@@ -1,0 +1,35 @@
+{
+  "name": "webmcp-canary-minimal",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "npx wrangler@latest dev --ip 127.0.0.1 --port 8443 --local",
+    "wp:demo": "sh bin/start-wordpress-demo.sh",
+    "wp:down": "sh bin/stop-wordpress-demo.sh",
+    "wp:reset": "docker compose down -v",
+    "wp:logs": "docker compose logs -f wordpress",
+    "wp:plugin-check": "docker compose run --rm wpcli wp plugin check webmcp-canary --include-experimental --include-low-severity-errors --include-low-severity-warnings",
+    "seed:demo": "node scripts/seed-demo.mjs",
+    "cf:deploy": "npx wrangler@latest deploy",
+    "cf:kv:create": "npx wrangler@latest kv namespace create WEBMCP_KV",
+    "d1:create": "npx wrangler@latest d1 create webmcp-canary",
+    "d1:migrate:local": "npx wrangler@latest d1 migrations apply webmcp-canary --local",
+    "d1:migrate:remote": "npx wrangler@latest d1 migrations apply webmcp-canary --remote",
+    "standards:check": "node scripts/webmcp-standards-monitor.mjs check",
+    "standards:autofix": "node scripts/webmcp-standards-monitor.mjs autofix",
+    "standards:rollback": "node scripts/webmcp-rollback.mjs",
+    "standards:traffic-guard": "node scripts/traffic-rollback-guard.mjs",
+    "test:smoke": "node scripts/smoke-public-api.mjs",
+    "test:webmcp-headless": "node scripts/headless-webmcp-registration.mjs",
+    "test:mcp-regression": "node scripts/run-mcp-quality-regression.mjs",
+    "test:deploy-gate": "npm run test:smoke && npm run test:webmcp-headless && npm run test:mcp-regression"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.46.0",
+    "wrangler": "latest"
+  }
+}

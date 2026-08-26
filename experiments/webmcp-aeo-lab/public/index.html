@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WebMCP External Tag Demo</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main>
+    <h1>WebMCP 外部タグ検証フォーム</h1>
+    <p class="note">
+      このHTML本体には WebMCP の登録コードはありません。登録は外部タグ <code>/tag.js</code> が行います。
+    </p>
+
+    <form id="contact-form" aria-label="問い合わせフォーム">
+      <label for="name">氏名</label>
+      <input id="name" name="name" autocomplete="name">
+
+      <label for="email">メールアドレス</label>
+      <input id="email" name="email" type="email" autocomplete="email">
+
+      <label for="phone">電話番号</label>
+      <input id="phone" name="phone" placeholder="09012345678">
+
+      <label for="message">お問い合わせ内容</label>
+      <textarea id="message" name="message"></textarea>
+
+      <section id="dynamic-fields" aria-label="動的フィールド"></section>
+
+      <button id="add-company" type="button">会社名欄を追加</button>
+      <button id="submit" type="submit">問い合わせを送信する</button>
+    </form>
+
+    <form id="newsletter-form" aria-label="メルマガ登録フォーム">
+      <label for="newsletter-email">メールアドレス</label>
+      <input id="newsletter-email" name="newsletter_email" type="email" autocomplete="email">
+
+      <label for="newsletter-name">表示名</label>
+      <input id="newsletter-name" name="newsletter_name">
+
+      <button id="newsletter-submit" type="submit">購読する</button>
+    </form>
+
+    <form id="search-form" role="search" aria-label="サイト内検索">
+      <label for="site-search">検索</label>
+      <input id="site-search" name="s" type="search" placeholder="検索キーワード">
+      <button id="search-submit" type="submit">検索</button>
+    </form>
+
+    <pre id="result"></pre>
+    <pre id="page-log"></pre>
+  </main>
+
+  <script>
+    const form = document.querySelector('#contact-form');
+    const newsletterForm = document.querySelector('#newsletter-form');
+    const searchForm = document.querySelector('#search-form');
+    const result = document.querySelector('#result');
+    const log = document.querySelector('#page-log');
+
+    document.querySelector('#add-company').addEventListener('click', () => {
+      if (document.querySelector('#company')) return;
+      const label = document.createElement('label');
+      label.htmlFor = 'company';
+      label.textContent = '会社名';
+      const input = document.createElement('input');
+      input.id = 'company';
+      input.name = 'company';
+      input.placeholder = '株式会社テスト';
+      document.querySelector('#dynamic-fields').append(label, input);
+      log.textContent = 'dynamic field added: #company';
+      document.dispatchEvent(new CustomEvent('toolchange', { detail: { reason: 'company-field-added' } }));
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const ok = form.name.value.length > 0
+        && form.email.value.includes('@')
+        && form.phone.value === '09012345678'
+        && form.message.value.length > 0
+        && (!document.querySelector('#company') || form.company.value === '株式会社テスト');
+      result.textContent = ok ? 'SUCCESS' : 'ERROR';
+    });
+
+    newsletterForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const ok = newsletterForm.newsletter_email.value.includes('@')
+        && newsletterForm.newsletter_name.value.length > 0;
+      result.textContent = ok ? 'SUCCESS' : 'ERROR';
+    });
+
+    searchForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      result.textContent = 'SEARCH';
+    });
+  </script>
+
+  <script src="/tag.js" async></script>
+</body>
+</html>

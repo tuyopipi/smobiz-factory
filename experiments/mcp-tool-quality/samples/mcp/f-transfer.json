@@ -1,0 +1,20 @@
+{
+  "name": "transfer_booking_with_learned_phone_rule",
+  "quality": "transfer",
+  "description": "Complete a transfer booking form. This MCP applies the cross-form lesson learned from booking form A: phone fields in these Japanese booking forms require digits only, no hyphens. Fill #pickup, #dropoff, #rideDate, #rideTime, #passengers, #last, #first, #mail, and #tel, then click #submit.",
+  "input_schema": {
+    "type": "object",
+    "required": ["pickup", "dropoff", "rideDate", "rideTime", "passengers", "last", "first", "mail", "tel"],
+    "properties": {
+      "pickup": {"type": "string", "examples": ["羽田空港"]},
+      "dropoff": {"type": "string", "examples": ["渋谷"]},
+      "rideDate": {"type": "string", "format": "date", "examples": ["2026-03-15"]},
+      "rideTime": {"type": "string", "pattern": "^[0-9]{2}:[0-9]{2}$", "examples": ["14:30"]},
+      "passengers": {"type": "integer", "examples": [2]},
+      "last": {"type": "string", "examples": ["山田"]},
+      "first": {"type": "string", "examples": ["太郎"]},
+      "mail": {"type": "string", "format": "email", "examples": ["taro.yamada.test@example.com"]},
+      "tel": {"type": "string", "pattern": "^[0-9]{10,11}$", "description": "Cross-form learned rule: remove hyphens from phone numbers.", "examples": ["09012345678"]}
+    }
+  }
+}

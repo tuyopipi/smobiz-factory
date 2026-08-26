@@ -1,0 +1,19 @@
+{
+  "name": "complete_conditional_business_application",
+  "quality": "high",
+  "description": "Complete the conditional application form. Select #plan value business first; this reveals #company and #jobTitle. Select #country value JP; this reveals #prefecture and #postalCode. Use digits only for #postalCode and #phone. Submit with #submit only after all dynamic fields are visible and filled.",
+  "input_schema": {
+    "type": "object",
+    "required": ["plan", "company", "jobTitle", "country", "prefecture", "postalCode", "email", "phone"],
+    "properties": {
+      "plan": {"type": "string", "enum": ["business"], "examples": ["business"]},
+      "company": {"type": "string", "examples": ["株式会社テスト"]},
+      "jobTitle": {"type": "string", "examples": ["エンジニア"]},
+      "country": {"type": "string", "enum": ["JP"], "examples": ["JP"]},
+      "prefecture": {"type": "string", "enum": ["東京都"], "examples": ["東京都"]},
+      "postalCode": {"type": "string", "pattern": "^[0-9]{7}$", "description": "Remove hyphen from postal code.", "examples": ["1500001"]},
+      "email": {"type": "string", "format": "email", "examples": ["taro.yamada.test@example.com"]},
+      "phone": {"type": "string", "pattern": "^[0-9]{10,11}$", "description": "Remove hyphens.", "examples": ["09012345678"]}
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "smobiz-factory",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node scripts/run-tests.mjs",
+    "form-taxonomy:summarize": "npm run build && node scripts/form-taxonomy-summarize.mjs",
+    "form-map:run": "npm run build && node scripts/form-map-runner.mjs",
+    "form-map:summarize": "npm run build && node scripts/form-map-summarize.mjs",
+    "start": "node dist/src/index.js",
+    "deploy": "bash scripts/deploy.sh"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.12",
+    "playwright": "^1.61.1",
+    "typescript": "^5.5.4"
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "site_id": "replace_me",
+  "url": "https://example.com/form",
+  "vertical": "government",
+  "steps": 3,
+  "fields": [
+    {
+      "selector": "#tel",
+      "type": "phone",
+      "format": "digits_only",
+      "note": "ハイフンを入れると弾かれる"
+    },
+    {
+      "selector": "#zip",
+      "type": "postal_code",
+      "format": "digits_only_7"
+    },
+    {
+      "selector": "#income",
+      "type": "annual_income",
+      "format": "digits_only",
+      "unit": "yen",
+      "note": "カンマ不可"
+    },
+    {
+      "selector": "#birth",
+      "type": "birthdate",
+      "format": "YYYY-MM-DD"
+    }
+  ],
+  "traps": [
+    {
+      "selector": "#website",
+      "reason": "honeypot: 画面外に配置。埋めると弾かれる"
+    }
+  ],
+  "order_deps": [
+    {
+      "trigger": "#country",
+      "value": "JP",
+      "reveals": "#prefecture"
+    }
+  ],
+  "step_map": {
+    "1": ["name", "email", "phone", "postal", "address"],
+    "2": ["birthdate", "gender", "company", "income"],
+    "3": ["confirm"]
+  },
+  "gotchas": [
+    "郵便番号を入れると住所が自動補完される。上書きすると壊れる",
+    "step2 に進むには、step1 の同意チェックが必須"
+  ]
+}

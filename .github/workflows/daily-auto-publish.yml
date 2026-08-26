@@ -1,0 +1,44 @@
+name: Daily auto publish
+
+on:
+  schedule:
+    - cron: "15 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: pdo_pgsql, ftp
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Restore private PHP config
+        env:
+          PHP_APP_CONFIG_BASE64: ${{ secrets.PHP_APP_CONFIG_BASE64 }}
+        run: |
+          test -n "$PHP_APP_CONFIG_BASE64"
+          echo "$PHP_APP_CONFIG_BASE64" | base64 -d > php-app/config.php
+
+      - name: Test
+        run: npm test
+
+      - name: Run one auto publish cycle
+        run: node scripts/auto-publish-tool.mjs
+
+      - name: Show latest automation result
+        if: always()
+        run: |
+          test -f artifacts/auto-publish/latest-result.json && cat artifacts/auto-publish/latest-result.json || true

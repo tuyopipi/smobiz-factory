@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>A Multi-step Booking</title>
+  <link rel="stylesheet" href="/forms/common.css">
+</head>
+<body>
+  <main>
+    <h1>予約フォーム A</h1>
+    <form id="form">
+      <section class="step active" data-step="1">
+        <label for="destination">行き先</label>
+        <select id="destination" name="destination">
+          <option value="">選択してください</option>
+          <option value="tokyo">東京</option>
+          <option value="osaka">大阪</option>
+        </select>
+        <label for="checkin">チェックイン日</label>
+        <input id="checkin" name="checkin" type="date">
+        <label for="nights">宿泊数</label>
+        <input id="nights" name="nights" type="number" min="1">
+        <label for="guests">人数</label>
+        <input id="guests" name="guests" type="number" min="1">
+        <button type="button" id="next1">次へ</button>
+      </section>
+      <section class="step" data-step="2">
+        <p class="hint">代表者情報。電話番号はハイフンなし。</p>
+        <label for="familyName">姓</label>
+        <input id="familyName" name="familyName">
+        <label for="givenName">名</label>
+        <input id="givenName" name="givenName">
+        <label for="email">メール</label>
+        <input id="email" name="email" type="email">
+        <label for="phone">電話番号</label>
+        <input id="phone" name="phone" placeholder="09012345678">
+        <button type="button" id="back2">戻る</button>
+        <button type="button" id="next2">確認へ</button>
+      </section>
+      <section class="step" data-step="3">
+        <p id="confirmText"></p>
+        <button type="button" id="back3">戻る</button>
+        <button type="submit" id="submit">登録を完了する</button>
+      </section>
+    </form>
+    <div id="result"></div>
+  </main>
+  <script>
+    const expected = { destination: 'tokyo', checkin: '2026-03-15', nights: '2', guests: '2', familyName: '山田', givenName: '太郎', email: 'taro.yamada.test@example.com', phone: '09012345678' };
+    const form = document.querySelector('#form');
+    const result = document.querySelector('#result');
+    function clearErrors() {
+      document.querySelectorAll('.field-error').forEach((el) => el.remove());
+    }
+    function addError(selector, message) {
+      const field = document.querySelector(selector);
+      const error = document.createElement('p');
+      error.className = 'field-error';
+      error.dataset.selector = selector;
+      error.textContent = `${selector}: ${message}`;
+      field.insertAdjacentElement('afterend', error);
+    }
+    function show(step) {
+      document.querySelectorAll('.step').forEach((el) => el.classList.toggle('active', el.dataset.step === String(step)));
+      if (step === 3) document.querySelector('#confirmText').textContent = `${form.destination.value} / ${form.checkin.value} / ${form.nights.value}泊 / ${form.guests.value}名`;
+    }
+    document.querySelector('#next1').onclick = () => show(2);
+    document.querySelector('#next2').onclick = () => show(3);
+    document.querySelector('#back2').onclick = () => show(1);
+    document.querySelector('#back3').onclick = () => show(2);
+    form.onsubmit = (event) => {
+      event.preventDefault();
+      clearErrors();
+      const errors = [];
+      for (const [key, value] of Object.entries(expected)) {
+        if (form.elements[key].value !== value) errors.push([`#${key}`, `${value} を入力してください`]);
+      }
+      if (form.phone.value && !/^[0-9]{10,11}$/.test(form.phone.value)) {
+        errors.push(['#phone', '電話番号はハイフンなしの半角数字で入力してください']);
+      }
+      for (const [selector, message] of errors) addError(selector, message);
+      const ok = errors.length === 0;
+      result.textContent = ok ? 'SUCCESS' : 'ERROR';
+    };
+  </script>
+</body>
+</html>

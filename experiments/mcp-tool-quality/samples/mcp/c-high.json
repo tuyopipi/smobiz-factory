@@ -1,0 +1,19 @@
+{
+  "name": "complete_ambiguous_signup",
+  "quality": "high",
+  "description": "Complete the ambiguous signup form. The labels are useless; rely on placeholders and exact selectors. Fill #f1 family name, #f2 given name, #f3 email, #f4 phone digits only, #f5 postal code digits only, #f6 prefecture, #f7 city, #f8 company. Then click #submit.",
+  "input_schema": {
+    "type": "object",
+    "required": ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8"],
+    "properties": {
+      "f1": {"type": "string", "description": "family_name", "examples": ["山田"]},
+      "f2": {"type": "string", "description": "given_name", "examples": ["太郎"]},
+      "f3": {"type": "string", "format": "email", "examples": ["taro.yamada.test@example.com"]},
+      "f4": {"type": "string", "pattern": "^[0-9]{10,11}$", "examples": ["09012345678"]},
+      "f5": {"type": "string", "pattern": "^[0-9]{7}$", "examples": ["1500001"]},
+      "f6": {"type": "string", "examples": ["東京都"]},
+      "f7": {"type": "string", "examples": ["渋谷区"]},
+      "f8": {"type": "string", "examples": ["株式会社テスト"]}
+    }
+  }
+}

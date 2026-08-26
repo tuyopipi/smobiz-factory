@@ -1,0 +1,44 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "webmcp-canary",
+	"main": "worker/index.mjs",
+	"compatibility_date": "2026-07-19",
+	"assets": {
+		"directory": "./public",
+		"binding": "ASSETS",
+		"run_worker_first": [
+			"/api/*"
+		]
+	},
+	"kv_namespaces": [
+		{
+			"binding": "WEBMCP_KV",
+			"id": "38e155109eeb40a3bff1bb7f3306b69f"
+		}
+	],
+	"d1_databases": [
+		{
+			"binding": "WEBMCP_DB",
+			"database_name": "webmcp-canary",
+			"database_id": "6eafcadf-db96-4e47-bb01-1aae478e0704",
+			"migrations_dir": "migrations"
+		}
+	],
+	"vars": {
+		"WEBMCP_AB_MIN_SAMPLES": "20",
+		"WEBMCP_AB_Z_THRESHOLD": "1.96",
+		"WEBMCP_TRAFFIC_MIN_RESULTS": "20",
+		"WEBMCP_TRAFFIC_MAX_FAILURE_RATE": "0.5",
+		"WEBMCP_LEARNING_MIN_SUBMISSIONS": "20",
+		"WEBMCP_LEARNING_MIN_FAILURES": "3",
+		"WEBMCP_LEARNING_MIN_SUPPORT_RATE": "0.12",
+		"WEBMCP_LEARNING_DISABLE_LIFT_THRESHOLD": "-2",
+		"WEBMCP_ALLOWED_ORIGINS": "*",
+		"OPENAI_MODEL": "gpt-4.1-mini"
+	},
+	"triggers": {
+		"crons": [
+			"17 18 * * *"
+		]
+	}
+}

@@ -1,0 +1,42 @@
+{
+  "defaults": {
+    "runs": 10,
+    "smokeRuns": 3,
+    "maxSteps": 25,
+    "provider": "openai",
+    "model": "gpt-4.1-mini",
+    "temperature": 0.7
+  },
+  "forms": [
+    {
+      "id": "a",
+      "name": "A Multi-step Booking",
+      "path": "/samples/forms/a-multistep-booking.html",
+      "task": "東京で2026年3月15日から2泊、2名で予約してください。代表者は山田 太郎、メールは taro.yamada.test@example.com、電話は 090-1234-5678 です。",
+      "mcp": {
+        "low": "samples/mcp/a-low.json",
+        "high": "samples/mcp/a-high.json"
+      }
+    },
+    {
+      "id": "c",
+      "name": "C Ambiguous Labels",
+      "path": "/samples/forms/c-ambiguous-labels.html",
+      "task": "会員登録をしてください。姓は山田、名は太郎、メールは taro.yamada.test@example.com、電話は090-1234-5678、郵便番号は150-0001、都道府県は東京都、市区町村は渋谷区、会社名は株式会社テストです。",
+      "mcp": {
+        "low": "samples/mcp/c-low.json",
+        "high": "samples/mcp/c-high.json"
+      }
+    },
+    {
+      "id": "e",
+      "name": "E Combined Complex",
+      "path": "/samples/forms/e-combined-complex.html",
+      "task": "法人の総合申請をしてください。会社名は株式会社テスト、役職はエンジニア、国は日本、郵便番号は150-0001、都道府県は東京都、市区町村は渋谷区、姓は山田、名は太郎、メールは taro.yamada.test@example.com、電話は090-1234-5678、生年月日は1995年4月1日です。",
+      "mcp": {
+        "low": "samples/mcp/e-low.json",
+        "high": "samples/mcp/e-high.json"
+      }
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "name": "mcp-quality-bench",
+  "version": "0.1.0",
+  "description": "Benchmark how MCP tool definition quality affects browser-agent task success.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "bench": "node src/run-experiment.mjs --config benchmark.config.example.json",
+    "bench:mock": "node src/run-experiment.mjs --config benchmark.config.example.json --mock",
+    "smoke": "node src/run-experiment.mjs --config benchmark.config.example.json --smoke --mock",
+    "smoke:openai": "node src/run-experiment.mjs --config benchmark.config.example.json --smoke",
+    "repair:mock": "node src/repair-loop.mjs --mock-agent --mock-repair",
+    "repair:openai": "node src/repair-loop.mjs",
+    "experiment": "node src/run-experiment.mjs --config benchmark.config.example.json",
+    "experiment:mock": "node src/run-experiment.mjs --config benchmark.config.example.json --mock",
+    "install:browsers": "npx playwright install chromium"
+  },
+  "bin": {
+    "mcp-quality-bench": "src/run-experiment.mjs"
+  },
+  "dependencies": {
+    "playwright": "^1.61.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

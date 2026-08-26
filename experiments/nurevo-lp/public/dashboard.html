@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <link rel="icon" href="/assets/favicon.png">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>Nurevo Dashboard</title>
+    <meta name="description" content="View your Nurevo form analytics and improvement suggestions.">
+    <link rel="stylesheet" href="/assets/styles.css">
+    <script src="/config.js"></script>
+    <script src="/assets/dashboard.js" defer></script>
+  </head>
+  <body class="dashboard-page">
+    <header class="site-header">
+      <a class="brand" href="/">
+        <img class="brand-mark" src="/assets/logo.png" alt="Nurevo" width="28" height="28">
+        <span>Nurevo</span>
+      </a>
+      <div class="dashboard-actions">
+        <button class="lang-toggle" type="button" data-lang-toggle>日本語</button>
+        <button class="button small" type="button" data-logout hidden data-i18n="auth.logout">Log out</button>
+      </div>
+    </header>
+
+    <main class="dashboard-shell">
+      <section class="dashboard-intro">
+        <p class="eyebrow" data-i18n="dashboard.eyebrow">Dashboard</p>
+        <h1 data-i18n="dashboard.title">Your form performance</h1>
+        <p data-i18n="dashboard.copy">Track completion, find the fields causing abandonment, and act on improvement suggestions.</p>
+      </section>
+
+      <section class="auth-panel" data-auth-panel hidden>
+        <h2 data-i18n="auth.title">Sign in with email</h2>
+        <p data-i18n="auth.copy">We will send a one-time sign-in link. It expires in 15 minutes.</p>
+        <p class="note" data-i18n="auth.legacyNote">If you cannot sign in with a previously issued key, please reissue the key.</p>
+        <form class="key-form" data-auth-form>
+          <label>
+            <span data-i18n="auth.email">Email</span>
+            <input type="email" name="email" autocomplete="email" required>
+          </label>
+          <button class="button primary" type="submit" data-i18n="auth.submit">Send sign-in link</button>
+          <p class="form-status" data-auth-status aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section data-dashboard hidden>
+        <div class="dashboard-toolbar">
+          <p><span data-i18n="dashboard.signedIn">Signed in as</span> <strong data-email></strong></p>
+        </div>
+        <div class="site-grid" data-sites></div>
+        <div class="empty-state" data-empty hidden>
+          <h2 data-i18n="dashboard.emptyTitle">No sites yet</h2>
+          <p data-i18n="dashboard.emptyCopy">Issue a site key from the Nurevo home page using this email address.</p>
+          <a class="button primary" href="/#install" data-i18n="dashboard.install">Install Nurevo</a>
+        </div>
+      </section>
+      <p class="form-status error" data-page-error aria-live="polite"></p>
+    </main>
+  </body>
+</html>

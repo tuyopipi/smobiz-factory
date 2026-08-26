@@ -1,0 +1,27 @@
+{
+  "form_id": "custom_react_hook_form_zod_1",
+  "ground_truth_mapping": {
+    "#family_name": "family_name",
+    "#given_name": "given_name",
+    "#email": "email",
+    "#phone": "phone",
+    "#postal_code": "postal_code",
+    "#country": "country",
+    "#prefecture": "prefecture",
+    "#city": "city",
+    "#address_line": "address_line",
+    "#company": "company",
+    "#annual_income": "annual_income"
+  },
+  "honeypots": ["#website_url", "#fax_number", "#internal_note"],
+  "validation_rules": {
+    "#phone": "no_hyphen",
+    "#postal_code": "half_width_digits_only",
+    "#annual_income": "number_only"
+  },
+  "order_deps": [
+    { "trigger": "#country", "reveals": "#prefecture" }
+  ],
+  "steps": 3,
+  "step2_requires": ["annual_income", "company"]
+}

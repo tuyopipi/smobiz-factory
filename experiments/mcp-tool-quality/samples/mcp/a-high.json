@@ -1,0 +1,19 @@
+{
+  "name": "complete_multistep_booking",
+  "quality": "high",
+  "description": "Complete the three-step booking form. Step 1: choose destination #destination as value tokyo, set #checkin to YYYY-MM-DD, set #nights and #guests as numbers, then click #next1. Step 2: fill representative details; #phone requires digits only with no hyphens, then click #next2. Step 3: click #submit. Finish only after #result shows SUCCESS.",
+  "input_schema": {
+    "type": "object",
+    "required": ["destination", "checkin", "nights", "guests", "familyName", "givenName", "email", "phone"],
+    "properties": {
+      "destination": {"type": "string", "enum": ["tokyo"], "examples": ["tokyo"]},
+      "checkin": {"type": "string", "format": "date", "examples": ["2026-03-15"]},
+      "nights": {"type": "integer", "minimum": 1, "examples": [2]},
+      "guests": {"type": "integer", "minimum": 1, "examples": [2]},
+      "familyName": {"type": "string", "examples": ["山田"]},
+      "givenName": {"type": "string", "examples": ["太郎"]},
+      "email": {"type": "string", "format": "email", "examples": ["taro.yamada.test@example.com"]},
+      "phone": {"type": "string", "pattern": "^[0-9]{10,11}$", "description": "Remove hyphens.", "examples": ["09012345678"]}
+    }
+  }
+}

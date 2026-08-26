@@ -1,0 +1,23 @@
+{
+  "name": "complete_combined_complex_application",
+  "quality": "high",
+  "description": "Complete the combined multi-step form. Do not fill hidden #website; it is a honeypot. Step 1: select #accountType business, then fill #x1 company and #x2 job title, click #next1. Step 2: select #country JP to reveal address fields; fill #zip digits only, #pref, #city, click #next2. Step 3: fill ambiguous #n1 family name, #n2 given name, #mail email, #tel phone digits only, #birth YYYY-MM-DD, then click #submit.",
+  "input_schema": {
+    "type": "object",
+    "required": ["accountType", "company", "jobTitle", "country", "zip", "pref", "city", "familyName", "givenName", "email", "phone", "birth"],
+    "properties": {
+      "accountType": {"type": "string", "enum": ["business"], "examples": ["business"]},
+      "company": {"type": "string", "examples": ["株式会社テスト"]},
+      "jobTitle": {"type": "string", "examples": ["エンジニア"]},
+      "country": {"type": "string", "enum": ["JP"], "examples": ["JP"]},
+      "zip": {"type": "string", "pattern": "^[0-9]{7}$", "examples": ["1500001"]},
+      "pref": {"type": "string", "examples": ["東京都"]},
+      "city": {"type": "string", "examples": ["渋谷区"]},
+      "familyName": {"type": "string", "examples": ["山田"]},
+      "givenName": {"type": "string", "examples": ["太郎"]},
+      "email": {"type": "string", "format": "email", "examples": ["taro.yamada.test@example.com"]},
+      "phone": {"type": "string", "pattern": "^[0-9]{10,11}$", "examples": ["09012345678"]},
+      "birth": {"type": "string", "format": "date", "examples": ["1995-04-01"]}
+    }
+  }
+}
