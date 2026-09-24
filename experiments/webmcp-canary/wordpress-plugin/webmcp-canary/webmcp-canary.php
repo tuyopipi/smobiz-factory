@@ -23,10 +23,14 @@ define('WEBMCP_CANARY_VERSION', '0.1.0');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
+define('WEBMCP_CANARY_LLMS_TXT_MAX_BYTES', 256 * 1024);
 
 function webmcp_canary_default_settings() {
     return array(
         'enabled' => '0',
+        'allow_ai_crawlers' => '1',
+        'serve_llms_txt' => '1',
+        'serve_schema' => '1',
         'tag_url' => 'https://nurevo.jp/tag.js',
         'site_key' => '',
         'site_email' => get_option('admin_email'),
@@ -37,6 +41,44 @@ function webmcp_canary_default_settings() {
 function webmcp_canary_settings() {
     $settings = get_option(WEBMCP_CANARY_OPTION, array());
     return wp_parse_args(is_array($settings) ? $settings : array(), webmcp_canary_default_settings());
+}
+
+add_filter('robots_txt', 'webmcp_canary_allow_ai_crawlers_robots_txt', 10, 2);
+function webmcp_canary_allow_ai_crawlers_robots_txt($output, $public) {
+    $output = (string) $output;
+    $settings = webmcp_canary_settings();
+    if (!$public || $settings['enabled'] !== '1' || $settings['allow_ai_crawlers'] !== '1') {
+        return $output;
+    }
+
+    $marker = '# Nurevo WebMCP AI crawler access';
+    if (strpos($output, $marker) !== false) {
+        return $output;
+    }
+
+    $agents = array(
+        'GPTBot',
+        'OAI-SearchBot',
+        'ChatGPT-User',
+        'ClaudeBot',
+        'anthropic-ai',
+        'PerplexityBot',
+        'Google-Extended',
+        'CCBot',
+        'Applebot-Extended',
+    );
+    $rules = array($marker);
+    foreach ($agents as $agent) {
+        $rules[] = 'User-agent: ' . $agent;
+        $rules[] = 'Allow: /';
+        $rules[] = '';
+    }
+
+    $separator = '';
+    if ($output !== '') {
+        $separator = substr($output, -1) === "\n" ? "\n" : "\n\n";
+    }
+    return $output . $separator . implode("\n", $rules) . "\n";
 }
 
 add_action('admin_init', 'webmcp_canary_register_settings');
@@ -55,6 +97,9 @@ function webmcp_canary_register_settings() {
     );
 
     add_settings_field('enabled', __('Enable tag', 'nurevo-webmcp'), 'webmcp_canary_enabled_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('allow_ai_crawlers', __('Allow AI crawlers in robots.txt', 'nurevo-webmcp'), 'webmcp_canary_allow_ai_crawlers_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('serve_llms_txt', __('Serve /llms.txt', 'nurevo-webmcp'), 'webmcp_canary_serve_llms_txt_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('serve_schema', __('Output JSON-LD schema (server-side)', 'nurevo-webmcp'), 'webmcp_canary_serve_schema_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('tag_url', __('External tag.js URL', 'nurevo-webmcp'), 'webmcp_canary_tag_url_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('site_key', __('API key / site key', 'nurevo-webmcp'), 'webmcp_canary_site_key_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('site_email', __('Owner email', 'nurevo-webmcp'), 'webmcp_canary_site_email_field', 'webmcp_canary', 'webmcp_canary_main');
@@ -65,6 +110,9 @@ function webmcp_canary_sanitize_settings($input) {
     $input = is_array($input) ? $input : array();
     return array(
         'enabled' => !empty($input['enabled']) ? '1' : '0',
+        'allow_ai_crawlers' => !empty($input['allow_ai_crawlers']) ? '1' : '0',
+        'serve_llms_txt' => !empty($input['serve_llms_txt']) ? '1' : '0',
+        'serve_schema' => !empty($input['serve_schema']) ? '1' : '0',
         'tag_url' => isset($input['tag_url']) ? esc_url_raw($input['tag_url']) : '',
         'site_key' => isset($input['site_key']) ? sanitize_text_field($input['site_key']) : '',
         'site_email' => isset($input['site_email']) ? sanitize_email($input['site_email']) : '',
@@ -80,6 +128,39 @@ function webmcp_canary_enabled_field() {
         checked('1', $settings['enabled'], false),
         esc_html__('Load WebMCP tag on public pages', 'nurevo-webmcp')
     );
+}
+
+function webmcp_canary_allow_ai_crawlers_field() {
+    $settings = webmcp_canary_settings();
+    printf(
+        '<label><input type="checkbox" name="%1$s[allow_ai_crawlers]" value="1" %2$s> %3$s</label>',
+        esc_attr(WEBMCP_CANARY_OPTION),
+        checked('1', $settings['allow_ai_crawlers'], false),
+        esc_html__('Explicitly allow major AI search and training crawlers in the virtual robots.txt file', 'nurevo-webmcp')
+    );
+    echo '<p class="description">' . esc_html__('Applied only while the WebMCP tag is enabled and the site is visible to search engines.', 'nurevo-webmcp') . '</p>';
+}
+
+function webmcp_canary_serve_llms_txt_field() {
+    $settings = webmcp_canary_settings();
+    printf(
+        '<label><input type="checkbox" name="%1$s[serve_llms_txt]" value="1" %2$s> %3$s</label>',
+        esc_attr(WEBMCP_CANARY_OPTION),
+        checked('1', $settings['serve_llms_txt'], false),
+        esc_html__('Serve the Worker-generated llms.txt at this site’s /llms.txt URL', 'nurevo-webmcp')
+    );
+    echo '<p class="description">' . esc_html__('Requires the WebMCP tag to be enabled and a site key to be configured.', 'nurevo-webmcp') . '</p>';
+}
+
+function webmcp_canary_serve_schema_field() {
+    $settings = webmcp_canary_settings();
+    printf(
+        '<label><input type="checkbox" name="%1$s[serve_schema]" value="1" %2$s> %3$s</label>',
+        esc_attr(WEBMCP_CANARY_OPTION),
+        checked('1', $settings['serve_schema'], false),
+        esc_html__('Output schema.org JSON-LD (Organization, WebSite, and the current page) in the page head so AI crawlers that do not run JavaScript can read it', 'nurevo-webmcp')
+    );
+    echo '<p class="description">' . esc_html__('Built from this site content. Requires the WebMCP tag to be enabled.', 'nurevo-webmcp') . '</p>';
 }
 
 function webmcp_canary_tag_url_field() {
@@ -221,6 +302,69 @@ function webmcp_canary_api_base_candidates() {
         $candidates[] = $scheme . '://host.docker.internal' . $port;
     }
     return array_values(array_unique($candidates));
+}
+
+function webmcp_canary_fetch_llms_txt() {
+    $settings = webmcp_canary_settings();
+    if ($settings['enabled'] !== '1' || $settings['serve_llms_txt'] !== '1' || empty($settings['site_key'])) {
+        return null;
+    }
+
+    $host = wp_parse_url(home_url(), PHP_URL_HOST);
+    $api_bases = webmcp_canary_api_base_candidates();
+    if (empty($host) || empty($api_bases)) {
+        return null;
+    }
+
+    foreach ($api_bases as $api_base) {
+        $url = add_query_arg(
+            array(
+                'site_key' => $settings['site_key'],
+                'host' => $host,
+            ),
+            trailingslashit($api_base) . 'api/llms.txt'
+        );
+        $response = wp_remote_get($url, array(
+            'timeout' => WEBMCP_CANARY_HTTP_TIMEOUT,
+            'headers' => array('accept' => 'text/plain'),
+            'limit_response_size' => WEBMCP_CANARY_LLMS_TXT_MAX_BYTES + 1,
+        ));
+        if (is_wp_error($response)) {
+            continue;
+        }
+        $status = wp_remote_retrieve_response_code($response);
+        $body = wp_remote_retrieve_body($response);
+        if ($status >= 200 && $status < 300 && is_string($body) && $body !== '' && strlen($body) <= WEBMCP_CANARY_LLMS_TXT_MAX_BYTES) {
+            return $body;
+        }
+    }
+
+    return null;
+}
+
+add_action('template_redirect', 'webmcp_canary_maybe_serve_llms_txt', 0);
+function webmcp_canary_maybe_serve_llms_txt() {
+    if (empty($_SERVER['REQUEST_URI'])) {
+        return;
+    }
+    $request_path = wp_parse_url(wp_unslash($_SERVER['REQUEST_URI']), PHP_URL_PATH);
+    $llms_path = wp_parse_url(home_url('/llms.txt'), PHP_URL_PATH);
+    if (!is_string($request_path) || !is_string($llms_path) || $request_path !== $llms_path) {
+        return;
+    }
+
+    $body = webmcp_canary_fetch_llms_txt();
+    if (!is_string($body)) {
+        return;
+    }
+
+    status_header(200);
+    nocache_headers();
+    header('Content-Type: text/plain; charset=utf-8');
+    header('X-Content-Type-Options: nosniff');
+    // The body is trusted plain text fetched from the configured WebMCP Worker.
+    echo $body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    exit;
 }
 
 function webmcp_canary_cache_key($suffix = '') {
@@ -1056,6 +1200,110 @@ function webmcp_canary_settings_page() {
         </div>
     </div>
     <?php
+}
+
+add_action('wp_head', 'webmcp_canary_output_server_schema', 5);
+function webmcp_canary_output_server_schema() {
+    if (is_admin() || is_feed() || is_404() || is_search()) {
+        return;
+    }
+    $settings = webmcp_canary_settings();
+    if ($settings['enabled'] !== '1' || $settings['serve_schema'] !== '1') {
+        return;
+    }
+    if (!get_option('blog_public')) {
+        return;
+    }
+
+    $site_url  = home_url('/');
+    $site_name = get_bloginfo('name');
+    $site_desc = get_bloginfo('description');
+    $org_id    = $site_url . '#organization';
+    $web_id    = $site_url . '#website';
+
+    $graph = array();
+
+    $org = array(
+        '@type' => 'Organization',
+        '@id'   => $org_id,
+        'name'  => $site_name,
+        'url'   => $site_url,
+    );
+    $logo_id = get_theme_mod('custom_logo');
+    if ($logo_id) {
+        $logo_url = wp_get_attachment_image_url($logo_id, 'full');
+        if ($logo_url) {
+            $org['logo'] = $logo_url;
+        }
+    }
+    $graph[] = $org;
+
+    $graph[] = array(
+        '@type'       => 'WebSite',
+        '@id'         => $web_id,
+        'url'         => $site_url,
+        'name'        => $site_name,
+        'description' => $site_desc,
+        'publisher'   => array('@id' => $org_id),
+    );
+
+    if (is_singular()) {
+        $post = get_queried_object();
+        if ($post instanceof WP_Post) {
+            $url       = get_permalink($post);
+            $title     = get_the_title($post);
+            $excerpt   = has_excerpt($post)
+                ? get_the_excerpt($post)
+                : wp_trim_words(wp_strip_all_tags($post->post_content), 40, '');
+            $published = get_the_date('c', $post);
+            $modified  = get_the_modified_date('c', $post);
+            $is_post   = (get_post_type($post) === 'post');
+
+            $node = array(
+                '@type'            => $is_post ? 'BlogPosting' : 'WebPage',
+                '@id'              => $url . '#' . ($is_post ? 'article' : 'webpage'),
+                'url'              => $url,
+                'name'             => $title,
+                'headline'         => $title,
+                'description'      => $excerpt,
+                'datePublished'    => $published,
+                'dateModified'     => $modified,
+                'inLanguage'       => get_bloginfo('language'),
+                'isPartOf'         => array('@id' => $web_id),
+                'publisher'        => array('@id' => $org_id),
+                'mainEntityOfPage' => $url,
+            );
+            if ($is_post) {
+                $author = get_the_author_meta('display_name', $post->post_author);
+                if ($author) {
+                    $node['author'] = array('@type' => 'Person', 'name' => $author);
+                }
+            }
+            $img = get_the_post_thumbnail_url($post, 'full');
+            if ($img) {
+                $node['image'] = $img;
+            }
+            $graph[] = $node;
+        }
+    } elseif (is_front_page() || is_home()) {
+        $graph[] = array(
+            '@type'       => 'WebPage',
+            '@id'         => $site_url . '#webpage',
+            'url'         => $site_url,
+            'name'        => $site_name,
+            'description' => $site_desc,
+            'inLanguage'  => get_bloginfo('language'),
+            'isPartOf'    => array('@id' => $web_id),
+        );
+    }
+
+    $data = array(
+        '@context' => 'https://schema.org',
+        '@graph'   => $graph,
+    );
+
+    // Trusted JSON generated from this site's own data.
+    echo "\n" . '<script type="application/ld+json" id="nurevo-aeo-server">' . wp_json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 add_action('wp_enqueue_scripts', 'webmcp_canary_enqueue_tag');

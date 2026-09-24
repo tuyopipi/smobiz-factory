@@ -20,6 +20,14 @@ const AUTH_RATE_WINDOW_MS = 60 * 60 * 1000;
 const AGENT_HOST_MISMATCH_PREFIX = "agent-auth-host-mismatch:";
 const FOOTPRINT_MAX_BYTES = 256 * 1024;
 const DEFAULT_JSON_MAX_BYTES = 64 * 1024;
+const PAGE_META_TTL_SECONDS = 7 * 24 * 60 * 60;
+const PAGE_META_JSON_LD_MAX_BYTES = 10 * 1024;
+const ORG_SCHEMA_TTL_SECONDS = 30 * 24 * 60 * 60;
+const ORGANIZATION_EXTRACTION_SYSTEM_PROMPT = "Extract organization/company information ONLY if clearly present in the provided page metadata. Do NOT guess or infer. If a field is not clearly stated, omit it or use empty. Return JSON only: {\"name\":\"\",\"url\":\"\",\"logo\":\"\",\"description\":\"\",\"sameAs\":[]}. If no clear organization info exists, return all-empty.";
+const FAQ_SCHEMA_TTL_SECONDS = 30 * 24 * 60 * 60;
+const FAQ_EXTRACTION_SYSTEM_PROMPT = "Extract FAQ (question-answer pairs) ONLY if clearly present in the provided page metadata (headings, description, existing JSON-LD). Do NOT invent questions or answers. Do NOT infer. If clear FAQ content is not present, return empty. Return JSON only: {\"faqs\":[{\"question\":\"\",\"answer\":\"\"}]}. If no clear FAQ exists, return {\"faqs\":[]}.";
+const ARTICLE_SCHEMA_TTL_SECONDS = 30 * 24 * 60 * 60;
+const ARTICLE_EXTRACTION_SYSTEM_PROMPT = "Extract article/blog post information ONLY if this page is clearly an article or blog post AND the information is clearly present in the metadata. Do NOT guess author or date if not stated. Do NOT infer. If this is not clearly an article/blog page, return empty. Return JSON only: {\"isArticle\":false,\"headline\":\"\",\"author\":\"\",\"datePublished\":\"\",\"description\":\"\"}. If not an article, set isArticle to false and return empty fields.";
 const RATE_LIMIT_PREFIX = "rate-limit:";
 const SITE_KEY_ISSUE_TOTAL_PREFIX = "site-key-issue-total:";
 const STRIPE_EVENT_PREFIX = "stripe-event:";
@@ -220,20 +228,118 @@ export default {
         return json(health, health.ok ? 200 : 503, request, env);
       }
 
+      if (url.pathname === "/api/llms.txt" && request.method === "GET") {
+        const siteKey = url.searchParams.get("site_key");
+        const requestedHost = url.searchParams.get("host");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const body = await generateLlmsTxt(env, { host: access.record.siteHost });
+        return new Response(body, {
+          status: 200,
+          headers: {
+            "content-type": "text/plain; charset=utf-8",
+            "cache-control": "no-store"
+          }
+        });
+      }
+
+      if (url.pathname === "/api/page-meta" && request.method === "POST") {
+        const payload = await readJson(request);
+        const siteKey = String(payload?.siteKey || payload?.site_key || "").trim();
+        const requestedHost = String(payload?.host || "");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const result = await storePageMeta(env, {
+          siteKey,
+          host: access.record.siteHost,
+          pathname: payload?.pathname,
+          meta: payload?.meta
+        });
+        return json({ ok: true, key: result.key, expiresIn: PAGE_META_TTL_SECONDS }, 200, request, env);
+      }
+
+      if (url.pathname === "/api/org-schema" && request.method === "GET") {
+        const siteKey = String(url.searchParams.get("site_key") || "").trim();
+        const requestedHost = String(url.searchParams.get("host") || "").trim();
+        const pathname = url.searchParams.get("pathname");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const result = await organizationSchemaForPage(env, {
+          siteKey,
+          host: access.record.siteHost,
+          pathname
+        });
+        if (!result.found || !result.schema) return json({ error: "not_found" }, 404, request, env);
+        return json(result.schema, 200, request, env);
+      }
+
+      if (url.pathname === "/api/faq-schema" && request.method === "GET") {
+        const siteKey = String(url.searchParams.get("site_key") || "").trim();
+        const requestedHost = String(url.searchParams.get("host") || "").trim();
+        const pathname = url.searchParams.get("pathname");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const result = await faqSchemaForPage(env, {
+          siteKey,
+          host: access.record.siteHost,
+          pathname
+        });
+        if (!result.found || !result.schema) return json({ error: "not_found" }, 404, request, env);
+        return json(result.schema, 200, request, env);
+      }
+
+      if (url.pathname === "/api/article-schema" && request.method === "GET") {
+        const siteKey = String(url.searchParams.get("site_key") || "").trim();
+        const requestedHost = String(url.searchParams.get("host") || "").trim();
+        const pathname = url.searchParams.get("pathname");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const result = await articleSchemaForPage(env, {
+          siteKey,
+          host: access.record.siteHost,
+          pathname
+        });
+        if (!result.found || !result.schema) return json({ error: "not_found" }, 404, request, env);
+        return json(result.schema, 200, request, env);
+      }
+
+      if (url.pathname === "/api/aeo-schemas" && request.method === "GET") {
+        const siteKey = String(url.searchParams.get("site_key") || "").trim();
+        const requestedHost = String(url.searchParams.get("host") || "").trim();
+        const pathname = url.searchParams.get("pathname");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const input = { siteKey, host: access.record.siteHost, pathname };
+        const results = await Promise.all([
+          organizationSchemaForPage(env, input),
+          faqSchemaForPage(env, input),
+          articleSchemaForPage(env, input)
+        ]);
+        return json({ schemas: results.map((result) => result.schema).filter(Boolean) }, 200, request, env);
+      }
+
       if (url.pathname === "/api/site-insights") {
         const siteKey = url.searchParams.get("site_key");
         const requestedHost = url.searchParams.get("host");
         const sessionAuthorized = await sessionOwnsSiteKey(request, env, siteKey);
         const hasAdminCredential = Boolean(request.headers.get("x-webmcp-admin-token"));
         const admin = !sessionAuthorized && hasAdminCredential ? await requireAdmin(request, env) : null;
-        const siteKeyRecord = !sessionAuthorized && !admin?.ok && siteKey && requestedHost
-          ? await findSiteKey(env, siteKey)
-          : null;
-        const siteKeyHostAuthorized = Boolean(
-          siteKeyRecord?.status === "active"
-          && requestedHost.toLowerCase() === String(siteKeyRecord.siteHost || "").toLowerCase()
-        );
-        if (!sessionAuthorized && !admin?.ok && !siteKeyHostAuthorized) {
+        const siteKeyHostAccess = !sessionAuthorized && !admin?.ok
+          ? await authorizeSiteKeyHost(env, siteKey, requestedHost)
+          : { ok: false };
+        if (!sessionAuthorized && !admin?.ok && !siteKeyHostAccess.ok) {
           return json({ error: admin?.status === 503 ? admin.error : "forbidden" }, admin?.status === 503 ? 503 : 403, request, env);
         }
         return json(await siteInsights(env, {
@@ -737,6 +843,60 @@ function inferSiteActions(fields) {
   if (/contact|問い合わせ|message|email|メール/i.test(text)) actions.push({ name: "Submit contact form", valueName: "contact_request", description: "The site can accept an inquiry or contact request." });
   if (/application|申込|register|登録|company|会社/i.test(text)) actions.push({ name: "Complete application form", valueName: "application_request", description: "The site can accept a registration or application request." });
   return actions.length ? actions : [{ name: "Complete web form", valueName: "form_request", description: "The site can accept structured form input." }];
+}
+
+async function generateLlmsTxt(env, { host }) {
+  const metadata = await loadLlmsSiteMetadata(env, host);
+  const siteName = llmsText(metadata.title || host, host);
+  const description = `Information and form actions available on ${siteName}.`;
+  const actionLines = metadata.forms.map((form, index) => {
+    const structure = form.formStructure || {};
+    const fields = (structure.fields || []).filter((field) => !field.hidden);
+    const actions = inferSiteActions(fields);
+    const formName = llmsText(structure.formName || structure.formId || `Form ${index + 1}`, `Form ${index + 1}`);
+    return `- ${formName}: ${actions.map((action) => llmsText(action.description, "The site can accept structured form input.")).join(" ")}`;
+  });
+  if (!actionLines.length) actionLines.push("- No form actions are currently available.");
+  return `# ${siteName}\n\n> ${description}\n\n## Actions\n${actionLines.join("\n")}\n`;
+}
+
+async function loadLlmsSiteMetadata(env, host) {
+  if (hasD1(env)) {
+    const rows = await env.WEBMCP_DB.prepare(`
+      SELECT fo.form_hash, fo.form_id, fo.structure_json
+      FROM forms fo
+      INNER JOIN sites s ON s.id = fo.site_id
+      WHERE s.host = ?
+      ORDER BY fo.updated_at DESC
+      LIMIT 100
+    `).bind(host).all();
+    return {
+      title: null,
+      forms: (rows.results || []).map((row) => ({
+        formHash: row.form_hash,
+        formStructure: safeJson(row.structure_json, { formId: row.form_id, fields: [] })
+      }))
+    };
+  }
+  const footprints = await getJson(env, "footprints", []);
+  const matching = footprints.filter((footprint) => String(footprint.site?.host || "").toLowerCase() === host.toLowerCase());
+  const forms = new Map();
+  for (const footprint of matching) {
+    const key = footprint.formHash || JSON.stringify(footprint.formStructure || {});
+    forms.set(key, { formHash: footprint.formHash || null, formStructure: footprint.formStructure || {} });
+  }
+  return {
+    title: matching.find((footprint) => footprint.site?.title)?.site.title || null,
+    forms: [...forms.values()]
+  };
+}
+
+function llmsText(value, fallback) {
+  return String(value || fallback || "")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim()
+    .slice(0, 200);
 }
 
 async function sanitizeFootprint(payload) {
@@ -1909,6 +2069,379 @@ async function agentAuthorization(request, env, siteKey) {
     return { registered: false, plan: "pro", reason: "server says caller host does not match the registered site" };
   }
   return { registered: true, plan: "free", reason: "server says caller is registered" };
+}
+
+async function authorizeSiteKeyHost(env, siteKey, requestedHost) {
+  if (!siteKey || !requestedHost) return { ok: false, record: null };
+  const record = await findSiteKey(env, siteKey);
+  const hostMatches = record?.status === "active"
+    && requestedHost.toLowerCase() === String(record.siteHost || "").toLowerCase();
+  return hostMatches ? { ok: true, record } : { ok: false, record: null };
+}
+
+async function storePageMeta(env, { siteKey, host, pathname, meta }) {
+  if (!env.WEBMCP_KV) throw new PublicHttpError(503, "page_meta_storage_unavailable");
+  const safePathname = sanitizePagePathname(pathname, host);
+  const siteKeyHash = await sha256Hex(siteKey);
+  const pathnameHash = await sha256Hex(safePathname);
+  const key = `page-meta:${siteKeyHash}:${pathnameHash}`;
+  const sanitizedMeta = sanitizePageMeta(meta);
+  const value = {
+    host,
+    pathname: safePathname,
+    collectedAt: new Date().toISOString(),
+    contentHash: await sha256Hex(stableJson(sanitizedMeta)),
+    meta: sanitizedMeta
+  };
+  await env.WEBMCP_KV.put(key, JSON.stringify(value), { expirationTtl: PAGE_META_TTL_SECONDS });
+  return { key, value };
+}
+
+async function organizationSchemaForPage(env, { siteKey, host, pathname }, dependencies = {}) {
+  if (!env.WEBMCP_KV) throw new PublicHttpError(503, "page_meta_storage_unavailable");
+  const safePathname = sanitizePagePathname(pathname, host);
+  const siteKeyHash = await sha256Hex(siteKey);
+  const pathnameHash = await sha256Hex(safePathname);
+  const pageMeta = await env.WEBMCP_KV.get(`page-meta:${siteKeyHash}:${pathnameHash}`, "json");
+  if (!pageMeta?.meta) return { found: false, schema: null, cached: false };
+
+  const contentHash = isSha256Hex(pageMeta.contentHash)
+    ? pageMeta.contentHash.toLowerCase()
+    : await sha256Hex(stableJson(pageMeta.meta));
+  const cacheKey = `org-schema:${siteKeyHash}:${contentHash}`;
+  const cached = await env.WEBMCP_KV.get(cacheKey, "json");
+  if (cached && Object.hasOwn(cached, "schema")) {
+    console.log("org_schema_cache_hit", JSON.stringify({ cacheKey }));
+    return { found: true, schema: cached.schema, cached: true };
+  }
+  if (!env.OPENAI_API_KEY) throw new PublicHttpError(412, "OPENAI_API_KEY_MISSING");
+
+  console.log("org_schema_openai_call", JSON.stringify({ cacheKey }));
+  const extract = dependencies.extractOrganization || extractOrganizationWithOpenAI;
+  const extracted = await extract(env, pageMeta.meta);
+  const schema = buildOrganizationSchema(extracted);
+  await env.WEBMCP_KV.put(cacheKey, JSON.stringify({ schema }), { expirationTtl: ORG_SCHEMA_TTL_SECONDS });
+  return { found: true, schema, cached: false };
+}
+
+async function extractOrganizationWithOpenAI(env, pageMeta) {
+  const endpoint = String(env.OPENAI_API_URL || "https://api.openai.com/v1/chat/completions");
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      temperature: 0,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: ORGANIZATION_EXTRACTION_SYSTEM_PROMPT },
+        { role: "user", content: JSON.stringify(pageMeta) }
+      ]
+    })
+  });
+  if (!response.ok) throw new Error(`OpenAI organization extraction failed ${response.status}: ${await response.text()}`);
+  const body = await response.json();
+  try {
+    return JSON.parse(body.choices?.[0]?.message?.content ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+async function faqSchemaForPage(env, { siteKey, host, pathname }, dependencies = {}) {
+  if (!env.WEBMCP_KV) throw new PublicHttpError(503, "page_meta_storage_unavailable");
+  const safePathname = sanitizePagePathname(pathname, host);
+  const siteKeyHash = await sha256Hex(siteKey);
+  const pathnameHash = await sha256Hex(safePathname);
+  const pageMeta = await env.WEBMCP_KV.get(`page-meta:${siteKeyHash}:${pathnameHash}`, "json");
+  if (!pageMeta?.meta) return { found: false, schema: null, cached: false };
+
+  const contentHash = isSha256Hex(pageMeta.contentHash)
+    ? pageMeta.contentHash.toLowerCase()
+    : await sha256Hex(stableJson(pageMeta.meta));
+  const cacheKey = `faq-schema:${siteKeyHash}:${contentHash}`;
+  const cached = await env.WEBMCP_KV.get(cacheKey, "json");
+  if (cached && Object.hasOwn(cached, "schema")) {
+    console.log("faq_schema_cache_hit", JSON.stringify({ cacheKey }));
+    return { found: true, schema: cached.schema, cached: true };
+  }
+  if (!env.OPENAI_API_KEY) throw new PublicHttpError(412, "OPENAI_API_KEY_MISSING");
+
+  console.log("faq_schema_openai_call", JSON.stringify({ cacheKey }));
+  const extract = dependencies.extractFaq || extractFaqWithOpenAI;
+  const extracted = await extract(env, pageMeta.meta);
+  const schema = buildFaqSchema(extracted);
+  await env.WEBMCP_KV.put(cacheKey, JSON.stringify({ schema }), { expirationTtl: FAQ_SCHEMA_TTL_SECONDS });
+  return { found: true, schema, cached: false };
+}
+
+async function extractFaqWithOpenAI(env, pageMeta) {
+  const endpoint = String(env.OPENAI_API_URL || "https://api.openai.com/v1/chat/completions");
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      temperature: 0,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: FAQ_EXTRACTION_SYSTEM_PROMPT },
+        { role: "user", content: JSON.stringify(pageMeta) }
+      ]
+    })
+  });
+  if (!response.ok) throw new Error(`OpenAI FAQ extraction failed ${response.status}: ${await response.text()}`);
+  const body = await response.json();
+  try {
+    return JSON.parse(body.choices?.[0]?.message?.content ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+function buildFaqSchema(value) {
+  const candidates = Array.isArray(value?.faqs) ? value.faqs : [];
+  const mainEntity = candidates
+    .filter((faq) => faq && typeof faq === "object" && !Array.isArray(faq))
+    .map((faq) => ({
+      question: limitText(faq.question, 300),
+      answer: limitText(faq.answer, 1000)
+    }))
+    .filter((faq) => faq.question && faq.answer)
+    .slice(0, 20)
+    .map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer
+      }
+    }));
+  if (!mainEntity.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity
+  };
+}
+
+async function articleSchemaForPage(env, { siteKey, host, pathname }, dependencies = {}) {
+  if (!env.WEBMCP_KV) throw new PublicHttpError(503, "page_meta_storage_unavailable");
+  const safePathname = sanitizePagePathname(pathname, host);
+  const siteKeyHash = await sha256Hex(siteKey);
+  const pathnameHash = await sha256Hex(safePathname);
+  const pageMeta = await env.WEBMCP_KV.get(`page-meta:${siteKeyHash}:${pathnameHash}`, "json");
+  if (!pageMeta?.meta) return { found: false, schema: null, cached: false };
+
+  const contentHash = isSha256Hex(pageMeta.contentHash)
+    ? pageMeta.contentHash.toLowerCase()
+    : await sha256Hex(stableJson(pageMeta.meta));
+  const cacheKey = `article-schema:${siteKeyHash}:${contentHash}`;
+  const cached = await env.WEBMCP_KV.get(cacheKey, "json");
+  if (cached && Object.hasOwn(cached, "schema")) {
+    console.log("article_schema_cache_hit", JSON.stringify({ cacheKey }));
+    return { found: true, schema: cached.schema, cached: true };
+  }
+  if (!env.OPENAI_API_KEY) throw new PublicHttpError(412, "OPENAI_API_KEY_MISSING");
+
+  console.log("article_schema_openai_call", JSON.stringify({ cacheKey }));
+  const extract = dependencies.extractArticle || extractArticleWithOpenAI;
+  const extracted = await extract(env, pageMeta.meta);
+  const schema = buildArticleSchema(extracted, { host, pathname: safePathname });
+  await env.WEBMCP_KV.put(cacheKey, JSON.stringify({ schema }), { expirationTtl: ARTICLE_SCHEMA_TTL_SECONDS });
+  return { found: true, schema, cached: false };
+}
+
+async function extractArticleWithOpenAI(env, pageMeta) {
+  const endpoint = String(env.OPENAI_API_URL || "https://api.openai.com/v1/chat/completions");
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      temperature: 0,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: ARTICLE_EXTRACTION_SYSTEM_PROMPT },
+        { role: "user", content: JSON.stringify(pageMeta) }
+      ]
+    })
+  });
+  if (!response.ok) throw new Error(`OpenAI article extraction failed ${response.status}: ${await response.text()}`);
+  const body = await response.json();
+  try {
+    return JSON.parse(body.choices?.[0]?.message?.content ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+function buildArticleSchema(value, { host, pathname }) {
+  const extracted = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const headline = limitText(extracted.headline, 300);
+  if (extracted.isArticle !== true || !headline) return null;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline,
+    url: new URL(pathname, `https://${host}`).href
+  };
+  const description = limitText(extracted.description, 1000);
+  const author = limitText(extracted.author, 300);
+  const datePublished = validIso8601(extracted.datePublished);
+  if (description) schema.description = description;
+  if (author) schema.author = { "@type": "Person", name: author };
+  if (datePublished) schema.datePublished = datePublished;
+  return schema;
+}
+
+function validIso8601(value) {
+  if (typeof value !== "string") return "";
+  const candidate = value.trim();
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})?)?$/.exec(candidate);
+  if (!match || !Number.isFinite(Date.parse(candidate))) return "";
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (month < 1 || month > 12) return "";
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return day >= 1 && day <= daysInMonth ? candidate : "";
+}
+
+function buildOrganizationSchema(value) {
+  const extracted = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const name = limitText(extracted.name, 300);
+  if (!name) return null;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name
+  };
+  const url = validHttpUrl(extracted.url);
+  const logo = validHttpUrl(extracted.logo);
+  const description = limitText(extracted.description, 1000);
+  const sameAs = Array.isArray(extracted.sameAs)
+    ? [...new Set(extracted.sameAs.map(validHttpUrl).filter(Boolean))].slice(0, 50)
+    : [];
+  if (url) schema.url = url;
+  if (logo) schema.logo = logo;
+  if (description) schema.description = description;
+  if (sameAs.length) schema.sameAs = sameAs;
+  return schema;
+}
+
+function validHttpUrl(value) {
+  if (typeof value !== "string" || !value.trim()) return "";
+  try {
+    const parsed = new URL(value.trim());
+    return parsed.protocol === "https:" || parsed.protocol === "http:" ? parsed.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function isSha256Hex(value) {
+  return typeof value === "string" && /^[a-f0-9]{64}$/i.test(value);
+}
+
+function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function sanitizePagePathname(value, host) {
+  const raw = limitText(value, 2048) || "/";
+  try {
+    return new URL(raw, `https://${host}`).pathname || "/";
+  } catch {
+    return "/";
+  }
+}
+
+function sanitizePageMeta(input) {
+  const meta = input && typeof input === "object" && !Array.isArray(input) ? input : {};
+  const openGraph = meta.openGraph && typeof meta.openGraph === "object" && !Array.isArray(meta.openGraph)
+    ? meta.openGraph
+    : {};
+  const headings = Array.isArray(meta.headings) ? meta.headings.slice(0, 30) : [];
+  const jsonLdValues = Array.isArray(meta.jsonLd) ? meta.jsonLd : [];
+  return {
+    title: piiSafeText(meta.title, 300),
+    description: piiSafeText(meta.description, 500),
+    openGraph: {
+      title: piiSafeText(openGraph.title, 300),
+      description: piiSafeText(openGraph.description, 500),
+      type: piiSafeText(openGraph.type, 100),
+      siteName: piiSafeText(openGraph.siteName, 300)
+    },
+    canonicalUrl: piiSafeText(meta.canonicalUrl, 2048),
+    lang: piiSafeText(meta.lang, 35),
+    headings: headings
+      .map((heading) => ({
+        level: ["h1", "h2", "h3"].includes(String(heading?.level || "").toLowerCase())
+          ? String(heading.level).toLowerCase()
+          : "",
+        text: piiSafeText(heading?.text, 200)
+      }))
+      .filter((heading) => heading.level && heading.text),
+    jsonLd: sanitizeJsonLd(jsonLdValues)
+  };
+}
+
+function sanitizeJsonLd(values) {
+  const output = [];
+  let usedBytes = 0;
+  for (const value of values) {
+    const remaining = PAGE_META_JSON_LD_MAX_BYTES - usedBytes;
+    if (remaining <= 0) break;
+    const sanitized = redactPii(limitText(value, remaining));
+    const truncated = truncateUtf8(sanitized, remaining);
+    if (!truncated) continue;
+    output.push(truncated);
+    usedBytes += new TextEncoder().encode(truncated).byteLength;
+  }
+  return output;
+}
+
+function piiSafeText(value, maxLength) {
+  return redactPii(limitText(value, maxLength));
+}
+
+function limitText(value, maxLength) {
+  if (typeof value !== "string") return "";
+  return value.trim().slice(0, maxLength);
+}
+
+function truncateUtf8(value, maxBytes) {
+  const bytes = new TextEncoder().encode(String(value || ""));
+  if (bytes.byteLength <= maxBytes) return String(value || "");
+  return new TextDecoder().decode(bytes.slice(0, maxBytes));
+}
+
+function redactPii(value) {
+  const withoutEmails = String(value || "").replace(
+    /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,
+    "[redacted-email]"
+  );
+  return withoutEmails.replace(/\+?\d[\d().\s-]{7,}\d/g, (candidate) => {
+    const digitCount = (candidate.match(/\d/g) || []).length;
+    const compact = candidate.replace(/\s/g, "");
+    const looksLikePhone = digitCount >= 9 && digitCount <= 15
+      && (/^[+]\d/.test(compact) || /[().-]/.test(candidate) || /^\d{10,15}$/.test(compact));
+    return looksLikePhone ? "[redacted-phone]" : candidate;
+  });
 }
 
 async function authorizeMcpDefinition(request, env, payload) {
