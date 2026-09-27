@@ -1,0 +1,4 @@
+ALTER TABLE sites ADD COLUMN tag_detected INTEGER;
+ALTER TABLE sites ADD COLUMN schema_in_html INTEGER;
+ALTER TABLE sites ADD COLUMN scanned_at INTEGER;
+ALTER TABLE sites ADD COLUMN scan_error TEXT;

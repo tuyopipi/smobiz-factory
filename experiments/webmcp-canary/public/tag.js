@@ -13,6 +13,32 @@
   const VALIDITY_KEYS = new Set(["valueMissing", "typeMismatch", "patternMismatch", "tooShort", "tooLong", "rangeUnderflow", "rangeOverflow", "stepMismatch", "badInput", "customError", "valid"]);
   let latestMcpDefinitions = [];
 
+  // Nurevo T-tag integration: the Worker verifies the key in D1, updates
+  // sites.last_seen_at, and returns JSON-LD for schema injection.
+  bootNurevoSiteTag();
+
+  async function bootNurevoSiteTag() {
+    if (!SITE_KEY || document.querySelector('script[data-nurevo-jsonld="1"]')) return;
+    try {
+      const response = await fetch(`${TAG_ORIGIN}/api/tag/config?k=${encodeURIComponent(SITE_KEY)}`, {
+        method: "GET",
+        mode: "cors",
+        credentials: "omit",
+        keepalive: true,
+      });
+      if (!response.ok) return;
+      const config = await response.json();
+      if (!config?.ok || !config.jsonld) return;
+      const schema = document.createElement("script");
+      schema.type = "application/ld+json";
+      schema.dataset.nurevoJsonld = "1";
+      schema.textContent = JSON.stringify(config.jsonld);
+      (document.head || document.documentElement).appendChild(schema);
+    } catch (_) {
+      // The tag must never break the host page when the API is unavailable.
+    }
+  }
+
   log(`tag.js loaded version=${TAG_VERSION}`);
   boot().catch((error) => log(`tag.js error: ${error?.stack || error}`));
 

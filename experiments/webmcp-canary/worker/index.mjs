@@ -1,4 +1,6 @@
 import { handleDiagnose } from "./diagnose.mjs";
+import { authorizeSiteKey } from "./agent-authorization.mjs";
+import { handleApi, refreshDuePlaceSites } from "./api.mjs";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -43,9 +45,14 @@ const ALLOWED_VALIDITY_KEYS = new Set(["valueMissing", "typeMismatch", "patternM
 
 export default {
   async scheduled(_event, env, ctx) {
-    ctx.waitUntil(runLearningJob(env, { trigger: "scheduled" }).then((result) => {
-      console.log("webmcp-learning", JSON.stringify(result));
-    }));
+    ctx.waitUntil(Promise.all([
+      runLearningJob(env, { trigger: "scheduled" }).then((result) => {
+        console.log("webmcp-learning", JSON.stringify(result));
+      }),
+      refreshDuePlaceSites(env).then((result) => {
+        console.log("nurevo-places-refresh", JSON.stringify(result));
+      }),
+    ]));
   },
 
   async fetch(request, env, ctx) {
@@ -70,6 +77,9 @@ export default {
           allowedOrigins: originPolicy(env).allowedOrigins
         }, 403, request, env);
       }
+
+      const nurevoResponse = await handleApi(request, env);
+      if (nurevoResponse) return nurevoResponse;
 
       if (url.pathname === "/api/agent-authorization") {
         const authorization = await agentAuthorization(request, env, url.searchParams.get("site_key"));
@@ -2020,55 +2030,14 @@ function sanitizeValidity(validity = {}) {
   return clean;
 }
 
-function isRegisteredSiteKey(siteKey, env) {
-  if (!siteKey) return false;
-  return String(env.WEBMCP_REGISTERED_SITE_KEYS || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .includes(siteKey);
-}
-
-async function isAuthorizedSiteKey(siteKey, env) {
-  if (isRegisteredSiteKey(siteKey, env)) return true;
-  if (!siteKey) return false;
-  if (hasD1(env)) {
-    const row = await env.WEBMCP_DB.prepare("SELECT site_key FROM site_keys WHERE site_key = ? AND status = 'active'").bind(siteKey).first();
-    return Boolean(row?.site_key);
-  }
-  if (env.WEBMCP_KV) {
-    const issued = await getJson(env, "site-keys", {});
-    return Boolean(issued[siteKey]?.status === "active");
-  }
-  return false;
-}
-
 async function agentAuthorization(request, env, siteKey) {
-  if (!siteKey) return { registered: false, plan: null, reason: "server says caller is not registered" };
-  const record = await findSiteKey(env, siteKey);
-  if (!record) {
-    const registered = isRegisteredSiteKey(siteKey, env);
-    return {
-      registered,
-      plan: registered ? "free" : null,
-      reason: registered ? "server says caller is registered" : "server says caller is not registered"
-    };
-  }
-  if (record.status !== "active") return { registered: false, plan: record.plan || "free", reason: "server says caller is not registered" };
-  const requestHost = requestSourceHost(request);
-  const hostMatches = isDevelopmentHost(requestHost) || normalizeHost(requestHost) === normalizeHost(record.siteHost);
-  if (hostMatches) return { registered: true, plan: record.plan || "free", reason: "server says caller is registered" };
-
-  await recordAgentHostMismatch(env, {
-    siteKey,
-    expectedHost: record.siteHost,
-    requestHost: requestHost || null,
-    plan: record.plan || "free"
-  });
-  if (record.plan === "pro") {
-    return { registered: false, plan: "pro", reason: "server says caller host does not match the registered site" };
-  }
-  return { registered: true, plan: "free", reason: "server says caller is registered" };
+  const authorization = await authorizeSiteKey(env, String(siteKey || "").trim());
+  return {
+    ...authorization,
+    reason: authorization.registered
+      ? "server says caller is registered"
+      : "server says caller is not registered",
+  };
 }
 
 async function authorizeSiteKeyHost(env, siteKey, requestedHost) {
