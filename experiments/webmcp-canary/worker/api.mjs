@@ -28,6 +28,25 @@ const PLACES_REFRESH_MS = 365 * 24 * 60 * 60 * 1000;
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 const SUPER_ADMIN_EMAILS_ENV = "SUPER_ADMIN_EMAILS";
 const REQ = ["name", "tel", "address", "hours", "geo", "business_type", "price_level"];
+const INITIAL_AEO_RULESET = Object.freeze({
+  version: 1,
+  created_at: "2026-09-30T00:00:00.000Z",
+  active: 1,
+  notes: "Initial ruleset matching the pre-AEO-brain JSON-LD output.",
+  definition: Object.freeze({
+    schema: Object.freeze({
+      context: "https://schema.org",
+      type: "LocalBusiness",
+      required: ["@context", "@type", "name"],
+      recommended: ["url", "additionalType", "address", "telephone", "openingHours", "openingHoursSpecification", "geo", "priceRange", "image", "potentialAction"],
+      fields: Object.freeze({ url: true, additionalType: true, address: true, telephone: true, openingHours: true, openingHoursSpecification: true, geo: true, priceRange: true, image: true, potentialAction: true }),
+      priceLevelMap: Object.freeze({ PRICE_LEVEL_FREE: "Free", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥¥" }),
+    }),
+    llmsTxt: Object.freeze({ format: "markdown", sections: ["identity", "store_information", "supported_ai_crawlers"] }),
+    robots: Object.freeze({ defaultAllow: true, aiCrawlerIds: ["gptbot", "oai-search", "chatgpt-user", "claudebot", "perplexity", "google-ext", "applebot-ext", "bytespider"] }),
+    defaults: Object.freeze({ schemaType: "LocalBusiness", nameSource: "settings.name_or_site.url", hostedBaseUrl: "https://nurevo.jp/s/" }),
+  }),
+});
 
 function completeness(settings = {}) {
   const has = {
@@ -43,21 +62,48 @@ function completeness(settings = {}) {
   return { filled, total: REQ.length, pct: Math.round((filled / REQ.length) * 100), has };
 }
 
-function buildJsonLd(site, settings) {
-  const ld = { "@context": "https://schema.org", "@type": "LocalBusiness", name: settings.name || site.url };
-  const canonicalUrl = site?.website_uri || (site?.url ? (/^https?:\/\//i.test(site.url) ? site.url : `https://${site.url}`) : null) || (site?.slug ? `https://nurevo.jp/s/${encodeURIComponent(site.slug)}` : null);
-  if (canonicalUrl) ld.url = canonicalUrl;
-  if (settings.business_type) ld.additionalType = settings.business_type;
-  if (settings.address) ld.address = { "@type": "PostalAddress", streetAddress: settings.address };
-  if (settings.tel) ld.telephone = settings.tel;
-  if (settings.hours) ld.openingHours = settings.hours;
+function rulesetDefinition(ruleset) {
+  if (!ruleset) return INITIAL_AEO_RULESET.definition;
+  if (ruleset.definition && typeof ruleset.definition === "object") return ruleset.definition;
+  if (typeof ruleset.definition_json === "string") {
+    try { return JSON.parse(ruleset.definition_json); } catch { return INITIAL_AEO_RULESET.definition; }
+  }
+  return ruleset;
+}
+
+async function loadActiveRuleset(env) {
+  if (!env?.DB) return INITIAL_AEO_RULESET;
+  try {
+    const row = await env.DB.prepare(
+      "SELECT version, created_at, definition_json, active, notes FROM aeo_rulesets WHERE active = 1 ORDER BY version DESC LIMIT 1",
+    ).first();
+    return row || INITIAL_AEO_RULESET;
+  } catch (error) {
+    if (!String(error?.message || error).includes("no such table")) throw error;
+    return INITIAL_AEO_RULESET;
+  }
+}
+
+function buildJsonLd(site, settings, ruleset) {
+  const definition = rulesetDefinition(ruleset);
+  const schema = definition?.schema || INITIAL_AEO_RULESET.definition.schema;
+  const fields = schema.fields || INITIAL_AEO_RULESET.definition.schema.fields;
+  const defaults = definition?.defaults || INITIAL_AEO_RULESET.definition.defaults;
+  const ld = { "@context": schema.context || "https://schema.org", "@type": schema.type || defaults.schemaType || "LocalBusiness", name: settings.name || site.url };
+  const hostedBaseUrl = defaults.hostedBaseUrl || "https://nurevo.jp/s/";
+  const canonicalUrl = site?.website_uri || (site?.url ? (/^https?:\/\//i.test(site.url) ? site.url : `https://${site.url}`) : null) || (site?.slug ? `${hostedBaseUrl}${encodeURIComponent(site.slug)}` : null);
+  if (fields.url !== false && canonicalUrl) ld.url = canonicalUrl;
+  if (fields.additionalType !== false && settings.business_type) ld.additionalType = settings.business_type;
+  if (fields.address !== false && settings.address) ld.address = { "@type": "PostalAddress", streetAddress: settings.address };
+  if (fields.telephone !== false && settings.tel) ld.telephone = settings.tel;
+  if (fields.openingHours !== false && settings.hours) ld.openingHours = settings.hours;
   const hours = openingHoursSpecification(settings.hours_periods, settings.hours);
-  if (hours.length) ld.openingHoursSpecification = hours;
-  if (settings.lat != null && settings.lng != null) ld.geo = { "@type": "GeoCoordinates", latitude: settings.lat, longitude: settings.lng };
-  const priceRange = { PRICE_LEVEL_FREE: "Free", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥¥" }[settings.price_level] || settings.price;
-  if (priceRange) ld.priceRange = priceRange;
-  if (settings.image) ld.image = settings.image;
-  if (settings.reserve_url) ld.potentialAction = { "@type": "ReserveAction", target: settings.reserve_url };
+  if (fields.openingHoursSpecification !== false && hours.length) ld.openingHoursSpecification = hours;
+  if (fields.geo !== false && settings.lat != null && settings.lng != null) ld.geo = { "@type": "GeoCoordinates", latitude: settings.lat, longitude: settings.lng };
+  const priceRange = (schema.priceLevelMap || INITIAL_AEO_RULESET.definition.schema.priceLevelMap)[settings.price_level] || settings.price;
+  if (fields.priceRange !== false && priceRange) ld.priceRange = priceRange;
+  if (fields.image !== false && settings.image) ld.image = settings.image;
+  if (fields.potentialAction !== false && settings.reserve_url) ld.potentialAction = { "@type": "ReserveAction", target: settings.reserve_url };
   return ld;
 }
 
@@ -230,6 +276,7 @@ export async function handleApi(request, env) {
     if (!siteState || siteState.delivery_status === "stopped") return json({ ok: false }, 404);
     const settings = await env.DB.prepare("SELECT * FROM site_settings WHERE site_id = ?").bind(auth.siteId).first() || {};
     const site = await env.DB.prepare("SELECT url, website_uri, slug FROM sites WHERE id = ?").bind(auth.siteId).first();
+    const ruleset = await loadActiveRuleset(env);
     const store = {
       name: settings.name || site?.url || "",
       address: settings.address || "",
@@ -242,7 +289,8 @@ export async function handleApi(request, env) {
       ok: true,
       quality: auth.quality,
       crawlerAllowed: !!settings.allow_crawlers,
-      jsonld: settings.serve_schema ? buildJsonLd(site, settings) : null,
+      jsonld: settings.serve_schema ? buildJsonLd(site, settings, ruleset) : null,
+      ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
       store,
     });
   }
@@ -1030,7 +1078,7 @@ function buildHostedLlms(store) {
   return buildLlmsTxt({ name: store.name, address: store.address, tel: store.tel, hours: store.hours, url: store.url });
 }
 
-export { PLACES_SEARCH_FIELD_MASK, PLACES_DETAILS_FIELD_MASK, importPlaceForSite };
+export { INITIAL_AEO_RULESET, PLACES_SEARCH_FIELD_MASK, PLACES_DETAILS_FIELD_MASK, buildJsonLd, importPlaceForSite, loadActiveRuleset };
 
 export async function refreshDuePlaceSites(env) {
   const cutoff = Date.now() - PLACES_REFRESH_MS;
