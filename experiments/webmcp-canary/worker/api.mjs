@@ -1,12 +1,14 @@
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler } from "./ai-crawlers.js";
 
-const json = (obj, status = 200) => new Response(JSON.stringify(obj), {
+const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
+const json = (obj, status = 200, extraHeaders = {}) => new Response(JSON.stringify(obj), {
   status,
   headers: {
     "content-type": "application/json; charset=utf-8",
     "access-control-allow-origin": "*",
     "cache-control": "no-store",
+    ...extraHeaders,
   },
 });
 const uid = () => crypto.randomUUID().replace(/-/g, "").slice(0, 12);
@@ -40,7 +42,9 @@ const INITIAL_AEO_RULESET = Object.freeze({
       required: ["@context", "@type", "name"],
       recommended: ["url", "additionalType", "address", "telephone", "openingHours", "openingHoursSpecification", "geo", "priceRange", "image", "potentialAction"],
       fields: Object.freeze({ url: true, additionalType: true, address: true, telephone: true, openingHours: true, openingHoursSpecification: true, geo: true, priceRange: true, image: true, potentialAction: true }),
+      hostedFields: ["address", "openingHoursSpecification", "geo", "telephone", "priceRange"],
       priceLevelMap: Object.freeze({ PRICE_LEVEL_FREE: "Free", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥¥" }),
+      hostedPriceLevelMap: Object.freeze({ PRICE_LEVEL_FREE: "¥", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥" }),
     }),
     llmsTxt: Object.freeze({ format: "markdown", sections: ["identity", "store_information", "supported_ai_crawlers"] }),
     robots: Object.freeze({ defaultAllow: true, aiCrawlerIds: ["gptbot", "oai-search", "chatgpt-user", "claudebot", "perplexity", "google-ext", "applebot-ext", "bytespider"] }),
@@ -122,9 +126,11 @@ export async function handleApi(request, env) {
     const hosted = await loadHostedStore(env, slug);
     if (!hosted) return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
     if (hosted.delivery_status === "stopped") return new Response("Gone", { status: 410, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
-    if (hostedMatch[2]) return new Response(buildHostedLlms(hosted), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" } });
+    const ruleset = await loadActiveRuleset(env);
+    const rulesetVersion = String(ruleset.version || INITIAL_AEO_RULESET.version);
+    if (hostedMatch[2]) return new Response(buildHostedLlms(hosted, ruleset), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "x-aeo-ruleset-version": rulesetVersion } });
     const locale = preferredHostedLocale(url, request);
-    return new Response(localizeHostedMarkup(renderHostedStore(hosted, locale), HOSTED_LABELS[locale] || HOSTED_LABELS.ja, locale), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "public, max-age=300" } });
+    return new Response(localizeHostedMarkup(renderHostedStore(hosted, locale, ruleset), HOSTED_LABELS[locale] || HOSTED_LABELS.ja, locale), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "vary": "accept-language", "x-aeo-ruleset-version": rulesetVersion } });
   }
 
   if (path === "/robots.txt" && method === "GET") {
@@ -292,6 +298,10 @@ export async function handleApi(request, env) {
       jsonld: settings.serve_schema ? buildJsonLd(site, settings, ruleset) : null,
       ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
       store,
+    }, 200, {
+      "cache-control": LIVE_AEO_CACHE_CONTROL,
+      "access-control-expose-headers": "x-aeo-ruleset-version",
+      "x-aeo-ruleset-version": String(ruleset.version || INITIAL_AEO_RULESET.version),
     });
   }
 
@@ -979,8 +989,9 @@ async function loadHostedStore(env, slug) {
   ).bind(slug).first();
 }
 
-function priceRange(value) {
-  const map = { PRICE_LEVEL_FREE: "¥", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥" };
+function priceRange(value, ruleset) {
+  const definition = rulesetDefinition(ruleset);
+  const map = definition?.schema?.hostedPriceLevelMap || INITIAL_AEO_RULESET.definition.schema.hostedPriceLevelMap;
   return map[String(value || "").toUpperCase()] || "";
 }
 
@@ -1023,14 +1034,17 @@ function openingHoursSpecification(periods, hoursText) {
   return specs;
 }
 
-function hostedSchema(store, price) {
-  const schema = { "@context": "https://schema.org", "@type": "LocalBusiness", name: store.name };
-  if (store.address) schema.address = { "@type": "PostalAddress", streetAddress: store.address };
+function hostedSchema(store, price, ruleset) {
+  const definition = rulesetDefinition(ruleset);
+  const rules = definition?.schema || INITIAL_AEO_RULESET.definition.schema;
+  const fields = new Set(rules.hostedFields || INITIAL_AEO_RULESET.definition.schema.hostedFields);
+  const schema = { "@context": rules.context || "https://schema.org", "@type": rules.type || "LocalBusiness", name: store.name };
+  if (fields.has("address") && store.address) schema.address = { "@type": "PostalAddress", streetAddress: store.address };
   const hours = openingHoursSpecification(store.hours_periods, store.hours);
-  if (hours.length) schema.openingHoursSpecification = hours;
-  if (store.lat != null && store.lng != null) schema.geo = { "@type": "GeoCoordinates", latitude: store.lat, longitude: store.lng };
-  if (store.tel) schema.telephone = store.tel;
-  if (price) schema.priceRange = price;
+  if (fields.has("openingHoursSpecification") && hours.length) schema.openingHoursSpecification = hours;
+  if (fields.has("geo") && store.lat != null && store.lng != null) schema.geo = { "@type": "GeoCoordinates", latitude: store.lat, longitude: store.lng };
+  if (fields.has("telephone") && store.tel) schema.telephone = store.tel;
+  if (fields.has("priceRange") && price) schema.priceRange = price;
   return schema;
 }
 
@@ -1065,20 +1079,20 @@ function localizeHostedMarkup(html, labels, locale) {
     .replace('<span class="label">価格帯</span>', `<span class="label">${labels.price}</span>`)
     .replace('>利用規約</a>', `>${labels.terms}</a>`).replace('>プライバシーポリシー</a>', `>${labels.privacy}</a>`).replace('>特定商取引法に基づく表記</a>', `>${labels.legal}</a>`);
 }
-function renderHostedStore(store, locale = "ja") {
+function renderHostedStore(store, locale = "ja", ruleset) {
   const labels = HOSTED_LABELS[locale] || HOSTED_LABELS.ja;
-  const price = priceRange(store.price || store.price_level);
+  const price = priceRange(store.price || store.price_level, ruleset);
   const today = todayOpening(store.hours);
-  const schema = JSON.stringify(hostedSchema(store, price)).replace(/</g, "\\u003c");
+  const schema = JSON.stringify(hostedSchema(store, price, ruleset)).replace(/</g, "\\u003c");
   const esc = (value) => String(value ?? "").replace(/[&<>\"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(store.name)} | Nurevo</title><link rel="icon" href="/assets/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><script type="application/ld+json">${schema}</script><style>:root{--purple:#6f4df6;--ink:#241b3a;--muted:#716983;--line:#e9e4f5}*{box-sizing:border-box}body{margin:0;background:#faf9fe;color:var(--ink);font-family:Inter,system-ui,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:28px 20px 56px}.brand{display:flex;align-items:center;gap:8px;color:var(--purple);font-weight:800;text-decoration:none}.brand img{width:28px;height:28px}.hero{margin-top:64px}.eyebrow{color:var(--purple);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(32px,8vw,60px);line-height:1.05;margin:12px 0}.type{color:var(--muted);font-size:18px}.badge{display:inline-flex;margin-top:22px;padding:8px 12px;border-radius:999px;background:${today.open ? "#dcfce7;color:#166534" : "#f1eafa;color:#6f4df6"};font-size:13px;font-weight:700}.info{margin-top:34px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid var(--line)}.label{color:var(--muted)}.value{text-align:right;white-space:pre-wrap}.footer{margin-top:38px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:12px}.footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--purple)}@media(max-width:560px){.row{display:block}.value{text-align:left;margin-top:4px}}</style></head><body><main class="wrap"><a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo">Nurevo</a><section class="hero"><div class="eyebrow">Local business</div><h1>${esc(store.name)}</h1><div class="type">${esc(store.business_type || "")}</div><span class="badge">${today.open ? "本日営業中" : "本日営業時間"} · ${esc(today.label)}</span></section><section class="info">${store.address ? `<div class="row"><span class="label">住所</span><span class="value">${esc(store.address)}</span></div>` : ""}${store.hours ? `<div class="row"><span class="label">営業時間</span><span class="value">${esc(store.hours)}</span></div>` : ""}${store.tel ? `<div class="row"><span class="label">電話</span><span class="value">${esc(store.tel)}</span></div>` : ""}${price ? `<div class="row"><span class="label">価格帯</span><span class="value">${price}</span></div>` : ""}</section><p class="footer"><span>Information provided by Nurevo.</span><a href="/terms">利用規約</a><a href="/privacy">プライバシーポリシー</a><a href="/tokushoho">特定商取引法に基づく表記</a></p></main></body></html>`;
 }
 
-function buildHostedLlms(store) {
+function buildHostedLlms(store, _ruleset) {
   return buildLlmsTxt({ name: store.name, address: store.address, tel: store.tel, hours: store.hours, url: store.url });
 }
 
-export { INITIAL_AEO_RULESET, PLACES_SEARCH_FIELD_MASK, PLACES_DETAILS_FIELD_MASK, buildJsonLd, importPlaceForSite, loadActiveRuleset };
+export { INITIAL_AEO_RULESET, LIVE_AEO_CACHE_CONTROL, PLACES_SEARCH_FIELD_MASK, PLACES_DETAILS_FIELD_MASK, buildJsonLd, hostedSchema, importPlaceForSite, loadActiveRuleset, renderHostedStore };
 
 export async function refreshDuePlaceSites(env) {
   const cutoff = Date.now() - PLACES_REFRESH_MS;

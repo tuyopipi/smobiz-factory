@@ -59,6 +59,13 @@ CREATE TABLE IF NOT EXISTS sites (
   schema_types INTEGER DEFAULT 0,      -- 出力中の JSON-LD type 数
   crawler_allowed INTEGER DEFAULT 0,   -- llms.txt / robots で 8種を許可しているか
   last_seen_at INTEGER,                -- タグ最終ハートビート
+  place_id TEXT,
+  fetched_at INTEGER,
+  slug TEXT,
+  channel TEXT NOT NULL DEFAULT 'direct',
+  referred_by TEXT,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
   website_uri TEXT,
   website_fingerprint TEXT,
   recommended_install_type TEXT,
@@ -73,6 +80,8 @@ CREATE TABLE IF NOT EXISTS site_settings (
   site_id TEXT PRIMARY KEY,
   business_type TEXT,
   name TEXT, tel TEXT, address TEXT, hours TEXT, hours_periods TEXT,
+  price_level TEXT,
+  price TEXT,
   lat REAL, lng REAL,                  -- 緯度経度（両方あって geo 充足）
   image TEXT, reserve_url TEXT,
   serve_schema INTEGER DEFAULT 1,      -- schema 出力 ON/OFF
@@ -90,6 +99,8 @@ CREATE TABLE IF NOT EXISTS crawler_hits (
 
 CREATE INDEX IF NOT EXISTS idx_sites_org  ON sites(org_id);
 CREATE INDEX IF NOT EXISTS idx_sites_key  ON sites(site_key);
+CREATE INDEX IF NOT EXISTS idx_sites_places_refresh ON sites(fetched_at, place_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sites_slug ON sites(slug);
 CREATE INDEX IF NOT EXISTS idx_members_org ON members(org_id);
 CREATE INDEX IF NOT EXISTS idx_hits_site  ON crawler_hits(site_id, date);
 
@@ -130,7 +141,7 @@ INSERT OR IGNORE INTO aeo_rulesets (version, created_at, definition_json, active
 VALUES (
   1,
   '2026-09-30T00:00:00.000Z',
-  '{"schema":{"context":"https://schema.org","type":"LocalBusiness","required":["@context","@type","name"],"recommended":["url","additionalType","address","telephone","openingHours","openingHoursSpecification","geo","priceRange","image","potentialAction"],"fields":{"url":true,"additionalType":true,"address":true,"telephone":true,"openingHours":true,"openingHoursSpecification":true,"geo":true,"priceRange":true,"image":true,"potentialAction":true},"priceLevelMap":{"PRICE_LEVEL_FREE":"Free","PRICE_LEVEL_INEXPENSIVE":"¥","PRICE_LEVEL_MODERATE":"¥¥","PRICE_LEVEL_EXPENSIVE":"¥¥¥","PRICE_LEVEL_VERY_EXPENSIVE":"¥¥¥¥"}},"llmsTxt":{"format":"markdown","sections":["identity","store_information","supported_ai_crawlers"]},"robots":{"defaultAllow":true,"aiCrawlerIds":["gptbot","oai-search","chatgpt-user","claudebot","perplexity","google-ext","applebot-ext","bytespider"]},"defaults":{"schemaType":"LocalBusiness","nameSource":"settings.name_or_site.url","hostedBaseUrl":"https://nurevo.jp/s/"}}',
+  '{"schema":{"context":"https://schema.org","type":"LocalBusiness","required":["@context","@type","name"],"recommended":["url","additionalType","address","telephone","openingHours","openingHoursSpecification","geo","priceRange","image","potentialAction"],"fields":{"url":true,"additionalType":true,"address":true,"telephone":true,"openingHours":true,"openingHoursSpecification":true,"geo":true,"priceRange":true,"image":true,"potentialAction":true},"hostedFields":["address","openingHoursSpecification","geo","telephone","priceRange"],"priceLevelMap":{"PRICE_LEVEL_FREE":"Free","PRICE_LEVEL_INEXPENSIVE":"¥","PRICE_LEVEL_MODERATE":"¥¥","PRICE_LEVEL_EXPENSIVE":"¥¥¥","PRICE_LEVEL_VERY_EXPENSIVE":"¥¥¥¥"},"hostedPriceLevelMap":{"PRICE_LEVEL_FREE":"¥","PRICE_LEVEL_INEXPENSIVE":"¥","PRICE_LEVEL_MODERATE":"¥¥","PRICE_LEVEL_EXPENSIVE":"¥¥¥","PRICE_LEVEL_VERY_EXPENSIVE":"¥¥¥"}},"llmsTxt":{"format":"markdown","sections":["identity","store_information","supported_ai_crawlers"]},"robots":{"defaultAllow":true,"aiCrawlerIds":["gptbot","oai-search","chatgpt-user","claudebot","perplexity","google-ext","applebot-ext","bytespider"]},"defaults":{"schemaType":"LocalBusiness","nameSource":"settings.name_or_site.url","hostedBaseUrl":"https://nurevo.jp/s/"}}',
   1,
   'Initial ruleset matching the pre-AEO-brain JSON-LD output.'
 );

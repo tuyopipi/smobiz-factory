@@ -90,7 +90,7 @@ add_action('admin_menu', function () {
   });
 });
 
-// Nurevo から設定を取得（サイトキーで）。5分キャッシュ。
+// Nurevo から設定を取得（サイトキーで）。1分後に再検証してactive rulesetへ追従。
 function nurevo_fetch_config($key) {
   if (!$key) return null;
   $cache = get_transient('nurevo_cfg_' . md5($key));
@@ -98,6 +98,6 @@ function nurevo_fetch_config($key) {
   $res = wp_remote_get(NUREVO_API . '/tag/config?k=' . urlencode($key), ['timeout' => 4]);
   if (is_wp_error($res) || wp_remote_retrieve_response_code($res) !== 200) return null;
   $cfg = json_decode(wp_remote_retrieve_body($res), true);
-  set_transient('nurevo_cfg_' . md5($key), $cfg, 5 * MINUTE_IN_SECONDS);
+  set_transient('nurevo_cfg_' . md5($key), $cfg, MINUTE_IN_SECONDS);
   return $cfg;
 }
