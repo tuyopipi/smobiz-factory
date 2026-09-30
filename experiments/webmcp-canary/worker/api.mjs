@@ -76,6 +76,48 @@ function rulesetDefinition(ruleset) {
   return ruleset;
 }
 
+function normalizeRulesetDefinition(value) {
+  let definition = value;
+  const errors = [];
+  if (typeof definition === "string") {
+    try { definition = JSON.parse(definition); } catch { return { ok: false, errors: ["definition_json must be valid JSON"] }; }
+  }
+  if (!definition || typeof definition !== "object" || Array.isArray(definition)) {
+    return { ok: false, errors: ["definition_json must be a JSON object"] };
+  }
+  const schema = definition.schema;
+  const llmsTxt = definition.llmsTxt;
+  const robots = definition.robots;
+  const defaults = definition.defaults;
+  if (!schema || typeof schema !== "object" || Array.isArray(schema)) errors.push("schema is required");
+  if (!llmsTxt || typeof llmsTxt !== "object" || Array.isArray(llmsTxt)) errors.push("llmsTxt is required");
+  if (!robots || typeof robots !== "object" || Array.isArray(robots)) errors.push("robots is required");
+  if (!defaults || typeof defaults !== "object" || Array.isArray(defaults)) errors.push("defaults is required");
+  if (schema) {
+    if (typeof schema.context !== "string" || !schema.context.trim()) errors.push("schema.context is required");
+    if (typeof schema.type !== "string" || !schema.type.trim()) errors.push("schema.type is required");
+    if (!Array.isArray(schema.required) || !["@context", "@type", "name"].every((key) => schema.required.includes(key))) errors.push("schema.required must include @context, @type and name");
+    if (!schema.fields || typeof schema.fields !== "object" || Array.isArray(schema.fields)) errors.push("schema.fields is required");
+  }
+  if (llmsTxt) {
+    if (typeof llmsTxt.format !== "string" || !llmsTxt.format.trim()) errors.push("llmsTxt.format is required");
+    if (!Array.isArray(llmsTxt.sections) || !llmsTxt.sections.length) errors.push("llmsTxt.sections must be a non-empty array");
+  }
+  if (robots) {
+    if (typeof robots.defaultAllow !== "boolean") errors.push("robots.defaultAllow must be boolean");
+    const crawlerIds = new Set(AI_CRAWLERS.map((crawler) => crawler.id));
+    if (!Array.isArray(robots.aiCrawlerIds) || !robots.aiCrawlerIds.length || robots.aiCrawlerIds.some((id) => !crawlerIds.has(id))) errors.push("robots.aiCrawlerIds must contain supported crawler ids");
+  }
+  if (defaults) {
+    if (typeof defaults.schemaType !== "string" || !defaults.schemaType.trim()) errors.push("defaults.schemaType is required");
+    if (typeof defaults.hostedBaseUrl !== "string" || !/^https:\/\//i.test(defaults.hostedBaseUrl)) errors.push("defaults.hostedBaseUrl must be an https URL");
+  }
+  if (errors.length) return { ok: false, errors };
+  const serialized = JSON.stringify(definition);
+  if (new TextEncoder().encode(serialized).byteLength > 64 * 1024) return { ok: false, errors: ["definition_json exceeds 64 KiB"] };
+  return { ok: true, definition, json: serialized };
+}
+
 async function loadActiveRuleset(env) {
   if (!env?.DB) return INITIAL_AEO_RULESET;
   try {
@@ -229,6 +271,76 @@ export async function handleApi(request, env, ctx) {
       "SELECT o.id,o.name,o.plan,o.wholesale_min,COUNT(s.id) AS site_count,SUM(CASE WHEN s.status='active' THEN 1 ELSE 0 END) AS active_sites FROM orgs o LEFT JOIN sites s ON s.org_id=o.id GROUP BY o.id,o.name,o.plan,o.wholesale_min ORDER BY o.created_at",
     ).all();
     return json({ orgs: results || [] });
+  }
+  if (path === "/api/admin/aeo/rulesets" && method === "GET") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    const { results } = await env.DB.prepare(`
+      SELECT r.version,r.active,r.created_at,r.notes,
+             h.activated_at,h.activated_by
+        FROM aeo_rulesets r
+        LEFT JOIN aeo_ruleset_activations h ON h.id = (
+          SELECT id FROM aeo_ruleset_activations
+           WHERE ruleset_version=r.version
+           ORDER BY activated_at DESC,id DESC LIMIT 1
+        )
+       ORDER BY r.version DESC
+    `).all();
+    return json({ rulesets: results || [] });
+  }
+  if (path === "/api/admin/aeo/rulesets" && method === "POST") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    const body = await safeJson(request);
+    const normalized = normalizeRulesetDefinition(body.definition_json);
+    if (!normalized.ok) return json({ error: "invalid_definition_json", details: normalized.errors }, 400);
+    const notes = String(body.notes || "").trim();
+    if (notes.length > 2000) return json({ error: "notes_too_long" }, 400);
+    const createdAt = new Date().toISOString();
+    const created = await env.DB.prepare(`
+      INSERT INTO aeo_rulesets (version,created_at,definition_json,active,notes)
+      SELECT COALESCE(MAX(version),0)+1,?,?,0,? FROM aeo_rulesets
+      RETURNING version,created_at,active,notes
+    `).bind(createdAt, normalized.json, notes || null).first();
+    return json({ ok: true, ruleset: created }, 201);
+  }
+  const rulesetDetailMatch = path.match(/^\/api\/admin\/aeo\/rulesets\/(\d+)$/);
+  if (rulesetDetailMatch && method === "GET") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    const version = Number(rulesetDetailMatch[1]);
+    const ruleset = await env.DB.prepare(
+      "SELECT version,created_at,definition_json,active,notes FROM aeo_rulesets WHERE version=?",
+    ).bind(version).first();
+    if (!ruleset) return json({ error: "not_found" }, 404);
+    const { results } = await env.DB.prepare(
+      "SELECT id,activated_at,activated_by,notes FROM aeo_ruleset_activations WHERE ruleset_version=? ORDER BY activated_at DESC,id DESC",
+    ).bind(version).all();
+    return json({ ruleset, activations: results || [] });
+  }
+  const rulesetActivateMatch = path.match(/^\/api\/admin\/aeo\/rulesets\/(\d+)\/activate$/);
+  if (rulesetActivateMatch && method === "POST") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    const version = Number(rulesetActivateMatch[1]);
+    const ruleset = await env.DB.prepare(
+      "SELECT version,definition_json,active,notes FROM aeo_rulesets WHERE version=?",
+    ).bind(version).first();
+    if (!ruleset) return json({ error: "not_found" }, 404);
+    const normalized = normalizeRulesetDefinition(ruleset.definition_json);
+    if (!normalized.ok) return json({ error: "invalid_ruleset_definition", details: normalized.errors }, 409);
+    const body = await safeJson(request);
+    const activationNotes = String(body.notes || "").trim();
+    if (activationNotes.length > 2000) return json({ error: "notes_too_long" }, 400);
+    const activatedAt = new Date().toISOString();
+    const activationId = `act_${uid()}`;
+    await env.DB.batch([
+      env.DB.prepare("UPDATE aeo_rulesets SET active=0 WHERE active=1"),
+      env.DB.prepare("UPDATE aeo_rulesets SET active=1 WHERE version=?").bind(version),
+      env.DB.prepare("INSERT INTO aeo_ruleset_activations (id,ruleset_version,activated_at,activated_by,notes) VALUES (?,?,?,?,?)")
+        .bind(activationId, version, activatedAt, superAdmin.member_id, activationNotes || ruleset.notes || null),
+    ]);
+    return json({ ok: true, version, active: 1, activated_at: activatedAt, activated_by: superAdmin.member_id });
   }
   if (path === "/api/members/invites" && method === "POST") {
     const admin = await requireMember(request, env);
