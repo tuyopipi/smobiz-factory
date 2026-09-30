@@ -3,11 +3,23 @@
 	"name": "webmcp-canary",
 	"main": "worker/index.mjs",
 	"compatibility_date": "2026-07-19",
+	"routes": [
+		{ "pattern": "nurevo.jp/api/*", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/dashboard", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/dashboard/*", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/s/*", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/sitemap.xml", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/robots.txt", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/llms.txt", "zone_name": "nurevo.jp" }
+	],
 	"assets": {
 		"directory": "./public",
 		"binding": "ASSETS",
 		"run_worker_first": [
-			"/api/*"
+			"/api/*",
+			"/dashboard",
+			"/dashboard/*",
+			"/llms.txt"
 		]
 	},
 	"kv_namespaces": [
@@ -38,8 +50,8 @@
 		"WEBMCP_LEARNING_MIN_FAILURES": "3",
 		"WEBMCP_LEARNING_MIN_SUPPORT_RATE": "0.12",
 		"WEBMCP_LEARNING_DISABLE_LIFT_THRESHOLD": "-2",
-		"WEBMCP_ALLOWED_ORIGINS": "*",
-		"DEV": "1",
+		"WEBMCP_ALLOWED_ORIGINS": "https://nurevo.jp,https://www.nurevo.jp",
+		"DEV": "0",
 		"OPENAI_MODEL": "gpt-4.1-mini"
 	},
 	"triggers": {

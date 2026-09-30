@@ -51,6 +51,7 @@ CREATE TABLE IF NOT EXISTS sites (
   scanned_at INTEGER,
   scan_error TEXT,
   status TEXT DEFAULT 'pending',       -- pending | detected | active | error
+  delivery_status TEXT NOT NULL DEFAULT 'active', -- active | stopped
   plan TEXT DEFAULT 'pro',
   contract TEXT DEFAULT 'trial',       -- active | trial | cancelled
   resale_price INTEGER DEFAULT 0,
@@ -58,8 +59,14 @@ CREATE TABLE IF NOT EXISTS sites (
   schema_types INTEGER DEFAULT 0,      -- 出力中の JSON-LD type 数
   crawler_allowed INTEGER DEFAULT 0,   -- llms.txt / robots で 8種を許可しているか
   last_seen_at INTEGER,                -- タグ最終ハートビート
+  website_uri TEXT,
+  website_fingerprint TEXT,
+  recommended_install_type TEXT,
+  owner_member_id TEXT,
   created_at INTEGER
 );
+
+CREATE INDEX IF NOT EXISTS idx_sites_owner_member ON sites(owner_member_id);
 
 -- 店舗情報（情報充足率の判定元。埋まっている項目数で充足率を出す）
 CREATE TABLE IF NOT EXISTS site_settings (
@@ -99,4 +106,11 @@ CREATE TABLE IF NOT EXISTS billing_events (
   event_id TEXT PRIMARY KEY,
   kind TEXT NOT NULL,
   created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS api_rate_limits (
+  bucket TEXT PRIMARY KEY,
+  window_started_at INTEGER NOT NULL,
+  count INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL
 );

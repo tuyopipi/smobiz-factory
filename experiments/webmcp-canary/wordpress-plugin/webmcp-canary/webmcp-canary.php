@@ -126,7 +126,7 @@ function webmcp_canary_enabled_field() {
         '<label><input type="checkbox" name="%1$s[enabled]" value="1" %2$s> %3$s</label>',
         esc_attr(WEBMCP_CANARY_OPTION),
         checked('1', $settings['enabled'], false),
-        esc_html__('Load WebMCP tag on public pages', 'nurevo-webmcp')
+        esc_html__('Load WebMCP tag on public pages (analytics/WebMCP only; it does not deliver AI-search schema)', 'nurevo-webmcp')
     );
 }
 
@@ -170,7 +170,7 @@ function webmcp_canary_tag_url_field() {
         esc_attr(WEBMCP_CANARY_OPTION),
         esc_attr($settings['tag_url'])
     );
-    echo '<p class="description">' . esc_html__('The plugin does not bundle tag.js. Updating this hosted file updates all installed sites.', 'nurevo-webmcp') . '</p>';
+    echo '<p class="description">' . esc_html__('Analytics/WebMCP only. This JavaScript tag is not used for AI-search schema delivery; use the Nurevo WebMCP server-rendered plugin for LocalBusiness JSON-LD.', 'nurevo-webmcp') . '</p>';
 }
 
 function webmcp_canary_site_key_field() {
@@ -1308,6 +1308,8 @@ function webmcp_canary_output_server_schema() {
 
 add_action('wp_enqueue_scripts', 'webmcp_canary_enqueue_tag');
 function webmcp_canary_enqueue_tag() {
+    // Retained for form analytics/WebMCP features only. AI-search schema is
+    // rendered server-side by webmcp_canary_output_server_schema() above.
     if (is_admin()) {
         return;
     }

@@ -1,0 +1,599 @@
+<title>Nurevo 代理店ダッシュボード</title>
+<meta name="description" content="MEO代理店向け Nurevo 管理ダッシュボード（MVPプロトタイプ）。8言語対応。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#f6f7fb; --panel:#fff; --panel-2:#fbfbfe; --ink:#14161d; --muted:#5b6472; --faint:#8c94a4;
+  --line:#e7e9f1; --line-2:#dcdfea; --accent:#6f4df6; --accent-d:#4b31c6; --wash:#f2eeff;
+  --green:#12a150; --green-bg:#e5f6ec; --amber:#b7791f; --amber-bg:#fbf1e0; --red:#d64545; --red-bg:#fbe9e9; --gray-bg:#eef0f5;
+  --sh-sm:0 4px 16px rgba(20,27,45,.06); --sh:0 20px 50px rgba(20,27,45,.12);
+  --r:14px; --r-sm:9px;
+  --mono:"JetBrains Mono",ui-monospace,monospace;
+  --sans:Inter,ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;
+}
+*{box-sizing:border-box;}
+html,body{margin:0; height:100%;}
+body{font-family:var(--sans); color:var(--ink); background:var(--bg); line-height:1.6; -webkit-font-smoothing:antialiased;}
+h1,h2,h3{margin:0; letter-spacing:-.02em;}
+button{font-family:inherit;cursor:pointer;}
+.mono{font-family:var(--mono);}
+.demo-ribbon{background:#14161d;color:#e7ecfb;font-size:12px;text-align:center;padding:6px;}
+.demo-ribbon b{color:#9d7bff;}
+.app{display:grid; grid-template-columns:230px 1fr; min-height:calc(100% - 29px);}
+@media(max-width:820px){ .app{grid-template-columns:1fr;} .side{display:none;} }
+.side{background:var(--panel); border-right:1px solid var(--line); padding:20px 14px; display:flex; flex-direction:column; gap:4px;}
+.brand{display:flex; align-items:center; gap:9px; font-weight:900; font-size:19px; padding:6px 8px 16px;}
+.brand .mk{width:28px;height:28px;border-radius:8px;background:conic-gradient(from 200deg,#6f4df6,#ff5d8f,#ffb02e,#6f4df6);display:grid;place-items:center;}
+.brand .mk::after{content:"";width:11px;height:11px;border-radius:4px;background:#fff;}
+.navitem{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:10px;color:var(--muted);font-weight:600;font-size:14.5px;border:none;background:none;width:100%;text-align:left;}
+.navitem:hover{background:var(--panel-2);color:var(--ink);}
+.navitem.active{background:var(--wash);color:var(--accent-d);}
+.navitem svg{width:18px;height:18px;}
+.side .foot{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px;}
+.side .org{font-size:12.5px;color:var(--muted);padding:0 4px;} .side .org b{display:block;color:var(--ink);font-size:13.5px;}
+.langsel{width:100%;border:1px solid var(--line-2);border-radius:8px;padding:8px 10px;font:inherit;font-size:13px;background:#fff;color:var(--ink);}
+.main{padding:24px clamp(16px,3vw,34px); overflow:auto;}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px;flex-wrap:wrap;}
+.topbar h1{font-size:24px;font-weight:800;}
+.topbar .who{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:10px;}
+.avatar{width:30px;height:30px;border-radius:50%;background:linear-gradient(140deg,#8f6bff,#6f4df6);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px;}
+.btn{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line-2);background:#fff;color:var(--ink);border-radius:var(--r-sm);padding:9px 15px;font-weight:700;font-size:14px;transition:all .14s;}
+.btn:hover{border-color:var(--accent);color:var(--accent-d);}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;}
+.btn.primary:hover{background:var(--accent-d);color:#fff;}
+.btn.sm{padding:6px 11px;font-size:13px;}
+.btn svg{width:15px;height:15px;}
+.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px;}
+@media(max-width:900px){ .tiles{grid-template-columns:repeat(2,1fr);} }
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--sh-sm);}
+.tile .t{font-size:12.5px;color:var(--faint);font-weight:600;}
+.tile .v{font-size:32px;font-weight:900;letter-spacing:-.03em;margin-top:8px;}
+.tile .v small{font-size:14px;color:var(--muted);font-weight:600;}
+.tile .sub{font-size:12px;color:var(--muted);margin-top:4px;}
+.tile .v.g{color:var(--green);} .tile .v.p{color:var(--accent);}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh-sm);}
+.card .hd{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);flex-wrap:wrap;}
+.card .hd h2{font-size:16px;font-weight:800;}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.input,.select{border:1px solid var(--line-2);border-radius:var(--r-sm);padding:9px 12px;font:inherit;font-size:14px;background:#fff;min-width:0;}
+.input:focus,.select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--wash);}
+.lbl-inline{font-size:12.5px;color:var(--muted);font-weight:600;}
+.helper{font-size:11.5px;color:var(--faint);margin-top:3px;}
+.tblwrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:14px;}
+th{text-align:left;font-size:11.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--faint);font-weight:700;padding:12px 20px;border-bottom:1px solid var(--line);white-space:nowrap;}
+td{padding:13px 20px;border-bottom:1px solid var(--line);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tbody tr.clickable{cursor:pointer;} tbody tr.clickable:hover{background:var(--panel-2);}
+.site-url{font-weight:700;} .site-url .mono{font-size:12px;color:var(--muted);font-weight:400;display:block;}
+.typechip{display:inline-block;font-size:12px;font-weight:700;color:var(--accent-d);background:var(--wash);padding:3px 10px;border-radius:999px;white-space:nowrap;}
+.memo-cell{max-width:210px;font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.memo-cell.empty{color:var(--faint);font-style:italic;}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:800;padding:4px 10px;border-radius:999px;white-space:nowrap;}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;}
+.pill.active{color:var(--green);background:var(--green-bg);}
+.pill.detected{color:var(--amber);background:var(--amber-bg);}
+.pill.pending{color:var(--muted);background:var(--gray-bg);}
+.pill.error{color:var(--red);background:var(--red-bg);}
+.pill.invited{color:var(--amber);background:var(--amber-bg);}
+.tag2{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+.tag2.c_active{color:var(--green);background:var(--green-bg);} .tag2.c_trial{color:var(--amber);background:var(--amber-bg);} .tag2.c_cancelled{color:var(--muted);background:var(--gray-bg);}
+.score{font-weight:800;font-family:var(--mono);}
+.score.g{color:var(--green);} .score.a{color:var(--amber);} .score.n{color:var(--faint);}
+.sig{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;}
+.sig.g{color:var(--green);background:var(--green-bg);} .sig.a{color:var(--amber);background:var(--amber-bg);} .sig.n{color:var(--faint);background:var(--gray-bg);}
+.okmark{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;font-size:12px;font-weight:900;}
+.okmark.yes{color:var(--green);background:var(--green-bg);} .okmark.no{color:var(--red);background:var(--red-bg);}
+.hits{font-family:var(--mono);font-weight:700;}
+.hits.z{color:var(--faint);font-weight:400;}
+.siglist{display:flex;flex-direction:column;gap:2px;}
+.sigrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid var(--line);}
+.sigrow:last-child{border-bottom:none;}
+.sigrow .k{font-size:13px;color:var(--muted);font-weight:600;}
+.sigrow .val{font-weight:800;font-size:15px;display:flex;align-items:center;gap:7px;}
+.sigrow .val .big{font-family:var(--mono);font-size:22px;letter-spacing:-.02em;}
+.checklist{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;}
+.chk{font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap;}
+.chk.on{color:var(--green);background:var(--green-bg);}
+.chk.off{color:var(--faint);background:var(--gray-bg);}
+.detail-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:20px;}
+.detail-grid>*{min-width:0;}
+@media(max-width:820px){ .detail-grid{grid-template-columns:1fr;} }
+.field{display:flex;flex-direction:column;gap:5px;margin-bottom:14px;}
+.field label{font-size:12px;font-weight:700;color:var(--muted);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+textarea.input{resize:vertical;min-height:64px;}
+.keybox{display:flex;gap:8px;align-items:stretch;background:#14162a;border-radius:10px;padding:8px 8px 8px 14px;}
+.keybox code{color:#e7ecfb;font-family:var(--mono);font-size:12px;flex:1;min-width:0;display:flex;align-items:center;overflow:auto;white-space:nowrap;}
+.keybox button{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:0 14px;font-weight:700;font-size:12.5px;}
+.methods-mini{display:flex;gap:6px;margin:10px 0;}
+.methods-mini button{flex:1;border:1px solid var(--line-2);background:#fff;border-radius:8px;padding:8px;font-size:12.5px;font-weight:700;color:var(--muted);}
+.methods-mini button.active{background:var(--wash);color:var(--accent-d);border-color:var(--accent);}
+.scorering{display:grid;place-items:center;padding:8px 0;}
+.scorering .n{font-size:52px;font-weight:900;letter-spacing:-.04em;background:linear-gradient(120deg,var(--accent),#ff5d8f);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.bar{height:9px;border-radius:5px;background:var(--line);overflow:hidden;margin-top:6px;}
+.bar>span{display:block;height:100%;border-radius:5px;background:linear-gradient(90deg,var(--accent),#9d7bff);}
+.modal-bg{position:fixed;inset:0;background:rgba(20,22,30,.4);display:grid;place-items:center;padding:20px;z-index:50;}
+.modal{background:#fff;border-radius:16px;box-shadow:var(--sh);width:min(520px,100%);padding:26px;}
+.modal h3{font-size:18px;font-weight:800;margin-bottom:14px;}
+.row-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;}
+[hidden]{display:none!important;}
+.muted{color:var(--muted);} .empty{padding:40px 20px;text-align:center;color:var(--muted);}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#14161d;color:#fff;padding:11px 20px;border-radius:999px;font-size:13.5px;font-weight:600;box-shadow:var(--sh);z-index:60;}
+.crumb{font-size:13px;color:var(--muted);margin-bottom:8px;} .crumb button{background:none;border:none;color:var(--accent-d);font-weight:700;font-size:13px;padding:0;}
+.section-title{font-size:13px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin:0 0 12px;}
+</style>
+
+<div class="demo-ribbon" id="ribbon">これは <b>MVPプロトタイプ</b>（代理店ダッシュボード）。データは仮・ブラウザ内のみで動作。バックエンド未接続。</div>
+<div class="app">
+  <aside class="side">
+    <div class="brand"><span class="mk"></span>Nurevo</div>
+    <button class="navitem active" data-nav="summary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg><span data-t="nav.summary"></span></button>
+    <button class="navitem" data-nav="sites"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="7" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/></svg><span data-t="nav.sites"></span></button>
+    <button class="navitem" data-nav="members"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 20a5.5 5.5 0 0111 0M16 6.5a3 3 0 010 5.8M20.5 20a5.2 5.2 0 00-4-5"/></svg><span data-t="nav.members"></span></button>
+    <div class="foot">
+      <div class="org"><b>サンプルMEO代理店</b><span id="orgMeta"></span></div>
+      <select class="langsel" id="langSel" onchange="setLang(this.value)">
+        <option value="ja">🇯🇵 日本語</option><option value="en">🇬🇧 English</option><option value="zh">🇨🇳 简体中文</option><option value="tw">🇹🇼 繁體中文</option><option value="ko">🇰🇷 한국어</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option>
+      </select>
+    </div>
+  </aside>
+  <main class="main" id="main"></main>
+</div>
+<div id="modalRoot"></div>
+
+<script>
+/* ---------- i18n ---------- */
+const T = {
+ "nav.summary":{ja:"サマリー",en:"Summary",zh:"概览",tw:"概覽",ko:"요약",es:"Resumen",fr:"Résumé",de:"Übersicht"},
+ "nav.sites":{ja:"サイト",en:"Sites",zh:"网站",tw:"網站",ko:"사이트",es:"Sitios",fr:"Sites",de:"Sites"},
+ "nav.members":{ja:"メンバー",en:"Members",zh:"成员",tw:"成員",ko:"멤버",es:"Miembros",fr:"Membres",de:"Mitglieder"},
+ "running":{ja:"サイト稼働中",en:"sites live",zh:"个网站运行中",tw:"個網站運行中",ko:"사이트 운영 중",es:"sitios activos",fr:"sites actifs",de:"Sites aktiv"},
+ "ribbon":{ja:"これは <b>MVPプロトタイプ</b>（代理店ダッシュボード）。データは仮・ブラウザ内のみで動作。バックエンド未接続。",en:"This is an <b>MVP prototype</b> (agency dashboard). Data is mock, runs in-browser only. Backend not connected.",zh:"这是<b>MVP原型</b>（代理商仪表板）。数据为模拟，仅在浏览器内运行，未连接后端。",tw:"這是<b>MVP原型</b>（代理商儀表板）。資料為模擬，僅在瀏覽器內運行，未連接後端。",ko:"이것은 <b>MVP 프로토타입</b>(대리점 대시보드)입니다. 데이터는 임시이며 브라우저 내에서만 작동하고 백엔드에 연결되지 않았습니다.",es:"Este es un <b>prototipo MVP</b> (panel de agencia). Los datos son de prueba, funcionan solo en el navegador. Backend no conectado.",fr:"Ceci est un <b>prototype MVP</b> (tableau de bord agence). Données fictives, fonctionne uniquement dans le navigateur. Backend non connecté.",de:"Dies ist ein <b>MVP-Prototyp</b> (Agentur-Dashboard). Daten sind Beispieldaten, laufen nur im Browser. Backend nicht verbunden."},
+ "ago.m":{ja:"{x}分前",en:"{x}m ago",zh:"{x}分钟前",tw:"{x}分鐘前",ko:"{x}분 전",es:"hace {x}m",fr:"il y a {x}min",de:"vor {x}Min"},
+ "ago.h":{ja:"{x}時間前",en:"{x}h ago",zh:"{x}小时前",tw:"{x}小時前",ko:"{x}시간 전",es:"hace {x}h",fr:"il y a {x}h",de:"vor {x}Std"},
+ "ago.d":{ja:"{x}日前",en:"{x}d ago",zh:"{x}天前",tw:"{x}天前",ko:"{x}일 전",es:"hace {x}d",fr:"il y a {x}j",de:"vor {x}Tg"},
+ "sum.title":{ja:"サマリー",en:"Summary",zh:"概览",tw:"概覽",ko:"요약",es:"Resumen",fr:"Résumé",de:"Übersicht"},
+ "tile.active":{ja:"稼働サイト数",en:"Live sites",zh:"运行网站数",tw:"運行網站數",ko:"운영 사이트",es:"Sitios activos",fr:"Sites actifs",de:"Aktive Sites"},
+ "tile.avg":{ja:"平均 AI可視性スコア",en:"Avg. AI visibility",zh:"平均AI可见性",tw:"平均AI可見性",ko:"평균 AI 가시성",es:"Visibilidad IA media",fr:"Visibilité IA moy.",de:"Ø KI-Sichtbarkeit"},
+ "tile.new":{ja:"今月の新規稼働",en:"New this month",zh:"本月新增",tw:"本月新增",ko:"이번 달 신규",es:"Nuevos este mes",fr:"Nouveaux ce mois",de:"Neu diesen Monat"},
+ "tile.bill":{ja:"今月の請求見込み",en:"Est. billing",zh:"本月预计账单",tw:"本月預計帳單",ko:"이번 달 청구 예상",es:"Facturación est.",fr:"Facturation est.",de:"Abrechnung (Prognose)"},
+ "sub.rate":{ja:"稼働率 {v}%",en:"{v}% live",zh:"运行率 {v}%",tw:"運行率 {v}%",ko:"가동률 {v}%",es:"{v}% activo",fr:"{v}% actifs",de:"{v}% aktiv"},
+ "sub.avg":{ja:"稼働サイトの平均",en:"across live sites",zh:"运行网站平均",tw:"運行網站平均",ko:"운영 사이트 평균",es:"media de activos",fr:"moyenne des actifs",de:"Ø aktive Sites"},
+ "sub.new":{ja:"先月比 +2",en:"+2 vs last month",zh:"环比 +2",tw:"環比 +2",ko:"전월 대비 +2",es:"+2 vs mes ant.",fr:"+2 vs mois préc.",de:"+2 ggü. Vormonat"},
+ "sub.bill":{ja:"卸 {p} × {n}",en:"wholesale {p} × {n}",zh:"批发 {p} × {n}",tw:"批發 {p} × {n}",ko:"도매 {p} × {n}",es:"mayorista {p} × {n}",fr:"gros {p} × {n}",de:"Großhandel {p} × {n}"},
+ "sum.all":{ja:"全サイト",en:"All sites",zh:"全部网站",tw:"全部網站",ko:"전체 사이트",es:"Todos los sitios",fr:"Tous les sites",de:"Alle Sites"},
+ "sum.manage":{ja:"サイト管理へ",en:"Manage sites",zh:"管理网站",tw:"管理網站",ko:"사이트 관리",es:"Gestionar",fr:"Gérer",de:"Verwalten"},
+ "sort.label":{ja:"並び替え",en:"Sort",zh:"排序",tw:"排序",ko:"정렬",es:"Orden",fr:"Trier",de:"Sortieren"},
+ "sort.type":{ja:"業種順",en:"By type",zh:"按业种",tw:"按業種",ko:"업종순",es:"Por tipo",fr:"Par type",de:"Nach Typ"},
+ "sort.score":{ja:"スコア順",en:"By score",zh:"按分数",tw:"按分數",ko:"점수순",es:"Por score",fr:"Par score",de:"Nach Score"},
+ "sort.status":{ja:"状態順",en:"By status",zh:"按状态",tw:"按狀態",ko:"상태순",es:"Por estado",fr:"Par statut",de:"Nach Status"},
+ "sort.seen":{ja:"最終確認順",en:"By last seen",zh:"按最后确认",tw:"按最後確認",ko:"최근 확인순",es:"Por última vez",fr:"Par dernière fois",de:"Nach zuletzt"},
+ "sort.url":{ja:"URL順",en:"By URL",zh:"按URL",tw:"按URL",ko:"URL순",es:"Por URL",fr:"Par URL",de:"Nach URL"},
+ "sort.fill":{ja:"充足率順",en:"By completeness",zh:"按完整度",tw:"按完整度",ko:"충족률순",es:"Por completitud",fr:"Par complétude",de:"Nach Vollständigkeit"},
+ "tile.schema":{ja:"schema出力サイト",en:"Schema output",zh:"输出schema站点",tw:"輸出schema網站",ko:"schema 출력 사이트",es:"Sitios con schema",fr:"Sites avec schema",de:"Schema-Ausgabe"},
+ "sub.schema":{ja:"構造化データを出力中",en:"emitting structured data",zh:"正在输出结构化数据",tw:"正在輸出結構化資料",ko:"구조화 데이터 출력 중",es:"emitiendo datos",fr:"données émises",de:"gibt Daten aus"},
+ "tile.fill":{ja:"平均 情報充足率",en:"Avg. completeness",zh:"平均完整度",tw:"平均完整度",ko:"평균 충족률",es:"Completitud media",fr:"Complétude moy.",de:"Ø Vollständigkeit"},
+ "sub.fill":{ja:"必須項目の平均充足",en:"required fields filled",zh:"必填项平均完整度",tw:"必填項平均完整度",ko:"필수 항목 평균 충족",es:"campos requeridos",fr:"champs requis remplis",de:"Pflichtfelder ausgefüllt"},
+ "th.schema":{ja:"schema",en:"Schema",zh:"schema",tw:"schema",ko:"schema",es:"Schema",fr:"Schema",de:"Schema"},
+ "th.crawler":{ja:"クローラー許可",en:"Crawlers",zh:"爬虫许可",tw:"爬蟲許可",ko:"크롤러 허용",es:"Crawlers",fr:"Crawlers",de:"Crawler"},
+ "th.fill":{ja:"情報充足",en:"Info",zh:"完整度",tw:"完整度",ko:"충족률",es:"Info",fr:"Info",de:"Info"},
+ "sig.types":{ja:"{n}種",en:"{n} types",zh:"{n}种",tw:"{n}種",ko:"{n}종",es:"{n} tipos",fr:"{n} types",de:"{n} Typen"},
+ "th.site":{ja:"サイト",en:"Site",zh:"网站",tw:"網站",ko:"사이트",es:"Sitio",fr:"Site",de:"Site"},
+ "th.type":{ja:"業種",en:"Type",zh:"业种",tw:"業種",ko:"업종",es:"Tipo",fr:"Type",de:"Typ"},
+ "th.status":{ja:"状態",en:"Status",zh:"状态",tw:"狀態",ko:"상태",es:"Estado",fr:"Statut",de:"Status"},
+ "th.score":{ja:"スコア",en:"Score",zh:"分数",tw:"分數",ko:"점수",es:"Score",fr:"Score",de:"Score"},
+ "th.vis":{ja:"可視性",en:"Visibility",zh:"可见性",tw:"可見性",ko:"가시성",es:"Visibilidad",fr:"Visibilité",de:"Sichtbarkeit"},
+ "th.contract":{ja:"契約",en:"Contract",zh:"合约",tw:"合約",ko:"계약",es:"Contrato",fr:"Contrat",de:"Vertrag"},
+ "th.price":{ja:"販売価格",en:"Price",zh:"售价",tw:"售價",ko:"판매가",es:"Precio",fr:"Prix",de:"Preis"},
+ "th.memo":{ja:"メモ",en:"Memo",zh:"备注",tw:"備註",ko:"메모",es:"Nota",fr:"Note",de:"Notiz"},
+ "th.seen":{ja:"最終確認",en:"Last seen",zh:"最后确认",tw:"最後確認",ko:"최근 확인",es:"Última vez",fr:"Dernière fois",de:"Zuletzt"},
+ "sites.title":{ja:"サイト",en:"Sites",zh:"网站",tw:"網站",ko:"사이트",es:"Sitios",fr:"Sites",de:"Sites"},
+ "act.bulk":{ja:"一括登録",en:"Bulk add",zh:"批量添加",tw:"批量新增",ko:"일괄 등록",es:"Añadir en lote",fr:"Ajout en lot",de:"Massen-Import"},
+ "act.add":{ja:"サイトを登録",en:"Add site",zh:"添加网站",tw:"新增網站",ko:"사이트 등록",es:"Añadir sitio",fr:"Ajouter un site",de:"Site hinzufügen"},
+ "ph.search":{ja:"URLで検索…",en:"Search URL…",zh:"搜索URL…",tw:"搜尋URL…",ko:"URL 검색…",es:"Buscar URL…",fr:"Rechercher…",de:"URL suchen…"},
+ "f.allTypes":{ja:"すべての業種",en:"All types",zh:"所有业种",tw:"所有業種",ko:"모든 업종",es:"Todos los tipos",fr:"Tous types",de:"Alle Typen"},
+ "f.allContract":{ja:"すべての契約",en:"All contracts",zh:"所有合约",tw:"所有合約",ko:"모든 계약",es:"Todos",fr:"Tous",de:"Alle Verträge"},
+ "count.live":{ja:"{a} 稼働 / {b} 件",en:"{a} live / {b} total",zh:"{a} 运行 / {b} 个",tw:"{a} 運行 / {b} 個",ko:"{a} 운영 / {b} 건",es:"{a} activos / {b}",fr:"{a} actifs / {b}",de:"{a} aktiv / {b}"},
+ "empty.sites":{ja:"該当するサイトがありません",en:"No matching sites",zh:"没有匹配的网站",tw:"沒有符合的網站",ko:"해당 사이트 없음",es:"Sin resultados",fr:"Aucun site",de:"Keine Sites"},
+ "st.active":{ja:"稼働中",en:"Live",zh:"运行中",tw:"運行中",ko:"운영 중",es:"Activo",fr:"Actif",de:"Aktiv"},
+ "st.detected":{ja:"検出済み",en:"Detected",zh:"已检测",tw:"已偵測",ko:"감지됨",es:"Detectado",fr:"Détecté",de:"Erkannt"},
+ "st.pending":{ja:"未設置",en:"Not set",zh:"未安装",tw:"未安裝",ko:"미설치",es:"Sin instalar",fr:"Non installé",de:"Nicht installiert"},
+ "st.error":{ja:"切断・エラー",en:"Error",zh:"断开·错误",tw:"斷線·錯誤",ko:"끊김·오류",es:"Error",fr:"Erreur",de:"Fehler"},
+ "btn.verify":{ja:"接続確認",en:"Verify",zh:"确认连接",tw:"確認連線",ko:"연결 확인",es:"Verificar",fr:"Vérifier",de:"Prüfen"},
+ "btn.settings":{ja:"設定",en:"Settings",zh:"设置",tw:"設定",ko:"설정",es:"Ajustes",fr:"Réglages",de:"Einstellungen"},
+ "btn.verifyLong":{ja:"接続を確認",en:"Verify connection",zh:"确认连接",tw:"確認連線",ko:"연결 확인",es:"Verificar conexión",fr:"Vérifier la connexion",de:"Verbindung prüfen"},
+ "d.back":{ja:"← サイト一覧",en:"← All sites",zh:"← 网站列表",tw:"← 網站列表",ko:"← 사이트 목록",es:"← Todos",fr:"← Retour",de:"← Alle Sites"},
+ "d.aeo":{ja:"AEO設定（店舗情報）",en:"AEO settings (store info)",zh:"AEO设置（店铺信息）",tw:"AEO設定（店家資訊）",ko:"AEO 설정 (매장 정보)",es:"Ajustes AEO (local)",fr:"Réglages AEO (local)",de:"AEO-Einstellungen"},
+ "d.type":{ja:"業種",en:"Type",zh:"业种",tw:"業種",ko:"업종",es:"Tipo",fr:"Type",de:"Typ"},
+ "d.name":{ja:"店舗名",en:"Store name",zh:"店铺名",tw:"店家名",ko:"매장명",es:"Nombre",fr:"Nom",de:"Name"},
+ "d.tel":{ja:"電話",en:"Phone",zh:"电话",tw:"電話",ko:"전화",es:"Teléfono",fr:"Téléphone",de:"Telefon"},
+ "d.price":{ja:"価格帯",en:"Price range",zh:"价格带",tw:"價格帶",ko:"가격대",es:"Rango precio",fr:"Gamme prix",de:"Preisklasse"},
+ "d.addr":{ja:"住所",en:"Address",zh:"地址",tw:"地址",ko:"주소",es:"Dirección",fr:"Adresse",de:"Adresse"},
+ "d.hours":{ja:"営業時間",en:"Hours",zh:"营业时间",tw:"營業時間",ko:"영업시간",es:"Horario",fr:"Horaires",de:"Öffnungszeiten"},
+ "d.schema":{ja:"構造化データ(schema)を出力",en:"Output structured data (schema)",zh:"输出结构化数据(schema)",tw:"輸出結構化資料(schema)",ko:"구조화 데이터(schema) 출력",es:"Emitir schema",fr:"Générer le schema",de:"Schema ausgeben"},
+ "d.schemaHelp":{ja:"AIが店舗情報を読める形で出力",en:"So AI can read store info",zh:"让AI能读取店铺信息",tw:"讓AI能讀取店家資訊",ko:"AI가 매장 정보를 읽도록",es:"Para que la IA lo lea",fr:"Pour que l'IA le lise",de:"Damit KI es liest"},
+ "d.crawler":{ja:"AIクローラー許可 / llms.txt",en:"AI crawlers / llms.txt",zh:"AI爬虫 / llms.txt",tw:"AI爬蟲 / llms.txt",ko:"AI 크롤러 / llms.txt",es:"Crawlers IA / llms.txt",fr:"Crawlers IA / llms.txt",de:"KI-Crawler / llms.txt"},
+ "d.crawlerHelp":{ja:"GPTBot等のAIに読ませる",en:"Let GPTBot & co. read it",zh:"让GPTBot等AI读取",tw:"讓GPTBot等AI讀取",ko:"GPTBot 등이 읽도록",es:"Deja que GPTBot lea",fr:"Laisser GPTBot lire",de:"GPTBot & Co. lesen lassen"},
+ "d.on":{ja:"ON",en:"On",zh:"开",tw:"開",ko:"ON",es:"Sí",fr:"Oui",de:"An"},
+ "d.off":{ja:"OFF",en:"Off",zh:"关",tw:"關",ko:"OFF",es:"No",fr:"Non",de:"Aus"},
+ "d.contract":{ja:"契約ステータス",en:"Contract status",zh:"合约状态",tw:"合約狀態",ko:"계약 상태",es:"Estado contrato",fr:"Statut contrat",de:"Vertragsstatus"},
+ "d.resale":{ja:"販売価格（クライアントへの月額）",en:"Resale price (monthly to client)",zh:"售价（对客户月费）",tw:"售價（對客戶月費）",ko:"판매가 (고객 월정액)",es:"Precio (mensual al cliente)",fr:"Prix (mensuel client)",de:"Verkaufspreis (mtl.)"},
+ "d.memo":{ja:"メモ（社内用）",en:"Memo (internal)",zh:"备注（内部）",tw:"備註（內部）",ko:"메모 (내부용)",es:"Nota (interna)",fr:"Note (interne)",de:"Notiz (intern)"},
+ "d.memoPh":{ja:"担当者・進捗・特記事項など",en:"Owner, status, notes…",zh:"负责人·进度·备注",tw:"負責人·進度·備註",ko:"담당자·진행·특이사항",es:"Responsable, estado…",fr:"Responsable, statut…",de:"Zuständig, Status…"},
+ "d.save":{ja:"設定を保存",en:"Save settings",zh:"保存设置",tw:"儲存設定",ko:"설정 저장",es:"Guardar",fr:"Enregistrer",de:"Speichern"},
+ "d.signals":{ja:"AI対応状況",en:"AI readiness",zh:"AI就绪状况",tw:"AI就緒狀況",ko:"AI 대응 상태",es:"Estado IA",fr:"État IA",de:"KI-Bereitschaft"},
+ "d.sTag":{ja:"タグ稼働",en:"Tag status",zh:"标签运行",tw:"標籤運行",ko:"태그 상태",es:"Estado etiqueta",fr:"État balise",de:"Tag-Status"},
+ "d.sSchema":{ja:"schema出力",en:"Schema output",zh:"schema输出",tw:"schema輸出",ko:"schema 출력",es:"Salida schema",fr:"Sortie schema",de:"Schema-Ausgabe"},
+ "d.sCrawler":{ja:"AIクローラー許可",en:"AI crawlers allowed",zh:"AI爬虫许可",tw:"AI爬蟲許可",ko:"AI 크롤러 허용",es:"Crawlers IA permitidos",fr:"Crawlers IA autorisés",de:"KI-Crawler erlaubt"},
+ "d.sFill":{ja:"情報充足率",en:"Info completeness",zh:"信息完整度",tw:"資訊完整度",ko:"정보 충족률",es:"Completitud",fr:"Complétude",de:"Vollständigkeit"},
+ "fl.name":{ja:"店舗名",en:"Name",zh:"店名",tw:"店名",ko:"매장명",es:"Nombre",fr:"Nom",de:"Name"},
+ "fl.tel":{ja:"電話",en:"Phone",zh:"电话",tw:"電話",ko:"전화",es:"Teléfono",fr:"Tél.",de:"Telefon"},
+ "fl.address":{ja:"住所",en:"Address",zh:"地址",tw:"地址",ko:"주소",es:"Dirección",fr:"Adresse",de:"Adresse"},
+ "fl.hours":{ja:"営業時間",en:"Hours",zh:"营业时间",tw:"營業時間",ko:"영업시간",es:"Horario",fr:"Horaires",de:"Zeiten"},
+ "fl.geo":{ja:"緯度経度",en:"Geo",zh:"经纬度",tw:"經緯度",ko:"위경도",es:"Geo",fr:"Géo",de:"Geo"},
+ "fl.image":{ja:"画像",en:"Image",zh:"图片",tw:"圖片",ko:"이미지",es:"Imagen",fr:"Image",de:"Bild"},
+ "fl.reserve":{ja:"予約URL",en:"Booking URL",zh:"预约链接",tw:"預約連結",ko:"예약 URL",es:"Reserva",fr:"Réservation",de:"Buchung"},
+ "d.sSeen":{ja:"最終確認",en:"Last seen",zh:"最后确认",tw:"最後確認",ko:"최근 확인",es:"Última vez",fr:"Dernière fois",de:"Zuletzt"},
+ "d.crawlers8":{ja:"対応AIクローラー（8種）",en:"Supported AI crawlers (8)",zh:"支持的AI爬虫（8种）",tw:"支援的AI爬蟲（8種）",ko:"지원 AI 크롤러 (8종)",es:"Crawlers IA soportados (8)",fr:"Crawlers IA pris en charge (8)",de:"Unterstützte KI-Crawler (8)"},
+ "d.crawlers8Note":{ja:"※ 許可ONのとき、robots.txt / llms.txt でこの8種を許可します。",en:"* When allowed, robots.txt / llms.txt permit these 8 crawlers.",zh:"* 允许时，robots.txt / llms.txt 会放行这8种爬虫。",tw:"* 允許時，robots.txt / llms.txt 會放行這8種爬蟲。",ko:"* 허용 시 robots.txt / llms.txt에서 이 8종을 허용합니다.",es:"* Si se permite, robots.txt / llms.txt habilitan estos 8 crawlers.",fr:"* Si autorisé, robots.txt / llms.txt permettent ces 8 crawlers.",de:"* Wenn erlaubt, lassen robots.txt / llms.txt diese 8 Crawler zu."},
+ "d.signalsNote":{ja:"※ すべて自社データ・設定値から確実に取得できる実測値。仮のスコアではありません。",en:"* All from your own data and settings — verifiable facts, not a made-up score.",zh:"* 全部来自自有数据与设置，可验证的事实，并非虚构分数。",tw:"* 全部來自自有資料與設定，可驗證的事實，並非虛構分數。",ko:"* 모두 자사 데이터·설정값에서 확실히 얻는 실측값입니다. 임의 점수가 아닙니다.",es:"* Todo de tus propios datos y ajustes: hechos verificables, no un score inventado.",fr:"* Tout provient de vos données et réglages : des faits vérifiables, pas un score inventé.",de:"* Alles aus eigenen Daten und Einstellungen — überprüfbare Fakten, kein erfundener Score."},
+ "d.install":{ja:"設置",en:"Install",zh:"安装",tw:"安裝",ko:"설치",es:"Instalar",fr:"Installer",de:"Installieren"},
+ "m.tag":{ja:"直接タグ",en:"Direct tag",zh:"直接标签",tw:"直接標籤",ko:"직접 태그",es:"Etiqueta",fr:"Balise",de:"Tag"},
+ "m.wp":{ja:"WordPress",en:"WordPress",zh:"WordPress",tw:"WordPress",ko:"WordPress",es:"WordPress",fr:"WordPress",de:"WordPress"},
+ "d.tagDesc":{ja:"HTMLの <head> に貼るだけ。",en:"Paste in your HTML <head>.",zh:"贴入HTML的<head>。",tw:"貼入HTML的<head>。",ko:"HTML <head>에 붙이기.",es:"Pega en el <head>.",fr:"Collez dans le <head>.",de:"In den <head> einfügen."},
+ "d.gtmDesc":{ja:"GTMのカスタムHTMLに貼り、All Pagesで公開。",en:"Paste in GTM Custom HTML, All Pages.",zh:"贴入GTM自定义HTML，All Pages。",tw:"貼入GTM自訂HTML，All Pages。",ko:"GTM 커스텀 HTML, All Pages.",es:"GTM HTML personalizado, All Pages.",fr:"GTM HTML perso, All Pages.",de:"GTM Custom-HTML, All Pages."},
+ "d.wpDesc":{ja:"公式プラグイン「Nurevo WebMCP」を有効化し、下のサイトキーを入力。",en:"Activate the Nurevo WebMCP plugin and enter this key.",zh:"启用Nurevo WebMCP插件并输入此密钥。",tw:"啟用Nurevo WebMCP外掛並輸入此金鑰。",ko:"Nurevo WebMCP 플러그인 활성화 후 이 키 입력.",es:"Activa el plugin Nurevo WebMCP e introduce la clave.",fr:"Activez le plugin Nurevo WebMCP et saisissez la clé.",de:"Nurevo-WebMCP-Plugin aktivieren und Key eingeben."},
+ "d.copy":{ja:"コピー",en:"Copy",zh:"复制",tw:"複製",ko:"복사",es:"Copiar",fr:"Copier",de:"Kopieren"},
+ "mem.title":{ja:"メンバー",en:"Members",zh:"成员",tw:"成員",ko:"멤버",es:"Miembros",fr:"Membres",de:"Mitglieder"},
+ "mem.invite":{ja:"メンバーを招待",en:"Invite member",zh:"邀请成员",tw:"邀請成員",ko:"멤버 초대",es:"Invitar",fr:"Inviter",de:"Einladen"},
+ "mem.team":{ja:"チーム",en:"Team",zh:"团队",tw:"團隊",ko:"팀",es:"Equipo",fr:"Équipe",de:"Team"},
+ "mem.helper":{ja:"管理者がメールを追加すると、その人もログインできます",en:"Admins can add emails so those people can log in too",zh:"管理员添加邮箱后，对方也能登录",tw:"管理員新增信箱後，對方也能登入",ko:"관리자가 이메일을 추가하면 로그인 가능",es:"El admin añade correos para dar acceso",fr:"L'admin ajoute des e-mails pour donner accès",de:"Admins fügen E-Mails für Zugang hinzu"},
+ "th.email":{ja:"メール",en:"Email",zh:"邮箱",tw:"信箱",ko:"이메일",es:"Correo",fr:"E-mail",de:"E-Mail"},
+ "th.role":{ja:"権限",en:"Role",zh:"权限",tw:"權限",ko:"권한",es:"Rol",fr:"Rôle",de:"Rolle"},
+ "mem.joined":{ja:"参加中",en:"Active",zh:"已加入",tw:"已加入",ko:"참여 중",es:"Activo",fr:"Actif",de:"Aktiv"},
+ "mem.invited":{ja:"招待中",en:"Invited",zh:"已邀请",tw:"已邀請",ko:"초대됨",es:"Invitado",fr:"Invité",de:"Eingeladen"},
+ "btn.remove":{ja:"削除",en:"Remove",zh:"删除",tw:"刪除",ko:"삭제",es:"Quitar",fr:"Retirer",de:"Entfernen"},
+ "you":{ja:"(あなた)",en:"(you)",zh:"(你)",tw:"(你)",ko:"(나)",es:"(tú)",fr:"(vous)",de:"(Sie)"},
+ "role.admin":{ja:"管理者",en:"Admin",zh:"管理员",tw:"管理員",ko:"관리자",es:"Admin",fr:"Admin",de:"Admin"},
+ "role.operator":{ja:"運用担当",en:"Operator",zh:"运营",tw:"營運",ko:"운영자",es:"Operador",fr:"Opérateur",de:"Operator"},
+ "role.viewer":{ja:"閲覧のみ",en:"Viewer",zh:"仅查看",tw:"僅檢視",ko:"열람",es:"Lector",fr:"Lecteur",de:"Betrachter"},
+ "m.addTitle":{ja:"サイトを登録",en:"Add a site",zh:"添加网站",tw:"新增網站",ko:"사이트 등록",es:"Añadir sitio",fr:"Ajouter un site",de:"Site hinzufügen"},
+ "m.url":{ja:"サイトURL",en:"Site URL",zh:"网站URL",tw:"網站URL",ko:"사이트 URL",es:"URL del sitio",fr:"URL du site",de:"Site-URL"},
+ "m.memoOpt":{ja:"メモ（任意）",en:"Memo (optional)",zh:"备注（可选）",tw:"備註（選填）",ko:"메모 (선택)",es:"Nota (opcional)",fr:"Note (facultatif)",de:"Notiz (optional)"},
+ "m.addHelper":{ja:"登録するとサイトキーが発行され、貼ったタグが稼働可能になります。",en:"Registering issues a site key; the installed tag then goes live.",zh:"注册后发放站点密钥，已安装的标签即可运行。",tw:"註冊後發放網站金鑰，已安裝的標籤即可運行。",ko:"등록하면 사이트 키가 발급되고 태그가 활성화됩니다.",es:"Al registrar se emite la clave y la etiqueta se activa.",fr:"L'enregistrement émet la clé et active la balise.",de:"Registrierung erzeugt den Key, das Tag wird aktiv."},
+ "m.cancel":{ja:"キャンセル",en:"Cancel",zh:"取消",tw:"取消",ko:"취소",es:"Cancelar",fr:"Annuler",de:"Abbrechen"},
+ "m.register":{ja:"登録する",en:"Register",zh:"注册",tw:"註冊",ko:"등록",es:"Registrar",fr:"Enregistrer",de:"Registrieren"},
+ "m.bulkTitle":{ja:"一括登録",en:"Bulk add",zh:"批量添加",tw:"批量新增",ko:"일괄 등록",es:"Añadir en lote",fr:"Ajout en lot",de:"Massen-Import"},
+ "m.typeAll":{ja:"業種（まとめて適用）",en:"Type (applied to all)",zh:"业种（统一应用）",tw:"業種（統一套用）",ko:"업종 (일괄 적용)",es:"Tipo (para todos)",fr:"Type (pour tous)",de:"Typ (für alle)"},
+ "m.urls":{ja:"URL（1行に1つ）",en:"URLs (one per line)",zh:"URL（每行一个）",tw:"URL（每行一個）",ko:"URL (한 줄에 하나)",es:"URLs (una por línea)",fr:"URLs (une par ligne)",de:"URLs (eine pro Zeile)"},
+ "m.contractLbl":{ja:"契約ステータス",en:"Contract",zh:"合约",tw:"合約",ko:"계약",es:"Contrato",fr:"Contrat",de:"Vertrag"},
+ "m.priceLbl":{ja:"販売価格（月額・任意）",en:"Price (monthly, optional)",zh:"售价（月费·可选）",tw:"售價（月費·選填）",ko:"판매가 (월·선택)",es:"Precio (mensual, opt.)",fr:"Prix (mensuel, opt.)",de:"Preis (mtl., optional)"},
+ "m.inviteTitle":{ja:"メンバーを招待",en:"Invite a member",zh:"邀请成员",tw:"邀請成員",ko:"멤버 초대",es:"Invitar miembro",fr:"Inviter un membre",de:"Mitglied einladen"},
+ "m.email":{ja:"メールアドレス",en:"Email address",zh:"邮箱地址",tw:"信箱地址",ko:"이메일 주소",es:"Correo",fr:"Adresse e-mail",de:"E-Mail-Adresse"},
+ "m.roleLbl":{ja:"権限",en:"Role",zh:"权限",tw:"權限",ko:"권한",es:"Rol",fr:"Rôle",de:"Rolle"},
+ "m.inviteHelper":{ja:"招待メールのリンクからログインできます（マジックリンク・パスワード不要）。",en:"They log in via the emailed magic link (no password).",zh:"通过邮件魔法链接登录（无需密码）。",tw:"透過郵件魔法連結登入（免密碼）。",ko:"이메일 매직링크로 로그인 (비밀번호 불필요).",es:"Acceden por el enlace mágico del correo (sin contraseña).",fr:"Connexion via le lien magique par e-mail (sans mot de passe).",de:"Login per Magic-Link aus der E-Mail (ohne Passwort)."},
+ "m.inviteBtn":{ja:"招待を送る",en:"Send invite",zh:"发送邀请",tw:"發送邀請",ko:"초대 보내기",es:"Enviar invitación",fr:"Envoyer",de:"Einladen"},
+ "toast.role":{ja:"権限を更新しました",en:"Role updated",zh:"已更新权限",tw:"已更新權限",ko:"권한 업데이트됨",es:"Rol actualizado",fr:"Rôle mis à jour",de:"Rolle aktualisiert"},
+ "toast.rm":{ja:"メンバーを削除しました",en:"Member removed",zh:"已删除成员",tw:"已刪除成員",ko:"멤버 삭제됨",es:"Miembro eliminado",fr:"Membre retiré",de:"Mitglied entfernt"},
+ "toast.copyKey":{ja:"サイトキーをコピー",en:"Site key copied",zh:"已复制站点密钥",tw:"已複製網站金鑰",ko:"사이트 키 복사됨",es:"Clave copiada",fr:"Clé copiée",de:"Key kopiert"},
+ "toast.copySnip":{ja:"スニペットをコピー",en:"Snippet copied",zh:"已复制代码",tw:"已複製程式碼",ko:"스니펫 복사됨",es:"Snippet copiado",fr:"Snippet copié",de:"Snippet kopiert"},
+ "toast.saved":{ja:"設定を保存しました",en:"Settings saved",zh:"已保存设置",tw:"已儲存設定",ko:"설정 저장됨",es:"Guardado",fr:"Enregistré",de:"Gespeichert"},
+ "toast.verifying":{ja:"タグの発火を確認中…",en:"Checking tag…",zh:"正在检查标签…",tw:"正在檢查標籤…",ko:"태그 확인 중…",es:"Verificando…",fr:"Vérification…",de:"Prüfe Tag…"},
+ "toast.verified":{ja:"接続を確認しました（稼働中）",en:"Connected (live)",zh:"已连接（运行中）",tw:"已連線（運行中）",ko:"연결됨 (운영 중)",es:"Conectado (activo)",fr:"Connecté (actif)",de:"Verbunden (aktiv)"},
+ "toast.added":{ja:"サイトを登録しました（未設置）",en:"Site registered (not set)",zh:"已注册网站（未安装）",tw:"已註冊網站（未安裝）",ko:"사이트 등록됨 (미설치)",es:"Sitio registrado",fr:"Site enregistré",de:"Site registriert"},
+ "toast.bulkAdded":{ja:"{n}件を登録しました",en:"{n} sites added",zh:"已添加{n}个",tw:"已新增{n}個",ko:"{n}건 등록됨",es:"{n} añadidos",fr:"{n} ajoutés",de:"{n} hinzugefügt"},
+ "toast.invited":{ja:"招待を送りました",en:"Invite sent",zh:"已发送邀请",tw:"已發送邀請",ko:"초대 전송됨",es:"Invitación enviada",fr:"Invitation envoyée",de:"Einladung gesendet"},
+ "type.salon":{ja:"美容室",en:"Salon",zh:"美发",tw:"美髮",ko:"미용실",es:"Peluquería",fr:"Salon",de:"Friseur"},
+ "type.restaurant":{ja:"飲食店",en:"Restaurant",zh:"餐饮",tw:"餐飲",ko:"음식점",es:"Restaurante",fr:"Restaurant",de:"Restaurant"},
+ "type.dental":{ja:"歯科",en:"Dental",zh:"牙科",tw:"牙科",ko:"치과",es:"Dental",fr:"Dentaire",de:"Zahnarzt"},
+ "type.clinic":{ja:"クリニック",en:"Clinic",zh:"诊所",tw:"診所",ko:"클리닉",es:"Clínica",fr:"Clinique",de:"Klinik"},
+ "type.seitai":{ja:"整体・接骨院",en:"Bodywork",zh:"整骨",tw:"整骨",ko:"정체·접골",es:"Osteopatía",fr:"Ostéo",de:"Therapie"},
+ "type.realestate":{ja:"不動産",en:"Real estate",zh:"房产",tw:"房產",ko:"부동산",es:"Inmobiliaria",fr:"Immobilier",de:"Immobilien"},
+ "type.other":{ja:"その他",en:"Other",zh:"其他",tw:"其他",ko:"기타",es:"Otros",fr:"Autre",de:"Andere"},
+ "contract.active":{ja:"契約中",en:"Active",zh:"合约中",tw:"合約中",ko:"계약 중",es:"Activo",fr:"Actif",de:"Aktiv"},
+ "contract.trial":{ja:"トライアル",en:"Trial",zh:"试用",tw:"試用",ko:"체험",es:"Prueba",fr:"Essai",de:"Test"},
+ "contract.cancelled":{ja:"解約",en:"Cancelled",zh:"已解约",tw:"已解約",ko:"해지",es:"Cancelado",fr:"Résilié",de:"Gekündigt"},
+};
+let LANG = "ja";
+try{ LANG = localStorage.getItem("nrv-dash-lang") || "ja"; }catch(e){}
+const t = (k,vars) => { let s=(T[k]&&(T[k][LANG]||T[k].en||T[k].ja))||k; if(vars) for(const key in vars) s=s.replace("{"+key+"}", vars[key]); return s; };
+function setLang(l){ LANG=l; try{localStorage.setItem("nrv-dash-lang",l);}catch(e){} document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t)); render(); }
+
+/* ---------- state ---------- */
+const yen = n => "¥" + n.toLocaleString();
+const uid = () => Math.random().toString(36).slice(2,9);
+const WHOLESALE = 1500;
+const now = Date.now();
+const mins = m => now - m*60000;
+const TYPES = ["salon","restaurant","dental","clinic","seitai","realestate","other"];
+const CONTRACTS = ["active","trial","cancelled"];
+// 対応AIクローラー8種（shared/ai-crawlers.js と一致）
+const AICRAWLERS = [
+  {ua:"GPTBot", owner:"OpenAI"}, {ua:"OAI-SearchBot", owner:"OpenAI"}, {ua:"ChatGPT-User", owner:"OpenAI"},
+  {ua:"ClaudeBot", owner:"Anthropic"}, {ua:"PerplexityBot", owner:"Perplexity"}, {ua:"Google-Extended", owner:"Google"},
+  {ua:"Applebot-Extended", owner:"Apple"}, {ua:"Bytespider", owner:"ByteDance"},
+];
+
+const state = {
+  view:"summary", sort:"type", method:"tag",
+  me:{name:"橋本", email:"admin@sample-meo.co.jp", role:"admin"},
+  members:[
+    {id:uid(), email:"admin@sample-meo.co.jp", role:"admin", status:"active"},
+    {id:uid(), email:"tanaka@sample-meo.co.jp", role:"operator", status:"active"},
+    {id:uid(), email:"sato@sample-meo.co.jp", role:"viewer", status:"invited"},
+  ],
+  sites:[
+    {id:uid(), url:"lumina-omotesando.jp", type:"salon", key:"nrv_90bd53a1f2", status:"active", schema:4, crawler:true, store:{name:1,tel:1,address:1,hours:1,geo:1,image:1,reserve:1}, lastSeen:mins(3), memo:"表参道本店。オーナー田中様、対応◎", contract:"active", price:4000},
+    {id:uid(), url:"lumina-shibuya.jp", type:"salon", key:"nrv_2c71aa0e4b", status:"active", schema:3, crawler:true, store:{name:1,tel:1,address:1,hours:1,geo:1,image:1}, lastSeen:mins(12), memo:"", contract:"active", price:4000},
+    {id:uid(), url:"bistro-b-ginza.com", type:"restaurant", key:"nrv_5f13d9c220", status:"active", schema:3, crawler:true, store:{name:1,tel:1,address:1,hours:1,image:1}, lastSeen:mins(40), memo:"予約フォーム改修待ち", contract:"active", price:3500},
+    {id:uid(), url:"bistro-b-umeda.com", type:"restaurant", key:"nrv_7a88be1c31", status:"detected", schema:0, crawler:false, store:{name:1,tel:1}, lastSeen:mins(90), memo:"", contract:"trial", price:0},
+    {id:uid(), url:"clinic-c-yokohama.jp", type:"clinic", key:"nrv_c40219ff55", status:"error", schema:2, crawler:true, store:{name:1,tel:1,address:1,hours:1}, lastSeen:mins(3000), memo:"タグ切断。要連絡", contract:"active", price:5000},
+    {id:uid(), url:"clinic-c-kawasaki.jp", type:"clinic", key:"nrv_ab77e0d913", status:"pending", schema:0, crawler:false, store:{name:1}, lastSeen:null, memo:"", contract:"trial", price:0},
+    {id:uid(), url:"seikotsu-machida.jp", type:"seitai", key:"nrv_31d0aa77c2", status:"active", schema:2, crawler:true, store:{name:1,tel:1,address:1,hours:1,geo:1}, lastSeen:mins(220), memo:"", contract:"active", price:3000},
+  ],
+  filter:{q:"", type:"all"},
+};
+
+const REQ = ["name","tel","address","hours","geo","image","reserve"];
+const filledCount = s => REQ.filter(k=>s.store&&s.store[k]).length;
+const completePct = s => Math.round(filledCount(s)/REQ.length*100);
+const fillClass = s => { const f=filledCount(s); return f===REQ.length?"g":(f?"a":"n"); };
+const typeLabel = k => t("type."+k);
+const fmtAgo = t2 => { if(!t2) return "—"; const m=Math.round((now-t2)/60000); if(m<60) return t("ago.m",{x:m}); const h=Math.round(m/60); if(h<24) return t("ago.h",{x:h}); return t("ago.d",{x:Math.round(h/24)}); };
+const scoreClass = s => s==null?"n":(s>=80?"g":"a");
+function toast(msg){ const el=document.createElement("div"); el.className="toast"; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),1800); }
+
+function sortSites(list){
+  const arr=[...list], k=state.sort;
+  if(k==="type") arr.sort((a,b)=> TYPES.indexOf(a.type)-TYPES.indexOf(b.type) || completePct(b)-completePct(a));
+  else if(k==="fill") arr.sort((a,b)=>completePct(b)-completePct(a));
+  else if(k==="status"){ const o={active:0,detected:1,pending:2,error:3}; arr.sort((a,b)=>o[a.status]-o[b.status]); }
+  else if(k==="seen") arr.sort((a,b)=>(b.lastSeen||0)-(a.lastSeen||0));
+  else if(k==="url") arr.sort((a,b)=>a.url.localeCompare(b.url));
+  return arr;
+}
+function sortSelect(){
+  const opts=[["type","sort.type"],["fill","sort.fill"],["status","sort.status"],["seen","sort.seen"],["url","sort.url"]];
+  return `<span class="lbl-inline">${t("sort.label")}</span><select class="select" id="sortSel">${opts.map(([v,k])=>`<option value="${v}" ${state.sort===v?"selected":""}>${t(k)}</option>`).join("")}</select>`;
+}
+
+function setNav(v){ state.view=v; document.querySelectorAll(".navitem").forEach(b=>b.classList.toggle("active", b.dataset.nav===v)); render(); }
+document.querySelectorAll(".navitem").forEach(b=> b.addEventListener("click", ()=>setNav(b.dataset.nav)));
+
+function render(){
+  document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));
+  document.getElementById("langSel").value=LANG;
+  document.getElementById("ribbon").innerHTML=t("ribbon");
+  const m=document.getElementById("main");
+  document.getElementById("orgMeta").textContent = state.sites.filter(s=>s.status==="active").length + " " + t("running");
+  if(state.view==="summary") m.innerHTML=viewSummary();
+  else if(state.view==="sites") m.innerHTML=viewSites();
+  else if(state.view==="members") m.innerHTML=viewMembers();
+  else if(state.view.startsWith("site:")) m.innerHTML=viewSiteDetail(state.view.slice(5));
+  bindMain();
+}
+
+function signalCells(s){
+  const schema = s.schema>0 ? `<span class="sig g">${t("sig.types",{n:s.schema})}</span>` : `<span class="sig n">${t("d.off")}</span>`;
+  const crawler = s.crawler ? `<span class="okmark yes">✓</span>` : `<span class="okmark no">✕</span>`;
+  const fill = `<span class="sig ${fillClass(s)}">${filledCount(s)}/${REQ.length}</span>`;
+  return `<td>${schema}</td><td>${crawler}</td><td>${fill}</td>`;
+}
+function siteRows(list, opts){
+  const withMemo=opts&&opts.memo, action=!(opts&&opts.noAction);
+  return list.map(s=>`<tr class="clickable" data-site="${s.id}">
+    <td class="site-url">${s.url}<span class="mono">${s.key}</span></td>
+    <td><span class="typechip">${typeLabel(s.type)}</span></td>
+    <td><span class="pill ${s.status}">${t("st."+s.status)}</span></td>
+    ${signalCells(s)}
+    ${withMemo?`<td class="memo-cell ${s.memo?"":"empty"}">${s.memo||"—"}</td>`:""}
+    <td class="muted">${fmtAgo(s.lastSeen)}</td>
+    ${action?`<td>${(s.status==="pending"||s.status==="detected"||s.status==="error")?`<button class="btn sm" data-verify="${s.id}">${t("btn.verify")}</button>`:`<button class="btn sm" data-open="${s.id}">${t("btn.settings")}</button>`}</td>`:""}
+  </tr>`).join("");
+}
+
+function viewSummary(){
+  const active=state.sites.filter(s=>s.status==="active");
+  const total=state.sites.length;
+  const schemaOn=state.sites.filter(s=>s.schema>0).length;
+  const avgFill=total?Math.round(state.sites.reduce((a,s)=>a+completePct(s),0)/total):0;
+  const billable=state.sites.filter(s=>s.status==="active"&&s.contract!=="cancelled").length;
+  const billing=billable*WHOLESALE;
+  const list=sortSites(state.sites);
+  return `
+  <div class="topbar"><h1>${t("sum.title")}</h1><div class="who"><span>${state.me.email}</span><span class="avatar">${state.me.name[0]}</span></div></div>
+  <div class="tiles">
+    <div class="tile"><div class="t">${t("tile.active")}</div><div class="v g">${active.length}<small> / ${total}</small></div><div class="sub">${t("sub.rate",{v: total?Math.round(active.length/total*100):0})}</div></div>
+    <div class="tile"><div class="t">${t("tile.schema")}</div><div class="v p">${schemaOn}<small> / ${total}</small></div><div class="sub">${t("sub.schema")}</div></div>
+    <div class="tile"><div class="t">${t("tile.fill")}</div><div class="v">${avgFill}%</div><div class="sub">${t("sub.fill")}</div></div>
+    <div class="tile"><div class="t">${t("tile.bill")}</div><div class="v">${yen(billing)}</div><div class="sub">${t("sub.bill",{p:yen(WHOLESALE),n:billable})}</div></div>
+  </div>
+  <div class="card">
+    <div class="hd"><h2>${t("sum.all")} (${total})</h2><div class="toolbar">${sortSelect()}<button class="btn sm" data-nav-btn="sites">${t("sum.manage")}</button></div></div>
+    <div class="tblwrap"><table><thead><tr><th>${t("th.site")}</th><th>${t("th.type")}</th><th>${t("th.status")}</th><th>${t("th.schema")}</th><th>${t("th.crawler")}</th><th>${t("th.fill")}</th><th>${t("th.seen")}</th></tr></thead><tbody>
+      ${siteRows(list,{noAction:true})}
+    </tbody></table></div>
+  </div>`;
+}
+
+function viewSites(){
+  let list=state.sites.filter(s=> (state.filter.type==="all"||s.type===state.filter.type) && (!state.filter.q || s.url.includes(state.filter.q)));
+  list=sortSites(list);
+  return `
+  <div class="topbar"><h1>${t("sites.title")} <span class="muted" style="font-size:16px;font-weight:600">(${state.sites.length})</span></h1>
+    <div class="toolbar">
+      <button class="btn" id="bulkBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>${t("act.bulk")}</button>
+      <button class="btn primary" id="addBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>${t("act.add")}</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="hd">
+      <div class="toolbar">
+        <input class="input" id="q" placeholder="${t("ph.search")}" value="${state.filter.q}">
+        <select class="select" id="typeFilter"><option value="all">${t("f.allTypes")}</option>${TYPES.map(k=>`<option value="${k}" ${state.filter.type===k?"selected":""}>${typeLabel(k)}</option>`).join("")}</select>
+        ${sortSelect()}
+      </div>
+      <span class="muted" style="font-size:13px">${t("count.live",{a:list.filter(s=>s.status==="active").length,b:list.length})}</span>
+    </div>
+    <div class="tblwrap"><table><thead><tr><th>${t("th.site")}</th><th>${t("th.type")}</th><th>${t("th.status")}</th><th>${t("th.schema")}</th><th>${t("th.crawler")}</th><th>${t("th.fill")}</th><th>${t("th.memo")}</th><th>${t("th.seen")}</th><th></th></tr></thead><tbody>
+      ${list.length?siteRows(list,{memo:true}):`<tr><td colspan="9" class="empty">${t("empty.sites")}</td></tr>`}
+    </tbody></table></div>
+  </div>`;
+}
+
+function viewSiteDetail(id){
+  const s=state.sites.find(x=>x.id===id); if(!s) return "";
+  const snippet=`<script src="https://nurevo.jp/tag.js" data-webmcp-site-key="${s.key}" defer></`+`script>`;
+  return `
+  <div class="crumb"><button data-nav-btn="sites">${t("d.back")}</button></div>
+  <div class="topbar"><h1>${s.url}</h1>
+    <div class="toolbar"><span class="pill ${s.status}">${t("st."+s.status)}</span>${s.status!=="active"?`<button class="btn primary" data-verify="${s.id}">${t("btn.verifyLong")}</button>`:""}</div>
+  </div>
+  <div class="detail-grid">
+    <div class="card" style="padding:22px">
+      <p class="section-title">${t("d.aeo")}</p>
+      <div class="grid2">
+        <div class="field"><label>${t("d.type")}</label><select class="select" id="dType">${TYPES.map(k=>`<option value="${k}" ${s.type===k?"selected":""}>${typeLabel(k)}</option>`).join("")}</select></div>
+        <div class="field"><label>${t("d.contract")}</label><select class="select" id="dContract">${CONTRACTS.map(c=>`<option value="${c}" ${s.contract===c?"selected":""}>${t("contract."+c)}</option>`).join("")}</select></div>
+      </div>
+      <div class="field"><label>${t("d.name")}</label><input class="input" value="${s.url.split(".")[0]}"></div>
+      <div class="grid2">
+        <div class="field"><label>${t("d.tel")}</label><input class="input" placeholder="03-1234-5678"></div>
+        <div class="field"><label>${t("d.resale")}</label><input class="input mono" id="dPrice" type="number" value="${s.price||0}"></div>
+      </div>
+      <div class="field"><label>${t("d.addr")}</label><input class="input" placeholder="…"></div>
+      <div class="field"><label>${t("d.hours")}</label><input class="input" placeholder="Tu-Su 11:00-20:00"></div>
+      <div class="grid2">
+        <div class="field"><label>${t("d.schema")}</label><select class="select" id="dSchema"><option value="on" ${s.schema>0?"selected":""}>${t("d.on")}</option><option value="off" ${s.schema>0?"":"selected"}>${t("d.off")}</option></select><span class="helper">${t("d.schemaHelp")}</span></div>
+        <div class="field"><label>${t("d.crawler")}</label><select class="select" id="dCrawler"><option value="on" ${s.crawler?"selected":""}>${t("d.on")}</option><option value="off" ${s.crawler?"":"selected"}>${t("d.off")}</option></select><span class="helper">${t("d.crawlerHelp")}</span></div>
+      </div>
+      <div class="field"><label>${t("d.memo")}</label><textarea class="input" id="dMemo" placeholder="${t("d.memoPh")}">${s.memo||""}</textarea></div>
+      <button class="btn primary" id="saveAeo">${t("d.save")}</button>
+    </div>
+    <div>
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <p class="section-title">${t("d.signals")}</p>
+        <div class="siglist">
+          <div class="sigrow"><span class="k">${t("d.sTag")}</span><span class="val"><span class="pill ${s.status}">${t("st."+s.status)}</span></span></div>
+          <div class="sigrow"><span class="k">${t("d.sSchema")}</span><span class="val">${s.schema>0?`<span class="sig g">${t("sig.types",{n:s.schema})}</span>`:`<span class="sig n">${t("d.off")}</span>`}</span></div>
+          <div class="sigrow"><span class="k">${t("d.sCrawler")}</span><span class="val">${s.crawler?`<span class="okmark yes">✓</span>`:`<span class="okmark no">✕</span>`}</span></div>
+          <div class="sigrow"><span class="k">${t("d.sFill")}</span><span class="val"><span class="sig ${fillClass(s)}" style="font-size:14px">${filledCount(s)}/${REQ.length}</span> <span class="big">${completePct(s)}%</span></span></div>
+          <div class="sigrow"><span class="k">${t("d.sSeen")}</span><span class="val" style="font-weight:600;color:var(--muted)">${fmtAgo(s.lastSeen)}</span></div>
+        </div>
+        <div class="checklist">${REQ.map(k=>`<span class="chk ${s.store&&s.store[k]?"on":"off"}">${s.store&&s.store[k]?"✓":"○"} ${t("fl."+k)}</span>`).join("")}</div>
+        <p class="helper" style="margin-top:10px">${t("d.signalsNote")}</p>
+      </div>
+      <div class="card" style="padding:22px;margin-bottom:16px">
+        <p class="section-title">${t("d.crawlers8")}</p>
+        <div class="checklist">${AICRAWLERS.map(c=>`<span class="chk ${s.crawler?"on":"off"}" title="${c.owner}">${s.crawler?"✓":"○"} ${c.ua}</span>`).join("")}</div>
+        <p class="helper" style="margin-top:10px">${t("d.crawlers8Note")}</p>
+      </div>
+      <div class="card" style="padding:22px">
+        <p class="section-title">${t("d.install")}</p>
+        <div class="methods-mini">
+          <button class="${state.method==="tag"?"active":""}" data-method="tag">${t("m.tag")}</button>
+          <button class="${state.method==="gtm"?"active":""}" data-method="gtm">GTM</button>
+          <button class="${state.method==="wp"?"active":""}" data-method="wp">${t("m.wp")}</button>
+        </div>
+        ${state.method==="wp"
+          ? `<p class="muted" style="font-size:13px">${t("d.wpDesc")}</p><div class="keybox"><code>${s.key}</code><button data-copy="${s.key}">${t("d.copy")}</button></div>`
+          : `<p class="muted" style="font-size:13px">${state.method==="gtm"?t("d.gtmDesc"):t("d.tagDesc")}</p><div class="keybox"><code>${snippet.replace(/</g,"&lt;")}</code><button data-copy-snip="${s.key}">${t("d.copy")}</button></div>`}
+      </div>
+    </div>
+  </div>`;
+}
+
+function viewMembers(){
+  return `
+  <div class="topbar"><h1>${t("mem.title")}</h1><button class="btn primary" id="inviteBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>${t("mem.invite")}</button></div>
+  <div class="card">
+    <div class="hd"><h2>${t("mem.team")} (${state.members.length})</h2><span class="muted" style="font-size:13px">${t("mem.helper")}</span></div>
+    <div class="tblwrap"><table><thead><tr><th>${t("th.email")}</th><th>${t("th.role")}</th><th>${t("th.status")}</th><th></th></tr></thead><tbody>
+      ${state.members.map(mem=>`<tr>
+        <td style="font-weight:700">${mem.email}${mem.email===state.me.email?' <span class="muted" style="font-weight:400">'+t("you")+'</span>':''}</td>
+        <td><select class="select" data-role="${mem.id}" style="padding:6px 10px">${["admin","operator","viewer"].map(r=>`<option value="${r}" ${mem.role===r?"selected":""}>${t("role."+r)}</option>`).join("")}</select></td>
+        <td><span class="pill ${mem.status==="active"?"active":"invited"}">${mem.status==="active"?t("mem.joined"):t("mem.invited")}</span></td>
+        <td>${mem.email!==state.me.email?`<button class="btn sm" data-rm="${mem.id}">${t("btn.remove")}</button>`:""}</td>
+      </tr>`).join("")}
+    </tbody></table></div>
+  </div>`;
+}
+
+function bindMain(){
+  const m=document.getElementById("main");
+  m.querySelectorAll("[data-nav-btn]").forEach(b=>b.onclick=()=>setNav(b.dataset.navBtn));
+  m.querySelectorAll("tbody tr.clickable[data-site]").forEach(tr=>tr.onclick=e=>{ if(e.target.closest("button,select")) return; state.view="site:"+tr.dataset.site; render(); });
+  m.querySelectorAll("[data-open]").forEach(b=>b.onclick=e=>{e.stopPropagation(); state.view="site:"+b.dataset.open; render();});
+  m.querySelectorAll("[data-verify]").forEach(b=>b.onclick=e=>{e.stopPropagation(); verify(b.dataset.verify);});
+  const q=m.querySelector("#q"); if(q) q.oninput=()=>{state.filter.q=q.value; const p=q.selectionStart; render(); const nq=document.querySelector("#q"); if(nq){nq.focus(); try{nq.setSelectionRange(p,p)}catch(e){}}};
+  const tf=m.querySelector("#typeFilter"); if(tf) tf.onchange=()=>{state.filter.type=tf.value; render();};
+  m.querySelectorAll("#sortSel").forEach(sel=> sel.onchange=()=>{state.sort=sel.value; render();});
+  const ab=m.querySelector("#addBtn"); if(ab) ab.onclick=addModal;
+  const bb=m.querySelector("#bulkBtn"); if(bb) bb.onclick=bulkModal;
+  const ib=m.querySelector("#inviteBtn"); if(ib) ib.onclick=inviteModal;
+  m.querySelectorAll("[data-role]").forEach(sel=>sel.onchange=()=>{state.members.find(x=>x.id===sel.dataset.role).role=sel.value; toast(t("toast.role"));});
+  m.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{state.members=state.members.filter(x=>x.id!==b.dataset.rm); toast(t("toast.rm")); render();});
+  m.querySelectorAll("[data-method]").forEach(b=>b.onclick=()=>{state.method=b.dataset.method; render();});
+  m.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>{navigator.clipboard?.writeText(b.dataset.copy).catch(()=>{}); toast(t("toast.copyKey"));});
+  m.querySelectorAll("[data-copy-snip]").forEach(b=>b.onclick=()=>{navigator.clipboard?.writeText(`<script src="https://nurevo.jp/tag.js" data-webmcp-site-key="${b.dataset.copySnip}" defer></`+`script>`).catch(()=>{}); toast(t("toast.copySnip"));});
+  const sa=m.querySelector("#saveAeo"); if(sa) sa.onclick=()=>{ const id=state.view.slice(5); const s=state.sites.find(x=>x.id===id); if(s){ const dt=m.querySelector("#dType"), dc=m.querySelector("#dContract"), dm=m.querySelector("#dMemo"), dp=m.querySelector("#dPrice"), ds=m.querySelector("#dSchema"), dcr=m.querySelector("#dCrawler"); if(dt)s.type=dt.value; if(dc)s.contract=dc.value; if(dm)s.memo=dm.value; if(dp)s.price=parseInt(dp.value)||0; if(ds)s.schema=(ds.value==="on")?(s.schema>0?s.schema:3):0; if(dcr)s.crawler=(dcr.value==="on"); } toast(t("toast.saved")); render(); };
+}
+
+function verify(id){
+  const s=state.sites.find(x=>x.id===id); if(!s) return;
+  toast(t("toast.verifying"));
+  setTimeout(()=>{ s.status="active"; s.lastSeen=Date.now(); if(!s.schema)s.schema=3; s.crawler=true; toast(t("toast.verified")); render(); }, 900);
+}
+function closeModal(){ document.getElementById("modalRoot").innerHTML=""; }
+function modal(html){ document.getElementById("modalRoot").innerHTML=`<div class="modal-bg" id="mbg"><div class="modal">${html}</div></div>`; document.getElementById("mbg").onclick=e=>{if(e.target.id==="mbg")closeModal();}; }
+const typeOpts = sel => TYPES.map(k=>`<option value="${k}" ${k===sel?"selected":""}>${typeLabel(k)}</option>`).join("");
+
+function addModal(){
+  modal(`<h3>${t("m.addTitle")}</h3>
+    <div class="field"><label>${t("m.url")}</label><input class="input" id="mUrl" placeholder="example.com"></div>
+    <div class="grid2">
+      <div class="field"><label>${t("d.type")}</label><select class="select" id="mType">${typeOpts("salon")}</select></div>
+      <div class="field"><label>${t("m.contractLbl")}</label><select class="select" id="mContract">${CONTRACTS.map(c=>`<option value="${c}" ${c==="trial"?"selected":""}>${t("contract."+c)}</option>`).join("")}</select></div>
+    </div>
+    <div class="field"><label>${t("m.priceLbl")}</label><input class="input mono" id="mPrice" type="number" placeholder="4000"></div>
+    <div class="field"><label>${t("m.memoOpt")}</label><textarea class="input" id="mMemo"></textarea></div>
+    <p class="muted" style="font-size:12.5px">${t("m.addHelper")}</p>
+    <div class="row-actions"><button class="btn" onclick="closeModal()">${t("m.cancel")}</button><button class="btn primary" id="mAdd">${t("m.register")}</button></div>`);
+  document.getElementById("mAdd").onclick=()=>{
+    const url=document.getElementById("mUrl").value.trim(); if(!url) return;
+    state.sites.unshift({id:uid(), url:url.replace(/^https?:\/\//,""), type:document.getElementById("mType").value, key:"nrv_"+uid()+uid().slice(0,3), status:"pending", schema:0, crawler:false, store:{}, lastSeen:null, memo:document.getElementById("mMemo").value.trim(), contract:document.getElementById("mContract").value, price:parseInt(document.getElementById("mPrice").value)||0});
+    closeModal(); toast(t("toast.added")); render();
+  };
+}
+function bulkModal(){
+  modal(`<h3>${t("m.bulkTitle")}</h3>
+    <div class="grid2"><div class="field"><label>${t("m.typeAll")}</label><select class="select" id="bType">${typeOpts("salon")}</select></div>
+    <div class="field"><label>${t("m.contractLbl")}</label><select class="select" id="bContract">${CONTRACTS.map(c=>`<option value="${c}" ${c==="trial"?"selected":""}>${t("contract."+c)}</option>`).join("")}</select></div></div>
+    <div class="field"><label>${t("m.urls")}</label><textarea class="input" id="bUrls" rows="6" placeholder="shop1.com&#10;shop2.com&#10;shop3.com"></textarea></div>
+    <div class="row-actions"><button class="btn" onclick="closeModal()">${t("m.cancel")}</button><button class="btn primary" id="bAdd">${t("m.bulkTitle")}</button></div>`);
+  document.getElementById("bAdd").onclick=()=>{
+    const urls=document.getElementById("bUrls").value.split(/\n+/).map(x=>x.trim()).filter(Boolean);
+    const type=document.getElementById("bType").value, contract=document.getElementById("bContract").value;
+    urls.forEach(u=>state.sites.unshift({id:uid(), url:u.replace(/^https?:\/\//,""), type, key:"nrv_"+uid()+uid().slice(0,3), status:"pending", schema:0, crawler:false, store:{}, lastSeen:null, memo:"", contract, price:0}));
+    closeModal(); toast(t("toast.bulkAdded",{n:urls.length})); render();
+  };
+}
+function inviteModal(){
+  modal(`<h3>${t("m.inviteTitle")}</h3>
+    <div class="field"><label>${t("m.email")}</label><input class="input" id="iEmail" placeholder="member@example.com"></div>
+    <div class="field"><label>${t("m.roleLbl")}</label><select class="select" id="iRole">${["admin","operator","viewer"].map(r=>`<option value="${r}">${t("role."+r)}</option>`).join("")}</select></div>
+    <p class="muted" style="font-size:12.5px">${t("m.inviteHelper")}</p>
+    <div class="row-actions"><button class="btn" onclick="closeModal()">${t("m.cancel")}</button><button class="btn primary" id="iAdd">${t("m.inviteBtn")}</button></div>`);
+  document.getElementById("iAdd").onclick=()=>{
+    const email=document.getElementById("iEmail").value.trim(); if(!email) return;
+    state.members.push({id:uid(), email, role:document.getElementById("iRole").value, status:"invited"});
+    closeModal(); toast(t("toast.invited")); render();
+  };
+}
+window.closeModal=closeModal; window.setLang=setLang;
+render();
+</script>

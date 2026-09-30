@@ -2,7 +2,7 @@
   const TAG_VERSION = "2026-08-20.2";
   const SCRIPT_ELEMENT = document.currentScript;
   const TAG_ORIGIN = new URL(SCRIPT_ELEMENT?.src || location.href, location.href).origin;
-  const SITE_KEY = SCRIPT_ELEMENT?.dataset.webmcpSiteKey || new URL(SCRIPT_ELEMENT?.src || location.href, location.href).searchParams.get("site_key") || "";
+  const SITE_KEY = SCRIPT_ELEMENT?.dataset.webmcpSiteKey || SCRIPT_ELEMENT?.dataset.k || new URL(SCRIPT_ELEMENT?.src || location.href, location.href).searchParams.get("site_key") || "";
   const DEBUG = SCRIPT_ELEMENT?.dataset.webmcpDebug === "1" || new URLSearchParams(location.search).get("webmcp_debug") === "1";
   const toolControllers = new Map();
   const executionHistory = new Map();

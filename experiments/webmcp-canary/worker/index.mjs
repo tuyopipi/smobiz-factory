@@ -1,6 +1,6 @@
 import { handleDiagnose } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
-import { handleApi, refreshDuePlaceSites } from "./api.mjs";
+import { handleApi } from "./api.mjs";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -49,9 +49,6 @@ export default {
       runLearningJob(env, { trigger: "scheduled" }).then((result) => {
         console.log("webmcp-learning", JSON.stringify(result));
       }),
-      refreshDuePlaceSites(env).then((result) => {
-        console.log("nurevo-places-refresh", JSON.stringify(result));
-      }),
     ]));
   },
 
@@ -59,7 +56,7 @@ export default {
     const url = new URL(request.url);
 
     if (request.method === "OPTIONS") {
-      if (COOKIE_AUTH_PATHS.has(url.pathname) && request.headers.get("origin") !== dashboardOrigin(env)) {
+      if (request.headers.get("origin") && !isAllowedOrigin(request, env)) {
         return json({ error: "origin_not_allowed" }, 403, request, env);
       }
       return json({}, 204, request, env);
@@ -68,9 +65,6 @@ export default {
 
     try {
       const requestOrigin = request.headers.get("origin");
-      if (COOKIE_AUTH_PATHS.has(url.pathname) && requestOrigin && requestOrigin !== dashboardOrigin(env)) {
-        return json({ error: "origin_not_allowed" }, 403, request, env);
-      }
       if (url.pathname.startsWith("/api/") && !isAllowedOrigin(request, env)) {
         return json({
           error: "origin_not_allowed",
@@ -79,7 +73,7 @@ export default {
       }
 
       const nurevoResponse = await handleApi(request, env);
-      if (nurevoResponse) return nurevoResponse;
+      if (nurevoResponse) return withCors(nurevoResponse, request, env);
 
       if (url.pathname === "/api/agent-authorization") {
         const authorization = await agentAuthorization(request, env, url.searchParams.get("site_key"));
@@ -382,10 +376,25 @@ export default {
         return json(await runLearningJob(env, { trigger: "manual" }), 200, request, env);
       }
 
+      if (url.pathname === "/dashboard" || url.pathname === "/dashboard/") {
+        const asset = await env.ASSETS.fetch(new Request(new URL("/dashboard.html", url), request));
+        if (asset.ok) {
+          const html = await asset.text();
+          const branding = `<style>.brand{display:inline-flex!important;align-items:center;gap:8px;text-decoration:none}.brand .mk{width:28px!important;height:28px!important;background:url('/assets/logo.png') center/contain no-repeat!important;border-radius:0!important;box-shadow:none!important}.brand .mk:after{display:none!important}.account{display:inline-flex!important;align-items:center;gap:10px;margin-left:auto;color:#5b6472;font-size:13px}.account button{cursor:pointer}</style><script src="/dashboard-auth.js" defer></script>`;
+          const headers = new Headers(asset.headers);
+          headers.set("x-nurevo-dashboard-branding", "logo");
+          return new Response(html.replace("</head>", `${branding}</head>`), { status: asset.status, headers });
+        }
+      }
       return env.ASSETS.fetch(request);
     } catch (error) {
       if (error instanceof PublicHttpError) return json({ error: error.code }, error.status, request, env);
-      console.error("request_error", JSON.stringify({ path: url.pathname, name: error?.name || "Error" }));
+      console.error("request_error", JSON.stringify({
+        path: url.pathname,
+        name: error?.name || "Error",
+        message: error?.message || String(error),
+        stack: error?.stack || null,
+      }));
       return json({ error: "internal_error" }, 500, request, env);
     }
   }
@@ -428,9 +437,8 @@ function corsHeaders(request, env) {
   const origin = request?.headers?.get("origin");
   const pathname = request ? new URL(request.url).pathname : "";
   if (COOKIE_AUTH_PATHS.has(pathname)) {
-    const allowedDashboardOrigin = dashboardOrigin(env);
-    if (origin === allowedDashboardOrigin) {
-      headers.set("access-control-allow-origin", allowedDashboardOrigin);
+    if (origin && isAllowedOrigin(request, env)) {
+      headers.set("access-control-allow-origin", origin);
       headers.set("access-control-allow-credentials", "true");
       headers.set("vary", "Origin");
     } else {
@@ -446,6 +454,16 @@ function corsHeaders(request, env) {
     headers.set("access-control-allow-origin", "*");
   }
   return headers;
+}
+
+function withCors(response, request, env) {
+  const headers = new Headers(response.headers);
+  const cors = corsHeaders(request, env);
+  for (const [key, value] of cors.entries()) {
+    if (key === "content-type" || key === "cache-control") continue;
+    headers.set(key, value);
+  }
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
 function dashboardOrigin(env) {
@@ -659,11 +677,11 @@ function originPolicy(env) {
 function isAllowedOrigin(request, env) {
   const origin = request.headers.get("origin");
   if (!origin) return true;
-  const allowed = originPolicy(env).allowedOrigins;
+  const allowed = originPolicy(env).allowedOrigins.map((value) => String(value).replace(/\/$/, ""));
   if (allowed.includes("*")) return true;
   try {
-    const host = new URL(origin).host;
-    return allowed.includes(origin) || allowed.includes(host);
+    const parsed = new URL(origin);
+    return allowed.includes(parsed.origin) || allowed.includes(parsed.host);
   } catch {
     return false;
   }
@@ -2790,9 +2808,9 @@ async function handleAuthRequest(request, env) {
       })
     });
     if (!response.ok) {
-      const detail = await response.text();
+      await response.text();
       await env.WEBMCP_KV.delete(`${AUTH_TOKEN_PREFIX}${token}`);
-      console.error("resend_error", JSON.stringify({ status: response.status, detail: detail.slice(0, 500) }));
+      console.error("resend_error", JSON.stringify({ status: response.status }));
       return json({ error: "Could not send the sign-in email. Check the Resend configuration.", code: "EMAIL_SEND_FAILED" }, 502, request, env);
     }
   }
