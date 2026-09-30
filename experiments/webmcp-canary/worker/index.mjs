@@ -77,7 +77,7 @@ export default {
         }, 403, request, env);
       }
 
-      const nurevoResponse = await handleApi(request, env);
+      const nurevoResponse = await handleApi(request, env, ctx);
       if (nurevoResponse) return withCors(nurevoResponse, request, env);
 
       if (url.pathname === "/api/agent-authorization") {

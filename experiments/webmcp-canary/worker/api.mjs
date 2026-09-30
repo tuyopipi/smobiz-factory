@@ -21,6 +21,7 @@ const API_RATE_LIMITS = Object.freeze({
   authEmail: { limit: 5, windowMs: 60 * 60 * 1000 },
   memberIp: { limit: 10, windowMs: 60 * 60 * 1000 },
   memberEmail: { limit: 3, windowMs: 60 * 60 * 1000 },
+  crawlerHit: { limit: 120, windowMs: 60 * 1000 },
 });
 const PLACES_SEARCH_FIELD_MASK = "places.id,places.displayName,places.formattedAddress,places.location,places.regularOpeningHours,places.nationalPhoneNumber,places.types,places.primaryType,places.primaryTypeDisplayName,places.priceLevel,places.websiteUri";
 // Place Details (New) uses resource-relative field names (without the `places.` prefix).
@@ -111,7 +112,7 @@ function buildJsonLd(site, settings, ruleset) {
   return ld;
 }
 
-export async function handleApi(request, env) {
+export async function handleApi(request, env, ctx) {
   const url = new URL(request.url);
   const path = url.pathname;
   const method = request.method;
@@ -126,6 +127,12 @@ export async function handleApi(request, env) {
     const hosted = await loadHostedStore(env, slug);
     if (!hosted) return new Response("Not found", { status: 404, headers: { "content-type": "text/plain; charset=utf-8" } });
     if (hosted.delivery_status === "stopped") return new Response("Gone", { status: 410, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
+    const crawler = matchCrawler(request.headers.get("user-agent") || "");
+    if (crawler) {
+      const hit = recordRateLimitedCrawlerHit(env, hosted.id, crawler.id);
+      if (ctx?.waitUntil) ctx.waitUntil(hit);
+      else await hit;
+    }
     const ruleset = await loadActiveRuleset(env);
     const rulesetVersion = String(ruleset.version || INITIAL_AEO_RULESET.version);
     if (hostedMatch[2]) return new Response(buildHostedLlms(hosted, ruleset), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "x-aeo-ruleset-version": rulesetVersion } });
@@ -303,6 +310,22 @@ export async function handleApi(request, env) {
       "access-control-expose-headers": "x-aeo-ruleset-version",
       "x-aeo-ruleset-version": String(ruleset.version || INITIAL_AEO_RULESET.version),
     });
+  }
+
+  if (path === "/api/tag/hit") {
+    if (method !== "POST") return json({ error: "method_not_allowed" }, 405, { allow: "POST" });
+    const auth = await authorizeSiteKey(env, url.searchParams.get("k") || url.searchParams.get("siteKey"), { touch: false });
+    if (!auth.registered) return json({ error: "invalid_site_key" }, 404);
+
+    const crawler = matchCrawler(request.headers.get("user-agent") || "");
+    if (!crawler) return json({ ok: true, recorded: false });
+
+    const limit = await crawlerHitRateLimit(env, auth.siteId, crawler.id);
+    if (limit.unavailable) return json({ error: "rate_limit_unavailable" }, 503);
+    if (!limit.allowed) return json({ error: "rate_limited" }, 429, { "retry-after": String(Math.ceil(API_RATE_LIMITS.crawlerHit.windowMs / 1000)) });
+
+    await recordCrawlerHit(env, auth.siteId, crawler.id);
+    return json({ ok: true, recorded: true, crawler_id: crawler.id });
   }
 
   if (path === "/api/places/search" && method === "GET") {
@@ -1406,11 +1429,32 @@ async function checkApiRateLimit(env, scope, value, { limit, windowMs }) {
   }
 }
 
+async function crawlerHitRateLimit(env, siteId, crawlerId) {
+  return checkApiRateLimit(env, "crawler-hit", `${siteId}:${crawlerId}`, API_RATE_LIMITS.crawlerHit);
+}
+
+async function recordCrawlerHit(env, siteId, crawlerId, date = new Date().toISOString().slice(0, 10)) {
+  await env.DB.prepare(`
+    INSERT INTO crawler_hits (site_id, date, crawler_id, hits)
+    VALUES (?, ?, ?, 1)
+    ON CONFLICT(site_id, date, crawler_id) DO UPDATE SET hits = crawler_hits.hits + 1
+  `).bind(siteId, date, crawlerId).run();
+}
+
+async function recordRateLimitedCrawlerHit(env, siteId, crawlerId) {
+  try {
+    const limit = await crawlerHitRateLimit(env, siteId, crawlerId);
+    if (limit.allowed) await recordCrawlerHit(env, siteId, crawlerId);
+  } catch (error) {
+    console.error("crawler_hit_record_error", JSON.stringify({ siteId, crawlerId, error: String(error?.message || error).slice(0, 120) }));
+  }
+}
+
 function csrfRequired(path) {
   // These endpoints are intentionally unauthenticated. Browser-origin checks
   // and the dedicated IP/email limiter protect public signup/auth requests;
   // every authenticated state-changing endpoint still requires the token.
-  return path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook";
+  return path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 
 function readCookie(request, name) {

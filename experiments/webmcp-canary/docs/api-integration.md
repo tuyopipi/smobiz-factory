@@ -103,8 +103,65 @@ document.head += renderNurevoSchema(NUREVO_SITE_KEY)
 
 ## 任意のクローラ来訪通知
 
-AIクローラの来訪計測用に、サーバー側hit通知を任意で追加できます。`/api/tag/hit`と具体的なサンプルはフェーズ4で提供します。IPアドレス、ページ本文、フォーム値などのPIIは送信しません。
+AIクローラのUser-Agentをサーバー側で判定し、一致した場合だけ`POST /api/tag/hit?k=<site_key>`を呼ぶと来訪を計測できます。通知には元のUser-Agentを渡しますが、Nurevoが保存するのはサイト、日付、8種のクローラID、集計件数だけです。IPアドレス、ページURL、本文、フォーム値などのPIIは保存しません。通知失敗はページ表示を止めないよう無視してください。
+
+### Node / Next.js
+
+サーバーのrequest handlerやmiddlewareから呼びます。ブラウザへ配信するコードには入れません。
+
+```ts
+const AI_CRAWLER = /GPTBot|OAI-SearchBot|ChatGPT-User|ClaudeBot|PerplexityBot|Google-Extended|Applebot-Extended|Bytespider/i;
+
+export async function reportNurevoHit(request: Request) {
+  const ua = request.headers.get("user-agent") || "";
+  if (!AI_CRAWLER.test(ua)) return;
+  try {
+    await fetch(
+      `https://nurevo.jp/api/tag/hit?k=${encodeURIComponent(process.env.NUREVO_SITE_KEY!)}`,
+      { method: "POST", headers: { "user-agent": ua }, signal: AbortSignal.timeout(1000) },
+    );
+  } catch {
+    // Optional telemetry: never fail the page render.
+  }
+}
+```
+
+プラットフォームに`waitUntil`やレスポンス後タスクがある場合は、`reportNurevoHit(request)`をそこへ登録するとページ応答を待たせません。
+
+### PHP
+
+```php
+<?php
+$ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
+$bots = '/GPTBot|OAI-SearchBot|ChatGPT-User|ClaudeBot|PerplexityBot|Google-Extended|Applebot-Extended|Bytespider/i';
+if ($ua && preg_match($bots, $ua)) {
+    $url = 'https://nurevo.jp/api/tag/hit?k=' . rawurlencode(getenv('NUREVO_SITE_KEY'));
+    $context = stream_context_create(['http' => [
+        'method' => 'POST',
+        'header' => "User-Agent: " . str_replace(["\r", "\n"], '', $ua) . "\r\n",
+        'content' => '',
+        'timeout' => 1,
+        'ignore_errors' => true,
+    ]]);
+    @file_get_contents($url, false, $context); // 失敗は描画へ伝播させない
+}
+?>
+```
+
+### 汎用擬似コード
+
+```text
+ua = incomingRequest.header("User-Agent")
+if ua matches one of the 8 Nurevo AI crawler names:
+    backgroundTask(
+        HTTP_POST(
+            "https://nurevo.jp/api/tag/hit?k=" + urlEncode(NUREVO_SITE_KEY),
+            headers = { "User-Agent": ua },
+            timeout = 1 second
+        ).ignoreFailure()
+    )
+```
 
 ## 静的JSON-LD
 
-JSON-LDの手貼りは軽量な選択肢として残しますが、自動更新されません。常にactive rulesetへ追従するには、WordPressプラグインまたはこのサーバー側API連携を利用してください。
+JSON-LDの手貼りは軽量な選択肢として残しますが、自動更新されず、クローラ来訪も計測できません。常にactive rulesetへ追従し来訪を計測するには、WordPressプラグインまたはこのサーバー側API連携を利用してください。

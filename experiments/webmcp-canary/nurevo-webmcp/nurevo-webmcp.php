@@ -61,12 +61,24 @@ add_action('template_redirect', function () {
   exit;
 });
 
-// 4) （将来）AIクローラーの実アクセスを1件記録 → Nurevo に日次集計を送る
+// 4) AIクローラーの実アクセスをNurevoへ通知（非同期・描画とは独立）
+function nurevo_report_hit($key, $user_agent) {
+  if (!$key || !$user_agent) return;
+  // 応答やエラーは利用しない。失敗してもschema出力・ページ描画には影響させない。
+  wp_remote_post(NUREVO_API . '/tag/hit?k=' . rawurlencode($key), [
+    'blocking' => false,
+    'timeout' => 0.5,
+    'redirection' => 0,
+    'headers' => ['User-Agent' => $user_agent],
+    'body' => '',
+  ]);
+}
+
 add_action('init', function () {
   $ua = $_SERVER['HTTP_USER_AGENT'] ?? '';
   foreach (NUREVO_AI_CRAWLERS as $bot) {
     if (stripos($ua, $bot) !== false) {
-      // TODO: nurevo_report_hit(nurevo_site_key(), $bot);  // /api/hits に送る
+      nurevo_report_hit(nurevo_site_key(), $ua);
       break;
     }
   }
