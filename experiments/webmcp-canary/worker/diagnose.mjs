@@ -14,6 +14,8 @@
 const UA = "Nurevo-Diagnostics/1.0 (+https://nurevo.jp)";
 const TIMEOUT_MS = 8000;
 const MAX_BYTES = 2_000_000;
+export const DEFAULT_AEO_SCORE_CRON_LIMIT = 10;
+const MAX_AEO_SCORE_CRON_LIMIT = 50;
 
 const AI_BOTS = ["GPTBot", "ClaudeBot", "anthropic-ai", "PerplexityBot", "Google-Extended", "CCBot"];
 
@@ -23,27 +25,46 @@ const CORS = {
   "access-control-allow-headers": "content-type",
 };
 
-export async function handleDiagnose(request) {
+export async function handleDiagnose(request, env) {
   if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: CORS });
 
   const url = new URL(request.url);
   const raw = url.searchParams.get("url") || "";
   const lang = url.searchParams.get("lang") === "en" ? "en" : "ja";
 
+  try {
+    const result = await diagnoseUrl(raw, lang);
+    if (env?.DB) {
+      try {
+        const site = await resolveDiagnosedSite(env, url, raw);
+        if (site) await storeAeoScore(env, site.id, result);
+      } catch (error) {
+        console.error("aeo-score-ondemand-save", JSON.stringify({ message: String(error?.message || error) }));
+      }
+    }
+    return json(result);
+  } catch (error) {
+    if (error instanceof DiagnoseError) return json({ error: error.code }, error.status);
+    throw error;
+  }
+}
+
+export async function diagnoseUrl(raw, lang = "ja") {
+
   let target;
   try {
     target = new URL(raw);
     if (target.protocol !== "https:" && target.protocol !== "http:") throw new Error("scheme");
   } catch {
-    return json({ error: "invalid_url" }, 400);
+    throw new DiagnoseError(400, "invalid_url");
   }
-  if (isPrivateHost(target.hostname)) return json({ error: "invalid_url" }, 400);
+  if (isPrivateHost(target.hostname)) throw new DiagnoseError(400, "invalid_url");
 
   let html = "";
   try {
     html = await fetchText(target.href);
   } catch {
-    return json({ error: "unreachable" }, 502);
+    throw new DiagnoseError(502, "unreachable", target.host);
   }
 
   let robots = "";
@@ -58,7 +79,7 @@ export async function handleDiagnose(request) {
   const { checks, scorable } = buildChecks(facts, blocked, lang);
   const score = scorable ? scoreOf(checks, blocked) : null;
 
-  return json({
+  return {
     host: target.host,
     score,
     scorable,
@@ -69,7 +90,134 @@ export async function handleDiagnose(request) {
           : "このページでは判定できません"),
     checks,
     scannedAt: new Date().toISOString(),
+  };
+}
+
+class DiagnoseError extends Error {
+  constructor(status, code, host = null) {
+    super(code);
+    this.name = "DiagnoseError";
+    this.status = status;
+    this.code = code;
+    this.host = host;
+  }
+}
+
+export async function storeAeoScore(env, siteId, result) {
+  const ruleset = await env.DB.prepare(
+    "SELECT version FROM aeo_rulesets WHERE active=1 ORDER BY version DESC LIMIT 1",
+  ).first();
+  const scannedAt = result.scannedAt || new Date().toISOString();
+  await env.DB.prepare(
+    `INSERT INTO aeo_scores (site_id,scanned_at,host,score,verdict,checks_json,ruleset_version)
+     VALUES (?,?,?,?,?,?,?)`,
+  ).bind(
+    siteId,
+    scannedAt,
+    result.host || null,
+    result.score == null ? null : result.score,
+    result.verdict || null,
+    JSON.stringify(Array.isArray(result.checks) ? result.checks : []),
+    Number(ruleset?.version || 1),
+  ).run();
+  return { ...result, scannedAt, rulesetVersion: Number(ruleset?.version || 1) };
+}
+
+export async function diagnoseAndStore(env, site, { lang = "ja" } = {}) {
+  const targetUrl = siteDiagnosticUrl(site);
+  try {
+    const result = await diagnoseUrl(targetUrl, lang);
+    return { ok: true, siteId: site.id, result: await storeAeoScore(env, site.id, result) };
+  } catch (error) {
+    if (!(error instanceof DiagnoseError)) throw error;
+    const failed = {
+      host: error.host || safeHost(targetUrl),
+      score: null,
+      scorable: false,
+      verdict: error.code,
+      checks: [],
+      scannedAt: new Date().toISOString(),
+    };
+    return { ok: false, siteId: site.id, error: error.code, result: await storeAeoScore(env, site.id, failed) };
+  }
+}
+
+export async function runAeoScoreCron(env, { limit } = {}) {
+  const configured = Number(limit ?? env.AEO_SCORE_CRON_LIMIT ?? DEFAULT_AEO_SCORE_CRON_LIMIT);
+  const batchLimit = Math.max(1, Math.min(MAX_AEO_SCORE_CRON_LIMIT, Number.isFinite(configured) ? Math.floor(configured) : DEFAULT_AEO_SCORE_CRON_LIMIT));
+  const { results } = await env.DB.prepare(
+    `SELECT s.id,s.url,s.website_uri,s.slug,MAX(a.scanned_at) AS last_aeo_scanned_at
+       FROM sites s
+       LEFT JOIN aeo_scores a ON a.site_id=s.id
+      WHERE COALESCE(s.delivery_status,'active')='active'
+        AND (trim(COALESCE(s.website_uri,''))<>'' OR trim(COALESCE(s.url,''))<>'' OR trim(COALESCE(s.slug,''))<>'')
+      GROUP BY s.id,s.url,s.website_uri,s.slug,s.created_at
+      ORDER BY CASE WHEN MAX(a.scanned_at) IS NULL THEN 0 ELSE 1 END,
+               MAX(a.scanned_at) ASC,
+               s.created_at ASC,
+               s.id ASC
+      LIMIT ?`,
+  ).bind(batchLimit).all();
+
+  const outcomes = [];
+  for (const site of results || []) {
+    try {
+      outcomes.push(await diagnoseAndStore(env, site));
+    } catch (error) {
+      outcomes.push({ ok: false, siteId: site.id, error: String(error?.message || error).slice(0, 200) });
+    }
+  }
+  return { limit: batchLimit, selected: (results || []).length, processed: outcomes.length, outcomes };
+}
+
+function siteDiagnosticUrl(site) {
+  const raw = String(site.website_uri || site.url || "").trim();
+  if (raw) return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+  return `https://nurevo.jp/s/${encodeURIComponent(site.slug || "")}`;
+}
+
+async function resolveDiagnosedSite(env, requestUrl, raw) {
+  let target;
+  try { target = new URL(raw); } catch { return null; }
+  const explicitId = requestUrl.searchParams.get("site_id") || requestUrl.searchParams.get("siteId");
+  const explicitKey = requestUrl.searchParams.get("site_key") || requestUrl.searchParams.get("k");
+  if (explicitId || explicitKey) {
+    const row = explicitId
+      ? await env.DB.prepare("SELECT id,url,website_uri,slug FROM sites WHERE id=? LIMIT 1").bind(explicitId).first()
+      : await env.DB.prepare("SELECT id,url,website_uri,slug FROM sites WHERE site_key=? LIMIT 1").bind(explicitKey).first();
+    if (row && diagnosticSiteMatches(row, target)) return row;
+  }
+
+  const normalized = target.href.replace(/\/$/, "").toLowerCase();
+  const host = target.host.toLowerCase();
+  const hostname = target.hostname.toLowerCase();
+  const candidates = [normalized, host, hostname, `https://${host}`, `http://${host}`];
+  const row = await env.DB.prepare(
+    `SELECT id,url,website_uri,slug FROM sites
+      WHERE lower(rtrim(trim(COALESCE(url,'')),'/')) IN (?,?,?,?,?)
+         OR lower(rtrim(trim(COALESCE(website_uri,'')),'/')) IN (?,?,?,?,?)
+      LIMIT 1`,
+  ).bind(...candidates, ...candidates).first();
+  if (row) return row;
+  const hosted = target.hostname.toLowerCase() === "nurevo.jp" && target.pathname.match(/^\/s\/([^/]+)\/?$/i);
+  return hosted
+    ? env.DB.prepare("SELECT id,url,website_uri,slug FROM sites WHERE slug=? LIMIT 1").bind(decodeURIComponent(hosted[1])).first()
+    : null;
+}
+
+function diagnosticSiteMatches(site, target) {
+  if (site.slug && target.hostname.toLowerCase() === "nurevo.jp" && target.pathname === `/s/${site.slug}`) return true;
+  return [site.website_uri, site.url].some((value) => {
+    if (!value) return false;
+    try {
+      const candidate = new URL(/^https?:\/\//i.test(value) ? value : `https://${value}`);
+      return candidate.hostname.toLowerCase() === target.hostname.toLowerCase();
+    } catch { return false; }
   });
+}
+
+function safeHost(raw) {
+  try { return new URL(raw).host; } catch { return null; }
 }
 
 /* ───────────────────────── fetch ───────────────────────── */
@@ -237,7 +385,7 @@ export function blockedBots(robots) {
 
 /* ───────────────────────── checks ──────────────────────── */
 
-function buildChecks(f, blocked, lang) {
+export function buildChecks(f, blocked, lang) {
   const t = (ja, en) => (lang === "en" ? en : ja);
   const real = f.forms.filter((x) => x.fields >= 2 && !x.hasPassword && !x.onlySearch);
   const checks = [];
@@ -410,7 +558,7 @@ export function scoreOf(checks, blocked = []) {
   return score;
 }
 
-function verdictOf(score, lang) {
+export function verdictOf(score, lang) {
   const ja = score >= 85 ? "よく整っています"
     : score >= 65 ? "おおむね動きますが、改善の余地があります"
     : score >= 40 ? "エージェントが詰まりやすい状態です"

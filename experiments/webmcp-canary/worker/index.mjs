@@ -1,4 +1,4 @@
-import { handleDiagnose } from "./diagnose.mjs";
+import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { handleApi } from "./api.mjs";
 
@@ -49,6 +49,11 @@ export default {
       runLearningJob(env, { trigger: "scheduled" }).then((result) => {
         console.log("webmcp-learning", JSON.stringify(result));
       }),
+      runAeoScoreCron(env).then((result) => {
+        console.log("aeo-score-cron", JSON.stringify(result));
+      }).catch((error) => {
+        console.error("aeo-score-cron-error", JSON.stringify({ message: String(error?.message || error) }));
+      }),
     ]));
   },
 
@@ -61,7 +66,7 @@ export default {
       }
       return json({}, 204, request, env);
     }
-    if (url.pathname === "/api/diagnose") return handleDiagnose(request);
+    if (url.pathname === "/api/diagnose") return handleDiagnose(request, env);
 
     try {
       const requestOrigin = request.headers.get("origin");
