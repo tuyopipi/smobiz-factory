@@ -1,6 +1,7 @@
 import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { handleApi } from "./api.mjs";
+import { runAeoLearningJob } from "./aeo-learning.mjs";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -48,11 +49,18 @@ export default {
     ctx.waitUntil(Promise.all([
       runLearningJob(env, { trigger: "scheduled" }).then((result) => {
         console.log("webmcp-learning", JSON.stringify(result));
+      }).catch((error) => {
+        console.error("webmcp-learning-error", JSON.stringify({ message: String(error?.message || error) }));
       }),
       runAeoScoreCron(env).then((result) => {
         console.log("aeo-score-cron", JSON.stringify(result));
       }).catch((error) => {
         console.error("aeo-score-cron-error", JSON.stringify({ message: String(error?.message || error) }));
+      }),
+      runAeoLearningJob(env, { trigger: "scheduled" }).then((result) => {
+        console.log("aeo-learning", JSON.stringify(result));
+      }).catch((error) => {
+        console.error("aeo-learning-error", JSON.stringify({ message: String(error?.message || error) }));
       }),
     ]));
   },
