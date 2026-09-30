@@ -546,6 +546,53 @@ export async function handleApi(request, env, ctx) {
     return json({ sites });
   }
 
+  const aeoMetricsMatch = path.match(/^\/api\/sites\/([^/]+)\/aeo-metrics$/i);
+  if (aeoMetricsMatch && method === "GET") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent(aeoMetricsMatch[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+    }
+    const scoreLimit = Math.min(180, Math.max(1, Number.parseInt(url.searchParams.get("limit") || "30", 10) || 30));
+    const hitDays = Math.min(365, Math.max(1, Number.parseInt(url.searchParams.get("days") || "30", 10) || 30));
+    const hitCutoff = new Date(Date.now() - (hitDays - 1) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const [scoreResult, hitResult, activeRuleset] = await Promise.all([
+      env.DB.prepare(`
+        SELECT site_id,scanned_at,host,score,verdict,ruleset_version
+          FROM (
+            SELECT site_id,scanned_at,host,score,verdict,ruleset_version
+              FROM aeo_scores WHERE site_id=?
+             ORDER BY scanned_at DESC LIMIT ?
+          ) ORDER BY scanned_at ASC
+      `).bind(site.id, scoreLimit).all(),
+      env.DB.prepare(`
+        SELECT date,crawler_id,hits
+          FROM crawler_hits
+         WHERE site_id=? AND date>=?
+         ORDER BY date ASC,crawler_id ASC
+      `).bind(site.id, hitCutoff).all(),
+      env.DB.prepare("SELECT version FROM aeo_rulesets WHERE active=1 ORDER BY version DESC LIMIT 1").first(),
+    ]);
+    const liveDelivery = site.install_type !== "static";
+    return json({
+      site_id: site.id,
+      install_type: site.install_type,
+      scores: scoreResult.results || [],
+      crawler_hits: liveDelivery ? (hitResult.results || []) : [],
+      crawler_measurement: liveDelivery,
+      ruleset: {
+        version: liveDelivery ? Number(activeRuleset?.version || INITIAL_AEO_RULESET.version) : null,
+        latest_version: Number(activeRuleset?.version || INITIAL_AEO_RULESET.version),
+        auto_updates: liveDelivery,
+        status: liveDelivery ? "latest" : "static",
+      },
+      limits: { scores: scoreLimit, hit_days: hitDays },
+    });
+  }
+
   const scanMatch = path.match(/^\/api\/sites\/([^/]+)\/scan$/i);
   if (scanMatch && method === "POST") {
     const member = await requireMember(request, env);
