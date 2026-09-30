@@ -1,3 +1,4 @@
+/* Nurevo dashboard asset revision: 2026-10-01-asset1 */
 (function () {
   "use strict";
   var main = document.querySelector("#main"), side = document.querySelector(".side");
