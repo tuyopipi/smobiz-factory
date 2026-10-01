@@ -52,24 +52,38 @@ const ALLOWED_EVENT_KEYS = new Set(["type", "selector", "key", "timestampOffsetM
 const ALLOWED_VALIDITY_KEYS = new Set(["valueMissing", "typeMismatch", "patternMismatch", "tooShort", "tooLong", "rangeUnderflow", "rangeOverflow", "stepMismatch", "badInput", "customError", "valid"]);
 
 export default {
-  async scheduled(_event, env, ctx) {
-    ctx.waitUntil(Promise.all([
-      runLearningJob(env, { trigger: "scheduled" }).then((result) => {
-        console.log("webmcp-learning", JSON.stringify(result));
-      }).catch((error) => {
-        console.error("webmcp-learning-error", JSON.stringify({ message: String(error?.message || error) }));
-      }),
-      runAeoScoreCron(env).then((result) => {
-        console.log("aeo-score-cron", JSON.stringify(result));
-      }).catch((error) => {
-        console.error("aeo-score-cron-error", JSON.stringify({ message: String(error?.message || error) }));
-      }),
-      runAeoLearningJob(env, { trigger: "scheduled" }).then((result) => {
-        console.log("aeo-learning", JSON.stringify(result));
-      }).catch((error) => {
-        console.error("aeo-learning-error", JSON.stringify({ message: String(error?.message || error) }));
-      }),
-    ]));
+  async scheduled(event, env, ctx) {
+    const dailyCron = "17 18 * * *";
+    const weeklyCron = "17 18 * * 1";
+    const cron = String(event?.cron || "");
+    const jobs = [];
+
+    // Form learning and AEO diagnostics remain daily. AEO brain learning is weekly.
+    if (cron === dailyCron) {
+      jobs.push(
+        runLearningJob(env, { trigger: "scheduled" }).then((result) => {
+          console.log("webmcp-learning", JSON.stringify(result));
+        }).catch((error) => {
+          console.error("webmcp-learning-error", JSON.stringify({ message: String(error?.message || error) }));
+        }),
+        runAeoScoreCron(env).then((result) => {
+          console.log("aeo-score-cron", JSON.stringify(result));
+        }).catch((error) => {
+          console.error("aeo-score-cron-error", JSON.stringify({ message: String(error?.message || error) }));
+        }),
+      );
+    } else if (cron === weeklyCron) {
+      jobs.push(
+        runAeoLearningJob(env, { trigger: "scheduled" }).then((result) => {
+          console.log("aeo-learning", JSON.stringify(result));
+        }).catch((error) => {
+          console.error("aeo-learning-error", JSON.stringify({ message: String(error?.message || error) }));
+        }),
+      );
+    } else {
+      console.warn("scheduled-unknown-cron", JSON.stringify({ cron }));
+    }
+    if (jobs.length) ctx.waitUntil(Promise.all(jobs));
   },
 
   async fetch(request, env, ctx) {
