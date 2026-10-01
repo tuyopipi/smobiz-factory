@@ -2,6 +2,13 @@ import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { handleApi } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
+import dashboardRulesetsSource from "../public/dashboard-rulesets.js";
+import dashboardAeoMetricsSource from "../public/dashboard-aeo-metrics.js";
+
+const DASHBOARD_SCRIPT_SOURCES = new Map([
+  ["/dashboard-rulesets.js", dashboardRulesetsSource],
+  ["/dashboard-aeo-metrics.js", dashboardAeoMetricsSource],
+]);
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -387,6 +394,17 @@ export default {
         const auth = await requireAdmin(request, env);
         if (!auth.ok) return json({ error: auth.error }, auth.status, request, env);
         return json(await runLearningJob(env, { trigger: "manual" }), 200, request, env);
+      }
+
+      const dashboardScript = DASHBOARD_SCRIPT_SOURCES.get(url.pathname);
+      if (request.method === "GET" && dashboardScript) {
+        return new Response(dashboardScript, {
+          status: 200,
+          headers: {
+            "content-type": "application/javascript; charset=utf-8",
+            "cache-control": "no-cache, no-store, must-revalidate",
+          },
+        });
       }
 
       if (url.pathname === "/dashboard" || url.pathname === "/dashboard/") {
