@@ -6,13 +6,19 @@ import dashboardRulesetsSource from "../public/dashboard-rulesets.js";
 import dashboardAeoMetricsSource from "../public/dashboard-aeo-metrics.js";
 import englishTermsSource from "../public/en/terms/index.html";
 import englishPrivacySource from "../public/en/privacy/index.html";
+import tokushohoSource from "../public/tokushoho/index.html";
+import japaneseTermsSource from "../public/terms/index.html";
+import japanesePrivacySource from "../public/privacy/index.html";
 
 const DASHBOARD_SCRIPT_SOURCES = new Map([
   ["/dashboard-rulesets.js", dashboardRulesetsSource],
   ["/dashboard-aeo-metrics.js", dashboardAeoMetricsSource],
 ]);
 
-const ENGLISH_LEGAL_SOURCES = new Map([
+const LEGAL_PAGE_SOURCES = new Map([
+  ["/tokushoho", tokushohoSource],
+  ["/terms", japaneseTermsSource],
+  ["/privacy", japanesePrivacySource],
   ["/en/terms", englishTermsSource],
   ["/en/privacy", englishPrivacySource],
 ]);
@@ -428,9 +434,9 @@ export default {
         });
       }
 
-      const englishLegal = ENGLISH_LEGAL_SOURCES.get(url.pathname.replace(/\/$/, ""));
-      if (request.method === "GET" && englishLegal) {
-        return new Response(englishLegal, {
+      const legalPage = LEGAL_PAGE_SOURCES.get(url.pathname.replace(/\/$/, ""));
+      if (request.method === "GET" && legalPage) {
+        return new Response(legalPage, {
           status: 200,
           headers: {
             "content-type": "text/html; charset=utf-8",
