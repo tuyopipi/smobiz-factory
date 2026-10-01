@@ -4,10 +4,17 @@ import { handleApi } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 import dashboardRulesetsSource from "../public/dashboard-rulesets.js";
 import dashboardAeoMetricsSource from "../public/dashboard-aeo-metrics.js";
+import englishTermsSource from "../public/en/terms/index.html";
+import englishPrivacySource from "../public/en/privacy/index.html";
 
 const DASHBOARD_SCRIPT_SOURCES = new Map([
   ["/dashboard-rulesets.js", dashboardRulesetsSource],
   ["/dashboard-aeo-metrics.js", dashboardAeoMetricsSource],
+]);
+
+const ENGLISH_LEGAL_SOURCES = new Map([
+  ["/en/terms", englishTermsSource],
+  ["/en/privacy", englishPrivacySource],
 ]);
 
 const JSON_HEADERS = {
@@ -416,6 +423,17 @@ export default {
           status: 200,
           headers: {
             "content-type": "application/javascript; charset=utf-8",
+            "cache-control": "no-cache, no-store, must-revalidate",
+          },
+        });
+      }
+
+      const englishLegal = ENGLISH_LEGAL_SOURCES.get(url.pathname.replace(/\/$/, ""));
+      if (request.method === "GET" && englishLegal) {
+        return new Response(englishLegal, {
+          status: 200,
+          headers: {
+            "content-type": "text/html; charset=utf-8",
             "cache-control": "no-cache, no-store, must-revalidate",
           },
         });
