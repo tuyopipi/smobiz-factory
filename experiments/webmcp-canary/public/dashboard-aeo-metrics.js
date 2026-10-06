@@ -38,11 +38,43 @@
     if (!ruleset.auto_updates) return '<div class="nrv-ruleset static"><b>静的JSON-LD</b><span>自動更新されません（最新ruleset: v' + esc(ruleset.latest_version || '—') + '）</span></div>';
     return '<div class="nrv-ruleset latest"><b>ruleset v' + esc(ruleset.version || '—') + '</b><span>最新化されています · 中央ルールへ自動追従</span></div>';
   }
+  // Timestamps are stored as ISO strings; one that will not parse is shown as it
+  // came rather than as "Invalid Date".
+  function formatWhen(value) {
+    var at = new Date(value);
+    return Number.isFinite(at.getTime()) ? at.toLocaleString() : String(value);
+  }
+  // The score says how bad it is; the checklist says what to do about it. The
+  // dashboard showed only the former, so an operator could see a site failing
+  // with no indication of why or what to fix.
+  function checklist(metrics) {
+    var checks = metrics.checks || [];
+    if (!checks.length) return '<div class="nrv-aeo-empty">診断データなし</div>';
+    // Findings first: a passing check is reassurance, a failing one is work.
+    var rank = { BAD: 0, WARN: 1, OK: 2 };
+    var ordered = checks.slice().sort(function (a, b) {
+      var ra = rank[String(a.status).toUpperCase()], rb = rank[String(b.status).toUpperCase()];
+      return (ra === undefined ? 1 : ra) - (rb === undefined ? 1 : rb);
+    });
+    var rows = ordered.map(function (check) {
+      var status = String(check.status || '').toUpperCase();
+      var cls = status === 'OK' ? 'ok' : status === 'WARN' ? 'warn' : 'bad';
+      var mark = status === 'OK' ? '✓' : status === 'WARN' ? '!' : '×';
+      return '<li class="nrv-aeo-check is-' + cls + '">'
+        + '<span class="nrv-aeo-check-icon" aria-hidden="true">' + mark + '</span>'
+        + '<div><strong>' + esc(check.label || check.id || '') + '</strong>'
+        + '<p>' + esc(check.message || '') + '</p></div></li>';
+    }).join('');
+    var when = metrics.checked_at
+      ? '<p class="nrv-aeo-range"><span>診断時刻</span><span>' + esc(formatWhen(metrics.checked_at)) + '</span></p>'
+      : '';
+    return '<ol class="nrv-aeo-checks">' + rows + '</ol>' + when;
+  }
   function panel(metrics) {
     var section = document.createElement('section');
     section.className = 'nrv-aeo-metrics';
     section.dataset.siteId = metrics.site_id;
-    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>AEO計測</small><h2>検索AIへの届き方</h2></div>' + rulesetStatus(metrics) + '</div><div class="nrv-aeo-grid"><section><h3>AEOスコアの推移</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>AIクローラ来訪</h3>' + crawlerTable(metrics) + '</section></div></div>';
+    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>AEO計測</small><h2>検索AIへの届き方</h2></div>' + rulesetStatus(metrics) + '</div><div class="nrv-aeo-grid"><section><h3>AEOスコアの推移</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>AIクローラ来訪</h3>' + crawlerTable(metrics) + '</section></div><section class="nrv-aeo-checklist"><h3>診断チェックリスト</h3>' + checklist(metrics) + '</section></div>';
     return section;
   }
   async function resolveSiteId() {
@@ -68,7 +100,12 @@
     placeholder.innerHTML = '<div class="card panel"><p class="notice">AEO計測を読み込み中…</p></div>';
     main.appendChild(placeholder);
     try {
-      var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/aeo-metrics?limit=30&days=30', { credentials: 'include', cache: 'no-store' });
+      // Ask for the checklist in the language this page is written in. The
+      // endpoint otherwise negotiates on Accept-Language, which would put an
+      // English checklist inside the Japanese panel around it for anyone whose
+      // browser prefers English.
+      var lang = document.documentElement.lang || 'ja';
+      var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/aeo-metrics?limit=30&days=30&lang=' + encodeURIComponent(lang), { credentials: 'include', cache: 'no-store' });
       var metrics = await response.json();
       if (!response.ok) throw new Error(metrics.error || 'AEO計測を取得できませんでした');
       if (placeholder.isConnected) placeholder.replaceWith(panel(metrics));
@@ -83,7 +120,7 @@
     if (back) selectedSiteId = null;
   }, true);
   var style = document.createElement('style');
-  style.textContent = '.nrv-aeo-metrics{margin-top:18px}.nrv-aeo-heading{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px}.nrv-aeo-heading small{color:#6f4df6;font-weight:800}.nrv-aeo-heading h2{font-size:19px;margin:2px 0}.nrv-aeo-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.nrv-aeo-grid h3{font-size:14px;margin:0 0 12px}.nrv-aeo-score{display:flex;align-items:baseline;gap:5px}.nrv-aeo-score strong{font-size:36px;color:#4b31c6}.nrv-aeo-score b{margin-left:auto;font-size:12px;color:#667085}.nrv-aeo-score b.up{color:#128a48}.nrv-aeo-score b.down{color:#c83f49}.nrv-aeo-chart{display:block;width:100%;height:auto;min-height:120px;background:#faf9fe;border-radius:10px}.nrv-aeo-chart .axis{stroke:#ded9ea;stroke-width:1}.nrv-aeo-chart .line{fill:none;stroke:#6f4df6;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.nrv-aeo-chart circle{fill:#fff;stroke:#6f4df6;stroke-width:3}.nrv-aeo-range{display:flex;justify-content:space-between;color:#8b8498;font-size:10px}.nrv-ruleset{display:grid;gap:1px;border-radius:9px;padding:8px 11px;font-size:12px}.nrv-ruleset.latest{background:#eaf8ef;color:#176b3a}.nrv-ruleset.static,.nrv-aeo-warning{background:#fff7d6;border:1px solid #f0c75e;color:#6d5000}.nrv-ruleset span{font-size:11px}.nrv-aeo-warning,.nrv-aeo-empty{border-radius:9px;padding:14px;font-size:12px}.nrv-aeo-empty{background:#f6f7fb;color:#687080;text-align:center}.nrv-hit-cell{position:relative;min-width:100px}.nrv-hit-bar{display:block;height:20px;border-radius:5px;background:#dcd3ff}.nrv-hit-cell b{position:absolute;left:7px;top:0;line-height:20px;font-size:11px}.nrv-aeo-grid code{font-size:11px}@media(max-width:800px){.nrv-aeo-grid{grid-template-columns:1fr}}';
+  style.textContent = '.nrv-aeo-metrics{margin-top:18px}.nrv-aeo-heading{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px}.nrv-aeo-heading small{color:#6f4df6;font-weight:800}.nrv-aeo-heading h2{font-size:19px;margin:2px 0}.nrv-aeo-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.nrv-aeo-grid h3{font-size:14px;margin:0 0 12px}.nrv-aeo-score{display:flex;align-items:baseline;gap:5px}.nrv-aeo-score strong{font-size:36px;color:#4b31c6}.nrv-aeo-score b{margin-left:auto;font-size:12px;color:#667085}.nrv-aeo-score b.up{color:#128a48}.nrv-aeo-score b.down{color:#c83f49}.nrv-aeo-chart{display:block;width:100%;height:auto;min-height:120px;background:#faf9fe;border-radius:10px}.nrv-aeo-chart .axis{stroke:#ded9ea;stroke-width:1}.nrv-aeo-chart .line{fill:none;stroke:#6f4df6;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.nrv-aeo-chart circle{fill:#fff;stroke:#6f4df6;stroke-width:3}.nrv-aeo-range{display:flex;justify-content:space-between;color:#8b8498;font-size:10px}.nrv-ruleset{display:grid;gap:1px;border-radius:9px;padding:8px 11px;font-size:12px}.nrv-ruleset.latest{background:#eaf8ef;color:#176b3a}.nrv-ruleset.static,.nrv-aeo-warning{background:#fff7d6;border:1px solid #f0c75e;color:#6d5000}.nrv-ruleset span{font-size:11px}.nrv-aeo-warning,.nrv-aeo-empty{border-radius:9px;padding:14px;font-size:12px}.nrv-aeo-checklist{margin-top:22px;border-top:1px solid #efecf4;padding-top:18px}.nrv-aeo-checks{list-style:none;margin:0;padding:0}.nrv-aeo-check{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;padding:11px 0;border-top:1px solid #f3f1f7}.nrv-aeo-check:first-child{border-top:0}.nrv-aeo-check strong{display:block;font-size:13px}.nrv-aeo-check p{margin:2px 0 0;color:#6c6579;font-size:12px}.nrv-aeo-check-icon{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;color:#fff;font-size:12px;font-weight:800}.nrv-aeo-check.is-ok .nrv-aeo-check-icon{background:#1a9c6b}.nrv-aeo-check.is-warn .nrv-aeo-check-icon{background:#b7791f}.nrv-aeo-check.is-bad .nrv-aeo-check-icon{background:#d13b3b}.nrv-aeo-empty{background:#f6f7fb;color:#687080;text-align:center}.nrv-hit-cell{position:relative;min-width:100px}.nrv-hit-bar{display:block;height:20px;border-radius:5px;background:#dcd3ff}.nrv-hit-cell b{position:absolute;left:7px;top:0;line-height:20px;font-size:11px}.nrv-aeo-grid code{font-size:11px}@media(max-width:800px){.nrv-aeo-grid{grid-template-columns:1fr}}';
   document.head.appendChild(style);
   new MutationObserver(function () { mount(); }).observe(document.documentElement, { childList: true, subtree: true });
   setTimeout(mount, 500);

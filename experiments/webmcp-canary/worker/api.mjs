@@ -793,9 +793,9 @@ export async function handleApi(request, env, ctx) {
     const hitCutoff = new Date(Date.now() - (hitDays - 1) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const [scoreResult, hitResult, activeRuleset] = await Promise.all([
       env.DB.prepare(`
-        SELECT site_id,scanned_at,host,score,verdict,ruleset_version
+        SELECT site_id,scanned_at,host,score,verdict,ruleset_version,checks_json
           FROM (
-            SELECT site_id,scanned_at,host,score,verdict,ruleset_version
+            SELECT site_id,scanned_at,host,score,verdict,ruleset_version,checks_json
               FROM aeo_scores WHERE site_id=?
              ORDER BY scanned_at DESC LIMIT ?
           ) ORDER BY scanned_at ASC
@@ -809,10 +809,35 @@ export async function handleApi(request, env, ctx) {
       env.DB.prepare("SELECT version FROM aeo_rulesets WHERE active=1 ORDER BY version DESC LIMIT 1").first(),
     ]);
     const liveDelivery = site.install_type !== "static";
+    // The checklist of the most recent diagnosis: what this site should actually
+    // fix. History rows keep carrying only their score, because sending every
+    // past checklist would be a lot of payload for a chart.
+    //
+    // Every stored row was written with Japanese wording baked in, from before
+    // diagnoses localised. The ids and statuses are the durable part, so the
+    // wording is re-applied per request and the stored text is overwritten
+    // rather than trusted - the same reason /api/aeo/score localises on the way
+    // out. An id this build has no wording for keeps what it was stored with.
+    const scoreRows = scoreResult.results || [];
+    const latestRow = scoreRows.length ? scoreRows[scoreRows.length - 1] : null;
+    let latestChecks = [];
+    if (latestRow?.checks_json) {
+      try {
+        const parsed = JSON.parse(latestRow.checks_json);
+        if (Array.isArray(parsed)) latestChecks = localizeAeoChecks(parsed, requestedAeoLang(request, url));
+      } catch {
+        // A row written by an older or broken build is not worth failing the
+        // whole panel over; the history and crawler hits still render.
+        latestChecks = [];
+      }
+    }
+
     return json({
       site_id: site.id,
       install_type: site.install_type,
-      scores: scoreResult.results || [],
+      checks: latestChecks,
+      checked_at: latestRow?.scanned_at || null,
+      scores: scoreRows.map(({ checks_json, ...row }) => row),
       crawler_hits: liveDelivery ? (hitResult.results || []) : [],
       crawler_measurement: liveDelivery,
       ruleset: {
