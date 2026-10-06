@@ -757,7 +757,21 @@ export async function handleApi(request, env, ctx) {
         website_uri: row.website_uri || null,
         website_fingerprint: row.website_fingerprint || null,
         recommended_install_type: row.recommended_install_type || null,
-        billing: { status: row.contract === "active" ? "active" : row.contract === "unpaid" ? "unpaid" : row.contract === "cancelled" ? "stopped" : "pending", customer_id: row.stripe_customer_id || null, subscription_id: row.stripe_subscription_id || null },
+        // What the site is entitled to, decided the same way every other reader
+        // decides it. billed_plan and manual_plan are reported separately so the
+        // dashboard can say *why*: "pro, because it is paid for" reads very
+        // differently from "pro, because we granted it".
+        plan: resolveSitePlan(row),
+        billed_plan: normalizeAeoPlan(row.plan),
+        manual_plan: row.manual_plan || null,
+        contract: row.contract || null,
+        billing: { status: row.contract === "active" ? "active" : row.contract === "unpaid" ? "unpaid" : row.contract === "cancelled" ? "stopped" : row.contract === "past_due" ? "past_due" : "pending", customer_id: row.stripe_customer_id || null, subscription_id: row.stripe_subscription_id || null },
+        // The licence binding. The hash itself is never exposed - it identifies
+        // a secret - but whether a site is bound, to which domain and since when
+        // is what the operator needs to see.
+        bound: !!row.bound_license_hash,
+        bound_at: row.bound_at || null,
+        domain_key: row.domain_key || null,
         checklist,
       };
     });

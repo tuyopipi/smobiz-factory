@@ -51,6 +51,17 @@ UPDATE sites
    AND (stripe_subscription_id IS NULL OR trim(stripe_subscription_id) = '')
    AND manual_plan IS NULL;
 
+-- Now that the grant is recorded, plan must say what billing granted, which for
+-- these rows is nothing. Leaving the old tier in place would make the column
+-- lie: the dashboard reports it as "billed_plan" so an operator can tell a paid
+-- site from a granted one, and a stale value there claims someone is paying.
+-- resolveSitePlan() still returns the granted tier, so nothing is demoted.
+UPDATE sites
+   SET plan = 'free'
+ WHERE manual_plan IS NOT NULL
+   AND manual_plan_note = 'grandfathered by 0021: paid tier with no Stripe subscription'
+   AND (stripe_subscription_id IS NULL OR trim(stripe_subscription_id) = '');
+
 -- Wholesale sites are invoiced outside Stripe by design (the dashboard hides the
 -- payment UI for them), so they must not depend on a subscription existing.
 -- Their tier comes from the license they were provisioned with.
