@@ -866,6 +866,10 @@ export async function handleApi(request, env, ctx) {
       plan: "pro",
       beta: SOV_BETA,
       model_version: SOV_MODEL_VERSION,
+      // engineStatus() reports which engines are configured right now. The
+      // latest run carries the engines that actually produced it, which is what
+      // its numbers mean - a key added or removed since then does not
+      // retroactively change what was measured.
       ...engineStatus(env),
       latest: history.latest,
       trend: history.trend,

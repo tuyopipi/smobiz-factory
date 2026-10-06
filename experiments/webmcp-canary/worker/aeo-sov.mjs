@@ -26,6 +26,13 @@ export const SOV_BETA = true;
 export const SOV_MIN_SAMPLES_FOR_RATE = 2;
 
 /**
+ * The reasons a rate may be absent, which a reader must never collapse into 0%.
+ * `measured` is the only one that carries a number; the other two mean nothing
+ * was measurable, which is a different statement from "measured, and it is zero".
+ */
+export const RATE_BASES = Object.freeze(["measured", "insufficient_samples", "no_answers"]);
+
+/**
  * Cost control. These are hard limits enforced in code, not suggestions.
  * A pro site is measured weekly, so the monthly cap leaves headroom for a
  * small number of manual runs on top of the four scheduled ones.
@@ -566,17 +573,34 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
     JSON.stringify(result.engines || []), result.questions_asked || 0, result.answers_received || 0,
     result.queries_used || 0, result.appearance_rate, result.citation_rate, result.confidence,
     JSON.stringify(result.competitors || []),
-    JSON.stringify({ beta: SOV_BETA, truncated: !!result.truncated, brand: result.brand }),
+    // Keep what the aggregation already worked out. Without these the reader
+    // cannot tell a measured zero from an unmeasurable one, and cannot separate
+    // the engine that searches the web from the one answering out of model
+    // knowledge - it would have to recompute both from the mention rows and
+    // get the branded controls wrong doing it.
+    JSON.stringify({
+      beta: SOV_BETA,
+      truncated: !!result.truncated,
+      brand: result.brand,
+      rate_basis: result.rate_basis,
+      min_samples_for_rate: result.min_samples_for_rate,
+      by_engine: result.by_engine || [],
+      parser_control: result.parser_control ?? null,
+    }),
   ).run();
 
   const samples = (result.samples || []).slice(0, SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPerRun);
   for (const sample of samples) {
     await env.DB.prepare(`
       INSERT INTO aeo_sov_mentions
-        (run_id,site_id,engine,question,ok,brand_mentioned,brand_cited,competitor_hosts_json,answer_excerpt,error)
-      VALUES (?,?,?,?,?,?,?,?,?,?)
+        (run_id,site_id,engine,question,kind,ok,brand_mentioned,brand_cited,competitor_hosts_json,answer_excerpt,error)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?)
     `).bind(
-      id, siteId, sample.engine, sample.question, sample.ok ? 1 : 0,
+      id, siteId, sample.engine, sample.question,
+      // Recorded so a later reader can exclude the controls the aggregation
+      // already excluded, instead of silently folding them into the rate.
+      sample.kind === "branded" ? "branded" : "discovery",
+      sample.ok ? 1 : 0,
       sample.mentioned ? 1 : 0, sample.cited ? 1 : 0,
       JSON.stringify(sample.competitorHosts || []), sample.excerpt || null, sample.error || null,
     ).run();
@@ -584,21 +608,52 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
   return { id, ran_at: ranAt };
 }
 
+/**
+ * Why a run reports no rate.
+ *
+ * Runs written before 0022 did not store this, so it is recomputed from the
+ * answer count using the same threshold the aggregation applied. That keeps an
+ * old row readable without inventing anything: the answer count and the
+ * threshold are exactly what decided the rate in the first place.
+ */
+export function deriveRateBasis(answersReceived) {
+  const answers = Number(answersReceived || 0);
+  if (answers === 0) return "no_answers";
+  return answers >= SOV_MIN_SAMPLES_FOR_RATE ? "measured" : "insufficient_samples";
+}
+
 /** Latest run plus the trend series the dashboard graphs. */
 export async function loadSovHistory(env, siteId, { limit = 26 } = {}) {
   const bounded = Math.min(52, Math.max(1, limit));
   const result = await env.DB.prepare(`
     SELECT id,ran_at,status,trigger,appearance_rate,citation_rate,confidence,
-           questions_asked,answers_received,queries_used,competitors_json,engines_json
+           questions_asked,answers_received,queries_used,competitors_json,engines_json,detail_json
       FROM aeo_sov_runs WHERE site_id=? ORDER BY ran_at DESC LIMIT ?
   `).bind(siteId, bounded).all();
   const rows = result.results || [];
   const latest = rows[0] || null;
+  const detail = latest ? safeJsonObject(latest.detail_json) : {};
   return {
     latest: latest ? {
       ...latest,
-      competitors: safeJsonArray(latest.competitors_json),
+      // Aggregators were already dropped when the answer was analysed. Applying
+      // the same list again on the way out means a row written by an older
+      // build - or edited by hand - cannot put tabelog back in front of the
+      // operator as if it were a competitor.
+      competitors: safeJsonArray(latest.competitors_json)
+        .filter((entry) => entry && !isAggregator(String(entry.host || ""))),
       engines: safeJsonArray(latest.engines_json),
+      // Stored since 0022; derived for anything older. A row that predates the
+      // per-engine split reports an empty breakdown rather than one recomputed
+      // from mention rows, which could not tell a branded control apart.
+      rate_basis: RATE_BASES.includes(detail.rate_basis)
+        ? detail.rate_basis
+        : deriveRateBasis(latest.answers_received),
+      rate_basis_derived: !RATE_BASES.includes(detail.rate_basis),
+      min_samples_for_rate: Number(detail.min_samples_for_rate) || SOV_MIN_SAMPLES_FOR_RATE,
+      by_engine: asArray(detail.by_engine),
+      parser_control: detail.parser_control ?? null,
+      truncated: !!detail.truncated,
     } : null,
     trend: rows.slice().reverse().map((row) => ({
       ran_at: row.ran_at,
@@ -616,6 +671,23 @@ export async function loadSovHistory(env, siteId, { limit = 26 } = {}) {
 
 function safeJsonArray(value) {
   try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed : []; } catch { return []; }
+}
+
+/** A stored JSON object, or {} for anything unreadable - including JSON that
+ *  parses to an array or a scalar, which would otherwise read as an object with
+ *  no keys and silently lose the distinction. */
+function safeJsonObject(value) {
+  try {
+    const parsed = JSON.parse(value);
+    return parsed && typeof parsed === "object" && !Array.isArray(parsed) ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+/** An already-parsed value that should be a list. */
+function asArray(value) {
+  return Array.isArray(value) ? value : [];
 }
 
 function firstNonEmpty(...values) {

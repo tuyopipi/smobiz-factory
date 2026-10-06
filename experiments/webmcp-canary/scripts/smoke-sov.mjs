@@ -190,7 +190,10 @@ for (const target of TARGETS) {
   console.log(`  競合                        : ${JSON.stringify(measurement.competitors)}`);
   console.log(`  このターゲットの消費        : ${measurement.queries_used}\n`);
 
-  // Record the run exactly as the production path would.
+  // Record the run with the same columns and the same detail_json shape
+  // storeSovRun() writes. The per-probe aeo_sov_mentions rows are not written
+  // here - this script exists to check the engines answer, not to reproduce the
+  // whole persistence path.
   const runId = `sov_smoke_${target.id}_${Date.now().toString(36)}`;
   d1([
     `INSERT OR REPLACE INTO aeo_sov_runs (id,site_id,ran_at,status,trigger,model_version,engines_json,`,
@@ -201,7 +204,17 @@ for (const target of TARGETS) {
     `${measurement.appearance_rate === null ? "NULL" : measurement.appearance_rate},`,
     `${measurement.citation_rate === null ? "NULL" : measurement.citation_rate},`,
     `${sqlString(measurement.confidence)},${sqlString(JSON.stringify(measurement.competitors))},`,
-    `${sqlString(JSON.stringify({ rate_basis: measurement.rate_basis, parser_control: measurement.parser_control, by_engine: measurement.by_engine }))});`,
+    // Same detail_json shape storeSovRun() writes. It used to differ, so a
+    // smoke row and a real row disagreed about what this column contains.
+    `${sqlString(JSON.stringify({
+      beta: measurement.beta,
+      truncated: !!measurement.truncated,
+      brand: measurement.brand,
+      rate_basis: measurement.rate_basis,
+      min_samples_for_rate: measurement.min_samples_for_rate,
+      by_engine: measurement.by_engine || [],
+      parser_control: measurement.parser_control ?? null,
+    }))});`,
     `INSERT INTO aeo_sov_usage (site_id,month,queries_used,updated_at) VALUES (${sqlString(target.id)},'${month}',${measurement.queries_used},${sqlString(new Date().toISOString())})`,
     `ON CONFLICT(site_id,month) DO UPDATE SET queries_used=queries_used+excluded.queries_used,updated_at=excluded.updated_at;`,
   ].join("\n"));

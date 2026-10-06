@@ -146,6 +146,9 @@ CREATE TABLE IF NOT EXISTS aeo_sov_mentions (
   site_id TEXT NOT NULL,
   engine TEXT NOT NULL,
   question TEXT NOT NULL,
+  -- 'branded' probes name the business in the prompt and only check the mention
+  -- parser; they are reported separately and never scored. See 0022.
+  kind TEXT NOT NULL DEFAULT 'discovery' CHECK (kind IN ('discovery', 'branded')),
   ok INTEGER NOT NULL DEFAULT 1 CHECK (ok IN (0, 1)),
   brand_mentioned INTEGER NOT NULL DEFAULT 0 CHECK (brand_mentioned IN (0, 1)),
   brand_cited INTEGER NOT NULL DEFAULT 0 CHECK (brand_cited IN (0, 1)),
@@ -158,6 +161,8 @@ CREATE INDEX IF NOT EXISTS idx_aeo_sov_mentions_run
   ON aeo_sov_mentions(run_id);
 CREATE INDEX IF NOT EXISTS idx_aeo_sov_mentions_site
   ON aeo_sov_mentions(site_id, engine);
+CREATE INDEX IF NOT EXISTS idx_aeo_sov_mentions_run_kind
+  ON aeo_sov_mentions(run_id, kind);
 
 CREATE TABLE IF NOT EXISTS aeo_sov_usage (
   site_id TEXT NOT NULL,
