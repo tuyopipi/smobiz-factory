@@ -33,31 +33,68 @@ p{margin:0;} a{color:inherit; text-decoration:none;} img{max-width:100%;display:
 
 /* nav */
 header.nav{position:sticky; top:0; z-index:60; background:rgba(255,249,245,.86); backdrop-filter:blur(16px); border-bottom:1px solid rgba(238,230,239,.9);}
-header.nav .wrap{display:flex; align-items:center; gap:18px; padding-block:14px;}
-.brand{display:flex; align-items:center; gap:10px; font-weight:900; font-size:23px; letter-spacing:-.04em;}
+/* The bar gets a wider track than the text column: at the shared 1180px the
+   German and French label sets overflow at every desktop width. */
+header.nav .wrap{display:flex; align-items:center; gap:18px; padding-block:14px; max-width:1320px;}
+/* flex:none - without it the wordmark is the item that shrinks when the row runs
+   out of room, and the first nav link slides on top of it. */
+.brand{display:flex; align-items:center; gap:10px; font-weight:900; font-size:23px; letter-spacing:-.04em; flex:none;}
 .brand .mk{width:34px; height:34px; border-radius:11px; background:conic-gradient(from 200deg,var(--purple),var(--pink),var(--amber),var(--purple)); display:grid; place-items:center; box-shadow:0 8px 18px -6px rgba(111,77,246,.5);}
 .brand .mk::after{content:""; width:14px; height:14px; border-radius:5px; background:#fff;}
 .nav-links{display:flex; gap:24px; margin-left:auto; font-size:14.5px; font-weight:600; color:var(--muted);}
+/* A link may be dropped from the row, but never broken across two lines. */
+.nav-links a{white-space:nowrap;}
 .nav-links a:hover{color:var(--ink);}
+header.nav .btn{white-space:nowrap;} .login-link{white-space:nowrap;}
+/* German and Spanish labels are roughly twice the Japanese width, so the row is
+   tightened and then thinned out before it can start wrapping. */
+@media(max-width:1340px){ header.nav .wrap{gap:12px;} .nav-links{gap:16px; font-size:14px;} }
+/* Log in and Get started are account entry points and stay on the bar at every
+   width. Only the sales-partner link - a niche audience, also linked in the
+   footer - steps aside when German or French run the row out of room. */
+@media(max-width:1220px){ .nav-links{gap:13px; font-size:13.5px;} header.nav .btn.ghost.sm{display:none;} }
+/* 961-1040px: the last band before the links drop out entirely at 960. */
+@media(max-width:1040px){ .nav-links{gap:10px; font-size:13px;} }
 .lang{font-weight:700; font-size:13.5px; color:var(--ink); border:1px solid #eadff0; background:#fff; border-radius:999px; padding:9px 12px; cursor:pointer; font-family:var(--sans);}
 @media(max-width:960px){ .nav-links{display:none;} }
 
 /* hero */
 .hero{position:relative; overflow:hidden;
   background:radial-gradient(40rem 30rem at 8% 8%,rgba(255,93,143,.14),transparent 55%),radial-gradient(44rem 32rem at 96% 10%,rgba(111,77,246,.18),transparent 58%),radial-gradient(40rem 30rem at 60% 100%,rgba(18,179,166,.12),transparent 60%),var(--bg);}
-.hero .wrap{display:grid; grid-template-columns:1.14fr 0.86fr; gap:clamp(28px,3.5vw,48px); align-items:center; padding-block:clamp(52px,7vw,88px);}
-@media(max-width:960px){ .hero .wrap{grid-template-columns:1fr; gap:40px;} }
+.hero .wrap{display:grid; grid-template-columns:minmax(0,1fr) minmax(360px,420px); gap:clamp(28px,3.5vw,48px); align-items:center; padding-block:clamp(52px,7vw,88px);}
+@media(max-width:1100px){ .hero .wrap{grid-template-columns:minmax(0,1fr) minmax(320px,380px);} }
+@media(max-width:960px){ .hero .wrap{grid-template-columns:minmax(0,1fr); gap:40px; justify-items:center;} }
 .hero .kick{background:#fff; color:var(--purple-d); box-shadow:var(--sh-sm);}
-.hero h1{font-size:clamp(27px,4.4vw,50px); line-height:1.16; letter-spacing:-.03em; white-space:nowrap;}
+.hero h1{font-size:clamp(27px,4.4vw,50px); line-height:1.16; letter-spacing:-.03em; text-wrap:balance;}
 .hero h1 .hl{color:var(--purple);} .hero h1 .hl2{color:var(--pink);}
 .hero .lead{margin-top:22px; font-size:clamp(17px,1.9vw,21px); color:#4a4458; max-width:40ch; font-weight:500;}
 .hero .cta{margin-top:32px; display:flex; flex-wrap:wrap; gap:13px;}
 .hero .note{margin-top:16px; font-size:13.5px; color:var(--muted); font-weight:600;}
 
+/* hero AI-readability checker (eye-catch) */
+.sr-only{position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;}
+.herocheck{margin-top:28px; background:#fff; border:1px solid #efe7f4; border-radius:var(--r); padding:clamp(20px,2.4vw,28px); box-shadow:var(--sh); max-width:560px;}
+.herocheck h2{font-size:clamp(19px,2.3vw,26px); line-height:1.3; letter-spacing:-.02em;}
+.herocheck h2 .hl{color:var(--purple);}
+.herocheck .sub{margin-top:9px; font-size:14px; color:var(--muted); font-weight:500;}
+.herocheck .row{margin-top:17px; display:flex; gap:10px;}
+.herocheck input{flex:1; min-width:0; font-family:var(--sans); font-size:16px; font-weight:600; color:var(--ink); background:#fbf9fe; border:2px solid #e7ddf0; border-radius:999px; padding:14px 20px;}
+.herocheck input::placeholder{color:#a79fb4; font-weight:500;}
+.herocheck input:focus{outline:none; border-color:var(--purple); background:#fff; box-shadow:0 0 0 4px rgba(111,77,246,.16);}
+.herocheck input[aria-invalid="true"]{border-color:var(--pink); background:#fff;}
+.herocheck .row .btn{flex:none; white-space:nowrap;}
+.herocheck .err{margin-top:11px; font-size:13.5px; font-weight:700; color:#d33c6a;}
+.herocheck .note{margin-top:13px; font-size:12.5px; color:var(--faint); font-weight:600;}
+@media(max-width:620px){ .herocheck{max-width:none;} .herocheck .row{flex-direction:column;} .herocheck .row .btn{width:100%;} }
+
 /* hero collage */
-.collage{position:relative; min-height:440px;}
-.collage .main{position:relative; z-index:3; background:#fff; border-radius:26px; box-shadow:var(--sh-lg); overflow:hidden; border:1px solid #f0e9f2; max-width:420px; margin-left:auto;}
+/* The bottom padding is the landing strip for the two chips below the card. */
+.collage{position:relative; width:100%; max-width:420px; margin-inline:auto; padding-block:26px 68px;}
+.collage .main{position:relative; z-index:3; background:#fff; border-radius:26px; box-shadow:var(--sh-lg); overflow:hidden; border:1px solid #f0e9f2; width:100%;}
 .collage .main .photo{height:172px; background:linear-gradient(120deg,#ffd9e5,#e7e0ff 55%,#d6f5f0); position:relative; display:grid; place-items:center;}
+/* The hero image is real markup (good LCP) and is not injected by JS, so it
+   needs the same sizing the case photos get from the loader. */
+.collage .main .photo img{width:100%; height:100%; object-fit:cover;}
 .collage .main .photo .ph{font-size:11px; font-weight:800; color:rgba(90,60,110,.6); background:rgba(255,255,255,.7); padding:5px 12px; border-radius:999px;}
 .collage .main .photo .badge{position:absolute; left:18px; bottom:-20px; width:58px; height:58px; border-radius:17px; background:#fff; box-shadow:var(--sh-sm); display:grid; place-items:center; font-size:27px; z-index:2;}
 .collage .main .bd{padding:28px 20px 22px;}
@@ -65,16 +102,36 @@ header.nav .wrap{display:flex; align-items:center; gap:18px; padding-block:14px;
 .collage .main .aiq{margin-top:16px; background:#f7f4ff; border-radius:14px; padding:12px 14px; font-size:13px;} .collage .main .aiq b{color:var(--purple-d);}
 .collage .main .aia{margin-top:10px; display:flex; flex-direction:column; gap:7px;}
 .collage .main .aia .r{display:flex; gap:9px; font-size:12.5px;} .collage .main .aia .r .k{color:var(--faint); min-width:52px;} .collage .main .aia .r .v{font-weight:700;}
-.chip{position:absolute; z-index:4; background:#fff; border-radius:14px; box-shadow:var(--sh); padding:11px 15px; font-weight:800; font-size:14px; display:flex; align-items:center; gap:9px;}
-.chip .ic{width:26px; height:26px; border-radius:8px; display:grid; place-items:center; color:#fff; font-size:14px;}
-.chip.c1{top:6px; left:-6px;} .chip.c1 .ic{background:var(--amber);}
-.chip.c2{top:172px; left:-30px;} .chip.c2 .ic{background:var(--teal);}
-.chip.c3{bottom:36px; left:6px;} .chip.c3 .ic{background:var(--pink);}
-.chip.c4{bottom:-6px; right:14px;} .chip.c4 .ic{background:var(--blue);}
+/* Chips sit on the photo band and just outside the card's bottom edge, never
+   over the body text, and never on top of each other. A long translation wraps
+   inside the chip instead of widening it into its neighbour. */
+/* c1 and c2 overlay the photo band; c3 and c4 sit below the card. None of them
+   cross the body text, and the width caps keep the bottom pair from meeting
+   however long the translation is. */
+.chip{position:absolute; z-index:4; background:#fff; border-radius:14px; box-shadow:var(--sh); padding:9px 13px; font-weight:800; font-size:13.5px; line-height:1.35; display:flex; align-items:center; gap:8px;}
+.chip .ic{width:24px; height:24px; flex:none; border-radius:8px; display:grid; place-items:center; color:#fff; font-size:13px;}
+.chip.c1{top:4px; left:-14px; max-width:min(60%,215px);} .chip.c1 .ic{background:var(--amber);}
+.chip.c2{top:104px; right:-14px; max-width:min(58%,205px);} .chip.c2 .ic{background:var(--teal);}
+/* Anchored by top, not bottom: a chip whose text wraps to two lines then grows
+   downward into the padding instead of upward over the card's body text. */
+.chip.c3{top:calc(100% - 58px); left:-10px; max-width:46%;} .chip.c3 .ic{background:var(--pink);}
+.chip.c4{top:calc(100% - 58px); right:-10px; max-width:46%;} .chip.c4 .ic{background:var(--blue);}
+@media(max-width:1100px){ .chip{font-size:12.5px;} .chip.c1,.chip.c3{left:-8px;} .chip.c2,.chip.c4{right:-8px;} }
 .blob{position:absolute; border-radius:50%; filter:blur(6px); z-index:1;}
-.blob.b1{width:150px; height:150px; background:rgba(255,176,46,.35); top:-20px; right:30px;}
-.blob.b2{width:120px; height:120px; background:rgba(18,179,166,.3); bottom:0; right:-10px;}
-@media(max-width:520px){ .chip.c1,.chip.c2{left:0;} }
+.blob.b1{width:150px; height:150px; background:rgba(255,176,46,.35); top:-8px; right:20px;}
+.blob.b2{width:120px; height:120px; background:rgba(18,179,166,.3); bottom:4px; right:-8px;}
+/* Below this the card is the full column width; keep only the two chips that
+   still have clear space so none of them collide or hang off the edge. */
+@media(max-width:560px){
+  /* c3 moves up alongside the card here, so no bottom landing strip is needed. */
+  .collage{max-width:none; padding-block:22px;}
+  .chip{font-size:12.5px;}
+  .chip.c1{left:0; max-width:70%;}
+  /* On the photo band, below c1: the card is full width here, so a chip under
+     it would sit on the opening hours. */
+  .chip.c3{left:0; top:112px; max-width:70%;}
+  .chip.c2,.chip.c4{display:none;}
+}
 
 /* engines (logos) */
 .engines{padding-block:30px; text-align:center;}
@@ -145,13 +202,16 @@ section{padding-block:clamp(60px,7vw,96px);}
 .stat .n{font-size:clamp(34px,5vw,52px); font-weight:900; letter-spacing:-.04em;} .stat .l{font-size:14px; opacity:.9; margin-top:4px; font-weight:600;}
 
 /* pricing */
-.plans{display:grid; grid-template-columns:1fr 1fr; gap:22px; margin-top:44px; max-width:900px; margin-inline:auto;}
-@media(max-width:720px){ .plans{grid-template-columns:1fr;} }
-.plan{background:#fff; border-radius:var(--r); padding:34px; box-shadow:var(--sh-sm); display:flex; flex-direction:column; position:relative; border:2px solid transparent;}
+.plans{display:grid; grid-template-columns:repeat(3,1fr); gap:20px; margin-top:44px; max-width:1060px; margin-inline:auto; align-items:stretch;}
+@media(max-width:980px){ .plans{grid-template-columns:1fr; max-width:520px;} }
+.plan{background:#fff; border-radius:var(--r); padding:32px 28px; box-shadow:var(--sh-sm); display:flex; flex-direction:column; position:relative; border:2px solid transparent;}
+.plan[data-badge]::after{content:attr(data-badge); position:absolute; top:22px; right:22px; font-size:11px; font-weight:900; padding:5px 12px; border-radius:999px; white-space:nowrap;}
 .plan.pro{border-color:var(--purple); box-shadow:var(--sh-lg);}
-.plan.pro::after{content:attr(data-badge); position:absolute; top:24px; right:24px; font-size:11px; font-weight:900; color:#fff; background:var(--pink); padding:5px 13px; border-radius:999px;}
+.plan.pro[data-badge]::after{background:var(--pink); color:#fff;}
+.plan.beta{border-color:#f2e4c6;}
+.plan.beta[data-badge]::after{background:var(--amber); color:#5a3c00;}
 .plan .nm{font-weight:800; color:var(--muted); font-size:14px;}
-.plan .pr{font-size:44px; font-weight:900; letter-spacing:-.04em; margin:8px 0 4px;} .plan .pr small{font-size:15px; font-weight:600; color:var(--muted);}
+.plan .pr{font-size:clamp(34px,3.4vw,42px); font-weight:900; letter-spacing:-.04em; margin:8px 0 4px;} .plan .pr small{font-size:14px; font-weight:600; color:var(--muted);}
 .plan .desc{color:var(--muted); font-size:14px; margin-bottom:18px;}
 .plan ul{list-style:none; margin:0 0 26px; padding:0; display:grid; gap:11px;} .plan li{display:flex; gap:10px; font-size:15px; color:var(--muted);} .plan li::before{content:"✓"; color:var(--purple); font-weight:900;}
 .plan .btn{margin-top:auto;}
@@ -203,16 +263,27 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 .keyrow{margin-top:26px; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; background:var(--wash); border-radius:var(--r); padding:22px 26px;}
 .keyrow span{font-weight:700; color:var(--purple-d);}
 @media(max-width:560px){
-  header.nav .wrap{gap:9px;}
+  header.nav .wrap{gap:9px; flex-wrap:wrap; row-gap:8px;}
+  header.nav .btn.ghost.sm{display:none;}
   .brand{font-size:19px;} .brand .mk{width:28px; height:28px;}
-  .login-link{display:none;}
+  .login-link{font-size:13px;}
   .lang{padding:7px 8px; font-size:12px; max-width:118px;}
   header.nav .btn.sm{padding:8px 12px; font-size:13px;}
+}
+/* Phone widths: Log in and the primary CTA both have to stay on the bar, so the
+   wordmark gives way to the logo alone (the img keeps alt="Nurevo") and the
+   language select tightens. Below ~360px the row is allowed to wrap - both
+   links remain visible, which is what matters. */
+@media(max-width:480px){ .brand .bw{display:none;} }
+@media(max-width:400px){
+  header.nav .wrap{gap:7px;}
+  .lang{padding:6px 6px;}
+  header.nav .btn.sm{padding:8px 10px;}
 }
 </style>
 
 <header class="nav"><div class="wrap">
-  <a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo" style="width:28px;height:28px;object-fit:contain">Nurevo</a>
+  <a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo" style="width:28px;height:28px;object-fit:contain"><span class="bw">Nurevo</span></a>
   <nav class="nav-links"><a href="#cases" data-i18n="nav.cases">活用シーン</a><a href="#how" data-i18n="nav.how">仕組み</a><a href="#features" data-i18n="nav.feat">機能</a><a href="#pricing" data-i18n="nav.pricing">料金</a><a href="#company" data-i18n="nav.company">会社概要</a></nav>
   <select class="lang" aria-label="Language" onchange="setLang(this.value)">
     <option value="ja">🇯🇵 日本語</option><option value="en">🇬🇧 English</option><option value="zh">🇨🇳 简体中文</option><option value="zh-TW">🇹🇼 繁體中文</option><option value="ko">🇰🇷 한국어</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option>
@@ -228,6 +299,19 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
     <span class="kick" data-i18n="hero.kick">AI検索の時代の、集客インフラ</span>
     <h1 data-i18n-html="hero.h1">AIが、あなたのお店を<br><span class="hl">見つけて</span><span class="hl2">案内する</span>。</h1>
     <p class="lead" data-i18n="hero.lead">ChatGPTもGeminiも、あなたのサイトを正確に理解。構造化データもllms.txtも、GTMかWordPressでタグ1本。</p>
+
+    <form class="herocheck" id="heroCheck" novalidate>
+      <h2 data-i18n-html="herocheck.h">あなたのサイト、<span class="hl">AIにちゃんと読まれてる？</span></h2>
+      <p class="sub" data-i18n="herocheck.sub">URLを入れるだけ。登録不要・無料でAI可読スコアを診断します。</p>
+      <div class="row">
+        <label class="sr-only" for="heroCheckUrl" data-i18n="herocheck.label">診断するサイトのURL</label>
+        <input id="heroCheckUrl" name="url" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="example.com" data-i18n-ph="herocheck.ph" required>
+        <button type="submit" class="btn primary" data-i18n="herocheck.cta">URLで無料診断</button>
+      </div>
+      <p class="err" id="heroCheckErr" role="alert" hidden data-i18n="herocheck.err">サイトのURLを入力してください（例：example.com）。</p>
+      <p class="note" data-i18n="herocheck.note">AIクローラー到達性・構造化データ・llms.txt など8項目を即時チェック</p>
+    </form>
+
     <div class="cta"><a href="#install" class="btn pink lg" data-i18n="hero.cta1">今すぐ導入する</a><a href="#how" class="btn ghost lg" data-i18n="hero.cta2">仕組みを見る</a></div>
     <p class="note" data-i18n="hero.note">WordPress公式プラグイン掲載 ・ 5分で導入 ・ 主要AI対応</p>
   </div>
@@ -236,16 +320,16 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
     <span class="chip c1"><span class="ic">★</span><span data-i18n="chip.1">4.7の評価も伝わる</span></span>
     <span class="chip c2"><span class="ic">◷</span><span data-i18n="chip.2">営業時間もAIが把握</span></span>
     <span class="chip c3"><span class="ic">✎</span><span data-i18n="chip.3">予約もそのまま</span></span>
-    <span class="chip c4"><span class="ic">◎</span>AI ready</span>
+    <span class="chip c4"><span class="ic">◎</span><span data-i18n="chip.4">AI ready</span></span>
     <div class="main">
       <div class="photo"><img src="assets/img/hero-store.webp" alt="自然光が入る明るい日本のヘアサロン内観" loading="eager"><span class="badge">💇</span></div>
       <div class="bd">
-        <h4>ルミナ 表参道</h4>
+        <h4 data-i18n="hero.card.name">ルミナ 表参道</h4>
         <div class="sub" data-i18n="hero.card.sub">美容室 ・ カット / カラー / ヘッドスパ</div>
-        <div class="aiq"><b>AI：</b><span data-i18n="hero.card.q">「表参道でおすすめの美容室は？」への回答に、あなたのお店が正確に登場。</span></div>
+        <div class="aiq"><b data-i18n="hero.card.ai">AI：</b><span data-i18n="hero.card.q">「表参道でおすすめの美容室は？」への回答に、あなたのお店が正確に登場。</span></div>
         <div class="aia">
-          <div class="r"><span class="k" data-i18n="lbl.hours">営業</span><span class="v">火〜日 11:00–20:00</span></div>
-          <div class="r"><span class="k" data-i18n="lbl.rating">評価</span><span class="v">★ 4.7（213件）</span></div>
+          <div class="r"><span class="k" data-i18n="lbl.hours">営業</span><span class="v" data-i18n="hero.card.hours">火〜日 11:00–20:00</span></div>
+          <div class="r"><span class="k" data-i18n="lbl.rating">評価</span><span class="v" data-i18n="hero.card.rating">★ 4.7（213件）</span></div>
           <div class="r"><span class="k" data-i18n="lbl.book">予約</span><span class="v" data-i18n="hero.card.book">オンライン・当日可</span></div>
         </div>
       </div>
@@ -292,7 +376,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
   <div class="head"><span class="kick kick2" data-i18n="feat.kick">できること</span><h2 data-i18n-html="feat.h2">“実行”を、<br>まるごと自動化。</h2></div>
   <div class="fb">
     <div class="txt"><span class="kick3" style="background:var(--wash);color:var(--purple-d)" data-i18n="feat.1.k">サーバーサイド構造化データ</span><h3 data-i18n="feat.1.t">JavaScriptを実行しないAIにも、確実に届く。</h3><p data-i18n="feat.1.p">店舗(LocalBusiness)などのschema.orgをサイト側で出力。GPTBotのようなクローラーにも、正確な情報が読み取られます。</p><ul><li data-i18n="feat.1.l1">業種・住所・営業時間・評価・予約に対応</li><li data-i18n="feat.1.l2">WordPress設定から自動生成</li></ul></div>
-    <div class="viz"><div class="panel p1"><div class="minibrowser"><div class="cr"><i></i><i></i><i></i></div><div class="cbody"><div class="codewrap"><span class="ky">"@type"</span>: <span class="st">"HairSalon"</span>,<br><span class="ky">"name"</span>: <span class="st">"ルミナ 表参道"</span>,<br><span class="ky">"openingHours"</span>: <span class="st">"Tu-Su 11-20"</span>,<br><span class="ky">"aggregateRating"</span>: <span class="nu">4.7</span>,<br><span class="ky">"potentialAction"</span>: <span class="st">"ReserveAction"</span></div></div></div></div></div>
+    <div class="viz"><div class="panel p1"><div class="minibrowser"><div class="cr"><i></i><i></i><i></i></div><div class="cbody"><div class="codewrap"><span class="ky">"@type"</span>: <span class="st">"HairSalon"</span>,<br><span class="ky">"name"</span>: <span class="st">"Lumina Omotesando"</span>,<br><span class="ky">"openingHours"</span>: <span class="st">"Tu-Su 11-20"</span>,<br><span class="ky">"aggregateRating"</span>: <span class="nu">4.7</span>,<br><span class="ky">"potentialAction"</span>: <span class="st">"ReserveAction"</span></div></div></div></div></div>
   </div>
   <div class="fb rev">
     <div class="txt"><span class="kick3" style="background:#e6faf6;color:var(--teal)" data-i18n="feat.2.k">ダッシュボード</span><h3 data-i18n="feat.2.t">AIに、どれだけ届いているか。</h3><p data-i18n="feat.2.p">AI可視性スコアで、AIにどれだけ正しく理解されているかを一目で。改善点も自動で提示します。</p><ul><li data-i18n="feat.2.l1">AI可視性スコアで現状を把握</li><li data-i18n="feat.2.l2">改善アクションを自動で提案</li></ul></div>
@@ -339,18 +423,52 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 
 <!-- STATS -->
 <div class="stats"><div class="wrap">
-  <div class="stat"><div class="n">5分</div><div class="l" data-i18n="stat.1">で導入完了</div></div>
-  <div class="stat"><div class="n">7種+</div><div class="l" data-i18n="stat.2">の対応AIクローラー</div></div>
-  <div class="stat"><div class="n">¥3,000</div><div class="l" data-i18n="stat.3">月・サイト〜</div></div>
-  <div class="stat"><div class="n">2億+</div><div class="l" data-i18n="stat.4">世界の対象事業者</div></div>
+  <div class="stat"><div class="n" data-i18n="stat.1.n">5分</div><div class="l" data-i18n="stat.1">で導入完了</div></div>
+  <div class="stat"><div class="n" data-i18n="stat.2.n">7種+</div><div class="l" data-i18n="stat.2">の対応AIクローラー</div></div>
+  <div class="stat"><div class="n" data-i18n="stat.3.n">¥0</div><div class="l" data-i18n="stat.3">から始められる</div></div>
+  <div class="stat"><div class="n" data-i18n="stat.4.n">2億+</div><div class="l" data-i18n="stat.4">世界の対象事業者</div></div>
 </div></div>
 
 <!-- PRICING -->
 <section id="pricing"><div class="wrap">
-  <div class="head"><span class="kick kick2" data-i18n="pricing.kick">料金</span><h2 data-i18n="pricing.h2">シンプルな月額。サイト単位。</h2></div>
+  <div class="head"><span class="kick kick2" data-i18n="pricing.kick">料金</span><h2 data-i18n="pricing.h2">無料から始めて、必要なぶんだけ。</h2></div>
   <div class="plans">
-    <div class="plan pro" data-badge="おすすめ"><span class="nm">Pro</span><div class="pr">¥3,000<small data-i18n="price.unit"> / 月・サイト</small></div><p class="desc" data-i18n="price.pro.desc">AI検索対策をひととおり。中小サイト・店舗におすすめ。</p><ul><li data-i18n="price.pro.1">店舗schema・llms.txt配信</li><li data-i18n="price.pro.2">主要AIクローラー対応</li><li data-i18n="price.pro.3">フォーム最適化・ベンチマーク</li><li data-i18n="price.pro.4">複数サイト横断の学習</li></ul><a href="/dashboard" class="btn primary" data-i18n="price.pro.cta">Proをはじめる</a></div>
-    <div class="plan"><span class="nm" data-i18n="price.ent.nm">代理店 / 大規模導入</span><div class="pr" data-i18n="price.ent.pr">お問い合わせ</div><p class="desc" data-i18n="price.ent.desc">SEO・MEO・制作会社さま向けの卸・OEM、多店舗一括導入。</p><ul><li data-i18n="price.ent.1">ホワイトラベル / OEM提供</li><li data-i18n="price.ent.2">複数店舗の一括オンボーディング</li><li data-i18n="price.ent.3">ボリューム料金・専任サポート</li></ul><a href="#" class="btn ghost" data-i18n="price.ent.cta">相談する</a></div>
+    <div class="plan">
+      <span class="nm" data-i18n="price.free.nm">Free</span>
+      <div class="pr">¥0<small data-i18n="price.free.unit"> / 月</small></div>
+      <p class="desc" data-i18n="price.free.desc">まず現状を知って、AI向けの基本出力までを無料で。</p>
+      <ul>
+        <li data-i18n="price.free.1">AI可読スコア診断</li>
+        <li data-i18n="price.free.2">基本schema・llms.txt・AIクローラー許可の出力</li>
+        <li data-i18n="price.free.3">店情報の自動抽出</li>
+        <li data-i18n="price.free.4">Yoast・Rank Mathと併用OK</li>
+      </ul>
+      <a href="#install" class="btn ghost" data-i18n="price.free.cta">無料ではじめる</a>
+    </div>
+    <div class="plan pro" data-badge="おすすめ">
+      <span class="nm" data-i18n="price.std.nm">Standard</span>
+      <div class="pr">¥3,000<small data-i18n="price.unit"> / 月・サイト</small></div>
+      <p class="desc" data-i18n="price.std.desc">AIの基準は変わり続けます。追従はNurevoに任せる。</p>
+      <ul>
+        <li data-i18n="price.std.1">Freeプランのすべて</li>
+        <li data-i18n="price.std.2">「常に最新」中央rulesetで自動最適化</li>
+        <li data-i18n="price.std.3">AIの基準が変わると自動で最適化し直し</li>
+        <li data-i18n="price.std.4">基準の変更をwp-adminで通知</li>
+      </ul>
+      <a href="/dashboard" class="btn primary" data-i18n="price.std.cta">Standardをはじめる</a>
+    </div>
+    <div class="plan beta" data-badge="β・近日提供">
+      <span class="nm" data-i18n="price.top.nm">Pro</span>
+      <div class="pr">¥14,800<small data-i18n="price.top.unit"> / 月〜</small></div>
+      <p class="desc" data-i18n="price.top.desc">出して終わりにしない。AIでの露出を数字で追う。</p>
+      <ul>
+        <li data-i18n="price.top.1">Standardプランのすべて</li>
+        <li data-i18n="price.top.2">「測定」AIの回答にどれだけ登場しているか（登場率）</li>
+        <li data-i18n="price.top.3">競合比較</li>
+        <li data-i18n="price.top.4">推移・月次レポート</li>
+      </ul>
+      <a href="/dashboard" class="btn ghost" data-i18n="price.top.cta">Proプランを見る</a>
+    </div>
   </div>
 </div></section>
 
@@ -368,7 +486,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 <!-- FINAL -->
 <section class="final"><span class="blob x1"></span><span class="blob x2"></span><div class="wrap">
   <h2 data-i18n="final.h2">AIに選ばれるお店に、今日から。</h2>
-  <p class="lead" data-i18n="final.lead">GTMかWordPressで、タグ1本・5分。まずはProから。</p>
+  <p class="lead" data-i18n="final.lead">GTMかWordPressで、タグ1本・5分。まずは無料から。</p>
   <div class="cta" style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap"><a href="#pricing" class="btn ghost lg" data-i18n="final.cta1">今すぐ導入する</a><a href="#" class="btn primary lg" style="background:#3a1f8f;border-color:#3a1f8f" data-i18n="final.cta2">代理店・OEM相談</a></div>
 </div></section>
 
@@ -380,11 +498,11 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
   <div class="top">
     <div class="co"><a class="brand" href="https://nurevo.jp/" style="display:flex;align-items:center;gap:10px;font-weight:900;font-size:22px"><img src="/assets/logo.png" alt="Nurevo" style="width:30px;height:30px;object-fit:contain">Nurevo</a>
       <h4 data-i18n="company.h">会社概要</h4>
-      <dl><dt data-i18n="company.name">運営会社</dt><dd>Bestie.合同会社</dd><dt data-i18n="company.addr">所在地</dt><dd>東京都千代田区神田三崎町3-2-6</dd><dt data-i18n="company.rep">代表者</dt><dd>橋本 剛</dd><dt data-i18n="company.est">設立</dt><dd>2025年5月</dd><dt data-i18n="company.biz">事業内容</dt><dd data-i18n="company.biz.v">AI検索対策(AEO)・WebMCPサービス「Nurevo」の開発・提供</dd><dt data-i18n="company.contact">お問い合わせ</dt><dd>info@nurevo.jp</dd></dl>
+      <dl><dt data-i18n="company.name">運営会社</dt><dd data-i18n="company.name.v">Bestie.合同会社</dd><dt data-i18n="company.addr">所在地</dt><dd data-i18n="company.addr.v">東京都千代田区神田三崎町3-2-6</dd><dt data-i18n="company.rep">代表者</dt><dd data-i18n="company.rep.v">橋本 剛</dd><dt data-i18n="company.est">設立</dt><dd data-i18n="company.est.v">2025年5月</dd><dt data-i18n="company.biz">事業内容</dt><dd data-i18n="company.biz.v">AI検索対策(AEO)・WebMCPサービス「Nurevo」の開発・提供</dd><dt data-i18n="company.contact">お問い合わせ</dt><dd>info@nurevo.jp</dd></dl>
     </div>
-    <div class="flinks"><span class="h">Links</span><a href="#cases" data-i18n="nav.cases">活用シーン</a><a href="#how" data-i18n="nav.how">仕組み</a><a href="#pricing" data-i18n="nav.pricing">料金</a><a href="#" data-i18n="foot.docs">開発者向けドキュメント</a><a href="#" data-i18n="foot.privacy">プライバシーポリシー</a><a href="#" data-i18n="foot.terms">利用規約</a><a href="#" data-i18n="foot.legal">特定商取引法に基づく表記</a></div>
+    <div class="flinks"><span class="h" data-i18n="foot.links">リンク</span><a href="#cases" data-i18n="nav.cases">活用シーン</a><a href="#how" data-i18n="nav.how">仕組み</a><a href="#pricing" data-i18n="nav.pricing">料金</a><a href="#" data-i18n="foot.docs">開発者向けドキュメント</a><a href="#" data-i18n="foot.privacy">プライバシーポリシー</a><a href="#" data-i18n="foot.terms">利用規約</a><a href="#" data-i18n="foot.legal">特定商取引法に基づく表記</a></div>
   </div>
-  <div class="bottom">© 2026 Bestie.合同会社. All rights reserved.</div>
+  <div class="bottom" data-i18n="foot.copyright">© 2026 Bestie.合同会社. All rights reserved.</div>
 </div></footer>
 
 <script>
@@ -489,24 +607,34 @@ const I18N={
  "wp.schema":{ja:"店舗schemaを出力",en:"Output store schema",zh:"输出店铺schema",'zh-TW':"輸出店家schema",ko:"매장 schema 출력",es:"Emitir schema del local",fr:"Générer le schema",de:"Store-Schema ausgeben"},
  "stat.1":{ja:"で導入完了",en:"to set up",zh:"完成接入",'zh-TW':"完成接入",ko:"만에 도입",es:"para instalar",fr:"pour installer",de:"zur Einrichtung"},
  "stat.2":{ja:"の対応AIクローラー",en:"AI crawlers supported",zh:"种AI爬虫支持",'zh-TW':"種AI爬蟲支援",ko:"개 AI 크롤러 지원",es:"crawlers de IA",fr:"crawlers IA",de:"KI-Crawler"},
- "stat.3":{ja:"月・サイト〜",en:"/mo per site",zh:"/月·每站起",'zh-TW':"/月·每站起",ko:"/월·사이트~",es:"/mes por sitio",fr:"/mois par site",de:"/Monat pro Site"},
+ "stat.3":{ja:"から始められる",en:"to get started",zh:"即可开始",'zh-TW':"即可開始",ko:"부터 시작 가능",es:"para empezar",fr:"pour commencer",de:"zum Einstieg"},
  "stat.4":{ja:"世界の対象事業者",en:"businesses worldwide",zh:"全球目标商家",'zh-TW':"全球目標商家",ko:"전 세계 대상 사업자",es:"negocios en el mundo",fr:"entreprises dans le monde",de:"Unternehmen weltweit"},
  "pricing.kick":{ja:"料金",en:"Pricing",zh:"价格",'zh-TW':"價格",ko:"요금",es:"Precios",fr:"Tarifs",de:"Preise"},
- "pricing.h2":{ja:"シンプルな月額。サイト単位。",en:"Simple monthly pricing, per site.",zh:"简单的月付，按站点计费。",'zh-TW':"簡單的月付，依網站計費。",ko:"심플한 월정액. 사이트 단위.",es:"Precio mensual simple, por sitio.",fr:"Tarif mensuel simple, par site.",de:"Einfach monatlich, pro Site."},
+ "pricing.h2":{ja:"無料から始めて、必要なぶんだけ。",en:"Start free. Pay only for what you need.",zh:"从免费开始，按需付费。",'zh-TW':"從免費開始，依需求付費。",ko:"무료로 시작해, 필요한 만큼만.",es:"Empieza gratis. Paga solo lo que necesites.",fr:"Commencez gratuitement. Payez ce dont vous avez besoin.",de:"Kostenlos starten. Nur zahlen, was Sie brauchen."},
  "price.unit":{ja:" / 月・サイト",en:" / mo · site",zh:" / 月·站",'zh-TW':" / 月·站",ko:" / 월·사이트",es:" / mes · sitio",fr:" / mois · site",de:" / Monat · Site"},
- "price.pro.desc":{ja:"AI検索対策をひととおり。中小サイト・店舗におすすめ。",en:"Full AI-search coverage. Great for SMBs and stores.",zh:"AI搜索优化全覆盖，适合中小站点与店铺。",'zh-TW':"AI搜尋優化全覆蓋，適合中小網站與店家。",ko:"AI 검색 대응 전반. 중소·매장에 추천.",es:"Cobertura completa de IA. Ideal para pymes y tiendas.",fr:"Couverture IA complète. Idéal PME et commerces.",de:"Volle KI-Abdeckung. Ideal für KMU und Läden."},
- "price.pro.1":{ja:"店舗schema・llms.txt配信",en:"Store schema & llms.txt",zh:"店铺schema与llms.txt",'zh-TW':"店家schema與llms.txt",ko:"매장 schema·llms.txt",es:"Schema del local y llms.txt",fr:"Schema & llms.txt",de:"Store-Schema & llms.txt"},
- "price.pro.2":{ja:"主要AIクローラー対応",en:"Major AI crawlers",zh:"主流AI爬虫支持",'zh-TW':"主流AI爬蟲支援",ko:"주요 AI 크롤러",es:"Principales crawlers de IA",fr:"Principaux crawlers IA",de:"Große KI-Crawler"},
- "price.pro.3":{ja:"フォーム最適化・ベンチマーク",en:"Form optimization & benchmarks",zh:"表单优化与基准对比",'zh-TW':"表單優化與基準對比",ko:"폼 최적화·벤치마크",es:"Optimización y benchmarks",fr:"Optimisation & benchmarks",de:"Formular-Optimierung & Benchmarks"},
- "price.pro.4":{ja:"複数サイト横断の学習",en:"Cross-site learning",zh:"跨站点学习",'zh-TW':"跨網站學習",ko:"다중 사이트 학습",es:"Aprendizaje entre sitios",fr:"Apprentissage inter-sites",de:"Site-übergreifendes Lernen"},
- "price.pro.cta":{ja:"Proをはじめる",en:"Start Pro",zh:"开通Pro",'zh-TW':"開通Pro",ko:"Pro 시작",es:"Empezar Pro",fr:"Démarrer Pro",de:"Pro starten"},
- "price.ent.nm":{ja:"代理店 / 大規模導入",en:"Agency / Enterprise",zh:"代理 / 大规模",'zh-TW':"代理 / 大規模",ko:"대리점 / 대규모",es:"Agencia / Enterprise",fr:"Agence / Entreprise",de:"Agentur / Enterprise"},
- "price.ent.pr":{ja:"お問い合わせ",en:"Contact us",zh:"联系我们",'zh-TW':"聯絡我們",ko:"문의하기",es:"Contáctanos",fr:"Nous contacter",de:"Kontakt"},
- "price.ent.desc":{ja:"SEO・MEO・制作会社さま向けの卸・OEM、多店舗一括導入。",en:"Wholesale/OEM for SEO, MEO and agencies; multi-store rollout.",zh:"面向SEO/MEO/制作公司的批发·OEM与多店铺批量接入。",'zh-TW':"面向SEO/MEO/製作公司的批發·OEM與多店家批量接入。",ko:"SEO·MEO·제작사 대상 도매/OEM, 다점포 일괄 도입.",es:"Mayorista/OEM para SEO, MEO y agencias; despliegue multi-tienda.",fr:"Gros/OEM pour SEO, MEO et agences ; déploiement multi-sites.",de:"Wholesale/OEM für SEO, MEO, Agenturen; Multi-Store-Rollout."},
- "price.ent.1":{ja:"ホワイトラベル / OEM提供",en:"White-label / OEM",zh:"白标 / OEM",'zh-TW':"白標 / OEM",ko:"화이트라벨 / OEM",es:"Marca blanca / OEM",fr:"Marque blanche / OEM",de:"White-Label / OEM"},
- "price.ent.2":{ja:"複数店舗の一括オンボーディング",en:"Bulk multi-store onboarding",zh:"多店铺批量接入",'zh-TW':"多店家批量接入",ko:"다점포 일괄 온보딩",es:"Alta masiva multi-tienda",fr:"Onboarding multi-sites",de:"Multi-Store-Onboarding"},
- "price.ent.3":{ja:"ボリューム料金・専任サポート",en:"Volume pricing & dedicated support",zh:"批量价格与专属支持",'zh-TW':"批量價格與專屬支援",ko:"볼륨 요금·전담 지원",es:"Precio por volumen y soporte dedicado",fr:"Tarif volume & support dédié",de:"Mengenpreis & dedizierter Support"},
- "price.ent.cta":{ja:"相談する",en:"Talk to us",zh:"咨询",'zh-TW':"諮詢",ko:"상담하기",es:"Hablemos",fr:"Discutons",de:"Sprechen wir"},
+ "price.free.nm":{ja:"Free",en:"Free",zh:"Free",'zh-TW':"Free",ko:"Free",es:"Free",fr:"Free",de:"Free"},
+ "price.free.unit":{ja:" / 月",en:" / mo",zh:" / 月",'zh-TW':" / 月",ko:" / 월",es:" / mes",fr:" / mois",de:" / Monat"},
+ "price.free.desc":{ja:"まず現状を知って、AI向けの基本出力までを無料で。",en:"See where you stand, and publish the AI-facing basics — free.",zh:"先了解现状，并免费输出面向AI的基础内容。",'zh-TW':"先了解現狀，並免費輸出面向AI的基礎內容。",ko:"현황을 확인하고 AI용 기본 출력까지 무료로.",es:"Conoce tu situación y publica lo básico para IA, gratis.",fr:"Faites le point et publiez les bases pour l'IA, gratuitement.",de:"Status erfahren und KI-Basics veröffentlichen – kostenlos."},
+ "price.free.1":{ja:"AI可読スコア診断",en:"AI readability score",zh:"AI可读性评分诊断",'zh-TW':"AI可讀性評分診斷",ko:"AI 가독성 점수 진단",es:"Diagnóstico de legibilidad para IA",fr:"Score de lisibilité IA",de:"KI-Lesbarkeits-Score"},
+ "price.free.2":{ja:"基本schema・llms.txt・AIクローラー許可の出力",en:"Basic schema, llms.txt and AI crawler access",zh:"基础schema、llms.txt与AI爬虫许可输出",'zh-TW':"基礎schema、llms.txt與AI爬蟲許可輸出",ko:"기본 schema·llms.txt·AI 크롤러 허용 출력",es:"Schema básico, llms.txt y acceso de crawlers de IA",fr:"Schema de base, llms.txt et accès crawlers IA",de:"Basis-Schema, llms.txt und KI-Crawler-Zugriff"},
+ "price.free.3":{ja:"店情報の自動抽出",en:"Automatic business-info extraction",zh:"店铺信息自动提取",'zh-TW':"店家資訊自動擷取",ko:"매장 정보 자동 추출",es:"Extracción automática de datos del negocio",fr:"Extraction automatique des infos",de:"Automatische Datenübernahme"},
+ "price.free.4":{ja:"Yoast・Rank Mathと併用OK",en:"Works alongside Yoast and Rank Math",zh:"可与Yoast、Rank Math并用",'zh-TW':"可與Yoast、Rank Math並用",ko:"Yoast·Rank Math와 병용 가능",es:"Compatible con Yoast y Rank Math",fr:"Compatible Yoast et Rank Math",de:"Parallel zu Yoast und Rank Math"},
+ "price.free.cta":{ja:"無料ではじめる",en:"Start free",zh:"免费开始",'zh-TW':"免費開始",ko:"무료로 시작",es:"Empezar gratis",fr:"Commencer gratuitement",de:"Kostenlos starten"},
+ "price.std.nm":{ja:"Standard",en:"Standard",zh:"Standard",'zh-TW':"Standard",ko:"Standard",es:"Standard",fr:"Standard",de:"Standard"},
+ "price.std.desc":{ja:"AIの基準は変わり続けます。追従はNurevoに任せる。",en:"AI criteria keep changing. Let Nurevo keep up for you.",zh:"AI的标准不断变化，跟进交给Nurevo。",'zh-TW':"AI的標準不斷變化，跟進交給Nurevo。",ko:"AI 기준은 계속 바뀝니다. 추종은 Nurevo에 맡기세요.",es:"Los criterios de IA cambian. Deja que Nurevo los siga.",fr:"Les critères IA évoluent. Nurevo suit pour vous.",de:"KI-Kriterien ändern sich. Nurevo bleibt dran."},
+ "price.std.1":{ja:"Freeプランのすべて",en:"Everything in Free",zh:"包含免费版全部功能",'zh-TW':"包含免費版全部功能",ko:"무료 플랜의 모든 기능",es:"Todo lo del plan Gratis",fr:"Tout le plan Gratuit",de:"Alles aus Kostenlos"},
+ "price.std.2":{ja:"「常に最新」中央rulesetで自動最適化",en:"\"Always current\" — auto-optimized by the central ruleset",zh:"「始终最新」由中央ruleset自动优化",'zh-TW':"「始終最新」由中央ruleset自動優化",ko:"'항상 최신' 중앙 ruleset으로 자동 최적화",es:"«Siempre al día»: optimización automática por el ruleset central",fr:"« Toujours à jour » : optimisation auto par le ruleset central",de:"„Immer aktuell“ – Auto-Optimierung per zentralem Ruleset"},
+ "price.std.3":{ja:"AIの基準が変わると自動で最適化し直し",en:"Re-optimized automatically when AI criteria change",zh:"AI标准变化时自动重新优化",'zh-TW':"AI標準變化時自動重新優化",ko:"AI 기준이 바뀌면 자동으로 재최적화",es:"Reoptimización automática al cambiar los criterios de IA",fr:"Ré-optimisation auto quand les critères IA changent",de:"Automatische Neu-Optimierung bei geänderten KI-Kriterien"},
+ "price.std.4":{ja:"基準の変更をwp-adminで通知",en:"Criteria changes announced in wp-admin",zh:"标准变更在wp-admin中通知",'zh-TW':"標準變更在wp-admin中通知",ko:"기준 변경을 wp-admin에서 알림",es:"Avisos de cambios en wp-admin",fr:"Changements notifiés dans wp-admin",de:"Änderungen werden in wp-admin gemeldet"},
+ "price.std.cta":{ja:"Standardをはじめる",en:"Start Standard",zh:"开通标准版",'zh-TW':"開通標準版",ko:"표준 시작",es:"Empezar Estándar",fr:"Démarrer Standard",de:"Standard starten"},
+ "price.top.nm":{ja:"Pro",en:"Pro",zh:"Pro",'zh-TW':"Pro",ko:"Pro",es:"Pro",fr:"Pro",de:"Pro"},
+ "price.top.unit":{ja:" / 月〜",en:" / mo and up",zh:" / 月起",'zh-TW':" / 月起",ko:" / 월~",es:" / mes en adelante",fr:" / mois et plus",de:" / Monat aufwärts"},
+ "price.top.desc":{ja:"出して終わりにしない。AIでの露出を数字で追う。",en:"Don't stop at publishing. Track your AI visibility in numbers.",zh:"不止于输出。用数字追踪AI中的曝光。",'zh-TW':"不止於輸出。用數字追蹤AI中的曝光。",ko:"출력에서 끝내지 않고, AI 노출을 수치로 추적.",es:"No te quedes en publicar: mide tu visibilidad en IA.",fr:"Ne vous arrêtez pas à la publication : mesurez votre visibilité IA.",de:"Nicht nur veröffentlichen – KI-Sichtbarkeit messen."},
+ "price.top.1":{ja:"Standardプランのすべて",en:"Everything in Standard",zh:"包含标准版全部功能",'zh-TW':"包含標準版全部功能",ko:"표준 플랜의 모든 기능",es:"Todo lo del plan Estándar",fr:"Tout le plan Standard",de:"Alles aus Standard"},
+ "price.top.2":{ja:"「測定」AIの回答にどれだけ登場しているか（登場率）",en:"\"Measurement\" — how often AI answers mention you (appearance rate)",zh:"「测量」你在AI回答中出现的频率（登场率）",'zh-TW':"「測量」你在AI回答中出現的頻率（登場率）",ko:"'측정' AI 답변에 얼마나 등장하는가(등장률)",es:"«Medición»: con qué frecuencia te menciona la IA (tasa de aparición)",fr:"« Mesure » : fréquence de mention par l'IA (taux d'apparition)",de:"„Messung“ – wie oft KI-Antworten Sie nennen (Erscheinungsrate)"},
+ "price.top.3":{ja:"競合比較",en:"Competitor comparison",zh:"竞品对比",'zh-TW':"競品對比",ko:"경쟁사 비교",es:"Comparación con competidores",fr:"Comparaison concurrentielle",de:"Wettbewerbsvergleich"},
+ "price.top.4":{ja:"推移・月次レポート",en:"Trends and a monthly report",zh:"趋势与月度报告",'zh-TW':"趨勢與月度報告",ko:"추이·월간 리포트",es:"Tendencias e informe mensual",fr:"Tendances et rapport mensuel",de:"Verlauf und Monatsbericht"},
+ "price.top.cta":{ja:"Proプランを見る",en:"See Advanced",zh:"查看高级版",'zh-TW':"查看高階版",ko:"상위 플랜 보기",es:"Ver Avanzado",fr:"Voir Avancé",de:"Advanced ansehen"},
  "voices.kick":{ja:"導入の声",en:"Testimonials",zh:"客户之声",'zh-TW':"客戶心聲",ko:"고객 후기",es:"Testimonios",fr:"Témoignages",de:"Stimmen"},
  "voices.h2":{ja:"使っている人の声。",en:"What customers say.",zh:"用户怎么说。",'zh-TW':"用戶怎麼說。",ko:"사용자의 목소리.",es:"Lo que dicen los clientes.",fr:"Ce qu'en disent les clients.",de:"Was Kunden sagen."},
  "voices.lead":{ja:"※ 実際の導入企業のお名前・写真に差し替えてください。",en:"* Replace with real customer names and photos.",zh:"※ 请替换为真实客户名称与照片。",'zh-TW':"※ 請替換為真實客戶名稱與照片。",ko:"※ 실제 고객명·사진으로 교체하세요.",es:"* Sustituye por nombres y fotos reales.",fr:"* Remplacez par de vrais noms et photos.",de:"* Durch echte Namen und Fotos ersetzen."},
@@ -527,7 +655,7 @@ const I18N={
  "faq.4.q":{ja:"導入にコードは必要ですか？",en:"Do I need to code?",zh:"接入需要写代码吗？",'zh-TW':"接入需要寫程式碼嗎？",ko:"도입에 코드가 필요한가요?",es:"¿Necesito programar?",fr:"Faut-il coder ?",de:"Brauche ich Code?"},
  "faq.4.a":{ja:"WordPressならプラグイン有効化とキー入力だけ。GTM・直接タグでも1行で完了します。",en:"On WordPress, just activate the plugin and enter a key. GTM or a direct tag is one line.",zh:"WordPress只需启用插件并输入密钥；GTM或直接标签一行即可。",'zh-TW':"WordPress只需啟用外掛並輸入金鑰；GTM或直接標籤一行即可。",ko:"WordPress는 플러그인 활성화와 키 입력뿐. GTM·직접 태그도 한 줄.",es:"En WordPress, activa el plugin e introduce la clave. GTM o etiqueta directa, una línea.",fr:"Sur WordPress, activez le plugin et saisissez une clé. GTM ou balise : une ligne.",de:"Bei WordPress Plugin aktivieren und Key eingeben. GTM/Tag: eine Zeile."},
  "final.h2":{ja:"AIに選ばれるお店に、今日から。",en:"Be the business AI picks — starting today.",zh:"从今天起，成为被AI选中的店铺。",'zh-TW':"從今天起，成為被AI選中的店家。",ko:"오늘부터, AI가 고르는 매장으로.",es:"Sé el negocio que la IA elige, desde hoy.",fr:"Devenez l'établissement que l'IA choisit, dès aujourd'hui.",de:"Ab heute das Geschäft, das die KI wählt."},
- "final.lead":{ja:"GTMかWordPressで、タグ1本・5分。まずはProから。",en:"One tag, 5 minutes, via GTM or WordPress. Start with Pro.",zh:"通过GTM或WordPress，一行标签、5分钟。先从Pro开始。",'zh-TW':"透過GTM或WordPress，一行標籤、5分鐘。先從Pro開始。",ko:"GTM 또는 WordPress로 태그 하나·5분. Pro부터.",es:"Una etiqueta, 5 minutos, con GTM o WordPress. Empieza con Pro.",fr:"Une balise, 5 minutes, via GTM ou WordPress. Commencez par Pro.",de:"Ein Tag, 5 Minuten, per GTM oder WordPress. Mit Pro starten."},
+ "final.lead":{ja:"GTMかWordPressで、タグ1本・5分。まずは無料から。",en:"One tag, 5 minutes, via GTM or WordPress. Start free.",zh:"通过GTM或WordPress，一行标签、5分钟。先从免费开始。",'zh-TW':"透過GTM或WordPress，一行標籤、5分鐘。先從免費開始。",ko:"GTM 또는 WordPress로 태그 하나·5분. 무료부터.",es:"Una etiqueta, 5 minutos, con GTM o WordPress. Empieza gratis.",fr:"Une balise, 5 minutes, via GTM ou WordPress. Commencez gratuitement.",de:"Ein Tag, 5 Minuten, per GTM oder WordPress. Kostenlos starten."},
  "final.cta1":{ja:"今すぐ導入する",en:"Get started",zh:"立即使用",'zh-TW':"立即使用",ko:"지금 시작",es:"Empezar ahora",fr:"Commencer",de:"Jetzt starten"},
  "final.cta2":{ja:"代理店・OEM相談",en:"Agency / OEM",zh:"代理·OEM咨询",'zh-TW':"代理·OEM諮詢",ko:"대리점·OEM 상담",es:"Agencia / OEM",fr:"Agence / OEM",de:"Agentur / OEM"},
  "company.h":{ja:"会社概要",en:"Company",zh:"公司信息",'zh-TW':"公司資訊",ko:"회사 정보",es:"Empresa",fr:"Société",de:"Unternehmen"},
@@ -538,19 +666,89 @@ const I18N={
  "company.biz":{ja:"事業内容",en:"Business",zh:"业务内容",'zh-TW':"業務內容",ko:"사업 내용",es:"Actividad",fr:"Activité",de:"Geschäft"},
  "company.biz.v":{ja:"AI検索対策(AEO)・WebMCPサービス「Nurevo」の開発・提供",en:"Developing and operating Nurevo, an AEO / WebMCP service",zh:"开发并提供AI搜索优化(AEO)·WebMCP服务「Nurevo」",'zh-TW':"開發並提供AI搜尋優化(AEO)·WebMCP服務「Nurevo」",ko:"AEO·WebMCP 서비스 'Nurevo' 개발·운영",es:"Desarrollo del servicio AEO / WebMCP «Nurevo»",fr:"Développement du service AEO / WebMCP « Nurevo »",de:"Entwicklung des AEO/WebMCP-Dienstes „Nurevo“"},
  "company.contact":{ja:"お問い合わせ",en:"Contact",zh:"联系",'zh-TW':"聯絡",ko:"문의",es:"Contacto",fr:"Contact",de:"Kontakt"},
+ // Company-profile values. The registered name and address are a matter of legal
+ // record, so they are romanised rather than translated, and the kanji form is
+ // kept wherever it is readable (ja/zh/zh-TW). "合同会社" is a Japanese LLC.
+ "company.name.v":{ja:"Bestie.合同会社",en:"Bestie. LLC",zh:"Bestie.合同会社",'zh-TW':"Bestie.合同會社",ko:"Bestie. LLC",es:"Bestie. LLC",fr:"Bestie. LLC",de:"Bestie. LLC"},
+ "company.addr.v":{ja:"東京都千代田区神田三崎町3-2-6",en:"3-2-6 Kanda-Misakicho, Chiyoda-ku, Tokyo, Japan",zh:"东京都千代田区神田三崎町3-2-6",'zh-TW':"東京都千代田區神田三崎町3-2-6",ko:"3-2-6 Kanda-Misakicho, Chiyoda-ku, Tokyo, Japan",es:"3-2-6 Kanda-Misakicho, Chiyoda-ku, Tokio, Japón",fr:"3-2-6 Kanda-Misakicho, Chiyoda-ku, Tokyo, Japon",de:"3-2-6 Kanda-Misakicho, Chiyoda-ku, Tokio, Japan"},
+ "company.rep.v":{ja:"橋本 剛",en:"Tsuyoshi Hashimoto",zh:"桥本 刚",'zh-TW':"橋本 剛",ko:"Tsuyoshi Hashimoto",es:"Tsuyoshi Hashimoto",fr:"Tsuyoshi Hashimoto",de:"Tsuyoshi Hashimoto"},
+ "company.est.v":{ja:"2025年5月",en:"May 2025",zh:"2025年5月",'zh-TW':"2025年5月",ko:"2025년 5월",es:"Mayo de 2025",fr:"Mai 2025",de:"Mai 2025"},
+ "foot.links":{ja:"リンク",en:"Links",zh:"链接",'zh-TW':"連結",ko:"링크",es:"Enlaces",fr:"Liens",de:"Links"},
+ "foot.copyright":{ja:"© 2026 Bestie.合同会社. All rights reserved.",en:"© 2026 Bestie. LLC. All rights reserved.",zh:"© 2026 Bestie.合同会社. 保留所有权利。",'zh-TW':"© 2026 Bestie.合同會社. 保留一切權利。",ko:"© 2026 Bestie. LLC. All rights reserved.",es:"© 2026 Bestie. LLC. Todos los derechos reservados.",fr:"© 2026 Bestie. LLC. Tous droits réservés.",de:"© 2026 Bestie. LLC. Alle Rechte vorbehalten."},
  "foot.docs":{ja:"開発者向けドキュメント",en:"Developer docs",zh:"开发者文档",'zh-TW':"開發者文件",ko:"개발자 문서",es:"Docs para desarrolladores",fr:"Docs développeurs",de:"Entwickler-Docs"},
  "foot.privacy":{ja:"プライバシーポリシー",en:"Privacy Policy",zh:"隐私政策",'zh-TW':"隱私政策",ko:"개인정보처리방침",es:"Privacidad",fr:"Confidentialité",de:"Datenschutz"},
  "foot.terms":{ja:"利用規約",en:"Terms",zh:"服务条款",'zh-TW':"服務條款",ko:"이용약관",es:"Términos",fr:"Conditions",de:"AGB"},
  "foot.legal":{ja:"特定商取引法に基づく表記",en:"Legal notice",zh:"特定商交易法标示",'zh-TW':"特定商交易法標示",ko:"특정상거래법 표기",es:"Aviso legal",fr:"Mentions légales",de:"Impressum"},
- "pricing.badge":{ja:"おすすめ",en:"Popular",zh:"推荐",'zh-TW':"推薦",ko:"추천",es:"Popular",fr:"Populaire",de:"Beliebt"}
+ "chip.4":{ja:"AI対応ずみ",en:"AI ready",zh:"已支持AI",'zh-TW':"已支援AI",ko:"AI 대응 완료",es:"Listo para IA",fr:"Prêt pour l'IA",de:"KI-bereit"},
+ "hero.card.name":{ja:"ルミナ 表参道",en:"Lumina Omotesando",zh:"Lumina 表参道",'zh-TW':"Lumina 表參道",ko:"루미나 오모테산도",es:"Lumina Omotesando",fr:"Lumina Omotesando",de:"Lumina Omotesando"},
+ // The CJK full-width colon carries its own trailing space; the Latin ones need one.
+ "hero.card.ai":{ja:"AI：",en:"AI: ",zh:"AI：",'zh-TW':"AI：",ko:"AI: ",es:"IA: ",fr:"IA : ",de:"KI: "},
+ "hero.card.hours":{ja:"火〜日 11:00–20:00",en:"Tue–Sun 11:00–20:00",zh:"周二至周日 11:00–20:00",'zh-TW':"週二至週日 11:00–20:00",ko:"화–일 11:00–20:00",es:"Mar–Dom 11:00–20:00",fr:"Mar–Dim 11:00–20:00",de:"Di–So 11:00–20:00"},
+ "hero.card.rating":{ja:"★ 4.7（213件）",en:"★ 4.7 (213 reviews)",zh:"★ 4.7（213条）",'zh-TW':"★ 4.7（213則）",ko:"★ 4.7 (213건)",es:"★ 4,7 (213 reseñas)",fr:"★ 4,7 (213 avis)",de:"★ 4,7 (213 Bewertungen)"},
+ "stat.1.n":{ja:"5分",en:"5 min",zh:"5分钟",'zh-TW':"5分鐘",ko:"5분",es:"5 min",fr:"5 min",de:"5 Min."},
+ // zh/zh-TW/ko carry the counter (种/種/개) in stat.2's label, so the number is
+ // bare in those locales; Japanese keeps 種 because its label has none.
+ "stat.2.n":{ja:"7種+",en:"7+",zh:"7+",'zh-TW':"7+",ko:"7+",es:"7+",fr:"7+",de:"7+"},
+ // The plan is free in every market; the price is billed in JPY, so the figure
+ // itself is not localised, only kept keyed alongside its sibling stats.
+ "stat.3.n":{ja:"¥0",en:"¥0",zh:"¥0",'zh-TW':"¥0",ko:"¥0",es:"¥0",fr:"¥0",de:"¥0"},
+ "stat.4.n":{ja:"2億+",en:"200M+",zh:"2亿+",'zh-TW':"2億+",ko:"2억+",es:"200M+",fr:"200 M+",de:"200 Mio.+"},
+ "pricing.badge":{ja:"おすすめ",en:"Popular",zh:"推荐",'zh-TW':"推薦",ko:"추천",es:"Popular",fr:"Populaire",de:"Beliebt"},
+ "pricing.beta":{ja:"β・近日提供",en:"Beta · coming soon",zh:"β·即将推出",'zh-TW':"β·即將推出",ko:"β·출시 예정",es:"Beta · muy pronto",fr:"Bêta · bientôt",de:"Beta · demnächst"},
+ "herocheck.h":{ja:"あなたのサイト、<span class=\"hl\">AIにちゃんと読まれてる？</span>",en:"Is your site <span class=\"hl\">actually readable to AI?</span>",zh:"你的网站，<span class=\"hl\">AI真的读懂了吗？</span>",'zh-TW':"你的網站，<span class=\"hl\">AI真的讀懂了嗎？</span>",ko:"당신의 사이트, <span class=\"hl\">AI가 제대로 읽고 있나요?</span>",es:"¿La IA <span class=\"hl\">lee bien tu sitio?</span>",fr:"Votre site est-il <span class=\"hl\">vraiment lisible par l'IA ?</span>",de:"Liest die KI <span class=\"hl\">Ihre Seite wirklich?</span>"},
+ "herocheck.sub":{ja:"URLを入れるだけ。登録不要・無料でAI可読スコアを診断します。",en:"Just paste a URL. No signup — get your AI readability score free.",zh:"只需输入URL。无需注册，免费诊断AI可读性评分。",'zh-TW':"只需輸入URL。無需註冊，免費診斷AI可讀性評分。",ko:"URL만 입력하세요. 가입 없이 무료로 AI 가독성 점수를 진단합니다.",es:"Solo pega una URL. Sin registro: tu score de legibilidad IA, gratis.",fr:"Collez une URL. Sans inscription : votre score de lisibilité IA, gratuit.",de:"Einfach URL einfügen. Ohne Anmeldung – KI-Lesbarkeits-Score kostenlos."},
+ "herocheck.label":{ja:"診断するサイトのURL",en:"URL of the site to diagnose",zh:"要诊断的网站URL",'zh-TW':"要診斷的網站URL",ko:"진단할 사이트 URL",es:"URL del sitio a diagnosticar",fr:"URL du site à analyser",de:"URL der zu prüfenden Seite"},
+ "herocheck.ph":{ja:"example.com",en:"example.com",zh:"example.com",'zh-TW':"example.com",ko:"example.com",es:"example.com",fr:"example.com",de:"example.com"},
+ "herocheck.cta":{ja:"URLで無料診断",en:"Check my site free",zh:"输入URL免费诊断",'zh-TW':"輸入URL免費診斷",ko:"URL로 무료 진단",es:"Diagnóstico gratis",fr:"Analyser gratuitement",de:"Kostenlos prüfen"},
+ "herocheck.err":{ja:"サイトのURLを入力してください（例：example.com）。",en:"Enter a site URL (for example, example.com).",zh:"请输入网站URL（例如 example.com）。",'zh-TW':"請輸入網站URL（例如 example.com）。",ko:"사이트 URL을 입력하세요(예: example.com).",es:"Introduce una URL (por ejemplo, example.com).",fr:"Saisissez une URL (par exemple example.com).",de:"Geben Sie eine URL ein (z. B. example.com)."},
+ "herocheck.note":{ja:"AIクローラー到達性・構造化データ・llms.txt など8項目を即時チェック",en:"Eight checks instantly: AI crawler access, structured data, llms.txt and more",zh:"即时检查8项：AI爬虫可达性、结构化数据、llms.txt等",'zh-TW':"即時檢查8項：AI爬蟲可達性、結構化資料、llms.txt等",ko:"AI 크롤러 도달성·구조화 데이터·llms.txt 등 8개 항목을 즉시 점검",es:"Ocho comprobaciones al instante: acceso de crawlers, datos estructurados, llms.txt y más",fr:"Huit vérifications immédiates : accès crawlers, données structurées, llms.txt…",de:"Acht Prüfungen sofort: Crawler-Zugriff, strukturierte Daten, llms.txt u. a."}
 };
 function setLang(lang){
   document.documentElement.lang = (lang==='zh'?'zh-CN':lang);
   document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); const t=I18N[k]; if(t&&t[lang]) el.textContent=t[lang]; });
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{ const k=el.getAttribute('data-i18n-html'); const t=I18N[k]; if(t&&t[lang]) el.innerHTML=t[lang]; });
-  const badge=I18N['pricing.badge'][lang]; const pro=document.querySelector('.plan.pro'); if(pro&&badge) pro.setAttribute('data-badge',badge);
+  document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ const k=el.getAttribute('data-i18n-ph'); const t=I18N[k]; if(t&&t[lang]) el.placeholder=t[lang]; });
+  const badge=(I18N['pricing.badge']||{})[lang]; const pro=document.querySelector('.plan.pro'); if(pro&&badge) pro.setAttribute('data-badge',badge);
+  const beta=(I18N['pricing.beta']||{})[lang]; const top=document.querySelector('.plan.beta'); if(top&&beta) top.setAttribute('data-badge',beta);
   try{ localStorage.setItem('nurevo_lang',lang); }catch(e){}
 }
+
+/* Hero AI-readability checker: hand off to /check, which auto-diagnoses ?url=. */
+(function(){
+  const form=document.getElementById('heroCheck'); if(!form) return;
+  const input=document.getElementById('heroCheckUrl'), err=document.getElementById('heroCheckErr');
+  // Mirrors normalizeUrl() in /check so a bare host like "example.com" works
+  // and the URL handed over is already valid.
+  function normalize(value){
+    let raw=String(value||'').trim();
+    if(!raw) throw new Error('empty');
+    if(!/^https?:\/\//i.test(raw)) raw='https://'+raw;
+    const parsed=new URL(raw);
+    if(parsed.protocol!=='http:'&&parsed.protocol!=='https:') throw new Error('scheme');
+    if(!/^[^\s.]+(\.[^\s.]+)+$/.test(parsed.hostname)) throw new Error('host');
+    parsed.hash='';
+    return parsed.href;
+  }
+  function clearError(){ err.hidden=true; input.removeAttribute('aria-invalid'); }
+  form.addEventListener('submit',function(event){
+    event.preventDefault();
+    let target;
+    try{ target=normalize(input.value); }
+    catch(e){
+      const lang=(document.querySelector('.lang')||{}).value||'ja';
+      const t=I18N['herocheck.err']||{};
+      err.textContent=t[lang]||t.ja;
+      err.hidden=false; input.setAttribute('aria-invalid','true'); input.focus();
+      return;
+    }
+    clearError();
+    // Hand the visitor's chosen language over, so the checker page and the
+    // checklist it fetches both speak it rather than reverting to Japanese.
+    const chosen=(document.querySelector('.lang')||{}).value||'ja';
+    location.href='/check?url='+encodeURIComponent(target)+(chosen&&chosen!=='ja'?'&lang='+encodeURIComponent(chosen):'');
+  });
+  input.addEventListener('input',clearError);
+}());
 function copySnip(btn){
   const code=document.getElementById('snipCode'); const txt=code?code.textContent:'';
   const done=()=>{ const lang=(document.querySelector('.lang')||{}).value||'ja'; const t=(I18N['install.copied']||{})[lang]||'Copied'; const o=btn.textContent; btn.textContent=t; setTimeout(()=>{ const c=(I18N['install.copy']||{})[lang]||'Copy'; btn.textContent=c; },1600); };
@@ -558,5 +756,5 @@ function copySnip(btn){
   catch(e){ try{ const r=document.createRange(); r.selectNode(code); const s=getSelection(); s.removeAllRanges(); s.addRange(r); done(); }catch(_){} }
 }
 (function(){ let l='ja'; try{ l=localStorage.getItem('nurevo_lang')||'ja'; }catch(e){} const sel=document.querySelector('.lang'); if(sel){ sel.value=l; } if(l!=='ja') setLang(l); })();
-document.addEventListener('DOMContentLoaded',()=>{const imgs=[['.collage .main .photo','assets/img/hero-store.webp','自然光が入る明るい日本のヘアサロン内観'],['.case.k1 .photo','assets/img/case-salon.webp','美容師が髪を整える様子'],['.case.k2 .photo','assets/img/case-restaurant.webp','きれいに盛り付けられた和食'],['.case.k3 .photo','assets/img/case-clinic.webp','明るく清潔なクリニック受付'],['.case.k4 .photo','assets/img/case-realestate.webp','自然光の入る明るい日本の住居リビング']];imgs.forEach(([sel,src,alt])=>{const el=document.querySelector(sel);if(!el)return;const badge=el.querySelector('.badge');el.querySelectorAll('.ph').forEach(x=>x.remove());const im=document.createElement('img');im.src=src;im.alt=alt;im.loading=sel.includes('collage')?'eager':'lazy';im.style.cssText='width:100%;height:100%;object-fit:cover';el.prepend(im);if(badge)el.append(badge)});document.querySelectorAll('.flinks a[data-i18n="foot.privacy"]').forEach(a=>a.href='https://nurevo.jp/privacy');document.querySelectorAll('.flinks a[data-i18n="foot.terms"]').forEach(a=>a.href='https://nurevo.jp/terms');document.querySelectorAll('.flinks a[data-i18n="foot.legal"]').forEach(a=>a.href='https://nurevo.jp/tokushoho')});
+document.addEventListener('DOMContentLoaded',()=>{const imgs=[['.case.k1 .photo','assets/img/case-salon.webp','美容師が髪を整える様子'],['.case.k2 .photo','assets/img/case-restaurant.webp','きれいに盛り付けられた和食'],['.case.k3 .photo','assets/img/case-clinic.webp','明るく清潔なクリニック受付'],['.case.k4 .photo','assets/img/case-realestate.webp','自然光の入る明るい日本の住居リビング']];imgs.forEach(([sel,src,alt])=>{const el=document.querySelector(sel);if(!el)return;const badge=el.querySelector('.badge');el.querySelectorAll('.ph').forEach(x=>x.remove());const im=document.createElement('img');im.src=src;im.alt=alt;im.loading='lazy';im.style.cssText='width:100%;height:100%;object-fit:cover';el.prepend(im);if(badge)el.append(badge)});document.querySelectorAll('.flinks a[data-i18n="foot.privacy"]').forEach(a=>a.href='https://nurevo.jp/privacy');document.querySelectorAll('.flinks a[data-i18n="foot.terms"]').forEach(a=>a.href='https://nurevo.jp/terms');document.querySelectorAll('.flinks a[data-i18n="foot.legal"]').forEach(a=>a.href='https://nurevo.jp/tokushoho')});
 </script>

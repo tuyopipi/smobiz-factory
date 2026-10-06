@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>AI可読チェッカー | Nurevo AEO</title>
+  <meta name="description" content="URLを入力するだけで、AIが読みやすいサイトか無料で診断します。">
+  <link rel="icon" href="/assets/favicon.png">
+  <style>
+    :root{color-scheme:light;--accent:#6f4df6;--accent-dark:#5134d4;--ink:#181525;--muted:#625d70;--line:#e9e3ef;--wash:#f7f3ff;--green:#1a9c6b;--yellow:#b7791f;--red:#d13b3b;--bg:#fffaf7;--shadow:0 22px 60px rgba(65,42,98,.12);font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+    *{box-sizing:border-box}body{margin:0;background:radial-gradient(48rem 30rem at 100% 0,rgba(111,77,246,.13),transparent 60%),radial-gradient(38rem 26rem at 0 28%,rgba(255,93,143,.09),transparent 65%),var(--bg);color:var(--ink);line-height:1.65}a{color:inherit}.wrap{width:min(1080px,calc(100% - 40px));margin:auto}
+    header{border-bottom:1px solid rgba(233,227,239,.9);background:rgba(255,250,247,.86);backdrop-filter:blur(14px)}header .wrap{height:68px;display:flex;align-items:center;justify-content:space-between}.brand{text-decoration:none;font-size:22px;font-weight:900;letter-spacing:-.04em}.brand span{color:var(--accent)}.home{font-size:14px;font-weight:700;color:var(--muted);text-decoration:none}.home:hover{color:var(--accent)}
+    main{padding:64px 0 80px}.intro{text-align:center;max-width:780px;margin:0 auto}.eyebrow{display:inline-block;margin-bottom:14px;padding:6px 13px;border-radius:999px;background:var(--wash);color:var(--accent-dark);font-size:13px;font-weight:800}.intro h1{margin:0;font-size:clamp(32px,5vw,54px);line-height:1.12;letter-spacing:-.045em}.intro p{max-width:650px;margin:18px auto 0;color:var(--muted);font-size:17px}
+    .checker{margin:34px auto 0;padding:12px;max-width:820px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}form{display:flex;gap:10px}input[type=url]{min-width:0;flex:1;border:1px solid #dcd4e5;border-radius:13px;padding:15px 17px;font:inherit;font-size:16px;color:var(--ink);outline:none}input[type=url]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(111,77,246,.13)}button,.button{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:13px;padding:14px 22px;background:var(--accent);color:#fff;font:inherit;font-weight:800;text-decoration:none;cursor:pointer;transition:.15s ease}button:hover,.button:hover{background:var(--accent-dark);transform:translateY(-1px)}button:disabled{opacity:.65;cursor:wait;transform:none}
+    .message{max-width:820px;margin:18px auto 0;padding:14px 17px;border-radius:12px;background:#fff2f2;border:1px solid #f1c1c1;color:#9c2929;font-weight:700}.loading{max-width:820px;margin:20px auto 0;color:var(--accent-dark);font-weight:750;text-align:center}.loading:before{content:"";display:inline-block;width:14px;height:14px;margin-right:9px;border:2px solid #dcd3ff;border-top-color:var(--accent);border-radius:50%;vertical-align:-2px;animation:spin .75s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+    .results{margin-top:32px}.summary{display:grid;grid-template-columns:230px minmax(0,1fr);align-items:center;gap:38px;padding:34px;background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}.gauge{--band:var(--red);--degrees:0deg;width:210px;height:210px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--band) var(--degrees),#ece9ef 0)}.gauge:before{content:"";grid-area:1/1;width:166px;height:166px;border-radius:50%;background:#fff}.gauge div{grid-area:1/1;position:relative;text-align:center}.gauge strong{display:block;font-size:62px;line-height:.95;letter-spacing:-.06em}.gauge span{color:var(--muted);font-weight:700}.badge{display:inline-flex;border-radius:999px;padding:6px 14px;color:#fff;font-size:14px;font-weight:850}.result-copy h2{margin:15px 0 8px;font-size:clamp(25px,4vw,36px);letter-spacing:-.035em}.result-copy p{margin:0;color:var(--muted)}.gate-warning{margin-top:13px;color:var(--red)!important;font-weight:750}
+    .content-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.6fr);gap:22px;margin-top:22px}.panel{padding:27px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 34px rgba(65,42,98,.07)}.panel h2{margin:0 0 17px;font-size:22px;letter-spacing:-.025em}.checks{margin:0;padding:0;list-style:none}.check{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;padding:15px 0;border-top:1px solid #eeeaf1}.check:first-child{border-top:0;padding-top:2px}.check-icon{width:29px;height:29px;display:grid;place-items:center;border-radius:50%;color:#fff;font-weight:900}.check strong{display:block}.check p{margin:3px 0 0;color:var(--muted);font-size:14px}.check.is-ok .check-icon{background:var(--green)}.check.is-warn .check-icon{background:var(--yellow)}.check.is-bad .check-icon{background:var(--red)}
+    .sample{min-height:178px;background:linear-gradient(145deg,#f7f3ff,#fff)}.sample-label{font-size:13px;color:var(--accent-dark);font-weight:800}.sample-placeholder{display:grid;place-items:center;min-height:105px;margin-top:12px;border:1px dashed #cfc2f5;border-radius:14px;color:var(--muted);font-weight:750;text-align:center}.share{margin-top:22px}.share-row{display:flex;gap:9px}.share input{min-width:0;flex:1;border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:#faf9fb;color:var(--muted)}.share button{padding:10px 16px;font-size:14px}
+    .cta{margin-top:22px;padding:30px;background:linear-gradient(130deg,#6442ed,#865ef8);border-radius:22px;color:#fff}.cta h2{margin:0;font-size:27px}.cta p{margin:8px 0 20px;color:#eee9ff}.cta-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.cta .button{background:#fff;color:var(--accent-dark)}.cta .button:hover{background:#f5f1ff}.cta .guide{font-weight:750;color:#fff;text-underline-offset:4px}
+    footer{padding:26px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
+    [hidden]{display:none!important}@media(max-width:760px){main{padding-top:42px}.wrap{width:min(100% - 28px,1080px)}form{flex-direction:column}.checker{padding:10px}.summary{grid-template-columns:1fr;text-align:center;gap:24px}.gauge{margin:auto;width:190px;height:190px}.gauge:before{width:150px;height:150px}.content-grid{grid-template-columns:1fr}.cta{text-align:center}.cta-actions{justify-content:center}.share-row{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <header><div class="wrap"><a class="brand" href="/">Nurevo <span>AEO</span></a><a class="home" href="/" data-t="home">トップへ戻る</a></div></header>
+  <main class="wrap">
+    <section class="intro" aria-labelledby="page-title">
+      <span class="eyebrow" data-t="eyebrow">登録不要・無料</span>
+      <h1 id="page-title" data-t="title">あなたのサイトは、<br>AIに読めていますか？</h1>
+      <p data-t="lead">URLを入力すると、構造化データ・重要情報・本文・llms.txt・情報の一貫性を診断します。</p>
+    </section>
+    <div class="checker">
+      <form id="checker-form" novalidate>
+        <label for="site-url" hidden data-t="inputLabel">診断するWebサイトのURL</label>
+        <input id="site-url" name="url" type="url" inputmode="url" autocomplete="url" placeholder="https://example.com" required>
+        <button id="submit-button" type="submit" data-t="submit">無料で診断する</button>
+      </form>
+    </div>
+    <p id="loading" class="loading" role="status" hidden data-t="loading">AI可読性を診断しています…</p>
+    <p id="error-message" class="message" role="alert" hidden data-t="error">診断できませんでした。時間をおいて再試行</p>
+
+    <section id="results" class="results" aria-live="polite" hidden>
+      <div class="summary">
+        <div id="gauge" class="gauge"><div><strong id="score">0</strong><span>/100</span></div></div>
+        <div class="result-copy">
+          <span id="badge" class="badge">危険</span>
+          <h2 id="result-title" data-t="resultTitle">AI可読スコア</h2>
+          <p data-t="resultLead">AIがサイトへ到達し、重要な情報を正しく読み取れる状態かを評価しました。</p>
+          <p id="gate-warning" class="gate-warning" hidden data-t="gate">到達性ゲートを通過していないため、スコアは15点以下に制限されています。</p>
+        </div>
+      </div>
+
+      <div class="content-grid">
+        <section class="panel"><h2 data-t="checksHeading">診断項目</h2><ol id="checks" class="checks"></ol></section>
+        <div>
+          <section class="panel sample"><span class="sample-label" data-t="sampleLabel">AIサンプル</span><h2 data-t="sampleHeading">ChatGPTに質問した結果</h2><div class="sample-placeholder" data-t="samplePlaceholder">準備中（近日公開）</div></section>
+          <section class="panel share"><h2 data-t="shareHeading">結果をシェア</h2><div class="share-row"><input id="share-url" type="text" readonly aria-label="結果のシェアURL"><button id="copy-share" type="button" data-t="copy">コピー</button></div></section>
+        </div>
+      </div>
+
+      <section class="cta">
+        <h2 data-t="ctaHeading">赤や黄色の項目を直しましょう</h2>
+        <p data-t="ctaLead">サーバー側から正しい情報を届けることで、AIが理解できる状態を作ります。</p>
+        <div class="cta-actions">
+          <a class="button" href="/nurevo-webmcp.zip" download data-t="ctaButton">直す → Nurevo AEO（WordPressプラグイン）</a>
+          <a class="guide" href="/guide/integration" data-t="ctaGuide">WordPress以外 → サーバー側連携ガイド</a>
+        </div>
+      </section>
+    </section>
+  </main>
+  <footer><div class="wrap" data-t="footer">© Nurevo — AI可読性の改善を支援します。</div></footer>
+
+  <script>
+    (function () {
+      'use strict';
+      var API_ENDPOINT = 'https://nurevo.jp/api/aeo/score';
+      var COLORS = {green:'#1a9c6b',yellow:'#b7791f',red:'#d13b3b'};
+
+      // The checklist wording comes from the API, so the page language has to go
+      // with the request - otherwise the surrounding page and the checks
+      // disagree, which reads worse than either language on its own.
+      var STRINGS = {
+        ja: {
+          home:'トップへ戻る', eyebrow:'登録不要・無料',
+          title:'あなたのサイトは、<br>AIに読めていますか？',
+          lead:'URLを入力すると、構造化データ・重要情報・本文・llms.txt・情報の一貫性を診断します。',
+          inputLabel:'診断するWebサイトのURL', submit:'無料で診断する', submitting:'診断中…',
+          loading:'AI可読性を診断しています…', error:'診断できませんでした。時間をおいて再試行',
+          invalidUrl:'有効なURLを入力してください。',
+          resultTitle:'AI可読スコア',
+          resultLead:'AIがサイトへ到達し、重要な情報を正しく読み取れる状態かを評価しました。',
+          gate:'到達性ゲートを通過していないため、スコアは15点以下に制限されています。',
+          checksHeading:'診断項目', sampleLabel:'AIサンプル', sampleHeading:'ChatGPTに質問した結果',
+          samplePlaceholder:'準備中（近日公開）', shareHeading:'結果をシェア',
+          copy:'コピー', copied:'コピー済み',
+          ctaHeading:'赤や黄色の項目を直しましょう',
+          ctaLead:'サーバー側から正しい情報を届けることで、AIが理解できる状態を作ります。',
+          ctaButton:'直す → Nurevo AEO（WordPressプラグイン）',
+          ctaGuide:'WordPress以外 → サーバー側連携ガイド',
+          footer:'© Nurevo — AI可読性の改善を支援します。',
+          pageTitle:'AI可読チェッカー | Nurevo AEO',
+          bands:{green:'良好',yellow:'要改善',red:'危険'},
+          titles:{green:'AIに正しく読まれています',yellow:'改善すると、さらにAIが読みやすくなります',red:'AIが情報を十分に読み取れていません'}
+        },
+        en: {
+          home:'Back to home', eyebrow:'No signup, free',
+          title:'Can AI actually<br>read your site?',
+          lead:'Paste a URL and we check your structured data, key information, page text, llms.txt and consistency.',
+          inputLabel:'URL of the site to check', submit:'Check for free', submitting:'Checking…',
+          loading:'Checking how AI reads your site…', error:'The check failed. Please try again shortly.',
+          invalidUrl:'Please enter a valid URL.',
+          resultTitle:'AI readability score',
+          resultLead:'We measured whether AI can reach your site and read the information that matters.',
+          gate:'The reachability gate did not pass, so the score is capped at 15.',
+          checksHeading:'Checks', sampleLabel:'AI sample', sampleHeading:'What ChatGPT answered',
+          samplePlaceholder:'Coming soon', shareHeading:'Share this result',
+          copy:'Copy', copied:'Copied',
+          ctaHeading:'Fix the red and amber items',
+          ctaLead:'Serving the right information from your server is what makes your site readable to AI.',
+          ctaButton:'Fix it → Nurevo AEO (WordPress plugin)',
+          ctaGuide:'Not on WordPress? → Server-side integration guide',
+          footer:'© Nurevo — helping sites become readable to AI.',
+          pageTitle:'AI readability checker | Nurevo AEO',
+          bands:{green:'Good',yellow:'Needs work',red:'At risk'},
+          titles:{green:'AI is reading your site correctly',yellow:'A few fixes and AI will read it far better',red:'AI cannot read enough of your information'}
+        }
+      };
+
+      // ?lang= wins (the main site hands its selected language over that way),
+      // then the document's own lang. Anything we have not written falls back to
+      // English rather than Japanese, so a visitor gets a language they can act on.
+      var LANG = (function () {
+        var requested = (new URLSearchParams(location.search).get('lang') || document.documentElement.lang || 'ja')
+          .toLowerCase().replace('_', '-');
+        if (STRINGS[requested]) return requested;
+        var base = requested.split('-')[0];
+        return STRINGS[base] ? base : 'en';
+      }());
+      var T = STRINGS[LANG];
+      var LABELS = T.bands;
+      var TITLES = T.titles;
+
+      document.documentElement.lang = LANG;
+      document.title = T.pageTitle;
+      Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (node) {
+        var value = T[node.getAttribute('data-t')];
+        if (typeof value !== 'string') return;
+        // Only the headline carries markup, and it is ours, not user input.
+        if (value.indexOf('<br>') >= 0) node.innerHTML = value; else node.textContent = value;
+      });
+      var form = document.getElementById('checker-form');
+      var input = document.getElementById('site-url');
+      var submit = document.getElementById('submit-button');
+      var loading = document.getElementById('loading');
+      var error = document.getElementById('error-message');
+      var results = document.getElementById('results');
+      var activeController = null;
+
+      function normalizeUrl(value) {
+        var raw = String(value || '').trim();
+        if (!/^https?:\/\//i.test(raw)) raw = 'https://' + raw;
+        var parsed = new URL(raw);
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') throw new Error('invalid_url');
+        parsed.hash = '';
+        return parsed.href;
+      }
+      function validPayload(body) {
+        return body && Number.isFinite(Number(body.score)) && COLORS[body.band] && typeof body.gatePassed === 'boolean' && Array.isArray(body.checks);
+      }
+      function render(body, targetUrl) {
+        var score = Math.max(0, Math.min(100, Math.round(Number(body.score))));
+        var color = COLORS[body.band];
+        document.getElementById('gauge').style.setProperty('--band', color);
+        document.getElementById('gauge').style.setProperty('--degrees', (score * 3.6) + 'deg');
+        document.getElementById('score').textContent = String(score);
+        var badge = document.getElementById('badge');
+        badge.textContent = LABELS[body.band];
+        badge.style.background = color;
+        document.getElementById('result-title').textContent = TITLES[body.band];
+        document.getElementById('gate-warning').hidden = body.gatePassed;
+        var list = document.getElementById('checks');
+        list.replaceChildren();
+        body.checks.forEach(function (check) {
+          var status = String(check.status || '').toUpperCase();
+          if (!['OK','WARN','BAD'].includes(status)) status = 'BAD';
+          var item = document.createElement('li');
+          item.className = 'check is-' + status.toLowerCase();
+          var icon = document.createElement('span');
+          icon.className = 'check-icon';
+          icon.setAttribute('aria-hidden', 'true');
+          icon.textContent = status === 'OK' ? '✓' : status === 'WARN' ? '!' : '×';
+          var copy = document.createElement('div');
+          var label = document.createElement('strong');
+          var message = document.createElement('p');
+          label.textContent = String(check.label || T.checksHeading);
+          message.textContent = String(check.message || '');
+          copy.append(label, message);
+          item.append(icon, copy);
+          list.append(item);
+        });
+        var share = new URL(location.href);
+        share.search = '';
+        share.searchParams.set('url', targetUrl);
+        if (LANG !== 'ja') share.searchParams.set('lang', LANG);
+        document.getElementById('share-url').value = share.href;
+        results.hidden = false;
+      }
+      async function diagnose(value) {
+        var targetUrl;
+        try { targetUrl = normalizeUrl(value); } catch (_) { input.setCustomValidity(T.invalidUrl); input.reportValidity(); return; }
+        input.setCustomValidity('');
+        if (activeController) activeController.abort();
+        activeController = new AbortController();
+        results.hidden = true;
+        error.hidden = true;
+        loading.hidden = false;
+        submit.disabled = true;
+        submit.textContent = T.submitting;
+        var share = new URL(location.href);
+        share.search = '';
+        share.searchParams.set('url', targetUrl);
+        if (LANG !== 'ja') share.searchParams.set('lang', LANG);
+        history.replaceState(null, '', share.href);
+        try {
+          var api = new URL(API_ENDPOINT);
+          api.searchParams.set('url', targetUrl);
+          // The API words the checklist; without this the checks come back in
+          // the service default while the page around them is in another language.
+          api.searchParams.set('lang', LANG);
+          var response = await fetch(api.href, {headers:{accept:'application/json'},signal:activeController.signal});
+          if (!response.ok) throw new Error('http_' + response.status);
+          var body = await response.json();
+          if (!validPayload(body)) throw new Error('invalid_response');
+          render(body, targetUrl);
+        } catch (caught) {
+          if (caught && caught.name === 'AbortError') return;
+          error.hidden = false;
+        } finally {
+          loading.hidden = true;
+          submit.disabled = false;
+          submit.textContent = T.submit;
+        }
+      }
+      form.addEventListener('submit', function (event) { event.preventDefault(); diagnose(input.value); });
+      document.getElementById('copy-share').addEventListener('click', async function () {
+        var button = this;
+        var value = document.getElementById('share-url').value;
+        try { await navigator.clipboard.writeText(value); } catch (_) { document.getElementById('share-url').select(); document.execCommand('copy'); }
+        button.textContent = T.copied;
+        setTimeout(function () { button.textContent = T.copy; }, 1400);
+      });
+      var initialUrl = new URLSearchParams(location.search).get('url');
+      if (initialUrl) { input.value = initialUrl; diagnose(initialUrl); }
+    }());
+  </script>
+</body>
+</html>
