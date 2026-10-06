@@ -12,7 +12,8 @@ function environment(initialPlan) {
         bind(...values) {
           return {
             async first() {
-              if (sql.includes("SELECT id, plan, status, delivery_status FROM sites WHERE site_key")) return { id: "site-1", plan, status: "active", delivery_status: "active" };
+              if (sql.includes("SELECT id, plan, manual_plan, status, delivery_status FROM sites WHERE site_key")) return { id: "site-1", plan, manual_plan: null, status: "active", delivery_status: "active" };
+                if (sql.includes("SELECT plan, manual_plan FROM sites WHERE id=?")) return { plan, manual_plan: null };
               if (sql.includes("SELECT delivery_status FROM sites")) return { delivery_status: "active" };
               if (sql.includes("SELECT * FROM site_settings")) return { name: "Nurevo Cafe", serve_schema: 1, allow_crawlers: 1, telephone: "ignored", tel: "03-1234-5678", address: "Tokyo" };
               if (sql.includes("SELECT url, website_uri, slug FROM sites")) return { url: "example.com", website_uri: null, slug: null };
@@ -71,8 +72,21 @@ const verified = await handleApi(new Request("https://worker.test/api/license/ve
   body: JSON.stringify({ license: "nrv_canary_standard_3000", site_key: "nrv_site" }),
 }), env, {});
 assert.equal(verified.status, 200);
-assert.deepEqual(await verified.json(), { ok: true, plan: "standard" });
-assert.equal(env.plan, "standard");
+// Billing decides the plan, so verifying a key no longer grants one. The
+// response reports what the site actually has - otherwise a cancelled
+// customer would be told they are still on the tier their key names.
+assert.deepEqual(await verified.json(), { ok: true, plan: "free" }, "an unbilled site is free even with a valid key");
+assert.equal(env.plan, "free", "verify does not write the plan");
+assert.deepEqual(env.updates, [], "verify performs no plan update at all");
+
+// A site that billing has put on a tier reports that tier.
+const billed = environment("pro");
+const billedResponse = await handleApi(new Request("https://worker.test/api/license/verify", {
+  method: "POST",
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ license: "nrv_canary_standard_3000", site_key: "nrv_site" }),
+}), billed, {});
+assert.deepEqual(await billedResponse.json(), { ok: true, plan: "pro" }, "the billed tier is reported, not the license tier");
 
 const invalid = await handleApi(new Request("https://worker.test/api/license/verify", {
   method: "POST",

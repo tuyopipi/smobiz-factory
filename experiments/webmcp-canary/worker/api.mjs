@@ -13,6 +13,7 @@ import {
   profileToColumns, rowToProfile, serializeFieldSources,
 } from "./site-profile.mjs";
 import { normalizeDomainKey } from "./domain-key.mjs";
+import { planFromSubscription, pricesFromEnv, resolveSitePlan } from "./billing-plan.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
 const json = (obj, status = 200, extraHeaders = {}) => new Response(JSON.stringify(obj), {
@@ -307,7 +308,11 @@ export async function handleApi(request, env, ctx) {
     if (siteKey) {
       const auth = await authorizeSiteKey(env, siteKey, { touch: false });
       if (!auth.registered) return json({ ok: false, error: "invalid_site_key", plan: "free" }, 404);
-      await env.DB.prepare("UPDATE sites SET plan=? WHERE id=?").bind(plan, auth.siteId).run();
+      // The license no longer sets the plan; billing does. Report what the site
+      // actually has rather than what the key would once have granted, so a
+      // cancelled customer is not told they are still on pro.
+      const site = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(auth.siteId).first();
+      return json({ ok: true, plan: resolveSitePlan(site || {}) });
     }
     return json({ ok: true, plan });
   }
@@ -343,7 +348,7 @@ export async function handleApi(request, env, ctx) {
     if (!domainKey) return json({ ok: false, error: "invalid_domain" }, 400);
 
     const license = await env.DB.prepare(
-      "SELECT license_hash, plan, org_id, seats FROM licenses WHERE license_hash=? AND active=1 LIMIT 1",
+      "SELECT license_hash, plan, org_id, seats, manual FROM licenses WHERE license_hash=? AND active=1 LIMIT 1",
     ).bind(licenseHash).first();
     const plan = normalizeAeoPlan(license?.plan);
     // One answer for "no such key", "inactive key" and "free key": a caller must
@@ -868,7 +873,7 @@ export async function handleApi(request, env, ctx) {
       const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
       return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
     }
-    const plan = normalizeAeoPlan(site.plan);
+    const plan = resolveSitePlan(site);
     const month = (url.searchParams.get("month") || "").match(/^\d{4}-\d{2}$/)
       ? url.searchParams.get("month")
       : undefined;
@@ -1175,11 +1180,34 @@ export async function handleApi(request, env, ctx) {
     if (Number(claim.meta?.changes || 0) !== 1) return json({ received: true, duplicate: true });
     const object = event.data?.object || {};
     const siteId = object.metadata?.siteId || object.subscription_details?.metadata?.siteId || object.lines?.data?.[0]?.metadata?.siteId;
+    // Checkout only records the identifiers. The tier comes from the
+    // subscription object, which arrives in its own event and is the thing that
+    // actually says what was bought and whether it is still paid for.
     if (event.type === "checkout.session.completed" && siteId) {
       await env.DB.prepare("UPDATE sites SET stripe_customer_id=?,stripe_subscription_id=? WHERE id=?")
         .bind(object.customer || null, object.subscription || null, siteId).run();
-      await env.DB.prepare("UPDATE sites SET contract='active' WHERE id=?").bind(siteId).run();
     }
+
+    // The subscription is the source of truth for the plan.
+    if (["customer.subscription.created", "customer.subscription.updated", "customer.subscription.deleted"].includes(event.type)) {
+      // deleted does not always carry a status we can act on, so treat it as the
+      // cancellation it is.
+      const subscription = event.type === "customer.subscription.deleted"
+        ? { ...object, status: "canceled" }
+        : object;
+      const derived = planFromSubscription(subscription, pricesFromEnv(env));
+      // A site referenced by metadata, or failing that by the subscription we
+      // already stored - a subscription changed from the Stripe dashboard does
+      // not necessarily carry our metadata.
+      const target = siteId
+        || (object.id ? (await env.DB.prepare("SELECT id FROM sites WHERE stripe_subscription_id=? LIMIT 1").bind(object.id).first())?.id : null);
+      if (derived && target) {
+        await env.DB.prepare(
+          "UPDATE sites SET plan=?, contract=?, delivery_status=?, stripe_customer_id=COALESCE(?,stripe_customer_id), stripe_subscription_id=COALESCE(?,stripe_subscription_id) WHERE id=?",
+        ).bind(derived.plan, derived.contract, derived.delivery_status, object.customer || null, object.id || null, target).run();
+      }
+    }
+
     if (event.type === "invoice.paid" && siteId) {
       await env.DB.prepare("UPDATE sites SET contract='active' WHERE id=?").bind(siteId).run();
       const site = await env.DB.prepare("SELECT * FROM sites WHERE id=?").bind(siteId).first();
@@ -1189,11 +1217,12 @@ export async function handleApi(request, env, ctx) {
         await stripeRequest(stripeTestSecret(env), "/v1/transfers", new URLSearchParams({ amount: String(BILLING_DEFAULTS.referral_monthly_yen), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id }));
       }
     }
+    // A failed payment no longer stops the site. Stripe retries for days before
+    // giving up, and that retry window is the grace period; cutting service on
+    // the first failure gave the customer no grace at all. The subscription
+    // moving to unpaid is what stops it, handled above.
     if (event.type === "invoice.payment_failed" && siteId) {
-      await env.DB.prepare("UPDATE sites SET contract='unpaid',delivery_status='stopped' WHERE id=?").bind(siteId).run();
-    }
-    if (event.type === "customer.subscription.deleted" && siteId) {
-      await env.DB.prepare("UPDATE sites SET contract='cancelled',delivery_status='stopped' WHERE id=?").bind(siteId).run();
+      await env.DB.prepare("UPDATE sites SET contract='past_due' WHERE id=?").bind(siteId).run();
     }
     return json({ received: true });
   }
@@ -1319,14 +1348,24 @@ async function bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, ins
     // token. Taking over a site bound to a different key of the same org is
     // allowed: both keys belong to the org, and refusing would strand a site
     // when a customer upgrades from standard to pro.
+    // Binding links the install to the site. It does not grant a tier - billing
+    // does that - so plan is not written here. A key marked manual is the one
+    // exception: those are issued outside Stripe (wholesale, partner, canary)
+    // and the grant is recorded on the site so resolveSitePlan can honour it.
     await env.DB.prepare(
-      "UPDATE sites SET plan=?, bound_license_hash=?, bound_at=?, install_type=?, website_uri=COALESCE(NULLIF(?,''), website_uri) WHERE id=?",
-    ).bind(plan, license.license_hash, now, installType, siteUrl, existing.id).run();
+      "UPDATE sites SET bound_license_hash=?, bound_at=?, install_type=?, website_uri=COALESCE(NULLIF(?,''), website_uri) WHERE id=?",
+    ).bind(license.license_hash, now, installType, siteUrl, existing.id).run();
+    if (Number(license.manual || 0) === 1) {
+      await env.DB.prepare(
+        "UPDATE sites SET manual_plan=?, manual_plan_note=COALESCE(manual_plan_note,'granted by a manually issued license') WHERE id=?",
+      ).bind(plan, existing.id).run();
+    }
     const token = await issueProfileToken(env, existing.id);
+    const site = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(existing.id).first();
     return {
       ok: true,
       body: {
-        ok: true, plan, site_id: existing.id, site_key: existing.site_key,
+        ok: true, plan: resolveSitePlan(site || {}), site_id: existing.id, site_key: existing.site_key,
         profile_token: token, bound: true, domain: domainKey,
         reused: existing.bound_license_hash === license.license_hash,
       },
@@ -1344,11 +1383,20 @@ async function bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, ins
 
   const siteId = uid();
   const siteKey = newKey();
+  // plan starts at free: a new site has no subscription yet, and billing is
+  // what grants a tier. manual_plan carries the grant for keys issued outside
+  // Stripe, so a wholesale or canary install still works on day one.
+  // Declared outside the try because the success path below reports it.
+  const manualPlan = Number(license.manual || 0) === 1 ? plan : null;
   try {
     await env.DB.prepare(`
-      INSERT INTO sites (id, org_id, url, site_key, install_type, plan, domain_key, bound_license_hash, bound_at, website_uri, created_at)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `).bind(siteId, license.org_id, domainKey, siteKey, installType, plan, domainKey, license.license_hash, now, siteUrl || null, now).run();
+      INSERT INTO sites (id, org_id, url, site_key, install_type, plan, manual_plan, manual_plan_note, domain_key, bound_license_hash, bound_at, website_uri, created_at)
+      VALUES (?, ?, ?, ?, ?, 'free', ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      siteId, license.org_id, domainKey, siteKey, installType,
+      manualPlan, manualPlan ? 'granted by a manually issued license' : null,
+      domainKey, license.license_hash, now, siteUrl || null, now,
+    ).run();
   } catch (error) {
     // Two installs redeeming the same key against the same domain at once: the
     // unique index rejects the loser, which then finds the winner's row.
@@ -1360,13 +1408,14 @@ async function bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, ins
       return { ok: false, status: 500, error: "bind_failed" };
     }
     const token = await issueProfileToken(env, raced.id);
-    return { ok: true, body: { ok: true, plan, site_id: raced.id, site_key: raced.site_key, profile_token: token, bound: true, domain: domainKey, reused: true } };
+    const racedSite = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(raced.id).first();
+    return { ok: true, body: { ok: true, plan: resolveSitePlan(racedSite || {}), site_id: raced.id, site_key: raced.site_key, profile_token: token, bound: true, domain: domainKey, reused: true } };
   }
 
   const token = await issueProfileToken(env, siteId);
   return {
     ok: true,
-    body: { ok: true, plan, site_id: siteId, site_key: siteKey, profile_token: token, bound: true, domain: domainKey, reused: false },
+    body: { ok: true, plan: resolveSitePlan({ plan: "free", manual_plan: manualPlan }), site_id: siteId, site_key: siteKey, profile_token: token, bound: true, domain: domainKey, reused: false },
   };
 }
 
@@ -1466,7 +1515,7 @@ async function requireProSite(request, env, siteId) {
   }
   if (!site) return { ok: false, response: json({ error: "not_found" }, 404) };
 
-  const plan = normalizeAeoPlan(site.plan);
+  const plan = resolveSitePlan(site);
   if (plan !== "pro") {
     return {
       ok: false,

@@ -2124,6 +2124,21 @@ function webmcp_canary_sync_ruleset($force = false) {
     }
 
     $state['plan'] = $plan;
+
+    // Billing decides the plan now, so the service is the authority on it and
+    // this periodic call is how a change reaches the site. Writing it only into
+    // the ruleset state left it unread: the plan badge, the always-current
+    // banner and the measurement screen all read the settings copy, so a
+    // cancelled subscription went on showing the paid tier until the operator
+    // happened to re-save the licence field.
+    $settings = webmcp_canary_settings();
+    if ($plan !== $settings['plan']) {
+        $settings['plan'] = $plan;
+        update_option(WEBMCP_CANARY_OPTION, $settings);
+        // The diagnosis is cached per plan-dependent ruleset, so drop it and let
+        // the next screen view re-run against whatever the site is entitled to.
+        delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
+    }
     if ($version > intval($state['version'])) {
         $state['previous_version'] = intval($state['version']);
         $state['version'] = $version;

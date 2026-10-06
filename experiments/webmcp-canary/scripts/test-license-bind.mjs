@@ -53,6 +53,10 @@ function makeEnv({ licenses = [], sites = [], seats = 1 } = {}) {
             if (/FROM licenses WHERE license_hash=\?/.test(sql)) {
               return db.licenses.find((l) => l.license_hash === values[0] && l.active === 1) || null;
             }
+            if (/SELECT plan, manual_plan FROM sites WHERE id=\?/.test(sql)) {
+              const site = db.sites.find((s) => s.id === values[0]);
+              return site ? { plan: site.plan, manual_plan: site.manual_plan ?? null } : null;
+            }
             if (/SELECT id, site_key, bound_license_hash FROM sites WHERE org_id=\? AND domain_key=\?/.test(sql)) {
               return db.sites.find((s) => s.org_id === values[0] && s.domain_key === values[1]) || null;
             }
@@ -78,11 +82,17 @@ function makeEnv({ licenses = [], sites = [], seats = 1 } = {}) {
             async all() { return { results: [] }; },
             async run() {
               if (/INSERT INTO sites/.test(sql)) {
-                const [id, org_id, url, site_key, install_type, plan, domain_key, bound_license_hash, bound_at, website_uri] = values;
+                // plan is a literal 'free' in the statement, so it is not bound.
+                const [id, org_id, url, site_key, install_type, manual_plan, manual_plan_note,
+                       domain_key, bound_license_hash, bound_at, website_uri] = values;
                 if (db.sites.some((s) => s.org_id === org_id && s.domain_key === domain_key)) {
                   throw new Error("UNIQUE constraint failed: sites.org_id, sites.domain_key");
                 }
-                db.sites.push({ id, org_id, url, site_key, install_type, plan, domain_key, bound_license_hash, bound_at, website_uri, profile_token_hash: null });
+                db.sites.push({
+                  id, org_id, url, site_key, install_type, plan: "free",
+                  manual_plan: manual_plan ?? null, manual_plan_note: manual_plan_note ?? null,
+                  domain_key, bound_license_hash, bound_at, website_uri, profile_token_hash: null,
+                });
                 return { success: true };
               }
               if (/UPDATE sites SET profile_token_hash=\?/.test(sql)) {
@@ -90,9 +100,14 @@ function makeEnv({ licenses = [], sites = [], seats = 1 } = {}) {
                 if (site) site.profile_token_hash = values[0];
                 return { success: true };
               }
-              if (/UPDATE sites SET plan=\?, bound_license_hash=\?/.test(sql)) {
-                const site = db.sites.find((s) => s.id === values[5]);
-                if (site) { site.plan = values[0]; site.bound_license_hash = values[1]; site.bound_at = values[2]; site.install_type = values[3]; }
+              if (/UPDATE sites SET bound_license_hash=\?/.test(sql)) {
+                const site = db.sites.find((s) => s.id === values[4]);
+                if (site) { site.bound_license_hash = values[0]; site.bound_at = values[1]; site.install_type = values[2]; }
+                return { success: true };
+              }
+              if (/UPDATE sites SET manual_plan=\?/.test(sql)) {
+                const site = db.sites.find((s) => s.id === values[1]);
+                if (site) site.manual_plan = values[0];
                 return { success: true };
               }
               if (/UPDATE sites SET bound_license_hash=NULL/.test(sql)) {
@@ -121,9 +136,15 @@ const call = (method, path, env, body, headers = {}) => handleApi(
     ...(body ? { body: JSON.stringify(body) } : {}),
   }), env, ctx);
 
-async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-canary", active = 1 } = {}) {
+/**
+ * `manual` defaults to 1 here because most of these cases care about binding
+ * rather than billing, and a manually issued key is the only kind that still
+ * grants a tier on its own. Retail keys (manual: 0) are covered explicitly
+ * below: billing decides their plan, so binding one grants nothing.
+ */
+async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-canary", active = 1, manual = 1 } = {}) {
   const env = makeEnv();
-  env.db.licenses = [{ license_hash: await sha256Hex(STANDARD_KEY), plan, active, org_id, seats }];
+  env.db.licenses = [{ license_hash: await sha256Hex(STANDARD_KEY), plan, active, org_id, seats, manual }];
   return env;
 }
 
@@ -137,7 +158,7 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
   assert.equal(response.status, 200, "a valid license binds");
   const body = await response.json();
   assert.equal(body.ok, true);
-  assert.equal(body.plan, "standard", "the license plan is returned");
+  assert.equal(body.plan, "standard", "a manually issued license grants its tier");
   assert.equal(body.domain, "example.com", "the domain is normalised before it is stored");
   assert.ok(body.site_id, "a site id is minted");
   assert.ok(body.site_key, "a site key is minted");
@@ -147,8 +168,39 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
 
   const site = env.db.sites[0];
   assert.equal(site.domain_key, "example.com", "the normalised key is what lands in the row");
-  assert.equal(site.plan, "standard", "the site carries the licensed plan");
+  // Billing owns sites.plan. A manual key records its grant separately, so a
+  // later subscription - or its cancellation - decides plan without the key
+  // having to be re-redeemed.
+  assert.equal(site.plan, "free", "binding does not write the billed plan");
+  assert.equal(site.manual_plan, "standard", "the manual grant is recorded on the site");
   assert.ok(site.profile_token_hash && !site.profile_token_hash.includes(body.profile_token), "only the token hash is stored");
+}
+
+/* ---------------- a retail key links, it does not pay ---------------- */
+
+{
+  // The ordinary case now: a key sold through checkout. Redeeming it registers
+  // the install, and the Stripe subscription - not the key - decides the tier.
+  const env = await envWithLicense({ manual: 0 });
+  const body = await (await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "retail.example" })).json();
+  assert.equal(body.ok, true, "a retail license still binds");
+  assert.ok(body.site_id && body.site_key && body.profile_token, "and still registers the install");
+  assert.equal(body.plan, "free", "but grants no tier on its own");
+
+  const site = env.db.sites[0];
+  assert.equal(site.plan, "free", "nothing is billed yet");
+  assert.equal(site.manual_plan, null, "and no grant is recorded for a retail key");
+}
+
+{
+  // Once billing has granted a tier, re-binding reports it rather than
+  // overwriting it back to what the key says.
+  const env = await envWithLicense({ manual: 0 });
+  await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "paid.example" });
+  env.db.sites[0].plan = "pro";   // as a subscription webhook would have set it
+  const again = await (await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "paid.example" })).json();
+  assert.equal(again.plan, "pro", "re-binding reports the billed tier");
+  assert.equal(env.db.sites[0].plan, "pro", "and does not reset it to the license tier");
 }
 
 /* ---------------- binding again is idempotent ---------------- */

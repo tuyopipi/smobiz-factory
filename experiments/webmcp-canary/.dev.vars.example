@@ -40,3 +40,23 @@ OPENAI_MODEL=gpt-4.1-mini
 # Weekly batch size (pro sites measured per run). Hard caps on questions,
 # engines and the per-site monthly query budget live in worker/aeo-sov.mjs.
 # SOV_BATCH_LIMIT=50
+
+# --- Billing decides the plan ---------------------------------------------
+# A Stripe subscription is what grants standard or pro; the license key only
+# links an install to a site. These map a Stripe price to a tier, and a price
+# that matches neither grants nothing - an unrecognised price is far likelier
+# to be a misconfiguration than a new tier.
+#
+# Never put a value here. Set them with:
+#   wrangler secret put STRIPE_SECRET_KEY
+#   wrangler secret put STRIPE_WEBHOOK_SECRET
+#   wrangler secret put STRIPE_PRICE_ID_PRO
+#   wrangler secret put STRIPE_PRICE_ID_STANDARD
+#
+# STRIPE_PRICE_ID_STANDARD is new and currently unset, so standard cannot be
+# sold through checkout yet; standard sites are provisioned manually until a
+# price exists for them. Everything else keeps working with it unset.
+#
+# For a local test-mode run, put test-mode values in .dev.vars (git-ignored):
+# STRIPE_PRICE_ID_PRO=price_...
+# STRIPE_PRICE_ID_STANDARD=price_...
