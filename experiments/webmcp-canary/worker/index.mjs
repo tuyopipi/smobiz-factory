@@ -1,6 +1,6 @@
 import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
-import { handleApi } from "./api.mjs";
+import { handleApi, runSovWeeklyBatch } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 import dashboardRulesetsSource from "../public/dashboard-rulesets.js";
 import dashboardAeoMetricsSource from "../public/dashboard-aeo-metrics.js";
@@ -73,8 +73,14 @@ export default {
         }),
       );
     } else if (cron === weeklyCron) {
+      // SoV runs before learning so the week's appearance data is available to
+      // the calibration proposal the learning job records.
       jobs.push(
-        runAeoLearningJob(env, { trigger: "scheduled" }).then((result) => {
+        runSovWeeklyBatch(env).then((result) => {
+          console.log("aeo-sov-batch", JSON.stringify(result));
+        }).catch((error) => {
+          console.error("aeo-sov-batch-error", JSON.stringify({ message: String(error?.message || error) }));
+        }).then(() => runAeoLearningJob(env, { trigger: "scheduled" })).then((result) => {
           console.log("aeo-learning", JSON.stringify(result));
         }).catch((error) => {
           console.error("aeo-learning-error", JSON.stringify({ message: String(error?.message || error) }));
@@ -272,7 +278,7 @@ export default {
         if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
         const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
         if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
-        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        // llms.txt is a free baseline output: any authorized site key gets it.
         const body = await generateLlmsTxt(env, { host: access.record.siteHost });
         return new Response(body, {
           status: 200,
@@ -2769,13 +2775,9 @@ async function findActiveSiteKeyByHost(env, host) {
 }
 
 function isProSiteKey(siteKey, env, record) {
-  if (record?.plan === "pro") return true;
-  if (!siteKey) return false;
-  return String(env.WEBMCP_PRO_SITE_KEYS || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .includes(siteKey);
+  // Plan comes from the site record only. The former WEBMCP_PRO_SITE_KEYS
+  // env allowlist was an undocumented plan bypass and has been removed.
+  return record?.plan === "pro";
 }
 
 async function findSiteKey(env, siteKey) {

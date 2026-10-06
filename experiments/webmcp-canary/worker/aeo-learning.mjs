@@ -1,3 +1,5 @@
+import { runCalibration } from "./aeo-calibration.mjs";
+
 const CUSTOMER_FIELDS = Object.freeze([
   { schema: "name", setting: "name", label: "店舗名", requiredKey: "name", present: (site) => !!site.name },
   { schema: "telephone", setting: "tel", label: "電話番号", present: (site) => !!site.tel },
@@ -165,7 +167,7 @@ function reorderedRecommended(current, preferred) {
   return [...preferred.filter((item) => allowed.has(item)), ...current.filter((item) => !preferred.includes(item))];
 }
 
-async function createCandidate(env, active, analyses, evidence, now) {
+async function createCandidate(env, active, analyses, evidence, now, calibration = null) {
   if (!analyses.length) return { version: null, mode: "heuristic", reason: "no_sites" };
   const fingerprintPayload = {
     active_version: Number(active.version),
@@ -173,6 +175,10 @@ async function createCandidate(env, active, analyses, evidence, now) {
     score_samples: analyses.filter((site) => site.averageScore != null).length,
     fields: evidence,
     citation_samples_used: false,
+    // Appearance-rate evidence changes the candidate's inputs, so it must
+    // participate in the fingerprint or new SoV data would be deduplicated away.
+    sov_samples: calibration?.samples || 0,
+    sov_lift: calibration?.lift || null,
   };
   const fingerprint = (await sha256(JSON.stringify(fingerprintPayload))).slice(0, 20);
   const existing = await env.DB.prepare("SELECT version FROM aeo_rulesets WHERE active=0 AND notes LIKE ? ORDER BY version DESC LIMIT 1")
@@ -197,18 +203,23 @@ async function createCandidate(env, active, analyses, evidence, now) {
     }
   }
   definition.schema.recommended = reorderedRecommended(currentOrder, preferredOrder);
-  // Reserved extension point: future citation samples may be added here. They are
-  // intentionally absent today; this engine uses only scores, hits and completeness.
+  // Measured AI appearance rates (U2 SoV) arrive here as the calibration
+  // proposal. It is recorded as evidence only: AEO_SCORE_WEIGHTS stays fixed
+  // until the proposal is reviewed and switched on explicitly.
+  const materials = ["aeo_scores", "crawler_hits", "site_settings_completeness"];
+  if (calibration?.samples) materials.push("aeo_sov_runs");
   definition.learningEvidence = {
     source_active_version: Number(active.version),
     generated_at: now,
-    materials: ["aeo_scores", "crawler_hits", "site_settings_completeness"],
+    materials,
     field_correlations: evidence,
     citation_samples_used: false,
     citation_samples: [],
+    sov_calibration: calibration || { applied: false, reason: "not_collected", samples: 0 },
     rationale,
   };
-  const notes = `[AEO learning] source_active=v${active.version}; evidence=${fingerprint}; mode=${mode}; materials=score/hits/completeness; citations=not-used; ${rationale}`.slice(0, 2000);
+  const calibrationNote = `sov_samples=${calibration?.samples || 0}; weights_applied=${calibration?.applied === true}`;
+  const notes = `[AEO learning] source_active=v${active.version}; evidence=${fingerprint}; mode=${mode}; materials=${materials.join("/")}; citations=not-used; ${calibrationNote}; ${rationale}`.slice(0, 2000);
   const created = await env.DB.prepare(`
     INSERT INTO aeo_rulesets (version,created_at,definition_json,active,notes)
     SELECT COALESCE(MAX(version),0)+1,?,?,0,? FROM aeo_rulesets
@@ -240,17 +251,29 @@ export async function runAeoLearningJob(env, { trigger = "scheduled" } = {}) {
   const analyses = analyzeSites(siteRows.results || [], scoreHistory, hitsBySite, definition, Number(active.version));
   const openRecommendations = await saveSiteRecommendations(env, analyses, Number(active.version), id, startedAt);
   const evidence = correlationEvidence(analyses, definition);
-  const candidate = await createCandidate(env, active, analyses, evidence, startedAt);
+  // Self-calibration input: measured AI appearance rates paired with each
+  // site's checks. A failure here must not fail the learning run, so a broken
+  // calibration degrades to "not collected".
+  let calibration = null;
+  try {
+    calibration = await runCalibration(env);
+  } catch (error) {
+    calibration = { applied: false, reason: "calibration_failed", samples: 0, error: String(error?.message || error).slice(0, 120) };
+  }
+  const candidate = await createCandidate(env, active, analyses, evidence, startedAt, calibration);
   const finishedAt = isoNow();
+  const sources = ["aeo_scores", "crawler_hits", "site_settings_completeness", "active_aeo_ruleset"];
+  if (calibration?.samples) sources.push("aeo_sov_runs");
   const inputMaterials = {
-    sources: ["aeo_scores", "crawler_hits", "site_settings_completeness", "active_aeo_ruleset"],
+    sources,
     score_rows: scoreRows.results?.length || 0,
     crawler_aggregate_rows: hitRows.results?.length || 0,
     citation_samples_available: false,
     citation_samples_used: false,
-    future_extension: "citation_samples",
+    sov_calibration: calibration,
+    weights_applied: calibration?.applied === true,
   };
-  const summary = `Analyzed ${analyses.length} sites; ${openRecommendations} require customer data; candidate ${candidate.version ? `v${candidate.version}` : "not created"}; mode=${candidate.mode}; citation data not used.`;
+  const summary = `Analyzed ${analyses.length} sites; ${openRecommendations} require customer data; candidate ${candidate.version ? `v${candidate.version}` : "not created"}; mode=${candidate.mode}; citation data not used; sov_samples=${calibration?.samples || 0}; weights unchanged.`;
   await env.DB.prepare(`
     INSERT INTO aeo_learning_runs
       (id,ran_at,finished_at,trigger,sites_analyzed,recommendations_created,candidate_version,mode,summary,input_materials_json,citation_samples_used)

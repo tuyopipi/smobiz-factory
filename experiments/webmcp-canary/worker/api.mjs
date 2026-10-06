@@ -1,5 +1,18 @@
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler } from "./ai-crawlers.js";
+import { AEO_CACHE_TTL_SECONDS, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, resolveAeoCheckLang } from "./aeo-score.mjs";
+import { storeAeoScore } from "./diagnose.mjs";
+import {
+  SOV_BETA, SOV_LIMITS, SOV_MODEL_VERSION, SovError,
+  availableEngines, buildBrandProfile, buildQuestionSet,
+  engineStatus, loadSovHistory, measureSov, sovRecordUsage, sovRemainingBudget, storeSovRun,
+} from "./aeo-sov.mjs";
+import { buildMonthlyReport, renderMonthlyReportHtml, renderMonthlyReportText } from "./aeo-report.mjs";
+import {
+  PROFILE_FIELD_NAMES, mergeProfile, parseFieldSources, profileResponse,
+  profileToColumns, rowToProfile, serializeFieldSources,
+} from "./site-profile.mjs";
+import { normalizeDomainKey } from "./domain-key.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
 const json = (obj, status = 200, extraHeaders = {}) => new Response(JSON.stringify(obj), {
@@ -22,6 +35,13 @@ const API_RATE_LIMITS = Object.freeze({
   memberIp: { limit: 10, windowMs: 60 * 60 * 1000 },
   memberEmail: { limit: 3, windowMs: 60 * 60 * 1000 },
   crawlerHit: { limit: 120, windowMs: 60 * 1000 },
+  siteProfile: { limit: 60, windowMs: 60 * 60 * 1000 },
+  // Binding is unauthenticated by necessity - the license key is the only
+  // credential the plugin holds - so it is limited twice: per caller, to slow
+  // key guessing from one place, and per key, so a leaked key cannot be redeemed
+  // across the internet faster than a human would notice.
+  licenseBindIp: { limit: 10, windowMs: 60 * 60 * 1000 },
+  licenseBindKey: { limit: 20, windowMs: 24 * 60 * 60 * 1000 },
 });
 const PLACES_SEARCH_FIELD_MASK = "places.id,places.displayName,places.formattedAddress,places.location,places.regularOpeningHours,places.nationalPhoneNumber,places.types,places.primaryType,places.primaryTypeDisplayName,places.priceLevel,places.websiteUri";
 // Place Details (New) uses resource-relative field names (without the `places.` prefix).
@@ -136,11 +156,17 @@ function buildJsonLd(site, settings, ruleset) {
   const schema = definition?.schema || INITIAL_AEO_RULESET.definition.schema;
   const fields = schema.fields || INITIAL_AEO_RULESET.definition.schema.fields;
   const defaults = definition?.defaults || INITIAL_AEO_RULESET.definition.defaults;
-  const ld = { "@context": schema.context || "https://schema.org", "@type": schema.type || defaults.schemaType || "LocalBusiness", name: settings.name || site.url };
+  // A site-specific schema.org type wins over the ruleset default: it is the
+  // owner's own statement about what the business is.
+  const schemaType = settings.business_type_schema || schema.type || defaults.schemaType || "LocalBusiness";
+  const ld = { "@context": schema.context || "https://schema.org", "@type": schemaType, name: settings.name || site.url };
   const hostedBaseUrl = defaults.hostedBaseUrl || "https://nurevo.jp/s/";
   const canonicalUrl = site?.website_uri || (site?.url ? (/^https?:\/\//i.test(site.url) ? site.url : `https://${site.url}`) : null) || (site?.slug ? `${hostedBaseUrl}${encodeURIComponent(site.slug)}` : null);
   if (fields.url !== false && canonicalUrl) ld.url = canonicalUrl;
-  if (fields.additionalType !== false && settings.business_type) ld.additionalType = settings.business_type;
+  // additionalType carries the human-facing label (e.g. 美容室). Fall back to the
+  // schema type so a site migrated from the single-column layout is not blank.
+  const typeLabel = settings.business_type || settings.business_type_schema;
+  if (fields.additionalType !== false && typeLabel) ld.additionalType = typeLabel;
   if (fields.address !== false && settings.address) ld.address = { "@type": "PostalAddress", streetAddress: settings.address };
   if (fields.telephone !== false && settings.tel) ld.telephone = settings.tel;
   if (fields.openingHours !== false && settings.hours) ld.openingHours = settings.hours;
@@ -158,6 +184,184 @@ export async function handleApi(request, env, ctx) {
   const url = new URL(request.url);
   const path = url.pathname;
   const method = request.method;
+
+  if (path === "/api/aeo/score" && method === "GET") {
+    const raw = url.searchParams.get("url") || "";
+    const rate = await aeoPublicRateLimit(request, env);
+    if (!rate.allowed) return json({ error: "rate_limited" }, 429, { "retry-after": String(rate.retryAfter) });
+    try {
+      const lang = requestedAeoLang(request, url);
+      // The cache key deliberately excludes the language: one diagnosis is
+      // reused for every language, and the wording is applied on the way out.
+      // Caching per language would multiply the entries and let the first
+      // visitor's language decide what everyone else sees until it expired.
+      const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
+      const cached = await env.WEBMCP_KV?.get(cacheKey, "json");
+      const vary = { "cache-control": `public, max-age=${AEO_CACHE_TTL_SECONDS}`, "vary": "accept-language" };
+      if (cached) return json(aeoResponse(cached, lang), 200, { ...vary, "x-aeo-cache": "hit" });
+      const result = await diagnoseAeoUrl(raw);
+      const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(aeoResponse(result)), { expirationTtl: AEO_CACHE_TTL_SECONDS });
+      if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
+      return json(aeoResponse(result, lang), 200, { ...vary, "x-aeo-cache": "miss" });
+    } catch (error) {
+      if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
+      throw error;
+    }
+  }
+
+  // Public checker, lightweight sample: one question against one engine.
+  // Always cached, and explicitly "preparing" when no engine key is set, so the
+  // public page never burns engine quota per visitor.
+  if (path === "/api/aeo/mention" && method === "GET") {
+    const raw = url.searchParams.get("url") || "";
+    const rate = await aeoPublicRateLimit(request, env);
+    if (!rate.allowed) return json({ error: "rate_limited" }, 429, { "retry-after": String(rate.retryAfter) });
+
+    const engines = availableEngines(env);
+    if (!engines.length) {
+      return json({
+        status: "preparing",
+        beta: SOV_BETA,
+        message: "AI登場チェックは準備中です。",
+        ...engineStatus(env),
+      }, 200, { "cache-control": "public, max-age=300" });
+    }
+
+    let target;
+    try { target = normalizeAeoCacheUrl(raw); } catch (error) {
+      if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
+      throw error;
+    }
+    const engine = engines[0];
+    const cacheKey = `aeo-mention:${SOV_MODEL_VERSION}:${engine.id}:${await aeoSha256Hex(target)}`;
+    const cached = await env.WEBMCP_KV?.get(cacheKey, "json");
+    if (cached) {
+      return json(cached, 200, { "cache-control": `public, max-age=${SOV_LIMITS.publicCacheTtlSeconds}`, "x-aeo-cache": "hit" });
+    }
+
+    let body;
+    try {
+      const schemas = await fetchSchemaNodes(target);
+      const profile = buildBrandProfile({ site: { website_uri: target }, settings: {}, schemas });
+      const question = buildQuestionSet(profile, 1)[0];
+      const probe = await measureSov(env, profile, { questions: [question], budget: 1 });
+      const sample = probe.samples[0];
+      body = {
+        status: sample?.ok ? "measured" : "unavailable",
+        beta: SOV_BETA,
+        engine: { id: engine.id, label: engine.label, citations_available: engine.citations },
+        brand: profile.name,
+        question,
+        mentioned: sample?.ok ? sample.mentioned : null,
+        cited: sample?.ok ? sample.cited : null,
+        sample_size: 1,
+        // One answer is one data point, not a rate. The caller is told so it
+        // cannot present this as a measured appearance rate.
+        note: "1質問×1エンジンの参考サンプルです。登場率の測定はProプランで行います。",
+        upgrade_url: "https://nurevo.jp/dashboard",
+      };
+    } catch (error) {
+      if (error instanceof SovError || error instanceof AeoScoreError) {
+        return json({ error: error.code }, error.status);
+      }
+      throw error;
+    }
+
+    const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(body), { expirationTtl: SOV_LIMITS.publicCacheTtlSeconds });
+    if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
+    return json(body, 200, { "cache-control": `public, max-age=${SOV_LIMITS.publicCacheTtlSeconds}`, "x-aeo-cache": "miss" });
+  }
+
+  const siteAeoScoreMatch = path.match(/^\/api\/sites\/([^/]+)\/aeo-score$/i);
+  if (siteAeoScoreMatch && method === "GET") {
+    const siteId = decodeURIComponent(siteAeoScoreMatch[1]);
+    const siteKey = url.searchParams.get("site_key") || url.searchParams.get("siteKey") || url.searchParams.get("k");
+    const auth = await authorizeSiteKey(env, siteKey, { touch: false });
+    if (!auth.registered || String(auth.siteId) !== siteId) return json({ error: "invalid_site_key" }, 404);
+    const site = await env.DB.prepare("SELECT id,url,website_uri,slug FROM sites WHERE id=? LIMIT 1").bind(siteId).first();
+    if (!site) return json({ error: "not_found" }, 404);
+    const target = String(site.website_uri || site.url || "").trim()
+      || (site.slug ? `https://nurevo.jp/s/${encodeURIComponent(site.slug)}` : "");
+    try {
+      const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`);
+      // Stored history keeps the default wording; only the reply is localised,
+      // so the archive stays comparable across requests from different locales.
+      await storeAeoScore(env, site.id, { ...result, verdict: result.band });
+      return json(aeoResponse(result, requestedAeoLang(request, url)), 200, { "vary": "accept-language" });
+    } catch (error) {
+      if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
+      throw error;
+    }
+  }
+
+  if (path === "/api/license/verify" && method === "POST") {
+    const payload = await readLicensePayload(request);
+    if (!payload.ok) return json({ error: payload.error, plan: "free" }, payload.status);
+    const licenseHash = await sha256Hex(String(payload.value.license || "").trim());
+    const license = await env.DB.prepare(
+      "SELECT plan FROM licenses WHERE license_hash=? AND active=1 LIMIT 1",
+    ).bind(licenseHash).first();
+    const plan = normalizeAeoPlan(license?.plan);
+    if (!license || plan === "free") return json({ ok: false, error: "invalid_license", plan: "free" }, 404);
+    const siteKey = String(payload.value.site_key || payload.value.siteKey || "").trim();
+    if (siteKey) {
+      const auth = await authorizeSiteKey(env, siteKey, { touch: false });
+      if (!auth.registered) return json({ ok: false, error: "invalid_site_key", plan: "free" }, 404);
+      await env.DB.prepare("UPDATE sites SET plan=? WHERE id=?").bind(plan, auth.siteId).run();
+    }
+    return json({ ok: true, plan });
+  }
+
+  // Bind-on-license: redeem a license against a domain and get back everything
+  // the plugin needs to act as a registered site. This is the only path that
+  // creates a sites row from a self-installed plugin, so it is also the only
+  // place a site_id and profile token are minted without a dashboard session.
+  //
+  // Unauthenticated by necessity: the license key is the credential. It is never
+  // compared against anything the caller also supplies, and every failure that
+  // could reveal whether a key exists answers with the same shape.
+  if (path === "/api/license/bind" && method === "POST") {
+    const payload = await readLicensePayload(request);
+    if (!payload.ok) return json({ ok: false, error: payload.error }, payload.status);
+
+    const ipLimit = await checkApiRateLimit(env, "license-bind-ip", requestClientIp(request), API_RATE_LIMITS.licenseBindIp);
+    if (!ipLimit.allowed) {
+      return json({ ok: false, error: ipLimit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, ipLimit.unavailable ? 503 : 429);
+    }
+
+    const licenseHash = await sha256Hex(String(payload.value.license || "").trim());
+    const keyLimit = await checkApiRateLimit(env, "license-bind-key", licenseHash, API_RATE_LIMITS.licenseBindKey);
+    if (!keyLimit.allowed) {
+      return json({ ok: false, error: keyLimit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, keyLimit.unavailable ? 503 : 429);
+    }
+
+    // Local installs are a real development case, so loopback is accepted only
+    // when the request itself is not from the public internet.
+    const allowReserved = env.WEBMCP_ALLOW_LOCAL_BIND === "1";
+    const domainKey = normalizeDomainKey(payload.value.domain ?? payload.value.site_url ?? "", { allowReserved })
+      ?? normalizeDomainKey(payload.value.site_url ?? "", { allowReserved });
+    if (!domainKey) return json({ ok: false, error: "invalid_domain" }, 400);
+
+    const license = await env.DB.prepare(
+      "SELECT license_hash, plan, org_id, seats FROM licenses WHERE license_hash=? AND active=1 LIMIT 1",
+    ).bind(licenseHash).first();
+    const plan = normalizeAeoPlan(license?.plan);
+    // One answer for "no such key", "inactive key" and "free key": a caller must
+    // not be able to probe which licenses exist.
+    if (!license || plan === "free") return json({ ok: false, error: "invalid_license" }, 404);
+    // A key with no org cannot create a site; refusing is honest, inventing an
+    // org would attach a paying customer to nothing.
+    if (!license.org_id) return json({ ok: false, error: "license_not_provisioned" }, 409);
+
+    const installType = ["wp", "tag", "hosted"].includes(String(payload.value.install_type || "").trim())
+      ? String(payload.value.install_type).trim()
+      : "wp";
+    const siteUrl = String(payload.value.site_url || "").trim().slice(0, 2048);
+
+    const bound = await bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, installType });
+    if (!bound.ok) return json({ ok: false, error: bound.error }, bound.status);
+    return json(bound.body);
+  }
 
   if (["POST", "PUT", "DELETE"].includes(method) && csrfRequired(path) && !csrfValid(request)) {
     return json({ error: "csrf_failed" }, 403);
@@ -196,7 +400,7 @@ export async function handleApi(request, env, ctx) {
 
   if (path === "/llms.txt" && method === "GET") {
     const { results } = await env.DB.prepare(
-      `SELECT s.slug, ss.name, ss.business_type, ss.address, ss.hours, ss.tel
+      `SELECT s.slug, ss.name, COALESCE(ss.business_type, ss.business_type_schema) AS business_type, ss.address, ss.hours, ss.tel
          FROM sites s JOIN site_settings ss ON ss.site_id=s.id
         WHERE s.install_type='hosted' AND (s.delivery_status IS NULL OR s.delivery_status='active') AND s.slug IS NOT NULL AND s.slug<>''
         ORDER BY s.slug`,
@@ -401,7 +605,8 @@ export async function handleApi(request, env, ctx) {
     if (!siteState || siteState.delivery_status === "stopped") return json({ ok: false }, 404);
     const settings = await env.DB.prepare("SELECT * FROM site_settings WHERE site_id = ?").bind(auth.siteId).first() || {};
     const site = await env.DB.prepare("SELECT url, website_uri, slug FROM sites WHERE id = ?").bind(auth.siteId).first();
-    const ruleset = await loadActiveRuleset(env);
+    const plan = normalizeAeoPlan(auth.plan);
+    const ruleset = plan === "free" ? INITIAL_AEO_RULESET : await loadActiveRuleset(env);
     const store = {
       name: settings.name || site?.url || "",
       address: settings.address || "",
@@ -410,14 +615,16 @@ export async function handleApi(request, env, ctx) {
       reserve: settings.reserve_url || "",
       url: site?.url || "",
     };
-    return json({
+    const body = {
       ok: true,
+      plan,
       quality: auth.quality,
       crawlerAllowed: !!settings.allow_crawlers,
       jsonld: settings.serve_schema ? buildJsonLd(site, settings, ruleset) : null,
       ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
       store,
-    }, 200, {
+    };
+    return json(body, 200, {
       "cache-control": LIVE_AEO_CACHE_CONTROL,
       "access-control-expose-headers": "x-aeo-ruleset-version",
       "x-aeo-ruleset-version": String(ruleset.version || INITIAL_AEO_RULESET.version),
@@ -479,7 +686,7 @@ export async function handleApi(request, env, ctx) {
     const siteKey = newKey();
     const slug = installType === "hosted" ? await uniqueSlug(env, body?.name || "store", id) : null;
     await env.DB.prepare(
-      "INSERT INTO sites (id, org_id, owner_member_id, url, site_key, install_type, status, plan, contract, slug, place_id, created_at) VALUES (?,?,?,?,?,?,'pending','pro','trial',?,?,?)",
+      "INSERT INTO sites (id, org_id, owner_member_id, url, site_key, install_type, status, plan, contract, slug, place_id, created_at) VALUES (?,?,?,?,?,?,'pending','free','free',?,?,?)",
     ).bind(id, member.org_id, member.member_id, siteUrl.replace(/^https?:\/\//, ""), siteKey, installType, slug, placeId, Date.now()).run();
     let imported = null;
     if (placeId) {
@@ -489,14 +696,20 @@ export async function handleApi(request, env, ctx) {
       imported = result.body;
     }
     if (installType === "hosted" || installType === "static") {
-      // Place import has already created this row.  Keep the imported address,
-      // phone, hours and geo data instead of issuing a duplicate INSERT.
+      // Place import may already have created this row. Ensure it exists with
+      // the output toggles on, then record the registrant's name through the
+      // merger so it carries provenance like every other profile write.
       await env.DB.prepare(
-        "INSERT INTO site_settings (site_id,name,serve_schema,allow_crawlers) VALUES (?,?,1,1) ON CONFLICT(site_id) DO NOTHING",
-      ).bind(id, body?.name || "").run();
+        "INSERT INTO site_settings (site_id,serve_schema,allow_crawlers) VALUES (?,1,1) ON CONFLICT(site_id) DO NOTHING",
+      ).bind(id).run();
+      if (body?.name) await writeSiteProfile(env, id, { name: body.name }, "dashboard");
     }
+    // Issued with the site so the store-profile sync works immediately. Returned
+    // once in plaintext; only the hash is kept. Unlike site_key - which the tag
+    // prints into public markup - this one must never reach a public page.
+    const profileToken = await issueProfileToken(env, id);
     const snippet = `<script src="https://nurevo.jp/tag.js" data-webmcp-site-key="${siteKey}" defer></` + "script>";
-    return json({ id, siteKey, install_type: installType, slug: imported?.slug || slug, hostedUrl: (imported?.slug || slug) ? `/s/${imported?.slug || slug}` : null, snippet, imported, proposal: imported?.proposal || null });
+    return json({ id, siteKey, profile_token: profileToken, install_type: installType, slug: imported?.slug || slug, hostedUrl: (imported?.slug || slug) ? `/s/${imported?.slug || slug}` : null, snippet, imported, proposal: imported?.proposal || null });
   }
 
   if (path === "/api/sites" && method === "GET") {
@@ -593,6 +806,163 @@ export async function handleApi(request, env, ctx) {
     });
   }
 
+  /* ---------------- U2: AI Share-of-Voice (pro plan) ---------------- */
+
+  const sovMatch = path.match(/^\/api\/sites\/([^/]+)\/sov$/i);
+  if (sovMatch && method === "GET") {
+    const access = await requireProSite(request, env, decodeURIComponent(sovMatch[1]));
+    if (!access.ok) return access.response;
+    const site = access.site;
+    const [history, budget] = await Promise.all([
+      loadSovHistory(env, site.id, { limit: Number.parseInt(url.searchParams.get("limit") || "26", 10) || 26 }),
+      sovRemainingBudget(env, site.id),
+    ]);
+    return json({
+      site_id: site.id,
+      plan: "pro",
+      beta: SOV_BETA,
+      model_version: SOV_MODEL_VERSION,
+      ...engineStatus(env),
+      latest: history.latest,
+      trend: history.trend,
+      limits: {
+        questions_per_run: SOV_LIMITS.maxQuestionsPerRun,
+        engines_per_run: SOV_LIMITS.maxEnginesPerRun,
+        monthly_queries: SOV_LIMITS.monthlyQueriesPerSite,
+        schedule: "weekly",
+      },
+      usage: budget,
+    });
+  }
+
+  if (sovMatch && method === "POST") {
+    const access = await requireProSite(request, env, decodeURIComponent(sovMatch[1]));
+    if (!access.ok) return access.response;
+    const result = await runSiteSov(env, access.site, { trigger: "manual" });
+    if (result.error) return json({ error: result.error, usage: result.usage }, result.status || 429);
+    return json({
+      site_id: access.site.id,
+      beta: SOV_BETA,
+      status: result.measurement.status,
+      run: result.run,
+      appearance_rate: result.measurement.appearance_rate,
+      citation_rate: result.measurement.citation_rate,
+      confidence: result.measurement.confidence,
+      answers_received: result.measurement.answers_received,
+      questions_asked: result.measurement.questions_asked,
+      competitors: result.measurement.competitors,
+      queries_used: result.measurement.queries_used,
+      truncated: !!result.measurement.truncated,
+      usage: result.usage,
+      ...engineStatus(env),
+    });
+  }
+
+  const reportMatch = path.match(/^\/api\/sites\/([^/]+)\/monthly-report$/i);
+  if (reportMatch && method === "GET") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent(reportMatch[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+    }
+    const plan = normalizeAeoPlan(site.plan);
+    const month = (url.searchParams.get("month") || "").match(/^\d{4}-\d{2}$/)
+      ? url.searchParams.get("month")
+      : undefined;
+    const scoreResult = await env.DB.prepare(
+      "SELECT scanned_at,score,verdict FROM aeo_scores WHERE site_id=? ORDER BY scanned_at DESC LIMIT 180",
+    ).bind(site.id).all();
+    // Only a pro site has SoV data to include; the report says so for others.
+    const sov = plan === "pro" ? await loadSovHistory(env, site.id, { limit: 8 }) : null;
+    const report = buildMonthlyReport({ site, plan, month, scores: scoreResult.results || [], sov });
+
+    const format = (url.searchParams.get("format") || "json").toLowerCase();
+    if (format === "html") {
+      return new Response(renderMonthlyReportHtml(report), {
+        status: 200,
+        headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
+    if (format === "text") {
+      return new Response(renderMonthlyReportText(report), {
+        status: 200,
+        headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
+    return json({
+      report,
+      preview: { text: renderMonthlyReportText(report) },
+      // Generation only. Delivery is enabled separately.
+      delivery: { email_enabled: false, status: "generation_only" },
+    });
+  }
+
+  /* ---------------- Store profile (SSOT) ---------------- */
+
+  const profileMatch = path.match(/^\/api\/sites\/([^/]+)\/profile$/i);
+  if (profileMatch && (method === "GET" || method === "PUT")) {
+    const siteId = decodeURIComponent(profileMatch[1]);
+    const auth = await requireProfileToken(request, env, siteId);
+    if (!auth.ok) return auth.response;
+
+    if (method === "GET") {
+      const current = await loadSiteProfile(env, siteId);
+      if (!current) return json({ error: "not_found" }, 404);
+      return json(profileResponse(current.values, current.sources, current.updated_at));
+    }
+
+    const body = await safeJson(request);
+    const result = await writeSiteProfile(env, siteId, pickProfileFields(body), "wordpress");
+    if (result.error) return json({ error: result.error }, result.status || 400);
+    return json(result);
+  }
+
+  // Issue or rotate the per-site profile token. Member-authenticated and
+  // CSRF-protected; the plaintext is returned once and only the hash is stored.
+  const profileTokenMatch = path.match(/^\/api\/sites\/([^/]+)\/profile-token$/i);
+  if (profileTokenMatch && method === "POST") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent(profileTokenMatch[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return json({ error: exists ? "forbidden" : "not_found" }, exists ? 403 : 404);
+    }
+    const token = await issueProfileToken(env, siteId);
+    return json({ ok: true, site_id: siteId, profile_token: token, note: "Store this now; it is not retrievable again." });
+  }
+
+  // Release a site's claim on its license, freeing the seat.
+  //
+  // Member-authenticated, not license-authenticated: the person who can see the
+  // site in the dashboard is the one entitled to release it. Holding the license
+  // key is not sufficient, or anyone who learned a key could detach a customer's
+  // site from it.
+  const unbindMatch = path.match(/^\/api\/sites\/([^/]+)\/unbind$/i);
+  if (unbindMatch && method === "POST") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent(unbindMatch[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return json({ error: exists ? "forbidden" : "not_found" }, exists ? 403 : 404);
+    }
+    // domain_key is cleared along with the binding so the site stops occupying
+    // (org_id, domain_key); the same domain can then be bound again, here or
+    // under another license. The row itself is kept: it carries the diagnosis
+    // history and the store profile, which the operator has not asked to lose.
+    // The profile token is revoked because it was handed out on bind.
+    await env.DB.prepare(
+      "UPDATE sites SET bound_license_hash=NULL, bound_at=NULL, domain_key=NULL, profile_token_hash=NULL, plan='free' WHERE id=?",
+    ).bind(siteId).run();
+    return json({ ok: true, site_id: siteId, bound: false, plan: "free" });
+  }
+
   const scanMatch = path.match(/^\/api\/sites\/([^/]+)\/scan$/i);
   if (scanMatch && method === "POST") {
     const member = await requireMember(request, env);
@@ -681,22 +1051,28 @@ export async function handleApi(request, env, ctx) {
         .bind(body.gbp_linked ? 1 : 0, id, member.org_id).run();
       return json({ ok: true, gbp_linked: !!body.gbp_linked });
     }
+    // Store fields go through the shared merger so this screen cannot diverge
+    // from wp-admin. `type` from this form is the display label, matching what
+    // the dashboard has always shown.
+    const profileResult = await writeSiteProfile(env, id, {
+      name: body.name, business_type_label: body.type, phone: body.tel, address: body.address,
+      hours: body.hours, lat: body.lat, lng: body.lng, image: body.image, reserve_url: body.reserve_url,
+    }, "dashboard");
+    if (profileResult.error) return json({ error: profileResult.error }, profileResult.status || 400);
+
+    // Output toggles are deliberately NOT part of the profile: they control tag
+    // delivery here and page output in WordPress, which are different switches.
     await env.DB.prepare(
-      `INSERT INTO site_settings (site_id,business_type,name,tel,address,hours,lat,lng,image,reserve_url,serve_schema,allow_crawlers)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-       ON CONFLICT(site_id) DO UPDATE SET business_type=excluded.business_type,name=excluded.name,tel=excluded.tel,
-       address=excluded.address,hours=excluded.hours,lat=excluded.lat,lng=excluded.lng,image=excluded.image,
-       reserve_url=excluded.reserve_url,serve_schema=excluded.serve_schema,allow_crawlers=excluded.allow_crawlers`,
-    ).bind(id, body.type || null, body.name || null, body.tel || null, body.address || null, body.hours || null,
-      body.lat ?? null, body.lng ?? null, body.image || null, body.reserve_url || null,
-      body.serve_schema ? 1 : 0, body.allow_crawlers ? 1 : 0).run();
+      `INSERT INTO site_settings (site_id,serve_schema,allow_crawlers) VALUES (?,?,?)
+       ON CONFLICT(site_id) DO UPDATE SET serve_schema=excluded.serve_schema,allow_crawlers=excluded.allow_crawlers`,
+    ).bind(id, body.serve_schema ? 1 : 0, body.allow_crawlers ? 1 : 0).run();
     const schemaTypes = body.serve_schema ? countSchemaTypes(body) : 0;
     if (Object.prototype.hasOwnProperty.call(body, "gbp_linked")) {
       await env.DB.prepare("UPDATE sites SET gbp_linked=? WHERE id=? AND org_id=?").bind(body.gbp_linked ? 1 : 0, id, member.org_id).run();
     }
     await env.DB.prepare("UPDATE sites SET schema_types=?,crawler_allowed=? WHERE id=? AND org_id=?")
       .bind(schemaTypes, body.allow_crawlers ? 1 : 0, id, member.org_id).run();
-    return json({ ok: true, schema_types: schemaTypes });
+    return json({ ok: true, schema_types: schemaTypes, changed: profileResult.changed, rejected: profileResult.rejected });
   }
   if (match && method === "DELETE") {
     const member = await requireMember(request, env);
@@ -737,7 +1113,7 @@ export async function handleApi(request, env, ctx) {
     if (!env.STRIPE_PRICE_ID_PRO) return json({ error: "STRIPE_PRICE_ID_PRO is required" }, 503);
     const response = await stripeRequest(secret, "/v1/checkout/sessions", form);
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_checkout_failed" }, 502);
-    return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen, trial: false });
+    return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen });
   }
 
   if (path === "/api/billing/payment-link" && method === "POST") {
@@ -764,7 +1140,7 @@ export async function handleApi(request, env, ctx) {
     });
     const response = await stripeRequest(secret, "/v1/payment_links", form);
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_payment_link_failed" }, 502);
-    return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen, trial: false, site_id: site.id });
+    return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen, site_id: site.id });
   }
 
   if (path === "/api/billing/connect/onboard" && method === "POST") {
@@ -824,7 +1200,427 @@ export async function handleApi(request, env, ctx) {
   return null;
 }
 
+/**
+ * Shape the diagnosis for the wire, in the requested language.
+ *
+ * Wording is applied here rather than inside the diagnosis so that one cached
+ * result serves every language. `lang` is undefined for callers that never ask,
+ * which keeps their responses byte-identical to before.
+ */
+function aeoResponse(result, lang) {
+  const checks = lang === undefined ? result.checks : localizeAeoChecks(result.checks, lang);
+  return { score: result.score, band: result.band, gatePassed: result.gatePassed, checks };
+}
+
+/**
+ * Which language to word the checks in.
+ *
+ * Returns undefined when the caller expressed no preference at all, so that
+ * existing integrations keep the Japanese wording they were built against
+ * instead of silently switching to the English fallback.
+ */
+function requestedAeoLang(request, url) {
+  const query = url.searchParams.get("lang");
+  if (query) return resolveAeoCheckLang(query);
+  const header = String(request.headers.get("accept-language") || "").trim();
+  if (header === "") return undefined;
+  const first = header.split(",")[0].trim().split(";")[0];
+  return first ? resolveAeoCheckLang(first) : undefined;
+}
+
+/* ---------------- Store profile: the single write path ---------------- */
+
+/** Read the canonical profile for a site, with its provenance map. */
+async function loadSiteProfile(env, siteId) {
+  const [settingsRow, siteRow] = await Promise.all([
+    env.DB.prepare("SELECT * FROM site_settings WHERE site_id=?").bind(siteId).first(),
+    env.DB.prepare("SELECT id,website_uri FROM sites WHERE id=? LIMIT 1").bind(siteId).first(),
+  ]);
+  if (!siteRow) return null;
+  return {
+    values: rowToProfile(settingsRow || {}, siteRow),
+    sources: parseFieldSources(settingsRow?.field_sources),
+    updated_at: settingsRow?.updated_at ?? null,
+    exists: !!settingsRow,
+  };
+}
+
+/**
+ * Apply a profile write. Every writer - wp-admin, the dashboard and the Places
+ * import - goes through here, so the merge rules are enforced in exactly one
+ * place and cannot be bypassed by adding another route.
+ *
+ * `now` is taken from the worker's own clock. A caller may not supply a
+ * timestamp, which is what stops a client from forging merge order.
+ */
+async function writeSiteProfile(env, siteId, incoming, source) {
+  const current = await loadSiteProfile(env, siteId);
+  if (!current) return { error: "not_found", status: 404 };
+
+  const now = Date.now();
+  let merged;
+  try {
+    merged = mergeProfile({ current: current.values, sources: current.sources, incoming, source, now });
+  } catch (error) {
+    return { error: "invalid_profile_source", status: 400, detail: String(error?.message || error) };
+  }
+
+  if (!merged.changed.length && current.exists) {
+    // Nothing moved: skip the write but still report what was refused so a
+    // caller can tell "no-op" from "blocked by a human value".
+    return { ok: true, changed: [], rejected: merged.rejected, ...profileResponse(merged.values, merged.sources, current.updated_at) };
+  }
+
+  const { settings, site } = profileToColumns(merged.values);
+  const columns = Object.keys(settings);
+  const assignments = columns.map((column) => `${column}=excluded.${column}`).join(",");
+  const placeholders = columns.map(() => "?").join(",");
+  await env.DB.prepare(
+    `INSERT INTO site_settings (site_id,${columns.join(",")},updated_at,field_sources)
+     VALUES (?,${placeholders},?,?)
+     ON CONFLICT(site_id) DO UPDATE SET ${assignments},updated_at=excluded.updated_at,field_sources=excluded.field_sources`,
+  ).bind(siteId, ...columns.map((column) => settings[column]), merged.updated_at, serializeFieldSources(merged.sources)).run();
+
+  // url lives on the sites row; only write it when the merge actually moved it.
+  if (merged.changed.includes("url")) {
+    await env.DB.prepare("UPDATE sites SET website_uri=? WHERE id=?").bind(site.website_uri ?? null, siteId).run();
+  }
+
+  return { ok: true, changed: merged.changed, rejected: merged.rejected, ...profileResponse(merged.values, merged.sources, merged.updated_at) };
+}
+
+/**
+ * Mint a profile write token for a site and store only its hash.
+ *
+ * The plaintext is returned to the caller once and is not recoverable
+ * afterwards, so a leak of the database does not yield working tokens.
+ */
+/**
+ * Claim (org, domain) for a license, creating the site row if it is new.
+ *
+ * Idempotent on purpose. The plugin calls this every time the license field is
+ * saved, and a reinstall or a settings re-save must land on the same site rather
+ * than minting a second one. The uniqueness of (org_id, domain_key) is what
+ * makes that safe: the lookup below and the database agree on what "same site"
+ * means, because both use the normalised key.
+ *
+ * A fresh profile token is issued on every bind. The caller has just proved it
+ * holds the license, and the plugin stores whatever it gets back, so rotating
+ * costs nothing and limits how long a leaked token stays useful.
+ */
+async function bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, installType }) {
+  const now = Date.now();
+  const existing = await env.DB.prepare(
+    "SELECT id, site_key, bound_license_hash FROM sites WHERE org_id=? AND domain_key=? LIMIT 1",
+  ).bind(license.org_id, domainKey).first();
+
+  if (existing) {
+    // Re-binding a site that this key already holds is a no-op plus a fresh
+    // token. Taking over a site bound to a different key of the same org is
+    // allowed: both keys belong to the org, and refusing would strand a site
+    // when a customer upgrades from standard to pro.
+    await env.DB.prepare(
+      "UPDATE sites SET plan=?, bound_license_hash=?, bound_at=?, install_type=?, website_uri=COALESCE(NULLIF(?,''), website_uri) WHERE id=?",
+    ).bind(plan, license.license_hash, now, installType, siteUrl, existing.id).run();
+    const token = await issueProfileToken(env, existing.id);
+    return {
+      ok: true,
+      body: {
+        ok: true, plan, site_id: existing.id, site_key: existing.site_key,
+        profile_token: token, bound: true, domain: domainKey,
+        reused: existing.bound_license_hash === license.license_hash,
+      },
+    };
+  }
+
+  // A new domain costs a seat. Count distinct sites already bound to this key.
+  const seats = Math.max(1, Number(license.seats || 1));
+  const used = await env.DB.prepare(
+    "SELECT count(*) AS n FROM sites WHERE bound_license_hash=?",
+  ).bind(license.license_hash).first();
+  if (Number(used?.n || 0) >= seats) {
+    return { ok: false, status: 409, error: "seat_limit_reached" };
+  }
+
+  const siteId = uid();
+  const siteKey = newKey();
+  try {
+    await env.DB.prepare(`
+      INSERT INTO sites (id, org_id, url, site_key, install_type, plan, domain_key, bound_license_hash, bound_at, website_uri, created_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(siteId, license.org_id, domainKey, siteKey, installType, plan, domainKey, license.license_hash, now, siteUrl || null, now).run();
+  } catch (error) {
+    // Two installs redeeming the same key against the same domain at once: the
+    // unique index rejects the loser, which then finds the winner's row.
+    const raced = await env.DB.prepare(
+      "SELECT id, site_key FROM sites WHERE org_id=? AND domain_key=? LIMIT 1",
+    ).bind(license.org_id, domainKey).first();
+    if (!raced) {
+      console.error("license_bind_insert_failed", JSON.stringify({ error: String(error?.message || "d1_error").slice(0, 160) }));
+      return { ok: false, status: 500, error: "bind_failed" };
+    }
+    const token = await issueProfileToken(env, raced.id);
+    return { ok: true, body: { ok: true, plan, site_id: raced.id, site_key: raced.site_key, profile_token: token, bound: true, domain: domainKey, reused: true } };
+  }
+
+  const token = await issueProfileToken(env, siteId);
+  return {
+    ok: true,
+    body: { ok: true, plan, site_id: siteId, site_key: siteKey, profile_token: token, bound: true, domain: domainKey, reused: false },
+  };
+}
+
+async function issueProfileToken(env, siteId) {
+  const token = `nrvp_${randomHex(32)}`;
+  await env.DB.prepare("UPDATE sites SET profile_token_hash=? WHERE id=?").bind(await sha256Hex(token), siteId).run();
+  return token;
+}
+
+/** Keep only the canonical fields from an untrusted request body. */
+function pickProfileFields(body) {
+  const incoming = {};
+  for (const field of PROFILE_FIELD_NAMES) {
+    if (Object.prototype.hasOwnProperty.call(body || {}, field)) incoming[field] = body[field];
+  }
+  return incoming;
+}
+
+/**
+ * Authorise a profile read/write with the per-site profile token.
+ *
+ * site_key deliberately does not work here: the plugin prints it into public
+ * page markup, so it identifies a site but proves nothing. The token is sent as
+ * a bearer header rather than a query parameter so it does not land in logs.
+ */
+async function requireProfileToken(request, env, siteId) {
+  const header = String(request.headers.get("authorization") || "");
+  const token = header.toLowerCase().startsWith("bearer ") ? header.slice(7).trim() : "";
+  if (!token) return { ok: false, response: json({ error: "missing_profile_token" }, 401) };
+
+  const site = await env.DB.prepare("SELECT id,profile_token_hash,delivery_status FROM sites WHERE id=? LIMIT 1")
+    .bind(siteId).first();
+  if (!site || !site.profile_token_hash) return { ok: false, response: json({ error: "profile_token_not_issued" }, 404) };
+
+  const presented = await sha256Hex(token);
+  // Constant-time-ish compare on equal-length hex digests.
+  if (presented.length !== site.profile_token_hash.length) {
+    return { ok: false, response: json({ error: "invalid_profile_token" }, 403) };
+  }
+  let diff = 0;
+  for (let index = 0; index < presented.length; index += 1) {
+    diff |= presented.charCodeAt(index) ^ site.profile_token_hash.charCodeAt(index);
+  }
+  if (diff !== 0) return { ok: false, response: json({ error: "invalid_profile_token" }, 403) };
+
+  const limit = await checkApiRateLimit(env, "site-profile", siteId, API_RATE_LIMITS.siteProfile);
+  if (!limit.allowed) {
+    return { ok: false, response: json({ error: limit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, limit.unavailable ? 503 : 429) };
+  }
+  return { ok: true, site };
+}
+
+/* ---------------- U2: SoV access control and runner ---------------- */
+
+const SOV_UPGRADE = Object.freeze({
+  required_plan: "pro",
+  plan_label: "Pro",
+  price_yen_monthly: 14800,
+  price_label: "¥14,800/月〜",
+  upgrade_url: "https://nurevo.jp/dashboard",
+  beta: SOV_BETA,
+  message: "AI登場率の測定はProプラン（¥14,800/月〜・β）の機能です。",
+});
+
+/**
+ * Resolve the target site and require the pro plan.
+ *
+ * Two callers exist and both are supported: the dashboard authenticates with a
+ * member session, while the WordPress plugin authenticates with its site key
+ * (the same pattern /api/sites/:id/aeo-score already uses). A site key only
+ * ever resolves to its own site.
+ *
+ * A non-pro site gets 402 with the upgrade information - the pricing and link
+ * only, never a locked payload - so wp-admin and the dashboard can render the
+ * upgrade path without guessing at it.
+ */
+async function requireProSite(request, env, siteId) {
+  const url = new URL(request.url);
+  const siteKey = url.searchParams.get("site_key") || url.searchParams.get("siteKey") || url.searchParams.get("k");
+
+  let site = null;
+  let member = null;
+  if (siteKey) {
+    const auth = await authorizeSiteKey(env, siteKey, { touch: false });
+    if (!auth.registered || String(auth.siteId) !== siteId) {
+      return { ok: false, response: json({ error: "invalid_site_key" }, 404) };
+    }
+    site = await env.DB.prepare("SELECT * FROM sites WHERE id=? LIMIT 1").bind(siteId).first();
+  } else {
+    member = await requireMember(request, env);
+    if (!member) return { ok: false, response: json({ error: "unauthorized" }, 401) };
+    site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return { ok: false, response: exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404) };
+    }
+  }
+  if (!site) return { ok: false, response: json({ error: "not_found" }, 404) };
+
+  const plan = normalizeAeoPlan(site.plan);
+  if (plan !== "pro") {
+    return {
+      ok: false,
+      response: json({ error: "upgrade_required", plan, upgrade: SOV_UPGRADE }, 402),
+    };
+  }
+  return { ok: true, member, site, plan };
+}
+
+/**
+ * Measure one site, enforcing the monthly engine-call cap.
+ *
+ * The remaining monthly budget caps the run, so a site can never exceed
+ * SOV_LIMITS.monthlyQueriesPerSite regardless of how it is triggered. Usage is
+ * recorded from the calls actually issued, not from the planned question count.
+ */
+async function runSiteSov(env, site, { trigger = "scheduled" } = {}) {
+  const budget = await sovRemainingBudget(env, site.id);
+  const perRunMax = SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPerRun;
+  const allowance = Math.min(perRunMax, budget.remaining);
+  if (allowance <= 0) {
+    return { error: "monthly_quota_exhausted", status: 429, usage: budget };
+  }
+
+  // Measure the business as its owner describes it: the canonical record is the
+  // same one wp-admin and the dashboard write, so the brand and locality used
+  // here cannot drift from what the operator entered.
+  const canonical = await loadSiteProfile(env, site.id);
+  const settings = {
+    name: canonical?.values?.name || "",
+    business_type: canonical?.values?.business_type_label || canonical?.values?.business_type_schema || "",
+    address: canonical?.values?.address || "",
+  };
+  const target = sovTargetUrl(site);
+
+  let schemas = [];
+  if (target) {
+    // Published schema only fills gaps the record does not cover; it never
+    // overrides what the owner stated.
+    try { schemas = await fetchSchemaNodes(target); } catch { schemas = []; }
+  }
+
+  let profile;
+  try {
+    profile = buildBrandProfile({ site, settings, schemas });
+  } catch (error) {
+    if (error instanceof SovError) return { error: error.code, status: error.status, usage: budget };
+    throw error;
+  }
+
+  const measurement = await measureSov(env, profile, { budget: allowance });
+  if (measurement.queries_used > 0) {
+    await sovRecordUsage(env, site.id, measurement.queries_used);
+  }
+  const run = await storeSovRun(env, site.id, measurement, { trigger });
+  const usage = await sovRemainingBudget(env, site.id);
+  return { measurement, run, usage, profile };
+}
+
+function sovTargetUrl(site) {
+  const raw = String(site.website_uri || site.url || "").trim()
+    || (site.slug ? `https://nurevo.jp/s/${encodeURIComponent(site.slug)}` : "");
+  if (!raw) return "";
+  return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
+}
+
+/**
+ * Weekly pro batch. Cost control is structural: only pro sites are selected,
+ * each run is capped, and each site's monthly counter gates it independently.
+ */
+export async function runSovWeeklyBatch(env, { limit = 50 } = {}) {
+  if (!env?.DB) throw new Error("DB binding is required for the SoV batch");
+  const engines = availableEngines(env);
+  if (!engines.length) {
+    return { ok: true, status: "unconfigured", sites: 0, measured: 0, skipped: 0, engines: [] };
+  }
+  const bounded = Math.min(200, Math.max(1, Number(env.SOV_BATCH_LIMIT || limit)));
+  const result = await env.DB.prepare(`
+    SELECT * FROM sites
+     WHERE plan='pro' AND (delivery_status IS NULL OR delivery_status='active')
+     ORDER BY created_at LIMIT ?
+  `).bind(bounded).all();
+
+  let measured = 0;
+  let skipped = 0;
+  const errors = [];
+  for (const site of result.results || []) {
+    try {
+      const outcome = await runSiteSov(env, site, { trigger: "scheduled" });
+      if (outcome.error) { skipped += 1; errors.push({ site_id: site.id, error: outcome.error }); continue; }
+      measured += 1;
+    } catch (error) {
+      skipped += 1;
+      errors.push({ site_id: site.id, error: String(error?.message || error).slice(0, 120) });
+    }
+  }
+  return {
+    ok: true,
+    status: "measured",
+    model_version: SOV_MODEL_VERSION,
+    engines: engines.map((engine) => engine.id),
+    sites: (result.results || []).length,
+    measured,
+    skipped,
+    errors: errors.slice(0, 20),
+  };
+}
+
+function normalizeAeoPlan(value) {
+  return ["standard", "pro"].includes(String(value || "").toLowerCase()) ? String(value).toLowerCase() : "free";
+}
+
+async function readLicensePayload(request) {
+  const length = Number(request.headers.get("content-length") || 0);
+  if (length > 4096) return { ok: false, status: 413, error: "request_too_large" };
+  let raw = "";
+  try { raw = await request.text(); } catch { return { ok: false, status: 400, error: "invalid_json" }; }
+  if (new TextEncoder().encode(raw).byteLength > 4096) return { ok: false, status: 413, error: "request_too_large" };
+  let value;
+  try { value = JSON.parse(raw); } catch { return { ok: false, status: 400, error: "invalid_json" }; }
+  const license = String(value?.license || "").trim();
+  if (!license || license.length > 256) return { ok: false, status: 400, error: "invalid_license" };
+  return { ok: true, value };
+}
+
+function normalizeAeoCacheUrl(raw) {
+  let target;
+  try { target = new URL(String(raw || "")); } catch { throw new AeoScoreError(400, "invalid_url"); }
+  target.hash = "";
+  return target.href;
+}
+
+async function aeoSha256Hex(value) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function aeoPublicRateLimit(request, env) {
+  if (!env.WEBMCP_KV) return { allowed: false, retryAfter: AEO_RATE_LIMIT.windowSeconds };
+  const ip = request.headers.get("cf-connecting-ip") || "unknown";
+  const bucket = Math.floor(Date.now() / (AEO_RATE_LIMIT.windowSeconds * 1000));
+  const key = `aeo-score:rate:${await aeoSha256Hex(ip)}:${bucket}`;
+  const current = Number(await env.WEBMCP_KV.get(key) || 0);
+  if (current >= AEO_RATE_LIMIT.limit) {
+    const retryAfter = AEO_RATE_LIMIT.windowSeconds - Math.floor((Date.now() / 1000) % AEO_RATE_LIMIT.windowSeconds);
+    return { allowed: false, retryAfter };
+  }
+  await env.WEBMCP_KV.put(key, String(current + 1), { expirationTtl: AEO_RATE_LIMIT.windowSeconds + 60 });
+  return { allowed: true, retryAfter: 0 };
+}
+
 function stripeTestSecret(env) {
+  // TODO(U4-production): 本番キー投入待ち（要確認・橋本確認後）。
+  // Keep sk_live, production Price IDs, and the production webhook secret out until approval.
   const value = String(env.STRIPE_SECRET_KEY || "").trim();
   return value.startsWith("sk_test_") ? value : "";
 }
@@ -940,21 +1736,35 @@ async function importPlaceForSite(env, site, body = {}, refresh = false) {
   const proposal = await inspectWebsite(websiteUri);
   const existing = await env.DB.prepare("SELECT * FROM site_settings WHERE site_id=?").bind(site.id).first() || {};
   const settings = placeToSettings(place, existing);
-  await env.DB.prepare(
-    `INSERT INTO site_settings (site_id,business_type,name,tel,address,hours,hours_periods,lat,lng,image,reserve_url,serve_schema,allow_crawlers,price_level,price)
-     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-     ON CONFLICT(site_id) DO UPDATE SET business_type=excluded.business_type,name=excluded.name,tel=excluded.tel,
-     address=excluded.address,hours=excluded.hours,hours_periods=excluded.hours_periods,lat=excluded.lat,lng=excluded.lng,price_level=excluded.price_level,price=excluded.price`,
-  ).bind(site.id, settings.business_type, settings.name, settings.tel, settings.address, settings.hours,
-    settings.hours_periods, settings.lat, settings.lng, existing.image || null, existing.reserve_url || null,
-    existing.serve_schema == null ? 1 : Number(existing.serve_schema),
-    existing.allow_crawlers == null ? 1 : Number(existing.allow_crawlers), settings.price_level, settings.price_level).run();
-  const schemaTypes = (existing.serve_schema == null || Number(existing.serve_schema) === 1) ? countSchemaTypes(settings) : 0;
+  // Places is an assistant, not an authority: the merger refuses any field a
+  // person has edited. Before this, a /refresh silently replaced hand-entered
+  // addresses and phone numbers.
+  const placesResult = await writeSiteProfile(env, site.id, {
+    name: settings.name,
+    business_type_label: settings.business_type,
+    phone: settings.tel,
+    address: settings.address,
+    hours: settings.hours,
+    hours_periods: settings.hours_periods,
+    lat: settings.lat,
+    lng: settings.lng,
+    price_level: settings.price_level,
+  }, "places");
+  const applied = placesResult.error ? {} : placesResult.profile;
+  const schemaTypes = (existing.serve_schema == null || Number(existing.serve_schema) === 1)
+    ? countSchemaTypes({
+        name: applied.name, tel: applied.phone, address: applied.address, hours: applied.hours,
+        lat: applied.lat, lng: applied.lng, image: applied.image, reserve_url: applied.reserve_url,
+      })
+    : 0;
   const fetchedAt = Date.now();
   const slug = site.slug || await uniqueSlug(env, settings.name || site.url, site.id);
-  await env.DB.prepare("UPDATE sites SET place_id=?,fetched_at=?,schema_types=?,crawler_allowed=1,slug=?,website_uri=?,website_fingerprint=?,recommended_install_type=? WHERE id=?")
-    .bind(place.id || placeId || null, fetchedAt, schemaTypes, slug, websiteUri, proposal.fingerprint, proposal.recommended_install_type, site.id).run();
-  return { status: 200, body: { ok: true, place_id: place.id || placeId || null, fetched_at: fetchedAt, schema_types: schemaTypes, slug, website_uri: websiteUri, proposal, mock: !!place.mock } };
+  if (websiteUri) {
+    await writeSiteProfile(env, site.id, { url: websiteUri }, "places");
+  }
+  await env.DB.prepare("UPDATE sites SET place_id=?,fetched_at=?,schema_types=?,crawler_allowed=1,slug=?,website_fingerprint=?,recommended_install_type=? WHERE id=?")
+    .bind(place.id || placeId || null, fetchedAt, schemaTypes, slug, proposal.fingerprint, proposal.recommended_install_type, site.id).run();
+  return { status: 200, body: { ok: true, place_id: place.id || placeId || null, fetched_at: fetchedAt, schema_types: schemaTypes, slug, website_uri: websiteUri, proposal, mock: !!place.mock, changed: placesResult.changed || [], rejected: placesResult.rejected || [] } };
 }
 
 function isSocialWebsite(hostname) {
@@ -1613,6 +2423,16 @@ function csrfRequired(path) {
   // These endpoints are intentionally unauthenticated. Browser-origin checks
   // and the dedicated IP/email limiter protect public signup/auth requests;
   // every authenticated state-changing endpoint still requires the token.
+  // /api/sites/:id/profile is bearer-authenticated server-to-server (the
+  // WordPress plugin). It reads no cookie, so a CSRF token is meaningless there
+  // and would only block the sync.
+  if (/^\/api\/sites\/[^/]+\/profile$/i.test(path)) return false;
+  // /api/license/bind is server-to-server from the plugin, authenticated by the
+  // license key itself. It reads no cookie, so a CSRF token proves nothing; the
+  // IP and per-key limiters are what protect it. Stated here rather than relying
+  // on the route sitting above this check, so moving the route cannot silently
+  // start rejecting every plugin that saves a license.
+  if (path === "/api/license/bind") return false;
   return path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 

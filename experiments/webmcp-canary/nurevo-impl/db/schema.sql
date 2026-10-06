@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS sites (
   scan_error TEXT,
   status TEXT DEFAULT 'pending',       -- pending | detected | active | error
   delivery_status TEXT NOT NULL DEFAULT 'active', -- active | stopped
-  plan TEXT DEFAULT 'pro',
+  plan TEXT NOT NULL DEFAULT 'free' CHECK (plan IN ('free', 'standard', 'pro')),
   contract TEXT DEFAULT 'trial',       -- active | trial | cancelled
   resale_price INTEGER DEFAULT 0,
   -- タグ/プラグインから確実に取れる実測値（フェイクなし）
@@ -70,22 +70,30 @@ CREATE TABLE IF NOT EXISTS sites (
   website_fingerprint TEXT,
   recommended_install_type TEXT,
   owner_member_id TEXT,
+  profile_token_hash TEXT,            -- sha256(店情報書き込みトークン)。site_key は公開値のため書き込みに使わない
   created_at INTEGER
 );
 
 CREATE INDEX IF NOT EXISTS idx_sites_owner_member ON sites(owner_member_id);
 
 -- 店舗情報（情報充足率の判定元。埋まっている項目数で充足率を出す）
+-- 店情報の正本（SSOT）。WordPress はこのレコードのミラーを持つ。
+-- 書き手は wp-admin / ダッシュボード / Places の3経路だが、すべて
+-- worker の共通マージャを通る。詳細は 0019_site_profile_ssot.sql。
 CREATE TABLE IF NOT EXISTS site_settings (
   site_id TEXT PRIMARY KEY,
-  business_type TEXT,
+  business_type TEXT,                  -- 表示・SoV質問用のラベル（例: 美容室）
+  business_type_schema TEXT,           -- schema.org の @type（例: HairSalon）
   name TEXT, tel TEXT, address TEXT, hours TEXT, hours_periods TEXT,
+  description TEXT, email TEXT,
   price_level TEXT,
   price TEXT,
   lat REAL, lng REAL,                  -- 緯度経度（両方あって geo 充足）
   image TEXT, reserve_url TEXT,
-  serve_schema INTEGER DEFAULT 1,      -- schema 出力 ON/OFF
-  allow_crawlers INTEGER DEFAULT 1     -- AIクローラー許可 ON/OFF
+  serve_schema INTEGER DEFAULT 1,      -- schema 出力 ON/OFF（同期対象外）
+  allow_crawlers INTEGER DEFAULT 1,    -- AIクローラー許可 ON/OFF（同期対象外）
+  updated_at INTEGER,                  -- ms。worker の受信時刻のみを刻む
+  field_sources TEXT                   -- JSON: フィールド単位の出所と時刻
 );
 
 -- 将来：AIクローラーの実アクセス数（サーバー/CDNログ or WPプラグインから日次集計）
@@ -103,6 +111,61 @@ CREATE INDEX IF NOT EXISTS idx_sites_places_refresh ON sites(fetched_at, place_i
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sites_slug ON sites(slug);
 CREATE INDEX IF NOT EXISTS idx_members_org ON members(org_id);
 CREATE INDEX IF NOT EXISTS idx_hits_site  ON crawler_hits(site_id, date);
+
+CREATE TABLE IF NOT EXISTS licenses (
+  license_hash TEXT PRIMARY KEY,
+  plan TEXT NOT NULL CHECK (plan IN ('free', 'standard', 'pro')),
+  active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
+  created_at INTEGER NOT NULL
+);
+
+-- U2 AI Share-of-Voice measurement (pro plan). See 0018_aeo_sov.sql.
+CREATE TABLE IF NOT EXISTS aeo_sov_runs (
+  id TEXT PRIMARY KEY,
+  site_id TEXT NOT NULL,
+  ran_at TEXT NOT NULL,
+  status TEXT NOT NULL,
+  trigger TEXT NOT NULL,
+  model_version TEXT NOT NULL,
+  engines_json TEXT NOT NULL DEFAULT '[]',
+  questions_asked INTEGER NOT NULL DEFAULT 0,
+  answers_received INTEGER NOT NULL DEFAULT 0,
+  queries_used INTEGER NOT NULL DEFAULT 0,
+  appearance_rate REAL,
+  citation_rate REAL,
+  confidence TEXT,
+  competitors_json TEXT NOT NULL DEFAULT '[]',
+  detail_json TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_aeo_sov_runs_site_ran_at
+  ON aeo_sov_runs(site_id, ran_at DESC);
+
+CREATE TABLE IF NOT EXISTS aeo_sov_mentions (
+  run_id TEXT NOT NULL,
+  site_id TEXT NOT NULL,
+  engine TEXT NOT NULL,
+  question TEXT NOT NULL,
+  ok INTEGER NOT NULL DEFAULT 1 CHECK (ok IN (0, 1)),
+  brand_mentioned INTEGER NOT NULL DEFAULT 0 CHECK (brand_mentioned IN (0, 1)),
+  brand_cited INTEGER NOT NULL DEFAULT 0 CHECK (brand_cited IN (0, 1)),
+  competitor_hosts_json TEXT NOT NULL DEFAULT '[]',
+  answer_excerpt TEXT,
+  error TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_aeo_sov_mentions_run
+  ON aeo_sov_mentions(run_id);
+CREATE INDEX IF NOT EXISTS idx_aeo_sov_mentions_site
+  ON aeo_sov_mentions(site_id, engine);
+
+CREATE TABLE IF NOT EXISTS aeo_sov_usage (
+  site_id TEXT NOT NULL,
+  month TEXT NOT NULL,
+  queries_used INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (site_id, month)
+);
 
 CREATE TABLE IF NOT EXISTS referrers (
   id TEXT PRIMARY KEY,

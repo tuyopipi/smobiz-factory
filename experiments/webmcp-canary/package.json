@@ -9,7 +9,7 @@
     "wp:down": "sh bin/stop-wordpress-demo.sh",
     "wp:reset": "docker compose down -v",
     "wp:logs": "docker compose logs -f wordpress",
-    "wp:plugin-check": "docker compose run --rm wpcli wp plugin check webmcp-canary --include-experimental --include-low-severity-errors --include-low-severity-warnings",
+    "wp:plugin-check": "npm run plugin:build && docker compose run --rm --user root -v \"$PWD/dist/nurevo-webmcp:/var/www/html/wp-content/plugins/nurevo-webmcp:ro\" wpcli wp --allow-root plugin check nurevo-webmcp --include-experimental --include-low-severity-errors --include-low-severity-warnings",
     "seed:demo": "node scripts/seed-demo.mjs",
     "cf:deploy": "npx wrangler@latest deploy",
     "cf:kv:create": "npx wrangler@latest kv namespace create WEBMCP_KV",
@@ -23,7 +23,15 @@
     "test:smoke": "node scripts/smoke-public-api.mjs",
     "test:webmcp-headless": "node scripts/headless-webmcp-registration.mjs",
     "test:mcp-regression": "node scripts/run-mcp-quality-regression.mjs",
-    "test:deploy-gate": "npm run test:smoke && npm run test:webmcp-headless && npm run test:mcp-regression"
+    "test:aeo-score": "node scripts/test-aeo-score.mjs && node scripts/test-aeo-endpoints.mjs",
+    "test:wp-aeo-admin": "php scripts/test-wordpress-aeo-admin.php",
+    "test:plans": "node scripts/test-plans-license.mjs && php scripts/test-wordpress-aeo-admin.php",
+    "test:sov": "node scripts/test-aeo-sov.mjs && node scripts/test-sov-endpoints.mjs && node scripts/test-sov-cost-caps.mjs",
+    "test:profile": "node scripts/test-site-profile.mjs && node scripts/test-profile-endpoints.mjs",
+    "smoke:sov": "node scripts/smoke-sov.mjs",
+    "i18n": "node scripts/generate-plugin-translations.mjs",
+    "test:deploy-gate": "npm run test:smoke && npm run test:webmcp-headless && npm run test:mcp-regression",
+    "plugin:build": "node scripts/build-plugin-zip.mjs"
   },
   "engines": {
     "node": ">=20"

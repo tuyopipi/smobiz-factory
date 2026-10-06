@@ -16,4 +16,27 @@ OPENAI_MODEL=gpt-4.1-mini
 # WEBMCP_ADMIN_TOKEN=change-me
 
 # Optional. Only required for /api/repair-insights.
-# OPENAI_API_KEY=sk-...
+# Set with: wrangler secret put OPENAI_API_KEY
+
+# --- U2 AI Share-of-Voice measurement (pro plan, beta) --------------------
+# Entirely opt-in. With no engine key set, SoV endpoints return an explicit
+# "unconfigured"/"preparing" state and make no engine calls, so local and
+# canary runs work without any secret.
+#
+# Set these with `wrangler secret put <NAME>` - never put a value in this file,
+# in wrangler.jsonc, or anywhere else in the repo. The code only ever reads
+# them from the env binding and never logs or returns them.
+#   wrangler secret put PERPLEXITY_API_KEY
+#   wrangler secret put OPENAI_API_KEY
+# For a local run, put them in .dev.vars (git-ignored), not in this example file.
+# PERPLEXITY_MODEL=sonar
+#
+# Endpoint overrides. Only honoured for loopback/.test hosts, because the
+# request carries the API key; any other value is ignored and the real
+# provider is used. Only for pointing a local run at a mock engine.
+# PERPLEXITY_API_URL=http://127.0.0.1:8799/chat/completions
+# OPENAI_CHAT_API_URL=http://127.0.0.1:8799/chat/completions
+#
+# Weekly batch size (pro sites measured per run). Hard caps on questions,
+# engines and the per-site monthly query budget live in worker/aeo-sov.mjs.
+# SOV_BATCH_LIMIT=50

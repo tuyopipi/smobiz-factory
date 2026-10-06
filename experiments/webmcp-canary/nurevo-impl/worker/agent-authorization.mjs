@@ -8,7 +8,7 @@
  * @returns {{ registered:boolean, plan:string, quality:"high"|"basic", siteId?:string }}
  */
 export async function authorizeSiteKey(env, siteKey, { touch = true } = {}) {
-  if (!siteKey) return { registered: false, plan: "basic", quality: "basic" };
+  if (!siteKey) return { registered: false, plan: "free", quality: "basic" };
 
   const row = await env.DB
     .prepare("SELECT id, plan, status FROM sites WHERE site_key = ?")
@@ -17,7 +17,7 @@ export async function authorizeSiteKey(env, siteKey, { touch = true } = {}) {
 
   if (!row) {
     // 未登録キーは basic（＝タグは動くが high 機能はオフ）。旧: 許可リストに無い扱い。
-    return { registered: false, plan: "basic", quality: "basic" };
+    return { registered: false, plan: "free", quality: "basic" };
   }
 
   // 設置検証：来た時点で last_seen を更新し、pending/detected/error → active に昇格。
@@ -30,7 +30,7 @@ export async function authorizeSiteKey(env, siteKey, { touch = true } = {}) {
       .run();
   }
 
-  const plan = row.plan || "basic";
+  const plan = ["standard", "pro"].includes(row.plan) ? row.plan : "free";
   const quality = plan === "pro" ? "high" : "basic"; // pro かつ登録済み → high
   return { registered: true, plan, quality, siteId: row.id };
 }

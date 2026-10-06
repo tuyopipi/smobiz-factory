@@ -11,6 +11,8 @@
  * That limitation is surfaced to the user in the result.
  */
 
+import { AeoScoreError, diagnoseAeoUrl } from "./aeo-score.mjs";
+
 const UA = "Nurevo-Diagnostics/1.0 (+https://nurevo.jp)";
 const TIMEOUT_MS = 8000;
 const MAX_BYTES = 2_000_000;
@@ -44,52 +46,20 @@ export async function handleDiagnose(request, env) {
     }
     return json(result);
   } catch (error) {
-    if (error instanceof DiagnoseError) return json({ error: error.code }, error.status);
+    if (error instanceof DiagnoseError || error instanceof AeoScoreError) return json({ error: error.code }, error.status);
     throw error;
   }
 }
 
 export async function diagnoseUrl(raw, lang = "ja") {
-
-  let target;
-  try {
-    target = new URL(raw);
-    if (target.protocol !== "https:" && target.protocol !== "http:") throw new Error("scheme");
-  } catch {
-    throw new DiagnoseError(400, "invalid_url");
-  }
-  if (isPrivateHost(target.hostname)) throw new DiagnoseError(400, "invalid_url");
-
-  let html = "";
-  try {
-    html = await fetchText(target.href);
-  } catch {
-    throw new DiagnoseError(502, "unreachable", target.host);
-  }
-
-  let robots = "";
-  try {
-    robots = await fetchText(new URL("/robots.txt", target.origin).href);
-  } catch {
-    robots = "";
-  }
-
-  const facts = await parseHtml(html);
-  const blocked = blockedBots(robots);
-  const { checks, scorable } = buildChecks(facts, blocked, lang);
-  const score = scorable ? scoreOf(checks, blocked) : null;
-
+  const result = await diagnoseAeoUrl(raw);
   return {
-    host: target.host,
-    score,
-    scorable,
-    verdict: scorable
-      ? verdictOf(score, lang)
-      : (lang === "en"
-          ? "Not enough to judge on this page"
-          : "このページでは判定できません"),
-    checks,
-    scannedAt: new Date().toISOString(),
+    ...result,
+    scorable: true,
+    verdict: result.band === "green"
+      ? (lang === "en" ? "Good" : "良好")
+      : result.band === "yellow" ? (lang === "en" ? "Needs improvement" : "要改善")
+        : (lang === "en" ? "Critical" : "危険"),
   };
 }
 
@@ -129,7 +99,7 @@ export async function diagnoseAndStore(env, site, { lang = "ja" } = {}) {
     const result = await diagnoseUrl(targetUrl, lang);
     return { ok: true, siteId: site.id, result: await storeAeoScore(env, site.id, result) };
   } catch (error) {
-    if (!(error instanceof DiagnoseError)) throw error;
+    if (!(error instanceof DiagnoseError) && !(error instanceof AeoScoreError)) throw error;
     const failed = {
       host: error.host || safeHost(targetUrl),
       score: null,

@@ -56,7 +56,7 @@ export async function handleApi(request, env) {
     if (!siteUrl) return json({ error: "url required" }, 400);
     const id = uid(), key = newKey();
     await env.DB.prepare(
-      "INSERT INTO sites (id, org_id, url, site_key, status, plan, contract, created_at) VALUES (?,?,?,?,'pending','pro','trial',?)"
+      "INSERT INTO sites (id, org_id, url, site_key, status, plan, contract, created_at) VALUES (?,?,?,?,'pending','free','free',?)"
     ).bind(id, me.org_id, siteUrl.replace(/^https?:\/\//, ""), key, Date.now()).run();
     const snippet = `<script src="https://nurevo.jp/tag.js" data-webmcp-site-key="${key}" defer></` + `script>`;
     return json({ id, siteKey: key, snippet });
@@ -85,26 +85,24 @@ export async function handleApi(request, env) {
     return json({ sites });
   }
 
-  // ── AEO設定保存: PUT /api/sites/:id  {store..., serve_schema, allow_crawlers} ──
+  // ── AEO設定保存: PUT /api/sites/:id ─────────────────────────────────
+  // 封鎖済み。店情報の正本は worker/api.mjs の writeSiteProfile() →
+  // worker/site-profile.mjs の mergeProfile() が一手に管理する（SSOT）。
+  //
+  // ここにあった site_settings への直書きは、マージャを通らないため
+  //   ・フィールド単位の出所(provenance)が記録されない
+  //   ・Places が人間の入力を上書きしない規則が効かない
+  //   ・updated_at がサーバ時刻で刻まれない
+  // という形で SSOT を壊す。参照実装としてルート形状だけ残し、実行は拒否する。
+  //
+  // 将来この実装を有効化する場合は、必ず mergeProfile() 経由に書き換えること。
+  // 直書きを復活させてはならない。
   const mm = p.match(/^\/api\/sites\/([a-z0-9]+)$/i);
   if (mm && m === "PUT") {
-    const me = await requireMember(request, env); if (!me) return json({ error: "unauthorized" }, 401);
-    const id = mm[1]; const b = await request.json();
-    await env.DB.prepare(
-      `INSERT INTO site_settings (site_id, business_type, name, tel, address, hours, lat, lng, image, reserve_url, serve_schema, allow_crawlers)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
-       ON CONFLICT(site_id) DO UPDATE SET business_type=excluded.business_type, name=excluded.name, tel=excluded.tel,
-         address=excluded.address, hours=excluded.hours, lat=excluded.lat, lng=excluded.lng, image=excluded.image,
-         reserve_url=excluded.reserve_url, serve_schema=excluded.serve_schema, allow_crawlers=excluded.allow_crawlers`
-    ).bind(id, b.type||null, b.name||null, b.tel||null, b.address||null, b.hours||null,
-           b.lat??null, b.lng??null, b.image||null, b.reserve_url||null,
-           b.serve_schema?1:0, b.allow_crawlers?1:0).run();
-    // schema_types は出力する JSON-LD の type 数（serve_schema=OFF なら 0）
-    const st = { name:b.name, tel:b.tel, address:b.address, hours:b.hours, lat:b.lat, lng:b.lng, image:b.image, reserve_url:b.reserve_url };
-    const schemaTypes = b.serve_schema ? countSchemaTypes(st) : 0;
-    await env.DB.prepare("UPDATE sites SET schema_types=?, crawler_allowed=?, contract=?, resale_price=? WHERE id=? AND org_id=?")
-      .bind(schemaTypes, b.allow_crawlers?1:0, b.contract||"trial", b.price||0, id, me.org_id).run();
-    return json({ ok: true, schema_types: schemaTypes });
+    throw new Error(
+      "nurevo-impl: direct site_settings write is sealed. " +
+      "Store profile writes must go through mergeProfile() in worker/site-profile.mjs.",
+    );
   }
 
   // ── 8種クローラー一覧（ダッシュボード表示用）: GET /api/crawlers ──────
@@ -115,15 +113,6 @@ export async function handleApi(request, env) {
   return null; // 該当なし
 }
 
-// serve_schema=ON のとき、揃っている情報から出せる LocalBusiness の type 数を数える
-function countSchemaTypes(st) {
-  let n = 1; // LocalBusiness 本体
-  if (st.hours) n++;                       // OpeningHoursSpecification
-  if (st.lat != null && st.lng != null) n++; // GeoCoordinates
-  if (st.reserve_url) n++;                 // ReserveAction
-  if (st.image) n++;                       // ImageObject
-  return n;
-}
 
 // セッションから member を取得（マジックリンク発行済み想定）
 async function requireMember(request, env) {
