@@ -248,3 +248,62 @@ function runConfirm({ domain = "example.com", typed, fetchImpl }) {
 }
 
 console.log("unbind UI tests passed");
+
+/* ---------------- the plan panel (Phase 1) ---------------- */
+
+{
+  // A site Stripe has never seen: both tiers are offered, and nothing claims to
+  // manage a subscription that does not exist.
+  const html = detailHtml(BOUND({ plan: "free", billing: { status: "pending", customer_id: null, subscription_id: null } }));
+  assert.ok(html.includes("現在のプラン"), "the plan panel is titled");
+  assert.ok(html.includes("FREE"), "and states the current plan");
+  assert.ok(html.includes('data-buy="standard"') && html.includes('data-buy="pro"'), "both tiers can be bought");
+  assert.ok(html.includes("¥3,000") && html.includes("¥14,800"), "at the price each actually costs");
+  assert.equal(html.includes('id="planportal"'), false, "no portal button without a customer");
+}
+
+{
+  // Once Stripe knows the customer, changing tier belongs to the portal: it
+  // handles proration and the result comes back through the webhook, which is
+  // the only thing allowed to decide a plan.
+  const html = detailHtml(BOUND({ plan: "standard", billing: { status: "active", customer_id: "cus_1", subscription_id: "sub_1" } }));
+  assert.ok(html.includes('id="planportal"'), "the portal is offered");
+  assert.ok(html.includes("STANDARD"), "and the paid tier is shown");
+  assert.equal(html.includes('data-buy="'), false, "a second checkout is not offered alongside it");
+  assert.ok(html.includes("Stripe"), "and the page says where the change happens");
+}
+
+{
+  // A granted tier has no subscription behind it, so it is labelled as granted.
+  const granted = detailHtml(BOUND({ plan: "pro", manual_plan: "pro", billing: { status: "pending", customer_id: null } }));
+  assert.ok(granted.includes("手動付与"), "a manual grant is called one");
+
+  const billed = detailHtml(BOUND({ plan: "pro", manual_plan: null, billing: { status: "active", customer_id: "cus_1" } }));
+  assert.equal(billed.includes("手動付与"), false, "a paid tier is not");
+}
+
+{
+  // Wholesale sites are invoiced outside Stripe; offering checkout would be a
+  // second bill for the same site.
+  const html = detailHtml(BOUND({ payment_ui: false, plan: "standard", billing: { status: "active", customer_id: "cus_1" } }));
+  assert.equal(html.includes('data-buy="'), false, "no checkout for a wholesale site");
+  assert.equal(html.includes('id="planportal"'), false, "and no portal");
+  assert.ok(html.includes("卸請求"), "it says why instead");
+}
+
+{
+  // The panel must not sit inside the profile form, or saving the store details
+  // would trip a redirect to Stripe.
+  const html = detailHtml(BOUND({ billing: { status: "pending", customer_id: null } }));
+  const formEnd = html.indexOf("</form>", html.indexOf('<form id="form"'));
+  assert.ok(html.indexOf('data-buy="standard"') > formEnd, "the buy buttons are outside the profile form");
+}
+
+{
+  // Untrusted values reach the panel like everything else.
+  const html = detailHtml(BOUND({ plan: '"><script>alert(1)</script>', manual_plan: "<b>x</b>" }));
+  assert.equal(html.includes("<script>alert(1)"), false, "the plan is escaped");
+  assert.equal(html.includes("<b>x</b>"), false, "so is the grant");
+}
+
+console.log("plan panel tests passed");

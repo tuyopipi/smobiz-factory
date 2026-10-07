@@ -50,6 +50,15 @@ const PLACES_DETAILS_FIELD_MASK = "id,displayName,formattedAddress,location,regu
 const PLACES_REFRESH_MS = 365 * 24 * 60 * 60 * 1000;
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
+/**
+ * What each paid tier costs per site, per month.
+ *
+ * The Stripe price ids are the authority on what is actually charged; this is
+ * what we tell the operator we are about to charge. They are stated together so
+ * a tier cannot be added to one without the other.
+ */
+const PLAN_MONTHLY_YEN = Object.freeze({ standard: 3000, pro: 14800 });
+const CHECKOUTABLE_PLANS = Object.freeze(['standard', 'pro']);
 const SUPER_ADMIN_EMAILS_ENV = "SUPER_ADMIN_EMAILS";
 /*
  * What has to be filled in before a profile counts as complete.
@@ -1241,17 +1250,60 @@ export async function handleApi(request, env, ctx) {
     const body = await safeJson(request);
     const siteRef = String(body.site_id || body.siteKey || body.site_key || "").trim();
     if (!siteRef) return json({ error: "site_id_or_site_key_required" }, 400);
+    // Which tier is being bought has to be said out loud. This used to charge
+    // the Pro price whatever the caller meant, so there is deliberately no
+    // default to fall back to.
+    const wantedPlan = String(body.plan || "").trim().toLowerCase();
+    if (!CHECKOUTABLE_PLANS.includes(wantedPlan)) {
+      return json({ error: "plan_required", allowed: CHECKOUTABLE_PLANS }, 400);
+    }
     const site = await loadOwnedSiteByRef(env, member, siteRef);
     if (!site) return json({ error: "not_found" }, 404);
     if (!["direct", "referral"].includes(site.channel || "direct")) return json({ error: "channel_not_checkoutable" }, 400);
     const secret = stripeTestSecret(env);
     if (!secret) return json({ error: "stripe_test_key_required" }, 503);
+    const priceId = pricesFromEnv(env)[wantedPlan];
+    if (!priceId) return json({ error: "price_not_configured", plan: wantedPlan }, 503);
     const memberRow = await env.DB.prepare("SELECT email FROM members WHERE id=?").bind(member.member_id).first();
-    const form = new URLSearchParams({ mode: "subscription", "line_items[0][price]": String(env.STRIPE_PRICE_ID_PRO || ""), "line_items[0][quantity]": "1", success_url: "https://nurevo.jp/dashboard?checkout=success", cancel_url: "https://nurevo.jp/dashboard?checkout=cancelled", customer_email: memberRow?.email || "", "metadata[siteId]": site.id, "metadata[orgId]": member.org_id, "subscription_data[metadata][siteId]": site.id, "subscription_data[metadata][orgId]": member.org_id });
-    if (!env.STRIPE_PRICE_ID_PRO) return json({ error: "STRIPE_PRICE_ID_PRO is required" }, 503);
+    const form = new URLSearchParams({ mode: "subscription", "line_items[0][price]": priceId, "line_items[0][quantity]": "1", success_url: "https://nurevo.jp/dashboard?checkout=success", cancel_url: "https://nurevo.jp/dashboard?checkout=cancelled", customer_email: memberRow?.email || "", "metadata[siteId]": site.id, "metadata[orgId]": member.org_id, "metadata[plan]": wantedPlan, "subscription_data[metadata][siteId]": site.id, "subscription_data[metadata][orgId]": member.org_id, "subscription_data[metadata][plan]": wantedPlan });
     const response = await stripeRequest(secret, "/v1/checkout/sessions", form);
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_checkout_failed" }, 502);
-    return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen });
+    // The tier that was actually priced, and what it costs - not a constant that
+    // happens to be nearby.
+    return json({ ok: true, url: response.data.url, plan: wantedPlan, amount_yen: PLAN_MONTHLY_YEN[wantedPlan] });
+  }
+
+  /*
+   * Stripe's own customer portal.
+   *
+   * Changing tier, updating a card and cancelling all happen there rather than
+   * here: Stripe already handles proration, dunning and the receipt, and every
+   * outcome comes back through the subscription webhook, which is the one place
+   * allowed to decide a plan. Building our own upgrade endpoint would mean a
+   * second opinion about what someone is entitled to.
+   */
+  if (path === "/api/billing/portal" && method === "POST") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const body = await safeJson(request);
+    const siteRef = String(body.site_id || body.siteKey || body.site_key || "").trim();
+    if (!siteRef) return json({ error: "site_id_or_site_key_required" }, 400);
+    const site = await loadOwnedSiteByRef(env, member, siteRef);
+    if (!site) return json({ error: "not_found" }, 404);
+    // Nothing to manage until Stripe knows this customer; the dashboard offers
+    // checkout instead in that state.
+    if (!site.stripe_customer_id) return json({ error: "no_subscription" }, 409);
+    const secret = stripeTestSecret(env);
+    if (!secret) return json({ error: "stripe_test_key_required" }, 503);
+    const form = new URLSearchParams({
+      customer: String(site.stripe_customer_id),
+      return_url: `https://nurevo.jp/dashboard#site:${encodeURIComponent(site.id)}`,
+    });
+    const response = await stripeRequest(secret, "/v1/billing_portal/sessions", form);
+    if (!response.ok || !response.data?.url) {
+      return json({ error: response.data?.error?.message || "stripe_portal_failed" }, 502);
+    }
+    return json({ ok: true, url: response.data.url });
   }
 
   if (path === "/api/billing/payment-link" && method === "POST") {
@@ -1646,7 +1698,7 @@ async function requireProfileToken(request, env, siteId) {
 const SOV_UPGRADE = Object.freeze({
   required_plan: "pro",
   plan_label: "Pro",
-  price_yen_monthly: 14800,
+  price_yen_monthly: PLAN_MONTHLY_YEN.pro,
   price_label: "¥14,800/月〜",
   upgrade_url: "https://nurevo.jp/dashboard",
   beta: SOV_BETA,
