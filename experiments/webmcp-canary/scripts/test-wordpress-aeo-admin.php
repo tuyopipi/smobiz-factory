@@ -642,11 +642,9 @@ $GLOBALS['webmcp_test_options']['blog_public'] = 1;
 ob_start();
 webmcp_canary_output_server_schema();
 $typed_output = ob_get_clean();
-foreach (webmcp_canary_nurevo_schema_types($typed) as $table_type) {
-    if ($table_type === 'WebSite' || $table_type === 'WebPage') { continue; }
-    expect(strpos($typed_output, '"@type":"' . $table_type . '"') !== false,
-        "the table's business row names a type the page publishes: {$table_type}");
-}
+$business_row = webmcp_canary_business_schema_type($typed);
+expect(strpos($typed_output, '"@type":"' . $business_row . '"') !== false,
+    "the table's business row names a type the page publishes: {$business_row}");
 /* With no business facts at all it falls back to Organization. */
 $bare = array_merge(webmcp_canary_default_settings(), array('enabled' => '1', 'serve_schema' => '1'));
 expect(webmcp_canary_business_schema_type($bare) === 'Organization', 'with no business facts the type is Organization');
@@ -1046,8 +1044,20 @@ foreach ($shared['rows'] as $row) { $owner_by_type[$row['type']] = $row['owner']
 expect($owner_by_type['Organization'] === 'seo', 'Yoast owns Organization when it publishes one completely');
 expect($owner_by_type['WebSite'] === 'seo', 'Yoast owns WebSite');
 expect($owner_by_type['WebPage'] === 'seo', 'Yoast owns WebPage');
-expect($owner_by_type['FAQPage'] === 'nurevo', 'Nurevo keeps the AEO-only FAQPage');
-expect($owner_by_type['OpeningHoursSpecification'] === 'nurevo', 'Nurevo keeps OpeningHoursSpecification');
+expect(!isset($owner_by_type['FAQPage']), 'a type nothing emits is not listed as published');
+expect(!isset($owner_by_type['OpeningHoursSpecification']), 'nor is OpeningHoursSpecification');
+expect($owner_by_type['BlogPosting'] === 'nurevo',
+    'BlogPosting stays ours while the measurement has not seen one');
+
+update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, array(
+    'business' => array('state' => 'complete', 'id' => 'https://example.test/#rival'),
+    'types' => array('Organization', 'WebSite', 'WebPage', 'BlogPosting'),
+    'conflict' => false, 'measured_at' => time(), 'signature' => 'test',
+));
+$with_article = webmcp_canary_schema_ownership(array('avoid_schema_duplicates' => '1'));
+$article_owner = array();
+foreach ($with_article['rows'] as $row) { $article_owner[$row['type']] = $row['owner']; }
+expect($article_owner['BlogPosting'] === 'seo', 'once an article node is measured, Yoast owns it');
 expect($shared['seo_plugins'] === array('Yoast SEO'), 'the detected SEO plugin is named as a fact');
 
 // Measured as publishing an incomplete business node: the table must say so,
@@ -1083,6 +1093,43 @@ foreach (array('complete', 'partial') as $measured_state) {
     }
 }
 delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
+
+/* ------------------------------------------------------------------ *
+ * The ownership table may only name types the page actually emits
+ * ------------------------------------------------------------------ */
+
+// The table exists to state what this site publishes, but it listed FAQPage and
+// OpeningHoursSpecification unconditionally while the output path emitted
+// neither - the one thing it promised not to do. This reads the emitter and
+// holds the table to it, so a type cannot be announced before it is published.
+$emitter_start = strpos($source, 'function webmcp_canary_output_server_schema()');
+expect($emitter_start !== false, 'the schema emitter was found');
+$emitter = substr($source, $emitter_start);
+$next_hook = strpos($emitter, "\nadd_action(");
+$emitter = $next_hook === false ? $emitter : substr($emitter, 0, $next_hook);
+
+preg_match_all("/'@type'\s*=>\s*'([A-Za-z]+)'/", $emitter, $literal_types);
+preg_match_all("/\?\s*'([A-Za-z]+)'\s*:\s*'([A-Za-z]+)'/", $emitter, $ternary_types);
+$emitted = array_merge($literal_types[1], $ternary_types[1], $ternary_types[2]);
+// The business node's type is computed rather than written as a literal.
+$emitted[] = webmcp_canary_business_schema_type(array('business_type' => ''));
+$emitted = array_values(array_unique(array_filter($emitted)));
+expect(in_array('WebSite', $emitted, true) && in_array('BlogPosting', $emitted, true),
+    'the emitter scan found the expected types');
+
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$listed = webmcp_canary_schema_ownership(array('avoid_schema_duplicates' => '1', 'business_type' => ''));
+foreach ($listed['rows'] as $row) {
+    expect(in_array($row['type'], $emitted, true),
+        "the ownership table only names types the page emits: {$row['type']}");
+}
+
+// And the reverse for the node most sites publish most often, which the list
+// had simply forgotten.
+$types_listed = array_map(function ($row) { return $row['type']; }, $listed['rows']);
+expect(in_array('BlogPosting', $types_listed, true), 'BlogPosting is listed as a type Nurevo publishes');
+expect(count($types_listed) === count(array_unique($types_listed)), 'no type is listed twice');
+
 $GLOBALS['webmcp_test_active_plugins'] = array();
 
 // Checklist actions: fix in place, send to the form, or explain.

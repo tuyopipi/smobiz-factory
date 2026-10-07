@@ -379,8 +379,10 @@ function webmcp_canary_duplicate_schema_types($active_plugins = null) {
     }
 
     // These are the common graph roots emitted by the supported SEO plugins.
-    // AEO-only nodes (for example FAQPage or OpeningHoursSpecification) are
-    // deliberately not in this list and remain eligible for Nurevo output.
+    // AEO-only nodes (FAQPage, OpeningHoursSpecification) are deliberately not
+    // in this list, so they would remain eligible for Nurevo output - but
+    // nothing emits them yet, which is why they are absent from
+    // webmcp_canary_nurevo_schema_types() and from the ownership table.
     return array(
         'Organization',
         'WebSite',
@@ -801,13 +803,15 @@ function webmcp_canary_business_schema_type($settings = null) {
     return $has_business_facts ? 'LocalBusiness' : 'Organization';
 }
 
+/**
+ * The types webmcp_canary_output_server_schema() actually publishes.
+ *
+ * The ownership table is built from this, so anything listed here has to be
+ * something the output path emits. A type we merely intend to support does
+ * not belong in it - see the FAQPage note below.
+ */
 function webmcp_canary_nurevo_schema_types($settings = null) {
-    return array(webmcp_canary_business_schema_type($settings), 'WebSite', 'WebPage');
-}
-
-/** AEO-specific types Nurevo keeps emitting even alongside an SEO plugin. */
-function webmcp_canary_aeo_only_schema_types() {
-    return array('FAQPage', 'OpeningHoursSpecification');
+    return array(webmcp_canary_business_schema_type($settings), 'WebSite', 'WebPage', 'BlogPosting');
 }
 
 /**
@@ -840,9 +844,6 @@ function webmcp_canary_schema_ownership($settings = null, $active_plugins = null
             $owner = 'nurevo';
         }
         $rows[] = array('type' => $type, 'owner' => $owner);
-    }
-    foreach (webmcp_canary_aeo_only_schema_types() as $type) {
-        $rows[] = array('type' => $type, 'owner' => 'nurevo');
     }
     return array(
         'rows' => $rows,
