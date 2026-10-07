@@ -219,13 +219,27 @@ $compat_off = array('avoid_schema_duplicates' => '0');
 expect(webmcp_canary_filter_schema_graph($schema_graph, $compat_on, array()) === $schema_graph, 'no SEO plugin keeps the full Nurevo schema graph');
 $yoast = array('wordpress-seo/wp-seo.php' => 'Yoast SEO');
 
-/* Suppression now follows what the other plugin actually publishes, measured
- * from the served page, not merely whether it is installed. Until that
- * measurement exists nothing is suppressed, because a gap is worse than a
+/* Types the front page carries follow what the other plugin was actually
+ * measured publishing, not merely whether it is installed. Until that
+ * measurement exists they are not suppressed, because a gap is worse than a
  * duplicate: a duplicate shows up in the schema table and the diagnosis, a
- * missing address does not. */
-expect(webmcp_canary_filter_schema_graph($schema_graph, $compat_on, $yoast) === $schema_graph,
-    'with Yoast active but nothing measured yet, the full graph is published');
+ * missing address does not.
+ *
+ * FAQPage is the exception, and deliberately so. Yoast and Rank Math both ship
+ * an FAQ block, and the FAQ it emits lives on an inner page the front-page
+ * measurement never reads - so waiting for a measurement would mean waiting
+ * forever while publishing a second FAQPage on every page that has one. */
+$unmeasured = webmcp_canary_filter_schema_graph($schema_graph, $compat_on, $yoast);
+$unmeasured_types = array();
+foreach ($unmeasured as $node) {
+    foreach (webmcp_canary_schema_node_types($node) as $node_type) { $unmeasured_types[$node_type] = true; }
+}
+expect(isset($unmeasured_types['Organization']) && isset($unmeasured_types['WebSite']),
+    'with Yoast active but nothing measured yet, the measured types are still published');
+expect(!isset($unmeasured_types['FAQPage']),
+    'but FAQPage stands down on detection, because their FAQ is never on the front page');
+expect(isset($unmeasured_types['OpeningHoursSpecification']),
+    'and a type nobody else publishes is untouched');
 
 /* Measured: Yoast publishes Organization, WebSite and WebPage completely. */
 $measured_complete = array(
@@ -237,8 +251,9 @@ $measured_complete = array(
 );
 update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, $measured_complete);
 $filtered = webmcp_canary_filter_schema_graph($schema_graph, $compat_on, $yoast);
-expect(count($filtered) === 2, 'a complete rival removes every overlapping Nurevo schema root');
-expect($filtered[0]['@type'] === 'FAQPage' && $filtered[1]['@type'] === 'OpeningHoursSpecification', 'AEO-only schema nodes remain with Yoast active');
+expect(count($filtered) === 1, 'a complete rival removes every overlapping Nurevo schema root');
+expect($filtered[0]['@type'] === 'OpeningHoursSpecification',
+    'only a type nobody else publishes survives a complete rival');
 expect(webmcp_canary_filter_schema_graph($schema_graph, $compat_off, $yoast) === $schema_graph, 'compatibility toggle off preserves the full graph');
 delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
 
@@ -549,14 +564,20 @@ expect($missing['business']['state'] === 'partial', 'a business node missing tel
 /* 4. Nothing published at all: nothing suppressed. */
 $empty = webmcp_canary_parse_rival_schema('<html><head></head><body></body></html>', 'HairSalon');
 expect($empty['business']['state'] === 'none', 'no rival schema reads as none');
-expect(webmcp_canary_suppressed_schema_types($empty, array('wordpress-seo/wp-seo.php' => 'Yoast SEO')) === array(), 'nothing is suppressed when they publish nothing');
+$empty_suppressed = webmcp_canary_suppressed_schema_types($empty, array('wordpress-seo/wp-seo.php' => 'Yoast SEO'));
+expect(!in_array('Organization', $empty_suppressed, true) && !in_array('WebPage', $empty_suppressed, true),
+    'nothing measured means nothing measured is suppressed');
+expect($empty_suppressed === array('FAQPage'),
+    'except FAQPage, which stands down on detection alone');
 
 /* 5. No SEO plugin: unchanged behaviour. */
 expect(webmcp_canary_suppressed_schema_types($complete, array()) === array(), 'with no SEO plugin active nothing is suppressed');
 
 /* 6. Before the first measurement we publish rather than hide: a duplicate is
- *    visible and fixable, a missing address is not. */
-expect(webmcp_canary_suppressed_schema_types(null, array('wordpress-seo/wp-seo.php' => 'Yoast SEO')) === array(), 'an unmeasured site suppresses nothing (fail open)');
+ *    visible and fixable, a missing address is not. FAQPage is decided by
+ *    detection and so is unaffected by whether a measurement exists. */
+$unmeasured_suppressed = webmcp_canary_suppressed_schema_types(null, array('wordpress-seo/wp-seo.php' => 'Yoast SEO'));
+expect($unmeasured_suppressed === array('FAQPage'), 'an unmeasured site suppresses nothing it would have measured (fail open)');
 
 /* 7. Our own block must never be read as a rival. */
 $ours = '<html><head><script type="application/ld+json" id="' . WEBMCP_CANARY_SCHEMA_SCRIPT_ID . '">'
@@ -703,7 +724,9 @@ expect(!$threw, 'malformed rival JSON-LD does not throw');
 expect($ok === true, 'a 200 with unusable JSON-LD is still a completed measurement');
 $cached = webmcp_canary_rival_schema_state();
 expect($cached['business']['state'] === 'none', 'unparseable rival schema is treated as nothing published');
-expect(webmcp_canary_suppressed_schema_types() === array(), 'nothing is suppressed on the strength of schema we could not read');
+$unreadable_suppressed = webmcp_canary_suppressed_schema_types();
+expect(!in_array('Organization', $unreadable_suppressed, true) && !in_array('WebPage', $unreadable_suppressed, true),
+    'nothing measured is suppressed on the strength of schema we could not read');
 
 /* 14d. A failed fetch must leave no cache behind, so the fail-open path holds
  *      rather than a half-written picture being trusted. */
@@ -711,7 +734,9 @@ delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
 $GLOBALS['webmcp_test_remote_get'] = array();
 expect(webmcp_canary_measure_rival_schema() === false, 'an unreachable site reports failure');
 expect(webmcp_canary_rival_schema_state() === null, 'a failed measurement writes no cache');
-expect(webmcp_canary_suppressed_schema_types() === array(), 'with no measurement nothing is suppressed');
+$no_cache_suppressed = webmcp_canary_suppressed_schema_types();
+expect(!in_array('Organization', $no_cache_suppressed, true) && !in_array('WebPage', $no_cache_suppressed, true),
+    'with no measurement nothing measured is suppressed');
 
 /* 14e. A non-200 is a failure too: an error page is not evidence of anything. */
 $mock_response($complete_rival_markup, 503);
@@ -1352,5 +1377,99 @@ expect(array_key_exists('license_key', $defaults), 'the licence key setting is k
 expect(strpos($source, 'webmcp_canary_bind_license') !== false, 'and the licence path still exists');
 
 unset($GLOBALS['webmcp_test_remote']);
+
+/* ------------------------------------------------------------------ *
+ * Per-type coexistence (Phase 4)
+ * ------------------------------------------------------------------ */
+
+// One flat list of "types an SEO plugin might emit" could not express what is
+// needed, because the right answer runs in opposite directions by type. Article
+// is ours only when nobody else publishes one; Product is theirs the moment
+// WooCommerce is active; Service is ours unconditionally. Each type carries its
+// own rule now, and these hold the three apart.
+
+$rules = webmcp_canary_schema_type_rules();
+foreach (array('WebSite', 'WebPage', 'Article', 'BlogPosting', 'FAQPage', 'Product', 'Service', 'Reservation') as $type) {
+    expect(isset($rules[$type]), "every type carries a rule: {$type}");
+}
+expect($rules['Article']['basis'] === 'measured', 'Article is decided by what their page shows');
+expect($rules['FAQPage']['basis'] === 'detected', 'FAQPage is decided by detection');
+expect($rules['Product']['basis'] === 'detected', 'so is Product');
+expect($rules['Service']['basis'] === 'always', 'Service is ours unconditionally');
+expect($rules['Product']['publishers'] === array('commerce'), 'Product is published by the store plugin, not the SEO one');
+expect($rules['FAQPage']['publishers'] === array('seo'), 'FAQPage is published by the SEO plugins');
+
+$yoast_only = array('wordpress-seo/wp-seo.php' => 'Yoast SEO');
+$woo_only = array('woocommerce/woocommerce.php' => 'WooCommerce');
+$measured_nothing = array(
+    'business' => array('state' => 'none', 'id' => ''), 'types' => array(),
+    'conflict' => false, 'measured_at' => time(), 'signature' => 'test',
+);
+
+// WooCommerce publishes Product itself from WC_Structured_Data, so a store
+// running it already has Product covered and must not get a second one. No page
+// is read to find that out: a shop page is not the front page.
+$with_woo = webmcp_canary_suppressed_schema_types($measured_nothing, array(), $woo_only);
+expect(in_array('Product', $with_woo, true), 'WooCommerce active means Product is theirs');
+expect(!in_array('FAQPage', $with_woo, true), 'and WooCommerce says nothing about FAQ');
+expect(!in_array('Service', $with_woo, true), 'nor about Service');
+
+$without_woo = webmcp_canary_suppressed_schema_types($measured_nothing, array(), array());
+expect(!in_array('Product', $without_woo, true), 'without WooCommerce, Product is ours to publish');
+
+// Yoast and Rank Math both ship an FAQ block. Their FAQ lives on inner pages
+// the front-page measurement never reads, so waiting for a measurement would
+// mean publishing a second FAQPage forever.
+$with_yoast = webmcp_canary_suppressed_schema_types($measured_nothing, $yoast_only, array());
+expect(in_array('FAQPage', $with_yoast, true), 'an SEO plugin with an FAQ block means FAQPage is theirs');
+expect(!in_array('Product', $with_yoast, true), 'but an SEO plugin does not publish Product');
+
+// The two opposite policies coexist on one site.
+$both = webmcp_canary_suppressed_schema_types($measured_nothing, $yoast_only, $woo_only);
+expect(in_array('Product', $both, true) && in_array('FAQPage', $both, true), 'both stand down when both publishers are present');
+expect(!in_array('Service', $both, true), 'and Service still does not');
+expect(!in_array('Article', $both, true), 'nor Article, which they were not measured publishing');
+
+// Article is the opposite policy and must stay that way: measured, not detected.
+$measured_article = array(
+    'business' => array('state' => 'none', 'id' => ''), 'types' => array('Article', 'BlogPosting'),
+    'conflict' => false, 'measured_at' => time(), 'signature' => 'test',
+);
+$article_seen = webmcp_canary_suppressed_schema_types($measured_article, $yoast_only, array());
+expect(in_array('Article', $article_seen, true), 'an article node they were seen publishing is theirs');
+expect(in_array('BlogPosting', $article_seen, true), 'and so is the post node');
+
+// Nothing is suppressed for a site with no other plugin at all, whatever the
+// measurement says.
+$solo = webmcp_canary_suppressed_schema_types($measured_article, array(), array());
+expect($solo === array(), 'with no other publisher active nothing stands down');
+
+// The graph filter honours all of it, which is where it actually matters.
+$mixed_graph = array(
+    array('@type' => 'Product', 'name' => 'Bag'),
+    array('@type' => 'FAQPage', 'mainEntity' => array()),
+    array('@type' => 'Service', 'name' => 'Cut'),
+    array('@type' => 'OpeningHoursSpecification', 'opens' => '09:00'),
+);
+$GLOBALS['webmcp_test_active_plugins'] = array('woocommerce/woocommerce.php');
+update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, $measured_nothing);
+$woo_filtered = webmcp_canary_filter_schema_graph($mixed_graph, array('avoid_schema_duplicates' => '1'));
+$woo_types = array();
+foreach ($woo_filtered as $node) { foreach (webmcp_canary_schema_node_types($node) as $t) { $woo_types[$t] = true; } }
+expect(!isset($woo_types['Product']), 'a WooCommerce store publishes no second Product from us');
+expect(isset($woo_types['Service']) && isset($woo_types['OpeningHoursSpecification']), 'and keeps what nobody else publishes');
+expect(isset($woo_types['FAQPage']), 'WooCommerce alone does not take the FAQ');
+
+// Turning compatibility off still publishes everything, as it always did.
+$off = webmcp_canary_filter_schema_graph($mixed_graph, array('avoid_schema_duplicates' => '0'));
+expect($off === $mixed_graph, 'the compatibility toggle still overrides every per-type rule');
+
+$GLOBALS['webmcp_test_active_plugins'] = array();
+delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
+
+// No page is fetched to reach any of these decisions.
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+webmcp_canary_suppressed_schema_types($measured_nothing, $yoast_only, $woo_only);
+expect(empty($GLOBALS['webmcp_test_remote_get_log']), 'deciding per-type coexistence fetches nothing');
 
 echo "WordPress AEO admin tests passed\n";

@@ -372,6 +372,37 @@ function webmcp_canary_avoid_schema_duplicates_field() {
  * Keys are plugin basenames so callers can make deterministic decisions while
  * values are the human-readable names shown in wp-admin.
  */
+/**
+ * Other plugins that publish schema, by what they publish.
+ *
+ * WooCommerce emits Product JSON-LD from WC_Structured_Data with no SEO plugin
+ * involved, so a store running it already has Product covered. Detection is
+ * enough to know that: unlike the business node, where the question is whether
+ * their node is *complete*, "does anyone else publish Product here" has a
+ * yes/no answer the moment the plugin is active. That is what lets this avoid
+ * fetching pages - Product and FAQ live on inner pages the front-page
+ * measurement never sees.
+ */
+function webmcp_canary_detect_active_commerce_plugins() {
+    if (!function_exists('is_plugin_active') && defined('ABSPATH')) {
+        $plugin_api = ABSPATH . 'wp-admin/includes/plugin.php';
+        if (file_exists($plugin_api)) {
+            require_once $plugin_api;
+        }
+    }
+    if (!function_exists('is_plugin_active')) {
+        return array();
+    }
+    $supported = array('woocommerce/woocommerce.php' => 'WooCommerce');
+    $active = array();
+    foreach ($supported as $plugin_file => $plugin_name) {
+        if (is_plugin_active($plugin_file)) {
+            $active[$plugin_file] = $plugin_name;
+        }
+    }
+    return $active;
+}
+
 function webmcp_canary_detect_active_seo_plugins() {
     if (!function_exists('is_plugin_active') && defined('ABSPATH')) {
         $plugin_api = ABSPATH . 'wp-admin/includes/plugin.php';
@@ -398,29 +429,94 @@ function webmcp_canary_detect_active_seo_plugins() {
     return $active;
 }
 
-function webmcp_canary_duplicate_schema_types($active_plugins = null) {
+/**
+ * Who else publishes each schema type, and how we decide whether to stand down.
+ *
+ * A flat list of "types an SEO plugin might emit" could not express what Phase 4
+ * needs, because the right answer differs by type in two opposite directions.
+ * Article is ours only when nobody else publishes one. Product is theirs the
+ * moment WooCommerce is active. FAQPage is ours unless a plugin with an FAQ
+ * block is installed. One list cannot say all three, so each type carries its
+ * own rule.
+ *
+ * `publishers` is which other plugins emit the type: 'seo' for the supported SEO
+ * plugins, 'commerce' for WooCommerce. `basis` is how the decision is made:
+ *
+ *   measured  only stand down for what their page was actually seen to publish.
+ *             Used for the graph roots the front page carries, where we can see
+ *             the answer and a presence check would hide our node on sites where
+ *             their free tier emits nothing.
+ *   detected  the plugin being active is the answer. Used where measurement
+ *             cannot reach: Product lives on shop pages and FAQPage on inner
+ *             pages, and the measurement only ever reads the front page.
+ *   always    nobody else publishes it, so it is ours unconditionally.
+ */
+function webmcp_canary_schema_type_rules() {
+    $rules = array(
+        'WebSite'        => array('publishers' => array('seo'), 'basis' => 'measured'),
+        'WebPage'        => array('publishers' => array('seo'), 'basis' => 'measured'),
+        'BreadcrumbList' => array('publishers' => array('seo'), 'basis' => 'measured'),
+        'Article'        => array('publishers' => array('seo'), 'basis' => 'measured'),
+        'NewsArticle'    => array('publishers' => array('seo'), 'basis' => 'measured'),
+        'BlogPosting'    => array('publishers' => array('seo'), 'basis' => 'measured'),
+        // Both Yoast and Rank Math ship an FAQ block that emits FAQPage. It was
+        // previously exempt from suppression entirely, which would have produced
+        // two FAQPage nodes on every site using one of those blocks.
+        'FAQPage'        => array('publishers' => array('seo'), 'basis' => 'detected'),
+        // WooCommerce publishes this itself, SEO plugin or not.
+        'Product'        => array('publishers' => array('commerce'), 'basis' => 'detected'),
+        'Offer'          => array('publishers' => array('commerce'), 'basis' => 'detected'),
+        // Booking plugins publish no schema at all, so these are open ground.
+        'Service'        => array('publishers' => array(), 'basis' => 'always'),
+        'Reservation'    => array('publishers' => array(), 'basis' => 'always'),
+        'OpeningHoursSpecification' => array('publishers' => array(), 'basis' => 'always'),
+    );
+    // The business node is measured rather than detected: an SEO plugin's free
+    // tier usually emits an Organization with a name and a logo and nothing
+    // else, and standing down for that would lose the address and hours that are
+    // the entire point.
+    foreach (webmcp_canary_local_business_types() as $type) {
+        $rules[$type] = array('publishers' => array('seo'), 'basis' => 'measured');
+    }
+    return $rules;
+}
+
+/** Which publisher groups are active on this site. */
+function webmcp_canary_active_publishers($active_plugins = null, $commerce_plugins = null) {
     if ($active_plugins === null) {
         $active_plugins = webmcp_canary_detect_active_seo_plugins();
     }
-    if (empty($active_plugins)) {
+    if ($commerce_plugins === null) {
+        $commerce_plugins = webmcp_canary_detect_active_commerce_plugins();
+    }
+    $groups = array();
+    if (!empty($active_plugins)) {
+        $groups[] = 'seo';
+    }
+    if (!empty($commerce_plugins)) {
+        $groups[] = 'commerce';
+    }
+    return $groups;
+}
+
+/**
+ * Types another plugin on this site may be publishing.
+ *
+ * Kept as a function of its own because the measured path still needs to know
+ * which types are even candidates before asking what the page showed.
+ */
+function webmcp_canary_duplicate_schema_types($active_plugins = null, $commerce_plugins = null) {
+    $groups = webmcp_canary_active_publishers($active_plugins, $commerce_plugins);
+    if (empty($groups)) {
         return array();
     }
-
-    // These are the common graph roots emitted by the supported SEO plugins.
-    // AEO-only nodes (FAQPage, OpeningHoursSpecification) are deliberately not
-    // in this list, so they would remain eligible for Nurevo output - but
-    // nothing emits them yet, which is why they are absent from
-    // webmcp_canary_nurevo_schema_types() and from the ownership table.
-    return array(
-        'Organization',
-        'WebSite',
-        'WebPage',
-        'Article',
-        'NewsArticle',
-        'BlogPosting',
-        'BreadcrumbList',
-        'LocalBusiness',
-    );
+    $candidates = array();
+    foreach (webmcp_canary_schema_type_rules() as $type => $rule) {
+        if (array_intersect($rule['publishers'], $groups)) {
+            $candidates[] = $type;
+        }
+    }
+    return $candidates;
 }
 
 /* -----------------------------------------------------------------------
@@ -657,35 +753,47 @@ function webmcp_canary_measure_rival_schema() {
  * suppressed. That errs towards a duplicate rather than a gap: a duplicate is
  * visible in the schema table and in the diagnosis, a missing address is not.
  */
-function webmcp_canary_suppressed_schema_types($state = null, $active_plugins = null) {
-    if ($active_plugins === null) {
-        $active_plugins = webmcp_canary_detect_active_seo_plugins();
-    }
-    $candidates = webmcp_canary_duplicate_schema_types($active_plugins);
-    if (empty($candidates)) {
+function webmcp_canary_suppressed_schema_types($state = null, $active_plugins = null, $commerce_plugins = null) {
+    $groups = webmcp_canary_active_publishers($active_plugins, $commerce_plugins);
+    if (empty($groups)) {
         return array();
     }
+    $rules = webmcp_canary_schema_type_rules();
     $state = $state === null ? webmcp_canary_rival_schema_state() : $state;
-    if (!is_array($state)) {
-        return array(); // Not measured yet: publish, do not hide.
-    }
-
-    $published = isset($state['types']) && is_array($state['types']) ? $state['types'] : array();
-    $business_state = isset($state['business']['state']) ? $state['business']['state'] : 'none';
+    $published = is_array($state) && isset($state['types']) && is_array($state['types']) ? $state['types'] : array();
+    $business_state = is_array($state) && isset($state['business']['state']) ? $state['business']['state'] : 'none';
     $business_types = webmcp_canary_local_business_types();
+    $conflict = is_array($state) && !empty($state['conflict']);
 
     $suppressed = array();
-    foreach ($candidates as $type) {
+    foreach ($rules as $type => $rule) {
+        if (!array_intersect($rule['publishers'], $groups)) {
+            continue;   // nobody else publishes it here
+        }
+        if ($rule['basis'] === 'always') {
+            continue;
+        }
+        if ($rule['basis'] === 'detected') {
+            // The plugin is active, so it publishes this type. No page is
+            // fetched: the types this covers live where the front-page
+            // measurement cannot see them.
+            $suppressed[] = $type;
+            continue;
+        }
+        // measured. Without a measurement yet, publish rather than hide - a
+        // missing node is worse than a duplicate, and the measurement runs on
+        // activation, on save, on a plugin change and daily.
+        if (!is_array($state)) {
+            continue;
+        }
         if (in_array($type, $business_types, true)) {
             // The business slot is suppressed only when theirs is complete, or
             // when two complete ones already exist and we would be a third.
-            if ($business_state === 'complete' || !empty($state['conflict'])) {
+            if ($business_state === 'complete' || $conflict) {
                 $suppressed[] = $type;
             }
             continue;
         }
-        // Page-level nodes stay presence-gated: the SEO plugin owns the page
-        // context and there is nothing for Nurevo to add by repeating it.
         if (in_array($type, $published, true)) {
             $suppressed[] = $type;
         }
@@ -852,11 +960,13 @@ function webmcp_canary_schema_ownership($settings = null, $active_plugins = null
     if ($active_plugins === null) {
         $active_plugins = webmcp_canary_detect_active_seo_plugins();
     }
-    $avoiding = ($settings['avoid_schema_duplicates'] ?? '1') === '1' && !empty($active_plugins);
+    $commerce_plugins = webmcp_canary_detect_active_commerce_plugins();
+    $avoiding = ($settings['avoid_schema_duplicates'] ?? '1') === '1'
+        && !empty(webmcp_canary_active_publishers($active_plugins, $commerce_plugins));
     // Read the same decision the output path reads, so the table can never
     // claim something the page does not actually do.
     $state = webmcp_canary_rival_schema_state();
-    $suppressed = $avoiding ? webmcp_canary_suppressed_schema_types($state, $active_plugins) : array();
+    $suppressed = $avoiding ? webmcp_canary_suppressed_schema_types($state, $active_plugins, $commerce_plugins) : array();
     $business_types = webmcp_canary_local_business_types();
     $business_state = is_array($state) && isset($state['business']['state']) ? $state['business']['state'] : 'none';
 
