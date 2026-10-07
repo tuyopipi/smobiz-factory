@@ -51,7 +51,22 @@ const PLACES_REFRESH_MS = 365 * 24 * 60 * 60 * 1000;
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 const SUPER_ADMIN_EMAILS_ENV = "SUPER_ADMIN_EMAILS";
-const REQ = ["name", "tel", "address", "hours", "geo", "business_type", "price_level"];
+/*
+ * What has to be filled in before a profile counts as complete.
+ *
+ * Every entry is something the owner can actually type into the dashboard. The
+ * old list required price_level, which only Google Places ever writes and the
+ * listing query did not even select - so the bar could never be cleared, and a
+ * site sat at "incomplete" with nothing the operator could do about it.
+ *
+ * business_type is judged on the schema.org type, which is the field WordPress
+ * edits and the one that reaches @type. business_type_label is a display string
+ * Places fills in and no human owns.
+ */
+const PROFILE_REQUIRED = Object.freeze(["name", "phone", "address", "hours", "geo", "business_type_schema"]);
+
+/* Reported so the form can encourage them, but they never block completion. */
+const PROFILE_OPTIONAL = Object.freeze(["description", "email", "url", "image", "reserve_url", "price_level"]);
 const INITIAL_AEO_RULESET = Object.freeze({
   version: 1,
   created_at: "2026-09-30T00:00:00.000Z",
@@ -74,18 +89,36 @@ const INITIAL_AEO_RULESET = Object.freeze({
   }),
 });
 
-function completeness(settings = {}) {
-  const has = {
-    name: !!settings.name,
-    tel: !!settings.tel,
-    address: !!settings.address,
-    hours: !!settings.hours,
-    geo: settings.lat != null && settings.lng != null,
-    business_type: !!settings.business_type,
-    price_level: !!settings.price_level,
+/**
+ * Completeness of a canonical profile.
+ *
+ * Takes the canonical field names, so the dashboard form, the site listing and
+ * the new read endpoint all score the same record the same way instead of each
+ * inspecting raw columns.
+ */
+function profileCompleteness(values = {}) {
+  const filledValue = (field) => {
+    const value = values[field];
+    return value !== null && value !== undefined && String(value).trim() !== "";
   };
-  const filled = REQ.filter((key) => has[key]).length;
-  return { filled, total: REQ.length, pct: Math.round((filled / REQ.length) * 100), has };
+  const has = {
+    geo: values.lat != null && values.lng != null,
+  };
+  for (const field of [...PROFILE_REQUIRED, ...PROFILE_OPTIONAL]) {
+    if (field === "geo") continue;
+    has[field] = filledValue(field);
+  }
+  const filled = PROFILE_REQUIRED.filter((field) => has[field]).length;
+  return {
+    filled,
+    total: PROFILE_REQUIRED.length,
+    pct: Math.round((filled / PROFILE_REQUIRED.length) * 100),
+    has,
+    required: PROFILE_REQUIRED,
+    optional: PROFILE_OPTIONAL,
+    // The fields still blocking completion, so a caller can say which.
+    missing: PROFILE_REQUIRED.filter((field) => !has[field]),
+  };
 }
 
 function rulesetDefinition(ruleset) {
@@ -723,7 +756,14 @@ export async function handleApi(request, env, ctx) {
     const { results } = await listOwnedSites(env, member);
     const now = Date.now();
     const sites = results.map((row) => {
-      const fill = completeness({ name: row.s_name, tel: row.tel, address: row.address, hours: row.hours, lat: row.lat, lng: row.lng, business_type: row.business_type, price_level: row.price_level });
+      // Scored on the canonical field names, the same way /api/sites/:id and
+      // the edit form score it.
+      const fill = profileCompleteness({
+        name: row.s_name, phone: row.tel, address: row.address, hours: row.hours,
+        lat: row.lat, lng: row.lng, business_type_schema: row.business_type_schema,
+        description: row.description, email: row.email, url: row.website_uri,
+        image: row.image, reserve_url: row.reserve_url, price_level: row.price_level,
+      });
       const stale = row.last_seen_at && now - row.last_seen_at > 24 * 3600e3;
       const checklist = [
         { key: "map", done: !!row.place_id, manual: false },
@@ -1084,6 +1124,44 @@ export async function handleApi(request, env, ctx) {
     const result = await importPlaceForSite(env, site, body, placesMatch[2] === "refresh");
     return json(result.body, result.status);
   }
+  /*
+   * The store profile, for the member who owns the site.
+   *
+   * The dashboard edit form used to populate itself from /api/tag/config, which
+   * is the public tag-delivery payload and carries six keys. Four of the form's
+   * own inputs - lat, lng, image, reserve_url - are not among them, so they
+   * rendered blank no matter what was stored, and saving the blank form sent
+   * lat/lng as an explicit null and deleted the geo Places had imported.
+   *
+   * This returns the whole canonical record, so the form can round-trip every
+   * field it offers to edit. It is member-authenticated and ownership-checked;
+   * /api/sites/:id/profile stays bearer-authenticated for the WordPress sync.
+   */
+  if (match && method === "GET") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const site = await loadOwnedSite(env, member, match[1]);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(match[1]).first();
+      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+    }
+    const current = await loadSiteProfile(env, site.id);
+    if (!current) return json({ error: "not_found" }, 404);
+    const settings = await env.DB.prepare("SELECT serve_schema,allow_crawlers FROM site_settings WHERE site_id=?").bind(site.id).first();
+    return json({
+      id: site.id,
+      // field_sources travels too: the form needs to know that a value came
+      // from Places rather than from a person, because re-saving it as human
+      // would switch off the refresh that maintains it.
+      ...profileResponse(current.values, current.sources, current.updated_at),
+      completeness: profileCompleteness(current.values),
+      // Output toggles are not profile fields - they switch delivery here and
+      // page output in WordPress - but the same form owns them.
+      serve_schema: settings?.serve_schema == null ? 1 : Number(settings.serve_schema),
+      allow_crawlers: settings?.allow_crawlers == null ? 0 : Number(settings.allow_crawlers),
+    });
+  }
+
   if (match && method === "PUT") {
     const member = await requireMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
@@ -1100,12 +1178,10 @@ export async function handleApi(request, env, ctx) {
       return json({ ok: true, gbp_linked: !!body.gbp_linked });
     }
     // Store fields go through the shared merger so this screen cannot diverge
-    // from wp-admin. `type` from this form is the display label, matching what
-    // the dashboard has always shown.
-    const profileResult = await writeSiteProfile(env, id, {
-      name: body.name, business_type_label: body.type, phone: body.tel, address: body.address,
-      hours: body.hours, lat: body.lat, lng: body.lng, image: body.image, reserve_url: body.reserve_url,
-    }, "dashboard");
+    // from wp-admin. Only the keys the request actually carries are passed on:
+    // naming every field here meant an absent one arrived as undefined, and a
+    // form that could not read lat/lng sent them as null - an explicit delete.
+    const profileResult = await writeSiteProfile(env, id, pickDashboardProfileFields(body), "dashboard");
     if (profileResult.error) return json({ error: profileResult.error }, profileResult.status || 400);
 
     // Output toggles are deliberately NOT part of the profile: they control tag
@@ -1114,7 +1190,9 @@ export async function handleApi(request, env, ctx) {
       `INSERT INTO site_settings (site_id,serve_schema,allow_crawlers) VALUES (?,?,?)
        ON CONFLICT(site_id) DO UPDATE SET serve_schema=excluded.serve_schema,allow_crawlers=excluded.allow_crawlers`,
     ).bind(id, body.serve_schema ? 1 : 0, body.allow_crawlers ? 1 : 0).run();
-    const schemaTypes = body.serve_schema ? countSchemaTypes(body) : 0;
+    // Counted from the merged record, not from the request: a partial save must
+    // not report fewer schema types just because the form left a key out.
+    const schemaTypes = body.serve_schema ? countSchemaTypes(profileResult.profile || {}) : 0;
     if (Object.prototype.hasOwnProperty.call(body, "gbp_linked")) {
       await env.DB.prepare("UPDATE sites SET gbp_linked=? WHERE id=? AND org_id=?").bind(body.gbp_linked ? 1 : 0, id, member.org_id).run();
     }
@@ -1473,6 +1551,46 @@ function pickProfileFields(body) {
   const incoming = {};
   for (const field of PROFILE_FIELD_NAMES) {
     if (Object.prototype.hasOwnProperty.call(body || {}, field)) incoming[field] = body[field];
+  }
+  return incoming;
+}
+
+/*
+ * What the dashboard edit form is allowed to write.
+ *
+ * Deliberately not the whole field set:
+ *   business_type_label  a display string Places maintains; the human-editable
+ *                        type is business_type_schema, which is also the one
+ *                        WordPress edits and the one that reaches @type.
+ *   hours_periods        machine-readable hours, Places-owned (the merger
+ *                        rejects human writes to it anyway).
+ *   price_level, price   no editor on either side; Places owns price_level.
+ *
+ * `tel` is accepted as an alias for phone because that is what the form field
+ * has always been called.
+ */
+const DASHBOARD_PROFILE_FIELDS = Object.freeze([
+  "name", "description", "address", "phone", "hours",
+  "business_type_schema", "email", "url", "lat", "lng", "image", "reserve_url",
+]);
+
+/**
+ * Build the merge input from a dashboard PUT.
+ *
+ * Presence, not value, decides what is touched: a key the body does not carry
+ * is left out, and mergeProfile then skips the field entirely. This is what
+ * makes a partial save safe - the form sends only what it actually holds, and
+ * an absent key can no longer be mistaken for an instruction.
+ */
+function pickDashboardProfileFields(body) {
+  const source = body || {};
+  const incoming = {};
+  for (const field of DASHBOARD_PROFILE_FIELDS) {
+    if (Object.prototype.hasOwnProperty.call(source, field)) incoming[field] = source[field];
+  }
+  if (!Object.prototype.hasOwnProperty.call(incoming, "phone")
+      && Object.prototype.hasOwnProperty.call(source, "tel")) {
+    incoming.phone = source.tel;
   }
   return incoming;
 }
@@ -2259,8 +2377,12 @@ async function loadOwnedSiteByRef(env, actor, reference) {
 }
 
 async function listOwnedSites(env, actor) {
+  // business_type_schema, description, email and price_level are selected
+  // because completeness scores them. price_level in particular was required
+  // but never fetched, so every site's fill percentage was short by one.
   const select = `SELECT s.*, o.plan AS org_plan, ss.name AS s_name, ss.tel, ss.address, ss.hours, ss.lat, ss.lng,
-              ss.image, ss.reserve_url, ss.business_type
+              ss.image, ss.reserve_url, ss.business_type, ss.business_type_schema, ss.description,
+              ss.email, ss.price_level
          FROM sites s JOIN orgs o ON o.id=s.org_id LEFT JOIN site_settings ss ON ss.site_id = s.id`;
   if (actor.is_super_admin) return env.DB.prepare(`${select} ORDER BY s.created_at`).all();
   if (actor.role === "store") return env.DB.prepare(`${select} WHERE s.org_id=? AND s.owner_member_id=? ORDER BY s.created_at`).bind(actor.org_id, actor.member_id).all();
