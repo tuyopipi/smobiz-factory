@@ -40,6 +40,7 @@ function wp_remote_retrieve_body($response) { return $response['body'] ?? ''; }
 function is_plugin_active($plugin) { return in_array($plugin, $GLOBALS['webmcp_test_active_plugins'], true); }
 function update_option($key, $value) { $GLOBALS['webmcp_test_options'][$key] = $value; return true; }
 function wp_strip_all_tags($value) { return strip_tags((string) $value); }
+function esc_textarea($value) { return htmlspecialchars((string) $value, ENT_QUOTES); }
 function strip_shortcodes($value) { return preg_replace('/\[[^\]]+\]/', '', (string) $value); }
 function get_posts() { return $GLOBALS['webmcp_test_posts']; }
 
@@ -1162,6 +1163,13 @@ expect($emitter_start !== false, 'the schema emitter was found');
 $emitter = substr($source, $emitter_start);
 $next_hook = strpos($emitter, "\nadd_action(");
 $emitter = $next_hook === false ? $emitter : substr($emitter, 0, $next_hook);
+// Nodes the emitter appends are built in helpers, so those count as emitted
+// too - otherwise a type could be listed in the table and built in a helper
+// without this noticing.
+$faq_builder_start = strpos($source, 'function webmcp_canary_faq_schema_node(');
+if ($faq_builder_start !== false) {
+    $emitter .= substr($source, $faq_builder_start, 1200);
+}
 
 preg_match_all("/'@type'\s*=>\s*'([A-Za-z]+)'/", $emitter, $literal_types);
 preg_match_all("/\?\s*'([A-Za-z]+)'\s*:\s*'([A-Za-z]+)'/", $emitter, $ternary_types);
@@ -1183,6 +1191,15 @@ foreach ($listed['rows'] as $row) {
 // had simply forgotten.
 $types_listed = array_map(function ($row) { return $row['type']; }, $listed['rows']);
 expect(in_array('BlogPosting', $types_listed, true), 'BlogPosting is listed as a type Nurevo publishes');
+
+// The conditional row has to satisfy the same rule.
+webmcp_canary_save_faq_entries(array(array('q' => 'Q', 'a' => 'A')));
+$with_faq = webmcp_canary_schema_ownership(array('avoid_schema_duplicates' => '1', 'business_type' => ''));
+foreach ($with_faq['rows'] as $row) {
+    expect(in_array($row['type'], $emitted, true),
+        "a conditionally listed type is still one the page emits: {$row['type']}");
+}
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
 expect(count($types_listed) === count(array_unique($types_listed)), 'no type is listed twice');
 
 $GLOBALS['webmcp_test_active_plugins'] = array();
@@ -1588,5 +1605,117 @@ expect(get_option(WEBMCP_CANARY_CATALOG_OPTION, null) === null, 'deactivating th
 
 $GLOBALS['webmcp_test_products'] = array();
 $GLOBALS['webmcp_test_product_terms'] = array();
+
+/* ------------------------------------------------------------------ *
+ * Hand-entered FAQ (Phase 6)
+ * ------------------------------------------------------------------ */
+
+// This is content the operator typed into Nurevo. The per-type rule that makes
+// FAQPage theirs is about not repeating an SEO plugin's own FAQ block, which
+// holds different questions - so it does not apply here, and this is published
+// whether or not such a plugin is active.
+
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+expect(webmcp_canary_faq_entries() === array(), 'no FAQ by default');
+expect(webmcp_canary_faq_schema_node('https://example.test/') === null, 'and no node to publish');
+
+$saved = webmcp_canary_save_faq_entries(array(
+    array('q' => '駐車場はありますか？', 'a' => '店舗横に3台分あります。'),
+    array('q' => '  予約は必要ですか？  ', 'a' => " 当日席もご用意しています。 "),
+    array('q' => 'Half a pair', 'a' => ''),
+    array('q' => '', 'a' => 'Orphan answer'),
+    'not an entry',
+));
+expect(count($saved) === 2, 'half a pair answers nothing, so it is not stored');
+$entries = webmcp_canary_faq_entries();
+expect($entries[1]['q'] === '予約は必要ですか？', 'surrounding space is trimmed');
+
+// The read side filters too, not only the save side: the option can be written
+// by hand, by an older build, or by anything else that touches wp_options, and
+// half a pair must not reach a page from any of those routes.
+update_option(WEBMCP_CANARY_FAQ_OPTION, array(
+    array('q' => 'Good', 'a' => 'Pair'),
+    array('q' => 'Question with no answer', 'a' => ''),
+    array('q' => '', 'a' => 'Answer with no question'),
+    array('q' => '   ', 'a' => '   '),
+));
+$from_dirty = webmcp_canary_faq_entries();
+expect(count($from_dirty) === 1, 'a hand-written option is filtered on the way out as well');
+expect($from_dirty[0]['q'] === 'Good', 'and the usable pair survives');
+$dirty_node = webmcp_canary_faq_schema_node('https://example.test/');
+expect(count($dirty_node['mainEntity']) === 1, 'so the node carries only complete pairs');
+
+webmcp_canary_save_faq_entries(array(
+    array('q' => '駐車場はありますか？', 'a' => '店舗横に3台分あります。'),
+    array('q' => '予約は必要ですか？', 'a' => '当日席もご用意しています。'),
+));
+$node = webmcp_canary_faq_schema_node('https://example.test/');
+expect($node['@type'] === 'FAQPage', 'the node is an FAQPage');
+expect(count($node['mainEntity']) === 2, 'with one entry per pair');
+expect($node['mainEntity'][0]['@type'] === 'Question', 'each is a Question');
+expect($node['mainEntity'][0]['name'] === '駐車場はありますか？', 'carrying the question');
+expect($node['mainEntity'][0]['acceptedAnswer']['@type'] === 'Answer', 'and an Answer');
+expect($node['mainEntity'][0]['acceptedAnswer']['text'] === '店舗横に3台分あります。', 'carrying the answer');
+
+// The id is ours. An SEO plugin's FAQ block may publish its own FAQPage on the
+// same page; the two are different documents and merging them under one id
+// would claim their questions are ours.
+expect($node['@id'] === 'https://example.test/#nurevo-faq', 'the id is namespaced to this plugin');
+expect(strpos($node['@id'], 'nurevo') !== false, 'and says so');
+
+// Published on the front page by default, and on a chosen page when set.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'enabled' => '1', 'serve_schema' => '1', 'business_name' => 'Example', 'faq_page_id' => '0',
+));
+$GLOBALS['webmcp_test_options']['blog_public'] = 1;
+ob_start();
+webmcp_canary_output_server_schema();
+$faq_output = ob_get_clean();
+expect(strpos($faq_output, '"FAQPage"') !== false, 'the FAQ reaches the page');
+expect(strpos($faq_output, '駐車場はありますか？') !== false, 'with the operator\'s own question');
+expect(strpos($faq_output, '#nurevo-faq') !== false, 'under our id');
+
+// And it survives an SEO plugin being active, which is the whole point.
+$GLOBALS['webmcp_test_active_plugins'] = array('wordpress-seo/wp-seo.php');
+update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, array(
+    'business' => array('state' => 'complete', 'id' => 'https://example.test/#rival'),
+    'types' => array('Organization', 'WebSite', 'WebPage', 'FAQPage'),
+    'conflict' => false, 'measured_at' => time(), 'signature' => 'test',
+));
+ob_start();
+webmcp_canary_output_server_schema();
+$with_yoast = ob_get_clean();
+expect(strpos($with_yoast, '"FAQPage"') !== false, 'a hand-entered FAQ is published even with Yoast active');
+expect(strpos($with_yoast, '駐車場はありますか？') !== false, 'because it is the operator\'s content, not a repeat of theirs');
+
+// A Nurevo-generated FAQPage node - as opposed to this hand-entered one - is
+// still filtered, so the rule itself is intact.
+expect(in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('wordpress-seo/wp-seo.php' => 'Yoast SEO')), true),
+    'the FAQPage coexistence rule is unchanged');
+
+// The ownership table reports it, now that it is really published.
+expect(in_array('FAQPage', webmcp_canary_nurevo_schema_types(), true), 'FAQPage is listed once there is an FAQ');
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+expect(!in_array('FAQPage', webmcp_canary_nurevo_schema_types(), true), 'and not listed when there is none');
+
+// An empty FAQ publishes nothing rather than an empty node.
+ob_start();
+webmcp_canary_output_server_schema();
+$no_faq = ob_get_clean();
+expect(strpos($no_faq, '"FAQPage"') === false, 'no FAQ means no FAQPage node');
+
+$GLOBALS['webmcp_test_active_plugins'] = array();
+delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
+
+// The input exists to type into, and the page selector with it.
+expect(strpos($source, 'name="%2$s[faq][%3$d][q]"') !== false, 'there is a question input');
+expect(strpos($source, 'name="%2$s[faq_page_id]"') !== false, 'and a page selector');
+expect(strpos($source, 'webmcp_canary_faq_field') !== false, 'registered as a settings field');
+
+// More pairs than the cap are not stored.
+$many = array();
+for ($i = 0; $i < WEBMCP_CANARY_MAX_FAQ + 5; $i++) { $many[] = array('q' => "q{$i}", 'a' => "a{$i}"); }
+expect(count(webmcp_canary_save_faq_entries($many)) === WEBMCP_CANARY_MAX_FAQ, 'the cap is a cap');
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
 
 echo "WordPress AEO admin tests passed\n";

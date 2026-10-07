@@ -62,6 +62,8 @@ function webmcp_canary_default_settings() {
         'license_key' => '',
         // Issued per site in the dashboard, typed in here once. See 0023.
         'pairing_code' => '',
+        // Page that carries the hand-entered FAQ. 0 = front page.
+        'faq_page_id' => '0',
         'plan' => 'free',
         'business_name' => '',
         'business_description' => '',
@@ -75,6 +77,99 @@ function webmcp_canary_default_settings() {
         'admin_token' => '',
         // Per-site write credential for the profile sync. Never printed publicly.
         'profile_token' => '',
+    );
+}
+
+/** Where the hand-entered Q&A lives. */
+if (!defined('WEBMCP_CANARY_FAQ_OPTION')) {
+    define('WEBMCP_CANARY_FAQ_OPTION', 'webmcp_canary_faq');
+}
+
+/** How many pairs are kept. An FAQ is not a knowledge base. */
+if (!defined('WEBMCP_CANARY_MAX_FAQ')) {
+    define('WEBMCP_CANARY_MAX_FAQ', 20);
+}
+
+/**
+ * The questions and answers the operator typed in.
+ *
+ * This is content they entered into Nurevo, not something read off their pages,
+ * which is why it is published even where an SEO plugin's own FAQ block would
+ * have made us stand down: that rule is about not repeating *their* FAQ, and
+ * this is not theirs. See webmcp_canary_schema_type_rules().
+ */
+function webmcp_canary_faq_entries() {
+    $stored = get_option(WEBMCP_CANARY_FAQ_OPTION, array());
+    if (!is_array($stored)) {
+        return array();
+    }
+    $entries = array();
+    foreach ($stored as $entry) {
+        if (!is_array($entry)) {
+            continue;
+        }
+        $question = trim((string) ($entry['q'] ?? ''));
+        $answer = trim((string) ($entry['a'] ?? ''));
+        // Half a pair answers nothing, so it is not published.
+        if ($question === '' || $answer === '') {
+            continue;
+        }
+        $entries[] = array('q' => $question, 'a' => $answer);
+        if (count($entries) >= WEBMCP_CANARY_MAX_FAQ) {
+            break;
+        }
+    }
+    return $entries;
+}
+
+/** Store a submitted list, dropping anything incomplete. */
+function webmcp_canary_save_faq_entries($input) {
+    $clean = array();
+    if (is_array($input)) {
+        foreach ($input as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+            $question = sanitize_text_field((string) ($entry['q'] ?? ''));
+            $answer = sanitize_textarea_field((string) ($entry['a'] ?? ''));
+            if ($question === '' || $answer === '') {
+                continue;
+            }
+            $clean[] = array('q' => $question, 'a' => $answer);
+            if (count($clean) >= WEBMCP_CANARY_MAX_FAQ) {
+                break;
+            }
+        }
+    }
+    update_option(WEBMCP_CANARY_FAQ_OPTION, $clean, false);
+    return $clean;
+}
+
+/**
+ * The FAQPage node, under an id of ours.
+ *
+ * The id is namespaced to this plugin rather than the bare page id, because an
+ * SEO plugin's FAQ block may publish its own FAQPage on the same page and the
+ * two are different documents. Merging them under one id would claim their
+ * questions are ours.
+ */
+function webmcp_canary_faq_schema_node($page_url) {
+    $entries = webmcp_canary_faq_entries();
+    if (empty($entries)) {
+        return null;
+    }
+    $main = array();
+    foreach ($entries as $entry) {
+        $main[] = array(
+            '@type' => 'Question',
+            'name' => $entry['q'],
+            'acceptedAnswer' => array('@type' => 'Answer', 'text' => $entry['a']),
+        );
+    }
+    return array(
+        '@type' => 'FAQPage',
+        '@id' => rtrim((string) $page_url, '/') . '/#nurevo-faq',
+        'mainEntity' => $main,
     );
 }
 
@@ -138,6 +233,7 @@ function webmcp_canary_register_settings() {
     add_settings_field('avoid_schema_duplicates', __('SEO plugin compatibility', 'nurevo-webmcp'), 'webmcp_canary_avoid_schema_duplicates_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('business_details', __('Store / organization information', 'nurevo-webmcp'), 'webmcp_canary_business_details_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('pairing_code', __('Pairing code', 'nurevo-webmcp'), 'webmcp_canary_pairing_code_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('faq', __('Frequently asked questions', 'nurevo-webmcp'), 'webmcp_canary_faq_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('license_key', __('License key', 'nurevo-webmcp'), 'webmcp_canary_license_key_field', 'webmcp_canary', 'webmcp_canary_main');
 
     // Connection and debug settings, rendered inside the collapsed developer block.
@@ -219,6 +315,7 @@ function webmcp_canary_sanitize_settings($input) {
     $current = webmcp_canary_settings();
     $license_key = isset($input['license_key']) ? sanitize_text_field($input['license_key']) : $current['license_key'];
     $pairing_code = isset($input['pairing_code']) ? sanitize_text_field($input['pairing_code']) : $current['pairing_code'];
+    $faq_page_id = isset($input['faq_page_id']) ? (string) max(0, (int) $input['faq_page_id']) : $current['faq_page_id'];
     $site_key = isset($input['site_key']) ? sanitize_text_field($input['site_key']) : '';
     $tag_url = isset($input['tag_url']) ? esc_url_raw($input['tag_url']) : '';
     $site_id = isset($input['site_id']) ? sanitize_text_field($input['site_id']) : $current['site_id'];
@@ -227,6 +324,10 @@ function webmcp_canary_sanitize_settings($input) {
     // No license means no account: the plugin stays entirely local and contacts
     // nothing. Every free feature works in that state, so there is nothing to
     // ask the service about.
+    if (isset($input['faq'])) {
+        webmcp_canary_save_faq_entries($input['faq']);
+    }
+
     $plan = 'free';
     $paired = false;
     if ($pairing_code !== '') {
@@ -292,6 +393,7 @@ function webmcp_canary_sanitize_settings($input) {
         'site_id' => $site_id,
         'license_key' => $license_key,
         'pairing_code' => $pairing_code,
+        'faq_page_id' => $faq_page_id,
         'plan' => $plan,
         'business_name' => isset($input['business_name']) ? sanitize_text_field($input['business_name']) : $current['business_name'],
         'business_description' => isset($input['business_description']) ? sanitize_textarea_field($input['business_description']) : $current['business_description'],
@@ -948,7 +1050,13 @@ function webmcp_canary_business_schema_type($settings = null) {
  * not belong in it - see the FAQPage note below.
  */
 function webmcp_canary_nurevo_schema_types($settings = null) {
-    return array(webmcp_canary_business_schema_type($settings), 'WebSite', 'WebPage', 'BlogPosting');
+    $types = array(webmcp_canary_business_schema_type($settings), 'WebSite', 'WebPage', 'BlogPosting');
+    // Listed only when there is an FAQ to publish, because the table states what
+    // this site does rather than what the plugin can do.
+    if (!empty(webmcp_canary_faq_entries())) {
+        $types[] = 'FAQPage';
+    }
+    return $types;
 }
 
 /**
@@ -1451,6 +1559,43 @@ function webmcp_canary_site_id_field() {
  * licence key could do neither - it created the site as a side effect of being
  * redeemed, and nothing issues retail keys in the first place.
  */
+/**
+ * Hand-entered questions and answers.
+ *
+ * Published as FAQPage on the page chosen below. This is the operator's own
+ * content, so it is published whether or not an SEO plugin ships an FAQ block -
+ * that block holds different questions, and standing down for it would mean
+ * their FAQ replaces one the operator wrote here.
+ */
+function webmcp_canary_faq_field() {
+    $entries = webmcp_canary_faq_entries();
+    // One spare row so there is always somewhere to type.
+    $entries[] = array('q' => '', 'a' => '');
+    echo '<fieldset id="webmcp-faq">';
+    foreach ($entries as $index => $entry) {
+        printf(
+            '<p><label>%1$s<br><input type="text" class="regular-text" name="%2$s[faq][%3$d][q]" value="%4$s"></label></p>'
+            . '<p><label>%5$s<br><textarea class="large-text" rows="2" name="%2$s[faq][%3$d][a]">%6$s</textarea></label></p>',
+            esc_html__('Question', 'nurevo-webmcp'),
+            esc_attr(WEBMCP_CANARY_OPTION),
+            (int) $index,
+            esc_attr($entry['q']),
+            esc_html__('Answer', 'nurevo-webmcp'),
+            esc_textarea($entry['a'])
+        );
+    }
+    echo '<p class="description">' . esc_html__('Published as FAQPage structured data. Leave a question or its answer blank to remove the pair. Save to add another row.', 'nurevo-webmcp') . '</p>';
+
+    $settings = webmcp_canary_settings();
+    printf(
+        '<p><label>%1$s <input type="number" min="0" step="1" class="small-text" name="%2$s[faq_page_id]" value="%3$s"></label></p>',
+        esc_html__('Page ID that carries the FAQ (0 = front page)', 'nurevo-webmcp'),
+        esc_attr(WEBMCP_CANARY_OPTION),
+        esc_attr($settings['faq_page_id'])
+    );
+    echo '</fieldset>';
+}
+
 function webmcp_canary_pairing_code_field() {
     $settings = webmcp_canary_settings();
     printf(
@@ -3751,6 +3896,23 @@ function webmcp_canary_output_server_schema() {
     }
 
     $graph = webmcp_canary_filter_schema_graph($graph, $settings);
+
+    // The hand-entered FAQ is content the operator typed into Nurevo, not
+    // something read off their pages, so the FAQPage rule - which is about not
+    // repeating an SEO plugin's own FAQ block - does not apply to it. It is
+    // added after the filter for that reason, under an id of ours, so the two
+    // documents stay separate if both appear.
+    $faq_page_id = (int) ($settings['faq_page_id'] ?? 0);
+    $on_faq_page = $faq_page_id > 0
+        ? (is_singular() && get_queried_object_id() === $faq_page_id)
+        : (is_front_page() || is_home());
+    if ($on_faq_page) {
+        $faq_node = webmcp_canary_faq_schema_node($faq_page_id > 0 ? get_permalink($faq_page_id) : $site_url);
+        if ($faq_node !== null) {
+            $graph[] = $faq_node;
+        }
+    }
+
     if (empty($graph)) {
         return;
     }
