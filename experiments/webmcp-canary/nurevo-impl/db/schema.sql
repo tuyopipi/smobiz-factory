@@ -61,6 +61,10 @@ CREATE TABLE IF NOT EXISTS sites (
   last_seen_at INTEGER,                -- タグ最終ハートビート
   place_id TEXT,
   fetched_at INTEGER,
+  -- Dashboard-first pairing. Only the hash is kept; see 0023.
+  pairing_code_hash TEXT,
+  pairing_code_expires_at INTEGER,
+  pairing_code_used_at INTEGER,
   slug TEXT,
   channel TEXT NOT NULL DEFAULT 'direct',
   referred_by TEXT,
@@ -107,6 +111,8 @@ CREATE TABLE IF NOT EXISTS crawler_hits (
 
 CREATE INDEX IF NOT EXISTS idx_sites_org  ON sites(org_id);
 CREATE INDEX IF NOT EXISTS idx_sites_key  ON sites(site_key);
+CREATE INDEX IF NOT EXISTS idx_sites_pairing_code
+  ON sites(pairing_code_hash) WHERE pairing_code_hash IS NOT NULL;
 CREATE INDEX IF NOT EXISTS idx_sites_places_refresh ON sites(fetched_at, place_id);
 CREATE UNIQUE INDEX IF NOT EXISTS idx_sites_slug ON sites(slug);
 CREATE INDEX IF NOT EXISTS idx_members_org ON members(org_id);

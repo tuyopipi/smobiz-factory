@@ -112,7 +112,9 @@ function makeEnv({ licenses = [], sites = [], seats = 1 } = {}) {
               }
               if (/UPDATE sites SET bound_license_hash=NULL/.test(sql)) {
                 const site = db.sites.find((s) => s.id === values[0]);
-                if (site) { site.bound_license_hash = null; site.bound_at = null; site.domain_key = null; site.profile_token_hash = null; site.plan = "free"; }
+                // plan is deliberately absent from the real statement: releasing a
+                // binding does not revoke a tier. See test-unbind-plan.mjs.
+                if (site) { site.bound_license_hash = null; site.bound_at = null; site.domain_key = null; site.profile_token_hash = null; }
                 return { success: true };
               }
               return { success: true };
@@ -148,26 +150,44 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
   return env;
 }
 
-/* ---------------- a first bind creates the site ---------------- */
+/**
+ * A site that already exists and is already claimed for a domain.
+ *
+ * Binding can no longer create one: the dashboard does that, and /api/pair
+ * attaches the install. So every licence test starts from a row that is already
+ * there, which is also what the licence path now only ever meets in practice.
+ */
+function seedSite(env, over = {}) {
+  const site = {
+    id: `site_${env.db.sites.length + 1}`, org_id: "org-canary",
+    url: over.domain_key || "example.com", site_key: `nrv_k${env.db.sites.length + 1}`,
+    install_type: "wp", plan: "free", manual_plan: null, manual_plan_note: null,
+    domain_key: "example.com", bound_license_hash: null, bound_at: null,
+    website_uri: null, profile_token_hash: null, ...over,
+  };
+  env.db.sites.push(site);
+  return site;
+}
+
+/* ---------------- binding attaches to a site that already exists ---------------- */
 
 {
   const env = await envWithLicense();
+  seedSite(env, { domain_key: "example.com" });
   const response = await call("POST", "/api/license/bind", env, {
     license: STANDARD_KEY, domain: "https://www.Example.com/wp-admin/", site_url: "https://www.example.com/", install_type: "wp",
   });
-  assert.equal(response.status, 200, "a valid license binds");
+  assert.equal(response.status, 200, "a valid license binds to the registered site");
   const body = await response.json();
   assert.equal(body.ok, true);
   assert.equal(body.plan, "standard", "a manually issued license grants its tier");
-  assert.equal(body.domain, "example.com", "the domain is normalised before it is stored");
-  assert.ok(body.site_id, "a site id is minted");
-  assert.ok(body.site_key, "a site key is minted");
+  assert.equal(body.domain, "example.com", "the domain is normalised before it is matched");
+  assert.equal(body.site_id, env.db.sites[0].id, "and it is the site that was already there");
   assert.ok(body.profile_token?.startsWith("nrvp_"), "a profile token is issued");
   assert.equal(body.bound, true);
-  assert.equal(body.reused, false, "a first bind is not a reuse");
 
   const site = env.db.sites[0];
-  assert.equal(site.domain_key, "example.com", "the normalised key is what lands in the row");
+  assert.equal(env.db.sites.length, 1, "no second row appears");
   // Billing owns sites.plan. A manual key records its grant separately, so a
   // later subscription - or its cancellation - decides plan without the key
   // having to be re-redeemed.
@@ -176,28 +196,39 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
   assert.ok(site.profile_token_hash && !site.profile_token_hash.includes(body.profile_token), "only the token hash is stored");
 }
 
+/* ---------------- a licence can no longer create a site ---------------- */
+
+{
+  // This is the change. Redeeming a key used to INSERT a row, so a site came
+  // into being as a side effect of a key being redeemed and the account owner
+  // never chose it. Sites are created in the dashboard; /api/pair attaches the
+  // install to one.
+  const env = await envWithLicense();
+  const response = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "never-registered.example" });
+  assert.equal(response.status, 404, "an unregistered domain is refused");
+  assert.equal((await response.json()).error, "site_not_registered");
+  assert.equal(env.db.sites.length, 0, "and nothing is created for it");
+}
+
 /* ---------------- a retail key links, it does not pay ---------------- */
 
 {
-  // The ordinary case now: a key sold through checkout. Redeeming it registers
-  // the install, and the Stripe subscription - not the key - decides the tier.
+  // A key sold through checkout. Redeeming it links the install, and the Stripe
+  // subscription - not the key - decides the tier.
   const env = await envWithLicense({ manual: 0 });
+  seedSite(env, { domain_key: "retail.example" });
   const body = await (await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "retail.example" })).json();
   assert.equal(body.ok, true, "a retail license still binds");
-  assert.ok(body.site_id && body.site_key && body.profile_token, "and still registers the install");
+  assert.ok(body.site_id && body.site_key && body.profile_token, "and still links the install");
   assert.equal(body.plan, "free", "but grants no tier on its own");
-
-  const site = env.db.sites[0];
-  assert.equal(site.plan, "free", "nothing is billed yet");
-  assert.equal(site.manual_plan, null, "and no grant is recorded for a retail key");
+  assert.equal(env.db.sites[0].manual_plan, null, "and no grant is recorded for a retail key");
 }
 
 {
   // Once billing has granted a tier, re-binding reports it rather than
   // overwriting it back to what the key says.
   const env = await envWithLicense({ manual: 0 });
-  await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "paid.example" });
-  env.db.sites[0].plan = "pro";   // as a subscription webhook would have set it
+  seedSite(env, { domain_key: "paid.example", plan: "pro" });   // as a subscription webhook would have set it
   const again = await (await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "paid.example" })).json();
   assert.equal(again.plan, "pro", "re-binding reports the billed tier");
   assert.equal(env.db.sites[0].plan, "pro", "and does not reset it to the license tier");
@@ -207,6 +238,7 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
 
 {
   const env = await envWithLicense();
+  seedSite(env, { domain_key: "example.com" });
   const first = await (await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "example.com" })).json();
   // The plugin re-sends this every time the licence field is saved.
   const second = await (await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "https://example.com/" })).json();
@@ -216,41 +248,49 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
   assert.notEqual(second.profile_token, first.profile_token, "the write token is rotated on every bind");
 }
 
-// Differently spelled, still one site.
+// Differently spelled, still the one site.
 {
   const env = await envWithLicense();
+  seedSite(env, { domain_key: "example.com" });
   for (const domain of ["example.com", "https://www.example.com", "EXAMPLE.COM.", "http://example.com:8080/x"]) {
-    await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain });
+    const response = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain });
+    assert.equal(response.status, 200, `${domain} resolves to the registered site`);
   }
-  assert.equal(env.db.sites.length, 1, "four spellings of one domain produce one site");
+  assert.equal(env.db.sites.length, 1, "four spellings of one domain stay one site");
 }
 
 /* ---------------- seats ---------------- */
 
 {
+  // A seat is consumed by binding a site, and the sites now pre-exist, so the
+  // limit applies to how many of them one key may claim.
   const env = await envWithLicense({ seats: 1 });
+  seedSite(env, { domain_key: "first.example" });
+  seedSite(env, { domain_key: "second.example" });
   const first = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "first.example" });
   assert.equal(first.status, 200, "the first domain takes the only seat");
   const second = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "second.example" });
   assert.equal(second.status, 409, "a second domain is refused when seats are exhausted");
   assert.equal((await second.json()).error, "seat_limit_reached");
-  assert.equal(env.db.sites.length, 1, "the refused bind created nothing");
+  assert.equal(env.db.sites[1].bound_license_hash, null, "and the refused site stays unbound");
 }
 
 {
   const env = await envWithLicense({ seats: 3 });
+  for (const domain of ["a.example", "b.example", "c.example", "d.example"]) seedSite(env, { domain_key: domain });
   for (const domain of ["a.example", "b.example", "c.example"]) {
     assert.equal((await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain })).status, 200, `${domain} fits`);
   }
   assert.equal((await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "d.example" })).status, 409, "the fourth exceeds three seats");
-  // Re-binding an existing domain must not consume another seat.
+  // Re-binding a domain this key already holds must not consume another seat.
   assert.equal((await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "a.example" })).status, 200, "re-binding an existing domain still works at the seat limit");
-  assert.equal(env.db.sites.length, 3, "still three sites");
 }
 
 // A subdomain is a separate site, so it costs a seat.
 {
   const env = await envWithLicense({ seats: 1 });
+  seedSite(env, { domain_key: "example.com" });
+  seedSite(env, { domain_key: "shop.example.com" });
   await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "example.com" });
   const sub = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "shop.example.com" });
   assert.equal(sub.status, 409, "a subdomain is a distinct site and needs its own seat");
@@ -260,29 +300,33 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
 
 {
   const env = await envWithLicense();
+  seedSite(env, { domain_key: "example.com" });
   const unknown = await call("POST", "/api/license/bind", env, { license: "nrv_not_a_real_key", domain: "example.com" });
   assert.equal(unknown.status, 404);
   const unknownBody = await unknown.json();
 
   const inactiveEnv = await envWithLicense({ active: 0 });
+  seedSite(inactiveEnv, { domain_key: "example.com" });
   const inactive = await call("POST", "/api/license/bind", inactiveEnv, { license: STANDARD_KEY, domain: "example.com" });
   assert.equal(inactive.status, 404, "an inactive key answers like an unknown one");
   assert.deepEqual(await inactive.json(), unknownBody, "inactive and unknown are indistinguishable");
 
   const freeEnv = await envWithLicense({ plan: "free" });
+  seedSite(freeEnv, { domain_key: "example.com" });
   const free = await call("POST", "/api/license/bind", freeEnv, { license: STANDARD_KEY, domain: "example.com" });
   assert.equal(free.status, 404, "a free-plan key answers like an unknown one");
   assert.deepEqual(await free.json(), unknownBody, "free and unknown are indistinguishable");
 }
 
-/* ---------------- a license with no org cannot create a site ---------------- */
+/* ---------------- a license with no org binds nothing ---------------- */
 
 {
   const env = await envWithLicense({ org_id: null });
+  seedSite(env, { domain_key: "example.com" });
   const response = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "example.com" });
   assert.equal(response.status, 409, "an unprovisioned license is refused");
   assert.equal((await response.json()).error, "license_not_provisioned");
-  assert.equal(env.db.sites.length, 0, "no site is invented for it");
+  assert.equal(env.db.sites[0].bound_license_hash, null, "and nothing is bound to it");
 }
 
 /* ---------------- domains that are not sites ---------------- */
@@ -294,13 +338,13 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
     assert.equal(response.status, 400, `rejected as a domain: ${JSON.stringify(domain)}`);
     assert.equal((await response.json()).error, "invalid_domain");
   }
-  assert.equal(env.db.sites.length, 0, "nothing was created for an unusable domain");
 }
 
 // Local development is a real case, but only when the deployment opts in.
 {
   const env = await envWithLicense();
   env.WEBMCP_ALLOW_LOCAL_BIND = "1";
+  seedSite(env, { domain_key: "localhost" });
   const response = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "http://localhost:8080/" });
   assert.equal(response.status, 200, "loopback binds when the deployment allows it");
   assert.equal((await response.json()).domain, "localhost");
@@ -310,15 +354,17 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
 
 {
   const env = await envWithLicense();
+  seedSite(env, { domain_key: "example.com" });
   const response = await call("POST", "/api/license/bind", env, { site_key: "nrv_public_key", domain: "example.com" });
   assert.equal(response.status, 400, "a site key is not accepted in place of a license");
-  assert.equal(env.db.sites.length, 0, "and binds nothing");
+  assert.equal(env.db.sites[0].bound_license_hash, null, "and binds nothing");
 }
 
 /* ---------------- rate limiting ---------------- */
 
 {
   const env = await envWithLicense({ seats: 99 });
+  for (let n = 0; n < 12; n++) seedSite(env, { domain_key: `d${n}.example` });
   let limited = null;
   for (let attempt = 0; attempt < 12; attempt++) {
     const response = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: `d${attempt}.example` });
@@ -331,6 +377,8 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
 
 {
   const env = await envWithLicense({ seats: 1 });
+  seedSite(env, { domain_key: "old.example" });
+  seedSite(env, { domain_key: "new.example" });
   const first = await (await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "old.example" })).json();
   assert.equal((await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "new.example" })).status, 409, "no seat left");
 
@@ -358,6 +406,7 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
 
 {
   const env = await envWithLicense();
+  seedSite(env, { domain_key: "example.com" });
   const bound = await (await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "example.com" })).json();
 
   // Two separate gates, asserted separately so neither can quietly stop working:

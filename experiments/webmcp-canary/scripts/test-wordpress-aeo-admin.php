@@ -1277,4 +1277,80 @@ foreach (array('../../etc/passwd', '<script>alert(1)</script>', 'abc 123', 'abc-
     expect(webmcp_canary_dashboard_url($bad) === '', "a malformed site ID yields no URL: {$bad}");
 }
 
+/* ------------------------------------------------------------------ *
+ * Pairing code (Phase 2)
+ * ------------------------------------------------------------------ */
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array('tag_url' => 'https://nurevo.jp/tag.js');
+
+// An empty code contacts nothing: a plugin with no code is a local-only install
+// and has no reason to talk to the service.
+unset($GLOBALS['webmcp_test_last_remote']);
+$empty = webmcp_canary_pair_site('');
+expect(is_wp_error($empty) && $empty->get_error_code() === 'webmcp_pair_invalid', 'an empty pairing code is refused locally');
+expect(!isset($GLOBALS['webmcp_test_last_remote']), 'and sends no request');
+
+// The successful case adopts what the service issued.
+$GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => wp_json_encode(array(
+    'ok' => true, 'site_id' => 'abc123', 'site_key' => 'nrv_paired',
+    'profile_token' => 'nrvp_token', 'plan' => 'free', 'domain' => 'example.test', 'paired' => true,
+)));
+$paired = webmcp_canary_pair_site('NRV-ABCDE-FGHJK-MNPQR-STUVW', 'https://nurevo.jp/tag.js');
+expect(!is_wp_error($paired), 'a valid code pairs');
+expect($paired['site_id'] === 'abc123' && $paired['site_key'] === 'nrv_paired', 'the site identifiers are adopted');
+expect($paired['profile_token'] === 'nrvp_token', 'and the write token');
+// Pairing links an install and grants nothing, so free is an ordinary answer.
+// The licence path treats a free answer as a failure, which is exactly why a
+// retail key could never be redeemed successfully.
+expect($paired['plan'] === 'free', 'a free plan is a successful pairing, not a failure');
+
+$sent = $GLOBALS['webmcp_test_last_remote'];
+expect(strpos($sent['url'], '/api/pair') !== false, 'it is sent to the pairing endpoint');
+$sent_body = json_decode($sent['args']['body'], true);
+expect($sent_body['code'] === 'NRV-ABCDE-FGHJK-MNPQR-STUVW', 'the code is sent as typed');
+expect(!empty($sent_body['domain']) && !empty($sent_body['site_url']), 'with this site’s own address');
+expect($sent_body['install_type'] === 'wp', 'and its install type');
+
+// A service that refuses says why, and the reason is actionable.
+foreach (array(
+    'domain_mismatch' => 'webmcp_pair_domain',
+    'code_already_used' => 'webmcp_pair_used',
+    'domain_already_paired' => 'webmcp_pair_taken',
+    'rate_limited' => 'webmcp_pair_rate',
+    'invalid_code' => 'webmcp_pair_invalid',
+) as $service_error => $expected_code) {
+    $GLOBALS['webmcp_test_remote'] = array('status' => 409, 'body' => wp_json_encode(array(
+        'ok' => false, 'error' => $service_error, 'expected' => 'registered.test',
+    )));
+    $refused = webmcp_canary_pair_site('NRV-ABCDE-FGHJK-MNPQR-STUVW', 'https://nurevo.jp/tag.js');
+    expect(is_wp_error($refused) && $refused->get_error_code() === $expected_code,
+        "a refusal is reported as itself: {$service_error}");
+}
+
+// The domain mismatch names the domain to fix, because that is the one error
+// the operator can do something about without contacting anyone.
+$GLOBALS['webmcp_test_remote'] = array('status' => 409, 'body' => wp_json_encode(array(
+    'ok' => false, 'error' => 'domain_mismatch', 'expected' => 'registered.test',
+)));
+$mismatch = webmcp_canary_pair_site('NRV-ABCDE-FGHJK-MNPQR-STUVW', 'https://nurevo.jp/tag.js');
+expect(strpos($mismatch->get_error_message(), 'registered.test') !== false, 'the expected domain is named');
+
+// An unreachable service is a transport failure, not a bad code.
+$GLOBALS['webmcp_test_remote'] = new WP_Error('offline', 'offline');
+$offline = webmcp_canary_pair_site('NRV-ABCDE-FGHJK-MNPQR-STUVW', 'https://nurevo.jp/tag.js');
+expect(is_wp_error($offline) && $offline->get_error_code() === 'webmcp_pair_unreachable',
+    'an unreachable service is not reported as an invalid code');
+
+// The setting and its field exist, so the code can actually be entered.
+$defaults = webmcp_canary_default_settings();
+expect(array_key_exists('pairing_code', $defaults), 'the pairing code is a stored setting');
+expect(strpos($source, "name=\"%1\$s[pairing_code]\"") !== false, 'and has an input to type it into');
+expect(strpos($source, 'webmcp_canary_pairing_code_field') !== false, 'registered as a settings field');
+
+// The licence route is still there for installs that predate pairing.
+expect(array_key_exists('license_key', $defaults), 'the licence key setting is kept for existing installs');
+expect(strpos($source, 'webmcp_canary_bind_license') !== false, 'and the licence path still exists');
+
+unset($GLOBALS['webmcp_test_remote']);
+
 echo "WordPress AEO admin tests passed\n";

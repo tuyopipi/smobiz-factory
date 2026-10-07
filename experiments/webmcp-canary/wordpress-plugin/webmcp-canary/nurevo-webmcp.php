@@ -60,6 +60,8 @@ function webmcp_canary_default_settings() {
         'site_key' => '',
         'site_id' => '',
         'license_key' => '',
+        // Issued per site in the dashboard, typed in here once. See 0023.
+        'pairing_code' => '',
         'plan' => 'free',
         'business_name' => '',
         'business_description' => '',
@@ -135,6 +137,7 @@ function webmcp_canary_register_settings() {
     add_settings_field('serve_schema', __('Output JSON-LD schema (server-side)', 'nurevo-webmcp'), 'webmcp_canary_serve_schema_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('avoid_schema_duplicates', __('SEO plugin compatibility', 'nurevo-webmcp'), 'webmcp_canary_avoid_schema_duplicates_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('business_details', __('Store / organization information', 'nurevo-webmcp'), 'webmcp_canary_business_details_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('pairing_code', __('Pairing code', 'nurevo-webmcp'), 'webmcp_canary_pairing_code_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('license_key', __('License key', 'nurevo-webmcp'), 'webmcp_canary_license_key_field', 'webmcp_canary', 'webmcp_canary_main');
 
     // Connection and debug settings, rendered inside the collapsed developer block.
@@ -214,6 +217,7 @@ function webmcp_canary_sanitize_settings($input) {
     $input = is_array($input) ? $input : array();
     $current = webmcp_canary_settings();
     $license_key = isset($input['license_key']) ? sanitize_text_field($input['license_key']) : $current['license_key'];
+    $pairing_code = isset($input['pairing_code']) ? sanitize_text_field($input['pairing_code']) : $current['pairing_code'];
     $site_key = isset($input['site_key']) ? sanitize_text_field($input['site_key']) : '';
     $tag_url = isset($input['tag_url']) ? esc_url_raw($input['tag_url']) : '';
     $site_id = isset($input['site_id']) ? sanitize_text_field($input['site_id']) : $current['site_id'];
@@ -223,7 +227,30 @@ function webmcp_canary_sanitize_settings($input) {
     // nothing. Every free feature works in that state, so there is nothing to
     // ask the service about.
     $plan = 'free';
-    if ($license_key !== '') {
+    $paired = false;
+    if ($pairing_code !== '') {
+        $result = webmcp_canary_pair_site($pairing_code, $tag_url);
+        if (is_wp_error($result)) {
+            add_settings_error(WEBMCP_CANARY_OPTION, $result->get_error_code(), $result->get_error_message(), 'error');
+        } else {
+            $paired = true;
+            $plan = $result['plan'];
+            if (!empty($result['site_id'])) $site_id = sanitize_text_field($result['site_id']);
+            if (!empty($result['site_key'])) $site_key = sanitize_text_field($result['site_key']);
+            if (!empty($result['profile_token'])) $profile_token = sanitize_text_field($result['profile_token']);
+            add_settings_error(
+                WEBMCP_CANARY_OPTION,
+                'webmcp_paired',
+                /* translators: 1: the domain this site was paired as. 2: plan name, e.g. "Free" or "Pro". */
+                sprintf(__('Paired. This site is registered as %1$s. Plan: %2$s.', 'nurevo-webmcp'), (string) $result['domain'], $plan),
+                'updated'
+            );
+        }
+    }
+    // The licence route stays live for installs that were set up before pairing
+    // existed. A paired install has nothing left for a key to do, so it is not
+    // consulted once pairing has succeeded.
+    if (!$paired && $license_key !== '') {
         // Redeeming the license is what registers this site, so this replaces
         // the old verify call: verify only answered "which plan", which left a
         // self-installed plugin with no site_id and therefore no profile sync,
@@ -263,6 +290,7 @@ function webmcp_canary_sanitize_settings($input) {
         'site_key' => $site_key,
         'site_id' => $site_id,
         'license_key' => $license_key,
+        'pairing_code' => $pairing_code,
         'plan' => $plan,
         'business_name' => isset($input['business_name']) ? sanitize_text_field($input['business_name']) : $current['business_name'],
         'business_description' => isset($input['business_description']) ? sanitize_textarea_field($input['business_description']) : $current['business_description'],
@@ -1304,6 +1332,24 @@ function webmcp_canary_site_id_field() {
     echo '<p class="description">' . esc_html__('Site ID used by the registered-site AEO score endpoint. It is separate from the site key.', 'nurevo-webmcp') . '</p>';
 }
 
+/**
+ * The pairing code, issued per site in the dashboard.
+ *
+ * This is how an install is attached to a site now: the site is created by the
+ * person who owns the account, and the code only links this WordPress to it. A
+ * licence key could do neither - it created the site as a side effect of being
+ * redeemed, and nothing issues retail keys in the first place.
+ */
+function webmcp_canary_pairing_code_field() {
+    $settings = webmcp_canary_settings();
+    printf(
+        '<input type="text" class="regular-text code" name="%1$s[pairing_code]" value="%2$s" autocomplete="off" placeholder="NRV-XXXXX-XXXXX-XXXXX-XXXXX">',
+        esc_attr(WEBMCP_CANARY_OPTION),
+        esc_attr($settings['pairing_code'])
+    );
+    echo '<p class="description">' . esc_html__('Add the site on the nurevo.jp dashboard, then paste the pairing code it shows here. The code is used once; re-issue it from the dashboard if you need another.', 'nurevo-webmcp') . '</p>';
+}
+
 function webmcp_canary_license_key_field() {
     $settings = webmcp_canary_settings();
     printf(
@@ -1470,6 +1516,101 @@ function webmcp_canary_api_base_candidates() {
  *
  * Returns array{plan,site_id,site_key,profile_token,domain} or a WP_Error.
  */
+/**
+ * Attach this install to a site the operator already created.
+ *
+ * Mirrors webmcp_canary_bind_license(), but the code only ever links: the site
+ * exists before the code does, so there is nothing for a mistyped or leaked one
+ * to create. The service answers with the site id, key and write token, which
+ * are what let this install sync its profile and carry a diagnosis history.
+ *
+ * Returns array{plan,site_id,site_key,profile_token,domain} or a WP_Error.
+ */
+function webmcp_canary_pair_site($code, $tag_url = '') {
+    $code = sanitize_text_field($code);
+    if ($code === '') {
+        return new WP_Error('webmcp_pair_invalid', __('The pairing code is invalid or has expired.', 'nurevo-webmcp'));
+    }
+    $api_bases = array();
+    if ($tag_url !== '') {
+        $parts = wp_parse_url($tag_url);
+        if (!empty($parts['scheme']) && !empty($parts['host'])) {
+            $api_bases[] = $parts['scheme'] . '://' . $parts['host'] . (!empty($parts['port']) ? ':' . $parts['port'] : '');
+        }
+    }
+    if (empty($api_bases)) {
+        $api_bases = webmcp_canary_api_base_candidates();
+    }
+    if (empty($api_bases)) {
+        return new WP_Error('webmcp_pair_unreachable', __('The Nurevo service is not configured.', 'nurevo-webmcp'));
+    }
+
+    $site_url = home_url('/');
+    $last_error = null;
+    foreach (array_values(array_unique($api_bases)) as $api_base) {
+        $response = wp_remote_post(trailingslashit($api_base) . 'api/pair', array(
+            'timeout' => WEBMCP_CANARY_HTTP_TIMEOUT,
+            'headers' => array('accept' => 'application/json', 'content-type' => 'application/json'),
+            'body' => wp_json_encode(array(
+                'code' => $code,
+                'domain' => $site_url,
+                'site_url' => $site_url,
+                'install_type' => 'wp',
+            )),
+        ));
+        if (is_wp_error($response)) {
+            $last_error = $response;
+            continue;
+        }
+        $status = wp_remote_retrieve_response_code($response);
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        if ($status >= 200 && $status < 300 && is_array($body) && !empty($body['ok'])) {
+            // Unlike the licence path, the plan is not checked here. Pairing
+            // links an install and grants nothing, so "free" is a perfectly
+            // ordinary answer - the licence path treating it as a failure is
+            // why a retail key could never be redeemed successfully.
+            return array(
+                'plan' => isset($body['plan']) ? (string) $body['plan'] : 'free',
+                'site_id' => isset($body['site_id']) ? (string) $body['site_id'] : '',
+                'site_key' => isset($body['site_key']) ? (string) $body['site_key'] : '',
+                'profile_token' => isset($body['profile_token']) ? (string) $body['profile_token'] : '',
+                'domain' => isset($body['domain']) ? (string) $body['domain'] : '',
+            );
+        }
+        // A reachable service that refuses is an answer, not a transport
+        // failure: say what it refused rather than retrying the next base.
+        $error = is_array($body) && isset($body['error']) ? (string) $body['error'] : '';
+        if ($error === 'domain_mismatch') {
+            $expected = is_array($body) && isset($body['expected']) ? (string) $body['expected'] : '';
+            return new WP_Error('webmcp_pair_domain', sprintf(
+                /* translators: %s: the domain the site was registered under on the dashboard. */
+                __('This code belongs to a site registered as %s. Pair it from that site, or correct the site address on the dashboard.', 'nurevo-webmcp'),
+                $expected
+            ));
+        }
+        if ($error === 'code_already_used') {
+            return new WP_Error('webmcp_pair_used', __('This pairing code has already been used by another site. Issue a new one from the dashboard.', 'nurevo-webmcp'));
+        }
+        if ($error === 'domain_already_paired') {
+            return new WP_Error('webmcp_pair_taken', __('Another site in this account is already paired with this domain.', 'nurevo-webmcp'));
+        }
+        if ($error === 'rate_limited') {
+            return new WP_Error('webmcp_pair_rate', __('Too many attempts. Please wait and try again.', 'nurevo-webmcp'));
+        }
+        if ($error !== '') {
+            return new WP_Error('webmcp_pair_invalid', __('The pairing code is invalid or has expired.', 'nurevo-webmcp'));
+        }
+        $last_error = new WP_Error('webmcp_pair_unreachable', __('The Nurevo service could not be reached.', 'nurevo-webmcp'));
+    }
+    // A transport failure carries WordPress's own error code, which tells the
+    // caller nothing about pairing. Normalising it here is what lets the screen
+    // distinguish "that code is wrong" from "we could not ask".
+    if ($last_error instanceof WP_Error && strpos($last_error->get_error_code(), 'webmcp_') === 0) {
+        return $last_error;
+    }
+    return new WP_Error('webmcp_pair_unreachable', __('The Nurevo service could not be reached.', 'nurevo-webmcp'));
+}
+
 function webmcp_canary_bind_license($license, $tag_url = '') {
     $license = sanitize_text_field($license);
     if ($license === '') {

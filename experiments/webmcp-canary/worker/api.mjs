@@ -43,6 +43,10 @@ const API_RATE_LIMITS = Object.freeze({
   // across the internet faster than a human would notice.
   licenseBindIp: { limit: 10, windowMs: 60 * 60 * 1000 },
   licenseBindKey: { limit: 20, windowMs: 24 * 60 * 60 * 1000 },
+  // /api/pair is unauthenticated for the same reason bind is: the code is
+  // the only thing the plugin holds. A pairing code is short enough to be
+  // read aloud, so guessing it has to be slow from any one caller.
+  pairIp: { limit: 10, windowMs: 60 * 60 * 1000 },
 });
 const PLACES_SEARCH_FIELD_MASK = "places.id,places.displayName,places.formattedAddress,places.location,places.regularOpeningHours,places.nationalPhoneNumber,places.types,places.primaryType,places.primaryTypeDisplayName,places.priceLevel,places.websiteUri";
 // Place Details (New) uses resource-relative field names (without the `places.` prefix).
@@ -58,6 +62,42 @@ const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_mont
  * a tier cannot be added to one without the other.
  */
 const PLAN_MONTHLY_YEN = Object.freeze({ standard: 3000, pro: 14800 });
+
+/*
+ * Pairing codes.
+ *
+ * Typed by a person from a dashboard into wp-admin, so the alphabet leaves out
+ * the characters that get misread between the two - 0/O, 1/I/L - and the code is
+ * grouped for reading aloud. Twenty characters from a 32-symbol alphabet is 100
+ * bits, which is far past guessable even before the rate limiter.
+ */
+const PAIRING_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+const PAIRING_CODE_GROUPS = 4;
+const PAIRING_CODE_GROUP_LEN = 5;
+const PAIRING_CODE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+
+function newPairingCode() {
+  const bytes = crypto.getRandomValues(new Uint8Array(PAIRING_CODE_GROUPS * PAIRING_CODE_GROUP_LEN));
+  const chars = [...bytes].map((byte) => PAIRING_ALPHABET[byte % PAIRING_ALPHABET.length]);
+  const groups = [];
+  for (let at = 0; at < chars.length; at += PAIRING_CODE_GROUP_LEN) {
+    groups.push(chars.slice(at, at + PAIRING_CODE_GROUP_LEN).join(""));
+  }
+  return `NRV-${groups.join("-")}`;
+}
+
+/**
+ * The form a code is stored and compared in.
+ *
+ * Someone retyping a code should not be refused over how they spaced or cased
+ * it, so separators and case are removed before hashing. An empty result is
+ * returned as "" and never hashed, or every row with no code would match.
+ */
+function normalizePairingCode(raw) {
+  const value = String(raw || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
+  return value.length >= PAIRING_CODE_GROUPS * PAIRING_CODE_GROUP_LEN ? value : "";
+}
+
 const CHECKOUTABLE_PLANS = Object.freeze(['standard', 'pro']);
 const SUPER_ADMIN_EMAILS_ENV = "SUPER_ADMIN_EMAILS";
 /*
@@ -408,6 +448,96 @@ export async function handleApi(request, env, ctx) {
     const bound = await bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, installType });
     if (!bound.ok) return json({ ok: false, error: bound.error }, bound.status);
     return json(bound.body);
+  }
+
+  /*
+   * Attach an install to a site the operator already created.
+   *
+   * This replaces redeeming a licence key. The site exists before the code does,
+   * so pairing can only ever attach an install to something somebody chose - it
+   * cannot bring a site into being, which is what /api/license/bind did as a
+   * side effect of a key being redeemed.
+   *
+   * Server-to-server from the plugin, so there is no cookie and a CSRF token
+   * would prove nothing; the IP limiter is what protects it. Stated above the
+   * gate and in csrfRequired() both, so moving this route cannot silently start
+   * rejecting every plugin that saves a code.
+   */
+  if (path === "/api/pair" && method === "POST") {
+    const payload = await safeJson(request);
+    const ipLimit = await checkApiRateLimit(env, "pair-ip", requestClientIp(request), API_RATE_LIMITS.pairIp);
+    if (!ipLimit.allowed) {
+      return json({ ok: false, error: ipLimit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, ipLimit.unavailable ? 503 : 429);
+    }
+
+    const code = normalizePairingCode(payload?.code);
+    if (!code) return json({ ok: false, error: "invalid_code" }, 404);
+
+    const allowReserved = env.WEBMCP_ALLOW_LOCAL_BIND === "1";
+    const domainKey = normalizeDomainKey(payload?.domain ?? payload?.site_url ?? "", { allowReserved })
+      ?? normalizeDomainKey(payload?.site_url ?? "", { allowReserved });
+    if (!domainKey) return json({ ok: false, error: "invalid_domain" }, 400);
+
+    const site = await env.DB.prepare(
+      "SELECT * FROM sites WHERE pairing_code_hash=? LIMIT 1",
+    ).bind(await sha256Hex(code)).first();
+    // One answer for "no such code" and "expired", so a caller cannot use the
+    // difference to learn that a code once existed.
+    if (!site) return json({ ok: false, error: "invalid_code" }, 404);
+    if (Number(site.pairing_code_expires_at || 0) <= Date.now()) {
+      return json({ ok: false, error: "invalid_code" }, 404);
+    }
+
+    // The site was created in the dashboard with a URL. An install pairing from
+    // a different domain is either a mistake or someone else's site, and either
+    // way it must not take over this row.
+    const expected = normalizeDomainKey(site.website_uri || site.url || "", { allowReserved });
+    if (expected && expected !== domainKey) {
+      return json({ ok: false, error: "domain_mismatch", expected }, 409);
+    }
+
+    // A code is single use. A repeat from the same domain is a retry, not a
+    // second use: the plugin may have lost the response carrying its token, and
+    // refusing would strand an install that did everything right.
+    if (site.pairing_code_used_at && site.domain_key && site.domain_key !== domainKey) {
+      return json({ ok: false, error: "code_already_used" }, 409);
+    }
+
+    const installType = ["wp", "tag", "hosted"].includes(String(payload?.install_type || "").trim())
+      ? String(payload.install_type).trim()
+      : site.install_type || "wp";
+    const siteUrl = String(payload?.site_url || "").trim().slice(0, 2048);
+    const now = Date.now();
+    try {
+      await env.DB.prepare(
+        `UPDATE sites SET domain_key=?, bound_at=?, install_type=?, pairing_code_used_at=?,
+                website_uri=COALESCE(NULLIF(?,''), website_uri) WHERE id=?`,
+      ).bind(domainKey, now, installType, now, siteUrl, site.id).run();
+    } catch (error) {
+      // UNIQUE(org_id, domain_key): this org already claimed the domain with a
+      // different site, and saying so is more useful than a 500.
+      if (/UNIQUE|constraint/i.test(String(error?.message || error))) {
+        return json({ ok: false, error: "domain_already_paired" }, 409);
+      }
+      throw error;
+    }
+
+    // Issued here rather than at creation: the token is what lets the install
+    // write the store profile, and nothing should hold one before it has proved
+    // it has the code.
+    const profileToken = await issueProfileToken(env, site.id);
+    const after = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(site.id).first();
+    return json({
+      ok: true,
+      site_id: site.id,
+      site_key: site.site_key,
+      profile_token: profileToken,
+      // Whatever billing and any manual grant say, resolved the same way every
+      // other reader resolves it. Pairing grants nothing on its own.
+      plan: resolveSitePlan(after || {}),
+      domain: domainKey,
+      paired: true,
+    });
   }
 
   if (["POST", "PUT", "DELETE"].includes(method) && csrfRequired(path) && !csrfValid(request)) {
@@ -1033,6 +1163,35 @@ export async function handleApi(request, env, ctx) {
     return json({ ok: true, site_id: siteId, profile_token: token, note: "Store this now; it is not retrievable again." });
   }
 
+  /*
+   * Issue (or re-issue) this site's pairing code.
+   *
+   * The plaintext is returned once and only its hash is stored, so a code that
+   * is lost is replaced rather than recovered. Re-issuing deliberately replaces
+   * any outstanding code: an operator who clicks this has decided the old one
+   * should stop working.
+   */
+  const pairingCodeMatch = path.match(/^\/api\/sites\/([^/]+)\/pairing-code$/i);
+  if (pairingCodeMatch && method === "POST") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent(pairingCodeMatch[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return json({ error: exists ? "forbidden" : "not_found" }, exists ? 403 : 404);
+    }
+    const code = newPairingCode();
+    const expiresAt = Date.now() + PAIRING_CODE_TTL_MS;
+    await env.DB.prepare(
+      "UPDATE sites SET pairing_code_hash=?, pairing_code_expires_at=?, pairing_code_used_at=NULL WHERE id=?",
+    ).bind(await sha256Hex(normalizePairingCode(code)), expiresAt, siteId).run();
+    return json({
+      ok: true, site_id: siteId, pairing_code: code, expires_at: expiresAt,
+      note: "Store this now; it is not retrievable again.",
+    });
+  }
+
   // Release a site's claim on its license, freeing the seat.
   //
   // Member-authenticated, not license-authenticated: the person who can see the
@@ -1533,6 +1692,18 @@ async function bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, ins
     // token. Taking over a site bound to a different key of the same org is
     // allowed: both keys belong to the org, and refusing would strand a site
     // when a customer upgrades from standard to pro.
+    // Claiming a site this key does not already hold costs a seat. The count
+    // used to live in the branch that created sites, which is gone - so without
+    // it here a licence would have no limit at all.
+    if (existing.bound_license_hash !== license.license_hash) {
+      const seats = Math.max(1, Number(license.seats || 1));
+      const used = await env.DB.prepare(
+        "SELECT count(*) AS n FROM sites WHERE bound_license_hash=?",
+      ).bind(license.license_hash).first();
+      if (Number(used?.n || 0) >= seats) {
+        return { ok: false, status: 409, error: "seat_limit_reached" };
+      }
+    }
     // Binding links the install to the site. It does not grant a tier - billing
     // does that - so plan is not written here. A key marked manual is the one
     // exception: those are issued outside Stripe (wholesale, partner, canary)
@@ -1557,51 +1728,14 @@ async function bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, ins
     };
   }
 
-  // A new domain costs a seat. Count distinct sites already bound to this key.
-  const seats = Math.max(1, Number(license.seats || 1));
-  const used = await env.DB.prepare(
-    "SELECT count(*) AS n FROM sites WHERE bound_license_hash=?",
-  ).bind(license.license_hash).first();
-  if (Number(used?.n || 0) >= seats) {
-    return { ok: false, status: 409, error: "seat_limit_reached" };
-  }
-
-  const siteId = uid();
-  const siteKey = newKey();
-  // plan starts at free: a new site has no subscription yet, and billing is
-  // what grants a tier. manual_plan carries the grant for keys issued outside
-  // Stripe, so a wholesale or canary install still works on day one.
-  // Declared outside the try because the success path below reports it.
-  const manualPlan = Number(license.manual || 0) === 1 ? plan : null;
-  try {
-    await env.DB.prepare(`
-      INSERT INTO sites (id, org_id, url, site_key, install_type, plan, manual_plan, manual_plan_note, domain_key, bound_license_hash, bound_at, website_uri, created_at)
-      VALUES (?, ?, ?, ?, ?, 'free', ?, ?, ?, ?, ?, ?, ?)
-    `).bind(
-      siteId, license.org_id, domainKey, siteKey, installType,
-      manualPlan, manualPlan ? 'granted by a manually issued license' : null,
-      domainKey, license.license_hash, now, siteUrl || null, now,
-    ).run();
-  } catch (error) {
-    // Two installs redeeming the same key against the same domain at once: the
-    // unique index rejects the loser, which then finds the winner's row.
-    const raced = await env.DB.prepare(
-      "SELECT id, site_key FROM sites WHERE org_id=? AND domain_key=? LIMIT 1",
-    ).bind(license.org_id, domainKey).first();
-    if (!raced) {
-      console.error("license_bind_insert_failed", JSON.stringify({ error: String(error?.message || "d1_error").slice(0, 160) }));
-      return { ok: false, status: 500, error: "bind_failed" };
-    }
-    const token = await issueProfileToken(env, raced.id);
-    const racedSite = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(raced.id).first();
-    return { ok: true, body: { ok: true, plan: resolveSitePlan(racedSite || {}), site_id: raced.id, site_key: raced.site_key, profile_token: token, bound: true, domain: domainKey, reused: true } };
-  }
-
-  const token = await issueProfileToken(env, siteId);
-  return {
-    ok: true,
-    body: { ok: true, plan: resolveSitePlan({ plan: "free", manual_plan: manualPlan }), site_id: siteId, site_key: siteKey, profile_token: token, bound: true, domain: domainKey, reused: false },
-  };
+  // A licence can attach an install to a site that already exists; it can no
+  // longer bring one into being. A site is created in the dashboard by the
+  // person who owns the account, and /api/pair attaches the install to it.
+  //
+  // This branch used to INSERT a site here, so a redeemed key produced a row
+  // nobody had chosen - and, because nothing issues retail keys, a row that in
+  // practice only the canary fixtures could produce.
+  return { ok: false, status: 404, error: "site_not_registered" };
 }
 
 async function issueProfileToken(env, siteId) {
@@ -2711,6 +2845,9 @@ function csrfRequired(path) {
   // on the route sitting above this check, so moving the route cannot silently
   // start rejecting every plugin that saves a license.
   if (path === "/api/license/bind") return false;
+  // /api/pair is the same shape: the plugin sends a pairing code and no
+  // cookie, so a CSRF token proves nothing and the IP limiter is the defence.
+  if (path === "/api/pair") return false;
   return path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 
