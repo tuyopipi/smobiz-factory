@@ -48,10 +48,6 @@ const API_RATE_LIMITS = Object.freeze({
   // read aloud, so guessing it has to be slow from any one caller.
   pairIp: { limit: 10, windowMs: 60 * 60 * 1000 },
 });
-const PLACES_SEARCH_FIELD_MASK = "places.id,places.displayName,places.formattedAddress,places.location,places.regularOpeningHours,places.nationalPhoneNumber,places.types,places.primaryType,places.primaryTypeDisplayName,places.priceLevel,places.websiteUri";
-// Place Details (New) uses resource-relative field names (without the `places.` prefix).
-const PLACES_DETAILS_FIELD_MASK = "id,displayName,formattedAddress,location,regularOpeningHours,nationalPhoneNumber,types,primaryType,primaryTypeDisplayName,priceLevel,websiteUri";
-const PLACES_REFRESH_MS = 365 * 24 * 60 * 60 * 1000;
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 /**
@@ -112,10 +108,10 @@ const SUPER_ADMIN_EMAILS_ENV = "SUPER_ADMIN_EMAILS";
  * edits and the one that reaches @type. business_type_label is a display string
  * Places fills in and no human owns.
  */
-const PROFILE_REQUIRED = Object.freeze(["name", "phone", "address", "hours", "geo", "business_type_schema"]);
+const PROFILE_REQUIRED = Object.freeze(["name", "phone", "address", "hours", "business_type_schema"]);
 
 /* Reported so the form can encourage them, but they never block completion. */
-const PROFILE_OPTIONAL = Object.freeze(["description", "email", "url", "image", "reserve_url", "price_level"]);
+const PROFILE_OPTIONAL = Object.freeze(["description", "email", "url", "image", "reserve_url", "price_level", "geo"]);
 const INITIAL_AEO_RULESET = Object.freeze({
   version: 1,
   created_at: "2026-09-30T00:00:00.000Z",
@@ -824,30 +820,6 @@ export async function handleApi(request, env, ctx) {
     return json({ ok: true, recorded: true, crawler_id: crawler.id });
   }
 
-  if (path === "/api/places/search" && method === "GET") {
-    const member = await requireMember(request, env);
-    if (!member) return json({ error: "unauthorized" }, 401);
-    const query = String(url.searchParams.get("q") || "").trim();
-    if (query.length < 2) return json({ error: "query_required" }, 400);
-    try {
-      const places = await searchPlaces(env, query);
-      return json({ places });
-    } catch (error) {
-      const detail = error?.detail && typeof error.detail === "object" ? error.detail : { googleMessage: "places_search_failed" };
-      console.error("nurevo_places_search_error", JSON.stringify({
-        message: error?.message || "places_search_failed",
-        upstreamStatus: error?.status || null,
-        detail,
-      }));
-      return json({
-        error: "places_unavailable",
-        reason: "google_places_error",
-        upstreamStatus: error?.status || null,
-        detail,
-        message: "Googleマップから店舗候補を取得できませんでした。しばらくしてから再試行してください。",
-      }, 502);
-    }
-  }
 
   if (path === "/api/sites" && method === "POST") {
     const member = await requireMember(request, env);
@@ -857,36 +829,37 @@ export async function handleApi(request, env, ctx) {
     const installType = ["wp", "tag", "hosted", "static"].includes(body?.install_type) ? body.install_type : "tag";
     const siteUrl = String(body?.url || "").trim();
     if (!["hosted"].includes(installType) && !siteUrl) return json({ error: "url required" }, 400);
-    const placeId = String(body?.place_id || "").trim();
-    if (!placeId) return json({ error: "place_selection_required", message: "Googleマップの候補を選択してください。" }, 400);
+    // A Google Maps selection used to be mandatory here, which made adding a
+    // site impossible without the Places API and meant every site was a place
+    // Google already knew about. The address bar is enough: what the store is
+    // called and what it sells are the owner's to tell us.
     const id = uid();
     const siteKey = newKey();
-    const slug = installType === "hosted" ? await uniqueSlug(env, body?.name || "store", id) : null;
+    const slug = installType === "hosted"
+      ? await uniqueSlug(env, body?.name || siteUrl || "store", id)
+      : null;
     await env.DB.prepare(
-      "INSERT INTO sites (id, org_id, owner_member_id, url, site_key, install_type, status, plan, contract, slug, place_id, created_at) VALUES (?,?,?,?,?,?,'pending','free','free',?,?,?)",
-    ).bind(id, member.org_id, member.member_id, siteUrl.replace(/^https?:\/\//, ""), siteKey, installType, slug, placeId, Date.now()).run();
-    let imported = null;
-    if (placeId) {
-      const importedSite = await env.DB.prepare("SELECT * FROM sites WHERE id=? AND org_id=?").bind(id, member.org_id).first();
-      const result = await importPlaceForSite(env, importedSite, { placeId });
-      if (result.status !== 200) return json(result.body || { error: "places_unavailable" }, result.status);
-      imported = result.body;
-    }
-    if (installType === "hosted" || installType === "static") {
-      // Place import may already have created this row. Ensure it exists with
-      // the output toggles on, then record the registrant's name through the
-      // merger so it carries provenance like every other profile write.
-      await env.DB.prepare(
-        "INSERT INTO site_settings (site_id,serve_schema,allow_crawlers) VALUES (?,1,1) ON CONFLICT(site_id) DO NOTHING",
-      ).bind(id).run();
-      if (body?.name) await writeSiteProfile(env, id, { name: body.name }, "dashboard");
-    }
+      "INSERT INTO sites (id, org_id, owner_member_id, url, site_key, install_type, status, plan, contract, slug, created_at) VALUES (?,?,?,?,?,?,'pending','free','free',?,?)",
+    ).bind(id, member.org_id, member.member_id, siteUrl.replace(/^https?:\/\//, "").replace(/\/+$/, ""), siteKey, installType, slug, Date.now()).run();
+
+    await env.DB.prepare(
+      "INSERT INTO site_settings (site_id,serve_schema,allow_crawlers) VALUES (?,1,1) ON CONFLICT(site_id) DO NOTHING",
+    ).bind(id).run();
+    // Whatever the registrant typed goes through the shared merger, so it
+    // carries provenance like every other profile write and a later edit from
+    // wp-admin or the plugin can build on it rather than fight it.
+    const seeded = {};
+    if (body?.name) seeded.name = body.name;
+    if (body?.business_type) seeded.business_type_schema = body.business_type;
+    if (siteUrl) seeded.url = /^https?:\/\//i.test(siteUrl) ? siteUrl : `https://${siteUrl}`;
+    if (Object.keys(seeded).length) await writeSiteProfile(env, id, seeded, "dashboard");
+
     // Issued with the site so the store-profile sync works immediately. Returned
     // once in plaintext; only the hash is kept. Unlike site_key - which the tag
     // prints into public markup - this one must never reach a public page.
     const profileToken = await issueProfileToken(env, id);
     const snippet = `<script src="https://nurevo.jp/tag.js" data-webmcp-site-key="${siteKey}" defer></` + "script>";
-    return json({ id, siteKey, profile_token: profileToken, install_type: installType, slug: imported?.slug || slug, hostedUrl: (imported?.slug || slug) ? `/s/${imported?.slug || slug}` : null, snippet, imported, proposal: imported?.proposal || null });
+    return json({ id, siteKey, profile_token: profileToken, install_type: installType, slug, hostedUrl: slug ? `/s/${slug}` : null, snippet });
   }
 
   if (path === "/api/sites" && method === "GET") {
@@ -905,9 +878,10 @@ export async function handleApi(request, env, ctx) {
       });
       const stale = row.last_seen_at && now - row.last_seen_at > 24 * 3600e3;
       const checklist = [
-        { key: "map", done: !!row.place_id, manual: false },
-        { key: "website", done: row.fetched_at != null, manual: false },
-        { key: "site_type", done: !!row.website_fingerprint, manual: false },
+        // "information" replaces the three Places-derived rows. Filling the
+        // store profile is now the first real step, and it is the one the
+        // operator can actually act on.
+        { key: "information", done: fill.filled >= fill.total, manual: false },
         { key: "tag_schema", done: row.install_type === "hosted" ? true : row.tag_detected === true && row.schema_in_html === true, manual: false },
         { key: "gbp_linked", done: !!row.gbp_linked, manual: true },
       ].sort((a, b) => Number(a.done) - Number(b.done));
@@ -923,7 +897,6 @@ export async function handleApi(request, env, ctx) {
         status: stale ? "error" : row.status,
         schema_types: row.schema_types || 0,
         crawler_allowed: !!row.crawler_allowed,
-        place_id: row.place_id || null,
         fetchedAt: row.fetched_at || null,
         slug: row.slug || null,
         hostedUrl: row.slug ? `/s/${row.slug}` : null,
@@ -1288,22 +1261,6 @@ export async function handleApi(request, env, ctx) {
   }
 
   const match = path.match(/^\/api\/sites\/([a-z0-9]+)$/i);
-  const placesMatch = path.match(/^\/api\/sites\/([a-z0-9]+)\/(import|refresh)$/i);
-  if (placesMatch && (method === "POST")) {
-    const member = await requireMember(request, env);
-    if (!member) return json({ error: "unauthorized" }, 401);
-    const site = await loadOwnedSite(env, member, placesMatch[1]);
-    if (!site) {
-      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(placesMatch[1]).first();
-      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
-    }
-    if (placesMatch[2] === "import" && site.fetched_at) {
-      return json({ error: "already_imported", fetched_at: site.fetched_at }, 409);
-    }
-    const body = method === "POST" ? await safeJson(request) : {};
-    const result = await importPlaceForSite(env, site, body, placesMatch[2] === "refresh");
-    return json(result.body, result.status);
-  }
   /*
    * The store profile, for the member who owns the site.
    *
@@ -2128,52 +2085,6 @@ function extractLocalBusinessSchema(html) {
   });
 }
 
-async function importPlaceForSite(env, site, body = {}, refresh = false) {
-  const placeId = String(body.placeId || site.place_id || "").trim();
-  const query = String(body.query || site.url || "").trim();
-  let place;
-  try {
-    place = await fetchPlace(env, { placeId, query });
-  } catch (error) {
-    const detail = error?.detail && typeof error.detail === "object" ? error.detail : { googleMessage: "places_failed" };
-    console.error("nurevo_places_error", JSON.stringify({ siteId: site.id, refresh, message: error?.message || "places_failed", upstreamStatus: error?.status || null, detail }));
-    return { status: 502, body: { error: "places_unavailable", reason: "google_places_error", upstreamStatus: error?.status || null, detail, message: "Googleマップから店舗情報を取得できませんでした。" } };
-  }
-  if (!place) return { status: 404, body: { error: "place_not_found" } };
-  const websiteUri = String(place.websiteUri || "").trim() || null;
-  const proposal = await inspectWebsite(websiteUri);
-  const existing = await env.DB.prepare("SELECT * FROM site_settings WHERE site_id=?").bind(site.id).first() || {};
-  const settings = placeToSettings(place, existing);
-  // Places is an assistant, not an authority: the merger refuses any field a
-  // person has edited. Before this, a /refresh silently replaced hand-entered
-  // addresses and phone numbers.
-  const placesResult = await writeSiteProfile(env, site.id, {
-    name: settings.name,
-    business_type_label: settings.business_type,
-    phone: settings.tel,
-    address: settings.address,
-    hours: settings.hours,
-    hours_periods: settings.hours_periods,
-    lat: settings.lat,
-    lng: settings.lng,
-    price_level: settings.price_level,
-  }, "places");
-  const applied = placesResult.error ? {} : placesResult.profile;
-  const schemaTypes = (existing.serve_schema == null || Number(existing.serve_schema) === 1)
-    ? countSchemaTypes({
-        name: applied.name, tel: applied.phone, address: applied.address, hours: applied.hours,
-        lat: applied.lat, lng: applied.lng, image: applied.image, reserve_url: applied.reserve_url,
-      })
-    : 0;
-  const fetchedAt = Date.now();
-  const slug = site.slug || await uniqueSlug(env, settings.name || site.url, site.id);
-  if (websiteUri) {
-    await writeSiteProfile(env, site.id, { url: websiteUri }, "places");
-  }
-  await env.DB.prepare("UPDATE sites SET place_id=?,fetched_at=?,schema_types=?,crawler_allowed=1,slug=?,website_fingerprint=?,recommended_install_type=? WHERE id=?")
-    .bind(place.id || placeId || null, fetchedAt, schemaTypes, slug, proposal.fingerprint, proposal.recommended_install_type, site.id).run();
-  return { status: 200, body: { ok: true, place_id: place.id || placeId || null, fetched_at: fetchedAt, schema_types: schemaTypes, slug, website_uri: websiteUri, proposal, mock: !!place.mock, changed: placesResult.changed || [], rejected: placesResult.rejected || [] } };
-}
 
 function isSocialWebsite(hostname) {
   const host = String(hostname || "").toLowerCase().replace(/^www\./, "");
@@ -2227,148 +2138,9 @@ async function inspectWebsite(websiteUri) {
   }
 }
 
-async function fetchPlace(env, { placeId, query }) {
-  const apiKey = String(env.GOOGLE_MAPS_API_KEY || "").trim();
-  if (!apiKey) {
-    if (String(env.DEV || "") !== "1") throw new Error("GOOGLE_MAPS_API_KEY is not configured");
-    return mockPlace(placeId || query);
-  }
-  let resolvedId = placeId;
-  if (!resolvedId) {
-    const searchUrl = "https://places.googleapis.com/v1/places:searchText";
-    console.log("nurevo_places_search_request", JSON.stringify({ endpoint: searchUrl, fieldMask: PLACES_SEARCH_FIELD_MASK, hasApiKey: true }));
-    const search = await fetch(searchUrl, {
-      method: "POST",
-      headers: { "content-type": "application/json", "x-goog-api-key": apiKey, "x-goog-fieldmask": PLACES_SEARCH_FIELD_MASK },
-      body: JSON.stringify({ textQuery: query, maxResultCount: 1, languageCode: "ja" }),
-    });
-    const searchBody = await search.text();
-    const searchSummary = summarizeGoogleResponse(searchBody);
-    console.log("nurevo_places_search_response", JSON.stringify({ status: search.status, ok: search.ok, ...searchSummary }));
-    if (!search.ok) {
-      const error = new Error(`places_search_${search.status}`);
-      error.status = search.status;
-      error.detail = searchSummary;
-      throw error;
-    }
-    const data = JSON.parse(searchBody);
-    resolvedId = data.places?.[0]?.id;
-    if (!resolvedId) return null;
-    return data.places[0];
-  }
-  const detailsUrl = `https://places.googleapis.com/v1/places/${encodeURIComponent(resolvedId)}?languageCode=ja`;
-  console.log("nurevo_places_details_request", JSON.stringify({ endpoint: "https://places.googleapis.com/v1/places/{place_id}", fieldMask: PLACES_DETAILS_FIELD_MASK, hasPlaceId: !!resolvedId, hasApiKey: true }));
-  const details = await fetch(detailsUrl, {
-    headers: { "x-goog-api-key": apiKey, "x-goog-fieldmask": PLACES_DETAILS_FIELD_MASK },
-  });
-  const detailsBody = await details.text();
-  const detailsSummary = summarizeGoogleResponse(detailsBody);
-  console.log("nurevo_places_details_response", JSON.stringify({ status: details.status, ok: details.ok, ...detailsSummary }));
-  if (details.status === 404) return null;
-  if (!details.ok) {
-    const error = new Error(`places_details_${details.status}`);
-    error.status = details.status;
-    error.detail = detailsSummary;
-    throw error;
-  }
-  return { ...(JSON.parse(detailsBody)), id: resolvedId };
-}
 
-async function searchPlaces(env, query) {
-  const apiKey = String(env.GOOGLE_MAPS_API_KEY || "").trim();
-  if (!apiKey) {
-    if (String(env.DEV || "") !== "1") throw new Error("GOOGLE_MAPS_API_KEY is not configured");
-    const mock = mockPlace(query);
-    return [{ id: mock.id || `mock-${query}`, name: mock.displayName?.text || query, type: mock.primaryTypeDisplayName?.text || "", address: mock.formattedAddress || "", website_uri: mock.websiteUri || null, suggested_install_type: "hosted" }];
-  }
-  const response = await fetch("https://places.googleapis.com/v1/places:searchText", {
-    method: "POST",
-    headers: { "content-type": "application/json", "x-goog-api-key": apiKey, "x-goog-fieldmask": PLACES_SEARCH_FIELD_MASK },
-    body: JSON.stringify({ textQuery: query, maxResultCount: 5, languageCode: "ja" }),
-  });
-  if (!response.ok) {
-    const detail = await response.text();
-    const error = new Error(`places_search_${response.status}`);
-    error.status = response.status;
-    error.detail = summarizeGoogleResponse(detail);
-    throw error;
-  }
-  const data = await response.json();
-  return (data.places || []).map((place) => ({
-    id: place.id,
-    name: place.displayName?.text || "",
-    type: place.primaryTypeDisplayName?.text || placeTypeLabel(place.primaryType || place.types?.[0]) || "",
-    address: place.formattedAddress || "",
-    lat: place.location?.latitude ?? null,
-    lng: place.location?.longitude ?? null,
-    website_uri: place.websiteUri || null,
-    suggested_install_type: place.websiteUri ? (isSocialWebsite(new URL(place.websiteUri).hostname) ? "hosted" : "tag") : "hosted",
-  }));
-}
 
-function summarizeGoogleResponse(raw) {
-  try {
-    const parsed = JSON.parse(raw);
-    const error = parsed?.error;
-    return {
-      responseKeys: Object.keys(parsed || {}).slice(0, 20),
-      resultCount: Array.isArray(parsed?.places) ? parsed.places.length : undefined,
-      googleStatus: error?.status || parsed?.status || undefined,
-      googleMessage: error?.message || undefined,
-    };
-  } catch {
-    return { responseKeys: [], googleStatus: undefined, googleMessage: "invalid_google_response" };
-  }
-}
 
-function placeToSettings(place, existing = {}) {
-  const location = place.location || {};
-  const hours = Array.isArray(place.regularOpeningHours?.weekdayDescriptions)
-    ? place.regularOpeningHours.weekdayDescriptions.join("; ")
-    : (existing.hours || null);
-  return {
-    business_type: place.primaryTypeDisplayName?.text || placeTypeLabel(place.primaryType || place.types?.[0]) || existing.business_type || null,
-    name: place.displayName?.text || existing.name || null,
-    tel: place.nationalPhoneNumber || existing.tel || null,
-    address: place.formattedAddress || existing.address || null,
-    hours,
-    lat: location.latitude ?? existing.lat ?? null,
-    lng: location.longitude ?? existing.lng ?? null,
-    price_level: place.priceLevel || existing.price_level || null,
-    hours_periods: Array.isArray(place.regularOpeningHours?.periods)
-      ? JSON.stringify(place.regularOpeningHours.periods)
-      : (existing.hours_periods || null),
-  };
-}
-
-function mockPlace(seed) {
-  const source = String(seed || "canary");
-  const suffix = source.replace(/^mock-/, "").replace(/[^a-z0-9]+/gi, " ").trim() || "Canary";
-  return {
-    id: source.startsWith("mock-") ? source : `mock-${suffix.toLowerCase().replace(/\s+/g, "-")}`,
-    mock: true,
-    displayName: { text: `Nurevo ${suffix}` },
-    formattedAddress: "東京都千代田区1-1",
-    location: { latitude: 35.6812, longitude: 139.7671 },
-    regularOpeningHours: {
-      weekdayDescriptions: ["月曜日: 09:00–18:00", "火曜日: 09:00–18:00"],
-      periods: [
-        { open: { day: 1, hour: 9, minute: 0 }, close: { day: 1, hour: 18, minute: 0 } },
-        { open: { day: 2, hour: 9, minute: 0 }, close: { day: 2, hour: 18, minute: 0 } },
-      ],
-    },
-    nationalPhoneNumber: "03-1234-5678",
-    types: ["cafe"],
-    primaryType: "cafe",
-    primaryTypeDisplayName: { text: "カフェ", languageCode: "ja" },
-    priceLevel: "PRICE_LEVEL_MODERATE",
-  };
-}
-
-function placeTypeLabel(type) {
-  const labels = { cafe: "カフェ", restaurant: "レストラン", bar: "バー", bakery: "ベーカリー", beauty_salon: "美容院", hair_care: "美容院", clothing_store: "衣料品店", store: "店舗", pharmacy: "薬局", dentist: "歯科", lodging: "宿泊施設" };
-  return labels[String(type || "").toLowerCase()] || null;
-}
 
 async function uniqueSlug(env, name, siteId) {
   const base = String(name || "store").normalize("NFKC").trim().toLowerCase()
@@ -2384,7 +2156,7 @@ async function uniqueSlug(env, name, siteId) {
 
 async function loadHostedStore(env, slug) {
   return env.DB.prepare(
-    `SELECT s.id,s.url,s.slug,s.place_id,s.delivery_status,ss.name,ss.business_type,ss.address,ss.hours,ss.hours_periods,ss.lat,ss.lng,ss.tel,ss.price,ss.price_level
+    `SELECT s.id,s.url,s.slug,s.delivery_status,ss.name,ss.business_type,ss.address,ss.hours,ss.hours_periods,ss.lat,ss.lng,ss.tel,ss.price,ss.price_level
        FROM sites s JOIN site_settings ss ON ss.site_id=s.id WHERE s.slug=? LIMIT 1`,
   ).bind(slug).first();
 }
@@ -2492,20 +2264,8 @@ function buildHostedLlms(store, _ruleset) {
   return buildLlmsTxt({ name: store.name, address: store.address, tel: store.tel, hours: store.hours, url: store.url });
 }
 
-export { INITIAL_AEO_RULESET, LIVE_AEO_CACHE_CONTROL, PLACES_SEARCH_FIELD_MASK, PLACES_DETAILS_FIELD_MASK, buildJsonLd, hostedSchema, importPlaceForSite, loadActiveRuleset, renderHostedStore };
+export { INITIAL_AEO_RULESET, LIVE_AEO_CACHE_CONTROL, buildJsonLd, hostedSchema, loadActiveRuleset, renderHostedStore };
 
-export async function refreshDuePlaceSites(env) {
-  const cutoff = Date.now() - PLACES_REFRESH_MS;
-  const { results } = await env.DB.prepare(
-    "SELECT * FROM sites WHERE place_id IS NOT NULL AND (fetched_at IS NULL OR fetched_at<=?) ORDER BY fetched_at LIMIT 100",
-  ).bind(cutoff).all();
-  const outcomes = [];
-  for (const site of results || []) {
-    const result = await importPlaceForSite(env, site, { placeId: site.place_id }, true);
-    outcomes.push({ siteId: site.id, status: result.status });
-  }
-  return outcomes;
-}
 
 function countSchemaTypes(settings) {
   let count = 1;

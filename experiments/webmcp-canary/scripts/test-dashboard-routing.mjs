@@ -364,7 +364,8 @@ for (const bad of [
   const app = boot({ hash: "#site:abc123def456", sites: [SITE({ fill: null })] });
   app.render();
   assert.equal(app.main().includes("/7"), false, "the stale denominator of 7 is gone");
-  assert.ok(app.main().includes("/6"), "six required fields is what is shown");
+  // geo left the required set when Google Places did, so five remain.
+  assert.ok(app.main().includes("/5"), "five required fields is what is shown");
 }
 
 /* ---------------- the rest of the detail view is intact ---------------- */

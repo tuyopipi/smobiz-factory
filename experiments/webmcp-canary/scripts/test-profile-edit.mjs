@@ -277,7 +277,9 @@ const writeProfile = async (env, body, id = SITE_ID) => {
   assert.equal(body.completeness.has.business_type_schema, false,
     "the Places display label does not satisfy the business type");
   assert.ok(body.completeness.missing.includes("business_type_schema"), "which is reported as missing");
-  assert.ok(body.completeness.missing.includes("geo"));
+  assert.equal(body.completeness.missing.includes("geo"), false, "geo no longer blocks completion");
+  assert.ok(body.completeness.optional.includes("geo"), "but it is still reported");
+  assert.equal(body.completeness.has.geo, false, "and still says whether it is set");
   assert.equal(body.completeness.has.name, true);
 }
 
