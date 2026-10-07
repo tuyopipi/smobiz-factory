@@ -41,6 +41,8 @@ function detailHtml(site) {
     localStorage: { getItem: () => null, setItem() {} },
     location: { reload() {}, search: "", href: "https://nurevo.jp/dashboard" },
     navigator: {},
+    // The script registers a hashchange listener for deep linking.
+    addEventListener() {},
     MutationObserver: class { observe() {} },
     setTimeout() {}, clearTimeout() {},
     fetch: async () => { throw new Error("rendering must not call the network"); },

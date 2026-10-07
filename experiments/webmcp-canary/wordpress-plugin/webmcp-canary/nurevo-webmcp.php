@@ -1412,6 +1412,33 @@ function webmcp_canary_api_base() {
     return $parts['scheme'] . '://' . $parts['host'] . $port;
 }
 
+/**
+ * URL of the nurevo.jp dashboard, derived from the configured service.
+ *
+ * `$site_id` deep-links to that site's detail view. The dashboard reads the
+ * fragment on load, so the link lands on the site rather than the summary.
+ * Returns '' when the service is not configured, or when a deep link was asked
+ * for and this install has no site ID yet - a link to the wrong place is worse
+ * than no link.
+ */
+function webmcp_canary_dashboard_url($site_id = '') {
+    $api_base = webmcp_canary_api_base();
+    if ($api_base === '') {
+        return '';
+    }
+    $url = trailingslashit($api_base) . 'dashboard';
+    $site_id = trim((string) $site_id);
+    if ($site_id === '') {
+        return $url;
+    }
+    // Site IDs are hex from the service; anything else is not one of ours and
+    // must not be pasted into a URL.
+    if (!preg_match('/^[a-z0-9]{1,64}$/i', $site_id)) {
+        return '';
+    }
+    return $url . '#site:' . rawurlencode($site_id);
+}
+
 function webmcp_canary_api_base_candidates() {
     $api_base = webmcp_canary_api_base();
     if (empty($api_base)) {
@@ -2546,7 +2573,7 @@ function webmcp_canary_sov_page() {
                         <?php esc_html_e('Your Pro plan is active. Measurement needs a site key and site ID to be configured.', 'nurevo-webmcp'); ?>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=webmcp-canary-settings')); ?>"><?php esc_html_e('Open settings', 'nurevo-webmcp'); ?></a>
                     <?php else : ?>
-                        <a href="https://nurevo.jp/dashboard"><?php esc_html_e('See the Pro plan at nurevo.jp', 'nurevo-webmcp'); ?></a>
+                        <?php $nurevo_dashboard = webmcp_canary_dashboard_url(); ?><?php if ($nurevo_dashboard !== '') : ?><a href="<?php echo esc_url($nurevo_dashboard); ?>" target="_blank" rel="noopener"><?php esc_html_e('See the Pro plan at nurevo.jp', 'nurevo-webmcp'); ?></a><?php endif; ?>
                     <?php endif; ?>
                 </p>
             </section>
@@ -2803,6 +2830,14 @@ function webmcp_canary_aeo_page() {
     ?>
     <div class="wrap webmcp-aeo-dashboard">
         <?php echo webmcp_canary_screen_title('Nurevo AEO'); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_screen_title() ?>
+        <?php $nurevo_site_link = webmcp_canary_dashboard_url($settings['site_id']); ?>
+        <?php if ($nurevo_site_link !== '') : ?>
+            <p class="webmcp-aeo-dashboard-link">
+                <a href="<?php echo esc_url($nurevo_site_link); ?>" target="_blank" rel="noopener">
+                    <?php esc_html_e('View this site on the nurevo.jp dashboard', 'nurevo-webmcp'); ?> &#8599;
+                </a>
+            </p>
+        <?php endif; ?>
         <?php $extraction_report = get_option(WEBMCP_CANARY_EXTRACTION_OPTION, array()); ?>
         <?php if (!empty($extraction_report['count'])) : ?>
             <div class="notice notice-info inline"><p>

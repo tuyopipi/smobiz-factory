@@ -1191,4 +1191,43 @@ expect(strpos($readme, 'No paid PHP is bundled') !== false, 'readme states no lo
 expect(strpos($readme, 'Privacy Policy: https://nurevo.jp/privacy') !== false, 'readme discloses the privacy policy URL');
 expect(strpos($readme, 'Terms of Service: https://nurevo.jp/terms') !== false, 'readme discloses the terms URL');
 
+/* ------------------------------------------------------------------ *
+ * Dashboard deep link (#7)
+ * ------------------------------------------------------------------ */
+
+// The upsell link used to be a hardcoded https://nurevo.jp/dashboard, so a
+// canary or local install sent the operator to production. Every dashboard URL
+// now comes from the configured service instead.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array(
+    'tag_url' => 'https://nurevo.jp/tag.js',
+    'site_id' => 'abc123def456',
+);
+expect(webmcp_canary_dashboard_url() === 'https://nurevo.jp/dashboard', 'the dashboard URL comes from the service base');
+expect(
+    webmcp_canary_dashboard_url('abc123def456') === 'https://nurevo.jp/dashboard#site:abc123def456',
+    'a site ID becomes a deep link'
+);
+
+// A canary or local service must be followed, not overridden by the host we
+// happen to ship as the default.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['tag_url'] = 'http://localhost:8799/tag.js';
+expect(
+    webmcp_canary_dashboard_url('abc123def456') === 'http://localhost:8799/dashboard#site:abc123def456',
+    'the deep link follows a local service'
+);
+
+// No service configured means no link at all.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['tag_url'] = '';
+expect(webmcp_canary_dashboard_url() === '', 'an unconfigured service yields no URL');
+expect(webmcp_canary_dashboard_url('abc123def456') === '', 'and no deep link');
+
+// A site ID this plugin never received, or one that is not shaped like ours,
+// must not be pasted into a URL - a link to the wrong site is worse than none.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['tag_url'] = 'https://nurevo.jp/tag.js';
+expect(webmcp_canary_dashboard_url('') === 'https://nurevo.jp/dashboard', 'an empty site ID gives the plain dashboard');
+expect(webmcp_canary_dashboard_url('   ') === 'https://nurevo.jp/dashboard', 'so does whitespace');
+foreach (array('../../etc/passwd', '<script>alert(1)</script>', 'abc 123', 'abc-123', 'a#b', str_repeat('a', 65)) as $bad) {
+    expect(webmcp_canary_dashboard_url($bad) === '', "a malformed site ID yields no URL: {$bad}");
+}
+
 echo "WordPress AEO admin tests passed\n";

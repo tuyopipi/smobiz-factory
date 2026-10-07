@@ -59,6 +59,8 @@ function makeSandbox({ fetchImpl } = {}) {
     Headers: class { constructor() {} has() { return false; } set() {} },
     URL,
     FormData: class { constructor(form) { this.form = form; } get(key) { return (this.form?.values || {})[key] ?? ""; } },
+    // The script registers a hashchange listener for deep linking.
+    addEventListener() {},
     MutationObserver: class { observe() {} },
     setTimeout() {}, clearTimeout() {},
     fetch: fetchImpl || (async () => { calls.push("unexpected"); throw new Error("no network expected"); }),

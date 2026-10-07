@@ -368,6 +368,7 @@ const JA = {
     "Proプランは有効です。測定にはサイトキーとサイトIDの設定が必要です。",
   "Open settings": "設定を開く",
   "See the Pro plan at nurevo.jp": "Proプランを見る（nurevo.jp）",
+  "View this site on the nurevo.jp dashboard": "このサイトを nurevo.jp ダッシュボードで見る",
   "Your free diagnosis, basic schema, llms.txt and AI crawler access carry on exactly as before.":
     "Freeプランの診断・基本schema・llms.txt・AIクローラー許可は、このまま変わらずご利用いただけます。",
   "AI appearance rate": "AI登場率",
