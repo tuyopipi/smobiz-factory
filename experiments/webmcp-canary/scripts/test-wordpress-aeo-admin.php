@@ -1718,4 +1718,124 @@ for ($i = 0; $i < WEBMCP_CANARY_MAX_FAQ + 5; $i++) { $many[] = array('q' => "q{$
 expect(count(webmcp_canary_save_faq_entries($many)) === WEBMCP_CANARY_MAX_FAQ, 'the cap is a cap');
 delete_option(WEBMCP_CANARY_FAQ_OPTION);
 
+/* ------------------------------------------------------------------ *
+ * Hand-entered services (Phase 7)
+ * ------------------------------------------------------------------ */
+
+// Hand-entered rather than read from a booking plugin. Amelia and the others
+// expose no documented API for third parties, so reading them would mean
+// querying undocumented tables and guessing at whether a duration is stored in
+// seconds or minutes. Everything here is a value someone typed, including the
+// unit and the booking URL, so nothing is inferred.
+
+delete_option(WEBMCP_CANARY_SERVICES_OPTION);
+expect(webmcp_canary_service_entries() === array(), 'no services by default');
+expect(webmcp_canary_service_schema_nodes('https://example.test/', 'https://example.test/#organization') === array(),
+    'and nothing to publish');
+
+$saved_services = webmcp_canary_save_service_entries(array(
+    array('name' => 'カット', 'minutes' => '45', 'price' => '4500', 'currency' => 'jpy', 'category' => 'ヘア', 'reserve_url' => 'https://example.test/book/cut'),
+    array('name' => 'ヘッドスパ', 'minutes' => '30', 'price' => '', 'currency' => '', 'category' => '', 'reserve_url' => ''),
+    array('name' => '', 'minutes' => '60', 'price' => '9000'),
+    'not an entry',
+));
+expect(count($saved_services) === 2, 'a service with no name is not published');
+$services = webmcp_canary_service_entries();
+expect($services[0]['minutes'] === 45, 'the duration is kept as the number of minutes it says it is');
+expect($services[0]['currency'] === 'JPY', 'the currency is normalised to its usual case');
+
+// The read side filters too: the option can be written by hand or by an older
+// build, and a nameless service must not reach a page from any route.
+update_option(WEBMCP_CANARY_SERVICES_OPTION, array(
+    array('name' => 'Good', 'minutes' => 10),
+    array('name' => '', 'minutes' => 20),
+    array('name' => '   ', 'price' => '1'),
+));
+expect(count(webmcp_canary_service_entries()) === 1, 'a hand-written option is filtered on the way out as well');
+
+webmcp_canary_save_service_entries($saved_services);
+$nodes = webmcp_canary_service_schema_nodes('https://example.test/', 'https://example.test/#organization');
+expect(count($nodes) === 2, 'one node per service');
+expect($nodes[0]['@type'] === 'Service', 'each is a Service');
+expect($nodes[0]['name'] === 'カット', 'carrying the name');
+expect($nodes[0]['provider']['@id'] === 'https://example.test/#organization', 'offered by the business node');
+expect($nodes[0]['category'] === 'ヘア', 'with its category when there is one');
+expect(!isset($nodes[1]['category']), 'and none when there is not');
+
+// Service has no duration term, so the minutes go in additionalProperty with a
+// unit rather than into an invented property.
+expect($nodes[0]['additionalProperty']['value'] === 45, 'the duration is published');
+expect($nodes[0]['additionalProperty']['unitCode'] === 'MIN', 'in minutes, stated as a unit');
+expect($nodes[0]['additionalProperty']['unitText'] === 'minutes', 'and in words');
+
+expect($nodes[0]['offers']['@type'] === 'Offer' && $nodes[0]['offers']['price'] === '4500', 'the price is an Offer');
+expect($nodes[0]['offers']['priceCurrency'] === 'JPY', 'with its currency');
+expect(!isset($nodes[1]['offers']), 'a service with no price carries no Offer rather than a blank one');
+
+// ReserveAction points at the URL the operator entered - nothing is derived.
+expect($nodes[0]['potentialAction']['@type'] === 'ReserveAction', 'the service is bookable');
+expect($nodes[0]['potentialAction']['target']['@type'] === 'EntryPoint', 'through an entry point');
+expect($nodes[0]['potentialAction']['target']['urlTemplate'] === 'https://example.test/book/cut',
+    'at the exact URL that was entered');
+// result is a Reservation because that is what the action produces. A bare
+// Reservation node would claim a booking already exists.
+expect($nodes[0]['potentialAction']['result']['@type'] === 'Reservation', 'and produces a Reservation');
+expect(!isset($nodes[1]['potentialAction']), 'a service with no booking URL is not claimed to be bookable');
+
+// The ids are ours, and distinct per service.
+expect($nodes[0]['@id'] === 'https://example.test/#nurevo-service-1', 'the id is namespaced to this plugin');
+expect($nodes[1]['@id'] === 'https://example.test/#nurevo-service-2', 'and unique per service');
+
+// They reach the page.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'enabled' => '1', 'serve_schema' => '1', 'business_name' => 'Example', 'faq_page_id' => '0',
+));
+$GLOBALS['webmcp_test_options']['blog_public'] = 1;
+ob_start();
+webmcp_canary_output_server_schema();
+$service_output = ob_get_clean();
+expect(strpos($service_output, '"Service"') !== false, 'the services reach the page');
+expect(strpos($service_output, '"ReserveAction"') !== false, 'with their booking action');
+expect(strpos($service_output, '"Reservation"') !== false, 'and the reservation it produces');
+expect(strpos($service_output, 'https://example.test/book/cut') !== false, 'pointing at the entered URL');
+expect(strpos($service_output, '#nurevo-service-1') !== false, 'under our id');
+
+// Nobody else publishes Service, so an SEO plugin changes nothing here.
+$GLOBALS['webmcp_test_active_plugins'] = array('wordpress-seo/wp-seo.php', 'woocommerce/woocommerce.php');
+update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, array(
+    'business' => array('state' => 'complete', 'id' => 'https://example.test/#rival'),
+    'types' => array('Organization', 'WebSite', 'WebPage'),
+    'conflict' => false, 'measured_at' => time(), 'signature' => 'test',
+));
+ob_start();
+webmcp_canary_output_server_schema();
+$with_others = ob_get_clean();
+expect(strpos($with_others, '"Service"') !== false, 'services survive every other plugin, because none of them publish Service');
+$GLOBALS['webmcp_test_active_plugins'] = array();
+delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
+
+// llms.txt lists them.
+$service_llms = webmcp_canary_build_local_llms_txt();
+expect(strpos($service_llms, '## Services') !== false, 'llms.txt gains a service section');
+expect(strpos($service_llms, '45 min') !== false, 'with the duration in the unit it was entered in');
+expect(strpos($service_llms, 'JPY 4500') !== false, 'and the price with its currency');
+
+// The ownership table reports it only once there is one.
+expect(in_array('Service', webmcp_canary_nurevo_schema_types(), true), 'Service is listed once there is a service');
+delete_option(WEBMCP_CANARY_SERVICES_OPTION);
+expect(!in_array('Service', webmcp_canary_nurevo_schema_types(), true), 'and not listed when there is none');
+$no_service_llms = webmcp_canary_build_local_llms_txt();
+expect(strpos($no_service_llms, '## Services') === false, 'nor does llms.txt carry an empty section');
+
+// The inputs exist to type into.
+foreach (array('[name]', '[minutes]', '[price]', '[currency]', '[category]', '[reserve_url]') as $input_name) {
+    expect(strpos($source, '[services][%3$d]' . $input_name) !== false, "there is an input for {$input_name}");
+}
+expect(strpos($source, 'webmcp_canary_services_field') !== false, 'registered as a settings field');
+
+$many_services = array();
+for ($i = 0; $i < WEBMCP_CANARY_MAX_SERVICES + 5; $i++) { $many_services[] = array('name' => "s{$i}"); }
+expect(count(webmcp_canary_save_service_entries($many_services)) === WEBMCP_CANARY_MAX_SERVICES, 'the cap is a cap');
+delete_option(WEBMCP_CANARY_SERVICES_OPTION);
+
 echo "WordPress AEO admin tests passed\n";

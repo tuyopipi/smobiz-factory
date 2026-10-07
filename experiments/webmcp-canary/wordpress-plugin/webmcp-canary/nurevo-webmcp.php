@@ -80,6 +80,167 @@ function webmcp_canary_default_settings() {
     );
 }
 
+/** Where the hand-entered service list lives. */
+if (!defined('WEBMCP_CANARY_SERVICES_OPTION')) {
+    define('WEBMCP_CANARY_SERVICES_OPTION', 'webmcp_canary_services');
+}
+
+/** How many services are kept. */
+if (!defined('WEBMCP_CANARY_MAX_SERVICES')) {
+    define('WEBMCP_CANARY_MAX_SERVICES', 20);
+}
+
+/**
+ * The bookable services the operator typed in.
+ *
+ * Hand-entered rather than read from a booking plugin. Amelia and the others
+ * expose no documented API for third parties, so reading them would mean
+ * querying undocumented tables and guessing at whether a duration is stored in
+ * seconds or minutes - and a wrong duration published as fact is worse than no
+ * duration at all. Everything here is a value someone entered, including the
+ * unit and the booking URL, so nothing is inferred.
+ */
+function webmcp_canary_service_entries() {
+    $stored = get_option(WEBMCP_CANARY_SERVICES_OPTION, array());
+    if (!is_array($stored)) {
+        return array();
+    }
+    $entries = array();
+    foreach ($stored as $entry) {
+        if (!is_array($entry)) {
+            continue;
+        }
+        $name = trim((string) ($entry['name'] ?? ''));
+        // A service with no name is nothing to publish.
+        if ($name === '') {
+            continue;
+        }
+        $entries[] = array(
+            'name' => $name,
+            // Minutes, because the field says minutes. 0 means not stated.
+            'minutes' => max(0, (int) ($entry['minutes'] ?? 0)),
+            'price' => trim((string) ($entry['price'] ?? '')),
+            'currency' => strtoupper(trim((string) ($entry['currency'] ?? ''))),
+            'category' => trim((string) ($entry['category'] ?? '')),
+            'reserve_url' => trim((string) ($entry['reserve_url'] ?? '')),
+        );
+        if (count($entries) >= WEBMCP_CANARY_MAX_SERVICES) {
+            break;
+        }
+    }
+    return $entries;
+}
+
+/** Store a submitted list, dropping anything with no name. */
+function webmcp_canary_save_service_entries($input) {
+    $clean = array();
+    if (is_array($input)) {
+        foreach ($input as $entry) {
+            if (!is_array($entry)) {
+                continue;
+            }
+            $name = sanitize_text_field((string) ($entry['name'] ?? ''));
+            if ($name === '') {
+                continue;
+            }
+            $clean[] = array(
+                'name' => $name,
+                'minutes' => max(0, (int) ($entry['minutes'] ?? 0)),
+                'price' => sanitize_text_field((string) ($entry['price'] ?? '')),
+                'currency' => strtoupper(sanitize_text_field((string) ($entry['currency'] ?? ''))),
+                'category' => sanitize_text_field((string) ($entry['category'] ?? '')),
+                'reserve_url' => esc_url_raw((string) ($entry['reserve_url'] ?? '')),
+            );
+            if (count($clean) >= WEBMCP_CANARY_MAX_SERVICES) {
+                break;
+            }
+        }
+    }
+    update_option(WEBMCP_CANARY_SERVICES_OPTION, $clean, false);
+    return $clean;
+}
+
+/**
+ * Service nodes, each offered by the business and bookable at its own URL.
+ *
+ * `potentialAction` is a ReserveAction whose target is the URL the operator
+ * gave and whose result is a Reservation - which is how schema.org says "this
+ * action produces a booking". A bare Reservation node would claim a booking
+ * already exists, which is a different and untrue statement.
+ *
+ * Duration goes in `additionalProperty`: Service has no duration term, and
+ * additionalProperty with a unit is the sanctioned way to state a value that
+ * has no dedicated property, rather than inventing one.
+ */
+function webmcp_canary_service_schema_nodes($page_url, $provider_id) {
+    $entries = webmcp_canary_service_entries();
+    if (empty($entries)) {
+        return array();
+    }
+    $base = rtrim((string) $page_url, '/');
+    $nodes = array();
+    foreach ($entries as $index => $entry) {
+        $node = array(
+            '@type' => 'Service',
+            // Namespaced to this plugin: a booking plugin publishing its own
+            // Service some day would be a different document.
+            '@id' => $base . '/#nurevo-service-' . ($index + 1),
+            'name' => $entry['name'],
+            'provider' => array('@id' => $provider_id),
+        );
+        if ($entry['category'] !== '') {
+            $node['category'] = $entry['category'];
+        }
+        if ($entry['minutes'] > 0) {
+            $node['additionalProperty'] = array(
+                '@type' => 'PropertyValue',
+                'name' => 'duration',
+                'value' => $entry['minutes'],
+                'unitCode' => 'MIN',
+                'unitText' => 'minutes',
+            );
+        }
+        if ($entry['price'] !== '') {
+            $offer = array('@type' => 'Offer', 'price' => $entry['price']);
+            if ($entry['currency'] !== '') {
+                $offer['priceCurrency'] = $entry['currency'];
+            }
+            $node['offers'] = $offer;
+        }
+        if ($entry['reserve_url'] !== '') {
+            $node['potentialAction'] = array(
+                '@type' => 'ReserveAction',
+                'target' => array(
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => $entry['reserve_url'],
+                ),
+                'result' => array('@type' => 'Reservation', 'name' => $entry['name']),
+            );
+        }
+        $nodes[] = $node;
+    }
+    return $nodes;
+}
+
+/** One service as an llms.txt line. */
+function webmcp_canary_service_llms_line($entry) {
+    $label = $entry['name'];
+    if ($entry['reserve_url'] !== '') {
+        $label = '[' . $entry['name'] . '](' . $entry['reserve_url'] . ')';
+    }
+    $notes = array();
+    if ($entry['minutes'] > 0) {
+        $notes[] = $entry['minutes'] . ' min';
+    }
+    if ($entry['price'] !== '') {
+        $notes[] = trim($entry['currency'] . ' ' . $entry['price']);
+    }
+    if ($entry['category'] !== '') {
+        $notes[] = $entry['category'];
+    }
+    return '- ' . $label . (empty($notes) ? '' : ' — ' . implode(' · ', $notes));
+}
+
 /** Where the hand-entered Q&A lives. */
 if (!defined('WEBMCP_CANARY_FAQ_OPTION')) {
     define('WEBMCP_CANARY_FAQ_OPTION', 'webmcp_canary_faq');
@@ -234,6 +395,7 @@ function webmcp_canary_register_settings() {
     add_settings_field('business_details', __('Store / organization information', 'nurevo-webmcp'), 'webmcp_canary_business_details_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('pairing_code', __('Pairing code', 'nurevo-webmcp'), 'webmcp_canary_pairing_code_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('faq', __('Frequently asked questions', 'nurevo-webmcp'), 'webmcp_canary_faq_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('services', __('Bookable services', 'nurevo-webmcp'), 'webmcp_canary_services_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('license_key', __('License key', 'nurevo-webmcp'), 'webmcp_canary_license_key_field', 'webmcp_canary', 'webmcp_canary_main');
 
     // Connection and debug settings, rendered inside the collapsed developer block.
@@ -326,6 +488,9 @@ function webmcp_canary_sanitize_settings($input) {
     // ask the service about.
     if (isset($input['faq'])) {
         webmcp_canary_save_faq_entries($input['faq']);
+    }
+    if (isset($input['services'])) {
+        webmcp_canary_save_service_entries($input['services']);
     }
 
     $plan = 'free';
@@ -1056,6 +1221,9 @@ function webmcp_canary_nurevo_schema_types($settings = null) {
     if (!empty(webmcp_canary_faq_entries())) {
         $types[] = 'FAQPage';
     }
+    if (!empty(webmcp_canary_service_entries())) {
+        $types[] = 'Service';
+    }
     return $types;
 }
 
@@ -1567,6 +1735,48 @@ function webmcp_canary_site_id_field() {
  * that block holds different questions, and standing down for it would mean
  * their FAQ replaces one the operator wrote here.
  */
+/**
+ * Hand-entered bookable services.
+ *
+ * Every value here is typed by the operator, including the unit on the duration
+ * and the booking URL. Nothing is read from a booking plugin: Amelia and the
+ * others expose no documented API, so reading them would mean querying
+ * undocumented tables and guessing at units - and a wrong duration published as
+ * fact is worse than none.
+ */
+function webmcp_canary_services_field() {
+    $entries = webmcp_canary_service_entries();
+    // One spare row so there is always somewhere to type.
+    $entries[] = array('name' => '', 'minutes' => 0, 'price' => '', 'currency' => '', 'category' => '', 'reserve_url' => '');
+    echo '<fieldset id="webmcp-services">';
+    foreach ($entries as $index => $entry) {
+        printf(
+            '<p><label>%1$s<br><input type="text" class="regular-text" name="%2$s[services][%3$d][name]" value="%4$s"></label></p>'
+            . '<p><label>%5$s <input type="number" min="0" step="1" class="small-text" name="%2$s[services][%3$d][minutes]" value="%6$s"></label> '
+            . '<label>%7$s <input type="text" class="small-text" name="%2$s[services][%3$d][price]" value="%8$s"></label> '
+            . '<label>%9$s <input type="text" class="small-text" name="%2$s[services][%3$d][currency]" value="%10$s" placeholder="JPY"></label></p>'
+            . '<p><label>%11$s <input type="text" class="regular-text" name="%2$s[services][%3$d][category]" value="%12$s"></label></p>'
+            . '<p><label>%13$s<br><input type="url" class="regular-text" name="%2$s[services][%3$d][reserve_url]" value="%14$s"></label></p>',
+            esc_html__('Service name', 'nurevo-webmcp'),
+            esc_attr(WEBMCP_CANARY_OPTION),
+            (int) $index,
+            esc_attr($entry['name']),
+            esc_html__('Duration (minutes)', 'nurevo-webmcp'),
+            esc_attr((string) $entry['minutes']),
+            esc_html__('Price', 'nurevo-webmcp'),
+            esc_attr($entry['price']),
+            esc_html__('Currency', 'nurevo-webmcp'),
+            esc_attr($entry['currency']),
+            esc_html__('Category (optional)', 'nurevo-webmcp'),
+            esc_attr($entry['category']),
+            esc_html__('Booking URL', 'nurevo-webmcp'),
+            esc_attr($entry['reserve_url'])
+        );
+    }
+    echo '<p class="description">' . esc_html__('Published as Service structured data with a ReserveAction pointing at the booking URL you enter. Leave the name blank to remove a service. Save to add another row.', 'nurevo-webmcp') . '</p>';
+    echo '</fieldset>';
+}
+
 function webmcp_canary_faq_field() {
     $entries = webmcp_canary_faq_entries();
     // One spare row so there is always somewhere to type.
@@ -2189,6 +2399,18 @@ function webmcp_canary_build_local_llms_txt() {
         $lines[] = '';
         foreach ($products as $product) {
             $lines[] = webmcp_canary_product_llms_line($product);
+        }
+        $lines[] = '';
+    }
+
+    // Services, for the same reason as products: a model reading the file learns
+    // what can be booked, how long it takes and what it costs.
+    $services = webmcp_canary_service_entries();
+    if (!empty($services)) {
+        $lines[] = '## Services';
+        $lines[] = '';
+        foreach ($services as $service) {
+            $lines[] = webmcp_canary_service_llms_line($service);
         }
         $lines[] = '';
     }
@@ -3910,6 +4132,15 @@ function webmcp_canary_output_server_schema() {
         $faq_node = webmcp_canary_faq_schema_node($faq_page_id > 0 ? get_permalink($faq_page_id) : $site_url);
         if ($faq_node !== null) {
             $graph[] = $faq_node;
+        }
+    }
+
+    // Services are open ground - no booking plugin publishes schema at all, so
+    // basis=always and there is nothing to stand down for. Published on the same
+    // page as the FAQ, offered by the business node, under ids of ours.
+    if ($on_faq_page) {
+        foreach (webmcp_canary_service_schema_nodes($faq_page_id > 0 ? get_permalink($faq_page_id) : $site_url, $org_id) as $service_node) {
+            $graph[] = $service_node;
         }
     }
 
