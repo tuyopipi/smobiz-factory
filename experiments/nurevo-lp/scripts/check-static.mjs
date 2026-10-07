@@ -16,7 +16,14 @@ for (const file of requiredFiles) {
 }
 
 const index = await readFile(new URL("../public/index.html", import.meta.url), "utf8");
-for (const needle of ["そのフォーム、入力途中で何人が諦めていますか", "site-key-form", "privacy.html", "terms.html"]) {
+for (const needle of [
+  "あなたのお店は、",            // hero promise
+  "AIにちゃんと読まれているか",   // the free diagnosis offer
+  "Yoast/Rank Mathと併用OK",    // coexistence, the main objection handled
+  "正直",                       // the honest-measurement position
+  "heroCheck",                  // the URL diagnosis form
+  "data-webmcp-site-key"        // the tag snippet visitors copy
+]) {
   if (!index.includes(needle)) throw new Error(`index.html missing: ${needle}`);
 }
 

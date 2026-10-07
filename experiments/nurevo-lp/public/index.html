@@ -1,6 +1,6 @@
 <title>Nurevo</title><link rel="icon" href="/assets/favicon.png">
 <meta property="og:image" content="https://nurevo.jp/ogp.png">
-<meta name="description" content="AIに正しく理解・推薦されるサイトへ。構造化データもllms.txtも、GTMかWordPressでタグ1本。">
+<meta name="description" content="AI検索であなたのサイトがどれだけ引用されているかを正直に測り、引用される土台に整えるAEOツール。Yoast/Rank Mathと併用OK。">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+JP:wght@500;700;900&family=JetBrains+Mono:wght@500&display=swap">
@@ -66,7 +66,8 @@ header.nav .btn{white-space:nowrap;} .login-link{white-space:nowrap;}
 @media(max-width:960px){ .hero .wrap{grid-template-columns:minmax(0,1fr); gap:40px; justify-items:center;} }
 .hero .kick{background:#fff; color:var(--purple-d); box-shadow:var(--sh-sm);}
 .hero h1{font-size:clamp(27px,4.4vw,50px); line-height:1.16; letter-spacing:-.03em; text-wrap:balance;}
-.hero h1 .hl{color:var(--purple);} .hero h1 .hl2{color:var(--pink);}
+.hero h1 .hl{color:var(--purple);}
+  .hero .nb,.herocheck .nb{display:inline-block;} .hero h1 .hl2{color:var(--pink);}
 .hero .lead{margin-top:22px; font-size:clamp(17px,1.9vw,21px); color:#4a4458; max-width:40ch; font-weight:500;}
 .hero .cta{margin-top:32px; display:flex; flex-wrap:wrap; gap:13px;}
 .hero .note{margin-top:16px; font-size:13.5px; color:var(--muted); font-weight:600;}
@@ -256,6 +257,8 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 .method .mn{font-family:var(--mono); font-size:12px; color:var(--purple); font-weight:700; letter-spacing:.02em; white-space:nowrap;}
 .method h3{font-size:18px; margin:10px 0 8px;} .method > p{color:var(--muted); font-size:14px; margin-bottom:18px;}
 .method .btn{margin-top:auto; align-self:flex-start;}
+  .method.primary{border-color:var(--purple); box-shadow:var(--sh-lg); position:relative;}
+  .method.primary::after{content:attr(data-badge); position:absolute; top:-11px; left:28px; background:var(--pink); color:#fff; font-size:11px; font-weight:800; border-radius:999px; padding:4px 11px;}
 .snipfull{margin-top:20px; display:flex; align-items:stretch; gap:8px; background:#14162a; border-radius:14px; padding:10px 10px 10px 16px;}
 .snipfull code{color:#e7ecfb; font-family:var(--mono); font-size:12.5px; overflow-x:auto; white-space:nowrap; flex:1; display:flex; align-items:center;}
 .snipfull .copy{flex:none; background:var(--purple); color:#fff; border:none; border-radius:9px; padding:10px 18px; font-weight:700; font-size:13.5px; cursor:pointer; font-family:var(--sans);}
@@ -296,24 +299,24 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 <!-- HERO -->
 <section class="hero"><div class="wrap">
   <div>
-    <span class="kick" data-i18n="hero.kick">AI検索の時代の、集客インフラ</span>
-    <h1 data-i18n-html="hero.h1">AIが、あなたのお店を<br><span class="hl">見つけて</span><span class="hl2">案内する</span>。</h1>
-    <p class="lead" data-i18n="hero.lead">ChatGPTもGeminiも、あなたのサイトを正確に理解。構造化データもllms.txtも、GTMかWordPressでタグ1本。</p>
+    <span class="kick" data-i18n="hero.kick">AI検索時代の、見つけられ方</span>
+    <h1 data-i18n-html="hero.h1">客はもう、<span class="nb">AIに聞いている。</span><br>あなたのお店は、<span class="nb"><span class="hl">選ばれていますか</span>？</span></h1>
+    <p class="lead" data-i18n="hero.lead">ChatGPTやPerplexityが答えるとき、あなたのサイトを正しく理解し、引用できるか。Nurevoは、AIにどう見えているかを“正直に”測り、引用される土台に整えます。</p>
 
     <form class="herocheck" id="heroCheck" novalidate>
-      <h2 data-i18n-html="herocheck.h">あなたのサイト、<span class="hl">AIにちゃんと読まれてる？</span></h2>
-      <p class="sub" data-i18n="herocheck.sub">URLを入れるだけ。登録不要・無料でAI可読スコアを診断します。</p>
+      <h2 data-i18n-html="herocheck.h">まず、<span class="hl">AIにちゃんと読まれているか</span><span class="nb">確かめる</span></h2>
+      <p class="sub" data-i18n="herocheck.sub">URLを入れるだけ。登録不要・無料で、AI可読スコアを即時診断。</p>
       <div class="row">
         <label class="sr-only" for="heroCheckUrl" data-i18n="herocheck.label">診断するサイトのURL</label>
         <input id="heroCheckUrl" name="url" type="text" inputmode="url" autocomplete="url" spellcheck="false" placeholder="example.com" data-i18n-ph="herocheck.ph" required>
         <button type="submit" class="btn primary" data-i18n="herocheck.cta">URLで無料診断</button>
       </div>
       <p class="err" id="heroCheckErr" role="alert" hidden data-i18n="herocheck.err">サイトのURLを入力してください（例：example.com）。</p>
-      <p class="note" data-i18n="herocheck.note">AIクローラー到達性・構造化データ・llms.txt など8項目を即時チェック</p>
+      <p class="note" data-i18n="herocheck.note">AIクローラー到達性・構造化データ・llms.txt など8項目を即チェック</p>
     </form>
 
-    <div class="cta"><a href="#install" class="btn pink lg" data-i18n="hero.cta1">今すぐ導入する</a><a href="#how" class="btn ghost lg" data-i18n="hero.cta2">仕組みを見る</a></div>
-    <p class="note" data-i18n="hero.note">WordPress公式プラグイン掲載 ・ 5分で導入 ・ 主要AI対応</p>
+    <div class="cta"><a href="#install" class="btn pink lg" data-i18n="hero.cta1">無料ではじめる</a><a href="#how" class="btn ghost lg" data-i18n="hero.cta2">仕組みを見る</a></div>
+    <p class="note" data-i18n="hero.note">WordPress公式プラグイン掲載 ・ Yoast/Rank Mathと併用OK ・ 主要AI対応</p>
   </div>
   <div class="collage">
     <span class="blob b1"></span><span class="blob b2"></span>
@@ -326,7 +329,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
       <div class="bd">
         <h4 data-i18n="hero.card.name">ルミナ 表参道</h4>
         <div class="sub" data-i18n="hero.card.sub">美容室 ・ カット / カラー / ヘッドスパ</div>
-        <div class="aiq"><b data-i18n="hero.card.ai">AI：</b><span data-i18n="hero.card.q">「表参道でおすすめの美容室は？」への回答に、あなたのお店が正確に登場。</span></div>
+        <div class="aiq"><b data-i18n="hero.card.ai">AI：</b><span data-i18n="hero.card.q">AIの回答に、あなたのお店が“引用”される。</span></div>
         <div class="aia">
           <div class="r"><span class="k" data-i18n="lbl.hours">営業</span><span class="v" data-i18n="hero.card.hours">火〜日 11:00–20:00</span></div>
           <div class="r"><span class="k" data-i18n="lbl.rating">評価</span><span class="v" data-i18n="hero.card.rating">★ 4.7（213件）</span></div>
@@ -363,23 +366,23 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 
 <!-- STEPS -->
 <section id="how" style="background:#fff"><div class="wrap">
-  <div class="head"><span class="kick kick2" data-i18n="how.kick">仕組み</span><h2 data-i18n-html="how.h2">タグ1本で、<br>3つが自動で動く。</h2></div>
+  <div class="head"><span class="kick kick2" data-i18n="how.kick">仕組み</span><h2 data-i18n-html="how.h2">入れるだけで、<br>3つが自動で動く。</h2></div>
   <div class="steps">
-    <div class="step s1"><span class="big">1</span><div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg></div><h3 data-i18n="step.1.t">構造化データを出力</h3><p data-i18n="step.1.p">業種・住所・営業時間・評価・予約を、AIが読める形でサイト側に。</p></div>
-    <div class="step s2"><span class="big">2</span><div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><h3 data-i18n="step.2.t">AIに読ませる土台</h3><p data-i18n="step.2.p">llms.txt配信とAIクローラー設定で、AIがあなたのサイトを回遊。</p></div>
-    <div class="step s3"><span class="big">3</span><div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12l5 5L20 6"/></svg></div><h3 data-i18n="step.3.t">成果を計測・改善</h3><p data-i18n="step.3.p">AI可視性とフォーム完了率を可視化し、改善点まで提示。</p></div>
+    <div class="step s1"><span class="big">1</span><div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg></div><h3 data-i18n="step.1.t">構造化データを出力</h3><p data-i18n="step.1.p">AIが理解できる形に、サーバー側で確実に。</p></div>
+    <div class="step s2"><span class="big">2</span><div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><h3 data-i18n="step.2.t">AIに読ませる土台</h3><p data-i18n="step.2.p">llms.txt・AIクローラー許可まで自動で。</p></div>
+    <div class="step s3"><span class="big">3</span><div class="art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12l5 5L20 6"/></svg></div><h3 data-i18n="step.3.t">成果を正直に計測</h3><p data-i18n="step.3.p">どれだけ引用されているかを、盛らずに数字で。</p></div>
   </div>
 </div></section>
 
 <!-- FEATURE BLOCKS -->
 <section id="features"><div class="wrap">
-  <div class="head"><span class="kick kick2" data-i18n="feat.kick">できること</span><h2 data-i18n-html="feat.h2">“実行”を、<br>まるごと自動化。</h2></div>
+  <div class="head"><span class="kick kick2" data-i18n="feat.kick">できること</span><h2 data-i18n-html="feat.h2">測って、直す。<br>AEOを、まるごと。</h2></div>
   <div class="fb">
     <div class="txt"><span class="kick3" style="background:var(--wash);color:var(--purple-d)" data-i18n="feat.1.k">サーバーサイド構造化データ</span><h3 data-i18n="feat.1.t">JavaScriptを実行しないAIにも、確実に届く。</h3><p data-i18n="feat.1.p">店舗(LocalBusiness)などのschema.orgをサイト側で出力。GPTBotのようなクローラーにも、正確な情報が読み取られます。</p><ul><li data-i18n="feat.1.l1">業種・住所・営業時間・評価・予約に対応</li><li data-i18n="feat.1.l2">WordPress設定から自動生成</li></ul></div>
     <div class="viz"><div class="panel p1"><div class="minibrowser"><div class="cr"><i></i><i></i><i></i></div><div class="cbody"><div class="codewrap"><span class="ky">"@type"</span>: <span class="st">"HairSalon"</span>,<br><span class="ky">"name"</span>: <span class="st">"Lumina Omotesando"</span>,<br><span class="ky">"openingHours"</span>: <span class="st">"Tu-Su 11-20"</span>,<br><span class="ky">"aggregateRating"</span>: <span class="nu">4.7</span>,<br><span class="ky">"potentialAction"</span>: <span class="st">"ReserveAction"</span></div></div></div></div></div>
   </div>
   <div class="fb rev">
-    <div class="txt"><span class="kick3" style="background:#e6faf6;color:var(--teal)" data-i18n="feat.2.k">ダッシュボード</span><h3 data-i18n="feat.2.t">AIに、どれだけ届いているか。</h3><p data-i18n="feat.2.p">AI可視性スコアで、AIにどれだけ正しく理解されているかを一目で。改善点も自動で提示します。</p><ul><li data-i18n="feat.2.l1">AI可視性スコアで現状を把握</li><li data-i18n="feat.2.l2">改善アクションを自動で提案</li></ul></div>
+    <div class="txt"><span class="kick3" style="background:#e6faf6;color:var(--teal)" data-i18n="feat.2.k">正直なSoV計測（Pro）</span><h3 data-i18n="feat.2.t">“盛らない”数字で、AIでの引用を測る。</h3><p data-i18n="feat.2.p">AIの回答にどれだけ引用されたかを実測します。サンプルが足りないときは0%と丸めず、「サンプル不足」と正直に表示します。</p><ul><li data-i18n="feat.2.l1">引用率・競合比較・推移を実測</li><li data-i18n="feat.2.l2">測れないときは、測れないと表示</li></ul></div>
     <div class="viz"><div class="panel p2" style="display:grid;place-items:center;text-align:center;min-height:300px">
       <div style="background:#fff;border-radius:20px;box-shadow:var(--sh-sm);padding:34px 44px;width:100%;max-width:320px">
         <div style="font-size:13px;color:var(--muted);font-weight:800" data-i18n="kpi.vis">AI可視性スコア</div>
@@ -391,30 +394,30 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
     </div></div>
   </div>
   <div class="fb">
-    <div class="txt"><span class="kick3" style="background:#fff2e3;color:var(--coral)" data-i18n="feat.3.k">かんたん導入</span><h3 data-i18n="feat.3.t">入れて、キーを貼るだけ。</h3><p data-i18n="feat.3.p">WordPressなら公式プラグインを有効化してサイトキーを入力。GTM・直接タグでも1行で完了します。</p><ul><li data-i18n="feat.3.l1">コード不要（WordPress）</li><li data-i18n="feat.3.l2">GTM / 直接タグにも対応</li></ul></div>
+    <div class="txt"><span class="kick3" style="background:#fff2e3;color:var(--coral)" data-i18n="feat.3.k">Yoast / Rank Mathと共存</span><h3 data-i18n="feat.3.t">今の設定を壊さない。足りないところだけ、そっと補う。</h3><p data-i18n="feat.3.p">すでに出力されている構造化データは尊重し、AI向けに不足している部分だけを補います。既存のSEO設定は置き換えません。</p><ul><li data-i18n="feat.3.l1">既存のschema出力を尊重</li><li data-i18n="feat.3.l2">不足分だけをスマートに補完</li></ul></div>
     <div class="viz"><div class="panel p3"><div class="minibrowser"><div class="cr"><i></i><i></i><i></i></div><div class="cbody" style="display:grid;gap:10px"><div style="background:#f6f4fb;border-radius:10px;padding:10px 12px;font-size:11px"><b style="color:#5c5768" data-i18n="wp.key">サイトキー</b><br><span style="font-family:var(--mono);color:#171423">nrv_90bd53a1f2…</span></div><div style="display:flex;justify-content:space-between;align-items:center;background:#f6f4fb;border-radius:10px;padding:10px 12px;font-size:12px;font-weight:800"><span data-i18n="wp.enable">タグを有効化</span><span style="width:36px;height:20px;border-radius:999px;background:var(--purple);position:relative;display:inline-block"><span style="position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff"></span></span></div><div style="display:flex;justify-content:space-between;align-items:center;background:#f6f4fb;border-radius:10px;padding:10px 12px;font-size:12px;font-weight:800"><span data-i18n="wp.schema">店舗schemaを出力</span><span style="width:36px;height:20px;border-radius:999px;background:var(--teal);position:relative;display:inline-block"><span style="position:absolute;top:2px;right:2px;width:16px;height:16px;border-radius:50%;background:#fff"></span></span></div></div></div></div></div>
   </div>
 </div></section>
 
 <!-- INSTALL -->
 <section id="install" class="installsec"><div class="wrap">
-  <div class="head"><span class="kick kick2" data-i18n="install.kick">導入</span><h2 data-i18n-html="install.h2">GTM か WordPress。<br>5分で。</h2><p class="lead" data-i18n="install.lead">下のタグを貼るか、WordPress公式プラグインを有効化。サイトキーはダッシュボードで発行できます。</p></div>
+  <div class="head"><span class="kick kick2" data-i18n="install.kick">導入</span><h2 data-i18n-html="install.h2">WordPress管理画面から、<br>検索してインストール。</h2><p class="lead" data-i18n="install.lead">WordPressなら、管理画面の「プラグイン」で「Nurevo AEO」を検索してインストール、有効化するだけ。ファイルのアップロードもコードも不要です。</p></div>
   <div class="methods">
-    <div class="method">
+    <div class="method primary" data-badge="おすすめ">
       <span class="mn">WordPress</span>
-      <h3 data-i18n="install.w.t">公式プラグイン</h3>
-      <p data-i18n="install.w.p">「Nurevo WebMCP」を有効化してサイトキーを入力。店舗情報を入れれば構造化データを自動出力します。</p>
+      <h3 data-i18n="install.w.t">検索 → インストール → 有効化</h3>
+      <p data-i18n="install.w.p">管理画面の「プラグイン」→「新規追加」で「Nurevo AEO」を検索し、インストールして有効化します。あとは店舗情報を入れるだけで、構造化データとllms.txtが自動で出力されます。</p>
       <a href="https://wordpress.org/plugins/nurevo-webmcp/" target="_blank" rel="noopener" class="btn ghost sm" data-i18n="install.wplink">公式プラグインへ →</a>
     </div>
     <div class="method">
-      <span class="mn" data-i18n="install.t.k">直接タグ</span>
-      <h3 data-i18n="install.t.t">&lt;head&gt; に貼る</h3>
-      <p data-i18n="install.t.p">HTMLの &lt;head&gt; 内に、下のスニペットを1行貼るだけ。CMSを問わず使えます。</p>
+      <span class="mn" data-i18n="install.t.k">WordPress以外</span>
+      <h3 data-i18n="install.t.t">&lt;head&gt; にタグを1行</h3>
+      <p data-i18n="install.t.p">WordPressを使っていないサイト向け。HTMLの &lt;head&gt; 内に下のスニペットを貼れば、CMSを問わず動きます。</p>
     </div>
     <div class="method">
       <span class="mn">Google Tag Manager</span>
-      <h3 data-i18n="install.g.t">カスタムHTMLに貼る</h3>
-      <p data-i18n="install.g.p">GTMのカスタムHTMLタグに下のスニペットを貼り、トリガーは All Pages を選んで公開します。</p>
+      <h3 data-i18n="install.g.t">GTMのカスタムHTML</h3>
+      <p data-i18n="install.g.p">タグマネージャ運用の場合は、カスタムHTMLタグに下のスニペットを貼り、トリガーに All Pages を選んで公開します。</p>
     </div>
   </div>
   <div class="snipfull"><code id="snipCode">&lt;script src="https://nurevo.jp/tag.js" data-webmcp-site-key="YOUR_SITE_KEY" defer&gt;&lt;/script&gt;</code><button class="copy" onclick="copySnip(this)" data-i18n="install.copy">コピー</button></div>
@@ -448,7 +451,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
     <div class="plan pro" data-badge="おすすめ">
       <span class="nm" data-i18n="price.std.nm">Standard</span>
       <div class="pr">¥3,000<small data-i18n="price.unit"> / 月・サイト</small></div>
-      <p class="desc" data-i18n="price.std.desc">AIの基準は変わり続けます。追従はNurevoに任せる。</p>
+      <p class="desc" data-i18n="price.std.desc">AIの基準は変わり続ける。追従はNurevoに任せる。</p>
       <ul>
         <li data-i18n="price.std.1">Freeプランのすべて</li>
         <li data-i18n="price.std.2">「常に最新」中央rulesetで自動最適化</li>
@@ -460,12 +463,12 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
     <div class="plan beta" data-badge="β・近日提供">
       <span class="nm" data-i18n="price.top.nm">Pro</span>
       <div class="pr">¥14,800<small data-i18n="price.top.unit"> / 月〜</small></div>
-      <p class="desc" data-i18n="price.top.desc">出して終わりにしない。AIでの露出を数字で追う。</p>
+      <p class="desc" data-i18n="price.top.desc">出して終わりにしない。AIでの引用を“正直な数字”で追う。</p>
       <ul>
         <li data-i18n="price.top.1">Standardプランのすべて</li>
-        <li data-i18n="price.top.2">「測定」AIの回答にどれだけ登場しているか（登場率）</li>
-        <li data-i18n="price.top.3">競合比較</li>
-        <li data-i18n="price.top.4">推移・月次レポート</li>
+        <li data-i18n="price.top.2">「測定」AIの回答にどれだけ引用されているか（引用率）</li>
+        <li data-i18n="price.top.3">競合との引用比較</li>
+        <li data-i18n="price.top.4">引用率の推移・月次レポート</li>
       </ul>
       <a href="/dashboard" class="btn ghost" data-i18n="price.top.cta">Proプランを見る</a>
     </div>
@@ -476,7 +479,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 <section><div class="wrap">
   <div class="head"><span class="kick kick2" data-i18n="faq.kick">FAQ</span><h2 data-i18n="faq.h2">よくある質問</h2></div>
   <div class="faq">
-    <div class="qa"><h3 data-i18n="faq.1.q">schemaは自分でも作れるのでは？</h3><p data-i18n="faq.1.a">生成は可能です。Nurevoの価値は横断学習と標準への追従保守を任せられる点。実行を委ね、集客に集中できます。</p></div>
+    <div class="qa"><h3 data-i18n="faq.1.q">すでにYoast（やRank Math）を使っています。併用できますか？</h3><p data-i18n="faq.1.a">はい。Nurevoは既存のSEO設定を置き換えません。すでに出力されている構造化データは尊重し、AI向けに足りない部分だけを補います（スマート共存）。</p></div>
     <div class="qa"><h3 data-i18n="faq.2.q">本当にAIに推薦されますか？</h3><p data-i18n="faq.2.a">「AIが正確に理解・説明する」土台を作ります。推薦の押し上げはAI側に依存するため、効果は導入後に一緒に測ります。</p></div>
     <div class="qa"><h3 data-i18n="faq.3.q">入力値はNurevoに送られますか？</h3><p data-i18n="faq.3.a">いいえ。氏名・メール等の入力値は送信しません。扱うのはフォーム構造と匿名の結果のみです。</p></div>
     <div class="qa"><h3 data-i18n="faq.4.q">導入にコードは必要ですか？</h3><p data-i18n="faq.4.a">WordPressならプラグイン有効化とキー入力だけ。GTM・直接タグでも1行で完了します。</p></div>
@@ -486,8 +489,8 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 <!-- FINAL -->
 <section class="final"><span class="blob x1"></span><span class="blob x2"></span><div class="wrap">
   <h2 data-i18n="final.h2">AIに選ばれるお店に、今日から。</h2>
-  <p class="lead" data-i18n="final.lead">GTMかWordPressで、タグ1本・5分。まずは無料から。</p>
-  <div class="cta" style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap"><a href="#pricing" class="btn ghost lg" data-i18n="final.cta1">今すぐ導入する</a><a href="#" class="btn primary lg" style="background:#3a1f8f;border-color:#3a1f8f" data-i18n="final.cta2">代理店・OEM相談</a></div>
+  <p class="lead" data-i18n="final.lead">まずは無料で、あなたのサイトのスコアを確かめる。</p>
+  <div class="cta" style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap"><a href="#pricing" class="btn ghost lg" data-i18n="final.cta1">無料で診断する</a><a href="#" class="btn primary lg" style="background:#3a1f8f;border-color:#3a1f8f" data-i18n="final.cta2">代理店・OEM相談</a></div>
 </div></section>
 
 <section class="partner-callout"><div class="wrap"><span class="kick kick2" data-i18n="partner.kick">販売パートナー募集</span><h2 data-i18n="partner.h2">AEO市場を一緒に広げる</h2><p class="lead" data-i18n="partner.lead">Nurevoを必要なお店へ届ける、販売パートナーを募集しています。</p><div class="partner-lines"><p><b data-i18n="partner.ref.title">個人紹介パートナー</b> — <span data-i18n="partner.ref.body">レベニューシェア・継続報酬。紹介のみでサポート不要。</span></p><p><b data-i18n="partner.agency.title">企業向け販売代理店</b> — <span data-i18n="partner.agency.body">卸価格で仕入れ、販売価格は自由設定。</span></p></div><a href="/partner" class="btn primary" data-i18n="partner.cta">販売パートナー様はこちら</a></div></section>
@@ -500,7 +503,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
       <h4 data-i18n="company.h">会社概要</h4>
       <dl><dt data-i18n="company.name">運営会社</dt><dd data-i18n="company.name.v">Bestie.合同会社</dd><dt data-i18n="company.addr">所在地</dt><dd data-i18n="company.addr.v">東京都千代田区神田三崎町3-2-6</dd><dt data-i18n="company.rep">代表者</dt><dd data-i18n="company.rep.v">橋本 剛</dd><dt data-i18n="company.est">設立</dt><dd data-i18n="company.est.v">2025年5月</dd><dt data-i18n="company.biz">事業内容</dt><dd data-i18n="company.biz.v">AI検索対策(AEO)・WebMCPサービス「Nurevo」の開発・提供</dd><dt data-i18n="company.contact">お問い合わせ</dt><dd>info@nurevo.jp</dd></dl>
     </div>
-    <div class="flinks"><span class="h" data-i18n="foot.links">リンク</span><a href="#cases" data-i18n="nav.cases">活用シーン</a><a href="#how" data-i18n="nav.how">仕組み</a><a href="#pricing" data-i18n="nav.pricing">料金</a><a href="#" data-i18n="foot.docs">開発者向けドキュメント</a><a href="#" data-i18n="foot.privacy">プライバシーポリシー</a><a href="#" data-i18n="foot.terms">利用規約</a><a href="#" data-i18n="foot.legal">特定商取引法に基づく表記</a></div>
+    <div class="flinks"><span class="h" data-i18n="foot.links">リンク</span><a href="#cases" data-i18n="nav.cases">活用シーン</a><a href="#how" data-i18n="nav.how">仕組み</a><a href="#pricing" data-i18n="nav.pricing">料金</a><a href="#" data-i18n="foot.docs">開発者向けドキュメント</a><a href="/privacy" data-i18n="foot.privacy">プライバシーポリシー</a><a href="/terms" data-i18n="foot.terms">利用規約</a><a href="/tokushoho" data-i18n="foot.legal">特定商取引法に基づく表記</a></div>
   </div>
   <div class="bottom" data-i18n="foot.copyright">© 2026 Bestie.合同会社. All rights reserved.</div>
 </div></footer>
@@ -527,8 +530,8 @@ const I18N={
  "partner.agency.body":{ja:"卸価格で仕入れ、販売価格は自由設定。",en:"Wholesale terms with freedom to set your own selling price.",zh:"以批发条件采购，自由设定销售价格。",'zh-TW':"以批發條件採購，自由設定銷售價格。",ko:"도매 조건으로 구매하고 판매 가격을 자유롭게 설정합니다.",es:"Compra al por mayor y fija libremente tu precio de venta.",fr:"Achetez en gros et fixez librement votre prix de vente.",de:"Zu Großhandelskonditionen beziehen und Verkaufspreis frei festlegen."},
  "partner.cta":{ja:"販売パートナー様はこちら",en:"Become a sales partner",zh:"销售合作伙伴详情",'zh-TW':"銷售合作夥伴詳情",ko:"판매 파트너 안내",es:"Ser socio comercial",fr:"Devenir partenaire",de:"Vertriebspartner werden"},
  "install.kick":{ja:"導入",en:"Install",zh:"接入",'zh-TW':"接入",ko:"도입",es:"Instalación",fr:"Installation",de:"Einrichtung"},
- "install.h2":{ja:"GTM か WordPress。<br>5分で。",en:"GTM or WordPress. In 5 minutes.",zh:"GTM或WordPress，5分钟搞定。",'zh-TW':"GTM或WordPress，5分鐘搞定。",ko:"GTM 또는 WordPress. 5분이면.",es:"GTM o WordPress. En 5 minutos.",fr:"GTM ou WordPress. En 5 minutes.",de:"GTM oder WordPress. In 5 Minuten."},
- "install.lead":{ja:"下のタグを貼るか、WordPress公式プラグインを有効化。サイトキーはダッシュボードで発行できます。",en:"Paste the tag below, or activate the WordPress plugin. Issue your site key in the dashboard.",zh:"粘贴下方标签，或启用WordPress官方插件。站点密钥在仪表盘中获取。",'zh-TW':"貼上下方標籤，或啟用WordPress官方外掛。網站金鑰在儀表板中取得。",ko:"아래 태그를 붙이거나 WordPress 플러그인을 활성화. 사이트 키는 대시보드에서 발급.",es:"Pega la etiqueta o activa el plugin de WordPress. Genera tu clave en el panel.",fr:"Collez la balise ou activez le plugin WordPress. Générez votre clé dans le tableau de bord.",de:"Tag einfügen oder WordPress-Plugin aktivieren. Site-Key im Dashboard erstellen."},
+ "install.h2":{ja:"WordPress管理画面から、<br>検索してインストール。",en:"GTM or WordPress. In 5 minutes.",zh:"GTM或WordPress，5分钟搞定。",'zh-TW':"GTM或WordPress，5分鐘搞定。",ko:"GTM 또는 WordPress. 5분이면.",es:"GTM o WordPress. En 5 minutos.",fr:"GTM ou WordPress. En 5 minutes.",de:"GTM oder WordPress. In 5 Minuten."},
+ "install.lead":{ja:"WordPressなら、管理画面の「プラグイン」で「Nurevo AEO」を検索してインストール、有効化するだけ。ファイルのアップロードもコードも不要です。",en:"Paste the tag below, or activate the WordPress plugin. Issue your site key in the dashboard.",zh:"粘贴下方标签，或启用WordPress官方插件。站点密钥在仪表盘中获取。",'zh-TW':"貼上下方標籤，或啟用WordPress官方外掛。網站金鑰在儀表板中取得。",ko:"아래 태그를 붙이거나 WordPress 플러그인을 활성화. 사이트 키는 대시보드에서 발급.",es:"Pega la etiqueta o activa el plugin de WordPress. Genera tu clave en el panel.",fr:"Collez la balise ou activez le plugin WordPress. Générez votre clé dans le tableau de bord.",de:"Tag einfügen oder WordPress-Plugin aktivieren. Site-Key im Dashboard erstellen."},
  "install.m1.t":{ja:"Google Tag Manager / 直接タグ",en:"Google Tag Manager / Direct tag",zh:"Google Tag Manager / 直接标签",'zh-TW':"Google Tag Manager / 直接標籤",ko:"Google Tag Manager / 직접 태그",es:"Google Tag Manager / Etiqueta directa",fr:"Google Tag Manager / Balise directe",de:"Google Tag Manager / Direktes Tag"},
  "install.m1.p":{ja:"スニペットをGTMのカスタムHTML、または <head> に貼るだけ。All Pagesで配信します。",en:"Paste the snippet into GTM Custom HTML, or your <head>. Fire on All Pages.",zh:"将代码贴入GTM自定义HTML或<head>，在All Pages触发。",'zh-TW':"將程式碼貼入GTM自訂HTML或<head>，在All Pages觸發。",ko:"스니펫을 GTM 커스텀 HTML 또는 <head>에 붙이고 All Pages로 실행.",es:"Pega el snippet en GTM (HTML personalizado) o en <head>. Dispara en All Pages.",fr:"Collez le snippet dans GTM (HTML perso) ou <head>. Déclencheur All Pages.",de:"Snippet in GTM-Custom-HTML oder <head> einfügen. Auf All Pages auslösen."},
  "install.m2.t":{ja:"WordPress 公式プラグイン",en:"WordPress official plugin",zh:"WordPress官方插件",'zh-TW':"WordPress官方外掛",ko:"WordPress 공식 플러그인",es:"Plugin oficial de WordPress",fr:"Plugin officiel WordPress",de:"Offizielles WordPress-Plugin"},
@@ -538,26 +541,26 @@ const I18N={
  "install.wplink":{ja:"WordPress公式プラグインへ →",en:"Go to WordPress plugin →",zh:"前往WordPress插件 →",'zh-TW':"前往WordPress外掛 →",ko:"WordPress 플러그인으로 →",es:"Ir al plugin de WordPress →",fr:"Voir le plugin WordPress →",de:"Zum WordPress-Plugin →"},
  "install.keynote":{ja:"サイトキーの発行・管理はダッシュボードから。",en:"Issue and manage your site key from the dashboard.",zh:"在仪表盘发放与管理站点密钥。",'zh-TW':"在儀表板發放與管理網站金鑰。",ko:"사이트 키 발급·관리는 대시보드에서.",es:"Genera y gestiona tu clave desde el panel.",fr:"Générez et gérez votre clé depuis le tableau de bord.",de:"Site-Key im Dashboard erstellen und verwalten."},
  "install.dash":{ja:"ダッシュボードを開く",en:"Open dashboard",zh:"打开仪表盘",'zh-TW':"開啟儀表板",ko:"대시보드 열기",es:"Abrir panel",fr:"Ouvrir le tableau de bord",de:"Dashboard öffnen"},
- "install.w.t":{ja:"公式プラグイン",en:"Official plugin",zh:"官方插件",'zh-TW':"官方外掛",ko:"공식 플러그인",es:"Plugin oficial",fr:"Plugin officiel",de:"Offizielles Plugin"},
- "install.w.p":{ja:"「Nurevo WebMCP」を有効化してサイトキーを入力。店舗情報を入れれば構造化データを自動出力します。",en:"Activate \"Nurevo WebMCP\", enter your key, add store info — schema is auto-generated.",zh:"启用「Nurevo WebMCP」，输入密钥并填入店铺信息，自动生成结构化数据。",'zh-TW':"啟用「Nurevo WebMCP」，輸入金鑰並填入店家資訊，自動生成結構化資料。",ko:"'Nurevo WebMCP' 활성화 후 키 입력, 매장 정보 추가 시 schema 자동 생성.",es:"Activa «Nurevo WebMCP», introduce la clave y datos del local: schema automático.",fr:"Activez « Nurevo WebMCP », saisissez la clé et les infos : schema automatique.",de:"„Nurevo WebMCP“ aktivieren, Key eingeben, Store-Infos – Schema automatisch."},
- "install.t.k":{ja:"直接タグ",en:"Direct tag",zh:"直接标签",'zh-TW':"直接標籤",ko:"직접 태그",es:"Etiqueta directa",fr:"Balise directe",de:"Direktes Tag"},
- "install.t.t":{ja:"<head> に貼る",en:"Paste in <head>",zh:"贴入 <head>",'zh-TW':"貼入 <head>",ko:"<head>에 붙이기",es:"Pegar en <head>",fr:"Coller dans <head>",de:"In <head> einfügen"},
- "install.t.p":{ja:"HTMLの <head> 内に、下のスニペットを1行貼るだけ。CMSを問わず使えます。",en:"Paste the snippet once inside your HTML <head>. Works with any CMS.",zh:"将下方代码贴入HTML的<head>，一行即可，适用任意CMS。",'zh-TW':"將下方程式碼貼入HTML的<head>，一行即可，適用任意CMS。",ko:"HTML의 <head>에 아래 스니펫을 한 줄 붙이면 끝. 모든 CMS 지원.",es:"Pega el snippet en el <head> del HTML. Sirve con cualquier CMS.",fr:"Collez le snippet dans le <head> du HTML. Compatible tout CMS.",de:"Snippet einmal in den HTML-<head> einfügen. Für jedes CMS."},
- "install.g.t":{ja:"カスタムHTMLに貼る",en:"Add as Custom HTML",zh:"添加为自定义HTML",'zh-TW':"新增為自訂HTML",ko:"커스텀 HTML로 추가",es:"Añadir como HTML personalizado",fr:"Ajouter en HTML perso",de:"Als Custom-HTML einfügen"},
- "install.g.p":{ja:"GTMのカスタムHTMLタグに下のスニペットを貼り、トリガーは All Pages を選んで公開します。",en:"Paste the snippet into a GTM Custom HTML tag, set the trigger to All Pages, and publish.",zh:"将下方代码贴入GTM自定义HTML标签，触发器选All Pages并发布。",'zh-TW':"將下方程式碼貼入GTM自訂HTML標籤，觸發器選All Pages並發布。",ko:"GTM 커스텀 HTML 태그에 스니펫을 붙이고 트리거를 All Pages로 설정 후 게시.",es:"Pega el snippet en una etiqueta HTML personalizada de GTM, dispara en All Pages y publica.",fr:"Collez le snippet dans une balise HTML perso GTM, déclencheur All Pages, publiez.",de:"Snippet in ein GTM-Custom-HTML-Tag, Trigger All Pages, veröffentlichen."},
- "hero.kick":{ja:"AI検索の時代の、集客インフラ",en:"Growth infrastructure for the AI-search era",zh:"AI搜索时代的获客基础设施",'zh-TW':"AI搜尋時代的獲客基礎建設",ko:"AI 검색 시대의 고객 유치 인프라",es:"Infraestructura de captación para la era de la IA",fr:"L'infrastructure d'acquisition à l'ère de l'IA",de:"Wachstums-Infrastruktur für die KI-Suche"},
- "hero.h1":{ja:'AIが、あなたのお店を<br><span class="hl">見つけて</span><span class="hl2">案内する</span>。',en:'AI <span class="hl">finds</span> and <span class="hl2">recommends</span> your business.',zh:'让AI<span class="hl">找到</span>并<span class="hl2">推荐</span>你的店铺。',"zh-TW":'讓AI<span class="hl">找到</span>並<span class="hl2">推薦</span>你的店家。',ko:'AI가 당신의 매장을 <span class="hl">찾아</span> <span class="hl2">안내</span>합니다.',es:'La IA <span class="hl">encuentra</span> y <span class="hl2">recomienda</span> tu negocio.',fr:'L\'IA <span class="hl">trouve</span> et <span class="hl2">recommande</span> votre établissement.',de:'KI <span class="hl">findet</span> und <span class="hl2">empfiehlt</span> Ihr Geschäft.'},
- "hero.lead":{ja:"ChatGPTもGeminiも、あなたのサイトを正確に理解。構造化データもllms.txtも、GTMかWordPressでタグ1本。",en:"ChatGPT and Gemini understand your site correctly. Structured data and llms.txt, in one tag — via GTM or WordPress.",zh:"让ChatGPT和Gemini准确理解你的网站。结构化数据与llms.txt，通过GTM或WordPress一行标签搞定。",'zh-TW':"讓ChatGPT與Gemini準確理解你的網站。結構化資料與llms.txt，透過GTM或WordPress一行標籤完成。",ko:"ChatGPT와 Gemini가 사이트를 정확히 이해합니다. 구조화 데이터와 llms.txt를 GTM 또는 WordPress에서 태그 하나로.",es:"ChatGPT y Gemini entienden tu sitio. Datos estructurados y llms.txt en una etiqueta, con GTM o WordPress.",fr:"ChatGPT et Gemini comprennent votre site. Données structurées et llms.txt en une balise, via GTM ou WordPress.",de:"ChatGPT und Gemini verstehen Ihre Seite. Strukturierte Daten und llms.txt in einem Tag – per GTM oder WordPress."},
- "hero.cta1":{ja:"今すぐ導入する",en:"Get started",zh:"立即使用",'zh-TW':"立即使用",ko:"지금 시작",es:"Empezar ahora",fr:"Commencer",de:"Jetzt starten"},
+ "install.w.t":{ja:"検索 → インストール → 有効化",en:"Official plugin",zh:"官方插件",'zh-TW':"官方外掛",ko:"공식 플러그인",es:"Plugin oficial",fr:"Plugin officiel",de:"Offizielles Plugin"},
+ "install.w.p":{ja:"管理画面の「プラグイン」→「新規追加」で「Nurevo AEO」を検索し、インストールして有効化します。あとは店舗情報を入れるだけで、構造化データとllms.txtが自動で出力されます。",en:"Activate \"Nurevo WebMCP\", enter your key, add store info — schema is auto-generated.",zh:"启用「Nurevo WebMCP」，输入密钥并填入店铺信息，自动生成结构化数据。",'zh-TW':"啟用「Nurevo WebMCP」，輸入金鑰並填入店家資訊，自動生成結構化資料。",ko:"'Nurevo WebMCP' 활성화 후 키 입력, 매장 정보 추가 시 schema 자동 생성.",es:"Activa «Nurevo WebMCP», introduce la clave y datos del local: schema automático.",fr:"Activez « Nurevo WebMCP », saisissez la clé et les infos : schema automatique.",de:"„Nurevo WebMCP“ aktivieren, Key eingeben, Store-Infos – Schema automatisch."},
+ "install.t.k":{ja:"WordPress以外",en:"Direct tag",zh:"直接标签",'zh-TW':"直接標籤",ko:"직접 태그",es:"Etiqueta directa",fr:"Balise directe",de:"Direktes Tag"},
+ "install.t.t":{ja:"&lt;head&gt; にタグを1行",en:"Paste in <head>",zh:"贴入 <head>",'zh-TW':"貼入 <head>",ko:"<head>에 붙이기",es:"Pegar en <head>",fr:"Coller dans <head>",de:"In <head> einfügen"},
+ "install.t.p":{ja:"WordPressを使っていないサイト向け。HTMLの &lt;head&gt; 内に下のスニペットを貼れば、CMSを問わず動きます。",en:"Paste the snippet once inside your HTML <head>. Works with any CMS.",zh:"将下方代码贴入HTML的<head>，一行即可，适用任意CMS。",'zh-TW':"將下方程式碼貼入HTML的<head>，一行即可，適用任意CMS。",ko:"HTML의 <head>에 아래 스니펫을 한 줄 붙이면 끝. 모든 CMS 지원.",es:"Pega el snippet en el <head> del HTML. Sirve con cualquier CMS.",fr:"Collez le snippet dans le <head> du HTML. Compatible tout CMS.",de:"Snippet einmal in den HTML-<head> einfügen. Für jedes CMS."},
+ "install.g.t":{ja:"GTMのカスタムHTML",en:"Add as Custom HTML",zh:"添加为自定义HTML",'zh-TW':"新增為自訂HTML",ko:"커스텀 HTML로 추가",es:"Añadir como HTML personalizado",fr:"Ajouter en HTML perso",de:"Als Custom-HTML einfügen"},
+ "install.g.p":{ja:"タグマネージャ運用の場合は、カスタムHTMLタグに下のスニペットを貼り、トリガーに All Pages を選んで公開します。",en:"Paste the snippet into a GTM Custom HTML tag, set the trigger to All Pages, and publish.",zh:"将下方代码贴入GTM自定义HTML标签，触发器选All Pages并发布。",'zh-TW':"將下方程式碼貼入GTM自訂HTML標籤，觸發器選All Pages並發布。",ko:"GTM 커스텀 HTML 태그에 스니펫을 붙이고 트리거를 All Pages로 설정 후 게시.",es:"Pega el snippet en una etiqueta HTML personalizada de GTM, dispara en All Pages y publica.",fr:"Collez le snippet dans une balise HTML perso GTM, déclencheur All Pages, publiez.",de:"Snippet in ein GTM-Custom-HTML-Tag, Trigger All Pages, veröffentlichen."},
+ "hero.kick":{ja:"AI検索時代の、見つけられ方",en:"Growth infrastructure for the AI-search era",zh:"AI搜索时代的获客基础设施",'zh-TW':"AI搜尋時代的獲客基礎建設",ko:"AI 검색 시대의 고객 유치 인프라",es:"Infraestructura de captación para la era de la IA",fr:"L'infrastructure d'acquisition à l'ère de l'IA",de:"Wachstums-Infrastruktur für die KI-Suche"},
+ "hero.h1":{ja:'客はもう、<span class="nb">AIに聞いている。</span><br>あなたのお店は、<span class="nb"><span class="hl">選ばれていますか</span>？</span>',en:'AI <span class="hl">finds</span> and <span class="hl2">recommends</span> your business.',zh:'让AI<span class="hl">找到</span>并<span class="hl2">推荐</span>你的店铺。',"zh-TW":'讓AI<span class="hl">找到</span>並<span class="hl2">推薦</span>你的店家。',ko:'AI가 당신의 매장을 <span class="hl">찾아</span> <span class="hl2">안내</span>합니다.',es:'La IA <span class="hl">encuentra</span> y <span class="hl2">recomienda</span> tu negocio.',fr:'L\'IA <span class="hl">trouve</span> et <span class="hl2">recommande</span> votre établissement.',de:'KI <span class="hl">findet</span> und <span class="hl2">empfiehlt</span> Ihr Geschäft.'},
+ "hero.lead":{ja:"ChatGPTやPerplexityが答えるとき、あなたのサイトを正しく理解し、引用できるか。Nurevoは、AIにどう見えているかを“正直に”測り、引用される土台に整えます。",en:"ChatGPT and Gemini understand your site correctly. Structured data and llms.txt, in one tag — via GTM or WordPress.",zh:"让ChatGPT和Gemini准确理解你的网站。结构化数据与llms.txt，通过GTM或WordPress一行标签搞定。",'zh-TW':"讓ChatGPT與Gemini準確理解你的網站。結構化資料與llms.txt，透過GTM或WordPress一行標籤完成。",ko:"ChatGPT와 Gemini가 사이트를 정확히 이해합니다. 구조화 데이터와 llms.txt를 GTM 또는 WordPress에서 태그 하나로.",es:"ChatGPT y Gemini entienden tu sitio. Datos estructurados y llms.txt en una etiqueta, con GTM o WordPress.",fr:"ChatGPT et Gemini comprennent votre site. Données structurées et llms.txt en une balise, via GTM ou WordPress.",de:"ChatGPT und Gemini verstehen Ihre Seite. Strukturierte Daten und llms.txt in einem Tag – per GTM oder WordPress."},
+ "hero.cta1":{ja:"無料ではじめる",en:"Get started",zh:"立即使用",'zh-TW':"立即使用",ko:"지금 시작",es:"Empezar ahora",fr:"Commencer",de:"Jetzt starten"},
  "hero.cta2":{ja:"仕組みを見る",en:"See how",zh:"了解原理",'zh-TW':"了解原理",ko:"작동 방식 보기",es:"Ver cómo",fr:"Voir comment",de:"So geht's"},
- "hero.note":{ja:"WordPress公式プラグイン掲載 ・ 5分で導入 ・ 主要AI対応",en:"On the WordPress plugin directory · 5-min setup · Major AI engines",zh:"已上架WordPress官方插件 · 5分钟接入 · 支持主流AI",'zh-TW':"已上架WordPress官方外掛 · 5分鐘接入 · 支援主流AI",ko:"WordPress 공식 플러그인 등록 · 5분 설치 · 주요 AI 지원",es:"En el directorio de plugins de WordPress · 5 min · Principales IA",fr:"Sur l'annuaire de plugins WordPress · 5 min · Principales IA",de:"Im WordPress-Plugin-Verzeichnis · 5 Min · Große KI-Engines"},
+ "hero.note":{ja:"WordPress公式プラグイン掲載 ・ Yoast/Rank Mathと併用OK ・ 主要AI対応",en:"On the WordPress plugin directory · 5-min setup · Major AI engines",zh:"已上架WordPress官方插件 · 5分钟接入 · 支持主流AI",'zh-TW':"已上架WordPress官方外掛 · 5分鐘接入 · 支援主流AI",ko:"WordPress 공식 플러그인 등록 · 5분 설치 · 주요 AI 지원",es:"En el directorio de plugins de WordPress · 5 min · Principales IA",fr:"Sur l'annuaire de plugins WordPress · 5 min · Principales IA",de:"Im WordPress-Plugin-Verzeichnis · 5 Min · Große KI-Engines"},
  "chip.1":{ja:"4.7の評価も伝わる",en:"Ratings come through",zh:"评分也能传达",'zh-TW':"評分也能傳達",ko:"평점도 전달",es:"Las reseñas llegan",fr:"Les avis passent",de:"Bewertungen inklusive"},
  "chip.2":{ja:"営業時間もAIが把握",en:"AI knows your hours",zh:"AI掌握营业时间",'zh-TW':"AI掌握營業時間",ko:"AI가 영업시간 파악",es:"La IA sabe tu horario",fr:"L'IA connaît vos horaires",de:"KI kennt die Öffnungszeiten"},
  "chip.3":{ja:"予約もそのまま",en:"Bookings, built in",zh:"预约无缝衔接",'zh-TW':"預約無縫銜接",ko:"예약도 그대로",es:"Reservas incluidas",fr:"Réservations intégrées",de:"Buchung inklusive"},
  "ph.hero":{ja:"店舗の写真（差替え）",en:"Store photo (replace)",zh:"店铺照片（可替换）",'zh-TW':"店家照片（可替換）",ko:"매장 사진 (교체)",es:"Foto (reemplazar)",fr:"Photo (à remplacer)",de:"Foto (ersetzen)"},
  "ph.case":{ja:"写真（差替え）",en:"Photo (replace)",zh:"照片（替换）",'zh-TW':"照片（替換）",ko:"사진 (교체)",es:"Foto",fr:"Photo",de:"Foto"},
  "hero.card.sub":{ja:"美容室 ・ カット / カラー / ヘッドスパ",en:"Hair salon · Cut / Color / Spa",zh:"美发沙龙 · 剪发/染发/护理",'zh-TW':"美髮沙龍 · 剪髮/染髮/護理",ko:"미용실 · 커트/컬러/스파",es:"Peluquería · Corte/Color/Spa",fr:"Salon · Coupe/Couleur/Spa",de:"Friseur · Schnitt/Farbe/Spa"},
- "hero.card.q":{ja:"「表参道でおすすめの美容室は？」への回答に、あなたのお店が正確に登場。",en:"When asked \"best salon in Omotesando?\", your business appears accurately.",zh:"当被问“表参道推荐的美发店？”，你的店铺会准确出现。",'zh-TW':"當被問「表參道推薦的美髮店？」，你的店家會準確出現。",ko:"\"오모테산도 추천 미용실?\" 답변에 매장이 정확히 등장.",es:"Ante \"¿mejor salón en Omotesando?\", tu negocio aparece bien.",fr:"À la question « meilleur salon ? », votre établissement apparaît.",de:"Bei \"bester Salon?\" erscheint Ihr Geschäft korrekt."},
+ "hero.card.q":{ja:"AIの回答に、あなたのお店が“引用”される。",en:"When asked \"best salon in Omotesando?\", your business appears accurately.",zh:"当被问“表参道推荐的美发店？”，你的店铺会准确出现。",'zh-TW':"當被問「表參道推薦的美髮店？」，你的店家會準確出現。",ko:"\"오모테산도 추천 미용실?\" 답변에 매장이 정확히 등장.",es:"Ante \"¿mejor salón en Omotesando?\", tu negocio aparece bien.",fr:"À la question « meilleur salon ? », votre établissement apparaît.",de:"Bei \"bester Salon?\" erscheint Ihr Geschäft korrekt."},
  "lbl.hours":{ja:"営業",en:"Hours",zh:"营业",'zh-TW':"營業",ko:"영업",es:"Horario",fr:"Horaires",de:"Zeiten"},
  "lbl.rating":{ja:"評価",en:"Rating",zh:"评分",'zh-TW':"評分",ko:"평점",es:"Reseñas",fr:"Note",de:"Bewertung"},
  "lbl.book":{ja:"予約",en:"Booking",zh:"预约",'zh-TW':"預約",ko:"예약",es:"Reserva",fr:"Réserver",de:"Buchung"},
@@ -575,30 +578,30 @@ const I18N={
  "case.3.p":{ja:"診療科・受付時間・予約をAIに。安心して来院につなげる。",en:"Departments, hours and booking to AI — turning trust into visits.",zh:"科室、接诊时间与预约传达给AI，安心就诊。",'zh-TW':"科別、看診時間與預約傳達給AI，安心就診。",ko:"진료과·접수시간·예약을 AI에. 안심 내원으로.",es:"Especialidades, horarios y cita a la IA. Confianza que llena la agenda.",fr:"Spécialités, horaires et RDV pour l'IA. La confiance en visites.",de:"Fachbereiche, Zeiten, Termine für die KI – Vertrauen wird Besuch."},
  "case.4.p":{ja:"物件・サービス情報を構造化。問い合わせをAIが後押し。",en:"Structure listings and services. AI nudges the inquiry.",zh:"结构化房源与服务信息，AI推动咨询。",'zh-TW':"結構化物件與服務資訊，AI推動諮詢。",ko:"매물·서비스 정보를 구조화. 문의를 AI가 촉진.",es:"Estructura inmuebles y servicios. La IA impulsa la consulta.",fr:"Structurez biens et services. L'IA favorise la demande.",de:"Angebote strukturieren. Die KI fördert die Anfrage."},
  "how.kick":{ja:"仕組み",en:"How it works",zh:"工作原理",'zh-TW':"運作方式",ko:"작동 방식",es:"Cómo funciona",fr:"Fonctionnement",de:"So funktioniert's"},
- "how.h2":{ja:"タグ1本で、<br>3つが自動で動く。",en:"One tag. Three things, automatic.",zh:"一行标签，三件事自动完成。",'zh-TW':"一行標籤，三件事自動完成。",ko:"태그 하나로 세 가지가 자동으로.",es:"Una etiqueta. Tres cosas, automáticas.",fr:"Une balise. Trois choses, automatiques.",de:"Ein Tag. Drei Dinge, automatisch."},
+ "how.h2":{ja:"入れるだけで、<br>3つが自動で動く。",en:"One tag. Three things, automatic.",zh:"一行标签，三件事自动完成。",'zh-TW':"一行標籤，三件事自動完成。",ko:"태그 하나로 세 가지가 자동으로.",es:"Una etiqueta. Tres cosas, automáticas.",fr:"Une balise. Trois choses, automatiques.",de:"Ein Tag. Drei Dinge, automatisch."},
  "step.1.t":{ja:"構造化データを出力",en:"Output structured data",zh:"输出结构化数据",'zh-TW':"輸出結構化資料",ko:"구조화 데이터 출력",es:"Datos estructurados",fr:"Données structurées",de:"Strukturierte Daten"},
  "step.2.t":{ja:"AIに読ませる土台",en:"A base AI can read",zh:"让AI可读的基础",'zh-TW':"讓AI可讀的基礎",ko:"AI가 읽는 토대",es:"Base legible por IA",fr:"Une base lisible par l'IA",de:"KI-lesbare Basis"},
- "step.3.t":{ja:"成果を計測・改善",en:"Measure & improve",zh:"衡量与改进",'zh-TW':"衡量與改進",ko:"성과 측정·개선",es:"Medir y mejorar",fr:"Mesurer & améliorer",de:"Messen & verbessern"},
- "step.1.p":{ja:"業種・住所・営業時間・評価・予約を、AIが読める形でサイト側に。",en:"Type, address, hours, rating and booking — in a form AI can read.",zh:"业种、地址、时间、评分、预约，以AI可读形式输出。",'zh-TW':"業種、地址、時間、評分、預約，以AI可讀形式輸出。",ko:"업종·주소·시간·평점·예약을 AI가 읽는 형태로.",es:"Tipo, dirección, horario, reseñas y reserva legibles por IA.",fr:"Type, adresse, horaires, avis et réservation, lisibles par l'IA.",de:"Art, Adresse, Zeiten, Bewertung, Buchung – KI-lesbar."},
- "step.2.p":{ja:"llms.txt配信とAIクローラー設定で、AIがあなたのサイトを回遊。",en:"llms.txt and crawler rules let AI traverse your site.",zh:"通过llms.txt与爬虫设置，让AI遍历你的网站。",'zh-TW':"透過llms.txt與爬蟲設定，讓AI遍歷你的網站。",ko:"llms.txt와 크롤러 설정으로 AI가 사이트를 순회.",es:"llms.txt y reglas de rastreo dejan que la IA recorra tu sitio.",fr:"llms.txt et règles de crawl laissent l'IA parcourir votre site.",de:"llms.txt und Crawler-Regeln lassen KI Ihre Seite durchlaufen."},
- "step.3.p":{ja:"AI可視性とフォーム完了率を可視化し、改善点まで提示。",en:"Visualize AI visibility and form completion, with fixes suggested.",zh:"可视化AI可见性与表单完成率，并提出改进建议。",'zh-TW':"可視化AI可見性與表單完成率，並提出改進建議。",ko:"AI 가시성과 폼 완료율을 시각화하고 개선점 제시.",es:"Visualiza la visibilidad IA y la conversión, con mejoras sugeridas.",fr:"Visualisez la visibilité IA et la conversion, avec des pistes.",de:"KI-Sichtbarkeit und Abschlussrate sichtbar, inkl. Tipps."},
+ "step.3.t":{ja:"成果を正直に計測",en:"Measure & improve",zh:"衡量与改进",'zh-TW':"衡量與改進",ko:"성과 측정·개선",es:"Medir y mejorar",fr:"Mesurer & améliorer",de:"Messen & verbessern"},
+ "step.1.p":{ja:"AIが理解できる形に、サーバー側で確実に。",en:"Type, address, hours, rating and booking — in a form AI can read.",zh:"业种、地址、时间、评分、预约，以AI可读形式输出。",'zh-TW':"業種、地址、時間、評分、預約，以AI可讀形式輸出。",ko:"업종·주소·시간·평점·예약을 AI가 읽는 형태로.",es:"Tipo, dirección, horario, reseñas y reserva legibles por IA.",fr:"Type, adresse, horaires, avis et réservation, lisibles par l'IA.",de:"Art, Adresse, Zeiten, Bewertung, Buchung – KI-lesbar."},
+ "step.2.p":{ja:"llms.txt・AIクローラー許可まで自動で。",en:"llms.txt and crawler rules let AI traverse your site.",zh:"通过llms.txt与爬虫设置，让AI遍历你的网站。",'zh-TW':"透過llms.txt與爬蟲設定，讓AI遍歷你的網站。",ko:"llms.txt와 크롤러 설정으로 AI가 사이트를 순회.",es:"llms.txt y reglas de rastreo dejan que la IA recorra tu sitio.",fr:"llms.txt et règles de crawl laissent l'IA parcourir votre site.",de:"llms.txt und Crawler-Regeln lassen KI Ihre Seite durchlaufen."},
+ "step.3.p":{ja:"どれだけ引用されているかを、盛らずに数字で。",en:"Visualize AI visibility and form completion, with fixes suggested.",zh:"可视化AI可见性与表单完成率，并提出改进建议。",'zh-TW':"可視化AI可見性與表單完成率，並提出改進建議。",ko:"AI 가시성과 폼 완료율을 시각화하고 개선점 제시.",es:"Visualiza la visibilidad IA y la conversión, con mejoras sugeridas.",fr:"Visualisez la visibilité IA et la conversion, avec des pistes.",de:"KI-Sichtbarkeit und Abschlussrate sichtbar, inkl. Tipps."},
  "feat.kick":{ja:"できること",en:"What it does",zh:"功能",'zh-TW':"功能",ko:"기능",es:"Qué hace",fr:"Fonctions",de:"Funktionen"},
- "feat.h2":{ja:"“実行”を、<br>まるごと自動化。",en:"Automate the whole execution.",zh:"把“执行”整体自动化。",'zh-TW':"把「執行」整體自動化。",ko:"'실행'을 통째로 자동화.",es:"Automatiza toda la ejecución.",fr:"Automatisez toute l'exécution.",de:"Die ganze Umsetzung – automatisch."},
+ "feat.h2":{ja:"測って、直す。<br>AEOを、まるごと。",en:"Automate the whole execution.",zh:"把“执行”整体自动化。",'zh-TW':"把「執行」整體自動化。",ko:"'실행'을 통째로 자동화.",es:"Automatiza toda la ejecución.",fr:"Automatisez toute l'exécution.",de:"Die ganze Umsetzung – automatisch."},
  "feat.1.k":{ja:"サーバーサイド構造化データ",en:"Server-side structured data",zh:"服务端结构化数据",'zh-TW':"伺服器端結構化資料",ko:"서버사이드 구조화 데이터",es:"Datos estructurados en servidor",fr:"Données structurées côté serveur",de:"Serverseitige strukturierte Daten"},
  "feat.1.t":{ja:"JavaScriptを実行しないAIにも、確実に届く。",en:"Reaches AI that doesn't run JavaScript.",zh:"连不执行JS的AI也能读取。",'zh-TW':"連不執行JS的AI也能讀取。",ko:"JS를 실행하지 않는 AI에도 확실히.",es:"Llega a IA que no ejecuta JavaScript.",fr:"Atteint les IA qui n'exécutent pas JS.",de:"Erreicht auch KI ohne JavaScript."},
  "feat.1.p":{ja:"店舗(LocalBusiness)などのschema.orgをサイト側で出力。GPTBotのようなクローラーにも、正確な情報が読み取られます。",en:"Output schema.org (LocalBusiness, etc.) server-side, so crawlers like GPTBot read it accurately.",zh:"在服务端输出schema.org（LocalBusiness等），GPTBot等爬虫也能准确读取。",'zh-TW':"在伺服器端輸出schema.org（LocalBusiness等），GPTBot等爬蟲也能準確讀取。",ko:"schema.org(LocalBusiness 등)를 서버에서 출력해 GPTBot 같은 크롤러도 정확히 읽습니다.",es:"Genera schema.org (LocalBusiness…) en servidor; crawlers como GPTBot lo leen bien.",fr:"Générez schema.org (LocalBusiness…) côté serveur ; des crawlers comme GPTBot le lisent.",de:"schema.org (LocalBusiness…) serverseitig – Crawler wie GPTBot lesen es korrekt."},
  "feat.1.l1":{ja:"業種・住所・営業時間・評価・予約に対応",en:"Type, address, hours, rating, booking",zh:"支持业种、地址、时间、评分、预约",'zh-TW':"支援業種、地址、時間、評分、預約",ko:"업종·주소·시간·평점·예약 지원",es:"Tipo, dirección, horario, reseñas, reserva",fr:"Type, adresse, horaires, avis, réservation",de:"Art, Adresse, Zeiten, Bewertung, Buchung"},
  "feat.1.l2":{ja:"WordPress設定から自動生成",en:"Auto-generated from WordPress settings",zh:"由WordPress设置自动生成",'zh-TW':"由WordPress設定自動生成",ko:"WordPress 설정에서 자동 생성",es:"Autogenerado desde WordPress",fr:"Généré depuis les réglages WordPress",de:"Automatisch aus WordPress-Einstellungen"},
- "feat.2.k":{ja:"ダッシュボード",en:"Dashboard",zh:"仪表盘",'zh-TW':"儀表板",ko:"대시보드",es:"Panel",fr:"Tableau de bord",de:"Dashboard"},
- "feat.2.t":{ja:"AIに、どれだけ届いているか。",en:"See how far you reach AI.",zh:"看看你触达AI有多广。",'zh-TW':"看看你觸達AI有多廣。",ko:"AI에 얼마나 닿는지 확인.",es:"Mira cuánto llegas a la IA.",fr:"Voyez votre portée auprès de l'IA.",de:"Sehen Sie Ihre KI-Reichweite."},
- "feat.2.p":{ja:"AI可視性スコアで、AIにどれだけ正しく理解されているかを一目で。改善点も自動で提示します。",en:"See at a glance how well AI understands you, with an AI visibility score — plus automatic suggestions.",zh:"通过AI可见性评分，一眼看清AI对你的理解程度，并自动给出改进建议。",'zh-TW':"透過AI可見性評分，一眼看清AI對你的理解程度，並自動給出改進建議。",ko:"AI 가시성 점수로 AI가 얼마나 잘 이해하는지 한눈에. 개선점도 자동 제시.",es:"Con un score de visibilidad, ve de un vistazo cuánto te entiende la IA, con sugerencias.",fr:"Un score de visibilité montre d'un coup d'œil à quel point l'IA vous comprend, avec des pistes.",de:"Ein KI-Sichtbarkeits-Score zeigt auf einen Blick, wie gut die KI Sie versteht – mit Tipps."},
- "feat.2.l1":{ja:"AI可視性スコアで現状を把握",en:"Grasp status with an AI visibility score",zh:"用AI可见性评分掌握现状",'zh-TW':"用AI可見性評分掌握現狀",ko:"AI 가시성 점수로 현황 파악",es:"Conoce el estado con un score de visibilidad",fr:"État via un score de visibilité IA",de:"Status per KI-Sichtbarkeits-Score"},
- "feat.2.l2":{ja:"改善アクションを自動で提案",en:"Automatic improvement suggestions",zh:"自动提出改进建议",'zh-TW':"自動提出改進建議",ko:"개선 액션 자동 제안",es:"Sugerencias de mejora automáticas",fr:"Suggestions d'amélioration automatiques",de:"Automatische Verbesserungstipps"},
- "feat.3.k":{ja:"かんたん導入",en:"Easy setup",zh:"轻松接入",'zh-TW':"輕鬆接入",ko:"간편 도입",es:"Fácil de instalar",fr:"Installation facile",de:"Einfache Einrichtung"},
- "feat.3.t":{ja:"入れて、キーを貼るだけ。",en:"Install, paste your key, done.",zh:"安装、粘贴密钥，完成。",'zh-TW':"安裝、貼上金鑰，完成。",ko:"설치하고 키만 붙이면 끝.",es:"Instala, pega tu clave, listo.",fr:"Installez, collez la clé, terminé.",de:"Installieren, Key einfügen, fertig."},
- "feat.3.p":{ja:"WordPressなら公式プラグインを有効化してサイトキーを入力。GTM・直接タグでも1行で完了します。",en:"On WordPress, activate the plugin and enter your key. GTM or a direct tag works in one line too.",zh:"WordPress启用官方插件并输入密钥即可；GTM或直接标签也仅需一行。",'zh-TW':"WordPress啟用官方外掛並輸入金鑰即可；GTM或直接標籤也僅需一行。",ko:"WordPress는 플러그인 활성화 후 키 입력. GTM·직접 태그도 한 줄이면 됩니다.",es:"En WordPress activa el plugin e introduce la clave. GTM o etiqueta directa, una línea.",fr:"Sur WordPress, activez le plugin et saisissez la clé. GTM ou balise directe : une ligne.",de:"Bei WordPress Plugin aktivieren, Key eingeben. GTM oder Tag: eine Zeile."},
- "feat.3.l1":{ja:"コード不要（WordPress）",en:"No code (WordPress)",zh:"无需代码（WordPress）",'zh-TW':"無需程式碼（WordPress）",ko:"코드 불필요 (WordPress)",es:"Sin código (WordPress)",fr:"Sans code (WordPress)",de:"Ohne Code (WordPress)"},
- "feat.3.l2":{ja:"GTM / 直接タグにも対応",en:"GTM & direct tag supported",zh:"支持GTM / 直接标签",'zh-TW':"支援GTM / 直接標籤",ko:"GTM·직접 태그 지원",es:"Compatible con GTM y etiqueta directa",fr:"GTM et balise directe pris en charge",de:"GTM & direktes Tag unterstützt"},
+ "feat.2.k":{ja:"正直なSoV計測（Pro）",en:"Dashboard",zh:"仪表盘",'zh-TW':"儀表板",ko:"대시보드",es:"Panel",fr:"Tableau de bord",de:"Dashboard"},
+ "feat.2.t":{ja:"“盛らない”数字で、AIでの引用を測る。",en:"See how far you reach AI.",zh:"看看你触达AI有多广。",'zh-TW':"看看你觸達AI有多廣。",ko:"AI에 얼마나 닿는지 확인.",es:"Mira cuánto llegas a la IA.",fr:"Voyez votre portée auprès de l'IA.",de:"Sehen Sie Ihre KI-Reichweite."},
+ "feat.2.p":{ja:"AIの回答にどれだけ引用されたかを実測します。サンプルが足りないときは0%と丸めず、「サンプル不足」と正直に表示します。",en:"See at a glance how well AI understands you, with an AI visibility score — plus automatic suggestions.",zh:"通过AI可见性评分，一眼看清AI对你的理解程度，并自动给出改进建议。",'zh-TW':"透過AI可見性評分，一眼看清AI對你的理解程度，並自動給出改進建議。",ko:"AI 가시성 점수로 AI가 얼마나 잘 이해하는지 한눈에. 개선점도 자동 제시.",es:"Con un score de visibilidad, ve de un vistazo cuánto te entiende la IA, con sugerencias.",fr:"Un score de visibilité montre d'un coup d'œil à quel point l'IA vous comprend, avec des pistes.",de:"Ein KI-Sichtbarkeits-Score zeigt auf einen Blick, wie gut die KI Sie versteht – mit Tipps."},
+ "feat.2.l1":{ja:"引用率・競合比較・推移を実測",en:"Grasp status with an AI visibility score",zh:"用AI可见性评分掌握现状",'zh-TW':"用AI可見性評分掌握現狀",ko:"AI 가시성 점수로 현황 파악",es:"Conoce el estado con un score de visibilidad",fr:"État via un score de visibilité IA",de:"Status per KI-Sichtbarkeits-Score"},
+ "feat.2.l2":{ja:"測れないときは、測れないと表示",en:"Automatic improvement suggestions",zh:"自动提出改进建议",'zh-TW':"自動提出改進建議",ko:"개선 액션 자동 제안",es:"Sugerencias de mejora automáticas",fr:"Suggestions d'amélioration automatiques",de:"Automatische Verbesserungstipps"},
+ "feat.3.k":{ja:"Yoast / Rank Mathと共存",en:"Easy setup",zh:"轻松接入",'zh-TW':"輕鬆接入",ko:"간편 도입",es:"Fácil de instalar",fr:"Installation facile",de:"Einfache Einrichtung"},
+ "feat.3.t":{ja:"今の設定を壊さない。足りないところだけ、そっと補う。",en:"Install, paste your key, done.",zh:"安装、粘贴密钥，完成。",'zh-TW':"安裝、貼上金鑰，完成。",ko:"설치하고 키만 붙이면 끝.",es:"Instala, pega tu clave, listo.",fr:"Installez, collez la clé, terminé.",de:"Installieren, Key einfügen, fertig."},
+ "feat.3.p":{ja:"すでに出力されている構造化データは尊重し、AI向けに不足している部分だけを補います。既存のSEO設定は置き換えません。",en:"On WordPress, activate the plugin and enter your key. GTM or a direct tag works in one line too.",zh:"WordPress启用官方插件并输入密钥即可；GTM或直接标签也仅需一行。",'zh-TW':"WordPress啟用官方外掛並輸入金鑰即可；GTM或直接標籤也僅需一行。",ko:"WordPress는 플러그인 활성화 후 키 입력. GTM·직접 태그도 한 줄이면 됩니다.",es:"En WordPress activa el plugin e introduce la clave. GTM o etiqueta directa, una línea.",fr:"Sur WordPress, activez le plugin et saisissez la clé. GTM ou balise directe : une ligne.",de:"Bei WordPress Plugin aktivieren, Key eingeben. GTM oder Tag: eine Zeile."},
+ "feat.3.l1":{ja:"既存のschema出力を尊重",en:"No code (WordPress)",zh:"无需代码（WordPress）",'zh-TW':"無需程式碼（WordPress）",ko:"코드 불필요 (WordPress)",es:"Sin código (WordPress)",fr:"Sans code (WordPress)",de:"Ohne Code (WordPress)"},
+ "feat.3.l2":{ja:"不足分だけをスマートに補完",en:"GTM & direct tag supported",zh:"支持GTM / 直接标签",'zh-TW':"支援GTM / 直接標籤",ko:"GTM·직접 태그 지원",es:"Compatible con GTM y etiqueta directa",fr:"GTM et balise directe pris en charge",de:"GTM & direktes Tag unterstützt"},
  "kpi.vis":{ja:"AI可視性スコア",en:"AI visibility",zh:"AI可见性",'zh-TW':"AI可見性",ko:"AI 가시성",es:"Visibilidad IA",fr:"Visibilité IA",de:"KI-Sichtbarkeit"},
  "kpi.form":{ja:"フォーム完了率",en:"Form completion",zh:"表单完成率",'zh-TW':"表單完成率",ko:"폼 완료율",es:"Conversión de formulario",fr:"Taux de complétion",de:"Formular-Abschluss"},
  "kpi.access":{ja:"AIクローラーのアクセス",en:"AI crawler access",zh:"AI爬虫访问",'zh-TW':"AI爬蟲存取",ko:"AI 크롤러 접근",es:"Acceso de crawlers IA",fr:"Accès crawlers IA",de:"KI-Crawler-Zugriffe"},
@@ -621,7 +624,7 @@ const I18N={
  "price.free.4":{ja:"Yoast・Rank Mathと併用OK",en:"Works alongside Yoast and Rank Math",zh:"可与Yoast、Rank Math并用",'zh-TW':"可與Yoast、Rank Math並用",ko:"Yoast·Rank Math와 병용 가능",es:"Compatible con Yoast y Rank Math",fr:"Compatible Yoast et Rank Math",de:"Parallel zu Yoast und Rank Math"},
  "price.free.cta":{ja:"無料ではじめる",en:"Start free",zh:"免费开始",'zh-TW':"免費開始",ko:"무료로 시작",es:"Empezar gratis",fr:"Commencer gratuitement",de:"Kostenlos starten"},
  "price.std.nm":{ja:"Standard",en:"Standard",zh:"Standard",'zh-TW':"Standard",ko:"Standard",es:"Standard",fr:"Standard",de:"Standard"},
- "price.std.desc":{ja:"AIの基準は変わり続けます。追従はNurevoに任せる。",en:"AI criteria keep changing. Let Nurevo keep up for you.",zh:"AI的标准不断变化，跟进交给Nurevo。",'zh-TW':"AI的標準不斷變化，跟進交給Nurevo。",ko:"AI 기준은 계속 바뀝니다. 추종은 Nurevo에 맡기세요.",es:"Los criterios de IA cambian. Deja que Nurevo los siga.",fr:"Les critères IA évoluent. Nurevo suit pour vous.",de:"KI-Kriterien ändern sich. Nurevo bleibt dran."},
+ "price.std.desc":{ja:"AIの基準は変わり続ける。追従はNurevoに任せる。",en:"AI criteria keep changing. Let Nurevo keep up for you.",zh:"AI的标准不断变化，跟进交给Nurevo。",'zh-TW':"AI的標準不斷變化，跟進交給Nurevo。",ko:"AI 기준은 계속 바뀝니다. 추종은 Nurevo에 맡기세요.",es:"Los criterios de IA cambian. Deja que Nurevo los siga.",fr:"Les critères IA évoluent. Nurevo suit pour vous.",de:"KI-Kriterien ändern sich. Nurevo bleibt dran."},
  "price.std.1":{ja:"Freeプランのすべて",en:"Everything in Free",zh:"包含免费版全部功能",'zh-TW':"包含免費版全部功能",ko:"무료 플랜의 모든 기능",es:"Todo lo del plan Gratis",fr:"Tout le plan Gratuit",de:"Alles aus Kostenlos"},
  "price.std.2":{ja:"「常に最新」中央rulesetで自動最適化",en:"\"Always current\" — auto-optimized by the central ruleset",zh:"「始终最新」由中央ruleset自动优化",'zh-TW':"「始終最新」由中央ruleset自動優化",ko:"'항상 최신' 중앙 ruleset으로 자동 최적화",es:"«Siempre al día»: optimización automática por el ruleset central",fr:"« Toujours à jour » : optimisation auto par le ruleset central",de:"„Immer aktuell“ – Auto-Optimierung per zentralem Ruleset"},
  "price.std.3":{ja:"AIの基準が変わると自動で最適化し直し",en:"Re-optimized automatically when AI criteria change",zh:"AI标准变化时自动重新优化",'zh-TW':"AI標準變化時自動重新優化",ko:"AI 기준이 바뀌면 자동으로 재최적화",es:"Reoptimización automática al cambiar los criterios de IA",fr:"Ré-optimisation auto quand les critères IA changent",de:"Automatische Neu-Optimierung bei geänderten KI-Kriterien"},
@@ -629,11 +632,11 @@ const I18N={
  "price.std.cta":{ja:"Standardをはじめる",en:"Start Standard",zh:"开通标准版",'zh-TW':"開通標準版",ko:"표준 시작",es:"Empezar Estándar",fr:"Démarrer Standard",de:"Standard starten"},
  "price.top.nm":{ja:"Pro",en:"Pro",zh:"Pro",'zh-TW':"Pro",ko:"Pro",es:"Pro",fr:"Pro",de:"Pro"},
  "price.top.unit":{ja:" / 月〜",en:" / mo and up",zh:" / 月起",'zh-TW':" / 月起",ko:" / 월~",es:" / mes en adelante",fr:" / mois et plus",de:" / Monat aufwärts"},
- "price.top.desc":{ja:"出して終わりにしない。AIでの露出を数字で追う。",en:"Don't stop at publishing. Track your AI visibility in numbers.",zh:"不止于输出。用数字追踪AI中的曝光。",'zh-TW':"不止於輸出。用數字追蹤AI中的曝光。",ko:"출력에서 끝내지 않고, AI 노출을 수치로 추적.",es:"No te quedes en publicar: mide tu visibilidad en IA.",fr:"Ne vous arrêtez pas à la publication : mesurez votre visibilité IA.",de:"Nicht nur veröffentlichen – KI-Sichtbarkeit messen."},
+ "price.top.desc":{ja:"出して終わりにしない。AIでの引用を“正直な数字”で追う。",en:"Don't stop at publishing. Track your AI visibility in numbers.",zh:"不止于输出。用数字追踪AI中的曝光。",'zh-TW':"不止於輸出。用數字追蹤AI中的曝光。",ko:"출력에서 끝내지 않고, AI 노출을 수치로 추적.",es:"No te quedes en publicar: mide tu visibilidad en IA.",fr:"Ne vous arrêtez pas à la publication : mesurez votre visibilité IA.",de:"Nicht nur veröffentlichen – KI-Sichtbarkeit messen."},
  "price.top.1":{ja:"Standardプランのすべて",en:"Everything in Standard",zh:"包含标准版全部功能",'zh-TW':"包含標準版全部功能",ko:"표준 플랜의 모든 기능",es:"Todo lo del plan Estándar",fr:"Tout le plan Standard",de:"Alles aus Standard"},
- "price.top.2":{ja:"「測定」AIの回答にどれだけ登場しているか（登場率）",en:"\"Measurement\" — how often AI answers mention you (appearance rate)",zh:"「测量」你在AI回答中出现的频率（登场率）",'zh-TW':"「測量」你在AI回答中出現的頻率（登場率）",ko:"'측정' AI 답변에 얼마나 등장하는가(등장률)",es:"«Medición»: con qué frecuencia te menciona la IA (tasa de aparición)",fr:"« Mesure » : fréquence de mention par l'IA (taux d'apparition)",de:"„Messung“ – wie oft KI-Antworten Sie nennen (Erscheinungsrate)"},
- "price.top.3":{ja:"競合比較",en:"Competitor comparison",zh:"竞品对比",'zh-TW':"競品對比",ko:"경쟁사 비교",es:"Comparación con competidores",fr:"Comparaison concurrentielle",de:"Wettbewerbsvergleich"},
- "price.top.4":{ja:"推移・月次レポート",en:"Trends and a monthly report",zh:"趋势与月度报告",'zh-TW':"趨勢與月度報告",ko:"추이·월간 리포트",es:"Tendencias e informe mensual",fr:"Tendances et rapport mensuel",de:"Verlauf und Monatsbericht"},
+ "price.top.2":{ja:"「測定」AIの回答にどれだけ引用されているか（引用率）",en:"\"Measurement\" — how often AI answers mention you (appearance rate)",zh:"「测量」你在AI回答中出现的频率（登场率）",'zh-TW':"「測量」你在AI回答中出現的頻率（登場率）",ko:"'측정' AI 답변에 얼마나 등장하는가(등장률)",es:"«Medición»: con qué frecuencia te menciona la IA (tasa de aparición)",fr:"« Mesure » : fréquence de mention par l'IA (taux d'apparition)",de:"„Messung“ – wie oft KI-Antworten Sie nennen (Erscheinungsrate)"},
+ "price.top.3":{ja:"競合との引用比較",en:"Competitor comparison",zh:"竞品对比",'zh-TW':"競品對比",ko:"경쟁사 비교",es:"Comparación con competidores",fr:"Comparaison concurrentielle",de:"Wettbewerbsvergleich"},
+ "price.top.4":{ja:"引用率の推移・月次レポート",en:"Trends and a monthly report",zh:"趋势与月度报告",'zh-TW':"趨勢與月度報告",ko:"추이·월간 리포트",es:"Tendencias e informe mensual",fr:"Tendances et rapport mensuel",de:"Verlauf und Monatsbericht"},
  "price.top.cta":{ja:"Proプランを見る",en:"See Advanced",zh:"查看高级版",'zh-TW':"查看高階版",ko:"상위 플랜 보기",es:"Ver Avanzado",fr:"Voir Avancé",de:"Advanced ansehen"},
  "voices.kick":{ja:"導入の声",en:"Testimonials",zh:"客户之声",'zh-TW':"客戶心聲",ko:"고객 후기",es:"Testimonios",fr:"Témoignages",de:"Stimmen"},
  "voices.h2":{ja:"使っている人の声。",en:"What customers say.",zh:"用户怎么说。",'zh-TW':"用戶怎麼說。",ko:"사용자의 목소리.",es:"Lo que dicen los clientes.",fr:"Ce qu'en disent les clients.",de:"Was Kunden sagen."},
@@ -646,8 +649,8 @@ const I18N={
  "voice.3.r":{ja:"代表",en:"CEO",zh:"负责人",'zh-TW':"負責人",ko:"대표",es:"CEO",fr:"Dirigeant",de:"Geschäftsführer"},
  "faq.kick":{ja:"FAQ",en:"FAQ",zh:"常见问题",'zh-TW':"常見問題",ko:"FAQ",es:"FAQ",fr:"FAQ",de:"FAQ"},
  "faq.h2":{ja:"よくある質問",en:"Frequently asked",zh:"常见问题",'zh-TW':"常見問題",ko:"자주 묻는 질문",es:"Preguntas frecuentes",fr:"Questions fréquentes",de:"Häufige Fragen"},
- "faq.1.q":{ja:"schemaは自分でも作れるのでは？",en:"Can't I write schema myself?",zh:"我自己也能写schema吧？",'zh-TW':"我自己也能寫schema吧？",ko:"schema는 직접 만들 수 있지 않나요?",es:"¿No puedo crear el schema yo?",fr:"Je peux écrire le schema moi-même ?",de:"Kann ich Schema nicht selbst schreiben?"},
- "faq.1.a":{ja:"生成は可能です。Nurevoの価値は横断学習と標準への追従保守を任せられる点。実行を委ね、集客に集中できます。",en:"You can. Nurevo's value is cross-site learning and keeping up with standards — so you focus on growth.",zh:"可以。Nurevo的价值在于跨站学习与持续跟进标准，让你专注获客。",'zh-TW':"可以。Nurevo的價值在於跨站學習與持續跟進標準，讓你專注獲客。",ko:"가능합니다. Nurevo의 가치는 횡단 학습과 표준 유지보수를 맡기는 것.",es:"Puedes. El valor de Nurevo es el aprendizaje entre sitios y mantener los estándares.",fr:"Oui. La valeur de Nurevo : l'apprentissage inter-sites et le suivi des standards.",de:"Ja. Nurevos Wert: site-übergreifendes Lernen und Standard-Pflege."},
+ "faq.1.q":{ja:"すでにYoast（やRank Math）を使っています。併用できますか？",en:"Can't I write schema myself?",zh:"我自己也能写schema吧？",'zh-TW':"我自己也能寫schema吧？",ko:"schema는 직접 만들 수 있지 않나요?",es:"¿No puedo crear el schema yo?",fr:"Je peux écrire le schema moi-même ?",de:"Kann ich Schema nicht selbst schreiben?"},
+ "faq.1.a":{ja:"はい。Nurevoは既存のSEO設定を置き換えません。すでに出力されている構造化データは尊重し、AI向けに足りない部分だけを補います（スマート共存）。",en:"You can. Nurevo's value is cross-site learning and keeping up with standards — so you focus on growth.",zh:"可以。Nurevo的价值在于跨站学习与持续跟进标准，让你专注获客。",'zh-TW':"可以。Nurevo的價值在於跨站學習與持續跟進標準，讓你專注獲客。",ko:"가능합니다. Nurevo의 가치는 횡단 학습과 표준 유지보수를 맡기는 것.",es:"Puedes. El valor de Nurevo es el aprendizaje entre sitios y mantener los estándares.",fr:"Oui. La valeur de Nurevo : l'apprentissage inter-sites et le suivi des standards.",de:"Ja. Nurevos Wert: site-übergreifendes Lernen und Standard-Pflege."},
  "faq.2.q":{ja:"本当にAIに推薦されますか？",en:"Will AI really recommend me?",zh:"真的会被AI推荐吗？",'zh-TW':"真的會被AI推薦嗎？",ko:"정말 AI가 추천하나요?",es:"¿De verdad me recomendará la IA?",fr:"L'IA va-t-elle vraiment me recommander ?",de:"Empfiehlt mich die KI wirklich?"},
  "faq.2.a":{ja:"「AIが正確に理解・説明する」土台を作ります。推薦の押し上げはAI側に依存するため、効果は導入後に一緒に測ります。",en:"We build the base for AI to understand you accurately. Ranking depends on the AI, so we measure impact together after launch.",zh:"我们打造让AI准确理解的基础。推荐排名取决于AI，效果会在上线后一起衡量。",'zh-TW':"我們打造讓AI準確理解的基礎。推薦排名取決於AI，效果會在上線後一起衡量。",ko:"AI가 정확히 이해하는 토대를 만듭니다. 추천은 AI에 달려 있어 도입 후 함께 측정합니다.",es:"Creamos la base para que la IA te entienda. El ranking depende de la IA; medimos juntos.",fr:"Nous créons la base pour que l'IA vous comprenne. Le classement dépend de l'IA ; on mesure ensemble.",de:"Wir schaffen die Basis, dass KI Sie versteht. Ranking hängt von der KI ab – wir messen gemeinsam."},
  "faq.3.q":{ja:"入力値はNurevoに送られますか？",en:"Are form inputs sent to Nurevo?",zh:"输入内容会发送给Nurevo吗？",'zh-TW':"輸入內容會傳送給Nurevo嗎？",ko:"입력값이 Nurevo로 전송되나요?",es:"¿Se envían los datos a Nurevo?",fr:"Les saisies sont-elles envoyées à Nurevo ?",de:"Werden Eingaben an Nurevo gesendet?"},
@@ -655,8 +658,8 @@ const I18N={
  "faq.4.q":{ja:"導入にコードは必要ですか？",en:"Do I need to code?",zh:"接入需要写代码吗？",'zh-TW':"接入需要寫程式碼嗎？",ko:"도입에 코드가 필요한가요?",es:"¿Necesito programar?",fr:"Faut-il coder ?",de:"Brauche ich Code?"},
  "faq.4.a":{ja:"WordPressならプラグイン有効化とキー入力だけ。GTM・直接タグでも1行で完了します。",en:"On WordPress, just activate the plugin and enter a key. GTM or a direct tag is one line.",zh:"WordPress只需启用插件并输入密钥；GTM或直接标签一行即可。",'zh-TW':"WordPress只需啟用外掛並輸入金鑰；GTM或直接標籤一行即可。",ko:"WordPress는 플러그인 활성화와 키 입력뿐. GTM·직접 태그도 한 줄.",es:"En WordPress, activa el plugin e introduce la clave. GTM o etiqueta directa, una línea.",fr:"Sur WordPress, activez le plugin et saisissez une clé. GTM ou balise : une ligne.",de:"Bei WordPress Plugin aktivieren und Key eingeben. GTM/Tag: eine Zeile."},
  "final.h2":{ja:"AIに選ばれるお店に、今日から。",en:"Be the business AI picks — starting today.",zh:"从今天起，成为被AI选中的店铺。",'zh-TW':"從今天起，成為被AI選中的店家。",ko:"오늘부터, AI가 고르는 매장으로.",es:"Sé el negocio que la IA elige, desde hoy.",fr:"Devenez l'établissement que l'IA choisit, dès aujourd'hui.",de:"Ab heute das Geschäft, das die KI wählt."},
- "final.lead":{ja:"GTMかWordPressで、タグ1本・5分。まずは無料から。",en:"One tag, 5 minutes, via GTM or WordPress. Start free.",zh:"通过GTM或WordPress，一行标签、5分钟。先从免费开始。",'zh-TW':"透過GTM或WordPress，一行標籤、5分鐘。先從免費開始。",ko:"GTM 또는 WordPress로 태그 하나·5분. 무료부터.",es:"Una etiqueta, 5 minutos, con GTM o WordPress. Empieza gratis.",fr:"Une balise, 5 minutes, via GTM ou WordPress. Commencez gratuitement.",de:"Ein Tag, 5 Minuten, per GTM oder WordPress. Kostenlos starten."},
- "final.cta1":{ja:"今すぐ導入する",en:"Get started",zh:"立即使用",'zh-TW':"立即使用",ko:"지금 시작",es:"Empezar ahora",fr:"Commencer",de:"Jetzt starten"},
+ "final.lead":{ja:"まずは無料で、あなたのサイトのスコアを確かめる。",en:"One tag, 5 minutes, via GTM or WordPress. Start free.",zh:"通过GTM或WordPress，一行标签、5分钟。先从免费开始。",'zh-TW':"透過GTM或WordPress，一行標籤、5分鐘。先從免費開始。",ko:"GTM 또는 WordPress로 태그 하나·5분. 무료부터.",es:"Una etiqueta, 5 minutos, con GTM o WordPress. Empieza gratis.",fr:"Une balise, 5 minutes, via GTM ou WordPress. Commencez gratuitement.",de:"Ein Tag, 5 Minuten, per GTM oder WordPress. Kostenlos starten."},
+ "final.cta1":{ja:"無料で診断する",en:"Get started",zh:"立即使用",'zh-TW':"立即使用",ko:"지금 시작",es:"Empezar ahora",fr:"Commencer",de:"Jetzt starten"},
  "final.cta2":{ja:"代理店・OEM相談",en:"Agency / OEM",zh:"代理·OEM咨询",'zh-TW':"代理·OEM諮詢",ko:"대리점·OEM 상담",es:"Agencia / OEM",fr:"Agence / OEM",de:"Agentur / OEM"},
  "company.h":{ja:"会社概要",en:"Company",zh:"公司信息",'zh-TW':"公司資訊",ko:"회사 정보",es:"Empresa",fr:"Société",de:"Unternehmen"},
  "company.name":{ja:"運営会社",en:"Company",zh:"运营公司",'zh-TW':"營運公司",ko:"운영 회사",es:"Empresa",fr:"Société",de:"Firma"},
@@ -695,19 +698,20 @@ const I18N={
  "stat.4.n":{ja:"2億+",en:"200M+",zh:"2亿+",'zh-TW':"2億+",ko:"2억+",es:"200M+",fr:"200 M+",de:"200 Mio.+"},
  "pricing.badge":{ja:"おすすめ",en:"Popular",zh:"推荐",'zh-TW':"推薦",ko:"추천",es:"Popular",fr:"Populaire",de:"Beliebt"},
  "pricing.beta":{ja:"β・近日提供",en:"Beta · coming soon",zh:"β·即将推出",'zh-TW':"β·即將推出",ko:"β·출시 예정",es:"Beta · muy pronto",fr:"Bêta · bientôt",de:"Beta · demnächst"},
- "herocheck.h":{ja:"あなたのサイト、<span class=\"hl\">AIにちゃんと読まれてる？</span>",en:"Is your site <span class=\"hl\">actually readable to AI?</span>",zh:"你的网站，<span class=\"hl\">AI真的读懂了吗？</span>",'zh-TW':"你的網站，<span class=\"hl\">AI真的讀懂了嗎？</span>",ko:"당신의 사이트, <span class=\"hl\">AI가 제대로 읽고 있나요?</span>",es:"¿La IA <span class=\"hl\">lee bien tu sitio?</span>",fr:"Votre site est-il <span class=\"hl\">vraiment lisible par l'IA ?</span>",de:"Liest die KI <span class=\"hl\">Ihre Seite wirklich?</span>"},
- "herocheck.sub":{ja:"URLを入れるだけ。登録不要・無料でAI可読スコアを診断します。",en:"Just paste a URL. No signup — get your AI readability score free.",zh:"只需输入URL。无需注册，免费诊断AI可读性评分。",'zh-TW':"只需輸入URL。無需註冊，免費診斷AI可讀性評分。",ko:"URL만 입력하세요. 가입 없이 무료로 AI 가독성 점수를 진단합니다.",es:"Solo pega una URL. Sin registro: tu score de legibilidad IA, gratis.",fr:"Collez une URL. Sans inscription : votre score de lisibilité IA, gratuit.",de:"Einfach URL einfügen. Ohne Anmeldung – KI-Lesbarkeits-Score kostenlos."},
+ "herocheck.h":{ja:'まず、<span class="hl">AIにちゃんと読まれているか</span><span class="nb">確かめる</span>',en:"Is your site <span class=\"hl\">actually readable to AI?</span>",zh:"你的网站，<span class=\"hl\">AI真的读懂了吗？</span>",'zh-TW':"你的網站，<span class=\"hl\">AI真的讀懂了嗎？</span>",ko:"당신의 사이트, <span class=\"hl\">AI가 제대로 읽고 있나요?</span>",es:"¿La IA <span class=\"hl\">lee bien tu sitio?</span>",fr:"Votre site est-il <span class=\"hl\">vraiment lisible par l'IA ?</span>",de:"Liest die KI <span class=\"hl\">Ihre Seite wirklich?</span>"},
+ "herocheck.sub":{ja:"URLを入れるだけ。登録不要・無料で、AI可読スコアを即時診断。",en:"Just paste a URL. No signup — get your AI readability score free.",zh:"只需输入URL。无需注册，免费诊断AI可读性评分。",'zh-TW':"只需輸入URL。無需註冊，免費診斷AI可讀性評分。",ko:"URL만 입력하세요. 가입 없이 무료로 AI 가독성 점수를 진단합니다.",es:"Solo pega una URL. Sin registro: tu score de legibilidad IA, gratis.",fr:"Collez une URL. Sans inscription : votre score de lisibilité IA, gratuit.",de:"Einfach URL einfügen. Ohne Anmeldung – KI-Lesbarkeits-Score kostenlos."},
  "herocheck.label":{ja:"診断するサイトのURL",en:"URL of the site to diagnose",zh:"要诊断的网站URL",'zh-TW':"要診斷的網站URL",ko:"진단할 사이트 URL",es:"URL del sitio a diagnosticar",fr:"URL du site à analyser",de:"URL der zu prüfenden Seite"},
  "herocheck.ph":{ja:"example.com",en:"example.com",zh:"example.com",'zh-TW':"example.com",ko:"example.com",es:"example.com",fr:"example.com",de:"example.com"},
  "herocheck.cta":{ja:"URLで無料診断",en:"Check my site free",zh:"输入URL免费诊断",'zh-TW':"輸入URL免費診斷",ko:"URL로 무료 진단",es:"Diagnóstico gratis",fr:"Analyser gratuitement",de:"Kostenlos prüfen"},
  "herocheck.err":{ja:"サイトのURLを入力してください（例：example.com）。",en:"Enter a site URL (for example, example.com).",zh:"请输入网站URL（例如 example.com）。",'zh-TW':"請輸入網站URL（例如 example.com）。",ko:"사이트 URL을 입력하세요(예: example.com).",es:"Introduce una URL (por ejemplo, example.com).",fr:"Saisissez une URL (par exemple example.com).",de:"Geben Sie eine URL ein (z. B. example.com)."},
- "herocheck.note":{ja:"AIクローラー到達性・構造化データ・llms.txt など8項目を即時チェック",en:"Eight checks instantly: AI crawler access, structured data, llms.txt and more",zh:"即时检查8项：AI爬虫可达性、结构化数据、llms.txt等",'zh-TW':"即時檢查8項：AI爬蟲可達性、結構化資料、llms.txt等",ko:"AI 크롤러 도달성·구조화 데이터·llms.txt 등 8개 항목을 즉시 점검",es:"Ocho comprobaciones al instante: acceso de crawlers, datos estructurados, llms.txt y más",fr:"Huit vérifications immédiates : accès crawlers, données structurées, llms.txt…",de:"Acht Prüfungen sofort: Crawler-Zugriff, strukturierte Daten, llms.txt u. a."}
+ "herocheck.note":{ja:"AIクローラー到達性・構造化データ・llms.txt など8項目を即チェック",en:"Eight checks instantly: AI crawler access, structured data, llms.txt and more",zh:"即时检查8项：AI爬虫可达性、结构化数据、llms.txt等",'zh-TW':"即時檢查8項：AI爬蟲可達性、結構化資料、llms.txt等",ko:"AI 크롤러 도달성·구조화 데이터·llms.txt 등 8개 항목을 즉시 점검",es:"Ocho comprobaciones al instante: acceso de crawlers, datos estructurados, llms.txt y más",fr:"Huit vérifications immédiates : accès crawlers, données structurées, llms.txt…",de:"Acht Prüfungen sofort: Crawler-Zugriff, strukturierte Daten, llms.txt u. a."}
 };
 function setLang(lang){
   document.documentElement.lang = (lang==='zh'?'zh-CN':lang);
   document.querySelectorAll('[data-i18n]').forEach(el=>{ const k=el.getAttribute('data-i18n'); const t=I18N[k]; if(t&&t[lang]) el.textContent=t[lang]; });
   document.querySelectorAll('[data-i18n-html]').forEach(el=>{ const k=el.getAttribute('data-i18n-html'); const t=I18N[k]; if(t&&t[lang]) el.innerHTML=t[lang]; });
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{ const k=el.getAttribute('data-i18n-ph'); const t=I18N[k]; if(t&&t[lang]) el.placeholder=t[lang]; });
+  const mbadge=(I18N['pricing.badge']||{})[lang]; const mprim=document.querySelector('.method.primary'); if(mprim&&mbadge) mprim.setAttribute('data-badge',mbadge);
   const badge=(I18N['pricing.badge']||{})[lang]; const pro=document.querySelector('.plan.pro'); if(pro&&badge) pro.setAttribute('data-badge',badge);
   const beta=(I18N['pricing.beta']||{})[lang]; const top=document.querySelector('.plan.beta'); if(top&&beta) top.setAttribute('data-badge',beta);
   try{ localStorage.setItem('nurevo_lang',lang); }catch(e){}
