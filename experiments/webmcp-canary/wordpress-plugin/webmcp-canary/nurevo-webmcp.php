@@ -206,6 +206,7 @@ function webmcp_canary_store_info_changed($old_value, $value) {
     if (!$dirty) {
         return;
     }
+    webmcp_canary_refresh_catalog();
     $pushed = webmcp_canary_push_profile();
     if (!is_wp_error($pushed)) {
         // The merged record may differ from what was sent, so re-diagnose.
@@ -1799,6 +1800,180 @@ function webmcp_canary_bind_license($license, $tag_url = '') {
  * This is the free baseline: it never contacts the Nurevo service, so the
  * /llms.txt output keeps working with no site key and no license.
  */
+/* -----------------------------------------------------------------------
+ * WooCommerce.
+ *
+ * A store already publishes Product JSON-LD of its own (WC_Structured_Data), so
+ * there is nothing to add there and emitting our own would duplicate it - see
+ * the per-type coexistence rules, where Product is theirs on detection alone.
+ *
+ * What WooCommerce does not publish is an llms.txt. A model reading one gets the
+ * catalogue as text with prices and availability, which is pure gain and cannot
+ * collide with anything. The same list is what the measurement needs to ask
+ * questions about the things this shop actually sells, rather than about the
+ * shop in the abstract.
+ * --------------------------------------------------------------------- */
+
+/** How many products are read. A catalogue is not a sitemap. */
+if (!defined('WEBMCP_CANARY_MAX_PRODUCTS')) {
+    define('WEBMCP_CANARY_MAX_PRODUCTS', 50);
+}
+
+function webmcp_canary_woocommerce_active() {
+    return !empty(webmcp_canary_detect_active_commerce_plugins());
+}
+
+/**
+ * The catalogue, as plain arrays.
+ *
+ * Deliberately returns data and nothing else: the llms.txt builder and the
+ * measurement feed both read it, and neither should have to know what a
+ * WC_Product is. Only published, visible, purchasable products are included -
+ * a draft or a hidden product is not something to tell a model about.
+ */
+function webmcp_canary_woocommerce_products($limit = null) {
+    $limit = $limit === null ? WEBMCP_CANARY_MAX_PRODUCTS : max(1, (int) $limit);
+    if (!webmcp_canary_woocommerce_active() || !function_exists('wc_get_products')) {
+        return array();
+    }
+    $found = wc_get_products(array(
+        'status' => 'publish',
+        'limit' => $limit,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'visibility' => 'visible',
+        'return' => 'objects',
+    ));
+    if (!is_array($found)) {
+        return array();
+    }
+    $products = array();
+    foreach ($found as $product) {
+        if (!is_object($product) || !method_exists($product, 'get_name')) {
+            continue;
+        }
+        $name = webmcp_canary_llms_line($product->get_name());
+        if ($name === '') {
+            continue;
+        }
+        $products[] = array(
+            'name' => $name,
+            'url' => method_exists($product, 'get_permalink') ? (string) $product->get_permalink() : '',
+            'sku' => method_exists($product, 'get_sku') ? webmcp_canary_llms_line($product->get_sku()) : '',
+            // The displayed price, not the raw meta: a sale price is what a
+            // customer is actually asked for, and what a model should quote.
+            'price' => method_exists($product, 'get_price') ? webmcp_canary_llms_line($product->get_price()) : '',
+            'currency' => function_exists('get_woocommerce_currency') ? (string) get_woocommerce_currency() : '',
+            'in_stock' => method_exists($product, 'is_in_stock') ? (bool) $product->is_in_stock() : null,
+            'categories' => webmcp_canary_woocommerce_product_categories($product),
+        );
+    }
+    return $products;
+}
+
+function webmcp_canary_woocommerce_product_categories($product) {
+    if (!method_exists($product, 'get_id') || !function_exists('wp_get_post_terms')) {
+        return array();
+    }
+    $terms = wp_get_post_terms($product->get_id(), 'product_cat', array('fields' => 'names'));
+    if (!is_array($terms)) {
+        return array();
+    }
+    $names = array();
+    foreach ($terms as $term) {
+        $name = webmcp_canary_llms_line($term);
+        if ($name !== '') {
+            $names[] = $name;
+        }
+    }
+    return $names;
+}
+
+/** One product as an llms.txt line: what it is, what it costs, can it be had. */
+function webmcp_canary_product_llms_line($product) {
+    $label = $product['name'];
+    if (!empty($product['url'])) {
+        $label = '[' . $product['name'] . '](' . $product['url'] . ')';
+    }
+    $notes = array();
+    if ($product['price'] !== '') {
+        $notes[] = trim($product['currency'] . ' ' . $product['price']);
+    }
+    if ($product['in_stock'] === true) {
+        $notes[] = 'in stock';
+    } elseif ($product['in_stock'] === false) {
+        $notes[] = 'out of stock';
+    }
+    if (!empty($product['sku'])) {
+        $notes[] = 'SKU ' . $product['sku'];
+    }
+    if (!empty($product['categories'])) {
+        $notes[] = implode(' / ', $product['categories']);
+    }
+    return '- ' . $label . (empty($notes) ? '' : ' — ' . implode(' · ', $notes));
+}
+
+/**
+ * The catalogue as the measurement sees it.
+ *
+ * Share-of-voice asks an engine questions and looks for this business in the
+ * answers. Without a catalogue the questions can only be about the business in
+ * general; with one they can be about what it actually sells, which is what
+ * someone searching for a product would ask. This is the supply side only - the
+ * engines, the budget and the scoring live in the service.
+ */
+/** Where the catalogue snapshot is kept between refreshes. */
+if (!defined('WEBMCP_CANARY_CATALOG_OPTION')) {
+    define('WEBMCP_CANARY_CATALOG_OPTION', 'webmcp_canary_catalog');
+}
+
+/**
+ * Refresh the stored catalogue snapshot.
+ *
+ * wc_get_products() is a database query per call, so the feed is built on a
+ * schedule and on save rather than on every request that wants it. The snapshot
+ * is what the measurement reads; the service consuming it is a separate piece
+ * of work, so nothing is transmitted here - this is the supply side only, and
+ * sending data the service would discard would be worse than not sending it.
+ */
+function webmcp_canary_refresh_catalog() {
+    if (!webmcp_canary_woocommerce_active()) {
+        delete_option(WEBMCP_CANARY_CATALOG_OPTION);
+        return array();
+    }
+    $feed = webmcp_canary_measurement_feed();
+    $feed['refreshed_at'] = time();
+    update_option(WEBMCP_CANARY_CATALOG_OPTION, $feed, false);
+    return $feed;
+}
+
+/** The stored snapshot, or a freshly built one when there is none. */
+function webmcp_canary_stored_catalog() {
+    $stored = get_option(WEBMCP_CANARY_CATALOG_OPTION, null);
+    return is_array($stored) ? $stored : webmcp_canary_refresh_catalog();
+}
+
+function webmcp_canary_measurement_feed() {
+    $settings = webmcp_canary_settings();
+    $products = webmcp_canary_woocommerce_products();
+    return array(
+        'business_type' => $settings['business_type'],
+        'products' => array_map(function ($product) {
+            return array(
+                'name' => $product['name'],
+                'url' => $product['url'],
+                'price' => $product['price'],
+                'currency' => $product['currency'],
+                'categories' => $product['categories'],
+            );
+        }, $products),
+        'product_count' => count($products),
+        // Named so the service can tell a shop with no products from a site
+        // that has no shop at all.
+        'source' => webmcp_canary_woocommerce_active() ? 'woocommerce' : 'none',
+    );
+}
+
 function webmcp_canary_build_local_llms_txt() {
     $settings = webmcp_canary_settings();
     $name = $settings['business_name'] !== '' ? $settings['business_name'] : get_bloginfo('name');
@@ -1857,6 +2032,19 @@ function webmcp_canary_build_local_llms_txt() {
         $lines[] = '## Pages';
         $lines[] = '';
         $lines = array_merge($lines, $entries);
+        $lines[] = '';
+    }
+
+    // The catalogue. WooCommerce publishes Product JSON-LD but no llms.txt, so
+    // this is the one place a model can read what the shop sells as text, with
+    // the price and whether it can be bought.
+    $products = webmcp_canary_woocommerce_products();
+    if (!empty($products)) {
+        $lines[] = '## Products';
+        $lines[] = '';
+        foreach ($products as $product) {
+            $lines[] = webmcp_canary_product_llms_line($product);
+        }
         $lines[] = '';
     }
 
@@ -2660,6 +2848,7 @@ function webmcp_canary_cron_sync_profile() {
     if (webmcp_canary_profile_sync_enabled()) {
         webmcp_canary_pull_profile(true);
     }
+    webmcp_canary_refresh_catalog();
 }
 
 /* -----------------------------------------------------------------------

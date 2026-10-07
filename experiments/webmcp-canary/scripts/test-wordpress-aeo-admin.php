@@ -42,6 +42,36 @@ function update_option($key, $value) { $GLOBALS['webmcp_test_options'][$key] = $
 function wp_strip_all_tags($value) { return strip_tags((string) $value); }
 function strip_shortcodes($value) { return preg_replace('/\[[^\]]+\]/', '', (string) $value); }
 function get_posts() { return $GLOBALS['webmcp_test_posts']; }
+
+/* ------------------------------------------------------------------ *
+ * WooCommerce stubs
+ *
+ * Only the handful of methods the adapter calls. A real WC_Product has
+ * hundreds; standing in for the ones actually used keeps the test honest about
+ * what the plugin depends on.
+ * ------------------------------------------------------------------ */
+$GLOBALS['webmcp_test_products'] = array();
+$GLOBALS['webmcp_test_currency'] = 'JPY';
+$GLOBALS['webmcp_test_product_terms'] = array();
+
+class WebmcpTestProduct {
+    private $data;
+    public function __construct($data) { $this->data = $data; }
+    public function get_id() { return $this->data['id'] ?? 0; }
+    public function get_name() { return $this->data['name'] ?? ''; }
+    public function get_permalink() { return $this->data['url'] ?? ''; }
+    public function get_sku() { return $this->data['sku'] ?? ''; }
+    public function get_price() { return $this->data['price'] ?? ''; }
+    public function is_in_stock() { return array_key_exists('in_stock', $this->data) ? $this->data['in_stock'] : true; }
+}
+function wc_get_products($args) {
+    $limit = isset($args['limit']) ? (int) $args['limit'] : 10;
+    return array_slice($GLOBALS['webmcp_test_products'], 0, $limit);
+}
+function get_woocommerce_currency() { return $GLOBALS['webmcp_test_currency']; }
+function wp_get_post_terms($post_id, $taxonomy, $args = array()) {
+    return $GLOBALS['webmcp_test_product_terms'][$post_id] ?? array();
+}
 function is_admin() { return false; }
 function is_feed() { return false; }
 function is_404() { return false; }
@@ -1471,5 +1501,92 @@ delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
 $GLOBALS['webmcp_test_remote_get_log'] = array();
 webmcp_canary_suppressed_schema_types($measured_nothing, $yoast_only, $woo_only);
 expect(empty($GLOBALS['webmcp_test_remote_get_log']), 'deciding per-type coexistence fetches nothing');
+
+/* ------------------------------------------------------------------ *
+ * WooCommerce catalogue (Phase 5)
+ * ------------------------------------------------------------------ */
+
+// WooCommerce publishes Product JSON-LD itself and no llms.txt. So the schema
+// is left alone - a second Product node would be a duplicate - and the
+// catalogue is published as text, where nothing of theirs can collide with it.
+
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$GLOBALS['webmcp_test_products'] = array();
+expect(webmcp_canary_woocommerce_active() === false, 'no WooCommerce means no store');
+expect(webmcp_canary_woocommerce_products() === array(), 'and no products to read');
+
+$GLOBALS['webmcp_test_active_plugins'] = array('woocommerce/woocommerce.php');
+$GLOBALS['webmcp_test_product_terms'] = array(11 => array('Coffee', 'Beans'));
+$GLOBALS['webmcp_test_products'] = array(
+    new WebmcpTestProduct(array('id' => 11, 'name' => 'Ethiopia Yirgacheffe', 'url' => 'https://example.test/p/yirgacheffe', 'sku' => 'ETH-001', 'price' => '1800', 'in_stock' => true)),
+    new WebmcpTestProduct(array('id' => 12, 'name' => 'Decaf Blend', 'url' => 'https://example.test/p/decaf', 'sku' => '', 'price' => '1200', 'in_stock' => false)),
+    new WebmcpTestProduct(array('id' => 13, 'name' => '', 'url' => 'https://example.test/p/unnamed', 'price' => '900')),
+);
+expect(webmcp_canary_woocommerce_active() === true, 'WooCommerce is detected');
+
+$products = webmcp_canary_woocommerce_products();
+expect(count($products) === 2, 'a product with no name is not something to tell a model about');
+expect($products[0]['name'] === 'Ethiopia Yirgacheffe', 'the name is read');
+expect($products[0]['sku'] === 'ETH-001' && $products[0]['price'] === '1800', 'with its SKU and price');
+expect($products[0]['currency'] === 'JPY', 'and the store currency');
+expect($products[0]['in_stock'] === true && $products[1]['in_stock'] === false, 'availability is read as a fact, not assumed');
+expect($products[0]['categories'] === array('Coffee', 'Beans'), 'categories come through');
+
+// The llms.txt line says what it is, what it costs and whether it can be had -
+// the three things someone asking a model about a product wants.
+$line = webmcp_canary_product_llms_line($products[0]);
+expect(strpos($line, '[Ethiopia Yirgacheffe](https://example.test/p/yirgacheffe)') !== false, 'the product links to itself');
+expect(strpos($line, 'JPY 1800') !== false, 'the price carries its currency');
+expect(strpos($line, 'in stock') !== false, 'availability is stated');
+expect(strpos($line, 'SKU ETH-001') !== false, 'the SKU is stated');
+expect(strpos(webmcp_canary_product_llms_line($products[1]), 'out of stock') !== false, 'and so is being unavailable');
+
+// The catalogue reaches llms.txt.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'enabled' => '1', 'business_name' => 'Example Coffee',
+));
+$llms = webmcp_canary_build_local_llms_txt();
+expect(strpos($llms, '## Products') !== false, 'llms.txt gains a product section');
+expect(strpos($llms, 'Ethiopia Yirgacheffe') !== false, 'with the products in it');
+expect(strpos($llms, 'out of stock') !== false, 'and their availability');
+
+// A site with no shop gets no empty section.
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$no_shop = webmcp_canary_build_local_llms_txt();
+expect(strpos($no_shop, '## Products') === false, 'a site with no shop has no product section');
+
+// Product schema stays theirs. This is the whole coexistence decision for
+// WooCommerce: they publish it, so we publish none.
+$GLOBALS['webmcp_test_active_plugins'] = array('woocommerce/woocommerce.php');
+expect(!in_array('Product', webmcp_canary_nurevo_schema_types(), true),
+    'Product is not a type this plugin publishes');
+$product_graph = array(array('@type' => 'Product', 'name' => 'Ethiopia Yirgacheffe'));
+expect(webmcp_canary_filter_schema_graph($product_graph, array('avoid_schema_duplicates' => '1')) === array(),
+    'and a Product node would be dropped before it reached the page');
+
+// The measurement feed: the supply side only. Nothing is transmitted here.
+$feed = webmcp_canary_measurement_feed();
+expect($feed['source'] === 'woocommerce', 'the feed says where the catalogue came from');
+expect($feed['product_count'] === 2, 'and how much of it there is');
+expect($feed['products'][0]['name'] === 'Ethiopia Yirgacheffe', 'with the products the questions would be about');
+expect(!isset($feed['products'][0]['in_stock']), 'stock is not part of what a question is asked about');
+
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$empty_feed = webmcp_canary_measurement_feed();
+expect($empty_feed['source'] === 'none', 'a site with no shop is distinguishable from a shop with no products');
+expect($empty_feed['product_count'] === 0, 'and reports nothing to ask about');
+
+// The snapshot is stored rather than rebuilt per request, and cleared when the
+// shop goes away so a stale catalogue cannot outlive it.
+$GLOBALS['webmcp_test_active_plugins'] = array('woocommerce/woocommerce.php');
+$refreshed = webmcp_canary_refresh_catalog();
+expect($refreshed['product_count'] === 2 && !empty($refreshed['refreshed_at']), 'the snapshot is stamped');
+expect(get_option(WEBMCP_CANARY_CATALOG_OPTION)['product_count'] === 2, 'and stored');
+$GLOBALS['webmcp_test_active_plugins'] = array();
+webmcp_canary_refresh_catalog();
+expect(get_option(WEBMCP_CANARY_CATALOG_OPTION, null) === null, 'deactivating the shop clears the snapshot');
+
+$GLOBALS['webmcp_test_products'] = array();
+$GLOBALS['webmcp_test_product_terms'] = array();
 
 echo "WordPress AEO admin tests passed\n";
