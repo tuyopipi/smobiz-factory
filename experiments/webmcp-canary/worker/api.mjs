@@ -1045,10 +1045,22 @@ export async function handleApi(request, env, ctx) {
     // under another license. The row itself is kept: it carries the diagnosis
     // history and the store profile, which the operator has not asked to lose.
     // The profile token is revoked because it was handed out on bind.
+    //
+    // plan is deliberately not touched. Binding links an install to a site and
+    // grants no tier - see bindLicenseToDomain - so releasing it must not revoke
+    // one either. This used to write plan='free', which quietly demoted a site
+    // with a live subscription: billing had granted pro, contract still said
+    // active, and the tier vanished until Stripe happened to send another event.
+    // stripe_subscription_id, contract and manual_plan are left alone for the
+    // same reason; cancelling the subscription is a separate, explicit act.
     await env.DB.prepare(
-      "UPDATE sites SET bound_license_hash=NULL, bound_at=NULL, domain_key=NULL, profile_token_hash=NULL, plan='free' WHERE id=?",
+      "UPDATE sites SET bound_license_hash=NULL, bound_at=NULL, domain_key=NULL, profile_token_hash=NULL WHERE id=?",
     ).bind(siteId).run();
-    return json({ ok: true, site_id: siteId, bound: false, plan: "free" });
+    // Re-read rather than reporting a constant: the tier after unbinding is
+    // whatever billing and any manual grant say it is, which is exactly what
+    // every other reader resolves.
+    const after = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(siteId).first();
+    return json({ ok: true, site_id: siteId, bound: false, plan: resolveSitePlan(after || {}) });
   }
 
   const scanMatch = path.match(/^\/api\/sites\/([^/]+)\/scan$/i);

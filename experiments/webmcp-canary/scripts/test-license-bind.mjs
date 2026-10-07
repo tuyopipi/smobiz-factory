@@ -338,12 +338,17 @@ async function envWithLicense({ seats = 1, plan = "standard", org_id = "org-cana
   assert.equal(unbind.status, 200, "a member can unbind their own site");
   const unbound = await unbind.json();
   assert.equal(unbound.bound, false);
-  assert.equal(unbound.plan, "free", "an unbound site falls back to free");
+  // This key is manually issued, so the grant recorded on the site outlives the
+  // binding. Unbinding releases a seat; it does not take away a tier. The old
+  // assertion here expected "free" because unbind wrote plan='free' - a leftover
+  // from before billing became the source of truth. See test-unbind-plan.mjs.
+  assert.equal(unbound.plan, "standard", "releasing the binding does not revoke the grant");
 
   const site = env.db.sites.find((s) => s.id === first.site_id);
   assert.equal(site.bound_license_hash, null, "the binding is cleared");
   assert.equal(site.domain_key, null, "the domain is released so it can be claimed again");
   assert.equal(site.profile_token_hash, null, "the write token is revoked");
+  assert.equal(site.manual_plan, "standard", "and the grant itself is untouched");
 
   const rebound = await call("POST", "/api/license/bind", env, { license: STANDARD_KEY, domain: "new.example" });
   assert.equal(rebound.status, 200, "the freed seat is usable");
