@@ -60,18 +60,30 @@
     const ui = GUIDE_UI[(document.querySelector('#lang') || {}).value || 'ja'] || GUIDE_UI.ja;
     syncGuideTab();
     document.querySelectorAll('.nav').forEach((n) => n.classList.toggle('active', n.dataset.view === 'guide'));
-    const main = document.querySelector('#main');
+    // The slot the dashboard renders for this view, falling back to #main for
+    // any caller that has not provided one.
+    const main = document.querySelector('#nrv-guide-slot') || document.querySelector('#main');
     if (!main) return;
     const articles = d.articles.concat([PAYMENT[(document.querySelector('#lang') || {}).value || 'ja'] || PAYMENT.ja]);
     main.innerHTML = `<div class="top"><h1>${esc(d.title)}</h1><div class="who">${esc(d.intro)}</div></div><div class="card panel nrv-guide"><div class="nrv-guide-steps">${d.steps.map((s) => `<div class="nrv-guide-step"><div class="nrv-guide-num">${esc(s[0])}</div><div><h2>${esc(s[1])}</h2><p>${esc(s[2])}</p>${link(ui.more, s[3])}</div></div>`).join('')}</div></div><div class="card panel nrv-guide-articles" id="guide-articles"><h2>${esc(d.tab)}${esc(ui.articles)}</h2>${articles.map((a) => `<article id="${esc(a[0])}"><h3>${esc(a[1])}</h3><p>${esc(a[2]).replace(/\n/g, '<br>')}</p></article>`).join('')}</div>`;
     main.querySelectorAll('.guide-action').forEach((a) => a.addEventListener('click', (e) => {
-      if (a.dataset.guideView) { e.preventDefault(); const nav = document.querySelector(`[data-view="${a.dataset.guideView}"]`); if (nav) nav.click(); }
+      if (a.dataset.guideView) {
+        e.preventDefault();
+        const nav = document.querySelector(`.nav[data-view="${a.dataset.guideView}"]`);
+        if (nav) nav.click();
+      }
     }));
   }
-  document.addEventListener('click', (e) => {
-    const nav = e.target.closest && e.target.closest('[data-view="guide"]');
-    if (nav) { e.preventDefault(); e.stopImmediatePropagation(); render(); }
-  }, true);
+  /*
+   * The dashboard owns which view is showing; this only fills it.
+   *
+   * This used to intercept clicks on its own tab in the capture phase, paint
+   * #main itself and stop the event - so the dashboard never learned that the
+   * view had changed and never re-bound the navigation. Signed in that was
+   * merely inconsistent; signed out it was a dead end, because the only paint
+   * that ever attached handlers had been skipped.
+   */
+  window.__nrvRenderGuide = render;
   document.addEventListener('change', (e) => {
     if (e.target && e.target.id === 'lang') {
       localStorage.setItem('nrv-dash-lang', e.target.value);

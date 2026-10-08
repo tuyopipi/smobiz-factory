@@ -94,12 +94,16 @@ function boot({ hash = "", sites = [], storage = {}, fetchImpl } = {}) {
 ;globalThis.__get = (name) => globalThis[name];
 ;globalThis.__setSites = (rows) => { sites = rows; };
 ;globalThis.__setView = (v) => { view = v; };
-;globalThis.__view = () => view;`, sandbox);
+;globalThis.__view = () => view;
+;globalThis.__setAuthed = (v) => { authed = v; };
+;globalThis.__authed = () => authed;`, sandbox);
   sandbox.__setSites(sites);
   return {
     sandbox, location, store, history, listeners, roots,
     main: () => roots.get("#main")?.innerHTML || "",
     view: () => sandbox.__view(),
+    authed: () => sandbox.__authed(),
+    setAuthed: (v) => sandbox.__setAuthed(v),
     render: () => sandbox.render(),
     load: () => sandbox.load(),
   };
@@ -158,7 +162,6 @@ for (const bad of [
   "#site:abc-123",
   "#site:",
   "#nonsense",
-  "#guide",
   "#site:" + "a".repeat(200),
 ]) {
   const app = boot({ hash: bad, sites: [SITE()] });
@@ -168,6 +171,18 @@ for (const bad of [
   assert.equal(html.includes("<script>alert"), false, `${bad} injects no markup`);
   assert.equal(html.includes('onload="alert'), false, `${bad} injects no attribute`);
 }
+
+{
+  // The guide is a view like any other now, and a linkable one. It used to be
+  // painted by its own module hijacking clicks on its own tab, which meant the
+  // dashboard never knew it was showing - and, signed out, never re-bound the
+  // navigation, so the tab was a dead end.
+  const app = boot({ hash: "#guide", sites: [SITE()] });
+  assert.equal(app.view(), "guide", "#guide is a view, not a rejected hash");
+  app.render();
+  assert.ok(app.main().includes("nrv-guide-slot"), "and renders a slot for its module to fill");
+}
+
 
 {
   // A percent-encoded id is accepted once decoded, and a broken escape does not
@@ -196,10 +211,19 @@ for (const bad of [
 }
 
 {
-  // The guide is rendered by dashboard-guide.js without touching `view`, so the
-  // hash must not be rewritten on its behalf.
+  // The guide is a routable view now, so selecting it writes the hash like any
+  // other tab - which is what makes it linkable and, more importantly, what
+  // makes leaving it ordinary navigation rather than a special case.
   const app = boot({ hash: "#summary", sites: [SITE()] });
   app.sandbox.__setView("guide");
+  app.render();
+  assert.equal(app.location.hash, "#guide", "selecting the guide writes its hash");
+}
+
+{
+  // A view this build does not know is still not allowed to rewrite the hash.
+  const app = boot({ hash: "#summary", sites: [SITE()] });
+  app.sandbox.__setView("nonsense");
   app.render();
   assert.equal(app.location.hash, "#summary", "an unroutable view leaves the hash alone");
 }
@@ -381,3 +405,77 @@ for (const bad of [
 }
 
 console.log("dashboard routing tests passed");
+
+
+/* ---------------- signed out is not a dead end ---------------- */
+
+/*
+ * The reported bug: with no session, opening the guide left the visitor unable
+ * to reach any other tab or get back to sign in.
+ *
+ * Two causes, both here. The 401 handler painted the sign-in form straight
+ * into #main and never called bind(), so every tab in the sidebar lost its
+ * click handler; and dashboard-guide.js intercepted clicks on its own tab in
+ * the capture phase, so that one tab still "worked" and carried the visitor
+ * into a view nothing could leave.
+ */
+
+{
+  // A 401 leaves the navigation working, which is the whole fix.
+  const app = boot({ hash: "", sites: [] });
+  const unauthorized = Object.assign(new Error("unauthorized"), { status: 401 });
+  app.sandbox.api = async () => { throw unauthorized; };
+  await app.load();
+
+  assert.equal(app.authed(), false, "the signed-out state is recorded rather than painted over");
+  assert.ok(app.main().includes('id="auth"'), "the sign-in form is shown");
+  // bind() ran, so the tabs are live. Without this the page is a dead end.
+  const nav = app.roots.get('[data-view]');
+  assert.ok(app.main().includes("data-view"), "and the panel offers a way onward");
+}
+
+{
+  // A signed-out visitor can read the guide, and can leave it again.
+  const app = boot({ hash: "#guide", sites: [] });
+  app.setAuthed(false);
+  app.render();
+  const html = app.main();
+  assert.ok(html.includes("nrv-guide-slot"), "the guide is public");
+  assert.ok(html.includes('data-view="summary"'), "and offers the way back to sign in");
+  assert.equal(app.location.hash, "#guide", "while staying linkable");
+}
+
+{
+  // Every other view asks for a session rather than rendering an empty shell.
+  for (const view of ["summary", "sites", "billing"]) {
+    const app = boot({ hash: `#${view}`, sites: [] });
+    app.setAuthed(false);
+    app.render();
+    assert.ok(app.main().includes('id="auth"'), `${view} asks a signed-out visitor to sign in`);
+    assert.ok(app.main().includes('data-view="guide"'), `${view} still offers the public guide`);
+  }
+}
+
+{
+  // A deep link to a site is not somewhere a signed-out visitor can be left.
+  const app = boot({ hash: "#site:abc123def456", sites: [] });
+  const unauthorized = Object.assign(new Error("unauthorized"), { status: 401 });
+  app.sandbox.api = async () => { throw unauthorized; };
+  await app.load();
+  assert.equal(app.view(), "summary", "the deep link is not held onto");
+  assert.equal(app.store["nrv-dash-pending-site"], "abc123def456", "but it is remembered for after sign in");
+}
+
+{
+  // Signing back in restores the ordinary views.
+  const app = boot({ hash: "#summary", sites: [SITE()] });
+  app.setAuthed(false);
+  app.render();
+  assert.ok(app.main().includes('id="auth"'));
+  app.setAuthed(true);
+  app.render();
+  assert.ok(!app.main().includes('id="auth"'), "a session puts the summary back");
+  assert.ok(app.main().includes("example.com"));
+}
+
+console.log("signed-out navigation tests passed");
