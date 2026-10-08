@@ -5,13 +5,17 @@
 	"compatibility_date": "2026-07-19",
 	"routes": [
 		{ "pattern": "nurevo.jp/api/*", "zone_name": "nurevo.jp" },
-		{ "pattern": "nurevo.jp/dashboard", "zone_name": "nurevo.jp" },
-		{ "pattern": "nurevo.jp/dashboard/*", "zone_name": "nurevo.jp" },
-		// Cloudflare allows a wildcard only at the end of the path, so this
-		// cannot be "/dashboard-*.js" - that pattern is rejected and the route
-		// is silently never created, leaving the dashboard's own modules to
-		// fall through to the Pages LP, which answers them with its HTML.
-		{ "pattern": "nurevo.jp/dashboard-*", "zone_name": "nurevo.jp" },
+		// One pattern for everything under /dashboard, because an exact-path
+		// route did not cover a query string: /dashboard served the dashboard
+		// and /dashboard?plan=standard fell through to the Pages LP - which
+		// broke the landing page's own Standard button, since that is exactly
+		// the URL it links to. /dashboard.html did the same.
+		//
+		// This also subsumes /dashboard/* and /dashboard-* (the module files).
+		// Cloudflare allows a wildcard only at the end of the path, so the
+		// earlier "/dashboard-*.js" was rejected outright and silently never
+		// created - the same class of failure, found the same way.
+		{ "pattern": "nurevo.jp/dashboard*", "zone_name": "nurevo.jp" },
 		{ "pattern": "nurevo.jp/en/*", "zone_name": "nurevo.jp" },
 		{ "pattern": "nurevo.jp/s/*", "zone_name": "nurevo.jp" },
 		{ "pattern": "nurevo.jp/sitemap.xml", "zone_name": "nurevo.jp" },
