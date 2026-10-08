@@ -87,6 +87,27 @@ export function normalizeTiers(tiers) {
   return Object.freeze(cleaned.map((tier) => Object.freeze(tier)));
 }
 
+/**
+ * A rate agreed with one partner, as a fraction, or null for "use the table".
+ *
+ * Basis points in, fraction out: 2500 -> 0.25, 10000 -> 1. Integers are the
+ * stored form because money - 0.175 has no exact binary representation, and a
+ * rate that is almost right compounds every month.
+ *
+ * Zero is a real override and must survive: a partner on 0% is a partner who
+ * earns nothing, which is a different statement from having no agreement. The
+ * obvious `bp || null` would turn one into the other.
+ */
+export function overrideRate(basisPoints) {
+  // A number, not something that converts to one. "2500" from a form and 2500
+  // from the column are different levels of confidence, and the stored type is
+  // INTEGER - so a string here means a caller skipped the validation the API
+  // does, and guessing on its behalf is how a wrong rate gets paid.
+  if (typeof basisPoints !== "number" || !Number.isInteger(basisPoints)) return null;
+  if (basisPoints < 0 || basisPoints > 10000) return null;
+  return basisPoints / 10000;
+}
+
 /** The rate a partner with this many billable sites earns. */
 export function rateForCount(count, tiers = DEFAULT_KICKBACK_TIERS) {
   const n = Number(count);
@@ -123,7 +144,7 @@ export function siteRevenueYen(site = {}) {
  * this only does the arithmetic, which is the part worth testing before any
  * real money exists.
  */
-export function calculateKickback({ partner_org_id = null, month = null, sites = [], tiers = DEFAULT_KICKBACK_TIERS } = {}) {
+export function calculateKickback({ partner_org_id = null, month = null, sites = [], tiers = DEFAULT_KICKBACK_TIERS, rateOverrideBp = null } = {}) {
   const table = normalizeTiers(tiers) || DEFAULT_KICKBACK_TIERS;
   const lines = [];
   let excluded = 0;
@@ -147,7 +168,17 @@ export function calculateKickback({ partner_org_id = null, month = null, sites =
 
   const billableSites = lines.length;
   const grossYen = lines.reduce((total, line) => total + line.revenue_yen, 0);
-  const rate = rateForCount(billableSites, table);
+  /*
+   * A negotiated rate wins over the table, and applies at any volume.
+   *
+   * That is the whole point of an override: the volume curve is the standard
+   * offer, and this is the agreement someone signed instead. It is applied
+   * even at zero billable sites, where it makes no difference to the payout
+   * but keeps the reported rate honest about which basis was used.
+   */
+  const override = overrideRate(rateOverrideBp);
+  const tierRate = rateForCount(billableSites, table);
+  const rate = override === null ? tierRate : override;
   // Floored once on the total rather than per line: rounding each line down
   // separately would lose up to a yen per site every month.
   const payoutYen = Math.floor(grossYen * rate);
@@ -160,6 +191,12 @@ export function calculateKickback({ partner_org_id = null, month = null, sites =
     gross_yen: grossYen,
     rate,
     rate_percent: Math.round(rate * 1000) / 10,
+    // Which basis produced the rate, and what the table would have paid. A
+    // statement that cannot say why it used 100% is not auditable, and the
+    // tier rate is what the conversation about renegotiating starts from.
+    rate_basis: override === null ? "tier" : "org_override",
+    rate_override_bp: override === null ? null : Math.round(override * 10000),
+    tier_rate: tierRate,
     payout_yen: payoutYen,
     // Stated so a statement can say so in words: this is a calculation, and
     // somebody still has to make the transfer.

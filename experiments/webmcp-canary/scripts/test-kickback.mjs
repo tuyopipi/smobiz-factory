@@ -12,7 +12,7 @@
 import assert from "node:assert/strict";
 import {
   DEFAULT_KICKBACK_TIERS, calculateKickback, kickbackTiersFromEnv,
-  normalizeTiers, rateForCount, siteRevenueYen,
+  normalizeTiers, overrideRate, rateForCount, siteRevenueYen,
 } from "../worker/kickback.mjs";
 
 const std = (id) => ({ site_id: id, billed_plan: "standard" });
@@ -374,3 +374,227 @@ const report = async (env, target = "/api/orgs/agency/kickback") => {
 }
 
 console.log("kickback endpoint tests passed");
+
+/* ---------------- a rate agreed with one partner ---------------- */
+
+/*
+ * The tier table is the standard offer. A real negotiation departs from it: a
+ * launch partner on 100%, a reseller held at the rate they signed before the
+ * volume curve would have reduced it. Without an override the only options
+ * were to change the global schedule - silently repaying every other partner
+ * at the new rate - or to work the difference out by hand every month, which
+ * is how a partner ends up underpaid.
+ */
+
+assert.equal(overrideRate(10000), 1, "10000 basis points is 100%");
+assert.equal(overrideRate(2500), 0.25);
+assert.equal(overrideRate(1), 0.0001, "one basis point is expressible");
+assert.equal(overrideRate(0), 0, "zero is a rate, not an absence");
+assert.equal(overrideRate(null), null, "no override means use the table");
+assert.equal(overrideRate(undefined), null);
+assert.equal(overrideRate(""), null);
+
+// Units are basis points, and a float is a unit mistake - 0.25 meaning 25%
+// would otherwise be read as 0.0025%.
+assert.equal(overrideRate(0.25), null, "a fraction is refused rather than misread");
+assert.equal(overrideRate(25.5), null);
+assert.equal(overrideRate(10001), null, "more than 100% is not a rate");
+assert.equal(overrideRate(-1), null);
+assert.equal(overrideRate("2500"), null, "and a string is not basis points");
+
+{
+  // 100%: the partner keeps everything the attributed sites paid.
+  const result = calculateKickback({ sites: many(3, std), rateOverrideBp: 10000 });
+  assert.equal(result.rate, 1);
+  assert.equal(result.gross_yen, 9000);
+  assert.equal(result.payout_yen, 9000, "all of it");
+  assert.equal(result.rate_basis, "org_override", "and the statement says why");
+  assert.equal(result.rate_override_bp, 10000);
+  assert.equal(result.tier_rate, 0.2, "while still reporting what the table would have paid");
+}
+
+{
+  // The override applies at any volume - that is the point of it. A partner on
+  // 25% with sixty sites is not moved to the 40% band.
+  const result = calculateKickback({ sites: many(60, std), rateOverrideBp: 2500 });
+  assert.equal(result.rate, 0.25, "the agreed rate holds at volume");
+  assert.equal(result.tier_rate, 0.4, "even where the table would pay more");
+  assert.equal(result.payout_yen, Math.floor(180000 * 0.25));
+}
+
+{
+  // And below the table, which is the case that would otherwise be silently
+  // overpaid.
+  const result = calculateKickback({ sites: many(2, std), rateOverrideBp: 1000 });
+  assert.equal(result.rate, 0.1);
+  assert.equal(result.tier_rate, 0.2);
+  assert.equal(result.payout_yen, 600);
+}
+
+{
+  // Zero earns nothing, and must not fall back to the table. `bp || null`
+  // would turn a partner on 0% into a partner with no agreement.
+  const result = calculateKickback({ sites: many(5, std), rateOverrideBp: 0 });
+  assert.equal(result.rate, 0, "zero is honoured");
+  assert.equal(result.payout_yen, 0);
+  assert.equal(result.rate_basis, "org_override", "as an override, not as an absent one");
+}
+
+{
+  const result = calculateKickback({ sites: many(3, std) });
+  assert.equal(result.rate_basis, "tier", "no override means the table");
+  assert.equal(result.rate_override_bp, null);
+  assert.equal(result.rate, result.tier_rate);
+}
+
+{
+  // A malformed override is ignored in favour of the table rather than paying
+  // out at something nobody chose.
+  for (const bad of [0.5, "100%", -5, 10001, {}, NaN]) {
+    const result = calculateKickback({ sites: many(3, std), rateOverrideBp: bad });
+    assert.equal(result.rate, 0.2, `a malformed override falls back to the table: ${JSON.stringify(bad)}`);
+    assert.equal(result.rate_basis, "tier");
+  }
+}
+
+{
+  // Comped sites still earn nothing, whatever the rate. The two exceptions
+  // must not combine into a payout on revenue that does not exist.
+  const result = calculateKickback({
+    sites: [std("paid"), { site_id: "free1", billed_plan: "pro", comped: true }],
+    rateOverrideBp: 10000,
+  });
+  assert.equal(result.billable_sites, 1);
+  assert.equal(result.gross_yen, 3000, "the comped site contributes nothing even at 100%");
+  assert.equal(result.payout_yen, 3000);
+}
+
+{
+  // Still floored. 3,333 at 33.33% is 1,110.89 - the partner is owed 1,110.
+  const result = calculateKickback({
+    sites: [{ site_id: "odd", billed_plan: "standard", amount_yen: 3333 }],
+    rateOverrideBp: 3333,
+  });
+  assert.equal(result.payout_yen, Math.floor(3333 * 0.3333));
+  assert.equal(result.payout_yen, 1110);
+}
+
+/* ---------------- setting the rate ---------------- */
+
+const rateEnv = ({ superAdmin = true, role = "admin", orgs = [{ id: "agency" }] } = {}) => {
+  const db = { orgs: orgs.map((o) => ({ ...o })) };
+  const DB = {
+    prepare(sql) {
+      const first = async (...values) => {
+        if (/FROM sessions/.test(sql)) {
+          return { member_id: "m1", org_id: "agency", email: superAdmin ? "boss@x.test" : "o@x.test", role, status: "active", expires_at: Date.now() + 3.6e6 };
+        }
+        if (/COUNT\(\*\) AS n FROM sites WHERE org_id=\?/.test(sql)) return { n: 7 };
+        if (/FROM orgs WHERE id=\?/.test(sql)) return db.orgs.find((o) => o.id === values[0]) || null;
+        return null;
+      };
+      return {
+        bind(...values) {
+          return {
+            first: () => first(...values),
+            async all() { return { results: [] }; },
+            async run() {
+              if (/UPDATE orgs SET kickback_rate_bp=/.test(sql)) {
+                const org = db.orgs.find((o) => o.id === values[4]);
+                if (org) { org.kickback_rate_bp = values[0]; org.kickback_rate_note = values[1]; org.kickback_rate_at = values[2]; org.kickback_rate_by = values[3]; }
+              }
+              return { success: true };
+            },
+          };
+        },
+        first, async all() { return { results: [] }; }, async run() { return { success: true }; },
+      };
+    },
+  };
+  return { DB, db, WEBMCP_ALLOWED_ORIGINS: "https://nurevo.jp", ...(superAdmin ? { SUPER_ADMIN_EMAILS: "boss@x.test" } : {}) };
+};
+
+const setRate = async (env, body, org = "agency") => {
+  const response = await handleApi(
+    new Request(`https://w.test/api/orgs/${org}/kickback-rate`, {
+      method: "PUT",
+      headers: { cookie: `nrv_session=t; nrv_csrf=${CSRF}`, "x-csrf-token": CSRF, "content-type": "application/json", origin: "https://nurevo.jp" },
+      body: JSON.stringify(body),
+    }),
+    env, { waitUntil() {} },
+  );
+  return { status: response.status, body: await response.json() };
+};
+
+{
+  const env = rateEnv();
+  const { status, body } = await setRate(env, { rate_bp: 10000, note: "立ち上げパートナー・書面合意" });
+  assert.equal(status, 200);
+  assert.equal(body.rate_bp, 10000);
+  assert.equal(body.rate_percent, 100, "reported as a percentage for a human");
+  assert.equal(body.basis, "org_override");
+  assert.equal(body.sites_attributed, 7, "and says what it covers");
+
+  const org = env.db.orgs[0];
+  assert.equal(org.kickback_rate_bp, 10000);
+  assert.equal(org.kickback_rate_note, "立ち上げパートナー・書面合意", "the reason is kept");
+  assert.ok(org.kickback_rate_at, "with when");
+  assert.equal(org.kickback_rate_by, "m1", "and who agreed it");
+}
+
+{
+  const env = rateEnv();
+  await setRate(env, { rate_bp: 2500, note: "n" });
+  const { status, body } = await setRate(env, { rate_bp: null });
+  assert.equal(status, 200, "an override can be removed");
+  assert.equal(body.rate_bp, null);
+  assert.equal(body.basis, "tier", "returning the partner to the table");
+  assert.equal(env.db.orgs[0].kickback_rate_note, null, "and the note goes with it");
+}
+
+{
+  const env = rateEnv();
+  const { status, body } = await setRate(env, { rate_bp: 5000 });
+  assert.equal(status, 400, "a rate with no stated basis is refused");
+  assert.equal(body.error, "note_required");
+  assert.equal(env.db.orgs[0].kickback_rate_bp, undefined, "and nothing is stored");
+}
+
+{
+  const env = rateEnv();
+  const { status, body } = await setRate(env, { note: "no rate key" });
+  assert.equal(status, 400, "an absent rate is not a removal");
+  assert.equal(body.error, "rate_bp_required");
+}
+
+{
+  // The unit mistake worth refusing loudly: 0.25 meaning 25%.
+  for (const bad of [0.25, 25.5, -1, 10001, "2500", true]) {
+    const env = rateEnv();
+    const { status, body } = await setRate(env, { rate_bp: bad, note: "n" });
+    assert.equal(status, 400, `a malformed rate is refused: ${JSON.stringify(bad)}`);
+    assert.equal(body.error, "invalid_rate_bp");
+    assert.equal(env.db.orgs[0].kickback_rate_bp, undefined);
+  }
+}
+
+{
+  // A partner raising their own commission is not a feature. Comping a plan
+  // costs a subscription; this pays out money, so it sits a level higher.
+  const env = rateEnv({ superAdmin: false });
+  const { status } = await setRate(env, { rate_bp: 10000, note: "mine now" });
+  assert.equal(status, 403, "an org admin cannot set their own rate");
+  assert.equal(env.db.orgs[0].kickback_rate_bp, undefined);
+}
+
+{
+  const { status } = await setRate(rateEnv({ superAdmin: false, role: "operator" }), { rate_bp: 100, note: "n" });
+  assert.equal(status, 403);
+}
+
+{
+  const { status } = await setRate(rateEnv(), { rate_bp: 100, note: "n" }, "nosuch");
+  assert.equal(status, 404, "an org that does not exist cannot have a rate");
+}
+
+console.log("kickback override tests passed");

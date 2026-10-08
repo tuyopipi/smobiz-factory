@@ -1436,7 +1436,9 @@ export async function handleApi(request, env, ctx) {
     if (!member) return json({ error: "forbidden" }, 403);
     const orgId = decodeURIComponent(kickbackMatch[1]);
     if (orgId !== member.org_id && !member.is_super_admin) return json({ error: "forbidden" }, 403);
-    const org = await env.DB.prepare("SELECT id, manual_plan FROM orgs WHERE id=? LIMIT 1").bind(orgId).first();
+    const org = await env.DB.prepare(
+      "SELECT id, manual_plan, kickback_rate_bp, kickback_rate_note FROM orgs WHERE id=? LIMIT 1",
+    ).bind(orgId).first();
     if (!org) return json({ error: "not_found" }, 404);
 
     const month = String(url.searchParams.get("month") || "").trim();
@@ -1468,7 +1470,74 @@ export async function handleApi(request, env, ctx) {
         month: month || null,
         sites,
         tiers: kickbackTiersFromEnv(env),
+        // A rate agreed with this partner, if there is one. The tier table is
+        // the standard offer; this is what was signed instead.
+        rateOverrideBp: org.kickback_rate_bp,
       }),
+      rate_note: org.kickback_rate_note || null,
+    });
+  }
+
+  /*
+   * Set the rate agreed with one partner.
+   *
+   * Super-admin only, and deliberately not an org admin's own power - a
+   * partner being able to raise their own commission is not a feature. Comping
+   * a plan costs us a subscription; this pays out money, so it sits one level
+   * higher.
+   *
+   * Basis points, because money: 2500 is 25%, 10000 is 100%. A note is
+   * required, for the same reason a comp needs one - a rate with no stated
+   * basis is indistinguishable from a mistake a year later.
+   *
+   * `rate_bp: null` removes the override and returns the partner to the tier
+   * table. An absent key is refused rather than treated as a removal, so a
+   * malformed body cannot silently cancel an agreement.
+   */
+  const orgRateMatch = path.match(/^\/api\/orgs\/([^/]+)\/kickback-rate$/i);
+  if (orgRateMatch && method === "PUT") {
+    const member = await requireSuperAdmin(request, env);
+    if (!member) return json({ error: "forbidden" }, 403);
+    const orgId = decodeURIComponent(orgRateMatch[1]);
+    const org = await env.DB.prepare("SELECT id FROM orgs WHERE id=? LIMIT 1").bind(orgId).first();
+    if (!org) return json({ error: "not_found" }, 404);
+
+    const body = await safeJson(request);
+    if (!body || typeof body !== "object") return json({ error: "invalid_body" }, 400);
+    if (!Object.prototype.hasOwnProperty.call(body, "rate_bp")) return json({ error: "rate_bp_required" }, 400);
+
+    let rateBp = null;
+    let note = null;
+    if (body.rate_bp !== null) {
+      /*
+       * Integer basis points, as a number, and nothing that merely converts to
+       * one. Number() would accept "2500" from a form and - worse - true as 1,
+       * and a float here is a unit mistake: 0.25 meaning 25% would set a rate
+       * of 0.0025%. Refusing loudly is the only safe answer when the quantity
+       * is money.
+       */
+      if (typeof body.rate_bp !== "number" || !Number.isInteger(body.rate_bp)
+        || body.rate_bp < 0 || body.rate_bp > 10000) {
+        return json({ error: "invalid_rate_bp", expected: "integer basis points, 0 to 10000" }, 400);
+      }
+      rateBp = body.rate_bp;
+      note = catalogText(body.note, 500);
+      if (!note) return json({ error: "note_required" }, 400);
+    }
+
+    await env.DB.prepare(
+      "UPDATE orgs SET kickback_rate_bp=?, kickback_rate_note=?, kickback_rate_at=?, kickback_rate_by=? WHERE id=?",
+    ).bind(rateBp, note, rateBp === null ? null : Date.now(), rateBp === null ? null : member.member_id, orgId).run();
+
+    const counted = await env.DB.prepare("SELECT COUNT(*) AS n FROM sites WHERE org_id=?").bind(orgId).first();
+    return json({
+      ok: true,
+      org_id: orgId,
+      rate_bp: rateBp,
+      rate_percent: rateBp === null ? null : Math.round(rateBp / 100 * 10) / 10,
+      rate_note: note,
+      basis: rateBp === null ? "tier" : "org_override",
+      sites_attributed: Number(counted?.n || 0),
     });
   }
 
