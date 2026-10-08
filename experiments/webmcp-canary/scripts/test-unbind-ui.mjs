@@ -336,3 +336,66 @@ console.log("plan panel tests passed");
 }
 
 console.log("binding panel tests passed");
+
+/* ---------------- the catalogue panel ---------------- */
+
+const CATALOG = {
+  state: { product_source: "woocommerce", product_count: 2, service_count: 1, faq_count: 1, page_count: 1, updated_at: 1_760_000_000_000 },
+  products: [{ name: "Ethiopia Yirgacheffe", price: "1800", currency: "JPY", in_stock: true, categories: ["Coffee"] },
+             { name: "Decaf", price: "1200", currency: "JPY", in_stock: false, categories: [] }],
+  services: [{ name: "カット", minutes: 45, price: "4500", currency: "JPY", category: "ヘア" }],
+  faqs: [{ question: "駐車場は？", answer: "3台あります。" }],
+  pages: [{ title: "About" }],
+};
+
+{
+  const html = detailHtml(BOUND({ _catalog: CATALOG }));
+  assert.ok(html.includes("サイトから取得した情報"), "the panel is titled");
+  assert.ok(html.includes("Ethiopia Yirgacheffe"), "products are listed");
+  assert.ok(html.includes("JPY 1800") && html.includes("在庫あり"), "with price and availability");
+  assert.ok(html.includes("在庫なし"), "and an out-of-stock product says so");
+  assert.ok(html.includes("カット") && html.includes("45分"), "services carry their duration in minutes");
+  assert.ok(html.includes("駐車場は？"), "the FAQ is listed");
+  assert.ok(html.includes("About"), "and the pages");
+  // Where each list came from, so "we read none" is distinguishable from
+  // "nobody asked".
+  assert.ok(html.includes("WooCommerce"), "products name their source");
+  assert.ok(html.includes("手入力"), "hand-entered lists name theirs");
+}
+
+{
+  // Never synced is a different statement from having none.
+  const unsynced = detailHtml(BOUND({ _catalog: null }));
+  assert.ok(unsynced.includes("まだ同期されていません"), "an unsynced site says so");
+  assert.equal(unsynced.includes("このサイトにはありません"), false, "and does not claim the lists are empty");
+
+  const empty = detailHtml(BOUND({ _catalog: { state: { product_source: "none", updated_at: 1 }, products: [], services: [], faqs: [], pages: [] } }));
+  assert.ok(empty.includes("このサイトにはありません"), "a synced site with nothing says that instead");
+  assert.equal(empty.includes("まだ同期されていません"), false);
+}
+
+{
+  // Everything in here came off someone else's site.
+  const html = detailHtml(BOUND({ _catalog: { ...CATALOG,
+    products: [{ name: '<img src=x onerror=alert(1)>', categories: ['"><script>alert(2)</script>'] }],
+    faqs: [{ question: "<b>q</b>", answer: "<i>a</i>" }] } }));
+  assert.equal(html.includes("<img src=x"), false, "a product name cannot inject markup");
+  assert.equal(html.includes("<script>alert(2)"), false, "nor a category");
+  assert.equal(html.includes("<b>q</b>"), false, "nor a question");
+  assert.ok(html.includes("&lt;img"), "it is shown as text");
+}
+
+{
+  // Damaged payloads must not take the page down.
+  for (const [label, catalog] of [
+    ["missing lists", { state: { updated_at: 1 } }],
+    ["null lists", { state: { updated_at: 1 }, products: null, services: null, faqs: null, pages: null }],
+    ["no timestamp", { state: {}, products: [], services: [], faqs: [], pages: [] }],
+  ]) {
+    const html = detailHtml(BOUND({ _catalog: catalog }));
+    assert.ok(html.includes("サイトから取得した情報"), `${label} still renders`);
+    assert.equal(html.includes("undefined"), false, `${label} leaks no undefined`);
+  }
+}
+
+console.log("catalog panel tests passed");

@@ -1126,6 +1126,27 @@ export async function handleApi(request, env, ctx) {
     return json(result);
   }
 
+  /*
+   * The catalogue, written by the plugin and read by the dashboard.
+   *
+   * Bearer-authenticated like /profile, because it is the same server-to-server
+   * sync from the same install - and exempt from CSRF for the same reason: it
+   * reads no cookie.
+   */
+  const catalogMatch = path.match(/^\/api\/sites\/([^/]+)\/catalog$/i);
+  if (catalogMatch && (method === "GET" || method === "PUT")) {
+    const siteId = decodeURIComponent(catalogMatch[1]);
+    const auth = await requireProfileToken(request, env, siteId);
+    if (!auth.ok) return auth.response;
+
+    if (method === "GET") {
+      return json(await loadSiteCatalog(env, siteId));
+    }
+    const body = await safeJson(request);
+    const result = await writeSiteCatalog(env, siteId, body);
+    return json(result);
+  }
+
   // Issue or rotate the per-site profile token. Member-authenticated and
   // CSRF-protected; the plaintext is returned once and only the hash is stored.
   const profileTokenMatch = path.match(/^\/api\/sites\/([^/]+)\/profile-token$/i);
@@ -1291,8 +1312,13 @@ export async function handleApi(request, env, ctx) {
     const current = await loadSiteProfile(env, site.id);
     if (!current) return json({ error: "not_found" }, 404);
     const settings = await env.DB.prepare("SELECT serve_schema,allow_crawlers FROM site_settings WHERE site_id=?").bind(site.id).first();
+    const catalog = await loadSiteCatalog(env, site.id);
     return json({
       id: site.id,
+      // What the install read off the site: the shop, the services, the FAQ and
+      // the pages. Empty lists with a state row mean "none"; no state row means
+      // the plugin has not synced yet, which the panel words differently.
+      catalog,
       // field_sources travels too: the form needs to know that a value came
       // from Places rather than from a person, because re-saving it as human
       // would switch off the refresh that maintains it.
@@ -1705,6 +1731,154 @@ async function issueProfileToken(env, siteId) {
   const token = `nrvp_${randomHex(32)}`;
   await env.DB.prepare("UPDATE sites SET profile_token_hash=? WHERE id=?").bind(await sha256Hex(token), siteId).run();
   return token;
+}
+
+/*
+ * The catalogue: what a site sells, offers, answers and publishes.
+ *
+ * Written by the plugin through the same bearer token as the profile, and read
+ * by the dashboard through the member session. Lists are replaced wholesale -
+ * the plugin is the only writer and always sends the complete list - but an
+ * absent list is left alone, so a sync that carries only products cannot empty
+ * the FAQ. That is the same rule mergeProfile applies to fields: absent means
+ * "not supplied", not "delete".
+ */
+const CATALOG_LISTS = Object.freeze({
+  products: {
+    table: "site_products",
+    columns: ["name", "url", "sku", "price", "currency", "in_stock", "categories_json"],
+    pick: (item) => ({
+      name: catalogText(item?.name, 200),
+      url: catalogText(item?.url, 2048) || null,
+      sku: catalogText(item?.sku, 120) || null,
+      price: catalogText(item?.price, 60) || null,
+      currency: catalogText(item?.currency, 12).toUpperCase() || null,
+      // Three states, not two: in stock, out of stock, and a shop that does not
+      // track it at all.
+      in_stock: item?.in_stock === true ? 1 : item?.in_stock === false ? 0 : null,
+      categories_json: JSON.stringify(
+        (Array.isArray(item?.categories) ? item.categories : [])
+          .map((c) => catalogText(c, 80)).filter(Boolean).slice(0, 10),
+      ),
+    }),
+  },
+  services: {
+    table: "site_services",
+    columns: ["name", "minutes", "price", "currency", "category", "reserve_url"],
+    pick: (item) => ({
+      name: catalogText(item?.name, 200),
+      minutes: Number.isFinite(Number(item?.minutes)) && Number(item.minutes) > 0 ? Math.round(Number(item.minutes)) : null,
+      price: catalogText(item?.price, 60) || null,
+      currency: catalogText(item?.currency, 12).toUpperCase() || null,
+      category: catalogText(item?.category, 120) || null,
+      reserve_url: catalogText(item?.reserve_url, 2048) || null,
+    }),
+  },
+  faqs: {
+    table: "site_faqs",
+    columns: ["question", "answer"],
+    pick: (item) => ({
+      question: catalogText(item?.question ?? item?.q, 300),
+      answer: catalogText(item?.answer ?? item?.a, 2000),
+    }),
+    // Half a pair answers nothing.
+    valid: (row) => row.question !== "" && row.answer !== "",
+  },
+  pages: {
+    table: "site_pages",
+    columns: ["title", "url"],
+    pick: (item) => ({
+      title: catalogText(item?.title, 300),
+      url: catalogText(item?.url, 2048) || null,
+    }),
+  },
+});
+
+const CATALOG_MAX_ROWS = 100;
+
+function catalogText(value, max) {
+  return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, max);
+}
+
+/** Read every list for a site, in the order the plugin sent them. */
+async function loadSiteCatalog(env, siteId) {
+  const [products, services, faqs, pages, state] = await Promise.all([
+    env.DB.prepare("SELECT name,url,sku,price,currency,in_stock,categories_json FROM site_products WHERE site_id=? ORDER BY position").bind(siteId).all(),
+    env.DB.prepare("SELECT name,minutes,price,currency,category,reserve_url FROM site_services WHERE site_id=? ORDER BY position").bind(siteId).all(),
+    env.DB.prepare("SELECT question,answer FROM site_faqs WHERE site_id=? ORDER BY position").bind(siteId).all(),
+    env.DB.prepare("SELECT title,url FROM site_pages WHERE site_id=? ORDER BY position").bind(siteId).all(),
+    env.DB.prepare("SELECT * FROM site_catalog_state WHERE site_id=?").bind(siteId).first(),
+  ]);
+  return {
+    products: (products.results || []).map((row) => ({
+      ...row,
+      in_stock: row.in_stock == null ? null : row.in_stock === 1,
+      categories: safeCatalogArray(row.categories_json),
+      categories_json: undefined,
+    })),
+    services: services.results || [],
+    faqs: faqs.results || [],
+    pages: pages.results || [],
+    // Null until the plugin has synced once. An empty list with a state row
+    // means "this shop has none"; no state row means "we have never looked".
+    state: state || null,
+  };
+}
+
+function safeCatalogArray(raw) {
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Replace the lists a payload actually carries.
+ *
+ * A list the body does not mention is left exactly as it was, so a partial sync
+ * cannot empty something it knows nothing about.
+ */
+async function writeSiteCatalog(env, siteId, body) {
+  const written = {};
+  for (const [key, spec] of Object.entries(CATALOG_LISTS)) {
+    if (!Object.prototype.hasOwnProperty.call(body || {}, key)) continue;
+    const incoming = Array.isArray(body[key]) ? body[key] : [];
+    const rows = incoming
+      .map(spec.pick)
+      .filter((row) => row.name !== undefined ? row.name !== "" : true)
+      .filter((row) => (spec.valid ? spec.valid(row) : true))
+      .filter((row) => Object.values(row).some((value) => value !== null && value !== "" && value !== "[]"))
+      .slice(0, CATALOG_MAX_ROWS);
+
+    const statements = [env.DB.prepare(`DELETE FROM ${spec.table} WHERE site_id=?`).bind(siteId)];
+    rows.forEach((row, index) => {
+      const columns = spec.columns;
+      statements.push(
+        env.DB.prepare(
+          `INSERT INTO ${spec.table} (site_id,position,${columns.join(",")}) VALUES (?,?,${columns.map(() => "?").join(",")})`,
+        ).bind(siteId, index, ...columns.map((column) => row[column] ?? null)),
+      );
+    });
+    await env.DB.batch(statements);
+    written[key] = rows.length;
+  }
+
+  if (!Object.keys(written).length) return { ok: true, written };
+
+  const current = await loadSiteCatalog(env, siteId);
+  await env.DB.prepare(`
+    INSERT INTO site_catalog_state (site_id,source,product_source,product_count,service_count,faq_count,page_count,updated_at)
+    VALUES (?,?,?,?,?,?,?,?)
+    ON CONFLICT(site_id) DO UPDATE SET source=excluded.source,product_source=excluded.product_source,
+      product_count=excluded.product_count,service_count=excluded.service_count,
+      faq_count=excluded.faq_count,page_count=excluded.page_count,updated_at=excluded.updated_at
+  `).bind(
+    siteId, "wordpress", catalogText(body?.product_source, 40) || null,
+    current.products.length, current.services.length, current.faqs.length, current.pages.length, Date.now(),
+  ).run();
+  return { ok: true, written };
 }
 
 /** Keep only the canonical fields from an untrusted request body. */
@@ -2614,6 +2788,8 @@ function csrfRequired(path) {
   // /api/pair is the same shape: the plugin sends a pairing code and no
   // cookie, so a CSRF token proves nothing and the IP limiter is the defence.
   if (path === "/api/pair") return false;
+  // The catalogue sync is the profile sync's twin: bearer token, no cookie.
+  if (/^\/api\/sites\/[^/]+\/catalog$/i.test(path)) return false;
   return path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 

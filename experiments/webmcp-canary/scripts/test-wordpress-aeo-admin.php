@@ -1886,4 +1886,46 @@ $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_email'] = '';
 webmcp_canary_apply_remote_profile(array('profile' => array('email' => 'hello@example.test'), 'field_sources' => array(), 'updated_at' => 0));
 expect(webmcp_canary_settings()['business_email'] === 'hello@example.test', 'an empty local field is still filled from the service');
 
+/* ------------------------------------------------------------------ *
+ * The catalogue payload the plugin sends
+ * ------------------------------------------------------------------ */
+
+$GLOBALS['webmcp_test_active_plugins'] = array('woocommerce/woocommerce.php');
+$GLOBALS['webmcp_test_product_terms'] = array(21 => array('Coffee'));
+$GLOBALS['webmcp_test_products'] = array(
+    new WebmcpTestProduct(array('id' => 21, 'name' => 'Yirgacheffe', 'url' => 'https://x.test/p', 'sku' => 'E1', 'price' => '1800', 'in_stock' => true)),
+);
+webmcp_canary_save_service_entries(array(array('name' => 'Cut', 'minutes' => 45, 'price' => '4500', 'currency' => 'JPY', 'reserve_url' => 'https://x.test/book')));
+webmcp_canary_save_faq_entries(array(array('q' => 'Parking?', 'a' => 'Three spaces.')));
+$GLOBALS['webmcp_test_posts'] = array((object) array('ID' => 9, 'post_content' => 'x'));
+
+$catalog = webmcp_canary_catalog_payload();
+expect(count($catalog['products']) === 1, 'the catalogue carries the shop');
+expect($catalog['products'][0]['name'] === 'Yirgacheffe', 'with product names');
+expect($catalog['products'][0]['in_stock'] === true, 'and availability as a fact');
+expect($catalog['products'][0]['categories'] === array('Coffee'), 'and categories');
+expect($catalog['product_source'] === 'woocommerce', 'naming where the products came from');
+expect(count($catalog['services']) === 1 && $catalog['services'][0]['minutes'] === 45, 'services carry their duration in minutes');
+expect($catalog['services'][0]['reserve_url'] === 'https://x.test/book', 'and the entered booking URL');
+expect(count($catalog['faqs']) === 1 && $catalog['faqs'][0]['question'] === 'Parking?', 'the FAQ is carried as question/answer');
+expect(array_key_exists('pages', $catalog), 'and the pages');
+
+// A site with no shop says so rather than omitting the key, because an absent
+// list means "not supplied" to the service and would leave a stale catalogue.
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$no_shop = webmcp_canary_catalog_payload();
+expect($no_shop['products'] === array(), 'a site with no shop sends an empty product list');
+expect($no_shop['product_source'] === 'none', 'and says the shop is absent');
+expect(array_key_exists('products', $no_shop), 'the key is present, so the service clears what it held');
+
+// Not configured: nothing is sent at all.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('site_id' => '', 'profile_token' => ''));
+$unconfigured = webmcp_canary_push_catalog();
+expect(is_wp_error($unconfigured), 'an unpaired install sends no catalogue');
+
+$GLOBALS['webmcp_test_products'] = array();
+$GLOBALS['webmcp_test_product_terms'] = array();
+delete_option(WEBMCP_CANARY_SERVICES_OPTION);
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+
 echo "WordPress AEO admin tests passed\n";

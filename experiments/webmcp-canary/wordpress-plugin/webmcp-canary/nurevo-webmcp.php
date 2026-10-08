@@ -45,6 +45,12 @@ define('WEBMCP_CANARY_SOV_TTL', 6 * HOUR_IN_SECONDS);
  */
 
 function webmcp_canary_default_settings() {
+    if (!empty($push_catalog_after_save)) {
+        // The identifiers are in $settings but not yet in the option, so the
+        // push is deferred to the next request rather than guessed at here.
+        update_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 1, false);
+    }
+
     return array(
         'enabled' => '0',
         'allow_ai_crawlers' => '1',
@@ -465,6 +471,7 @@ function webmcp_canary_store_info_changed($old_value, $value) {
         return;
     }
     webmcp_canary_refresh_catalog();
+    webmcp_canary_push_catalog();
     $pushed = webmcp_canary_push_profile();
     if (!is_wp_error($pushed)) {
         // The merged record may differ from what was sent, so re-diagnose.
@@ -502,6 +509,9 @@ function webmcp_canary_sanitize_settings($input) {
         } else {
             $paired = true;
             $plan = $result['plan'];
+            // Sent below, once the identifiers are stored - a freshly connected
+            // site should not look empty in the dashboard until a cron run.
+            $push_catalog_after_save = true;
             if (!empty($result['site_id'])) $site_id = sanitize_text_field($result['site_id']);
             if (!empty($result['site_key'])) $site_key = sanitize_text_field($result['site_key']);
             if (!empty($result['profile_token'])) $profile_token = sanitize_text_field($result['profile_token']);
@@ -2277,6 +2287,11 @@ function webmcp_canary_product_llms_line($product) {
  * someone searching for a product would ask. This is the supply side only - the
  * engines, the budget and the scoring live in the service.
  */
+/** Set when pairing just stored new identifiers and the catalogue is unsent. */
+if (!defined('WEBMCP_CANARY_CATALOG_PENDING_OPTION')) {
+    define('WEBMCP_CANARY_CATALOG_PENDING_OPTION', 'webmcp_canary_catalog_pending');
+}
+
 /** Where the catalogue snapshot is kept between refreshes. */
 if (!defined('WEBMCP_CANARY_CATALOG_OPTION')) {
     define('WEBMCP_CANARY_CATALOG_OPTION', 'webmcp_canary_catalog');
@@ -3185,6 +3200,144 @@ function webmcp_canary_profile_request($method, $body = null) {
 }
 
 /** Push the local mirror, then adopt the merged record the service returns. */
+/**
+ * Everything this install knows about what the site offers.
+ *
+ * Products come from WooCommerce, services and the FAQ from what the operator
+ * typed in, and the pages from the same scan that already looks for store
+ * facts. All four were read locally and went nowhere; the service could show an
+ * operator their phone number and nothing about the shop it belongs to.
+ *
+ * Lists are always complete - the plugin is the only writer - so the service
+ * replaces what it holds. A list this install genuinely has none of is sent as
+ * an empty array, which is a fact ("no products here"), not an omission.
+ */
+function webmcp_canary_catalog_payload() {
+    $products = array();
+    foreach (webmcp_canary_woocommerce_products() as $product) {
+        $products[] = array(
+            'name' => $product['name'],
+            'url' => $product['url'],
+            'sku' => $product['sku'],
+            'price' => $product['price'],
+            'currency' => $product['currency'],
+            'in_stock' => $product['in_stock'],
+            'categories' => $product['categories'],
+        );
+    }
+
+    $services = array();
+    foreach (webmcp_canary_service_entries() as $service) {
+        $services[] = array(
+            'name' => $service['name'],
+            'minutes' => $service['minutes'],
+            'price' => $service['price'],
+            'currency' => $service['currency'],
+            'category' => $service['category'],
+            'reserve_url' => $service['reserve_url'],
+        );
+    }
+
+    $faqs = array();
+    foreach (webmcp_canary_faq_entries() as $faq) {
+        $faqs[] = array('question' => $faq['q'], 'answer' => $faq['a']);
+    }
+
+    return array(
+        'products' => $products,
+        'services' => $services,
+        'faqs' => $faqs,
+        'pages' => webmcp_canary_catalog_pages(),
+        // Named so the service can tell a shop with no products from a site with
+        // no shop at all.
+        'product_source' => webmcp_canary_woocommerce_active() ? 'woocommerce' : 'none',
+    );
+}
+
+/** The published pages worth telling a model about. */
+function webmcp_canary_catalog_pages($limit = 30) {
+    if (!function_exists('get_posts')) {
+        return array();
+    }
+    $posts = get_posts(array(
+        'post_type' => array('page', 'post'),
+        'post_status' => 'publish',
+        'posts_per_page' => max(1, (int) $limit),
+        'orderby' => 'modified',
+        'order' => 'DESC',
+        'no_found_rows' => true,
+    ));
+    $pages = array();
+    foreach ($posts as $post) {
+        if (!is_object($post) || empty($post->ID)) {
+            continue;
+        }
+        $title = webmcp_canary_llms_line(get_the_title($post));
+        if ($title === '') {
+            continue;
+        }
+        $permalink = get_permalink($post);
+        $pages[] = array('title' => $title, 'url' => is_string($permalink) ? $permalink : '');
+    }
+    return $pages;
+}
+
+/**
+ * Send the catalogue.
+ *
+ * Separate from the profile push because the two fail independently: a shop
+ * with a thousand products should not stop an address reaching the service, and
+ * an unreachable service should not lose the catalogue either.
+ */
+/**
+ * Send a catalogue that pairing deferred.
+ *
+ * Pairing stores the identifiers inside the settings sanitiser, before they are
+ * in the option, so the push cannot happen there. The flag is drained on the
+ * next admin view, which is the very next request after a save.
+ */
+function webmcp_canary_drain_pending_catalog() {
+    if (!get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0)) {
+        return;
+    }
+    delete_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION);
+    if (webmcp_canary_profile_sync_enabled()) {
+        webmcp_canary_push_catalog();
+    }
+}
+
+function webmcp_canary_push_catalog() {
+    $settings = webmcp_canary_settings();
+    if (!webmcp_canary_profile_sync_enabled($settings)) {
+        return new WP_Error('webmcp_profile_sync_disabled', __('Catalogue sync needs a site ID and a profile token.', 'nurevo-webmcp'));
+    }
+    $last_error = null;
+    foreach (webmcp_canary_api_base_candidates() as $api_base) {
+        $response = wp_remote_post(trailingslashit($api_base) . 'api/sites/' . rawurlencode($settings['site_id']) . '/catalog', array(
+            'method' => 'PUT',
+            'timeout' => WEBMCP_CANARY_HTTP_TIMEOUT,
+            'headers' => array(
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+                'authorization' => 'Bearer ' . $settings['profile_token'],
+            ),
+            'body' => wp_json_encode(webmcp_canary_catalog_payload()),
+        ));
+        if (is_wp_error($response)) {
+            $last_error = $response;
+            continue;
+        }
+        $status = wp_remote_retrieve_response_code($response);
+        if ($status >= 200 && $status < 300) {
+            return json_decode(wp_remote_retrieve_body($response), true);
+        }
+        $last_error = new WP_Error('webmcp_catalog_refused', sprintf('HTTP %d', $status));
+    }
+    return $last_error instanceof WP_Error
+        ? $last_error
+        : new WP_Error('webmcp_catalog_unreachable', __('The Nurevo service could not be reached.', 'nurevo-webmcp'));
+}
+
 function webmcp_canary_push_profile() {
     $result = webmcp_canary_profile_request('PUT', webmcp_canary_local_profile());
     if (is_wp_error($result)) {
@@ -3227,6 +3380,9 @@ function webmcp_canary_cron_sync_profile() {
         webmcp_canary_pull_profile(true);
     }
     webmcp_canary_refresh_catalog();
+    if (webmcp_canary_profile_sync_enabled()) {
+        webmcp_canary_push_catalog();
+    }
 }
 
 /* -----------------------------------------------------------------------
@@ -3639,6 +3795,7 @@ function webmcp_canary_aeo_page() {
     }
     webmcp_canary_autofill_business_data();
     webmcp_canary_pull_profile();
+    webmcp_canary_drain_pending_catalog();
     webmcp_canary_sync_ruleset();
     $result = webmcp_canary_get_aeo_score(false);
     $score = is_wp_error($result) ? null : $result;

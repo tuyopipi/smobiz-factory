@@ -369,6 +369,7 @@ const JA = {
   "Open settings": "設定を開く",
   "See the Pro plan at nurevo.jp": "Proプランを見る（nurevo.jp）",
   "Pairing code": "ペアリングコード",
+  "Catalogue sync needs a site ID and a profile token.": "カタログ同期にはサイトIDとプロフィールトークンが必要です。",
   "Frequently asked questions": "よくある質問",
   "Bookable services": "予約できるサービス",
   "Service name": "サービス名",
