@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.2
+Stable tag: 0.7.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,14 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.7.0 =
+
+* "Always current" now actually changes what your site publishes. On Standard and above the plugin receives the current output criteria from the service and applies them, instead of only noting that the version number had moved. Free installs keep publishing exactly what they publish today.
+* The address is published as a structured PostalAddress on Standard and above, so AI reads the street address as data rather than parsing it out of a sentence.
+* The AEO score is measured against the criteria in force, so it reflects the current standard rather than the one that applied when you installed.
+* A business type such as CafeOrCoffeeShop or HairSalon is no longer scored as unrecognised. Choosing a specific type was costing points; all of the types in the settings picker are now recognised.
+* The schema part of the score is proportional to how many criteria you meet, rather than one of three bands, so partial progress shows up as partial progress.
+
 = 0.6.2 =
 
 * Fixed the "View this site on the nurevo.jp dashboard" link, which could point at a development address instead of nurevo.jp. The link was built from the service URL in Settings; it is now always the nurevo.jp dashboard, while API calls continue to follow whatever service is configured.
@@ -189,6 +197,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.7.0 =
+
+Standard and above now receive the current output criteria and publish to them automatically. Scores are measured against the current standard, and specific business types are no longer penalised.
 
 = 0.6.2 =
 
