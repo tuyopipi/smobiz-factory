@@ -86,6 +86,10 @@ function get_bloginfo($field) {
     return $values[$field] ?? '';
 }
 function get_theme_mod() { return false; }
+// The diagnosis is worded by the service, so the plugin has to tell it which
+// language to answer in. Settable per test.
+$GLOBALS['webmcp_test_locale'] = 'ja';
+function get_locale() { return $GLOBALS['webmcp_test_locale']; }
 function register_deactivation_hook($file, $callback) { $GLOBALS['webmcp_test_hooks']['deactivation'][] = $callback; }
 function delete_option($key) { unset($GLOBALS['webmcp_test_options'][$key]); return true; }
 function add_query_arg($args, $url) {
@@ -1976,6 +1980,72 @@ expect(!get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0), 'a rejected code le
 delete_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION);
 webmcp_canary_sanitize_settings(array('enabled' => '1', 'tag_url' => 'https://nurevo.jp/tag.js'));
 expect(!get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0), 'saving settings without pairing queues nothing');
+
+/* ------------------------------------------------------------------ *
+ * The diagnosis speaks the site's language
+ *
+ * The checks are worded by the service, not here. The plugin never said which
+ * language it wanted, so the checklist came back in English and sat in the
+ * middle of admin screens that were otherwise translated - which is what "the
+ * diagnosis page is not in Japanese" actually was.
+ * ------------------------------------------------------------------ */
+
+$GLOBALS['webmcp_test_locale'] = 'ja';
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'tag_url' => 'https://nurevo.jp/tag.js', 'site_id' => 'site1', 'site_key' => 'nrv_k',
+));
+$lang_endpoints = webmcp_canary_aeo_score_endpoints();
+expect(count($lang_endpoints) > 0, 'a configured site has diagnosis endpoints');
+foreach ($lang_endpoints as $endpoint) {
+    expect(strpos($endpoint, 'lang=ja') !== false, 'every endpoint asks for the site language: ' . $endpoint);
+}
+
+$GLOBALS['webmcp_test_locale'] = 'en_US';
+foreach (webmcp_canary_aeo_score_endpoints() as $endpoint) {
+    expect(strpos($endpoint, 'lang=en-us') !== false, 'and follows the site when it changes');
+}
+
+// A cached diagnosis is wording in one language. Switching the site language
+// must fetch again rather than keep showing the previous one.
+$GLOBALS['webmcp_test_locale'] = 'ja';
+$ja_identity = webmcp_canary_aeo_score_identity();
+$GLOBALS['webmcp_test_locale'] = 'en_US';
+expect(webmcp_canary_aeo_score_identity() !== $ja_identity, 'the cache is not shared across languages');
+$GLOBALS['webmcp_test_locale'] = 'ja';
+
+/* ------------------------------------------------------------------ *
+ * A failed diagnosis says so, instead of "Checking" for ever
+ *
+ * The page discarded the WP_Error and rendered the pending badge whenever the
+ * score was missing, so a diagnosis that had actually failed was
+ * indistinguishable from one still in flight - and there was nothing to press.
+ * ------------------------------------------------------------------ */
+
+$pending = webmcp_canary_aeo_view(null);
+expect($pending['band'] === 'pending', 'no score and no error is still pending');
+expect($pending['badge'] === 'Checking', 'and keeps the pending badge');
+
+$failed = webmcp_canary_aeo_view(null, new WP_Error('webmcp_aeo_unreachable', 'AEO diagnosis is not available yet.'));
+expect($failed['band'] === 'error', 'a failure is its own state, not pending');
+expect($failed['badge'] === 'Could not diagnose', 'and says so');
+expect($failed['heading'] === 'AEO diagnosis is not available yet.', 'carrying the reason it failed');
+expect($failed['error_code'] === 'webmcp_aeo_unreachable', 'and the code, for the page to act on');
+expect($failed['score'] === null, 'with no score invented');
+
+// An unreachable service is the common case: a site that is not yet public.
+$GLOBALS['webmcp_test_remote_get'] = array();
+delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
+$unreachable = webmcp_canary_get_aeo_score(true);
+expect(is_wp_error($unreachable), 'an unreachable service returns the error rather than a score');
+expect(webmcp_canary_aeo_view(null, $unreachable)['band'] === 'error', 'which the page can show');
+
+// And a real answer still wins.
+$GLOBALS['webmcp_test_remote_get'] = array('api/sites/site1/aeo-score' => array('status' => 200, 'body' => $aeo_body));
+delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
+$ok = webmcp_canary_get_aeo_score(true);
+expect(!is_wp_error($ok), 'a registered site is diagnosed through its own endpoint');
+expect(webmcp_canary_aeo_view($ok, null)['score'] !== null, 'and the score renders');
+$GLOBALS['webmcp_test_remote_get'] = array();
 
 $GLOBALS['webmcp_test_products'] = array();
 $GLOBALS['webmcp_test_product_terms'] = array();

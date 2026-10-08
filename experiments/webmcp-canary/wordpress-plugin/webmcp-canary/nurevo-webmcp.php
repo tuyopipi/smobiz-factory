@@ -3667,7 +3667,7 @@ function webmcp_canary_validate_aeo_score($body) {
 
 function webmcp_canary_aeo_score_identity() {
     $settings = webmcp_canary_settings();
-    return md5($settings['site_id'] . '|' . $settings['site_key'] . '|' . home_url('/') . '|' . implode(',', webmcp_canary_api_base_candidates()));
+    return md5($settings['site_id'] . '|' . $settings['site_key'] . '|' . home_url('/') . '|' . webmcp_canary_aeo_lang() . '|' . implode(',', webmcp_canary_api_base_candidates()));
 }
 
 function webmcp_canary_cached_aeo_score() {
@@ -3684,19 +3684,32 @@ function webmcp_canary_cached_aeo_score() {
  * free install that never issued a site key - falls back to the public
  * URL-based diagnosis so the checklist always works without registration.
  */
+/**
+ * The language the diagnosis should come back in.
+ *
+ * The checks are worded by the service, not here, so without this the
+ * checklist arrived in English however the site was set up - the admin screens
+ * around it were translated and the diagnosis in the middle of them was not.
+ */
+function webmcp_canary_aeo_lang() {
+    $locale = function_exists('determine_locale') ? determine_locale() : get_locale();
+    return strtolower(str_replace('_', '-', (string) $locale));
+}
+
 function webmcp_canary_aeo_score_endpoints() {
     $settings = webmcp_canary_settings();
     $registered = $settings['site_key'] !== '' && $settings['site_id'] !== '';
+    $lang = webmcp_canary_aeo_lang();
     $endpoints = array();
     foreach (webmcp_canary_api_base_candidates() as $api_base) {
         if ($registered) {
             $endpoints[] = add_query_arg(
-                array('site_key' => $settings['site_key']),
+                array('site_key' => $settings['site_key'], 'lang' => $lang),
                 trailingslashit($api_base) . 'api/sites/' . rawurlencode($settings['site_id']) . '/aeo-score'
             );
         }
         $endpoints[] = add_query_arg(
-            array('url' => home_url('/')),
+            array('url' => home_url('/'), 'lang' => $lang),
             trailingslashit($api_base) . 'api/aeo/score'
         );
     }
@@ -3738,8 +3751,27 @@ function webmcp_canary_get_aeo_score($force_refresh = false) {
     return is_wp_error($last_error) ? $last_error : new WP_Error('webmcp_aeo_unreachable', __('AEO diagnosis is not available yet.', 'nurevo-webmcp'));
 }
 
-function webmcp_canary_aeo_view($score) {
+/**
+ * Turn a diagnosis - or the reason there isn't one - into something to show.
+ *
+ * The page used to discard the WP_Error and render "Checking" whenever the
+ * score was missing, so a diagnosis that had actually failed was
+ * indistinguishable from one still in flight: the badge said Checking for ever
+ * and offered nothing to do about it. The reason is now carried through and
+ * shown, with the retry that makes it actionable.
+ */
+function webmcp_canary_aeo_view($score, $error = null) {
     if (!is_array($score)) {
+        if (is_wp_error($error)) {
+            return array(
+                'score' => null,
+                'band' => 'error',
+                'color' => '#d13b3b',
+                'badge' => __('Could not diagnose', 'nurevo-webmcp'),
+                'heading' => $error->get_error_message(),
+                'error_code' => $error->get_error_code(),
+            );
+        }
         return array('score' => null, 'band' => 'pending', 'color' => '#8c8f94', 'badge' => __('Checking', 'nurevo-webmcp'), 'heading' => __('Checking how AI reads your site', 'nurevo-webmcp'));
     }
     $band = in_array($score['band'], array('green', 'yellow', 'red'), true) ? $score['band'] : 'red';
@@ -3796,9 +3828,12 @@ function webmcp_canary_aeo_page() {
     webmcp_canary_pull_profile();
     webmcp_canary_drain_pending_catalog();
     webmcp_canary_sync_ruleset();
-    $result = webmcp_canary_get_aeo_score(false);
+    // A retry is a deliberate request for a fresh diagnosis, so it bypasses the
+    // cached copy; without it the button would re-show the same stale failure.
+    $retry = isset($_GET['nurevo_recheck']) && check_admin_referer('nurevo_recheck');
+    $result = webmcp_canary_get_aeo_score($retry);
     $score = is_wp_error($result) ? null : $result;
-    $view = webmcp_canary_aeo_view($score);
+    $view = webmcp_canary_aeo_view($score, is_wp_error($result) ? $result : null);
     $settings = webmcp_canary_settings();
     $auto_follow = webmcp_canary_auto_follow_view($settings);
     $degrees = is_null($view['score']) ? 0 : round($view['score'] * 3.6);
@@ -3830,7 +3865,20 @@ function webmcp_canary_aeo_page() {
             <div class="webmcp-aeo-summary">
                 <span class="webmcp-aeo-badge is-<?php echo esc_attr($view['band']); ?>"><?php echo esc_html($view['badge']); ?></span>
                 <h2><?php echo esc_html($view['heading']); ?></h2>
-                <?php if (is_null($view['score'])) : ?><p class="description"><?php esc_html_e('Checking. The score appears automatically once your settings are complete.', 'nurevo-webmcp'); ?></p><?php endif; ?>
+                <?php if (is_null($view['score'])) : ?>
+                    <p class="description">
+                        <?php if ($view['band'] === 'error') : ?>
+                            <?php esc_html_e('The service could not diagnose this site. This usually means it is not reachable from the internet yet - a local or password-protected site cannot be read.', 'nurevo-webmcp'); ?>
+                        <?php else : ?>
+                            <?php esc_html_e('Checking. The score appears automatically once your settings are complete.', 'nurevo-webmcp'); ?>
+                        <?php endif; ?>
+                    </p>
+                    <p>
+                        <a class="button" href="<?php echo esc_url(wp_nonce_url(add_query_arg('nurevo_recheck', '1'), 'nurevo_recheck')); ?>">
+                            <?php esc_html_e('Check again', 'nurevo-webmcp'); ?>
+                        </a>
+                    </p>
+                <?php endif; ?>
             </div>
         </section>
 
