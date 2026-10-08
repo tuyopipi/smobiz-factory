@@ -8,7 +8,7 @@
 import assert from "node:assert/strict";
 import {
   ENTITLING_STATUSES, REVOKING_STATUSES, normalizePlan, planFromSubscription,
-  pricesFromEnv, resolveSitePlan, subscriptionPriceIds, tierFromPriceIds,
+  pricesFromEnv, resolveSitePlan, strongestPlan, subscriptionPriceIds, tierFromPriceIds,
 } from "../worker/billing-plan.mjs";
 
 const PRICES = { pro: "price_pro_live", standard: "price_std_live" };
@@ -84,13 +84,34 @@ assert.equal(resolveSitePlan({ plan: "standard" }), "standard");
 assert.equal(resolveSitePlan({ plan: "free" }), "free", "no billing and no grant is free");
 assert.equal(resolveSitePlan({}), "free", "an empty row is free");
 
-// The manual grant is a floor, not an override.
+// The manual grant is a floor, not an override: a site has the strongest of
+// what it pays for and what it was given. The earlier rule returned the grant
+// only when billing said free, which is not a floor - it ignored a grant that
+// was better than the subscription, so comping pro to a site already paying
+// for standard silently did nothing. That is the case comps exist for.
 assert.equal(resolveSitePlan({ plan: "free", manual_plan: "pro" }), "pro", "a granted tier applies when billing grants nothing");
-assert.equal(resolveSitePlan({ plan: "pro", manual_plan: "standard" }), "pro", "billing outranks the grant");
-assert.equal(resolveSitePlan({ plan: "standard", manual_plan: "pro" }), "standard", "billing outranks the grant even downward");
+assert.equal(resolveSitePlan({ plan: "pro", manual_plan: "standard" }), "pro", "a weaker grant never demotes a paying site");
+assert.equal(resolveSitePlan({ plan: "standard", manual_plan: "pro" }), "pro", "a stronger grant is honoured over a weaker subscription");
 
 // Cancelling drops a grandfathered site back to its grant, not to nothing.
 assert.equal(resolveSitePlan({ plan: "free", manual_plan: "pro" }), "pro", "a cancelled grandfathered site keeps its grant");
+
+/* ---------------- a grant made at the org ---------------- */
+
+// An agency and every site under it, free by agreement. Stamping each site
+// works until the agency adds its hundredth and someone forgets one.
+assert.equal(resolveSitePlan({ plan: "free" }, { manual_plan: "standard" }), "standard", "an org grant reaches a site that has none of its own");
+assert.equal(resolveSitePlan({ plan: "free", manual_plan: "pro" }, { manual_plan: "standard" }), "pro", "a stronger site grant wins over the org's");
+assert.equal(resolveSitePlan({ plan: "pro" }, { manual_plan: "standard" }), "pro", "and a paid tier is never reduced by an org grant");
+assert.equal(resolveSitePlan({ plan: "free" }, { manual_plan: null }), "free", "an org with no grant grants nothing");
+assert.equal(resolveSitePlan({ plan: "free" }, null), "free", "and no org at all is not an error");
+assert.equal(resolveSitePlan({ plan: "free" }, { manual_plan: "ENTERPRISE" }), "free", "an unknown org grant is not honoured");
+
+// Explicitly: the comp is free of charge. It sets what the site may use; it
+// never writes sites.plan, which is what billing owns.
+assert.equal(strongestPlan("free", "free", "pro"), "pro");
+assert.equal(strongestPlan(), "free", "nothing at all is free");
+assert.equal(strongestPlan(null, undefined, ""), "free");
 
 // Anything unrecognised is free rather than trusted.
 assert.equal(resolveSitePlan({ plan: "enterprise" }), "free", "an unknown stored plan is not honoured");

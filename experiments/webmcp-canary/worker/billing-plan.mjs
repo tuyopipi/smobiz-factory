@@ -100,10 +100,33 @@ export function planFromSubscription(subscription, prices = {}) {
  * grant is the floor, not an override, so cancelling a subscription drops a
  * grandfathered site back to its granted tier rather than to nothing.
  */
-export function resolveSitePlan(site = {}) {
-  const billed = normalizePlan(site.plan);
-  if (billed !== "free") return billed;
-  return normalizePlan(site.manual_plan);
+export function resolveSitePlan(site = {}, org = null) {
+  return strongestPlan(
+    normalizePlan(site.plan),
+    normalizePlan(site.manual_plan),
+    normalizePlan(org?.manual_plan),
+  );
+}
+
+/**
+ * The highest of several tiers.
+ *
+ * A site's tier is now three statements rather than two: what billing says it
+ * pays for, what this site was comped, and what its org was comped. They answer
+ * different questions, so the strongest wins instead of the last one read - a
+ * customer paying for pro under an agency with a standard comp keeps pro, and
+ * cancelling that subscription drops them to the comp rather than to nothing.
+ *
+ * The previous shape returned the grant only when billing said free, which gave
+ * the same answer for two tiers and the wrong one the moment a third appeared.
+ */
+export function strongestPlan(...plans) {
+  let best = "free";
+  for (const plan of plans) {
+    const normalized = normalizePlan(plan);
+    if (PLANS.indexOf(normalized) > PLANS.indexOf(best)) best = normalized;
+  }
+  return best;
 }
 
 /** Read the configured price ids off the worker env. */

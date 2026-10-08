@@ -950,9 +950,15 @@ export async function handleApi(request, env, ctx) {
         // decides it. billed_plan and manual_plan are reported separately so the
         // dashboard can say *why*: "pro, because it is paid for" reads very
         // differently from "pro, because we granted it".
-        plan: resolveSitePlan(row),
+        plan: resolveSitePlan(row, { manual_plan: row.org_manual_plan }),
         billed_plan: normalizeAeoPlan(row.plan),
         manual_plan: row.manual_plan || null,
+        manual_plan_note: row.manual_plan_note || null,
+        // A comp made on the org reaches every site under it. Reported
+        // separately from the site's own grant so the dashboard can say which
+        // of the two is the reason this site is not being billed.
+        org_manual_plan: row.org_manual_plan || null,
+        org_manual_plan_note: row.org_manual_plan_note || null,
         contract: row.contract || null,
         billing: { status: row.contract === "active" ? "active" : row.contract === "unpaid" ? "unpaid" : row.contract === "cancelled" ? "stopped" : row.contract === "past_due" ? "past_due" : "pending", customer_id: row.stripe_customer_id || null, subscription_id: row.stripe_subscription_id || null },
         // The licence binding. The hash itself is never exposed - it identifies
@@ -1226,6 +1232,77 @@ export async function handleApi(request, env, ctx) {
     return json({
       ok: true, site_id: siteId, pairing_code: code, expires_at: expiresAt,
       note: "Store this now; it is not retrievable again.",
+    });
+  }
+
+  /*
+   * Comp a tier: give Standard or Pro away, deliberately, at no charge.
+   *
+   * Two levels, because the decision is made at two levels. A single shop gets
+   * comped on its own row; an agency and everything under it gets comped once
+   * on the org, which is the case that matters - stamping each site works until
+   * the agency adds its hundredth and someone forgets one, and that site
+   * quietly starts being billed.
+   *
+   * This never writes sites.plan. Billing owns that column, and a comp that
+   * edited it would be indistinguishable from a subscription a month later.
+   * resolveSitePlan takes the strongest of billed, site grant and org grant,
+   * so a comp raises what a site may use and nothing else.
+   *
+   * Admin only, and the note is required: a grant with no stated reason is
+   * indistinguishable from a billing bug once the person who made it has left.
+   */
+  const siteCompMatch = path.match(/^\/api\/sites\/([^/]+)\/comp$/i);
+  if (siteCompMatch && method === "PUT") {
+    const member = await requireAdmin(request, env);
+    if (!member) return json({ error: "forbidden" }, 403);
+    const siteId = decodeURIComponent(siteCompMatch[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return json({ error: exists ? "forbidden" : "not_found" }, exists ? 403 : 404);
+    }
+    const grant = readCompGrant(await safeJson(request));
+    if (grant.error) return json({ error: grant.error }, 400);
+    await env.DB.prepare(
+      "UPDATE sites SET manual_plan=?, manual_plan_note=?, manual_plan_at=?, manual_plan_by=? WHERE id=?",
+    ).bind(grant.plan, grant.note, grant.plan ? Date.now() : null, grant.plan ? member.member_id : null, site.id).run();
+    const after = await env.DB.prepare(
+      "SELECT s.plan, s.manual_plan, s.manual_plan_note, o.manual_plan AS org_manual_plan FROM sites s LEFT JOIN orgs o ON o.id=s.org_id WHERE s.id=? LIMIT 1",
+    ).bind(site.id).first();
+    return json({
+      ok: true,
+      site_id: site.id,
+      manual_plan: after?.manual_plan || null,
+      manual_plan_note: after?.manual_plan_note || null,
+      plan: resolveSitePlan(after || {}, { manual_plan: after?.org_manual_plan }),
+    });
+  }
+
+  const orgCompMatch = path.match(/^\/api\/orgs\/([^/]+)\/comp$/i);
+  if (orgCompMatch && method === "PUT") {
+    const member = await requireAdmin(request, env);
+    if (!member) return json({ error: "forbidden" }, 403);
+    const orgId = decodeURIComponent(orgCompMatch[1]);
+    // An admin comps their own org. Reaching across orgs is a super-admin act,
+    // or an agency could comp its way into someone else's billing.
+    if (orgId !== member.org_id && !member.is_super_admin) return json({ error: "forbidden" }, 403);
+    const org = await env.DB.prepare("SELECT id FROM orgs WHERE id=? LIMIT 1").bind(orgId).first();
+    if (!org) return json({ error: "not_found" }, 404);
+    const grant = readCompGrant(await safeJson(request));
+    if (grant.error) return json({ error: grant.error }, 400);
+    await env.DB.prepare(
+      "UPDATE orgs SET manual_plan=?, manual_plan_note=?, manual_plan_at=?, manual_plan_by=? WHERE id=?",
+    ).bind(grant.plan, grant.note, grant.plan ? Date.now() : null, grant.plan ? member.member_id : null, orgId).run();
+    const counted = await env.DB.prepare("SELECT COUNT(*) AS n FROM sites WHERE org_id=?").bind(orgId).first();
+    return json({
+      ok: true,
+      org_id: orgId,
+      manual_plan: grant.plan,
+      manual_plan_note: grant.note,
+      // What the grant actually reaches, so the caller is not left guessing
+      // whether it applied to the agency's whole book.
+      sites_covered: Number(counted?.n || 0),
     });
   }
 
@@ -1832,6 +1909,28 @@ const CATALOG_LISTS = Object.freeze({
 });
 
 const CATALOG_MAX_ROWS = 100;
+
+/**
+ * Read a comp grant off a request body.
+ *
+ * `plan: null` revokes - the one way back to being billed normally - and is
+ * why an absent key is rejected rather than treated as a revocation: a
+ * malformed body must not silently cancel an agency's agreement.
+ *
+ * The note is required when granting, because the only thing that makes a
+ * free tier auditable a year later is the reason someone wrote down. Revoking
+ * needs none: there is nothing left to explain.
+ */
+function readCompGrant(body) {
+  if (!body || typeof body !== "object") return { error: "invalid_body" };
+  if (!Object.prototype.hasOwnProperty.call(body, "plan")) return { error: "plan_required" };
+  if (body.plan === null) return { plan: null, note: null };
+  const plan = String(body.plan || "").trim().toLowerCase();
+  if (!CHECKOUTABLE_PLANS.includes(plan)) return { error: "invalid_plan" };
+  const note = catalogText(body.note, 500);
+  if (!note) return { error: "note_required" };
+  return { plan, note };
+}
 
 function catalogText(value, max) {
   return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, max);
@@ -2555,7 +2654,7 @@ async function listOwnedSites(env, actor) {
   // business_type_schema, description, email and price_level are selected
   // because completeness scores them. price_level in particular was required
   // but never fetched, so every site's fill percentage was short by one.
-  const select = `SELECT s.*, o.plan AS org_plan, ss.name AS s_name, ss.tel, ss.address, ss.hours, ss.lat, ss.lng,
+  const select = `SELECT s.*, o.plan AS org_plan, o.manual_plan AS org_manual_plan, o.manual_plan_note AS org_manual_plan_note, ss.name AS s_name, ss.tel, ss.address, ss.hours, ss.lat, ss.lng,
               ss.image, ss.reserve_url, ss.business_type, ss.business_type_schema, ss.description,
               ss.email, ss.price_level
          FROM sites s JOIN orgs o ON o.id=s.org_id LEFT JOIN site_settings ss ON ss.site_id = s.id`;
