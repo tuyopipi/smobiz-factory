@@ -1,6 +1,6 @@
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler } from "./ai-crawlers.js";
-import { AEO_CACHE_TTL_SECONDS, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, resolveAeoCheckLang } from "./aeo-score.mjs";
+import { AEO_CACHE_TTL_SECONDS, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, publishedSchemaProps, resolveAeoCheckLang } from "./aeo-score.mjs";
 import { storeAeoScore } from "./diagnose.mjs";
 import {
   SOV_BETA, SOV_LIMITS, SOV_MODEL_VERSION, SovError,
@@ -15,6 +15,7 @@ import {
 import { normalizeDomainKey } from "./domain-key.mjs";
 import { planFromSubscription, pricesFromEnv, resolveSitePlan } from "./billing-plan.mjs";
 import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
+import { buildSiteRecommendations } from "./recommendations.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
 const json = (obj, status = 200, extraHeaders = {}) => new Response(JSON.stringify(obj), {
@@ -125,7 +126,14 @@ const INITIAL_AEO_RULESET = Object.freeze({
       required: ["@context", "@type", "name"],
       recommended: ["url", "additionalType", "address", "telephone", "openingHours", "openingHoursSpecification", "geo", "priceRange", "image", "potentialAction"],
       fields: Object.freeze({ url: true, additionalType: true, address: true, telephone: true, openingHours: true, openingHoursSpecification: true, geo: true, priceRange: true, image: true, potentialAction: true }),
-      hostedFields: ["address", "openingHoursSpecification", "geo", "telephone", "priceRange"],
+      // url is here because a hosted page that does not state its own canonical
+      // address was being marked down for a baseline property the publisher
+      // never emitted - an unfair deduction, not a tier difference.
+      hostedFields: ["url", "address", "openingHoursSpecification", "geo", "telephone", "priceRange"],
+      // Which properties a diagnosis counts. Stated here rather than hardcoded
+      // in the scorer, because advancing the criteria means widening this list
+      // and a site that has not advanced with it should feel the difference.
+      scoredProps: ["name", "url", "address", "telephone", "openingHours", "geo"],
       priceLevelMap: Object.freeze({ PRICE_LEVEL_FREE: "Free", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥¥" }),
       hostedPriceLevelMap: Object.freeze({ PRICE_LEVEL_FREE: "¥", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥" }),
     }),
@@ -218,6 +226,37 @@ function normalizeRulesetDefinition(value) {
   return { ok: true, definition, json: serialized };
 }
 
+/**
+ * The schema properties a diagnosis scores against, right now.
+ *
+ * Always the active ruleset, never the plan-selected one. Output follows the
+ * plan - a free site keeps emitting what it was installed with - but the
+ * measuring stick is the same for everyone, which is the whole point: it is
+ * what lets a free site's score drift down as the criteria move while a
+ * Standard site's holds.
+ */
+/**
+ * The ruleset a given site publishes under.
+ *
+ * Free keeps the baseline the plugin and the service shipped with; a paying or
+ * comped site follows the criteria in force. This is the selection /api/tag/config
+ * has always made, pulled out so the hosted page makes it too - it was reading
+ * the active ruleset whatever the store paid, which would have handed the
+ * advance to every free store the moment one was activated.
+ */
+async function rulesetForPlan(env, plan) {
+  return normalizeAeoPlan(plan) === "free" ? INITIAL_AEO_RULESET : await loadActiveRuleset(env);
+}
+
+async function activeScoredProps(env) {
+  const ruleset = await loadActiveRuleset(env);
+  const definition = rulesetDefinition(ruleset);
+  const props = definition?.schema?.scoredProps;
+  return Array.isArray(props) && props.length
+    ? props
+    : INITIAL_AEO_RULESET.definition.schema.scoredProps;
+}
+
 async function loadActiveRuleset(env) {
   if (!env?.DB) return INITIAL_AEO_RULESET;
   try {
@@ -257,6 +296,20 @@ function buildJsonLd(site, settings, ruleset) {
   if (fields.priceRange !== false && priceRange) ld.priceRange = priceRange;
   if (fields.image !== false && settings.image) ld.image = settings.image;
   if (fields.potentialAction !== false && settings.reserve_url) ld.potentialAction = { "@type": "ReserveAction", target: settings.reserve_url };
+
+  /*
+   * Properties a ruleset has to switch on, rather than off.
+   *
+   * Everything above is "on unless the ruleset says otherwise", which is right
+   * for fields that have always been emitted. It is exactly wrong for new
+   * ones: `fields.description !== false` is true for a ruleset that has never
+   * heard of description, so a baseline site would pick up every future field
+   * the moment it was invented and the plan model would mean nothing. These
+   * are opt-in, so a site keeps the criteria it was installed with until it is
+   * entitled to move.
+   */
+  if (fields.description === true && settings.description) ld.description = settings.description;
+  if (fields.email === true && settings.email) ld.email = settings.email;
   return ld;
 }
 
@@ -363,7 +416,9 @@ export async function handleApi(request, env, ctx) {
     const target = String(site.website_uri || site.url || "").trim()
       || (site.slug ? `https://nurevo.jp/s/${encodeURIComponent(site.slug)}` : "");
     try {
-      const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`);
+      const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`, {
+        scoredProps: await activeScoredProps(env),
+      });
       // Stored history keeps the default wording; only the reply is localised,
       // so the archive stays comparable across requests from different locales.
       await storeAeoScore(env, site.id, { ...result, verdict: result.band });
@@ -402,7 +457,9 @@ export async function handleApi(request, env, ctx) {
       || (owned.slug ? `https://nurevo.jp/s/${encodeURIComponent(owned.slug)}` : "");
     if (!target) return json({ error: "no_url" }, 400);
     try {
-      const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`);
+      const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`, {
+        scoredProps: await activeScoredProps(env),
+      });
       await storeAeoScore(env, owned.id, { ...result, verdict: result.band });
       return json(aeoResponse(result, requestedAeoLang(request, url)));
     } catch (error) {
@@ -590,7 +647,7 @@ export async function handleApi(request, env, ctx) {
       if (ctx?.waitUntil) ctx.waitUntil(hit);
       else await hit;
     }
-    const ruleset = await loadActiveRuleset(env);
+    const ruleset = await rulesetForPlan(env, resolveSitePlan(hosted, { manual_plan: hosted.org_manual_plan }));
     const rulesetVersion = String(ruleset.version || INITIAL_AEO_RULESET.version);
     if (hostedMatch[2]) return new Response(buildHostedLlms(hosted, ruleset), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "x-aeo-ruleset-version": rulesetVersion } });
     const locale = preferredHostedLocale(url, request);
@@ -817,7 +874,7 @@ export async function handleApi(request, env, ctx) {
     const settings = await env.DB.prepare("SELECT * FROM site_settings WHERE site_id = ?").bind(auth.siteId).first() || {};
     const site = await env.DB.prepare("SELECT url, website_uri, slug FROM sites WHERE id = ?").bind(auth.siteId).first();
     const plan = normalizeAeoPlan(auth.plan);
-    const ruleset = plan === "free" ? INITIAL_AEO_RULESET : await loadActiveRuleset(env);
+    const ruleset = await rulesetForPlan(env, plan);
     const store = {
       name: settings.name || site?.url || "",
       address: settings.address || "",
@@ -833,6 +890,12 @@ export async function handleApi(request, env, ctx) {
       crawlerAllowed: !!settings.allow_crawlers,
       jsonld: settings.serve_schema ? buildJsonLd(site, settings, ruleset) : null,
       ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
+      // The plugin publishes its own @graph, because it has data this service
+      // does not - the FAQ, the services, the shop. It cannot use the JSON-LD
+      // above, so it gets the field switches instead and applies them to what
+      // it builds locally. Without this the plugin followed a version number
+      // and nothing else, and "always current" moved no output at all.
+      schema_fields: rulesetDefinition(ruleset)?.schema?.fields || INITIAL_AEO_RULESET.definition.schema.fields,
       store,
     };
     return json(body, 200, {
@@ -1233,6 +1296,95 @@ export async function handleApi(request, env, ctx) {
     return json({
       ok: true, site_id: siteId, pairing_code: code, expires_at: expiresAt,
       note: "Store this now; it is not retrievable again.",
+    });
+  }
+
+  /*
+   * Where to fix this site.
+   *
+   * Pro. A score says there is a problem; this says which thing to change and
+   * in what order, which is the part an operator cannot work out for
+   * themselves from eight checks that all say "needs work".
+   *
+   * Composed from things that were actually measured: the failing checks of the
+   * latest diagnosis, the scored properties this site's live schema does not
+   * publish, and whatever the learning job recorded. Nothing is generated to
+   * fill the list - a site with nothing wrong gets an empty one.
+   *
+   * The schema is read live rather than from the stored diagnosis, because
+   * advice has to describe the page as it is now; a fix made ten minutes ago
+   * should not still be listed.
+   */
+  const recommendationsMatch = path.match(/^\/api\/sites\/([^/]+)\/recommendations$/i);
+  if (recommendationsMatch && method === "GET") {
+    const access = await requireProSite(request, env, decodeURIComponent(recommendationsMatch[1]));
+    if (!access.ok) return access.response;
+    const site = access.site;
+    const lang = requestedAeoLang(request, url) || "ja";
+
+    const [latest, storedRows, current, scoredProps] = await Promise.all([
+      env.DB.prepare(
+        "SELECT scanned_at,checks_json FROM aeo_scores WHERE site_id=? ORDER BY scanned_at DESC LIMIT 1",
+      ).bind(site.id).first(),
+      env.DB.prepare(
+        "SELECT kind,detail_json,status,updated_at FROM aeo_site_recommendations WHERE site_id=? AND status='open'",
+      ).bind(site.id).all(),
+      loadSiteProfile(env, site.id),
+      activeScoredProps(env),
+    ]);
+
+    let checks = [];
+    if (latest?.checks_json) {
+      try {
+        const parsed = JSON.parse(latest.checks_json);
+        if (Array.isArray(parsed)) checks = localizeAeoChecks(parsed, lang);
+      } catch {
+        // A row from an older or broken build is not worth failing the advice
+        // over; the property gaps below still stand on their own.
+        checks = [];
+      }
+    }
+
+    /*
+     * What the page publishes right now.
+     *
+     * Read, or not read - and the difference matters more than it looks. An
+     * unreadable page yields no properties, which is indistinguishable from a
+     * page that publishes none, and the property pass would then confidently
+     * list every criterion as missing. A list that is wrong about nine things
+     * is worse than no list, so a failed read suppresses that pass entirely
+     * and says so instead.
+     */
+    let publishedProps = [];
+    let schemaRead = false;
+    const target = String(site.website_uri || site.url || "").trim()
+      || (site.slug ? `https://nurevo.jp/s/${encodeURIComponent(site.slug)}` : "");
+    if (target) {
+      try {
+        const nodes = await fetchSchemaNodes(/^https?:\/\//i.test(target) ? target : `https://${target}`);
+        publishedProps = publishedSchemaProps(nodes, scoredProps);
+        schemaRead = true;
+      } catch {
+        schemaRead = false;
+      }
+    }
+
+    return json({
+      site_id: site.id,
+      checked_at: latest?.scanned_at || null,
+      // Stated in the response so the dashboard can say "we could not read
+      // your page" rather than implying the list is complete.
+      schema_read: schemaRead,
+      ...buildSiteRecommendations({
+        checks,
+        profile: current?.values || {},
+        // Without a reading, the criteria cannot be compared against anything.
+        scoredProps: schemaRead ? scoredProps : [],
+        publishedProps,
+        plan: access.plan,
+        stored: storedRows?.results || [],
+      }),
+      scored_props: scoredProps.map((prop) => String(prop).toLowerCase()),
     });
   }
 
@@ -2538,8 +2690,13 @@ async function uniqueSlug(env, name, siteId) {
 
 async function loadHostedStore(env, slug) {
   return env.DB.prepare(
-    `SELECT s.id,s.url,s.slug,s.delivery_status,ss.name,ss.business_type,ss.address,ss.hours,ss.hours_periods,ss.lat,ss.lng,ss.tel,ss.price,ss.price_level
-       FROM sites s JOIN site_settings ss ON ss.site_id=s.id WHERE s.slug=? LIMIT 1`,
+    `SELECT s.id,s.url,s.slug,s.delivery_status,s.plan,s.manual_plan,
+            o.manual_plan AS org_manual_plan,
+            ss.name,ss.business_type,ss.address,ss.hours,ss.hours_periods,ss.lat,ss.lng,
+            ss.tel,ss.price,ss.price_level,ss.description,ss.email
+       FROM sites s JOIN site_settings ss ON ss.site_id=s.id
+       LEFT JOIN orgs o ON o.id=s.org_id
+      WHERE s.slug=? LIMIT 1`,
   ).bind(slug).first();
 }
 
@@ -2593,12 +2750,24 @@ function hostedSchema(store, price, ruleset) {
   const rules = definition?.schema || INITIAL_AEO_RULESET.definition.schema;
   const fields = new Set(rules.hostedFields || INITIAL_AEO_RULESET.definition.schema.hostedFields);
   const schema = { "@context": rules.context || "https://schema.org", "@type": rules.type || "LocalBusiness", name: store.name };
+  const canonical = store.slug
+    ? `${definition?.defaults?.hostedBaseUrl || INITIAL_AEO_RULESET.definition.defaults.hostedBaseUrl}${store.slug}`
+    : "";
+  if (fields.has("url") && canonical) schema.url = canonical;
   if (fields.has("address") && store.address) schema.address = { "@type": "PostalAddress", streetAddress: store.address };
   const hours = openingHoursSpecification(store.hours_periods, store.hours);
   if (fields.has("openingHoursSpecification") && hours.length) schema.openingHoursSpecification = hours;
+  // The text form, for stores whose hours were typed as a sentence rather than
+  // parsed into periods - which is most of them.
+  if (fields.has("openingHours") && store.hours) schema.openingHours = store.hours;
   if (fields.has("geo") && store.lat != null && store.lng != null) schema.geo = { "@type": "GeoCoordinates", latitude: store.lat, longitude: store.lng };
   if (fields.has("telephone") && store.tel) schema.telephone = store.tel;
   if (fields.has("priceRange") && price) schema.priceRange = price;
+  // hostedFields is a allow-list rather than a set of switches, so a property
+  // the ruleset has not named is simply absent - new ones are opt-in here by
+  // construction, and a baseline store keeps exactly the page it had.
+  if (fields.has("description") && store.description) schema.description = store.description;
+  if (fields.has("email") && store.email) schema.email = store.email;
   return schema;
 }
 

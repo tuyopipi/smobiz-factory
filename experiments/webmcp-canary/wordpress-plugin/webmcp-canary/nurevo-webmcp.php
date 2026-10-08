@@ -2934,7 +2934,33 @@ function webmcp_canary_ruleset_state() {
         'changed_at' => 0,
         'notice_version' => 0,
         'dismissed_version' => 0,
+        // Which optional schema properties this site is entitled to publish.
+        // Empty means "whatever the plugin shipped with", which is what a free
+        // site keeps: following the central criteria is the paid part, and
+        // until this is populated the output is exactly as it has always been.
+        'fields' => array(),
     ));
+}
+
+/**
+ * Is this site entitled to publish an optional schema property?
+ *
+ * The answer comes from the central ruleset, which only a site that follows it
+ * receives. A free site has no stored switches and so keeps publishing exactly
+ * what the plugin shipped with - it never loses a field, it simply does not
+ * gain the ones the criteria added after it installed.
+ *
+ * Default false, deliberately. "On unless switched off" would hand every
+ * future property to every site the moment it was invented, which is how the
+ * plan model becomes a label again.
+ */
+function webmcp_canary_ruleset_allows($field, $state = null) {
+    $state = is_array($state) ? $state : webmcp_canary_ruleset_state();
+    if (!webmcp_canary_auto_follow_enabled()) {
+        return false;
+    }
+    $fields = isset($state['fields']) && is_array($state['fields']) ? $state['fields'] : array();
+    return !empty($fields[sanitize_key($field)]);
 }
 
 /** Standard and above follow the central ruleset; free stays on the baseline. */
@@ -2982,6 +3008,19 @@ function webmcp_canary_sync_ruleset($force = false) {
             continue;
         }
         $version = $reported;
+        // The field switches, not just the version. Storing only the number is
+        // why "always current" used to move nothing: the plugin knew the
+        // criteria had advanced and had no idea what had changed.
+        if (isset($body['schema_fields']) && is_array($body['schema_fields'])) {
+            $fields = array();
+            foreach ($body['schema_fields'] as $field_key => $field_on) {
+                $clean_key = sanitize_key($field_key);
+                if ($clean_key !== '') {
+                    $fields[$clean_key] = !empty($field_on);
+                }
+            }
+            $state['fields'] = $fields;
+        }
         if (isset($body['plan']) && in_array($body['plan'], array('free', 'standard', 'pro'), true)) {
             $plan = $body['plan'];
         }
@@ -4276,7 +4315,13 @@ function webmcp_canary_output_server_schema() {
         $org['description'] = $site_desc;
     }
     if (!empty($settings['business_address'])) {
-        $org['address'] = $settings['business_address'];
+        // A bare string is what this has always published, and a free site
+        // keeps it. schema.org documents PostalAddress as the form for an
+        // address, and an engine reading streetAddress does not have to parse
+        // it out of prose - so following the criteria upgrades the shape.
+        $org['address'] = webmcp_canary_ruleset_allows('postaladdress')
+            ? array('@type' => 'PostalAddress', 'streetAddress' => $settings['business_address'])
+            : $settings['business_address'];
     }
     if (!empty($settings['business_phone'])) {
         $org['telephone'] = $settings['business_phone'];
