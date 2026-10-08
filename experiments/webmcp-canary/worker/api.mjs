@@ -14,6 +14,7 @@ import {
 } from "./site-profile.mjs";
 import { normalizeDomainKey } from "./domain-key.mjs";
 import { planFromSubscription, pricesFromEnv, resolveSitePlan } from "./billing-plan.mjs";
+import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
 const json = (obj, status = 200, extraHeaders = {}) => new Response(JSON.stringify(obj), {
@@ -1232,6 +1233,65 @@ export async function handleApi(request, env, ctx) {
     return json({
       ok: true, site_id: siteId, pairing_code: code, expires_at: expiresAt,
       note: "Store this now; it is not retrievable again.",
+    });
+  }
+
+  /*
+   * What a partner is owed this month.
+   *
+   * A report, not a payment. The engine works out the figure and the lines
+   * behind it; somebody still makes the transfer by hand, and nothing here is
+   * wired to one.
+   *
+   * Attribution is the part that is a question about the account model rather
+   * than about arithmetic, so it is answered here and only here: a site counts
+   * towards a partner org if it belongs to that org, or if its org was
+   * referred by it. The calculation itself takes rows and does not care.
+   *
+   * A comped site is passed through as comped rather than filtered out, so the
+   * engine can both exclude its revenue and keep it out of the count that
+   * picks the rate - a partner must not reach a better tier on sites that pay
+   * nothing.
+   */
+  const kickbackMatch = path.match(/^\/api\/orgs\/([^/]+)\/kickback$/i);
+  if (kickbackMatch && method === "GET") {
+    const member = await requireAdmin(request, env);
+    if (!member) return json({ error: "forbidden" }, 403);
+    const orgId = decodeURIComponent(kickbackMatch[1]);
+    if (orgId !== member.org_id && !member.is_super_admin) return json({ error: "forbidden" }, 403);
+    const org = await env.DB.prepare("SELECT id, manual_plan FROM orgs WHERE id=? LIMIT 1").bind(orgId).first();
+    if (!org) return json({ error: "not_found" }, 404);
+
+    const month = String(url.searchParams.get("month") || "").trim();
+    // 01 to 12, not any two digits: "2026-13" is a typo for a real month and
+    // echoing it back into a statement would make the mistake look deliberate.
+    if (month && !/^\d{4}-(0[1-9]|1[0-2])$/.test(month)) return json({ error: "invalid_month" }, 400);
+
+    const attributed = await env.DB.prepare(`
+      SELECT s.id, s.plan, s.manual_plan, s.contract, s.resale_price, s.delivery_status,
+             o.manual_plan AS org_manual_plan
+        FROM sites s JOIN orgs o ON o.id=s.org_id
+       WHERE s.org_id=? OR o.referred_by=?
+    `).bind(orgId, orgId).all();
+
+    const sites = (attributed.results || []).map((row) => ({
+      site_id: row.id,
+      // What the subscription pays for, never what a comp lets the site use.
+      billed_plan: normalizeAeoPlan(row.plan),
+      // A stopped site is not invoiced, and a grant of either kind means the
+      // site was given away.
+      comped: !!row.manual_plan || !!row.org_manual_plan || row.delivery_status === "stopped",
+      amount_yen: row.resale_price > 0 ? row.resale_price : null,
+    }));
+
+    return json({
+      ok: true,
+      ...calculateKickback({
+        partner_org_id: orgId,
+        month: month || null,
+        sites,
+        tiers: kickbackTiersFromEnv(env),
+      }),
     });
   }
 
