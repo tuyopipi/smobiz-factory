@@ -1923,6 +1923,60 @@ $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canar
 $unconfigured = webmcp_canary_push_catalog();
 expect(is_wp_error($unconfigured), 'an unpaired install sends no catalogue');
 
+/* ------------------------------------------------------------------ *
+ * A freshly paired site must not look empty
+ *
+ * Pairing happens inside the settings sanitiser, where the site ID and write
+ * token exist only as local variables - they reach the option when WordPress
+ * stores the sanitiser's return value, which is after the sanitiser has run.
+ * So the push is deferred by a flag that the next admin request drains.
+ *
+ * The flag assignment and the flag write were in different functions: the
+ * sanitiser set $push_catalog_after_save and webmcp_canary_default_settings()
+ * read it, where it was always undefined. The deferred push therefore never
+ * happened, and a site stayed blank in the dashboard until a cron run. This
+ * pins the flag to the function that actually knows pairing succeeded.
+ * ------------------------------------------------------------------ */
+
+delete_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION);
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('site_id' => '', 'profile_token' => ''));
+$GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => wp_json_encode(array(
+    'ok' => true, 'plan' => 'free', 'site_id' => 'paired01',
+    'site_key' => 'nrv_paired', 'profile_token' => 'nrvp_paired', 'domain' => 'example.test',
+)));
+$paired = webmcp_canary_sanitize_settings(array(
+    'enabled' => '1', 'tag_url' => 'https://nurevo.jp/tag.js', 'pairing_code' => 'NRV-AAAAA-BBBBB-CCCCC-DDDDD',
+));
+expect($paired['site_id'] === 'paired01', 'pairing adopts the issued site ID');
+expect($paired['profile_token'] === 'nrvp_paired', 'and the write token');
+expect(get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0) == 1, 'pairing leaves the catalogue push pending');
+
+// The next request stores what the sanitiser returned, then drains the flag.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $paired;
+unset($GLOBALS['webmcp_test_last_remote']);
+webmcp_canary_drain_pending_catalog();
+expect(!get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0), 'draining clears the flag so it fires once');
+expect(
+    isset($GLOBALS['webmcp_test_last_remote']) && strpos($GLOBALS['webmcp_test_last_remote']['url'], '/api/sites/paired01/catalog') !== false,
+    'and the catalogue is sent for the site pairing just issued'
+);
+
+// Nothing pending means nothing sent: the drain is not a second sync path.
+unset($GLOBALS['webmcp_test_last_remote']);
+webmcp_canary_drain_pending_catalog();
+expect(!isset($GLOBALS['webmcp_test_last_remote']), 'a drain with no flag sends nothing');
+
+// A pairing that failed leaves nothing pending - there is no site to send to.
+delete_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION);
+$GLOBALS['webmcp_test_remote'] = array('status' => 404, 'body' => '{"ok":false,"error":"invalid_code"}');
+webmcp_canary_sanitize_settings(array('tag_url' => 'https://nurevo.jp/tag.js', 'pairing_code' => 'NRV-ZZZZZ-ZZZZZ-ZZZZZ-ZZZZZ'));
+expect(!get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0), 'a rejected code leaves no pending push');
+
+// And an ordinary save with no code does not queue one either.
+delete_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION);
+webmcp_canary_sanitize_settings(array('enabled' => '1', 'tag_url' => 'https://nurevo.jp/tag.js'));
+expect(!get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0), 'saving settings without pairing queues nothing');
+
 $GLOBALS['webmcp_test_products'] = array();
 $GLOBALS['webmcp_test_product_terms'] = array();
 delete_option(WEBMCP_CANARY_SERVICES_OPTION);

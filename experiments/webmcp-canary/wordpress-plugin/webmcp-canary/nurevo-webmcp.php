@@ -45,12 +45,6 @@ define('WEBMCP_CANARY_SOV_TTL', 6 * HOUR_IN_SECONDS);
  */
 
 function webmcp_canary_default_settings() {
-    if (!empty($push_catalog_after_save)) {
-        // The identifiers are in $settings but not yet in the option, so the
-        // push is deferred to the next request rather than guessed at here.
-        update_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 1, false);
-    }
-
     return array(
         'enabled' => '0',
         'allow_ai_crawlers' => '1',
@@ -555,6 +549,11 @@ function webmcp_canary_sanitize_settings($input) {
                 'updated'
             );
         }
+    }
+    if (!empty($push_catalog_after_save)) {
+        // The identifiers are returned below but are not in the option yet, so
+        // the push is deferred to the next request rather than guessed at here.
+        update_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 1, false);
     }
     return array(
         'enabled' => !empty($input['enabled']) ? '1' : '0',
