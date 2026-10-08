@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.7.0
+Stable tag: 0.7.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,11 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.7.1 =
+
+* The settings screen now shows the three steps to connect a site - add it in the dashboard, issue a pairing code, paste it in - until the site is connected. This was only explained in small print halfway down the form.
+* The AI visibility screen no longer shows a price for Pro. Measurement is in beta and not on sale yet, so the screen says so instead.
+
 = 0.7.0 =
 
 * "Always current" now actually changes what your site publishes. On Standard and above the plugin receives the current output criteria from the service and applies them, instead of only noting that the version number had moved. Free installs keep publishing exactly what they publish today.
@@ -197,6 +202,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.7.1 =
+
+Adds the three connection steps to the settings screen, and marks Pro as coming soon rather than showing a price.
 
 = 0.7.0 =
 

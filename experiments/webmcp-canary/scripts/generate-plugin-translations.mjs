@@ -287,6 +287,20 @@ const JA = {
   "The service could not diagnose this site. This usually means it is not reachable from the internet yet - a local or password-protected site cannot be read.":
     "このサイトを診断できませんでした。多くの場合、サイトがまだインターネットから見えないことが原因です（ローカル環境やパスワード保護中のサイトは読み取れません）。",
   "Check again": "もう一度診断する",
+  // The connection block on the settings screen, and the Pro coming-soon
+  // wording that replaced a price.
+  "Connect this site to Nurevo": "このサイトをNurevoに接続する",
+  "Open the nurevo.jp dashboard and add this site.": "nurevo.jpのダッシュボードを開き、このサイトを追加します。",
+  "Press \"Issue a pairing code\" and copy the code.": "「ペアリングコードを発行」を押して、コードをコピーします。",
+  "Paste it into the Pairing code field below and save.": "下の「ペアリングコード」欄に貼り付けて保存します。",
+  "Open the dashboard": "ダッシュボードを開く",
+  "Diagnosis, structured data and llms.txt already work without connecting. Connecting is what lets the dashboard show this site and keep its output current.":
+    "診断・構造化データ・llms.txtは接続しなくても動作します。接続すると、ダッシュボードにこのサイトが表示され、出力を最新基準に保てます。",
+  "Measuring your visibility in AI answers is a Pro feature (beta, coming soon)":
+    "AIの回答での登場率の測定はProプランの機能です（β・近日提供）",
+  "Pro is not on sale yet. There is nothing to buy and nothing to set up - this screen will start working once measurement opens.":
+    "Proはまだ販売していません。購入も設定も不要です。測定の提供開始後、この画面が動き始めます。",
+  "See what Pro will do": "Proでできることを見る",
   "Good": "良好",
   "AI is reading your site correctly": "AIに正しく読まれています",
   "Needs work": "要改善",
