@@ -307,3 +307,32 @@ console.log("unbind UI tests passed");
 }
 
 console.log("plan panel tests passed");
+
+/* ---------------- the binding panel after pairing replaced licences ---------------- */
+
+{
+  // A paired site is connected. The panel used to read the licence hash, which
+  // /api/pair never sets, so every paired install was told it was not connected
+  // and pointed at a licence field that no longer connects anything.
+  const html = detailHtml(BOUND({ bound: true, bound_via: "pairing", domain_key: "example.com" }));
+  assert.ok(html.includes("ペアリングコード"), "the panel says it was connected by pairing");
+  assert.equal(html.includes("未接続"), false, "and does not claim otherwise");
+  assert.ok(html.includes('id="unbind"'), "with the release control");
+}
+
+{
+  const html = detailHtml(BOUND({ bound: true, bound_via: "license", domain_key: "example.com" }));
+  assert.ok(html.includes("旧方式"), "a legacy licence link is named as legacy");
+}
+
+{
+  // Not connected: the instructions are the ones that work, and the code can be
+  // issued from here rather than only from the add dialog.
+  const html = detailHtml(BOUND({ bound: false, bound_via: null, bound_at: null, domain_key: null }));
+  assert.ok(html.includes("未接続"));
+  assert.ok(html.includes("ペアリングコードを発行"), "a code can be issued from the panel");
+  assert.ok(html.includes("貼り付けると接続されます"), "and the instructions describe pairing");
+  assert.equal(html.includes("ライセンスキーを保存すると接続"), false, "the licence instruction is gone");
+}
+
+console.log("binding panel tests passed");

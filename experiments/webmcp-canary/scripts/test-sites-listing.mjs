@@ -104,6 +104,34 @@ const listSites = async (rows) => {
 /* ---------------- binding ---------------- */
 
 {
+  // Pairing is how an install connects now: /api/pair claims a domain and sets
+  // bound_at, and issues no licence hash at all. Keying "bound" off the hash
+  // reported every paired site as not connected.
+  const paired = Date.now();
+  const [site] = await listSites([{ ...baseRow, bound_license_hash: null, bound_at: paired, domain_key: "example.com" }]);
+  assert.equal(site.bound, true, "a paired site is connected");
+  assert.equal(site.bound_via, "pairing", "and says how");
+  assert.equal(site.domain_key, "example.com");
+}
+
+{
+  // A legacy install that redeemed a licence is still connected, and still
+  // distinguishable.
+  const [site] = await listSites([{ ...baseRow, bound_license_hash: "a".repeat(64), bound_at: Date.now(), domain_key: "example.com" }]);
+  assert.equal(site.bound, true, "a licence-bound site is connected too");
+  assert.equal(site.bound_via, "license", "reported as the legacy route");
+}
+
+{
+  // A half-written row is not a connection.
+  const [noDomain] = await listSites([{ ...baseRow, bound_at: Date.now(), domain_key: null }]);
+  assert.equal(noDomain.bound, false, "a timestamp with no domain is not connected");
+  const [noTime] = await listSites([{ ...baseRow, bound_at: null, domain_key: "example.com" }]);
+  assert.equal(noTime.bound, false, "nor a domain with no timestamp");
+  assert.equal(noTime.bound_via, null);
+}
+
+{
   const bound = Date.now();
   const [site] = await listSites([{ ...baseRow, bound_license_hash: "a".repeat(64), bound_at: bound, domain_key: "example.com" }]);
   assert.equal(site.bound, true, "a bound site says so");

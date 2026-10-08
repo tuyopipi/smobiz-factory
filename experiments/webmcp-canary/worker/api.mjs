@@ -921,9 +921,15 @@ export async function handleApi(request, env, ctx) {
         // The licence binding. The hash itself is never exposed - it identifies
         // a secret - but whether a site is bound, to which domain and since when
         // is what the operator needs to see.
-        bound: !!row.bound_license_hash,
+        // An install is connected when it has claimed a domain, not when it
+        // holds a licence hash. /api/pair sets domain_key and bound_at and no
+        // hash at all - licences do not issue any more - so keying off the hash
+        // reported every paired site as "not connected".
+        bound: !!(row.domain_key && row.bound_at),
         bound_at: row.bound_at || null,
         domain_key: row.domain_key || null,
+        // How the link was made, so the panel can word itself correctly.
+        bound_via: row.bound_license_hash ? "license" : (row.domain_key && row.bound_at ? "pairing" : null),
         checklist,
       };
     });

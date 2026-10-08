@@ -3112,6 +3112,17 @@ function webmcp_canary_apply_remote_profile($remote) {
         }
         $value = $remote['profile'][$field];
         $value = $value === null ? '' : trim((string) $value);
+        // An empty canonical value means "not filled in there", not "clear it
+        // here" - the same rule mergeProfile applies on the way up, where "" is
+        // never allowed to overwrite a stored value.
+        //
+        // Without this, the first pull after pairing wiped the shop: a site the
+        // dashboard has just created has an empty profile, so every field this
+        // plugin had extracted locally was overwritten with "" and then pushed
+        // back up as empty. The install lost its own data by connecting.
+        if ($value === '' && trim((string) $settings[$option_key]) !== '') {
+            continue;
+        }
         if ((string) $settings[$option_key] === $value) {
             continue;
         }

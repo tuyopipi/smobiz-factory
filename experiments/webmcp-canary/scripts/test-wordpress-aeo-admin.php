@@ -1838,4 +1838,52 @@ for ($i = 0; $i < WEBMCP_CANARY_MAX_SERVICES + 5; $i++) { $many_services[] = arr
 expect(count(webmcp_canary_save_service_entries($many_services)) === WEBMCP_CANARY_MAX_SERVICES, 'the cap is a cap');
 delete_option(WEBMCP_CANARY_SERVICES_OPTION);
 
+/* ------------------------------------------------------------------ *
+ * A pull must not clear what this site already knows
+ * ------------------------------------------------------------------ */
+
+// The first pull after pairing wiped the shop. A site the dashboard has just
+// created has an empty profile, so every field extracted locally was
+// overwritten with "" and then pushed back up as empty - the install lost its
+// own data by connecting. Empty means "not filled in there", which is the same
+// rule mergeProfile applies on the way up.
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'business_name' => 'Lumina Omotesando',
+    'business_address' => '3-2-6 Kanda-Misakicho, Chiyoda-ku, Tokyo',
+    'business_phone' => '03-1234-5678',
+    'business_hours' => 'Tue-Sun 11:00-20:00',
+    'business_type' => 'HairSalon',
+));
+// Exactly what a freshly created site answers: every canonical field null.
+webmcp_canary_apply_remote_profile(array('profile' => array(
+    'name' => null, 'description' => null, 'address' => null, 'phone' => null,
+    'hours' => null, 'business_type_schema' => null, 'email' => null, 'url' => null,
+), 'field_sources' => array(), 'updated_at' => 0));
+$after_empty_pull = webmcp_canary_settings();
+expect($after_empty_pull['business_name'] === 'Lumina Omotesando', 'an empty remote does not clear the local name');
+expect($after_empty_pull['business_address'] !== '', 'nor the address');
+expect($after_empty_pull['business_phone'] === '03-1234-5678', 'nor the phone');
+expect($after_empty_pull['business_hours'] !== '', 'nor the hours');
+expect($after_empty_pull['business_type'] === 'HairSalon', 'nor the business type');
+
+// What the push would then send - the bug ended with empty values going up.
+$payload = webmcp_canary_local_profile();
+expect($payload['name'] === 'Lumina Omotesando', 'so the push still carries the real values');
+expect($payload['address'] !== '', 'and the real address');
+
+// A remote value that is actually set still wins: the service is the canonical
+// record, and this is a mirror.
+webmcp_canary_apply_remote_profile(array('profile' => array(
+    'name' => 'Renamed From Dashboard', 'phone' => null,
+), 'field_sources' => array(), 'updated_at' => 0));
+$after_real_pull = webmcp_canary_settings();
+expect($after_real_pull['business_name'] === 'Renamed From Dashboard', 'a real remote value is adopted');
+expect($after_real_pull['business_phone'] === '03-1234-5678', 'while an empty one beside it changes nothing');
+
+// An empty remote may still fill a field that is empty here.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_email'] = '';
+webmcp_canary_apply_remote_profile(array('profile' => array('email' => 'hello@example.test'), 'field_sources' => array(), 'updated_at' => 0));
+expect(webmcp_canary_settings()['business_email'] === 'hello@example.test', 'an empty local field is still filled from the service');
+
 echo "WordPress AEO admin tests passed\n";
