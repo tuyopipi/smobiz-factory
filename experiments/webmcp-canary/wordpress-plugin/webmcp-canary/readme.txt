@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.0
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,12 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.6.1 =
+
+* The diagnosis is now in your site's language. The checks are worded by the Nurevo service, and the plugin never said which language it wanted, so the checklist came back in English even on a Japanese site.
+* When a diagnosis cannot be taken, the screen says so and why, with a "Check again" button. It previously showed "Checking" indefinitely, which was indistinguishable from a diagnosis still in progress.
+* A site that has never been diagnosed no longer shows a score of zero. Nothing had been measured, so there was no score to show.
+
 = 0.6.0 =
 
 * Connect a site with a pairing code from the dashboard. Previously connecting required a licence key, and nothing in the product issued one, so a self-installed plugin could not be connected at all.
@@ -179,6 +185,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.6.1 =
+
+The AEO diagnosis now appears in your site's language, and says why when it cannot be taken instead of showing "Checking" forever.
 
 = 0.6.0 =
 

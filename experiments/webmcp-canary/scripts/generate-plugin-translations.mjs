@@ -281,6 +281,12 @@ const JA = {
   "Checking how AI reads your site": "AI可読性を診断しています",
   "Checking. The score appears automatically once your settings are complete.":
     "診断中。設定が揃い次第、自動的に表示されます。",
+  // A diagnosis that failed is its own state, told apart from one still in
+  // flight: "Checking" for ever was indistinguishable from a real failure.
+  "Could not diagnose": "診断できませんでした",
+  "The service could not diagnose this site. This usually means it is not reachable from the internet yet - a local or password-protected site cannot be read.":
+    "このサイトを診断できませんでした。多くの場合、サイトがまだインターネットから見えないことが原因です（ローカル環境やパスワード保護中のサイトは読み取れません）。",
+  "Check again": "もう一度診断する",
   "Good": "良好",
   "AI is reading your site correctly": "AIに正しく読まれています",
   "Needs work": "要改善",
