@@ -373,6 +373,43 @@ export async function handleApi(request, env, ctx) {
     }
   }
 
+  /*
+   * Run a diagnosis now, for a site the caller owns in the dashboard.
+   *
+   * The GET above authenticates with the site key, which only the installed
+   * plugin holds. That left the dashboard with no way to produce a score at
+   * all: /api/sites/:id/aeo-metrics reads the stored history, and nothing wrote
+   * to it until the nightly cron came round. A freshly registered site
+   * therefore showed "no diagnosis data" for up to a day, which reads as
+   * broken rather than as pending.
+   *
+   * Member-authenticated and ownership-checked, so this is a second door to the
+   * same room rather than a wider one.
+   */
+  if (siteAeoScoreMatch && method === "POST") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent(siteAeoScoreMatch[1]);
+    const owned = await loadOwnedSite(env, member, siteId);
+    if (!owned) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return json({ error: exists ? "forbidden" : "not_found" }, exists ? 403 : 404);
+    }
+    // A hosted store has no address of its own until it is published, so its
+    // own page is the thing to diagnose - the same target the cron uses.
+    const target = String(owned.website_uri || owned.url || "").trim()
+      || (owned.slug ? `https://nurevo.jp/s/${encodeURIComponent(owned.slug)}` : "");
+    if (!target) return json({ error: "no_url" }, 400);
+    try {
+      const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`);
+      await storeAeoScore(env, owned.id, { ...result, verdict: result.band });
+      return json(aeoResponse(result, requestedAeoLang(request, url)));
+    } catch (error) {
+      if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
+      throw error;
+    }
+  }
+
   if (path === "/api/license/verify" && method === "POST") {
     const payload = await readLicensePayload(request);
     if (!payload.ok) return json({ error: payload.error, plan: "free" }, payload.status);
