@@ -165,6 +165,18 @@ const comp = async (env, target, body) => {
   assert.equal(status, 400, "granting free is not a grant");
 }
 
+{
+  // Pro cannot be bought, but it can be given - that is how a beta participant
+  // gets access while it is not on sale. "Not for sale" must never become
+  // "cannot be provided": the grantable list is deliberately wider than the
+  // purchasable one, and tying them together removed beta access entirely.
+  const env = makeEnv();
+  const { status, body } = await comp(env, "/api/sites/site1", { plan: "pro", note: "beta participant" });
+  assert.equal(status, 200, "Pro can still be granted");
+  assert.equal(body.manual_plan, "pro");
+  assert.equal(body.plan, "pro", "and the site is entitled to it");
+}
+
 /* ---------------- who may grant ---------------- */
 
 {

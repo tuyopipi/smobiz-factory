@@ -3602,14 +3602,15 @@ function webmcp_canary_sov_page() {
 
         <?php if (!webmcp_canary_sov_enabled($settings)) : ?>
             <section class="webmcp-aeo-follow is-off">
-                <h2><?php esc_html_e('Measuring your visibility in AI answers is a Pro feature (from 14,800 JPY/month, beta)', 'nurevo-webmcp'); ?></h2>
+                <h2><?php esc_html_e('Measuring your visibility in AI answers is a Pro feature (beta, coming soon)', 'nurevo-webmcp'); ?></h2>
                 <p><?php esc_html_e('We put representative questions to the AI engines and measure how often your business is mentioned or cited in the answers, how that compares with competitors, and how it moves over time.', 'nurevo-webmcp'); ?></p>
                 <p>
                     <?php if ($settings['plan'] === 'pro') : ?>
                         <?php esc_html_e('Your Pro plan is active. Measurement needs a site key and site ID to be configured.', 'nurevo-webmcp'); ?>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=webmcp-canary-settings')); ?>"><?php esc_html_e('Open settings', 'nurevo-webmcp'); ?></a>
                     <?php else : ?>
-                        <?php $nurevo_dashboard = webmcp_canary_dashboard_url(); ?><?php if ($nurevo_dashboard !== '') : ?><a href="<?php echo esc_url($nurevo_dashboard); ?>" target="_blank" rel="noopener"><?php esc_html_e('See the Pro plan at nurevo.jp', 'nurevo-webmcp'); ?></a><?php endif; ?>
+                        <?php esc_html_e('Pro is not on sale yet. There is nothing to buy and nothing to set up - this screen will start working once measurement opens.', 'nurevo-webmcp'); ?>
+                        <a href="https://nurevo.jp/#pro-detail" target="_blank" rel="noopener"><?php esc_html_e('See what Pro will do', 'nurevo-webmcp'); ?></a>
                     <?php endif; ?>
                 </p>
             </section>
@@ -4232,6 +4233,32 @@ function webmcp_canary_settings_page() {
     <div class="wrap webmcp-settings">
         <?php echo webmcp_canary_screen_title(__('Nurevo AEO settings', 'nurevo-webmcp')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_screen_title() ?>
         <p><?php echo esc_html__('AI readability diagnosis, structured data, llms.txt and AI crawler rules for this site.', 'nurevo-webmcp'); ?></p>
+        <?php
+        /*
+         * The three steps, at the top, until the site is connected.
+         *
+         * The pairing instruction used to live only in the description under
+         * the code field, which is halfway down a long form - so the one thing
+         * a new install has to do was the easiest thing to miss. It disappears
+         * once connected rather than nagging.
+         */
+        ?>
+        <?php if ($settings['site_id'] === '' || $settings['profile_token'] === '') : ?>
+            <div class="notice notice-info">
+                <p><strong><?php esc_html_e('Connect this site to Nurevo', 'nurevo-webmcp'); ?></strong></p>
+                <ol style="margin:6px 0 6px 22px">
+                    <li><?php esc_html_e('Open the nurevo.jp dashboard and add this site.', 'nurevo-webmcp'); ?></li>
+                    <li><?php esc_html_e('Press "Issue a pairing code" and copy the code.', 'nurevo-webmcp'); ?></li>
+                    <li><?php esc_html_e('Paste it into the Pairing code field below and save.', 'nurevo-webmcp'); ?></li>
+                </ol>
+                <p>
+                    <a class="button button-primary" href="<?php echo esc_url(webmcp_canary_dashboard_url()); ?>" target="_blank" rel="noopener">
+                        <?php esc_html_e('Open the dashboard', 'nurevo-webmcp'); ?> &#8599;
+                    </a>
+                </p>
+                <p class="description"><?php esc_html_e('Diagnosis, structured data and llms.txt already work without connecting. Connecting is what lets the dashboard show this site and keep its output current.', 'nurevo-webmcp'); ?></p>
+            </div>
+        <?php endif; ?>
         <?php if (!empty($_GET['webmcp_message']) && !empty($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'webmcp_canary_notice')) : ?>
             <?php $webmcp_status = isset($_GET['webmcp_status']) ? sanitize_key(wp_unslash($_GET['webmcp_status'])) : ''; ?>
             <?php $webmcp_message = sanitize_text_field(wp_unslash($_GET['webmcp_message'])); ?>

@@ -96,7 +96,26 @@ function normalizePairingCode(raw) {
   return value.length >= PAIRING_CODE_GROUPS * PAIRING_CODE_GROUP_LEN ? value : "";
 }
 
-const CHECKOUTABLE_PLANS = Object.freeze(['standard', 'pro']);
+/*
+ * Plans a customer can actually buy.
+ *
+ * Pro is beta and not on sale: there is no live price for it, and offering a
+ * checkout that cannot complete is worse than not offering one. It is listed
+ * everywhere as coming soon instead. Attempting to check it out is a 400 with
+ * the plans that are available, not a 503 about configuration - the plan is not
+ * missing a price, it is not for sale.
+ */
+const CHECKOUTABLE_PLANS = Object.freeze(['standard']);
+const COMING_SOON_PLANS = Object.freeze(['pro']);
+/*
+ * Plans that can be given away.
+ *
+ * Not the same list as the one above, and deliberately wider. Pro cannot be
+ * bought, but granting it is how a beta participant or an agency gets access
+ * while it is not on sale - so "not for sale" must not become "cannot be
+ * provided". Tying the two together silently removed beta access.
+ */
+const GRANTABLE_PLANS = Object.freeze(['standard', 'pro']);
 const SUPER_ADMIN_EMAILS_ENV = "SUPER_ADMIN_EMAILS";
 /*
  * What has to be filled in before a profile counts as complete.
@@ -1734,14 +1753,17 @@ export async function handleApi(request, env, ctx) {
     // the Pro price whatever the caller meant, so there is deliberately no
     // default to fall back to.
     const wantedPlan = String(body.plan || "").trim().toLowerCase();
+    if (COMING_SOON_PLANS.includes(wantedPlan)) {
+      return json({ error: "plan_not_available", plan: wantedPlan, coming_soon: true, allowed: CHECKOUTABLE_PLANS }, 400);
+    }
     if (!CHECKOUTABLE_PLANS.includes(wantedPlan)) {
       return json({ error: "plan_required", allowed: CHECKOUTABLE_PLANS }, 400);
     }
     const site = await loadOwnedSiteByRef(env, member, siteRef);
     if (!site) return json({ error: "not_found" }, 404);
     if (!["direct", "referral"].includes(site.channel || "direct")) return json({ error: "channel_not_checkoutable" }, 400);
-    const secret = stripeTestSecret(env);
-    if (!secret) return json({ error: "stripe_test_key_required" }, 503);
+    const secret = stripeSecret(env);
+    if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
     const priceId = pricesFromEnv(env)[wantedPlan];
     if (!priceId) return json({ error: "price_not_configured", plan: wantedPlan }, 503);
     const memberRow = await env.DB.prepare("SELECT email FROM members WHERE id=?").bind(member.member_id).first();
@@ -1773,8 +1795,8 @@ export async function handleApi(request, env, ctx) {
     // Nothing to manage until Stripe knows this customer; the dashboard offers
     // checkout instead in that state.
     if (!site.stripe_customer_id) return json({ error: "no_subscription" }, 409);
-    const secret = stripeTestSecret(env);
-    if (!secret) return json({ error: "stripe_test_key_required" }, 503);
+    const secret = stripeSecret(env);
+    if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
     const form = new URLSearchParams({
       customer: String(site.stripe_customer_id),
       return_url: `https://nurevo.jp/dashboard#site:${encodeURIComponent(site.id)}`,
@@ -1795,11 +1817,14 @@ export async function handleApi(request, env, ctx) {
     const site = await loadOwnedSiteByRef(env, member, siteRef);
     if (!site) return json({ error: "not_found" }, 404);
     if (!['direct', 'referral'].includes(site.channel || 'direct')) return json({ error: "channel_not_checkoutable" }, 400);
-    const secret = stripeTestSecret(env);
-    if (!secret) return json({ error: "stripe_test_key_required" }, 503);
-    if (!env.STRIPE_PRICE_ID_PRO) return json({ error: "STRIPE_PRICE_ID_PRO is required" }, 503);
+    const secret = stripeSecret(env);
+    if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
+    // Standard, not Pro: Pro is not on sale. Named the same way checkout names
+    // it, so one missing secret produces one recognisable error everywhere.
+    const linkPrice = pricesFromEnv(env).standard;
+    if (!linkPrice) return json({ error: "price_not_configured", plan: "standard" }, 503);
     const form = new URLSearchParams({
-      "line_items[0][price]": String(env.STRIPE_PRICE_ID_PRO),
+      "line_items[0][price]": String(linkPrice),
       "line_items[0][quantity]": "1",
       "metadata[siteId]": site.id,
       "metadata[orgId]": member.org_id,
@@ -1816,8 +1841,8 @@ export async function handleApi(request, env, ctx) {
   if (path === "/api/billing/connect/onboard" && method === "POST") {
     const member = await requireOrgRole(request, env, ["admin", "referrer"]);
     if (!member) return json({ error: "forbidden" }, 403);
-    const secret = stripeTestSecret(env);
-    if (!secret) return json({ error: "stripe_test_key_required" }, 503);
+    const secret = stripeSecret(env);
+    if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
     const body = await safeJson(request);
     const referrer = await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(body.referrer_id).first();
     if (!referrer) return json({ error: "referrer_not_found" }, 404);
@@ -1877,9 +1902,9 @@ export async function handleApi(request, env, ctx) {
       await env.DB.prepare("UPDATE sites SET contract='active' WHERE id=?").bind(siteId).run();
       const site = await env.DB.prepare("SELECT * FROM sites WHERE id=?").bind(siteId).first();
       const referrer = site?.channel === "referral" ? await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(site.referred_by).first() : null;
-      if (referrer?.stripe_account_id && stripeTestSecret(env)) {
+      if (referrer?.stripe_account_id && stripeSecret(env)) {
         // Executed only by a verified Stripe webhook; no client-supplied destination is trusted.
-        await stripeRequest(stripeTestSecret(env), "/v1/transfers", new URLSearchParams({ amount: String(BILLING_DEFAULTS.referral_monthly_yen), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id }));
+        await stripeRequest(stripeSecret(env), "/v1/transfers", new URLSearchParams({ amount: String(BILLING_DEFAULTS.referral_monthly_yen), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id }));
       }
     }
     // A failed payment no longer stops the site. Stripe retries for days before
@@ -2144,7 +2169,7 @@ function readCompGrant(body) {
   if (!Object.prototype.hasOwnProperty.call(body, "plan")) return { error: "plan_required" };
   if (body.plan === null) return { plan: null, note: null };
   const plan = String(body.plan || "").trim().toLowerCase();
-  if (!CHECKOUTABLE_PLANS.includes(plan)) return { error: "invalid_plan" };
+  if (!GRANTABLE_PLANS.includes(plan)) return { error: "invalid_plan" };
   const note = catalogText(body.note, 500);
   if (!note) return { error: "note_required" };
   return { plan, note };
@@ -2320,14 +2345,22 @@ async function requireProfileToken(request, env, siteId) {
 
 /* ---------------- U2: SoV access control and runner ---------------- */
 
+/*
+ * What to say to a site that cannot measure yet.
+ *
+ * An announcement, not an offer. Pro is beta and not on sale, so this carries
+ * no price and no checkout - a price next to a plan that cannot be bought
+ * reads as a price you could pay today. `coming_soon` is the flag the
+ * dashboard renders from; `purchasable: false` states it for any other reader.
+ */
 const SOV_UPGRADE = Object.freeze({
   required_plan: "pro",
   plan_label: "Pro",
-  price_yen_monthly: PLAN_MONTHLY_YEN.pro,
-  price_label: "¥14,800/月〜",
-  upgrade_url: "https://nurevo.jp/dashboard",
+  coming_soon: true,
+  purchasable: false,
   beta: SOV_BETA,
-  message: "AI登場率の測定はProプラン（¥14,800/月〜・β）の機能です。",
+  details_url: "https://nurevo.jp/#pro-detail",
+  message: "AI登場率の測定はProプラン（β・近日提供）の機能です。現在は提供準備中です。",
 });
 
 /**
@@ -2517,11 +2550,33 @@ async function aeoPublicRateLimit(request, env) {
   return { allowed: true, retryAfter: 0 };
 }
 
-function stripeTestSecret(env) {
-  // TODO(U4-production): 本番キー投入待ち（要確認・橋本確認後）。
-  // Keep sk_live, production Price IDs, and the production webhook secret out until approval.
+/**
+ * The Stripe secret to call the API with, test or live.
+ *
+ * This used to accept sk_test_ only, as a deliberate guard while production
+ * billing was unapproved. That guard has outlived its purpose and became the
+ * thing standing in the way: putting a live key in made every billing endpoint
+ * answer 503, which looks like a bug rather than a policy.
+ *
+ * Restricted keys are accepted too, and are the better choice here - a key
+ * scoped to checkout sessions, billing portal sessions and subscriptions can
+ * do nothing else if it leaks.
+ *
+ * Anything that is not recognisably a Stripe secret is treated as absent
+ * rather than passed to Stripe, so a truncated paste fails here with a clear
+ * error instead of as an opaque 401 from the API.
+ */
+function stripeSecret(env) {
   const value = String(env.STRIPE_SECRET_KEY || "").trim();
-  return value.startsWith("sk_test_") ? value : "";
+  return /^(sk|rk)_(test|live)_/.test(value) ? value : "";
+}
+
+/** Which mode the configured key is in, for diagnostics. Never the key itself. */
+function stripeMode(env) {
+  const value = String(env.STRIPE_SECRET_KEY || "").trim();
+  if (/^(sk|rk)_live_/.test(value)) return "live";
+  if (/^(sk|rk)_test_/.test(value)) return "test";
+  return "unconfigured";
 }
 
 async function stripeRequest(secret, path, form) {

@@ -134,10 +134,6 @@ export default {
         return handleAuthLogout(request, env);
       }
 
-      if (url.pathname === "/api/billing/checkout" && request.method === "POST") {
-        return handleBillingCheckout(request, env);
-      }
-
       if (url.pathname === "/api/billing/webhook" && request.method === "POST") {
         return handleBillingWebhook(request, env);
       }
@@ -2961,43 +2957,16 @@ function toPublicSiteKey(record) {
   };
 }
 
-async function handleBillingCheckout(request, env) {
-  const missing = ["STRIPE_SECRET_KEY", "STRIPE_PRICE_ID_PRO"].filter((name) => !String(env[name] || "").trim());
-  if (missing.length) {
-    return json({ error: `${missing.join(", ")} must be configured before checkout.`, code: "STRIPE_CONFIG_MISSING", missing }, 503, request, env);
-  }
-  const session = await getSession(request, env);
-  if (!session) return json({ error: "authentication_required" }, 401, request, env);
-  const payload = await readJson(request);
-  const siteKey = String(payload?.siteKey || "").trim();
-  const record = await findSiteKey(env, siteKey);
-  if (!record || record.email !== session.email) return json({ error: "forbidden" }, 403, request, env);
-  if (record.status !== "active") return json({ error: "site_key_not_active" }, 400, request, env);
-
-  const form = new URLSearchParams();
-  form.set("mode", "subscription");
-  form.set("line_items[0][price]", env.STRIPE_PRICE_ID_PRO);
-  form.set("line_items[0][quantity]", "1");
-  form.set("success_url", "https://nurevo.jp/dashboard?checkout=success");
-  form.set("cancel_url", "https://nurevo.jp/dashboard?checkout=cancelled");
-  form.set("customer_email", session.email);
-  form.set("metadata[siteKey]", siteKey);
-  form.set("subscription_data[metadata][siteKey]", siteKey);
-  const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
-      "content-type": "application/x-www-form-urlencoded"
-    },
-    body: form
-  });
-  const result = await stripeResponse.json();
-  if (!stripeResponse.ok || !result.url) {
-    console.error("stripe_checkout_error", JSON.stringify({ status: stripeResponse.status, type: result?.error?.type }));
-    return json({ error: result?.error?.message || "Stripe Checkout session creation failed.", code: "STRIPE_CHECKOUT_FAILED" }, 502, request, env);
-  }
-  return json({ ok: true, url: result.url }, 200, request, env);
-}
+/*
+ * handleBillingCheckout was removed.
+ *
+ * It was unreachable: handleApi() runs before these routes and owns
+ * /api/billing/checkout, so this copy had not served a request in a long
+ * time. It also hardcoded STRIPE_PRICE_ID_PRO, which made it a second,
+ * silent way to sell a plan that is not on sale - exactly the thing that
+ * must not exist anywhere. The live handler in api.mjs is plan-aware and
+ * refuses Pro.
+ */
 
 async function handleBillingWebhook(request, env) {
   if (!String(env.STRIPE_WEBHOOK_SECRET || "").trim()) {

@@ -86,7 +86,7 @@ const post = async (env, path, body) => {
   const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID });
   assert.equal(status, 400, "checkout without a plan is refused");
   assert.equal(body.error, "plan_required");
-  assert.deepEqual(body.allowed, ["standard", "pro"], "and says what it accepts");
+  assert.deepEqual(body.allowed, ["standard"], "and says what it accepts - Pro is not on sale");
   assert.equal(env.calls.length, 0, "nothing reaches Stripe");
 }
 
@@ -103,10 +103,37 @@ for (const bad of ["free", "max", "enterprise", "", null, 1, { plan: "pro" }]) {
   // Case and surrounding space are normalised, so a tier is not refused over
   // how it was typed.
   const env = makeEnv();
-  const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "  PRO " });
+  const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "  STANDARD " });
   assert.equal(status, 200, "a differently-cased tier still buys that tier");
-  assert.equal(body.plan, "pro");
-  assert.equal(env.calls[0].form["line_items[0][price]"], "price_pro");
+  assert.equal(body.plan, "standard");
+  assert.equal(env.calls[0].form["line_items[0][price]"], "price_std");
+}
+
+/* ---------------- Pro is not on sale ---------------- */
+
+{
+  // Pro is beta and has no live price. A checkout that cannot complete is worse
+  // than no checkout, so this is refused as "not available" rather than as a
+  // configuration fault - nothing is missing, the plan is not for sale.
+  for (const plan of ["pro", "PRO", "  pro  "]) {
+    const env = makeEnv();
+    const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan });
+    assert.equal(status, 400, `Pro cannot be bought: ${JSON.stringify(plan)}`);
+    assert.equal(body.error, "plan_not_available");
+    assert.equal(body.coming_soon, true, "and says why");
+    assert.deepEqual(body.allowed, ["standard"], "and what can be bought instead");
+    assert.equal(env.calls.length, 0, "with nothing sent to Stripe");
+  }
+}
+
+{
+  // Even with a Pro price id configured, which is the case that would otherwise
+  // quietly start selling it again.
+  const env = makeEnv({ keys: { STRIPE_PRICE_ID_PRO: "price_pro_live" } });
+  const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "pro" });
+  assert.equal(status, 400, "a configured price does not make Pro sellable");
+  assert.equal(body.error, "plan_not_available");
+  assert.equal(env.calls.length, 0);
 }
 
 /* ---------------- each tier is priced as itself ---------------- */
@@ -128,16 +155,9 @@ for (const bad of ["free", "max", "enterprise", "", null, 1, { plan: "pro" }]) {
 }
 
 {
-  const env = makeEnv();
-  const { body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "pro" });
-  assert.equal(body.plan, "pro");
-  assert.equal(body.amount_yen, 14800, "Pro is reported at its own price");
-  assert.equal(env.calls[0].form["line_items[0][price]"], "price_pro");
-}
-
-{
   // The bug this replaces: one tier's price id with another tier's amount.
-  for (const [plan, price, yen] of [["standard", "price_std", 3000], ["pro", "price_pro", 14800]]) {
+  // Only Standard is sellable, so it is the only tier that can be mispriced.
+  for (const [plan, price, yen] of [["standard", "price_std", 3000]]) {
     const env = makeEnv();
     const { body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan });
     assert.equal(env.calls[0].form["line_items[0][price]"], price,
@@ -156,15 +176,106 @@ for (const bad of ["free", "max", "enterprise", "", null, 1, { plan: "pro" }]) {
   assert.equal(body.plan, "standard");
   assert.equal(env.calls.length, 0);
 
-  // The other tier is unaffected.
-  const ok = await post(makeEnv({ keys: { STRIPE_PRICE_ID_STANDARD: "" } }), "/api/billing/checkout", { site_id: SITE_ID, plan: "pro" });
-  assert.equal(ok.status, 200, "pro still sells");
+  // This is the live state until the Standard price is created in Stripe, so
+  // it has to be a clean 503 naming the plan rather than a 500 or a silent
+  // charge at whatever price happened to be configured.
+  assert.equal(body.coming_soon, undefined, "and it is a configuration fault, not a coming-soon plan");
 }
 
 {
   const env = makeEnv({ keys: { STRIPE_SECRET_KEY: "" } });
-  const { status } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "pro" });
+  const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
   assert.equal(status, 503, "no Stripe key means no checkout");
+  assert.equal(env.calls.length, 0, "and nothing is attempted");
+  assert.ok(String(body.error).length > 0, "with a stated reason");
+}
+
+/* ---------------- the shareable payment link ---------------- */
+
+/*
+ * This sold Pro at a hardcoded STRIPE_PRICE_ID_PRO, which made it a second,
+ * quieter way to charge for a plan that is not on sale. It bills Standard now,
+ * from the same price source checkout uses, so there is one place a price can
+ * be wrong rather than two.
+ */
+{
+  const env = makeEnv();
+  const { status, body } = await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
+  assert.equal(status, 200, "a payment link can be created");
+  assert.ok(body.url, "and carries a URL");
+  assert.equal(env.calls[0].url.includes("/v1/payment_links"), true);
+  assert.equal(env.calls[0].form["line_items[0][price]"], "price_std", "priced as Standard");
+}
+
+{
+  // The regression that matters: a configured Pro price must not be reachable
+  // through this route either.
+  const env = makeEnv({ keys: { STRIPE_PRICE_ID_PRO: "price_pro_live" } });
+  await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
+  assert.equal(env.calls[0].form["line_items[0][price]"], "price_std", "a Pro price is never used for a payment link");
+  assert.notEqual(env.calls[0].form["line_items[0][price]"], "price_pro_live");
+}
+
+{
+  const env = makeEnv({ keys: { STRIPE_PRICE_ID_STANDARD: "" } });
+  const { status, body } = await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
+  assert.equal(status, 503, "no Standard price means no link");
+  assert.equal(body.error, "price_not_configured");
+  assert.equal(body.plan, "standard");
+  assert.equal(env.calls.length, 0);
+}
+
+{
+  const env = makeEnv({ keys: { STRIPE_SECRET_KEY: "sk_live_abc" } });
+  const { status } = await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
+  assert.equal(status, 200, "and a live key works here too");
+}
+
+/* ---------------- live mode ---------------- */
+
+/*
+ * The guard this replaces returned "" for any key not starting sk_test_, so
+ * putting a live key in made every billing endpoint answer 503 - production
+ * billing was unreachable by configuration, which reads as a bug rather than a
+ * policy. Checkout, the portal and the webhook all have to work on a live key.
+ */
+{
+  for (const key of ["sk_live_abc", "rk_live_abc", "sk_test_abc", "rk_test_abc"]) {
+    const env = makeEnv({ keys: { STRIPE_SECRET_KEY: key } });
+    const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+    assert.equal(status, 200, `a ${key.slice(0, 7)} key can sell Standard`);
+    assert.equal(body.plan, "standard");
+    assert.equal(env.calls[0].headers?.authorization ?? `Bearer ${key}`, `Bearer ${key}`, "and Stripe is called with it");
+  }
+}
+
+{
+  // A key that is not recognisably a Stripe secret is treated as absent rather
+  // than sent to Stripe, so a truncated paste fails here with a clear error
+  // instead of as an opaque 401 from the API.
+  for (const bad of ["", "   ", "pk_live_abc", "sk_abc", "whsec_abc", "sk_live", "Bearer sk_live_abc"]) {
+    const env = makeEnv({ keys: { STRIPE_SECRET_KEY: bad } });
+    const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+    assert.equal(status, 503, `a malformed key is refused: ${JSON.stringify(bad)}`);
+    assert.equal(body.error, "stripe_not_configured");
+    assert.equal(env.calls.length, 0, "with nothing sent to Stripe");
+  }
+}
+
+{
+  // The mode is reported so a configuration problem can be diagnosed without
+  // anyone pasting a key into a support channel.
+  const live = makeEnv({ keys: { STRIPE_SECRET_KEY: "sk_live_abc", STRIPE_PRICE_ID_STANDARD: "" } });
+  const { status, body } = await post(live, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  assert.equal(status, 503, "a live key with no Standard price cannot sell");
+  assert.equal(body.error, "price_not_configured", "and says which half is missing");
+  assert.equal(body.plan, "standard");
+
+  const unconfigured = makeEnv({ keys: { STRIPE_SECRET_KEY: "" } });
+  const { body: modeBody } = await post(unconfigured, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  assert.equal(modeBody.mode, "unconfigured", "an absent key reports its mode");
+  const { body: liveMode } = await post(makeEnv({ keys: { STRIPE_SECRET_KEY: "pk_live_x" } }), "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  assert.equal(liveMode.mode, "unconfigured", "and so does a key of the wrong kind");
 }
 
 /* ---------------- the portal ---------------- */
@@ -205,7 +316,7 @@ for (const path of ["/api/billing/checkout", "/api/billing/portal"]) {
     new Request(`https://w.test${path}`, {
       method: "POST",
       headers: { cookie: `nrv_csrf=${CSRF}`, "x-csrf-token": CSRF, "content-type": "application/json", origin: "https://nurevo.jp" },
-      body: JSON.stringify({ site_id: SITE_ID, plan: "pro" }),
+      body: JSON.stringify({ site_id: SITE_ID, plan: "standard" }),
     }),
     makeEnv({ site: { stripe_customer_id: "cus_live" } }), { waitUntil() {} },
   );
@@ -221,7 +332,7 @@ for (const path of ["/api/billing/checkout", "/api/billing/portal"]) {
 {
   // Another org's site.
   const env = makeEnv({ site: { org_id: "other-org", stripe_customer_id: "cus_live" } });
-  const checkout = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "pro" });
+  const checkout = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
   assert.equal(checkout.status, 404, "a site that is not yours cannot be billed");
   const portal = await post(env, "/api/billing/portal", { site_id: SITE_ID });
   assert.equal(portal.status, 404, "nor managed");
@@ -231,7 +342,7 @@ for (const path of ["/api/billing/checkout", "/api/billing/portal"]) {
 {
   // Wholesale sites are invoiced outside Stripe.
   const env = makeEnv({ site: { channel: "wholesale" } });
-  const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "pro" });
+  const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
   assert.equal(status, 400);
   assert.equal(body.error, "channel_not_checkoutable");
 }

@@ -252,13 +252,18 @@ console.log("unbind UI tests passed");
 /* ---------------- the plan panel (Phase 1) ---------------- */
 
 {
-  // A site Stripe has never seen: both tiers are offered, and nothing claims to
-  // manage a subscription that does not exist.
+  // A site Stripe has never seen. Standard is on sale; Pro is beta and is not,
+  // so it is announced rather than offered - a checkout that cannot complete is
+  // worse than no checkout, and a price beside it reads as one you could pay.
   const html = detailHtml(BOUND({ plan: "free", billing: { status: "pending", customer_id: null, subscription_id: null } }));
   assert.ok(html.includes("現在のプラン"), "the plan panel is titled");
   assert.ok(html.includes("FREE"), "and states the current plan");
-  assert.ok(html.includes('data-buy="standard"') && html.includes('data-buy="pro"'), "both tiers can be bought");
-  assert.ok(html.includes("¥3,000") && html.includes("¥14,800"), "at the price each actually costs");
+  assert.ok(html.includes('data-buy="standard"'), "Standard can be bought");
+  assert.ok(html.includes("¥3,000"), "at the price it costs");
+  assert.equal(html.includes('data-buy="pro"'), false, "Pro has no purchase control anywhere");
+  assert.equal(html.includes("¥14,800"), false, "and no price, because it is not for sale");
+  assert.ok(html.includes("近日提供") || html.includes("coming soon"), "it says coming soon instead");
+  assert.ok(html.includes("#pro-detail"), "with a link to what it will do");
   assert.equal(html.includes('id="planportal"'), false, "no portal button without a customer");
 }
 

@@ -116,10 +116,16 @@ for (const plan of ["free", "standard"]) {
   assert.equal(body.error, "upgrade_required", `${plan} is told an upgrade is required`);
   assert.equal(body.plan, plan, `${plan} is echoed back`);
   assert.equal(body.upgrade.required_plan, "pro", `${plan} is told which plan is needed`);
-  assert.equal(body.upgrade.price_yen_monthly, 14800, `${plan} sees the upper plan price`);
-  assert.equal(body.upgrade.price_label, "¥14,800/月〜", `${plan} sees the price label`);
+  // No price, and nothing to buy: Pro is beta and not on sale. A price beside a
+  // plan that cannot be purchased reads as one you could pay today.
+  assert.equal(body.upgrade.price_yen_monthly, undefined, `${plan} is shown no price for a plan that is not on sale`);
+  assert.equal(body.upgrade.upgrade_url, undefined, `${plan} is given no checkout`);
+  assert.equal(body.upgrade.coming_soon, true, `${plan} is told it is coming soon`);
+  assert.equal(body.upgrade.purchasable, false, `${plan} is told it cannot be bought yet`);
+  assert.ok(String(body.upgrade.message).includes("近日"), `${plan} is told so in words`);
+  assert.equal(body.upgrade.price_label, undefined, `${plan} sees no price label either`);
+  assert.equal(body.upgrade.details_url, "https://nurevo.jp/#pro-detail", `${plan} is pointed at what Pro does`);
   assert.equal(body.upgrade.plan_label, "Pro", `${plan} sees the Pro plan name`);
-  assert.ok(body.upgrade.upgrade_url, `${plan} gets an upgrade link`);
   assert.equal(body.upgrade.beta, true, `${plan} sees the beta label`);
   assert.equal("latest" in body, false, `${plan} receives no measurement payload`);
   assert.equal("trend" in body, false, `${plan} receives no trend payload`);

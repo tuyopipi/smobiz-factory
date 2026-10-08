@@ -137,7 +137,10 @@
       + '<p class="nrv-sov-locked-head"><b>AI登場率は Pro β で測定します</b></p>'
       + '<p>' + esc(upgrade.message || 'AI登場率の測定はProプランの機能です。') + '</p>'
       + '<p class="nrv-sov-note">現在のプラン：<code>' + esc(plan) + '</code></p>'
-      + (upgrade.upgrade_url ? '<p><a class="nrv-sov-cta" href="' + esc(upgrade.upgrade_url) + '">Proにアップグレード</a></p>' : '')
+      // Coming soon, so this links to what Pro will do rather than to a
+      // checkout. "Upgrade" invited someone to buy a plan that is not on sale.
+      + '<p class="nrv-sov-note"><b>β・近日提供</b></p>'
+      + (upgrade.details_url ? '<p><a class="nrv-sov-cta" href="' + esc(upgrade.details_url) + '" target="_blank" rel="noopener">Proの詳細を見る</a></p>' : '')
       + '</div>';
   }
 
