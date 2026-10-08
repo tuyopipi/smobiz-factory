@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.5.1
+Stable tag: 0.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,18 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.6.0 =
+
+* Connect a site with a pairing code from the dashboard. Previously connecting required a licence key, and nothing in the product issued one, so a self-installed plugin could not be connected at all.
+* Connecting no longer erases what the plugin already knows. A freshly registered site has an empty profile, and that empty profile was overwriting the business name, address, phone and hours already entered here.
+* Hand-entered questions and answers are published as FAQPage, so an AI answering "do they have parking" can find the answer you wrote.
+* Hand-entered services are published as Service with your own reservation URL, which needs no booking plugin.
+* WooCommerce products now reach llms.txt and the AEO measurement, so what you sell is part of what AI reads.
+* Products, services, questions and your main pages are now visible in the dashboard, each labelled with where it came from.
+* Coexistence is now decided per schema type rather than all at once: a commerce plugin's Product and Offer are left to it, while the business details it omits are still published.
+* The schema ownership table now lists only the types the page actually emits.
+* Links between the WordPress screens and the dashboard, in both directions.
+
 = 0.5.1 =
 
 * Smart coexistence: fills the business data your SEO plugin leaves out (same @id, no duplicate schema). Previously any supported SEO plugin suppressed the business node outright, so sites running the free tiers published no address, telephone or opening hours at all.
@@ -167,6 +179,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.6.0 =
+
+Connect a site with a pairing code from the dashboard instead of a licence key. Adds FAQPage and Service output from entries you type in. Fixes a bug where connecting a site erased the business details already entered in WordPress.
 
 = 0.5.1 =
 
