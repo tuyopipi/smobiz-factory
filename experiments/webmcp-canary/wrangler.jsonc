@@ -7,7 +7,11 @@
 		{ "pattern": "nurevo.jp/api/*", "zone_name": "nurevo.jp" },
 		{ "pattern": "nurevo.jp/dashboard", "zone_name": "nurevo.jp" },
 		{ "pattern": "nurevo.jp/dashboard/*", "zone_name": "nurevo.jp" },
-		{ "pattern": "nurevo.jp/dashboard-*.js", "zone_name": "nurevo.jp" },
+		// Cloudflare allows a wildcard only at the end of the path, so this
+		// cannot be "/dashboard-*.js" - that pattern is rejected and the route
+		// is silently never created, leaving the dashboard's own modules to
+		// fall through to the Pages LP, which answers them with its HTML.
+		{ "pattern": "nurevo.jp/dashboard-*", "zone_name": "nurevo.jp" },
 		{ "pattern": "nurevo.jp/en/*", "zone_name": "nurevo.jp" },
 		{ "pattern": "nurevo.jp/s/*", "zone_name": "nurevo.jp" },
 		{ "pattern": "nurevo.jp/sitemap.xml", "zone_name": "nurevo.jp" },
