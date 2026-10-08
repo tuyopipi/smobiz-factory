@@ -33,7 +33,35 @@ const half = scoreAeo({
   freshSignals: false,
 });
 assert.deepEqual(half.statuses, { schema: "WARN", coverage: "WARN", legibility: "BAD", llms: "WARN", consistency: "WARN" });
-assert.equal(half.score, 40);
+// 49 rather than 40 since u1-v2: the schema component is proportional to the
+// properties actually met, so 0.79 of the criteria earns 0.79 of the thirty
+// points instead of the flat half a WARN band used to give. The status is
+// still WARN - what changed is the arithmetic behind it, not the verdict.
+assert.equal(half.score, 49);
+assert.equal(Math.round(half.metrics.schema * 100), 79, "and the factor is reported, so a score can be explained");
+
+// The band is still coarse where coarseness is right: no markup at all is zero,
+// not a fraction of something.
+assert.equal(scoreAeo({ ...excellent, jsonLdInRawHtml: false }).statuses.schema, "BAD");
+assert.equal(scoreAeo({ ...excellent, jsonLdInRawHtml: false }).metrics.schema, 0);
+
+// Markup that exists but cannot be trusted earns half credit on its properties:
+// present, but nothing can rely on it.
+const wrongType = scoreAeo({ ...excellent, schemaTypeMatches: false });
+assert.equal(Math.round(wrongType.metrics.schema * 100), 50, "an unrecognised type halves the component");
+assert.equal(wrongType.statuses.schema, "WARN");
+const invalid = scoreAeo({ ...excellent, schemaValid: false });
+assert.equal(Math.round(invalid.metrics.schema * 100), 50, "and so does malformed JSON-LD");
+
+// A site meeting more of the criteria always scores at least as well as one
+// meeting fewer - the property that made the old band unfair when the criteria
+// moved.
+let previous = -1;
+for (const met of [0, 0.25, 0.5, 0.75, 1]) {
+  const score = scoreAeo({ ...excellent, schemaCoreProps: met }).score;
+  assert.ok(score >= previous, `the score rises with the share of criteria met: ${met} -> ${score}`);
+  previous = score;
+}
 
 // WebMCP is intentionally not an AEO scoring signal.
 assert.deepEqual(scoreAeo({ ...excellent, webmcpTools: 0 }), scoreAeo({ ...excellent, webmcpTools: 999 }));

@@ -1,7 +1,9 @@
 // Keep these weights independent from extraction so layer-2 citation data can
 // tune the model without changing the public scoring contract.
 export const AEO_SCORE_WEIGHTS = Object.freeze({ schema: 30, coverage: 25, legibility: 20, llms: 15, consistency: 10 });
-export const AEO_SCORE_MODEL_VERSION = "u1-v1";
+// u1-v2: the schema component became proportional to the properties met,
+// rather than one of three bands. Scores from v1 are not directly comparable.
+export const AEO_SCORE_MODEL_VERSION = "u1-v2";
 const STATUS_FACTOR = Object.freeze({ OK: 1, WARN: 0.5, BAD: 0 });
 export const AEO_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
 export const AEO_RATE_LIMIT = Object.freeze({ limit: 20, windowSeconds: 60 * 60 });
@@ -10,10 +12,62 @@ const AI_CRAWLERS = Object.freeze([
   "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-Web",
   "PerplexityBot", "Google-Extended", "Applebot-Extended",
 ]);
+/**
+ * The schema properties scored when nothing says otherwise.
+ *
+ * The six a local business cannot be understood without. A ruleset may widen
+ * this - that is how the criteria move - but it is the floor a diagnosis with
+ * no ruleset to consult is measured against.
+ */
+export const BASELINE_SCORED_PROPS = Object.freeze([
+  "name", "url", "address", "telephone", "openinghours", "geo",
+]);
+
+/**
+ * Types that count as "this page is about something an AI can use".
+ *
+ * This list has to include the business types the product itself offers, or it
+ * penalises a site for following our own advice. A cafe that correctly declares
+ * CafeOrCoffeeShop - a real schema.org subtype of LocalBusiness, and one of the
+ * options in the plugin's own picker - was scored as though it had published no
+ * recognisable type at all, capping its schema component at WARN however
+ * complete the rest of its markup was. Being more specific is the right thing
+ * to do and was costing points.
+ */
 const USEFUL_SCHEMA_TYPES = new Set([
-  "organization", "localbusiness", "restaurant", "store", "professionalservice",
-  "medicalbusiness", "dentist", "lodgingbusiness", "hotel", "product", "service",
+  // Content and generic entities.
+  "organization", "localbusiness", "product", "service",
   "article", "newsarticle", "blogposting", "faqpage", "website",
+  // Food and drink.
+  "restaurant", "cafeorcoffeeshop", "bakery", "barorpub", "fastfoodrestaurant",
+  "icecreamshop", "winery", "brewery", "distillery",
+  // Retail.
+  "store", "clothingstore", "grocerystore", "pharmacy", "petstore",
+  "furniturestore", "shoppingcenter", "bookstore", "florist", "hardwarestore",
+  "jewelrystore", "liquorstore", "mobilephonestore", "officeequipmentstore",
+  "shoestore", "sportinggoodsstore", "toystore", "conveniencestore",
+  "departmentstore", "electronicsstore", "homegoodsstore",
+  // Health and beauty.
+  "healthandbeautybusiness", "hairsalon", "beautysalon", "dayspa", "nailsalon",
+  "medicalbusiness", "dentist", "physician", "hospital", "veterinarycare",
+  "optician", "healthclub", "tattooparlor",
+  // Lodging and travel.
+  "lodgingbusiness", "hotel", "motel", "hostel", "bedandbreakfast", "resort",
+  "campground", "travelagency", "touristinformationcenter",
+  // Professional and trade.
+  "professionalservice", "legalservice", "accountingservice", "financialservice",
+  "insuranceagency", "realestateagent", "notary", "employmentagency",
+  "homeandconstructionbusiness", "plumber", "electrician", "generalcontractor",
+  "roofingcontractor", "movingcompany", "housepainter", "locksmith",
+  "autorepair", "automotivebusiness", "autodealer", "autobodyshop",
+  "autopartsstore", "autorental", "autowash", "gasstation", "motorcycledealer",
+  // Activity, education and the rest.
+  "sportsactivitylocation", "exercisegym", "golfcourse", "skiresort",
+  "swimmingpool", "tenniscomplex", "bowlingalley",
+  "entertainmentbusiness", "movietheater", "nightclub", "casino", "amusementpark",
+  "childcare", "educationalorganization", "school", "preschool", "library",
+  "museum", "touristattraction", "selfstorage", "drycleaningorlaundry",
+  "emergencyservice", "governmentoffice", "internetcafe", "recyclingcenter",
 ]);
 
 const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
@@ -38,8 +92,27 @@ export function scoreAeo(input = {}) {
     consistent: input.consistent === true,
     freshSignals: input.freshSignals === true,
   };
-  const schema = !signals.jsonLdInRawHtml ? "BAD"
-    : signals.schemaValid && signals.schemaTypeMatches && signals.schemaCoreProps >= 0.8 ? "OK" : "WARN";
+  /*
+   * The schema component is proportional to the properties actually met.
+   *
+   * It used to be one of three bands, so a site meeting two thirds of the
+   * criteria lost the same fifteen points as one meeting a third. That is fine
+   * while the criteria never move. Once they do - which is the entire point of
+   * a tier that follows them - a three-step band cannot express "slightly
+   * behind": a site drops a whole band the moment a single new property is
+   * added, and a site that is far behind stops being distinguishable from one
+   * that is nearly current.
+   *
+   * Proportional credit is also simply the fairer reading of the same facts: a
+   * deduction for each criterion genuinely unmet, and no more.
+   *
+   * Markup that is invalid or describes the wrong kind of thing earns half
+   * credit on its properties - it exists, but nothing can rely on it.
+   */
+  const schemaFactor = !signals.jsonLdInRawHtml ? 0
+    : signals.schemaValid && signals.schemaTypeMatches ? signals.schemaCoreProps
+      : 0.5 * signals.schemaCoreProps;
+  const schema = schemaFactor >= 0.8 ? "OK" : schemaFactor > 0 ? "WARN" : "BAD";
   const coverageValue = 0.6 * signals.coreFieldsFilled + 0.4 * signals.bizSpecificFilled;
   const coverage = statusFor(coverageValue, 0.8, 0.4);
   const legibilityValue = 0.6 * signals.factsInText + 0.2 * Number(signals.hasHeadingStructure) + 0.2 * Number(signals.hasFaq);
@@ -48,15 +121,18 @@ export function scoreAeo(input = {}) {
   const consistency = signals.consistent && signals.freshSignals ? "OK"
     : signals.consistent || signals.freshSignals ? "WARN" : "BAD";
   const statuses = { schema, coverage, legibility, llms, consistency };
+  // Every component but schema is still banded; schema carries its own factor
+  // so a partial result is scored as partial rather than rounded to a band.
+  const factors = { ...Object.fromEntries(Object.keys(AEO_SCORE_WEIGHTS).map((id) => [id, STATUS_FACTOR[statuses[id]]])), schema: schemaFactor };
   const rawScore = Math.round(Object.entries(AEO_SCORE_WEIGHTS)
-    .reduce((sum, [id, weight]) => sum + weight * STATUS_FACTOR[statuses[id]], 0));
+    .reduce((sum, [id, weight]) => sum + weight * factors[id], 0));
   const gatePassed = signals.aiCrawlersAllowed && !signals.edgeBlocked && signals.serverRenderedHtml;
   const score = gatePassed ? rawScore : Math.min(rawScore, 15);
   const band = !gatePassed ? "red" : score >= 80 ? "green" : score >= 50 ? "yellow" : "red";
-  return { score, band, gatePassed, statuses, metrics: { coverage: coverageValue, legibility: legibilityValue } };
+  return { score, band, gatePassed, statuses, metrics: { coverage: coverageValue, legibility: legibilityValue, schema: schemaFactor } };
 }
 
-export async function diagnoseAeoUrl(raw, { fetchImpl = fetch } = {}) {
+export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null } = {}) {
   const target = publicUrl(raw);
   const page = await fetchBounded(fetchImpl, target.href, { userAgent: "Nurevo-AEO-Diagnostics/1.0 (+https://nurevo.jp)" });
   const [robots, llms, edgeBlocked] = await Promise.all([
@@ -67,6 +143,7 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch } = {}) {
   const signals = extractAeoSignals(page.text, robots.text, llms.text, {
     edgeBlocked,
     llmsPresent: llms.ok,
+    scoredProps,
   });
   const result = scoreAeo(signals);
   return {
@@ -76,6 +153,10 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch } = {}) {
     gatePassed: result.gatePassed,
     checks: buildAeoChecks(signals, result),
     scannedAt: new Date().toISOString(),
+    // What this score was measured against. Without it, "your score went down"
+    // is unanswerable - the page may not have changed at all.
+    scoredProps: Array.isArray(signals.scoredProps) ? signals.scoredProps : BASELINE_SCORED_PROPS,
+    publishedProps: Array.isArray(signals.publishedProps) ? signals.publishedProps : [],
   };
 }
 
@@ -90,6 +171,20 @@ export function extractSchemaNodes(html = "") {
     try { flattenSchemas(JSON.parse(match[1]), nodes); } catch { /* malformed JSON-LD contributes no nodes */ }
   }
   return nodes;
+}
+
+/**
+ * Which of these properties the given JSON-LD nodes actually carry.
+ *
+ * The same test the scorer applies, exposed so advice can name the exact
+ * properties a score was deducted for. Anything else would risk telling an
+ * operator to fix something the scorer did not mark them down on.
+ */
+export function publishedSchemaProps(nodes = [], props = BASELINE_SCORED_PROPS) {
+  const schemaText = JSON.stringify(Array.isArray(nodes) ? nodes : []).toLowerCase();
+  return (props || [])
+    .map((key) => String(key).toLowerCase())
+    .filter((key) => key && schemaText.includes(`"${key}`));
 }
 
 /** Fetch a public page and return the JSON-LD nodes it publishes. */
@@ -131,7 +226,18 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     /(?:latitude|longitude|緯度|経度)/i.test(visible),
     /https?:\/\//i.test(visible) || /(公式サイト|website)/i.test(visible),
   ];
-  const propTests = ["name", "url", "address", "telephone", "openinghours", "geo"].map((key) => schemaText.includes(`\"${key}`));
+  // Which schema properties count is the ruleset's decision, not a constant
+  // here. This is the hinge the whole plan model turns on: a free site keeps
+  // emitting the fields it was installed with, every site is scored against
+  // the criteria in force today, and the gap between the two is what advancing
+  // the criteria actually costs. Falling back to the baseline list keeps the
+  // public URL diagnosis - which has no site and therefore no ruleset -
+  // scoring exactly as it did.
+  const scoredProps = Array.isArray(options.scoredProps) && options.scoredProps.length
+    ? options.scoredProps.map((key) => String(key).toLowerCase())
+    : BASELINE_SCORED_PROPS;
+  const publishedProps = scoredProps.filter((key) => schemaText.includes(`"${key}`));
+  const propTests = scoredProps.map((key) => publishedProps.includes(key));
   const llmsQualityTests = [llms.length >= 120, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours)/i.test(llms)];
   return {
     aiCrawlersAllowed: AI_CRAWLERS.every((bot) => robotsAllows(robots, bot)),
@@ -141,6 +247,8 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     schemaTypeMatches,
     schemaValid,
     schemaCoreProps: average(propTests),
+    scoredProps,
+    publishedProps,
     coreFieldsFilled: average(coreTests),
     bizSpecificFilled: average(bizTests),
     factsInText: average(factsTests),
