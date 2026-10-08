@@ -1245,8 +1245,14 @@ export async function handleApi(request, env, ctx) {
    *
    * Attribution is the part that is a question about the account model rather
    * than about arithmetic, so it is answered here and only here: a site counts
-   * towards a partner org if it belongs to that org, or if its org was
-   * referred by it. The calculation itself takes rows and does not care.
+   * towards a partner org if it belongs to that org. The calculation itself
+   * takes rows and does not care.
+   *
+   * There is deliberately no org-to-org referral here. sites.referred_by
+   * points at the referrers table - a person, not an org - so it cannot answer
+   * "which partner org introduced this site", and inventing an answer from it
+   * would put the wrong name on a payment. An agency whose clients own their
+   * own orgs needs an explicit org-to-org link before it can be reported on.
    *
    * A comped site is passed through as comped rather than filtered out, so the
    * engine can both exclude its revenue and keep it out of the count that
@@ -1271,8 +1277,8 @@ export async function handleApi(request, env, ctx) {
       SELECT s.id, s.plan, s.manual_plan, s.contract, s.resale_price, s.delivery_status,
              o.manual_plan AS org_manual_plan
         FROM sites s JOIN orgs o ON o.id=s.org_id
-       WHERE s.org_id=? OR o.referred_by=?
-    `).bind(orgId, orgId).all();
+       WHERE s.org_id=?
+    `).bind(orgId).all();
 
     const sites = (attributed.results || []).map((row) => ({
       site_id: row.id,

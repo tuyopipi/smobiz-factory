@@ -228,8 +228,16 @@ console.log("kickback tests passed");
 
 /**
  * Attribution is the part the engine deliberately does not decide, so it is
- * worth pinning here: a site counts towards a partner org if it belongs to
- * that org, or if its org was referred by it.
+ * worth pinning here: a site counts towards a partner org when it belongs to
+ * that org, and on no other basis.
+ *
+ * In particular there is no org-to-org referral. sites.referred_by names a
+ * person in the referrers table, not an org, so it cannot answer "which
+ * partner introduced this site" - and the query must not read any org column
+ * that is not actually in the schema. An earlier revision joined on
+ * orgs.referred_by, which exists in the local database and not in production;
+ * the fake database here happily answered it and the live endpoint returned
+ * 500. Hence the explicit column list below.
  */
 const { handleApi } = await import("../worker/api.mjs");
 
@@ -252,7 +260,18 @@ function reportEnv({ role = "admin", sites = [], superAdmin = false, tiers = nul
             first: () => first(...values),
             async all() {
               if (/FROM sites s JOIN orgs o/.test(sql)) {
-                return { results: sites.filter((s) => s.org_id === values[0] || s.org_referred_by === values[1]) };
+                // Only columns the real schema has, in both databases. A query
+                // naming anything else is a 500 in production, which is exactly
+                // what a permissive stub hid once already.
+                const allowed = new Set([
+                  "s.id", "s.plan", "s.manual_plan", "s.contract", "s.resale_price",
+                  "s.delivery_status", "o.manual_plan",
+                ]);
+                for (const column of sql.match(/\b[so]\.[a-z_]+/g) || []) {
+                  if (column === "o.id" || column === "s.org_id") continue;
+                  assert.ok(allowed.has(column), `the kickback query reads a column the schema may not have: ${column}`);
+                }
+                return { results: sites.filter((row) => row.org_id === values[0]) };
               }
               return { results: [] };
             },
@@ -280,14 +299,15 @@ const report = async (env, target = "/api/orgs/agency/kickback") => {
     sites: [
       { id: "a", org_id: "agency", plan: "standard", manual_plan: null, org_manual_plan: null, delivery_status: "active", resale_price: 0 },
       { id: "b", org_id: "agency", plan: "pro", manual_plan: null, org_manual_plan: null, delivery_status: "active", resale_price: 0 },
-      // Attributed through its own org having been referred by the partner.
-      { id: "c", org_id: "client", org_referred_by: "agency", plan: "standard", manual_plan: null, org_manual_plan: null, delivery_status: "active", resale_price: 0 },
+      { id: "c", org_id: "agency", plan: "standard", manual_plan: null, org_manual_plan: null, delivery_status: "active", resale_price: 0 },
+      // Another org's site, which is not this partner's business.
+      { id: "x", org_id: "someone-else", plan: "pro", manual_plan: null, org_manual_plan: null, delivery_status: "active", resale_price: 0 },
     ],
   });
   const { status, body } = await report(env);
   assert.equal(status, 200);
-  assert.equal(body.billable_sites, 3, "both kinds of attribution count");
-  assert.equal(body.gross_yen, 3000 + 14800 + 3000);
+  assert.equal(body.billable_sites, 3, "the partner's own sites count");
+  assert.equal(body.gross_yen, 3000 + 14800 + 3000, "and another org's does not");
   assert.equal(body.rate, 0.2);
   assert.equal(body.payout_yen, Math.floor(20800 * 0.2));
   assert.equal(body.payout_status, "calculated", "it is a report, not a payment");
