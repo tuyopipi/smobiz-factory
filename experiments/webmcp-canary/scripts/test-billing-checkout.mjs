@@ -149,6 +149,9 @@ for (const bad of ["free", "max", "enterprise", "", null, 1, { plan: "pro" }]) {
   assert.ok(call.url.includes("/v1/checkout/sessions"));
   assert.equal(call.form["line_items[0][price]"], "price_std", "and Stripe is sent the Standard price");
   assert.equal(call.form.mode, "subscription");
+  // Stripe hides the coupon field unless the session asks for it, so without
+  // this a promotion code that exists cannot be redeemed.
+  assert.equal(call.form.allow_promotion_codes, "true", "the checkout accepts a promotion code");
   // The webhook resolves the site from this metadata.
   assert.equal(call.form["subscription_data[metadata][siteId]"], SITE_ID);
   assert.equal(call.form["subscription_data[metadata][plan]"], "standard");

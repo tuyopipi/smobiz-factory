@@ -1836,7 +1836,12 @@ export async function handleApi(request, env, ctx) {
     const priceId = pricesFromEnv(env)[wantedPlan];
     if (!priceId) return json({ error: "price_not_configured", plan: wantedPlan }, 503);
     const memberRow = await env.DB.prepare("SELECT email FROM members WHERE id=?").bind(member.member_id).first();
-    const form = new URLSearchParams({ mode: "subscription", "line_items[0][price]": priceId, "line_items[0][quantity]": "1", success_url: "https://nurevo.jp/dashboard?checkout=success", cancel_url: "https://nurevo.jp/dashboard?checkout=cancelled", customer_email: memberRow?.email || "", "metadata[siteId]": site.id, "metadata[orgId]": member.org_id, "metadata[plan]": wantedPlan, "subscription_data[metadata][siteId]": site.id, "subscription_data[metadata][orgId]": member.org_id, "subscription_data[metadata][plan]": wantedPlan });
+    const form = new URLSearchParams({ mode: "subscription", "line_items[0][price]": priceId, "line_items[0][quantity]": "1",
+      // Stripe hides the coupon field unless asked, so a promotion code that
+      // exists is unredeemable without this. Opt-in rather than default, and
+      // cheaper to turn on now than to discover at the first campaign.
+      allow_promotion_codes: "true",
+      success_url: "https://nurevo.jp/dashboard?checkout=success", cancel_url: "https://nurevo.jp/dashboard?checkout=cancelled", customer_email: memberRow?.email || "", "metadata[siteId]": site.id, "metadata[orgId]": member.org_id, "metadata[plan]": wantedPlan, "subscription_data[metadata][siteId]": site.id, "subscription_data[metadata][orgId]": member.org_id, "subscription_data[metadata][plan]": wantedPlan });
     const response = await stripeRequest(secret, "/v1/checkout/sessions", form);
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_checkout_failed" }, 502);
     // The tier that was actually priced, and what it costs - not a constant that
