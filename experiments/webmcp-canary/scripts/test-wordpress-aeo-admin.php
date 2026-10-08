@@ -1318,31 +1318,55 @@ expect(strpos($readme, 'Terms of Service: https://nurevo.jp/terms') !== false, '
  * Dashboard deep link (#7)
  * ------------------------------------------------------------------ */
 
-// The upsell link used to be a hardcoded https://nurevo.jp/dashboard, so a
-// canary or local install sent the operator to production. Every dashboard URL
-// now comes from the configured service instead.
+// Where a person goes to manage their sites is fixed, and deliberately not
+// derived from the configured service.
+//
+// This reverses an earlier decision. The link was once derived from the tag URL
+// so that a canary install would not send its operator to production - a fair
+// concern, but the tag URL is a technical endpoint, and pointing it at a
+// development worker is a legitimate thing to do. The result was a real site's
+// admin screen offering "View this site on the nurevo.jp dashboard" as a link
+// to http://host.docker.internal:8799 - a machine that exists on one laptop.
+//
+// A link a human clicks now always goes to the product. API calls still follow
+// the configured service, which is what actually needs to vary.
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array(
     'tag_url' => 'https://nurevo.jp/tag.js',
     'site_id' => 'abc123def456',
 );
-expect(webmcp_canary_dashboard_url() === 'https://nurevo.jp/dashboard', 'the dashboard URL comes from the service base');
+expect(webmcp_canary_dashboard_url() === 'https://nurevo.jp/dashboard', 'the dashboard URL is the product');
 expect(
     webmcp_canary_dashboard_url('abc123def456') === 'https://nurevo.jp/dashboard#site:abc123def456',
     'a site ID becomes a deep link'
 );
 
-// A canary or local service must be followed, not overridden by the host we
-// happen to ship as the default.
-$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['tag_url'] = 'http://localhost:8799/tag.js';
+// The case the change exists for: a development service must not drag the
+// human-facing link onto a development host.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['tag_url'] = 'http://host.docker.internal:8799/tag.js';
 expect(
-    webmcp_canary_dashboard_url('abc123def456') === 'http://localhost:8799/dashboard#site:abc123def456',
-    'the deep link follows a local service'
+    webmcp_canary_dashboard_url('abc123def456') === 'https://nurevo.jp/dashboard#site:abc123def456',
+    'a development service does not move the dashboard link'
+);
+expect(
+    strpos(webmcp_canary_dashboard_url('abc123def456'), 'host.docker.internal') === false,
+    'and no development host can reach the link at all'
 );
 
-// No service configured means no link at all.
+// Nor does an unconfigured service remove it. There is still a dashboard to
+// send someone to, and this link is how they reach it in order to pair.
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['tag_url'] = '';
-expect(webmcp_canary_dashboard_url() === '', 'an unconfigured service yields no URL');
-expect(webmcp_canary_dashboard_url('abc123def456') === '', 'and no deep link');
+expect(webmcp_canary_dashboard_url() === 'https://nurevo.jp/dashboard', 'an unconfigured service still has a dashboard');
+expect(
+    webmcp_canary_dashboard_url('abc123def456') === 'https://nurevo.jp/dashboard#site:abc123def456',
+    'and still deep-links'
+);
+
+// API calls are the thing that must follow the service, and still do.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['tag_url'] = 'http://host.docker.internal:8799/tag.js';
+expect(
+    webmcp_canary_api_base() === 'http://host.docker.internal:8799',
+    'the API base still follows the configured service'
+);
 
 // A site ID this plugin never received, or one that is not shaped like ours,
 // must not be pasted into a URL - a link to the wrong site is worse than none.

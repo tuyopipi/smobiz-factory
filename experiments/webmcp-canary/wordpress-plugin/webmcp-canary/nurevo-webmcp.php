@@ -3,7 +3,7 @@
  * Plugin Name: Nurevo AEO
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
- * Version: 0.6.1
+ * Version: 0.6.2
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Nurevo
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WEBMCP_CANARY_VERSION', '0.6.1');
+define('WEBMCP_CANARY_VERSION', '0.6.2');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
@@ -78,6 +78,25 @@ function webmcp_canary_default_settings() {
         // Per-site write credential for the profile sync. Never printed publicly.
         'profile_token' => '',
     );
+}
+
+/**
+ * Where a person goes to manage their sites.
+ *
+ * Fixed, and deliberately not derived from the configured service URL. The
+ * dashboard links used to be built from the tag URL, which is a technical
+ * endpoint: pointing it at a development worker is a legitimate thing to do,
+ * and it made the admin screen offer "View this site on the nurevo.jp
+ * dashboard" as a link to a machine that only exists on the developer's laptop.
+ *
+ * API calls still follow the configured service - they have to, or local
+ * development could not talk to a local worker. Links a human clicks do not.
+ *
+ * Overridable from wp-config.php for development, so nothing has to be edited
+ * here to work against a staging dashboard.
+ */
+if (!defined('WEBMCP_CANARY_DASHBOARD_BASE')) {
+    define('WEBMCP_CANARY_DASHBOARD_BASE', 'https://nurevo.jp');
 }
 
 /** Where the hand-entered service list lives. */
@@ -1935,20 +1954,24 @@ function webmcp_canary_api_base() {
 }
 
 /**
- * URL of the nurevo.jp dashboard, derived from the configured service.
+ * URL of the nurevo.jp dashboard.
+ *
+ * Built from WEBMCP_CANARY_DASHBOARD_BASE, never from the configured service.
+ * It used to derive from the tag URL, so an install pointed at a development
+ * worker rendered this link as http://host.docker.internal:8799/dashboard -
+ * an address that exists on one laptop - in the admin screen of a real site.
  *
  * `$site_id` deep-links to that site's detail view. The dashboard reads the
  * fragment on load, so the link lands on the site rather than the summary.
- * Returns '' when the service is not configured, or when a deep link was asked
- * for and this install has no site ID yet - a link to the wrong place is worse
- * than no link.
+ * Returns '' when a deep link was asked for and this install has no site ID
+ * yet - a link to the wrong place is worse than no link.
  */
 function webmcp_canary_dashboard_url($site_id = '') {
-    $api_base = webmcp_canary_api_base();
-    if ($api_base === '') {
+    $base = rtrim((string) WEBMCP_CANARY_DASHBOARD_BASE, '/');
+    if ($base === '') {
         return '';
     }
-    $url = trailingslashit($api_base) . 'dashboard';
+    $url = trailingslashit($base) . 'dashboard';
     $site_id = trim((string) $site_id);
     if ($site_id === '') {
         return $url;

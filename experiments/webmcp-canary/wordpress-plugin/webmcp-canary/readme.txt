@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -141,6 +141,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.6.2 =
+
+* Fixed the "View this site on the nurevo.jp dashboard" link, which could point at a development address instead of nurevo.jp. The link was built from the service URL in Settings; it is now always the nurevo.jp dashboard, while API calls continue to follow whatever service is configured.
+
 = 0.6.1 =
 
 * The diagnosis is now in your site's language. The checks are worded by the Nurevo service, and the plugin never said which language it wanted, so the checklist came back in English even on a Japanese site.
@@ -185,6 +189,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.6.2 =
+
+Fixes the dashboard link in the admin screen, which could point somewhere other than nurevo.jp.
 
 = 0.6.1 =
 
