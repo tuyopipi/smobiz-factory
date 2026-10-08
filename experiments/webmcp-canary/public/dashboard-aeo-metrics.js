@@ -4,7 +4,15 @@
   var selectedSiteId = null;
   var loadingSiteId = null;
   function esc(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
-  function validScores(scores) { return (scores || []).filter(function (item) { return Number.isFinite(Number(item.score)); }); }
+  // Number(null) is 0, so the obvious isFinite(Number(score)) check treats a
+  // row that was never scored as a perfect zero - a claim about the site that
+  // nothing measured. Absent and zero are different answers.
+  function validScores(scores) {
+    return (scores || []).filter(function (item) {
+      return item && item.score !== null && item.score !== undefined && item.score !== ""
+        && Number.isFinite(Number(item.score));
+    });
+  }
   function sparkline(scores) {
     var values = validScores(scores);
     if (values.length < 2) return '<div class="nrv-aeo-empty">推移表示には2回以上の診断が必要です。</div>';

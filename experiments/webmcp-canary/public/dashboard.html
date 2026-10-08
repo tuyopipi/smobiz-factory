@@ -36,7 +36,7 @@ function catRows(items,render){const list=Array.isArray(items)?items:[];return l
    diagnose. The middle case used to render as nothing, so a new site looked
    like a broken one. */
 function aeoBand(v){return v>=80?'g':v>=50?'a':'n'}
-function aeoScoreRow(s){const m=s._aeo,rows=(m&&m.scores||[]).filter(r=>Number.isFinite(Number(r.score)));
+function aeoScoreRow(s){const m=s._aeo,rows=(m&&m.scores||[]).filter(r=>r&&r.score!==null&&r.score!==undefined&&r.score!==''&&Number.isFinite(Number(r.score)));
 if(rows.length){const last=rows[rows.length-1],n=Number(last.score);
 return `<div class="sigrow"><span>${t('aeoScore')}</span><b><span class="sig ${aeoBand(n)}">${n}</span> <small class="notice">/100</small></b></div>`
 +`<div class="sigrow"><span>${t('aeoWhen')}</span><b>${last.scanned_at?new Date(last.scanned_at).toLocaleString():'—'}</b></div>`
