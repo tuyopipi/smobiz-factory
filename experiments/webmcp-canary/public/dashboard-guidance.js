@@ -13,13 +13,23 @@
   var deliveryText = { ja: { stop: "配信停止", resume: "配信再開", confirmStop: "配信を停止しますか？ページが非公開になり、課金対象から外れます", stopped: "配信停止中" }, en: { stop: "Stop delivery", resume: "Resume delivery", confirmStop: "Stop delivery? The page will become private and leave billing.", stopped: "Delivery stopped" }, zh: { stop: "停止发布", resume: "恢复发布", confirmStop: "停止发布吗？页面将不公开且不再计费。", stopped: "已停止发布" }, tw: { stop: "停止發布", resume: "恢復發布", confirmStop: "要停止發布嗎？頁面將不公開且不再計費。", stopped: "已停止發布" }, ko: { stop: "게시 중지", resume: "게시 재개", confirmStop: "게시를 중지할까요? 페이지가 비공개되고 과금 대상에서 제외됩니다.", stopped: "게시 중지됨" }, es: { stop: "Detener publicación", resume: "Reanudar publicación", confirmStop: "¿Detener la publicación? La página será privada y no se facturará.", stopped: "Publicación detenida" }, fr: { stop: "Arrêter la publication", resume: "Reprendre la publication", confirmStop: "Arrêter la publication ? La page sera privée et exclue de la facturation.", stopped: "Publication arrêtée" }, de: { stop: "Veröffentlichung stoppen", resume: "Veröffentlichung fortsetzen", confirmStop: "Veröffentlichung stoppen? Die Seite wird privat und nicht mehr berechnet.", stopped: "Veröffentlichung gestoppt" } };
   var lastId = null;
   function esc(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
+  // The site's own address, scheme included. Mirrors siteHref() in the
+  // dashboard: website_uri when it is absolute, else the stored url, which is
+  // kept without a scheme and so must be given one before it is a link.
+  function siteHref(site) {
+    var uri = String((site && site.website_uri) || "").trim();
+    if (/^https?:\/\//i.test(uri)) return uri;
+    var raw = String((site && site.url) || "").trim();
+    if (!raw) return "";
+    return /^https?:\/\//i.test(raw) ? raw : "https://" + raw;
+  }
   function button(text, attrs) { var b = document.createElement("button"); b.className = "btn"; b.type = "button"; b.textContent = text; Object.keys(attrs || {}).forEach(function (k) { b.setAttribute(k, attrs[k]); }); return b; }
   async function loadSites() { var r = await fetch("/api/sites", { credentials: "include", cache: "no-store" }); if (!r.ok) return []; return (await r.json()).sites || []; }
   async function loadSiteConfig(site) { try { var r = await fetch("/api/tag/config?k=" + encodeURIComponent(site.key), { credentials: "include", cache: "no-store" }); if (!r.ok) return null; return await r.json(); } catch (_) { return null; } }
   function installMethods(site, type) {
     var hostUrl = site.hostedUrl ? "https://nurevo.jp" + site.hostedUrl : "https://nurevo.jp/s/（店舗slug）";
     var methods = [
-      { key: "wp", title: "① WordPressプラグイン", what: "プラグインを入れると店のLocalBusiness情報がサーバー側で出力され、AIに読まれます。", steps: ["「プラグインをダウンロード」から nurevo-webmcp.zip を保存", "WordPress管理画面→プラグイン→新規追加→プラグインのアップロード→zipを選択→インストール→有効化", "Nurevo設定欄に当該サイトのサイトキー（" + (site.key || "サイトキー") + "）を入力して保存", "公開ページのソース表示で application/ld+json に LocalBusiness が出ればOK", "キャッシュ系プラグインを利用している場合はキャッシュをクリア"] },
+      { key: "wp", title: "① WordPressプラグイン", what: "プラグインを入れると店のLocalBusiness情報がサーバー側で出力され、AIに読まれます。", steps: ["WordPress管理画面→プラグイン→新規追加で「Nurevo AEO」を検索し、インストール→有効化", "このページで「ペアリングコードを発行」を押す", "WordPress管理画面→Nurevo AEO→設定にコードを貼って保存（これで接続されます）", "公開ページのソース表示で application/ld+json に LocalBusiness が出ればOK", "キャッシュ系プラグインを利用している場合はキャッシュをクリア"] },
       { key: "hosted", title: "② ホストページ /s/", what: "Nurevoが店専用ページ（schema入り・配信済み）を生成します。インストール不要です。", steps: ["NurevoホストURLをコピー（" + hostUrl + "）", "Googleビジネスプロフィールの「ウェブサイト」欄に貼り付け", "Instagramプロフィールの「ウェブサイト」欄に貼り付け", "URLを開いて店情報が表示されればOK"] },
       { key: "static", title: "③ 静的JSON-LD貼り付け（WordPress以外）", what: "完成済みJSON-LDをサイトの<head>に貼るだけ。サーバー出力されAIに届きます。", steps: ["「静的JSON-LDをコピー」を押す", "サイトビルダーのカスタムコード／<head>欄（Wix・STUDIO・ペライチ等）に貼り付け", "サイトを公開", "ソース表示で application/ld+json が出ればOK"] }
     ];
@@ -38,7 +48,15 @@
     var billing = site.billing || {}; var billingText = copy.billing; var lang = localStorage.getItem("nrv-dash-lang") || "ja"; var billingLabels = billingStatusText[lang] || billingStatusText.ja; var isWholesale = site.payment_ui === false || site.channel === "wholesale"; var billingState = billing.status === "active" ? "active" : billing.status === "unpaid" ? "unpaid" : "pending"; if (!isWholesale) actions += '<div class="nrv-check nrv-action ' + (billingState === "active" ? "done" : "todo") + '"><span>' + (billingState === "active" ? "✓" : "⚠") + '</span><div><b>' + esc(billingText[0]) + '：' + esc(billingLabels[billingState]) + '</b><small>' + esc(billingText[1]) + '</small>' + (billingState === "active" ? '' : '<button type="button" class="btn nrv-payment-action">' + esc(lang === "ja" ? "支払いリンクを共有" : "Share payment link") + '</button>') + '</div></div>';
     var info = ["site_type", "map", "website"].map(function (key) { var text = copy[key]; var item = byKey[key] || { done: false }; return '<div class="nrv-info"><b>' + esc(text[0]) + '</b><span>' + (item.done ? '✓ ' : '') + esc(text[1]) + '</span></div>'; }).join("");
     var body = '<div class="head" style="padding:0 0 12px;border:0"><h2>導入・チェック</h2></div>' + installMethods(site, type) + '<h3 class="nrv-section-title">アクション</h3><div class="nrv-checklist">' + actions + '</div><h3 class="nrv-section-title nrv-info-title">情報表示</h3><div class="nrv-info-list">' + info + '</div><div class="nrv-actions"><div><b>サイトキー</b><div class="toolbar"><code class="nrv-key">' + esc(site.key || "") + '</code><button class="btn nrv-key-copy" type="button">コピー</button></div></div>';
-    if (type === "wp") body += '<p><a href="/nurevo-webmcp.zip" download>WordPressプラグインをダウンロード</a><br><small>プラグイン設定画面にサイトキーを貼り付けてください。</small></p>';
+    if (type === "wp") {
+      // No download attribute and no bundled zip: the first opened the site as
+      // a file save, and the second shipped a copy that went stale the moment
+      // 0.6.0 reached the directory.
+      var siteUrl = siteHref(site);
+      body += '<p>' + (siteUrl ? '<a href="' + esc(siteUrl) + '" target="_blank" rel="noopener">サイトを開く ↗</a><br>' : '')
+        + '<a href="https://wordpress.org/plugins/nurevo-webmcp/" target="_blank" rel="noopener">WordPress公式ディレクトリからインストール ↗</a>'
+        + '<br><small>WordPress管理画面→プラグイン→新規追加で「Nurevo AEO」を検索してもインストールできます。接続はペアリングコードで行います。</small></p>';
+    }
     // Legacy tag sites keep only the warning; the tag setup is no longer a primary installation method.
     if (type === "tag") body += '<p class="nrv-js-warning"><b>⚠️ 注意</b> この方式（JSタグ/GTM）はAI検索用のschema配信には反映されません（アクセス解析/WebMCP用途）。AI検索にはWordPressプラグイン、ホストページ、または静的JSON-LD貼り付けを使用してください。</p>';
     if (type === "static") body += '<p><b>静的JSON-LD</b><textarea class="input nrv-jsonld" readonly rows="8">' + esc(site.jsonldBlock || "JSON-LDを取得できませんでした") + '</textarea><button class="btn nrv-jsonld-copy" type="button">JSON-LDをコピー</button><small>サイトの&lt;head&gt;に貼り付け（静的なのでAIに届きます）。</small></p>';
