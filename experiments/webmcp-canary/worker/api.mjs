@@ -3162,8 +3162,6 @@ async function handleMemberRegistration(request, env) {
     invitation = await env.DB.prepare("SELECT token,org_id FROM sessions WHERE token=? AND kind='member_invite' AND expires_at>? ")
       .bind(inviteHash, Date.now()).first();
     if (!invitation) return json({ error: "invalid_invite" }, 403);
-  } else if (role === "store") {
-    return json({ error: "invite_required_for_store" }, 403);
   }
   const existing = await env.DB.prepare("SELECT id FROM members WHERE lower(email)=?").bind(email).first();
   if (existing) return json({ error: "member_exists" }, 409);
