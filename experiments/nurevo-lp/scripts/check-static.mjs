@@ -27,4 +27,8 @@ for (const needle of [
   if (!index.includes(needle)) throw new Error(`index.html missing: ${needle}`);
 }
 
+const partner = await readFile(new URL("../public/partner/index.html", import.meta.url), "utf8");
+if (/name=["']invite["']/u.test(partner)) throw new Error("partner registration must not require an invite code");
+if (/Invitation only|招待制/u.test(partner)) throw new Error("partner registration must not be described as invitation-only");
+
 console.log("nurevo-lp static check: ok");
