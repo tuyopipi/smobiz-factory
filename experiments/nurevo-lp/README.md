@@ -4,13 +4,25 @@ Cloudflare Pagesで `nurevo.jp` に置くための軽量な静的LPです。Word
 
 ## 構成
 
-- `public/index.html`: LP本体
-- `public/privacy.html`: プライバシーポリシー雛形
-- `public/terms.html`: 利用規約雛形
-- `public/tokushoho.html`: 特定商取引法に基づく表記雛形
-- `public/config.js`: 公開Worker URL、tag.js URL、WordPressプラグインURLの設定
-- `public/assets/app.js`: i18n、タブ、コピー、サイトキー発行フォーム
-- `public/assets/styles.css`: レスポンシブCSS
+LPは言語ごとの静的ページとしてビルドします。**`public/index.html` と `public/<言語>/index.html` は生成物なので直接編集しません。**
+
+- `src/lp.html`: LP本体のテンプレート（日本語のマークアップ。`data-i18n` で辞書のキーを指す）
+- `src/i18n.mjs`: 全文言の辞書（8言語）。日本語が正で、変えたら他の7言語も合わせる
+- `src/site.mjs`: head・JSON-LD・sitemap・llms.txt に出す事実（会社情報、料金、言語とURL）
+- `src/content/*.mjs`: コンテンツページの枠。本文が全部入った言語だけが公開される
+- `src/lp.js` / `src/ai-referral.js`: ページのスクリプト／AI検索からの流入を数えるビーコン
+- `scripts/build-site.mjs`: 上記から `public/` を生成（各言語のLP、`sitemap-pages.xml`、`llms-pages.json`、手書きページのheadブロック）
+- `scripts/check-seo.mjs`: 生成物の検査（h1、canonical、hreflangの相互参照、JSON-LDがページ本文と一致するか）
+- `public/check/` `public/partner/` `public/guide/` `public/*.html`: 手書きのページ。`<!-- seo:generated … -->` の間だけビルドが書き換える
+
+```bash
+npm run build            # src/ を変えたら必ず実行
+npm run check            # 生成物が最新か＋SEO/構造化データの検査
+npm run preview:drafts   # 未完成のコンテンツページを noindex で確認（デプロイされない .preview/ に出力）
+npm run deploy           # check を通してから Pages へ
+```
+
+`/robots.txt` `/sitemap.xml` `/llms.txt` は `experiments/webmcp-canary` のワーカーが配信します（`worker/site-seo.mjs`）。`/sitemap.xml` は `sitemap-pages.xml`（このビルド）と `sitemap-stores.xml`（ホスト店舗）のインデックスです。
 
 規約類は雛形です。公開前に必ず法的レビューを行ってください。
 

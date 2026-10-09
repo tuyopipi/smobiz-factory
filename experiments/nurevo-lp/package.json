@@ -4,10 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check": "node --check public/assets/app.js && node scripts/check-static.mjs",
+    "build": "node scripts/build-site.mjs",
+    "preview:drafts": "rm -rf .preview && cp -R public .preview && node scripts/build-site.mjs --drafts --out .preview && npx wrangler@latest pages dev .preview",
+    "check": "node --check public/assets/app.js && node scripts/build-site.mjs --check && node scripts/check-static.mjs && node scripts/check-seo.mjs",
     "check:aeo": "node scripts/check-aeo-checker.mjs",
     "preview": "npx wrangler@latest pages dev public",
-    "deploy": "npx wrangler@latest pages deploy public --project-name nurevo --branch production"
+    "deploy": "npm run check && npx wrangler@latest pages deploy public --project-name nurevo --branch production"
   },
   "engines": {
     "node": ">=20"
