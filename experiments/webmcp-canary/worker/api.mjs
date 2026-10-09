@@ -16,6 +16,7 @@ import { normalizeDomainKey } from "./domain-key.mjs";
 import { planFromSubscription, pricesFromEnv, resolveSitePlan } from "./billing-plan.mjs";
 import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
+import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
 const json = (obj, status = 200, extraHeaders = {}) => new Response(JSON.stringify(obj), {
@@ -674,15 +675,19 @@ export async function handleApi(request, env, ctx) {
   }
 
   if (path === "/robots.txt" && method === "GET") {
-    const allow = AI_CRAWLERS.map((crawler) => `User-agent: ${crawler.ua}\nAllow: /s/`).join("\n\n");
-    return new Response(`${allow}\n\nSitemap: https://nurevo.jp/sitemap.xml\n`, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" } });
+    return new Response(siteRobotsTxt(), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" } });
   }
 
+  // The marketing pages are static and list themselves (Pages builds
+  // /sitemap-pages.xml); the store pages come from the database. One index
+  // over both, so neither has to know the other's URLs.
   if (path === "/sitemap.xml" && method === "GET") {
+    return new Response(sitemapIndexXml(), { headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=300" } });
+  }
+
+  if (path === "/sitemap-stores.xml" && method === "GET") {
     const { results } = await env.DB.prepare("SELECT slug FROM sites WHERE install_type='hosted' AND (delivery_status IS NULL OR delivery_status='active') AND slug IS NOT NULL AND slug<>'' ORDER BY slug").all();
-    const escXml = (value) => String(value || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;").replace(/'/g, "&apos;");
-    const urls = (results || []).map((row) => `  <url><loc>https://nurevo.jp/s/${escXml(row.slug)}</loc></url>`).join("\n");
-    return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`, { headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=300" } });
+    return new Response(storesSitemapXml(results), { headers: { "content-type": "application/xml; charset=utf-8", "cache-control": "public, max-age=300" } });
   }
 
   if (path === "/llms.txt" && method === "GET") {
@@ -692,17 +697,29 @@ export async function handleApi(request, env, ctx) {
         WHERE s.install_type='hosted' AND (s.delivery_status IS NULL OR s.delivery_status='active') AND s.slug IS NOT NULL AND s.slug<>''
         ORDER BY s.slug`,
     ).all();
-    const lines = ["# Nurevo hosted stores", "", "Nurevoのホスト店舗ページ一覧です。", ""];
-    for (const store of results || []) {
-      lines.push(`## ${store.name || store.slug}`);
-      lines.push(`- URL: https://nurevo.jp/s/${store.slug}`);
-      if (store.business_type) lines.push(`- 業種: ${store.business_type}`);
-      if (store.address) lines.push(`- 住所: ${store.address}`);
-      if (store.hours) lines.push(`- 営業時間: ${store.hours}`);
-      if (store.tel) lines.push(`- 電話: ${store.tel}`);
-      lines.push("");
-    }
-    return new Response(lines.join("\n"), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" } });
+    const pages = await loadSitePages(env);
+    return new Response(siteLlmsTxt(pages, results || []), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" } });
+  }
+
+  // A visit to the marketing site that arrived from an AI answer engine. Sent
+  // by sendBeacon from the page, so there is no CSRF token and no session; the
+  // body is three short fields and only a known engine id is counted.
+  if (path === "/api/lp/ai-referral" && method === "POST") {
+    let payload = null;
+    try { payload = JSON.parse(await request.text()); } catch { payload = null; }
+    const origin = request.headers.get("origin") || "";
+    const sameSite = /^https:\/\/(www\.)?nurevo\.jp$/i.test(origin) || String(env.DEV || "") === "1";
+    if (sameSite && payload) await recordAiReferral(env, payload);
+    // Always the same answer: the page does nothing with it, and a caller
+    // probing the endpoint learns nothing from it.
+    return new Response(null, { status: 204 });
+  }
+
+  if (path === "/api/lp/ai-referrals" && method === "GET") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    if (!member.is_super_admin) return json({ error: "forbidden" }, 403);
+    return json(await readAiReferrals(env, url.searchParams.get("days")));
   }
 
   if (path === "/api/auth/request" && method === "POST") {
@@ -3288,6 +3305,8 @@ function csrfRequired(path) {
   if (path === "/api/pair") return false;
   // The catalogue sync is the profile sync's twin: bearer token, no cookie.
   if (/^\/api\/sites\/[^/]+\/catalog$/i.test(path)) return false;
+  // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
+  if (path === "/api/lp/ai-referral") return false;
   return path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 
