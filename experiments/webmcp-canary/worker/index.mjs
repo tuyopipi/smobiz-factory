@@ -99,7 +99,11 @@ export default {
 
     try {
       const requestOrigin = request.headers.get("origin");
-      if (url.pathname.startsWith("/api/") && !isAllowedOrigin(request, env)) {
+      // The customer-site referral beacon is intentionally cross-origin; its
+      // handler authenticates the public site key and then requires the Origin
+      // host to match that site's saved domain. The global dashboard CORS list
+      // cannot enumerate every customer domain.
+      if (url.pathname.startsWith("/api/") && url.pathname !== "/api/site/ai-referral" && !isAllowedOrigin(request, env)) {
         return json({
           error: "origin_not_allowed",
           allowedOrigins: originPolicy(env).allowedOrigins

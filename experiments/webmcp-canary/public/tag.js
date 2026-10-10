@@ -29,8 +29,10 @@
     if (!engine) return;
     const body = JSON.stringify({ site_key: SITE_KEY, engine });
     const endpoint = new URL("/api/site/ai-referral", TAG_ORIGIN).href;
-    if (navigator.sendBeacon) navigator.sendBeacon(endpoint, new Blob([body], { type: "application/json" }));
-    else fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body, mode: "cors", credentials: "omit", keepalive: true }).catch(() => {});
+    // text/plain is CORS-safelisted, so a third-party customer site can send
+    // this without a preflight; the endpoint still parses the body as JSON.
+    if (navigator.sendBeacon) navigator.sendBeacon(endpoint, new Blob([body], { type: "text/plain" }));
+    else fetch(endpoint, { method: "POST", headers: { "content-type": "text/plain" }, body, mode: "cors", credentials: "omit", keepalive: true }).catch(() => {});
   }
 
   // Nurevo T-tag integration: the Worker verifies the key in D1, updates
