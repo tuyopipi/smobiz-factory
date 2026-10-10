@@ -145,14 +145,14 @@ for (const view of ["summary", "sites", "billing"]) {
   // same answer for "does not exist" and "belongs to someone else" - no probe.
   const app = boot({ hash: "#site:ffffffffffff", sites: [SITE()] });
   app.render();
-  assert.ok(app.main().includes("サイトがありません"), "an unknown id shows the empty state");
+  assert.ok(app.main().includes("最初のクライアントサイトを追加"), "an unknown id shows the guided empty state");
   assert.equal(app.main().includes('id="form"'), false, "and no site detail");
 }
 
 {
   const other = boot({ hash: "#site:aaaaaaaaaaaa", sites: [] });
   other.render();
-  assert.ok(other.main().includes("サイトがありません"), "another org's id is indistinguishable");
+  assert.ok(other.main().includes("最初のクライアントサイトを追加"), "another org's id is indistinguishable");
 }
 
 for (const bad of [
@@ -324,18 +324,20 @@ for (const bad of [
   });
   await app.load();
   assert.equal(app.store["nrv-dash-pending-site"], undefined, "the stash is consumed");
-  assert.ok(app.main().includes("サイトがありません"), "and a vanished site shows the empty state");
+  assert.ok(app.main().includes("最初のクライアントサイトを追加"), "and a vanished site shows the guided empty state");
 }
 
 {
-  // An explicit hash beats a stash.
+  // An explicit billing hash from a non-partner is not an entitlement. The
+  // signed-in role is settled before load and ordinary accounts return to the
+  // sites flow instead of loading or displaying billing.
   const app = boot({
     hash: "#billing",
     storage: { "nrv-dash-pending-site": "abc123def456" },
     fetchImpl: async () => ({ ok: true, json: async () => ({ sites: [] }) }),
   });
   await app.load();
-  assert.equal(app.view(), "billing", "the address bar wins over the stash");
+  assert.equal(app.view(), "sites", "a non-partner cannot force the billing view from the address bar");
   assert.equal(app.store["nrv-dash-pending-site"], undefined, "which is consumed either way");
 }
 
