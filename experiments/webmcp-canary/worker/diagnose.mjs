@@ -113,9 +113,11 @@ export async function diagnoseAndStore(env, site, { lang = "ja" } = {}) {
 }
 
 export async function runAeoScoreCron(env, { limit } = {}) {
-  const configured = Number(limit ?? env.AEO_SCORE_CRON_LIMIT ?? DEFAULT_AEO_SCORE_CRON_LIMIT);
-  const batchLimit = Math.max(1, Math.min(MAX_AEO_SCORE_CRON_LIMIT, Number.isFinite(configured) ? Math.floor(configured) : DEFAULT_AEO_SCORE_CRON_LIMIT));
-  const { results } = await env.DB.prepare(
+  // `limit` remains available to deterministic tests and emergency manual
+  // runs. Scheduled runs deliberately have no cap: a round-robin LIMIT left
+  // larger accounts without a point on many calendar days.
+  const requestedLimit = limit == null ? null : Math.max(1, Math.min(MAX_AEO_SCORE_CRON_LIMIT, Math.floor(Number(limit) || DEFAULT_AEO_SCORE_CRON_LIMIT)));
+  const statement = env.DB.prepare(
     `SELECT s.id,s.url,s.website_uri,s.slug,MAX(a.scanned_at) AS last_aeo_scanned_at
        FROM sites s
        LEFT JOIN aeo_scores a ON a.site_id=s.id
@@ -126,8 +128,9 @@ export async function runAeoScoreCron(env, { limit } = {}) {
                MAX(a.scanned_at) ASC,
                s.created_at ASC,
                s.id ASC
-      LIMIT ?`,
-  ).bind(batchLimit).all();
+      ${requestedLimit == null ? "" : "LIMIT ?"}`,
+  );
+  const { results } = requestedLimit == null ? await statement.all() : await statement.bind(requestedLimit).all();
 
   const outcomes = [];
   for (const site of results || []) {
@@ -137,7 +140,7 @@ export async function runAeoScoreCron(env, { limit } = {}) {
       outcomes.push({ ok: false, siteId: site.id, error: String(error?.message || error).slice(0, 200) });
     }
   }
-  return { limit: batchLimit, selected: (results || []).length, processed: outcomes.length, outcomes };
+  return { limit: requestedLimit, selected: (results || []).length, processed: outcomes.length, outcomes };
 }
 
 function siteDiagnosticUrl(site) {

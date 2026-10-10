@@ -41,6 +41,18 @@
     var max = Math.max.apply(Math, hits.map(function (item) { return Number(item.hits || 0); }).concat([1]));
     return '<div class="tablewrap"><table><thead><tr><th>日付</th><th>クローラ種別</th><th>来訪数</th></tr></thead><tbody>' + hits.map(function (item) { var count = Number(item.hits || 0); return '<tr><td>' + esc(item.date) + '</td><td><code>' + esc(item.crawler_id) + '</code></td><td><div class="nrv-hit-cell"><span class="nrv-hit-bar" style="width:' + Math.max(4, Math.round(count / max * 100)) + '%"></span><b>' + count + '</b></div></td></tr>'; }).join('') + '</tbody></table></div>';
   }
+  function referralTrend(rows) {
+    var byDay = {};
+    (rows || []).forEach(function (row) { byDay[row.date] = (byDay[row.date] || 0) + Number(row.hits || 0); });
+    var days = Object.keys(byDay).sort();
+    if (!days.length) return '<div class="nrv-aeo-empty">AI経由の流入データなし</div>';
+    var width = 520, height = 150, pad = 18, max = Math.max.apply(Math, days.map(function (day) { return byDay[day]; }).concat([1]));
+    var points = days.map(function (day, index) {
+      return { day: day, hits: byDay[day], x: pad + index * (width - pad * 2) / Math.max(1, days.length - 1), y: height - pad - byDay[day] * (height - pad * 2) / max };
+    });
+    return '<div class="nrv-aeo-score"><strong>' + esc(points[points.length - 1].hits) + '</strong><span>件 / 最新日</span></div>'
+      + '<svg class="nrv-aeo-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="AI流入の日次推移"><line x1="' + pad + '" y1="' + (height - pad) + '" x2="' + (width - pad) + '" y2="' + (height - pad) + '" class="axis"></line><polyline points="' + points.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ') + '" class="line"></polyline>' + points.map(function (p) { return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4"><title>' + esc(p.day) + ': ' + p.hits + '件</title></circle>'; }).join('') + '</svg><div class="nrv-aeo-range"><span>' + esc(days[0]) + '</span><span>' + esc(days[days.length - 1]) + '</span></div>';
+  }
   function rulesetStatus(metrics) {
     var ruleset = metrics.ruleset || {};
     if (!ruleset.auto_updates) return '<div class="nrv-ruleset static"><b>静的JSON-LD</b><span>自動更新されません（最新ruleset: v' + esc(ruleset.latest_version || '—') + '）</span></div>';
@@ -82,7 +94,7 @@
     var section = document.createElement('section');
     section.className = 'nrv-aeo-metrics';
     section.dataset.siteId = metrics.site_id;
-    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>AEO計測</small><h2>検索AIへの届き方</h2></div>' + rulesetStatus(metrics) + '</div><div class="nrv-aeo-grid"><section><h3>AEOスコアの推移</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>AIクローラ来訪</h3>' + crawlerTable(metrics) + '</section></div><section class="nrv-aeo-checklist"><h3>診断チェックリスト</h3>' + checklist(metrics) + '</section></div>';
+    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>AEO計測</small><h2>検索AIへの届き方</h2></div>' + rulesetStatus(metrics) + '</div><div class="nrv-aeo-grid"><section><h3>AEOスコア（日次）</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>AI流入（日次）</h3>' + referralTrend(metrics.ai_referrals) + '</section></div><section class="nrv-aeo-checklist"><h3>AIクローラ来訪</h3>' + crawlerTable(metrics) + '</section><section class="nrv-aeo-checklist"><h3>診断チェックリスト</h3>' + checklist(metrics) + '</section></div>';
     return section;
   }
   async function resolveSiteId() {

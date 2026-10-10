@@ -343,27 +343,34 @@ const ARTICLE_CSS = read("src/article.css");
 
 /** Paragraphs of an answer, as HTML. Copy is plain text; blank lines split paragraphs. */
 const paragraphs = (text) => String(text).split(/\n\s*\n/).map((p) => `<p>${esc(p.trim())}</p>`).join("\n");
+const inline = (text) => esc(text).replace(/\[([^\]]+)\]\((\/[^)]+)\)/g, '<a href="$2">$1</a>');
+const richParagraphs = (items = []) => items.map((item) => `<p>${inline(item)}</p>`).join("\n");
+const contentPath = (lang, slug) => `${lang === "en" ? "/guide/" : `/${lang}/guide/`}${slug}/`;
+function richSections(copy) {
+  return (copy.sections || []).map((section) => `<section class="qa"><h2>${esc(section.heading)}</h2>${richParagraphs(section.paragraphs)}${section.list?.length ? `<ol>${section.list.map((item) => `<li>${inline(item)}</li>`).join("")}</ol>` : ""}${richParagraphs(section.after)}</section>`).join("\n");
+}
 
 /** One content page in one language. `copy` is that language's block of the content file. */
 function contentPage(page, lang, { draft }) {
   const meta = langOf(lang);
   const copy = page.locales[lang];
-  const pathFor = (code) => `${langOf(code).path}${page.slug}/`;
+  const pathFor = (code) => contentPath(code, page.slug);
   const url = ORIGIN + pathFor(lang);
   const home = ORIGIN + meta.path;
   const published = Object.keys(page.locales).filter((code) => draft || isComplete(page.locales[code]));
-  const faq = copy.questions.map((item) => [item.q, item.a.replace(/\n\s*\n/g, " ")]);
+  const questions = copy.faqs || copy.questions;
+  const faq = questions.map((item) => [item.q, item.a.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\n\s*\n/g, " ")]);
   const graph = [
     organizationNode(),
     websiteNode(),
     webPageNode({ url, title: copy.title, description: copy.description, lang }),
-    breadcrumbNode(url, [{ name: t("nav.home", lang), url: home }, { name: copy.h1, url }]),
+    breadcrumbNode(url, [{ name: t("nav.home", lang), url: home }, { name: lang === "ja" ? "AEOガイド" : "AEO Guides", url: ORIGIN + (lang === "en" ? "/guide/" : `/${lang}/guide/`) }, { name: copy.h1, url }]),
     faqNode(url, faq),
   ];
   const related = (page.related || [])
     .map((slug) => ALL_CONTENT.find((other) => other.slug === slug))
     .filter((other) => other && other.locales[lang] && (draft || isComplete(other.locales[lang])))
-    .map((other) => `<li><a href="${langOf(lang).path}${other.slug}/">${esc(other.locales[lang].h1)}</a></li>`);
+    .map((other) => `<li><a href="${contentPath(lang, other.slug)}">${esc(other.locales[lang].h1)}</a></li>`);
 
   return `<!doctype html>
 <html lang="${meta.htmlLang}">
@@ -376,11 +383,13 @@ ${head({ lang, title: copy.title, description: copy.description, url, type: "art
   <a class="btn primary" href="${copy.cta.href}">${esc(copy.cta.label)}</a>
 </div></header>
 <main class="wrap">
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="${meta.path}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <span>${esc(copy.h1)}</span></nav>
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="${meta.path}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <a href="${lang === "en" ? "/guide/" : `/${lang}/guide/`}">${lang === "ja" ? "AEOガイド" : "AEO Guides"}</a> <span aria-hidden="true">›</span> <span>${esc(copy.h1)}</span></nav>
   <article>
     <h1>${esc(copy.h1)}</h1>
     <p class="lead">${esc(copy.lead)}</p>
-${copy.questions.map((item) => `    <section class="qa">\n      <h2>${esc(item.q)}</h2>\n${paragraphs(item.a)}\n    </section>`).join("\n")}
+${richParagraphs(copy.intro)}
+${copy.sections ? richSections(copy) : copy.questions.map((item) => `    <section class="qa">\n      <h2>${esc(item.q)}</h2>\n${paragraphs(item.a)}\n    </section>`).join("\n")}
+    <section class="qa"><h2>FAQ</h2>${questions.map((item) => `<h3>${esc(item.q)}</h3>${richParagraphs([item.a])}`).join("\n")}</section>
   </article>
   <aside class="cta">
     <h2>${esc(copy.cta.heading)}</h2>
@@ -402,8 +411,8 @@ function isComplete(copy) {
   const filled = (value) => typeof value === "string" && value.trim() !== "";
   return ["title", "description", "h1", "lead", "relatedHeading"].every((key) => filled(copy[key]))
     && copy.cta && ["heading", "body", "label", "href"].every((key) => filled(copy.cta[key]))
-    && Array.isArray(copy.questions) && copy.questions.length > 0
-    && copy.questions.every((item) => filled(item.q) && filled(item.a));
+    && Array.isArray(copy.faqs || copy.questions) && (copy.faqs || copy.questions).length > 0
+    && (copy.faqs || copy.questions).every((item) => filled(item.q) && filled(item.a));
 }
 
 const ALL_CONTENT = [];
@@ -430,7 +439,7 @@ const publishedContent = [];
 for (const page of ALL_CONTENT) {
   const codes = Object.keys(page.locales).filter((code) => DRAFTS || isComplete(page.locales[code]));
   if (!codes.length) continue;
-  const pathFor = (code) => `${langOf(code).path}${page.slug}/`;
+  const pathFor = (code) => contentPath(code, page.slug);
   for (const code of codes) {
     const draft = !isComplete(page.locales[code]);
     files.set(`${pathFor(code).slice(1)}index.html`, contentPage(page, code, { draft }));
@@ -438,6 +447,25 @@ for (const page of ALL_CONTENT) {
   }
   const live = codes.filter((code) => isComplete(page.locales[code]));
   if (live.length) sitemap.push({ alternates: alternatesFor(live, pathFor), urls: live.map((code) => ORIGIN + pathFor(code)) });
+}
+
+function guideHub(lang) {
+  const ja = lang === "ja";
+  const path = ja ? "/ja/guide/" : "/guide/";
+  const url = ORIGIN + path;
+  const pillar = ALL_CONTENT.find((page) => page.slug === "what-is-aeo").locales[lang];
+  const planned = ja
+    ? ["WordPressのAEO", "llms.txt", "ChatGPTに表示される方法", "AI可視性チェック"]
+    : ["AEO for WordPress", "llms.txt", "How to appear in ChatGPT", "AI visibility check"];
+  const title = ja ? "AEOガイド | Nurevo" : "AEO Guides | Nurevo";
+  const description = ja ? "AIに読まれ、引用されるサイトを作るためのAEOガイド。" : "Practical guides to making your website readable and citable by AI.";
+  const extra = `<style>${ARTICLE_CSS}</style>\n${jsonLd([organizationNode(), websiteNode(), webPageNode({ url, title, description, lang }), breadcrumbNode(url, [{ name: title, url }])])}`;
+  return `<!doctype html><html lang="${ja ? "ja" : "en"}"><head>${head({ lang, title, description, url, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${ja ? "/" : "/en/"}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a><a class="btn primary" href="/check">${ja ? "無料チェック" : "Free check"}</a></div></header><main class="wrap"><article><h1>${ja ? "AEOガイド" : "AEO Guides"}</h1><p class="lead">${ja ? "AIの答えの中で選ばれるための基礎から実装まで。" : "From the fundamentals to implementation: get your business into AI answers."}</p><section class="qa"><h2>${ja ? "まず読む" : "Start here"}</h2><p><a href="${contentPath(lang, "what-is-aeo")}">${esc(pillar.h1)}</a></p></section><section class="qa"><h2>${ja ? "準備中の実践ガイド" : "Practical guides in progress"}</h2><ul>${planned.map((name) => `<li>${esc(name)}</li>`).join("")}</ul></section></article></main><script src="/assets/ai-referral.js" defer></script></body></html>`;
+}
+for (const code of ["en", "ja"]) {
+  const path = code === "en" ? "/guide/" : "/ja/guide/";
+  files.set(`${path.slice(1)}index.html`, guideHub(code));
+  sitemap.push({ alternates: [], urls: [ORIGIN + path] });
 }
 for (const page of STATIC_PAGES) sitemap.push({ alternates: [], urls: [ORIGIN + page.path] });
 

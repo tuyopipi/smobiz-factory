@@ -1,6 +1,6 @@
 import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
-import { handleApi, runSovWeeklyBatch } from "./api.mjs";
+import { handleApi, runSovDailyBatch } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 
 const JSON_HEADERS = {
@@ -51,7 +51,9 @@ export default {
     const cron = String(event?.cron || "");
     const jobs = [];
 
-    // Form learning and AEO diagnostics remain daily. AEO brain learning is weekly.
+    // Every customer site gets one daily score point and, when the provider
+    // key exists, one daily SoV run. A missing SoV key is an explicit safe
+    // skip and must not hold up the other daily jobs.
     if (cron === dailyCron) {
       jobs.push(
         runLearningJob(env, { trigger: "scheduled" }).then((result) => {
@@ -64,16 +66,15 @@ export default {
         }).catch((error) => {
           console.error("aeo-score-cron-error", JSON.stringify({ message: String(error?.message || error) }));
         }),
+        runSovDailyBatch(env).then((result) => {
+          console.log("aeo-sov-daily", JSON.stringify(result));
+        }).catch((error) => {
+          console.error("aeo-sov-daily-error", JSON.stringify({ message: String(error?.message || error) }));
+        }),
       );
     } else if (cron === weeklyCron) {
-      // SoV runs before learning so the week's appearance data is available to
-      // the calibration proposal the learning job records.
       jobs.push(
-        runSovWeeklyBatch(env).then((result) => {
-          console.log("aeo-sov-batch", JSON.stringify(result));
-        }).catch((error) => {
-          console.error("aeo-sov-batch-error", JSON.stringify({ message: String(error?.message || error) }));
-        }).then(() => runAeoLearningJob(env, { trigger: "scheduled" })).then((result) => {
+        runAeoLearningJob(env, { trigger: "scheduled" }).then((result) => {
           console.log("aeo-learning", JSON.stringify(result));
         }).catch((error) => {
           console.error("aeo-learning-error", JSON.stringify({ message: String(error?.message || error) }));

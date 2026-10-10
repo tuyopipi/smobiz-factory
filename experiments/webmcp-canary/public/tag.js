@@ -13,6 +13,26 @@
   const VALIDITY_KEYS = new Set(["valueMissing", "typeMismatch", "patternMismatch", "tooShort", "tooLong", "rangeUnderflow", "rangeOverflow", "stepMismatch", "badInput", "customError", "valid"]);
   let latestMcpDefinitions = [];
 
+  recordAiReferral();
+
+  function recordAiReferral() {
+    if (!SITE_KEY) return;
+    let host = "";
+    try { host = new URL(document.referrer).hostname.toLowerCase(); } catch (_) { return; }
+    const engines = {
+      "chatgpt.com":"chatgpt", "perplexity.ai":"perplexity", "gemini.google.com":"gemini",
+      "copilot.microsoft.com":"copilot", "claude.ai":"claude", "you.com":"you",
+      "phind.com":"phind", "kagi.com":"kagi", "duckduckgo.com":"duckduckgo-ai",
+      "meta.ai":"meta-ai", "grok.com":"grok", "deepseek.com":"deepseek", "chat.mistral.ai":"mistral"
+    };
+    const engine = Object.entries(engines).find(([domain]) => host === domain || host.endsWith(`.${domain}`))?.[1];
+    if (!engine) return;
+    const body = JSON.stringify({ site_key: SITE_KEY, engine });
+    const endpoint = new URL("/api/site/ai-referral", TAG_ORIGIN).href;
+    if (navigator.sendBeacon) navigator.sendBeacon(endpoint, new Blob([body], { type: "application/json" }));
+    else fetch(endpoint, { method: "POST", headers: { "content-type": "application/json" }, body, mode: "cors", credentials: "omit", keepalive: true }).catch(() => {});
+  }
+
   // Nurevo T-tag integration: the Worker verifies the key in D1, updates
   // sites.last_seen_at, and returns JSON-LD for schema injection.
   bootNurevoSiteTag();

@@ -722,6 +722,24 @@ export async function handleApi(request, env, ctx) {
     return json(await readAiReferrals(env, url.searchParams.get("days")));
   }
 
+  // Customer-site equivalent of the LP beacon. The public site key identifies
+  // a site but grants no read access; origin/domain matching prevents another
+  // site from inflating its totals. Only aggregate day/engine counters survive.
+  if (path === "/api/site/ai-referral" && method === "POST") {
+    let payload = null;
+    try { payload = JSON.parse(await request.text()); } catch { payload = null; }
+    const siteKey = String(payload?.site_key || payload?.siteKey || "").trim();
+    const engine = String(payload?.engine || "").trim();
+    const auth = await authorizeSiteKey(env, siteKey, { touch: false });
+    if (auth.registered && AI_REFERRER_IDS.includes(engine)) {
+      const site = await env.DB.prepare("SELECT url,website_uri,slug FROM sites WHERE id=? LIMIT 1").bind(auth.siteId).first();
+      if (site && referralOriginMatchesSite(request.headers.get("origin"), site, env)) {
+        await recordSiteAiReferral(env, auth.siteId, engine);
+      }
+    }
+    return new Response(null, { status: 204 });
+  }
+
   if (path === "/api/auth/request" && method === "POST") {
     return handleMagicRequest(request, env);
   }
@@ -1092,7 +1110,7 @@ export async function handleApi(request, env, ctx) {
     const scoreLimit = Math.min(180, Math.max(1, Number.parseInt(url.searchParams.get("limit") || "30", 10) || 30));
     const hitDays = Math.min(365, Math.max(1, Number.parseInt(url.searchParams.get("days") || "30", 10) || 30));
     const hitCutoff = new Date(Date.now() - (hitDays - 1) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
-    const [scoreResult, hitResult, activeRuleset] = await Promise.all([
+    const [scoreResult, hitResult, referralResult, activeRuleset] = await Promise.all([
       env.DB.prepare(`
         SELECT site_id,scanned_at,host,score,verdict,ruleset_version,checks_json
           FROM (
@@ -1106,6 +1124,12 @@ export async function handleApi(request, env, ctx) {
           FROM crawler_hits
          WHERE site_id=? AND date>=?
          ORDER BY date ASC,crawler_id ASC
+      `).bind(site.id, hitCutoff).all(),
+      env.DB.prepare(`
+        SELECT date,engine,hits
+          FROM ai_referral_daily
+         WHERE site_id=? AND date>=?
+         ORDER BY date ASC,engine ASC
       `).bind(site.id, hitCutoff).all(),
       env.DB.prepare("SELECT version FROM aeo_rulesets WHERE active=1 ORDER BY version DESC LIMIT 1").first(),
     ]);
@@ -1141,6 +1165,7 @@ export async function handleApi(request, env, ctx) {
       scores: scoreRows.map(({ checks_json, ...row }) => row),
       crawler_hits: liveDelivery ? (hitResult.results || []) : [],
       crawler_measurement: liveDelivery,
+      ai_referrals: referralResult.results || [],
       ruleset: {
         version: liveDelivery ? Number(activeRuleset?.version || INITIAL_AEO_RULESET.version) : null,
         latest_version: Number(activeRuleset?.version || INITIAL_AEO_RULESET.version),
@@ -2560,7 +2585,7 @@ function sovTargetUrl(site) {
  * Weekly pro batch. Cost control is structural: only pro sites are selected,
  * each run is capped, and each site's monthly counter gates it independently.
  */
-export async function runSovWeeklyBatch(env, { limit = 50 } = {}) {
+export async function runSovDailyBatch(env, { limit = 200 } = {}) {
   if (!env?.DB) throw new Error("DB binding is required for the SoV batch");
   const engines = availableEngines(env);
   if (!engines.length) {
@@ -2597,6 +2622,9 @@ export async function runSovWeeklyBatch(env, { limit = 50 } = {}) {
     errors: errors.slice(0, 20),
   };
 }
+
+// Kept for callers/tests from the weekly beta; both now use the daily vessel.
+export const runSovWeeklyBatch = runSovDailyBatch;
 
 function normalizeAeoPlan(value) {
   return ["standard", "pro"].includes(String(value || "").toLowerCase()) ? String(value).toLowerCase() : "free";
@@ -2954,7 +2982,7 @@ function renderHostedStore(store, locale = "ja", ruleset) {
   const today = todayOpening(store.hours);
   const schema = JSON.stringify(hostedSchema(store, price, ruleset)).replace(/</g, "\\u003c");
   const esc = (value) => String(value ?? "").replace(/[&<>\"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
-  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(store.name)} | Nurevo</title><link rel="icon" href="/assets/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><script type="application/ld+json">${schema}</script><style>:root{--purple:#6f4df6;--ink:#241b3a;--muted:#716983;--line:#e9e4f5}*{box-sizing:border-box}body{margin:0;background:#faf9fe;color:var(--ink);font-family:Inter,system-ui,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:28px 20px 56px}.brand{display:flex;align-items:center;gap:8px;color:var(--purple);font-weight:800;text-decoration:none}.brand img{width:28px;height:28px}.hero{margin-top:64px}.eyebrow{color:var(--purple);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(32px,8vw,60px);line-height:1.05;margin:12px 0}.type{color:var(--muted);font-size:18px}.badge{display:inline-flex;margin-top:22px;padding:8px 12px;border-radius:999px;background:${today.open ? "#dcfce7;color:#166534" : "#f1eafa;color:#6f4df6"};font-size:13px;font-weight:700}.info{margin-top:34px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid var(--line)}.label{color:var(--muted)}.value{text-align:right;white-space:pre-wrap}.footer{margin-top:38px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:12px}.footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--purple)}@media(max-width:560px){.row{display:block}.value{text-align:left;margin-top:4px}}</style></head><body><main class="wrap"><a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo">Nurevo</a><section class="hero"><div class="eyebrow">Local business</div><h1>${esc(store.name)}</h1><div class="type">${esc(store.business_type || "")}</div><span class="badge">${today.open ? "本日営業中" : "本日営業時間"} · ${esc(today.label)}</span></section><section class="info">${store.address ? `<div class="row"><span class="label">住所</span><span class="value">${esc(store.address)}</span></div>` : ""}${store.hours ? `<div class="row"><span class="label">営業時間</span><span class="value">${esc(store.hours)}</span></div>` : ""}${store.tel ? `<div class="row"><span class="label">電話</span><span class="value">${esc(store.tel)}</span></div>` : ""}${price ? `<div class="row"><span class="label">価格帯</span><span class="value">${price}</span></div>` : ""}</section><p class="footer"><span>Information provided by Nurevo.</span><a href="/terms">利用規約</a><a href="/privacy">プライバシーポリシー</a><a href="/tokushoho">特定商取引法に基づく表記</a></p></main></body></html>`;
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(store.name)} | Nurevo</title><link rel="icon" href="/assets/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><script type="application/ld+json">${schema}</script><style>:root{--purple:#6f4df6;--ink:#241b3a;--muted:#716983;--line:#e9e4f5}*{box-sizing:border-box}body{margin:0;background:#faf9fe;color:var(--ink);font-family:Inter,system-ui,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:28px 20px 56px}.brand{display:flex;align-items:center;gap:8px;color:var(--purple);font-weight:800;text-decoration:none}.brand img{width:28px;height:28px}.hero{margin-top:64px}.eyebrow{color:var(--purple);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(32px,8vw,60px);line-height:1.05;margin:12px 0}.type{color:var(--muted);font-size:18px}.badge{display:inline-flex;margin-top:22px;padding:8px 12px;border-radius:999px;background:${today.open ? "#dcfce7;color:#166534" : "#f1eafa;color:#6f4df6"};font-size:13px;font-weight:700}.info{margin-top:34px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid var(--line)}.label{color:var(--muted)}.value{text-align:right;white-space:pre-wrap}.footer{margin-top:38px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:12px}.footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--purple)}@media(max-width:560px){.row{display:block}.value{text-align:left;margin-top:4px}}</style></head><body><main class="wrap"><a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo">Nurevo</a><section class="hero"><div class="eyebrow">Local business</div><h1>${esc(store.name)}</h1><div class="type">${esc(store.business_type || "")}</div><span class="badge">${today.open ? "本日営業中" : "本日営業時間"} · ${esc(today.label)}</span></section><section class="info">${store.address ? `<div class="row"><span class="label">住所</span><span class="value">${esc(store.address)}</span></div>` : ""}${store.hours ? `<div class="row"><span class="label">営業時間</span><span class="value">${esc(store.hours)}</span></div>` : ""}${store.tel ? `<div class="row"><span class="label">電話</span><span class="value">${esc(store.tel)}</span></div>` : ""}${price ? `<div class="row"><span class="label">価格帯</span><span class="value">${price}</span></div>` : ""}</section><p class="footer"><span>Information provided by Nurevo.</span><a href="/terms">利用規約</a><a href="/privacy">プライバシーポリシー</a><a href="/tokushoho">特定商取引法に基づく表記</a></p></main><script src="/tag.js" data-webmcp-site-key="${esc(store.site_key || "")}" defer></script></body></html>`;
 }
 
 function buildHostedLlms(store, _ruleset) {
@@ -3307,7 +3335,35 @@ function csrfRequired(path) {
   if (/^\/api\/sites\/[^/]+\/catalog$/i.test(path)) return false;
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
+  if (path === "/api/site/ai-referral") return false;
   return path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
+}
+
+const AI_REFERRER_IDS = Object.freeze([
+  "chatgpt", "perplexity", "gemini", "copilot", "claude", "you", "phind", "kagi",
+  "duckduckgo-ai", "meta-ai", "grok", "deepseek", "mistral",
+]);
+
+function referralOriginMatchesSite(origin, site, env) {
+  if (String(env.DEV || "") === "1") return true;
+  let host = "";
+  try { host = new URL(String(origin || "")).hostname.toLowerCase().replace(/^www\./, ""); } catch { return false; }
+  if (site.slug && host === "nurevo.jp") return true;
+  for (const raw of [site.website_uri, site.url]) {
+    if (!raw) continue;
+    try {
+      const candidate = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`).hostname.toLowerCase().replace(/^www\./, "");
+      if (candidate === host) return true;
+    } catch { /* malformed saved URLs cannot authorize a beacon */ }
+  }
+  return false;
+}
+
+async function recordSiteAiReferral(env, siteId, engine, date = new Date().toISOString().slice(0, 10)) {
+  await env.DB.prepare(`
+    INSERT INTO ai_referral_daily (site_id,date,engine,hits) VALUES (?,?,?,1)
+    ON CONFLICT(site_id,date,engine) DO UPDATE SET hits=ai_referral_daily.hits+1
+  `).bind(siteId, date, engine).run();
 }
 
 function readCookie(request, name) {
