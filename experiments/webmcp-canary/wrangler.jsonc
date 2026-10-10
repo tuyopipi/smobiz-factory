@@ -5,6 +5,7 @@
 	"compatibility_date": "2026-07-19",
 	"routes": [
 		{ "pattern": "nurevo.jp/api/*", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/tag.js", "zone_name": "nurevo.jp" },
 		// One pattern for everything under /dashboard, because an exact-path
 		// route did not cover a query string: /dashboard served the dashboard
 		// and /dashboard?plan=standard fell through to the Pages LP - which
@@ -32,6 +33,7 @@
 		"binding": "ASSETS",
 		"run_worker_first": [
 			"/api/*",
+			"/tag.js",
 			"/dashboard",
 			"/dashboard/*",
 			"/en/*",
