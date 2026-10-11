@@ -454,13 +454,12 @@ function guideHub(lang) {
   const path = ja ? "/ja/guide/" : "/guide/";
   const url = ORIGIN + path;
   const pillar = ALL_CONTENT.find((page) => page.slug === "what-is-aeo").locales[lang];
-  const planned = ja
-    ? ["WordPressのAEO", "llms.txt", "ChatGPTに表示される方法", "AI可視性チェック"]
-    : ["AEO for WordPress", "llms.txt", "How to appear in ChatGPT", "AI visibility check"];
+  const guides = ALL_CONTENT.filter((page) => page.slug !== "what-is-aeo" && isComplete(page.locales[lang]));
+  const pending = ALL_CONTENT.filter((page) => page.slug !== "what-is-aeo" && !isComplete(page.locales[lang]));
   const title = ja ? "AEOガイド | Nurevo" : "AEO Guides | Nurevo";
   const description = ja ? "AIに読まれ、引用されるサイトを作るためのAEOガイド。" : "Practical guides to making your website readable and citable by AI.";
   const extra = `<style>${ARTICLE_CSS}</style>\n${jsonLd([organizationNode(), websiteNode(), webPageNode({ url, title, description, lang }), breadcrumbNode(url, [{ name: title, url }])])}`;
-  return `<!doctype html><html lang="${ja ? "ja" : "en"}"><head>${head({ lang, title, description, url, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${ja ? "/" : "/en/"}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a><a class="btn primary" href="/check">${ja ? "無料チェック" : "Free check"}</a></div></header><main class="wrap"><article><h1>${ja ? "AEOガイド" : "AEO Guides"}</h1><p class="lead">${ja ? "AIの答えの中で選ばれるための基礎から実装まで。" : "From the fundamentals to implementation: get your business into AI answers."}</p><section class="qa"><h2>${ja ? "まず読む" : "Start here"}</h2><p><a href="${contentPath(lang, "what-is-aeo")}">${esc(pillar.h1)}</a></p></section><section class="qa"><h2>${ja ? "準備中の実践ガイド" : "Practical guides in progress"}</h2><ul>${planned.map((name) => `<li>${esc(name)}</li>`).join("")}</ul></section></article></main><script src="/assets/ai-referral.js" defer></script></body></html>`;
+  return `<!doctype html><html lang="${ja ? "ja" : "en"}"><head>${head({ lang, title, description, url, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${ja ? "/" : "/en/"}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a><a class="btn primary" href="/check">${ja ? "無料チェック" : "Free check"}</a></div></header><main class="wrap"><article><h1>${ja ? "AEOガイド" : "AEO Guides"}</h1><p class="lead">${ja ? "AIの答えの中で選ばれるための基礎から実装まで。" : "From the fundamentals to implementation: get your business into AI answers."}</p><section class="qa"><h2>${ja ? "まず読む" : "Start here"}</h2><p><a href="${contentPath(lang, "what-is-aeo")}">${esc(pillar.h1)}</a></p></section><section class="qa"><h2>${ja ? "実践ガイド" : "Practical guides"}</h2><ul>${guides.map((page) => `<li><a href="${contentPath(lang, page.slug)}">${esc(page.locales[lang].h1)}</a></li>`).join("")}</ul></section>${pending.length ? `<section class="qa"><h2>${ja ? "準備中" : "In progress"}</h2><ul>${pending.map((page) => `<li>${esc(page.targetQueries[0])}</li>`).join("")}</ul></section>` : ""}</article></main><script src="/assets/ai-referral.js" defer></script></body></html>`;
 }
 for (const code of ["en", "ja"]) {
   const path = code === "en" ? "/guide/" : "/ja/guide/";

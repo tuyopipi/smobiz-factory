@@ -18,7 +18,7 @@ export default {
   // The searches and questions this page is meant to answer.
   targetQueries: ["is my site visible to AI", "AI visibility checker", "check if ChatGPT can read my site", "AI readability test"],
   // Other content pages to link to, by slug. Only published ones are linked.
-  related: ["what-is-aeo", "how-to-appear-in-chatgpt", "aeo-for-wordpress"],
+  related: ["what-is-aeo", "appear-in-chatgpt", "aeo-wordpress"],
   locales: {
     en: {
       title: "",        // <title>, about 60 characters

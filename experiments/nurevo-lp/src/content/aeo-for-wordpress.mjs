@@ -1,44 +1,131 @@
-// Content page: AEO for WordPress / Best WordPress AEO plugin
-//
-// This is the frame. The page is built, with its Q&A structure, FAQPage schema,
-// breadcrumb, internal links and call to action, as soon as every field of a
-// locale below has copy in it - and not before: a page with an empty answer is
-// not published, listed in the sitemap, or linked from another page.
-//
-// To publish: fill title, description, h1, lead and every answer ("a") for a
-// locale, then run `npm run build`. To see the unfinished page first, run
-// `npm run preview:drafts`. To add a language, add a block under `locales`
-// keyed by a code from src/site.mjs (ja, en, zh, zh-TW, ko, es, fr, de); the
-// page is then served under that language's path and joins the hreflang set.
-//
-// Answers are plain text. A blank line starts a new paragraph. The questions
-// below are a suggested outline, not copy: reword, reorder, add or remove them.
 export default {
-  slug: "aeo-for-wordpress",
-  // The searches and questions this page is meant to answer.
-  targetQueries: ["AEO for WordPress", "WordPress AEO plugin", "best WordPress AEO plugin", "WordPress llms.txt plugin"],
-  // Other content pages to link to, by slug. Only published ones are linked.
-  related: ["what-is-aeo", "llms-txt", "ai-visibility-check"],
-  locales: {
-    en: {
-      title: "",        // <title>, about 60 characters
-      description: "",  // meta description, about 155 characters
-      h1: "",
-      lead: "",         // one or two sentences that answer the page's main question outright
-      questions: [
-        { q: "What does an AEO plugin for WordPress do?", a: "" },
-        { q: "Can I use it together with Yoast SEO or Rank Math?", a: "" },
-        { q: "How do I install Nurevo AEO?", a: "" },
-        { q: "What does it output on my site?", a: "" },
-        { q: "What is free, and what does the paid plan add?", a: "" },
+  "slug": "aeo-wordpress",
+  "targetQueries": [
+    "AEO for WordPress: How to Make Your Site Readable by AI",
+    "WordPressのAEO：サイトをAIに読ませる方法"
+  ],
+  "related": [
+    "what-is-aeo",
+    "appear-in-chatgpt",
+    "llms-txt",
+    "aeo-vs-seo-vs-geo"
+  ],
+  "locales": {
+    "en": {
+      "title": "AEO for WordPress: How to Make Your Site Readable by AI | Nurevo",
+      "description": "Make your WordPress site readable by AI with structured data, llms.txt and crawler access. Learn how a server-side plugin handles the essentials.",
+      "h1": "AEO for WordPress: How to Make Your Site Readable by AI",
+      "lead": "WordPress powers a huge share of the web, which makes it the easiest place to get AEO right — if you know what AI answer engines actually need. Here are the exact pieces, and how to do them on WordPress without touching code.",
+      "sections": [
+        {
+          "heading": "What AI needs from a WordPress site",
+          "paragraphs": [
+            "AI answer engines (ChatGPT, Perplexity, Google AI Overviews, Gemini) read your site as raw, server-rendered data. On WordPress, three things decide whether they can read and cite you:"
+          ],
+          "list": [
+            "Structured data (schema.org JSON-LD) — your business, services, products and FAQs, in a format AI parses.",
+            "llms.txt — a file at your domain root telling AI what your site is and which pages matter. [What is llms.txt?](/guide/llms-txt)",
+            "AI crawler access — robots.txt must allow GPTBot, ClaudeBot, PerplexityBot, Google-Extended and others."
+          ]
+        },
+        {
+          "heading": "The problem with doing it by hand",
+          "paragraphs": [
+            "Each can be done manually, but it drifts: schema breaks when you change themes, llms.txt goes stale, crawler lists change. For an agency managing many client sites, per-site by hand doesn't scale."
+          ]
+        },
+        {
+          "heading": "The WordPress way: a plugin that outputs it server-side",
+          "paragraphs": [
+            "A plugin can emit correct schema.org data, generate llms.txt, and set AI-crawler access automatically — server-side, so AI reads it even without running JavaScript. That is what Nurevo AEO does: install, connect, the plumbing is handled, with a score that shows where you stand."
+          ]
+        },
+        {
+          "heading": "For agencies",
+          "paragraphs": [
+            "If you build WordPress sites, AEO is a new service you can offer every client without building your own tooling — and earn recurring revenue doing it. [How to appear in ChatGPT](/guide/appear-in-chatgpt)"
+          ]
+        }
       ],
-      relatedHeading: "Related guides",
-      cta: {
-        heading: "Is your site visible to AI?",
-        body: "Enter a URL and get a free AI-readability score. No sign-up.",
-        label: "Run the free check",
-        href: "/check?lang=en",
-      },
+      "faqs": [
+        {
+          "q": "Does my theme or page builder matter for AEO?",
+          "a": "What matters is server-rendered HTML and structured data, not the visual builder. A plugin that outputs schema server-side works regardless of theme."
+        },
+        {
+          "q": "Will AEO slow my site down?",
+          "a": "No. Structured data and llms.txt are tiny text files; they don't meaningfully affect page speed."
+        },
+        {
+          "q": "Do I still need SEO on WordPress?",
+          "a": "Yes — keep your SEO plugin. AEO adds the AI-readability layer on top. [AEO vs SEO vs GEO](/guide/aeo-vs-seo-vs-geo)"
+        }
+      ],
+      "relatedHeading": "Related guides",
+      "cta": {
+        "heading": "See how AI reads your WordPress site",
+        "body": "No sign-up required.",
+        "label": "See how AI reads your WordPress site",
+        "href": "/check"
+      }
     },
-  },
+    "ja": {
+      "title": "WordPressのAEO：サイトをAIに読ませる方法 | Nurevo",
+      "description": "WordPressサイトをAIに読ませるための構造化データ・llms.txt・クローラ許可と、コードを触らずに導入する方法を解説します。",
+      "h1": "WordPressのAEO：サイトをAIに読ませる方法",
+      "lead": "WordPressはウェブの大きな割合を占めるので、AEOを正しくやるのが一番ラクな場所です——AIの回答エンジンが何を必要とするか分かっていれば。ここでは、その要素と、コードを触らずWordPressでやる方法を。",
+      "sections": [
+        {
+          "heading": "AIがWordPressサイトに求めるもの",
+          "paragraphs": [
+            "AIの回答エンジン（ChatGPT・Perplexity・Google AI Overviews・Gemini）は、サイトをサーバーが返す生のデータとして読みます。WordPressでは次の3つが読めるかどうかを決めます："
+          ],
+          "list": [
+            "構造化データ（schema.org JSON-LD）— 事業・サービス・商品・FAQを、AIが解釈できる形で。",
+            "llms.txt — ドメイン直下のファイルで、サイトが何か・どのページが重要かをAIに伝える。[llms.txtとは](/ja/guide/llms-txt)",
+            "AIクローラの許可 — robots.txtで GPTBot・ClaudeBot・PerplexityBot・Google-Extended 等を通す。"
+          ]
+        },
+        {
+          "heading": "手作業の問題",
+          "paragraphs": [
+            "どれも手でできますが、ズレます：テーマ変更でスキーマが壊れ、llms.txtは古くなり、クローラ一覧は変わる。多数のクライアントサイトを1件ずつ手でやるのは現実的でない。"
+          ]
+        },
+        {
+          "heading": "WordPress流：サーバー側で出力するプラグイン",
+          "paragraphs": [
+            "プラグインなら、正しいschema.org・llms.txt・クローラ設定を自動でサーバー側出力できます——AIはJSを実行しなくても読める。Nurevo AEOはこれを行う：入れて繋ぐだけで配管完了、スコアで現在地が分かる。"
+          ]
+        },
+        {
+          "heading": "制作会社へ",
+          "paragraphs": [
+            "WordPressを作るなら、AEOは自前でツールを作らずに全クライアントに出せる新サービス＋継続収益になります。[ChatGPTに載る方法](/ja/guide/appear-in-chatgpt)"
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "q": "テーマやページビルダーはAEOに関係ある？",
+          "a": "重要なのはサーバーが返すHTMLと構造化データで、見た目のビルダーではない。サーバー側でスキーマを出すプラグインならテーマ問わず効く。"
+        },
+        {
+          "q": "AEOでサイトは遅くなる？",
+          "a": "ならない。構造化データとllms.txtは極小のテキストで、表示速度にほぼ影響しない。"
+        },
+        {
+          "q": "WordPressでもSEOは必要？",
+          "a": "必要。SEOプラグインは残す。AEOはその上にAI可読性の層を足すもの。[AEO vs SEO vs GEO](/ja/guide/aeo-vs-seo-vs-geo)"
+        }
+      ],
+      "relatedHeading": "関連ガイド",
+      "cta": {
+        "heading": "AIがあなたのWordPressをどう読んでいるか確認",
+        "body": "登録は不要です。",
+        "label": "AIがあなたのWordPressをどう読んでいるか確認",
+        "href": "/check"
+      }
+    }
+  }
 };

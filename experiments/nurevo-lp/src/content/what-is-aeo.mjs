@@ -1,7 +1,7 @@
 export default {
   slug: "what-is-aeo",
   targetQueries: ["what is AEO", "answer engine optimization", "what is GEO", "AEO vs SEO"],
-  related: ["aeo-for-wordpress", "llms-txt", "how-to-appear-in-chatgpt", "ai-visibility-check"],
+  related: ["aeo-wordpress", "llms-txt", "appear-in-chatgpt", "aeo-vs-seo-vs-geo", "ai-visibility-check"],
   locales: {
     en: {
       title: "What Is AEO (Answer Engine Optimization)? | Nurevo",
