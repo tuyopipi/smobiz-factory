@@ -977,9 +977,9 @@ export async function handleApi(request, env, ctx) {
 
 
   if (path === "/api/sites" && method === "POST") {
-    const member = await requireMember(request, env);
+    // Any active member can start onboarding; paid entitlements apply later.
+    const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
-    if (!member.is_super_admin && !["admin", "store", "referrer", "agency"].includes(member.role)) return json({ error: "forbidden" }, 403);
     const body = await request.json();
     const installType = ["wp", "tag", "hosted", "static"].includes(body?.install_type) ? body.install_type : "tag";
     const siteUrl = String(body?.url || "").trim();
@@ -3046,7 +3046,9 @@ async function loadOwnedSite(env, actor, siteId) {
     return env.DB.prepare("SELECT * FROM sites WHERE id=? AND org_id=? AND owner_member_id=?").bind(siteId, actor.org_id, actor.member_id).first();
   }
   if (actor.role === "referrer") {
-    return env.DB.prepare("SELECT s.* FROM sites s JOIN referrers r ON r.id=s.referred_by WHERE s.id=? AND s.org_id=? AND s.channel='referral' AND lower(r.email)=lower(?)").bind(siteId, actor.org_id, actor.email).first();
+    // A newly created direct site has no referral record. Its creator still
+    // needs access to issue pairing codes and resume onboarding.
+    return env.DB.prepare("SELECT s.* FROM sites s LEFT JOIN referrers r ON r.id=s.referred_by WHERE s.id=? AND s.org_id=? AND (s.owner_member_id=? OR (s.channel='referral' AND lower(r.email)=lower(?)))").bind(siteId, actor.org_id, actor.member_id, actor.email).first();
   }
   return env.DB.prepare("SELECT * FROM sites WHERE id=? AND org_id=?").bind(siteId, actor.org_id).first();
 }
@@ -3055,7 +3057,7 @@ async function loadOwnedSiteByRef(env, actor, reference) {
   if (!actor) return null;
   if (actor.is_super_admin) return env.DB.prepare("SELECT * FROM sites WHERE id=? OR site_key=? LIMIT 1").bind(reference, reference).first();
   if (actor.role === "store") return env.DB.prepare("SELECT * FROM sites WHERE org_id=? AND owner_member_id=? AND (id=? OR site_key=?) LIMIT 1").bind(actor.org_id, actor.member_id, reference, reference).first();
-  if (actor.role === "referrer") return env.DB.prepare("SELECT s.* FROM sites s JOIN referrers r ON r.id=s.referred_by WHERE s.org_id=? AND s.channel='referral' AND lower(r.email)=lower(?) AND (s.id=? OR s.site_key=?) LIMIT 1").bind(actor.org_id, actor.email, reference, reference).first();
+  if (actor.role === "referrer") return env.DB.prepare("SELECT s.* FROM sites s LEFT JOIN referrers r ON r.id=s.referred_by WHERE s.org_id=? AND (s.owner_member_id=? OR (s.channel='referral' AND lower(r.email)=lower(?))) AND (s.id=? OR s.site_key=?) LIMIT 1").bind(actor.org_id, actor.member_id, actor.email, reference, reference).first();
   return env.DB.prepare("SELECT * FROM sites WHERE org_id=? AND (id=? OR site_key=?) LIMIT 1").bind(actor.org_id, reference, reference).first();
 }
 
@@ -3069,7 +3071,7 @@ async function listOwnedSites(env, actor) {
          FROM sites s JOIN orgs o ON o.id=s.org_id LEFT JOIN site_settings ss ON ss.site_id = s.id`;
   if (actor.is_super_admin) return env.DB.prepare(`${select} ORDER BY s.created_at`).all();
   if (actor.role === "store") return env.DB.prepare(`${select} WHERE s.org_id=? AND s.owner_member_id=? ORDER BY s.created_at`).bind(actor.org_id, actor.member_id).all();
-  if (actor.role === "referrer") return env.DB.prepare(`${select} JOIN referrers r ON r.id=s.referred_by WHERE s.org_id=? AND s.channel='referral' AND lower(r.email)=lower(?) ORDER BY s.created_at`).bind(actor.org_id, actor.email).all();
+  if (actor.role === "referrer") return env.DB.prepare(`${select} LEFT JOIN referrers r ON r.id=s.referred_by WHERE s.org_id=? AND (s.owner_member_id=? OR (s.channel='referral' AND lower(r.email)=lower(?))) ORDER BY s.created_at`).bind(actor.org_id, actor.member_id, actor.email).all();
   return env.DB.prepare(`${select} WHERE s.org_id=? ORDER BY s.created_at`).bind(actor.org_id).all();
 }
 

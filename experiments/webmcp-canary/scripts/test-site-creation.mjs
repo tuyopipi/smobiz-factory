@@ -15,14 +15,15 @@ import { handleApi } from "../worker/api.mjs";
 const CSRF = "c".repeat(64);
 const HEADERS = { cookie: `nrv_session=t; nrv_csrf=${CSRF}`, "x-csrf-token": CSRF, "content-type": "application/json", origin: "https://nurevo.jp" };
 
-function makeEnv({ role = "admin" } = {}) {
+function makeEnv({ role = "admin", status = "active", expired = false } = {}) {
   const db = { sites: [], settings: [], profiles: [] };
   const DB = {
     prepare(sql) {
       const first = async (...values) => {
         if (/FROM sessions/.test(sql)) {
-          return { member_id: "m1", org_id: "org1", email: "o@x.test", role, status: "active", expires_at: Date.now() + 3.6e6 };
+          return { member_id: "m1", org_id: "org1", email: "o@x.test", role, status, expires_at: Date.now() + (expired ? -1 : 3.6e6) };
         }
+        if (/FROM sites s LEFT JOIN referrers/.test(sql)) return db.sites.find((s) => s.id === values[0] && s.org_id === values[1] && s.owner_member_id === values[2]) || null;
         if (/FROM sites WHERE slug=\?/.test(sql)) return db.sites.find((s) => s.slug === values[0] && s.id !== values[1]) || null;
         if (/FROM site_settings/.test(sql)) return db.settings.find((s) => s.site_id === values[0]) || null;
         if (/SELECT id,website_uri FROM sites WHERE id=\?/.test(sql)) return db.sites.find((s) => s.id === values[0]) || null;
@@ -187,7 +188,7 @@ const create = async (env, body) => {
   assert.ok(env.db.sites[0].pairing_code_hash, "and only its hash is stored");
 }
 
-/* ---------------- access control is unchanged ---------------- */
+/* ---------------- active members may start onboarding ---------------- */
 
 {
   const anonymous = await handleApi(
@@ -199,7 +200,30 @@ const create = async (env, body) => {
 
 {
   const { status } = await create(makeEnv({ role: "viewer" }), { install_type: "tag", url: "x.example" });
-  assert.equal(status, 403, "a role that may not register sites still cannot");
+  assert.equal(status, 200, "an active viewer may register a client site");
+}
+
+for (const role of ["member", "operator", "store", "agency", "referrer"]) {
+  const env = makeEnv({ role });
+  const { status, body } = await create(env, { install_type: "wp", url: "https://happiris-design.com/" });
+  assert.equal(status, 200, `${role} may register a site`);
+  assert.equal(env.db.sites[0].org_id, "org1");
+  assert.equal(env.db.sites[0].owner_member_id, "m1");
+  const paired = await handleApi(new Request(`https://w.test/api/sites/${body.id}/pairing-code`, { method: "POST", headers: HEADERS }), env, { waitUntil() {} });
+  assert.equal(paired.status, 200, `${role} may pair their new site`);
+}
+for (const options of [{ status: "pending" }, { status: "disabled" }, { status: "invited" }, { expired: true }]) {
+  const env = makeEnv(options);
+  const { status } = await create(env, { url: "x.example" });
+  assert.equal(status, 401);
+  assert.equal(env.db.sites.length, 0);
+}
+{
+  const env = makeEnv();
+  const response = await handleApi(new Request("https://w.test/api/sites", { method: "POST", headers: { ...HEADERS, "x-csrf-token": "wrong" }, body: JSON.stringify({ url: "x.example" }) }), env, { waitUntil() {} });
+  assert.equal(response.status, 403);
+  assert.equal((await response.json()).error, "csrf_failed");
+  assert.equal(env.db.sites.length, 0);
 }
 
 /* ---------------- Places is gone, not merely unused ---------------- */
