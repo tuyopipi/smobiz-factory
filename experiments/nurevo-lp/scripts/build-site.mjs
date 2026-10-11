@@ -286,6 +286,19 @@ function landingPage(lang) {
   const description = t("meta.desc", lang);
 
   let body = localize(TEMPLATE, lang).replaceAll("{{home}}", meta.path);
+  // Guides are published in Japanese and English; other LPs use English.
+  const guideLang = lang === "ja" ? "ja" : "en";
+  const guideHubPath = guideLang === "ja" ? "/ja/guide/" : "/guide/";
+  const guideLabel = guideLang === "ja" ? "AEOガイド" : "AEO Guide";
+  const guideSlugs = ["what-is-aeo", "aeo-wordpress", "llms-txt", "appear-in-chatgpt", "aeo-vs-seo-vs-geo"];
+  const cards = guideSlugs.map((slug) => {
+    const page = ALL_CONTENT.find((item) => item.slug === slug);
+    if (!page || !isComplete(page.locales[guideLang])) throw new Error(`Unpublished LP guide: ${guideLang}/${slug}`);
+    return `<a class="learn-card" href="${contentPath(guideLang, slug)}"><span>${esc(page.locales[guideLang].h1)}</span><span aria-hidden="true">→</span></a>`;
+  }).join("");
+  body = body.replace("{{guideNav}}", `<a href="${guideHubPath}">${guideLang === "ja" ? "ガイド" : "Guide"}</a>`)
+    .replace("{{guideFooter}}", `<a href="${guideHubPath}">${guideLabel}</a>`)
+    .replace("{{learnSection}}", `<section class="learn" id="learn"><div class="wrap"><div class="learn-heading"><h2>${guideLang === "ja" ? "AEOガイド" : "Learn"}</h2><a href="${guideHubPath}">${guideLang === "ja" ? "ガイド一覧" : "All guides"} →</a></div><div class="learn-cards">${cards}</div></div></section>`);
   // Mark the page's own language in the switcher.
   body = body.replace(/(<select class="lang"[^>]*>)[\s\S]*?(<\/select>)/, (_all, open, close) =>
     `${open}${LANGS.map((item) => `<option value="${item.code}"${item.code === lang ? " selected" : ""}>${item.label}</option>`).join("")}${close}`);
@@ -380,7 +393,7 @@ ${head({ lang, title: copy.title, description: copy.description, url, type: "art
 <body>
 <header class="nav"><div class="wrap">
   <a class="brand" href="${meta.path}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
-  <a class="btn primary" href="${copy.cta.href}">${esc(copy.cta.label)}</a>
+  <a class="btn primary" href="${copy.cta.href === "/check" && lang === "en" ? "/check?lang=en" : copy.cta.href}">${esc(copy.cta.label)}</a>
 </div></header>
 <main class="wrap">
   <nav class="crumbs" aria-label="Breadcrumb"><a href="${meta.path}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <a href="${lang === "en" ? "/guide/" : `/${lang}/guide/`}">${lang === "ja" ? "AEOガイド" : "AEO Guides"}</a> <span aria-hidden="true">›</span> <span>${esc(copy.h1)}</span></nav>
@@ -394,7 +407,7 @@ ${copy.sections ? richSections(copy) : copy.questions.map((item) => `    <sectio
   <aside class="cta">
     <h2>${esc(copy.cta.heading)}</h2>
     <p>${esc(copy.cta.body)}</p>
-    <a class="btn primary lg" href="${copy.cta.href}">${esc(copy.cta.label)}</a>
+    <a class="btn primary lg" href="${copy.cta.href === "/check" && lang === "en" ? "/check?lang=en" : copy.cta.href}">${esc(copy.cta.label)}</a>
   </aside>
 ${related.length ? `  <nav class="related" aria-label="${escAttr(copy.relatedHeading)}"><h2>${esc(copy.relatedHeading)}</h2><ul>${related.join("")}</ul></nav>` : ""}
 </main>
@@ -459,7 +472,7 @@ function guideHub(lang) {
   const title = ja ? "AEOガイド | Nurevo" : "AEO Guides | Nurevo";
   const description = ja ? "AIに読まれ、引用されるサイトを作るためのAEOガイド。" : "Practical guides to making your website readable and citable by AI.";
   const extra = `<style>${ARTICLE_CSS}</style>\n${jsonLd([organizationNode(), websiteNode(), webPageNode({ url, title, description, lang }), breadcrumbNode(url, [{ name: title, url }])])}`;
-  return `<!doctype html><html lang="${ja ? "ja" : "en"}"><head>${head({ lang, title, description, url, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${ja ? "/" : "/en/"}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a><a class="btn primary" href="/check">${ja ? "無料チェック" : "Free check"}</a></div></header><main class="wrap"><article><h1>${ja ? "AEOガイド" : "AEO Guides"}</h1><p class="lead">${ja ? "AIの答えの中で選ばれるための基礎から実装まで。" : "From the fundamentals to implementation: get your business into AI answers."}</p><section class="qa"><h2>${ja ? "まず読む" : "Start here"}</h2><p><a href="${contentPath(lang, "what-is-aeo")}">${esc(pillar.h1)}</a></p></section><section class="qa"><h2>${ja ? "実践ガイド" : "Practical guides"}</h2><ul>${guides.map((page) => `<li><a href="${contentPath(lang, page.slug)}">${esc(page.locales[lang].h1)}</a></li>`).join("")}</ul></section>${pending.length ? `<section class="qa"><h2>${ja ? "準備中" : "In progress"}</h2><ul>${pending.map((page) => `<li>${esc(page.targetQueries[0])}</li>`).join("")}</ul></section>` : ""}</article></main><script src="/assets/ai-referral.js" defer></script></body></html>`;
+  return `<!doctype html><html lang="${ja ? "ja" : "en"}"><head>${head({ lang, title, description, url, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${ja ? "/" : "/en/"}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a><a class="btn primary" href="${ja ? "/check" : "/check?lang=en"}">${ja ? "無料チェック" : "Free check"}</a></div></header><main class="wrap"><article><h1>${ja ? "AEOガイド" : "AEO Guides"}</h1><p class="lead">${ja ? "AIの答えの中で選ばれるための基礎から実装まで。" : "From the fundamentals to implementation: get your business into AI answers."}</p><section class="qa"><h2>${ja ? "まず読む" : "Start here"}</h2><p><a href="${contentPath(lang, "what-is-aeo")}">${esc(pillar.h1)}</a></p></section><section class="qa"><h2>${ja ? "実践ガイド" : "Practical guides"}</h2><ul>${guides.map((page) => `<li><a href="${contentPath(lang, page.slug)}">${esc(page.locales[lang].h1)}</a></li>`).join("")}</ul></section>${pending.length ? `<section class="qa"><h2>${ja ? "準備中" : "In progress"}</h2><ul>${pending.map((page) => `<li>${esc(page.targetQueries[0])}</li>`).join("")}</ul></section>` : ""}</article></main><script src="/assets/ai-referral.js" defer></script></body></html>`;
 }
 for (const code of ["en", "ja"]) {
   const path = code === "en" ? "/guide/" : "/ja/guide/";

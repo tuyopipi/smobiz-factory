@@ -97,6 +97,7 @@
       <section class="panel share"><h2 data-t="shareHeading">結果をシェア</h2><div class="share-row"><input id="share-url" type="text" readonly aria-label="結果のシェアURL"><button id="copy-share" type="button" data-t="copy">コピー</button></div></section>
     </section>
   </main>
+  <nav class="wrap" aria-label="AEO guides" style="padding-block:24px"><a id="aeo-guide-link" href="/ja/guide/" data-t="aeoGuide">AEOガイド</a></nav>
   <footer><div class="wrap" data-t="footer">© Nurevo — AI可読性の改善を支援します。</div></footer>
 
   <script>
@@ -110,7 +111,7 @@
       // disagree, which reads worse than either language on its own.
       var STRINGS = {
         ja: {
-          home:'トップへ戻る', eyebrow:'登録不要・無料',
+          aeoGuide:'AEOガイド', home:'トップへ戻る', eyebrow:'登録不要・無料',
           title:'あなたのサイトは、<br>AIに読めていますか？',
           lead:'URLを入力すると、構造化データ・重要情報・本文・llms.txt・情報の一貫性を診断します。',
           inputLabel:'診断するWebサイトのURL', submit:'無料で診断する', submitting:'診断中…',
@@ -134,7 +135,7 @@
           titles:{green:'AIに正しく読まれています',yellow:'改善すると、さらにAIが読みやすくなります',red:'AIが情報を十分に読み取れていません'}
         },
         en: {
-          home:'Back to home', eyebrow:'No signup, free',
+          aeoGuide:'AEO Guide', home:'Back to home', eyebrow:'No signup, free',
           title:'Can AI actually<br>read your site?',
           lead:'Paste a URL and we check your structured data, key information, page text, llms.txt and consistency.',
           inputLabel:'URL of the site to check', submit:'Check for free', submitting:'Checking…',
@@ -175,6 +176,7 @@
 
       document.documentElement.lang = LANG;
       document.title = T.pageTitle;
+      document.getElementById("aeo-guide-link").href = LANG === "ja" ? "/ja/guide/" : "/guide/";
       Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (node) {
         var value = T[node.getAttribute('data-t')];
         if (typeof value !== 'string') return;
