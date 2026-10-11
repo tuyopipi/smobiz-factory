@@ -2089,4 +2089,10 @@ $GLOBALS['webmcp_test_product_terms'] = array();
 delete_option(WEBMCP_CANARY_SERVICES_OPTION);
 delete_option(WEBMCP_CANARY_FAQ_OPTION);
 
+$field_view = webmcp_canary_aeo_check_view(array(
+    'id' => 'schema', 'status' => 'WARN', 'message' => '1/2 fields published.',
+    'fields' => array(array('present' => true), array('present' => false)),
+));
+expect(strpos($field_view['label'], '(1/2)') !== false, 'plugin heading shows the published field count');
+expect($field_view['message'] === '1/2 fields published.', 'plugin preserves the field diagnosis message');
 echo "WordPress AEO admin tests passed\n";

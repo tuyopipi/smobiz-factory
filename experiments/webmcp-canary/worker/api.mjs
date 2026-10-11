@@ -1,3 +1,4 @@
+import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler } from "./ai-crawlers.js";
 import { AEO_CACHE_TTL_SECONDS, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, publishedSchemaProps, resolveAeoCheckLang } from "./aeo-score.mjs";
@@ -145,6 +146,7 @@ const INITIAL_AEO_RULESET = Object.freeze({
       type: "LocalBusiness",
       required: ["@context", "@type", "name"],
       recommended: ["url", "additionalType", "address", "telephone", "openingHours", "openingHoursSpecification", "geo", "priceRange", "image", "potentialAction"],
+      entityFields: ENTITY_SCHEMA_FIELDS,
       fields: Object.freeze({ url: true, additionalType: true, address: true, telephone: true, openingHours: true, openingHoursSpecification: true, geo: true, priceRange: true, image: true, potentialAction: true }),
       // url is here because a hosted page that does not state its own canonical
       // address was being marked down for a baseline property the publisher
@@ -348,11 +350,13 @@ export async function handleApi(request, env, ctx) {
       // reused for every language, and the wording is applied on the way out.
       // Caching per language would multiply the entries and let the first
       // visitor's language decide what everyone else sees until it expired.
-      const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
+      const schemaRules = rulesetDefinition(await loadActiveRuleset(env)).schema;
+      const rulesHash = await aeoSha256Hex(JSON.stringify(schemaRules));
+      const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
       const cached = await env.WEBMCP_KV?.get(cacheKey, "json");
       const vary = { "cache-control": `public, max-age=${AEO_CACHE_TTL_SECONDS}`, "vary": "accept-language" };
       if (cached) return json(aeoResponse(cached, lang), 200, { ...vary, "x-aeo-cache": "hit" });
-      const result = await diagnoseAeoUrl(raw);
+      const result = await diagnoseAeoUrl(raw, { schemaRules });
       const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(aeoResponse(result)), { expirationTtl: AEO_CACHE_TTL_SECONDS });
       if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
       return json(aeoResponse(result, lang), 200, { ...vary, "x-aeo-cache": "miss" });
@@ -437,7 +441,7 @@ export async function handleApi(request, env, ctx) {
       || (site.slug ? `https://nurevo.jp/s/${encodeURIComponent(site.slug)}` : "");
     try {
       const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`, {
-        scoredProps: await activeScoredProps(env),
+        ...(await diagnosticOptions(env, siteId)),
       });
       // Stored history keeps the default wording; only the reply is localised,
       // so the archive stays comparable across requests from different locales.
@@ -478,7 +482,7 @@ export async function handleApi(request, env, ctx) {
     if (!target) return json({ error: "no_url" }, 400);
     try {
       const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`, {
-        scoredProps: await activeScoredProps(env),
+        ...(await diagnosticOptions(env, siteId)),
       });
       await storeAeoScore(env, owned.id, { ...result, verdict: result.band });
       return json(aeoResponse(result, requestedAeoLang(request, url)));
@@ -2044,7 +2048,8 @@ export async function handleApi(request, env, ctx) {
  */
 function aeoResponse(result, lang) {
   const checks = lang === undefined ? result.checks : localizeAeoChecks(result.checks, lang);
-  return { score: result.score, band: result.band, gatePassed: result.gatePassed, checks };
+  const fields = checks.find(c => c.id === "schema")?.fields;
+  return { score: result.score, band: result.band, gatePassed: result.gatePassed, checks, ...(fields ? { structuredData: { fields, filled: fields.filter(f => f.present).length, total: fields.length } } : {}) };
 }
 
 /**
@@ -3408,3 +3413,18 @@ function sessionCookie(value, maxAge) {
 }
 
 export { buildLlmsTxt, matchCrawler, robotsBlock };
+
+export async function diagnosticOptions(env, siteId) {
+  const schemaRules = rulesetDefinition(await loadActiveRuleset(env)).schema;
+  if (!siteId || !env?.DB) return { schemaRules };
+  let catalog = null, profile = null;
+  try {
+    [catalog, profile] = await Promise.all([
+      loadSiteCatalog(env, siteId),
+      env.DB.prepare("SELECT business_type_schema FROM site_settings WHERE site_id=?").bind(siteId).first(),
+    ]);
+  } catch (error) {
+    if (!String(error?.message || error).includes('no such table')) throw error;
+  }
+  return { schemaRules, catalog, entityType: profile?.business_type_schema };
+}

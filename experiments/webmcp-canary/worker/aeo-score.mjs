@@ -1,9 +1,10 @@
+import { ENTITY_SCHEMA_FIELDS, localizeFields, fieldsSummary, textHint, fieldLang } from "./aeo-fields.mjs";
 // Keep these weights independent from extraction so layer-2 citation data can
 // tune the model without changing the public scoring contract.
 export const AEO_SCORE_WEIGHTS = Object.freeze({ schema: 30, coverage: 25, legibility: 20, llms: 15, consistency: 10 });
 // u1-v2: the schema component became proportional to the properties met,
 // rather than one of three bands. Scores from v1 are not directly comparable.
-export const AEO_SCORE_MODEL_VERSION = "u1-v2";
+export const AEO_SCORE_MODEL_VERSION = "u1-v3";
 const STATUS_FACTOR = Object.freeze({ OK: 1, WARN: 0.5, BAD: 0 });
 export const AEO_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
 export const AEO_RATE_LIMIT = Object.freeze({ limit: 20, windowSeconds: 60 * 60 });
@@ -113,8 +114,8 @@ export function scoreAeo(input = {}) {
     : signals.schemaValid && signals.schemaTypeMatches ? signals.schemaCoreProps
       : 0.5 * signals.schemaCoreProps;
   const schema = schemaFactor >= 0.8 ? "OK" : schemaFactor > 0 ? "WARN" : "BAD";
-  const coverageValue = 0.6 * signals.coreFieldsFilled + 0.4 * signals.bizSpecificFilled;
-  const coverage = statusFor(coverageValue, 0.8, 0.4);
+  const coverageValue = input.schemaFields ? signals.schemaCoreProps : 0.6 * signals.coreFieldsFilled + 0.4 * signals.bizSpecificFilled;
+  const coverage = input.schemaFields ? schema : statusFor(coverageValue, 0.8, 0.4);
   const legibilityValue = 0.6 * signals.factsInText + 0.2 * Number(signals.hasHeadingStructure) + 0.2 * Number(signals.hasFaq);
   const legibility = statusFor(legibilityValue, 0.75, 0.4);
   const llms = !signals.llmsTxtPresent ? "BAD" : signals.llmsTxtQuality >= 0.7 ? "OK" : "WARN";
@@ -132,7 +133,7 @@ export function scoreAeo(input = {}) {
   return { score, band, gatePassed, statuses, metrics: { coverage: coverageValue, legibility: legibilityValue, schema: schemaFactor } };
 }
 
-export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null } = {}) {
+export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null, schemaRules = null, entityType = null, catalog = null } = {}) {
   const target = publicUrl(raw);
   const page = await fetchBounded(fetchImpl, target.href, { userAgent: "Nurevo-AEO-Diagnostics/1.0 (+https://nurevo.jp)" });
   const [robots, llms, edgeBlocked] = await Promise.all([
@@ -143,7 +144,7 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = nul
   const signals = extractAeoSignals(page.text, robots.text, llms.text, {
     edgeBlocked,
     llmsPresent: llms.ok,
-    scoredProps,
+    scoredProps, schemaRules, entityType, catalog,
   });
   const result = scoreAeo(signals);
   return {
@@ -152,6 +153,7 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = nul
     band: result.band,
     gatePassed: result.gatePassed,
     checks: buildAeoChecks(signals, result),
+    structuredData: { fields: localizeFields(signals.schemaFields, "ja"), filled: signals.schemaFields.filter(f => f.present).length, total: signals.schemaFields.length },
     scannedAt: new Date().toISOString(),
     // What this score was measured against. Without it, "your score went down"
     // is unanswerable - the page may not have changed at all.
@@ -181,10 +183,16 @@ export function extractSchemaNodes(html = "") {
  * operator to fix something the scorer did not mark them down on.
  */
 export function publishedSchemaProps(nodes = [], props = BASELINE_SCORED_PROPS) {
-  const schemaText = JSON.stringify(Array.isArray(nodes) ? nodes : []).toLowerCase();
-  return (props || [])
-    .map((key) => String(key).toLowerCase())
-    .filter((key) => key && schemaText.includes(`"${key}`));
+  const found = new Set();
+  const visit = value => {
+    if (!value || typeof value !== "object") return;
+    for (const [key, item] of Object.entries(value)) {
+      if (item != null && item !== "" && (!Array.isArray(item) || item.length)) found.add(key.toLowerCase());
+      visit(item);
+    }
+  };
+  visit(nodes);
+  return (props || []).map(key => String(key).toLowerCase()).filter(key => found.has(key));
 }
 
 /** Fetch a public page and return the JSON-LD nodes it publishes. */
@@ -236,8 +244,8 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
   const scoredProps = Array.isArray(options.scoredProps) && options.scoredProps.length
     ? options.scoredProps.map((key) => String(key).toLowerCase())
     : BASELINE_SCORED_PROPS;
-  const publishedProps = scoredProps.filter((key) => schemaText.includes(`"${key}`));
-  const propTests = scoredProps.map((key) => publishedProps.includes(key));
+  const publishedProps = publishedSchemaProps(schemas, scoredProps);
+  const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: /woocommerce|"@type"\s*:\s*"(?:OnlineStore|Offer)"/i.test(html) });
   const llmsQualityTests = [llms.length >= 120, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours)/i.test(llms)];
   return {
     aiCrawlersAllowed: AI_CRAWLERS.every((bot) => robotsAllows(robots, bot)),
@@ -246,12 +254,15 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     jsonLdInRawHtml: scripts.length > 0,
     schemaTypeMatches,
     schemaValid,
-    schemaCoreProps: average(propTests),
+    schemaCoreProps: schemaFields.reduce((sum, f) => sum + (f.present ? f.weight : 0), 0) / Math.max(1, schemaFields.reduce((sum, f) => sum + f.weight, 0)),
+    schemaFields,
     scoredProps,
     publishedProps,
     coreFieldsFilled: average(coreTests),
     bizSpecificFilled: average(bizTests),
-    factsInText: average(factsTests),
+    factsInText: schemaFields.some(f => ['Product','Service','Article'].includes(f.entityType))
+      ? average(schemas.filter(n => ['product','service','article','blogposting','newsarticle'].includes(String(n['@type']).toLowerCase())).flatMap(n => [String(n.name || n.headline || '').trim(), String(n.description || '').trim()]).map(fact => Boolean(fact) && visible.includes(fact.toLowerCase())))
+      : average(factsTests),
     hasHeadingStructure: /<h1\b/i.test(html) && /<h[2-6]\b/i.test(html),
     hasFaq: types.some((type) => String(type).toLowerCase() === "faqpage") || /(よくある質問|faq)/i.test(visible),
     llmsTxtPresent: options.llmsPresent === true,
@@ -322,7 +333,7 @@ const TRANSLATED_LANGS = Object.freeze(Object.keys(CHECK_WORDING));
 export function resolveAeoCheckLang(requested) {
   const value = String(requested || "").trim().toLowerCase().replace("_", "-");
   if (value === "") return "en";
-  if (TRANSLATED_LANGS.includes(value)) return value;
+  if (AEO_CHECK_LANGS.map(x => x.toLowerCase()).includes(value)) return fieldLang(value);
   const base = value.split("-")[0];
   if (TRANSLATED_LANGS.includes(base)) return base;
   return "en";
@@ -343,8 +354,9 @@ export function localizeAeoChecks(checks, requested) {
     if (!wording) return { ...check };
     const status = String(check?.status || "").toUpperCase();
     // An unrecognised status is a finding, not a pass.
-    const message = wording[status] ?? wording.WARN;
-    return { ...check, label: wording.label, message };
+    const fields = Array.isArray(check.fields) ? localizeFields(check.fields, requested) : null;
+    const message = fields ? fieldsSummary(fields, requested) : wording[status] ?? wording.WARN;
+    return { ...check, label: fields ? `${wording.label} (${fields.filter(f => f.present).length}/${fields.length})` : wording.label, message, ...(fields ? { fields } : {}), ...(check.id === "legibility" ? { hints: [textHint(requested)] } : {}) };
   });
 }
 
@@ -365,6 +377,7 @@ export function buildAeoChecks(signals, result, lang = "ja") {
     id,
     status: gate ? (gateStatus[id] ? "OK" : "BAD") : result.statuses[id],
     fixable,
+    ...(["schema", "coverage"].includes(id) && signals.schemaFields ? { fields: signals.schemaFields } : {}),
   }));
   return localizeAeoChecks(checks, lang);
 }
@@ -439,4 +452,49 @@ function privateHost(host) { const h = host.toLowerCase(); return h === "localho
 
 export class AeoScoreError extends Error {
   constructor(status, code) { super(code); this.name = "AeoScoreError"; this.status = status; this.code = code; }
+}
+
+// Match fields within the correct entity, never by a substring anywhere in JSON.
+export function diagnoseSchemaFields(nodes, options = {}) {
+  const typesOf = node => [node?.['@type']].flat().filter(Boolean).map(t => String(t).toLowerCase());
+  const types = nodes.flatMap(typesOf);
+  const families = new Set();
+  const hint = String(options.entityType || '').toLowerCase();
+  if (types.includes('product') || options.catalog?.products?.length || options.commerceDetected || /product|store|shop|commerce/.test(hint)) families.add('Product');
+  if (types.includes('service') || options.catalog?.services?.length || hint === 'service') families.add('Service');
+  if (types.some(t => ['article','blogposting','newsarticle'].includes(t)) || /article|blog/.test(hint)) families.add('Article');
+  const isLocal = t => USEFUL_SCHEMA_TYPES.has(t) && !['product','service','article','blogposting','newsarticle','organization','website','faqpage'].includes(t);
+  if (isLocal(hint) || types.some(isLocal) || (!families.size && !types.some(t => ['organization','website','faqpage'].includes(t)) && !['organization','website','faqpage'].includes(hint))) families.add('LocalBusiness');
+  const rules = options.schemaRules || {};
+  const definitions = rules.entityFields || ENTITY_SCHEMA_FIELDS;
+  const selected = [...families, 'WebSite', 'FAQPage', 'Organization'];
+  const match = (node, family) => {
+    const tt = typesOf(node);
+    if (family === 'Article') return tt.some(t => ['article','blogposting','newsarticle'].includes(t));
+    if (family === 'LocalBusiness') return tt.some(t => USEFUL_SCHEMA_TYPES.has(t) && !['organization','product','service','article','blogposting','newsarticle','website','faqpage'].includes(t));
+    return tt.includes(family.toLowerCase());
+  };
+  const hasValue = value => value != null && (typeof value === 'string' ? value.trim().length > 0 : Array.isArray(value) ? value.length > 0 && value.every(hasValue) : typeof value === 'object' ? Object.keys(value).some(k => !k.startsWith('@') && hasValue(value[k])) : true);
+  const resolve = value => value && typeof value === 'object' && value['@id'] ? nodes.find(n => n['@id'] === value['@id']) || value : value;
+  const read = (value, parts) => {
+    value = resolve(value);
+    if (Array.isArray(value)) return value.length > 0 && value.every(v => read(v, parts));
+    if (!parts.length) return hasValue(value);
+    const [key,...rest] = parts;
+    if (key === 'openingHoursSpecification' || key === 'openingHours' || key === 'openinghours') return read(value?.openingHoursSpecification ?? value?.openingHours, rest);
+    if (key === 'geo' && !rest.length) return hasValue(value?.geo?.latitude) && hasValue(value?.geo?.longitude);
+    if (key === 'mainEntity' && !rest.length) return Array.isArray(value?.mainEntity) && value.mainEntity.length > 0 && value.mainEntity.every(q => hasValue(q.name) && hasValue(resolve(q.acceptedAnswer)?.text));
+    return read(value?.[key],rest);
+  };
+  return selected.flatMap(entityType => {
+    let definition = definitions[entityType] || {};
+    // Explicit legacy scoredProps remain authoritative for local entities.
+    if (entityType === 'LocalBusiness' && !rules.entityFields) {
+      const legacy = Array.isArray(options.scoredProps) && options.scoredProps.length ? options.scoredProps : rules.scoredProps;
+      if (Array.isArray(legacy) && legacy.length) definition = Object.fromEntries(legacy.filter(f => f === 'name' || rules.fields?.[f] !== false).map(f => [f === 'openinghours' ? 'openingHours' : f, true]));
+      else if (rules.fields) definition = {name:true,...rules.fields};
+    }
+    const entities = nodes.filter(n => match(n,entityType));
+    return Object.entries(definition).filter(([field,enabled]) => enabled !== false && enabled?.enabled !== false && (entityType !== 'LocalBusiness' || rules.fields?.[field] !== false)).map(([field,config]) => ({entityType,field,weight: config && typeof config === 'object' && Number(config.weight) > 0 ? Number(config.weight) : 1,present: entities.length > 0 && entities.every(n => read(n,field.split('.')))}));
+  });
 }

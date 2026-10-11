@@ -30,7 +30,7 @@ const firstBody = await first.json();
 assert.equal(first.status, 200);
 assert.equal(first.headers.get("x-aeo-cache"), "miss");
 assert.equal(first.headers.get("cache-control"), "public, max-age=604800");
-assert.deepEqual(Object.keys(firstBody), ["score", "band", "gatePassed", "checks"]);
+assert.deepEqual(Object.keys(firstBody), ["score", "band", "gatePassed", "checks", "structuredData"]);
 
 const second = await handleApi(new Request(publicUrl, { headers: { "cf-connecting-ip": "198.51.100.10" } }), env, ctx);
 assert.equal(second.status, 200);
@@ -58,6 +58,7 @@ const db = {
             if (sql.includes("FROM aeo_rulesets")) return { version: 1 };
             return null;
           },
+          async all() { return { results: sql.includes('FROM site_products') ? [{name:'Tea',sku:'T1',price:'100',currency:'JPY'}] : [] }; },
           async run() { statements.push({ sql, values }); return { success: true }; },
         };
       },
@@ -68,8 +69,9 @@ const db = {
 const registered = await handleApi(new Request(`https://worker.test/api/sites/${siteId}/aeo-score?site_key=nrv_test`), { DB: db }, ctx);
 const registeredBody = await registered.json();
 assert.equal(registered.status, 200);
-assert.deepEqual(Object.keys(registeredBody), ["score", "band", "gatePassed", "checks"]);
+assert.deepEqual(Object.keys(registeredBody), ["score", "band", "gatePassed", "checks", "structuredData"]);
 assert.ok(statements.some(({ sql }) => sql.includes("INSERT INTO aeo_scores")));
+assert.ok(registeredBody.structuredData.fields.some(f => f.entityType === 'Product' && f.field === 'offers.priceCurrency' && !f.present), 'catalog selects Product but unpublished catalog facts do not count as public schema');
 
 const denied = await handleApi(new Request(`https://worker.test/api/sites/${siteId}/aeo-score?site_key=`), { DB: db }, ctx);
 assert.equal(denied.status, 404);

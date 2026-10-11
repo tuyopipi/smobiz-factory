@@ -75,7 +75,7 @@ const SETTINGS = {
 
 /* ---------------- 2. one measuring stick, the current one ---------------- */
 
-const pageWith = (ld) => `<html><body><h1>栞珈琲</h1><h2>営業時間</h2><p>東京都千代田区神田三崎町3-2-6 電話 03-1234-5678 営業時間 11:00-20:00 緯度 経度 https://example.com</p><script type="application/ld+json">${JSON.stringify(ld)}</script></body></html>`;
+const pageWith = (ld) => `<html><body><h1>栞珈琲</h1><h2>営業時間</h2><p>東京都千代田区神田三崎町3-2-6 電話 03-1234-5678 営業時間 11:00-20:00 緯度 経度 https://example.com</p><script type="application/ld+json">${JSON.stringify([ld, {"@type":"WebSite",name:"栞珈琲",url:"https://example.com"},{"@type":"Organization",sameAs:["https://example.com"]},{"@type":"FAQPage",mainEntity:[{name:"Hours?",acceptedAnswer:{text:"11:00-20:00"}}]}])}</script></body></html>`;
 const ROBOTS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-Web", "PerplexityBot", "Google-Extended", "Applebot-Extended"]
   .map((bot) => `User-agent: ${bot}\nAllow: /`).join("\n\n");
 const LLMS = "# 栞珈琲\n\n> 神田の自家焙煎コーヒー店\n\n## Key facts\n- URL: https://example.com/\n- Address: 東京都千代田区神田三崎町3-2-6\n- Phone: 03-1234-5678\n- Hours: 11:00-20:00\n";
@@ -110,14 +110,14 @@ const scoreOf = (ld, scoredProps) => {
   // decline being gradual instead of a cliff.
   assert.ok(standard.score - free.score >= 5, `and the gap is visible: +${standard.score - free.score}`);
   assert.ok(
-    Math.abs((standard.metrics.schema - free.metrics.schema) - 2 / 9) < 0.01,
+    Math.abs((standard.metrics.schema - free.metrics.schema) - 2 / 13) < 0.01,
     "the deduction is exactly the share of criteria unmet, not a band",
   );
   // The difference is the schema component and nothing else - the two pages are
   // otherwise identical, so any other component moving would mean the test is
   // measuring something it did not intend to.
   for (const key of Object.keys(standard.statuses)) {
-    if (key === "schema") continue;
+    if (["schema", "coverage"].includes(key)) continue;
     assert.equal(standard.statuses[key], free.statuses[key], `only the schema component differs, not ${key}`);
   }
 

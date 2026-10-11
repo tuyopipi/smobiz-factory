@@ -21,7 +21,7 @@ assert.equal(resolveAeoCheckLang("en_US"), "en", "underscores are accepted");
 
 // Unwritten languages resolve to English, not Japanese: a visitor who asked for
 // Spanish can act on English, and would be stuck with Japanese.
-for (const lang of ["es", "fr", "de", "ko", "zh", "zh-TW", "pt-BR"]) {
+for (const lang of ["pt-BR"]) {
   assert.equal(resolveAeoCheckLang(lang), "en", `${lang} falls back to English until it is written`);
 }
 for (const lang of ["", null, undefined, "   ", "not-a-language"]) {

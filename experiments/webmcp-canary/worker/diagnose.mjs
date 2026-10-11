@@ -11,7 +11,7 @@
  * That limitation is surfaced to the user in the result.
  */
 
-import { AeoScoreError, diagnoseAeoUrl } from "./aeo-score.mjs";
+import { AeoScoreError, diagnoseAeoUrl, localizeAeoChecks } from "./aeo-score.mjs";
 
 const UA = "Nurevo-Diagnostics/1.0 (+https://nurevo.jp)";
 const TIMEOUT_MS = 8000;
@@ -35,7 +35,8 @@ export async function handleDiagnose(request, env) {
   const lang = url.searchParams.get("lang") === "en" ? "en" : "ja";
 
   try {
-    const result = await diagnoseUrl(raw, lang);
+    const { diagnosticOptions } = await import('./api.mjs');
+    const result = await diagnoseUrl(raw, lang, await diagnosticOptions(env));
     if (env?.DB) {
       try {
         const site = await resolveDiagnosedSite(env, url, raw);
@@ -51,8 +52,10 @@ export async function handleDiagnose(request, env) {
   }
 }
 
-export async function diagnoseUrl(raw, lang = "ja") {
-  const result = await diagnoseAeoUrl(raw);
+export async function diagnoseUrl(raw, lang = "ja", options = {}) {
+  const result = await diagnoseAeoUrl(raw, options);
+  result.checks = localizeAeoChecks(result.checks, lang);
+  result.structuredData.fields = result.checks.find(c => c.id === "schema").fields;
   return {
     ...result,
     scorable: true,
@@ -96,7 +99,8 @@ export async function storeAeoScore(env, siteId, result) {
 export async function diagnoseAndStore(env, site, { lang = "ja" } = {}) {
   const targetUrl = siteDiagnosticUrl(site);
   try {
-    const result = await diagnoseUrl(targetUrl, lang);
+    const { diagnosticOptions } = await import("./api.mjs");
+    const result = await diagnoseUrl(targetUrl, lang, await diagnosticOptions(env, site.id));
     return { ok: true, siteId: site.id, result: await storeAeoScore(env, site.id, result) };
   } catch (error) {
     if (!(error instanceof DiagnoseError) && !(error instanceof AeoScoreError)) throw error;

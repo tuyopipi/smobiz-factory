@@ -83,7 +83,9 @@
       return '<li class="nrv-aeo-check is-' + cls + '">'
         + '<span class="nrv-aeo-check-icon" aria-hidden="true">' + mark + '</span>'
         + '<div><strong>' + esc(check.label || check.id || '') + '</strong>'
-        + '<p>' + esc(check.message || '') + '</p></div></li>';
+        + '<p>' + esc(check.message || '') + '</p>'
+        + (Array.isArray(check.fields) ? '<details open><summary>' + check.fields.filter(function(f){return f.present;}).length + '/' + check.fields.length + '</summary>' + check.fields.map(function(f){return '<p>' + (f.present ? '✓ ' : '✗ ') + '<code>' + esc(f.entityType + '.' + f.field) + '</code> — ' + esc(f.label) + (f.present ? '' : '<br>' + esc(f.description) + '<br>' + esc(f.howTo)) + '</p>';}).join('') + '</details>' : '')
+        + (check.hints || []).map(function(h){return '<p>' + esc(h) + '</p>';}).join('') + '</div></li>';
     }).join('');
     var when = metrics.checked_at
       ? '<p class="nrv-aeo-range"><span>診断時刻</span><span>' + esc(formatWhen(metrics.checked_at)) + '</span></p>'

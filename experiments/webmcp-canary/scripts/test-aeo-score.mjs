@@ -79,7 +79,7 @@ const extracted = extractAeoSignals(html, robots, llms, { edgeBlocked: false, ll
 assert.equal(extracted.aiCrawlersAllowed, true);
 assert.equal(extracted.jsonLdInRawHtml, true);
 assert.equal(extracted.schemaValid, true);
-assert.equal(scoreAeo(extracted).band, "green");
+assert.equal(scoreAeo(extracted).band, "yellow", "missing common schema fields reduce completeness");
 const checks = buildAeoChecks(extracted, scoreAeo(extracted));
 assert.equal(checks.length, 8);
 assert.ok(checks.every((check) => ["OK", "WARN", "BAD"].includes(check.status)));

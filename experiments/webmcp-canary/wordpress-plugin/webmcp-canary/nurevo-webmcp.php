@@ -1399,6 +1399,10 @@ function webmcp_canary_aeo_check_view($check) {
         $message = isset($check['message']) ? (string) $check['message'] : '';
     }
 
+    if (isset($check['fields']) && is_array($check['fields'])) {
+        $filled = count(array_filter($check['fields'], function ($field) { return !empty($field['present']); }));
+        return array('label' => $entry['label'] . ' (' . $filled . '/' . count($check['fields']) . ')', 'message' => $check['message'], 'known' => true);
+    }
     return array('label' => $entry['label'], 'message' => $message, 'known' => true);
 }
 
@@ -3972,7 +3976,17 @@ function webmcp_canary_aeo_page() {
                         <span class="webmcp-aeo-check-icon" aria-hidden="true"><?php echo esc_html($icon); ?></span>
                         <div>
                             <strong><?php echo esc_html($wording['label']); ?></strong>
-                            <p><?php echo esc_html($wording['message']); ?></p>
+                            <p><?php echo esc_html(!empty($check['fields']) ? $check['message'] : $wording['message']); ?></p>
+                            <?php if (!empty($check['fields']) && is_array($check['fields'])) : ?>
+                                <details open>
+                                    <summary><?php echo esc_html(count(array_filter($check['fields'], function ($field) { return !empty($field['present']); })) . '/' . count($check['fields'])); ?></summary>
+                                    <?php foreach ($check['fields'] as $field) : ?>
+                                        <p><?php echo esc_html(!empty($field['present']) ? '✓ ' : '✗ '); ?><code><?php echo esc_html($field['entityType'] . '.' . $field['field']); ?></code> — <?php echo esc_html($field['label']); ?>
+                                        <?php if (empty($field['present'])) : ?><br><?php echo esc_html($field['description']); ?><br><?php echo esc_html($field['howTo']); ?><?php endif; ?></p>
+                                    <?php endforeach; ?>
+                                </details>
+                            <?php endif; ?>
+                            <?php foreach (isset($check['hints']) && is_array($check['hints']) ? $check['hints'] : array() as $hint) : ?><p><?php echo esc_html($hint); ?></p><?php endforeach; ?>
                             <?php if ($action && !empty($action['hint'])) : ?>
                                 <p class="webmcp-aeo-howto"><?php echo esc_html($action['hint']); ?></p>
                             <?php endif; ?>

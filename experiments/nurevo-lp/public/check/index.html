@@ -230,6 +230,23 @@
           label.textContent = String(check.label || T.checksHeading);
           message.textContent = String(check.message || '');
           copy.append(label, message);
+          if (Array.isArray(check.fields)) {
+            var details = document.createElement('details');
+            details.open = true;
+            var summary = document.createElement('summary');
+            summary.textContent = check.fields.filter(function(f) { return f.present; }).length + '/' + check.fields.length;
+            details.append(summary);
+            check.fields.forEach(function(f) {
+              var row = document.createElement('p');
+              row.textContent = (f.present ? '✓ ' : '✗ ') + f.entityType + '.' + f.field + ' — ' + f.label;
+              if (!f.present) {
+                row.append(document.createElement('br'), document.createTextNode(f.description), document.createElement('br'), document.createTextNode(f.howTo));
+              }
+              details.append(row);
+            });
+            copy.append(details);
+          }
+          (check.hints || []).forEach(function(h) { var hint = document.createElement('p'); hint.textContent = h; copy.append(hint); });
           item.append(icon, copy);
           list.append(item);
         });
