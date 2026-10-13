@@ -150,3 +150,33 @@ LPで発行されたスニペットをGTMに貼る場合も同じ `tag.js` URL�
 
 - `nurevo.jp` が表示されない  
   PagesのCustom domainsに `nurevo.jp` が追加済みか、DNSがCloudflareの指示通りになっているか確認します。
+
+## AEO / SEO 運用（2026-10-13）
+
+JSON-LDは静的HTMLのheadにビルド時出力し、JavaScriptの実行を必要としません。
+Organization.name は Nurevo、legalName はサイトの会社表記と一致する Bestie.合同会社。
+確認できる公式SNSがないため sameAs は公式WordPressプラグインURLのみです。
+/check はサイト内検索ではないため SearchAction は付けません。
+8言語LPと公開記事・主要ページは sitemap-pages.xml に収録します。
+Pages単体でも robots.txt / llms.txt / sitemap.xml を配信できるよう同じビルドで生成します。
+本番では既存Workerが robots.txt / llms.txt / sitemap.xml を配信し、後者は店舗とLPのsitemapインデックスです。
+料金とガイド一覧も llms-pages.json 経由でWorkerに渡します。
+出典のない「2億+」「7種+」「5分で導入完了」は8言語で数値を使わない説明に変更しました。
+
+### www → 非www 301（Cloudflareでの設定が必要）
+
+Pagesの `_redirects` はホスト単位のリダイレクトに対応していません。
+パスだけの全件リダイレクトは非wwwでもループするため追加しません。
+2026-10-13の確認では www.nurevo.jp は200で、301は未設定です。
+
+1. Cloudflare Dashboardで nurevo.jp ゾーンを選び、Rules → Create rule → Redirect Rule。
+2. 名前: `www to apex`。Custom filter expression: `(http.host eq "www.nurevo.jp")`。
+3. URL redirect は Dynamic、式: `concat("https://nurevo.jp", http.request.uri.path)`。
+4. Status code: 301、Preserve query string: 有効。
+5. www のDNSレコードが Proxied であることを確認して Deploy。
+6. `curl -I 'https://www.nurevo.jp/check?lang=en'` で301とLocationを確認。
+   トップ・各言語・記事パスでもパスとクエリの保持を確認する。
+
+公式資料:
+- https://developers.cloudflare.com/pages/configuration/redirects/ （Domain-level redirects 非対応）
+- https://developers.cloudflare.com/rules/url-forwarding/single-redirects/create-dashboard/

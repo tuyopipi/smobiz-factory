@@ -24,6 +24,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import I18N from "../src/i18n.mjs";
+import { siteRobotsTxt, siteLlmsTxt } from "../../webmcp-canary/worker/site-seo.mjs";
 import {
   ORIGIN, LANGS, DEFAULT_LANG, OG_IMAGE, ORGANIZATION, PRODUCT, FAQ_KEYS, STATIC_PAGES, AI_REFERRERS,
 } from "../src/site.mjs";
@@ -185,9 +186,9 @@ function organizationNode() {
   return {
     "@type": "Organization",
     "@id": ORG_ID,
-    name: ORGANIZATION.legalName,
+    name: ORGANIZATION.brand,
     legalName: ORGANIZATION.legalName,
-    alternateName: ORGANIZATION.brand,
+    alternateName: ORGANIZATION.legalName,
     brand: { "@type": "Brand", name: ORGANIZATION.brand },
     url: `${ORIGIN}/`,
     logo: { "@type": "ImageObject", ...ORGANIZATION.logo },
@@ -537,7 +538,7 @@ for (const page of STATIC_PAGES.filter((item) => item.file)) {
 }
 
 const xml = (value) => esc(value).replace(/"/g, "&quot;");
-files.set("sitemap-pages.xml", [
+const pagesSitemap = [
   '<?xml version="1.0" encoding="UTF-8"?>',
   '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">',
   ...sitemap.flatMap((group) => group.urls.map((loc) => [
@@ -548,15 +549,25 @@ files.set("sitemap-pages.xml", [
   ].join("\n"))),
   "</urlset>",
   "",
-].join("\n"));
+].join("\n");
+files.set("sitemap-pages.xml", pagesSitemap);
+files.set("sitemap.xml", pagesSitemap);
 
 // What the worker's /llms.txt lists above the hosted stores. It is fetched from
 // here so the page list cannot drift from what the build actually published.
 files.set("llms-pages.json", `${JSON.stringify({
   home: LANGS.map((lang) => ({ lang: lang.hreflang, url: ORIGIN + lang.path, title: t("meta.title", lang.code) })),
-  pages: [...publishedContent, ...STATIC_PAGES.filter((page) => page.summary)]
+  pages: [
+    { lang: "ja", path: "/#pricing", title: "料金 / Pricing", summary: "Standard: ¥3,000 / month / site. Pro: coming soon." },
+    { lang: "en", path: "/guide/", title: "AEO Guides" },
+    { lang: "ja", path: "/ja/guide/", title: "AEOガイド" },
+    ...publishedContent, ...STATIC_PAGES.filter((page) => page.summary)]
     .map((page) => ({ lang: langOf(page.lang).hreflang, url: ORIGIN + page.path, title: page.title, summary: page.summary })),
 }, null, 1)}\n`);
+
+files.set("robots.txt", siteRobotsTxt());
+const llmsPages = JSON.parse(files.get("llms-pages.json"));
+files.set("llms.txt", siteLlmsTxt(llmsPages, []));
 
 files.set("assets/ai-referral.js", `var ENGINES=${JSON.stringify(AI_REFERRERS)};\n${read("src/ai-referral.js")}`);
 
