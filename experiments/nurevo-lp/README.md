@@ -180,3 +180,5 @@ Pagesの `_redirects` はホスト単位のリダイレクトに対応してい�
 公式資料:
 - https://developers.cloudflare.com/pages/configuration/redirects/ （Domain-level redirects 非対応）
 - https://developers.cloudflare.com/rules/url-forwarding/single-redirects/create-dashboard/
+
+英語規約ページもPages内の実ファイルをビルド対象とし、本番で配信される /en/privacy/・/en/terms/ をcanonicalとsitemapに使用します。

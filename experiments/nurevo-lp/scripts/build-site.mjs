@@ -412,7 +412,7 @@ ${copy.sections ? richSections(copy) : copy.questions.map((item) => `    <sectio
   </aside>
 ${related.length ? `  <nav class="related" aria-label="${escAttr(copy.relatedHeading)}"><h2>${esc(copy.relatedHeading)}</h2><ul>${related.join("")}</ul></nav>` : ""}
 </main>
-<footer class="foot"><div class="wrap"><a href="${meta.path}">Nurevo</a> ・ <a href="${lang === "en" ? "/en/terms" : "/terms"}">${esc(t("foot.terms", lang))}</a> ・ <a href="${lang === "en" ? "/en/privacy" : "/privacy"}">${esc(t("foot.privacy", lang))}</a></div></footer>
+<footer class="foot"><div class="wrap"><a href="${meta.path}">Nurevo</a> ・ <a href="${lang === "en" ? "/en/terms/" : "/terms"}">${esc(t("foot.terms", lang))}</a> ・ <a href="${lang === "en" ? "/en/privacy/" : "/privacy"}">${esc(t("foot.privacy", lang))}</a></div></footer>
 <script src="/assets/ai-referral.js" defer></script>
 </body>
 </html>

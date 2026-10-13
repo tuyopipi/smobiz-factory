@@ -65,7 +65,7 @@ export const FAQ_KEYS = [
 // Hand-written pages under public/. The build does not write their content; it
 // keeps a block of head tags in each (canonical, Open Graph, JSON-LD) between
 // the seo markers, and lists them in the sitemap and llms.txt. `file` is
-// omitted for the two English legal pages, which the worker serves.
+// provided for each static legal page as well.
 export const STATIC_PAGES = [
   { path: "/check/", file: "check/index.html", lang: "ja", title: "AI可読チェッカー", summary: "URLを入れるだけで、AIがそのサイトを読めるかを無料で診断するツール（登録不要）。" },
   { path: "/partner/", file: "partner/index.html", lang: "ja", title: "販売パートナー募集", summary: "個人紹介パートナーと企業向け販売代理店の募集、登録申請。" },
@@ -73,8 +73,8 @@ export const STATIC_PAGES = [
   { path: "/privacy", file: "privacy.html", lang: "ja", title: "プライバシーポリシー" },
   { path: "/terms", file: "terms.html", lang: "ja", title: "利用規約" },
   { path: "/tokushoho", file: "tokushoho.html", lang: "ja", title: "特定商取引法に基づく表記" },
-  { path: "/en/privacy", lang: "en", title: "Privacy Policy" },
-  { path: "/en/terms", lang: "en", title: "Terms of Service" },
+  { path: "/en/privacy/", file: "en/privacy.html", lang: "en", title: "Privacy Policy" },
+  { path: "/en/terms/", file: "en/terms.html", lang: "en", title: "Terms of Service" },
 ];
 
 // Where a visitor who arrived from an AI answer came from. Matched against the

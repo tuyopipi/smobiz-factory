@@ -32,6 +32,8 @@ const squash = (value) => String(value).replace(/\s+/g, "");
 /** Where a URL of this site lives under public/. */
 function fileFor(url) {
   const path = url.slice(ORIGIN.length);
+  const declared = STATIC_PAGES.find((page) => page.path === path && page.file);
+  if (declared) return join(PUBLIC, declared.file);
   if (path.endsWith("/")) return join(PUBLIC, path, "index.html");
   return existsSync(join(PUBLIC, `${path}.html`)) ? join(PUBLIC, `${path}.html`) : join(PUBLIC, path, "index.html");
 }
