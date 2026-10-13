@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { extractAeoSignals, scoreAeo, buildAeoChecks, localizeAeoChecks, diagnoseSchemaFields } from '../worker/aeo-score.mjs';
-import { ENTITY_SCHEMA_FIELDS } from '../worker/aeo-fields.mjs';
+import { ENTITY_SCHEMA_FIELDS, localizeFields } from '../worker/aeo-fields.mjs';
 const product = {'@type':'Product',name:'Tea',image:'https://example.com/tea.jpg',description:'Green tea',brand:{name:'Tea farm'},sku:'T1',offers:{'@type':'Offer',price:0,priceCurrency:'JPY',availability:'https://schema.org/InStock'},aggregateRating:{ratingValue:4,ratingCount:2}};
 const nodes = [product,{'@type':'WebSite',name:'Tea shop',url:'https://example.com'}, {'@type':'Organization',sameAs:['https://example.com/about']}, {'@type':'FAQPage',mainEntity:[{name:'Shipping?',acceptedAnswer:{text:'Free'}}]}];
 const html = ns => `<h1>Tea</h1><h2>Green tea</h2><script type="application/ld+json">${JSON.stringify({'@graph':ns})}</script>`;
@@ -44,3 +44,27 @@ assert.ok(hinted.some(f => f.entityType === 'Product' && !f.present));
 assert.ok(hinted.some(f => f.entityType === 'LocalBusiness' && !f.present));
 const disabled = diagnoseSchemaFields([{'@type':'Restaurant',name:'Shop'}],{schemaRules:{entityFields:ENTITY_SCHEMA_FIELDS,fields:{telephone:false}}});
 assert.ok(!disabled.some(f => f.entityType === 'LocalBusiness' && f.field === 'telephone'));
+
+const software = {'@type':['SoftwareApplication'],name:'Nurevo',description:'AEO tool',applicationCategory:'BusinessApplication',operatingSystem:'WordPress',offers:[{'@type':'Offer',price:0,priceCurrency:'JPY'},{'@type':'Offer',price:3000,priceCurrency:'JPY'}]};
+const saas = extractAeoSignals(html([software]));
+const softwareFields = saas.schemaFields.filter(f => f.entityType === 'SoftwareApplication');
+assert.deepEqual(softwareFields.map(f => f.field),Object.keys(ENTITY_SCHEMA_FIELDS.SoftwareApplication));
+assert.ok(softwareFields.every(f => f.present));
+assert.ok(saas.schemaTypeMatches);
+assert.ok(!saas.schemaFields.some(f => ['Product','LocalBusiness'].includes(f.entityType)));
+assert.ok(!extractAeoSignals(html([{'@type':'Service',offers:{'@type':'Offer',price:10}}])).schemaFields.some(f => f.entityType === 'Product'), 'a service Offer is not commerce');
+assert.ok(!extractAeoSignals('<h1>Software</h1>', '', '', {entityType:'SoftwareApplication'}).schemaFields.some(f => f.entityType === 'Product'));
+assert.ok(!diagnoseSchemaFields([software,product],{commerceDetected:true,catalog:{products:[product]}}).some(f => f.entityType === 'Product'), 'software classification must not require Product');
+const missingCurrency = structuredClone(software); delete missingCurrency.offers[1].priceCurrency;
+assert.equal(diagnoseSchemaFields([missingCurrency]).find(f => f.field === 'offers.priceCurrency').present,false);
+assert.deepEqual(diagnoseSchemaFields([software],{schemaRules:{entityFields:{SoftwareApplication:{name:true,description:false,operatingSystem:{enabled:false}}}}}).map(f => f.field),['name'], 'explicit rules remain authoritative');
+for (const lang of ['ja','en','zh','zh-TW','ko','es','fr','de']) {
+  const fields = localizeFields(diagnoseSchemaFields([product,software]),lang);
+  assert.ok(fields.every(f => f.label && f.description && f.howTo));
+  assert.ok(fields.filter(f => f.entityType === 'SoftwareApplication').every(f => !f.howTo.includes('WooCommerce')));
+  const products = localizeFields(diagnoseSchemaFields([product]),lang).filter(f => f.entityType === 'Product');
+  assert.equal(new Set(products.map(f => f.howTo)).size,products.length);
+  const review = /レビュー|reviews|评论|評論|리뷰|reseñas|avis|Rezensionen/;
+  assert.ok(products.filter(f => f.field !== 'aggregateRating').every(f => !review.test(f.howTo)));
+}
+console.log('SaaS classification, explicit rules and field-specific hints passed');

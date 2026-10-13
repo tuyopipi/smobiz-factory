@@ -9,6 +9,14 @@ export const ENTITY_SCHEMA_FIELDS = Object.freeze({
     "url": true,
     "sameAs": true
   },
+  "SoftwareApplication": {
+    "name": true,
+    "applicationCategory": true,
+    "operatingSystem": true,
+    "offers.price": true,
+    "offers.priceCurrency": true,
+    "description": true
+  },
   "Product": {
     "name": true,
     "image": true,
@@ -72,7 +80,7 @@ const TEXT = {
   "ja": [
     "{label}をAIに伝える公開データです。",
     "Nurevo → 設定 → 店舗・組織情報で設定し、該当ページに公開してください。",
-    "WooCommerce → 商品編集で設定してください。評価は実際のレビューから出力されます。",
+    "実際の公開レビューからaggregateRatingの評価と件数を出力してください。",
     "Nurevo → 設定 → 予約可能なサービスと掲載ページで設定してください。",
     "WordPress → 投稿編集とSEOプラグインの設定で公開してください。",
     "Nurevo → 設定 → よくある質問で質問と回答を設定してください。",
@@ -82,7 +90,7 @@ const TEXT = {
   "en": [
     "Published data that tells AI the {label}.",
     "Set this in Nurevo → Business information and publish it on the relevant page.",
-    "Set this in WooCommerce → Edit product. Ratings come from real reviews.",
+    "Output aggregateRating values and counts from real published reviews.",
     "Set this in Nurevo → Services and the service page.",
     "Publish this in WordPress → Edit post and your SEO plugin settings.",
     "Add questions and answers in Nurevo → FAQ.",
@@ -92,7 +100,7 @@ const TEXT = {
   "zh": [
     "向AI提供{label}的公开数据。",
     "在 Nurevo → 基本信息中设置并发布到相关页面。",
-    "在 WooCommerce → 编辑商品中设置。评分来自真实评论。",
+    "从真实公开评论输出aggregateRating评分和数量。",
     "在 Nurevo → 服务及服务页面中设置。",
     "在 WordPress → 编辑文章及SEO插件中发布。",
     "在 Nurevo → FAQ 中添加问题和回答。",
@@ -102,7 +110,7 @@ const TEXT = {
   "zh-TW": [
     "向AI提供{label}的公開資料。",
     "在 Nurevo → 基本資訊中設定並發布到相關頁面。",
-    "在 WooCommerce → 編輯商品中設定。評分來自真實評論。",
+    "從真實公開評論輸出aggregateRating評分和數量。",
     "在 Nurevo → 服務及服務頁面中設定。",
     "在 WordPress → 編輯文章及SEO外掛中發布。",
     "在 Nurevo → FAQ 中新增問題與回答。",
@@ -112,7 +120,7 @@ const TEXT = {
   "ko": [
     "AI에 {label} 정보를 제공하는 공개 데이터입니다.",
     "Nurevo → 기본 정보에서 설정하고 해당 페이지에 게시하세요.",
-    "WooCommerce → 상품 편집에서 설정하세요. 평점은 실제 리뷰에서 생성됩니다.",
+    "실제 공개 리뷰에서 aggregateRating 평점과 수를 출력하세요.",
     "Nurevo → 서비스와 서비스 페이지에서 설정하세요.",
     "WordPress → 글 편집 및 SEO 플러그인 설정에서 게시하세요.",
     "Nurevo → FAQ에서 질문과 답변을 추가하세요.",
@@ -122,7 +130,7 @@ const TEXT = {
   "es": [
     "Datos publicados que indican a la IA: {label}.",
     "Configúralo en Nurevo → Información del negocio y publícalo en la página correspondiente.",
-    "Configúralo en WooCommerce → Editar producto. Las valoraciones proceden de reseñas reales.",
+    "Publica aggregateRating y su cantidad a partir de reseñas reales publicadas.",
     "Configúralo en Nurevo → Servicios y en la página del servicio.",
     "Publícalo en WordPress → Editar entrada y en tu plugin SEO.",
     "Añade preguntas y respuestas en Nurevo → FAQ.",
@@ -132,7 +140,7 @@ const TEXT = {
   "fr": [
     "Données publiées indiquant à l’IA : {label}.",
     "Configurez ce champ dans Nurevo → Informations de l’entreprise et publiez-le sur la page concernée.",
-    "Configurez ce champ dans WooCommerce → Modifier le produit. Les notes proviennent d’avis réels.",
+    "Publiez aggregateRating et le nombre d’avis à partir d’avis réels publiés.",
     "Configurez ce champ dans Nurevo → Services et sur la page du service.",
     "Publiez ce champ dans WordPress → Modifier l’article et votre extension SEO.",
     "Ajoutez les questions et réponses dans Nurevo → FAQ.",
@@ -142,7 +150,7 @@ const TEXT = {
   "de": [
     "Veröffentlichte Daten informieren KI über: {label}.",
     "In Nurevo → Unternehmensinformationen einstellen und auf der entsprechenden Seite veröffentlichen.",
-    "In WooCommerce → Produkt bearbeiten einstellen. Bewertungen stammen aus echten Rezensionen.",
+    "Geben Sie aggregateRating und die Anzahl aus echten veröffentlichten Rezensionen aus.",
     "In Nurevo → Dienstleistungen und auf der Serviceseite einstellen.",
     "In WordPress → Beitrag bearbeiten und im SEO-Plugin veröffentlichen.",
     "Fragen und Antworten in Nurevo → FAQ hinzufügen.",
@@ -159,12 +167,12 @@ export function localizeFields(fields, requested) {
   return fields.map(item => {
     const key = item.field === 'openingHours' || item.field === 'openinghours' ? 'openingHoursSpecification' : item.field;
     const index = KEYS.indexOf(key);
-    const label = labels[index] || item.field;
+    const label = SOFTWARE_LABELS[lang]?.[key] || labels[index] || item.field;
     const hint = item.entityType === 'Product' ? 2 : item.entityType === 'Service' ? 3 : item.entityType === 'Article' ? 4 : item.entityType === 'FAQPage' ? 5 : 1;
     const supported = item.entityType === 'LocalBusiness' ? ['name','address','telephone','openingHours','openingHoursSpecification','url'].includes(item.field)
       : item.entityType === 'Service' ? ['name','provider','serviceType','offers.price'].includes(item.field)
       : !['sameAs','brand'].includes(item.field);
-    return {...item, label, description: MEANINGS[lang].split('|')[index] || text[0].replace('{label}',label), howTo: supported ? text[hint] : UNSUPPORTED[lang]};
+    return {...item, label, description: MEANINGS[lang].split('|')[index] || text[0].replace('{label}',label), howTo: fieldHowTo(item.entityType, key, lang, label, supported ? text[hint] : UNSUPPORTED[lang])};
   });
 }
 export function fieldsSummary(fields, requested) {
@@ -182,3 +190,65 @@ const UNSUPPORTED = {
   fr: 'Nurevo ne dispose pas de champ dédié. Publiez les informations réelles dans les réglages de données structurées d’une extension SEO compatible.',
   de: 'Nurevo hat kein eigenes Eingabefeld dafür. Veröffentlichen Sie echte Angaben über die strukturierten Daten eines kompatiblen SEO-Plugins.'
 };
+
+const SOFTWARE_LABELS = {
+  ja: {applicationCategory:'アプリケーション分類', operatingSystem:'対応OS・動作環境'},
+  en: {applicationCategory:'Application category', operatingSystem:'Operating system'},
+  zh: {applicationCategory:'应用类别', operatingSystem:'操作系统'},
+  'zh-TW': {applicationCategory:'應用程式分類', operatingSystem:'作業系統'},
+  ko: {applicationCategory:'앱 분류', operatingSystem:'운영 체제'},
+  es: {applicationCategory:'Categoría de aplicación', operatingSystem:'Sistema operativo'},
+  fr: {applicationCategory:'Catégorie d’application', operatingSystem:'Système d’exploitation'},
+  de: {applicationCategory:'Anwendungskategorie', operatingSystem:'Betriebssystem'}
+};
+const FIELD_INSTRUCTIONS = {
+  ja: {
+    name:'公開ページに正式名称を記載し、構造化データのnameにも同じ名称を設定してください。',
+    image:'商品画像・記事のアイキャッチに公開画像のURLを設定してください。',
+    description:'何を提供し、誰のどんな課題を解決するかをページの説明文に書き、descriptionにも設定してください。',
+    brand:'実際のブランド名を商品ブランド設定で指定してください。入力欄がない場合は対応するSEOプラグインでProduct.brandを設定してください。',
+    sku:'WooCommerceの商品編集 → 商品データ → 在庫で商品コード（SKU）を設定してください。',
+    'offers.price':'公開料金に一致する数値をoffers.priceに設定してください。無料プランは0です。',
+    'offers.priceCurrency':'公開料金の通貨をISO 4217コード（JPY、USD等）でoffers.priceCurrencyに設定してください。',
+    'offers.availability':'商品の実際の在庫・販売状態を在庫管理で設定し、offers.availabilityにInStock等のschema.org URLを出力してください。',
+    aggregateRating:'実際の公開レビューだけを集計し、aggregateRatingのratingValueとratingCountまたはreviewCountを出力してください。レビューがない場合は評価を作らないでください。',
+    applicationCategory:'アプリの用途に合う分類（BusinessApplication等）をSoftwareApplication.applicationCategoryに設定してください。',
+    operatingSystem:'対応OS・動作環境（Web、WordPress等）をSoftwareApplication.operatingSystemに設定してください。'
+  },
+  en: {
+    name:'Publish the official name on the page and use the same name in structured data.',
+    image:'Set a public image URL in the product image or article featured image settings.',
+    description:'Describe what you provide, who it serves and the problem it solves on the page; use that text for description.',
+    brand:'Set the actual brand in product brand settings. If unavailable, configure Product.brand in a compatible SEO plugin.',
+    sku:'In WooCommerce → Edit product → Product data → Inventory, set the SKU.',
+    'offers.price':'Set offers.price to a number matching the published price; use 0 for a free plan.',
+    'offers.priceCurrency':'Set offers.priceCurrency to the published price’s ISO 4217 currency code, such as JPY or USD.',
+    'offers.availability':'Set actual stock status in inventory settings and output a schema.org URL such as InStock in offers.availability.',
+    aggregateRating:'Aggregate only real published reviews into aggregateRating.ratingValue and ratingCount or reviewCount. Do not invent ratings when there are no reviews.',
+    applicationCategory:'Set SoftwareApplication.applicationCategory to a category matching the app’s purpose, such as BusinessApplication.',
+    operatingSystem:'Set SoftwareApplication.operatingSystem to the supported OS or runtime, such as Web or WordPress.'
+  }
+};
+const PUBLISH_FIELD = {
+  ja:'公開ページの実際の情報を、対応するSEOプラグインの構造化データ設定で{field}に設定してください。',
+  en:'Set {field} to the actual information on the public page using a compatible SEO plugin’s structured data settings.',
+  zh:'在兼容的SEO插件结构化数据设置中，将公开页面的真实信息设置到{field}。',
+  'zh-TW':'在相容的SEO外掛結構化資料設定中，將公開頁面的真實資訊設定到{field}。',
+  ko:'호환되는 SEO 플러그인의 구조화 데이터 설정에서 공개 페이지의 실제 정보를 {field}에 설정하세요.',
+  es:'Configura {field} con la información real de la página pública en los ajustes de datos estructurados de un plugin SEO compatible.',
+  fr:'Renseignez {field} avec les informations réelles de la page publique dans les réglages de données structurées d’une extension SEO compatible.',
+  de:'Tragen Sie die tatsächlichen Angaben der öffentlichen Seite unter {field} in den Einstellungen für strukturierte Daten eines kompatiblen SEO-Plugins ein.'
+};
+function fieldHowTo(entity, key, lang, label, fallback) {
+  const path = `${entity}.${key}`;
+  const instruction = FIELD_INSTRUCTIONS[lang]?.[key];
+  if (entity === 'SoftwareApplication') {
+    const location = lang === 'ja' ? 'LPのJSON-LDテンプレート、またはSoftwareApplication対応プラグインの構造化データ設定で編集してください。Nurevoには専用入力欄がありません。' : lang === 'en' ? 'Edit the LP JSON-LD template or a plugin that supports SoftwareApplication. Nurevo has no dedicated input for this field.' : UNSUPPORTED[lang];
+    return `${instruction || PUBLISH_FIELD[lang].replace('{field}',path)} ${location}`;
+  }
+  if (instruction) return instruction;
+  if (entity !== 'Product') return `${fallback} ${PUBLISH_FIELD[lang].replace('{field}',path)}`;
+  // Every field gets its own path; review instructions belong only to aggregateRating.
+  if (key === 'aggregateRating') return TEXT[lang][2];
+  return PUBLISH_FIELD[lang].replace('{field}',path) + ' ' + (MEANINGS[lang].split('|')[KEYS.indexOf(key)] || label);
+}

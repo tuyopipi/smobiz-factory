@@ -4,7 +4,7 @@ import { ENTITY_SCHEMA_FIELDS, localizeFields, fieldsSummary, textHint, fieldLan
 export const AEO_SCORE_WEIGHTS = Object.freeze({ schema: 30, coverage: 25, legibility: 20, llms: 15, consistency: 10 });
 // u1-v2: the schema component became proportional to the properties met,
 // rather than one of three bands. Scores from v1 are not directly comparable.
-export const AEO_SCORE_MODEL_VERSION = "u1-v3";
+export const AEO_SCORE_MODEL_VERSION = "u1-v4";
 const STATUS_FACTOR = Object.freeze({ OK: 1, WARN: 0.5, BAD: 0 });
 export const AEO_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
 export const AEO_RATE_LIMIT = Object.freeze({ limit: 20, windowSeconds: 60 * 60 });
@@ -37,7 +37,7 @@ export const BASELINE_SCORED_PROPS = Object.freeze([
  */
 const USEFUL_SCHEMA_TYPES = new Set([
   // Content and generic entities.
-  "organization", "localbusiness", "product", "service",
+  "organization", "localbusiness", "product", "service", "softwareapplication",
   "article", "newsarticle", "blogposting", "faqpage", "website",
   // Food and drink.
   "restaurant", "cafeorcoffeeshop", "bakery", "barorpub", "fastfoodrestaurant",
@@ -245,7 +245,7 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     ? options.scoredProps.map((key) => String(key).toLowerCase())
     : BASELINE_SCORED_PROPS;
   const publishedProps = publishedSchemaProps(schemas, scoredProps);
-  const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: /woocommerce|"@type"\s*:\s*"(?:OnlineStore|Offer)"/i.test(html) });
+  const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: options.commerceDetected || /(?:class|id)=["'][^"']*woocommerce/i.test(html) });
   const llmsQualityTests = [llms.length >= 120, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours)/i.test(llms)];
   return {
     aiCrawlersAllowed: AI_CRAWLERS.every((bot) => robotsAllows(robots, bot)),
@@ -260,8 +260,8 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     publishedProps,
     coreFieldsFilled: average(coreTests),
     bizSpecificFilled: average(bizTests),
-    factsInText: schemaFields.some(f => ['Product','Service','Article'].includes(f.entityType))
-      ? average(schemas.filter(n => ['product','service','article','blogposting','newsarticle'].includes(String(n['@type']).toLowerCase())).flatMap(n => [String(n.name || n.headline || '').trim(), String(n.description || '').trim()]).map(fact => Boolean(fact) && visible.includes(fact.toLowerCase())))
+    factsInText: schemaFields.some(f => ['Product','Service','Article','SoftwareApplication'].includes(f.entityType))
+      ? average(schemas.filter(n => [n['@type']].flat().some(t => ['product','service','article','blogposting','newsarticle','softwareapplication'].includes(String(t).toLowerCase()))).flatMap(n => [String(n.name || n.headline || '').trim(), String(n.description || '').trim()]).map(fact => Boolean(fact) && visible.includes(fact.toLowerCase())))
       : average(factsTests),
     hasHeadingStructure: /<h1\b/i.test(html) && /<h[2-6]\b/i.test(html),
     hasFaq: types.some((type) => String(type).toLowerCase() === "faqpage") || /(よくある質問|faq)/i.test(visible),
@@ -460,18 +460,20 @@ export function diagnoseSchemaFields(nodes, options = {}) {
   const types = nodes.flatMap(typesOf);
   const families = new Set();
   const hint = String(options.entityType || '').toLowerCase();
-  if (types.includes('product') || options.catalog?.products?.length || options.commerceDetected || /product|store|shop|commerce/.test(hint)) families.add('Product');
+  const software = types.includes('softwareapplication') || ['softwareapplication','saas','software'].includes(hint);
+  if (software) families.add('SoftwareApplication');
+  if (!software && (types.includes('product') || types.includes('onlinestore') || options.catalog?.products?.length || options.commerceDetected || /^(product|.*store|shop|ecommerce)$/.test(hint))) families.add('Product');
   if (types.includes('service') || options.catalog?.services?.length || hint === 'service') families.add('Service');
   if (types.some(t => ['article','blogposting','newsarticle'].includes(t)) || /article|blog/.test(hint)) families.add('Article');
-  const isLocal = t => USEFUL_SCHEMA_TYPES.has(t) && !['product','service','article','blogposting','newsarticle','organization','website','faqpage'].includes(t);
-  if (isLocal(hint) || types.some(isLocal) || (!families.size && !types.some(t => ['organization','website','faqpage'].includes(t)) && !['organization','website','faqpage'].includes(hint))) families.add('LocalBusiness');
+  const isLocal = t => USEFUL_SCHEMA_TYPES.has(t) && !['product','service','article','blogposting','newsarticle','organization','website','faqpage','softwareapplication'].includes(t);
+  if (isLocal(hint) || types.some(isLocal) || (!families.size && !types.some(t => ['organization','website','faqpage','softwareapplication'].includes(t)) && !['organization','website','faqpage'].includes(hint))) families.add('LocalBusiness');
   const rules = options.schemaRules || {};
   const definitions = rules.entityFields || ENTITY_SCHEMA_FIELDS;
   const selected = [...families, 'WebSite', 'FAQPage', 'Organization'];
   const match = (node, family) => {
     const tt = typesOf(node);
     if (family === 'Article') return tt.some(t => ['article','blogposting','newsarticle'].includes(t));
-    if (family === 'LocalBusiness') return tt.some(t => USEFUL_SCHEMA_TYPES.has(t) && !['organization','product','service','article','blogposting','newsarticle','website','faqpage'].includes(t));
+    if (family === 'LocalBusiness') return tt.some(t => USEFUL_SCHEMA_TYPES.has(t) && !['organization','product','service','article','blogposting','newsarticle','website','faqpage','softwareapplication'].includes(t));
     return tt.includes(family.toLowerCase());
   };
   const hasValue = value => value != null && (typeof value === 'string' ? value.trim().length > 0 : Array.isArray(value) ? value.length > 0 && value.every(hasValue) : typeof value === 'object' ? Object.keys(value).some(k => !k.startsWith('@') && hasValue(value[k])) : true);
