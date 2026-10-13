@@ -35,3 +35,16 @@ Apply nurevo-impl/db/0029_member_email_preferences.sql BEFORE deploying this Wor
 - Worker/JS syntax checks and git diff --check.
 
 These checks do not prove real inbox delivery. Live en/ko delivery and inbox inspection require a designated recipient and a test mail environment; no production secrets were read or changed, and no real email was sent during the mock tests.
+
+## Local release verification (2026-10-13)
+
+Live delivery is intentionally skipped. Local checks passed for exact subjects and introductory text/HTML in all eight locales, and mocked provider requests exercise account language, registration locale, quality-ranked Accept-Language, and English fallback. Registration tests, Worker syntax checks, diff checks, and the Wrangler deployment dry run passed.
+
+```text
+en: subject=Sign in to Nurevo
+en: text=Open the following link to sign in to Nurevo.
+ko: subject=Nurevo 로그인 링크
+ko: text=Nurevo에 로그인하려면 아래 링크를 열어 주세요.
+```
+
+The production baseline was commit 3b1a9c8 (Worker version 4489d9f3-397e-4ed1-98e2-3eb54323adc9). The email-preferences table was absent during the read-only prerequisite check; release requires only migration 0029 before deployment. No billing changes or production-secret operations are part of this release.
