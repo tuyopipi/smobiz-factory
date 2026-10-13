@@ -9,6 +9,7 @@ function makeEnv() {
       return {
         bind(...values) {
           return {
+            async run() { return { success: true }; },
             async first() {
               if (sql.includes("INSERT INTO api_rate_limits")) return { count: 1, window_started_at: Date.now() };
               if (sql.includes("SELECT id FROM members")) return null;
@@ -40,7 +41,7 @@ for (const role of ["agency", "referrer", "store"]) {
   assert.equal(body.status, "pending");
   assert.match(body.member_id, /^mem_/u);
   assert.equal(body.role, role);
-  assert.equal(env.inserted.length, 1, `${role} creates one pending member`);
+  assert.equal(env.inserted.length, 2, `${role} creates a pending member and registration locale atomically`);
 }
 
 const form = await readFile(new URL("../public/member-register.html", import.meta.url), "utf8");

@@ -1,3 +1,4 @@
+import { resolveEmailLocale, loadEmailPreferences, magicLinkEmail } from "./email-i18n.mjs";
 import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { handleApi, runSovDailyBatch } from "./api.mjs";
@@ -2832,9 +2833,7 @@ async function handleAuthRequest(request, env) {
       body: JSON.stringify({
         from: env.MAIL_FROM,
         to: [email],
-        subject: "Sign in to Nurevo",
-        html: `<p>Use the link below to sign in to your Nurevo dashboard. It expires in 15 minutes.</p><p><a href="${link}">Sign in to Nurevo</a></p><p>If you did not request this email, you can ignore it.</p>`,
-        text: `Sign in to Nurevo (valid for 15 minutes): ${link}`
+        ...magicLinkEmail(link, resolveEmailLocale(await loadEmailPreferences(env, email), request.headers.get("accept-language")))
       })
     });
     if (!response.ok) {

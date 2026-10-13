@@ -1,3 +1,4 @@
+import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail } from "./email-i18n.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler } from "./ai-crawlers.js";
@@ -915,13 +916,26 @@ export async function handleApi(request, env, ctx) {
     return json({ ok: true, id: approveMatch[1], status: "active" });
   }
 
+  if (path === "/api/me/language" && method === "POST") {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    let body;
+    try { body = await request.json(); } catch { return json({ error: "invalid_json" }, 400); }
+    const language = normalizeEmailLocale(body?.language);
+    if (!language) return json({ error: "invalid_language" }, 400);
+    await env.DB.prepare("INSERT INTO member_email_preferences (email,language) VALUES (?,?) ON CONFLICT(email) DO UPDATE SET language=excluded.language")
+      .bind(member.email.toLowerCase(), language).run();
+    return json({ ok: true, language });
+  }
+
   if (path === "/api/me" && method === "GET") {
     const member = await requireMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
     const row = await env.DB.prepare("SELECT email, role FROM members WHERE id=? AND org_id=?")
       .bind(member.member_id, member.org_id).first();
     if (!row) return json({ error: "unauthorized" }, 401);
-    return attachCsrf(json({ email: row.email, role: row.role, org_id: member.org_id, is_super_admin: !!member.is_super_admin }), request);
+    const preferences = await loadEmailPreferences(env, row.email);
+    return attachCsrf(json({ email: row.email, role: row.role, org_id: member.org_id, is_super_admin: !!member.is_super_admin, language: preferences.language || null }), request);
   }
 
   if (path === "/api/tag/config" && method === "GET") {
@@ -3097,7 +3111,9 @@ async function handleMagicRequest(request, env) {
   const emailLimit = await checkApiRateLimit(env, "auth-email", email, API_RATE_LIMITS.authEmail);
   if (!emailLimit.allowed) return json({ error: emailLimit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, emailLimit.unavailable ? 503 : 429);
 
-  const member = await findOrCreateMember(env, email);
+  const registrationLocale = normalizeEmailLocale(body?.locale || body?.lang || new URL(request.url).searchParams.get("lang")) || headerEmailLocale(request.headers.get("accept-language"));
+  const member = await findOrCreateMember(env, email, registrationLocale);
+  const emailLocale = resolveEmailLocale(await loadEmailPreferences(env, email), request.headers.get("accept-language"));
   const now = Date.now();
   const outstanding = await env.DB.prepare(
     "SELECT COUNT(*) AS count FROM sessions WHERE member_id=? AND kind='magic' AND expires_at>?",
@@ -3111,7 +3127,7 @@ async function handleMagicRequest(request, env) {
   ).bind(tokenHash, member.id, member.orgId, "magic", now + AUTH_MAGIC_TTL_MS).run();
 
   const loginLink = `${new URL(request.url).origin}/api/auth/callback?token=${encodeURIComponent(rawToken)}`;
-  const mailResult = await sendMagicLinkEmail(env, email, loginLink);
+  const mailResult = await sendMagicLinkEmail(env, email, loginLink, emailLocale);
   if (!mailResult.ok) {
     // Do not leave an unusable magic credential behind when the provider rejects
     // the message. A new request may then issue a fresh, single-use token.
@@ -3126,14 +3142,14 @@ async function handleMagicRequest(request, env) {
   return json(response, 200);
 }
 
-async function sendMagicLinkEmail(env, email, loginLink) {
+async function sendMagicLinkEmail(env, email, loginLink, locale) {
   const apiKey = String(env.RESEND_API_KEY || "").trim();
   const from = String(env.MAIL_FROM || "").trim();
   if (!apiKey || !from) return { ok: false, code: "mail_provider_not_configured", status: 503 };
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${apiKey}`, "content-type": "application/json" },
-    body: JSON.stringify({ from, to: [email], subject: "Nurevoへのログインリンク", text: `Nurevoにログインするには、次のリンクを開いてください。\n\n${loginLink}\n\nこのリンクは15分間有効です。`, html: `<p>Nurevoにログインするには、次のボタンを押してください。</p><p><a href="${loginLink}">ログインする</a></p><p>このリンクは15分間有効です。</p>` }),
+    body: JSON.stringify({ from, to: [email], ...magicLinkEmail(loginLink, locale) }),
   });
   if (response.ok) return { ok: true };
   let detail = {};
@@ -3227,6 +3243,7 @@ async function handleMemberRegistration(request, env) {
   const now = Date.now();
   const statements = [env.DB.prepare("INSERT INTO members (id,org_id,email,role,status,created_at) VALUES (?,?,?,?,?,?)").bind(memberId, orgId, email, roleMap[role], "pending", now)];
   if (inviteHash) statements.push(env.DB.prepare("DELETE FROM sessions WHERE token=? AND kind='member_invite'").bind(inviteHash));
+  statements.push(registrationLocaleStatement(env, email, normalizeEmailLocale(body?.locale || body?.lang) || headerEmailLocale(request.headers.get("accept-language"))));
   await env.DB.batch(statements);
   return json({ ok: true, status: "pending", member_id: memberId, role: roleMap[role] }, 201);
 }
@@ -3247,7 +3264,7 @@ async function handleMagicLogout(request, env) {
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
 }
 
-async function findOrCreateMember(env, email) {
+async function findOrCreateMember(env, email, registrationLocale) {
   const existing = await env.DB.prepare("SELECT id,org_id FROM members WHERE lower(email)=?").bind(email).first();
   if (existing) return { id: existing.id, orgId: existing.org_id };
   const orgId = `org_${uid()}`;
@@ -3256,6 +3273,7 @@ async function findOrCreateMember(env, email) {
     await env.DB.batch([
       env.DB.prepare("INSERT INTO orgs (id,name,plan,created_at) VALUES (?,?,?,?)").bind(orgId, email, "pro", Date.now()),
       env.DB.prepare("INSERT INTO members (id,org_id,email,role,status,created_at) VALUES (?,?,?,?,?,?)").bind(memberId, orgId, email, "admin", "active", Date.now()),
+      registrationLocaleStatement(env, email, registrationLocale),
     ]);
     return { id: memberId, orgId };
   } catch (error) {

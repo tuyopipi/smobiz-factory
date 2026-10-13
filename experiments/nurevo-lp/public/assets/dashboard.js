@@ -184,7 +184,7 @@ async function requestMagicLink(event) {
       method: "POST",
       credentials: "include",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email: new FormData(event.currentTarget).get("email") })
+      body: JSON.stringify({ email: new FormData(event.currentTarget).get("email"), locale: dashboardState.lang })
     });
     const payload = await response.json();
     if (!response.ok) throw new Error(payload.error || "request_failed");

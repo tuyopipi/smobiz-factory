@@ -10,6 +10,15 @@
       })
       .then(function (member) {
         window.nrvMember = member;
+        if (member.language) {
+          var savedLanguage = member.language === "zh-tw" ? "tw" : member.language;
+          localStorage.setItem("nrv-dash-lang", savedLanguage);
+          var selector = document.querySelector("#lang");
+          if (selector && selector.value !== savedLanguage) {
+            selector.value = savedLanguage;
+            if (selector.onchange) selector.onchange({ target: selector });
+          }
+        }
         if (top.querySelector(".account")) return;
         var account = document.createElement("span");
         account.className = "account";
@@ -45,7 +54,7 @@
       method: "POST",
       credentials: "include",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email: email ? email.value : "" })
+      body: JSON.stringify({ email: email ? email.value : "", locale: localStorage.getItem("nrv-dash-lang") || document.documentElement.lang })
     })
       .then(function (response) {
         return response.json().catch(function () { return {}; }).then(function (body) {
@@ -56,6 +65,15 @@
       .then(function () { if (message) { message.className = "notice success"; message.textContent = "メールを送りました"; } })
       .catch(function (error) { if (message) { message.className = "notice error"; message.textContent = error.message; } });
   }, true);
+  document.addEventListener("change", function (event) {
+    if (event.target.id !== "lang" || !window.nrvMember) return;
+    var match = document.cookie.match(/(?:^|;\s*)nrv_csrf=([^;]+)/);
+    fetch("/api/me/language", { method: "POST", credentials: "include",
+      headers: { "content-type": "application/json", "x-csrf-token": match ? decodeURIComponent(match[1]) : "" },
+      body: JSON.stringify({ language: event.target.value })
+    }).then(function (response) { if (!response.ok) console.error("Could not save account language", response.status); })
+      .catch(function () { console.error("Could not save account language"); });
+  });
   var observer = new MutationObserver(addAccount);
   observer.observe(document.documentElement, { childList: true, subtree: true });
   addAccount();

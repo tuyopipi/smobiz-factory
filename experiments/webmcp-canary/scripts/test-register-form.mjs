@@ -84,7 +84,7 @@ const settle = () => new Promise((resolve) => setImmediate(resolve));
   assert.equal(requests.length, 1, "further submits while in flight send nothing");
 
   assert.equal(requests[0].url, "/api/members/register");
-  assert.deepEqual(JSON.parse(requests[0].init.body), { email: "a@example.test", role: "store" });
+  assert.deepEqual(JSON.parse(requests[0].init.body), { email: "a@example.test", role: "store", locale: "ja" });
 
   respond(0, 201, { ok: true, status: "pending", member_id: "mem_1", role: "store" });
   await first;

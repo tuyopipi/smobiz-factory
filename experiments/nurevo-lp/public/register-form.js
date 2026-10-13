@@ -192,6 +192,7 @@
       statusEl.textContent = text(lang, "sending");
 
       var payload = options.payload(new root.FormData(form));
+      payload.locale = lang;
       return root.fetch("/api/members/register", {
         method: "POST",
         headers: { "content-type": "application/json" },
