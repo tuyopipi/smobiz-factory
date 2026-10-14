@@ -6,8 +6,8 @@ const js = readFileSync(new URL("../public/dashboard-onboarding.js", import.meta
 const wrangler = readFileSync(new URL("../wrangler.jsonc", import.meta.url), "utf8");
 assert.match(html, /クライアントのサイトを追加/, "agency-first CTA is the only visible entry wording");
 assert.match(html, /if\(!sites\.length\).*emptyStart/, "zero sites render the guided empty state");
-assert.match(html, /canBill\?api\('\/api\/billing\/summary'\):Promise\.resolve\(null\)/, "non-partners do not request billing");
-assert.match(js, /\["referrer", "agency"\]/, "only partner roles see billing navigation");
+assert.match(html, /api\('\/api\/partner'\)/, 'all accounts load their partner summary');
+assert.match(js, /partnerNav\.hidden = false/, 'every account can issue a referral code');
 assert.match(js, /接続待ち…/, "wizard explains the live state");
 assert.match(js, /site && site\.bound/, "wizard polls until the server reports pairing");
 assert.match(js, /\/aeo-score/, "first diagnosis starts as soon as pairing is observed");

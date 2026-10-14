@@ -11,6 +11,7 @@
 // wherever it is readable (ja/zh/zh-TW). The plan is billed in JPY in every
 // market, so the price figures are not localised.
 export default {
+ "nav.signup": {"ja":"新規登録","en":"Sign up","zh":"注册","zh-TW":"註冊","ko":"가입","es":"Registrarse","fr":"S’inscrire","de":"Registrieren"},
  "nav.cases": {"ja": "活用シーン", "en": "Use cases", "zh": "应用场景", "zh-TW": "應用場景", "ko": "활용 사례", "es": "Casos de uso", "fr": "Cas d'usage", "de": "Anwendungen"},
  "nav.how": {"ja": "仕組み", "en": "How it works", "zh": "工作原理", "zh-TW": "運作方式", "ko": "작동 방식", "es": "Cómo funciona", "fr": "Fonctionnement", "de": "So funktioniert's"},
  "nav.pricing": {"ja": "料金", "en": "Pricing", "zh": "价格", "zh-TW": "價格", "ko": "요금", "es": "Precios", "fr": "Tarifs", "de": "Preise"},

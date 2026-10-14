@@ -44,3 +44,22 @@ export function magicLinkEmail(link, locale) {
   return { subject, text: `${intro}\n\n${link}\n\n${expiry}\n${ignore}`,
     html: `<html lang="${lang}"><body><p>${escapeHtml(intro)}</p><p><a href="${escapeHtml(link)}">${escapeHtml(action)}</a></p><p>${escapeHtml(expiry)}</p><p>${escapeHtml(ignore)}</p></body></html>` };
 }
+
+// Confirmation uses the same 15-minute, single-use credential as sign-in.
+const SIGNUP_COPY = {
+  ja: ["Nurevo 新規登録の確認", "メールアドレスを確認してNurevoにログインするには、次のリンクを開いてください。"],
+  en: ["Confirm your Nurevo registration", "Open the following link to confirm your email address and sign in to Nurevo."],
+  zh: ["确认 Nurevo 注册", "请打开以下链接确认您的邮箱地址并登录 Nurevo。"],
+  "zh-tw": ["確認 Nurevo 註冊", "請開啟以下連結確認您的電子郵件地址並登入 Nurevo。"],
+  ko: ["Nurevo 가입 확인", "아래 링크를 열어 이메일 주소를 확인하고 Nurevo에 로그인해 주세요."],
+  es: ["Confirma tu registro en Nurevo", "Abre el siguiente enlace para confirmar tu correo e iniciar sesión en Nurevo."],
+  fr: ["Confirmez votre inscription à Nurevo", "Ouvrez le lien suivant pour confirmer votre adresse e-mail et vous connecter à Nurevo."],
+  de: ["Nurevo-Registrierung bestätigen", "Öffnen Sie den folgenden Link, um Ihre E-Mail-Adresse zu bestätigen und sich bei Nurevo anzumelden."]
+};
+export function signupLinkEmail(link, locale) {
+  const lang = normalizeEmailLocale(locale) || "en";
+  const [subject, intro] = SIGNUP_COPY[lang];
+  const [, , action, expiry, ignore] = COPY[lang];
+  return { subject, text: `${intro}\n\n${link}\n\n${expiry}\n${ignore}`,
+    html: `<html lang="${lang}"><body><p>${escapeHtml(intro)}</p><p><a href="${escapeHtml(link)}">${escapeHtml(action)}</a></p><p>${escapeHtml(expiry)}</p><p>${escapeHtml(ignore)}</p></body></html>` };
+}

@@ -34,12 +34,7 @@
         });
         account.append(email, logout);
         top.append(account);
-        // Role-based presentation is only a UX layer; every API also enforces
-        // the same scope server-side. Stores/referrers never see wholesale or
-        // billing navigation, while admins/super-admins retain the member tab.
-        if (member.role === "store") {
-          document.querySelectorAll('[data-view="billing"]').forEach(function (node) { node.hidden = true; });
-        }
+
       })
       .catch(function () {});
   }

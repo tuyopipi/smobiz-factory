@@ -286,7 +286,8 @@ function landingPage(lang) {
   const title = t("meta.title", lang);
   const description = t("meta.desc", lang);
 
-  let body = localize(TEMPLATE, lang).replaceAll("{{home}}", meta.path);
+  let body = localize(TEMPLATE, lang).replaceAll("{{home}}", meta.path)
+    .replace('href="/signup.html"', `href="/signup.html?lang=${encodeURIComponent(lang)}"`);
   // Guides are published in Japanese and English; other LPs use English.
   const guideLang = lang === "ja" ? "ja" : "en";
   const guideHubPath = guideLang === "ja" ? "/ja/guide/" : "/guide/";

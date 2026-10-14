@@ -3,13 +3,9 @@
   "use strict";
   var pollTimer = null;
   var activeModal = null;
-  function allowedBilling() { return !!(me && ["referrer", "agency"].includes(me.role)); }
   function syncRoleNavigation() {
-    var billingNav = document.querySelector('.nav[data-view="billing"]');
-    if (billingNav) {
-      billingNav.hidden = !allowedBilling();
-      billingNav.style.display = allowedBilling() ? "" : "none";
-    }
+    var partnerNav = document.querySelector('.nav[data-view="partner"]');
+    if (partnerNav) { partnerNav.hidden = false; partnerNav.style.display = ""; }
   }
   function close() { if (pollTimer) clearTimeout(pollTimer); pollTimer = null; if (activeModal) activeModal.remove(); activeModal = null; }
   function modal(html) {

@@ -1,4 +1,5 @@
-import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail } from "./email-i18n.mjs";
+import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
+import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler } from "./ai-crawlers.js";
@@ -743,6 +744,21 @@ export async function handleApi(request, env, ctx) {
       }
     }
     return new Response(null, { status: 204 });
+  }
+
+  if (["/api/auth/signup", "/api/auth/magic-link"].includes(path) && method === "POST") {
+    return handleMagicRequest(request, env, { accountAuth: true, signup: path.endsWith("signup") });
+  }
+  if (path === "/api/auth/verify" && method === "GET") return handleMagicCallback(request, env, true);
+  if (path === "/api/partner" && method === "GET") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    return json(await partnerSummary(env, await ensureAccount(env, member.member_id)));
+  }
+  if (["/api/partner/code", "/api/partner/code/regenerate"].includes(path) && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    return json({ referral_code: await issueReferralCode(env, await ensureAccount(env, member.member_id), path.endsWith("regenerate")) });
   }
 
   if (path === "/api/auth/request" && method === "POST") {
@@ -3100,19 +3116,20 @@ async function loadOwnedMember(env, actor, memberId) {
   return env.DB.prepare("SELECT id,email,org_id,role,status,created_at FROM members WHERE id=? AND org_id=?").bind(memberId, actor.org_id).first();
 }
 
-async function handleMagicRequest(request, env) {
+async function handleMagicRequest(request, env, { accountAuth = false, signup = false } = {}) {
   const ipLimit = await checkApiRateLimit(env, "auth-ip", requestClientIp(request), API_RATE_LIMITS.authIp);
   if (!ipLimit.allowed) return json({ error: ipLimit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, ipLimit.unavailable ? 503 : 429);
   let body;
   try { body = await request.json(); } catch { return json({ error: "invalid_json" }, 400); }
   const email = String(body?.email || "").trim().toLowerCase();
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: "invalid_email" }, 400);
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: "invalid_email" }, 400);
 
   const emailLimit = await checkApiRateLimit(env, "auth-email", email, API_RATE_LIMITS.authEmail);
   if (!emailLimit.allowed) return json({ error: emailLimit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, emailLimit.unavailable ? 503 : 429);
 
   const registrationLocale = normalizeEmailLocale(body?.locale || body?.lang || new URL(request.url).searchParams.get("lang")) || headerEmailLocale(request.headers.get("accept-language"));
-  const member = await findOrCreateMember(env, email, registrationLocale);
+  const member = await findOrCreateMember(env, email, registrationLocale, signup ? body?.referral_code : null, accountAuth);
+  const account = accountAuth ? await ensureAccount(env, member.id) : null;
   const emailLocale = resolveEmailLocale(await loadEmailPreferences(env, email), request.headers.get("accept-language"));
   const now = Date.now();
   const outstanding = await env.DB.prepare(
@@ -3122,16 +3139,23 @@ async function handleMagicRequest(request, env) {
 
   const rawToken = randomHex(32);
   const tokenHash = await sha256Hex(rawToken);
-  await env.DB.prepare(
-    "INSERT INTO sessions (token,member_id,org_id,kind,expires_at) VALUES (?,?,?,?,?)",
-  ).bind(tokenHash, member.id, member.orgId, "magic", now + AUTH_MAGIC_TTL_MS).run();
+  if (accountAuth) {
+    const pending = await env.DB.prepare("SELECT COUNT(*) AS count FROM auth_tokens WHERE account_id=? AND used_at IS NULL AND expires_at>?").bind(account.id, now).first();
+    if (Number(pending?.count || 0) >= 5) return json({ error: "rate_limited" }, 429);
+    await env.DB.prepare("INSERT INTO auth_tokens(token,account_id,purpose,email,expires_at) VALUES (?,?,?,?,?)")
+      .bind(tokenHash, account.id, signup ? "signup" : "login", email, now + AUTH_MAGIC_TTL_MS).run();
+  } else {
+    await env.DB.prepare("INSERT INTO sessions (token,member_id,org_id,kind,expires_at) VALUES (?,?,?,?,?)")
+      .bind(tokenHash, member.id, member.orgId, "magic", now + AUTH_MAGIC_TTL_MS).run();
+  }
 
-  const loginLink = `${new URL(request.url).origin}/api/auth/callback?token=${encodeURIComponent(rawToken)}`;
-  const mailResult = await sendMagicLinkEmail(env, email, loginLink, emailLocale);
+  const loginLink = `${new URL(request.url).origin}/api/auth/${accountAuth ? "verify" : "callback"}?token=${encodeURIComponent(rawToken)}`;
+  const mailResult = await sendMagicLinkEmail(env, email, loginLink, emailLocale, signup && !!member.created)
+    .catch(() => ({ ok: false, code: "mail_send_failed", status: 502 }));
   if (!mailResult.ok) {
     // Do not leave an unusable magic credential behind when the provider rejects
     // the message. A new request may then issue a fresh, single-use token.
-    await env.DB.prepare("DELETE FROM sessions WHERE token=? AND kind='magic'").bind(tokenHash).run();
+    await env.DB.prepare(accountAuth ? "DELETE FROM auth_tokens WHERE token=?" : "DELETE FROM sessions WHERE token=? AND kind='magic'").bind(tokenHash).run();
     console.error("nurevo_magic_email_failed", JSON.stringify({ code: mailResult.code }));
     return json({ error: mailResult.code }, mailResult.status || 503);
   }
@@ -3142,14 +3166,14 @@ async function handleMagicRequest(request, env) {
   return json(response, 200);
 }
 
-async function sendMagicLinkEmail(env, email, loginLink, locale) {
+async function sendMagicLinkEmail(env, email, loginLink, locale, signup = false) {
   const apiKey = String(env.RESEND_API_KEY || "").trim();
   const from = String(env.MAIL_FROM || "").trim();
   if (!apiKey || !from) return { ok: false, code: "mail_provider_not_configured", status: 503 };
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { authorization: `Bearer ${apiKey}`, "content-type": "application/json" },
-    body: JSON.stringify({ from, to: [email], ...magicLinkEmail(loginLink, locale) }),
+    body: JSON.stringify({ from, to: [email], ...(signup ? signupLinkEmail(loginLink, locale) : magicLinkEmail(loginLink, locale)) }),
   });
   if (response.ok) return { ok: true };
   let detail = {};
@@ -3157,18 +3181,18 @@ async function sendMagicLinkEmail(env, email, loginLink, locale) {
   return { ok: false, code: detail?.name || "mail_send_failed", status: 502 };
 }
 
-async function handleMagicCallback(request, env) {
+async function handleMagicCallback(request, env, accountAuth = false) {
   const rawToken = new URL(request.url).searchParams.get("token") || "";
   if (!/^[a-f0-9]{64}$/i.test(rawToken)) return authErrorRedirect(request);
   const tokenHash = await sha256Hex(rawToken);
   const now = Date.now();
-  const magic = await env.DB.prepare(
-    "SELECT se.member_id,se.org_id,m.status FROM sessions se JOIN members m ON m.id=se.member_id AND m.org_id=se.org_id WHERE se.token=? AND se.kind='magic' AND se.expires_at>?",
-  ).bind(tokenHash, now).first();
+  const magic = accountAuth
+    ? await env.DB.prepare("SELECT m.id AS member_id,m.org_id,m.status FROM auth_tokens t JOIN accounts a ON a.id=t.account_id JOIN members m ON m.id=a.member_id WHERE t.token=? AND t.purpose IN ('signup','login') AND t.used_at IS NULL AND t.expires_at>? AND lower(t.email)=lower(m.email)").bind(tokenHash, now).first()
+    : await env.DB.prepare("SELECT se.member_id,se.org_id,m.status FROM sessions se JOIN members m ON m.id=se.member_id AND m.org_id=se.org_id WHERE se.token=? AND se.kind='magic' AND se.expires_at>?").bind(tokenHash, now).first();
   if (!magic || magic.status !== "active") return authErrorRedirect(request);
-  const consumed = await env.DB.prepare(
-    "DELETE FROM sessions WHERE token=? AND kind='magic' AND expires_at>?",
-  ).bind(tokenHash, now).run();
+  const consumed = accountAuth
+    ? await env.DB.prepare("UPDATE auth_tokens SET used_at=? WHERE token=? AND used_at IS NULL AND expires_at>?").bind(now, tokenHash, now).run()
+    : await env.DB.prepare("DELETE FROM sessions WHERE token=? AND kind='magic' AND expires_at>?").bind(tokenHash, now).run();
   if (Number(consumed?.meta?.changes || 0) !== 1) return authErrorRedirect(request);
 
   const rawSession = randomHex(32);
@@ -3264,9 +3288,13 @@ async function handleMagicLogout(request, env) {
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
 }
 
-async function findOrCreateMember(env, email, registrationLocale) {
+async function findOrCreateMember(env, email, registrationLocale, referralCode = null, accountAuth = false) {
   const existing = await env.DB.prepare("SELECT id,org_id FROM members WHERE lower(email)=?").bind(email).first();
   if (existing) return { id: existing.id, orgId: existing.org_id };
+  const normalizedCode = String(referralCode || "").trim().toUpperCase();
+  const parent = normalizedCode ? await env.DB.prepare("SELECT id,email FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
+  const eligibleParent = parent && String(parent.email).toLowerCase() !== email ? parent : null;
+  if (normalizedCode && !eligibleParent) console.warn("nurevo_referral_ignored", { reason: parent ? "self_referral" : "invalid_code" });
   const orgId = `org_${uid()}`;
   const memberId = `mem_${uid()}`;
   try {
@@ -3274,8 +3302,10 @@ async function findOrCreateMember(env, email, registrationLocale) {
       env.DB.prepare("INSERT INTO orgs (id,name,plan,created_at) VALUES (?,?,?,?)").bind(orgId, email, "pro", Date.now()),
       env.DB.prepare("INSERT INTO members (id,org_id,email,role,status,created_at) VALUES (?,?,?,?,?,?)").bind(memberId, orgId, email, "admin", "active", Date.now()),
       registrationLocaleStatement(env, email, registrationLocale),
+      ...(accountAuth ? [env.DB.prepare("INSERT INTO accounts(member_id,email,created_at,referred_by_account_id,referred_by_code) VALUES (?,?,?,?,?)")
+        .bind(memberId, email, Date.now(), eligibleParent?.id || null, eligibleParent ? normalizedCode : null)] : []),
     ]);
-    return { id: memberId, orgId };
+    return { id: memberId, orgId, created: true };
   } catch (error) {
     const raced = await env.DB.prepare("SELECT id,org_id FROM members WHERE lower(email)=?").bind(email).first();
     if (!raced) throw error;
@@ -3361,7 +3391,7 @@ function csrfRequired(path) {
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;
-  return path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
+  return !["/api/auth/signup", "/api/auth/magic-link"].includes(path) && path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 
 const AI_REFERRER_IDS = Object.freeze([

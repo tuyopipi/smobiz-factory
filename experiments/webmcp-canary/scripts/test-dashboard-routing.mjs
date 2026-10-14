@@ -132,7 +132,7 @@ const SITE = (over = {}) => ({
   assert.equal(app.view(), "summary", "no hash means the summary");
 }
 
-for (const view of ["summary", "sites", "billing"]) {
+for (const view of ["summary", "sites", "partner"]) {
   const app = boot({ hash: `#${view}`, sites: [SITE()] });
   assert.equal(app.view(), view, `#${view} opens that view`);
 }
@@ -337,7 +337,7 @@ for (const bad of [
     fetchImpl: async () => ({ ok: true, json: async () => ({ sites: [] }) }),
   });
   await app.load();
-  assert.equal(app.view(), "sites", "a non-partner cannot force the billing view from the address bar");
+  assert.equal(app.view(), "partner", "legacy billing links open partner for every account");
   assert.equal(app.store["nrv-dash-pending-site"], undefined, "which is consumed either way");
 }
 
@@ -449,7 +449,7 @@ console.log("dashboard routing tests passed");
 
 {
   // Every other view asks for a session rather than rendering an empty shell.
-  for (const view of ["summary", "sites", "billing"]) {
+  for (const view of ["summary", "sites", "partner"]) {
     const app = boot({ hash: `#${view}`, sites: [] });
     app.setAuthed(false);
     app.render();
