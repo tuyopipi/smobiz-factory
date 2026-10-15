@@ -153,20 +153,12 @@ const render = (site, opts) => makeSandbox(opts).__detail(SITE(site));
 }
 
 {
-  // Granting is an admin act. A viewer seeing a form they cannot submit is
-  // worse than not seeing it; the server checks this again regardless.
-  const asAdmin = render({}, { admin: true });
-  assert.ok(asAdmin.includes("compform"), "an admin gets the grant form");
-  assert.ok(asAdmin.includes("無料で付与するプラン"));
-  assert.ok(asAdmin.includes("組織全体に付与すると"), "and is told what an org grant covers");
-
-  const asViewer = render({});
-  assert.ok(!asViewer.includes("compform"), "a non-admin does not");
-}
-
-{
-  const html = render({ manual_plan: "standard", manual_plan_note: "n" }, { admin: true });
-  assert.ok(html.includes('value="standard" selected'), "the form opens on the grant already in force");
+  for (const admin of [true, false]) {
+    const html = render({manual_plan: 'standard', manual_plan_note: 'existing grant'}, {admin});
+    assert.ok(!html.includes('compform'));
+    assert.ok(!html.includes('無料で付与するプラン'));
+    assert.ok(html.includes('existing grant'), 'existing grant stays readable');
+  }
 }
 
 /* ---------------- the pairing code ---------------- */

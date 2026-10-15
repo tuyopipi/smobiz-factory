@@ -1,14 +1,4 @@
-/**
- * Giving a tier away on purpose.
- *
- * Billing owns sites.plan. A comp must therefore never touch it - otherwise a
- * free agreement and a paid subscription become indistinguishable a month
- * later, which is exactly the confusion 0021 was written to end.
- *
- * The case that matters is the agency: one grant on the org covering every
- * site under it, including the ones added tomorrow. Stamping each site works
- * until someone forgets one and a customer who was promised free gets billed.
- */
+// Retired grant endpoints must preserve existing data and entitlement.
 import assert from "node:assert/strict";
 import { handleApi } from "../worker/api.mjs";
 import { resolveSitePlan } from "../worker/billing-plan.mjs";
@@ -83,150 +73,22 @@ const comp = async (env, target, body) => {
   return { status: response.status, body: await response.json() };
 };
 
-/* ---------------- a site comped on its own ---------------- */
-
-{
-  const env = makeEnv();
-  const { status, body } = await comp(env, "/api/sites/site1", { plan: "standard", note: "free under the agency agreement" });
-  assert.equal(status, 200);
-  assert.equal(body.manual_plan, "standard");
-  assert.equal(body.plan, "standard", "and the site is entitled to it");
-
-  const stored = env.db.sites[0];
-  assert.equal(stored.manual_plan, "standard");
-  assert.equal(stored.manual_plan_note, "free under the agency agreement", "the reason is kept");
-  assert.ok(stored.manual_plan_at, "with when");
-  assert.equal(stored.manual_plan_by, "m1", "and who");
-  // The whole point: this is free, so the billed column is untouched.
-  assert.equal(stored.plan, "free", "billing's own column is never written by a comp");
+// Neither creating nor revoking a grant may change existing data.
+for (const target of ['/api/sites/site1', '/api/orgs/org1']) {
+  for (const plan of ['standard', 'pro', null]) {
+    const env = makeEnv({superAdmin: true});
+    env.db.sites[0].manual_plan = 'standard';
+    env.db.orgs[0].manual_plan = 'pro';
+    const before = structuredClone(env.db);
+    const { status, body } = await comp(env, target, {plan, note: 'retired'});
+    assert.equal(status, 410);
+    assert.equal(body.error, 'complimentary_grants_disabled');
+    assert.deepEqual(env.db, before, 'retired endpoints never write data');
+    assert.equal(resolveSitePlan(env.db.sites[0], env.db.orgs[0]), 'pro', 'existing grants still entitle');
+  }
 }
-
-{
-  // Revoking is the way back to being billed normally.
-  const env = makeEnv();
-  await comp(env, "/api/sites/site1", { plan: "pro", note: "launch partner" });
-  const { status, body } = await comp(env, "/api/sites/site1", { plan: null });
-  assert.equal(status, 200);
-  assert.equal(body.manual_plan, null, "the grant is gone");
-  assert.equal(env.db.sites[0].manual_plan_note, null, "and so is its note");
-  assert.equal(body.plan, "free", "leaving the site on what it pays for");
+for (const role of ['operator', 'viewer']) {
+  const {status} = await comp(makeEnv({role}), '/api/sites/site1', {plan: 'standard', note: 'n'});
+  assert.equal(status, 403);
 }
-
-/* ---------------- an agency, comped once ---------------- */
-
-{
-  const env = makeEnv();
-  const { status, body } = await comp(env, "/api/orgs/org1", { plan: "pro", note: "wholesale partner, invoiced separately" });
-  assert.equal(status, 200);
-  assert.equal(body.manual_plan, "pro");
-  assert.equal(body.sites_covered, 1, "it says what it reaches");
-  assert.equal(env.db.orgs[0].manual_plan, "pro");
-
-  // Every site under it, including ones with no grant of their own.
-  assert.equal(resolveSitePlan(env.db.sites[0], env.db.orgs[0]), "pro", "the org grant reaches the site");
-  assert.equal(env.db.sites[0].manual_plan, null, "without stamping each site");
-}
-
-{
-  // A site added after the grant is covered too - the reason this lives on the
-  // org rather than being copied onto each row.
-  const env = makeEnv();
-  await comp(env, "/api/orgs/org1", { plan: "standard", note: "partner" });
-  const later = { id: "site9", org_id: "org1", plan: "free", manual_plan: null };
-  assert.equal(resolveSitePlan(later, env.db.orgs[0]), "standard", "a site added later is covered");
-}
-
-/* ---------------- what a grant may not do ---------------- */
-
-{
-  const env = makeEnv();
-  const { status, body } = await comp(env, "/api/sites/site1", { plan: "standard" });
-  assert.equal(status, 400, "a grant with no reason is refused");
-  assert.equal(body.error, "note_required");
-  assert.equal(env.db.sites[0].manual_plan, null, "and nothing is stored");
-}
-
-{
-  const env = makeEnv();
-  const { status, body } = await comp(env, "/api/sites/site1", { note: "no plan key at all" });
-  assert.equal(status, 400, "an absent plan is not a revocation");
-  assert.equal(body.error, "plan_required");
-}
-
-{
-  const env = makeEnv();
-  const { status } = await comp(env, "/api/sites/site1", { plan: "enterprise", note: "n" });
-  assert.equal(status, 400, "a tier that does not exist cannot be granted");
-}
-
-{
-  const env = makeEnv();
-  const { status } = await comp(env, "/api/sites/site1", { plan: "free", note: "n" });
-  assert.equal(status, 400, "granting free is not a grant");
-}
-
-{
-  // Pro cannot be bought, but it can be given - that is how a beta participant
-  // gets access while it is not on sale. "Not for sale" must never become
-  // "cannot be provided": the grantable list is deliberately wider than the
-  // purchasable one, and tying them together removed beta access entirely.
-  const env = makeEnv();
-  const { status, body } = await comp(env, "/api/sites/site1", { plan: "pro", note: "beta participant" });
-  assert.equal(status, 200, "Pro can still be granted");
-  assert.equal(body.manual_plan, "pro");
-  assert.equal(body.plan, "pro", "and the site is entitled to it");
-}
-
-/* ---------------- who may grant ---------------- */
-
-{
-  const { status } = await comp(makeEnv({ role: "operator" }), "/api/sites/site1", { plan: "pro", note: "n" });
-  assert.equal(status, 403, "an operator cannot comp a tier");
-}
-
-{
-  const { status } = await comp(makeEnv({ role: "viewer" }), "/api/orgs/org1", { plan: "pro", note: "n" });
-  assert.equal(status, 403, "nor comp an org");
-}
-
-{
-  const response = await handleApi(
-    new Request("https://w.test/api/sites/site1/comp", {
-      method: "PUT",
-      headers: { "content-type": "application/json", "x-csrf-token": CSRF, cookie: `nrv_csrf=${CSRF}`, origin: "https://nurevo.jp" },
-      body: JSON.stringify({ plan: "pro", note: "n" }),
-    }),
-    makeEnv(), ctx,
-  );
-  assert.equal(response.status, 403, "and no session cannot either");
-}
-
-{
-  // Reaching across orgs would let one agency comp its way into another's
-  // billing.
-  const env = makeEnv();
-  const { status } = await comp(env, "/api/orgs/org2", { plan: "pro", note: "not mine" });
-  assert.equal(status, 403, "an admin may not comp someone else's org");
-  assert.equal(env.db.orgs[1].manual_plan, null);
-}
-
-{
-  const env = makeEnv({ superAdmin: true });
-  const { status } = await comp(env, "/api/orgs/org2", { plan: "pro", note: "support grant" });
-  assert.equal(status, 200, "a super admin may");
-  assert.equal(env.db.orgs[1].manual_plan, "pro");
-}
-
-{
-  const env = makeEnv();
-  const { status } = await comp(env, "/api/orgs/nosuch", { plan: "pro", note: "n" });
-  assert.equal(status, 403, "an org that is not yours is refused before it is looked up");
-}
-
-{
-  const env = makeEnv({ superAdmin: true });
-  const { status } = await comp(env, "/api/orgs/nosuch", { plan: "pro", note: "n" });
-  assert.equal(status, 404, "and one that does not exist is a 404 to someone who could have comped it");
-}
-
-console.log("comp grant tests passed");
+console.log('retired comp endpoint and preserved entitlement tests passed');

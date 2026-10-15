@@ -207,6 +207,9 @@ for (const bad of ["free", "max", "enterprise", "", null, 1, { plan: "pro" }]) {
   assert.equal(status, 200, "a payment link can be created");
   assert.ok(body.url, "and carries a URL");
   assert.equal(env.calls[0].url.includes("/v1/payment_links"), true);
+  assert.equal(env.calls[0].form.allow_promotion_codes, "true");
+  assert.equal(env.calls[0].form['metadata[siteId]'], SITE_ID);
+  assert.equal(env.calls[0].form['subscription_data[metadata][siteId]'], SITE_ID);
   assert.equal(env.calls[0].form["line_items[0][price]"], "price_std", "priced as Standard");
 }
 

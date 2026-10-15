@@ -111,15 +111,6 @@ function normalizePairingCode(raw) {
  */
 const CHECKOUTABLE_PLANS = Object.freeze(['standard']);
 const COMING_SOON_PLANS = Object.freeze(['pro']);
-/*
- * Plans that can be given away.
- *
- * Not the same list as the one above, and deliberately wider. Pro cannot be
- * bought, but granting it is how a beta participant or an agency gets access
- * while it is not on sale - so "not for sale" must not become "cannot be
- * provided". Tying the two together silently removed beta access.
- */
-const GRANTABLE_PLANS = Object.freeze(['standard', 'pro']);
 const SUPER_ADMIN_EMAILS_ENV = "SUPER_ADMIN_EMAILS";
 /*
  * What has to be filled in before a profile counts as complete.
@@ -1617,75 +1608,12 @@ export async function handleApi(request, env, ctx) {
     });
   }
 
-  /*
-   * Comp a tier: give Standard or Pro away, deliberately, at no charge.
-   *
-   * Two levels, because the decision is made at two levels. A single shop gets
-   * comped on its own row; an agency and everything under it gets comped once
-   * on the org, which is the case that matters - stamping each site works until
-   * the agency adds its hundredth and someone forgets one, and that site
-   * quietly starts being billed.
-   *
-   * This never writes sites.plan. Billing owns that column, and a comp that
-   * edited it would be indistinguishable from a subscription a month later.
-   * resolveSitePlan takes the strongest of billed, site grant and org grant,
-   * so a comp raises what a site may use and nothing else.
-   *
-   * Admin only, and the note is required: a grant with no stated reason is
-   * indistinguishable from a billing bug once the person who made it has left.
-   */
-  const siteCompMatch = path.match(/^\/api\/sites\/([^/]+)\/comp$/i);
-  if (siteCompMatch && method === "PUT") {
+  // Complimentary grants are retired. Keep existing grants readable, but never
+  // create, change or revoke them through the former management endpoints.
+  if (/^\/api\/(?:sites|orgs)\/[^/]+\/comp$/i.test(path) && method === "PUT") {
     const member = await requireAdmin(request, env);
     if (!member) return json({ error: "forbidden" }, 403);
-    const siteId = decodeURIComponent(siteCompMatch[1]);
-    const site = await loadOwnedSite(env, member, siteId);
-    if (!site) {
-      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
-      return json({ error: exists ? "forbidden" : "not_found" }, exists ? 403 : 404);
-    }
-    const grant = readCompGrant(await safeJson(request));
-    if (grant.error) return json({ error: grant.error }, 400);
-    await env.DB.prepare(
-      "UPDATE sites SET manual_plan=?, manual_plan_note=?, manual_plan_at=?, manual_plan_by=? WHERE id=?",
-    ).bind(grant.plan, grant.note, grant.plan ? Date.now() : null, grant.plan ? member.member_id : null, site.id).run();
-    const after = await env.DB.prepare(
-      "SELECT s.plan, s.manual_plan, s.manual_plan_note, o.manual_plan AS org_manual_plan FROM sites s LEFT JOIN orgs o ON o.id=s.org_id WHERE s.id=? LIMIT 1",
-    ).bind(site.id).first();
-    return json({
-      ok: true,
-      site_id: site.id,
-      manual_plan: after?.manual_plan || null,
-      manual_plan_note: after?.manual_plan_note || null,
-      plan: resolveSitePlan(after || {}, { manual_plan: after?.org_manual_plan }),
-    });
-  }
-
-  const orgCompMatch = path.match(/^\/api\/orgs\/([^/]+)\/comp$/i);
-  if (orgCompMatch && method === "PUT") {
-    const member = await requireAdmin(request, env);
-    if (!member) return json({ error: "forbidden" }, 403);
-    const orgId = decodeURIComponent(orgCompMatch[1]);
-    // An admin comps their own org. Reaching across orgs is a super-admin act,
-    // or an agency could comp its way into someone else's billing.
-    if (orgId !== member.org_id && !member.is_super_admin) return json({ error: "forbidden" }, 403);
-    const org = await env.DB.prepare("SELECT id FROM orgs WHERE id=? LIMIT 1").bind(orgId).first();
-    if (!org) return json({ error: "not_found" }, 404);
-    const grant = readCompGrant(await safeJson(request));
-    if (grant.error) return json({ error: grant.error }, 400);
-    await env.DB.prepare(
-      "UPDATE orgs SET manual_plan=?, manual_plan_note=?, manual_plan_at=?, manual_plan_by=? WHERE id=?",
-    ).bind(grant.plan, grant.note, grant.plan ? Date.now() : null, grant.plan ? member.member_id : null, orgId).run();
-    const counted = await env.DB.prepare("SELECT COUNT(*) AS n FROM sites WHERE org_id=?").bind(orgId).first();
-    return json({
-      ok: true,
-      org_id: orgId,
-      manual_plan: grant.plan,
-      manual_plan_note: grant.note,
-      // What the grant actually reaches, so the caller is not left guessing
-      // whether it applied to the agency's whole book.
-      sites_covered: Number(counted?.n || 0),
-    });
+    return json({ error: "complimentary_grants_disabled" }, 410);
   }
 
   // Release a site's claim on its license, freeing the seat.
@@ -1974,6 +1902,7 @@ export async function handleApi(request, env, ctx) {
     const linkPrice = pricesFromEnv(env).standard;
     if (!linkPrice) return json({ error: "price_not_configured", plan: "standard" }, 503);
     const form = new URLSearchParams({
+      allow_promotion_codes: "true",
       "line_items[0][price]": String(linkPrice),
       "line_items[0][quantity]": "1",
       "metadata[siteId]": site.id,
@@ -2303,28 +2232,6 @@ const CATALOG_LISTS = Object.freeze({
 });
 
 const CATALOG_MAX_ROWS = 100;
-
-/**
- * Read a comp grant off a request body.
- *
- * `plan: null` revokes - the one way back to being billed normally - and is
- * why an absent key is rejected rather than treated as a revocation: a
- * malformed body must not silently cancel an agency's agreement.
- *
- * The note is required when granting, because the only thing that makes a
- * free tier auditable a year later is the reason someone wrote down. Revoking
- * needs none: there is nothing left to explain.
- */
-function readCompGrant(body) {
-  if (!body || typeof body !== "object") return { error: "invalid_body" };
-  if (!Object.prototype.hasOwnProperty.call(body, "plan")) return { error: "plan_required" };
-  if (body.plan === null) return { plan: null, note: null };
-  const plan = String(body.plan || "").trim().toLowerCase();
-  if (!GRANTABLE_PLANS.includes(plan)) return { error: "invalid_plan" };
-  const note = catalogText(body.note, 500);
-  if (!note) return { error: "note_required" };
-  return { plan, note };
-}
 
 function catalogText(value, max) {
   return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, max);

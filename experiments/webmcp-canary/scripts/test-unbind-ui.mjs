@@ -258,7 +258,7 @@ console.log("unbind UI tests passed");
   const html = detailHtml(BOUND({ plan: "free", billing: { status: "pending", customer_id: null, subscription_id: null } }));
   assert.ok(html.includes("現在のプラン"), "the plan panel is titled");
   assert.ok(html.includes("FREE"), "and states the current plan");
-  assert.ok(html.includes('data-buy="standard"'), "Standard can be bought");
+  assert.ok(html.includes('id="standard-pay-open"'), "Standard can be bought");
   assert.ok(html.includes("¥3,000"), "at the price it costs");
   assert.equal(html.includes('data-buy="pro"'), false, "Pro has no purchase control anywhere");
   assert.equal(html.includes("¥14,800"), false, "and no price, because it is not for sale");
@@ -274,6 +274,9 @@ console.log("unbind UI tests passed");
   const html = detailHtml(BOUND({ plan: "standard", billing: { status: "active", customer_id: "cus_1", subscription_id: "sub_1" } }));
   assert.ok(html.includes('id="planportal"'), "the portal is offered");
   assert.ok(html.includes("STANDARD"), "and the paid tier is shown");
+  assert.ok(html.includes('Standard 有効'));
+  assert.equal(html.includes('id="standard-pay-open"'), false);
+  assert.equal(html.includes('id="standard-pay-copy"'), false);
   assert.equal(html.includes('data-buy="'), false, "a second checkout is not offered alongside it");
   assert.ok(html.includes("Stripe"), "and the page says where the change happens");
 }
@@ -299,9 +302,9 @@ console.log("unbind UI tests passed");
 {
   // The panel must not sit inside the profile form, or saving the store details
   // would trip a redirect to Stripe.
-  const html = detailHtml(BOUND({ billing: { status: "pending", customer_id: null } }));
+  const html = detailHtml(BOUND({ plan: "free", billing: { status: "pending", customer_id: null } }));
   const formEnd = html.indexOf("</form>", html.indexOf('<form id="form"'));
-  assert.ok(html.indexOf('data-buy="standard"') > formEnd, "the buy buttons are outside the profile form");
+  assert.ok(html.indexOf('id="standard-pay-open"') > formEnd, "the buy buttons are outside the profile form");
 }
 
 {
