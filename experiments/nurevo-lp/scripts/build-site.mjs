@@ -216,7 +216,8 @@ function softwareNode(lang) {
     "@type": "SoftwareApplication",
     "@id": APP_ID,
     name: PRODUCT.name,
-    description: t("meta.desc", lang),
+    // Describe the app with the same text visitors can read in the rendered hero.
+    description: t("hero.lead", lang),
     applicationCategory: PRODUCT.category,
     operatingSystem: PRODUCT.operatingSystem,
     url: ORIGIN + langOf(lang).path,
