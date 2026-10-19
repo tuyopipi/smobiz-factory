@@ -426,3 +426,6 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
   fetched_at TEXT NOT NULL,
   retry_after INTEGER               -- epoch ms; only for status 'error'
 );
+
+-- 0034: provider-reported usage per engine call.
+ALTER TABLE aeo_sov_evidence ADD COLUMN usage_json TEXT;

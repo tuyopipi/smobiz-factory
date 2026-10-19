@@ -267,10 +267,32 @@ class MemoryKv {
   async put(key, value) { this.values.set(key, value); }
 }
 
+
+// /api/aeo/mention answers only a signed-in super admin. A database that
+// knows one session, for an operator whose address is in SUPER_ADMIN_EMAILS.
+const OPERATOR = { cookie: "nrv_session=operator" };
+const operatorDb = (email = "ops@nurevo.test") => ({
+  prepare(sql) {
+    const statement = { bind: () => statement, async first() { return /FROM sessions/.test(sql) ? { member_id: "op", org_id: "o", email, role: "admin", status: "active", expires_at: Date.now() + 3.6e6 } : null; }, async all() { return { results: [] }; }, async run() { return { meta: {} }; } };
+    return statement;
+  },
+});
+const operatorEnv = (extra) => ({ DB: operatorDb(), SUPER_ADMIN_EMAILS: "ops@nurevo.test", ...extra });
+
 {
-  const env = { WEBMCP_KV: new MemoryKv() };
+  // Closed to the public: no session, or a session that is not an operator's,
+  // gets nothing - and above all, triggers no paid engine call.
+  const calls = installFetch();
+  const env = { WEBMCP_KV: new MemoryKv(), PERPLEXITY_API_KEY: "pk", OPENAI_API_KEY: "ok", DB: operatorDb("owner@shop.test"), SUPER_ADMIN_EMAILS: "ops@nurevo.test" };
+  assert.equal((await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", env)).status, 401, "anonymous: refused");
+  assert.equal((await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", env, OPERATOR)).status, 403, "an ordinary member: refused");
+  assert.equal(calls.engine, 0, "no engine call was made for either");
+}
+
+{
+  const env = operatorEnv({ WEBMCP_KV: new MemoryKv() });
   installFetch();
-  const response = await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", env);
+  const response = await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", env, OPERATOR);
   assert.equal(response.status, 200, "the public checker responds without an engine key");
   const body = await response.json();
   assert.equal(body.status, "preparing", "with no key the public checker reports preparing");
@@ -279,9 +301,9 @@ class MemoryKv {
 }
 
 {
-  const env = { WEBMCP_KV: new MemoryKv(), PERPLEXITY_API_KEY: "pk" };
+  const env = operatorEnv({ WEBMCP_KV: new MemoryKv(), PERPLEXITY_API_KEY: "pk" });
   const calls = installFetch();
-  const first = await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", env);
+  const first = await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", env, OPERATOR);
   assert.equal(first.status, 200, "a configured public check succeeds");
   assert.equal(first.headers.get("x-aeo-cache"), "miss", "the first call is a cache miss");
   const body = await first.json();
@@ -294,11 +316,33 @@ class MemoryKv {
   assert.equal("appearance_rate" in body, false, "a single sample is never presented as a rate");
   assert.equal(calls.engine, 1, "exactly one engine call is made");
 
-  const second = await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", env);
+  const second = await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", env, OPERATOR);
   assert.equal(second.headers.get("x-aeo-cache"), "hit", "a repeat call is served from cache");
   assert.equal(calls.engine, 1, "the cached call issues no further engine request");
 
-  const invalid = await get("/api/aeo/mention?url=not-a-url", env);
+  const invalid = await get("/api/aeo/mention?url=not-a-url", env, OPERATOR);
+
+  // A failed call is not cached: the next request tries the engine again.
+  const flaky = operatorEnv({ WEBMCP_KV: new MemoryKv(), PERPLEXITY_API_KEY: "pk" });
+  const engineCalls = { n: 0 };
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    const url = String(input?.url || input);
+    if (url.includes("api.perplexity.ai")) { engineCalls.n += 1; return new Response("<h1>403 Forbidden</h1>", { status: 403 }); }
+    return realFetch(input, init);
+  };
+  const failedFirst = await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", flaky, OPERATOR);
+  const failedBody = await failedFirst.json();
+  assert.equal(failedBody.status, "unavailable");
+  assert.equal(failedBody.error, "perplexity_http_403");
+  assert.match(failedBody.error_detail, /403 Forbidden/, "the operator sees why");
+  assert.equal(failedFirst.headers.get("x-aeo-cache"), "bypass");
+  await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", flaky, OPERATOR);
+  assert.equal(engineCalls.n, 2, "a failure is retried, not served from cache");
+  // Only the per-IP rate counter is written; no answer was cached.
+  const stale = [...flaky.WEBMCP_KV.values.keys()].filter((key) => key.startsWith("aeo-mention:"));
+  assert.equal(stale.length, 0, "nothing was cached for the failures");
+  globalThis.fetch = realFetch;
   assert.equal(invalid.status, 400, "an invalid URL is rejected");
 }
 

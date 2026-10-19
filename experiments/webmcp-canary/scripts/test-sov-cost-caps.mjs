@@ -148,13 +148,19 @@ class Kv {
 }
 installFetch();
 const kv = new Kv();
-const publicEnv = { WEBMCP_KV: kv, PERPLEXITY_API_KEY: "pk" };
-const first = await handleApi(new Request("https://w.test/api/aeo/mention?url=https%3A%2F%2Fcap.example.com"), publicEnv, ctx);
+// Internal only: the operator's session is what lets the call through.
+const opDb = { prepare(sql) { const s = { bind: () => s, async first() { return /FROM sessions/.test(sql) ? { member_id: "op", org_id: "o", email: "ops@nurevo.test", role: "admin", status: "active", expires_at: Date.now() + 3.6e6 } : null; }, async run() { return { meta: {} }; }, async all() { return { results: [] }; } }; return s; } };
+const publicEnv = { WEBMCP_KV: kv, PERPLEXITY_API_KEY: "pk", DB: opDb, SUPER_ADMIN_EMAILS: "ops@nurevo.test" };
+const operatorHeaders = { headers: { cookie: "nrv_session=op" } };
+const anonymous = await handleApi(new Request("https://w.test/api/aeo/mention?url=https%3A%2F%2Fcap.example.com"), publicEnv, ctx);
+assert.equal(anonymous.status, 401, "the checker is closed to the public");
+assert.equal(engineCalls, 0, "an anonymous request costs nothing");
+const first = await handleApi(new Request("https://w.test/api/aeo/mention?url=https%3A%2F%2Fcap.example.com", operatorHeaders), publicEnv, ctx);
 const firstBody = await first.json();
 assert.equal(firstBody.sample_size, 1, "the public checker takes exactly one sample");
 assert.equal(engineCalls, 1, "the public checker issues exactly one engine call");
 assert.equal("appearance_rate" in firstBody, false, "a single public sample is never presented as a rate");
-await handleApi(new Request("https://w.test/api/aeo/mention?url=https%3A%2F%2Fcap.example.com"), publicEnv, ctx);
+await handleApi(new Request("https://w.test/api/aeo/mention?url=https%3A%2F%2Fcap.example.com", operatorHeaders), publicEnv, ctx);
 assert.equal(engineCalls, 1, "a repeat public check is served from cache with no further engine call");
 
 /* --- cap 9: a deliberately shrunken budget stops hard --------------------- */

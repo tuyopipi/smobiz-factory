@@ -341,10 +341,16 @@ export async function handleApi(request, env, ctx) {
     }
   }
 
-  // Public checker, lightweight sample: one question against one engine.
-  // Always cached, and explicitly "preparing" when no engine key is set, so the
-  // public page never burns engine quota per visitor.
+  // One question against one engine, for internal use only.
+  //
+  // This was public: no page has called it since the checker dropped its AI
+  // sample, but anyone could, and each new URL cost one paid engine call with
+  // only a per-IP limit in the way - so a key being present was enough to let
+  // strangers run up the bill. It now answers only a signed-in super admin.
   if (path === "/api/aeo/mention" && method === "GET") {
+    const operator = await requireMember(request, env);
+    if (!operator) return json({ error: "unauthorized" }, 401);
+    if (!operator.is_super_admin) return json({ error: "forbidden" }, 403);
     const raw = url.searchParams.get("url") || "";
     const rate = await aeoPublicRateLimit(request, env);
     if (!rate.allowed) return json({ error: "rate_limited" }, 429, { "retry-after": String(rate.retryAfter) });
@@ -367,17 +373,19 @@ export async function handleApi(request, env, ctx) {
     const engine = engines[0];
     const cacheKey = `aeo-mention:${SOV_MODEL_VERSION}:${engine.id}:${await aeoSha256Hex(target)}`;
     const cached = await env.WEBMCP_KV?.get(cacheKey, "json");
-    if (cached) {
+    // Failures cached before they stopped being cached are ignored, not served.
+    if (cached?.status === "measured") {
       return json(cached, 200, { "cache-control": `public, max-age=${SOV_LIMITS.publicCacheTtlSeconds}`, "x-aeo-cache": "hit" });
     }
 
     let body;
+    let sample = null;
     try {
       const schemas = await fetchSchemaNodes(target);
       const profile = buildBrandProfile({ site: { website_uri: target }, settings: {}, schemas });
       const question = buildQuestionSet(profile, 1)[0];
       const probe = await measureSov(env, profile, { questions: [question], budget: 1 });
-      const sample = probe.samples[0];
+      sample = probe.samples[0];
       body = {
         status: sample?.ok ? "measured" : "unavailable",
         beta: SOV_BETA,
@@ -399,6 +407,12 @@ export async function handleApi(request, env, ctx) {
       throw error;
     }
 
+    // Only an answer is worth keeping. A failed call cached for a week turned
+    // a transient provider error into a week of "unavailable"; it is now
+    // retried on the next request, and the failure is not served from cache.
+    if (body.status !== "measured") {
+      return json({ ...body, error: sample?.error || null, error_detail: sample?.error_detail || null }, 200, { "cache-control": "no-store", "x-aeo-cache": "bypass" });
+    }
     const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(body), { expirationTtl: SOV_LIMITS.publicCacheTtlSeconds });
     if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
     return json(body, 200, { "cache-control": `public, max-age=${SOV_LIMITS.publicCacheTtlSeconds}`, "x-aeo-cache": "miss" });

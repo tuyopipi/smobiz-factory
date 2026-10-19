@@ -56,7 +56,28 @@ const AGGREGATOR_HOSTS = Object.freeze([
 ]);
 
 export class SovError extends Error {
-  constructor(status, code) { super(code); this.name = "SovError"; this.status = status; this.code = code; }
+  constructor(status, code, detail = null) { super(code); this.name = "SovError"; this.status = status; this.code = code; this.detail = detail; }
+}
+
+/**
+ * The start of a provider's error response, safe to store and log.
+ *
+ * A bare "perplexity_http_403" cannot tell an exhausted balance from a bad
+ * model name from an edge block, and the response body can. Only the
+ * provider's own words are kept - tags stripped, anything shaped like an API
+ * key redacted, at most 200 characters - never the request or its headers.
+ */
+export async function providerErrorDetail(response) {
+  let text = "";
+  try { text = await response.text(); } catch { return null; }
+  const clean = text
+    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\b(?:pplx|sk|sk-proj|key)[-_][A-Za-z0-9_-]{8,}\b/g, "[redacted]")
+    .replace(/\bBearer\s+\S+/gi, "Bearer [redacted]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return clean ? clean.slice(0, 200) : null;
 }
 
 /* ------------------------------------------------------------------ *
@@ -433,25 +454,80 @@ function engineEndpoint(override, providerUrl) {
   return loopback ? url.href : providerUrl;
 }
 
+// Perplexity retired Sonar chat completions in favour of its Agent API: the
+// old endpoint now answers 403 "Sonar is now the Agent API". The "fast"
+// preset is the documented replacement for model "sonar" and searches the
+// web by default, which is what a citation measurement needs.
+export const PERPLEXITY_PRESET_DEFAULT = "fast";
+export const perplexityPreset = (env = {}) => String(env.PERPLEXITY_PRESET || PERPLEXITY_PRESET_DEFAULT);
+
+/** Answer text, cited URLs, model and usage from an Agent API response. */
+export function parsePerplexityAgent(data) {
+  const output = Array.isArray(data?.output) ? data.output : [];
+  const answer = output
+    .filter((item) => item?.type === "message")
+    .flatMap((item) => (Array.isArray(item.content) ? item.content : []))
+    .map((part) => (typeof part?.text === "string" ? part.text : ""))
+    .join("\n")
+    .trim();
+  const citations = output
+    .filter((item) => item?.type === "search_results")
+    .flatMap((item) => (Array.isArray(item.results) ? item.results : []))
+    .map((result) => result?.url)
+    .filter((url) => typeof url === "string" && url);
+  return { answer, citations: [...new Set(citations)], model: typeof data?.model === "string" ? data.model : null, status: data?.status || null };
+}
+
 async function probePerplexity(env, question, fetchImpl) {
-  const endpoint = engineEndpoint(env.PERPLEXITY_API_URL, "https://api.perplexity.ai/chat/completions");
+  const endpoint = engineEndpoint(env.PERPLEXITY_API_URL, "https://api.perplexity.ai/v1/agent");
   const response = await withTimeout((signal) => fetchImpl(endpoint, {
     method: "POST",
     signal,
     headers: { authorization: `Bearer ${env.PERPLEXITY_API_KEY}`, "content-type": "application/json" },
     body: JSON.stringify({
-      model: String(env.PERPLEXITY_MODEL || "sonar"),
-      messages: [{ role: "system", content: SYSTEM_PROMPT }, { role: "user", content: question }],
-      max_tokens: 500,
+      preset: perplexityPreset(env),
+      instructions: SYSTEM_PROMPT,
+      input: question,
+      max_output_tokens: 500,
     }),
   }));
-  if (!response.ok) throw new SovError(502, `perplexity_http_${response.status}`);
+  if (!response.ok) {
+    const detail = await providerErrorDetail(response);
+    console.error("sov-engine-error", JSON.stringify({ engine: "perplexity", status: response.status, detail }));
+    throw new SovError(502, `perplexity_http_${response.status}`, detail);
+  }
   const data = await response.json();
+  if (data?.status === "failed" || data?.status === "cancelled") throw new SovError(502, `perplexity_${data.status}`, String(data?.error?.message || "").slice(0, 200) || null);
+  const agent = parsePerplexityAgent(data);
+  // A chat-completions shaped body is still read, so a local double written
+  // for the old API keeps working; production only ever sees the Agent shape.
+  const legacyAnswer = String(data?.choices?.[0]?.message?.content || "");
   return {
-    model: String(data?.model || env.PERPLEXITY_MODEL || "sonar"),
-    answer: String(data?.choices?.[0]?.message?.content || ""),
-    citations: Array.isArray(data?.citations) ? data.citations : Array.isArray(data?.search_results) ? data.search_results : [],
+    model: agent.model || String(data?.model || `preset:${perplexityPreset(env)}`),
+    answer: agent.answer || legacyAnswer,
+    citations: agent.citations.length ? agent.citations
+      : Array.isArray(data?.citations) ? data.citations : Array.isArray(data?.search_results) ? data.search_results : [],
+    usage: engineUsage(data?.usage),
   };
+}
+
+/**
+ * What the provider says a call consumed, kept with the evidence so the real
+ * cost of a measurement can be added up rather than estimated. Only numbers
+ * and short labels are kept - token counts, the search context size and, when
+ * the provider reports it, its own cost breakdown.
+ */
+export function engineUsage(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const out = {};
+  for (const [key, value] of Object.entries(raw)) {
+    if (typeof value === "number" && Number.isFinite(value)) out[key] = value;
+    else if (typeof value === "string" && value.length <= 40) out[key] = value;
+    else if (key === "cost" && value && typeof value === "object") {
+      out.cost = Object.fromEntries(Object.entries(value).filter(([, v]) => typeof v === "number" && Number.isFinite(v)));
+    }
+  }
+  return Object.keys(out).length ? out : null;
 }
 
 async function probeOpenAi(env, question, fetchImpl) {
@@ -466,11 +542,15 @@ async function probeOpenAi(env, question, fetchImpl) {
       max_tokens: 500,
     }),
   }));
-  if (!response.ok) throw new SovError(502, `openai_http_${response.status}`);
+  if (!response.ok) {
+    const detail = await providerErrorDetail(response);
+    console.error("sov-engine-error", JSON.stringify({ engine: "openai", status: response.status, detail }));
+    throw new SovError(502, `openai_http_${response.status}`, detail);
+  }
   const data = await response.json();
   // No citation list is returned here, so only URLs inside the answer text can
   // serve as citation evidence. engineStatus() reports citations_available:false.
-  return { answer: String(data?.choices?.[0]?.message?.content || ""), citations: [] };
+  return { answer: String(data?.choices?.[0]?.message?.content || ""), citations: [], usage: engineUsage(data?.usage) };
 }
 
 export const ENGINE_ADAPTERS = Object.freeze({ perplexity: probePerplexity, openai: probeOpenAi });
@@ -521,13 +601,14 @@ export async function measureSov(env, profile, {
         const probe = await engineAdapters[engine.id](env, question.text, fetchImpl);
         if (!probe.answer.trim()) throw new SovError(502, "empty_answer");
         const analysis = analyzeAnswer({ ...probe, profile });
-        samples.push({ ok: true, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine_model: probe.model || null, engine: engine.id, question: question.text, kind: question.kind, ...analysis });
+        samples.push({ ok: true, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine_model: probe.model || null, usage: probe.usage || null, engine: engine.id, question: question.text, kind: question.kind, ...analysis });
       } catch (error) {
         // A failed probe is recorded but excluded from the rate denominator,
         // so an engine outage lowers confidence instead of the score.
         samples.push({
           ok: false, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine: engine.id, question: question.text, kind: question.kind,
           error: error instanceof SovError ? error.code : "engine_request_failed",
+          error_detail: error instanceof SovError ? error.detail || null : null,
         });
       }
     }
@@ -626,13 +707,14 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
   }
   for (const sample of samples) {
     statements.push(env.DB.prepare(`INSERT INTO aeo_sov_evidence
-      (id,run_id,site_id,measured_at,engine,question,sample_index,ok,answer_summary,citation_urls_json,brand_cited,citation_rank,accuracy_json)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
+      (id,run_id,site_id,measured_at,engine,question,sample_index,ok,answer_summary,citation_urls_json,brand_cited,citation_rank,accuracy_json,usage_json)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
         crypto.randomUUID(), id, siteId, sample.measured_at || ranAt, sample.engine, sample.question,
         sample.sample_index || 1, sample.ok ? 1 : 0, sample.excerpt || null,
         JSON.stringify(sample.citationUrls || []), sample.cited ? 1 : 0, sample.citation_rank || null,
         JSON.stringify({ mentioned: sample.ok ? !!sample.mentioned : null, status: "unreviewed", description: sample.excerpt || null,
-          kind: sample.kind || "discovery", error: sample.error || null, engine_model: sample.engine_model || null }),
+          kind: sample.kind || "discovery", error: sample.error || null, error_detail: sample.error_detail || null, engine_model: sample.engine_model || null }),
+        sample.usage ? JSON.stringify(sample.usage) : null,
       ));
   }
   if (result.status === "measured") {
