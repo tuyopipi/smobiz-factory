@@ -1,3 +1,4 @@
+import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
 import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
@@ -1203,6 +1204,26 @@ export async function handleApi(request, env, ctx) {
 
   /* ---------------- U2: AI Share-of-Voice (pro plan) ---------------- */
 
+  const proMatch = path.match(/^\/api\/sites\/([^/]+)\/sov\/(query-set|report|evidence)(?:\/([^/]+))?$/i);
+  if (proMatch) {
+    const access = await requireProSite(request, env, decodeURIComponent(proMatch[1]));
+    if (!access.ok) return access.response;
+    // Site keys are read-only for these owner-editable resources.
+    if (method !== "GET" && !access.member) return json({ error: "owner_session_required" }, 403);
+    try {
+      const resource = proMatch[2];
+      if (resource === "query-set" && method === "GET") return json({ query_set: await loadQuerySet(env, access.site.id) });
+      if (resource === "query-set" && method === "PUT") return json({ query_set: await saveQuerySet(env, access.site.id, await request.json()) });
+      if (resource === "report" && method === "GET") return json({ report: await loadProReport(env, access.site) });
+      if (resource === "evidence" && proMatch[3] && method === "PUT") return json({ accuracy: await reviewEvidence(env, access.site.id, decodeURIComponent(proMatch[3]), await request.json(), access.member.member_id) });
+      return json({ error: "method_not_allowed" }, 405);
+    } catch (error) {
+      if (error instanceof SovError) return json({ error: error.code }, error.status);
+      if (error instanceof SyntaxError) return json({ error: "invalid_json" }, 400);
+      throw error;
+    }
+  }
+
   const sovMatch = path.match(/^\/api\/sites\/([^/]+)\/sov$/i);
   if (sovMatch && method === "GET") {
     const access = await requireProSite(request, env, decodeURIComponent(sovMatch[1]));
@@ -1253,6 +1274,7 @@ export async function handleApi(request, env, ctx) {
       queries_used: result.measurement.queries_used,
       truncated: !!result.measurement.truncated,
       usage: result.usage,
+      cached: !!result.cached,
       ...engineStatus(env),
     });
   }
@@ -2474,12 +2496,16 @@ async function requireProSite(request, env, siteId) {
  * recorded from the calls actually issued, not from the planned question count.
  */
 async function runSiteSov(env, site, { trigger = "scheduled" } = {}) {
+  const token = await acquireMeasurementLock(env, site.id);
+  if (!token) return { error: "measurement_in_progress", status: 429 };
+  try { return await runSiteSovLocked(env, site, { trigger }); }
+  finally { await releaseMeasurementLock(env, site.id, token); }
+}
+
+async function runSiteSovLocked(env, site, { trigger }) {
   const budget = await sovRemainingBudget(env, site.id);
   const perRunMax = SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPerRun;
   const allowance = Math.min(perRunMax, budget.remaining);
-  if (allowance <= 0) {
-    return { error: "monthly_quota_exhausted", status: 429, usage: budget };
-  }
 
   // Measure the business as its owner describes it: the canonical record is the
   // same one wp-admin and the dashboard write, so the brand and locality used
@@ -2507,9 +2533,27 @@ async function runSiteSov(env, site, { trigger = "scheduled" } = {}) {
     throw error;
   }
 
-  const measurement = await measureSov(env, profile, { budget: allowance });
-  if (measurement.queries_used > 0) {
-    await sovRecordUsage(env, site.id, measurement.queries_used);
+  const config = await ensureQuerySet(env, site.id, profile);
+  const cacheKey = await measurementKey(env, config, profile);
+  if (String(env.PERPLEXITY_API_KEY || "").trim()) {
+    const cached = await loadCachedRun(env, site.id, cacheKey);
+    if (cached) return { ...cached, usage: budget, profile };
+    const recent = await env.DB.prepare("SELECT ran_at FROM aeo_sov_runs WHERE site_id=? ORDER BY ran_at DESC LIMIT 1").bind(site.id).first();
+    if (recent && Date.now() - Date.parse(recent.ran_at) < 60000) {
+      return { error: "measurement_rate_limited", status: 429, usage: budget };
+    }
+  }
+  // Charge the allowance before external I/O: a terminated request cannot make
+  // paid calls disappear from the budget. Refund unused calls after completion.
+  const configured = !!String(env.PERPLEXITY_API_KEY || "").trim();
+  if (configured && allowance <= 0) return { error: "monthly_quota_exhausted", status: 429, usage: budget };
+  if (configured) await sovRecordUsage(env, site.id, allowance);
+  const measurement = await measureSov(env, profile, { budget: allowance,
+    questions: config.questions, repetitions: config.repetitions, engineIds: ["perplexity"] });
+  measurement.query_set = config;
+  measurement.cache_key = cacheKey;
+  if (configured && measurement.queries_used < allowance) {
+    await sovRecordUsage(env, site.id, measurement.queries_used - allowance);
   }
   const run = await storeSovRun(env, site.id, measurement, { trigger });
   const usage = await sovRemainingBudget(env, site.id);

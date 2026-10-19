@@ -333,3 +333,20 @@ class MemoryKv {
 }
 
 console.log("SoV endpoint tests passed");
+
+// Pro report resources reuse tenant and plan guards, and editing requires CSRF.
+for (const resource of ['query-set','report']) {
+  const denied = await get(`/api/sites/${SITE_ID}/sov/${resource}`, makeEnv({plan:'standard'}), {cookie:SESSION});
+  assert.equal(denied.status,402);
+}
+{
+  const env=makeEnv();
+  const report=await (await get(`/api/sites/${SITE_ID}/sov/report`,env,{cookie:SESSION})).json();
+  assert.equal(report.report.status,'unconfigured');
+  assert.equal(report.report.summary.citation_rate,null);
+  const missingCsrf=await handleApi(new Request(`https://worker.test/api/sites/${SITE_ID}/sov/query-set`,{method:'PUT',headers:{cookie:SESSION},body:'{}'}),env,ctx);
+  assert.equal(missingCsrf.status,403);
+  const invalid=await handleApi(new Request(`https://worker.test/api/sites/${SITE_ID}/sov/query-set`,{method:'PUT',headers:{cookie:SESSION_CSRF,'x-csrf-token':CSRF},body:JSON.stringify({questions:[],repetitions:2,competitors:[]})}),env,ctx);
+  assert.equal(invalid.status,422);
+}
+console.log('Pro report endpoint guards passed');

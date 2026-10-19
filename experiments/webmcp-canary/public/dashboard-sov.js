@@ -171,6 +171,59 @@
     return site ? site.id : null;
   }
 
+  async function addProReport(main, siteId) {
+    var section = main.querySelector('.nrv-sov');
+    if (!section || section.querySelector('.nrv-sov-locked')) return;
+    var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov/report', { credentials: 'include' });
+    if (!response.ok || !section.isConnected) return;
+    var report = (await response.json()).report;
+    var box = document.createElement('div'); box.className = 'card panel';
+    var config = report.current_query_set || { questions: [], repetitions: 2, competitors: [] };
+    var table = function (rows) { return '<table style="width:100%">' + rows.map(function (row) { return '<tr>' + row.map(function (cell) { return '<td style="padding:6px">' + esc(cell) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>'; };
+    var pct = function (v) { return v == null ? '算出不可／サンプル不足' : Math.round(v * 1000) / 10 + '%'; };
+    box.innerHTML = '<h3>Pro 測定レポート</h3><p>' + esc(report.notice) + '</p>'
+      + '<p>' + (report.status === 'unconfigured' ? 'Perplexity未設定：測定していません。' : report.status === 'no_data' ? '未測定' : '回答数 ' + esc(report.summary.answers) + '／引用頻度 ' + pct(report.summary.citation_rate)) + '</p>'
+      + '<p>キャッシュは1時間。同じ条件の測定は再利用します。測定は有料APIの利用枠を消費します。</p>'
+      + '<details><summary>固定クエリセットを編集</summary><label>代表クエリ（1行1件、最大20件）<textarea data-pro-questions style="width:100%;min-height:120px">' + esc(config.questions.join('\n')) + '</textarea></label>'
+      + '<label>各クエリの実行回数 <input data-pro-n type="number" min="1" max="3" value="' + esc(config.repetitions) + '"></label>'
+      + '<label>競合ドメイン（1行1件、最大10件）<textarea data-pro-competitors style="width:100%">' + esc(config.competitors.join('\n')) + '</textarea></label><button data-pro-save>設定を保存</button></details>'
+      + '<button data-pro-run>測定を実行</button> <button data-pro-json>JSONを保存</button><p data-pro-status role="status"></p>'
+      + '<h4>Presence</h4>' + table([['クエリ','回答数','引用回数','頻度']].concat(report.presence.map(function(r){ return [r.question,r.answers,r.citations,pct(r.frequency)]; })))
+      + '<h4>指定競合との比較</h4><p>' + esc(report.sov_basis) + '</p>' + table([['ドメイン','引用回数','頻度','SoV']].concat(report.competitors.map(function(r){ return [r.host,r.citations,pct(r.frequency),pct(r.share_of_voice)]; })))
+      + '<h4>同じ測定条件での推移</h4>' + table([['日時','回答数','引用頻度']].concat(report.trend.map(function(r){ return [r.ran_at,r.answers_received,pct(r.citation_rate)]; })))
+      + '<h4>ギャップ</h4>' + (report.gaps.length ? report.gaps.map(function(r){ return '<p>' + esc(r.question + '：' + r.reason) + '</p>'; }).join('') : '<p>記録なし（改善不要の判定ではありません）</p>')
+      + '<h4>正確性と証跡</h4><p>回答抜粋を確認し、事実との明らかな相違を記録してください。未確認は正確性未判定です。</p>'
+      + report.evidence.map(function(e){ return '<details data-pro-evidence="' + esc(e.id) + '"><summary>' + esc(e.question + '／' + e.measured_at + '／' + e.engine + '／引用順 ' + (e.citation_rank || 'なし')) + '</summary><p>' + esc(e.answer_summary || '回答なし') + '</p><p>言及：' + esc(e.accuracy.mentioned == null ? '判定不可' : e.accuracy.mentioned ? 'あり' : 'なし') + '／確認状態：' + esc(e.accuracy.status) + '</p><pre style="white-space:pre-wrap">' + esc(e.citation_urls.join('\n')) + '</pre><select data-pro-review><option value="uncertain">未確定</option><option value="confirmed_error">明らかな誤りあり</option><option value="checked_no_obvious_error">確認した範囲で明らかな誤りなし</option></select><textarea data-pro-note placeholder="比較した事実・参照URL・確認範囲">' + esc(e.accuracy.note || '') + '</textarea><button data-pro-review-save>確認結果を保存</button></details>'; }).join('');
+    section.appendChild(box);
+    async function write(path, method, body) {
+      var csrf = await (await fetch('/api/csrf', { credentials: 'include' })).json();
+      var res = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov' + path, { method:method, credentials:'include', headers:{'content-type':'application/json','x-csrf-token':csrf.csrf_token}, body:body === undefined ? undefined : JSON.stringify(body) });
+      var data = await res.json(); if (!res.ok) throw new Error(data.error || '保存できませんでした'); return data;
+    }
+    box.addEventListener('click', async function(event) {
+      var target = event.target, status = box.querySelector('[data-pro-status]');
+      if (!target.matches('button')) return;
+      target.disabled = true;
+      try {
+        if (target.hasAttribute('data-pro-json')) {
+          var blob = URL.createObjectURL(new Blob([JSON.stringify(report,null,2)],{type:'application/json'}));
+          var a = document.createElement('a'); a.href=blob; a.download='pro-report-' + siteId + '.json'; a.click(); setTimeout(function(){ URL.revokeObjectURL(blob); },1000);
+        } else if (target.hasAttribute('data-pro-save')) {
+          await write('/query-set','PUT',{questions:box.querySelector('[data-pro-questions]').value.split('\n').filter(function(v){ return v.trim(); }), repetitions:Number(box.querySelector('[data-pro-n]').value), competitors:box.querySelector('[data-pro-competitors]').value.split('\n').map(function(v){ return v.trim(); }).filter(Boolean)});
+          status.textContent='保存しました。次回測定に反映します。';
+        } else if (target.hasAttribute('data-pro-run')) {
+          status.textContent='測定中…'; var result = await write('','POST'); status.textContent=result.status === 'unconfigured' ? 'Perplexity未設定：測定していません。' : result.cached ? 'キャッシュを再利用しました。' : '測定しました。';
+          box.remove(); await addProReport(main,siteId);
+        } else if (target.hasAttribute('data-pro-review-save')) {
+          var evidence = target.closest('[data-pro-evidence]');
+          await write('/evidence/' + encodeURIComponent(evidence.getAttribute('data-pro-evidence')),'PUT',{status:evidence.querySelector('[data-pro-review]').value,note:evidence.querySelector('[data-pro-note]').value});
+          box.remove(); await addProReport(main,siteId);
+        }
+      } catch(error) { status.textContent=String(error.message); }
+      finally { target.disabled=false; }
+    });
+  }
+
   async function mount() {
     var main = document.querySelector('#main'), detail = main && main.querySelector('.detail');
     if (!main || !detail) { loadingSiteId = null; return; }
@@ -188,6 +241,7 @@
         main.appendChild(panel({ kind: 'locked', data: data }));
       } else if (response.ok) {
         main.appendChild(panel({ kind: 'measured', data: data }));
+        await addProReport(main, siteId);
       }
       // Anything else leaves the page as it was: a panel that cannot say
       // anything true is worse than no panel.

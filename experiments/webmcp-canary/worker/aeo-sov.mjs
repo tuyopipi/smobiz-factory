@@ -15,7 +15,7 @@
  * that produced them so a small sample is never presented as precision.
  */
 
-export const SOV_MODEL_VERSION = "u2-v1";
+export const SOV_MODEL_VERSION = "u2-v2";
 export const SOV_BETA = true;
 
 /**
@@ -271,18 +271,26 @@ export function analyzeAnswer({ answer = "", citations = [], profile }) {
     .filter((alias) => alias.length >= MIN_ALIAS_CHARS)
     .some((alias) => normalized.includes(alias));
 
+  const providerUrls = citations.map((c) => typeof c === "string" ? c : c?.url);
+  const citationUrls = dedupe([...providerUrls, ...urlsInText(text)].filter((u) => {
+    try { return ["http:", "https:"].includes(new URL(u).protocol); } catch { return false; }
+  }));
   const citedHosts = dedupe([
     ...citations.map((citation) => normalizeHost(typeof citation === "string" ? citation : citation?.url)),
     ...urlsInText(text).map(normalizeHost),
   ].filter(Boolean));
 
   const ownHost = profile.host ? normalizeHost(profile.host) : "";
-  const cited = !!ownHost && citedHosts.some((host) => sameSite(host, ownHost));
+  const owns = (host) => host === ownHost || host.endsWith(`.${ownHost}`);
+  const cited = !!ownHost && citedHosts.some(owns);
   const competitorHosts = citedHosts.filter((host) => !sameSite(host, ownHost) && !isAggregator(host));
 
   return {
     mentioned,
     cited,
+    citationUrls,
+    citation_rank: ownHost ? (providerUrls.findIndex((u) => owns(normalizeHost(u))) + 1 || null) : null,
+    rank_basis: "provider_source_order_not_search_ranking",
     citedHosts,
     competitorHosts,
     excerpt: text.replace(/\s+/g, " ").trim().slice(0, SOV_LIMITS.answerExcerptChars),
@@ -440,6 +448,7 @@ async function probePerplexity(env, question, fetchImpl) {
   if (!response.ok) throw new SovError(502, `perplexity_http_${response.status}`);
   const data = await response.json();
   return {
+    model: String(data?.model || env.PERPLEXITY_MODEL || "sonar"),
     answer: String(data?.choices?.[0]?.message?.content || ""),
     citations: Array.isArray(data?.citations) ? data.citations : Array.isArray(data?.search_results) ? data.search_results : [],
   };
@@ -464,7 +473,7 @@ async function probeOpenAi(env, question, fetchImpl) {
   return { answer: String(data?.choices?.[0]?.message?.content || ""), citations: [] };
 }
 
-const PROBES = Object.freeze({ perplexity: probePerplexity, openai: probeOpenAi });
+export const ENGINE_ADAPTERS = Object.freeze({ perplexity: probePerplexity, openai: probeOpenAi });
 
 /* ------------------------------------------------------------------ *
  * Measurement
@@ -480,8 +489,11 @@ export async function measureSov(env, profile, {
   questions,
   budget = SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPerRun,
   fetchImpl = fetch,
+  repetitions = 1,
+  engineIds,
+  engineAdapters = ENGINE_ADAPTERS,
 } = {}) {
-  const engines = availableEngines(env);
+  const engines = availableEngines(env).filter((e) => !engineIds || engineIds.includes(e.id));
   if (!engines.length) {
     return {
       status: "unconfigured",
@@ -500,20 +512,22 @@ export async function measureSov(env, profile, {
   let used = 0;
   let truncated = false;
 
-  for (const question of questionSet) {
+  const repeats = Math.max(1, Math.min(3, Number.isInteger(repetitions) ? repetitions : 1));
+  for (const question of questionSet.flatMap((q) => Array.from({ length: repeats }, (_, i) => ({ ...q, sample_index: i + 1 })))) {
     for (const engine of engines) {
       if (used >= budget) { truncated = true; break; }
       used += 1;
       try {
-        const probe = await PROBES[engine.id](env, question.text, fetchImpl);
+        const probe = await engineAdapters[engine.id](env, question.text, fetchImpl);
+        if (!probe.answer.trim()) throw new SovError(502, "empty_answer");
         const analysis = analyzeAnswer({ ...probe, profile });
-        samples.push({ ok: true, engine: engine.id, question: question.text, kind: question.kind, ...analysis });
+        samples.push({ ok: true, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine_model: probe.model || null, engine: engine.id, question: question.text, kind: question.kind, ...analysis });
       } catch (error) {
         // A failed probe is recorded but excluded from the rate denominator,
         // so an engine outage lowers confidence instead of the score.
         samples.push({
-          ok: false, engine: engine.id, question: question.text, kind: question.kind,
-          error: String(error?.code || error?.message || error).slice(0, 120),
+          ok: false, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine: engine.id, question: question.text, kind: question.kind,
+          error: error instanceof SovError ? error.code : "engine_request_failed",
         });
       }
     }
@@ -525,6 +539,7 @@ export async function measureSov(env, profile, {
     ...engineStatus(env),
     ...aggregateSov(samples, profile),
     samples,
+    repetitions: repeats,
     queries_used: used,
     truncated,
     limits: SOV_LIMITS,
@@ -561,9 +576,10 @@ export async function sovRecordUsage(env, siteId, queries, now = Date.now()) {
  * ------------------------------------------------------------------ */
 
 export async function storeSovRun(env, siteId, result, { trigger = "manual", now = Date.now() } = {}) {
+  const statements = [];
   const id = `sov_${crypto.randomUUID().replace(/-/g, "").slice(0, 16)}`;
   const ranAt = new Date(now).toISOString();
-  await env.DB.prepare(`
+  statements.push(env.DB.prepare(`
     INSERT INTO aeo_sov_runs
       (id,site_id,ran_at,status,trigger,model_version,engines_json,questions_asked,answers_received,
        queries_used,appearance_rate,citation_rate,confidence,competitors_json,detail_json)
@@ -579,6 +595,9 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
     // knowledge - it would have to recompute both from the mention rows and
     // get the branded controls wrong doing it.
     JSON.stringify({
+      query_set: result.query_set || null,
+      cache_key: result.cache_key || null,
+      repetitions: result.repetitions || 1,
       beta: SOV_BETA,
       truncated: !!result.truncated,
       brand: result.brand,
@@ -587,11 +606,11 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
       by_engine: result.by_engine || [],
       parser_control: result.parser_control ?? null,
     }),
-  ).run();
+  ));
 
-  const samples = (result.samples || []).slice(0, SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPerRun);
+  const samples = (result.samples || []).slice(0, SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPerRun * 3);
   for (const sample of samples) {
-    await env.DB.prepare(`
+    statements.push(env.DB.prepare(`
       INSERT INTO aeo_sov_mentions
         (run_id,site_id,engine,question,kind,ok,brand_mentioned,brand_cited,competitor_hosts_json,answer_excerpt,error)
       VALUES (?,?,?,?,?,?,?,?,?,?,?)
@@ -603,8 +622,21 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
       sample.ok ? 1 : 0,
       sample.mentioned ? 1 : 0, sample.cited ? 1 : 0,
       JSON.stringify(sample.competitorHosts || []), sample.excerpt || null, sample.error || null,
-    ).run();
+    ));
   }
+  for (const sample of samples) {
+    statements.push(env.DB.prepare(`INSERT INTO aeo_sov_evidence
+      (id,run_id,site_id,measured_at,engine,question,sample_index,ok,answer_summary,citation_urls_json,brand_cited,citation_rank,accuracy_json)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
+        crypto.randomUUID(), id, siteId, sample.measured_at || ranAt, sample.engine, sample.question,
+        sample.sample_index || 1, sample.ok ? 1 : 0, sample.excerpt || null,
+        JSON.stringify(sample.citationUrls || []), sample.cited ? 1 : 0, sample.citation_rank || null,
+        JSON.stringify({ mentioned: sample.ok ? !!sample.mentioned : null, status: "unreviewed", description: sample.excerpt || null,
+          kind: sample.kind || "discovery", error: sample.error || null, engine_model: sample.engine_model || null }),
+      ));
+  }
+  if (env.DB.batch) await env.DB.batch(statements);
+  else for (const statement of statements) await statement.run();
   return { id, ran_at: ranAt };
 }
 
