@@ -339,6 +339,9 @@ const operatorEnv = (extra) => ({ DB: operatorDb(), SUPER_ADMIN_EMAILS: "ops@nur
   assert.equal(failedFirst.headers.get("x-aeo-cache"), "bypass");
   await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", flaky, OPERATOR);
   assert.equal(engineCalls.n, 2, "a failure is retried, not served from cache");
+  // An "unavailable" left in the cache by the old behaviour is not served either.
+  const stale = [...flaky.WEBMCP_KV.values.keys()];
+  assert.equal(stale.length, 0, "nothing was cached for the failures");
   globalThis.fetch = realFetch;
   assert.equal(invalid.status, 400, "an invalid URL is rejected");
 }

@@ -372,7 +372,8 @@ export async function handleApi(request, env, ctx) {
     const engine = engines[0];
     const cacheKey = `aeo-mention:${SOV_MODEL_VERSION}:${engine.id}:${await aeoSha256Hex(target)}`;
     const cached = await env.WEBMCP_KV?.get(cacheKey, "json");
-    if (cached) {
+    // Failures cached before they stopped being cached are ignored, not served.
+    if (cached?.status === "measured") {
       return json(cached, 200, { "cache-control": `public, max-age=${SOV_LIMITS.publicCacheTtlSeconds}`, "x-aeo-cache": "hit" });
     }
 
