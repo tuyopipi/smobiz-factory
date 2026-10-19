@@ -451,7 +451,27 @@ async function probePerplexity(env, question, fetchImpl) {
     model: String(data?.model || env.PERPLEXITY_MODEL || "sonar"),
     answer: String(data?.choices?.[0]?.message?.content || ""),
     citations: Array.isArray(data?.citations) ? data.citations : Array.isArray(data?.search_results) ? data.search_results : [],
+    usage: engineUsage(data?.usage),
   };
+}
+
+/**
+ * What the provider says a call consumed, kept with the evidence so the real
+ * cost of a measurement can be added up rather than estimated. Only numbers
+ * and short labels are kept - token counts, the search context size and, when
+ * the provider reports it, its own cost breakdown.
+ */
+export function engineUsage(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const out = {};
+  for (const [key, value] of Object.entries(raw)) {
+    if (typeof value === "number" && Number.isFinite(value)) out[key] = value;
+    else if (typeof value === "string" && value.length <= 40) out[key] = value;
+    else if (key === "cost" && value && typeof value === "object") {
+      out.cost = Object.fromEntries(Object.entries(value).filter(([, v]) => typeof v === "number" && Number.isFinite(v)));
+    }
+  }
+  return Object.keys(out).length ? out : null;
 }
 
 async function probeOpenAi(env, question, fetchImpl) {
@@ -470,7 +490,7 @@ async function probeOpenAi(env, question, fetchImpl) {
   const data = await response.json();
   // No citation list is returned here, so only URLs inside the answer text can
   // serve as citation evidence. engineStatus() reports citations_available:false.
-  return { answer: String(data?.choices?.[0]?.message?.content || ""), citations: [] };
+  return { answer: String(data?.choices?.[0]?.message?.content || ""), citations: [], usage: engineUsage(data?.usage) };
 }
 
 export const ENGINE_ADAPTERS = Object.freeze({ perplexity: probePerplexity, openai: probeOpenAi });
@@ -521,7 +541,7 @@ export async function measureSov(env, profile, {
         const probe = await engineAdapters[engine.id](env, question.text, fetchImpl);
         if (!probe.answer.trim()) throw new SovError(502, "empty_answer");
         const analysis = analyzeAnswer({ ...probe, profile });
-        samples.push({ ok: true, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine_model: probe.model || null, engine: engine.id, question: question.text, kind: question.kind, ...analysis });
+        samples.push({ ok: true, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine_model: probe.model || null, usage: probe.usage || null, engine: engine.id, question: question.text, kind: question.kind, ...analysis });
       } catch (error) {
         // A failed probe is recorded but excluded from the rate denominator,
         // so an engine outage lowers confidence instead of the score.
@@ -626,13 +646,14 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
   }
   for (const sample of samples) {
     statements.push(env.DB.prepare(`INSERT INTO aeo_sov_evidence
-      (id,run_id,site_id,measured_at,engine,question,sample_index,ok,answer_summary,citation_urls_json,brand_cited,citation_rank,accuracy_json)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
+      (id,run_id,site_id,measured_at,engine,question,sample_index,ok,answer_summary,citation_urls_json,brand_cited,citation_rank,accuracy_json,usage_json)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).bind(
         crypto.randomUUID(), id, siteId, sample.measured_at || ranAt, sample.engine, sample.question,
         sample.sample_index || 1, sample.ok ? 1 : 0, sample.excerpt || null,
         JSON.stringify(sample.citationUrls || []), sample.cited ? 1 : 0, sample.citation_rank || null,
         JSON.stringify({ mentioned: sample.ok ? !!sample.mentioned : null, status: "unreviewed", description: sample.excerpt || null,
           kind: sample.kind || "discovery", error: sample.error || null, engine_model: sample.engine_model || null }),
+        sample.usage ? JSON.stringify(sample.usage) : null,
       ));
   }
   if (result.status === "measured") {

@@ -340,10 +340,16 @@ export async function handleApi(request, env, ctx) {
     }
   }
 
-  // Public checker, lightweight sample: one question against one engine.
-  // Always cached, and explicitly "preparing" when no engine key is set, so the
-  // public page never burns engine quota per visitor.
+  // One question against one engine, for internal use only.
+  //
+  // This was public: no page has called it since the checker dropped its AI
+  // sample, but anyone could, and each new URL cost one paid engine call with
+  // only a per-IP limit in the way - so a key being present was enough to let
+  // strangers run up the bill. It now answers only a signed-in super admin.
   if (path === "/api/aeo/mention" && method === "GET") {
+    const operator = await requireMember(request, env);
+    if (!operator) return json({ error: "unauthorized" }, 401);
+    if (!operator.is_super_admin) return json({ error: "forbidden" }, 403);
     const raw = url.searchParams.get("url") || "";
     const rate = await aeoPublicRateLimit(request, env);
     if (!rate.allowed) return json({ error: "rate_limited" }, 429, { "retry-after": String(rate.retryAfter) });
