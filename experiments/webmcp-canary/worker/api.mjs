@@ -377,12 +377,13 @@ export async function handleApi(request, env, ctx) {
     }
 
     let body;
+    let sample = null;
     try {
       const schemas = await fetchSchemaNodes(target);
       const profile = buildBrandProfile({ site: { website_uri: target }, settings: {}, schemas });
       const question = buildQuestionSet(profile, 1)[0];
       const probe = await measureSov(env, profile, { questions: [question], budget: 1 });
-      const sample = probe.samples[0];
+      sample = probe.samples[0];
       body = {
         status: sample?.ok ? "measured" : "unavailable",
         beta: SOV_BETA,
@@ -404,6 +405,12 @@ export async function handleApi(request, env, ctx) {
       throw error;
     }
 
+    // Only an answer is worth keeping. A failed call cached for a week turned
+    // a transient provider error into a week of "unavailable"; it is now
+    // retried on the next request, and the failure is not served from cache.
+    if (body.status !== "measured") {
+      return json({ ...body, error: sample?.error || null, error_detail: sample?.error_detail || null }, 200, { "cache-control": "no-store", "x-aeo-cache": "bypass" });
+    }
     const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(body), { expirationTtl: SOV_LIMITS.publicCacheTtlSeconds });
     if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
     return json(body, 200, { "cache-control": `public, max-age=${SOV_LIMITS.publicCacheTtlSeconds}`, "x-aeo-cache": "miss" });

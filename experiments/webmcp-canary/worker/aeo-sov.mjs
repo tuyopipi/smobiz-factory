@@ -56,7 +56,28 @@ const AGGREGATOR_HOSTS = Object.freeze([
 ]);
 
 export class SovError extends Error {
-  constructor(status, code) { super(code); this.name = "SovError"; this.status = status; this.code = code; }
+  constructor(status, code, detail = null) { super(code); this.name = "SovError"; this.status = status; this.code = code; this.detail = detail; }
+}
+
+/**
+ * The start of a provider's error response, safe to store and log.
+ *
+ * A bare "perplexity_http_403" cannot tell an exhausted balance from a bad
+ * model name from an edge block, and the response body can. Only the
+ * provider's own words are kept - tags stripped, anything shaped like an API
+ * key redacted, at most 200 characters - never the request or its headers.
+ */
+export async function providerErrorDetail(response) {
+  let text = "";
+  try { text = await response.text(); } catch { return null; }
+  const clean = text
+    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\b(?:pplx|sk|sk-proj|key)[-_][A-Za-z0-9_-]{8,}\b/g, "[redacted]")
+    .replace(/\bBearer\s+\S+/gi, "Bearer [redacted]")
+    .replace(/\s+/g, " ")
+    .trim();
+  return clean ? clean.slice(0, 200) : null;
 }
 
 /* ------------------------------------------------------------------ *
@@ -445,7 +466,11 @@ async function probePerplexity(env, question, fetchImpl) {
       max_tokens: 500,
     }),
   }));
-  if (!response.ok) throw new SovError(502, `perplexity_http_${response.status}`);
+  if (!response.ok) {
+    const detail = await providerErrorDetail(response);
+    console.error("sov-engine-error", JSON.stringify({ engine: "perplexity", status: response.status, detail }));
+    throw new SovError(502, `perplexity_http_${response.status}`, detail);
+  }
   const data = await response.json();
   return {
     model: String(data?.model || env.PERPLEXITY_MODEL || "sonar"),
@@ -486,7 +511,11 @@ async function probeOpenAi(env, question, fetchImpl) {
       max_tokens: 500,
     }),
   }));
-  if (!response.ok) throw new SovError(502, `openai_http_${response.status}`);
+  if (!response.ok) {
+    const detail = await providerErrorDetail(response);
+    console.error("sov-engine-error", JSON.stringify({ engine: "openai", status: response.status, detail }));
+    throw new SovError(502, `openai_http_${response.status}`, detail);
+  }
   const data = await response.json();
   // No citation list is returned here, so only URLs inside the answer text can
   // serve as citation evidence. engineStatus() reports citations_available:false.
@@ -548,6 +577,7 @@ export async function measureSov(env, profile, {
         samples.push({
           ok: false, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine: engine.id, question: question.text, kind: question.kind,
           error: error instanceof SovError ? error.code : "engine_request_failed",
+          error_detail: error instanceof SovError ? error.detail || null : null,
         });
       }
     }
@@ -652,7 +682,7 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
         sample.sample_index || 1, sample.ok ? 1 : 0, sample.excerpt || null,
         JSON.stringify(sample.citationUrls || []), sample.cited ? 1 : 0, sample.citation_rank || null,
         JSON.stringify({ mentioned: sample.ok ? !!sample.mentioned : null, status: "unreviewed", description: sample.excerpt || null,
-          kind: sample.kind || "discovery", error: sample.error || null, engine_model: sample.engine_model || null }),
+          kind: sample.kind || "discovery", error: sample.error || null, error_detail: sample.error_detail || null, engine_model: sample.engine_model || null }),
         sample.usage ? JSON.stringify(sample.usage) : null,
       ));
   }

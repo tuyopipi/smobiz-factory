@@ -39,3 +39,24 @@ const rows = sqlite.prepare("SELECT ok, usage_json FROM aeo_sov_evidence ORDER B
 assert.equal(JSON.parse(rows[0].usage_json).cost.total_cost, 0.00524, "the provider's own cost is stored with the evidence");
 assert.equal(rows[1].usage_json, null, "a failed call records no usage");
 console.log("SoV usage tests passed");
+
+/* ---------------- a failed call says why, without leaking anything ---------------- */
+{
+  const { providerErrorDetail } = await import("../worker/aeo-sov.mjs");
+  const html = { text: async () => `<html><head><style>x{}</style></head><body><h1>403 Forbidden</h1><p>Request blocked. Bearer pplx-ABCDEFGHIJKLMNOP1234 and key_abcdefghijk</p></body></html>` };
+  const detail = await providerErrorDetail(html);
+  assert.match(detail, /403 Forbidden Request blocked\./, "tags stripped, the provider's words kept");
+  assert.equal(/pplx-|key_abc/.test(detail), false, "anything shaped like a key is redacted");
+  assert.ok((await providerErrorDetail({ text: async () => "x".repeat(1000) })).length <= 200, "at most 200 characters");
+
+  const body = JSON.stringify({ error: { message: "insufficient credits", type: "insufficient_quota", code: 403 } });
+  const failed = await measureSov({ PERPLEXITY_API_KEY: "pplx-secretsecretsecret" }, profile, { questions: ["q"], engineIds: ["perplexity"],
+    fetchImpl: async () => ({ ok: false, status: 403, text: async () => body, json: async () => JSON.parse(body) }) });
+  assert.equal(failed.samples[0].error, "perplexity_http_403");
+  assert.match(failed.samples[0].error_detail, /insufficient credits/);
+  await storeSovRun({ DB }, "s2", failed, { trigger: "manual" });
+  const row = sqlite.prepare("SELECT accuracy_json FROM aeo_sov_evidence WHERE site_id='s2'").get();
+  assert.match(JSON.parse(row.accuracy_json).error_detail, /insufficient credits/, "the reason is kept with the evidence");
+  assert.equal(row.accuracy_json.includes("secretsecret"), false, "the key never reaches storage");
+}
+console.log("SoV error detail tests passed");

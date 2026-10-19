@@ -321,6 +321,25 @@ const operatorEnv = (extra) => ({ DB: operatorDb(), SUPER_ADMIN_EMAILS: "ops@nur
   assert.equal(calls.engine, 1, "the cached call issues no further engine request");
 
   const invalid = await get("/api/aeo/mention?url=not-a-url", env, OPERATOR);
+
+  // A failed call is not cached: the next request tries the engine again.
+  const flaky = operatorEnv({ WEBMCP_KV: new MemoryKv(), PERPLEXITY_API_KEY: "pk" });
+  const engineCalls = { n: 0 };
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async (input, init) => {
+    const url = String(input?.url || input);
+    if (url.includes("api.perplexity.ai")) { engineCalls.n += 1; return new Response("<h1>403 Forbidden</h1>", { status: 403 }); }
+    return realFetch(input, init);
+  };
+  const failedFirst = await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", flaky, OPERATOR);
+  const failedBody = await failedFirst.json();
+  assert.equal(failedBody.status, "unavailable");
+  assert.equal(failedBody.error, "perplexity_http_403");
+  assert.match(failedBody.error_detail, /403 Forbidden/, "the operator sees why");
+  assert.equal(failedFirst.headers.get("x-aeo-cache"), "bypass");
+  await get("/api/aeo/mention?url=https%3A%2F%2Fpro.example.com", flaky, OPERATOR);
+  assert.equal(engineCalls.n, 2, "a failure is retried, not served from cache");
+  globalThis.fetch = realFetch;
   assert.equal(invalid.status, 400, "an invalid URL is rejected");
 }
 
