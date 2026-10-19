@@ -1,3 +1,4 @@
+import { INITIAL_AEO_RULESET } from "./aeo-rules.mjs";
 export const AI_CRAWLERS = [
   { id: "gptbot", ua: "GPTBot", owner: "OpenAI", engine: "ChatGPT", purpose: "学習・インデックス" },
   { id: "oai-search", ua: "OAI-SearchBot", owner: "OpenAI", engine: "ChatGPT Search", purpose: "検索インデックス" },
@@ -15,26 +16,21 @@ export function matchCrawler(uaString = "") {
 }
 
 export const isAICrawler = (ua) => !!matchCrawler(ua);
-export function robotsBlock(allow = true) {
-  const rule = allow ? "Allow: /" : "Disallow: /";
-  return AI_CRAWLERS.map((crawler) => `User-agent: ${crawler.ua}\n${rule}`).join("\n\n") + "\n";
+export function robotsBlock(allow = true, definition = INITIAL_AEO_RULESET.definition) {
+  const rule = allow && definition.robots.defaultAllow ? "Allow: /" : "Disallow: /";
+  return AI_CRAWLERS.filter(c=>definition.robots.aiCrawlerIds.includes(c.id)).map(c=>`User-agent: ${c.ua}\n${rule}`).join("\n\n") + "\n";
 }
 
-export function buildLlmsTxt(site = {}) {
-  const lines = [
-    `# ${site.name || site.url || "Store"}`,
-    site.summary ? `> ${site.summary}` : null,
-    "",
-    "## 店舗情報",
-    site.address ? `- 住所: ${site.address}` : null,
-    site.tel ? `- 電話: ${site.tel}` : null,
-    site.hours ? `- 営業時間: ${site.hours}` : null,
-    site.reserve ? `- 予約: ${site.reserve}` : null,
-    site.url ? `- サイト: https://${String(site.url).replace(/^https?:\/\//, "")}` : null,
-    "",
-    "## 対応AIクローラー（許可）",
-    ...AI_CRAWLERS.map((crawler) => `- ${crawler.ua} — ${crawler.owner}（${crawler.engine}）`),
-    "",
-  ];
-  return lines.filter((line) => line !== null).join("\n");
+export function buildLlmsTxt(site = {}, definition = INITIAL_AEO_RULESET.definition) {
+  let canonical = site.url;
+  try { if (canonical) canonical = new URL(/^https?:\/\//i.test(canonical) ? canonical : `https://${canonical}`).href; } catch { canonical = null; }
+  const values = {...site,url:canonical,name:site.name || site.url,description:site.description || site.summary,
+    reserve_url:site.reserve_url || site.reserve,
+    crawlerNames:AI_CRAWLERS.filter(c=>definition.robots.aiCrawlerIds.includes(c.id)).map(c=>`- ${c.ua}`).join('\n')};
+  const clean = value => String(value ?? '').replace(/[\r\n]+/g,' ');
+  return definition.llmsTxt.sections.map(section=>(definition.generation.llmsSections[section] || []).map(spec=>{
+    if (spec.literal) return spec.literal;
+    const value = values[spec.source];
+    return value ? spec.template.replace('{value}',spec.source === 'crawlerNames' ? value : clean(value)) : null;
+  }).filter(Boolean).join('\n')).filter(Boolean).join('\n\n') + '\n';
 }

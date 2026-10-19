@@ -1,3 +1,5 @@
+import { verifyDelivery, deliveryStatements } from "./aeo-delivery.mjs";
+import { requestAutoFix } from "./aeo-autofix.mjs";
 /**
  * Nurevo — site diagnostic endpoint.
  *
@@ -36,15 +38,18 @@ export async function handleDiagnose(request, env) {
 
   try {
     const { diagnosticOptions } = await import('./api.mjs');
-    const result = await diagnoseUrl(raw, lang, await diagnosticOptions(env));
+    const resolvedSite = env?.DB ? await resolveDiagnosedSite(env, url, raw) : null;
+    const result = await diagnoseUrl(raw, lang, await diagnosticOptions(env, resolvedSite?.id));
     if (env?.DB) {
       try {
-        const site = await resolveDiagnosedSite(env, url, raw);
+        const site = resolvedSite;
         if (site) await storeAeoScore(env, site.id, result);
       } catch (error) {
         console.error("aeo-score-ondemand-save", JSON.stringify({ message: String(error?.message || error) }));
       }
     }
+    delete result.publicNodes;
+    delete result.deliveryEvidence;
     return json(result);
   } catch (error) {
     if (error instanceof DiagnoseError || error instanceof AeoScoreError) return json({ error: error.code }, error.status);
@@ -77,13 +82,12 @@ class DiagnoseError extends Error {
 }
 
 export async function storeAeoScore(env, siteId, result) {
-  const ruleset = await env.DB.prepare(
-    "SELECT version FROM aeo_rulesets WHERE active=1 ORDER BY version DESC LIMIT 1",
-  ).first();
   const scannedAt = result.scannedAt || new Date().toISOString();
-  await env.DB.prepare(
-    `INSERT INTO aeo_scores (site_id,scanned_at,host,score,verdict,checks_json,ruleset_version)
-     VALUES (?,?,?,?,?,?,?)`,
+  const measured = {...result,scannedAt};
+  const deliveredVersion = await verifyDelivery(env, siteId, measured, {persist:false});
+  const scoreStatement = env.DB.prepare(
+    `INSERT INTO aeo_scores (site_id,scanned_at,host,score,verdict,checks_json,ruleset_version,delivered_ruleset_version,score_model_version)
+     VALUES (?,?,?,?,?,?,?,?,?)`,
   ).bind(
     siteId,
     scannedAt,
@@ -91,9 +95,14 @@ export async function storeAeoScore(env, siteId, result) {
     result.score == null ? null : result.score,
     result.verdict || null,
     JSON.stringify(Array.isArray(result.checks) ? result.checks : []),
-    Number(ruleset?.version || 1),
-  ).run();
-  return { ...result, scannedAt, rulesetVersion: Number(ruleset?.version || 1) };
+    result.rulesetVersion ?? null,
+    deliveredVersion,
+    result.modelVersion ?? null,
+  );
+  const statements = [scoreStatement,...(deliveredVersion == null ? [] : deliveryStatements(env,siteId,deliveredVersion,measured))];
+  if (env.DB.batch) await env.DB.batch(statements);
+  else for (const statement of statements) await statement.run();
+  return { ...result, scannedAt, deliveredRulesetVersion: deliveredVersion };
 }
 
 export async function diagnoseAndStore(env, site, { lang = "ja" } = {}) {
@@ -139,7 +148,10 @@ export async function runAeoScoreCron(env, { limit } = {}) {
   const outcomes = [];
   for (const site of results || []) {
     try {
-      outcomes.push(await diagnoseAndStore(env, site));
+      const outcome = await diagnoseAndStore(env, site);
+      if (outcome.ok) outcome.autofix = await requestAutoFix(env, site, outcome.result);
+      if (outcome.result) { delete outcome.result.publicNodes; delete outcome.result.deliveryEvidence; }
+      outcomes.push(outcome);
     } catch (error) {
       outcomes.push({ ok: false, siteId: site.id, error: String(error?.message || error).slice(0, 200) });
     }

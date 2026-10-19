@@ -28,11 +28,12 @@ export const SITE_CRAWLERS = [
 // Nothing under these is a page: the API, and the signed-in dashboard.
 const DISALLOW = ["/api/", "/dashboard"];
 
-export function siteRobotsTxt() {
-  const rules = ["Allow: /", ...DISALLOW.map((path) => `Disallow: ${path}`)].join("\n");
+export function siteRobotsTxt({allow=true,agents=[]} = {}) {
+  const crawlers = [...new Set([...SITE_CRAWLERS,...agents])];
+  const rules = [allow ? "Allow: /" : "Disallow: /", ...DISALLOW.map((path) => `Disallow: ${path}`)].join("\n");
   return [
     "# nurevo.jp - AI crawlers are welcome on every public page.",
-    `${SITE_CRAWLERS.map((ua) => `User-agent: ${ua}`).join("\n")}\n${rules}`,
+    `${crawlers.map((ua) => `User-agent: ${ua}`).join("\n")}\n${rules}`,
     `User-agent: *\n${rules}`,
     `Sitemap: ${SITE_ORIGIN}/sitemap.xml`,
     "",

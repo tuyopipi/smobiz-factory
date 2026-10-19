@@ -5,6 +5,8 @@ import { measureSov, storeSovRun, sovRecordUsage, sovRemainingBudget } from '../
 import { saveQuerySet, loadQuerySet, loadProReport, reviewEvidence, acquireMeasurementLock, releaseMeasurementLock, loadCachedRun, measurementKey } from '../worker/pro-report.mjs';
 const sqlite = new DatabaseSync(':memory:');
 for (const file of ['0018_aeo_sov.sql','0022_sov_engine_split.sql','0031_pro_measurement.sql']) sqlite.exec(readFileSync(new URL('../nurevo-impl/db/'+file,import.meta.url),'utf8'));
+sqlite.exec(`CREATE TABLE aeo_scores(site_id TEXT,scanned_at TEXT,ruleset_version INTEGER,delivered_ruleset_version INTEGER,score_model_version TEXT);
+CREATE TABLE aeo_learning_observations(run_id TEXT PRIMARY KEY,site_id TEXT,measured_at TEXT,score_scanned_at TEXT,scoring_ruleset_version INTEGER,delivered_ruleset_version INTEGER,model_version TEXT,measurement_json TEXT);`);
 // Applying the additive migration a second time must be harmless.
 sqlite.exec(readFileSync(new URL('../nurevo-impl/db/0031_pro_measurement.sql',import.meta.url),'utf8'));
 const DB = { prepare(sql) { return { bind(...args) { const stmt=sqlite.prepare(sql); return {

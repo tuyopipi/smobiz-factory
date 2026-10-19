@@ -1,3 +1,4 @@
+import { INITIAL_AEO_RULESET } from "../worker/aeo-rules.mjs";
 /**
  * Where to fix this site, in the order worth fixing it.
  *
@@ -201,7 +202,7 @@ function makeEnv({ plan = "pro" } = {}) {
         if (/FROM sessions/.test(sql)) {
           return { member_id: "m1", org_id: "org1", email: "o@x.test", role: "admin", status: "active", expires_at: Date.now() + 3.6e6 };
         }
-        if (/FROM aeo_rulesets/.test(sql)) return null;
+        if (/FROM aeo_rulesets/.test(sql)) return INITIAL_AEO_RULESET;
         if (/FROM aeo_scores/.test(sql)) return { scanned_at: "2026-10-08T00:00:00.000Z", checks_json: JSON.stringify([{ id: "llms", status: "BAD" }]) };
         if (/FROM site_settings/.test(sql)) return { site_id: "site1", name: "X" };
         if (/FROM sites WHERE id=\?/.test(sql)) {

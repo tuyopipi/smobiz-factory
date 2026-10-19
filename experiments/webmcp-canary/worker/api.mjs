@@ -1,3 +1,5 @@
+import { recordFetched } from "./aeo-delivery.mjs";
+import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
 import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
@@ -129,35 +131,6 @@ const PROFILE_REQUIRED = Object.freeze(["name", "phone", "address", "hours", "bu
 
 /* Reported so the form can encourage them, but they never block completion. */
 const PROFILE_OPTIONAL = Object.freeze(["description", "email", "url", "image", "reserve_url", "price_level", "geo"]);
-const INITIAL_AEO_RULESET = Object.freeze({
-  version: 1,
-  created_at: "2026-09-30T00:00:00.000Z",
-  active: 1,
-  notes: "Initial ruleset matching the pre-AEO-brain JSON-LD output.",
-  definition: Object.freeze({
-    schema: Object.freeze({
-      context: "https://schema.org",
-      type: "LocalBusiness",
-      required: ["@context", "@type", "name"],
-      recommended: ["url", "additionalType", "address", "telephone", "openingHours", "openingHoursSpecification", "geo", "priceRange", "image", "potentialAction"],
-      entityFields: ENTITY_SCHEMA_FIELDS,
-      fields: Object.freeze({ url: true, additionalType: true, address: true, telephone: true, openingHours: true, openingHoursSpecification: true, geo: true, priceRange: true, image: true, potentialAction: true }),
-      // url is here because a hosted page that does not state its own canonical
-      // address was being marked down for a baseline property the publisher
-      // never emitted - an unfair deduction, not a tier difference.
-      hostedFields: ["url", "address", "openingHoursSpecification", "geo", "telephone", "priceRange"],
-      // Which properties a diagnosis counts. Stated here rather than hardcoded
-      // in the scorer, because advancing the criteria means widening this list
-      // and a site that has not advanced with it should feel the difference.
-      scoredProps: ["name", "url", "address", "telephone", "openingHours", "geo"],
-      priceLevelMap: Object.freeze({ PRICE_LEVEL_FREE: "Free", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥¥" }),
-      hostedPriceLevelMap: Object.freeze({ PRICE_LEVEL_FREE: "¥", PRICE_LEVEL_INEXPENSIVE: "¥", PRICE_LEVEL_MODERATE: "¥¥", PRICE_LEVEL_EXPENSIVE: "¥¥¥", PRICE_LEVEL_VERY_EXPENSIVE: "¥¥¥" }),
-    }),
-    llmsTxt: Object.freeze({ format: "markdown", sections: ["identity", "store_information", "supported_ai_crawlers"] }),
-    robots: Object.freeze({ defaultAllow: true, aiCrawlerIds: ["gptbot", "oai-search", "chatgpt-user", "claudebot", "perplexity", "google-ext", "applebot-ext", "bytespider"] }),
-    defaults: Object.freeze({ schemaType: "LocalBusiness", nameSource: "settings.name_or_site.url", hostedBaseUrl: "https://nurevo.jp/s/" }),
-  }),
-});
 
 /**
  * Completeness of a canonical profile.
@@ -195,7 +168,7 @@ function rulesetDefinition(ruleset) {
   if (!ruleset) return INITIAL_AEO_RULESET.definition;
   if (ruleset.definition && typeof ruleset.definition === "object") return ruleset.definition;
   if (typeof ruleset.definition_json === "string") {
-    try { return JSON.parse(ruleset.definition_json); } catch { return INITIAL_AEO_RULESET.definition; }
+    return JSON.parse(ruleset.definition_json);
   }
   return ruleset;
 }
@@ -208,6 +181,21 @@ function normalizeRulesetDefinition(value) {
   }
   if (!definition || typeof definition !== "object" || Array.isArray(definition)) {
     return { ok: false, errors: ["definition_json must be a JSON object"] };
+  }
+  const scoring = definition.scoring;
+  if (!scoring || Object.keys(DEFAULT_SCORING).some(k => scoring[k] == null)) errors.push("complete scoring definition is required");
+  if (scoring && (!scoring.weights || Object.values(scoring.weights).some(v => !Number.isFinite(v) || v < 0) || Object.values(scoring.weights).reduce((a,b)=>a+b,0) !== 100)) errors.push("scoring weights must sum to 100");
+  if (scoring) {
+    const fractions = ['invalidSchemaFactor','schemaOk','coverageOk','coverageWarn','legibilityOk','legibilityWarn','llmsOk'];
+    if (fractions.some(k=>!Number.isFinite(scoring[k]) || scoring[k]<0 || scoring[k]>1)) errors.push('scoring fractions must be between 0 and 1');
+    if (['gateCap','greenAt','yellowAt'].some(k=>!Number.isFinite(scoring[k]) || scoring[k]<0 || scoring[k]>100) || scoring.greenAt<scoring.yellowAt) errors.push('invalid scoring bands');
+    if (['minVisible','minFactText','minLlms'].some(k=>!Number.isSafeInteger(scoring[k]) || scoring[k]<0 || scoring[k]>2000000)) errors.push('invalid text length threshold');
+    for (const [key,size] of [['coverageMix',2],['legibilityMix',3]]) if (!Array.isArray(scoring[key]) || scoring[key].length!==size || scoring[key].some(v=>!Number.isFinite(v)||v<0||v>1) || Math.abs(scoring[key].reduce((a,b)=>a+b,0)-1)>0.000001) errors.push('invalid '+key);
+    if (typeof scoring.modelVersion !== 'string' || !scoring.modelVersion.trim()) errors.push('scoring.modelVersion is required');
+    if (Object.keys(scoring.weights || {}).sort().join() !== Object.keys(DEFAULT_SCORING.weights).sort().join()) errors.push('invalid scoring weight dimensions');
+    for (const key of ['OK','WARN','BAD']) if (!Number.isFinite(scoring.statusFactors?.[key]) || scoring.statusFactors[key]<0 || scoring.statusFactors[key]>1) errors.push('invalid status factor');
+    for (const key of ['aiCrawlers','usefulTypes','factTextPatterns']) if (!Array.isArray(scoring[key]) || !scoring[key].length || scoring[key].some(v=>typeof v!=='string' || v.length>512)) errors.push('invalid '+key);
+    try { for (const pattern of scoring.factTextPatterns || []) new RegExp(pattern,'i'); } catch {errors.push('invalid text pattern');}
   }
   const schema = definition.schema;
   const llmsTxt = definition.llmsTxt;
@@ -237,6 +225,22 @@ function normalizeRulesetDefinition(value) {
     if (typeof defaults.hostedBaseUrl !== "string" || !/^https:\/\//i.test(defaults.hostedBaseUrl)) errors.push("defaults.hostedBaseUrl must be an https URL");
   }
   if (errors.length) return { ok: false, errors };
+  if (!definition.generation?.properties || !definition.generation?.llmsSections || !definition.generation?.entityTemplates) errors.push("generation properties and llmsSections are required");
+  if (llmsTxt?.sections?.some(section=>!Array.isArray(definition.generation?.llmsSections?.[section]))) errors.push('unsupported llms section');
+  if (!schema?.entityFields || Object.keys(ENTITY_SCHEMA_FIELDS).some(k=>!schema.entityFields[k])) errors.push('complete schema.entityFields is required');
+  if (llmsTxt.format !== 'markdown') errors.push('unsupported llms format');
+  const validSpec = (spec,key,depth=0) => {
+    if (!spec || typeof spec!=='object' || Array.isArray(spec) || depth>12) return false;
+    if (spec.requires && (!Array.isArray(spec.requires) || spec.requires.some(k=>typeof k!=='string'))) return false;
+    const kinds = ['literal','source','object'].filter(k=>Object.hasOwn(spec,k));
+    if (kinds.length!==1) return false;
+    if (kinds[0]==='literal') return ['@type','@context'].includes(key) && typeof spec.literal==='string';
+    if (kinds[0]==='source') return typeof spec.source==='string' && /^@?[A-Za-z][A-Za-z0-9_]*$/.test(spec.source);
+    return spec.object && typeof spec.object==='object' && Object.entries(spec.object).every(([k,v])=>validSpec(v,k,depth+1));
+  };
+  if (definition.generation?.properties && (['@context','@type','name'].some(k=>!definition.generation.properties[k]) || Object.entries(definition.generation.properties).some(([k,v])=>!validSpec(v,k)))) errors.push('invalid generation property; factual literals are not supported');
+  if (Object.values(definition.generation?.entityTemplates || {}).some(template=>Object.entries(template).some(([k,v])=>!validSpec(v,k)))) errors.push('invalid entity template');
+  if (errors.length) return {ok:false,errors};
   const serialized = JSON.stringify(definition);
   if (new TextEncoder().encode(serialized).byteLength > 64 * 1024) return { ok: false, errors: ["definition_json exceeds 64 KiB"] };
   return { ok: true, definition, json: serialized };
@@ -275,57 +279,31 @@ async function activeScoredProps(env) {
 
 async function loadActiveRuleset(env) {
   if (!env?.DB) return INITIAL_AEO_RULESET;
-  try {
-    const row = await env.DB.prepare(
-      "SELECT version, created_at, definition_json, active, notes FROM aeo_rulesets WHERE active = 1 ORDER BY version DESC LIMIT 1",
-    ).first();
-    return row || INITIAL_AEO_RULESET;
-  } catch (error) {
-    if (!String(error?.message || error).includes("no such table")) throw error;
-    return INITIAL_AEO_RULESET;
-  }
+  const row = await env.DB.prepare("SELECT version,created_at,definition_json,active,notes FROM aeo_rulesets WHERE active=1 ORDER BY version DESC LIMIT 1").first();
+  if (!row) throw new Error("active_ruleset_missing");
+  const checked = normalizeRulesetDefinition(row.definition_json || row.definition);
+  if (!checked.ok) throw new Error("active_ruleset_invalid: " + checked.errors.join(", "));
+  return row;
 }
 
 function buildJsonLd(site, settings, ruleset) {
   const definition = rulesetDefinition(ruleset);
-  const schema = definition?.schema || INITIAL_AEO_RULESET.definition.schema;
-  const fields = schema.fields || INITIAL_AEO_RULESET.definition.schema.fields;
-  const defaults = definition?.defaults || INITIAL_AEO_RULESET.definition.defaults;
+  const schema = definition.schema;
+  const fields = schema.fields;
+  const defaults = definition.defaults;
   // A site-specific schema.org type wins over the ruleset default: it is the
   // owner's own statement about what the business is.
   const schemaType = settings.business_type_schema || schema.type || defaults.schemaType || "LocalBusiness";
-  const ld = { "@context": schema.context || "https://schema.org", "@type": schemaType, name: settings.name || site.url };
-  const hostedBaseUrl = defaults.hostedBaseUrl || "https://nurevo.jp/s/";
+  const hostedBaseUrl = defaults.hostedBaseUrl;
   const canonicalUrl = site?.website_uri || (site?.url ? (/^https?:\/\//i.test(site.url) ? site.url : `https://${site.url}`) : null) || (site?.slug ? `${hostedBaseUrl}${encodeURIComponent(site.slug)}` : null);
-  if (fields.url !== false && canonicalUrl) ld.url = canonicalUrl;
-  // additionalType carries the human-facing label (e.g. 美容室). Fall back to the
-  // schema type so a site migrated from the single-column layout is not blank.
-  const typeLabel = settings.business_type || settings.business_type_schema;
-  if (fields.additionalType !== false && typeLabel) ld.additionalType = typeLabel;
-  if (fields.address !== false && settings.address) ld.address = { "@type": "PostalAddress", streetAddress: settings.address };
-  if (fields.telephone !== false && settings.tel) ld.telephone = settings.tel;
-  if (fields.openingHours !== false && settings.hours) ld.openingHours = settings.hours;
-  const hours = openingHoursSpecification(settings.hours_periods, settings.hours);
-  if (fields.openingHoursSpecification !== false && hours.length) ld.openingHoursSpecification = hours;
-  if (fields.geo !== false && settings.lat != null && settings.lng != null) ld.geo = { "@type": "GeoCoordinates", latitude: settings.lat, longitude: settings.lng };
-  const priceRange = (schema.priceLevelMap || INITIAL_AEO_RULESET.definition.schema.priceLevelMap)[settings.price_level] || settings.price;
-  if (fields.priceRange !== false && priceRange) ld.priceRange = priceRange;
-  if (fields.image !== false && settings.image) ld.image = settings.image;
-  if (fields.potentialAction !== false && settings.reserve_url) ld.potentialAction = { "@type": "ReserveAction", target: settings.reserve_url };
+  const values = { ...settings, canonicalUrl, schemaType,
+    name: settings.name || site.url,
+    typeLabel: settings.business_type || settings.business_type_schema,
+    structuredHours: openingHoursSpecification(settings.hours_periods, settings.hours),
+    mappedPrice: schema.priceLevelMap?.[settings.price_level] || settings.price,
+  };
+  const ld = renderRuleSchema(definition, values, fields);
 
-  /*
-   * Properties a ruleset has to switch on, rather than off.
-   *
-   * Everything above is "on unless the ruleset says otherwise", which is right
-   * for fields that have always been emitted. It is exactly wrong for new
-   * ones: `fields.description !== false` is true for a ruleset that has never
-   * heard of description, so a baseline site would pick up every future field
-   * the moment it was invented and the plan model would mean nothing. These
-   * are opt-in, so a site keeps the criteria it was installed with until it is
-   * entitled to move.
-   */
-  if (fields.description === true && settings.description) ld.description = settings.description;
-  if (fields.email === true && settings.email) ld.email = settings.email;
   return ld;
 }
 
@@ -344,13 +322,15 @@ export async function handleApi(request, env, ctx) {
       // reused for every language, and the wording is applied on the way out.
       // Caching per language would multiply the entries and let the first
       // visitor's language decide what everyone else sees until it expired.
-      const schemaRules = rulesetDefinition(await loadActiveRuleset(env)).schema;
-      const rulesHash = await aeoSha256Hex(JSON.stringify(schemaRules));
+      const activeRuleset = await loadActiveRuleset(env);
+  const definition = rulesetDefinition(activeRuleset);
+  const schemaRules = definition.schema;
+      const rulesHash = await aeoSha256Hex(JSON.stringify(definition));
       const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
       const cached = await env.WEBMCP_KV?.get(cacheKey, "json");
       const vary = { "cache-control": `public, max-age=${AEO_CACHE_TTL_SECONDS}`, "vary": "accept-language" };
       if (cached) return json(aeoResponse(cached, lang), 200, { ...vary, "x-aeo-cache": "hit" });
-      const result = await diagnoseAeoUrl(raw, { schemaRules });
+      const result = await diagnoseAeoUrl(raw, { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version });
       const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(aeoResponse(result)), { expirationTtl: AEO_CACHE_TTL_SECONDS });
       if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
       return json(aeoResponse(result, lang), 200, { ...vary, "x-aeo-cache": "miss" });
@@ -667,13 +647,16 @@ export async function handleApi(request, env, ctx) {
     }
     const ruleset = await rulesetForPlan(env, resolveSitePlan(hosted, { manual_plan: hosted.org_manual_plan }));
     const rulesetVersion = String(ruleset.version || INITIAL_AEO_RULESET.version);
-    if (hostedMatch[2]) return new Response(buildHostedLlms(hosted, ruleset), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "x-aeo-ruleset-version": rulesetVersion } });
+    if (!hostedMatch[2]) await recordFetched(env, hosted.id, Number(ruleset.version), hostedSchema(hosted, priceRange(hosted.price || hosted.price_level, ruleset), ruleset));
+    if (hostedMatch[2]) return new Response(buildHostedLlms(hosted, ruleset) + `\n# nurevo-aeo-ruleset:${ruleset.version}\n`, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "x-aeo-ruleset-version": rulesetVersion } });
     const locale = preferredHostedLocale(url, request);
     return new Response(localizeHostedMarkup(renderHostedStore(hosted, locale, ruleset), HOSTED_LABELS[locale] || HOSTED_LABELS.ja, locale), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "vary": "accept-language", "x-aeo-ruleset-version": rulesetVersion } });
   }
 
   if (path === "/robots.txt" && method === "GET") {
-    return new Response(siteRobotsTxt(), { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" } });
+    const ruleset = await loadActiveRuleset(env);
+    const policy = rulesetDefinition(ruleset).robots;
+    return new Response(siteRobotsTxt({allow:policy.defaultAllow,agents:AI_CRAWLERS.filter(c=>policy.aiCrawlerIds.includes(c.id)).map(c=>c.ua)}) + `\n# nurevo-aeo-ruleset:${ruleset.version}\n`, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "public, max-age=300" } });
   }
 
   // The marketing pages are static and list themselves (Pages builds
@@ -951,7 +934,7 @@ export async function handleApi(request, env, ctx) {
     if (!auth.registered) return json({ ok: false }, 404);
     const siteState = await env.DB.prepare("SELECT delivery_status FROM sites WHERE id = ?").bind(auth.siteId).first();
     if (!siteState || siteState.delivery_status === "stopped") return json({ ok: false }, 404);
-    const settings = await env.DB.prepare("SELECT * FROM site_settings WHERE site_id = ?").bind(auth.siteId).first() || {};
+    const settings = await generationSettings(env, auth.siteId);
     const site = await env.DB.prepare("SELECT url, website_uri, slug FROM sites WHERE id = ?").bind(auth.siteId).first();
     const plan = normalizeAeoPlan(auth.plan);
     const ruleset = await rulesetForPlan(env, plan);
@@ -963,11 +946,16 @@ export async function handleApi(request, env, ctx) {
       reserve: settings.reserve_url || "",
       url: site?.url || "",
     };
+    const deliveryPayload = settings.serve_schema ? buildJsonLd(site, settings, ruleset) : null;
+    await recordFetched(env, auth.siteId, Number(ruleset.version), deliveryPayload);
+    const autofix = await env.DB.prepare("SELECT * FROM aeo_autofix_jobs WHERE site_id=? AND status<>'planning'").bind(auth.siteId).first();
     const body = {
+      autofix,
+      crawler_agents: AI_CRAWLERS.filter(c => rulesetDefinition(ruleset).robots.aiCrawlerIds.includes(c.id)).map(c=>c.ua),
       ok: true,
       plan,
       quality: auth.quality,
-      crawlerAllowed: !!settings.allow_crawlers,
+      crawlerAllowed: !!settings.allow_crawlers && rulesetDefinition(ruleset).robots.defaultAllow,
       jsonld: settings.serve_schema ? buildJsonLd(site, settings, ruleset) : null,
       ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
       // The plugin publishes its own @graph, because it has data this service
@@ -975,7 +963,9 @@ export async function handleApi(request, env, ctx) {
       // above, so it gets the field switches instead and applies them to what
       // it builds locally. Without this the plugin followed a version number
       // and nothing else, and "always current" moved no output at all.
-      schema_fields: rulesetDefinition(ruleset)?.schema?.fields || INITIAL_AEO_RULESET.definition.schema.fields,
+      schema_fields: rulesetDefinition(ruleset).schema.fields,
+      entity_templates: rulesetDefinition(ruleset).generation.entityTemplates,
+      business_template: rulesetDefinition(ruleset).generation.properties,
       store,
     };
     return json(body, 200, {
@@ -1138,9 +1128,9 @@ export async function handleApi(request, env, ctx) {
     const hitCutoff = new Date(Date.now() - (hitDays - 1) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const [scoreResult, hitResult, referralResult, activeRuleset] = await Promise.all([
       env.DB.prepare(`
-        SELECT site_id,scanned_at,host,score,verdict,ruleset_version,checks_json
+        SELECT site_id,scanned_at,host,score,verdict,ruleset_version,delivered_ruleset_version,score_model_version,checks_json
           FROM (
-            SELECT site_id,scanned_at,host,score,verdict,ruleset_version,checks_json
+            SELECT site_id,scanned_at,host,score,verdict,ruleset_version,delivered_ruleset_version,score_model_version,checks_json
               FROM aeo_scores WHERE site_id=?
              ORDER BY scanned_at DESC LIMIT ?
           ) ORDER BY scanned_at ASC
@@ -1183,7 +1173,9 @@ export async function handleApi(request, env, ctx) {
       }
     }
 
+    const autoFixJob = await env.DB.prepare('SELECT missing_json,status,requested_at FROM aeo_autofix_jobs WHERE site_id=?').bind(site.id).first();
     return json({
+      optimization: autoFixJob ? {...JSON.parse(autoFixJob.missing_json),status:autoFixJob.status,requested_at:autoFixJob.requested_at} : null,
       site_id: site.id,
       install_type: site.install_type,
       checks: latestChecks,
@@ -1193,10 +1185,11 @@ export async function handleApi(request, env, ctx) {
       crawler_measurement: liveDelivery,
       ai_referrals: referralResult.results || [],
       ruleset: {
-        version: liveDelivery ? Number(activeRuleset?.version || INITIAL_AEO_RULESET.version) : null,
+        version: liveDelivery ? latestRow?.delivered_ruleset_version ?? null : null,
+        scoring_version: latestRow?.ruleset_version ?? null,
         latest_version: Number(activeRuleset?.version || INITIAL_AEO_RULESET.version),
         auto_updates: liveDelivery,
-        status: liveDelivery ? "latest" : "static",
+        status: !liveDelivery ? "static" : latestRow?.delivered_ruleset_version === activeRuleset?.version ? "latest" : "unverified",
       },
       limits: { scores: scoreLimit, hit_days: hitDays },
     });
@@ -2074,7 +2067,7 @@ async function loadSiteProfile(env, siteId) {
  * `now` is taken from the worker's own clock. A caller may not supply a
  * timestamp, which is what stops a client from forging merge order.
  */
-async function writeSiteProfile(env, siteId, incoming, source) {
+export async function writeSiteProfile(env, siteId, incoming, source) {
   const current = await loadSiteProfile(env, siteId);
   if (!current) return { error: "not_found", status: 404 };
 
@@ -2849,7 +2842,7 @@ async function uniqueSlug(env, name, siteId) {
 }
 
 async function loadHostedStore(env, slug) {
-  return env.DB.prepare(
+  const store = await env.DB.prepare(
     `SELECT s.id,s.url,s.slug,s.delivery_status,s.plan,s.manual_plan,
             o.manual_plan AS org_manual_plan,
             ss.name,ss.business_type,ss.address,ss.hours,ss.hours_periods,ss.lat,ss.lng,
@@ -2858,6 +2851,8 @@ async function loadHostedStore(env, slug) {
        LEFT JOIN orgs o ON o.id=s.org_id
       WHERE s.slug=? LIMIT 1`,
   ).bind(slug).first();
+  if (store) Object.assign(store, await generationSettings(env, store.id));
+  return store;
 }
 
 function priceRange(value, ruleset) {
@@ -2907,28 +2902,13 @@ function openingHoursSpecification(periods, hoursText) {
 
 function hostedSchema(store, price, ruleset) {
   const definition = rulesetDefinition(ruleset);
-  const rules = definition?.schema || INITIAL_AEO_RULESET.definition.schema;
-  const fields = new Set(rules.hostedFields || INITIAL_AEO_RULESET.definition.schema.hostedFields);
-  const schema = { "@context": rules.context || "https://schema.org", "@type": rules.type || "LocalBusiness", name: store.name };
-  const canonical = store.slug
-    ? `${definition?.defaults?.hostedBaseUrl || INITIAL_AEO_RULESET.definition.defaults.hostedBaseUrl}${store.slug}`
-    : "";
-  if (fields.has("url") && canonical) schema.url = canonical;
-  if (fields.has("address") && store.address) schema.address = { "@type": "PostalAddress", streetAddress: store.address };
-  const hours = openingHoursSpecification(store.hours_periods, store.hours);
-  if (fields.has("openingHoursSpecification") && hours.length) schema.openingHoursSpecification = hours;
-  // The text form, for stores whose hours were typed as a sentence rather than
-  // parsed into periods - which is most of them.
-  if (fields.has("openingHours") && store.hours) schema.openingHours = store.hours;
-  if (fields.has("geo") && store.lat != null && store.lng != null) schema.geo = { "@type": "GeoCoordinates", latitude: store.lat, longitude: store.lng };
-  if (fields.has("telephone") && store.tel) schema.telephone = store.tel;
-  if (fields.has("priceRange") && price) schema.priceRange = price;
-  // hostedFields is a allow-list rather than a set of switches, so a property
-  // the ruleset has not named is simply absent - new ones are opt-in here by
-  // construction, and a baseline store keeps exactly the page it had.
-  if (fields.has("description") && store.description) schema.description = store.description;
-  if (fields.has("email") && store.email) schema.email = store.email;
-  return schema;
+  const rules = definition.schema;
+  const canonicalUrl = store.slug ? `${definition.defaults.hostedBaseUrl}${store.slug}` : store.website_uri || store.url;
+  const values = { ...store, canonicalUrl, schemaType: store.business_type_schema || rules.type,
+    structuredHours: openingHoursSpecification(store.hours_periods, store.hours), mappedPrice: price,
+    typeLabel: store.business_type || store.business_type_schema };
+  const fields = Object.fromEntries((rules.hostedFields || []).map(k=>[k,true]));
+  return renderRuleSchema(definition, values, fields, true);
 }
 
 const HOSTED_LABELS = {
@@ -2968,11 +2948,11 @@ function renderHostedStore(store, locale = "ja", ruleset) {
   const today = todayOpening(store.hours);
   const schema = JSON.stringify(hostedSchema(store, price, ruleset)).replace(/</g, "\\u003c");
   const esc = (value) => String(value ?? "").replace(/[&<>\"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
-  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(store.name)} | Nurevo</title><link rel="icon" href="/assets/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><script type="application/ld+json">${schema}</script><style>:root{--purple:#6f4df6;--ink:#241b3a;--muted:#716983;--line:#e9e4f5}*{box-sizing:border-box}body{margin:0;background:#faf9fe;color:var(--ink);font-family:Inter,system-ui,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:28px 20px 56px}.brand{display:flex;align-items:center;gap:8px;color:var(--purple);font-weight:800;text-decoration:none}.brand img{width:28px;height:28px}.hero{margin-top:64px}.eyebrow{color:var(--purple);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(32px,8vw,60px);line-height:1.05;margin:12px 0}.type{color:var(--muted);font-size:18px}.badge{display:inline-flex;margin-top:22px;padding:8px 12px;border-radius:999px;background:${today.open ? "#dcfce7;color:#166534" : "#f1eafa;color:#6f4df6"};font-size:13px;font-weight:700}.info{margin-top:34px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid var(--line)}.label{color:var(--muted)}.value{text-align:right;white-space:pre-wrap}.footer{margin-top:38px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:12px}.footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--purple)}@media(max-width:560px){.row{display:block}.value{text-align:left;margin-top:4px}}</style></head><body><main class="wrap"><a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo">Nurevo</a><section class="hero"><div class="eyebrow">Local business</div><h1>${esc(store.name)}</h1><div class="type">${esc(store.business_type || "")}</div><span class="badge">${today.open ? "本日営業中" : "本日営業時間"} · ${esc(today.label)}</span></section><section class="info">${store.address ? `<div class="row"><span class="label">住所</span><span class="value">${esc(store.address)}</span></div>` : ""}${store.hours ? `<div class="row"><span class="label">営業時間</span><span class="value">${esc(store.hours)}</span></div>` : ""}${store.tel ? `<div class="row"><span class="label">電話</span><span class="value">${esc(store.tel)}</span></div>` : ""}${price ? `<div class="row"><span class="label">価格帯</span><span class="value">${price}</span></div>` : ""}</section><p class="footer"><span>Information provided by Nurevo.</span><a href="/terms">利用規約</a><a href="/privacy">プライバシーポリシー</a><a href="/tokushoho">特定商取引法に基づく表記</a></p></main><script src="/tag.js" data-webmcp-site-key="${esc(store.site_key || "")}" defer></script></body></html>`;
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(store.name)} | Nurevo</title><link rel="icon" href="/assets/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><script type="application/ld+json">${schema}</script><script type="application/json" id="nurevo-aeo-delivery">${JSON.stringify({version:Number(ruleset?.version || 1)})}</script><style>:root{--purple:#6f4df6;--ink:#241b3a;--muted:#716983;--line:#e9e4f5}*{box-sizing:border-box}body{margin:0;background:#faf9fe;color:var(--ink);font-family:Inter,system-ui,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:28px 20px 56px}.brand{display:flex;align-items:center;gap:8px;color:var(--purple);font-weight:800;text-decoration:none}.brand img{width:28px;height:28px}.hero{margin-top:64px}.eyebrow{color:var(--purple);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(32px,8vw,60px);line-height:1.05;margin:12px 0}.type{color:var(--muted);font-size:18px}.badge{display:inline-flex;margin-top:22px;padding:8px 12px;border-radius:999px;background:${today.open ? "#dcfce7;color:#166534" : "#f1eafa;color:#6f4df6"};font-size:13px;font-weight:700}.info{margin-top:34px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid var(--line)}.label{color:var(--muted)}.value{text-align:right;white-space:pre-wrap}.footer{margin-top:38px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:12px}.footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--purple)}@media(max-width:560px){.row{display:block}.value{text-align:left;margin-top:4px}}</style></head><body><main class="wrap"><a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo">Nurevo</a><section class="hero"><div class="eyebrow">Local business</div><h1>${esc(store.name)}</h1><div class="type">${esc(store.business_type || "")}</div><span class="badge">${today.open ? "本日営業中" : "本日営業時間"} · ${esc(today.label)}</span></section><section class="info">${store.address ? `<div class="row"><span class="label">住所</span><span class="value">${esc(store.address)}</span></div>` : ""}${store.hours ? `<div class="row"><span class="label">営業時間</span><span class="value">${esc(store.hours)}</span></div>` : ""}${store.tel ? `<div class="row"><span class="label">電話</span><span class="value">${esc(store.tel)}</span></div>` : ""}${price ? `<div class="row"><span class="label">価格帯</span><span class="value">${price}</span></div>` : ""}</section><p class="footer"><span>Information provided by Nurevo.</span><a href="/terms">利用規約</a><a href="/privacy">プライバシーポリシー</a><a href="/tokushoho">特定商取引法に基づく表記</a></p></main><script src="/tag.js" data-webmcp-site-key="${esc(store.site_key || "")}" defer></script></body></html>`;
 }
 
-function buildHostedLlms(store, _ruleset) {
-  return buildLlmsTxt({ name: store.name, address: store.address, tel: store.tel, hours: store.hours, url: store.url });
+function buildHostedLlms(store, ruleset) {
+  return buildLlmsTxt(store, rulesetDefinition(ruleset));
 }
 
 export { INITIAL_AEO_RULESET, LIVE_AEO_CACHE_CONTROL, buildJsonLd, hostedSchema, loadActiveRuleset, renderHostedStore };
@@ -3414,8 +3394,10 @@ function sessionCookie(value, maxAge) {
 export { buildLlmsTxt, matchCrawler, robotsBlock };
 
 export async function diagnosticOptions(env, siteId) {
-  const schemaRules = rulesetDefinition(await loadActiveRuleset(env)).schema;
-  if (!siteId || !env?.DB) return { schemaRules };
+  const activeRuleset = await loadActiveRuleset(env);
+  const definition = rulesetDefinition(activeRuleset);
+  const schemaRules = definition.schema;
+  if (!siteId || !env?.DB) return { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version };
   let catalog = null, profile = null;
   try {
     [catalog, profile] = await Promise.all([
@@ -3425,5 +3407,22 @@ export async function diagnosticOptions(env, siteId) {
   } catch (error) {
     if (!String(error?.message || error).includes('no such table')) throw error;
   }
-  return { schemaRules, catalog, entityType: profile?.business_type_schema };
+  return { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, catalog, entityType: profile?.business_type_schema };
+}
+
+export async function centralLlmsForKey(env, siteKey) {
+  if (!env?.DB) return null;
+  const auth = await authorizeSiteKey(env, siteKey, {touch:false});
+  if (!auth.registered) return null;
+  const site = await env.DB.prepare('SELECT * FROM sites WHERE id=?').bind(auth.siteId).first();
+  const settings = await env.DB.prepare('SELECT * FROM site_settings WHERE site_id=?').bind(auth.siteId).first() || {};
+  const rule = await rulesetForPlan(env, auth.plan);
+  return buildLlmsTxt({...settings,url:site.website_uri || site.url},rulesetDefinition(rule)) + `\n# nurevo-aeo-ruleset:${rule.version}\n`;
+}
+
+async function generationSettings(env, siteId) {
+  const settings = await env.DB.prepare('SELECT * FROM site_settings WHERE site_id=?').bind(siteId).first() || {};
+  const facts = await env.DB.prepare('SELECT same_as_json FROM aeo_harvested_facts WHERE site_id=?').bind(siteId).first();
+  if (facts) settings.same_as = JSON.parse(facts.same_as_json);
+  return settings;
 }

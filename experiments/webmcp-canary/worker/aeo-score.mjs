@@ -1,18 +1,15 @@
+import { DEFAULT_SCORING } from "./aeo-rules.mjs";
 import { ENTITY_SCHEMA_FIELDS, localizeFields, fieldsSummary, textHint, fieldLang } from "./aeo-fields.mjs";
 // Keep these weights independent from extraction so layer-2 citation data can
 // tune the model without changing the public scoring contract.
-export const AEO_SCORE_WEIGHTS = Object.freeze({ schema: 30, coverage: 25, legibility: 20, llms: 15, consistency: 10 });
+export const AEO_SCORE_WEIGHTS = DEFAULT_SCORING.weights;
 // u1-v2: the schema component became proportional to the properties met,
 // rather than one of three bands. Scores from v1 are not directly comparable.
-export const AEO_SCORE_MODEL_VERSION = "u1-v4";
-const STATUS_FACTOR = Object.freeze({ OK: 1, WARN: 0.5, BAD: 0 });
+export const AEO_SCORE_MODEL_VERSION = DEFAULT_SCORING.modelVersion;
 export const AEO_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
 export const AEO_RATE_LIMIT = Object.freeze({ limit: 20, windowSeconds: 60 * 60 });
 
-const AI_CRAWLERS = Object.freeze([
-  "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-Web",
-  "PerplexityBot", "Google-Extended", "Applebot-Extended",
-]);
+
 /**
  * The schema properties scored when nothing says otherwise.
  *
@@ -35,46 +32,13 @@ export const BASELINE_SCORED_PROPS = Object.freeze([
  * complete the rest of its markup was. Being more specific is the right thing
  * to do and was costing points.
  */
-const USEFUL_SCHEMA_TYPES = new Set([
-  // Content and generic entities.
-  "organization", "localbusiness", "product", "service", "softwareapplication",
-  "article", "newsarticle", "blogposting", "faqpage", "website",
-  // Food and drink.
-  "restaurant", "cafeorcoffeeshop", "bakery", "barorpub", "fastfoodrestaurant",
-  "icecreamshop", "winery", "brewery", "distillery",
-  // Retail.
-  "store", "clothingstore", "grocerystore", "pharmacy", "petstore",
-  "furniturestore", "shoppingcenter", "bookstore", "florist", "hardwarestore",
-  "jewelrystore", "liquorstore", "mobilephonestore", "officeequipmentstore",
-  "shoestore", "sportinggoodsstore", "toystore", "conveniencestore",
-  "departmentstore", "electronicsstore", "homegoodsstore",
-  // Health and beauty.
-  "healthandbeautybusiness", "hairsalon", "beautysalon", "dayspa", "nailsalon",
-  "medicalbusiness", "dentist", "physician", "hospital", "veterinarycare",
-  "optician", "healthclub", "tattooparlor",
-  // Lodging and travel.
-  "lodgingbusiness", "hotel", "motel", "hostel", "bedandbreakfast", "resort",
-  "campground", "travelagency", "touristinformationcenter",
-  // Professional and trade.
-  "professionalservice", "legalservice", "accountingservice", "financialservice",
-  "insuranceagency", "realestateagent", "notary", "employmentagency",
-  "homeandconstructionbusiness", "plumber", "electrician", "generalcontractor",
-  "roofingcontractor", "movingcompany", "housepainter", "locksmith",
-  "autorepair", "automotivebusiness", "autodealer", "autobodyshop",
-  "autopartsstore", "autorental", "autowash", "gasstation", "motorcycledealer",
-  // Activity, education and the rest.
-  "sportsactivitylocation", "exercisegym", "golfcourse", "skiresort",
-  "swimmingpool", "tenniscomplex", "bowlingalley",
-  "entertainmentbusiness", "movietheater", "nightclub", "casino", "amusementpark",
-  "childcare", "educationalorganization", "school", "preschool", "library",
-  "museum", "touristattraction", "selfstorage", "drycleaningorlaundry",
-  "emergencyservice", "governmentoffice", "internetcafe", "recyclingcenter",
-]);
 
 const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
 const statusFor = (value, okAt, warnAt) => value >= okAt ? "OK" : value >= warnAt ? "WARN" : "BAD";
 
-export function scoreAeo(input = {}) {
+export function scoreAeo(input = {}, scoring = DEFAULT_SCORING) {
+  const r = scoring;
+  const weights = r.weights;
   const signals = {
     aiCrawlersAllowed: input.aiCrawlersAllowed === true,
     edgeBlocked: input.edgeBlocked === true,
@@ -112,28 +76,28 @@ export function scoreAeo(input = {}) {
    */
   const schemaFactor = !signals.jsonLdInRawHtml ? 0
     : signals.schemaValid && signals.schemaTypeMatches ? signals.schemaCoreProps
-      : 0.5 * signals.schemaCoreProps;
-  const schema = schemaFactor >= 0.8 ? "OK" : schemaFactor > 0 ? "WARN" : "BAD";
-  const coverageValue = input.schemaFields ? signals.schemaCoreProps : 0.6 * signals.coreFieldsFilled + 0.4 * signals.bizSpecificFilled;
-  const coverage = input.schemaFields ? schema : statusFor(coverageValue, 0.8, 0.4);
-  const legibilityValue = 0.6 * signals.factsInText + 0.2 * Number(signals.hasHeadingStructure) + 0.2 * Number(signals.hasFaq);
-  const legibility = statusFor(legibilityValue, 0.75, 0.4);
-  const llms = !signals.llmsTxtPresent ? "BAD" : signals.llmsTxtQuality >= 0.7 ? "OK" : "WARN";
+      : r.invalidSchemaFactor * signals.schemaCoreProps;
+  const schema = schemaFactor >= r.schemaOk ? "OK" : schemaFactor > 0 ? "WARN" : "BAD";
+  const coverageValue = input.schemaFields ? signals.schemaCoreProps : r.coverageMix[0] * signals.coreFieldsFilled + r.coverageMix[1] * signals.bizSpecificFilled;
+  const coverage = input.schemaFields ? schema : statusFor(coverageValue, r.coverageOk, r.coverageWarn);
+  const legibilityValue = r.legibilityMix[0] * signals.factsInText + r.legibilityMix[1] * Number(signals.hasHeadingStructure) + r.legibilityMix[2] * Number(signals.hasFaq);
+  const legibility = statusFor(legibilityValue, r.legibilityOk, r.legibilityWarn);
+  const llms = !signals.llmsTxtPresent ? "BAD" : signals.llmsTxtQuality >= r.llmsOk ? "OK" : "WARN";
   const consistency = signals.consistent && signals.freshSignals ? "OK"
     : signals.consistent || signals.freshSignals ? "WARN" : "BAD";
   const statuses = { schema, coverage, legibility, llms, consistency };
   // Every component but schema is still banded; schema carries its own factor
   // so a partial result is scored as partial rather than rounded to a band.
-  const factors = { ...Object.fromEntries(Object.keys(AEO_SCORE_WEIGHTS).map((id) => [id, STATUS_FACTOR[statuses[id]]])), schema: schemaFactor };
-  const rawScore = Math.round(Object.entries(AEO_SCORE_WEIGHTS)
+  const factors = { ...Object.fromEntries(Object.keys(weights).map((id) => [id, r.statusFactors[statuses[id]]])), schema: schemaFactor };
+  const rawScore = Math.round(Object.entries(weights)
     .reduce((sum, [id, weight]) => sum + weight * factors[id], 0));
   const gatePassed = signals.aiCrawlersAllowed && !signals.edgeBlocked && signals.serverRenderedHtml;
-  const score = gatePassed ? rawScore : Math.min(rawScore, 15);
-  const band = !gatePassed ? "red" : score >= 80 ? "green" : score >= 50 ? "yellow" : "red";
+  const score = gatePassed ? rawScore : Math.min(rawScore, r.gateCap);
+  const band = !gatePassed ? "red" : score >= r.greenAt ? "green" : score >= r.yellowAt ? "yellow" : "red";
   return { score, band, gatePassed, statuses, metrics: { coverage: coverageValue, legibility: legibilityValue, schema: schemaFactor } };
 }
 
-export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null, schemaRules = null, entityType = null, catalog = null } = {}) {
+export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null, schemaRules = null, entityType = null, catalog = null, scoring = DEFAULT_SCORING, rulesetVersion = null } = {}) {
   const target = publicUrl(raw);
   const page = await fetchBounded(fetchImpl, target.href, { userAgent: "Nurevo-AEO-Diagnostics/1.0 (+https://nurevo.jp)" });
   const [robots, llms, edgeBlocked] = await Promise.all([
@@ -144,10 +108,14 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = nul
   const signals = extractAeoSignals(page.text, robots.text, llms.text, {
     edgeBlocked,
     llmsPresent: llms.ok,
-    scoredProps, schemaRules, entityType, catalog,
+    scoredProps, schemaRules, entityType, catalog, scoring,
   });
-  const result = scoreAeo(signals);
+  const result = scoreAeo(signals, scoring);
   return {
+    rulesetVersion,
+    modelVersion: scoring.modelVersion,
+    deliveryEvidence: deliveryEvidence(page.text, robots.text, llms.text),
+    publicNodes: extractSchemaNodes(page.text),
     host: target.host,
     score: result.score,
     band: result.band,
@@ -203,6 +171,7 @@ export async function fetchSchemaNodes(raw, { fetchImpl = fetch } = {}) {
 }
 
 export function extractAeoSignals(html = "", robots = "", llms = "", options = {}) {
+  const scoring = options.scoring || DEFAULT_SCORING;
   const scripts = [...String(html).matchAll(/<script\b[^>]*type\s*=\s*["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script\s*>/gi)];
   const schemas = [];
   let schemaValid = scripts.length > 0;
@@ -210,7 +179,8 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     try { flattenSchemas(JSON.parse(match[1]), schemas); } catch { schemaValid = false; }
   }
   const types = schemas.flatMap((item) => Array.isArray(item?.["@type"]) ? item["@type"] : [item?.["@type"]]).filter(Boolean);
-  const schemaTypeMatches = types.some((type) => USEFUL_SCHEMA_TYPES.has(String(type).toLowerCase()));
+  const usefulTypes = new Set(scoring.usefulTypes);
+  const schemaTypeMatches = types.some((type) => usefulTypes.has(String(type).toLowerCase()));
   const schemaText = JSON.stringify(schemas).toLowerCase();
   const visible = stripHtml(html).toLowerCase();
   const coreTests = [
@@ -226,14 +196,8 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     schemas.some((x) => x?.makesOffer || x?.hasOfferCatalog || x?.serviceType) || /(サービス|service)/i.test(visible),
     schemas.some((x) => x?.priceRange || x?.offers) || /(料金|価格|price|¥|￥|\$)/i.test(visible),
   ];
-  const factsTests = [
-    visible.trim().length >= 20,
-    addressLike(visible),
-    /(?:tel|電話|phone)[\s:：]*[+()\d-]{7,}/i.test(visible),
-    /(営業時間|opening hours|月曜|monday)/i.test(visible),
-    /(?:latitude|longitude|緯度|経度)/i.test(visible),
-    /https?:\/\//i.test(visible) || /(公式サイト|website)/i.test(visible),
-  ];
+  const factsTests = [visible.trim().length >= scoring.minFactText,
+    ...scoring.factTextPatterns.map(pattern=>new RegExp(pattern,'i').test(visible))];
   // Which schema properties count is the ruleset's decision, not a constant
   // here. This is the hinge the whole plan model turns on: a free site keeps
   // emitting the fields it was installed with, every site is scored against
@@ -246,11 +210,11 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     : BASELINE_SCORED_PROPS;
   const publishedProps = publishedSchemaProps(schemas, scoredProps);
   const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: options.commerceDetected || /(?:class|id)=["'][^"']*woocommerce/i.test(html) });
-  const llmsQualityTests = [llms.length >= 120, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours)/i.test(llms)];
+  const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours)/i.test(llms)];
   return {
-    aiCrawlersAllowed: AI_CRAWLERS.every((bot) => robotsAllows(robots, bot)),
+    aiCrawlersAllowed: scoring.aiCrawlers.every((bot) => robotsAllows(robots, bot)),
     edgeBlocked: options.edgeBlocked === true,
-    serverRenderedHtml: visible.replace(/\s+/g, " ").trim().length >= 100 || scripts.length > 0,
+    serverRenderedHtml: visible.replace(/\s+/g, " ").trim().length >= scoring.minVisible || scripts.length > 0,
     jsonLdInRawHtml: scripts.length > 0,
     schemaTypeMatches,
     schemaValid,
@@ -456,6 +420,7 @@ export class AeoScoreError extends Error {
 
 // Match fields within the correct entity, never by a substring anywhere in JSON.
 export function diagnoseSchemaFields(nodes, options = {}) {
+  const USEFUL_SCHEMA_TYPES = new Set((options.scoring || DEFAULT_SCORING).usefulTypes);
   const typesOf = node => [node?.['@type']].flat().filter(Boolean).map(t => String(t).toLowerCase());
   const types = nodes.flatMap(typesOf);
   const families = new Set();
@@ -499,4 +464,12 @@ export function diagnoseSchemaFields(nodes, options = {}) {
     const entities = nodes.filter(n => match(n,entityType));
     return Object.entries(definition).filter(([field,enabled]) => enabled !== false && enabled?.enabled !== false && (entityType !== 'LocalBusiness' || rules.fields?.[field] !== false)).map(([field,config]) => ({entityType,field,weight: config && typeof config === 'object' && Number(config.weight) > 0 ? Number(config.weight) : 1,present: entities.length > 0 && entities.every(n => read(n,field.split('.')))}));
   });
+}
+
+// Evidence is read from raw HTML, never from a config fetch or client acknowledgement.
+export function deliveryEvidence(html, robots = "", llms = "") {
+  const artifactVersion = text => {const m=String(text).match(/^# nurevo-aeo-ruleset:(\d+)\s*$/m); return m?Number(m[1]):null;};
+  const match = String(html).match(/<script\b[^>]*id=["']nurevo-aeo-delivery["'][^>]*>([\s\S]*?)<\/script>/i);
+  if (!match) return null;
+  try { const evidence = JSON.parse(match[1]); return { version: evidence.version, robotsVersion:artifactVersion(robots), llmsVersion:artifactVersion(llms), nodes: extractSchemaNodes(html).map(n=>({'@context':'https://schema.org',...n})) }; } catch { return null; }
 }

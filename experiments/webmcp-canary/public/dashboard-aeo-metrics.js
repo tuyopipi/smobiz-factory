@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-01-asset1 */
+/* Nurevo dashboard asset revision: 2026-10-20-asset1 */
 (function () {
   "use strict";
   var selectedSiteId = null;
@@ -29,10 +29,12 @@
   function scoreSummary(scores) {
     var values = validScores(scores);
     if (!values.length) return '<div class="nrv-aeo-empty">診断データなし</div>';
-    var latest = values[values.length - 1], previous = values.length > 1 ? values[values.length - 2] : null;
+    var latest = values[values.length - 1];
+    var comparable = values.filter(function(row){return latest.ruleset_version != null && latest.score_model_version && latest.delivered_ruleset_version != null && row.ruleset_version === latest.ruleset_version && row.score_model_version === latest.score_model_version && row.delivered_ruleset_version != null;});
+    var previous = comparable.length > 1 ? comparable[comparable.length - 2] : null;
     var delta = previous ? Number(latest.score) - Number(previous.score) : null;
-    var trend = delta == null ? '初回診断' : delta > 0 ? '↗ +' + delta : delta < 0 ? '↘ ' + delta : '→ 変化なし';
-    return '<div class="nrv-aeo-score"><strong>' + esc(latest.score) + '</strong><span>/ 100</span><b class="' + (delta > 0 ? 'up' : delta < 0 ? 'down' : '') + '">' + esc(trend) + '</b></div><p class="notice">' + esc(latest.verdict || '') + ' · ' + esc(latest.scanned_at) + '</p>' + sparkline(values);
+    var trend = delta == null ? (values.length > 1 ? '同じ採点基準・配信確認済みデータを蓄積中' : '初回診断') : delta > 0 ? '↗ +' + delta : delta < 0 ? '↘ ' + delta : '→ 変化なし';
+    return '<div class="nrv-aeo-score"><strong>' + esc(latest.score) + '</strong><span>/ 100</span><b class="' + (delta > 0 ? 'up' : delta < 0 ? 'down' : '') + '">' + esc(trend) + '</b></div><p class="notice">' + esc(latest.verdict || '') + ' · ' + esc(latest.scanned_at) + '</p>' + sparkline(comparable);
   }
   function crawlerTable(metrics) {
     if (!metrics.crawler_measurement) return '<div class="nrv-aeo-warning"><b>来訪計測なし（診断スコアのみ）</b><br>静的JSON-LDではクローラ来訪を計測できません。プラグインまたはAPI連携をご利用ください。</div>';
@@ -56,6 +58,7 @@
   function rulesetStatus(metrics) {
     var ruleset = metrics.ruleset || {};
     if (!ruleset.auto_updates) return '<div class="nrv-ruleset static"><b>静的JSON-LD</b><span>自動更新されません（最新ruleset: v' + esc(ruleset.latest_version || '—') + '）</span></div>';
+    if (ruleset.status !== 'latest') return '<div class="nrv-ruleset static"><b>公開サイトでの配信を確認中</b><span>最新ルール v' + esc(ruleset.latest_version || '—') + ' · 確認できた配信版 v' + esc(ruleset.version || '—') + '</span></div>';
     return '<div class="nrv-ruleset latest"><b>ruleset v' + esc(ruleset.version || '—') + '</b><span>最新化されています · 中央ルールへ自動追従</span></div>';
   }
   // Timestamps are stored as ISO strings; one that will not parse is shown as it
@@ -92,11 +95,17 @@
       : '';
     return '<ol class="nrv-aeo-checks">' + rows + '</ol>' + when;
   }
+  function optimizationNotice(metrics) {
+    var detail = metrics.optimization;
+    if (!detail || !detail.action_required) return '';
+    var fields = (detail.missing_fields || []).map(function(f){return esc(f.entityType + '.' + f.field);}).join(', ');
+    return '<div class="nrv-aeo-warning" role="status"><b>自動最適化：情報の確認が必要です</b><p>公開情報で確認できない項目があります。実際の情報だけを入力してください。</p><p>' + fields + '</p></div>';
+  }
   function panel(metrics) {
     var section = document.createElement('section');
     section.className = 'nrv-aeo-metrics';
     section.dataset.siteId = metrics.site_id;
-    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>AEO計測</small><h2>検索AIへの届き方</h2></div>' + rulesetStatus(metrics) + '</div><div class="nrv-aeo-grid"><section><h3>AEOスコア（日次）</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>AI流入（日次）</h3>' + referralTrend(metrics.ai_referrals) + '</section></div><section class="nrv-aeo-checklist"><h3>AIクローラ来訪</h3>' + crawlerTable(metrics) + '</section><section class="nrv-aeo-checklist"><h3>診断チェックリスト</h3>' + checklist(metrics) + '</section></div>';
+    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>AEO計測</small><h2>検索AIへの届き方</h2></div>' + rulesetStatus(metrics) + '</div>' + optimizationNotice(metrics) + '<div class="nrv-aeo-grid"><section><h3>AEOスコア（日次）</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>AI流入（日次）</h3>' + referralTrend(metrics.ai_referrals) + '</section></div><section class="nrv-aeo-checklist"><h3>AIクローラ来訪</h3>' + crawlerTable(metrics) + '</section><section class="nrv-aeo-checklist"><h3>診断チェックリスト</h3>' + checklist(metrics) + '</section></div>';
     return section;
   }
   async function resolveSiteId() {

@@ -3,7 +3,7 @@
  * Plugin Name: Nurevo AEO
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
- * Version: 0.7.1
+ * Version: 0.7.2
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Nurevo
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WEBMCP_CANARY_VERSION', '0.7.1');
+define('WEBMCP_CANARY_VERSION', '0.7.2');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
@@ -382,10 +382,15 @@ function webmcp_canary_allow_ai_crawlers_robots_txt($output, $public) {
         'CCBot',
         'Applebot-Extended',
     );
+    $central_state = webmcp_canary_ruleset_state();
+    if (!empty(webmcp_canary_central_payload()['crawler_agents'])) {
+        $agents = array_filter($central_state['crawler_agents'], function ($agent) { return is_string($agent) && preg_match('/^[A-Za-z0-9._-]+$/', $agent); });
+    }
     $rules = array($marker);
+    if (!empty(webmcp_canary_central_payload()['crawler_agents'])) { $rules[] = '# nurevo-aeo-ruleset:' . intval($central_state['version']); }
     foreach ($agents as $agent) {
         $rules[] = 'User-agent: ' . $agent;
-        $rules[] = 'Allow: /';
+        $rules[] = !empty(webmcp_canary_central_payload()['crawler_agents']) && empty($central_state['crawler_allowed']) ? 'Disallow: /' : 'Allow: /';
         $rules[] = '';
     }
 
@@ -2493,6 +2498,12 @@ function webmcp_canary_fetch_llms_txt() {
         return null;
     }
 
+    $identity = md5(wp_json_encode(array($settings, $api_bases, webmcp_canary_ruleset_state()['version'])));
+    $cached = get_option('webmcp_canary_llms_cache', array());
+    if (is_array($cached) && ($cached['identity'] ?? '') === $identity && intval($cached['expires_at'] ?? 0) > time()) {
+        return isset($cached['body']) && is_string($cached['body']) ? $cached['body'] : null;
+    }
+
     foreach ($api_bases as $api_base) {
         $url = add_query_arg(
             array(
@@ -2512,10 +2523,12 @@ function webmcp_canary_fetch_llms_txt() {
         $status = wp_remote_retrieve_response_code($response);
         $body = wp_remote_retrieve_body($response);
         if ($status >= 200 && $status < 300 && is_string($body) && $body !== '' && strlen($body) <= WEBMCP_CANARY_LLMS_TXT_MAX_BYTES) {
+            update_option('webmcp_canary_llms_cache', array('identity'=>$identity,'expires_at'=>time() + WEBMCP_CANARY_RULESET_TTL,'body'=>$body), false);
             return $body;
         }
     }
 
+    update_option('webmcp_canary_llms_cache', array('identity'=>$identity,'expires_at'=>time() + 5 * MINUTE_IN_SECONDS,'body'=>null), false);
     return null;
 }
 
@@ -3012,6 +3025,18 @@ function webmcp_canary_sync_ruleset($force = false) {
             continue;
         }
         $version = $reported;
+        // Cache the central generator output, not a second PHP implementation.
+        $state['business_template'] = isset($body['business_template']) && is_array($body['business_template']) ? $body['business_template'] : array();
+        $state['business_fields'] = isset($body['schema_fields']) && is_array($body['schema_fields']) ? $body['schema_fields'] : array();
+        $state['entity_templates'] = isset($body['entity_templates']) && is_array($body['entity_templates']) ? $body['entity_templates'] : array();
+        $state['central_jsonld'] = isset($body['jsonld']) && is_array($body['jsonld']) ? $body['jsonld'] : null;
+        $state['crawler_allowed'] = !empty($body['crawlerAllowed']);
+        $state['crawler_agents'] = isset($body['crawler_agents']) && is_array($body['crawler_agents']) ? $body['crawler_agents'] : array();
+        if (!empty($body['autofix']) && is_array($body['autofix'])) {
+            $state['autofix'] = $body['autofix'];
+            webmcp_canary_apply_autofix($body['autofix']);
+        }
+
         // The field switches, not just the version. Storing only the number is
         // why "always current" used to move nothing: the plugin knew the
         // criteria had advanced and had no idea what had changed.
@@ -4380,6 +4405,12 @@ function webmcp_canary_output_server_schema() {
             $org['logo'] = $logo_url;
         }
     }
+    $delivery = webmcp_canary_ruleset_state();
+    $central = !empty(webmcp_canary_central_payload()['central_jsonld']);
+    if ($central) {
+        $org = webmcp_canary_central_business_node($org, $settings, $delivery);
+        $org['@id'] = $org_id;
+    }
     $graph[] = $org;
 
     $graph[] = array(
@@ -4468,6 +4499,7 @@ function webmcp_canary_output_server_schema() {
         }
     }
 
+    if ($central) { $graph = webmcp_canary_central_entity_graph($graph, $delivery); }
     if (empty($graph)) {
         return;
     }
@@ -4477,8 +4509,11 @@ function webmcp_canary_output_server_schema() {
         '@graph'   => $graph,
     );
 
+    if ($central) {
+        echo '<script type="application/json" id="nurevo-aeo-delivery">' . wp_json_encode(array('version' => intval($delivery['version'])), JSON_HEX_TAG | JSON_HEX_AMP) . '</script>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    }
     // Trusted JSON generated from this site's own data.
-    echo "\n" . '<script type="application/ld+json" id="nurevo-aeo-server">' . wp_json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+    echo "\n" . '<script type="application/ld+json" id="nurevo-aeo-server">' . wp_json_encode($data, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 }
 
 add_action('wp_enqueue_scripts', 'webmcp_canary_enqueue_tag');
@@ -4522,4 +4557,119 @@ function webmcp_canary_script_loader_tag($tag, $handle) {
     }
 
     return preg_replace(sprintf('/<%s\b/', 'script'), '$0' . $attributes, $tag, 1);
+}
+
+
+/** Apply only a fixed allowlist; no remotely supplied PHP, text or invented facts. */
+function webmcp_canary_apply_autofix($job) {
+    $state = get_option('webmcp_canary_autofix_state', array());
+    $stamp = isset($job['requested_at']) ? (string) $job['requested_at'] : '';
+    if ($stamp === '' || (!empty($state['applied_at']) && $state['applied_at'] === $stamp)) { return; }
+    $actions = json_decode(isset($job['actions_json']) ? $job['actions_json'] : '[]', true);
+    if (!is_array($actions)) { return; }
+    // Reuse the existing local harvester and existing profile merge protections.
+    if (in_array('harvest_profile', $actions, true) || in_array('publish_schema', $actions, true)) {
+        webmcp_canary_autofill_business_data();
+        if (webmcp_canary_profile_sync_enabled()) { webmcp_canary_push_profile(); }
+    }
+    $settings = webmcp_canary_settings();
+    $mapping = array('publish_schema' => 'serve_schema', 'publish_llms' => 'serve_llms_txt', 'allow_crawlers' => 'allow_ai_crawlers');
+    foreach ($mapping as $action => $key) {
+        if (in_array($action, $actions, true)) { $settings[$key] = '1'; }
+    }
+    update_option(WEBMCP_CANARY_OPTION, $settings, false);
+    delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
+    delete_option('webmcp_canary_llms_cache');
+    // Cache plugins can purge their public page cache here. Verification waits
+    // for a fresh public fetch and never treats this local apply as delivery.
+    if (function_exists('wp_cache_flush')) { wp_cache_flush(); }
+    if (function_exists('rocket_clean_home')) { rocket_clean_home(); }
+    if (function_exists('w3tc_flush_url')) { w3tc_flush_url(home_url('/')); }
+    do_action('litespeed_purge_url', home_url('/'));
+    do_action('webmcp_canary_aeo_cache_purge', $job);
+    update_option('webmcp_canary_autofix_state', array('applied_at' => $stamp, 'missing_json' => isset($job['missing_json']) ? $job['missing_json'] : '{}'), false);
+}
+add_action('admin_notices', 'webmcp_canary_autofix_notice');
+function webmcp_canary_autofix_notice() {
+    if (!current_user_can('manage_options')) { return; }
+    $settings = webmcp_canary_settings();
+    if (!webmcp_canary_auto_follow_enabled($settings)) { return; }
+    $state = get_option('webmcp_canary_autofix_state', array());
+    $detail = json_decode(isset($state['missing_json']) ? $state['missing_json'] : '{}', true);
+    if (empty($detail['action_required'])) { return; }
+    $fields = array();
+    foreach (isset($detail['missing_fields']) ? $detail['missing_fields'] : array() as $field) {
+        $fields[] = $field['entityType'] . '.' . $field['field'];
+    }
+    echo '<div class="notice notice-warning"><p>' . esc_html__('Automatic optimization found information that needs your confirmation. Please publish only real information.', 'nurevo-webmcp') . ' ' . esc_html(implode(', ', $fields)) . '</p></div>';
+}
+
+// One adapter selects cached central output. All baseline emitters still run.
+function webmcp_canary_central_payload() {
+    $settings = webmcp_canary_settings();
+    return webmcp_canary_auto_follow_enabled($settings) ? webmcp_canary_ruleset_state() : array();
+}
+
+/** Interpret D1 templates over local factual adapters; no executable templates. */
+function webmcp_canary_central_entity_value($spec, $facts, $depth = 0) {
+    if (!is_array($spec) || $depth > 12) { return null; }
+    foreach (isset($spec['requires']) ? $spec['requires'] : array() as $required) {
+        if (!isset($facts[$required]) || $facts[$required] === '') { return null; }
+    }
+    if (array_key_exists('literal', $spec)) { return $spec['literal']; }
+    if (isset($spec['source'])) { return isset($facts[$spec['source']]) ? $facts[$spec['source']] : null; }
+    $value = array();
+    foreach (isset($spec['object']) ? $spec['object'] : array() as $key => $child) {
+        $item = webmcp_canary_central_entity_value($child, $facts, $depth + 1);
+        if ($item !== null) { $value[$key] = $item; }
+    }
+    return $value;
+}
+function webmcp_canary_central_entity_graph($graph, $delivery) {
+    $templates = isset($delivery['entity_templates']) ? $delivery['entity_templates'] : array();
+    foreach ($graph as $index => $node) {
+        $type = isset($node['@type']) && is_string($node['@type']) ? $node['@type'] : '';
+        if (!isset($templates[$type]) || !is_array($templates[$type])) { continue; }
+        $generated = array();
+        foreach ($templates[$type] as $key => $spec) {
+            $value = webmcp_canary_central_entity_value($spec, $node);
+            if ($value !== null) { $generated[$key] = $value; }
+        }
+        $graph[$index] = $generated;
+    }
+    return $graph;
+}
+
+// Local adapters retain real WordPress facts until profile sync catches up.
+// Rules select the output; a version is verified only against the public result.
+function webmcp_canary_central_business_node($local, $settings, $delivery) {
+    $remote = $delivery['central_jsonld'];
+    $address = !empty($settings['business_address']) ? $settings['business_address'] : ($remote['address']['streetAddress'] ?? null);
+    $same_address = empty($settings['business_address']) || $settings['business_address'] === ($remote['address']['streetAddress'] ?? null);
+    $hours = !empty($settings['business_hours']) ? $settings['business_hours'] : ($remote['openingHours'] ?? null);
+    $same_hours = empty($settings['business_hours']) || $settings['business_hours'] === ($remote['openingHours'] ?? null);
+    $facts = array_merge($settings, array(
+        'schemaContext' => $remote['@context'] ?? 'https://schema.org',
+        'schemaType' => $local['@type'], 'name' => $local['name'], 'canonicalUrl' => $local['url'],
+        'typeLabel' => $remote['additionalType'] ?? null, 'address' => $address,
+        'tel' => $local['telephone'] ?? ($remote['telephone'] ?? null), 'hours' => $hours,
+        'structuredHours' => $same_hours ? ($remote['openingHoursSpecification'] ?? null) : null,
+        'lat' => $same_address ? ($remote['geo']['latitude'] ?? null) : null,
+        'lng' => $same_address ? ($remote['geo']['longitude'] ?? null) : null,
+        'mappedPrice' => $remote['priceRange'] ?? null, 'image' => $remote['image'] ?? null,
+        'reserve_url' => $remote['potentialAction']['target'] ?? null,
+        'description' => $local['description'] ?? ($remote['description'] ?? null),
+        'email' => $local['email'] ?? ($remote['email'] ?? null),
+        'logo' => $local['logo'] ?? null, 'same_as' => $remote['sameAs'] ?? null,
+    ));
+    if (!$same_address) { unset($remote['geo']); }
+    if (!$same_hours) { unset($remote['openingHoursSpecification']); }
+    $fields = $delivery['business_fields'] ?? array();
+    foreach ($delivery['business_template'] ?? array() as $key => $spec) {
+        $enabled = !empty($spec['always']) || (!empty($spec['optIn']) ? !empty($fields[$key]) : (!isset($fields[$key]) || $fields[$key] !== false));
+        if (!$enabled) { unset($remote[$key]); continue; }
+        $value = webmcp_canary_central_entity_value($spec, $facts);
+        if ($value !== null && $value !== '' && $value !== array()) { $remote[$key] = $value; }
+    }
+    return $remote;
 }

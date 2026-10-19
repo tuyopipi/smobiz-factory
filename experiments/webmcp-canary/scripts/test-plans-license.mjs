@@ -1,3 +1,4 @@
+import { INITIAL_AEO_RULESET } from "../worker/aeo-rules.mjs";
 import assert from "node:assert/strict";
 import { handleApi } from "../worker/api.mjs";
 
@@ -17,7 +18,7 @@ function environment(initialPlan) {
               if (sql.includes("SELECT delivery_status FROM sites")) return { delivery_status: "active" };
               if (sql.includes("SELECT * FROM site_settings")) return { name: "Nurevo Cafe", serve_schema: 1, allow_crawlers: 1, telephone: "ignored", tel: "03-1234-5678", address: "Tokyo" };
               if (sql.includes("SELECT url, website_uri, slug FROM sites")) return { url: "example.com", website_uri: null, slug: null };
-              if (sql.includes("FROM aeo_rulesets WHERE active = 1")) return { version: 9, definition_json: JSON.stringify({ schema: { context: "https://schema.org", type: "Restaurant", fields: { telephone: false, address: true } }, defaults: { schemaType: "LocalBusiness", hostedBaseUrl: "https://nurevo.jp/s/" } }) };
+              if (/FROM aeo_rulesets WHERE active\s*=\s*1/.test(sql)) return { version: 9, definition_json: JSON.stringify({ ...INITIAL_AEO_RULESET.definition, schema: { ...INITIAL_AEO_RULESET.definition.schema, context: "https://schema.org", type: "Restaurant", fields: { telephone: false, address: true } }, defaults: { schemaType: "LocalBusiness", hostedBaseUrl: "https://nurevo.jp/s/" } }) };
               if (sql.includes("SELECT plan FROM licenses")) return values[0] === STANDARD_HASH ? { plan: "standard" } : null;
               return null;
             },
@@ -28,7 +29,7 @@ function environment(initialPlan) {
           };
         },
         async first() {
-          if (sql.includes("FROM aeo_rulesets WHERE active = 1")) return { version: 9, definition_json: JSON.stringify({ schema: { context: "https://schema.org", type: "Restaurant", fields: { telephone: false, address: true } }, defaults: { schemaType: "LocalBusiness", hostedBaseUrl: "https://nurevo.jp/s/" } }) };
+          if (/FROM aeo_rulesets WHERE active\s*=\s*1/.test(sql)) return { version: 9, definition_json: JSON.stringify({ ...INITIAL_AEO_RULESET.definition, schema: { ...INITIAL_AEO_RULESET.definition.schema, context: "https://schema.org", type: "Restaurant", fields: { telephone: false, address: true } }, defaults: { schemaType: "LocalBusiness", hostedBaseUrl: "https://nurevo.jp/s/" } }) };
           return null;
         },
       };

@@ -1,3 +1,4 @@
+import { INITIAL_AEO_RULESET } from "../worker/aeo-rules.mjs";
 import assert from "node:assert/strict";
 import { handleApi } from "../worker/api.mjs";
 
@@ -55,14 +56,14 @@ const db = {
           async first() {
             if (sql.includes("FROM sites WHERE site_key")) return { id: siteId, plan: "free", status: "active", delivery_status: "active" };
             if (sql.includes("FROM sites WHERE id")) return { id: siteId, url: "https://example.com", website_uri: null, slug: null };
-            if (sql.includes("FROM aeo_rulesets")) return { version: 1 };
+            if (sql.includes("FROM aeo_rulesets")) return INITIAL_AEO_RULESET;
             return null;
           },
           async all() { return { results: sql.includes('FROM site_products') ? [{name:'Tea',sku:'T1',price:'100',currency:'JPY'}] : [] }; },
           async run() { statements.push({ sql, values }); return { success: true }; },
         };
       },
-      async first() { return null; },
+      async first() { return sql.includes("FROM aeo_rulesets") ? INITIAL_AEO_RULESET : null; },
     };
   },
 };

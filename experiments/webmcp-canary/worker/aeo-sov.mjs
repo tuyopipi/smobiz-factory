@@ -635,6 +635,14 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
           kind: sample.kind || "discovery", error: sample.error || null, engine_model: sample.engine_model || null }),
       ));
   }
+  if (result.status === "measured") {
+    statements.push(env.DB.prepare(`INSERT INTO aeo_learning_observations
+      (run_id,site_id,measured_at,score_scanned_at,scoring_ruleset_version,delivered_ruleset_version,model_version,measurement_json)
+      SELECT ?,?,?,s.scanned_at,s.ruleset_version,s.delivered_ruleset_version,s.score_model_version,?
+      FROM (SELECT 1) seed LEFT JOIN aeo_scores s ON s.site_id=? AND s.scanned_at=(
+        SELECT MAX(scanned_at) FROM aeo_scores WHERE site_id=? AND scanned_at<=?)`)
+      .bind(id,siteId,ranAt,JSON.stringify({measurement_model:SOV_MODEL_VERSION,engines:result.engines || [],status:result.status,appearance_rate:result.appearance_rate ?? null,citation_rate:result.citation_rate ?? null,answers_received:result.answers_received || 0,query_set:result.query_set || null}),siteId,siteId,ranAt));
+  }
   if (env.DB.batch) await env.DB.batch(statements);
   else for (const statement of statements) await statement.run();
   return { id, ran_at: ranAt };

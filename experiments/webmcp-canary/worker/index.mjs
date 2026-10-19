@@ -1,7 +1,7 @@
 import { resolveEmailLocale, loadEmailPreferences, magicLinkEmail } from "./email-i18n.mjs";
 import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
-import { handleApi, runSovDailyBatch } from "./api.mjs";
+import { handleApi, runSovDailyBatch, centralLlmsForKey } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 
 const JSON_HEADERS = {
@@ -274,7 +274,7 @@ export default {
         const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
         if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
         // llms.txt is a free baseline output: any authorized site key gets it.
-        const body = await generateLlmsTxt(env, { host: access.record.siteHost });
+        const body = await centralLlmsForKey(env, siteKey) ?? await generateLlmsTxt(env, { host: access.record.siteHost });
         return new Response(body, {
           status: 200,
           headers: {

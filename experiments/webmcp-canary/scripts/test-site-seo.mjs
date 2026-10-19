@@ -1,3 +1,4 @@
+import { INITIAL_AEO_RULESET } from "../worker/aeo-rules.mjs";
 /**
  * nurevo.jp's own robots.txt, sitemap, llms.txt and AI-referral tally.
  *
@@ -31,7 +32,7 @@ function makeEnv({ member = null } = {}) {
         const statement = {
           bind: () => statement,
           async all() { return { results: /FROM sites/.test(sql) ? STORES : [] }; },
-          async first() { return /FROM sessions/.test(sql) ? member : null; },
+          async first() { return /FROM sessions/.test(sql) ? member : /FROM aeo_rulesets/.test(sql) ? INITIAL_AEO_RULESET : null; },
           async run() { return { meta: { changes: 0 } }; },
         };
         return statement;
@@ -48,7 +49,7 @@ const get = (path, env, init = {}) => handleApi(new Request(`https://nurevo.jp${
   const response = await get("/robots.txt", makeEnv());
   assert.equal(response.status, 200);
   const robots = await response.text();
-  assert.equal(robots, siteRobotsTxt());
+  assert.equal(robots, siteRobotsTxt() + "\n# nurevo-aeo-ruleset:1\n");
   for (const ua of ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-SearchBot", "PerplexityBot", "Perplexity-User", "Google-Extended", "Bingbot", "Applebot-Extended"]) {
     assert.ok(robots.includes(`User-agent: ${ua}\n`), `${ua} is named`);
   }
@@ -59,7 +60,7 @@ const get = (path, env, init = {}) => handleApi(new Request(`https://nurevo.jp${
   assert.equal(group.split("\n").filter((line) => line.startsWith("User-agent:")).length, SITE_CRAWLERS.length);
   assert.ok(robots.includes("User-agent: *\nAllow: /"), "and so may everyone else");
   assert.ok(group.includes("Disallow: /api/") && group.includes("Disallow: /dashboard"), "but not the API or the dashboard");
-  assert.ok(robots.trimEnd().endsWith("Sitemap: https://nurevo.jp/sitemap.xml"), "the sitemap is declared");
+  assert.ok(robots.split("\n").includes("Sitemap: https://nurevo.jp/sitemap.xml"), "the sitemap is declared");
 }
 
 /* ---------------- sitemap ---------------- */
