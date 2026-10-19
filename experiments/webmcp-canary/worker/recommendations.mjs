@@ -189,7 +189,8 @@ export function buildSiteRecommendations({
       id: `stored:${text(row?.kind) || "recommendation"}`,
       target: text(row?.kind),
       priority: PRIORITY.stored,
-      title: text(row?.kind) === "missing_customer_data" ? "店舗情報の確認が必要です" : text(row?.kind),
+      title: text(row?.kind) === "missing_customer_data" ? "店舗情報の確認が必要です"
+        : text(row?.kind) === "geo_unresolved" ? "位置情報（geo）を自動補完できませんでした" : text(row?.kind),
       detail: text(detail.reason),
       fields: missing.map((field) => text(field?.label) || text(field?.key)).filter(Boolean),
       status: "WARN",

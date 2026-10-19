@@ -22,7 +22,13 @@ assert.equal(PROFILE_FIELDS.business_type_schema.column, "business_type_schema",
 assert.equal(PROFILE_FIELDS.business_type_schema.wp, "business_type", "WordPress's business_type is the schema type");
 assert.equal(PROFILE_FIELDS.url.table, "sites", "url lives on the sites row");
 assert.equal(PROFILE_FIELDS.hours_periods.automatedOnly, true, "machine-readable hours have no human editor");
-assert.deepEqual(PROFILE_SOURCES, ["wordpress", "dashboard", "places", "autofill"], "the four writers are fixed");
+assert.deepEqual(PROFILE_SOURCES, ["wordpress", "dashboard", "places", "autofill", "geocoder"], "the five writers are fixed");
+// The geocoder is a machine: it fills coordinates, it never replaces a person's.
+{
+  const human = mergeProfile({ current: { lat: 35.1 }, sources: { lat: { source: "dashboard", updated_at: 1 } }, incoming: { lat: 36.5 }, source: "geocoder", now: 2 });
+  assert.equal(human.values.lat, 35.1, "geocoder cannot overwrite a value a person entered");
+  assert.equal(human.rejected[0]?.reason, "human_value_protected");
+}
 assert.ok(isHumanSource("wordpress") && isHumanSource("dashboard"), "wp-admin and the dashboard are human");
 assert.ok(!isHumanSource("places") && !isHumanSource("autofill"), "Places and autofill are automated");
 

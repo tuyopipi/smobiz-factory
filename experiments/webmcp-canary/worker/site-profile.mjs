@@ -18,7 +18,9 @@
  */
 
 /** Who wrote a field. The first two are people; the rest are machines. */
-export const PROFILE_SOURCES = Object.freeze(["wordpress", "dashboard", "places", "autofill"]);
+// "geocoder" writes only lat/lng, derived from the site's own address
+// (worker/geocoder.mjs), and records which address it derived them from.
+export const PROFILE_SOURCES = Object.freeze(["wordpress", "dashboard", "places", "autofill", "geocoder"]);
 const HUMAN_SOURCES = Object.freeze(["wordpress", "dashboard"]);
 
 export function isHumanSource(source) {
@@ -77,7 +79,7 @@ export const PROFILE_FIELD_NAMES = Object.freeze(Object.keys(PROFILE_FIELDS));
  * Returns the merged values, the updated provenance map, and which fields
  * actually moved, so a caller can skip a pointless write.
  */
-export function mergeProfile({ current = {}, sources = {}, incoming = {}, source, now = Date.now() } = {}) {
+export function mergeProfile({ current = {}, sources = {}, incoming = {}, source, now = Date.now(), meta = null } = {}) {
   if (!PROFILE_SOURCES.includes(source)) {
     throw new Error(`unknown_profile_source:${source}`);
   }
@@ -113,7 +115,7 @@ export function mergeProfile({ current = {}, sources = {}, incoming = {}, source
     if (sameValue(values[field], proposed)) continue;
 
     values[field] = proposed;
-    nextSources[field] = { source, updated_at: now };
+    nextSources[field] = { source, updated_at: now, ...(meta?.addressKey ? { address_key: String(meta.addressKey) } : {}) };
     changed.push(field);
   }
 
@@ -191,6 +193,9 @@ export function parseFieldSources(raw) {
       if (!PROFILE_FIELD_NAMES.includes(field) || !entry || typeof entry !== "object") continue;
       if (!PROFILE_SOURCES.includes(entry.source)) continue;
       clean[field] = { source: entry.source, updated_at: Number(entry.updated_at) || 0 };
+      // Which address a geocoded coordinate was derived from, so a changed
+      // address can be told from an unchanged one.
+      if (typeof entry.address_key === "string" && /^[a-f0-9]{64}$/.test(entry.address_key)) clean[field].address_key = entry.address_key;
     }
     return clean;
   } catch {

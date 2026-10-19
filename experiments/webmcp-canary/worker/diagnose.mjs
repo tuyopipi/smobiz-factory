@@ -1,3 +1,4 @@
+import { geocodeSiteProfile } from "./geocoder.mjs";
 import { verifyDelivery, deliveryStatements } from "./aeo-delivery.mjs";
 import { requestAutoFix } from "./aeo-autofix.mjs";
 /**
@@ -150,6 +151,10 @@ export async function runAeoScoreCron(env, { limit } = {}) {
     try {
       const outcome = await diagnoseAndStore(env, site);
       if (outcome.ok) outcome.autofix = await requestAutoFix(env, site, outcome.result);
+      // Every plan: deriving geo from the site's own address is the same kind
+      // of extraction Free already does. Cached per address, so a daily run
+      // only calls the provider for an address it has not seen.
+      try { outcome.geocode = (await geocodeSiteProfile(env, site.id)).status; } catch (error) { outcome.geocode = "error"; }
       if (outcome.result) { delete outcome.result.publicNodes; delete outcome.result.deliveryEvidence; }
       outcomes.push(outcome);
     } catch (error) {

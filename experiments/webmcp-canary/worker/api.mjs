@@ -22,6 +22,7 @@ import { normalizeDomainKey } from "./domain-key.mjs";
 import { planFromSubscription, pricesFromEnv, resolveSitePlan } from "./billing-plan.mjs";
 import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
+import { geocodeSiteProfile } from "./geocoder.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
@@ -2045,7 +2046,7 @@ function requestedAeoLang(request, url) {
 /* ---------------- Store profile: the single write path ---------------- */
 
 /** Read the canonical profile for a site, with its provenance map. */
-async function loadSiteProfile(env, siteId) {
+export async function loadSiteProfile(env, siteId) {
   const [settingsRow, siteRow] = await Promise.all([
     env.DB.prepare("SELECT * FROM site_settings WHERE site_id=?").bind(siteId).first(),
     env.DB.prepare("SELECT id,website_uri FROM sites WHERE id=? LIMIT 1").bind(siteId).first(),
@@ -2067,14 +2068,14 @@ async function loadSiteProfile(env, siteId) {
  * `now` is taken from the worker's own clock. A caller may not supply a
  * timestamp, which is what stops a client from forging merge order.
  */
-export async function writeSiteProfile(env, siteId, incoming, source) {
+export async function writeSiteProfile(env, siteId, incoming, source, { addressKey = null } = {}) {
   const current = await loadSiteProfile(env, siteId);
   if (!current) return { error: "not_found", status: 404 };
 
   const now = Date.now();
   let merged;
   try {
-    merged = mergeProfile({ current: current.values, sources: current.sources, incoming, source, now });
+    merged = mergeProfile({ current: current.values, sources: current.sources, incoming, source, now, meta: { addressKey } });
   } catch (error) {
     return { error: "invalid_profile_source", status: 400, detail: String(error?.message || error) };
   }
@@ -2098,6 +2099,15 @@ export async function writeSiteProfile(env, siteId, incoming, source) {
   // url lives on the sites row; only write it when the merge actually moved it.
   if (merged.changed.includes("url")) {
     await env.DB.prepare("UPDATE sites SET website_uri=? WHERE id=?").bind(site.website_uri ?? null, siteId).run();
+  }
+
+  // A new or changed address is the one moment its coordinates may be looked
+  // up (or dropped). Never fatal to the profile write, and never re-entered
+  // by the geocoder's own write.
+  if (source !== "geocoder" && merged.changed.includes("address")) {
+    try { await geocodeSiteProfile(env, siteId); } catch (error) {
+      console.error("geocode-on-profile-write", JSON.stringify({ siteId, message: String(error?.message || error).slice(0, 200) }));
+    }
   }
 
   return { ok: true, changed: merged.changed, rejected: merged.rejected, ...profileResponse(merged.values, merged.sources, merged.updated_at) };
