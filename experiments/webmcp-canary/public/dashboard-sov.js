@@ -189,7 +189,7 @@
       + '<label>競合ドメイン（1行1件、最大10件）<textarea data-pro-competitors style="width:100%">' + esc(config.competitors.join('\n')) + '</textarea></label><button data-pro-save>設定を保存</button></details>'
       + '<button data-pro-run>測定を実行</button> <button data-pro-json>JSONを保存</button><p data-pro-status role="status"></p>'
       + '<h4>Presence</h4>' + table([['クエリ','回答数','引用回数','頻度']].concat(report.presence.map(function(r){ return [r.question,r.answers,r.citations,pct(r.frequency)]; })))
-      + '<h4>指定競合との比較</h4><p>' + esc(report.sov_basis) + '</p>' + table([['ドメイン','引用回数','頻度','SoV']].concat(report.competitors.map(function(r){ return [r.host,r.citations,pct(r.frequency),pct(r.share_of_voice)]; })))
+      + '<h4>指定競合との比較</h4><p>' + esc(report.sov_basis) + '</p>' + (report.recount_note ? '<p>' + esc(report.recount_note) + '</p>' : '') + table([['ドメイン','引用回数','頻度','SoV']].concat(report.competitors.map(function(r){ return [r.host + (r.own ? '（自社）' : r.recounted ? '（再集計）' : ''),r.citations,pct(r.frequency),pct(r.share_of_voice)]; })))
       + '<h4>同じ測定条件での推移</h4>' + table([['日時','回答数','引用頻度']].concat(report.trend.map(function(r){ return [r.ran_at,r.answers_received,pct(r.citation_rate)]; })))
       + '<h4>ギャップ</h4>' + (report.gaps.length ? report.gaps.map(function(r){ return '<p>' + esc(r.question + '：' + r.reason) + '</p>'; }).join('') : '<p>記録なし（改善不要の判定ではありません）</p>')
       + '<h4>正確性と証跡</h4><p>回答抜粋を確認し、事実との明らかな相違を記録してください。未確認は正確性未判定です。</p>'

@@ -25,6 +25,8 @@ export function buildMonthlyReport({
   month,
   scores = [],
   sov = null,
+  family = null,
+  comparison = null,
   now = Date.now(),
 } = {}) {
   const period = month || new Date(now).toISOString().slice(0, 7);
@@ -57,9 +59,70 @@ export function buildMonthlyReport({
     site: { id: site.id || null, host: site.website_uri || site.url || null, plan },
     readability,
     visibility,
-    next_steps: nextSteps(readability, visibility),
+    business_family: family,
+    // The registered-competitor comparison from the Pro report, when there is
+    // one to show: the site itself plus at least one competitor the owner named.
+    comparison: comparison && Array.isArray(comparison.rows) && comparison.rows.some((row) => !row.own) ? {
+      answers: comparison.answers ?? null,
+      basis: comparison.basis || null,
+      recount_note: comparison.recount_note || null,
+      rows: comparison.rows.map((row) => ({ host: row.host, own: !!row.own, citations: row.citations, frequency: row.frequency ?? null, share_of_voice: row.share_of_voice ?? null })),
+    } : null,
+    next_steps: nextSteps(readability, visibility, family),
   };
 }
+
+/**
+ * The kind of business the latest diagnosis judged the site to be.
+ *
+ * Read from the schema check the scorer stored: it records which entity
+ * family it evaluated (from the site's published types and its business type
+ * hint), so the report follows the same judgement as the score instead of
+ * guessing again. null when there is no diagnosis to go on.
+ */
+export function businessFamilyFromChecks(checksJson) {
+  let checks;
+  try { checks = typeof checksJson === "string" ? JSON.parse(checksJson) : checksJson; } catch { return null; }
+  const schema = Array.isArray(checks) ? checks.find((check) => check?.id === "schema") : null;
+  const families = new Set((schema?.fields || []).map((field) => field?.entityType).filter(Boolean));
+  if (families.has("LocalBusiness")) return "local";
+  if (families.has("SoftwareApplication")) return "software";
+  if (families.has("Product")) return "product";
+  if (families.has("Service")) return "service";
+  if (families.has("Article")) return "article";
+  return null;
+}
+
+// What to do about a low AI appearance rate depends on what the site is. A
+// shop is found through its hours, address and prices; a software product is
+// found through what it does, how it compares, and who else writes about it.
+const LOW_VISIBILITY_STEPS = {
+  local: ["AI登場率が低い状態です。営業時間・住所・価格・FAQを本文とschemaの両方に揃えると改善しやすくなります。"],
+  software: [
+    "AI登場率が低い状態です。製品ページの構造化データ（SoftwareApplication：機能・対応環境・料金プラン）を、本文と同じ内容で揃えてください。",
+    "比較・FAQ・ユースケースのページを用意し、AIが答える質問（「〜におすすめのツールは？」「AとBの違いは？」）に本文で答えられる状態にすると、トピックの網羅性が上がります。",
+    "第三者のメディア・レビュー・ディレクトリへの掲載を増やすと、AIが引用できる情報源が増えます。",
+    "llms.txtに主要な製品・料金・導入手順のページを記載してください。",
+  ],
+  product: [
+    "AI登場率が低い状態です。商品ページの構造化データ（Product：価格・在庫・ブランド）を、本文と同じ内容で揃えてください。",
+    "比較・FAQ・選び方のページを用意し、AIが答える質問に本文で答えられる状態にすると、トピックの網羅性が上がります。",
+    "第三者のレビュー・比較メディアへの掲載を増やすと、AIが引用できる情報源が増えます。",
+    "llms.txtに主要な商品・カテゴリのページを記載してください。",
+  ],
+  service: [
+    "AI登場率が低い状態です。サービスページの構造化データ（Service：内容・対象・料金）を、本文と同じ内容で揃えてください。",
+    "事例・FAQ・料金の考え方のページを用意し、AIが答える質問に本文で答えられる状態にすると、トピックの網羅性が上がります。",
+    "第三者のメディア・ディレクトリへの掲載を増やすと、AIが引用できる情報源が増えます。",
+  ],
+  article: [
+    "AI登場率が低い状態です。記事の構造化データ（著者・公開日・更新日）を本文と揃え、記事ごとに一つの問いへ明確に答えてください。",
+    "関連する記事どうしを内部リンクでつなぎ、テーマの網羅性を上げてください。",
+  ],
+};
+// Without a diagnosis to say what the site is, say nothing industry-specific
+// rather than give a shop's advice to a business that may not be one.
+const LOW_VISIBILITY_FALLBACK = ["AI登場率が低い状態です。AEOスコア画面の診断を実行すると、業種に合わせた改善項目が表示されます。"];
 
 function buildVisibilitySection(plan, sov) {
   if (plan !== "pro") {
@@ -97,7 +160,7 @@ function buildVisibilitySection(plan, sov) {
   };
 }
 
-function nextSteps(readability, visibility) {
+function nextSteps(readability, visibility, family = null) {
   const steps = [];
   if (!readability.available) {
     steps.push("wp-adminのAEOスコア画面を開くと診断が実行されます。");
@@ -105,7 +168,7 @@ function nextSteps(readability, visibility) {
     steps.push("AEOスコア画面のチェックリストから［直す］を実行してください（基本項目は無料です）。");
   }
   if (visibility.available && visibility.appearance_rate != null && visibility.appearance_rate < 0.3) {
-    steps.push("AI登場率が低い状態です。営業時間・住所・価格・FAQを本文とschemaの両方に揃えると改善しやすくなります。");
+    steps.push(...(LOW_VISIBILITY_STEPS[family] || LOW_VISIBILITY_FALLBACK));
   }
   if (visibility.available && visibility.confidence === "low") {
     steps.push("今回の測定はサンプル数が少ないため、傾向は次回以降の測定とあわせて確認してください。");
@@ -156,6 +219,15 @@ export function renderMonthlyReportText(report) {
   } else {
     lines.push(`  ${report.visibility.message}`);
   }
+  if (report.comparison) {
+    lines.push("");
+    lines.push(`■ 指定競合との比較（回答数 ${report.comparison.answers}）`);
+    for (const row of report.comparison.rows) {
+      lines.push(`  - ${row.host}${row.own ? "（自社）" : ""}: 引用 ${row.citations}回 / 頻度 ${percent(row.frequency)} / SoV ${percent(row.share_of_voice)}`);
+    }
+    if (report.comparison.basis) lines.push(`  ${report.comparison.basis}`);
+    if (report.comparison.recount_note) lines.push(`  ${report.comparison.recount_note}`);
+  }
   if (report.next_steps.length) {
     lines.push("");
     lines.push("■ 次のアクション");
@@ -197,6 +269,14 @@ export function renderMonthlyReportHtml(report) {
     sections.push(`<p>${escapeHtml(report.visibility.message)}${upgrade}</p>`);
   }
 
+  if (report.comparison) {
+    const rows = report.comparison.rows
+      .map((row) => `<tr${row.own ? ' class="own"' : ""}><td>${escapeHtml(row.host)}${row.own ? "（自社）" : ""}</td><td>${row.citations}</td><td>${escapeHtml(percent(row.frequency))}</td><td>${escapeHtml(percent(row.share_of_voice))}</td></tr>`)
+      .join("");
+    sections.push(`<h2>指定競合との比較</h2><p>回答数 ${escapeHtml(String(report.comparison.answers))}</p><table><thead><tr><th>ドメイン</th><th>引用回数</th><th>頻度</th><th>SoV</th></tr></thead><tbody>${rows}</tbody></table>`);
+    if (report.comparison.basis) sections.push(`<p class="note">${escapeHtml(report.comparison.basis)}</p>`);
+    if (report.comparison.recount_note) sections.push(`<p class="note">${escapeHtml(report.comparison.recount_note)}</p>`);
+  }
   if (report.next_steps.length) {
     const items = report.next_steps.map((step) => `<li>${escapeHtml(step)}</li>`).join("");
     sections.push(`<h2>次のアクション</h2><ul>${items}</ul>`);
@@ -204,6 +284,7 @@ export function renderMonthlyReportHtml(report) {
 
   return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>Nurevo AEO 月次レポート ${escapeHtml(report.period)}</title><style>
 body{font-family:system-ui,-apple-system,"Hiragino Sans",sans-serif;max-width:680px;margin:0 auto;padding:28px;color:#1f2937;line-height:1.7}
+.note{font-size:12px;color:#6b7280}tr.own td{font-weight:700}
 h1{font-size:24px}h2{font-size:18px;margin-top:28px;border-top:1px solid #e5e7eb;padding-top:18px}h3{font-size:15px}
 .metric strong{font-size:34px}.beta{color:#b7791f;font-weight:600}.site{color:#6b7280}
 table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:7px 10px;border-bottom:1px solid #edf0f2}

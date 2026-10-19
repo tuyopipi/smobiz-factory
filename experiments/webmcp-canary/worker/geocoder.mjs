@@ -236,6 +236,9 @@ const REASONS = {
  * Places or the site's own published schema supplied, are left alone.
  */
 export async function geocodeSiteProfile(env, siteId, { now = Date.now(), fetchImpl = fetch, sleep } = {}) {
+  // Switched off until a key is configured: no lookup, no table access, and no
+  // owner notice about a feature the operator has not turned on.
+  if (!geocoderConfig(env)) return { status: "disabled" };
   const { loadSiteProfile, writeSiteProfile } = await import("./api.mjs");
   const profile = await loadSiteProfile(env, siteId);
   if (!profile) return { status: "not_found_site" };

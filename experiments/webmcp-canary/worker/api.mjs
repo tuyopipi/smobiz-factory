@@ -13,7 +13,7 @@ import {
   availableEngines, buildBrandProfile, buildQuestionSet,
   engineStatus, loadSovHistory, measureSov, sovRecordUsage, sovRemainingBudget, storeSovRun,
 } from "./aeo-sov.mjs";
-import { buildMonthlyReport, renderMonthlyReportHtml, renderMonthlyReportText } from "./aeo-report.mjs";
+import { buildMonthlyReport, businessFamilyFromChecks, renderMonthlyReportHtml, renderMonthlyReportText } from "./aeo-report.mjs";
 import {
   PROFILE_FIELD_NAMES, mergeProfile, parseFieldSources, profileResponse,
   profileToColumns, rowToProfile, serializeFieldSources,
@@ -1306,7 +1306,16 @@ export async function handleApi(request, env, ctx) {
     ).bind(site.id).all();
     // Only a pro site has SoV data to include; the report says so for others.
     const sov = plan === "pro" ? await loadSovHistory(env, site.id, { limit: 8 }) : null;
-    const report = buildMonthlyReport({ site, plan, month, scores: scoreResult.results || [], sov });
+    // The latest diagnosis says what kind of business this is; the report's
+    // advice follows it rather than assuming every site is a shop.
+    const latestChecks = await env.DB.prepare("SELECT checks_json FROM aeo_scores WHERE site_id=? ORDER BY scanned_at DESC LIMIT 1").bind(site.id).first();
+    const family = businessFamilyFromChecks(latestChecks?.checks_json);
+    let comparison = null;
+    if (plan === "pro") {
+      const pro = await loadProReport(env, site);
+      comparison = { rows: pro.competitors, answers: pro.summary?.answers ?? null, basis: pro.sov_basis, recount_note: pro.recount_note };
+    }
+    const report = buildMonthlyReport({ site, plan, month, scores: scoreResult.results || [], sov, family, comparison });
 
     const format = (url.searchParams.get("format") || "json").toLowerCase();
     if (format === "html") {

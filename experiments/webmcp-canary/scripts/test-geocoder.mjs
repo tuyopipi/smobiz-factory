@@ -64,18 +64,20 @@ assert.equal(normalizeAddress("〒920-0000　石川県金沢市１－２－３")
 assert.equal(await addressKey("石川県金沢市１－２"), await addressKey("石川県金沢市1-2"));
 assert.notEqual(await addressKey("石川県金沢市1-2"), await addressKey("石川県金沢市1-3"));
 
-/* ---------------- no key: nothing is called, nothing is guessed ---------------- */
+/* ---------------- no key: the feature is off ---------------- */
 
 {
   const { env, sqlite } = makeEnv({ GEOCODER_API_KEY: "" });
   assert.equal(geocoderConfig(env), null);
   const stub = fetchStub([]);
   const result = await geocodeSiteProfile(env, "s1", { fetchImpl: stub.impl, sleep: noSleep });
-  assert.equal(result.status, "unconfigured");
+  assert.equal(result.status, "disabled");
   assert.equal(stub.calls.length, 0, "no provider call without a key");
   assert.equal(geo(sqlite).lat, null, "geo stays empty");
-  assert.equal(recommendation(sqlite).status, "open", "the owner is told");
-  assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM geocode_cache").get().n, 0, "an unconfigured run caches nothing");
+  assert.equal(recommendation(sqlite), undefined, "no owner notice for a feature that is not switched on");
+  assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM geocode_cache").get().n, 0, "nothing is cached");
+  // geocodeAddress itself still reports why when called directly.
+  assert.equal((await geocodeAddress(env, "石川県金沢市", { fetchImpl: stub.impl, sleep: noSleep })).status, "unconfigured");
 }
 
 /* ---------------- a city-level address is never a shop's location ---------------- */
@@ -157,9 +159,12 @@ assert.notEqual(await addressKey("石川県金沢市1-2"), await addressKey("石
 /* ---------------- a profile save that changes the address triggers the lookup ---------------- */
 
 {
-  const { env, sqlite } = makeEnv({ GEOCODER_API_KEY: "" });
+  const { env, sqlite } = makeEnv();
+  const realFetch = globalThis.fetch;
+  globalThis.fetch = async () => ({ ok: true, status: 200, json: async () => opencage(36.56, 136.65, "road") });
   await writeSiteProfile(env, "s1", { address: "石川県金沢市広坂2-2-2" }, "dashboard");
-  assert.equal(JSON.parse(recommendation(sqlite).detail_json).status, "unconfigured", "the write ran the geocode step");
+  globalThis.fetch = realFetch;
+  assert.equal(JSON.parse(recommendation(sqlite).detail_json).status, "imprecise", "the write ran the geocode step");
   const profile = await loadSiteProfile(env, "s1");
   assert.equal(profile.values.address, "石川県金沢市広坂2-2-2", "the profile write itself is unaffected");
 }

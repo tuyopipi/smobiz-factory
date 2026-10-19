@@ -72,8 +72,13 @@ export function buildProReport({ site, run = null, evidence = [], runs = [], con
   const entries = evidence.map(e => ({ ...e, citation_urls: parseJson(e.citation_urls_json, []), accuracy: parseJson(e.accuracy_json) }));
   const discovery = entries.filter(e => e.ok && e.accuracy.kind !== 'branded');
   const domain = normalizeHost(site.website_uri || site.url);
-  const hosts = [...new Set([domain, ...(snapshot?.competitors || [])])].filter(Boolean);
-  const counts = hosts.map(host => ({ host, own: host === domain, citations: discovery.filter(e => e.citation_urls.some(u => matches(u,host))).length }));
+  // Competitors registered after a run are counted against that run's stored
+  // evidence: every cited URL of every answer is kept, so this is a recount of
+  // what was observed, not a new measurement. Each row says which it is.
+  const measuredWith = new Set(snapshot?.competitors || []);
+  const hosts = [...new Set([domain, ...(snapshot?.competitors || []), ...(config?.competitors || [])])].filter(Boolean);
+  const counts = hosts.map(host => ({ host, own: host === domain, recounted: host !== domain && !measuredWith.has(host),
+    citations: discovery.filter(e => e.citation_urls.some(u => matches(u,host))).length }));
   const total = counts.reduce((n,r) => n+r.citations, 0);
   const competitors = counts.map(r => ({ ...r, frequency: discovery.length >= 2 ? r.citations/discovery.length : null, share_of_voice: total && discovery.length >= 2 ? r.citations/total : null }));
   const presence = (snapshot?.questions || []).map(question => {
@@ -88,7 +93,8 @@ export function buildProReport({ site, run = null, evidence = [], runs = [], con
     summary:{ answers:discovery.length, citation_rate:discovery.length >= 2 ? discovery.filter(e=>e.brand_cited).length/discovery.length : null,
       evidence_available:entries.length > 0, legacy_data:!!run && !snapshot },
     query_set:snapshot, current_query_set:config, presence, competitors, trend,
-    sov_basis:'自社＋指定競合の回答単位の引用回数合計。1回答で同じドメインを複数引用しても1回。失敗は分母から除外。',
+    sov_basis:'自社＋指定競合の回答単位の引用回数合計。1回答で同じドメインを複数引用しても1回。失敗は分母から除外。サブドメインは同じ競合として数える。',
+    recount_note: counts.some(r => r.recounted) ? '測定後に登録した競合は、保存済みの引用URL一覧から再集計しています（新たなAI問い合わせはしていません）。' : null,
     gaps:presence.filter(r=>r.answers >= 2 && r.citations === 0).map(r=>({ question:r.question, reason:'このサンプルでは引用なし。原因は未判定。' })),
     accuracy:entries.map(e=>({ evidence_id:e.id, question:e.question, ...e.accuracy })), evidence:entries };
 }
