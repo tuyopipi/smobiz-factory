@@ -35,7 +35,7 @@ export async function ensureQuerySet(env, siteId, profile) {
   return await loadQuerySet(env, siteId) || { ...config, version: 1 }; // test doubles may not read writes
 }
 export async function measurementKey(env, config, profile) {
-  const raw = JSON.stringify({ config, profile, model: env.PERPLEXITY_MODEL || 'sonar', engines: availableEngines(env).filter(e => e.id === 'perplexity') });
+  const raw = JSON.stringify({ config, profile, model: `agent:${env.PERPLEXITY_PRESET || 'fast'}`, engines: availableEngines(env).filter(e => e.id === 'perplexity') });
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw)))].map(b => b.toString(16).padStart(2,'0')).join('');
 }
 export async function loadCachedRun(env, siteId, cacheKey) {

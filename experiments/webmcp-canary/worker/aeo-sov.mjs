@@ -454,16 +454,41 @@ function engineEndpoint(override, providerUrl) {
   return loopback ? url.href : providerUrl;
 }
 
+// Perplexity retired Sonar chat completions in favour of its Agent API: the
+// old endpoint now answers 403 "Sonar is now the Agent API". The "fast"
+// preset is the documented replacement for model "sonar" and searches the
+// web by default, which is what a citation measurement needs.
+export const PERPLEXITY_PRESET_DEFAULT = "fast";
+export const perplexityPreset = (env = {}) => String(env.PERPLEXITY_PRESET || PERPLEXITY_PRESET_DEFAULT);
+
+/** Answer text, cited URLs, model and usage from an Agent API response. */
+export function parsePerplexityAgent(data) {
+  const output = Array.isArray(data?.output) ? data.output : [];
+  const answer = output
+    .filter((item) => item?.type === "message")
+    .flatMap((item) => (Array.isArray(item.content) ? item.content : []))
+    .map((part) => (typeof part?.text === "string" ? part.text : ""))
+    .join("\n")
+    .trim();
+  const citations = output
+    .filter((item) => item?.type === "search_results")
+    .flatMap((item) => (Array.isArray(item.results) ? item.results : []))
+    .map((result) => result?.url)
+    .filter((url) => typeof url === "string" && url);
+  return { answer, citations: [...new Set(citations)], model: typeof data?.model === "string" ? data.model : null, status: data?.status || null };
+}
+
 async function probePerplexity(env, question, fetchImpl) {
-  const endpoint = engineEndpoint(env.PERPLEXITY_API_URL, "https://api.perplexity.ai/chat/completions");
+  const endpoint = engineEndpoint(env.PERPLEXITY_API_URL, "https://api.perplexity.ai/v1/agent");
   const response = await withTimeout((signal) => fetchImpl(endpoint, {
     method: "POST",
     signal,
     headers: { authorization: `Bearer ${env.PERPLEXITY_API_KEY}`, "content-type": "application/json" },
     body: JSON.stringify({
-      model: String(env.PERPLEXITY_MODEL || "sonar"),
-      messages: [{ role: "system", content: SYSTEM_PROMPT }, { role: "user", content: question }],
-      max_tokens: 500,
+      preset: perplexityPreset(env),
+      instructions: SYSTEM_PROMPT,
+      input: question,
+      max_output_tokens: 500,
     }),
   }));
   if (!response.ok) {
@@ -472,10 +497,16 @@ async function probePerplexity(env, question, fetchImpl) {
     throw new SovError(502, `perplexity_http_${response.status}`, detail);
   }
   const data = await response.json();
+  if (data?.status === "failed" || data?.status === "cancelled") throw new SovError(502, `perplexity_${data.status}`, String(data?.error?.message || "").slice(0, 200) || null);
+  const agent = parsePerplexityAgent(data);
+  // A chat-completions shaped body is still read, so a local double written
+  // for the old API keeps working; production only ever sees the Agent shape.
+  const legacyAnswer = String(data?.choices?.[0]?.message?.content || "");
   return {
-    model: String(data?.model || env.PERPLEXITY_MODEL || "sonar"),
-    answer: String(data?.choices?.[0]?.message?.content || ""),
-    citations: Array.isArray(data?.citations) ? data.citations : Array.isArray(data?.search_results) ? data.search_results : [],
+    model: agent.model || String(data?.model || `preset:${perplexityPreset(env)}`),
+    answer: agent.answer || legacyAnswer,
+    citations: agent.citations.length ? agent.citations
+      : Array.isArray(data?.citations) ? data.citations : Array.isArray(data?.search_results) ? data.search_results : [],
     usage: engineUsage(data?.usage),
   };
 }
