@@ -504,6 +504,10 @@ const JA = {
   "Load the Nurevo browser tag on public pages": "公開ページで Nurevo ブラウザタグを読み込む",
   "Off by default, and not needed for AEO. The AEO score, schema.org output, llms.txt and AI crawler rules all work with this off. Turning it on loads a script from the service URL above on every public page and reports public form structure and privacy-safe outcomes; values your visitors type are not sent. Leave it off unless Nurevo support asked you to enable it.":
     "既定はオフで、AEOには不要です。AEOスコア・schema.org出力・llms.txt・AIクローラー許可は、オフのままでも動作します。オンにすると上記サービスURLのスクリプトを全公開ページで読み込み、公開フォームの構造とプライバシーに配慮した結果を送信します（訪問者が入力した値は送信しません）。Nurevoサポートから指示がない限り、オフのままにしてください。",
+
+  // Continuous optimization (0.7.2).
+  "Automatic optimization found information that needs your confirmation. Please publish only real information.":
+    "自動最適化で、確認が必要な情報が見つかりました。実在する情報だけを公開してください。",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo
