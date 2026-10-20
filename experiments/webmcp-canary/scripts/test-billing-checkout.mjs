@@ -21,7 +21,7 @@ const HEADERS = {
 };
 
 /** Records every Stripe call so the form actually sent can be asserted. */
-function makeEnv({ site = {}, stripe, keys = {} } = {}) {
+function makeEnv({ site = {}, stripe, keys = {}, referredBy = null } = {}) {
   const calls = [];
   const row = {
     id: SITE_ID, org_id: "org1", url: "example.com", site_key: "nrv_k", channel: "direct",
@@ -34,6 +34,7 @@ function makeEnv({ site = {}, stripe, keys = {} } = {}) {
         if (/FROM sessions/.test(sql)) {
           return { member_id: "m1", org_id: "org1", email: "owner@example.test", role: "admin", status: "active", expires_at: Date.now() + 3.6e6 };
         }
+        if (/SELECT referred_by_account_id FROM accounts/.test(sql)) return { referred_by_account_id: referredBy };
         if (/FROM members WHERE id=\?/.test(sql)) return { email: "owner@example.test" };
         if (/FROM sites/.test(sql)) {
           // loadOwnedSiteByRef binds (org_id, ref, ref) against
@@ -376,3 +377,17 @@ for (const path of ["/api/billing/checkout", "/api/billing/portal"]) {
 }
 
 console.log("billing checkout and portal tests passed");
+
+{
+  const env = makeEnv({ referredBy: 42, site: { owner_member_id: 'customer' } });
+  const result = await post(env, '/api/billing/checkout', { site_id: SITE_ID, plan: 'standard', referred_by: 999 });
+  assert.equal(result.status, 200);
+  assert.equal(env.calls[0].form['metadata[referred_by]'], '42');
+  assert.equal(env.calls[0].form['subscription_data[metadata][referred_by]'], '42');
+}
+{
+  const env = makeEnv();
+  await post(env, '/api/billing/checkout', { site_id: SITE_ID, plan: 'standard', referred_by: 999 });
+  assert.equal(env.calls[0].form['subscription_data[metadata][referred_by]'], undefined);
+}
+console.log('referral metadata: trusted account attribution, organic omission');

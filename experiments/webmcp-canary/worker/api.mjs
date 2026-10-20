@@ -1,3 +1,7 @@
+import { signReferral, verifyReferral } from './referral-tokens.mjs';
+import { shareReferralReport, openReferral, requestReferralVerification, consumeReferral, referralWelcome } from './referral-flow.mjs';
+import { referralConfig, previousMonth } from './referral-config.mjs';
+import { runReferralLedger, ledgerExport, ledgerCsv, wiseSummaryCsv } from './referral-ledger.mjs';
 import { recordFetched } from "./aeo-delivery.mjs";
 import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
@@ -734,6 +738,88 @@ export async function handleApi(request, env, ctx) {
       }
     }
     return new Response(null, { status: 204 });
+  }
+
+  if (path.startsWith('/api/referral/')) {
+    const limit = await checkApiRateLimit(env, 'referral-ip', requestClientIp(request), API_RATE_LIMITS.authIp);
+    if (!limit.allowed) return json({error: limit.unavailable ? 'rate_limit_unavailable' : 'rate_limited'}, limit.unavailable ? 503 : 429);
+    if (path === '/api/referral/open' && method === 'GET') return openReferral(request, env);
+    if (path === '/api/referral/verify-email' && method === 'POST') {
+      const token = (await request.clone().formData()).get('token');
+      const emailLimit = await checkApiRateLimit(env, 'referral-invite', String(token || ''), API_RATE_LIMITS.authEmail);
+      if (!emailLimit.allowed) return json({error:'rate_limited'},429);
+      return requestReferralVerification(request, env);
+    }
+    if (path === '/api/referral/redeem' && method === 'GET') {
+      const invite = await consumeReferral(request, env);
+      if (!invite) return authErrorRedirect(request);
+      const parent = await env.DB.prepare('SELECT id,email FROM accounts WHERE id=?').bind(invite.partner_id).first();
+      if (!parent || String(parent.email).toLowerCase() === invite.email) return authErrorRedirect(request);
+      const member = await findOrCreateMember(env, invite.email, invite.locale, invite.ref_code, true, parent);
+      const active = await env.DB.prepare('SELECT status FROM members WHERE id=?').bind(member.id).first();
+      if (active?.status !== 'active') return authErrorRedirect(request);
+      const rawSession = randomHex(32);
+      await env.DB.prepare("INSERT INTO sessions(token,member_id,org_id,kind,expires_at) VALUES (?,?,?,'session',?)").bind(await sha256Hex(rawSession),member.id,member.orgId,Date.now()+AUTH_SESSION_TTL_MS).run();
+      return referralWelcome(invite,[sessionCookie(rawSession,Math.floor(AUTH_SESSION_TTL_MS/1000)),csrfCookie(randomHex(32),CSRF_TTL_SECONDS)]);
+    }
+  }
+  if (path === '/api/partner/register' && method === 'POST') {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({error:'unauthorized'},401);
+    const account = await ensureAccount(env,member.member_id);
+    const code = await issueReferralCode(env,account);
+    await env.DB.prepare('UPDATE accounts SET partner_registered_at=COALESCE(partner_registered_at,?) WHERE id=?').bind(Date.now(),account.id).run();
+    return json({ok:true,referral_code:code,...referralConfig(env)});
+  }
+  if (path === '/api/partner/share' && method === 'POST') {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({error:'unauthorized'},401);
+    const limit = await checkApiRateLimit(env,'partner-share',member.member_id,API_RATE_LIMITS.authEmail);
+    if (!limit.allowed) return json({error:'rate_limited'},429);
+    const body = await safeJson(request);
+    const site = await loadOwnedSiteByRef(env,member,String(body.site_id || ''));
+    if (!site) return json({error:'not_found'},404);
+    try { return json(await shareReferralReport(env,request,member,site,body.email)); }
+    catch(error) { return json({error: ['invalid_email','self_referral','report_not_available','referral_secret_not_configured','mail_provider_not_configured','mail_send_failed'].includes(error.message) ? error.message : 'share_failed'},400); }
+  }
+  if (path === '/api/admin/referral-metadata' && method === 'POST') {
+    const member = await requireActiveMember(request,env);
+    if (!member?.is_super_admin) return json({error:'forbidden'},403);
+    const {results:rows} = await env.DB.prepare(`SELECT DISTINCT s.stripe_subscription_id,a.referred_by_account_id FROM sites s JOIN accounts a ON a.member_id=s.owner_member_id WHERE a.referred_by_account_id IS NOT NULL AND s.stripe_subscription_id IS NOT NULL`).all();
+    const subscriptions = new Map();
+    for (const row of rows) {
+      if (subscriptions.has(row.stripe_subscription_id) && subscriptions.get(row.stripe_subscription_id) !== row.referred_by_account_id) return json({error:'ambiguous_subscription_owner'},422);
+      const {results:owners} = await env.DB.prepare('SELECT DISTINCT owner_member_id FROM sites WHERE stripe_subscription_id=?').bind(row.stripe_subscription_id).all();
+      if (owners.length !== 1 || !owners[0].owner_member_id) return json({error:'ambiguous_subscription_owner'},422);
+      subscriptions.set(row.stripe_subscription_id,row.referred_by_account_id);
+    }
+    let updated = 0;
+    const secret = stripeSecret(env);
+    if (!secret) return json({error:'stripe_not_configured'},503);
+    for (const [subscription,parent] of subscriptions) {
+      const response = await stripeRequest(secret,'/v1/subscriptions/'+encodeURIComponent(subscription),new URLSearchParams({'metadata[referred_by]':String(parent)}));
+      if (!response.ok) return json({error:'metadata_update_failed',updated},502);
+      updated++;
+    }
+    return json({ok:true,updated});
+  }
+  if (path === '/api/partner/ledger' && method === 'GET') {
+    const member = await requireActiveMember(request,env);
+    if (!member) return json({error:'unauthorized'},401);
+    const account = await ensureAccount(env,member.member_id);
+    try { return json(await ledgerExport(env,url.searchParams.get('period') || previousMonth(),account.id) || {status:'unavailable'}); }
+    catch { return json({error:'invalid_period'},400); }
+  }
+  if (path === '/api/admin/referral-ledger' && ['GET','POST'].includes(method)) {
+    const member = await requireActiveMember(request,env);
+    if (!member?.is_super_admin) return json({error:'forbidden'},403);
+    try {
+      if (method === 'POST') return json(await runReferralLedger(env,(await safeJson(request)).period || previousMonth()));
+      const report = await ledgerExport(env,url.searchParams.get('period') || previousMonth());
+      if (!report) return json({error:'ledger_unavailable'},404);
+      if (['csv','wise-csv'].includes(url.searchParams.get('format'))) return new Response(url.searchParams.get('format') === 'wise-csv' ? wiseSummaryCsv(report) : ledgerCsv(report),{headers:{'content-type':'text/csv; charset=utf-8','content-disposition':`attachment; filename="referral-${report.run.period}.csv"`,'cache-control':'no-store'}});
+      return json(report);
+    } catch(error) { return json({error:error.message},422); }
   }
 
   if (["/api/auth/signup", "/api/auth/magic-link"].includes(path) && method === "POST") {
@@ -1885,6 +1971,11 @@ export async function handleApi(request, env, ctx) {
       // cheaper to turn on now than to discover at the first campaign.
       allow_promotion_codes: "true",
       success_url: "https://nurevo.jp/dashboard?checkout=success", cancel_url: "https://nurevo.jp/dashboard?checkout=cancelled", customer_email: memberRow?.email || "", "metadata[siteId]": site.id, "metadata[orgId]": member.org_id, "metadata[plan]": wantedPlan, "subscription_data[metadata][siteId]": site.id, "subscription_data[metadata][orgId]": member.org_id, "subscription_data[metadata][plan]": wantedPlan });
+    const referral = await env.DB.prepare('SELECT referred_by_account_id FROM accounts WHERE member_id=?').bind(site.owner_member_id || member.member_id).first();
+    if (referral?.referred_by_account_id) {
+      form.set('metadata[referred_by]', String(referral.referred_by_account_id));
+      form.set('subscription_data[metadata][referred_by]', String(referral.referred_by_account_id));
+    }
     const response = await stripeRequest(secret, "/v1/checkout/sessions", form);
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_checkout_failed" }, 502);
     // The tier that was actually priced, and what it costs - not a constant that
@@ -1959,21 +2050,7 @@ export async function handleApi(request, env, ctx) {
   if (path === "/api/billing/connect/onboard" && method === "POST") {
     const member = await requireOrgRole(request, env, ["admin", "referrer"]);
     if (!member) return json({ error: "forbidden" }, 403);
-    const secret = stripeSecret(env);
-    if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
-    const body = await safeJson(request);
-    const referrer = await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(body.referrer_id).first();
-    if (!referrer) return json({ error: "referrer_not_found" }, 404);
-    let accountId = referrer.stripe_account_id;
-    if (!accountId) {
-      const account = await stripeRequest(secret, "/v1/accounts", new URLSearchParams({ type: "express", "metadata[referrerId]": referrer.id }));
-      if (!account.ok) return json({ error: account.data?.error?.message || "stripe_account_failed" }, 502);
-      accountId = account.data.id;
-      await env.DB.prepare("UPDATE referrers SET stripe_account_id=? WHERE id=?").bind(accountId, referrer.id).run();
-    }
-    const link = await stripeRequest(secret, "/v1/account_links", new URLSearchParams({ account: accountId, refresh_url: "https://nurevo.jp/dashboard?connect=refresh", return_url: "https://nurevo.jp/dashboard?connect=complete", type: "account_onboarding" }));
-    if (!link.ok) return json({ error: link.data?.error?.message || "stripe_account_link_failed" }, 502);
-    return json({ ok: true, account_id: accountId, url: link.data.url });
+    return json({error:'manual_partner_payouts'},410);
   }
 
   if (path === "/api/billing/webhook" && method === "POST") {
@@ -2018,12 +2095,7 @@ export async function handleApi(request, env, ctx) {
 
     if (event.type === "invoice.paid" && siteId) {
       await env.DB.prepare("UPDATE sites SET contract='active' WHERE id=?").bind(siteId).run();
-      const site = await env.DB.prepare("SELECT * FROM sites WHERE id=?").bind(siteId).first();
-      const referrer = site?.channel === "referral" ? await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(site.referred_by).first() : null;
-      if (referrer?.stripe_account_id && stripeSecret(env)) {
-        // Executed only by a verified Stripe webhook; no client-supplied destination is trusted.
-        await stripeRequest(stripeSecret(env), "/v1/transfers", new URLSearchParams({ amount: String(BILLING_DEFAULTS.referral_monthly_yen), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id }));
-      }
+      // Referral commissions are reconciled from paid invoices into a manual payout ledger.
     }
     // A failed payment no longer stops the site. Stripe retries for days before
     // giving up, and that retry window is the grace period; cutting service on
@@ -3091,8 +3163,9 @@ async function handleMagicRequest(request, env, { accountAuth = false, signup = 
   const emailLimit = await checkApiRateLimit(env, "auth-email", email, API_RATE_LIMITS.authEmail);
   if (!emailLimit.allowed) return json({ error: emailLimit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, emailLimit.unavailable ? 503 : 429);
 
+  if (signup && body?.referral_code && String(env.REFERRAL_TOKEN_SECRET || '').length < 32) return json({error:'referral_secret_not_configured'},503);
   const registrationLocale = normalizeEmailLocale(body?.locale || body?.lang || new URL(request.url).searchParams.get("lang")) || headerEmailLocale(request.headers.get("accept-language"));
-  const member = await findOrCreateMember(env, email, registrationLocale, signup ? body?.referral_code : null, accountAuth);
+  const member = await findOrCreateMember(env, email, registrationLocale, null, accountAuth);
   const account = accountAuth ? await ensureAccount(env, member.id) : null;
   const emailLocale = resolveEmailLocale(await loadEmailPreferences(env, email), request.headers.get("accept-language"));
   const now = Date.now();
@@ -3101,13 +3174,16 @@ async function handleMagicRequest(request, env, { accountAuth = false, signup = 
   ).bind(member.id, now).first();
   if (Number(outstanding?.count || 0) >= 5) return json({ error: "rate_limited" }, 429);
 
-  const rawToken = randomHex(32);
+  const rawToken = accountAuth && env.REFERRAL_TOKEN_SECRET ? await signReferral(env,randomHex(16),'auth',now+AUTH_MAGIC_TTL_MS) : randomHex(32);
   const tokenHash = await sha256Hex(rawToken);
   if (accountAuth) {
     const pending = await env.DB.prepare("SELECT COUNT(*) AS count FROM auth_tokens WHERE account_id=? AND used_at IS NULL AND expires_at>?").bind(account.id, now).first();
     if (Number(pending?.count || 0) >= 5) return json({ error: "rate_limited" }, 429);
-    await env.DB.prepare("INSERT INTO auth_tokens(token,account_id,purpose,email,expires_at) VALUES (?,?,?,?,?)")
-      .bind(tokenHash, account.id, signup ? "signup" : "login", email, now + AUTH_MAGIC_TTL_MS).run();
+    const refCode = String(signup ? body?.referral_code || '' : '').trim().toUpperCase();
+    const parent = member.created && refCode ? await env.DB.prepare('SELECT id,email FROM accounts WHERE referral_code=?').bind(refCode).first() : null;
+    const eligible = parent && String(parent.email).toLowerCase() !== email;
+    await env.DB.prepare("INSERT INTO auth_tokens(token,account_id,purpose,email,expires_at,referral_parent_id,referral_code) VALUES (?,?,?,?,?,?,?)")
+      .bind(tokenHash, account.id, signup ? "signup" : "login", email, now + AUTH_MAGIC_TTL_MS,eligible ? parent.id : null,eligible ? refCode : null).run();
   } else {
     await env.DB.prepare("INSERT INTO sessions (token,member_id,org_id,kind,expires_at) VALUES (?,?,?,?,?)")
       .bind(tokenHash, member.id, member.orgId, "magic", now + AUTH_MAGIC_TTL_MS).run();
@@ -3147,17 +3223,23 @@ async function sendMagicLinkEmail(env, email, loginLink, locale, signup = false)
 
 async function handleMagicCallback(request, env, accountAuth = false) {
   const rawToken = new URL(request.url).searchParams.get("token") || "";
-  if (!/^[a-f0-9]{64}$/i.test(rawToken)) return authErrorRedirect(request);
+  if (rawToken.includes('.')) {
+    if (!accountAuth || !await verifyReferral(env,rawToken,'auth')) return authErrorRedirect(request);
+  } else if (!/^[a-f0-9]{64}$/i.test(rawToken)) return authErrorRedirect(request);
   const tokenHash = await sha256Hex(rawToken);
   const now = Date.now();
   const magic = accountAuth
-    ? await env.DB.prepare("SELECT m.id AS member_id,m.org_id,m.status FROM auth_tokens t JOIN accounts a ON a.id=t.account_id JOIN members m ON m.id=a.member_id WHERE t.token=? AND t.purpose IN ('signup','login') AND t.used_at IS NULL AND t.expires_at>? AND lower(t.email)=lower(m.email)").bind(tokenHash, now).first()
+    ? await env.DB.prepare("SELECT m.id AS member_id,m.org_id,m.status,t.referral_parent_id,t.referral_code FROM auth_tokens t JOIN accounts a ON a.id=t.account_id JOIN members m ON m.id=a.member_id WHERE t.token=? AND t.purpose IN ('signup','login') AND t.used_at IS NULL AND t.expires_at>? AND lower(t.email)=lower(m.email)").bind(tokenHash, now).first()
     : await env.DB.prepare("SELECT se.member_id,se.org_id,m.status FROM sessions se JOIN members m ON m.id=se.member_id AND m.org_id=se.org_id WHERE se.token=? AND se.kind='magic' AND se.expires_at>?").bind(tokenHash, now).first();
   if (!magic || magic.status !== "active") return authErrorRedirect(request);
   const consumed = accountAuth
     ? await env.DB.prepare("UPDATE auth_tokens SET used_at=? WHERE token=? AND used_at IS NULL AND expires_at>?").bind(now, tokenHash, now).run()
     : await env.DB.prepare("DELETE FROM sessions WHERE token=? AND kind='magic' AND expires_at>?").bind(tokenHash, now).run();
   if (Number(consumed?.meta?.changes || 0) !== 1) return authErrorRedirect(request);
+  if (accountAuth && magic.referral_parent_id) {
+    await env.DB.prepare('UPDATE accounts SET referred_by_account_id=?,referred_by_code=? WHERE member_id=? AND referred_by_account_id IS NULL AND id<>?')
+      .bind(magic.referral_parent_id,magic.referral_code,magic.member_id,magic.referral_parent_id).run();
+  }
 
   const rawSession = randomHex(32);
   const sessionHash = await sha256Hex(rawSession);
@@ -3252,11 +3334,11 @@ async function handleMagicLogout(request, env) {
   return new Response(JSON.stringify({ ok: true }), { status: 200, headers });
 }
 
-async function findOrCreateMember(env, email, registrationLocale, referralCode = null, accountAuth = false) {
+async function findOrCreateMember(env, email, registrationLocale, referralCode = null, accountAuth = false, verifiedParent = null) {
   const existing = await env.DB.prepare("SELECT id,org_id FROM members WHERE lower(email)=?").bind(email).first();
   if (existing) return { id: existing.id, orgId: existing.org_id };
   const normalizedCode = String(referralCode || "").trim().toUpperCase();
-  const parent = normalizedCode ? await env.DB.prepare("SELECT id,email FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
+  const parent = verifiedParent || (normalizedCode ? await env.DB.prepare("SELECT id,email FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null);
   const eligibleParent = parent && String(parent.email).toLowerCase() !== email ? parent : null;
   if (normalizedCode && !eligibleParent) console.warn("nurevo_referral_ignored", { reason: parent ? "self_referral" : "invalid_code" });
   const orgId = `org_${uid()}`;
@@ -3355,7 +3437,7 @@ function csrfRequired(path) {
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;
-  return !["/api/auth/signup", "/api/auth/magic-link"].includes(path) && path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
+  return !["/api/auth/signup", "/api/auth/magic-link"].includes(path) && path !== "/api/referral/verify-email" && path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 
 const AI_REFERRER_IDS = Object.freeze([

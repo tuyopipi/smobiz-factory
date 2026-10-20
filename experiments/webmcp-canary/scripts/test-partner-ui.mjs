@@ -8,7 +8,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   let code = null;
-  const partner = () => ({ referral_code: code, payout: { monthly_estimate_yen: 1200, cumulative_earned_yen: 2400, cumulative_paid_yen: null },
+  const partner = () => ({ referral_code: code, registered:!!code, payout:{rate:0.4,duration_months:null,totals:[{currency:'jpy',amount_minor:1200}]},
     referrals: [{ email: 'referred@example.test', registered_at: 1791986400000, sites: [{ url: 'shop.example.test', plan: 'standard', billing_status: 'active' }] }] });
   await page.route('https://nurevo.test/**', async route => {
     const path = new URL(route.request().url()).pathname;
@@ -16,7 +16,7 @@ try {
       let data = {};
       if (path === '/api/me') data = { email: 'parent@example.test', role: 'store' };
       if (path === '/api/partner') data = partner();
-      if (path.startsWith('/api/partner/code')) { code = path.endsWith('regenerate') ? 'BCDEFGHJKMNP' : 'ABCDEFGHJKMN'; data = { referral_code: code }; }
+      if (path === '/api/partner/register' || path.startsWith('/api/partner/code')) { code = path.endsWith('regenerate') ? 'BCDEFGHJKMNP' : 'ABCDEFGHJKMN'; data = { referral_code: code }; }
       if (path === '/api/sites') data = { sites: [] };
       if (path === '/api/crawlers') data = { crawlers: [] };
       return route.fulfill({ json: data });
@@ -25,23 +25,28 @@ try {
       const root = new URL('../public/', import.meta.url);
       const file = new URL(path === '/dashboard' ? 'dashboard.html' : path.slice(1), root);
       const body = await readFile(file);
-      return route.fulfill({ body, contentType: path === '/dashboard' ? 'text/html' : path.endsWith('.js') ? 'text/javascript' : 'image/png' });
+      return route.fulfill({ body, contentType: path === '/dashboard' ? 'text/html' : /\.m?js$/.test(path) ? 'text/javascript' : 'image/png' });
     } catch { return route.fulfill({ status: 404, body: '' }); }
   });
   await page.goto('https://nurevo.test/dashboard#partner');
-  await page.getByRole('heading', { name: 'パートナー', exact: true }).waitFor();
+  await page.getByRole('heading', { name: 'パートナー紹介', exact: true }).waitFor();
   assert.equal(await page.locator('[data-view="partner"]').isVisible(), true, 'store accounts see Partner');
-  await page.getByRole('button', { name: '発行', exact: true }).click();
+  await page.getByRole('button', { name: 'パートナーに登録', exact: true }).click();
   await page.getByText('ABCDEFGHJKMN', { exact: true }).waitFor();
-  await page.getByRole('button', { name: '更新', exact: true }).last().click();
+  await page.getByRole('button', { name: 'コードを再発行', exact: true }).last().click();
   await page.getByText('BCDEFGHJKMNP', { exact: true }).waitFor();
   assert.ok(await page.getByText('referred@example.test', { exact: true }).isVisible());
   assert.ok(await page.getByText('shop.example.test', { exact: true }).isVisible());
-  assert.ok(await page.getByText('¥1,200', { exact: true }).isVisible());
+  assert.ok(await page.getByText(/[¥￥]1,200/, { exact: true }).isVisible());
   await page.screenshot({ path: `${artifacts}/partner-ja.png`, fullPage: true });
   await page.locator('#lang').selectOption('en');
-  assert.ok(await page.getByRole('heading', { name: 'Partner', exact: true }).isVisible());
+  assert.ok(await page.getByRole('heading', { name: 'Partner referrals', exact: true }).isVisible());
   await page.screenshot({ path: `${artifacts}/partner-en.png`, fullPage: true });
+  for(const language of ['zh','tw','ko','es','fr','de']) {
+    await page.locator('#lang').selectOption(language);
+    await page.locator('#referral-share').waitFor();
+    assert.equal(await page.locator('#referral-share button').count(),1);
+  }
   assert.deepEqual(errors, []);
   const lp = await browser.newPage({ viewport: { width: 1280, height: 800 } });
   let submitted;
@@ -51,7 +56,7 @@ try {
     if (path.startsWith('/api/')) return route.fulfill({ json: {} });
     try {
       const file = new URL(path === '/' ? 'index.html' : path.slice(1), new URL('../../nurevo-lp/public/', import.meta.url));
-      return route.fulfill({ body: await readFile(file), contentType: path.endsWith('.js') ? 'text/javascript' : path.endsWith('.png') ? 'image/png' : 'text/html' });
+      return route.fulfill({ body: await readFile(file), contentType: /\.m?js$/.test(path) ? 'text/javascript' : path.endsWith('.png') ? 'image/png' : 'text/html' });
     } catch { return route.fulfill({ status: 404, body: '' }); }
   });
   await lp.goto('https://nurevo.test/');

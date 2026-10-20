@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { DatabaseSync } from 'node:sqlite';
 import { readFileSync } from 'node:fs';
 import { handleApi } from '../worker/api.mjs';
-import { monthlyReferralPayout, newReferralCode } from '../worker/partner.mjs';
+import { newReferralCode } from '../worker/partner.mjs';
 import { EMAIL_LOCALES, signupLinkEmail } from '../worker/email-i18n.mjs';
 const sqlite = new DatabaseSync(':memory:');
 sqlite.exec(readFileSync(new URL('../nurevo-impl/db/schema.sql', import.meta.url), 'utf8'));
@@ -13,6 +13,7 @@ sqlite.exec(readFileSync(new URL('../nurevo-impl/db/0029_member_email_preference
 sqlite.exec("INSERT INTO orgs(id) VALUES ('old'); INSERT INTO members(id,org_id,email,status) VALUES ('old','old','old@example.test','active')");
 sqlite.exec(readFileSync(new URL('../nurevo-impl/db/0030_account_referrals.sql', import.meta.url), 'utf8'));
 assert.equal(sqlite.prepare('SELECT COUNT(*) AS n FROM accounts').get().n, 1);
+sqlite.exec(readFileSync(new URL('../nurevo-impl/db/0035_referral_ledger.sql', import.meta.url), 'utf8'));
 const DB = {
   prepare(sql) {
     const stmt = sqlite.prepare(sql);
@@ -24,7 +25,7 @@ const DB = {
   },
   async batch(statements) { sqlite.exec('BEGIN'); try { const results = statements.map(s => s.runSync()); sqlite.exec('COMMIT'); return results; } catch (e) { sqlite.exec('ROLLBACK'); throw e; } }
 };
-const env = { DB, DEV: '1', RESEND_API_KEY: 'test-only', MAIL_FROM: 'test@example.test', STRIPE_SECRET_KEY: 'test-only', STRIPE_PRICE_ID_STANDARD: 'price_standard' };
+const env = { DB, REFERRAL_TOKEN_SECRET:'test-secret-referral-more-than-32-characters', DEV: '1', RESEND_API_KEY: 'test-only', MAIL_FROM: 'test@example.test', STRIPE_SECRET_KEY: 'test-only', STRIPE_PRICE_ID_STANDARD: 'price_standard' };
 const messages = [], stripeCalls = [];
 let mailFailure = false, invoicePages = [];
 const originalFetch = globalThis.fetch;
@@ -70,6 +71,8 @@ try {
   assert.match(code, /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{12}$/);
   assert.equal((await (await call('/api/partner/code', {}, cookie)).json()).referral_code, code, 'issue is idempotent');
   const child = await signup('child@example.test', code.toLowerCase());
+  assert.equal(sqlite.prepare("SELECT referred_by_account_id FROM accounts WHERE email='child@example.test'").get().referred_by_account_id,null,'attribution waits for verification');
+  await verify(child.loginLink);
   let partner = await (await call('/api/partner', undefined, cookie)).json();
   assert.equal(partner.referrals.length, 1); assert.equal(partner.referrals[0].email, 'child@example.test');
   const oldParentId = sqlite.prepare('SELECT referred_by_account_id FROM accounts WHERE email=?').get('child@example.test').referred_by_account_id;
@@ -96,22 +99,13 @@ try {
     insert.run(id, childMember.org_id, `${id}.example.test`, id, childMember.id, plan, contract, sub, Date.now());
   }
   sqlite.prepare("UPDATE sites SET manual_plan='standard' WHERE id='comp'").run();
-  invoicePages = [{ data: [{ currency: 'jpy', created: Math.ceil(Date.now()/1000), amount_paid: 3000, lines: { data: [{ price: { id: 'price_standard' } }] } }], has_more: false }];
   partner = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(partner.payout.monthly_estimate_yen, 1200);
-  assert.equal(partner.payout.cumulative_earned_yen, 1200);
-  assert.equal(partner.payout.cumulative_paid_yen, null, 'never invent disbursements');
+  assert.equal(partner.payout.rate_bp, 4000);
+  assert.equal(partner.payout.duration_months, null);
+  assert.deepEqual(partner.payout.totals, [], 'no invented commission before a reconciled ledger');
+  assert.equal(partner.payout.paid_status, 'manual_payment_not_recorded');
   assert.equal(partner.referrals[0].sites.length, 7);
-  assert.equal(monthlyReferralPayout([{ plan: 'standard', contract: 'active', stripe_subscription_id: null }]), 0);
-  invoicePages = [{ data: [{ currency: 'jpy', created: Math.ceil(Date.now()/1000), amount_paid: 3000, post_payment_credit_notes_amount: 100, lines: { data: [{ price: { id: 'price_standard' } }] } }], has_more: false }];
-  partner = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(partner.payout.cumulative_earned_yen, null, 'adjusted invoices never produce a guessed amount');
-  invoicePages = [{ data: [{ currency: 'jpy', created: 1, amount_paid: 3000, lines: { data: [{ price: { id: 'price_standard' } }] } }], has_more: false }];
-  partner = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(partner.payout.cumulative_earned_yen, 0, 'pre-registration invoices do not earn referral commission');
-  delete env.STRIPE_SECRET_KEY;
-  partner = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(partner.payout.cumulative_earned_yen, null);
+  assert.deepEqual(stripeCalls, [], 'summary reads the reconciled ledger, not Stripe');
   mailFailure = true;
   assert.equal((await call('/api/auth/signup', { email: 'failure@example.test' })).status, 502);
   assert.equal(sqlite.prepare('SELECT COUNT(*) AS n FROM auth_tokens WHERE email=?').get('failure@example.test').n, 0);
@@ -126,5 +120,5 @@ try {
   assert.equal(responses.filter(r => r.headers.get('location') === '/dashboard').length, 1, 'only one concurrent verification wins');
   for (const lang of EMAIL_LOCALES) { const email = signupLinkEmail('https://nurevo.jp/?a="<>', lang); assert.ok(email.subject && email.text.includes('15')); assert.match(email.html, /&quot;&lt;&gt;/); }
   assert.equal(new Set(Array.from({ length: 1000 }, newReferralCode)).size, 1000);
-  console.log('PASS: migration/backfill, referral signup, regeneration, invalid/self/immutable referral, token hash/single-use/expiry/concurrency, session/CSRF, shared email/IP limits, provider failure, real SQL payout states, read-only invoice commission, 8-language confirmation. No real mail or Stripe calls.');
+  console.log('PASS: migration/backfill, referral signup, regeneration, invalid/self/immutable referral, token hash/single-use/expiry/concurrency, session/CSRF, shared email/IP limits, provider failure, real SQL ledger summary, 8-language confirmation. No real mail or Stripe calls.');
 } finally { globalThis.fetch = originalFetch; sqlite.close(); }

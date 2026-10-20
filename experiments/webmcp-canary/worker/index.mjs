@@ -1,3 +1,4 @@
+import { runReferralLedger } from './referral-ledger.mjs';
 import { resolveEmailLocale, loadEmailPreferences, magicLinkEmail } from "./email-i18n.mjs";
 import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
@@ -51,6 +52,10 @@ export default {
     const weeklyCron = "17 18 * * 1";
     const cron = String(event?.cron || "");
     const jobs = [];
+    // Reuse the deployed daily trigger; once a month, opt-in via configuration.
+    if (cron === dailyCron && new Date(event.scheduledTime || Date.now()).getUTCDate() === 1 && env.REFERRAL_LEDGER_ENABLED === '1') {
+      jobs.push(runReferralLedger(env).then(result=>console.log('referral-ledger',JSON.stringify(result))).catch(()=>console.error('referral-ledger-failed')));
+    }
 
     // Every customer site gets one daily score point and, when the provider
     // key exists, one daily SoV run. A missing SoV key is an explicit safe

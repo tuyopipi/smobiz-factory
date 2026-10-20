@@ -112,6 +112,7 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = nul
   });
   const result = scoreAeo(signals, scoring);
   return {
+    siteLanguage: (page.text.match(/<html\b[^>]*\blang\s*=\s*["']([^"']+)["']/i) || [])[1] || null,
     rulesetVersion,
     modelVersion: scoring.modelVersion,
     deliveryEvidence: deliveryEvidence(page.text, robots.text, llms.text),

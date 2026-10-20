@@ -100,7 +100,8 @@ export async function storeAeoScore(env, siteId, result) {
     deliveredVersion,
     result.modelVersion ?? null,
   );
-  const statements = [scoreStatement,...(deliveredVersion == null ? [] : deliveryStatements(env,siteId,deliveredVersion,measured))];
+  const languageStatements = result.siteLanguage === undefined ? [] : [env.DB.prepare('UPDATE sites SET detected_language=? WHERE id=?').bind(result.siteLanguage,siteId)];
+  const statements = [scoreStatement,...languageStatements,...(deliveredVersion == null ? [] : deliveryStatements(env,siteId,deliveredVersion,measured))];
   if (env.DB.batch) await env.DB.batch(statements);
   else for (const statement of statements) await statement.run();
   return { ...result, scannedAt, deliveredRulesetVersion: deliveredVersion };
