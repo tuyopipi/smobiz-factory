@@ -70,3 +70,52 @@ Migration 0035 was applied remotely: 10 queries, completed successfully.
 Post-migration readback confirmed all six new referral objects, both auth token
 attribution columns, and unchanged accounts/sites/aeo_scores/SoV row counts.
 The backup/restore check preceded the production migration.
+
+## Production outcome
+
+Signed source commit: `659c693` (ED25519 signature verified).
+Worker version: `43d04cf5-2566-436b-b04a-0d3c87c80afb`, tag `referral-659c693`.
+100% traffic switched at 2026-10-20T04:39:20Z; deployment status readback confirmed.
+The referral secret was uploaded as secret_text together with the version;
+all 12 existing secrets were preserved. The generated local secret file was
+removed after deployment. Branch pushed normally to origin; no main/force push.
+
+Passed live checks (qa/referral-production-20261020.json):
+- /dashboard and all three referral module assets return 200.
+- Live share form module contains partner/customer name fields.
+- Existing /api/crawlers returns 200.
+- Unauthenticated partner API returns 401; admin ledger CSV returns 403.
+- Invalid unsubscribe credential returns 400.
+- Cryptographically signed expired verification credential is rejected with the
+  auth-error redirect; invalid invitation displays the invalid/expired page.
+- Referral IP limit returns 429 after its ten-request window allowance.
+  This verification uses the caller's real IP; no headers spoof an IP.
+
+Read-only live D1 Wise dry-run for closed period 2026-09 found zero referred
+accounts and zero eligible subscriptions. The existing exporters generated
+header-only summary/audit files at:
+- /private/tmp/nurevo-wise-dry-run-2026-09.csv
+- /private/tmp/nurevo-ledger-dry-run-2026-09.csv
+
+This dry-run did not create a production ledger snapshot, call Stripe, or pay
+anyone. It is not evidence of a nonzero paid-invoice calculation in production;
+that behavior is covered by the SQLite/mock-Stripe regression suite.
+
+### Outstanding live verification
+
+The user-designated partner/customer recipient addresses have not been supplied.
+Consequently real signup email delivery, mailbox link redemption, share email
+receipt, single-use redemption with an actual customer, resulting referred_by
+record, and authenticated admin snapshot/CSV download remain unverified live.
+Do not describe the full end-to-end acceptance criterion as complete.
+No real customer was used as a test recipient and no synthetic customer records
+were inserted into production as a substitute. Provide two controlled recipient
+addresses, complete mailbox verification, then use a super-admin session for the
+actual closed-month ledger snapshot and CSV download. With no paid Pro invoices,
+the correct final ledger remains zero; do not enable Pro or create a payment to
+produce a nonzero test row.
+
+References used for the release procedure:
+- https://developers.cloudflare.com/d1/best-practices/import-export-data/
+- https://developers.cloudflare.com/workers/configuration/secrets/
+- https://developers.cloudflare.com/workers/versions-and-deployments/rollbacks/
