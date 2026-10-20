@@ -58,7 +58,7 @@ async function call(path,body,cookie='',fixedIp){const headers={'cf-connecting-i
  if(body!==undefined){method='POST';if(body instanceof URLSearchParams){headers['content-type']='application/x-www-form-urlencoded';payload=body;}else{headers['content-type']='application/json';payload=JSON.stringify(body);}}
  return handleApi(new Request('https://nurevo.jp'+path,{method,headers,...(payload?{body:payload}:{})}),env,{});}
 const pathOf=link=>new URL(link).pathname+new URL(link).search;
-const extractLink=mail=>mail.text.match(/https:\/\/\S+/g).at(-1);
+const extractLink=mail=>mail.text.match(/https:\/\/[^\s]+/g).find(link=>/\/api\/(referral\/(open|redeem)|auth\/verify)/.test(link));
 try{
  const signup=await (await call('/api/auth/signup',{email:'parent@example.test',locale:'de'})).json();
  const logged=await call(pathOf(signup.loginLink));const cookie=logged.headers.get('set-cookie').match(/nrv_session=[^;]+/)[0];
@@ -69,7 +69,7 @@ try{
  assert.equal((await call('/api/partner/share',{site_id:'site',email:parent.email},cookie)).status,400,'self referral blocked');
  assert.equal((await call('/api/partner/share',{site_id:'absent',email:'customer@example.test'},cookie)).status,404);
  async function share(email){assert.equal((await call('/api/partner/share',{site_id:'site',email},cookie)).status,200);return extractLink(messages.at(-1));}
- const open=await share('customer@example.test');assert.equal(messages.at(-1).subject,referralCopy('fr').shareSubject);
+ const open=await share('customer@example.test');assert.ok(messages.at(-1).subject.includes('parent@example.test'));
  assert.equal(sqlite.prepare("SELECT count(*) n FROM members WHERE email='customer@example.test'").get().n,0,'share creates no account');
  const openResponse=await call(pathOf(open));const markup=await openResponse.text();assert.match(markup,/lang="fr"/);assert.ok(!markup.includes('shop.example.test'),'report private until verification');
  const inviteToken=new URL(open).searchParams.get('token');
@@ -88,6 +88,15 @@ try{
  await call('/api/referral/verify-email',new URLSearchParams({token:new URL(old).searchParams.get('token'),email:'old@example.test'}));
  await call(pathOf(extractLink(messages.at(-1))));
  assert.equal(sqlite.prepare("SELECT referred_by_account_id FROM accounts WHERE email='old@example.test'").get().referred_by_account_id,null);
+ // GET does not opt out (mail scanners); signed POST suppresses future sharing.
+ const unsub=messages.find(m=>m.text.includes('/api/referral/unsubscribe')).text.match(/https:\/\/[^\s]+/g).find(link=>link.includes('/unsubscribe'));
+ assert.equal((await call(pathOf(unsub))).status,200);
+ assert.equal(sqlite.prepare('SELECT count(*) n FROM referral_email_suppressions').get().n,0);
+ assert.equal((await call('/api/referral/unsubscribe',new URLSearchParams({token:new URL(unsub).searchParams.get('token')}))).status,200);
+ assert.equal(sqlite.prepare('SELECT count(*) n FROM referral_email_suppressions').get().n,1);
+ const suppressed=await call('/api/partner/share',{site_id:'site',email:'customer@example.test'},cookie);
+ assert.equal(suppressed.status,400);assert.equal((await suppressed.json()).error,'email_unsubscribed');
+ assert.equal((await call('/api/referral/unsubscribe?token=bad')).status,400);
  // Expiry and tampering are checked cryptographically as well as in SQL.
  const id='a'.repeat(32),expired=await signReferral(env,id,'verify',Date.now()-1000);
  assert.equal(await verifyReferral(env,expired,'verify'),null);

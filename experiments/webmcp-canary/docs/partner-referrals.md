@@ -1,7 +1,7 @@
 # Partner referrals and manual Wise reconciliation
 
-Local implementation on `feat/partner-referral-wise`. No production deployment,
-remote SQL, Stripe mutations or real email was performed during implementation.
+Implementation on `feat/partner-referral-wise`. For the production rollout and
+verification status, see `docs/referral-production-20261020.md`.
 
 Nurevo remains the Stripe merchant. A referred customer's actual paid **Pro**
 invoices earn 4,000 basis points (40%) by default, for life. Organic customers earn
@@ -12,8 +12,7 @@ on a plan that is currently marked coming soon.
 ## Configuration and rollout prerequisites
 
 Apply `nurevo-impl/db/0035_referral_ledger.sql` to the **DB / nurevo-db** binding
-after migrations through 0034. It is not a WEBMCP_DB migration. Obtain approval
-before any production database or deployment operation.
+after migrations through 0034. It is not a WEBMCP_DB migration. The user authorized the production rollout on 2026-10-20.
 
 - `REFERRAL_RATE_BP`: integer 0–10000, default 4000. Invalid settings fail closed.
 - `REFERRAL_DURATION_MONTHS`: positive integer, blank/unset means lifetime from
@@ -28,8 +27,12 @@ before any production database or deployment operation.
 
 The copy catalogue is `public/dashboard-referral-copy.mjs`. Its eight locales
 are ja, en, zh, zh-tw, ko, es, fr, de (dashboard `tw` maps to zh-tw).
-**Draft copy remains pending the master text mentioned but not supplied in the
-request.** Do not represent this draft as approved master copy.
+Email masters are in `worker/referral-email-copy.mjs`: EN/JA use the supplied
+2026-10-20 master; zh/zh-tw/ko/es/fr/de are machine translations pending Hashimoto
+review. Share accepts optional `partner_name` and `client_name` (email fallback).
+The postal address matches the published terms. Signed unsubscribe links show a
+confirmation form; POST suppresses future shared reports for that email. Essential
+login/verification emails remain available.
 
 ## Product flow
 
@@ -66,8 +69,7 @@ Checkout adds `referred_by` to session and subscription metadata using the **sit
 owner's** account attribution, never caller-supplied attribution. Organic checkout
 omits it. An authenticated super-admin may POST `/api/admin/referral-metadata`
 to backfill existing subscription metadata. This endpoint changes metadata only;
-it never changes a price, product, amount or webhook. Do not call it against
-production before approval. Legacy Connect onboarding and automatic invoice-paid
+it never changes a price, product, amount or webhook. Only metadata updates and invoice reads are authorized for this rollout. Legacy Connect onboarding and automatic invoice-paid
 transfers are retired in this local code; payouts are manual.
 
 ## Monthly ledger and export

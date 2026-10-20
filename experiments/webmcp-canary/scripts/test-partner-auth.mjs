@@ -84,7 +84,7 @@ try {
   await signup('oldcode@example.test', code);
   for (const email of ['invalid@example.test', 'oldcode@example.test']) assert.equal(sqlite.prepare('SELECT referred_by_account_id FROM accounts WHERE email=?').get(email).referred_by_account_id, null);
   await signup('parent@example.test', code2);
-  assert.equal(messages.at(-1).subject, 'Nurevoへのログインリンク', 'existing email gets login copy');
+  assert.equal(messages.at(-1).subject, 'Nurevo ログインリンク', 'existing email gets login copy');
   assert.equal(sqlite.prepare('SELECT referred_by_account_id FROM accounts WHERE email=?').get('parent@example.test').referred_by_account_id, null, 'self-referral ignored');
   await signup('child@example.test', code2);
   assert.equal(sqlite.prepare('SELECT referred_by_code FROM accounts WHERE email=?').get('child@example.test').referred_by_code, code, 'existing registration is immutable');

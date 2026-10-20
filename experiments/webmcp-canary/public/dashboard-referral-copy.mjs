@@ -1,4 +1,4 @@
-// Draft resources pending the supplied copy master. All referral surfaces share this catalogue.
+// Dashboard UI catalogue. Approved email masters live in worker/referral-email-copy.mjs.
 export const COPY = {
  en: ['AEO report from your Nurevo partner','Your partner has shared an AEO report for your website.','View report and verify email','Email address','Send verification email','Check your inbox','Confirm your email to view the report and sign in.','Welcome to Nurevo','Your email is verified. Your account is ready.','Open dashboard','AEO score','Measured at','Partner referrals','Register as a partner','Referral code','Share an AEO report','Customer email','Website','Send report','Report sent','Commission on actual Pro payments: {rate}%. Payments are made manually.','Referred customers','No referrals yet','Currency','Commission ledger','Period','Amount','Lifetime','{months} months','Request a new link from your partner. This link is invalid or expired.','Copy','Registered','Unavailable','Regenerate code','Existing customer accounts keep their original referral.','Paid Pro invoices only. Unpaid and refunded invoices are excluded.','Settings saved'],
  ja: ['パートナーからのAEOレポート','パートナーが貴社サイトのAEOレポートを共有しました。','レポートを見る・メールを確認','メールアドレス','確認メールを送る','メールをご確認ください','メールを確認すると、レポートを閲覧してログインできます。','Nurevoへようこそ','メール確認が完了し、アカウントを利用できます。','ダッシュボードを開く','AEOスコア','計測日時','パートナー紹介','パートナーに登録','紹介コード','AEOレポートを共有','お客様のメール','サイト','レポートを送る','送信しました','Proの実支払額の{rate}%が紹介報酬です。報酬は手動で支払います。','紹介したお客様','紹介はまだありません','通貨','報酬台帳','対象期間','金額','生涯継続','{months}か月','リンクが無効または期限切れです。パートナーに新しいリンクをご依頼ください。','コピー','登録済み','未確認','コードを再発行','既存のお客様の紹介関係は変更されません。','入金済みPro請求書のみ対象です。未払い・返金済みは除外します。','設定を保存しました'],
@@ -12,5 +12,6 @@ export const COPY = {
 const KEYS = ['shareSubject','shareIntro','view','email','verify','sent','verifyIntro','welcome','ready','dashboard','score','measured','partner','register','code','share','customerEmail','site','send','shared','terms','customers','empty','currency','ledger','period','amount','lifetime','months','invalid','copy','registered','unavailable','regenerate','existing','paidOnly','saved'];
 export function referralCopy(locale = 'en') {
  const row = COPY[locale === 'tw' ? 'zh-tw' : locale] || COPY.en;
- return Object.fromEntries(KEYS.map((key,i) => [key,row[i]]));
+ const names = {en:['Your display name','Customer name'],ja:['送信者の表示名','お客様のお名前'],zh:['您的显示名称','客户姓名'],'zh-tw':['您的顯示名稱','客戶姓名'],ko:['보내는 사람 이름','고객 이름'],es:['Tu nombre','Nombre del cliente'],fr:['Votre nom','Nom du client'],de:['Ihr Name','Kundenname']}[locale === 'tw' ? 'zh-tw' : locale] || ['Your display name','Customer name'];
+ return {...Object.fromEntries(KEYS.map((key,i) => [key,row[i]])),partnerName:names[0],clientName:names[1]};
 }

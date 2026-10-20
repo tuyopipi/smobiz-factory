@@ -1,5 +1,5 @@
 import { signReferral, verifyReferral } from './referral-tokens.mjs';
-import { shareReferralReport, openReferral, requestReferralVerification, consumeReferral, referralWelcome } from './referral-flow.mjs';
+import { shareReferralReport, openReferral, requestReferralVerification, consumeReferral, referralWelcome, unsubscribeReferral } from './referral-flow.mjs';
 import { referralConfig, previousMonth } from './referral-config.mjs';
 import { runReferralLedger, ledgerExport, ledgerCsv, wiseSummaryCsv } from './referral-ledger.mjs';
 import { recordFetched } from "./aeo-delivery.mjs";
@@ -743,6 +743,7 @@ export async function handleApi(request, env, ctx) {
   if (path.startsWith('/api/referral/')) {
     const limit = await checkApiRateLimit(env, 'referral-ip', requestClientIp(request), API_RATE_LIMITS.authIp);
     if (!limit.allowed) return json({error: limit.unavailable ? 'rate_limit_unavailable' : 'rate_limited'}, limit.unavailable ? 503 : 429);
+    if (path === '/api/referral/unsubscribe' && ['GET','POST'].includes(method)) return unsubscribeReferral(request,env);
     if (path === '/api/referral/open' && method === 'GET') return openReferral(request, env);
     if (path === '/api/referral/verify-email' && method === 'POST') {
       const token = (await request.clone().formData()).get('token');
@@ -779,8 +780,8 @@ export async function handleApi(request, env, ctx) {
     const body = await safeJson(request);
     const site = await loadOwnedSiteByRef(env,member,String(body.site_id || ''));
     if (!site) return json({error:'not_found'},404);
-    try { return json(await shareReferralReport(env,request,member,site,body.email)); }
-    catch(error) { return json({error: ['invalid_email','self_referral','report_not_available','referral_secret_not_configured','mail_provider_not_configured','mail_send_failed'].includes(error.message) ? error.message : 'share_failed'},400); }
+    try { return json(await shareReferralReport(env,request,member,site,body.email,{partner_name:body.partner_name,client_name:body.client_name})); }
+    catch(error) { return json({error: ['email_unsubscribed','invalid_email','self_referral','report_not_available','referral_secret_not_configured','mail_provider_not_configured','mail_send_failed'].includes(error.message) ? error.message : 'share_failed'},400); }
   }
   if (path === '/api/admin/referral-metadata' && method === 'POST') {
     const member = await requireActiveMember(request,env);
@@ -3437,7 +3438,7 @@ function csrfRequired(path) {
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;
-  return !["/api/auth/signup", "/api/auth/magic-link"].includes(path) && path !== "/api/referral/verify-email" && path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
+  return !["/api/auth/signup", "/api/auth/magic-link"].includes(path) && path !== "/api/referral/unsubscribe" && path !== "/api/referral/verify-email" && path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 
 const AI_REFERRER_IDS = Object.freeze([

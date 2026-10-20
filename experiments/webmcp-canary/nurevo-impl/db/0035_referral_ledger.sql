@@ -24,3 +24,8 @@ CREATE INDEX referral_ledger_partner ON referral_ledger(run_id,partner_id,curren
 -- Generic signup referral is also deferred until mailbox verification.
 ALTER TABLE auth_tokens ADD COLUMN referral_parent_id INTEGER REFERENCES accounts(id);
 ALTER TABLE auth_tokens ADD COLUMN referral_code TEXT;
+
+-- Report-sharing opt-out; essential authentication emails are unaffected.
+CREATE TABLE referral_email_suppressions (
+ email TEXT PRIMARY KEY COLLATE NOCASE, created_at INTEGER NOT NULL
+);

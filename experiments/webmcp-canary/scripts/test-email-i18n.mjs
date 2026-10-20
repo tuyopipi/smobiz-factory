@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { EMAIL_LOCALES, normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, magicLinkEmail } from "../worker/email-i18n.mjs";
+import { renderMasterEmail } from "../worker/referral-email-copy.mjs";
 import { handleApi } from "../worker/api.mjs";
 assert.equal(normalizeEmailLocale("zh-Hant-TW"), "zh-tw");
 assert.equal(normalizeEmailLocale("tw"), "zh-tw");
@@ -14,14 +15,14 @@ assert.equal(resolveEmailLocale({language:"xx",registration_locale:"ko-KR"}, "en
 assert.equal(resolveEmailLocale({}, "en;q=0.8,ko;q=0.8"), "en");
 assert.equal(resolveEmailLocale({}, "ko;q=0,en;q=0"), "en");
 const expectedCopy = {
-  ja: ["Nurevoへのログインリンク", "Nurevoにログインするには、次のリンクを開いてください。"],
-  en: ["Sign in to Nurevo", "Open the following link to sign in to Nurevo."],
-  zh: ["Nurevo 登录链接", "请打开以下链接登录 Nurevo。"],
-  "zh-tw": ["Nurevo 登入連結", "請開啟以下連結登入 Nurevo。"],
-  ko: ["Nurevo 로그인 링크", "Nurevo에 로그인하려면 아래 링크를 열어 주세요."],
-  es: ["Enlace para iniciar sesión en Nurevo", "Abre el siguiente enlace para iniciar sesión en Nurevo."],
-  fr: ["Lien de connexion à Nurevo", "Ouvrez le lien suivant pour vous connecter à Nurevo."],
-  de: ["Anmeldelink für Nurevo", "Öffnen Sie den folgenden Link, um sich bei Nurevo anzumelden."]
+ ja:['Nurevo ログインリンク','下のリンクでログインできます。1回のみ有効・15分で失効します。'],
+ en:['Your Nurevo login link','Click to log in to Nurevo. This link works once and expires in 15 minutes.'],
+ zh:['您的Nurevo登录链接','点击链接登录Nurevo。此链接仅可使用一次，将在15分钟后失效。'],
+ 'zh-tw':['您的Nurevo登入連結','點擊連結登入Nurevo。此連結僅可使用一次，將在15分鐘後失效。'],
+ ko:['Nurevo 로그인 링크','클릭하여 Nurevo에 로그인하세요. 이 링크는 한 번만 사용할 수 있으며 15분 후 만료됩니다.'],
+ es:['Tu enlace de acceso a Nurevo','Haz clic para iniciar sesión en Nurevo. Este enlace solo funciona una vez y caduca en 15 minutos.'],
+ fr:['Votre lien de connexion Nurevo','Cliquez pour vous connecter à Nurevo. Ce lien ne fonctionne qu’une fois et expire dans 15 minutes.'],
+ de:['Ihr Nurevo-Anmeldelink','Klicken Sie, um sich bei Nurevo anzumelden. Dieser Link funktioniert einmal und läuft in 15 Minuten ab.']
 };
 for (const locale of EMAIL_LOCALES) {
   const message = magicLinkEmail('https://nurevo.jp/callback?token=test&x="<>', locale);
@@ -66,8 +67,8 @@ try {
     }), env, {});
     assert.equal(response.status, 200);
     assert.equal(sent.length, 1);
-    assert.equal(sent[0].subject, locale === "ko" ? "Nurevo 로그인 링크" : "Sign in to Nurevo");
-    assert.match(sent[0].text, locale === "ko" ? /로그인하려면/ : /Open the following link/);
+    assert.equal(sent[0].subject, locale === "ko" ? "Nurevo 로그인 링크" : "Your Nurevo login link");
+    assert.match(sent[0].text, locale === "ko" ? /로그인하세요/ : /Click to log in/);
     assert.match(sent[0].html, new RegExp(`lang="${locale}"`));
     assert.ok(sent[0].html.includes(`<p>${expectedCopy[locale][1]}</p>`));
     assert.doesNotMatch(sent[0].text, /ログイン/);
@@ -76,3 +77,46 @@ try {
   }
 } finally { globalThis.fetch = originalFetch; }
 console.log("email localization tests passed (mock delivery; no real email sent)");
+
+const values={partner_name:'Partner',client_name:'Client',client_site:'https://client.test',score:72,magic_link:'https://nurevo.jp/api/referral/open?token=test',postal_address:'ADDRESS',unsub:'https://nurevo.jp/api/referral/unsubscribe?token=test'};
+assert.equal(renderMasterEmail('en','share',values).subject,"Your site's AI-search visibility report (from Partner)");
+assert.equal(renderMasterEmail('en','share',values).text,`Hi Client,
+
+Partner ran an AI-search (AEO) check on https://client.test. Your AI-readability score is 72/100.
+
+▶ View your full report: https://nurevo.jp/api/referral/open?token=test
+
+See exactly what AI assistants (ChatGPT, Perplexity) can and can't read on your site — and what to fix.
+
+Shared by Partner · Powered by Nurevo
+ADDRESS · Unsubscribe: https://nurevo.jp/api/referral/unsubscribe?token=test`);
+assert.equal(renderMasterEmail('ja','share',values).text,`Client 様
+
+Partner が https://client.test のAI検索(AEO)診断を行いました。AI可読スコアは 72/100 です。
+
+▶ レポートを見る: https://nurevo.jp/api/referral/open?token=test
+
+ChatGPTやPerplexityがサイトの何を見られて／見られていないか、何を直せばいいかが分かります。
+
+Shared by Partner · Powered by Nurevo
+ADDRESS · 配信停止: https://nurevo.jp/api/referral/unsubscribe?token=test`);
+assert.equal(magicLinkEmail('LINK','en',{postal_address:'ADDRESS',minutes:7}).text,`Click to log in to Nurevo. This link works once and expires in 7 minutes.
+
+▶ Log in: LINK
+
+If you didn't request this, ignore this email.
+
+Nurevo · ADDRESS`);
+assert.equal(magicLinkEmail('LINK','ja',{postal_address:'ADDRESS',minutes:7}).text,`下のリンクでログインできます。1回のみ有効・7分で失効します。
+
+▶ ログイン: LINK
+
+心当たりがなければ破棄してください。
+
+Nurevo · ADDRESS`);
+for(const locale of EMAIL_LOCALES){
+ const mail=renderMasterEmail(locale,'share',values);
+ assert.doesNotMatch(mail.text,/\{\{/);assert.ok(mail.text.includes('72/100'));assert.ok(mail.html.includes('href="https://nurevo.jp/api/referral/open?token=test"'));
+ const escaped=renderMasterEmail(locale,'share',{...values,partner_name:'<img src=x onerror=1>'});assert.doesNotMatch(escaped.html,/<img/);
+}
+console.log('EN/JA master full-text equality and 8-language share substitutions/escaping passed');

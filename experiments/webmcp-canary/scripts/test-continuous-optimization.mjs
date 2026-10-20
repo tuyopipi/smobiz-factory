@@ -19,6 +19,8 @@ sqlite.exec('ALTER TABLE sites ADD COLUMN manual_plan TEXT; ALTER TABLE orgs ADD
 for (const f of ['0013_aeo_rulesets.sql','0014_aeo_scores.sql','0015_aeo_ruleset_activations.sql','0016_aeo_learning.sql','0026_ruleset_v3_schema_advance.sql','0031_pro_measurement.sql']) sqlite.exec(sqlFile(f));
 const legacy=JSON.parse(sqlite.prepare('SELECT definition_json FROM aeo_rulesets WHERE active=1').get().definition_json);
 sqlite.exec(sqlFile('0032_continuous_optimization.sql'));
+sqlite.exec(sqlFile('0030_account_referrals.sql'));
+sqlite.exec(sqlFile('0035_referral_ledger.sql'));
 const DB={prepare(sql){const wrap=args=>({async first(){return sqlite.prepare(sql).get(...args)||null;},async all(){return {results:sqlite.prepare(sql).all(...args)};},async run(){return {meta:sqlite.prepare(sql).run(...args)};}});return {...wrap([]),bind(...args){return wrap(args);}};},async batch(statements){sqlite.exec('BEGIN');try{const out=[];for(const s of statements)out.push(await s.run());sqlite.exec('COMMIT');return out;}catch(e){sqlite.exec('ROLLBACK');throw e;}}};
 const env={DB};
 sqlite.exec(`INSERT INTO orgs(id) VALUES('o1'); INSERT INTO sites(id,org_id,url,website_uri,site_key,install_type,plan,created_at) VALUES('s1','o1','example.test','https://example.test/','nrv_test','wp','standard',1);
