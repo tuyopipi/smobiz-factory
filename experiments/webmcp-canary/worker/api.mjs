@@ -663,7 +663,7 @@ export async function handleApi(request, env, ctx) {
     const ruleset = await rulesetForPlan(env, resolveSitePlan(hosted, { manual_plan: hosted.org_manual_plan }));
     const rulesetVersion = String(ruleset.version || INITIAL_AEO_RULESET.version);
     if (!hostedMatch[2]) await recordFetched(env, hosted.id, Number(ruleset.version), hostedSchema(hosted, priceRange(hosted.price || hosted.price_level, ruleset), ruleset));
-    if (hostedMatch[2]) return new Response(buildHostedLlms(hosted, ruleset) + `\n# nurevo-aeo-ruleset:${ruleset.version}\n`, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "x-aeo-ruleset-version": rulesetVersion } });
+    if (hostedMatch[2]) return new Response(buildHostedLlms(hosted, ruleset) + `\n<!-- nurevo-aeo-ruleset:${ruleset.version} -->\n`, { headers: { "content-type": "text/plain; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "x-aeo-ruleset-version": rulesetVersion } });
     const locale = preferredHostedLocale(url, request);
     return new Response(localizeHostedMarkup(renderHostedStore(hosted, locale, ruleset), HOSTED_LABELS[locale] || HOSTED_LABELS.ja, locale), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": LIVE_AEO_CACHE_CONTROL, "vary": "accept-language", "x-aeo-ruleset-version": rulesetVersion } });
   }
@@ -3487,7 +3487,7 @@ export async function centralLlmsForKey(env, siteKey) {
   const site = await env.DB.prepare('SELECT * FROM sites WHERE id=?').bind(auth.siteId).first();
   const settings = await env.DB.prepare('SELECT * FROM site_settings WHERE site_id=?').bind(auth.siteId).first() || {};
   const rule = await rulesetForPlan(env, auth.plan);
-  return buildLlmsTxt({...settings,url:site.website_uri || site.url},rulesetDefinition(rule)) + `\n# nurevo-aeo-ruleset:${rule.version}\n`;
+  return buildLlmsTxt({...settings,url:site.website_uri || site.url},rulesetDefinition(rule)) + `\n<!-- nurevo-aeo-ruleset:${rule.version} -->\n`;
 }
 
 async function generationSettings(env, siteId) {
