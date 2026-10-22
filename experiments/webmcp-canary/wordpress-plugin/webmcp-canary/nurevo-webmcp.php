@@ -431,6 +431,12 @@ function webmcp_canary_allow_ai_crawlers_robots_txt($output, $public) {
     $inherited = webmcp_canary_robots_wildcard_rules($output);
 
     $rules = array($marker);
+    // Paid sites mark the ruleset version, so the diagnosis can verify which
+    // version actually reached this file.
+    $delivered = webmcp_canary_delivered_ruleset_version();
+    if ($delivered > 0) {
+        $rules[] = '# nurevo-aeo-ruleset:' . $delivered;
+    }
     foreach (webmcp_canary_ai_search_agents() as $agent) {
         $rules[] = 'User-agent: ' . $agent;
         foreach ($inherited as $line) {
@@ -2632,7 +2638,19 @@ function webmcp_canary_llms_txt_body() {
     if ($settings['enabled'] !== '1' || $settings['serve_llms_txt'] !== '1') {
         return null;
     }
-    return webmcp_canary_build_local_llms_txt();
+    $body = webmcp_canary_build_local_llms_txt();
+    $delivered = webmcp_canary_delivered_ruleset_version();
+    if ($delivered > 0) {
+        // An HTML comment, not a "# " line, which Markdown would read as a second H1.
+        $body = rtrim($body, "\n") . "\n\n<!-- nurevo-aeo-ruleset:" . $delivered . " -->\n";
+    }
+    return $body;
+}
+
+/** The central ruleset version this site follows (paid, synced), or 0. */
+function webmcp_canary_delivered_ruleset_version() {
+    $payload = webmcp_canary_central_payload();
+    return is_array($payload) && !empty($payload['version']) ? intval($payload['version']) : 0;
 }
 
 function webmcp_canary_fetch_llms_txt() {

@@ -5,12 +5,12 @@ export const DEFAULT_SCORING = Object.freeze({
   schemaOk:0.8, coverageOk:0.8, coverageWarn:0.4, coverageMix:[0.6,0.4],
   legibilityMix:[0.6,0.2,0.2], legibilityOk:0.75, legibilityWarn:0.4,
   llmsOk:0.7, gateCap:15, greenAt:80, yellowAt:50,
-  // Crawlers that fetch pages to answer or cite them in AI search. Training
-  // crawlers are deliberately not here: blocking them is the owner's choice and
-  // does not stop a site from appearing in AI answers.
+  // Kept identical to the ruleset snapshot stored by migration 0032. Training
+  // bots in this list are ignored by the reachability gate (gateCrawlers() in
+  // aeo-score.mjs), so blocking them never lowers a score.
   aiCrawlers:[
-  "OAI-SearchBot", "ChatGPT-User", "Claude-SearchBot", "Claude-User",
-  "PerplexityBot", "Perplexity-User",
+  "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-Web",
+  "PerplexityBot", "Google-Extended", "Applebot-Extended",
 ],
   factTextPatterns:["(住所|所在地|address|〒\\s*\\d{3})", "(?:tel|電話|phone)[\\s:：]*[+()\\d-]{7,}", "(営業時間|opening hours|月曜|monday)", "(?:latitude|longitude|緯度|経度)", "https?:\\/\\/|公式サイト|website"],
   minVisible:100, minFactText:20, minLlms:120,

@@ -483,7 +483,9 @@ export function diagnoseSchemaFields(nodes, options = {}) {
 
 // Evidence is read from raw HTML, never from a config fetch or client acknowledgement.
 export function deliveryEvidence(html, robots = "", llms = "") {
-  const artifactVersion = text => {const m=String(text).match(/^# nurevo-aeo-ruleset:(\d+)\s*$/m); return m?Number(m[1]):null;};
+  // robots.txt carries the marker as a # comment; llms.txt (Markdown) as an HTML
+  // comment, so it does not become a second H1. Both forms are accepted.
+  const artifactVersion = text => {const m=String(text).match(/^(?:# |<!--\s*)nurevo-aeo-ruleset:(\d+)\s*(?:-->)?\s*$/m); return m?Number(m[1]):null;};
   const match = String(html).match(/<script\b[^>]*id=["']nurevo-aeo-delivery["'][^>]*>([\s\S]*?)<\/script>/i);
   if (!match) return null;
   try { const evidence = JSON.parse(match[1]); return { version: evidence.version, robotsVersion:artifactVersion(robots), llmsVersion:artifactVersion(llms), nodes: extractSchemaNodes(html).map(n=>({'@context':'https://schema.org',...n})) }; } catch { return null; }
