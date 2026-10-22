@@ -118,6 +118,7 @@ function get_permalink($post) { return is_object($post) ? ($post->permalink ?? '
 function current_user_can() { return true; }
 function admin_url($path = '') { return 'https://example.test/wp-admin/' . ltrim($path, '/'); }
 if (!function_exists('do_action')) { function do_action(...$args) {} }
+if (!function_exists('get_current_screen')) { function get_current_screen() { return $GLOBALS['webmcp_test_screen'] ?? null; } }
 function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_html__($text) { return esc_html($text); }
 function esc_attr($value) { return esc_html($value); }
@@ -2524,5 +2525,68 @@ expect(strpos(file_get_contents(__DIR__ . '/../wordpress-plugin/webmcp-canary/nu
 $GLOBALS['webmcp_test_remote_get'] = array();
 delete_option(WEBMCP_CANARY_RULESET_OPTION);
 delete_option('webmcp_canary_autofix_state');
+
+/* --- 0.7.4: first-run fixes ------------------------------------------- */
+
+// Pairing and licence results are shown: settings_errors() must be called on
+// this top-level page, where WordPress does not print them by itself.
+expect(strpos($source, "settings_errors(WEBMCP_CANARY_OPTION);") !== false, 'the settings page prints pairing and licence results');
+
+// Pairing switches output on.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js', 'enabled' => '0'));
+$GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => wp_json_encode(array(
+    'ok' => true, 'site_id' => 'p1', 'site_key' => 'nrv_p1', 'profile_token' => 'nrvp_p1', 'plan' => 'free', 'domain' => 'example.test', 'paired' => true,
+)));
+$paired_settings = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('enabled' => '', 'pairing_code' => 'NRV-PAIRS-PAIRS-PAIRS-PAIRS')));
+expect($paired_settings['enabled'] === '1', 'a successful pairing switches output on');
+$GLOBALS['webmcp_test_remote'] = array('status' => 409, 'body' => wp_json_encode(array('ok' => false, 'error' => 'invalid_code')));
+$failed_settings = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('enabled' => '', 'pairing_code' => 'NRV-WRONG-WRONG-WRONG-WRONG')));
+expect($failed_settings['enabled'] === '0', 'a failed pairing does not switch output on');
+
+// The off notice appears on this plugin's screens and the Plugins list only.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '0'));
+$_GET['page'] = 'webmcp-canary';
+ob_start(); webmcp_canary_output_off_notice(); $off_notice = ob_get_clean();
+expect(strpos($off_notice, 'Nurevo AEO is off') !== false, 'the plugin screen says output is off');
+$_GET['page'] = 'some-other-plugin';
+ob_start(); webmcp_canary_output_off_notice(); $elsewhere = ob_get_clean();
+expect($elsewhere === '', 'other admin screens are not nagged');
+$GLOBALS['webmcp_test_screen'] = (object) array('id' => 'plugins');
+ob_start(); webmcp_canary_output_off_notice(); $plugins_screen = ob_get_clean();
+expect(strpos($plugins_screen, 'Nurevo AEO is off') !== false, 'the Plugins list says output is off');
+unset($GLOBALS['webmcp_test_screen'], $_GET['page']);
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '1';
+$_GET['page'] = 'webmcp-canary';
+ob_start(); webmcp_canary_output_off_notice(); $on_notice = ob_get_clean();
+expect($on_notice === '', 'no off notice once output is on');
+unset($_GET['page']);
+
+// A forced check asks the service to rescan; a normal view does not.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js'));
+expect(strpos(webmcp_canary_aeo_score_endpoints(true)[0], 'fresh=1') !== false, 'Check again requests a fresh scan');
+expect(strpos(webmcp_canary_aeo_score_endpoints(false)[0], 'fresh=') === false, 'a normal view may use the cache');
+
+// A key the service no longer serves (cancelled, unpaid, deleted) drops to Free.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'tag_url' => 'https://nurevo.jp/tag.js', 'plan' => 'standard', 'site_key' => 'nrv_gone',
+));
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+$GLOBALS['webmcp_test_remote_get'] = array('api/tag/config' => array('status' => 404, 'body' => '{"error":"not_found"}'));
+webmcp_canary_sync_ruleset(true);
+expect(webmcp_canary_settings()['plan'] === 'free', 'a revoked site key drops the plan to free');
+
+// "Refresh plan" checks a site the plugin still thinks is Free.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'tag_url' => 'https://nurevo.jp/tag.js', 'plan' => 'free', 'site_key' => 'nrv_up',
+));
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+$GLOBALS['webmcp_test_remote_get'] = array('api/tag/config' => array('status' => 200, 'body' => json_encode(array('ok' => true, 'plan' => 'standard', 'ruleset_version' => 3))));
+webmcp_canary_sync_ruleset(true);
+expect(webmcp_canary_settings()['plan'] === 'free', 'the scheduled sync still skips a free site');
+webmcp_canary_sync_ruleset_now();
+expect(webmcp_canary_settings()['plan'] === 'standard', 'Refresh plan picks up a purchase immediately');
+expect(empty($GLOBALS['webmcp_canary_force_follow']), 'the one-off check does not leave paid behaviour switched on');
+$GLOBALS['webmcp_test_remote_get'] = array();
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
 
 echo "WordPress AEO admin tests passed\n";

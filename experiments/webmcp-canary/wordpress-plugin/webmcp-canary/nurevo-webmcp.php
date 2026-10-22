@@ -736,6 +736,7 @@ function webmcp_canary_sanitize_settings($input) {
             }
             add_settings_error(WEBMCP_CANARY_OPTION, $bound->get_error_code(), $bound->get_error_message(), 'error');
         } else {
+            $bound_ok = true;
             $plan = $bound['plan'];
             // Adopt what the service issued. These are what let the site sync
             // its profile and carry a diagnosis history.
@@ -757,7 +758,10 @@ function webmcp_canary_sanitize_settings($input) {
         update_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 1, false);
     }
     return array(
-        'enabled' => !empty($input['enabled']) ? '1' : '0',
+        // Connecting (pairing or a licence) is an explicit request to publish,
+        // so it switches output on. Before, a paired site showed "Connected" in
+        // the dashboard while publishing nothing because output was still off.
+        'enabled' => (!empty($input['enabled']) || !empty($paired) || !empty($bound_ok)) ? '1' : '0',
         'allow_ai_crawlers' => !empty($input['allow_ai_crawlers']) ? '1' : '0',
         'ai_training' => isset($input['ai_training']) && in_array($input['ai_training'], array('default', 'allow', 'block'), true)
             ? $input['ai_training']
@@ -2118,6 +2122,54 @@ function webmcp_canary_license_key_field() {
         esc_html__('Separate from the site key. It is verified when these settings are saved. Current plan:', 'nurevo-webmcp'),
         esc_html($settings['plan'])
     );
+    if ($settings['site_key'] !== '') {
+        // A purchase or cancellation reaches the plugin on the next sync
+        // (twice a day). This checks now. A link, not a nested form: this
+        // field sits inside the settings form.
+        printf(
+            '<p><a class="button" href="%1$s">%2$s</a> <span class="description">%3$s</span></p>',
+            esc_url(wp_nonce_url(admin_url('admin-post.php?action=webmcp_canary_refresh_plan'), 'webmcp_canary_refresh_plan')),
+            esc_html__('Refresh plan', 'nurevo-webmcp'),
+            esc_html__('Just bought or cancelled a plan? Check it now instead of waiting for the next sync.', 'nurevo-webmcp')
+        );
+    }
+}
+
+add_action('admin_post_webmcp_canary_refresh_plan', 'webmcp_canary_refresh_plan_action');
+function webmcp_canary_refresh_plan_action() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You do not have permission to perform this action.', 'nurevo-webmcp'));
+    }
+    check_admin_referer('webmcp_canary_refresh_plan');
+    $before = webmcp_canary_settings()['plan'];
+    webmcp_canary_sync_ruleset_now();
+    $after = webmcp_canary_settings()['plan'];
+    webmcp_canary_redirect_settings(
+        'success',
+        $before === $after
+            /* translators: %s: plan name, e.g. "free" or "standard". */
+            ? sprintf(__('Plan checked: %s (unchanged).', 'nurevo-webmcp'), $after)
+            /* translators: 1: previous plan name. 2: new plan name. */
+            : sprintf(__('Plan updated: %1$s → %2$s.', 'nurevo-webmcp'), $before, $after)
+    );
+}
+
+/**
+ * Ask the service for this site's plan now. Unlike the scheduled sync, this
+ * also runs for a site the plugin still thinks is Free - that is exactly the
+ * site that has just been upgraded.
+ */
+function webmcp_canary_sync_ruleset_now() {
+    $settings = webmcp_canary_settings();
+    if ($settings['site_key'] === '') {
+        return webmcp_canary_ruleset_state();
+    }
+    $GLOBALS['webmcp_canary_force_follow'] = true;
+    try {
+        return webmcp_canary_sync_ruleset(true);
+    } finally {
+        unset($GLOBALS['webmcp_canary_force_follow']);
+    }
 }
 
 function webmcp_canary_site_email_field() {
@@ -3249,6 +3301,9 @@ function webmcp_canary_ruleset_allows($field, $state = null) {
 /** Standard and above follow the central ruleset; free stays on the baseline. */
 function webmcp_canary_auto_follow_enabled($settings = null) {
     $settings = is_array($settings) ? $settings : webmcp_canary_settings();
+    if (!empty($GLOBALS['webmcp_canary_force_follow']) && $settings['site_key'] !== '') {
+        return true; // an explicit "Refresh plan" from an administrator
+    }
     return in_array($settings['plan'], array('standard', 'pro'), true) && $settings['site_key'] !== '';
 }
 
@@ -3283,6 +3338,15 @@ function webmcp_canary_sync_ruleset($force = false) {
         }
         $status = wp_remote_retrieve_response_code($response);
         $body = json_decode(wp_remote_retrieve_body($response), true);
+        if (in_array($status, array(404, 410), true)) {
+            // The service answered and does not serve this key any more
+            // (cancelled, unpaid or deleted). Paid output must stop with it;
+            // keeping the last plan meant a cancelled site ran paid features
+            // indefinitely.
+            $plan = 'free';
+            $version = 0;
+            break;
+        }
         if ($status < 200 || $status >= 300 || !is_array($body) || empty($body['ok'])) {
             continue;
         }
@@ -3364,6 +3428,36 @@ function webmcp_canary_sync_ruleset($force = false) {
         delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
     }
     return $state;
+}
+
+add_action('admin_notices', 'webmcp_canary_output_off_notice');
+/**
+ * Output is off by default (nothing is published until the owner opts in),
+ * and nothing said so: a new install could pair, see "Connected" in the
+ * dashboard and publish nothing. Shown on this plugin's screens and the
+ * Plugins list only, not across the whole admin.
+ */
+function webmcp_canary_output_off_notice() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    $settings = webmcp_canary_settings();
+    if ($settings['enabled'] === '1') {
+        return;
+    }
+    $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen check.
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    $on_plugins = $screen && isset($screen->id) && $screen->id === 'plugins';
+    if (strpos($page, 'webmcp-canary') !== 0 && !$on_plugins) {
+        return;
+    }
+    printf(
+        '<div class="notice notice-error"><p><strong>%1$s</strong> %2$s <a class="button button-primary" href="%3$s">%4$s</a></p></div>',
+        esc_html__('Nurevo AEO is off: nothing is published yet.', 'nurevo-webmcp'),
+        esc_html__('Structured data, llms.txt and AI crawler rules start once you switch on output.', 'nurevo-webmcp'),
+        esc_url(admin_url('admin.php?page=webmcp-canary-settings')),
+        esc_html__('Turn on in settings', 'nurevo-webmcp')
+    );
 }
 
 add_action('admin_notices', 'webmcp_canary_ruleset_notice');
@@ -4061,20 +4155,23 @@ function webmcp_canary_aeo_lang() {
     return strtolower(str_replace('_', '-', (string) $locale));
 }
 
-function webmcp_canary_aeo_score_endpoints() {
+function webmcp_canary_aeo_score_endpoints($fresh = false) {
     $settings = webmcp_canary_settings();
     $registered = $settings['site_key'] !== '' && $settings['site_id'] !== '';
     $lang = webmcp_canary_aeo_lang();
+    // A forced check (Check again, after a fix) asks the service to rescan
+    // instead of answering from its cache.
+    $extra = $fresh ? array('fresh' => '1') : array();
     $endpoints = array();
     foreach (webmcp_canary_api_base_candidates() as $api_base) {
         if ($registered) {
             $endpoints[] = add_query_arg(
-                array('site_key' => $settings['site_key'], 'lang' => $lang),
+                array('site_key' => $settings['site_key'], 'lang' => $lang) + $extra,
                 trailingslashit($api_base) . 'api/sites/' . rawurlencode($settings['site_id']) . '/aeo-score'
             );
         }
         $endpoints[] = add_query_arg(
-            array('url' => home_url('/'), 'lang' => $lang),
+            array('url' => home_url('/'), 'lang' => $lang) + $extra,
             trailingslashit($api_base) . 'api/aeo/score'
         );
     }
@@ -4086,7 +4183,7 @@ function webmcp_canary_get_aeo_score($force_refresh = false) {
     if (!$force_refresh && is_array($cached) && !empty($cached['saved_at']) && time() - intval($cached['saved_at']) < WEBMCP_CANARY_AEO_SCORE_TTL) {
         return $cached['data'];
     }
-    $endpoints = webmcp_canary_aeo_score_endpoints();
+    $endpoints = webmcp_canary_aeo_score_endpoints($force_refresh);
     if (empty($endpoints)) {
         return new WP_Error('webmcp_aeo_not_configured', __('AEO diagnosis needs the service URL. Open Nurevo AEO > Settings and confirm it.', 'nurevo-webmcp'));
     }
@@ -4544,6 +4641,12 @@ function webmcp_canary_settings_page() {
     ?>
     <div class="wrap webmcp-settings">
         <?php echo webmcp_canary_screen_title(__('Nurevo AEO settings', 'nurevo-webmcp')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_screen_title() ?>
+        <?php
+        // WordPress prints these automatically only on Settings sub-pages; this
+        // is a top-level menu page, so pairing and licence results (including
+        // "code already used" or a domain mismatch) were never shown.
+        settings_errors(WEBMCP_CANARY_OPTION);
+        ?>
         <p><?php echo esc_html__('AI readability diagnosis, structured data, llms.txt and AI crawler rules for this site.', 'nurevo-webmcp'); ?></p>
         <?php
         /*
@@ -4568,7 +4671,7 @@ function webmcp_canary_settings_page() {
                         <?php esc_html_e('Open the dashboard', 'nurevo-webmcp'); ?> &#8599;
                     </a>
                 </p>
-                <p class="description"><?php esc_html_e('Diagnosis, structured data and llms.txt already work without connecting. Connecting is what lets the dashboard show this site and keep its output current.', 'nurevo-webmcp'); ?></p>
+                <p class="description"><?php esc_html_e('Diagnosis works without connecting, and structured data, llms.txt and AI crawler rules work without connecting once output is switched on. Connecting is what lets the dashboard show this site and keep its output current.', 'nurevo-webmcp'); ?></p>
             </div>
         <?php endif; ?>
         <?php if (!empty($_GET['webmcp_message']) && !empty($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'webmcp_canary_notice')) : ?>

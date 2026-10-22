@@ -533,6 +533,19 @@ const JA = {
     "Proプランの設定は WordPress ではなく Nurevo のダッシュボードで行います。このサイトが Pro になると、この画面に計測結果が自動で表示されます。",
   "See Pro details": "Proプランの詳細を見る",
 
+  // First-run fixes (0.7.4).
+  "Refresh plan": "プランを再確認",
+  "Just bought or cancelled a plan? Check it now instead of waiting for the next sync.":
+    "プランを購入・解約した直後ですか？次の同期を待たずに、今すぐ確認できます。",
+  "Plan checked: %s (unchanged).": "プランを確認しました：%s（変更なし）",
+  "Plan updated: %1$s → %2$s.": "プランを更新しました：%1$s → %2$s",
+  "Nurevo AEO is off: nothing is published yet.": "Nurevo AEO はオフです。まだ何も公開されていません。",
+  "Structured data, llms.txt and AI crawler rules start once you switch on output.":
+    "出力をオンにすると、構造化データ・llms.txt・AIクローラーの設定が有効になります。",
+  "Turn on in settings": "設定でオンにする",
+  "Diagnosis works without connecting, and structured data, llms.txt and AI crawler rules work without connecting once output is switched on. Connecting is what lets the dashboard show this site and keep its output current.":
+    "診断は接続しなくても使えます。構造化データ・llms.txt・AIクローラーの設定も、出力をオンにすれば接続なしで動きます。接続すると、ダッシュボードにこのサイトが表示され、出力が最新の基準に保たれます。",
+
   // Continuous optimization (0.7.2).
   "Automatic optimization found information that needs your confirmation. Please publish only real information.":
     "自動最適化で、確認が必要な情報が見つかりました。実在する情報だけを公開してください。",
