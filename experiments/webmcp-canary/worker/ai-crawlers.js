@@ -10,6 +10,24 @@ export const AI_CRAWLERS = [
   { id: "bytespider", ua: "Bytespider", owner: "ByteDance", engine: "Doubao 等", purpose: "学習・インデックス" },
 ];
 
+// The crawlers that fetch pages to answer a search or a user's question, as
+// opposed to the ones collecting training data. Owners who have not decided
+// about training can still let these in; the robots lines Nurevo recommends
+// for a non-WordPress site name only these and leave every other group alone.
+export const AI_SEARCH_CRAWLERS = Object.freeze([
+  "OAI-SearchBot", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Perplexity-User",
+]);
+
+/** robots.txt lines that allow the AI search crawlers and nothing else. */
+export function searchCrawlerRobotsLines() {
+  return [
+    "# Nurevo AEO: allow AI search crawlers (training crawlers are not changed)",
+    ...AI_SEARCH_CRAWLERS.map((ua) => `User-agent: ${ua}`),
+    "Allow: /",
+    "",
+  ].join("\n");
+}
+
 export function matchCrawler(uaString = "") {
   const ua = String(uaString).toLowerCase();
   return AI_CRAWLERS.find((crawler) => ua.includes(crawler.ua.toLowerCase())) || null;

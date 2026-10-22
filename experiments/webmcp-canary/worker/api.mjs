@@ -5,7 +5,7 @@ import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs"
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
-import { AI_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler } from "./ai-crawlers.js";
+import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler, searchCrawlerRobotsLines } from "./ai-crawlers.js";
 import { AEO_CACHE_TTL_SECONDS, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, publishedSchemaProps, resolveAeoCheckLang } from "./aeo-score.mjs";
 import { storeAeoScore } from "./diagnose.mjs";
 import {
@@ -297,6 +297,68 @@ async function loadActiveRuleset(env) {
   const checked = normalizeRulesetDefinition(row.definition_json || row.definition);
   if (!checked.ok) throw new Error("active_ruleset_invalid: " + checked.errors.join(", "));
   return row;
+}
+
+/**
+ * The stable identifier of the business node: "<site url>#organization", the
+ * same form the WordPress plugin uses, so a static copy, the tag and the plugin
+ * all describe one entity. Null when the site has no address of its own.
+ */
+function businessNodeId(site) {
+  const raw = String(site?.website_uri || site?.url || "").trim();
+  if (!raw) return null;
+  try {
+    const parsed = new URL(/^https?:\/\//i.test(raw) ? raw : `https://${raw}`);
+    parsed.hash = "";
+    parsed.search = "";
+    return `${parsed.href}#organization`;
+  } catch {
+    return null;
+  }
+}
+
+/** The business graph with its @id, placed right after @type. */
+function withBusinessId(ld, site) {
+  const id = businessNodeId(site);
+  if (!ld || typeof ld !== "object" || !id) return ld;
+  const { "@context": context, "@type": type, ...rest } = ld;
+  return { ...(context ? { "@context": context } : {}), ...(type ? { "@type": type } : {}), "@id": id, ...rest };
+}
+
+/**
+ * A JSON-LD <script> block that is safe to paste into HTML. "<" is the only
+ * character that can end the script early ("</script>", "<!--"), so every one
+ * is written as < - still the same JSON to any parser.
+ */
+function jsonLdScriptBlock(ld) {
+  if (!ld) return "";
+  const body = JSON.stringify(ld, null, 2)
+    .replace(/</g, "\\u003c")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+  return `<script type="application/ld+json">\n${body}\n</` + "script>";
+}
+
+async function staticSnippetPayload(env, site) {
+  const settings = await generationSettings(env, site.id);
+  const plan = resolveSitePlan(site);
+  const ruleset = await rulesetForPlan(env, plan);
+  const definition = rulesetDefinition(ruleset);
+  const jsonld = settings.serve_schema === 0 ? null : withBusinessId(buildJsonLd(site, settings, ruleset), site);
+  const llms = buildLlmsTxt({ ...settings, url: site.website_uri || site.url }, definition);
+  const updatedAt = Number(settings.updated_at) || null;
+  return {
+    site_id: site.id,
+    plan,
+    ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
+    updated_at: updatedAt ? new Date(updatedAt).toISOString() : null,
+    generated_at: new Date().toISOString(),
+    jsonld,
+    jsonld_html: jsonLdScriptBlock(jsonld),
+    llms_txt: llms,
+    robots_txt_lines: searchCrawlerRobotsLines(),
+    search_crawlers: [...AI_SEARCH_CRAWLERS],
+  };
 }
 
 function buildJsonLd(site, settings, ruleset) {
@@ -983,7 +1045,10 @@ export async function handleApi(request, env, ctx) {
       plan,
       quality: auth.quality,
       crawlerAllowed: !!settings.allow_crawlers && rulesetDefinition(ruleset).robots.defaultAllow,
-      jsonld: settings.serve_schema ? buildJsonLd(site, settings, ruleset) : null,
+      // The @id ties what tag.js injects to the same entity the static copy
+      // and the plugin describe. The delivery expectation above is recorded
+      // without it: the plugin may keep an existing business node's own @id.
+      jsonld: deliveryPayload ? withBusinessId(deliveryPayload, site) : null,
       ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
       // The plugin publishes its own @graph, because it has data this service
       // does not - the FAQ, the services, the shop. It cannot use the JSON-LD
@@ -1080,7 +1145,10 @@ export async function handleApi(request, env, ctx) {
         // store profile is now the first real step, and it is the one the
         // operator can actually act on.
         { key: "information", done: fill.filled >= fill.total, manual: false },
-        { key: "tag_schema", done: row.install_type === "hosted" ? true : row.tag_detected === true && row.schema_in_html === true, manual: false },
+        // Done when the business schema is in the raw HTML. The tag used to be
+        // required as well, but what it injects is invisible to crawlers that
+        // do not run JavaScript, and a static paste needs no tag at all.
+        { key: "tag_schema", done: row.install_type === "hosted" ? true : row.schema_in_html === true, manual: false },
         { key: "gbp_linked", done: !!row.gbp_linked, manual: true },
       ].sort((a, b) => Number(a.done) - Number(b.done));
       return {
@@ -1709,6 +1777,35 @@ export async function handleApi(request, env, ctx) {
     return json({ ok: true, site_id: siteId, bound: false, plan: resolveSitePlan(after || {}) });
   }
 
+  /*
+   * What a non-WordPress site pastes into its own HTML.
+   *
+   * tag.js and a GTM custom-HTML tag both inject the JSON-LD from the browser,
+   * after the page has loaded, and most AI crawlers never run JavaScript - so
+   * for them the tag delivers nothing. The plugin renders on the server; a site
+   * without it has to put the same graph into its HTML itself. This returns
+   * that graph as a ready-to-paste block, with the llms.txt to upload and the
+   * robots.txt lines that let the AI search crawlers in. A static copy does not
+   * follow later edits, so updated_at says when the profile behind it last
+   * changed and the dashboard can tell the owner to copy it again.
+   *
+   * Member-authenticated: it is the owner's own profile, and the profile token
+   * and site key are not accepted here.
+   */
+  const staticSnippetMatch = path.match(/^\/api\/sites\/([^/]+)\/static-snippet$/i);
+  if (staticSnippetMatch && method === "GET") {
+    const siteId = decodeURIComponent(staticSnippetMatch[1]);
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+    }
+    if (site.delivery_status === "stopped") return json({ error: "delivery_stopped" }, 409);
+    return json(await staticSnippetPayload(env, site));
+  }
+
   const scanMatch = path.match(/^\/api\/sites\/([^/]+)\/scan$/i);
   if (scanMatch && method === "POST") {
     const member = await requireMember(request, env);
@@ -1719,7 +1816,7 @@ export async function handleApi(request, env, ctx) {
       return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
     }
     const installType = site.install_type || (site.url ? "tag" : "hosted");
-    if (!["wp", "tag"].includes(installType)) return json({ error: "scan_not_supported_for_install_type" }, 400);
+    if (!["wp", "tag", "static"].includes(installType)) return json({ error: "scan_not_supported_for_install_type" }, 400);
     const target = String(site.url || "").trim();
     if (!target) return json({ error: "url required" }, 400);
     const scannedAt = Date.now();

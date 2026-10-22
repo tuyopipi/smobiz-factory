@@ -416,13 +416,13 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
     </div>
     <div class="method">
       <span class="mn" data-i18n="install.t.k">WordPress以外</span>
-      <h3 data-i18n="install.t.t">&lt;head&gt; にタグを1行</h3>
-      <p data-i18n="install.t.p">WordPressを使っていないサイト向け。HTMLの &lt;head&gt; 内に下のスニペットを貼れば、CMSを問わず動きます。</p>
+      <h3 data-i18n="install.t.t">JSON-LD・llms.txt・robots.txtを直接置く</h3>
+      <p data-i18n="install.t.p">ダッシュボードで生成されたJSON-LDをHTMLの &lt;head&gt; に貼り、llms.txtをサイトのルートに置き、robots.txtに行を追記します。静的に置くので、JavaScriptを実行しないAIクローラーにも届きます。店舗情報を変えたら貼り直してください。</p>
     </div>
     <div class="method">
-      <span class="mn">Google Tag Manager</span>
-      <h3 data-i18n="install.g.t">GTMのカスタムHTML</h3>
-      <p data-i18n="install.g.p">タグマネージャ運用の場合は、カスタムHTMLタグに下のスニペットを貼り、トリガーに All Pages を選んで公開します。</p>
+      <span class="mn" data-i18n="install.g.k">任意：計測用タグ</span>
+      <h3 data-i18n="install.g.t">tag.js（直接 または GTM）</h3>
+      <p data-i18n="install.g.p">AI経由の訪問を計測し、JavaScriptを実行するブラウザやAIエージェントを補助します。JavaScriptで後から挿入されるため（GTMも同じ）、JavaScriptを実行しないクローラーには届きません。プラグインや静的な貼り付けの代わりにはなりません。</p>
     </div>
   </div>
   <div class="snipfull"><code id="snipCode">&lt;script src="https://nurevo.jp/tag.js" data-webmcp-site-key="YOUR_SITE_KEY" defer&gt;&lt;/script&gt;</code><button class="copy" onclick="copySnip(this)" data-i18n="install.copy">コピー</button></div>
@@ -487,7 +487,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
     <div class="qa"><h3 data-i18n="faq.1.q">すでにYoast（やRank Math）を使っています。併用できますか？</h3><p data-i18n="faq.1.a">はい。Nurevoは既存のSEO設定を置き換えません。すでに出力されている構造化データは尊重し、AI向けに足りない部分だけを補います（スマート共存）。</p></div>
     <div class="qa"><h3 data-i18n="faq.2.q">本当にAIに推薦されますか？</h3><p data-i18n="faq.2.a">「AIが正確に理解・説明する」土台を作ります。推薦の押し上げはAI側に依存するため、効果は導入後に一緒に測ります。</p></div>
     <div class="qa"><h3 data-i18n="faq.3.q">入力値はNurevoに送られますか？</h3><p data-i18n="faq.3.a">いいえ。氏名・メール等の入力値は送信しません。扱うのはフォーム構造と匿名の結果のみです。</p></div>
-    <div class="qa"><h3 data-i18n="faq.4.q">導入にコードは必要ですか？</h3><p data-i18n="faq.4.a">WordPressならプラグイン有効化とキー入力だけ。GTM・直接タグでも1行で完了します。</p></div>
+    <div class="qa"><h3 data-i18n="faq.4.q">導入にコードは必要ですか？</h3><p data-i18n="faq.4.a">WordPressなら、プラグインを有効化してペアリングコードを貼り付けるだけ（サーバー側で出力されるのでおすすめ）。WordPress以外は、ダッシュボードで生成されるJSON-LD・llms.txt・robots.txtの行をコピーしてサイトに置きます。計測用のタグは任意です。</p></div>
   </div>
 </div></section>
 
