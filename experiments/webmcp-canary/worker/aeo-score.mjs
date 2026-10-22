@@ -212,7 +212,7 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
   const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: options.commerceDetected || /(?:class|id)=["'][^"']*woocommerce/i.test(html) });
   const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours)/i.test(llms)];
   return {
-    aiCrawlersAllowed: scoring.aiCrawlers.every((bot) => robotsAllows(robots, bot)),
+    aiCrawlersAllowed: gateCrawlers(scoring).every((bot) => robotsAllows(robots, bot)),
     edgeBlocked: options.edgeBlocked === true,
     serverRenderedHtml: visible.replace(/\s+/g, " ").trim().length >= scoring.minVisible || scripts.length > 0,
     jsonLdInRawHtml: scripts.length > 0,
@@ -264,7 +264,7 @@ export const AEO_CHECKS = Object.freeze([
 
 const CHECK_WORDING = Object.freeze({
   ja: {
-    ai_crawlers_allowed: { label: "AIクローラー到達性", OK: "主要AIクローラー8種をrobots.txtで許可しています。", WARN: "一部のAIクローラーがrobots.txtで明示的に許可されていません。", BAD: "robots.txtでAIクローラーを許可していないため、このサイトは読まれません。" },
+    ai_crawlers_allowed: { label: "AIクローラー到達性", OK: "AI検索のクローラー（ChatGPT検索・Claude・Perplexity）をrobots.txtで許可しています。", WARN: "一部のAI検索クローラーがrobots.txtで明示的に許可されていません。", BAD: "robots.txtでAI検索のクローラーを許可していないため、AI検索にこのサイトは読まれません。" },
     edge_access: { label: "CDN・エッジ到達性", OK: "CDN・WAFはAIボットの通過を許可しています。", WARN: "エッジでAIボットが妨げられている可能性があります。", BAD: "AIボットがサイトに到達する前に遮断されています。" },
     server_rendered_html: { label: "サーバー側HTML", OK: "生HTMLに本文とschemaが出力されています。", WARN: "生HTMLに本文の一部しか出力されていません。", BAD: "生HTMLに本文もschemaも無いため、JavaScriptを実行しないクローラーには空のページに見えます。" },
     schema: { label: "構造化データ", OK: "JSON-LDが妥当で、型と主要プロパティが揃っています。", WARN: "JSON-LDにAIが参照する主要プロパティの一部が欠けています。", BAD: "生HTMLに利用できるJSON-LDが見つかりません。" },
@@ -274,7 +274,7 @@ const CHECK_WORDING = Object.freeze({
     consistency: { label: "一貫性・鮮度", OK: "schemaと本文が一致し、更新シグナルもあります。", WARN: "schemaと本文に食い違いがあるか、更新シグナルがありません。", BAD: "schemaと本文が矛盾しており、AIはどちらも信頼しにくくなっています。" },
   },
   en: {
-    ai_crawlers_allowed: { label: "AI crawler access", OK: "The major AI crawlers are allowed in robots.txt.", WARN: "Some AI crawlers are not clearly allowed in robots.txt.", BAD: "AI crawlers are not allowed in robots.txt, so they will not read this site." },
+    ai_crawlers_allowed: { label: "AI crawler access", OK: "AI search crawlers (ChatGPT search, Claude, Perplexity) are allowed in robots.txt.", WARN: "Some AI search crawlers are not clearly allowed in robots.txt.", BAD: "AI search crawlers are not allowed in robots.txt, so AI search will not read this site." },
     edge_access: { label: "CDN and edge access", OK: "Your CDN or WAF is letting AI bots through.", WARN: "Something at the edge may be slowing AI bots down.", BAD: "AI bots are being blocked before they reach your site." },
     server_rendered_html: { label: "Server-rendered HTML", OK: "Your content and schema are in the raw HTML.", WARN: "Only part of your content is in the raw HTML.", BAD: "The raw HTML carries neither your content nor your schema, so crawlers that skip JavaScript see an empty page." },
     schema: { label: "Structured data", OK: "Valid JSON-LD with the right type and the key properties filled in.", WARN: "Your JSON-LD is missing some of the properties AI looks for.", BAD: "No usable JSON-LD was found in the raw HTML." },
@@ -368,6 +368,21 @@ async function fetchBounded(fetchImpl, href, { userAgent } = {}) {
   } finally { clearTimeout(timer); }
 }
 
+/**
+ * Model-training crawlers and opt-out tokens. A site may block these and still
+ * be read and cited by AI search, so they never count against the gate - even
+ * when an older ruleset stored in the database still lists them.
+ */
+export const AI_TRAINING_CRAWLERS = Object.freeze(["GPTBot", "ClaudeBot", "Claude-Web", "anthropic-ai", "Google-Extended", "Applebot-Extended", "CCBot", "Bytespider"]);
+const AI_SEARCH_CRAWLERS = Object.freeze(["OAI-SearchBot", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Perplexity-User"]);
+
+/** The crawlers the reachability gate checks: the ruleset's list minus training bots. */
+export function gateCrawlers(scoring = DEFAULT_SCORING) {
+  const training = new Set(AI_TRAINING_CRAWLERS.map((bot) => bot.toLowerCase()));
+  const listed = (Array.isArray(scoring.aiCrawlers) ? scoring.aiCrawlers : []).filter((bot) => !training.has(String(bot).toLowerCase()));
+  return listed.length ? listed : [...AI_SEARCH_CRAWLERS];
+}
+
 async function fetchOptional(fetchImpl, href) {
   try { return await fetchBounded(fetchImpl, href); } catch { return { ok: false, text: "" }; }
 }
@@ -376,7 +391,7 @@ async function detectEdgeBlock(fetchImpl, href) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetchImpl(href, { method: "HEAD", redirect: "follow", signal: controller.signal, headers: { "user-agent": "GPTBot/1.2 (+https://openai.com/gptbot)" } });
+    const response = await fetchImpl(href, { method: "HEAD", redirect: "follow", signal: controller.signal, headers: { "user-agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; OAI-SearchBot/1.0; +https://openai.com/searchbot" } });
     return [401, 403, 429, 451].includes(response.status);
   } catch { return true; } finally { clearTimeout(timer); }
 }

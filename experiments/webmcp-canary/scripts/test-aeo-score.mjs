@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { AEO_SCORE_WEIGHTS, buildAeoChecks, extractAeoSignals, scoreAeo } from "../worker/aeo-score.mjs";
+import { AEO_SCORE_WEIGHTS, buildAeoChecks, extractAeoSignals, gateCrawlers, scoreAeo } from "../worker/aeo-score.mjs";
+import { DEFAULT_SCORING } from "../worker/aeo-rules.mjs";
 
 const excellent = {
   aiCrawlersAllowed: true, edgeBlocked: false, serverRenderedHtml: true,
@@ -85,8 +86,23 @@ assert.equal(checks.length, 8);
 assert.ok(checks.every((check) => ["OK", "WARN", "BAD"].includes(check.status)));
 assert.ok(checks.every((check) => typeof check.id === "string" && typeof check.label === "string" && typeof check.message === "string" && typeof check.fixable === "boolean"));
 
-const denied = extractAeoSignals(html, "User-agent: GPTBot\nDisallow: /", llms, { llmsPresent: true });
+// Blocking an AI search crawler fails the gate.
+const denied = extractAeoSignals(html, "User-agent: OAI-SearchBot\nDisallow: /", llms, { llmsPresent: true });
 assert.equal(denied.aiCrawlersAllowed, false);
 assert.equal(scoreAeo(denied).score, 15);
+const deniedEverything = extractAeoSignals(html, "User-agent: *\nDisallow: /", llms, { llmsPresent: true });
+assert.equal(deniedEverything.aiCrawlersAllowed, false, "blocking every crawler fails the gate");
+
+// Blocking training crawlers is the owner's choice and costs nothing, even when
+// an older ruleset in the database still lists them.
+const trainingBlocked = "User-agent: GPTBot\nDisallow: /\n\nUser-agent: ClaudeBot\nDisallow: /\n\nUser-agent: Google-Extended\nDisallow: /\n\nUser-agent: CCBot\nDisallow: /\n";
+assert.equal(extractAeoSignals(html, trainingBlocked, llms, { llmsPresent: true }).aiCrawlersAllowed, true,
+  "blocking training crawlers does not fail the gate");
+const legacyScoring = { ...DEFAULT_SCORING, aiCrawlers: ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-Web", "PerplexityBot", "Google-Extended", "Applebot-Extended"] };
+assert.deepEqual(gateCrawlers(legacyScoring), ["OAI-SearchBot", "ChatGPT-User", "PerplexityBot"], "training bots are dropped from a legacy ruleset's list");
+assert.equal(extractAeoSignals(html, trainingBlocked, llms, { llmsPresent: true, scoring: legacyScoring }).aiCrawlersAllowed, true,
+  "a legacy ruleset listing training bots does not penalise blocking them");
+assert.deepEqual(gateCrawlers({ ...DEFAULT_SCORING, aiCrawlers: ["GPTBot"] }), ["OAI-SearchBot", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Perplexity-User"],
+  "a list with only training bots falls back to the search crawlers");
 
 console.log("AEO score unit tests passed");
