@@ -1606,7 +1606,10 @@ export async function handleApi(request, env, ctx) {
     const access = await requireProSite(request, env, decodeURIComponent(recommendationsMatch[1]));
     if (!access.ok) return access.response;
     const site = access.site;
-    const lang = requestedAeoLang(request, url) || "ja";
+    // The dashboard sends its own code, and "tw" is not a diagnosis catalog
+    // tag, so it is read as Traditional Chinese here rather than falling to
+    // English. No language at all keeps the original Japanese.
+    const lang = (String(url.searchParams.get("lang") || "").trim().toLowerCase() === "tw" ? "zh-TW" : requestedAeoLang(request, url)) || "ja";
 
     const [latest, storedRows, current, scoredProps] = await Promise.all([
       env.DB.prepare(
@@ -1669,6 +1672,7 @@ export async function handleApi(request, env, ctx) {
         publishedProps,
         plan: access.plan,
         stored: storedRows?.results || [],
+        lang,
       }),
       scored_props: scoredProps.map((prop) => String(prop).toLowerCase()),
     });

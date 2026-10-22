@@ -220,7 +220,7 @@ function fromRow(row) {
  * ------------------------------------------------------------------ */
 
 const NOTE_KIND = "geo_unresolved";
-const REASONS = {
+export const GEO_REASONS = {
   imprecise: "住所が番地まで特定できないため、位置情報（geo）を自動で付けていません。番地・建物名まで含む住所を入力すると自動で補完されます。",
   not_found: "住所から位置情報（geo）が見つかりませんでした。住所の表記をご確認ください。",
   error: "位置情報（geo）の取得に一時的に失敗しました。時間をおいて自動で再試行します。",
@@ -267,7 +267,7 @@ export async function geocodeSiteProfile(env, siteId, { now = Date.now(), fetchI
   }
   // The address moved and the old coordinates no longer describe it.
   if (ownGeo && hasGeo) await writeSiteProfile(env, siteId, { lat: null, lng: null }, "geocoder");
-  const detail = { reason: REASONS[result.status] || REASONS.error, status: result.status, precision: result.precision || null, address };
+  const detail = { reason: GEO_REASONS[result.status] || GEO_REASONS.error, status: result.status, precision: result.precision || null, address };
   await env.DB.prepare(
     `INSERT INTO aeo_site_recommendations(site_id,kind,created_at,updated_at,detail_json,status)
      VALUES(?,?,?,?,?,'open') ON CONFLICT(site_id,kind) DO UPDATE SET updated_at=excluded.updated_at,detail_json=excluded.detail_json,status='open'`,

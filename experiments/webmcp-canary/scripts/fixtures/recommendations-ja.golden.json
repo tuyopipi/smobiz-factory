@@ -1,0 +1,505 @@
+{
+  "empty": {
+    "plan": "free",
+    "count": 0,
+    "blocking": 0,
+    "scored_props": [],
+    "items": []
+  },
+  "checks": {
+    "plan": "pro",
+    "count": 4,
+    "blocking": 1,
+    "scored_props": [],
+    "items": [
+      {
+        "kind": "gate_blocked",
+        "id": "ai_crawlers_allowed",
+        "target": "ai_crawlers_allowed",
+        "priority": 100,
+        "title": "AIクローラー到達性",
+        "detail": "拒否しています。",
+        "blocking": true,
+        "status": "BAD"
+      },
+      {
+        "kind": "check_bad",
+        "id": "llms",
+        "target": "llms",
+        "priority": 70,
+        "title": "llms.txt",
+        "detail": "ありません。",
+        "blocking": false,
+        "status": "BAD"
+      },
+      {
+        "kind": "check_warn",
+        "id": "edge_access",
+        "target": "edge_access",
+        "priority": 30,
+        "title": "edge_access",
+        "detail": "",
+        "blocking": false,
+        "status": "WARN"
+      },
+      {
+        "kind": "check_warn",
+        "id": "schema",
+        "target": "schema",
+        "priority": 30,
+        "title": "構造化データ",
+        "detail": "一部のみ。",
+        "blocking": false,
+        "status": "WARN"
+      }
+    ]
+  },
+  "profile_missing": {
+    "plan": "pro",
+    "count": 11,
+    "blocking": 0,
+    "scored_props": [
+      "name",
+      "url",
+      "address",
+      "streetaddress",
+      "telephone",
+      "openinghours",
+      "geo",
+      "description",
+      "email",
+      "pricerange",
+      "sameas"
+    ],
+    "items": [
+      {
+        "kind": "profile_missing",
+        "id": "profile:address",
+        "target": "address",
+        "priority": 50,
+        "title": "住所を入力",
+        "detail": "場所を尋ねられても答えられません。 店舗情報に入力すると出力されます。",
+        "field": "address",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:description",
+        "target": "description",
+        "priority": 50,
+        "title": "紹介文を入力",
+        "detail": "どんな店かを説明できません。 店舗情報に入力すると出力されます。",
+        "field": "description",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:email",
+        "target": "email",
+        "priority": 50,
+        "title": "メールアドレスを入力",
+        "detail": "電話以外の連絡手段を答えられません。 店舗情報に入力すると出力されます。",
+        "field": "email",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:geo",
+        "target": "geo",
+        "priority": 50,
+        "title": "緯度・経度を入力",
+        "detail": "「近くの店」として検索されにくくなります。 店舗情報に入力すると出力されます。",
+        "field": "geo",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:name",
+        "target": "name",
+        "priority": 50,
+        "title": "店舗名を入力",
+        "detail": "AIが店を特定できません。 店舗情報に入力すると出力されます。",
+        "field": "name",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:openinghours",
+        "target": "openinghours",
+        "priority": 50,
+        "title": "営業時間を入力",
+        "detail": "「今開いていますか」に答えられません。 店舗情報に入力すると出力されます。",
+        "field": "hours",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:pricerange",
+        "target": "pricerange",
+        "priority": 50,
+        "title": "pricerangeを入力",
+        "detail": "店舗情報に入力すると出力されます。",
+        "field": null,
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:sameas",
+        "target": "sameas",
+        "priority": 50,
+        "title": "sameasを入力",
+        "detail": "店舗情報に入力すると出力されます。",
+        "field": null,
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:streetaddress",
+        "target": "streetaddress",
+        "priority": 50,
+        "title": "住所の構造化（PostalAddress）を入力",
+        "detail": "住所が文字列のままだと、AIは番地を文章から推測するしかありません。 店舗情報に入力すると出力されます。",
+        "field": "address",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:telephone",
+        "target": "telephone",
+        "priority": 50,
+        "title": "電話番号を入力",
+        "detail": "連絡手段を答えられません。 店舗情報に入力すると出力されます。",
+        "field": "phone",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:url",
+        "target": "url",
+        "priority": 50,
+        "title": "サイトURLを入力",
+        "detail": "回答からサイトへ誘導できません。 店舗情報に入力すると出力されます。",
+        "field": "url",
+        "status": "BAD"
+      }
+    ]
+  },
+  "criteria_lag": {
+    "plan": "free",
+    "count": 9,
+    "blocking": 0,
+    "scored_props": [
+      "name",
+      "url",
+      "address",
+      "streetaddress",
+      "telephone",
+      "openinghours",
+      "geo",
+      "description",
+      "email",
+      "pricerange"
+    ],
+    "items": [
+      {
+        "kind": "criteria_lag",
+        "id": "criteria:address",
+        "target": "address",
+        "priority": 60,
+        "title": "住所が最新基準で出力されていません",
+        "detail": "場所を尋ねられても答えられません。 値は入力済みです。Standardにすると最新の判定基準に自動追従して出力されます。",
+        "field": "address",
+        "upgrade": "standard",
+        "status": "WARN"
+      },
+      {
+        "kind": "criteria_lag",
+        "id": "criteria:description",
+        "target": "description",
+        "priority": 60,
+        "title": "紹介文が最新基準で出力されていません",
+        "detail": "どんな店かを説明できません。 値は入力済みです。Standardにすると最新の判定基準に自動追従して出力されます。",
+        "field": "description",
+        "upgrade": "standard",
+        "status": "WARN"
+      },
+      {
+        "kind": "criteria_lag",
+        "id": "criteria:email",
+        "target": "email",
+        "priority": 60,
+        "title": "メールアドレスが最新基準で出力されていません",
+        "detail": "電話以外の連絡手段を答えられません。 値は入力済みです。Standardにすると最新の判定基準に自動追従して出力されます。",
+        "field": "email",
+        "upgrade": "standard",
+        "status": "WARN"
+      },
+      {
+        "kind": "criteria_lag",
+        "id": "criteria:geo",
+        "target": "geo",
+        "priority": 60,
+        "title": "緯度・経度が最新基準で出力されていません",
+        "detail": "「近くの店」として検索されにくくなります。 値は入力済みです。Standardにすると最新の判定基準に自動追従して出力されます。",
+        "field": "geo",
+        "upgrade": "standard",
+        "status": "WARN"
+      },
+      {
+        "kind": "criteria_lag",
+        "id": "criteria:openinghours",
+        "target": "openinghours",
+        "priority": 60,
+        "title": "営業時間が最新基準で出力されていません",
+        "detail": "「今開いていますか」に答えられません。 値は入力済みです。Standardにすると最新の判定基準に自動追従して出力されます。",
+        "field": "hours",
+        "upgrade": "standard",
+        "status": "WARN"
+      },
+      {
+        "kind": "criteria_lag",
+        "id": "criteria:streetaddress",
+        "target": "streetaddress",
+        "priority": 60,
+        "title": "住所の構造化（PostalAddress）が最新基準で出力されていません",
+        "detail": "住所が文字列のままだと、AIは番地を文章から推測するしかありません。 値は入力済みです。Standardにすると最新の判定基準に自動追従して出力されます。",
+        "field": "address",
+        "upgrade": "standard",
+        "status": "WARN"
+      },
+      {
+        "kind": "criteria_lag",
+        "id": "criteria:telephone",
+        "target": "telephone",
+        "priority": 60,
+        "title": "電話番号が最新基準で出力されていません",
+        "detail": "連絡手段を答えられません。 値は入力済みです。Standardにすると最新の判定基準に自動追従して出力されます。",
+        "field": "phone",
+        "upgrade": "standard",
+        "status": "WARN"
+      },
+      {
+        "kind": "criteria_lag",
+        "id": "criteria:url",
+        "target": "url",
+        "priority": 60,
+        "title": "サイトURLが最新基準で出力されていません",
+        "detail": "回答からサイトへ誘導できません。 値は入力済みです。Standardにすると最新の判定基準に自動追従して出力されます。",
+        "field": "url",
+        "upgrade": "standard",
+        "status": "WARN"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:pricerange",
+        "target": "pricerange",
+        "priority": 50,
+        "title": "pricerangeを入力",
+        "detail": "店舗情報に入力すると出力されます。",
+        "field": null,
+        "status": "BAD"
+      }
+    ]
+  },
+  "schema_missing": {
+    "plan": "standard",
+    "count": 11,
+    "blocking": 0,
+    "scored_props": [
+      "name",
+      "url",
+      "address",
+      "streetaddress",
+      "telephone",
+      "openinghours",
+      "geo",
+      "description",
+      "email",
+      "pricerange",
+      "sameas"
+    ],
+    "items": [
+      {
+        "kind": "schema_missing",
+        "id": "schema:address",
+        "target": "address",
+        "priority": 80,
+        "title": "住所がschemaに出力されていません",
+        "detail": "場所を尋ねられても答えられません。 値は入力済みです。出力設定を確認してください。",
+        "field": "address",
+        "status": "BAD"
+      },
+      {
+        "kind": "schema_missing",
+        "id": "schema:description",
+        "target": "description",
+        "priority": 80,
+        "title": "紹介文がschemaに出力されていません",
+        "detail": "どんな店かを説明できません。 値は入力済みです。出力設定を確認してください。",
+        "field": "description",
+        "status": "BAD"
+      },
+      {
+        "kind": "schema_missing",
+        "id": "schema:email",
+        "target": "email",
+        "priority": 80,
+        "title": "メールアドレスがschemaに出力されていません",
+        "detail": "電話以外の連絡手段を答えられません。 値は入力済みです。出力設定を確認してください。",
+        "field": "email",
+        "status": "BAD"
+      },
+      {
+        "kind": "schema_missing",
+        "id": "schema:geo",
+        "target": "geo",
+        "priority": 80,
+        "title": "緯度・経度がschemaに出力されていません",
+        "detail": "「近くの店」として検索されにくくなります。 値は入力済みです。出力設定を確認してください。",
+        "field": "geo",
+        "status": "BAD"
+      },
+      {
+        "kind": "schema_missing",
+        "id": "schema:name",
+        "target": "name",
+        "priority": 80,
+        "title": "店舗名がschemaに出力されていません",
+        "detail": "AIが店を特定できません。 値は入力済みです。出力設定を確認してください。",
+        "field": "name",
+        "status": "BAD"
+      },
+      {
+        "kind": "schema_missing",
+        "id": "schema:openinghours",
+        "target": "openinghours",
+        "priority": 80,
+        "title": "営業時間がschemaに出力されていません",
+        "detail": "「今開いていますか」に答えられません。 値は入力済みです。出力設定を確認してください。",
+        "field": "hours",
+        "status": "BAD"
+      },
+      {
+        "kind": "schema_missing",
+        "id": "schema:streetaddress",
+        "target": "streetaddress",
+        "priority": 80,
+        "title": "住所の構造化（PostalAddress）がschemaに出力されていません",
+        "detail": "住所が文字列のままだと、AIは番地を文章から推測するしかありません。 値は入力済みです。出力設定を確認してください。",
+        "field": "address",
+        "status": "BAD"
+      },
+      {
+        "kind": "schema_missing",
+        "id": "schema:telephone",
+        "target": "telephone",
+        "priority": 80,
+        "title": "電話番号がschemaに出力されていません",
+        "detail": "連絡手段を答えられません。 値は入力済みです。出力設定を確認してください。",
+        "field": "phone",
+        "status": "BAD"
+      },
+      {
+        "kind": "schema_missing",
+        "id": "schema:url",
+        "target": "url",
+        "priority": 80,
+        "title": "サイトURLがschemaに出力されていません",
+        "detail": "回答からサイトへ誘導できません。 値は入力済みです。出力設定を確認してください。",
+        "field": "url",
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:pricerange",
+        "target": "pricerange",
+        "priority": 50,
+        "title": "pricerangeを入力",
+        "detail": "店舗情報に入力すると出力されます。",
+        "field": null,
+        "status": "BAD"
+      },
+      {
+        "kind": "profile_missing",
+        "id": "profile:sameas",
+        "target": "sameas",
+        "priority": 50,
+        "title": "sameasを入力",
+        "detail": "店舗情報に入力すると出力されます。",
+        "field": null,
+        "status": "BAD"
+      }
+    ]
+  },
+  "stored": {
+    "plan": "pro",
+    "count": 4,
+    "blocking": 0,
+    "scored_props": [],
+    "items": [
+      {
+        "kind": "stored",
+        "id": "stored:autofix_required",
+        "target": "autofix_required",
+        "priority": 20,
+        "title": "autofix_required",
+        "detail": "公開情報の不足です。既存データのみ抽出し、不明な事実はオーナーに確認します。",
+        "fields": [],
+        "status": "WARN"
+      },
+      {
+        "kind": "stored",
+        "id": "stored:geo_unresolved",
+        "target": "geo_unresolved",
+        "priority": 20,
+        "title": "位置情報（geo）を自動補完できませんでした",
+        "detail": "住所が番地まで特定できないため、位置情報（geo）を自動で付けていません。番地・建物名まで含む住所を入力すると自動で補完されます。",
+        "fields": [],
+        "status": "WARN"
+      },
+      {
+        "kind": "stored",
+        "id": "stored:missing_customer_data",
+        "target": "missing_customer_data",
+        "priority": 20,
+        "title": "店舗情報の確認が必要です",
+        "detail": "最新AEO rulesetの必須・推奨schema項目に、顧客確認が必要な店舗情報が不足しています。",
+        "fields": [
+          "価格帯",
+          "画像",
+          "予約URL",
+          "業種"
+        ],
+        "status": "WARN"
+      },
+      {
+        "kind": "stored",
+        "id": "stored:unknown_kind",
+        "target": "unknown_kind",
+        "priority": 20,
+        "title": "unknown_kind",
+        "detail": "",
+        "fields": [],
+        "status": "WARN"
+      }
+    ]
+  },
+  "geo_reasons": {
+    "plan": "pro",
+    "count": 1,
+    "blocking": 0,
+    "scored_props": [],
+    "items": [
+      {
+        "kind": "stored",
+        "id": "stored:geo_unresolved",
+        "target": "geo_unresolved",
+        "priority": 20,
+        "title": "位置情報（geo）を自動補完できませんでした",
+        "detail": "住所が番地まで特定できないため、位置情報（geo）を自動で付けていません。番地・建物名まで含む住所を入力すると自動で補完されます。",
+        "fields": [],
+        "status": "WARN"
+      }
+    ]
+  }
+}
