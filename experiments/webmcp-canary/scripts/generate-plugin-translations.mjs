@@ -524,6 +524,12 @@ const JA = {
   "Apply": "適用",
   "Not now": "今はしない",
 
+  // Pro wording that holds whether or not Pro is on sale (0.7.4).
+  "Measuring your visibility in AI answers is a Pro feature (beta)": "AIの回答での見られ方の計測は、Proプランの機能です（β）",
+  "Pro is set up on the Nurevo dashboard, not in WordPress. Once this site is on Pro, this screen shows its measurements automatically.":
+    "Proプランの設定は WordPress ではなく Nurevo のダッシュボードで行います。このサイトが Pro になると、この画面に計測結果が自動で表示されます。",
+  "See Pro details": "Proプランの詳細を見る",
+
   // Continuous optimization (0.7.2).
   "Automatic optimization found information that needs your confirmation. Please publish only real information.":
     "自動最適化で、確認が必要な情報が見つかりました。実在する情報だけを公開してください。",

@@ -3805,15 +3805,15 @@ function webmcp_canary_sov_page() {
 
         <?php if (!webmcp_canary_sov_enabled($settings)) : ?>
             <section class="webmcp-aeo-follow is-off">
-                <h2><?php esc_html_e('Measuring your visibility in AI answers is a Pro feature (beta, coming soon)', 'nurevo-webmcp'); ?></h2>
+                <h2><?php esc_html_e('Measuring your visibility in AI answers is a Pro feature (beta)', 'nurevo-webmcp'); ?></h2>
                 <p><?php esc_html_e('We put representative questions to the AI engines and measure how often your business is mentioned or cited in the answers, how that compares with competitors, and how it moves over time.', 'nurevo-webmcp'); ?></p>
                 <p>
                     <?php if ($settings['plan'] === 'pro') : ?>
                         <?php esc_html_e('Your Pro plan is active. Measurement needs a site key and site ID to be configured.', 'nurevo-webmcp'); ?>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=webmcp-canary-settings')); ?>"><?php esc_html_e('Open settings', 'nurevo-webmcp'); ?></a>
                     <?php else : ?>
-                        <?php esc_html_e('Pro is not on sale yet. There is nothing to buy and nothing to set up - this screen will start working once measurement opens.', 'nurevo-webmcp'); ?>
-                        <a href="https://nurevo.jp/#pro-detail" target="_blank" rel="noopener"><?php esc_html_e('See what Pro will do', 'nurevo-webmcp'); ?></a>
+                        <?php esc_html_e('Pro is set up on the Nurevo dashboard, not in WordPress. Once this site is on Pro, this screen shows its measurements automatically.', 'nurevo-webmcp'); ?>
+                        <a href="https://nurevo.jp/#pro-detail" target="_blank" rel="noopener"><?php esc_html_e('See Pro details', 'nurevo-webmcp'); ?></a>
                     <?php endif; ?>
                 </p>
             </section>

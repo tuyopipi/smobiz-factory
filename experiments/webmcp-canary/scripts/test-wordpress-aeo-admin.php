@@ -966,7 +966,12 @@ expect(strpos($source, 'Always current:') !== false, 'standard value is still de
 // payment route of any kind under the directory's rules anyway.
 expect(strpos($source, 'from 14,800 JPY/month') === false, 'the Pro price is gone from the measurement screen');
 expect(strpos($source, '14,800') === false, 'and from the plugin entirely');
-expect(strpos($source, 'beta, coming soon') !== false, 'Pro is labelled coming soon instead');
+// 0.7.4: worded so it stays true whether or not Pro is on sale: Pro is set up
+// on the Nurevo dashboard, never bought inside the plugin.
+expect(strpos($source, 'beta, coming soon') === false && strpos($source, 'Pro is not on sale yet') === false,
+    'the plugin no longer claims Pro is not on sale');
+expect(strpos($source, 'Pro is set up on the Nurevo dashboard, not in WordPress.') !== false, 'Pro points to the dashboard instead');
+expect(strpos($source, 'billing/checkout') === false && strpos($source, 'checkout.stripe') === false, 'the plugin still offers no purchase route');
 
 // T: the one thing a new install has to do, where it cannot be missed. It used
 // to appear only in the description under the code field, halfway down a long
@@ -974,7 +979,7 @@ expect(strpos($source, 'beta, coming soon') !== false, 'Pro is labelled coming s
 expect(strpos($source, 'Connect this site to Nurevo') !== false, 'an unconnected install is told how to connect');
 expect(strpos($source, 'Press "Issue a pairing code" and copy the code.') !== false, 'including where the code comes from');
 expect(strpos($source, "\$settings['site_id'] === '' || \$settings['profile_token'] === ''") !== false, 'and only while it is unconnected');
-expect(strpos($source, 'Pro is not on sale yet') !== false, 'and says so in words');
+expect(strpos($source, 'Once this site is on Pro, this screen shows its measurements automatically.') !== false, 'and says so in words');
 
 /* --- U2 measurement screen: pro only, display-only ---------------------- */
 
@@ -1072,7 +1077,7 @@ expect(strpos($source, "__('AI visibility', 'nurevo-webmcp')") !== false, 'the m
 $ja_catalogue = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/languages/nurevo-webmcp-ja.po');
 expect(strpos($ja_catalogue, '測定（β）') !== false, 'the measurement tab carries the beta label in Japanese');
 expect(strpos($source, 'webmcp-sov-beta') !== false, 'the measurement screen renders a beta badge');
-expect(strpos($source, 'beta, coming soon') !== false, 'the measurement upsell states beta and coming soon, with no price');
+expect(strpos($source, 'is a Pro feature (beta)') !== false && strpos($source, '14,800') === false, 'the measurement screen states Pro and beta, with no price');
 // Display only: the plugin must not contain a measurement implementation.
 expect(strpos($source, 'api.perplexity.ai') === false && strpos($source, 'api.openai.com') === false, 'the plugin never calls an AI engine directly');
 expect(strpos($source, 'PERPLEXITY_API_KEY') === false && strpos($source, 'OPENAI_API_KEY') === false, 'no engine API key is referenced in the plugin');
