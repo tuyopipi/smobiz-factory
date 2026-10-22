@@ -3,6 +3,7 @@ import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { handleApi, runSovDailyBatch, centralLlmsForKey } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
+import { runLifecycleReminders } from "./lifecycle-email.mjs";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -73,6 +74,14 @@ export default {
           console.log("aeo-sov-daily", JSON.stringify(result));
         }).catch((error) => {
           console.error("aeo-sov-daily-error", JSON.stringify({ message: String(error?.message || error) }));
+        }),
+        // "Not connected yet" reminders for wp sites, 24 h and 72 h after
+        // creation; bounded per run, claimed before sending, skipped while
+        // migration 0038 is unapplied.
+        runLifecycleReminders(env).then((result) => {
+          console.log("lifecycle-reminders", JSON.stringify(result));
+        }).catch((error) => {
+          console.error("lifecycle-reminders-error", JSON.stringify({ message: String(error?.message || error) }));
         }),
       );
     } else if (cron === weeklyCron) {
