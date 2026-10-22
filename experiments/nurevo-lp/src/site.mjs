@@ -96,3 +96,10 @@ export const AI_REFERRERS = [
   { id: "deepseek", hosts: ["chat.deepseek.com"] },
   { id: "mistral", hosts: ["chat.mistral.ai"] },
 ];
+
+// Whether the pricing table sells Pro. Pro goes on sale only after the Worker's
+// PRO_CHECKOUT_ENABLED switch is on and `npm run pro:check` passes; until then
+// the Pro card says "coming soon" and links to the details instead of checkout,
+// so the page never offers something the dashboard would refuse. Flip to true
+// in the same release that turns the Worker switch on.
+export const PRO_ON_SALE = false;

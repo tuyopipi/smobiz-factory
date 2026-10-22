@@ -26,7 +26,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import I18N from "../src/i18n.mjs";
 import { siteRobotsTxt, siteLlmsTxt } from "../../webmcp-canary/worker/site-seo.mjs";
 import {
-  ORIGIN, LANGS, DEFAULT_LANG, OG_IMAGE, ORGANIZATION, PRODUCT, FAQ_KEYS, STATIC_PAGES, AI_REFERRERS,
+  ORIGIN, LANGS, DEFAULT_LANG, OG_IMAGE, ORGANIZATION, PRODUCT, FAQ_KEYS, STATIC_PAGES, AI_REFERRERS, PRO_ON_SALE,
 } from "../src/site.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -278,7 +278,19 @@ function webPageNode({ url, title, description, lang, about }) {
  * Landing page
  * ------------------------------------------------------------------ */
 
-const TEMPLATE = read("src/lp.html");
+const PRO_CARD_ON_SALE = '<div class="plan">\n      <span class="nm" data-i18n="price.top.nm">Pro</span>';
+const PRO_CTA_ON_SALE = '<a href="/dashboard?plan=pro" class="btn primary" data-i18n="price.top.cta">Proをはじめる</a>';
+/** The template with the Pro card as it should be today (see PRO_ON_SALE in site.mjs). */
+function proCard(template) {
+  if (PRO_ON_SALE) return template;
+  for (const marker of [PRO_CARD_ON_SALE, PRO_CTA_ON_SALE]) {
+    if (template.split(marker).length !== 2) throw new Error(`build: Pro card marker not found exactly once: ${marker.slice(0, 40)}`);
+  }
+  return template
+    .replace(PRO_CARD_ON_SALE, '<div class="plan beta" data-badge="β・近日提供" data-i18n-badge="pricing.beta">\n      <span class="nm" data-i18n="price.top.nm">Pro</span>')
+    .replace(PRO_CTA_ON_SALE, '<a href="#pro-detail" class="btn ghost" data-i18n="price.top.soon">Proプランを見る</a>');
+}
+const TEMPLATE = proCard(read("src/lp.html"));
 const RUNTIME = read("src/lp.js");
 
 function landingPage(lang) {
