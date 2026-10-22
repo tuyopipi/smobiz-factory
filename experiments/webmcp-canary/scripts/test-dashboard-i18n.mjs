@@ -1,5 +1,6 @@
 /**
- * Every dashboard word in all eight languages, and the sign-in error page.
+ * Every dashboard word in all eight languages (including the super-admin
+ * ruleset screen, dashboard-rulesets.js), and the sign-in error page.
  *
  * zh/tw/ko/es/fr/de used to fall back to English for anything their own
  * blocks did not list (the partner view, the plan panel, the site page), and
@@ -59,7 +60,7 @@ assert.equal(I.ja.planGrantOrg && I.ja.planGrantOrg !== "planGrantOrg", true, "p
 
 /* ---------------- 2. the modules use the dictionary ---------------- */
 
-const MODULES = ["dashboard-aeo-metrics.js", "dashboard-sov.js", "dashboard-members.js"];
+const MODULES = ["dashboard-aeo-metrics.js", "dashboard-sov.js", "dashboard-members.js", "dashboard-rulesets.js"];
 for (const file of MODULES) {
   const src = read(file);
   // Comments may be Japanese-free prose; literals are what reach the page.
@@ -128,6 +129,95 @@ for (const lang of LANGS) {
   assert.ok(pages[0].includes(I[lang].amHeading) && pages[0].includes(I[lang].amChecklist), `${lang}: AEO panel headings`);
   assert.ok(pages[3].includes(I[lang].svLiveTag) && pages[3].includes(I[lang].svNotLive), `${lang}: SoV keeps the live / not-live labels`);
   assert.ok(pages[6].includes(I[lang].svLockedHead) && pages[6].includes(I[lang].svLockedMsg), `${lang}: SoV locked state`);
+}
+
+/* ---------------- 3b. the super-admin ruleset screen, per language ---------------- */
+
+{
+  // Drive the real script: a super admin, two rulesets, every button pressed.
+  const RS_KEYS = [...read("dashboard-rulesets.js").matchAll(/\btr\(\s*"(\w+)"/g)].map((m) => m[1]);
+  assert.ok(RS_KEYS.length >= 20 && RS_KEYS.every((k) => k.startsWith("rs")), "dashboard-rulesets.js reads its rs* words through tr()");
+  // Short labels (Status, Version, Notes) can be the same word in English;
+  // the sentences cannot.
+  for (const lang of LANGS.filter((l) => !["ja", "en"].includes(l))) {
+    for (const key of ["rsTitle", "rsNotice", "rsLoadActive", "rsHistory", "rsNone", "rsLoaded", "rsConfirm", "rsNoActive", "rsLoadedActive", "rsCreated"]) {
+      assert.notEqual(I[lang][key], I.en[key], `${lang}.${key} is not the English string`);
+    }
+  }
+  const tick = () => new Promise((resolve) => setImmediate(resolve));
+  async function drive(lang) {
+    const t = (k) => (I[lang] || I.ja)[k] || I.ja[k] || k;
+    const said = [];
+    const node = (extra = {}) => ({ innerHTML: "", textContent: "", value: "", dataset: {}, disabled: false, onclick: null, classList: { add() {}, remove() {} }, querySelectorAll: () => [], ...extra });
+    const fields = {};
+    const field = (sel) => (fields[sel] ||= node());
+    const main = node({
+      querySelector: (sel) => field(sel),
+    });
+    const nav = [];
+    const side = { querySelector: () => null, insertBefore: (el) => nav.push(el) };
+    const RULESETS = [{ version: 7, active: 1, created_at: "2026-10-01", notes: "n", activated_at: "2026-10-02" }, { version: 8, active: 0, created_at: "2026-10-20", notes: null }];
+    const DEF = JSON.stringify({ schema: {} });
+    const fetch = async (path, init = {}) => {
+      const json = (body, status = 200) => ({ ok: status < 400, status, json: async () => body });
+      if (path === "/api/me") return json({ is_super_admin: true });
+      if (path === "/api/admin/aeo/rulesets" && init.method === "POST") return json({ ruleset: { version: 9 } }, 201);
+      if (path === "/api/admin/aeo/rulesets") return json({ rulesets: RULESETS });
+      if (/\/activate$/.test(path)) return json({ ok: true });
+      const v = Number(path.split("/").pop());
+      return json({ ruleset: { version: v, notes: "x", definition_json: DEF } });
+    };
+    const sandbox = {
+      t, fetch, JSON, Promise, Number, String, Object, encodeURIComponent,
+      document: { querySelector: (sel) => (sel === "#main" ? main : sel === ".side" ? side : null), createElement: () => node(), querySelectorAll: () => [] },
+      confirm: (text) => { said.push(text); return false; },
+      alert: (text) => said.push(text),
+    };
+    sandbox.window = sandbox;
+    vm.createContext(sandbox);
+    vm.runInContext(read("dashboard-rulesets.js"), sandbox);
+    await tick(); await tick();
+    assert.equal(nav.length, 1, `${lang}: the nav entry is added for a super admin`);
+    const html = [nav[0].innerHTML];
+    // Render, then capture the row buttons as the page would expose them.
+    const rows = field("[data-ruleset-rows]");
+    const buttons = { detail: node({ dataset: { rulesetDetail: "7" } }), activate: node({ dataset: { rulesetActivate: "8" } }) };
+    rows.querySelectorAll = (sel) => (sel === "[data-ruleset-detail]" ? [buttons.detail] : sel === "[data-ruleset-activate]" ? [buttons.activate] : []);
+    nav[0].onclick();
+    html.push(main.innerHTML);
+    await tick(); await tick();
+    html.push(rows.innerHTML);
+    const result = field("[data-ruleset-result]");
+    await buttons.detail.onclick(); said.push(result.textContent);
+    await buttons.activate.onclick();
+    await field("[data-ruleset-copy-active]").onclick(); said.push(result.textContent);
+    field("[data-ruleset-definition]").value = DEF;
+    await field("[data-ruleset-create]").onclick();
+    await tick();
+    return { html, said };
+  }
+  for (const lang of LANGS) {
+    const { html, said } = await drive(lang);
+    const all = [...html, ...said].join("\n");
+    for (const key of ["rsNav", "rsTitle", "rsRefresh", "rsNotice", "rsLoadActive", "rsCreate", "rsHistory", "rsState", "rsCreatedAt", "rsActivatedAt", "rsLoading", "rsActive", "rsCandidate", "rsDetail", "rsActivate"]) {
+      assert.ok(all.includes(I[lang][key].replace(/&/g, "&amp;")), `${lang}: ruleset screen shows ${key} (${I[lang][key]})`);
+    }
+    assert.deepEqual(said, [
+      I[lang].rsLoaded.replace("{version}", "7"), I[lang].rsConfirm.replace("{version}", "8"),
+      I[lang].rsLoadedActive.replace("{version}", "7"), I[lang].rsCreated.replace("{version}", "9"),
+    ], `${lang}: every message, with its version filled in`);
+    assert.ok(!/\brs[A-Z]\w*\b/.test(all.replace(/data-k="rs\w+"/g, "")), `${lang}: no raw rs* key on the screen`);
+    assert.ok(!/\{\w+\}/.test(all), `${lang}: every placeholder filled`);
+    if (lang !== "ja") assert.ok(!(["zh", "tw"].includes(lang) ? KANA : JAPANESE).test(all), `${lang}: no Japanese on the ruleset screen (${(all.match(/.{0,30}[\u3040-\u30fa\u3400-\u9fff].{0,20}/) || [""])[0]})`);
+    if (lang === "ja") {
+      // The Japanese screen reads as it did before.
+      for (const s of ["AEOルール管理", "新版はcandidateとして保存されます。activate後、約5分以内に生きた接続へ反映されます。", "現在版の定義を読み込む", "candidateを作成", "バージョン履歴", "最終activate", "v7 を編集欄へ読み込みました。保存時は新版になります。", "v8 をactiveに切り替えますか？", "v9 をcandidateとして作成しました。"]) {
+        assert.ok(all.includes(s), `ja keeps "${s}"`);
+      }
+    }
+  }
+  const empty = (lang) => I[lang].rsNone;
+  for (const lang of LANGS) assert.ok(empty(lang) && I[lang].rsNoActive, `${lang}: empty-list and no-active messages`);
 }
 
 /* ---------------- 4. auth-error.html ---------------- */
