@@ -21,7 +21,9 @@ assert.equal(resolveAeoCheckLang("en_US"), "en", "underscores are accepted");
 
 // Unwritten languages resolve to English, not Japanese: a visitor who asked for
 // Spanish can act on English, and would be stuck with Japanese.
-for (const lang of ["pt-BR"]) {
+// (pt-BR used to be the example here; every plugin locale is now written, so a
+// language the plugin does not ship in stands in for "unwritten".)
+for (const lang of ["sw", "tl-PH"]) {
   assert.equal(resolveAeoCheckLang(lang), "en", `${lang} falls back to English until it is written`);
 }
 for (const lang of ["", null, undefined, "   ", "not-a-language"]) {
