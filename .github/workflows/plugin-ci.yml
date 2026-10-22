@@ -57,6 +57,19 @@ jobs:
       - name: Continuous optimization tests
         run: npm run test:continuous
 
+      # Fails if any shipped locale is missing a string or has a broken
+      # placeholder, or if the committed .pot/.po/.mo are stale.
+      - name: Translations complete and up to date
+        if: hashFiles('experiments/webmcp-canary/wordpress-plugin/webmcp-canary/languages/i18n/locales.json') != ''
+        run: |
+          node scripts/generate-plugin-translations.mjs
+          changed=$(git status --porcelain -- wordpress-plugin/webmcp-canary/languages)
+          if [ -n "$changed" ]; then
+            echo "::error::Translation files are out of date. Run: node scripts/generate-plugin-translations.mjs"
+            echo "$changed"
+            exit 1
+          fi
+
       - name: Build plugin zip
         run: node scripts/build-plugin-zip.mjs
 
