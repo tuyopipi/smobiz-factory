@@ -406,6 +406,7 @@ for (const path of ["/api/billing/checkout", "/api/billing/portal"]) {
   await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
   assert.equal(env.calls[0].form["automatic_tax[enabled]"], "true");
   assert.equal(env.calls[0].form["line_items[0][tax_rates][0]"], undefined, "automatic tax and a fixed rate are never combined");
+  assert.equal(env.calls[0].form["tax_id_collection[enabled]"], "true", "business customers can enter a tax ID for reverse charge");
   const link = await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
   assert.equal(link.status, 200);
   assert.equal(env.calls[1].form["automatic_tax[enabled]"], "true", "payment links use Stripe Tax");
