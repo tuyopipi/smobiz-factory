@@ -1,0 +1,78 @@
+# Tests for the Nurevo AEO plugin and its Worker.
+#
+# Test-only by design: it runs on push and pull request, never on a schedule,
+# has read-only repository access, uses no secrets, and deploys nothing.
+# Other workflow files stay ignored by .gitignore (see the note there).
+name: Plugin CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: experiments/webmcp-canary
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: none
+          coverage: none
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: experiments/webmcp-canary/package-lock.json
+
+      - name: PHP syntax check (plugin)
+        run: |
+          find wordpress-plugin/webmcp-canary -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: Schema merge tests
+        if: hashFiles('experiments/webmcp-canary/scripts/test-schema-merge.php') != ''
+        run: php scripts/test-schema-merge.php
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # Includes the WordPress plugin admin tests (php scripts/test-wordpress-aeo-admin.php).
+      - name: Worker and plugin tests
+        run: npm run test:canary
+
+      - name: Continuous optimization tests
+        run: npm run test:continuous
+
+      - name: Build plugin zip
+        run: node scripts/build-plugin-zip.mjs
+
+      - name: Check plugin zip contents
+        run: |
+          zip=$(ls dist/nurevo-webmcp-*.zip)
+          unzip -l "$zip"
+          # Only what WordPress.org should receive: no test pages, dev files or VCS data.
+          if unzip -Z1 "$zip" | grep -Ei '\.html?$|test|\.git|node_modules|\.env|docker'; then
+            echo "::error::Unexpected files in $zip"
+            exit 1
+          fi
+          # The header version, the constant and the readme stable tag must agree.
+          php=wordpress-plugin/webmcp-canary/nurevo-webmcp.php
+          header=$(sed -n 's/^ \* Version: //p' "$php")
+          constant=$(sed -n "s/^define('WEBMCP_CANARY_VERSION', '\(.*\)');/\1/p" "$php")
+          stable=$(sed -n 's/^Stable tag: //p' wordpress-plugin/webmcp-canary/readme.txt)
+          echo "header=$header constant=$constant stable=$stable"
+          test "$header" = "$constant" && test "$header" = "$stable"
