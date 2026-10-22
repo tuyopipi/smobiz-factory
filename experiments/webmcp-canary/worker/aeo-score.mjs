@@ -1,5 +1,6 @@
 import { DEFAULT_SCORING } from "./aeo-rules.mjs";
-import { ENTITY_SCHEMA_FIELDS, localizeFields, fieldsSummary, textHint, fieldLang } from "./aeo-fields.mjs";
+import { ENTITY_SCHEMA_FIELDS, localizeFields, fieldsSummary, textHint } from "./aeo-fields.mjs";
+import { DIAGNOSIS_LANGS, diagnosisText, resolveDiagnosisLang } from "./diagnosis-i18n.mjs";
 // Keep these weights independent from extraction so layer-2 citation data can
 // tune the model without changing the public scoring contract.
 export const AEO_SCORE_WEIGHTS = DEFAULT_SCORING.weights;
@@ -221,7 +222,7 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
   const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: options.commerceDetected || /(?:class|id)=["'][^"']*woocommerce/i.test(html) });
   const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours)/i.test(llms)];
   return {
-    aiCrawlersAllowed: scoring.aiCrawlers.every((bot) => robotsAllows(robots, bot)),
+    aiCrawlersAllowed: gateCrawlers(scoring).every((bot) => robotsAllows(robots, bot)),
     edgeBlocked: options.edgeBlocked === true,
     serverRenderedHtml: visible.replace(/\s+/g, " ").trim().length >= scoring.minVisible || scripts.length > 0,
     jsonLdInRawHtml: scripts.length > 0,
@@ -271,45 +272,32 @@ export const AEO_CHECKS = Object.freeze([
   { id: "consistency", fixable: false, gate: false },
 ]);
 
-const CHECK_WORDING = Object.freeze({
-  ja: {
-    ai_crawlers_allowed: { label: "AIクローラー到達性", OK: "主要AIクローラー8種をrobots.txtで許可しています。", WARN: "一部のAIクローラーがrobots.txtで明示的に許可されていません。", BAD: "robots.txtでAIクローラーを許可していないため、このサイトは読まれません。" },
-    edge_access: { label: "CDN・エッジ到達性", OK: "CDN・WAFはAIボットの通過を許可しています。", WARN: "エッジでAIボットが妨げられている可能性があります。", BAD: "AIボットがサイトに到達する前に遮断されています。" },
-    server_rendered_html: { label: "サーバー側HTML", OK: "生HTMLに本文とschemaが出力されています。", WARN: "生HTMLに本文の一部しか出力されていません。", BAD: "生HTMLに本文もschemaも無いため、JavaScriptを実行しないクローラーには空のページに見えます。" },
-    schema: { label: "構造化データ", OK: "JSON-LDが妥当で、型と主要プロパティが揃っています。", WARN: "JSON-LDにAIが参照する主要プロパティの一部が欠けています。", BAD: "生HTMLに利用できるJSON-LDが見つかりません。" },
-    coverage: { label: "重要情報の網羅", OK: "名称・住所・電話・営業時間・位置情報・URLがすべて公開されています。", WARN: "名称・住所・電話・営業時間・位置情報・URLのいずれかが不足しています。", BAD: "AIが必要とする基本情報（名称・住所・電話・営業時間・位置情報・URL）がほとんどありません。" },
-    legibility: { label: "本文の機械可読性", OK: "重要な事実・見出し構造・FAQが本文で読める状態です。", WARN: "重要な事実が本文から読み取りにくい状態です。", BAD: "本文に重要な事実が書かれておらず、AIはマークアップだけを頼りにしています。" },
-    llms: { label: "llms.txt", OK: "llms.txtが配信され、サイトを説明しています。", WARN: "llms.txtはありますが、内容が不十分です。", BAD: "llms.txtが配信されていません。" },
-    consistency: { label: "一貫性・鮮度", OK: "schemaと本文が一致し、更新シグナルもあります。", WARN: "schemaと本文に食い違いがあるか、更新シグナルがありません。", BAD: "schemaと本文が矛盾しており、AIはどちらも信頼しにくくなっています。" },
-  },
-  en: {
-    ai_crawlers_allowed: { label: "AI crawler access", OK: "The major AI crawlers are allowed in robots.txt.", WARN: "Some AI crawlers are not clearly allowed in robots.txt.", BAD: "AI crawlers are not allowed in robots.txt, so they will not read this site." },
-    edge_access: { label: "CDN and edge access", OK: "Your CDN or WAF is letting AI bots through.", WARN: "Something at the edge may be slowing AI bots down.", BAD: "AI bots are being blocked before they reach your site." },
-    server_rendered_html: { label: "Server-rendered HTML", OK: "Your content and schema are in the raw HTML.", WARN: "Only part of your content is in the raw HTML.", BAD: "The raw HTML carries neither your content nor your schema, so crawlers that skip JavaScript see an empty page." },
-    schema: { label: "Structured data", OK: "Valid JSON-LD with the right type and the key properties filled in.", WARN: "Your JSON-LD is missing some of the properties AI looks for.", BAD: "No usable JSON-LD was found in the raw HTML." },
-    coverage: { label: "Key information coverage", OK: "Name, address, phone, hours, location and URL are all published.", WARN: "Some of your name, address, phone, hours, location or URL is missing.", BAD: "The basics AI needs - name, address, phone, hours, location, URL - are mostly missing." },
-    legibility: { label: "Readable page text", OK: "Your key facts, headings and FAQ are readable in the page text.", WARN: "Your key facts are hard to find in the page text.", BAD: "The page text does not state your key facts, so AI has only your markup to go on." },
-    llms: { label: "llms.txt", OK: "llms.txt is published and describes this site.", WARN: "llms.txt is published but thin on detail.", BAD: "No llms.txt is published." },
-    consistency: { label: "Consistency and freshness", OK: "Your schema agrees with your page text and carries a freshness signal.", WARN: "Your schema and page text disagree in places, or the freshness signal is missing.", BAD: "Your schema contradicts your page text, which makes AI distrust both." },
-  },
-});
+/*
+ * The wording itself lives in worker/i18n/diagnosis/<lang>.json as
+ * check.<id>.label / .OK / .WARN / .BAD, one catalog per language the plugin
+ * ships in. See diagnosis-i18n.mjs for the fallback chain.
+ */
 
 /**
- * Languages the mechanism accepts. Only ja and en are written; the rest resolve
- * to English rather than to Japanese, so an unfinished translation reads as a
- * language most visitors can act on instead of one they cannot.
+ * Languages the diagnosis is written in: every catalog, so every one of the
+ * plugin's WordPress locales resolves to its own language rather than English.
  */
-export const AEO_CHECK_LANGS = Object.freeze(["ja", "en", "zh", "zh-TW", "ko", "es", "fr", "de"]);
-const TRANSLATED_LANGS = Object.freeze(Object.keys(CHECK_WORDING));
+export const AEO_CHECK_LANGS = DIAGNOSIS_LANGS;
 
-/** Pick a wording table. Anything unknown or unwritten falls back to English. */
+/**
+ * Pick a catalog. Accepts WordPress locales (de_DE, pt_BR, zh_HK), the plugin's
+ * lower-cased form (es-ar) and BCP 47 tags; anything unknown falls back to
+ * English rather than to Japanese, so an unwritten language reads as one most
+ * visitors can act on.
+ */
 export function resolveAeoCheckLang(requested) {
-  const value = String(requested || "").trim().toLowerCase().replace("_", "-");
-  if (value === "") return "en";
-  if (AEO_CHECK_LANGS.map(x => x.toLowerCase()).includes(value)) return fieldLang(value);
-  const base = value.split("-")[0];
-  if (TRANSLATED_LANGS.includes(base)) return base;
-  return "en";
+  return resolveDiagnosisLang(requested);
+}
+
+function checkWording(lang, id) {
+  const label = diagnosisText(lang, `check.${id}.label`);
+  if (label === undefined) return null;
+  return { label, OK: diagnosisText(lang, `check.${id}.OK`), WARN: diagnosisText(lang, `check.${id}.WARN`), BAD: diagnosisText(lang, `check.${id}.BAD`) };
 }
 
 /**
@@ -321,15 +309,14 @@ export function resolveAeoCheckLang(requested) {
  */
 export function localizeAeoChecks(checks, requested) {
   const lang = resolveAeoCheckLang(requested);
-  const table = CHECK_WORDING[lang] || CHECK_WORDING.en;
   return (Array.isArray(checks) ? checks : []).map((check) => {
-    const wording = table[check?.id];
+    const wording = checkWording(lang, check?.id);
     if (!wording) return { ...check };
     const status = String(check?.status || "").toUpperCase();
     // An unrecognised status is a finding, not a pass.
-    const fields = Array.isArray(check.fields) ? localizeFields(check.fields, requested) : null;
-    const message = fields ? fieldsSummary(fields, requested) : wording[status] ?? wording.WARN;
-    return { ...check, label: fields ? `${wording.label} (${fields.filter(f => f.present).length}/${fields.length})` : wording.label, message, ...(fields ? { fields } : {}), ...(check.id === "legibility" ? { hints: [textHint(requested)] } : {}) };
+    const fields = Array.isArray(check.fields) ? localizeFields(check.fields, lang) : null;
+    const message = fields ? fieldsSummary(fields, lang) : wording[status] ?? wording.WARN;
+    return { ...check, label: fields ? `${wording.label} (${fields.filter(f => f.present).length}/${fields.length})` : wording.label, message, ...(fields ? { fields } : {}), ...(check.id === "legibility" ? { hints: [textHint(lang)] } : {}) };
   });
 }
 
@@ -379,6 +366,21 @@ async function fetchBounded(fetchImpl, href, { userAgent, noCache = false } = {}
   } finally { clearTimeout(timer); }
 }
 
+/**
+ * Model-training crawlers and opt-out tokens. A site may block these and still
+ * be read and cited by AI search, so they never count against the gate - even
+ * when an older ruleset stored in the database still lists them.
+ */
+export const AI_TRAINING_CRAWLERS = Object.freeze(["GPTBot", "ClaudeBot", "Claude-Web", "anthropic-ai", "Google-Extended", "Applebot-Extended", "CCBot", "Bytespider"]);
+const AI_SEARCH_CRAWLERS = Object.freeze(["OAI-SearchBot", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Perplexity-User"]);
+
+/** The crawlers the reachability gate checks: the ruleset's list minus training bots. */
+export function gateCrawlers(scoring = DEFAULT_SCORING) {
+  const training = new Set(AI_TRAINING_CRAWLERS.map((bot) => bot.toLowerCase()));
+  const listed = (Array.isArray(scoring.aiCrawlers) ? scoring.aiCrawlers : []).filter((bot) => !training.has(String(bot).toLowerCase()));
+  return listed.length ? listed : [...AI_SEARCH_CRAWLERS];
+}
+
 async function fetchOptional(fetchImpl, href, options = {}) {
   try { return await fetchBounded(fetchImpl, href, options); } catch { return { ok: false, text: "" }; }
 }
@@ -387,7 +389,7 @@ async function detectEdgeBlock(fetchImpl, href) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetchImpl(href, { method: "HEAD", redirect: "follow", signal: controller.signal, headers: { "user-agent": "GPTBot/1.2 (+https://openai.com/gptbot)" } });
+    const response = await fetchImpl(href, { method: "HEAD", redirect: "follow", signal: controller.signal, headers: { "user-agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; OAI-SearchBot/1.0; +https://openai.com/searchbot" } });
     return [401, 403, 429, 451].includes(response.status);
   } catch { return true; } finally { clearTimeout(timer); }
 }

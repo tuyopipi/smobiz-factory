@@ -81,7 +81,15 @@ try{
 assert.equal(wp.state.version,5);
 assert.match(wp.html,/"alternateName":"Fixture Cafe"/,"new central template changes local WP content generation too");
 assert.match(wp.robots,/# nurevo-aeo-ruleset:5/);
-assert.equal(wp.flushes,1);
+assert.equal(wp.flushes,0,'applying a fix never empties the whole object cache');
+// The plugin's own robots.txt and llms.txt carry the version marker too (llms as
+// an HTML comment, not a second H1), so delivery verifies from real WP output.
+assert.doesNotMatch(wp.llms,/^# nurevo-aeo-ruleset/m,'llms.txt has no second H1 marker');
+assert.match(wp.llms,/<!-- nurevo-aeo-ruleset:5 -->/);
+const wpServed=html.replace(/<script[\s\S]*<\/script>/,'')+wp.html;
+const wpFetch=async(url,init={})=>init.method==='HEAD'?new Response(null,{status:200}):new Response(String(url).endsWith('/robots.txt')?wp.robots:String(url).endsWith('/llms.txt')?wp.llms:wpServed,{status:200,headers:{'content-type':String(url).endsWith('.txt')?'text/plain':'text/html'}});
+const wpResult=await diagnoseAeoUrl('https://example.test/',{...await diagnosticOptions(env,'s1'),fetchImpl:wpFetch});
+assert.equal(await verifyDelivery(env,'s1',wpResult),5,'delivery verifies from the plugin\'s real robots.txt and llms.txt');
 const served=html.replace(/<script[\s\S]*<\/script>/,'')+wp.html;
 result=await diagnoseAeoUrl('https://example.test/',{...await diagnosticOptions(env,'s1'),fetchImpl:fetchFixture(served)});
 result.scannedAt='2026-10-20T02:00:00.000Z';

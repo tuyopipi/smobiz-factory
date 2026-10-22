@@ -107,6 +107,7 @@ function get_the_title($post) { return is_object($post) ? ($post->post_title ?? 
 function get_permalink($post) { return is_object($post) ? ($post->permalink ?? '') : ''; }
 function current_user_can() { return true; }
 function admin_url($path = '') { return 'https://example.test/wp-admin/' . ltrim($path, '/'); }
+if (!function_exists('do_action')) { function do_action(...$args) {} }
 function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_html__($text) { return esc_html($text); }
 function esc_attr($value) { return esc_html($value); }
@@ -320,7 +321,9 @@ $wp_autofilled = $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION];
 expect($wp_autofilled['business_name'] === 'Manual Name', 'WordPress site name does not replace a manual Nurevo name');
 expect($wp_autofilled['business_description'] === 'WordPress description', 'WordPress description fills an empty field');
 expect($wp_autofilled['business_url'] === 'https://example.test/', 'WordPress site URL fills an empty field');
-expect($wp_autofilled['business_email'] === 'owner@example.test', 'WordPress administrator email fills an empty field');
+// 0.7.4: the admin email is usually the installer's or agency's own address and
+// would be published in JSON-LD and llms.txt, so it is never autofilled.
+expect($wp_autofilled['business_email'] === '', 'the WordPress administrator email is not autofilled as the business email');
 
 $GLOBALS['webmcp_test_posts'] = array((object) array('post_content' => "電話: 06-1234-5678\n住所: 〒530-0001 大阪府大阪市北区梅田1-1-1\n営業時間: 10:00〜19:00"));
 $content_values = webmcp_canary_extract_from_content();
@@ -481,25 +484,16 @@ expect(strpos($local_llms, '- [Menu](https://example.test/menu/)') !== false, 'l
 $GLOBALS['webmcp_test_remote_get'] = array();
 expect(webmcp_canary_fetch_llms_txt() === null, 'no site key means no service request for llms.txt');
 expect(webmcp_canary_llms_txt_body() === $local_llms, 'free llms.txt falls back to local generation');
+// 0.7.4: a connected site serves the same locally built llms.txt. The hosted
+// version had fewer sections and fixed Japanese headings, so connecting a site
+// used to make its llms.txt worse; a public request also no longer waits on a
+// remote call.
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['site_key'] = 'nrv_site';
 $GLOBALS['webmcp_test_remote_get'] = array('api/llms.txt' => array('status' => 200, 'body' => "# Central\n"));
-expect(webmcp_canary_llms_txt_body() === "# Central\n", 'a registered site prefers the central llms.txt');
-$GLOBALS['webmcp_test_remote_get'] = array();
 $llms_request_count = count($GLOBALS['webmcp_test_remote_get_log']);
-expect(webmcp_canary_llms_txt_body() === "# Central\n", 'fresh llms cache avoids an extra service request');
-expect(count($GLOBALS['webmcp_test_remote_get_log']) === $llms_request_count, 'llms cache actually avoids HTTP');
-$expired_llms = get_option('webmcp_canary_llms_cache');
-$expired_llms['expires_at'] = 0;
-update_option('webmcp_canary_llms_cache', $expired_llms);
-expect(webmcp_canary_llms_txt_body() === $local_llms, 'service failure still serves the local llms.txt');
-$failed_llms_requests = count($GLOBALS['webmcp_test_remote_get_log']);
-expect(webmcp_canary_llms_txt_body() === $local_llms, 'failure backoff continues local generation');
-expect(count($GLOBALS['webmcp_test_remote_get_log']) === $failed_llms_requests, 'failure backoff suppresses retry storms');
-$llms_new_rule = webmcp_canary_ruleset_state();
-$llms_new_rule['version'] += 1;
-update_option(WEBMCP_CANARY_RULESET_OPTION, $llms_new_rule);
-$GLOBALS['webmcp_test_remote_get'] = array('api/llms.txt' => array('status' => 200, 'body' => "# New rule\n"));
-expect(webmcp_canary_llms_txt_body() === "# New rule\n", 'a new ruleset invalidates llms success and failure caches');
+expect(webmcp_canary_llms_txt_body() === $local_llms, 'a connected site still serves the locally built llms.txt');
+expect(count($GLOBALS['webmcp_test_remote_get_log']) === $llms_request_count, 'serving llms.txt makes no service request');
+$GLOBALS['webmcp_test_remote_get'] = array();
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['serve_llms_txt'] = '0';
 expect(webmcp_canary_llms_txt_body() === null, 'disabling llms.txt stops all output');
 $GLOBALS['webmcp_test_posts'] = array();
@@ -972,7 +966,12 @@ expect(strpos($source, 'Always current:') !== false, 'standard value is still de
 // payment route of any kind under the directory's rules anyway.
 expect(strpos($source, 'from 14,800 JPY/month') === false, 'the Pro price is gone from the measurement screen');
 expect(strpos($source, '14,800') === false, 'and from the plugin entirely');
-expect(strpos($source, 'beta, coming soon') !== false, 'Pro is labelled coming soon instead');
+// 0.7.4: worded so it stays true whether or not Pro is on sale: Pro is set up
+// on the Nurevo dashboard, never bought inside the plugin.
+expect(strpos($source, 'beta, coming soon') === false && strpos($source, 'Pro is not on sale yet') === false,
+    'the plugin no longer claims Pro is not on sale');
+expect(strpos($source, 'Pro is set up on the Nurevo dashboard, not in WordPress.') !== false, 'Pro points to the dashboard instead');
+expect(strpos($source, 'billing/checkout') === false && strpos($source, 'checkout.stripe') === false, 'the plugin still offers no purchase route');
 
 // T: the one thing a new install has to do, where it cannot be missed. It used
 // to appear only in the description under the code field, halfway down a long
@@ -980,7 +979,7 @@ expect(strpos($source, 'beta, coming soon') !== false, 'Pro is labelled coming s
 expect(strpos($source, 'Connect this site to Nurevo') !== false, 'an unconnected install is told how to connect');
 expect(strpos($source, 'Press "Issue a pairing code" and copy the code.') !== false, 'including where the code comes from');
 expect(strpos($source, "\$settings['site_id'] === '' || \$settings['profile_token'] === ''") !== false, 'and only while it is unconnected');
-expect(strpos($source, 'Pro is not on sale yet') !== false, 'and says so in words');
+expect(strpos($source, 'Once this site is on Pro, this screen shows its measurements automatically.') !== false, 'and says so in words');
 
 /* --- U2 measurement screen: pro only, display-only ---------------------- */
 
@@ -1078,7 +1077,7 @@ expect(strpos($source, "__('AI visibility', 'nurevo-webmcp')") !== false, 'the m
 $ja_catalogue = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/languages/nurevo-webmcp-ja.po');
 expect(strpos($ja_catalogue, '測定（β）') !== false, 'the measurement tab carries the beta label in Japanese');
 expect(strpos($source, 'webmcp-sov-beta') !== false, 'the measurement screen renders a beta badge');
-expect(strpos($source, 'beta, coming soon') !== false, 'the measurement upsell states beta and coming soon, with no price');
+expect(strpos($source, 'is a Pro feature (beta)') !== false && strpos($source, '14,800') === false, 'the measurement screen states Pro and beta, with no price');
 // Display only: the plugin must not contain a measurement implementation.
 expect(strpos($source, 'api.perplexity.ai') === false && strpos($source, 'api.openai.com') === false, 'the plugin never calls an AI engine directly');
 expect(strpos($source, 'PERPLEXITY_API_KEY') === false && strpos($source, 'OPENAI_API_KEY') === false, 'no engine API key is referenced in the plugin');
@@ -2179,4 +2178,126 @@ $field_view = webmcp_canary_aeo_check_view(array(
 ));
 expect(strpos($field_view['label'], '(1/2)') !== false, 'plugin heading shows the published field count');
 expect($field_view['message'] === '1/2 fields published.', 'plugin preserves the field diagnosis message');
+
+/* --- 0.7.4: robots.txt splits search and training crawlers ------------- */
+
+$wp_robots = "User-agent: *\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\n\nSitemap: https://example.test/wp-sitemap.xml\n";
+expect(webmcp_canary_robots_wildcard_rules($wp_robots) === array('Disallow: /wp-admin/', 'Allow: /wp-admin/admin-ajax.php'),
+    'the site\'s "*" rules are read from robots.txt');
+expect(webmcp_canary_robots_wildcard_rules("User-agent: Googlebot\nUser-agent: *\nDisallow: /private/\n\nUser-agent: Bingbot\nDisallow: /bing-only/\n") === array('Disallow: /private/'),
+    'a "*" sharing a group with another agent is read, other groups are not');
+expect(webmcp_canary_robots_wildcard_rules("User-agent: *\nDisallow:\nAllow: /\n") === array(),
+    'empty and root rules add nothing to copy');
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array('enabled' => '1', 'allow_ai_crawlers' => '1'));
+$robots = webmcp_canary_allow_ai_crawlers_robots_txt($wp_robots, true);
+foreach (webmcp_canary_ai_search_agents() as $agent) {
+    expect(strpos($robots, "User-agent: {$agent}\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nAllow: /\n") !== false,
+        "{$agent} is allowed and keeps the site's /wp-admin/ rules");
+}
+expect(strpos($robots, 'GPTBot') === false && strpos($robots, 'ClaudeBot') === false && strpos($robots, 'Google-Extended') === false,
+    'training crawlers are left to the site\'s robots.txt by default');
+expect(strpos($robots, "Disallow: /\n") === false, 'nothing is blocked by default');
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['ai_training'] = 'block';
+$robots = webmcp_canary_allow_ai_crawlers_robots_txt($wp_robots, true);
+foreach (webmcp_canary_ai_training_agents() as $agent) {
+    expect(strpos($robots, "User-agent: {$agent}\nDisallow: /\n") !== false, "{$agent} is blocked when the owner chooses to block training");
+}
+expect(strpos($robots, "User-agent: OAI-SearchBot\nDisallow: /wp-admin/") !== false, 'blocking training leaves search crawlers allowed');
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['ai_training'] = 'allow';
+$robots = webmcp_canary_allow_ai_crawlers_robots_txt($wp_robots, true);
+expect(strpos($robots, "User-agent: GPTBot\nDisallow: /wp-admin/\nAllow: /wp-admin/admin-ajax.php\nAllow: /\n") !== false,
+    'allowing training also keeps the site\'s /wp-admin/ rules');
+
+// The service can no longer switch the site to Disallow: a paid ruleset that
+// says crawlers are not allowed only means Nurevo adds nothing.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array(
+    'enabled' => '1', 'allow_ai_crawlers' => '1', 'plan' => 'standard', 'site_key' => 'nrv_site',
+));
+$paid_state = webmcp_canary_ruleset_state();
+$paid_state['crawler_allowed'] = false;
+$paid_state['crawler_agents'] = array('GPTBot', 'OAI-SearchBot');
+update_option(WEBMCP_CANARY_RULESET_OPTION, $paid_state);
+$robots = webmcp_canary_allow_ai_crawlers_robots_txt($wp_robots, true);
+expect(strpos($robots, "Disallow: /\n") === false, 'a service response cannot turn robots.txt into Disallow: /');
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+
+$sanitized = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('ai_training' => 'block')));
+expect($sanitized['ai_training'] === 'block', 'the training choice is saved');
+$sanitized = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('ai_training' => 'everything')));
+expect($sanitized['ai_training'] === 'default', 'an unknown training choice falls back to the site\'s robots.txt');
+
+/* --- 0.7.4: the autofilled admin email is withdrawn -------------------- */
+
+$GLOBALS['webmcp_test_options']['admin_email'] = 'installer@agency.test';
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array('business_email' => 'Installer@Agency.test'));
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_EXTRACTION_OPTION] = array('fields' => array('business_name', 'business_email'));
+delete_option('webmcp_canary_migrated_074');
+delete_option(WEBMCP_CANARY_WITHDRAWN_EMAIL_OPTION);
+webmcp_canary_withdraw_autofilled_admin_email();
+expect(webmcp_canary_settings()['business_email'] === '', 'an autofilled admin email is withdrawn on upgrade');
+expect(webmcp_canary_is_withdrawn_email('installer@agency.test'), 'and remembered as withdrawn');
+$pulled = webmcp_canary_apply_remote_profile(array('profile' => array('email' => 'installer@agency.test', 'name' => 'Shop')));
+expect(webmcp_canary_settings()['business_email'] === '' && !in_array('business_email', $pulled['changed'], true),
+    'the profile sync does not bring the withdrawn address back');
+$pulled = webmcp_canary_apply_remote_profile(array('profile' => array('email' => 'hello@shop.test')));
+expect(webmcp_canary_settings()['business_email'] === 'hello@shop.test', 'a different business email from the service is still taken');
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array('business_email' => 'installer@agency.test'));
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_EXTRACTION_OPTION] = array('fields' => array('business_name'));
+delete_option('webmcp_canary_migrated_074');
+webmcp_canary_withdraw_autofilled_admin_email();
+expect(webmcp_canary_settings()['business_email'] === 'installer@agency.test', 'an address the owner typed is kept, even if it is the admin email');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_email'] = '';
+webmcp_canary_withdraw_autofilled_admin_email();
+expect(get_option('webmcp_canary_migrated_074') == 1, 'the withdrawal runs once');
+delete_option(WEBMCP_CANARY_WITHDRAWN_EMAIL_OPTION);
+unset($GLOBALS['webmcp_test_options']['admin_email']);
+
+/* --- 0.7.4: PostalAddress on every plan -------------------------------- */
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, $compat_on, array(
+    'enabled' => '1', 'serve_schema' => '1', 'plan' => 'free',
+    'business_name' => 'Free Shop', 'business_address' => '1-1-1 Marunouchi',
+));
+$GLOBALS['webmcp_test_active_plugins'] = array();
+delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
+webmcp_canary_schema_merged(false);
+ob_start();
+webmcp_canary_output_server_schema();
+$free_schema = ob_get_clean();
+expect(strpos($free_schema, '"address":{"@type":"PostalAddress","streetAddress":"1-1-1 Marunouchi"}') !== false,
+    'a free site publishes its address as PostalAddress');
+
+/* --- 0.7.4: service autofix is a proposal, applied by an administrator - */
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array(
+    'enabled' => '1', 'tag_url' => 'https://nurevo.jp/tag.js', 'plan' => 'standard', 'site_key' => 'nrv_site',
+    'serve_schema' => '0', 'serve_llms_txt' => '0', 'allow_ai_crawlers' => '0',
+));
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+delete_option('webmcp_canary_autofix_state');
+$GLOBALS['webmcp_test_remote_get'] = array('api/tag/config' => array('status' => 200, 'body' => json_encode(array(
+    'ok' => true, 'plan' => 'standard', 'ruleset_version' => 3,
+    'autofix' => array('requested_at' => '2026-10-22T00:00:00Z', 'actions_json' => json_encode(array('publish_schema', 'publish_llms', 'allow_crawlers'))),
+))));
+webmcp_canary_sync_ruleset(true);
+$after_sync = webmcp_canary_settings();
+expect($after_sync['serve_schema'] === '0' && $after_sync['serve_llms_txt'] === '0' && $after_sync['allow_ai_crawlers'] === '0',
+    'a service autofix does not change settings by itself');
+$pending = webmcp_canary_pending_autofix();
+expect(is_array($pending) && count(webmcp_canary_autofix_action_labels($pending)) === 3, 'it is held as a proposal with readable actions');
+webmcp_canary_apply_autofix($pending);
+$after_apply = webmcp_canary_settings();
+expect($after_apply['serve_schema'] === '1' && $after_apply['serve_llms_txt'] === '1' && $after_apply['allow_ai_crawlers'] === '1',
+    'applying the proposal turns the outputs on');
+expect(webmcp_canary_pending_autofix() === null, 'an applied proposal is not offered again');
+expect(strpos(file_get_contents(__DIR__ . '/../wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'wp_cache_flush()') === false,
+    'the whole object cache is never flushed');
+$GLOBALS['webmcp_test_remote_get'] = array();
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+delete_option('webmcp_canary_autofix_state');
+
 echo "WordPress AEO admin tests passed\n";

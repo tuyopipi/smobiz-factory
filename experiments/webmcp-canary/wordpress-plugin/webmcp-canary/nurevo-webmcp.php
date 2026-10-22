@@ -3,7 +3,7 @@
  * Plugin Name: Nurevo AEO
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
- * Version: 0.7.3
+ * Version: 0.7.4
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Nurevo
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WEBMCP_CANARY_VERSION', '0.7.3');
+define('WEBMCP_CANARY_VERSION', '0.7.4');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
@@ -48,6 +48,8 @@ function webmcp_canary_default_settings() {
     return array(
         'enabled' => '0',
         'allow_ai_crawlers' => '1',
+        // AI training crawlers: 'default' leaves them to the site's robots.txt.
+        'ai_training' => 'default',
         'serve_llms_txt' => '1',
         'serve_schema' => '1',
         'avoid_schema_duplicates' => '1',
@@ -358,6 +360,58 @@ function webmcp_canary_settings() {
     return wp_parse_args(is_array($settings) ? $settings : array(), webmcp_canary_default_settings());
 }
 
+/**
+ * Crawlers that fetch pages to answer or cite them in AI search. Allowing these
+ * is what AEO needs. Sources: OpenAI, Anthropic and Perplexity crawler docs.
+ */
+function webmcp_canary_ai_search_agents() {
+    return array('OAI-SearchBot', 'ChatGPT-User', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User');
+}
+
+/** Crawlers (or opt-out tokens) that collect content for model training. */
+function webmcp_canary_ai_training_agents() {
+    return array('GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended', 'CCBot');
+}
+
+/**
+ * The Allow/Disallow lines of the "User-agent: *" group(s) in a robots.txt.
+ *
+ * Only path rules are copied; an "Allow: /" or "Disallow:" with no path would
+ * add nothing to a group that ends in "Allow: /".
+ */
+function webmcp_canary_robots_wildcard_rules($robots) {
+    $lines = preg_split('/\r\n|\r|\n/', (string) $robots);
+    $rules = array();
+    $in_wildcard = false;
+    $previous_was_agent = false;
+    foreach ($lines as $raw) {
+        $line = trim(preg_replace('/#.*$/', '', $raw));
+        if ($line === '') {
+            continue;
+        }
+        if (preg_match('/^user-agent\s*:\s*(.+)$/i', $line, $match)) {
+            $agent = trim($match[1]);
+            // Consecutive User-agent lines share one group.
+            $in_wildcard = $previous_was_agent ? ($in_wildcard || $agent === '*') : ($agent === '*');
+            $previous_was_agent = true;
+            continue;
+        }
+        $previous_was_agent = false;
+        if (!$in_wildcard || !preg_match('/^(allow|disallow)\s*:\s*(\S*)$/i', $line, $match)) {
+            continue;
+        }
+        $path = $match[2];
+        if ($path === '' || $path === '/') {
+            continue;
+        }
+        $rule = ucfirst(strtolower($match[1])) . ': ' . $path;
+        if (!in_array($rule, $rules, true)) {
+            $rules[] = $rule;
+        }
+    }
+    return $rules;
+}
+
 add_filter('robots_txt', 'webmcp_canary_allow_ai_crawlers_robots_txt', 10, 2);
 function webmcp_canary_allow_ai_crawlers_robots_txt($output, $public) {
     $output = (string) $output;
@@ -366,32 +420,48 @@ function webmcp_canary_allow_ai_crawlers_robots_txt($output, $public) {
         return $output;
     }
 
-    $marker = '# Nurevo WebMCP AI crawler access';
-    if (strpos($output, $marker) !== false) {
+    $marker = '# Nurevo AEO: AI crawler access';
+    if (strpos($output, $marker) !== false || strpos($output, '# Nurevo WebMCP AI crawler access') !== false) {
         return $output;
     }
 
-    $agents = array(
-        'GPTBot',
-        'OAI-SearchBot',
-        'ChatGPT-User',
-        'ClaudeBot',
-        'anthropic-ai',
-        'PerplexityBot',
-        'Google-Extended',
-        'CCBot',
-        'Applebot-Extended',
-    );
-    $central_state = webmcp_canary_ruleset_state();
-    if (!empty(webmcp_canary_central_payload()['crawler_agents'])) {
-        $agents = array_filter($central_state['crawler_agents'], function ($agent) { return is_string($agent) && preg_match('/^[A-Za-z0-9._-]+$/', $agent); });
-    }
+    // A crawler that finds a group naming it ignores the "User-agent: *" group.
+    // Each group added here therefore repeats the site's own "*" rules, so
+    // exclusions such as /wp-admin/ keep applying to AI crawlers too.
+    $inherited = webmcp_canary_robots_wildcard_rules($output);
+
     $rules = array($marker);
-    if (!empty(webmcp_canary_central_payload()['crawler_agents'])) { $rules[] = '# nurevo-aeo-ruleset:' . intval($central_state['version']); }
-    foreach ($agents as $agent) {
+    // Paid sites mark the ruleset version, so the diagnosis can verify which
+    // version actually reached this file.
+    $delivered = webmcp_canary_delivered_ruleset_version();
+    if ($delivered > 0) {
+        $rules[] = '# nurevo-aeo-ruleset:' . $delivered;
+    }
+    foreach (webmcp_canary_ai_search_agents() as $agent) {
         $rules[] = 'User-agent: ' . $agent;
-        $rules[] = !empty(webmcp_canary_central_payload()['crawler_agents']) && empty($central_state['crawler_allowed']) ? 'Disallow: /' : 'Allow: /';
+        foreach ($inherited as $line) {
+            $rules[] = $line;
+        }
+        $rules[] = 'Allow: /';
         $rules[] = '';
+    }
+
+    // Training crawlers are the owner's call, and not needed to appear in AI
+    // answers. "default" adds nothing, so the site's own "*" rules decide.
+    $training = isset($settings['ai_training']) ? (string) $settings['ai_training'] : 'default';
+    if ($training === 'allow' || $training === 'block') {
+        foreach (webmcp_canary_ai_training_agents() as $agent) {
+            $rules[] = 'User-agent: ' . $agent;
+            if ($training === 'block') {
+                $rules[] = 'Disallow: /';
+            } else {
+                foreach ($inherited as $line) {
+                    $rules[] = $line;
+                }
+                $rules[] = 'Allow: /';
+            }
+            $rules[] = '';
+        }
     }
 
     $separator = '';
@@ -599,6 +669,9 @@ function webmcp_canary_sanitize_settings($input) {
     return array(
         'enabled' => !empty($input['enabled']) ? '1' : '0',
         'allow_ai_crawlers' => !empty($input['allow_ai_crawlers']) ? '1' : '0',
+        'ai_training' => isset($input['ai_training']) && in_array($input['ai_training'], array('default', 'allow', 'block'), true)
+            ? $input['ai_training']
+            : (in_array($current['ai_training'] ?? '', array('default', 'allow', 'block'), true) ? $current['ai_training'] : 'default'),
         'serve_llms_txt' => !empty($input['serve_llms_txt']) ? '1' : '0',
         'serve_schema' => !empty($input['serve_schema']) ? '1' : '0',
         'avoid_schema_duplicates' => !empty($input['avoid_schema_duplicates']) ? '1' : '0',
@@ -642,8 +715,27 @@ function webmcp_canary_allow_ai_crawlers_field() {
         '<label><input type="checkbox" name="%1$s[allow_ai_crawlers]" value="1" %2$s> %3$s</label>',
         esc_attr(WEBMCP_CANARY_OPTION),
         checked('1', $settings['allow_ai_crawlers'], false),
-        esc_html__('Explicitly allow major AI search and training crawlers in the virtual robots.txt file', 'nurevo-webmcp')
+        esc_html__('Allow AI search crawlers (ChatGPT search, Claude, Perplexity) in the virtual robots.txt file', 'nurevo-webmcp')
     );
+    echo '<p class="description">' . esc_html__('These fetch your pages to answer and cite them. Your existing robots.txt rules, such as /wp-admin/, keep applying to them.', 'nurevo-webmcp') . '</p>';
+
+    $choices = array(
+        'default' => __('Leave to my robots.txt (no change)', 'nurevo-webmcp'),
+        'allow'   => __('Allow', 'nurevo-webmcp'),
+        'block'   => __('Block', 'nurevo-webmcp'),
+    );
+    $current = isset($settings['ai_training']) && isset($choices[$settings['ai_training']]) ? $settings['ai_training'] : 'default';
+    echo '<fieldset style="margin-top:12px"><legend>' . esc_html__('AI training crawlers (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot)', 'nurevo-webmcp') . '</legend>';
+    foreach ($choices as $value => $label) {
+        printf(
+            '<label style="margin-right:16px"><input type="radio" name="%1$s[ai_training]" value="%2$s" %3$s> %4$s</label>',
+            esc_attr(WEBMCP_CANARY_OPTION),
+            esc_attr($value),
+            checked($current, $value, false),
+            esc_html($label)
+        );
+    }
+    echo '</fieldset><p class="description">' . esc_html__('These collect content to train AI models. They are not needed to appear in AI answers, so this is your choice.', 'nurevo-webmcp') . '</p>';
     echo '<p class="description">' . esc_html__('Applied only while Nurevo AEO is enabled and the site is visible to search engines.', 'nurevo-webmcp') . '</p>';
 }
 
@@ -1656,7 +1748,9 @@ function webmcp_canary_extract_from_wordpress() {
         'business_name' => get_option('blogname', get_bloginfo('name')),
         'business_description' => get_option('blogdescription', get_bloginfo('description')),
         'business_url' => home_url('/'),
-        'business_email' => get_option('admin_email', ''),
+        // Not the admin email: that is usually the installer's personal or the
+        // agency's address, and it would be published in JSON-LD and llms.txt.
+        // A business email is published only when the owner types one.
     ), function ($value) {
         return trim((string) $value) !== '';
     });
@@ -1692,6 +1786,44 @@ function webmcp_canary_extract_from_content() {
         $result['business_hours'] = trim($match[1]);
     }
     return $result;
+}
+
+/**
+ * 0.7.4: stop publishing the WordPress admin email as the business email.
+ *
+ * Earlier versions filled business_email from admin_email on activation, which
+ * published the installer's or agency's address in JSON-LD and llms.txt. Clear
+ * it once, but only where it is still that autofilled value: an address the
+ * owner typed themselves, even the same one, is kept if the extraction report
+ * does not list business_email as autofilled.
+ */
+define('WEBMCP_CANARY_WITHDRAWN_EMAIL_OPTION', 'webmcp_canary_withdrawn_email');
+add_action('admin_init', 'webmcp_canary_withdraw_autofilled_admin_email');
+function webmcp_canary_withdraw_autofilled_admin_email() {
+    if (get_option('webmcp_canary_migrated_074')) {
+        return;
+    }
+    update_option('webmcp_canary_migrated_074', 1, false);
+    $stored = get_option(WEBMCP_CANARY_OPTION, array());
+    if (!is_array($stored) || empty($stored['business_email'])) {
+        return;
+    }
+    $admin_email = strtolower(trim((string) get_option('admin_email', '')));
+    $report = get_option(WEBMCP_CANARY_EXTRACTION_OPTION, array());
+    $autofilled = is_array($report) && !empty($report['fields']) && in_array('business_email', (array) $report['fields'], true);
+    if ($admin_email === '' || strtolower(trim((string) $stored['business_email'])) !== $admin_email || !$autofilled) {
+        return;
+    }
+    update_option(WEBMCP_CANARY_WITHDRAWN_EMAIL_OPTION, $admin_email, false);
+    $stored['business_email'] = '';
+    update_option(WEBMCP_CANARY_OPTION, $stored);
+    delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
+    delete_option('webmcp_canary_llms_cache');
+}
+
+function webmcp_canary_is_withdrawn_email($value) {
+    $withdrawn = (string) get_option(WEBMCP_CANARY_WITHDRAWN_EMAIL_OPTION, '');
+    return $withdrawn !== '' && strtolower(trim((string) $value)) === $withdrawn;
 }
 
 /** Fill only empty Nurevo fields and return the fields populated this run. */
@@ -2495,17 +2627,30 @@ function webmcp_canary_llms_line($value) {
 /**
  * Resolve the llms.txt body to serve.
  *
- * Registered sites prefer the service response so a Standard license keeps the
- * output aligned with the current central ruleset. Everything else - and any
- * service failure - uses the locally generated baseline.
+ * Always the file this plugin builds from the site itself. The service's hosted
+ * version used to take priority on connected sites, but it carried less - no
+ * pages, products or services - and fixed Japanese headings whatever the site's
+ * language, so connecting a site made its llms.txt worse. Building locally also
+ * keeps a public /llms.txt request from waiting on a remote call.
  */
 function webmcp_canary_llms_txt_body() {
     $settings = webmcp_canary_settings();
     if ($settings['enabled'] !== '1' || $settings['serve_llms_txt'] !== '1') {
         return null;
     }
-    $remote = webmcp_canary_fetch_llms_txt();
-    return is_string($remote) && $remote !== '' ? $remote : webmcp_canary_build_local_llms_txt();
+    $body = webmcp_canary_build_local_llms_txt();
+    $delivered = webmcp_canary_delivered_ruleset_version();
+    if ($delivered > 0) {
+        // An HTML comment, not a "# " line, which Markdown would read as a second H1.
+        $body = rtrim($body, "\n") . "\n\n<!-- nurevo-aeo-ruleset:" . $delivered . " -->\n";
+    }
+    return $body;
+}
+
+/** The central ruleset version this site follows (paid, synced), or 0. */
+function webmcp_canary_delivered_ruleset_version() {
+    $payload = webmcp_canary_central_payload();
+    return is_array($payload) && !empty($payload['version']) ? intval($payload['version']) : 0;
 }
 
 function webmcp_canary_fetch_llms_txt() {
@@ -3055,8 +3200,10 @@ function webmcp_canary_sync_ruleset($force = false) {
         $state['crawler_allowed'] = !empty($body['crawlerAllowed']);
         $state['crawler_agents'] = isset($body['crawler_agents']) && is_array($body['crawler_agents']) ? $body['crawler_agents'] : array();
         if (!empty($body['autofix']) && is_array($body['autofix'])) {
+            // A proposal, not an instruction: it is shown to an administrator,
+            // who applies it with a button. Nothing the service returns changes
+            // this site's settings on its own.
             $state['autofix'] = $body['autofix'];
-            webmcp_canary_apply_autofix($body['autofix']);
         }
 
         // The field switches, not just the version. Storing only the number is
@@ -3251,6 +3398,11 @@ function webmcp_canary_apply_remote_profile($remote) {
             continue;
         }
         if ((string) $settings[$option_key] === $value) {
+            continue;
+        }
+        // An address this plugin once filled in from admin_email, and has since
+        // withdrawn, is not taken back from the service's copy.
+        if ($option_key === 'business_email' && webmcp_canary_is_withdrawn_email($value)) {
             continue;
         }
         $settings[$option_key] = $value;
@@ -3653,15 +3805,15 @@ function webmcp_canary_sov_page() {
 
         <?php if (!webmcp_canary_sov_enabled($settings)) : ?>
             <section class="webmcp-aeo-follow is-off">
-                <h2><?php esc_html_e('Measuring your visibility in AI answers is a Pro feature (beta, coming soon)', 'nurevo-webmcp'); ?></h2>
+                <h2><?php esc_html_e('Measuring your visibility in AI answers is a Pro feature (beta)', 'nurevo-webmcp'); ?></h2>
                 <p><?php esc_html_e('We put representative questions to the AI engines and measure how often your business is mentioned or cited in the answers, how that compares with competitors, and how it moves over time.', 'nurevo-webmcp'); ?></p>
                 <p>
                     <?php if ($settings['plan'] === 'pro') : ?>
                         <?php esc_html_e('Your Pro plan is active. Measurement needs a site key and site ID to be configured.', 'nurevo-webmcp'); ?>
                         <a href="<?php echo esc_url(admin_url('admin.php?page=webmcp-canary-settings')); ?>"><?php esc_html_e('Open settings', 'nurevo-webmcp'); ?></a>
                     <?php else : ?>
-                        <?php esc_html_e('Pro is not on sale yet. There is nothing to buy and nothing to set up - this screen will start working once measurement opens.', 'nurevo-webmcp'); ?>
-                        <a href="https://nurevo.jp/#pro-detail" target="_blank" rel="noopener"><?php esc_html_e('See what Pro will do', 'nurevo-webmcp'); ?></a>
+                        <?php esc_html_e('Pro is set up on the Nurevo dashboard, not in WordPress. Once this site is on Pro, this screen shows its measurements automatically.', 'nurevo-webmcp'); ?>
+                        <a href="https://nurevo.jp/#pro-detail" target="_blank" rel="noopener"><?php esc_html_e('See Pro details', 'nurevo-webmcp'); ?></a>
                     <?php endif; ?>
                 </p>
             </section>
@@ -4414,13 +4566,11 @@ function webmcp_canary_own_schema_bundle() {
         $org['description'] = $site_desc;
     }
     if (!empty($settings['business_address'])) {
-        // A bare string is what this has always published, and a free site
-        // keeps it. schema.org documents PostalAddress as the form for an
-        // address, and an engine reading streetAddress does not have to parse
-        // it out of prose - so following the criteria upgrades the shape.
-        $org['address'] = webmcp_canary_ruleset_allows('postaladdress')
-            ? array('@type' => 'PostalAddress', 'streetAddress' => $settings['business_address'])
-            : $settings['business_address'];
+        // schema.org documents PostalAddress as the form for an address, and an
+        // engine reading streetAddress does not have to parse it out of prose.
+        // Published on every plan: this code ships in the free download, so
+        // gating it on a licence would be locked functionality.
+        $org['address'] = array('@type' => 'PostalAddress', 'streetAddress' => $settings['business_address']);
     }
     if (!empty($settings['business_phone'])) {
         $org['telephone'] = $settings['business_phone'];
@@ -4916,20 +5066,93 @@ function webmcp_canary_apply_autofix($job) {
     update_option(WEBMCP_CANARY_OPTION, $settings, false);
     delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
     delete_option('webmcp_canary_llms_cache');
-    // Cache plugins can purge their public page cache here. Verification waits
-    // for a fresh public fetch and never treats this local apply as delivery.
-    if (function_exists('wp_cache_flush')) { wp_cache_flush(); }
+    // Purge the cached front page so the change is visible. Only page caches are
+    // asked; the object cache is left alone, since flushing it empties every
+    // plugin's cache at once. Verification waits for a fresh public fetch.
     if (function_exists('rocket_clean_home')) { rocket_clean_home(); }
     if (function_exists('w3tc_flush_url')) { w3tc_flush_url(home_url('/')); }
     do_action('litespeed_purge_url', home_url('/'));
     do_action('webmcp_canary_aeo_cache_purge', $job);
     update_option('webmcp_canary_autofix_state', array('applied_at' => $stamp, 'missing_json' => isset($job['missing_json']) ? $job['missing_json'] : '{}'), false);
 }
+/** The autofix proposal from the service that has not been applied yet, or null. */
+function webmcp_canary_pending_autofix() {
+    $state = webmcp_canary_ruleset_state();
+    $job = isset($state['autofix']) && is_array($state['autofix']) ? $state['autofix'] : null;
+    if (!$job || empty($job['requested_at'])) {
+        return null;
+    }
+    $applied = get_option('webmcp_canary_autofix_state', array());
+    $done = array();
+    foreach (array('applied_at', 'dismissed_at') as $key) {
+        if (!empty($applied[$key])) {
+            $done[] = (string) $applied[$key];
+        }
+    }
+    return in_array((string) $job['requested_at'], $done, true) ? null : $job;
+}
+
+/** Human labels for the actions a proposal may contain. */
+function webmcp_canary_autofix_action_labels($job) {
+    $actions = json_decode(isset($job['actions_json']) ? $job['actions_json'] : '[]', true);
+    $labels = array(
+        'harvest_profile' => __('Fill empty business details from your site', 'nurevo-webmcp'),
+        'publish_schema'  => __('Turn on structured data output', 'nurevo-webmcp'),
+        'publish_llms'    => __('Turn on /llms.txt', 'nurevo-webmcp'),
+        'allow_crawlers'  => __('Allow AI search crawlers in robots.txt', 'nurevo-webmcp'),
+    );
+    $out = array();
+    foreach (is_array($actions) ? $actions : array() as $action) {
+        if (isset($labels[$action])) {
+            $out[] = $labels[$action];
+        }
+    }
+    return $out;
+}
+
+add_action('admin_post_webmcp_canary_apply_autofix', 'webmcp_canary_apply_autofix_action');
+function webmcp_canary_apply_autofix_action() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You do not have permission to perform this action.', 'nurevo-webmcp'));
+    }
+    check_admin_referer('webmcp_canary_apply_autofix');
+    $job = webmcp_canary_pending_autofix();
+    $dismiss = !empty($_POST['dismiss']); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+    if ($job) {
+        if ($dismiss) {
+            $state = get_option('webmcp_canary_autofix_state', array());
+            $state = is_array($state) ? $state : array();
+            $state['dismissed_at'] = (string) $job['requested_at'];
+            update_option('webmcp_canary_autofix_state', $state, false);
+        } else {
+            webmcp_canary_apply_autofix($job);
+        }
+    }
+    wp_safe_redirect(admin_url('admin.php?page=webmcp-canary'));
+    exit;
+}
+
 add_action('admin_notices', 'webmcp_canary_autofix_notice');
 function webmcp_canary_autofix_notice() {
     if (!current_user_can('manage_options')) { return; }
     $settings = webmcp_canary_settings();
     if (!webmcp_canary_auto_follow_enabled($settings)) { return; }
+
+    $job = webmcp_canary_pending_autofix();
+    $labels = $job ? webmcp_canary_autofix_action_labels($job) : array();
+    if (!empty($labels)) {
+        echo '<div class="notice notice-info"><p><strong>' . esc_html__('Nurevo suggests these changes:', 'nurevo-webmcp') . '</strong></p><ul style="list-style:disc;margin-left:20px">';
+        foreach ($labels as $label) {
+            echo '<li>' . esc_html($label) . '</li>';
+        }
+        echo '</ul><form method="post" action="' . esc_url(admin_url('admin-post.php')) . '" style="margin:0 0 10px">';
+        echo '<input type="hidden" name="action" value="webmcp_canary_apply_autofix">';
+        wp_nonce_field('webmcp_canary_apply_autofix');
+        echo '<button type="submit" class="button button-primary">' . esc_html__('Apply', 'nurevo-webmcp') . '</button> ';
+        echo '<button type="submit" name="dismiss" value="1" class="button">' . esc_html__('Not now', 'nurevo-webmcp') . '</button>';
+        echo '</form></div>';
+    }
+
     $state = get_option('webmcp_canary_autofix_state', array());
     $detail = json_decode(isset($state['missing_json']) ? $state['missing_json'] : '{}', true);
     if (empty($detail['action_required'])) { return; }

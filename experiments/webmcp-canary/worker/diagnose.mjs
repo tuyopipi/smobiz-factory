@@ -15,6 +15,7 @@ import { requestAutoFix } from "./aeo-autofix.mjs";
  */
 
 import { AeoScoreError, diagnoseAeoUrl, localizeAeoChecks } from "./aeo-score.mjs";
+import { diagnosisText, resolveDiagnosisLang } from "./diagnosis-i18n.mjs";
 
 const UA = "Nurevo-Diagnostics/1.0 (+https://nurevo.jp)";
 const TIMEOUT_MS = 8000;
@@ -35,7 +36,7 @@ export async function handleDiagnose(request, env) {
 
   const url = new URL(request.url);
   const raw = url.searchParams.get("url") || "";
-  const lang = url.searchParams.get("lang") === "en" ? "en" : "ja";
+  const lang = diagnoseLang(url.searchParams.get("lang"));
 
   try {
     const { diagnosticOptions } = await import('./api.mjs');
@@ -65,11 +66,21 @@ export async function diagnoseUrl(raw, lang = "ja", options = {}) {
   return {
     ...result,
     scorable: true,
-    verdict: result.band === "green"
-      ? (lang === "en" ? "Good" : "良好")
-      : result.band === "yellow" ? (lang === "en" ? "Needs improvement" : "要改善")
-        : (lang === "en" ? "Critical" : "危険"),
+    verdict: diagnosisText(lang, `verdict.${["green", "yellow"].includes(result.band) ? result.band : "red"}`),
   };
+}
+
+/**
+ * The language /api/diagnose answers in. Japanese when the caller names none -
+ * or names one that is not a language at all - as it always has; otherwise the
+ * catalog the request resolves to, so a WordPress locale such as de_DE or
+ * pt_BR gets German or Brazilian Portuguese instead of being forced to ja/en.
+ */
+export function diagnoseLang(requested) {
+  const value = String(requested ?? "").trim();
+  if (value === "") return "ja";
+  const lang = resolveDiagnosisLang(value);
+  return lang === "en" && !/^en(?:[-_]|$)/i.test(value) ? "ja" : lang;
 }
 
 class DiagnoseError extends Error {

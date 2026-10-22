@@ -8,7 +8,6 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { execFileSync } from "node:child_process";
 
 const PLUGIN_DIR = "wordpress-plugin/webmcp-canary";
 const SOURCE = `${PLUGIN_DIR}/nurevo-webmcp.php`;
@@ -505,6 +504,32 @@ const JA = {
   "Off by default, and not needed for AEO. The AEO score, schema.org output, llms.txt and AI crawler rules all work with this off. Turning it on loads a script from the service URL above on every public page and reports public form structure and privacy-safe outcomes; values your visitors type are not sent. Leave it off unless Nurevo support asked you to enable it.":
     "既定はオフで、AEOには不要です。AEOスコア・schema.org出力・llms.txt・AIクローラー許可は、オフのままでも動作します。オンにすると上記サービスURLのスクリプトを全公開ページで読み込み、公開フォームの構造とプライバシーに配慮した結果を送信します（訪問者が入力した値は送信しません）。Nurevoサポートから指示がない限り、オフのままにしてください。",
 
+  // AI crawler split and approved suggestions (0.7.4).
+  "Allow AI search crawlers (ChatGPT search, Claude, Perplexity) in the virtual robots.txt file":
+    "AI検索のクローラー（ChatGPT検索・Claude・Perplexity）を仮想robots.txtで許可する",
+  "These fetch your pages to answer and cite them. Your existing robots.txt rules, such as /wp-admin/, keep applying to them.":
+    "回答や引用のためにページを読み込むクローラーです。/wp-admin/ など、既存のrobots.txtのルールは引き続き適用されます。",
+  "Leave to my robots.txt (no change)": "サイトのrobots.txtに任せる（変更しない）",
+  "Allow": "許可",
+  "Block": "ブロック",
+  "AI training crawlers (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot)":
+    "AI学習用のクローラー（GPTBot・ClaudeBot・Google-Extended・Applebot-Extended・CCBot）",
+  "These collect content to train AI models. They are not needed to appear in AI answers, so this is your choice.":
+    "AIモデルの学習用にコンテンツを収集するクローラーです。AIの回答に表示されるためには不要なので、許可するかどうかはお任せします。",
+  "Fill empty business details from your site": "空欄の事業者情報をサイトの内容から補う",
+  "Turn on structured data output": "構造化データの出力をオンにする",
+  "Turn on /llms.txt": "/llms.txt をオンにする",
+  "Allow AI search crawlers in robots.txt": "robots.txtでAI検索のクローラーを許可する",
+  "Nurevo suggests these changes:": "Nurevo からの変更の提案：",
+  "Apply": "適用",
+  "Not now": "今はしない",
+
+  // Pro wording that holds whether or not Pro is on sale (0.7.4).
+  "Measuring your visibility in AI answers is a Pro feature (beta)": "AIの回答での見られ方の計測は、Proプランの機能です（β）",
+  "Pro is set up on the Nurevo dashboard, not in WordPress. Once this site is on Pro, this screen shows its measurements automatically.":
+    "Proプランの設定は WordPress ではなく Nurevo のダッシュボードで行います。このサイトが Pro になると、この画面に計測結果が自動で表示されます。",
+  "See Pro details": "Proプランの詳細を見る",
+
   // Continuous optimization (0.7.2).
   "Automatic optimization found information that needs your confirmation. Please publish only real information.":
     "自動最適化で、確認が必要な情報が見つかりました。実在する情報だけを公開してください。",
@@ -522,12 +547,32 @@ msgstr ""
 "X-Generator: scripts/generate-plugin-translations.mjs\\n"
 `;
 
+// Every locale this plugin ships. The list follows the locales Yoast SEO ships
+// on WordPress.org. `from` reuses another locale's dictionary (regional variants
+// that read the same), optionally passed through a transform.
+const LOCALES_FILE = `${LANG_DIR}/i18n/locales.json`;
+const DICTIONARY_DIR = `${LANG_DIR}/i18n`;
+
+// No plural calls (_n) exist in the plugin, but the header should still be right.
+const ONE_FORM = new Set(["ja", "ko_KR", "zh_CN", "zh_TW", "zh_HK", "vi", "id_ID", "lo", "fa_IR"]);
+function pluralForms(locale) {
+  if (ONE_FORM.has(locale)) return "nplurals=1; plural=0";
+  if (["fr_FR", "fr_BE", "fr_CA", "pt_BR"].includes(locale)) return "nplurals=2; plural=(n > 1)";
+  if (["ru_RU", "uk", "hr", "sr_RS"].includes(locale)) return "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)";
+  if (["cs_CZ", "sk_SK"].includes(locale)) return "nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2";
+  if (locale === "pl_PL") return "nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)";
+  if (locale === "sl_SI") return "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3)";
+  if (locale === "ro_RO") return "nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2)";
+  if (locale === "ar") return "nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=11 ? 4 : 5)";
+  return "nplurals=2; plural=(n != 1)";
+}
+
 function poHeader(locale) {
   return `# Copyright (C) 2026 Nurevo
 # This file is distributed under the same license as the Nurevo AEO package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Nurevo AEO 0.1.0\\n"
+"Project-Id-Version: Nurevo AEO\\n"
 "Report-Msgid-Bugs-To: https://nurevo.jp/nurevo-webmcp/\\n"
 "Last-Translator: Nurevo <support@nurevo.jp>\\n"
 "Language-Team: ${locale} <support@nurevo.jp>\\n"
@@ -535,7 +580,7 @@ msgstr ""
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=UTF-8\\n"
 "Content-Transfer-Encoding: 8bit\\n"
-"Plural-Forms: ${locale === "ja" ? "nplurals=1; plural=0" : "nplurals=2; plural=(n != 1)"};\\n"
+"Plural-Forms: ${pluralForms(locale)};\\n"
 "X-Generator: scripts/generate-plugin-translations.mjs\\n"
 `;
 }
@@ -553,18 +598,122 @@ function emit(header, translate) {
   return output;
 }
 
-const missing = [];
+/**
+ * GNU .mo writer, so no gettext install is needed here or in CI.
+ * Little-endian, revision 0, no hash table (WordPress does not use it).
+ */
+function moBuffer(headerText, pairs) {
+  const all = [["", headerText], ...pairs].sort((a, b) => Buffer.compare(Buffer.from(a[0]), Buffer.from(b[0])));
+  const count = all.length;
+  const headerSize = 28;
+  const originalsTable = headerSize;
+  const translationsTable = originalsTable + count * 8;
+  let offset = translationsTable + count * 8;
+  const originals = [], translations = [];
+  for (const [id] of all) {
+    const bytes = Buffer.from(id, "utf8");
+    originals.push({ bytes, offset });
+    offset += bytes.length + 1;
+  }
+  for (const [, str] of all) {
+    const bytes = Buffer.from(str, "utf8");
+    translations.push({ bytes, offset });
+    offset += bytes.length + 1;
+  }
+  const out = Buffer.alloc(offset);
+  out.writeUInt32LE(0x950412de, 0);
+  out.writeUInt32LE(0, 4);
+  out.writeUInt32LE(count, 8);
+  out.writeUInt32LE(originalsTable, 12);
+  out.writeUInt32LE(translationsTable, 16);
+  out.writeUInt32LE(0, 20);
+  out.writeUInt32LE(0, 24);
+  all.forEach((_, i) => {
+    out.writeUInt32LE(originals[i].bytes.length, originalsTable + i * 8);
+    out.writeUInt32LE(originals[i].offset, originalsTable + i * 8 + 4);
+    out.writeUInt32LE(translations[i].bytes.length, translationsTable + i * 8);
+    out.writeUInt32LE(translations[i].offset, translationsTable + i * 8 + 4);
+  });
+  for (const item of [...originals, ...translations]) item.bytes.copy(out, item.offset);
+  return out;
+}
+
+/** The header block of a .po, as the msgstr of the empty msgid. */
+function headerMsgstr(locale) {
+  return [
+    "Project-Id-Version: Nurevo AEO",
+    `Language: ${locale}`,
+    "MIME-Version: 1.0",
+    "Content-Type: text/plain; charset=UTF-8",
+    "Content-Transfer-Encoding: 8bit",
+    `Plural-Forms: ${pluralForms(locale)};`,
+  ].join("\n") + "\n";
+}
+
+const TRANSFORMS = {
+  // Swiss Standard German does not use ß.
+  "de-CH": (value) => value.replace(/ß/g, "ss"),
+  // Hong Kong reads Traditional Chinese; the Taiwan dictionary is the base.
+  identity: (value) => value,
+};
+
+/** Placeholders (%s, %1$s, %d) must survive translation unchanged. */
+function placeholders(value) {
+  return (value.match(/%(?:\d+\$)?[sd]/g) || []).sort().join(",");
+}
+
+const missing = new Map();
+function note(locale, msgid) {
+  if (!missing.has(locale)) missing.set(locale, []);
+  missing.get(locale).push(msgid);
+}
+
 const japanese = (msgid) => {
   if (JA[msgid] !== undefined) return JA[msgid];
   // Already Japanese in the source: no separate translation needed.
-  if (/[\u3040-\u30ff\u4e00-\u9faf]/.test(msgid)) return msgid;
-  missing.push(msgid);
+  if (/[぀-ヿ一-龯]/.test(msgid)) return msgid;
+  note("ja", msgid);
   return msgid;
 };
 
+function loadDictionary(locale) {
+  const file = path.join(DICTIONARY_DIR, `${locale}.json`);
+  if (locale === "ja") return null;
+  if (!fs.existsSync(file)) return {};
+  return JSON.parse(fs.readFileSync(file, "utf8"));
+}
+
+function translatorFor(locale, spec) {
+  if (locale === "ja") return japanese;
+  const base = spec && spec.from ? spec.from : locale;
+  if (base === "ja") return japanese;
+  const dictionary = loadDictionary(base);
+  const transform = TRANSFORMS[(spec && spec.transform) || "identity"];
+  return (msgid) => {
+    let value = dictionary[msgid];
+    // English variants may leave a string as the source when nothing differs.
+    if ((value === undefined || value === "") && /^en_/.test(base)) value = msgid;
+    if (value === undefined || value === "") {
+      note(locale, msgid);
+      return "";
+    }
+    if (placeholders(value) !== placeholders(msgid)) {
+      note(locale, `${msgid}  [placeholder mismatch]`);
+      return "";
+    }
+    return transform(value);
+  };
+}
+
 fs.mkdirSync(LANG_DIR, { recursive: true });
 fs.writeFileSync(path.join(LANG_DIR, `${DOMAIN}.pot`), emit(POT_HEADER, () => ""));
-fs.writeFileSync(path.join(LANG_DIR, `${DOMAIN}-ja.po`), emit(poHeader("ja"), japanese));
+
+// Machine-readable source list for translators: msgid -> Japanese reference.
+fs.mkdirSync(DICTIONARY_DIR, { recursive: true });
+fs.writeFileSync(
+  path.join(DICTIONARY_DIR, "_source.json"),
+  JSON.stringify(Object.fromEntries(sorted.map(([msgid]) => [msgid, JA[msgid] ?? ""])), null, 2) + "\n"
+);
 
 // No en_US catalogue: the source strings are English, so it could only ever be
 // msgid == msgstr. Shipping one just adds weight and invites the two to drift.
@@ -572,18 +721,21 @@ for (const stale of ["en_US.po", "en_US.mo"]) {
   fs.rmSync(path.join(LANG_DIR, `${DOMAIN}-${stale}`), { force: true });
 }
 
-for (const locale of ["ja"]) {
-  const po = path.join(LANG_DIR, `${DOMAIN}-${locale}.po`);
-  try {
-    execFileSync("msgfmt", ["-o", path.join(LANG_DIR, `${DOMAIN}-${locale}.mo`), po], { stdio: "pipe" });
-  } catch (error) {
-    console.warn(`msgfmt unavailable or failed for ${locale}; .mo not rebuilt`);
-  }
+const locales = JSON.parse(fs.readFileSync(LOCALES_FILE, "utf8"));
+for (const [locale, spec] of Object.entries(locales)) {
+  const translate = translatorFor(locale, spec);
+  const values = sorted.map(([msgid]) => [msgid, translate(msgid)]);
+  const lookup = new Map(values);
+  fs.writeFileSync(path.join(LANG_DIR, `${DOMAIN}-${locale}.po`), emit(poHeader(locale), (msgid) => lookup.get(msgid)));
+  const pairs = values.filter(([, value]) => value !== "");
+  fs.writeFileSync(path.join(LANG_DIR, `${DOMAIN}-${locale}.mo`), moBuffer(headerMsgstr(locale), pairs));
 }
 
-console.log(`Extracted ${sorted.length} strings from ${SOURCE}`);
-if (missing.length) {
-  console.warn(`Untranslated (ja) strings: ${missing.length}`);
-  for (const msgid of missing) console.warn(`  - ${msgid}`);
+console.log(`Extracted ${sorted.length} strings from ${SOURCE}; wrote ${Object.keys(locales).length} locales`);
+if (missing.size) {
+  for (const [locale, list] of missing) {
+    console.warn(`Untranslated (${locale}): ${list.length}`);
+    for (const msgid of list.slice(0, 5)) console.warn(`  - ${msgid}`);
+  }
   process.exitCode = 1;
 }

@@ -17,7 +17,7 @@
  *
  * Usage: npm run plugin:build
  */
-import { createWriteStream } from "node:fs";
+import { createWriteStream, readFileSync } from "node:fs";
 import { cp, mkdir, rm, readFile, stat } from "node:fs/promises";
 import { execFile } from "node:child_process";
 import path from "node:path";
@@ -41,10 +41,12 @@ const INCLUDE = [
   "assets/icon.svg",  // used by the admin screens at runtime
   "assets/logo.svg",
   "languages/nurevo-webmcp.pot",
-  // Japanese only. The source strings are English, so an en_US catalogue could
-  // only repeat them back.
   "languages/nurevo-webmcp-ja.po",
-  "languages/nurevo-webmcp-ja.mo",
+  // One compiled catalogue per shipped locale (languages/i18n/locales.json).
+  // Only .mo: WordPress loads that, and 59 .po files would double the download.
+  // No en_US: the source strings are English.
+  ...Object.keys(JSON.parse(readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), "..", "wordpress-plugin/webmcp-canary/languages/i18n/locales.json"), "utf8")))
+    .map((locale) => `languages/nurevo-webmcp-${locale}.mo`),
 ];
 
 /**

@@ -5,6 +5,9 @@ export const DEFAULT_SCORING = Object.freeze({
   schemaOk:0.8, coverageOk:0.8, coverageWarn:0.4, coverageMix:[0.6,0.4],
   legibilityMix:[0.6,0.2,0.2], legibilityOk:0.75, legibilityWarn:0.4,
   llmsOk:0.7, gateCap:15, greenAt:80, yellowAt:50,
+  // Kept identical to the ruleset snapshot stored by migration 0032. Training
+  // bots in this list are ignored by the reachability gate (gateCrawlers() in
+  // aeo-score.mjs), so blocking them never lowers a score.
   aiCrawlers:[
   "GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-Web",
   "PerplexityBot", "Google-Extended", "Applebot-Extended",

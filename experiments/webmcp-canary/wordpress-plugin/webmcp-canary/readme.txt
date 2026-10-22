@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.7.3
+Stable tag: 0.7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,8 +24,9 @@ Everything below runs on the free plan. No license key, no trial period, no feat
 * **One-click fixes** — basic schema.org structured data, llms.txt and AI crawler access are fixed from the admin screen.
 * **Server-rendered schema.org JSON-LD** — emitted into the page HTML, so crawlers that never run JavaScript still read it.
 * **llms.txt** — served at `/llms.txt`. Generated inside the plugin from your WordPress content, so it works with no site key and no network access.
-* **AI crawler rules** — robots.txt entries that explicitly allow GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, anthropic-ai, PerplexityBot, Google-Extended, CCBot and Applebot-Extended.
-* **Business data extraction** — reads your existing SEO plugin settings, WordPress options and clearly labelled public content to fill in blank fields only. Values you have typed are never overwritten.
+* **AI crawler rules** — robots.txt entries that allow the crawlers AI search uses to read and cite your pages: OAI-SearchBot and ChatGPT-User (ChatGPT), Claude-SearchBot and Claude-User (Claude), PerplexityBot and Perplexity-User (Perplexity). Your existing robots.txt rules, such as /wp-admin/, keep applying to them.
+* **Your choice on AI training** — crawlers that collect content to train AI models (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot) are left to your robots.txt by default. You can allow or block them in one click. Blocking them does not affect AI search or your AEO score.
+* **Business data extraction** — reads your existing SEO plugin settings, WordPress options and clearly labelled public content to fill in blank fields only. Values you have typed are never overwritten. The WordPress administrator email is never used as your business email.
 
 = Works alongside Yoast SEO and Rank Math =
 
@@ -83,13 +84,9 @@ This plugin relies on the Nurevo service, operated by Bestie. LLC. It is not req
 * Diagnosis history — sends the site key, site ID and language. Endpoint: `/api/sites/{id}/aeo-score`.
 * Business profile — reads and updates the profile the service holds. Sends the business details from Settings: name, description, address, telephone, opening hours, business type, website URL and business email. Endpoint: `/api/sites/{id}/profile` (GET and PUT).
 * Catalogue — sends what the site offers so the service can publish the same facts: WooCommerce product names, URLs, SKUs, prices, currency, stock status and categories; the services, FAQ questions and answers entered in Settings; and the titles and URLs of your 30 most recently updated published posts and pages. Endpoint: `/api/sites/{id}/catalog` (PUT).
-* Ruleset — sends the site key and receives the current output criteria and plan. Endpoint: `/api/tag/config`.
+* Ruleset — sends the site key and receives the current output criteria and plan. When the service suggests changes (for example turning on llms.txt), they are shown in wp-admin and applied only when an administrator clicks Apply. Endpoint: `/api/tag/config`.
 * Site insights — sends the site key and host. Endpoint: `/api/site-insights`.
 * AI visibility measurement (Pro, beta) — sends the site key and site ID. Endpoint: `/api/sites/{id}/sov`.
-
-*On a public request for `/llms.txt`, once the site has a site key:*
-
-* Hosted llms.txt — sends the site key and host, and caches the answer for six hours. If the service cannot be reached, the plugin serves the llms.txt it builds itself. Endpoint: `/api/llms.txt`.
 
 The plugin also requests your own front page once a day (a loopback request to your own server, not to Nurevo) to see which structured data your other plugins already publish.
 
@@ -137,7 +134,7 @@ No. There is no locked or encrypted PHP in this plugin. A license changes which 
 
 = Does llms.txt work without the external service? =
 
-Yes. With no site key, or when the service cannot be reached, the plugin builds `/llms.txt` from your WordPress content and serves it itself.
+Yes. The plugin always builds `/llms.txt` from your WordPress content and serves it itself, connected to the service or not. A request for `/llms.txt` never waits on the service.
 
 = Does this replace my SEO plugin? =
 
@@ -145,7 +142,7 @@ No. Keep using a traditional SEO plugin for ordinary search. Nurevo AEO adds AI-
 
 = Does the plugin put anything on my public pages that talks to your servers? =
 
-Not unless you ask it to. The optional browser tag is off by default, and with it off no third-party script is loaded and no visitor data is sent anywhere. The AEO features do not use it. The requests the plugin does make are listed under "External services": on activation, in wp-admin, from WP-Cron once a site is connected, and for `/llms.txt` on connected sites. None of them includes visitor data.
+Not unless you ask it to. The optional browser tag is off by default, and with it off no third-party script is loaded and no visitor data is sent anywhere. The AEO features do not use it. The requests the plugin does make are listed under "External services": on activation, in wp-admin, and from WP-Cron once a site is connected. None of them includes visitor data.
 
 = Does it send what my visitors type into forms? =
 
@@ -166,6 +163,15 @@ It is a beta feature. It samples AI answers rather than observing every response
 3. Works with Yoast SEO and Rank Math — Nurevo fills the business details they leave out, no duplicate schema.
 
 == Changelog ==
+
+= 0.7.4 =
+* AI crawlers are now split by purpose. Crawlers that read and cite pages for AI search (OAI-SearchBot, ChatGPT-User, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User) are allowed. Training crawlers (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot) are left to your robots.txt unless you choose to allow or block them. Blocking them no longer lowers the AEO score.
+* The robots.txt groups Nurevo adds now repeat your site's own rules, such as Disallow: /wp-admin/. Before, a crawler named in its own group skipped those rules.
+* The Nurevo service can no longer switch your robots.txt to Disallow, or change your settings, on its own. Its suggestions appear in wp-admin with an Apply button. Applying no longer empties the whole object cache.
+* The WordPress administrator email is no longer filled in as the business email. Sites where 0.7.3 or earlier filled it in automatically have it removed from JSON-LD and llms.txt on upgrade; an address you typed yourself is kept.
+* Addresses are published as a schema.org PostalAddress on every plan.
+* /llms.txt is always the file the plugin builds from your site, with your pages, products and services, in your site's language. Connected sites used to receive a shorter hosted version with Japanese headings.
+* Translations for 59 languages are bundled.
 
 = 0.7.3 =
 * No more parallel structured data. With Yoast SEO, Rank Math or All in One SEO, Nurevo AEO now adds the missing facts - address, telephone, opening hours, a specific business type, FAQ questions and services - into the graph your SEO plugin already publishes, instead of printing a second graph beside it. Your SEO plugin's own values are never overwritten.
@@ -240,6 +246,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.7.4 =
+
+Separates AI search crawlers from AI training crawlers, keeps your robots.txt rules in force for them, stops publishing the admin email, and makes service suggestions wait for your approval.
 
 = 0.7.3 =
 
