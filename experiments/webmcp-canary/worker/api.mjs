@@ -3059,12 +3059,22 @@ async function loadOwnedSite(env, actor, siteId) {
 }
 
 /*
- * Consumption tax. Plan prices (3,000 / 14,800 JPY) are tax-exclusive, so 10%
+ * Consumption tax. Plan prices (3,000 / 14,800 JPY) are tax-exclusive, so tax
  * has to be added on top. Two ways, set by environment:
- *   STRIPE_AUTOMATIC_TAX="1"  Stripe Tax (needs a JP registration in Stripe
- *                             and prices with tax_behavior=exclusive). Works
- *                             for Checkout and Payment Links.
- *   STRIPE_TAX_RATE_ID=txr_…  a fixed 10% exclusive Tax Rate object. Checkout
+ *   STRIPE_AUTOMATIC_TAX="1"  Stripe Tax. Required as soon as anyone outside
+ *                             Japan can buy: Japanese consumption tax applies
+ *                             to digital services only when the CUSTOMER is in
+ *                             Japan (内外判定 by the recipient's address);
+ *                             abroad it is out of scope and the customer's
+ *                             country's VAT/GST may apply instead. Stripe Tax
+ *                             decides per customer location and registration,
+ *                             and a collected VAT/GST ID turns EU/UK-style B2B
+ *                             sales into reverse charge. Needs registrations in
+ *                             Stripe (at least Japan) and prices with
+ *                             tax_behavior=exclusive. Checkout and Payment Links.
+ *   STRIPE_TAX_RATE_ID=txr_…  a fixed 10% exclusive Tax Rate. Only correct when
+ *                             every customer is in Japan: it would charge
+ *                             Japanese tax to an overseas customer. Checkout
  *                             only; Payment Links have no tax_rates field.
  * With neither set, nothing is added - the state before this change.
  */
@@ -3080,6 +3090,9 @@ function automaticTaxEnabled(env) {
 export function applyConsumptionTax(form, env, { lineItem = true } = {}) {
   if (automaticTaxEnabled(env)) {
     form.set("automatic_tax[enabled]", "true");
+    // Lets a business enter its VAT/GST/JCT number, so Stripe Tax can apply
+    // reverse charge where the customer's country uses it.
+    form.set("tax_id_collection[enabled]", "true");
     return true;
   }
   if (lineItem && taxRateId(env)) {
