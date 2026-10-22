@@ -6,7 +6,7 @@ import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailP
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler, searchCrawlerRobotsLines } from "./ai-crawlers.js";
-import { AEO_CACHE_TTL_SECONDS, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, publishedSchemaProps, resolveAeoCheckLang } from "./aeo-score.mjs";
+import { AEO_CACHE_TTL_SECONDS, AEO_FRESH_RATE_LIMIT, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, publishedSchemaProps, resolveAeoCheckLang } from "./aeo-score.mjs";
 import { storeAeoScore } from "./diagnose.mjs";
 import {
   SOV_BETA, SOV_LIMITS, SOV_MODEL_VERSION, SovError,
@@ -391,8 +391,17 @@ export async function handleApi(request, env, ctx) {
     const raw = url.searchParams.get("url") || "";
     const rate = await aeoPublicRateLimit(request, env);
     if (!rate.allowed) return json({ error: "rate_limited" }, 429, { "retry-after": String(rate.retryAfter) });
+    // fresh=1: "I just changed the page, score it as it is now". Skips the KV
+    // read and is never stored by a browser or the edge. It is limited per
+    // host rather than per caller, because the cost it protects is the
+    // customer's server being fetched, not ours.
+    const fresh = aeoFreshRequested(url);
     try {
       const lang = requestedAeoLang(request, url);
+      if (fresh) {
+        const limited = await aeoFreshRateLimit(env, raw);
+        if (limited) return limited;
+      }
       // The cache key deliberately excludes the language: one diagnosis is
       // reused for every language, and the wording is applied on the way out.
       // Caching per language would multiply the entries and let the first
@@ -402,12 +411,15 @@ export async function handleApi(request, env, ctx) {
   const schemaRules = definition.schema;
       const rulesHash = await aeoSha256Hex(JSON.stringify(definition));
       const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
-      const cached = await env.WEBMCP_KV?.get(cacheKey, "json");
+      const cached = fresh ? null : await env.WEBMCP_KV?.get(cacheKey, "json");
       const vary = { "cache-control": `public, max-age=${AEO_CACHE_TTL_SECONDS}`, "vary": "accept-language" };
       if (cached) return json(aeoResponse(cached, lang), 200, { ...vary, "x-aeo-cache": "hit" });
-      const result = await diagnoseAeoUrl(raw, { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version });
+      const result = await diagnoseAeoUrl(raw, { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, fresh });
+      // A fresh result is still written back, so the next ordinary visitor
+      // sees the fixed page too instead of the copy the fix replaced.
       const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(aeoResponse(result)), { expirationTtl: AEO_CACHE_TTL_SECONDS });
       if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
+      if (fresh) return json(aeoResponse(result, lang), 200, { "cache-control": "no-store", "vary": "accept-language", "x-aeo-cache": "bypass" });
       return json(aeoResponse(result, lang), 200, { ...vary, "x-aeo-cache": "miss" });
     } catch (error) {
       if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
@@ -502,14 +514,25 @@ export async function handleApi(request, env, ctx) {
     if (!site) return json({ error: "not_found" }, 404);
     const target = String(site.website_uri || site.url || "").trim()
       || (site.slug ? `https://nurevo.jp/s/${encodeURIComponent(site.slug)}` : "");
+    // This endpoint never read a cache, but fresh=1 is accepted here too so the
+    // plugin can send the same parameter to both: it makes the fetch of the
+    // customer's page ask their page cache / CDN for a current copy, and is
+    // limited per host like the public endpoint.
+    const fresh = aeoFreshRequested(url);
+    const targetUrl = /^https?:\/\//i.test(target) ? target : `https://${target}`;
+    if (fresh) {
+      const limited = await aeoFreshRateLimit(env, targetUrl);
+      if (limited) return limited;
+    }
     try {
-      const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`, {
+      const result = await diagnoseAeoUrl(targetUrl, {
         ...(await diagnosticOptions(env, siteId)),
+        fresh,
       });
       // Stored history keeps the default wording; only the reply is localised,
       // so the archive stays comparable across requests from different locales.
       await storeAeoScore(env, site.id, { ...result, verdict: result.band });
-      return json(aeoResponse(result, requestedAeoLang(request, url)), 200, { "vary": "accept-language" });
+      return json(aeoResponse(result, requestedAeoLang(request, url)), 200, { "vary": "accept-language", ...(fresh ? { "x-aeo-cache": "bypass" } : {}) });
     } catch (error) {
       if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
       throw error;
@@ -813,7 +836,8 @@ export async function handleApi(request, env, ctx) {
   if (["/api/auth/signup", "/api/auth/magic-link"].includes(path) && method === "POST") {
     return handleMagicRequest(request, env, { accountAuth: true, signup: path.endsWith("signup") });
   }
-  if (path === "/api/auth/verify" && method === "GET") return handleMagicCallback(request, env, true);
+  // GET renders the confirm page; POST (its button) signs in.
+  if (path === "/api/auth/verify" && ["GET", "POST"].includes(method)) return handleMagicCallback(request, env, true);
   if (path === "/api/partner" && method === "GET") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
@@ -829,7 +853,7 @@ export async function handleApi(request, env, ctx) {
     return handleMagicRequest(request, env);
   }
 
-  if (path === "/api/auth/callback" && method === "GET") {
+  if (path === "/api/auth/callback" && ["GET", "POST"].includes(method)) {
     return handleMagicCallback(request, env);
   }
 
@@ -1020,9 +1044,26 @@ export async function handleApi(request, env, ctx) {
 
   if (path === "/api/tag/config" && method === "GET") {
     const auth = await authorizeSiteKey(env, url.searchParams.get("k") || url.searchParams.get("siteKey"));
-    if (!auth.registered) return json({ ok: false }, 404);
+    // A known key whose delivery billing (or the owner) stopped is told so,
+    // with 200. It used to get the same 404 as a key that never existed, so
+    // the plugin kept its cached paid plan and never learned it had lost it.
+    // Nothing paid travels with it: no central JSON-LD, no autofix.
+    const stoppedBody = () => json({
+      ok: true,
+      plan: "free",
+      delivery: "stopped",
+      ruleset_version: Number(INITIAL_AEO_RULESET.version),
+      jsonld: null,
+      autofix: null,
+    }, 200, {
+      "cache-control": LIVE_AEO_CACHE_CONTROL,
+      "access-control-expose-headers": "x-aeo-ruleset-version",
+      "x-aeo-ruleset-version": String(INITIAL_AEO_RULESET.version),
+    });
+    if (!auth.registered) return auth.reason === "delivery_stopped" ? stoppedBody() : json({ ok: false }, 404);
     const siteState = await env.DB.prepare("SELECT delivery_status FROM sites WHERE id = ?").bind(auth.siteId).first();
-    if (!siteState || siteState.delivery_status === "stopped") return json({ ok: false }, 404);
+    if (!siteState) return json({ ok: false }, 404);
+    if (siteState.delivery_status === "stopped") return stoppedBody();
     const settings = await generationSettings(env, auth.siteId);
     const site = await env.DB.prepare("SELECT url, website_uri, slug FROM sites WHERE id = ?").bind(auth.siteId).first();
     const plan = normalizeAeoPlan(auth.plan);
@@ -1043,6 +1084,7 @@ export async function handleApi(request, env, ctx) {
       crawler_agents: AI_CRAWLERS.filter(c => rulesetDefinition(ruleset).robots.aiCrawlerIds.includes(c.id)).map(c=>c.ua),
       ok: true,
       plan,
+      delivery: "active",
       quality: auth.quality,
       crawlerAllowed: !!settings.allow_crawlers && rulesetDefinition(ruleset).robots.defaultAllow,
       // The @id ties what tag.js injects to the same entity the static copy
@@ -1092,6 +1134,26 @@ export async function handleApi(request, env, ctx) {
     const installType = ["wp", "tag", "hosted", "static"].includes(body?.install_type) ? body.install_type : "tag";
     const siteUrl = String(body?.url || "").trim();
     if (!["hosted"].includes(installType) && !siteUrl) return json({ error: "url required" }, 400);
+    // Anything typed is checked the way pairing will check it later: a bare
+    // "example.com" is fine (https:// is assumed), but it has to name a real
+    // public host, and one org may not register the same domain twice - the
+    // second row would never pair, because (org_id, domain_key) is unique.
+    if (siteUrl) {
+      if (/^[a-z][a-z0-9+.-]*:/i.test(siteUrl) && !/^https?:\/\//i.test(siteUrl) && !/^[^:/]+:\d+/.test(siteUrl)) {
+        return json({ error: "invalid_url" }, 400);
+      }
+      const allowReserved = env.WEBMCP_ALLOW_LOCAL_BIND === "1";
+      const domainKey = normalizeDomainKey(siteUrl, { allowReserved });
+      let parsed = null;
+      try { parsed = new URL(/^https?:\/\//i.test(siteUrl) ? siteUrl : `https://${siteUrl}`); } catch { parsed = null; }
+      if (!domainKey || !parsed || /\s/.test(siteUrl)) return json({ error: "invalid_url" }, 400);
+      const { results: orgSites } = await env.DB.prepare(
+        "SELECT id,url,website_uri,domain_key FROM sites WHERE org_id=?",
+      ).bind(member.org_id).all();
+      const duplicate = (orgSites || []).find((row) => [row.domain_key, row.website_uri, row.url]
+        .some((value) => value && normalizeDomainKey(value, { allowReserved }) === domainKey));
+      if (duplicate) return json({ error: "duplicate_site", site_id: duplicate.id, domain: domainKey }, 409);
+    }
     // A Google Maps selection used to be mandatory here, which made adding a
     // site impossible without the Places API and meant every site was a place
     // Google already knew about. The address bar is enough: what the store is
@@ -1952,6 +2014,10 @@ export async function handleApi(request, env, ctx) {
       const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(match[1]).first();
       return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
     }
+    // Deleting the row does not cancel the Stripe subscription; it would only
+    // orphan it and keep billing a site that no longer exists. Cancel first,
+    // in the portal, and the webhook marks the contract cancelled.
+    if (hasLiveSubscription(site)) return json({ error: "subscription_active", manage: "portal" }, 409);
     await env.DB.batch([
       env.DB.prepare("DELETE FROM site_settings WHERE site_id=?").bind(site.id),
       env.DB.prepare("DELETE FROM sites WHERE id=?").bind(site.id),
@@ -1990,13 +2056,19 @@ export async function handleApi(request, env, ctx) {
     // A site that already has a live subscription changes tier in Stripe's
     // portal, which prorates and replaces the plan. A second Checkout here
     // would start a second subscription and bill both.
-    if (String(site.stripe_subscription_id || "").trim() && !["cancelled", "canceled", "stopped"].includes(String(site.contract || "").toLowerCase())) {
+    if (hasLiveSubscription(site)) {
       return json({ error: "subscription_exists", plan: wantedPlan, manage: "portal" }, 409);
     }
     const secret = stripeSecret(env);
     if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
     const priceId = pricesFromEnv(env)[wantedPlan];
     if (!priceId) return json({ error: "price_not_configured", plan: wantedPlan }, 503);
+    const region = billingRegion(request, body);
+    // Abroad, the fixed Japanese rate would charge 10% consumption tax on a
+    // sale that is outside its scope. Only Stripe Tax can tell the two apart.
+    if (region === "intl" && !automaticTaxEnabled(env)) {
+      return json({ error: "international_requires_automatic_tax", billing_region: region }, 409);
+    }
     const memberRow = await env.DB.prepare("SELECT email FROM members WHERE id=?").bind(member.member_id).first();
     const form = new URLSearchParams({ mode: "subscription", "line_items[0][price]": priceId, "line_items[0][quantity]": "1",
       // Stripe hides the coupon field unless asked, so a promotion code that
@@ -2005,11 +2077,12 @@ export async function handleApi(request, env, ctx) {
       allow_promotion_codes: "true",
       success_url: "https://nurevo.jp/dashboard?checkout=success", cancel_url: "https://nurevo.jp/dashboard?checkout=cancelled", customer_email: memberRow?.email || "", "metadata[siteId]": site.id, "metadata[orgId]": member.org_id, "metadata[plan]": wantedPlan, "subscription_data[metadata][siteId]": site.id, "subscription_data[metadata][orgId]": member.org_id, "subscription_data[metadata][plan]": wantedPlan });
     applyConsumptionTax(form, env, { lineItem: true });
-    const response = await stripeRequest(secret, "/v1/checkout/sessions", form);
+    const pinned = applyBillingRegion(form, env, region, { checkout: true });
+    const response = await stripeRequest(secret, "/v1/checkout/sessions", form, { version: pinned });
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_checkout_failed" }, 502);
     // The tier that was actually priced, and what it costs - not a constant that
     // happens to be nearby.
-    return json({ ok: true, url: response.data.url, plan: wantedPlan, amount_yen: PLAN_MONTHLY_YEN[wantedPlan] });
+    return json({ ok: true, url: response.data.url, plan: wantedPlan, amount_yen: PLAN_MONTHLY_YEN[wantedPlan], billing_region: region });
   }
 
   /*
@@ -2054,6 +2127,9 @@ export async function handleApi(request, env, ctx) {
     const site = await loadOwnedSiteByRef(env, member, siteRef);
     if (!site) return json({ error: "not_found" }, 404);
     if (!['direct', 'referral'].includes(site.channel || 'direct')) return json({ error: "channel_not_checkoutable" }, 400);
+    // Same rule as checkout: a site already paying changes tier in the portal.
+    // A second link paid would start a second subscription and bill both.
+    if (hasLiveSubscription(site)) return json({ error: "subscription_exists", plan: "standard", manage: "portal" }, 409);
     const secret = stripeSecret(env);
     if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
     // Standard, not Pro: Pro is not on sale. Named the same way checkout names
@@ -2070,13 +2146,22 @@ export async function handleApi(request, env, ctx) {
       "subscription_data[metadata][orgId]": member.org_id,
       "after_completion[type]": "redirect",
       "after_completion[redirect][url]": "https://nurevo.jp/dashboard?billing=success",
+      // A payment link is reusable by default: opened twice (two tabs, a
+      // forwarded email) and paid twice, it created two subscriptions for one
+      // site. One completed session and the link deactivates itself.
+      "restrictions[completed_sessions][limit]": "1",
     });
     // Payment Links cannot carry a fixed tax rate, only Stripe Tax. Refuse
     // rather than issue a link that would charge the price without tax.
     if (!applyConsumptionTax(form, env, { lineItem: false }) && taxRateId(env)) {
       return json({ error: "payment_link_requires_automatic_tax" }, 409);
     }
-    const response = await stripeRequest(secret, "/v1/payment_links", form);
+    const linkRegion = billingRegion(request, body);
+    if (linkRegion === "intl" && !automaticTaxEnabled(env)) {
+      return json({ error: "international_requires_automatic_tax", billing_region: linkRegion }, 409);
+    }
+    const linkPinned = applyBillingRegion(form, env, linkRegion, { checkout: false });
+    const response = await stripeRequest(secret, "/v1/payment_links", form, { version: linkPinned });
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_payment_link_failed" }, 502);
     return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen, site_id: site.id });
   }
@@ -2119,6 +2204,15 @@ export async function handleApi(request, env, ctx) {
     if (event.type === "checkout.session.completed" && siteId) {
       await env.DB.prepare("UPDATE sites SET stripe_customer_id=?,stripe_subscription_id=? WHERE id=?")
         .bind(object.customer || null, object.subscription || null, siteId).run();
+    }
+    // Abroad we sell to businesses only. A buyer outside Japan who left no tax
+    // ID (a country where Stripe cannot require one, or a Japan-region checkout
+    // used from abroad) is recorded for a person to look at; nothing is
+    // cancelled automatically.
+    if (event.type === "checkout.session.completed" && needsInternationalReview(object)) {
+      await env.DB.prepare("INSERT OR IGNORE INTO billing_events (event_id,kind,created_at) VALUES (?,?,?)")
+        .bind(`review:${object.id || event.id}`, `intl_no_tax_id:${String(object.customer_details?.address?.country || "").slice(0, 2)}:${siteId || ""}`, Date.now()).run();
+      console.warn("billing: international checkout without a tax ID", { session: object.id, siteId, country: object.customer_details?.address?.country });
     }
 
     // The subscription is the source of truth for the plan.
@@ -2851,6 +2945,44 @@ async function aeoSha256Hex(value) {
   return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
 }
 
+/**
+ * Whether Stripe is still billing this site: a subscription id is recorded and
+ * the contract has not been ended. Shared by checkout, payment links and site
+ * deletion so the three cannot disagree about what "live" means.
+ */
+export function hasLiveSubscription(site = {}) {
+  return !!String(site?.stripe_subscription_id || "").trim()
+    && !["cancelled", "canceled", "stopped"].includes(String(site?.contract || "").trim().toLowerCase());
+}
+
+function aeoFreshRequested(url) {
+  return ["1", "true", "yes"].includes(String(url.searchParams.get("fresh") || "").trim().toLowerCase());
+}
+
+/**
+ * One fresh scan per URL host per AEO_FRESH_RATE_LIMIT window. Returns a 429
+ * response when refused, null when the scan may go ahead. The host is the
+ * unit because a fresh scan fetches the customer's own server without any
+ * cache in front of it; many callers asking for one host must not turn into
+ * many uncached hits on it.
+ */
+async function aeoFreshRateLimit(env, rawUrl) {
+  let host;
+  try { host = new URL(normalizeAeoCacheUrl(rawUrl)).hostname.toLowerCase(); } catch (error) {
+    if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
+    throw error;
+  }
+  const windowSeconds = AEO_FRESH_RATE_LIMIT.windowSeconds;
+  const retry = { "retry-after": String(windowSeconds), "cache-control": "no-store" };
+  if (!env.WEBMCP_KV) return json({ error: "rate_limited", scope: "fresh_host" }, 429, retry);
+  const key = `aeo-score:fresh:${await aeoSha256Hex(host)}`;
+  const current = Number(await env.WEBMCP_KV.get(key) || 0);
+  if (current >= AEO_FRESH_RATE_LIMIT.limit) return json({ error: "rate_limited", scope: "fresh_host" }, 429, retry);
+  // KV's minimum TTL is 60 seconds, which is also the window.
+  await env.WEBMCP_KV.put(key, String(current + 1), { expirationTtl: Math.max(60, windowSeconds) });
+  return null;
+}
+
 async function aeoPublicRateLimit(request, env) {
   if (!env.WEBMCP_KV) return { allowed: false, retryAfter: AEO_RATE_LIMIT.windowSeconds };
   const ip = request.headers.get("cf-connecting-ip") || "unknown";
@@ -2894,8 +3026,12 @@ function stripeMode(env) {
   return "unconfigured";
 }
 
-async function stripeRequest(secret, path, form) {
-  const response = await fetch(`https://api.stripe.com${path}`, { method: "POST", headers: { authorization: `Bearer ${secret}`, "content-type": "application/x-www-form-urlencoded" }, body: form });
+async function stripeRequest(secret, path, form, { version } = {}) {
+  const headers = { authorization: `Bearer ${secret}`, "content-type": "application/x-www-form-urlencoded" };
+  // Pinned only where a request uses a parameter newer than an account's
+  // default API version may be (tax_id_collection[required], 2024-09-30).
+  if (version) headers["stripe-version"] = version;
+  const response = await fetch(`https://api.stripe.com${path}`, { method: "POST", headers, body: form });
   let data = {};
   try { data = await response.json(); } catch { data = {}; }
   return { ok: response.ok, status: response.status, data };
@@ -3267,6 +3403,54 @@ export function applyConsumptionTax(form, env, { lineItem = true } = {}) {
   return false;
 }
 
+/*
+ * Where a buyer is billed from. Outside Japan, Nurevo sells to businesses only:
+ * the buyer gives a tax ID and accounts for the tax themselves (reverse
+ * charge), so no foreign VAT registration is needed. Inside Japan nothing
+ * changes. The caller may say which applies; otherwise Cloudflare's view of
+ * the visitor's country decides, and an unknown country is treated as Japan,
+ * the market everything else here assumes.
+ */
+export const STRIPE_TAX_ID_API_VERSION = "2024-09-30.acacia";
+
+export function billingRegion(request, body = {}) {
+  const asked = String(body.billing_region || body.region || "").trim().toLowerCase();
+  if (asked === "jp" || asked === "intl") return asked;
+  const country = String(request?.cf?.country || request?.headers?.get?.("cf-ipcountry") || "").trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(country) || country === "XX" || country === "T1") return "jp";
+  return country === "JP" ? "jp" : "intl";
+}
+
+/**
+ * Adds what a region needs to a Checkout Session or Payment Link form, and
+ * returns the Stripe API version the request must be sent with (or "").
+ */
+export function applyBillingRegion(form, env, region, { checkout = true } = {}) {
+  form.set("metadata[billing_region]", region);
+  form.set("subscription_data[metadata][billing_region]", region);
+  if (checkout) form.set("locale", region === "jp" ? "ja" : "auto");
+  if (!automaticTaxEnabled(env)) return "";
+  // Stripe Tax needs an address to decide; a business abroad is identified by
+  // its tax ID, which is required wherever Stripe can collect one.
+  // In Japan Checkout's own "auto" asks for as much as the tax needs; abroad
+  // the full address is kept as evidence of where the sale was made.
+  form.set("billing_address_collection", region === "intl" ? "required" : "auto");
+  form.set("tax_id_collection[enabled]", "true");
+  if (region === "intl") {
+    form.set("tax_id_collection[required]", "if_supported");
+    return STRIPE_TAX_ID_API_VERSION;
+  }
+  return "";
+}
+
+/** A completed checkout from outside Japan with no tax ID on it. */
+export function needsInternationalReview(session) {
+  const country = String(session?.customer_details?.address?.country || "").toUpperCase();
+  if (!country || country === "JP") return false;
+  const ids = session?.customer_details?.tax_ids;
+  return !(Array.isArray(ids) && ids.length > 0);
+}
+
 async function loadOwnedSiteByRef(env, actor, reference) {
   if (!actor) return null;
   if (actor.is_super_admin) return env.DB.prepare("SELECT * FROM sites WHERE id=? OR site_key=? LIMIT 1").bind(reference, reference).first();
@@ -3308,8 +3492,14 @@ async function handleMagicRequest(request, env, { accountAuth = false, signup = 
 
   const registrationLocale = normalizeEmailLocale(body?.locale || body?.lang || new URL(request.url).searchParams.get("lang")) || headerEmailLocale(request.headers.get("accept-language"));
   const member = await findOrCreateMember(env, email, registrationLocale, signup ? body?.referral_code : null, accountAuth);
+  // A partner application still under review cannot sign in; a link sent now
+  // could only fail at the callback. Saying so here lets the form explain it.
+  if (member.status === "pending") return json({ error: "pending_approval" }, 403);
   const account = accountAuth ? await ensureAccount(env, member.id) : null;
   const emailLocale = resolveEmailLocale(await loadEmailPreferences(env, email), request.headers.get("accept-language"));
+  // Where to land after sign-in. Only /dashboard paths and plan=standard|pro
+  // survive; anything else becomes the default /dashboard.
+  const nextPath = safeAuthNext(body?.next, body?.plan);
   const now = Date.now();
   const outstanding = await env.DB.prepare(
     "SELECT COUNT(*) AS count FROM sessions WHERE member_id=? AND kind='magic' AND expires_at>?",
@@ -3321,11 +3511,15 @@ async function handleMagicRequest(request, env, { accountAuth = false, signup = 
   if (accountAuth) {
     const pending = await env.DB.prepare("SELECT COUNT(*) AS count FROM auth_tokens WHERE account_id=? AND used_at IS NULL AND expires_at>?").bind(account.id, now).first();
     if (Number(pending?.count || 0) >= 5) return json({ error: "rate_limited" }, 429);
-    await env.DB.prepare("INSERT INTO auth_tokens(token,account_id,purpose,email,expires_at) VALUES (?,?,?,?,?)")
-      .bind(tokenHash, account.id, signup ? "signup" : "login", email, now + AUTH_MAGIC_TTL_MS).run();
+    await runWithIntentColumns(env,
+      "INSERT INTO auth_tokens(token,account_id,purpose,email,expires_at,next_path,locale) VALUES (?,?,?,?,?,?,?)",
+      "INSERT INTO auth_tokens(token,account_id,purpose,email,expires_at) VALUES (?,?,?,?,?)",
+      [tokenHash, account.id, signup ? "signup" : "login", email, now + AUTH_MAGIC_TTL_MS], [nextPath, emailLocale]);
   } else {
-    await env.DB.prepare("INSERT INTO sessions (token,member_id,org_id,kind,expires_at) VALUES (?,?,?,?,?)")
-      .bind(tokenHash, member.id, member.orgId, "magic", now + AUTH_MAGIC_TTL_MS).run();
+    await runWithIntentColumns(env,
+      "INSERT INTO sessions (token,member_id,org_id,kind,expires_at,next_path,locale) VALUES (?,?,?,?,?,?,?)",
+      "INSERT INTO sessions (token,member_id,org_id,kind,expires_at) VALUES (?,?,?,?,?)",
+      [tokenHash, member.id, member.orgId, "magic", now + AUTH_MAGIC_TTL_MS], [nextPath, emailLocale]);
   }
 
   const loginLink = `${new URL(request.url).origin}/api/auth/${accountAuth ? "verify" : "callback"}?token=${encodeURIComponent(rawToken)}`;
@@ -3360,19 +3554,43 @@ async function sendMagicLinkEmail(env, email, loginLink, locale, signup = false)
   return { ok: false, code: detail?.name || "mail_send_failed", status: 502 };
 }
 
+/*
+ * Magic links: GET shows, POST signs in.
+ *
+ * GET used to consume the token. Mail security scanners (Defender Safe Links,
+ * Proofpoint, Gmail's own) fetch every link in a message before the person
+ * does, so the token was often spent by the time a human clicked it and they
+ * landed on "link expired". GET now only checks the token and renders a page
+ * with one button; the button POSTs the token back, and only that signs in.
+ *
+ * Login CSRF - an attacker making a victim's browser POST the attacker's token
+ * and so sign the victim into the attacker's account - is closed two ways:
+ * the GET sets a random HttpOnly, SameSite=Strict cookie that the form echoes
+ * (an attacker cannot set or read it), and a POST whose Origin or
+ * Sec-Fetch-Site says it came from another site is refused outright.
+ */
+const MAGIC_CONFIRM_COOKIE = "nrv_magic_confirm";
+
 async function handleMagicCallback(request, env, accountAuth = false) {
-  const rawToken = new URL(request.url).searchParams.get("token") || "";
-  if (!/^[a-f0-9]{64}$/i.test(rawToken)) return authErrorRedirect(request);
+  if (request.method === "GET") return handleMagicConfirmPage(request, env, accountAuth);
+  if (!magicPostSameOrigin(request)) return authErrorRedirect(request, "invalid");
+  const form = await readMagicForm(request);
+  const rawToken = String(form.token || "");
+  const confirm = String(form.confirm || "");
+  const cookie = readCookie(request, MAGIC_CONFIRM_COOKIE);
+  if (!/^[a-f0-9]{64}$/i.test(rawToken)) return authErrorRedirect(request, "invalid");
+  if (!/^[a-f0-9]{64}$/i.test(confirm) || confirm !== cookie) return authErrorRedirect(request, "invalid");
   const tokenHash = await sha256Hex(rawToken);
   const now = Date.now();
-  const magic = accountAuth
-    ? await env.DB.prepare("SELECT m.id AS member_id,m.org_id,m.status FROM auth_tokens t JOIN accounts a ON a.id=t.account_id JOIN members m ON m.id=a.member_id WHERE t.token=? AND t.purpose IN ('signup','login') AND t.used_at IS NULL AND t.expires_at>? AND lower(t.email)=lower(m.email)").bind(tokenHash, now).first()
-    : await env.DB.prepare("SELECT se.member_id,se.org_id,m.status FROM sessions se JOIN members m ON m.id=se.member_id AND m.org_id=se.org_id WHERE se.token=? AND se.kind='magic' AND se.expires_at>?").bind(tokenHash, now).first();
-  if (!magic || magic.status !== "active") return authErrorRedirect(request);
+  const magic = await lookupMagicToken(env, tokenHash, accountAuth);
+  const reason = magicTokenProblem(magic, now);
+  if (reason) return authErrorRedirect(request, reason, magic?.locale);
+  // Consumed, not deleted, on the dashboard path as well: a used row is what
+  // lets a second click say "already used" rather than "invalid".
   const consumed = accountAuth
     ? await env.DB.prepare("UPDATE auth_tokens SET used_at=? WHERE token=? AND used_at IS NULL AND expires_at>?").bind(now, tokenHash, now).run()
-    : await env.DB.prepare("DELETE FROM sessions WHERE token=? AND kind='magic' AND expires_at>?").bind(tokenHash, now).run();
-  if (Number(consumed?.meta?.changes || 0) !== 1) return authErrorRedirect(request);
+    : await env.DB.prepare("UPDATE sessions SET kind='magic_used' WHERE token=? AND kind='magic' AND expires_at>?").bind(tokenHash, now).run();
+  if (Number(consumed?.meta?.changes || 0) !== 1) return authErrorRedirect(request, "used", magic.locale);
 
   const rawSession = randomHex(32);
   const sessionHash = await sha256Hex(rawSession);
@@ -3386,15 +3604,169 @@ async function handleMagicCallback(request, env, accountAuth = false) {
   });
   headers.set("set-cookie", sessionCookie(rawSession, Math.floor(AUTH_SESSION_TTL_MS / 1000)));
   headers.append("set-cookie", csrfCookie(randomHex(32), CSRF_TTL_SECONDS));
-  headers.set("location", "/dashboard");
-  return new Response(null, { status: 302, headers });
+  headers.append("set-cookie", magicConfirmCookie("", 0));
+  // Re-checked on the way out: only a value safeAuthNext would have written.
+  headers.set("location", safeAuthNext(magic.next_path) || "/dashboard");
+  // 303: the browser follows a POST with a GET of the dashboard.
+  return new Response(null, { status: 303, headers });
 }
 
-function authErrorRedirect(request) {
+async function handleMagicConfirmPage(request, env, accountAuth) {
+  const url = new URL(request.url);
+  const rawToken = url.searchParams.get("token") || "";
+  if (!/^[a-f0-9]{64}$/i.test(rawToken)) return authErrorRedirect(request, "invalid");
+  const magic = await lookupMagicToken(env, await sha256Hex(rawToken), accountAuth);
+  const reason = magicTokenProblem(magic, Date.now());
+  if (reason) return authErrorRedirect(request, reason, magic?.locale);
+  const locale = authPageLocale(magic.locale, request);
+  const confirm = randomHex(32);
+  const html = renderMagicConfirmPage({ locale, action: url.pathname, token: rawToken, confirm });
+  const headers = new Headers({
+    "content-type": "text/html; charset=utf-8",
+    "cache-control": "no-store",
+    // The token is in this page's URL; it must not leak onward.
+    "referrer-policy": "no-referrer",
+    "x-frame-options": "DENY",
+    "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
+    "x-robots-tag": "noindex",
+  });
+  headers.set("set-cookie", magicConfirmCookie(confirm, Math.floor(AUTH_MAGIC_TTL_MS / 1000)));
+  return new Response(html, { status: 200, headers });
+}
+
+/** The token row, whatever its state, or null when there is no such token. */
+async function lookupMagicToken(env, tokenHash, accountAuth) {
+  const queries = accountAuth
+    ? ["SELECT m.id AS member_id,m.org_id,m.status,t.used_at,t.expires_at,t.next_path,t.locale FROM auth_tokens t JOIN accounts a ON a.id=t.account_id JOIN members m ON m.id=a.member_id WHERE t.token=? AND t.purpose IN ('signup','login') AND lower(t.email)=lower(m.email)",
+      "SELECT m.id AS member_id,m.org_id,m.status,t.used_at,t.expires_at FROM auth_tokens t JOIN accounts a ON a.id=t.account_id JOIN members m ON m.id=a.member_id WHERE t.token=? AND t.purpose IN ('signup','login') AND lower(t.email)=lower(m.email)"]
+    : ["SELECT se.member_id,se.org_id,se.kind,se.expires_at,se.next_path,se.locale,m.status FROM sessions se JOIN members m ON m.id=se.member_id AND m.org_id=se.org_id WHERE se.token=? AND se.kind IN ('magic','magic_used')",
+      "SELECT se.member_id,se.org_id,se.kind,se.expires_at,m.status FROM sessions se JOIN members m ON m.id=se.member_id AND m.org_id=se.org_id WHERE se.token=? AND se.kind IN ('magic','magic_used')"];
+  let row;
+  try { row = await env.DB.prepare(queries[0]).bind(tokenHash).first(); } catch (error) {
+    if (!isMissingColumnError(error)) throw error;
+    row = await env.DB.prepare(queries[1]).bind(tokenHash).first();
+  }
+  if (!row) return null;
+  return { ...row, used: accountAuth ? row.used_at != null : row.kind === "magic_used" };
+}
+
+/**
+ * Why this token cannot sign in, as the reason code auth-error.html shows, or
+ * null when it can. Used is checked before expired: a link clicked twice reads
+ * better as "already used" even after its fifteen minutes are up.
+ */
+function magicTokenProblem(magic, now) {
+  if (!magic) return "invalid";
+  if (magic.used) return "used";
+  if (Number(magic.expires_at || 0) <= now) return "expired";
+  if (magic.status === "pending") return "pending";
+  if (magic.status !== "active") return "invalid";
+  return null;
+}
+
+function magicPostSameOrigin(request) {
+  const site = String(request.headers.get("sec-fetch-site") || "").toLowerCase();
+  if (site && !["same-origin", "none"].includes(site)) return false;
+  const origin = request.headers.get("origin");
+  if (origin && origin !== "null") {
+    try { if (new URL(origin).origin !== new URL(request.url).origin) return false; } catch { return false; }
+  } else if (origin === "null") return false;
+  return true;
+}
+
+async function readMagicForm(request) {
+  const type = String(request.headers.get("content-type") || "").toLowerCase();
+  try {
+    if (type.includes("application/json")) return (await request.json()) || {};
+    return Object.fromEntries(new URLSearchParams(await request.text()));
+  } catch { return {}; }
+}
+
+function magicConfirmCookie(value, maxAge) {
+  return `${MAGIC_CONFIRM_COOKIE}=${encodeURIComponent(value)}; Path=/api/auth; HttpOnly; Secure; SameSite=Strict; Max-Age=${maxAge}`;
+}
+
+/**
+ * Where a signed-in person may be sent. Only this site's /dashboard, and of
+ * any query only plan=standard|pro. Returns null for "nothing to keep".
+ * `plan` may also arrive on its own (the LP sends /dashboard?plan=...).
+ */
+export function safeAuthNext(next, plan) {
+  const plans = ["standard", "pro"];
+  let path = "/dashboard";
+  let wanted = plans.includes(String(plan || "").trim().toLowerCase()) ? String(plan).trim().toLowerCase() : null;
+  const raw = String(next ?? "").trim();
+  if (raw) {
+    // Relative to a fixed origin: anything that resolves elsewhere
+    // (//evil.example, https://evil.example, /\evil) is dropped.
+    if (!raw.startsWith("/") || raw.startsWith("//") || raw.includes("\\")) return wanted ? `/dashboard?plan=${wanted}` : null;
+    let parsed;
+    try { parsed = new URL(raw, "https://nurevo.invalid"); } catch { parsed = null; }
+    if (!parsed || parsed.origin !== "https://nurevo.invalid") return wanted ? `/dashboard?plan=${wanted}` : null;
+    if (/^\/dashboard(?:\/[A-Za-z0-9_-]+)*\/?$/.test(parsed.pathname)) path = parsed.pathname;
+    const fromNext = String(parsed.searchParams.get("plan") || "").toLowerCase();
+    if (!wanted && plans.includes(fromNext)) wanted = fromNext;
+  }
+  if (!wanted && path === "/dashboard") return null;
+  return wanted ? `${path}?plan=${wanted}` : path;
+}
+
+function isMissingColumnError(error) {
+  return /no such column|has no column named/i.test(String(error?.message || error));
+}
+
+/**
+ * Write a magic credential with its intent columns (migration 0037), or
+ * without them when that migration has not been applied yet - the landing
+ * page is lost then, but sign-in still works.
+ */
+async function runWithIntentColumns(env, sqlWith, sqlWithout, binds, extra) {
+  try {
+    return await env.DB.prepare(sqlWith).bind(...binds, ...extra).run();
+  } catch (error) {
+    if (!isMissingColumnError(error)) throw error;
+    return env.DB.prepare(sqlWithout).bind(...binds).run();
+  }
+}
+
+const AUTH_PAGE_LOCALES = ["ja", "en", "zh", "tw", "ko", "es", "fr", "de"];
+
+/** The email's locale when the token recorded it, else the request's. */
+function authPageLocale(stored, request) {
+  const mapped = String(stored || "").toLowerCase() === "zh-tw" ? "tw" : String(stored || "").toLowerCase();
+  return AUTH_PAGE_LOCALES.includes(mapped) ? mapped : preferredAuthLocale(request);
+}
+
+const MAGIC_CONFIRM_COPY = {
+  ja: { title: "Nurevoにログイン", body: "下のボタンを押すとログインします。このリンクは一度だけ使えます。", button: "ログインする" },
+  en: { title: "Sign in to Nurevo", body: "Press the button below to sign in. This link can be used once.", button: "Sign in" },
+  zh: { title: "登录 Nurevo", body: "点击下方按钮即可登录。此链接只能使用一次。", button: "登录" },
+  tw: { title: "登入 Nurevo", body: "按下方按鈕即可登入。此連結只能使用一次。", button: "登入" },
+  ko: { title: "Nurevo 로그인", body: "아래 버튼을 누르면 로그인됩니다. 이 링크는 한 번만 사용할 수 있습니다.", button: "로그인" },
+  es: { title: "Iniciar sesión en Nurevo", body: "Pulsa el botón para iniciar sesión. Este enlace solo se puede usar una vez.", button: "Iniciar sesión" },
+  fr: { title: "Connexion à Nurevo", body: "Appuyez sur le bouton pour vous connecter. Ce lien ne peut être utilisé qu'une fois.", button: "Se connecter" },
+  de: { title: "Bei Nurevo anmelden", body: "Klicken Sie auf die Schaltfläche, um sich anzumelden. Dieser Link funktioniert nur einmal.", button: "Anmelden" },
+};
+
+function escapeAuthHtml(value) {
+  return String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+export function renderMagicConfirmPage({ locale = "ja", action, token, confirm }) {
+  const copy = MAGIC_CONFIRM_COPY[locale] || MAGIC_CONFIRM_COPY.ja;
+  const lang = locale === "tw" ? "zh-TW" : locale;
+  return `<!doctype html><html lang="${escapeAuthHtml(lang)}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${escapeAuthHtml(copy.title)}</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f6f7fb;color:#17122b;font:16px/1.6 Inter,system-ui,sans-serif}main{width:min(460px,calc(100% - 32px));padding:32px;border-radius:18px;background:#fff;box-shadow:0 12px 40px #17122b1a;text-align:center}button{margin-top:18px;padding:12px 22px;border:0;border-radius:10px;background:#6f4df6;color:#fff;font:inherit;font-weight:700;cursor:pointer}@media (prefers-color-scheme:dark){body{background:#0f0c1d;color:#ece9f7}main{background:#1b1730}}</style></head><body><main><h1>${escapeAuthHtml(copy.title)}</h1><p>${escapeAuthHtml(copy.body)}</p><form method="post" action="${escapeAuthHtml(action)}"><input type="hidden" name="token" value="${escapeAuthHtml(token)}"><input type="hidden" name="confirm" value="${escapeAuthHtml(confirm)}"><button type="submit">${escapeAuthHtml(copy.button)}</button></form></main></body></html>`;
+}
+
+const AUTH_ERROR_REASONS = ["expired", "used", "pending", "invalid"];
+
+function authErrorRedirect(request, reason = "invalid", storedLocale = null) {
   const url = new URL(request.url);
   url.pathname = "/auth-error.html";
-  url.search = `?lang=${encodeURIComponent(preferredAuthLocale(request))}`;
-  return Response.redirect(url.toString(), 302);
+  const code = AUTH_ERROR_REASONS.includes(reason) ? reason : "invalid";
+  url.search = `?lang=${encodeURIComponent(authPageLocale(storedLocale, request))}&reason=${code}`;
+  // 303 so a failed POST lands on the page with a GET.
+  return new Response(null, { status: 303, headers: { location: url.toString(), "cache-control": "no-store" } });
 }
 
 function preferredAuthLocale(request) {
@@ -3423,7 +3795,9 @@ async function handleMemberRegistration(request, env) {
   const role = String(body?.role || "");
   const invite = String(body?.invite || "").trim();
   const roleMap = { store: "store", referrer: "referrer", agency: "agency" };
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !roleMap[role]) return json({ error: "email_and_role_required" }, 400);
+  if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !roleMap[role]) {
+    return json({ error: "email_and_role_required", code: roleMap[role] ? "invalid_email" : "invalid_role" }, 400);
+  }
   const emailLimit = await checkApiRateLimit(env, "member-register-email", email, API_RATE_LIMITS.memberEmail);
   if (!emailLimit.allowed) return json({ error: emailLimit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, emailLimit.unavailable ? 503 : 429);
   let invitation = null;
@@ -3434,8 +3808,11 @@ async function handleMemberRegistration(request, env) {
       .bind(inviteHash, Date.now()).first();
     if (!invitation) return json({ error: "invalid_invite" }, 403);
   }
-  const existing = await env.DB.prepare("SELECT id FROM members WHERE lower(email)=?").bind(email).first();
-  if (existing) return json({ error: "member_exists" }, 409);
+  const existing = await env.DB.prepare("SELECT id,status FROM members WHERE lower(email)=?").bind(email).first();
+  // error stays "member_exists" for the forms already mapping it; code says
+  // which of the two situations it is, so a UI can offer sign-in for one and
+  // "wait for approval" for the other.
+  if (existing) return json({ error: "member_exists", code: existing.status === "pending" ? "pending_approval" : "already_registered" }, 409);
   let orgId = invitation?.org_id || env.PARTNER_REVIEW_ORG_ID || null;
   if (!orgId) {
     const reviewer = await env.DB.prepare("SELECT org_id FROM members WHERE role='admin' AND status='active' ORDER BY created_at LIMIT 1").first();
@@ -3468,8 +3845,8 @@ async function handleMagicLogout(request, env) {
 }
 
 async function findOrCreateMember(env, email, registrationLocale, referralCode = null, accountAuth = false) {
-  const existing = await env.DB.prepare("SELECT id,org_id FROM members WHERE lower(email)=?").bind(email).first();
-  if (existing) return { id: existing.id, orgId: existing.org_id };
+  const existing = await env.DB.prepare("SELECT id,org_id,status FROM members WHERE lower(email)=?").bind(email).first();
+  if (existing) return { id: existing.id, orgId: existing.org_id, status: existing.status || null };
   const normalizedCode = String(referralCode || "").trim().toUpperCase();
   const parent = normalizedCode ? await env.DB.prepare("SELECT id,email FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
   const eligibleParent = parent && String(parent.email).toLowerCase() !== email ? parent : null;
@@ -3478,7 +3855,11 @@ async function findOrCreateMember(env, email, registrationLocale, referralCode =
   const memberId = `mem_${uid()}`;
   try {
     await env.DB.batch([
-      env.DB.prepare("INSERT INTO orgs (id,name,plan,created_at) VALUES (?,?,?,?)").bind(orgId, email, "pro", Date.now()),
+      // orgs.plan grants nothing - entitlement is per site (resolveSitePlan:
+      // sites.plan from billing, sites.manual_plan, orgs.manual_plan). The only
+      // value read for behaviour is "wholesale". Writing "pro" here made every
+      // self-signed-up org look like a Pro customer in the admin org list.
+      env.DB.prepare("INSERT INTO orgs (id,name,plan,created_at) VALUES (?,?,?,?)").bind(orgId, email, "free", Date.now()),
       env.DB.prepare("INSERT INTO members (id,org_id,email,role,status,created_at) VALUES (?,?,?,?,?,?)").bind(memberId, orgId, email, "admin", "active", Date.now()),
       registrationLocaleStatement(env, email, registrationLocale),
       ...(accountAuth ? [env.DB.prepare("INSERT INTO accounts(member_id,email,created_at,referred_by_account_id,referred_by_code) VALUES (?,?,?,?,?)")
@@ -3570,6 +3951,10 @@ function csrfRequired(path) {
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;
+  // The magic-link confirm form is posted before any session exists, so there
+  // is no CSRF cookie to match yet. handleMagicCallback has its own guard: a
+  // one-time SameSite=Strict confirm cookie plus an Origin/Sec-Fetch-Site check.
+  if (path === "/api/auth/verify" || path === "/api/auth/callback") return false;
   return !["/api/auth/signup", "/api/auth/magic-link"].includes(path) && path !== "/api/auth/request" && path !== "/api/members/register" && path !== "/api/billing/webhook" && path !== "/api/tag/hit";
 }
 

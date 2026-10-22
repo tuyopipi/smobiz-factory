@@ -6,7 +6,14 @@ export const AEO_SCORE_WEIGHTS = DEFAULT_SCORING.weights;
 // u1-v2: the schema component became proportional to the properties met,
 // rather than one of three bands. Scores from v1 are not directly comparable.
 export const AEO_SCORE_MODEL_VERSION = DEFAULT_SCORING.modelVersion;
-export const AEO_CACHE_TTL_SECONDS = 7 * 24 * 60 * 60;
+// The public checker's cache. It was a week, so a WordPress owner who fixed
+// what the checker flagged and pressed "check again" was shown the old result
+// for days. Ten minutes still absorbs a burst of visitors checking one URL;
+// a caller that needs the page as it is now passes fresh=1 (see api.mjs).
+// Nothing else reads this constant.
+export const AEO_CACHE_TTL_SECONDS = 10 * 60;
+/** At most one fresh (cache-bypassing) scan per URL host in this window. */
+export const AEO_FRESH_RATE_LIMIT = Object.freeze({ limit: 1, windowSeconds: 60 });
 export const AEO_RATE_LIMIT = Object.freeze({ limit: 20, windowSeconds: 60 * 60 });
 
 
@@ -97,12 +104,14 @@ export function scoreAeo(input = {}, scoring = DEFAULT_SCORING) {
   return { score, band, gatePassed, statuses, metrics: { coverage: coverageValue, legibility: legibilityValue, schema: schemaFactor } };
 }
 
-export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null, schemaRules = null, entityType = null, catalog = null, scoring = DEFAULT_SCORING, rulesetVersion = null } = {}) {
+export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null, schemaRules = null, entityType = null, catalog = null, scoring = DEFAULT_SCORING, rulesetVersion = null, fresh = false } = {}) {
   const target = publicUrl(raw);
-  const page = await fetchBounded(fetchImpl, target.href, { userAgent: "Nurevo-AEO-Diagnostics/1.0 (+https://nurevo.jp)" });
+  // fresh: ask any cache between us and the site (a WordPress page cache, a
+  // CDN) for the current page, so a fix made a minute ago is what is scored.
+  const page = await fetchBounded(fetchImpl, target.href, { userAgent: "Nurevo-AEO-Diagnostics/1.0 (+https://nurevo.jp)", noCache: fresh });
   const [robots, llms, edgeBlocked] = await Promise.all([
-    fetchOptional(fetchImpl, new URL("/robots.txt", target.origin).href),
-    fetchOptional(fetchImpl, new URL("/llms.txt", target.origin).href),
+    fetchOptional(fetchImpl, new URL("/robots.txt", target.origin).href, { noCache: fresh }),
+    fetchOptional(fetchImpl, new URL("/llms.txt", target.origin).href, { noCache: fresh }),
     detectEdgeBlock(fetchImpl, target.href),
   ]);
   const signals = extractAeoSignals(page.text, robots.text, llms.text, {
@@ -354,11 +363,13 @@ function publicUrl(raw) {
   return url;
 }
 
-async function fetchBounded(fetchImpl, href, { userAgent } = {}) {
+async function fetchBounded(fetchImpl, href, { userAgent, noCache = false } = {}) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
-    const response = await fetchImpl(href, { redirect: "follow", signal: controller.signal, headers: { accept: "text/html,text/plain,*/*", "user-agent": userAgent || "Nurevo-AEO-Diagnostics/1.0" } });
+    const headers = { accept: "text/html,text/plain,*/*", "user-agent": userAgent || "Nurevo-AEO-Diagnostics/1.0" };
+    if (noCache) { headers["cache-control"] = "no-cache"; headers.pragma = "no-cache"; }
+    const response = await fetchImpl(href, { redirect: "follow", signal: controller.signal, headers });
     if (!response.ok) throw new AeoScoreError(502, "unreachable");
     const length = Number(response.headers.get("content-length") || 0);
     if (length > 2_000_000) throw new AeoScoreError(413, "response_too_large");
@@ -368,8 +379,8 @@ async function fetchBounded(fetchImpl, href, { userAgent } = {}) {
   } finally { clearTimeout(timer); }
 }
 
-async function fetchOptional(fetchImpl, href) {
-  try { return await fetchBounded(fetchImpl, href); } catch { return { ok: false, text: "" }; }
+async function fetchOptional(fetchImpl, href, options = {}) {
+  try { return await fetchBounded(fetchImpl, href, options); } catch { return { ok: false, text: "" }; }
 }
 
 async function detectEdgeBlock(fetchImpl, href) {

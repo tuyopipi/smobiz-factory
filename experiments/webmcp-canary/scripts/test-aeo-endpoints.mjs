@@ -30,7 +30,7 @@ await Promise.all(waitUntilTasks);
 const firstBody = await first.json();
 assert.equal(first.status, 200);
 assert.equal(first.headers.get("x-aeo-cache"), "miss");
-assert.equal(first.headers.get("cache-control"), "public, max-age=604800");
+assert.equal(first.headers.get("cache-control"), "public, max-age=600");
 assert.deepEqual(Object.keys(firstBody), ["score", "band", "gatePassed", "checks", "structuredData"]);
 
 const second = await handleApi(new Request(publicUrl, { headers: { "cf-connecting-ip": "198.51.100.10" } }), env, ctx);

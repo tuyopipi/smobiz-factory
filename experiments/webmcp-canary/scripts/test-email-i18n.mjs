@@ -52,7 +52,7 @@ try {
       prepare(sql) { return { bind(...values) { return {
         async first() {
           if (sql.includes("INSERT INTO api_rate_limits")) return {count:1};
-          if (sql.includes("SELECT id,org_id FROM members")) return {id:"mem_test",org_id:"org_test"};
+          if (/SELECT id,org_id(,status)? FROM members/.test(sql)) return {id:"mem_test",org_id:"org_test",status:"active"};
           if (sql.includes("COUNT(*)")) return {count:0};
           if (sql.includes("member_email_preferences")) return preferences;
           throw new Error(sql);
