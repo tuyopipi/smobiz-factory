@@ -353,6 +353,32 @@ $yoast_output = ob_get_clean();
 expect(strpos($yoast_output, '"telephone"') !== false || strpos($yoast_output, '"@type"') !== false,
     'with SEO plugins active but nothing measured, Nurevo still publishes');
 
+/* Yoast, Rank Math and AIOSEO are merged into, not measured. When one of them
+ * took our facts into its graph on this request, nothing else is printed. When
+ * none did, that plugin published no graph here, so there is nothing to clash
+ * with and the full graph is printed - even if a stale measurement says it
+ * publishes a complete business elsewhere. */
+update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, array(
+    'business' => array('state' => 'complete', 'id' => 'https://example.test/#rival-biz'),
+    'types' => array('Organization', 'WebSite', 'WebPage', 'BreadcrumbList'),
+    'conflict' => false, 'measured_at' => time(), 'signature' => 'test',
+));
+webmcp_canary_schema_merged(true);
+ob_start();
+webmcp_canary_output_server_schema();
+$merged_output = ob_get_clean();
+expect($merged_output === '', 'after merging into the SEO plugin graph, no second graph is printed');
+webmcp_canary_schema_merged(false);
+ob_start();
+webmcp_canary_output_server_schema();
+$unmerged_output = ob_get_clean();
+expect(strpos($unmerged_output, '"@type":"WebSite"') !== false,
+    'a merge-capable SEO plugin that printed no graph here does not suppress anything');
+
+/* Plugins with no graph filter (SEOPress, The SEO Framework) are still handled
+ * by measuring what the page serves. */
+$GLOBALS['webmcp_test_active_plugins'] = array('wp-seopress/seopress.php');
+expect(webmcp_canary_detect_active_seo_plugins()['wp-seopress/seopress.php'] === 'SEOPress', 'SEOPress is detected through is_plugin_active');
 update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, array(
     'business' => array('state' => 'partial', 'id' => 'https://example.test/#rival-org'),
     'types' => array('Organization', 'WebSite', 'WebPage', 'BreadcrumbList'),
@@ -888,7 +914,11 @@ if (preg_match('/^ \* Requires at least:\s*(\d+)\.(\d+)/m', $source, $floor)) {
 
 expect(strpos($source, "add_filter('robots_txt', 'webmcp_canary_allow_ai_crawlers_robots_txt'") !== false, 'robots output remains registered');
 expect(strpos($source, "add_action('template_redirect', 'webmcp_canary_maybe_serve_llms_txt'") !== false, 'llms.txt output remains registered');
-expect(strpos($source, "add_action('wp_head', 'webmcp_canary_output_server_schema', 5)") !== false, 'server schema remains registered');
+// 99: after every SEO plugin has printed its graph (they print at 1), so a merge into theirs is known.
+expect(strpos($source, "add_action('wp_head', 'webmcp_canary_output_server_schema', 99)") !== false, 'server schema remains registered');
+expect(strpos($source, "add_filter('wpseo_schema_graph', 'webmcp_canary_merge_into_list_graph'") !== false, 'Yoast graph merge is registered');
+expect(strpos($source, "add_filter('rank_math/schema/validated_data', 'webmcp_canary_merge_into_keyed_graph'") !== false, 'Rank Math graph merge is registered');
+expect(strpos($source, "add_filter('aioseo_schema_output', 'webmcp_canary_merge_into_list_graph'") !== false, 'AIOSEO graph merge is registered');
 
 /* The browser tag is the only code path that puts a third-party script on public
  * pages and reports visitor-side activity, so it must stay opt-in: enabling the
@@ -1189,11 +1219,13 @@ delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
 // OpeningHoursSpecification unconditionally while the output path emitted
 // neither - the one thing it promised not to do. This reads the emitter and
 // holds the table to it, so a type cannot be announced before it is published.
-$emitter_start = strpos($source, 'function webmcp_canary_output_server_schema()');
+// The nodes are built in one place for both outputs: the standalone graph and
+// the merge into an SEO plugin's graph.
+$emitter_start = strpos($source, 'function webmcp_canary_own_schema_bundle()');
 expect($emitter_start !== false, 'the schema emitter was found');
 $emitter = substr($source, $emitter_start);
-$next_hook = strpos($emitter, "\nadd_action(");
-$emitter = $next_hook === false ? $emitter : substr($emitter, 0, $next_hook);
+$next_function = strpos($emitter, "\nfunction ", 1);
+$emitter = $next_function === false ? $emitter : substr($emitter, 0, $next_function);
 // Nodes the emitter appends are built in helpers, so those count as emitted
 // too - otherwise a type could be listed in the table and built in a helper
 // without this noticing.
@@ -1453,6 +1485,44 @@ foreach (array(
     expect(is_wp_error($refused) && $refused->get_error_code() === $expected_code,
         "a refusal is reported as itself: {$service_error}");
 }
+
+// Saving the settings again must not re-send a code that was already redeemed.
+// The sanitizer runs on every write of the option (cron, ruleset sync, autofill),
+// and re-sending used to come back "code_already_used" and drop the plan to Free.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'tag_url' => 'https://nurevo.jp/tag.js', 'plan' => 'standard', 'site_id' => 'abc123',
+    'site_key' => 'nrv_paired', 'profile_token' => 'nrvp_token',
+    'pairing_code' => 'NRV-ABCDE-FGHJK-MNPQR-STUVW', // stored by 0.7.2 and earlier
+));
+$GLOBALS['webmcp_test_remote'] = array('status' => 409, 'body' => wp_json_encode(array('ok' => false, 'error' => 'code_already_used')));
+unset($GLOBALS['webmcp_test_last_remote']);
+$resaved = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('business_name' => 'Renamed')));
+expect(!isset($GLOBALS['webmcp_test_last_remote']), 'a re-submitted, already redeemed pairing code is not sent again');
+expect($resaved['plan'] === 'standard', 'an unrelated save keeps the paid plan');
+expect($resaved['pairing_code'] === '', 'the spent pairing code is not kept');
+expect($resaved['site_id'] === 'abc123' && $resaved['site_key'] === 'nrv_paired', 'the site identifiers are kept');
+
+// A plan written by the ruleset sync survives the sanitizer.
+$synced = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('plan' => 'pro', 'pairing_code' => '')));
+expect($synced['plan'] === 'pro', 'a plan set by the service sync is kept through the sanitizer');
+
+// The same licence key, already bound, is not redeemed again on every save.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['license_key'] = 'NRV-LIC-KEY';
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['pairing_code'] = '';
+unset($GLOBALS['webmcp_test_last_remote']);
+$relicensed = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('business_name' => 'Again')));
+expect(!isset($GLOBALS['webmcp_test_last_remote']), 'an already bound licence key is not sent again');
+expect($relicensed['plan'] === 'standard', 'and the plan is kept');
+
+// A new code is still sent.
+$GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => wp_json_encode(array(
+    'ok' => true, 'site_id' => 'new1', 'site_key' => 'nrv_new', 'profile_token' => 'nrvp_new', 'plan' => 'pro', 'domain' => 'example.test', 'paired' => true,
+)));
+$fresh = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('pairing_code' => 'NRV-ZZZZZ-ZZZZZ-ZZZZZ-ZZZZZ')));
+expect(isset($GLOBALS['webmcp_test_last_remote']) && strpos($GLOBALS['webmcp_test_last_remote']['url'], '/api/pair') !== false, 'a new pairing code is sent');
+expect($fresh['plan'] === 'pro' && $fresh['site_id'] === 'new1', 'and its result is adopted');
+expect($fresh['pairing_code'] === '', 'and the code is not kept afterwards');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array('tag_url' => 'https://nurevo.jp/tag.js');
 
 // The domain mismatch names the domain to fix, because that is the one error
 // the operator can do something about without contacting anyone.

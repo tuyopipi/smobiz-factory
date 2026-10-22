@@ -3,7 +3,7 @@
  * Plugin Name: Nurevo AEO
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
- * Version: 0.7.2
+ * Version: 0.7.3
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Nurevo
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WEBMCP_CANARY_VERSION', '0.7.2');
+define('WEBMCP_CANARY_VERSION', '0.7.3');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
@@ -518,9 +518,26 @@ function webmcp_canary_sanitize_settings($input) {
         webmcp_canary_save_service_entries($input['services']);
     }
 
-    $plan = 'free';
+    // This callback runs on every write of the option, not only on the settings
+    // form: cron, the ruleset sync, autofill and the AJAX fixes all save the
+    // whole array through here. So the plan is carried over unless something in
+    // this save actually establishes a new one, and the service is contacted only
+    // when the owner has entered a pairing code or licence key that has not been
+    // redeemed yet. Re-sending a used code got "code_already_used" back and
+    // dropped a paying site to Free on an unrelated save.
+    $valid_plans = array('free', 'standard', 'pro');
+    if (isset($input['plan']) && in_array($input['plan'], $valid_plans, true)) {
+        $plan = $input['plan'];
+    } else {
+        $plan = in_array($current['plan'], $valid_plans, true) ? $current['plan'] : 'free';
+    }
     $paired = false;
-    if ($pairing_code !== '') {
+    // A code is single use. One that matches the stored value is the field
+    // being re-submitted, not a new code, and is never sent again.
+    $is_new_pairing_code = $pairing_code !== '' && $pairing_code !== (string) $current['pairing_code'];
+    $is_new_license = $license_key !== ''
+        && ($license_key !== (string) $current['license_key'] || (string) $current['site_id'] === '');
+    if ($is_new_pairing_code) {
         $result = webmcp_canary_pair_site($pairing_code, $tag_url);
         if (is_wp_error($result)) {
             add_settings_error(WEBMCP_CANARY_OPTION, $result->get_error_code(), $result->get_error_message(), 'error');
@@ -545,7 +562,7 @@ function webmcp_canary_sanitize_settings($input) {
     // The licence route stays live for installs that were set up before pairing
     // existed. A paired install has nothing left for a key to do, so it is not
     // consulted once pairing has succeeded.
-    if (!$paired && $license_key !== '') {
+    if (!$paired && $is_new_license) {
         // Redeeming the license is what registers this site, so this replaces
         // the old verify call: verify only answered "which plan", which left a
         // self-installed plugin with no site_id and therefore no profile sync,
@@ -590,7 +607,9 @@ function webmcp_canary_sanitize_settings($input) {
         'site_key' => $site_key,
         'site_id' => $site_id,
         'license_key' => $license_key,
-        'pairing_code' => $pairing_code,
+        // Never kept: a redeemed code is spent, and a rejected one should be
+        // typed again rather than retried on every later save.
+        'pairing_code' => '',
         'faq_page_id' => $faq_page_id,
         'plan' => $plan,
         'business_name' => isset($input['business_name']) ? sanitize_text_field($input['business_name']) : $current['business_name'],
@@ -720,6 +739,9 @@ function webmcp_canary_detect_active_seo_plugins() {
         'wordpress-seo/wp-seo.php'                    => 'Yoast SEO',
         'seo-by-rank-math/rank-math.php'              => 'Rank Math SEO',
         'all-in-one-seo-pack/all_in_one_seo_pack.php' => 'All in One SEO',
+        // No graph filter to merge into; handled by measurement instead.
+        'wp-seopress/seopress.php'                    => 'SEOPress',
+        'autodescription/autodescription.php'         => 'The SEO Framework',
     );
     $active = array();
     foreach ($supported as $plugin_file => $plugin_name) {
@@ -4350,18 +4372,29 @@ function webmcp_canary_settings_page() {
     <?php
 }
 
-add_action('wp_head', 'webmcp_canary_output_server_schema', 5);
-function webmcp_canary_output_server_schema() {
+/**
+ * Whether this request should carry Nurevo's facts at all.
+ */
+function webmcp_canary_schema_request_allowed() {
     if (is_admin() || is_feed() || is_404() || is_search()) {
-        return;
+        return false;
     }
     $settings = webmcp_canary_settings();
     if ($settings['enabled'] !== '1' || $settings['serve_schema'] !== '1') {
-        return;
+        return false;
     }
-    if (!get_option('blog_public')) {
-        return;
-    }
+    return (bool) get_option('blog_public');
+}
+
+/**
+ * Everything Nurevo would publish on this request.
+ *
+ * `core` is the business, WebSite and page nodes; `extra` is the FAQ and the
+ * services, which are hand-entered and therefore never suppressed. The two are
+ * kept apart because the standalone path filters `core` only.
+ */
+function webmcp_canary_own_schema_bundle() {
+    $settings = webmcp_canary_settings();
 
     $site_url  = !empty($settings['business_url']) ? $settings['business_url'] : home_url('/');
     $site_name = !empty($settings['business_name']) ? $settings['business_name'] : get_bloginfo('name');
@@ -4472,13 +4505,10 @@ function webmcp_canary_output_server_schema() {
         );
     }
 
-    $graph = webmcp_canary_filter_schema_graph($graph, $settings);
-
-    // The hand-entered FAQ is content the operator typed into Nurevo, not
-    // something read off their pages, so the FAQPage rule - which is about not
-    // repeating an SEO plugin's own FAQ block - does not apply to it. It is
-    // added after the filter for that reason, under an id of ours, so the two
-    // documents stay separate if both appear.
+    // The hand-entered FAQ and services are content the operator typed into
+    // Nurevo, not something read off their pages. When an SEO plugin already
+    // publishes an FAQPage here, the merge adds only the questions it lacks.
+    $extra = array();
     $faq_page_id = (int) ($settings['faq_page_id'] ?? 0);
     $on_faq_page = $faq_page_id > 0
         ? (is_singular() && get_queried_object_id() === $faq_page_id)
@@ -4486,20 +4516,326 @@ function webmcp_canary_output_server_schema() {
     if ($on_faq_page) {
         $faq_node = webmcp_canary_faq_schema_node($faq_page_id > 0 ? get_permalink($faq_page_id) : $site_url);
         if ($faq_node !== null) {
-            $graph[] = $faq_node;
+            $extra[] = $faq_node;
         }
-    }
-
-    // Services are open ground - no booking plugin publishes schema at all, so
-    // basis=always and there is nothing to stand down for. Published on the same
-    // page as the FAQ, offered by the business node, under ids of ours.
-    if ($on_faq_page) {
+        // Services are open ground - no booking plugin publishes schema at all.
+        // Offered by the business node, under ids of ours.
         foreach (webmcp_canary_service_schema_nodes($faq_page_id > 0 ? get_permalink($faq_page_id) : $site_url, $org_id) as $service_node) {
-            $graph[] = $service_node;
+            $extra[] = $service_node;
         }
     }
 
-    if ($central) { $graph = webmcp_canary_central_entity_graph($graph, $delivery); }
+    $bundle = array(
+        'core'     => $graph,
+        'extra'    => $extra,
+        'org_id'   => $org_id,
+        'central'  => $central,
+        'delivery' => $delivery,
+    );
+    return $bundle;
+}
+
+/** Apply the paid central templates, when they are in force, to a graph of ours. */
+function webmcp_canary_finalize_own_graph($graph, $bundle) {
+    if (!empty($bundle['central'])) {
+        $graph = webmcp_canary_central_entity_graph($graph, $bundle['delivery']);
+    }
+    return $graph;
+}
+
+/* -----------------------------------------------------------------------
+ * Coexistence by merging into the SEO plugin's own graph.
+ *
+ * Yoast SEO, Rank Math and All in One SEO each build one JSON-LD graph and pass
+ * it through a filter before printing it. Nurevo hooks those filters and adds
+ * only what the graph is missing: properties the business node lacks
+ * (address, telephone, opening hours, ...), FAQ questions it does not already
+ * carry, and the services. Nodes the plugin already publishes - WebSite,
+ * WebPage, Article and the rest - are left as they are. The page then carries
+ * one graph, from one plugin, describing one business. No second business
+ * node, no second WebSite, nothing to reconcile.
+ *
+ * When none of those filters ran on a request (another SEO plugin, none at all,
+ * or the plugin's schema switched off for that page), Nurevo prints its own
+ * graph at the end of <head>, after every SEO plugin has printed theirs.
+ * --------------------------------------------------------------------- */
+
+/** Plugins whose graph Nurevo merges into, by plugin file. */
+function webmcp_canary_graph_integrations() {
+    return array(
+        'wordpress-seo/wp-seo.php',
+        'seo-by-rank-math/rank-math.php',
+        'all-in-one-seo-pack/all_in_one_seo_pack.php',
+    );
+}
+
+/** Set once a merge has happened on this request, so nothing is printed twice. */
+function webmcp_canary_schema_merged($set = null) {
+    static $merged = false;
+    if ($set !== null) {
+        $merged = (bool) $set;
+    }
+    return $merged;
+}
+
+add_filter('wpseo_schema_graph', 'webmcp_canary_merge_into_list_graph', 99);
+add_filter('aioseo_schema_output', 'webmcp_canary_merge_into_list_graph', 99);
+/** Yoast SEO and All in One SEO pass the graph as a plain list of nodes. */
+function webmcp_canary_merge_into_list_graph($graph) {
+    if (!is_array($graph) || !webmcp_canary_schema_request_allowed()) {
+        return $graph;
+    }
+    return array_values(webmcp_canary_merge_graph($graph));
+}
+
+add_filter('rank_math/schema/validated_data', 'webmcp_canary_merge_into_keyed_graph', 99);
+/** Rank Math passes the graph keyed by entity name and lists it itself. */
+function webmcp_canary_merge_into_keyed_graph($data) {
+    if (!is_array($data) || empty($data) || !webmcp_canary_schema_request_allowed()) {
+        return $data;
+    }
+    return webmcp_canary_merge_graph($data);
+}
+
+/** Types that describe the page itself; the SEO plugin owns these. */
+function webmcp_canary_page_type_families() {
+    return array(
+        'website' => array('WebSite'),
+        'webpage' => array('WebPage', 'CollectionPage', 'ItemPage', 'AboutPage', 'ContactPage', 'ProfilePage', 'SearchResultsPage', 'CheckoutPage', 'MedicalWebPage', 'RealEstateListing'),
+        'article' => array('Article', 'BlogPosting', 'NewsArticle', 'TechArticle', 'Report', 'ScholarlyArticle', 'SocialMediaPosting'),
+        'breadcrumb' => array('BreadcrumbList'),
+    );
+}
+
+function webmcp_canary_page_type_family($node) {
+    $types = webmcp_canary_schema_node_types($node);
+    foreach (webmcp_canary_page_type_families() as $family => $members) {
+        if (array_intersect($types, $members)) {
+            return $family;
+        }
+    }
+    return '';
+}
+
+/**
+ * Merge Nurevo's facts into another plugin's graph. Keys are preserved; nodes
+ * that are genuinely new are appended under "nurevo-*" keys.
+ *
+ * Public so it can be tested without WordPress: pass $own to skip building it.
+ */
+function webmcp_canary_merge_graph($graph, $own = null) {
+    if ($own === null) {
+        $bundle = webmcp_canary_own_schema_bundle();
+        $own = webmcp_canary_finalize_own_graph(array_merge($bundle['core'], $bundle['extra']), $bundle);
+    }
+    if (!is_array($own) || empty($own)) {
+        return $graph;
+    }
+    $configured_type = (string) (webmcp_canary_settings()['business_type'] ?? '');
+
+    // Locate what they already publish.
+    $business_key = null;
+    $family_keys = array();
+    $faq_key = null;
+    $ids = array();
+    $question_names = array();
+    foreach ($graph as $key => $node) {
+        if (!is_array($node)) {
+            continue;
+        }
+        if (!empty($node['@id'])) {
+            $ids[(string) $node['@id']] = $key;
+        }
+        $types = webmcp_canary_schema_node_types($node);
+        if (in_array('FAQPage', $types, true) && $faq_key === null) {
+            $faq_key = $key;
+        }
+        if (in_array('Question', $types, true) && isset($node['name'])) {
+            $question_names[webmcp_canary_question_key($node['name'])] = true;
+        }
+        if (!empty($node['mainEntity']) && is_array($node['mainEntity'])) {
+            foreach ($node['mainEntity'] as $entity) {
+                if (is_array($entity) && in_array('Question', webmcp_canary_schema_node_types($entity), true) && isset($entity['name'])) {
+                    $question_names[webmcp_canary_question_key($entity['name'])] = true;
+                }
+            }
+        }
+        $family = webmcp_canary_page_type_family($node);
+        if ($family !== '' && !isset($family_keys[$family])) {
+            $family_keys[$family] = $key;
+        }
+        // A Person standing for the site is not the business: leave it alone.
+        if ($business_key === null && $types !== array('Person') && webmcp_canary_is_business_node($node, $configured_type)) {
+            $business_key = $key;
+        }
+    }
+
+    $id_map = array();
+    $appended = array();
+    foreach ($own as $node) {
+        if (!is_array($node)) {
+            continue;
+        }
+        unset($node['@context']);
+        $own_id = isset($node['@id']) ? (string) $node['@id'] : '';
+        $types = webmcp_canary_schema_node_types($node);
+
+        // The business: add the facts their node lacks, under their id.
+        if (webmcp_canary_is_business_node($node, $configured_type) && $business_key !== null) {
+            $graph[$business_key] = webmcp_canary_fill_missing($graph[$business_key], $node);
+            $graph[$business_key]['@type'] = webmcp_canary_merge_business_type($graph[$business_key], $types);
+            $their_id = isset($graph[$business_key]['@id']) ? (string) $graph[$business_key]['@id'] : '';
+            if ($their_id === '' && $own_id !== '') {
+                $graph[$business_key]['@id'] = $own_id;
+            } elseif ($own_id !== '' && $their_id !== $own_id) {
+                $id_map[$own_id] = $their_id;
+            }
+            continue;
+        }
+
+        // Page-level nodes they publish stay theirs; only a missing description
+        // or language is added.
+        $family = webmcp_canary_page_type_family($node);
+        if ($family !== '' && isset($family_keys[$family])) {
+            $their = $graph[$family_keys[$family]];
+            $graph[$family_keys[$family]] = webmcp_canary_fill_missing($their, array_intersect_key($node, array_flip(array('description', 'inLanguage'))));
+            $their_id = isset($their['@id']) ? (string) $their['@id'] : '';
+            if ($own_id !== '' && $their_id !== '' && $their_id !== $own_id) {
+                $id_map[$own_id] = $their_id;
+            }
+            continue;
+        }
+
+        // FAQ: add only the questions they do not already answer.
+        if (in_array('FAQPage', $types, true) && $faq_key !== null) {
+            $missing = array();
+            foreach ((array) ($node['mainEntity'] ?? array()) as $question) {
+                if (is_array($question) && isset($question['name']) && !isset($question_names[webmcp_canary_question_key($question['name'])])) {
+                    $missing[] = $question;
+                }
+            }
+            if (!empty($missing)) {
+                $existing = isset($graph[$faq_key]['mainEntity']) ? $graph[$faq_key]['mainEntity'] : array();
+                if (!is_array($existing) || isset($existing['@type']) || isset($existing['@id'])) {
+                    $existing = $existing ? array($existing) : array();
+                }
+                $graph[$faq_key]['mainEntity'] = array_merge(array_values($existing), $missing);
+            }
+            if ($own_id !== '' && !empty($graph[$faq_key]['@id'])) {
+                $id_map[$own_id] = (string) $graph[$faq_key]['@id'];
+            }
+            continue;
+        }
+
+        // Same @id already present: fill gaps rather than repeat the node.
+        if ($own_id !== '' && isset($ids[$own_id])) {
+            $graph[$ids[$own_id]] = webmcp_canary_fill_missing($graph[$ids[$own_id]], $node);
+            continue;
+        }
+
+        // Nobody publishes this: it is new information, not a duplicate.
+        $appended[] = $node;
+    }
+
+    // Point everything we added at their nodes, not at ids that no longer exist.
+    foreach ($graph as $key => $node) {
+        $graph[$key] = webmcp_canary_remap_ids($node, $id_map);
+    }
+    foreach ($appended as $index => $node) {
+        $graph['nurevo-' . $index] = webmcp_canary_remap_ids($node, $id_map);
+    }
+
+    webmcp_canary_schema_merged(true);
+    return $graph;
+}
+
+/** Copy properties from $source that $target does not already carry. */
+function webmcp_canary_fill_missing($target, $source) {
+    if (!is_array($target)) {
+        return $target;
+    }
+    foreach ((array) $source as $property => $value) {
+        if ($property === '@id' || $property === '@type' || $property === '@context') {
+            continue;
+        }
+        if (webmcp_canary_schema_has_property($target, $property)) {
+            continue;
+        }
+        // openingHours and openingHoursSpecification are one fact in two forms.
+        if ($property === 'openingHoursSpecification' && !empty($target['openingHours'])) {
+            continue;
+        }
+        $target[$property] = $value;
+    }
+    return $target;
+}
+
+/**
+ * Add a more specific business type (HairSalon, Dentist...) to theirs without
+ * dropping what they declared. "Organization" adds nothing and is not added.
+ */
+function webmcp_canary_merge_business_type($their_node, $own_types) {
+    $theirs = webmcp_canary_schema_node_types($their_node);
+    $add = array_values(array_diff($own_types, $theirs, array('Organization', 'Thing')));
+    if (empty($add)) {
+        return isset($their_node['@type']) ? $their_node['@type'] : 'Organization';
+    }
+    $merged = array_values(array_unique(array_merge($theirs, $add)));
+    return count($merged) === 1 ? $merged[0] : $merged;
+}
+
+function webmcp_canary_question_key($name) {
+    $name = trim(wp_strip_all_tags((string) $name));
+    return function_exists('mb_strtolower') ? mb_strtolower($name) : strtolower($name);
+}
+
+/** Rewrite {"@id": old} references to the ids that survive the merge. */
+function webmcp_canary_remap_ids($value, $id_map) {
+    if (empty($id_map) || !is_array($value)) {
+        return $value;
+    }
+    foreach ($value as $key => $item) {
+        if ($key === '@id' && is_string($item) && isset($id_map[$item]) && count($value) === 1) {
+            $value[$key] = $id_map[$item];
+        } elseif (is_array($item)) {
+            $value[$key] = webmcp_canary_remap_ids($item, $id_map);
+        }
+    }
+    return $value;
+}
+
+/**
+ * Standalone output, for requests where no SEO plugin graph took our facts.
+ *
+ * Runs at the end of <head> so every SEO plugin has already printed (they all
+ * print at priority 1). If a merge happened, there is nothing left to print.
+ */
+add_action('wp_head', 'webmcp_canary_output_server_schema', 99);
+function webmcp_canary_output_server_schema() {
+    if (!webmcp_canary_schema_request_allowed()) {
+        return;
+    }
+    $settings = webmcp_canary_settings();
+    $bundle = webmcp_canary_own_schema_bundle();
+    if (webmcp_canary_schema_merged()) {
+        // The facts are already inside the SEO plugin's graph. The delivery
+        // marker is still printed: the diagnosis reads it to confirm which
+        // ruleset version reached the page.
+        if (!empty($bundle['central'])) {
+            echo '<script type="application/json" id="nurevo-aeo-delivery">' . wp_json_encode(array('version' => intval($bundle['delivery']['version'])), JSON_HEX_TAG | JSON_HEX_AMP) . '</script>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
+        }
+        return;
+    }
+
+    // Plugins we merge into did not publish a graph on this request, so they
+    // are not competing for any node here. Others (SEOPress, The SEO Framework)
+    // are still handled by measurement: their nodes are left alone and the
+    // business facts go under their business @id, so the two merge.
+    $others = array_diff_key(webmcp_canary_detect_active_seo_plugins(), array_flip(webmcp_canary_graph_integrations()));
+    $graph = webmcp_canary_filter_schema_graph($bundle['core'], $settings, $others);
+    $graph = webmcp_canary_finalize_own_graph(array_merge($graph, $bundle['extra']), $bundle);
+    $central = !empty($bundle['central']);
+    $delivery = $bundle['delivery'];
     if (empty($graph)) {
         return;
     }

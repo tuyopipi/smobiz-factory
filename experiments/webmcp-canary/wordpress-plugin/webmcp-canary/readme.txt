@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.7.2
+Stable tag: 0.7.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,22 +24,27 @@ Everything below runs on the free plan. No license key, no trial period, no feat
 * **One-click fixes** — basic schema.org structured data, llms.txt and AI crawler access are fixed from the admin screen.
 * **Server-rendered schema.org JSON-LD** — emitted into the page HTML, so crawlers that never run JavaScript still read it.
 * **llms.txt** — served at `/llms.txt`. Generated inside the plugin from your WordPress content, so it works with no site key and no network access.
-* **AI crawler rules** — robots.txt entries that explicitly allow GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended and Bytespider.
+* **AI crawler rules** — robots.txt entries that explicitly allow GPTBot, OAI-SearchBot, ChatGPT-User, ClaudeBot, anthropic-ai, PerplexityBot, Google-Extended, CCBot and Applebot-Extended.
 * **Business data extraction** — reads your existing SEO plugin settings, WordPress options and clearly labelled public content to fill in blank fields only. Values you have typed are never overwritten.
 
 = Works alongside Yoast SEO and Rank Math =
 
 Keep your SEO plugin. The two jobs are different: Yoast SEO or Rank Math handle search ranking, Nurevo AEO handles whether an AI can read your facts.
 
-Nurevo AEO reads the structured data your site actually serves and suppresses only the nodes your SEO plugin genuinely publishes in full. Nothing is assumed from the fact that a plugin is installed.
+Nurevo AEO does not publish a second set of structured data next to your SEO plugin's. It adds the missing facts to the one your SEO plugin already publishes.
 
-That distinction matters. The free tiers of these plugins publish an Organization with a name, a URL and a logo, but no address, telephone or opening hours - those belong to their paid local-SEO add-ons. A plugin that stepped aside merely because Yoast was present would leave your page with no address, phone or hours at all, which is worse than a duplicate: a duplicate is visible, a gap is silent.
+With **Yoast SEO, Rank Math or All in One SEO**, Nurevo AEO hooks the filter each of them uses to build its JSON-LD graph (`wpseo_schema_graph`, `rank_math/schema/validated_data`, `aioseo_schema_output`) and adds only what is missing:
 
-So when your SEO plugin publishes a complete business entity, Nurevo AEO stays out of the way. When it publishes an incomplete one, Nurevo AEO supplies the missing facts under the same @id, so the two describe one business rather than two. The result is no duplicate schema and no missing information.
+* **Your business node** gets the address, telephone, opening hours, description and email it lacks, and a more specific type such as HairSalon or Dentist. Values your SEO plugin already sets are never overwritten.
+* **FAQ** questions you entered in Nurevo are added to the page's existing FAQPage, skipping any question it already answers.
+* **Services** you entered are added, linked to your business node.
+* **WebSite, WebPage, Article and breadcrumbs** stay exactly as your SEO plugin publishes them.
 
-Page-level nodes - WebSite, WebPage, Article, BreadcrumbList and the rest - are always left to your SEO plugin when it publishes them, because it owns that context. AEO-specific nodes such as FAQPage and opening hours are always Nurevo's. You can turn the whole arrangement off in the settings.
+The page ends up with one graph, from your SEO plugin, describing one business.
 
-The Nurevo AEO screen shows which plugin publishes each schema type, including where Nurevo is filling a gap.
+That matters because the free tiers of these plugins publish an Organization with a name, a URL and a logo, but no address, telephone or opening hours - those belong to their paid local-SEO add-ons. Those are exactly the facts an AI needs to describe a local business.
+
+With **any other setup** - SEOPress, The SEO Framework, a theme's own schema, or no SEO plugin - Nurevo AEO prints its own graph at the end of `<head>`. It leaves out what your other plugins already publish and puts the business facts under their business @id, so the two describe one business rather than two.
 
 = Plans =
 
@@ -57,15 +62,36 @@ This plugin relies on the Nurevo service, operated by Bestie. LLC. It is not req
 
 **The browser tag is opt-in and off by default.** Settings has an optional "Load the Nurevo browser tag on public pages" checkbox, unchecked unless you tick it. While it is off, no script is enqueued and nothing about your visitors reaches the service. If you turn it on, a script is loaded from the configured service URL (by default `https://nurevo.jp/tag.js`) on every public page view, carrying your public site key. It reports public form structure — field names, types, labels, selectors and option counts — and privacy-safe submission outcomes. It is designed not to transmit values a visitor typed: no names, email addresses, phone numbers, message bodies or payment details. Unticking the box stops it immediately. You do not need it for AEO.
 
-**Admin requests.** These are the requests the plugin does make, and they happen only in wp-admin, when you open or refresh the relevant screen. No visitor is involved:
+**Requests the plugin makes, and when.** All of them go to the Nurevo service URL in Settings (by default `https://nurevo.jp`). None of them carries visitor data.
 
-* AEO score — the service fetches and inspects your site's public pages. Sends your site URL, and the site key when registered. Endpoints: `/api/aeo/score`, `/api/sites/{id}/aeo-score`.
-* License verification — sends the license key and site key when you save a license. Endpoint: `/api/license/verify`.
-* Site registration and key management — sends your site host and URL. Endpoints: `/api/site-key`, `/api/site-key/regenerate`, `/api/site-key/disable`.
-* Hosted llms.txt and site insights — sends the site key and host. Endpoints: `/api/llms.txt`, `/api/site-insights`, `/api/tag/config`.
-* AI visibility measurement (Pro, beta) — sends the site key and site id. Endpoint: `/api/sites/{id}/sov`.
+*On activation, without a key:*
 
-Business information you have configured — name, address, phone, opening hours, business type and similar public details — is sent with registration and profile requests so the service can produce the same structured data your site publishes.
+* AEO diagnosis — when you activate the plugin it runs one diagnosis so the AEO screen has a result to show. Sends your home URL and your WordPress language. The service then fetches your public front page, `/robots.txt` and `/llms.txt`. Endpoint: `/api/aeo/score`.
+
+*In wp-admin, when you open or refresh a screen, without a key:*
+
+* AEO diagnosis — the same request as above, when you open the AEO screen or press "Check again". Endpoint: `/api/aeo/score`.
+
+*When you connect the site (pairing code or licence key):*
+
+* Pairing — sends the pairing code you entered and your home URL. Endpoint: `/api/pair`.
+* Licence — sends the licence key you entered and your home URL. Endpoint: `/api/license/bind`.
+* Site key management — sends your home URL and the owner email from Settings. Endpoints: `/api/site-key`, `/api/site-key/regenerate`, `/api/site-key/disable`.
+
+*Once the site is connected (site key or site ID present), in wp-admin and from WP-Cron twice a day:*
+
+* Diagnosis history — sends the site key, site ID and language. Endpoint: `/api/sites/{id}/aeo-score`.
+* Business profile — reads and updates the profile the service holds. Sends the business details from Settings: name, description, address, telephone, opening hours, business type, website URL and business email. Endpoint: `/api/sites/{id}/profile` (GET and PUT).
+* Catalogue — sends what the site offers so the service can publish the same facts: WooCommerce product names, URLs, SKUs, prices, currency, stock status and categories; the services, FAQ questions and answers entered in Settings; and the titles and URLs of your 30 most recently updated published posts and pages. Endpoint: `/api/sites/{id}/catalog` (PUT).
+* Ruleset — sends the site key and receives the current output criteria and plan. Endpoint: `/api/tag/config`.
+* Site insights — sends the site key and host. Endpoint: `/api/site-insights`.
+* AI visibility measurement (Pro, beta) — sends the site key and site ID. Endpoint: `/api/sites/{id}/sov`.
+
+*On a public request for `/llms.txt`, once the site has a site key:*
+
+* Hosted llms.txt — sends the site key and host, and caches the answer for six hours. If the service cannot be reached, the plugin serves the llms.txt it builds itself. Endpoint: `/api/llms.txt`.
+
+The plugin also requests your own front page once a day (a loopback request to your own server, not to Nurevo) to see which structured data your other plugins already publish.
 
 The site key is a public identifier. It appears in markup served to browsers, so never put a server secret in it. The license key is separate and is never printed into public pages.
 
@@ -119,7 +145,7 @@ No. Keep using a traditional SEO plugin for ordinary search. Nurevo AEO adds AI-
 
 = Does the plugin put anything on my public pages that talks to your servers? =
 
-Not unless you ask it to. The optional browser tag is off by default, and with it off no third-party script is loaded and no visitor data is sent anywhere. The AEO features do not use it. The requests the plugin does make happen in wp-admin, when you open the relevant screen.
+Not unless you ask it to. The optional browser tag is off by default, and with it off no third-party script is loaded and no visitor data is sent anywhere. The AEO features do not use it. The requests the plugin does make are listed under "External services": on activation, in wp-admin, from WP-Cron once a site is connected, and for `/llms.txt` on connected sites. None of them includes visitor data.
 
 = Does it send what my visitors type into forms? =
 
@@ -140,6 +166,14 @@ It is a beta feature. It samples AI answers rather than observing every response
 3. Works with Yoast SEO and Rank Math — Nurevo fills the business details they leave out, no duplicate schema.
 
 == Changelog ==
+
+= 0.7.3 =
+* No more parallel structured data. With Yoast SEO, Rank Math or All in One SEO, Nurevo AEO now adds the missing facts - address, telephone, opening hours, a specific business type, FAQ questions and services - into the graph your SEO plugin already publishes, instead of printing a second graph beside it. Your SEO plugin's own values are never overwritten.
+* SEOPress and The SEO Framework are now recognised, so their business node is completed under its own @id rather than duplicated.
+* Fixed: saving the settings no longer re-sends a pairing code that was already used. On 0.7.2 an unrelated save could get "code already used" back and show the site as Free. A licence key that is already bound is no longer redeemed again on every save.
+* Uninstalling now removes everything the plugin stored - FAQ, services, diagnosis and measurement caches, catalogue, ruleset and llms.txt caches - and its scheduled task, on every site of a multisite network.
+* The "External services" section now lists every request the plugin makes, when it makes it, and what it sends, including the diagnosis run on activation and the profile and catalogue sync on connected sites.
+* Removed a development test file from the plugin package.
 
 = 0.7.2 =
 * Follow central schema generation, apply bounded daily repair jobs, and expose verifiable delivery versions.
@@ -206,6 +240,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.7.3 =
+
+Merges the missing business facts into your SEO plugin's structured data instead of printing a second set, and fixes paid sites showing as Free after saving the settings.
 
 = 0.7.1 =
 
