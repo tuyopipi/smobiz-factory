@@ -64,16 +64,16 @@ function makeEnv({ site = {}, stripe, keys = {} } = {}) {
   };
   globalThis.fetch = async (url, init) => {
     const form = new URLSearchParams(String(init?.body || ""));
-    calls.push({ url: String(url), form: Object.fromEntries(form) });
+    calls.push({ url: String(url), form: Object.fromEntries(form), version: init?.headers?.["stripe-version"] || "" });
     const reply = stripe ? stripe(String(url)) : { url: "https://stripe.test/session" };
     return new Response(JSON.stringify(reply), { status: 200, headers: { "content-type": "application/json" } });
   };
   return env;
 }
 
-const post = async (env, path, body) => {
+const post = async (env, path, body, extraHeaders = {}) => {
   const response = await handleApi(
-    new Request(`https://w.test${path}`, { method: "POST", headers: HEADERS, body: JSON.stringify(body) }),
+    new Request(`https://w.test${path}`, { method: "POST", headers: { ...HEADERS, ...extraHeaders }, body: JSON.stringify(body) }),
     env, { waitUntil() {} },
   );
   return { status: response.status, body: await response.json() };
@@ -409,6 +409,78 @@ for (const path of ["/api/billing/checkout", "/api/billing/portal"]) {
   const link = await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
   assert.equal(link.status, 200);
   assert.equal(env.calls[1].form["automatic_tax[enabled]"], "true", "payment links use Stripe Tax");
+}
+
+// International sales: businesses only, and only with Stripe Tax.
+{
+  // A visitor from abroad with only the fixed Japanese rate is refused: the
+  // 10% would be charged on a sale outside Japan's consumption tax.
+  const env = makeEnv({ keys: { STRIPE_TAX_RATE_ID: "txr_jp10" } });
+  const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" }, { "cf-ipcountry": "DE" });
+  assert.equal(status, 409);
+  assert.equal(body.error, "international_requires_automatic_tax");
+  assert.equal(env.calls.length, 0, "Stripe is not called");
+  const link = await post(env, "/api/billing/payment-link", { site_id: SITE_ID, billing_region: "intl" });
+  assert.equal(link.status, 409, "payment links refuse too");
+}
+{
+  // With Stripe Tax, abroad requires a tax ID and the full address, and the
+  // request is pinned to an API version that knows tax_id_collection[required].
+  const env = makeEnv({ keys: { STRIPE_AUTOMATIC_TAX: "1" } });
+  const { status, body } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" }, { "cf-ipcountry": "US" });
+  assert.equal(status, 200);
+  assert.equal(body.billing_region, "intl");
+  const form = env.calls[0].form;
+  assert.equal(form["automatic_tax[enabled]"], "true");
+  assert.equal(form["tax_id_collection[enabled]"], "true");
+  assert.equal(form["tax_id_collection[required]"], "if_supported");
+  assert.equal(form.billing_address_collection, "required");
+  assert.equal(form.locale, "auto");
+  assert.equal(form["metadata[billing_region]"], "intl");
+  assert.equal(form["subscription_data[metadata][billing_region]"], "intl");
+  assert.equal(env.calls[0].version, "2024-09-30.acacia");
+  const link = await post(env, "/api/billing/payment-link", { site_id: SITE_ID, billing_region: "intl" });
+  assert.equal(link.status, 200);
+  assert.equal(env.calls[1].form["tax_id_collection[required]"], "if_supported");
+  assert.equal(env.calls[1].form.locale, undefined, "payment links have no locale field");
+}
+{
+  // Japan is unchanged apart from an optional tax ID field; the caller's
+  // explicit region wins over the visitor's country, and no header means Japan.
+  const env = makeEnv({ keys: { STRIPE_AUTOMATIC_TAX: "1" } });
+  await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  let form = env.calls[0].form;
+  assert.equal(form["metadata[billing_region]"], "jp");
+  assert.equal(form["tax_id_collection[required]"], undefined, "a tax ID is never required in Japan");
+  assert.equal(form.billing_address_collection, "auto");
+  assert.equal(form.locale, "ja");
+  assert.equal(env.calls[0].version, "", "no version pin when nothing new is used");
+  await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard", billing_region: "jp" }, { "cf-ipcountry": "FR" });
+  assert.equal(env.calls[1].form["metadata[billing_region]"], "jp");
+}
+{
+  // Fixed rate in Japan still works exactly as before.
+  const env = makeEnv({ keys: { STRIPE_TAX_RATE_ID: "txr_jp10" } });
+  const { status } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" }, { "cf-ipcountry": "JP" });
+  assert.equal(status, 200);
+  assert.equal(env.calls[0].form["tax_id_collection[enabled]"], undefined);
+  assert.equal(env.calls[0].form.locale, "ja");
+}
+{
+  const { billingRegion, needsInternationalReview } = await import("../worker/api.mjs");
+  const req = (country) => new Request("https://w.test/", { headers: country ? { "cf-ipcountry": country } : {} });
+  assert.equal(billingRegion(req("JP")), "jp");
+  assert.equal(billingRegion(req("GB")), "intl");
+  assert.equal(billingRegion(req("XX")), "jp", "unknown country is Japan");
+  assert.equal(billingRegion(req("T1")), "jp", "Tor is Japan");
+  assert.equal(billingRegion(req("")), "jp");
+  assert.equal(billingRegion(req("JP"), { billing_region: "intl" }), "intl");
+  assert.equal(billingRegion(req("US"), { billing_region: "bogus" }), "intl", "an unknown value falls back to the country");
+  assert.equal(needsInternationalReview({ customer_details: { address: { country: "JP" }, tax_ids: [] } }), false);
+  assert.equal(needsInternationalReview({ customer_details: { address: { country: "DE" }, tax_ids: [{ type: "eu_vat", value: "DE123" }] } }), false);
+  assert.equal(needsInternationalReview({ customer_details: { address: { country: "DE" }, tax_ids: [] } }), true);
+  assert.equal(needsInternationalReview({ customer_details: { address: { country: "US" } } }), true);
+  assert.equal(needsInternationalReview({}), false);
 }
 
 console.log("billing checkout and portal tests passed");

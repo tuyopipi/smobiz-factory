@@ -2063,6 +2063,12 @@ export async function handleApi(request, env, ctx) {
     if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
     const priceId = pricesFromEnv(env)[wantedPlan];
     if (!priceId) return json({ error: "price_not_configured", plan: wantedPlan }, 503);
+    const region = billingRegion(request, body);
+    // Abroad, the fixed Japanese rate would charge 10% consumption tax on a
+    // sale that is outside its scope. Only Stripe Tax can tell the two apart.
+    if (region === "intl" && !automaticTaxEnabled(env)) {
+      return json({ error: "international_requires_automatic_tax", billing_region: region }, 409);
+    }
     const memberRow = await env.DB.prepare("SELECT email FROM members WHERE id=?").bind(member.member_id).first();
     const form = new URLSearchParams({ mode: "subscription", "line_items[0][price]": priceId, "line_items[0][quantity]": "1",
       // Stripe hides the coupon field unless asked, so a promotion code that
@@ -2071,11 +2077,12 @@ export async function handleApi(request, env, ctx) {
       allow_promotion_codes: "true",
       success_url: "https://nurevo.jp/dashboard?checkout=success", cancel_url: "https://nurevo.jp/dashboard?checkout=cancelled", customer_email: memberRow?.email || "", "metadata[siteId]": site.id, "metadata[orgId]": member.org_id, "metadata[plan]": wantedPlan, "subscription_data[metadata][siteId]": site.id, "subscription_data[metadata][orgId]": member.org_id, "subscription_data[metadata][plan]": wantedPlan });
     applyConsumptionTax(form, env, { lineItem: true });
-    const response = await stripeRequest(secret, "/v1/checkout/sessions", form);
+    const pinned = applyBillingRegion(form, env, region, { checkout: true });
+    const response = await stripeRequest(secret, "/v1/checkout/sessions", form, { version: pinned });
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_checkout_failed" }, 502);
     // The tier that was actually priced, and what it costs - not a constant that
     // happens to be nearby.
-    return json({ ok: true, url: response.data.url, plan: wantedPlan, amount_yen: PLAN_MONTHLY_YEN[wantedPlan] });
+    return json({ ok: true, url: response.data.url, plan: wantedPlan, amount_yen: PLAN_MONTHLY_YEN[wantedPlan], billing_region: region });
   }
 
   /*
@@ -2149,7 +2156,12 @@ export async function handleApi(request, env, ctx) {
     if (!applyConsumptionTax(form, env, { lineItem: false }) && taxRateId(env)) {
       return json({ error: "payment_link_requires_automatic_tax" }, 409);
     }
-    const response = await stripeRequest(secret, "/v1/payment_links", form);
+    const linkRegion = billingRegion(request, body);
+    if (linkRegion === "intl" && !automaticTaxEnabled(env)) {
+      return json({ error: "international_requires_automatic_tax", billing_region: linkRegion }, 409);
+    }
+    const linkPinned = applyBillingRegion(form, env, linkRegion, { checkout: false });
+    const response = await stripeRequest(secret, "/v1/payment_links", form, { version: linkPinned });
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_payment_link_failed" }, 502);
     return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen, site_id: site.id });
   }
@@ -2192,6 +2204,15 @@ export async function handleApi(request, env, ctx) {
     if (event.type === "checkout.session.completed" && siteId) {
       await env.DB.prepare("UPDATE sites SET stripe_customer_id=?,stripe_subscription_id=? WHERE id=?")
         .bind(object.customer || null, object.subscription || null, siteId).run();
+    }
+    // Abroad we sell to businesses only. A buyer outside Japan who left no tax
+    // ID (a country where Stripe cannot require one, or a Japan-region checkout
+    // used from abroad) is recorded for a person to look at; nothing is
+    // cancelled automatically.
+    if (event.type === "checkout.session.completed" && needsInternationalReview(object)) {
+      await env.DB.prepare("INSERT OR IGNORE INTO billing_events (event_id,kind,created_at) VALUES (?,?,?)")
+        .bind(`review:${object.id || event.id}`, `intl_no_tax_id:${String(object.customer_details?.address?.country || "").slice(0, 2)}:${siteId || ""}`, Date.now()).run();
+      console.warn("billing: international checkout without a tax ID", { session: object.id, siteId, country: object.customer_details?.address?.country });
     }
 
     // The subscription is the source of truth for the plan.
@@ -3005,8 +3026,12 @@ function stripeMode(env) {
   return "unconfigured";
 }
 
-async function stripeRequest(secret, path, form) {
-  const response = await fetch(`https://api.stripe.com${path}`, { method: "POST", headers: { authorization: `Bearer ${secret}`, "content-type": "application/x-www-form-urlencoded" }, body: form });
+async function stripeRequest(secret, path, form, { version } = {}) {
+  const headers = { authorization: `Bearer ${secret}`, "content-type": "application/x-www-form-urlencoded" };
+  // Pinned only where a request uses a parameter newer than an account's
+  // default API version may be (tax_id_collection[required], 2024-09-30).
+  if (version) headers["stripe-version"] = version;
+  const response = await fetch(`https://api.stripe.com${path}`, { method: "POST", headers, body: form });
   let data = {};
   try { data = await response.json(); } catch { data = {}; }
   return { ok: response.ok, status: response.status, data };
@@ -3376,6 +3401,54 @@ export function applyConsumptionTax(form, env, { lineItem = true } = {}) {
     return true;
   }
   return false;
+}
+
+/*
+ * Where a buyer is billed from. Outside Japan, Nurevo sells to businesses only:
+ * the buyer gives a tax ID and accounts for the tax themselves (reverse
+ * charge), so no foreign VAT registration is needed. Inside Japan nothing
+ * changes. The caller may say which applies; otherwise Cloudflare's view of
+ * the visitor's country decides, and an unknown country is treated as Japan,
+ * the market everything else here assumes.
+ */
+export const STRIPE_TAX_ID_API_VERSION = "2024-09-30.acacia";
+
+export function billingRegion(request, body = {}) {
+  const asked = String(body.billing_region || body.region || "").trim().toLowerCase();
+  if (asked === "jp" || asked === "intl") return asked;
+  const country = String(request?.cf?.country || request?.headers?.get?.("cf-ipcountry") || "").trim().toUpperCase();
+  if (!/^[A-Z]{2}$/.test(country) || country === "XX" || country === "T1") return "jp";
+  return country === "JP" ? "jp" : "intl";
+}
+
+/**
+ * Adds what a region needs to a Checkout Session or Payment Link form, and
+ * returns the Stripe API version the request must be sent with (or "").
+ */
+export function applyBillingRegion(form, env, region, { checkout = true } = {}) {
+  form.set("metadata[billing_region]", region);
+  form.set("subscription_data[metadata][billing_region]", region);
+  if (checkout) form.set("locale", region === "jp" ? "ja" : "auto");
+  if (!automaticTaxEnabled(env)) return "";
+  // Stripe Tax needs an address to decide; a business abroad is identified by
+  // its tax ID, which is required wherever Stripe can collect one.
+  // In Japan Checkout's own "auto" asks for as much as the tax needs; abroad
+  // the full address is kept as evidence of where the sale was made.
+  form.set("billing_address_collection", region === "intl" ? "required" : "auto");
+  form.set("tax_id_collection[enabled]", "true");
+  if (region === "intl") {
+    form.set("tax_id_collection[required]", "if_supported");
+    return STRIPE_TAX_ID_API_VERSION;
+  }
+  return "";
+}
+
+/** A completed checkout from outside Japan with no tax ID on it. */
+export function needsInternationalReview(session) {
+  const country = String(session?.customer_details?.address?.country || "").toUpperCase();
+  if (!country || country === "JP") return false;
+  const ids = session?.customer_details?.tax_ids;
+  return !(Array.isArray(ids) && ids.length > 0);
 }
 
 async function loadOwnedSiteByRef(env, actor, reference) {
