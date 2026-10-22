@@ -78,7 +78,7 @@ const COPY = {
     paymentFailed: {
       subject: "{site} のお支払いができませんでした",
       intro: "{site} の Nurevo AEO プランについて、最新のお支払いを処理できませんでした。Stripe が数日かけてお支払いを再試行します。その間もサイトは引き続きご利用いただけます。",
-      action: "お支払い方法を更新するには、ダッシュボードでサイトを開き、「Manage billing」を選んでください。",
+      action: "お支払い方法を更新するには、ダッシュボードでサイトを開き、「支払いを管理」を選んでください。",
       ignore: "すでに更新済みの場合は、このメールは無視してください。",
     },
     planEnded: {
@@ -117,7 +117,7 @@ const COPY = {
       intro: "{site} is in Nurevo AEO, but the WordPress plugin hasn't connected yet. A quick check:",
       checklist: [
         "The Nurevo AEO plugin is installed and active (Plugins in WordPress).",
-        "In Nurevo AEO > Settings, \"Output AI-facing information\" is ON.",
+        "In Nurevo AEO > Settings, \"Output AI-facing information for this site\" is ON.",
         "The site address in WordPress (Settings > General) matches {site}.",
       ],
       reissue: "Then paste a pairing code into the plugin. If your code has expired, you can issue a new one here:",
@@ -166,7 +166,7 @@ const COPY = {
       intro: "{site} 已添加到 Nurevo AEO，但 WordPress 插件尚未完成连接。请检查以下几点：",
       checklist: [
         "Nurevo AEO 插件已安装并启用（WordPress 的“插件”）。",
-        "在“Nurevo AEO > Settings”中，“Output AI-facing information”已开启。",
+        "在“Nurevo AEO > 设置”中，“为此站点输出面向 AI 的信息”已开启。",
         "WordPress 中的站点地址（“设置 > 常规”）与 {site} 一致。",
       ],
       reissue: "然后将配对码粘贴到插件中。如果配对码已过期，可以在这里重新获取：",
@@ -176,7 +176,7 @@ const COPY = {
     paymentFailed: {
       subject: "{site} 付款失败",
       intro: "我们未能收取 {site} 的 Nurevo AEO 方案的最近一笔费用。Stripe 会在接下来几天内重试，在此期间您的网站仍可正常使用。",
-      action: "如需更新付款方式，请在控制台中打开您的网站，然后选择“Manage billing”。",
+      action: "如需更新付款方式，请在控制台中打开您的网站，然后选择“管理付款”。",
       ignore: "如果您已更新，请忽略此邮件。",
     },
     planEnded: {
@@ -215,7 +215,7 @@ const COPY = {
       intro: "{site} 已加入 Nurevo AEO，但 WordPress 外掛尚未完成連線。請確認以下幾點：",
       checklist: [
         "Nurevo AEO 外掛已安裝並啟用（WordPress 的「外掛」）。",
-        "在「Nurevo AEO > Settings」中，「Output AI-facing information」已開啟。",
+        "在「Nurevo AEO > 設定」中，「為此網站輸出給 AI 的資訊」已開啟。",
         "WordPress 的網站網址（「設定 > 一般」）與 {site} 一致。",
       ],
       reissue: "接著將配對碼貼到外掛中。如果配對碼已過期，可以在這裡重新發行：",
@@ -225,7 +225,7 @@ const COPY = {
     paymentFailed: {
       subject: "{site} 付款失敗",
       intro: "我們無法收取 {site} 的 Nurevo AEO 方案的最近一筆款項。Stripe 會在接下來幾天內重試，在此期間您的網站仍可正常運作。",
-      action: "若要更新付款方式，請在主控台開啟您的網站，然後選擇「Manage billing」。",
+      action: "若要更新付款方式，請在主控台開啟您的網站，然後選擇「管理付款」。",
       ignore: "如果您已更新，請忽略此郵件。",
     },
     planEnded: {
@@ -264,7 +264,7 @@ const COPY = {
       intro: "{site}은(는) Nurevo AEO에 추가되었지만 WordPress 플러그인이 아직 연결되지 않았습니다. 다음을 확인해 주세요:",
       checklist: [
         "Nurevo AEO 플러그인이 설치되어 활성화되어 있는지 (WordPress의 \"플러그인\").",
-        "\"Nurevo AEO > Settings\"에서 \"Output AI-facing information\"이 켜져 있는지.",
+        "\"Nurevo AEO > 설정\"에서 \"이 사이트의 AI용 정보 출력\"이 켜져 있는지.",
         "WordPress의 사이트 주소(\"설정 > 일반\")가 {site}와(과) 일치하는지.",
       ],
       reissue: "그다음 페어링 코드를 플러그인에 붙여 넣어 주세요. 코드가 만료되었다면 여기에서 새 코드를 발급할 수 있습니다:",
@@ -274,7 +274,7 @@ const COPY = {
     paymentFailed: {
       subject: "{site}의 결제에 실패했습니다",
       intro: "{site}의 Nurevo AEO 플랜에 대한 최근 결제를 처리하지 못했습니다. Stripe가 며칠 동안 결제를 다시 시도하며, 그동안 사이트는 계속 정상적으로 작동합니다.",
-      action: "결제 수단을 변경하려면 대시보드에서 사이트를 열고 \"Manage billing\"을 선택해 주세요.",
+      action: "결제 수단을 변경하려면 대시보드에서 사이트를 열고 \"결제 관리\"를 선택해 주세요.",
       ignore: "이미 변경하셨다면 이 메일은 무시하셔도 됩니다.",
     },
     planEnded: {
@@ -313,7 +313,7 @@ const COPY = {
       intro: "{site} está en Nurevo AEO, pero el plugin de WordPress aún no se ha conectado. Una comprobación rápida:",
       checklist: [
         "El plugin Nurevo AEO está instalado y activo (Plugins en WordPress).",
-        "En Nurevo AEO > Settings, \"Output AI-facing information\" está activado.",
+        "En Nurevo AEO > Ajustes, \"Generar información para la IA en este sitio\" está activado.",
         "La dirección del sitio en WordPress (Ajustes > Generales) coincide con {site}.",
       ],
       reissue: "Después, pega un código de emparejamiento en el plugin. Si tu código ha caducado, puedes generar uno nuevo aquí:",
@@ -323,7 +323,7 @@ const COPY = {
     paymentFailed: {
       subject: "No se pudo cobrar el pago de {site}",
       intro: "No hemos podido cobrar el último pago de tu plan de Nurevo AEO para {site}. Stripe volverá a intentarlo durante los próximos días y, mientras tanto, tu sitio sigue funcionando.",
-      action: "Para actualizar tu método de pago, abre tu sitio en el panel y elige \"Manage billing\".",
+      action: "Para actualizar tu método de pago, abre tu sitio en el panel y elige \"Gestionar pagos\".",
       ignore: "Si ya lo has actualizado, puedes ignorar este correo.",
     },
     planEnded: {
@@ -362,7 +362,7 @@ const COPY = {
       intro: "{site} est bien dans Nurevo AEO, mais l’extension WordPress n’est pas encore connectée. Une petite vérification :",
       checklist: [
         "L’extension Nurevo AEO est installée et activée (Extensions dans WordPress).",
-        "Dans Nurevo AEO > Settings, « Output AI-facing information » est activé.",
+        "Dans Nurevo AEO > Réglages, « Générer les informations destinées à l’IA pour ce site » est activé.",
         "L’adresse du site dans WordPress (Réglages > Général) correspond à {site}.",
       ],
       reissue: "Collez ensuite un code d’appairage dans l’extension. Si votre code a expiré, vous pouvez en obtenir un nouveau ici :",
@@ -372,7 +372,7 @@ const COPY = {
     paymentFailed: {
       subject: "Échec du paiement pour {site}",
       intro: "Nous n’avons pas pu encaisser le dernier paiement de votre offre Nurevo AEO pour {site}. Stripe va réessayer dans les prochains jours, et votre site continue de fonctionner en attendant.",
-      action: "Pour mettre à jour votre moyen de paiement, ouvrez votre site dans le tableau de bord et choisissez « Manage billing ».",
+      action: "Pour mettre à jour votre moyen de paiement, ouvrez votre site dans le tableau de bord et choisissez « Gérer la facturation ».",
       ignore: "Si vous l’avez déjà mis à jour, vous pouvez ignorer cet e-mail.",
     },
     planEnded: {
@@ -411,7 +411,7 @@ const COPY = {
       intro: "{site} ist in Nurevo AEO angelegt, aber das WordPress-Plugin ist noch nicht verbunden. Bitte prüfen Sie kurz:",
       checklist: [
         "Das Plugin Nurevo AEO ist installiert und aktiviert (Plugins in WordPress).",
-        "Unter „Nurevo AEO > Settings“ ist „Output AI-facing information“ eingeschaltet.",
+        "Unter „Nurevo AEO > Einstellungen“ ist „KI-relevante Informationen für diese Website ausgeben“ eingeschaltet.",
         "Die Website-Adresse in WordPress (Einstellungen > Allgemein) stimmt mit {site} überein.",
       ],
       reissue: "Fügen Sie danach einen Kopplungscode im Plugin ein. Ist Ihr Code abgelaufen, können Sie hier einen neuen erstellen:",
@@ -421,7 +421,7 @@ const COPY = {
     paymentFailed: {
       subject: "Zahlung für {site} fehlgeschlagen",
       intro: "Die letzte Zahlung für Ihren Nurevo AEO-Tarif für {site} konnte nicht eingezogen werden. Stripe versucht es in den nächsten Tagen erneut; Ihre Website läuft in der Zwischenzeit weiter.",
-      action: "Um Ihre Zahlungsmethode zu aktualisieren, öffnen Sie Ihre Website im Dashboard und wählen Sie „Manage billing“.",
+      action: "Um Ihre Zahlungsmethode zu aktualisieren, öffnen Sie Ihre Website im Dashboard und wählen Sie „Zahlungen verwalten“.",
       ignore: "Wenn Sie sie bereits aktualisiert haben, können Sie diese E-Mail ignorieren.",
     },
     planEnded: {

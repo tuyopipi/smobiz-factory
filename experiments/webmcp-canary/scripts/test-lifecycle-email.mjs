@@ -16,6 +16,10 @@
  * Real SQL (node:sqlite) behind a D1-shaped shim. fetch is replaced; nothing
  * leaves the process.
  */
+// The labels the user actually sees: the plugin's own translation of the
+// setting and the dashboard's billing button, per language.
+const SETTING_LABEL = { ja: "このサイトのAI向け情報を出力する", en: "Output AI-facing information for this site", zh: "为此站点输出面向 AI 的信息", "zh-TW": "為此網站輸出給 AI 的資訊", "zh-tw": "為此網站輸出給 AI 的資訊", ko: "이 사이트의 AI용 정보 출력", es: "Generar información para la IA en este sitio", fr: "Générer les informations destinées à l’IA pour ce site", de: "KI-relevante Informationen für diese Website ausgeben" };
+const BILLING_LABEL = { ja: "支払いを管理", en: "Manage billing", zh: "管理付款", "zh-TW": "管理付款", "zh-tw": "管理付款", ko: "결제 관리", es: "Gestionar pagos", fr: "Gérer la facturation", de: "Zahlungen verwalten" };
 import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
@@ -144,13 +148,13 @@ const ledger = (sqlite) => sqlite.prepare("SELECT scope,subject_id,kind,step,sta
       assert.ok(r.text.includes("https://nurevo.jp/api/email/unsubscribe?t=abc"), `${locale} reminder can be unsubscribed`);
       assert.ok(r.html.includes("unsubscribe?t=abc"));
       assert.equal(r.text.split("\n").filter((l) => l.startsWith("- ")).length, 3, `${locale} three checklist items`);
-      assert.ok(r.text.includes(locale === "ja" ? "AI向け情報を出力する" : "Output AI-facing information"), `${locale} names the setting as WordPress shows it`);
+      assert.ok(r.text.includes(SETTING_LABEL[locale]), `${locale} names the setting as the plugin translation shows it`);
       assert.ok(r.text.includes("Nurevo AEO >"), `${locale} names the settings menu`);
     }
     assert.notEqual(r1.subject, r2.subject);
     assert.ok(r2.text.length > r1.text.length, `${locale} the second reminder says it is the last`);
     const pf = paymentFailedEmail({ locale, site: wp });
-    assert.ok(pf.text.includes("Manage billing") && pf.text.includes("https://nurevo.jp/dashboard#site:site9"), `${locale} payment failed points at Manage billing`);
+    assert.ok(pf.text.includes(BILLING_LABEL[locale]) && pf.text.includes("https://nurevo.jp/dashboard#site:site9"), `${locale} payment failed points at Manage billing`);
     const pe = planEndedEmail({ locale, site: wp, previousPlan: "pro" });
     assert.ok(pe.text.includes("Pro") && pe.text.includes("Free") && pe.text.includes("AEO"), `${locale} plan ended names Pro, Free and the AEO check`);
     assert.ok(pe.text.includes("https://nurevo.jp/dashboard#site:site9"));
