@@ -15,6 +15,13 @@
  * that produced them so a small sample is never presented as precision.
  */
 
+import {
+  SOV_LANGUAGES, chineseLocality, foldLatin, koreanLocality, latinLocality, localizedBrandedQuestions,
+  localizedDiscoveryQuestions, looksJapaneseAddress, resolveSovLanguage,
+} from "./sov-locale.mjs";
+
+export { SOV_LANGUAGES, resolveSovLanguage } from "./sov-locale.mjs";
+
 export const SOV_MODEL_VERSION = "u2-v2";
 export const SOV_BETA = true;
 
@@ -47,13 +54,50 @@ export const SOV_LIMITS = Object.freeze({
   publicCacheTtlSeconds: 7 * 24 * 60 * 60,
 });
 
-/** Domains that are directories/aggregators, not a competing business site. */
-const AGGREGATOR_HOSTS = Object.freeze([
-  "google.com", "maps.google.com", "goo.gl", "tabelog.com", "hotpepper.jp",
-  "gurunavi.com", "gnavi.co.jp", "retty.me", "ikyu.com", "jalan.net",
-  "rurubu.travel", "tripadvisor.com", "tripadvisor.jp", "yelp.com",
-  "facebook.com", "instagram.com", "x.com", "twitter.com", "youtube.com",
-  "wikipedia.org", "ja.wikipedia.org", "note.com", "ameblo.jp",
+/**
+ * Domains that are directories/aggregators/platforms, not a competing business
+ * site. The single list consulted when an answer is analysed and again when a
+ * stored run is read back. Matching is by registrable suffix, so "yelp.com"
+ * also covers "m.yelp.com"; country variants of the same brand are listed
+ * because "yelp.co.uk" is not a subdomain of "yelp.com".
+ */
+export const AGGREGATOR_HOSTS = Object.freeze([
+  // Japan
+  "tabelog.com", "hotpepper.jp", "beauty.hotpepper.jp", "gurunavi.com", "gnavi.co.jp", "retty.me", "ikyu.com",
+  "jalan.net", "rurubu.travel", "tripadvisor.jp", "note.com", "ameblo.jp", "epark.jp", "minimodel.jp",
+  "ekiten.jp", "byoinnavi.jp", "rakuten.co.jp", "travel.rakuten.co.jp", "yahoo.co.jp", "goo.ne.jp",
+  // Maps and search
+  "google.com", "maps.google.com", "goo.gl", "maps.app.goo.gl", "g.page", "google.co.jp", "google.co.uk",
+  "google.de", "google.fr", "google.es", "google.it", "google.com.br", "google.com.tw", "google.com.hk", "google.co.kr",
+  "maps.apple.com", "bing.com", "mapquest.com", "waze.com", "here.com",
+  // Global reviews, listings and bookings
+  "yelp.com", "yelp.co.uk", "yelp.ca", "yelp.com.au", "yelp.de", "yelp.fr", "yelp.es", "yelp.it",
+  "tripadvisor.com", "tripadvisor.co.uk", "tripadvisor.ca", "tripadvisor.com.au", "tripadvisor.de", "tripadvisor.fr",
+  "tripadvisor.es", "tripadvisor.it", "tripadvisor.com.br", "tripadvisor.com.tw", "tripadvisor.com.hk", "tripadvisor.cn",
+  "foursquare.com", "opentable.com", "opentable.co.uk", "opentable.de", "opentable.jp", "resy.com", "exploretock.com",
+  "thefork.com", "thefork.co.uk", "thefork.fr", "thefork.it", "thefork.es", "lafourchette.com", "eltenedor.es",
+  "quandoo.com", "quandoo.de", "zomato.com", "happycow.net", "michelin.com", "guide.michelin.com",
+  "booking.com", "expedia.com", "hotels.com", "agoda.com", "trip.com", "airbnb.com", "kayak.com", "trivago.com",
+  "groupon.com", "doordash.com", "ubereats.com", "grubhub.com", "deliveroo.co.uk", "just-eat.co.uk", "lieferando.de",
+  "glovoapp.com", "ifood.com.br", "rappi.com", "foodpanda.com",
+  "yellowpages.com", "yell.com", "pagesjaunes.fr", "paginasamarillas.es", "paginegialle.it", "gelbeseiten.de",
+  "dasoertliche.de", "bbb.org", "angi.com", "thumbtack.com", "nextdoor.com", "trustpilot.com", "treatwell.com",
+  "treatwell.co.uk", "treatwell.de", "treatwell.fr", "fresha.com", "booksy.com", "vagaro.com", "styleseat.com",
+  "zocdoc.com", "doctolib.fr", "doctolib.de", "jameda.de", "healthgrades.com", "timeout.com", "eater.com",
+  "restaurantguru.com", "wanderlog.com", "golocal.de", "11880.com", "cylex.de", "hotfrog.com", "restaurantes.com",
+  "guiamais.com.br", "reclameaqui.com.br",
+  // China, Taiwan, Hong Kong
+  "dianping.com", "meituan.com", "ele.me", "baidu.com", "map.baidu.com", "amap.com", "gaode.com", "ctrip.com",
+  "mafengwo.cn", "xiaohongshu.com", "openrice.com", "ipeen.com.tw", "ifoodie.tw", "eztable.com", "inline.app",
+  "pixnet.net", "uber.com", "weibo.com", "zhihu.com", "douyin.com", "bilibili.com",
+  // Korea
+  "naver.com", "map.naver.com", "place.naver.com", "m.place.naver.com", "blog.naver.com", "naver.me",
+  "kakao.com", "map.kakao.com", "place.map.kakao.com", "daum.net", "tistory.com", "mangoplate.com", "catchtable.co.kr",
+  "diningcode.com", "yanolja.com", "yeogi.com",
+  // Social, video, encyclopedias, blogs
+  "facebook.com", "instagram.com", "x.com", "twitter.com", "youtube.com", "tiktok.com", "threads.net",
+  "pinterest.com", "reddit.com", "linkedin.com", "line.me", "wikipedia.org", "ja.wikipedia.org", "wikivoyage.org",
+  "medium.com", "quora.com",
 ]);
 
 export class SovError extends Error {
@@ -144,13 +188,41 @@ export function buildBrandProfile({ site = {}, settings = {}, schemas = [] } = {
   const host = normalizeHost(site.website_uri || site.url || "");
   const name = firstNonEmpty(settings.name, fromSchema.name, host);
   if (!name) throw new SovError(422, "brand_name_unavailable");
+  const businessType = firstNonEmpty(settings.business_type, fromSchema.businessType) || "";
+  const address = String(settings.address || "");
+  // Which language the questions are asked in. Every Japanese signal resolves
+  // to "ja" first, so an existing Japanese site measures exactly as before.
+  const decision = resolveSovLanguage({
+    settingsLanguage: settings.language || settings.locale || "",
+    address: firstNonEmpty(address, fromSchema.addressText),
+    schemaCountry: fromSchema.country,
+    siteLanguage: firstNonEmpty(site.language, site.locale, fromSchema.inLanguage),
+    name,
+    businessType,
+    host,
+  });
   return {
     name,
-    businessType: firstNonEmpty(settings.business_type, fromSchema.businessType) || "",
+    businessType,
     locality: firstNonEmpty(localityFromAddress(settings.address), fromSchema.locality) || "",
     host,
-    aliases: brandAliases(name, fromSchema.name, firstNonEmpty(settings.business_type, fromSchema.businessType)),
+    aliases: brandAliases(name, fromSchema.name, businessType),
+    language: decision.language,
+    language_source: decision.source,
+    // Kept apart from `aliases` so a Japanese profile's identity (and with it
+    // the measurement cache key and trend grouping) is unchanged.
+    domain_alias: domainAlias(host, name, fromSchema.name, businessType),
   };
+}
+
+/**
+ * The fields that identify a measurement setup. A Japanese profile hashes
+ * exactly the fields it always did, so existing trend lines stay continuous;
+ * other languages add the language so a language change starts a new series.
+ */
+export function profileIdentity(profile = {}) {
+  const legacy = { name: profile.name, businessType: profile.businessType, locality: profile.locality, host: profile.host, aliases: profile.aliases };
+  return !profile.language || profile.language === "ja" ? legacy : { ...legacy, language: profile.language };
 }
 
 /** Shortest alias that may be matched inside answer text. */
@@ -175,8 +247,46 @@ function brandAliases(name, schemaName, businessType) {
   });
 }
 
+/**
+ * The site's domain name without its TLD as an extra alias ("lumina-salon"
+ * for lumina-salon.co.uk), or "" when it adds nothing or is too weak a signal:
+ * shorter than MIN_DOMAIN_ALIAS_CHARS, an everyday word, the business type, or
+ * already equal to a name alias once spacing/case/accents are ignored.
+ */
+function domainAlias(host, ...names) {
+  const label = domainLabel(host);
+  if (!label) return "";
+  const normalized = normalizeForMatch(label);
+  if (normalized.length < MIN_DOMAIN_ALIAS_CHARS || GENERIC_DOMAIN_LABELS.has(normalized)) return "";
+  const loose = (value) => foldLatin(value).replace(/[^\p{L}\p{N}]+/gu, "");
+  const looseLabel = loose(label);
+  const nameForms = names.filter(Boolean).flatMap((value) => [value, stripLegalSuffixes(value)]);
+  return nameForms.some((value) => loose(value) === looseLabel) ? "" : label;
+}
+
+/** Shortest domain label accepted as an alias ("ab.com" would match noise). */
+const MIN_DOMAIN_ALIAS_CHARS = 4;
+const GENERIC_DOMAIN_LABELS = new Set([
+  "shop", "store", "cafe", "coffee", "salon", "hotel", "clinic", "restaurant", "bar", "bakery", "home", "info",
+  "official", "online", "web", "site", "blog", "news", "food", "beauty", "hair", "spa", "dental", "travel",
+  "example", "localhost", "nurevo",
+]);
+
+/**
+ * The registrable label of a host without its TLD: "www.shiori-coffee.co.jp"
+ * -> "shiori-coffee". Second-level public suffixes (co.jp, com.au, co.uk ...)
+ * are skipped so the label is the brand, not "co".
+ */
+export function domainLabel(host) {
+  const parts = normalizeHost(host).split(".").filter(Boolean);
+  if (parts.length < 2 || parts.every((part) => /^\d+$/.test(part))) return "";
+  let index = parts.length - 2;
+  if (index > 0 && /^(?:co|com|net|org|ac|or|ne|go|gr|ed|lg|gov|edu|ltd|plc)$/.test(parts[index]) && parts[parts.length - 1].length === 2) index -= 1;
+  return parts[index] || "";
+}
+
 function schemaProfile(schemas) {
-  const result = { name: "", businessType: "", locality: "" };
+  const result = { name: "", businessType: "", locality: "", country: "", addressText: "", inLanguage: "" };
   for (const node of Array.isArray(schemas) ? schemas : []) {
     if (!node || typeof node !== "object") continue;
     const types = (Array.isArray(node["@type"]) ? node["@type"] : [node["@type"]]).filter(Boolean).map(String);
@@ -194,12 +304,40 @@ function schemaProfile(schemas) {
       }
     }
     if (!result.locality && typeof node.address === "string") result.locality = localityFromAddress(node.address);
+    if (!result.inLanguage && typeof node.inLanguage === "string") result.inLanguage = node.inLanguage.trim();
+    if (node.address && typeof node.address === "object" && !result.country && node.address.addressCountry) {
+      result.country = typeof node.address.addressCountry === "string"
+        ? node.address.addressCountry : String(node.address.addressCountry?.name || node.address.addressCountry?.identifier || "");
+    }
+    if (!result.addressText && node.address) {
+      result.addressText = typeof node.address === "string" ? node.address
+        : [node.address.streetAddress, node.address.addressLocality, node.address.addressRegion, node.address.postalCode]
+          .filter((part) => typeof part === "string" && part.trim()).join(", ");
+    }
   }
   return result;
 }
 
-/** Pull a coarse locality (prefecture/ward/city) out of a free-text address. */
+/**
+ * Pull a coarse locality out of a free-text address.
+ *
+ * A Japanese address keeps the original prefecture/ward/city parser exactly.
+ * Hangul, Chinese and Latin-script addresses go to their own conservative
+ * parsers, which return "" rather than a fragment when unsure, so the
+ * questions are then asked without an area instead of with garbage.
+ */
 export function localityFromAddress(address) {
+  const raw = String(address || "");
+  if (!raw.trim()) return "";
+  if (/[\uac00-\ud7af]/.test(raw)) return koreanLocality(raw);
+  if (!looksJapaneseAddress(raw)) {
+    if (/[\u3400-\u9fff]/.test(raw)) return chineseLocality(raw);
+    return latinLocality(raw);
+  }
+  return japaneseLocality(raw);
+}
+
+function japaneseLocality(address) {
   const text = String(address || "").replace(/^\s*〒?\s*\d{3}-?\d{4}\s*/, "").trim();
   if (!text) return "";
   const match = text.match(/^(.{2,4}?[都道府県])?\s*(.{1,8}?[市区町村])?/);
@@ -227,6 +365,9 @@ function stripLegalSuffixes(name) {
  * scheduled run.
  */
 export function buildQuestionSet(profile, limit = SOV_LIMITS.maxQuestionsPerRun) {
+  const localized = profile.language && profile.language !== "ja"
+    ? localizedDiscoveryQuestions(profile.language, profile) : null;
+  if (localized) return finishQuestions(localized, limit);
   const type = profile.businessType || "お店";
   const area = profile.locality || "";
   // Two forms are needed so the particle stays correct: "渋谷区の喫茶店" when
@@ -245,6 +386,10 @@ export function buildQuestionSet(profile, limit = SOV_LIMITS.maxQuestionsPerRun)
     `${where}${type}の口コミが良いお店は？`,
     `今日${where}${type}に行きたい。候補を出して。`,
   ];
+  return finishQuestions(discovery, limit);
+}
+
+function finishQuestions(discovery, limit) {
   const questions = discovery
     .map((text) => text.replace(/\s+/g, " ").trim())
     .filter((text, index, all) => text && all.indexOf(text) === index);
@@ -258,8 +403,10 @@ export function buildQuestionSet(profile, limit = SOV_LIMITS.maxQuestionsPerRun)
  * are reported separately from the headline rate.
  */
 export function brandedControlQuestions(profile, limit = 1) {
+  const localized = profile.language && profile.language !== "ja"
+    ? localizedBrandedQuestions(profile.language, profile) : null;
   const type = profile.businessType || "お店";
-  const branded = [
+  const branded = localized || [
     `${profile.name}はどんな${type}？`,
     `${profile.name}の営業時間と住所を教えて。`,
     `${profile.name}の評判は？`,
@@ -285,13 +432,16 @@ function normalizeQuestion(question) {
  */
 export function analyzeAnswer({ answer = "", citations = [], profile }) {
   const text = String(answer);
-  const normalized = normalizeForMatch(text);
-  // Exact containment of a vetted alias only. No stemming, no edit distance,
-  // no partial scoring: an uncertain match is not an appearance.
-  const mentioned = (profile.aliases || [profile.name])
-    .map(normalizeForMatch)
-    .filter((alias) => alias.length >= MIN_ALIAS_CHARS)
-    .some((alias) => normalized.includes(alias));
+  const aliases = profile.aliases || [profile.name];
+  // A Japanese (or pre-language) profile keeps its original substring test as
+  // a sufficient condition, so nothing it matched before stops matching.
+  const legacy = !profile.language || profile.language === "ja";
+  // The domain label counts as a name only outside URLs: a bare citation link
+  // is citation evidence, not the business being named in the answer. Japanese
+  // profiles do not use it, so their mention rule is exactly as before.
+  const mentioned = (legacy && legacyMention(text, aliases))
+    || mentionsBrand(text, aliases)
+    || (!legacy && !!profile.domain_alias && mentionsBrand(text.replace(/https?:\/\/\S+/g, " "), [profile.domain_alias]));
 
   const providerUrls = citations.map((c) => typeof c === "string" ? c : c?.url);
   const citationUrls = dedupe([...providerUrls, ...urlsInText(text)].filter((u) => {
@@ -317,6 +467,58 @@ export function analyzeAnswer({ answer = "", citations = [], profile }) {
     competitorHosts,
     excerpt: text.replace(/\s+/g, " ").trim().slice(0, SOV_LIMITS.answerExcerptChars),
   };
+}
+
+/**
+ * Whether the answer names the business.
+ *
+ * Exact containment of a vetted alias only. No stemming, no edit distance, no
+ * partial scoring: an uncertain match is not an appearance.
+ *
+ * Aliases containing CJK/kana/Hangul keep the original NFKC substring test
+ * (those scripts have no spaces to bound a word). A Latin-script alias is
+ * compared case-insensitively with accents folded ("Café Müller" = "cafe
+ * muller" = "Cafe Mueller") and must sit on word boundaries, so "Luna" does
+ * not match "Lunatic". Spacing, hyphens and dots inside the name may differ
+ * ("Blue-Bottle", "bluebottle.com") but the ends must not run into other letters.
+ */
+export function mentionsBrand(answer, aliases = []) {
+  const text = String(answer || "");
+  const compact = normalizeForMatch(text);
+  const foldedTexts = [foldLatin(text), foldLatin(text, { german: true })];
+  return aliases.filter(Boolean).some((alias) => {
+    const value = String(alias);
+    const normalized = normalizeForMatch(value);
+    if (normalized.length < MIN_ALIAS_CHARS) return false;
+    if (!isLatinAlias(value)) return compact.includes(normalized);
+    return [foldLatin(value), foldLatin(value, { german: true })].some((folded) => {
+      const pattern = latinAliasPattern(folded);
+      return !!pattern && foldedTexts.some((candidate) => pattern.test(candidate));
+    });
+  });
+}
+
+/** The original matcher: NFKC/case/space-insensitive substring of any alias. */
+function legacyMention(text, aliases) {
+  const normalized = normalizeForMatch(text);
+  return aliases.map(normalizeForMatch).filter((alias) => alias.length >= MIN_ALIAS_CHARS)
+    .some((alias) => normalized.includes(alias));
+}
+
+function isLatinAlias(value) {
+  const text = String(value).normalize("NFKC");
+  return /\p{Script=Latin}/u.test(text) && !/[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af\uf900-\ufaff]/.test(text);
+}
+
+function latinAliasPattern(folded) {
+  const tokens = folded.split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+  if (!tokens.length || tokens.join("").length < MIN_ALIAS_CHARS) return null;
+  const escape = (token) => token.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Joined forms count too: "Blue Bottle" also matches "BlueBottle".
+  const body = tokens.map(escape).join("[\\s\\-_.·/]*");
+  // Bounded by Latin letters and digits only: "Nurevoです" is a mention in a
+  // Japanese answer, "Lunatic" is not a mention of "Luna".
+  return new RegExp(`(?<![\\p{Script=Latin}\\p{N}])${body}(?![\\p{Script=Latin}\\p{N}])`, "u");
 }
 
 /**
@@ -355,6 +557,10 @@ export function aggregateSov(samples, profile) {
     model_version: SOV_MODEL_VERSION,
     beta: SOV_BETA,
     brand: { name: profile.name, host: ownHost || null },
+    // The language the questions were asked in (null for a profile built
+    // before languages existed, which was always Japanese).
+    language: profile.language || null,
+    language_source: profile.language_source || null,
     questions_asked: discoverySamples.length,
     answers_received: total,
     appearance_rate: rateOf(mentions),
@@ -683,6 +889,8 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
       beta: SOV_BETA,
       truncated: !!result.truncated,
       brand: result.brand,
+      language: result.language ?? null,
+      language_source: result.language_source ?? null,
       rate_basis: result.rate_basis,
       min_samples_for_rate: result.min_samples_for_rate,
       by_engine: result.by_engine || [],
@@ -777,6 +985,8 @@ export async function loadSovHistory(env, siteId, { limit = 26 } = {}) {
       by_engine: asArray(detail.by_engine),
       parser_control: detail.parser_control ?? null,
       truncated: !!detail.truncated,
+      // Stored since multilingual questions; older runs were all Japanese.
+      language: typeof detail.language === "string" ? detail.language : null,
     } : null,
     trend: rows.slice().reverse().map((row) => ({
       ran_at: row.ran_at,

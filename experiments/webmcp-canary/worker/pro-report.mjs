@@ -1,4 +1,4 @@
-import { SovError, normalizeHost, buildQuestionSet, availableEngines } from './aeo-sov.mjs';
+import { SovError, normalizeHost, buildQuestionSet, availableEngines, profileIdentity, SOV_LANGUAGES } from './aeo-sov.mjs';
 
 export const VARIABILITY_NOTICE = 'AI回答・引用は実行日時やモデルで変動します。小規模サンプルの観測値であり、絶対値・順位・正確性を保証しません。引用順位は提供元の出典URL一覧の順序です。';
 export const PRO_CACHE_MS = 60 * 60 * 1000;
@@ -12,8 +12,12 @@ export function validateQuerySet(input) {
     if (typeof value !== 'string' || !/^(?:[a-z0-9\u0080-\uffff-]+\.)+[a-z\u0080-\uffff]{2,}$/i.test(value.replace(/^www\./, ''))) throw new SovError(422, 'invalid_competitor_domain');
     return normalizeHost(value);
   });
+  if (input.language != null && !SOV_LANGUAGES.includes(input.language)) throw new SovError(422, 'invalid_language');
+  // `language` is recorded only for a non-Japanese set, so a Japanese config
+  // (and the cache key hashed from it) is byte-identical to before.
   return { questions: [...new Set(input.questions.map(q => q.trim()))], repetitions: input.repetitions,
-    competitors: [...new Set(competitors)], engine: 'perplexity' };
+    competitors: [...new Set(competitors)], engine: 'perplexity',
+    ...(input.language && input.language !== 'ja' ? { language: input.language } : {}) };
 }
 export async function loadQuerySet(env, siteId) {
   const row = await env.DB.prepare('SELECT * FROM aeo_sov_query_sets WHERE site_id=?').bind(siteId).first();
@@ -28,14 +32,34 @@ export async function saveQuerySet(env, siteId, input) {
 }
 export async function ensureQuerySet(env, siteId, profile) {
   const existing = await loadQuerySet(env, siteId);
-  if (existing) return existing;
-  const config = validateQuerySet({ questions: buildQuestionSet(profile).slice(0, 5), repetitions: 2, competitors: [] });
+  if (existing && !isStaleDefaultSet(existing, profile)) return existing;
+  const config = validateQuerySet({ questions: buildQuestionSet(profile).slice(0, 5), repetitions: 2, competitors: [], language: profile.language });
+  if (existing) {
+    // Replace only the untouched Japanese default of a site now known to be
+    // non-Japanese; the owner's competitors and repetitions are kept.
+    return saveQuerySet(env, siteId, { ...config, repetitions: existing.repetitions, competitors: existing.competitors || [] });
+  }
   await env.DB.prepare('INSERT OR IGNORE INTO aeo_sov_query_sets(site_id,version,config_json,updated_at) VALUES (?,1,?,?)')
     .bind(siteId, JSON.stringify(config), new Date().toISOString()).run();
   return await loadQuerySet(env, siteId) || { ...config, version: 1 }; // test doubles may not read writes
 }
+
+/**
+ * A stored set that is exactly the auto-generated Japanese default, for a site
+ * whose questions should now be asked in another language. Sets written before
+ * languages existed were always Japanese; one the owner edited never matches
+ * and is left alone.
+ */
+function isStaleDefaultSet(existing, profile) {
+  if (!profile?.language || profile.language === 'ja' || existing.language) return false;
+  // Matched by the template wording rather than by regenerating it: the area
+  // in an old set came from the Japanese-only parser and cannot be rebuilt.
+  return Array.isArray(existing.questions) && existing.questions.length === JA_DEFAULT_ENDINGS.length
+    && existing.questions.every((q, i) => typeof q === 'string' && q.endsWith(JA_DEFAULT_ENDINGS[i]));
+}
+const JA_DEFAULT_ENDINGS = ['でおすすめはどこ？', 'を探しています。評判の良いところを教えて。', 'を3つ挙げて。', 'の営業時間を知りたい。', 'で予約できるところは？'];
 export async function measurementKey(env, config, profile) {
-  const raw = JSON.stringify({ config, profile, model: `agent:${env.PERPLEXITY_PRESET || 'fast'}`, engines: availableEngines(env).filter(e => e.id === 'perplexity') });
+  const raw = JSON.stringify({ config, profile: profileIdentity(profile), model: `agent:${env.PERPLEXITY_PRESET || 'fast'}`, engines: availableEngines(env).filter(e => e.id === 'perplexity') });
   return [...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(raw)))].map(b => b.toString(16).padStart(2,'0')).join('');
 }
 export async function loadCachedRun(env, siteId, cacheKey) {
