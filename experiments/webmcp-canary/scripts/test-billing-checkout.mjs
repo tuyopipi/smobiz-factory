@@ -375,4 +375,40 @@ for (const path of ["/api/billing/checkout", "/api/billing/portal"]) {
   assert.equal(resolveSitePlan({ plan: cancelled.plan, manual_plan: null }), "free");
 }
 
+/* ---------------- consumption tax (prices are tax-exclusive) ---------------- */
+
+{
+  // Nothing configured: no tax parameters, the behaviour before this change.
+  const env = makeEnv();
+  await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  assert.equal(env.calls[0].form["automatic_tax[enabled]"], undefined);
+  assert.equal(env.calls[0].form["line_items[0][tax_rates][0]"], undefined);
+}
+{
+  // A fixed 10% rate is attached to the Checkout line item.
+  const env = makeEnv({ keys: { STRIPE_TAX_RATE_ID: "txr_jp10" } });
+  const { status } = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  assert.equal(status, 200);
+  assert.equal(env.calls[0].form["line_items[0][tax_rates][0]"], "txr_jp10", "checkout adds the tax rate on top of the price");
+}
+{
+  // Payment Links cannot carry a tax rate, so with only a rate configured the
+  // link is refused instead of charging the price without tax.
+  const env = makeEnv({ keys: { STRIPE_TAX_RATE_ID: "txr_jp10" } });
+  const { status, body } = await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
+  assert.equal(status, 409);
+  assert.equal(body.error, "payment_link_requires_automatic_tax");
+  assert.equal(env.calls.length, 0, "no untaxed payment link is created");
+}
+{
+  // Stripe Tax covers both paths.
+  const env = makeEnv({ keys: { STRIPE_AUTOMATIC_TAX: "1", STRIPE_TAX_RATE_ID: "txr_jp10" } });
+  await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  assert.equal(env.calls[0].form["automatic_tax[enabled]"], "true");
+  assert.equal(env.calls[0].form["line_items[0][tax_rates][0]"], undefined, "automatic tax and a fixed rate are never combined");
+  const link = await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
+  assert.equal(link.status, 200);
+  assert.equal(env.calls[1].form["automatic_tax[enabled]"], "true", "payment links use Stripe Tax");
+}
+
 console.log("billing checkout and portal tests passed");

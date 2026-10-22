@@ -5,7 +5,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
-  parseSecretList, evaluateSecrets, evaluateFlag, evaluatePrice, parseWranglerConfig,
+  evaluateTax, parseSecretList, evaluateSecrets, evaluateFlag, evaluatePrice, parseWranglerConfig,
   stripJsonc, stripeKeyMode, maskId, wranglerErrorLine, REQUIRED_SECRETS, DAILY_CRON,
 } from "./pro-golive-check.mjs";
 
@@ -100,5 +100,13 @@ const GOOD = {
 assert.equal(
   wranglerErrorLine("\u001b[33m▲ [WARNING] Proxy detected\u001b[0m\n\u001b[31m✘ [ERROR] You are not authenticated.\u001b[0m\n"),
   "✘ [ERROR] You are not authenticated.", "the wrangler error line is shown, not the warning");
+
+// Consumption tax must be configured: prices are tax-exclusive.
+assert.equal(evaluateTax({ vars: {} }, new Set()).ok, false, "no tax method fails");
+assert.equal(evaluateTax({ vars: { STRIPE_AUTOMATIC_TAX: "1" } }, new Set()).method, "automatic");
+assert.equal(evaluateTax({ vars: { STRIPE_AUTOMATIC_TAX: "0" } }, new Set()).ok, false, "automatic tax must be exactly 1");
+assert.equal(evaluateTax({ vars: {} }, new Set(["STRIPE_TAX_RATE_ID"])).method, "rate");
+assert.ok(evaluatePrice({ object: "price", active: true, type: "recurring", currency: "jpy", unit_amount: 14800, recurring: { interval: "month" }, tax_behavior: "inclusive" }).problems.some((p) => p.includes("inclusive")),
+  "an inclusive price is rejected");
 
 console.log("pro go-live check tests passed");

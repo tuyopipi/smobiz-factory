@@ -107,6 +107,20 @@ export function evaluateFlag(config, secretNames) {
   return { status: "off", source: "unset", on: false };
 }
 
+/**
+ * Prices are tax-exclusive, so a tax method must be configured or Pro is
+ * charged without consumption tax. STRIPE_AUTOMATIC_TAX="1" (Stripe Tax) or a
+ * STRIPE_TAX_RATE_ID; either may be a var or a secret.
+ */
+export function evaluateTax(config, secretNames) {
+  const vars = config?.vars || {};
+  const automatic = String(vars.STRIPE_AUTOMATIC_TAX ?? "").trim() === "1" || secretNames.has("STRIPE_AUTOMATIC_TAX");
+  const rate = Object.prototype.hasOwnProperty.call(vars, "STRIPE_TAX_RATE_ID") || secretNames.has("STRIPE_TAX_RATE_ID");
+  if (automatic) return { ok: true, method: "automatic", detail: "Stripe Tax (STRIPE_AUTOMATIC_TAX)" };
+  if (rate) return { ok: true, method: "rate", detail: "fixed tax rate on Checkout (STRIPE_TAX_RATE_ID); payment links are refused" };
+  return { ok: false, method: null, detail: "no STRIPE_AUTOMATIC_TAX or STRIPE_TAX_RATE_ID: Pro would be charged without consumption tax" };
+}
+
 /** Check a Stripe Price object against what the LP and the worker charge. */
 export function evaluatePrice(price, { keyMode = null } = {}) {
   const problems = [];
@@ -124,6 +138,9 @@ export function evaluatePrice(price, { keyMode = null } = {}) {
   if (recurring.interval !== EXPECTED_PRICE.interval) problems.push(`interval is ${JSON.stringify(recurring.interval)}, not "month"`);
   if ((recurring.interval_count ?? 1) !== EXPECTED_PRICE.interval_count) problems.push(`interval_count is ${JSON.stringify(recurring.interval_count)}, not 1`);
   if (recurring.usage_type && recurring.usage_type !== "licensed") problems.push(`usage_type is ${JSON.stringify(recurring.usage_type)}, not "licensed"`);
+  // The list price is tax-exclusive; a price marked inclusive would have tax
+  // carved out of 14,800 instead of added on top.
+  if (price.tax_behavior === "inclusive") problems.push('tax_behavior is "inclusive"; the 14,800 list price is tax-exclusive');
   if (keyMode === "live" && price.livemode !== true) problems.push("checked with a live key but the price is not livemode");
   if (keyMode === "test") warnings.push("checked with a TEST key: this proves the test-mode price only, not production");
   if (price.livemode === false && keyMode !== "test") warnings.push("price is test mode");
@@ -201,6 +218,11 @@ async function main(argv) {
   else if (flag.status === "conflict") record("FAIL", `${FLAG}`, "defined both in wrangler.jsonc vars and as a secret; keep one");
   else if (beforeFlag) record("INFO", `${FLAG}`, `off (${flag.source}); expected with --before-flag`);
   else record("FAIL", `${FLAG}`, `off (${flag.source}${flag.value !== undefined ? `, value ${JSON.stringify(flag.value)}` : ""}); Pro checkout stays "coming soon"`);
+
+  // (b2) consumption tax
+  const tax = evaluateTax(config, names);
+  if (!listed && !tax.ok) record("FAIL", "consumption tax", "unknown (secret list unavailable)");
+  else record(tax.ok ? "PASS" : "FAIL", "consumption tax", tax.detail);
 
   // (c) optional live price check
   const key = String(process.env.STRIPE_SECRET_KEY || "").trim();
