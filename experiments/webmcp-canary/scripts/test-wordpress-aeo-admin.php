@@ -77,8 +77,18 @@ function is_admin() { return false; }
 function is_feed() { return false; }
 function is_404() { return false; }
 function is_search() { return false; }
-function is_singular() { return false; }
-function is_front_page() { return true; }
+// The queried post, for singular-page tests. null means an archive/front page.
+$GLOBALS['webmcp_test_queried'] = null;
+$GLOBALS['webmcp_test_front_page'] = true;
+function is_singular() { return $GLOBALS['webmcp_test_queried'] !== null; }
+function is_front_page() { return $GLOBALS['webmcp_test_front_page']; }
+function get_queried_object() { return $GLOBALS['webmcp_test_queried']; }
+function get_queried_object_id() { return $GLOBALS['webmcp_test_queried'] ? (int) $GLOBALS['webmcp_test_queried']->ID : 0; }
+function has_shortcode($content, $tag) { return strpos((string) $content, '[' . $tag) !== false; }
+function has_block($name, $content) { return strpos((string) $content, '<!-- wp:' . $name) !== false; }
+function add_shortcode($tag, $callback) { $GLOBALS['webmcp_test_shortcodes'][$tag] = $callback; }
+function register_block_type($name, $args = array()) { $GLOBALS['webmcp_test_blocks'][$name] = $args; return true; }
+function wp_add_inline_script($handle, $data) { $GLOBALS['webmcp_test_inline_scripts'][$handle] = $data; return true; }
 function is_home() { return false; }
 function home_url($path = '') { return 'https://example.test' . ($path === '/' ? '/' : $path); }
 function get_bloginfo($field) {
@@ -108,6 +118,7 @@ function get_permalink($post) { return is_object($post) ? ($post->permalink ?? '
 function current_user_can() { return true; }
 function admin_url($path = '') { return 'https://example.test/wp-admin/' . ltrim($path, '/'); }
 if (!function_exists('do_action')) { function do_action(...$args) {} }
+if (!function_exists('get_current_screen')) { function get_current_screen() { return $GLOBALS['webmcp_test_screen'] ?? null; } }
 function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_html__($text) { return esc_html($text); }
 function esc_attr($value) { return esc_html($value); }
@@ -424,8 +435,144 @@ ob_start();
 webmcp_canary_output_server_schema();
 $business_output = ob_get_clean();
 expect(strpos($business_output, '"@type":"LocalBusiness"') !== false, 'autofilled store details select LocalBusiness schema');
-expect(strpos($business_output, '"telephone":"03-1234-5678"') !== false, 'autofilled phone is included in server schema');
+// A Japanese number on a Japanese site is published in international form.
+expect(strpos($business_output, '"telephone":"+81-3-1234-5678"') !== false, 'autofilled phone is included in server schema');
+expect(webmcp_canary_settings()['business_phone'] === '03-1234-5678', 'the stored phone stays as typed');
+// "09:00-18:00" does not say which days, so it stays text.
+expect(strpos($business_output, 'openingHoursSpecification') === false, 'hours without days are not turned into a specification');
 expect(strpos($business_output, '"openingHours":"09:00-18:00"') !== false, 'autofilled hours are included in server schema');
+
+/* --- Opening hours as OpeningHoursSpecification ----------------------- */
+
+// The free text is read into a specification only when it says plainly which
+// days and which hours; anything else stays text, exactly as typed.
+function webmcp_test_hours($text) {
+    $specs = webmcp_canary_opening_hours_specification($text);
+    if ($specs === null) {
+        return null;
+    }
+    $short = array();
+    foreach ($specs as $spec) {
+        expect($spec['@type'] === 'OpeningHoursSpecification', 'each entry is an OpeningHoursSpecification');
+        $days = array();
+        foreach ((array) $spec['dayOfWeek'] as $url) {
+            expect(strpos($url, 'https://schema.org/') === 0, 'dayOfWeek is a schema.org day URL');
+            $days[] = substr($url, strlen('https://schema.org/'), 2);
+        }
+        $short[] = implode(',', $days) . ' ' . $spec['opens'] . '-' . $spec['closes'];
+    }
+    return $short;
+}
+$hours_cases = array(
+    '10:00〜19:00 火曜定休' => array('Mo,We,Th,Fr,Sa,Su 10:00-19:00'),
+    'Tu-Su 11-20' => array('Tu,We,Th,Fr,Sa,Su 11:00-20:00'),
+    '月〜金 9:00-18:00 / 土 10:00-15:00' => array('Mo,Tu,We,Th,Fr 09:00-18:00', 'Sa 10:00-15:00'),
+    'Mon-Fri 9am-5pm, Sat 10am-2pm' => array('Mo,Tu,We,Th,Fr 09:00-17:00', 'Sa 10:00-14:00'),
+    '１０：００～１９：００（水曜定休）' => array('Mo,Tu,Th,Fr,Sa,Su 10:00-19:00'),
+    '11:30-14:00 17:00-22:00 月曜定休' => array('Tu,We,Th,Fr,Sa,Su 11:30-14:00', 'Tu,We,Th,Fr,Sa,Su 17:00-22:00'),
+    '毎日 10:00-20:00' => array('Mo,Tu,We,Th,Fr,Sa,Su 10:00-20:00'),
+    '営業時間 10時〜19時 定休日 水曜日' => array('Mo,Tu,Th,Fr,Sa,Su 10:00-19:00'),
+    '月・水・金 10:00-18:00' => array('Mo,We,Fr 10:00-18:00'),
+    '平日 9:00-18:00' => array('Mo,Tu,We,Th,Fr 09:00-18:00'),
+    'Mon-Sat 18:00-02:00' => array('Mo,Tu,We,Th,Fr,Sa 18:00-02:00'),
+    'Daily 11-20' => array('Mo,Tu,We,Th,Fr,Sa,Su 11:00-20:00'),
+    '火〜日 11:00–20:00' => array('Tu,We,Th,Fr,Sa,Su 11:00-20:00'),
+    '月~土 10時から19時' => array('Mo,Tu,We,Th,Fr,Sa 10:00-19:00'),
+    'Fr-Mo 10-18' => array('Mo,Fr,Sa,Su 10:00-18:00'),
+    '9:00-18:00 Mon-Fri' => array('Mo,Tu,We,Th,Fr 09:00-18:00'),
+    'Mon-Fri: 9-17; Sat: 10-14' => array('Mo,Tu,We,Th,Fr 09:00-17:00', 'Sa 10:00-14:00'),
+    'Tue-Sun 11am to 8pm, closed Mon' => array('Tu,We,Th,Fr,Sa,Su 11:00-20:00'),
+    '定休日：火曜 / 10:00-19:00' => array('Mo,We,Th,Fr,Sa,Su 10:00-19:00'),
+    '10:00-19:00 火曜日定休 水曜日定休' => array('Mo,Th,Fr,Sa,Su 10:00-19:00'),
+    'Mon-Fri 9:00-12:00 13:00-18:00' => array('Mo,Tu,We,Th,Fr 09:00-12:00', 'Mo,Tu,We,Th,Fr 13:00-18:00'),
+    '0:00-24:00 毎日' => array('Mo,Tu,We,Th,Fr,Sa,Su 00:00-23:59'),
+);
+foreach ($hours_cases as $text => $expected) {
+    $got = webmcp_test_hours($text);
+    expect($got === $expected, "hours parsed: {$text} => " . json_encode($got));
+}
+// Failures: no days, unknown words, holidays, nth weekdays, ambiguous clocks,
+// a closed day that is also given hours. None of these may invent hours.
+foreach (array(
+    '', '10:00-19:00', '09:00-18:00', '9-5', 'Closed Mondays', '平日 9:00-18:00 土日祝休み',
+    '10:00-19:00 (L.O. 18:30)', '第2火曜定休 10:00-19:00', '10:00〜19:00（最終受付18:00）', 'open 24 hours',
+    '10:00-19:00 月曜定休 月-金 9-18', '日曜・祝日休み 10:00-18:00', 'Mon-Fri 25:00-26:00', 'Mon 10:75-12:00',
+    'Mon-Fri 9am-17', 'By appointment', '要予約', 'Mon-Fri 10:00-10:00',
+) as $text) {
+    expect(webmcp_canary_opening_hours_specification($text) === null, "hours not guessed: {$text}");
+}
+
+// Published as a specification, without the text beside it, when it parses.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array(
+    'enabled' => '1', 'serve_schema' => '1', 'business_name' => 'Hours Cafe', 'business_hours' => '10:00〜19:00 火曜定休',
+));
+$hours_bundle = webmcp_canary_own_schema_bundle();
+$hours_org = $hours_bundle['core'][0];
+expect(!isset($hours_org['openingHours']), 'parsed hours drop the free-text openingHours');
+expect($hours_org['openingHoursSpecification'][0]['opens'] === '10:00' && count($hours_org['openingHoursSpecification'][0]['dayOfWeek']) === 6,
+    'and publish openingHoursSpecification');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_hours'] = '10:00-19:00（祝日は17時まで）';
+$hours_org = webmcp_canary_own_schema_bundle()['core'][0];
+expect($hours_org['openingHours'] === '10:00-19:00（祝日は17時まで）' && !isset($hours_org['openingHoursSpecification']),
+    'unparsed hours are published as typed');
+
+// The merge into an SEO plugin's node carries the specification as the one
+// hours fact; a node with hours of its own keeps them.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_hours'] = 'Tu-Su 11-20';
+$merged_hours = array_values(webmcp_canary_merge_graph(array(
+    array('@type' => 'Organization', '@id' => 'https://example.test/#org', 'name' => 'Hours Cafe', 'url' => 'https://example.test/'),
+)));
+expect(!empty($merged_hours[0]['openingHoursSpecification']) && !isset($merged_hours[0]['openingHours']),
+    'the merge adds the specification, not the text');
+$merged_hours = array_values(webmcp_canary_merge_graph(array(
+    array('@type' => 'Organization', '@id' => 'https://example.test/#org', 'name' => 'Hours Cafe', 'openingHours' => 'Mo-Fr 9-5'),
+)));
+expect($merged_hours[0]['openingHours'] === 'Mo-Fr 9-5' && !isset($merged_hours[0]['openingHoursSpecification']),
+    'their own hours are not doubled by ours');
+webmcp_canary_schema_merged(false);
+
+/* --- Telephone in international form ------------------------------------ */
+
+foreach (array(
+    array('03-1234-5678', 'ja', '', '+81-3-1234-5678'),
+    array('090-1234-5678', 'ja', '', '+81-90-1234-5678'),
+    array('０３－１２３４－５６７８', 'ja', '', '+81-3-1234-5678'),
+    array('03 (1234) 5678', 'ja', '', '+81-3-1234-5678'),
+    array('0120-123-456', 'ja', '', '+81-120-123-456'),
+    array('0312345678', 'ja', '', '+81-312345678'),
+    array('03-1234-5678', 'en_US', '〒100-0001 Chiyoda', '+81-3-1234-5678'),
+    array('03-1234-5678', 'en_US', '東京都千代田区丸の内1-1-1', '+81-3-1234-5678'),
+    array('03-1234-5678', 'en_US', '1 Main St, Springfield', '03-1234-5678'),
+    array('+81 3 1234 5678', 'ja', '', '+81 3 1234 5678'),
+    array('+1 415 555 0100', 'ja', '', '+1 415 555 0100'),
+    array('123-4567', 'ja', '', '123-4567'),
+    array('00-1234-5678', 'ja', '', '00-1234-5678'),
+    array('03-1234-56789-1', 'ja', '', '03-1234-56789-1'),
+    array('03-1234-5678 (代表)', 'ja', '', '03-1234-5678 (代表)'),
+) as $case) {
+    expect(webmcp_canary_schema_telephone($case[0], $case[1], $case[2]) === $case[3],
+        "telephone {$case[0]} ({$case[1]}) => " . webmcp_canary_schema_telephone($case[0], $case[1], $case[2]));
+}
+
+/* --- additionalType is a URL or nothing ---------------------------------- */
+
+expect(webmcp_canary_schema_type_url('Hair salon') === null, 'a free label is not an additionalType');
+expect(webmcp_canary_schema_type_url('https://www.wikidata.org/wiki/Q1056228') === 'https://www.wikidata.org/wiki/Q1056228', 'a URL is kept');
+expect(webmcp_canary_schema_type_url(array('Cafe', 'https://schema.org/CafeOrCoffeeShop')) === 'https://schema.org/CafeOrCoffeeShop', 'a list keeps only its URLs');
+expect(webmcp_canary_schema_type_url(null) === null, 'nothing stays nothing');
+$normalized = webmcp_canary_normalize_business_facts(
+    array('@type' => 'CafeOrCoffeeShop', 'additionalType' => 'カフェ', 'telephone' => '03-1234-5678', 'openingHours' => 'Tu-Su 11-20'),
+    array('business_address' => '東京都渋谷区')
+);
+expect(!isset($normalized['additionalType']), 'a label in additionalType is dropped from the business node');
+expect($normalized['telephone'] === '+81-3-1234-5678' && !isset($normalized['openingHours']) && count($normalized['openingHoursSpecification']) === 1,
+    'the business node is normalised in one place');
+$normalized = webmcp_canary_normalize_business_facts(array('additionalType' => 'https://schema.org/CafeOrCoffeeShop'), array());
+expect($normalized['additionalType'] === 'https://schema.org/CafeOrCoffeeShop', 'a URL additionalType is kept');
+// The central template's node is published as the service generated it, since
+// delivery is verified by matching it value for value on the page.
+expect(strpos(webmcp_test_function_body(file_get_contents(__DIR__ . '/../wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_own_schema_bundle'), 'webmcp_canary_normalize_business_facts') !== false,
+    'the local business node is normalised');
 
 /* --- Free plan completeness: diagnosis works with no site key ----------- */
 
@@ -1787,11 +1934,71 @@ expect($node['mainEntity'][0]['acceptedAnswer']['text'] === '店舗横に3台分
 expect($node['@id'] === 'https://example.test/#nurevo-faq', 'the id is namespaced to this plugin');
 expect(strpos($node['@id'], 'nurevo') !== false, 'and says so');
 
-// Published on the front page by default, and on a chosen page when set.
+// Google accepts FAQPage markup only for questions a visitor can read on the
+// page. The FAQ is therefore published only on a page that renders it with
+// the block or the shortcode - not on the front page by default any more.
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
     'enabled' => '1', 'serve_schema' => '1', 'business_name' => 'Example', 'faq_page_id' => '0',
 ));
 $GLOBALS['webmcp_test_options']['blog_public'] = 1;
+ob_start();
+webmcp_canary_output_server_schema();
+$front_without_faq = ob_get_clean();
+expect(strpos($front_without_faq, '"FAQPage"') === false, 'the front page alone no longer publishes an FAQ nobody can see');
+
+// A page that does not render the FAQ publishes none.
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 12, 'post_content' => '<p>About us</p>', 'post_title' => 'About', 'permalink' => 'https://example.test/about/');
+$GLOBALS['webmcp_test_front_page'] = false;
+expect(webmcp_canary_faq_visible_post() === null, 'a page without the shortcode or block does not show the FAQ');
+// Choosing it as the faq page does not change that.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['faq_page_id'] = '12';
+ob_start();
+webmcp_canary_output_server_schema();
+$chosen_without_faq = ob_get_clean();
+expect(strpos($chosen_without_faq, '"FAQPage"') === false, 'the chosen faq page publishes no FAQ unless it renders it');
+
+// With the shortcode it does, under that page's URL.
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 12, 'post_content' => "<p>Questions</p>\n[nurevo_faq]", 'post_title' => 'FAQ', 'permalink' => 'https://example.test/faq/');
+expect(webmcp_canary_faq_visible_post() !== null, 'the shortcode makes the FAQ visible');
+ob_start();
+webmcp_canary_output_server_schema();
+$faq_output = ob_get_clean();
+expect(strpos($faq_output, 'https://example.test/faq/#nurevo-faq') !== false, 'the FAQ is published under the page that shows it');
+
+// Any singular page with the block counts, chosen or not.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['faq_page_id'] = '0';
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 40, 'post_content' => '<!-- wp:nurevo/faq /-->', 'post_title' => 'Help', 'permalink' => 'https://example.test/help/');
+ob_start();
+webmcp_canary_output_server_schema();
+$block_output = ob_get_clean();
+expect(strpos($block_output, '"FAQPage"') !== false && strpos($block_output, 'https://example.test/help/#nurevo-faq') !== false,
+    'the block publishes the FAQ on its page');
+
+// The rendered FAQ is accessible HTML and escapes what was typed.
+update_option(WEBMCP_CANARY_FAQ_OPTION, array(array('q' => '駐車場はありますか？', 'a' => "店舗横に3台分あります。"), array('q' => 'Tags <b>?', 'a' => "Line one\n<script>x</script>")));
+$rendered = webmcp_canary_render_faq();
+expect(substr_count($rendered, '<details') === 2 && substr_count($rendered, '<summary') === 2, 'one <details>/<summary> per question');
+expect(strpos($rendered, '<script>') === false && strpos($rendered, '&lt;script&gt;') !== false, 'the answer is escaped');
+expect(strpos($rendered, 'Tags &lt;b&gt;?') !== false, 'and so is the question');
+expect(strpos($rendered, '<br') !== false, 'line breaks in an answer are kept');
+expect(isset($GLOBALS['webmcp_test_shortcodes']['nurevo_faq']), 'the [nurevo_faq] shortcode is registered');
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+expect(webmcp_canary_render_faq() === '', 'no FAQ renders nothing');
+webmcp_canary_save_faq_entries(array(array('q' => '駐車場はありますか？', 'a' => '店舗横に3台分あります。')));
+
+// The block is server-rendered by the same function, with no build step.
+$GLOBALS['webmcp_test_blocks'] = array();
+webmcp_canary_register_faq_block();
+expect(isset($GLOBALS['webmcp_test_blocks']['nurevo/faq']), 'the nurevo/faq block is registered');
+expect($GLOBALS['webmcp_test_blocks']['nurevo/faq']['render_callback'] === 'webmcp_canary_render_faq', 'and rendered on the server');
+expect(strpos(webmcp_canary_faq_block_editor_js(), "registerBlockType('nurevo/faq'") !== false, 'with a plain-JS editor registration');
+
+// The settings screen tells the owner how to show it.
+expect(strpos($source, '[nurevo_faq]') !== false && strpos($source, 'place the %1$s block or the %2$s shortcode') !== false,
+    'the settings help names the block and the shortcode');
+
+// The rest of this section runs on the FAQ page.
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 12, 'post_content' => '[nurevo_faq]', 'post_title' => 'FAQ', 'permalink' => 'https://example.test/faq/');
 ob_start();
 webmcp_canary_output_server_schema();
 $faq_output = ob_get_clean();
@@ -1830,8 +2037,10 @@ expect(strpos($no_faq, '"FAQPage"') === false, 'no FAQ means no FAQPage node');
 
 $GLOBALS['webmcp_test_active_plugins'] = array();
 delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
+$GLOBALS['webmcp_test_queried'] = null;
+$GLOBALS['webmcp_test_front_page'] = true;
 
-// The input exists to type into, and the page selector with it.
+// The input exists to type into, and the services page selector with it.
 expect(strpos($source, 'name="%2$s[faq][%3$d][q]"') !== false, 'there is a question input');
 expect(strpos($source, 'name="%2$s[faq_page_id]"') !== false, 'and a page selector');
 expect(strpos($source, 'webmcp_canary_faq_field') !== false, 'registered as a settings field');
@@ -1923,6 +2132,23 @@ expect(strpos($service_output, '"ReserveAction"') !== false, 'with their booking
 expect(strpos($service_output, '"Reservation"') !== false, 'and the reservation it produces');
 expect(strpos($service_output, 'https://example.test/book/cut') !== false, 'pointing at the entered URL');
 expect(strpos($service_output, '#nurevo-service-1') !== false, 'under our id');
+expect(strpos($service_output, '"FAQPage"') === false, 'services stay on the front page without the FAQ riding along');
+
+// With a chosen page, services move there - whether or not it shows the FAQ.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['faq_page_id'] = '12';
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 12, 'post_content' => '<p>Menu</p>', 'post_title' => 'Menu', 'permalink' => 'https://example.test/menu/');
+$GLOBALS['webmcp_test_front_page'] = false;
+ob_start();
+webmcp_canary_output_server_schema();
+$chosen_services = ob_get_clean();
+expect(strpos($chosen_services, 'https://example.test/menu/#nurevo-service-1') !== false, 'services are published on the chosen page');
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 13, 'post_content' => '', 'post_title' => 'Other', 'permalink' => 'https://example.test/other/');
+ob_start();
+webmcp_canary_output_server_schema();
+expect(strpos(ob_get_clean(), '"Service"') === false, 'and not on other pages');
+$GLOBALS['webmcp_test_queried'] = null;
+$GLOBALS['webmcp_test_front_page'] = true;
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['faq_page_id'] = '0';
 
 // Nobody else publishes Service, so an SEO plugin changes nothing here.
 $GLOBALS['webmcp_test_active_plugins'] = array('wordpress-seo/wp-seo.php', 'woocommerce/woocommerce.php');
@@ -2299,5 +2525,68 @@ expect(strpos(file_get_contents(__DIR__ . '/../wordpress-plugin/webmcp-canary/nu
 $GLOBALS['webmcp_test_remote_get'] = array();
 delete_option(WEBMCP_CANARY_RULESET_OPTION);
 delete_option('webmcp_canary_autofix_state');
+
+/* --- 0.7.4: first-run fixes ------------------------------------------- */
+
+// Pairing and licence results are shown: settings_errors() must be called on
+// this top-level page, where WordPress does not print them by itself.
+expect(strpos($source, "settings_errors(WEBMCP_CANARY_OPTION);") !== false, 'the settings page prints pairing and licence results');
+
+// Pairing switches output on.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js', 'enabled' => '0'));
+$GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => wp_json_encode(array(
+    'ok' => true, 'site_id' => 'p1', 'site_key' => 'nrv_p1', 'profile_token' => 'nrvp_p1', 'plan' => 'free', 'domain' => 'example.test', 'paired' => true,
+)));
+$paired_settings = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('enabled' => '', 'pairing_code' => 'NRV-PAIRS-PAIRS-PAIRS-PAIRS')));
+expect($paired_settings['enabled'] === '1', 'a successful pairing switches output on');
+$GLOBALS['webmcp_test_remote'] = array('status' => 409, 'body' => wp_json_encode(array('ok' => false, 'error' => 'invalid_code')));
+$failed_settings = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('enabled' => '', 'pairing_code' => 'NRV-WRONG-WRONG-WRONG-WRONG')));
+expect($failed_settings['enabled'] === '0', 'a failed pairing does not switch output on');
+
+// The off notice appears on this plugin's screens and the Plugins list only.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '0'));
+$_GET['page'] = 'webmcp-canary';
+ob_start(); webmcp_canary_output_off_notice(); $off_notice = ob_get_clean();
+expect(strpos($off_notice, 'Nurevo AEO is off') !== false, 'the plugin screen says output is off');
+$_GET['page'] = 'some-other-plugin';
+ob_start(); webmcp_canary_output_off_notice(); $elsewhere = ob_get_clean();
+expect($elsewhere === '', 'other admin screens are not nagged');
+$GLOBALS['webmcp_test_screen'] = (object) array('id' => 'plugins');
+ob_start(); webmcp_canary_output_off_notice(); $plugins_screen = ob_get_clean();
+expect(strpos($plugins_screen, 'Nurevo AEO is off') !== false, 'the Plugins list says output is off');
+unset($GLOBALS['webmcp_test_screen'], $_GET['page']);
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '1';
+$_GET['page'] = 'webmcp-canary';
+ob_start(); webmcp_canary_output_off_notice(); $on_notice = ob_get_clean();
+expect($on_notice === '', 'no off notice once output is on');
+unset($_GET['page']);
+
+// A forced check asks the service to rescan; a normal view does not.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js'));
+expect(strpos(webmcp_canary_aeo_score_endpoints(true)[0], 'fresh=1') !== false, 'Check again requests a fresh scan');
+expect(strpos(webmcp_canary_aeo_score_endpoints(false)[0], 'fresh=') === false, 'a normal view may use the cache');
+
+// A key the service no longer serves (cancelled, unpaid, deleted) drops to Free.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'tag_url' => 'https://nurevo.jp/tag.js', 'plan' => 'standard', 'site_key' => 'nrv_gone',
+));
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+$GLOBALS['webmcp_test_remote_get'] = array('api/tag/config' => array('status' => 404, 'body' => '{"error":"not_found"}'));
+webmcp_canary_sync_ruleset(true);
+expect(webmcp_canary_settings()['plan'] === 'free', 'a revoked site key drops the plan to free');
+
+// "Refresh plan" checks a site the plugin still thinks is Free.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'tag_url' => 'https://nurevo.jp/tag.js', 'plan' => 'free', 'site_key' => 'nrv_up',
+));
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+$GLOBALS['webmcp_test_remote_get'] = array('api/tag/config' => array('status' => 200, 'body' => json_encode(array('ok' => true, 'plan' => 'standard', 'ruleset_version' => 3))));
+webmcp_canary_sync_ruleset(true);
+expect(webmcp_canary_settings()['plan'] === 'free', 'the scheduled sync still skips a free site');
+webmcp_canary_sync_ruleset_now();
+expect(webmcp_canary_settings()['plan'] === 'standard', 'Refresh plan picks up a purchase immediately');
+expect(empty($GLOBALS['webmcp_canary_force_follow']), 'the one-off check does not leave paid behaviour switched on');
+$GLOBALS['webmcp_test_remote_get'] = array();
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
 
 echo "WordPress AEO admin tests passed\n";

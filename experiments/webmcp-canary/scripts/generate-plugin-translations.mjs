@@ -400,8 +400,11 @@ const JA = {
   "Published as Service structured data with a ReserveAction pointing at the booking URL you enter. Leave the name blank to remove a service. Save to add another row.": "Service 構造化データとして出力し、入力された予約URLを指す ReserveAction を付けます。サービス名を空にすると、そのサービスは削除されます。保存すると入力欄が1組増えます。",
   "Question": "質問",
   "Answer": "回答",
-  "Published as FAQPage structured data. Leave a question or its answer blank to remove the pair. Save to add another row.": "FAQPage 構造化データとして出力します。質問または回答を空にすると、その組は削除されます。保存すると入力欄が1組増えます。",
-  "Page ID that carries the FAQ (0 = front page)": "FAQを掲載するページID（0 = フロントページ）",
+  "Leave a question or its answer blank to remove the pair. Save to add another row.": "質問または回答を空にすると、その組は削除されます。保存すると入力欄が1組増えます。",
+  "To publish the FAQ, place the %1$s block or the %2$s shortcode on the page where it should appear. The questions are shown there and published as FAQPage structured data on that page only; search engines accept FAQ markup only for questions visitors can read.": "FAQを公開するには、表示したいページに %1$s ブロックまたは %2$s ショートコードを配置してください。質問はそのページに表示され、そのページでのみ FAQPage 構造化データとして出力されます。検索エンジンは、訪問者が読める質問のFAQマークアップしか認めません。",
+  "Nurevo FAQ": "Nurevo FAQ",
+  "Shows the questions and answers entered in Nurevo AEO settings.": "Nurevo AEO の設定で入力した質問と回答を表示します。",
+  "Page ID that carries the services (0 = front page)": "サービスを掲載するページID（0 = フロントページ）",
   "Add the site on the nurevo.jp dashboard, then paste the pairing code it shows here. The code is used once; re-issue it from the dashboard if you need another.": "nurevo.jp のダッシュボードでサイトを追加し、表示されたペアリングコードをここに貼り付けてください。コードは一度だけ使えます。必要な場合はダッシュボードから再発行できます。",
   "Paired. This site is registered as %1$s. Plan: %2$s.": "接続しました。このサイトは %1$s として登録されています。プラン: %2$s。",
   "The pairing code is invalid or has expired.": "ペアリングコードが正しくないか、有効期限が切れています。",
@@ -529,6 +532,19 @@ const JA = {
   "Pro is set up on the Nurevo dashboard, not in WordPress. Once this site is on Pro, this screen shows its measurements automatically.":
     "Proプランの設定は WordPress ではなく Nurevo のダッシュボードで行います。このサイトが Pro になると、この画面に計測結果が自動で表示されます。",
   "See Pro details": "Proプランの詳細を見る",
+
+  // First-run fixes (0.7.4).
+  "Refresh plan": "プランを再確認",
+  "Just bought or cancelled a plan? Check it now instead of waiting for the next sync.":
+    "プランを購入・解約した直後ですか？次の同期を待たずに、今すぐ確認できます。",
+  "Plan checked: %s (unchanged).": "プランを確認しました：%s（変更なし）",
+  "Plan updated: %1$s → %2$s.": "プランを更新しました：%1$s → %2$s",
+  "Nurevo AEO is off: nothing is published yet.": "Nurevo AEO はオフです。まだ何も公開されていません。",
+  "Structured data, llms.txt and AI crawler rules start once you switch on output.":
+    "出力をオンにすると、構造化データ・llms.txt・AIクローラーの設定が有効になります。",
+  "Turn on in settings": "設定でオンにする",
+  "Diagnosis works without connecting, and structured data, llms.txt and AI crawler rules work without connecting once output is switched on. Connecting is what lets the dashboard show this site and keep its output current.":
+    "診断は接続しなくても使えます。構造化データ・llms.txt・AIクローラーの設定も、出力をオンにすれば接続なしで動きます。接続すると、ダッシュボードにこのサイトが表示され、出力が最新の基準に保たれます。",
 
   // Continuous optimization (0.7.2).
   "Automatic optimization found information that needs your confirmation. Please publish only real information.":

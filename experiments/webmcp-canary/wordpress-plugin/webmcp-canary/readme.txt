@@ -37,7 +37,7 @@ Nurevo AEO does not publish a second set of structured data next to your SEO plu
 With **Yoast SEO, Rank Math or All in One SEO**, Nurevo AEO hooks the filter each of them uses to build its JSON-LD graph (`wpseo_schema_graph`, `rank_math/schema/validated_data`, `aioseo_schema_output`) and adds only what is missing:
 
 * **Your business node** gets the address, telephone, opening hours, description and email it lacks, and a more specific type such as HairSalon or Dentist. Values your SEO plugin already sets are never overwritten.
-* **FAQ** questions you entered in Nurevo are added to the page's existing FAQPage, skipping any question it already answers.
+* **FAQ** questions you entered in Nurevo are added to the page's existing FAQPage, skipping any question it already answers - on the page where you placed the Nurevo FAQ block or the `[nurevo_faq]` shortcode.
 * **Services** you entered are added, linked to your business node.
 * **WebSite, WebPage, Article and breadcrumbs** stay exactly as your SEO plugin publishes them.
 
@@ -108,6 +108,10 @@ By using these features you agree to the service's terms. Please read them befor
 
 == Frequently Asked Questions ==
 
+= How do I publish my FAQ? =
+
+Enter the questions and answers under **Nurevo AEO > Settings**, then add the **Nurevo FAQ** block (or the `[nurevo_faq]` shortcode) to the page where they should appear. The questions are shown there as expandable items and published as FAQPage structured data on that page only. Search engines accept FAQ markup only for questions a visitor can read, so nothing is published for an FAQ that is not on any page.
+
 = What is AEO? =
 
 AEO (Answer Engine Optimization) is about being quoted correctly inside AI answers from ChatGPT, Perplexity, Google AI and others. Classic SEO is about where you rank in a list of links. AEO is about whether a machine can read your facts at all.
@@ -172,6 +176,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Addresses are published as a schema.org PostalAddress on every plan.
 * /llms.txt is always the file the plugin builds from your site, with your pages, products and services, in your site's language. Connected sites used to receive a shorter hosted version with Japanese headings.
 * Translations for 59 languages are bundled.
+* Opening hours written in common Japanese or English forms ("10:00-19:00, closed Tuesdays", "Tu-Su 11-20", "Mon-Fri 9:00-18:00 / Sat 10:00-15:00", including Japanese day names, wave dashes and full-width digits) are now published as schema.org openingHoursSpecification. Hours the plugin cannot read with certainty are still published exactly as you typed them, never guessed.
+* On a Japanese site, a Japanese telephone number such as 03-1234-5678 is published in international form (+81-3-1234-5678) in structured data. The number you entered is not changed.
+* FAQ: add the new "Nurevo FAQ" block or the [nurevo_faq] shortcode to a page to show your questions and answers there. FAQPage structured data is now published only on a page that shows them, because search engines accept FAQ markup only for questions visitors can read. If you relied on the front page or the chosen page ID, place the block or shortcode on that page. Services are published where they were before.
+* additionalType is published only when it is a URL.
 
 = 0.7.3 =
 * No more parallel structured data. With Yoast SEO, Rank Math or All in One SEO, Nurevo AEO now adds the missing facts - address, telephone, opening hours, a specific business type, FAQ questions and services - into the graph your SEO plugin already publishes, instead of printing a second graph beside it. Your SEO plugin's own values are never overwritten.

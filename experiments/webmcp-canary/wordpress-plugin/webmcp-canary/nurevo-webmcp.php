@@ -355,6 +355,96 @@ function webmcp_canary_faq_schema_node($page_url) {
     );
 }
 
+/* -----------------------------------------------------------------------
+ * The FAQ on the page.
+ *
+ * Google only accepts FAQPage markup for questions a visitor can read on the
+ * page, so the hand-entered FAQ is rendered by a block or a shortcode, and the
+ * FAQPage JSON-LD is published only on a page that contains one of them.
+ * --------------------------------------------------------------------- */
+
+add_shortcode('nurevo_faq', 'webmcp_canary_render_faq');
+add_action('init', 'webmcp_canary_register_faq_block');
+
+/** The FAQ as HTML: one <details> per question, so it works without script. */
+function webmcp_canary_render_faq($attributes = array()) {
+    $entries = webmcp_canary_faq_entries();
+    if (empty($entries)) {
+        return '';
+    }
+    $html = '<div class="nurevo-faq">';
+    foreach ($entries as $entry) {
+        $html .= '<details class="nurevo-faq__item"><summary class="nurevo-faq__question">' . esc_html($entry['q']) . '</summary>'
+            . '<div class="nurevo-faq__answer"><p>' . nl2br(esc_html($entry['a'])) . '</p></div></details>';
+    }
+    return $html . '</div>';
+}
+
+/**
+ * A server-rendered block, nurevo/faq. No build step: the editor script is a
+ * few lines of plain JavaScript that previews the block with ServerSideRender.
+ */
+function webmcp_canary_register_faq_block() {
+    if (!function_exists('register_block_type')) {
+        return;
+    }
+    $editor_handle = null;
+    if (function_exists('wp_register_script') && function_exists('wp_add_inline_script')) {
+        $editor_handle = 'nurevo-faq-block-editor';
+        wp_register_script($editor_handle, '', array('wp-blocks', 'wp-element', 'wp-server-side-render', 'wp-block-editor'), WEBMCP_CANARY_VERSION, true);
+        wp_add_inline_script($editor_handle, webmcp_canary_faq_block_editor_js());
+    }
+    $args = array(
+        'api_version'     => 2,
+        'title'           => __('Nurevo FAQ', 'nurevo-webmcp'),
+        'category'        => 'widgets',
+        'icon'            => 'editor-help',
+        'description'     => __('Shows the questions and answers entered in Nurevo AEO settings.', 'nurevo-webmcp'),
+        'supports'        => array('html' => false),
+        'render_callback' => 'webmcp_canary_render_faq',
+    );
+    if ($editor_handle !== null) {
+        $args['editor_script'] = $editor_handle;
+    }
+    register_block_type('nurevo/faq', $args);
+}
+
+function webmcp_canary_faq_block_editor_js() {
+    return "(function(wp){if(!wp||!wp.blocks||!wp.element){return;}var el=wp.element.createElement;"
+        . "var SSR=wp.serverSideRender;var be=wp.blockEditor||{};"
+        . "wp.blocks.registerBlockType('nurevo/faq',{apiVersion:2,title:'Nurevo FAQ',category:'widgets',icon:'editor-help',supports:{html:false},"
+        . "edit:function(){var props=be.useBlockProps?be.useBlockProps():{};"
+        . "return el('div',props,SSR?el(SSR,{block:'nurevo/faq'}):'Nurevo FAQ');},"
+        . "save:function(){return null;}});})(window.wp);";
+}
+
+/** Does this post's content render the FAQ? */
+function webmcp_canary_post_shows_faq($post) {
+    if (!is_object($post) || !isset($post->post_content)) {
+        return false;
+    }
+    $content = (string) $post->post_content;
+    if (function_exists('has_shortcode') && has_shortcode($content, 'nurevo_faq')) {
+        return true;
+    }
+    return function_exists('has_block') && has_block('nurevo/faq', $content);
+}
+
+/**
+ * The post on this request that shows the FAQ, or null.
+ *
+ * The queried page when its content contains the block or the shortcode. The
+ * chosen faq page counts only through that same test - choosing a page no
+ * longer publishes the FAQ on it by itself.
+ */
+function webmcp_canary_faq_visible_post() {
+    if (!is_singular()) {
+        return null;
+    }
+    $post = get_queried_object();
+    return webmcp_canary_post_shows_faq($post) ? $post : null;
+}
+
 function webmcp_canary_settings() {
     $settings = get_option(WEBMCP_CANARY_OPTION, array());
     return wp_parse_args(is_array($settings) ? $settings : array(), webmcp_canary_default_settings());
@@ -646,6 +736,7 @@ function webmcp_canary_sanitize_settings($input) {
             }
             add_settings_error(WEBMCP_CANARY_OPTION, $bound->get_error_code(), $bound->get_error_message(), 'error');
         } else {
+            $bound_ok = true;
             $plan = $bound['plan'];
             // Adopt what the service issued. These are what let the site sync
             // its profile and carry a diagnosis history.
@@ -667,7 +758,10 @@ function webmcp_canary_sanitize_settings($input) {
         update_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 1, false);
     }
     return array(
-        'enabled' => !empty($input['enabled']) ? '1' : '0',
+        // Connecting (pairing or a licence) is an explicit request to publish,
+        // so it switches output on. Before, a paired site showed "Connected" in
+        // the dashboard while publishing nothing because output was still off.
+        'enabled' => (!empty($input['enabled']) || !empty($paired) || !empty($bound_ok)) ? '1' : '0',
         'allow_ai_crawlers' => !empty($input['allow_ai_crawlers']) ? '1' : '0',
         'ai_training' => isset($input['ai_training']) && in_array($input['ai_training'], array('default', 'allow', 'block'), true)
             ? $input['ai_training']
@@ -1921,7 +2015,8 @@ function webmcp_canary_site_id_field() {
 /**
  * Hand-entered questions and answers.
  *
- * Published as FAQPage on the page chosen below. This is the operator's own
+ * Shown by the [nurevo_faq] shortcode or the nurevo/faq block, and published as
+ * FAQPage on the page that shows it. This is the operator's own
  * content, so it is published whether or not an SEO plugin ships an FAQ block -
  * that block holds different questions, and standing down for it would mean
  * their FAQ replaces one the operator wrote here.
@@ -1965,6 +2060,16 @@ function webmcp_canary_services_field() {
         );
     }
     echo '<p class="description">' . esc_html__('Published as Service structured data with a ReserveAction pointing at the booking URL you enter. Leave the name blank to remove a service. Save to add another row.', 'nurevo-webmcp') . '</p>';
+
+    // Stored as faq_page_id for compatibility: it used to place the FAQ too,
+    // which now follows the block or shortcode instead.
+    $settings = webmcp_canary_settings();
+    printf(
+        '<p><label>%1$s <input type="number" min="0" step="1" class="small-text" name="%2$s[faq_page_id]" value="%3$s"></label></p>',
+        esc_html__('Page ID that carries the services (0 = front page)', 'nurevo-webmcp'),
+        esc_attr(WEBMCP_CANARY_OPTION),
+        esc_attr($settings['faq_page_id'])
+    );
     echo '</fieldset>';
 }
 
@@ -1985,15 +2090,13 @@ function webmcp_canary_faq_field() {
             esc_textarea($entry['a'])
         );
     }
-    echo '<p class="description">' . esc_html__('Published as FAQPage structured data. Leave a question or its answer blank to remove the pair. Save to add another row.', 'nurevo-webmcp') . '</p>';
-
-    $settings = webmcp_canary_settings();
-    printf(
-        '<p><label>%1$s <input type="number" min="0" step="1" class="small-text" name="%2$s[faq_page_id]" value="%3$s"></label></p>',
-        esc_html__('Page ID that carries the FAQ (0 = front page)', 'nurevo-webmcp'),
-        esc_attr(WEBMCP_CANARY_OPTION),
-        esc_attr($settings['faq_page_id'])
-    );
+    echo '<p class="description">' . esc_html__('Leave a question or its answer blank to remove the pair. Save to add another row.', 'nurevo-webmcp') . '</p>';
+    echo '<p class="description">' . sprintf(
+        /* translators: 1: block name, 2: shortcode */
+        esc_html__('To publish the FAQ, place the %1$s block or the %2$s shortcode on the page where it should appear. The questions are shown there and published as FAQPage structured data on that page only; search engines accept FAQ markup only for questions visitors can read.', 'nurevo-webmcp'),
+        '<strong>' . esc_html__('Nurevo FAQ', 'nurevo-webmcp') . '</strong>',
+        '<code>[nurevo_faq]</code>'
+    ) . '</p>';
     echo '</fieldset>';
 }
 
@@ -2019,6 +2122,54 @@ function webmcp_canary_license_key_field() {
         esc_html__('Separate from the site key. It is verified when these settings are saved. Current plan:', 'nurevo-webmcp'),
         esc_html($settings['plan'])
     );
+    if ($settings['site_key'] !== '') {
+        // A purchase or cancellation reaches the plugin on the next sync
+        // (twice a day). This checks now. A link, not a nested form: this
+        // field sits inside the settings form.
+        printf(
+            '<p><a class="button" href="%1$s">%2$s</a> <span class="description">%3$s</span></p>',
+            esc_url(wp_nonce_url(admin_url('admin-post.php?action=webmcp_canary_refresh_plan'), 'webmcp_canary_refresh_plan')),
+            esc_html__('Refresh plan', 'nurevo-webmcp'),
+            esc_html__('Just bought or cancelled a plan? Check it now instead of waiting for the next sync.', 'nurevo-webmcp')
+        );
+    }
+}
+
+add_action('admin_post_webmcp_canary_refresh_plan', 'webmcp_canary_refresh_plan_action');
+function webmcp_canary_refresh_plan_action() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You do not have permission to perform this action.', 'nurevo-webmcp'));
+    }
+    check_admin_referer('webmcp_canary_refresh_plan');
+    $before = webmcp_canary_settings()['plan'];
+    webmcp_canary_sync_ruleset_now();
+    $after = webmcp_canary_settings()['plan'];
+    webmcp_canary_redirect_settings(
+        'success',
+        $before === $after
+            /* translators: %s: plan name, e.g. "free" or "standard". */
+            ? sprintf(__('Plan checked: %s (unchanged).', 'nurevo-webmcp'), $after)
+            /* translators: 1: previous plan name. 2: new plan name. */
+            : sprintf(__('Plan updated: %1$s → %2$s.', 'nurevo-webmcp'), $before, $after)
+    );
+}
+
+/**
+ * Ask the service for this site's plan now. Unlike the scheduled sync, this
+ * also runs for a site the plugin still thinks is Free - that is exactly the
+ * site that has just been upgraded.
+ */
+function webmcp_canary_sync_ruleset_now() {
+    $settings = webmcp_canary_settings();
+    if ($settings['site_key'] === '') {
+        return webmcp_canary_ruleset_state();
+    }
+    $GLOBALS['webmcp_canary_force_follow'] = true;
+    try {
+        return webmcp_canary_sync_ruleset(true);
+    } finally {
+        unset($GLOBALS['webmcp_canary_force_follow']);
+    }
 }
 
 function webmcp_canary_site_email_field() {
@@ -3150,6 +3301,9 @@ function webmcp_canary_ruleset_allows($field, $state = null) {
 /** Standard and above follow the central ruleset; free stays on the baseline. */
 function webmcp_canary_auto_follow_enabled($settings = null) {
     $settings = is_array($settings) ? $settings : webmcp_canary_settings();
+    if (!empty($GLOBALS['webmcp_canary_force_follow']) && $settings['site_key'] !== '') {
+        return true; // an explicit "Refresh plan" from an administrator
+    }
     return in_array($settings['plan'], array('standard', 'pro'), true) && $settings['site_key'] !== '';
 }
 
@@ -3184,6 +3338,15 @@ function webmcp_canary_sync_ruleset($force = false) {
         }
         $status = wp_remote_retrieve_response_code($response);
         $body = json_decode(wp_remote_retrieve_body($response), true);
+        if (in_array($status, array(404, 410), true)) {
+            // The service answered and does not serve this key any more
+            // (cancelled, unpaid or deleted). Paid output must stop with it;
+            // keeping the last plan meant a cancelled site ran paid features
+            // indefinitely.
+            $plan = 'free';
+            $version = 0;
+            break;
+        }
         if ($status < 200 || $status >= 300 || !is_array($body) || empty($body['ok'])) {
             continue;
         }
@@ -3265,6 +3428,36 @@ function webmcp_canary_sync_ruleset($force = false) {
         delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
     }
     return $state;
+}
+
+add_action('admin_notices', 'webmcp_canary_output_off_notice');
+/**
+ * Output is off by default (nothing is published until the owner opts in),
+ * and nothing said so: a new install could pair, see "Connected" in the
+ * dashboard and publish nothing. Shown on this plugin's screens and the
+ * Plugins list only, not across the whole admin.
+ */
+function webmcp_canary_output_off_notice() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    $settings = webmcp_canary_settings();
+    if ($settings['enabled'] === '1') {
+        return;
+    }
+    $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen check.
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    $on_plugins = $screen && isset($screen->id) && $screen->id === 'plugins';
+    if (strpos($page, 'webmcp-canary') !== 0 && !$on_plugins) {
+        return;
+    }
+    printf(
+        '<div class="notice notice-error"><p><strong>%1$s</strong> %2$s <a class="button button-primary" href="%3$s">%4$s</a></p></div>',
+        esc_html__('Nurevo AEO is off: nothing is published yet.', 'nurevo-webmcp'),
+        esc_html__('Structured data, llms.txt and AI crawler rules start once you switch on output.', 'nurevo-webmcp'),
+        esc_url(admin_url('admin.php?page=webmcp-canary-settings')),
+        esc_html__('Turn on in settings', 'nurevo-webmcp')
+    );
 }
 
 add_action('admin_notices', 'webmcp_canary_ruleset_notice');
@@ -3962,20 +4155,23 @@ function webmcp_canary_aeo_lang() {
     return strtolower(str_replace('_', '-', (string) $locale));
 }
 
-function webmcp_canary_aeo_score_endpoints() {
+function webmcp_canary_aeo_score_endpoints($fresh = false) {
     $settings = webmcp_canary_settings();
     $registered = $settings['site_key'] !== '' && $settings['site_id'] !== '';
     $lang = webmcp_canary_aeo_lang();
+    // A forced check (Check again, after a fix) asks the service to rescan
+    // instead of answering from its cache.
+    $extra = $fresh ? array('fresh' => '1') : array();
     $endpoints = array();
     foreach (webmcp_canary_api_base_candidates() as $api_base) {
         if ($registered) {
             $endpoints[] = add_query_arg(
-                array('site_key' => $settings['site_key'], 'lang' => $lang),
+                array('site_key' => $settings['site_key'], 'lang' => $lang) + $extra,
                 trailingslashit($api_base) . 'api/sites/' . rawurlencode($settings['site_id']) . '/aeo-score'
             );
         }
         $endpoints[] = add_query_arg(
-            array('url' => home_url('/'), 'lang' => $lang),
+            array('url' => home_url('/'), 'lang' => $lang) + $extra,
             trailingslashit($api_base) . 'api/aeo/score'
         );
     }
@@ -3987,7 +4183,7 @@ function webmcp_canary_get_aeo_score($force_refresh = false) {
     if (!$force_refresh && is_array($cached) && !empty($cached['saved_at']) && time() - intval($cached['saved_at']) < WEBMCP_CANARY_AEO_SCORE_TTL) {
         return $cached['data'];
     }
-    $endpoints = webmcp_canary_aeo_score_endpoints();
+    $endpoints = webmcp_canary_aeo_score_endpoints($force_refresh);
     if (empty($endpoints)) {
         return new WP_Error('webmcp_aeo_not_configured', __('AEO diagnosis needs the service URL. Open Nurevo AEO > Settings and confirm it.', 'nurevo-webmcp'));
     }
@@ -4445,6 +4641,12 @@ function webmcp_canary_settings_page() {
     ?>
     <div class="wrap webmcp-settings">
         <?php echo webmcp_canary_screen_title(__('Nurevo AEO settings', 'nurevo-webmcp')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_screen_title() ?>
+        <?php
+        // WordPress prints these automatically only on Settings sub-pages; this
+        // is a top-level menu page, so pairing and licence results (including
+        // "code already used" or a domain mismatch) were never shown.
+        settings_errors(WEBMCP_CANARY_OPTION);
+        ?>
         <p><?php echo esc_html__('AI readability diagnosis, structured data, llms.txt and AI crawler rules for this site.', 'nurevo-webmcp'); ?></p>
         <?php
         /*
@@ -4469,7 +4671,7 @@ function webmcp_canary_settings_page() {
                         <?php esc_html_e('Open the dashboard', 'nurevo-webmcp'); ?> &#8599;
                     </a>
                 </p>
-                <p class="description"><?php esc_html_e('Diagnosis, structured data and llms.txt already work without connecting. Connecting is what lets the dashboard show this site and keep its output current.', 'nurevo-webmcp'); ?></p>
+                <p class="description"><?php esc_html_e('Diagnosis works without connecting, and structured data, llms.txt and AI crawler rules work without connecting once output is switched on. Connecting is what lets the dashboard show this site and keep its output current.', 'nurevo-webmcp'); ?></p>
             </div>
         <?php endif; ?>
         <?php if (!empty($_GET['webmcp_message']) && !empty($_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'webmcp_canary_notice')) : ?>
@@ -4539,6 +4741,372 @@ function webmcp_canary_schema_request_allowed() {
 }
 
 /**
+ * Full-width ASCII (U+FF01-U+FF5E) and the ideographic space to ASCII.
+ *
+ * Done by hand rather than with mb_convert_kana, which needs mbstring.
+ */
+function webmcp_canary_halfwidth($text) {
+    $text = str_replace("\xE3\x80\x80", ' ', (string) $text);
+    return (string) preg_replace_callback('/[\x{FF01}-\x{FF5E}]/u', function ($match) {
+        $c = $match[0];
+        $code = ((ord($c[0]) & 0x0F) << 12) | ((ord($c[1]) & 0x3F) << 6) | (ord($c[2]) & 0x3F);
+        return chr($code - 0xFEE0);
+    }, $text);
+}
+
+/** Dashes, wave dashes and tildes written between two values, as "-". */
+function webmcp_canary_normalize_dashes($text) {
+    return str_replace(
+        array("\u{301C}", "\u{FF5E}", '~', "\u{2013}", "\u{2014}", "\u{2212}", "\u{2010}", "\u{2011}", "\u{2015}", "\u{30FC}", "\u{FE63}"),
+        '-',
+        (string) $text
+    );
+}
+
+/** One "9:00-18:00" style range as array(opens, closes) in HH:MM, or null. */
+function webmcp_canary_hours_clock_range($match) {
+    $open_hour = (int) $match[1];
+    $open_minute = (isset($match[2]) && $match[2] !== '') ? (int) $match[2] : ((isset($match[3]) && $match[3] !== '') ? (int) $match[3] : 0);
+    $open_suffix = isset($match[4]) ? $match[4] : '';
+    $close_hour = (int) $match[5];
+    $close_minute = (isset($match[6]) && $match[6] !== '') ? (int) $match[6] : ((isset($match[7]) && $match[7] !== '') ? (int) $match[7] : 0);
+    $close_suffix = isset($match[8]) ? $match[8] : '';
+
+    if ($open_suffix !== '' && $close_suffix === '') {
+        return null;
+    }
+    // "9-5" with no am/pm is a 12-hour clock left implicit, not a shop that
+    // opens at nine and shuts at five the next morning. Late opening into the
+    // night ("18:00-02:00") is kept.
+    if ($open_suffix === '' && $close_suffix === '' && $open_hour < 12
+        && ($close_hour * 60 + $close_minute) <= ($open_hour * 60 + $open_minute)) {
+        return null;
+    }
+    if ($open_suffix === '' && $close_suffix !== '') {
+        // "9-5pm" is 9am to 5pm, "1-5pm" is 1pm to 5pm, "9-12pm" ends at noon.
+        if ($close_suffix === 'am' || $close_hour === 12) {
+            $open_suffix = 'am';
+        } else {
+            $open_suffix = ($open_hour === 12 || $open_hour < $close_hour) ? 'pm' : 'am';
+        }
+    }
+    $clock = function ($hour, $minute, $suffix, $is_close) {
+        if ($minute > 59) {
+            return null;
+        }
+        if ($suffix !== '') {
+            if ($hour < 1 || $hour > 12) {
+                return null;
+            }
+            $hour = ($hour % 12) + ($suffix === 'pm' ? 12 : 0);
+        } elseif ($hour > 24 || ($hour === 24 && ($minute !== 0 || !$is_close))) {
+            return null;
+        }
+        if ($hour === 24) {
+            // Open until midnight. xsd:time has no 24:00.
+            return '23:59';
+        }
+        return sprintf('%02d:%02d', $hour, $minute);
+    };
+    $opens = $clock($open_hour, $open_minute, $open_suffix, false);
+    $closes = $clock($close_hour, $close_minute, $close_suffix, true);
+    if ($opens === null || $closes === null || $opens === $closes) {
+        return null;
+    }
+    return array($opens, $closes);
+}
+
+/** Close the day group and time ranges collected so far into a segment. */
+function webmcp_canary_hours_flush(&$state, $boundary) {
+    if (!empty($state['times'])) {
+        $state['segments'][] = array('days' => empty($state['days']) ? null : $state['days'], 'times' => $state['times']);
+        $state['days'] = array();
+        $state['times'] = array();
+        return true;
+    }
+    if (!empty($state['days']) && $boundary) {
+        // "9:00-18:00 Mon-Fri": days written after their hours.
+        $last = count($state['segments']) - 1;
+        if ($last < 0 || $state['segments'][$last]['days'] !== null) {
+            return false;
+        }
+        $state['segments'][$last]['days'] = $state['days'];
+        $state['days'] = array();
+    }
+    return true;
+}
+
+/**
+ * Opening hours text as schema.org OpeningHoursSpecification, or null.
+ *
+ * Conservative on purpose: it reads the common ways a shop writes its hours in
+ * Japanese and English ("10:00-19:00, closed Tuesdays" written the Japanese
+ * way, "Tu-Su 11-20", "Mon-Fri 9:00-18:00 / Sat 10:00-15:00", with Japanese
+ * day names, wave dashes and full-width digits) and gives up on anything else -
+ * a word it does not know, public holidays, "the second Tuesday", a last-order
+ * note. Giving up keeps the
+ * text as openingHours, as written; a misread would publish hours the shop
+ * does not keep. A time with no days and no closing day ("10:00-19:00") is
+ * also left alone, since it does not say which days it covers.
+ */
+function webmcp_canary_opening_hours_specification($text) {
+    $text = trim((string) $text);
+    if ($text === '') {
+        return null;
+    }
+    $text = webmcp_canary_normalize_dashes(webmcp_canary_halfwidth($text));
+    $text = str_replace("\u{304B}\u{3089}", '-', $text);
+    $text = strtolower($text);
+    $text = (string) preg_replace('/([\d\s])([ap])\.m\.?/', '$1$2m', $text);
+    $text = (string) preg_replace('/\s+(?:to|through|thru)\s+/', '-', $text);
+
+    $en_day = 'monday|mon|mo|tuesday|tues|tue|tu|wednesday|weds|wed|we|thursday|thurs|thur|thu|th|friday|fri|fr|saturday|sat|sa|sunday|sun|su';
+    $day = '(?:([\x{6708}\x{706B}\x{6C34}\x{6728}\x{91D1}\x{571F}\x{65E5}])(?:\x{66DC}\x{65E5}|\x{66DC})?|(' . $en_day . ')(?:s|\.)?(?![a-z]))';
+    $time_part = '(\d{1,2})(?::(\d{2})|\x{6642}(?:(\d{1,2})\x{5206})?)?\s*(am|pm)?';
+    $patterns = array(
+        'hard'   => '/\G[\/;|\r\n\x{3002}]+/u',
+        'soft'   => '/\G(?:[\s,\x{3001}\x{30FB}&()\[\]\x{3010}\x{3011}\x{300C}\x{300D}:.]|and(?![a-z]))+/u',
+        'noise'  => '/\G(?:\x{55B6}\x{696D}\x{6642}\x{9593}|\x{55B6}\x{696D}\x{65E5}|\x{55B6}\x{696D}|\x{307E}\x{3067}|(?:opening hours|business hours|hours|open)(?![a-z]))/u',
+        'all'    => '/\G(?:\x{6BCE}\x{65E5}|\x{5E74}\x{4E2D}\x{7121}\x{4F11}|\x{7121}\x{4F11}|(?:daily|every ?day|7 days(?: a week)?)(?![a-z]))/u',
+        'closed' => '/\G(?:\x{5B9A}\x{4F11}\x{65E5}|\x{5B9A}\x{4F11}|\x{4F11}\x{696D}\x{65E5}|\x{4F11}\x{696D}|\x{4F11}\x{307F}|\x{4F11}\x{65E5}|\x{4F11}|(?:closed|close)(?: on)?(?![a-z]))/u',
+        'time'   => '/\G' . $time_part . '\s*-\s*' . $time_part . '(?![\d:])/u',
+        'weekdays' => '/\G(?:\x{5E73}\x{65E5}|weekdays?(?![a-z]))/u',
+        'day'    => '/\G' . $day . '(?:\s*-\s*' . $day . ')?/u',
+    );
+    $ja_days = array("\u{6708}" => 0, "\u{706B}" => 1, "\u{6C34}" => 2, "\u{6728}" => 3, "\u{91D1}" => 4, "\u{571F}" => 5, "\u{65E5}" => 6);
+    $en_days = array('mo' => 0, 'tu' => 1, 'we' => 2, 'th' => 3, 'fr' => 4, 'sa' => 5, 'su' => 6);
+    $day_index = function ($ja, $en) use ($ja_days, $en_days) {
+        if ($ja !== '' && $ja !== null) {
+            return $ja_days[$ja];
+        }
+        return $en_days[substr($en, 0, 2)];
+    };
+
+    $state = array('segments' => array(), 'days' => array(), 'times' => array());
+    $closed = array();
+    $closed_prefix = false;
+    $all_days = false;
+    $pos = 0;
+    $len = strlen($text);
+    while ($pos < $len) {
+        $kind = null;
+        $match = array();
+        foreach ($patterns as $name => $pattern) {
+            if (preg_match($pattern, $text, $match, 0, $pos) && $match[0] !== '') {
+                $kind = $name;
+                break;
+            }
+        }
+        if ($kind === null) {
+            return null;
+        }
+        $pos += strlen($match[0]);
+        if ($kind === 'hard') {
+            if (!webmcp_canary_hours_flush($state, true)) {
+                return null;
+            }
+            $closed_prefix = false;
+        } elseif ($kind === 'all') {
+            $all_days = true;
+        } elseif ($kind === 'closed') {
+            if (!empty($state['days']) && empty($state['times'])) {
+                // "<Tuesday> closed" (the usual Japanese order), "Sun closed".
+                $closed = array_merge($closed, $state['days']);
+                $state['days'] = array();
+            } else {
+                // "Closed: Wednesday", "Closed Mondays".
+                if (!webmcp_canary_hours_flush($state, false)) {
+                    return null;
+                }
+                $closed_prefix = true;
+            }
+        } elseif ($kind === 'time') {
+            $range = webmcp_canary_hours_clock_range($match);
+            if ($range === null) {
+                return null;
+            }
+            $closed_prefix = false;
+            $state['times'][] = $range;
+        } elseif ($kind === 'day' || $kind === 'weekdays') {
+            if ($kind === 'weekdays') {
+                $days = array(0, 1, 2, 3, 4);
+            } else {
+                $first = $day_index($match[1] ?? '', $match[2] ?? '');
+                $days = array($first);
+                if (isset($match[3]) && ($match[3] !== '' || (isset($match[4]) && $match[4] !== ''))) {
+                    // A range, wrapping past Sunday when it has to ("Fr-Mo").
+                    $last = $day_index($match[3], $match[4] ?? '');
+                    for ($d = $first; $d !== $last; $d = ($d + 1) % 7) {
+                        $days[] = ($d + 1) % 7;
+                    }
+                }
+            }
+            if ($closed_prefix) {
+                $closed = array_merge($closed, $days);
+                continue;
+            }
+            if (!empty($state['times']) && !webmcp_canary_hours_flush($state, false)) {
+                return null;
+            }
+            $state['days'] = array_values(array_unique(array_merge($state['days'], $days)));
+        }
+        // 'soft' and 'noise' only separate.
+    }
+    if (!webmcp_canary_hours_flush($state, true)) {
+        return null;
+    }
+    if (empty($state['segments'])) {
+        return null;
+    }
+    $closed = array_values(array_unique($closed));
+    if ($all_days && !empty($closed)) {
+        return null;
+    }
+
+    // day => list of [opens, closes]
+    $by_day = array();
+    $dayless = array();
+    foreach ($state['segments'] as $segment) {
+        if ($segment['days'] === null) {
+            $dayless = array_merge($dayless, $segment['times']);
+            continue;
+        }
+        foreach ($segment['days'] as $d) {
+            if (in_array($d, $closed, true)) {
+                return null;
+            }
+            foreach ($segment['times'] as $range) {
+                $by_day[$d][] = $range;
+            }
+        }
+    }
+    if (!empty($dayless)) {
+        if (empty($closed) && !$all_days) {
+            return null;
+        }
+        $remainder = array_diff(range(0, 6), $closed, array_keys($by_day));
+        if (empty($remainder)) {
+            return null;
+        }
+        foreach ($remainder as $d) {
+            foreach ($dayless as $range) {
+                $by_day[$d][] = $range;
+            }
+        }
+    }
+    if (empty($by_day)) {
+        return null;
+    }
+
+    $names = array('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday');
+    $groups = array();
+    ksort($by_day);
+    foreach ($by_day as $d => $ranges) {
+        foreach ($ranges as $range) {
+            $key = $range[0] . '-' . $range[1];
+            if (!isset($groups[$key])) {
+                $groups[$key] = array('days' => array(), 'opens' => $range[0], 'closes' => $range[1]);
+            }
+            if (!in_array($d, $groups[$key]['days'], true)) {
+                $groups[$key]['days'][] = $d;
+            }
+        }
+    }
+    $specs = array();
+    foreach ($groups as $group) {
+        $urls = array();
+        foreach ($group['days'] as $d) {
+            $urls[] = 'https://schema.org/' . $names[$d];
+        }
+        $specs[] = array(
+            '@type'     => 'OpeningHoursSpecification',
+            'dayOfWeek' => count($urls) === 1 ? $urls[0] : $urls,
+            'opens'     => $group['opens'],
+            'closes'    => $group['closes'],
+        );
+    }
+    return $specs;
+}
+
+/**
+ * The business telephone as published in schema, in international form when
+ * it is plainly a Japanese domestic number on a Japanese site.
+ *
+ * Only the schema value changes; the stored setting stays as typed. A number
+ * that already starts with "+", one that is not 10-11 digits starting with a
+ * single 0, or one on a site that is not Japanese is published unchanged.
+ */
+function webmcp_canary_schema_telephone($phone, $locale = '', $address = '') {
+    $phone = trim((string) $phone);
+    if ($phone === '') {
+        return $phone;
+    }
+    $ascii = trim(webmcp_canary_normalize_dashes(webmcp_canary_halfwidth($phone)));
+    if (strpos($ascii, '+') === 0) {
+        return $phone;
+    }
+    $japanese = stripos((string) $locale, 'ja') === 0 || preg_match('/[\x{90FD}\x{9053}\x{5E9C}\x{770C}\x{3012}]/u', (string) $address);
+    if (!$japanese || !preg_match('/^[\d\s().\-]+$/', $ascii)) {
+        return $phone;
+    }
+    $digits = preg_replace('/\D/', '', $ascii);
+    if (!preg_match('/^0[1-9]\d{8,9}$/', $digits)) {
+        return $phone;
+    }
+    $groups = preg_split('/\D+/', $ascii, -1, PREG_SPLIT_NO_EMPTY);
+    if (count($groups) > 1 && strlen($groups[0]) > 1) {
+        $groups[0] = substr($groups[0], 1);
+        return '+81-' . implode('-', $groups);
+    }
+    return '+81-' . substr($digits, 1);
+}
+
+/**
+ * The business node's telephone and hours in the forms engines read best.
+ *
+ * The telephone in international form for a Japanese number on a Japanese
+ * site; the hours as openingHoursSpecification when the text reads
+ * unambiguously, otherwise the text exactly as written - never both, since
+ * they are one fact. additionalType, if anything set one, is kept only as a
+ * URL. The stored settings are not changed.
+ */
+function webmcp_canary_normalize_business_facts($org, $settings) {
+    if (!empty($org['telephone'])) {
+        $org['telephone'] = webmcp_canary_schema_telephone(
+            $org['telephone'],
+            function_exists('get_locale') ? get_locale() : '',
+            (string) ($settings['business_address'] ?? '')
+        );
+    }
+    if (!empty($org['openingHours']) && is_string($org['openingHours'])) {
+        $hours_spec = webmcp_canary_opening_hours_specification($org['openingHours']);
+        if ($hours_spec !== null) {
+            unset($org['openingHours']);
+            $org['openingHoursSpecification'] = $hours_spec;
+        }
+    }
+    if (array_key_exists('additionalType', $org)) {
+        $type_url = webmcp_canary_schema_type_url($org['additionalType']);
+        if ($type_url === null) {
+            unset($org['additionalType']);
+        } else {
+            $org['additionalType'] = $type_url;
+        }
+    }
+    return $org;
+}
+
+/** schema.org additionalType must be a URL; a free label is dropped. */
+function webmcp_canary_schema_type_url($value) {
+    if (is_array($value)) {
+        $urls = array_values(array_filter(array_map('webmcp_canary_schema_type_url', $value)));
+        return empty($urls) ? null : (count($urls) === 1 ? $urls[0] : $urls);
+    }
+    $value = trim((string) $value);
+    return preg_match('#^https?://[^\s/$.?\#][^\s]*$#i', $value) ? $value : null;
+}
+
+/**
  * Everything Nurevo would publish on this request.
  *
  * `core` is the business, WebSite and page nodes; `extra` is the FAQ and the
@@ -4591,8 +5159,13 @@ function webmcp_canary_own_schema_bundle() {
     $delivery = webmcp_canary_ruleset_state();
     $central = !empty(webmcp_canary_central_payload()['central_jsonld']);
     if ($central) {
+        // The central template's business node is published exactly as the
+        // service generated it: delivery is verified by finding that node,
+        // value for value, on the public page.
         $org = webmcp_canary_central_business_node($org, $settings, $delivery);
         $org['@id'] = $org_id;
+    } else {
+        $org = webmcp_canary_normalize_business_facts($org, $settings);
     }
     $graph[] = $org;
 
@@ -4659,18 +5232,27 @@ function webmcp_canary_own_schema_bundle() {
     // Nurevo, not something read off their pages. When an SEO plugin already
     // publishes an FAQPage here, the merge adds only the questions it lacks.
     $extra = array();
-    $faq_page_id = (int) ($settings['faq_page_id'] ?? 0);
-    $on_faq_page = $faq_page_id > 0
-        ? (is_singular() && get_queried_object_id() === $faq_page_id)
-        : (is_front_page() || is_home());
-    if ($on_faq_page) {
-        $faq_node = webmcp_canary_faq_schema_node($faq_page_id > 0 ? get_permalink($faq_page_id) : $site_url);
+
+    // The FAQ is published only where its questions are visible: on the page
+    // that renders them through the block or the shortcode. Google treats
+    // FAQPage markup for content a visitor cannot see as spam.
+    $faq_post = webmcp_canary_faq_visible_post();
+    if ($faq_post !== null) {
+        $faq_node = webmcp_canary_faq_schema_node(get_permalink($faq_post));
         if ($faq_node !== null) {
             $extra[] = $faq_node;
         }
-        // Services are open ground - no booking plugin publishes schema at all.
-        // Offered by the business node, under ids of ours.
-        foreach (webmcp_canary_service_schema_nodes($faq_page_id > 0 ? get_permalink($faq_page_id) : $site_url, $org_id) as $service_node) {
+    }
+
+    // Services are open ground - no booking plugin publishes schema at all.
+    // Offered by the business node, under ids of ours, on the chosen page or
+    // the front page.
+    $faq_page_id = (int) ($settings['faq_page_id'] ?? 0);
+    $on_services_page = $faq_page_id > 0
+        ? (is_singular() && get_queried_object_id() === $faq_page_id)
+        : (is_front_page() || is_home());
+    if ($on_services_page) {
+        foreach (webmcp_canary_service_schema_nodes($faq_page_id > 0 ? get_permalink(get_queried_object()) : $site_url, $org_id) as $service_node) {
             $extra[] = $service_node;
         }
     }
