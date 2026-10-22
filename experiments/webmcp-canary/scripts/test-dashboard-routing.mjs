@@ -145,14 +145,14 @@ for (const view of ["summary", "sites", "partner"]) {
   // same answer for "does not exist" and "belongs to someone else" - no probe.
   const app = boot({ hash: "#site:ffffffffffff", sites: [SITE()] });
   app.render();
-  assert.ok(app.main().includes("最初のクライアントサイトを追加"), "an unknown id shows the guided empty state");
+  assert.ok(app.main().includes("最初のサイトを追加"), "an unknown id shows the guided empty state");
   assert.equal(app.main().includes('id="form"'), false, "and no site detail");
 }
 
 {
   const other = boot({ hash: "#site:aaaaaaaaaaaa", sites: [] });
   other.render();
-  assert.ok(other.main().includes("最初のクライアントサイトを追加"), "another org's id is indistinguishable");
+  assert.ok(other.main().includes("最初のサイトを追加"), "another org's id is indistinguishable");
 }
 
 for (const bad of [
@@ -324,7 +324,7 @@ for (const bad of [
   });
   await app.load();
   assert.equal(app.store["nrv-dash-pending-site"], undefined, "the stash is consumed");
-  assert.ok(app.main().includes("最初のクライアントサイトを追加"), "and a vanished site shows the guided empty state");
+  assert.ok(app.main().includes("最初のサイトを追加"), "and a vanished site shows the guided empty state");
 }
 
 {

@@ -51,4 +51,20 @@ const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/gi)];
 assert.equal(scripts.length, 1, "checker must have one inline script");
 new Function(scripts[0][1]);
 
+// The next step is an account, for every site, and the steps follow the site:
+// a plugin for WordPress, the paste-in copy for everything else.
+assert.ok(html.includes('id="signup-cta" href="/signup.html?lang=ja"'), "a primary sign-up button");
+assert.match(html, /signup-cta'\)\.href = '\/signup\.html\?lang=' \+ encodeURIComponent\(LANG\)/, "carrying the page language");
+assert.ok(html.includes('data-platform="wp"') && html.includes('data-platform="other"'), "a WordPress / not-WordPress toggle");
+assert.ok(html.includes('role="radiogroup"'), "announced as a choice");
+assert.match(html, /stepsOther:\[/, "with steps for sites that are not WordPress");
+assert.match(html, /\[\[ダッシュボード\]\]/, "and the pairing step links to the dashboard");
+assert.match(html, /var DASHBOARD = '\/dashboard\?lang='/);
+// A green result is not told to fix red and amber items.
+assert.match(html, /ctaHeadings:\{red:'赤や黄色の項目を直しましょう',yellow:'[^']+',green:'この状態を保ちましょう'\}/);
+assert.match(html, /function ctaFor\(body\)/);
+for (const lang of ["ja", "en", "zh", "'zh-tw'", "ko", "es", "fr", "de"]) {
+  assert.ok(html.includes(`        ${lang}: {`), `the page speaks ${lang}`);
+}
+
 console.log("Nurevo AEO checker static tests passed");

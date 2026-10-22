@@ -243,7 +243,8 @@ function runConfirm({ domain = "example.com", typed, fetchImpl }) {
   });
   await confirm.run();
   assert.equal(confirm.modal.removed, undefined, "the modal stays open on failure");
-  assert.equal(confirm.error.textContent, "forbidden", "and reports the error");
+  assert.equal(confirm.error.textContent, "この操作を行う権限がありません。", "and reports the error in words");
+  assert.equal(confirm.error.textContent.includes("forbidden"), false, "not as the raw code");
   assert.equal(confirm.submit.disabled, false, "the button is usable again");
 }
 

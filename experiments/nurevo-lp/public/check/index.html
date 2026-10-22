@@ -16,7 +16,7 @@
     .results{margin-top:32px}.summary{display:grid;grid-template-columns:230px minmax(0,1fr);align-items:center;gap:38px;padding:34px;background:#fff;border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}.gauge{--band:var(--red);--degrees:0deg;width:210px;height:210px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--band) var(--degrees),#ece9ef 0)}.gauge:before{content:"";grid-area:1/1;width:166px;height:166px;border-radius:50%;background:#fff}.gauge div{grid-area:1/1;position:relative;text-align:center}.gauge strong{display:block;font-size:62px;line-height:.95;letter-spacing:-.06em}.gauge span{color:var(--muted);font-weight:700}.badge{display:inline-flex;border-radius:999px;padding:6px 14px;color:#fff;font-size:14px;font-weight:850}.result-copy h2{margin:15px 0 8px;font-size:clamp(25px,4vw,36px);letter-spacing:-.035em}.result-copy p{margin:0;color:var(--muted)}.gate-warning{margin-top:13px;color:var(--red)!important;font-weight:750}
     .content-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(280px,.6fr);gap:22px;margin-top:22px}.content-grid.one-column{grid-template-columns:minmax(0,1fr)}.cta-steps{counter-reset:step;list-style:none;margin:0 0 18px;padding:0;display:grid;gap:9px;text-align:left}.cta-steps li{counter-increment:step;display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start;font-weight:700}.cta-steps li:before{content:counter(step);width:22px;height:22px;border-radius:50%;background:var(--accent-dark);color:#fff;display:grid;place-items:center;font-size:12px}.panel{padding:27px;background:#fff;border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 34px rgba(65,42,98,.07)}.panel h2{margin:0 0 17px;font-size:22px;letter-spacing:-.025em}.checks{margin:0;padding:0;list-style:none}.check{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;padding:15px 0;border-top:1px solid #eeeaf1}.check:first-child{border-top:0;padding-top:2px}.check-icon{width:29px;height:29px;display:grid;place-items:center;border-radius:50%;color:#fff;font-weight:900}.check strong{display:block}.check p{margin:3px 0 0;color:var(--muted);font-size:14px}.check.is-ok .check-icon{background:var(--green)}.check.is-warn .check-icon{background:var(--yellow)}.check.is-bad .check-icon{background:var(--red)}
     .share{margin-top:22px}.share-row{display:flex;gap:9px}.share input{min-width:0;flex:1;border:1px solid var(--line);border-radius:11px;padding:11px 13px;background:#faf9fb;color:var(--muted)}.share button{padding:10px 16px;font-size:14px}
-    .cta{margin-top:22px;padding:30px;background:linear-gradient(130deg,#6442ed,#865ef8);border-radius:22px;color:#fff}.cta h2{margin:0;font-size:27px}.cta p{margin:8px 0 20px;color:#eee9ff}.cta-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.cta .button{background:#fff;color:var(--accent-dark)}.cta .button:hover{background:#f5f1ff}.cta .guide{font-weight:750;color:#fff;text-underline-offset:4px}
+    .cta{margin-top:22px;padding:30px;background:linear-gradient(130deg,#6442ed,#865ef8);border-radius:22px;color:#fff}.cta h2{margin:0;font-size:27px}.cta p{margin:8px 0 20px;color:#eee9ff}.cta-actions{display:flex;align-items:center;flex-wrap:wrap;gap:12px}.cta .button{background:#fff;color:var(--accent-dark)}.cta .button:hover{background:#f5f1ff}.cta .guide{font-weight:750;color:#fff;text-underline-offset:4px}.cta .button.secondary{background:transparent;color:#fff;border:2px solid #ffffffb3}.cta .button.secondary:hover{background:#ffffff1f}.cta-toggle{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 16px}.cta-toggle span{font-weight:750}.cta-toggle button{padding:8px 14px;border-radius:999px;background:#ffffff26;color:#fff;border:2px solid transparent;font-size:14px}.cta-toggle button[aria-checked=true]{background:#fff;color:var(--accent-dark)}.cta-toggle button:hover{transform:none}.cta-steps a{color:#fff;text-underline-offset:3px}.cta :focus-visible{outline:3px solid #fff;outline-offset:2px}
     footer{padding:26px 0;border-top:1px solid var(--line);color:var(--muted);font-size:13px;text-align:center}
     [hidden]{display:none!important}@media(max-width:760px){main{padding-top:42px}.wrap{width:min(100% - 28px,1080px)}form{flex-direction:column}.checker{padding:10px}.summary{grid-template-columns:1fr;text-align:center;gap:24px}.gauge{margin:auto;width:190px;height:190px}.gauge:before{width:150px;height:150px}.content-grid{grid-template-columns:1fr}.cta{text-align:center}.cta-actions{justify-content:center}.share-row{flex-direction:column}}
   </style>
@@ -78,23 +78,25 @@
         <section class="panel"><h2 data-t="checksHeading">診断項目</h2><ol id="checks" class="checks"></ol></section>
       </div>
 
-      <section class="cta">
-        <h2 data-t="ctaHeading">赤や黄色の項目を直しましょう</h2>
-        <p data-t="ctaLead">サーバー側から正しい情報を届けることで、AIが理解できる状態を作ります。</p>
-        <!-- T: the three steps, in order. The old button handed out a bundled
-             zip, which went stale the moment the plugin reached the directory. -->
-        <ol class="cta-steps">
-          <li data-t="ctaStep1">WordPress管理画面→プラグイン→新規追加で「Nurevo AEO」を検索してインストール</li>
-          <li data-t="ctaStep2">有効化する</li>
-          <li data-t="ctaStep3">ダッシュボードでペアリングコードを発行し、Nurevo AEO→設定に貼り付けて保存</li>
-        </ol>
+      <section class="cta" aria-labelledby="cta-heading">
+        <h2 id="cta-heading" data-t="ctaHeading">赤や黄色の項目を直しましょう</h2>
+        <p id="cta-lead" data-t="ctaLead">サーバー側から正しい情報を届けることで、AIが理解できる状態を作ります。</p>
+        <!-- The next steps depend on the site. They used to assume WordPress,
+             which left everyone else with a plugin they could not install. -->
+        <div class="cta-toggle" role="radiogroup" aria-labelledby="cta-toggle-label">
+          <span id="cta-toggle-label" data-t="toggleLabel">サイトの種類：</span>
+          <button type="button" role="radio" aria-checked="true" data-platform="wp" data-t="toggleWp">WordPress</button>
+          <button type="button" role="radio" aria-checked="false" data-platform="other" data-t="toggleOther">WordPress以外</button>
+        </div>
+        <ol class="cta-steps" id="cta-steps"></ol>
         <div class="cta-actions">
-          <a class="button" href="https://wordpress.org/plugins/nurevo-webmcp/" target="_blank" rel="noopener" data-t="ctaButton">プラグインをインストール（WordPress公式）</a>
-          <a class="guide" href="/guide/integration" data-t="ctaGuide">WordPress以外 → サーバー側連携ガイド</a>
+          <a class="button" id="signup-cta" href="/signup.html?lang=ja" data-t="signup">無料アカウントを作成</a>
+          <a class="button secondary" id="plugin-cta" href="https://wordpress.org/plugins/nurevo-webmcp/" target="_blank" rel="noopener" data-t="ctaButton">プラグインをインストール（WordPress公式）</a>
+          <a class="guide" id="guide-cta" href="/guide/integration" data-t="ctaGuide">WordPress以外 → サーバー側連携ガイド</a>
         </div>
       </section>
 
-      <section class="panel share"><h2 data-t="shareHeading">結果をシェア</h2><div class="share-row"><input id="share-url" type="text" readonly aria-label="結果のシェアURL"><button id="copy-share" type="button" data-t="copy">コピー</button></div></section>
+      <section class="panel share"><h2 data-t="shareHeading">結果をシェア</h2><div class="share-row"><input id="share-url" type="text" readonly aria-label="結果のシェアURL" data-t-label="shareLabel"><button id="copy-share" type="button" data-t="copy">コピー</button></div></section>
     </section>
   </main>
   <nav class="wrap" aria-label="AEO guides" style="padding-block:24px"><a id="aeo-guide-link" href="/ja/guide/" data-t="aeoGuide">AEOガイド</a></nav>
@@ -120,13 +122,16 @@
           resultTitle:'AI可読スコア',
           resultLead:'AIがサイトへ到達し、重要な情報を正しく読み取れる状態かを評価しました。',
           gate:'到達性ゲートを通過していないため、スコアは15点以下に制限されています。',
-          checksHeading:'診断項目', shareHeading:'結果をシェア',
-          ctaStep1:'WordPress管理画面→プラグイン→新規追加で「Nurevo AEO」を検索してインストール',
-          ctaStep2:'有効化する',
-          ctaStep3:'ダッシュボードでペアリングコードを発行し、Nurevo AEO→設定に貼り付けて保存',
+          checksHeading:'診断項目', shareHeading:'結果をシェア', shareLabel:'結果のシェアURL',
           copy:'コピー', copied:'コピー済み',
           ctaHeading:'赤や黄色の項目を直しましょう',
+          ctaHeadings:{red:'赤や黄色の項目を直しましょう',yellow:'黄色の項目を直しましょう',green:'この状態を保ちましょう'},
           ctaLead:'サーバー側から正しい情報を届けることで、AIが理解できる状態を作ります。',
+          ctaLeadGreen:'サイトの更新やAI側の基準の変化があっても、正しい情報を届け続けられるようにします。',
+          signup:'無料アカウントを作成',
+          toggleLabel:'サイトの種類：', toggleWp:'WordPress', toggleOther:'WordPress以外',
+          stepsWp:['WordPress管理画面→プラグイン→新規追加で「Nurevo AEO」を検索してインストール','有効化する','[[ダッシュボード]]でペアリングコードを発行し、Nurevo AEO→設定に貼り付けて保存'],
+          stepsOther:['無料アカウントを作成（メールアドレスだけで始められます）','[[ダッシュボード]]で「サイトを追加」→「その他のサイト」を選び、URLを入力','表示されるJSON-LD・llms.txt・robots.txtの行をコピーしてサイトに貼り付け'],
           ctaButton:'プラグインをインストール（WordPress公式）',
           ctaGuide:'WordPress以外 → サーバー側連携ガイド',
           footer:'© Nurevo — AI可読性の改善を支援します。',
@@ -144,19 +149,184 @@
           resultTitle:'AI readability score',
           resultLead:'We measured whether AI can reach your site and read the information that matters.',
           gate:'The reachability gate did not pass, so the score is capped at 15.',
-          checksHeading:'Checks', shareHeading:'Share this result',
-          ctaStep1:'In WordPress admin, go to Plugins - Add New and search for "Nurevo AEO", then install it',
-          ctaStep2:'Activate it',
-          ctaStep3:'Issue a pairing code in the dashboard and paste it into Nurevo AEO - Settings',
+          checksHeading:'Checks', shareHeading:'Share this result', shareLabel:'Share link for this result',
           copy:'Copy', copied:'Copied',
           ctaHeading:'Fix the red and amber items',
+          ctaHeadings:{red:'Fix the red and amber items',yellow:'Fix the amber items',green:'Keep it this way'},
           ctaLead:'Serving the right information from your server is what makes your site readable to AI.',
+          ctaLeadGreen:'Keep serving the right information as your site changes and as AI criteria move on.',
+          signup:'Create a free account',
+          toggleLabel:'Your site runs on:', toggleWp:'WordPress', toggleOther:'Not WordPress',
+          stepsWp:['In WordPress admin, go to Plugins - Add New and search for "Nurevo AEO", then install it','Activate it','Issue a pairing code in the [[dashboard]] and paste it into Nurevo AEO - Settings'],
+          stepsOther:['Create a free account (an email address is all it takes)','In the [[dashboard]], choose Add a site - Other website and enter the URL','Copy the JSON-LD, llms.txt and robots.txt lines it shows and paste them into your site'],
           ctaButton:'Fix it → Nurevo AEO (WordPress plugin)',
           ctaGuide:'Not on WordPress? → Server-side integration guide',
           footer:'© Nurevo — helping sites become readable to AI.',
           pageTitle:'AI readability checker | Nurevo AEO',
           bands:{green:'Good',yellow:'Needs work',red:'At risk'},
           titles:{green:'AI is reading your site correctly',yellow:'A few fixes and AI will read it far better',red:'AI cannot read enough of your information'}
+        },
+        zh: {
+          aeoGuide:'AEO 指南', home:'返回首页', eyebrow:'无需注册・免费',
+          title:'AI 真的能读懂<br>您的网站吗？',
+          lead:'输入网址，我们会检查结构化数据、关键信息、正文、llms.txt 以及信息的一致性。',
+          inputLabel:'要检查的网站网址', submit:'免费检查', submitting:'检查中…',
+          loading:'正在检查 AI 如何读取您的网站…', error:'检查失败，请稍后再试。',
+          invalidUrl:'请输入有效的网址。',
+          resultTitle:'AI 可读性分数',
+          resultLead:'我们评估了 AI 能否访问您的网站并正确读取重要信息。',
+          gate:'未通过可访问性检查，分数上限为 15 分。',
+          checksHeading:'检查项目', shareHeading:'分享结果', shareLabel:'结果分享链接',
+          copy:'复制', copied:'已复制',
+          ctaHeading:'修复红色和黄色项目',
+          ctaHeadings:{red:'修复红色和黄色项目',yellow:'修复黄色项目',green:'保持这个状态'},
+          ctaLead:'从服务器端提供正确的信息，才能让 AI 读懂您的网站。',
+          ctaLeadGreen:'即使网站更新或 AI 的标准变化，也能持续提供正确的信息。',
+          signup:'创建免费账户',
+          toggleLabel:'您的网站使用：', toggleWp:'WordPress', toggleOther:'非 WordPress',
+          stepsWp:['在 WordPress 后台 → 插件 → 安装插件 中搜索“Nurevo AEO”并安装','启用插件','在[[控制台]]生成配对码，粘贴到 Nurevo AEO → 设置 并保存'],
+          stepsOther:['创建免费账户（只需电子邮件地址）','在[[控制台]]选择“添加网站”→“其他网站”并输入网址','复制显示的 JSON-LD、llms.txt 和 robots.txt 行，粘贴到您的网站'],
+          ctaButton:'安装 WordPress 插件',
+          ctaGuide:'服务器端集成指南',
+          footer:'© Nurevo — 帮助网站被 AI 读懂。',
+          pageTitle:'AI 可读性检查 | Nurevo AEO',
+          bands:{green:'良好',yellow:'需改进',red:'有风险'},
+          titles:{green:'AI 能正确读取您的网站',yellow:'稍作修改，AI 会读得更好',red:'AI 无法充分读取您的信息'}
+        },
+        'zh-tw': {
+          aeoGuide:'AEO 指南', home:'返回首頁', eyebrow:'免註冊・免費',
+          title:'AI 真的讀得懂<br>您的網站嗎？',
+          lead:'輸入網址，我們會檢查結構化資料、重要資訊、內文、llms.txt 與資訊的一致性。',
+          inputLabel:'要檢查的網站網址', submit:'免費檢查', submitting:'檢查中…',
+          loading:'正在檢查 AI 如何讀取您的網站…', error:'檢查失敗，請稍後再試。',
+          invalidUrl:'請輸入有效的網址。',
+          resultTitle:'AI 可讀性分數',
+          resultLead:'我們評估了 AI 能否連到您的網站並正確讀取重要資訊。',
+          gate:'未通過可連線性檢查，分數上限為 15 分。',
+          checksHeading:'檢查項目', shareHeading:'分享結果', shareLabel:'結果分享連結',
+          copy:'複製', copied:'已複製',
+          ctaHeading:'修正紅色與黃色項目',
+          ctaHeadings:{red:'修正紅色與黃色項目',yellow:'修正黃色項目',green:'保持這個狀態'},
+          ctaLead:'從伺服器端提供正確的資訊，才能讓 AI 讀懂您的網站。',
+          ctaLeadGreen:'即使網站更新或 AI 的標準改變，也能持續提供正確的資訊。',
+          signup:'建立免費帳戶',
+          toggleLabel:'您的網站使用：', toggleWp:'WordPress', toggleOther:'非 WordPress',
+          stepsWp:['在 WordPress 後台 → 外掛 → 安裝外掛 搜尋「Nurevo AEO」並安裝','啟用外掛','在[[控制台]]產生配對碼，貼到 Nurevo AEO → 設定 並儲存'],
+          stepsOther:['建立免費帳戶（只需電子郵件地址）','在[[控制台]]選擇「新增網站」→「其他網站」並輸入網址','複製顯示的 JSON-LD、llms.txt 與 robots.txt 行，貼到您的網站'],
+          ctaButton:'安裝 WordPress 外掛',
+          ctaGuide:'伺服器端整合指南',
+          footer:'© Nurevo — 協助網站被 AI 讀懂。',
+          pageTitle:'AI 可讀性檢查 | Nurevo AEO',
+          bands:{green:'良好',yellow:'需改善',red:'有風險'},
+          titles:{green:'AI 能正確讀取您的網站',yellow:'稍作修正，AI 會讀得更好',red:'AI 無法充分讀取您的資訊'}
+        },
+        ko: {
+          aeoGuide:'AEO 가이드', home:'홈으로', eyebrow:'가입 없이 무료',
+          title:'AI가 정말로<br>내 사이트를 읽을 수 있을까요?',
+          lead:'URL을 입력하면 구조화 데이터, 핵심 정보, 본문, llms.txt, 정보의 일관성을 진단합니다.',
+          inputLabel:'진단할 웹사이트 URL', submit:'무료로 진단하기', submitting:'진단 중…',
+          loading:'AI가 사이트를 어떻게 읽는지 진단하고 있습니다…', error:'진단하지 못했습니다. 잠시 후 다시 시도해 주세요.',
+          invalidUrl:'올바른 URL을 입력하세요.',
+          resultTitle:'AI 가독성 점수',
+          resultLead:'AI가 사이트에 접근해 중요한 정보를 제대로 읽을 수 있는지 평가했습니다.',
+          gate:'접근성 관문을 통과하지 못해 점수가 15점 이하로 제한됩니다.',
+          checksHeading:'진단 항목', shareHeading:'결과 공유', shareLabel:'결과 공유 링크',
+          copy:'복사', copied:'복사됨',
+          ctaHeading:'빨간색과 노란색 항목을 고치세요',
+          ctaHeadings:{red:'빨간색과 노란색 항목을 고치세요',yellow:'노란색 항목을 고치세요',green:'이 상태를 유지하세요'},
+          ctaLead:'서버에서 올바른 정보를 제공해야 AI가 사이트를 이해할 수 있습니다.',
+          ctaLeadGreen:'사이트가 바뀌거나 AI의 기준이 달라져도 올바른 정보를 계속 제공합니다.',
+          signup:'무료 계정 만들기',
+          toggleLabel:'사이트 종류:', toggleWp:'WordPress', toggleOther:'WordPress 아님',
+          stepsWp:['WordPress 관리자 → 플러그인 → 새로 추가에서 "Nurevo AEO"를 검색해 설치','활성화','[[대시보드]]에서 페어링 코드를 발급해 Nurevo AEO → 설정에 붙여 넣고 저장'],
+          stepsOther:['무료 계정 만들기(이메일 주소만 있으면 됩니다)','[[대시보드]]에서 "사이트 추가" → "그 밖의 웹사이트"를 고르고 URL 입력','표시되는 JSON-LD, llms.txt, robots.txt 줄을 복사해 사이트에 붙여 넣기'],
+          ctaButton:'WordPress 플러그인 설치',
+          ctaGuide:'서버 측 연동 가이드',
+          footer:'© Nurevo — 사이트가 AI에게 읽히도록 돕습니다.',
+          pageTitle:'AI 가독성 검사 | Nurevo AEO',
+          bands:{green:'양호',yellow:'개선 필요',red:'위험'},
+          titles:{green:'AI가 사이트를 제대로 읽고 있습니다',yellow:'조금만 고치면 AI가 훨씬 잘 읽습니다',red:'AI가 정보를 충분히 읽지 못하고 있습니다'}
+        },
+        es: {
+          aeoGuide:'Guía AEO', home:'Volver al inicio', eyebrow:'Gratis, sin registro',
+          title:'¿Puede la IA<br>leer tu sitio de verdad?',
+          lead:'Pega una URL y revisamos los datos estructurados, la información clave, el texto, el llms.txt y la coherencia.',
+          inputLabel:'URL del sitio que quieres revisar', submit:'Revisar gratis', submitting:'Revisando…',
+          loading:'Revisando cómo lee la IA tu sitio…', error:'No se pudo revisar. Inténtalo de nuevo en breve.',
+          invalidUrl:'Introduce una URL válida.',
+          resultTitle:'Puntuación de legibilidad para IA',
+          resultLead:'Medimos si la IA puede llegar a tu sitio y leer la información importante.',
+          gate:'No se superó la comprobación de acceso, así que la puntuación se limita a 15.',
+          checksHeading:'Comprobaciones', shareHeading:'Compartir el resultado', shareLabel:'Enlace para compartir el resultado',
+          copy:'Copiar', copied:'Copiado',
+          ctaHeading:'Corrige los puntos rojos y ámbar',
+          ctaHeadings:{red:'Corrige los puntos rojos y ámbar',yellow:'Corrige los puntos ámbar',green:'Mantenlo así'},
+          ctaLead:'Servir la información correcta desde tu servidor es lo que hace que la IA pueda leer tu sitio.',
+          ctaLeadGreen:'Sigue sirviendo la información correcta aunque tu sitio cambie y los criterios de la IA evolucionen.',
+          signup:'Crear una cuenta gratis',
+          toggleLabel:'Tu sitio usa:', toggleWp:'WordPress', toggleOther:'Otro, no WordPress',
+          stepsWp:['En el administrador de WordPress, ve a Plugins - Añadir nuevo, busca "Nurevo AEO" e instálalo','Actívalo','Emite un código de emparejamiento en el [[panel]] y pégalo en Nurevo AEO - Ajustes'],
+          stepsOther:['Crea una cuenta gratis (solo necesitas un correo electrónico)','En el [[panel]], elige Añadir un sitio - Otro sitio web e introduce la URL','Copia el JSON-LD, el llms.txt y las líneas de robots.txt que aparecen y pégalos en tu sitio'],
+          ctaButton:'Instalar el plugin de WordPress',
+          ctaGuide:'Guía de integración en el servidor',
+          footer:'© Nurevo — ayudamos a que la IA pueda leer los sitios.',
+          pageTitle:'Comprobador de legibilidad para IA | Nurevo AEO',
+          bands:{green:'Bien',yellow:'Mejorable',red:'En riesgo'},
+          titles:{green:'La IA lee tu sitio correctamente',yellow:'Con unos ajustes, la IA lo leerá mucho mejor',red:'La IA no puede leer suficiente información'}
+        },
+        fr: {
+          aeoGuide:'Guide AEO', home:'Retour à l’accueil', eyebrow:'Gratuit, sans inscription',
+          title:'L’IA peut-elle vraiment<br>lire votre site ?',
+          lead:'Collez une URL : nous vérifions les données structurées, les informations clés, le texte, le llms.txt et la cohérence.',
+          inputLabel:'URL du site à vérifier', submit:'Vérifier gratuitement', submitting:'Vérification…',
+          loading:'Nous vérifions comment l’IA lit votre site…', error:'La vérification a échoué. Réessayez dans un instant.',
+          invalidUrl:'Saisissez une URL valide.',
+          resultTitle:'Score de lisibilité par l’IA',
+          resultLead:'Nous avons mesuré si l’IA peut atteindre votre site et lire les informations importantes.',
+          gate:'Le contrôle d’accessibilité n’a pas été validé : le score est plafonné à 15.',
+          checksHeading:'Vérifications', shareHeading:'Partager le résultat', shareLabel:'Lien de partage du résultat',
+          copy:'Copier', copied:'Copié',
+          ctaHeading:'Corrigez les points rouges et orange',
+          ctaHeadings:{red:'Corrigez les points rouges et orange',yellow:'Corrigez les points orange',green:'Gardez ce niveau'},
+          ctaLead:'C’est en servant les bonnes informations depuis votre serveur que votre site devient lisible par l’IA.',
+          ctaLeadGreen:'Continuez à servir les bonnes informations quand votre site change et quand les critères de l’IA évoluent.',
+          signup:'Créer un compte gratuit',
+          toggleLabel:'Votre site fonctionne avec :', toggleWp:'WordPress', toggleOther:'Autre que WordPress',
+          stepsWp:['Dans l’administration WordPress, allez dans Extensions - Ajouter, recherchez « Nurevo AEO » et installez-la','Activez-la','Émettez un code d’appairage dans le [[tableau de bord]] et collez-le dans Nurevo AEO - Réglages'],
+          stepsOther:['Créez un compte gratuit (une adresse e-mail suffit)','Dans le [[tableau de bord]], choisissez Ajouter un site - Autre site web et saisissez l’URL','Copiez le JSON-LD, le llms.txt et les lignes robots.txt affichés et collez-les dans votre site'],
+          ctaButton:'Installer l’extension WordPress',
+          ctaGuide:'Guide d’intégration côté serveur',
+          footer:'© Nurevo — aider les sites à devenir lisibles par l’IA.',
+          pageTitle:'Vérificateur de lisibilité IA | Nurevo AEO',
+          bands:{green:'Bon',yellow:'À améliorer',red:'À risque'},
+          titles:{green:'L’IA lit correctement votre site',yellow:'Quelques corrections et l’IA le lira bien mieux',red:'L’IA ne peut pas lire assez d’informations'}
+        },
+        de: {
+          aeoGuide:'AEO-Leitfaden', home:'Zur Startseite', eyebrow:'Kostenlos, ohne Anmeldung',
+          title:'Kann KI Ihre Website<br>wirklich lesen?',
+          lead:'URL eingeben: Wir prüfen strukturierte Daten, Kerninformationen, Seitentext, llms.txt und Konsistenz.',
+          inputLabel:'URL der zu prüfenden Website', submit:'Kostenlos prüfen', submitting:'Wird geprüft…',
+          loading:'Wir prüfen, wie KI Ihre Website liest…', error:'Die Prüfung ist fehlgeschlagen. Bitte versuchen Sie es gleich noch einmal.',
+          invalidUrl:'Bitte geben Sie eine gültige URL ein.',
+          resultTitle:'KI-Lesbarkeitswert',
+          resultLead:'Wir haben gemessen, ob KI Ihre Website erreicht und die wichtigen Informationen lesen kann.',
+          gate:'Die Erreichbarkeitsprüfung wurde nicht bestanden, daher ist der Wert auf 15 begrenzt.',
+          checksHeading:'Prüfpunkte', shareHeading:'Ergebnis teilen', shareLabel:'Link zum Teilen des Ergebnisses',
+          copy:'Kopieren', copied:'Kopiert',
+          ctaHeading:'Beheben Sie die roten und gelben Punkte',
+          ctaHeadings:{red:'Beheben Sie die roten und gelben Punkte',yellow:'Beheben Sie die gelben Punkte',green:'Halten Sie diesen Stand'},
+          ctaLead:'Erst wenn Ihr Server die richtigen Informationen ausliefert, kann KI Ihre Website lesen.',
+          ctaLeadGreen:'Liefern Sie weiter die richtigen Informationen, auch wenn sich Ihre Website oder die KI-Kriterien ändern.',
+          signup:'Kostenloses Konto erstellen',
+          toggleLabel:'Ihre Website läuft mit:', toggleWp:'WordPress', toggleOther:'Nicht WordPress',
+          stepsWp:['Im WordPress-Admin unter Plugins - Installieren nach „Nurevo AEO“ suchen und installieren','Aktivieren','Im [[Dashboard]] einen Kopplungscode ausstellen und in Nurevo AEO - Einstellungen einfügen'],
+          stepsOther:['Kostenloses Konto erstellen (eine E-Mail-Adresse genügt)','Im [[Dashboard]] Website hinzufügen - Andere Website wählen und die URL eingeben','Das angezeigte JSON-LD, die llms.txt und die robots.txt-Zeilen kopieren und in Ihre Website einfügen'],
+          ctaButton:'WordPress-Plugin installieren',
+          ctaGuide:'Leitfaden zur serverseitigen Integration',
+          footer:'© Nurevo — damit KI Websites lesen kann.',
+          pageTitle:'KI-Lesbarkeitsprüfung | Nurevo AEO',
+          bands:{green:'Gut',yellow:'Verbesserungsbedarf',red:'Gefährdet'},
+          titles:{green:'KI liest Ihre Website korrekt',yellow:'Ein paar Korrekturen und KI liest sie viel besser',red:'KI kann nicht genug Informationen lesen'}
         }
       };
 
@@ -166,6 +336,7 @@
       var LANG = (function () {
         var requested = (new URLSearchParams(location.search).get('lang') || document.documentElement.lang || 'ja')
           .toLowerCase().replace('_', '-');
+        if (requested === 'tw' || /^zh-(tw|hk|mo|hant)/.test(requested)) return 'zh-tw';
         if (STRINGS[requested]) return requested;
         var base = requested.split('-')[0];
         return STRINGS[base] ? base : 'en';
@@ -177,6 +348,50 @@
       document.documentElement.lang = LANG;
       document.title = T.pageTitle;
       document.getElementById("aeo-guide-link").href = LANG === "ja" ? "/ja/guide/" : "/guide/";
+      document.getElementById('signup-cta').href = '/signup.html?lang=' + encodeURIComponent(LANG);
+      Array.prototype.forEach.call(document.querySelectorAll('[data-t-label]'), function (node) {
+        var value = T[node.getAttribute('data-t-label')];
+        if (typeof value === 'string') node.setAttribute('aria-label', value);
+      });
+      var DASHBOARD = '/dashboard?lang=' + encodeURIComponent(LANG);
+      var platform = 'wp';
+      // Steps are ours, not user input; [[text]] marks the dashboard link.
+      function renderSteps() {
+        var list = document.getElementById('cta-steps');
+        list.replaceChildren();
+        (platform === 'wp' ? T.stepsWp : T.stepsOther).forEach(function (step) {
+          var item = document.createElement('li');
+          var span = document.createElement('span');
+          String(step).split(/(\[\[[^\]]+\]\])/).forEach(function (part) {
+            var m = /^\[\[([^\]]+)\]\]$/.exec(part);
+            if (m) { var a = document.createElement('a'); a.href = DASHBOARD; a.textContent = m[1]; span.append(a); }
+            else if (part) span.append(document.createTextNode(part));
+          });
+          item.append(span);
+          list.append(item);
+        });
+        document.getElementById('plugin-cta').hidden = platform !== 'wp';
+        Array.prototype.forEach.call(document.querySelectorAll('[data-platform]'), function (button) {
+          button.setAttribute('aria-checked', String(button.getAttribute('data-platform') === platform));
+        });
+      }
+      Array.prototype.forEach.call(document.querySelectorAll('[data-platform]'), function (button) {
+        button.addEventListener('click', function () { platform = button.getAttribute('data-platform'); renderSteps(); });
+        button.addEventListener('keydown', function (event) {
+          if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+          event.preventDefault();
+          platform = platform === 'wp' ? 'other' : 'wp'; renderSteps();
+          document.querySelector('[data-platform="' + platform + '"]').focus();
+        });
+      });
+      renderSteps();
+      // Do not tell a green result to "fix the red and amber items".
+      function ctaFor(body) {
+        var statuses = body.checks.map(function (c) { return String(c.status || '').toUpperCase(); });
+        var key = statuses.indexOf('BAD') >= 0 || !body.gatePassed ? 'red' : statuses.indexOf('WARN') >= 0 ? 'yellow' : body.band === 'green' ? 'green' : 'yellow';
+        document.getElementById('cta-heading').textContent = T.ctaHeadings[key];
+        document.getElementById('cta-lead').textContent = key === 'green' ? T.ctaLeadGreen : T.ctaLead;
+      }
       Array.prototype.forEach.call(document.querySelectorAll('[data-t]'), function (node) {
         var value = T[node.getAttribute('data-t')];
         if (typeof value !== 'string') return;
@@ -213,6 +428,7 @@
         badge.style.background = color;
         document.getElementById('result-title').textContent = TITLES[body.band];
         document.getElementById('gate-warning').hidden = body.gatePassed;
+        ctaFor(body);
         var list = document.getElementById('checks');
         list.replaceChildren();
         body.checks.forEach(function (check) {
