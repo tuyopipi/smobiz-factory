@@ -3,6 +3,7 @@ import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-ru
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
 import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
+import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler, searchCrawlerRobotsLines } from "./ai-crawlers.js";
@@ -386,6 +387,9 @@ export async function handleApi(request, env, ctx) {
   const url = new URL(request.url);
   const path = url.pathname;
   const method = request.method;
+
+  // One-click unsubscribe from the not-connected reminders (lifecycle-email.mjs).
+  if (path === UNSUBSCRIBE_PATH) return handleUnsubscribe(request, env);
 
   if (path === "/api/aeo/score" && method === "GET") {
     const raw = url.searchParams.get("url") || "";
@@ -1184,6 +1188,10 @@ export async function handleApi(request, env, ctx) {
     // prints into public markup - this one must never reach a public page.
     const profileToken = await issueProfileToken(env, id);
     const snippet = `<script src="https://nurevo.jp/tag.js" data-webmcp-site-key="${siteKey}" defer></` + "script>";
+    // Welcome / next step, once, for the member's first site. Off the request
+    // path and never able to fail it; skipped while 0038 is unapplied.
+    const welcome = runInBackground(ctx, () => sendWelcomeEmail(env, { memberId: member.member_id, siteId: id }));
+    if (welcome) await welcome;
     return json({ id, siteKey, profile_token: profileToken, install_type: installType, slug, hostedUrl: slug ? `/s/${slug}` : null, snippet });
   }
 
@@ -2228,10 +2236,26 @@ export async function handleApi(request, env, ctx) {
       // not necessarily carry our metadata.
       const target = siteId
         || (object.id ? (await env.DB.prepare("SELECT id FROM sites WHERE stripe_subscription_id=? LIMIT 1").bind(object.id).first())?.id : null);
+      // The plan before the cancellation, for the "plan ended" email: only a
+      // site that was paying is told its plan ended. Read only when mail is
+      // configured, and never allowed to fail the webhook.
+      let endedBefore = null;
+      if (event.type === "customer.subscription.deleted" && target && mailConfigured(env)) {
+        endedBefore = await billingSite(env, { siteId: target }).catch(() => null);
+      }
       if (derived && target) {
         await env.DB.prepare(
           "UPDATE sites SET plan=?, contract=?, delivery_status=?, stripe_customer_id=COALESCE(?,stripe_customer_id), stripe_subscription_id=COALESCE(?,stripe_subscription_id) WHERE id=?",
         ).bind(derived.plan, derived.contract, derived.delivery_status, object.customer || null, object.id || null, target).run();
+      }
+      if (endedBefore && derived?.plan === "free") {
+        const mail = runInBackground(ctx, async () => {
+          const after = await billingSite(env, { siteId: target });
+          let orgManualPlan = null;
+          try { orgManualPlan = (await env.DB.prepare("SELECT manual_plan FROM orgs WHERE id=? LIMIT 1").bind(endedBefore.org_id).first())?.manual_plan || null; } catch { orgManualPlan = null; }
+          return sendPlanEndedEmail(env, { before: endedBefore, after, orgManualPlan, subscriptionId: object.id });
+        });
+        if (mail) await mail;
       }
     }
 
@@ -2250,6 +2274,16 @@ export async function handleApi(request, env, ctx) {
     // moving to unpaid is what stops it, handled above.
     if (event.type === "invoice.payment_failed" && siteId) {
       await env.DB.prepare("UPDATE sites SET contract='past_due' WHERE id=?").bind(siteId).run();
+    }
+    // Tell the owner, once per failing invoice (Stripe sends this event again
+    // on every retry). No card details: the email links to the dashboard,
+    // where "Manage billing" opens the Stripe portal.
+    if (event.type === "invoice.payment_failed" && mailConfigured(env)) {
+      const mail = runInBackground(ctx, async () => {
+        const site = await billingSite(env, { siteId, subscriptionId: typeof object.subscription === "string" ? object.subscription : object.subscription?.id, customerId: typeof object.customer === "string" ? object.customer : null });
+        return site ? sendPaymentFailedEmail(env, { site, invoiceId: object.id || event.id }) : "no_site";
+      });
+      if (mail) await mail;
     }
     return json({ received: true });
   }
