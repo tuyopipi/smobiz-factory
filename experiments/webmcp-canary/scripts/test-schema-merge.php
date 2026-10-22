@@ -177,6 +177,21 @@ check('person site: Person left untouched', !isset(find_type($merged, 'Person')[
 check('person site: business node added once', count_types($merged, 'HairSalon') === 1);
 check('person site: their WebSite publisher unchanged', find_type($merged, 'WebSite')['publisher']['@id'] === 'https://salon.test/#/schema/person/1');
 
+// 4b. Structured hours from Nurevo fill a node with no hours, and never sit
+// beside hours of theirs in either form.
+$own_spec = $own;
+unset($own_spec[0]['openingHours']);
+$own_spec[0]['openingHoursSpecification'] = array(array('@type' => 'OpeningHoursSpecification',
+    'dayOfWeek' => array('https://schema.org/Tuesday'), 'opens' => '11:00', 'closes' => '20:00'));
+$merged = array_values(webmcp_canary_merge_graph($yoast, $own_spec));
+$org = find_type($merged, 'Organization');
+check('spec: added to a node without hours', !empty($org['openingHoursSpecification']) && !isset($org['openingHours']));
+$their_text = $yoast;
+$their_text[3]['openingHours'] = 'Mo-Fr 9:00-17:00';
+$merged = array_values(webmcp_canary_merge_graph($their_text, $own_spec));
+$org = find_type($merged, 'Organization');
+check('spec: not added next to their openingHours text', !isset($org['openingHoursSpecification']) && $org['openingHours'] === 'Mo-Fr 9:00-17:00');
+
 // 5. Merge marks the request, so the standalone output is skipped.
 check('merge sets the merged flag', webmcp_canary_schema_merged() === true);
 
