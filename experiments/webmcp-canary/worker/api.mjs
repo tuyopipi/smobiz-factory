@@ -1044,7 +1044,14 @@ export async function handleApi(request, env, ctx) {
       .bind(member.member_id, member.org_id).first();
     if (!row) return json({ error: "unauthorized" }, 401);
     const preferences = await loadEmailPreferences(env, row.email);
-    return attachCsrf(json({ email: row.email, role: row.role, org_id: member.org_id, is_super_admin: !!member.is_super_admin, language: preferences.language || null }), request);
+    // Both stored languages (member_email_preferences, 0029): `language` is the
+    // one the member chose in the dashboard, `registration_locale` the one they
+    // signed up in. Additive: older clients keep reading `language`.
+    return attachCsrf(json({
+      email: row.email, role: row.role, org_id: member.org_id, is_super_admin: !!member.is_super_admin,
+      language: normalizeEmailLocale(preferences.language) || null,
+      registration_locale: normalizeEmailLocale(preferences.registration_locale) || null,
+    }), request);
   }
 
   if (path === "/api/tag/config" && method === "GET") {

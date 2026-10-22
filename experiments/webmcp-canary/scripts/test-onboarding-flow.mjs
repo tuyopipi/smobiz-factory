@@ -116,7 +116,7 @@ const flush = () => new Promise((r) => setImmediate(r));
   const pick = app.get("pickLang");
   assert.equal(pick({ registration_locale: "ko" }), "ko", "registration_locale is honoured when the server sends it");
   assert.equal(pick({ language: "zh-tw" }), "tw", "else the saved account language");
-  assert.equal(pick({ registration_locale: "es", language: "de" }), "es", "registration_locale first");
+  assert.equal(pick({ registration_locale: "es", language: "de" }), "de", "a language chosen later beats the one registered in, as in email");
   assert.equal(pick({}), "fr", "absent fields fall through to the browser");
   assert.equal(pick(null), "fr");
   const saved = boot({ storage: { "nrv-dash-lang": "en" } }).get("pickLang");

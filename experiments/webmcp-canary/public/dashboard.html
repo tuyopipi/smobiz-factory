@@ -143,14 +143,14 @@ I.ja=Object.assign({},I.ja,I2.ja,I3.ja,I4.ja);I.en=Object.assign({},I.en,I2.en,I
 const tf=(k,v)=>String(t(k)).replace(/\{(\w+)\}/g,(m,n)=>v&&v[n]!=null?String(v[n]):m);
 /* The language the dashboard speaks, decided in this order: an explicit ?lang
    in the address, the choice saved in this browser, the member's own language
-   from /api/me (registration_locale when the server sends it, else the saved
-   account language), the browser's languages, and only then Japanese. The
+   from /api/me (the account language the member chose, else the language they
+   registered in - the same order the emails use), the browser's languages, and only then Japanese. The
    eight codes are the dashboard's own; zh-TW/zh-HK/zh-Hant are "tw". */
 const HTML_LANG={ja:'ja',en:'en',zh:'zh-CN',tw:'zh-TW',ko:'ko',es:'es',fr:'fr',de:'de'};
 function normLang(v){const s=String(v||'').trim().toLowerCase().replace(/_/g,'-');if(!s)return null;if(s==='tw'||/^zh-(tw|hk|mo|hant)/.test(s))return 'tw';const b=s.split('-')[0];return LANGS.includes(b)?b:null}
 function queryLang(){try{return normLang(new URLSearchParams(location.search).get('lang'))}catch{return null}}
 function savedLang(){try{return normLang(localStorage.getItem('nrv-dash-lang'))}catch{return null}}
-function memberLang(m){return m?normLang(m.registration_locale)||normLang(m.language):null}
+function memberLang(m){return m?normLang(m.language)||normLang(m.registration_locale):null}
 function browserLang(){try{const list=Array.isArray(navigator.languages)&&navigator.languages.length?navigator.languages:[navigator.language];for(const l of list){const n=normLang(l);if(n)return n}}catch{}return null}
 function pickLang(m){return queryLang()||savedLang()||memberLang(m)||browserLang()||'ja'}
 if(queryLang())try{localStorage.setItem('nrv-dash-lang',queryLang())}catch{}
