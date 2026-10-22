@@ -13,6 +13,7 @@
  * `wrangler secret list`, the vars from wrangler.jsonc, and (optionally) GETs
  * one Stripe price with a key you put in your own shell. It writes nothing.
  */
+import { HOURLY_CRON } from "../worker/schedule.mjs";
 import { readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import { fileURLToPath } from "node:url";
@@ -192,6 +193,7 @@ async function main(argv) {
 
   const crons = config?.triggers?.crons || [];
   record(crons.includes(DAILY_CRON) ? "PASS" : "FAIL", `daily cron ${DAILY_CRON} (runs the SoV batch)`);
+  record(crons.includes(HOURLY_CRON) ? "PASS" : "FAIL", `hourly cron ${HOURLY_CRON} (sends the not-connected reminders)`);
 
   // (a) secret names
   let names = new Set();

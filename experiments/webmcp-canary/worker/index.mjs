@@ -4,6 +4,7 @@ import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { handleApi, runSovDailyBatch, centralLlmsForKey } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 import { runLifecycleReminders } from "./lifecycle-email.mjs";
+import { runScheduled } from "./schedule.mjs";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -46,56 +47,26 @@ const COOKIE_AUTH_PATHS = new Set([
 const ALLOWED_EVENT_KEYS = new Set(["type", "selector", "key", "timestampOffsetMs", "errorText", "validity", "changed", "beforeLength", "afterLength", "errorName", "toolName"]);
 const ALLOWED_VALIDITY_KEYS = new Set(["valueMissing", "typeMismatch", "patternMismatch", "tooShort", "tooLong", "rangeUnderflow", "rangeOverflow", "stepMismatch", "badInput", "customError", "valid"]);
 
+// What each cron runs is in schedule.mjs; how each job is started is here.
+const SCHEDULED_RUNNERS = Object.freeze({
+  "webmcp-learning": (env) => runLearningJob(env, { trigger: "scheduled" }),
+  // Every customer site gets one daily score point.
+  "aeo-score-cron": (env) => runAeoScoreCron(env),
+  // When the provider key exists the SoV batch runs; it re-measures each pro
+  // site only every SOV_MIN_INTERVAL_DAYS days so the monthly engine-call cap
+  // lasts the month. A missing SoV key is an explicit safe skip and must not
+  // hold up the other daily jobs.
+  "aeo-sov-daily": (env) => runSovDailyBatch(env),
+  "aeo-learning": (env) => runAeoLearningJob(env, { trigger: "scheduled" }),
+  // "Not connected yet" reminders for wp sites, 24 h and 72 h after creation;
+  // bounded per run, claimed before sending (so a repeat run never resends),
+  // skipped while migration 0038 is unapplied.
+  "lifecycle-reminders": (env) => runLifecycleReminders(env),
+});
+
 export default {
   async scheduled(event, env, ctx) {
-    const dailyCron = "17 18 * * *";
-    const weeklyCron = "17 18 * * 1";
-    const cron = String(event?.cron || "");
-    const jobs = [];
-
-    // Every customer site gets one daily score point and, when the provider
-    // key exists, the SoV batch runs; it re-measures each pro site only every
-    // SOV_MIN_INTERVAL_DAYS days so the monthly engine-call cap lasts the
-    // month. A missing SoV key is an explicit safe skip and must not hold up
-    // the other daily jobs.
-    if (cron === dailyCron) {
-      jobs.push(
-        runLearningJob(env, { trigger: "scheduled" }).then((result) => {
-          console.log("webmcp-learning", JSON.stringify(result));
-        }).catch((error) => {
-          console.error("webmcp-learning-error", JSON.stringify({ message: String(error?.message || error) }));
-        }),
-        runAeoScoreCron(env).then((result) => {
-          console.log("aeo-score-cron", JSON.stringify(result));
-        }).catch((error) => {
-          console.error("aeo-score-cron-error", JSON.stringify({ message: String(error?.message || error) }));
-        }),
-        runSovDailyBatch(env).then((result) => {
-          console.log("aeo-sov-daily", JSON.stringify(result));
-        }).catch((error) => {
-          console.error("aeo-sov-daily-error", JSON.stringify({ message: String(error?.message || error) }));
-        }),
-        // "Not connected yet" reminders for wp sites, 24 h and 72 h after
-        // creation; bounded per run, claimed before sending, skipped while
-        // migration 0038 is unapplied.
-        runLifecycleReminders(env).then((result) => {
-          console.log("lifecycle-reminders", JSON.stringify(result));
-        }).catch((error) => {
-          console.error("lifecycle-reminders-error", JSON.stringify({ message: String(error?.message || error) }));
-        }),
-      );
-    } else if (cron === weeklyCron) {
-      jobs.push(
-        runAeoLearningJob(env, { trigger: "scheduled" }).then((result) => {
-          console.log("aeo-learning", JSON.stringify(result));
-        }).catch((error) => {
-          console.error("aeo-learning-error", JSON.stringify({ message: String(error?.message || error) }));
-        }),
-      );
-    } else {
-      console.warn("scheduled-unknown-cron", JSON.stringify({ cron }));
-    }
-    if (jobs.length) ctx.waitUntil(Promise.all(jobs));
+    runScheduled(event, env, ctx, SCHEDULED_RUNNERS);
   },
 
   async fetch(request, env, ctx) {

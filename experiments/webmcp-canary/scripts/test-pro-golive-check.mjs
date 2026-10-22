@@ -2,6 +2,7 @@
  * The pure parts of the Pro go-live check: parsing what wrangler prints,
  * deciding the flag state, and judging a Stripe price. Fixtures only.
  */
+import { HOURLY_CRON } from "../worker/schedule.mjs";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import {
@@ -47,6 +48,7 @@ import {
   const real = parseWranglerConfig(readFileSync(new URL("../wrangler.jsonc", import.meta.url), "utf8"));
   assert.equal(real.name, "webmcp-canary", "the real config parses");
   assert.ok(real.triggers.crons.includes(DAILY_CRON), "and has the daily cron");
+  assert.ok(real.triggers.crons.includes(HOURLY_CRON), "and the hourly reminder cron");
 }
 
 /* ---------------- the flag ---------------- */

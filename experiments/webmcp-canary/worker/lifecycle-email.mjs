@@ -3,7 +3,9 @@
  *
  *   welcome         once per member, when their first site is created
  *   not_connected   wp sites still unpaired 24 h and 72 h after creation,
- *                   from the scheduled handler; two at most, then it stops
+ *                   from the hourly cron (worker/schedule.mjs), so each
+ *                   arrives within about an hour of being due; two at
+ *                   most, then it stops
  *   payment_failed  invoice.payment_failed, once per failing invoice
  *   plan_ended      customer.subscription.deleted for a site that was paid
  *
