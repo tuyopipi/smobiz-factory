@@ -78,6 +78,8 @@
   var LOCALES = { ja: "ja-JP", en: "en-US", zh: "zh-CN", tw: "zh-TW", ko: "ko-KR", es: "es-ES", fr: "fr-FR", de: "de-DE" };
   // The dashboard's own language when it is on the page, else the saved one.
   function pageLang() { var l = null; try { l = lang; } catch (_) {} if (!l) { try { l = localStorage.getItem("nrv-dash-lang"); } catch (_) {} } return G[l] ? l : "ja"; }
+  // A full-width colon is right in Japanese and Chinese only.
+  function colonFor(lang) { return lang === "ja" || lang === "zh" || lang === "tw" ? "：" : ": "; }
   function errText(code) { return typeof window.nrvErrText === "function" ? window.nrvErrText(code) : String(code || ""); }
   function formatTime(iso, lang) { if (!iso) return ""; var d = new Date(iso); if (isNaN(d.getTime())) return ""; try { return d.toLocaleString(LOCALES[lang] || "en-US"); } catch (_) { return d.toISOString(); } }
   // The three paste-in items for a non-WordPress site, plus the optional tag
@@ -89,7 +91,7 @@
     if (!snippet) html += '<p class="nrv-js-warning">' + esc(c.failed) + '</p>';
     else {
       var when = formatTime(snippet.updated_at, lang);
-      html += '<p class="nrv-static-updated"><b>' + esc(c.updated) + '：</b><time datetime="' + esc(snippet.updated_at || "") + '">' + esc(when || c.never) + '</time></p><p class="nrv-js-warning nrv-static-stale">' + esc(c.stale) + '</p>';
+      html += '<p class="nrv-static-updated"><b>' + esc(c.updated) + colonFor(lang) + '</b><time datetime="' + esc(snippet.updated_at || "") + '">' + esc(when || c.never) + '</time></p><p class="nrv-js-warning nrv-static-stale">' + esc(c.stale) + '</p>';
       html += snippet.jsonld_html ? block("jsonld", c.jsonld, c.jsonldHow, snippet.jsonld_html, 10) : '<p class="nrv-js-warning">' + esc(c.off) + '</p>';
       html += block("llms", c.llms, c.llmsHow, snippet.llms_txt || "", 6);
       html += block("robots", c.robots, c.robotsHow, snippet.robots_txt_lines || "", 8);
@@ -118,7 +120,7 @@
     var byKey = Object.fromEntries((site.checklist || []).map(function (item) { return [item.key, item]; }));
     var actionKeys = ["tag_schema"]; if (type === "hosted") actionKeys.push("gbp_linked");
     var actions = actionKeys.map(function (key) { var item = byKey[key] || { done: false }; var text = copy[key]; return '<div class="nrv-check nrv-action ' + (item.done ? "done" : "todo") + '" data-key="' + key + '"><span aria-hidden="true">' + (item.done ? "✓" : "⚠") + '</span><div><b>' + esc(text[0]) + '</b><small>' + esc(text[1]) + '</small></div></div>'; }).join("");
-    var billing = site.billing || {}; var billingText = copy.billing; var billingLabels = billingStatusText[lang] || billingStatusText.en; var isWholesale = site.payment_ui === false || site.channel === "wholesale"; var billingState = billing.status === "active" ? "active" : billing.status === "unpaid" ? "unpaid" : "pending"; if (!isWholesale) actions += '<div class="nrv-check nrv-action ' + (billingState === "active" ? "done" : "todo") + '" data-key="billing"><span aria-hidden="true">' + (billingState === "active" ? "✓" : "⚠") + '</span><div><b>' + esc(billingText[0]) + '：' + esc(billingLabels[billingState]) + '</b><small>' + esc(billingText[1]) + '</small>' + (billingState === "active" ? '' : '<button type="button" class="btn nrv-payment-action">' + esc(g.share) + '</button>') + '</div></div>';
+    var billing = site.billing || {}; var billingText = copy.billing; var billingLabels = billingStatusText[lang] || billingStatusText.en; var isWholesale = site.payment_ui === false || site.channel === "wholesale"; var billingState = billing.status === "active" ? "active" : billing.status === "unpaid" ? "unpaid" : "pending"; if (!isWholesale) actions += '<div class="nrv-check nrv-action ' + (billingState === "active" ? "done" : "todo") + '" data-key="billing"><span aria-hidden="true">' + (billingState === "active" ? "✓" : "⚠") + '</span><div><b>' + esc(billingText[0]) + colonFor(lang) + esc(billingLabels[billingState]) + '</b><small>' + esc(billingText[1]) + '</small>' + (billingState === "active" ? '' : '<button type="button" class="btn nrv-payment-action">' + esc(g.share) + '</button>') + '</div></div>';
     var info = ["site_type", "map", "website"].map(function (key) { var text = copy[key]; if (!text) return ''; var item = byKey[key] || { done: false }; return '<div class="nrv-info"><b>' + esc(text[0]) + '</b><span>' + (item.done ? '✓ ' : '') + esc(text[1]) + '</span></div>'; }).join("");
     var body = '<div class="head" style="padding:0 0 12px;border:0"><h2>' + esc(g.panel) + '</h2></div>' + installMethods(site, type, lang) + '<h3 class="nrv-section-title">' + esc(g.actions) + '</h3><div class="nrv-checklist">' + actions + '</div>' + (info ? '<h3 class="nrv-section-title nrv-info-title">' + esc(g.info) + '</h3><div class="nrv-info-list">' + info + '</div>' : '') + '<div class="nrv-actions"><div><b>' + esc(g.siteKey) + '</b><div class="toolbar"><code class="nrv-key">' + esc(site.key || "") + '</code><button class="btn nrv-key-copy" type="button">' + esc((staticText[lang] || staticText.en).copy) + '</button></div></div>';
     if (type === "wp") {

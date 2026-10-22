@@ -152,6 +152,31 @@ const flush = () => new Promise((r) => setImmediate(r));
   }
 }
 
+/* ---------------- 6b. partner view and plan panel in every language ---------------- */
+
+{
+  // These were ja/en only: label(ja, en) picked English for zh/tw/ko/es/fr/de.
+  for (const lang of LANGS) {
+    const app = boot({ storage: { "nrv-dash-lang": lang } });
+    const I = app.get("I")[lang];
+    app.set("partnerData", { referral_code: null, payout: {}, referrals: [] });
+    const partner = app.sandbox.partnerView();
+    for (const key of ["ptCode", "ptNotIssued", "ptIssue", "ptRegenNote", "ptMonthly", "ptCumulative", "ptPaid", "ptRate", "ptReferred", "ptAccount", "ptNone", "ptUnavailable"]) {
+      assert.ok(partner.includes(I[key]), `${lang}: partner view shows ${key}`);
+    }
+    const plan = app.sandbox.standardPaymentPanel({ id: "s1", plan: "free" });
+    for (const key of ["plStdHead", "plSelf", "plOpen", "plClient", "plCopyLink", "intlNote"]) assert.ok(plan.includes(I[key]), `${lang}: plan panel shows ${key}`);
+    app.set("PRO_CHECKOUT", true);
+    const pro = app.sandbox.proOffer();
+    assert.ok(pro.includes(I.planProBuy) && !/\{(buy|yen)\}/.test(pro) && pro.includes("14,800"), `${lang}: Pro heading filled in`);
+    const active = app.sandbox.standardPaymentPanel({ id: "s1", plan: "standard" });
+    assert.ok(active.includes(I.plActive), `${lang}: active plan pill`);
+    if (lang !== "ja") {
+      for (const html of [partner, plan, pro, active]) assert.ok(!/[぀-ヺー-ヿ]/.test(html), `${lang}: no Japanese kana in the partner view or plan panel`);
+    }
+  }
+}
+
 /* ---------------- 7. errors in words ---------------- */
 
 {

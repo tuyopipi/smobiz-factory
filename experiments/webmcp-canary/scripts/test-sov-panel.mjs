@@ -12,6 +12,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
+import { tFor } from "./dashboard-dictionary.mjs";
 
 const SOURCE = readFileSync(new URL("../public/dashboard-sov.js", import.meta.url), "utf8");
 
@@ -34,6 +35,8 @@ function render(state) {
     setTimeout() {},
     fetch: async () => { throw new Error("the render path must not call the network"); },
     Number, Math, String, Date, JSON, Array, Object, console,
+    // The page gives every module the dashboard's t(); Japanese here.
+    t: tFor("ja"),
   };
   sandbox.window = sandbox;
   vm.createContext(sandbox);

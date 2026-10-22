@@ -1,8 +1,14 @@
-/* Nurevo dashboard asset revision: 2026-10-20-asset1 */
+/* Nurevo dashboard asset revision: 2026-10-22-i18n */
 (function () {
   "use strict";
   var selectedSiteId = null;
   var loadingSiteId = null;
+  // Words come from the dashboard dictionary (t() in dashboard.html), as in
+  // dashboard-onboarding.js, so this panel speaks the page's language.
+  function tr(key, vars) {
+    var text = typeof t === "function" ? String(t(key)) : key;
+    return text.replace(/\{(\w+)\}/g, function (m, name) { return vars && vars[name] != null ? String(vars[name]) : m; });
+  }
   function esc(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
   // Number(null) is 0, so the obvious isFinite(Number(score)) check treats a
   // row that was never scored as a perfect zero - a claim about the site that
@@ -15,7 +21,7 @@
   }
   function sparkline(scores) {
     var values = validScores(scores);
-    if (values.length < 2) return '<div class="nrv-aeo-empty">推移表示には2回以上の診断が必要です。</div>';
+    if (values.length < 2) return '<div class="nrv-aeo-empty">' + esc(tr('amTrendNeed')) + '</div>';
     var width = 520, height = 150, pad = 18;
     var numbers = values.map(function (item) { return Number(item.score); });
     var min = Math.min.apply(Math, numbers), max = Math.max.apply(Math, numbers), range = Math.max(1, max - min);
@@ -24,42 +30,42 @@
       var y = height - pad - (score - min) * (height - pad * 2) / range;
       return { x: x, y: y, score: score };
     });
-    return '<svg class="nrv-aeo-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="AEOスコアの推移"><line x1="' + pad + '" y1="' + (height - pad) + '" x2="' + (width - pad) + '" y2="' + (height - pad) + '" class="axis"></line><polyline points="' + points.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ') + '" class="line"></polyline>' + points.map(function (p) { return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4"><title>' + p.score + '点</title></circle>'; }).join('') + '</svg><div class="nrv-aeo-range"><span>' + esc(values[0].scanned_at) + '</span><span>' + esc(values[values.length - 1].scanned_at) + '</span></div>';
+    return '<svg class="nrv-aeo-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + esc(tr('amChartLabel')) + '"><line x1="' + pad + '" y1="' + (height - pad) + '" x2="' + (width - pad) + '" y2="' + (height - pad) + '" class="axis"></line><polyline points="' + points.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ') + '" class="line"></polyline>' + points.map(function (p) { return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4"><title>' + esc(tr('amPoints', { n: p.score })) + '</title></circle>'; }).join('') + '</svg><div class="nrv-aeo-range"><span>' + esc(values[0].scanned_at) + '</span><span>' + esc(values[values.length - 1].scanned_at) + '</span></div>';
   }
   function scoreSummary(scores) {
     var values = validScores(scores);
-    if (!values.length) return '<div class="nrv-aeo-empty">診断データなし</div>';
+    if (!values.length) return '<div class="nrv-aeo-empty">' + esc(tr('amNoData')) + '</div>';
     var latest = values[values.length - 1];
     var comparable = values.filter(function(row){return latest.ruleset_version != null && latest.score_model_version && latest.delivered_ruleset_version != null && row.ruleset_version === latest.ruleset_version && row.score_model_version === latest.score_model_version && row.delivered_ruleset_version != null;});
     var previous = comparable.length > 1 ? comparable[comparable.length - 2] : null;
     var delta = previous ? Number(latest.score) - Number(previous.score) : null;
-    var trend = delta == null ? (values.length > 1 ? '同じ採点基準・配信確認済みデータを蓄積中' : '初回診断') : delta > 0 ? '↗ +' + delta : delta < 0 ? '↘ ' + delta : '→ 変化なし';
+    var trend = delta == null ? (values.length > 1 ? tr('amAccumulating') : tr('amFirst')) : delta > 0 ? '↗ +' + delta : delta < 0 ? '↘ ' + delta : '→ ' + tr('amNoChange');
     return '<div class="nrv-aeo-score"><strong>' + esc(latest.score) + '</strong><span>/ 100</span><b class="' + (delta > 0 ? 'up' : delta < 0 ? 'down' : '') + '">' + esc(trend) + '</b></div><p class="notice">' + esc(latest.verdict || '') + ' · ' + esc(latest.scanned_at) + '</p>' + sparkline(comparable);
   }
   function crawlerTable(metrics) {
-    if (!metrics.crawler_measurement) return '<div class="nrv-aeo-warning"><b>来訪計測なし（診断スコアのみ）</b><br>静的JSON-LDではクローラ来訪を計測できません。プラグインまたはAPI連携をご利用ください。</div>';
+    if (!metrics.crawler_measurement) return '<div class="nrv-aeo-warning"><b>' + esc(tr('amNoVisitsTitle')) + '</b><br>' + esc(tr('amNoVisitsBody')) + '</div>';
     var hits = metrics.crawler_hits || [];
-    if (!hits.length) return '<div class="nrv-aeo-empty">クローラ来訪データなし</div>';
+    if (!hits.length) return '<div class="nrv-aeo-empty">' + esc(tr('amNoCrawler')) + '</div>';
     var max = Math.max.apply(Math, hits.map(function (item) { return Number(item.hits || 0); }).concat([1]));
-    return '<div class="tablewrap"><table><thead><tr><th>日付</th><th>クローラ種別</th><th>来訪数</th></tr></thead><tbody>' + hits.map(function (item) { var count = Number(item.hits || 0); return '<tr><td>' + esc(item.date) + '</td><td><code>' + esc(item.crawler_id) + '</code></td><td><div class="nrv-hit-cell"><span class="nrv-hit-bar" style="width:' + Math.max(4, Math.round(count / max * 100)) + '%"></span><b>' + count + '</b></div></td></tr>'; }).join('') + '</tbody></table></div>';
+    return '<div class="tablewrap"><table><thead><tr><th>' + esc(tr('amDate')) + '</th><th>' + esc(tr('amCrawlerType')) + '</th><th>' + esc(tr('amVisits')) + '</th></tr></thead><tbody>' + hits.map(function (item) { var count = Number(item.hits || 0); return '<tr><td>' + esc(item.date) + '</td><td><code>' + esc(item.crawler_id) + '</code></td><td><div class="nrv-hit-cell"><span class="nrv-hit-bar" style="width:' + Math.max(4, Math.round(count / max * 100)) + '%"></span><b>' + count + '</b></div></td></tr>'; }).join('') + '</tbody></table></div>';
   }
   function referralTrend(rows) {
     var byDay = {};
     (rows || []).forEach(function (row) { byDay[row.date] = (byDay[row.date] || 0) + Number(row.hits || 0); });
     var days = Object.keys(byDay).sort();
-    if (!days.length) return '<div class="nrv-aeo-empty">AI経由の流入データなし</div>';
+    if (!days.length) return '<div class="nrv-aeo-empty">' + esc(tr('amNoReferral')) + '</div>';
     var width = 520, height = 150, pad = 18, max = Math.max.apply(Math, days.map(function (day) { return byDay[day]; }).concat([1]));
     var points = days.map(function (day, index) {
       return { day: day, hits: byDay[day], x: pad + index * (width - pad * 2) / Math.max(1, days.length - 1), y: height - pad - byDay[day] * (height - pad * 2) / max };
     });
-    return '<div class="nrv-aeo-score"><strong>' + esc(points[points.length - 1].hits) + '</strong><span>件 / 最新日</span></div>'
-      + '<svg class="nrv-aeo-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="AI流入の日次推移"><line x1="' + pad + '" y1="' + (height - pad) + '" x2="' + (width - pad) + '" y2="' + (height - pad) + '" class="axis"></line><polyline points="' + points.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ') + '" class="line"></polyline>' + points.map(function (p) { return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4"><title>' + esc(p.day) + ': ' + p.hits + '件</title></circle>'; }).join('') + '</svg><div class="nrv-aeo-range"><span>' + esc(days[0]) + '</span><span>' + esc(days[days.length - 1]) + '</span></div>';
+    return '<div class="nrv-aeo-score"><strong>' + esc(points[points.length - 1].hits) + '</strong><span>' + esc(tr('amLatestDay')) + '</span></div>'
+      + '<svg class="nrv-aeo-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + esc(tr('amReferralChart')) + '"><line x1="' + pad + '" y1="' + (height - pad) + '" x2="' + (width - pad) + '" y2="' + (height - pad) + '" class="axis"></line><polyline points="' + points.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ') + '" class="line"></polyline>' + points.map(function (p) { return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4"><title>' + esc(p.day) + ': ' + esc(tr('amCount', { n: p.hits })) + '</title></circle>'; }).join('') + '</svg><div class="nrv-aeo-range"><span>' + esc(days[0]) + '</span><span>' + esc(days[days.length - 1]) + '</span></div>';
   }
   function rulesetStatus(metrics) {
     var ruleset = metrics.ruleset || {};
-    if (!ruleset.auto_updates) return '<div class="nrv-ruleset static"><b>静的JSON-LD</b><span>自動更新されません（最新ruleset: v' + esc(ruleset.latest_version || '—') + '）</span></div>';
-    if (ruleset.status !== 'latest') return '<div class="nrv-ruleset static"><b>公開サイトでの配信を確認中</b><span>最新ルール v' + esc(ruleset.latest_version || '—') + ' · 確認できた配信版 v' + esc(ruleset.version || '—') + '</span></div>';
-    return '<div class="nrv-ruleset latest"><b>ruleset v' + esc(ruleset.version || '—') + '</b><span>最新化されています · 中央ルールへ自動追従</span></div>';
+    if (!ruleset.auto_updates) return '<div class="nrv-ruleset static"><b>' + esc(tr('amStaticTitle')) + '</b><span>' + esc(tr('amStaticNote', { latest: ruleset.latest_version || '—' })) + '</span></div>';
+    if (ruleset.status !== 'latest') return '<div class="nrv-ruleset static"><b>' + esc(tr('amVerifying')) + '</b><span>' + esc(tr('amVerifyingNote', { latest: ruleset.latest_version || '—', version: ruleset.version || '—' })) + '</span></div>';
+    return '<div class="nrv-ruleset latest"><b>ruleset v' + esc(ruleset.version || '—') + '</b><span>' + esc(tr('amLatestNote')) + '</span></div>';
   }
   // Timestamps are stored as ISO strings; one that will not parse is shown as it
   // came rather than as "Invalid Date".
@@ -72,7 +78,7 @@
   // with no indication of why or what to fix.
   function checklist(metrics) {
     var checks = metrics.checks || [];
-    if (!checks.length) return '<div class="nrv-aeo-empty">診断データなし</div>';
+    if (!checks.length) return '<div class="nrv-aeo-empty">' + esc(tr('amNoData')) + '</div>';
     // Findings first: a passing check is reassurance, a failing one is work.
     var rank = { BAD: 0, WARN: 1, OK: 2 };
     var ordered = checks.slice().sort(function (a, b) {
@@ -91,7 +97,7 @@
         + (check.hints || []).map(function(h){return '<p>' + esc(h) + '</p>';}).join('') + '</div></li>';
     }).join('');
     var when = metrics.checked_at
-      ? '<p class="nrv-aeo-range"><span>診断時刻</span><span>' + esc(formatWhen(metrics.checked_at)) + '</span></p>'
+      ? '<p class="nrv-aeo-range"><span>' + esc(tr('amCheckedAt')) + '</span><span>' + esc(formatWhen(metrics.checked_at)) + '</span></p>'
       : '';
     return '<ol class="nrv-aeo-checks">' + rows + '</ol>' + when;
   }
@@ -99,13 +105,13 @@
     var detail = metrics.optimization;
     if (!detail || !detail.action_required) return '';
     var fields = (detail.missing_fields || []).map(function(f){return esc(f.entityType + '.' + f.field);}).join(', ');
-    return '<div class="nrv-aeo-warning" role="status"><b>自動最適化：情報の確認が必要です</b><p>公開情報で確認できない項目があります。実際の情報だけを入力してください。</p><p>' + fields + '</p></div>';
+    return '<div class="nrv-aeo-warning" role="status"><b>' + esc(tr('amOptTitle')) + '</b><p>' + esc(tr('amOptBody')) + '</p><p>' + fields + '</p></div>';
   }
   function panel(metrics) {
     var section = document.createElement('section');
     section.className = 'nrv-aeo-metrics';
     section.dataset.siteId = metrics.site_id;
-    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>AEO計測</small><h2>検索AIへの届き方</h2></div>' + rulesetStatus(metrics) + '</div>' + optimizationNotice(metrics) + '<div class="nrv-aeo-grid"><section><h3>AEOスコア（日次）</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>AI流入（日次）</h3>' + referralTrend(metrics.ai_referrals) + '</section></div><section class="nrv-aeo-checklist"><h3>AIクローラ来訪</h3>' + crawlerTable(metrics) + '</section><section class="nrv-aeo-checklist"><h3>診断チェックリスト</h3>' + checklist(metrics) + '</section></div>';
+    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>' + esc(tr('amKicker')) + '</small><h2>' + esc(tr('amHeading')) + '</h2></div>' + rulesetStatus(metrics) + '</div>' + optimizationNotice(metrics) + '<div class="nrv-aeo-grid"><section><h3>' + esc(tr('amScoreDaily')) + '</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>' + esc(tr('amReferralDaily')) + '</h3>' + referralTrend(metrics.ai_referrals) + '</section></div><section class="nrv-aeo-checklist"><h3>' + esc(tr('amCrawlerTitle')) + '</h3>' + crawlerTable(metrics) + '</section><section class="nrv-aeo-checklist"><h3>' + esc(tr('amChecklist')) + '</h3>' + checklist(metrics) + '</section></div>';
     return section;
   }
   async function resolveSiteId() {
@@ -128,7 +134,7 @@
     loadingSiteId = siteId;
     var placeholder = document.createElement('section');
     placeholder.className = 'nrv-aeo-metrics';
-    placeholder.innerHTML = '<div class="card panel"><p class="notice">AEO計測を読み込み中…</p></div>';
+    placeholder.innerHTML = '<div class="card panel"><p class="notice">' + esc(tr('amLoading')) + '</p></div>';
     main.appendChild(placeholder);
     try {
       // Ask for the checklist in the language this page is written in. The
@@ -138,7 +144,7 @@
       var lang = document.documentElement.lang || 'ja';
       var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/aeo-metrics?limit=30&days=30&lang=' + encodeURIComponent(lang), { credentials: 'include', cache: 'no-store' });
       var metrics = await response.json();
-      if (!response.ok) throw new Error(metrics.error || 'AEO計測を取得できませんでした');
+      if (!response.ok) throw new Error(metrics.error || tr('amLoadFailed'));
       if (placeholder.isConnected) placeholder.replaceWith(panel(metrics));
     } catch (error) {
       if (placeholder.isConnected) placeholder.innerHTML = '<div class="card panel"><div class="nrv-aeo-empty">' + esc(error.message) + '</div></div>';

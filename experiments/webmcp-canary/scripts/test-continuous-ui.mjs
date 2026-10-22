@@ -1,7 +1,8 @@
 import assert from 'node:assert/strict';
 import vm from 'node:vm';
 import {readFileSync} from 'node:fs';
-const sandbox={document:{createElement:()=>({dataset:{}}),addEventListener(){},head:{appendChild(){}},documentElement:{}},MutationObserver:class{observe(){}},setTimeout(){}};
+import {tFor} from './dashboard-dictionary.mjs';
+const sandbox={t:tFor('ja'),document:{createElement:()=>({dataset:{}}),addEventListener(){},head:{appendChild(){}},documentElement:{}},MutationObserver:class{observe(){}},setTimeout(){}};
 vm.runInNewContext(readFileSync(new URL('../public/dashboard-aeo-metrics.js',import.meta.url),'utf8').replace('  document.head.appendChild(style);','  globalThis.ui={rulesetStatus,optimizationNotice,scoreSummary};\n  document.head.appendChild(style);'),sandbox);
 assert.match(sandbox.ui.rulesetStatus({ruleset:{auto_updates:true,latest_version:5,version:4,status:'unverified'}}),/確認中/);
 assert.doesNotMatch(sandbox.ui.rulesetStatus({ruleset:{auto_updates:true,latest_version:5,version:null,status:'unverified'}}),/最新化されています/);

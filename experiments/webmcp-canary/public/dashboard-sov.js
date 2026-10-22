@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-07-asset1 */
+/* Nurevo dashboard asset revision: 2026-10-22-i18n */
 /*
  * AI Share-of-Voice panel (Pro, beta).
  *
@@ -19,6 +19,13 @@
   "use strict";
   var selectedSiteId = null;
   var loadingSiteId = null;
+  // Words come from the dashboard dictionary (t() in dashboard.html), as in
+  // dashboard-onboarding.js. Server text (upgrade copy, notices, gap reasons)
+  // is shown as the server sent it.
+  function tr(key, vars) {
+    var text = typeof t === "function" ? String(t(key)) : key;
+    return text.replace(/\{(\w+)\}/g, function (m, name) { return vars && vars[name] != null ? String(vars[name]) : m; });
+  }
   function esc(value) { return String(value == null ? "" : value).replace(/[&<>"']/g, function (c) { return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]; }); }
 
   function formatWhen(value) {
@@ -41,8 +48,8 @@
 
   function rateText(rate, answers) {
     var basis = basisOf(rate, answers);
-    if (basis === 'no_answers') return '<span class="nrv-sov-none">まだ出典として現れていません</span>';
-    if (basis === 'insufficient_samples') return '<span class="nrv-sov-none">サンプル不足（n=' + esc(Number(answers || 0)) + '）</span>';
+    if (basis === 'no_answers') return '<span class="nrv-sov-none">' + esc(tr('svNotYet')) + '</span>';
+    if (basis === 'insufficient_samples') return '<span class="nrv-sov-none">' + esc(tr('svInsufficient', { n: Number(answers || 0) })) + '</span>';
     return '<span class="nrv-sov-rate">' + esc(Math.round(Number(rate) * 1000) / 10) + '%</span>'
       + '<span class="nrv-sov-n">n=' + esc(Number(answers || 0)) + '</span>';
   }
@@ -51,14 +58,14 @@
   // The other engine is reported, but never as the same kind of evidence.
   function engineCard(row) {
     var live = row.live_search === true;
-    var name = row.engine === 'perplexity' ? 'Perplexity' : row.engine === 'openai' ? 'ChatGPT (OpenAI)' : String(row.engine || '不明');
+    var name = row.engine === 'perplexity' ? 'Perplexity' : row.engine === 'openai' ? 'ChatGPT (OpenAI)' : String(row.engine || tr('svUnknown'));
     var kind = live
-      ? '<span class="nrv-sov-tag is-live">ライブ検索での出現</span>'
-      : '<span class="nrv-sov-tag is-static">学習済み知識内の存在<b>ライブ検索ではない</b></span>';
+      ? '<span class="nrv-sov-tag is-live">' + esc(tr('svLiveTag')) + '</span>'
+      : '<span class="nrv-sov-tag is-static">' + esc(tr('svStaticTag')) + '<b>' + esc(tr('svNotLive')) + '</b></span>';
     // failures are shown next to the sample count, never folded into it: an
     // engine outage must lower confidence, not the rate.
     var failures = Number(row.failures || 0)
-      ? '<span class="nrv-sov-fail">失敗 ' + esc(Number(row.failures)) + '件（率から除外）</span>' : '';
+      ? '<span class="nrv-sov-fail">' + esc(tr('svFailures', { n: Number(row.failures) })) + '</span>' : '';
     return '<div class="nrv-sov-engine' + (live ? ' is-headline' : '') + '">'
       + '<div class="nrv-sov-engine-head"><strong>' + esc(name) + '</strong>' + kind + '</div>'
       + '<div class="nrv-sov-engine-rate">' + rateText(row.appearance_rate, row.answers) + '</div>'
@@ -73,16 +80,15 @@
    */
   function legacyEngines(latest) {
     var engines = latest.engines || [];
-    if (!engines.length) return '<p class="nrv-sov-note">この測定にはエンジン内訳が記録されていません。</p>';
+    if (!engines.length) return '<p class="nrv-sov-note">' + esc(tr('svNoBreakdown')) + '</p>';
     var rows = engines.map(function (engine) {
       var live = engine.live_search === true;
       return '<li>' + esc(engine.label || engine.id || '')
-        + (live ? '<span class="nrv-sov-tag is-live">ライブ検索</span>'
-                : '<span class="nrv-sov-tag is-static">学習済み知識<b>ライブ検索ではない</b></span>') + '</li>';
+        + (live ? '<span class="nrv-sov-tag is-live">' + esc(tr('svLive')) + '</span>'
+                : '<span class="nrv-sov-tag is-static">' + esc(tr('svKnowledge')) + '<b>' + esc(tr('svNotLive')) + '</b></span>') + '</li>';
     }).join('');
     return '<ul class="nrv-sov-roster">' + rows + '</ul>'
-      + '<p class="nrv-sov-note">この測定はエンジン別の内訳を保存していないため、出現率は表示していません。'
-      + 'ライブ検索と学習済み知識を1つの率に混ぜないためです。次回の測定から表示されます。</p>';
+      + '<p class="nrv-sov-note">' + esc(tr('svLegacyNote')) + '</p>';
   }
 
   function competitorList(latest) {
@@ -90,17 +96,16 @@
     if (!rows.length) return '';
     var items = rows.slice(0, 10).map(function (row) {
       return '<li><code>' + esc(row.host || '') + '</code>'
-        + '<span>' + esc(Number(row.appearances || 0)) + '回</span></li>';
+        + '<span>' + esc(tr('svTimes', { n: Number(row.appearances || 0) })) + '</span></li>';
     }).join('');
-    return '<div class="nrv-sov-competitors"><h4>同じ質問で挙がった他社</h4><ul>' + items + '</ul></div>';
+    return '<div class="nrv-sov-competitors"><h4>' + esc(tr('svCompetitors')) + '</h4><ul>' + items + '</ul></div>';
   }
 
   function control(latest) {
     var ctl = latest.parser_control;
     if (!ctl) return '';
     // Shown so a low rate can be told apart from a broken matcher.
-    return '<p class="nrv-sov-note">パーサー確認用の指名質問：' + esc(Number(ctl.answers || 0)) + '件中 '
-      + esc(Number(ctl.detected || 0)) + '件で検出（出現率には算入していません）。</p>';
+    return '<p class="nrv-sov-note">' + esc(tr('svControl', { answers: Number(ctl.answers || 0), detected: Number(ctl.detected || 0) })) + '</p>';
   }
 
   function measured(data) {
@@ -115,17 +120,17 @@
       : legacyEngines(latest);
 
     var asOf = '<dl class="nrv-sov-meta">'
-      + '<div><dt>診断時刻</dt><dd>' + esc(formatWhen(latest.ran_at)) + '</dd></div>'
-      + '<div><dt>質問数</dt><dd>' + esc(Number(latest.questions_asked || 0)) + '</dd></div>'
-      + '<div><dt>回答数</dt><dd>' + esc(Number(latest.answers_received || 0)) + '</dd></div>'
-      + '<div><dt>消費クエリ</dt><dd>' + esc(Number(latest.queries_used || 0)) + '</dd></div>'
+      + '<div><dt>' + esc(tr('svRanAt')) + '</dt><dd>' + esc(formatWhen(latest.ran_at)) + '</dd></div>'
+      + '<div><dt>' + esc(tr('svQuestions')) + '</dt><dd>' + esc(Number(latest.questions_asked || 0)) + '</dd></div>'
+      + '<div><dt>' + esc(tr('svAnswers')) + '</dt><dd>' + esc(Number(latest.answers_received || 0)) + '</dd></div>'
+      + '<div><dt>' + esc(tr('svQueries')) + '</dt><dd>' + esc(Number(latest.queries_used || 0)) + '</dd></div>'
       + '</dl>';
 
     return asOf + body + competitorList(latest) + control(latest);
   }
 
   function empty() {
-    return '<div class="nrv-aeo-empty">Pro βの測定はスケジュール実行です。まだ結果がありません。</div>';
+    return '<div class="nrv-aeo-empty">' + esc(tr('svEmpty')) + '</div>';
   }
 
   // free / standard. States the current plan and what Pro measures - no numbers,
@@ -134,16 +139,16 @@
     var upgrade = (info && info.upgrade) || {};
     var plan = (info && info.plan) || 'free';
     return '<div class="nrv-sov-locked">'
-      + '<p class="nrv-sov-locked-head"><b>AI登場率は Pro β で測定します</b></p>'
-      + '<p>' + esc(upgrade.message || 'AI登場率の測定はProプランの機能です。') + '</p>'
-      + '<p class="nrv-sov-note">現在のプラン：<code>' + esc(plan) + '</code></p>'
+      + '<p class="nrv-sov-locked-head"><b>' + esc(tr('svLockedHead')) + '</b></p>'
+      + '<p>' + esc(upgrade.message || tr('svLockedMsg')) + '</p>'
+      + '<p class="nrv-sov-note">' + esc(tr('svCurrentPlan')) + '<code>' + esc(plan) + '</code></p>'
       // The server says whether Pro is on sale (upgrade.purchasable). While it
       // is not, this links to what Pro will do rather than to a checkout -
       // "Upgrade" would invite someone to buy a plan that is not on sale.
       + (upgrade.purchasable === true
-        ? (upgrade.checkout_url ? '<p><a class="nrv-sov-cta" href="' + esc(upgrade.checkout_url) + '">Proにする</a></p>' : '')
-        : '<p class="nrv-sov-note"><b>β・近日提供</b></p>')
-      + (upgrade.details_url ? '<p><a class="nrv-sov-cta" href="' + esc(upgrade.details_url) + '" target="_blank" rel="noopener">Proの詳細を見る</a></p>' : '')
+        ? (upgrade.checkout_url ? '<p><a class="nrv-sov-cta" href="' + esc(upgrade.checkout_url) + '">' + esc(tr('planProBuy')) + '</a></p>' : '')
+        : '<p class="nrv-sov-note"><b>' + esc(tr('svSoon')) + '</b></p>')
+      + (upgrade.details_url ? '<p><a class="nrv-sov-cta" href="' + esc(upgrade.details_url) + '" target="_blank" rel="noopener">' + esc(tr('planProDetails')) + '</a></p>' : '')
       + '</div>';
   }
 
@@ -156,8 +161,8 @@
     else if (!state.data.latest) inner = empty();
     else inner = measured(state.data);
     section.innerHTML = '<div class="card panel">'
-      + '<div class="nrv-aeo-heading"><div><small>AI登場率</small>'
-      + '<h2>AI検索での見つかり方 ' + beta + '</h2></div></div>'
+      + '<div class="nrv-aeo-heading"><div><small>' + esc(tr('svKicker')) + '</small>'
+      + '<h2>' + esc(tr('svHeading')) + ' ' + beta + '</h2></div></div>'
       + inner + '</div>';
     return section;
   }
@@ -183,25 +188,26 @@
     var box = document.createElement('div'); box.className = 'card panel';
     var config = report.current_query_set || { questions: [], repetitions: 2, competitors: [] };
     var table = function (rows) { return '<table style="width:100%">' + rows.map(function (row) { return '<tr>' + row.map(function (cell) { return '<td style="padding:6px">' + esc(cell) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>'; };
-    var pct = function (v) { return v == null ? '算出不可／サンプル不足' : Math.round(v * 1000) / 10 + '%'; };
-    box.innerHTML = '<h3>Pro 測定レポート</h3><p>' + esc(report.notice) + '</p>'
-      + '<p>' + (report.status === 'unconfigured' ? 'Perplexity未設定：測定していません。' : report.status === 'no_data' ? '未測定' : '回答数 ' + esc(report.summary.answers) + '／引用頻度 ' + pct(report.summary.citation_rate)) + '</p>'
-      + '<p>キャッシュは1時間。同じ条件の測定は再利用します。測定は有料APIの利用枠を消費します。</p>'
-      + '<details><summary>固定クエリセットを編集</summary><label>代表クエリ（1行1件、最大20件）<textarea data-pro-questions style="width:100%;min-height:120px">' + esc(config.questions.join('\n')) + '</textarea></label>'
-      + '<label>各クエリの実行回数 <input data-pro-n type="number" min="1" max="3" value="' + esc(config.repetitions) + '"></label>'
-      + '<label>競合ドメイン（1行1件、最大10件）<textarea data-pro-competitors style="width:100%">' + esc(config.competitors.join('\n')) + '</textarea></label><button data-pro-save>設定を保存</button></details>'
-      + '<button data-pro-run>測定を実行</button> <button data-pro-json>JSONを保存</button><p data-pro-status role="status"></p>'
-      + '<h4>Presence</h4>' + table([['クエリ','回答数','引用回数','頻度']].concat(report.presence.map(function(r){ return [r.question,r.answers,r.citations,pct(r.frequency)]; })))
-      + '<h4>指定競合との比較</h4><p>' + esc(report.sov_basis) + '</p>' + (report.recount_note ? '<p>' + esc(report.recount_note) + '</p>' : '') + table([['ドメイン','引用回数','頻度','SoV']].concat(report.competitors.map(function(r){ return [r.host + (r.own ? '（自社）' : r.recounted ? '（再集計）' : ''),r.citations,pct(r.frequency),pct(r.share_of_voice)]; })))
-      + '<h4>同じ測定条件での推移</h4>' + table([['日時','回答数','引用頻度']].concat(report.trend.map(function(r){ return [r.ran_at,r.answers_received,pct(r.citation_rate)]; })))
-      + '<h4>ギャップ</h4>' + (report.gaps.length ? report.gaps.map(function(r){ return '<p>' + esc(r.question + '：' + r.reason) + '</p>'; }).join('') : '<p>記録なし（改善不要の判定ではありません）</p>')
-      + '<h4>正確性と証跡</h4><p>回答抜粋を確認し、事実との明らかな相違を記録してください。未確認は正確性未判定です。</p>'
-      + report.evidence.map(function(e){ return '<details data-pro-evidence="' + esc(e.id) + '"><summary>' + esc(e.question + '／' + e.measured_at + '／' + e.engine + '／引用順 ' + (e.citation_rank || 'なし')) + '</summary><p>' + esc(e.answer_summary || '回答なし') + '</p><p>言及：' + esc(e.accuracy.mentioned == null ? '判定不可' : e.accuracy.mentioned ? 'あり' : 'なし') + '／確認状態：' + esc(e.accuracy.status) + '</p><pre style="white-space:pre-wrap">' + esc(e.citation_urls.join('\n')) + '</pre><select data-pro-review><option value="uncertain">未確定</option><option value="confirmed_error">明らかな誤りあり</option><option value="checked_no_obvious_error">確認した範囲で明らかな誤りなし</option></select><textarea data-pro-note placeholder="比較した事実・参照URL・確認範囲">' + esc(e.accuracy.note || '') + '</textarea><button data-pro-review-save>確認結果を保存</button></details>'; }).join('');
+    var pct = function (v) { return v == null ? tr('svNA') : Math.round(v * 1000) / 10 + '%'; };
+    var sep = tr('svSep'), colon = tr('svColon');
+    box.innerHTML = '<h3>' + esc(tr('svReport')) + '</h3><p>' + esc(report.notice) + '</p>'
+      + '<p>' + esc(report.status === 'unconfigured' ? tr('svUnconfigured') : report.status === 'no_data' ? tr('svUnmeasured') : tr('svSummary', { answers: report.summary.answers, rate: pct(report.summary.citation_rate) })) + '</p>'
+      + '<p>' + esc(tr('svCacheNote')) + '</p>'
+      + '<details><summary>' + esc(tr('svEditSet')) + '</summary><label>' + esc(tr('svQueriesLabel')) + '<textarea data-pro-questions style="width:100%;min-height:120px">' + esc(config.questions.join('\n')) + '</textarea></label>'
+      + '<label>' + esc(tr('svReps')) + ' <input data-pro-n type="number" min="1" max="3" value="' + esc(config.repetitions) + '"></label>'
+      + '<label>' + esc(tr('svCompDomains')) + '<textarea data-pro-competitors style="width:100%">' + esc(config.competitors.join('\n')) + '</textarea></label><button data-pro-save>' + esc(tr('svSaveSet')) + '</button></details>'
+      + '<button data-pro-run>' + esc(tr('svRun')) + '</button> <button data-pro-json>' + esc(tr('svJson')) + '</button><p data-pro-status role="status"></p>'
+      + '<h4>' + esc(tr('svPresence')) + '</h4>' + table([[tr('svQuery'),tr('svAnswers'),tr('svCitations'),tr('svFreq')]].concat(report.presence.map(function(r){ return [r.question,r.answers,r.citations,pct(r.frequency)]; })))
+      + '<h4>' + esc(tr('svVsComp')) + '</h4><p>' + esc(report.sov_basis) + '</p>' + (report.recount_note ? '<p>' + esc(report.recount_note) + '</p>' : '') + table([[tr('svDomain'),tr('svCitations'),tr('svFreq'),'SoV']].concat(report.competitors.map(function(r){ return [r.host + (r.own ? tr('svOwn') : r.recounted ? tr('svRecounted') : ''),r.citations,pct(r.frequency),pct(r.share_of_voice)]; })))
+      + '<h4>' + esc(tr('svTrend')) + '</h4>' + table([[tr('svDateTime'),tr('svAnswers'),tr('svCiteFreq')]].concat(report.trend.map(function(r){ return [r.ran_at,r.answers_received,pct(r.citation_rate)]; })))
+      + '<h4>' + esc(tr('svGaps')) + '</h4>' + (report.gaps.length ? report.gaps.map(function(r){ return '<p>' + esc(r.question + colon + r.reason) + '</p>'; }).join('') : '<p>' + esc(tr('svNoGaps')) + '</p>')
+      + '<h4>' + esc(tr('svAccuracy')) + '</h4><p>' + esc(tr('svAccuracyLead')) + '</p>'
+      + report.evidence.map(function(e){ return '<details data-pro-evidence="' + esc(e.id) + '"><summary>' + esc(e.question + sep + e.measured_at + sep + e.engine + sep + tr('svRank', { n: e.citation_rank || tr('svNone') })) + '</summary><p>' + esc(e.answer_summary || tr('svNoAnswer')) + '</p><p>' + esc(tr('svMentioned')) + esc(e.accuracy.mentioned == null ? tr('svUndeterminable') : e.accuracy.mentioned ? tr('svYes') : tr('svNone')) + esc(sep + tr('svReviewState')) + esc(e.accuracy.status) + '</p><pre style="white-space:pre-wrap">' + esc(e.citation_urls.join('\n')) + '</pre><select data-pro-review><option value="uncertain">' + esc(tr('svUncertain')) + '</option><option value="confirmed_error">' + esc(tr('svConfirmedError')) + '</option><option value="checked_no_obvious_error">' + esc(tr('svNoObvious')) + '</option></select><textarea data-pro-note placeholder="' + esc(tr('svNotePh')) + '">' + esc(e.accuracy.note || '') + '</textarea><button data-pro-review-save>' + esc(tr('svSaveReview')) + '</button></details>'; }).join('');
     section.appendChild(box);
     async function write(path, method, body) {
       var csrf = await (await fetch('/api/csrf', { credentials: 'include' })).json();
       var res = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov' + path, { method:method, credentials:'include', headers:{'content-type':'application/json','x-csrf-token':csrf.csrf_token}, body:body === undefined ? undefined : JSON.stringify(body) });
-      var data = await res.json(); if (!res.ok) throw new Error(data.error || '保存できませんでした'); return data;
+      var data = await res.json(); if (!res.ok) throw new Error(data.error || tr('svSaveFailed')); return data;
     }
     box.addEventListener('click', async function(event) {
       var target = event.target, status = box.querySelector('[data-pro-status]');
@@ -213,9 +219,9 @@
           var a = document.createElement('a'); a.href=blob; a.download='pro-report-' + siteId + '.json'; a.click(); setTimeout(function(){ URL.revokeObjectURL(blob); },1000);
         } else if (target.hasAttribute('data-pro-save')) {
           await write('/query-set','PUT',{questions:box.querySelector('[data-pro-questions]').value.split('\n').filter(function(v){ return v.trim(); }), repetitions:Number(box.querySelector('[data-pro-n]').value), competitors:box.querySelector('[data-pro-competitors]').value.split('\n').map(function(v){ return v.trim(); }).filter(Boolean)});
-          status.textContent='保存しました。次回測定に反映します。';
+          status.textContent=tr('svSaved');
         } else if (target.hasAttribute('data-pro-run')) {
-          status.textContent='測定中…'; var result = await write('','POST'); status.textContent=result.status === 'unconfigured' ? 'Perplexity未設定：測定していません。' : result.cached ? 'キャッシュを再利用しました。' : '測定しました。';
+          status.textContent=tr('svMeasuring'); var result = await write('','POST'); status.textContent=result.status === 'unconfigured' ? tr('svUnconfigured') : result.cached ? tr('svCached') : tr('svDone');
           box.remove(); await addProReport(main,siteId);
         } else if (target.hasAttribute('data-pro-review-save')) {
           var evidence = target.closest('[data-pro-evidence]');
