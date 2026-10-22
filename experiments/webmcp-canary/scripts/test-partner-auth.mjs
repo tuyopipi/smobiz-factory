@@ -48,13 +48,24 @@ async function signup(email, referral_code) {
   const response = await call('/api/auth/signup', { email, referral_code, locale: 'ja' });
   assert.equal(response.status, 200); return response.json();
 }
-async function verify(link) { return call(new URL(link).pathname + new URL(link).search); }
+// A magic link no longer signs in on GET (mail scanners prefetch it): GET
+// renders a confirm page, and its form POSTs the token back.
+async function verify(link) {
+  const target = new URL(link);
+  const page = await call(target.pathname + target.search);
+  if (page.status !== 200) return page;
+  const html = await page.text();
+  const token = html.match(/name="token" value="([a-f0-9]{64})"/)[1];
+  const confirm = html.match(/name="confirm" value="([a-f0-9]{64})"/)[1];
+  const cookie = page.headers.get('set-cookie').match(/nrv_magic_confirm=[^;]+/)[0];
+  return handleApi(new Request('https://nurevo.jp' + target.pathname, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', origin: 'https://nurevo.jp', cookie, 'cf-connecting-ip': `test-${++ip}` }, body: new URLSearchParams({ token, confirm }).toString() }), env, {});
+}
 try {
   const parent = await signup('parent@example.test');
   const token = new URL(parent.loginLink).searchParams.get('token');
   assert.equal(sqlite.prepare('SELECT token FROM auth_tokens WHERE email=?').get('parent@example.test').token === token, false, 'token stored hashed');
   const loggedIn = await verify(parent.loginLink);
-  assert.equal(loggedIn.status, 302); assert.equal(loggedIn.headers.get('location'), '/dashboard');
+  assert.equal(loggedIn.status, 303); assert.equal(loggedIn.headers.get('location'), '/dashboard');
   const cookie = loggedIn.headers.get('set-cookie').match(/nrv_session=[^;]+/)[0];
   assert.ok(sqlite.prepare('SELECT used_at FROM auth_tokens WHERE email=?').get('parent@example.test').used_at);
   assert.match((await verify(parent.loginLink)).headers.get('location'), /auth-error/);
