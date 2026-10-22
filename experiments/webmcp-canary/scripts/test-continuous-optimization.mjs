@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {execFileSync} from 'node:child_process';
 import {handleApi,diagnosticOptions,buildJsonLd,renderHostedStore,hostedSchema,centralLlmsForKey} from '../worker/api.mjs';
-import {diagnoseAeoUrl,extractAeoSignals,scoreAeo} from '../worker/aeo-score.mjs';
+import {diagnoseAeoUrl,extractAeoSignals,scoreAeo,deliveryEvidence} from '../worker/aeo-score.mjs';
 import {storeAeoScore,runAeoScoreCron} from '../worker/diagnose.mjs';
 import {recordFetched,verifyDelivery} from '../worker/aeo-delivery.mjs';
 import {requestAutoFix} from '../worker/aeo-autofix.mjs';
@@ -45,7 +45,7 @@ const config=async()=>{const res=await handleApi(new Request('https://nurevo.jp/
 const first=await config();
 assert.equal(first.ruleset_version,4);
 assert.equal(sqlite.prepare('SELECT * FROM aeo_site_delivery').get(),undefined,'fetch alone never verifies delivery');
-const fetchFixture=(body,version=5)=>async(url,init={})=>init.method==='HEAD'?new Response(null,{status:200}):new Response(String(url).endsWith('/robots.txt')?'User-agent: *\nAllow: /\n# nurevo-aeo-ruleset:'+version:String(url).endsWith('/llms.txt')?'# Fixture Cafe\nAddress: Tokyo phone:0312345678 https://example.test/\n'+ 'real information '.repeat(12)+'\n# nurevo-aeo-ruleset:'+version:body);
+const fetchFixture=(body,version=5)=>async(url,init={})=>init.method==='HEAD'?new Response(null,{status:200}):new Response(String(url).endsWith('/robots.txt')?'User-agent: *\nAllow: /\n# nurevo-aeo-ruleset:'+version:String(url).endsWith('/llms.txt')?'# Fixture Cafe\nAddress: Tokyo phone:0312345678 https://example.test/\n'+ 'real information '.repeat(12)+'\n<!-- nurevo-aeo-ruleset:'+version+' -->':body);
 let result=await diagnoseAeoUrl('https://example.test/',{...await diagnosticOptions(env,'s1'),fetchImpl:fetchFixture(html)});
 result.scannedAt='2026-10-20T01:00:00.000Z';
 assert.equal((await storeAeoScore(env,'s1',result)).deliveredRulesetVersion,null,'no marker means unverified');
@@ -60,7 +60,13 @@ sqlite.exec('UPDATE aeo_rulesets SET active=0; UPDATE aeo_rulesets SET active=1 
 const second=await config();
 assert.equal(second.ruleset_version,5);
 const llmsOutput=await centralLlmsForKey(env,"nrv_test");
-assert.match(llmsOutput,/# nurevo-aeo-ruleset:5/);
+assert.match(llmsOutput,/^<!-- nurevo-aeo-ruleset:5 -->$/m,'llms marker is an HTML comment');
+assert.doesNotMatch(llmsOutput,/^# nurevo-aeo-ruleset/m,'llms marker must not be a second Markdown H1');
+assert.equal((llmsOutput.match(/^# /gm)||[]).length,1,'llms.txt has exactly one H1');
+{const ev=deliveryEvidence('<script type="application/json" id="nurevo-aeo-delivery">{"version":5}</script>','User-agent: *\n# nurevo-aeo-ruleset:5\n',llmsOutput);
+ assert.equal(ev.robotsVersion,5,'verifier reads robots # marker');
+ assert.equal(ev.llmsVersion,5,'verifier reads llms HTML-comment marker');
+ assert.equal(deliveryEvidence('<script id="nurevo-aeo-delivery">{"version":5}</script>','','# T\n# nurevo-aeo-ruleset:4\n').llmsVersion,4,'legacy llms # marker still accepted');}
 assert.match(llmsOutput,/Real description/);
 assert.equal(second.jsonld.contactPoint.email,profile.email,'new declarative property generated without JS changes');
 assert.equal(sqlite.prepare('SELECT * FROM aeo_site_delivery').get(),undefined,'new version fetched still not verified');
