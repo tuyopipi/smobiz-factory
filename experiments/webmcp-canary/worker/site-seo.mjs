@@ -76,7 +76,7 @@ export function siteLlmsTxt(pages, stores) {
     "## Product",
     "",
     "- Free (¥0 / month): AI-readability score, and schema.org, llms.txt and AI crawler rules output to the criteria in force at install time.",
-    "- Standard (¥3,000 / month per site): everything in Free, kept up to date as the criteria change.",
+    "- Standard (¥3,000 / month per site, excluding tax): everything in Free, kept up to date as the criteria change.",
     "- Pro: announced, in beta and not yet on sale. A prioritised fix list, and measurement of how often AI answers cite the site.",
     `- WordPress plugin: https://wordpress.org/plugins/nurevo-webmcp/`,
     `- Operator: Bestie.合同会社 (Tokyo, Japan). Contact: info@nurevo.jp`,

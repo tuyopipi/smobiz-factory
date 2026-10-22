@@ -1885,6 +1885,7 @@ export async function handleApi(request, env, ctx) {
       // cheaper to turn on now than to discover at the first campaign.
       allow_promotion_codes: "true",
       success_url: "https://nurevo.jp/dashboard?checkout=success", cancel_url: "https://nurevo.jp/dashboard?checkout=cancelled", customer_email: memberRow?.email || "", "metadata[siteId]": site.id, "metadata[orgId]": member.org_id, "metadata[plan]": wantedPlan, "subscription_data[metadata][siteId]": site.id, "subscription_data[metadata][orgId]": member.org_id, "subscription_data[metadata][plan]": wantedPlan });
+    applyConsumptionTax(form, env, { lineItem: true });
     const response = await stripeRequest(secret, "/v1/checkout/sessions", form);
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_checkout_failed" }, 502);
     // The tier that was actually priced, and what it costs - not a constant that
@@ -1951,6 +1952,11 @@ export async function handleApi(request, env, ctx) {
       "after_completion[type]": "redirect",
       "after_completion[redirect][url]": "https://nurevo.jp/dashboard?billing=success",
     });
+    // Payment Links cannot carry a fixed tax rate, only Stripe Tax. Refuse
+    // rather than issue a link that would charge the price without tax.
+    if (!applyConsumptionTax(form, env, { lineItem: false }) && taxRateId(env)) {
+      return json({ error: "payment_link_requires_automatic_tax" }, 409);
+    }
     const response = await stripeRequest(secret, "/v1/payment_links", form);
     if (!response.ok || !response.data?.url) return json({ error: response.data?.error?.message || "stripe_payment_link_failed" }, 502);
     return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen, site_id: site.id });
@@ -3050,6 +3056,37 @@ async function loadOwnedSite(env, actor, siteId) {
     return env.DB.prepare("SELECT s.* FROM sites s LEFT JOIN referrers r ON r.id=s.referred_by WHERE s.id=? AND s.org_id=? AND (s.owner_member_id=? OR (s.channel='referral' AND lower(r.email)=lower(?)))").bind(siteId, actor.org_id, actor.member_id, actor.email).first();
   }
   return env.DB.prepare("SELECT * FROM sites WHERE id=? AND org_id=?").bind(siteId, actor.org_id).first();
+}
+
+/*
+ * Consumption tax. Plan prices (3,000 / 14,800 JPY) are tax-exclusive, so 10%
+ * has to be added on top. Two ways, set by environment:
+ *   STRIPE_AUTOMATIC_TAX="1"  Stripe Tax (needs a JP registration in Stripe
+ *                             and prices with tax_behavior=exclusive). Works
+ *                             for Checkout and Payment Links.
+ *   STRIPE_TAX_RATE_ID=txr_…  a fixed 10% exclusive Tax Rate object. Checkout
+ *                             only; Payment Links have no tax_rates field.
+ * With neither set, nothing is added - the state before this change.
+ */
+function taxRateId(env) {
+  return String(env.STRIPE_TAX_RATE_ID || "").trim();
+}
+
+function automaticTaxEnabled(env) {
+  return String(env.STRIPE_AUTOMATIC_TAX ?? "").trim() === "1";
+}
+
+/** Adds tax parameters to a Stripe form. Returns true when tax will be charged. */
+export function applyConsumptionTax(form, env, { lineItem = true } = {}) {
+  if (automaticTaxEnabled(env)) {
+    form.set("automatic_tax[enabled]", "true");
+    return true;
+  }
+  if (lineItem && taxRateId(env)) {
+    form.set("line_items[0][tax_rates][0]", taxRateId(env));
+    return true;
+  }
+  return false;
 }
 
 async function loadOwnedSiteByRef(env, actor, reference) {
