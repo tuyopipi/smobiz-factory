@@ -482,6 +482,7 @@ export async function handleApi(request, env, ctx) {
         engine: { id: engine.id, label: engine.label, citations_available: engine.citations },
         brand: profile.name,
         question,
+        language: profile.language,
         mentioned: sample?.ok ? sample.mentioned : null,
         cited: sample?.ok ? sample.cited : null,
         sample_size: 1,
