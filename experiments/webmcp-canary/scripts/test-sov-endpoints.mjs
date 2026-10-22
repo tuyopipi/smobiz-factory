@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { handleApi, runSovWeeklyBatch } from "../worker/api.mjs";
+import { handleApi, runSovWeeklyBatch, runSovDailyBatch, SOV_MIN_INTERVAL_DAYS } from "../worker/api.mjs";
 import { SOV_LIMITS } from "../worker/aeo-sov.mjs";
 
 const SITE_ID = "site-pro";
@@ -37,6 +37,12 @@ function makeEnv({ plan = "pro", keys = {}, usage = 0, runs = [] } = {}) {
                 return values[0] === SITE_ID
                   ? { id: SITE_ID, org_id: "org1", url: "pro.example.com", website_uri: "https://pro.example.com", slug: null, plan, install_type: "tag", delivery_status: "active" }
                   : null;
+              }
+              if (sql.includes("FROM aeo_sov_runs") && sql.includes("trigger='scheduled'")) {
+                const hit = sovRuns
+                  .filter((run) => run.trigger === "scheduled" && run.status === "measured" && Number(run.answers_received) > 0)
+                  .sort((a, b) => String(b.ran_at).localeCompare(String(a.ran_at)))[0];
+                return hit ? { ran_at: hit.ran_at } : null;
               }
               if (sql.includes("FROM site_settings")) return { name: "栞珈琲", business_type: "喫茶店", address: "東京都渋谷区神宮前1-2-3" };
               if (sql.includes("FROM aeo_sov_usage")) {
@@ -154,7 +160,7 @@ assert.equal(foreign.status, 404, "an unknown site is not found");
   assert.deepEqual(body.supported, ["perplexity", "openai"], "the supported engines are still listed");
   assert.equal(body.latest, null, "no runs means no latest");
   assert.equal(body.limits.monthly_queries, SOV_LIMITS.monthlyQueriesPerSite, "the monthly cap is disclosed");
-  assert.equal(body.limits.schedule, "weekly", "the weekly schedule is disclosed");
+  assert.equal(body.limits.schedule, `every_${SOV_MIN_INTERVAL_DAYS}_days`, "the measurement cadence is disclosed");
   assert.equal(body.beta, true, "the response is labelled beta");
 
   const runResponse = await post(`/api/sites/${SITE_ID}/sov`, env);
@@ -222,7 +228,7 @@ assert.equal(foreign.status, 404, "an unknown site is not found");
   assert.equal(calls.engine, 0, "no engine call is made once the cap is reached");
 }
 
-/* ---------------- weekly batch ---------------- */
+/* ---------------- scheduled batch ---------------- */
 
 {
   const env = makeEnv({ plan: "pro", keys: { PERPLEXITY_API_KEY: "pk" } });
@@ -254,6 +260,78 @@ assert.equal(foreign.status, 404, "an unknown site is not found");
   const result = await runSovWeeklyBatch(env);
   assert.equal(result.sites, 0, "the batch only selects pro sites");
   assert.equal(calls.engine, 0, "no engine call is made for non-pro sites");
+}
+
+/* ---------------- cadence: daily trigger, measured every N days ---------------- */
+
+{
+  assert.equal(SOV_MIN_INTERVAL_DAYS, 3, "a pro site is measured every 3 days");
+  const day = 24 * 60 * 60 * 1000;
+  const now = Date.parse("2026-10-20T18:17:30Z");
+  const scheduled = (agoMs, extra = {}) => ({ trigger: "scheduled", status: "measured", answers_received: 10,
+    ran_at: new Date(now - agoMs).toISOString(), ...extra });
+
+  // Measured yesterday: not due, no engine call, nothing written.
+  {
+    const env = makeEnv({ plan: "pro", keys: { PERPLEXITY_API_KEY: "pk" }, runs: [scheduled(1 * day)] });
+    const calls = installFetch();
+    const result = await runSovDailyBatch(env, { now });
+    assert.equal(result.not_due, 1, "a site measured 1 day ago is not due");
+    assert.equal(result.measured, 0);
+    assert.equal(calls.engine, 0, "and costs nothing");
+  }
+  // Measured 2.9 days ago: still not due.
+  {
+    const env = makeEnv({ plan: "pro", keys: { PERPLEXITY_API_KEY: "pk" }, runs: [scheduled(2.9 * day - 2 * 3600e3)] });
+    const calls = installFetch();
+    const result = await runSovDailyBatch(env, { now });
+    assert.equal(result.not_due, 1);
+    assert.equal(calls.engine, 0);
+  }
+  // Exactly 3 days by the cron clock, with a run that landed a few minutes
+  // after the previous trigger: due.
+  {
+    const env = makeEnv({ plan: "pro", keys: { PERPLEXITY_API_KEY: "pk" }, runs: [scheduled(3 * day - 5 * 60e3)] });
+    const calls = installFetch();
+    const result = await runSovDailyBatch(env, { now });
+    assert.equal(result.not_due, 0, "on the 3rd day the site is due");
+    assert.equal(result.measured, 1);
+    assert.ok(calls.engine > 0);
+  }
+  // A recent manual run does not hold the schedule back.
+  {
+    const env = makeEnv({ plan: "pro", keys: { PERPLEXITY_API_KEY: "pk" },
+      runs: [scheduled(1 * day, { trigger: "manual" }), scheduled(4 * day)] });
+    installFetch();
+    const result = await runSovDailyBatch(env, { now });
+    assert.equal(result.measured, 1, "manual runs do not count towards the cadence");
+  }
+  // A recent scheduled run that got no answers is retried next day.
+  {
+    const env = makeEnv({ plan: "pro", keys: { PERPLEXITY_API_KEY: "pk" },
+      runs: [scheduled(1 * day, { answers_received: 0 })] });
+    installFetch();
+    const result = await runSovDailyBatch(env, { now });
+    assert.equal(result.measured, 1, "a failed scheduled run does not count");
+  }
+  // A month of daily triggers measures ~10 times = ~100 calls, under the cap.
+  {
+    const env = makeEnv({ plan: "pro", keys: { PERPLEXITY_API_KEY: "pk" } });
+    const calls = installFetch();
+    const start = Date.parse("2026-10-01T18:17:00Z");
+    let runs = 0;
+    const realNow = Date.now;
+    try {
+      for (let d = 0; d < 31; d += 1) {
+        const at = start + d * day + 20e3;
+        Date.now = () => at; // runs are stored with the wall clock
+        const result = await runSovDailyBatch(env, { now: at });
+        runs += result.measured;
+      }
+    } finally { Date.now = realNow; }
+    assert.equal(runs, 11, "31 daily triggers measure on days 1,4,...,31");
+    assert.ok(calls.engine <= SOV_LIMITS.monthlyQueriesPerSite * 0.6, `engine calls stay well under the cap (${calls.engine})`);
+  }
 }
 
 /* ---------------- public lightweight checker ---------------- */

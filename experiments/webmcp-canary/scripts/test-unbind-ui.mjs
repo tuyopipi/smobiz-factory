@@ -407,3 +407,25 @@ const CATALOG = {
 }
 
 console.log("catalog panel tests passed");
+
+/* ---------------- Pro follows the server's sale switch ---------------- */
+
+{
+  // The dashboard does not decide whether Pro is on sale; /api/sites says so
+  // (pro_checkout), and the plan panel renders from that.
+  const free = BOUND({ plan: "free", billing: { status: "pending", customer_id: null, subscription_id: null } });
+  const off = makeSandbox().sandbox;
+  const offHtml = off.__detail(free);
+  assert.equal(offHtml.includes('id="pro-checkout"'), false, "switch off: no Pro checkout");
+  assert.ok(offHtml.includes("近日提供"), "switch off: still coming soon");
+
+  const on = makeSandbox().sandbox;
+  vm.runInContext("PRO_CHECKOUT=true;", on);
+  const onHtml = on.__detail(free);
+  assert.ok(onHtml.includes('id="pro-checkout"'), "switch on: Pro can be bought");
+  assert.ok(onHtml.includes("¥14,800"), "at its price");
+  assert.equal(onHtml.includes("近日提供"), false, "and is no longer called coming soon");
+  assert.ok(onHtml.includes('id="standard-pay-open"'), "Standard is still offered");
+}
+
+console.log("pro sale switch UI tests passed");

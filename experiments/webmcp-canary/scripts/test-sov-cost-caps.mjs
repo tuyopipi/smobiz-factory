@@ -115,11 +115,11 @@ for (const remaining of [1, 3, 7]) {
   }
 }
 
-/* --- cap 5: the weekly batch respects the same budget ---------------------- */
+/* --- cap 5: the scheduled batch respects the same budget ---------------------- */
 installFetch();
 const batchExhausted = env({ usage: SOV_LIMITS.monthlyQueriesPerSite });
 const batch = await runSovWeeklyBatch(batchExhausted);
-assert.equal(engineCalls, 0, "the weekly batch issues no call for a site over its cap");
+assert.equal(engineCalls, 0, "the scheduled batch issues no call for a site over its cap");
 assert.equal(batch.skipped, 1, "the capped site is skipped");
 assert.equal(batch.errors[0].error, "monthly_quota_exhausted", "the batch reports why it skipped");
 

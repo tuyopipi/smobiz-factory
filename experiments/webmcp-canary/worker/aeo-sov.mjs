@@ -34,8 +34,9 @@ export const RATE_BASES = Object.freeze(["measured", "insufficient_samples", "no
 
 /**
  * Cost control. These are hard limits enforced in code, not suggestions.
- * A pro site is measured weekly, so the monthly cap leaves headroom for a
- * small number of manual runs on top of the four scheduled ones.
+ * The batch is triggered daily but measures a pro site only every
+ * SOV_MIN_INTERVAL_DAYS (3) days: ~10 scheduled runs x 10 calls = ~100 calls a
+ * month, so the 200-call cap leaves headroom for manual runs on top.
  */
 export const SOV_LIMITS = Object.freeze({
   maxQuestionsPerRun: 20,

@@ -53,8 +53,10 @@ export default {
     const jobs = [];
 
     // Every customer site gets one daily score point and, when the provider
-    // key exists, one daily SoV run. A missing SoV key is an explicit safe
-    // skip and must not hold up the other daily jobs.
+    // key exists, the SoV batch runs; it re-measures each pro site only every
+    // SOV_MIN_INTERVAL_DAYS days so the monthly engine-call cap lasts the
+    // month. A missing SoV key is an explicit safe skip and must not hold up
+    // the other daily jobs.
     if (cron === dailyCron) {
       jobs.push(
         runLearningJob(env, { trigger: "scheduled" }).then((result) => {

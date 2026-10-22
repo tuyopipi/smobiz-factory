@@ -19,7 +19,7 @@ import {
   profileToColumns, rowToProfile, serializeFieldSources,
 } from "./site-profile.mjs";
 import { normalizeDomainKey } from "./domain-key.mjs";
-import { planFromSubscription, pricesFromEnv, resolveSitePlan } from "./billing-plan.mjs";
+import { planFromSubscription, pricesFromEnv, proCheckoutEnabled, resolveSitePlan } from "./billing-plan.mjs";
 import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
 import { geocodeSiteProfile } from "./geocoder.mjs";
@@ -115,6 +115,18 @@ function normalizePairingCode(raw) {
  */
 const CHECKOUTABLE_PLANS = Object.freeze(['standard']);
 const COMING_SOON_PLANS = Object.freeze(['pro']);
+/*
+ * Pro goes on sale behind an explicit switch: PRO_CHECKOUT_ENABLED="1" AND a
+ * Pro price id. Either alone keeps the coming-soon behaviour above, so adding
+ * the price id first (or flipping the flag before the price exists) cannot
+ * start selling a plan by accident. See proCheckoutEnabled() in billing-plan.
+ */
+function checkoutablePlans(env) {
+  return proCheckoutEnabled(env) ? [...CHECKOUTABLE_PLANS, 'pro'] : CHECKOUTABLE_PLANS;
+}
+function comingSoonPlans(env) {
+  return proCheckoutEnabled(env) ? [] : COMING_SOON_PLANS;
+}
 const SUPER_ADMIN_EMAILS_ENV = "SUPER_ADMIN_EMAILS";
 /*
  * What has to be filled in before a profile counts as complete.
@@ -1125,7 +1137,9 @@ export async function handleApi(request, env, ctx) {
         checklist,
       };
     });
-    return json({ sites });
+    // Whether Pro can be bought, so the dashboard follows the server's switch
+    // instead of hardcoding "coming soon".
+    return json({ sites, pro_checkout: proCheckoutEnabled(env), pro_monthly_yen: PLAN_MONTHLY_YEN.pro });
   }
 
   const aeoMetricsMatch = path.match(/^\/api\/sites\/([^/]+)\/aeo-metrics$/i);
@@ -1257,7 +1271,8 @@ export async function handleApi(request, env, ctx) {
         questions_per_run: SOV_LIMITS.maxQuestionsPerRun,
         engines_per_run: SOV_LIMITS.maxEnginesPerRun,
         monthly_queries: SOV_LIMITS.monthlyQueriesPerSite,
-        schedule: "weekly",
+        // Triggered daily; each site is re-measured every N days.
+        schedule: `every_${SOV_MIN_INTERVAL_DAYS}_days`,
       },
       usage: budget,
     });
@@ -1865,15 +1880,22 @@ export async function handleApi(request, env, ctx) {
     // the Pro price whatever the caller meant, so there is deliberately no
     // default to fall back to.
     const wantedPlan = String(body.plan || "").trim().toLowerCase();
-    if (COMING_SOON_PLANS.includes(wantedPlan)) {
-      return json({ error: "plan_not_available", plan: wantedPlan, coming_soon: true, allowed: CHECKOUTABLE_PLANS }, 400);
+    const allowedPlans = checkoutablePlans(env);
+    if (comingSoonPlans(env).includes(wantedPlan)) {
+      return json({ error: "plan_not_available", plan: wantedPlan, coming_soon: true, allowed: allowedPlans }, 400);
     }
-    if (!CHECKOUTABLE_PLANS.includes(wantedPlan)) {
-      return json({ error: "plan_required", allowed: CHECKOUTABLE_PLANS }, 400);
+    if (!allowedPlans.includes(wantedPlan)) {
+      return json({ error: "plan_required", allowed: allowedPlans }, 400);
     }
     const site = await loadOwnedSiteByRef(env, member, siteRef);
     if (!site) return json({ error: "not_found" }, 404);
     if (!["direct", "referral"].includes(site.channel || "direct")) return json({ error: "channel_not_checkoutable" }, 400);
+    // A site that already has a live subscription changes tier in Stripe's
+    // portal, which prorates and replaces the plan. A second Checkout here
+    // would start a second subscription and bill both.
+    if (String(site.stripe_subscription_id || "").trim() && !["cancelled", "canceled", "stopped"].includes(String(site.contract || "").toLowerCase())) {
+      return json({ error: "subscription_exists", plan: wantedPlan, manage: "portal" }, 409);
+    }
     const secret = stripeSecret(env);
     if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
     const priceId = pricesFromEnv(env)[wantedPlan];
@@ -2454,10 +2476,11 @@ async function requireProfileToken(request, env, siteId) {
 /*
  * What to say to a site that cannot measure yet.
  *
- * An announcement, not an offer. Pro is beta and not on sale, so this carries
- * no price and no checkout - a price next to a plan that cannot be bought
- * reads as a price you could pay today. `coming_soon` is the flag the
- * dashboard renders from; `purchasable: false` states it for any other reader.
+ * While Pro is not on sale this is an announcement, not an offer: no price and
+ * no checkout - a price next to a plan that cannot be bought reads as a price
+ * you could pay today. `coming_soon` is the flag the dashboard renders from;
+ * `purchasable` states it for any other reader. Once proCheckoutEnabled(env) is
+ * true the same object becomes an offer with the price and the checkout entry.
  */
 const SOV_UPGRADE = Object.freeze({
   required_plan: "pro",
@@ -2468,6 +2491,20 @@ const SOV_UPGRADE = Object.freeze({
   details_url: "https://nurevo.jp/#pro-detail",
   message: "AI登場率の測定はProプラン（β・近日提供）の機能です。現在は提供準備中です。",
 });
+const SOV_UPGRADE_ON_SALE = Object.freeze({
+  required_plan: "pro",
+  plan_label: "Pro",
+  coming_soon: false,
+  purchasable: true,
+  beta: SOV_BETA,
+  price_yen: PLAN_MONTHLY_YEN.pro,
+  details_url: "https://nurevo.jp/#pro-detail",
+  checkout_url: "https://nurevo.jp/dashboard?plan=pro",
+  message: `AI登場率の測定はProプラン（¥${PLAN_MONTHLY_YEN.pro.toLocaleString("en-US")}/月・測定はβ）の機能です。`,
+});
+function sovUpgrade(env) {
+  return proCheckoutEnabled(env) ? SOV_UPGRADE_ON_SALE : SOV_UPGRADE;
+}
 
 /**
  * Resolve the target site and require the pro plan.
@@ -2508,7 +2545,7 @@ async function requireProSite(request, env, siteId) {
   if (plan !== "pro") {
     return {
       ok: false,
-      response: json({ error: "upgrade_required", plan, upgrade: SOV_UPGRADE }, 402),
+      response: json({ error: "upgrade_required", plan, upgrade: sovUpgrade(env) }, 402),
     };
   }
   return { ok: true, member, site, plan };
@@ -2593,11 +2630,48 @@ function sovTargetUrl(site) {
   return /^https?:\/\//i.test(raw) ? raw : `https://${raw}`;
 }
 
-/**
- * Weekly pro batch. Cost control is structural: only pro sites are selected,
- * each run is capped, and each site's monthly counter gates it independently.
+/*
+ * The batch is triggered daily, but a site is only re-measured once its last
+ * successful scheduled run is SOV_MIN_INTERVAL_DAYS old. A run is 5 questions
+ * x 2 repetitions = 10 engine calls, so measuring every day spent the
+ * 200-call monthly cap by about day 20 and left the rest of the month dark.
+ * Every 3 days is ~10 runs = ~100 calls a month, with headroom for manual runs.
  */
-export async function runSovDailyBatch(env, { limit = 200 } = {}) {
+export const SOV_MIN_INTERVAL_DAYS = 3;
+// The cron fires at the same minute each day but a run lands a few seconds to
+// minutes after it, so "exactly 3 days ago" would read as 2.99 days and slip a
+// day. An hour of slack keeps the cadence on the 3rd day.
+const SOV_INTERVAL_SLACK_MS = 60 * 60 * 1000;
+
+function sovMinIntervalMs(env) {
+  const raw = Number(env?.SOV_MIN_INTERVAL_DAYS);
+  const days = Number.isFinite(raw) && raw >= 0 ? raw : SOV_MIN_INTERVAL_DAYS;
+  return Math.max(0, days * 24 * 60 * 60 * 1000 - SOV_INTERVAL_SLACK_MS);
+}
+
+/**
+ * When a site was last measured successfully by the schedule. Manual runs do
+ * not count: they are the owner's extra checks, and must not push back the
+ * scheduled cadence. Runs with no answers do not count either, so a run that
+ * failed at the engine is retried on the next daily trigger.
+ */
+async function lastScheduledSovRunAt(env, siteId) {
+  const row = await env.DB.prepare(`
+    SELECT ran_at FROM aeo_sov_runs
+     WHERE site_id=? AND trigger='scheduled' AND status='measured' AND answers_received>0
+     ORDER BY ran_at DESC LIMIT 1
+  `).bind(siteId).first();
+  const at = row ? Date.parse(row.ran_at) : NaN;
+  return Number.isFinite(at) ? at : null;
+}
+
+/**
+ * Pro SoV batch, triggered daily; each site is measured every
+ * SOV_MIN_INTERVAL_DAYS days. Cost control is structural: only pro sites are
+ * selected, each run is capped, and each site's monthly counter gates it
+ * independently.
+ */
+export async function runSovDailyBatch(env, { limit = 200, now = Date.now() } = {}) {
   if (!env?.DB) throw new Error("DB binding is required for the SoV batch");
   const engines = availableEngines(env);
   if (!engines.length) {
@@ -2612,9 +2686,13 @@ export async function runSovDailyBatch(env, { limit = 200 } = {}) {
 
   let measured = 0;
   let skipped = 0;
+  let notDue = 0;
   const errors = [];
+  const minInterval = sovMinIntervalMs(env);
   for (const site of result.results || []) {
     try {
+      const lastAt = minInterval > 0 ? await lastScheduledSovRunAt(env, site.id) : null;
+      if (lastAt !== null && now - lastAt < minInterval) { notDue += 1; continue; }
       const outcome = await runSiteSov(env, site, { trigger: "scheduled" });
       if (outcome.error) { skipped += 1; errors.push({ site_id: site.id, error: outcome.error }); continue; }
       measured += 1;
@@ -2631,11 +2709,13 @@ export async function runSovDailyBatch(env, { limit = 200 } = {}) {
     sites: (result.results || []).length,
     measured,
     skipped,
+    not_due: notDue,
+    min_interval_days: minInterval > 0 ? (minInterval + SOV_INTERVAL_SLACK_MS) / 86400000 : 0,
     errors: errors.slice(0, 20),
   };
 }
 
-// Kept for callers/tests from the weekly beta; both now use the daily vessel.
+// Kept for callers/tests from the weekly beta; both names run the same batch.
 export const runSovWeeklyBatch = runSovDailyBatch;
 
 function normalizeAeoPlan(value) {

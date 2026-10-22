@@ -46,11 +46,13 @@ export const PRODUCT = {
   category: "BusinessApplication",
   operatingSystem: "WordPress",
   downloadUrl: "https://wordpress.org/plugins/nurevo-webmcp/",
-  // Only what can be bought, or used for nothing, today. Pro is announced with a
-  // planned figure and is not on sale, so it is not an Offer.
+  // Only what can be bought, or used for nothing, today. Pro is listed once it
+  // is on sale (worker: PRO_CHECKOUT_ENABLED=1 + STRIPE_PRICE_ID_PRO). Do not
+  // publish this page before that switch is on in production.
   offers: [
     { nameKey: "price.free.nm", descKey: "price.free.desc", price: 0, url: "/#pricing" },
     { nameKey: "price.std.nm", descKey: "price.std.desc", price: 3000, monthly: true, url: "/dashboard?plan=standard" },
+    { nameKey: "price.top.nm", descKey: "price.top.desc", price: 14800, monthly: true, url: "/dashboard?plan=pro" },
   ],
 };
 

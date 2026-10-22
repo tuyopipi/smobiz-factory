@@ -129,12 +129,12 @@ function buildVisibilitySection(plan, sov) {
     return {
       available: false,
       reason: "plan",
-      message: "AI登場率の測定はProプラン（¥14,800/月〜）の機能です。",
+      message: "AI登場率の測定はProプラン（¥14,800/月）の機能です。",
       upgrade_url: "https://nurevo.jp/dashboard",
     };
   }
   if (!sov || !sov.latest) {
-    return { available: false, reason: "no_data", message: "AI登場率はまだ測定されていません。次回の週次測定で計測されます。" };
+    return { available: false, reason: "no_data", message: "AI登場率はまだ測定されていません。次回の定期測定（3日ごと）で計測されます。" };
   }
   if (sov.latest.status === "unconfigured") {
     return { available: false, reason: "unconfigured", message: "AIエンジンが未設定のため、AI登場率は測定していません。" };

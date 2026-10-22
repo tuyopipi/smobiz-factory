@@ -560,7 +560,7 @@ files.set("sitemap.xml", pagesSitemap);
 files.set("llms-pages.json", `${JSON.stringify({
   home: LANGS.map((lang) => ({ lang: lang.hreflang, url: ORIGIN + lang.path, title: t("meta.title", lang.code) })),
   pages: [
-    { lang: "ja", path: "/#pricing", title: "料金 / Pricing", summary: "Standard: ¥3,000 / month / site. Pro: coming soon." },
+    { lang: "ja", path: "/#pricing", title: "料金 / Pricing", summary: "Standard: ¥3,000 / month / site. Pro: ¥14,800 / month / site (AI visibility measurement in beta)." },
     { lang: "en", path: "/guide/", title: "AEO Guides" },
     { lang: "ja", path: "/ja/guide/", title: "AEOガイド" },
     ...publishedContent, ...STATIC_PAGES.filter((page) => page.summary)]

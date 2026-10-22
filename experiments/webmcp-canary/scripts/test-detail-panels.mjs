@@ -191,17 +191,24 @@ const render = (site, opts) => makeSandbox(opts).__detail(SITE(site));
 }
 
 {
-  // Pro is beta and its landing-page button is a detail link, not a purchase,
-  // so it must never arrive here as a chosen plan. Asserted on the parse
-  // itself, because the renderer guards on "standard" too and would hide a
-  // mistake made here.
-  assert.equal(makeSandbox({ search: "?plan=standard" }).__planIntent(), "standard", "the buyable plan is read");
-  assert.equal(makeSandbox({ search: "?plan=pro" }).__planIntent(), null, "a plan that cannot be bought is not an intent");
-  assert.equal(makeSandbox({ search: "?plan=enterprise" }).__planIntent(), null, "nor is one that does not exist");
+  // The landing page's Pro button links to ?plan=pro. Reading that intent is
+  // harmless; what matters is that it only turns into a Pro checkout when the
+  // server says Pro is on sale (pro_checkout from /api/sites).
+  assert.equal(makeSandbox({ search: "?plan=standard" }).__planIntent(), "standard", "the Standard intent is read");
+  assert.equal(makeSandbox({ search: "?plan=pro" }).__planIntent(), "pro", "the Pro intent is read");
+  assert.equal(makeSandbox({ search: "?plan=enterprise" }).__planIntent(), null, "a plan that does not exist is not");
   assert.equal(makeSandbox({ search: "" }).__planIntent(), null, "and no query is no intent");
 
-  const pro = render({}, { search: "?plan=pro" });
-  assert.ok(!pro.includes("選択中"), "so nothing is marked as chosen");
+  const proOff = render({}, { search: "?plan=pro" });
+  assert.ok(!proOff.includes("選択中"), "while Pro is not on sale, nothing is marked as chosen");
+  assert.ok(!proOff.includes('id="pro-checkout"'), "and there is no Pro checkout");
+
+  const sandbox = makeSandbox({ search: "?plan=pro" });
+  vm.runInContext("PRO_CHECKOUT=true;", sandbox);
+  const proOn = sandbox.__detail(SITE({}));
+  assert.ok(proOn.includes("Proを選択中"), "once on sale, arriving from the Pro button says so");
+  assert.ok(proOn.includes('id="pro-checkout"'), "and offers the Pro checkout");
+  assert.ok(!proOn.includes("Standardを選択中"), "without claiming Standard was chosen");
 }
 
 console.log("detail panel tests passed");

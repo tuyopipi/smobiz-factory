@@ -136,3 +136,16 @@ export function pricesFromEnv(env = {}) {
     standard: String(env.STRIPE_PRICE_ID_STANDARD || "").trim(),
   };
 }
+
+/**
+ * Whether Pro can be bought right now.
+ *
+ * Two independent switches, both required: the explicit go-live flag
+ * PRO_CHECKOUT_ENABLED="1", and a configured Pro price id. The flag alone
+ * would offer a checkout that fails on a missing price; the price alone is the
+ * state production was in while Pro was deliberately not on sale. Anything else
+ * ("true", "yes", unset) leaves Pro as coming soon.
+ */
+export function proCheckoutEnabled(env = {}) {
+  return String(env.PRO_CHECKOUT_ENABLED ?? "").trim() === "1" && !!pricesFromEnv(env).pro;
+}
