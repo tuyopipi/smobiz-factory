@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.7.4
+Stable tag: 0.8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -176,6 +176,20 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.8.0 =
+* Nothing is sent to the Nurevo service until you agree. Activating the plugin no longer runs a diagnosis or makes any request. The AEO screen explains what the diagnosis sends and runs it when you tick the consent box and press "Run diagnosis". Pairing the site with a code also counts as agreeing.
+* The "Nurevo AEO is off" notice is now informational. On the Plugins screen it can be dismissed, and stays dismissed for you.
+* Per-page settings in the block editor sidebar and the classic editor: leave a page out of llms.txt, publish no Nurevo structured data on it, or give it its own questions and answers. A page's own FAQ is shown by the Nurevo FAQ block set to "This page's own questions" or by `[nurevo_faq source="post"]`, and published as FAQPage on that page only.
+* Tools: export and import the settings as JSON. Keys, tokens, the plan and the connection are never exported or imported.
+* WP-CLI commands `wp nurevo status|diagnose|export|import`, and a read-only REST route `nurevo/v1/status` for administrators.
+* Filters for developers, documented in DEVELOPERS.md: `nurevo_schema_graph`, `nurevo_business_node`, `nurevo_llms_txt`, `nurevo_llms_txt_lines`, `nurevo_robots_search_agents`, `nurevo_robots_training_agents` and `nurevo_excluded_post_ids`.
+* llms.txt is cached and refreshed when posts or settings change, and is served with `Cache-Control: public, max-age=300`.
+* Multisite: network activation schedules the twice-daily sync on every site, new sites get it too, and network deactivation clears it everywhere.
+* The privacy policy guide (Settings > Privacy) now suggests text describing what is sent to nurevo.jp and when.
+* Connection error messages are written for site owners instead of developers.
+* New settings to hide the AEO score in the admin bar and the Dashboard widget. Both stay on unless you turn them off.
+* The Nurevo FAQ block title is translated.
+
 = 0.7.4 =
 * AI crawlers are now split by purpose. Crawlers that read and cite pages for AI search (OAI-SearchBot, ChatGPT-User, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User) are allowed. Training crawlers (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot) are left to your robots.txt unless you choose to allow or block them. Blocking them no longer lowers the AEO score.
 * The robots.txt groups Nurevo adds now repeat your site's own rules, such as Disallow: /wp-admin/. Before, a crawler named in its own group skipped those rules.
@@ -262,6 +276,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.8.0 =
+
+Asks before contacting the Nurevo service: press "Run diagnosis" once on the AEO screen to keep receiving the score (connected sites are unaffected). Adds per-page settings, settings export/import, WP-CLI commands and developer filters.
 
 = 0.7.4 =
 

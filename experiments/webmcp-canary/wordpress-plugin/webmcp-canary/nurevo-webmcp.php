@@ -3,7 +3,7 @@
  * Plugin Name: Nurevo AEO
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
- * Version: 0.7.4
+ * Version: 0.8.0
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Nurevo
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WEBMCP_CANARY_VERSION', '0.7.4');
+define('WEBMCP_CANARY_VERSION', '0.8.0');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
@@ -79,6 +79,9 @@ function webmcp_canary_default_settings() {
         'admin_token' => '',
         // Per-site write credential for the profile sync. Never printed publicly.
         'profile_token' => '',
+        // Where the score shows in wp-admin. Both on by default.
+        'show_admin_bar_score' => '1',
+        'show_dashboard_widget' => '1',
     );
 }
 
@@ -440,19 +443,20 @@ function webmcp_canary_register_faq_block() {
 
 function webmcp_canary_faq_block_editor_js() {
     $strings = array(
+        'title' => __('Nurevo FAQ', 'nurevo-webmcp'),
         'source' => __('Questions to show', 'nurevo-webmcp'),
         'site' => __('Site-wide questions (Settings)', 'nurevo-webmcp'),
         'post' => __('This page’s own questions', 'nurevo-webmcp'),
     );
     return "(function(wp,t){if(!wp||!wp.blocks||!wp.element){return;}var el=wp.element.createElement;"
         . "var SSR=wp.serverSideRender;var be=wp.blockEditor||{};var c=wp.components||{};"
-        . "wp.blocks.registerBlockType('nurevo/faq',{apiVersion:2,title:'Nurevo FAQ',category:'widgets',icon:'editor-help',supports:{html:false},"
+        . "wp.blocks.registerBlockType('nurevo/faq',{apiVersion:2,title:t.title,category:'widgets',icon:'editor-help',supports:{html:false},"
         . "attributes:{source:{type:'string',default:'site'}},"
         . "edit:function(p){var props=be.useBlockProps?be.useBlockProps():{};var src=p.attributes.source||'site';"
         . "var pid=wp.data&&wp.data.select('core/editor')?wp.data.select('core/editor').getCurrentPostId():0;"
         . "var panel=be.InspectorControls&&c.SelectControl?el(be.InspectorControls,{},el(c.PanelBody,{},el(c.SelectControl,{label:t.source,value:src,"
         . "options:[{label:t.site,value:'site'},{label:t.post,value:'post'}],onChange:function(v){p.setAttributes({source:v});}}))):null;"
-        . "return el('div',props,panel,SSR?el(SSR,{block:'nurevo/faq',attributes:{source:src},urlQueryArgs:pid?{post_id:pid}:{}}):'Nurevo FAQ');},"
+        . "return el('div',props,panel,SSR?el(SSR,{block:'nurevo/faq',attributes:{source:src},urlQueryArgs:pid?{post_id:pid}:{}}):t.title);},"
         . "save:function(){return null;}});})(window.wp," . wp_json_encode($strings) . ");";
 }
 
@@ -931,6 +935,7 @@ function webmcp_canary_register_settings() {
     add_settings_field('faq', __('Frequently asked questions', 'nurevo-webmcp'), 'webmcp_canary_faq_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('services', __('Bookable services', 'nurevo-webmcp'), 'webmcp_canary_services_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('license_key', __('License key', 'nurevo-webmcp'), 'webmcp_canary_license_key_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('admin_display', __('Score in wp-admin', 'nurevo-webmcp'), 'webmcp_canary_admin_display_field', 'webmcp_canary', 'webmcp_canary_main');
 
     // Connection and debug settings, rendered inside the collapsed developer block.
     add_settings_section('webmcp_canary_advanced', '__return_false', '__return_false', 'webmcp_canary');
@@ -1143,6 +1148,41 @@ function webmcp_canary_sanitize_settings($input) {
         'site_email' => isset($input['site_email']) ? sanitize_email($input['site_email']) : '',
         'admin_token' => isset($input['admin_token']) ? sanitize_text_field($input['admin_token']) : '',
         'profile_token' => $profile_token,
+        'show_admin_bar_score' => webmcp_canary_sanitize_display_toggle($input, $current, 'show_admin_bar_score'),
+        'show_dashboard_widget' => webmcp_canary_sanitize_display_toggle($input, $current, 'show_dashboard_widget'),
+    );
+}
+
+/**
+ * A wp-admin display switch. On the settings form an unticked box is simply
+ * absent, so the form sends a marker; every other write (cron, sync, import of
+ * an older file) that leaves the key out keeps the current value instead of
+ * switching it off.
+ */
+function webmcp_canary_sanitize_display_toggle($input, $current, $key) {
+    if (!empty($input['admin_display_submitted'])) {
+        return !empty($input[$key]) ? '1' : '0';
+    }
+    if (isset($input[$key])) {
+        return !empty($input[$key]) ? '1' : '0';
+    }
+    return isset($current[$key]) && $current[$key] === '0' ? '0' : '1';
+}
+
+function webmcp_canary_admin_display_field() {
+    $settings = webmcp_canary_settings();
+    printf('<input type="hidden" name="%1$s[admin_display_submitted]" value="1">', esc_attr(WEBMCP_CANARY_OPTION));
+    printf(
+        '<p><label><input type="checkbox" name="%1$s[show_admin_bar_score]" value="1" %2$s> %3$s</label></p>',
+        esc_attr(WEBMCP_CANARY_OPTION),
+        checked('1', $settings['show_admin_bar_score'], false),
+        esc_html__('Show the AEO score in the admin bar', 'nurevo-webmcp')
+    );
+    printf(
+        '<p><label><input type="checkbox" name="%1$s[show_dashboard_widget]" value="1" %2$s> %3$s</label></p>',
+        esc_attr(WEBMCP_CANARY_OPTION),
+        checked('1', $settings['show_dashboard_widget'], false),
+        esc_html__('Show the Nurevo AEO widget on the Dashboard', 'nurevo-webmcp')
     );
 }
 
@@ -5148,7 +5188,7 @@ function webmcp_canary_fix_aeo() {
 
 add_action('admin_bar_menu', 'webmcp_canary_admin_bar_score', 90);
 function webmcp_canary_admin_bar_score($wp_admin_bar) {
-    if (!current_user_can('manage_options')) {
+    if (!current_user_can('manage_options') || webmcp_canary_settings()['show_admin_bar_score'] === '0') {
         return;
     }
     $cached = webmcp_canary_cached_aeo_score();
@@ -5167,7 +5207,7 @@ function webmcp_canary_admin_bar_score($wp_admin_bar) {
 
 add_action('wp_dashboard_setup', 'webmcp_canary_register_aeo_widget');
 function webmcp_canary_register_aeo_widget() {
-    if (current_user_can('manage_options')) {
+    if (current_user_can('manage_options') && webmcp_canary_settings()['show_dashboard_widget'] !== '0') {
         wp_add_dashboard_widget('webmcp_canary_aeo_widget', 'Nurevo AEO', 'webmcp_canary_aeo_widget');
     }
 }
@@ -5413,6 +5453,7 @@ function webmcp_canary_exportable_setting_keys() {
         'enabled', 'allow_ai_crawlers', 'ai_training', 'serve_llms_txt', 'serve_schema', 'avoid_schema_duplicates',
         'faq_page_id', 'business_name', 'business_description', 'business_address', 'business_phone',
         'business_hours', 'business_type', 'business_url', 'business_email',
+        'show_admin_bar_score', 'show_dashboard_widget',
     );
 }
 

@@ -674,6 +674,13 @@ const JA = {
     "管理者が任意のNurevoブラウザタグをオンにした場合、公開ページで nurevo.jp のスクリプトが読み込まれます。このスクリプトは公開フォームの構造と送信の成否を報告し、訪問者が入力した内容は送信しない設計になっています。",
   "Nurevo privacy policy: %s":
     "Nurevoのプライバシーポリシー: %s",
+  // wp-admin display switches (0.8.0).
+  "Score in wp-admin":
+    "管理画面でのスコア表示",
+  "Show the AEO score in the admin bar":
+    "管理バーにAEOスコアを表示する",
+  "Show the Nurevo AEO widget on the Dashboard":
+    "ダッシュボードにNurevo AEOウィジェットを表示する",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo

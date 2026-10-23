@@ -178,6 +178,7 @@ $GLOBALS['webmcp_test_user_meta'] = array();
 function get_user_meta($user_id, $key = '', $single = false) { return $GLOBALS['webmcp_test_user_meta'][$user_id][$key] ?? ($single ? '' : array()); }
 function update_user_meta($user_id, $key, $value) { $GLOBALS['webmcp_test_user_meta'][$user_id][$key] = $value; return true; }
 function wp_create_nonce($action = -1) { return md5($action); }
+function wp_add_dashboard_widget($id, $title, $callback) { $GLOBALS['webmcp_test_widgets'][$id] = $title; }
 function wp_kses_post($html) { return $html; }
 function wp_add_privacy_policy_content($name, $text) { $GLOBALS['webmcp_test_privacy'][$name] = $text; }
 $GLOBALS['webmcp_test_transients'] = array();
@@ -3128,5 +3129,47 @@ expect($privacy !== '', 'privacy policy text is suggested to WordPress');
 foreach (array('nurevo.jp', 'Only after a site administrator agrees', 'pairing code', 'home page address', 'business details', 'no visitor data', 'https://nurevo.jp/privacy') as $disclosed) {
     expect(strpos($privacy, $disclosed) !== false, "the privacy text states: {$disclosed}");
 }
+
+/* --- 0.8.0: wp-admin display switches, FAQ block title, version -------- */
+
+$display_defaults = webmcp_canary_default_settings();
+expect($display_defaults['show_admin_bar_score'] === '1' && $display_defaults['show_dashboard_widget'] === '1', 'the admin bar score and the Dashboard widget are on by default');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($display_defaults, array('enabled' => '1'));
+$admin_bar = new class { public $nodes = array(); public function add_node($node) { $this->nodes[] = $node; } };
+webmcp_canary_admin_bar_score($admin_bar);
+expect(count($admin_bar->nodes) === 1, 'the admin bar shows the score by default');
+$GLOBALS['webmcp_test_widgets'] = array();
+webmcp_canary_register_aeo_widget();
+expect(isset($GLOBALS['webmcp_test_widgets']['webmcp_canary_aeo_widget']), 'the Dashboard widget is registered by default');
+
+$hidden = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('admin_display_submitted' => '1', 'show_admin_bar_score' => '', 'show_dashboard_widget' => '')));
+expect($hidden['show_admin_bar_score'] === '0' && $hidden['show_dashboard_widget'] === '0', 'unticking both on the form turns them off');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $hidden;
+$admin_bar->nodes = array();
+webmcp_canary_admin_bar_score($admin_bar);
+expect($admin_bar->nodes === array(), 'the admin bar score can be hidden');
+$GLOBALS['webmcp_test_widgets'] = array();
+webmcp_canary_register_aeo_widget();
+expect(empty($GLOBALS['webmcp_test_widgets']), 'the Dashboard widget can be hidden');
+$kept_hidden = webmcp_canary_sanitize_settings(array('enabled' => '1'));
+expect($kept_hidden['show_admin_bar_score'] === '0', 'a write that does not come from the form keeps the choice');
+$stored_before_080 = $display_defaults;
+unset($stored_before_080['show_admin_bar_score'], $stored_before_080['show_dashboard_widget']);
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $stored_before_080;
+$upgraded = webmcp_canary_sanitize_settings($stored_before_080);
+expect($upgraded['show_admin_bar_score'] === '1' && $upgraded['show_dashboard_widget'] === '1', 'an install upgraded from 0.7 keeps both on');
+$shown_again = webmcp_canary_sanitize_settings(array('admin_display_submitted' => '1', 'show_admin_bar_score' => '1', 'show_dashboard_widget' => '1'));
+expect($shown_again['show_admin_bar_score'] === '1' && $shown_again['show_dashboard_widget'] === '1', 'ticking them turns them back on');
+expect(in_array('show_admin_bar_score', webmcp_canary_exportable_setting_keys(), true), 'the switches travel with an export');
+
+$block_js = webmcp_canary_faq_block_editor_js();
+expect(strpos($block_js, "title:'Nurevo FAQ'") === false && strpos($block_js, 'title:t.title') !== false, 'the FAQ block title comes from a translated string');
+expect(strpos($block_js, '"title":"Nurevo FAQ"') !== false, 'which is passed in from PHP');
+
+$main_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
+expect(WEBMCP_CANARY_VERSION === '0.8.0' && strpos($main_source, " * Version: 0.8.0\n") !== false, 'the version is 0.8.0 in the header and the constant');
+$readme_080 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
+expect(strpos($readme_080, "Stable tag: 0.8.0") !== false, 'and in the readme stable tag');
+expect(substr_count($readme_080, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice');
 
 echo "WordPress AEO admin tests passed\n";
