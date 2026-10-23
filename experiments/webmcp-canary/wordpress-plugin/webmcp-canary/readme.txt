@@ -170,9 +170,13 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Screenshots ==
 
-1. Your AEO score and a checklist of exactly what to fix — read from your live pages.
-2. One-click fixes: publish llms.txt and server-side schema without touching code.
-3. Works with Yoast SEO and Rank Math — Nurevo fills the business details they leave out, no duplicate schema.
+1. The AEO Score screen: a 0-100 score with a traffic-light badge, a summary of what AI cannot read from the site, and the diagnosis checklist.
+2. Fix suggestions in the checklist: one-click "Create it" for llms.txt, "Add business details" for missing structured data, and how-to hints for editorial items.
+3. Settings: the output switch, AI crawler rules, llms.txt and JSON-LD output, SEO plugin compatibility, and the store information used to build the schema.
+4. The generated /llms.txt, built locally from the store information, pages and services.
+5. The Nurevo FAQ block in the block editor, showing the questions and answers entered in the plugin settings.
+6. Per-page settings in the block editor's Page sidebar: leave the page out of llms.txt, publish no Nurevo structured data on it, and add questions and answers for that page only.
+7. The first-run screen. Nothing is sent to the Nurevo service until you tick the consent box and press "Run diagnosis"; it explains what the diagnosis sends.
 
 == Changelog ==
 

@@ -37,15 +37,25 @@ search / Server-side schema.org - llms.txt - AI crawler ready" and the icon is
 the bare brand mark. Nothing says "WebMCP", so the 0.4.0 to 0.5.0 rename needed
 no artwork change.
 
-## Still missing: screenshots
+## Screenshots
 
-`screenshot-1.png`, `screenshot-2.png`, … also belong in this directory, and
-readme.txt gains a matching `== Screenshots ==` section whose Nth caption
-describes `screenshot-N.png`. Neither exists yet, so the section is deliberately
-absent from readme.txt rather than listing captions with no images behind them.
+`screenshot-1.png` to `screenshot-7.png` are the listing screenshots of 0.8.0.
+The Nth caption in readme.txt's `== Screenshots ==` section describes
+`screenshot-N.png`. Like the banners and icons they go in SVN `assets/`, not in
+the plugin: `scripts/build-plugin-zip.mjs` ships an allowlist that does not
+include them.
 
-Worth capturing when they are drawn:
+| File | Shows |
+| --- | --- |
+| `screenshot-1.png` | AEO score: 0-100 score, traffic-light badge, what AI cannot read, checklist |
+| `screenshot-2.png` | Fix suggestions in the checklist (one-click llms.txt, business details) |
+| `screenshot-3.png` | Settings: output switch, AI crawler rules, llms.txt, JSON-LD, store information |
+| `screenshot-4.png` | The generated /llms.txt |
+| `screenshot-5.png` | The Nurevo FAQ block in the block editor |
+| `screenshot-6.png` | Per-page settings panel in the block editor sidebar |
+| `screenshot-7.png` | First-run consent screen (nothing is sent before consent) |
 
-1. The AEO score screen — score, traffic-light alert, checklist.
-2. A one-click fix being applied (basic schema, llms.txt, AI crawler access).
-3. The settings screen — extracted business data and SEO-plugin coexistence.
+They were captured from a local WordPress demo site ("Sakura Bistro") with the
+English admin. A Japanese set was captured with the same numbering but is not
+committed; wordpress.org shows `screenshot-N.png` for every language unless a
+locale-specific file is added.

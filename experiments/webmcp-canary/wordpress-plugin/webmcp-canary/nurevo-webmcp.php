@@ -1212,16 +1212,22 @@ function webmcp_canary_allow_ai_crawlers_field() {
         'block'   => __('Block', 'nurevo-webmcp'),
     );
     $current = isset($settings['ai_training']) && isset($choices[$settings['ai_training']]) ? $settings['ai_training'] : 'default';
-    echo '<fieldset style="margin-top:12px"><legend>' . esc_html__('AI training crawlers (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot)', 'nurevo-webmcp') . '</legend>';
+    // One label per radio, stacked with <br> as in core's own radio groups:
+    // the form-table rule `td fieldset label { margin: ... !important }` wipes
+    // any side margin, so inline radios ran together ("Allow○ Block").
+    echo '<fieldset class="webmcp-radio-group"><legend>' . esc_html__('AI training crawlers (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot)', 'nurevo-webmcp') . '</legend>';
+    $radios = array();
     foreach ($choices as $value => $label) {
-        printf(
-            '<label style="margin-right:16px"><input type="radio" name="%1$s[ai_training]" value="%2$s" %3$s> %4$s</label>',
+        $radios[] = sprintf(
+            '<label for="%5$s"><input type="radio" id="%5$s" name="%1$s[ai_training]" value="%2$s" %3$s> %4$s</label>',
             esc_attr(WEBMCP_CANARY_OPTION),
             esc_attr($value),
             checked($current, $value, false),
-            esc_html($label)
+            esc_html($label),
+            esc_attr('webmcp-ai-training-' . $value)
         );
     }
+    echo implode('<br>', $radios); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
     echo '</fieldset><p class="description">' . esc_html__('These collect content to train AI models. They are not needed to appear in AI answers, so this is your choice.', 'nurevo-webmcp') . '</p>';
     echo '<p class="description">' . esc_html__('Applied only while Nurevo AEO is enabled and the site is visible to search engines.', 'nurevo-webmcp') . '</p>';
 }
@@ -3768,10 +3774,12 @@ function webmcp_canary_consent_panel() {
             <input type="hidden" name="action" value="webmcp_canary_consent">
             <?php wp_nonce_field('webmcp_canary_consent'); ?>
             <p><label><input type="checkbox" name="nurevo_consent" value="1"> <?php esc_html_e('I agree to send this site’s URL to the Nurevo service for diagnosis, under its Terms of Service and Privacy Policy.', 'nurevo-webmcp'); ?></label></p>
-            <p>
+            <p class="webmcp-actions-row">
                 <button type="submit" class="button button-primary"><?php esc_html_e('Run diagnosis', 'nurevo-webmcp'); ?></button>
-                <a href="https://nurevo.jp/terms" target="_blank" rel="noopener"><?php esc_html_e('Terms of Service', 'nurevo-webmcp'); ?></a> ·
-                <a href="https://nurevo.jp/privacy" target="_blank" rel="noopener"><?php esc_html_e('Privacy Policy', 'nurevo-webmcp'); ?></a>
+                <span>
+                    <a href="https://nurevo.jp/terms" target="_blank" rel="noopener"><?php esc_html_e('Terms of Service', 'nurevo-webmcp'); ?></a> ·
+                    <a href="https://nurevo.jp/privacy" target="_blank" rel="noopener"><?php esc_html_e('Privacy Policy', 'nurevo-webmcp'); ?></a>
+                </span>
             </p>
         </form>
     </section>
@@ -5240,6 +5248,11 @@ function webmcp_canary_chrome_styles() {
         .webmcp-dev-details>summary:hover{color:#1d2327}
         .webmcp-dev-details table{margin-top:10px}
         .webmcp-dev-details th{width:230px;font-weight:600}
+        .webmcp-actions-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+        form.webmcp-actions-row{margin:0}
+        .webmcp-tools-actions{gap:12px 24px;margin:1em 0}
+        .webmcp-radio-group{margin-top:16px}
+        .webmcp-radio-group legend{margin-bottom:4px;font-weight:600}
 CSS;
 }
 
@@ -5401,20 +5414,20 @@ function webmcp_canary_settings_page() {
         <hr>
         <h2><?php echo esc_html__('Site key actions', 'nurevo-webmcp'); ?></h2>
         <p><?php echo esc_html__('Issue a site key for this WordPress domain, save it automatically, or rotate/disable the current key.', 'nurevo-webmcp'); ?></p>
-        <div>
+        <div class="webmcp-actions-row">
             <?php if (empty($settings['site_key'])) : ?>
-                <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" style="display:inline-block">
+                <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="webmcp-actions-row">
                     <?php wp_nonce_field('webmcp_canary_issue_site_key'); ?>
                     <input type="hidden" name="action" value="webmcp_canary_issue_site_key">
                     <?php submit_button(__('Issue site key', 'nurevo-webmcp'), 'primary', 'submit', false); ?>
                 </form>
             <?php else : ?>
-                <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" style="display:inline-block;margin-right:8px">
+                <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="webmcp-actions-row">
                     <?php wp_nonce_field('webmcp_canary_regenerate_site_key'); ?>
                     <input type="hidden" name="action" value="webmcp_canary_regenerate_site_key">
                     <?php submit_button(__('Regenerate site key', 'nurevo-webmcp'), 'secondary', 'submit', false); ?>
                 </form>
-                <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" style="display:inline-block">
+                <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="webmcp-actions-row">
                     <?php wp_nonce_field('webmcp_canary_disable_site_key'); ?>
                     <input type="hidden" name="action" value="webmcp_canary_disable_site_key">
                     <?php submit_button(__('Disable site key', 'nurevo-webmcp'), 'delete', 'submit', false); ?>
@@ -5425,17 +5438,20 @@ function webmcp_canary_settings_page() {
         <hr>
         <h2 id="nurevo-tools"><?php esc_html_e('Tools', 'nurevo-webmcp'); ?></h2>
         <p><?php esc_html_e('Copy these settings to another site. The file holds the output switches, the business details, the FAQ and the services. Keys, tokens, the plan and the connection are never exported or imported.', 'nurevo-webmcp'); ?></p>
-        <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" style="display:inline-block;margin-right:8px">
-            <?php wp_nonce_field('webmcp_canary_export_settings'); ?>
-            <input type="hidden" name="action" value="webmcp_canary_export_settings">
-            <?php submit_button(__('Export settings', 'nurevo-webmcp'), 'secondary', 'submit', false); ?>
-        </form>
-        <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" enctype="multipart/form-data" style="display:inline-block">
-            <?php wp_nonce_field('webmcp_canary_import_settings'); ?>
-            <input type="hidden" name="action" value="webmcp_canary_import_settings">
-            <label><?php esc_html_e('Settings file (.json)', 'nurevo-webmcp'); ?> <input type="file" name="nurevo_import_file" accept="application/json,.json"></label>
-            <?php submit_button(__('Import settings', 'nurevo-webmcp'), 'secondary', 'submit', false); ?>
-        </form>
+        <div class="webmcp-actions-row webmcp-tools-actions">
+            <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" class="webmcp-actions-row">
+                <?php wp_nonce_field('webmcp_canary_export_settings'); ?>
+                <input type="hidden" name="action" value="webmcp_canary_export_settings">
+                <?php submit_button(__('Export settings', 'nurevo-webmcp'), 'secondary', 'submit', false, array('id' => 'webmcp-export-settings')); ?>
+            </form>
+            <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" enctype="multipart/form-data" class="webmcp-actions-row">
+                <?php wp_nonce_field('webmcp_canary_import_settings'); ?>
+                <input type="hidden" name="action" value="webmcp_canary_import_settings">
+                <label for="webmcp-import-file"><?php esc_html_e('Settings file (.json)', 'nurevo-webmcp'); ?></label>
+                <input type="file" id="webmcp-import-file" name="nurevo_import_file" accept="application/json,.json">
+                <?php submit_button(__('Import settings', 'nurevo-webmcp'), 'secondary', 'submit', false, array('id' => 'webmcp-import-settings')); ?>
+            </form>
+        </div>
     </div>
     <?php
 }
