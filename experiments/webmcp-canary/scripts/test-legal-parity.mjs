@@ -26,4 +26,17 @@ for (const [lp, worker, head] of pairs) {
 const priceRow = (html) => html.match(/<th>販売価格<\/th><td>(.*?)<\/td>/)[1];
 assert.equal(priceRow(read("../../nurevo-lp/public/tokushoho.html")), priceRow(read("../public/tokushoho/index.html")), "tokushoho price rows match");
 assert.match(priceRow(read("../../nurevo-lp/public/tokushoho.html")), /Proプラン/, "Pro is listed while it is on sale");
+// Overseas prices: the manual USD amounts on the Stripe prices, in both copies.
+for (const path of ["../../nurevo-lp/public/tokushoho.html", "../public/tokushoho/index.html"]) {
+  const row = priceRow(read(path));
+  assert.match(row, /3,000円/, `${path}: the JPY Standard total stays`);
+  assert.match(row, /14,800円/, `${path}: the JPY Pro total stays`);
+  assert.match(row, /Standardプラン 月額20米ドル/, `${path}: the USD Standard amount is listed`);
+  assert.match(row, /Proプラン 月額99米ドル/, `${path}: the USD Pro amount is listed`);
+  assert.match(row, /現地通貨/, `${path}: other countries see the local-currency amount at checkout`);
+}
+for (const [path, head, usd] of [
+  ["../../nurevo-lp/public/terms.html", "<h2>第4条（料金および支払い）</h2>", /米国のユーザーには米ドル/],
+  ["../../nurevo-lp/public/en/terms.html", "<h2>Article 4 (Fees and Payment)</h2>", /in US dollars to users in the United States/],
+]) assert.match(article(read(path), head), usd, `${path}: article 4 names the currency per country`);
 console.log("legal page parity tests passed");

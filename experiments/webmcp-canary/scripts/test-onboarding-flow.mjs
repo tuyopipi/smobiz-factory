@@ -168,7 +168,10 @@ const flush = () => new Promise((r) => setImmediate(r));
     for (const key of ["plStdHead", "plSelf", "plOpen", "plClient", "plCopyLink", "intlNote"]) assert.ok(plan.includes(I[key]), `${lang}: plan panel shows ${key}`);
     app.set("PRO_CHECKOUT", true);
     const pro = app.sandbox.proOffer();
-    assert.ok(pro.includes(I.planProBuy) && !/\{(buy|yen)\}/.test(pro) && pro.includes("14,800"), `${lang}: Pro heading filled in`);
+    // Yen in Japanese, the US price everywhere else.
+    assert.ok(pro.includes(I.planProBuy) && !/\{(buy|yen|usd)\}/.test(pro), `${lang}: Pro heading filled in`);
+    if (lang === "ja") assert.ok(pro.includes("¥14,800"), "ja: Pro heading in yen");
+    else assert.ok(/\$\s?99|99\s?(\$|US\$)/.test(pro) && !pro.includes("14,800") && !pro.includes("¥"), `${lang}: Pro heading in US dollars`);
     const active = app.sandbox.standardPaymentPanel({ id: "s1", plan: "standard" });
     assert.ok(active.includes(I.plActive), `${lang}: active plan pill`);
     if (lang !== "ja") {

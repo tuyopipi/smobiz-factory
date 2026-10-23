@@ -69,6 +69,10 @@ const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_mont
  * a tier cannot be added to one without the other.
  */
 const PLAN_MONTHLY_YEN = Object.freeze({ standard: 3000, pro: 14800 });
+// The manual USD currency option on the same Stripe Price: what customers in
+// the US pay. Shown on the dashboard outside Japanese; Stripe converts from JPY
+// for everyone else.
+const PLAN_MONTHLY_USD = Object.freeze({ standard: 20, pro: 99 });
 
 /*
  * Pairing codes.
@@ -1286,7 +1290,7 @@ export async function handleApi(request, env, ctx) {
     });
     // Whether Pro can be bought, so the dashboard follows the server's switch
     // instead of hardcoding "coming soon".
-    return json({ sites, pro_checkout: proCheckoutEnabled(env), pro_monthly_yen: PLAN_MONTHLY_YEN.pro });
+    return json({ sites, pro_checkout: proCheckoutEnabled(env), pro_monthly_yen: PLAN_MONTHLY_YEN.pro, pro_monthly_usd: PLAN_MONTHLY_USD.pro });
   }
 
   const aeoMetricsMatch = path.match(/^\/api\/sites\/([^/]+)\/aeo-metrics$/i);
