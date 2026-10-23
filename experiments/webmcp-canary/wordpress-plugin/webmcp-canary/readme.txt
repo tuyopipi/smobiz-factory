@@ -110,6 +110,10 @@ By using these features you agree to the service's terms. Please read them befor
 
 Enter the questions and answers under **Nurevo AEO > Settings**, then add the **Nurevo FAQ** block (or the `[nurevo_faq]` shortcode) to the page where they should appear. The questions are shown there as expandable items and published as FAQPage structured data on that page only. Search engines accept FAQ markup only for questions a visitor can read, so nothing is published for an FAQ that is not on any page.
 
+= Can I leave a page out, or give a page its own FAQ? =
+
+Yes. In the block editor, open the **Nurevo AEO** panel in the post sidebar; in the classic editor, use the **Nurevo AEO** box. You can leave the page out of `/llms.txt`, stop Nurevo publishing structured data on it, and enter questions and answers for that page alone. A page's own questions are shown where you place the Nurevo FAQ block set to "This page's own questions" (or the `[nurevo_faq source="post"]` shortcode), and published as FAQPage on that page only.
+
 = What is AEO? =
 
 AEO (Answer Engine Optimization) is about being quoted correctly inside AI answers from ChatGPT, Perplexity, Google AI and others. Classic SEO is about where you rank in a list of links. AEO is about whether a machine can read your facts at all.

@@ -40,6 +40,7 @@ const INCLUDE = [
   "LICENSE",
   "assets/icon.svg",  // used by the admin screens at runtime
   "assets/logo.svg",
+  "assets/editor-panel.js", // block editor sidebar panel (per-post settings), no build step
   "languages/nurevo-webmcp.pot",
   "languages/nurevo-webmcp-ja.po",
   // One compiled catalogue per shipped locale (languages/i18n/locales.json).

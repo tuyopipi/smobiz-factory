@@ -334,9 +334,12 @@ function webmcp_canary_save_faq_entries($input) {
  * SEO plugin's FAQ block may publish its own FAQPage on the same page and the
  * two are different documents. Merging them under one id would claim their
  * questions are ours.
+ *
+ * $entries defaults to the site-wide FAQ; the caller passes the questions that
+ * are actually visible on the page (site-wide, this page's own, or both).
  */
-function webmcp_canary_faq_schema_node($page_url) {
-    $entries = webmcp_canary_faq_entries();
+function webmcp_canary_faq_schema_node($page_url, $entries = null) {
+    $entries = $entries === null ? webmcp_canary_faq_entries() : $entries;
     if (empty($entries)) {
         return null;
     }
@@ -361,14 +364,37 @@ function webmcp_canary_faq_schema_node($page_url) {
  * Google only accepts FAQPage markup for questions a visitor can read on the
  * page, so the hand-entered FAQ is rendered by a block or a shortcode, and the
  * FAQPage JSON-LD is published only on a page that contains one of them.
+ *
+ * There are two sources: the site-wide FAQ from Settings, and a page's own
+ * questions stored in its `_nurevo_faq` meta. The block (source "post") or the
+ * shortcode [nurevo_faq source="post"] shows the page's own; the default shows
+ * the site-wide one. Each is published only where it is shown.
  * --------------------------------------------------------------------- */
 
 add_shortcode('nurevo_faq', 'webmcp_canary_render_faq');
 add_action('init', 'webmcp_canary_register_faq_block');
 
+/** Which FAQ an attribute set asks for: 'post' or 'site'. */
+function webmcp_canary_faq_source($attributes) {
+    return is_array($attributes) && isset($attributes['source']) && $attributes['source'] === 'post' ? 'post' : 'site';
+}
+
+/** The post being rendered, for a page-level FAQ. */
+function webmcp_canary_current_post_id() {
+    if (function_exists('get_the_ID')) {
+        $id = (int) get_the_ID();
+        if ($id > 0) {
+            return $id;
+        }
+    }
+    return function_exists('get_queried_object_id') ? (int) get_queried_object_id() : 0;
+}
+
 /** The FAQ as HTML: one <details> per question, so it works without script. */
 function webmcp_canary_render_faq($attributes = array()) {
-    $entries = webmcp_canary_faq_entries();
+    $entries = webmcp_canary_faq_source($attributes) === 'post'
+        ? webmcp_canary_post_faq_entries(webmcp_canary_current_post_id())
+        : webmcp_canary_faq_entries();
     if (empty($entries)) {
         return '';
     }
@@ -391,7 +417,7 @@ function webmcp_canary_register_faq_block() {
     $editor_handle = null;
     if (function_exists('wp_register_script') && function_exists('wp_add_inline_script')) {
         $editor_handle = 'nurevo-faq-block-editor';
-        wp_register_script($editor_handle, '', array('wp-blocks', 'wp-element', 'wp-server-side-render', 'wp-block-editor'), WEBMCP_CANARY_VERSION, true);
+        wp_register_script($editor_handle, '', array('wp-blocks', 'wp-element', 'wp-server-side-render', 'wp-block-editor', 'wp-components', 'wp-data'), WEBMCP_CANARY_VERSION, true);
         wp_add_inline_script($editor_handle, webmcp_canary_faq_block_editor_js());
     }
     $args = array(
@@ -401,6 +427,9 @@ function webmcp_canary_register_faq_block() {
         'icon'            => 'editor-help',
         'description'     => __('Shows the questions and answers entered in Nurevo AEO settings.', 'nurevo-webmcp'),
         'supports'        => array('html' => false),
+        'attributes'      => array(
+            'source' => array('type' => 'string', 'enum' => array('site', 'post'), 'default' => 'site'),
+        ),
         'render_callback' => 'webmcp_canary_render_faq',
     );
     if ($editor_handle !== null) {
@@ -410,24 +439,54 @@ function webmcp_canary_register_faq_block() {
 }
 
 function webmcp_canary_faq_block_editor_js() {
-    return "(function(wp){if(!wp||!wp.blocks||!wp.element){return;}var el=wp.element.createElement;"
-        . "var SSR=wp.serverSideRender;var be=wp.blockEditor||{};"
+    $strings = array(
+        'source' => __('Questions to show', 'nurevo-webmcp'),
+        'site' => __('Site-wide questions (Settings)', 'nurevo-webmcp'),
+        'post' => __('This page’s own questions', 'nurevo-webmcp'),
+    );
+    return "(function(wp,t){if(!wp||!wp.blocks||!wp.element){return;}var el=wp.element.createElement;"
+        . "var SSR=wp.serverSideRender;var be=wp.blockEditor||{};var c=wp.components||{};"
         . "wp.blocks.registerBlockType('nurevo/faq',{apiVersion:2,title:'Nurevo FAQ',category:'widgets',icon:'editor-help',supports:{html:false},"
-        . "edit:function(){var props=be.useBlockProps?be.useBlockProps():{};"
-        . "return el('div',props,SSR?el(SSR,{block:'nurevo/faq'}):'Nurevo FAQ');},"
-        . "save:function(){return null;}});})(window.wp);";
+        . "attributes:{source:{type:'string',default:'site'}},"
+        . "edit:function(p){var props=be.useBlockProps?be.useBlockProps():{};var src=p.attributes.source||'site';"
+        . "var pid=wp.data&&wp.data.select('core/editor')?wp.data.select('core/editor').getCurrentPostId():0;"
+        . "var panel=be.InspectorControls&&c.SelectControl?el(be.InspectorControls,{},el(c.PanelBody,{},el(c.SelectControl,{label:t.source,value:src,"
+        . "options:[{label:t.site,value:'site'},{label:t.post,value:'post'}],onChange:function(v){p.setAttributes({source:v});}}))):null;"
+        . "return el('div',props,panel,SSR?el(SSR,{block:'nurevo/faq',attributes:{source:src},urlQueryArgs:pid?{post_id:pid}:{}}):'Nurevo FAQ');},"
+        . "save:function(){return null;}});})(window.wp," . wp_json_encode($strings) . ");";
 }
 
-/** Does this post's content render the FAQ? */
+/**
+ * Which FAQ sources a piece of content renders: the site-wide FAQ, the page's
+ * own, both or neither. Read from the shortcode and block markup itself, so a
+ * shortcode written as [nurevo_faq source="post"] counts only as the page's own.
+ */
+function webmcp_canary_faq_sources_in_content($content) {
+    $content = (string) $content;
+    $found = array('site' => false, 'post' => false);
+    if (preg_match_all('/(?<!\[)\[nurevo_faq(\s[^\]]*)?\]/', $content, $shortcodes, PREG_SET_ORDER)) {
+        foreach ($shortcodes as $shortcode) {
+            $attrs = isset($shortcode[1]) ? $shortcode[1] : '';
+            $is_post = (bool) preg_match('/\bsource\s*=\s*(["\']?)post\1(?=[\s\/]|$)/', $attrs);
+            $found[$is_post ? 'post' : 'site'] = true;
+        }
+    }
+    if (preg_match_all('/<!--\s+wp:nurevo\/faq(\s+\{.*?\})?\s+\/?-->/s', $content, $blocks, PREG_SET_ORDER)) {
+        foreach ($blocks as $block) {
+            $attrs = isset($block[1]) ? json_decode(trim($block[1]), true) : null;
+            $found[webmcp_canary_faq_source($attrs) === 'post' ? 'post' : 'site'] = true;
+        }
+    }
+    return $found;
+}
+
+/** Does this post's content render an FAQ? */
 function webmcp_canary_post_shows_faq($post) {
     if (!is_object($post) || !isset($post->post_content)) {
         return false;
     }
-    $content = (string) $post->post_content;
-    if (function_exists('has_shortcode') && has_shortcode($content, 'nurevo_faq')) {
-        return true;
-    }
-    return function_exists('has_block') && has_block('nurevo/faq', $content);
+    $sources = webmcp_canary_faq_sources_in_content($post->post_content);
+    return $sources['site'] || $sources['post'];
 }
 
 /**
@@ -443,6 +502,278 @@ function webmcp_canary_faq_visible_post() {
     }
     $post = get_queried_object();
     return webmcp_canary_post_shows_faq($post) ? $post : null;
+}
+
+/**
+ * The questions visible on a post that shows the FAQ: the site-wide ones where
+ * the default block or shortcode is placed, the post's own where the "post"
+ * source is, in that order.
+ */
+function webmcp_canary_visible_faq_entries($post) {
+    if (!is_object($post) || !isset($post->post_content)) {
+        return array();
+    }
+    $sources = webmcp_canary_faq_sources_in_content($post->post_content);
+    $entries = $sources['site'] ? webmcp_canary_faq_entries() : array();
+    if ($sources['post'] && !empty($post->ID)) {
+        $entries = array_merge($entries, webmcp_canary_post_faq_entries((int) $post->ID));
+    }
+    return $entries;
+}
+
+/* -----------------------------------------------------------------------
+ * Per-post controls.
+ *
+ * Three post meta keys, editable from the block editor sidebar (a
+ * PluginDocumentSettingPanel in assets/editor-panel.js) and from a meta box in
+ * the classic editor:
+ *
+ *   _nurevo_exclude_llms    leave this post out of /llms.txt
+ *   _nurevo_exclude_schema  publish no Nurevo structured data on this post
+ *   _nurevo_faq             this post's own questions and answers
+ * --------------------------------------------------------------------- */
+
+if (!defined('WEBMCP_CANARY_META_EXCLUDE_LLMS')) {
+    define('WEBMCP_CANARY_META_EXCLUDE_LLMS', '_nurevo_exclude_llms');
+}
+if (!defined('WEBMCP_CANARY_META_EXCLUDE_SCHEMA')) {
+    define('WEBMCP_CANARY_META_EXCLUDE_SCHEMA', '_nurevo_exclude_schema');
+}
+if (!defined('WEBMCP_CANARY_META_FAQ')) {
+    define('WEBMCP_CANARY_META_FAQ', '_nurevo_faq');
+}
+
+add_action('init', 'webmcp_canary_register_post_meta');
+function webmcp_canary_register_post_meta() {
+    if (!function_exists('register_post_meta')) {
+        return;
+    }
+    foreach (array(WEBMCP_CANARY_META_EXCLUDE_LLMS, WEBMCP_CANARY_META_EXCLUDE_SCHEMA) as $key) {
+        register_post_meta('', $key, array(
+            'type' => 'boolean',
+            'single' => true,
+            'default' => false,
+            'show_in_rest' => true,
+            'sanitize_callback' => 'webmcp_canary_sanitize_post_flag',
+            'auth_callback' => 'webmcp_canary_post_meta_auth',
+        ));
+    }
+    register_post_meta('', WEBMCP_CANARY_META_FAQ, array(
+        'type' => 'array',
+        'single' => true,
+        'default' => array(),
+        'show_in_rest' => array(
+            'schema' => array(
+                'type' => 'array',
+                'items' => array(
+                    'type' => 'object',
+                    'properties' => array(
+                        'q' => array('type' => 'string'),
+                        'a' => array('type' => 'string'),
+                    ),
+                    'additionalProperties' => false,
+                ),
+            ),
+        ),
+        'sanitize_callback' => 'webmcp_canary_sanitize_post_faq',
+        'auth_callback' => 'webmcp_canary_post_meta_auth',
+    ));
+}
+
+/** Only someone who may edit the post may change its Nurevo settings. */
+function webmcp_canary_post_meta_auth($allowed = false, $meta_key = '', $object_id = 0) {
+    return current_user_can('edit_post', (int) $object_id);
+}
+
+function webmcp_canary_sanitize_post_flag($value) {
+    return !empty($value) && $value !== 'false' && $value !== '0';
+}
+
+/** Keep complete {q,a} pairs only, as plain text, capped like the site-wide FAQ. */
+function webmcp_canary_sanitize_post_faq($value) {
+    $clean = array();
+    if (!is_array($value)) {
+        return $clean;
+    }
+    foreach ($value as $entry) {
+        if (!is_array($entry)) {
+            continue;
+        }
+        $question = sanitize_text_field((string) ($entry['q'] ?? ''));
+        $answer = sanitize_textarea_field((string) ($entry['a'] ?? ''));
+        if ($question === '' || $answer === '') {
+            continue;
+        }
+        $clean[] = array('q' => $question, 'a' => $answer);
+        if (count($clean) >= WEBMCP_CANARY_MAX_FAQ) {
+            break;
+        }
+    }
+    return $clean;
+}
+
+/** A post's own questions, filtered on the way out as well. */
+function webmcp_canary_post_faq_entries($post_id) {
+    $post_id = (int) $post_id;
+    if ($post_id <= 0 || !function_exists('get_post_meta')) {
+        return array();
+    }
+    return webmcp_canary_sanitize_post_faq(get_post_meta($post_id, WEBMCP_CANARY_META_FAQ, true));
+}
+
+/**
+ * Posts an owner has excluded, for 'llms' (llms.txt) or 'schema' (structured
+ * data). One small id-only query on the meta key.
+ */
+function webmcp_canary_excluded_post_ids($context) {
+    $key = $context === 'schema' ? WEBMCP_CANARY_META_EXCLUDE_SCHEMA : WEBMCP_CANARY_META_EXCLUDE_LLMS;
+    $ids = array();
+    if (function_exists('get_posts')) {
+        $found = get_posts(array(
+            'post_type' => 'any',
+            'post_status' => 'any',
+            'posts_per_page' => 1000,
+            'fields' => 'ids',
+            'meta_key' => $key, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key -- id-only lookup on one key.
+            'meta_value' => '1', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+            'no_found_rows' => true,
+            'suppress_filters' => false,
+        ));
+        foreach ((array) $found as $item) {
+            $id = is_object($item) ? (int) $item->ID : (int) $item;
+            if ($id > 0) {
+                $ids[] = $id;
+            }
+        }
+    }
+    return array_values(array_unique($ids));
+}
+
+function webmcp_canary_post_excluded($post_id, $context) {
+    $post_id = (int) $post_id;
+    return $post_id > 0 && in_array($post_id, webmcp_canary_excluded_post_ids($context), true);
+}
+
+/** Strings the editor panel shows, translated here so the JS needs no build. */
+function webmcp_canary_editor_panel_strings() {
+    return array(
+        'title' => __('Nurevo AEO', 'nurevo-webmcp'),
+        'excludeLlms' => __('Leave this page out of llms.txt', 'nurevo-webmcp'),
+        'excludeSchema' => __('Publish no Nurevo structured data on this page', 'nurevo-webmcp'),
+        'faqHeading' => __('Questions and answers for this page', 'nurevo-webmcp'),
+        'faqHelp' => __('Shown where you place the Nurevo FAQ block set to this page’s own questions, or the [nurevo_faq source="post"] shortcode. Published as FAQPage on this page only.', 'nurevo-webmcp'),
+        'question' => __('Question', 'nurevo-webmcp'),
+        'answer' => __('Answer', 'nurevo-webmcp'),
+        'add' => __('Add a question', 'nurevo-webmcp'),
+        'remove' => __('Remove', 'nurevo-webmcp'),
+    );
+}
+
+add_action('enqueue_block_editor_assets', 'webmcp_canary_enqueue_editor_panel');
+function webmcp_canary_enqueue_editor_panel() {
+    // The post editor only: the site and widget editors have no post to edit.
+    $screen = function_exists('get_current_screen') ? get_current_screen() : null;
+    if ($screen && isset($screen->base) && $screen->base !== 'post') {
+        return;
+    }
+    wp_enqueue_script(
+        'nurevo-editor-panel',
+        webmcp_canary_asset_url('editor-panel.js'),
+        array('wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data', 'wp-element'),
+        WEBMCP_CANARY_VERSION,
+        true
+    );
+    wp_add_inline_script(
+        'nurevo-editor-panel',
+        'window.nurevoEditorPanel = ' . wp_json_encode(array('i18n' => webmcp_canary_editor_panel_strings())) . ';',
+        'before'
+    );
+}
+
+add_action('add_meta_boxes', 'webmcp_canary_add_meta_box');
+/** The classic editor's equivalent. Hidden in the block editor, which has the panel. */
+function webmcp_canary_add_meta_box() {
+    $types = function_exists('get_post_types') ? get_post_types(array('public' => true)) : array('post', 'page');
+    unset($types['attachment']);
+    foreach ($types as $type) {
+        add_meta_box(
+            'nurevo-aeo-post',
+            __('Nurevo AEO', 'nurevo-webmcp'),
+            'webmcp_canary_render_meta_box',
+            $type,
+            'side',
+            'default',
+            array('__back_compat_meta_box' => true)
+        );
+    }
+}
+
+function webmcp_canary_render_meta_box($post) {
+    $post_id = is_object($post) && isset($post->ID) ? (int) $post->ID : 0;
+    $strings = webmcp_canary_editor_panel_strings();
+    wp_nonce_field('webmcp_canary_post_meta', 'nurevo_post_meta_nonce');
+    $flags = array(
+        'nurevo_exclude_llms' => array(WEBMCP_CANARY_META_EXCLUDE_LLMS, $strings['excludeLlms']),
+        'nurevo_exclude_schema' => array(WEBMCP_CANARY_META_EXCLUDE_SCHEMA, $strings['excludeSchema']),
+    );
+    foreach ($flags as $field => $definition) {
+        printf(
+            '<p><label><input type="checkbox" name="%1$s" value="1" %2$s> %3$s</label></p>',
+            esc_attr($field),
+            checked(true, (bool) get_post_meta($post_id, $definition[0], true), false),
+            esc_html($definition[1])
+        );
+    }
+    echo '<p><strong>' . esc_html($strings['faqHeading']) . '</strong></p>';
+    $entries = webmcp_canary_post_faq_entries($post_id);
+    $entries[] = array('q' => '', 'a' => '');
+    foreach ($entries as $index => $entry) {
+        printf(
+            '<p><label>%1$s<br><input type="text" class="widefat" name="nurevo_faq[%2$d][q]" value="%3$s"></label></p>'
+            . '<p><label>%4$s<br><textarea class="widefat" rows="2" name="nurevo_faq[%2$d][a]">%5$s</textarea></label></p>',
+            esc_html($strings['question']),
+            (int) $index,
+            esc_attr($entry['q']),
+            esc_html($strings['answer']),
+            esc_textarea($entry['a'])
+        );
+    }
+    echo '<p class="description">' . esc_html($strings['faqHelp']) . ' ' . esc_html__('Leave a question or its answer blank to remove the pair. Save to add another row.', 'nurevo-webmcp') . '</p>';
+}
+
+add_action('save_post', 'webmcp_canary_save_post_meta_box', 10, 2);
+function webmcp_canary_save_post_meta_box($post_id, $post = null) {
+    if (!isset($_POST['nurevo_post_meta_nonce'])) {
+        return;
+    }
+    $nonce = sanitize_text_field(wp_unslash($_POST['nurevo_post_meta_nonce']));
+    if (!wp_verify_nonce($nonce, 'webmcp_canary_post_meta')) {
+        return;
+    }
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+    if (function_exists('wp_is_post_revision') && wp_is_post_revision($post_id)) {
+        return;
+    }
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+    foreach (array('nurevo_exclude_llms' => WEBMCP_CANARY_META_EXCLUDE_LLMS, 'nurevo_exclude_schema' => WEBMCP_CANARY_META_EXCLUDE_SCHEMA) as $field => $key) {
+        if (!empty($_POST[$field])) {
+            update_post_meta($post_id, $key, true);
+        } else {
+            delete_post_meta($post_id, $key);
+        }
+    }
+    $faq = isset($_POST['nurevo_faq']) && is_array($_POST['nurevo_faq'])
+        ? webmcp_canary_sanitize_post_faq(wp_unslash($_POST['nurevo_faq'])) // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitised field by field in webmcp_canary_sanitize_post_faq().
+        : array();
+    if (empty($faq)) {
+        delete_post_meta($post_id, WEBMCP_CANARY_META_FAQ);
+    } else {
+        update_post_meta($post_id, WEBMCP_CANARY_META_FAQ, $faq);
+    }
 }
 
 function webmcp_canary_settings() {
@@ -2717,17 +3048,23 @@ function webmcp_canary_build_local_llms_txt() {
         $lines[] = '';
     }
 
-    $pages = function_exists('get_posts') ? get_posts(array(
+    // Posts their editor chose to leave out of llms.txt.
+    $excluded = webmcp_canary_excluded_post_ids('llms');
+    $query = array(
         'post_type' => array('page', 'post'),
         'post_status' => 'publish',
         'posts_per_page' => 30,
         'orderby' => 'modified',
         'order' => 'DESC',
         'no_found_rows' => true,
-    )) : array();
+    );
+    if (!empty($excluded)) {
+        $query['post__not_in'] = $excluded; // phpcs:ignore WordPressVIPMinimum.Performance.WPQueryParams.PostNotIn_post__not_in -- at most the owner's own exclusions.
+    }
+    $pages = function_exists('get_posts') ? get_posts($query) : array();
     $entries = array();
     foreach ($pages as $page) {
-        if (!is_object($page) || empty($page->ID)) {
+        if (!is_object($page) || empty($page->ID) || in_array((int) $page->ID, $excluded, true)) {
             continue;
         }
         $title = webmcp_canary_llms_line(get_the_title($page));
@@ -4903,7 +5240,15 @@ function webmcp_canary_schema_request_allowed() {
     if ($settings['enabled'] !== '1' || $settings['serve_schema'] !== '1') {
         return false;
     }
-    return (bool) get_option('blog_public');
+    if (!get_option('blog_public')) {
+        return false;
+    }
+    // A post its editor excluded carries no Nurevo structured data at all:
+    // neither our own graph nor anything merged into an SEO plugin's.
+    if (is_singular() && webmcp_canary_post_excluded(get_queried_object_id(), 'schema')) {
+        return false;
+    }
+    return true;
 }
 
 /**
@@ -5404,7 +5749,7 @@ function webmcp_canary_own_schema_bundle() {
     // FAQPage markup for content a visitor cannot see as spam.
     $faq_post = webmcp_canary_faq_visible_post();
     if ($faq_post !== null) {
-        $faq_node = webmcp_canary_faq_schema_node(get_permalink($faq_post));
+        $faq_node = webmcp_canary_faq_schema_node(get_permalink($faq_post), webmcp_canary_visible_faq_entries($faq_post));
         if ($faq_node !== null) {
             $extra[] = $faq_node;
         }

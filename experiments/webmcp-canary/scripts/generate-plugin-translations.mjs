@@ -574,6 +574,25 @@ const JA = {
     "未実行",
   "The diagnosis has not been run yet. Nothing is sent to the Nurevo service until you run it.":
     "診断はまだ実行されていません。実行するまで、Nurevoサービスには何も送信されません。",
+  // Per-post controls (0.8.0).
+  "Questions to show":
+    "表示する質問",
+  "Site-wide questions (Settings)":
+    "サイト共通の質問（設定画面）",
+  "This page’s own questions":
+    "このページ専用の質問",
+  "Leave this page out of llms.txt":
+    "このページをllms.txtに載せない",
+  "Publish no Nurevo structured data on this page":
+    "このページではNurevoの構造化データを出力しない",
+  "Questions and answers for this page":
+    "このページのよくある質問",
+  "Shown where you place the Nurevo FAQ block set to this page’s own questions, or the [nurevo_faq source=\"post\"] shortcode. Published as FAQPage on this page only.":
+    "「このページ専用の質問」に設定したNurevo FAQブロック、または [nurevo_faq source=\"post\"] ショートコードを置いた場所に表示されます。FAQPageとしてはこのページでのみ公開されます。",
+  "Add a question":
+    "質問を追加",
+  "Remove":
+    "削除",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo

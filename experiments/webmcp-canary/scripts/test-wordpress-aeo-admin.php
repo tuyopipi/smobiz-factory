@@ -42,7 +42,38 @@ function update_option($key, $value) { $GLOBALS['webmcp_test_options'][$key] = $
 function wp_strip_all_tags($value) { return strip_tags((string) $value); }
 function esc_textarea($value) { return htmlspecialchars((string) $value, ENT_QUOTES); }
 function strip_shortcodes($value) { return preg_replace('/\[[^\]]+\]/', '', (string) $value); }
-function get_posts() { return $GLOBALS['webmcp_test_posts']; }
+function get_posts($args = array()) {
+    $posts = $GLOBALS['webmcp_test_posts'];
+    if (!empty($args['meta_key'])) {
+        $posts = array_values(array_filter($posts, function ($post) use ($args) {
+            return is_object($post) && !empty($post->ID) && !empty(get_post_meta($post->ID, $args['meta_key'], true));
+        }));
+    }
+    if (!empty($args['post__not_in'])) {
+        $posts = array_values(array_filter($posts, function ($post) use ($args) {
+            return !is_object($post) || empty($post->ID) || !in_array((int) $post->ID, $args['post__not_in'], true);
+        }));
+    }
+    if (($args['fields'] ?? '') === 'ids') {
+        return array_map(function ($post) { return (int) $post->ID; }, $posts);
+    }
+    return $posts;
+}
+$GLOBALS['webmcp_test_post_meta'] = array();
+function get_post_meta($post_id, $key = '', $single = false) {
+    $value = $GLOBALS['webmcp_test_post_meta'][(int) $post_id][$key] ?? null;
+    if ($value === null) { return $single ? '' : array(); }
+    return $single ? $value : array($value);
+}
+function update_post_meta($post_id, $key, $value) { $GLOBALS['webmcp_test_post_meta'][(int) $post_id][$key] = $value; return true; }
+function delete_post_meta($post_id, $key) { unset($GLOBALS['webmcp_test_post_meta'][(int) $post_id][$key]); return true; }
+function register_post_meta($type, $key, $args) { $GLOBALS['webmcp_test_post_meta_registered'][$key] = array('type' => $type, 'args' => $args); return true; }
+function get_the_ID() { return $GLOBALS['webmcp_test_the_id'] ?? (isset($GLOBALS['webmcp_test_queried']) && $GLOBALS['webmcp_test_queried'] ? (int) $GLOBALS['webmcp_test_queried']->ID : 0); }
+function wp_is_post_revision($post_id) { return false; }
+function checked($checked, $current = true, $echo = true) { $result = ((string) $checked === (string) $current) ? ' checked="checked"' : ''; if ($echo) { echo $result; } return $result; }
+function wp_enqueue_script($handle, $src = '', $deps = array(), $ver = false, $in_footer = false) { $GLOBALS['webmcp_test_enqueued'][$handle] = array('src' => $src, 'deps' => $deps); }
+function get_post_types($args = array()) { return array('post' => 'post', 'page' => 'page', 'attachment' => 'attachment'); }
+function add_meta_box($id, $title, $callback, $screen = null, $context = 'advanced', $priority = 'default', $args = null) { $GLOBALS['webmcp_test_meta_boxes'][$screen] = array('id' => $id, 'args' => $args); }
 
 /* ------------------------------------------------------------------ *
  * WooCommerce stubs
@@ -115,7 +146,7 @@ function wp_remote_get($url, $args = array()) {
 }
 function get_the_title($post) { return is_object($post) ? ($post->post_title ?? '') : ''; }
 function get_permalink($post) { return is_object($post) ? ($post->permalink ?? '') : ''; }
-function current_user_can() { return true; }
+function current_user_can($cap = '', ...$args) { return !in_array($cap, $GLOBALS['webmcp_test_denied_caps'] ?? array(), true); }
 function admin_url($path = '') { return 'https://example.test/wp-admin/' . ltrim($path, '/'); }
 if (!function_exists('do_action')) { function do_action(...$args) {} }
 if (!function_exists('get_current_screen')) { function get_current_screen() { return $GLOBALS['webmcp_test_screen'] ?? null; } }
@@ -2660,5 +2691,152 @@ expect(webmcp_canary_settings()['plan'] === 'standard', 'Refresh plan picks up a
 expect(empty($GLOBALS['webmcp_canary_force_follow']), 'the one-off check does not leave paid behaviour switched on');
 $GLOBALS['webmcp_test_remote_get'] = array();
 delete_option(WEBMCP_CANARY_RULESET_OPTION);
+
+/* --- 0.8.0: per-post controls ----------------------------------------- */
+
+$GLOBALS['webmcp_test_post_meta_registered'] = array();
+webmcp_canary_register_post_meta();
+foreach (array('_nurevo_exclude_llms' => 'boolean', '_nurevo_exclude_schema' => 'boolean', '_nurevo_faq' => 'array') as $meta_key => $meta_type) {
+    $registered = $GLOBALS['webmcp_test_post_meta_registered'][$meta_key] ?? null;
+    expect($registered !== null, "post meta is registered: {$meta_key}");
+    expect($registered['args']['type'] === $meta_type && $registered['args']['single'] === true, "{$meta_key} is a single {$meta_type}");
+    expect(!empty($registered['args']['show_in_rest']), "{$meta_key} is exposed to the block editor");
+    expect($registered['args']['auth_callback'] === 'webmcp_canary_post_meta_auth', "{$meta_key} is guarded by an auth callback");
+}
+expect(isset($GLOBALS['webmcp_test_post_meta_registered']['_nurevo_faq']['args']['show_in_rest']['schema']['items']['properties']['q']), 'the FAQ meta declares its {q,a} schema');
+expect(webmcp_canary_post_meta_auth(false, '_nurevo_faq', 5) === true, 'an editor of the post may change its Nurevo meta');
+$GLOBALS['webmcp_test_denied_caps'] = array('edit_post');
+expect(webmcp_canary_post_meta_auth(false, '_nurevo_faq', 5) === false, 'someone who cannot edit the post may not');
+$GLOBALS['webmcp_test_denied_caps'] = array();
+
+$clean_post_faq = webmcp_canary_sanitize_post_faq(array(
+    array('q' => ' <b>Parking?</b> ', 'a' => "Two spaces.\nBehind the shop."),
+    array('q' => 'Half', 'a' => ''),
+    'junk',
+    array('q' => 'Q2', 'a' => 'A2', 'extra' => 'dropped'),
+));
+expect(count($clean_post_faq) === 2 && $clean_post_faq[0]['q'] === 'Parking?', 'the page FAQ keeps complete, plain-text pairs only');
+expect(!isset($clean_post_faq[1]['extra']), 'and only the q and a fields');
+expect(webmcp_canary_sanitize_post_faq('not a list') === array(), 'anything else is dropped');
+expect(webmcp_canary_sanitize_post_flag('1') === true && webmcp_canary_sanitize_post_flag('') === false && webmcp_canary_sanitize_post_flag('false') === false, 'flags are booleans');
+
+// llms.txt skips posts their editor excluded.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '1', 'serve_llms_txt' => '1', 'business_name' => 'Meta Shop'));
+$GLOBALS['webmcp_test_posts'] = array(
+    (object) array('ID' => 31, 'post_title' => 'Kept page', 'permalink' => 'https://example.test/kept/', 'post_content' => ''),
+    (object) array('ID' => 32, 'post_title' => 'Hidden page', 'permalink' => 'https://example.test/hidden/', 'post_content' => ''),
+);
+update_post_meta(32, '_nurevo_exclude_llms', true);
+$meta_llms = webmcp_canary_build_local_llms_txt();
+expect(strpos($meta_llms, 'Kept page') !== false, 'llms.txt lists the other posts');
+expect(strpos($meta_llms, 'Hidden page') === false, 'llms.txt skips a post excluded from it');
+expect(webmcp_canary_excluded_post_ids('llms') === array(32), 'the excluded ids are read from the meta');
+expect(webmcp_canary_excluded_post_ids('schema') === array(), 'and per purpose');
+$GLOBALS['webmcp_test_posts'] = array();
+
+// Schema output and the graph merge skip a singular page excluded from it.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '1', 'serve_schema' => '1', 'business_name' => 'Meta Shop'));
+$GLOBALS['webmcp_test_options']['blog_public'] = 1;
+$GLOBALS['webmcp_test_active_plugins'] = array();
+webmcp_canary_schema_merged(false);
+$excluded_page = (object) array('ID' => 50, 'post_content' => 'x', 'post_title' => 'No schema', 'permalink' => 'https://example.test/no-schema/');
+$GLOBALS['webmcp_test_posts'] = array($excluded_page);
+update_post_meta(50, '_nurevo_exclude_schema', true);
+$GLOBALS['webmcp_test_queried'] = $excluded_page;
+$GLOBALS['webmcp_test_front_page'] = false;
+ob_start(); webmcp_canary_output_server_schema(); $excluded_output = ob_get_clean();
+expect($excluded_output === '', 'an excluded page prints no Nurevo structured data');
+$their_graph = array(array('@type' => 'Organization', '@id' => 'https://example.test/#org', 'name' => 'Theirs'));
+expect(webmcp_canary_merge_into_list_graph($their_graph) === $their_graph, 'nor merges anything into an SEO plugin graph');
+expect(webmcp_canary_merge_into_keyed_graph(array('org' => $their_graph[0])) === array('org' => $their_graph[0]), 'in either graph shape');
+webmcp_canary_schema_merged(false);
+delete_post_meta(50, '_nurevo_exclude_schema');
+ob_start(); webmcp_canary_output_server_schema(); $included_output = ob_get_clean();
+expect(strpos($included_output, 'application/ld+json') !== false, 'the same page publishes again once the exclusion is removed');
+$GLOBALS['webmcp_test_posts'] = array();
+
+// A page-level FAQ is published only on that page, and only where it is shown.
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+update_post_meta(60, '_nurevo_faq', array(array('q' => 'Page-only question?', 'a' => 'Page-only answer.')));
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 60, 'post_content' => '<p>Intro</p>[nurevo_faq source="post"]', 'post_title' => 'P60', 'permalink' => 'https://example.test/p60/');
+expect(webmcp_canary_faq_sources_in_content($GLOBALS['webmcp_test_queried']->post_content) === array('site' => false, 'post' => true), 'the shortcode with source="post" shows the page FAQ');
+ob_start(); webmcp_canary_output_server_schema(); $page_faq_output = ob_get_clean();
+expect(strpos($page_faq_output, '"FAQPage"') !== false && strpos($page_faq_output, 'Page-only question?') !== false, 'the page FAQ is published on its page');
+expect(strpos($page_faq_output, 'https://example.test/p60/#nurevo-faq') !== false, 'under that page');
+$rendered_page_faq = webmcp_canary_render_faq(array('source' => 'post'));
+expect(strpos($rendered_page_faq, 'Page-only question?') !== false, 'and the shortcode renders the same questions');
+expect(webmcp_canary_render_faq('') === '', 'the default shortcode still shows the (empty) site-wide FAQ');
+// Meta alone, with nothing on the page to show it, publishes nothing.
+update_post_meta(61, '_nurevo_faq', array(array('q' => 'Invisible?', 'a' => 'Yes.')));
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 61, 'post_content' => '<p>No FAQ here</p>', 'post_title' => 'P61', 'permalink' => 'https://example.test/p61/');
+ob_start(); webmcp_canary_output_server_schema(); $hidden_faq_output = ob_get_clean();
+expect(strpos($hidden_faq_output, '"FAQPage"') === false && strpos($hidden_faq_output, 'Invisible?') === false, 'a page FAQ that is not shown is not published');
+// The default shortcode shows the site-wide FAQ, not the page's own.
+webmcp_canary_save_faq_entries(array(array('q' => 'Site question?', 'a' => 'Site answer.')));
+update_post_meta(62, '_nurevo_faq', array(array('q' => 'Not shown here?', 'a' => 'Right.')));
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 62, 'post_content' => '[nurevo_faq]', 'post_title' => 'P62', 'permalink' => 'https://example.test/p62/');
+ob_start(); webmcp_canary_output_server_schema(); $site_faq_output = ob_get_clean();
+expect(strpos($site_faq_output, 'Site question?') !== false && strpos($site_faq_output, 'Not shown here?') === false, 'the site-wide shortcode publishes only the site-wide questions');
+// The block with source "post" counts too, and both sources can be on one page.
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 60, 'post_content' => "<!-- wp:nurevo/faq /-->\n<!-- wp:nurevo/faq {\"source\":\"post\"} /-->", 'post_title' => 'P60', 'permalink' => 'https://example.test/p60/');
+ob_start(); webmcp_canary_output_server_schema(); $both_faq_output = ob_get_clean();
+expect(strpos($both_faq_output, 'Site question?') !== false && strpos($both_faq_output, 'Page-only question?') !== false, 'both FAQs on one page make one FAQPage with both');
+expect(substr_count($both_faq_output, '"FAQPage"') === 1, 'still a single FAQPage node');
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+$GLOBALS['webmcp_test_queried'] = null;
+$GLOBALS['webmcp_test_front_page'] = true;
+$GLOBALS['webmcp_test_blocks'] = array();
+webmcp_canary_register_faq_block();
+expect($GLOBALS['webmcp_test_blocks']['nurevo/faq']['attributes']['source']['default'] === 'site', 'the FAQ block has a source attribute');
+
+// The classic editor meta box saves with a nonce and an edit_post check.
+$_POST = array(
+    'nurevo_post_meta_nonce' => md5('webmcp_canary_post_meta'),
+    'nurevo_exclude_llms' => '1',
+    'nurevo_faq' => array(array('q' => 'Box Q', 'a' => 'Box A'), array('q' => '', 'a' => '')),
+);
+webmcp_canary_save_post_meta_box(70);
+expect(get_post_meta(70, '_nurevo_exclude_llms', true) === true, 'the meta box saves the llms.txt exclusion');
+expect(get_post_meta(70, '_nurevo_exclude_schema', true) === '', 'an unticked box saves nothing');
+expect(get_post_meta(70, '_nurevo_faq', true) === array(array('q' => 'Box Q', 'a' => 'Box A')), 'and the page FAQ, without empty rows');
+$_POST['nurevo_post_meta_nonce'] = 'forged';
+$_POST['nurevo_exclude_schema'] = '1';
+webmcp_canary_save_post_meta_box(71);
+expect(get_post_meta(71, '_nurevo_exclude_schema', true) === '', 'a bad nonce saves nothing');
+$_POST['nurevo_post_meta_nonce'] = md5('webmcp_canary_post_meta');
+$GLOBALS['webmcp_test_denied_caps'] = array('edit_post');
+webmcp_canary_save_post_meta_box(72);
+expect(get_post_meta(72, '_nurevo_exclude_schema', true) === '', 'a user who cannot edit the post saves nothing');
+$GLOBALS['webmcp_test_denied_caps'] = array();
+$_POST = array();
+webmcp_canary_save_post_meta_box(70);
+expect(get_post_meta(70, '_nurevo_exclude_llms', true) === true, 'a save without the meta box (block editor, REST) leaves the meta alone');
+$GLOBALS['webmcp_test_meta_boxes'] = array();
+webmcp_canary_add_meta_box();
+expect(isset($GLOBALS['webmcp_test_meta_boxes']['post'], $GLOBALS['webmcp_test_meta_boxes']['page']) && !isset($GLOBALS['webmcp_test_meta_boxes']['attachment']), 'the meta box is on public post types');
+expect(!empty($GLOBALS['webmcp_test_meta_boxes']['post']['args']['__back_compat_meta_box']), 'and only in the classic editor');
+ob_start(); webmcp_canary_render_meta_box((object) array('ID' => 70)); $meta_box_html = ob_get_clean();
+expect(strpos($meta_box_html, 'nurevo_post_meta_nonce') !== false && strpos($meta_box_html, 'Box Q') !== false, 'the meta box renders its nonce and the saved FAQ');
+
+// The block editor panel: a separate plain-JS file, enqueued on the editor only.
+$GLOBALS['webmcp_test_enqueued'] = array();
+$GLOBALS['webmcp_test_screen'] = (object) array('base' => 'post', 'id' => 'post');
+webmcp_canary_enqueue_editor_panel();
+$panel = $GLOBALS['webmcp_test_enqueued']['nurevo-editor-panel'] ?? null;
+expect($panel !== null && strpos($panel['src'], 'assets/editor-panel.js') !== false, 'the editor panel script is enqueued from assets/');
+foreach (array('wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data') as $dep) {
+    expect(in_array($dep, $panel['deps'], true), "the editor panel depends on {$dep}");
+}
+$GLOBALS['webmcp_test_enqueued'] = array();
+$GLOBALS['webmcp_test_screen'] = (object) array('base' => 'site-editor', 'id' => 'site-editor');
+webmcp_canary_enqueue_editor_panel();
+expect(empty($GLOBALS['webmcp_test_enqueued']), 'and not in the site editor');
+unset($GLOBALS['webmcp_test_screen']);
+$panel_js = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/assets/editor-panel.js');
+expect(strpos($panel_js, 'PluginDocumentSettingPanel') !== false && strpos($panel_js, 'wp.element.createElement') !== false, 'the panel is a PluginDocumentSettingPanel built with createElement');
+foreach (array('_nurevo_exclude_llms', '_nurevo_exclude_schema', '_nurevo_faq') as $meta_key) {
+    expect(strpos($panel_js, $meta_key) !== false, "the panel edits {$meta_key}");
+}
+expect(strpos($panel_js, 'import ') === false && strpos($panel_js, 'require(') === false, 'and needs no build step');
 
 echo "WordPress AEO admin tests passed\n";

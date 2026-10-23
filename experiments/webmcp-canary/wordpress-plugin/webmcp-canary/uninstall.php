@@ -35,6 +35,11 @@ function nurevo_aeo_uninstall_site() {
         }
     }
 
+    // Per-post settings: llms.txt / schema exclusions and page-level FAQs.
+    foreach (array('_nurevo_exclude_llms', '_nurevo_exclude_schema', '_nurevo_faq') as $meta_key) {
+        delete_post_meta_by_key($meta_key);
+    }
+
     wp_clear_scheduled_hook('webmcp_canary_ruleset_check');
 }
 
