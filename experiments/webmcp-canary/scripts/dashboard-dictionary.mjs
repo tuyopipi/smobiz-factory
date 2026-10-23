@@ -15,7 +15,7 @@ export function loadDictionary() {
   const merge = source.indexOf("I.ja=Object.assign");
   if (merge < 0) throw new Error("dashboard.html: dictionary merge line not found");
   const head = source.slice(0, source.indexOf("\n", merge));
-  return new Function(`${head}\n;return { I, I2, I3, I4, LANGS };`)();
+  return new Function(`${head}\n;return { I, I2, I3, I4, I5, LANGS };`)();
 }
 
 /** t() for one language, as the dashboard defines it. */

@@ -34,7 +34,7 @@
     "test:dashboard": "node scripts/test-sites-listing.mjs && node scripts/test-site-creation.mjs && node scripts/test-site-catalog.mjs && node scripts/test-aeo-metrics-checks.mjs && node scripts/test-aeo-check-lang.mjs && node scripts/test-dashboard-routing.mjs && node scripts/test-detail-panels.mjs && node scripts/test-wp-connection.mjs && node scripts/test-onboarding.mjs && node scripts/test-onboarding-flow.mjs && node scripts/test-dashboard-i18n.mjs && node scripts/test-me-language.mjs && node scripts/test-onboarding-backend.mjs && node scripts/test-site-seo.mjs && node scripts/test-recommendations.mjs && node scripts/test-recommendations-i18n.mjs && node scripts/test-static-snippet.mjs && node scripts/test-hosted-full-score.mjs && node scripts/test-static-snippet-llms-lang.mjs && node scripts/test-modal-stacking.mjs",
     "test:partner": "node scripts/test-partner-auth.mjs && node scripts/test-partner-payouts.mjs && node scripts/test-partner-ui.mjs",
     "test:member-registration": "node scripts/test-member-registration.mjs && node scripts/test-register-form.mjs",
-    "test:canary": "node scripts/test-legal-parity.mjs && npm run test:aeo-score && npm run test:sov && npm run test:profile && npm run test:billing && npm run test:dashboard && npm run test:plans && npm run test:member-registration",
+    "test:canary": "node scripts/test-legal-parity.mjs && npm run test:aeo-score && npm run test:sov && npm run test:profile && npm run test:billing && npm run test:dashboard && npm run test:offsite && npm run test:plans && npm run test:member-registration",
     "smoke:sov": "node scripts/smoke-sov.mjs",
     "pro:check": "node scripts/pro-golive-check.mjs",
     "stripe:check": "node scripts/stripe-setup-check.mjs",
@@ -43,6 +43,7 @@
     "plugin:build": "node scripts/build-plugin-zip.mjs",
     "test:wp-env": "node scripts/wp-env-smoke.mjs",
     "lint:php": "composer install -d tests/phpcs --no-interaction --no-progress && tests/phpcs/vendor/bin/phpcs --standard=tests/phpcs/phpcs.xml.dist",
+    "test:offsite": "node scripts/test-offsite-audit.mjs",
     "test:continuous": "node scripts/test-continuous-optimization.mjs && node scripts/test-continuous-ui.mjs && node scripts/test-geocoder.mjs"
   },
   "engines": {

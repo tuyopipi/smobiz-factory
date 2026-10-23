@@ -5,6 +5,7 @@ import { handleApi, runSovDailyBatch, centralLlmsForKey } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 import { runLifecycleReminders } from "./lifecycle-email.mjs";
 import { runScheduled } from "./schedule.mjs";
+import { runOffsiteAuditWeekly } from "./offsite-audit.mjs";
 import { runPartnerPayouts } from "./partner-payouts.mjs";
 
 const JSON_HEADERS = {
@@ -59,6 +60,9 @@ const SCHEDULED_RUNNERS = Object.freeze({
   // hold up the other daily jobs.
   "aeo-sov-daily": (env) => runSovDailyBatch(env),
   "aeo-learning": (env) => runAeoLearningJob(env, { trigger: "scheduled" }),
+  // Off-site listing audit of Standard/Pro sites (worker/offsite-audit.mjs);
+  // skipped without GOOGLE_MAPS_API_KEY or until migration 0042, bounded per run.
+  "offsite-audit-weekly": (env) => runOffsiteAuditWeekly(env),
   // "Not connected yet" reminders for wp sites, 24 h and 72 h after creation;
   // bounded per run, claimed before sending (so a repeat run never resends),
   // skipped while migration 0038 is unapplied.

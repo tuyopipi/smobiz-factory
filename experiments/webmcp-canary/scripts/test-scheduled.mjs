@@ -37,7 +37,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 {
   assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts"], "hourly: the reminders and the partner payouts");
   assert.deepEqual([...SCHEDULED_JOBS[DAILY_CRON]], ["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"], "daily: as before, without the reminders");
-  assert.deepEqual([...SCHEDULED_JOBS[WEEKLY_CRON]], ["aeo-learning"], "weekly: as before");
+  assert.deepEqual([...SCHEDULED_JOBS[WEEKLY_CRON]], ["aeo-learning", "offsite-audit-weekly"], "weekly: the learning job and the off-site listing audit");
   const all = Object.values(SCHEDULED_JOBS).flat();
   assert.equal(new Set(all).size, all.length, "no job runs under two crons");
 
@@ -48,6 +48,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
     ["aeo-score-cron", "runAeoScoreCron(env)"],
     ["aeo-sov-daily", "runSovDailyBatch(env)"],
     ["aeo-learning", 'runAeoLearningJob(env, { trigger: "scheduled" })'],
+    ["offsite-audit-weekly", "runOffsiteAuditWeekly(env)"],
     ["lifecycle-reminders", "runLifecycleReminders(env)"],
     ["partner-payouts", "runPartnerPayouts(env)"],
   ]) {
@@ -94,7 +95,7 @@ async function fire(cron, { fail = [] } = {}) {
   assert.equal(daily.ran.includes("lifecycle-reminders"), false, "and not the reminders");
 
   const weekly = await fire(WEEKLY_CRON);
-  assert.deepEqual(weekly.ran, ["aeo-learning"]);
+  assert.deepEqual(weekly.ran, ["aeo-learning", "offsite-audit-weekly"]);
 
   const unknown = await fire("0 0 * * *");
   assert.deepEqual(unknown.ran, [], "an unknown cron runs nothing");

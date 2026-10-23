@@ -429,3 +429,22 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 
 -- 0034: provider-reported usage per engine call.
 ALTER TABLE aeo_sov_evidence ADD COLUMN usage_json TEXT;
+
+-- 0042: off-site listing audit (only our own comparison outcome and listing ids).
+CREATE TABLE IF NOT EXISTS offsite_audits (
+  id TEXT PRIMARY KEY,
+  site_id TEXT NOT NULL,
+  ran_at INTEGER NOT NULL,                  -- epoch ms, worker clock
+  trigger TEXT NOT NULL CHECK (trigger IN ('manual', 'scheduled', 'followup')),
+  result_json TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_offsite_audits_site ON offsite_audits(site_id, ran_at);
+
+CREATE TABLE IF NOT EXISTS offsite_listing_refs (
+  site_id TEXT NOT NULL,
+  source TEXT NOT NULL,                     -- google
+  listing_id TEXT NOT NULL,                 -- e.g. Google place_id
+  pinned INTEGER NOT NULL DEFAULT 0,        -- 1 = the owner picked it
+  updated_at INTEGER NOT NULL,
+  PRIMARY KEY (site_id, source)
+);

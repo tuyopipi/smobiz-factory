@@ -5,7 +5,8 @@
  * each other.
  *
  *   daily   learning, the daily AEO score point and the SoV batch
- *   weekly  the AEO ruleset learning job (Mondays)
+ *   weekly  the AEO ruleset learning job and the off-site listing audit of
+ *           Standard/Pro sites (Mondays)
  *   hourly  the "not connected yet" reminders, so the 24 h and 72 h
  *           emails arrive within the hour rather than up to a day late, and
  *           the partner payouts job (held commission released once a
@@ -20,7 +21,7 @@ export const HOURLY_CRON = "23 * * * *";
 /** What each cron runs, by log label. Nothing runs under two crons. */
 export const SCHEDULED_JOBS = Object.freeze({
   [DAILY_CRON]: Object.freeze(["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"]),
-  [WEEKLY_CRON]: Object.freeze(["aeo-learning"]),
+  [WEEKLY_CRON]: Object.freeze(["aeo-learning", "offsite-audit-weekly"]),
   [HOURLY_CRON]: Object.freeze(["lifecycle-reminders", "partner-payouts"]),
 });
 
