@@ -956,7 +956,7 @@ export async function handleApi(request, env, ctx) {
     if (!superAdmin) return json({ error: "forbidden" }, 403);
     return json(await listPartnerApplications(env));
   }
-  const partnerReview = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject)$/);
+  const partnerReview = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject|revoke)$/);
   if (partnerReview && method === "POST") {
     const superAdmin = await requireSuperAdmin(request, env);
     if (!superAdmin) return json({ error: "forbidden" }, 403);
@@ -4092,7 +4092,15 @@ async function findOrCreateMember(env, email, registrationLocale, referralCode =
   const existing = await env.DB.prepare("SELECT id,org_id,status FROM members WHERE lower(email)=?").bind(email).first();
   if (existing) return { id: existing.id, orgId: existing.org_id, status: existing.status || null };
   const normalizedCode = String(referralCode || "").trim().toUpperCase();
-  const parent = normalizedCode ? await env.DB.prepare("SELECT id,email,partner_status,partner_approved_at FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
+  let parent = null;
+  try {
+    parent = normalizedCode ? await env.DB.prepare("SELECT id,email,partner_status,partner_approved_at FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
+  } catch (error) {
+    // Deployed before 0040: no partner is approved yet, so the code is ignored
+    // and the signup itself still succeeds.
+    if (!/no such column/i.test(String(error?.message || error))) throw error;
+    console.warn("nurevo_referral_ignored", { reason: "migration_0040_not_applied" });
+  }
   // A code attributes a signup only while its owner is an approved partner;
   // a code kept from before approval (or after rejection) is inactive.
   const selfReferral = parent && String(parent.email).toLowerCase() === email;

@@ -25,7 +25,8 @@ export function newReferralCode() {
  * Partner approval (migration 0040). Only an account Nurevo approved can issue
  * a referral code, set up a payout account, attribute signups or earn
  * commission. none -> pending (the member applies) -> approved | rejected (a
- * super admin decides); a rejected account may apply again.
+ * super admin decides); approved -> rejected (a super admin revokes); a
+ * rejected account may apply again.
  */
 export const PARTNER_STATUSES = Object.freeze(["none", "pending", "approved", "rejected"]);
 export function partnerStatus(account) {
@@ -48,17 +49,19 @@ export async function applyForPartner(env, account, { now = Date.now() } = {}) {
  * approve twice or flip a decision already made.
  */
 export async function reviewPartner(env, accountId, decision, reviewerMemberId, { now = Date.now() } = {}) {
-  if (!["approve", "reject"].includes(decision)) return { status: 400, body: { error: "invalid_decision" } };
+  if (!["approve", "reject", "revoke"].includes(decision)) return { status: 400, body: { error: "invalid_decision" } };
   const id = Number(accountId);
   if (!Number.isInteger(id) || id <= 0) return { status: 404, body: { error: "not_found" } };
+  // revoke: approved -> rejected. From then on no new code use, no new
+  // commission and held rows stay held (destinationFor); the member may apply again.
   const result = decision === "approve"
     ? await env.DB.prepare("UPDATE accounts SET partner_status='approved', partner_approved_at=?, partner_reviewed_at=?, partner_reviewed_by=? WHERE id=? AND partner_status='pending'")
       .bind(now, now, reviewerMemberId, id).run()
-    : await env.DB.prepare("UPDATE accounts SET partner_status='rejected', partner_reviewed_at=?, partner_reviewed_by=? WHERE id=? AND partner_status='pending'")
+    : await env.DB.prepare(`UPDATE accounts SET partner_status='rejected', partner_reviewed_at=?, partner_reviewed_by=? WHERE id=? AND partner_status='${decision === "revoke" ? "approved" : "pending"}'`)
       .bind(now, reviewerMemberId, id).run();
   const row = await env.DB.prepare("SELECT id, email, partner_status, partner_approved_at FROM accounts WHERE id=?").bind(id).first();
   if (!row) return { status: 404, body: { error: "not_found" } };
-  if (Number(result.meta?.changes || 0) !== 1) return { status: 409, body: { error: "not_pending", partner_status: partnerStatus(row) } };
+  if (Number(result.meta?.changes || 0) !== 1) return { status: 409, body: { error: decision === "revoke" ? "not_approved" : "not_pending", partner_status: partnerStatus(row) } };
   return { status: 200, body: { ok: true, id: row.id, partner_status: partnerStatus(row), approved_at: row.partner_approved_at ?? null } };
 }
 export async function listPartnerApplications(env) {

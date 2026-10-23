@@ -72,7 +72,7 @@ try {
   await page.screenshot({ path: `${artifacts}/partner-ja.png`, fullPage: true });
   // Every payout string exists in all 8 languages.
   const missing = await page.evaluate(() => {
-    const keys = ['ptStatusTitle','ptStatusNone','ptStatusPending','ptStatusApproved','ptStatusRejected','ptApply','ptApplied','ptApplyNote','ptPendingNote','ptApprovedNote','ptRejectedNote','ptCodeInactive','ptCodeNeedsApproval','ptFirstFree','ptFirstCustomer','ptBeforeApproval','ptFirstCustomerInvoices','err_partner_not_approved','paApps','paAppsLead','paReject','paNoApps','paApprovedList','ptPayoutTitle','ptPayoutNotStarted','ptPayoutInProgress','ptPayoutReady','ptPayoutUnavailable','ptPayoutDue','ptPayoutStart','ptPayoutContinue','ptPayoutUpdate','ptPayoutSchedule','ptPayoutSecure','ptPayoutJapan','ptPayoutHeldNote','ptHeld','ptNextThisMonth','ptLaterThisMonth','ptNextNextMonth','ptLaterNextMonth','ptPayoutExpired','ptPayoutOpening','ptMonthly','ptRate'];
+    const keys = ['ptStatusTitle','ptStatusNone','ptStatusPending','ptStatusApproved','ptStatusRejected','ptApply','ptApplied','ptApplyNote','ptPendingNote','ptApprovedNote','ptRejectedNote','ptCodeInactive','ptCodeNeedsApproval','ptFirstFree','ptFirstCustomer','ptBeforeApproval','ptFirstCustomerInvoices','err_partner_not_approved','paApps','paAppsLead','paReject','paRevoke','paRevokeNote','paNoApps','paApprovedList','ptPayoutTitle','ptPayoutNotStarted','ptPayoutInProgress','ptPayoutReady','ptPayoutUnavailable','ptPayoutDue','ptPayoutStart','ptPayoutContinue','ptPayoutUpdate','ptPayoutSchedule','ptPayoutSecure','ptPayoutJapan','ptPayoutHeldNote','ptHeld','ptNextThisMonth','ptLaterThisMonth','ptNextNextMonth','ptLaterNextMonth','ptPayoutExpired','ptPayoutOpening','ptMonthly','ptRate'];
     const out = [];
     for (const lang of ['ja','en','zh','tw','ko','es','fr','de']) for (const k of keys) if (!I[lang] || !I[lang][k]) out.push(lang + ':' + k);
     for (const lang of ['en','zh','tw','ko','es','fr','de']) if (I[lang].ptPayoutTitle === I.ja.ptPayoutTitle) out.push(lang + ':untranslated');
@@ -125,11 +125,12 @@ try {
       if (path === '/api/admin/pending') data = { pending: [] };
       if (path === '/api/admin/partners') data = { partners: [] };
       if (path === '/api/admin/partner-applications') data = { pending: pendingApps, approved: approvedApps };
-      const m = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject)$/);
+      const m = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject|revoke)$/);
       if (m) {
         assert.equal(req.method(), 'POST');
         assert.equal(req.headers()['x-csrf-token'], 'f'.repeat(64), 'approval carries the CSRF token');
         reviews.push(m[2] + ':' + m[1]);
+        if (m[2] === 'revoke') { approvedApps = approvedApps.filter(a => String(a.account_id) !== m[1]); return route.fulfill({ json: { ok: true, partner_status: 'rejected' } }); }
         const app = pendingApps.find(a => String(a.account_id) === m[1]);
         pendingApps = pendingApps.filter(a => a !== app);
         if (m[2] === 'approve') approvedApps.push({ ...app, partner_status: 'approved', approved_at: 1791990000000, referrals: 0 });
@@ -150,8 +151,11 @@ try {
   await admin.locator('[data-approved-partner-rows]').getByText('applicant@example.test', { exact: true }).waitFor();
   await admin.locator('[data-partner-reject="8"]').click();
   await admin.getByText('審査待ちのパートナー申請はありません。', { exact: true }).waitFor();
-  assert.deepEqual(reviews, ['approve:7', 'reject:8']);
+  assert.ok(await admin.getByText(/承認を取り消すと/).isVisible(), 'the revoke note is shown');
   await admin.screenshot({ path: `${artifacts}/partner-admin-approval.png`, fullPage: true });
+  await admin.locator('[data-partner-revoke="7"]').click();
+  await admin.getByText('承認済みパートナーはいません。', { exact: true }).waitFor();
+  assert.deepEqual(reviews, ['approve:7', 'reject:8', 'revoke:7']);
   await admin.close();
   const lp = await browser.newPage({ viewport: { width: 1280, height: 800 }, locale: 'ja-JP' });
   let submitted;
@@ -183,5 +187,5 @@ try {
   await lp.goto('https://nurevo.test/');
   assert.ok(await lp.locator('header').getByRole('link', { name: '新規登録', exact: true }).isVisible());
   await lp.screenshot({ path: `${artifacts}/lp-mobile.png` });
-  console.log(`PASS: partner approval states (apply, pending, approved; inactive old code; no issue/onboarding before approval), first-customer note and labels, super-admin approve/reject UI with CSRF, payout account card (status, button, monthly 25th, Japan-only, bank details on Stripe), payout strings in 8 languages, JP/EN Partner routing for store accounts, issue/regenerate, automatic referral table, payout values, LP header/mobile button, signup payload/success, localized form. Screenshots: ${artifacts}`);
+  console.log(`PASS: partner approval states (apply, pending, approved; inactive old code; no issue/onboarding before approval), first-customer note and labels, super-admin approve/reject/revoke UI with CSRF, payout account card (status, button, monthly 25th, Japan-only, bank details on Stripe), payout strings in 8 languages, JP/EN Partner routing for store accounts, issue/regenerate, automatic referral table, payout values, LP header/mobile button, signup payload/success, localized form. Screenshots: ${artifacts}`);
 } finally { await browser.close(); }

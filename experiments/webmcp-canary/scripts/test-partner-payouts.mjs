@@ -16,7 +16,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import { handleApi } from "../worker/api.mjs";
-import { runPartnerPayouts, payoutWindow, partnerLedgerTotals, keptYen, reconcileCommission, firstCustomerOf } from "../worker/partner-payouts.mjs";
+import { runPartnerPayouts, payoutWindow, partnerLedgerTotals, keptYen, reconcileCommission, firstCustomerOf, handleConnectedAccountUpdated } from "../worker/partner-payouts.mjs";
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 const sqlite = new DatabaseSync(":memory:");
@@ -38,7 +38,7 @@ const DB = {
   async batch(statements) { return statements.map((s) => s.runSync()); },
 };
 const WEBHOOK_SECRET = "whsec_test_partner", CONNECT_SECRET = "whsec_test_connect";
-const env = { DB, DEV: "1", STRIPE_SECRET_KEY: "sk_test_partner_payouts", STRIPE_WEBHOOK_SECRET: WEBHOOK_SECRET, STRIPE_CONNECT_WEBHOOK_SECRET: CONNECT_SECRET, STRIPE_PRICE_ID_STANDARD: "price_std", STRIPE_PRICE_ID_PRO: "price_pro" };
+const env = { DB, DEV: "1", SUPER_ADMIN_EMAILS: "boss@example.test", STRIPE_SECRET_KEY: "sk_test_partner_payouts", STRIPE_WEBHOOK_SECRET: WEBHOOK_SECRET, STRIPE_CONNECT_WEBHOOK_SECRET: CONNECT_SECRET, STRIPE_PRICE_ID_STANDARD: "price_std", STRIPE_PRICE_ID_PRO: "price_pro" };
 
 /* ---------------- Stripe stub ---------------- */
 const stripe = {
@@ -719,7 +719,61 @@ try {
     assert.ok(ids.includes(answers[0]));
   }
 
-  console.log("PASS: net-basis commission; signed webhook only; idempotent event/invoice; source_transaction on every transfer, no custom transfer_group; held->released; H1 transient charge read; H2 refund while unresolved / before the row / after a lost answer; H3 legacy onboard retired, legacy accounts need ready+JP; H4 lost answer + amount change -> one transfer; M1 24 h backoff, key revision, dead rows surfaced; lost/open disputes; M2 no starvation; M3 offset applied once; M4 multiple charges held; self-referral; GET read-only; schedule fix on POST refresh; ledger totals and payout window; 0040: non-approved partner -> no code/onboarding/commission, pre-approval referrals never earn, first customer void on every invoice (incl. after churn, redelivery, refund, hourly job), second customer earns 40% of net, concurrent first invoices pick exactly one first customer, estimates exclude it. No real Stripe calls.");
+  /* --- M1: held rows (e.g. created before 0040) are paid only while the partner is approved --- */
+  {
+    const hp = await member("held_partner", "held-partner@example.test");
+    readyAccount(hp.account.id, "acct_hp");
+    charge("ch_hp");
+    sqlite.prepare("INSERT INTO referral_payouts(kind,source_key,invoice_id,charge_id,partner_account_id,status,created_at,updated_at) VALUES ('commission','invoice:in_hp','in_hp','ch_hp',?,'held',?,?)").run(hp.account.id, Date.now(), Date.now());
+    sqlite.prepare("UPDATE accounts SET partner_status='pending' WHERE id=?").run(hp.account.id); // as 0040 leaves an existing code holder
+    await runPartnerPayouts(env, { now: Date.now() + 600 * HOUR });
+    await webhook("charge.refunded", stripe.charges.get("ch_hp")); // a charge event goes through payCommission too
+    await handleConnectedAccountUpdated(env, stripe.accounts.get("acct_hp"));
+    assert.equal(transfersFor("ch_hp").length, 0, "a pending partner's held row is not paid");
+    assert.equal(row("in_hp").status, "held");
+    approve(hp, Date.now());
+    await runPartnerPayouts(env, { now: Date.now() + 601 * HOUR });
+    assert.equal(transfersFor("ch_hp").length, 1, "paid once the partner is approved");
+    assert.equal(transfersFor("ch_hp")[0].amount, 1156);
+  }
+
+  /* --- M2: a super admin revokes an approved partner --- */
+  {
+    const boss = await member("boss", "boss@example.test");
+    const vp = await member("revoke_partner", "revoke@example.test");
+    approve(vp, Date.now() - HOUR);
+    const v1 = await member("revoke_c1", "revoke-c1@example.test"), v2 = await member("revoke_c2", "revoke-c2@example.test");
+    await refer(v1, vp); await refer(v2, vp);
+    site("site_v1", "revoke_c1", "sub_v1"); site("site_v2", "revoke_c2", "sub_v2");
+    sqlite.prepare("UPDATE accounts SET stripe_account_id='acct_vp', payout_status='in_progress', payout_checked_at=? WHERE id=?").run(Date.now() + 700 * HOUR, vp.account.id);
+    charge("ch_v1");
+    await webhook("invoice.paid", invoice("in_v1", "ch_v1", "sub_v1"));
+    assert.equal(row("in_v1").status, "held", "earned while approved, held until the payout account is ready");
+    const path = `/api/admin/partner-applications/${vp.account.id}/revoke`;
+    assert.equal((await call(path, { method: "POST", cookie: vp.cookie })).status, 403, "a partner cannot revoke (or reach) the admin route");
+    assert.equal((await call(path, { method: "POST", cookie: boss.cookie, csrf: false })).status, 403, "revoke needs CSRF");
+    assert.equal(sqlite.prepare("SELECT partner_status FROM accounts WHERE id=?").get(vp.account.id).partner_status, "approved");
+    r = await call(path, { method: "POST", cookie: boss.cookie });
+    assert.equal(r.status, 200); assert.equal(r.body.partner_status, "rejected");
+    const revoked = sqlite.prepare("SELECT partner_reviewed_by, partner_reviewed_at FROM accounts WHERE id=?").get(vp.account.id);
+    assert.equal(revoked.partner_reviewed_by, "boss"); assert.ok(revoked.partner_reviewed_at > 0);
+    assert.equal((await call(path, { method: "POST", cookie: boss.cookie })).status, 409, "only an approved partner can be revoked");
+    assert.equal((await call(`/api/admin/partner-applications/${vp.account.id}/approve`, { method: "POST", cookie: boss.cookie })).status, 409, "re-approval needs a new application");
+    charge("ch_v2");
+    await webhook("invoice.paid", invoice("in_v2", "ch_v2", "sub_v2"));
+    assert.equal(row("in_v2"), undefined, "no new commission after revoke");
+    stripe.accounts.set("acct_vp", { id: "acct_vp", country: "JP", capabilities: { transfers: "active" }, requirements: {}, settings: { payouts: { schedule: { interval: "monthly", monthly_anchor: 25 } } } });
+    sqlite.prepare("UPDATE accounts SET payout_status='ready' WHERE id=?").run(vp.account.id);
+    await runPartnerPayouts(env, { now: Date.now() + 701 * HOUR });
+    await handleConnectedAccountUpdated(env, stripe.accounts.get("acct_vp"));
+    assert.equal(transfersFor("ch_v1").length, 0, "held rows stay held after revoke");
+    assert.equal((await call("/api/partner/payout/onboard", { method: "POST", cookie: vp.cookie })).status, 403);
+    assert.equal((await call("/api/partner/code", { method: "POST", cookie: vp.cookie })).status, 403);
+    summary = (await call("/api/partner", { cookie: vp.cookie })).body;
+    assert.equal(summary.partner.status, "rejected"); assert.equal(summary.referral_code_active, false);
+  }
+
+  console.log("PASS: net-basis commission; signed webhook only; idempotent event/invoice; source_transaction on every transfer, no custom transfer_group; held->released; H1 transient charge read; H2 refund while unresolved / before the row / after a lost answer; H3 legacy onboard retired, legacy accounts need ready+JP; H4 lost answer + amount change -> one transfer; M1 24 h backoff, key revision, dead rows surfaced; lost/open disputes; M2 no starvation; M3 offset applied once; M4 multiple charges held; self-referral; GET read-only; schedule fix on POST refresh; ledger totals and payout window; 0040: non-approved partner -> no code/onboarding/commission, pre-approval referrals never earn, first customer void on every invoice (incl. after churn, redelivery, refund, hourly job), second customer earns 40% of net, concurrent first invoices pick exactly one first customer, estimates exclude it; held rows paid only while approved; super-admin revoke (CSRF) stops new commission and keeps held rows held. No real Stripe calls.");
 } finally {
   globalThis.fetch = originalFetch;
   sqlite.close();

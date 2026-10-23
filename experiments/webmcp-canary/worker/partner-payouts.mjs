@@ -328,10 +328,18 @@ export async function resolvePartner(env, site) {
     ? await env.DB.prepare("SELECT id, email FROM members WHERE id=?").bind(site.owner_member_id).first()
     : null;
   if (site.owner_member_id) {
-    const partner = await env.DB.prepare(`SELECT p.id, c.id AS customer_id FROM accounts c JOIN accounts p ON p.id=c.referred_by_account_id
-      WHERE c.member_id=? AND p.id<>c.id AND p.member_id<>? AND lower(p.email)<>lower(c.email)
-        AND p.partner_status='approved' AND p.partner_approved_at IS NOT NULL AND c.created_at>=p.partner_approved_at`)
-      .bind(site.owner_member_id, site.owner_member_id).first();
+    let partner = null;
+    try {
+      partner = await env.DB.prepare(`SELECT p.id, c.id AS customer_id FROM accounts c JOIN accounts p ON p.id=c.referred_by_account_id
+        WHERE c.member_id=? AND p.id<>c.id AND p.member_id<>? AND lower(p.email)<>lower(c.email)
+          AND p.partner_status='approved' AND p.partner_approved_at IS NOT NULL AND c.created_at>=p.partner_approved_at`)
+        .bind(site.owner_member_id, site.owner_member_id).first();
+    } catch (error) {
+      // Worker deployed before 0040: nobody is approved yet, so no account
+      // partner (never a 500 that makes Stripe retry every invoice.paid).
+      if (!/no such column/i.test(String(error?.message || error))) throw error;
+      console.error("partner_approval_unavailable", JSON.stringify({ message: "migration_0040_not_applied" }));
+    }
     if (partner?.id) return { partnerAccountId: partner.id, legacyReferrerId: null, customerAccountId: partner.customer_id };
   }
   if (site.channel === "referral" && site.referred_by) {
@@ -452,7 +460,10 @@ const legacyReadiness = async (env, stripeAccountId, readiness) => {
 async function destinationFor(env, row, { now, readiness }) {
   if (row.partner_account_id) {
     const account = await env.DB.prepare("SELECT * FROM accounts WHERE id=?").bind(row.partner_account_id).first();
-    if (!account?.stripe_account_id) return null;
+    // Only a partner Nurevo currently approves is paid (migration 0040): rows of
+    // a pending, rejected or revoked partner, including rows created before
+    // 0040, stay held until it is approved again.
+    if (!account?.stripe_account_id || account.partner_status !== "approved") return null;
     const key = `a:${account.id}`;
     if (!readiness.has(key)) readiness.set(key, await refreshPayoutAccount(env, account, { now }));
     return readiness.get(key).status === "ready" ? account.stripe_account_id : null;
@@ -768,7 +779,7 @@ export async function releaseHeldPayouts(env, { partnerAccountId = null, limit =
   const { results: rows = [] } = await env.DB.prepare(`SELECT r.id FROM referral_payouts r LEFT JOIN accounts a ON a.id=r.partner_account_id
       WHERE r.kind='commission' AND (r.status IN ('held','failed') OR (r.status='sending' AND r.updated_at<?))
         AND (r.legacy_referrer_id IS NOT NULL OR a.payout_status='ready' OR a.payout_checked_at IS NULL OR a.payout_checked_at<?)
-        AND (a.id IS NULL OR a.stripe_account_id IS NOT NULL)${filter}
+        AND (a.id IS NULL OR (a.stripe_account_id IS NOT NULL AND a.partner_status='approved'))${filter}
       ORDER BY IFNULL(r.checked_at,0), r.id LIMIT ?`)
     .bind(staleBefore, now - 6 * HOUR_MS, ...binds, limit).all();
   const readiness = new Map();
@@ -796,7 +807,7 @@ export async function runPartnerPayouts(env, { now = Date.now(), get = stripeGet
     if (result.dead_total) console.error("referral_payout_dead_rows", JSON.stringify({ count: result.dead_total }));
     return result;
   } catch (error) {
-    if (/no such table|no such column/i.test(String(error?.message || error))) return { skipped: "migration_0039_not_applied" };
+    if (/no such table|no such column/i.test(String(error?.message || error))) return { skipped: /no such table/i.test(String(error?.message || error)) ? "migration_0039_not_applied" : "migration_0040_not_applied" };
     throw error;
   }
 }
