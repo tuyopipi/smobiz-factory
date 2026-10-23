@@ -10,10 +10,13 @@
  * dashboard:
  *   - Is Stripe Tax active, with the head office in Japan, a Japanese
  *     registration and prices treated as tax-exclusive by default?
- *   - Which active prices are the Standard (JPY 3,000/month) and Pro
- *     (JPY 14,800/month) prices - their ids, to put in the Worker secrets?
- *   - Are there other prices on those products that could be picked by
- *     mistake (for example a USD default price)?
+ *   - Which active prices are the Standard (JPY 3,000/month, USD option
+ *     20.00) and Pro (JPY 14,800/month, USD option 99.00) prices - their ids,
+ *     to put in the Worker secrets? One Price per plan, default currency JPY,
+ *     with a manual USD currency option.
+ *   - Are there other active prices on those products (an old USD-only
+ *     default, an old standalone JPY price) to archive, and do subscriptions
+ *     still use them (then they go in STRIPE_PRICE_IDS_LEGACY_*)?
  *   - Does the customer portal let people update a card, cancel and switch
  *     between Standard and Pro?
  *   - How many live subscriptions each price has, and how many of them are
@@ -32,9 +35,13 @@ export function exemptFromConfig(text) {
   try { return String(parseWranglerConfig(text)?.vars?.STRIPE_TAX_EXEMPT ?? "").trim() === "1"; } catch { return false; }
 }
 
+// The manual USD currency option on each price, in cents: what customers in
+// the US pay exactly (Adaptive Pricing converts from JPY everywhere else).
+const PLAN_MONTHLY_USD_CENTS = Object.freeze({ standard: 2000, pro: 9900 });
+
 export const EXPECTED = Object.freeze({
-  standard: { currency: "jpy", unit_amount: PLAN_MONTHLY_YEN.standard },
-  pro: { currency: "jpy", unit_amount: PLAN_MONTHLY_YEN.pro },
+  standard: { currency: "jpy", unit_amount: PLAN_MONTHLY_YEN.standard, usd_unit_amount: PLAN_MONTHLY_USD_CENTS.standard },
+  pro: { currency: "jpy", unit_amount: PLAN_MONTHLY_YEN.pro, usd_unit_amount: PLAN_MONTHLY_USD_CENTS.pro },
 });
 
 /** Stripe Tax settings: active, head office in Japan, tax-exclusive default. */
@@ -71,44 +78,115 @@ export function evaluateRegistrations(list) {
   return out;
 }
 
-/** Find the Standard and Pro prices among active recurring prices. */
+/** The USD amount (cents) of a price's manual USD currency option, or null. */
+export function usdOptionAmount(price) {
+  const amount = price?.currency_options?.usd?.unit_amount;
+  return Number.isInteger(amount) ? amount : null;
+}
+
+const productIdOf = (price) => (typeof price?.product === "object" && price.product ? price.product.id : price?.product) ?? null;
+const usdOk = (plan, price) => usdOptionAmount(price) === EXPECTED[plan].usd_unit_amount;
+
+/**
+ * Find the Standard and Pro prices among active recurring prices.
+ *
+ * A plan's price is a monthly JPY price at the list amount. Those that also
+ * carry the right USD currency option come first, so an old standalone JPY
+ * price at the same amount never hides the new multi-currency one.
+ */
 export function findPlanPrices(prices) {
   const rows = (Array.isArray(prices) ? prices : []).filter((p) => p && p.active && p.type === "recurring");
   const monthly = (p) => p.recurring?.interval === "month" && (p.recurring?.interval_count ?? 1) === 1;
-  const pick = (plan) => rows.filter((p) => monthly(p)
-    && String(p.currency).toLowerCase() === EXPECTED[plan].currency
-    && p.unit_amount === EXPECTED[plan].unit_amount);
+  const pick = (plan) => rows
+    .filter((p) => monthly(p)
+      && String(p.currency).toLowerCase() === EXPECTED[plan].currency
+      && p.unit_amount === EXPECTED[plan].unit_amount)
+    .sort((a, b) => Number(usdOk(plan, b)) - Number(usdOk(plan, a)));
   return { standard: pick("standard"), pro: pick("pro"), all: rows };
+}
+
+/**
+ * Which price a plan should sell, and which other active prices on the same
+ * product(s) are left over - the old USD-only default, the old standalone JPY
+ * price - and should be archived (and, if subscribed, listed as legacy).
+ */
+export function selectPlanPrice(plan, matches, all) {
+  const list = Array.isArray(matches) ? matches : [];
+  const good = list.filter((p) => usdOk(plan, p));
+  const primary = good[0] || null;
+  const products = new Set((primary ? [primary] : list).map(productIdOf).filter(Boolean));
+  const failing = primary ? [] : list;
+  const others = (Array.isArray(all) ? all : []).filter((p) => products.has(productIdOf(p))
+    && p.id !== primary?.id
+    && !failing.some((f) => f.id === p.id));
+  return { primary, good, others };
+}
+
+function describeAmount(price) {
+  const currency = String(price.currency).toLowerCase();
+  const amount = currency === "jpy" ? `JPY ${price.unit_amount}` : `${currency.toUpperCase()} ${(price.unit_amount / 100).toFixed(2)}`;
+  const usd = usdOptionAmount(price);
+  return currency !== "usd" && usd != null ? `${amount} (+USD ${(usd / 100).toFixed(2)} option)` : amount;
 }
 
 /** Verdicts for one plan's price(s) and the product they belong to. */
 export function evaluatePlanPrice(plan, matches, all, { defaultTaxBehavior = null, exempt = false } = {}) {
   const label = plan === "pro" ? "Pro price" : "Standard price";
+  const legacyVar = `STRIPE_PRICE_IDS_LEGACY_${plan.toUpperCase()}`;
   const yen = EXPECTED[plan].unit_amount.toLocaleString("en-US");
+  const usd = (EXPECTED[plan].usd_unit_amount / 100).toFixed(2);
+  const recipe = `currency JPY ${yen}, monthly, plus a USD currency option of ${usd}`;
   if (!matches.length) {
-    return [["FAIL", label, `no active JPY ${yen}/month price: create it (currency JPY, ${yen}, monthly, tax behaviour Exclusive)`]];
+    return [["FAIL", label, `no active JPY ${yen}/month price: create it (${recipe})`]];
   }
   const out = [];
-  if (matches.length > 1) out.push(["WARN", label, `${matches.length} matching prices; the Worker uses only the one in its secret: ${matches.map((p) => p.id).join(", ")}`]);
-  for (const price of matches) {
+  const { primary, good, others } = selectPlanPrice(plan, matches, all);
+  if (!primary) {
+    for (const price of matches) {
+      const have = usdOptionAmount(price);
+      out.push(["FAIL", `${label} ${price.id}`, have == null
+        ? `JPY ${yen}/month but no USD currency option: add USD ${usd} (or create a new price: ${recipe})`
+        : `USD currency option is ${(have / 100).toFixed(2)}, expected ${usd}: create a new price (${recipe})`]);
+    }
+  }
+  if (good.length > 1) out.push(["WARN", label, `${good.length} matching prices; the Worker uses only the one in its secret: ${good.map((p) => p.id).join(", ")}`]);
+  for (const price of good) {
     const problems = [];
     if (!exempt && price.tax_behavior === "inclusive") problems.push("tax behaviour is Inclusive (tax would be carved out of the price) - make a new price with Exclusive");
     if (!exempt && (price.tax_behavior == null || price.tax_behavior === "unspecified") && defaultTaxBehavior !== "exclusive") {
       problems.push("tax behaviour unspecified and the account default is not Exclusive");
     }
-    out.push([problems.length ? "FAIL" : "PASS", `${label} ${price.id}`, problems.length ? problems.join("; ") : exempt ? `JPY ${yen}/month (total; no tax added)` : `JPY ${yen}/month, tax-exclusive`]);
-    const product = typeof price.product === "object" ? price.product : null;
-    if (product) {
-      if (!exempt && !product.tax_code) out.push(["WARN", `${label} product`, `"${product.name}" has no tax code; the account preset is used. Set it to the SaaS business-use code`]);
-      const siblings = all.filter((p) => (typeof p.product === "object" ? p.product.id : p.product) === product.id && p.id !== price.id);
-      for (const other of siblings) {
-        const amount = String(other.currency).toLowerCase() === "jpy" ? `JPY ${other.unit_amount}` : `${String(other.currency).toUpperCase()} ${(other.unit_amount / 100).toFixed(2)}`;
-        const isDefault = product.default_price === other.id || product.default_price?.id === other.id;
-        out.push(["WARN", `${label} product`, `also has an active ${amount} price ${other.id}${isDefault ? " (the product's DEFAULT)" : ""}. With Adaptive Pricing the JPY price is shown in local currency, so archive extra currencies or make the JPY price the default`]);
-      }
-    }
+    out.push([problems.length ? "FAIL" : "PASS", `${label} ${price.id}`, problems.length ? problems.join("; ")
+      : `JPY ${yen}/month + USD ${usd} option${exempt ? " (total; no tax added)" : ", tax-exclusive"}`]);
+  }
+  const product = [primary, ...matches].map((p) => (typeof p?.product === "object" ? p.product : null)).find(Boolean) || null;
+  if (product && !exempt && !product.tax_code) out.push(["WARN", `${label} product`, `"${product.name}" has no tax code; the account preset is used. Set it to the SaaS business-use code`]);
+  for (const other of others.filter((p) => !good.some((g) => g.id === p.id))) {
+    const owner = typeof other.product === "object" ? other.product : product;
+    const isDefault = owner && (owner.default_price === other.id || owner.default_price?.id === other.id);
+    out.push(["WARN", `${label} product`, `also has an active ${describeAmount(other)} price ${other.id}${isDefault ? " (the product's DEFAULT)" : ""}. Archive it; existing subscriptions keep working. If subscriptions use it, put its id in ${legacyVar}`]);
   }
   return out;
+}
+
+/**
+ * The wrangler commands that point the Worker at these prices.
+ *
+ * `legacy` maps a plan to the old price ids that still have subscriptions;
+ * they go into STRIPE_PRICE_IDS_LEGACY_* so a webhook for those subscriptions
+ * keeps their tier.
+ */
+export function wranglerCommands(ids = {}, legacy = {}) {
+  const lines = [];
+  for (const plan of ["standard", "pro"]) {
+    const name = plan === "pro" ? "Pro" : "Standard";
+    lines.push(ids[plan] ? `echo ${ids[plan]} | npx wrangler secret put STRIPE_PRICE_ID_${plan.toUpperCase()}` : `# ${name} price not found`);
+  }
+  for (const plan of ["standard", "pro"]) {
+    const old = [...new Set((legacy[plan] || []).filter(Boolean))];
+    if (old.length) lines.push(`echo ${old.join(",")} | npx wrangler secret put STRIPE_PRICE_IDS_LEGACY_${plan.toUpperCase()}`);
+  }
+  return lines;
 }
 
 /** Customer portal: what "Manage billing" in the dashboard opens. */
@@ -174,28 +252,34 @@ async function main() {
     add(evaluateRegistrations(await get(key, "/tax/registrations?status=active&limit=100")));
   }
 
-  const prices = await get(key, "/prices?active=true&type=recurring&limit=100&expand[]=data.product");
+  const prices = await get(key, "/prices?active=true&type=recurring&limit=100&expand[]=data.product&expand[]=data.currency_options");
   if (prices.error) add([["FAIL", "Prices", `could not list: ${String(prices.error.message).slice(0, 120)}`]]);
   const found = findPlanPrices(prices.data);
   for (const plan of ["standard", "pro"]) add(evaluatePlanPrice(plan, found[plan], found.all, { defaultTaxBehavior: settings?.defaults?.tax_behavior, exempt }));
 
   add(evaluatePortal(await get(key, "/billing_portal/configurations?active=true&limit=10&expand[]=data.features.subscription_update.products")));
 
+  const ids = {};
+  const legacy = { standard: [], pro: [] };
   for (const plan of ["standard", "pro"]) {
-    for (const price of found[plan]) {
-      const subs = await get(key, `/subscriptions?price=${encodeURIComponent(price.id)}&status=active&limit=100&expand[]=data.discounts&expand[]=data.discounts.source.coupon`);
-      const s = summariseSubscriptions(subs.data);
-      add([[s.expiring ? "WARN" : "INFO", `Subscriptions on ${price.id}`,
-        `${s.total} active: ${s.free} free (100% coupon), ${s.paying} paying${s.expiring ? `, ${s.expiring} free coupon(s) are NOT forever` : ""}`]]);
+    const { primary, others } = selectPlanPrice(plan, found[plan], found.all);
+    ids[plan] = primary?.id;
+    for (const price of [primary, ...others].filter(Boolean)) {
+      const subs = await get(key, `/subscriptions?price=${encodeURIComponent(price.id)}&status=all&limit=100&expand[]=data.discounts&expand[]=data.discounts.source.coupon`);
+      // Entitling statuses only: these are the subscriptions a webhook could downgrade.
+      const live = (Array.isArray(subs.data) ? subs.data : []).filter((sub) => ["trialing", "active", "past_due"].includes(sub.status));
+      const s = summariseSubscriptions(live);
+      if (price !== primary && s.total) legacy[plan].push(price.id);
+      add([[s.expiring ? "WARN" : "INFO", `Subscriptions on ${price.id}${price === primary ? "" : " (old price)"}`,
+        `${s.total} live: ${s.free} free (100% coupon), ${s.paying} paying${s.expiring ? `, ${s.expiring} free coupon(s) are NOT forever` : ""}`]]);
     }
   }
 
   console.log(`Nurevo Stripe setup check (${mode} key, read-only)\n`);
   for (const [status, label, detail] of rows) console.log(`${status.padEnd(5)} ${label}${detail ? ` - ${detail}` : ""}`);
-  const ids = { standard: found.standard[0]?.id, pro: found.pro[0]?.id };
   console.log("\nWorker secrets to point at these prices (run in experiments/webmcp-canary):");
-  console.log(`  ${ids.standard ? `echo ${ids.standard} | npx wrangler secret put STRIPE_PRICE_ID_STANDARD` : "# Standard price not found"}`);
-  console.log(`  ${ids.pro ? `echo ${ids.pro} | npx wrangler secret put STRIPE_PRICE_ID_PRO` : "# Pro price not found"}`);
+  for (const line of wranglerCommands(ids, legacy)) console.log(`  ${line}`);
+  if (legacy.standard.length || legacy.pro.length) console.log("  # STRIPE_PRICE_IDS_LEGACY_* keeps subscriptions on old prices at their tier; keep them after archiving those prices.");
   console.log("\nNot readable through the API - check by hand: Settings > Payments > Adaptive Pricing is ON.");
   const failed = rows.filter(([status]) => status === "FAIL").length;
   console.log(`\n${failed ? `FAIL: ${failed} item(s) to fix` : "OK"}`);

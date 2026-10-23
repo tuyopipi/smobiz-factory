@@ -193,6 +193,27 @@ for (const bad of ["free", "max", "enterprise", "", null, 1, { plan: "pro" }]) {
   assert.ok(String(body.error).length > 0, "with a stated reason");
 }
 
+/* ---------------- legacy price ids are never sold ---------------- */
+
+{
+  // STRIPE_PRICE_IDS_LEGACY_* only keeps old subscriptions on their tier. New
+  // checkouts and payment links use the primary id alone.
+  const legacy = { STRIPE_PRICE_IDS_LEGACY_STANDARD: "price_std_old", STRIPE_PRICE_IDS_LEGACY_PRO: "price_pro_old" };
+  const env = makeEnv({ keys: legacy });
+  await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  assert.equal(env.calls[0].form["line_items[0][price]"], "price_std", "checkout sends the primary standard price");
+
+  const link = makeEnv({ keys: legacy });
+  await post(link, "/api/billing/payment-link", { site_id: SITE_ID });
+  assert.equal(link.calls[0].form["line_items[0][price]"], "price_std", "a payment link sends the primary standard price");
+
+  const onlyLegacy = makeEnv({ keys: { ...legacy, STRIPE_PRICE_ID_STANDARD: "" } });
+  const { status, body } = await post(onlyLegacy, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" });
+  assert.equal(status, 503, "a legacy id never stands in for a missing primary price");
+  assert.equal(body.error, "price_not_configured");
+  assert.equal(onlyLegacy.calls.length, 0);
+}
+
 /* ---------------- the shareable payment link ---------------- */
 
 /*
