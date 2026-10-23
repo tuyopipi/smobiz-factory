@@ -220,7 +220,7 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     : BASELINE_SCORED_PROPS;
   const publishedProps = publishedSchemaProps(schemas, scoredProps);
   const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: options.commerceDetected || /(?:class|id)=["'][^"']*woocommerce/i.test(html) });
-  const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours)/i.test(llms)];
+  const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours|adresse|dirección|teléfono|telefon|horario|horaires|öffnungszeiten|地址|电话|营业时间|營業時間|주소|전화|영업시간)/i.test(llms)];
   return {
     aiCrawlersAllowed: gateCrawlers(scoring).every((bot) => robotsAllows(robots, bot)),
     edgeBlocked: options.edgeBlocked === true,

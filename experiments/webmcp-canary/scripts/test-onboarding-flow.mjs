@@ -206,8 +206,8 @@ const flush = () => new Promise((r) => setImmediate(r));
 
 /* ---------------- 2. the wizard asks which site first ---------------- */
 
-function wizard(apiImpl) {
-  const app = boot({ apiImpl });
+function wizard(apiImpl, options = {}) {
+  const app = boot({ apiImpl, ...options });
   const ob = app.sandbox.__nrvOnboarding;
   ob.start();
   const box = app.sandbox.document.body.appended.querySelector(".nrv-onboard-box");
@@ -255,14 +255,14 @@ async function submit(box, values) {
   let snippetAsked = false;
   const { app, ob, box } = wizard(async (path) => {
     if (path === "/api/sites") return { id: "s2", siteKey: "nrv_k2" };
-    if (path.endsWith("/static-snippet")) { snippetAsked = true; return { jsonld_html: "<script></script>", llms_txt: "# x", robots_txt_lines: "User-agent: X" }; }
+    if (path === "/api/sites/s2/static-snippet?lang=ja") { snippetAsked = true; return { jsonld_html: "<script></script>", llms_txt: "# x", robots_txt_lines: "User-agent: X" }; }
     return {};
   });
   app.sandbox.__nrvStaticSnippetHtml = (snippet, site, lang) => `<section class="nrv-static" data-lang="${lang}" data-key="${site.key}">${snippet ? "blocks" : "failed"}</section>`;
   ob.setup("static");
   await submit(box, { "#nrv-ob-url": "wix-shop.example" });
   assert.deepEqual(app.calls[0].body, { install_type: "static", url: "https://wix-shop.example/" });
-  assert.ok(snippetAsked, "the static snippet is fetched for the new site");
+  assert.ok(snippetAsked, "the static snippet is fetched for the new site, in the dashboard's language");
   assert.ok(box.innerHTML.includes('class="nrv-static" data-lang="ja" data-key="nrv_k2">blocks'), "and rendered with the shared renderer");
   assert.ok(!box.innerHTML.includes("pairing"), "no WordPress pairing for a static site");
 }
@@ -314,6 +314,41 @@ async function submit(box, values) {
   const scheduled = app.timers.filter((t) => t.ms === 2000).length;
   assert.ok(scheduled >= 1, "the next poll is scheduled every 2 s");
   assert.equal(ob.POLL_MAX, 150, "for 150 rounds");
+}
+
+{
+  // The pairing-code help image is a screenshot of the Japanese plugin screen.
+  // Only a Japanese reader sees it; every other language is told in words
+  // where the field is, with the menu and field names its plugin translation
+  // shows (read from the plugin's own catalogs, never edited here).
+  const PLUGIN_LOCALE = { en: "_en", zh: "zh_CN", tw: "zh_TW", ko: "ko_KR", es: "es_ES", fr: "fr_FR", de: "de_DE" };
+  const i18nDir = new URL("../wordpress-plugin/webmcp-canary/languages/i18n/", import.meta.url);
+  const plugin = (locale) => locale === "_en" ? null : JSON.parse(readFileSync(new URL(`${locale}.json`, i18nDir), "utf8"));
+  const word = (catalog, msgid) => catalog ? catalog[msgid] : msgid;
+  for (const lang of LANGS) {
+    const { app, ob, box } = wizard(async () => ({ sites: [{ id: "s1", bound: false }] }), { storage: { "nrv-dash-lang": lang } });
+    assert.equal(app.get("lang"), lang);
+    ob.connectStep("s1", "NRV-AAAAA", "https://example.com/");
+    const I = app.get("I");
+    const shot = box.innerHTML.includes("wp-pairing-code.png");
+    if (lang === "ja") {
+      assert.ok(shot, "ja keeps the screenshot");
+      assert.ok(!box.innerHTML.includes("nrv-paste-where"), "and needs no text in its place");
+      continue;
+    }
+    assert.ok(!shot && !box.innerHTML.includes("<figure"), `${lang}: no Japanese screenshot`);
+    const text = I[lang].obPasteWhere;
+    assert.ok(text && text !== I.en.obPasteWhere || lang === "en", `${lang}: obPasteWhere is its own translation`);
+    assert.ok(box.innerHTML.includes(`<p class="nrv-paste-where">${app.get("esc")(text)}</p>`), `${lang}: the description is shown instead`);
+    const catalog = plugin(PLUGIN_LOCALE[lang]);
+    for (const msgid of ["Nurevo AEO", "Settings", "Pairing code", "Store / organization information"]) {
+      assert.ok(text.includes(word(catalog, msgid)), `${lang}: names "${word(catalog, msgid)}" as the plugin does`);
+    }
+    // The numbered steps around it use the same names.
+    assert.ok(I[lang].obI2.includes(word(catalog, "Settings")), `${lang}: obI2 names the plugin's Settings menu`);
+    assert.ok(I[lang].obI3.includes(word(catalog, "Pairing code")), `${lang}: obI3 names the plugin's field`);
+    assert.ok(!/[\u3040-\u30ff]/.test(text), `${lang}: no kana in the description`);
+  }
 }
 
 /* ---------------- 4. back from Stripe ---------------- */

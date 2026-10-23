@@ -6,7 +6,7 @@ import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailP
 import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
-import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, robotsBlock, matchCrawler, searchCrawlerRobotsLines } from "./ai-crawlers.js";
+import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, resolveLlmsTxtLang, robotsBlock, matchCrawler, searchCrawlerRobotsLines } from "./ai-crawlers.js";
 import { AEO_CACHE_TTL_SECONDS, AEO_FRESH_RATE_LIMIT, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, publishedSchemaProps, resolveAeoCheckLang } from "./aeo-score.mjs";
 import { storeAeoScore } from "./diagnose.mjs";
 import {
@@ -340,13 +340,13 @@ function jsonLdScriptBlock(ld) {
   return `<script type="application/ld+json">\n${body}\n</` + "script>";
 }
 
-async function staticSnippetPayload(env, site) {
+async function staticSnippetPayload(env, site, lang = "ja") {
   const settings = await generationSettings(env, site.id);
   const plan = resolveSitePlan(site);
   const ruleset = await rulesetForPlan(env, plan);
   const definition = rulesetDefinition(ruleset);
   const jsonld = settings.serve_schema === 0 ? null : withBusinessId(buildJsonLd(site, settings, ruleset), site);
-  const llms = buildLlmsTxt({ ...settings, url: site.website_uri || site.url }, definition);
+  const llms = buildLlmsTxt({ ...settings, url: site.website_uri || site.url }, definition, lang);
   const updatedAt = Number(settings.updated_at) || null;
   return {
     site_id: site.id,
@@ -357,6 +357,7 @@ async function staticSnippetPayload(env, site) {
     jsonld,
     jsonld_html: jsonLdScriptBlock(jsonld),
     llms_txt: llms,
+    llms_txt_lang: lang,
     robots_txt_lines: searchCrawlerRobotsLines(),
     search_crawlers: [...AI_SEARCH_CRAWLERS],
   };
@@ -1885,7 +1886,11 @@ export async function handleApi(request, env, ctx) {
       return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
     }
     if (site.delivery_status === "stopped") return json({ error: "delivery_stopped" }, 409);
-    return json(await staticSnippetPayload(env, site));
+    // llms.txt headings follow the dashboard's language (?lang=), then the
+    // browser's; with neither they stay Japanese, as they always were.
+    const snippetLang = resolveLlmsTxtLang(url.searchParams.get("lang")
+      || String(request.headers.get("accept-language") || "").split(",")[0].split(";")[0]);
+    return json(await staticSnippetPayload(env, site, snippetLang), 200, { "vary": "accept-language" });
   }
 
   const scanMatch = path.match(/^\/api\/sites\/([^/]+)\/scan$/i);
