@@ -219,7 +219,7 @@ export async function refreshPayoutAccount(env, account, { force = false, now = 
 function jstDay(now) { return new Date(now + 9 * HOUR_MS).toISOString().slice(0, 10).replace(/-/g, ""); }
 
 /**
- * Create (once) the partner's Express account and return the Stripe-hosted
+ * Create (once) the partner's connected account (Express Dashboard) and return the Stripe-hosted
  * URL to continue: onboarding while transfers are not active, the Express
  * dashboard (bank details, payouts) once they are.
  */
@@ -230,7 +230,14 @@ export async function startPayoutOnboarding(env, account, { now = Date.now() } =
   let state;
   if (!stripeAccountId) {
     const form = scheduleForm(env);
-    form.set("type", "express");
+    // Accounts v1 controller properties equivalent to Express (`type` is
+    // deprecated for new platforms): Express Dashboard, Nurevo pays Stripe's
+    // fees and is liable for losses (which is also what lets it set the payout
+    // schedule), Stripe collects and keeps the KYC/bank requirements.
+    form.set("controller[stripe_dashboard][type]", "express");
+    form.set("controller[fees][payer]", "application");
+    form.set("controller[losses][payments]", "application");
+    form.set("controller[requirement_collection]", "stripe");
     form.set("country", "JP");
     form.set("capabilities[transfers][requested]", "true");
     // Opt in if Stripe asks this platform to request card_payments with

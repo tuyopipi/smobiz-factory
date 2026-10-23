@@ -61,7 +61,7 @@ globalThis.fetch = async (input, options = {}) => {
   if (method === "POST" && url.pathname === "/v1/accounts") {
     return replay(key, () => {
       const id = `acct_test_${++stripe.accountSeq}`;
-      const account = { id, country: form.country, type: form.type, capabilities: { transfers: "inactive" }, details_submitted: false,
+      const account = { id, country: form.country, type: "none", controller: { stripe_dashboard: { type: form["controller[stripe_dashboard][type]"] }, losses: { payments: form["controller[losses][payments]"] } }, capabilities: { transfers: "inactive" }, details_submitted: false,
         requirements: { currently_due: ["external_account", "representative.first_name_kanji"], past_due: [], disabled_reason: "requirements.past_due" },
         settings: { payouts: { schedule: { interval: form["settings[payouts][schedule][interval]"], monthly_anchor: Number(form["settings[payouts][schedule][monthly_anchor]"]) } } },
         _form: form };
@@ -75,7 +75,11 @@ globalThis.fetch = async (input, options = {}) => {
     if (method === "POST") account.settings.payouts.schedule = { interval: form["settings[payouts][schedule][interval]"], monthly_anchor: Number(form["settings[payouts][schedule][monthly_anchor]"]) };
     return ok(account);
   }
-  if (method === "POST" && (m = url.pathname.match(/^\/v1\/accounts\/([^/]+)\/login_links$/))) return ok({ url: `https://connect.stripe.com/express/${m[1]}` });
+  if (method === "POST" && (m = url.pathname.match(/^\/v1\/accounts\/([^/]+)\/login_links$/))) {
+    // Login links exist only for accounts that use the Express Dashboard.
+    if (stripe.accounts.get(m[1])?.controller?.stripe_dashboard?.type !== "express") return fail(400, "invalid_request_error");
+    return ok({ url: `https://connect.stripe.com/express/${m[1]}` });
+  }
   if (method === "POST" && url.pathname === "/v1/account_links") {
     assert.equal(form.type, "account_onboarding");
     assert.equal(form.return_url, "https://nurevo.jp/dashboard?payout=return#partner");
@@ -211,7 +215,11 @@ try {
   assert.equal(r.body.kind, "onboarding");
   const created = stripe.calls.filter((c) => c.method === "POST" && c.path === "/v1/accounts");
   assert.equal(created.length, 1);
-  assert.equal(created[0].form.type, "express");
+  assert.equal(created[0].form.type, undefined, "no deprecated account type");
+  assert.equal(created[0].form["controller[stripe_dashboard][type]"], "express");
+  assert.equal(created[0].form["controller[fees][payer]"], "application");
+  assert.equal(created[0].form["controller[losses][payments]"], "application");
+  assert.equal(created[0].form["controller[requirement_collection]"], "stripe");
   assert.equal(created[0].form.country, "JP", "partners are Japan-based");
   assert.equal(created[0].form["capabilities[transfers][requested]"], "true");
   assert.equal(created[0].form["settings[payouts][schedule][interval]"], "monthly");
