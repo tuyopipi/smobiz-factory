@@ -1,4 +1,4 @@
-import { REFERRAL_SHARE, referralCommissionYen, payoutAnchor, refreshPayoutAccount, releaseHeldPayouts, partnerLedgerTotals } from "./partner-payouts.mjs";
+import { REFERRAL_SHARE, referralCommissionYen, payoutAnchor, refreshPayoutAccount, partnerLedgerTotals } from "./partner-payouts.mjs";
 // Account identities are per member, independent of organization-level access.
 export async function ensureAccount(env, memberId) {
   await env.DB.prepare(`INSERT INTO accounts(member_id,email,created_at)
@@ -48,19 +48,17 @@ export function monthlyReferralPayout(sites) {
   for (const plan of subscriptions.values()) total += ESTIMATE_MONTHLY_YEN[plan];
   return total;
 }
-export async function partnerSummary(env, account, { refresh = false, now = Date.now() } = {}) {
+export async function partnerSummary(env, account, { now = Date.now() } = {}) {
   const { results: accounts = [] } = await env.DB.prepare('SELECT id,member_id,email,created_at FROM accounts WHERE referred_by_account_id=? ORDER BY created_at DESC,id DESC').bind(account.id).all();
   const { results: sites = [] } = await env.DB.prepare(`SELECT s.id,s.url,s.created_at,s.plan,s.contract,s.stripe_subscription_id,s.owner_member_id,a.created_at AS account_registered_at
     FROM sites s JOIN accounts a ON a.member_id=s.owner_member_id WHERE a.referred_by_account_id=?`).bind(account.id).all();
   const anchor = payoutAnchor(env);
   let payoutAccount;
   try {
-    payoutAccount = await refreshPayoutAccount(env, account, { force: refresh, now });
+    payoutAccount = await refreshPayoutAccount(env, account, { now }); // read-only, cached
   } catch { payoutAccount = { status: 'unavailable', currently_due: 0, past_due: 0 }; }
   let totals = null;
   try {
-    // The partner's account just became ready: pay what was held (bounded).
-    if (payoutAccount.status === 'ready' && !payoutAccount.cached) await releaseHeldPayouts(env, { partnerAccountId: account.id, limit: 10, now });
     totals = await partnerLedgerTotals(env, account.id, { now, anchor });
   } catch (error) {
     console.error('partner_ledger_unavailable', JSON.stringify({ message: String(error?.message || error).slice(0, 120) }));
@@ -71,7 +69,7 @@ export async function partnerSummary(env, account, { refresh = false, now = Date
       standard_monthly_yen: ESTIMATE_MONTHLY_YEN.standard, pro_monthly_yen: ESTIMATE_MONTHLY_YEN.pro,
       monthly_estimate_yen: monthlyReferralPayout(sites), estimate_basis: 'before_stripe_fees',
       cumulative_earned_yen: totals ? totals.earned : null, cumulative_paid_yen: totals ? totals.paid : null,
-      held_yen: totals ? totals.held : null,
+      held_yen: totals ? totals.held : null, needs_attention: totals ? totals.attention : null,
       next_payout_yen: totals ? totals.next : null, later_payout_yen: totals ? totals.later : null,
       next_payout_at: totals ? totals.window.next : null, next_payout_this_month: totals ? totals.window.nextIsThisMonth : null,
       payout_day: anchor, paid_status: totals ? 'ledger' : 'ledger_unavailable', basis: 'net_after_stripe_fees',

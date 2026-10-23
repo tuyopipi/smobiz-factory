@@ -8,7 +8,7 @@ try {
   const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, locale: 'ja-JP' });
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   let code = null;
-  let payoutStatus = 'not_started', onboardCalls = 0;
+  let payoutStatus = 'not_started', onboardCalls = 0, refreshCalls = 0;
   const partner = () => ({ referral_code: code, payout: { monthly_estimate_yen: 1200, cumulative_earned_yen: 2400, cumulative_paid_yen: 0, held_yen: 1156, next_payout_yen: 0, later_payout_yen: 1156, next_payout_this_month: true, payout_day: 25, account: { status: payoutStatus, currently_due: payoutStatus === 'in_progress' ? 2 : 0 } },
     referrals: [{ email: 'referred@example.test', registered_at: 1791986400000, sites: [{ url: 'shop.example.test', plan: 'standard', billing_status: 'active' }] }] });
   await page.route('https://nurevo.test/**', async route => {
@@ -17,6 +17,7 @@ try {
       let data = {};
       if (path === '/api/me') data = { email: 'parent@example.test', role: 'store' };
       if (path === '/api/partner') data = partner();
+      if (path === '/api/partner/payout/refresh') { assert.equal(route.request().method(), 'POST'); refreshCalls++; data = { ok: true }; }
       if (path === '/api/partner/payout/onboard') { assert.equal(route.request().method(), 'POST'); onboardCalls++; data = { ok: true, kind: 'onboarding', url: 'https://connect.stripe.com/setup/e/acct_test' }; }
       if (path.startsWith('/api/partner/code')) { code = path.endsWith('regenerate') ? 'BCDEFGHJKMNP' : 'ABCDEFGHJKMN'; data = { referral_code: code }; }
       if (path === '/api/sites') data = { sites: [] };
@@ -78,6 +79,7 @@ try {
   assert.ok(await page.getByRole('button', { name: '登録を続ける', exact: true }).isVisible());
   assert.ok(await page.getByText('あと2項目の入力が必要です。', { exact: true }).isVisible());
   assert.equal(new URL(page.url()).searchParams.get('payout'), null, 'the return marker is removed from the address bar');
+  assert.equal(refreshCalls, 1, 'returning from Stripe asks the server (POST) to re-check the account once');
   payoutStatus = 'ready';
   await page.reload();
   await page.getByRole('heading', { name: '報酬の受け取り口座', exact: true }).waitFor();

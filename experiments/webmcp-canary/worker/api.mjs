@@ -2,7 +2,7 @@ import { recordFetched } from "./aeo-delivery.mjs";
 import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
 import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
-import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeRefund, handleConnectedAccountUpdated } from "./partner-payouts.mjs";
+import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
@@ -905,8 +905,21 @@ export async function handleApi(request, env, ctx) {
   if (path === "/api/partner" && method === "GET") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
-    const refresh = new URL(request.url).searchParams.get("refresh") === "1";
-    return json(await partnerSummary(env, await ensureAccount(env, member.member_id), { refresh }));
+    // Read-only: no money moves and no Stripe setting changes on a GET.
+    return json(await partnerSummary(env, await ensureAccount(env, member.member_id)));
+  }
+  // After Stripe sends the partner back: re-read the account (throttled) and
+  // release held commission if it is now ready. CSRF-protected POST.
+  if (path === "/api/partner/payout/refresh" && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    try {
+      const result = await refreshPayoutAfterReturn(env, await ensureAccount(env, member.member_id));
+      return json({ ok: true, payout_account: result.payout_account });
+    } catch (error) {
+      console.error("partner_payout_refresh_failed", JSON.stringify({ message: String(error?.message || error).slice(0, 200) }));
+      return json({ error: "payout_refresh_failed" }, 503);
+    }
   }
   // The partner's own payout account (Stripe Connect Express, Japan). No body
   // is read: the account and the destination are always the signed-in member's.
@@ -2265,24 +2278,12 @@ export async function handleApi(request, env, ctx) {
     return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen, site_id: site.id });
   }
 
+  // Retired: it let any org admin or referrer attach a Stripe account to any
+  // referrer id. Partners onboard their own account from the Partner page
+  // (POST /api/partner/payout/onboard); legacy referrers are paid only to an
+  // account already stored for them that is ready and in Japan.
   if (path === "/api/billing/connect/onboard" && method === "POST") {
-    const member = await requireOrgRole(request, env, ["admin", "referrer"]);
-    if (!member) return json({ error: "forbidden" }, 403);
-    const secret = stripeSecret(env);
-    if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
-    const body = await safeJson(request);
-    const referrer = await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(body.referrer_id).first();
-    if (!referrer) return json({ error: "referrer_not_found" }, 404);
-    let accountId = referrer.stripe_account_id;
-    if (!accountId) {
-      const account = await stripeRequest(secret, "/v1/accounts", new URLSearchParams({ type: "express", "metadata[referrerId]": referrer.id }));
-      if (!account.ok) return json({ error: account.data?.error?.message || "stripe_account_failed" }, 502);
-      accountId = account.data.id;
-      await env.DB.prepare("UPDATE referrers SET stripe_account_id=? WHERE id=?").bind(accountId, referrer.id).run();
-    }
-    const link = await stripeRequest(secret, "/v1/account_links", new URLSearchParams({ account: accountId, refresh_url: "https://nurevo.jp/dashboard?connect=refresh", return_url: "https://nurevo.jp/dashboard?connect=complete", type: "account_onboarding" }));
-    if (!link.ok) return json({ error: link.data?.error?.message || "stripe_account_link_failed" }, 502);
-    return json({ ok: true, account_id: accountId, url: link.data.url });
+    return json({ error: "legacy_onboarding_disabled", use: "/api/partner/payout/onboard" }, 410);
   }
 
   if (path === "/api/billing/webhook" && method === "POST") {
@@ -2373,11 +2374,15 @@ export async function handleApi(request, env, ctx) {
     // Only this verified webhook creates commission; nothing comes from a client.
     // A failure un-claims the event so Stripe retries it; the ledger makes
     // the retry safe.
-    if (event.type === "invoice.paid" || event.type === "charge.refunded") {
+    const chargeEvent = event.type === "charge.refunded" ? object.id
+      : /^charge\.dispute\.(created|closed|funds_withdrawn|funds_reinstated)$/.test(event.type || "") ? (typeof object.charge === "string" ? object.charge : object.charge?.id) : null;
+    if (event.type === "invoice.paid" || chargeEvent) {
       try {
+        // Refunds and disputes re-read the charge's current state; what the
+        // event says is not the amount used.
         const outcome = event.type === "invoice.paid"
           ? await recordInvoiceCommission(env, { invoice: object, siteId })
-          : await recordChargeRefund(env, { charge: object });
+          : await recordChargeEvent(env, { chargeId: chargeEvent });
         if (outcome?.status === "failed") console.error("referral_payout_not_sent", JSON.stringify({ event: event.id, type: event.type }));
       } catch (error) {
         console.error("referral_ledger_error", JSON.stringify({ event: event.id, type: event.type, message: String(error?.message || error).slice(0, 200) }));
@@ -3213,7 +3218,11 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
     const { results: orgs } = await env.DB.prepare("SELECT id FROM orgs ORDER BY created_at").all();
     const summaries = [];
     for (const org of orgs || []) summaries.push(await billingSummary(env, org.id, { role: "admin" }));
+    // Partner payouts that need a person (retries exhausted), for the owner.
+    let payoutsNeedingAttention = null;
+    try { payoutsNeedingAttention = Number((await env.DB.prepare("SELECT COUNT(*) AS n FROM referral_payouts WHERE kind='commission' AND status='dead'").first())?.n || 0); } catch { payoutsNeedingAttention = null; }
     return {
+      referral_payouts_needing_attention: payoutsNeedingAttention,
       currency: "jpy",
       unit_prices: { ...BILLING_DEFAULTS },
       mrr_yen: summaries.reduce((sum, item) => sum + Number(item.mrr_yen || 0), 0),
