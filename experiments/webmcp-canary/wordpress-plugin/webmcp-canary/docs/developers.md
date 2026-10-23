@@ -140,3 +140,41 @@ wp nurevo import <file|->          # import an export; keys and unknown settings
 
 `GET /wp-json/nurevo/v1/status` returns the same report as `wp nurevo status`
 to users with `manage_options`. It is read-only and contains no keys or tokens.
+
+## Abilities API (WordPress 6.9+)
+
+On WordPress 6.9 and later, `includes/abilities.php` registers a `nurevo`
+ability category and four read-only abilities through the
+[Abilities API](https://developer.wordpress.org/apis/abilities-api/). On older
+WordPress, where `wp_register_ability()` does not exist, nothing is registered.
+
+The category is registered on `wp_abilities_api_categories_init` and the
+abilities on `wp_abilities_api_init`, as core requires. Every ability:
+
+- needs `manage_options` (`permission_callback`);
+- takes no input (an empty object, which is also the default);
+- declares an `output_schema`;
+- is annotated `readonly: true`, `destructive: false`, `idempotent: true` and
+  has `show_in_rest: true` in its `meta`;
+- only reads what the site already stores. None writes a setting, and none
+  contacts the Nurevo service or any other remote or paid API.
+
+| Ability | Returns |
+| --- | --- |
+| `nurevo/get-status` | `output_enabled`; `outputs` (`json_ld`, `llms_txt`, `robots_rules`); `ai_training` (`default`, `allow` or `block`); `search_engines_allowed`; `llms_txt_url`; `connected`; `plan`; `consent`; `version`. |
+| `nurevo/get-aeo-score` | The last **stored** diagnosis: `available`, `score`, `band`, `band_label`, `date`, `checklist` (`total`, `ok`, `warn`, `bad`), `checks` (`id`, `label`, `status`), `message`, `admin_url`. It never runs a new diagnosis. Without a stored one, `available` is `false` and `message` says how to run one from wp-admin. |
+| `nurevo/get-fixes` | The WARN and BAD items of that stored diagnosis, each with `id`, `status`, `label`, `finding`, a plain-language `next_step` and the admin screen to do it on (`where`). |
+| `nurevo/get-business-profile` | The business node exactly as Nurevo's JSON-LD carries it (`json_ld`), plus flat `type`, `name`, `description`, `url`, `address`, `telephone`, `email`, `opening_hours` / `opening_hours_specification`, and `published` (whether output is on). Only published facts: never the site key, tokens, licence or the owner email. |
+
+Running one in PHP:
+
+```php
+$ability = wp_get_ability('nurevo/get-status');
+$status  = $ability ? $ability->execute() : null; // array, or WP_Error
+```
+
+Over REST (authenticated, as an administrator), a read-only ability runs with GET:
+
+```
+GET /wp-json/wp-abilities/v1/abilities/nurevo/get-aeo-score/run
+```

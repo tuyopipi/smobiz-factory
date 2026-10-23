@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.8.0
+Stable tag: 0.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -100,8 +100,8 @@ By using these features you agree to the service's terms. Please read them befor
 == Installation ==
 
 1. Upload the plugin folder to `/wp-content/plugins/`, or install the zip from Plugins > Add New > Upload Plugin.
-2. Activate **Nurevo AEO** on the Plugins screen.
-3. Open **Nurevo AEO > Settings** and enable it.
+2. Activate **Nurevo AEO** on the Plugins screen. The setup wizard opens once: four short steps for the kind of business, its basic facts, what to publish for AI, and an optional diagnosis. You can skip it and come back from **Nurevo AEO > Setup**.
+3. Or set it up by hand: open **Nurevo AEO > Settings** and enable it.
 4. Check the business information the plugin extracted automatically and correct anything wrong. It only fills blanks, so nothing you typed was replaced.
 5. Open **Nurevo AEO > AEO Score**, read what the diagnosis sends, tick the consent box and press **Run diagnosis**. Then apply the free fixes.
 6. A site key and a license key are optional. They are only needed for diagnostics history held by the service and for the Standard "always current" ruleset.
@@ -119,6 +119,10 @@ Yes. In the block editor, open the **Nurevo AEO** panel in the post sidebar; in 
 = Can I copy the settings to another site, or script them? =
 
 Yes. **Nurevo AEO > Settings > Tools** exports the settings (output switches, business details, FAQ and services) as a JSON file and imports one. Keys, tokens, the plan and the connection are never exported or imported, and a file containing them is refused. With WP-CLI: `wp nurevo status`, `wp nurevo diagnose`, `wp nurevo export` and `wp nurevo import <file>`. Administrators can also read the output state from the REST route `GET /wp-json/nurevo/v1/status`.
+
+= Does the AI integration cost anything? =
+
+No. The AI integration runs inside your own WordPress, and the AI that uses it is your own assistant. Nurevo AEO makes no calls to any AI API, so there is no usage fee behind it. On WordPress 6.9 and later it offers read-only abilities through the WordPress Abilities API: your status, the last stored AEO score, what is left to fix, and the business facts you already publish. They change nothing and run no new diagnosis.
 
 = What is AEO? =
 
@@ -179,6 +183,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 7. The first-run screen. Nothing is sent to the Nurevo service until you tick the consent box and press "Run diagnosis"; it explains what the diagnosis sends.
 
 == Changelog ==
+
+= 0.8.1 =
+* First-run setup wizard (Nurevo AEO > Setup): the kind of business, the name, address, phone, opening hours and description, what to publish for AI, and the optional diagnosis, in four short steps. It opens once after you activate the plugin on a site that is not set up yet, never after a bulk, network or WP-CLI activation. Skip it at any step and resume later; the opening hours are read back to you as they will be published.
+* WordPress Abilities API (WordPress 6.9+): four read-only abilities for administrators, `nurevo/get-status`, `nurevo/get-aeo-score`, `nurevo/get-fixes` and `nurevo/get-business-profile`, so an AI assistant you use can read your setup. They change no settings, return no keys or tokens, and contact no service; the score is the last stored one. Documented in docs/developers.md. Nothing changes on older WordPress.
 
 = 0.8.0 =
 * Nothing is sent to the Nurevo service until you agree. Activating the plugin no longer runs a diagnosis or makes any request. The AEO screen explains what the diagnosis sends and runs it when you tick the consent box and press "Run diagnosis". Pairing the site with a code also counts as agreeing.
@@ -280,6 +288,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.8.1 =
+
+Adds a short setup wizard (Nurevo AEO > Setup) and read-only WordPress Abilities for AI assistants on WordPress 6.9+. Existing sites are not redirected and nothing changes in what is published.
 
 = 0.8.0 =
 

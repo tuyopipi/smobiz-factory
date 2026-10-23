@@ -3169,10 +3169,11 @@ expect(strpos($block_js, "title:'Nurevo FAQ'") === false && strpos($block_js, 't
 expect(strpos($block_js, '"title":"Nurevo FAQ"') !== false, 'which is passed in from PHP');
 
 $main_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
-expect(WEBMCP_CANARY_VERSION === '0.8.0' && strpos($main_source, " * Version: 0.8.0\n") !== false, 'the version is 0.8.0 in the header and the constant');
-$readme_080 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
-expect(strpos($readme_080, "Stable tag: 0.8.0") !== false, 'and in the readme stable tag');
-expect(substr_count($readme_080, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice');
+expect(WEBMCP_CANARY_VERSION === '0.8.1' && strpos($main_source, " * Version: 0.8.1\n") !== false, 'the version is 0.8.1 in the header and the constant');
+$readme_081 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
+expect(strpos($readme_081, "Stable tag: 0.8.1") !== false, 'and in the readme stable tag');
+expect(substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.8.0');
+expect(strpos($readme_081, '= Does the AI integration cost anything? =') !== false, 'the readme answers whether the AI integration costs anything');
 
 /* --- Free is never scored down for data it holds: optIn fields publish unless retired --- */
 $optin_local = array('@type' => 'Restaurant', 'name' => 'Sakura', 'url' => 'https://example.test/', 'description' => 'Small bistro.', 'email' => 'shop@example.test');
@@ -3455,6 +3456,186 @@ $action_body = webmcp_test_function_body($wizard_source, 'webmcp_canary_wizard_a
 expect(strpos($action_body, "current_user_can('manage_options')") !== false && strpos($action_body, "check_admin_referer('webmcp_canary_wizard')") !== false, 'the admin-post handler checks the capability and the nonce');
 expect(strpos($wizard_source, 'wp_remote_') === false, 'the wizard has no HTTP calls of its own');
 expect(strpos($wizard_source, "register_setting") === false && strpos($wizard_source, "update_option(WEBMCP_CANARY_OPTION, \$clean)") !== false, 'settings go into the one existing option');
+$wizard_reset();
+
+/* --- 0.8.1: WordPress Abilities API (read-only) --------------------------- */
+
+// Without the API (WordPress before 6.9): nothing is hooked and nothing breaks.
+expect(!function_exists('wp_register_ability'), 'the harness starts without the Abilities API');
+expect(webmcp_canary_abilities_bootstrap() === false, 'bootstrap reports the API is missing');
+expect(empty($GLOBALS['webmcp_test_hooks']['wp_abilities_api_init']) && empty($GLOBALS['webmcp_test_hooks']['wp_abilities_api_categories_init']), 'no ability hooks are added');
+webmcp_canary_register_ability_category();
+webmcp_canary_register_abilities();
+expect(empty($GLOBALS['webmcp_test_abilities']), 'calling the registrars directly registers nothing');
+
+// With the API (stand-ins for the WordPress 6.9 functions).
+if (!function_exists('wp_register_ability')) {
+    function wp_register_ability($name, $args) {
+        if (!preg_match('/^[a-z0-9-]+\/[a-z0-9-]+$/', $name)) {
+            return null;
+        }
+        $GLOBALS['webmcp_test_abilities'][$name] = $args;
+        return (object) array('name' => $name);
+    }
+    function wp_register_ability_category($slug, $args) {
+        if (!preg_match('/^[a-z0-9]+(?:-[a-z0-9]+)*$/', $slug)) {
+            return null;
+        }
+        $GLOBALS['webmcp_test_ability_categories'][$slug] = $args;
+        return (object) array('slug' => $slug);
+    }
+}
+expect(webmcp_canary_abilities_bootstrap() === true, 'bootstrap hooks registration when the API exists');
+foreach ($GLOBALS['webmcp_test_hooks']['wp_abilities_api_categories_init'] as $callback) { $callback(); }
+foreach ($GLOBALS['webmcp_test_hooks']['wp_abilities_api_init'] as $callback) { $callback(); }
+$category = $GLOBALS['webmcp_test_ability_categories']['nurevo'] ?? null;
+expect(is_array($category) && $category['label'] !== '' && $category['description'] !== '', 'the nurevo category is registered with a label and description');
+$abilities = $GLOBALS['webmcp_test_abilities'] ?? array();
+expect(array_keys($abilities) === array('nurevo/get-status', 'nurevo/get-aeo-score', 'nurevo/get-fixes', 'nurevo/get-business-profile'), 'the four abilities are registered');
+
+/** A small JSON Schema check: types (incl. null), required keys, nested properties and items. */
+function webmcp_test_schema_errors($value, $schema, $path = '$') {
+    $errors = array();
+    $types = isset($schema['type']) ? (array) $schema['type'] : array();
+    $type_ok = empty($types);
+    foreach ($types as $type) {
+        if (($type === 'object' && is_array($value) && (empty($value) || array_keys($value) !== range(0, count($value) - 1)))
+            || ($type === 'array' && is_array($value) && (empty($value) || array_keys($value) === range(0, count($value) - 1)))
+            || ($type === 'string' && is_string($value))
+            || ($type === 'integer' && is_int($value))
+            || ($type === 'number' && (is_int($value) || is_float($value)))
+            || ($type === 'boolean' && is_bool($value))
+            || ($type === 'null' && $value === null)) {
+            $type_ok = true;
+        }
+    }
+    if (!$type_ok) {
+        return array("{$path}: expected " . implode('|', $types) . ', got ' . gettype($value));
+    }
+    if (isset($schema['enum']) && !in_array($value, $schema['enum'], true)) {
+        $errors[] = "{$path}: " . var_export($value, true) . ' not in enum';
+    }
+    if (is_array($value) && in_array('object', $types, true)) {
+        foreach ($schema['required'] ?? array() as $key) {
+            if (!array_key_exists($key, $value)) {
+                $errors[] = "{$path}.{$key}: required";
+            }
+        }
+        foreach ($schema['properties'] ?? array() as $key => $sub) {
+            if (array_key_exists($key, $value)) {
+                $errors = array_merge($errors, webmcp_test_schema_errors($value[$key], $sub, "{$path}.{$key}"));
+            }
+        }
+    }
+    if (is_array($value) && in_array('array', $types, true) && isset($schema['items'])) {
+        foreach ($value as $index => $item) {
+            $errors = array_merge($errors, webmcp_test_schema_errors($item, $schema['items'], "{$path}[{$index}]"));
+        }
+    }
+    return $errors;
+}
+
+foreach ($abilities as $name => $args) {
+    foreach (array('label', 'description', 'category', 'input_schema', 'output_schema', 'execute_callback', 'permission_callback', 'meta') as $key) {
+        expect(isset($args[$key]), "{$name} has {$key}");
+    }
+    expect(is_string($args['label']) && $args['label'] !== '' && is_string($args['description']) && $args['description'] !== '', "{$name} has a label and a description");
+    expect($args['category'] === 'nurevo', "{$name} is in the nurevo category");
+    expect($args['input_schema']['type'] === 'object' && $args['input_schema']['properties'] === array() && $args['input_schema']['additionalProperties'] === false, "{$name} takes no input");
+    expect(array_key_exists('default', $args['input_schema']), "{$name} gives its input a default so a call with no input validates");
+    expect($args['output_schema']['type'] === 'object' && !empty($args['output_schema']['properties']), "{$name} declares an output schema");
+    expect($args['meta']['annotations']['readonly'] === true && $args['meta']['annotations']['destructive'] === false, "{$name} is annotated read-only");
+    expect($args['meta']['show_in_rest'] === true, "{$name} is available through the Abilities REST API");
+    expect(is_callable($args['execute_callback']) && is_callable($args['permission_callback']), "{$name} has callable callbacks");
+    // Only administrators.
+    $GLOBALS['webmcp_test_denied_caps'] = array('manage_options');
+    expect(call_user_func($args['permission_callback'], array()) === false, "{$name} denies users without manage_options");
+    $GLOBALS['webmcp_test_denied_caps'] = array();
+    expect(call_user_func($args['permission_callback'], array()) === true, "{$name} allows administrators");
+}
+
+// Executing them: local reads only. No remote calls, no writes.
+$wizard_reset(array(
+    'enabled' => '1', 'serve_schema' => '1', 'serve_llms_txt' => '1', 'allow_ai_crawlers' => '1', 'ai_training' => 'block',
+    'site_key' => 'nrv_secret_site_key', 'site_id' => 'site01', 'profile_token' => 'nrvp_secret_token', 'admin_token' => 'adm_secret',
+    'license_key' => 'nrv_secret_licence', 'site_email' => 'owner-private@example.test', 'plan' => 'standard',
+    'business_name' => 'Sakura Bistro', 'business_type' => 'Restaurant', 'business_address' => '1-2-3 Jingumae, Tokyo',
+    'business_phone' => '+81-3-1111-2222', 'business_hours' => 'Mon-Fri 9:00-18:00', 'business_description' => 'Seasonal French cooking',
+    'business_url' => 'https://example.test/', 'business_email' => '',
+));
+$GLOBALS['webmcp_test_queried'] = null;
+$GLOBALS['webmcp_test_front_page'] = true;
+$log_before = count($GLOBALS['webmcp_test_remote_get_log']);
+$GLOBALS['webmcp_test_last_remote'] = null;
+$options_before = serialize($GLOBALS['webmcp_test_options']);
+$run = function ($name) use ($abilities) {
+    $args = $abilities[$name];
+    $output = call_user_func($args['execute_callback'], $args['input_schema']['default']);
+    $errors = webmcp_test_schema_errors($output, $args['output_schema']);
+    expect($errors === array(), "{$name} output matches its schema: " . implode('; ', $errors));
+    return $output;
+};
+
+$status = $run('nurevo/get-status');
+expect($status['output_enabled'] === true && $status['outputs'] === array('json_ld' => true, 'llms_txt' => true, 'robots_rules' => true), 'get-status reports the active outputs');
+expect($status['ai_training'] === 'block' && $status['connected'] === true && $status['plan'] === 'standard' && $status['consent'] === true, 'get-status reports training, connection, plan and consent');
+
+$no_score = $run('nurevo/get-aeo-score');
+expect($no_score['available'] === false && $no_score['score'] === null, 'get-aeo-score says when no diagnosis is stored');
+expect(strpos($no_score['message'], 'Nurevo AEO > AEO Score') !== false, 'and tells the user where to run one');
+$no_fixes = $run('nurevo/get-fixes');
+expect($no_fixes['available'] === false && $no_fixes['fixes'] === array(), 'get-fixes has nothing to list without a diagnosis');
+delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['site_key'] = '';
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['site_id'] = '';
+$unconsented = $run('nurevo/get-aeo-score');
+expect(strpos($unconsented['message'], 'press Run diagnosis') !== false, 'without consent it explains how to agree and run one');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['site_key'] = 'nrv_secret_site_key';
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['site_id'] = 'site01';
+
+$stored_at = 1760000000;
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_AEO_SCORE_OPTION] = array('saved_at' => $stored_at, 'identity' => 'stale-or-not', 'data' => array(
+    'score' => 58, 'band' => 'yellow', 'gatePassed' => true, 'checks' => array(
+        array('id' => 'schema', 'label' => 'Schema', 'status' => 'OK', 'message' => '', 'fixable' => true),
+        array('id' => 'llms', 'label' => 'llms.txt', 'status' => 'BAD', 'message' => '', 'fixable' => true),
+        array('id' => 'coverage', 'label' => 'Coverage', 'status' => 'WARN', 'message' => '', 'fixable' => true),
+        array('id' => 'legibility', 'label' => 'Legibility', 'status' => 'WARN', 'message' => '', 'fixable' => false),
+        array('id' => 'brand_new_check', 'label' => 'Brand new', 'status' => 'BAD', 'message' => 'Something new', 'fixable' => false, 'hints' => array('Do the new thing.')),
+    ),
+));
+$options_before = serialize($GLOBALS['webmcp_test_options']);
+$score_out = $run('nurevo/get-aeo-score');
+expect($score_out['available'] === true && $score_out['score'] === 58 && $score_out['band'] === 'yellow', 'get-aeo-score returns the stored score and band');
+expect($score_out['date'] === gmdate('c', $stored_at), 'with the date it was stored');
+expect($score_out['checklist'] === array('total' => 5, 'ok' => 1, 'warn' => 2, 'bad' => 2), 'and a checklist summary');
+$fixes = $run('nurevo/get-fixes');
+expect(count($fixes['fixes']) === 4 && $fixes['fixes'][0]['id'] === 'llms', 'get-fixes lists only the WARN and BAD items');
+expect(strpos($fixes['fixes'][0]['next_step'], 'press "Create it"') !== false, 'a one-click fix says which button to press');
+expect(strpos($fixes['fixes'][1]['next_step'], 'Open Nurevo AEO > Settings') !== false, 'a missing-facts item points to the business details');
+expect(strpos($fixes['fixes'][2]['next_step'], 'headings') !== false, 'an editorial item gets the editorial advice');
+expect($fixes['fixes'][3]['next_step'] === 'Do the new thing.', 'an unknown check falls back to the service hints');
+
+$profile = $run('nurevo/get-business-profile');
+expect($profile['published'] === true && $profile['name'] === 'Sakura Bistro' && $profile['type'] === 'Restaurant', 'get-business-profile returns the published business node');
+expect($profile['address'] === '1-2-3 Jingumae, Tokyo' && $profile['telephone'] === '+81-3-1111-2222', 'with the address and phone as published');
+expect(!empty($profile['opening_hours_specification']) && $profile['opening_hours'] === null, 'and the hours as the JSON-LD carries them');
+expect($profile['email'] === null, 'an email that is not published is not returned');
+$everything = json_encode(array($status, $score_out, $fixes, $profile));
+foreach (array('nrv_secret_site_key', 'nrvp_secret_token', 'adm_secret', 'nrv_secret_licence', 'owner-private@example.test', 'owner@example.test') as $secret) {
+    expect(strpos($everything, $secret) === false, "no ability returns {$secret}");
+}
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_email'] = 'hello@sakura.example';
+$options_before = serialize($GLOBALS['webmcp_test_options']);
+$published_email = $run('nurevo/get-business-profile');
+expect($published_email['email'] === 'hello@sakura.example', 'a business email the owner chose to publish is returned');
+expect(serialize($GLOBALS['webmcp_test_options']) === $options_before, 'running the abilities writes no option');
+expect(count($GLOBALS['webmcp_test_remote_get_log']) === $log_before && $GLOBALS['webmcp_test_last_remote'] === null, 'running the abilities makes no remote call');
+$abilities_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/includes/abilities.php');
+foreach (array('wp_remote_', 'update_option', 'webmcp_canary_get_aeo_score(', 'set_transient', 'delete_option') as $forbidden) {
+    expect(strpos($abilities_source, $forbidden) === false, "abilities.php never calls {$forbidden}");
+}
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '0';
+expect($run('nurevo/get-business-profile')['published'] === false, 'with output off the profile says it is not published');
 $wizard_reset();
 
 echo "WordPress AEO admin tests passed\n";

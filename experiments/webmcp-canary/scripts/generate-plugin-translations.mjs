@@ -828,6 +828,43 @@ const JA = {
     "設定を再開",
   "Do not show again":
     "今後表示しない",
+  // Abilities API (0.8.1).
+  "Read-only information about what Nurevo AEO publishes for AI on this site.":
+    "このサイトでNurevo AEOがAI向けに公開している内容の読み取り専用情報。",
+  "Get Nurevo AEO status":
+    "Nurevo AEOの状態を取得",
+  "Whether Nurevo AEO output is on, which outputs are active (JSON-LD, llms.txt, robots.txt rules), the AI training crawler choice, whether the site is connected to nurevo.jp, the plan, and whether diagnosis consent was given.":
+    "Nurevo AEOの出力がオンかどうか、有効な出力（JSON-LD・llms.txt・robots.txtのルール）、AI学習クローラーの設定、nurevo.jpとの接続状況、プラン、診断への同意の有無。",
+  "Get the last AEO score":
+    "最新のAEOスコアを取得",
+  "The last stored AEO diagnosis: score out of 100, band, date and a checklist summary. It never runs a new diagnosis.":
+    "保存済みの最新のAEO診断結果（100点満点のスコア、評価帯、日時、チェックリストの概要）。新しい診断は実行しません。",
+  "Get AEO fixes":
+    "AEOの改善点を取得",
+  "The items in the last stored AEO diagnosis that need attention (WARN or BAD), each with a plain-language next step.":
+    "保存済みの最新のAEO診断で対応が必要な項目（WARN・BAD）と、それぞれのわかりやすい次の対応。",
+  "Get the published business profile":
+    "公開中の事業者情報を取得",
+  "The business facts Nurevo AEO publishes in this site’s JSON-LD: type, name, description, URL, address, phone, opening hours and any published email.":
+    "Nurevo AEOがこのサイトのJSON-LDで公開している事業者情報（種類・名称・説明・URL・住所・電話番号・営業時間・公開しているメールアドレス）。",
+  "No AEO diagnosis is stored yet. In WordPress admin, open Nurevo AEO > AEO Score; the diagnosis runs there.":
+    "保存されたAEO診断はまだありません。WordPress管理画面で「Nurevo AEO > AEOスコア」を開くと診断が実行されます。",
+  "No AEO diagnosis has been run yet. In WordPress admin, open Nurevo AEO > AEO Score and press Run diagnosis. Nothing is sent to the Nurevo service until you agree there.":
+    "AEO診断はまだ実行されていません。WordPress管理画面で「Nurevo AEO > AEOスコア」を開き、「診断を実行」を押してください。そこで同意するまで、Nurevoサービスには何も送信されません。",
+  "On the Nurevo AEO > AEO Score screen, press \"%1$s\" next to this item. %2$s":
+    "「Nurevo AEO > AEOスコア」画面で、この項目の横にある「%1$s」を押してください。%2$s",
+  "Open Nurevo AEO > Settings and fill in the business details.":
+    "「Nurevo AEO > 設定」を開き、店舗情報を入力してください。",
+  "See this item on the Nurevo AEO > AEO Score screen for details.":
+    "詳しくは「Nurevo AEO > AEOスコア」画面でこの項目を確認してください。",
+  "Nothing to fix: every item in the last diagnosis passed.":
+    "改善が必要な項目はありません。最新の診断ではすべての項目が合格でした。",
+  "%d item(s) in the last diagnosis need attention.":
+    "最新の診断で %d 件の項目に対応が必要です。",
+  "These facts are published in this site’s JSON-LD.":
+    "これらの情報はこのサイトのJSON-LDで公開されています。",
+  "Output is off, so these facts are not published yet. Switch it on in Nurevo AEO > Settings.":
+    "出力がオフのため、これらの情報はまだ公開されていません。「Nurevo AEO > 設定」でオンにしてください。",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo
