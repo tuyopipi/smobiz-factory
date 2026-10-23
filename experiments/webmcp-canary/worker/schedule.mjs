@@ -6,9 +6,12 @@
  *
  *   daily   learning, the daily AEO score point and the SoV batch
  *   weekly  the AEO ruleset learning job (Mondays)
- *   hourly  the "not connected yet" reminders only, so the 24 h and 72 h
- *           emails arrive within the hour rather than up to a day late. Its
- *           minute (23) avoids :00 and the daily/weekly minute (17).
+ *   hourly  the "not connected yet" reminders, so the 24 h and 72 h
+ *           emails arrive within the hour rather than up to a day late, and
+ *           the partner payouts job (held commission released once a
+ *           partner's Stripe account is ready, failed transfers/reversals
+ *           retried, unresolved charges re-read). Its minute (23) avoids :00
+ *           and the daily/weekly minute (17).
  */
 export const DAILY_CRON = "17 18 * * *";
 export const WEEKLY_CRON = "17 18 * * 1";
@@ -18,7 +21,7 @@ export const HOURLY_CRON = "23 * * * *";
 export const SCHEDULED_JOBS = Object.freeze({
   [DAILY_CRON]: Object.freeze(["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"]),
   [WEEKLY_CRON]: Object.freeze(["aeo-learning"]),
-  [HOURLY_CRON]: Object.freeze(["lifecycle-reminders"]),
+  [HOURLY_CRON]: Object.freeze(["lifecycle-reminders", "partner-payouts"]),
 });
 
 /**

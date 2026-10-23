@@ -2,6 +2,7 @@ import { recordFetched } from "./aeo-delivery.mjs";
 import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
 import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
+import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
@@ -61,6 +62,11 @@ const API_RATE_LIMITS = Object.freeze({
 });
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
+// Referral partners receive 40% of the NET JPY of each paid invoice's charge
+// (after Stripe fees), per invoice, through Stripe Connect. The ledger and the
+// money movement live in partner-payouts.mjs.
+export { REFERRAL_SHARE, referralCommissionYen, referralPaidYen } from "./partner-payouts.mjs";
+const referralEstimateSql = () => `SUM(CASE WHEN s.plan='pro' THEN ${referralCommissionYen(PLAN_MONTHLY_YEN.pro, "jpy")} WHEN s.id IS NOT NULL THEN ${referralCommissionYen(PLAN_MONTHLY_YEN.standard, "jpy")} ELSE 0 END)`;
 /**
  * What each paid tier costs per site, per month.
  *
@@ -899,7 +905,29 @@ export async function handleApi(request, env, ctx) {
   if (path === "/api/partner" && method === "GET") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
+    // Read-only: no money moves and no Stripe setting changes on a GET.
     return json(await partnerSummary(env, await ensureAccount(env, member.member_id)));
+  }
+  // After Stripe sends the partner back: re-read the account (throttled) and
+  // release held commission if it is now ready. CSRF-protected POST.
+  if (path === "/api/partner/payout/refresh" && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    try {
+      const result = await refreshPayoutAfterReturn(env, await ensureAccount(env, member.member_id));
+      return json({ ok: true, payout_account: result.payout_account });
+    } catch (error) {
+      console.error("partner_payout_refresh_failed", JSON.stringify({ message: String(error?.message || error).slice(0, 200) }));
+      return json({ error: "payout_refresh_failed" }, 503);
+    }
+  }
+  // The partner's own payout account (Stripe Connect Express, Japan). No body
+  // is read: the account and the destination are always the signed-in member's.
+  if (path === "/api/partner/payout/onboard" && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const result = await startPayoutOnboarding(env, await ensureAccount(env, member.member_id));
+    return json(result.body, result.status);
   }
   if (["/api/partner/code", "/api/partner/code/regenerate"].includes(path) && method === "POST") {
     const member = await requireActiveMember(request, env);
@@ -2250,37 +2278,40 @@ export async function handleApi(request, env, ctx) {
     return json({ ok: true, url: response.data.url, amount_yen: BILLING_DEFAULTS.direct_monthly_yen, site_id: site.id });
   }
 
+  // Retired: it let any org admin or referrer attach a Stripe account to any
+  // referrer id. Partners onboard their own account from the Partner page
+  // (POST /api/partner/payout/onboard); legacy referrers are paid only to an
+  // account already stored for them that is ready and in Japan.
   if (path === "/api/billing/connect/onboard" && method === "POST") {
-    const member = await requireOrgRole(request, env, ["admin", "referrer"]);
-    if (!member) return json({ error: "forbidden" }, 403);
-    const secret = stripeSecret(env);
-    if (!secret) return json({ error: "stripe_not_configured", mode: stripeMode(env) }, 503);
-    const body = await safeJson(request);
-    const referrer = await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(body.referrer_id).first();
-    if (!referrer) return json({ error: "referrer_not_found" }, 404);
-    let accountId = referrer.stripe_account_id;
-    if (!accountId) {
-      const account = await stripeRequest(secret, "/v1/accounts", new URLSearchParams({ type: "express", "metadata[referrerId]": referrer.id }));
-      if (!account.ok) return json({ error: account.data?.error?.message || "stripe_account_failed" }, 502);
-      accountId = account.data.id;
-      await env.DB.prepare("UPDATE referrers SET stripe_account_id=? WHERE id=?").bind(accountId, referrer.id).run();
-    }
-    const link = await stripeRequest(secret, "/v1/account_links", new URLSearchParams({ account: accountId, refresh_url: "https://nurevo.jp/dashboard?connect=refresh", return_url: "https://nurevo.jp/dashboard?connect=complete", type: "account_onboarding" }));
-    if (!link.ok) return json({ error: link.data?.error?.message || "stripe_account_link_failed" }, 502);
-    return json({ ok: true, account_id: accountId, url: link.data.url });
+    return json({ error: "legacy_onboarding_disabled", use: "/api/partner/payout/onboard" }, 410);
   }
 
   if (path === "/api/billing/webhook" && method === "POST") {
     const secret = String(env.STRIPE_WEBHOOK_SECRET || "").trim();
     if (!secret) return json({ error: "stripe_webhook_secret_required" }, 503);
+    // A Connect endpoint (events from partners' Express accounts) has its own
+    // signing secret; either may sign, but see below for what Connect events can do.
+    const connectSecret = String(env.STRIPE_CONNECT_WEBHOOK_SECRET || "").trim();
     const rawBody = await request.text();
-    if (!await verifyStripeSignature(rawBody, request.headers.get("stripe-signature") || "", secret)) return json({ error: "invalid_webhook_signature" }, 400);
+    const signature = request.headers.get("stripe-signature") || "";
+    if (!await verifyStripeSignature(rawBody, signature, secret)
+      && !(connectSecret && await verifyStripeSignature(rawBody, signature, connectSecret))) return json({ error: "invalid_webhook_signature" }, 400);
     let event;
     try { event = JSON.parse(rawBody); } catch { return json({ error: "invalid_json" }, 400); }
     if (!event?.id) return json({ error: "event_id_required" }, 400);
     const claim = await env.DB.prepare("INSERT OR IGNORE INTO billing_events (event_id,kind,created_at) VALUES (?,?,?)").bind(event.id, event.type || "unknown", Date.now()).run();
     if (Number(claim.meta?.changes || 0) !== 1) return json({ received: true, duplicate: true });
     const object = event.data?.object || {};
+    // Events from a connected account only update that partner's payout
+    // status (and release commission already held for them). They never
+    // touch billing or create commission.
+    if (event.account) {
+      if (event.type === "account.updated") {
+        try { await handleConnectedAccountUpdated(env, { ...object, id: object.id || event.account }); }
+        catch (error) { console.error("partner_account_update_error", JSON.stringify({ message: String(error?.message || error).slice(0, 200) })); }
+      }
+      return json({ received: true });
+    }
     const siteId = object.metadata?.siteId || object.subscription_details?.metadata?.siteId || object.lines?.data?.[0]?.metadata?.siteId;
     // Checkout only records the identifiers. The tier comes from the
     // subscription object, which arrives in its own event and is the thing that
@@ -2337,11 +2368,26 @@ export async function handleApi(request, env, ctx) {
 
     if (event.type === "invoice.paid" && siteId) {
       await env.DB.prepare("UPDATE sites SET contract='active' WHERE id=?").bind(siteId).run();
-      const site = await env.DB.prepare("SELECT * FROM sites WHERE id=?").bind(siteId).first();
-      const referrer = site?.channel === "referral" ? await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(site.referred_by).first() : null;
-      if (referrer?.stripe_account_id && stripeSecret(env)) {
-        // Executed only by a verified Stripe webhook; no client-supplied destination is trusted.
-        await stripeRequest(stripeSecret(env), "/v1/transfers", new URLSearchParams({ amount: String(BILLING_DEFAULTS.referral_monthly_yen), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id }));
+    }
+    // Partner commission: one ledger row per invoice (account referral or
+    // legacy referrer, never both), paid with source_transaction = the charge.
+    // Only this verified webhook creates commission; nothing comes from a client.
+    // A failure un-claims the event so Stripe retries it; the ledger makes
+    // the retry safe.
+    const chargeEvent = event.type === "charge.refunded" ? object.id
+      : /^charge\.dispute\.(created|closed|funds_withdrawn|funds_reinstated)$/.test(event.type || "") ? (typeof object.charge === "string" ? object.charge : object.charge?.id) : null;
+    if (event.type === "invoice.paid" || chargeEvent) {
+      try {
+        // Refunds and disputes re-read the charge's current state; what the
+        // event says is not the amount used.
+        const outcome = event.type === "invoice.paid"
+          ? await recordInvoiceCommission(env, { invoice: object, siteId })
+          : await recordChargeEvent(env, { chargeId: chargeEvent });
+        if (outcome?.status === "failed") console.error("referral_payout_not_sent", JSON.stringify({ event: event.id, type: event.type }));
+      } catch (error) {
+        console.error("referral_ledger_error", JSON.stringify({ event: event.id, type: event.type, message: String(error?.message || error).slice(0, 200) }));
+        await env.DB.prepare("DELETE FROM billing_events WHERE event_id=?").bind(event.id).run();
+        return json({ error: "referral_ledger_error" }, 500);
       }
     }
     // A failed payment no longer stops the site. Stripe retries for days before
@@ -3172,7 +3218,12 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
     const { results: orgs } = await env.DB.prepare("SELECT id FROM orgs ORDER BY created_at").all();
     const summaries = [];
     for (const org of orgs || []) summaries.push(await billingSummary(env, org.id, { role: "admin" }));
+    // Partner payouts that need a person (retries exhausted, or an invoice
+    // paid by several charges), for the owner.
+    let payoutsNeedingAttention = null;
+    try { payoutsNeedingAttention = Number((await env.DB.prepare("SELECT COUNT(*) AS n FROM referral_payouts WHERE kind='commission' AND (status='dead' OR (status='held' AND last_error='multiple_charges'))").first())?.n || 0); } catch { payoutsNeedingAttention = null; }
     return {
+      referral_payouts_needing_attention: payoutsNeedingAttention,
       currency: "jpy",
       unit_prices: { ...BILLING_DEFAULTS },
       mrr_yen: summaries.reduce((sum, item) => sum + Number(item.mrr_yen || 0), 0),
@@ -3193,11 +3244,11 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
   const directCount = (counts.direct || 0) + (counts.referral || 0);
   const activeCount = Object.values(counts).reduce((sum, value) => sum + Number(value || 0), 0);
   const referrers = actor.role === "referrer"
-    ? await env.DB.prepare("SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') WHERE lower(r.email)=lower(?) GROUP BY r.id,r.name,r.email ORDER BY r.name").bind(orgId, actor.email).all()
+    ? await env.DB.prepare(`SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites, ${referralEstimateSql()} AS monthly_yen FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') WHERE lower(r.email)=lower(?) GROUP BY r.id,r.name,r.email ORDER BY r.name`).bind(orgId, actor.email).all()
     : actor.role === "store"
       ? { results: [] }
-      : await env.DB.prepare("SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') GROUP BY r.id,r.name,r.email ORDER BY r.name").bind(orgId).all();
-  const referralPayments = (referrers.results || []).map((row) => ({ id: row.id, name: row.name, email: row.email, active_sites: Number(row.active_sites || 0), monthly_amount_yen: Number(row.active_sites || 0) * BILLING_DEFAULTS.referral_monthly_yen }));
+      : await env.DB.prepare(`SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites, ${referralEstimateSql()} AS monthly_yen FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') GROUP BY r.id,r.name,r.email ORDER BY r.name`).bind(orgId).all();
+  const referralPayments = (referrers.results || []).map((row) => ({ id: row.id, name: row.name, email: row.email, active_sites: Number(row.active_sites || 0), monthly_amount_yen: Number(row.monthly_yen || 0) }));
   const wholesaleEligible = org.plan === "wholesale" && activeCount >= Number(org.wholesale_min || 50);
   if (actor.role === "referrer") {
     const partnerSites = Number(counts.referral || 0);
@@ -3206,7 +3257,8 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
       scope: "referrer",
       active_sites: partnerSites,
       incentive_per_site_yen: BILLING_DEFAULTS.referral_monthly_yen,
-      partner_incentive_yen: partnerSites * BILLING_DEFAULTS.referral_monthly_yen,
+      share: REFERRAL_SHARE,
+      partner_incentive_yen: referralPayments.reduce((sum, row) => sum + row.monthly_amount_yen, 0),
     };
   }
   if (actor.role === "agency") {

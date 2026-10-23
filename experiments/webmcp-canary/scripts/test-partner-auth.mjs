@@ -26,17 +26,15 @@ const DB = {
 };
 const env = { DB, DEV: '1', RESEND_API_KEY: 'test-only', MAIL_FROM: 'test@example.test', STRIPE_SECRET_KEY: 'test-only', STRIPE_PRICE_ID_STANDARD: 'price_standard' };
 const messages = [], stripeCalls = [];
-let mailFailure = false, invoicePages = [];
+let mailFailure = false;
 const originalFetch = globalThis.fetch;
 globalThis.fetch = async (url, options) => {
   if (String(url).startsWith('https://api.resend.com/')) {
     messages.push(JSON.parse(options.body));
     return Response.json(mailFailure ? { name: 'send_failed' } : { id: 'test' }, { status: mailFailure ? 500 : 200 });
   }
-  assert.match(String(url), /^https:\/\/api.stripe.com\/v1\/invoices\?/);
-  assert.equal(options.method || 'GET', 'GET', 'partner never changes billing');
   stripeCalls.push(String(url));
-  return Response.json(invoicePages.shift() || { data: [], has_more: false });
+  throw new Error(`unexpected network call ${url}`);
 };
 let ip = 0;
 async function call(path, body, cookie = '', fixedIp) {
@@ -107,22 +105,27 @@ try {
     insert.run(id, childMember.org_id, `${id}.example.test`, id, childMember.id, plan, contract, sub, Date.now());
   }
   sqlite.prepare("UPDATE sites SET manual_plan='standard' WHERE id='comp'").run();
-  invoicePages = [{ data: [{ currency: 'jpy', created: Math.ceil(Date.now()/1000), amount_paid: 3000, lines: { data: [{ price: { id: 'price_standard' } }] } }], has_more: false }];
   partner = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(partner.payout.monthly_estimate_yen, 1200);
-  assert.equal(partner.payout.cumulative_earned_yen, 1200);
+  assert.equal(partner.payout.monthly_estimate_yen, 1200, 'one active Standard subscription (duplicates and trials/unpaid/comp excluded)');
+  assert.equal(partner.payout.cumulative_earned_yen, null, 'no ledger yet (0039 unapplied) -> never a guessed amount');
   assert.equal(partner.payout.cumulative_paid_yen, null, 'never invent disbursements');
+  assert.equal(partner.payout.paid_status, 'ledger_unavailable');
+  assert.equal(partner.payout.account.status, 'not_started');
   assert.equal(partner.referrals[0].sites.length, 7);
+  sqlite.exec(readFileSync(new URL('../nurevo-impl/db/0039_partner_payouts.sql', import.meta.url), 'utf8'));
+  insert.run('pro', childMember.org_id, 'pro.example.test', 'pro', childMember.id, 'pro', 'active', 'sub_pro', Date.now());
+  partner = await (await call('/api/partner', undefined, cookie)).json();
+  assert.equal(partner.payout.monthly_estimate_yen, 1200 + 5920, 'Pro counts at 40% too (estimate before Stripe fees)');
+  assert.equal(partner.payout.estimate_basis, 'before_stripe_fees');
+  assert.equal(partner.payout.cumulative_earned_yen, 0, 'the ledger is the only source of earned/paid');
+  assert.equal(partner.payout.cumulative_paid_yen, 0);
+  assert.equal(partner.payout.paid_status, 'ledger');
+  assert.equal(partner.payout.payout_day, 25);
   assert.equal(monthlyReferralPayout([{ plan: 'standard', contract: 'active', stripe_subscription_id: null }]), 0);
-  invoicePages = [{ data: [{ currency: 'jpy', created: Math.ceil(Date.now()/1000), amount_paid: 3000, post_payment_credit_notes_amount: 100, lines: { data: [{ price: { id: 'price_standard' } }] } }], has_more: false }];
-  partner = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(partner.payout.cumulative_earned_yen, null, 'adjusted invoices never produce a guessed amount');
-  invoicePages = [{ data: [{ currency: 'jpy', created: 1, amount_paid: 3000, lines: { data: [{ price: { id: 'price_standard' } }] } }], has_more: false }];
-  partner = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(partner.payout.cumulative_earned_yen, 0, 'pre-registration invoices do not earn referral commission');
-  delete env.STRIPE_SECRET_KEY;
-  partner = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(partner.payout.cumulative_earned_yen, null);
+  assert.equal(monthlyReferralPayout([{ plan: 'pro', contract: 'active', stripe_subscription_id: 's' }, { plan: 'pro', contract: 'trial', stripe_subscription_id: 't' }]), 5920);
+  assert.equal((await call('/api/partner/payout/onboard', {})).status, 403, 'payout onboarding needs CSRF');
+  assert.equal((await call('/api/partner/payout/onboard', {}, cookie)).status, 503, 'no Stripe key -> not configured, nothing created');
+  assert.equal(stripeCalls.length, 0, 'the partner page never calls Stripe without a configured key');
   mailFailure = true;
   assert.equal((await call('/api/auth/signup', { email: 'failure@example.test' })).status, 502);
   assert.equal(sqlite.prepare('SELECT COUNT(*) AS n FROM auth_tokens WHERE email=?').get('failure@example.test').n, 0);
@@ -137,5 +140,5 @@ try {
   assert.equal(responses.filter(r => r.headers.get('location') === '/dashboard').length, 1, 'only one concurrent verification wins');
   for (const lang of EMAIL_LOCALES) { const email = signupLinkEmail('https://nurevo.jp/?a="<>', lang); assert.ok(email.subject && email.text.includes('15')); assert.match(email.html, /&quot;&lt;&gt;/); }
   assert.equal(new Set(Array.from({ length: 1000 }, newReferralCode)).size, 1000);
-  console.log('PASS: migration/backfill, referral signup, regeneration, invalid/self/immutable referral, token hash/single-use/expiry/concurrency, session/CSRF, shared email/IP limits, provider failure, real SQL payout states, read-only invoice commission, 8-language confirmation. No real mail or Stripe calls.');
+  console.log('PASS: migration/backfill, referral signup, regeneration, invalid/self/immutable referral, token hash/single-use/expiry/concurrency, session/CSRF, shared email/IP limits, provider failure, real SQL payout states (ledger only, estimate counts Standard and Pro), onboarding CSRF/unconfigured, 8-language confirmation. No real mail or Stripe calls.');
 } finally { globalThis.fetch = originalFetch; sqlite.close(); }

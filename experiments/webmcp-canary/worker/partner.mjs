@@ -1,4 +1,4 @@
-import { pricesFromEnv, tierPriceIds } from "./billing-plan.mjs";
+import { REFERRAL_SHARE, referralCommissionYen, payoutAnchor, refreshPayoutAccount, partnerLedgerTotals } from "./partner-payouts.mjs";
 // Account identities are per member, independent of organization-level access.
 export async function ensureAccount(env, memberId) {
   await env.DB.prepare(`INSERT INTO accounts(member_id,email,created_at)
@@ -37,74 +37,44 @@ export async function issueReferralCode(env, account, regenerate = false) {
   }
   throw new Error('referral_code_collision');
 }
+// Before Stripe fees: the real commission is 40% of the NET amount (after
+// fees), so this is labelled as an estimate on the Partner page.
+export const ESTIMATE_MONTHLY_YEN = Object.freeze({ standard: referralCommissionYen(3000, 'jpy'), pro: referralCommissionYen(14800, 'jpy') });
 export function monthlyReferralPayout(sites) {
   // manual_plan, org grants, trials, grace periods and unpaid sites never qualify.
-  const subscriptions = new Set(sites.filter(s => s.plan === 'standard' && s.contract === 'active' && s.stripe_subscription_id).map(s => s.stripe_subscription_id));
-  return subscriptions.size * 1200;
+  const subscriptions = new Map();
+  for (const s of sites) if (['standard', 'pro'].includes(s.plan) && s.contract === 'active' && s.stripe_subscription_id) subscriptions.set(s.stripe_subscription_id, s.plan);
+  let total = 0;
+  for (const plan of subscriptions.values()) total += ESTIMATE_MONTHLY_YEN[plan];
+  return total;
 }
-async function paidInvoiceCommission(env, subscriptionIds, registeredAt) {
-  const key = String(env.STRIPE_SECRET_KEY || '').trim();
-  if (!key) return { amount: null, reason: 'payment_history_unavailable' };
-  if (subscriptionIds.length > 20) return { amount: null, reason: 'payment_history_incomplete' };
-  let total = 0, requests = 0;
-  try {
-    for (const subscription of subscriptionIds) {
-      let cursor = '';
-      for (let page = 0; page < 10; page++) {
-        if (++requests > 20) return { amount: null, reason: 'payment_history_incomplete' };
-        const params = new URLSearchParams({ subscription, status: 'paid', limit: '100' });
-        if (cursor) params.set('starting_after', cursor);
-        const response = await fetch(`https://api.stripe.com/v1/invoices?${params}`, { headers: { authorization: `Bearer ${key}` } });
-        if (!response.ok) throw new Error('invoice_read_failed');
-        const result = await response.json();
-        for (const invoice of result.data || []) {
-          const created = Number(invoice.created);
-          if (!Number.isFinite(created)) return { amount: null, reason: 'payment_history_incomplete' };
-          if (created * 1000 < registeredAt.get(subscription)) continue;
-          // A history entry must identify the Standard price, not a manual tier.
-          // Mixed/truncated invoices cannot safely attribute a commission.
-          const lines = invoice.lines;
-          if (invoice.currency !== 'jpy' || lines?.has_more || !lines?.data?.length
-            || Number(invoice.pre_payment_credit_notes_amount || 0) || Number(invoice.post_payment_credit_notes_amount || 0))
-            return { amount: null, reason: 'payment_history_incomplete' };
-          // The current Standard price plus any legacy Standard prices that
-          // older subscriptions are still billed on (STRIPE_PRICE_IDS_LEGACY_STANDARD).
-          const configured = pricesFromEnv(env);
-          if (!configured.standard) return { amount: null, reason: 'payment_history_unavailable' };
-          const standardPrices = tierPriceIds(configured, 'standard');
-          const isStandard = price => standardPrices.includes(price);
-          const prices = lines.data.map(line => line.price?.id || line.pricing?.price_details?.price);
-          if (prices.some(price => !price) || (prices.some(isStandard) && !prices.every(isStandard)))
-            return { amount: null, reason: 'payment_history_incomplete' };
-          const standardOnly = prices.every(isStandard);
-          if (standardOnly) total += Math.floor(Number(invoice.amount_paid || 0) * 0.4);
-        }
-        if (!result.has_more) break;
-        cursor = result.data?.at(-1)?.id;
-        if (!cursor || page === 9) return { amount: null, reason: 'payment_history_incomplete' };
-      }
-    }
-    return { amount: total, reason: null };
-  } catch {
-    return { amount: null, reason: 'payment_history_unavailable' };
-  }
-}
-export async function partnerSummary(env, account) {
+export async function partnerSummary(env, account, { now = Date.now() } = {}) {
   const { results: accounts = [] } = await env.DB.prepare('SELECT id,member_id,email,created_at FROM accounts WHERE referred_by_account_id=? ORDER BY created_at DESC,id DESC').bind(account.id).all();
   const { results: sites = [] } = await env.DB.prepare(`SELECT s.id,s.url,s.created_at,s.plan,s.contract,s.stripe_subscription_id,s.owner_member_id,a.created_at AS account_registered_at
     FROM sites s JOIN accounts a ON a.member_id=s.owner_member_id WHERE a.referred_by_account_id=?`).bind(account.id).all();
-  const subscriptionIds = [...new Set(sites.map(s => s.stripe_subscription_id).filter(Boolean))];
-  const registeredAt = new Map(subscriptionIds.map(id => [id, Math.min(...sites.filter(s => s.stripe_subscription_id === id).map(s => s.account_registered_at))]));
-  const history = subscriptionIds.length
-    ? await paidInvoiceCommission(env, subscriptionIds, registeredAt)
-    : { amount: 0, reason: null };
+  const anchor = payoutAnchor(env);
+  let payoutAccount;
+  try {
+    payoutAccount = await refreshPayoutAccount(env, account, { now }); // read-only, cached
+  } catch { payoutAccount = { status: 'unavailable', currently_due: 0, past_due: 0 }; }
+  let totals = null;
+  try {
+    totals = await partnerLedgerTotals(env, account.id, { now, anchor });
+  } catch (error) {
+    console.error('partner_ledger_unavailable', JSON.stringify({ message: String(error?.message || error).slice(0, 120) }));
+  }
   return {
     referral_code: account.referral_code,
-    payout: { currency: 'jpy', rate: 0.4, standard_monthly_yen: 1200,
-      monthly_estimate_yen: monthlyReferralPayout(sites),
-      cumulative_earned_yen: history.amount, cumulative_paid_yen: null,
-      history_status: history.reason || 'available', paid_status: 'no_payout_ledger',
-      basis: 'subscription_webhook_state_and_paid_invoices' },
+    payout: { currency: 'jpy', rate: REFERRAL_SHARE,
+      standard_monthly_yen: ESTIMATE_MONTHLY_YEN.standard, pro_monthly_yen: ESTIMATE_MONTHLY_YEN.pro,
+      monthly_estimate_yen: monthlyReferralPayout(sites), estimate_basis: 'before_stripe_fees',
+      cumulative_earned_yen: totals ? totals.earned : null, cumulative_paid_yen: totals ? totals.paid : null,
+      held_yen: totals ? totals.held : null, needs_attention: totals ? totals.attention : null,
+      next_payout_yen: totals ? totals.next : null, later_payout_yen: totals ? totals.later : null,
+      next_payout_at: totals ? totals.window.next : null, next_payout_this_month: totals ? totals.window.nextIsThisMonth : null,
+      payout_day: anchor, paid_status: totals ? 'ledger' : 'ledger_unavailable', basis: 'net_after_stripe_fees',
+      account: { status: payoutAccount.status, currently_due: Number(payoutAccount.currently_due || 0) + Number(payoutAccount.past_due || 0),
+        disabled_reason: payoutAccount.disabled_reason || null } },
     referrals: accounts.map(a => ({ account_id: a.id, email: a.email, registered_at: a.created_at,
       sites: sites.filter(s => s.owner_member_id === a.member_id).map(s => ({ id: s.id, url: s.url, plan: s.plan, billing_status: s.contract, registered_at: s.created_at })) }))
   };

@@ -66,7 +66,10 @@ for (const lang of LANGS.filter((l) => l !== "ja")) {
   assert.ok(I[lang].plProHead.includes("{usd}") && /\$/.test(I[lang].plProHead) && !/¥|\{yen\}/.test(I[lang].plProHead), `${lang}.plProHead shows the USD amount`);
 }
 assert.equal(I.ja.plLinkCopied, "リンクをコピーしました");
-assert.equal(I.en.ptRate, "¥1,200/month (40%) per active referred Standard subscription. Disbursed totals are unavailable without a payout ledger.");
+// Commission is 40% of what Nurevo received after Stripe fees; the monthly
+// figure is an estimate before fees, and says so in every language.
+assert.equal(I.en.ptRate, "For each payment by a referred customer you earn 40% of what Nurevo received after Stripe fees (rounded down to the yen). Refunds reverse it in proportion. The monthly estimate uses Standard ¥1,200 and Pro ¥5,920 and is before Stripe fees.");
+for (const lang of LANGS) assert.ok(/5,920|5 920/.test(I[lang].ptRate) && /40/.test(I[lang].ptRate), `${lang}.ptRate states 40% and the Pro estimate`);
 assert.equal(I.ja.planGrantOrg && I.ja.planGrantOrg !== "planGrantOrg", true, "planGrantOrg is a word, not its key");
 
 /* ---------------- 2. the modules use the dictionary ---------------- */

@@ -35,7 +35,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 /* ---------------- what each cron runs ---------------- */
 
 {
-  assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders"], "hourly: the reminders only");
+  assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts"], "hourly: the reminders and the partner payouts");
   assert.deepEqual([...SCHEDULED_JOBS[DAILY_CRON]], ["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"], "daily: as before, without the reminders");
   assert.deepEqual([...SCHEDULED_JOBS[WEEKLY_CRON]], ["aeo-learning"], "weekly: as before");
   const all = Object.values(SCHEDULED_JOBS).flat();
@@ -49,6 +49,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
     ["aeo-sov-daily", "runSovDailyBatch(env)"],
     ["aeo-learning", 'runAeoLearningJob(env, { trigger: "scheduled" })'],
     ["lifecycle-reminders", "runLifecycleReminders(env)"],
+    ["partner-payouts", "runPartnerPayouts(env)"],
   ]) {
     assert.ok(index.includes(`"${label}": (env) => ${call},`), `index.mjs runs ${label} as ${call}`);
   }
@@ -84,7 +85,7 @@ async function fire(cron, { fail = [] } = {}) {
 
 {
   const hourly = await fire(HOURLY_CRON);
-  assert.deepEqual(hourly.ran, ["lifecycle-reminders"], "the hourly event runs the reminders and nothing else");
+  assert.deepEqual(hourly.ran, ["lifecycle-reminders", "partner-payouts"], "the hourly event runs the reminders and the partner payouts, nothing else");
   assert.equal(hourly.waits.length, 1, "inside waitUntil");
   assert.ok(hourly.lines.some((l) => l.startsWith("lifecycle-reminders {")), "and logs under the same label as before");
 
