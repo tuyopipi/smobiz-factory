@@ -13,6 +13,16 @@
  *   kept_yen = floor(commission_yen × (charge.amount − amount_refunded) / charge.amount),
  *   or 0 when a dispute on the charge was lost.
  *
+ * Who can earn (migration 0040):
+ *   - Only a partner account Nurevo approved (partner_status='approved'), and
+ *     only for customers whose account was created at or after that approval.
+ *   - The partner's FIRST paying referred customer earns nothing on any of
+ *     its invoices, forever: the first qualifying paid invoice records it in
+ *     accounts.partner_first_customer_account_id (conditional UPDATE, so one
+ *     customer wins a race), and each of its invoices gets a ledger row with
+ *     status='void', amount 0, last_error='first_customer'. From the second
+ *     distinct paying customer on, every paid invoice earns as below.
+ *
  * kept_yen is always recomputed from the charge's CURRENT state (read from
  * Stripe when paying, when a refund/dispute event arrives and by the hourly
  * reconcile), never from the order events arrived in, so a refund that comes
@@ -304,6 +314,13 @@ async function resolveSite(env, invoice, siteId) {
 /**
  * Who is owed commission for this site: the account referral first, else the
  * legacy referrer. Nobody earns commission on their own payments.
+ *
+ * An account referral counts only when the partner is approved by Nurevo
+ * (accounts.partner_status='approved', migration 0040) AND the customer's
+ * account was created (= referred) at or after that approval: referrals made
+ * before approval never earn, not even retroactively. Legacy referrers
+ * (the `referrers` table) are records Nurevo itself creates and are not
+ * subject to this application flow.
  */
 export async function resolvePartner(env, site) {
   if (!site) return null;
@@ -311,9 +328,11 @@ export async function resolvePartner(env, site) {
     ? await env.DB.prepare("SELECT id, email FROM members WHERE id=?").bind(site.owner_member_id).first()
     : null;
   if (site.owner_member_id) {
-    const partner = await env.DB.prepare(`SELECT p.id FROM accounts c JOIN accounts p ON p.id=c.referred_by_account_id
-      WHERE c.member_id=? AND p.id<>c.id AND p.member_id<>? AND lower(p.email)<>lower(c.email)`).bind(site.owner_member_id, site.owner_member_id).first();
-    if (partner?.id) return { partnerAccountId: partner.id, legacyReferrerId: null };
+    const partner = await env.DB.prepare(`SELECT p.id, c.id AS customer_id FROM accounts c JOIN accounts p ON p.id=c.referred_by_account_id
+      WHERE c.member_id=? AND p.id<>c.id AND p.member_id<>? AND lower(p.email)<>lower(c.email)
+        AND p.partner_status='approved' AND p.partner_approved_at IS NOT NULL AND c.created_at>=p.partner_approved_at`)
+      .bind(site.owner_member_id, site.owner_member_id).first();
+    if (partner?.id) return { partnerAccountId: partner.id, legacyReferrerId: null, customerAccountId: partner.customer_id };
   }
   if (site.channel === "referral" && site.referred_by) {
     const referrer = await env.DB.prepare("SELECT id, email FROM referrers WHERE id=?").bind(site.referred_by).first();
@@ -336,6 +355,18 @@ export async function recordInvoiceCommission(env, { invoice, siteId = null, now
   if (!partner) return { skipped: "no_partner" };
   const key = `invoice:${invoice.id}`;
   let row = await env.DB.prepare("SELECT id FROM referral_payouts WHERE source_key=?").bind(key).first();
+  if (!row && partner.partnerAccountId && partner.customerAccountId) {
+    // The partner's first paying customer never earns, on any invoice, ever.
+    if (await firstCustomerOf(env, partner.partnerAccountId, partner.customerAccountId) === Number(partner.customerAccountId)) {
+      await env.DB.prepare(`INSERT OR IGNORE INTO referral_payouts
+          (kind, source_key, invoice_id, charge_id, partner_account_id, site_id, amount_yen, kept_yen, status, last_error, created_at, updated_at)
+          VALUES ('commission', ?, ?, NULL, ?, ?, 0, 0, 'void', ?, ?, ?)`)
+        .bind(key, invoice.id, partner.partnerAccountId, site.id, FIRST_CUSTOMER, now, now).run();
+      const excluded = await env.DB.prepare("SELECT id, status, last_error FROM referral_payouts WHERE source_key=?").bind(key).first();
+      if (excluded?.last_error === FIRST_CUSTOMER) return { status: "void", reason: FIRST_CUSTOMER };
+      row = excluded;
+    }
+  }
   if (!row) {
     const secret = stripeKey(env);
     const ids = secret ? await invoiceChargeIds(secret, invoice, get) : (typeof invoice.charge === "string" ? [invoice.charge] : null);
@@ -350,6 +381,19 @@ export async function recordInvoiceCommission(env, { invoice, siteId = null, now
     if (!row) return { skipped: "ledger_unavailable" };
   }
   return payCommission(env, row.id, { now, get, sync: true });
+}
+
+export const FIRST_CUSTOMER = "first_customer";
+/**
+ * The partner's first customer: claimed by the first qualifying paid invoice
+ * with a conditional UPDATE, so two customers' first invoices arriving at the
+ * same time still pick exactly one. Returns the recorded customer account id.
+ */
+export async function firstCustomerOf(env, partnerAccountId, customerAccountId) {
+  await env.DB.prepare("UPDATE accounts SET partner_first_customer_account_id=? WHERE id=? AND partner_first_customer_account_id IS NULL")
+    .bind(customerAccountId, partnerAccountId).run();
+  const partner = await env.DB.prepare("SELECT partner_first_customer_account_id AS first FROM accounts WHERE id=?").bind(partnerAccountId).first();
+  return partner?.first == null ? null : Number(partner.first);
 }
 
 const loadRow = (env, id) => env.DB.prepare("SELECT * FROM referral_payouts WHERE id=?").bind(id).first();
@@ -505,6 +549,7 @@ async function failAttempt(env, row, result, now) {
 export async function payCommission(env, id, { now = Date.now(), get = stripeGet, readiness = new Map(), sync = false } = {}) {
   let row = await loadRow(env, id);
   if (!row || row.kind !== "commission") return { status: "missing" };
+  if (row.last_error === FIRST_CUSTOMER) return { status: row.status, reason: FIRST_CUSTOMER }; // never paid
   if (row.status === "sent" || row.status === "reversed") return reconcileCommission(env, row, { now, get });
   const stale = row.status === "sending" && now - Number(row.updated_at || 0) > STALE_CLAIM_MS;
   if (!["held", "failed"].includes(row.status) && !stale) return { status: row.status };
@@ -790,8 +835,9 @@ export async function partnerLedgerTotals(env, accountId, { now = Date.now(), an
   const window = payoutWindow(now, anchor);
   const pulled = new Map();
   for (const r of rows) if (r.kind === "reversal" && r.status === "sent") pulled.set(r.parent_id, (pulled.get(r.parent_id) || 0) + Number(r.amount_yen));
-  const totals = { earned: 0, paid: 0, held: 0, next: 0, later: 0, attention: 0 };
+  const totals = { earned: 0, paid: 0, held: 0, next: 0, later: 0, attention: 0, firstCustomer: 0 };
   for (const r of rows) {
+    if (r.kind === "commission" && r.last_error === FIRST_CUSTOMER) totals.firstCustomer++;
     if (r.kind !== "commission" || r.status === "void") continue;
     const kept = Number(r.kept_yen ?? r.amount_yen ?? 0);
     totals.earned += kept;

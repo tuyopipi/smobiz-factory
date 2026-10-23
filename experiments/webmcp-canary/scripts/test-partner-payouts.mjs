@@ -1,6 +1,6 @@
 /**
  * Partner commission payouts (worker/partner-payouts.mjs) against real SQL
- * (schema + migrations 0029, 0030, 0039) and a stubbed Stripe. No real Stripe
+ * (schema + migrations 0029, 0030, 0039, 0040) and a stubbed Stripe. No real Stripe
  * call is possible: fetch is replaced and anything unexpected fails the test.
  *
  * Covers: net-basis commission; signed webhook only; same event twice -> one
@@ -16,7 +16,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import { handleApi } from "../worker/api.mjs";
-import { runPartnerPayouts, payoutWindow, partnerLedgerTotals, keptYen, reconcileCommission } from "../worker/partner-payouts.mjs";
+import { runPartnerPayouts, payoutWindow, partnerLedgerTotals, keptYen, reconcileCommission, firstCustomerOf } from "../worker/partner-payouts.mjs";
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 const sqlite = new DatabaseSync(":memory:");
@@ -25,6 +25,7 @@ sqlite.exec("ALTER TABLE sites ADD COLUMN manual_plan TEXT");
 sqlite.exec(read("../nurevo-impl/db/0029_member_email_preferences.sql"));
 sqlite.exec(read("../nurevo-impl/db/0030_account_referrals.sql"));
 sqlite.exec(read("../nurevo-impl/db/0039_partner_payouts.sql"));
+sqlite.exec(read("../nurevo-impl/db/0040_partner_approval_first_customer.sql"));
 const DB = {
   prepare(sql) {
     const stmt = sqlite.prepare(sql);
@@ -168,7 +169,25 @@ async function call(path, { cookie = "", csrf = true, method, body = {} } = {}) 
   const response = await handleApi(new Request(`https://nurevo.jp${path}`, { method: m, headers, ...(m === "POST" ? { body: JSON.stringify(body) } : {}) }), env, {});
   return { status: response.status, body: await response.json() };
 }
-function refer(child, partner) { sqlite.prepare("UPDATE accounts SET referred_by_account_id=? WHERE id=?").run(partner.account.id, child.account.id); }
+// 0040: only an approved partner earns, and its first paying customer never
+// does. The PR #23 scenarios below are about money movement, so their partners
+// are approved and already past their first customer (`first: "recorded"`);
+// the Rule 1/Rule 2 scenarios at the end start from scratch (`first: "none"`).
+function approve(partner, at = 1) {
+  sqlite.prepare("UPDATE accounts SET partner_status='approved', partner_approved_at=COALESCE(partner_approved_at, ?) WHERE id=?").run(at, partner.account.id);
+}
+let firstSeq = 0;
+async function pastFirstCustomer(partner) {
+  if (sqlite.prepare("SELECT partner_first_customer_account_id AS f FROM accounts WHERE id=?").get(partner.account.id).f) return;
+  const first = await member(`first_${++firstSeq}`, `first-${firstSeq}@example.test`);
+  sqlite.prepare("UPDATE accounts SET referred_by_account_id=? WHERE id=?").run(partner.account.id, first.account.id);
+  sqlite.prepare("UPDATE accounts SET partner_first_customer_account_id=? WHERE id=?").run(first.account.id, partner.account.id);
+}
+async function refer(child, partner, { first = "recorded" } = {}) {
+  approve(partner);
+  if (first === "recorded") await pastFirstCustomer(partner);
+  sqlite.prepare("UPDATE accounts SET referred_by_account_id=? WHERE id=?").run(partner.account.id, child.account.id);
+}
 function site(id, owner, sub, extra = {}) {
   sqlite.prepare("INSERT INTO sites(id,org_id,url,site_key,owner_member_id,plan,contract,stripe_subscription_id,channel,referred_by,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)")
     .run(id, `org_${owner}`, `${id}.example.test`, id, owner, extra.plan || "standard", "active", sub, extra.channel || "direct", extra.referred_by || null, Date.now());
@@ -190,7 +209,7 @@ const HOUR = 3600_000;
 try {
   const partner = await member("partner", "partner@example.test");
   const customer = await member("customer", "customer@example.test");
-  refer(customer, partner);
+  await refer(customer, partner);
   site("site_a", "customer", "sub_a");
 
   /* --- commission math --- */
@@ -453,7 +472,7 @@ try {
   {
     const w = await member("withhold_partner", "withhold@example.test");
     const wc = await member("withhold_customer", "withhold-customer@example.test");
-    refer(wc, w);
+    await refer(wc, w);
     site("site_w", "withhold_customer", "sub_w");
     sqlite.prepare("UPDATE accounts SET stripe_account_id='acct_w', payout_status='ready', payout_checked_at=? WHERE id=?").run(Date.now(), w.account.id);
     stripe.accounts.set("acct_w", { id: "acct_w", country: "JP", capabilities: { transfers: "active" }, requirements: {}, settings: { payouts: { schedule: { interval: "monthly", monthly_anchor: 25 } } } });
@@ -491,7 +510,7 @@ try {
   {
     const rp = await member("race_partner", "race@example.test");
     const rc = await member("race_customer", "race-customer@example.test");
-    refer(rc, rp);
+    await refer(rc, rp);
     site("site_race", "race_customer", "sub_race");
     sqlite.prepare("UPDATE accounts SET stripe_account_id='acct_race', payout_status='ready', payout_checked_at=? WHERE id=?").run(Date.now(), rp.account.id);
     stripe.accounts.set("acct_race", { id: "acct_race", country: "JP", capabilities: { transfers: "active" }, requirements: {}, settings: { payouts: { schedule: { interval: "monthly", monthly_anchor: 25 } } } });
@@ -583,7 +602,124 @@ try {
   assert.equal(totals.next, 1156, "available before the 25th -> paid on this 25th");
   assert.equal(totals.later, 1156, "not settled by the 25th -> next month");
 
-  console.log("PASS: net-basis commission; signed webhook only; idempotent event/invoice; source_transaction on every transfer, no custom transfer_group; held->released; H1 transient charge read; H2 refund while unresolved / before the row / after a lost answer; H3 legacy onboard retired, legacy accounts need ready+JP; H4 lost answer + amount change -> one transfer; M1 24 h backoff, key revision, dead rows surfaced; lost/open disputes; M2 no starvation; M3 offset applied once; M4 multiple charges held; self-referral; GET read-only; schedule fix on POST refresh; ledger totals and payout window. No real Stripe calls.");
+  /* ================= 0040 Rule 1: only partners approved by Nurevo earn ================= */
+  const readyAccount = (id, acct) => {
+    sqlite.prepare("UPDATE accounts SET stripe_account_id=?, payout_status='ready', payout_checked_at=? WHERE id=?").run(acct, Date.now() + 400 * HOUR, id);
+    stripe.accounts.set(acct, { id: acct, country: "JP", capabilities: { transfers: "active" }, requirements: {}, settings: { payouts: { schedule: { interval: "monthly", monthly_anchor: 25 } } } });
+  };
+  {
+    const np = await member("np_partner", "np@example.test");
+    readyAccount(np.account.id, "acct_np");
+    const npc = await member("np_customer", "np-customer@example.test");
+    sqlite.prepare("UPDATE accounts SET referred_by_account_id=? WHERE id=?").run(np.account.id, npc.account.id); // e.g. a code issued before 0040
+    site("site_np", "np_customer", "sub_np");
+    charge("ch_np1");
+    r = await webhook("invoice.paid", invoice("in_np1", "ch_np1", "sub_np"));
+    assert.equal(r.status, 200);
+    assert.equal(row("in_np1"), undefined, "a non-approved partner gets no ledger row and no commission");
+    assert.equal(sqlite.prepare("SELECT partner_first_customer_account_id AS f FROM accounts WHERE id=?").get(np.account.id).f, null, "and no first customer is consumed");
+    r = await call("/api/partner/payout/onboard", { method: "POST", cookie: np.cookie });
+    assert.equal(r.status, 403); assert.equal(r.body.error, "partner_not_approved");
+    assert.equal((await call("/api/partner/code", { method: "POST", cookie: np.cookie })).status, 403, "no referral code before approval");
+    const before = stripe.transfers.length;
+    // Approved later: the customer referred BEFORE approval still never earns.
+    approve(np, Date.now() + 1000);
+    charge("ch_np2");
+    await webhook("invoice.paid", invoice("in_np2", "ch_np2", "sub_np"));
+    assert.equal(row("in_np2"), undefined, "referrals made before approval never earn, not even after it");
+    assert.equal(stripe.transfers.length, before);
+    summary = (await call("/api/partner", { cookie: np.cookie })).body;
+    assert.equal(summary.referrals[0].commission, "before_approval");
+    assert.equal(summary.payout.monthly_estimate_yen, 0, "the estimate leaves pre-approval referrals out");
+  }
+
+  /* ================= 0040 Rule 2: the first referred customer never earns ================= */
+  {
+    const fp = await member("fp_partner", "fp@example.test");
+    approve(fp, Date.now() - HOUR);
+    readyAccount(fp.account.id, "acct_fp");
+    const a = await member("fp_a", "fp-a@example.test");
+    const b = await member("fp_b", "fp-b@example.test");
+    await refer(a, fp, { first: "none" }); await refer(b, fp, { first: "none" });
+    site("site_fa", "fp_a", "sub_fa"); site("site_fb", "fp_b", "sub_fb");
+    // A zero invoice does not make anyone the first customer.
+    await webhook("invoice.paid", invoice("in_fa0", null, "sub_fa", { amount_paid: 0 }));
+    assert.equal(sqlite.prepare("SELECT partner_first_customer_account_id AS f FROM accounts WHERE id=?").get(fp.account.id).f, null);
+    const calls0 = stripe.calls.length;
+    for (const n of [1, 2]) {
+      charge(`ch_fa${n}`);
+      r = await webhook("invoice.paid", invoice(`in_fa${n}`, `ch_fa${n}`, "sub_fa"));
+      assert.equal(r.status, 200);
+      assert.equal(row(`in_fa${n}`).status, "void", "the first customer's invoice is recorded, not paid");
+      assert.equal(row(`in_fa${n}`).last_error, "first_customer");
+      assert.equal(row(`in_fa${n}`).amount_yen, 0);
+      assert.equal(transfersFor(`ch_fa${n}`).length, 0);
+    }
+    assert.equal(stripe.calls.slice(calls0).length, 0, "excluded invoices never touch Stripe");
+    assert.equal(sqlite.prepare("SELECT partner_first_customer_account_id AS f FROM accounts WHERE id=?").get(fp.account.id).f, a.account.id);
+    // The second distinct paying customer earns 40% of the net on every invoice.
+    for (const n of [1, 2]) {
+      charge(`ch_fb${n}`);
+      await webhook("invoice.paid", invoice(`in_fb${n}`, `ch_fb${n}`, "sub_fb"));
+      assert.equal(row(`in_fb${n}`).amount_yen, 1156);
+      assert.equal(transfersFor(`ch_fb${n}`).length, 1, "the second customer earns");
+      assert.equal(transfersFor(`ch_fb${n}`)[0].amount, C(3000 - 108));
+    }
+    // The first customer still earns nothing later, also after it churned and came back.
+    sqlite.prepare("UPDATE sites SET contract='cancelled' WHERE id='site_fa'").run();
+    site("site_fa2", "fp_a", "sub_fa2", { plan: "pro" });
+    charge("ch_fa3", { amount: 14800, fee: 533 });
+    await webhook("invoice.paid", invoice("in_fa3", "ch_fa3", "sub_fa2", { amount_paid: 14800 }));
+    assert.equal(row("in_fa3").status, "void"); assert.equal(row("in_fa3").last_error, "first_customer");
+    assert.equal(transfersFor("ch_fa3").length, 0, "every invoice of the first customer, forever");
+    // Re-delivered events and the hourly job do not change that.
+    await webhook("invoice.paid", invoice("in_fa1", "ch_fa1", "sub_fa"));
+    stripe.charges.get("ch_fa1").amount_refunded = 3000;
+    await webhook("charge.refunded", stripe.charges.get("ch_fa1"));
+    await runPartnerPayouts(env, { now: Date.now() + 500 * HOUR });
+    assert.equal(rows().filter((x) => x.kind === "commission" && x.partner_account_id === fp.account.id && x.last_error === "first_customer").length, 3);
+    assert.equal(stripe.transfers.filter((t) => t.destination === "acct_fp").length, 2, "only the second customer's two invoices were paid");
+    summary = (await call("/api/partner", { cookie: fp.cookie })).body;
+    assert.equal(summary.payout.first_customer_invoices, 3, "the Partner page can show them as 1社目（報酬対象外）");
+    assert.equal(summary.payout.cumulative_earned_yen, 2 * 1156);
+    assert.equal(summary.partner.first_customer_account_id, a.account.id);
+    assert.equal(summary.referrals.find((x) => x.email === "fp-a@example.test").commission, "first_customer");
+    assert.equal(summary.referrals.find((x) => x.email === "fp-b@example.test").commission, "eligible");
+    assert.equal(summary.payout.monthly_estimate_yen, 1200, "the estimate leaves the first customer (Pro) out: only B's Standard");
+  }
+
+  /* --- concurrent first invoices of two customers: exactly one first customer --- */
+  for (let round = 0; round < 3; round++) {
+    const cp = await member(`cp_${round}`, `cp-${round}@example.test`);
+    approve(cp, Date.now() - HOUR);
+    readyAccount(cp.account.id, `acct_cp${round}`);
+    const x = await member(`cx_${round}`, `cx-${round}@example.test`), y = await member(`cy_${round}`, `cy-${round}@example.test`);
+    await refer(x, cp, { first: "none" }); await refer(y, cp, { first: "none" });
+    site(`site_cx${round}`, `cx_${round}`, `sub_cx${round}`); site(`site_cy${round}`, `cy_${round}`, `sub_cy${round}`);
+    charge(`ch_cx${round}`); charge(`ch_cy${round}`);
+    const results = await Promise.all([
+      webhook("invoice.paid", invoice(`in_cx${round}`, `ch_cx${round}`, `sub_cx${round}`)),
+      webhook("invoice.paid", invoice(`in_cy${round}`, `ch_cy${round}`, `sub_cy${round}`)),
+    ]);
+    assert.deepEqual(results.map((x) => x.status), [200, 200]);
+    const mine2 = [row(`in_cx${round}`), row(`in_cy${round}`)];
+    assert.equal(mine2.filter((x) => x.last_error === "first_customer").length, 1, "exactly one of the two is the first customer");
+    assert.equal(mine2.filter((x) => x.amount_yen === 1156).length, 1, "the other one earns");
+    const first = sqlite.prepare("SELECT partner_first_customer_account_id AS f FROM accounts WHERE id=?").get(cp.account.id).f;
+    const voided = mine2.find((x) => x.last_error === "first_customer");
+    assert.equal(first, voided.invoice_id.startsWith("in_cx") ? x.account.id : y.account.id, "the recorded first customer is the one whose invoice was excluded");
+  }
+  {
+    // The claim itself under many concurrent callers: one winner, everyone agrees.
+    const rp2 = await member("claim_partner", "claim@example.test");
+    const ids = [];
+    for (let n = 0; n < 6; n++) ids.push((await member(`claim_c${n}`, `claim-c${n}@example.test`)).account.id);
+    const answers = await Promise.all(ids.map((id) => firstCustomerOf(env, rp2.account.id, id)));
+    assert.equal(new Set(answers).size, 1, "every caller sees the same first customer");
+    assert.ok(ids.includes(answers[0]));
+  }
+
+  console.log("PASS: net-basis commission; signed webhook only; idempotent event/invoice; source_transaction on every transfer, no custom transfer_group; held->released; H1 transient charge read; H2 refund while unresolved / before the row / after a lost answer; H3 legacy onboard retired, legacy accounts need ready+JP; H4 lost answer + amount change -> one transfer; M1 24 h backoff, key revision, dead rows surfaced; lost/open disputes; M2 no starvation; M3 offset applied once; M4 multiple charges held; self-referral; GET read-only; schedule fix on POST refresh; ledger totals and payout window; 0040: non-approved partner -> no code/onboarding/commission, pre-approval referrals never earn, first customer void on every invoice (incl. after churn, redelivery, refund, hourly job), second customer earns 40% of net, concurrent first invoices pick exactly one first customer, estimates exclude it. No real Stripe calls.");
 } finally {
   globalThis.fetch = originalFetch;
   sqlite.close();
