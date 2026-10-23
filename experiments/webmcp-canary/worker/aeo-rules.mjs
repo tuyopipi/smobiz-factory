@@ -85,7 +85,19 @@ export function renderRuleSchema(definition, values, fields, explicit = false) {
     if (spec.source) return values[spec.source];
     if (spec.object) return Object.fromEntries(Object.entries(spec.object).map(([k,v])=>[k,read(v)]).filter(([,v])=>present(v)));
   };
-  return Object.fromEntries(Object.entries(definition.generation.properties).filter(([k,spec])=>spec.always || (explicit || spec.optIn ? fields[k] === true : fields[k] !== false)).map(([k,spec])=>[k,read(spec)]).filter(([,v])=>present(v)));
+  /*
+   * optIn properties carry data only the owner can supply (description,
+   * email, official/social links). They used to be published only when the
+   * ruleset named them, which withheld data a Free owner had already entered
+   * and then scored the site down for its absence - a plan penalty, not a real
+   * gap. They are now published whenever the owner has entered the value, on
+   * every plan, unless the ruleset explicitly retires one (fields[k] === false).
+   * What a plan's ruleset version does decide is which properties exist at
+   * all: a property a newer generation introduces is still absent from an
+   * older one, and that is a real gap.
+   */
+  const enabled = (k, spec) => spec.always || (spec.optIn ? fields[k] !== false : explicit ? fields[k] === true : fields[k] !== false);
+  return Object.fromEntries(Object.entries(definition.generation.properties).filter(([k,spec])=>enabled(k, spec)).map(([k,spec])=>[k,read(spec)]).filter(([,v])=>present(v)));
 }
 export const INITIAL_AEO_RULESET = Object.freeze({
   version: 1,

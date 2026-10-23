@@ -1,25 +1,21 @@
 /**
- * The thing that makes free, Standard and Pro different.
+ * What makes Free, Standard and Pro different - and what must not.
  *
- * Before this, "always current" moved a version number and nothing else: the
- * plugin followed an integer, the scorer never consulted a ruleset at all, and
- * two rulesets with different contents produced byte-identical output. A paid
- * tier whose only difference is a bigger number is not a paid tier.
+ * Owner decision (2026-10): Free gets no artificial penalty. Every plan is
+ * scored with the same yardstick, and data the owner has entered is never
+ * withheld from the output because of the plan.
  *
- * The model asserted here has three parts, and all three have to hold or the
- * tiers collapse back into labels:
- *
- *   1. Output follows the plan. A free site keeps publishing the properties it
- *      was installed with; it never loses one, it simply does not gain the ones
- *      added after it.
- *   2. Scoring follows the criteria, for everyone. One measuring stick, the
- *      current one - which is what lets a free site's score drift down as the
- *      criteria advance while a Standard site's holds.
- *   3. A new property must be opt-in. "On unless switched off" hands every
- *      future field to every site the moment it is invented.
+ *   1. Owner-entered data (description, email, links) is published on every
+ *      plan. What a plan's ruleset version decides is which properties exist:
+ *      a property a newer generation introduces is absent from an older one.
+ *   2. One measuring stick, the current criteria, for everyone. The same data
+ *      scores the same on Free and Standard; Free falls behind only by what a
+ *      newer generation genuinely adds - a real gap, not a penalty.
+ *   3. A ruleset can still retire a property (fields[k] === false), and an
+ *      empty value is never published.
  */
 import assert from "node:assert/strict";
-import { INITIAL_AEO_RULESET, buildJsonLd } from "../worker/api.mjs";
+import { INITIAL_AEO_RULESET, buildJsonLd, hostedSchema } from "../worker/api.mjs";
 import { BASELINE_SCORED_PROPS, diagnoseSchemaFields, extractAeoSignals, publishedSchemaProps, schemaFieldPresent, scoreAeo } from "../worker/aeo-score.mjs";
 
 /* The advance shipped as ruleset v3. Mirrored here so a change to the
@@ -41,36 +37,45 @@ const SETTINGS = {
   business_type_schema: "CafeOrCoffeeShop", description: "神田の自家焙煎コーヒー店", email: "hello@example.com",
 };
 
-/* ---------------- 1. output follows the plan ---------------- */
+/* ---------------- 1. owner-entered data is published on every plan ---------------- */
 
 {
   const free = buildJsonLd(SITE, SETTINGS, baseline);
   const standard = buildJsonLd(SITE, SETTINGS, advanced);
 
-  // The same store data, published differently. This is the claim the pricing
-  // page makes, and it was false until now.
-  assert.notDeepEqual(free, standard, "the same store data does not produce the same schema on both tiers");
+  // Free used to withhold description and email the owner had entered, then
+  // score the site down for not publishing them.
+  assert.equal(free.description, "神田の自家焙煎コーヒー店", "Free publishes the description the owner entered");
+  assert.equal(free.email, "hello@example.com", "and the email");
+  assert.deepEqual(free, standard, "the same store data produces the same schema on both tiers for properties both generations define");
+}
 
-  assert.equal(free.description, undefined, "a baseline site does not publish description");
-  assert.equal(free.email, undefined, "nor email");
-  assert.equal(standard.description, "神田の自家焙煎コーヒー店", "a site following the criteria publishes description");
-  assert.equal(standard.email, "hello@example.com", "and email");
-
-  // Nothing is taken away from the baseline. A free site losing a field it had
-  // yesterday would be a regression dressed up as a plan model.
-  for (const key of Object.keys(free)) {
-    assert.deepEqual(standard[key], free[key], `the advanced tier keeps everything the baseline published: ${key}`);
-  }
-  assert.ok(Object.keys(standard).length > Object.keys(free).length, "and adds to it");
+{
+  // A property only a newer generation defines is the real difference: it
+  // appears where the site follows the newer criteria, and not on Free.
+  const newer = structuredClone(advanced);
+  newer.definition.generation = structuredClone(INITIAL_AEO_RULESET.definition.generation);
+  newer.definition.generation.properties.contactPoint = { object: { "@type": { literal: "ContactPoint" }, email: { source: "email" } }, requires: ["email"], optIn: true };
+  assert.equal(buildJsonLd(SITE, SETTINGS, newer).contactPoint.email, "hello@example.com", "the newer generation emits its new property");
+  assert.equal(buildJsonLd(SITE, SETTINGS, baseline).contactPoint, undefined, "Free, on the generation it has, does not");
 }
 
 {
   // A field with no value behind it publishes nothing, on either tier. An empty
   // property would earn a site a criterion it has not actually met.
   const bare = { name: "栞珈琲", address: "", description: "", email: "" };
-  const standard = buildJsonLd(SITE, bare, advanced);
-  assert.equal(standard.description, undefined, "an empty description is not published");
-  assert.equal(standard.email, undefined, "nor an empty email");
+  for (const ruleset of [baseline, advanced]) {
+    const out = buildJsonLd(SITE, bare, ruleset);
+    assert.equal(out.description, undefined, "an empty description is not published");
+    assert.equal(out.email, undefined, "nor an empty email");
+  }
+}
+
+{
+  // Hosted pages follow the same rule: entered data is not withheld on Free.
+  const hosted = hostedSchema({ ...SITE, ...SETTINGS }, "¥¥", baseline);
+  assert.equal(hosted.description, "神田の自家焙煎コーヒー店");
+  assert.equal(hosted.email, "hello@example.com");
 }
 
 /* ---------------- 2. one measuring stick, the current one ---------------- */
@@ -87,80 +92,57 @@ const scoreOf = (ld, scoredProps) => {
 };
 
 {
-  const freeLd = buildJsonLd(SITE, SETTINGS, baseline);
-  const standardLd = buildJsonLd(SITE, SETTINGS, advanced);
-
-  // Both measured against the criteria in force. Not against the ruleset each
-  // happens to publish under - that would score every site as perfect against
-  // its own standard and make the whole model unobservable.
-  const free = scoreOf(freeLd, ADVANCED_SCORED);
-  const standard = scoreOf(standardLd, ADVANCED_SCORED);
-
-  assert.ok(standard.score > free.score, `a site following the criteria scores higher: ${standard.score} > ${free.score}`);
-  assert.equal(standard.statuses.schema, "OK", "it meets the schema criteria");
-  // The baseline page publishes a structured address, so it meets 11 of the 13
-  // criteria (0.85). Before the scorer read streetAddress under address it
-  // was credited 10/13 (0.77, WARN) for a property it actually publishes.
-  assert.equal(free.statuses.schema, "OK", "the baseline site misses only description and email, still above the OK line");
-  assert.ok(free.metrics.schema < standard.metrics.schema, "and is marked down proportionally rather than failed");
-
-  // The gap has to be real and survivable at the same time. A site that
-  // installed the plugin yesterday is not suddenly in the red.
-  assert.ok(free.score >= 50, `a baseline site stays respectable: ${free.score}`);
-  assert.notEqual(free.band, "red", `and out of the red: ${free.band}`);
-  // A real gap, and proportional to what is actually missing: two of nine
-  // properties is 2/9 of the thirty-point schema component, about seven points.
-  // Fewer than the fifteen a band step used to cost, which is the trade for the
-  // decline being gradual instead of a cliff.
-  assert.ok(standard.score - free.score >= 5, `and the gap is visible: +${standard.score - free.score}`);
-  assert.ok(
-    Math.abs((standard.metrics.schema - free.metrics.schema) - 2 / 13) < 0.01,
-    "the deduction is exactly the share of criteria unmet, not a band",
-  );
-  // The difference is the schema component and nothing else - the two pages are
-  // otherwise identical, so any other component moving would mean the test is
-  // measuring something it did not intend to.
-  for (const key of Object.keys(standard.statuses)) {
-    if (["schema", "coverage"].includes(key)) continue;
-    assert.equal(standard.statuses[key], free.statuses[key], `only the schema component differs, not ${key}`);
-  }
-
-  // And the deduction is for things genuinely absent, named.
-  assert.ok(!free.published.includes("description"), "the baseline page really lacks description");
-  assert.ok(!free.published.includes("email"), "and email");
-
-  assert.ok(standard.published.includes("description") && standard.published.includes("email"), "and the advanced page really has them");
+  // Measured against the criteria in force, the same data scores the same on
+  // both tiers. Free carries no penalty for being Free.
+  const free = scoreOf(buildJsonLd(SITE, SETTINGS, baseline), ADVANCED_SCORED);
+  const standard = scoreOf(buildJsonLd(SITE, SETTINGS, advanced), ADVANCED_SCORED);
+  assert.equal(free.score, standard.score, `same data, same score: ${free.score} = ${standard.score}`);
+  assert.equal(free.statuses.schema, "OK");
+  assert.ok(free.published.includes("description") && free.published.includes("email"), "the entered properties are really on the page");
 }
 
 {
-  // Measured against the baseline criteria, the two are indistinguishable.
-  // That is the "before" state, and it is what made the tiers a label: the
-  // difference only appears once the criteria have moved past the baseline.
-  const free = scoreOf(buildJsonLd(SITE, SETTINGS, baseline), BASELINE_SCORED_PROPS);
-  const standard = scoreOf(buildJsonLd(SITE, SETTINGS, advanced), BASELINE_SCORED_PROPS);
-  assert.equal(free.score, standard.score, "under the old criteria there was nothing to choose between them");
+  // A Free owner who has not entered the data a criterion needs has a real,
+  // proportional gap - the same gap a Standard site with the same data has.
+  const sparse = { ...SETTINGS, description: "", email: "" };
+  const free = scoreOf(buildJsonLd(SITE, sparse, baseline), ADVANCED_SCORED);
+  const standard = scoreOf(buildJsonLd(SITE, sparse, advanced), ADVANCED_SCORED);
+  assert.equal(free.score, standard.score, "missing data costs both tiers the same");
+  const full = scoreOf(buildJsonLd(SITE, SETTINGS, baseline), ADVANCED_SCORED);
+  assert.ok(Math.abs((full.metrics.schema - free.metrics.schema) - 2 / 13) < 0.01, "the gap is exactly the share of criteria unmet, not a band");
+  assert.ok(free.score >= 50 && free.band !== "red", `and survivable: ${free.score}`);
 }
 
 {
-  // The decline is gradual, not a cliff. Each further property the criteria add
-  // and a baseline site lacks costs it a little more.
-  const freeLd = buildJsonLd(SITE, SETTINGS, baseline);
-  const six = scoreOf(freeLd, BASELINE_SCORED_PROPS).coreProps;
-  const nine = scoreOf(freeLd, ADVANCED_SCORED).coreProps;
+  // A property only a newer generation can emit is the one place Free falls
+  // behind - by its proportional share, and only once the criteria score it.
+  const newer = structuredClone(advanced);
+  newer.definition.generation = structuredClone(INITIAL_AEO_RULESET.definition.generation);
+  newer.definition.generation.properties.contactPoint = { object: { "@type": { literal: "ContactPoint" }, email: { source: "email" } }, requires: ["email"], optIn: true };
+  const criteria = [...ADVANCED_SCORED, "contactPoint"];
+  const free = scoreOf(buildJsonLd(SITE, SETTINGS, baseline), criteria);
+  const following = scoreOf(buildJsonLd(SITE, SETTINGS, newer), criteria);
+  assert.ok(following.metrics.schema > free.metrics.schema, "a site on the newer generation meets the new criterion");
+  assert.ok(Math.abs((following.metrics.schema - free.metrics.schema) - 1 / 14) < 0.01, "Free is behind by exactly that one criterion");
+}
+
+{
+  // The gradual decline when criteria widen still holds for data a site lacks.
+  const ld = buildJsonLd(SITE, { ...SETTINGS, description: "", email: "" }, baseline);
+  const six = scoreOf(ld, BASELINE_SCORED_PROPS).coreProps;
+  const nine = scoreOf(ld, ADVANCED_SCORED).coreProps;
   assert.ok(nine < six, `the same page meets a smaller share of a wider standard: ${nine.toFixed(3)} < ${six.toFixed(3)}`);
   assert.ok(nine > 0.5, "but still meets most of it");
 }
 
-/* ---------------- 3. a new property is opt-in ---------------- */
+/* ---------------- 3. retiring a property, and empty values ---------------- */
 
 {
-  // The bug this guards against: `fields.description !== false` is true for a
-  // ruleset that has never heard of description, so every baseline site would
-  // pick up every future property the moment it was invented.
+  // A ruleset that never names description still publishes what the owner entered.
   const silent = { version: 9, definition: { ...INITIAL_AEO_RULESET.definition, schema: { ...INITIAL_AEO_RULESET.definition.schema, fields: { url: true } } } };
   const out = buildJsonLd(SITE, SETTINGS, silent);
-  assert.equal(out.description, undefined, "a ruleset that says nothing about description does not publish it");
-  assert.equal(out.email, undefined, "nor email");
+  assert.equal(out.description, "神田の自家焙煎コーヒー店");
+  assert.equal(out.email, "hello@example.com");
 }
 
 {
