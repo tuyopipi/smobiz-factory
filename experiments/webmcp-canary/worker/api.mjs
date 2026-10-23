@@ -2091,7 +2091,7 @@ export async function handleApi(request, env, ctx) {
     const region = billingRegion(request, body);
     // Abroad, the fixed Japanese rate would charge 10% consumption tax on a
     // sale that is outside its scope. Only Stripe Tax can tell the two apart.
-    if (region === "intl" && !automaticTaxEnabled(env)) {
+    if (region === "intl" && !internationalBillingReady(env)) {
       return json({ error: "international_requires_automatic_tax", billing_region: region }, 409);
     }
     const memberRow = await env.DB.prepare("SELECT email FROM members WHERE id=?").bind(member.member_id).first();
@@ -2178,11 +2178,11 @@ export async function handleApi(request, env, ctx) {
     });
     // Payment Links cannot carry a fixed tax rate, only Stripe Tax. Refuse
     // rather than issue a link that would charge the price without tax.
-    if (!applyConsumptionTax(form, env, { lineItem: false }) && taxRateId(env)) {
+    if (!applyConsumptionTax(form, env, { lineItem: false }) && taxRateId(env) && !taxExempt(env)) {
       return json({ error: "payment_link_requires_automatic_tax" }, 409);
     }
     const linkRegion = billingRegion(request, body);
-    if (linkRegion === "intl" && !automaticTaxEnabled(env)) {
+    if (linkRegion === "intl" && !internationalBillingReady(env)) {
       return json({ error: "international_requires_automatic_tax", billing_region: linkRegion }, 409);
     }
     const linkPinned = applyBillingRegion(form, env, linkRegion, { checkout: false });
@@ -2749,7 +2749,7 @@ const SOV_UPGRADE_ON_SALE = Object.freeze({
   details_url: "https://nurevo.jp/#pro-detail",
   checkout_url: "https://nurevo.jp/dashboard?plan=pro",
   price_tax: "excluded",
-  message: `AI登場率の測定はProプラン（¥${PLAN_MONTHLY_YEN.pro.toLocaleString("en-US")}/月・税抜、測定はβ）の機能です。`,
+  message: `AI登場率の測定はProプラン（¥${PLAN_MONTHLY_YEN.pro.toLocaleString("en-US")}/月、測定はβ）の機能です。`,
 });
 function sovUpgrade(env) {
   return proCheckoutEnabled(env) ? SOV_UPGRADE_ON_SALE : SOV_UPGRADE;
@@ -3447,12 +3447,29 @@ function taxRateId(env) {
   return String(env.STRIPE_TAX_RATE_ID || "").trim();
 }
 
+/*
+ * STRIPE_TAX_EXEMPT="1": the seller is a consumption-tax exempt business
+ * (no invoice registration), so no tax is added anywhere and the list price is
+ * the total. Abroad is still businesses-only with a tax ID, which Checkout
+ * collects without Stripe Tax.
+ */
+export function taxExempt(env) {
+  return String(env.STRIPE_TAX_EXEMPT ?? "").trim() === "1";
+}
+
+/** Whether the international (businesses-only) path can run. */
+function internationalBillingReady(env) {
+  return automaticTaxEnabled(env) || taxExempt(env);
+}
+
 function automaticTaxEnabled(env) {
   return String(env.STRIPE_AUTOMATIC_TAX ?? "").trim() === "1";
 }
 
 /** Adds tax parameters to a Stripe form. Returns true when tax will be charged. */
 export function applyConsumptionTax(form, env, { lineItem = true } = {}) {
+  // Exempt: nothing is added, and that is the intended, complete answer.
+  if (taxExempt(env)) return false;
   if (automaticTaxEnabled(env)) {
     form.set("automatic_tax[enabled]", "true");
     // Lets a business enter its VAT/GST/JCT number, so Stripe Tax can apply
@@ -3493,7 +3510,7 @@ export function applyBillingRegion(form, env, region, { checkout = true } = {}) 
   form.set("metadata[billing_region]", region);
   form.set("subscription_data[metadata][billing_region]", region);
   if (checkout) form.set("locale", region === "jp" ? "ja" : "auto");
-  if (!automaticTaxEnabled(env)) return "";
+  if (!internationalBillingReady(env)) return "";
   // Stripe Tax needs an address to decide; a business abroad is identified by
   // its tax ID, which is required wherever Stripe can collect one.
   // In Japan Checkout's own "auto" asks for as much as the tax needs; abroad

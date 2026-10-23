@@ -53,7 +53,7 @@ const i4Keys = new Set(LANGS.flatMap((l) => Object.keys(I4[l])));
 for (const lang of LANGS) for (const key of i4Keys) assert.ok(own(lang).has(key), `${lang}.${key} (I4)`);
 // Existing ja/en wording is untouched.
 assert.equal(I.ja.ptCode, "紹介コード");
-assert.equal(I.en.plStdHead, "Choose Standard（¥3,000/month・excl. tax）");
+assert.equal(I.en.plStdHead, "Choose Standard（¥3,000/month）");
 assert.equal(I.ja.plLinkCopied, "リンクをコピーしました");
 assert.equal(I.en.ptRate, "¥1,200/month (40%) per active referred Standard subscription. Disbursed totals are unavailable without a payout ledger.");
 assert.equal(I.ja.planGrantOrg && I.ja.planGrantOrg !== "planGrantOrg", true, "planGrantOrg is a word, not its key");
