@@ -110,13 +110,14 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = nul
   // fresh: ask any cache between us and the site (a WordPress page cache, a
   // CDN) for the current page, so a fix made a minute ago is what is scored.
   const page = await fetchBounded(fetchImpl, target.href, { userAgent: "Nurevo-AEO-Diagnostics/1.0 (+https://nurevo.jp)", noCache: fresh });
-  const [robots, llms, edgeBlocked] = await Promise.all([
+  const [robots, llms, edgeAccess] = await Promise.all([
     fetchOptional(fetchImpl, new URL("/robots.txt", target.origin).href, { noCache: fresh }),
     fetchOptional(fetchImpl, new URL("/llms.txt", target.origin).href, { noCache: fresh }),
     detectEdgeBlock(fetchImpl, target.href),
   ]);
   const signals = extractAeoSignals(page.text, robots.text, llms.text, {
-    edgeBlocked,
+    edgeBlocked: edgeAccess === "blocked",
+    edgeUnknown: edgeAccess === "unknown",
     llmsPresent: llms.ok,
     scoredProps, schemaRules, entityType, catalog, scoring,
   });
@@ -283,6 +284,9 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
   return {
     aiCrawlersAllowed: gateCrawlers(scoring).every((bot) => robotsAllows(robots, bot)),
     edgeBlocked: options.edgeBlocked === true,
+    // The bot-UA probe failed or timed out: we do not know. Not a block, so it
+    // never trips the gate, and the checklist says it could not be checked.
+    edgeAccessUnknown: options.edgeBlocked !== true && options.edgeUnknown === true,
     serverRenderedHtml: visible.replace(/\s+/g, " ").trim().length >= scoring.minVisible || scripts.length > 0,
     jsonLdInRawHtml: scripts.length > 0,
     schemaTypeMatches,
@@ -356,7 +360,7 @@ export function resolveAeoCheckLang(requested) {
 function checkWording(lang, id) {
   const label = diagnosisText(lang, `check.${id}.label`);
   if (label === undefined) return null;
-  return { label, OK: diagnosisText(lang, `check.${id}.OK`), WARN: diagnosisText(lang, `check.${id}.WARN`), BAD: diagnosisText(lang, `check.${id}.BAD`) };
+  return { label, OK: diagnosisText(lang, `check.${id}.OK`), WARN: diagnosisText(lang, `check.${id}.WARN`), BAD: diagnosisText(lang, `check.${id}.BAD`), UNKNOWN: diagnosisText(lang, `check.${id}.UNKNOWN`) };
 }
 
 /**
@@ -374,7 +378,7 @@ export function localizeAeoChecks(checks, requested) {
     const status = String(check?.status || "").toUpperCase();
     // An unrecognised status is a finding, not a pass.
     const fields = Array.isArray(check.fields) ? localizeFields(check.fields, lang) : null;
-    const message = fields ? fieldsSummary(fields, lang) : wording[status] ?? wording.WARN;
+    const message = fields ? fieldsSummary(fields, lang) : (check.unknown === true && wording.UNKNOWN) ? wording.UNKNOWN : wording[status] ?? wording.WARN;
     return { ...check, label: fields ? `${wording.label} (${fields.filter(f => f.present).length}/${fields.length})` : wording.label, message, ...(fields ? { fields } : {}), ...(check.id === "legibility" ? { hints: [textHint(lang)] } : {}) };
   });
 }
@@ -392,9 +396,13 @@ export function buildAeoChecks(signals, result, lang = "ja") {
     edge_access: !signals.edgeBlocked,
     server_rendered_html: signals.serverRenderedHtml,
   };
+  // An edge probe that could not complete is reported as WARN + unknown, not
+  // as a pass (we did not see one) and not as a block (we did not see one either).
+  const unknown = { edge_access: signals.edgeAccessUnknown === true && !signals.edgeBlocked };
   const checks = AEO_CHECKS.map(({ id, fixable, gate }) => ({
     id,
-    status: gate ? (gateStatus[id] ? "OK" : "BAD") : result.statuses[id],
+    status: unknown[id] ? "WARN" : gate ? (gateStatus[id] ? "OK" : "BAD") : result.statuses[id],
+    ...(unknown[id] ? { unknown: true } : {}),
     fixable,
     ...(["schema", "coverage"].includes(id) && signals.schemaFields ? { fields: signals.schemaFields } : {}),
   }));
@@ -444,13 +452,24 @@ async function fetchOptional(fetchImpl, href, options = {}) {
   try { return await fetchBounded(fetchImpl, href, options); } catch { return { ok: false, text: "" }; }
 }
 
-async function detectEdgeBlock(fetchImpl, href) {
+/**
+ * Probe the page as an AI search bot: "blocked", "open" or "unknown".
+ *
+ * Only a response that actually refuses the bot is a block - 401/403/429/451,
+ * or a CDN challenge page (cf-mitigated: challenge). A network error or a
+ * timeout used to count as blocked too, which capped a reachable site at the
+ * gate score because one HEAD request was slow; it is now "unknown", which
+ * neither fails the gate nor claims a pass.
+ */
+export async function detectEdgeBlock(fetchImpl, href) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
     const response = await fetchImpl(href, { method: "HEAD", redirect: "follow", signal: controller.signal, headers: { "user-agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; OAI-SearchBot/1.0; +https://openai.com/searchbot" } });
-    return [401, 403, 429, 451].includes(response.status);
-  } catch { return true; } finally { clearTimeout(timer); }
+    if ([401, 403, 429, 451].includes(response.status)) return "blocked";
+    if (String(response.headers?.get?.("cf-mitigated") || "").toLowerCase() === "challenge") return "blocked";
+    return "open";
+  } catch { return "unknown"; } finally { clearTimeout(timer); }
 }
 
 function robotsAllows(text, bot) {

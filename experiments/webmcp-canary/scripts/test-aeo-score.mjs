@@ -105,4 +105,44 @@ assert.equal(extractAeoSignals(html, trainingBlocked, llms, { llmsPresent: true,
 assert.deepEqual(gateCrawlers({ ...DEFAULT_SCORING, aiCrawlers: ["GPTBot"] }), ["OAI-SearchBot", "ChatGPT-User", "Claude-SearchBot", "Claude-User", "PerplexityBot", "Perplexity-User"],
   "a list with only training bots falls back to the search crawlers");
 
+/* ---------------- edge probe: a failed request is unknown, not blocked ---------------- */
+{
+  const { diagnoseAeoUrl, detectEdgeBlock, localizeAeoChecks } = await import("../worker/aeo-score.mjs");
+  const { buildSiteRecommendations } = await import("../worker/recommendations.mjs");
+  const site = (head) => async (url, init = {}) => {
+    if (init.method === "HEAD") return head();
+    const href = String(url);
+    if (href.endsWith("/robots.txt")) return new Response(robots, { status: 200 });
+    if (href.endsWith("/llms.txt")) return new Response(llms, { status: 200 });
+    return new Response(html, { status: 200, headers: { "content-type": "text/html" } });
+  };
+  const timeout = () => { throw new DOMException("The operation was aborted.", "AbortError"); };
+  const reset = () => { throw new TypeError("fetch failed"); };
+  assert.equal(await detectEdgeBlock(site(timeout), "https://example.com/"), "unknown");
+  assert.equal(await detectEdgeBlock(site(reset), "https://example.com/"), "unknown");
+  assert.equal(await detectEdgeBlock(site(() => new Response(null, { status: 403 })), "https://example.com/"), "blocked");
+  assert.equal(await detectEdgeBlock(site(() => new Response(null, { status: 429 })), "https://example.com/"), "blocked");
+  assert.equal(await detectEdgeBlock(site(() => new Response(null, { status: 503, headers: { "cf-mitigated": "challenge" } })), "https://example.com/"), "blocked", "a CDN challenge is a block");
+  assert.equal(await detectEdgeBlock(site(() => new Response(null, { status: 405 })), "https://example.com/"), "open", "a server that refuses HEAD is not blocking bots");
+
+  const open = await diagnoseAeoUrl("https://example.com/", { fetchImpl: site(() => new Response(null, { status: 200 })) });
+  const unknown = await diagnoseAeoUrl("https://example.com/", { fetchImpl: site(timeout) });
+  const blocked = await diagnoseAeoUrl("https://example.com/", { fetchImpl: site(() => new Response(null, { status: 403 })) });
+  // Before: a timed-out HEAD capped this reachable page at 15.
+  assert.equal(unknown.gatePassed, true, "an unknown edge does not fail the gate");
+  assert.equal(unknown.score, open.score, "and costs nothing");
+  assert.ok(unknown.score > 15);
+  assert.equal(blocked.gatePassed, false);
+  assert.ok(blocked.score <= 15, "a real 403 still caps the score");
+  const edge = (r) => r.checks.find((c) => c.id === "edge_access");
+  assert.equal(edge(open).status, "OK");
+  assert.equal(edge(blocked).status, "BAD");
+  assert.equal(edge(unknown).status, "WARN", "not shown as a pass we never saw");
+  assert.equal(edge(unknown).unknown, true);
+  assert.match(edge(unknown).message, /確認できませんでした/, "the checklist says it could not be checked");
+  assert.match(localizeAeoChecks(unknown.checks, "en").find((c) => c.id === "edge_access").message, /could not check edge access/);
+  const recs = buildSiteRecommendations({ checks: unknown.checks, profile: {}, scoredProps: [], publishedProps: [], plan: "standard", stored: [], lang: "ja" });
+  assert.ok(!JSON.stringify(recs).includes("edge_access"), "an unrun check is not turned into advice");
+}
+
 console.log("AEO score unit tests passed");
