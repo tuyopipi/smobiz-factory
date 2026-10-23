@@ -1,0 +1,29 @@
+{
+    "name": "nurevo/webmcp-canary-phpcs",
+    "description": "Coding-standards tooling for the Nurevo AEO plugin. Dev-only; nothing here ships.",
+    "type": "project",
+    "license": "GPL-2.0-or-later",
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.13.6",
+        "wp-coding-standards/wpcs": "3.4.1",
+        "phpcsstandards/phpcsutils": "1.2.3",
+        "phpcsstandards/phpcsextra": "1.5.1",
+        "phpcompatibility/php-compatibility": "10.0.0-alpha2",
+        "phpcompatibility/phpcompatibility-paragonie": "2.0.0-alpha2",
+        "phpcompatibility/phpcompatibility-passwordcompat": "2.0.0-alpha1",
+        "phpcompatibility/phpcompatibility-wp": "3.0.0-alpha2",
+        "dealerdirect/phpcodesniffer-composer-installer": "1.2.1"
+    },
+    "minimum-stability": "alpha",
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "platform-check": false,
+        "sort-packages": true
+    },
+    "extra": {
+        "comment": "PHPCompatibility 10 (alpha) is used because 9.3.5, the last stable release, predates PHP 8 and cannot flag 8.x-only syntax or functions, which is the point of testVersion 7.4-. Versions are exact so CI is reproducible without a lock file (packagist was unreachable when this was written)."
+    }
+}

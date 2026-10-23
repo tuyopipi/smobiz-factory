@@ -40,6 +40,8 @@
     "i18n": "node scripts/generate-plugin-translations.mjs",
     "test:deploy-gate": "npm run test:smoke && npm run test:webmcp-headless && npm run test:mcp-regression",
     "plugin:build": "node scripts/build-plugin-zip.mjs",
+    "test:wp-env": "node scripts/wp-env-smoke.mjs",
+    "lint:php": "composer install -d tests/phpcs --no-interaction --no-progress && tests/phpcs/vendor/bin/phpcs --standard=tests/phpcs/phpcs.xml.dist",
     "test:continuous": "node scripts/test-continuous-optimization.mjs && node scripts/test-continuous-ui.mjs && node scripts/test-geocoder.mjs"
   },
   "engines": {

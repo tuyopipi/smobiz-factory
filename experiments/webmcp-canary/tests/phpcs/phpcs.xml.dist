@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!--
+  Coding standards for the Nurevo AEO plugin (report-only in CI for now).
+
+  Run from experiments/webmcp-canary:  npm run lint:php
+  (installs the pinned tools into tests/phpcs/vendor with Composer first).
+
+  Scans the plugin source directly. The build zip ships the same PHP files
+  (scripts/build-plugin-zip.mjs copies them verbatim).
+-->
+<ruleset name="Nurevo AEO">
+	<description>WordPress-Extra plus PHPCompatibilityWP for PHP 7.4 and later.</description>
+
+	<file>../../wordpress-plugin/webmcp-canary</file>
+
+	<arg name="extensions" value="php"/>
+	<arg name="basepath" value="../.."/>
+	<arg name="colors"/>
+	<arg value="s"/>
+
+	<!-- The plugin header says "Requires PHP: 7.4". -->
+	<config name="testVersion" value="7.4-"/>
+	<!-- The plugin header says "Requires at least: 6.1". -->
+	<config name="minimum_wp_version" value="6.1"/>
+
+	<rule ref="WordPress-Extra"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<rule ref="WordPress.WP.I18n">
+		<properties>
+			<property name="text_domain" type="array">
+				<element value="nurevo-webmcp"/>
+			</property>
+		</properties>
+	</rule>
+</ruleset>
