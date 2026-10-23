@@ -41,6 +41,8 @@ const INCLUDE = [
   "assets/icon.svg",  // used by the admin screens at runtime
   "assets/logo.svg",
   "assets/editor-panel.js", // block editor sidebar panel (per-post settings), no build step
+  "includes/rest.php",       // read-only REST route nurevo/v1/status
+  "includes/cli.php",        // WP-CLI commands, loaded only under WP-CLI
   "languages/nurevo-webmcp.pot",
   "languages/nurevo-webmcp-ja.po",
   // One compiled catalogue per shipped locale (languages/i18n/locales.json).

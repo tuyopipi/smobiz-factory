@@ -114,6 +114,10 @@ Enter the questions and answers under **Nurevo AEO > Settings**, then add the **
 
 Yes. In the block editor, open the **Nurevo AEO** panel in the post sidebar; in the classic editor, use the **Nurevo AEO** box. You can leave the page out of `/llms.txt`, stop Nurevo publishing structured data on it, and enter questions and answers for that page alone. A page's own questions are shown where you place the Nurevo FAQ block set to "This page's own questions" (or the `[nurevo_faq source="post"]` shortcode), and published as FAQPage on that page only.
 
+= Can I copy the settings to another site, or script them? =
+
+Yes. **Nurevo AEO > Settings > Tools** exports the settings (output switches, business details, FAQ and services) as a JSON file and imports one. Keys, tokens, the plan and the connection are never exported or imported, and a file containing them is refused. With WP-CLI: `wp nurevo status`, `wp nurevo diagnose`, `wp nurevo export` and `wp nurevo import <file>`. Administrators can also read the output state from the REST route `GET /wp-json/nurevo/v1/status`.
+
 = What is AEO? =
 
 AEO (Answer Engine Optimization) is about being quoted correctly inside AI answers from ChatGPT, Perplexity, Google AI and others. Classic SEO is about where you rank in a list of links. AEO is about whether a machine can read your facts at all.

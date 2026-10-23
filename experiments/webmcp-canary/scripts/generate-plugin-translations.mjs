@@ -29,19 +29,29 @@ function poQuote(value) {
   return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`;
 }
 
-const source = fs.readFileSync(SOURCE, "utf8");
-const lineOf = (index) => source.slice(0, index).split("\n").length;
+// The main file plus the include files (REST route, WP-CLI commands).
+const INCLUDES_DIR = `${PLUGIN_DIR}/includes`;
+const SOURCES = [
+  SOURCE,
+  ...(fs.existsSync(INCLUDES_DIR)
+    ? fs.readdirSync(INCLUDES_DIR).filter((name) => name.endsWith(".php")).sort().map((name) => `${INCLUDES_DIR}/${name}`)
+    : []),
+];
 
 /** msgid -> sorted unique source references */
 const entries = new Map();
-for (const match of source.matchAll(CALL)) {
-  if (match[2] !== TEXT_DOMAIN) continue;
-  const msgid = phpUnquote(match[1]);
-  if (msgid === "") continue;
-  const reference = `${SOURCE}:${lineOf(match.index)}`;
-  const existing = entries.get(msgid);
-  if (existing) existing.add(reference);
-  else entries.set(msgid, new Set([reference]));
+for (const file of SOURCES) {
+  const source = fs.readFileSync(file, "utf8");
+  const lineOf = (index) => source.slice(0, index).split("\n").length;
+  for (const match of source.matchAll(CALL)) {
+    if (match[2] !== TEXT_DOMAIN) continue;
+    const msgid = phpUnquote(match[1]);
+    if (msgid === "") continue;
+    const reference = `${file}:${lineOf(match.index)}`;
+    const existing = entries.get(msgid);
+    if (existing) existing.add(reference);
+    else entries.set(msgid, new Set([reference]));
+  }
 }
 
 // Japanese for the English source strings. Strings already written in Japanese
@@ -593,6 +603,41 @@ const JA = {
     "質問を追加",
   "Remove":
     "削除",
+  // Tools: export/import, WP-CLI (0.8.0).
+  "AEO score: %1$d/100 (%2$s)":
+    "AEOスコア: %1$d/100（%2$s）",
+  "Choose a settings file exported from Nurevo AEO.":
+    "Nurevo AEO から書き出した設定ファイルを選んでください。",
+  "Copy these settings to another site. The file holds the output switches, the business details, the FAQ and the services. Keys, tokens, the plan and the connection are never exported or imported.":
+    "この設定を別のサイトにコピーできます。ファイルには出力のオン・オフ、店舗情報、よくある質問、サービスが含まれます。キー・トークン・プラン・接続情報は書き出しも読み込みもしません。",
+  "Could not read the file.":
+    "ファイルを読み込めませんでした。",
+  "Could not write the file.":
+    "ファイルを書き込めませんでした。",
+  "Export settings":
+    "設定を書き出す",
+  "Import settings":
+    "設定を読み込む",
+  "Settings exported.":
+    "設定を書き出しました。",
+  "Settings file (.json)":
+    "設定ファイル（.json）",
+  "Settings imported.":
+    "設定を読み込みました。",
+  "The diagnosis sends this site’s URL to the Nurevo service. Run again with --consent to agree.":
+    "診断ではこのサイトのURLがNurevoサービスに送信されます。同意する場合は --consent を付けて再実行してください。",
+  "The file contains keys or connection settings, which are never imported: %s":
+    "ファイルにキーまたは接続設定が含まれています。これらは読み込みません: %s",
+  "The file contains settings this version does not know: %s":
+    "ファイルに、このバージョンが認識できない設定が含まれています: %s",
+  "The file is not a valid Nurevo AEO settings file.":
+    "有効なNurevo AEO設定ファイルではありません。",
+  "The file is not valid JSON.":
+    "ファイルが正しいJSONではありません。",
+  "This is not a Nurevo AEO settings file.":
+    "Nurevo AEO の設定ファイルではありません。",
+  "Tools":
+    "ツール",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo
@@ -791,7 +836,7 @@ for (const [locale, spec] of Object.entries(locales)) {
   fs.writeFileSync(path.join(LANG_DIR, `${DOMAIN}-${locale}.mo`), moBuffer(headerMsgstr(locale), pairs));
 }
 
-console.log(`Extracted ${sorted.length} strings from ${SOURCE}; wrote ${Object.keys(locales).length} locales`);
+console.log(`Extracted ${sorted.length} strings from ${SOURCES.join(", ")}; wrote ${Object.keys(locales).length} locales`);
 if (missing.size) {
   for (const [locale, list] of missing) {
     console.warn(`Untranslated (${locale}): ${list.length}`);

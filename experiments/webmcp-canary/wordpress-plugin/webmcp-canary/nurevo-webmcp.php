@@ -5225,8 +5225,200 @@ function webmcp_canary_settings_page() {
                 </form>
             <?php endif; ?>
         </div>
+
+        <hr>
+        <h2 id="nurevo-tools"><?php esc_html_e('Tools', 'nurevo-webmcp'); ?></h2>
+        <p><?php esc_html_e('Copy these settings to another site. The file holds the output switches, the business details, the FAQ and the services. Keys, tokens, the plan and the connection are never exported or imported.', 'nurevo-webmcp'); ?></p>
+        <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" style="display:inline-block;margin-right:8px">
+            <?php wp_nonce_field('webmcp_canary_export_settings'); ?>
+            <input type="hidden" name="action" value="webmcp_canary_export_settings">
+            <?php submit_button(__('Export settings', 'nurevo-webmcp'), 'secondary', 'submit', false); ?>
+        </form>
+        <form action="<?php echo esc_url(admin_url('admin-post.php')); ?>" method="post" enctype="multipart/form-data" style="display:inline-block">
+            <?php wp_nonce_field('webmcp_canary_import_settings'); ?>
+            <input type="hidden" name="action" value="webmcp_canary_import_settings">
+            <label><?php esc_html_e('Settings file (.json)', 'nurevo-webmcp'); ?> <input type="file" name="nurevo_import_file" accept="application/json,.json"></label>
+            <?php submit_button(__('Import settings', 'nurevo-webmcp'), 'secondary', 'submit', false); ?>
+        </form>
     </div>
     <?php
+}
+
+/* -----------------------------------------------------------------------
+ * Tools: settings export / import and a read-only status report.
+ *
+ * Shared by the Tools section on the settings screen, the WP-CLI commands
+ * (includes/cli.php) and the REST route (includes/rest.php).
+ * --------------------------------------------------------------------- */
+
+/** Settings that may travel between sites. */
+function webmcp_canary_exportable_setting_keys() {
+    return array(
+        'enabled', 'allow_ai_crawlers', 'ai_training', 'serve_llms_txt', 'serve_schema', 'avoid_schema_duplicates',
+        'faq_page_id', 'business_name', 'business_description', 'business_address', 'business_phone',
+        'business_hours', 'business_type', 'business_url', 'business_email',
+    );
+}
+
+/**
+ * Settings that belong to this site and its connection, never to a file:
+ * credentials, the plan the service decides, and where the plugin connects to.
+ */
+function webmcp_canary_secret_setting_keys() {
+    return array('site_key', 'site_id', 'license_key', 'pairing_code', 'admin_token', 'profile_token', 'plan', 'tag_url', 'load_tag', 'site_email');
+}
+
+/** The export document. */
+function webmcp_canary_export_settings() {
+    $settings = webmcp_canary_settings();
+    $out = array();
+    foreach (webmcp_canary_exportable_setting_keys() as $key) {
+        $out[$key] = isset($settings[$key]) ? (string) $settings[$key] : '';
+    }
+    return array(
+        'plugin' => 'nurevo-aeo',
+        'format' => 1,
+        'version' => WEBMCP_CANARY_VERSION,
+        'exported_at' => gmdate('c'),
+        'settings' => $out,
+        'faq' => webmcp_canary_faq_entries(),
+        'services' => webmcp_canary_service_entries(),
+    );
+}
+
+/**
+ * Validate and apply an export document. Returns a summary array or WP_Error.
+ *
+ * Unknown keys are refused rather than ignored, so a file from another plugin
+ * or a later format cannot half-apply. Keys and secrets are refused outright.
+ * Accepted values go through the same sanitize callback as the settings form.
+ */
+function webmcp_canary_import_settings_json($json) {
+    $data = json_decode((string) $json, true);
+    if (!is_array($data)) {
+        return new WP_Error('webmcp_import_invalid', __('The file is not valid JSON.', 'nurevo-webmcp'));
+    }
+    if (($data['plugin'] ?? '') !== 'nurevo-aeo') {
+        return new WP_Error('webmcp_import_invalid', __('This is not a Nurevo AEO settings file.', 'nurevo-webmcp'));
+    }
+    $unknown = array_diff(array_keys($data), array('plugin', 'format', 'version', 'exported_at', 'settings', 'faq', 'services'));
+    $settings = isset($data['settings']) ? $data['settings'] : array();
+    if (!is_array($settings) || (isset($data['faq']) && !is_array($data['faq'])) || (isset($data['services']) && !is_array($data['services']))) {
+        return new WP_Error('webmcp_import_invalid', __('The file is not a valid Nurevo AEO settings file.', 'nurevo-webmcp'));
+    }
+    $secrets = array_values(array_intersect(array_keys($settings), webmcp_canary_secret_setting_keys()));
+    if (!empty($secrets)) {
+        return new WP_Error('webmcp_import_secret', sprintf(
+            /* translators: %s: comma-separated setting names. */
+            __('The file contains keys or connection settings, which are never imported: %s', 'nurevo-webmcp'),
+            implode(', ', $secrets)
+        ));
+    }
+    $unknown = array_merge($unknown, array_diff(array_keys($settings), webmcp_canary_exportable_setting_keys()));
+    if (!empty($unknown)) {
+        return new WP_Error('webmcp_import_unknown_key', sprintf(
+            /* translators: %s: comma-separated unknown setting names. */
+            __('The file contains settings this version does not know: %s', 'nurevo-webmcp'),
+            implode(', ', array_map('strval', $unknown))
+        ));
+    }
+    foreach ($settings as $value) {
+        if (!is_scalar($value) && $value !== null) {
+            return new WP_Error('webmcp_import_invalid', __('The file is not a valid Nurevo AEO settings file.', 'nurevo-webmcp'));
+        }
+    }
+
+    // Everything not in the file keeps its current value, including the
+    // connection, which the sanitizer would otherwise read as cleared.
+    $input = array_merge(webmcp_canary_settings(), array_map('strval', array_map(function ($value) {
+        return $value === null ? '' : $value;
+    }, $settings)));
+    if (isset($data['faq'])) {
+        $input['faq'] = $data['faq'];
+    }
+    if (isset($data['services'])) {
+        $input['services'] = $data['services'];
+    }
+    $clean = webmcp_canary_sanitize_settings($input);
+    update_option(WEBMCP_CANARY_OPTION, $clean);
+    return array(
+        'settings' => count($settings),
+        'faq' => isset($data['faq']) ? count(webmcp_canary_faq_entries()) : null,
+        'services' => isset($data['services']) ? count(webmcp_canary_service_entries()) : null,
+    );
+}
+
+add_action('admin_post_webmcp_canary_export_settings', 'webmcp_canary_export_settings_action');
+function webmcp_canary_export_settings_action() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You do not have permission to perform this action.', 'nurevo-webmcp'));
+    }
+    check_admin_referer('webmcp_canary_export_settings');
+    nocache_headers();
+    header('Content-Type: application/json; charset=utf-8');
+    header('Content-Disposition: attachment; filename="nurevo-aeo-settings-' . gmdate('Ymd') . '.json"');
+    echo wp_json_encode(webmcp_canary_export_settings(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- a JSON download.
+    exit;
+}
+
+add_action('admin_post_webmcp_canary_import_settings', 'webmcp_canary_import_settings_action');
+function webmcp_canary_import_settings_action() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You do not have permission to perform this action.', 'nurevo-webmcp'));
+    }
+    check_admin_referer('webmcp_canary_import_settings');
+    $file = isset($_FILES['nurevo_import_file']) && is_array($_FILES['nurevo_import_file']) ? $_FILES['nurevo_import_file'] : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- only tmp_name and size are read.
+    $tmp = isset($file['tmp_name']) ? (string) $file['tmp_name'] : '';
+    if ($tmp === '' || !is_uploaded_file($tmp) || (int) ($file['size'] ?? 0) > 1024 * 1024) {
+        webmcp_canary_redirect_settings('error', __('Choose a settings file exported from Nurevo AEO.', 'nurevo-webmcp'));
+    }
+    $result = webmcp_canary_import_settings_json(file_get_contents($tmp)); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- a local upload.
+    if (is_wp_error($result)) {
+        webmcp_canary_redirect_settings('error', $result->get_error_message());
+    }
+    webmcp_canary_redirect_settings('updated', __('Settings imported.', 'nurevo-webmcp'));
+}
+
+/**
+ * What this site publishes, for the REST route and `wp nurevo status`.
+ * Read-only and free of keys and tokens.
+ */
+function webmcp_canary_status_report() {
+    $settings = webmcp_canary_settings();
+    $enabled = $settings['enabled'] === '1';
+    $ruleset = webmcp_canary_ruleset_state();
+    $cached = get_option(WEBMCP_CANARY_AEO_SCORE_OPTION, array());
+    $last = null;
+    if (is_array($cached) && !empty($cached['saved_at']) && isset($cached['data']['score'])) {
+        $last = array(
+            'score' => (int) $cached['data']['score'],
+            'band' => (string) ($cached['data']['band'] ?? ''),
+            'at' => gmdate('c', (int) $cached['saved_at']),
+        );
+    }
+    return array(
+        'version' => WEBMCP_CANARY_VERSION,
+        'enabled' => $enabled,
+        'outputs' => array(
+            'schema' => $enabled && $settings['serve_schema'] === '1',
+            'llms_txt' => $enabled && $settings['serve_llms_txt'] === '1',
+            'ai_crawler_rules' => $enabled && $settings['allow_ai_crawlers'] === '1',
+            'ai_training' => (string) $settings['ai_training'],
+            'browser_tag' => $enabled && $settings['load_tag'] === '1',
+        ),
+        'search_engines_allowed' => (bool) get_option('blog_public'),
+        'llms_txt_url' => home_url('/llms.txt'),
+        'consent' => webmcp_canary_has_consent($settings),
+        'connected' => $settings['site_id'] !== '',
+        'plan' => (string) $settings['plan'],
+        'ruleset_version' => (int) $ruleset['version'],
+        'last_diagnosis' => $last,
+        'seo_plugins' => array_values(webmcp_canary_detect_active_seo_plugins()),
+        'excluded_posts' => array(
+            'llms_txt' => count(webmcp_canary_excluded_post_ids('llms')),
+            'schema' => count(webmcp_canary_excluded_post_ids('schema')),
+        ),
+    );
 }
 
 /**
@@ -6324,4 +6516,10 @@ function webmcp_canary_central_business_node($local, $settings, $delivery) {
         if ($value !== null && $value !== '' && $value !== array()) { $remote[$key] = $value; }
     }
     return $remote;
+}
+
+/* Read-only REST route and WP-CLI commands, kept in their own files. */
+require_once __DIR__ . '/includes/rest.php';
+if (defined('WP_CLI') && WP_CLI) {
+    require_once __DIR__ . '/includes/cli.php';
 }

@@ -170,6 +170,19 @@ function update_user_meta($user_id, $key, $value) { $GLOBALS['webmcp_test_user_m
 function wp_create_nonce($action = -1) { return md5($action); }
 function wp_nonce_field($action = -1, $name = '_wpnonce') { echo '<input type="hidden" name="' . $name . '" value="' . md5($action) . '">'; }
 
+// WP-CLI and REST stand-ins, so includes/cli.php and includes/rest.php load.
+define('WP_CLI', true);
+class WebmcpTestCliError extends Exception {}
+class WP_CLI {
+    public static $commands = array();
+    public static $out = array();
+    public static function add_command($name, $class) { self::$commands[$name] = $class; }
+    public static function line($message = '') { self::$out[] = $message; }
+    public static function success($message) { self::$out[] = 'Success: ' . $message; }
+    public static function error($message) { throw new WebmcpTestCliError($message); }
+}
+function register_rest_route($namespace, $route, $args) { $GLOBALS['webmcp_test_rest_routes'][$namespace . $route] = $args; return true; }
+
 require dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php';
 
 function expect($condition, $message) {
@@ -2838,5 +2851,115 @@ foreach (array('_nurevo_exclude_llms', '_nurevo_exclude_schema', '_nurevo_faq') 
     expect(strpos($panel_js, $meta_key) !== false, "the panel edits {$meta_key}");
 }
 expect(strpos($panel_js, 'import ') === false && strpos($panel_js, 'require(') === false, 'and needs no build step');
+
+/* --- 0.8.0: tools: export/import, WP-CLI, REST status ----------------- */
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'enabled' => '1', 'business_name' => 'Export Shop', 'business_phone' => '03-0000-0000',
+    'site_key' => 'nrv_secret_key', 'site_id' => 'sid123', 'license_key' => 'LIC-SECRET', 'admin_token' => 'tok-secret',
+    'profile_token' => 'nrvp_secret', 'plan' => 'standard', 'tag_url' => 'https://nurevo.jp/tag.js',
+));
+webmcp_canary_save_faq_entries(array(array('q' => 'Export Q', 'a' => 'Export A')));
+$export = webmcp_canary_export_settings();
+$export_json = wp_json_encode($export);
+expect($export['plugin'] === 'nurevo-aeo' && $export['settings']['business_name'] === 'Export Shop', 'the export carries the settings');
+expect($export['faq'][0]['q'] === 'Export Q', 'and the FAQ');
+foreach (array('nrv_secret_key', 'sid123', 'LIC-SECRET', 'tok-secret', 'nrvp_secret') as $secret) {
+    expect(strpos($export_json, $secret) === false, "the export never contains a key or token: {$secret}");
+}
+foreach (webmcp_canary_secret_setting_keys() as $secret_key) {
+    expect(!array_key_exists($secret_key, $export['settings']), "the export leaves out {$secret_key}");
+}
+
+$import_ok = function ($settings, $extra = array()) {
+    return wp_json_encode(array_merge(array('plugin' => 'nurevo-aeo', 'format' => 1, 'settings' => $settings), $extra));
+};
+expect(webmcp_canary_import_settings_json('{nope')->get_error_code() === 'webmcp_import_invalid', 'invalid JSON is refused');
+expect(webmcp_canary_import_settings_json('{"plugin":"other","settings":{}}')->get_error_code() === 'webmcp_import_invalid', 'another plugin\'s file is refused');
+$unknown_import = webmcp_canary_import_settings_json($import_ok(array('business_name' => 'X', 'surprise' => '1')));
+expect(is_wp_error($unknown_import) && $unknown_import->get_error_code() === 'webmcp_import_unknown_key', 'an unknown setting is refused');
+expect(strpos($unknown_import->get_error_message(), 'surprise') !== false, 'and named');
+expect(webmcp_canary_import_settings_json($import_ok(array(), array('extra_top' => 1)))->get_error_code() === 'webmcp_import_unknown_key', 'an unknown top-level key is refused');
+foreach (array('site_key', 'license_key', 'admin_token', 'profile_token', 'plan', 'tag_url', 'pairing_code') as $secret_key) {
+    $secret_import = webmcp_canary_import_settings_json($import_ok(array('business_name' => 'X', $secret_key => 'attacker')));
+    expect(is_wp_error($secret_import) && $secret_import->get_error_code() === 'webmcp_import_secret', "importing {$secret_key} is refused");
+}
+expect(webmcp_canary_settings()['business_name'] === 'Export Shop', 'a refused file changes nothing');
+expect(webmcp_canary_import_settings_json($import_ok(array('business_name' => array('nested'))))->get_error_code() === 'webmcp_import_invalid', 'a non-scalar value is refused');
+
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+$GLOBALS['webmcp_test_last_remote'] = null;
+$imported = webmcp_canary_import_settings_json($import_ok(
+    array('business_name' => '<b>Imported</b> Shop', 'ai_training' => 'everything', 'serve_llms_txt' => '0', 'business_url' => 'https://imported.example/'),
+    array('faq' => array(array('q' => 'Imported Q', 'a' => 'Imported A'), array('q' => 'half', 'a' => '')))
+));
+expect(is_array($imported), 'a valid file is imported');
+$after_import = webmcp_canary_settings();
+expect($after_import['business_name'] === 'Imported Shop', 'imported values go through the sanitize callback');
+expect($after_import['ai_training'] === 'default', 'an invalid choice falls back as on the form');
+expect($after_import['serve_llms_txt'] === '0' && $after_import['enabled'] === '1', 'switches are imported, others kept');
+expect($after_import['site_key'] === 'nrv_secret_key' && $after_import['license_key'] === 'LIC-SECRET' && $after_import['plan'] === 'standard', 'this site\'s keys and plan are kept');
+expect(webmcp_canary_faq_entries() === array(array('q' => 'Imported Q', 'a' => 'Imported A')), 'the FAQ is imported, incomplete pairs dropped');
+expect($GLOBALS['webmcp_test_remote_get_log'] === array() && $GLOBALS['webmcp_test_last_remote'] === null, 'importing contacts nothing');
+$roundtrip = webmcp_canary_import_settings_json(wp_json_encode(webmcp_canary_export_settings()));
+expect(is_array($roundtrip), 'an export imports cleanly');
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+expect(strpos($source_now = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), "check_admin_referer('webmcp_canary_import_settings')") !== false, 'the import form is nonce-checked');
+expect(strpos(webmcp_test_function_body($source_now, 'webmcp_canary_import_settings_action'), "current_user_can('manage_options')") !== false, 'and needs manage_options');
+expect(strpos(webmcp_test_function_body($source_now, 'webmcp_canary_export_settings_action'), "current_user_can('manage_options')") !== false, 'so does the export');
+
+// REST: read-only status for administrators.
+$GLOBALS['webmcp_test_rest_routes'] = array();
+webmcp_canary_register_rest_routes();
+$route = $GLOBALS['webmcp_test_rest_routes']['nurevo/v1/status'] ?? null;
+expect($route !== null && $route['methods'] === 'GET', 'GET nurevo/v1/status is registered');
+expect(in_array('webmcp_canary_register_rest_routes', $GLOBALS['webmcp_test_hooks']['rest_api_init'], true), 'on rest_api_init');
+expect(call_user_func($route['permission_callback']) === true, 'an administrator may read it');
+$GLOBALS['webmcp_test_denied_caps'] = array('manage_options');
+expect(call_user_func($route['permission_callback']) === false, 'nobody else may');
+$GLOBALS['webmcp_test_denied_caps'] = array();
+$status = call_user_func($route['callback']);
+expect($status['version'] === WEBMCP_CANARY_VERSION && $status['enabled'] === true, 'the status reports the version and switch');
+expect($status['outputs']['llms_txt'] === false && $status['outputs']['schema'] === true, 'and each output');
+expect($status['connected'] === true && $status['consent'] === true, 'and the connection');
+$status_json = wp_json_encode($status);
+foreach (array('nrv_secret_key', 'LIC-SECRET', 'tok-secret', 'nrvp_secret') as $secret) {
+    expect(strpos($status_json, $secret) === false, "the status never contains a key or token: {$secret}");
+}
+
+// WP-CLI.
+expect((WP_CLI::$commands['nurevo'] ?? '') === 'Webmcp_Canary_CLI_Command', 'wp nurevo is registered under WP-CLI');
+$cli = new Webmcp_Canary_CLI_Command();
+WP_CLI::$out = array();
+$cli->status(array(), array());
+expect(in_array('enabled: yes', WP_CLI::$out, true) && in_array('outputs.llms_txt: no', WP_CLI::$out, true), 'wp nurevo status prints the output state');
+WP_CLI::$out = array();
+$cli->status(array(), array('format' => 'json'));
+expect(json_decode(WP_CLI::$out[0], true)['version'] === WEBMCP_CANARY_VERSION, 'and as JSON');
+WP_CLI::$out = array();
+$cli->export(array(), array());
+$cli_export = WP_CLI::$out[0];
+expect(json_decode($cli_export, true)['plugin'] === 'nurevo-aeo' && strpos($cli_export, 'LIC-SECRET') === false, 'wp nurevo export prints the settings without secrets');
+$tmp_import = tempnam(sys_get_temp_dir(), 'nurevo');
+file_put_contents($tmp_import, $import_ok(array('business_name' => 'CLI Shop')));
+$cli->import(array($tmp_import), array());
+expect(webmcp_canary_settings()['business_name'] === 'CLI Shop', 'wp nurevo import applies a file');
+file_put_contents($tmp_import, $import_ok(array('site_key' => 'x')));
+$cli_threw = false;
+try { $cli->import(array($tmp_import), array()); } catch (WebmcpTestCliError $error) { $cli_threw = true; }
+expect($cli_threw, 'and refuses one with keys');
+unlink($tmp_import);
+// diagnose needs consent, given with --consent.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js'));
+delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+$cli_threw = false;
+try { $cli->diagnose(array(), array()); } catch (WebmcpTestCliError $error) { $cli_threw = strpos($error->getMessage(), '--consent') !== false; }
+expect($cli_threw && $GLOBALS['webmcp_test_remote_get_log'] === array(), 'wp nurevo diagnose asks for --consent and sends nothing without it');
+$GLOBALS['webmcp_test_remote_get'] = array('api/aeo/score' => array('status' => 200, 'body' => $aeo_body));
+WP_CLI::$out = array();
+$cli->diagnose(array(), array('consent' => true));
+expect(get_option(WEBMCP_CANARY_CONSENT_OPTION)['via'] === 'cli' && strpos(end(WP_CLI::$out), 'AEO score: 64/100') !== false, 'with --consent it records consent and runs');
+$GLOBALS['webmcp_test_remote_get'] = array();
 
 echo "WordPress AEO admin tests passed\n";
