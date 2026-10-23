@@ -1,4 +1,10 @@
-import { handleDiagnose } from "./diagnose.mjs";
+import { resolveEmailLocale, loadEmailPreferences, magicLinkEmail } from "./email-i18n.mjs";
+import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
+import { authorizeSiteKey } from "./agent-authorization.mjs";
+import { handleApi, runSovDailyBatch, centralLlmsForKey } from "./api.mjs";
+import { runAeoLearningJob } from "./aeo-learning.mjs";
+import { runLifecycleReminders } from "./lifecycle-email.mjs";
+import { runScheduled } from "./schedule.mjs";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -20,6 +26,14 @@ const AUTH_RATE_WINDOW_MS = 60 * 60 * 1000;
 const AGENT_HOST_MISMATCH_PREFIX = "agent-auth-host-mismatch:";
 const FOOTPRINT_MAX_BYTES = 256 * 1024;
 const DEFAULT_JSON_MAX_BYTES = 64 * 1024;
+const PAGE_META_TTL_SECONDS = 7 * 24 * 60 * 60;
+const PAGE_META_JSON_LD_MAX_BYTES = 10 * 1024;
+const ORG_SCHEMA_TTL_SECONDS = 30 * 24 * 60 * 60;
+const ORGANIZATION_EXTRACTION_SYSTEM_PROMPT = "Extract organization/company information ONLY if clearly present in the provided page metadata. Do NOT guess or infer. If a field is not clearly stated, omit it or use empty. Return JSON only: {\"name\":\"\",\"url\":\"\",\"logo\":\"\",\"description\":\"\",\"sameAs\":[]}. If no clear organization info exists, return all-empty.";
+const FAQ_SCHEMA_TTL_SECONDS = 30 * 24 * 60 * 60;
+const FAQ_EXTRACTION_SYSTEM_PROMPT = "Extract FAQ (question-answer pairs) ONLY if clearly present in the provided page metadata (headings, description, existing JSON-LD). Do NOT invent questions or answers. Do NOT infer. If clear FAQ content is not present, return empty. Return JSON only: {\"faqs\":[{\"question\":\"\",\"answer\":\"\"}]}. If no clear FAQ exists, return {\"faqs\":[]}.";
+const ARTICLE_SCHEMA_TTL_SECONDS = 30 * 24 * 60 * 60;
+const ARTICLE_EXTRACTION_SYSTEM_PROMPT = "Extract article/blog post information ONLY if this page is clearly an article or blog post AND the information is clearly present in the metadata. Do NOT guess author or date if not stated. Do NOT infer. If this is not clearly an article/blog page, return empty. Return JSON only: {\"isArticle\":false,\"headline\":\"\",\"author\":\"\",\"datePublished\":\"\",\"description\":\"\"}. If not an article, set isArticle to false and return empty fields.";
 const RATE_LIMIT_PREFIX = "rate-limit:";
 const SITE_KEY_ISSUE_TOTAL_PREFIX = "site-key-issue-total:";
 const STRIPE_EVENT_PREFIX = "stripe-event:";
@@ -33,35 +47,54 @@ const COOKIE_AUTH_PATHS = new Set([
 const ALLOWED_EVENT_KEYS = new Set(["type", "selector", "key", "timestampOffsetMs", "errorText", "validity", "changed", "beforeLength", "afterLength", "errorName", "toolName"]);
 const ALLOWED_VALIDITY_KEYS = new Set(["valueMissing", "typeMismatch", "patternMismatch", "tooShort", "tooLong", "rangeUnderflow", "rangeOverflow", "stepMismatch", "badInput", "customError", "valid"]);
 
+// What each cron runs is in schedule.mjs; how each job is started is here.
+const SCHEDULED_RUNNERS = Object.freeze({
+  "webmcp-learning": (env) => runLearningJob(env, { trigger: "scheduled" }),
+  // Every customer site gets one daily score point.
+  "aeo-score-cron": (env) => runAeoScoreCron(env),
+  // When the provider key exists the SoV batch runs; it re-measures each pro
+  // site only every SOV_MIN_INTERVAL_DAYS days so the monthly engine-call cap
+  // lasts the month. A missing SoV key is an explicit safe skip and must not
+  // hold up the other daily jobs.
+  "aeo-sov-daily": (env) => runSovDailyBatch(env),
+  "aeo-learning": (env) => runAeoLearningJob(env, { trigger: "scheduled" }),
+  // "Not connected yet" reminders for wp sites, 24 h and 72 h after creation;
+  // bounded per run, claimed before sending (so a repeat run never resends),
+  // skipped while migration 0038 is unapplied.
+  "lifecycle-reminders": (env) => runLifecycleReminders(env),
+});
+
 export default {
-  async scheduled(_event, env, ctx) {
-    ctx.waitUntil(runLearningJob(env, { trigger: "scheduled" }).then((result) => {
-      console.log("webmcp-learning", JSON.stringify(result));
-    }));
+  async scheduled(event, env, ctx) {
+    runScheduled(event, env, ctx, SCHEDULED_RUNNERS);
   },
 
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
     if (request.method === "OPTIONS") {
-      if (COOKIE_AUTH_PATHS.has(url.pathname) && request.headers.get("origin") !== dashboardOrigin(env)) {
+      if (request.headers.get("origin") && !isAllowedOrigin(request, env)) {
         return json({ error: "origin_not_allowed" }, 403, request, env);
       }
       return json({}, 204, request, env);
     }
-    if (url.pathname === "/api/diagnose") return handleDiagnose(request);
+    if (url.pathname === "/api/diagnose") return handleDiagnose(request, env);
 
     try {
       const requestOrigin = request.headers.get("origin");
-      if (COOKIE_AUTH_PATHS.has(url.pathname) && requestOrigin && requestOrigin !== dashboardOrigin(env)) {
-        return json({ error: "origin_not_allowed" }, 403, request, env);
-      }
-      if (url.pathname.startsWith("/api/") && !isAllowedOrigin(request, env)) {
+      // The customer-site referral beacon is intentionally cross-origin; its
+      // handler authenticates the public site key and then requires the Origin
+      // host to match that site's saved domain. The global dashboard CORS list
+      // cannot enumerate every customer domain.
+      if (url.pathname.startsWith("/api/") && url.pathname !== "/api/site/ai-referral" && !isAllowedOrigin(request, env)) {
         return json({
           error: "origin_not_allowed",
           allowedOrigins: originPolicy(env).allowedOrigins
         }, 403, request, env);
       }
+
+      const nurevoResponse = await handleApi(request, env, ctx);
+      if (nurevoResponse) return withCors(nurevoResponse, request, env);
 
       if (url.pathname === "/api/agent-authorization") {
         const authorization = await agentAuthorization(request, env, url.searchParams.get("site_key"));
@@ -87,10 +120,6 @@ export default {
 
       if (url.pathname === "/api/auth/logout" && request.method === "POST") {
         return handleAuthLogout(request, env);
-      }
-
-      if (url.pathname === "/api/billing/checkout" && request.method === "POST") {
-        return handleBillingCheckout(request, env);
       }
 
       if (url.pathname === "/api/billing/webhook" && request.method === "POST") {
@@ -220,20 +249,118 @@ export default {
         return json(health, health.ok ? 200 : 503, request, env);
       }
 
+      if (url.pathname === "/api/llms.txt" && request.method === "GET") {
+        const siteKey = url.searchParams.get("site_key");
+        const requestedHost = url.searchParams.get("host");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        // llms.txt is a free baseline output: any authorized site key gets it.
+        const body = await centralLlmsForKey(env, siteKey) ?? await generateLlmsTxt(env, { host: access.record.siteHost });
+        return new Response(body, {
+          status: 200,
+          headers: {
+            "content-type": "text/plain; charset=utf-8",
+            "cache-control": "no-store"
+          }
+        });
+      }
+
+      if (url.pathname === "/api/page-meta" && request.method === "POST") {
+        const payload = await readJson(request);
+        const siteKey = String(payload?.siteKey || payload?.site_key || "").trim();
+        const requestedHost = String(payload?.host || "");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const result = await storePageMeta(env, {
+          siteKey,
+          host: access.record.siteHost,
+          pathname: payload?.pathname,
+          meta: payload?.meta
+        });
+        return json({ ok: true, key: result.key, expiresIn: PAGE_META_TTL_SECONDS }, 200, request, env);
+      }
+
+      if (url.pathname === "/api/org-schema" && request.method === "GET") {
+        const siteKey = String(url.searchParams.get("site_key") || "").trim();
+        const requestedHost = String(url.searchParams.get("host") || "").trim();
+        const pathname = url.searchParams.get("pathname");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const result = await organizationSchemaForPage(env, {
+          siteKey,
+          host: access.record.siteHost,
+          pathname
+        });
+        if (!result.found || !result.schema) return json({ error: "not_found" }, 404, request, env);
+        return json(result.schema, 200, request, env);
+      }
+
+      if (url.pathname === "/api/faq-schema" && request.method === "GET") {
+        const siteKey = String(url.searchParams.get("site_key") || "").trim();
+        const requestedHost = String(url.searchParams.get("host") || "").trim();
+        const pathname = url.searchParams.get("pathname");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const result = await faqSchemaForPage(env, {
+          siteKey,
+          host: access.record.siteHost,
+          pathname
+        });
+        if (!result.found || !result.schema) return json({ error: "not_found" }, 404, request, env);
+        return json(result.schema, 200, request, env);
+      }
+
+      if (url.pathname === "/api/article-schema" && request.method === "GET") {
+        const siteKey = String(url.searchParams.get("site_key") || "").trim();
+        const requestedHost = String(url.searchParams.get("host") || "").trim();
+        const pathname = url.searchParams.get("pathname");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const result = await articleSchemaForPage(env, {
+          siteKey,
+          host: access.record.siteHost,
+          pathname
+        });
+        if (!result.found || !result.schema) return json({ error: "not_found" }, 404, request, env);
+        return json(result.schema, 200, request, env);
+      }
+
+      if (url.pathname === "/api/aeo-schemas" && request.method === "GET") {
+        const siteKey = String(url.searchParams.get("site_key") || "").trim();
+        const requestedHost = String(url.searchParams.get("host") || "").trim();
+        const pathname = url.searchParams.get("pathname");
+        if (!siteKey || !requestedHost) return json({ error: "missing_site_key_or_host" }, 400, request, env);
+        const access = await authorizeSiteKeyHost(env, siteKey, requestedHost);
+        if (!access.ok) return json({ error: "forbidden" }, 403, request, env);
+        if (!isProSiteKey(siteKey, env, access.record)) return json({ error: "not_found" }, 404, request, env);
+        const input = { siteKey, host: access.record.siteHost, pathname };
+        const results = await Promise.all([
+          organizationSchemaForPage(env, input),
+          faqSchemaForPage(env, input),
+          articleSchemaForPage(env, input)
+        ]);
+        return json({ schemas: results.map((result) => result.schema).filter(Boolean) }, 200, request, env);
+      }
+
       if (url.pathname === "/api/site-insights") {
         const siteKey = url.searchParams.get("site_key");
         const requestedHost = url.searchParams.get("host");
         const sessionAuthorized = await sessionOwnsSiteKey(request, env, siteKey);
         const hasAdminCredential = Boolean(request.headers.get("x-webmcp-admin-token"));
         const admin = !sessionAuthorized && hasAdminCredential ? await requireAdmin(request, env) : null;
-        const siteKeyRecord = !sessionAuthorized && !admin?.ok && siteKey && requestedHost
-          ? await findSiteKey(env, siteKey)
-          : null;
-        const siteKeyHostAuthorized = Boolean(
-          siteKeyRecord?.status === "active"
-          && requestedHost.toLowerCase() === String(siteKeyRecord.siteHost || "").toLowerCase()
-        );
-        if (!sessionAuthorized && !admin?.ok && !siteKeyHostAuthorized) {
+        const siteKeyHostAccess = !sessionAuthorized && !admin?.ok
+          ? await authorizeSiteKeyHost(env, siteKey, requestedHost)
+          : { ok: false };
+        if (!sessionAuthorized && !admin?.ok && !siteKeyHostAccess.ok) {
           return json({ error: admin?.status === 503 ? admin.error : "forbidden" }, admin?.status === 503 ? 503 : 403, request, env);
         }
         return json(await siteInsights(env, {
@@ -266,10 +393,25 @@ export default {
         return json(await runLearningJob(env, { trigger: "manual" }), 200, request, env);
       }
 
+      if (url.pathname === "/dashboard" || url.pathname === "/dashboard/") {
+        const asset = await env.ASSETS.fetch(new Request(new URL("/dashboard.html", url), request));
+        if (asset.ok) {
+          const html = await asset.text();
+          const branding = `<style>.brand{display:inline-flex!important;align-items:center;gap:8px;text-decoration:none}.brand .mk{width:28px!important;height:28px!important;background:url('/assets/logo.png') center/contain no-repeat!important;border-radius:0!important;box-shadow:none!important}.brand .mk:after{display:none!important}.account{display:inline-flex!important;align-items:center;gap:10px;margin-left:auto;color:#5b6472;font-size:13px}.account button{cursor:pointer}</style><script src="/dashboard-auth.js" defer></script>`;
+          const headers = new Headers(asset.headers);
+          headers.set("x-nurevo-dashboard-branding", "logo");
+          return new Response(html.replace("</head>", `${branding}</head>`), { status: asset.status, headers });
+        }
+      }
       return env.ASSETS.fetch(request);
     } catch (error) {
       if (error instanceof PublicHttpError) return json({ error: error.code }, error.status, request, env);
-      console.error("request_error", JSON.stringify({ path: url.pathname, name: error?.name || "Error" }));
+      console.error("request_error", JSON.stringify({
+        path: url.pathname,
+        name: error?.name || "Error",
+        message: error?.message || String(error),
+        stack: error?.stack || null,
+      }));
       return json({ error: "internal_error" }, 500, request, env);
     }
   }
@@ -312,9 +454,8 @@ function corsHeaders(request, env) {
   const origin = request?.headers?.get("origin");
   const pathname = request ? new URL(request.url).pathname : "";
   if (COOKIE_AUTH_PATHS.has(pathname)) {
-    const allowedDashboardOrigin = dashboardOrigin(env);
-    if (origin === allowedDashboardOrigin) {
-      headers.set("access-control-allow-origin", allowedDashboardOrigin);
+    if (origin && isAllowedOrigin(request, env)) {
+      headers.set("access-control-allow-origin", origin);
       headers.set("access-control-allow-credentials", "true");
       headers.set("vary", "Origin");
     } else {
@@ -330,6 +471,16 @@ function corsHeaders(request, env) {
     headers.set("access-control-allow-origin", "*");
   }
   return headers;
+}
+
+function withCors(response, request, env) {
+  const headers = new Headers(response.headers);
+  const cors = corsHeaders(request, env);
+  for (const [key, value] of cors.entries()) {
+    if (key === "content-type" || key === "cache-control") continue;
+    headers.set(key, value);
+  }
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
 function dashboardOrigin(env) {
@@ -543,11 +694,11 @@ function originPolicy(env) {
 function isAllowedOrigin(request, env) {
   const origin = request.headers.get("origin");
   if (!origin) return true;
-  const allowed = originPolicy(env).allowedOrigins;
+  const allowed = originPolicy(env).allowedOrigins.map((value) => String(value).replace(/\/$/, ""));
   if (allowed.includes("*")) return true;
   try {
-    const host = new URL(origin).host;
-    return allowed.includes(origin) || allowed.includes(host);
+    const parsed = new URL(origin);
+    return allowed.includes(parsed.origin) || allowed.includes(parsed.host);
   } catch {
     return false;
   }
@@ -737,6 +888,60 @@ function inferSiteActions(fields) {
   if (/contact|問い合わせ|message|email|メール/i.test(text)) actions.push({ name: "Submit contact form", valueName: "contact_request", description: "The site can accept an inquiry or contact request." });
   if (/application|申込|register|登録|company|会社/i.test(text)) actions.push({ name: "Complete application form", valueName: "application_request", description: "The site can accept a registration or application request." });
   return actions.length ? actions : [{ name: "Complete web form", valueName: "form_request", description: "The site can accept structured form input." }];
+}
+
+async function generateLlmsTxt(env, { host }) {
+  const metadata = await loadLlmsSiteMetadata(env, host);
+  const siteName = llmsText(metadata.title || host, host);
+  const description = `Information and form actions available on ${siteName}.`;
+  const actionLines = metadata.forms.map((form, index) => {
+    const structure = form.formStructure || {};
+    const fields = (structure.fields || []).filter((field) => !field.hidden);
+    const actions = inferSiteActions(fields);
+    const formName = llmsText(structure.formName || structure.formId || `Form ${index + 1}`, `Form ${index + 1}`);
+    return `- ${formName}: ${actions.map((action) => llmsText(action.description, "The site can accept structured form input.")).join(" ")}`;
+  });
+  if (!actionLines.length) actionLines.push("- No form actions are currently available.");
+  return `# ${siteName}\n\n> ${description}\n\n## Actions\n${actionLines.join("\n")}\n`;
+}
+
+async function loadLlmsSiteMetadata(env, host) {
+  if (hasD1(env)) {
+    const rows = await env.WEBMCP_DB.prepare(`
+      SELECT fo.form_hash, fo.form_id, fo.structure_json
+      FROM forms fo
+      INNER JOIN sites s ON s.id = fo.site_id
+      WHERE s.host = ?
+      ORDER BY fo.updated_at DESC
+      LIMIT 100
+    `).bind(host).all();
+    return {
+      title: null,
+      forms: (rows.results || []).map((row) => ({
+        formHash: row.form_hash,
+        formStructure: safeJson(row.structure_json, { formId: row.form_id, fields: [] })
+      }))
+    };
+  }
+  const footprints = await getJson(env, "footprints", []);
+  const matching = footprints.filter((footprint) => String(footprint.site?.host || "").toLowerCase() === host.toLowerCase());
+  const forms = new Map();
+  for (const footprint of matching) {
+    const key = footprint.formHash || JSON.stringify(footprint.formStructure || {});
+    forms.set(key, { formHash: footprint.formHash || null, formStructure: footprint.formStructure || {} });
+  }
+  return {
+    title: matching.find((footprint) => footprint.site?.title)?.site.title || null,
+    forms: [...forms.values()]
+  };
+}
+
+function llmsText(value, fallback) {
+  return String(value || fallback || "")
+    .replace(/[\r\n\t]+/g, " ")
+    .replace(/\s{2,}/g, " ")
+    .trim()
+    .slice(0, 200);
 }
 
 async function sanitizeFootprint(payload) {
@@ -1860,55 +2065,387 @@ function sanitizeValidity(validity = {}) {
   return clean;
 }
 
-function isRegisteredSiteKey(siteKey, env) {
-  if (!siteKey) return false;
-  return String(env.WEBMCP_REGISTERED_SITE_KEYS || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .includes(siteKey);
-}
-
-async function isAuthorizedSiteKey(siteKey, env) {
-  if (isRegisteredSiteKey(siteKey, env)) return true;
-  if (!siteKey) return false;
-  if (hasD1(env)) {
-    const row = await env.WEBMCP_DB.prepare("SELECT site_key FROM site_keys WHERE site_key = ? AND status = 'active'").bind(siteKey).first();
-    return Boolean(row?.site_key);
-  }
-  if (env.WEBMCP_KV) {
-    const issued = await getJson(env, "site-keys", {});
-    return Boolean(issued[siteKey]?.status === "active");
-  }
-  return false;
-}
-
 async function agentAuthorization(request, env, siteKey) {
-  if (!siteKey) return { registered: false, plan: null, reason: "server says caller is not registered" };
-  const record = await findSiteKey(env, siteKey);
-  if (!record) {
-    const registered = isRegisteredSiteKey(siteKey, env);
-    return {
-      registered,
-      plan: registered ? "free" : null,
-      reason: registered ? "server says caller is registered" : "server says caller is not registered"
-    };
-  }
-  if (record.status !== "active") return { registered: false, plan: record.plan || "free", reason: "server says caller is not registered" };
-  const requestHost = requestSourceHost(request);
-  const hostMatches = isDevelopmentHost(requestHost) || normalizeHost(requestHost) === normalizeHost(record.siteHost);
-  if (hostMatches) return { registered: true, plan: record.plan || "free", reason: "server says caller is registered" };
+  const authorization = await authorizeSiteKey(env, String(siteKey || "").trim());
+  return {
+    ...authorization,
+    reason: authorization.registered
+      ? "server says caller is registered"
+      : "server says caller is not registered",
+  };
+}
 
-  await recordAgentHostMismatch(env, {
-    siteKey,
-    expectedHost: record.siteHost,
-    requestHost: requestHost || null,
-    plan: record.plan || "free"
-  });
-  if (record.plan === "pro") {
-    return { registered: false, plan: "pro", reason: "server says caller host does not match the registered site" };
+async function authorizeSiteKeyHost(env, siteKey, requestedHost) {
+  if (!siteKey || !requestedHost) return { ok: false, record: null };
+  const record = await findSiteKey(env, siteKey);
+  const hostMatches = record?.status === "active"
+    && requestedHost.toLowerCase() === String(record.siteHost || "").toLowerCase();
+  return hostMatches ? { ok: true, record } : { ok: false, record: null };
+}
+
+async function storePageMeta(env, { siteKey, host, pathname, meta }) {
+  if (!env.WEBMCP_KV) throw new PublicHttpError(503, "page_meta_storage_unavailable");
+  const safePathname = sanitizePagePathname(pathname, host);
+  const siteKeyHash = await sha256Hex(siteKey);
+  const pathnameHash = await sha256Hex(safePathname);
+  const key = `page-meta:${siteKeyHash}:${pathnameHash}`;
+  const sanitizedMeta = sanitizePageMeta(meta);
+  const value = {
+    host,
+    pathname: safePathname,
+    collectedAt: new Date().toISOString(),
+    contentHash: await sha256Hex(stableJson(sanitizedMeta)),
+    meta: sanitizedMeta
+  };
+  await env.WEBMCP_KV.put(key, JSON.stringify(value), { expirationTtl: PAGE_META_TTL_SECONDS });
+  return { key, value };
+}
+
+async function organizationSchemaForPage(env, { siteKey, host, pathname }, dependencies = {}) {
+  if (!env.WEBMCP_KV) throw new PublicHttpError(503, "page_meta_storage_unavailable");
+  const safePathname = sanitizePagePathname(pathname, host);
+  const siteKeyHash = await sha256Hex(siteKey);
+  const pathnameHash = await sha256Hex(safePathname);
+  const pageMeta = await env.WEBMCP_KV.get(`page-meta:${siteKeyHash}:${pathnameHash}`, "json");
+  if (!pageMeta?.meta) return { found: false, schema: null, cached: false };
+
+  const contentHash = isSha256Hex(pageMeta.contentHash)
+    ? pageMeta.contentHash.toLowerCase()
+    : await sha256Hex(stableJson(pageMeta.meta));
+  const cacheKey = `org-schema:${siteKeyHash}:${contentHash}`;
+  const cached = await env.WEBMCP_KV.get(cacheKey, "json");
+  if (cached && Object.hasOwn(cached, "schema")) {
+    console.log("org_schema_cache_hit", JSON.stringify({ cacheKey }));
+    return { found: true, schema: cached.schema, cached: true };
   }
-  return { registered: true, plan: "free", reason: "server says caller is registered" };
+  if (!env.OPENAI_API_KEY) throw new PublicHttpError(412, "OPENAI_API_KEY_MISSING");
+
+  console.log("org_schema_openai_call", JSON.stringify({ cacheKey }));
+  const extract = dependencies.extractOrganization || extractOrganizationWithOpenAI;
+  const extracted = await extract(env, pageMeta.meta);
+  const schema = buildOrganizationSchema(extracted);
+  await env.WEBMCP_KV.put(cacheKey, JSON.stringify({ schema }), { expirationTtl: ORG_SCHEMA_TTL_SECONDS });
+  return { found: true, schema, cached: false };
+}
+
+async function extractOrganizationWithOpenAI(env, pageMeta) {
+  const endpoint = String(env.OPENAI_API_URL || "https://api.openai.com/v1/chat/completions");
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      temperature: 0,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: ORGANIZATION_EXTRACTION_SYSTEM_PROMPT },
+        { role: "user", content: JSON.stringify(pageMeta) }
+      ]
+    })
+  });
+  if (!response.ok) throw new Error(`OpenAI organization extraction failed ${response.status}: ${await response.text()}`);
+  const body = await response.json();
+  try {
+    return JSON.parse(body.choices?.[0]?.message?.content ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+async function faqSchemaForPage(env, { siteKey, host, pathname }, dependencies = {}) {
+  if (!env.WEBMCP_KV) throw new PublicHttpError(503, "page_meta_storage_unavailable");
+  const safePathname = sanitizePagePathname(pathname, host);
+  const siteKeyHash = await sha256Hex(siteKey);
+  const pathnameHash = await sha256Hex(safePathname);
+  const pageMeta = await env.WEBMCP_KV.get(`page-meta:${siteKeyHash}:${pathnameHash}`, "json");
+  if (!pageMeta?.meta) return { found: false, schema: null, cached: false };
+
+  const contentHash = isSha256Hex(pageMeta.contentHash)
+    ? pageMeta.contentHash.toLowerCase()
+    : await sha256Hex(stableJson(pageMeta.meta));
+  const cacheKey = `faq-schema:${siteKeyHash}:${contentHash}`;
+  const cached = await env.WEBMCP_KV.get(cacheKey, "json");
+  if (cached && Object.hasOwn(cached, "schema")) {
+    console.log("faq_schema_cache_hit", JSON.stringify({ cacheKey }));
+    return { found: true, schema: cached.schema, cached: true };
+  }
+  if (!env.OPENAI_API_KEY) throw new PublicHttpError(412, "OPENAI_API_KEY_MISSING");
+
+  console.log("faq_schema_openai_call", JSON.stringify({ cacheKey }));
+  const extract = dependencies.extractFaq || extractFaqWithOpenAI;
+  const extracted = await extract(env, pageMeta.meta);
+  const schema = buildFaqSchema(extracted);
+  await env.WEBMCP_KV.put(cacheKey, JSON.stringify({ schema }), { expirationTtl: FAQ_SCHEMA_TTL_SECONDS });
+  return { found: true, schema, cached: false };
+}
+
+async function extractFaqWithOpenAI(env, pageMeta) {
+  const endpoint = String(env.OPENAI_API_URL || "https://api.openai.com/v1/chat/completions");
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      temperature: 0,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: FAQ_EXTRACTION_SYSTEM_PROMPT },
+        { role: "user", content: JSON.stringify(pageMeta) }
+      ]
+    })
+  });
+  if (!response.ok) throw new Error(`OpenAI FAQ extraction failed ${response.status}: ${await response.text()}`);
+  const body = await response.json();
+  try {
+    return JSON.parse(body.choices?.[0]?.message?.content ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+function buildFaqSchema(value) {
+  const candidates = Array.isArray(value?.faqs) ? value.faqs : [];
+  const mainEntity = candidates
+    .filter((faq) => faq && typeof faq === "object" && !Array.isArray(faq))
+    .map((faq) => ({
+      question: limitText(faq.question, 300),
+      answer: limitText(faq.answer, 1000)
+    }))
+    .filter((faq) => faq.question && faq.answer)
+    .slice(0, 20)
+    .map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: faq.answer
+      }
+    }));
+  if (!mainEntity.length) return null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity
+  };
+}
+
+async function articleSchemaForPage(env, { siteKey, host, pathname }, dependencies = {}) {
+  if (!env.WEBMCP_KV) throw new PublicHttpError(503, "page_meta_storage_unavailable");
+  const safePathname = sanitizePagePathname(pathname, host);
+  const siteKeyHash = await sha256Hex(siteKey);
+  const pathnameHash = await sha256Hex(safePathname);
+  const pageMeta = await env.WEBMCP_KV.get(`page-meta:${siteKeyHash}:${pathnameHash}`, "json");
+  if (!pageMeta?.meta) return { found: false, schema: null, cached: false };
+
+  const contentHash = isSha256Hex(pageMeta.contentHash)
+    ? pageMeta.contentHash.toLowerCase()
+    : await sha256Hex(stableJson(pageMeta.meta));
+  const cacheKey = `article-schema:${siteKeyHash}:${contentHash}`;
+  const cached = await env.WEBMCP_KV.get(cacheKey, "json");
+  if (cached && Object.hasOwn(cached, "schema")) {
+    console.log("article_schema_cache_hit", JSON.stringify({ cacheKey }));
+    return { found: true, schema: cached.schema, cached: true };
+  }
+  if (!env.OPENAI_API_KEY) throw new PublicHttpError(412, "OPENAI_API_KEY_MISSING");
+
+  console.log("article_schema_openai_call", JSON.stringify({ cacheKey }));
+  const extract = dependencies.extractArticle || extractArticleWithOpenAI;
+  const extracted = await extract(env, pageMeta.meta);
+  const schema = buildArticleSchema(extracted, { host, pathname: safePathname });
+  await env.WEBMCP_KV.put(cacheKey, JSON.stringify({ schema }), { expirationTtl: ARTICLE_SCHEMA_TTL_SECONDS });
+  return { found: true, schema, cached: false };
+}
+
+async function extractArticleWithOpenAI(env, pageMeta) {
+  const endpoint = String(env.OPENAI_API_URL || "https://api.openai.com/v1/chat/completions");
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${env.OPENAI_API_KEY}`
+    },
+    body: JSON.stringify({
+      model: env.OPENAI_MODEL || "gpt-4.1-mini",
+      temperature: 0,
+      response_format: { type: "json_object" },
+      messages: [
+        { role: "system", content: ARTICLE_EXTRACTION_SYSTEM_PROMPT },
+        { role: "user", content: JSON.stringify(pageMeta) }
+      ]
+    })
+  });
+  if (!response.ok) throw new Error(`OpenAI article extraction failed ${response.status}: ${await response.text()}`);
+  const body = await response.json();
+  try {
+    return JSON.parse(body.choices?.[0]?.message?.content ?? "{}");
+  } catch {
+    return {};
+  }
+}
+
+function buildArticleSchema(value, { host, pathname }) {
+  const extracted = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const headline = limitText(extracted.headline, 300);
+  if (extracted.isArticle !== true || !headline) return null;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline,
+    url: new URL(pathname, `https://${host}`).href
+  };
+  const description = limitText(extracted.description, 1000);
+  const author = limitText(extracted.author, 300);
+  const datePublished = validIso8601(extracted.datePublished);
+  if (description) schema.description = description;
+  if (author) schema.author = { "@type": "Person", name: author };
+  if (datePublished) schema.datePublished = datePublished;
+  return schema;
+}
+
+function validIso8601(value) {
+  if (typeof value !== "string") return "";
+  const candidate = value.trim();
+  const match = /^(\d{4})-(\d{2})-(\d{2})(?:T\d{2}:\d{2}(?::\d{2}(?:\.\d+)?)?(?:Z|[+-]\d{2}:\d{2})?)?$/.exec(candidate);
+  if (!match || !Number.isFinite(Date.parse(candidate))) return "";
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (month < 1 || month > 12) return "";
+  const daysInMonth = new Date(Date.UTC(year, month, 0)).getUTCDate();
+  return day >= 1 && day <= daysInMonth ? candidate : "";
+}
+
+function buildOrganizationSchema(value) {
+  const extracted = value && typeof value === "object" && !Array.isArray(value) ? value : {};
+  const name = limitText(extracted.name, 300);
+  if (!name) return null;
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name
+  };
+  const url = validHttpUrl(extracted.url);
+  const logo = validHttpUrl(extracted.logo);
+  const description = limitText(extracted.description, 1000);
+  const sameAs = Array.isArray(extracted.sameAs)
+    ? [...new Set(extracted.sameAs.map(validHttpUrl).filter(Boolean))].slice(0, 50)
+    : [];
+  if (url) schema.url = url;
+  if (logo) schema.logo = logo;
+  if (description) schema.description = description;
+  if (sameAs.length) schema.sameAs = sameAs;
+  return schema;
+}
+
+function validHttpUrl(value) {
+  if (typeof value !== "string" || !value.trim()) return "";
+  try {
+    const parsed = new URL(value.trim());
+    return parsed.protocol === "https:" || parsed.protocol === "http:" ? parsed.href : "";
+  } catch {
+    return "";
+  }
+}
+
+function isSha256Hex(value) {
+  return typeof value === "string" && /^[a-f0-9]{64}$/i.test(value);
+}
+
+function stableJson(value) {
+  if (Array.isArray(value)) return `[${value.map(stableJson).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${stableJson(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+function sanitizePagePathname(value, host) {
+  const raw = limitText(value, 2048) || "/";
+  try {
+    return new URL(raw, `https://${host}`).pathname || "/";
+  } catch {
+    return "/";
+  }
+}
+
+function sanitizePageMeta(input) {
+  const meta = input && typeof input === "object" && !Array.isArray(input) ? input : {};
+  const openGraph = meta.openGraph && typeof meta.openGraph === "object" && !Array.isArray(meta.openGraph)
+    ? meta.openGraph
+    : {};
+  const headings = Array.isArray(meta.headings) ? meta.headings.slice(0, 30) : [];
+  const jsonLdValues = Array.isArray(meta.jsonLd) ? meta.jsonLd : [];
+  return {
+    title: piiSafeText(meta.title, 300),
+    description: piiSafeText(meta.description, 500),
+    openGraph: {
+      title: piiSafeText(openGraph.title, 300),
+      description: piiSafeText(openGraph.description, 500),
+      type: piiSafeText(openGraph.type, 100),
+      siteName: piiSafeText(openGraph.siteName, 300)
+    },
+    canonicalUrl: piiSafeText(meta.canonicalUrl, 2048),
+    lang: piiSafeText(meta.lang, 35),
+    headings: headings
+      .map((heading) => ({
+        level: ["h1", "h2", "h3"].includes(String(heading?.level || "").toLowerCase())
+          ? String(heading.level).toLowerCase()
+          : "",
+        text: piiSafeText(heading?.text, 200)
+      }))
+      .filter((heading) => heading.level && heading.text),
+    jsonLd: sanitizeJsonLd(jsonLdValues)
+  };
+}
+
+function sanitizeJsonLd(values) {
+  const output = [];
+  let usedBytes = 0;
+  for (const value of values) {
+    const remaining = PAGE_META_JSON_LD_MAX_BYTES - usedBytes;
+    if (remaining <= 0) break;
+    const sanitized = redactPii(limitText(value, remaining));
+    const truncated = truncateUtf8(sanitized, remaining);
+    if (!truncated) continue;
+    output.push(truncated);
+    usedBytes += new TextEncoder().encode(truncated).byteLength;
+  }
+  return output;
+}
+
+function piiSafeText(value, maxLength) {
+  return redactPii(limitText(value, maxLength));
+}
+
+function limitText(value, maxLength) {
+  if (typeof value !== "string") return "";
+  return value.trim().slice(0, maxLength);
+}
+
+function truncateUtf8(value, maxBytes) {
+  const bytes = new TextEncoder().encode(String(value || ""));
+  if (bytes.byteLength <= maxBytes) return String(value || "");
+  return new TextDecoder().decode(bytes.slice(0, maxBytes));
+}
+
+function redactPii(value) {
+  const withoutEmails = String(value || "").replace(
+    /[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi,
+    "[redacted-email]"
+  );
+  return withoutEmails.replace(/\+?\d[\d().\s-]{7,}\d/g, (candidate) => {
+    const digitCount = (candidate.match(/\d/g) || []).length;
+    const compact = candidate.replace(/\s/g, "");
+    const looksLikePhone = digitCount >= 9 && digitCount <= 15
+      && (/^[+]\d/.test(compact) || /[().-]/.test(candidate) || /^\d{10,15}$/.test(compact));
+    return looksLikePhone ? "[redacted-phone]" : candidate;
+  });
 }
 
 async function authorizeMcpDefinition(request, env, payload) {
@@ -2204,13 +2741,9 @@ async function findActiveSiteKeyByHost(env, host) {
 }
 
 function isProSiteKey(siteKey, env, record) {
-  if (record?.plan === "pro") return true;
-  if (!siteKey) return false;
-  return String(env.WEBMCP_PRO_SITE_KEYS || "")
-    .split(",")
-    .map((item) => item.trim())
-    .filter(Boolean)
-    .includes(siteKey);
+  // Plan comes from the site record only. The former WEBMCP_PRO_SITE_KEYS
+  // env allowlist was an undocumented plan bypass and has been removed.
+  return record?.plan === "pro";
 }
 
 async function findSiteKey(env, siteKey) {
@@ -2282,15 +2815,13 @@ async function handleAuthRequest(request, env) {
       body: JSON.stringify({
         from: env.MAIL_FROM,
         to: [email],
-        subject: "Sign in to Nurevo",
-        html: `<p>Use the link below to sign in to your Nurevo dashboard. It expires in 15 minutes.</p><p><a href="${link}">Sign in to Nurevo</a></p><p>If you did not request this email, you can ignore it.</p>`,
-        text: `Sign in to Nurevo (valid for 15 minutes): ${link}`
+        ...magicLinkEmail(link, resolveEmailLocale(await loadEmailPreferences(env, email), request.headers.get("accept-language")))
       })
     });
     if (!response.ok) {
-      const detail = await response.text();
+      await response.text();
       await env.WEBMCP_KV.delete(`${AUTH_TOKEN_PREFIX}${token}`);
-      console.error("resend_error", JSON.stringify({ status: response.status, detail: detail.slice(0, 500) }));
+      console.error("resend_error", JSON.stringify({ status: response.status }));
       return json({ error: "Could not send the sign-in email. Check the Resend configuration.", code: "EMAIL_SEND_FAILED" }, 502, request, env);
     }
   }
@@ -2412,43 +2943,16 @@ function toPublicSiteKey(record) {
   };
 }
 
-async function handleBillingCheckout(request, env) {
-  const missing = ["STRIPE_SECRET_KEY", "STRIPE_PRICE_ID_PRO"].filter((name) => !String(env[name] || "").trim());
-  if (missing.length) {
-    return json({ error: `${missing.join(", ")} must be configured before checkout.`, code: "STRIPE_CONFIG_MISSING", missing }, 503, request, env);
-  }
-  const session = await getSession(request, env);
-  if (!session) return json({ error: "authentication_required" }, 401, request, env);
-  const payload = await readJson(request);
-  const siteKey = String(payload?.siteKey || "").trim();
-  const record = await findSiteKey(env, siteKey);
-  if (!record || record.email !== session.email) return json({ error: "forbidden" }, 403, request, env);
-  if (record.status !== "active") return json({ error: "site_key_not_active" }, 400, request, env);
-
-  const form = new URLSearchParams();
-  form.set("mode", "subscription");
-  form.set("line_items[0][price]", env.STRIPE_PRICE_ID_PRO);
-  form.set("line_items[0][quantity]", "1");
-  form.set("success_url", "https://nurevo.jp/dashboard?checkout=success");
-  form.set("cancel_url", "https://nurevo.jp/dashboard?checkout=cancelled");
-  form.set("customer_email", session.email);
-  form.set("metadata[siteKey]", siteKey);
-  form.set("subscription_data[metadata][siteKey]", siteKey);
-  const stripeResponse = await fetch("https://api.stripe.com/v1/checkout/sessions", {
-    method: "POST",
-    headers: {
-      authorization: `Bearer ${env.STRIPE_SECRET_KEY}`,
-      "content-type": "application/x-www-form-urlencoded"
-    },
-    body: form
-  });
-  const result = await stripeResponse.json();
-  if (!stripeResponse.ok || !result.url) {
-    console.error("stripe_checkout_error", JSON.stringify({ status: stripeResponse.status, type: result?.error?.type }));
-    return json({ error: result?.error?.message || "Stripe Checkout session creation failed.", code: "STRIPE_CHECKOUT_FAILED" }, 502, request, env);
-  }
-  return json({ ok: true, url: result.url }, 200, request, env);
-}
+/*
+ * handleBillingCheckout was removed.
+ *
+ * It was unreachable: handleApi() runs before these routes and owns
+ * /api/billing/checkout, so this copy had not served a request in a long
+ * time. It also hardcoded STRIPE_PRICE_ID_PRO, which made it a second,
+ * silent way to sell a plan that is not on sale - exactly the thing that
+ * must not exist anywhere. The live handler in api.mjs is plan-aware and
+ * refuses Pro.
+ */
 
 async function handleBillingWebhook(request, env) {
   if (!String(env.STRIPE_WEBHOOK_SECRET || "").trim()) {

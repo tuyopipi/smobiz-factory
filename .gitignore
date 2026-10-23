@@ -1,15 +1,23 @@
 node_modules/
+*.zip
 .DS_Store
 *.log
 .env
 .env.*
 .wrangler/
 dist/
+build/
+coverage/
+.cache/
 results/
 artifacts/
 .webmcp-dev.log
 php-app/config.php
 php-app/inc/config.php
 php-app/config.sample.php
-.github/workflows/
-**/.github/workflows/
+# Workflows are kept out of this repository on purpose: older ones deployed
+# to production and called paid APIs on a schedule (removed 2026-08-26).
+# Only the test-only CI below is tracked. Do not un-ignore others without review.
+.github/workflows/*
+**/.github/workflows/*
+!/.github/workflows/plugin-ci.yml

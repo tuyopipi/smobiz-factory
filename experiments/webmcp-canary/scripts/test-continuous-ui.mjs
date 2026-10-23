@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+import {tFor} from './dashboard-dictionary.mjs';
+const sandbox={t:tFor('ja'),document:{createElement:()=>({dataset:{}}),addEventListener(){},head:{appendChild(){}},documentElement:{}},MutationObserver:class{observe(){}},setTimeout(){}};
+vm.runInNewContext(readFileSync(new URL('../public/dashboard-aeo-metrics.js',import.meta.url),'utf8').replace('  document.head.appendChild(style);','  globalThis.ui={rulesetStatus,optimizationNotice,scoreSummary};\n  document.head.appendChild(style);'),sandbox);
+assert.match(sandbox.ui.rulesetStatus({ruleset:{auto_updates:true,latest_version:5,version:4,status:'unverified'}}),/確認中/);
+assert.doesNotMatch(sandbox.ui.rulesetStatus({ruleset:{auto_updates:true,latest_version:5,version:null,status:'unverified'}}),/最新化されています/);
+assert.match(sandbox.ui.rulesetStatus({ruleset:{auto_updates:true,latest_version:5,version:5,status:'latest'}}),/最新化されています/);
+const row={score:60,ruleset_version:5,score_model_version:'u1-v4',delivered_ruleset_version:4,scanned_at:'2026-10-20T01:00:00Z'};
+assert.match(sandbox.ui.scoreSummary([row,{...row,score:70,delivered_ruleset_version:5}]),/↗ \+10/,'verified before/after under same criterion can be compared');
+assert.doesNotMatch(sandbox.ui.scoreSummary([row,{...row,score:70,ruleset_version:6}]),/↗/,'criterion changes cannot masquerade as improvement');
+assert.doesNotMatch(sandbox.ui.scoreSummary([row,{...row,score:70,delivered_ruleset_version:null}]),/↗/,'unverified output is excluded from before/after');
+assert.match(sandbox.ui.optimizationNotice({optimization:{action_required:true,missing_fields:[{entityType:'LocalBusiness',field:'geo'}]}}),/LocalBusiness.geo/);
+assert.doesNotMatch(sandbox.ui.optimizationNotice({optimization:{action_required:true,missing_fields:[{entityType:'<img>',field:'geo'}]}}),/<img>/);
+console.log('Continuous optimization UI passed: honest delivery status, comparable before/after, escaped owner notifications.');

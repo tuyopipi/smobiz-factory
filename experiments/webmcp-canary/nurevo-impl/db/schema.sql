@@ -1,0 +1,431 @@
+-- nurevo / db / schema.sql
+-- Cloudflare D1 (SQLite)。webmcp-canary で検証 → 本番反映。
+-- 適用: wrangler d1 execute nurevo-db --file=db/schema.sql
+
+CREATE TABLE IF NOT EXISTS orgs (
+  id TEXT PRIMARY KEY,
+  name TEXT,
+  plan TEXT DEFAULT 'pro',
+  wholesale_price INTEGER DEFAULT 1500,
+  wholesale_min INTEGER NOT NULL DEFAULT 50,
+  created_at INTEGER
+  ,channel TEXT NOT NULL DEFAULT 'direct'
+  ,referred_by TEXT
+  ,stripe_customer_id TEXT
+  ,stripe_subscription_id TEXT
+);
+
+CREATE TABLE IF NOT EXISTS members (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL,
+  email TEXT UNIQUE NOT NULL,
+  role TEXT DEFAULT 'operator',        -- admin | operator | viewer
+  status TEXT DEFAULT 'invited',       -- active | invited | disabled
+  created_at INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  token TEXT PRIMARY KEY,              -- ログインセッション / マジックリンク
+  member_id TEXT,
+  org_id TEXT,
+  kind TEXT DEFAULT 'session',         -- magic | session
+  expires_at INTEGER
+);
+
+CREATE TABLE IF NOT EXISTS invites (
+  token TEXT PRIMARY KEY,
+  org_id TEXT, email TEXT, role TEXT,
+  expires_at INTEGER
+);
+
+-- ★中核：登録した瞬間に「稼働スイッチ」が入るテーブル
+CREATE TABLE IF NOT EXISTS sites (
+  id TEXT PRIMARY KEY,
+  org_id TEXT NOT NULL,
+  url TEXT NOT NULL,
+  site_key TEXT UNIQUE NOT NULL,       -- タグが名乗るキー = 稼働スイッチ
+  install_type TEXT NOT NULL DEFAULT 'tag', -- wp | tag | hosted
+  gbp_linked INTEGER NOT NULL DEFAULT 0,
+  tag_detected INTEGER,
+  schema_in_html INTEGER,
+  scanned_at INTEGER,
+  scan_error TEXT,
+  status TEXT DEFAULT 'pending',       -- pending | detected | active | error
+  delivery_status TEXT NOT NULL DEFAULT 'active', -- active | stopped
+  plan TEXT NOT NULL DEFAULT 'free' CHECK (plan IN ('free', 'standard', 'pro')),
+  contract TEXT DEFAULT 'trial',       -- active | trial | cancelled
+  resale_price INTEGER DEFAULT 0,
+  -- タグ/プラグインから確実に取れる実測値（フェイクなし）
+  schema_types INTEGER DEFAULT 0,      -- 出力中の JSON-LD type 数
+  crawler_allowed INTEGER DEFAULT 0,   -- llms.txt / robots で 8種を許可しているか
+  last_seen_at INTEGER,                -- タグ最終ハートビート
+  place_id TEXT,
+  fetched_at INTEGER,
+  -- Dashboard-first pairing. Only the hash is kept; see 0023.
+  pairing_code_hash TEXT,
+  pairing_code_expires_at INTEGER,
+  pairing_code_used_at INTEGER,
+  slug TEXT,
+  channel TEXT NOT NULL DEFAULT 'direct',
+  referred_by TEXT,
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT,
+  website_uri TEXT,
+  website_fingerprint TEXT,
+  recommended_install_type TEXT,
+  owner_member_id TEXT,
+  profile_token_hash TEXT,            -- sha256(店情報書き込みトークン)。site_key は公開値のため書き込みに使わない
+  created_at INTEGER
+);
+
+CREATE INDEX IF NOT EXISTS idx_sites_owner_member ON sites(owner_member_id);
+
+-- 店舗情報（情報充足率の判定元。埋まっている項目数で充足率を出す）
+-- 店情報の正本（SSOT）。WordPress はこのレコードのミラーを持つ。
+-- 書き手は wp-admin / ダッシュボード / Places の3経路だが、すべて
+-- worker の共通マージャを通る。詳細は 0019_site_profile_ssot.sql。
+CREATE TABLE IF NOT EXISTS site_settings (
+  site_id TEXT PRIMARY KEY,
+  business_type TEXT,                  -- 表示・SoV質問用のラベル（例: 美容室）
+  business_type_schema TEXT,           -- schema.org の @type（例: HairSalon）
+  name TEXT, tel TEXT, address TEXT, hours TEXT, hours_periods TEXT,
+  description TEXT, email TEXT,
+  price_level TEXT,
+  price TEXT,
+  lat REAL, lng REAL,                  -- 緯度経度（両方あって geo 充足）
+  image TEXT, reserve_url TEXT,
+  serve_schema INTEGER DEFAULT 1,      -- schema 出力 ON/OFF（同期対象外）
+  allow_crawlers INTEGER DEFAULT 1,    -- AIクローラー許可 ON/OFF（同期対象外）
+  updated_at INTEGER,                  -- ms。worker の受信時刻のみを刻む
+  field_sources TEXT                   -- JSON: フィールド単位の出所と時刻
+);
+
+-- 将来：AIクローラーの実アクセス数（サーバー/CDNログ or WPプラグインから日次集計）
+CREATE TABLE IF NOT EXISTS crawler_hits (
+  site_id TEXT NOT NULL,
+  date TEXT NOT NULL,                  -- YYYY-MM-DD
+  crawler_id TEXT NOT NULL,            -- ai-crawlers.js の id（gptbot 等）
+  hits INTEGER DEFAULT 0,
+  PRIMARY KEY (site_id, date, crawler_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_sites_org  ON sites(org_id);
+CREATE INDEX IF NOT EXISTS idx_sites_key  ON sites(site_key);
+CREATE INDEX IF NOT EXISTS idx_sites_pairing_code
+  ON sites(pairing_code_hash) WHERE pairing_code_hash IS NOT NULL;
+CREATE INDEX IF NOT EXISTS idx_sites_places_refresh ON sites(fetched_at, place_id);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_sites_slug ON sites(slug);
+CREATE INDEX IF NOT EXISTS idx_members_org ON members(org_id);
+CREATE INDEX IF NOT EXISTS idx_hits_site  ON crawler_hits(site_id, date);
+
+CREATE TABLE IF NOT EXISTS licenses (
+  license_hash TEXT PRIMARY KEY,
+  plan TEXT NOT NULL CHECK (plan IN ('free', 'standard', 'pro')),
+  active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0, 1)),
+  created_at INTEGER NOT NULL
+);
+
+-- U2 AI Share-of-Voice measurement (pro plan). See 0018_aeo_sov.sql.
+CREATE TABLE IF NOT EXISTS aeo_sov_runs (
+  id TEXT PRIMARY KEY,
+  site_id TEXT NOT NULL,
+  ran_at TEXT NOT NULL,
+  status TEXT NOT NULL,
+  trigger TEXT NOT NULL,
+  model_version TEXT NOT NULL,
+  engines_json TEXT NOT NULL DEFAULT '[]',
+  questions_asked INTEGER NOT NULL DEFAULT 0,
+  answers_received INTEGER NOT NULL DEFAULT 0,
+  queries_used INTEGER NOT NULL DEFAULT 0,
+  appearance_rate REAL,
+  citation_rate REAL,
+  confidence TEXT,
+  competitors_json TEXT NOT NULL DEFAULT '[]',
+  detail_json TEXT NOT NULL DEFAULT '{}'
+);
+
+CREATE INDEX IF NOT EXISTS idx_aeo_sov_runs_site_ran_at
+  ON aeo_sov_runs(site_id, ran_at DESC);
+
+CREATE TABLE IF NOT EXISTS aeo_sov_mentions (
+  run_id TEXT NOT NULL,
+  site_id TEXT NOT NULL,
+  engine TEXT NOT NULL,
+  question TEXT NOT NULL,
+  -- 'branded' probes name the business in the prompt and only check the mention
+  -- parser; they are reported separately and never scored. See 0022.
+  kind TEXT NOT NULL DEFAULT 'discovery' CHECK (kind IN ('discovery', 'branded')),
+  ok INTEGER NOT NULL DEFAULT 1 CHECK (ok IN (0, 1)),
+  brand_mentioned INTEGER NOT NULL DEFAULT 0 CHECK (brand_mentioned IN (0, 1)),
+  brand_cited INTEGER NOT NULL DEFAULT 0 CHECK (brand_cited IN (0, 1)),
+  competitor_hosts_json TEXT NOT NULL DEFAULT '[]',
+  answer_excerpt TEXT,
+  error TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_aeo_sov_mentions_run
+  ON aeo_sov_mentions(run_id);
+CREATE INDEX IF NOT EXISTS idx_aeo_sov_mentions_site
+  ON aeo_sov_mentions(site_id, engine);
+CREATE INDEX IF NOT EXISTS idx_aeo_sov_mentions_run_kind
+  ON aeo_sov_mentions(run_id, kind);
+
+CREATE TABLE IF NOT EXISTS aeo_sov_usage (
+  site_id TEXT NOT NULL,
+  month TEXT NOT NULL,
+  queries_used INTEGER NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (site_id, month)
+);
+
+CREATE TABLE IF NOT EXISTS ai_referral_daily (
+  site_id TEXT NOT NULL,
+  date TEXT NOT NULL,
+  engine TEXT NOT NULL,
+  hits INTEGER NOT NULL DEFAULT 0,
+  PRIMARY KEY (site_id, date, engine),
+  FOREIGN KEY (site_id) REFERENCES sites(id) ON DELETE CASCADE
+);
+CREATE INDEX IF NOT EXISTS idx_ai_referral_daily_site_date
+  ON ai_referral_daily(site_id, date DESC);
+
+-- Catalogue the plugin reads from the site. See 0024_site_catalog.sql.
+CREATE TABLE IF NOT EXISTS site_products (
+  site_id TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  url TEXT,
+  sku TEXT,
+  -- Text rather than a number: a price is what the shop displays, and
+  -- WooCommerce stores it as a string for the same reason.
+  price TEXT,
+  currency TEXT,
+  -- 1 in stock, 0 out of stock, NULL when the shop does not track it. The three
+  -- are different answers and must not collapse into a boolean.
+  in_stock INTEGER CHECK (in_stock IS NULL OR in_stock IN (0, 1)),
+  categories_json TEXT NOT NULL DEFAULT '[]',
+  PRIMARY KEY (site_id, position)
+);
+
+/* ------------------------------------------------------------------ *
+ * Bookable services
+ * ------------------------------------------------------------------ */
+
+CREATE TABLE IF NOT EXISTS site_services (
+  site_id TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  name TEXT NOT NULL,
+  -- Minutes, because that is the unit the operator was asked for. Stated here
+  -- so nothing downstream has to guess, which is the mistake that kept the
+  -- booking-plugin adapters from being written at all.
+  minutes INTEGER,
+  price TEXT,
+  currency TEXT,
+  category TEXT,
+  -- The URL the operator entered. Never derived.
+  reserve_url TEXT,
+  PRIMARY KEY (site_id, position)
+);
+
+/* ------------------------------------------------------------------ *
+ * Questions and answers
+ * ------------------------------------------------------------------ */
+
+CREATE TABLE IF NOT EXISTS site_faqs (
+  site_id TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  question TEXT NOT NULL,
+  answer TEXT NOT NULL,
+  PRIMARY KEY (site_id, position)
+);
+
+/* ------------------------------------------------------------------ *
+ * The pages worth knowing about
+ * ------------------------------------------------------------------ */
+
+CREATE TABLE IF NOT EXISTS site_pages (
+  site_id TEXT NOT NULL,
+  position INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  url TEXT,
+  PRIMARY KEY (site_id, position)
+);
+
+/* ------------------------------------------------------------------ *
+ * Provenance and freshness
+ * ------------------------------------------------------------------ */
+
+-- One row per site recording where each list came from and when, mirroring what
+-- site_settings.field_sources does for the profile. Kept beside the lists
+-- rather than inside them so an empty list is still a measurement: "this shop
+-- has no products" and "we have never looked" are different facts.
+CREATE TABLE IF NOT EXISTS site_catalog_state (
+  site_id TEXT PRIMARY KEY,
+  source TEXT NOT NULL,
+  product_source TEXT,
+  product_count INTEGER NOT NULL DEFAULT 0,
+  service_count INTEGER NOT NULL DEFAULT 0,
+  faq_count INTEGER NOT NULL DEFAULT 0,
+  page_count INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_site_products_site ON site_products(site_id);
+CREATE INDEX IF NOT EXISTS idx_site_services_site ON site_services(site_id);
+CREATE INDEX IF NOT EXISTS idx_site_faqs_site ON site_faqs(site_id);
+CREATE INDEX IF NOT EXISTS idx_site_pages_site ON site_pages(site_id);
+
+CREATE TABLE IF NOT EXISTS referrers (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  type TEXT NOT NULL DEFAULT 'individual',
+  email TEXT,
+  stripe_account_id TEXT,
+  created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS billing_events (
+  event_id TEXT PRIMARY KEY,
+  kind TEXT NOT NULL,
+  created_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS api_rate_limits (
+  bucket TEXT PRIMARY KEY,
+  window_started_at INTEGER NOT NULL,
+  count INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS aeo_rulesets (
+  version INTEGER PRIMARY KEY,
+  created_at TEXT NOT NULL,
+  definition_json TEXT NOT NULL,
+  active INTEGER NOT NULL DEFAULT 0,
+  notes TEXT
+);
+
+CREATE UNIQUE INDEX IF NOT EXISTS idx_aeo_rulesets_one_active
+  ON aeo_rulesets(active) WHERE active = 1;
+
+INSERT OR IGNORE INTO aeo_rulesets (version, created_at, definition_json, active, notes)
+VALUES (
+  1,
+  '2026-09-30T00:00:00.000Z',
+  '{"schema":{"context":"https://schema.org","type":"LocalBusiness","required":["@context","@type","name"],"recommended":["url","additionalType","address","telephone","openingHours","openingHoursSpecification","geo","priceRange","image","potentialAction"],"fields":{"url":true,"additionalType":true,"address":true,"telephone":true,"openingHours":true,"openingHoursSpecification":true,"geo":true,"priceRange":true,"image":true,"potentialAction":true},"hostedFields":["address","openingHoursSpecification","geo","telephone","priceRange"],"priceLevelMap":{"PRICE_LEVEL_FREE":"Free","PRICE_LEVEL_INEXPENSIVE":"¥","PRICE_LEVEL_MODERATE":"¥¥","PRICE_LEVEL_EXPENSIVE":"¥¥¥","PRICE_LEVEL_VERY_EXPENSIVE":"¥¥¥¥"},"hostedPriceLevelMap":{"PRICE_LEVEL_FREE":"¥","PRICE_LEVEL_INEXPENSIVE":"¥","PRICE_LEVEL_MODERATE":"¥¥","PRICE_LEVEL_EXPENSIVE":"¥¥¥","PRICE_LEVEL_VERY_EXPENSIVE":"¥¥¥"}},"llmsTxt":{"format":"markdown","sections":["identity","store_information","supported_ai_crawlers"]},"robots":{"defaultAllow":true,"aiCrawlerIds":["gptbot","oai-search","chatgpt-user","claudebot","perplexity","google-ext","applebot-ext","bytespider"]},"defaults":{"schemaType":"LocalBusiness","nameSource":"settings.name_or_site.url","hostedBaseUrl":"https://nurevo.jp/s/"}}',
+  1,
+  'Initial ruleset matching the pre-AEO-brain JSON-LD output.'
+);
+
+CREATE TABLE IF NOT EXISTS aeo_ruleset_activations (
+  id TEXT PRIMARY KEY,
+  ruleset_version INTEGER NOT NULL,
+  activated_at TEXT NOT NULL,
+  activated_by TEXT NOT NULL,
+  notes TEXT,
+  FOREIGN KEY (ruleset_version) REFERENCES aeo_rulesets(version)
+);
+
+CREATE INDEX IF NOT EXISTS idx_aeo_ruleset_activations_version_time
+  ON aeo_ruleset_activations(ruleset_version, activated_at DESC);
+
+INSERT OR IGNORE INTO aeo_ruleset_activations (id, ruleset_version, activated_at, activated_by, notes)
+SELECT 'activation-initial-v1', version, created_at, 'system:migration-0015', 'Initial active ruleset history'
+  FROM aeo_rulesets
+ WHERE version = 1 AND active = 1;
+
+CREATE TABLE IF NOT EXISTS aeo_scores (
+  site_id TEXT NOT NULL,
+  scanned_at TEXT NOT NULL,
+  host TEXT,
+  score INTEGER,
+  verdict TEXT,
+  checks_json TEXT,
+  ruleset_version INTEGER,
+  PRIMARY KEY (site_id, scanned_at)
+);
+
+CREATE INDEX IF NOT EXISTS idx_aeo_scores_site_scanned_at
+  ON aeo_scores(site_id, scanned_at);
+
+CREATE TABLE IF NOT EXISTS aeo_site_recommendations (
+  site_id TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  created_at TEXT NOT NULL,
+  updated_at TEXT NOT NULL,
+  detail_json TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'open',
+  ruleset_version INTEGER,
+  learning_run_id TEXT,
+  PRIMARY KEY (site_id, kind)
+);
+
+CREATE INDEX IF NOT EXISTS idx_aeo_site_recommendations_status
+  ON aeo_site_recommendations(status, updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS aeo_learning_runs (
+  id TEXT PRIMARY KEY,
+  ran_at TEXT NOT NULL,
+  finished_at TEXT NOT NULL,
+  trigger TEXT NOT NULL,
+  sites_analyzed INTEGER NOT NULL DEFAULT 0,
+  recommendations_created INTEGER NOT NULL DEFAULT 0,
+  candidate_version INTEGER,
+  mode TEXT NOT NULL,
+  summary TEXT NOT NULL,
+  input_materials_json TEXT NOT NULL,
+  citation_samples_used INTEGER NOT NULL DEFAULT 0
+);
+
+CREATE INDEX IF NOT EXISTS idx_aeo_learning_runs_ran_at
+  ON aeo_learning_runs(ran_at DESC);
+
+-- Pro measurement extensions (0031).
+-- Additive: legacy runs/mentions remain readable.
+CREATE TABLE IF NOT EXISTS aeo_sov_query_sets (
+  site_id TEXT PRIMARY KEY,
+  version INTEGER NOT NULL,
+  config_json TEXT NOT NULL,
+  updated_at TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS aeo_sov_evidence (
+  id TEXT PRIMARY KEY,
+  run_id TEXT NOT NULL,
+  site_id TEXT NOT NULL,
+  measured_at TEXT NOT NULL,
+  engine TEXT NOT NULL,
+  question TEXT NOT NULL,
+  sample_index INTEGER NOT NULL,
+  ok INTEGER NOT NULL CHECK(ok IN (0,1)),
+  answer_summary TEXT,
+  citation_urls_json TEXT NOT NULL DEFAULT '[]',
+  brand_cited INTEGER NOT NULL CHECK(brand_cited IN (0,1)),
+  citation_rank INTEGER,
+  accuracy_json TEXT NOT NULL DEFAULT '{}'
+);
+CREATE INDEX IF NOT EXISTS idx_sov_evidence_run ON aeo_sov_evidence(site_id,run_id);
+CREATE TABLE IF NOT EXISTS aeo_sov_locks (
+  site_id TEXT PRIMARY KEY,
+  token TEXT NOT NULL,
+  expires_at INTEGER NOT NULL
+);
+-- Address -> coordinates, looked up once per address (worker/geocoder.mjs).
+-- Additive. The site's coordinates themselves stay in site_settings.lat/lng;
+-- this only remembers what a provider said about an address, including
+-- "too vague" and "not found", so the same address is never paid for twice.
+CREATE TABLE IF NOT EXISTS geocode_cache (
+  address_key TEXT PRIMARY KEY,     -- sha256 of the normalised address
+  address TEXT NOT NULL,            -- the normalised address that was sent
+  status TEXT NOT NULL CHECK(status IN ('ok','imprecise','not_found','error')),
+  lat REAL,                         -- only for status 'ok'
+  lng REAL,
+  precision TEXT,                   -- address | street | area
+  label TEXT,                       -- the provider's formatted match, for review
+  provider TEXT NOT NULL,
+  attribution TEXT NOT NULL,        -- data licence attribution (ODbL)
+  fetched_at TEXT NOT NULL,
+  retry_after INTEGER               -- epoch ms; only for status 'error'
+);
+
+-- 0034: provider-reported usage per engine call.
+ALTER TABLE aeo_sov_evidence ADD COLUMN usage_json TEXT;

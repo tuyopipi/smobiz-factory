@@ -1,8 +1,8 @@
 (() => {
-  const TAG_VERSION = "2026-07-23.1";
+  const TAG_VERSION = "2026-08-20.2";
   const SCRIPT_ELEMENT = document.currentScript;
   const TAG_ORIGIN = new URL(SCRIPT_ELEMENT?.src || location.href, location.href).origin;
-  const SITE_KEY = SCRIPT_ELEMENT?.dataset.webmcpSiteKey || new URL(SCRIPT_ELEMENT?.src || location.href, location.href).searchParams.get("site_key") || "";
+  const SITE_KEY = SCRIPT_ELEMENT?.dataset.webmcpSiteKey || SCRIPT_ELEMENT?.dataset.k || new URL(SCRIPT_ELEMENT?.src || location.href, location.href).searchParams.get("site_key") || "";
   const DEBUG = SCRIPT_ELEMENT?.dataset.webmcpDebug === "1" || new URLSearchParams(location.search).get("webmcp_debug") === "1";
   const toolControllers = new Map();
   const executionHistory = new Map();
@@ -12,6 +12,54 @@
   const FOOTPRINT_EVENT_KEYS = new Set(["type", "selector", "key", "timestampOffsetMs", "errorText", "validity", "changed", "beforeLength", "afterLength", "errorName", "toolName"]);
   const VALIDITY_KEYS = new Set(["valueMissing", "typeMismatch", "patternMismatch", "tooShort", "tooLong", "rangeUnderflow", "rangeOverflow", "stepMismatch", "badInput", "customError", "valid"]);
   let latestMcpDefinitions = [];
+
+  recordAiReferral();
+
+  function recordAiReferral() {
+    if (!SITE_KEY) return;
+    let host = "";
+    try { host = new URL(document.referrer).hostname.toLowerCase(); } catch (_) { return; }
+    const engines = {
+      "chatgpt.com":"chatgpt", "perplexity.ai":"perplexity", "gemini.google.com":"gemini",
+      "copilot.microsoft.com":"copilot", "claude.ai":"claude", "you.com":"you",
+      "phind.com":"phind", "kagi.com":"kagi", "duckduckgo.com":"duckduckgo-ai",
+      "meta.ai":"meta-ai", "grok.com":"grok", "deepseek.com":"deepseek", "chat.mistral.ai":"mistral"
+    };
+    const engine = Object.entries(engines).find(([domain]) => host === domain || host.endsWith(`.${domain}`))?.[1];
+    if (!engine) return;
+    const body = JSON.stringify({ site_key: SITE_KEY, engine });
+    const endpoint = new URL("/api/site/ai-referral", TAG_ORIGIN).href;
+    // text/plain is CORS-safelisted, so a third-party customer site can send
+    // this without a preflight; the endpoint still parses the body as JSON.
+    if (navigator.sendBeacon) navigator.sendBeacon(endpoint, new Blob([body], { type: "text/plain" }));
+    else fetch(endpoint, { method: "POST", headers: { "content-type": "text/plain" }, body, mode: "cors", credentials: "omit", keepalive: true }).catch(() => {});
+  }
+
+  // Nurevo T-tag integration: the Worker verifies the key in D1, updates
+  // sites.last_seen_at, and returns JSON-LD for schema injection.
+  bootNurevoSiteTag();
+
+  async function bootNurevoSiteTag() {
+    if (!SITE_KEY || document.querySelector('script[data-nurevo-jsonld="1"]')) return;
+    try {
+      const response = await fetch(`${TAG_ORIGIN}/api/tag/config?k=${encodeURIComponent(SITE_KEY)}`, {
+        method: "GET",
+        mode: "cors",
+        credentials: "omit",
+        keepalive: true,
+      });
+      if (!response.ok) return;
+      const config = await response.json();
+      if (!config?.ok || !config.jsonld) return;
+      const schema = document.createElement("script");
+      schema.type = "application/ld+json";
+      schema.dataset.nurevoJsonld = "1";
+      schema.textContent = JSON.stringify(config.jsonld);
+      (document.head || document.documentElement).appendChild(schema);
+    } catch (_) {
+      // The tag must never break the host page when the API is unavailable.
+    }
+  }
 
   log(`tag.js loaded version=${TAG_VERSION}`);
   boot().catch((error) => log(`tag.js error: ${error?.stack || error}`));
@@ -26,11 +74,16 @@
   window.addEventListener("pagehide", () => sendFootprint("abandoned"));
 
   async function boot() {
-    await registerTools({ reason: "initial-load" });
+    const auth = await checkAuthorization();
+    if (auth.registered === true && auth.quality === "high") {
+      await sendPageMeta();
+      await fetchAndApplyAeoContentSchemas();
+    }
+    await registerTools({ reason: "initial-load", auth });
     attachFootprintListeners();
   }
 
-  async function registerTools({ reason }) {
+  async function registerTools({ reason, auth: providedAuth = null }) {
     const modelContext = getModelContext();
     const detectedForms = collectEligibleFormStates();
     if (!detectedForms.length) {
@@ -48,7 +101,7 @@
       return;
     }
 
-    const auth = await checkAuthorization();
+    const auth = providedAuth || await checkAuthorization();
     const activeKeys = new Set(detectedForms.map((state) => state.formKey));
     for (const key of [...formStates.keys()]) {
       if (!activeKeys.has(key)) formStates.delete(key);
@@ -211,6 +264,118 @@
     });
     if (!response.ok) throw new Error(`mcp-definition failed ${response.status}`);
     return response.json();
+  }
+
+  function collectPageMeta() {
+    const metaContent = (selector) => document.querySelector(selector)?.getAttribute("content")?.trim() || "";
+    const canonicalUrl = document.querySelector('link[rel="canonical"]')?.href || "";
+    const headings = [...document.querySelectorAll("h1, h2, h3")]
+      .slice(0, 30)
+      .map((heading) => ({
+        level: heading.tagName.toLowerCase(),
+        text: String(heading.textContent || "").trim().slice(0, 200)
+      }))
+      .filter((heading) => heading.text);
+    const jsonLd = [];
+    let jsonLdBytes = 0;
+    for (const script of document.querySelectorAll('script[type="application/ld+json"]')) {
+      const value = String(script.textContent || "").trim();
+      if (!value) continue;
+      const remaining = 10 * 1024 - jsonLdBytes;
+      if (remaining <= 0) break;
+      const truncated = truncateUtf8(value, remaining);
+      if (truncated) {
+        jsonLd.push(truncated);
+        jsonLdBytes += new TextEncoder().encode(truncated).byteLength;
+      }
+    }
+    return {
+      title: String(document.title || "").slice(0, 300),
+      description: metaContent('meta[name="description"]').slice(0, 500),
+      openGraph: {
+        title: metaContent('meta[property="og:title"]').slice(0, 300),
+        description: metaContent('meta[property="og:description"]').slice(0, 500),
+        type: metaContent('meta[property="og:type"]').slice(0, 100),
+        siteName: metaContent('meta[property="og:site_name"]').slice(0, 300)
+      },
+      canonicalUrl: canonicalUrl.slice(0, 2048),
+      lang: String(document.documentElement.lang || "").slice(0, 35),
+      headings,
+      jsonLd
+    };
+  }
+
+  async function sendPageMeta() {
+    try {
+      const response = await fetch(apiUrl("/api/page-meta"), {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        cache: "no-store",
+        body: JSON.stringify({
+          siteKey: SITE_KEY,
+          host: location.host,
+          pathname: location.pathname,
+          meta: collectPageMeta()
+        })
+      });
+      if (!response.ok) throw new Error(`page-meta failed ${response.status}`);
+      log("page metadata stored");
+    } catch (error) {
+      log(`page metadata was not stored: ${error?.message || error}`);
+    }
+  }
+
+  async function fetchAndApplyAeoContentSchemas() {
+    try {
+      const url = new URL("/api/aeo-schemas", TAG_ORIGIN);
+      url.searchParams.set("site_key", SITE_KEY);
+      url.searchParams.set("host", location.host);
+      url.searchParams.set("pathname", location.pathname);
+      const response = await fetch(url.href, { cache: "no-store" });
+      if (!response.ok) throw new Error(`aeo-schemas failed ${response.status}`);
+      const payload = await response.json();
+      applyAeoContentSchemas(payload.schemas);
+    } catch (error) {
+      log(`AEO content schemas were not applied: ${error?.message || error}`);
+    }
+  }
+
+  function applyAeoContentSchemas(value) {
+    const schemas = Array.isArray(value)
+      ? value.filter((schema) => schema && typeof schema === "object" && !Array.isArray(schema))
+      : [];
+    const id = "webmcp-aeo-content";
+    let script = document.getElementById(id);
+    if (!schemas.length) {
+      script?.remove();
+      window.__webmcpAeoContent = [];
+      log("AEO content schemas empty");
+      return;
+    }
+    if (!script) {
+      script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.id = id;
+      document.head.appendChild(script);
+    }
+    const structuredData = schemas.length === 1
+      ? schemas[0]
+      : {
+          "@context": "https://schema.org",
+          "@graph": schemas.map((schema) => {
+            const { "@context": _context, ...item } = schema;
+            return item;
+          })
+        };
+    script.textContent = JSON.stringify(structuredData);
+    window.__webmcpAeoContent = schemas;
+    log(`AEO content schemas applied count=${schemas.length}`);
+  }
+
+  function truncateUtf8(value, maxBytes) {
+    const bytes = new TextEncoder().encode(String(value || ""));
+    if (bytes.byteLength <= maxBytes) return String(value || "");
+    return new TextDecoder().decode(bytes.slice(0, maxBytes));
   }
 
   function applyDeclarativeMetadata(declarative, state) {

@@ -4,13 +4,25 @@ Cloudflare Pagesで `nurevo.jp` に置くための軽量な静的LPです。Word
 
 ## 構成
 
-- `public/index.html`: LP本体
-- `public/privacy.html`: プライバシーポリシー雛形
-- `public/terms.html`: 利用規約雛形
-- `public/tokushoho.html`: 特定商取引法に基づく表記雛形
-- `public/config.js`: 公開Worker URL、tag.js URL、WordPressプラグインURLの設定
-- `public/assets/app.js`: i18n、タブ、コピー、サイトキー発行フォーム
-- `public/assets/styles.css`: レスポンシブCSS
+LPは言語ごとの静的ページとしてビルドします。**`public/index.html` と `public/<言語>/index.html` は生成物なので直接編集しません。**
+
+- `src/lp.html`: LP本体のテンプレート（日本語のマークアップ。`data-i18n` で辞書のキーを指す）
+- `src/i18n.mjs`: 全文言の辞書（8言語）。日本語が正で、変えたら他の7言語も合わせる
+- `src/site.mjs`: head・JSON-LD・sitemap・llms.txt に出す事実（会社情報、料金、言語とURL）
+- `src/content/*.mjs`: コンテンツページの枠。本文が全部入った言語だけが公開される
+- `src/lp.js` / `src/ai-referral.js`: ページのスクリプト／AI検索からの流入を数えるビーコン
+- `scripts/build-site.mjs`: 上記から `public/` を生成（各言語のLP、`sitemap-pages.xml`、`llms-pages.json`、手書きページのheadブロック）
+- `scripts/check-seo.mjs`: 生成物の検査（h1、canonical、hreflangの相互参照、JSON-LDがページ本文と一致するか）
+- `public/check/` `public/partner/` `public/guide/` `public/*.html`: 手書きのページ。`<!-- seo:generated … -->` の間だけビルドが書き換える
+
+```bash
+npm run build            # src/ を変えたら必ず実行
+npm run check            # 生成物が最新か＋SEO/構造化データの検査
+npm run preview:drafts   # 未完成のコンテンツページを noindex で確認（デプロイされない .preview/ に出力）
+npm run deploy           # check を通してから Pages へ
+```
+
+`/robots.txt` `/sitemap.xml` `/llms.txt` は `experiments/webmcp-canary` のワーカーが配信します（`worker/site-seo.mjs`）。`/sitemap.xml` は `sitemap-pages.xml`（このビルド）と `sitemap-stores.xml`（ホスト店舗）のインデックスです。
 
 規約類は雛形です。公開前に必ず法的レビューを行ってください。
 
@@ -138,3 +150,35 @@ LPで発行されたスニペットをGTMに貼る場合も同じ `tag.js` URL�
 
 - `nurevo.jp` が表示されない  
   PagesのCustom domainsに `nurevo.jp` が追加済みか、DNSがCloudflareの指示通りになっているか確認します。
+
+## AEO / SEO 運用（2026-10-13）
+
+JSON-LDは静的HTMLのheadにビルド時出力し、JavaScriptの実行を必要としません。
+Organization.name は Nurevo、legalName はサイトの会社表記と一致する Bestie.合同会社。
+確認できる公式SNSがないため sameAs は公式WordPressプラグインURLのみです。
+/check はサイト内検索ではないため SearchAction は付けません。
+8言語LPと公開記事・主要ページは sitemap-pages.xml に収録します。
+Pages単体でも robots.txt / llms.txt / sitemap.xml を配信できるよう同じビルドで生成します。
+本番では既存Workerが robots.txt / llms.txt / sitemap.xml を配信し、後者は店舗とLPのsitemapインデックスです。
+料金とガイド一覧も llms-pages.json 経由でWorkerに渡します。
+出典のない「2億+」「7種+」「5分で導入完了」は8言語で数値を使わない説明に変更しました。
+
+### www → 非www 301（Cloudflareでの設定が必要）
+
+Pagesの `_redirects` はホスト単位のリダイレクトに対応していません。
+パスだけの全件リダイレクトは非wwwでもループするため追加しません。
+2026-10-13の確認では www.nurevo.jp は200で、301は未設定です。
+
+1. Cloudflare Dashboardで nurevo.jp ゾーンを選び、Rules → Create rule → Redirect Rule。
+2. 名前: `www to apex`。Custom filter expression: `(http.host eq "www.nurevo.jp")`。
+3. URL redirect は Dynamic、式: `concat("https://nurevo.jp", http.request.uri.path)`。
+4. Status code: 301、Preserve query string: 有効。
+5. www のDNSレコードが Proxied であることを確認して Deploy。
+6. `curl -I 'https://www.nurevo.jp/check?lang=en'` で301とLocationを確認。
+   トップ・各言語・記事パスでもパスとクエリの保持を確認する。
+
+公式資料:
+- https://developers.cloudflare.com/pages/configuration/redirects/ （Domain-level redirects 非対応）
+- https://developers.cloudflare.com/rules/url-forwarding/single-redirects/create-dashboard/
+
+英語規約ページもPages内の実ファイルをビルド対象とし、本番で配信される /en/privacy/・/en/terms/ をcanonicalとsitemapに使用します。

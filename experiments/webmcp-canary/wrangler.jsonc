@@ -3,11 +3,45 @@
 	"name": "webmcp-canary",
 	"main": "worker/index.mjs",
 	"compatibility_date": "2026-07-19",
+	"routes": [
+		{ "pattern": "nurevo.jp/api/*", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/tag.js", "zone_name": "nurevo.jp" },
+		// One pattern for everything under /dashboard, because an exact-path
+		// route did not cover a query string: /dashboard served the dashboard
+		// and /dashboard?plan=standard fell through to the Pages LP - which
+		// broke the landing page's own Standard button, since that is exactly
+		// the URL it links to. /dashboard.html did the same.
+		//
+		// This also subsumes /dashboard/* and /dashboard-* (the module files).
+		// Cloudflare allows a wildcard only at the end of the path, so the
+		// earlier "/dashboard-*.js" was rejected outright and silently never
+		// created - the same class of failure, found the same way.
+		{ "pattern": "nurevo.jp/dashboard*", "zone_name": "nurevo.jp" },
+		// Screenshots embedded in the dashboard onboarding and reused by the
+		// downloadable setup guide. Keep this route narrowly scoped so the LP
+		// continues to own every other /assets path.
+		{ "pattern": "nurevo.jp/assets/onboarding/*", "zone_name": "nurevo.jp" },
+		// Only the two English legal pages. This was "nurevo.jp/en/*", which also
+		// claimed /en/ itself - the English landing page that Pages builds - and
+		// answered it with a 404.
+		{ "pattern": "nurevo.jp/en/privacy*", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/en/terms*", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/s/*", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/sitemap.xml", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/sitemap-stores.xml", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/robots.txt", "zone_name": "nurevo.jp" },
+		{ "pattern": "nurevo.jp/llms.txt", "zone_name": "nurevo.jp" }
+	],
 	"assets": {
 		"directory": "./public",
 		"binding": "ASSETS",
 		"run_worker_first": [
-			"/api/*"
+			"/api/*",
+			"/tag.js",
+			"/dashboard",
+			"/dashboard/*",
+			"/en/*",
+			"/llms.txt"
 		]
 	},
 	"kv_namespaces": [
@@ -22,6 +56,11 @@
 			"database_name": "webmcp-canary",
 			"database_id": "6eafcadf-db96-4e47-bb01-1aae478e0704",
 			"migrations_dir": "migrations"
+		},
+		{
+			"binding": "DB",
+			"database_name": "nurevo-db",
+			"database_id": "3b73d9c9-9111-4c58-9a88-aa080aeb9a1e"
 		}
 	],
 	"vars": {
@@ -33,12 +72,18 @@
 		"WEBMCP_LEARNING_MIN_FAILURES": "3",
 		"WEBMCP_LEARNING_MIN_SUPPORT_RATE": "0.12",
 		"WEBMCP_LEARNING_DISABLE_LIFT_THRESHOLD": "-2",
-		"WEBMCP_ALLOWED_ORIGINS": "*",
+		"AEO_SCORE_CRON_LIMIT": "10",
+		"WEBMCP_ALLOWED_ORIGINS": "https://nurevo.jp,https://www.nurevo.jp",
+		"DEV": "0",
 		"OPENAI_MODEL": "gpt-4.1-mini"
 	},
 	"triggers": {
+		// daily jobs, weekly learning, and the hourly "not connected yet"
+		// reminders (worker/schedule.mjs says what each runs).
 		"crons": [
-			"17 18 * * *"
+			"17 18 * * *",
+			"17 18 * * 1",
+			"23 * * * *"
 		]
 	}
 }

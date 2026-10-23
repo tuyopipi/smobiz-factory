@@ -1,0 +1,20 @@
+import { chromium } from "playwright";
+import { mkdir } from "node:fs/promises";
+
+const origin = process.env.WORDPRESS_URL || "http://localhost:8080";
+const out = new URL("../public/assets/onboarding/", import.meta.url);
+await mkdir(out, { recursive: true });
+const browser = await chromium.launch({ headless: true, executablePath: process.env.CHROME_PATH || "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" });
+const page = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+await page.goto(`${origin}/wp-login.php`, { waitUntil: "networkidle" });
+await page.locator("#user_login").fill(process.env.WORDPRESS_ADMIN_USER || "admin");
+await page.locator("#user_pass").fill(process.env.WORDPRESS_ADMIN_PASSWORD || "password");
+await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.locator("#wp-submit").click()]);
+await page.goto(`${origin}/wp-admin/admin.php?page=webmcp-canary-settings`, { waitUntil: "networkidle" });
+const field = page.locator('input[placeholder="NRV-XXXXX-XXXXX-XXXXX-XXXXX"]');
+await field.scrollIntoViewIfNeeded();
+const row = field.locator("xpath=ancestor::tr[1]");
+await row.screenshot({ path: new URL("wp-pairing-code.png", out).pathname });
+await page.screenshot({ path: new URL("wp-settings-full.png", out).pathname, fullPage: true });
+console.log(`captured ${await field.getAttribute("placeholder")}`);
+await browser.close();

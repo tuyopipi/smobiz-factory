@@ -1,0 +1,1 @@
+document.addEventListener('DOMContentLoaded',()=>document.querySelectorAll('.brand').forEach(a=>{a.href='https://nurevo.jp/';a.innerHTML='<img src="/assets/logo.png" alt="Nurevo" style="width:28px;height:28px;object-fit:contain">Nurevo'}));
