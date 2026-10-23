@@ -2,6 +2,7 @@ import { recordFetched } from "./aeo-delivery.mjs";
 import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
 import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
+import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeRefund, handleConnectedAccountUpdated } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
@@ -61,15 +62,10 @@ const API_RATE_LIMITS = Object.freeze({
 });
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
-// Referral partners receive this share of what the customer actually paid,
-// transferred per paid invoice through Stripe Connect, in JPY (the platform
-// balance currency). Non-JPY invoices are converted via referralPaidYen.
-export const REFERRAL_SHARE = 0.4;
-export function referralCommissionYen(amountPaid, currency) {
-  if (String(currency || "").toLowerCase() !== "jpy") return 0;
-  const paid = Math.floor(Number(amountPaid) || 0);
-  return paid > 0 ? Math.floor(paid * REFERRAL_SHARE) : 0;
-}
+// Referral partners receive 40% of the NET JPY of each paid invoice's charge
+// (after Stripe fees), per invoice, through Stripe Connect. The ledger and the
+// money movement live in partner-payouts.mjs.
+export { REFERRAL_SHARE, referralCommissionYen, referralPaidYen } from "./partner-payouts.mjs";
 const referralEstimateSql = () => `SUM(CASE WHEN s.plan='pro' THEN ${referralCommissionYen(PLAN_MONTHLY_YEN.pro, "jpy")} WHEN s.id IS NOT NULL THEN ${referralCommissionYen(PLAN_MONTHLY_YEN.standard, "jpy")} ELSE 0 END)`;
 /**
  * What each paid tier costs per site, per month.
@@ -909,7 +905,16 @@ export async function handleApi(request, env, ctx) {
   if (path === "/api/partner" && method === "GET") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
-    return json(await partnerSummary(env, await ensureAccount(env, member.member_id)));
+    const refresh = new URL(request.url).searchParams.get("refresh") === "1";
+    return json(await partnerSummary(env, await ensureAccount(env, member.member_id), { refresh }));
+  }
+  // The partner's own payout account (Stripe Connect Express, Japan). No body
+  // is read: the account and the destination are always the signed-in member's.
+  if (path === "/api/partner/payout/onboard" && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const result = await startPayoutOnboarding(env, await ensureAccount(env, member.member_id));
+    return json(result.body, result.status);
   }
   if (["/api/partner/code", "/api/partner/code/regenerate"].includes(path) && method === "POST") {
     const member = await requireActiveMember(request, env);
@@ -2283,14 +2288,29 @@ export async function handleApi(request, env, ctx) {
   if (path === "/api/billing/webhook" && method === "POST") {
     const secret = String(env.STRIPE_WEBHOOK_SECRET || "").trim();
     if (!secret) return json({ error: "stripe_webhook_secret_required" }, 503);
+    // A Connect endpoint (events from partners' Express accounts) has its own
+    // signing secret; either may sign, but see below for what Connect events can do.
+    const connectSecret = String(env.STRIPE_CONNECT_WEBHOOK_SECRET || "").trim();
     const rawBody = await request.text();
-    if (!await verifyStripeSignature(rawBody, request.headers.get("stripe-signature") || "", secret)) return json({ error: "invalid_webhook_signature" }, 400);
+    const signature = request.headers.get("stripe-signature") || "";
+    if (!await verifyStripeSignature(rawBody, signature, secret)
+      && !(connectSecret && await verifyStripeSignature(rawBody, signature, connectSecret))) return json({ error: "invalid_webhook_signature" }, 400);
     let event;
     try { event = JSON.parse(rawBody); } catch { return json({ error: "invalid_json" }, 400); }
     if (!event?.id) return json({ error: "event_id_required" }, 400);
     const claim = await env.DB.prepare("INSERT OR IGNORE INTO billing_events (event_id,kind,created_at) VALUES (?,?,?)").bind(event.id, event.type || "unknown", Date.now()).run();
     if (Number(claim.meta?.changes || 0) !== 1) return json({ received: true, duplicate: true });
     const object = event.data?.object || {};
+    // Events from a connected account only update that partner's payout
+    // status (and release commission already held for them). They never
+    // touch billing or create commission.
+    if (event.account) {
+      if (event.type === "account.updated") {
+        try { await handleConnectedAccountUpdated(env, { ...object, id: object.id || event.account }); }
+        catch (error) { console.error("partner_account_update_error", JSON.stringify({ message: String(error?.message || error).slice(0, 200) })); }
+      }
+      return json({ received: true });
+    }
     const siteId = object.metadata?.siteId || object.subscription_details?.metadata?.siteId || object.lines?.data?.[0]?.metadata?.siteId;
     // Checkout only records the identifiers. The tier comes from the
     // subscription object, which arrives in its own event and is the thing that
@@ -2347,23 +2367,22 @@ export async function handleApi(request, env, ctx) {
 
     if (event.type === "invoice.paid" && siteId) {
       await env.DB.prepare("UPDATE sites SET contract='active' WHERE id=?").bind(siteId).run();
-      const site = await env.DB.prepare("SELECT * FROM sites WHERE id=?").bind(siteId).first();
-      const referrer = site?.channel === "referral" ? await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(site.referred_by).first() : null;
-      if (referrer?.stripe_account_id && stripeSecret(env)) {
-        // Executed only by a verified Stripe webhook; no client-supplied destination is trusted.
-        // 40% of the amount actually paid (Standard ¥3,000 -> ¥1,200, Pro ¥14,800 -> ¥5,920).
-        // Invoices in other currencies (USD, Adaptive Pricing) are shared on the
-        // JPY amount Stripe settled for the charge.
-        const paid = await referralPaidYen(stripeSecret(env), object);
-        const commission = referralCommissionYen(paid.amountYen, "jpy");
-        if (commission > 0) {
-          const transfer = new URLSearchParams({ amount: String(commission), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id, "metadata[invoiceId]": String(object.id || "") });
-          // Tie the transfer to the invoice's charge when known, so it does not
-          // wait on (or fail for lack of) available platform balance.
-          if (paid.chargeId) transfer.set("source_transaction", paid.chargeId);
-          const sent = await stripeRequest(stripeSecret(env), "/v1/transfers", transfer);
-          if (!sent?.ok) console.error("referral_transfer_failed", JSON.stringify({ siteId, invoiceId: object.id || null, error: sent?.data?.error?.message || null }));
-        }
+    }
+    // Partner commission: one ledger row per invoice (account referral or
+    // legacy referrer, never both), paid with source_transaction = the charge.
+    // Only this verified webhook creates commission; nothing comes from a client.
+    // A failure un-claims the event so Stripe retries it; the ledger makes
+    // the retry safe.
+    if (event.type === "invoice.paid" || event.type === "charge.refunded") {
+      try {
+        const outcome = event.type === "invoice.paid"
+          ? await recordInvoiceCommission(env, { invoice: object, siteId })
+          : await recordChargeRefund(env, { charge: object });
+        if (outcome?.status === "failed") console.error("referral_payout_not_sent", JSON.stringify({ event: event.id, type: event.type }));
+      } catch (error) {
+        console.error("referral_ledger_error", JSON.stringify({ event: event.id, type: event.type, message: String(error?.message || error).slice(0, 200) }));
+        await env.DB.prepare("DELETE FROM billing_events WHERE event_id=?").bind(event.id).run();
+        return json({ error: "referral_ledger_error" }, 500);
       }
     }
     // A failed payment no longer stops the site. Stripe retries for days before
@@ -3161,40 +3180,6 @@ function stripeMode(env) {
   if (/^(sk|rk)_live_/.test(value)) return "live";
   if (/^(sk|rk)_test_/.test(value)) return "test";
   return "unconfigured";
-}
-
-async function stripeGet(secret, path, { version } = {}) {
-  const headers = { authorization: `Bearer ${secret}` };
-  if (version) headers["stripe-version"] = version;
-  try {
-    const response = await fetch(`https://api.stripe.com${path}`, { method: "GET", headers });
-    let data = {};
-    try { data = await response.json(); } catch { data = {}; }
-    return { ok: response.ok, status: response.status, data };
-  } catch { return { ok: false, status: 0, data: {} }; }
-}
-
-const INVOICE_PAYMENTS_API_VERSION = "2025-03-31.basil";
-
-/**
- * What a paid invoice brought in, in JPY, and the charge behind it.
- * JPY invoices use amount_paid directly. Other currencies are read from the
- * charge's balance transaction (the gross JPY Stripe settled). The charge is
- * on the invoice in older API versions and behind invoice_payments in newer.
- */
-export async function referralPaidYen(secret, invoice, { get = stripeGet } = {}) {
-  let chargeId = typeof invoice?.charge === "string" ? invoice.charge : null;
-  if (!chargeId && invoice?.id) {
-    const list = await get(secret, `/v1/invoice_payments?invoice=${encodeURIComponent(invoice.id)}&limit=3`, { version: INVOICE_PAYMENTS_API_VERSION });
-    const row = (list.data?.data || []).find((item) => item?.status === "paid" && item?.payment?.type === "charge");
-    chargeId = typeof row?.payment?.charge === "string" ? row.payment.charge : row?.payment?.charge?.id || null;
-  }
-  if (String(invoice?.currency || "").toLowerCase() === "jpy") return { amountYen: Number(invoice.amount_paid) || 0, chargeId };
-  if (!chargeId) return { amountYen: 0, chargeId: null };
-  const charge = await get(secret, `/v1/charges/${encodeURIComponent(chargeId)}?expand[]=balance_transaction`);
-  const bt = charge.data?.balance_transaction;
-  if (!charge.ok || !bt || String(bt.currency || "").toLowerCase() !== "jpy") return { amountYen: 0, chargeId };
-  return { amountYen: Number(bt.amount) || 0, chargeId };
 }
 
 async function stripeRequest(secret, path, form, { version } = {}) {

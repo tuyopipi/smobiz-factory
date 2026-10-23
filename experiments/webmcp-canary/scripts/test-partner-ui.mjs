@@ -5,10 +5,11 @@ const browser = await chromium.launch({ headless: true, channel: process.env.PLA
 const artifacts = process.env.PARTNER_QA_OUTPUT || '/private/tmp/nurevo-partner-qa';
 await mkdir(artifacts, { recursive: true });
 try {
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, locale: 'ja-JP' });
   const errors = []; page.on('pageerror', e => errors.push(e.message));
   let code = null;
-  const partner = () => ({ referral_code: code, payout: { monthly_estimate_yen: 1200, cumulative_earned_yen: 2400, cumulative_paid_yen: null },
+  let payoutStatus = 'not_started', onboardCalls = 0;
+  const partner = () => ({ referral_code: code, payout: { monthly_estimate_yen: 1200, cumulative_earned_yen: 2400, cumulative_paid_yen: 0, held_yen: 1156, next_payout_yen: 0, later_payout_yen: 1156, next_payout_this_month: true, payout_day: 25, account: { status: payoutStatus, currently_due: payoutStatus === 'in_progress' ? 2 : 0 } },
     referrals: [{ email: 'referred@example.test', registered_at: 1791986400000, sites: [{ url: 'shop.example.test', plan: 'standard', billing_status: 'active' }] }] });
   await page.route('https://nurevo.test/**', async route => {
     const path = new URL(route.request().url()).pathname;
@@ -16,6 +17,7 @@ try {
       let data = {};
       if (path === '/api/me') data = { email: 'parent@example.test', role: 'store' };
       if (path === '/api/partner') data = partner();
+      if (path === '/api/partner/payout/onboard') { assert.equal(route.request().method(), 'POST'); onboardCalls++; data = { ok: true, kind: 'onboarding', url: 'https://connect.stripe.com/setup/e/acct_test' }; }
       if (path.startsWith('/api/partner/code')) { code = path.endsWith('regenerate') ? 'BCDEFGHJKMNP' : 'ABCDEFGHJKMN'; data = { referral_code: code }; }
       if (path === '/api/sites') data = { sites: [] };
       if (path === '/api/crawlers') data = { crawlers: [] };
@@ -38,12 +40,54 @@ try {
   assert.ok(await page.getByText('referred@example.test', { exact: true }).isVisible());
   assert.ok(await page.getByText('shop.example.test', { exact: true }).isVisible());
   assert.ok(await page.getByText('¥1,200', { exact: true }).isVisible());
+  // Payout account card: status, schedule, notes, and the onboarding button.
+  assert.ok(await page.getByRole('heading', { name: '報酬の受け取り口座', exact: true }).isVisible());
+  assert.ok(await page.getByText('毎月25日にまとめて口座へ入金', { exact: true }).isVisible());
+  assert.ok(await page.getByText('未登録', { exact: true }).isVisible());
+  assert.ok(await page.getByText(/Nurevoは口座番号を保存・閲覧しません/).isVisible());
+  assert.ok(await page.getByText(/日本国内の事業者・個人/).isVisible());
+  assert.ok(await page.getByText('今月25日に入金予定', { exact: true }).isVisible());
+  assert.ok(await page.getByText('来月以降', { exact: true }).isVisible());
+  assert.ok(await page.getByText('月額報酬見込み（手数料控除前の目安）', { exact: true }).isVisible());
   await page.screenshot({ path: `${artifacts}/partner-ja.png`, fullPage: true });
+  // Every payout string exists in all 8 languages.
+  const missing = await page.evaluate(() => {
+    const keys = ['ptPayoutTitle','ptPayoutNotStarted','ptPayoutInProgress','ptPayoutReady','ptPayoutUnavailable','ptPayoutDue','ptPayoutStart','ptPayoutContinue','ptPayoutUpdate','ptPayoutSchedule','ptPayoutSecure','ptPayoutJapan','ptPayoutHeldNote','ptHeld','ptNextThisMonth','ptLaterThisMonth','ptNextNextMonth','ptLaterNextMonth','ptPayoutExpired','ptPayoutOpening','ptMonthly','ptRate'];
+    const out = [];
+    for (const lang of ['ja','en','zh','tw','ko','es','fr','de']) for (const k of keys) if (!I[lang] || !I[lang][k]) out.push(lang + ':' + k);
+    for (const lang of ['en','zh','tw','ko','es','fr','de']) if (I[lang].ptPayoutTitle === I.ja.ptPayoutTitle) out.push(lang + ':untranslated');
+    for (const lang of ['ja','en','zh','tw','ko','es','fr','de']) if (!I[lang].ptPayoutSchedule.includes('{d}')) out.push(lang + ':schedule-day');
+    return out;
+  });
+  assert.deepEqual(missing, [], 'payout strings in all 8 languages');
+  for (const lang of ['zh', 'tw', 'ko', 'es', 'fr', 'de']) {
+    await page.locator('#lang').selectOption(lang);
+    const schedule = await page.locator('#payout-card').innerText();
+    assert.match(schedule, /25/, `${lang}: the payout day is shown`);
+    assert.equal(/ptPayout/.test(schedule), false, `${lang}: no raw keys`);
+  }
+  await page.locator('#lang').selectOption('ja');
+  // The button asks the server for a Stripe-hosted link and goes there.
+  await page.route('https://connect.stripe.com/**', route => route.fulfill({ body: '<title>Stripe</title>', contentType: 'text/html' }));
+  await Promise.all([page.waitForURL('https://connect.stripe.com/**'), page.getByRole('button', { name: '受け取り口座を登録', exact: true }).click()]);
+  assert.equal(onboardCalls, 1);
+  payoutStatus = 'in_progress';
+  await page.goto('https://nurevo.test/dashboard?payout=return#partner');
+  await page.getByRole('heading', { name: '報酬の受け取り口座', exact: true }).waitFor();
+  assert.ok(await page.getByText('登録手続き中', { exact: true }).isVisible());
+  assert.ok(await page.getByRole('button', { name: '登録を続ける', exact: true }).isVisible());
+  assert.ok(await page.getByText('あと2項目の入力が必要です。', { exact: true }).isVisible());
+  assert.equal(new URL(page.url()).searchParams.get('payout'), null, 'the return marker is removed from the address bar');
+  payoutStatus = 'ready';
+  await page.reload();
+  await page.getByRole('heading', { name: '報酬の受け取り口座', exact: true }).waitFor();
+  assert.ok(await page.getByRole('button', { name: '口座情報を確認・変更', exact: true }).isVisible());
+  await page.screenshot({ path: `${artifacts}/partner-payout-ready.png`, fullPage: true });
   await page.locator('#lang').selectOption('en');
   assert.ok(await page.getByRole('heading', { name: 'Partner', exact: true }).isVisible());
   await page.screenshot({ path: `${artifacts}/partner-en.png`, fullPage: true });
   assert.deepEqual(errors, []);
-  const lp = await browser.newPage({ viewport: { width: 1280, height: 800 } });
+  const lp = await browser.newPage({ viewport: { width: 1280, height: 800 }, locale: 'ja-JP' });
   let submitted;
   await lp.route('https://nurevo.test/**', async route => {
     const path = new URL(route.request().url()).pathname;
@@ -73,5 +117,5 @@ try {
   await lp.goto('https://nurevo.test/');
   assert.ok(await lp.locator('header').getByRole('link', { name: '新規登録', exact: true }).isVisible());
   await lp.screenshot({ path: `${artifacts}/lp-mobile.png` });
-  console.log(`PASS: JP/EN Partner routing for store accounts, issue/regenerate, automatic referral table, payout values, LP header/mobile button, signup payload/success, localized form. Screenshots: ${artifacts}`);
+  console.log(`PASS: payout account card (status, button, monthly 25th, Japan-only, bank details on Stripe), payout strings in 8 languages, JP/EN Partner routing for store accounts, issue/regenerate, automatic referral table, payout values, LP header/mobile button, signup payload/success, localized form. Screenshots: ${artifacts}`);
 } finally { await browser.close(); }

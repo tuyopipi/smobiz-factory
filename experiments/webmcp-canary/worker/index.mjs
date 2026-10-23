@@ -5,6 +5,7 @@ import { handleApi, runSovDailyBatch, centralLlmsForKey } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 import { runLifecycleReminders } from "./lifecycle-email.mjs";
 import { runScheduled } from "./schedule.mjs";
+import { runPartnerPayouts } from "./partner-payouts.mjs";
 
 const JSON_HEADERS = {
   "content-type": "application/json; charset=utf-8",
@@ -62,6 +63,9 @@ const SCHEDULED_RUNNERS = Object.freeze({
   // bounded per run, claimed before sending (so a repeat run never resends),
   // skipped while migration 0038 is unapplied.
   "lifecycle-reminders": (env) => runLifecycleReminders(env),
+  // Held partner commission is paid once the partner's Express account can
+  // receive transfers; bounded per run, idempotent, skipped until 0039.
+  "partner-payouts": (env) => runPartnerPayouts(env),
 });
 
 export default {
