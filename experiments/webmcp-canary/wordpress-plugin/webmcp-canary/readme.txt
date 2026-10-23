@@ -63,17 +63,15 @@ This plugin relies on the Nurevo service, operated by Bestie. LLC. It is not req
 
 **The browser tag is opt-in and off by default.** Settings has an optional "Load the Nurevo browser tag on public pages" checkbox, unchecked unless you tick it. While it is off, no script is enqueued and nothing about your visitors reaches the service. If you turn it on, a script is loaded from the configured service URL (by default `https://nurevo.jp/tag.js`) on every public page view, carrying your public site key. It reports public form structure — field names, types, labels, selectors and option counts — and privacy-safe submission outcomes. It is designed not to transmit values a visitor typed: no names, email addresses, phone numbers, message bodies or payment details. Unticking the box stops it immediately. You do not need it for AEO.
 
+**Nothing is sent until you agree.** Activating the plugin makes no request at all. The first time you open the AEO screen it explains what the diagnosis sends and asks you to tick a consent box and press "Run diagnosis". Until you do, or until you pair the site with a pairing code (which is itself an explicit request to connect), the plugin does not contact the Nurevo service. Your consent is stored as a WordPress option and removed when the plugin is uninstalled.
+
 **Requests the plugin makes, and when.** All of them go to the Nurevo service URL in Settings (by default `https://nurevo.jp`). None of them carries visitor data.
 
-*On activation, without a key:*
+*After you agree (Run diagnosis), without a key:*
 
-* AEO diagnosis — when you activate the plugin it runs one diagnosis so the AEO screen has a result to show. Sends your home URL and your WordPress language. The service then fetches your public front page, `/robots.txt` and `/llms.txt`. Endpoint: `/api/aeo/score`.
+* AEO diagnosis — when you press "Run diagnosis", and afterwards when you open the AEO screen, press "Check again" or apply a one-click fix. Sends your home URL and your WordPress language. The service then fetches your public front page, `/robots.txt` and `/llms.txt`. Endpoint: `/api/aeo/score`.
 
-*In wp-admin, when you open or refresh a screen, without a key:*
-
-* AEO diagnosis — the same request as above, when you open the AEO screen or press "Check again". Endpoint: `/api/aeo/score`.
-
-*When you connect the site (pairing code or licence key):*
+*When you connect the site (pairing code or licence key) — connecting counts as consent:*
 
 * Pairing — sends the pairing code you entered and your home URL. Endpoint: `/api/pair`.
 * Licence — sends the licence key you entered and your home URL. Endpoint: `/api/license/bind`.
@@ -103,7 +101,7 @@ By using these features you agree to the service's terms. Please read them befor
 2. Activate **Nurevo AEO** on the Plugins screen.
 3. Open **Nurevo AEO > Settings** and enable it.
 4. Check the business information the plugin extracted automatically and correct anything wrong. It only fills blanks, so nothing you typed was replaced.
-5. Open **Nurevo AEO > AEO Score** to run the diagnosis and apply the free fixes.
+5. Open **Nurevo AEO > AEO Score**, read what the diagnosis sends, tick the consent box and press **Run diagnosis**. Then apply the free fixes.
 6. A site key and a license key are optional. They are only needed for diagnostics history held by the service and for the Standard "always current" ruleset.
 
 == Frequently Asked Questions ==
@@ -146,7 +144,7 @@ No. Keep using a traditional SEO plugin for ordinary search. Nurevo AEO adds AI-
 
 = Does the plugin put anything on my public pages that talks to your servers? =
 
-Not unless you ask it to. The optional browser tag is off by default, and with it off no third-party script is loaded and no visitor data is sent anywhere. The AEO features do not use it. The requests the plugin does make are listed under "External services": on activation, in wp-admin, and from WP-Cron once a site is connected. None of them includes visitor data.
+Not unless you ask it to. The optional browser tag is off by default, and with it off no third-party script is loaded and no visitor data is sent anywhere. The AEO features do not use it. The requests the plugin does make are listed under "External services": none on activation, none before you agree on the AEO screen or pair the site, then in wp-admin and from WP-Cron once a site is connected. None of them includes visitor data.
 
 = Does it send what my visitors type into forms? =
 

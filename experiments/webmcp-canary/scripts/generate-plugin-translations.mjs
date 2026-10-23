@@ -549,6 +549,31 @@ const JA = {
   // Continuous optimization (0.7.2).
   "Automatic optimization found information that needs your confirmation. Please publish only real information.":
     "自動最適化で、確認が必要な情報が見つかりました。実在する情報だけを公開してください。",
+  // Consent before contacting the service (0.8.0).
+  "The diagnosis has not been run yet. Open Nurevo AEO and press Run diagnosis to agree to contact the Nurevo service.":
+    "診断はまだ実行されていません。Nurevo AEO を開き、「診断を実行」を押してNurevoサービスへの接続に同意してください。",
+  "Run your first AEO diagnosis":
+    "最初のAEO診断を実行する",
+  "The diagnosis is run by the Nurevo service at nurevo.jp. Nothing has been sent yet: the plugin contacts the service only after you agree here.":
+    "診断は nurevo.jp のNurevoサービスで実行されます。まだ何も送信されていません。ここで同意するまで、プラグインはサービスに接続しません。",
+  "Running it sends your home page URL and your WordPress language. The service then reads your public front page, robots.txt and llms.txt, as any visitor could. No visitor data is sent.":
+    "実行すると、ホームページのURLとWordPressの言語が送信されます。その後サービスが、一般の訪問者と同じように公開中のトップページ・robots.txt・llms.txtを読み取ります。訪問者のデータは送信されません。",
+  "Structured data, llms.txt and AI crawler rules work without this; they are produced by the plugin on your own server.":
+    "構造化データ・llms.txt・AIクローラーの設定はこれがなくても動きます。いずれもお使いのサーバー上でプラグインが生成します。",
+  "Tick the box to agree before running the diagnosis.":
+    "診断を実行する前に、チェックボックスにチェックを入れて同意してください。",
+  "I agree to send this site’s URL to the Nurevo service for diagnosis, under its Terms of Service and Privacy Policy.":
+    "利用規約とプライバシーポリシーに基づき、診断のためにこのサイトのURLをNurevoサービスへ送信することに同意します。",
+  "Run diagnosis":
+    "診断を実行",
+  "Terms of Service":
+    "利用規約",
+  "Privacy Policy":
+    "プライバシーポリシー",
+  "not run yet":
+    "未実行",
+  "The diagnosis has not been run yet. Nothing is sent to the Nurevo service until you run it.":
+    "診断はまだ実行されていません。実行するまで、Nurevoサービスには何も送信されません。",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo

@@ -703,6 +703,8 @@ function webmcp_canary_sanitize_settings($input) {
             add_settings_error(WEBMCP_CANARY_OPTION, $result->get_error_code(), $result->get_error_message(), 'error');
         } else {
             $paired = true;
+            // Pairing is an explicit request to connect, so it is consent.
+            webmcp_canary_record_consent('pairing');
             $plan = $result['plan'];
             // Sent below, once the identifiers are stored - a freshly connected
             // site should not look empty in the dashboard until a cron run.
@@ -737,6 +739,7 @@ function webmcp_canary_sanitize_settings($input) {
             add_settings_error(WEBMCP_CANARY_OPTION, $bound->get_error_code(), $bound->get_error_message(), 'error');
         } else {
             $bound_ok = true;
+            webmcp_canary_record_consent('license');
             $plan = $bound['plan'];
             // Adopt what the service issued. These are what let the site sync
             // its profile and carry a diagnosis history.
@@ -2965,6 +2968,7 @@ function webmcp_canary_issue_site_key_action() {
         }
         webmcp_canary_redirect_settings('error', $result->get_error_message());
     }
+    webmcp_canary_record_consent('site_key');
     $settings = webmcp_canary_adopt_connection($settings, $result);
     $settings['enabled'] = '1';
     update_option(WEBMCP_CANARY_OPTION, $settings);
@@ -3230,14 +3234,114 @@ function webmcp_canary_should_force_refresh() {
     return wp_verify_nonce($nonce, 'webmcp_canary_refresh');
 }
 
+/* -----------------------------------------------------------------------
+ * Consent before contacting the Nurevo service.
+ *
+ * Nothing is sent to the service until an administrator asks for it: either by
+ * pressing "Run diagnosis" with the consent box ticked, or by pairing the site
+ * (or binding a licence), which is itself an explicit request to connect.
+ * Activation makes no HTTP request at all.
+ * --------------------------------------------------------------------- */
+
+if (!defined('WEBMCP_CANARY_CONSENT_OPTION')) {
+    define('WEBMCP_CANARY_CONSENT_OPTION', 'webmcp_canary_consent');
+}
+
+/**
+ * Has an administrator agreed to contact the Nurevo service?
+ *
+ * A site that is already connected (site key or site ID present) agreed when
+ * it was paired, licensed or issued a key, so it counts without a stored flag.
+ */
+function webmcp_canary_has_consent($settings = null) {
+    $stored = get_option(WEBMCP_CANARY_CONSENT_OPTION, array());
+    if (is_array($stored) && !empty($stored['at'])) {
+        return true;
+    }
+    $settings = is_array($settings) ? $settings : webmcp_canary_settings();
+    return (string) ($settings['site_key'] ?? '') !== '' || (string) ($settings['site_id'] ?? '') !== '';
+}
+
+/** Record consent. $via says how it was given: 'diagnosis', 'pairing', 'license', 'cli'. */
+function webmcp_canary_record_consent($via = 'diagnosis') {
+    $stored = get_option(WEBMCP_CANARY_CONSENT_OPTION, array());
+    if (is_array($stored) && !empty($stored['at'])) {
+        return;
+    }
+    update_option(WEBMCP_CANARY_CONSENT_OPTION, array(
+        'at' => time(),
+        'via' => sanitize_key($via),
+        'user' => function_exists('get_current_user_id') ? (int) get_current_user_id() : 0,
+    ), false);
+}
+
+/**
+ * Handle the "Run diagnosis" form. Returns true when consent was recorded.
+ * Split from the admin-post handler so it can be exercised without exiting.
+ */
+function webmcp_canary_handle_consent_submit($post) {
+    if (!current_user_can('manage_options')) {
+        return false;
+    }
+    if (empty($post['nurevo_consent'])) {
+        return false;
+    }
+    webmcp_canary_record_consent('diagnosis');
+    delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
+    return true;
+}
+
+add_action('admin_post_webmcp_canary_consent', 'webmcp_canary_consent_action');
+function webmcp_canary_consent_action() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You do not have permission to perform this action.', 'nurevo-webmcp'));
+    }
+    check_admin_referer('webmcp_canary_consent');
+    $agreed = webmcp_canary_handle_consent_submit(wp_unslash($_POST)); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- verified above.
+    $args = array('page' => 'webmcp-canary');
+    if (!$agreed) {
+        $args['nurevo_consent_missing'] = '1';
+    }
+    wp_safe_redirect(add_query_arg($args, admin_url('admin.php')));
+    exit;
+}
+
+/** The first-run panel shown on the AEO screen until consent is given. */
+function webmcp_canary_consent_panel() {
+    $missing = !empty($_GET['nurevo_consent_missing']); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
+    ob_start();
+    ?>
+    <section class="webmcp-aeo-section webmcp-consent">
+        <h2><?php esc_html_e('Run your first AEO diagnosis', 'nurevo-webmcp'); ?></h2>
+        <p><?php esc_html_e('The diagnosis is run by the Nurevo service at nurevo.jp. Nothing has been sent yet: the plugin contacts the service only after you agree here.', 'nurevo-webmcp'); ?></p>
+        <p><?php esc_html_e('Running it sends your home page URL and your WordPress language. The service then reads your public front page, robots.txt and llms.txt, as any visitor could. No visitor data is sent.', 'nurevo-webmcp'); ?></p>
+        <p><?php esc_html_e('Structured data, llms.txt and AI crawler rules work without this; they are produced by the plugin on your own server.', 'nurevo-webmcp'); ?></p>
+        <?php if ($missing) : ?>
+            <p class="webmcp-consent-missing"><strong><?php esc_html_e('Tick the box to agree before running the diagnosis.', 'nurevo-webmcp'); ?></strong></p>
+        <?php endif; ?>
+        <form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+            <input type="hidden" name="action" value="webmcp_canary_consent">
+            <?php wp_nonce_field('webmcp_canary_consent'); ?>
+            <p><label><input type="checkbox" name="nurevo_consent" value="1"> <?php esc_html_e('I agree to send this site’s URL to the Nurevo service for diagnosis, under its Terms of Service and Privacy Policy.', 'nurevo-webmcp'); ?></label></p>
+            <p>
+                <button type="submit" class="button button-primary"><?php esc_html_e('Run diagnosis', 'nurevo-webmcp'); ?></button>
+                <a href="https://nurevo.jp/terms" target="_blank" rel="noopener"><?php esc_html_e('Terms of Service', 'nurevo-webmcp'); ?></a> ·
+                <a href="https://nurevo.jp/privacy" target="_blank" rel="noopener"><?php esc_html_e('Privacy Policy', 'nurevo-webmcp'); ?></a>
+            </p>
+        </form>
+    </section>
+    <?php
+    return ob_get_clean();
+}
+
 register_activation_hook(__FILE__, 'webmcp_canary_activate_aeo_score');
+/**
+ * Activation: local work only. Nothing here makes an HTTP request - not to the
+ * Nurevo service, and not the loopback measurement of this site's own front
+ * page, which waits for the first admin screen or cron run instead.
+ */
 function webmcp_canary_activate_aeo_score() {
     webmcp_canary_autofill_business_data();
-    // Measure before the diagnosis, and before the first page is served: until
-    // this lands nothing is suppressed, so the sooner it runs the shorter the
-    // window in which a duplicate could appear.
-    webmcp_canary_measure_rival_schema();
-    webmcp_canary_get_aeo_score(true);
     if (function_exists('wp_next_scheduled') && !wp_next_scheduled(WEBMCP_CANARY_RULESET_CRON)) {
         wp_schedule_event(time() + HOUR_IN_SECONDS, 'twicedaily', WEBMCP_CANARY_RULESET_CRON);
     }
@@ -4179,6 +4283,10 @@ function webmcp_canary_aeo_score_endpoints($fresh = false) {
 }
 
 function webmcp_canary_get_aeo_score($force_refresh = false) {
+    // No request leaves this site before an administrator has agreed to it.
+    if (!webmcp_canary_has_consent()) {
+        return new WP_Error('webmcp_aeo_no_consent', __('The diagnosis has not been run yet. Open Nurevo AEO and press Run diagnosis to agree to contact the Nurevo service.', 'nurevo-webmcp'));
+    }
     $cached = webmcp_canary_cached_aeo_score();
     if (!$force_refresh && is_array($cached) && !empty($cached['saved_at']) && time() - intval($cached['saved_at']) < WEBMCP_CANARY_AEO_SCORE_TTL) {
         return $cached['data'];
@@ -4287,13 +4395,17 @@ function webmcp_canary_aeo_page() {
         return;
     }
     webmcp_canary_autofill_business_data();
-    webmcp_canary_pull_profile();
-    webmcp_canary_drain_pending_catalog();
-    webmcp_canary_sync_ruleset();
+    $consented = webmcp_canary_has_consent();
+    if ($consented) {
+        webmcp_canary_pull_profile();
+        webmcp_canary_drain_pending_catalog();
+        webmcp_canary_sync_ruleset();
+    }
     // A retry is a deliberate request for a fresh diagnosis, so it bypasses the
     // cached copy; without it the button would re-show the same stale failure.
-    $retry = isset($_GET['nurevo_recheck']) && check_admin_referer('nurevo_recheck');
-    $result = webmcp_canary_get_aeo_score($retry);
+    $retry = $consented && isset($_GET['nurevo_recheck']) && check_admin_referer('nurevo_recheck');
+    // Before consent nothing is fetched: the screen shows the consent panel.
+    $result = $consented ? webmcp_canary_get_aeo_score($retry) : null;
     $score = is_wp_error($result) ? null : $result;
     $view = webmcp_canary_aeo_view($score, is_wp_error($result) ? $result : null);
     $settings = webmcp_canary_settings();
@@ -4320,6 +4432,9 @@ function webmcp_canary_aeo_page() {
                 <a href="<?php echo esc_url(admin_url('admin.php?page=webmcp-canary-settings')); ?>"><?php esc_html_e('Review and correct', 'nurevo-webmcp'); ?></a>
             </p><p><small><?php esc_html_e('These were inferred from your existing settings and published content. Only blank fields were filled, so please check that the values are right.', 'nurevo-webmcp'); ?></small></p></div>
         <?php endif; ?>
+        <?php if (!$consented) : ?>
+            <?php echo webmcp_canary_consent_panel(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_consent_panel() ?>
+        <?php else : ?>
         <section class="webmcp-aeo-hero">
             <div class="webmcp-aeo-gauge" style="--aeo-color:<?php echo esc_attr($view['color']); ?>;--aeo-degrees:<?php echo esc_attr($degrees); ?>deg">
                 <div><strong><?php echo is_null($view['score']) ? '—' : esc_html($view['score']); ?></strong><span>/100</span></div>
@@ -4396,6 +4511,7 @@ function webmcp_canary_aeo_page() {
                 </ol>
             <?php endif; ?>
         </section>
+        <?php endif; ?>
 
         <?php $ownership = webmcp_canary_schema_ownership($settings); ?>
         <section class="webmcp-aeo-section webmcp-schema-owners">
@@ -4502,7 +4618,8 @@ function webmcp_canary_admin_bar_score($wp_admin_bar) {
     $score = is_array($cached) ? $cached['data'] : null;
     $view = webmcp_canary_aeo_view($score);
     /* translators: %s: AEO score out of 100, or a "checking" label while it is being calculated. */
-    $label = sprintf(__('AEO %s', 'nurevo-webmcp'), is_null($view['score']) ? __('Checking', 'nurevo-webmcp') : $view['score']);
+    $pending_label = webmcp_canary_has_consent() ? __('Checking', 'nurevo-webmcp') : __('not run yet', 'nurevo-webmcp');
+    $label = sprintf(__('AEO %s', 'nurevo-webmcp'), is_null($view['score']) ? $pending_label : $view['score']);
     $wp_admin_bar->add_node(array(
         'id' => 'webmcp-canary-aeo-score',
         'title' => '<span class="webmcp-aeo-admin-dot" style="background:' . esc_attr($view['color']) . '"></span>' . esc_html($label),
@@ -4522,6 +4639,11 @@ function webmcp_canary_aeo_widget() {
     $cached = webmcp_canary_cached_aeo_score();
     $score = is_array($cached) ? $cached['data'] : null;
     $view = webmcp_canary_aeo_view($score);
+    if (!webmcp_canary_has_consent()) {
+        echo '<p>' . esc_html__('The diagnosis has not been run yet. Nothing is sent to the Nurevo service until you run it.', 'nurevo-webmcp') . '</p>';
+        echo '<p><a class="button" href="' . esc_url(admin_url('admin.php?page=webmcp-canary')) . '">' . esc_html__('Run diagnosis', 'nurevo-webmcp') . '</a></p>';
+        return;
+    }
     echo '<p style="font-size:30px;font-weight:700;margin:8px 0;color:' . esc_attr($view['color']) . '">' . (is_null($view['score']) ? esc_html__('Checking', 'nurevo-webmcp') : esc_html($view['score'] . ' / 100')) . '</p>';
     echo '<p>' . esc_html($view['heading']) . '</p><p><a href="' . esc_url(admin_url('admin.php?page=webmcp-canary')) . '">' . esc_html__('See the full diagnosis', 'nurevo-webmcp') . '</a></p>';
 }

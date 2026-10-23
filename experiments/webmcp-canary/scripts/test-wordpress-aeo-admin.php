@@ -121,6 +121,7 @@ if (!function_exists('do_action')) { function do_action(...$args) {} }
 if (!function_exists('get_current_screen')) { function get_current_screen() { return $GLOBALS['webmcp_test_screen'] ?? null; } }
 function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_html__($text) { return esc_html($text); }
+function esc_html_e($text) { echo esc_html($text); }
 function esc_attr($value) { return esc_html($value); }
 function esc_url($value) { return esc_html($value); }
 function wp_nonce_url($url, $action) { return $url . '&_wpnonce=' . md5($action); }
@@ -131,6 +132,8 @@ function wp_schedule_event($timestamp, $recurrence, $hook) { $GLOBALS['webmcp_te
 function wp_clear_scheduled_hook($hook) { $GLOBALS['webmcp_test_cleared'][] = $hook; return 1; }
 function plugins_url($path = '', $plugin = '') { return 'https://example.test/wp-content/plugins/webmcp-canary/' . ltrim($path, '/'); }
 function wp_date($format, $timestamp = null) { return gmdate($format, $timestamp ?? time()); }
+function get_current_user_id() { return $GLOBALS['webmcp_test_user_id'] ?? 1; }
+function wp_nonce_field($action = -1, $name = '_wpnonce') { echo '<input type="hidden" name="' . $name . '" value="' . md5($action) . '">'; }
 
 require dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php';
 
@@ -573,6 +576,51 @@ expect($normalized['additionalType'] === 'https://schema.org/CafeOrCoffeeShop', 
 // delivery is verified by matching it value for value on the page.
 expect(strpos(webmcp_test_function_body(file_get_contents(__DIR__ . '/../wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_own_schema_bundle'), 'webmcp_canary_normalize_business_facts') !== false,
     'the local business node is normalised');
+
+/* --- 0.8.0: consent before contacting the service --------------------- */
+
+// Activation does local work only: no request to the service and no loopback.
+delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array('tag_url' => 'https://nurevo.jp/tag.js'));
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+$GLOBALS['webmcp_test_last_remote'] = null;
+$GLOBALS['webmcp_test_remote_get'] = array('' => array('status' => 200, 'body' => '{}'));
+webmcp_canary_activate_aeo_score();
+expect($GLOBALS['webmcp_test_remote_get_log'] === array() && $GLOBALS['webmcp_test_last_remote'] === null, 'activation makes no HTTP request at all');
+expect(!webmcp_canary_has_consent(), 'a fresh install has not consented');
+$activation_body = webmcp_test_function_body(file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_activate_aeo_score');
+expect(strpos($activation_body, 'get_aeo_score') === false && strpos($activation_body, 'measure_rival_schema') === false, 'activation no longer diagnoses or measures');
+
+// Before consent the diagnosis refuses without sending anything.
+$no_consent = webmcp_canary_get_aeo_score(true);
+expect(is_wp_error($no_consent) && $no_consent->get_error_code() === 'webmcp_aeo_no_consent', 'no diagnosis before consent');
+expect($GLOBALS['webmcp_test_remote_get_log'] === array(), 'and no request before consent');
+$GLOBALS['webmcp_test_remote_get'] = array();
+
+// The consent form needs the box ticked.
+expect(webmcp_canary_handle_consent_submit(array()) === false, 'pressing Run diagnosis without the box records nothing');
+expect(!webmcp_canary_has_consent(), 'so there is still no consent');
+expect(webmcp_canary_handle_consent_submit(array('nurevo_consent' => '1')) === true, 'ticking the box records consent');
+expect(webmcp_canary_has_consent(), 'consent is stored');
+expect(get_option(WEBMCP_CANARY_CONSENT_OPTION)['via'] === 'diagnosis', 'with how it was given');
+$consent_panel = webmcp_canary_consent_panel();
+expect(strpos($consent_panel, 'name="nurevo_consent"') !== false && strpos($consent_panel, 'Run diagnosis') !== false, 'the first-run panel has a consent box and a Run diagnosis button');
+expect(strpos($consent_panel, 'webmcp_canary_consent') !== false, 'and posts to the consent action');
+
+// A connected site consented when it was connected.
+delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+expect(webmcp_canary_has_consent(array('site_key' => 'nrv_x', 'site_id' => '')), 'a site key implies consent');
+expect(webmcp_canary_has_consent(array('site_key' => '', 'site_id' => 'abc')), 'so does a site ID');
+
+// Pairing with a code is consent.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array('tag_url' => 'https://nurevo.jp/tag.js'));
+$GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => '{"ok":true,"plan":"free","site_id":"c1","site_key":"nrv_c1","profile_token":"t","domain":"example.test"}');
+webmcp_canary_sanitize_settings(array('tag_url' => 'https://nurevo.jp/tag.js', 'pairing_code' => 'NRV-CONSE-NTCON-SENTC-ONSEN'));
+expect(get_option(WEBMCP_CANARY_CONSENT_OPTION)['via'] === 'pairing', 'pairing records consent');
+unset($GLOBALS['webmcp_test_remote']);
+delete_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION);
+$readme_consent = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
+expect(strpos($readme_consent, 'Nothing is sent until you agree.') !== false && strpos($readme_consent, 'On activation, without a key') === false, 'the readme says nothing is sent before consent');
 
 /* --- Free plan completeness: diagnosis works with no site key ----------- */
 
