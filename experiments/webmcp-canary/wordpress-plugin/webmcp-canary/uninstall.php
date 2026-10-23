@@ -18,7 +18,7 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 /**
  * Delete this plugin's options and transients from the current site.
  */
-function nurevo_aeo_uninstall_site() {
+function webmcp_canary_uninstall_site() {
     global $wpdb;
 
     $patterns = array(
@@ -35,17 +35,25 @@ function nurevo_aeo_uninstall_site() {
         }
     }
 
+    // Per-post settings: llms.txt / schema exclusions and page-level FAQs.
+    foreach (array('_nurevo_exclude_llms', '_nurevo_exclude_schema', '_nurevo_faq') as $meta_key) {
+        delete_post_meta_by_key($meta_key);
+    }
+
     wp_clear_scheduled_hook('webmcp_canary_ruleset_check');
 }
+
+// Per-user dismissal of the "output is off" notice, stored once per network.
+delete_metadata('user', 0, 'webmcp_canary_off_notice_dismissed', '', true);
 
 if (is_multisite()) {
     $site_ids = get_sites(array('fields' => 'ids', 'number' => 0));
     foreach ($site_ids as $site_id) {
         switch_to_blog($site_id);
-        nurevo_aeo_uninstall_site();
+        webmcp_canary_uninstall_site();
         restore_current_blog();
     }
     delete_site_option('webmcp_canary_settings');
 } else {
-    nurevo_aeo_uninstall_site();
+    webmcp_canary_uninstall_site();
 }

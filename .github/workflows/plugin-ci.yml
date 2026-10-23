@@ -3,6 +3,13 @@
 # Test-only by design: it runs on push and pull request, never on a schedule,
 # has read-only repository access, uses no secrets, and deploys nothing.
 # Other workflow files stay ignored by .gitignore (see the note there).
+#
+# Jobs:
+#   test          Worker and plugin tests on Node 22 / PHP 8.3, translations, zip build.
+#   php           php -l and the PHP harness tests on every PHP the plugin supports (7.4-8.4).
+#   plugin-check  WordPress Plugin Check (plugin_repo category) on the built zip.
+#   wp-env-smoke  Real WordPress + Yoast SEO: activate, JSON-LD, /llms.txt, uninstall. Non-blocking for now.
+#   phpcs         WordPress-Extra + PHPCompatibilityWP (7.4-). Report-only for now.
 name: Plugin CI
 
 on:
@@ -27,7 +34,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: shivammathur/setup-php@v2
+      # The PHP syntax check and the schema merge tests moved to the `php`
+      # matrix job below, which includes this version.
+      - uses: shivammathur/setup-php@2.37.2
         with:
           php-version: "8.3"
           tools: none
@@ -38,14 +47,6 @@ jobs:
           node-version: "22"
           cache: npm
           cache-dependency-path: experiments/webmcp-canary/package-lock.json
-
-      - name: PHP syntax check (plugin)
-        run: |
-          find wordpress-plugin/webmcp-canary -name '*.php' -print0 | xargs -0 -n1 php -l
-
-      - name: Schema merge tests
-        if: hashFiles('experiments/webmcp-canary/scripts/test-schema-merge.php') != ''
-        run: php scripts/test-schema-merge.php
 
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
@@ -89,3 +90,164 @@ jobs:
           stable=$(sed -n 's/^Stable tag: //p' wordpress-plugin/webmcp-canary/readme.txt)
           echo "header=$header constant=$constant stable=$stable"
           test "$header" = "$constant" && test "$header" = "$stable"
+
+  # The plugin header says "Requires PHP: 7.4". This proves every plugin file
+  # parses, and the two PHP harnesses run, on each supported PHP release.
+  # The harnesses use no syntax newer than 7.4 (checked with PHPCompatibility,
+  # testVersion 7.4-), so they are linted and run on 7.4 as well.
+  php:
+    name: PHP ${{ matrix.php }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["7.4", "8.0", "8.1", "8.2", "8.3", "8.4"]
+    defaults:
+      run:
+        working-directory: experiments/webmcp-canary
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: none
+          coverage: none
+
+      - name: PHP syntax check (plugin)
+        run: |
+          php -v
+          find wordpress-plugin/webmcp-canary -name '*.php' -print0 | xargs -0 -n1 php -l
+
+      - name: PHP syntax check (test harnesses)
+        run: |
+          for f in scripts/test-schema-merge.php scripts/test-wordpress-aeo-admin.php; do
+            if [ -f "$f" ]; then php -l "$f"; fi
+          done
+
+      # Every PHP diagnostic (notice, deprecation, warning) is shown on stderr
+      # and fails the step, so a 7.4 incompatibility or an 8.4 deprecation in
+      # the plugin cannot pass unnoticed.
+      - name: Schema merge tests
+        if: hashFiles('experiments/webmcp-canary/scripts/test-schema-merge.php') != ''
+        run: |
+          php -d error_reporting=-1 -d display_errors=stderr -d display_startup_errors=1 \
+            scripts/test-schema-merge.php 2> "$RUNNER_TEMP/diagnostics.txt"
+          if [ -s "$RUNNER_TEMP/diagnostics.txt" ]; then
+            cat "$RUNNER_TEMP/diagnostics.txt"
+            echo "::error::PHP ${{ matrix.php }} emitted diagnostics in test-schema-merge.php"
+            exit 1
+          fi
+
+      - name: WordPress plugin admin tests
+        run: |
+          php -d error_reporting=-1 -d display_errors=stderr -d display_startup_errors=1 \
+            scripts/test-wordpress-aeo-admin.php 2> "$RUNNER_TEMP/diagnostics.txt"
+          if [ -s "$RUNNER_TEMP/diagnostics.txt" ]; then
+            cat "$RUNNER_TEMP/diagnostics.txt"
+            echo "::error::PHP ${{ matrix.php }} emitted diagnostics in test-wordpress-aeo-admin.php"
+            exit 1
+          fi
+
+  # The official Plugin Check, on exactly what would be uploaded: the built
+  # zip, unpacked. Category plugin_repo is the set of checks the WordPress.org
+  # plugin directory runs on submissions. Experimental checks stay off, as on
+  # WordPress.org. Nothing is ignored: no ignore-codes, exclude-checks,
+  # exclude-files or exclude-directories. If one is ever needed, list it here
+  # with the reason next to it.
+  plugin-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Build plugin zip
+        working-directory: experiments/webmcp-canary
+        run: node scripts/build-plugin-zip.mjs
+
+      - name: Unpack the zip
+        run: |
+          set -- experiments/webmcp-canary/dist/nurevo-webmcp-*.zip
+          if [ "$#" -ne 1 ] || [ ! -f "$1" ]; then
+            echo "::error::Expected exactly one dist/nurevo-webmcp-*.zip, found: $*"
+            exit 1
+          fi
+          rm -rf plugin-check-build
+          mkdir plugin-check-build
+          unzip -q "$1" -d plugin-check-build
+          ls -la plugin-check-build/nurevo-webmcp
+
+      - name: WordPress Plugin Check
+        uses: wordpress/plugin-check-action@v1.1.9
+        with:
+          build-dir: ./plugin-check-build/nurevo-webmcp
+          # One line: the action turns newlines into commas, and a trailing
+          # newline from a block scalar would leave a trailing comma.
+          categories: plugin_repo
+
+  # Real WordPress (latest) with Yoast SEO from wordpress.org, via @wordpress/env
+  # in Docker. See scripts/wp-env-smoke.mjs for every step and assertion.
+  # Outbound HTTP to anything but the site itself is recorded and blocked by a
+  # test mu-plugin, so this job calls no external service.
+  wp-env-smoke:
+    name: WordPress + Yoast smoke (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    # Non-blocking while the job is new: a first-run flake (image pulls,
+    # wordpress.org downloads) must not block PRs. Make it blocking once it
+    # has been green for a while.
+    continue-on-error: true
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["7.4", "8.3"]
+    defaults:
+      run:
+        working-directory: experiments/webmcp-canary
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Build plugin zip
+        run: node scripts/build-plugin-zip.mjs
+
+      - name: Smoke test in wp-env
+        env:
+          WP_ENV_PHP_VERSION: ${{ matrix.php }}
+        run: node scripts/wp-env-smoke.mjs
+
+  # WordPress coding standards and PHP 7.4+ compatibility, on the plugin
+  # source (the zip ships the same PHP files). Report-only for now: the
+  # step never fails the job until the existing findings are worked down.
+  phpcs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Also non-blocking at job level, so a Composer/Packagist hiccup while
+    # installing the tools cannot block a PR either.
+    continue-on-error: true
+    defaults:
+      run:
+        working-directory: experiments/webmcp-canary
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@2.37.2
+        with:
+          php-version: "8.3"
+          tools: composer:v2
+          coverage: none
+
+      - name: Install PHPCS and standards (pinned in tests/phpcs/composer.json)
+        run: composer install -d tests/phpcs --no-interaction --no-progress
+
+      - name: PHPCS (report-only)
+        continue-on-error: true
+        run: tests/phpcs/vendor/bin/phpcs --standard=tests/phpcs/phpcs.xml.dist --report=summary --report-source

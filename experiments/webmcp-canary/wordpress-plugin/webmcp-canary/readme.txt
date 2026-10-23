@@ -4,7 +4,7 @@ Tags: aeo, ai-search, schema, structured-data, llms-txt
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.7.4
+Stable tag: 0.8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,17 +63,15 @@ This plugin relies on the Nurevo service, operated by Bestie. LLC. It is not req
 
 **The browser tag is opt-in and off by default.** Settings has an optional "Load the Nurevo browser tag on public pages" checkbox, unchecked unless you tick it. While it is off, no script is enqueued and nothing about your visitors reaches the service. If you turn it on, a script is loaded from the configured service URL (by default `https://nurevo.jp/tag.js`) on every public page view, carrying your public site key. It reports public form structure — field names, types, labels, selectors and option counts — and privacy-safe submission outcomes. It is designed not to transmit values a visitor typed: no names, email addresses, phone numbers, message bodies or payment details. Unticking the box stops it immediately. You do not need it for AEO.
 
+**Nothing is sent until you agree.** Activating the plugin makes no request at all. The first time you open the AEO screen it explains what the diagnosis sends and asks you to tick a consent box and press "Run diagnosis". Until you do, or until you pair the site with a pairing code (which is itself an explicit request to connect), the plugin does not contact the Nurevo service. Your consent is stored as a WordPress option and removed when the plugin is uninstalled.
+
 **Requests the plugin makes, and when.** All of them go to the Nurevo service URL in Settings (by default `https://nurevo.jp`). None of them carries visitor data.
 
-*On activation, without a key:*
+*After you agree (Run diagnosis), without a key:*
 
-* AEO diagnosis — when you activate the plugin it runs one diagnosis so the AEO screen has a result to show. Sends your home URL and your WordPress language. The service then fetches your public front page, `/robots.txt` and `/llms.txt`. Endpoint: `/api/aeo/score`.
+* AEO diagnosis — when you press "Run diagnosis", and afterwards when you open the AEO screen, press "Check again" or apply a one-click fix. Sends your home URL and your WordPress language. The service then fetches your public front page, `/robots.txt` and `/llms.txt`. Endpoint: `/api/aeo/score`.
 
-*In wp-admin, when you open or refresh a screen, without a key:*
-
-* AEO diagnosis — the same request as above, when you open the AEO screen or press "Check again". Endpoint: `/api/aeo/score`.
-
-*When you connect the site (pairing code or licence key):*
+*When you connect the site (pairing code or licence key) — connecting counts as consent:*
 
 * Pairing — sends the pairing code you entered and your home URL. Endpoint: `/api/pair`.
 * Licence — sends the licence key you entered and your home URL. Endpoint: `/api/license/bind`.
@@ -92,6 +90,8 @@ The plugin also requests your own front page once a day (a loopback request to y
 
 The site key is a public identifier. It appears in markup served to browsers, so never put a server secret in it. The license key is separate and is never printed into public pages.
 
+The plugin suggests matching text for your site's privacy policy under **Settings > Privacy** (Policy Guide).
+
 By using these features you agree to the service's terms. Please read them before entering a key:
 
 * Privacy Policy: https://nurevo.jp/privacy
@@ -103,7 +103,7 @@ By using these features you agree to the service's terms. Please read them befor
 2. Activate **Nurevo AEO** on the Plugins screen.
 3. Open **Nurevo AEO > Settings** and enable it.
 4. Check the business information the plugin extracted automatically and correct anything wrong. It only fills blanks, so nothing you typed was replaced.
-5. Open **Nurevo AEO > AEO Score** to run the diagnosis and apply the free fixes.
+5. Open **Nurevo AEO > AEO Score**, read what the diagnosis sends, tick the consent box and press **Run diagnosis**. Then apply the free fixes.
 6. A site key and a license key are optional. They are only needed for diagnostics history held by the service and for the Standard "always current" ruleset.
 
 == Frequently Asked Questions ==
@@ -111,6 +111,14 @@ By using these features you agree to the service's terms. Please read them befor
 = How do I publish my FAQ? =
 
 Enter the questions and answers under **Nurevo AEO > Settings**, then add the **Nurevo FAQ** block (or the `[nurevo_faq]` shortcode) to the page where they should appear. The questions are shown there as expandable items and published as FAQPage structured data on that page only. Search engines accept FAQ markup only for questions a visitor can read, so nothing is published for an FAQ that is not on any page.
+
+= Can I leave a page out, or give a page its own FAQ? =
+
+Yes. In the block editor, open the **Nurevo AEO** panel in the post sidebar; in the classic editor, use the **Nurevo AEO** box. You can leave the page out of `/llms.txt`, stop Nurevo publishing structured data on it, and enter questions and answers for that page alone. A page's own questions are shown where you place the Nurevo FAQ block set to "This page's own questions" (or the `[nurevo_faq source="post"]` shortcode), and published as FAQPage on that page only.
+
+= Can I copy the settings to another site, or script them? =
+
+Yes. **Nurevo AEO > Settings > Tools** exports the settings (output switches, business details, FAQ and services) as a JSON file and imports one. Keys, tokens, the plan and the connection are never exported or imported, and a file containing them is refused. With WP-CLI: `wp nurevo status`, `wp nurevo diagnose`, `wp nurevo export` and `wp nurevo import <file>`. Administrators can also read the output state from the REST route `GET /wp-json/nurevo/v1/status`.
 
 = What is AEO? =
 
@@ -146,7 +154,7 @@ No. Keep using a traditional SEO plugin for ordinary search. Nurevo AEO adds AI-
 
 = Does the plugin put anything on my public pages that talks to your servers? =
 
-Not unless you ask it to. The optional browser tag is off by default, and with it off no third-party script is loaded and no visitor data is sent anywhere. The AEO features do not use it. The requests the plugin does make are listed under "External services": on activation, in wp-admin, and from WP-Cron once a site is connected. None of them includes visitor data.
+Not unless you ask it to. The optional browser tag is off by default, and with it off no third-party script is loaded and no visitor data is sent anywhere. The AEO features do not use it. The requests the plugin does make are listed under "External services": none on activation, none before you agree on the AEO screen or pair the site, then in wp-admin and from WP-Cron once a site is connected. None of them includes visitor data.
 
 = Does it send what my visitors type into forms? =
 
@@ -167,6 +175,20 @@ It is a beta feature. It samples AI answers rather than observing every response
 3. Works with Yoast SEO and Rank Math — Nurevo fills the business details they leave out, no duplicate schema.
 
 == Changelog ==
+
+= 0.8.0 =
+* Nothing is sent to the Nurevo service until you agree. Activating the plugin no longer runs a diagnosis or makes any request. The AEO screen explains what the diagnosis sends and runs it when you tick the consent box and press "Run diagnosis". Pairing the site with a code also counts as agreeing.
+* The "Nurevo AEO is off" notice is now informational. On the Plugins screen it can be dismissed, and stays dismissed for you.
+* Per-page settings in the block editor sidebar and the classic editor: leave a page out of llms.txt, publish no Nurevo structured data on it, or give it its own questions and answers. A page's own FAQ is shown by the Nurevo FAQ block set to "This page's own questions" or by `[nurevo_faq source="post"]`, and published as FAQPage on that page only.
+* Tools: export and import the settings as JSON. Keys, tokens, the plan and the connection are never exported or imported.
+* WP-CLI commands `wp nurevo status|diagnose|export|import`, and a read-only REST route `nurevo/v1/status` for administrators.
+* Filters for developers, documented in docs/developers.md: `webmcp_canary_schema_graph`, `webmcp_canary_business_node`, `webmcp_canary_llms_txt`, `webmcp_canary_llms_txt_lines`, `webmcp_canary_robots_search_agents`, `webmcp_canary_robots_training_agents` and `webmcp_canary_excluded_post_ids`.
+* llms.txt is cached and refreshed when posts or settings change, and is served with `Cache-Control: public, max-age=300`.
+* Multisite: network activation schedules the twice-daily sync on every site, new sites get it too, and network deactivation clears it everywhere.
+* The privacy policy guide (Settings > Privacy) now suggests text describing what is sent to nurevo.jp and when.
+* Connection error messages are written for site owners instead of developers.
+* New settings to hide the AEO score in the admin bar and the Dashboard widget. Both stay on unless you turn them off.
+* The Nurevo FAQ block title is translated.
 
 = 0.7.4 =
 * AI crawlers are now split by purpose. Crawlers that read and cite pages for AI search (OAI-SearchBot, ChatGPT-User, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User) are allowed. Training crawlers (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot) are left to your robots.txt unless you choose to allow or block them. Blocking them no longer lowers the AEO score.
@@ -254,6 +276,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.8.0 =
+
+Asks before contacting the Nurevo service: press "Run diagnosis" once on the AEO screen to keep receiving the score (connected sites are unaffected). Adds per-page settings, settings export/import, WP-CLI commands and developer filters.
 
 = 0.7.4 =
 

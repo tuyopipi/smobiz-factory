@@ -29,19 +29,29 @@ function poQuote(value) {
   return `"${value.replace(/\\/g, "\\\\").replace(/"/g, '\\"').replace(/\n/g, "\\n")}"`;
 }
 
-const source = fs.readFileSync(SOURCE, "utf8");
-const lineOf = (index) => source.slice(0, index).split("\n").length;
+// The main file plus the include files (REST route, WP-CLI commands).
+const INCLUDES_DIR = `${PLUGIN_DIR}/includes`;
+const SOURCES = [
+  SOURCE,
+  ...(fs.existsSync(INCLUDES_DIR)
+    ? fs.readdirSync(INCLUDES_DIR).filter((name) => name.endsWith(".php")).sort().map((name) => `${INCLUDES_DIR}/${name}`)
+    : []),
+];
 
 /** msgid -> sorted unique source references */
 const entries = new Map();
-for (const match of source.matchAll(CALL)) {
-  if (match[2] !== TEXT_DOMAIN) continue;
-  const msgid = phpUnquote(match[1]);
-  if (msgid === "") continue;
-  const reference = `${SOURCE}:${lineOf(match.index)}`;
-  const existing = entries.get(msgid);
-  if (existing) existing.add(reference);
-  else entries.set(msgid, new Set([reference]));
+for (const file of SOURCES) {
+  const source = fs.readFileSync(file, "utf8");
+  const lineOf = (index) => source.slice(0, index).split("\n").length;
+  for (const match of source.matchAll(CALL)) {
+    if (match[2] !== TEXT_DOMAIN) continue;
+    const msgid = phpUnquote(match[1]);
+    if (msgid === "") continue;
+    const reference = `${file}:${lineOf(match.index)}`;
+    const existing = entries.get(msgid);
+    if (existing) existing.add(reference);
+    else entries.set(msgid, new Set([reference]));
+  }
 }
 
 // Japanese for the English source strings. Strings already written in Japanese
@@ -549,6 +559,128 @@ const JA = {
   // Continuous optimization (0.7.2).
   "Automatic optimization found information that needs your confirmation. Please publish only real information.":
     "自動最適化で、確認が必要な情報が見つかりました。実在する情報だけを公開してください。",
+  // Consent before contacting the service (0.8.0).
+  "The diagnosis has not been run yet. Open Nurevo AEO and press Run diagnosis to agree to contact the Nurevo service.":
+    "診断はまだ実行されていません。Nurevo AEO を開き、「診断を実行」を押してNurevoサービスへの接続に同意してください。",
+  "Run your first AEO diagnosis":
+    "最初のAEO診断を実行する",
+  "The diagnosis is run by the Nurevo service at nurevo.jp. Nothing has been sent yet: the plugin contacts the service only after you agree here.":
+    "診断は nurevo.jp のNurevoサービスで実行されます。まだ何も送信されていません。ここで同意するまで、プラグインはサービスに接続しません。",
+  "Running it sends your home page URL and your WordPress language. The service then reads your public front page, robots.txt and llms.txt, as any visitor could. No visitor data is sent.":
+    "実行すると、ホームページのURLとWordPressの言語が送信されます。その後サービスが、一般の訪問者と同じように公開中のトップページ・robots.txt・llms.txtを読み取ります。訪問者のデータは送信されません。",
+  "Structured data, llms.txt and AI crawler rules work without this; they are produced by the plugin on your own server.":
+    "構造化データ・llms.txt・AIクローラーの設定はこれがなくても動きます。いずれもお使いのサーバー上でプラグインが生成します。",
+  "Tick the box to agree before running the diagnosis.":
+    "診断を実行する前に、チェックボックスにチェックを入れて同意してください。",
+  "I agree to send this site’s URL to the Nurevo service for diagnosis, under its Terms of Service and Privacy Policy.":
+    "利用規約とプライバシーポリシーに基づき、診断のためにこのサイトのURLをNurevoサービスへ送信することに同意します。",
+  "Run diagnosis":
+    "診断を実行",
+  "Terms of Service":
+    "利用規約",
+  "Privacy Policy":
+    "プライバシーポリシー",
+  "not run yet":
+    "未実行",
+  "The diagnosis has not been run yet. Nothing is sent to the Nurevo service until you run it.":
+    "診断はまだ実行されていません。実行するまで、Nurevoサービスには何も送信されません。",
+  // Per-post controls (0.8.0).
+  "Questions to show":
+    "表示する質問",
+  "Site-wide questions (Settings)":
+    "サイト共通の質問（設定画面）",
+  "This page’s own questions":
+    "このページ専用の質問",
+  "Leave this page out of llms.txt":
+    "このページをllms.txtに載せない",
+  "Publish no Nurevo structured data on this page":
+    "このページではNurevoの構造化データを出力しない",
+  "Questions and answers for this page":
+    "このページのよくある質問",
+  "Shown where you place the Nurevo FAQ block set to this page’s own questions, or the [nurevo_faq source=\"post\"] shortcode. Published as FAQPage on this page only.":
+    "「このページ専用の質問」に設定したNurevo FAQブロック、または [nurevo_faq source=\"post\"] ショートコードを置いた場所に表示されます。FAQPageとしてはこのページでのみ公開されます。",
+  "Add a question":
+    "質問を追加",
+  "Remove":
+    "削除",
+  // Tools: export/import, WP-CLI (0.8.0).
+  "AEO score: %1$d/100 (%2$s)":
+    "AEOスコア: %1$d/100（%2$s）",
+  "Choose a settings file exported from Nurevo AEO.":
+    "Nurevo AEO から書き出した設定ファイルを選んでください。",
+  "Copy these settings to another site. The file holds the output switches, the business details, the FAQ and the services. Keys, tokens, the plan and the connection are never exported or imported.":
+    "この設定を別のサイトにコピーできます。ファイルには出力のオン・オフ、店舗情報、よくある質問、サービスが含まれます。キー・トークン・プラン・接続情報は書き出しも読み込みもしません。",
+  "Could not read the file.":
+    "ファイルを読み込めませんでした。",
+  "Could not write the file.":
+    "ファイルを書き込めませんでした。",
+  "Export settings":
+    "設定を書き出す",
+  "Import settings":
+    "設定を読み込む",
+  "Settings exported.":
+    "設定を書き出しました。",
+  "Settings file (.json)":
+    "設定ファイル（.json）",
+  "Settings imported.":
+    "設定を読み込みました。",
+  "The diagnosis sends this site’s URL to the Nurevo service. Run again with --consent to agree.":
+    "診断ではこのサイトのURLがNurevoサービスに送信されます。同意する場合は --consent を付けて再実行してください。",
+  "The file contains keys or connection settings, which are never imported: %s":
+    "ファイルにキーまたは接続設定が含まれています。これらは読み込みません: %s",
+  "The file contains settings this version does not know: %s":
+    "ファイルに、このバージョンが認識できない設定が含まれています: %s",
+  "The file is not a valid Nurevo AEO settings file.":
+    "有効なNurevo AEO設定ファイルではありません。",
+  "The file is not valid JSON.":
+    "ファイルが正しいJSONではありません。",
+  "This is not a Nurevo AEO settings file.":
+    "Nurevo AEO の設定ファイルではありません。",
+  "Tools":
+    "ツール",
+  // Owner-facing connection messages (0.8.0).
+  "The Nurevo service URL is not set. Open Nurevo AEO > Settings and check it under Advanced.":
+    "NurevoサービスのURLが設定されていません。Nurevo AEO > 設定 を開き、「詳細設定」で確認してください。",
+  "The Nurevo service sent a response this plugin could not read.":
+    "Nurevoサービスから、このプラグインが読み取れない応答が返されました。",
+  "The Nurevo service returned an error: %s":
+    "Nurevoサービスがエラーを返しました: %s",
+  "This site is not connected to Nurevo yet. Open Nurevo AEO > Settings and pair it with a pairing code.":
+    "このサイトはまだNurevoに接続されていません。Nurevo AEO > 設定 を開き、ペアリングコードで接続してください。",
+  "Could not reach the Nurevo service. Please try again later.":
+    "Nurevoサービスに接続できませんでした。しばらくしてから再度お試しください。",
+  "Showing the last data received from Nurevo, because the service cannot be reached right now.":
+    "現在Nurevoサービスに接続できないため、最後に受信したデータを表示しています。",
+  "The Nurevo service did not answer within %d seconds. Your server may not be allowed to make outgoing connections, or the service may be busy. Please try again later.":
+    "Nurevoサービスが%d秒以内に応答しませんでした。お使いのサーバーで外部への接続が許可されていないか、サービスが混み合っている可能性があります。しばらくしてから再度お試しください。",
+  "Your server could not look up the Nurevo service address. Ask your hosting provider whether outgoing connections are allowed.":
+    "お使いのサーバーがNurevoサービスのアドレスを調べられませんでした。外部への接続が許可されているか、ホスティング会社にお問い合わせください。",
+  "Your server could not verify the Nurevo service’s security certificate. Ask your hosting provider to update the server’s certificate store.":
+    "お使いのサーバーがNurevoサービスのセキュリティ証明書を確認できませんでした。サーバーの証明書ストアの更新をホスティング会社に依頼してください。",
+  "Could not reach the Nurevo service. Check your internet connection and try again later. If it keeps happening, ask your hosting provider whether outgoing connections are allowed.":
+    "Nurevoサービスに接続できませんでした。インターネット接続を確認し、しばらくしてから再度お試しください。繰り返し発生する場合は、外部への接続が許可されているかホスティング会社にお問い合わせください。",
+  "The Nurevo service did not accept this site’s connection: %s":
+    "Nurevoサービスがこのサイトの接続を受け付けませんでした: %s",
+  "The Nurevo service URL in Settings did not lead to the Nurevo service: %s":
+    "設定にあるNurevoサービスのURLは、Nurevoサービスにつながりませんでした: %s",
+  // Suggested privacy policy text (0.8.0).
+  "This site uses the Nurevo AEO plugin to publish structured data, llms.txt and AI crawler rules. These are produced on this site’s own server. By default the plugin adds no tracking script to public pages and sends no visitor data to the Nurevo service.":
+    "このサイトでは、構造化データ・llms.txt・AIクローラーの設定を公開するために Nurevo AEO プラグインを使用しています。これらはこのサイト自身のサーバーで生成されます。初期設定では、公開ページに追跡用のスクリプトは追加されず、訪問者のデータがNurevoサービスに送信されることもありません。",
+  "Only after a site administrator agrees to run the AEO diagnosis, or connects the site to Nurevo with a pairing code, does the plugin contact the Nurevo service at nurevo.jp, operated by Bestie. LLC. It then sends this site’s home page address and WordPress language, and the service reads the site’s public front page, robots.txt and llms.txt.":
+    "サイト管理者がAEO診断の実行に同意した場合、またはペアリングコードでサイトをNurevoに接続した場合に限り、プラグインは Bestie. LLC. が運営する nurevo.jp のNurevoサービスに接続します。その際、このサイトのホームページのアドレスとWordPressの言語が送信され、サービスはサイトの公開中のトップページ・robots.txt・llms.txtを読み取ります。",
+  "Once the site is connected, the plugin also sends, from the WordPress administration area and twice a day: the business details entered in its settings (name, description, address, telephone, opening hours, business type, website and business email), the products, services and frequently asked questions it publishes, and the titles and addresses of recently updated public posts and pages. This is information about the business, not about visitors.":
+    "サイトの接続後は、WordPressの管理画面から、また1日2回、次の情報も送信されます。設定に入力された店舗情報（名称・説明・住所・電話番号・営業時間・業種・ウェブサイト・連絡用メールアドレス）、プラグインが公開する商品・サービス・よくある質問、最近更新された公開済みの投稿と固定ページのタイトルとアドレスです。これらは事業に関する情報であり、訪問者に関する情報ではありません。",
+  "If an administrator turns on the optional Nurevo browser tag, a script is loaded from nurevo.jp on public pages. It reports the structure of public forms and whether a submission succeeded, and is designed not to send what visitors type.":
+    "管理者が任意のNurevoブラウザタグをオンにした場合、公開ページで nurevo.jp のスクリプトが読み込まれます。このスクリプトは公開フォームの構造と送信の成否を報告し、訪問者が入力した内容は送信しない設計になっています。",
+  "Nurevo privacy policy: %s":
+    "Nurevoのプライバシーポリシー: %s",
+  // wp-admin display switches (0.8.0).
+  "Score in wp-admin":
+    "管理画面でのスコア表示",
+  "Show the AEO score in the admin bar":
+    "管理バーにAEOスコアを表示する",
+  "Show the Nurevo AEO widget on the Dashboard":
+    "ダッシュボードにNurevo AEOウィジェットを表示する",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo
@@ -747,7 +879,7 @@ for (const [locale, spec] of Object.entries(locales)) {
   fs.writeFileSync(path.join(LANG_DIR, `${DOMAIN}-${locale}.mo`), moBuffer(headerMsgstr(locale), pairs));
 }
 
-console.log(`Extracted ${sorted.length} strings from ${SOURCE}; wrote ${Object.keys(locales).length} locales`);
+console.log(`Extracted ${sorted.length} strings from ${SOURCES.join(", ")}; wrote ${Object.keys(locales).length} locales`);
 if (missing.size) {
   for (const [locale, list] of missing) {
     console.warn(`Untranslated (${locale}): ${list.length}`);

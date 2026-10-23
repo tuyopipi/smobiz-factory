@@ -42,7 +42,38 @@ function update_option($key, $value) { $GLOBALS['webmcp_test_options'][$key] = $
 function wp_strip_all_tags($value) { return strip_tags((string) $value); }
 function esc_textarea($value) { return htmlspecialchars((string) $value, ENT_QUOTES); }
 function strip_shortcodes($value) { return preg_replace('/\[[^\]]+\]/', '', (string) $value); }
-function get_posts() { return $GLOBALS['webmcp_test_posts']; }
+function get_posts($args = array()) {
+    $posts = $GLOBALS['webmcp_test_posts'];
+    if (!empty($args['meta_key'])) {
+        $posts = array_values(array_filter($posts, function ($post) use ($args) {
+            return is_object($post) && !empty($post->ID) && !empty(get_post_meta($post->ID, $args['meta_key'], true));
+        }));
+    }
+    if (!empty($args['post__not_in'])) {
+        $posts = array_values(array_filter($posts, function ($post) use ($args) {
+            return !is_object($post) || empty($post->ID) || !in_array((int) $post->ID, $args['post__not_in'], true);
+        }));
+    }
+    if (($args['fields'] ?? '') === 'ids') {
+        return array_map(function ($post) { return (int) $post->ID; }, $posts);
+    }
+    return $posts;
+}
+$GLOBALS['webmcp_test_post_meta'] = array();
+function get_post_meta($post_id, $key = '', $single = false) {
+    $value = $GLOBALS['webmcp_test_post_meta'][(int) $post_id][$key] ?? null;
+    if ($value === null) { return $single ? '' : array(); }
+    return $single ? $value : array($value);
+}
+function update_post_meta($post_id, $key, $value) { $GLOBALS['webmcp_test_post_meta'][(int) $post_id][$key] = $value; return true; }
+function delete_post_meta($post_id, $key) { unset($GLOBALS['webmcp_test_post_meta'][(int) $post_id][$key]); return true; }
+function register_post_meta($type, $key, $args) { $GLOBALS['webmcp_test_post_meta_registered'][$key] = array('type' => $type, 'args' => $args); return true; }
+function get_the_ID() { return $GLOBALS['webmcp_test_the_id'] ?? (isset($GLOBALS['webmcp_test_queried']) && $GLOBALS['webmcp_test_queried'] ? (int) $GLOBALS['webmcp_test_queried']->ID : 0); }
+function wp_is_post_revision($post_id) { return false; }
+function checked($checked, $current = true, $echo = true) { $result = ((string) $checked === (string) $current) ? ' checked="checked"' : ''; if ($echo) { echo $result; } return $result; }
+function wp_enqueue_script($handle, $src = '', $deps = array(), $ver = false, $in_footer = false) { $GLOBALS['webmcp_test_enqueued'][$handle] = array('src' => $src, 'deps' => $deps); }
+function get_post_types($args = array()) { return array('post' => 'post', 'page' => 'page', 'attachment' => 'attachment'); }
+function add_meta_box($id, $title, $callback, $screen = null, $context = 'advanced', $priority = 'default', $args = null) { $GLOBALS['webmcp_test_meta_boxes'][$screen] = array('id' => $id, 'args' => $args); }
 
 /* ------------------------------------------------------------------ *
  * WooCommerce stubs
@@ -115,22 +146,63 @@ function wp_remote_get($url, $args = array()) {
 }
 function get_the_title($post) { return is_object($post) ? ($post->post_title ?? '') : ''; }
 function get_permalink($post) { return is_object($post) ? ($post->permalink ?? '') : ''; }
-function current_user_can() { return true; }
+function current_user_can($cap = '', ...$args) { return !in_array($cap, $GLOBALS['webmcp_test_denied_caps'] ?? array(), true); }
 function admin_url($path = '') { return 'https://example.test/wp-admin/' . ltrim($path, '/'); }
 if (!function_exists('do_action')) { function do_action(...$args) {} }
 if (!function_exists('get_current_screen')) { function get_current_screen() { return $GLOBALS['webmcp_test_screen'] ?? null; } }
 function esc_html($value) { return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8'); }
 function esc_html__($text) { return esc_html($text); }
+function esc_html_e($text) { echo esc_html($text); }
 function esc_attr($value) { return esc_html($value); }
 function esc_url($value) { return esc_html($value); }
 function wp_nonce_url($url, $action) { return $url . '&_wpnonce=' . md5($action); }
 function wp_verify_nonce($nonce, $action) { return $nonce === md5($action); }
 function wp_unslash($value) { return $value; }
 function wp_next_scheduled() { return false; }
-function wp_schedule_event($timestamp, $recurrence, $hook) { $GLOBALS['webmcp_test_scheduled'][] = $hook; return true; }
-function wp_clear_scheduled_hook($hook) { $GLOBALS['webmcp_test_cleared'][] = $hook; return 1; }
+function wp_schedule_event($timestamp, $recurrence, $hook) { $GLOBALS['webmcp_test_scheduled'][] = $hook; $GLOBALS['webmcp_test_scheduled_by_blog'][$GLOBALS['webmcp_test_blog']][] = $hook; return true; }
+function wp_clear_scheduled_hook($hook) { $GLOBALS['webmcp_test_cleared'][] = $hook; $GLOBALS['webmcp_test_cleared_by_blog'][$GLOBALS['webmcp_test_blog']][] = $hook; return 1; }
+// Multisite stand-ins: a network of three sites, off unless a test turns it on.
+$GLOBALS['webmcp_test_blog'] = 1;
+$GLOBALS['webmcp_test_multisite'] = false;
+$GLOBALS['webmcp_test_network_active'] = false;
+function is_multisite() { return $GLOBALS['webmcp_test_multisite']; }
+function get_sites($args = array()) { return array(1, 2, 3); }
+function switch_to_blog($id) { $GLOBALS['webmcp_test_blog_stack'][] = $GLOBALS['webmcp_test_blog']; $GLOBALS['webmcp_test_blog'] = (int) $id; return true; }
+function restore_current_blog() { $GLOBALS['webmcp_test_blog'] = array_pop($GLOBALS['webmcp_test_blog_stack']); return true; }
+function is_plugin_active_for_network($plugin) { return $GLOBALS['webmcp_test_network_active'] && $plugin === 'nurevo-webmcp/nurevo-webmcp.php'; }
+function plugin_basename($file) { return 'nurevo-webmcp/' . basename($file); }
 function plugins_url($path = '', $plugin = '') { return 'https://example.test/wp-content/plugins/webmcp-canary/' . ltrim($path, '/'); }
 function wp_date($format, $timestamp = null) { return gmdate($format, $timestamp ?? time()); }
+function get_current_user_id() { return $GLOBALS['webmcp_test_user_id'] ?? 1; }
+$GLOBALS['webmcp_test_user_meta'] = array();
+function get_user_meta($user_id, $key = '', $single = false) { return $GLOBALS['webmcp_test_user_meta'][$user_id][$key] ?? ($single ? '' : array()); }
+function update_user_meta($user_id, $key, $value) { $GLOBALS['webmcp_test_user_meta'][$user_id][$key] = $value; return true; }
+function wp_create_nonce($action = -1) { return md5($action); }
+function wp_add_dashboard_widget($id, $title, $callback) { $GLOBALS['webmcp_test_widgets'][$id] = $title; }
+function wp_kses_post($html) { return $html; }
+function wp_add_privacy_policy_content($name, $text) { $GLOBALS['webmcp_test_privacy'][$name] = $text; }
+$GLOBALS['webmcp_test_transients'] = array();
+function get_transient($key) { return $GLOBALS['webmcp_test_transients'][$key] ?? false; }
+function set_transient($key, $value, $ttl = 0) { $GLOBALS['webmcp_test_transients'][$key] = $value; return true; }
+function delete_transient($key) { unset($GLOBALS['webmcp_test_transients'][$key]); return true; }
+function apply_filters($hook, $value, ...$args) {
+    foreach ($GLOBALS['webmcp_test_hooks'][$hook] ?? array() as $callback) { $value = $callback($value, ...$args); }
+    return $value;
+}
+function wp_nonce_field($action = -1, $name = '_wpnonce') { echo '<input type="hidden" name="' . $name . '" value="' . md5($action) . '">'; }
+
+// WP-CLI and REST stand-ins, so includes/cli.php and includes/rest.php load.
+define('WP_CLI', true);
+class WebmcpTestCliError extends Exception {}
+class WP_CLI {
+    public static $commands = array();
+    public static $out = array();
+    public static function add_command($name, $class) { self::$commands[$name] = $class; }
+    public static function line($message = '') { self::$out[] = $message; }
+    public static function success($message) { self::$out[] = 'Success: ' . $message; }
+    public static function error($message) { throw new WebmcpTestCliError($message); }
+}
+function register_rest_route($namespace, $route, $args) { $GLOBALS['webmcp_test_rest_routes'][$namespace . $route] = $args; return true; }
 
 require dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php';
 
@@ -573,6 +645,51 @@ expect($normalized['additionalType'] === 'https://schema.org/CafeOrCoffeeShop', 
 // delivery is verified by matching it value for value on the page.
 expect(strpos(webmcp_test_function_body(file_get_contents(__DIR__ . '/../wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_own_schema_bundle'), 'webmcp_canary_normalize_business_facts') !== false,
     'the local business node is normalised');
+
+/* --- 0.8.0: consent before contacting the service --------------------- */
+
+// Activation does local work only: no request to the service and no loopback.
+delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array('tag_url' => 'https://nurevo.jp/tag.js'));
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+$GLOBALS['webmcp_test_last_remote'] = null;
+$GLOBALS['webmcp_test_remote_get'] = array('' => array('status' => 200, 'body' => '{}'));
+webmcp_canary_activate_aeo_score();
+expect($GLOBALS['webmcp_test_remote_get_log'] === array() && $GLOBALS['webmcp_test_last_remote'] === null, 'activation makes no HTTP request at all');
+expect(!webmcp_canary_has_consent(), 'a fresh install has not consented');
+$activation_body = webmcp_test_function_body(file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_activate_aeo_score');
+expect(strpos($activation_body, 'get_aeo_score') === false && strpos($activation_body, 'measure_rival_schema') === false, 'activation no longer diagnoses or measures');
+
+// Before consent the diagnosis refuses without sending anything.
+$no_consent = webmcp_canary_get_aeo_score(true);
+expect(is_wp_error($no_consent) && $no_consent->get_error_code() === 'webmcp_aeo_no_consent', 'no diagnosis before consent');
+expect($GLOBALS['webmcp_test_remote_get_log'] === array(), 'and no request before consent');
+$GLOBALS['webmcp_test_remote_get'] = array();
+
+// The consent form needs the box ticked.
+expect(webmcp_canary_handle_consent_submit(array()) === false, 'pressing Run diagnosis without the box records nothing');
+expect(!webmcp_canary_has_consent(), 'so there is still no consent');
+expect(webmcp_canary_handle_consent_submit(array('nurevo_consent' => '1')) === true, 'ticking the box records consent');
+expect(webmcp_canary_has_consent(), 'consent is stored');
+expect(get_option(WEBMCP_CANARY_CONSENT_OPTION)['via'] === 'diagnosis', 'with how it was given');
+$consent_panel = webmcp_canary_consent_panel();
+expect(strpos($consent_panel, 'name="nurevo_consent"') !== false && strpos($consent_panel, 'Run diagnosis') !== false, 'the first-run panel has a consent box and a Run diagnosis button');
+expect(strpos($consent_panel, 'webmcp_canary_consent') !== false, 'and posts to the consent action');
+
+// A connected site consented when it was connected.
+delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+expect(webmcp_canary_has_consent(array('site_key' => 'nrv_x', 'site_id' => '')), 'a site key implies consent');
+expect(webmcp_canary_has_consent(array('site_key' => '', 'site_id' => 'abc')), 'so does a site ID');
+
+// Pairing with a code is consent.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($defaults, array('tag_url' => 'https://nurevo.jp/tag.js'));
+$GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => '{"ok":true,"plan":"free","site_id":"c1","site_key":"nrv_c1","profile_token":"t","domain":"example.test"}');
+webmcp_canary_sanitize_settings(array('tag_url' => 'https://nurevo.jp/tag.js', 'pairing_code' => 'NRV-CONSE-NTCON-SENTC-ONSEN'));
+expect(get_option(WEBMCP_CANARY_CONSENT_OPTION)['via'] === 'pairing', 'pairing records consent');
+unset($GLOBALS['webmcp_test_remote']);
+delete_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION);
+$readme_consent = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
+expect(strpos($readme_consent, 'Nothing is sent until you agree.') !== false && strpos($readme_consent, 'On activation, without a key') === false, 'the readme says nothing is sent before consent');
 
 /* --- Free plan completeness: diagnosis works with no site key ----------- */
 
@@ -2554,6 +2671,26 @@ expect($elsewhere === '', 'other admin screens are not nagged');
 $GLOBALS['webmcp_test_screen'] = (object) array('id' => 'plugins');
 ob_start(); webmcp_canary_output_off_notice(); $plugins_screen = ob_get_clean();
 expect(strpos($plugins_screen, 'Nurevo AEO is off') !== false, 'the Plugins list says output is off');
+// 0.8.0: information, not an error, and dismissible per user on the Plugins screen.
+expect(strpos($off_notice, 'notice-error') === false && strpos($off_notice, 'notice-info') !== false, 'on Nurevo screens it is an informational notice');
+expect(strpos($off_notice, 'is-dismissible') === false, 'which stays on Nurevo screens, where the switch is');
+expect(strpos($plugins_screen, 'notice-error') === false && strpos($plugins_screen, 'notice-info') !== false, 'on the Plugins screen it is informational');
+expect(strpos($plugins_screen, 'is-dismissible') !== false && strpos($plugins_screen, 'webmcp_canary_dismiss_off_notice') !== false, 'and dismissible, with the dismissal sent to the server');
+expect(webmcp_canary_dismiss_off_notice_for_user(0) === false, 'a dismissal needs a user');
+$GLOBALS['webmcp_test_user_id'] = 7;
+expect(webmcp_canary_dismiss_off_notice_for_user(7) === true, 'a user can dismiss it');
+ob_start(); webmcp_canary_output_off_notice(); $after_dismiss = ob_get_clean();
+expect($after_dismiss === '', 'once dismissed it no longer shows on the Plugins screen for that user');
+$GLOBALS['webmcp_test_user_id'] = 8;
+ob_start(); webmcp_canary_output_off_notice(); $other_user = ob_get_clean();
+expect(strpos($other_user, 'Nurevo AEO is off') !== false, 'the dismissal is stored per user');
+$GLOBALS['webmcp_test_user_id'] = 7;
+unset($GLOBALS['webmcp_test_screen']);
+$_GET['page'] = 'webmcp-canary';
+ob_start(); webmcp_canary_output_off_notice(); $nurevo_after_dismiss = ob_get_clean();
+expect(strpos($nurevo_after_dismiss, 'Nurevo AEO is off') !== false, 'dismissing on the Plugins screen does not hide it on Nurevo screens');
+unset($GLOBALS['webmcp_test_user_id']);
+expect(in_array('webmcp_canary_dismiss_off_notice_ajax', $GLOBALS['webmcp_test_hooks']['wp_ajax_webmcp_canary_dismiss_off_notice'], true), 'the dismissal endpoint is registered');
 unset($GLOBALS['webmcp_test_screen'], $_GET['page']);
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '1';
 $_GET['page'] = 'webmcp-canary';
@@ -2588,5 +2725,451 @@ expect(webmcp_canary_settings()['plan'] === 'standard', 'Refresh plan picks up a
 expect(empty($GLOBALS['webmcp_canary_force_follow']), 'the one-off check does not leave paid behaviour switched on');
 $GLOBALS['webmcp_test_remote_get'] = array();
 delete_option(WEBMCP_CANARY_RULESET_OPTION);
+
+/* --- 0.8.0: per-post controls ----------------------------------------- */
+
+$GLOBALS['webmcp_test_post_meta_registered'] = array();
+webmcp_canary_register_post_meta();
+foreach (array('_nurevo_exclude_llms' => 'boolean', '_nurevo_exclude_schema' => 'boolean', '_nurevo_faq' => 'array') as $meta_key => $meta_type) {
+    $registered = $GLOBALS['webmcp_test_post_meta_registered'][$meta_key] ?? null;
+    expect($registered !== null, "post meta is registered: {$meta_key}");
+    expect($registered['args']['type'] === $meta_type && $registered['args']['single'] === true, "{$meta_key} is a single {$meta_type}");
+    expect(!empty($registered['args']['show_in_rest']), "{$meta_key} is exposed to the block editor");
+    expect($registered['args']['auth_callback'] === 'webmcp_canary_post_meta_auth', "{$meta_key} is guarded by an auth callback");
+}
+expect(isset($GLOBALS['webmcp_test_post_meta_registered']['_nurevo_faq']['args']['show_in_rest']['schema']['items']['properties']['q']), 'the FAQ meta declares its {q,a} schema');
+expect(webmcp_canary_post_meta_auth(false, '_nurevo_faq', 5) === true, 'an editor of the post may change its Nurevo meta');
+$GLOBALS['webmcp_test_denied_caps'] = array('edit_post');
+expect(webmcp_canary_post_meta_auth(false, '_nurevo_faq', 5) === false, 'someone who cannot edit the post may not');
+$GLOBALS['webmcp_test_denied_caps'] = array();
+
+$clean_post_faq = webmcp_canary_sanitize_post_faq(array(
+    array('q' => ' <b>Parking?</b> ', 'a' => "Two spaces.\nBehind the shop."),
+    array('q' => 'Half', 'a' => ''),
+    'junk',
+    array('q' => 'Q2', 'a' => 'A2', 'extra' => 'dropped'),
+));
+expect(count($clean_post_faq) === 2 && $clean_post_faq[0]['q'] === 'Parking?', 'the page FAQ keeps complete, plain-text pairs only');
+expect(!isset($clean_post_faq[1]['extra']), 'and only the q and a fields');
+expect(webmcp_canary_sanitize_post_faq('not a list') === array(), 'anything else is dropped');
+expect(webmcp_canary_sanitize_post_flag('1') === true && webmcp_canary_sanitize_post_flag('') === false && webmcp_canary_sanitize_post_flag('false') === false, 'flags are booleans');
+
+// llms.txt skips posts their editor excluded.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '1', 'serve_llms_txt' => '1', 'business_name' => 'Meta Shop'));
+$GLOBALS['webmcp_test_posts'] = array(
+    (object) array('ID' => 31, 'post_title' => 'Kept page', 'permalink' => 'https://example.test/kept/', 'post_content' => ''),
+    (object) array('ID' => 32, 'post_title' => 'Hidden page', 'permalink' => 'https://example.test/hidden/', 'post_content' => ''),
+);
+update_post_meta(32, '_nurevo_exclude_llms', true);
+$meta_llms = webmcp_canary_build_local_llms_txt();
+expect(strpos($meta_llms, 'Kept page') !== false, 'llms.txt lists the other posts');
+expect(strpos($meta_llms, 'Hidden page') === false, 'llms.txt skips a post excluded from it');
+expect(webmcp_canary_excluded_post_ids('llms') === array(32), 'the excluded ids are read from the meta');
+expect(webmcp_canary_excluded_post_ids('schema') === array(), 'and per purpose');
+$GLOBALS['webmcp_test_posts'] = array();
+
+// Schema output and the graph merge skip a singular page excluded from it.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '1', 'serve_schema' => '1', 'business_name' => 'Meta Shop'));
+$GLOBALS['webmcp_test_options']['blog_public'] = 1;
+$GLOBALS['webmcp_test_active_plugins'] = array();
+webmcp_canary_schema_merged(false);
+$excluded_page = (object) array('ID' => 50, 'post_content' => 'x', 'post_title' => 'No schema', 'permalink' => 'https://example.test/no-schema/');
+$GLOBALS['webmcp_test_posts'] = array($excluded_page);
+update_post_meta(50, '_nurevo_exclude_schema', true);
+$GLOBALS['webmcp_test_queried'] = $excluded_page;
+$GLOBALS['webmcp_test_front_page'] = false;
+ob_start(); webmcp_canary_output_server_schema(); $excluded_output = ob_get_clean();
+expect($excluded_output === '', 'an excluded page prints no Nurevo structured data');
+$their_graph = array(array('@type' => 'Organization', '@id' => 'https://example.test/#org', 'name' => 'Theirs'));
+expect(webmcp_canary_merge_into_list_graph($their_graph) === $their_graph, 'nor merges anything into an SEO plugin graph');
+expect(webmcp_canary_merge_into_keyed_graph(array('org' => $their_graph[0])) === array('org' => $their_graph[0]), 'in either graph shape');
+webmcp_canary_schema_merged(false);
+delete_post_meta(50, '_nurevo_exclude_schema');
+ob_start(); webmcp_canary_output_server_schema(); $included_output = ob_get_clean();
+expect(strpos($included_output, 'application/ld+json') !== false, 'the same page publishes again once the exclusion is removed');
+$GLOBALS['webmcp_test_posts'] = array();
+
+// A page-level FAQ is published only on that page, and only where it is shown.
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+update_post_meta(60, '_nurevo_faq', array(array('q' => 'Page-only question?', 'a' => 'Page-only answer.')));
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 60, 'post_content' => '<p>Intro</p>[nurevo_faq source="post"]', 'post_title' => 'P60', 'permalink' => 'https://example.test/p60/');
+expect(webmcp_canary_faq_sources_in_content($GLOBALS['webmcp_test_queried']->post_content) === array('site' => false, 'post' => true), 'the shortcode with source="post" shows the page FAQ');
+ob_start(); webmcp_canary_output_server_schema(); $page_faq_output = ob_get_clean();
+expect(strpos($page_faq_output, '"FAQPage"') !== false && strpos($page_faq_output, 'Page-only question?') !== false, 'the page FAQ is published on its page');
+expect(strpos($page_faq_output, 'https://example.test/p60/#nurevo-faq') !== false, 'under that page');
+$rendered_page_faq = webmcp_canary_render_faq(array('source' => 'post'));
+expect(strpos($rendered_page_faq, 'Page-only question?') !== false, 'and the shortcode renders the same questions');
+expect(webmcp_canary_render_faq('') === '', 'the default shortcode still shows the (empty) site-wide FAQ');
+// Meta alone, with nothing on the page to show it, publishes nothing.
+update_post_meta(61, '_nurevo_faq', array(array('q' => 'Invisible?', 'a' => 'Yes.')));
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 61, 'post_content' => '<p>No FAQ here</p>', 'post_title' => 'P61', 'permalink' => 'https://example.test/p61/');
+ob_start(); webmcp_canary_output_server_schema(); $hidden_faq_output = ob_get_clean();
+expect(strpos($hidden_faq_output, '"FAQPage"') === false && strpos($hidden_faq_output, 'Invisible?') === false, 'a page FAQ that is not shown is not published');
+// The default shortcode shows the site-wide FAQ, not the page's own.
+webmcp_canary_save_faq_entries(array(array('q' => 'Site question?', 'a' => 'Site answer.')));
+update_post_meta(62, '_nurevo_faq', array(array('q' => 'Not shown here?', 'a' => 'Right.')));
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 62, 'post_content' => '[nurevo_faq]', 'post_title' => 'P62', 'permalink' => 'https://example.test/p62/');
+ob_start(); webmcp_canary_output_server_schema(); $site_faq_output = ob_get_clean();
+expect(strpos($site_faq_output, 'Site question?') !== false && strpos($site_faq_output, 'Not shown here?') === false, 'the site-wide shortcode publishes only the site-wide questions');
+// The block with source "post" counts too, and both sources can be on one page.
+$GLOBALS['webmcp_test_queried'] = (object) array('ID' => 60, 'post_content' => "<!-- wp:nurevo/faq /-->\n<!-- wp:nurevo/faq {\"source\":\"post\"} /-->", 'post_title' => 'P60', 'permalink' => 'https://example.test/p60/');
+ob_start(); webmcp_canary_output_server_schema(); $both_faq_output = ob_get_clean();
+expect(strpos($both_faq_output, 'Site question?') !== false && strpos($both_faq_output, 'Page-only question?') !== false, 'both FAQs on one page make one FAQPage with both');
+expect(substr_count($both_faq_output, '"FAQPage"') === 1, 'still a single FAQPage node');
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+$GLOBALS['webmcp_test_queried'] = null;
+$GLOBALS['webmcp_test_front_page'] = true;
+$GLOBALS['webmcp_test_blocks'] = array();
+webmcp_canary_register_faq_block();
+expect($GLOBALS['webmcp_test_blocks']['nurevo/faq']['attributes']['source']['default'] === 'site', 'the FAQ block has a source attribute');
+
+// The classic editor meta box saves with a nonce and an edit_post check.
+$_POST = array(
+    'nurevo_post_meta_nonce' => md5('webmcp_canary_post_meta'),
+    'nurevo_exclude_llms' => '1',
+    'nurevo_faq' => array(array('q' => 'Box Q', 'a' => 'Box A'), array('q' => '', 'a' => '')),
+);
+webmcp_canary_save_post_meta_box(70);
+expect(get_post_meta(70, '_nurevo_exclude_llms', true) === true, 'the meta box saves the llms.txt exclusion');
+expect(get_post_meta(70, '_nurevo_exclude_schema', true) === '', 'an unticked box saves nothing');
+expect(get_post_meta(70, '_nurevo_faq', true) === array(array('q' => 'Box Q', 'a' => 'Box A')), 'and the page FAQ, without empty rows');
+$_POST['nurevo_post_meta_nonce'] = 'forged';
+$_POST['nurevo_exclude_schema'] = '1';
+webmcp_canary_save_post_meta_box(71);
+expect(get_post_meta(71, '_nurevo_exclude_schema', true) === '', 'a bad nonce saves nothing');
+$_POST['nurevo_post_meta_nonce'] = md5('webmcp_canary_post_meta');
+$GLOBALS['webmcp_test_denied_caps'] = array('edit_post');
+webmcp_canary_save_post_meta_box(72);
+expect(get_post_meta(72, '_nurevo_exclude_schema', true) === '', 'a user who cannot edit the post saves nothing');
+$GLOBALS['webmcp_test_denied_caps'] = array();
+$_POST = array();
+webmcp_canary_save_post_meta_box(70);
+expect(get_post_meta(70, '_nurevo_exclude_llms', true) === true, 'a save without the meta box (block editor, REST) leaves the meta alone');
+$GLOBALS['webmcp_test_meta_boxes'] = array();
+webmcp_canary_add_meta_box();
+expect(isset($GLOBALS['webmcp_test_meta_boxes']['post'], $GLOBALS['webmcp_test_meta_boxes']['page']) && !isset($GLOBALS['webmcp_test_meta_boxes']['attachment']), 'the meta box is on public post types');
+expect(!empty($GLOBALS['webmcp_test_meta_boxes']['post']['args']['__back_compat_meta_box']), 'and only in the classic editor');
+ob_start(); webmcp_canary_render_meta_box((object) array('ID' => 70)); $meta_box_html = ob_get_clean();
+expect(strpos($meta_box_html, 'nurevo_post_meta_nonce') !== false && strpos($meta_box_html, 'Box Q') !== false, 'the meta box renders its nonce and the saved FAQ');
+
+// The block editor panel: a separate plain-JS file, enqueued on the editor only.
+$GLOBALS['webmcp_test_enqueued'] = array();
+$GLOBALS['webmcp_test_screen'] = (object) array('base' => 'post', 'id' => 'post');
+webmcp_canary_enqueue_editor_panel();
+$panel = $GLOBALS['webmcp_test_enqueued']['nurevo-editor-panel'] ?? null;
+expect($panel !== null && strpos($panel['src'], 'assets/editor-panel.js') !== false, 'the editor panel script is enqueued from assets/');
+foreach (array('wp-plugins', 'wp-edit-post', 'wp-components', 'wp-data') as $dep) {
+    expect(in_array($dep, $panel['deps'], true), "the editor panel depends on {$dep}");
+}
+$GLOBALS['webmcp_test_enqueued'] = array();
+$GLOBALS['webmcp_test_screen'] = (object) array('base' => 'site-editor', 'id' => 'site-editor');
+webmcp_canary_enqueue_editor_panel();
+expect(empty($GLOBALS['webmcp_test_enqueued']), 'and not in the site editor');
+unset($GLOBALS['webmcp_test_screen']);
+$panel_js = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/assets/editor-panel.js');
+expect(strpos($panel_js, 'PluginDocumentSettingPanel') !== false && strpos($panel_js, 'wp.element.createElement') !== false, 'the panel is a PluginDocumentSettingPanel built with createElement');
+foreach (array('_nurevo_exclude_llms', '_nurevo_exclude_schema', '_nurevo_faq') as $meta_key) {
+    expect(strpos($panel_js, $meta_key) !== false, "the panel edits {$meta_key}");
+}
+expect(strpos($panel_js, 'import ') === false && strpos($panel_js, 'require(') === false, 'and needs no build step');
+
+/* --- 0.8.0: tools: export/import, WP-CLI, REST status ----------------- */
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'enabled' => '1', 'business_name' => 'Export Shop', 'business_phone' => '03-0000-0000',
+    'site_key' => 'nrv_secret_key', 'site_id' => 'sid123', 'license_key' => 'LIC-SECRET', 'admin_token' => 'tok-secret',
+    'profile_token' => 'nrvp_secret', 'plan' => 'standard', 'tag_url' => 'https://nurevo.jp/tag.js',
+));
+webmcp_canary_save_faq_entries(array(array('q' => 'Export Q', 'a' => 'Export A')));
+$export = webmcp_canary_export_settings();
+$export_json = wp_json_encode($export);
+expect($export['plugin'] === 'nurevo-aeo' && $export['settings']['business_name'] === 'Export Shop', 'the export carries the settings');
+expect($export['faq'][0]['q'] === 'Export Q', 'and the FAQ');
+foreach (array('nrv_secret_key', 'sid123', 'LIC-SECRET', 'tok-secret', 'nrvp_secret') as $secret) {
+    expect(strpos($export_json, $secret) === false, "the export never contains a key or token: {$secret}");
+}
+foreach (webmcp_canary_secret_setting_keys() as $secret_key) {
+    expect(!array_key_exists($secret_key, $export['settings']), "the export leaves out {$secret_key}");
+}
+
+$import_ok = function ($settings, $extra = array()) {
+    return wp_json_encode(array_merge(array('plugin' => 'nurevo-aeo', 'format' => 1, 'settings' => $settings), $extra));
+};
+expect(webmcp_canary_import_settings_json('{nope')->get_error_code() === 'webmcp_import_invalid', 'invalid JSON is refused');
+expect(webmcp_canary_import_settings_json('{"plugin":"other","settings":{}}')->get_error_code() === 'webmcp_import_invalid', 'another plugin\'s file is refused');
+$unknown_import = webmcp_canary_import_settings_json($import_ok(array('business_name' => 'X', 'surprise' => '1')));
+expect(is_wp_error($unknown_import) && $unknown_import->get_error_code() === 'webmcp_import_unknown_key', 'an unknown setting is refused');
+expect(strpos($unknown_import->get_error_message(), 'surprise') !== false, 'and named');
+expect(webmcp_canary_import_settings_json($import_ok(array(), array('extra_top' => 1)))->get_error_code() === 'webmcp_import_unknown_key', 'an unknown top-level key is refused');
+foreach (array('site_key', 'license_key', 'admin_token', 'profile_token', 'plan', 'tag_url', 'pairing_code') as $secret_key) {
+    $secret_import = webmcp_canary_import_settings_json($import_ok(array('business_name' => 'X', $secret_key => 'attacker')));
+    expect(is_wp_error($secret_import) && $secret_import->get_error_code() === 'webmcp_import_secret', "importing {$secret_key} is refused");
+}
+expect(webmcp_canary_settings()['business_name'] === 'Export Shop', 'a refused file changes nothing');
+expect(webmcp_canary_import_settings_json($import_ok(array('business_name' => array('nested'))))->get_error_code() === 'webmcp_import_invalid', 'a non-scalar value is refused');
+
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+$GLOBALS['webmcp_test_last_remote'] = null;
+$imported = webmcp_canary_import_settings_json($import_ok(
+    array('business_name' => '<b>Imported</b> Shop', 'ai_training' => 'everything', 'serve_llms_txt' => '0', 'business_url' => 'https://imported.example/'),
+    array('faq' => array(array('q' => 'Imported Q', 'a' => 'Imported A'), array('q' => 'half', 'a' => '')))
+));
+expect(is_array($imported), 'a valid file is imported');
+$after_import = webmcp_canary_settings();
+expect($after_import['business_name'] === 'Imported Shop', 'imported values go through the sanitize callback');
+expect($after_import['ai_training'] === 'default', 'an invalid choice falls back as on the form');
+expect($after_import['serve_llms_txt'] === '0' && $after_import['enabled'] === '1', 'switches are imported, others kept');
+expect($after_import['site_key'] === 'nrv_secret_key' && $after_import['license_key'] === 'LIC-SECRET' && $after_import['plan'] === 'standard', 'this site\'s keys and plan are kept');
+expect(webmcp_canary_faq_entries() === array(array('q' => 'Imported Q', 'a' => 'Imported A')), 'the FAQ is imported, incomplete pairs dropped');
+expect($GLOBALS['webmcp_test_remote_get_log'] === array() && $GLOBALS['webmcp_test_last_remote'] === null, 'importing contacts nothing');
+$roundtrip = webmcp_canary_import_settings_json(wp_json_encode(webmcp_canary_export_settings()));
+expect(is_array($roundtrip), 'an export imports cleanly');
+delete_option(WEBMCP_CANARY_FAQ_OPTION);
+expect(strpos($source_now = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), "check_admin_referer('webmcp_canary_import_settings')") !== false, 'the import form is nonce-checked');
+expect(strpos(webmcp_test_function_body($source_now, 'webmcp_canary_import_settings_action'), "current_user_can('manage_options')") !== false, 'and needs manage_options');
+expect(strpos(webmcp_test_function_body($source_now, 'webmcp_canary_export_settings_action'), "current_user_can('manage_options')") !== false, 'so does the export');
+
+// REST: read-only status for administrators.
+$GLOBALS['webmcp_test_rest_routes'] = array();
+webmcp_canary_register_rest_routes();
+$route = $GLOBALS['webmcp_test_rest_routes']['nurevo/v1/status'] ?? null;
+expect($route !== null && $route['methods'] === 'GET', 'GET nurevo/v1/status is registered');
+expect(in_array('webmcp_canary_register_rest_routes', $GLOBALS['webmcp_test_hooks']['rest_api_init'], true), 'on rest_api_init');
+expect(call_user_func($route['permission_callback']) === true, 'an administrator may read it');
+$GLOBALS['webmcp_test_denied_caps'] = array('manage_options');
+expect(call_user_func($route['permission_callback']) === false, 'nobody else may');
+$GLOBALS['webmcp_test_denied_caps'] = array();
+$status = call_user_func($route['callback']);
+expect($status['version'] === WEBMCP_CANARY_VERSION && $status['enabled'] === true, 'the status reports the version and switch');
+expect($status['outputs']['llms_txt'] === false && $status['outputs']['schema'] === true, 'and each output');
+expect($status['connected'] === true && $status['consent'] === true, 'and the connection');
+$status_json = wp_json_encode($status);
+foreach (array('nrv_secret_key', 'LIC-SECRET', 'tok-secret', 'nrvp_secret') as $secret) {
+    expect(strpos($status_json, $secret) === false, "the status never contains a key or token: {$secret}");
+}
+
+// WP-CLI.
+expect((WP_CLI::$commands['nurevo'] ?? '') === 'Webmcp_Canary_CLI_Command', 'wp nurevo is registered under WP-CLI');
+$cli = new Webmcp_Canary_CLI_Command();
+WP_CLI::$out = array();
+$cli->status(array(), array());
+expect(in_array('enabled: yes', WP_CLI::$out, true) && in_array('outputs.llms_txt: no', WP_CLI::$out, true), 'wp nurevo status prints the output state');
+WP_CLI::$out = array();
+$cli->status(array(), array('format' => 'json'));
+expect(json_decode(WP_CLI::$out[0], true)['version'] === WEBMCP_CANARY_VERSION, 'and as JSON');
+WP_CLI::$out = array();
+$cli->export(array(), array());
+$cli_export = WP_CLI::$out[0];
+expect(json_decode($cli_export, true)['plugin'] === 'nurevo-aeo' && strpos($cli_export, 'LIC-SECRET') === false, 'wp nurevo export prints the settings without secrets');
+$tmp_import = tempnam(sys_get_temp_dir(), 'nurevo');
+file_put_contents($tmp_import, $import_ok(array('business_name' => 'CLI Shop')));
+$cli->import(array($tmp_import), array());
+expect(webmcp_canary_settings()['business_name'] === 'CLI Shop', 'wp nurevo import applies a file');
+file_put_contents($tmp_import, $import_ok(array('site_key' => 'x')));
+$cli_threw = false;
+try { $cli->import(array($tmp_import), array()); } catch (WebmcpTestCliError $error) { $cli_threw = true; }
+expect($cli_threw, 'and refuses one with keys');
+unlink($tmp_import);
+// diagnose needs consent, given with --consent.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js'));
+delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+$cli_threw = false;
+try { $cli->diagnose(array(), array()); } catch (WebmcpTestCliError $error) { $cli_threw = strpos($error->getMessage(), '--consent') !== false; }
+expect($cli_threw && $GLOBALS['webmcp_test_remote_get_log'] === array(), 'wp nurevo diagnose asks for --consent and sends nothing without it');
+$GLOBALS['webmcp_test_remote_get'] = array('api/aeo/score' => array('status' => 200, 'body' => $aeo_body));
+WP_CLI::$out = array();
+$cli->diagnose(array(), array('consent' => true));
+expect(get_option(WEBMCP_CANARY_CONSENT_OPTION)['via'] === 'cli' && strpos(end(WP_CLI::$out), 'AEO score: 64/100') !== false, 'with --consent it records consent and runs');
+$GLOBALS['webmcp_test_remote_get'] = array();
+
+/* --- 0.8.0: developer filters ----------------------------------------- */
+
+$filter_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
+$developers_md = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/docs/developers.md');
+foreach (array('webmcp_canary_schema_graph', 'webmcp_canary_business_node', 'webmcp_canary_llms_txt', 'webmcp_canary_llms_txt_lines', 'webmcp_canary_robots_search_agents', 'webmcp_canary_robots_training_agents', 'webmcp_canary_excluded_post_ids') as $filter_name) {
+    expect(substr_count($filter_source, "apply_filters('{$filter_name}'") === 1, "{$filter_name} is applied in exactly one place");
+    expect(strpos($developers_md, '`' . $filter_name . '`') !== false, "{$filter_name} is documented in docs/developers.md");
+}
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'enabled' => '1', 'serve_schema' => '1', 'serve_llms_txt' => '1', 'allow_ai_crawlers' => '1', 'ai_training' => 'block', 'business_name' => 'Filter Shop',
+));
+$GLOBALS['webmcp_test_options']['blog_public'] = 1;
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$GLOBALS['webmcp_test_queried'] = null;
+$GLOBALS['webmcp_test_front_page'] = true;
+webmcp_canary_schema_merged(false);
+
+add_filter('webmcp_canary_business_node', function ($node, $settings) { $node['priceRange'] = '$$-filtered'; return $node; });
+add_filter('webmcp_canary_schema_graph', function ($bundle) { $bundle['extra'][] = array('@type' => 'Event', 'name' => 'Filtered event'); return $bundle; });
+ob_start(); webmcp_canary_output_server_schema(); $filtered_schema = ob_get_clean();
+expect(strpos($filtered_schema, '$$-filtered') !== false, 'webmcp_canary_business_node changes the business node');
+expect(strpos($filtered_schema, 'Filtered event') !== false, 'webmcp_canary_schema_graph changes the published graph');
+$merged_filtered = webmcp_canary_merge_into_list_graph(array(array('@type' => 'Organization', '@id' => 'https://example.test/#o', 'name' => 'Theirs')));
+expect(strpos(wp_json_encode($merged_filtered), '$$-filtered') !== false && strpos(wp_json_encode($merged_filtered), 'Filtered event') !== false, 'and the graph merged into an SEO plugin');
+webmcp_canary_schema_merged(false);
+$GLOBALS['webmcp_test_hooks']['webmcp_canary_schema_graph'] = array(function () { return 'broken'; });
+ob_start(); webmcp_canary_output_server_schema(); $broken_filter_schema = ob_get_clean();
+expect(strpos($broken_filter_schema, 'Filter Shop') !== false, 'a filter returning the wrong shape is ignored');
+unset($GLOBALS['webmcp_test_hooks']['webmcp_canary_schema_graph'], $GLOBALS['webmcp_test_hooks']['webmcp_canary_business_node']);
+
+add_filter('webmcp_canary_llms_txt_lines', function ($lines) { $lines[] = '## Added by a filter'; return $lines; });
+expect(strpos(webmcp_canary_build_local_llms_txt(), '## Added by a filter') !== false, 'webmcp_canary_llms_txt_lines changes the lines');
+add_filter('webmcp_canary_llms_txt', function ($body) { return $body . "\nBODY-FILTER\n"; });
+expect(strpos((string) webmcp_canary_llms_txt_body(), 'BODY-FILTER') !== false, 'webmcp_canary_llms_txt changes the served body');
+unset($GLOBALS['webmcp_test_hooks']['webmcp_canary_llms_txt_lines'], $GLOBALS['webmcp_test_hooks']['webmcp_canary_llms_txt']);
+
+add_filter('webmcp_canary_robots_search_agents', function ($agents) { $agents[] = "NewSearchBot\nDisallow: /"; return $agents; });
+add_filter('webmcp_canary_robots_training_agents', function ($agents) { return array_values(array_diff($agents, array('CCBot'))); });
+$filtered_robots = webmcp_canary_allow_ai_crawlers_robots_txt("User-agent: *\nDisallow:\n", true);
+expect(strpos($filtered_robots, 'User-agent: NewSearchBotDisallow /') !== false, 'webmcp_canary_robots_search_agents adds an agent, reduced to one line');
+expect(strpos($filtered_robots, "\nDisallow: /\nAllow") === false, 'a filtered agent cannot inject a rule');
+expect(strpos($filtered_robots, 'CCBot') === false && strpos($filtered_robots, 'User-agent: GPTBot') !== false, 'webmcp_canary_robots_training_agents changes the training list');
+unset($GLOBALS['webmcp_test_hooks']['webmcp_canary_robots_search_agents'], $GLOBALS['webmcp_test_hooks']['webmcp_canary_robots_training_agents']);
+
+$GLOBALS['webmcp_test_posts'] = array(
+    (object) array('ID' => 81, 'post_title' => 'Filtered out', 'permalink' => 'https://example.test/f81/', 'post_content' => ''),
+    (object) array('ID' => 82, 'post_title' => 'Still listed', 'permalink' => 'https://example.test/f82/', 'post_content' => ''),
+);
+add_filter('webmcp_canary_excluded_post_ids', function ($ids, $context) { if ($context === 'llms') { $ids[] = 81; } return $ids; });
+$filtered_llms = webmcp_canary_build_local_llms_txt();
+expect(strpos($filtered_llms, 'Filtered out') === false && strpos($filtered_llms, 'Still listed') !== false, 'webmcp_canary_excluded_post_ids excludes posts from llms.txt');
+expect(webmcp_canary_excluded_post_ids('schema') === array(), 'per context');
+unset($GLOBALS['webmcp_test_hooks']['webmcp_canary_excluded_post_ids']);
+$GLOBALS['webmcp_test_posts'] = array();
+
+/* --- 0.8.0: no developer jargon in messages the owner sees ------------- */
+
+$jargon_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
+preg_match_all("/(?:__|esc_html__|esc_html_e|_e)\(\s*'((?:[^'\\\\]|\\\\.)*)'\s*,\s*'nurevo-webmcp'/", $jargon_source, $visible_strings);
+expect(count($visible_strings[1]) > 200, 'the owner-facing strings were found: ' . count($visible_strings[1]));
+foreach ($visible_strings[1] as $visible) {
+    foreach (array('WebMCP', 'Docker', 'Worker', 'tag.js URL') as $jargon) {
+        expect(strpos($visible, $jargon) === false, "no '{$jargon}' in an owner-facing string: {$visible}");
+    }
+}
+expect(strpos($jargon_source, 'fetched from the configured WebMCP Worker') === false, 'the stale llms.txt comment is gone');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js', 'site_key' => 'k'));
+$timeout_message = webmcp_canary_connection_error_message(new WP_Error('http_request_failed', 'cURL error 28: Operation timed out'));
+expect(strpos($timeout_message, 'Nurevo service') !== false && strpos($timeout_message, (string) WEBMCP_CANARY_HTTP_TIMEOUT) !== false, 'a timeout is explained in plain words');
+expect(strpos(webmcp_canary_connection_error_message(null), 'hosting provider') !== false, 'and the generic failure says what to do');
+
+/* --- 0.8.0: multisite cron -------------------------------------------- */
+
+$GLOBALS['webmcp_test_multisite'] = true;
+$GLOBALS['webmcp_test_scheduled_by_blog'] = array();
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+webmcp_canary_activate_aeo_score(true);
+foreach (array(1, 2, 3) as $blog) {
+    expect(in_array(WEBMCP_CANARY_RULESET_CRON, $GLOBALS['webmcp_test_scheduled_by_blog'][$blog] ?? array(), true), "network activation schedules the sync on site {$blog}");
+}
+expect($GLOBALS['webmcp_test_blog'] === 1 && empty($GLOBALS['webmcp_test_blog_stack']), 'and returns to the current site');
+expect($GLOBALS['webmcp_test_remote_get_log'] === array(), 'network activation makes no request either');
+
+$GLOBALS['webmcp_test_scheduled_by_blog'] = array();
+webmcp_canary_activate_aeo_score(false);
+expect(array_keys($GLOBALS['webmcp_test_scheduled_by_blog']) === array(1), 'activating on one site schedules that site only');
+
+expect(in_array('webmcp_canary_initialize_site', $GLOBALS['webmcp_test_hooks']['wp_initialize_site'], true), 'new sites are hooked');
+$GLOBALS['webmcp_test_scheduled_by_blog'] = array();
+webmcp_canary_initialize_site((object) array('blog_id' => 9));
+expect(empty($GLOBALS['webmcp_test_scheduled_by_blog']), 'a new site gets nothing while the plugin is not network-active');
+$GLOBALS['webmcp_test_network_active'] = true;
+webmcp_canary_initialize_site((object) array('blog_id' => 9));
+expect(in_array(WEBMCP_CANARY_RULESET_CRON, $GLOBALS['webmcp_test_scheduled_by_blog'][9] ?? array(), true), 'a new site on a network-active install gets its sync');
+expect($GLOBALS['webmcp_test_blog'] === 1, 'and the current site is restored');
+
+$GLOBALS['webmcp_test_cleared_by_blog'] = array();
+webmcp_canary_deactivate_ruleset_cron(true);
+foreach (array(1, 2, 3) as $blog) {
+    expect(in_array(WEBMCP_CANARY_RULESET_CRON, $GLOBALS['webmcp_test_cleared_by_blog'][$blog] ?? array(), true), "network deactivation clears the sync on site {$blog}");
+}
+$GLOBALS['webmcp_test_cleared_by_blog'] = array();
+webmcp_canary_deactivate_ruleset_cron(false);
+expect(array_keys($GLOBALS['webmcp_test_cleared_by_blog']) === array(1), 'deactivating one site clears that site only');
+$GLOBALS['webmcp_test_multisite'] = false;
+$GLOBALS['webmcp_test_network_active'] = false;
+
+/* --- 0.8.0: llms.txt cache -------------------------------------------- */
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '1', 'serve_llms_txt' => '1', 'business_name' => 'Cache Shop'));
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+webmcp_canary_flush_llms_cache();
+$GLOBALS['webmcp_test_posts'] = array((object) array('ID' => 91, 'post_title' => 'First post', 'permalink' => 'https://example.test/first/', 'post_content' => ''));
+$cached_first = webmcp_canary_llms_txt_body();
+expect(strpos($cached_first, 'First post') !== false, 'the first request builds llms.txt');
+expect(is_array(get_transient(WEBMCP_CANARY_LLMS_TRANSIENT)), 'and caches it in a transient');
+$GLOBALS['webmcp_test_posts'][] = (object) array('ID' => 92, 'post_title' => 'Second post', 'permalink' => 'https://example.test/second/', 'post_content' => '');
+expect(webmcp_canary_llms_txt_body() === $cached_first, 'later requests are served from the cache');
+foreach (array('save_post', 'deleted_post', 'update_option_' . WEBMCP_CANARY_OPTION, 'update_option_' . WEBMCP_CANARY_SERVICES_OPTION, 'update_option_' . WEBMCP_CANARY_RULESET_OPTION) as $invalidating_hook) {
+    expect(in_array('webmcp_canary_flush_llms_cache', $GLOBALS['webmcp_test_hooks'][$invalidating_hook] ?? array(), true), "the cache is cleared on {$invalidating_hook}");
+}
+foreach ($GLOBALS['webmcp_test_hooks']['save_post'] as $save_callback) {
+    if ($save_callback === 'webmcp_canary_flush_llms_cache') { call_user_func($save_callback, 92, null, true); }
+}
+expect(strpos(webmcp_canary_llms_txt_body(), 'Second post') !== false, 'saving a post brings it into llms.txt');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_name'] = 'Renamed Cache Shop';
+expect(strpos(webmcp_canary_llms_txt_body(), '# Renamed Cache Shop') === 0, 'a settings change is never served stale');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['serve_llms_txt'] = '0';
+expect(webmcp_canary_llms_txt_body() === null, 'switching llms.txt off stops it even with a cached body');
+$GLOBALS['webmcp_test_posts'] = array();
+webmcp_canary_flush_llms_cache();
+$serve_body = webmcp_test_function_body(file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_maybe_serve_llms_txt');
+expect(strpos($serve_body, "header('Cache-Control: public, max-age=300')") !== false, 'llms.txt is served with Cache-Control: public, max-age=300');
+expect(strpos($serve_body, 'nocache_headers') === false, 'and no longer as uncacheable');
+
+/* --- 0.8.0: suggested privacy policy text ------------------------------ */
+
+$GLOBALS['webmcp_test_privacy'] = array();
+webmcp_canary_add_privacy_policy_content();
+expect(in_array('webmcp_canary_add_privacy_policy_content', $GLOBALS['webmcp_test_hooks']['admin_init'], true), 'the privacy text is offered from admin_init');
+$privacy = $GLOBALS['webmcp_test_privacy']['Nurevo AEO'] ?? '';
+expect($privacy !== '', 'privacy policy text is suggested to WordPress');
+foreach (array('nurevo.jp', 'Only after a site administrator agrees', 'pairing code', 'home page address', 'business details', 'no visitor data', 'https://nurevo.jp/privacy') as $disclosed) {
+    expect(strpos($privacy, $disclosed) !== false, "the privacy text states: {$disclosed}");
+}
+
+/* --- 0.8.0: wp-admin display switches, FAQ block title, version -------- */
+
+$display_defaults = webmcp_canary_default_settings();
+expect($display_defaults['show_admin_bar_score'] === '1' && $display_defaults['show_dashboard_widget'] === '1', 'the admin bar score and the Dashboard widget are on by default');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($display_defaults, array('enabled' => '1'));
+$admin_bar = new class { public $nodes = array(); public function add_node($node) { $this->nodes[] = $node; } };
+webmcp_canary_admin_bar_score($admin_bar);
+expect(count($admin_bar->nodes) === 1, 'the admin bar shows the score by default');
+$GLOBALS['webmcp_test_widgets'] = array();
+webmcp_canary_register_aeo_widget();
+expect(isset($GLOBALS['webmcp_test_widgets']['webmcp_canary_aeo_widget']), 'the Dashboard widget is registered by default');
+
+$hidden = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('admin_display_submitted' => '1', 'show_admin_bar_score' => '', 'show_dashboard_widget' => '')));
+expect($hidden['show_admin_bar_score'] === '0' && $hidden['show_dashboard_widget'] === '0', 'unticking both on the form turns them off');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $hidden;
+$admin_bar->nodes = array();
+webmcp_canary_admin_bar_score($admin_bar);
+expect($admin_bar->nodes === array(), 'the admin bar score can be hidden');
+$GLOBALS['webmcp_test_widgets'] = array();
+webmcp_canary_register_aeo_widget();
+expect(empty($GLOBALS['webmcp_test_widgets']), 'the Dashboard widget can be hidden');
+$kept_hidden = webmcp_canary_sanitize_settings(array('enabled' => '1'));
+expect($kept_hidden['show_admin_bar_score'] === '0', 'a write that does not come from the form keeps the choice');
+$stored_before_080 = $display_defaults;
+unset($stored_before_080['show_admin_bar_score'], $stored_before_080['show_dashboard_widget']);
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $stored_before_080;
+$upgraded = webmcp_canary_sanitize_settings($stored_before_080);
+expect($upgraded['show_admin_bar_score'] === '1' && $upgraded['show_dashboard_widget'] === '1', 'an install upgraded from 0.7 keeps both on');
+$shown_again = webmcp_canary_sanitize_settings(array('admin_display_submitted' => '1', 'show_admin_bar_score' => '1', 'show_dashboard_widget' => '1'));
+expect($shown_again['show_admin_bar_score'] === '1' && $shown_again['show_dashboard_widget'] === '1', 'ticking them turns them back on');
+expect(in_array('show_admin_bar_score', webmcp_canary_exportable_setting_keys(), true), 'the switches travel with an export');
+
+$block_js = webmcp_canary_faq_block_editor_js();
+expect(strpos($block_js, "title:'Nurevo FAQ'") === false && strpos($block_js, 'title:t.title') !== false, 'the FAQ block title comes from a translated string');
+expect(strpos($block_js, '"title":"Nurevo FAQ"') !== false, 'which is passed in from PHP');
+
+$main_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
+expect(WEBMCP_CANARY_VERSION === '0.8.0' && strpos($main_source, " * Version: 0.8.0\n") !== false, 'the version is 0.8.0 in the header and the constant');
+$readme_080 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
+expect(strpos($readme_080, "Stable tag: 0.8.0") !== false, 'and in the readme stable tag');
+expect(substr_count($readme_080, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice');
 
 echo "WordPress AEO admin tests passed\n";
