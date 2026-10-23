@@ -117,9 +117,11 @@ export function evaluateTax(config, secretNames) {
   const vars = config?.vars || {};
   const automatic = String(vars.STRIPE_AUTOMATIC_TAX ?? "").trim() === "1" || secretNames.has("STRIPE_AUTOMATIC_TAX");
   const rate = Object.prototype.hasOwnProperty.call(vars, "STRIPE_TAX_RATE_ID") || secretNames.has("STRIPE_TAX_RATE_ID");
+  const exempt = String(vars.STRIPE_TAX_EXEMPT ?? "").trim() === "1" || secretNames.has("STRIPE_TAX_EXEMPT");
+  if (exempt && !automatic) return { ok: true, method: "exempt", detail: "tax-exempt seller (STRIPE_TAX_EXEMPT): list price is the total, no tax added" };
   if (automatic) return { ok: true, method: "automatic", detail: "Stripe Tax (STRIPE_AUTOMATIC_TAX)" };
   if (rate) return { ok: true, method: "rate", detail: "fixed tax rate on Checkout (STRIPE_TAX_RATE_ID); payment links are refused" };
-  return { ok: false, method: null, detail: "no STRIPE_AUTOMATIC_TAX or STRIPE_TAX_RATE_ID: Pro would be charged without consumption tax" };
+  return { ok: false, method: null, detail: "no STRIPE_AUTOMATIC_TAX, STRIPE_TAX_RATE_ID or STRIPE_TAX_EXEMPT: say how consumption tax is handled" };
 }
 
 /** Check a Stripe Price object against what the LP and the worker charge. */

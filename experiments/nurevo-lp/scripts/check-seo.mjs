@@ -144,11 +144,23 @@ for (const url of sitemapUrls) {
     for (const key of ["name", "applicationCategory", "operatingSystem", "offers"]) if (!app[key]) fail(url, `SoftwareApplication has no ${key}`);
     // No rating exists, so none may be stated - in any form.
     if (app.aggregateRating || app.review) fail(url, "SoftwareApplication carries a rating or review that nothing measured");
-    for (const offer of app.offers || []) {
-      if (offer.priceCurrency !== "JPY" || !/^\d+$/.test(offer.price)) fail(url, `offer ${offer.name} has no usable price`);
-      const shown = `¥${Number(offer.price).toLocaleString("en-US")}`;
-      if (!text.includes(shown)) fail(url, `offer price ${shown} is not shown on the page`);
+    // JPY is the canonical price and Japanese pages show it; every other
+    // language shows the US-dollar price. Each page must show the offers in
+    // its own currency, and every plan must have a JPY offer.
+    const pageCurrency = lang === "ja" ? "JPY" : "USD";
+    const symbol = { JPY: "¥", USD: "$" };
+    const offers = app.offers || [];
+    for (const offer of offers) {
+      if (!symbol[offer.priceCurrency] || !/^\d+$/.test(offer.price)) fail(url, `offer ${offer.name} has no usable price`);
+      if (offer.priceCurrency === "USD" && offer.eligibleRegion?.name !== "US") fail(url, `USD offer ${offer.name} is not limited to the US`);
+      if (offer.priceCurrency === pageCurrency || (offer.priceCurrency === "JPY" && Number(offer.price) === 0)) {
+        const shown = `${symbol[pageCurrency]}${Number(offer.price).toLocaleString("en-US")}`;
+        if (!text.includes(shown)) fail(url, `offer price ${shown} is not shown on the page`);
+      }
       if (!squash(text).includes(squash(offer.name))) fail(url, `offer name ${offer.name} is not shown on the page`);
+    }
+    for (const offer of offers.filter((o) => o.priceCurrency === "USD")) {
+      if (!offers.some((o) => o.priceCurrency === "JPY" && o.name === offer.name)) fail(url, `offer ${offer.name} has no canonical JPY offer`);
     }
   }
   if (/aggregateRating|"review"/.test(blocks.map((block) => block[1]).join(""))) fail(url, "a rating or review appears in the structured data");

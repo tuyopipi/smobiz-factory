@@ -1,3 +1,4 @@
+import { pricesFromEnv, tierPriceIds } from "./billing-plan.mjs";
 // Account identities are per member, independent of organization-level access.
 export async function ensureAccount(env, memberId) {
   await env.DB.prepare(`INSERT INTO accounts(member_id,email,created_at)
@@ -66,12 +67,16 @@ async function paidInvoiceCommission(env, subscriptionIds, registeredAt) {
           if (invoice.currency !== 'jpy' || lines?.has_more || !lines?.data?.length
             || Number(invoice.pre_payment_credit_notes_amount || 0) || Number(invoice.post_payment_credit_notes_amount || 0))
             return { amount: null, reason: 'payment_history_incomplete' };
-          const standardPrice = String(env.STRIPE_PRICE_ID_STANDARD || '');
-          if (!standardPrice) return { amount: null, reason: 'payment_history_unavailable' };
+          // The current Standard price plus any legacy Standard prices that
+          // older subscriptions are still billed on (STRIPE_PRICE_IDS_LEGACY_STANDARD).
+          const configured = pricesFromEnv(env);
+          if (!configured.standard) return { amount: null, reason: 'payment_history_unavailable' };
+          const standardPrices = tierPriceIds(configured, 'standard');
+          const isStandard = price => standardPrices.includes(price);
           const prices = lines.data.map(line => line.price?.id || line.pricing?.price_details?.price);
-          if (prices.some(price => !price) || (prices.includes(standardPrice) && prices.some(price => price !== standardPrice)))
+          if (prices.some(price => !price) || (prices.some(isStandard) && !prices.every(isStandard)))
             return { amount: null, reason: 'payment_history_incomplete' };
-          const standardOnly = prices.every(price => price === standardPrice);
+          const standardOnly = prices.every(isStandard);
           if (standardOnly) total += Math.floor(Number(invoice.amount_paid || 0) * 0.4);
         }
         if (!result.has_more) break;

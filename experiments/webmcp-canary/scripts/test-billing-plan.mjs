@@ -127,15 +127,54 @@ assert.equal(normalizePlan(undefined), "free");
 
 assert.deepEqual(
   pricesFromEnv({ STRIPE_PRICE_ID_PRO: " price_pro ", STRIPE_PRICE_ID_STANDARD: "price_std" }),
-  { pro: "price_pro", standard: "price_std" },
+  { pro: "price_pro", standard: "price_std", legacy: { pro: [], standard: [] } },
   "price ids are read and trimmed",
 );
-assert.deepEqual(pricesFromEnv({}), { pro: "", standard: "" }, "missing price config is blank, not undefined");
+assert.deepEqual(pricesFromEnv({}), { pro: "", standard: "", legacy: { pro: [], standard: [] } }, "missing price config is blank, not undefined");
 
 // With STRIPE_PRICE_ID_STANDARD unset - the state this ships in - a standard
 // price cannot be sold, but a pro one still can.
 const proOnly = pricesFromEnv({ STRIPE_PRICE_ID_PRO: "price_pro" });
 assert.equal(tierFromPriceIds(["price_pro"], proOnly), "pro", "pro still sells with standard unconfigured");
 assert.equal(tierFromPriceIds(["price_std"], proOnly), "free", "standard cannot be sold until it is configured");
+
+/* ---------------- legacy price ids ---------------- */
+
+// The live subscriptions predate the multi-currency prices: they sit on an old
+// standalone JPY price while the env points at the new one. A webhook for them
+// must keep their tier, not demote a paying customer to free.
+{
+  const env = {
+    STRIPE_PRICE_ID_STANDARD: "price_std_multi",
+    STRIPE_PRICE_ID_PRO: "price_pro_multi",
+    STRIPE_PRICE_IDS_LEGACY_STANDARD: " price_std_jpy_old , price_std_usd_old,, ",
+    STRIPE_PRICE_IDS_LEGACY_PRO: "price_pro_jpy_old",
+  };
+  const prices = pricesFromEnv(env);
+  assert.deepEqual(prices.legacy, { standard: ["price_std_jpy_old", "price_std_usd_old"], pro: ["price_pro_jpy_old"] }, "legacy ids are split on commas and trimmed");
+  assert.equal(prices.standard, "price_std_multi", "checkout still sees only the primary standard id");
+  assert.equal(prices.pro, "price_pro_multi", "checkout still sees only the primary pro id");
+
+  assert.equal(tierFromPriceIds(["price_std_multi"], prices), "standard", "the new price buys standard");
+  assert.equal(tierFromPriceIds(["price_std_jpy_old"], prices), "standard", "an old standard price is still standard");
+  assert.equal(tierFromPriceIds(["price_std_usd_old"], prices), "standard", "every listed legacy id counts");
+  assert.equal(tierFromPriceIds(["price_pro_jpy_old"], prices), "pro", "an old pro price is still pro");
+  assert.equal(tierFromPriceIds(["price_std_jpy_old", "price_pro_jpy_old"], prices), "pro", "the highest tier still wins across legacy ids");
+  assert.equal(tierFromPriceIds(["price_unlisted"], prices), "free", "a legacy list does not make unknown prices count");
+
+  const renewed = planFromSubscription(sub("active", ["price_std_jpy_old"]), prices);
+  assert.equal(renewed.plan, "standard", "a webhook for an old subscription keeps its tier");
+  assert.equal(renewed.delivery_status, "active");
+  assert.equal(planFromSubscription(sub("past_due", ["price_pro_jpy_old"]), prices).plan, "pro", "including during the retry window");
+  assert.equal(planFromSubscription(sub("canceled", ["price_pro_jpy_old"]), prices).plan, "free", "and cancelling it still revokes");
+
+  // Without the legacy var the old price is unknown, which is exactly the
+  // downgrade this exists to prevent.
+  const noLegacy = pricesFromEnv({ STRIPE_PRICE_ID_STANDARD: "price_std_multi" });
+  assert.equal(planFromSubscription(sub("active", ["price_std_jpy_old"]), noLegacy).plan, "free", "unlisted old prices grant nothing");
+
+  // Blank legacy entries never match blank ids.
+  assert.equal(tierFromPriceIds([""], pricesFromEnv({ STRIPE_PRICE_IDS_LEGACY_PRO: " , " })), "free");
+}
 
 console.log("billing plan tests passed");

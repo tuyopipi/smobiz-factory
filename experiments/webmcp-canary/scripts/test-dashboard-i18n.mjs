@@ -42,7 +42,10 @@ for (const lang of LANGS) {
   for (const key of keys) {
     const value = I[lang][key];
     assert.ok(typeof value === "string" && value.trim().length > 0, `${lang}.${key} is a non-empty string`);
-    assert.equal(placeholders(value), placeholders(I.ja[key]), `${lang}.${key} keeps the placeholders of ja`);
+    // The price slot is the one intended difference: ja shows {yen}, every
+    // other language the US price {usd}. The page passes both.
+    const slot = (v) => placeholders(v).replace(/\b(yen|usd)\b/g, "price");
+    assert.equal(slot(value), slot(I.ja[key]), `${lang}.${key} keeps the placeholders of ja`);
     if (lang !== "ja" && !["zh", "tw"].includes(lang)) assert.ok(!JAPANESE.test(value), `${lang}.${key} has no Japanese (${value})`);
     if (["zh", "tw"].includes(lang)) assert.ok(!KANA.test(value), `${lang}.${key} has no kana (${value})`);
   }
@@ -53,7 +56,15 @@ const i4Keys = new Set(LANGS.flatMap((l) => Object.keys(I4[l])));
 for (const lang of LANGS) for (const key of i4Keys) assert.ok(own(lang).has(key), `${lang}.${key} (I4)`);
 // Existing ja/en wording is untouched.
 assert.equal(I.ja.ptCode, "紹介コード");
-assert.equal(I.en.plStdHead, "Choose Standard（¥3,000/month・excl. tax）");
+// Plan prices: yen in Japanese, US dollars everywhere else.
+assert.equal(I.ja.plStdHead, "スタンダードにする（¥3,000/月）");
+assert.equal(I.ja.plProHead, "{buy}（¥{yen}/月）");
+assert.equal(I.en.plStdHead, "Choose Standard ($20/month)");
+assert.equal(I.en.plProHead, "{buy} (${usd}/month)");
+for (const lang of LANGS.filter((l) => l !== "ja")) {
+  assert.ok(/20/.test(I[lang].plStdHead) && /\$/.test(I[lang].plStdHead) && !/¥|3,000|3 000/.test(I[lang].plStdHead), `${lang}.plStdHead shows $20`);
+  assert.ok(I[lang].plProHead.includes("{usd}") && /\$/.test(I[lang].plProHead) && !/¥|\{yen\}/.test(I[lang].plProHead), `${lang}.plProHead shows the USD amount`);
+}
 assert.equal(I.ja.plLinkCopied, "リンクをコピーしました");
 assert.equal(I.en.ptRate, "¥1,200/month (40%) per active referred Standard subscription. Disbursed totals are unavailable without a payout ledger.");
 assert.equal(I.ja.planGrantOrg && I.ja.planGrantOrg !== "planGrantOrg", true, "planGrantOrg is a word, not its key");
