@@ -2,20 +2,22 @@
 /**
  * AEO validation study runner. See study/README.md.
  *
- *   node study/run-study.mjs plan    [--sample ...] [--repeats 3] [--engines gemini]
+ *   node study/run-study.mjs plan    [--sample ...] [--repeats 3]
  *   node study/run-study.mjs score   [--sample ...] [--out study/out] [--rescore] [--dry-run]
- *   node study/run-study.mjs measure [--engines gemini] [--repeats 3] [--max-calls N] ... [--dry-run]
+ *   node study/run-study.mjs measure [--repeats 3] [--max-calls N] [--max-usd 3] [--dry-run]
  *
- * Keys come from environment variables only (GEMINI_API_KEY, and for paid
- * engines PERPLEXITY_API_KEY / OPENAI_API_KEY). They are never printed,
- * written to disk, or put in a URL.
+ * Engine: Perplexity (Agent API, preset "fast"), the Pro product's adapter.
+ * --max-calls (default: the planned total) and --max-usd (default 3) are
+ * cumulative over every run in the same --out directory.
+ * The key comes from PERPLEXITY_API_KEY only; it is never printed, written to
+ * disk, or put in a URL.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseCsv } from "./lib/csv.mjs";
-import { ENGINE_INFO, GEMINI_FREE_GROUNDED_RPD, buildMeasure, loadExternalEngines } from "./lib/engines.mjs";
-import { planTasks, readJsonl, runMeasurements } from "./lib/runner.mjs";
+import { ENGINE_INFO, PER_CALL_ASSUMPTION, PRICING_SOURCES, buildMeasure, engineModel, perCallCeilingUsd } from "./lib/engines.mjs";
+import { ledgerTotals, planTasks, readJsonl, runMeasurements } from "./lib/runner.mjs";
 import { scoreSite } from "./lib/scorer.mjs";
 import { INITIAL_AEO_RULESET } from "../worker/aeo-rules.mjs";
 
@@ -44,23 +46,24 @@ export function loadSample(path) {
   return rows.filter((r) => String(r.exclude || "").toLowerCase() !== "yes");
 }
 
-/** Defaults sized to stay well inside the Gemini free tier (500 grounded RPD). */
-export const FREE_DEFAULTS = Object.freeze({ repeats: 3, maxCallsPerDay: 450, maxTotalCalls: 1200, minIntervalMs: 7000 });
+/** Budget defaults (owner decision: small paid budget on Perplexity). */
+export const STUDY_DEFAULTS = Object.freeze({ repeats: 3, maxUsd: 3, minIntervalMs: 2000 });
 
 export async function main(argv = process.argv.slice(2), { env = process.env, stdout = console.log, fetchImpl = fetch } = {}) {
   const { command, flags } = parseArgs(argv);
   const samplePath = resolve(flags.sample || join(HERE, "sample.csv"));
   const outDir = resolve(flags.out || join(HERE, "out"));
   const dry = flags["dry-run"] === true;
-  const freeOnly = flags["allow-paid"] !== true;
-  const engines = dry ? ["stub"] : String(flags.engines || "gemini").split(",").map((s) => s.trim()).filter(Boolean);
-  const repeats = num(flags.repeats, FREE_DEFAULTS.repeats);
-  const models = {};
-  if (flags.model) for (const id of engines) if (id.startsWith("gemini")) models[id] = String(flags.model);
-  for (const id of engines) if (!models[id] && ENGINE_INFO[id]?.defaultModel) models[id] = ENGINE_INFO[id].defaultModel;
+  const engines = dry ? ["stub"] : ["perplexity"];
+  if (!dry && flags.engines !== undefined && String(flags.engines) !== "perplexity") {
+    stdout("Refusing: the study measures with perplexity only (Gemini is excluded by its grounding terms; see study/README.md).");
+    return 2;
+  }
+  const repeats = num(flags.repeats, STUDY_DEFAULTS.repeats);
+  const models = Object.fromEntries(engines.map((id) => [id, engineModel(id)]));
 
   if (command === "help" || flags.help) {
-    stdout(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(2, 13).map((l) => l.replace(/^ \* ?/, "")).join("\n"));
+    stdout(readFileSync(fileURLToPath(import.meta.url), "utf8").split("\n").slice(2, 15).map((l) => l.replace(/^ \* ?/, "")).join("\n"));
     return 0;
   }
 
@@ -72,7 +75,14 @@ export async function main(argv = process.argv.slice(2), { env = process.env, st
     const perEngine = Object.fromEntries(engines.map((e) => [e, tasks.filter((t) => t.engine === e).length]));
     const unique = new Set(tasks.map((t) => t.question.text)).size;
     stdout(`businesses: ${businesses.length}\nunique questions: ${unique}\nrepeats: ${repeats}\ncalls per engine: ${JSON.stringify(perEngine)}\ntotal calls: ${tasks.length}`);
-    if (engines.includes("gemini")) stdout(`gemini free tier: ${GEMINI_FREE_GROUNDED_RPD} grounded requests/day (shared Flash/Flash-Lite) -> at --max-calls-per-day ${FREE_DEFAULTS.maxCallsPerDay}, about ${Math.ceil(perEngine.gemini / FREE_DEFAULTS.maxCallsPerDay)} day(s)`);
+    for (const engine of engines.filter((e) => e !== "stub")) {
+      const ceiling = perCallCeilingUsd(engine);
+      stdout(`${ENGINE_INFO[engine].label}: <= $${ceiling.toFixed(4)} per call (1 Fast Search + ${PER_CALL_ASSUMPTION.inputTokens} input + ${PER_CALL_ASSUMPTION.outputTokens} output tokens at list price)`);
+      stdout(`estimated ceiling for ${perEngine[engine]} calls: $${(ceiling * perEngine[engine]).toFixed(2)} (default --max-usd ${STUDY_DEFAULTS.maxUsd})`);
+      stdout(`pricing: ${PRICING_SOURCES.join(" , ")}`);
+    }
+    const ledger = ledgerTotals(readJsonl(join(outDir, dry ? "calls-ledger.dry.jsonl" : "calls-ledger.jsonl")));
+    stdout(`already in ledger: ${ledger.calls} call(s), $${ledger.usd.toFixed(4)} (est.)`);
     return 0;
   }
 
@@ -107,35 +117,29 @@ export async function main(argv = process.argv.slice(2), { env = process.env, st
   }
 
   if (command === "measure") {
-    if (!dry && engines.includes("gemini") && flags["ack-grounding-terms"] !== true) {
-      stdout("Refusing: Gemini grounded answers are covered by the 'Grounding with Google Search' section of the Gemini API Additional Terms, which restricts storing and analysing Grounded Results. Read study/README.md (利用規約の注意) and decide; then re-run with --ack-grounding-terms.");
-      return 2;
-    }
-    if (!dry && engines.includes("gemini") && flags.store === "full") {
-      stdout("Refusing: --store full would keep Grounded Result text and source hosts; the Grounding terms restrict storing them. Use the default --store flags for engine gemini.");
-      return 2;
-    }
-    let external = null;
-    if (flags["engines-module"]) external = await loadExternalEngines(String(flags["engines-module"]), env);
+    if (flags.store === true || (flags.store && !["flags", "full"].includes(flags.store))) { stdout("Refusing: --store must be flags or full"); return 2; }
     let measure;
     try {
-      measure = buildMeasure({ engines, env, models, freeOnly, allowModels: flags["allow-model"] ? String(flags["allow-model"]).split(",") : [], external, fetchImpl });
+      measure = buildMeasure({ engines, env, fetchImpl });
     } catch (error) { stdout(`Refusing: ${error.message}`); return 2; }
+    const planned = planTasks({ businesses, engines, repeats, models }).length;
+    const maxCalls = num(flags["max-calls"], planned);
+    const maxUsd = num(flags["max-usd"], STUDY_DEFAULTS.maxUsd);
+    if (!Number.isFinite(maxCalls) || maxCalls < 0 || !Number.isFinite(maxUsd) || maxUsd < 0) { stdout("Refusing: --max-calls and --max-usd must be non-negative numbers"); return 2; }
     const suffix = dry ? ".dry" : "";
+    if (!dry) stdout(`budget: --max-calls ${maxCalls} (planned ${planned}), --max-usd ${maxUsd}, <= $${perCallCeilingUsd("perplexity").toFixed(4)} reserved per call`);
     const summary = await runMeasurements({
       businesses: dry ? businesses.map((b) => ({ ...b, __stubScore: dryScore(b).score })) : businesses,
       engines, repeats, models, measure,
       cachePath: join(outDir, `measurements${suffix}.jsonl`),
       ledgerPath: join(outDir, `calls-ledger${suffix}.jsonl`),
-      maxCalls: num(flags["max-calls"], Infinity),
-      maxTotalCalls: num(flags["max-total-calls"], freeOnly && !dry ? FREE_DEFAULTS.maxTotalCalls : Infinity),
-      maxCallsPerDay: num(flags["max-calls-per-day"], freeOnly && !dry ? FREE_DEFAULTS.maxCallsPerDay : Infinity),
-      minIntervalMs: dry ? 0 : num(flags["min-interval-ms"], FREE_DEFAULTS.minIntervalMs),
+      maxCalls, maxUsd, perCallUsd: (engine) => perCallCeilingUsd(engine),
+      minIntervalMs: dry ? 0 : num(flags["min-interval-ms"], STUDY_DEFAULTS.minIntervalMs),
       store: flags.store || "flags",
       log: (line) => stdout(line),
     });
     stdout(JSON.stringify(summary, null, 2));
-    if (summary.stop && !["max_calls", "max_calls_per_day", "max_total_calls"].includes(summary.stop.reason)) return 3;
+    if (summary.stop && !["max_calls", "max_usd"].includes(summary.stop.reason)) return 3;
     return 0;
   }
 

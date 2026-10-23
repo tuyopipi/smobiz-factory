@@ -3,8 +3,10 @@
 Nurevo の「AI読みやすさスコア」（0〜100点）が高い地域事業者ほど、実際に AI の回答に登場しやすいのかを確かめるための調査です。
 目的は、良い結果でも悪い結果でも**正直な証拠**を得ることです。結果は製品の改善に使い、支持された場合に限って営業資料にも使います。
 
-> 現在の方針（オーナー決定）: **無料枠の範囲だけで実施し、有料APIは一切呼びません。**
-> 1回目の測定は Google Gemini（Google検索グラウンディング付き）の無料枠だけで行います。ChatGPT・Perplexity は有料なので今回は対象外です（あとから差し込めるようにしてあります）。
+> 現在の方針（オーナー決定）: **Perplexity（有料・少額予算）だけで測定します。**
+> 当初予定していた Gemini（無料枠＋Google検索グラウンディング）は、Gemini API の規約が検索付き回答の分析を禁じているため使いません（4章）。
+> 測定には Pro の「AI表示状況」機能と**同じ Perplexity アダプター**（`worker/ai-engines.mjs` の `probePerplexity`、Agent API・プリセット `fast`）と**同じ登場判定**（`worker/aeo-sov.mjs` の `analyzeAnswer`：名前が出た／自社ドメインが引用された、を別々に記録）を使うので、この調査は製品が測っているものをそのまま検証します。
+> 予算: 既定の上限は **537回・3ドル**。見込み費用は**約1〜1.7ドル**（9章）。
 
 ---
 
@@ -50,37 +52,34 @@ Nurevo の「AI読みやすさスコア」（0〜100点）が高い地域事業�
 
 ## 4. エンジンと繰り返し
 
-| エンジン | 今回 | 料金 | 備考 |
-|---|---|---|---|
-| Gemini 2.5 Flash ＋ Google検索グラウンディング（`gemini`） | **使用** | 無料枠（課金なしプロジェクト） | 無料枠でグラウンディングが使えるのは 2.5 Flash / 2.5 Flash-Lite のみ（後述） |
-| Gemini（検索なし、`gemini-ungrounded`） | 任意 | 無料枠 | モデルの記憶だけ。サイト改善の効果は反映されにくい。グラウンディング規約の対象外 |
-| Perplexity / ChatGPT（OpenAI） | 対象外 | 有料 | `--allow-paid` を付けない限り実行を拒否。`worker/aeo-sov.mjs` の既存アダプター、または今後の `worker/ai-engines.mjs` を `--engines-module` で差し込み可能 |
+| エンジン | 今回 | 備考 |
+|---|---|---|
+| **Perplexity**（Agent API、プリセット `fast`） | **使用（唯一）** | Pro 製品と同じアダプター。`fast` は Fast Search を最大1回行い（max steps 1）、`openai/gpt-6-luna` が priority ティアで回答します（https://docs.perplexity.ai/docs/agent-api/presets ）。環境変数 `PERPLEXITY_PRESET` / `PERPLEXITY_API_URL` は無視し、常に `fast` と本番エンドポイントを使います（費用の前提が変わらないように） |
+| Gemini（検索付き・検索なしとも） | **使わない** | 下記「Gemini を使わない理由」 |
+| ChatGPT（OpenAI） | 今回は対象外 | 製品には同じ形のアダプターがあるが、今回の予算・判断の対象外 |
 
-- 繰り返し: 各質問をエンジンごとに **3回**（AIの回答は毎回変わるため）。
-- 判定: Nurevo の SoV 機能と同じ判定ロジック（`worker/aeo-sov.mjs` の `analyzeAnswer`）を使い、名前（`aliases` 列の別名を含む）が回答に含まれるか、引用元に自社ドメインがあるかを見ます。Gemini の引用は Google のリダイレクトURLなので、引用元タイトル（ドメイン名）からドメインを判定します。リダイレクトURLはたどりません。
+- 繰り返し: 各質問を **3回**（AIの回答は毎回変わるため）。
+- 判定: Nurevo の SoV 機能と同じ `analyzeAnswer` を使い、名前（`aliases` 列の別名を含む）が回答に含まれるか、引用元（Perplexity の `search_results` の URL と回答中の URL）に自社ドメインがあるかを**別々に**記録します。主指標の「登場」はそのどちらか（製品の `any_rate` と同じ定義）。
 
-### 無料枠について（2026-10-23 に公式ページで確認）
+### Gemini を使わない理由（記録として残す）
 
-- 料金ページ（https://ai.google.dev/gemini-api/docs/pricing ）の「Grounding with Google Search」行:
-  - **Gemini 2.5 Flash / 2.5 Flash-Lite の無料枠: "Free of charge, up to 500 RPD (limit shared with Flash-Lite RPD)"**（1日500リクエスト、両モデル合算）。
-  - Gemini 3 以降: 無料枠は "Not available"（AI Studio 画面での試用のみ）。**「月5,000回無料」は有料枠（課金を有効にしたプロジェクト）の特典**で、"5,000 free search requests per month (shared across all Gemini 3 and newer models), then $14 per 1,000 requests" です。フォーラムで言われている「Gemini 3 は月5,000回無料」は無料枠の話ではありません。
-- 無料枠の1分あたり・1日あたりの上限（RPM/RPD）はモデルごとに AI Studio でのみ表示されます（https://ai.google.dev/gemini-api/docs/rate-limits ）。既定では7秒間隔（約8回/分）で呼び出します。上限が違えば `--min-interval-ms` で調整してください。
-- 1日の上限は米国太平洋時間の0時にリセットされます。ランナーも太平洋時間で日付を数えます。
+Gemini API 追加利用規約（https://ai.google.dev/gemini-api/terms ）の「Grounding with Google Search」の節は、検索付き回答（Grounded Results）のキャッシュ・保存・**分析・監視**を制限し、質問した本人にそのまま表示することを求めています。登場率を自動で集計するこの調査はまさに「分析」に当たるため使えません。検索なしの Gemini は「モデルの記憶」しか測れず、製品が測るもの（検索して答える AI に出るか）と別物なので、代わりにもしません。PR #26（`worker/ai-engines.mjs`）でも同じ理由で Gemini を製品から外しています。
 
-### 無料枠の安全装置（ランナーに実装済み）
+### 結果が一般化できる範囲・できない範囲
 
-- `--free-only` が既定です。有料エンジン（Perplexity・OpenAI・外部モジュール）と、無料枠リストにない Gemini モデルは**実行前に拒否**します。
-- **429 / RESOURCE_EXHAUSTED / quota / billing / 401 / 403 / モデル不明などのエラーが1回でも出たら即停止**し、再試行しません（課金プロジェクトで再試行すると有料利用になりうるため）。5xx・通信エラーが5回続いても停止します。
-- 上限（既定値）: 1日あたり **450回**（無料枠500の手前）、全期間で **1,200回**、1回の実行あたり `--max-calls`。すべての呼び出しは**呼び出す前に**台帳（`out/calls-ledger.jsonl`）へ記録し、上限はその台帳で判定するので、中断・再実行しても超えません。
-- **課金状態はAPIキーから判定できません。** そのため「課金を有効にしていないプロジェクトのキーを使う」ことがオーナー側の必須条件です。課金なしのプロジェクトでは料金は発生せず、上限を超えると 429 エラーになる、というのが料金ページ・レート制限ページの定義に基づく理解です（念のため Google Cloud コンソールの「お支払い」で、そのプロジェクトに請求先アカウントが紐づいていないことも確認してください）。
+- **言えること**: Perplexity（`fast` プリセット＝Fast Search 1回＋gpt-6-luna、測定した週）で、Nurevo スコアと登場率に関係があるか。これは Pro 製品の「Perplexity での表示状況」と同じ測り方です。
+- **言えないこと**: ChatGPT・Gemini・Google の AI による概要・Copilot など**他の AI での登場**。検索エンジン（Perplexity の検索インデックス）も回答モデルも違うので、結果を他のエンジンに持ち込めません。Perplexity の他のプリセット（検索回数やモデルが違うもの）や、Perplexity の一般向けアプリ（ログイン・位置情報・履歴で回答が変わる）とも同一ではありません。
+- 営業資料に使う場合は「Perplexity での結果」と必ず明記します。
 
-## 5. 利用規約の注意（必ず読んでください）
+## 5. 利用規約の確認（Perplexity API、2026-10-23 に再確認）
 
-1. **無料枠のデータ利用**: Gemini API の無料枠（Unpaid Services）では、送信した内容と回答が Google の製品改善に使われ、人間のレビュアーが読むことがあります（https://ai.google.dev/gemini-api/terms 「Unpaid Services」）。今回送るのは公開されている事業者についての一般的な質問だけで、個人情報や機密は含まないため、この点は許容できると判断しています。
-2. **グラウンディング結果の扱い（重要・未解決）**: 同じ規約の「Grounding with Google Search」の節は、Grounded Results（検索付き回答）について、キャッシュ・保存・**分析（analyze）・そこから学習すること**を制限し、結果は質問した本人に検索候補と一緒に表示すること、を求めています（保存は2年以内・限定目的で可）。この調査は回答を集計して分析するため、**規約の文言に抵触する可能性があります**。
-   - ランナーの対策: Gemini（検索付き）の回答本文・引用URL・引用ホストは**保存しません**。保存するのは「名前が出たか」「自社ドメインが引用されたか」の真偽値と件数だけです（`--store full` は Gemini では拒否）。
-   - それでも集計・分析そのものが「analyze」に当たると読める余地があるため、**実行には `--ack-grounding-terms` の明示が必要**にしてあります。オーナーが規約を読み、必要なら Google に確認したうえで判断してください。判断がつかない場合は、検索なしの `gemini-ungrounded` だけで実施する（規約上の問題は小さいが、測れるのは「モデルの記憶」だけ）という選択肢があります。
-3. Perplexity・OpenAI を将来使う場合も、それぞれの規約で回答の保存・分析の扱いを確認してください。
+対象: Perplexity API Terms of Service（https://hub-prod.perplexity.ai/hub/legal/perplexity-api-terms-of-service 、最終更新 2024-02-17）。
+
+- **回答（Response）の保存・分析を制限する条項は見当たりません**でした（PR #26 の確認結果と同じ）。1.2 は「Customer Application 内で Response を受け取り表示すること」を認める書き方で、保存・分析を明示的に許可する条項もありませんが、禁止もしていません。表示・帰属（出典表示）の義務もありません。
+- 2.2 の禁止事項は、有害なコンテンツの生成、API Platform の派生物の作成、API Platform と同種・代替となる API や製品を作ること、など。回答を集計して自社スコアとの相関を見る本調査は該当しないと判断しています。2.2 は「基盤となる LLM のライセンスによる制限も受けうる」とも書いています。
+- 2.5 / 9.3: Perplexity は送信データ（質問）とログを保持・分析しうる。送るのは公開されている事業者についての一般的な質問だけで、個人情報や機密は含みません。
+- 本調査の保存方針: 既定（`--store flags`）では回答本文を保存せず、「名前が出たか」「自社ドメインが引用されたか」「引用順位」と件数・推定費用だけを保存します。根拠を残したい場合は `--store full`（回答の先頭400文字と引用ホスト）も使えます。
+- 規約は変わることがあります。実行前に上記ページの最終更新日が 2024-02-17 のままか確認し、変わっていれば読み直してください。
 
 ## 6. 結果指標
 
@@ -115,91 +114,116 @@ Nurevo の「AI読みやすさスコア」（0〜100点）が高い地域事業�
 | 支持されない | 上記以外（CI が0をまたぐ等）。検出できる最小の相関を併記 |
 | 逆の関係 | ρ < 0 かつ p < 0.05 |
 
-- 営業資料に使ってよいのは「支持」の場合だけです。その場合も「相関であって因果ではない」「Gemini（Google）での結果であり、ChatGPT・Perplexity については未検証」「測定時点」を必ず添えます。
+- 営業資料に使ってよいのは「支持」の場合だけです。その場合も「相関であって因果ではない」「Perplexity での結果であり、ChatGPT・Gemini などについては未検証」「測定時点」を必ず添えます。
 - 構成要素の分析は探索的なので、製品改善の手がかりには使いますが、営業上の主張には使いません。
 
 ## 9. 呼び出し回数と費用
+
+### 呼び出し回数
 
 | 項目 | 値 |
 |---|---|
 | 事業者 | 72件（脱落後は60件台の見込み） |
 | 固有の質問数 | 179（発見系の共有を反映。`node study/run-study.mjs plan` で確認） |
 | 繰り返し | 3回 |
-| Gemini 呼び出し合計 | **537回**（72件の場合） |
-| 1日の上限（既定） | 450回 → **2日に分けて実行** |
-| 費用 | **0円**（課金なしプロジェクトの無料枠内。超えると 429 で止まる） |
+| Perplexity 呼び出し合計 | **179 × 3 = 537回** |
 | Nurevo スコア計算 | 0円（外部の有料APIは使わない。各サイトに4リクエスト程度） |
 
-参考（今回は使わない・要確認）:
+### 料金（2026-10-23 に公式ページで確認）
 
-| 将来の選択肢 | 料金（出典） |
-|---|---|
-| Gemini 2.5 Flash 有料枠のグラウンディング | 1日1,500回まで無料、その後 $35 / 1,000 回（料金ページ、2026-10-23 確認）＋トークン料金（要確認） |
-| Gemini 3 以降 有料枠のグラウンディング | 月5,000回まで無料、その後 $14 / 1,000 検索（1リクエストで複数検索になりうる）（同上） |
-| Perplexity / OpenAI | 要確認（今回は未調査・未使用） |
+- Fast Search（`web_search`、`search_type: "fast"`）: **$1.00 / 1,000回**＝1回 $0.001（https://docs.perplexity.ai/getting-started/pricing ）。Agent API にリクエスト単位の料金はなく、トークン料金＋ツール料金です。
+- `fast` プリセットのモデル `openai/gpt-6-luna` の標準料金は入力 $0.10 / 100万トークン、出力 $0.50 / 100万トークン（Agent API Models ページ https://docs.perplexity.ai/docs/agent-api/models ）。`fast` は **priority ティア**（料金ページ: "priority (2×)"）なので **入力 $0.20、出力 $1.00 / 100万トークン**。製品アダプターの価格表（`worker/ai-engines.mjs` の `ENGINE_PRICING`）と同じ値です。
+- `fast` は検索最大1回（max steps 1、https://docs.perplexity.ai/docs/agent-api/presets ）、アダプターは出力を最大500トークンに制限しています。
+
+### 1回あたりの上限見積もり（ランナーが毎回この額を先に予約）
+
+| 内訳 | 計算 | 金額 |
+|---|---|---|
+| Fast Search 1回 | 1 × $0.001 | $0.0010 |
+| 入力 8,000トークン（多めに見積もり：指示文＋質問＋検索結果10件） | 8,000 × $0.20 ÷ 1,000,000 | $0.0016 |
+| 出力 500トークン（上限） | 500 × $1.00 ÷ 1,000,000 | $0.0005 |
+| **合計（上限）** | | **$0.0031** |
+
+- **537回 × $0.0031 = $1.66（上限見積もり、約250円）**。
+- 典型的な見込み（入力3,000・出力300トークン）: $0.001 + $0.0006 + $0.0003 = $0.0019 → 537回で **約 $1.02**。
+- 既定の予算上限 `--max-usd 3` は上限見積もりの約1.8倍の余裕。$3 ÷ $0.0031 ≒ 967回分なので、537回の本番が予算で止まることは通常ありません。
+
+### 予算の安全装置（ランナーに実装済み）
+
+- `--max-calls`（既定＝計画総数 537）と `--max-usd`（既定 3ドル）は、同じ `--out` フォルダでの**全実行の累計**で判定します。試運転の5回も累計に入ります。
+- 呼び出しの**前に**台帳（`out/calls-ledger.jsonl`）へ記録し、上限見積もり $0.0031 を予約します。「次の1回で上限を超えうる」時点で止まるので、上限は超えません。
+  - Perplexity が回答に費用（`usage.cost.total_cost`）を含めて返した場合はその額で精算し、含めない場合は予約額のまま（低く見積もることはしない）。失敗・タイムアウトした呼び出しも、課金された可能性があるので予約額のまま数えます。
+  - 1回の実費が上限見積もりの2倍を超えたら、見積もりが間違っているとして停止します（`cost_above_estimate`）。
+- **429（レート制限）・quota・402・クレジット不足/billing・401/403（キー拒否）・その他の 4xx が1回でも出たら即停止**し、再試行しません（終了コード3）。5xx・タイムアウトは記録だけして次へ進み、3回続いたら停止します。失敗した質問は次回の実行で聞き直します。
+- 呼び出し間隔は既定2秒（`--min-interval-ms`）。
+- ランナーの外側の安全装置として、Perplexity の API 設定画面でクレジット残高を必要額（例: $5）程度にし、自動チャージ（auto top-up）を使っている場合は調査中だけでも無効にしておくことを勧めます（画面の項目名は変わることがあります）。
 
 ## 10. 実行手順（オーナーの Mac で）
 
-前提: Node.js 20 以上、このリポジトリの clone。
+前提: Node.js 20 以上、`/Users/tsuyoshi/smobiz-factory` の clone。依存パッケージは不要です（Node 標準機能だけで動きます）。
 
-### 10.1 無料の Gemini API キーを作る
+### 10.1 Perplexity API キーを用意する
 
-1. https://aistudio.google.com/apikey を開き、Google アカウントでログインします。
-2. 「Create API key（APIキーを作成）」を押し、**新しいプロジェクト**を作る（または課金を設定していないプロジェクトを選ぶ）。
-3. AI Studio のキー／プロジェクトの画面で、そのプロジェクトが無料枠（Free tier）のままで、課金（Billing）が設定されていないことを確認します（画面の表記は変わることがあります。Google Cloud コンソールの「お支払い」で請求先アカウントが紐づいていないことを見るのが確実です）。**課金を設定しないでください。**
-4. 表示されたキーをコピーします（他人に見せない・チャットやファイルに貼らない）。
+- 新しく作る場合: perplexity.ai にログイン → 設定（Settings）→ **API**（API ポータル。https://www.perplexity.ai/account/api 、URL は変わることがあります）で、支払い方法とクレジットを確認し、「API Keys」で **Generate / Create** を押してキー（`pplx-` で始まる）をコピーします。
+- **Cloudflare に設定済みのキーを使い回す場合**: Cloudflare の secret（`PERPLEXITY_API_KEY`）は `wrangler` でも管理画面でも**読み出せません**（書き込み専用）。同じキーを使うには、上の Perplexity の API 画面からコピーしてください（画面で再表示できない場合は、調査用に新しいキーを作るのが安全です。調査後に削除できます）。
+- キーは他人に見せない・チャットやファイルに貼らないでください。ランナーは環境変数 `PERPLEXITY_API_KEY` からだけ読み、画面・ログ・キャッシュ・URL には一切出しません（テストで確認済み）。
 
 ### 10.2 実行
 
 ```sh
-cd smobiz-factory/experiments/webmcp-canary
+cd /Users/tsuyoshi/smobiz-factory/experiments/webmcp-canary
 
-# 0) テストと動作確認（APIは呼ばない）
+# 0) 最新のブランチを取得（PR #25 がマージされるまではこのブランチで実行）
+git fetch origin
+git checkout feat/aeo-validation-study
+git pull --ff-only origin feat/aeo-validation-study
+# npm ci は不要（依存パッケージなし）。他の作業で必要になった場合だけ実行
+
+# 1) テストと計画の確認（APIは呼ばない）
 npm run test:study
 node study/run-study.mjs plan
-node study/run-study.mjs score --dry-run && node study/run-study.mjs measure --dry-run && node study/analyze-study.mjs --dry-run
+#    → total calls: 537 / <= $0.0031 per call / estimated ceiling ... $1.66 が表示される
 
-# 1) Nurevo スコアを計算（各サイトのトップページ等を取得。無料）
+# 2) Nurevo スコアを計算（各サイトのトップページ等を取得。無料）
 node study/run-study.mjs score
 #    途中で止まっても再実行すれば続きから。取り直すときは --rescore
 
-# 2) キーを環境変数に入れる（画面に表示されず、履歴にも残らない入れ方）
-read -s GEMINI_API_KEY && export GEMINI_API_KEY
+# 3) キーを環境変数に入れる（画面に表示されず、履歴にも残らない入れ方。貼り付けて Enter）
+read -s PERPLEXITY_API_KEY && export PERPLEXITY_API_KEY
 
-# 3) 試運転（5回だけ）
-node study/run-study.mjs measure --engines gemini --ack-grounding-terms --max-calls 5
+# 4) 試運転（5回だけ、最大 $0.0155）
+node study/run-study.mjs measure --max-calls 5
+#    → 最後に表示される JSON の "ok": 5, "usd_total" を確認。study/out/measurements.jsonl に5行
 
-# 4) 本番（1日450回で自動停止。翌日（太平洋時間の日付が変わった後）に同じコマンドで続きから）
-node study/run-study.mjs measure --engines gemini --ack-grounding-terms
+# 5) 本番（残り532回。累計 537回・3ドルで自動停止。途中で止まっても同じコマンドで続きから）
+node study/run-study.mjs measure
 
-# 5) 分析
+# 6) 分析
 node study/analyze-study.mjs
 #    → study/out/report.md, study/out/business_results.csv, study/out/raw_measurements.csv
 
-unset GEMINI_API_KEY
+# 7) キーを消す
+unset PERPLEXITY_API_KEY
 ```
 
-- `--ack-grounding-terms` は 5章の規約の注意を読んだうえで付けてください。付けないと実行を拒否します。
-- 検索なしで行う場合: `--engines gemini-ungrounded`（`--ack-grounding-terms` は不要）。
-- キーは環境変数からだけ読み、画面・ログ・キャッシュ・URL には一切出しません（テストで確認済み）。
+- 終了コード3で止まった場合（429・クレジット不足・キー拒否など）は、表示された `stop.reason` を確認し、原因を直してから同じコマンドで再実行してください（終わった分は聞き直しません）。
+- `node study/run-study.mjs plan` はいつでも「台帳にある呼び出し回数と推定費用」を表示します。
 - 本番の Nurevo は D1 にある「現在有効なルールセット」で採点します。ローカルでは API と同じく初期ルールセット（`INITIAL_AEO_RULESET`）を使います。本番のルールセットで採点したい場合は、その定義を JSON に書き出して `--ruleset-json path` で渡してください。各スコアには `model_version` / `ruleset_version` が記録されます。
 - スコア計算と AI 測定は**同じ週のうちに**行ってください（サイトが変わるとスコアと結果が対応しなくなります）。
+- 全工程の動作確認だけなら `--dry-run`（スタブのエンジン・架空スコア。APIもサイトも呼ばない）: `node study/run-study.mjs score --dry-run && node study/run-study.mjs measure --dry-run && node study/analyze-study.mjs --dry-run`
 
-### 主なオプション
+### 主なオプション（`measure`）
 
 | オプション | 既定 | 意味 |
 |---|---|---|
-| `--engines` | `gemini` | カンマ区切り。`gemini`, `gemini-ungrounded`, （有料）`perplexity`, `openai` |
-| `--model` | `gemini-2.5-flash` | 無料枠リスト外は `--free-only` で拒否 |
 | `--repeats` | 3 | 繰り返し回数 |
-| `--max-calls` | なし | この実行での上限 |
-| `--max-calls-per-day` | 450 | 太平洋時間の1日あたり上限（台帳で判定） |
-| `--max-total-calls` | 1200 | 全期間の上限（台帳で判定） |
-| `--min-interval-ms` | 7000 | 呼び出し間隔 |
-| `--store` | `flags` | `flags`＝真偽値と件数のみ保存（Gemini 検索付きはこれのみ可） |
-| `--engines-module` | なし | 外部アダプター（例: 今後の `worker/ai-engines.mjs`）。`measure(engine, question, business)` または `ENGINE_ADAPTERS` をエクスポートしたもの |
-| `--allow-paid` | 付けない | 有料エンジンを許可（今回は使わない） |
-| `--dry-run` | — | スタブのエンジン・架空スコアで全工程を確認（APIもサイトも呼ばない） |
+| `--max-calls` | 計画総数（537） | 全実行の累計呼び出し回数の上限（台帳で判定） |
+| `--max-usd` | 3 | 全実行の累計推定費用（ドル）の上限。1回 $0.0031 を先に予約して判定 |
+| `--min-interval-ms` | 2000 | 呼び出し間隔 |
+| `--store` | `flags` | `flags`＝真偽値と件数のみ保存／`full`＝回答の先頭400文字と引用ホストも保存 |
+| `--out` | `study/out` | 結果と台帳のフォルダ（上限はこのフォルダ単位で累計） |
+| `--dry-run` | — | スタブで全工程を確認 |
+| `--engines` | `perplexity` | `perplexity` 以外は拒否 |
 
 ## 11. ファイル構成
 
@@ -209,16 +233,16 @@ unset GEMINI_API_KEY
 | `run-study.mjs` | ランナー（`plan` / `score` / `measure`） |
 | `analyze-study.mjs` | 分析と報告書の生成 |
 | `lib/questions.mjs` | 質問テンプレート |
-| `lib/engines.mjs` | エンジン（Gemini・スタブ・既存SoVアダプター・外部モジュール読み込み）と無料枠ポリシー |
+| `lib/engines.mjs` | エンジン（製品の Perplexity アダプター・スタブ）、1回あたりの上限見積もり、エラーの停止判定 |
 | `lib/scorer.mjs` | `/api/aeo/score` と同じ関数で採点し、構成要素の点数を復元 |
-| `lib/runner.mjs` | キャッシュ・再開・上限・停止の制御 |
+| `lib/runner.mjs` | キャッシュ・再開・回数/費用の上限・停止の制御 |
 | `lib/analysis.mjs`, `lib/stats.mjs` | 統計と報告書 |
-| `tests/` | テスト（`npm run test:study`） |
+| `tests/` | テスト（`npm run test:study`。実際の API は呼ばない） |
 | `out/` | 実行結果（git 管理外） |
 
 ## 12. この調査で言えないこと
 
 - 因果関係（スコアを上げれば登場が増える）は示せません。示すには、同じサイトの改善前後を比べる介入研究が必要です。
-- Gemini（Google）だけの結果です。ChatGPT・Perplexity での登場とは別物です。
+- Perplexity（`fast` プリセット）だけの結果です。ChatGPT・Gemini・Google の AI による概要などでの登場とは別物です（4章）。
 - 72件・4都市・5業種の結果で、他の業種や地方に一般化できるとは限りません。
 - サンプルは Web 検索で上位に出た公式サイトから選んでいるため、もともと検索で見つかりやすい事業者に偏っています。

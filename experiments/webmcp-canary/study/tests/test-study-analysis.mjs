@@ -50,9 +50,9 @@ function synth({ n = 60, seed = 1, prob, scoreFn, trials = 9, brandedMention = 0
     const p = prob(score, category, rand);
     for (let t = 0; t < trials; t += 1) {
       const hit = rand() < p;
-      measurements.push({ ok: true, engine: "gemini", kind: "discovery", key: `${id}-${t}`, results: { [id]: { mentioned: hit, cited: false } } });
+      measurements.push({ ok: true, engine: "perplexity", kind: "discovery", key: `${id}-${t}`, results: { [id]: { mentioned: hit, cited: false } } });
     }
-    for (let t = 0; t < 3; t += 1) measurements.push({ ok: true, engine: "gemini", kind: "branded", key: `${id}-b${t}`, results: { [id]: { mentioned: rand() < brandedMention, cited: rand() < score / 100 } } });
+    for (let t = 0; t < 3; t += 1) measurements.push({ ok: true, engine: "perplexity", kind: "branded", key: `${id}-b${t}`, results: { [id]: { mentioned: rand() < brandedMention, cited: rand() < score / 100 } } });
   }
   return { businesses, scores, measurements };
 }
@@ -60,20 +60,20 @@ function synth({ n = 60, seed = 1, prob, scoreFn, trials = 9, brandedMention = 0
 {
   // Known positive relationship: logit(p) rises steeply with score.
   const data = synth({ seed: 7, prob: (s) => 1 / (1 + Math.exp(-(-3 + 0.05 * s))) });
-  const r = analyzeStudy({ ...data, engine: "gemini", iterations: 2000 });
+  const r = analyzeStudy({ ...data, engine: "perplexity", iterations: 2000 });
   assert.equal(r.n, 60);
   assert.ok(r.primary.rho > 0.4, `strong synthetic relation gives high rho (${r.primary.rho})`);
   assert.ok(r.primary.p < 0.01);
   assert.ok(r.glmScore.ok && r.glmScore.oddsRatio > 1.5, "odds ratio per SD > 1");
   assert.equal(r.verdict.code, "support", JSON.stringify(r.verdict));
-  const md = renderReport([r], { engineLabels: { gemini: "Gemini" } });
+  const md = renderReport([r], { engineLabels: { perplexity: "Perplexity" } });
   assert.ok(md.includes("結論: 支持"), "report states the conclusion in Japanese");
   assert.ok(md.includes("相関は因果ではありません"));
 }
 {
   // Null: appearance unrelated to score.
   const data = synth({ seed: 8, prob: () => 0.3 });
-  const r = analyzeStudy({ ...data, engine: "gemini", iterations: 2000 });
+  const r = analyzeStudy({ ...data, engine: "perplexity", iterations: 2000 });
   assert.ok(Math.abs(r.primary.rho) < 0.3, `null rho small (${r.primary.rho})`);
   assert.notEqual(r.verdict.code, "support", "null data is never 'support'");
 }
@@ -81,7 +81,7 @@ function synth({ n = 60, seed = 1, prob, scoreFn, trials = 9, brandedMention = 0
   // Confounded: category drives both score and appearance; no within-category relation.
   const base = { 飲食: 20, 美容: 35, 歯科: 50, 士業: 65, 宿泊: 80 };
   const data = synth({ seed: 9, scoreFn: (i, c, rand) => Math.round(base[c] + rand() * 10), prob: (s, c) => base[c] / 120 });
-  const r = analyzeStudy({ ...data, engine: "gemini", iterations: 2000 });
+  const r = analyzeStudy({ ...data, engine: "perplexity", iterations: 2000 });
   assert.ok(r.primary.rho > 0.5, `raw rho is inflated by category (${r.primary.rho})`);
   assert.ok(Math.abs(r.fe.rho) < 0.3, `fixed effects remove it (${r.fe.rho})`);
   assert.notEqual(r.verdict.code, "support", "a pure category confound does not count as support");
@@ -89,13 +89,13 @@ function synth({ n = 60, seed = 1, prob, scoreFn, trials = 9, brandedMention = 0
 {
   // Floor effect: almost nobody appears -> inconclusive, not "no effect".
   const data = synth({ seed: 10, prob: () => 0.005 });
-  const r = analyzeStudy({ ...data, engine: "gemini", iterations: 500 });
+  const r = analyzeStudy({ ...data, engine: "perplexity", iterations: 500 });
   assert.equal(r.verdict.code, "inconclusive");
 }
 {
   // Broken alias detection (branded questions rarely detected) -> inconclusive.
   const data = synth({ seed: 11, prob: (s) => s / 150, brandedMention: 0.2 });
-  const r = analyzeStudy({ ...data, engine: "gemini", iterations: 500 });
+  const r = analyzeStudy({ ...data, engine: "perplexity", iterations: 500 });
   assert.equal(r.verdict.code, "inconclusive");
   assert.ok(r.verdict.reasons.some((x) => x.includes("名指し")));
 }
@@ -104,7 +104,7 @@ function synth({ n = 60, seed = 1, prob, scoreFn, trials = 9, brandedMention = 0
   const data = synth({ n: 40, seed: 12, prob: () => 0.3 });
   data.scores[0].ok = false;
   data.measurements = data.measurements.filter((m) => !(m.results.s1 && m.kind === "discovery"));
-  const r = analyzeStudy({ ...data, engine: "gemini", iterations: 200 });
+  const r = analyzeStudy({ ...data, engine: "perplexity", iterations: 200 });
   assert.equal(r.n, 38);
   assert.deepEqual(r.excluded.map((e) => e.reason).sort(), ["score_failed", "too_few_answers"]);
 }
