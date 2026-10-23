@@ -21,7 +21,8 @@
   var loadingSiteId = null;
   // Words come from the dashboard dictionary (t() in dashboard.html), as in
   // dashboard-onboarding.js. Server text (upgrade copy, notices, gap reasons)
-  // is shown as the server sent it.
+  // is shown as the server sent it; the Pro report is requested in the
+  // dashboard's language so that text matches the page.
   function tr(key, vars) {
     var text = typeof t === "function" ? String(t(key)) : key;
     return text.replace(/\{(\w+)\}/g, function (m, name) { return vars && vars[name] != null ? String(vars[name]) : m; });
@@ -182,7 +183,10 @@
   async function addProReport(main, siteId) {
     var section = main.querySelector('.nrv-sov');
     if (!section || section.querySelector('.nrv-sov-locked')) return;
-    var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov/report', { credentials: 'include' });
+    // Ask for the report's own sentences (notice, basis, gap reasons) in the
+    // dashboard's language rather than the browser's.
+    var pageLang = 'ja'; try { pageLang = lang || 'ja'; } catch (_) { pageLang = document.documentElement.lang || 'ja'; }
+    var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov/report?lang=' + encodeURIComponent(pageLang), { credentials: 'include' });
     if (!response.ok || !section.isConnected) return;
     var report = (await response.json()).report;
     var box = document.createElement('div'); box.className = 'card panel';

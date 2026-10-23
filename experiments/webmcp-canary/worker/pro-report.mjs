@@ -1,6 +1,78 @@
 import { SovError, normalizeHost, buildQuestionSet, availableEngines, profileIdentity, SOV_LANGUAGES } from './aeo-sov.mjs';
 
 export const VARIABILITY_NOTICE = 'AI回答・引用は実行日時やモデルで変動します。小規模サンプルの観測値であり、絶対値・順位・正確性を保証しません。引用順位は提供元の出典URL一覧の順序です。';
+
+/*
+ * The report's own sentences, in the dashboard's eight languages. Japanese is
+ * the original wording and must stay byte-identical (a golden test holds it);
+ * a request with no language at all keeps Japanese, as it always was.
+ * The monthly report HTML (aeo-report.mjs) is still Japanese-only.
+ */
+export const PRO_REPORT_LANGS = Object.freeze(['ja', 'en', 'zh', 'zh-TW', 'ko', 'es', 'fr', 'de']);
+const PRO_REPORT_TEXT = Object.freeze({
+  ja: {
+    notice: VARIABILITY_NOTICE,
+    sov_basis: '自社＋指定競合の回答単位の引用回数合計。1回答で同じドメインを複数引用しても1回。失敗は分母から除外。サブドメインは同じ競合として数える。',
+    recount_note: '測定後に登録した競合は、保存済みの引用URL一覧から再集計しています（新たなAI問い合わせはしていません）。',
+    gap_reason: 'このサンプルでは引用なし。原因は未判定。',
+  },
+  en: {
+    notice: 'AI answers and citations vary with the time of the run and the model. These are observations from a small sample and do not guarantee absolute values, rankings or accuracy. Citation rank is the order of the provider’s list of source URLs.',
+    sov_basis: 'Total citations per answer across your site and the listed competitors. A domain cited several times in one answer counts once. Failed answers are excluded from the denominator. Subdomains count as the same competitor.',
+    recount_note: 'Competitors added after the measurement are recounted from the stored citation URLs (no new AI queries were made).',
+    gap_reason: 'Not cited in this sample. Cause not determined.',
+  },
+  zh: {
+    notice: 'AI 回答和引用会因执行时间和模型而变化。这些是小样本的观测值，不保证绝对数值、排名或准确性。引用排名是服务提供方来源 URL 列表中的顺序。',
+    sov_basis: '自有网站与指定竞争对手按回答计的引用次数合计。同一回答中多次引用同一域名只计 1 次。失败的回答不计入分母。子域名按同一竞争对手计算。',
+    recount_note: '测量后添加的竞争对手是根据已保存的引用 URL 列表重新统计的（未进行新的 AI 查询）。',
+    gap_reason: '本次样本中未被引用。原因尚未判定。',
+  },
+  'zh-TW': {
+    notice: 'AI 回答與引用會因執行時間和模型而變動。這些是小樣本的觀測值，不保證絕對數值、排名或正確性。引用排名是服務提供者來源 URL 清單中的順序。',
+    sov_basis: '自家網站與指定競爭對手以回答為單位的引用次數合計。同一回答中多次引用同一網域只計 1 次。失敗的回答不計入分母。子網域視為同一競爭對手。',
+    recount_note: '測量後新增的競爭對手是依已儲存的引用 URL 清單重新統計（未進行新的 AI 查詢）。',
+    gap_reason: '本次樣本中未被引用。原因尚未判定。',
+  },
+  ko: {
+    notice: 'AI 답변과 인용은 실행 시점과 모델에 따라 달라집니다. 소규모 표본의 관측값이며 절대값, 순위, 정확성을 보장하지 않습니다. 인용 순위는 제공자의 출처 URL 목록 순서입니다.',
+    sov_basis: '자사와 지정한 경쟁사의 답변 단위 인용 횟수 합계입니다. 한 답변에서 같은 도메인을 여러 번 인용해도 1회로 셉니다. 실패한 답변은 분모에서 제외합니다. 하위 도메인은 같은 경쟁사로 셉니다.',
+    recount_note: '측정 후 등록한 경쟁사는 저장된 인용 URL 목록으로 다시 집계했습니다(새 AI 질의는 하지 않았습니다).',
+    gap_reason: '이 표본에서는 인용되지 않았습니다. 원인은 판단하지 않았습니다.',
+  },
+  es: {
+    notice: 'Las respuestas y citas de la IA varían según el momento de la ejecución y el modelo. Son observaciones de una muestra pequeña y no garantizan valores absolutos, posiciones ni exactitud. La posición de cita es el orden de la lista de URL de fuentes del proveedor.',
+    sov_basis: 'Total de citas por respuesta entre su sitio y los competidores indicados. Un dominio citado varias veces en una respuesta cuenta una vez. Las respuestas fallidas se excluyen del denominador. Los subdominios cuentan como el mismo competidor.',
+    recount_note: 'Los competidores añadidos después de la medición se recuentan a partir de las URL de citas guardadas (no se hicieron nuevas consultas a la IA).',
+    gap_reason: 'Sin citas en esta muestra. Causa no determinada.',
+  },
+  fr: {
+    notice: 'Les réponses et citations de l’IA varient selon le moment de l’exécution et le modèle. Ce sont des observations sur un petit échantillon, sans garantie de valeurs absolues, de classement ni d’exactitude. Le rang de citation correspond à l’ordre de la liste des URL sources du fournisseur.',
+    sov_basis: 'Total des citations par réponse pour votre site et les concurrents indiqués. Un domaine cité plusieurs fois dans une même réponse compte une fois. Les réponses en échec sont exclues du dénominateur. Les sous-domaines comptent comme le même concurrent.',
+    recount_note: 'Les concurrents ajoutés après la mesure sont recomptés à partir des URL de citation enregistrées (aucune nouvelle requête IA).',
+    gap_reason: 'Aucune citation dans cet échantillon. Cause non déterminée.',
+  },
+  de: {
+    notice: 'KI-Antworten und Zitate schwanken je nach Ausführungszeitpunkt und Modell. Es handelt sich um Beobachtungen aus einer kleinen Stichprobe ohne Gewähr für absolute Werte, Rangfolge oder Richtigkeit. Der Zitierrang ist die Reihenfolge in der Quell-URL-Liste des Anbieters.',
+    sov_basis: 'Summe der Zitate pro Antwort für Ihre Website und die angegebenen Wettbewerber. Eine Domain, die in einer Antwort mehrfach zitiert wird, zählt einmal. Fehlgeschlagene Antworten werden nicht in den Nenner gerechnet. Subdomains zählen als derselbe Wettbewerber.',
+    recount_note: 'Nach der Messung hinzugefügte Wettbewerber werden aus den gespeicherten Zitat-URLs neu gezählt (keine neuen KI-Abfragen).',
+    gap_reason: 'In dieser Stichprobe nicht zitiert. Ursache nicht ermittelt.',
+  },
+});
+
+/**
+ * One of PRO_REPORT_LANGS. Accepts the dashboard's own codes ("tw"), BCP 47
+ * tags and WordPress locales. Nothing requested means Japanese; a language
+ * the report is not written in means English.
+ */
+export function resolveProReportLang(requested) {
+  const raw = String(requested ?? '').trim().replace(/_/g, '-').toLowerCase();
+  if (!raw) return 'ja';
+  if (raw === 'tw' || raw === 'zh-tw' || raw === 'zh-hk' || raw === 'zh-mo' || raw.startsWith('zh-hant')) return 'zh-TW';
+  const base = raw.split('-')[0];
+  return PRO_REPORT_LANGS.includes(base) ? base : 'en';
+}
+export function proReportText(lang) { return PRO_REPORT_TEXT[resolveProReportLang(lang)]; }
 export const PRO_CACHE_MS = 60 * 60 * 1000;
 export const parseJson = (s, fallback = {}) => { try { return JSON.parse(s); } catch { return fallback; } };
 export function validateQuerySet(input) {
@@ -101,7 +173,8 @@ export function trendKey(querySet) {
   return JSON.stringify({ engine: querySet.engine || 'perplexity', language: querySet.language || 'ja', questions });
 }
 const matches = (url, host) => { const h = normalizeHost(url); return h === host || h.endsWith('.'+host); };
-export function buildProReport({ site, run = null, evidence = [], runs = [], config = null, configured = false }) {
+export function buildProReport({ site, run = null, evidence = [], runs = [], config = null, configured = false, lang = 'ja' }) {
+  const text = proReportText(lang);
   const detail = parseJson(run?.detail_json);
   const snapshot = detail.query_set || null;
   const entries = evidence.map(e => ({ ...e, citation_urls: parseJson(e.citation_urls_json, []), accuracy: parseJson(e.accuracy_json) }));
@@ -134,19 +207,19 @@ export function buildProReport({ site, run = null, evidence = [], runs = [], con
     return key ? key === currentTrendKey : !!d.cache_key && d.cache_key === detail.cache_key;
   })
     .map(r => ({ id:r.id, ran_at:r.ran_at, citation_rate:r.citation_rate, answers_received:r.answers_received })).reverse() : [];
-  return { version:'pro-report-v1', site_id:site.id, generated_at:new Date().toISOString(), notice:VARIABILITY_NOTICE,
+  return { version:'pro-report-v1', site_id:site.id, generated_at:new Date().toISOString(), notice:text.notice,
     status:run?.status || (configured ? 'no_data' : 'unconfigured'), configured, run_id:run?.id || null,
     summary:{ answers:discovery.length, citation_rate:discovery.length >= 2 ? discovery.filter(e=>e.brand_cited).length/discovery.length : null,
       evidence_available:entries.length > 0, legacy_data:!!run && !snapshot },
     query_set:snapshot, current_query_set:config, presence, competitors, trend,
-    sov_basis:'自社＋指定競合の回答単位の引用回数合計。1回答で同じドメインを複数引用しても1回。失敗は分母から除外。サブドメインは同じ競合として数える。',
-    recount_note: counts.some(r => r.recounted) ? '測定後に登録した競合は、保存済みの引用URL一覧から再集計しています（新たなAI問い合わせはしていません）。' : null,
-    gaps:presence.filter(r=>r.answers >= 2 && r.citations === 0).map(r=>({ question:r.question, reason:'このサンプルでは引用なし。原因は未判定。' })),
+    sov_basis:text.sov_basis,
+    recount_note: counts.some(r => r.recounted) ? text.recount_note : null,
+    gaps:presence.filter(r=>r.answers >= 2 && r.citations === 0).map(r=>({ question:r.question, reason:text.gap_reason })),
     accuracy:entries.map(e=>({ evidence_id:e.id, question:e.question, ...e.accuracy })), evidence:entries };
 }
-export async function loadProReport(env, site) {
+export async function loadProReport(env, site, { lang = 'ja' } = {}) {
   const result = await env.DB.prepare('SELECT * FROM aeo_sov_runs WHERE site_id=? ORDER BY ran_at DESC LIMIT 52').bind(site.id).all();
   const runs = result.results || [], run = runs[0] || null;
   const evidence = run ? (await env.DB.prepare('SELECT * FROM aeo_sov_evidence WHERE site_id=? AND run_id=? ORDER BY measured_at,id').bind(site.id,run.id).all()).results || [] : [];
-  return buildProReport({ site,run,runs,evidence,config:await loadQuerySet(env,site.id),configured:!!String(env.PERPLEXITY_API_KEY || '').trim() });
+  return buildProReport({ site,run,runs,evidence,config:await loadQuerySet(env,site.id),configured:!!String(env.PERPLEXITY_API_KEY || '').trim(), lang });
 }

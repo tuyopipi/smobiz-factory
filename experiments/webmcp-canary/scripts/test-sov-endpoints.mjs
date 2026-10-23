@@ -466,6 +466,13 @@ for (const resource of ['query-set','report']) {
   const report=await (await get(`/api/sites/${SITE_ID}/sov/report`,env,{cookie:SESSION})).json();
   assert.equal(report.report.status,'unconfigured');
   assert.equal(report.report.summary.citation_rate,null);
+  // The report's sentences follow the dashboard's ?lang= ("tw" = Traditional
+  // Chinese); with no language they stay Japanese.
+  assert.match(report.report.notice,/AI回答・引用は実行日時/);
+  const tw=await (await get(`/api/sites/${SITE_ID}/sov/report?lang=tw`,env,{cookie:SESSION})).json();
+  assert.match(tw.report.notice,/AI 回答與引用/);
+  const en=await (await get(`/api/sites/${SITE_ID}/sov/report?lang=en`,env,{cookie:SESSION})).json();
+  assert.match(en.report.sov_basis,/Total citations per answer/);
   const missingCsrf=await handleApi(new Request(`https://worker.test/api/sites/${SITE_ID}/sov/query-set`,{method:'PUT',headers:{cookie:SESSION},body:'{}'}),env,ctx);
   assert.equal(missingCsrf.status,403);
   const invalid=await handleApi(new Request(`https://worker.test/api/sites/${SITE_ID}/sov/query-set`,{method:'PUT',headers:{cookie:SESSION_CSRF,'x-csrf-token':CSRF},body:JSON.stringify({questions:[],repetitions:2,competitors:[]})}),env,ctx);

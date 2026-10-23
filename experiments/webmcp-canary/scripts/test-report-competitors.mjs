@@ -9,7 +9,7 @@
  *    The advice now follows the business family the diagnosis recorded.
  */
 import assert from "node:assert/strict";
-import { buildProReport } from "../worker/pro-report.mjs";
+import { PRO_REPORT_LANGS, VARIABILITY_NOTICE, buildProReport, resolveProReportLang } from "../worker/pro-report.mjs";
 import { buildMonthlyReport, businessFamilyFromChecks, renderMonthlyReportHtml, renderMonthlyReportText } from "../worker/aeo-report.mjs";
 
 /* ---------------- competitors recounted from stored evidence ---------------- */
@@ -42,6 +42,47 @@ import { buildMonthlyReport, businessFamilyFromChecks, renderMonthlyReportHtml, 
   const measured = buildProReport({ site: { id: "s", url: "nurevo.jp" }, run: { ...run, detail_json: JSON.stringify({ query_set: { questions: ["q1"], competitors: ["aeogodmode.io"] } }) }, evidence, config: null });
   assert.equal(measured.competitors.find((r) => r.host === "aeogodmode.io").recounted, false);
   assert.equal(measured.recount_note, null);
+}
+
+/* ---------------- report sentences in the dashboard's eight languages ---------------- */
+{
+  const ev = (question, urls, cited = 0) => ({ id: question + urls.length, ok: 1, question, brand_cited: cited, citation_urls_json: JSON.stringify(urls), accuracy_json: JSON.stringify({ kind: "discovery" }) });
+  const evidence = [ev("q1", ["https://rival.example/a"]), ev("q1", ["https://rival.example/b"])];
+  const run = { id: "r1", status: "measured", detail_json: JSON.stringify({ query_set: { questions: ["q1"], repetitions: 2, competitors: [] }, cache_key: "k" }) };
+  const config = { questions: ["q1"], repetitions: 2, competitors: ["rival.example"] };
+  const build = (lang) => buildProReport({ site: { id: "s", url: "nurevo.jp" }, run, runs: [run], evidence, config, configured: true, ...(lang === undefined ? {} : { lang }) });
+
+  // Golden: the Japanese wording is byte-identical to what shipped before
+  // localisation, and a request with no language still gets it.
+  const GOLDEN_JA = {
+    notice: "AI回答・引用は実行日時やモデルで変動します。小規模サンプルの観測値であり、絶対値・順位・正確性を保証しません。引用順位は提供元の出典URL一覧の順序です。",
+    sov_basis: "自社＋指定競合の回答単位の引用回数合計。1回答で同じドメインを複数引用しても1回。失敗は分母から除外。サブドメインは同じ競合として数える。",
+    recount_note: "測定後に登録した競合は、保存済みの引用URL一覧から再集計しています（新たなAI問い合わせはしていません）。",
+    gap: "このサンプルでは引用なし。原因は未判定。",
+  };
+  const sentences = (r) => ({ notice: r.notice, sov_basis: r.sov_basis, recount_note: r.recount_note, gap: r.gaps[0]?.reason });
+  for (const lang of [undefined, "ja", "", "ja-JP"]) {
+    assert.deepEqual(sentences(build(lang)), GOLDEN_JA, `Japanese report sentences are unchanged (${JSON.stringify(lang)})`);
+  }
+  assert.equal(VARIABILITY_NOTICE, GOLDEN_JA.notice);
+  const strip = (r) => JSON.stringify({ ...r, generated_at: null });
+  assert.equal(strip(build("ja")), strip(build(undefined)), "the whole Japanese payload is identical with or without lang");
+
+  const seen = new Set();
+  for (const lang of PRO_REPORT_LANGS) {
+    const out = sentences(build(lang));
+    for (const [key, value] of Object.entries(out)) assert.ok(typeof value === "string" && value.length > 10, `${lang}.${key} present`);
+    if (lang !== "ja") assert.ok(!/[\u3040-\u30ff]/.test(Object.values(out).join("")), `${lang}: no Japanese kana left`);
+    seen.add(out.notice);
+  }
+  assert.equal(seen.size, PRO_REPORT_LANGS.length, "every language has its own notice");
+  assert.equal(resolveProReportLang("tw"), "zh-TW");
+  assert.equal(resolveProReportLang("zh_TW"), "zh-TW");
+  assert.equal(resolveProReportLang("zh-CN"), "zh");
+  assert.equal(resolveProReportLang("de_DE"), "de");
+  assert.equal(resolveProReportLang("pt-BR"), "en", "an unwritten language reads English");
+  assert.equal(resolveProReportLang(null), "ja");
+  assert.match(build("en").gaps[0].reason, /Not cited/);
 }
 
 /* ---------------- next actions follow the business family ---------------- */

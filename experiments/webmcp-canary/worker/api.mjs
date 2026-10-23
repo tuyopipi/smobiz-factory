@@ -1387,7 +1387,10 @@ export async function handleApi(request, env, ctx) {
       const resource = proMatch[2];
       if (resource === "query-set" && method === "GET") return json({ query_set: await loadQuerySet(env, access.site.id) });
       if (resource === "query-set" && method === "PUT") return json({ query_set: await saveQuerySet(env, access.site.id, await request.json()) });
-      if (resource === "report" && method === "GET") return json({ report: await loadProReport(env, access.site) });
+      // Same language negotiation as the other Pro endpoints: the dashboard's
+      // ?lang= ("tw" read as Traditional Chinese), then Accept-Language, and
+      // Japanese when neither is given.
+      if (resource === "report" && method === "GET") return json({ report: await loadProReport(env, access.site, { lang: (String(url.searchParams.get("lang") || "").trim().toLowerCase() === "tw" ? "zh-TW" : requestedAeoLang(request, url)) || "ja" }) });
       if (resource === "evidence" && proMatch[3] && method === "PUT") return json({ accuracy: await reviewEvidence(env, access.site.id, decodeURIComponent(proMatch[3]), await request.json(), access.member.member_id) });
       return json({ error: "method_not_allowed" }, 405);
     } catch (error) {
