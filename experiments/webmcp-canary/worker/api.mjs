@@ -26,6 +26,7 @@ import { PRO_CANDIDATE_SQL, planFromSubscription, pricesFromEnv, proCheckoutEnab
 import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
 import { geocodeSiteProfile } from "./geocoder.mjs";
+import { offsiteAuditRun, offsiteAuditView } from "./offsite-audit.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
@@ -1829,6 +1830,30 @@ export async function handleApi(request, env, ctx) {
    * picks the rate - a partner must not reach a better tier on sites that pay
    * nothing.
    */
+  /*
+   * Off-site listing audit (worker/offsite-audit.mjs): does the store profile
+   * match what Google Maps and the other listings say? A separate section, not
+   * part of the 0-100 AEO score. GET reads the stored outcome and makes no
+   * external call; POST runs it now, within the plan's allowance (Free once a
+   * month, Standard/Pro every 10 minutes up to five a day). Owner session only;
+   * CSRF is enforced above for the POST.
+   */
+  const offsiteMatch = path.match(/^\/api\/sites\/([^/]+)\/offsite-audit$/i);
+  if (offsiteMatch && (method === "GET" || method === "POST")) {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent(offsiteMatch[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+    }
+    if (method === "GET") return json(await offsiteAuditView(env, site));
+    if (member.role === "viewer") return json({ error: "forbidden" }, 403);
+    const outcome = await offsiteAuditRun(env, site, await safeJson(request) || {});
+    return json(outcome.body, outcome.status);
+  }
+
   const kickbackMatch = path.match(/^\/api\/orgs\/([^/]+)\/kickback$/i);
   if (kickbackMatch && method === "GET") {
     const member = await requireAdmin(request, env);
