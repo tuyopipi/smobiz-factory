@@ -102,4 +102,4 @@ export const AI_REFERRERS = [
 // the Pro card says "coming soon" and links to the details instead of checkout,
 // so the page never offers something the dashboard would refuse. Flip to true
 // in the same release that turns the Worker switch on.
-export const PRO_ON_SALE = false;
+export const PRO_ON_SALE = true;

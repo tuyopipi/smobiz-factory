@@ -21,4 +21,9 @@ for (const [lp, worker, head] of pairs) {
   assert.equal(article(read(worker), head), article(read(lp), head), `${worker} fee article matches ${lp}`);
   assert.ok(!/tax included|税込）とします/.test(article(read(worker), head)), "prices are tax-exclusive");
 }
+// The legal notice (特商法) is served by Pages; the Worker keeps a copy. Both
+// must list every plan on sale with the same prices.
+const priceRow = (html) => html.match(/<th>販売価格<\/th><td>(.*?)<\/td>/)[1];
+assert.equal(priceRow(read("../../nurevo-lp/public/tokushoho.html")), priceRow(read("../public/tokushoho/index.html")), "tokushoho price rows match");
+assert.match(priceRow(read("../../nurevo-lp/public/tokushoho.html")), /Proプラン/, "Pro is listed while it is on sale");
 console.log("legal page parity tests passed");
