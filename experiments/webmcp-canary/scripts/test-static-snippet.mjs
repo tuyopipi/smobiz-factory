@@ -97,8 +97,13 @@ async function ask(env, { id = "site1", headers = SESSION, method = "GET" } = {}
   const match = body.jsonld_html.match(/^<script type="application\/ld\+json">\n([\s\S]*)\n<\/script>$/);
   assert.ok(match, "a complete application/ld+json script block");
   const parsed = JSON.parse(match[1]);
-  assert.deepEqual(parsed, body.jsonld, "whose body parses back to the same graph");
-  assert.equal(parsed["@context"], "https://schema.org");
+  // The block now carries the business node plus a WebSite node (item 9), so
+  // it parses back to jsonld_nodes, whose first node is the business node.
+  assert.deepEqual(parsed, body.jsonld_nodes, "whose body parses back to the same graph");
+  assert.deepEqual(parsed[0], body.jsonld, "led by the business node");
+  assert.equal(parsed[0]["@context"], "https://schema.org");
+  assert.ok(parsed.some((n) => n["@type"] === "WebSite"), "with a WebSite node");
+  assert.ok(!parsed.some((n) => n["@type"] === "FAQPage"), "and never an FAQPage the page may not show");
 
   assert.match(body.llms_txt, /栞珈琲/, "llms.txt is the site's own");
   assert.equal(body.robots_txt_lines, searchCrawlerRobotsLines());
@@ -130,7 +135,8 @@ async function ask(env, { id = "site1", headers = SESSION, method = "GET" } = {}
   assert.ok(!inner.includes("<"), "no '<' at all inside the block");
   assert.ok(!inner.includes(" "), "line separators are escaped");
   assert.equal(body.jsonld_html.match(/<\/script>/g).length, 1, "exactly one closing tag, the real one");
-  assert.equal(JSON.parse(inner).name, hostile, "and it still parses to the original value");
+  // The block is now an array (business node + WebSite); every node keeps the value.
+  assert.ok(JSON.parse(inner).every((node) => node.name === hostile), "and it still parses to the original value");
 }
 
 /* ---------------- serve_schema off ---------------- */

@@ -54,7 +54,9 @@
       const schema = document.createElement("script");
       schema.type = "application/ld+json";
       schema.dataset.nurevoJsonld = "1";
-      schema.textContent = JSON.stringify(config.jsonld);
+      // jsonld_nodes adds the WebSite (and Organization.sameAs) nodes beside
+      // the business node; older configs only carry jsonld.
+      schema.textContent = JSON.stringify(Array.isArray(config.jsonld_nodes) && config.jsonld_nodes.length ? config.jsonld_nodes : config.jsonld);
       (document.head || document.documentElement).appendChild(schema);
     } catch (_) {
       // The tag must never break the host page when the API is unavailable.

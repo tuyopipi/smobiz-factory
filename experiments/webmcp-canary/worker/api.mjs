@@ -331,6 +331,48 @@ function withBusinessId(ld, site) {
 }
 
 /**
+ * The nodes published beside the business node on hosted, tag and static
+ * output, so a site that is not on WordPress can meet every criterion the
+ * scorer reads (WebSite, FAQPage, Organization.sameAs) - with real data only.
+ *
+ *  - WebSite: always, when the site has a canonical URL. It is just the site
+ *    naming itself; dateModified is the profile's last update when known.
+ *  - Organization (same @id as the business node, so it is the same entity):
+ *    only when the owner has official or social links - the harvested/entered
+ *    sameAs list, plus the owner's own website when this page is not it.
+ *  - FAQPage: only when the owner has entered FAQs AND the caller shows them
+ *    visibly on the same page (faqVisible). Google's rule is that FAQ markup
+ *    must describe an FAQ the visitor can see; the hosted page renders it, the
+ *    static/tag snippets cannot promise placement, so they never emit it.
+ */
+export function companionNodes(site, settings = {}, { canonicalUrl = null, faqs = [], faqVisible = false } = {}) {
+  const canonical = canonicalUrl || site?.website_uri || (site?.url ? (/^https?:\/\//i.test(site.url) ? site.url : `https://${site.url}`) : null)
+    || (site?.slug ? `https://nurevo.jp/s/${encodeURIComponent(site.slug)}` : null);
+  if (!canonical) return [];
+  let base;
+  try { const u = new URL(canonical); u.hash = ""; u.search = ""; base = u.href; } catch { return []; }
+  const name = settings.name || site?.url || "";
+  const updated = Number(settings.updated_at);
+  const nodes = [{
+    "@context": "https://schema.org", "@type": "WebSite", "@id": `${base}#website`, url: canonical,
+    ...(name ? { name } : {}),
+    ...(Number.isFinite(updated) && updated > 0 ? { dateModified: new Date(updated).toISOString() } : {}),
+  }];
+  const official = String(site?.website_uri || "").trim();
+  const links = [...new Set([
+    ...(Array.isArray(settings.same_as) ? settings.same_as : []),
+    ...(official && official.replace(/\/$/, "") !== canonical.replace(/\/$/, "") ? [official] : []),
+  ].map((link) => String(link || "").trim()).filter((link) => /^https?:\/\/[^\s]+$/i.test(link)))];
+  if (links.length) nodes.push({ "@context": "https://schema.org", "@type": "Organization", "@id": `${base}#organization`, ...(name ? { name } : {}), url: canonical, sameAs: links });
+  const answered = (Array.isArray(faqs) ? faqs : []).filter((f) => String(f?.question || "").trim() && String(f?.answer || "").trim());
+  if (faqVisible && answered.length) {
+    nodes.push({ "@context": "https://schema.org", "@type": "FAQPage", "@id": `${base}#faq`,
+      mainEntity: answered.map((f) => ({ "@type": "Question", name: String(f.question).trim(), acceptedAnswer: { "@type": "Answer", text: String(f.answer).trim() } })) });
+  }
+  return nodes;
+}
+
+/**
  * A JSON-LD <script> block that is safe to paste into HTML. "<" is the only
  * character that can end the script early ("</script>", "<!--"), so every one
  * is written as < - still the same JSON to any parser.
@@ -350,6 +392,11 @@ async function staticSnippetPayload(env, site, lang = "ja") {
   const ruleset = await rulesetForPlan(env, plan);
   const definition = rulesetDefinition(ruleset);
   const jsonld = settings.serve_schema === 0 ? null : withBusinessId(buildJsonLd(site, settings, ruleset), site);
+  // The business node plus WebSite / Organization.sameAs. No FAQPage: this is
+  // a copy pasted into a page we cannot see, so we cannot promise the FAQ is
+  // visible there (Google's FAQ rule). An owner with a visible FAQ marks it up
+  // on that page.
+  const jsonldNodes = jsonld ? [jsonld, ...companionNodes(site, settings)] : null;
   const llms = buildLlmsTxt({ ...settings, url: site.website_uri || site.url }, definition, lang);
   const updatedAt = Number(settings.updated_at) || null;
   return {
@@ -359,7 +406,8 @@ async function staticSnippetPayload(env, site, lang = "ja") {
     updated_at: updatedAt ? new Date(updatedAt).toISOString() : null,
     generated_at: new Date().toISOString(),
     jsonld,
-    jsonld_html: jsonLdScriptBlock(jsonld),
+    jsonld_nodes: jsonldNodes,
+    jsonld_html: jsonLdScriptBlock(jsonldNodes),
     llms_txt: llms,
     llms_txt_lang: lang,
     robots_txt_lines: searchCrawlerRobotsLines(),
@@ -1108,6 +1156,10 @@ export async function handleApi(request, env, ctx) {
       // and the plugin describe. The delivery expectation above is recorded
       // without it: the plugin may keep an existing business node's own @id.
       jsonld: deliveryPayload ? withBusinessId(deliveryPayload, site) : null,
+      // What tag.js injects: the business node plus WebSite / Organization.sameAs
+      // (never FAQPage - see companionNodes). `jsonld` above is unchanged for
+      // readers that expect the single business node.
+      jsonld_nodes: deliveryPayload ? [withBusinessId(deliveryPayload, site), ...companionNodes(site, settings)] : null,
       ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
       // The plugin publishes its own @graph, because it has data this service
       // does not - the FAQ, the services, the shop. It cannot use the JSON-LD
@@ -3259,7 +3311,7 @@ async function uniqueSlug(env, name, siteId) {
 
 async function loadHostedStore(env, slug) {
   const store = await env.DB.prepare(
-    `SELECT s.id,s.url,s.slug,s.delivery_status,s.plan,s.manual_plan,
+    `SELECT s.id,s.url,s.website_uri,s.slug,s.delivery_status,s.plan,s.manual_plan,
             o.manual_plan AS org_manual_plan,
             ss.name,ss.business_type,ss.address,ss.hours,ss.hours_periods,ss.lat,ss.lng,
             ss.tel,ss.price,ss.price_level,ss.description,ss.email
@@ -3267,7 +3319,12 @@ async function loadHostedStore(env, slug) {
        LEFT JOIN orgs o ON o.id=s.org_id
       WHERE s.slug=? LIMIT 1`,
   ).bind(slug).first();
-  if (store) Object.assign(store, await generationSettings(env, store.id));
+  if (store) {
+    Object.assign(store, await generationSettings(env, store.id));
+    try {
+      store.faqs = (await env.DB.prepare("SELECT question,answer FROM site_faqs WHERE site_id=? ORDER BY position").bind(store.id).all())?.results || [];
+    } catch { store.faqs = []; }
+  }
   return store;
 }
 
@@ -3328,14 +3385,14 @@ function hostedSchema(store, price, ruleset) {
 }
 
 const HOSTED_LABELS = {
-  ja: { open: "本日営業中", today: "本日営業時間", address: "住所", hours: "営業時間", tel: "電話", price: "価格帯", terms: "利用規約", privacy: "プライバシーポリシー", legal: "特定商取引法に基づく表記", local: "地域のお店" },
-  en: { open: "Open today", today: "Today's hours", address: "Address", hours: "Hours", tel: "Phone", price: "Price range", terms: "Terms", privacy: "Privacy", legal: "Legal notice", local: "Local business" },
-  zh: { open: "今日营业", today: "今日营业时间", address: "地址", hours: "营业时间", tel: "电话", price: "价格区间", terms: "服务条款", privacy: "隐私政策", legal: "法律声明", local: "本地商家" },
-  tw: { open: "今日營業中", today: "今日營業時間", address: "地址", hours: "營業時間", tel: "電話", price: "價格區間", terms: "服務條款", privacy: "隱私政策", legal: "法律聲明", local: "本地商家" },
-  ko: { open: "오늘 영업 중", today: "오늘 영업시간", address: "주소", hours: "영업시간", tel: "전화", price: "가격대", terms: "이용약관", privacy: "개인정보처리방침", legal: "법적 고지", local: "지역 사업자" },
-  es: { open: "Abierto hoy", today: "Horario de hoy", address: "Dirección", hours: "Horario", tel: "Teléfono", price: "Rango de precios", terms: "Términos", privacy: "Privacidad", legal: "Aviso legal", local: "Negocio local" },
-  fr: { open: "Ouvert aujourd’hui", today: "Horaires du jour", address: "Adresse", hours: "Horaires", tel: "Téléphone", price: "Prix", terms: "Conditions", privacy: "Confidentialité", legal: "Mentions légales", local: "Commerce local" },
-  de: { open: "Heute geöffnet", today: "Heutige Öffnungszeiten", address: "Adresse", hours: "Öffnungszeiten", tel: "Telefon", price: "Preisspanne", terms: "Nutzungsbedingungen", privacy: "Datenschutz", legal: "Impressum", local: "Lokales Geschäft" },
+  ja: { open: "本日営業中", today: "本日営業時間", address: "住所", hours: "営業時間", tel: "電話", price: "価格帯", terms: "利用規約", privacy: "プライバシーポリシー", legal: "特定商取引法に基づく表記", local: "地域のお店", info: "店舗情報", faq: "よくある質問", website: "公式サイト" },
+  en: { open: "Open today", today: "Today's hours", address: "Address", hours: "Hours", tel: "Phone", price: "Price range", terms: "Terms", privacy: "Privacy", legal: "Legal notice", local: "Local business", info: "Store information", faq: "FAQ", website: "Website" },
+  zh: { open: "今日营业", today: "今日营业时间", address: "地址", hours: "营业时间", tel: "电话", price: "价格区间", terms: "服务条款", privacy: "隐私政策", legal: "法律声明", local: "本地商家", info: "店铺信息", faq: "常见问题", website: "官方网站" },
+  tw: { open: "今日營業中", today: "今日營業時間", address: "地址", hours: "營業時間", tel: "電話", price: "價格區間", terms: "服務條款", privacy: "隱私政策", legal: "法律聲明", local: "本地商家", info: "店家資訊", faq: "常見問題", website: "官方網站" },
+  ko: { open: "오늘 영업 중", today: "오늘 영업시간", address: "주소", hours: "영업시간", tel: "전화", price: "가격대", terms: "이용약관", privacy: "개인정보처리방침", legal: "법적 고지", local: "지역 사업자", info: "매장 정보", faq: "자주 묻는 질문", website: "공식 웹사이트" },
+  es: { open: "Abierto hoy", today: "Horario de hoy", address: "Dirección", hours: "Horario", tel: "Teléfono", price: "Rango de precios", terms: "Términos", privacy: "Privacidad", legal: "Aviso legal", local: "Negocio local", info: "Información del negocio", faq: "Preguntas frecuentes", website: "Sitio web" },
+  fr: { open: "Ouvert aujourd’hui", today: "Horaires du jour", address: "Adresse", hours: "Horaires", tel: "Téléphone", price: "Prix", terms: "Conditions", privacy: "Confidentialité", legal: "Mentions légales", local: "Commerce local", info: "Informations", faq: "Questions fréquentes", website: "Site web" },
+  de: { open: "Heute geöffnet", today: "Heutige Öffnungszeiten", address: "Adresse", hours: "Öffnungszeiten", tel: "Telefon", price: "Preisspanne", terms: "Nutzungsbedingungen", privacy: "Datenschutz", legal: "Impressum", local: "Lokales Geschäft", info: "Geschäftsinformationen", faq: "Häufige Fragen", website: "Website" },
 };
 function preferredHostedLocale(url, request) {
   const q = (url.searchParams.get("lang") || "").toLowerCase().replace("_", "-");
@@ -3362,9 +3419,18 @@ function renderHostedStore(store, locale = "ja", ruleset) {
   const labels = HOSTED_LABELS[locale] || HOSTED_LABELS.ja;
   const price = priceRange(store.price || store.price_level, ruleset);
   const today = todayOpening(store.hours);
-  const schema = JSON.stringify(hostedSchema(store, price, ruleset)).replace(/</g, "\\u003c");
+  const business = hostedSchema(store, price, ruleset);
+  const canonical = business.url || (store.slug ? `${rulesetDefinition(ruleset).defaults.hostedBaseUrl}${store.slug}` : null);
+  const faqs = (Array.isArray(store.faqs) ? store.faqs : []).filter((f) => String(f?.question || "").trim() && String(f?.answer || "").trim());
+  // The FAQ is rendered on this page, so its markup describes something the
+  // visitor can see. The business node takes the same @id as the Organization
+  // node so both describe one entity.
+  const companions = companionNodes({ ...store, website_uri: store.website_uri }, store, { canonicalUrl: canonical, faqs, faqVisible: true });
+  const businessId = companions.length ? companions[0]["@id"].replace(/#website$/, "#organization") : null;
+  const nodes = companions.length ? [{ ...(business["@context"] ? { "@context": business["@context"] } : {}), "@type": business["@type"], "@id": businessId, ...business }, ...companions] : business;
+  const schema = JSON.stringify(nodes).replace(/</g, "\\u003c");
   const esc = (value) => String(value ?? "").replace(/[&<>\"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
-  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(store.name)} | Nurevo</title><link rel="icon" href="/assets/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><script type="application/ld+json">${schema}</script><script type="application/json" id="nurevo-aeo-delivery">${JSON.stringify({version:Number(ruleset?.version || 1)})}</script><style>:root{--purple:#6f4df6;--ink:#241b3a;--muted:#716983;--line:#e9e4f5}*{box-sizing:border-box}body{margin:0;background:#faf9fe;color:var(--ink);font-family:Inter,system-ui,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:28px 20px 56px}.brand{display:flex;align-items:center;gap:8px;color:var(--purple);font-weight:800;text-decoration:none}.brand img{width:28px;height:28px}.hero{margin-top:64px}.eyebrow{color:var(--purple);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(32px,8vw,60px);line-height:1.05;margin:12px 0}.type{color:var(--muted);font-size:18px}.badge{display:inline-flex;margin-top:22px;padding:8px 12px;border-radius:999px;background:${today.open ? "#dcfce7;color:#166534" : "#f1eafa;color:#6f4df6"};font-size:13px;font-weight:700}.info{margin-top:34px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid var(--line)}.label{color:var(--muted)}.value{text-align:right;white-space:pre-wrap}.footer{margin-top:38px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:12px}.footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--purple)}@media(max-width:560px){.row{display:block}.value{text-align:left;margin-top:4px}}</style></head><body><main class="wrap"><a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo">Nurevo</a><section class="hero"><div class="eyebrow">Local business</div><h1>${esc(store.name)}</h1><div class="type">${esc(store.business_type || "")}</div><span class="badge">${today.open ? "本日営業中" : "本日営業時間"} · ${esc(today.label)}</span></section><section class="info">${store.address ? `<div class="row"><span class="label">住所</span><span class="value">${esc(store.address)}</span></div>` : ""}${store.hours ? `<div class="row"><span class="label">営業時間</span><span class="value">${esc(store.hours)}</span></div>` : ""}${store.tel ? `<div class="row"><span class="label">電話</span><span class="value">${esc(store.tel)}</span></div>` : ""}${price ? `<div class="row"><span class="label">価格帯</span><span class="value">${price}</span></div>` : ""}</section><p class="footer"><span>Information provided by Nurevo.</span><a href="/terms">利用規約</a><a href="/privacy">プライバシーポリシー</a><a href="/tokushoho">特定商取引法に基づく表記</a></p></main><script src="/tag.js" data-webmcp-site-key="${esc(store.site_key || "")}" defer></script></body></html>`;
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(store.name)} | Nurevo</title><link rel="icon" href="/assets/favicon.png"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet"><script type="application/ld+json">${schema}</script><script type="application/json" id="nurevo-aeo-delivery">${JSON.stringify({version:Number(ruleset?.version || 1)})}</script><style>:root{--purple:#6f4df6;--ink:#241b3a;--muted:#716983;--line:#e9e4f5}*{box-sizing:border-box}body{margin:0;background:#faf9fe;color:var(--ink);font-family:Inter,system-ui,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:28px 20px 56px}.brand{display:flex;align-items:center;gap:8px;color:var(--purple);font-weight:800;text-decoration:none}.brand img{width:28px;height:28px}.hero{margin-top:64px}.eyebrow{color:var(--purple);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}.hero h1{font-size:clamp(32px,8vw,60px);line-height:1.05;margin:12px 0}.type{color:var(--muted);font-size:18px}.badge{display:inline-flex;margin-top:22px;padding:8px 12px;border-radius:999px;background:${today.open ? "#dcfce7;color:#166534" : "#f1eafa;color:#6f4df6"};font-size:13px;font-weight:700}.info{margin-top:34px;border-top:1px solid var(--line)}.row{display:flex;justify-content:space-between;gap:20px;padding:17px 0;border-bottom:1px solid var(--line)}.label{color:var(--muted)}.value{text-align:right;white-space:pre-wrap}.sub{font-size:13px;color:var(--muted);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0;padding-top:24px}.faq{margin-top:34px}.faq h2{font-size:22px;margin:0 0 8px}.qa{padding:14px 0;border-bottom:1px solid var(--line)}.qa h3{font-size:16px;margin:0 0 6px}.qa p{margin:0;color:var(--ink);white-space:pre-wrap}.value a{color:var(--purple)}.footer{margin-top:38px;color:var(--muted);font-size:12px;display:flex;flex-wrap:wrap;gap:12px}.footer a{color:var(--muted);text-decoration:none}.footer a:hover{color:var(--purple)}@media(max-width:560px){.row{display:block}.value{text-align:left;margin-top:4px}}</style></head><body><main class="wrap"><a class="brand" href="https://nurevo.jp/"><img src="/assets/logo.png" alt="Nurevo">Nurevo</a><section class="hero"><div class="eyebrow">Local business</div><h1>${esc(store.name)}</h1><div class="type">${esc(store.business_type || "")}</div><span class="badge">${today.open ? "本日営業中" : "本日営業時間"} · ${esc(today.label)}</span></section><section class="info"><h2 class="sub">${esc(labels.info)}</h2>${store.address ? `<div class="row"><span class="label">住所</span><span class="value">${esc(store.address)}</span></div>` : ""}${store.hours ? `<div class="row"><span class="label">営業時間</span><span class="value">${esc(store.hours)}</span></div>` : ""}${store.tel ? `<div class="row"><span class="label">電話</span><span class="value">${esc(store.tel)}</span></div>` : ""}${price ? `<div class="row"><span class="label">価格帯</span><span class="value">${price}</span></div>` : ""}${store.website_uri && /^https?:\/\//i.test(store.website_uri) ? `<div class="row"><span class="label">${esc(labels.website)}</span><span class="value"><a href="${esc(store.website_uri)}" rel="noopener">${esc(store.website_uri)}</a></span></div>` : ""}</section>${faqs.length ? `<section class="faq"><h2>${esc(labels.faq)}</h2>${faqs.map((f) => `<div class="qa"><h3>${esc(f.question)}</h3><p>${esc(f.answer)}</p></div>`).join("")}</section>` : ""}<p class="footer"><span>Information provided by Nurevo.</span><a href="/terms">利用規約</a><a href="/privacy">プライバシーポリシー</a><a href="/tokushoho">特定商取引法に基づく表記</a></p></main><script src="/tag.js" data-webmcp-site-key="${esc(store.site_key || "")}" defer></script></body></html>`;
 }
 
 function buildHostedLlms(store, ruleset) {
