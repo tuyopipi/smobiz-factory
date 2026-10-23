@@ -3702,16 +3702,76 @@ register_activation_hook(__FILE__, 'webmcp_canary_activate_aeo_score');
  * Activation: local work only. Nothing here makes an HTTP request - not to the
  * Nurevo service, and not the loopback measurement of this site's own front
  * page, which waits for the first admin screen or cron run instead.
+ *
+ * Network activation on a multisite runs the same per-site work on every
+ * site; sites created later are handled by webmcp_canary_initialize_site().
  */
-function webmcp_canary_activate_aeo_score() {
+function webmcp_canary_activate_aeo_score($network_wide = false) {
+    if ($network_wide && function_exists('is_multisite') && is_multisite()) {
+        webmcp_canary_for_each_site('webmcp_canary_activate_site');
+        return;
+    }
+    webmcp_canary_activate_site();
+}
+
+/** One site's activation: fill blank business fields locally and schedule the sync. */
+function webmcp_canary_activate_site() {
     webmcp_canary_autofill_business_data();
+    webmcp_canary_schedule_cron();
+}
+
+function webmcp_canary_schedule_cron() {
     if (function_exists('wp_next_scheduled') && !wp_next_scheduled(WEBMCP_CANARY_RULESET_CRON)) {
         wp_schedule_event(time() + HOUR_IN_SECONDS, 'twicedaily', WEBMCP_CANARY_RULESET_CRON);
     }
 }
 
+/** Run $callback once in the context of every site of the network. */
+function webmcp_canary_for_each_site($callback) {
+    if (!function_exists('get_sites') || !function_exists('switch_to_blog')) {
+        call_user_func($callback);
+        return;
+    }
+    foreach (get_sites(array('fields' => 'ids', 'number' => 0)) as $site_id) {
+        switch_to_blog((int) $site_id);
+        call_user_func($callback);
+        restore_current_blog();
+    }
+}
+
+/** The plugin basename, for the network-activation check. */
+function webmcp_canary_plugin_basename() {
+    return function_exists('plugin_basename') ? plugin_basename(__FILE__) : 'nurevo-webmcp/nurevo-webmcp.php';
+}
+
+add_action('wp_initialize_site', 'webmcp_canary_initialize_site', 200);
+/** A site added to a network where the plugin is network-active gets its cron too. */
+function webmcp_canary_initialize_site($site) {
+    if (!function_exists('is_plugin_active_for_network') && defined('ABSPATH') && file_exists(ABSPATH . 'wp-admin/includes/plugin.php')) {
+        require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    }
+    if (!function_exists('is_plugin_active_for_network') || !is_plugin_active_for_network(webmcp_canary_plugin_basename())) {
+        return;
+    }
+    $site_id = is_object($site) && isset($site->blog_id) ? (int) $site->blog_id : (int) $site;
+    if ($site_id <= 0) {
+        return;
+    }
+    switch_to_blog($site_id);
+    webmcp_canary_activate_site();
+    restore_current_blog();
+}
+
 register_deactivation_hook(__FILE__, 'webmcp_canary_deactivate_ruleset_cron');
-function webmcp_canary_deactivate_ruleset_cron() {
+function webmcp_canary_deactivate_ruleset_cron($network_wide = false) {
+    if ($network_wide && function_exists('is_multisite') && is_multisite()) {
+        webmcp_canary_for_each_site('webmcp_canary_clear_cron');
+        return;
+    }
+    webmcp_canary_clear_cron();
+}
+
+function webmcp_canary_clear_cron() {
     if (function_exists('wp_clear_scheduled_hook')) {
         wp_clear_scheduled_hook(WEBMCP_CANARY_RULESET_CRON);
     }

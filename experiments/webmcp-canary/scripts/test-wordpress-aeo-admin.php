@@ -159,8 +159,18 @@ function wp_nonce_url($url, $action) { return $url . '&_wpnonce=' . md5($action)
 function wp_verify_nonce($nonce, $action) { return $nonce === md5($action); }
 function wp_unslash($value) { return $value; }
 function wp_next_scheduled() { return false; }
-function wp_schedule_event($timestamp, $recurrence, $hook) { $GLOBALS['webmcp_test_scheduled'][] = $hook; return true; }
-function wp_clear_scheduled_hook($hook) { $GLOBALS['webmcp_test_cleared'][] = $hook; return 1; }
+function wp_schedule_event($timestamp, $recurrence, $hook) { $GLOBALS['webmcp_test_scheduled'][] = $hook; $GLOBALS['webmcp_test_scheduled_by_blog'][$GLOBALS['webmcp_test_blog']][] = $hook; return true; }
+function wp_clear_scheduled_hook($hook) { $GLOBALS['webmcp_test_cleared'][] = $hook; $GLOBALS['webmcp_test_cleared_by_blog'][$GLOBALS['webmcp_test_blog']][] = $hook; return 1; }
+// Multisite stand-ins: a network of three sites, off unless a test turns it on.
+$GLOBALS['webmcp_test_blog'] = 1;
+$GLOBALS['webmcp_test_multisite'] = false;
+$GLOBALS['webmcp_test_network_active'] = false;
+function is_multisite() { return $GLOBALS['webmcp_test_multisite']; }
+function get_sites($args = array()) { return array(1, 2, 3); }
+function switch_to_blog($id) { $GLOBALS['webmcp_test_blog_stack'][] = $GLOBALS['webmcp_test_blog']; $GLOBALS['webmcp_test_blog'] = (int) $id; return true; }
+function restore_current_blog() { $GLOBALS['webmcp_test_blog'] = array_pop($GLOBALS['webmcp_test_blog_stack']); return true; }
+function is_plugin_active_for_network($plugin) { return $GLOBALS['webmcp_test_network_active'] && $plugin === 'nurevo-webmcp/nurevo-webmcp.php'; }
+function plugin_basename($file) { return 'nurevo-webmcp/' . basename($file); }
 function plugins_url($path = '', $plugin = '') { return 'https://example.test/wp-content/plugins/webmcp-canary/' . ltrim($path, '/'); }
 function wp_date($format, $timestamp = null) { return gmdate($format, $timestamp ?? time()); }
 function get_current_user_id() { return $GLOBALS['webmcp_test_user_id'] ?? 1; }
@@ -3037,5 +3047,41 @@ $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canar
 $timeout_message = webmcp_canary_connection_error_message(new WP_Error('http_request_failed', 'cURL error 28: Operation timed out'));
 expect(strpos($timeout_message, 'Nurevo service') !== false && strpos($timeout_message, (string) WEBMCP_CANARY_HTTP_TIMEOUT) !== false, 'a timeout is explained in plain words');
 expect(strpos(webmcp_canary_connection_error_message(null), 'hosting provider') !== false, 'and the generic failure says what to do');
+
+/* --- 0.8.0: multisite cron -------------------------------------------- */
+
+$GLOBALS['webmcp_test_multisite'] = true;
+$GLOBALS['webmcp_test_scheduled_by_blog'] = array();
+$GLOBALS['webmcp_test_remote_get_log'] = array();
+webmcp_canary_activate_aeo_score(true);
+foreach (array(1, 2, 3) as $blog) {
+    expect(in_array(WEBMCP_CANARY_RULESET_CRON, $GLOBALS['webmcp_test_scheduled_by_blog'][$blog] ?? array(), true), "network activation schedules the sync on site {$blog}");
+}
+expect($GLOBALS['webmcp_test_blog'] === 1 && empty($GLOBALS['webmcp_test_blog_stack']), 'and returns to the current site');
+expect($GLOBALS['webmcp_test_remote_get_log'] === array(), 'network activation makes no request either');
+
+$GLOBALS['webmcp_test_scheduled_by_blog'] = array();
+webmcp_canary_activate_aeo_score(false);
+expect(array_keys($GLOBALS['webmcp_test_scheduled_by_blog']) === array(1), 'activating on one site schedules that site only');
+
+expect(in_array('webmcp_canary_initialize_site', $GLOBALS['webmcp_test_hooks']['wp_initialize_site'], true), 'new sites are hooked');
+$GLOBALS['webmcp_test_scheduled_by_blog'] = array();
+webmcp_canary_initialize_site((object) array('blog_id' => 9));
+expect(empty($GLOBALS['webmcp_test_scheduled_by_blog']), 'a new site gets nothing while the plugin is not network-active');
+$GLOBALS['webmcp_test_network_active'] = true;
+webmcp_canary_initialize_site((object) array('blog_id' => 9));
+expect(in_array(WEBMCP_CANARY_RULESET_CRON, $GLOBALS['webmcp_test_scheduled_by_blog'][9] ?? array(), true), 'a new site on a network-active install gets its sync');
+expect($GLOBALS['webmcp_test_blog'] === 1, 'and the current site is restored');
+
+$GLOBALS['webmcp_test_cleared_by_blog'] = array();
+webmcp_canary_deactivate_ruleset_cron(true);
+foreach (array(1, 2, 3) as $blog) {
+    expect(in_array(WEBMCP_CANARY_RULESET_CRON, $GLOBALS['webmcp_test_cleared_by_blog'][$blog] ?? array(), true), "network deactivation clears the sync on site {$blog}");
+}
+$GLOBALS['webmcp_test_cleared_by_blog'] = array();
+webmcp_canary_deactivate_ruleset_cron(false);
+expect(array_keys($GLOBALS['webmcp_test_cleared_by_blog']) === array(1), 'deactivating one site clears that site only');
+$GLOBALS['webmcp_test_multisite'] = false;
+$GLOBALS['webmcp_test_network_active'] = false;
 
 echo "WordPress AEO admin tests passed\n";
