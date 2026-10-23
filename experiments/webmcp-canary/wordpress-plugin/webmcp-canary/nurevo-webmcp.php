@@ -3153,15 +3153,55 @@ function webmcp_canary_llms_txt_body() {
     if ($settings['enabled'] !== '1' || $settings['serve_llms_txt'] !== '1') {
         return null;
     }
-    $body = webmcp_canary_build_local_llms_txt();
+    $body = webmcp_canary_cached_llms_txt($settings);
+    /** Filter: the complete llms.txt body as served. See DEVELOPERS.md. */
+    $filtered_body = apply_filters('nurevo_llms_txt', $body);
+    return is_string($filtered_body) ? $filtered_body : $body;
+}
+
+/** Transient holding the generated llms.txt body. */
+if (!defined('WEBMCP_CANARY_LLMS_TRANSIENT')) {
+    define('WEBMCP_CANARY_LLMS_TRANSIENT', 'webmcp_canary_llms_txt');
+}
+
+/**
+ * The generated llms.txt, from a transient when it is still current.
+ *
+ * Building it reads up to 30 posts and the whole product catalogue, which is
+ * too much for every crawler hit. The cache is cleared when a post is saved or
+ * deleted, when the settings or the service list change and when the ruleset
+ * is synced (see the hooks below), and is also keyed on the settings and the
+ * delivered ruleset version, so a change that bypasses those hooks still
+ * produces a fresh file.
+ */
+function webmcp_canary_cached_llms_txt($settings = null) {
+    $settings = is_array($settings) ? $settings : webmcp_canary_settings();
     $delivered = webmcp_canary_delivered_ruleset_version();
+    $signature = md5((string) wp_json_encode(array($settings, $delivered, WEBMCP_CANARY_VERSION)));
+    $cached = get_transient(WEBMCP_CANARY_LLMS_TRANSIENT);
+    if (is_array($cached) && isset($cached['sig'], $cached['body']) && $cached['sig'] === $signature && is_string($cached['body'])) {
+        return $cached['body'];
+    }
+    $body = webmcp_canary_build_local_llms_txt();
     if ($delivered > 0) {
         // An HTML comment, not a "# " line, which Markdown would read as a second H1.
         $body = rtrim($body, "\n") . "\n\n<!-- nurevo-aeo-ruleset:" . $delivered . " -->\n";
     }
-    /** Filter: the complete llms.txt body as served. See DEVELOPERS.md. */
-    $filtered_body = apply_filters('nurevo_llms_txt', $body);
-    return is_string($filtered_body) ? $filtered_body : $body;
+    set_transient(WEBMCP_CANARY_LLMS_TRANSIENT, array('sig' => $signature, 'body' => $body), DAY_IN_SECONDS);
+    return $body;
+}
+
+add_action('save_post', 'webmcp_canary_flush_llms_cache');
+add_action('deleted_post', 'webmcp_canary_flush_llms_cache');
+add_action('update_option_' . WEBMCP_CANARY_OPTION, 'webmcp_canary_flush_llms_cache');
+add_action('add_option_' . WEBMCP_CANARY_OPTION, 'webmcp_canary_flush_llms_cache');
+add_action('update_option_' . WEBMCP_CANARY_SERVICES_OPTION, 'webmcp_canary_flush_llms_cache');
+add_action('add_option_' . WEBMCP_CANARY_SERVICES_OPTION, 'webmcp_canary_flush_llms_cache');
+add_action('update_option_' . WEBMCP_CANARY_RULESET_OPTION, 'webmcp_canary_flush_llms_cache');
+add_action('add_option_' . WEBMCP_CANARY_RULESET_OPTION, 'webmcp_canary_flush_llms_cache');
+/** Drop the cached llms.txt. Takes and ignores whatever the hook passes. */
+function webmcp_canary_flush_llms_cache() {
+    delete_transient(WEBMCP_CANARY_LLMS_TRANSIENT);
 }
 
 /** The central ruleset version this site follows (paid, synced), or 0. */
@@ -3234,7 +3274,9 @@ function webmcp_canary_maybe_serve_llms_txt() {
     }
 
     status_header(200);
-    nocache_headers();
+    // Public and short-lived: the file changes only when the site does, and a
+    // crawler or page cache may reuse it for five minutes.
+    header('Cache-Control: public, max-age=300');
     header('Content-Type: text/plain; charset=utf-8');
     header('X-Content-Type-Options: nosniff');
     // The body is plain text this plugin generated from the site's own content.

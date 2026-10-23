@@ -54,7 +54,8 @@ add_filter('nurevo_llms_txt_lines', function (array $lines) {
 });
 ```
 
-Applied while the body is generated.
+Applied while the body is generated, so its result is cached with it (see
+"Caching").
 
 ### `nurevo_llms_txt`
 
@@ -114,6 +115,17 @@ meta box. The block editor panel needs the post type to support
 | `_nurevo_exclude_llms` | boolean | The post is not listed in `/llms.txt`. |
 | `_nurevo_exclude_schema` | boolean | No Nurevo structured data on the post, standalone or merged. |
 | `_nurevo_faq` | array of `{q, a}` | The post's own questions. Shown by the Nurevo FAQ block with "This page's own questions" or `[nurevo_faq source="post"]`, and published as FAQPage on that post only, and only where shown. |
+
+## Caching
+
+`/llms.txt` is cached in the `webmcp_canary_llms_txt` transient and served
+with `Cache-Control: public, max-age=300`. The cache is cleared when a post is
+saved or deleted, when the settings or the service list change, and when the
+central ruleset is synced. To clear it yourself:
+
+```php
+webmcp_canary_flush_llms_cache();
+```
 
 ## WP-CLI
 

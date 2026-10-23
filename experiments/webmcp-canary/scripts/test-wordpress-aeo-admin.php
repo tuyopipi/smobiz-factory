@@ -178,6 +178,10 @@ $GLOBALS['webmcp_test_user_meta'] = array();
 function get_user_meta($user_id, $key = '', $single = false) { return $GLOBALS['webmcp_test_user_meta'][$user_id][$key] ?? ($single ? '' : array()); }
 function update_user_meta($user_id, $key, $value) { $GLOBALS['webmcp_test_user_meta'][$user_id][$key] = $value; return true; }
 function wp_create_nonce($action = -1) { return md5($action); }
+$GLOBALS['webmcp_test_transients'] = array();
+function get_transient($key) { return $GLOBALS['webmcp_test_transients'][$key] ?? false; }
+function set_transient($key, $value, $ttl = 0) { $GLOBALS['webmcp_test_transients'][$key] = $value; return true; }
+function delete_transient($key) { unset($GLOBALS['webmcp_test_transients'][$key]); return true; }
 function apply_filters($hook, $value, ...$args) {
     foreach ($GLOBALS['webmcp_test_hooks'][$hook] ?? array() as $callback) { $value = $callback($value, ...$args); }
     return $value;
@@ -3083,5 +3087,33 @@ webmcp_canary_deactivate_ruleset_cron(false);
 expect(array_keys($GLOBALS['webmcp_test_cleared_by_blog']) === array(1), 'deactivating one site clears that site only');
 $GLOBALS['webmcp_test_multisite'] = false;
 $GLOBALS['webmcp_test_network_active'] = false;
+
+/* --- 0.8.0: llms.txt cache -------------------------------------------- */
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '1', 'serve_llms_txt' => '1', 'business_name' => 'Cache Shop'));
+delete_option(WEBMCP_CANARY_RULESET_OPTION);
+webmcp_canary_flush_llms_cache();
+$GLOBALS['webmcp_test_posts'] = array((object) array('ID' => 91, 'post_title' => 'First post', 'permalink' => 'https://example.test/first/', 'post_content' => ''));
+$cached_first = webmcp_canary_llms_txt_body();
+expect(strpos($cached_first, 'First post') !== false, 'the first request builds llms.txt');
+expect(is_array(get_transient(WEBMCP_CANARY_LLMS_TRANSIENT)), 'and caches it in a transient');
+$GLOBALS['webmcp_test_posts'][] = (object) array('ID' => 92, 'post_title' => 'Second post', 'permalink' => 'https://example.test/second/', 'post_content' => '');
+expect(webmcp_canary_llms_txt_body() === $cached_first, 'later requests are served from the cache');
+foreach (array('save_post', 'deleted_post', 'update_option_' . WEBMCP_CANARY_OPTION, 'update_option_' . WEBMCP_CANARY_SERVICES_OPTION, 'update_option_' . WEBMCP_CANARY_RULESET_OPTION) as $invalidating_hook) {
+    expect(in_array('webmcp_canary_flush_llms_cache', $GLOBALS['webmcp_test_hooks'][$invalidating_hook] ?? array(), true), "the cache is cleared on {$invalidating_hook}");
+}
+foreach ($GLOBALS['webmcp_test_hooks']['save_post'] as $save_callback) {
+    if ($save_callback === 'webmcp_canary_flush_llms_cache') { call_user_func($save_callback, 92, null, true); }
+}
+expect(strpos(webmcp_canary_llms_txt_body(), 'Second post') !== false, 'saving a post brings it into llms.txt');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_name'] = 'Renamed Cache Shop';
+expect(strpos(webmcp_canary_llms_txt_body(), '# Renamed Cache Shop') === 0, 'a settings change is never served stale');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['serve_llms_txt'] = '0';
+expect(webmcp_canary_llms_txt_body() === null, 'switching llms.txt off stops it even with a cached body');
+$GLOBALS['webmcp_test_posts'] = array();
+webmcp_canary_flush_llms_cache();
+$serve_body = webmcp_test_function_body(file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_maybe_serve_llms_txt');
+expect(strpos($serve_body, "header('Cache-Control: public, max-age=300')") !== false, 'llms.txt is served with Cache-Control: public, max-age=300');
+expect(strpos($serve_body, 'nocache_headers') === false, 'and no longer as uncacheable');
 
 echo "WordPress AEO admin tests passed\n";
