@@ -1,7 +1,7 @@
 import { recordFetched } from "./aeo-delivery.mjs";
 import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
-import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
+import { ensureAccount, issueReferralCode, partnerSummary, isApprovedPartner, applyForPartner, reviewPartner, listPartnerApplications, PartnerNotApprovedError } from "./partner.mjs";
 import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
@@ -923,16 +923,46 @@ export async function handleApi(request, env, ctx) {
   }
   // The partner's own payout account (Stripe Connect Express, Japan). No body
   // is read: the account and the destination are always the signed-in member's.
+  // Only a partner Nurevo approved may set up a payout account (no Stripe call otherwise).
   if (path === "/api/partner/payout/onboard" && method === "POST") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
-    const result = await startPayoutOnboarding(env, await ensureAccount(env, member.member_id));
+    const account = await ensureAccount(env, member.member_id);
+    if (!isApprovedPartner(account)) return json({ error: "partner_not_approved" }, 403);
+    const result = await startPayoutOnboarding(env, account);
     return json(result.body, result.status);
   }
   if (["/api/partner/code", "/api/partner/code/regenerate"].includes(path) && method === "POST") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
-    return json({ referral_code: await issueReferralCode(env, await ensureAccount(env, member.member_id), path.endsWith("regenerate")) });
+    try {
+      return json({ referral_code: await issueReferralCode(env, await ensureAccount(env, member.member_id), path.endsWith("regenerate")) });
+    } catch (error) {
+      if (error instanceof PartnerNotApprovedError) return json({ error: "partner_not_approved" }, 403);
+      throw error;
+    }
+  }
+  // "パートナー申請": the member asks Nurevo to approve it as a partner. No body is read.
+  if (path === "/api/partner/apply" && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const result = await applyForPartner(env, await ensureAccount(env, member.member_id));
+    return json({ ok: true, partner_status: result.status, applied_at: result.applied_at });
+  }
+  // Partner applications: listed, approved and rejected by a super admin only
+  // (the same check as the other /api/admin routes; POSTs are CSRF-checked above).
+  if (path === "/api/admin/partner-applications" && method === "GET") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    return json(await listPartnerApplications(env));
+  }
+  const partnerReview = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject|revoke)$/);
+  if (partnerReview && method === "POST") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    const result = await reviewPartner(env, partnerReview[1], partnerReview[2], superAdmin.member_id);
+    if (result.status === 200) console.log("partner_reviewed", JSON.stringify({ account: Number(partnerReview[1]), decision: partnerReview[2], by: superAdmin.member_id }));
+    return json(result.body, result.status);
   }
 
   if (path === "/api/auth/request" && method === "POST") {
@@ -4062,9 +4092,20 @@ async function findOrCreateMember(env, email, registrationLocale, referralCode =
   const existing = await env.DB.prepare("SELECT id,org_id,status FROM members WHERE lower(email)=?").bind(email).first();
   if (existing) return { id: existing.id, orgId: existing.org_id, status: existing.status || null };
   const normalizedCode = String(referralCode || "").trim().toUpperCase();
-  const parent = normalizedCode ? await env.DB.prepare("SELECT id,email FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
-  const eligibleParent = parent && String(parent.email).toLowerCase() !== email ? parent : null;
-  if (normalizedCode && !eligibleParent) console.warn("nurevo_referral_ignored", { reason: parent ? "self_referral" : "invalid_code" });
+  let parent = null;
+  try {
+    parent = normalizedCode ? await env.DB.prepare("SELECT id,email,partner_status,partner_approved_at FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
+  } catch (error) {
+    // Deployed before 0040: no partner is approved yet, so the code is ignored
+    // and the signup itself still succeeds.
+    if (!/no such column/i.test(String(error?.message || error))) throw error;
+    console.warn("nurevo_referral_ignored", { reason: "migration_0040_not_applied" });
+  }
+  // A code attributes a signup only while its owner is an approved partner;
+  // a code kept from before approval (or after rejection) is inactive.
+  const selfReferral = parent && String(parent.email).toLowerCase() === email;
+  const eligibleParent = parent && !selfReferral && isApprovedPartner(parent) ? parent : null;
+  if (normalizedCode && !eligibleParent) console.warn("nurevo_referral_ignored", { reason: !parent ? "invalid_code" : selfReferral ? "self_referral" : "partner_not_approved" });
   const orgId = `org_${uid()}`;
   const memberId = `mem_${uid()}`;
   try {
