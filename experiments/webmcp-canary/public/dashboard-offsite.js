@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-23-offsite */
+/* Nurevo dashboard asset revision: 2026-10-23-offsite2 */
 /*
  * "Off-site store information" card on the site page.
  *
@@ -16,6 +16,14 @@
  *
  * Words come from the dashboard dictionary (t() in dashboard.html, the I5
  * block), like the other modules.
+ *
+ * Attribution: Places data shown without a Google map must credit Google Maps
+ * (https://developers.google.com/maps/documentation/places/web-service/policies).
+ * The logo is preferred; this card uses the permitted text form, styled as
+ * the policy asks: "Google Maps" exactly, never translated (translate="no"),
+ * Roboto/sans-serif, normal style, weight 400, 12-16px, #5E5E5E on white,
+ * normal letter spacing, inside the same box as the data, plus any third-party
+ * provider Google names in `attributions`. Shown only next to Google values.
  */
 (function () {
   "use strict";
@@ -100,20 +108,31 @@
       + '<p class="nrv-os-links">' + [link(links && links.suggest, "osOpenListing"), link(links && links.check, "osCheck"), link(links && links.manage, "osManage")].filter(Boolean).join(" ") + "</p>";
   }
 
-  function googleBlock(source, profile) {
+  // "Google Maps" is a wordmark: not a dictionary word, never localised.
+  function attribution(source) {
+    var providers = (source.attribution_providers || []).map(function (p) {
+      var href = safeUrl(p.uri);
+      return href ? '<a href="' + esc(href) + '" target="_blank" rel="noopener" translate="no">' + esc(p.name) + "</a>" : '<span translate="no">' + esc(p.name) + "</span>";
+    });
+    return '<p class="nrv-os-attr">' + esc(tr("osAttribution")) + ' <span class="nrv-os-gmaps" translate="no">Google Maps</span>'
+      + (providers.length ? '<span class="nrv-os-providers"> · ' + providers.join(", ") + "</span>" : "") + "</p>";
+  }
+
+  function googleBlock(source, profile, refunded) {
     var name = tr("osSrc_google");
     var html = '<div class="nrv-os-source" data-os-source="google"><div class="nrv-os-head"><strong>' + esc(name) + "</strong> " + badge(source.status) + '<span class="nrv-os-kind">' + esc(tr("osAuto")) + "</span></div>";
     if (source.status === "match" || source.status === "mismatch") {
       html += fieldLines(source, profile, name);
-      if (source.observed) html += '<p class="nrv-os-attr">' + esc(tr("osAttribution")) + "</p>";
+      if (source.observed) html += attribution(source);
     } else if (source.status === "ambiguous") {
       html += "<p>" + esc(tr("osCandidates")) + '</p><ul class="nrv-os-cands">' + (source.candidates || []).map(function (c) {
         var label = c.name ? c.name + (c.address ? tr("osSep") + c.address : "") : tr("osCandidateStored");
         return "<li>" + esc(label) + " " + link(c.url, "osOpenListing") + ' <button type="button" data-os-pick="' + esc(c.id) + '">' + esc(tr("osPick")) + "</button></li>";
       }).join("") + "</ul><p class=\"nrv-os-note\">" + esc(tr("osPickNote")) + "</p>";
-      if ((source.candidates || []).some(function (c) { return c.name; })) html += '<p class="nrv-os-attr">' + esc(tr("osAttribution")) + "</p>";
+      if ((source.candidates || []).some(function (c) { return c.name; })) html += attribution(source);
     } else if (source.status === "error" || source.status === "rate_limited" || source.status === "skipped") {
       html += "<p>" + esc(word("osStatusNote_", source.status)) + "</p>";
+      if (refunded) html += '<p class="nrv-os-note">' + esc(tr("osRefunded")) + "</p>";
     }
     html += steps(source.steps, source.links);
     if (source.status === "not_configured") {
@@ -167,7 +186,7 @@
     html += profileBlock(profile);
     html += "<h3>" + esc(tr("osAutoHead")) + "</h3>";
     var google = result && (result.sources || []).filter(function (s) { return s.id === "google"; })[0];
-    if (google) html += googleBlock(google, profile);
+    if (google) html += googleBlock(google, profile, !!(fresh && fresh.refunded));
     else if (!configured.google) html += googleBlock({ id: "google", status: "not_configured", steps: ["google_manual"], links: { manage: "https://business.google.com/" } }, profile);
     else html += '<p class="nrv-os-note">' + esc(tr("osNever")) + "</p>";
     var manual = (view && view.checklist) || (result && result.manual) || [];
@@ -252,7 +271,7 @@
   }, true);
 
   var style = document.createElement("style");
-  style.textContent = ".nrv-offsite{margin-top:18px}.nrv-os-why{font-size:13px;line-height:1.7;margin:0 0 6px}.nrv-os-note{font-size:11px;color:#6c6579;line-height:1.6;margin:4px 0}.nrv-os-run{margin:12px 0}.nrv-os-run button,.nrv-os-cands button{background:#6f4df6;color:#fff;border:0;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer}.nrv-os-run button[disabled]{opacity:.5;cursor:default}.nrv-offsite h3{font-size:13px;margin:18px 0 8px}.nrv-os-source{border:1px solid #ece9f3;border-radius:10px;padding:12px 14px;margin:0 0 10px}.nrv-os-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}.nrv-os-kind{font-size:10px;color:#8b8498}.nrv-os-badge{font-size:10px;border-radius:5px;padding:2px 7px;font-weight:700}.nrv-os-badge.is-ok{background:#e7f5ec;color:#176b3a}.nrv-os-badge.is-bad{background:#fdecec;color:#a12828}.nrv-os-badge.is-manual{background:#efe9ff;color:#5a3ad6}.nrv-os-badge.is-neutral{background:#f1eff5;color:#5d5570}.nrv-os-lines{margin:6px 0;padding-left:18px;font-size:12px;line-height:1.7}.nrv-os-lines li.is-bad{color:#a12828}.nrv-os-lines li.is-warn{color:#8a5a00}.nrv-os-lines li.is-note{color:#6c6579}.nrv-os-ok{font-size:12px;color:#176b3a;margin:4px 0}.nrv-os-steps{margin:6px 0;padding-left:18px;font-size:12px;line-height:1.7}.nrv-os-links{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;margin:4px 0 0}.nrv-os-link{color:#6f4df6;font-weight:700}.nrv-os-attr{font-size:10px;color:#8b8498;margin:4px 0 0}.nrv-os-cands{list-style:none;padding:0;margin:6px 0;font-size:12px}.nrv-os-cands li{padding:6px 0;border-top:1px solid #f3f1f7}.nrv-os-profile{font-size:12px;margin:8px 0}.nrv-os-profile dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px 16px;margin:8px 0 0}.nrv-os-profile dt{font-size:10px;color:#8b8498}.nrv-os-profile dd{margin:0;white-space:pre-wrap}";
+  style.textContent = ".nrv-offsite{margin-top:18px}.nrv-os-why{font-size:13px;line-height:1.7;margin:0 0 6px}.nrv-os-note{font-size:11px;color:#6c6579;line-height:1.6;margin:4px 0}.nrv-os-run{margin:12px 0}.nrv-os-run button,.nrv-os-cands button{background:#6f4df6;color:#fff;border:0;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer}.nrv-os-run button[disabled]{opacity:.5;cursor:default}.nrv-offsite h3{font-size:13px;margin:18px 0 8px}.nrv-os-source{border:1px solid #ece9f3;border-radius:10px;padding:12px 14px;margin:0 0 10px}.nrv-os-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}.nrv-os-kind{font-size:10px;color:#8b8498}.nrv-os-badge{font-size:10px;border-radius:5px;padding:2px 7px;font-weight:700}.nrv-os-badge.is-ok{background:#e7f5ec;color:#176b3a}.nrv-os-badge.is-bad{background:#fdecec;color:#a12828}.nrv-os-badge.is-manual{background:#efe9ff;color:#5a3ad6}.nrv-os-badge.is-neutral{background:#f1eff5;color:#5d5570}.nrv-os-lines{margin:6px 0;padding-left:18px;font-size:12px;line-height:1.7}.nrv-os-lines li.is-bad{color:#a12828}.nrv-os-lines li.is-warn{color:#8a5a00}.nrv-os-lines li.is-note{color:#6c6579}.nrv-os-ok{font-size:12px;color:#176b3a;margin:4px 0}.nrv-os-steps{margin:6px 0;padding-left:18px;font-size:12px;line-height:1.7}.nrv-os-links{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;margin:4px 0 0}.nrv-os-link{color:#6f4df6;font-weight:700}.nrv-os-attr{font-size:12px;color:#5e5e5e;margin:6px 0 0;line-height:1.5}.nrv-os-gmaps{font-family:Roboto,Arial,sans-serif;font-style:normal;font-weight:400;font-size:12px;letter-spacing:normal;color:#5e5e5e;text-transform:none}.nrv-os-providers a{color:#5e5e5e}.nrv-os-cands{list-style:none;padding:0;margin:6px 0;font-size:12px}.nrv-os-cands li{padding:6px 0;border-top:1px solid #f3f1f7}.nrv-os-profile{font-size:12px;margin:8px 0}.nrv-os-profile dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px 16px;margin:8px 0 0}.nrv-os-profile dt{font-size:10px;color:#8b8498}.nrv-os-profile dd{margin:0;white-space:pre-wrap}";
   document.head.appendChild(style);
   new MutationObserver(function () { mount(); }).observe(document.documentElement, { childList: true, subtree: true });
   setTimeout(mount, 700);

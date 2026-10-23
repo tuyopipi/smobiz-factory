@@ -12,7 +12,7 @@
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, SCHEDULED_JOBS, runScheduled } from "../worker/schedule.mjs";
+import { DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON, SCHEDULED_JOBS, runScheduled } from "../worker/schedule.mjs";
 import { parseWranglerConfig } from "./pro-golive-check.mjs";
 import { REMINDER_STEPS, HOUR_MS, dueReminderStep } from "../worker/lifecycle-email.mjs";
 
@@ -22,8 +22,9 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 {
   const config = parseWranglerConfig(read("../wrangler.jsonc"));
-  assert.deepEqual([...config.triggers.crons].sort(), [DAILY_CRON, WEEKLY_CRON, HOURLY_CRON].sort(), "wrangler.jsonc lists the three crons, no more");
-  assert.deepEqual(Object.keys(SCHEDULED_JOBS).sort(), [DAILY_CRON, WEEKLY_CRON, HOURLY_CRON].sort());
+  assert.deepEqual([...config.triggers.crons].sort(), [DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON].sort(), "wrangler.jsonc lists the four crons, no more");
+  assert.deepEqual(Object.keys(SCHEDULED_JOBS).sort(), [DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON].sort());
+  assert.notEqual(OFFSITE_CRON.split(" ")[0], DAILY_CRON.split(" ")[0], "the off-site audit has its own minute, so its own invocation");
   assert.equal(DAILY_CRON, "17 18 * * *", "the daily schedule is unchanged");
   assert.equal(WEEKLY_CRON, "17 18 * * 1", "and the weekly one");
   const [minute, ...rest] = HOURLY_CRON.split(" ");
@@ -37,7 +38,8 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 {
   assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts"], "hourly: the reminders and the partner payouts");
   assert.deepEqual([...SCHEDULED_JOBS[DAILY_CRON]], ["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"], "daily: as before, without the reminders");
-  assert.deepEqual([...SCHEDULED_JOBS[WEEKLY_CRON]], ["aeo-learning", "offsite-audit-weekly"], "weekly: the learning job and the off-site listing audit");
+  assert.deepEqual([...SCHEDULED_JOBS[WEEKLY_CRON]], ["aeo-learning"], "weekly: as before");
+  assert.deepEqual([...SCHEDULED_JOBS[OFFSITE_CRON]], ["offsite-audit"], "the off-site listing audit runs alone, daily");
   const all = Object.values(SCHEDULED_JOBS).flat();
   assert.equal(new Set(all).size, all.length, "no job runs under two crons");
 
@@ -48,7 +50,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
     ["aeo-score-cron", "runAeoScoreCron(env)"],
     ["aeo-sov-daily", "runSovDailyBatch(env)"],
     ["aeo-learning", 'runAeoLearningJob(env, { trigger: "scheduled" })'],
-    ["offsite-audit-weekly", "runOffsiteAuditWeekly(env)"],
+    ["offsite-audit", "runOffsiteAuditScheduled(env)"],
     ["lifecycle-reminders", "runLifecycleReminders(env)"],
     ["partner-payouts", "runPartnerPayouts(env)"],
   ]) {
@@ -95,7 +97,8 @@ async function fire(cron, { fail = [] } = {}) {
   assert.equal(daily.ran.includes("lifecycle-reminders"), false, "and not the reminders");
 
   const weekly = await fire(WEEKLY_CRON);
-  assert.deepEqual(weekly.ran, ["aeo-learning", "offsite-audit-weekly"]);
+  assert.deepEqual(weekly.ran, ["aeo-learning"]);
+  assert.deepEqual((await fire(OFFSITE_CRON)).ran, ["offsite-audit"]);
 
   const unknown = await fire("0 0 * * *");
   assert.deepEqual(unknown.ran, [], "an unknown cron runs nothing");

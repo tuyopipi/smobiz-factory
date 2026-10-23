@@ -13,11 +13,15 @@
  *  - a missing key is "not configured" and calls nothing;
  *  - only place ids and our own outcome are stored, never the listing's values;
  *  - the allowance: Free once a calendar month, Standard/Pro every 10 minutes
- *    up to five a day; a pick after an ambiguous run is free; a global daily
- *    ceiling on Places calls;
+ *    up to five a day; a pick after an ambiguous run is free (once); a global
+ *    daily ceiling on Places calls; all reserved atomically before any call,
+ *    so N parallel POSTs make exactly as many Places calls as allowed; runs
+ *    that called nothing useful (ceiling, error) are refunded;
  *  - the endpoint: owner session, CSRF, viewer read-only, other orgs refused;
- *  - the weekly cron audits Standard/Pro only, when due, and skips cleanly
+ *  - the daily cron audits Standard/Pro only, each once a week, within its
+ *    share of the daily ceiling and its time budget, and skips cleanly
  *    without a key or before 0042;
+ *  - Google Maps attribution (and third-party providers) next to Google data;
  *  - the dashboard card renders in all eight languages from dictionary words.
  */
 import assert from "node:assert/strict";
@@ -28,7 +32,7 @@ import vm from "node:vm";
 import {
   normalizeName, nameSimilarity, normalizeAddressParts, normalizePhone, parseHoursText, weekFromPeriods,
   compareName, compareAddress, comparePhone, compareHours, pickCandidate, manualChecklist, businessFamily,
-  runOffsiteAudit, offsiteAuditRun, offsiteAuditView, manualAllowance, runOffsiteAuditWeekly, storableResult, OFFSITE_LIMITS,
+  runOffsiteAudit, offsiteAuditRun, offsiteAuditView, manualAllowance, runOffsiteAuditScheduled, storableResult, OFFSITE_LIMITS,
 } from "../worker/offsite-audit.mjs";
 import { handleApi } from "../worker/api.mjs";
 import { loadDictionary, LANGS } from "./dashboard-dictionary.mjs";
@@ -191,7 +195,7 @@ const sha = (v) => createHash("sha256").update(v).digest("hex");
 function makeEnv({ key = "test-google-key", migrated = true, extra = {} } = {}) {
   const sqlite = new DatabaseSync(":memory:");
   sqlite.exec(sql("schema.sql"));
-  if (!migrated) sqlite.exec("DROP TABLE offsite_audits; DROP TABLE offsite_listing_refs;");
+  if (!migrated) sqlite.exec("DROP TABLE offsite_audits; DROP TABLE offsite_listing_refs; DROP TABLE offsite_audit_usage; DROP TABLE offsite_api_budget;");
   for (const stmt of ["ALTER TABLE sites ADD COLUMN manual_plan TEXT", "ALTER TABLE orgs ADD COLUMN manual_plan TEXT"]) {
     try { sqlite.exec(stmt); } catch { /* already there */ }
   }
@@ -238,10 +242,12 @@ const PLACE = (over = {}) => ({
 });
 
 /** A Places stub: answers search and details from the given places, records calls. */
-function placesStub(places, { status = 200 } = {}) {
+function placesStub(places, { status = 200, delayMs = 0 } = {}) {
   const calls = [];
   const impl = async (url, init = {}) => {
     calls.push({ url: String(url), init });
+    // A real call takes time; parallel requests interleave around it.
+    if (delayMs) await new Promise((resolve) => setTimeout(resolve, delayMs));
     if (status !== 200) return { ok: false, status, json: async () => ({}) };
     if (String(url).endsWith("places:searchText")) return { ok: true, status: 200, json: async () => ({ places }) };
     const id = decodeURIComponent(String(url).match(/\/places\/([^?]+)/)[1]);
@@ -281,12 +287,15 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
   assert.equal(g.listing.id, "ChIJ_shiori_main_0001");
   assert.ok(g.listing.url.includes("query_place_id=ChIJ_shiori_main_0001"));
   assert.equal(g.attribution, "Google Maps");
+  assert.deepEqual(g.attribution_providers, [], "no third-party provider named");
+  assert.equal(g.confidence > 0.8, true, "the response carries the confidence");
   // The request: one Text Search, Japanese, the field mask, the key in a header (never the URL).
   assert.equal(stub.calls.length, 1);
   assert.ok(stub.calls[0].url.endsWith("places:searchText"));
   assert.equal(stub.calls[0].init.headers["x-goog-api-key"], "test-google-key");
   assert.ok(!stub.calls[0].url.includes("test-google-key"));
   assert.match(stub.calls[0].init.headers["x-goog-fieldmask"], /places\.nationalPhoneNumber/);
+  assert.match(stub.calls[0].init.headers["x-goog-fieldmask"], /places\.attributions/, "third-party attributions are requested");
   assert.equal(JSON.parse(stub.calls[0].init.body).languageCode, "ja");
   // Stored: our outcome and the place id. Not Google's address, phone or hours.
   const json = stored(sqlite);
@@ -294,6 +303,8 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
   assert.ok(!json.includes("+81 3-1234-5678") && !json.includes("cid=1"), "nor its phone or URL");
   assert.ok(!json.includes("11時00分"), "nor its hours text");
   assert.ok(!JSON.parse(json).sources[0].observed);
+  assert.equal(JSON.parse(json).sources[0].confidence, undefined, "nor scores computed from Google's values");
+  assert.equal(JSON.parse(json).sources[0].fields.name.similarity, undefined);
   assert.equal(sqlite.prepare("SELECT listing_id FROM offsite_listing_refs WHERE site_id='s1'").get().listing_id, "ChIJ_shiori_main_0001");
 
   // The next run asks Place Details for the known id instead of searching.
@@ -426,7 +437,106 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
   assert.equal(stub.calls.length, 1, "the second site made no call");
   const noKv = makeEnv();
   delete noKv.env.WEBMCP_KV;
-  assert.equal(google(await runOffsiteAudit(noKv.env, "s1", { fetchImpl: stub.impl, now: T0 })).status, "rate_limited", "without KV the ceiling cannot be kept, so nothing is called");
+  assert.equal(google(await runOffsiteAudit(noKv.env, "s1", { fetchImpl: stub.impl, now: T0 })).status, "match", "the ceiling is kept in D1; KV is not needed");
+  const noTable = makeEnv();
+  noTable.sqlite.exec("DROP TABLE offsite_api_budget");
+  const before = stub.calls.length;
+  assert.equal(google(await runOffsiteAudit(noTable.env, "s1", { fetchImpl: stub.impl, now: T0 })).status, "rate_limited", "without the budget table the ceiling cannot be kept, so nothing is called");
+  assert.equal(stub.calls.length, before);
+  // A run that called nothing is not stored: the card keeps the previous outcome.
+  assert.equal(noTable.sqlite.prepare("SELECT COUNT(*) n FROM offsite_audits").get().n, 0);
+}
+
+/* ---------------- parallel requests: reservations are atomic ---------------- */
+{
+  // Free: eight POSTs at once, one monthly run -> exactly one Places call.
+  const { env } = makeEnv();
+  const stub = placesStub([PLACE()], { delayMs: 5 });
+  const free = { id: "s1", org_id: "o1", plan: "free" };
+  const outcomes = await Promise.all(Array.from({ length: 8 }, () => offsiteAuditRun(env, free, {}, { fetchImpl: stub.impl, now: T0 })));
+  assert.deepEqual(outcomes.map((o) => o.status).sort(), [200, 429, 429, 429, 429, 429, 429, 429]);
+  assert.equal(stub.calls.length, 1, "exactly the allowed number of Google calls");
+}
+{
+  // Standard: parallel POSTs at one moment -> one run (10-minute spacing);
+  // then the five a day are five calls however they are fired.
+  const { env } = makeEnv();
+  const stub = placesStub([PLACE()], { delayMs: 5 });
+  const std = { id: "s2", org_id: "o1", plan: "standard" };
+  let at = T0;
+  for (let round = 0; round < 7; round += 1, at += OFFSITE_LIMITS.paidMinIntervalMs) {
+    await Promise.all(Array.from({ length: 6 }, () => offsiteAuditRun(env, std, {}, { fetchImpl: stub.impl, now: at })));
+  }
+  assert.equal(stub.calls.length, OFFSITE_LIMITS.paidManualPerDay, "36 POSTs over 7 rounds, five calls");
+  assert.equal((await manualAllowance(env, "s2", "standard", at)).reason, "daily_limit");
+}
+{
+  // The all-sites ceiling: nine audits at once against a ceiling of 3.
+  const { env, sqlite } = makeEnv({ extra: { OFFSITE_GOOGLE_DAILY_LIMIT: "3" } });
+  const stub = placesStub([PLACE()], { delayMs: 5 });
+  const results = await Promise.all(["s1", "s2", "s3", "s1", "s2", "s3", "s1", "s2", "s3"].map((id) => runOffsiteAudit(env, id, { fetchImpl: stub.impl, now: T0 })));
+  assert.equal(stub.calls.length, 3, "exactly the ceiling");
+  assert.equal(results.filter((r) => google(r).status === "rate_limited").length, 6);
+  assert.equal(sqlite.prepare("SELECT n FROM offsite_api_budget WHERE source='google'").get().n, 3);
+  // A new UTC day, a new budget.
+  await runOffsiteAudit(env, "s1", { fetchImpl: stub.impl, now: T0 + 86400000 });
+  assert.equal(stub.calls.length, 4);
+}
+{
+  // The free re-run after an ambiguous run is taken once, even in parallel.
+  const { env, sqlite } = makeEnv();
+  sqlite.prepare("UPDATE site_settings SET tel=NULL,address=NULL WHERE site_id='s1'").run();
+  const stub = placesStub([PLACE({ id: "ChIJ_branch_a_00001" }), PLACE({ id: "ChIJ_branch_b_00002", formattedAddress: "東京都港区赤坂9-7-4" })], { delayMs: 5 });
+  const free = { id: "s1", org_id: "o1", plan: "free" };
+  assert.equal(google((await offsiteAuditRun(env, free, {}, { fetchImpl: stub.impl, now: T0 })).body.result).status, "ambiguous");
+  const picks = await Promise.all(Array.from({ length: 4 }, () => offsiteAuditRun(env, free, { pin: { source: "google", listing_id: "ChIJ_branch_b_00002" } }, { fetchImpl: stub.impl, now: T0 + 1000 })));
+  assert.deepEqual(picks.map((o) => o.status).sort(), [200, 429, 429, 429], "one free pick; the rest need the (used) allowance");
+  assert.equal(stub.calls.length, 2);
+}
+
+/* ---------------- runs that called nothing useful are not counted ---------------- */
+{
+  // The daily ceiling is reached by another site: the Free run is refunded.
+  const { env } = makeEnv({ extra: { OFFSITE_GOOGLE_DAILY_LIMIT: "1" } });
+  const stub = placesStub([PLACE()]);
+  await runOffsiteAudit(env, "s2", { fetchImpl: stub.impl, now: T0 });
+  const free = { id: "s1", org_id: "o1", plan: "free" };
+  const limited = await offsiteAuditRun(env, free, {}, { fetchImpl: stub.impl, now: T0 });
+  assert.equal(limited.status, 200);
+  assert.equal(google(limited.body.result).status, "rate_limited");
+  assert.equal(limited.body.result.refunded, true);
+  assert.equal(limited.body.allowance.used, 0, "the monthly run is still there");
+  assert.equal(limited.body.allowance.reason, "too_soon", "spacing still applies");
+  assert.equal((await offsiteAuditView(env, free, { now: T0 })).latest, null, "nothing stored for a run that called nothing");
+  const nextDay = await offsiteAuditRun(env, free, {}, { fetchImpl: stub.impl, now: T0 + 86400000 });
+  assert.equal(google(nextDay.body.result).status, "match", "the next day the same month's run works");
+  assert.equal(nextDay.body.result.refunded, undefined);
+  assert.equal(nextDay.body.allowance.reason, "monthly_limit", "and that one counts");
+}
+{
+  // Google failed: refunded; retry after the 10-minute spacing.
+  const { env } = makeEnv();
+  const quiet = console.error; console.error = () => {};
+  try {
+    const free = { id: "s1", org_id: "o1", plan: "free" };
+    const failed = await offsiteAuditRun(env, free, {}, { fetchImpl: placesStub([], { status: 500 }).impl, now: T0 });
+    assert.equal(google(failed.body.result).status, "error");
+    assert.equal(failed.body.result.refunded, true);
+    assert.equal((await offsiteAuditRun(env, free, {}, { fetchImpl: placesStub([PLACE()]).impl, now: T0 + 60000 })).body.allowance.reason, "too_soon");
+    const retry = await offsiteAuditRun(env, free, {}, { fetchImpl: placesStub([PLACE()]).impl, now: T0 + OFFSITE_LIMITS.paidMinIntervalMs });
+    assert.equal(retry.status, 200);
+    assert.equal(google(retry.body.result).status, "match");
+    assert.equal(retry.body.allowance.reason, "monthly_limit");
+  } finally { console.error = quiet; }
+}
+
+/* ---------------- third-party attribution ---------------- */
+{
+  const { env, sqlite } = makeEnv();
+  const stub = placesStub([PLACE({ attributions: [{ provider: "Example Data Co.", providerUri: "https://data.example/" }, { provider: "Bad Link", providerUri: "javascript:alert(1)" }] })]);
+  const g = google(await runOffsiteAudit(env, "s1", { fetchImpl: stub.impl, now: T0 }));
+  assert.deepEqual(g.attribution_providers, [{ name: "Example Data Co.", uri: "https://data.example/" }, { name: "Bad Link", uri: null }]);
+  assert.ok(!stored(sqlite).includes("Example Data"), "attributions are shown with the data, not stored");
 }
 
 /* ---------------- before 0042 ---------------- */
@@ -437,13 +547,16 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
   assert.equal(view.latest, null);
   assert.ok(view.checklist.length > 0, "the checklist needs no table");
   assert.equal((await offsiteAuditRun(env, { id: "s1", org_id: "o1", plan: "free" }, {})).status, 503);
-  assert.equal((await runOffsiteAuditWeekly(env, { now: T0 })).status, "not_migrated");
+  assert.equal((await runOffsiteAuditScheduled(env, { now: T0 })).status, "not_migrated");
 }
 
 /* ---------------- storableResult never keeps observed values ---------------- */
 {
   const s = storableResult({ sources: [{ id: "google", observed: { phone: "x" }, candidates: [{ id: "a", name: "n", address: "a" }], fields: { hours: { status: "mismatch", days: [{ day: 1, ours: "o", theirs: "t" }] }, business_status: { status: "mismatch", value: "CLOSED_PERMANENTLY" } } }] });
   assert.deepEqual(s.sources[0], { id: "google", candidates: [{ id: "a" }], fields: { hours: { status: "mismatch", days: [{ day: 1, ours: "o" }] }, business_status: { status: "mismatch" } } });
+  // A whitelist: a value added to the response later is not stored by accident.
+  const w = storableResult({ sources: [{ id: "google", status: "mismatch", confidence: 0.9, attribution_providers: [{ name: "P" }], listing: { id: "ChIJ_x", url: "https://www.google.com/maps/search/?x", pinned: false, name: "theirs" }, new_google_value: "x", fields: { name: { status: "variant", similarity: 0.9, theirs: "n" } } }] });
+  assert.deepEqual(w.sources[0], { id: "google", status: "mismatch", listing: { id: "ChIJ_x", url: "https://www.google.com/maps/search/?x", pinned: false }, fields: { name: { status: "variant" } } });
 }
 
 /* ================================================================== *
@@ -493,21 +606,51 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
 {
   const { env, sqlite } = makeEnv();
   const stub = placesStub([PLACE()]);
-  const outcome = await runOffsiteAuditWeekly(env, { now: T0, fetchImpl: stub.impl });
+  const outcome = await runOffsiteAuditScheduled(env, { now: T0, fetchImpl: stub.impl });
   assert.equal(outcome.audited, 2, "the Standard and the Pro site");
   const audited = sqlite.prepare("SELECT site_id,trigger FROM offsite_audits ORDER BY site_id").all().map((r) => `${r.site_id}:${r.trigger}`);
   assert.deepEqual(audited, ["s2:scheduled", "s3:scheduled"], "Free is not audited by the cron");
-  const again = await runOffsiteAuditWeekly(env, { now: T0 + 86400000, fetchImpl: stub.impl });
+  const again = await runOffsiteAuditScheduled(env, { now: T0 + 86400000, fetchImpl: stub.impl });
   assert.equal(again.audited, 0);
   assert.equal(again.not_due, 2, "a site audited this week is not due");
-  assert.equal((await runOffsiteAuditWeekly(env, { now: T0 + 7 * 86400000, fetchImpl: stub.impl })).audited, 2, "and is a week later");
+  assert.equal((await runOffsiteAuditScheduled(env, { now: T0 + 7 * 86400000, fetchImpl: stub.impl })).audited, 2, "and is a week later");
   // A Free site comped Standard through its org is audited.
   sqlite.exec("UPDATE orgs SET manual_plan='standard' WHERE id='o1'");
-  assert.equal((await runOffsiteAuditWeekly(env, { now: T0 + 14 * 86400000, fetchImpl: stub.impl })).audited, 3);
+  assert.equal((await runOffsiteAuditScheduled(env, { now: T0 + 14 * 86400000, fetchImpl: stub.impl })).audited, 3);
   // Without a key there is nothing to do and nothing is written.
   const off = makeEnv({ key: "" });
-  assert.equal((await runOffsiteAuditWeekly(off.env, { now: T0 })).status, "unconfigured");
+  assert.equal((await runOffsiteAuditScheduled(off.env, { now: T0 })).status, "unconfigured");
   assert.equal(off.sqlite.prepare("SELECT COUNT(*) n FROM offsite_audits").get().n, 0);
+}
+{
+  // The cron's share of the daily ceiling leaves room for owners' runs.
+  const { env, sqlite } = makeEnv({ extra: { OFFSITE_GOOGLE_DAILY_LIMIT: "3" } });
+  sqlite.exec("UPDATE orgs SET manual_plan='standard' WHERE id='o1'");
+  const stub = placesStub([PLACE()]);
+  const run = await runOffsiteAuditScheduled(env, { now: T0, fetchImpl: stub.impl });
+  assert.equal(run.audited, 2, "3 paid sites, ceiling 3, one call kept for owners");
+  assert.equal(run.stopped, "budget");
+  assert.equal(stub.calls.length, 2);
+  assert.equal(sqlite.prepare("SELECT COUNT(*) n FROM offsite_audits").get().n, 2, "the site that got no call is not marked audited");
+  const owner = await offsiteAuditRun(env, { id: "s1", org_id: "o1", plan: "free" }, {}, { fetchImpl: stub.impl, now: T0 });
+  assert.equal(google(owner.body.result).status, "match", "an owner can still run one");
+  const tomorrow = await runOffsiteAuditScheduled(env, { now: T0 + 86400000, fetchImpl: stub.impl });
+  assert.deepEqual([tomorrow.audited, tomorrow.not_due], [1, 2], "the site left out is audited the next day; the others are not due");
+}
+{
+  // Many due sites: bounded by OFFSITE_AUDIT_CRON_LIMIT, then by time.
+  const { env, sqlite } = makeEnv({ extra: { OFFSITE_AUDIT_CRON_LIMIT: "1" } });
+  const stub = placesStub([PLACE()]);
+  const first = await runOffsiteAuditScheduled(env, { now: T0, fetchImpl: stub.impl });
+  assert.equal(first.audited, 1);
+  assert.equal(first.stopped, "site_limit");
+  assert.equal((await runOffsiteAuditScheduled(env, { now: T0 + 86400000, fetchImpl: stub.impl })).audited, 1, "the other one the next day");
+  const timed = makeEnv();
+  let fake = 0;
+  const slow = await runOffsiteAuditScheduled(timed.env, { now: T0, fetchImpl: stub.impl, clock: () => (fake += OFFSITE_LIMITS.cronMaxMs + 1) });
+  assert.equal(slow.stopped, "time_limit");
+  assert.equal(slow.audited, 0);
+  void sqlite;
 }
 
 /* ================================================================== *
@@ -567,11 +710,19 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
     const html = sandbox.window.__x.panel(view, freshMismatch).innerHTML;
     assert.ok(html.includes("03-0000-0000"), `${lang}: a fresh run shows what the listing says`);
     assert.ok(html.includes(I5[lang].osAttribution), `${lang}: with the Google Maps attribution`);
-    assert.ok(!sandbox.window.__x.panel({ ...view, latest: storedAmbiguous }, null).innerHTML.includes(I5[lang].osAttribution), `${lang}: no attribution when no Google data is shown`);
+    assert.ok(html.includes('<span class="nrv-os-gmaps" translate="no">Google Maps</span>'), `${lang}: "Google Maps" as the untranslated wordmark`);
+    assert.ok(!/Google Maps/.test(I5[lang].osAttribution), `${lang}: the wordmark is not part of a translatable string`);
+    assert.ok(!sandbox.window.__x.panel({ ...view, latest: storedAmbiguous }, null).innerHTML.includes("nrv-os-gmaps"), `${lang}: no attribution when no Google data is shown`);
+    const withProvider = sandbox.window.__x.panel(view, { ...freshMismatch, sources: [{ ...freshMismatch.sources[0], attribution_providers: [{ name: "Example Data Co.", uri: "https://data.example/" }] }] }).innerHTML;
+    assert.ok(withProvider.includes("Google Maps</span><span class=\"nrv-os-providers\"> · <a href=\"https://data.example/\""), `${lang}: third-party providers next to Google Maps`);
+    const refunded = sandbox.window.__x.panel(view, { ran_at: T0, refunded: true, sources: [{ id: "google", status: "rate_limited" }] }).innerHTML;
+    assert.ok(refunded.includes(I5[lang].osRefunded), `${lang}: says the run was not counted`);
   }
   // The card is loaded by the dashboard.
   const dashboard = readFileSync(new URL("../public/dashboard.html", import.meta.url), "utf8");
   assert.ok(/<script src="\/dashboard-offsite\.js\?v=[\w-]+" defer><\/script>/.test(dashboard));
+  // The attribution styling the Places policies ask for.
+  for (const rule of ["font-family:Roboto", "font-weight:400", "font-style:normal", "font-size:12px", "letter-spacing:normal", "color:#5e5e5e"]) assert.ok(src.includes(`.nrv-os-gmaps{`) && src.split(".nrv-os-gmaps{")[1].split("}")[0].includes(rule), `wordmark: ${rule}`);
 }
 
-console.log("offsite audit tests passed (normalisation, matching, storage limits, allowance, endpoint, cron, 8-language card)");
+console.log("offsite audit tests passed (normalisation, matching, storage limits, atomic allowance and ceiling under parallel requests, refunds, endpoint, cron, attribution, 8-language card)");

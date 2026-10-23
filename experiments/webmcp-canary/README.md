@@ -232,6 +232,7 @@ The Worker's crons (UTC, listed in `wrangler.jsonc`, dispatched by `worker/sched
 | `17 18 * * *` | footprint learning, the daily AEO score point, the SoV batch |
 | `17 18 * * 1` | the weekly AEO ruleset learning job |
 | `23 * * * *` | only the "not connected yet" reminder emails, so the 24 h and 72 h reminders go out within about an hour of being due |
+| `47 18 * * *` | only the off-site listing audit: Standard/Pro sites due for their weekly Google Maps check (at most `OFFSITE_AUDIT_CRON_LIMIT`, default 100, per run) |
 
 The hourly cron takes effect on the next `wrangler deploy`; `npm run pro:check` reports it missing until then.
 

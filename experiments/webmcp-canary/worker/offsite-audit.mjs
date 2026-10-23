@@ -15,12 +15,17 @@
  *   Google Places API (New)   automatic, when GOOGLE_MAPS_API_KEY is set.
  *                             Text Search / Place Details with a field mask of
  *                             id, displayName, formattedAddress, phone, hours,
- *                             businessStatus. Terms allow caching place_id only
- *                             (and lat/lng for 30 days, which this does not
- *                             use), so what is stored is the place_id and our
- *                             own comparison outcome - never Google's name,
- *                             address, phone or hours. Those are returned once,
- *                             in the response of the run that fetched them.
+ *                             businessStatus and attributions. Terms allow
+ *                             caching place_id only (and lat/lng for 30 days,
+ *                             which this does not use), so what is stored is
+ *                             the place_id and our own comparison outcome -
+ *                             never Google's name, address, phone, hours,
+ *                             similarity scores or attributions. Those are
+ *                             returned once, in the response of the run that
+ *                             fetched them, and shown with the "Google Maps"
+ *                             attribution (plus any third-party provider
+ *                             Google names), as the Places API policies ask
+ *                             for Places data shown without a Google map.
  *   ホットペッパーグルメ       manual. The Recruit Web Service guideline forbids
  *                             use on sites of businesses that take money from
  *                             restaurants (Nurevo does), and the API returns no
@@ -49,10 +54,20 @@
  *     same, but flagged, because agreement there proves little.
  *   - No promise that fixing anything changes what an assistant says.
  *
+ * Spending is bounded in two places, both reserved in D1 with single atomic
+ * statements BEFORE any Places call, so parallel requests cannot overspend:
+ *   - the owner's allowance (offsite_audit_usage: UPDATE ... SET n=n+1 WHERE
+ *     n < limit AND no reservation in the last 10 minutes), refunded when the
+ *     run made no useful call (rate_limited, error, skipped);
+ *   - the all-sites daily ceiling (offsite_api_budget: one upsert per call,
+ *     DO UPDATE SET n=n+1 WHERE n < ceiling).
+ * The Google Cloud per-day quota on the key is the outer bound (owner setup).
+ *
  * Env:
  *   GOOGLE_MAPS_API_KEY              Places API (New) key; absent = not configured
  *   OFFSITE_GOOGLE_DAILY_LIMIT       ceiling on Places calls per UTC day, all sites (default 300)
- *   OFFSITE_AUDIT_CRON_LIMIT         sites audited per weekly cron run (default 50)
+ *   OFFSITE_AUDIT_CRON_LIMIT         sites audited per daily cron run (default 100, i.e.
+ *                                    weekly audits for up to ~700 Standard/Pro sites)
  */
 
 import { rowToProfile, parseFieldSources } from "./site-profile.mjs";
@@ -63,12 +78,20 @@ export const OFFSITE_AUDIT_VERSION = 1;
 export const OFFSITE_LIMITS = Object.freeze({
   // Free: one on-demand audit per calendar month (Asia/Tokyo).
   freeManualPerMonth: 1,
-  // Standard / Pro: on demand, at most this often and this many a day.
+  // Standard / Pro: on demand, at most this many a day.
   paidManualPerDay: 5,
+  // Every plan: at most one on-demand run per 10 minutes (for Free this only
+  // matters after a refunded run).
   paidMinIntervalMs: 10 * 60 * 1000,
-  // Weekly cron for Standard / Pro; a site audited within this window is skipped.
-  scheduledIntervalMs: 6 * 24 * 60 * 60 * 1000,
-  cronSites: 50,
+  // Daily cron for Standard / Pro: each site is due once a week (6.5 days, so
+  // the daily run does not drift by a day); at most cronSites sites per run.
+  scheduledIntervalMs: 6.5 * 24 * 60 * 60 * 1000,
+  cronSites: 100,
+  // The cron leaves this many of the day's Places calls for owners' runs
+  // (capped at a third of the ceiling).
+  manualReserve: 100,
+  // Stop a cron run after this long; the rest are due again tomorrow.
+  cronMaxMs: 5 * 60 * 1000,
   googleDailyCalls: 300,
   // A pick between ambiguous candidates re-runs once without spending the allowance.
   followupWindowMs: 24 * 60 * 60 * 1000,
@@ -457,7 +480,9 @@ export function pickCandidate(profile, listings = []) {
  * Sources
  * ------------------------------------------------------------------ */
 
-const PLACES_FIELDS = ["id", "displayName", "formattedAddress", "nationalPhoneNumber", "internationalPhoneNumber", "regularOpeningHours", "businessStatus", "googleMapsUri"];
+// `attributions` (third-party data providers Google must be credited with) is
+// an Essentials IDs Only field, so it does not raise the SKU.
+const PLACES_FIELDS = ["id", "attributions", "displayName", "formattedAddress", "nationalPhoneNumber", "internationalPhoneNumber", "regularOpeningHours", "businessStatus", "googleMapsUri"];
 const GOOGLE_ATTRIBUTION = "Google Maps";
 
 function placeToListing(place) {
@@ -472,7 +497,17 @@ function placeToListing(place) {
     hours_text: Array.isArray(place.regularOpeningHours?.weekdayDescriptions) ? place.regularOpeningHours.weekdayDescriptions.join("; ") : "",
     business_status: place.businessStatus || null,
     url: place.googleMapsUri || null,
+    providers: (Array.isArray(place.attributions) ? place.attributions : [])
+      .filter((a) => a && String(a.provider || "").trim())
+      .map((a) => ({ name: String(a.provider).trim().slice(0, 120), uri: /^https:\/\//.test(String(a.providerUri || "")) ? String(a.providerUri) : null })),
   };
+}
+
+/** Third-party providers to credit next to "Google Maps", de-duplicated. */
+function providersOf(listings) {
+  const seen = new Map();
+  for (const listing of listings) for (const p of listing?.providers || []) if (!seen.has(p.name)) seen.set(p.name, p);
+  return [...seen.values()];
 }
 
 /** Google Maps link to a place, built from its id (allowed to keep) and our own name. */
@@ -671,19 +706,33 @@ async function saveListingRef(env, siteId, source, listingId, pinned, now) {
 }
 
 /**
- * The part of a result that may be kept: statuses, which days differ, place
- * ids. Third-party values (observed, theirs, candidate names) are dropped.
+ * The part of a result that may be kept: our own comparison outcome (statuses,
+ * which of OUR fields differ, which weekdays differ with OUR hours) and place
+ * ids. Built from a whitelist, so anything Google returned - the observed
+ * values, candidate names and addresses, the listing's hours, similarity
+ * scores computed from Google's name, third-party attributions - is dropped
+ * even if a later change adds it to the response.
  */
+const SOURCE_KEEP = ["id", "kind", "attribution", "status", "reason", "error", "duplicates", "links", "steps"];
+const FIELD_KEEP = ["status", "reason", "note", "ours_from_listing", "comparable"];
 export function storableResult(result) {
   const clone = JSON.parse(JSON.stringify(result));
-  for (const source of clone.sources || []) {
-    delete source.observed;
-    if (Array.isArray(source.candidates)) source.candidates = source.candidates.map((c) => ({ id: c.id }));
-    for (const field of Object.values(source.fields || {})) {
-      if (Array.isArray(field.days)) field.days = field.days.map(({ day, ours }) => ({ day, ours }));
-      delete field.value;
+  clone.sources = (clone.sources || []).map((source) => {
+    const kept = {};
+    for (const key of SOURCE_KEEP) if (source[key] !== undefined) kept[key] = source[key];
+    if (source.listing) kept.listing = { id: source.listing.id, url: source.listing.url, pinned: !!source.listing.pinned };
+    if (Array.isArray(source.candidates)) kept.candidates = source.candidates.map((c) => ({ id: c.id }));
+    if (source.fields) {
+      kept.fields = {};
+      for (const [name, field] of Object.entries(source.fields)) {
+        const out = {};
+        for (const key of FIELD_KEEP) if (field[key] !== undefined) out[key] = field[key];
+        if (Array.isArray(field.days)) out.days = field.days.map(({ day, ours }) => ({ day, ours }));
+        kept.fields[name] = out;
+      }
     }
-  }
+    return kept;
+  });
   return clone;
 }
 
@@ -723,13 +772,6 @@ export async function offsiteAuditAvailable(env) {
  * Allowance and budget
  * ------------------------------------------------------------------ */
 
-function jstPeriodStart(now, unit) {
-  const jst = new Date(now + JST_OFFSET_MS);
-  const start = unit === "month"
-    ? Date.UTC(jst.getUTCFullYear(), jst.getUTCMonth(), 1)
-    : Date.UTC(jst.getUTCFullYear(), jst.getUTCMonth(), jst.getUTCDate());
-  return start - JST_OFFSET_MS;
-}
 function jstNextPeriod(now, unit) {
   const jst = new Date(now + JST_OFFSET_MS);
   const next = unit === "month"
@@ -737,47 +779,93 @@ function jstNextPeriod(now, unit) {
     : Date.UTC(jst.getUTCFullYear(), jst.getUTCMonth(), jst.getUTCDate() + 1);
   return next - JST_OFFSET_MS;
 }
+/** The allowance row of a period: "M2026-10" (JST month) or "D2026-10-14" (JST day). */
+function jstPeriodKey(now, unit) {
+  const jst = new Date(now + JST_OFFSET_MS).toISOString();
+  return unit === "month" ? `M${jst.slice(0, 7)}` : `D${jst.slice(0, 10)}`;
+}
+function allowancePolicy(plan) {
+  const paid = plan === "standard" || plan === "pro";
+  return { paid, unit: paid ? "day" : "month", limit: paid ? OFFSITE_LIMITS.paidManualPerDay : OFFSITE_LIMITS.freeManualPerMonth };
+}
+const changed = (outcome) => Number(outcome?.meta?.changes ?? outcome?.changes ?? 0);
 
 /**
- * Whether the owner may run an audit now. Free: once per calendar month (JST).
- * Standard / Pro: every 10 minutes at most, five a day.
+ * Whether the owner may run an audit now (a read; the POST reserves with
+ * reserveManualRun). Free: once per calendar month (JST). Standard / Pro: five
+ * a day. Every plan: one run per 10 minutes.
  */
 export async function manualAllowance(env, siteId, plan, now = Date.now()) {
-  const paid = plan === "standard" || plan === "pro";
-  const unit = paid ? "day" : "month";
-  const since = jstPeriodStart(now, unit);
-  const limit = paid ? OFFSITE_LIMITS.paidManualPerDay : OFFSITE_LIMITS.freeManualPerMonth;
+  const { paid, unit, limit } = allowancePolicy(plan);
   let used = 0;
   let last = null;
   try {
-    const row = await env.DB.prepare("SELECT COUNT(*) AS n, MAX(ran_at) AS last FROM offsite_audits WHERE site_id=? AND trigger='manual' AND ran_at>=?").bind(siteId, since).first();
-    used = Number(row?.n || 0);
-    const lastRow = await env.DB.prepare("SELECT MAX(ran_at) AS last FROM offsite_audits WHERE site_id=? AND trigger IN ('manual','followup')").bind(siteId).first();
-    last = lastRow?.last == null ? null : Number(lastRow.last);
+    const row = await env.DB.prepare("SELECT n FROM offsite_audit_usage WHERE site_id=? AND period=?").bind(siteId, jstPeriodKey(now, unit)).first();
+    used = Math.max(0, Number(row?.n || 0));
+    const lastRow = await env.DB.prepare("SELECT MAX(last_at) AS last FROM offsite_audit_usage WHERE site_id=?").bind(siteId).first();
+    last = Number(lastRow?.last || 0) || null;
   } catch (error) {
     if (isMissingTable(error)) return { allowed: false, reason: "unavailable", plan, period: unit, limit, used: 0 };
     throw error;
   }
   const base = { plan, period: unit, limit, used };
   if (used >= limit) return { ...base, allowed: false, reason: paid ? "daily_limit" : "monthly_limit", next_at: jstNextPeriod(now, unit) };
-  if (paid && last !== null && now - last < OFFSITE_LIMITS.paidMinIntervalMs) {
+  if (last !== null && now - last < OFFSITE_LIMITS.paidMinIntervalMs) {
     return { ...base, allowed: false, reason: "too_soon", next_at: last + OFFSITE_LIMITS.paidMinIntervalMs };
   }
   return { ...base, allowed: true };
 }
 
 /**
- * Reserve one Places call against the all-sites daily ceiling. Counted in KV;
- * without KV the ceiling cannot be kept, so nothing is called.
+ * Take one on-demand run from the allowance, atomically, before anything is
+ * called: one UPDATE that only succeeds while the period count is under the
+ * limit and no run was reserved in the last 10 minutes. D1 runs each statement
+ * on its own, so of N parallel POSTs exactly as many succeed as the allowance
+ * holds. Returns { ok, period } or { ok: false, allowance }.
  */
-async function reserveGoogleCall(env, now) {
-  if (!env.WEBMCP_KV) return false;
-  const limit = Math.max(1, Number(env.OFFSITE_GOOGLE_DAILY_LIMIT) || OFFSITE_LIMITS.googleDailyCalls);
-  const key = `offsite:google:calls:${new Date(now).toISOString().slice(0, 10)}`;
-  const used = Number(await env.WEBMCP_KV.get(key) || 0);
-  if (used >= limit) return false;
-  await env.WEBMCP_KV.put(key, String(used + 1), { expirationTtl: 2 * 86400 });
-  return true;
+export async function reserveManualRun(env, siteId, plan, now = Date.now()) {
+  const { unit, limit } = allowancePolicy(plan);
+  const period = jstPeriodKey(now, unit);
+  await env.DB.prepare("INSERT INTO offsite_audit_usage(site_id,period,n,last_at) VALUES(?,?,0,0) ON CONFLICT(site_id,period) DO NOTHING").bind(siteId, period).run();
+  const outcome = await env.DB.prepare(
+    `UPDATE offsite_audit_usage SET n=n+1, last_at=?
+      WHERE site_id=? AND period=? AND n<?
+        AND NOT EXISTS (SELECT 1 FROM offsite_audit_usage WHERE site_id=? AND last_at>?)`,
+  ).bind(now, siteId, period, limit, siteId, now - OFFSITE_LIMITS.paidMinIntervalMs).run();
+  if (changed(outcome) === 1) return { ok: true, period };
+  const allowance = await manualAllowance(env, siteId, plan, now);
+  // Lost a race that the read no longer shows: say "a moment".
+  return { ok: false, allowance: allowance.allowed ? { ...allowance, allowed: false, reason: "too_soon", next_at: now + OFFSITE_LIMITS.paidMinIntervalMs } : allowance };
+}
+
+/** Give a reserved run back (it made no useful call). The 10-minute spacing stays. */
+async function refundManualRun(env, siteId, period) {
+  await env.DB.prepare("UPDATE offsite_audit_usage SET n=n-1 WHERE site_id=? AND period=? AND n>0").bind(siteId, period).run();
+}
+
+export function googleDailyLimit(env) {
+  return Math.max(1, Math.floor(Number(env?.OFFSITE_GOOGLE_DAILY_LIMIT)) || OFFSITE_LIMITS.googleDailyCalls);
+}
+
+/**
+ * Reserve one Places call against the all-sites daily ceiling (UTC day), in
+ * one atomic upsert: the row is created at 1 or incremented only while under
+ * the cap, so parallel callers can never pass it. `cap` lowers the ceiling
+ * (the cron leaves room for owners' runs). Without the table nothing is called.
+ */
+export async function reserveGoogleCall(env, now, cap = Infinity) {
+  const limit = Math.min(googleDailyLimit(env), cap);
+  if (!(limit >= 1)) return false;
+  try {
+    const outcome = await env.DB.prepare(
+      `INSERT INTO offsite_api_budget(source,day,n) VALUES('google',?,1)
+       ON CONFLICT(source,day) DO UPDATE SET n=n+1 WHERE n<?`,
+    ).bind(new Date(now).toISOString().slice(0, 10), limit).run();
+    return changed(outcome) === 1;
+  } catch (error) {
+    if (isMissingTable(error)) return false;
+    throw error;
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -799,7 +887,7 @@ export function profileSummary(values = {}) {
   return { name: values.name || null, address: values.address || null, phone: values.phone || null, hours: values.hours || null };
 }
 
-async function auditGoogle(env, siteId, profile, sources, { fetchImpl, now, pin, knownPlaceId }) {
+async function auditGoogle(env, siteId, profile, sources, { fetchImpl, now, pin, knownPlaceId, googleCap = Infinity }) {
   const base = { id: "google", kind: "api", attribution: GOOGLE_ATTRIBUTION };
   if (!GOOGLE_SOURCE.configured(env)) {
     return { ...base, status: "not_configured", links: { check: `https://www.google.com/maps/search/?${new URLSearchParams({ api: "1", query: [profile.name, profile.address].filter(Boolean).join(" ") })}`, manage: "https://business.google.com/" } };
@@ -812,7 +900,7 @@ async function auditGoogle(env, siteId, profile, sources, { fetchImpl, now, pin,
     let duplicates = [];
     let candidates = [];
     if (ref?.listing_id) {
-      if (!await reserveGoogleCall(env, now)) return { ...base, status: "rate_limited" };
+      if (!await reserveGoogleCall(env, now, googleCap)) return { ...base, status: "rate_limited" };
       const listing = await GOOGLE_SOURCE.details(env, ref.listing_id, fetchImpl);
       if (listing) {
         const confidence = candidateConfidence(profile, listing);
@@ -822,7 +910,7 @@ async function auditGoogle(env, siteId, profile, sources, { fetchImpl, now, pin,
       }
     }
     if (!chosen) {
-      if (!await reserveGoogleCall(env, now)) return { ...base, status: "rate_limited" };
+      if (!await reserveGoogleCall(env, now, googleCap)) return { ...base, status: "rate_limited" };
       const listings = await GOOGLE_SOURCE.search(env, profile, fetchImpl);
       const pick = pickCandidate(profile, listings);
       duplicates = pick.duplicates || [];
@@ -831,7 +919,7 @@ async function auditGoogle(env, siteId, profile, sources, { fetchImpl, now, pin,
       }
       if (pick.status === "ambiguous") {
         candidates = pick.candidates.map((c) => ({ id: c.listing.id, name: c.listing.name, address: c.listing.address, url: googleMapsLink(c.listing.id, c.listing.name) }));
-        return { ...base, status: "ambiguous", candidates, steps: googleSteps({ status: "ambiguous" }) };
+        return { ...base, status: "ambiguous", candidates, attribution_providers: providersOf(pick.candidates.map((c) => c.listing)), steps: googleSteps({ status: "ambiguous" }) };
       }
       chosen = pick.best;
     }
@@ -844,6 +932,7 @@ async function auditGoogle(env, siteId, profile, sources, { fetchImpl, now, pin,
       listing: { id: chosen.listing.id, url: googleMapsLink(chosen.listing.id, profile.name), pinned: !!(ref?.pinned && ref.listing_id === chosen.listing.id) },
       fields: comparison.fields,
       observed: comparison.observed,
+      attribution_providers: providersOf([chosen.listing]),
       duplicates,
       links: { manage: "https://business.google.com/", suggest: googleMapsLink(chosen.listing.id, profile.name) },
     };
@@ -861,11 +950,11 @@ async function auditGoogle(env, siteId, profile, sources, { fetchImpl, now, pin,
  * Returns the full result, including values observed on the listings; only
  * storableResult(result) is written.
  */
-export async function runOffsiteAudit(env, siteId, { trigger = "manual", pin = null, fetchImpl = fetch, now = Date.now() } = {}) {
+export async function runOffsiteAudit(env, siteId, { trigger = "manual", pin = null, fetchImpl = fetch, now = Date.now(), googleCap = Infinity } = {}) {
   const loaded = await loadAuditProfile(env, siteId);
   if (!loaded) return { error: "not_found" };
   const { values, sources, placeId } = loaded;
-  const google = await auditGoogle(env, siteId, values, sources, { fetchImpl, now, pin, knownPlaceId: placeId });
+  const google = await auditGoogle(env, siteId, values, sources, { fetchImpl, now, pin, knownPlaceId: placeId, googleCap });
   const result = {
     version: OFFSITE_AUDIT_VERSION,
     ran_at: now,
@@ -875,9 +964,16 @@ export async function runOffsiteAudit(env, siteId, { trigger = "manual", pin = n
     manual: manualChecklist(values),
     summary: summarize([google]),
   };
-  result.id = await saveAudit(env, siteId, result, trigger, now);
+  // A run that called nothing (daily ceiling) says nothing new: not stored, so
+  // the previous outcome stays on the card and the cron retries the site
+  // tomorrow. A scheduled run that failed is likewise retried, not stored.
+  const store = google.status !== "rate_limited" && !(trigger === "scheduled" && google.status === "error");
+  result.id = store ? await saveAudit(env, siteId, result, trigger, now) : null;
   return result;
 }
+
+/** Runs that made no useful Places call; their allowance is given back. */
+const UNSPENT = new Set(["rate_limited", "error", "skipped"]);
 
 function summarize(sources) {
   const counts = {};
@@ -892,15 +988,29 @@ export function sourceStatus(env) {
 }
 
 /* ------------------------------------------------------------------ *
- * Weekly cron: Standard and Pro sites
+ * Daily cron: each Standard / Pro site once a week
  * ------------------------------------------------------------------ */
 
-export async function runOffsiteAuditWeekly(env, { now = Date.now(), fetchImpl = fetch } = {}) {
+/**
+ * Audits the Standard/Pro sites that are due (not audited for 6.5 days),
+ * oldest first, at most OFFSITE_AUDIT_CRON_LIMIT a run (default 100, so about
+ * 700 sites get a weekly audit). It stops early when its share of the daily
+ * Places ceiling is used (the ceiling minus a reserve for owners' runs) or
+ * after cronMaxMs; the remaining sites are due again the next day. Beyond
+ * ~7 x the limit, sites are audited less often than weekly, never more calls.
+ */
+export async function runOffsiteAuditScheduled(env, { now = Date.now(), fetchImpl = fetch, clock = Date.now } = {}) {
   if (!env?.DB) throw new Error("DB binding is required for the off-site audit");
   // Nothing automatic is configured: nothing to call and nothing new to store.
   if (!GOOGLE_SOURCE.configured(env)) return { ok: true, status: "unconfigured", audited: 0 };
   if (!await offsiteAuditAvailable(env)) return { ok: true, status: "not_migrated", audited: 0 };
-  const limit = Math.min(500, Math.max(1, Number(env.OFFSITE_AUDIT_CRON_LIMIT) || OFFSITE_LIMITS.cronSites));
+  const started = clock();
+  const limit = Math.min(1000, Math.max(1, Math.floor(Number(env.OFFSITE_AUDIT_CRON_LIMIT)) || OFFSITE_LIMITS.cronSites));
+  const ceiling = googleDailyLimit(env);
+  const googleCap = Math.max(1, ceiling - Math.min(OFFSITE_LIMITS.manualReserve, Math.floor(ceiling / 3)));
+  // Housekeeping: counters of past periods are no longer read.
+  await env.DB.prepare("DELETE FROM offsite_api_budget WHERE day < ?").bind(new Date(now - 7 * 86400000).toISOString().slice(0, 10)).run();
+  await env.DB.prepare("DELETE FROM offsite_audit_usage WHERE last_at < ?").bind(now - 62 * 86400000).run();
   const candidates = await env.DB.prepare(`
     SELECT s.*, o.manual_plan AS org_manual_plan,
            (SELECT MAX(a.ran_at) FROM offsite_audits a WHERE a.site_id=s.id) AS last_audit_at
@@ -912,21 +1022,23 @@ export async function runOffsiteAuditWeekly(env, { now = Date.now(), fetchImpl =
   `).bind(limit * 2).all();
   let audited = 0;
   let notDue = 0;
+  let stopped = null;
   const errors = [];
   for (const site of candidates.results || []) {
-    if (audited >= limit) break;
+    if (audited >= limit) { stopped = "site_limit"; break; }
+    if (clock() - started > OFFSITE_LIMITS.cronMaxMs) { stopped = "time_limit"; break; }
     const plan = resolveSitePlan(site, { manual_plan: site.org_manual_plan });
     if (plan !== "standard" && plan !== "pro") continue;
     if (site.last_audit_at != null && now - Number(site.last_audit_at) < OFFSITE_LIMITS.scheduledIntervalMs) { notDue += 1; continue; }
     try {
-      const result = await runOffsiteAudit(env, site.id, { trigger: "scheduled", fetchImpl, now });
+      const result = await runOffsiteAudit(env, site.id, { trigger: "scheduled", fetchImpl, now, googleCap });
+      if (result.sources?.some((s) => s.status === "rate_limited")) { stopped = "budget"; break; }
       audited += 1;
-      if (result.sources?.some((s) => s.status === "rate_limited")) break;
     } catch (error) {
       errors.push({ site_id: site.id, error: String(error?.message || error).slice(0, 120) });
     }
   }
-  return { ok: true, status: "audited", audited, not_due: notDue, errors: errors.slice(0, 20) };
+  return { ok: true, status: "audited", audited, not_due: notDue, stopped, errors: errors.slice(0, 20) };
 }
 
 /* ------------------------------------------------------------------ *
@@ -955,13 +1067,16 @@ export async function offsiteAuditView(env, site, { now = Date.now() } = {}) {
 /**
  * POST: run now. body.pin = { source: "google", listing_id } picks one of the
  * candidates of an ambiguous run; that re-run does not spend the allowance
- * when it follows an ambiguous run within 24 hours.
+ * when it follows an ambiguous run within 24 hours, once (claimed atomically).
+ * The allowance is reserved before anything is called and given back when the
+ * run made no useful call (daily ceiling reached, Google error, no name).
  */
 export async function offsiteAuditRun(env, site, body = {}, { now = Date.now(), fetchImpl = fetch } = {}) {
   if (!await offsiteAuditAvailable(env)) return { status: 503, body: { error: "offsite_audit_unavailable" } };
   const plan = await resolveSitePlanFor(env, site);
   let pin = null;
   let trigger = "manual";
+  let followupOf = null;
   if (body && body.pin) {
     const listingId = String(body.pin.listing_id || "").trim();
     if (body.pin.source !== "google" || !/^[A-Za-z0-9_-]{10,300}$/.test(listingId)) return { status: 400, body: { error: "invalid_pin" } };
@@ -970,13 +1085,34 @@ export async function offsiteAuditRun(env, site, body = {}, { now = Date.now(), 
     const google = latest?.sources?.find((s) => s.id === "google");
     const offered = google?.status === "ambiguous" && (google.candidates || []).some((c) => c.id === listingId);
     if (!offered) return { status: 400, body: { error: "pin_not_offered" } };
-    if (now - Number(latest.ran_at) <= OFFSITE_LIMITS.followupWindowMs) trigger = "followup";
+    if (now - Number(latest.ran_at) <= OFFSITE_LIMITS.followupWindowMs) {
+      const claim = await env.DB.prepare("UPDATE offsite_audits SET followup_used=1 WHERE id=? AND followup_used=0").bind(latest.id).run();
+      if (changed(claim) === 1) { trigger = "followup"; followupOf = latest.id; }
+    }
   }
+  let reservation = null;
   if (trigger === "manual") {
-    const allowance = await manualAllowance(env, site.id, plan, now);
-    if (!allowance.allowed) return { status: 429, body: { error: "rate_limited", allowance } };
+    reservation = await reserveManualRun(env, site.id, plan, now);
+    if (!reservation.ok) return { status: 429, body: { error: "rate_limited", allowance: reservation.allowance } };
   }
-  const result = await runOffsiteAudit(env, site.id, { trigger, pin, fetchImpl, now });
-  if (result.error) return { status: 404, body: { error: result.error } };
+  const giveBack = async () => {
+    if (reservation?.ok) await refundManualRun(env, site.id, reservation.period);
+    if (followupOf) await env.DB.prepare("UPDATE offsite_audits SET followup_used=0 WHERE id=?").bind(followupOf).run();
+  };
+  let result;
+  try {
+    result = await runOffsiteAudit(env, site.id, { trigger, pin, fetchImpl, now });
+  } catch (error) {
+    await giveBack();
+    throw error;
+  }
+  if (result.error) {
+    await giveBack();
+    return { status: 404, body: { error: result.error } };
+  }
+  if (result.sources.some((s) => UNSPENT.has(s.status))) {
+    await giveBack();
+    result.refunded = true;
+  }
   return { status: 200, body: { result, allowance: await manualAllowance(env, site.id, plan, now), configured: sourceStatus(env) } };
 }

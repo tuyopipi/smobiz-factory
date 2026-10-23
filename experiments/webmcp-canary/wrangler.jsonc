@@ -75,9 +75,12 @@
 		// Off-site listing audit (worker/offsite-audit.mjs): the secret
 		// GOOGLE_MAPS_API_KEY (Places API (New) only) turns on the automatic
 		// Google Maps check; without it the card shows "not configured" and the
-		// manual checklist. Optional vars: OFFSITE_GOOGLE_DAILY_LIMIT (Places
-		// calls per UTC day across all sites, default 300) and
-		// OFFSITE_AUDIT_CRON_LIMIT (sites per weekly run, default 50).
+		// manual checklist. Before setting it, put a per-day quota on Places
+		// API (New) in Google Cloud (required; see the PR's owner steps).
+		// Optional vars: OFFSITE_GOOGLE_DAILY_LIMIT (Places calls per UTC day
+		// across all sites, counted atomically in D1, default 300) and
+		// OFFSITE_AUDIT_CRON_LIMIT (sites per daily "47 18 * * *" run, default
+		// 100: weekly audits for up to ~700 Standard/Pro sites).
 		// Consumption-tax exempt seller (no invoice registration): the list
 		// price is the total and no tax is added. Abroad stays businesses-only
 		// with a tax ID. After invoice registration, replace this with
@@ -97,12 +100,14 @@
 		"OPENAI_MODEL": "gpt-4.1-mini"
 	},
 	"triggers": {
-		// daily jobs, weekly learning, and the hourly "not connected yet"
-		// reminders (worker/schedule.mjs says what each runs).
+		// daily jobs, weekly learning, the hourly "not connected yet"
+		// reminders and the daily off-site listing audit (worker/schedule.mjs
+		// says what each runs).
 		"crons": [
 			"17 18 * * *",
 			"17 18 * * 1",
-			"23 * * * *"
+			"23 * * * *",
+			"47 18 * * *"
 		]
 	}
 }
