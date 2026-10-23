@@ -3022,4 +3022,20 @@ expect(webmcp_canary_excluded_post_ids('schema') === array(), 'per context');
 unset($GLOBALS['webmcp_test_hooks']['nurevo_excluded_post_ids']);
 $GLOBALS['webmcp_test_posts'] = array();
 
+/* --- 0.8.0: no developer jargon in messages the owner sees ------------- */
+
+$jargon_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
+preg_match_all("/(?:__|esc_html__|esc_html_e|_e)\(\s*'((?:[^'\\\\]|\\\\.)*)'\s*,\s*'nurevo-webmcp'/", $jargon_source, $visible_strings);
+expect(count($visible_strings[1]) > 200, 'the owner-facing strings were found: ' . count($visible_strings[1]));
+foreach ($visible_strings[1] as $visible) {
+    foreach (array('WebMCP', 'Docker', 'Worker', 'tag.js URL') as $jargon) {
+        expect(strpos($visible, $jargon) === false, "no '{$jargon}' in an owner-facing string: {$visible}");
+    }
+}
+expect(strpos($jargon_source, 'fetched from the configured WebMCP Worker') === false, 'the stale llms.txt comment is gone');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js', 'site_key' => 'k'));
+$timeout_message = webmcp_canary_connection_error_message(new WP_Error('http_request_failed', 'cURL error 28: Operation timed out'));
+expect(strpos($timeout_message, 'Nurevo service') !== false && strpos($timeout_message, (string) WEBMCP_CANARY_HTTP_TIMEOUT) !== false, 'a timeout is explained in plain words');
+expect(strpos(webmcp_canary_connection_error_message(null), 'hosting provider') !== false, 'and the generic failure says what to do');
+
 echo "WordPress AEO admin tests passed\n";

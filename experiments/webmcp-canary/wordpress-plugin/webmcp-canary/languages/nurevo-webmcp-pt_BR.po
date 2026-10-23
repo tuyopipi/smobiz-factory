@@ -317,17 +317,17 @@ msgstr "Consistência e atualização"
 msgid "Copy these settings to another site. The file holds the output switches, the business details, the FAQ and the services. Keys, tokens, the plan and the connection are never exported or imported."
 msgstr ""
 
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3538
-msgid "Could not connect to the WebMCP server. Check the tag.js URL, site key, Docker network, and production Worker status."
-msgstr "Não foi possível conectar ao servidor WebMCP. Verifique a URL do tag.js, a chave do site, a rede Docker e o status do Worker de produção."
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3497
-msgid "Could not connect to the WebMCP server. No response was received from any configured API URL."
-msgstr "Não foi possível conectar ao servidor WebMCP. Nenhuma resposta foi recebida das URLs de API configuradas."
-
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:4747
 msgid "Could not diagnose"
 msgstr "Não foi possível diagnosticar"
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3538
+msgid "Could not reach the Nurevo service. Check your internet connection and try again later. If it keeps happening, ask your hosting provider whether outgoing connections are allowed."
+msgstr ""
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3497
+msgid "Could not reach the Nurevo service. Please try again later."
+msgstr ""
 
 #: wordpress-plugin/webmcp-canary/includes/cli.php:140
 msgid "Could not read the file."
@@ -899,8 +899,8 @@ msgid "Settings imported."
 msgstr ""
 
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3507
-msgid "Showing the last successfully fetched WebMCP data because the server is currently unreachable."
-msgstr "Exibindo os últimos dados do WebMCP obtidos com sucesso porque o servidor está inacessível no momento."
+msgid "Showing the last data received from Nurevo, because the service cannot be reached right now."
+msgstr ""
 
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:666
 msgid "Shown where you place the Nurevo FAQ block set to this page’s own questions, or the [nurevo_faq source=\"post\"] shortcode. Published as FAQPage on this page only."
@@ -978,10 +978,6 @@ msgstr "Os mecanismos de IA não retornaram respostas desta vez, então não foi
 msgid "The basics AI needs - name, address, phone, hours, location, URL - are mostly missing."
 msgstr "Os dados básicos de que a IA precisa (nome, endereço, telefone, horário, localização, URL) estão quase todos faltando."
 
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3552
-msgid "The configured WebMCP URL responded, but the expected API endpoint was not found: %s"
-msgstr "A URL do WebMCP configurada respondeu, mas o endpoint de API esperado não foi encontrado: %s"
-
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:4880
 msgid "The diagnosis and the fixes (basic schema, llms.txt, AI crawler access) all run on the free plan."
 msgstr "O diagnóstico e as correções (schema básico, llms.txt, acesso dos rastreadores de IA) funcionam no plano gratuito."
@@ -1051,9 +1047,38 @@ msgstr "Os principais rastreadores de IA estão liberados no robots.txt."
 msgid "The Nurevo service could not be reached."
 msgstr "Não foi possível acessar o serviço Nurevo."
 
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3545
+msgid "The Nurevo service did not accept this site’s connection: %s"
+msgstr ""
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3527
+msgid "The Nurevo service did not answer within %d seconds. Your server may not be allowed to make outgoing connections, or the service may be busy. Please try again later."
+msgstr ""
+
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:2710
 msgid "The Nurevo service is not configured."
 msgstr "O serviço Nurevo não está configurado."
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3290
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3558
+msgid "The Nurevo service returned an error: %s"
+msgstr ""
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3283
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3470
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3474
+msgid "The Nurevo service sent a response this plugin could not read."
+msgstr ""
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3552
+msgid "The Nurevo service URL in Settings did not lead to the Nurevo service: %s"
+msgstr ""
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3257
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3424
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3517
+msgid "The Nurevo service URL is not set. Open Nurevo AEO > Settings and check it under Advanced."
+msgstr ""
 
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:1923
 msgid "The page text does not state your key facts, so AI has only your markup to go on."
@@ -1076,48 +1101,9 @@ msgstr "O HTML bruto não contém nem o seu conteúdo nem o seu schema, então r
 msgid "The service could not diagnose this site. This usually means it is not reachable from the internet yet - a local or password-protected site cannot be read."
 msgstr "O serviço não conseguiu diagnosticar este site. Normalmente isso significa que ele ainda não está acessível pela internet: um site local ou protegido por senha não pode ser lido."
 
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3420
-msgid "The site key is not configured. Open WebMCP > Settings and configure it."
-msgstr "A chave do site não está configurada. Abra WebMCP > Configurações e configure-a."
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3520
-msgid "The site key is not configured. Open WebMCP > Settings and issue or paste a site key."
-msgstr "A chave do site não está configurada. Abra WebMCP > Configurações e emita ou cole uma chave do site."
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3257
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3424
-msgid "The tag.js URL is not configured. Open WebMCP > Settings and configure it."
-msgstr "A URL do tag.js não está configurada. Abra WebMCP > Configurações e configure-a."
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3517
-msgid "The tag.js URL is not configured. Open WebMCP > Settings and enter the public tag.js URL."
-msgstr "A URL do tag.js não está configurada. Abra WebMCP > Configurações e informe a URL pública do tag.js."
-
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:4560
 msgid "The trend appears once a second measurement has run."
 msgstr "A tendência aparece depois que uma segunda medição for executada."
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3527
-msgid "The WebMCP server did not respond within %d seconds. The URL may be unreachable from WordPress, the Worker may be slow, or Docker/network egress may be blocked."
-msgstr "O servidor WebMCP não respondeu em %d segundos. A URL pode estar inacessível a partir do WordPress, o Worker pode estar lento ou o tráfego de saída do Docker/rede pode estar bloqueado."
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3545
-msgid "The WebMCP server rejected the site key or admin token: %s"
-msgstr "O servidor WebMCP rejeitou a chave do site ou o token de administrador: %s"
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3474
-msgid "The WebMCP server response did not match the expected format."
-msgstr "A resposta do servidor WebMCP não está no formato esperado."
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3290
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3558
-msgid "The WebMCP server returned an error: %s"
-msgstr "O servidor WebMCP retornou um erro: %s"
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3283
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3470
-msgid "The WebMCP server returned invalid JSON."
-msgstr "O servidor WebMCP retornou um JSON inválido."
 
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3396
 msgid "There is no site key to disable."
@@ -1174,6 +1160,11 @@ msgstr "Este site não tem um domínio público para registrar. Uma licença só
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3330
 msgid "This site is already registered. Regenerate the key with an administrator token if the existing key is unavailable."
 msgstr "Este site já está registrado. Gere uma nova chave com um token de administrador se a chave existente não estiver disponível."
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3420
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3520
+msgid "This site is not connected to Nurevo yet. Open Nurevo AEO > Settings and pair it with a pairing code."
+msgstr ""
 
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3683
 msgid "Tick the box to agree before running the diagnosis."
@@ -1263,14 +1254,6 @@ msgstr "O que a IA não consegue ler neste site: %s"
 msgid "Which plugin outputs each schema type"
 msgstr "Qual plugin gera cada tipo de schema"
 
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3532
-msgid "WordPress could not resolve the WebMCP host name. Check the tag.js URL and DNS/network settings."
-msgstr "O WordPress não conseguiu resolver o nome de host do WebMCP. Verifique a URL do tag.js e as configurações de DNS/rede."
-
-#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3535
-msgid "WordPress could not verify the WebMCP HTTPS certificate. Check the public Worker URL and server certificate."
-msgstr "O WordPress não conseguiu verificar o certificado HTTPS do WebMCP. Verifique a URL pública do Worker e o certificado do servidor."
-
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:5125
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:5126
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:5146
@@ -1327,6 +1310,14 @@ msgstr "Seu schema e o texto da página divergem em alguns pontos, ou o sinal de
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:1935
 msgid "Your schema contradicts your page text, which makes AI distrust both."
 msgstr "Seu schema contradiz o texto da página, o que faz a IA desconfiar dos dois."
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3532
+msgid "Your server could not look up the Nurevo service address. Ask your hosting provider whether outgoing connections are allowed."
+msgstr ""
+
+#: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3535
+msgid "Your server could not verify the Nurevo service’s security certificate. Ask your hosting provider to update the server’s certificate store."
+msgstr ""
 
 #: wordpress-plugin/webmcp-canary/nurevo-webmcp.php:3999
 msgid "Your site now follows central ruleset v%2$d (was v%1$d). The diagnosis was re-run against the new criteria."

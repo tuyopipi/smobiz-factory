@@ -3237,7 +3237,7 @@ function webmcp_canary_maybe_serve_llms_txt() {
     nocache_headers();
     header('Content-Type: text/plain; charset=utf-8');
     header('X-Content-Type-Options: nosniff');
-    // The body is trusted plain text fetched from the configured WebMCP Worker.
+    // The body is plain text this plugin generated from the site's own content.
     echo $body; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
     exit;
 }
@@ -3254,7 +3254,7 @@ function webmcp_canary_last_good_cache_key() {
 function webmcp_canary_api_request($path, $body) {
     $api_bases = webmcp_canary_api_base_candidates();
     if (empty($api_bases)) {
-        return new WP_Error('webmcp_missing_api_base', __('The tag.js URL is not configured. Open WebMCP > Settings and configure it.', 'nurevo-webmcp'));
+        return new WP_Error('webmcp_missing_api_base', __('The Nurevo service URL is not set. Open Nurevo AEO > Settings and check it under Advanced.', 'nurevo-webmcp'));
     }
 
     $last_error = null;
@@ -3280,14 +3280,14 @@ function webmcp_canary_api_request($path, $body) {
         $raw_body = wp_remote_retrieve_body($response);
         $decoded = json_decode($raw_body, true);
         if (!is_array($decoded)) {
-            $last_error = new WP_Error('webmcp_api_invalid_json', __('The WebMCP server returned invalid JSON.', 'nurevo-webmcp'));
+            $last_error = new WP_Error('webmcp_api_invalid_json', __('The Nurevo service sent a response this plugin could not read.', 'nurevo-webmcp'));
             continue;
         }
         if ($status < 200 || $status >= 300 || empty($decoded['ok'])) {
-            /* translators: %d: HTTP status code returned by the WebMCP server. */
+            /* translators: %d: HTTP status code returned by the Nurevo service. */
             $message = !empty($decoded['message']) ? $decoded['message'] : (!empty($decoded['error']) ? $decoded['error'] : sprintf(__('HTTP %d', 'nurevo-webmcp'), $status));
-            /* translators: %s: Error message returned by the WebMCP server. */
-            return new WP_Error('webmcp_api_error', sprintf(__('The WebMCP server returned an error: %s', 'nurevo-webmcp'), $message), $decoded);
+            /* translators: %s: Error message returned by the Nurevo service. */
+            return new WP_Error('webmcp_api_error', sprintf(__('The Nurevo service returned an error: %s', 'nurevo-webmcp'), $message), $decoded);
         }
         return $decoded;
     }
@@ -3417,11 +3417,11 @@ function webmcp_canary_clear_insights_cache() {
 function webmcp_canary_get_site_insights($force_refresh = false) {
     $settings = webmcp_canary_settings();
     if (empty($settings['site_key'])) {
-        return new WP_Error('webmcp_missing_site_key', __('The site key is not configured. Open WebMCP > Settings and configure it.', 'nurevo-webmcp'));
+        return new WP_Error('webmcp_missing_site_key', __('This site is not connected to Nurevo yet. Open Nurevo AEO > Settings and pair it with a pairing code.', 'nurevo-webmcp'));
     }
     $api_bases = webmcp_canary_api_base_candidates();
     if (empty($api_bases)) {
-        return new WP_Error('webmcp_missing_api_base', __('The tag.js URL is not configured. Open WebMCP > Settings and configure it.', 'nurevo-webmcp'));
+        return new WP_Error('webmcp_missing_api_base', __('The Nurevo service URL is not set. Open Nurevo AEO > Settings and check it under Advanced.', 'nurevo-webmcp'));
     }
 
     $cache_key = webmcp_canary_cache_key();
@@ -3460,18 +3460,18 @@ function webmcp_canary_get_site_insights($force_refresh = false) {
         $raw_body = wp_remote_retrieve_body($response);
         $body = json_decode($raw_body, true);
         if ($status < 200 || $status >= 300) {
-            /* translators: %d: HTTP status code returned by the WebMCP server. */
+            /* translators: %d: HTTP status code returned by the Nurevo service. */
             $message = is_array($body) && !empty($body['error']) ? $body['error'] : sprintf(__('HTTP %d', 'nurevo-webmcp'), $status);
-            /* translators: %s: Error message returned by the WebMCP server. */
+            /* translators: %s: Error message returned by the Nurevo service. */
             $last_error = new WP_Error('webmcp_insights_http_error', webmcp_canary_http_status_error_message($status, $message), array('status' => $status, 'url' => $url));
             continue;
         }
         if (!is_array($body)) {
-            $last_error = new WP_Error('webmcp_insights_invalid_json', __('The WebMCP server returned invalid JSON.', 'nurevo-webmcp'));
+            $last_error = new WP_Error('webmcp_insights_invalid_json', __('The Nurevo service sent a response this plugin could not read.', 'nurevo-webmcp'));
             continue;
         }
         if (!webmcp_canary_validate_site_insights($body)) {
-            $last_error = new WP_Error('webmcp_insights_invalid_shape', __('The WebMCP server response did not match the expected format.', 'nurevo-webmcp'));
+            $last_error = new WP_Error('webmcp_insights_invalid_shape', __('The Nurevo service sent a response this plugin could not read.', 'nurevo-webmcp'));
             continue;
         }
         set_transient($cache_key, $body, WEBMCP_CANARY_INSIGHTS_CACHE_TTL);
@@ -3494,7 +3494,7 @@ function webmcp_canary_get_site_insights($force_refresh = false) {
             array('detail' => $last_error->get_error_message(), 'checked_urls' => $api_bases)
         );
     }
-    return new WP_Error('webmcp_insights_unreachable', __('Could not connect to the WebMCP server. No response was received from any configured API URL.', 'nurevo-webmcp'), array('checked_urls' => $api_bases));
+    return new WP_Error('webmcp_insights_unreachable', __('Could not reach the Nurevo service. Please try again later.', 'nurevo-webmcp'), array('checked_urls' => $api_bases));
 }
 
 function webmcp_canary_cached_insights_fallback($last_error) {
@@ -3504,7 +3504,7 @@ function webmcp_canary_cached_insights_fallback($last_error) {
     }
     $body = $cached['body'];
     $body['_webmcpWarning'] = array(
-        'message' => __('Showing the last successfully fetched WebMCP data because the server is currently unreachable.', 'nurevo-webmcp'),
+        'message' => __('Showing the last data received from Nurevo, because the service cannot be reached right now.', 'nurevo-webmcp'),
         'detail' => is_wp_error($last_error) ? $last_error->get_error_message() : '',
         'savedAt' => !empty($cached['saved_at']) ? intval($cached['saved_at']) : 0,
     );
@@ -3514,48 +3514,48 @@ function webmcp_canary_cached_insights_fallback($last_error) {
 function webmcp_canary_connection_error_message($last_error) {
     $settings = webmcp_canary_settings();
     if (empty($settings['tag_url'])) {
-        return __('The tag.js URL is not configured. Open WebMCP > Settings and enter the public tag.js URL.', 'nurevo-webmcp');
+        return __('The Nurevo service URL is not set. Open Nurevo AEO > Settings and check it under Advanced.', 'nurevo-webmcp');
     }
     if (empty($settings['site_key'])) {
-        return __('The site key is not configured. Open WebMCP > Settings and issue or paste a site key.', 'nurevo-webmcp');
+        return __('This site is not connected to Nurevo yet. Open Nurevo AEO > Settings and pair it with a pairing code.', 'nurevo-webmcp');
     }
     if (is_wp_error($last_error)) {
         $message = $last_error->get_error_message();
         if (stripos($message, 'timed out') !== false || stripos($message, 'cURL error 28') !== false) {
             return sprintf(
                 /* translators: %d: HTTP timeout in seconds. */
-                __('The WebMCP server did not respond within %d seconds. The URL may be unreachable from WordPress, the Worker may be slow, or Docker/network egress may be blocked.', 'nurevo-webmcp'),
+                __('The Nurevo service did not answer within %d seconds. Your server may not be allowed to make outgoing connections, or the service may be busy. Please try again later.', 'nurevo-webmcp'),
                 WEBMCP_CANARY_HTTP_TIMEOUT
             );
         }
         if (stripos($message, 'Could not resolve host') !== false || stripos($message, 'Name or service not known') !== false) {
-            return __('WordPress could not resolve the WebMCP host name. Check the tag.js URL and DNS/network settings.', 'nurevo-webmcp');
+            return __('Your server could not look up the Nurevo service address. Ask your hosting provider whether outgoing connections are allowed.', 'nurevo-webmcp');
         }
         if (stripos($message, 'SSL') !== false || stripos($message, 'certificate') !== false) {
-            return __('WordPress could not verify the WebMCP HTTPS certificate. Check the public Worker URL and server certificate.', 'nurevo-webmcp');
+            return __('Your server could not verify the Nurevo service’s security certificate. Ask your hosting provider to update the server’s certificate store.', 'nurevo-webmcp');
         }
     }
-    return __('Could not connect to the WebMCP server. Check the tag.js URL, site key, Docker network, and production Worker status.', 'nurevo-webmcp');
+    return __('Could not reach the Nurevo service. Check your internet connection and try again later. If it keeps happening, ask your hosting provider whether outgoing connections are allowed.', 'nurevo-webmcp');
 }
 
 function webmcp_canary_http_status_error_message($status, $message) {
     if (intval($status) === 403 || intval($status) === 401) {
         return sprintf(
             /* translators: %s: Server error message. */
-            __('The WebMCP server rejected the site key or admin token: %s', 'nurevo-webmcp'),
+            __('The Nurevo service did not accept this site’s connection: %s', 'nurevo-webmcp'),
             $message
         );
     }
     if (intval($status) === 404) {
         return sprintf(
             /* translators: %s: Server error message. */
-            __('The configured WebMCP URL responded, but the expected API endpoint was not found: %s', 'nurevo-webmcp'),
+            __('The Nurevo service URL in Settings did not lead to the Nurevo service: %s', 'nurevo-webmcp'),
             $message
         );
     }
     return sprintf(
         /* translators: %s: Server error message. */
-        __('The WebMCP server returned an error: %s', 'nurevo-webmcp'),
+        __('The Nurevo service returned an error: %s', 'nurevo-webmcp'),
         $message
     );
 }

@@ -638,6 +638,31 @@ const JA = {
     "Nurevo AEO の設定ファイルではありません。",
   "Tools":
     "ツール",
+  // Owner-facing connection messages (0.8.0).
+  "The Nurevo service URL is not set. Open Nurevo AEO > Settings and check it under Advanced.":
+    "NurevoサービスのURLが設定されていません。Nurevo AEO > 設定 を開き、「詳細設定」で確認してください。",
+  "The Nurevo service sent a response this plugin could not read.":
+    "Nurevoサービスから、このプラグインが読み取れない応答が返されました。",
+  "The Nurevo service returned an error: %s":
+    "Nurevoサービスがエラーを返しました: %s",
+  "This site is not connected to Nurevo yet. Open Nurevo AEO > Settings and pair it with a pairing code.":
+    "このサイトはまだNurevoに接続されていません。Nurevo AEO > 設定 を開き、ペアリングコードで接続してください。",
+  "Could not reach the Nurevo service. Please try again later.":
+    "Nurevoサービスに接続できませんでした。しばらくしてから再度お試しください。",
+  "Showing the last data received from Nurevo, because the service cannot be reached right now.":
+    "現在Nurevoサービスに接続できないため、最後に受信したデータを表示しています。",
+  "The Nurevo service did not answer within %d seconds. Your server may not be allowed to make outgoing connections, or the service may be busy. Please try again later.":
+    "Nurevoサービスが%d秒以内に応答しませんでした。お使いのサーバーで外部への接続が許可されていないか、サービスが混み合っている可能性があります。しばらくしてから再度お試しください。",
+  "Your server could not look up the Nurevo service address. Ask your hosting provider whether outgoing connections are allowed.":
+    "お使いのサーバーがNurevoサービスのアドレスを調べられませんでした。外部への接続が許可されているか、ホスティング会社にお問い合わせください。",
+  "Your server could not verify the Nurevo service’s security certificate. Ask your hosting provider to update the server’s certificate store.":
+    "お使いのサーバーがNurevoサービスのセキュリティ証明書を確認できませんでした。サーバーの証明書ストアの更新をホスティング会社に依頼してください。",
+  "Could not reach the Nurevo service. Check your internet connection and try again later. If it keeps happening, ask your hosting provider whether outgoing connections are allowed.":
+    "Nurevoサービスに接続できませんでした。インターネット接続を確認し、しばらくしてから再度お試しください。繰り返し発生する場合は、外部への接続が許可されているかホスティング会社にお問い合わせください。",
+  "The Nurevo service did not accept this site’s connection: %s":
+    "Nurevoサービスがこのサイトの接続を受け付けませんでした: %s",
+  "The Nurevo service URL in Settings did not lead to the Nurevo service: %s":
+    "設定にあるNurevoサービスのURLは、Nurevoサービスにつながりませんでした: %s",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo
