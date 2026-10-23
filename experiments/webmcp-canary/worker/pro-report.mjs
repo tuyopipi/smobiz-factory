@@ -89,6 +89,17 @@ export async function reviewEvidence(env, siteId, evidenceId, input, reviewerId)
   await env.DB.prepare('UPDATE aeo_sov_evidence SET accuracy_json=? WHERE id=? AND site_id=?').bind(JSON.stringify(review), evidenceId, siteId).run();
   return review;
 }
+/**
+ * The stable identity of a measurement series: engine + language + the
+ * normalised question texts. Competitors, repetitions and the row's
+ * version/updated_at are deliberately left out - editing them does not change
+ * what the citation and appearance rates measure.
+ */
+export function trendKey(querySet) {
+  if (!querySet || !Array.isArray(querySet.questions) || !querySet.questions.length) return null;
+  const questions = [...new Set(querySet.questions.map(q => String(q).normalize('NFKC').trim().replace(/\s+/g, ' ').toLowerCase()).filter(Boolean))].sort();
+  return JSON.stringify({ engine: querySet.engine || 'perplexity', language: querySet.language || 'ja', questions });
+}
 const matches = (url, host) => { const h = normalizeHost(url); return h === host || h.endsWith('.'+host); };
 export function buildProReport({ site, run = null, evidence = [], runs = [], config = null, configured = false }) {
   const detail = parseJson(run?.detail_json);
@@ -110,7 +121,18 @@ export function buildProReport({ site, run = null, evidence = [], runs = [], con
     return { question, answers: rows.length, citations: rows.filter(e=>e.brand_cited).length,
       frequency: rows.length >= 2 ? rows.filter(e=>e.brand_cited).length/rows.length : null };
   });
-  const trend = snapshot ? runs.filter(r => { const d = parseJson(r.detail_json); return d.cache_key && d.cache_key === detail.cache_key; })
+  // History is keyed on what is being measured - engine, language and the
+  // questions asked - not on the cache key, which hashes the whole query-set
+  // row (version, updated_at, competitors) and so reset the trend whenever the
+  // owner edited a competitor. Rows are compared by the query_set snapshot
+  // every run already stores, so old rows join the history with no migration;
+  // a row with no snapshot can still match on its exact cache key.
+  const currentTrendKey = trendKey(snapshot);
+  const trend = snapshot ? runs.filter(r => {
+    const d = parseJson(r.detail_json);
+    const key = trendKey(d.query_set);
+    return key ? key === currentTrendKey : !!d.cache_key && d.cache_key === detail.cache_key;
+  })
     .map(r => ({ id:r.id, ran_at:r.ran_at, citation_rate:r.citation_rate, answers_received:r.answers_received })).reverse() : [];
   return { version:'pro-report-v1', site_id:site.id, generated_at:new Date().toISOString(), notice:VARIABILITY_NOTICE,
     status:run?.status || (configured ? 'no_data' : 'unconfigured'), configured, run_id:run?.id || null,
