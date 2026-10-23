@@ -442,3 +442,11 @@ CREATE TABLE IF NOT EXISTS aeo_sov_engine_usage (
   updated_at TEXT NOT NULL,
   PRIMARY KEY (scope, engine, month)
 );
+
+CREATE TABLE IF NOT EXISTS aeo_sov_attempts (
+  site_id TEXT PRIMARY KEY,
+  trigger TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT,
+  reserved_json TEXT
+);

@@ -29,6 +29,9 @@
  *
  * An engine is usable only when its key is set. A missing key is "not
  * configured", never an error, and nothing is ever sent without a key.
+ * ChatGPT reads its own key, SOV_OPENAI_API_KEY. The OPENAI_API_KEY that the
+ * AEO learning job uses is only borrowed when SOV_OPENAI_USE_SHARED_KEY=1, so
+ * this measurement cannot spend that job's quota unless the owner says so.
  *
  * Costs are estimates from the provider's published list prices (see
  * ENGINE_PRICING.sources) and from what the provider says each call consumed.
@@ -44,13 +47,15 @@ export class SovError extends Error {
  * ------------------------------------------------------------------ */
 
 /**
- * Engine registry, in probe order. `key` names the secret binding and is the
- * only thing consulted to decide whether an engine is usable. Both search
- * the live web and return a source list.
+ * Engine registry, in probe order. `key` names the engine's own secret
+ * binding. `shared_key` is a key owned by another job that may be borrowed
+ * only when `shared_key_flag` is "1" (engineApiKey). Both search the live web
+ * and return a source list.
  */
 export const ENGINE_DEFINITIONS = Object.freeze([
   Object.freeze({ id: "perplexity", label: "Perplexity", citations: true, key: "PERPLEXITY_API_KEY", live_search: true }),
-  Object.freeze({ id: "openai", label: "ChatGPT", citations: true, key: "OPENAI_API_KEY", live_search: true }),
+  Object.freeze({ id: "openai", label: "ChatGPT", citations: true, key: "SOV_OPENAI_API_KEY", live_search: true,
+    shared_key: "OPENAI_API_KEY", shared_key_flag: "SOV_OPENAI_USE_SHARED_KEY" }),
 ]);
 export const ENGINE_IDS = Object.freeze(ENGINE_DEFINITIONS.map((engine) => engine.id));
 
@@ -58,9 +63,23 @@ export function engineDefinition(id) {
   return ENGINE_DEFINITIONS.find((engine) => engine.id === id) || null;
 }
 
-export function engineConfigured(env = {}, id) {
+/**
+ * The API key an engine is called with, or "" when it has none. The engine's
+ * own key wins; a shared key is used only when its opt-in flag is exactly "1".
+ */
+export function engineApiKey(env = {}, id) {
   const engine = engineDefinition(id);
-  return !!engine && String(env?.[engine.key] || "").trim() !== "";
+  if (!engine) return "";
+  const own = String(env?.[engine.key] || "").trim();
+  if (own) return own;
+  if (engine.shared_key && String(env?.[engine.shared_key_flag] || "").trim() === "1") {
+    return String(env?.[engine.shared_key] || "").trim();
+  }
+  return "";
+}
+
+export function engineConfigured(env = {}, id) {
+  return engineApiKey(env, id) !== "";
 }
 
 /* ------------------------------------------------------------------ *
@@ -100,6 +119,54 @@ export const ENGINE_PRICING = Object.freeze({
 
 export const OPENAI_SOV_MODEL_DEFAULT = "gpt-6-luna";
 export const openAiSovModel = (env = {}) => String(env.SOV_OPENAI_MODEL || OPENAI_SOV_MODEL_DEFAULT).trim();
+
+/**
+ * Upper bound on built-in tool calls per ChatGPT answer, sent as the Responses
+ * API's `max_tool_calls`: "The maximum number of total calls to built-in tools
+ * that can be processed in a response. This maximum number applies across all
+ * built-in tool calls, not per individual tool. Any further attempts to call a
+ * tool by the model will be ignored."
+ * (https://developers.openai.com/api/reference/terraform/resources/responses,
+ * checked 2026-10-23). It counts every web_search_call, including the
+ * open_page / find_in_page actions, so it also bounds the billed searches.
+ * SOV_OPENAI_MAX_TOOL_CALLS overrides it (1-10).
+ */
+export const OPENAI_MAX_TOOL_CALLS_DEFAULT = 2;
+export const OPENAI_MAX_TOOL_CALLS_LIMIT = 10;
+export function openAiMaxToolCalls(env = {}) {
+  const raw = env?.SOV_OPENAI_MAX_TOOL_CALLS;
+  if (raw === undefined || raw === null || String(raw).trim() === "") return OPENAI_MAX_TOOL_CALLS_DEFAULT;
+  const value = Number(raw);
+  return Number.isInteger(value) && value >= 1 ? Math.min(OPENAI_MAX_TOOL_CALLS_LIMIT, value) : OPENAI_MAX_TOOL_CALLS_DEFAULT;
+}
+
+/**
+ * Tokens assumed for one call when the provider did not say (a timed-out call)
+ * and when reserving budget before a run. Generous on purpose: at these list
+ * prices the tokens are a small part of a call, the search fee dominates.
+ */
+export const ASSUMED_CALL_TOKENS = Object.freeze({
+  perplexity: Object.freeze({ input: 10000, output: 500 }),
+  openai: Object.freeze({ input: 20000, output: 1500 }),
+});
+
+/**
+ * The most one call is assumed to cost: ChatGPT at max_tool_calls billed
+ * searches, Perplexity at one Fast Search, both with ASSUMED_CALL_TOKENS. Used
+ * to reserve USD before a run and as the cost of a call that timed out (the
+ * provider may have done the work, and the search count is unknown).
+ */
+export function assumedMaxCallCost(engineId, env = {}) {
+  const tokens = ASSUMED_CALL_TOKENS[engineId];
+  if (!tokens) return null;
+  const estimate = estimateCallCost(engineId, {
+    model: engineId === "openai" ? openAiSovModel(env) : "",
+    searches: engineId === "openai" ? openAiMaxToolCalls(env) : 1,
+    inputTokens: tokens.input,
+    outputTokens: tokens.output,
+  });
+  return { ...estimate, basis: "assumed_max" };
+}
 
 /**
  * Estimated USD for one call: searches x per-search price + tokens x token
@@ -272,23 +339,26 @@ export function parsePerplexityAgent(data) {
 
 export async function probePerplexity(env, question, fetchImpl) {
   const endpoint = engineEndpoint(env.PERPLEXITY_API_URL, "https://api.perplexity.ai/v1/agent");
-  const response = await withTimeout((signal) => fetchImpl(endpoint, {
-    method: "POST",
-    signal,
-    headers: { authorization: `Bearer ${env.PERPLEXITY_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      preset: perplexityPreset(env),
-      instructions: SYSTEM_PROMPT,
-      input: question,
-      max_output_tokens: 500,
-    }),
-  }));
-  if (!response.ok) {
-    const detail = await providerErrorDetail(response);
-    console.error("sov-engine-error", JSON.stringify({ engine: "perplexity", status: response.status, detail }));
-    throw new SovError(502, `perplexity_http_${response.status}`, detail);
-  }
-  const data = await response.json();
+  // The timeout covers reading the body too, so one call is bounded end to end.
+  const data = await withTimeout(async (signal) => {
+    const response = await fetchImpl(endpoint, {
+      method: "POST",
+      signal,
+      headers: { authorization: `Bearer ${engineApiKey(env, "perplexity")}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        preset: perplexityPreset(env),
+        instructions: SYSTEM_PROMPT,
+        input: question,
+        max_output_tokens: 500,
+      }),
+    });
+    if (!response.ok) {
+      const detail = await providerErrorDetail(response);
+      console.error("sov-engine-error", JSON.stringify({ engine: "perplexity", status: response.status, detail }));
+      throw new SovError(502, `perplexity_http_${response.status}`, detail);
+    }
+    return response.json();
+  });
   if (data?.status === "failed" || data?.status === "cancelled") throw new SovError(502, `perplexity_${data.status}`, String(data?.error?.message || "").slice(0, 200) || null);
   const agent = parsePerplexityAgent(data);
   // A chat-completions shaped body is still read, so a local double written
@@ -352,10 +422,19 @@ export function parseOpenAiResponse(data) {
       citations.push({ url: note.url, title: typeof note.title === "string" ? note.title.slice(0, 200) : null });
     }
   }
-  // Each web_search_call with a "search" action is one billed tool call.
-  // open_page / find_in_page actions are counted too: the price is per call.
-  const searches = output.filter((item) => item?.type === "web_search_call").length;
-  return { answer, citations, searches, model: typeof data?.model === "string" ? data.model : null, status: data?.status || null };
+  // Billing: the web search guide says "Search actions incur a tool call cost"
+  // (https://developers.openai.com/api/docs/guides/tools-web-search, section
+  // "Output and citations"); the open_page and find_in_page actions are named
+  // there without a cost, and the pricing page prices web search per call
+  // (https://developers.openai.com/api/docs/pricing). So only "search" actions
+  // are counted as billed; an item without an action type is counted too, to
+  // stay on the safe side. `tool_calls` keeps every web_search_call.
+  const toolCalls = output.filter((item) => item?.type === "web_search_call");
+  const searches = toolCalls.filter((item) => {
+    const type = item?.action?.type;
+    return type === undefined || type === null || type === "search";
+  }).length;
+  return { answer, citations, searches, tool_calls: toolCalls.length, model: typeof data?.model === "string" ? data.model : null, status: data?.status || null };
 }
 
 export async function probeOpenAiWebSearch(env, question, fetchImpl, { profile = {} } = {}) {
@@ -364,24 +443,29 @@ export async function probeOpenAiWebSearch(env, question, fetchImpl, { profile =
   const tool = { type: "web_search", search_context_size: "low" };
   const location = openAiUserLocation(profile);
   if (location) tool.user_location = location;
-  const response = await withTimeout((signal) => fetchImpl(endpoint, {
-    method: "POST",
-    signal,
-    headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      model,
-      instructions: SYSTEM_PROMPT,
-      input: question,
-      tools: [tool],
-      // A ChatGPT-with-search measurement: the engine must actually search.
-      tool_choice: "required",
-      reasoning: { effort: String(env.SOV_OPENAI_REASONING_EFFORT || "low") },
-      max_output_tokens: 1500,
-      store: false,
-    }),
-  }));
-  if (!response.ok) throw await providerFailure("openai", response);
-  const data = await response.json();
+  const data = await withTimeout(async (signal) => {
+    const response = await fetchImpl(endpoint, {
+      method: "POST",
+      signal,
+      headers: { authorization: `Bearer ${engineApiKey(env, "openai")}`, "content-type": "application/json" },
+      body: JSON.stringify({
+        model,
+        instructions: SYSTEM_PROMPT,
+        input: question,
+        tools: [tool],
+        // A ChatGPT-with-search measurement: the engine must actually search.
+        tool_choice: "required",
+        // ...but no more than this many tool calls (and so billed searches)
+        // per answer. See openAiMaxToolCalls.
+        max_tool_calls: openAiMaxToolCalls(env),
+        reasoning: { effort: String(env.SOV_OPENAI_REASONING_EFFORT || "low") },
+        max_output_tokens: 1500,
+        store: false,
+      }),
+    });
+    if (!response.ok) throw await providerFailure("openai", response);
+    return response.json();
+  });
   if (data?.status === "failed" || data?.status === "cancelled") {
     throw new SovError(502, `openai_${data.status}`, sanitizeProviderText(data?.error?.message || ""));
   }
@@ -430,19 +514,35 @@ export function wilsonInterval(k, n, z = 1.959963984540054) {
 }
 
 /* ------------------------------------------------------------------ *
- * Monthly call caps per engine (per site and for the whole deployment)
+ * Monthly caps per engine: calls and estimated USD, per site and for the
+ * whole deployment
  * ------------------------------------------------------------------ */
 
 /**
- * Conservative defaults. A run is the query set's questions x repetitions per
- * engine (5 x 2 = 10 by default) every 3 days, about 100 calls a month per
- * engine; the per-site caps leave a little room for manual runs. Perplexity
- * keeps its original 200 per site (SOV_LIMITS.monthlyQueriesPerSite, counted
- * in aeo_sov_usage as before). The global caps bound the whole deployment.
+ * Call caps. A run is the query set's questions x repetitions per engine
+ * (5 x 2 = 10 by default) every 3 days, about 100 calls a month per engine.
+ * Perplexity keeps its original 200 per site (SOV_LIMITS.monthlyQueriesPerSite,
+ * counted in aeo_sov_usage as before). ChatGPT is OFF by default: its per-site
+ * cap is 0 until the owner sets SOV_OPENAI_SITE_MONTHLY_CAP (120 is the
+ * suggested value, OPENAI_SITE_CAP_SUGGESTED). The global caps bound the whole
+ * deployment.
  */
 export const ENGINE_CAP_DEFAULTS = Object.freeze({
   perplexity: Object.freeze({ site: 200, global: 6000 }),
-  openai: Object.freeze({ site: 120, global: 3000 }),
+  openai: Object.freeze({ site: 0, global: 3000 }),
+});
+export const OPENAI_SITE_CAP_SUGGESTED = 120;
+
+/**
+ * Monthly USD caps, checked against the estimated cost already stored in
+ * aeo_sov_engine_usage (reservations included) before any call is reserved.
+ * SOV_<ENGINE>_SITE_MONTHLY_USD_CAP / SOV_<ENGINE>_GLOBAL_MONTHLY_USD_CAP
+ * override them; 0 switches the engine off. Perplexity's are guard rails far
+ * above what its call caps can spend at list price (~$0.0035 a call).
+ */
+export const ENGINE_USD_CAP_DEFAULTS = Object.freeze({
+  perplexity: Object.freeze({ site: 5, global: 150 }),
+  openai: Object.freeze({ site: 3, global: 40 }),
 });
 export const GLOBAL_SCOPE = "*";
 
@@ -452,8 +552,14 @@ function capFromEnv(raw, fallback) {
   return Number.isFinite(value) && value >= 0 ? Math.floor(value) : fallback;
 }
 
+function usdCapFromEnv(raw, fallback) {
+  if (raw === undefined || raw === null || String(raw).trim() === "") return fallback;
+  const value = Number(raw);
+  return Number.isFinite(value) && value >= 0 ? Math.round(value * 1e6) / 1e6 : fallback;
+}
+
 /**
- * The caps in force: SOV_<ENGINE>_SITE_MONTHLY_CAP and
+ * The call caps in force: SOV_<ENGINE>_SITE_MONTHLY_CAP and
  * SOV_<ENGINE>_GLOBAL_MONTHLY_CAP override the defaults; 0 switches the engine
  * off without removing its key. Perplexity's per-site cap is not overridable
  * here - it stays the original constant.
@@ -468,22 +574,36 @@ export function engineCaps(env = {}, id) {
   };
 }
 
+/** The USD caps in force (see ENGINE_USD_CAP_DEFAULTS). */
+export function engineUsdCaps(env = {}, id) {
+  const defaults = ENGINE_USD_CAP_DEFAULTS[id];
+  if (!defaults) return null;
+  const upper = id.toUpperCase();
+  return {
+    site: usdCapFromEnv(env[`SOV_${upper}_SITE_MONTHLY_USD_CAP`], defaults.site),
+    global: usdCapFromEnv(env[`SOV_${upper}_GLOBAL_MONTHLY_USD_CAP`], defaults.global),
+  };
+}
+
 export function monthKey(now = Date.now()) {
   return new Date(now).toISOString().slice(0, 7);
 }
 
 const MISSING_TABLE = /no such table|no such column/i;
+const round6 = (value) => Math.round((Number(value) || 0) * 1e6) / 1e6;
+// Float slack when comparing stored REAL sums against a USD cap.
+const USD_EPSILON = 1e-6;
 
 /** Calls and estimated USD recorded for one scope (a site id or "*") this month. */
 export async function readEngineUsage(env, scope, engine, now = Date.now()) {
   const row = await env.DB.prepare("SELECT calls,est_cost_usd FROM aeo_sov_engine_usage WHERE scope=? AND engine=? AND month=?")
     .bind(scope, engine, monthKey(now)).first();
-  return { calls: Number(row?.calls || 0), est_cost_usd: Number(row?.est_cost_usd || 0) };
+  return { calls: Number(row?.calls || 0), est_cost_usd: round6(row?.est_cost_usd) };
 }
 
 /**
  * Add calls (negative to refund a reservation) and estimated cost to both the
- * site's row and the global row.
+ * site's row and the global row. Unconditional: used to true up after a run.
  */
 export async function recordEngineUsage(env, siteId, engine, { calls = 0, estCostUsd = 0, searches = 0 } = {}, now = Date.now()) {
   if (!calls && !estCostUsd && !searches) return;
@@ -493,64 +613,155 @@ export async function recordEngineUsage(env, siteId, engine, { calls = 0, estCos
     ON CONFLICT(scope,engine,month) DO UPDATE SET calls=calls+excluded.calls,searches=searches+excluded.searches,
       est_cost_usd=est_cost_usd+excluded.est_cost_usd,updated_at=excluded.updated_at`;
   const statements = [siteId, GLOBAL_SCOPE].map((scope) => env.DB.prepare(sql)
-    .bind(scope, engine, month, Math.trunc(calls), Math.trunc(searches), Math.round(estCostUsd * 1e6) / 1e6, at));
+    .bind(scope, engine, month, Math.trunc(calls), Math.trunc(searches), round6(estCostUsd), at));
   if (env.DB.batch) await env.DB.batch(statements);
   else for (const statement of statements) await statement.run();
 }
 
 /**
- * Decide, per engine, whether this site may be measured now and with how many
- * calls. Statuses:
- *   ready              configured and under both caps; `allowance` calls
+ * Reserve `calls` and `estCostUsd` for one site, all or nothing, without ever
+ * letting a row pass its cap - also when several runs reserve at once.
+ *
+ * Each row is taken with one conditional UPDATE
+ *   ... SET calls=calls+n ... WHERE calls+n <= cap AND est_cost_usd+usd <= usdCap
+ * which D1 (SQLite, one writer) applies atomically: two concurrent runs cannot
+ * both see room that only one of them fits in. The global row is taken first,
+ * then the site row; if the site row has no room, the global reservation is
+ * handed back. A null cap is not checked (Perplexity's per-site call cap lives
+ * in aeo_sov_usage, guarded by the per-site measurement lock).
+ *
+ * Returns { ok: true } or { ok: false, scope: "global" | "site" }.
+ */
+export async function reserveEngineUsage(env, siteId, engine, { calls = 0, estCostUsd = 0, caps = {} } = {}, now = Date.now()) {
+  const month = monthKey(now);
+  const at = new Date(now).toISOString();
+  const n = Math.max(0, Math.trunc(calls));
+  const usd = Math.max(0, round6(estCostUsd));
+  if (!n && !usd) return { ok: true };
+  const ensure = (scope) => env.DB.prepare(`INSERT INTO aeo_sov_engine_usage (scope,engine,month,calls,searches,est_cost_usd,updated_at)
+    VALUES (?,?,?,0,0,0,?) ON CONFLICT(scope,engine,month) DO NOTHING`).bind(scope, engine, month, at);
+  const ensureAll = [ensure(GLOBAL_SCOPE), ensure(siteId)];
+  if (env.DB.batch) await env.DB.batch(ensureAll);
+  else for (const statement of ensureAll) await statement.run();
+  const take = async (scope, callCap, usdCap) => {
+    const calls = callCap === null || callCap === undefined ? null : Number(callCap);
+    const dollars = usdCap === null || usdCap === undefined ? null : Number(usdCap) + USD_EPSILON;
+    const result = await env.DB.prepare(`UPDATE aeo_sov_engine_usage SET calls=calls+?, est_cost_usd=est_cost_usd+?, updated_at=?
+      WHERE scope=? AND engine=? AND month=? AND (? IS NULL OR calls+?<=?) AND (? IS NULL OR est_cost_usd+?<=?)`)
+      .bind(n, usd, at, scope, engine, month, calls, n, calls, dollars, usd, dollars).run();
+    return Number(result?.meta?.changes ?? result?.changes ?? 0) > 0;
+  };
+  if (!await take(GLOBAL_SCOPE, caps.globalCalls ?? null, caps.globalUsd ?? null)) return { ok: false, scope: "global" };
+  if (!await take(siteId, caps.siteCalls ?? null, caps.siteUsd ?? null)) {
+    await env.DB.prepare(`UPDATE aeo_sov_engine_usage SET calls=calls-?, est_cost_usd=est_cost_usd-?, updated_at=?
+      WHERE scope=? AND engine=? AND month=?`).bind(n, usd, at, GLOBAL_SCOPE, engine, month).run();
+    return { ok: false, scope: "site" };
+  }
+  return { ok: true };
+}
+
+/**
+ * Decide, for one engine, whether this site may be measured now and with how
+ * many calls. Statuses:
+ *   ready              configured and under every cap; `allowance` calls
  *   not_configured     no key (never an error)
- *   disabled           a cap is set to 0
- *   quota_reached      the site's or the deployment's monthly cap is spent
- *                      (`scope` says which)
+ *   disabled           a call or USD cap is set to 0 (ChatGPT's per-site
+ *                      call cap is 0 by default)
+ *   quota_reached      a monthly cap is spent; `scope` says which:
+ *                      site | global (calls), site_usd | global_usd (USD)
  *   migration_pending  the usage table (0041) is missing, so ChatGPT's caps
  *                      cannot be enforced; it is not run.
  *                      Perplexity keeps its original per-site cap and runs.
+ * A call is budgeted at its assumed maximum cost (assumedMaxCallCost), so the
+ * USD left buys floor(left / usd_per_call) calls.
  * `perplexitySite` is the existing aeo_sov_usage reading for Perplexity.
  */
-export async function planEngineBudgets(env, siteId, { perRunMax, perplexitySite = null, now = Date.now() } = {}) {
-  const plans = [];
-  for (const engine of ENGINE_DEFINITIONS) {
-    const caps = engineCaps(env, engine.id);
-    const plan = { engine: engine.id, label: engine.label, status: "ready", allowance: 0, scope: null,
-      site: { used: null, cap: caps.site }, global: { used: null, cap: caps.global }, est_cost_usd_month: null };
-    if (!engineConfigured(env, engine.id)) { plans.push({ ...plan, status: "not_configured" }); continue; }
-    if (caps.site === 0 || caps.global === 0) { plans.push({ ...plan, status: "disabled" }); continue; }
-    let site;
-    let global;
-    try {
-      site = await readEngineUsage(env, siteId, engine.id, now);
-      global = await readEngineUsage(env, GLOBAL_SCOPE, engine.id, now);
-    } catch (error) {
-      if (!MISSING_TABLE.test(String(error?.message || error))) throw error;
-      site = null;
-      global = null;
-    }
-    if (engine.id === "perplexity") {
-      // The original counter stays authoritative for the per-site cap.
-      const used = Number(perplexitySite?.used || 0);
-      plan.site.used = used;
-      plan.global.used = global ? global.calls : null;
-      plan.est_cost_usd_month = site ? site.est_cost_usd : null;
-      const siteLeft = Math.max(0, caps.site - used);
-      const globalLeft = global ? Math.max(0, caps.global - global.calls) : Infinity;
-      if (siteLeft <= 0 || globalLeft <= 0) { plans.push({ ...plan, status: "quota_reached", scope: siteLeft <= 0 ? "site" : "global" }); continue; }
-      plans.push({ ...plan, allowance: Math.min(perRunMax, siteLeft, globalLeft), global_cap_enforced: !!global });
-      continue;
-    }
-    if (!site || !global) { plans.push({ ...plan, status: "migration_pending" }); continue; }
-    plan.site.used = site.calls;
-    plan.global.used = global.calls;
-    plan.est_cost_usd_month = site.est_cost_usd;
-    const siteLeft = Math.max(0, caps.site - site.calls);
-    const globalLeft = Math.max(0, caps.global - global.calls);
-    if (siteLeft <= 0 || globalLeft <= 0) { plans.push({ ...plan, status: "quota_reached", scope: siteLeft <= 0 ? "site" : "global" }); continue; }
-    plans.push({ ...plan, allowance: Math.min(perRunMax, siteLeft, globalLeft) });
+export async function planEngineBudget(env, siteId, engine, { perRunMax, perplexitySite = null, now = Date.now() } = {}) {
+  const caps = engineCaps(env, engine.id);
+  const usdCaps = engineUsdCaps(env, engine.id);
+  const usdPerCall = assumedMaxCallCost(engine.id, env)?.est_usd || 0;
+  const plan = { engine: engine.id, label: engine.label, status: "ready", allowance: 0, scope: null,
+    site: { used: null, cap: caps.site, usd_used: null, usd_cap: usdCaps.site },
+    global: { used: null, cap: caps.global, usd_used: null, usd_cap: usdCaps.global },
+    est_cost_usd_month: null, usd_per_call: usdPerCall, usage_tracked: false };
+  if (!engineConfigured(env, engine.id)) return { ...plan, status: "not_configured" };
+  if (caps.site === 0 || caps.global === 0 || usdCaps.site === 0 || usdCaps.global === 0) return { ...plan, status: "disabled" };
+  let site;
+  let global;
+  try {
+    site = await readEngineUsage(env, siteId, engine.id, now);
+    global = await readEngineUsage(env, GLOBAL_SCOPE, engine.id, now);
+  } catch (error) {
+    if (!MISSING_TABLE.test(String(error?.message || error))) throw error;
+    site = null;
+    global = null;
   }
+  if (engine.id !== "perplexity" && (!site || !global)) return { ...plan, status: "migration_pending" };
+  const tracked = !!site && !!global;
+  plan.usage_tracked = tracked;
+  // Perplexity's original counter stays authoritative for its per-site cap.
+  plan.site.used = engine.id === "perplexity" ? Number(perplexitySite?.used || 0) : site.calls;
+  if (tracked) {
+    plan.global.used = global.calls;
+    plan.site.usd_used = round6(site.est_cost_usd);
+    plan.global.usd_used = round6(global.est_cost_usd);
+    plan.est_cost_usd_month = site.est_cost_usd;
+  }
+  if (engine.id === "perplexity") plan.global_cap_enforced = tracked;
+  const byUsd = (cap, used) => usdPerCall > 0 ? Math.floor((cap - used + USD_EPSILON) / usdPerCall) : Infinity;
+  const limits = [["site", caps.site - plan.site.used]];
+  if (tracked) {
+    limits.push(["global", caps.global - global.calls]);
+    limits.push(["site_usd", byUsd(usdCaps.site, site.est_cost_usd)]);
+    limits.push(["global_usd", byUsd(usdCaps.global, global.est_cost_usd)]);
+  }
+  const tightest = limits.reduce((low, entry) => (entry[1] < low[1] ? entry : low));
+  if (tightest[1] <= 0) return { ...plan, status: "quota_reached", scope: tightest[0] };
+  return { ...plan, allowance: Math.min(perRunMax, tightest[1]) };
+}
+
+/** planEngineBudget for every engine, in registry order. A read only. */
+export async function planEngineBudgets(env, siteId, options = {}) {
+  const plans = [];
+  for (const engine of ENGINE_DEFINITIONS) plans.push(await planEngineBudget(env, siteId, engine, options));
   return plans;
+}
+
+/**
+ * Reserve each ready plan's allowance (calls, and calls x usd_per_call USD)
+ * with reserveEngineUsage. When another run took the room first, the plan is
+ * re-read and the smaller allowance tried, a few times; an engine left with no
+ * room is reported as quota_reached. Each returned plan carries `reserved`
+ * ({ calls, usd, tracked }) for the true-up after the run. Perplexity without
+ * the 0041 table is not tracked there (its site cap is aeo_sov_usage).
+ */
+export async function reserveEngineBudgets(env, siteId, plans, options = {}) {
+  const out = [];
+  for (const initial of plans) {
+    let plan = initial;
+    if (plan.status !== "ready" || !(plan.allowance > 0)) { out.push(plan); continue; }
+    const engine = engineDefinition(plan.engine);
+    let reserved = null;
+    for (let attempt = 0; attempt < 3 && plan.status === "ready" && plan.allowance > 0; attempt += 1) {
+      if (!plan.usage_tracked) { reserved = { calls: 0, usd: 0, tracked: false }; break; }
+      const usd = round6(plan.allowance * plan.usd_per_call);
+      const result = await reserveEngineUsage(env, siteId, plan.engine, {
+        calls: plan.allowance,
+        estCostUsd: usd,
+        caps: {
+          siteCalls: plan.engine === "perplexity" ? null : plan.site.cap,
+          globalCalls: plan.global.cap,
+          siteUsd: plan.site.usd_cap,
+          globalUsd: plan.global.usd_cap,
+        },
+      }, options.now);
+      if (result.ok) { reserved = { calls: plan.allowance, usd, tracked: true }; break; }
+      plan = await planEngineBudget(env, siteId, engine, options);
+      if (plan.status === "ready" && attempt === 2) plan = { ...plan, status: "quota_reached", scope: result.scope, allowance: 0 };
+    }
+    out.push(reserved ? { ...plan, reserved } : { ...plan, allowance: 0, reserved: null });
+  }
+  return out;
 }
 
 /**

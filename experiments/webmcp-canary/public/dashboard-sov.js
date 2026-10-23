@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-23-engines */
+/* Nurevo dashboard asset revision: 2026-10-23-engines2 */
 /*
  * AI Share-of-Voice panel (Pro, beta).
  *
@@ -91,7 +91,7 @@
     var pct = function (v) { return v == null ? '—' : Math.round(Number(v) * 1000) / 10 + '%'; };
     var statusText = function (row) {
       if (row.status === 'not_configured') return tr('svStNotConfigured');
-      if (row.status === 'quota_reached') return row.quota_scope === 'global' ? tr('svStQuotaGlobal') : tr('svStQuota');
+      if (row.status === 'quota_reached') return String(row.quota_scope || '').indexOf('global') === 0 ? tr('svStQuotaGlobal') : tr('svStQuota');
       if (row.status === 'disabled') return tr('svStDisabled');
       if (row.status === 'migration_pending') return tr('svStMigration');
       if (row.status === 'failed') return tr('svStFailed');

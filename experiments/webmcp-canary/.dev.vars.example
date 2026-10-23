@@ -27,7 +27,7 @@ OPENAI_MODEL=gpt-4.1-mini
 # in wrangler.jsonc, or anywhere else in the repo. The code only ever reads
 # them from the env binding and never logs or returns them.
 #   wrangler secret put PERPLEXITY_API_KEY
-#   wrangler secret put OPENAI_API_KEY
+#   wrangler secret put SOV_OPENAI_API_KEY      # ChatGPT measurement only (optional)
 # For a local run, put them in .dev.vars (git-ignored), not in this example file.
 # PERPLEXITY_MODEL=sonar
 #
@@ -37,14 +37,28 @@ OPENAI_MODEL=gpt-4.1-mini
 # PERPLEXITY_API_URL=http://127.0.0.1:8799/chat/completions
 # OPENAI_RESPONSES_SOV_API_URL=http://127.0.0.1:8799/v1/responses
 #
-# ChatGPT measurement (OPENAI_API_KEY present = enabled). NOTE: the same key is
-# used by the AEO learning job, so setting it turns ChatGPT measurement on too;
-# set SOV_OPENAI_SITE_MONTHLY_CAP=0 to keep it off. Model and caps:
+# ChatGPT measurement. OFF by default, turned on deliberately:
+#   1. its own key: wrangler secret put SOV_OPENAI_API_KEY
+#      (OPENAI_API_KEY, used by the AEO learning job, is borrowed only with
+#      SOV_OPENAI_USE_SHARED_KEY=1, so this measurement cannot spend that
+#      job's quota by default)
+#   2. a per-site monthly call cap above 0 (default 0 = off), e.g. 120
+# SOV_OPENAI_SITE_MONTHLY_CAP=120      # calls per site per month (0 = off, the default)
+# SOV_OPENAI_GLOBAL_MONTHLY_CAP=3000   # calls per month, all sites
+# SOV_OPENAI_SITE_MONTHLY_USD_CAP=3    # estimated USD per site per month (0 = off)
+# SOV_OPENAI_GLOBAL_MONTHLY_USD_CAP=40 # estimated USD per month, all sites
+# SOV_OPENAI_MAX_TOOL_CALLS=2          # max_tool_calls per answer (1-10)
+# SOV_OPENAI_USE_SHARED_KEY=0
 # SOV_OPENAI_MODEL=gpt-6-luna
 # SOV_OPENAI_REASONING_EFFORT=low
-# SOV_OPENAI_SITE_MONTHLY_CAP=120      # calls per site per month (0 = off)
-# SOV_OPENAI_GLOBAL_MONTHLY_CAP=3000   # calls per month, all sites
 # SOV_PERPLEXITY_GLOBAL_MONTHLY_CAP=6000  # per-site cap stays 200 (aeo-sov.mjs)
+# SOV_PERPLEXITY_SITE_MONTHLY_USD_CAP=5
+# SOV_PERPLEXITY_GLOBAL_MONTHLY_USD_CAP=150
+#
+# Daily batch time budget (ms): no new site after the budget, no new engine
+# call after the hard stop (a daily cron may run 15 minutes).
+# SOV_BATCH_TIME_BUDGET_MS=600000
+# SOV_BATCH_HARD_STOP_MS=780000
 # Gemini is not measured: the Gemini API grounding terms forbid analysing
 # Grounded Results. GEMINI_API_KEY is ignored by this measurement.
 #

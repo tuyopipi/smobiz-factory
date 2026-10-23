@@ -6,7 +6,8 @@
  * reviewed first.
  */
 
-import { SOV_BETA } from "./aeo-sov.mjs";
+import { HEADLINE_ENGINE_DEFAULT, SOV_BETA, SOV_MIN_SAMPLES_FOR_RATE, sovConfidence } from "./aeo-sov.mjs";
+import { engineDefinition } from "./ai-engines.mjs";
 
 export const REPORT_VERSION = "u2-report-v1";
 
@@ -139,25 +140,108 @@ function buildVisibilitySection(plan, sov) {
   if (sov.latest.status === "unconfigured") {
     return { available: false, reason: "unconfigured", message: "AIエンジンが未設定のため、AI登場率は測定していません。" };
   }
-  if (sov.latest.appearance_rate == null) {
-    return { available: false, reason: "no_answers", message: "AIエンジンから回答が得られなかったため、今月のAI登場率は算出できていません。" };
+  // The headline is one engine's series (Perplexity whenever it is
+  // configured), compared only with earlier points of the same engine. A run
+  // that did not ask that engine (say it was at its monthly cap) does not
+  // replace the headline with another engine's figure: the headline stays the
+  // engine's last measurement, dated, and every engine's latest figure is
+  // listed beside it.
+  const engine = sov.latest.headline_engine || HEADLINE_ENGINE_DEFAULT;
+  const series = headlineSeries(sov, engine);
+  const current = series[series.length - 1] || null;
+  const previous = series.length > 1 ? series[series.length - 2] : null;
+  const byEngine = latestByEngine(sov.latest);
+  const label = engineLabel(engine);
+  if (!current || current.appearance_rate == null) {
+    const othersAnswered = byEngine.some((row) => row.engine !== engine && row.answers > 0);
+    return {
+      available: false,
+      reason: "no_answers",
+      engine,
+      engine_label: label,
+      message: !current && othersAnswered
+        ? `${label}のAI登場率はまだ測定できていません（他のAIエンジンの結果はエンジン別に表示しています）。`
+        : "AIエンジンから回答が得られなかったため、今月のAI登場率は算出できていません。",
+      by_engine: byEngine,
+    };
   }
-  const trend = sov.trend || [];
-  const previous = trend.length > 1 ? trend[trend.length - 2] : null;
   return {
     available: true,
-    appearance_rate: sov.latest.appearance_rate,
-    citation_rate: sov.latest.citation_rate,
+    engine,
+    engine_label: label,
+    appearance_rate: current.appearance_rate,
+    citation_rate: current.citation_rate,
     delta: previous?.appearance_rate != null
-      ? Math.round((sov.latest.appearance_rate - previous.appearance_rate) * 1000) / 1000
+      ? Math.round((current.appearance_rate - previous.appearance_rate) * 1000) / 1000
       : null,
-    confidence: sov.latest.confidence,
-    answers_received: sov.latest.answers_received,
-    questions_asked: sov.latest.questions_asked,
+    confidence: current.answers != null ? sovConfidence(current.answers) : sov.latest.confidence,
+    answers_received: current.answers ?? sov.latest.answers_received,
+    questions_asked: current.asked ?? sov.latest.questions_asked,
     engines: sov.latest.engines || [],
     competitors: (sov.latest.competitors || []).slice(0, 5),
-    measured_at: sov.latest.ran_at,
+    measured_at: current.ran_at || sov.latest.ran_at,
+    // True when the latest run did not measure the headline engine, so the
+    // figure above is from an earlier run (measured_at says when).
+    from_earlier_run: !!sov.latest.ran_at && !!current.ran_at && current.ran_at !== sov.latest.ran_at,
+    by_engine: byEngine,
   };
+}
+
+function engineLabel(id) {
+  return engineDefinition(id)?.label || String(id || "");
+}
+
+/**
+ * One engine's points, oldest first, each { ran_at, answers, asked,
+ * appearance_rate, citation_rate }, keeping only runs in which that engine
+ * answered. Trend points carry engine_rates (aeo-sov.mjs loadSovHistory); a
+ * point without them is read as the headline engine's run-level figures.
+ */
+function headlineSeries(sov, engine) {
+  const pointOf = (point) => {
+    if (!point) return null;
+    if (point.engine_rates && typeof point.engine_rates === "object") {
+      const entry = point.engine_rates[engine];
+      return entry ? { ran_at: point.ran_at, ...entry } : null;
+    }
+    if ((point.headline_engine || engine) !== engine) return null;
+    return { ran_at: point.ran_at, answers: point.answers_received ?? null, asked: point.questions_asked ?? null,
+      appearance_rate: point.appearance_rate ?? null, citation_rate: point.citation_rate ?? null };
+  };
+  const trend = Array.isArray(sov.trend) && sov.trend.length ? sov.trend : [sov.latest];
+  return trend.map(pointOf).filter((point) => point && (point.answers > 0 || (point.answers == null && point.appearance_rate != null)));
+}
+
+/** Every engine's figure in the latest run, for the per-engine lines. */
+function latestByEngine(latest) {
+  return (Array.isArray(latest?.by_engine) ? latest.by_engine : [])
+    .filter((row) => row && typeof row.engine === "string")
+    .map((row) => {
+      const answers = Number(row.answers || 0);
+      const measurable = answers >= SOV_MIN_SAMPLES_FOR_RATE;
+      return {
+        engine: row.engine,
+        label: engineLabel(row.engine),
+        answers,
+        appearance_rate: measurable ? Math.round((Number(row.appearances || 0) / answers) * 1000) / 1000 : null,
+        any_rate: row.any_rate ?? null,
+        measured_at: latest.ran_at || null,
+      };
+    });
+}
+
+/** Lines naming the headline engine and listing each engine, when it helps. */
+function engineLines(visibility) {
+  const rows = visibility.by_engine || [];
+  const lines = [];
+  if (visibility.available && (rows.length > 1 || visibility.from_earlier_run)) {
+    lines.push(`基準エンジン: ${visibility.engine_label}（${String(visibility.measured_at || "").slice(0, 10)} の測定）`);
+  }
+  if (rows.length > 1 || (rows.length && (visibility.from_earlier_run || !visibility.available))) {
+    lines.push("エンジン別（最新の測定）:");
+    for (const row of rows) lines.push(`  - ${row.label}: ${percent(row.appearance_rate)}（回答数 ${row.answers}）`);
+  }
+  return lines;
 }
 
 function nextSteps(readability, visibility, family = null) {
@@ -210,6 +294,7 @@ export function renderMonthlyReportText(report) {
     lines.push(`  ${percent(report.visibility.appearance_rate)} (引用率 ${percent(report.visibility.citation_rate)})`);
     if (report.visibility.delta != null) lines.push(`  前回比: ${signed(report.visibility.delta, points)}`);
     lines.push(`  回答数: ${report.visibility.answers_received} / 質問数: ${report.visibility.questions_asked}（確度: ${report.visibility.confidence}）`);
+    for (const line of engineLines(report.visibility)) lines.push(`  ${line}`);
     if (report.visibility.competitors.length) {
       lines.push("  同じ質問で引用された他サイト:");
       for (const competitor of report.visibility.competitors) {
@@ -218,6 +303,7 @@ export function renderMonthlyReportText(report) {
     }
   } else {
     lines.push(`  ${report.visibility.message}`);
+    for (const line of engineLines(report.visibility)) lines.push(`  ${line}`);
   }
   if (report.comparison) {
     lines.push("");
@@ -256,6 +342,8 @@ export function renderMonthlyReportHtml(report) {
     sections.push(`<p class="metric"><strong>${escapeHtml(percent(report.visibility.appearance_rate))}</strong>（引用率 ${escapeHtml(percent(report.visibility.citation_rate))}）</p>`);
     if (report.visibility.delta != null) sections.push(`<p>前回比: ${escapeHtml(signed(report.visibility.delta, points))}</p>`);
     sections.push(`<p>回答数 ${report.visibility.answers_received} / 質問数 ${report.visibility.questions_asked}（確度: ${escapeHtml(String(report.visibility.confidence))}）</p>`);
+    const engineHtml = engineLines(report.visibility);
+    if (engineHtml.length) sections.push(`<p class="note">${engineHtml.map(escapeHtml).join("<br>")}</p>`);
     if (report.visibility.competitors.length) {
       const rows = report.visibility.competitors
         .map((competitor) => `<tr><td>${escapeHtml(competitor.host)}</td><td>${escapeHtml(percent(competitor.appearance_rate))}</td></tr>`)
@@ -267,6 +355,8 @@ export function renderMonthlyReportHtml(report) {
       ? ` <a href="${escapeHtml(report.visibility.upgrade_url)}">プランを見る</a>`
       : "";
     sections.push(`<p>${escapeHtml(report.visibility.message)}${upgrade}</p>`);
+    const engineHtml = engineLines(report.visibility);
+    if (engineHtml.length) sections.push(`<p class="note">${engineHtml.map(escapeHtml).join("<br>")}</p>`);
   }
 
   if (report.comparison) {
