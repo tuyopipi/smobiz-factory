@@ -115,6 +115,11 @@ const gapResult={...result,checks:result.checks.map(c=>['schema','coverage'].inc
 const jobResult=await requestAutoFix(env,site,gapResult,{now:Date.parse('2026-10-20T03:00:00Z')});
 assert.ok(jobResult.actions.includes('publish_schema'));
 assert.equal((await requestAutoFix(env,site,result,{now:Date.parse('2026-10-20T03:00:01Z')})).status,'rate_limited');
+// The daily cron is exactly 24 h apart; a run that lands a few seconds early
+// is still the next day's run, not "rate limited" (which made it every other day).
+assert.notEqual((await requestAutoFix(env,site,gapResult,{now:Date.parse('2026-10-21T02:59:30Z')})).status,'rate_limited','24 h minus cron jitter still runs');
+assert.equal((await requestAutoFix(env,site,gapResult,{now:Date.parse('2026-10-21T12:00:00Z')})).status,'rate_limited','but not twice in one day');
+assert.equal((await requestAutoFix(env,site,gapResult,{now:Date.parse('2026-10-22T01:30:00Z')})).status,'rate_limited','and not 22.5 h after the last run');
 assert.equal(JSON.parse(sqlite.prepare('SELECT missing_json FROM aeo_autofix_jobs').get().missing_json).action_required,true);
 sqlite.exec("UPDATE sites SET plan='free' WHERE id='s1';");
 assert.equal((await requestAutoFix(env,site,result,{now:Date.parse('2026-10-22T03:00:00Z')})).status,'ineligible');
