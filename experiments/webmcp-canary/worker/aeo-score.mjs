@@ -110,13 +110,14 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = nul
   // fresh: ask any cache between us and the site (a WordPress page cache, a
   // CDN) for the current page, so a fix made a minute ago is what is scored.
   const page = await fetchBounded(fetchImpl, target.href, { userAgent: "Nurevo-AEO-Diagnostics/1.0 (+https://nurevo.jp)", noCache: fresh });
-  const [robots, llms, edgeBlocked] = await Promise.all([
+  const [robots, llms, edgeAccess] = await Promise.all([
     fetchOptional(fetchImpl, new URL("/robots.txt", target.origin).href, { noCache: fresh }),
     fetchOptional(fetchImpl, new URL("/llms.txt", target.origin).href, { noCache: fresh }),
     detectEdgeBlock(fetchImpl, target.href),
   ]);
   const signals = extractAeoSignals(page.text, robots.text, llms.text, {
-    edgeBlocked,
+    edgeBlocked: edgeAccess === "blocked",
+    edgeUnknown: edgeAccess === "unknown",
     llmsPresent: llms.ok,
     scoredProps, schemaRules, entityType, catalog, scoring,
   });
@@ -160,17 +161,76 @@ export function extractSchemaNodes(html = "") {
  * properties a score was deducted for. Anything else would risk telling an
  * operator to fix something the scorer did not mark them down on.
  */
-export function publishedSchemaProps(nodes = [], props = BASELINE_SCORED_PROPS) {
-  const found = new Set();
-  const visit = value => {
-    if (!value || typeof value !== "object") return;
-    for (const [key, item] of Object.entries(value)) {
-      if (item != null && item !== "" && (!Array.isArray(item) || item.length)) found.add(key.toLowerCase());
-      visit(item);
+export function publishedSchemaProps(nodes = [], props = BASELINE_SCORED_PROPS, scoring = DEFAULT_SCORING) {
+  // The same reader the scorer uses (schemaFieldPresent), applied to the same
+  // entities - the local-business nodes - so a property is "published" here
+  // exactly when the score gives credit for it. The old recursive any-key
+  // search disagreed both ways: it found `name` inside a FAQ question and
+  // `streetAddress` the scorer never read. A page with no local-business node
+  // is read across all its typed nodes, as before.
+  const list = Array.isArray(nodes) ? nodes : [];
+  const local = list.filter((node) => isLocalBusinessNode(node, scoring));
+  const entities = local.length ? local : list.filter((node) => node && typeof node === "object");
+  return (props || []).map((key) => String(key))
+    .filter((key) => local.length
+      ? entities.every((node) => schemaFieldPresent(node, key, list))
+      : entities.some((node) => schemaFieldPresent(node, key, list)))
+    .map((key) => key.toLowerCase());
+}
+
+/*
+ * Reading one schema property off one entity.
+ *
+ * Shared by the scorer and the fix list so the two can never disagree about
+ * whether a property is there. Paths are dot-separated ("offers.price").
+ *
+ * PostalAddress members (streetAddress, addressLocality, ...) are read under
+ * `address` when the entity does not carry them itself, because that is where
+ * real markup - and our own generator - puts them. The v3 ruleset scores
+ * `streetAddress`; read as a top-level property it could never be met.
+ */
+export const POSTAL_ADDRESS_FIELDS = Object.freeze(["streetAddress", "addressLocality", "postalCode", "addressRegion", "addressCountry"]);
+const CANONICAL_FIELDS = new Map([
+  ...POSTAL_ADDRESS_FIELDS,
+  "openingHours", "openingHoursSpecification", "priceRange", "sameAs", "mainEntity",
+  "applicationCategory", "operatingSystem", "priceCurrency", "aggregateRating",
+  "areaServed", "serviceType", "datePublished", "dateModified", "hasMenu",
+].map((name) => [name.toLowerCase(), name]));
+const canonicalField = (key) => CANONICAL_FIELDS.get(String(key).toLowerCase()) || String(key);
+
+function hasSchemaValue(value) {
+  return value != null && (typeof value === "string" ? value.trim().length > 0
+    : Array.isArray(value) ? value.length > 0 && value.every(hasSchemaValue)
+      : typeof value === "object" ? Object.keys(value).some((k) => !k.startsWith("@") && hasSchemaValue(value[k]))
+        : true);
+}
+
+export function schemaFieldPresent(node, field, nodes = []) {
+  const resolve = (value) => value && typeof value === "object" && value["@id"] ? nodes.find((n) => n?.["@id"] === value["@id"]) || value : value;
+  const read = (value, parts) => {
+    value = resolve(value);
+    if (Array.isArray(value)) return value.length > 0 && value.every((v) => read(v, parts));
+    if (!parts.length) return hasSchemaValue(value);
+    const [key, ...rest] = parts;
+    if (key === "openingHoursSpecification" || key === "openingHours") return read(value?.openingHoursSpecification ?? value?.openingHours, rest);
+    if (key === "geo" && !rest.length) return hasSchemaValue(value?.geo?.latitude) && hasSchemaValue(value?.geo?.longitude);
+    if (key === "mainEntity" && !rest.length) return Array.isArray(value?.mainEntity) && value.mainEntity.length > 0 && value.mainEntity.every((q) => hasSchemaValue(q?.name) && hasSchemaValue(resolve(q?.acceptedAnswer)?.text));
+    if (POSTAL_ADDRESS_FIELDS.includes(key) && value && typeof value === "object" && value[key] === undefined && value.address !== undefined) {
+      const address = resolve(value.address);
+      // A plain-text address is not a PostalAddress and has no members.
+      if (address && typeof address === "object") return read(address, parts);
+      return false;
     }
+    return read(value?.[key], rest);
   };
-  visit(nodes);
-  return (props || []).map(key => String(key).toLowerCase()).filter(key => found.has(key));
+  return read(node, String(field).split(".").map(canonicalField));
+}
+
+const NON_LOCAL_TYPES = ["organization", "product", "service", "article", "blogposting", "newsarticle", "website", "faqpage", "softwareapplication"];
+function isLocalBusinessNode(node, scoring = DEFAULT_SCORING) {
+  const useful = new Set(scoring.usefulTypes);
+  return [node?.["@type"]].flat().filter(Boolean).map((t) => String(t).toLowerCase())
+    .some((t) => useful.has(t) && !NON_LOCAL_TYPES.includes(t));
 }
 
 /** Fetch a public page and return the JSON-LD nodes it publishes. */
@@ -218,12 +278,15 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
   const scoredProps = Array.isArray(options.scoredProps) && options.scoredProps.length
     ? options.scoredProps.map((key) => String(key).toLowerCase())
     : BASELINE_SCORED_PROPS;
-  const publishedProps = publishedSchemaProps(schemas, scoredProps);
+  const publishedProps = publishedSchemaProps(schemas, scoredProps, scoring);
   const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: options.commerceDetected || /(?:class|id)=["'][^"']*woocommerce/i.test(html) });
   const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours|adresse|dirección|teléfono|telefon|horario|horaires|öffnungszeiten|地址|电话|营业时间|營業時間|주소|전화|영업시간)/i.test(llms)];
   return {
     aiCrawlersAllowed: gateCrawlers(scoring).every((bot) => robotsAllows(robots, bot)),
     edgeBlocked: options.edgeBlocked === true,
+    // The bot-UA probe failed or timed out: we do not know. Not a block, so it
+    // never trips the gate, and the checklist says it could not be checked.
+    edgeAccessUnknown: options.edgeBlocked !== true && options.edgeUnknown === true,
     serverRenderedHtml: visible.replace(/\s+/g, " ").trim().length >= scoring.minVisible || scripts.length > 0,
     jsonLdInRawHtml: scripts.length > 0,
     schemaTypeMatches,
@@ -297,7 +360,7 @@ export function resolveAeoCheckLang(requested) {
 function checkWording(lang, id) {
   const label = diagnosisText(lang, `check.${id}.label`);
   if (label === undefined) return null;
-  return { label, OK: diagnosisText(lang, `check.${id}.OK`), WARN: diagnosisText(lang, `check.${id}.WARN`), BAD: diagnosisText(lang, `check.${id}.BAD`) };
+  return { label, OK: diagnosisText(lang, `check.${id}.OK`), WARN: diagnosisText(lang, `check.${id}.WARN`), BAD: diagnosisText(lang, `check.${id}.BAD`), UNKNOWN: diagnosisText(lang, `check.${id}.UNKNOWN`) };
 }
 
 /**
@@ -315,7 +378,7 @@ export function localizeAeoChecks(checks, requested) {
     const status = String(check?.status || "").toUpperCase();
     // An unrecognised status is a finding, not a pass.
     const fields = Array.isArray(check.fields) ? localizeFields(check.fields, lang) : null;
-    const message = fields ? fieldsSummary(fields, lang) : wording[status] ?? wording.WARN;
+    const message = fields ? fieldsSummary(fields, lang) : (check.unknown === true && wording.UNKNOWN) ? wording.UNKNOWN : wording[status] ?? wording.WARN;
     return { ...check, label: fields ? `${wording.label} (${fields.filter(f => f.present).length}/${fields.length})` : wording.label, message, ...(fields ? { fields } : {}), ...(check.id === "legibility" ? { hints: [textHint(lang)] } : {}) };
   });
 }
@@ -333,9 +396,13 @@ export function buildAeoChecks(signals, result, lang = "ja") {
     edge_access: !signals.edgeBlocked,
     server_rendered_html: signals.serverRenderedHtml,
   };
+  // An edge probe that could not complete is reported as WARN + unknown, not
+  // as a pass (we did not see one) and not as a block (we did not see one either).
+  const unknown = { edge_access: signals.edgeAccessUnknown === true && !signals.edgeBlocked };
   const checks = AEO_CHECKS.map(({ id, fixable, gate }) => ({
     id,
-    status: gate ? (gateStatus[id] ? "OK" : "BAD") : result.statuses[id],
+    status: unknown[id] ? "WARN" : gate ? (gateStatus[id] ? "OK" : "BAD") : result.statuses[id],
+    ...(unknown[id] ? { unknown: true } : {}),
     fixable,
     ...(["schema", "coverage"].includes(id) && signals.schemaFields ? { fields: signals.schemaFields } : {}),
   }));
@@ -385,13 +452,24 @@ async function fetchOptional(fetchImpl, href, options = {}) {
   try { return await fetchBounded(fetchImpl, href, options); } catch { return { ok: false, text: "" }; }
 }
 
-async function detectEdgeBlock(fetchImpl, href) {
+/**
+ * Probe the page as an AI search bot: "blocked", "open" or "unknown".
+ *
+ * Only a response that actually refuses the bot is a block - 401/403/429/451,
+ * or a CDN challenge page (cf-mitigated: challenge). A network error or a
+ * timeout used to count as blocked too, which capped a reachable site at the
+ * gate score because one HEAD request was slow; it is now "unknown", which
+ * neither fails the gate nor claims a pass.
+ */
+export async function detectEdgeBlock(fetchImpl, href) {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 8000);
   try {
     const response = await fetchImpl(href, { method: "HEAD", redirect: "follow", signal: controller.signal, headers: { "user-agent": "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko); compatible; OAI-SearchBot/1.0; +https://openai.com/searchbot" } });
-    return [401, 403, 429, 451].includes(response.status);
-  } catch { return true; } finally { clearTimeout(timer); }
+    if ([401, 403, 429, 451].includes(response.status)) return "blocked";
+    if (String(response.headers?.get?.("cf-mitigated") || "").toLowerCase() === "challenge") return "blocked";
+    return "open";
+  } catch { return "unknown"; } finally { clearTimeout(timer); }
 }
 
 function robotsAllows(text, bot) {
@@ -454,18 +532,6 @@ export function diagnoseSchemaFields(nodes, options = {}) {
     if (family === 'LocalBusiness') return tt.some(t => USEFUL_SCHEMA_TYPES.has(t) && !['organization','product','service','article','blogposting','newsarticle','website','faqpage','softwareapplication'].includes(t));
     return tt.includes(family.toLowerCase());
   };
-  const hasValue = value => value != null && (typeof value === 'string' ? value.trim().length > 0 : Array.isArray(value) ? value.length > 0 && value.every(hasValue) : typeof value === 'object' ? Object.keys(value).some(k => !k.startsWith('@') && hasValue(value[k])) : true);
-  const resolve = value => value && typeof value === 'object' && value['@id'] ? nodes.find(n => n['@id'] === value['@id']) || value : value;
-  const read = (value, parts) => {
-    value = resolve(value);
-    if (Array.isArray(value)) return value.length > 0 && value.every(v => read(v, parts));
-    if (!parts.length) return hasValue(value);
-    const [key,...rest] = parts;
-    if (key === 'openingHoursSpecification' || key === 'openingHours' || key === 'openinghours') return read(value?.openingHoursSpecification ?? value?.openingHours, rest);
-    if (key === 'geo' && !rest.length) return hasValue(value?.geo?.latitude) && hasValue(value?.geo?.longitude);
-    if (key === 'mainEntity' && !rest.length) return Array.isArray(value?.mainEntity) && value.mainEntity.length > 0 && value.mainEntity.every(q => hasValue(q.name) && hasValue(resolve(q.acceptedAnswer)?.text));
-    return read(value?.[key],rest);
-  };
   return selected.flatMap(entityType => {
     let definition = definitions[entityType] || {};
     // Explicit legacy scoredProps remain authoritative for local entities.
@@ -475,7 +541,7 @@ export function diagnoseSchemaFields(nodes, options = {}) {
       else if (rules.fields) definition = {name:true,...rules.fields};
     }
     const entities = nodes.filter(n => match(n,entityType));
-    return Object.entries(definition).filter(([field,enabled]) => enabled !== false && enabled?.enabled !== false && (entityType !== 'LocalBusiness' || rules.fields?.[field] !== false)).map(([field,config]) => ({entityType,field,weight: config && typeof config === 'object' && Number(config.weight) > 0 ? Number(config.weight) : 1,present: entities.length > 0 && entities.every(n => read(n,field.split('.')))}));
+    return Object.entries(definition).filter(([field,enabled]) => enabled !== false && enabled?.enabled !== false && (entityType !== 'LocalBusiness' || rules.fields?.[field] !== false)).map(([field,config]) => ({entityType,field,weight: config && typeof config === 'object' && Number(config.weight) > 0 ? Number(config.weight) : 1,present: entities.length > 0 && entities.every(n => schemaFieldPresent(n, field, nodes))}));
   });
 }
 

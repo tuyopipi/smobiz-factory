@@ -3172,4 +3172,17 @@ $readme_080 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-can
 expect(strpos($readme_080, "Stable tag: 0.8.0") !== false, 'and in the readme stable tag');
 expect(substr_count($readme_080, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice');
 
+/* --- Free is never scored down for data it holds: optIn fields publish unless retired --- */
+$optin_local = array('@type' => 'Restaurant', 'name' => 'Sakura', 'url' => 'https://example.test/', 'description' => 'Small bistro.', 'email' => 'shop@example.test');
+$optin_settings = webmcp_canary_default_settings();
+$optin_template = array(
+    'description' => array('optIn' => true, 'source' => 'description'),
+    'email' => array('optIn' => true, 'source' => 'email'),
+);
+$node = webmcp_canary_central_business_node($optin_local, $optin_settings, array('central_jsonld' => array(), 'business_template' => $optin_template, 'business_fields' => array()));
+expect(($node['description'] ?? null) === 'Small bistro.', 'an entered description is published even when the plan names no optIn fields');
+expect(($node['email'] ?? null) === 'shop@example.test', 'an entered email is published on every plan');
+$node = webmcp_canary_central_business_node($optin_local, $optin_settings, array('central_jsonld' => array(), 'business_template' => $optin_template, 'business_fields' => array('email' => false)));
+expect(!isset($node['email']), 'a ruleset can still retire an optIn field explicitly');
+
 echo "WordPress AEO admin tests passed\n";

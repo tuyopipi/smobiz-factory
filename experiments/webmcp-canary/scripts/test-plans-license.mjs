@@ -13,7 +13,7 @@ function environment(initialPlan) {
         bind(...values) {
           return {
             async first() {
-              if (sql.includes("SELECT id, plan, manual_plan, status, delivery_status FROM sites WHERE site_key")) return { id: "site-1", plan, manual_plan: null, status: "active", delivery_status: "active" };
+              if (/SELECT id, plan, manual_plan, status, delivery_status, .* FROM sites WHERE site_key/.test(sql)) return { id: "site-1", plan, manual_plan: null, status: "active", delivery_status: "active" };
                 if (sql.includes("SELECT plan, manual_plan FROM sites WHERE id=?")) return { plan, manual_plan: null };
               if (sql.includes("SELECT delivery_status FROM sites")) return { delivery_status: "active" };
               if (sql.includes("SELECT * FROM site_settings")) return { name: "Nurevo Cafe", serve_schema: 1, allow_crawlers: 1, telephone: "ignored", tel: "03-1234-5678", address: "Tokyo" };

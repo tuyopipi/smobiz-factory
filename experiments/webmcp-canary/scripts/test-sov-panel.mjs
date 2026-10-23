@@ -221,4 +221,19 @@ const LATEST = (over = {}) => ({
   assert.equal(html.includes("<i>hi</i>"), false, "the upsell copy is escaped");
 }
 
+/* ---------------- appearance rate is the headline, citation rate secondary ---------------- */
+
+{
+  const html = measured(LATEST());
+  const label = html.indexOf("出現率");
+  const rate = html.indexOf("40%");
+  const cite = html.indexOf("参考：引用率 20%");
+  assert.ok(label >= 0 && rate > label, "the engine card leads with the labelled appearance rate");
+  assert.ok(cite > rate, "the citation rate follows it, labelled as secondary");
+  // Too few answers for a rate: no secondary rate is invented either.
+  assert.ok(!measured(LATEST({ by_engine: [ENGINE({ answers: 1, appearance_rate: null })] })).includes("引用率"));
+  // An engine that returns no sources shows no citation rate.
+  assert.ok(!measured(LATEST({ by_engine: [ENGINE({ citations_available: false })] })).includes("参考：引用率"));
+}
+
 console.log("SoV panel render tests passed");

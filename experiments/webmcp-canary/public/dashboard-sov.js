@@ -21,7 +21,8 @@
   var loadingSiteId = null;
   // Words come from the dashboard dictionary (t() in dashboard.html), as in
   // dashboard-onboarding.js. Server text (upgrade copy, notices, gap reasons)
-  // is shown as the server sent it.
+  // is shown as the server sent it; the Pro report is requested in the
+  // dashboard's language so that text matches the page.
   function tr(key, vars) {
     var text = typeof t === "function" ? String(t(key)) : key;
     return text.replace(/\{(\w+)\}/g, function (m, name) { return vars && vars[name] != null ? String(vars[name]) : m; });
@@ -68,8 +69,18 @@
       ? '<span class="nrv-sov-fail">' + esc(tr('svFailures', { n: Number(row.failures) })) + '</span>' : '';
     return '<div class="nrv-sov-engine' + (live ? ' is-headline' : '') + '">'
       + '<div class="nrv-sov-engine-head"><strong>' + esc(name) + '</strong>' + kind + '</div>'
+      + '<div class="nrv-sov-engine-label">' + esc(tr('svAppearRate')) + '</div>'
       + '<div class="nrv-sov-engine-rate">' + rateText(row.appearance_rate, row.answers) + '</div>'
+      + citeLine(row)
       + failures + '</div>';
+  }
+
+  // The citation rate is secondary: only where the engine returns sources and
+  // the appearance rate itself had enough answers to be a rate.
+  function citeLine(row) {
+    if (row.citations_available === false || row.appearance_rate === null || row.appearance_rate === undefined || !Number(row.answers)) return '';
+    var rate = Math.round(Number(row.citations || 0) / Number(row.answers) * 1000) / 10 + '%';
+    return '<p class="nrv-sov-note nrv-sov-cite">' + esc(tr('svEngineCite', { rate: rate })) + '</p>';
   }
 
   /*
@@ -182,7 +193,10 @@
   async function addProReport(main, siteId) {
     var section = main.querySelector('.nrv-sov');
     if (!section || section.querySelector('.nrv-sov-locked')) return;
-    var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov/report', { credentials: 'include' });
+    // Ask for the report's own sentences (notice, basis, gap reasons) in the
+    // dashboard's language rather than the browser's.
+    var pageLang = 'ja'; try { pageLang = lang || 'ja'; } catch (_) { pageLang = document.documentElement.lang || 'ja'; }
+    var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov/report?lang=' + encodeURIComponent(pageLang), { credentials: 'include' });
     if (!response.ok || !section.isConnected) return;
     var report = (await response.json()).report;
     var box = document.createElement('div'); box.className = 'card panel';
@@ -191,15 +205,17 @@
     var pct = function (v) { return v == null ? tr('svNA') : Math.round(v * 1000) / 10 + '%'; };
     var sep = tr('svSep'), colon = tr('svColon');
     box.innerHTML = '<h3>' + esc(tr('svReport')) + '</h3><p>' + esc(report.notice) + '</p>'
-      + '<p>' + esc(report.status === 'unconfigured' ? tr('svUnconfigured') : report.status === 'no_data' ? tr('svUnmeasured') : tr('svSummary', { answers: report.summary.answers, rate: pct(report.summary.citation_rate) })) + '</p>'
+      // Headline: appearance rate (business named in the answer). Citation rate
+      // (the site among the source URLs) follows as a labelled secondary figure.
+      + '<p>' + esc(report.status === 'unconfigured' ? tr('svUnconfigured') : report.status === 'no_data' ? tr('svUnmeasured') : tr('svSummary', { answers: report.summary.answers, rate: pct(report.summary.appearance_rate), cite: pct(report.summary.citation_rate) })) + '</p>'
       + '<p>' + esc(tr('svCacheNote')) + '</p>'
       + '<details><summary>' + esc(tr('svEditSet')) + '</summary><label>' + esc(tr('svQueriesLabel')) + '<textarea data-pro-questions style="width:100%;min-height:120px">' + esc(config.questions.join('\n')) + '</textarea></label>'
       + '<label>' + esc(tr('svReps')) + ' <input data-pro-n type="number" min="1" max="3" value="' + esc(config.repetitions) + '"></label>'
       + '<label>' + esc(tr('svCompDomains')) + '<textarea data-pro-competitors style="width:100%">' + esc(config.competitors.join('\n')) + '</textarea></label><button data-pro-save>' + esc(tr('svSaveSet')) + '</button></details>'
       + '<button data-pro-run>' + esc(tr('svRun')) + '</button> <button data-pro-json>' + esc(tr('svJson')) + '</button><p data-pro-status role="status"></p>'
-      + '<h4>' + esc(tr('svPresence')) + '</h4>' + table([[tr('svQuery'),tr('svAnswers'),tr('svCitations'),tr('svFreq')]].concat(report.presence.map(function(r){ return [r.question,r.answers,r.citations,pct(r.frequency)]; })))
+      + '<h4>' + esc(tr('svPresence')) + '</h4>' + table([[tr('svQuery'),tr('svAnswers'),tr('svAppearances'),tr('svAppearRate'),tr('svCitations'),tr('svCiteFreq')]].concat(report.presence.map(function(r){ return [r.question,r.answers,r.appearances == null ? tr('svNA') : r.appearances,pct(r.appearance_rate),r.citations,pct(r.frequency)]; })))
       + '<h4>' + esc(tr('svVsComp')) + '</h4><p>' + esc(report.sov_basis) + '</p>' + (report.recount_note ? '<p>' + esc(report.recount_note) + '</p>' : '') + table([[tr('svDomain'),tr('svCitations'),tr('svFreq'),'SoV']].concat(report.competitors.map(function(r){ return [r.host + (r.own ? tr('svOwn') : r.recounted ? tr('svRecounted') : ''),r.citations,pct(r.frequency),pct(r.share_of_voice)]; })))
-      + '<h4>' + esc(tr('svTrend')) + '</h4>' + table([[tr('svDateTime'),tr('svAnswers'),tr('svCiteFreq')]].concat(report.trend.map(function(r){ return [r.ran_at,r.answers_received,pct(r.citation_rate)]; })))
+      + '<h4>' + esc(tr('svTrend')) + '</h4>' + table([[tr('svDateTime'),tr('svAnswers'),tr('svAppearRate'),tr('svCiteFreq')]].concat(report.trend.map(function(r){ return [r.ran_at,r.answers_received,pct(r.appearance_rate),pct(r.citation_rate)]; })))
       + '<h4>' + esc(tr('svGaps')) + '</h4>' + (report.gaps.length ? report.gaps.map(function(r){ return '<p>' + esc(r.question + colon + r.reason) + '</p>'; }).join('') : '<p>' + esc(tr('svNoGaps')) + '</p>')
       + '<h4>' + esc(tr('svAccuracy')) + '</h4><p>' + esc(tr('svAccuracyLead')) + '</p>'
       + report.evidence.map(function(e){ return '<details data-pro-evidence="' + esc(e.id) + '"><summary>' + esc(e.question + sep + e.measured_at + sep + e.engine + sep + tr('svRank', { n: e.citation_rank || tr('svNone') })) + '</summary><p>' + esc(e.answer_summary || tr('svNoAnswer')) + '</p><p>' + esc(tr('svMentioned')) + esc(e.accuracy.mentioned == null ? tr('svUndeterminable') : e.accuracy.mentioned ? tr('svYes') : tr('svNone')) + esc(sep + tr('svReviewState')) + esc(e.accuracy.status) + '</p><pre style="white-space:pre-wrap">' + esc(e.citation_urls.join('\n')) + '</pre><select data-pro-review><option value="uncertain">' + esc(tr('svUncertain')) + '</option><option value="confirmed_error">' + esc(tr('svConfirmedError')) + '</option><option value="checked_no_obvious_error">' + esc(tr('svNoObvious')) + '</option></select><textarea data-pro-note placeholder="' + esc(tr('svNotePh')) + '">' + esc(e.accuracy.note || '') + '</textarea><button data-pro-review-save>' + esc(tr('svSaveReview')) + '</button></details>'; }).join('');

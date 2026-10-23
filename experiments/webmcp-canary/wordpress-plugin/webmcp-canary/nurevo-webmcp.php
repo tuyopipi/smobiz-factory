@@ -6738,7 +6738,10 @@ function webmcp_canary_central_business_node($local, $settings, $delivery) {
     if (!$same_hours) { unset($remote['openingHoursSpecification']); }
     $fields = $delivery['business_fields'] ?? array();
     foreach ($delivery['business_template'] ?? array() as $key => $spec) {
-        $enabled = !empty($spec['always']) || (!empty($spec['optIn']) ? !empty($fields[$key]) : (!isset($fields[$key]) || $fields[$key] !== false));
+        // Owner-entered data (optIn: description, email, links) is published on
+        // every plan unless the ruleset explicitly retires it - the same rule
+        // the service applies, so Free is never scored down for data it holds.
+        $enabled = !empty($spec['always']) || !isset($fields[$key]) || $fields[$key] !== false;
         if (!$enabled) { unset($remote[$key]); continue; }
         $value = webmcp_canary_central_entity_value($spec, $facts);
         if ($value !== null && $value !== '' && $value !== array()) { $remote[$key] = $value; }

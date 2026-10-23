@@ -33,6 +33,12 @@ result.query_set=config; result.cache_key=await measurementKey(env,config,profil
 await storeSovRun(env,site.id,result,{now:Date.now()-2000});
 let report=await loadProReport(env,site);
 assert.equal(report.evidence.length,4); assert.equal(report.presence[0].frequency,0.5);
+// Headline Pro metric: appearance rate (the mock answer names "Nurevo" every
+// time); the citation rate (our URL among sources, half the time) is secondary.
+assert.equal(report.summary.headline,'appearance_rate');
+assert.equal(report.summary.appearance_rate,1); assert.equal(report.summary.citation_rate,0.5);
+assert.equal(report.presence[0].appearances,2); assert.equal(report.presence[0].appearance_rate,1);
+assert.equal(report.trend[0].appearance_rate,1); assert.equal(report.trend[0].citation_rate,0.5);
 assert.equal(report.competitors.find(c=>c.own).share_of_voice,2/6);
 assert.equal(report.competitors.find(c=>!c.own).citations,4);
 assert.ok(report.accuracy.every(e=>e.status==='unreviewed'));
@@ -40,8 +46,27 @@ assert.equal((await loadCachedRun(env,site.id,result.cache_key)).cached,true);
 assert.equal(await loadCachedRun(env,site.id,'changed'),null);
 await storeSovRun(env,site.id,result,{now:Date.now()-1000});
 assert.equal((await loadProReport(env,site)).trend.length,2);
-await storeSovRun(env,site.id,{...result,cache_key:'different-settings'});
+// History survives a competitor edit: the query-set row's version, updated_at
+// and competitors change (and so does the cache key), but the series measured
+// - engine, language, questions - does not. This used to reset the trend to 1.
+const edited=await saveQuerySet(env,site.id,{questions:config.questions,repetitions:2,competitors:['other.example','third.example']});
+assert.equal(edited.version,2);
+const editedKey=await measurementKey(env,edited,profile);
+assert.notEqual(editedKey,result.cache_key,'the cache key does change on an edit');
+await storeSovRun(env,site.id,{...result,query_set:edited,cache_key:editedKey},{now:Date.now()-500});
+assert.equal((await loadProReport(env,site)).trend.length,3,'the trend keeps all three runs across the competitor edit');
+// Re-ordering or re-spacing the same questions is the same series too.
+await storeSovRun(env,site.id,{...result,query_set:{...edited,questions:[...edited.questions].reverse().map(q=>' '+q+' ')},cache_key:'whitespace'},{now:Date.now()-400});
+assert.equal((await loadProReport(env,site)).trend.length,4);
+// Different questions or a different language are a different series.
+await storeSovRun(env,site.id,{...result,query_set:{...edited,questions:['別の質問は？']},cache_key:'different-questions'},{now:Date.now()-300});
 report=await loadProReport(env,site); assert.equal(report.trend.length,1);
+await storeSovRun(env,site.id,{...result,query_set:{...config,language:'en'},cache_key:'english'},{now:Date.now()-200});
+report=await loadProReport(env,site); assert.equal(report.trend.length,1,'a language change starts a new series');
+// A row from before snapshots existed (no query_set) still joins on its exact cache key.
+await storeSovRun(env,site.id,{...result,query_set:null,cache_key:'english'},{now:Date.now()-250});
+await storeSovRun(env,site.id,{...result,query_set:null,cache_key:'unrelated'},{now:Date.now()-240});
+report=await loadProReport(env,site); assert.equal(report.trend.length,2,'legacy rows fall back to the exact cache key');
 await reviewEvidence(env,site.id,report.evidence[0].id,{status:'confirmed_error',note:'QA fixture: factual comparison pending'},'reviewer');
 assert.equal((await loadProReport(env,site)).accuracy.filter(e=>e.status==='confirmed_error').length,1);
 await assert.rejects(()=>reviewEvidence(env,'other-site',report.evidence[0].id,{status:'confirmed_error',note:'x'},'reviewer'),/evidence_not_found/);

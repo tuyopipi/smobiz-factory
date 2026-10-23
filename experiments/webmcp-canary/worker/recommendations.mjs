@@ -412,6 +412,9 @@ export function buildSiteRecommendations({
     const id = text(check?.id);
     const status = text(check?.status).toUpperCase();
     if (!id || (status !== "BAD" && status !== "WARN")) continue;
+    // A check we could not run (e.g. the edge probe timed out) has nothing for
+    // the owner to fix; it is reported in the checklist, not as advice.
+    if (check?.unknown === true) continue;
     const gate = GATE_CHECKS.includes(id);
     push({
       kind: gate && status === "BAD" ? "gate_blocked" : status === "BAD" ? "check_bad" : "check_warn",
