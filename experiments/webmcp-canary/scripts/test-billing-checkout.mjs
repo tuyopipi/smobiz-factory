@@ -484,4 +484,25 @@ for (const path of ["/api/billing/checkout", "/api/billing/portal"]) {
   assert.equal(needsInternationalReview({}), false);
 }
 
+// A consumption-tax exempt seller (no invoice registration): nothing is added,
+// abroad still requires a business tax ID, payment links work.
+{
+  const env = makeEnv({ keys: { STRIPE_TAX_EXEMPT: "1" } });
+  let res = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" }, { "cf-ipcountry": "JP" });
+  assert.equal(res.status, 200);
+  let form = env.calls[0].form;
+  assert.equal(form["automatic_tax[enabled]"], undefined, "no Stripe Tax");
+  assert.equal(form["line_items[0][tax_rates][0]"], undefined, "no tax rate");
+  assert.equal(form["tax_id_collection[required]"], undefined, "Japan never requires a tax ID");
+  res = await post(env, "/api/billing/checkout", { site_id: SITE_ID, plan: "standard" }, { "cf-ipcountry": "DE" });
+  assert.equal(res.status, 200, "abroad is allowed for an exempt seller");
+  form = env.calls[1].form;
+  assert.equal(form["automatic_tax[enabled]"], undefined);
+  assert.equal(form["tax_id_collection[required]"], "if_supported", "but only for businesses with a tax ID");
+  assert.equal(form.billing_address_collection, "required");
+  const link = await post(env, "/api/billing/payment-link", { site_id: SITE_ID });
+  assert.equal(link.status, 200, "payment links work without tax");
+  assert.equal(env.calls[2].form["automatic_tax[enabled]"], undefined);
+}
+
 console.log("billing checkout and portal tests passed");

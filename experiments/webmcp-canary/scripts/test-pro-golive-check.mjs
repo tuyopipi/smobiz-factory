@@ -108,6 +108,7 @@ assert.equal(evaluateTax({ vars: {} }, new Set()).ok, false, "no tax method fail
 assert.equal(evaluateTax({ vars: { STRIPE_AUTOMATIC_TAX: "1" } }, new Set()).method, "automatic");
 assert.equal(evaluateTax({ vars: { STRIPE_AUTOMATIC_TAX: "0" } }, new Set()).ok, false, "automatic tax must be exactly 1");
 assert.equal(evaluateTax({ vars: {} }, new Set(["STRIPE_TAX_RATE_ID"])).method, "rate");
+assert.equal(evaluateTax({ vars: { STRIPE_TAX_EXEMPT: "1" } }, new Set()).method, "exempt", "a tax-exempt seller passes");
 assert.ok(evaluatePrice({ object: "price", active: true, type: "recurring", currency: "jpy", unit_amount: 14800, recurring: { interval: "month" }, tax_behavior: "inclusive" }).problems.some((p) => p.includes("inclusive")),
   "an inclusive price is rejected");
 
