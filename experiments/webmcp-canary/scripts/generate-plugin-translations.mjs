@@ -681,6 +681,153 @@ const JA = {
     "管理バーにAEOスコアを表示する",
   "Show the Nurevo AEO widget on the Dashboard":
     "ダッシュボードにNurevo AEOウィジェットを表示する",
+  // Setup wizard (0.8.1).
+  "Set up Nurevo AEO":
+    "Nurevo AEO の初期設定",
+  "Setup":
+    "初期設定",
+  "Setup progress":
+    "設定の進み具合",
+  "Site type":
+    "サイトの種類",
+  "Business info":
+    "店舗情報",
+  "Visibility to AI":
+    "AIへの公開",
+  "Done":
+    "完了",
+  "Restaurant or café":
+    "飲食店・カフェ",
+  "Restaurants, cafés, bakeries and bars":
+    "レストラン、カフェ、ベーカリー、バー",
+  "Beauty salon":
+    "美容サロン",
+  "Hair, nail and beauty salons, spas":
+    "美容室、ネイル・エステサロン、スパ",
+  "Clinic or dental":
+    "クリニック・歯科",
+  "Clinics, dentists, doctors and vets":
+    "クリニック、歯科医院、医院、動物病院",
+  "Professional services":
+    "専門サービス",
+  "Lawyers, accountants, agencies and trades":
+    "士業、会計事務所、代理店、工事・修理業",
+  "Retail shop":
+    "小売店",
+  "Shops and stores, on the street or online":
+    "実店舗やオンラインのショップ",
+  "Lodging":
+    "宿泊施設",
+  "Hotels, inns and guesthouses":
+    "ホテル、旅館、ゲストハウス",
+  "Other":
+    "その他",
+  "Any other business or organization":
+    "上記以外の事業・団体",
+  "Business name":
+    "店舗名・事業者名",
+  "Saved.":
+    "保存しました。",
+  "Choose the kind of business this site is for.":
+    "このサイトの事業の種類を選んでください。",
+  "Step %1$d of %2$d":
+    "ステップ %1$d / %2$d",
+  "Save and continue":
+    "保存して次へ",
+  "Back":
+    "戻る",
+  "Skip for now":
+    "あとで設定する",
+  "What kind of business is this site for?":
+    "このサイトはどんな事業のサイトですか？",
+  "This sets the schema.org type AI reads your business as. You can refine it later in Settings.":
+    "AIがあなたの事業をどの種類（schema.orgのタイプ）として読むかが決まります。あとで設定画面から細かく変更できます。",
+  "Business category":
+    "事業の種類",
+  "%s is active. Nurevo adds only the facts missing from its schema graph, with no duplicates.":
+    "%s が有効です。Nurevoはその構造化データに足りない情報だけを追加し、重複させません。",
+  "Your business information":
+    "店舗・事業の情報",
+  "These are the facts AI answers with. They are published as structured data and in llms.txt.":
+    "AIが回答に使う基本情報です。構造化データとllms.txtで公開されます。",
+  "%d field(s) are still empty. AI cannot answer with what is not here.":
+    "%d 件の項目が未入力です。ここにない情報はAIも答えられません。",
+  "Business information":
+    "店舗・事業の情報",
+  "Missing":
+    "未入力",
+  "Suggested from your SEO plugin. Please check it.":
+    "SEOプラグインの設定から入力しました。内容を確認してください。",
+  "Suggested from your site title and tagline. Please check it.":
+    "サイトのタイトルとキャッチフレーズから入力しました。内容を確認してください。",
+  "Free text, for example \"Mon-Fri 9:00-18:00, Sat 10:00-15:00, closed Sunday\".":
+    "自由に入力できます。例:「月-金 9:00-18:00、土 10:00-15:00、日曜定休」",
+  "These hours could not be read day by day, so they will be published exactly as written.":
+    "曜日ごとに読み取れなかったため、入力したとおりの文面で公開されます。",
+  "Read as:":
+    "次のように読み取りました:",
+  "Save and check the hours":
+    "保存して営業時間を確認",
+  "What AI can see":
+    "AIに見せる情報",
+  "Everything here is produced on your own server. Nothing is sent anywhere by these switches.":
+    "ここで設定する内容はすべてあなたのサーバー上で生成されます。これらのスイッチで外部に送信されるものはありません。",
+  "Publishing":
+    "公開",
+  "Publish AI-readable information (recommended)":
+    "AIが読める情報を公開する（推奨）",
+  "Turns on JSON-LD structured data, /llms.txt, and access for AI search crawlers in robots.txt.":
+    "JSON-LD構造化データ、/llms.txt、robots.txtでのAI検索クローラーの許可をオンにします。",
+  "Nurevo adds nothing for these crawlers; your existing robots.txt decides.":
+    "これらのクローラーについてNurevoは何も追加せず、今のrobots.txtに従います。",
+  "Your content may be used to train AI models.":
+    "コンテンツがAIモデルの学習に使われる場合があります。",
+  "Asks training crawlers to stay away. AI search and your score are not affected.":
+    "学習用クローラーにアクセスしないよう求めます。AI検索やスコアには影響しません。",
+  "AI training crawlers":
+    "AI学習クローラー",
+  "AEO diagnosis (optional)":
+    "AEO診断（任意）",
+  "You have already agreed to the diagnosis. Your score is shown on the next step.":
+    "診断にはすでに同意済みです。次のステップでスコアを表示します。",
+  "The diagnosis is run by the Nurevo service at nurevo.jp. It sends your home page URL and WordPress language; the service then reads your public front page, robots.txt and llms.txt. Nothing is sent unless you tick this box.":
+    "診断は nurevo.jp のNurevoサービスが行います。送信するのはホームページのURLとWordPressの言語で、サービスは公開中のトップページ・robots.txt・llms.txtを読み取ります。このボックスにチェックを入れない限り、何も送信されません。",
+  "Save and finish":
+    "保存して完了",
+  "You are set up":
+    "設定が完了しました",
+  "AI-readable information is now published from this site.":
+    "このサイトからAIが読める情報の公開を始めました。",
+  "Output is off, so nothing is published yet. You can switch it on in Settings at any time.":
+    "出力がオフのため、まだ何も公開されていません。設定画面からいつでもオンにできます。",
+  "AEO score":
+    "AEOスコア",
+  "The diagnosis has not been run, and nothing has been sent. You can run it any time from the AEO Score screen.":
+    "診断はまだ実行しておらず、何も送信していません。AEOスコア画面からいつでも実行できます。",
+  "Open the AEO Score screen":
+    "AEOスコア画面を開く",
+  "Next steps":
+    "次にやること",
+  "Add the Nurevo FAQ block to a page, so AI can quote your answers.":
+    "ページにNurevo FAQブロックを追加すると、AIがあなたの回答を引用できるようになります。",
+  "Open your pages":
+    "固定ページ一覧を開く",
+  "Connect this site to nurevo.jp to see it in the dashboard (optional, free).":
+    "nurevo.jp に接続すると、ダッシュボードでこのサイトを確認できます（任意・無料）。",
+  "Connect to nurevo.jp":
+    "nurevo.jp に接続",
+  "Per-page settings: leave a page out, or give it its own FAQ, from the Nurevo AEO panel in the editor.":
+    "ページごとの設定: エディターのNurevo AEOパネルから、ページを対象外にしたり、ページ専用のFAQを設定したりできます。",
+  "Standard keeps your output following new AI criteria automatically, if you ever want that.":
+    "必要になったら、Standardプランで出力を新しいAIの評価基準に自動で追従させることもできます。",
+  "Go to Nurevo AEO":
+    "Nurevo AEOへ",
+  "Nurevo AEO setup is not finished. It takes about three minutes.":
+    "Nurevo AEOの初期設定が終わっていません。3分ほどで完了します。",
+  "Resume setup":
+    "設定を再開",
+  "Do not show again":
+    "今後表示しない",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo

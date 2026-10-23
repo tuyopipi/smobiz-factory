@@ -190,6 +190,8 @@ function apply_filters($hook, $value, ...$args) {
     return $value;
 }
 function wp_nonce_field($action = -1, $name = '_wpnonce') { echo '<input type="hidden" name="' . $name . '" value="' . md5($action) . '">'; }
+function esc_attr_e($text) { echo esc_attr($text); }
+function add_submenu_page($parent, $page_title, $menu_title, $capability, $slug, $callback = '') { $GLOBALS['webmcp_test_submenus'][$slug] = array('parent' => $parent, 'title' => $menu_title, 'capability' => $capability, 'callback' => $callback); return $slug; }
 
 // WP-CLI and REST stand-ins, so includes/cli.php and includes/rest.php load.
 define('WP_CLI', true);
@@ -3184,5 +3186,275 @@ expect(($node['description'] ?? null) === 'Small bistro.', 'an entered descripti
 expect(($node['email'] ?? null) === 'shop@example.test', 'an entered email is published on every plan');
 $node = webmcp_canary_central_business_node($optin_local, $optin_settings, array('central_jsonld' => array(), 'business_template' => $optin_template, 'business_fields' => array('email' => false)));
 expect(!isset($node['email']), 'a ruleset can still retire an optIn field explicitly');
+
+/* --- 0.8.1: first-run setup wizard ---------------------------------------- */
+
+$wizard_reset = function ($settings = array()) {
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), $settings);
+    delete_option(WEBMCP_CANARY_WIZARD_OPTION);
+    delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+    delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
+    $GLOBALS['webmcp_test_transients'] = array();
+    $GLOBALS['webmcp_test_denied_caps'] = array();
+    $GLOBALS['webmcp_test_user_id'] = 1;
+    $GLOBALS['webmcp_test_active_plugins'] = array();
+};
+$interactive = array('cli' => false, 'ajax' => false, 'rest' => false, 'network' => false, 'bulk' => false);
+$wizard_url = webmcp_canary_wizard_url();
+expect(strpos($wizard_url, 'page=webmcp-canary-setup') !== false, 'the wizard lives at Nurevo AEO > Setup');
+
+// Reachable later from the Nurevo menu.
+$GLOBALS['webmcp_test_submenus'] = array();
+webmcp_canary_wizard_menu();
+expect(($GLOBALS['webmcp_test_submenus']['webmcp-canary-setup']['parent'] ?? '') === 'webmcp-canary', 'Setup is a submenu of Nurevo AEO');
+expect($GLOBALS['webmcp_test_submenus']['webmcp-canary-setup']['title'] === 'Setup' && $GLOBALS['webmcp_test_submenus']['webmcp-canary-setup']['capability'] === 'manage_options', 'labelled Setup, for administrators');
+
+// The activation hook asks for the redirect, and passes on whether it was network-wide.
+$activate_body = webmcp_test_function_body(file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_activate_aeo_score');
+expect(strpos($activate_body, 'webmcp_canary_wizard_flag_redirect($network_wide)') !== false, 'activation flags the wizard redirect');
+expect(strpos($activate_body, 'return;') < strpos($activate_body, 'webmcp_canary_wizard_flag_redirect'), 'and a network activation returns before it');
+
+// A single interactive activation by an administrator: redirected once.
+$wizard_reset();
+expect(webmcp_canary_wizard_flag_redirect(false, $interactive) === true, 'a single interactive activation flags the redirect');
+expect(get_transient(WEBMCP_CANARY_WIZARD_REDIRECT_TRANSIENT) === 1, 'the flag is a transient naming the activating user');
+expect(webmcp_canary_wizard_redirect_target($interactive) === $wizard_url, 'the next admin_init redirects to the wizard');
+expect(get_transient(WEBMCP_CANARY_WIZARD_REDIRECT_TRANSIENT) === false, 'and consumes the flag');
+expect(webmcp_canary_wizard_redirect_target($interactive) === '', 'so it fires once only');
+$redirect_hooks = array_filter($GLOBALS['webmcp_test_hooks']['admin_init'], function ($cb) { return $cb === 'webmcp_canary_wizard_maybe_redirect'; });
+expect(count($redirect_hooks) === 1, 'the redirect runs on admin_init');
+
+// Never under WP-CLI (this harness runs with WP_CLI defined), in bulk, network-wide, AJAX or REST.
+$wizard_reset();
+expect(webmcp_canary_wizard_flag_redirect(false) === false && get_transient(WEBMCP_CANARY_WIZARD_REDIRECT_TRANSIENT) === false, 'a WP-CLI activation flags nothing');
+foreach (array('bulk', 'network', 'ajax', 'rest', 'cli') as $blocked) {
+    $context = array_merge($interactive, array($blocked => true));
+    $wizard_reset();
+    expect(webmcp_canary_wizard_flag_redirect(false, $context) === false, "no redirect is flagged for a {$blocked} activation");
+    // Flagged by an earlier request, but consumed on a request of this kind.
+    webmcp_canary_wizard_flag_redirect(false, $interactive);
+    expect(webmcp_canary_wizard_redirect_target($context) === '', "a {$blocked} request is never redirected");
+    expect(get_transient(WEBMCP_CANARY_WIZARD_REDIRECT_TRANSIENT) === false, "and the flag is spent there ({$blocked})");
+}
+$wizard_reset();
+expect(webmcp_canary_wizard_flag_redirect(true, $interactive) === false, 'a network activation flags nothing');
+$_GET['activate-multi'] = 'true';
+expect(webmcp_canary_wizard_request_context()['bulk'] === true, 'the activate-multi screen is recognised as a bulk activation');
+unset($_GET['activate-multi']);
+$_POST['action'] = 'activate-selected';
+expect(webmcp_canary_wizard_request_context()['bulk'] === true, 'and so is the bulk action itself');
+unset($_POST['action']);
+expect(webmcp_canary_wizard_request_context()['cli'] === true, 'WP-CLI is read from the environment');
+
+// Never on a site that is already configured.
+$wizard_reset(array('site_key' => 'nrv_existing'));
+expect(webmcp_canary_wizard_flag_redirect(false, $interactive) === false, 'a site with a site key is not redirected');
+$wizard_reset(array('business_name' => 'Sakura', 'business_address' => 'Tokyo'));
+expect(webmcp_canary_wizard_flag_redirect(false, $interactive) === false, 'a site with name and address is not redirected');
+$wizard_reset(array('business_name' => 'Sakura'));
+expect(webmcp_canary_wizard_flag_redirect(false, $interactive) === true, 'a name alone (the site title autofill) does not count as configured');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_address'] = 'Tokyo';
+expect(webmcp_canary_wizard_redirect_target($interactive) === '', 'configured between activation and the redirect: not redirected');
+// Not for someone without manage_options, nor for a different user.
+$wizard_reset();
+$GLOBALS['webmcp_test_denied_caps'] = array('manage_options');
+expect(webmcp_canary_wizard_flag_redirect(false, $interactive) === false, 'a user without manage_options flags nothing');
+$wizard_reset();
+webmcp_canary_wizard_flag_redirect(false, $interactive);
+$GLOBALS['webmcp_test_user_id'] = 2;
+expect(webmcp_canary_wizard_redirect_target($interactive) === '', 'another user is not redirected');
+// Not again once the wizard was finished or skipped.
+$wizard_reset();
+update_option(WEBMCP_CANARY_WIZARD_OPTION, array('step' => 3, 'status' => 'done'));
+expect(webmcp_canary_wizard_flag_redirect(false, $interactive) === false, 'a finished wizard is not reopened by a later activation');
+
+// Step 1: the cards map onto the existing business_type values.
+$known_types = webmcp_canary_local_business_types();
+foreach (webmcp_canary_wizard_site_types() as $key => $card) {
+    expect($card['type'] === '' || in_array($card['type'], $known_types, true), "card {$key} sets a known schema.org type");
+    foreach ($card['family'] as $member) {
+        expect(in_array($member, $known_types, true), "card {$key} only claims known types ({$member})");
+    }
+}
+expect(array_keys(webmcp_canary_wizard_site_types()) === array('restaurant', 'beauty', 'clinic', 'professional', 'retail', 'lodging', 'other'), 'the seven categories, in order');
+expect(webmcp_canary_wizard_current_site_type(array('business_type' => 'Dentist')) === 'clinic', 'a Dentist shows as Clinic or dental');
+expect(webmcp_canary_wizard_current_site_type(array('business_type' => 'Library')) === 'other', 'an unclaimed type shows as Other');
+expect(webmcp_canary_wizard_current_site_type(array('business_type' => '')) === '', 'nothing is preselected when no type is set');
+
+$nonce = md5('webmcp_canary_wizard');
+$wizard_reset();
+$log_before = count($GLOBALS['webmcp_test_remote_get_log']);
+$GLOBALS['webmcp_test_last_remote'] = null;
+$result = webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '1', 'site_type' => 'beauty'));
+expect($result['ok'] && webmcp_canary_settings()['business_type'] === 'BeautySalon', 'step 1 saves the business type');
+expect(strpos($result['redirect'], 'step=2') !== false, 'and continues to step 2');
+expect(webmcp_canary_wizard_state()['step'] === 1 && webmcp_canary_wizard_state()['status'] === 'in_progress', 'and records the progress');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['business_type'] = 'HairSalon';
+webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '1', 'site_type' => 'beauty'));
+expect(webmcp_canary_settings()['business_type'] === 'HairSalon', 'a more specific type in the same category is kept');
+webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '1', 'site_type' => 'restaurant'));
+expect(webmcp_canary_settings()['business_type'] === 'Restaurant', 'another category replaces it');
+webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '1', 'site_type' => 'other'));
+expect(webmcp_canary_settings()['business_type'] === '', 'Other leaves the type to the plugin (Organization or LocalBusiness)');
+$bad_card = webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '1', 'site_type' => 'spaceship'));
+expect(!$bad_card['ok'] && $bad_card['error'] === 'site_type' && strpos($bad_card['redirect'], 'step=1') !== false, 'an unknown category is rejected back to step 1');
+
+// The SEO plugin line on step 1.
+$GLOBALS['webmcp_test_active_plugins'] = array('wordpress-seo/wp-seo.php');
+ob_start(); webmcp_canary_wizard_render_step_1(webmcp_canary_settings()); $step1 = ob_get_clean();
+expect(strpos($step1, 'Yoast SEO is active. Nurevo adds only the facts missing') !== false, 'step 1 says Nurevo only fills gaps in the SEO plugin graph');
+expect(strpos($step1, '<fieldset>') !== false && strpos($step1, '<legend>') !== false && substr_count($step1, 'type="radio"') === 7, 'step 1 is a fieldset of seven radio cards');
+expect(strpos($step1, 'id="webmcp-wizard-heading" tabindex="-1"') !== false, 'the step heading can take focus');
+$GLOBALS['webmcp_test_active_plugins'] = array();
+ob_start(); webmcp_canary_wizard_render_step_1(webmcp_canary_settings()); $step1_plain = ob_get_clean();
+expect(strpos($step1_plain, 'is active. Nurevo adds only') === false, 'and says nothing when no SEO plugin is active');
+
+// Step 2: prefill from Nurevo, then the SEO plugin, then the site title and tagline.
+$wizard_reset(array('business_phone' => '03-1111-2222'));
+$GLOBALS['webmcp_test_options']['blogname'] = 'Sakura Bistro';
+$GLOBALS['webmcp_test_options']['blogdescription'] = 'Seasonal French cooking';
+$GLOBALS['webmcp_test_active_plugins'] = array('wordpress-seo/wp-seo.php');
+$saved_wpseo_local = $GLOBALS['webmcp_test_options']['wpseo_local'] ?? null;
+$GLOBALS['webmcp_test_options']['wpseo_local'] = array('location_address' => '1-2-3 Jingumae, Tokyo');
+$prefill = webmcp_canary_wizard_prefill();
+expect($prefill['business_phone'] === array('value' => '03-1111-2222', 'source' => 'saved'), 'a saved value comes first');
+expect($prefill['business_address'] === array('value' => '1-2-3 Jingumae, Tokyo', 'source' => 'seo'), 'then the SEO plugin');
+expect($prefill['business_name'] === array('value' => 'Sakura Bistro', 'source' => 'site'), 'then the site title');
+expect($prefill['business_description']['source'] === 'site', 'and the tagline');
+expect($prefill['business_hours'] === array('value' => '', 'source' => ''), 'an unknown field stays empty');
+ob_start(); webmcp_canary_wizard_render_step_2(webmcp_canary_settings()); $step2 = ob_get_clean();
+expect(substr_count($step2, 'webmcp-wizard-field is-missing') === 1 && strpos($step2, 'id="webmcp-wizard-business-hours"') !== false, 'the empty field is highlighted');
+expect(strpos($step2, '1 field(s) are still empty') !== false, 'and counted');
+expect(strpos($step2, 'Suggested from your SEO plugin') !== false && strpos($step2, 'Suggested from your site title and tagline') !== false, 'suggested values say where they came from');
+expect(strpos($step2, '<label for="webmcp-wizard-business-name">') !== false, 'every field has a label');
+$GLOBALS['webmcp_test_active_plugins'] = array();
+if ($saved_wpseo_local === null) { unset($GLOBALS['webmcp_test_options']['wpseo_local']); } else { $GLOBALS['webmcp_test_options']['wpseo_local'] = $saved_wpseo_local; }
+
+$result = webmcp_canary_wizard_process(array(
+    '_wpnonce' => $nonce, 'step' => '2',
+    'business_name' => '<b>Sakura Bistro</b>', 'business_address' => '1-2-3 Jingumae, Tokyo', 'business_phone' => '03-1111-2222',
+    'business_hours' => 'Mon-Fri 9:00-18:00, Sat 10:00-15:00', 'business_description' => 'Seasonal French cooking',
+));
+$after2 = webmcp_canary_settings();
+expect($result['ok'] && $after2['business_name'] === 'Sakura Bistro', 'step 2 saves through the sanitize callback (tags stripped)');
+expect($after2['business_address'] === '1-2-3 Jingumae, Tokyo' && $after2['business_hours'] === 'Mon-Fri 9:00-18:00, Sat 10:00-15:00', 'step 2 saves address and hours');
+expect($after2['enabled'] === '0' && $after2['serve_schema'] === '1' && $after2['allow_ai_crawlers'] === '1', 'and leaves the switches it does not show alone');
+expect(webmcp_canary_wizard_state()['step'] === 2, 'progress moves to step 2');
+$hours_lines = webmcp_canary_wizard_hours_lines($after2['business_hours']);
+expect($hours_lines === array('Mon–Fri 09:00–18:00', 'Sat 10:00–15:00'), 'the hours are read back through the existing parser: ' . json_encode($hours_lines, JSON_UNESCAPED_UNICODE));
+expect(webmcp_canary_wizard_hours_lines('by appointment') === null, 'unreadable hours are reported as published as written');
+ob_start(); webmcp_canary_wizard_render_step_2(webmcp_canary_settings()); $step2_saved = ob_get_clean();
+expect(strpos($step2_saved, 'Read as:') !== false && strpos($step2_saved, '<li>Mon–Fri 09:00–18:00</li>') !== false, 'step 2 shows the parsed hours');
+expect(strpos($step2_saved, 'is-missing') === false, 'and no field is flagged once all are filled');
+$check = webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '2', 'business_hours' => 'Daily 11:00-22:00', 'nurevo_wizard_check_hours' => '1'));
+expect(strpos($check['redirect'], 'step=2') !== false && webmcp_canary_settings()['business_hours'] === 'Daily 11:00-22:00', 'Save and check the hours stays on step 2');
+
+// Step 3: one switch, the training choice, and consent that is off by default.
+ob_start(); webmcp_canary_wizard_render_step_3(webmcp_canary_settings()); $step3 = ob_get_clean();
+expect(preg_match('/name="nurevo_publish" value="1" checked/', $step3) === 1, 'the recommended switch is on the first time');
+expect(preg_match('/name="nurevo_consent" value="1"\s*>/', $step3) === 1, 'the consent box is unticked');
+expect(substr_count($step3, 'name="ai_training"') === 3 && strpos($step3, 'value="default" checked') !== false, 'the three training choices, default selected');
+expect(substr_count($step3, '<legend>') === 3, 'each group has a legend');
+$result = webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '3', 'nurevo_publish' => '1', 'ai_training' => 'block'));
+$after3 = webmcp_canary_settings();
+expect($result['ok'] && $after3['enabled'] === '1' && $after3['serve_schema'] === '1' && $after3['serve_llms_txt'] === '1' && $after3['allow_ai_crawlers'] === '1', 'the switch turns on JSON-LD, llms.txt and AI search crawlers');
+expect($after3['ai_training'] === 'block', 'the training choice is saved');
+expect(!webmcp_canary_has_consent(), 'no consent is recorded without the box');
+expect(webmcp_canary_wizard_state()['status'] === 'done' && strpos($result['redirect'], 'step=4') !== false, 'step 3 finishes the wizard');
+webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '3', 'ai_training' => 'nonsense'));
+expect(webmcp_canary_settings()['enabled'] === '0' && webmcp_canary_settings()['ai_training'] === 'block', 'unticking turns output off; an invalid choice keeps the last one');
+
+// No HTTP anywhere in steps 1-3, and none on step 4 without consent.
+ob_start(); webmcp_canary_wizard_render_step_4(webmcp_canary_settings()); $step4 = ob_get_clean();
+expect(strpos($step4, 'nothing has been sent') !== false, 'step 4 says nothing was sent');
+expect(count($GLOBALS['webmcp_test_remote_get_log']) === $log_before && $GLOBALS['webmcp_test_last_remote'] === null, 'the wizard makes no HTTP request before consent');
+expect(strpos($step4, 'Add the Nurevo FAQ block to a page') !== false && strpos($step4, 'Connect to nurevo.jp') !== false && strpos($step4, 'Per-page settings:') !== false, 'step 4 lists the next steps');
+expect(substr_count($step4, 'Standard') <= 1, 'at most one line about Standard');
+
+// With consent, step 4 shows the score through the existing function and cache.
+webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '3', 'nurevo_publish' => '1', 'ai_training' => 'default', 'nurevo_consent' => '1'));
+$consent = get_option(WEBMCP_CANARY_CONSENT_OPTION);
+expect(webmcp_canary_has_consent() && $consent['via'] === 'setup', 'ticking the box records consent in the existing store');
+expect(count($GLOBALS['webmcp_test_remote_get_log']) === $log_before, 'recording consent sends nothing by itself');
+$GLOBALS['webmcp_test_remote_get']['api/aeo/score'] = array('status' => 200, 'body' => json_encode(array('score' => 74, 'band' => 'yellow', 'gatePassed' => true, 'checks' => array(array('id' => 'llms', 'label' => 'llms', 'status' => 'OK', 'message' => '', 'fixable' => false)))));
+ob_start(); webmcp_canary_wizard_render_step_4(webmcp_canary_settings()); $step4_scored = ob_get_clean();
+expect(strpos($step4_scored, '>74</strong>') !== false, 'step 4 shows the score');
+expect(count($GLOBALS['webmcp_test_remote_get_log']) === $log_before + 1, 'with one diagnosis request');
+ob_start(); webmcp_canary_wizard_render_step_4(webmcp_canary_settings()); ob_get_clean();
+expect(count($GLOBALS['webmcp_test_remote_get_log']) === $log_before + 1, 'and a reload answers from the existing cache');
+unset($GLOBALS['webmcp_test_remote_get']['api/aeo/score']);
+
+// Skip and resume.
+$wizard_reset();
+webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '1', 'site_type' => 'retail'));
+$skip = webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '2', 'business_name' => 'Not saved', 'nurevo_wizard_skip' => '1'));
+expect($skip['ok'] && !empty($skip['skipped']) && strpos($skip['redirect'], 'page=webmcp-canary') !== false, 'Skip leaves the wizard for the AEO screen');
+expect(webmcp_canary_settings()['business_name'] === '', 'a skipped step saves nothing');
+expect(webmcp_canary_wizard_state()['status'] === 'skipped' && webmcp_canary_wizard_state()['step'] === 1, 'earlier progress is kept');
+expect(webmcp_canary_wizard_resume_step() === 2, 'and the wizard resumes at the step after it');
+$_GET = array('page' => 'webmcp-canary-setup');
+ob_start(); webmcp_canary_wizard_page(); $resumed = ob_get_clean();
+expect(strpos($resumed, 'Your business information') !== false && strpos($resumed, 'aria-current="step"') !== false, 'opening Setup again resumes at step 2 with the step marked');
+expect(strpos($resumed, 'Step 2 of 4') !== false, 'with a visible step indicator');
+expect(substr_count($resumed, 'nurevo_wizard_skip') === 1, 'every step offers Skip');
+webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '2', 'business_name' => 'Back again'));
+expect(webmcp_canary_wizard_state()['status'] === 'in_progress' && webmcp_canary_settings()['business_name'] === 'Back again', 'continuing after a skip saves and clears the skipped state');
+
+// The skipped notice: once, on Nurevo screens only, dismissible.
+update_option(WEBMCP_CANARY_WIZARD_OPTION, array('step' => 1, 'status' => 'skipped'));
+$GLOBALS['webmcp_test_user_meta'] = array();
+$_GET = array('page' => 'webmcp-canary');
+ob_start(); webmcp_canary_wizard_skipped_notice(); $skip_notice = ob_get_clean();
+expect(strpos($skip_notice, 'id="nurevo-setup-notice" class="notice notice-info is-dismissible"') !== false, 'a skipped setup shows one dismissible info notice');
+expect(strpos($skip_notice, 'Resume setup') !== false && strpos($skip_notice, 'webmcp_canary_dismiss_setup_notice') !== false, 'with a resume link and a server-side dismissal');
+$_GET = array();
+ob_start(); webmcp_canary_wizard_skipped_notice(); $elsewhere_notice = ob_get_clean();
+expect($elsewhere_notice === '', 'not outside Nurevo screens');
+$_GET = array('page' => 'webmcp-canary-setup');
+ob_start(); webmcp_canary_wizard_skipped_notice(); $on_wizard = ob_get_clean();
+expect($on_wizard === '', 'nor on the wizard itself');
+$_GET = array('page' => 'webmcp-canary-settings', 'nurevo_dismiss_setup' => '1', '_wpnonce' => 'forged');
+expect(webmcp_canary_wizard_maybe_dismiss_notice() === false, 'a forged dismissal is ignored');
+$_GET['_wpnonce'] = md5('webmcp_canary_dismiss_setup');
+expect(webmcp_canary_wizard_maybe_dismiss_notice() === true, 'the Do not show again link dismisses it');
+ob_start(); webmcp_canary_wizard_skipped_notice(); $dismissed = ob_get_clean();
+expect($dismissed === '', 'and it stays dismissed for that user');
+$GLOBALS['webmcp_test_user_id'] = 3;
+$_GET = array('page' => 'webmcp-canary');
+ob_start(); webmcp_canary_wizard_skipped_notice(); $other_admin = ob_get_clean();
+expect($other_admin !== '', 'another administrator still sees it once');
+expect(webmcp_canary_wizard_dismiss_notice_for_user(3) && get_user_meta(3, WEBMCP_CANARY_WIZARD_NOTICE_META, true) === 1, 'the AJAX close button stores the same per-user dismissal');
+$GLOBALS['webmcp_test_user_id'] = 1;
+update_option(WEBMCP_CANARY_WIZARD_OPTION, array('step' => 3, 'status' => 'done'));
+$GLOBALS['webmcp_test_user_meta'] = array();
+ob_start(); webmcp_canary_wizard_skipped_notice(); $finished = ob_get_clean();
+expect($finished === '', 'no notice once setup is finished');
+$_GET = array();
+
+// The "output is off" notice stays off the wizard, which has the switch itself.
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '0';
+$_GET = array('page' => 'webmcp-canary-setup');
+ob_start(); webmcp_canary_output_off_notice(); $off_on_wizard = ob_get_clean();
+expect($off_on_wizard === '', 'the output-off notice is not shown on the wizard');
+$_GET = array();
+
+// An invalid nonce or a missing capability is rejected, and nothing is saved.
+$wizard_reset();
+$forged = webmcp_canary_wizard_process(array('_wpnonce' => 'forged', 'step' => '1', 'site_type' => 'lodging'));
+expect(!$forged['ok'] && $forged['error'] === 'nonce' && webmcp_canary_settings()['business_type'] === '', 'an invalid nonce is rejected');
+$GLOBALS['webmcp_test_denied_caps'] = array('manage_options');
+$denied = webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '1', 'site_type' => 'lodging'));
+expect(!$denied['ok'] && $denied['error'] === 'forbidden' && webmcp_canary_settings()['business_type'] === '', 'a user without manage_options is rejected');
+ob_start(); webmcp_canary_wizard_page(); $denied_page = ob_get_clean();
+expect($denied_page === '', 'and sees no wizard');
+$GLOBALS['webmcp_test_denied_caps'] = array();
+$outside = webmcp_canary_wizard_process(array('_wpnonce' => $nonce, 'step' => '9'));
+expect(!$outside['ok'] && $outside['error'] === 'step', 'an unknown step is rejected');
+$wizard_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/includes/setup-wizard.php');
+$action_body = webmcp_test_function_body($wizard_source, 'webmcp_canary_wizard_action');
+expect(strpos($action_body, "current_user_can('manage_options')") !== false && strpos($action_body, "check_admin_referer('webmcp_canary_wizard')") !== false, 'the admin-post handler checks the capability and the nonce');
+expect(strpos($wizard_source, 'wp_remote_') === false, 'the wizard has no HTTP calls of its own');
+expect(strpos($wizard_source, "register_setting") === false && strpos($wizard_source, "update_option(WEBMCP_CANARY_OPTION, \$clean)") !== false, 'settings go into the one existing option');
+$wizard_reset();
 
 echo "WordPress AEO admin tests passed\n";
