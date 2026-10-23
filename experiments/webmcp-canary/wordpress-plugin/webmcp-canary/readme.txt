@@ -182,7 +182,7 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Per-page settings in the block editor sidebar and the classic editor: leave a page out of llms.txt, publish no Nurevo structured data on it, or give it its own questions and answers. A page's own FAQ is shown by the Nurevo FAQ block set to "This page's own questions" or by `[nurevo_faq source="post"]`, and published as FAQPage on that page only.
 * Tools: export and import the settings as JSON. Keys, tokens, the plan and the connection are never exported or imported.
 * WP-CLI commands `wp nurevo status|diagnose|export|import`, and a read-only REST route `nurevo/v1/status` for administrators.
-* Filters for developers, documented in DEVELOPERS.md: `nurevo_schema_graph`, `nurevo_business_node`, `nurevo_llms_txt`, `nurevo_llms_txt_lines`, `nurevo_robots_search_agents`, `nurevo_robots_training_agents` and `nurevo_excluded_post_ids`.
+* Filters for developers, documented in docs/developers.md: `webmcp_canary_schema_graph`, `webmcp_canary_business_node`, `webmcp_canary_llms_txt`, `webmcp_canary_llms_txt_lines`, `webmcp_canary_robots_search_agents`, `webmcp_canary_robots_training_agents` and `webmcp_canary_excluded_post_ids`.
 * llms.txt is cached and refreshed when posts or settings change, and is served with `Cache-Control: public, max-age=300`.
 * Multisite: network activation schedules the twice-daily sync on every site, new sites get it too, and network deactivation clears it everywhere.
 * The privacy policy guide (Settings > Privacy) now suggests text describing what is sent to nurevo.jp and when.

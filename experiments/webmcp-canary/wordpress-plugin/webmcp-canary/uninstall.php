@@ -18,7 +18,7 @@ if (!defined('WP_UNINSTALL_PLUGIN')) {
 /**
  * Delete this plugin's options and transients from the current site.
  */
-function nurevo_aeo_uninstall_site() {
+function webmcp_canary_uninstall_site() {
     global $wpdb;
 
     $patterns = array(
@@ -50,10 +50,10 @@ if (is_multisite()) {
     $site_ids = get_sites(array('fields' => 'ids', 'number' => 0));
     foreach ($site_ids as $site_id) {
         switch_to_blog($site_id);
-        nurevo_aeo_uninstall_site();
+        webmcp_canary_uninstall_site();
         restore_current_blog();
     }
     delete_site_option('webmcp_canary_settings');
 } else {
-    nurevo_aeo_uninstall_site();
+    webmcp_canary_uninstall_site();
 }

@@ -6,13 +6,13 @@ Nurevo AEO. Every hook below is applied in exactly one place in
 
 ## Filters
 
-### `nurevo_schema_graph`
+### `webmcp_canary_schema_graph`
 
 Everything Nurevo would publish on the current request, before it is filtered
 for coexistence with an SEO plugin or merged into that plugin's graph.
 
 ```php
-add_filter('nurevo_schema_graph', function (array $bundle) {
+add_filter('webmcp_canary_schema_graph', function (array $bundle) {
     // $bundle['core']  - business, WebSite and page nodes (subject to coexistence rules)
     // $bundle['extra'] - FAQPage and Service nodes (hand-entered, never suppressed)
     // $bundle['org_id'] - @id of the business node (read only)
@@ -24,13 +24,13 @@ add_filter('nurevo_schema_graph', function (array $bundle) {
 Return the same shape. A result without `core` and `extra` node lists is
 ignored. Not called on a page excluded from structured data (see below).
 
-### `nurevo_business_node`
+### `webmcp_canary_business_node`
 
 The business node (Organization, LocalBusiness or the configured subtype),
 after the telephone and opening hours have been normalised.
 
 ```php
-add_filter('nurevo_business_node', function (array $node, array $settings) {
+add_filter('webmcp_canary_business_node', function (array $node, array $settings) {
     $node['priceRange'] = '$$';
     $node['sameAs'] = array('https://www.instagram.com/example');
     return $node;
@@ -41,12 +41,12 @@ Return an array; anything else is ignored. With Yoast SEO, Rank Math or All in
 One SEO active, the node's properties are merged into their business node as
 usual, so values that plugin already sets still win.
 
-### `nurevo_llms_txt_lines`
+### `webmcp_canary_llms_txt_lines`
 
 The lines of `/llms.txt` (Markdown, one string per line) before they are joined.
 
 ```php
-add_filter('nurevo_llms_txt_lines', function (array $lines) {
+add_filter('webmcp_canary_llms_txt_lines', function (array $lines) {
     $lines[] = '## Policies';
     $lines[] = '';
     $lines[] = '- [Returns](https://example.com/returns/)';
@@ -57,30 +57,30 @@ add_filter('nurevo_llms_txt_lines', function (array $lines) {
 Applied while the body is generated, so its result is cached with it (see
 "Caching").
 
-### `nurevo_llms_txt`
+### `webmcp_canary_llms_txt`
 
 The complete `/llms.txt` body as served, on every request, after the cache.
 
 ```php
-add_filter('nurevo_llms_txt', function ($body) {
+add_filter('webmcp_canary_llms_txt', function ($body) {
     return $body . "\n> Last reviewed by the owner in 2026.\n";
 });
 ```
 
 Return a string; anything else is ignored.
 
-### `nurevo_robots_search_agents` / `nurevo_robots_training_agents`
+### `webmcp_canary_robots_search_agents` / `webmcp_canary_robots_training_agents`
 
 The crawler user-agent tokens Nurevo writes into the virtual robots.txt.
 Search agents get an `Allow: /` group (repeating your `User-agent: *` rules);
 training agents follow the "AI training crawlers" choice in Settings.
 
 ```php
-add_filter('nurevo_robots_search_agents', function (array $agents) {
+add_filter('webmcp_canary_robots_search_agents', function (array $agents) {
     $agents[] = 'MistralAI-User';
     return $agents;
 });
-add_filter('nurevo_robots_training_agents', function (array $agents) {
+add_filter('webmcp_canary_robots_training_agents', function (array $agents) {
     return array_diff($agents, array('CCBot'));
 });
 ```
@@ -88,14 +88,14 @@ add_filter('nurevo_robots_training_agents', function (array $agents) {
 Values are reduced to single-line tokens (letters, digits, `. _ - / *` and
 spaces) and de-duplicated.
 
-### `nurevo_excluded_post_ids`
+### `webmcp_canary_excluded_post_ids`
 
 Post IDs left out of `/llms.txt` (`$context === 'llms'`) or given no Nurevo
 structured data (`$context === 'schema'`). Starts from the posts whose editors
 ticked the matching per-post setting.
 
 ```php
-add_filter('nurevo_excluded_post_ids', function (array $ids, $context) {
+add_filter('webmcp_canary_excluded_post_ids', function (array $ids, $context) {
     if ($context === 'llms') {
         $ids = array_merge($ids, get_posts(array('post_type' => 'page', 'post_parent' => 42, 'fields' => 'ids')));
     }

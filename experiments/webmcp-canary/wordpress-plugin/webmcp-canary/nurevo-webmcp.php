@@ -650,8 +650,8 @@ function webmcp_canary_excluded_post_ids($context) {
             }
         }
     }
-    /** Filter: post IDs excluded from llms.txt ($context 'llms') or structured data ('schema'). See DEVELOPERS.md. */
-    $ids = apply_filters('nurevo_excluded_post_ids', $ids, $context);
+    /** Filter: post IDs excluded from llms.txt ($context 'llms') or structured data ('schema'). See docs/developers.md. */
+    $ids = apply_filters('webmcp_canary_excluded_post_ids', $ids, $context);
     return array_values(array_unique(array_filter(array_map('intval', (array) $ids))));
 }
 
@@ -792,14 +792,14 @@ function webmcp_canary_settings() {
  * is what AEO needs. Sources: OpenAI, Anthropic and Perplexity crawler docs.
  */
 function webmcp_canary_ai_search_agents() {
-    /** Filter: the AI search crawlers given an Allow group in robots.txt. See DEVELOPERS.md. */
-    return webmcp_canary_clean_agent_list(apply_filters('nurevo_robots_search_agents', array('OAI-SearchBot', 'ChatGPT-User', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User')));
+    /** Filter: the AI search crawlers given an Allow group in robots.txt. See docs/developers.md. */
+    return webmcp_canary_clean_agent_list(apply_filters('webmcp_canary_robots_search_agents', array('OAI-SearchBot', 'ChatGPT-User', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User')));
 }
 
 /** Crawlers (or opt-out tokens) that collect content for model training. */
 function webmcp_canary_ai_training_agents() {
-    /** Filter: the AI training crawlers the training choice applies to. See DEVELOPERS.md. */
-    return webmcp_canary_clean_agent_list(apply_filters('nurevo_robots_training_agents', array('GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended', 'CCBot')));
+    /** Filter: the AI training crawlers the training choice applies to. See docs/developers.md. */
+    return webmcp_canary_clean_agent_list(apply_filters('webmcp_canary_robots_training_agents', array('GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended', 'CCBot')));
 }
 
 /** A filtered agent list as unique single-line tokens, so robots.txt stays well formed. */
@@ -3165,8 +3165,8 @@ function webmcp_canary_build_local_llms_txt() {
         $lines[] = '';
     }
 
-    /** Filter: the llms.txt lines, before they are joined and cached. See DEVELOPERS.md. */
-    $filtered_lines = apply_filters('nurevo_llms_txt_lines', $lines);
+    /** Filter: the llms.txt lines, before they are joined and cached. See docs/developers.md. */
+    $filtered_lines = apply_filters('webmcp_canary_llms_txt_lines', $lines);
     if (is_array($filtered_lines)) {
         $lines = array_map('strval', array_filter($filtered_lines, 'is_scalar'));
     }
@@ -3194,8 +3194,8 @@ function webmcp_canary_llms_txt_body() {
         return null;
     }
     $body = webmcp_canary_cached_llms_txt($settings);
-    /** Filter: the complete llms.txt body as served. See DEVELOPERS.md. */
-    $filtered_body = apply_filters('nurevo_llms_txt', $body);
+    /** Filter: the complete llms.txt body as served. See docs/developers.md. */
+    $filtered_body = apply_filters('webmcp_canary_llms_txt', $body);
     return is_string($filtered_body) ? $filtered_body : $body;
 }
 
@@ -5194,8 +5194,8 @@ function webmcp_canary_admin_bar_score($wp_admin_bar) {
     $cached = webmcp_canary_cached_aeo_score();
     $score = is_array($cached) ? $cached['data'] : null;
     $view = webmcp_canary_aeo_view($score);
-    /* translators: %s: AEO score out of 100, or a "checking" label while it is being calculated. */
     $pending_label = webmcp_canary_has_consent() ? __('Checking', 'nurevo-webmcp') : __('not run yet', 'nurevo-webmcp');
+    /* translators: %s: AEO score out of 100, or a "checking" label while it is being calculated. */
     $label = sprintf(__('AEO %s', 'nurevo-webmcp'), is_null($view['score']) ? $pending_label : $view['score']);
     $wp_admin_bar->add_node(array(
         'id' => 'webmcp-canary-aeo-score',
@@ -6067,8 +6067,8 @@ function webmcp_canary_own_schema_bundle() {
     } else {
         $org = webmcp_canary_normalize_business_facts($org, $settings);
     }
-    /** Filter: the business node, before coexistence and merging. See DEVELOPERS.md. */
-    $filtered_org = apply_filters('nurevo_business_node', $org, $settings);
+    /** Filter: the business node, before coexistence and merging. See docs/developers.md. */
+    $filtered_org = apply_filters('webmcp_canary_business_node', $org, $settings);
     if (is_array($filtered_org) && !empty($filtered_org)) {
         $org = $filtered_org;
     }
@@ -6172,9 +6172,9 @@ function webmcp_canary_own_schema_bundle() {
     /**
      * Filter: everything Nurevo would publish on this request, before it is
      * filtered for coexistence or merged into an SEO plugin's graph. See
-     * DEVELOPERS.md. A result without node lists for core and extra is ignored.
+     * docs/developers.md. A result without node lists for core and extra is ignored.
      */
-    $filtered = apply_filters('nurevo_schema_graph', $bundle);
+    $filtered = apply_filters('webmcp_canary_schema_graph', $bundle);
     if (is_array($filtered) && isset($filtered['core'], $filtered['extra']) && is_array($filtered['core']) && is_array($filtered['extra'])) {
         $bundle = array_merge($bundle, array('core' => array_values($filtered['core']), 'extra' => array_values($filtered['extra'])));
     }
@@ -6567,6 +6567,7 @@ function webmcp_canary_apply_autofix($job) {
     // plugin's cache at once. Verification waits for a fresh public fetch.
     if (function_exists('rocket_clean_home')) { rocket_clean_home(); }
     if (function_exists('w3tc_flush_url')) { w3tc_flush_url(home_url('/')); }
+    // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- LiteSpeed Cache's own hook.
     do_action('litespeed_purge_url', home_url('/'));
     do_action('webmcp_canary_aeo_cache_purge', $job);
     update_option('webmcp_canary_autofix_state', array('applied_at' => $stamp, 'missing_json' => isset($job['missing_json']) ? $job['missing_json'] : '{}'), false);
