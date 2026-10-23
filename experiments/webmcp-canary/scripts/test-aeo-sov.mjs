@@ -17,9 +17,11 @@ assert.deepEqual(engineStatus({}).engines, [], "an unkeyed environment advertise
 const bothKeys = { PERPLEXITY_API_KEY: "pk", OPENAI_API_KEY: "ok" };
 const engines = availableEngines(bothKeys);
 assert.equal(engines.length, 2, "both keys enable both engines");
-assert.equal(engines[0].id, "perplexity", "the citation-capable engine is probed first");
+assert.equal(engines[0].id, "perplexity", "perplexity is probed first");
 assert.equal(engines[0].citations, true, "perplexity reports citation support");
-assert.equal(engines[1].citations, false, "openai does not claim citation support");
+assert.equal(engines[1].citations, true, "openai (Responses API + web_search) returns url citations");
+assert.deepEqual(availableEngines({ ...bothKeys, GEMINI_API_KEY: "gk" }).map((e) => e.id), ["perplexity", "openai"],
+  "a Gemini key enables nothing: grounded results may not be analysed under the Gemini API terms");
 assert.ok(
   availableEngines({ ...bothKeys, EXTRA: "x" }).length <= SOV_LIMITS.maxEnginesPerRun,
   "engine count never exceeds the per-run cap",
@@ -207,7 +209,7 @@ assert.equal(withFailures.answers_received, 2, "only successful probes form the 
 assert.equal(withFailures.appearance_rate, 0.5, "failures do not dilute the rate");
 assert.equal(withFailures.questions_asked, 4, "attempts are still reported");
 
-// Per-engine split: a live-search engine and a from-memory engine are separated.
+// Per-engine split: each engine's answers and failures stay its own.
 const breakdown = Object.fromEntries(withFailures.by_engine.map((row) => [row.engine, row]));
 assert.equal(breakdown.perplexity.answers, 2, "perplexity answers are counted");
 assert.equal(breakdown.perplexity.live_search, true, "perplexity is marked as live search");
@@ -215,7 +217,7 @@ assert.equal(breakdown.perplexity.citations_available, true, "perplexity is mark
 assert.equal(breakdown.openai.failures, 2, "openai failures are attributed to openai");
 assert.equal(breakdown.openai.answers, 0, "a failed engine contributes no answers");
 assert.equal(breakdown.openai.appearance_rate, null, "an engine with no answers has no rate");
-assert.equal(breakdown.openai.live_search, false, "the chat engine is marked as not live search");
+assert.equal(breakdown.openai.live_search, true, "ChatGPT is measured with web search");
 
 // Brand matching: exact containment of a vetted alias only.
 const genericName = buildBrandProfile({
@@ -309,7 +311,7 @@ assert.equal(budgetStub.calls.length, 2, "the budget hard-caps the number of eng
 assert.equal(budgeted.queries_used, 2, "usage reflects the calls actually issued");
 assert.equal(budgeted.truncated, true, "a budget-limited run is marked truncated");
 
-const twoEngineStub = engineStub([perplexityAnswer, { body: { choices: [{ message: { content: "no match" } }] } }]);
+const twoEngineStub = engineStub([perplexityAnswer, { body: { output: [{ type: "web_search_call", status: "completed" }, { type: "message", content: [{ type: "output_text", text: "no match", annotations: [] }] }] } }]);
 const twoEngine = await measureSov(bothKeys, overridden, { questions: ["q1"], fetchImpl: twoEngineStub.fetchImpl });
 assert.equal(twoEngineStub.calls.length, 2, "each question is asked of every configured engine");
 assert.equal(twoEngine.appearance_rate, 0.5, "one engine mentioning and one not gives 0.5");

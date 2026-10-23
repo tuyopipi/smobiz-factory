@@ -27,7 +27,7 @@ export const REQUIRED_SECRETS = Object.freeze([
   { name: "STRIPE_SECRET_KEY", why: "Stripe API key used by checkout/portal" },
   { name: "STRIPE_WEBHOOK_SECRET", why: "without it the subscription webhook is refused and a paid Pro site never becomes pro" },
   { name: "STRIPE_PRICE_ID_PRO", why: "the Pro price; checkout and the webhook both map it to plan=pro" },
-  { name: "PERPLEXITY_API_KEY", why: "the only engine the Pro SoV measurement uses" },
+  { name: "PERPLEXITY_API_KEY", why: "the Pro AI-visibility measurement's baseline engine (OPENAI_API_KEY / GEMINI_API_KEY optionally add ChatGPT / Gemini)" },
 ]);
 export const FLAG = "PRO_CHECKOUT_ENABLED";
 export const EXPECTED_PRICE = Object.freeze({ currency: "jpy", unit_amount: 14800, interval: "month", interval_count: 1 });

@@ -35,7 +35,18 @@ OPENAI_MODEL=gpt-4.1-mini
 # request carries the API key; any other value is ignored and the real
 # provider is used. Only for pointing a local run at a mock engine.
 # PERPLEXITY_API_URL=http://127.0.0.1:8799/chat/completions
-# OPENAI_CHAT_API_URL=http://127.0.0.1:8799/chat/completions
+# OPENAI_RESPONSES_SOV_API_URL=http://127.0.0.1:8799/v1/responses
+#
+# ChatGPT measurement (OPENAI_API_KEY present = enabled). NOTE: the same key is
+# used by the AEO learning job, so setting it turns ChatGPT measurement on too;
+# set SOV_OPENAI_SITE_MONTHLY_CAP=0 to keep it off. Model and caps:
+# SOV_OPENAI_MODEL=gpt-6-luna
+# SOV_OPENAI_REASONING_EFFORT=low
+# SOV_OPENAI_SITE_MONTHLY_CAP=120      # calls per site per month (0 = off)
+# SOV_OPENAI_GLOBAL_MONTHLY_CAP=3000   # calls per month, all sites
+# SOV_PERPLEXITY_GLOBAL_MONTHLY_CAP=6000  # per-site cap stays 200 (aeo-sov.mjs)
+# Gemini is not measured: the Gemini API grounding terms forbid analysing
+# Grounded Results. GEMINI_API_KEY is ignored by this measurement.
 #
 # Weekly batch size (pro sites measured per run). Hard caps on questions,
 # engines and the per-site monthly query budget live in worker/aeo-sov.mjs.

@@ -19,7 +19,7 @@ function installFetch() {
   engineCalls = 0;
   globalThis.fetch = async (input, init = {}) => {
     const href = typeof input === "string" ? input : input.url;
-    if (href.includes("api.perplexity.ai") || href.includes("api.openai.com")) {
+    if (href.includes("api.perplexity.ai") || href.includes("api.openai.com") || href.includes("generativelanguage.googleapis.com")) {
       engineCalls += 1;
       return new Response(JSON.stringify({
         choices: [{ message: { content: "ルミナ 表参道 がおすすめです。" } }],
@@ -86,7 +86,7 @@ assert.ok(engineCalls <= SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPe
 
 /* --- cap 2: engines per run ----------------------------------------------- */
 installFetch();
-await measureSov({ PERPLEXITY_API_KEY: "pk", OPENAI_API_KEY: "ok" }, profile, { questions: ["only-one"] });
+await measureSov({ PERPLEXITY_API_KEY: "pk", OPENAI_API_KEY: "ok", GEMINI_API_KEY: "gk", EXTRA_API_KEY: "x" }, profile, { questions: ["only-one"] });
 assert.equal(engineCalls, SOV_LIMITS.maxEnginesPerRun, "one question is asked of at most maxEnginesPerRun engines");
 
 /* --- cap 3: monthly budget exhausted -> zero engine calls ------------------ */
