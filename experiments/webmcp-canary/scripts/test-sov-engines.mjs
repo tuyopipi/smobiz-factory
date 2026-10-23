@@ -57,7 +57,7 @@ function recorder(responder) {
     text: "**栞珈琲**は渋谷区の人気カフェです。\n1. 栞珈琲 - 自家焙煎\n2. 青山ロースター：駅近",
     citations: [{ url: "https://tabelog.com/x", title: "食べログ" }, { url: "https://other-cafe.jp/", title: "Other" }],
   })));
-  const probe = await probeOpenAiWebSearch({ OPENAI_API_KEY: "sk-test-not-real-000000" }, "渋谷区のカフェでおすすめはどこ？", r.fetchImpl, { profile });
+  const probe = await probeOpenAiWebSearch({ SOV_OPENAI_API_KEY: "sk-test-not-real-000000" }, "渋谷区のカフェでおすすめはどこ？", r.fetchImpl, { profile });
   assert.equal(r.calls.length, 1);
   assert.equal(r.calls[0].url, "https://api.openai.com/v1/responses", "the Responses API is used");
   const body = r.calls[0].body;
@@ -65,6 +65,7 @@ function recorder(responder) {
   assert.equal(body.tools[0].type, "web_search", "the web_search tool is requested");
   assert.deepEqual(body.tools[0].user_location, { type: "approximate", country: "JP", timezone: "Asia/Tokyo", city: "渋谷区" }, "located in Japan, with the city");
   assert.equal(body.tool_choice, "required", "the engine must actually search");
+  assert.equal(body.max_tool_calls, 2, "but at most 2 tool calls (billed searches) per answer by default");
   assert.equal(body.store, false, "responses are not stored at the provider");
   assert.equal(r.calls[0].init.headers.authorization, "Bearer sk-test-not-real-000000");
   assert.equal(probe.citations.length, 2);
@@ -85,28 +86,28 @@ function recorder(responder) {
   assert.equal(custom.est_usd, 0.02); assert.equal(custom.token_price_known, false);
 
   // No mention, cited only.
-  const none = await probeOpenAiWebSearch({ OPENAI_API_KEY: "k" }, "q", recorder(() => json(openAiBody({ text: "青山ロースターがおすすめ。" }))).fetchImpl, { profile });
+  const none = await probeOpenAiWebSearch({ SOV_OPENAI_API_KEY: "k" }, "q", recorder(() => json(openAiBody({ text: "青山ロースターがおすすめ。" }))).fetchImpl, { profile });
   const noneA = analyzeAnswer({ ...none, profile });
   assert.equal(noneA.mentioned || noneA.cited, false, "no mention and no citation is not an appearance");
-  const citedOnly = await probeOpenAiWebSearch({ OPENAI_API_KEY: "k" }, "q",
+  const citedOnly = await probeOpenAiWebSearch({ SOV_OPENAI_API_KEY: "k" }, "q",
     recorder(() => json(openAiBody({ text: "駅近の自家焙煎の店があります。", citations: [{ url: "https://www.shiori-coffee.jp/menu", title: "menu" }] }))).fetchImpl, { profile });
   const citedA = analyzeAnswer({ ...citedOnly, profile });
   assert.equal(citedA.mentioned, false); assert.equal(citedA.cited, true, "a citation of the domain is detected");
 
   // API error: detail kept, key never echoed.
-  const err = await probeOpenAiWebSearch({ OPENAI_API_KEY: "k" }, "q",
+  const err = await probeOpenAiWebSearch({ SOV_OPENAI_API_KEY: "k" }, "q",
     recorder(() => new Response('{"error":{"message":"Incorrect API key provided: sk-proj-abcdefghijklmnop"}}', { status: 401 })).fetchImpl, { profile }).catch((e) => e);
   assert.ok(err instanceof SovError); assert.equal(err.code, "openai_http_401");
   assert.ok(!err.detail.includes("abcdefghijklmnop"), "a key in the provider's error is redacted");
   // Provider quota.
-  const quota = await probeOpenAiWebSearch({ OPENAI_API_KEY: "k" }, "q",
+  const quota = await probeOpenAiWebSearch({ SOV_OPENAI_API_KEY: "k" }, "q",
     recorder(() => new Response('{"error":{"code":"insufficient_quota","message":"You exceeded your current quota"}}', { status: 429 })).fetchImpl, { profile }).catch((e) => e);
   assert.equal(quota.code, "openai_quota_exhausted", "a spent provider quota has its own code");
-  const rate = await probeOpenAiWebSearch({ OPENAI_API_KEY: "k" }, "q", recorder(() => new Response("slow down", { status: 429 })).fetchImpl, { profile }).catch((e) => e);
+  const rate = await probeOpenAiWebSearch({ SOV_OPENAI_API_KEY: "k" }, "q", recorder(() => new Response("slow down", { status: 429 })).fetchImpl, { profile }).catch((e) => e);
   assert.equal(rate.code, "openai_http_429", "a plain rate limit is not a quota");
   // A loopback override is honoured, a remote one is not.
   const remote = recorder(() => json(openAiBody({ text: "x" })));
-  await probeOpenAiWebSearch({ OPENAI_API_KEY: "k", OPENAI_RESPONSES_SOV_API_URL: "https://evil.example/collect" }, "q", remote.fetchImpl, { profile });
+  await probeOpenAiWebSearch({ SOV_OPENAI_API_KEY: "k", OPENAI_RESPONSES_SOV_API_URL: "https://evil.example/collect" }, "q", remote.fetchImpl, { profile });
   assert.equal(remote.calls[0].url, "https://api.openai.com/v1/responses", "the key is never sent to an injected host");
 }
 
@@ -138,7 +139,7 @@ function recorder(responder) {
   const result = await measureSov({}, profile, { questions: ["q"], fetchImpl: r.fetchImpl });
   assert.equal(result.status, "unconfigured"); assert.equal(r.calls.length, 0);
   const openAiOnly = recorder(() => json(openAiBody({ text: "栞珈琲" })));
-  const o = await measureSov({ OPENAI_API_KEY: "o" }, profile, { questions: ["q1", "q2"], fetchImpl: openAiOnly.fetchImpl });
+  const o = await measureSov({ SOV_OPENAI_API_KEY: "o" }, profile, { questions: ["q1", "q2"], fetchImpl: openAiOnly.fetchImpl });
   assert.ok(openAiOnly.calls.every((c) => c.url.includes("api.openai.com")), "only the configured engine is contacted");
   assert.deepEqual(o.engines_run, ["openai"]);
   assert.equal(sanitizeProviderText("token pplx-abcdefghijk and sk-abcdefghijk and AIzaSyABCDEFGHIJKLMNOPQRSTUVWXYZ"), "token [redacted] and [redacted] and [redacted]");
@@ -146,7 +147,8 @@ function recorder(responder) {
 
 /* ---------------- two engines, repeat sampling, per-engine budget ---------------- */
 // The Gemini key is present throughout to prove it is ignored.
-const ALL_KEYS = { PERPLEXITY_API_KEY: "pk", OPENAI_API_KEY: "ok", GEMINI_API_KEY: "gk" };
+// ChatGPT is off by default (per-site cap 0), so these tests turn it on.
+const ALL_KEYS = { PERPLEXITY_API_KEY: "pk", SOV_OPENAI_API_KEY: "ok", GEMINI_API_KEY: "gk", SOV_OPENAI_SITE_MONTHLY_CAP: "120" };
 function engineFetch({ openaiQuota = false } = {}) {
   return recorder((url) => {
     if (url.includes("perplexity")) return json(perplexityBody({ text: "栞珈琲が人気。", urls: ["https://other.example/"] }));
@@ -172,7 +174,8 @@ function engineFetch({ openaiQuota = false } = {}) {
   assert.equal(by.openai.small_sample, true);
   assert.equal(result.combined.n, 10); assert.equal(result.combined.appeared, 10); assert.equal(result.combined.named, 6); assert.equal(result.combined.cited, 4);
   assert.equal(result.combined.appearance_rate, 1);
-  assert.equal(result.appearance_rate, 0.6, "the original named-only rate keeps its meaning");
+  assert.equal(result.appearance_rate, 1, "the run-level rate is Perplexity's named-only rate, never pooled with ChatGPT");
+  assert.equal(result.headline.engine, "perplexity"); assert.equal(result.headline.answers, 6);
   assert.ok(result.samples.find((s) => s.engine === "openai").sources[0].title === "栞", "source titles are kept as evidence");
 
   // No mention at all from either engine: 0, with an interval.
@@ -226,10 +229,10 @@ function sqliteDb({ withEngineUsage = true } = {}) {
 {
   const DB = sqliteDb();
   const env = { DB, ...ALL_KEYS };
-  assert.deepEqual(engineCaps({}, "openai"), { site: 120, global: 3000 }, "conservative defaults");
+  assert.deepEqual(engineCaps({}, "openai"), { site: 0, global: 3000 }, "ChatGPT is off by default (per-site cap 0)");
   assert.deepEqual(engineCaps({ SOV_OPENAI_SITE_MONTHLY_CAP: "50", SOV_OPENAI_GLOBAL_MONTHLY_CAP: "900" }, "openai"), { site: 50, global: 900 }, "env overrides");
   assert.deepEqual(engineCaps({ SOV_PERPLEXITY_SITE_MONTHLY_CAP: "5" }, "perplexity").site, 200, "Perplexity's per-site cap stays the original constant");
-  assert.equal(engineCaps({ SOV_OPENAI_SITE_MONTHLY_CAP: "abc" }, "openai").site, 120, "a malformed override falls back to the default");
+  assert.equal(engineCaps({ SOV_OPENAI_SITE_MONTHLY_CAP: "abc" }, "openai").site, 0, "a malformed override falls back to the default (off)");
 
   let plans = await planEngineBudgets(env, "s1", { perRunMax: 40, perplexitySite: { used: 0 } });
   assert.deepEqual(plans.map((p) => [p.engine, p.status, p.allowance]), [["perplexity", "ready", 40], ["openai", "ready", 40]]);
@@ -250,6 +253,8 @@ function sqliteDb({ withEngineUsage = true } = {}) {
   assert.equal(plans[0].status, "disabled", "a cap of 0 switches an engine off without removing its key");
   plans = await planEngineBudgets(env, "s3", { perRunMax: 40, perplexitySite: { used: 200 } });
   assert.deepEqual([plans[0].status, plans[0].scope], ["quota_reached", "site"], "Perplexity's original counter still decides its site cap");
+  plans = await planEngineBudgets({ DB, PERPLEXITY_API_KEY: "pk", SOV_OPENAI_API_KEY: "ok" }, "s1", { perRunMax: 40, perplexitySite: { used: 0 } });
+  assert.deepEqual([plans[1].status, plans[1].allowance], ["disabled", 0], "with a key but no per-site cap ChatGPT stays off");
   plans = await planEngineBudgets({ DB }, "s1", { perRunMax: 40 });
   assert.ok(plans.every((p) => p.status === "not_configured"), "no keys: every engine is not configured, never an error");
 
@@ -292,7 +297,9 @@ function sqliteDb({ withEngineUsage = true } = {}) {
   // the engine set) starts again.
   assert.equal(rows.perplexity.trend.length, 2, "Perplexity's history continues");
   assert.equal(rows.openai.trend.length, 1);
-  assert.equal(report.trend.length, 1, "the combined series restarts when the engine set changes");
+  assert.equal(report.trend.length, 2, "the headline series is Perplexity's and continues when ChatGPT is added");
+  assert.ok(report.trend.every((point) => point.engine === "perplexity"));
+  assert.equal(report.summary.engine, "perplexity"); assert.equal(report.summary.answers, 4, "the summary is Perplexity's answers only");
   assert.equal(report.combined.n, 8); assert.equal(report.combined.appeared, 8);
   assert.deepEqual(report.combined.engines, ["openai", "perplexity"]);
   assert.equal(trendKey(config, ["perplexity"]), trendKey(config), "a Perplexity-only key is the key earlier runs had");
@@ -343,7 +350,7 @@ function sqliteDb({ withEngineUsage = true } = {}) {
     if (init.method === "HEAD") return new Response(null, { status: 200 });
     return new Response(PAGE, { status: 200, headers: { "content-type": "text/html" } });
   };
-  const SECRETS = { PERPLEXITY_API_KEY: "E2E-SECRET-PPLX", OPENAI_API_KEY: "E2E-SECRET-OPENAI", GEMINI_API_KEY: "E2E-SECRET-GEMINI" };
+  const SECRETS = { PERPLEXITY_API_KEY: "E2E-SECRET-PPLX", SOV_OPENAI_API_KEY: "E2E-SECRET-OPENAI", GEMINI_API_KEY: "E2E-SECRET-GEMINI" };
   const env = { DB, ...SECRETS, SOV_OPENAI_SITE_MONTHLY_CAP: "4", WEBMCP_ALLOWED_ORIGINS: "https://nurevo.jp" };
   console.log = (...args) => { logs.push(args.join(" ")); };
   let batch;

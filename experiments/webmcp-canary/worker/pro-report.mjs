@@ -1,4 +1,4 @@
-import { SovError, normalizeHost, buildQuestionSet, availableEngines, profileIdentity, SOV_LANGUAGES, SOV_LIMITS, SOV_MIN_SAMPLES_FOR_RATE, enginesRunOf, sovRemainingBudget } from './aeo-sov.mjs';
+import { SovError, normalizeHost, buildQuestionSet, availableEngines, profileIdentity, SOV_LANGUAGES, SOV_LIMITS, SOV_MIN_SAMPLES_FOR_RATE, SOV_RUN_TIME_BUDGET_MS, HEADLINE_ENGINE_DEFAULT, enginesRunOf, headlineEngineOf, sovRemainingBudget } from './aeo-sov.mjs';
 import { ENGINE_DEFINITIONS, SMALL_SAMPLE_N, engineConfigured, planEngineBudgets, wilsonInterval } from './ai-engines.mjs';
 
 export const VARIABILITY_NOTICE = 'AI回答・引用は実行日時やモデルで変動します。小規模サンプルの観測値であり、絶対値・順位・正確性を保証しません。引用順位は提供元の出典URL一覧の順序です。';
@@ -161,12 +161,22 @@ export async function loadCachedRun(env, siteId, cacheKey) {
   if (detail.cache_key !== cacheKey) return null;
   return { run: { id: row.id, ran_at: row.ran_at }, measurement: { ...row, competitors: parseJson(row.competitors_json, []), queries_used: 0 }, cached: true };
 }
+/**
+ * How long a measurement lock is held if its run never releases it (the
+ * Worker was killed). A run stops issuing engine calls at its deadline
+ * (SOV_RUN_TIME_BUDGET_MS after it started), each call is bounded end to end
+ * by the request timeout (ChatGPT's tool calls by max_tool_calls inside it),
+ * so the longest a live run can hold the lock is the budget plus one call; the
+ * margin covers fetching the site's schema and storing the run. 15.3 minutes,
+ * down from a fixed 30.
+ */
+export const MEASUREMENT_LOCK_MARGIN_MS = 5 * 60 * 1000;
+export const MEASUREMENT_LOCK_LEASE_MS = SOV_RUN_TIME_BUDGET_MS + SOV_LIMITS.requestTimeoutMs + MEASUREMENT_LOCK_MARGIN_MS;
 export async function acquireMeasurementLock(env, siteId) {
   const token = crypto.randomUUID();
-  // Maximum run is 40 sequential calls, each with a 20s timeout. Lock lease exceeds that.
   const row = await env.DB.prepare(`INSERT INTO aeo_sov_locks(site_id,token,expires_at) VALUES (?,?,?)
     ON CONFLICT(site_id) DO UPDATE SET token=excluded.token,expires_at=excluded.expires_at
-    WHERE aeo_sov_locks.expires_at<?`).bind(siteId, token, Date.now()+30*60*1000, Date.now()).run();
+    WHERE aeo_sov_locks.expires_at<?`).bind(siteId, token, Date.now()+MEASUREMENT_LOCK_LEASE_MS, Date.now()).run();
   return row.meta?.changes === 0 ? null : token;
 }
 export async function releaseMeasurementLock(env, siteId, token) {
@@ -203,6 +213,12 @@ export function buildProReport({ site, run = null, evidence = [], runs = [], con
   const snapshot = detail.query_set || null;
   const entries = evidence.map(e => ({ ...e, citation_urls: parseJson(e.citation_urls_json, []), accuracy: parseJson(e.accuracy_json) }));
   const discovery = entries.filter(e => e.ok && e.accuracy.kind !== 'branded');
+  // The summary and its trend are the headline engine's (Perplexity whenever
+  // it is configured), as the run-level columns are: answers of different
+  // engines are not pooled into the headline. A run that did not ask that
+  // engine has no headline figure; the per-engine rows below still show it.
+  const headlineEngine = run ? (headlineEngineOf(detail) || HEADLINE_ENGINE_DEFAULT) : HEADLINE_ENGINE_DEFAULT;
+  const headlineAnswers = discovery.filter(e => (e.engine || 'perplexity') === headlineEngine);
   const domain = normalizeHost(site.website_uri || site.url);
   // Competitors registered after a run are counted against that run's stored
   // evidence: every cited URL of every answer is kept, so this is a recount of
@@ -232,25 +248,35 @@ export function buildProReport({ site, run = null, evidence = [], runs = [], con
   // owner edited a competitor. Rows are compared by the query_set snapshot
   // every run already stores, so old rows join the history with no migration;
   // a row with no snapshot can still match on its exact cache key.
-  // The run-level rate pools every engine asked, so the combined series is
-  // also keyed on that engine set: adding or losing an engine starts a new
-  // combined series and never bends an existing one.
-  const currentTrendKey = trendKey(snapshot, enginesRunOf(detail));
+  // The run-level rate is the headline engine's, so the series is keyed on
+  // that engine alone (a Perplexity key is the key every earlier run had) and
+  // keeps only runs whose headline is that engine and in which it answered:
+  // adding or losing ChatGPT never bends or restarts it.
+  const currentTrendKey = trendKey(snapshot, [headlineEngine]);
+  const headlineAnswered = (d, r) => headlineEngineOf(d) === headlineEngine
+    && (Array.isArray(d.by_engine) && d.by_engine.length
+      ? d.by_engine.some(b => b && b.engine === headlineEngine && Number(b.answers) > 0)
+      : Number(r.answers_received) > 0 || r.appearance_rate != null);
   const trend = snapshot ? runs.filter(r => {
     const d = parseJson(r.detail_json);
-    const key = trendKey(d.query_set, enginesRunOf(d));
-    return key ? key === currentTrendKey : !!d.cache_key && d.cache_key === detail.cache_key;
+    const key = trendKey(d.query_set, [headlineEngine]);
+    return (key ? key === currentTrendKey : !!d.cache_key && d.cache_key === detail.cache_key) && headlineAnswered(d, r);
   })
-    .map(r => ({ id:r.id, ran_at:r.ran_at, appearance_rate:r.appearance_rate ?? null, citation_rate:r.citation_rate, answers_received:r.answers_received,
-      any_rate: parseJson(r.detail_json).combined?.appearance_rate ?? null })).reverse() : [];
+    .map(r => {
+      const d = parseJson(r.detail_json);
+      const own = (Array.isArray(d.by_engine) ? d.by_engine : []).find(b => b && b.engine === headlineEngine);
+      return { id:r.id, ran_at:r.ran_at, engine: headlineEngine, appearance_rate:r.appearance_rate ?? null, citation_rate:r.citation_rate,
+        answers_received: own ? Number(own.answers) : r.answers_received,
+        any_rate: own ? own.any_rate ?? null : d.combined?.appearance_rate ?? null };
+    }).reverse() : [];
   const engines = engineRows({ run, runs, discovery, snapshot, plans: enginePlans, configuredIds, text });
   const combined = run ? { engines: enginesRunOf(detail), ...countStats(discovery.length, discovery.filter(appeared).length,
     discovery.filter(e => e.brand_cited).length, discovery.filter(e => appeared(e) || e.brand_cited).length, text) } : null;
   return { version:'pro-report-v1', site_id:site.id, generated_at:new Date().toISOString(), notice:text.notice,
     status:run?.status || (configured ? 'no_data' : 'unconfigured'), configured, run_id:run?.id || null,
-    summary:{ answers:discovery.length, headline:'appearance_rate',
-      appearance_rate:discovery.length >= 2 ? discovery.filter(appeared).length/discovery.length : null,
-      citation_rate:discovery.length >= 2 ? discovery.filter(e=>e.brand_cited).length/discovery.length : null,
+    summary:{ answers:headlineAnswers.length, headline:'appearance_rate', engine: headlineEngine,
+      appearance_rate:headlineAnswers.length >= 2 ? headlineAnswers.filter(appeared).length/headlineAnswers.length : null,
+      citation_rate:headlineAnswers.length >= 2 ? headlineAnswers.filter(e=>e.brand_cited).length/headlineAnswers.length : null,
       evidence_available:entries.length > 0, legacy_data:!!run && !snapshot },
     // Per engine (Perplexity / ChatGPT) and pooled. "appeared" is
     // named in the answer OR the site's domain among the sources; named and
@@ -338,7 +364,8 @@ function engineRows({ run, runs, discovery, snapshot, plans, configuredIds, text
       quota_scope: plan?.status === 'quota_reached' ? plan.scope : skip?.status === 'quota_reached' ? skip.scope || null : null,
       ...(stats || countStats(0, 0, 0, 0, text)),
       last_run_at: source?.ran_at || null, run_id: source?.id || null,
-      usage: plan ? { site_used: plan.site.used, site_cap: plan.site.cap, global_used: plan.global.used, global_cap: plan.global.cap, est_cost_usd_month: plan.est_cost_usd_month } : null,
+      usage: plan ? { site_used: plan.site.used, site_cap: plan.site.cap, global_used: plan.global.used, global_cap: plan.global.cap, est_cost_usd_month: plan.est_cost_usd_month,
+        site_usd_used: plan.site.usd_used ?? null, site_usd_cap: plan.site.usd_cap ?? null, global_usd_used: plan.global.usd_used ?? null, global_usd_cap: plan.global.usd_cap ?? null } : null,
       trend };
   });
 }

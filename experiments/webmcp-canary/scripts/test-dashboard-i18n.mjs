@@ -28,12 +28,12 @@ const placeholders = (s) => [...String(s).matchAll(/\{(\w+)\}/g)].map((m) => m[1
 
 /* ---------------- 1. the dictionary is complete ---------------- */
 
-const { I, I2, I3, I4 } = loadDictionary();
+const { I, I2, I3, I4, I5 } = loadDictionary();
 assert.deepEqual(Object.keys(I).sort(), [...LANGS].sort(), "the dictionary has exactly the eight languages");
 // zh..de are built on top of English, so a key they do not list themselves
 // would silently show English. Look only at their own blocks.
 const own = (lang) => new Set(["ja", "en"].includes(lang) ? Object.keys(I[lang])
-  : [...Object.keys(I2[lang] || {}), ...Object.keys(I3[lang] || {}), ...Object.keys(I4[lang] || {})]);
+  : [...Object.keys(I2[lang] || {}), ...Object.keys(I3[lang] || {}), ...Object.keys(I4[lang] || {}), ...Object.keys(I5[lang] || {})]);
 const keys = Object.keys(I.ja);
 for (const lang of LANGS) {
   const mine = own(lang);
@@ -54,6 +54,9 @@ for (const key of Object.keys(I.en)) assert.ok(key in I.ja, `en.${key} also exis
 // The I4 block itself, which this change added, lists every key in every language.
 const i4Keys = new Set(LANGS.flatMap((l) => Object.keys(I4[l])));
 for (const lang of LANGS) for (const key of i4Keys) assert.ok(own(lang).has(key), `${lang}.${key} (I4)`);
+// The off-site audit block (I5) likewise lists every key in every language.
+const i5Keys = new Set(LANGS.flatMap((l) => Object.keys(I5[l])));
+for (const lang of LANGS) for (const key of i5Keys) assert.ok(Object.keys(I5[lang]).includes(key), `${lang}.${key} (I5)`);
 // Existing ja/en wording is untouched.
 assert.equal(I.ja.ptCode, "紹介コード");
 // Plan prices: yen in Japanese, US dollars everywhere else.
@@ -74,7 +77,7 @@ assert.equal(I.ja.planGrantOrg && I.ja.planGrantOrg !== "planGrantOrg", true, "p
 
 /* ---------------- 2. the modules use the dictionary ---------------- */
 
-const MODULES = ["dashboard-aeo-metrics.js", "dashboard-sov.js", "dashboard-members.js", "dashboard-rulesets.js"];
+const MODULES = ["dashboard-aeo-metrics.js", "dashboard-sov.js", "dashboard-members.js", "dashboard-rulesets.js", "dashboard-offsite.js"];
 for (const file of MODULES) {
   const src = read(file);
   // Comments may be Japanese-free prose; literals are what reach the page.

@@ -14,8 +14,16 @@ assert.deepEqual(availableEngines({}), [], "no keys means no engines");
 assert.equal(engineStatus({}).configured, false, "an unkeyed environment reports unconfigured");
 assert.deepEqual(engineStatus({}).engines, [], "an unkeyed environment advertises no engines");
 
-const bothKeys = { PERPLEXITY_API_KEY: "pk", OPENAI_API_KEY: "ok" };
+const bothKeys = { PERPLEXITY_API_KEY: "pk", SOV_OPENAI_API_KEY: "ok" };
 const engines = availableEngines(bothKeys);
+// The learning job's OPENAI_API_KEY is not ChatGPT measurement's key: alone it
+// enables nothing, and it is borrowed only with SOV_OPENAI_USE_SHARED_KEY=1.
+assert.deepEqual(availableEngines({ PERPLEXITY_API_KEY: "pk", OPENAI_API_KEY: "ok" }).map((e) => e.id), ["perplexity"],
+  "the shared OPENAI_API_KEY does not enable ChatGPT measurement by default");
+assert.deepEqual(availableEngines({ OPENAI_API_KEY: "ok", SOV_OPENAI_USE_SHARED_KEY: "1" }).map((e) => e.id), ["openai"],
+  "the shared key is used only when the owner opts in");
+assert.deepEqual(availableEngines({ OPENAI_API_KEY: "ok", SOV_OPENAI_USE_SHARED_KEY: "true" }).map((e) => e.id), [],
+  "the opt-in flag must be exactly 1");
 assert.equal(engines.length, 2, "both keys enable both engines");
 assert.equal(engines[0].id, "perplexity", "perplexity is probed first");
 assert.equal(engines[0].citations, true, "perplexity reports citation support");
@@ -314,7 +322,13 @@ assert.equal(budgeted.truncated, true, "a budget-limited run is marked truncated
 const twoEngineStub = engineStub([perplexityAnswer, { body: { output: [{ type: "web_search_call", status: "completed" }, { type: "message", content: [{ type: "output_text", text: "no match", annotations: [] }] }] } }]);
 const twoEngine = await measureSov(bothKeys, overridden, { questions: ["q1"], fetchImpl: twoEngineStub.fetchImpl });
 assert.equal(twoEngineStub.calls.length, 2, "each question is asked of every configured engine");
-assert.equal(twoEngine.appearance_rate, 0.5, "one engine mentioning and one not gives 0.5");
+// The run-level (headline) rate is Perplexity's alone - engines are never
+// pooled into it - so one Perplexity answer gives no rate; the pooled
+// named-or-cited figure is reported separately as `combined`.
+assert.equal(twoEngine.headline.engine, "perplexity", "Perplexity is the headline engine");
+assert.equal(twoEngine.appearance_rate, null, "one Perplexity answer does not produce a headline rate");
+assert.equal(twoEngine.rate_basis, "insufficient_samples");
+assert.equal(twoEngine.combined.appearance_rate, 0.5, "one engine mentioning and one not gives a combined 0.5");
 
 const failingStub = engineStub([{ status: 500 }, perplexityAnswer]);
 const partial = await measureSov({ PERPLEXITY_API_KEY: "pk" }, overridden, {
@@ -363,7 +377,7 @@ assert.ok(localDouble.url.startsWith("http://127.0.0.1:8799/"), "a loopback test
 let contacted = 0;
 await measureSov({}, overridden, { questions: ["q"], fetchImpl: async () => { contacted += 1; return new Response("{}"); } });
 assert.equal(contacted, 0, "an unconfigured environment issues zero engine requests");
-const openAiOnly = await probedUrl({ OPENAI_API_KEY: "ok" });
+const openAiOnly = await probedUrl({ SOV_OPENAI_API_KEY: "ok" });
 assert.ok(openAiOnly.url.startsWith("https://api.openai.com/"), "a configured engine is probed even when the other has no key");
 
 /* ---------------- monthly report ---------------- */

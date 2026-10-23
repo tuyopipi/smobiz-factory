@@ -1,7 +1,7 @@
 import { recordFetched } from "./aeo-delivery.mjs";
 import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
-import { ensureAccount, issueReferralCode, partnerSummary } from "./partner.mjs";
+import { ensureAccount, issueReferralCode, partnerSummary, isApprovedPartner, applyForPartner, reviewPartner, listPartnerApplications, PartnerNotApprovedError } from "./partner.mjs";
 import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
@@ -11,7 +11,7 @@ import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, resolveLlmsTxtLang, robo
 import { AEO_CACHE_TTL_SECONDS, AEO_FRESH_RATE_LIMIT, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, publishedSchemaProps, resolveAeoCheckLang } from "./aeo-score.mjs";
 import { storeAeoScore } from "./diagnose.mjs";
 import {
-  SOV_BETA, SOV_LIMITS, SOV_MODEL_VERSION, SovError,
+  SOV_BETA, SOV_LIMITS, SOV_MODEL_VERSION, SOV_RUN_TIME_BUDGET_MS, SovError,
   availableEngines, buildBrandProfile, buildQuestionSet,
   engineStatus, loadSovHistory, measureSov, sovRecordUsage, sovRemainingBudget, storeSovRun,
 } from "./aeo-sov.mjs";
@@ -21,11 +21,12 @@ import {
   profileToColumns, rowToProfile, serializeFieldSources,
 } from "./site-profile.mjs";
 import { normalizeDomainKey } from "./domain-key.mjs";
-import { ENGINE_PRICING, monthlyCostSummary, planEngineBudgets, recordEngineUsage } from "./ai-engines.mjs";
+import { ENGINE_PRICING, monthlyCostSummary, planEngineBudgets, recordEngineUsage, reserveEngineBudgets } from "./ai-engines.mjs";
 import { PRO_CANDIDATE_SQL, planFromSubscription, pricesFromEnv, proCheckoutEnabled, resolveSitePlan, resolveSitePlanFor } from "./billing-plan.mjs";
 import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
 import { geocodeSiteProfile } from "./geocoder.mjs";
+import { offsiteAuditRun, offsiteAuditView } from "./offsite-audit.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
@@ -924,16 +925,46 @@ export async function handleApi(request, env, ctx) {
   }
   // The partner's own payout account (Stripe Connect Express, Japan). No body
   // is read: the account and the destination are always the signed-in member's.
+  // Only a partner Nurevo approved may set up a payout account (no Stripe call otherwise).
   if (path === "/api/partner/payout/onboard" && method === "POST") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
-    const result = await startPayoutOnboarding(env, await ensureAccount(env, member.member_id));
+    const account = await ensureAccount(env, member.member_id);
+    if (!isApprovedPartner(account)) return json({ error: "partner_not_approved" }, 403);
+    const result = await startPayoutOnboarding(env, account);
     return json(result.body, result.status);
   }
   if (["/api/partner/code", "/api/partner/code/regenerate"].includes(path) && method === "POST") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
-    return json({ referral_code: await issueReferralCode(env, await ensureAccount(env, member.member_id), path.endsWith("regenerate")) });
+    try {
+      return json({ referral_code: await issueReferralCode(env, await ensureAccount(env, member.member_id), path.endsWith("regenerate")) });
+    } catch (error) {
+      if (error instanceof PartnerNotApprovedError) return json({ error: "partner_not_approved" }, 403);
+      throw error;
+    }
+  }
+  // "パートナー申請": the member asks Nurevo to approve it as a partner. No body is read.
+  if (path === "/api/partner/apply" && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const result = await applyForPartner(env, await ensureAccount(env, member.member_id));
+    return json({ ok: true, partner_status: result.status, applied_at: result.applied_at });
+  }
+  // Partner applications: listed, approved and rejected by a super admin only
+  // (the same check as the other /api/admin routes; POSTs are CSRF-checked above).
+  if (path === "/api/admin/partner-applications" && method === "GET") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    return json(await listPartnerApplications(env));
+  }
+  const partnerReview = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject|revoke)$/);
+  if (partnerReview && method === "POST") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    const result = await reviewPartner(env, partnerReview[1], partnerReview[2], superAdmin.member_id);
+    if (result.status === 200) console.log("partner_reviewed", JSON.stringify({ account: Number(partnerReview[1]), decision: partnerReview[2], by: superAdmin.member_id }));
+    return json(result.body, result.status);
   }
 
   if (path === "/api/auth/request" && method === "POST") {
@@ -1562,7 +1593,9 @@ export async function handleApi(request, env, ctx) {
       "SELECT scanned_at,score,verdict FROM aeo_scores WHERE site_id=? ORDER BY scanned_at DESC LIMIT 180",
     ).bind(site.id).all();
     // Only a pro site has SoV data to include; the report says so for others.
-    const sov = plan === "pro" ? await loadSovHistory(env, site.id, { limit: 8 }) : null;
+    // Enough runs to find the headline engine's last measurement when the
+    // latest runs did not ask it (say it was at its monthly cap).
+    const sov = plan === "pro" ? await loadSovHistory(env, site.id, { limit: 26 }) : null;
     // The latest diagnosis says what kind of business this is; the report's
     // advice follows it rather than assuming every site is a shop.
     const latestChecks = await env.DB.prepare("SELECT checks_json FROM aeo_scores WHERE site_id=? ORDER BY scanned_at DESC LIMIT 1").bind(site.id).first();
@@ -1797,6 +1830,30 @@ export async function handleApi(request, env, ctx) {
    * picks the rate - a partner must not reach a better tier on sites that pay
    * nothing.
    */
+  /*
+   * Off-site listing audit (worker/offsite-audit.mjs): does the store profile
+   * match what Google Maps and the other listings say? A separate section, not
+   * part of the 0-100 AEO score. GET reads the stored outcome and makes no
+   * external call; POST runs it now, within the plan's allowance (Free once a
+   * month, Standard/Pro every 10 minutes up to five a day). Owner session only;
+   * CSRF is enforced above for the POST.
+   */
+  const offsiteMatch = path.match(/^\/api\/sites\/([^/]+)\/offsite-audit$/i);
+  if (offsiteMatch && (method === "GET" || method === "POST")) {
+    const member = await requireMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent(offsiteMatch[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+    }
+    if (method === "GET") return json(await offsiteAuditView(env, site));
+    if (member.role === "viewer") return json({ error: "forbidden" }, 403);
+    const outcome = await offsiteAuditRun(env, site, await safeJson(request) || {});
+    return json(outcome.body, outcome.status);
+  }
+
   const kickbackMatch = path.match(/^\/api\/orgs\/([^/]+)\/kickback$/i);
   if (kickbackMatch && method === "GET") {
     const member = await requireAdmin(request, env);
@@ -2919,15 +2976,19 @@ async function requireProSite(request, env, siteId) {
  * The remaining monthly budget caps the run, so a site can never exceed
  * SOV_LIMITS.monthlyQueriesPerSite regardless of how it is triggered. Usage is
  * recorded from the calls actually issued, not from the planned question count.
+ * The run stops issuing calls at `deadline` or SOV_RUN_TIME_BUDGET_MS after it
+ * started, whichever is first, stores what it has and refunds the rest.
  */
-async function runSiteSov(env, site, { trigger = "scheduled" } = {}) {
+async function runSiteSov(env, site, { trigger = "scheduled", deadline = null, clock = Date.now } = {}) {
   const token = await acquireMeasurementLock(env, site.id);
   if (!token) return { error: "measurement_in_progress", status: 429 };
-  try { return await runSiteSovLocked(env, site, { trigger }); }
+  const ownDeadline = clock() + SOV_RUN_TIME_BUDGET_MS;
+  const until = Number.isFinite(deadline) ? Math.min(deadline, ownDeadline) : ownDeadline;
+  try { return await runSiteSovLocked(env, site, { trigger, deadline: until, clock }); }
   finally { await releaseMeasurementLock(env, site.id, token); }
 }
 
-async function runSiteSovLocked(env, site, { trigger }) {
+async function runSiteSovLocked(env, site, { trigger, deadline, clock }) {
   const budget = await sovRemainingBudget(env, site.id);
   // Per engine per run: the most a 20-question set at 2 repetitions asks.
   const perRunMax = SOV_LIMITS.maxQuestionsPerRun * 2;
@@ -2960,15 +3021,15 @@ async function runSiteSovLocked(env, site, { trigger }) {
 
   const config = await ensureQuerySet(env, site.id, profile);
   // Each engine has its own monthly allowance: Perplexity's original per-site
-  // counter, and for every engine the per-site and global caps of
+  // counter, and for every engine the per-site and global call and USD caps of
   // aeo_sov_engine_usage. An engine at its cap is skipped and reported; the
   // others are still asked.
-  const plans = await planEngineBudgets(env, site.id, { perRunMax, perplexitySite: budget });
-  const ready = plans.filter((plan) => plan.status === "ready" && plan.allowance > 0);
-  const configured = plans.some((plan) => plan.status !== "not_configured");
-  const readyIds = ready.map((plan) => plan.engine);
-  const cacheKey = await measurementKey(env, config, profile, readyIds.length ? readyIds : ["perplexity"]);
-  if (readyIds.length) {
+  const planOptions = { perRunMax, perplexitySite: budget };
+  const planned = await planEngineBudgets(env, site.id, planOptions);
+  const configured = planned.some((plan) => plan.status !== "not_configured");
+  const plannedIds = planned.filter((plan) => plan.status === "ready" && plan.allowance > 0).map((plan) => plan.engine);
+  let cacheKey = await measurementKey(env, config, profile, plannedIds.length ? plannedIds : ["perplexity"]);
+  if (plannedIds.length) {
     const cached = await loadCachedRun(env, site.id, cacheKey);
     if (cached) return { ...cached, usage: budget, profile };
     const recent = await env.DB.prepare("SELECT ran_at FROM aeo_sov_runs WHERE site_id=? ORDER BY ran_at DESC LIMIT 1").bind(site.id).first();
@@ -2976,20 +3037,38 @@ async function runSiteSovLocked(env, site, { trigger }) {
       return { error: "measurement_rate_limited", status: 429, usage: budget };
     }
   }
+  if (configured && plannedIds.length && clock() >= deadline) {
+    // Out of time before anything was reserved or asked: nothing to refund.
+    return { error: "time_budget_exhausted", status: 429, usage: budget, engines: planned.map(publicPlan) };
+  }
+  // Charge each allowance before external I/O: a terminated request cannot
+  // make paid calls disappear from the budget. The reservation is atomic per
+  // row (ai-engines.mjs reserveEngineUsage), so concurrent runs cannot
+  // overshoot a cap; an engine another run left no room for drops out here.
+  // Unused calls and cost are refunded after the run.
+  const plans = await reserveEngineBudgets(env, site.id, planned, planOptions);
+  const ready = plans.filter((plan) => plan.status === "ready" && plan.allowance > 0);
+  const readyIds = ready.map((plan) => plan.engine);
   if (configured && !readyIds.length) {
     console.warn("sov-engine-caps", JSON.stringify({ site_id: site.id, engines: plans.map(publicPlan) }));
     return { error: "monthly_quota_exhausted", status: 429, usage: budget, engines: plans.map(publicPlan) };
   }
-  // Charge each allowance before external I/O: a terminated request cannot
-  // make paid calls disappear from the budget. Unused calls are refunded after.
+  if (readyIds.join() !== plannedIds.join()) cacheKey = await measurementKey(env, config, profile, readyIds.length ? readyIds : ["perplexity"]);
   const allowances = Object.fromEntries(ready.map((plan) => [plan.engine, plan.allowance]));
   if (allowances.perplexity) await sovRecordUsage(env, site.id, allowances.perplexity);
-  for (const plan of ready) await recordEngineUsageSafe(env, site.id, plan, { calls: plan.allowance });
+  // A scheduled attempt is recorded before the first call: if the Worker is
+  // stopped mid-run, the batch still sees that this site was attempted today
+  // and does not measure (and bill) it again tomorrow.
+  const attemptAt = trigger === "scheduled"
+    ? await recordSovAttempt(env, site.id, trigger, Object.fromEntries(ready.map((plan) => [plan.engine, plan.reserved || null])))
+    : null;
   const measurement = await measureSov(env, profile, {
     budget: Object.values(allowances).reduce((sum, n) => sum + n, 0),
     engineBudgets: allowances,
     questions: config.questions, repetitions: config.repetitions,
     engineIds: readyIds.length ? readyIds : ["perplexity"],
+    deadline,
+    clock,
   });
   measurement.query_set = config;
   measurement.cache_key = cacheKey;
@@ -3001,25 +3080,57 @@ async function runSiteSovLocked(env, site, { trigger }) {
   const costs = {};
   for (const plan of ready) {
     const samples = (measurement.samples || []).filter((sample) => sample.engine === plan.engine);
+    // A timed-out call carries its assumed maximum cost, never null.
     const estUsd = samples.reduce((sum, sample) => sum + (Number.isFinite(sample.cost?.est_usd) ? sample.cost.est_usd : 0), 0);
     const searches = samples.reduce((sum, sample) => sum + (Number.isFinite(sample.cost?.searches) ? sample.cost.searches : 0), 0);
     costs[plan.engine] = { calls: calls[plan.engine] || 0, est_usd: Math.round(estUsd * 1e6) / 1e6, searches };
-    await recordEngineUsageSafe(env, site.id, plan, { calls: (calls[plan.engine] || 0) - plan.allowance, estCostUsd: estUsd, searches });
+    // True up the reservation: calls and USD not used are given back.
+    const reserved = plan.reserved || { calls: 0, usd: 0, tracked: false };
+    const delta = { calls: (calls[plan.engine] || 0) - reserved.calls, estCostUsd: estUsd - reserved.usd, searches };
+    if (reserved.tracked) await recordEngineUsage(env, site.id, plan.engine, delta);
+    else await recordEngineUsageSafe(env, site.id, plan, delta);
   }
   if (Object.keys(costs).length) {
     // Estimated from list prices (ai-engines.mjs ENGINE_PRICING), not a bill.
     console.log("sov-engine-cost", JSON.stringify({ site_id: site.id, trigger, run: costs, prices_as_of: ENGINE_PRICING.as_of,
+      stop_reason: measurement.stop_reason || null,
       month_site_est_usd: Object.fromEntries(ready.map((plan) => [plan.engine, Math.round(((plan.est_cost_usd_month || 0) + costs[plan.engine].est_usd) * 1e4) / 1e4])) }));
   }
   const run = await storeSovRun(env, site.id, measurement, { trigger });
+  if (attemptAt) await finishSovAttempt(env, site.id, attemptAt);
   const usage = await sovRemainingBudget(env, site.id);
   return { measurement, run, usage, profile, engines: plans.map(publicPlan) };
+}
+
+const MISSING_SOV_TABLE = /no such table|no such column/i;
+
+/** Mark a scheduled attempt as started (0041). Returns its start time, or null before 0041. */
+async function recordSovAttempt(env, siteId, trigger, reserved) {
+  const at = new Date().toISOString();
+  try {
+    await env.DB.prepare(`INSERT INTO aeo_sov_attempts (site_id,trigger,started_at,finished_at,reserved_json) VALUES (?,?,?,NULL,?)
+      ON CONFLICT(site_id) DO UPDATE SET trigger=excluded.trigger,started_at=excluded.started_at,finished_at=NULL,reserved_json=excluded.reserved_json`)
+      .bind(siteId, trigger, at, JSON.stringify(reserved || {})).run();
+    return at;
+  } catch (error) {
+    if (MISSING_SOV_TABLE.test(String(error?.message || error))) return null;
+    throw error;
+  }
+}
+
+async function finishSovAttempt(env, siteId, startedAt) {
+  try {
+    await env.DB.prepare("UPDATE aeo_sov_attempts SET finished_at=? WHERE site_id=? AND started_at=?")
+      .bind(new Date().toISOString(), siteId, startedAt).run();
+  } catch (error) {
+    if (!MISSING_SOV_TABLE.test(String(error?.message || error))) throw error;
+  }
 }
 
 /** An engine plan without internal fields, as stored with a run and shown. */
 function publicPlan(plan) {
   return { engine: plan.engine, status: plan.status, scope: plan.scope || null, allowance: plan.allowance || 0,
-    site: plan.site, global: plan.global };
+    site: plan.site, global: plan.global, usd_per_call: plan.usd_per_call ?? null };
 }
 
 /**
@@ -3066,7 +3177,11 @@ function sovMinIntervalMs(env) {
  * When a site was last measured successfully by the schedule. Manual runs do
  * not count: they are the owner's extra checks, and must not push back the
  * scheduled cadence. Runs with no answers do not count either, so a run that
- * failed at the engine is retried on the next daily trigger.
+ * failed at the engine is retried on the next daily trigger. A scheduled
+ * attempt that was cut off before its run was stored (aeo_sov_attempts,
+ * finished_at NULL) counts as a run at its start: its calls were reserved and
+ * may have been billed, so the site waits for its next turn instead of being
+ * asked again the next day.
  */
 async function lastScheduledSovRunAt(env, siteId) {
   const row = await env.DB.prepare(`
@@ -3074,8 +3189,32 @@ async function lastScheduledSovRunAt(env, siteId) {
      WHERE site_id=? AND trigger='scheduled' AND status='measured' AND answers_received>0
      ORDER BY ran_at DESC LIMIT 1
   `).bind(siteId).first();
-  const at = row ? Date.parse(row.ran_at) : NaN;
-  return Number.isFinite(at) ? at : null;
+  let attempt = null;
+  try {
+    attempt = await env.DB.prepare("SELECT started_at FROM aeo_sov_attempts WHERE site_id=? AND trigger='scheduled' AND finished_at IS NULL")
+      .bind(siteId).first();
+  } catch (error) {
+    if (!MISSING_SOV_TABLE.test(String(error?.message || error))) throw error;
+  }
+  const times = [row?.ran_at, attempt?.started_at].map((value) => (value ? Date.parse(value) : NaN)).filter(Number.isFinite);
+  return times.length ? Math.max(...times) : null;
+}
+
+/*
+ * Cron time limit. A daily Cron Trigger may run for at most 15 minutes of wall
+ * time, and the sites are measured one after another, so the batch keeps to a
+ * budget: no new site is started after SOV_BATCH_TIME_BUDGET_MS, and no new
+ * engine call after SOV_BATCH_HARD_STOP_MS. A site cut short by the hard stop
+ * stores what it measured and refunds the rest; sites not reached are
+ * measured on the next daily trigger. Both are env-overridable in ms.
+ */
+export const SOV_BATCH_TIME_BUDGET_MS = 10 * 60 * 1000;
+export const SOV_BATCH_HARD_STOP_MS = 13 * 60 * 1000;
+
+function msFromEnv(raw, fallback) {
+  if (raw === undefined || raw === null || String(raw).trim() === "") return fallback;
+  const value = Number(raw);
+  return Number.isFinite(value) && value >= 0 ? value : fallback;
 }
 
 /**
@@ -3084,8 +3223,11 @@ async function lastScheduledSovRunAt(env, siteId) {
  * selected, each run is capped, and each site's monthly counter gates it
  * independently.
  */
-export async function runSovDailyBatch(env, { limit = 200, now = Date.now() } = {}) {
+export async function runSovDailyBatch(env, { limit = 200, now = Date.now(), clock = Date.now } = {}) {
   if (!env?.DB) throw new Error("DB binding is required for the SoV batch");
+  const startedAt = clock();
+  const softBudget = msFromEnv(env.SOV_BATCH_TIME_BUDGET_MS, SOV_BATCH_TIME_BUDGET_MS);
+  const hardStop = Math.max(softBudget, msFromEnv(env.SOV_BATCH_HARD_STOP_MS, SOV_BATCH_HARD_STOP_MS));
   const engines = availableEngines(env);
   if (!engines.length) {
     return { ok: true, status: "unconfigured", sites: 0, measured: 0, skipped: 0, engines: [] };
@@ -3105,14 +3247,19 @@ export async function runSovDailyBatch(env, { limit = 200, now = Date.now() } = 
   let measured = 0;
   let skipped = 0;
   let notDue = 0;
+  let deferred = 0;
+  let cutShort = 0;
   const errors = [];
   const minInterval = sovMinIntervalMs(env);
-  for (const site of result.results || []) {
+  const sites = result.results || [];
+  for (const [index, site] of sites.entries()) {
+    if (clock() - startedAt >= softBudget) { deferred = sites.length - index; break; }
     try {
       const lastAt = minInterval > 0 ? await lastScheduledSovRunAt(env, site.id) : null;
       if (lastAt !== null && now - lastAt < minInterval) { notDue += 1; continue; }
-      const outcome = await runSiteSov(env, site, { trigger: "scheduled" });
+      const outcome = await runSiteSov(env, site, { trigger: "scheduled", deadline: startedAt + hardStop, clock });
       if (outcome.error) { skipped += 1; errors.push({ site_id: site.id, error: outcome.error }); continue; }
+      if (outcome.measurement?.stop_reason === "time_budget") cutShort += 1;
       measured += 1;
     } catch (error) {
       skipped += 1;
@@ -3133,6 +3280,11 @@ export async function runSovDailyBatch(env, { limit = 200, now = Date.now() } = 
     measured,
     skipped,
     not_due: notDue,
+    // Sites left for the next daily trigger because the time budget ran out,
+    // and sites whose run the hard stop cut short (stored partially).
+    deferred,
+    cut_short: cutShort,
+    elapsed_ms: clock() - startedAt,
     min_interval_days: minInterval > 0 ? (minInterval + SOV_INTERVAL_SLACK_MS) / 86400000 : 0,
     errors: errors.slice(0, 20),
   };
@@ -4126,9 +4278,20 @@ async function findOrCreateMember(env, email, registrationLocale, referralCode =
   const existing = await env.DB.prepare("SELECT id,org_id,status FROM members WHERE lower(email)=?").bind(email).first();
   if (existing) return { id: existing.id, orgId: existing.org_id, status: existing.status || null };
   const normalizedCode = String(referralCode || "").trim().toUpperCase();
-  const parent = normalizedCode ? await env.DB.prepare("SELECT id,email FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
-  const eligibleParent = parent && String(parent.email).toLowerCase() !== email ? parent : null;
-  if (normalizedCode && !eligibleParent) console.warn("nurevo_referral_ignored", { reason: parent ? "self_referral" : "invalid_code" });
+  let parent = null;
+  try {
+    parent = normalizedCode ? await env.DB.prepare("SELECT id,email,partner_status,partner_approved_at FROM accounts WHERE referral_code=?").bind(normalizedCode).first() : null;
+  } catch (error) {
+    // Deployed before 0040: no partner is approved yet, so the code is ignored
+    // and the signup itself still succeeds.
+    if (!/no such column/i.test(String(error?.message || error))) throw error;
+    console.warn("nurevo_referral_ignored", { reason: "migration_0040_not_applied" });
+  }
+  // A code attributes a signup only while its owner is an approved partner;
+  // a code kept from before approval (or after rejection) is inactive.
+  const selfReferral = parent && String(parent.email).toLowerCase() === email;
+  const eligibleParent = parent && !selfReferral && isApprovedPartner(parent) ? parent : null;
+  if (normalizedCode && !eligibleParent) console.warn("nurevo_referral_ignored", { reason: !parent ? "invalid_code" : selfReferral ? "self_referral" : "partner_not_approved" });
   const orgId = `org_${uid()}`;
   const memberId = `mem_${uid()}`;
   try {

@@ -159,11 +159,17 @@ const flush = () => new Promise((r) => setImmediate(r));
   for (const lang of LANGS) {
     const app = boot({ storage: { "nrv-dash-lang": lang } });
     const I = app.get("I")[lang];
-    app.set("partnerData", { referral_code: null, payout: {}, referrals: [] });
+    app.set("partnerData", { referral_code: null, partner: { status: "approved", approved: true }, payout: {}, referrals: [] });
     const partner = app.sandbox.partnerView();
-    for (const key of ["ptCode", "ptNotIssued", "ptIssue", "ptRegenNote", "ptMonthly", "ptCumulative", "ptPaid", "ptRate", "ptReferred", "ptAccount", "ptNone", "ptUnavailable"]) {
+    for (const key of ["ptCode", "ptNotIssued", "ptIssue", "ptRegenNote", "ptMonthly", "ptCumulative", "ptPaid", "ptRate", "ptReferred", "ptAccount", "ptNone", "ptUnavailable", "ptStatusApproved", "ptFirstFree"]) {
       assert.ok(partner.includes(I[key]), `${lang}: partner view shows ${key}`);
     }
+    // Not approved (0040): the application, an inactive code and no issue button.
+    app.set("partnerData", { referral_code: "OLDCODE23456", partner: { status: "none", approved: false }, payout: {}, referrals: [{ email: "a@example.test", registered_at: 1, commission: "not_approved", sites: [] }] });
+    const applying = app.sandbox.partnerView();
+    for (const key of ["ptStatusNone", "ptApply", "ptApplyNote", "ptCodeInactive", "ptCodeNeedsApproval", "ptFirstFree", "ptBeforeApproval"]) assert.ok(applying.includes(I[key]), `${lang}: not-approved partner view shows ${key}`);
+    assert.ok(!applying.includes('id="referral-issue"') && !applying.includes('id="payout-onboard"'), `${lang}: no code issue or payout onboarding before approval`);
+    if (lang !== "ja") assert.ok(!/[぀-ヺー-ヿ]/.test(applying), `${lang}: no Japanese kana in the not-approved partner view`);
     const plan = app.sandbox.standardPaymentPanel({ id: "s1", plan: "free" });
     for (const key of ["plStdHead", "plSelf", "plOpen", "plClient", "plCopyLink", "intlNote"]) assert.ok(plan.includes(I[key]), `${lang}: plan panel shows ${key}`);
     app.set("PRO_CHECKOUT", true);

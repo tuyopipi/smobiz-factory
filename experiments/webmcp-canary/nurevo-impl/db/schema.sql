@@ -430,6 +430,42 @@ CREATE TABLE IF NOT EXISTS geocode_cache (
 -- 0034: provider-reported usage per engine call.
 ALTER TABLE aeo_sov_evidence ADD COLUMN usage_json TEXT;
 
+-- 0042: off-site listing audit (only our own comparison outcome and listing ids,
+-- plus the atomic allowance and daily-budget counters).
+CREATE TABLE IF NOT EXISTS offsite_audits (
+  id TEXT PRIMARY KEY,
+  site_id TEXT NOT NULL,
+  ran_at INTEGER NOT NULL,                  -- epoch ms, worker clock
+  trigger TEXT NOT NULL CHECK (trigger IN ('manual', 'scheduled', 'followup')),
+  result_json TEXT NOT NULL,
+  followup_used INTEGER NOT NULL DEFAULT 0  -- 1 = the free re-run after this (ambiguous) run was taken
+);
+CREATE INDEX IF NOT EXISTS idx_offsite_audits_site ON offsite_audits(site_id, ran_at);
+
+CREATE TABLE IF NOT EXISTS offsite_listing_refs (
+  site_id TEXT NOT NULL,
+  source TEXT NOT NULL,                     -- google
+  listing_id TEXT NOT NULL,                 -- e.g. Google place_id
+  pinned INTEGER NOT NULL DEFAULT 0,        -- 1 = the owner picked it
+  updated_at INTEGER NOT NULL,
+  PRIMARY KEY (site_id, source)
+);
+
+CREATE TABLE IF NOT EXISTS offsite_audit_usage (
+  site_id TEXT NOT NULL,
+  period TEXT NOT NULL,                     -- 'M2026-10' (Free, JST month) or 'D2026-10-14' (paid, JST day)
+  n INTEGER NOT NULL DEFAULT 0,             -- runs counted in the period (refunds subtract)
+  last_at INTEGER NOT NULL DEFAULT 0,       -- epoch ms of the latest reservation (spacing)
+  PRIMARY KEY (site_id, period)
+);
+
+CREATE TABLE IF NOT EXISTS offsite_api_budget (
+  source TEXT NOT NULL,                     -- google
+  day TEXT NOT NULL,                        -- UTC date, YYYY-MM-DD
+  n INTEGER NOT NULL DEFAULT 0,             -- calls reserved that day
+  PRIMARY KEY (source, day)
+);
+
 -- 0041: monthly AI-visibility engine calls and estimated cost, per engine,
 -- per site and for all sites (scope '*').
 CREATE TABLE IF NOT EXISTS aeo_sov_engine_usage (
@@ -441,4 +477,12 @@ CREATE TABLE IF NOT EXISTS aeo_sov_engine_usage (
   est_cost_usd REAL NOT NULL DEFAULT 0,
   updated_at TEXT NOT NULL,
   PRIMARY KEY (scope, engine, month)
+);
+
+CREATE TABLE IF NOT EXISTS aeo_sov_attempts (
+  site_id TEXT PRIMARY KEY,
+  trigger TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT,
+  reserved_json TEXT
 );
