@@ -160,17 +160,76 @@ export function extractSchemaNodes(html = "") {
  * properties a score was deducted for. Anything else would risk telling an
  * operator to fix something the scorer did not mark them down on.
  */
-export function publishedSchemaProps(nodes = [], props = BASELINE_SCORED_PROPS) {
-  const found = new Set();
-  const visit = value => {
-    if (!value || typeof value !== "object") return;
-    for (const [key, item] of Object.entries(value)) {
-      if (item != null && item !== "" && (!Array.isArray(item) || item.length)) found.add(key.toLowerCase());
-      visit(item);
+export function publishedSchemaProps(nodes = [], props = BASELINE_SCORED_PROPS, scoring = DEFAULT_SCORING) {
+  // The same reader the scorer uses (schemaFieldPresent), applied to the same
+  // entities - the local-business nodes - so a property is "published" here
+  // exactly when the score gives credit for it. The old recursive any-key
+  // search disagreed both ways: it found `name` inside a FAQ question and
+  // `streetAddress` the scorer never read. A page with no local-business node
+  // is read across all its typed nodes, as before.
+  const list = Array.isArray(nodes) ? nodes : [];
+  const local = list.filter((node) => isLocalBusinessNode(node, scoring));
+  const entities = local.length ? local : list.filter((node) => node && typeof node === "object");
+  return (props || []).map((key) => String(key))
+    .filter((key) => local.length
+      ? entities.every((node) => schemaFieldPresent(node, key, list))
+      : entities.some((node) => schemaFieldPresent(node, key, list)))
+    .map((key) => key.toLowerCase());
+}
+
+/*
+ * Reading one schema property off one entity.
+ *
+ * Shared by the scorer and the fix list so the two can never disagree about
+ * whether a property is there. Paths are dot-separated ("offers.price").
+ *
+ * PostalAddress members (streetAddress, addressLocality, ...) are read under
+ * `address` when the entity does not carry them itself, because that is where
+ * real markup - and our own generator - puts them. The v3 ruleset scores
+ * `streetAddress`; read as a top-level property it could never be met.
+ */
+export const POSTAL_ADDRESS_FIELDS = Object.freeze(["streetAddress", "addressLocality", "postalCode", "addressRegion", "addressCountry"]);
+const CANONICAL_FIELDS = new Map([
+  ...POSTAL_ADDRESS_FIELDS,
+  "openingHours", "openingHoursSpecification", "priceRange", "sameAs", "mainEntity",
+  "applicationCategory", "operatingSystem", "priceCurrency", "aggregateRating",
+  "areaServed", "serviceType", "datePublished", "dateModified", "hasMenu",
+].map((name) => [name.toLowerCase(), name]));
+const canonicalField = (key) => CANONICAL_FIELDS.get(String(key).toLowerCase()) || String(key);
+
+function hasSchemaValue(value) {
+  return value != null && (typeof value === "string" ? value.trim().length > 0
+    : Array.isArray(value) ? value.length > 0 && value.every(hasSchemaValue)
+      : typeof value === "object" ? Object.keys(value).some((k) => !k.startsWith("@") && hasSchemaValue(value[k]))
+        : true);
+}
+
+export function schemaFieldPresent(node, field, nodes = []) {
+  const resolve = (value) => value && typeof value === "object" && value["@id"] ? nodes.find((n) => n?.["@id"] === value["@id"]) || value : value;
+  const read = (value, parts) => {
+    value = resolve(value);
+    if (Array.isArray(value)) return value.length > 0 && value.every((v) => read(v, parts));
+    if (!parts.length) return hasSchemaValue(value);
+    const [key, ...rest] = parts;
+    if (key === "openingHoursSpecification" || key === "openingHours") return read(value?.openingHoursSpecification ?? value?.openingHours, rest);
+    if (key === "geo" && !rest.length) return hasSchemaValue(value?.geo?.latitude) && hasSchemaValue(value?.geo?.longitude);
+    if (key === "mainEntity" && !rest.length) return Array.isArray(value?.mainEntity) && value.mainEntity.length > 0 && value.mainEntity.every((q) => hasSchemaValue(q?.name) && hasSchemaValue(resolve(q?.acceptedAnswer)?.text));
+    if (POSTAL_ADDRESS_FIELDS.includes(key) && value && typeof value === "object" && value[key] === undefined && value.address !== undefined) {
+      const address = resolve(value.address);
+      // A plain-text address is not a PostalAddress and has no members.
+      if (address && typeof address === "object") return read(address, parts);
+      return false;
     }
+    return read(value?.[key], rest);
   };
-  visit(nodes);
-  return (props || []).map(key => String(key).toLowerCase()).filter(key => found.has(key));
+  return read(node, String(field).split(".").map(canonicalField));
+}
+
+const NON_LOCAL_TYPES = ["organization", "product", "service", "article", "blogposting", "newsarticle", "website", "faqpage", "softwareapplication"];
+function isLocalBusinessNode(node, scoring = DEFAULT_SCORING) {
+  const useful = new Set(scoring.usefulTypes);
+  return [node?.["@type"]].flat().filter(Boolean).map((t) => String(t).toLowerCase())
+    .some((t) => useful.has(t) && !NON_LOCAL_TYPES.includes(t));
 }
 
 /** Fetch a public page and return the JSON-LD nodes it publishes. */
@@ -218,7 +277,7 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
   const scoredProps = Array.isArray(options.scoredProps) && options.scoredProps.length
     ? options.scoredProps.map((key) => String(key).toLowerCase())
     : BASELINE_SCORED_PROPS;
-  const publishedProps = publishedSchemaProps(schemas, scoredProps);
+  const publishedProps = publishedSchemaProps(schemas, scoredProps, scoring);
   const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: options.commerceDetected || /(?:class|id)=["'][^"']*woocommerce/i.test(html) });
   const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours|adresse|dirección|teléfono|telefon|horario|horaires|öffnungszeiten|地址|电话|营业时间|營業時間|주소|전화|영업시간)/i.test(llms)];
   return {
@@ -454,18 +513,6 @@ export function diagnoseSchemaFields(nodes, options = {}) {
     if (family === 'LocalBusiness') return tt.some(t => USEFUL_SCHEMA_TYPES.has(t) && !['organization','product','service','article','blogposting','newsarticle','website','faqpage','softwareapplication'].includes(t));
     return tt.includes(family.toLowerCase());
   };
-  const hasValue = value => value != null && (typeof value === 'string' ? value.trim().length > 0 : Array.isArray(value) ? value.length > 0 && value.every(hasValue) : typeof value === 'object' ? Object.keys(value).some(k => !k.startsWith('@') && hasValue(value[k])) : true);
-  const resolve = value => value && typeof value === 'object' && value['@id'] ? nodes.find(n => n['@id'] === value['@id']) || value : value;
-  const read = (value, parts) => {
-    value = resolve(value);
-    if (Array.isArray(value)) return value.length > 0 && value.every(v => read(v, parts));
-    if (!parts.length) return hasValue(value);
-    const [key,...rest] = parts;
-    if (key === 'openingHoursSpecification' || key === 'openingHours' || key === 'openinghours') return read(value?.openingHoursSpecification ?? value?.openingHours, rest);
-    if (key === 'geo' && !rest.length) return hasValue(value?.geo?.latitude) && hasValue(value?.geo?.longitude);
-    if (key === 'mainEntity' && !rest.length) return Array.isArray(value?.mainEntity) && value.mainEntity.length > 0 && value.mainEntity.every(q => hasValue(q.name) && hasValue(resolve(q.acceptedAnswer)?.text));
-    return read(value?.[key],rest);
-  };
   return selected.flatMap(entityType => {
     let definition = definitions[entityType] || {};
     // Explicit legacy scoredProps remain authoritative for local entities.
@@ -475,7 +522,7 @@ export function diagnoseSchemaFields(nodes, options = {}) {
       else if (rules.fields) definition = {name:true,...rules.fields};
     }
     const entities = nodes.filter(n => match(n,entityType));
-    return Object.entries(definition).filter(([field,enabled]) => enabled !== false && enabled?.enabled !== false && (entityType !== 'LocalBusiness' || rules.fields?.[field] !== false)).map(([field,config]) => ({entityType,field,weight: config && typeof config === 'object' && Number(config.weight) > 0 ? Number(config.weight) : 1,present: entities.length > 0 && entities.every(n => read(n,field.split('.')))}));
+    return Object.entries(definition).filter(([field,enabled]) => enabled !== false && enabled?.enabled !== false && (entityType !== 'LocalBusiness' || rules.fields?.[field] !== false)).map(([field,config]) => ({entityType,field,weight: config && typeof config === 'object' && Number(config.weight) > 0 ? Number(config.weight) : 1,present: entities.length > 0 && entities.every(n => schemaFieldPresent(n, field, nodes))}));
   });
 }
 

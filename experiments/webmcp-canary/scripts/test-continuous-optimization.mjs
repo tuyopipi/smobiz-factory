@@ -106,8 +106,14 @@ assert.equal(cachedOld.rulesetVersion,5,'scoring snapshot remains the current cr
 // Central rule inputs change weights and thresholds, not only labels.
 assert.notDeepEqual(scoreAeo({aiCrawlersAllowed:true,serverRenderedHtml:true,jsonLdInRawHtml:true,schemaValid:true,schemaTypeMatches:true,schemaCoreProps:1},definition.scoring),scoreAeo({aiCrawlersAllowed:true,serverRenderedHtml:true,jsonLdInRawHtml:true,schemaValid:true,schemaTypeMatches:true,schemaCoreProps:1},rule5.scoring));
 // Unknown facts remain missing; the existing job is bounded to once per day.
-const jobResult=await requestAutoFix(env,site,result,{now:Date.parse('2026-10-20T03:00:00Z')});
-assert.ok(jobResult.actions.length>0);
+// The served WP page publishes address.streetAddress, which the scorer now
+// reads, so its schema check passes (it used to fail on streetAddress alone and
+// that failure was what gave this job something to do). Exercise the action
+// path with a genuine schema gap instead.
+assert.equal(result.checks.find(c=>c.id==='schema').status,'OK','structured streetAddress is credited');
+const gapResult={...result,checks:result.checks.map(c=>['schema','coverage'].includes(c.id)?{...c,status:'WARN',fields:[...c.fields,{entityType:'LocalBusiness',field:'geo',present:false}]}:c)};
+const jobResult=await requestAutoFix(env,site,gapResult,{now:Date.parse('2026-10-20T03:00:00Z')});
+assert.ok(jobResult.actions.includes('publish_schema'));
 assert.equal((await requestAutoFix(env,site,result,{now:Date.parse('2026-10-20T03:00:01Z')})).status,'rate_limited');
 assert.equal(JSON.parse(sqlite.prepare('SELECT missing_json FROM aeo_autofix_jobs').get().missing_json).action_required,true);
 sqlite.exec("UPDATE sites SET plan='free' WHERE id='s1';");
@@ -136,7 +142,12 @@ assert.equal(active().version,5,'measurements never mutate the active rules');
 // Daily scheduled path creates the job through the existing diagnosis cron.
 sqlite.exec("DELETE FROM aeo_autofix_jobs WHERE site_id='s1';");
 const previousFetch=globalThis.fetch;
-globalThis.fetch=fetchFixture(served);
+// A page with a genuine schema gap (no telephone, no geo), so the job has a
+// schema fix to plan; the complete served page no longer fails schema now that
+// address.streetAddress is credited.
+const servedGap=served.replace(/"telephone":"[^"]*",?/g,'').replace(/"geo":\{[^}]*\},?/g,'').replace(/,(\s*[}\]])/g,'$1');
+globalThis.fetch=fetchFixture(servedGap);
+for (const m of servedGap.matchAll(/<script[^>]*ld\+json[^>]*>([\s\S]*?)<\/script>/g)) JSON.parse(m[1]);
 try {
   const cron=await runAeoScoreCron(env,{limit:1});
   assert.equal(cron.processed,1);

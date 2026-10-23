@@ -20,7 +20,7 @@
  */
 import assert from "node:assert/strict";
 import { INITIAL_AEO_RULESET, buildJsonLd } from "../worker/api.mjs";
-import { BASELINE_SCORED_PROPS, extractAeoSignals, publishedSchemaProps, scoreAeo } from "../worker/aeo-score.mjs";
+import { BASELINE_SCORED_PROPS, diagnoseSchemaFields, extractAeoSignals, publishedSchemaProps, schemaFieldPresent, scoreAeo } from "../worker/aeo-score.mjs";
 
 /* The advance shipped as ruleset v3. Mirrored here so a change to the
    migration that alters the plan model has to change this file too. */
@@ -98,7 +98,11 @@ const scoreOf = (ld, scoredProps) => {
 
   assert.ok(standard.score > free.score, `a site following the criteria scores higher: ${standard.score} > ${free.score}`);
   assert.equal(standard.statuses.schema, "OK", "it meets the schema criteria");
-  assert.equal(free.statuses.schema, "WARN", "the baseline site does not, and is marked down rather than failed");
+  // The baseline page publishes a structured address, so it meets 11 of the 13
+  // criteria (0.85). Before the scorer read streetAddress under address it
+  // was credited 10/13 (0.77, WARN) for a property it actually publishes.
+  assert.equal(free.statuses.schema, "OK", "the baseline site misses only description and email, still above the OK line");
+  assert.ok(free.metrics.schema < standard.metrics.schema, "and is marked down proportionally rather than failed");
 
   // The gap has to be real and survivable at the same time. A site that
   // installed the plugin yesterday is not suddenly in the red.
@@ -188,6 +192,44 @@ const scoreOf = (ld, scoredProps) => {
     "a structured address publishes streetAddress; a missing property is not claimed",
   );
   assert.deepEqual(publishedSchemaProps([], ["name"]), [], "no schema publishes nothing");
+}
+
+/* ---------------- nested PostalAddress fields (v3 streetAddress) ---------------- */
+
+{
+  // The v3 ruleset scores streetAddress. Real markup nests it under address,
+  // as an object or an array; the scorer and the fix list must both read it
+  // there, and must agree with each other.
+  const v3 = { entityFields: { LocalBusiness: { name: true, address: true, streetAddress: true, addressLocality: true, postalCode: true } } };
+  const cases = [
+    ["object", { address: { "@type": "PostalAddress", streetAddress: "1-1", addressLocality: "Shibuya", postalCode: "150-0001" } }, true],
+    ["array", { address: [{ "@type": "PostalAddress", streetAddress: "1-1", addressLocality: "Shibuya", postalCode: "150-0001" }] }, true],
+    ["@id reference", { address: { "@id": "#addr" } }, true],
+    ["plain text address", { address: "1-1 Shibuya" }, false],
+    ["no address", {}, false],
+  ];
+  const addrNode = { "@id": "#addr", "@type": "PostalAddress", streetAddress: "1-1", addressLocality: "Shibuya", postalCode: "150-0001" };
+  for (const [label, extra, expected] of cases) {
+    const nodes = [{ "@type": "Restaurant", name: "X", ...extra }, addrNode];
+    const fields = diagnoseSchemaFields(nodes, { schemaRules: v3 });
+    for (const prop of ["streetAddress", "addressLocality", "postalCode"]) {
+      assert.equal(fields.find((f) => f.field === prop).present, expected, `${label}: scorer reads ${prop}`);
+    }
+    assert.equal(publishedSchemaProps(nodes, ["streetAddress", "addressLocality", "postalCode"]).length === 3, expected, `${label}: fix list agrees with the scorer`);
+  }
+  // A top-level streetAddress still counts (it is what the field literally names).
+  assert.equal(schemaFieldPresent({ "@type": "Store", streetAddress: "2-2" }, "streetAddress"), true);
+  // Lower-cased criteria (the form extractAeoSignals passes) resolve the same way.
+  assert.equal(schemaFieldPresent({ address: { streetAddress: "2-2" } }, "streetaddress"), true);
+  // The fix list no longer claims `name` from a nested FAQ question when the
+  // business node itself has none - the scorer never gave credit for that.
+  const faqOnly = [{ "@type": "LocalBusiness", url: "https://x.test" }, { "@type": "FAQPage", mainEntity: [{ name: "Q", acceptedAnswer: { text: "A" } }] }];
+  assert.deepEqual(publishedSchemaProps(faqOnly, ["name", "url"]), ["url"]);
+  // Score movement: a v3 page with a structured address now meets 9/9 instead of 8/9.
+  const v3Rules = { entityFields: { LocalBusiness: Object.fromEntries(["name", "url", "address", "streetAddress", "telephone", "openingHours", "geo", "description", "email"].map((k) => [k, true])) } };
+  const full = { "@type": "Restaurant", name: "X", url: "https://x.test", address: { "@type": "PostalAddress", streetAddress: "1-1" }, telephone: "03-0000-0000", openingHours: "Mo-Su 10:00-20:00", geo: { latitude: 35, longitude: 139 }, description: "d", email: "a@x.test" };
+  const local = diagnoseSchemaFields([full], { schemaRules: v3Rules }).filter((f) => f.entityType === "LocalBusiness");
+  assert.ok(local.every((f) => f.present), "a complete v3 business meets every LocalBusiness criterion");
 }
 
 console.log("plan tier tests passed");
