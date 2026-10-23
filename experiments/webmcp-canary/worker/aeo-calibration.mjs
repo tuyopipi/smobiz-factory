@@ -10,6 +10,7 @@
  */
 
 import { AEO_SCORE_WEIGHTS } from "./aeo-score.mjs";
+import { PRO_CANDIDATE_SQL, resolveSitePlan } from "./billing-plan.mjs";
 
 export const CALIBRATION_VERSION = "u2-calib-v1";
 
@@ -30,17 +31,21 @@ export async function collectCalibrationSamples(env, { limit = 500 } = {}) {
   const bounded = Math.min(2000, Math.max(1, limit));
   const result = await env.DB.prepare(`
     SELECT r.site_id, r.ran_at, r.appearance_rate, r.answers_received, r.confidence,
-           s.checks_json, s.score, s.scanned_at
+           sc.checks_json, sc.score, sc.scanned_at,
+           s.plan, s.manual_plan, o.manual_plan AS org_manual_plan
       FROM aeo_sov_runs r
-      JOIN sites si ON si.id = r.site_id AND si.plan = 'pro'
-      LEFT JOIN aeo_scores s ON s.site_id = r.site_id
-       AND s.scanned_at = (SELECT MAX(scanned_at) FROM aeo_scores WHERE site_id = r.site_id AND scanned_at <= r.ran_at)
-     WHERE r.status = 'measured' AND r.appearance_rate IS NOT NULL
+      JOIN sites s ON s.id = r.site_id
+      LEFT JOIN orgs o ON o.id = s.org_id
+      LEFT JOIN aeo_scores sc ON sc.site_id = r.site_id
+       AND sc.scanned_at = (SELECT MAX(scanned_at) FROM aeo_scores WHERE site_id = r.site_id AND scanned_at <= r.ran_at)
+     WHERE r.status = 'measured' AND r.appearance_rate IS NOT NULL AND ${PRO_CANDIDATE_SQL}
      ORDER BY r.ran_at DESC LIMIT ?
   `).bind(bounded).all();
 
   const samples = [];
   for (const row of result.results || []) {
+    // Comped Pro (site or org manual_plan) contributes like billed Pro.
+    if (resolveSitePlan(row, { manual_plan: row.org_manual_plan }) !== "pro") continue;
     const statuses = checkStatuses(row.checks_json);
     if (!statuses) continue;
     samples.push({

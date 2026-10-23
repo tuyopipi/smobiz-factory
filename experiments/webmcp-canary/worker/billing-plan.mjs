@@ -128,6 +128,41 @@ export function resolveSitePlan(site = {}, org = null) {
 }
 
 /**
+ * The resolved plan for a site row from anywhere in the worker.
+ *
+ * Every entitlement decision - the Pro gate, the SoV batch, calibration, the
+ * site-key check, the static snippet - must reach the same answer as
+ * resolveSitePlan with the org's grant included. Several read sites.plan alone
+ * (or sites.plan + sites.manual_plan) and so refused or skipped a site comped
+ * Pro through its org. A row that already carries org_manual_plan (from a
+ * join) is resolved as is; otherwise the org's grant is looked up by org_id.
+ */
+export async function resolveSitePlanFor(env, site = {}) {
+  if (!site) return "free";
+  if (site.org_manual_plan !== undefined) return resolveSitePlan(site, { manual_plan: site.org_manual_plan });
+  let orgManualPlan = null;
+  if ((site.org_id || site.id) && env?.DB) {
+    try {
+      const row = site.org_id
+        ? await env.DB.prepare("SELECT manual_plan FROM orgs WHERE id=? LIMIT 1").bind(site.org_id).first()
+        : await env.DB.prepare("SELECT o.manual_plan FROM orgs o JOIN sites s ON s.org_id = o.id WHERE s.id=? LIMIT 1").bind(site.id).first();
+      orgManualPlan = row?.manual_plan || null;
+    } catch {
+      // No orgs table or no grant column: the site's own statements decide.
+      orgManualPlan = null;
+    }
+  }
+  return resolveSitePlan(site, { manual_plan: orgManualPlan });
+}
+
+/**
+ * SQL candidates for "might be Pro". Selects broadly - billed, site-comped or
+ * org-comped - so the caller can confirm each row with resolveSitePlan.
+ * Expects `sites s LEFT JOIN orgs o ON o.id = s.org_id`.
+ */
+export const PRO_CANDIDATE_SQL = "(s.plan='pro' OR s.manual_plan='pro' OR o.manual_plan='pro')";
+
+/**
  * The highest of several tiers.
  *
  * A site's tier is now three statements rather than two: what billing says it

@@ -20,7 +20,7 @@ import {
   profileToColumns, rowToProfile, serializeFieldSources,
 } from "./site-profile.mjs";
 import { normalizeDomainKey } from "./domain-key.mjs";
-import { planFromSubscription, pricesFromEnv, proCheckoutEnabled, resolveSitePlan } from "./billing-plan.mjs";
+import { PRO_CANDIDATE_SQL, planFromSubscription, pricesFromEnv, proCheckoutEnabled, resolveSitePlan, resolveSitePlanFor } from "./billing-plan.mjs";
 import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
 import { geocodeSiteProfile } from "./geocoder.mjs";
@@ -346,7 +346,7 @@ function jsonLdScriptBlock(ld) {
 
 async function staticSnippetPayload(env, site, lang = "ja") {
   const settings = await generationSettings(env, site.id);
-  const plan = resolveSitePlan(site);
+  const plan = await resolveSitePlanFor(env, site);
   const ruleset = await rulesetForPlan(env, plan);
   const definition = rulesetDefinition(ruleset);
   const jsonld = settings.serve_schema === 0 ? null : withBusinessId(buildJsonLd(site, settings, ruleset), site);
@@ -605,7 +605,7 @@ export async function handleApi(request, env, ctx) {
       // actually has rather than what the key would once have granted, so a
       // cancelled customer is not told they are still on pro.
       const site = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(auth.siteId).first();
-      return json({ ok: true, plan: resolveSitePlan(site || {}) });
+      return json({ ok: true, plan: await resolveSitePlanFor(env, { ...(site || {}), id: auth.siteId }) });
     }
     return json({ ok: true, plan });
   }
@@ -745,7 +745,7 @@ export async function handleApi(request, env, ctx) {
       profile_token: profileToken,
       // Whatever billing and any manual grant say, resolved the same way every
       // other reader resolves it. Pairing grants nothing on its own.
-      plan: resolveSitePlan(after || {}),
+      plan: await resolveSitePlanFor(env, { ...(after || {}), id: site.id }),
       domain: domainKey,
       paired: true,
     });
@@ -1463,7 +1463,7 @@ export async function handleApi(request, env, ctx) {
       const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
       return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
     }
-    const plan = resolveSitePlan(site);
+    const plan = await resolveSitePlanFor(env, site);
     const month = (url.searchParams.get("month") || "").match(/^\d{4}-\d{2}$/)
       ? url.searchParams.get("month")
       : undefined;
@@ -1861,7 +1861,7 @@ export async function handleApi(request, env, ctx) {
     // whatever billing and any manual grant say it is, which is exactly what
     // every other reader resolves.
     const after = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(siteId).first();
-    return json({ ok: true, site_id: siteId, bound: false, plan: resolveSitePlan(after || {}) });
+    return json({ ok: true, site_id: siteId, bound: false, plan: await resolveSitePlanFor(env, { ...(after || {}), id: siteId }) });
   }
 
   /*
@@ -2469,7 +2469,7 @@ async function bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, ins
     return {
       ok: true,
       body: {
-        ok: true, plan: resolveSitePlan(site || {}), site_id: existing.id, site_key: existing.site_key,
+        ok: true, plan: await resolveSitePlanFor(env, { ...(site || {}), id: existing.id }), site_id: existing.id, site_key: existing.site_key,
         profile_token: token, bound: true, domain: domainKey,
         reused: existing.bound_license_hash === license.license_hash,
       },
@@ -2794,7 +2794,7 @@ async function requireProSite(request, env, siteId) {
   }
   if (!site) return { ok: false, response: json({ error: "not_found" }, 404) };
 
-  const plan = resolveSitePlan(site);
+  const plan = await resolveSitePlanFor(env, site);
   if (plan !== "pro") {
     return {
       ok: false,
@@ -2931,11 +2931,16 @@ export async function runSovDailyBatch(env, { limit = 200, now = Date.now() } = 
     return { ok: true, status: "unconfigured", sites: 0, measured: 0, skipped: 0, engines: [] };
   }
   const bounded = Math.min(200, Math.max(1, Number(env.SOV_BATCH_LIMIT || limit)));
-  const result = await env.DB.prepare(`
-    SELECT * FROM sites
-     WHERE plan='pro' AND (delivery_status IS NULL OR delivery_status='active')
-     ORDER BY created_at LIMIT ?
+  // Candidates are selected broadly - billed, site-comped or org-comped Pro -
+  // and each is confirmed with the one plan resolver, so a comped Pro site is
+  // measured exactly when the dashboard says it is Pro.
+  const candidates = await env.DB.prepare(`
+    SELECT s.*, o.manual_plan AS org_manual_plan FROM sites s
+      LEFT JOIN orgs o ON o.id = s.org_id
+     WHERE ${PRO_CANDIDATE_SQL} AND (s.delivery_status IS NULL OR s.delivery_status='active')
+     ORDER BY s.created_at LIMIT ?
   `).bind(bounded).all();
+  const result = { results: (candidates.results || []).filter((site) => resolveSitePlan(site, { manual_plan: site.org_manual_plan }) === "pro") };
 
   let measured = 0;
   let skipped = 0;

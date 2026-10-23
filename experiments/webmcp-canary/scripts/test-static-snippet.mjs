@@ -148,7 +148,7 @@ async function ask(env, { id = "site1", headers = SESSION, method = "GET" } = {}
 {
   const env = makeEnv();
   const base = env.DB.prepare;
-  env.DB.prepare = (sql) => /SELECT id, plan, manual_plan, status, delivery_status FROM sites WHERE site_key/.test(sql)
+  env.DB.prepare = (sql) => /SELECT id, plan, manual_plan, status, delivery_status, .* FROM sites WHERE site_key/.test(sql)
     ? { bind: () => ({ first: async () => ({ id: "site1", plan: "free", manual_plan: null, status: "active", delivery_status: "active" }), run: async () => ({}) }) }
     : /FROM sites WHERE id = \?/.test(sql)
       ? { bind: () => ({ first: async () => ({ url: "shop.example", website_uri: "https://shop.example/", slug: null, delivery_status: "active" }) }) }
