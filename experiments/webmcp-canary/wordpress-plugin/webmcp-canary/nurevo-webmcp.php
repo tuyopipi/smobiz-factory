@@ -3,7 +3,7 @@
  * Plugin Name: Nurevo AEO
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
- * Version: 0.8.0
+ * Version: 0.8.1
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Nurevo
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WEBMCP_CANARY_VERSION', '0.8.0');
+define('WEBMCP_CANARY_VERSION', '0.8.1');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
@@ -3830,6 +3830,11 @@ function webmcp_canary_activate_aeo_score($network_wide = false) {
         return;
     }
     webmcp_canary_activate_site();
+    // A single, interactive activation opens the setup wizard once (see
+    // includes/setup-wizard.php). Bulk, network and WP-CLI activations do not.
+    if (function_exists('webmcp_canary_wizard_flag_redirect')) {
+        webmcp_canary_wizard_flag_redirect($network_wide);
+    }
 }
 
 /** One site's activation: fill blank business fields locally and schedule the sync. */
@@ -4103,6 +4108,10 @@ function webmcp_canary_output_off_notice() {
     $screen = function_exists('get_current_screen') ? get_current_screen() : null;
     $on_plugins = $screen && isset($screen->id) && $screen->id === 'plugins';
     $on_nurevo = strpos($page, 'webmcp-canary') === 0;
+    // The setup wizard has the switch on its own step.
+    if ($page === 'webmcp-canary-setup') {
+        return;
+    }
     if (!$on_nurevo && !$on_plugins) {
         return;
     }
@@ -6749,8 +6758,10 @@ function webmcp_canary_central_business_node($local, $settings, $delivery) {
     return $remote;
 }
 
-/* Read-only REST route and WP-CLI commands, kept in their own files. */
+/* Read-only REST route, abilities, the setup wizard and WP-CLI commands, kept in their own files. */
 require_once __DIR__ . '/includes/rest.php';
+require_once __DIR__ . '/includes/abilities.php';
+require_once __DIR__ . '/includes/setup-wizard.php';
 if (defined('WP_CLI') && WP_CLI) {
     require_once __DIR__ . '/includes/cli.php';
 }
