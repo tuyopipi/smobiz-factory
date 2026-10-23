@@ -34,7 +34,8 @@ import {
 {
   const api = readFileSync(new URL("../worker/api.mjs", import.meta.url), "utf8");
   const billing = readFileSync(new URL("../worker/billing-plan.mjs", import.meta.url), "utf8");
-  const sov = readFileSync(new URL("../worker/aeo-sov.mjs", import.meta.url), "utf8");
+  // The engine registry (and with it the key names) lives in ai-engines.mjs.
+  const sov = readFileSync(new URL("../worker/ai-engines.mjs", import.meta.url), "utf8");
   assert.match(api, /function stripeSecret\(env\) \{\s*const value = String\(env\.STRIPE_SECRET_KEY/, "stripeSecret reads STRIPE_SECRET_KEY");
   assert.match(api, /env\.STRIPE_WEBHOOK_SECRET/);
   assert.match(billing, /env\.STRIPE_PRICE_ID_PRO/);

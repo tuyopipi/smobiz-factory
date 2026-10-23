@@ -21,6 +21,7 @@ import {
   profileToColumns, rowToProfile, serializeFieldSources,
 } from "./site-profile.mjs";
 import { normalizeDomainKey } from "./domain-key.mjs";
+import { ENGINE_PRICING, monthlyCostSummary, planEngineBudgets, recordEngineUsage } from "./ai-engines.mjs";
 import { PRO_CANDIDATE_SQL, planFromSubscription, pricesFromEnv, proCheckoutEnabled, resolveSitePlan, resolveSitePlanFor } from "./billing-plan.mjs";
 import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
@@ -1509,6 +1510,10 @@ export async function handleApi(request, env, ctx) {
         schedule: `every_${SOV_MIN_INTERVAL_DAYS}_days`,
       },
       usage: budget,
+      // Per engine: configured or not, this month's calls against the site
+      // and global caps. A read only; nothing is called.
+      engine_budgets: await planEngineBudgets(env, site.id, { perRunMax: SOV_LIMITS.maxQuestionsPerRun * 2, perplexitySite: budget })
+        .then((plans) => plans.map(publicPlan)).catch(() => null),
     });
   }
 
@@ -1516,7 +1521,7 @@ export async function handleApi(request, env, ctx) {
     const access = await requireProSite(request, env, decodeURIComponent(sovMatch[1]));
     if (!access.ok) return access.response;
     const result = await runSiteSov(env, access.site, { trigger: "manual" });
-    if (result.error) return json({ error: result.error, usage: result.usage }, result.status || 429);
+    if (result.error) return json({ error: result.error, usage: result.usage, ...(result.engines ? { engines: result.engines } : {}) }, result.status || 429);
     return json({
       site_id: access.site.id,
       beta: SOV_BETA,
@@ -1532,6 +1537,9 @@ export async function handleApi(request, env, ctx) {
       truncated: !!result.measurement.truncated,
       usage: result.usage,
       cached: !!result.cached,
+      by_engine: result.measurement.by_engine || [],
+      combined: result.measurement.combined ?? null,
+      engine_status: result.engines || null,
       ...engineStatus(env),
     });
   }
@@ -2921,8 +2929,8 @@ async function runSiteSov(env, site, { trigger = "scheduled" } = {}) {
 
 async function runSiteSovLocked(env, site, { trigger }) {
   const budget = await sovRemainingBudget(env, site.id);
-  const perRunMax = SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPerRun;
-  const allowance = Math.min(perRunMax, budget.remaining);
+  // Per engine per run: the most a 20-question set at 2 repetitions asks.
+  const perRunMax = SOV_LIMITS.maxQuestionsPerRun * 2;
 
   // Measure the business as its owner describes it: the canonical record is the
   // same one wp-admin and the dashboard write, so the brand and locality used
@@ -2951,8 +2959,16 @@ async function runSiteSovLocked(env, site, { trigger }) {
   }
 
   const config = await ensureQuerySet(env, site.id, profile);
-  const cacheKey = await measurementKey(env, config, profile);
-  if (String(env.PERPLEXITY_API_KEY || "").trim()) {
+  // Each engine has its own monthly allowance: Perplexity's original per-site
+  // counter, and for every engine the per-site and global caps of
+  // aeo_sov_engine_usage. An engine at its cap is skipped and reported; the
+  // others are still asked.
+  const plans = await planEngineBudgets(env, site.id, { perRunMax, perplexitySite: budget });
+  const ready = plans.filter((plan) => plan.status === "ready" && plan.allowance > 0);
+  const configured = plans.some((plan) => plan.status !== "not_configured");
+  const readyIds = ready.map((plan) => plan.engine);
+  const cacheKey = await measurementKey(env, config, profile, readyIds.length ? readyIds : ["perplexity"]);
+  if (readyIds.length) {
     const cached = await loadCachedRun(env, site.id, cacheKey);
     if (cached) return { ...cached, usage: budget, profile };
     const recent = await env.DB.prepare("SELECT ran_at FROM aeo_sov_runs WHERE site_id=? ORDER BY ran_at DESC LIMIT 1").bind(site.id).first();
@@ -2960,21 +2976,64 @@ async function runSiteSovLocked(env, site, { trigger }) {
       return { error: "measurement_rate_limited", status: 429, usage: budget };
     }
   }
-  // Charge the allowance before external I/O: a terminated request cannot make
-  // paid calls disappear from the budget. Refund unused calls after completion.
-  const configured = !!String(env.PERPLEXITY_API_KEY || "").trim();
-  if (configured && allowance <= 0) return { error: "monthly_quota_exhausted", status: 429, usage: budget };
-  if (configured) await sovRecordUsage(env, site.id, allowance);
-  const measurement = await measureSov(env, profile, { budget: allowance,
-    questions: config.questions, repetitions: config.repetitions, engineIds: ["perplexity"] });
+  if (configured && !readyIds.length) {
+    console.warn("sov-engine-caps", JSON.stringify({ site_id: site.id, engines: plans.map(publicPlan) }));
+    return { error: "monthly_quota_exhausted", status: 429, usage: budget, engines: plans.map(publicPlan) };
+  }
+  // Charge each allowance before external I/O: a terminated request cannot
+  // make paid calls disappear from the budget. Unused calls are refunded after.
+  const allowances = Object.fromEntries(ready.map((plan) => [plan.engine, plan.allowance]));
+  if (allowances.perplexity) await sovRecordUsage(env, site.id, allowances.perplexity);
+  for (const plan of ready) await recordEngineUsageSafe(env, site.id, plan, { calls: plan.allowance });
+  const measurement = await measureSov(env, profile, {
+    budget: Object.values(allowances).reduce((sum, n) => sum + n, 0),
+    engineBudgets: allowances,
+    questions: config.questions, repetitions: config.repetitions,
+    engineIds: readyIds.length ? readyIds : ["perplexity"],
+  });
   measurement.query_set = config;
   measurement.cache_key = cacheKey;
-  if (configured && measurement.queries_used < allowance) {
-    await sovRecordUsage(env, site.id, measurement.queries_used - allowance);
+  measurement.engine_status = plans.map(publicPlan);
+  const calls = measurement.engine_calls || {};
+  if (allowances.perplexity && (calls.perplexity || 0) < allowances.perplexity) {
+    await sovRecordUsage(env, site.id, (calls.perplexity || 0) - allowances.perplexity);
+  }
+  const costs = {};
+  for (const plan of ready) {
+    const samples = (measurement.samples || []).filter((sample) => sample.engine === plan.engine);
+    const estUsd = samples.reduce((sum, sample) => sum + (Number.isFinite(sample.cost?.est_usd) ? sample.cost.est_usd : 0), 0);
+    const searches = samples.reduce((sum, sample) => sum + (Number.isFinite(sample.cost?.searches) ? sample.cost.searches : 0), 0);
+    costs[plan.engine] = { calls: calls[plan.engine] || 0, est_usd: Math.round(estUsd * 1e6) / 1e6, searches };
+    await recordEngineUsageSafe(env, site.id, plan, { calls: (calls[plan.engine] || 0) - plan.allowance, estCostUsd: estUsd, searches });
+  }
+  if (Object.keys(costs).length) {
+    // Estimated from list prices (ai-engines.mjs ENGINE_PRICING), not a bill.
+    console.log("sov-engine-cost", JSON.stringify({ site_id: site.id, trigger, run: costs, prices_as_of: ENGINE_PRICING.as_of,
+      month_site_est_usd: Object.fromEntries(ready.map((plan) => [plan.engine, Math.round(((plan.est_cost_usd_month || 0) + costs[plan.engine].est_usd) * 1e4) / 1e4])) }));
   }
   const run = await storeSovRun(env, site.id, measurement, { trigger });
   const usage = await sovRemainingBudget(env, site.id);
-  return { measurement, run, usage, profile };
+  return { measurement, run, usage, profile, engines: plans.map(publicPlan) };
+}
+
+/** An engine plan without internal fields, as stored with a run and shown. */
+function publicPlan(plan) {
+  return { engine: plan.engine, status: plan.status, scope: plan.scope || null, allowance: plan.allowance || 0,
+    site: plan.site, global: plan.global };
+}
+
+/**
+ * Record engine usage. Perplexity still runs without the 0041 table (its
+ * per-site cap is the original counter), so a missing table there is logged
+ * and ignored; ChatGPT is never planned as ready without it.
+ */
+async function recordEngineUsageSafe(env, siteId, plan, delta) {
+  try {
+    await recordEngineUsage(env, siteId, plan.engine, delta);
+  } catch (error) {
+    if (plan.engine === "perplexity" && /no such table/i.test(String(error?.message || error))) return;
+    throw error;
+  }
 }
 
 function sovTargetUrl(site) {
@@ -3060,11 +3119,16 @@ export async function runSovDailyBatch(env, { limit = 200, now = Date.now() } = 
       errors.push({ site_id: site.id, error: String(error?.message || error).slice(0, 120) });
     }
   }
+  // This month's estimated spend for the whole deployment, per engine, so the
+  // daily log line carries it (null until 0041 is applied).
+  let monthCost = null;
+  try { monthCost = await monthlyCostSummary(env, now); } catch { monthCost = null; }
   return {
     ok: true,
     status: "measured",
     model_version: SOV_MODEL_VERSION,
     engines: engines.map((engine) => engine.id),
+    est_cost_usd_month: monthCost,
     sites: (result.results || []).length,
     measured,
     skipped,
