@@ -178,6 +178,8 @@ $GLOBALS['webmcp_test_user_meta'] = array();
 function get_user_meta($user_id, $key = '', $single = false) { return $GLOBALS['webmcp_test_user_meta'][$user_id][$key] ?? ($single ? '' : array()); }
 function update_user_meta($user_id, $key, $value) { $GLOBALS['webmcp_test_user_meta'][$user_id][$key] = $value; return true; }
 function wp_create_nonce($action = -1) { return md5($action); }
+function wp_kses_post($html) { return $html; }
+function wp_add_privacy_policy_content($name, $text) { $GLOBALS['webmcp_test_privacy'][$name] = $text; }
 $GLOBALS['webmcp_test_transients'] = array();
 function get_transient($key) { return $GLOBALS['webmcp_test_transients'][$key] ?? false; }
 function set_transient($key, $value, $ttl = 0) { $GLOBALS['webmcp_test_transients'][$key] = $value; return true; }
@@ -3115,5 +3117,16 @@ webmcp_canary_flush_llms_cache();
 $serve_body = webmcp_test_function_body(file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php'), 'webmcp_canary_maybe_serve_llms_txt');
 expect(strpos($serve_body, "header('Cache-Control: public, max-age=300')") !== false, 'llms.txt is served with Cache-Control: public, max-age=300');
 expect(strpos($serve_body, 'nocache_headers') === false, 'and no longer as uncacheable');
+
+/* --- 0.8.0: suggested privacy policy text ------------------------------ */
+
+$GLOBALS['webmcp_test_privacy'] = array();
+webmcp_canary_add_privacy_policy_content();
+expect(in_array('webmcp_canary_add_privacy_policy_content', $GLOBALS['webmcp_test_hooks']['admin_init'], true), 'the privacy text is offered from admin_init');
+$privacy = $GLOBALS['webmcp_test_privacy']['Nurevo AEO'] ?? '';
+expect($privacy !== '', 'privacy policy text is suggested to WordPress');
+foreach (array('nurevo.jp', 'Only after a site administrator agrees', 'pairing code', 'home page address', 'business details', 'no visitor data', 'https://nurevo.jp/privacy') as $disclosed) {
+    expect(strpos($privacy, $disclosed) !== false, "the privacy text states: {$disclosed}");
+}
 
 echo "WordPress AEO admin tests passed\n";

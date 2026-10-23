@@ -663,6 +663,17 @@ const JA = {
     "Nurevoサービスがこのサイトの接続を受け付けませんでした: %s",
   "The Nurevo service URL in Settings did not lead to the Nurevo service: %s":
     "設定にあるNurevoサービスのURLは、Nurevoサービスにつながりませんでした: %s",
+  // Suggested privacy policy text (0.8.0).
+  "This site uses the Nurevo AEO plugin to publish structured data, llms.txt and AI crawler rules. These are produced on this site’s own server. By default the plugin adds no tracking script to public pages and sends no visitor data to the Nurevo service.":
+    "このサイトでは、構造化データ・llms.txt・AIクローラーの設定を公開するために Nurevo AEO プラグインを使用しています。これらはこのサイト自身のサーバーで生成されます。初期設定では、公開ページに追跡用のスクリプトは追加されず、訪問者のデータがNurevoサービスに送信されることもありません。",
+  "Only after a site administrator agrees to run the AEO diagnosis, or connects the site to Nurevo with a pairing code, does the plugin contact the Nurevo service at nurevo.jp, operated by Bestie. LLC. It then sends this site’s home page address and WordPress language, and the service reads the site’s public front page, robots.txt and llms.txt.":
+    "サイト管理者がAEO診断の実行に同意した場合、またはペアリングコードでサイトをNurevoに接続した場合に限り、プラグインは Bestie. LLC. が運営する nurevo.jp のNurevoサービスに接続します。その際、このサイトのホームページのアドレスとWordPressの言語が送信され、サービスはサイトの公開中のトップページ・robots.txt・llms.txtを読み取ります。",
+  "Once the site is connected, the plugin also sends, from the WordPress administration area and twice a day: the business details entered in its settings (name, description, address, telephone, opening hours, business type, website and business email), the products, services and frequently asked questions it publishes, and the titles and addresses of recently updated public posts and pages. This is information about the business, not about visitors.":
+    "サイトの接続後は、WordPressの管理画面から、また1日2回、次の情報も送信されます。設定に入力された店舗情報（名称・説明・住所・電話番号・営業時間・業種・ウェブサイト・連絡用メールアドレス）、プラグインが公開する商品・サービス・よくある質問、最近更新された公開済みの投稿と固定ページのタイトルとアドレスです。これらは事業に関する情報であり、訪問者に関する情報ではありません。",
+  "If an administrator turns on the optional Nurevo browser tag, a script is loaded from nurevo.jp on public pages. It reports the structure of public forms and whether a submission succeeded, and is designed not to send what visitors type.":
+    "管理者が任意のNurevoブラウザタグをオンにした場合、公開ページで nurevo.jp のスクリプトが読み込まれます。このスクリプトは公開フォームの構造と送信の成否を報告し、訪問者が入力した内容は送信しない設計になっています。",
+  "Nurevo privacy policy: %s":
+    "Nurevoのプライバシーポリシー: %s",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo

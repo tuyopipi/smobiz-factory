@@ -90,6 +90,8 @@ The plugin also requests your own front page once a day (a loopback request to y
 
 The site key is a public identifier. It appears in markup served to browsers, so never put a server secret in it. The license key is separate and is never printed into public pages.
 
+The plugin suggests matching text for your site's privacy policy under **Settings > Privacy** (Policy Guide).
+
 By using these features you agree to the service's terms. Please read them before entering a key:
 
 * Privacy Policy: https://nurevo.jp/privacy

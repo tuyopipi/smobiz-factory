@@ -3739,6 +3739,34 @@ function webmcp_canary_consent_panel() {
     return ob_get_clean();
 }
 
+add_action('admin_init', 'webmcp_canary_add_privacy_policy_content');
+/**
+ * Suggested text for the site's privacy policy (Settings > Privacy), taken
+ * from the readme's "External services" disclosure.
+ */
+function webmcp_canary_add_privacy_policy_content() {
+    if (!function_exists('wp_add_privacy_policy_content')) {
+        return;
+    }
+    wp_add_privacy_policy_content(__('Nurevo AEO', 'nurevo-webmcp'), webmcp_canary_privacy_policy_text());
+}
+
+function webmcp_canary_privacy_policy_text() {
+    $paragraphs = array(
+        __('This site uses the Nurevo AEO plugin to publish structured data, llms.txt and AI crawler rules. These are produced on this site’s own server. By default the plugin adds no tracking script to public pages and sends no visitor data to the Nurevo service.', 'nurevo-webmcp'),
+        __('Only after a site administrator agrees to run the AEO diagnosis, or connects the site to Nurevo with a pairing code, does the plugin contact the Nurevo service at nurevo.jp, operated by Bestie. LLC. It then sends this site’s home page address and WordPress language, and the service reads the site’s public front page, robots.txt and llms.txt.', 'nurevo-webmcp'),
+        __('Once the site is connected, the plugin also sends, from the WordPress administration area and twice a day: the business details entered in its settings (name, description, address, telephone, opening hours, business type, website and business email), the products, services and frequently asked questions it publishes, and the titles and addresses of recently updated public posts and pages. This is information about the business, not about visitors.', 'nurevo-webmcp'),
+        __('If an administrator turns on the optional Nurevo browser tag, a script is loaded from nurevo.jp on public pages. It reports the structure of public forms and whether a submission succeeded, and is designed not to send what visitors type.', 'nurevo-webmcp'),
+    );
+    $html = '';
+    foreach ($paragraphs as $paragraph) {
+        $html .= '<p>' . esc_html($paragraph) . '</p>';
+    }
+    /* translators: %s: URL of the Nurevo privacy policy. */
+    $html .= '<p>' . sprintf(esc_html__('Nurevo privacy policy: %s', 'nurevo-webmcp'), '<a href="https://nurevo.jp/privacy">https://nurevo.jp/privacy</a>') . '</p>';
+    return wp_kses_post($html);
+}
+
 register_activation_hook(__FILE__, 'webmcp_canary_activate_aeo_score');
 /**
  * Activation: local work only. Nothing here makes an HTTP request - not to the
