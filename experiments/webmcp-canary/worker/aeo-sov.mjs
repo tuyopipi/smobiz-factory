@@ -20,7 +20,18 @@ import {
   localizedDiscoveryQuestions, looksJapaneseAddress, resolveSovLanguage,
 } from "./sov-locale.mjs";
 
+import {
+  ENGINE_ADAPTERS, ENGINE_DEFINITIONS, SMALL_SAMPLE_N, SovError, assumedMaxCallCost, engineConfigured, isProviderQuotaError,
+  wilsonInterval,
+} from "./ai-engines.mjs";
+
 export { SOV_LANGUAGES, resolveSovLanguage } from "./sov-locale.mjs";
+// The engine adapters and their plumbing live in ai-engines.mjs; these names
+// stay importable from here for existing callers.
+export {
+  ENGINE_ADAPTERS, PERPLEXITY_PRESET_DEFAULT, SovError, engineUsage, parsePerplexityAgent, perplexityPreset,
+  providerErrorDetail, wilsonInterval,
+} from "./ai-engines.mjs";
 
 export const SOV_MODEL_VERSION = "u2-v2";
 export const SOV_BETA = true;
@@ -37,7 +48,31 @@ export const SOV_MIN_SAMPLES_FOR_RATE = 2;
  * `measured` is the only one that carries a number; the other two mean nothing
  * was measurable, which is a different statement from "measured, and it is zero".
  */
-export const RATE_BASES = Object.freeze(["measured", "insufficient_samples", "no_answers"]);
+export const RATE_BASES = Object.freeze(["measured", "insufficient_samples", "no_answers", "not_asked"]);
+
+/**
+ * The engine whose rate is the run-level ("headline") appearance rate. It is
+ * Perplexity whenever Perplexity is configured, as it was for every run before
+ * ChatGPT was added, so the stored series continues like for like. A run in
+ * which the headline engine was not asked (say Perplexity is at its monthly
+ * cap and only ChatGPT ran) stores no headline rate ("not_asked") rather than
+ * quietly reporting ChatGPT's figure in its place; every engine's own rate is
+ * still in by_engine.
+ */
+export const HEADLINE_ENGINE_DEFAULT = "perplexity";
+export function headlineEngineFor(env = {}) {
+  const configured = ENGINE_DEFINITIONS.filter((engine) => engineConfigured(env, engine.id)).map((engine) => engine.id);
+  return configured.includes(HEADLINE_ENGINE_DEFAULT) ? HEADLINE_ENGINE_DEFAULT : configured[0] || HEADLINE_ENGINE_DEFAULT;
+}
+
+/**
+ * Time bounds. A run stops issuing engine calls once its deadline passes (at
+ * most this long after it started), keeps what it has, and refunds the rest of
+ * its reservation. With one call in flight bounded by requestTimeoutMs, a run
+ * holds its lock for at most SOV_RUN_TIME_BUDGET_MS + requestTimeoutMs plus
+ * storage; the lock lease (pro-report.mjs) is set from these.
+ */
+export const SOV_RUN_TIME_BUDGET_MS = 10 * 60 * 1000;
 
 /**
  * Cost control. These are hard limits enforced in code, not suggestions.
@@ -47,6 +82,8 @@ export const RATE_BASES = Object.freeze(["measured", "insufficient_samples", "no
  */
 export const SOV_LIMITS = Object.freeze({
   maxQuestionsPerRun: 20,
+  // Perplexity and ChatGPT. Each engine has its own monthly caps
+  // (ai-engines.mjs engineCaps); this only bounds how many are asked per run.
   maxEnginesPerRun: 2,
   monthlyQueriesPerSite: 200,
   answerExcerptChars: 400,
@@ -100,61 +137,21 @@ export const AGGREGATOR_HOSTS = Object.freeze([
   "medium.com", "quora.com",
 ]);
 
-export class SovError extends Error {
-  constructor(status, code, detail = null) { super(code); this.name = "SovError"; this.status = status; this.code = code; this.detail = detail; }
-}
-
-/**
- * The start of a provider's error response, safe to store and log.
- *
- * A bare "perplexity_http_403" cannot tell an exhausted balance from a bad
- * model name from an edge block, and the response body can. Only the
- * provider's own words are kept - tags stripped, anything shaped like an API
- * key redacted, at most 200 characters - never the request or its headers.
- */
-export async function providerErrorDetail(response) {
-  let text = "";
-  try { text = await response.text(); } catch { return null; }
-  const clean = text
-    .replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/\b(?:pplx|sk|sk-proj|key)[-_][A-Za-z0-9_-]{8,}\b/g, "[redacted]")
-    .replace(/\bBearer\s+\S+/gi, "Bearer [redacted]")
-    .replace(/\s+/g, " ")
-    .trim();
-  return clean ? clean.slice(0, 200) : null;
-}
-
 /* ------------------------------------------------------------------ *
  * Engine registry
  * ------------------------------------------------------------------ */
 
 /**
- * Engines usable in this environment, in probe priority order.
- *
- * `citations` records whether the engine returns a citation list. Engines
- * without one can only evidence a text mention, and the response says so
- * rather than implying citation data exists.
+ * Engine registry (ai-engines.mjs), in probe order. Both engines search
+ * the live web and return sources. `key` names the secret binding and is the
+ * only thing consulted to decide whether an engine is usable.
  */
-/**
- * Engine registry, in probe order.
- *
- * `citations` records whether the provider returns a source list. Perplexity
- * searches the live web and cites it; the OpenAI chat endpoint answers from
- * model knowledge and returns no sources, so it can only evidence a text
- * mention. Citation-capable engines are probed first so the single-sample
- * public checker gets the stronger signal. `key` names the secret binding and
- * is the only thing consulted to decide whether an engine is usable.
- */
-const ENGINES = Object.freeze([
-  { id: "perplexity", label: "Perplexity", citations: true, key: "PERPLEXITY_API_KEY", live_search: true },
-  { id: "openai", label: "ChatGPT (OpenAI)", citations: false, key: "OPENAI_API_KEY", live_search: false },
-]);
+const ENGINES = ENGINE_DEFINITIONS;
 
 /** Engines whose secret is present. An engine without its key is never probed. */
 export function availableEngines(env = {}) {
   return ENGINES
-    .filter((engine) => String(env[engine.key] || "").trim() !== "")
+    .filter((engine) => engineConfigured(env, engine.id))
     .map(({ id, label, citations, live_search }) => ({ id, label, citations, live_search }))
     .slice(0, SOV_LIMITS.maxEnginesPerRun);
 }
@@ -528,18 +525,38 @@ function latinAliasPattern(folded) {
  * control question names the business in the prompt, so its answer almost
  * always mentions it; including it would measure the question, not the site.
  * Controls are summarised separately under `parser_control`.
+ *
+ * It is also one engine's rate (`headlineEngine`, Perplexity by default; see
+ * HEADLINE_ENGINE_DEFAULT): answers of different engines are never pooled into
+ * it. `answers_received` still counts every engine's answers; each engine's
+ * own figures are in `by_engine`, and the pooled named-or-cited figure is
+ * `combined`.
  */
-export function aggregateSov(samples, profile) {
+export function aggregateSov(samples, profile, { headlineEngine = null } = {}) {
   const discoverySamples = samples.filter((sample) => sample.kind !== "branded");
   const controlSamples = samples.filter((sample) => sample.kind === "branded");
   // A probe that failed (HTTP error, timeout, unconfigured engine) is excluded
   // from the denominator: an outage must lower confidence, never the rate.
   const answered = discoverySamples.filter((sample) => sample.ok);
   const total = answered.length;
-  const mentions = answered.filter((sample) => sample.mentioned).length;
-  const citations = answered.filter((sample) => sample.cited).length;
   const rateAvailable = total >= SOV_MIN_SAMPLES_FOR_RATE;
   const rateOf = (count) => rateAvailable ? rate(count, total) : null;
+
+  // The headline rate is one engine's (see HEADLINE_ENGINE_DEFAULT), never a
+  // pool of engines: a sample without an engine is a Perplexity one (the only
+  // engine before multi-engine runs). Without an explicit choice it is
+  // Perplexity when Perplexity was asked, otherwise the one engine asked.
+  const engineOf = (sample) => sample.engine || HEADLINE_ENGINE_DEFAULT;
+  const askedEngines = dedupe(discoverySamples.map(engineOf));
+  const headline = headlineEngine
+    || (askedEngines.includes(HEADLINE_ENGINE_DEFAULT) || !askedEngines.length ? HEADLINE_ENGINE_DEFAULT : askedEngines[0]);
+  const headlineAsked = discoverySamples.some((sample) => engineOf(sample) === headline);
+  const headlineAnswered = answered.filter((sample) => engineOf(sample) === headline);
+  const headlineTotal = headlineAnswered.length;
+  const mentions = headlineAnswered.filter((sample) => sample.mentioned).length;
+  const citations = headlineAnswered.filter((sample) => sample.cited).length;
+  const headlineAvailable = headlineTotal >= SOV_MIN_SAMPLES_FOR_RATE;
+  const headlineRate = (count) => headlineAvailable ? rate(count, headlineTotal) : null;
 
   const byHost = new Map();
   for (const sample of answered) {
@@ -562,21 +579,35 @@ export function aggregateSov(samples, profile) {
     language: profile.language || null,
     language_source: profile.language_source || null,
     questions_asked: discoverySamples.length,
+    // Every engine's answers; the rates below are the headline engine's.
     answers_received: total,
-    appearance_rate: rateOf(mentions),
-    citation_rate: rateOf(citations),
-    // Distinguishes "measured 0%" from "could not be measured".
-    rate_basis: total === 0 ? "no_answers" : rateAvailable ? "measured" : "insufficient_samples",
+    appearance_rate: headlineRate(mentions),
+    citation_rate: headlineRate(citations),
+    // Distinguishes "measured 0%" from "could not be measured", and from "the
+    // headline engine was not asked in this run".
+    rate_basis: !headlineAsked && discoverySamples.length ? "not_asked"
+      : headlineTotal === 0 ? "no_answers" : headlineAvailable ? "measured" : "insufficient_samples",
     min_samples_for_rate: SOV_MIN_SAMPLES_FOR_RATE,
     appearances: mentions,
     citations,
+    headline: { engine: headline, asked: headlineAsked, answers: headlineTotal, appearances: mentions, citations },
     competitors,
     by_engine: engineBreakdown(discoverySamples, rateAvailable),
+    // Every engine's answers pooled, with "appeared" meaning named in the
+    // answer OR the site's domain among its sources. Named and cited are kept
+    // apart so the reader can see which kind of appearance it was.
+    combined: appearanceStats(answered),
     parser_control: controlSummary(controlSamples),
     // A handful of answers cannot support a confident rate. Say so instead of
     // letting the gauge imply precision it does not have.
-    confidence: !rateAvailable ? "none" : total < 5 ? "low" : total < 12 ? "medium" : "normal",
+    confidence: sovConfidence(headlineTotal),
   };
+}
+
+/** How far a rate from `answers` answers can be trusted (one engine's answers). */
+export function sovConfidence(answers) {
+  const total = Number(answers) || 0;
+  return total < SOV_MIN_SAMPLES_FOR_RATE ? "none" : total < 5 ? "low" : total < 12 ? "medium" : "normal";
 }
 
 function rate(count, total) {
@@ -584,11 +615,9 @@ function rate(count, total) {
 }
 
 /**
- * Per-engine split of the same samples.
- *
- * The headline rate mixes every configured engine. Perplexity searches the web
- * while the OpenAI chat endpoint answers from model knowledge, so the operator
- * is shown which engine contributed what instead of one undifferentiated number.
+ * Per-engine split of the same samples: each engine's answers, named, cited
+ * and named-or-cited counts, rates and Wilson interval, so engines are always
+ * reported side by side and never as one undifferentiated number.
  */
 /**
  * Branded control questions, reported but never scored.
@@ -610,28 +639,58 @@ function controlSummary(samples) {
   };
 }
 
+/**
+ * Appearance counts for a set of answered samples: n answers, how many named
+ * the business, how many cited its domain, how many did either ("appeared"),
+ * with a Wilson 95% interval on the appeared rate. `small_sample` is true
+ * below SMALL_SAMPLE_N answers, where the rate is reference only.
+ */
+export function appearanceStats(answered) {
+  const n = answered.length;
+  const named = answered.filter((sample) => sample.mentioned).length;
+  const cited = answered.filter((sample) => sample.cited).length;
+  const appeared = answered.filter((sample) => sample.mentioned || sample.cited).length;
+  const measurable = n >= SOV_MIN_SAMPLES_FOR_RATE;
+  return {
+    n, named, cited, appeared,
+    appearance_rate: measurable ? rate(appeared, n) : null,
+    named_rate: measurable ? rate(named, n) : null,
+    cited_rate: measurable ? rate(cited, n) : null,
+    interval: measurable ? wilsonInterval(appeared, n) : null,
+    small_sample: n < SMALL_SAMPLE_N,
+  };
+}
+
 function engineBreakdown(samples, rateAvailable) {
   const byEngine = new Map();
   for (const sample of samples) {
     const id = sample.engine || "unknown";
-    const row = byEngine.get(id) || { engine: id, answers: 0, failures: 0, appearances: 0, citations: 0 };
+    const row = byEngine.get(id) || { engine: id, answers: 0, failures: 0, appearances: 0, citations: 0, appeared: 0, est_cost_usd: 0 };
     if (sample.ok) {
       row.answers += 1;
       if (sample.mentioned) row.appearances += 1;
       if (sample.cited) row.citations += 1;
+      if (sample.mentioned || sample.cited) row.appeared += 1;
     } else {
       row.failures += 1;
     }
+    if (Number.isFinite(sample.cost?.est_usd)) row.est_cost_usd = Math.round((row.est_cost_usd + sample.cost.est_usd) * 1e6) / 1e6;
     byEngine.set(id, row);
   }
   return [...byEngine.values()].map((row) => {
     const meta = ENGINES.find((engine) => engine.id === row.engine);
+    const measurable = rateAvailable && row.answers >= SOV_MIN_SAMPLES_FOR_RATE;
     return {
       ...row,
       live_search: meta ? meta.live_search : null,
       citations_available: meta ? meta.citations : null,
-      appearance_rate: rateAvailable && row.answers >= SOV_MIN_SAMPLES_FOR_RATE
-        ? rate(row.appearances, row.answers) : null,
+      // `appearance_rate` keeps its original meaning (named in the answer);
+      // `any_rate` counts a citation of the site's domain as an appearance too.
+      appearance_rate: measurable ? rate(row.appearances, row.answers) : null,
+      citation_rate: measurable ? rate(row.citations, row.answers) : null,
+      any_rate: measurable ? rate(row.appeared, row.answers) : null,
+      interval: measurable ? wilsonInterval(row.appeared, row.answers) : null,
+      small_sample: row.answers < SMALL_SAMPLE_N,
     };
   });
 }
@@ -640,127 +699,8 @@ function engineBreakdown(samples, rateAvailable) {
  * Engine probes
  * ------------------------------------------------------------------ */
 
-const SYSTEM_PROMPT = "You are answering as a consumer-facing AI search assistant. Answer the user's question about local businesses concisely and factually. Name specific businesses when you can, and include source URLs when you have them.";
-
-/**
- * Resolve an engine endpoint.
- *
- * The request carries the provider API key in its Authorization header, so an
- * environment-supplied override is only honoured when it points at this
- * machine. That keeps a misconfigured or tampered variable from redirecting a
- * live secret to a third-party host; anything else silently uses the provider.
- */
-function engineEndpoint(override, providerUrl) {
-  const raw = String(override || "").trim();
-  if (!raw) return providerUrl;
-  let url;
-  try { url = new URL(raw); } catch { return providerUrl; }
-  const host = url.hostname.toLowerCase();
-  const loopback = host === "localhost" || host === "127.0.0.1" || host === "::1" || host === "[::1]"
-    || host.endsWith(".localhost") || host.endsWith(".test");
-  return loopback ? url.href : providerUrl;
-}
-
-// Perplexity retired Sonar chat completions in favour of its Agent API: the
-// old endpoint now answers 403 "Sonar is now the Agent API". The "fast"
-// preset is the documented replacement for model "sonar" and searches the
-// web by default, which is what a citation measurement needs.
-export const PERPLEXITY_PRESET_DEFAULT = "fast";
-export const perplexityPreset = (env = {}) => String(env.PERPLEXITY_PRESET || PERPLEXITY_PRESET_DEFAULT);
-
-/** Answer text, cited URLs, model and usage from an Agent API response. */
-export function parsePerplexityAgent(data) {
-  const output = Array.isArray(data?.output) ? data.output : [];
-  const answer = output
-    .filter((item) => item?.type === "message")
-    .flatMap((item) => (Array.isArray(item.content) ? item.content : []))
-    .map((part) => (typeof part?.text === "string" ? part.text : ""))
-    .join("\n")
-    .trim();
-  const citations = output
-    .filter((item) => item?.type === "search_results")
-    .flatMap((item) => (Array.isArray(item.results) ? item.results : []))
-    .map((result) => result?.url)
-    .filter((url) => typeof url === "string" && url);
-  return { answer, citations: [...new Set(citations)], model: typeof data?.model === "string" ? data.model : null, status: data?.status || null };
-}
-
-async function probePerplexity(env, question, fetchImpl) {
-  const endpoint = engineEndpoint(env.PERPLEXITY_API_URL, "https://api.perplexity.ai/v1/agent");
-  const response = await withTimeout((signal) => fetchImpl(endpoint, {
-    method: "POST",
-    signal,
-    headers: { authorization: `Bearer ${env.PERPLEXITY_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      preset: perplexityPreset(env),
-      instructions: SYSTEM_PROMPT,
-      input: question,
-      max_output_tokens: 500,
-    }),
-  }));
-  if (!response.ok) {
-    const detail = await providerErrorDetail(response);
-    console.error("sov-engine-error", JSON.stringify({ engine: "perplexity", status: response.status, detail }));
-    throw new SovError(502, `perplexity_http_${response.status}`, detail);
-  }
-  const data = await response.json();
-  if (data?.status === "failed" || data?.status === "cancelled") throw new SovError(502, `perplexity_${data.status}`, String(data?.error?.message || "").slice(0, 200) || null);
-  const agent = parsePerplexityAgent(data);
-  // A chat-completions shaped body is still read, so a local double written
-  // for the old API keeps working; production only ever sees the Agent shape.
-  const legacyAnswer = String(data?.choices?.[0]?.message?.content || "");
-  return {
-    model: agent.model || String(data?.model || `preset:${perplexityPreset(env)}`),
-    answer: agent.answer || legacyAnswer,
-    citations: agent.citations.length ? agent.citations
-      : Array.isArray(data?.citations) ? data.citations : Array.isArray(data?.search_results) ? data.search_results : [],
-    usage: engineUsage(data?.usage),
-  };
-}
-
-/**
- * What the provider says a call consumed, kept with the evidence so the real
- * cost of a measurement can be added up rather than estimated. Only numbers
- * and short labels are kept - token counts, the search context size and, when
- * the provider reports it, its own cost breakdown.
- */
-export function engineUsage(raw) {
-  if (!raw || typeof raw !== "object") return null;
-  const out = {};
-  for (const [key, value] of Object.entries(raw)) {
-    if (typeof value === "number" && Number.isFinite(value)) out[key] = value;
-    else if (typeof value === "string" && value.length <= 40) out[key] = value;
-    else if (key === "cost" && value && typeof value === "object") {
-      out.cost = Object.fromEntries(Object.entries(value).filter(([, v]) => typeof v === "number" && Number.isFinite(v)));
-    }
-  }
-  return Object.keys(out).length ? out : null;
-}
-
-async function probeOpenAi(env, question, fetchImpl) {
-  const endpoint = engineEndpoint(env.OPENAI_CHAT_API_URL, "https://api.openai.com/v1/chat/completions");
-  const response = await withTimeout((signal) => fetchImpl(endpoint, {
-    method: "POST",
-    signal,
-    headers: { authorization: `Bearer ${env.OPENAI_API_KEY}`, "content-type": "application/json" },
-    body: JSON.stringify({
-      model: String(env.OPENAI_MODEL || "gpt-4.1-mini"),
-      messages: [{ role: "system", content: SYSTEM_PROMPT }, { role: "user", content: question }],
-      max_tokens: 500,
-    }),
-  }));
-  if (!response.ok) {
-    const detail = await providerErrorDetail(response);
-    console.error("sov-engine-error", JSON.stringify({ engine: "openai", status: response.status, detail }));
-    throw new SovError(502, `openai_http_${response.status}`, detail);
-  }
-  const data = await response.json();
-  // No citation list is returned here, so only URLs inside the answer text can
-  // serve as citation evidence. engineStatus() reports citations_available:false.
-  return { answer: String(data?.choices?.[0]?.message?.content || ""), citations: [], usage: engineUsage(data?.usage) };
-}
-
-export const ENGINE_ADAPTERS = Object.freeze({ perplexity: probePerplexity, openai: probeOpenAi });
+// The adapters (Perplexity, ChatGPT with web search) are in
+// ai-engines.mjs and share one return shape.
 
 /* ------------------------------------------------------------------ *
  * Measurement
@@ -771,23 +711,34 @@ export const ENGINE_ADAPTERS = Object.freeze({ perplexity: probePerplexity, open
  *
  * `budget` caps how many engine calls may be made and is decremented as they
  * are issued, so the monthly cap holds even if a question set is large.
+ * `deadline` (epoch ms) stops issuing calls once passed: the answers so far are
+ * kept and the run says it was cut short (`stop_reason: "time_budget"`).
+ * A call that timed out is costed at its assumed maximum (assumedMaxCallCost:
+ * ChatGPT at max_tool_calls searches), since the provider may have done the
+ * work and did not say how much.
  */
 export async function measureSov(env, profile, {
   questions,
   budget = SOV_LIMITS.maxQuestionsPerRun * SOV_LIMITS.maxEnginesPerRun,
+  engineBudgets = null,
   fetchImpl = fetch,
   repetitions = 1,
   engineIds,
   engineAdapters = ENGINE_ADAPTERS,
+  deadline = null,
+  clock = Date.now,
 } = {}) {
   const engines = availableEngines(env).filter((e) => !engineIds || engineIds.includes(e.id));
+  const headlineEngine = headlineEngineFor(env);
   if (!engines.length) {
     return {
       status: "unconfigured",
       ...engineStatus(env),
-      ...aggregateSov([], profile),
+      ...aggregateSov([], profile, { headlineEngine }),
       samples: [],
       queries_used: 0,
+      engines_run: [],
+      engine_calls: {},
       limits: SOV_LIMITS,
     };
   }
@@ -798,40 +749,79 @@ export async function measureSov(env, profile, {
   const samples = [];
   let used = 0;
   let truncated = false;
+  let stopReason = null;
+  const outOfTime = () => Number.isFinite(deadline) && clock() >= deadline;
+  // Calls issued per engine, checked against that engine's own allowance
+  // (engineBudgets) so one engine reaching its cap never stops the others.
+  const calls = Object.fromEntries(engines.map((engine) => [engine.id, 0]));
+  const stopped = new Map();
+  const allowanceOf = (id) => {
+    const value = engineBudgets ? Number(engineBudgets[id]) : Infinity;
+    return Number.isFinite(value) ? Math.max(0, value) : Infinity;
+  };
 
   const repeats = Math.max(1, Math.min(3, Number.isInteger(repetitions) ? repetitions : 1));
   for (const question of questionSet.flatMap((q) => Array.from({ length: repeats }, (_, i) => ({ ...q, sample_index: i + 1 })))) {
     for (const engine of engines) {
       if (used >= budget) { truncated = true; break; }
+      if (outOfTime()) { truncated = true; stopReason = "time_budget"; break; }
+      if (stopped.has(engine.id)) continue;
+      if (calls[engine.id] >= allowanceOf(engine.id)) { stopped.set(engine.id, "engine_budget_reached"); truncated = true; continue; }
       used += 1;
+      calls[engine.id] += 1;
       try {
-        const probe = await engineAdapters[engine.id](env, question.text, fetchImpl);
-        if (!probe.answer.trim()) throw new SovError(502, "empty_answer");
+        const probe = await engineAdapters[engine.id](env, question.text, fetchImpl, { profile });
+        if (!String(probe?.answer || "").trim()) throw Object.assign(new SovError(502, "empty_answer"), { cost: probe?.cost || null });
         const analysis = analyzeAnswer({ ...probe, profile });
-        samples.push({ ok: true, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine_model: probe.model || null, usage: probe.usage || null, engine: engine.id, question: question.text, kind: question.kind, ...analysis });
+        samples.push({
+          ok: true, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine_model: probe.model || null,
+          usage: probe.usage || null, cost: probe.cost || null, engine: engine.id, question: question.text, kind: question.kind,
+          business_mentions: Array.isArray(probe.mentions) ? probe.mentions.slice(0, 15) : [],
+          sources: sourceTitles(probe.citations),
+          ...analysis,
+        });
       } catch (error) {
         // A failed probe is recorded but excluded from the rate denominator,
         // so an engine outage lowers confidence instead of the score.
+        const timedOut = error?.name === "AbortError" || error?.name === "TimeoutError";
+        const code = error instanceof SovError ? error.code : timedOut ? `${engine.id}_timeout` : "engine_request_failed";
         samples.push({
           ok: false, measured_at: new Date().toISOString(), sample_index: question.sample_index, engine: engine.id, question: question.text, kind: question.kind,
-          error: error instanceof SovError ? error.code : "engine_request_failed",
+          error: code,
           error_detail: error instanceof SovError ? error.detail || null : null,
+          cost: error?.cost || (timedOut ? assumedMaxCallCost(engine.id, env) : null),
         });
+        // The provider says its quota is spent: asking again only adds failures.
+        if (isProviderQuotaError(code)) stopped.set(engine.id, code);
       }
     }
     if (used >= budget) { truncated = true; break; }
+    if (stopReason) break;
   }
 
   return {
     status: "measured",
     ...engineStatus(env),
-    ...aggregateSov(samples, profile),
+    ...aggregateSov(samples, profile, { headlineEngine }),
     samples,
     repetitions: repeats,
     queries_used: used,
+    engines_run: engines.map((engine) => engine.id),
+    engine_calls: calls,
+    engine_stops: Object.fromEntries(stopped),
     truncated,
+    stop_reason: stopReason,
     limits: SOV_LIMITS,
   };
+}
+
+/** Source URLs with the title the engine gave them, for the reviewer. */
+function sourceTitles(citations) {
+  return (Array.isArray(citations) ? citations : [])
+    .map((citation) => typeof citation === "string" ? { url: citation, title: null }
+      : citation && typeof citation.url === "string" ? { url: citation.url, title: typeof citation.title === "string" ? citation.title.slice(0, 200) : null } : null)
+    .filter(Boolean)
+    .slice(0, 20);
 }
 
 /* ------------------------------------------------------------------ *
@@ -895,6 +885,16 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
       min_samples_for_rate: result.min_samples_for_rate,
       by_engine: result.by_engine || [],
       parser_control: result.parser_control ?? null,
+      // Multi-engine: which engines were actually asked (the trend of each
+      // engine and of the combined rate is keyed on this), the pooled
+      // named-or-cited figures, and why any configured engine was not asked.
+      engines_run: Array.isArray(result.engines_run) ? result.engines_run : null,
+      combined: result.combined ?? null,
+      engine_status: Array.isArray(result.engine_status) ? result.engine_status : null,
+      engine_stops: result.engine_stops || null,
+      // Whose rate the run-level appearance_rate / citation_rate columns are.
+      headline: result.headline ?? null,
+      stop_reason: result.stop_reason || null,
     }),
   ));
 
@@ -922,7 +922,11 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
         sample.sample_index || 1, sample.ok ? 1 : 0, sample.excerpt || null,
         JSON.stringify(sample.citationUrls || []), sample.cited ? 1 : 0, sample.citation_rank || null,
         JSON.stringify({ mentioned: sample.ok ? !!sample.mentioned : null, status: "unreviewed", description: sample.excerpt || null,
-          kind: sample.kind || "discovery", error: sample.error || null, error_detail: sample.error_detail || null, engine_model: sample.engine_model || null }),
+          kind: sample.kind || "discovery", error: sample.error || null, error_detail: sample.error_detail || null, engine_model: sample.engine_model || null,
+          // Evidence for the reviewer only; never scored.
+          business_mentions: Array.isArray(sample.business_mentions) ? sample.business_mentions : [],
+          sources: Array.isArray(sample.sources) ? sample.sources : [],
+          est_cost_usd: Number.isFinite(sample.cost?.est_usd) ? sample.cost.est_usd : null }),
         sample.usage ? JSON.stringify(sample.usage) : null,
       ));
   }
@@ -987,20 +991,89 @@ export async function loadSovHistory(env, siteId, { limit = 26 } = {}) {
       truncated: !!detail.truncated,
       // Stored since multilingual questions; older runs were all Japanese.
       language: typeof detail.language === "string" ? detail.language : null,
+      // Since multi-engine measurement; older runs asked Perplexity only.
+      engines_run: Array.isArray(detail.engines_run) ? detail.engines_run : null,
+      combined: detail.combined ?? null,
+      engine_status: asArray(detail.engine_status),
+      headline_engine: headlineEngineOf(detail),
+      stop_reason: typeof detail.stop_reason === "string" ? detail.stop_reason : null,
     } : null,
-    trend: rows.slice().reverse().map((row) => ({
-      ran_at: row.ran_at,
-      appearance_rate: row.appearance_rate,
-      citation_rate: row.citation_rate,
-      answers_received: row.answers_received,
-      confidence: row.confidence,
-    })),
+    trend: rows.slice().reverse().map((row) => {
+      const rowDetail = safeJsonObject(row.detail_json);
+      return {
+        ran_at: row.ran_at,
+        engines_run: enginesRunOf(rowDetail),
+        // The run-level rates are this engine's (headline_engine); compare a
+        // point only with points of the same engine, or use engine_rates.
+        headline_engine: headlineEngineOf(rowDetail),
+        appearance_rate: row.appearance_rate,
+        citation_rate: row.citation_rate,
+        answers_received: row.answers_received,
+        confidence: row.confidence,
+        engine_rates: engineRatesOf(row, rowDetail),
+      };
+    }),
   };
+}
+
+/**
+ * Whose rate a stored run's appearance_rate column is. Runs before the
+ * headline was stored: Perplexity when Perplexity was asked (it always was
+ * before multi-engine runs), otherwise the one engine asked; a run that pooled
+ * several engines without saying so has no single headline (null).
+ */
+export function headlineEngineOf(detail = {}) {
+  if (typeof detail?.headline?.engine === "string") return detail.headline.engine;
+  const engines = enginesRunOf(detail);
+  return engines.length === 1 ? engines[0] : null;
+}
+
+/**
+ * One stored run's rates per engine, comparable across runs of that engine:
+ * { [engine]: { answers, asked, appearance_rate, citation_rate } }, where
+ * appearance_rate is "named in the answer" (the column's meaning) and the
+ * rate is null below SOV_MIN_SAMPLES_FOR_RATE answers. Taken from the stored
+ * per-engine split; a run without one that asked a single engine uses its
+ * run-level figures for that engine.
+ */
+export function engineRatesOf(row = {}, detail = safeJsonObject(row.detail_json)) {
+  const out = {};
+  for (const entry of asArray(detail.by_engine)) {
+    if (!entry || typeof entry.engine !== "string") continue;
+    const answers = Number(entry.answers || 0);
+    const measurable = answers >= SOV_MIN_SAMPLES_FOR_RATE;
+    out[entry.engine] = {
+      answers,
+      asked: answers + Number(entry.failures || 0),
+      appearance_rate: measurable ? rate(Number(entry.appearances || 0), answers) : null,
+      citation_rate: measurable ? rate(Number(entry.citations || 0), answers) : null,
+    };
+  }
+  const engines = enginesRunOf(detail);
+  if (!Object.keys(out).length && engines.length === 1 && row.status !== "unconfigured") {
+    out[engines[0]] = {
+      answers: Number(row.answers_received || 0),
+      asked: Number(row.questions_asked || 0),
+      appearance_rate: row.appearance_rate ?? null,
+      citation_rate: row.citation_rate ?? null,
+    };
+  }
+  return out;
 }
 
 /* ------------------------------------------------------------------ *
  * Helpers
  * ------------------------------------------------------------------ */
+
+/**
+ * The engines a stored run asked, sorted. Runs written before multi-engine
+ * measurement asked Perplexity only (the scheduled and manual runs were pinned
+ * to it), so a missing list reads as ["perplexity"].
+ */
+export function enginesRunOf(detail = {}) {
+  const list = Array.isArray(detail?.engines_run) ? detail.engines_run.filter((id) => typeof id === "string") : null;
+  return list ? [...new Set(list)].sort() : ["perplexity"];
+}
 
 function safeJsonArray(value) {
   try { const parsed = JSON.parse(value); return Array.isArray(parsed) ? parsed : []; } catch { return []; }
@@ -1062,10 +1135,4 @@ export function normalizeForMatch(value) {
     .toLowerCase()
     .replace(/[\s　]+/g, "")
     .replace(/[・･'’"“”`]/g, "");
-}
-
-function withTimeout(run, timeoutMs = SOV_LIMITS.requestTimeoutMs) {
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeoutMs);
-  return Promise.resolve(run(controller.signal)).finally(() => clearTimeout(timer));
 }

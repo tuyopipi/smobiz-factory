@@ -11,6 +11,7 @@
 
 import { AEO_SCORE_WEIGHTS } from "./aeo-score.mjs";
 import { PRO_CANDIDATE_SQL, resolveSitePlan } from "./billing-plan.mjs";
+import { HEADLINE_ENGINE_DEFAULT, engineRatesOf, sovConfidence } from "./aeo-sov.mjs";
 
 export const CALIBRATION_VERSION = "u2-calib-v1";
 
@@ -25,12 +26,19 @@ export const CALIBRATION_MAX_DRIFT = 0.25;
  *
  * Only pro sites with a measured (not unconfigured) run contribute, because
  * only they have an outcome variable to correlate against.
+ *
+ * One engine at a time (Perplexity by default, the series every earlier run
+ * belongs to): each run contributes that engine's own appearance rate, from
+ * its stored per-engine split, and a run that did not get an answer from that
+ * engine contributes nothing. Rates of different engines are never averaged
+ * together, so adding ChatGPT does not move the Perplexity-based proposal.
  */
-export async function collectCalibrationSamples(env, { limit = 500 } = {}) {
+export async function collectCalibrationSamples(env, { limit = 500, engine = HEADLINE_ENGINE_DEFAULT } = {}) {
   if (!env?.DB) throw new Error("DB binding is required for calibration");
   const bounded = Math.min(2000, Math.max(1, limit));
   const result = await env.DB.prepare(`
-    SELECT r.site_id, r.ran_at, r.appearance_rate, r.answers_received, r.confidence,
+    SELECT r.site_id, r.ran_at, r.status, r.appearance_rate, r.citation_rate, r.answers_received, r.questions_asked,
+           r.confidence, r.detail_json,
            sc.checks_json, sc.score, sc.scanned_at,
            s.plan, s.manual_plan, o.manual_plan AS org_manual_plan
       FROM aeo_sov_runs r
@@ -38,7 +46,7 @@ export async function collectCalibrationSamples(env, { limit = 500 } = {}) {
       LEFT JOIN orgs o ON o.id = s.org_id
       LEFT JOIN aeo_scores sc ON sc.site_id = r.site_id
        AND sc.scanned_at = (SELECT MAX(scanned_at) FROM aeo_scores WHERE site_id = r.site_id AND scanned_at <= r.ran_at)
-     WHERE r.status = 'measured' AND r.appearance_rate IS NOT NULL AND ${PRO_CANDIDATE_SQL}
+     WHERE r.status = 'measured' AND ${PRO_CANDIDATE_SQL}
      ORDER BY r.ran_at DESC LIMIT ?
   `).bind(bounded).all();
 
@@ -46,14 +54,17 @@ export async function collectCalibrationSamples(env, { limit = 500 } = {}) {
   for (const row of result.results || []) {
     // Comped Pro (site or org manual_plan) contributes like billed Pro.
     if (resolveSitePlan(row, { manual_plan: row.org_manual_plan }) !== "pro") continue;
+    const rates = engineRatesOf(row)[engine];
+    if (!rates || rates.appearance_rate === null || rates.appearance_rate === undefined) continue;
     const statuses = checkStatuses(row.checks_json);
     if (!statuses) continue;
     samples.push({
       site_id: row.site_id,
       ran_at: row.ran_at,
-      appearance_rate: Number(row.appearance_rate),
-      answers_received: Number(row.answers_received || 0),
-      confidence: row.confidence,
+      engine,
+      appearance_rate: Number(rates.appearance_rate),
+      answers_received: Number(rates.answers || 0),
+      confidence: sovConfidence(rates.answers),
       score: row.score == null ? null : Number(row.score),
       statuses,
     });
@@ -160,6 +171,7 @@ export async function runCalibration(env, options = {}) {
   const proposal = proposeWeights(samples);
   return {
     ...proposal,
+    engine: options.engine || HEADLINE_ENGINE_DEFAULT,
     sites: new Set(samples.map((sample) => sample.site_id)).size,
     generated_at: new Date().toISOString(),
   };

@@ -93,7 +93,7 @@ const LATEST = (over = {}) => ({
     ENGINE({ engine: "openai", live_search: false, appearance_rate: 0.2, answers: 5 }),
     ENGINE({ engine: "perplexity", live_search: true, appearance_rate: 0.6, answers: 5 }),
   ] }));
-  assert.ok(html.includes("Perplexity") && html.includes("ChatGPT (OpenAI)"), "both engines are named");
+  assert.ok(html.includes("Perplexity") && html.includes("ChatGPT"), "both engines are named");
   assert.ok(html.includes("ライブ検索での出現"), "the searching engine is labelled as such");
   assert.ok(html.includes("学習済み知識内の存在"), "the other is labelled as model knowledge");
   assert.ok(html.includes("ライブ検索ではない"), "and is explicitly marked as not live search");
@@ -234,6 +234,47 @@ const LATEST = (over = {}) => ({
   assert.ok(!measured(LATEST({ by_engine: [ENGINE({ answers: 1, appearance_rate: null })] })).includes("引用率"));
   // An engine that returns no sources shows no citation rate.
   assert.ok(!measured(LATEST({ by_engine: [ENGINE({ citations_available: false })] })).includes("参考：引用率"));
+}
+
+/* ---------------- the Pro report's per-engine table ---------------- */
+
+function engineTable(report, lang = "ja") {
+  const sandbox = {
+    document: { createElement: () => ({ style: {} }), querySelector: () => null, addEventListener() {}, head: { appendChild() {} }, documentElement: { lang } },
+    MutationObserver: class { observe() {} }, setTimeout() {},
+    fetch: async () => { throw new Error("the render path must not call the network"); },
+    Number, Math, String, Date, JSON, Array, Object, console, t: tFor(lang),
+  };
+  sandbox.window = sandbox;
+  vm.createContext(sandbox);
+  vm.runInContext(SOURCE.replace("})();", "  window.__engineTable = engineReportTable;\n})();"), sandbox);
+  return sandbox.window.__engineTable(report);
+}
+const ROW = (over = {}) => ({ engine: "perplexity", label: "Perplexity", configured: true, status: "measured", n: 10, named: 6, cited: 3, appeared: 7,
+  appearance_rate: 0.7, interval: { low: 0.397, high: 0.892 }, small_sample: true, last_run_at: "2026-10-20T00:00:00.000Z", usage: { site_used: 30, site_cap: 200 }, ...over });
+{
+  const report = { engines: [
+    ROW(),
+    ROW({ engine: "openai", label: "ChatGPT", status: "quota_reached", quota_scope: "site", usage: { site_used: 120, site_cap: 120 } }),
+  ], combined: { n: 20, named: 12, cited: 6, appeared: 14, appearance_rate: 0.7, interval: { low: 0.481, high: 0.855 }, small_sample: false } };
+  const html = engineTable(report);
+  for (const name of ["Perplexity", "ChatGPT", "全エンジン合計"]) assert.ok(html.includes(name), `${name} has a row`);
+  assert.ok(html.includes("70%") && html.includes("39.7%–89.2%"), "rate and Wilson interval");
+  assert.ok(html.includes("名前で登場") && html.includes("引用で登場"), "named and cited columns");
+  assert.ok(html.includes("n が少ないため参考値"), "n < 20 is marked reference only");
+  assert.ok(html.includes("今月の上限に到達") && html.includes("今月 120/120 回"), "a capped engine says so");
+  const unkeyed = engineTable({ engines: [ROW(), ROW({ engine: "openai", label: "ChatGPT", configured: false, status: "not_configured", n: 0, named: 0, cited: 0, appearance_rate: null, interval: null, last_run_at: null, usage: null })] });
+  assert.ok(unkeyed.includes("未設定"), "a missing key is shown as not configured");
+  const openaiStart = unkeyed.indexOf('data-engine-row="openai"');
+  const openaiRow = unkeyed.slice(openaiStart, unkeyed.indexOf("</tr>", openaiStart));
+  assert.equal(/\d%/.test(openaiRow), false, "an unconfigured engine shows no number");
+  const combined = html.slice(html.indexOf('data-engine-row="combined"'));
+  assert.equal(combined.includes("参考値"), false, "n = 20 is not reference-only");
+  const en = engineTable(report, "en");
+  assert.ok(en.includes("Appearance rate (named or cited)") && en.includes("Small n: for reference only") && en.includes("Monthly limit reached"));
+  assert.equal(/[\u3040-\u30ff]/.test(en), false, "no Japanese in the English table");
+  for (const lang of ["zh", "tw", "ko", "es", "fr", "de"]) assert.ok(engineTable(report, lang).includes("95"), `${lang} renders`);
+  assert.equal(engineTable({ engines: [] }), "", "nothing to show, nothing drawn");
 }
 
 console.log("SoV panel render tests passed");

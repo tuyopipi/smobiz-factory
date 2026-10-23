@@ -74,7 +74,9 @@ function makeEnv({ plan = "pro", keys = {}, usage = 0, runs = [] } = {}) {
                   competitors_json: values[13], engines_json: values[6],
                 });
               }
-              return { success: true };
+              // D1 reports how many rows a statement changed; the engine-usage
+              // reservation is a conditional UPDATE that reads it.
+              return { success: true, meta: { changes: 1 } };
             },
           };
         },
