@@ -33,6 +33,12 @@ result.query_set=config; result.cache_key=await measurementKey(env,config,profil
 await storeSovRun(env,site.id,result,{now:Date.now()-2000});
 let report=await loadProReport(env,site);
 assert.equal(report.evidence.length,4); assert.equal(report.presence[0].frequency,0.5);
+// Headline Pro metric: appearance rate (the mock answer names "Nurevo" every
+// time); the citation rate (our URL among sources, half the time) is secondary.
+assert.equal(report.summary.headline,'appearance_rate');
+assert.equal(report.summary.appearance_rate,1); assert.equal(report.summary.citation_rate,0.5);
+assert.equal(report.presence[0].appearances,2); assert.equal(report.presence[0].appearance_rate,1);
+assert.equal(report.trend[0].appearance_rate,1); assert.equal(report.trend[0].citation_rate,0.5);
 assert.equal(report.competitors.find(c=>c.own).share_of_voice,2/6);
 assert.equal(report.competitors.find(c=>!c.own).citations,4);
 assert.ok(report.accuracy.every(e=>e.status==='unreviewed'));

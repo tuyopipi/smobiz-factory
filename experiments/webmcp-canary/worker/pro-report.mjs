@@ -189,9 +189,17 @@ export function buildProReport({ site, run = null, evidence = [], runs = [], con
     citations: discovery.filter(e => e.citation_urls.some(u => matches(u,host))).length }));
   const total = counts.reduce((n,r) => n+r.citations, 0);
   const competitors = counts.map(r => ({ ...r, frequency: discovery.length >= 2 ? r.citations/discovery.length : null, share_of_voice: total && discovery.length >= 2 ? r.citations/total : null }));
+  // The headline Pro metric is the appearance rate: the business named in the
+  // AI answer (evidence.accuracy.mentioned). The citation rate - the site among
+  // the answer's source URLs - is kept beside it as a secondary figure.
+  // `frequency` stays the citation frequency for existing readers.
+  const appeared = e => e.accuracy.mentioned === true;
   const presence = (snapshot?.questions || []).map(question => {
     const rows = discovery.filter(e => e.question === question);
-    return { question, answers: rows.length, citations: rows.filter(e=>e.brand_cited).length,
+    return { question, answers: rows.length,
+      appearances: rows.filter(appeared).length,
+      appearance_rate: rows.length >= 2 ? rows.filter(appeared).length/rows.length : null,
+      citations: rows.filter(e=>e.brand_cited).length,
       frequency: rows.length >= 2 ? rows.filter(e=>e.brand_cited).length/rows.length : null };
   });
   // History is keyed on what is being measured - engine, language and the
@@ -206,10 +214,12 @@ export function buildProReport({ site, run = null, evidence = [], runs = [], con
     const key = trendKey(d.query_set);
     return key ? key === currentTrendKey : !!d.cache_key && d.cache_key === detail.cache_key;
   })
-    .map(r => ({ id:r.id, ran_at:r.ran_at, citation_rate:r.citation_rate, answers_received:r.answers_received })).reverse() : [];
+    .map(r => ({ id:r.id, ran_at:r.ran_at, appearance_rate:r.appearance_rate ?? null, citation_rate:r.citation_rate, answers_received:r.answers_received })).reverse() : [];
   return { version:'pro-report-v1', site_id:site.id, generated_at:new Date().toISOString(), notice:text.notice,
     status:run?.status || (configured ? 'no_data' : 'unconfigured'), configured, run_id:run?.id || null,
-    summary:{ answers:discovery.length, citation_rate:discovery.length >= 2 ? discovery.filter(e=>e.brand_cited).length/discovery.length : null,
+    summary:{ answers:discovery.length, headline:'appearance_rate',
+      appearance_rate:discovery.length >= 2 ? discovery.filter(appeared).length/discovery.length : null,
+      citation_rate:discovery.length >= 2 ? discovery.filter(e=>e.brand_cited).length/discovery.length : null,
       evidence_available:entries.length > 0, legacy_data:!!run && !snapshot },
     query_set:snapshot, current_query_set:config, presence, competitors, trend,
     sov_basis:text.sov_basis,
