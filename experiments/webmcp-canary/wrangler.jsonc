@@ -66,10 +66,11 @@
 	"vars": {
 		// Pro is on sale (also needs the STRIPE_PRICE_ID_PRO secret).
 		"PRO_CHECKOUT_ENABLED": "1",
-		// Consumption tax through Stripe Tax: 10% in Japan, none for business
-		// customers abroad (tax ID, reverse charge). Needs Stripe Tax activated
-		// with a Japan registration and prices treated as tax-exclusive.
-		"STRIPE_AUTOMATIC_TAX": "1",
+		// Consumption-tax exempt seller (no invoice registration): the list
+		// price is the total and no tax is added. Abroad stays businesses-only
+		// with a tax ID. After invoice registration, replace this with
+		// STRIPE_AUTOMATIC_TAX "1" (Stripe Tax with a Japan registration).
+		"STRIPE_TAX_EXEMPT": "1",
 		"WEBMCP_AB_MIN_SAMPLES": "20",
 		"WEBMCP_AB_Z_THRESHOLD": "1.96",
 		"WEBMCP_TRAFFIC_MIN_RESULTS": "20",

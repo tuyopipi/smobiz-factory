@@ -19,7 +19,7 @@ const pairs = [
 ];
 for (const [lp, worker, head] of pairs) {
   assert.equal(article(read(worker), head), article(read(lp), head), `${worker} fee article matches ${lp}`);
-  assert.ok(!/tax included|税込）とします/.test(article(read(worker), head)), "prices are tax-exclusive");
+  assert.ok(!/tax included|税込）とします|exclusive of tax|税抜|消費税を加算/.test(article(read(worker), head)), "no tax is added on top of the price");
 }
 // The legal notice (特商法) is served by Pages; the Worker keeps a copy. Both
 // must list every plan on sale with the same prices.

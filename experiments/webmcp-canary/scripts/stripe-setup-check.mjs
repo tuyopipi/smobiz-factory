@@ -22,7 +22,15 @@
 // The list prices the LP, legal notice and worker (PLAN_MONTHLY_YEN in api.mjs) use.
 const PLAN_MONTHLY_YEN = Object.freeze({ standard: 3000, pro: 14800 });
 
+import { readFileSync } from "node:fs";
+import { parseWranglerConfig } from "./pro-golive-check.mjs";
+
 const API = "https://api.stripe.com/v1";
+
+/** Whether the Worker is configured as a consumption-tax exempt seller. */
+export function exemptFromConfig(text) {
+  try { return String(parseWranglerConfig(text)?.vars?.STRIPE_TAX_EXEMPT ?? "").trim() === "1"; } catch { return false; }
+}
 
 export const EXPECTED = Object.freeze({
   standard: { currency: "jpy", unit_amount: PLAN_MONTHLY_YEN.standard },
@@ -74,7 +82,7 @@ export function findPlanPrices(prices) {
 }
 
 /** Verdicts for one plan's price(s) and the product they belong to. */
-export function evaluatePlanPrice(plan, matches, all, { defaultTaxBehavior = null } = {}) {
+export function evaluatePlanPrice(plan, matches, all, { defaultTaxBehavior = null, exempt = false } = {}) {
   const label = plan === "pro" ? "Pro price" : "Standard price";
   const yen = EXPECTED[plan].unit_amount.toLocaleString("en-US");
   if (!matches.length) {
@@ -84,14 +92,14 @@ export function evaluatePlanPrice(plan, matches, all, { defaultTaxBehavior = nul
   if (matches.length > 1) out.push(["WARN", label, `${matches.length} matching prices; the Worker uses only the one in its secret: ${matches.map((p) => p.id).join(", ")}`]);
   for (const price of matches) {
     const problems = [];
-    if (price.tax_behavior === "inclusive") problems.push("tax behaviour is Inclusive (tax would be carved out of the price) - make a new price with Exclusive");
-    if ((price.tax_behavior == null || price.tax_behavior === "unspecified") && defaultTaxBehavior !== "exclusive") {
+    if (!exempt && price.tax_behavior === "inclusive") problems.push("tax behaviour is Inclusive (tax would be carved out of the price) - make a new price with Exclusive");
+    if (!exempt && (price.tax_behavior == null || price.tax_behavior === "unspecified") && defaultTaxBehavior !== "exclusive") {
       problems.push("tax behaviour unspecified and the account default is not Exclusive");
     }
-    out.push([problems.length ? "FAIL" : "PASS", `${label} ${price.id}`, problems.length ? problems.join("; ") : `JPY ${yen}/month, tax-exclusive`]);
+    out.push([problems.length ? "FAIL" : "PASS", `${label} ${price.id}`, problems.length ? problems.join("; ") : exempt ? `JPY ${yen}/month (total; no tax added)` : `JPY ${yen}/month, tax-exclusive`]);
     const product = typeof price.product === "object" ? price.product : null;
     if (product) {
-      if (!product.tax_code) out.push(["WARN", `${label} product`, `"${product.name}" has no tax code; the account preset is used. Set it to the SaaS business-use code`]);
+      if (!exempt && !product.tax_code) out.push(["WARN", `${label} product`, `"${product.name}" has no tax code; the account preset is used. Set it to the SaaS business-use code`]);
       const siblings = all.filter((p) => (typeof p.product === "object" ? p.product.id : p.product) === product.id && p.id !== price.id);
       for (const other of siblings) {
         const amount = String(other.currency).toLowerCase() === "jpy" ? `JPY ${other.unit_amount}` : `${String(other.currency).toUpperCase()} ${(other.unit_amount / 100).toFixed(2)}`;
@@ -157,14 +165,19 @@ async function main() {
   const rows = [];
   const add = (list) => rows.push(...list);
 
-  const settings = await get(key, "/tax/settings");
-  add(evaluateTaxSettings(settings));
-  add(evaluateRegistrations(await get(key, "/tax/registrations?status=active&limit=100")));
+  const exempt = exemptFromConfig(readFileSync(new URL("../wrangler.jsonc", import.meta.url), "utf8"));
+  const settings = exempt ? {} : await get(key, "/tax/settings");
+  if (exempt) {
+    add([["INFO", "Consumption tax", "tax-exempt seller (STRIPE_TAX_EXEMPT=1): no Stripe Tax setup or registration needed; prices are the total"]]);
+  } else {
+    add(evaluateTaxSettings(settings));
+    add(evaluateRegistrations(await get(key, "/tax/registrations?status=active&limit=100")));
+  }
 
   const prices = await get(key, "/prices?active=true&type=recurring&limit=100&expand[]=data.product");
   if (prices.error) add([["FAIL", "Prices", `could not list: ${String(prices.error.message).slice(0, 120)}`]]);
   const found = findPlanPrices(prices.data);
-  for (const plan of ["standard", "pro"]) add(evaluatePlanPrice(plan, found[plan], found.all, { defaultTaxBehavior: settings?.defaults?.tax_behavior }));
+  for (const plan of ["standard", "pro"]) add(evaluatePlanPrice(plan, found[plan], found.all, { defaultTaxBehavior: settings?.defaults?.tax_behavior, exempt }));
 
   add(evaluatePortal(await get(key, "/billing_portal/configurations?active=true&limit=10&expand[]=data.features.subscription_update.products")));
 

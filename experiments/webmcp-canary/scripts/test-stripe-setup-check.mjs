@@ -1,7 +1,7 @@
 // Verdicts of the read-only Stripe setup check, on fixtures shaped like the API.
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { evaluateTaxSettings, evaluateRegistrations, findPlanPrices, evaluatePlanPrice, evaluatePortal, summariseSubscriptions } from "./stripe-setup-check.mjs";
+import { exemptFromConfig, evaluateTaxSettings, evaluateRegistrations, findPlanPrices, evaluatePlanPrice, evaluatePortal, summariseSubscriptions } from "./stripe-setup-check.mjs";
 
 const status = (rows, label) => rows.find(([, l]) => l.startsWith(label))?.[0];
 
@@ -52,4 +52,11 @@ assert.deepEqual(s, { total: 3, free: 2, paying: 1, expiring: 1 });
 // Nothing personal is ever printed.
 const source = readFileSync(new URL("./stripe-setup-check.mjs", import.meta.url), "utf8");
 assert.ok(!/customer_email|\.email\b|\.name\b.*customer/.test(source.replace(/product\.name/g, "")), "no customer fields are read for output");
+// Exempt seller: tax behaviour and tax code do not matter, and the config says so.
+rows = evaluatePlanPrice("standard", found.standard, found.all, { defaultTaxBehavior: "inferred_by_currency", exempt: true });
+assert.equal(status(rows, "Standard price price_jpy"), "PASS", "an exempt seller's price is the total");
+assert.ok(!rows.some(([, , d]) => /no tax code/.test(d)));
+assert.equal(exemptFromConfig('{ "vars": { "STRIPE_TAX_EXEMPT": "1" } }'), true);
+assert.equal(exemptFromConfig('{ "vars": { "STRIPE_AUTOMATIC_TAX": "1" } }'), false);
+assert.equal(exemptFromConfig(readFileSync(new URL("../wrangler.jsonc", import.meta.url), "utf8")), true, "the shipped config is exempt");
 console.log("stripe setup check tests passed");
