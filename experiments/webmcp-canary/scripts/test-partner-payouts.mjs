@@ -16,7 +16,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync } from "node:sqlite";
 import { readFileSync } from "node:fs";
 import { handleApi } from "../worker/api.mjs";
-import { runPartnerPayouts, payoutWindow, partnerLedgerTotals, keptYen } from "../worker/partner-payouts.mjs";
+import { runPartnerPayouts, payoutWindow, partnerLedgerTotals, keptYen, reconcileCommission } from "../worker/partner-payouts.mjs";
 
 const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 const sqlite = new DatabaseSync(":memory:");
@@ -107,7 +107,12 @@ globalThis.fetch = async (input, options = {}) => {
     assert.equal(form.transfer_group, undefined, "no custom transfer_group with source_transaction");
     assert.equal(form.currency, "jpy");
     assert.match(key, /^nurevo-referral-ledger-\d+-k\d+$/, "a stable per-row Idempotency-Key");
-    if (stripe.transferError) { const e = stripe.transferError; return replay(key, () => () => fail(e.status, e.code)); }
+    if (stripe.transferError) {
+      const e = stripe.transferError;
+      // Rate limiting is rejected before execution: Stripe does not cache it.
+      if (e.status === 429) return fail(429, "rate_limit");
+      return replay(key, () => () => fail(e.status, e.code));
+    }
     const response = replay(key, () => {
       const transfer = { id: `tr_${stripe.transfers.length + 1}`, amount: Number(form.amount), destination: form.destination, source_transaction: form.source_transaction, created: Math.floor(Date.now() / 1000), metadata: { ledger_id: form["metadata[ledger_id]"] } };
       stripe.transfers.push(transfer);
@@ -381,6 +386,8 @@ try {
   assert.equal(row("in_multi").status, "held");
   assert.equal(row("in_multi").last_error, "multiple_charges");
   assert.equal(transfersFor("ch_multi_1").length + transfersFor("ch_multi_2").length, 0);
+  summary = (await call("/api/partner", { cookie: partner.cookie })).body;
+  assert.equal(summary.payout.needs_attention, 2, "an invoice paid by several charges also needs a person");
 
   /* --- H3: the legacy onboarding route is retired for everyone --- */
   sqlite.prepare("INSERT INTO referrers(id,name,email,stripe_account_id,created_at) VALUES ('ref_legacy','Legacy','legacy@example.test','acct_legacy',?)").run(Date.now());
@@ -467,6 +474,62 @@ try {
     assert.equal(transfersFor("ch_w3")[0].amount, C(14800 - 533) - 1156, "the refunded withholding row's credit is recovered from the next transfer");
     const wTotals = (await call("/api/partner", { cookie: w.cookie })).body.payout;
     assert.equal(wTotals.cumulative_paid_yen, wTotals.cumulative_earned_yen, "paid equals earned once every debt is recovered");
+  }
+
+  /* --- N2: a 429 is retried soon (no 24 h wait, same key) --- */
+  charge("ch_429");
+  stripe.transferError = { status: 429, code: "rate_limit" };
+  await quiet(() => webhook("invoice.paid", invoice("in_429", "ch_429", "sub_a")));
+  stripe.transferError = null;
+  assert.equal(row("in_429").status, "failed");
+  assert.equal(row("in_429").http_failed, 0);
+  await runPartnerPayouts(env, { now: Date.now() + 220 * HOUR });
+  assert.equal(transfersFor("ch_429").length, 1, "retried on the next run");
+  assert.equal(row("in_429").key_rev, 0, "same key: nothing was cached");
+
+  /* --- N1: concurrent reconciles never pull back more than is owed --- */
+  {
+    const rp = await member("race_partner", "race@example.test");
+    const rc = await member("race_customer", "race-customer@example.test");
+    refer(rc, rp);
+    site("site_race", "race_customer", "sub_race");
+    sqlite.prepare("UPDATE accounts SET stripe_account_id='acct_race', payout_status='ready', payout_checked_at=? WHERE id=?").run(Date.now(), rp.account.id);
+    stripe.accounts.set("acct_race", { id: "acct_race", country: "JP", capabilities: { transfers: "active" }, requirements: {}, settings: { payouts: { schedule: { interval: "monthly", monthly_anchor: 25 } } } });
+    charge("ch_race");
+    await webhook("invoice.paid", invoice("in_race", "ch_race", "sub_race"));
+    const sentRow = row("in_race");
+    assert.equal(sentRow.transferred_yen, 1156);
+    // Two reconciles that read the charge at two refund levels run at once.
+    sqlite.prepare("UPDATE referral_payouts SET kept_yen=0 WHERE id=?").run(sentRow.id);
+    await Promise.all([
+      reconcileCommission(env, { ...sentRow, kept_yen: 578 }, { sync: false }),
+      reconcileCommission(env, { ...sentRow, kept_yen: 0 }, { sync: false }),
+    ]);
+    assert.ok(reversalsFor("ch_race").reduce((n, x) => n + x.amount, 0) <= 1156, "never over-reversed");
+    await reconcileCommission(env, row("in_race"), { sync: false });
+    assert.equal(reversalsFor("ch_race").reduce((n, x) => n + x.amount, 0), 1156, "and fully reversed once settled");
+  }
+
+  /* --- N3: a row that goes dead gives back the debts it had reserved --- */
+  {
+    charge("ch_n3a");
+    await webhook("invoice.paid", invoice("in_n3a", "ch_n3a", "sub_a"));
+    stripe.failReversals = true;
+    stripe.charges.get("ch_n3a").amount_refunded = 3000;
+    await quiet(() => webhook("charge.refunded", stripe.charges.get("ch_n3a")));
+    stripe.failReversals = false;
+    charge("ch_n3b", { amount: 14800, fee: 533 });
+    stripe.transferError = { status: 400, code: "transfers_not_allowed" };
+    await quiet(async () => {
+      await webhook("invoice.paid", invoice("in_n3b", "ch_n3b", "sub_a", { amount_paid: 14800 }));
+      for (let n = 1; n <= 6; n++) await runPartnerPayouts(env, { now: Date.now() + (230 + n * 26) * HOUR });
+    });
+    stripe.transferError = null;
+    assert.equal(row("in_n3b").status, "dead");
+    assert.equal(rows().filter((x) => x.kind === "offset" && x.payer_id === row("in_n3b").id && x.status === "pending").length, 0);
+    charge("ch_n3c", { amount: 14800, fee: 533 });
+    await webhook("invoice.paid", invoice("in_n3c", "ch_n3c", "sub_a", { amount_paid: 14800 }));
+    assert.equal(transfersFor("ch_n3c")[0].amount, C(14800 - 533) - 1156, "the debt is still recovered by the next live transfer");
   }
 
   /* --- M2: permanently held rows do not starve the hourly job --- */

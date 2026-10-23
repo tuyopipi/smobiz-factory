@@ -3218,9 +3218,10 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
     const { results: orgs } = await env.DB.prepare("SELECT id FROM orgs ORDER BY created_at").all();
     const summaries = [];
     for (const org of orgs || []) summaries.push(await billingSummary(env, org.id, { role: "admin" }));
-    // Partner payouts that need a person (retries exhausted), for the owner.
+    // Partner payouts that need a person (retries exhausted, or an invoice
+    // paid by several charges), for the owner.
     let payoutsNeedingAttention = null;
-    try { payoutsNeedingAttention = Number((await env.DB.prepare("SELECT COUNT(*) AS n FROM referral_payouts WHERE kind='commission' AND status='dead'").first())?.n || 0); } catch { payoutsNeedingAttention = null; }
+    try { payoutsNeedingAttention = Number((await env.DB.prepare("SELECT COUNT(*) AS n FROM referral_payouts WHERE kind='commission' AND (status='dead' OR (status='held' AND last_error='multiple_charges'))").first())?.n || 0); } catch { payoutsNeedingAttention = null; }
     return {
       referral_payouts_needing_attention: payoutsNeedingAttention,
       currency: "jpy",

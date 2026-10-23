@@ -94,8 +94,10 @@ export async function stripePost(secret, path, form, { idempotencyKey, version }
 }
 
 const errorText = (result) => String(result?.data?.error?.code || result?.data?.error?.message || `http_${result?.status ?? 0}`).slice(0, 200);
-// No answer, or Stripe's own failure: the request may or may not have run.
-const ambiguous = (result) => !result?.status || result.status >= 500 || result.status === 409;
+// No answer, Stripe's own failure, rate limiting or an idempotency conflict:
+// the request may or may not have run, or may simply be retried soon.
+const ambiguous = (result) => !result?.status || result.status >= 500 || result.status === 409 || result.status === 429
+  || result?.data?.error?.type === "idempotency_error";
 const deadLog = (row, reason) => console.error("referral_payout_dead", JSON.stringify({ ledger: row.id, invoice: row.invoice_id, reason }));
 
 /* ---------------- the charge behind an invoice ---------------- */
@@ -541,6 +543,8 @@ export async function payCommission(env, id, { now = Date.now(), get = stripeGet
     if (row.http_failed) {
       if (Number(row.key_rev) + 1 > MAX_KEY_REVISIONS) {
         await env.DB.prepare("UPDATE referral_payouts SET status='dead', updated_at=? WHERE id=?").bind(now, row.id).run();
+        // Its reserved offsets never happened: the debts are still owed.
+        await env.DB.prepare("DELETE FROM referral_payouts WHERE kind='offset' AND payer_id=? AND status='pending'").bind(row.id).run();
         deadLog(row, row.last_error);
         return { status: "dead" };
       }
@@ -625,6 +629,16 @@ export async function reconcileCommission(env, row, { now = Date.now(), get = st
       VALUES ('reversal', ?, ?, ?, ?, ?, ?, ?, ?, 'pending', ?, ?)`)
     .bind(key, row.id, row.invoice_id, row.charge_id, row.partner_account_id, row.legacy_referrer_id, row.site_id, need, now, now).run();
   if (Number(ins.meta?.changes || 0) !== 1) return { status: row.status, owed: need }; // refused before: offsets recover it
+  // A concurrent reconcile or offset reservation may have claimed the same
+  // debt meanwhile: re-sum against the row's latest state and give ours back
+  // if the total would pull back more than the partner owes.
+  const latest = await loadRow(env, row.id);
+  const latestCredited = Number(latest.transferred_yen || 0) + Number(latest.withheld_yen || 0);
+  const claimed = await childSum(env, row.id, "reversal", ["sent", "pending", "processing"]) + await childSum(env, row.id, "offset", ["pending", "applied"]);
+  if (claimed > latestCredited - Number(latest.kept_yen ?? latest.amount_yen)) {
+    await env.DB.prepare("DELETE FROM referral_payouts WHERE source_key=? AND status='pending'").bind(key).run();
+    return { status: row.status, reason: "busy" };
+  }
   const reversal = await env.DB.prepare("SELECT * FROM referral_payouts WHERE source_key=?").bind(key).first();
   return settleReversal(env, reversal.id, { now, get });
 }
@@ -732,7 +746,7 @@ export async function runPartnerPayouts(env, { now = Date.now(), get = stripeGet
     const { results: sent = [] } = await env.DB.prepare(`SELECT * FROM referral_payouts WHERE kind='commission' AND status IN ('sent','reversed')
         AND sent_at>? ORDER BY IFNULL(checked_at,0), id LIMIT 10`).bind(now - RECONCILE_DAYS * DAY_MS).all();
     for (const row of sent) { await reconcileCommission(env, row, { now, get }); result.reconciled++; }
-    const dead = await env.DB.prepare("SELECT COUNT(*) AS n FROM referral_payouts WHERE kind='commission' AND status='dead'").first();
+    const dead = await env.DB.prepare("SELECT COUNT(*) AS n FROM referral_payouts WHERE kind='commission' AND (status='dead' OR (status='held' AND last_error='multiple_charges'))").first();
     result.dead_total = Number(dead?.n || 0);
     if (result.dead_total) console.error("referral_payout_dead_rows", JSON.stringify({ count: result.dead_total }));
     return result;
@@ -772,7 +786,7 @@ export function payoutWindow(now, anchor) {
 
 export async function partnerLedgerTotals(env, accountId, { now = Date.now(), anchor = DEFAULT_PAYOUT_ANCHOR } = {}) {
   const { results: rows = [] } = await env.DB.prepare(`SELECT id, kind, status, parent_id, amount_yen, kept_yen, transferred_yen,
-      available_at, sent_at FROM referral_payouts WHERE partner_account_id=?`).bind(accountId).all();
+      available_at, sent_at, last_error FROM referral_payouts WHERE partner_account_id=?`).bind(accountId).all();
   const window = payoutWindow(now, anchor);
   const pulled = new Map();
   for (const r of rows) if (r.kind === "reversal" && r.status === "sent") pulled.set(r.parent_id, (pulled.get(r.parent_id) || 0) + Number(r.amount_yen));
@@ -781,7 +795,7 @@ export async function partnerLedgerTotals(env, accountId, { now = Date.now(), an
     if (r.kind !== "commission" || r.status === "void") continue;
     const kept = Number(r.kept_yen ?? r.amount_yen ?? 0);
     totals.earned += kept;
-    if (r.status === "dead") totals.attention++;
+    if (r.status === "dead" || (r.status === "held" && r.last_error === "multiple_charges")) totals.attention++;
     if (["held", "failed", "sending", "dead"].includes(r.status)) { totals.held += kept; totals.later += kept; continue; }
     const net = Number(r.transferred_yen || 0) - (pulled.get(r.id) || 0);
     totals.paid += net;
