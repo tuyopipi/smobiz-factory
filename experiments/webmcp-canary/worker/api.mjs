@@ -61,6 +61,16 @@ const API_RATE_LIMITS = Object.freeze({
 });
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
+// Referral partners receive this share of what the customer actually paid,
+// transferred per paid invoice through Stripe Connect. Only JPY invoices are
+// shared: the platform balance settles in JPY and partners are domestic.
+export const REFERRAL_SHARE = 0.4;
+export function referralCommissionYen(amountPaid, currency) {
+  if (String(currency || "").toLowerCase() !== "jpy") return 0;
+  const paid = Math.floor(Number(amountPaid) || 0);
+  return paid > 0 ? Math.floor(paid * REFERRAL_SHARE) : 0;
+}
+const referralEstimateSql = () => `SUM(CASE WHEN s.plan='pro' THEN ${referralCommissionYen(PLAN_MONTHLY_YEN.pro, "jpy")} WHEN s.id IS NOT NULL THEN ${referralCommissionYen(PLAN_MONTHLY_YEN.standard, "jpy")} ELSE 0 END)`;
 /**
  * What each paid tier costs per site, per month.
  *
@@ -2341,7 +2351,16 @@ export async function handleApi(request, env, ctx) {
       const referrer = site?.channel === "referral" ? await env.DB.prepare("SELECT * FROM referrers WHERE id=?").bind(site.referred_by).first() : null;
       if (referrer?.stripe_account_id && stripeSecret(env)) {
         // Executed only by a verified Stripe webhook; no client-supplied destination is trusted.
-        await stripeRequest(stripeSecret(env), "/v1/transfers", new URLSearchParams({ amount: String(BILLING_DEFAULTS.referral_monthly_yen), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id }));
+        // 40% of the amount actually paid (Standard ¥3,000 -> ¥1,200, Pro ¥14,800 -> ¥5,920).
+        const commission = referralCommissionYen(object.amount_paid, object.currency);
+        if (commission > 0) {
+          const transfer = new URLSearchParams({ amount: String(commission), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id, "metadata[invoiceId]": String(object.id || "") });
+          // Tie the transfer to the invoice's charge when Stripe gives one, so it
+          // does not wait on (or fail for lack of) available platform balance.
+          if (typeof object.charge === "string" && object.charge) transfer.set("source_transaction", object.charge);
+          const sent = await stripeRequest(stripeSecret(env), "/v1/transfers", transfer);
+          if (!sent?.ok) console.error("referral_transfer_failed", JSON.stringify({ siteId, invoiceId: object.id || null, error: sent?.data?.error?.message || null }));
+        }
       }
     }
     // A failed payment no longer stops the site. Stripe retries for days before
@@ -3193,11 +3212,11 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
   const directCount = (counts.direct || 0) + (counts.referral || 0);
   const activeCount = Object.values(counts).reduce((sum, value) => sum + Number(value || 0), 0);
   const referrers = actor.role === "referrer"
-    ? await env.DB.prepare("SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') WHERE lower(r.email)=lower(?) GROUP BY r.id,r.name,r.email ORDER BY r.name").bind(orgId, actor.email).all()
+    ? await env.DB.prepare(`SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites, ${referralEstimateSql()} AS monthly_yen FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') WHERE lower(r.email)=lower(?) GROUP BY r.id,r.name,r.email ORDER BY r.name`).bind(orgId, actor.email).all()
     : actor.role === "store"
       ? { results: [] }
-      : await env.DB.prepare("SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') GROUP BY r.id,r.name,r.email ORDER BY r.name").bind(orgId).all();
-  const referralPayments = (referrers.results || []).map((row) => ({ id: row.id, name: row.name, email: row.email, active_sites: Number(row.active_sites || 0), monthly_amount_yen: Number(row.active_sites || 0) * BILLING_DEFAULTS.referral_monthly_yen }));
+      : await env.DB.prepare(`SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites, ${referralEstimateSql()} AS monthly_yen FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') GROUP BY r.id,r.name,r.email ORDER BY r.name`).bind(orgId).all();
+  const referralPayments = (referrers.results || []).map((row) => ({ id: row.id, name: row.name, email: row.email, active_sites: Number(row.active_sites || 0), monthly_amount_yen: Number(row.monthly_yen || 0) }));
   const wholesaleEligible = org.plan === "wholesale" && activeCount >= Number(org.wholesale_min || 50);
   if (actor.role === "referrer") {
     const partnerSites = Number(counts.referral || 0);
@@ -3206,7 +3225,8 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
       scope: "referrer",
       active_sites: partnerSites,
       incentive_per_site_yen: BILLING_DEFAULTS.referral_monthly_yen,
-      partner_incentive_yen: partnerSites * BILLING_DEFAULTS.referral_monthly_yen,
+      share: REFERRAL_SHARE,
+      partner_incentive_yen: referralPayments.reduce((sum, row) => sum + row.monthly_amount_yen, 0),
     };
   }
   if (actor.role === "agency") {
