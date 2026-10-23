@@ -322,7 +322,11 @@ assert.doesNotMatch(renderMagicConfirmPage({ locale: "ja", action: "/x\"><script
   const scanned = await open(link);
   assert.equal(scanned.status, 200);
   assert.equal(scanned.headers.get("cache-control"), "no-store");
-  assert.equal(scanned.headers.get("referrer-policy"), "no-referrer");
+  // Not "no-referrer": with it the browser sends "Origin: null" on the form's
+  // POST and the Worker's origin allowlist refuses it, so nobody can sign in
+  // (production incident 2026-10-23). "same-origin" still keeps the token in
+  // the URL from leaking to other sites.
+  assert.equal(scanned.headers.get("referrer-policy"), "same-origin");
   assert.equal(scanned.headers.get("set-cookie").includes("nrv_session"), false, "GET never signs in");
   await open(link);
   assert.equal(sqlite.prepare("SELECT kind FROM sessions WHERE next_path IS NOT NULL").get().kind, "magic", "the token survives GETs");
@@ -341,6 +345,26 @@ assert.doesNotMatch(renderMagicConfirmPage({ locale: "ja", action: "/x\"><script
   res = await post(link, parts, { origin: "https://nurevo.jp", "sec-fetch-site": "cross-site" });
   assert.equal(reasonOf(res), "invalid");
   assert.equal(sqlite.prepare("SELECT kind FROM sessions WHERE next_path IS NOT NULL").get().kind, "magic", "refused POSTs consume nothing");
+
+  // Through the real Worker entry point (not handleApi alone, which skipped the
+  // global origin gate and hid the incident): the Origin a browser sends for
+  // this page's policy must pass, and "null" - what no-referrer produced - is
+  // what the gate refuses.
+  {
+    const worker = (await import("../worker/index.mjs")).default;
+    const gateEnv = { ...env, WEBMCP_ALLOWED_ORIGINS: "https://nurevo.jp,https://www.nurevo.jp" };
+    const browserOrigin = (policy, pageOrigin) => (policy === "no-referrer" ? "null" : pageOrigin);
+    const sent = browserOrigin(scanned.headers.get("referrer-policy"), new URL(link).origin.replace(/^https?:\/\/[^/]+/, "https://nurevo.jp"));
+    const through = await worker.fetch(new Request("https://nurevo.jp/api/auth/callback", {
+      method: "POST", headers: { origin: sent, "content-type": "application/x-www-form-urlencoded" }, body: "token=x&confirm=y",
+    }), gateEnv, { waitUntil() {} });
+    const body = await through.clone().text();
+    assert.ok(!/origin_not_allowed/.test(body), `the sign-in POST passes the origin gate (Origin: ${sent})`);
+    const refused = await worker.fetch(new Request("https://nurevo.jp/api/auth/callback", {
+      method: "POST", headers: { origin: "null", "content-type": "application/x-www-form-urlencoded" }, body: "token=x&confirm=y",
+    }), gateEnv, { waitUntil() {} });
+    assert.match(await refused.text(), /origin_not_allowed/, "an Origin: null POST is what the gate refuses");
+  }
 
   // The person's click.
   res = await post(link, parts);

@@ -3709,8 +3709,11 @@ async function handleMagicConfirmPage(request, env, accountAuth) {
   const headers = new Headers({
     "content-type": "text/html; charset=utf-8",
     "cache-control": "no-store",
-    // The token is in this page's URL; it must not leak onward.
-    "referrer-policy": "no-referrer",
+    // The token is in this page's URL; it must not leak to other sites.
+    // "same-origin", not "no-referrer": with no-referrer the browser sends
+    // "Origin: null" on the sign-in form's POST, which the origin allowlist
+    // (and magicPostSameOrigin) rightly refuse, so nobody could sign in.
+    "referrer-policy": "same-origin",
     "x-frame-options": "DENY",
     "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'; base-uri 'none'",
     "x-robots-tag": "noindex",
