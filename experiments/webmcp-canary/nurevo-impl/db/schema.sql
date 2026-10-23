@@ -465,3 +465,24 @@ CREATE TABLE IF NOT EXISTS offsite_api_budget (
   n INTEGER NOT NULL DEFAULT 0,             -- calls reserved that day
   PRIMARY KEY (source, day)
 );
+
+-- 0041: monthly AI-visibility engine calls and estimated cost, per engine,
+-- per site and for all sites (scope '*').
+CREATE TABLE IF NOT EXISTS aeo_sov_engine_usage (
+  scope TEXT NOT NULL,
+  engine TEXT NOT NULL,
+  month TEXT NOT NULL,
+  calls INTEGER NOT NULL DEFAULT 0,
+  searches INTEGER NOT NULL DEFAULT 0,
+  est_cost_usd REAL NOT NULL DEFAULT 0,
+  updated_at TEXT NOT NULL,
+  PRIMARY KEY (scope, engine, month)
+);
+
+CREATE TABLE IF NOT EXISTS aeo_sov_attempts (
+  site_id TEXT PRIMARY KEY,
+  trigger TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT,
+  reserved_json TEXT
+);
