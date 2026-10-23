@@ -49,46 +49,75 @@
       setFaq(rows);
     }
 
+    // Spacing: recent WordPress drops the controls' bottom margin
+    // (__nextHasNoMarginBottom), so every gap here is set explicitly. Each
+    // toggle sits in its own PanelRow, the core pattern for document-panel
+    // toggles, and the FAQ rows stack in flex columns with a gap.
+    var stack = function (gap, extra) {
+      var style = { display: 'flex', flexDirection: 'column', gap: gap };
+      return Object.assign(style, extra || {});
+    };
+
     var rows = faq.map(function (row, index) {
-      return el('div', { key: 'faq-' + index, className: 'nurevo-faq-row', style: { marginBottom: '12px' } },
+      return el('div', { key: 'faq-' + index, className: 'nurevo-faq-row', style: stack('8px', { paddingBottom: '16px', borderBottom: '1px solid #e0e0e0' }) },
         el(c.TextControl, {
+          __nextHasNoMarginBottom: true,
+          __next40pxDefaultSize: true,
           label: t.question,
           value: row.q || '',
           onChange: function (value) { updateRow(index, 'q', value); }
         }),
         el(c.TextareaControl, {
+          __nextHasNoMarginBottom: true,
           label: t.answer,
           value: row.a || '',
           onChange: function (value) { updateRow(index, 'a', value); }
         }),
-        el(c.Button, {
-          isDestructive: true,
-          variant: 'link',
-          onClick: function () {
-            setFaq(faq.filter(function (unused, i) { return i !== index; }));
-          }
-        }, t.remove)
+        el('div', null,
+          el(c.Button, {
+            isDestructive: true,
+            variant: 'link',
+            onClick: function () {
+              setFaq(faq.filter(function (unused, i) { return i !== index; }));
+            }
+          }, t.remove)
+        )
       );
     });
 
+    var Row = c.PanelRow || 'div';
+
     return el(Panel, { name: 'nurevo-aeo-post-settings', title: t.title, className: 'nurevo-aeo-post-settings' },
-      el(c.ToggleControl, {
-        label: t.excludeLlms,
-        checked: !!meta._nurevo_exclude_llms,
-        onChange: function (value) { setMeta('_nurevo_exclude_llms', !!value); }
-      }),
-      el(c.ToggleControl, {
-        label: t.excludeSchema,
-        checked: !!meta._nurevo_exclude_schema,
-        onChange: function (value) { setMeta('_nurevo_exclude_schema', !!value); }
-      }),
-      el('p', { style: { fontWeight: 600, marginTop: '16px' } }, t.faqHeading),
-      el('p', { className: 'description' }, t.faqHelp),
-      rows,
-      el(c.Button, {
-        variant: 'secondary',
-        onClick: function () { setFaq(faq.concat([{ q: '', a: '' }])); }
-      }, t.add)
+      el(Row, null,
+        el(c.ToggleControl, {
+          __nextHasNoMarginBottom: true,
+          label: t.excludeLlms,
+          checked: !!meta._nurevo_exclude_llms,
+          onChange: function (value) { setMeta('_nurevo_exclude_llms', !!value); }
+        })
+      ),
+      el(Row, null,
+        el(c.ToggleControl, {
+          __nextHasNoMarginBottom: true,
+          label: t.excludeSchema,
+          checked: !!meta._nurevo_exclude_schema,
+          onChange: function (value) { setMeta('_nurevo_exclude_schema', !!value); }
+        })
+      ),
+      el('div', { style: stack('16px', { marginTop: '24px' }) },
+        el('div', null,
+          el('p', { style: { fontWeight: 600, margin: '0 0 8px' } }, t.faqHeading),
+          el('p', { className: 'description', style: { margin: 0 } }, t.faqHelp)
+        ),
+        rows,
+        el('div', null,
+          el(c.Button, {
+            variant: 'secondary',
+            __next40pxDefaultSize: true,
+            onClick: function () { setFaq(faq.concat([{ q: '', a: '' }])); }
+          }, t.add)
+        )
+      )
     );
   }
 
