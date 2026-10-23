@@ -38,6 +38,7 @@ const INCLUDE = [
   "uninstall.php",
   "readme.txt",
   "LICENSE",
+  "DEVELOPERS.md",           // hooks, per-post meta, WP-CLI and REST for developers
   "assets/icon.svg",  // used by the admin screens at runtime
   "assets/logo.svg",
   "assets/editor-panel.js", // block editor sidebar panel (per-post settings), no build step

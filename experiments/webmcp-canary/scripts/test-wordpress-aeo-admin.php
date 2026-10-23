@@ -168,6 +168,10 @@ $GLOBALS['webmcp_test_user_meta'] = array();
 function get_user_meta($user_id, $key = '', $single = false) { return $GLOBALS['webmcp_test_user_meta'][$user_id][$key] ?? ($single ? '' : array()); }
 function update_user_meta($user_id, $key, $value) { $GLOBALS['webmcp_test_user_meta'][$user_id][$key] = $value; return true; }
 function wp_create_nonce($action = -1) { return md5($action); }
+function apply_filters($hook, $value, ...$args) {
+    foreach ($GLOBALS['webmcp_test_hooks'][$hook] ?? array() as $callback) { $value = $callback($value, ...$args); }
+    return $value;
+}
 function wp_nonce_field($action = -1, $name = '_wpnonce') { echo '<input type="hidden" name="' . $name . '" value="' . md5($action) . '">'; }
 
 // WP-CLI and REST stand-ins, so includes/cli.php and includes/rest.php load.
@@ -2961,5 +2965,61 @@ WP_CLI::$out = array();
 $cli->diagnose(array(), array('consent' => true));
 expect(get_option(WEBMCP_CANARY_CONSENT_OPTION)['via'] === 'cli' && strpos(end(WP_CLI::$out), 'AEO score: 64/100') !== false, 'with --consent it records consent and runs');
 $GLOBALS['webmcp_test_remote_get'] = array();
+
+/* --- 0.8.0: developer filters ----------------------------------------- */
+
+$filter_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
+$developers_md = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/DEVELOPERS.md');
+foreach (array('nurevo_schema_graph', 'nurevo_business_node', 'nurevo_llms_txt', 'nurevo_llms_txt_lines', 'nurevo_robots_search_agents', 'nurevo_robots_training_agents', 'nurevo_excluded_post_ids') as $filter_name) {
+    expect(substr_count($filter_source, "apply_filters('{$filter_name}'") === 1, "{$filter_name} is applied in exactly one place");
+    expect(strpos($developers_md, '`' . $filter_name . '`') !== false, "{$filter_name} is documented in DEVELOPERS.md");
+}
+
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array(
+    'enabled' => '1', 'serve_schema' => '1', 'serve_llms_txt' => '1', 'allow_ai_crawlers' => '1', 'ai_training' => 'block', 'business_name' => 'Filter Shop',
+));
+$GLOBALS['webmcp_test_options']['blog_public'] = 1;
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$GLOBALS['webmcp_test_queried'] = null;
+$GLOBALS['webmcp_test_front_page'] = true;
+webmcp_canary_schema_merged(false);
+
+add_filter('nurevo_business_node', function ($node, $settings) { $node['priceRange'] = '$$-filtered'; return $node; });
+add_filter('nurevo_schema_graph', function ($bundle) { $bundle['extra'][] = array('@type' => 'Event', 'name' => 'Filtered event'); return $bundle; });
+ob_start(); webmcp_canary_output_server_schema(); $filtered_schema = ob_get_clean();
+expect(strpos($filtered_schema, '$$-filtered') !== false, 'nurevo_business_node changes the business node');
+expect(strpos($filtered_schema, 'Filtered event') !== false, 'nurevo_schema_graph changes the published graph');
+$merged_filtered = webmcp_canary_merge_into_list_graph(array(array('@type' => 'Organization', '@id' => 'https://example.test/#o', 'name' => 'Theirs')));
+expect(strpos(wp_json_encode($merged_filtered), '$$-filtered') !== false && strpos(wp_json_encode($merged_filtered), 'Filtered event') !== false, 'and the graph merged into an SEO plugin');
+webmcp_canary_schema_merged(false);
+$GLOBALS['webmcp_test_hooks']['nurevo_schema_graph'] = array(function () { return 'broken'; });
+ob_start(); webmcp_canary_output_server_schema(); $broken_filter_schema = ob_get_clean();
+expect(strpos($broken_filter_schema, 'Filter Shop') !== false, 'a filter returning the wrong shape is ignored');
+unset($GLOBALS['webmcp_test_hooks']['nurevo_schema_graph'], $GLOBALS['webmcp_test_hooks']['nurevo_business_node']);
+
+add_filter('nurevo_llms_txt_lines', function ($lines) { $lines[] = '## Added by a filter'; return $lines; });
+expect(strpos(webmcp_canary_build_local_llms_txt(), '## Added by a filter') !== false, 'nurevo_llms_txt_lines changes the lines');
+add_filter('nurevo_llms_txt', function ($body) { return $body . "\nBODY-FILTER\n"; });
+expect(strpos((string) webmcp_canary_llms_txt_body(), 'BODY-FILTER') !== false, 'nurevo_llms_txt changes the served body');
+unset($GLOBALS['webmcp_test_hooks']['nurevo_llms_txt_lines'], $GLOBALS['webmcp_test_hooks']['nurevo_llms_txt']);
+
+add_filter('nurevo_robots_search_agents', function ($agents) { $agents[] = "NewSearchBot\nDisallow: /"; return $agents; });
+add_filter('nurevo_robots_training_agents', function ($agents) { return array_values(array_diff($agents, array('CCBot'))); });
+$filtered_robots = webmcp_canary_allow_ai_crawlers_robots_txt("User-agent: *\nDisallow:\n", true);
+expect(strpos($filtered_robots, 'User-agent: NewSearchBotDisallow /') !== false, 'nurevo_robots_search_agents adds an agent, reduced to one line');
+expect(strpos($filtered_robots, "\nDisallow: /\nAllow") === false, 'a filtered agent cannot inject a rule');
+expect(strpos($filtered_robots, 'CCBot') === false && strpos($filtered_robots, 'User-agent: GPTBot') !== false, 'nurevo_robots_training_agents changes the training list');
+unset($GLOBALS['webmcp_test_hooks']['nurevo_robots_search_agents'], $GLOBALS['webmcp_test_hooks']['nurevo_robots_training_agents']);
+
+$GLOBALS['webmcp_test_posts'] = array(
+    (object) array('ID' => 81, 'post_title' => 'Filtered out', 'permalink' => 'https://example.test/f81/', 'post_content' => ''),
+    (object) array('ID' => 82, 'post_title' => 'Still listed', 'permalink' => 'https://example.test/f82/', 'post_content' => ''),
+);
+add_filter('nurevo_excluded_post_ids', function ($ids, $context) { if ($context === 'llms') { $ids[] = 81; } return $ids; });
+$filtered_llms = webmcp_canary_build_local_llms_txt();
+expect(strpos($filtered_llms, 'Filtered out') === false && strpos($filtered_llms, 'Still listed') !== false, 'nurevo_excluded_post_ids excludes posts from llms.txt');
+expect(webmcp_canary_excluded_post_ids('schema') === array(), 'per context');
+unset($GLOBALS['webmcp_test_hooks']['nurevo_excluded_post_ids']);
+$GLOBALS['webmcp_test_posts'] = array();
 
 echo "WordPress AEO admin tests passed\n";

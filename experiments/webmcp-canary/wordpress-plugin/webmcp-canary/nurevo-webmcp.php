@@ -646,7 +646,9 @@ function webmcp_canary_excluded_post_ids($context) {
             }
         }
     }
-    return array_values(array_unique($ids));
+    /** Filter: post IDs excluded from llms.txt ($context 'llms') or structured data ('schema'). See DEVELOPERS.md. */
+    $ids = apply_filters('nurevo_excluded_post_ids', $ids, $context);
+    return array_values(array_unique(array_filter(array_map('intval', (array) $ids))));
 }
 
 function webmcp_canary_post_excluded($post_id, $context) {
@@ -786,12 +788,29 @@ function webmcp_canary_settings() {
  * is what AEO needs. Sources: OpenAI, Anthropic and Perplexity crawler docs.
  */
 function webmcp_canary_ai_search_agents() {
-    return array('OAI-SearchBot', 'ChatGPT-User', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User');
+    /** Filter: the AI search crawlers given an Allow group in robots.txt. See DEVELOPERS.md. */
+    return webmcp_canary_clean_agent_list(apply_filters('nurevo_robots_search_agents', array('OAI-SearchBot', 'ChatGPT-User', 'Claude-SearchBot', 'Claude-User', 'PerplexityBot', 'Perplexity-User')));
 }
 
 /** Crawlers (or opt-out tokens) that collect content for model training. */
 function webmcp_canary_ai_training_agents() {
-    return array('GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended', 'CCBot');
+    /** Filter: the AI training crawlers the training choice applies to. See DEVELOPERS.md. */
+    return webmcp_canary_clean_agent_list(apply_filters('nurevo_robots_training_agents', array('GPTBot', 'ClaudeBot', 'Google-Extended', 'Applebot-Extended', 'CCBot')));
+}
+
+/** A filtered agent list as unique single-line tokens, so robots.txt stays well formed. */
+function webmcp_canary_clean_agent_list($agents) {
+    $clean = array();
+    foreach ((array) $agents as $agent) {
+        if (!is_scalar($agent)) {
+            continue;
+        }
+        $agent = trim(preg_replace('/[^A-Za-z0-9._\-\/ *]/', '', (string) $agent));
+        if ($agent !== '' && !in_array($agent, $clean, true)) {
+            $clean[] = $agent;
+        }
+    }
+    return $clean;
 }
 
 /**
@@ -3106,6 +3125,11 @@ function webmcp_canary_build_local_llms_txt() {
         $lines[] = '';
     }
 
+    /** Filter: the llms.txt lines, before they are joined and cached. See DEVELOPERS.md. */
+    $filtered_lines = apply_filters('nurevo_llms_txt_lines', $lines);
+    if (is_array($filtered_lines)) {
+        $lines = array_map('strval', array_filter($filtered_lines, 'is_scalar'));
+    }
     $body = implode("\n", $lines);
     return strlen($body) > WEBMCP_CANARY_LLMS_TXT_MAX_BYTES ? substr($body, 0, WEBMCP_CANARY_LLMS_TXT_MAX_BYTES) : $body;
 }
@@ -3135,7 +3159,9 @@ function webmcp_canary_llms_txt_body() {
         // An HTML comment, not a "# " line, which Markdown would read as a second H1.
         $body = rtrim($body, "\n") . "\n\n<!-- nurevo-aeo-ruleset:" . $delivered . " -->\n";
     }
-    return $body;
+    /** Filter: the complete llms.txt body as served. See DEVELOPERS.md. */
+    $filtered_body = apply_filters('nurevo_llms_txt', $body);
+    return is_string($filtered_body) ? $filtered_body : $body;
 }
 
 /** The central ruleset version this site follows (paid, synced), or 0. */
@@ -5870,6 +5896,11 @@ function webmcp_canary_own_schema_bundle() {
     } else {
         $org = webmcp_canary_normalize_business_facts($org, $settings);
     }
+    /** Filter: the business node, before coexistence and merging. See DEVELOPERS.md. */
+    $filtered_org = apply_filters('nurevo_business_node', $org, $settings);
+    if (is_array($filtered_org) && !empty($filtered_org)) {
+        $org = $filtered_org;
+    }
     $graph[] = $org;
 
     $graph[] = array(
@@ -5967,6 +5998,15 @@ function webmcp_canary_own_schema_bundle() {
         'central'  => $central,
         'delivery' => $delivery,
     );
+    /**
+     * Filter: everything Nurevo would publish on this request, before it is
+     * filtered for coexistence or merged into an SEO plugin's graph. See
+     * DEVELOPERS.md. A result without node lists for core and extra is ignored.
+     */
+    $filtered = apply_filters('nurevo_schema_graph', $bundle);
+    if (is_array($filtered) && isset($filtered['core'], $filtered['extra']) && is_array($filtered['core']) && is_array($filtered['extra'])) {
+        $bundle = array_merge($bundle, array('core' => array_values($filtered['core']), 'extra' => array_values($filtered['extra'])));
+    }
     return $bundle;
 }
 
