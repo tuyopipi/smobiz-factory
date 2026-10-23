@@ -62,8 +62,8 @@ const API_RATE_LIMITS = Object.freeze({
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 // Referral partners receive this share of what the customer actually paid,
-// transferred per paid invoice through Stripe Connect. Only JPY invoices are
-// shared: the platform balance settles in JPY and partners are domestic.
+// transferred per paid invoice through Stripe Connect, in JPY (the platform
+// balance currency). Non-JPY invoices are converted via referralPaidYen.
 export const REFERRAL_SHARE = 0.4;
 export function referralCommissionYen(amountPaid, currency) {
   if (String(currency || "").toLowerCase() !== "jpy") return 0;
@@ -2352,12 +2352,15 @@ export async function handleApi(request, env, ctx) {
       if (referrer?.stripe_account_id && stripeSecret(env)) {
         // Executed only by a verified Stripe webhook; no client-supplied destination is trusted.
         // 40% of the amount actually paid (Standard ¥3,000 -> ¥1,200, Pro ¥14,800 -> ¥5,920).
-        const commission = referralCommissionYen(object.amount_paid, object.currency);
+        // Invoices in other currencies (USD, Adaptive Pricing) are shared on the
+        // JPY amount Stripe settled for the charge.
+        const paid = await referralPaidYen(stripeSecret(env), object);
+        const commission = referralCommissionYen(paid.amountYen, "jpy");
         if (commission > 0) {
           const transfer = new URLSearchParams({ amount: String(commission), currency: "jpy", destination: referrer.stripe_account_id, "metadata[siteId]": siteId, "metadata[eventId]": event.id, "metadata[invoiceId]": String(object.id || "") });
-          // Tie the transfer to the invoice's charge when Stripe gives one, so it
-          // does not wait on (or fail for lack of) available platform balance.
-          if (typeof object.charge === "string" && object.charge) transfer.set("source_transaction", object.charge);
+          // Tie the transfer to the invoice's charge when known, so it does not
+          // wait on (or fail for lack of) available platform balance.
+          if (paid.chargeId) transfer.set("source_transaction", paid.chargeId);
           const sent = await stripeRequest(stripeSecret(env), "/v1/transfers", transfer);
           if (!sent?.ok) console.error("referral_transfer_failed", JSON.stringify({ siteId, invoiceId: object.id || null, error: sent?.data?.error?.message || null }));
         }
@@ -3158,6 +3161,40 @@ function stripeMode(env) {
   if (/^(sk|rk)_live_/.test(value)) return "live";
   if (/^(sk|rk)_test_/.test(value)) return "test";
   return "unconfigured";
+}
+
+async function stripeGet(secret, path, { version } = {}) {
+  const headers = { authorization: `Bearer ${secret}` };
+  if (version) headers["stripe-version"] = version;
+  try {
+    const response = await fetch(`https://api.stripe.com${path}`, { method: "GET", headers });
+    let data = {};
+    try { data = await response.json(); } catch { data = {}; }
+    return { ok: response.ok, status: response.status, data };
+  } catch { return { ok: false, status: 0, data: {} }; }
+}
+
+const INVOICE_PAYMENTS_API_VERSION = "2025-03-31.basil";
+
+/**
+ * What a paid invoice brought in, in JPY, and the charge behind it.
+ * JPY invoices use amount_paid directly. Other currencies are read from the
+ * charge's balance transaction (the gross JPY Stripe settled). The charge is
+ * on the invoice in older API versions and behind invoice_payments in newer.
+ */
+export async function referralPaidYen(secret, invoice, { get = stripeGet } = {}) {
+  let chargeId = typeof invoice?.charge === "string" ? invoice.charge : null;
+  if (!chargeId && invoice?.id) {
+    const list = await get(secret, `/v1/invoice_payments?invoice=${encodeURIComponent(invoice.id)}&limit=3`, { version: INVOICE_PAYMENTS_API_VERSION });
+    const row = (list.data?.data || []).find((item) => item?.status === "paid" && item?.payment?.type === "charge");
+    chargeId = typeof row?.payment?.charge === "string" ? row.payment.charge : row?.payment?.charge?.id || null;
+  }
+  if (String(invoice?.currency || "").toLowerCase() === "jpy") return { amountYen: Number(invoice.amount_paid) || 0, chargeId };
+  if (!chargeId) return { amountYen: 0, chargeId: null };
+  const charge = await get(secret, `/v1/charges/${encodeURIComponent(chargeId)}?expand[]=balance_transaction`);
+  const bt = charge.data?.balance_transaction;
+  if (!charge.ok || !bt || String(bt.currency || "").toLowerCase() !== "jpy") return { amountYen: 0, chargeId };
+  return { amountYen: Number(bt.amount) || 0, chargeId };
 }
 
 async function stripeRequest(secret, path, form, { version } = {}) {
