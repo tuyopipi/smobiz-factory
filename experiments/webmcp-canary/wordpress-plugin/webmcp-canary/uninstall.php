@@ -38,6 +38,9 @@ function nurevo_aeo_uninstall_site() {
     wp_clear_scheduled_hook('webmcp_canary_ruleset_check');
 }
 
+// Per-user dismissal of the "output is off" notice, stored once per network.
+delete_metadata('user', 0, 'webmcp_canary_off_notice_dismissed', '', true);
+
 if (is_multisite()) {
     $site_ids = get_sites(array('fields' => 'ids', 'number' => 0));
     foreach ($site_ids as $site_id) {

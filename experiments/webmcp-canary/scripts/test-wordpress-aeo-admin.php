@@ -133,6 +133,10 @@ function wp_clear_scheduled_hook($hook) { $GLOBALS['webmcp_test_cleared'][] = $h
 function plugins_url($path = '', $plugin = '') { return 'https://example.test/wp-content/plugins/webmcp-canary/' . ltrim($path, '/'); }
 function wp_date($format, $timestamp = null) { return gmdate($format, $timestamp ?? time()); }
 function get_current_user_id() { return $GLOBALS['webmcp_test_user_id'] ?? 1; }
+$GLOBALS['webmcp_test_user_meta'] = array();
+function get_user_meta($user_id, $key = '', $single = false) { return $GLOBALS['webmcp_test_user_meta'][$user_id][$key] ?? ($single ? '' : array()); }
+function update_user_meta($user_id, $key, $value) { $GLOBALS['webmcp_test_user_meta'][$user_id][$key] = $value; return true; }
+function wp_create_nonce($action = -1) { return md5($action); }
 function wp_nonce_field($action = -1, $name = '_wpnonce') { echo '<input type="hidden" name="' . $name . '" value="' . md5($action) . '">'; }
 
 require dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php';
@@ -2602,6 +2606,26 @@ expect($elsewhere === '', 'other admin screens are not nagged');
 $GLOBALS['webmcp_test_screen'] = (object) array('id' => 'plugins');
 ob_start(); webmcp_canary_output_off_notice(); $plugins_screen = ob_get_clean();
 expect(strpos($plugins_screen, 'Nurevo AEO is off') !== false, 'the Plugins list says output is off');
+// 0.8.0: information, not an error, and dismissible per user on the Plugins screen.
+expect(strpos($off_notice, 'notice-error') === false && strpos($off_notice, 'notice-info') !== false, 'on Nurevo screens it is an informational notice');
+expect(strpos($off_notice, 'is-dismissible') === false, 'which stays on Nurevo screens, where the switch is');
+expect(strpos($plugins_screen, 'notice-error') === false && strpos($plugins_screen, 'notice-info') !== false, 'on the Plugins screen it is informational');
+expect(strpos($plugins_screen, 'is-dismissible') !== false && strpos($plugins_screen, 'webmcp_canary_dismiss_off_notice') !== false, 'and dismissible, with the dismissal sent to the server');
+expect(webmcp_canary_dismiss_off_notice_for_user(0) === false, 'a dismissal needs a user');
+$GLOBALS['webmcp_test_user_id'] = 7;
+expect(webmcp_canary_dismiss_off_notice_for_user(7) === true, 'a user can dismiss it');
+ob_start(); webmcp_canary_output_off_notice(); $after_dismiss = ob_get_clean();
+expect($after_dismiss === '', 'once dismissed it no longer shows on the Plugins screen for that user');
+$GLOBALS['webmcp_test_user_id'] = 8;
+ob_start(); webmcp_canary_output_off_notice(); $other_user = ob_get_clean();
+expect(strpos($other_user, 'Nurevo AEO is off') !== false, 'the dismissal is stored per user');
+$GLOBALS['webmcp_test_user_id'] = 7;
+unset($GLOBALS['webmcp_test_screen']);
+$_GET['page'] = 'webmcp-canary';
+ob_start(); webmcp_canary_output_off_notice(); $nurevo_after_dismiss = ob_get_clean();
+expect(strpos($nurevo_after_dismiss, 'Nurevo AEO is off') !== false, 'dismissing on the Plugins screen does not hide it on Nurevo screens');
+unset($GLOBALS['webmcp_test_user_id']);
+expect(in_array('webmcp_canary_dismiss_off_notice_ajax', $GLOBALS['webmcp_test_hooks']['wp_ajax_webmcp_canary_dismiss_off_notice'], true), 'the dismissal endpoint is registered');
 unset($GLOBALS['webmcp_test_screen'], $_GET['page']);
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '1';
 $_GET['page'] = 'webmcp-canary';

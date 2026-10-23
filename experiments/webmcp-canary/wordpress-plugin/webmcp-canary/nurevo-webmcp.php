@@ -3535,11 +3535,20 @@ function webmcp_canary_sync_ruleset($force = false) {
 }
 
 add_action('admin_notices', 'webmcp_canary_output_off_notice');
+/** User meta that remembers a dismissal of the "off" notice on the Plugins screen. */
+if (!defined('WEBMCP_CANARY_OFF_NOTICE_META')) {
+    define('WEBMCP_CANARY_OFF_NOTICE_META', 'webmcp_canary_off_notice_dismissed');
+}
+
 /**
  * Output is off by default (nothing is published until the owner opts in),
  * and nothing said so: a new install could pair, see "Connected" in the
  * dashboard and publish nothing. Shown on this plugin's screens and the
  * Plugins list only, not across the whole admin.
+ *
+ * It is information, not an error. On the Plugins screen it can be dismissed,
+ * and the dismissal is kept per user; on Nurevo's own screens it stays, as
+ * those are where the switch is.
  */
 function webmcp_canary_output_off_notice() {
     if (!current_user_can('manage_options')) {
@@ -3552,16 +3561,51 @@ function webmcp_canary_output_off_notice() {
     $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen check.
     $screen = function_exists('get_current_screen') ? get_current_screen() : null;
     $on_plugins = $screen && isset($screen->id) && $screen->id === 'plugins';
-    if (strpos($page, 'webmcp-canary') !== 0 && !$on_plugins) {
+    $on_nurevo = strpos($page, 'webmcp-canary') === 0;
+    if (!$on_nurevo && !$on_plugins) {
         return;
     }
+    if (!$on_nurevo && get_user_meta(get_current_user_id(), WEBMCP_CANARY_OFF_NOTICE_META, true)) {
+        return;
+    }
+    $dismissible = !$on_nurevo;
     printf(
-        '<div class="notice notice-error"><p><strong>%1$s</strong> %2$s <a class="button button-primary" href="%3$s">%4$s</a></p></div>',
+        '<div id="nurevo-off-notice" class="notice notice-info%5$s"><p><strong>%1$s</strong> %2$s <a class="button button-primary" href="%3$s">%4$s</a></p></div>',
         esc_html__('Nurevo AEO is off: nothing is published yet.', 'nurevo-webmcp'),
         esc_html__('Structured data, llms.txt and AI crawler rules start once you switch on output.', 'nurevo-webmcp'),
         esc_url(admin_url('admin.php?page=webmcp-canary-settings')),
-        esc_html__('Turn on in settings', 'nurevo-webmcp')
+        esc_html__('Turn on in settings', 'nurevo-webmcp'),
+        $dismissible ? ' is-dismissible' : ''
     );
+    if ($dismissible) {
+        // WordPress hides a dismissible notice in the browser only; this tells
+        // the server, so it stays dismissed for this user.
+        printf(
+            '<script>(function(){var n=document.getElementById("nurevo-off-notice");if(!n){return;}n.addEventListener("click",function(e){if(!e.target||!e.target.classList||!e.target.classList.contains("notice-dismiss")){return;}var b=new URLSearchParams({action:"webmcp_canary_dismiss_off_notice",nonce:%1$s});fetch(%2$s,{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:b.toString()});});}());</script>',
+            wp_json_encode(wp_create_nonce('webmcp_canary_dismiss_off_notice')),
+            wp_json_encode(admin_url('admin-ajax.php'))
+        );
+    }
+}
+
+/** Remember that this user dismissed the "off" notice on the Plugins screen. */
+function webmcp_canary_dismiss_off_notice_for_user($user_id) {
+    $user_id = (int) $user_id;
+    if ($user_id <= 0) {
+        return false;
+    }
+    update_user_meta($user_id, WEBMCP_CANARY_OFF_NOTICE_META, 1);
+    return true;
+}
+
+add_action('wp_ajax_webmcp_canary_dismiss_off_notice', 'webmcp_canary_dismiss_off_notice_ajax');
+function webmcp_canary_dismiss_off_notice_ajax() {
+    check_ajax_referer('webmcp_canary_dismiss_off_notice', 'nonce');
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => 'forbidden'), 403);
+    }
+    webmcp_canary_dismiss_off_notice_for_user(get_current_user_id());
+    wp_send_json_success();
 }
 
 add_action('admin_notices', 'webmcp_canary_ruleset_notice');
