@@ -1,0 +1,87 @@
+# Production deploy for nurevo.jp: the Worker (API, dashboard, legal pages)
+# and the Pages landing page.
+#
+# Manual only: it runs when someone presses "Run workflow" (Actions > Deploy),
+# or when Claude is asked to run it. It never runs on push or on a schedule.
+# The full test suite runs first; nothing is deployed unless it passes.
+#
+# Needs two repository secrets (Settings > Secrets and variables > Actions):
+#   CLOUDFLARE_API_TOKEN   a token limited to Workers Scripts, Workers Routes
+#                          and Cloudflare Pages (Edit)
+#   CLOUDFLARE_ACCOUNT_ID  the Cloudflare account id
+# Database migrations and Worker secrets are NOT handled here; they stay manual.
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "What to deploy"
+        type: choice
+        options: [all, worker, lp]
+        default: all
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: experiments/webmcp-canary
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          tools: none
+          coverage: none
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: experiments/webmcp-canary/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - run: php scripts/test-schema-merge.php
+      - run: npm run test:canary
+      - run: npm run test:continuous
+      - name: Landing page checks
+        working-directory: experiments/nurevo-lp
+        run: npm run check && npm run check:aeo
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment: production
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: experiments/webmcp-canary/package-lock.json
+      - name: Install (pinned wrangler from package-lock)
+        working-directory: experiments/webmcp-canary
+        run: npm ci --no-audit --no-fund
+      - name: Check the secrets are present
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || { echo "::error::CLOUDFLARE_API_TOKEN secret is missing"; exit 1; }
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || { echo "::error::CLOUDFLARE_ACCOUNT_ID secret is missing"; exit 1; }
+      - name: Deploy Worker
+        if: inputs.target == 'all' || inputs.target == 'worker'
+        working-directory: experiments/webmcp-canary
+        run: npx wrangler deploy
+      - name: Deploy landing page
+        if: inputs.target == 'all' || inputs.target == 'lp'
+        working-directory: experiments/nurevo-lp
+        run: ../webmcp-canary/node_modules/.bin/wrangler pages deploy public --project-name nurevo --branch production --commit-hash "$GITHUB_SHA"
