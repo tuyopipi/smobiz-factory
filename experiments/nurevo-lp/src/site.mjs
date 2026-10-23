@@ -49,10 +49,15 @@ export const PRODUCT = {
   // Only what can be bought, or used for nothing, today. Pro is listed once it
   // is on sale (worker: PRO_CHECKOUT_ENABLED=1 + STRIPE_PRICE_ID_PRO). Do not
   // publish this page before that switch is on in production.
+  //
+  // `price` is JPY, the canonical price (what the Stripe Price is denominated
+  // in and what customers in Japan pay). `usd` is that Price's manual USD
+  // option, charged exactly in the US; it is published as an extra Offer
+  // limited to the US. The seller is consumption-tax exempt: both are totals.
   offers: [
-    { nameKey: "price.free.nm", descKey: "price.free.desc", price: 0, url: "/#pricing" },
-    { nameKey: "price.std.nm", descKey: "price.std.desc", price: 3000, monthly: true, url: "/dashboard?plan=standard" },
-    { nameKey: "price.top.nm", descKey: "price.top.desc", price: 14800, monthly: true, url: "/dashboard?plan=pro" },
+    { nameKey: "price.free.nm", descKey: "price.free.desc", price: 0, usd: 0, url: "/#pricing" },
+    { nameKey: "price.std.nm", descKey: "price.std.desc", price: 3000, usd: 20, monthly: true, url: "/dashboard?plan=standard" },
+    { nameKey: "price.top.nm", descKey: "price.top.desc", price: 14800, usd: 99, monthly: true, url: "/dashboard?plan=pro" },
   ],
 };
 

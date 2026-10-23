@@ -138,6 +138,7 @@ for (const keys of [{}, { STRIPE_PRICE_ID_PRO: "price_pro" }]) {
   const on = await request(makeEnv({ PRO_CHECKOUT_ENABLED: "1", STRIPE_PRICE_ID_PRO: "price_pro" }), "/api/sites", { method: "GET" });
   assert.equal(on.body.pro_checkout, true, "and that it is, once switched on");
   assert.equal(on.body.pro_monthly_yen, 14800);
+  assert.equal(on.body.pro_monthly_usd, 99, "and the US price the non-Japanese dashboard shows");
 }
 
 {

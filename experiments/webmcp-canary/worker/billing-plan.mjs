@@ -41,12 +41,31 @@ export function normalizePlan(value) {
  */
 export function tierFromPriceIds(priceIds, prices = {}) {
   const ids = (Array.isArray(priceIds) ? priceIds : [priceIds]).map((id) => String(id || "").trim()).filter(Boolean);
-  const pro = String(prices.pro || "").trim();
-  const standard = String(prices.standard || "").trim();
+  const matches = (tier) => tierPriceIds(prices, tier).some((id) => ids.includes(id));
   // Highest tier present wins, so a bundle containing both is not downgraded.
-  if (pro && ids.includes(pro)) return "pro";
-  if (standard && ids.includes(standard)) return "standard";
+  if (matches("pro")) return "pro";
+  if (matches("standard")) return "standard";
   return "free";
+}
+
+/**
+ * Every price id that buys a tier: the primary one, plus any legacy ids.
+ *
+ * A legacy id is a price that is no longer sold - an old standalone JPY price
+ * replaced by a multi-currency one - but that existing subscriptions are still
+ * on. Without it, the next webhook for such a subscription would find an
+ * unrecognised price and drop a paying customer to free.
+ */
+export function tierPriceIds(prices = {}, tier) {
+  const primary = String(prices?.[tier] || "").trim();
+  const legacy = splitPriceIds(prices?.legacy?.[tier]);
+  return [...new Set([primary, ...legacy].filter(Boolean))];
+}
+
+/** "a, b,,c" or ["a", " b"] -> ["a", "b", "c"]. */
+export function splitPriceIds(value) {
+  const parts = Array.isArray(value) ? value : String(value ?? "").split(",");
+  return parts.map((id) => String(id ?? "").trim()).filter(Boolean);
 }
 
 /** Every price id referenced by a Stripe subscription object. */
@@ -129,11 +148,23 @@ export function strongestPlan(...plans) {
   return best;
 }
 
-/** Read the configured price ids off the worker env. */
+/**
+ * Read the configured price ids off the worker env.
+ *
+ * `pro` and `standard` are the prices sold today: checkout and payment links
+ * use only these. `legacy` holds the optional comma-separated
+ * STRIPE_PRICE_IDS_LEGACY_PRO / STRIPE_PRICE_IDS_LEGACY_STANDARD - prices no
+ * longer sold that existing subscriptions still use - and is read only when
+ * deciding which tier a subscription buys.
+ */
 export function pricesFromEnv(env = {}) {
   return {
     pro: String(env.STRIPE_PRICE_ID_PRO || "").trim(),
     standard: String(env.STRIPE_PRICE_ID_STANDARD || "").trim(),
+    legacy: {
+      pro: splitPriceIds(env.STRIPE_PRICE_IDS_LEGACY_PRO),
+      standard: splitPriceIds(env.STRIPE_PRICE_IDS_LEGACY_STANDARD),
+    },
   };
 }
 

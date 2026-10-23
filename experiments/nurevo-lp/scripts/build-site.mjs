@@ -223,18 +223,28 @@ function softwareNode(lang) {
     url: ORIGIN + langOf(lang).path,
     downloadUrl: PRODUCT.downloadUrl,
     publisher: { "@id": ORG_ID },
-    offers: PRODUCT.offers.map((offer) => ({
-      "@type": "Offer",
-      name: t(offer.nameKey, lang),
-      description: t(offer.descKey, lang),
-      price: String(offer.price),
-      priceCurrency: "JPY",
-      availability: "https://schema.org/InStock",
-      url: ORIGIN + offer.url,
-      ...(offer.monthly
-        ? { priceSpecification: { "@type": "UnitPriceSpecification", price: String(offer.price), priceCurrency: "JPY", billingDuration: "P1M", unitText: "site", valueAddedTaxIncluded: false } }
-        : {}),
-    })),
+    // JPY first: it is the canonical price. The USD offers are the same plans
+    // as charged in the US (the Stripe Price's manual USD option).
+    offers: [
+      ...PRODUCT.offers.map((offer) => offerNode(offer, lang, "JPY", offer.price)),
+      ...PRODUCT.offers.filter((offer) => offer.monthly && offer.usd).map((offer) => offerNode(offer, lang, "USD", offer.usd, "US")),
+    ],
+  };
+}
+
+function offerNode(offer, lang, currency, price, region = null) {
+  return {
+    "@type": "Offer",
+    name: t(offer.nameKey, lang),
+    description: t(offer.descKey, lang),
+    price: String(price),
+    priceCurrency: currency,
+    availability: "https://schema.org/InStock",
+    url: ORIGIN + offer.url,
+    ...(region ? { eligibleRegion: { "@type": "Country", name: region } } : {}),
+    ...(offer.monthly
+      ? { priceSpecification: { "@type": "UnitPriceSpecification", price: String(price), priceCurrency: currency, billingDuration: "P1M", unitText: "site" } }
+      : {}),
   };
 }
 
@@ -572,7 +582,7 @@ files.set("sitemap.xml", pagesSitemap);
 files.set("llms-pages.json", `${JSON.stringify({
   home: LANGS.map((lang) => ({ lang: lang.hreflang, url: ORIGIN + lang.path, title: t("meta.title", lang.code) })),
   pages: [
-    { lang: "ja", path: "/#pricing", title: "料金 / Pricing", summary: "Standard: ¥3,000 / month / site. Pro: ¥14,800 / month / site (AI visibility measurement in beta). Prices exclude tax." },
+    { lang: "ja", path: "/#pricing", title: "料金 / Pricing", summary: "Standard: ¥3,000 / month / site (US$20 in the US). Pro: ¥14,800 / month / site, US$99 in the US (AI visibility measurement in beta). The price is the total; no consumption tax is added. Elsewhere, checkout shows the local currency." },
     { lang: "en", path: "/guide/", title: "AEO Guides" },
     { lang: "ja", path: "/ja/guide/", title: "AEOガイド" },
     ...publishedContent, ...STATIC_PAGES.filter((page) => page.summary)]
