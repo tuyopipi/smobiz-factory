@@ -1,11 +1,13 @@
-/* Nurevo dashboard asset revision: 2026-10-24-leadgen */
+/* Nurevo dashboard asset revision: 2026-10-24-leadgen2 */
 /*
  * Agency lead-generation tools on the Partner page (worker/agency-leadgen.mjs).
  *
  *  - "Sales tools": the embeddable "Is your business visible to AI?" widget
  *    (on/off, the websites allowed to show it, email on each lead, the embed
- *    code, a new widget key) and the referral landing page /p/<slug> (address,
- *    publish, noindex, intro text). Approved partners only.
+ *    code, a new widget key, the agency's privacy policy - required before the
+ *    widget can be switched on - and whether the contact address that receives
+ *    lead emails is verified) and the referral landing page /p/<slug>
+ *    (address, publish, noindex, intro text). Approved partners only.
  *  - "Leads": what the widget collected for this account, newest first, with
  *    CSV export and delete.
  *
@@ -55,6 +57,8 @@
       else if (f === "slug_required") out.push(tr("lgErrSlugRequired"));
       else if (f === "landing_intro") out.push(tr("agInvalid", { field: tr("lgIntro") }));
       else if (f === "branding") out.push(tr("lgNeedsBrand"));
+      else if (f === "privacy_url_required") out.push(tr("lgErrPrivacyRequired"));
+      else if (f === "privacy_url") out.push(tr("lgErrPrivacyUrl"));
     });
     return out.length ? out.join(" ") : tr("crSaveError");
   }
@@ -81,7 +85,9 @@
       + "<h3>" + esc(tr("lgWidget")) + "</h3><p class=\"nrv-lg-note\">" + esc(tr("lgWidgetLead")) + "</p>"
       + '<label class="nrv-ag-inline"><input type="checkbox" name="widget_enabled"' + checked(s.widget_enabled) + dis + "> " + esc(tr("lgWidgetEnable")) + "</label>"
       + "<label>" + esc(tr("lgOrigins")) + '<textarea class="input" name="allowed_origins" rows="3" spellcheck="false" placeholder="https://www.example.com"' + dis + ">" + esc((s.allowed_origins || []).join("\n")) + "</textarea></label>"
+      + "<label>" + esc(tr("lgPrivacyUrl")) + '<input class="input" name="privacy_url" type="url" maxlength="500" placeholder="https://" value="' + esc(s.privacy_url || "") + '"' + dis + "></label>"
       + '<label class="nrv-ag-inline"><input type="checkbox" name="notify_email"' + checked(s.notify_email) + dis + "> " + esc(tr("lgNotify")) + "</label>"
+      + contactLine(view)
       + (embed.script ? "<label>" + esc(tr("lgEmbed")) + '<textarea class="input nrv-lg-code" readonly rows="2" data-lg-embed>' + esc(embed.script) + "</textarea></label>"
         + '<p><button type="button" class="btn" data-lg-copy>' + esc(tr("copy")) + "</button></p>"
         + "<details><summary>" + esc(tr("lgEmbedIframe")) + '</summary><textarea class="input nrv-lg-code" readonly rows="3" data-lg-iframe>' + esc(embed.iframe) + "</textarea></details>"
@@ -96,6 +102,14 @@
       + (view.can_edit ? '<p><button type="submit" class="btn primary">' + esc(tr("save")) + '</button> <span class="nrv-ag-msg" data-lg-msg role="status"></span></p>' : "")
       + "</form></div>";
     return section;
+  }
+
+  /* Where lead emails go: the brand's contact address once verified, else the sign-in address. */
+  function contactLine(view) {
+    if (!view.contact_email || !view.settings) return "";
+    if (view.contact_verified) return '<p class="nrv-lg-note" data-lg-contact="verified">' + esc(tr("lgContactVerified", { email: view.contact_email })) + "</p>";
+    return '<p class="notice nrv-lg-warn" data-lg-contact="unverified">' + esc(tr("lgContactUnverified", { email: view.contact_email })) + "</p>"
+      + (view.can_edit ? '<p><button type="button" class="btn" data-lg-verify>' + esc(tr("lgVerifySend")) + '</button> <span class="nrv-ag-msg" data-lg-verify-msg role="status"></span></p>' : "");
   }
 
   function replaceTools(section, view, message) {
@@ -121,6 +135,15 @@
       if (result.ok && result.data.available) replaceTools(section, result.data, tr("saved"));
       else rotate.disabled = false;
     });
+    var verify = section.querySelector("[data-lg-verify]");
+    if (verify) verify.addEventListener("click", async function () {
+      var vmsg = section.querySelector("[data-lg-verify-msg]");
+      verify.disabled = true;
+      var result = await send("POST", "/api/agency/leadgen/verify-email?lang=" + pageLang(), { lang: pageLang() });
+      if (result.ok && result.data.available) { replaceTools(section, result.data, ""); var again = document.querySelector("[data-lg-verify-msg]"); if (again) again.textContent = tr("lgVerifySent"); return; }
+      if (vmsg) vmsg.textContent = result.status === 429 ? tr("err_rate_limited") : tr("crSaveError");
+      verify.disabled = false;
+    });
     var form = section.querySelector("[data-lg-form]");
     if (!form || !view.can_edit) return;
     form.addEventListener("submit", async function (event) {
@@ -131,6 +154,7 @@
       var body = {
         widget_enabled: el.widget_enabled.checked, allowed_origins: el.allowed_origins.value, notify_email: el.notify_email.checked,
         slug: el.slug.value, landing_enabled: el.landing_enabled.checked, landing_noindex: el.landing_noindex.checked, landing_intro: el.landing_intro.value,
+        privacy_url: el.privacy_url ? el.privacy_url.value : "",
       };
       if (button) button.disabled = true;
       try {

@@ -36,7 +36,7 @@ import {
   saveBranding, saveReportSettings, validateBranding, validateReportSettings, REPORT_UNSUBSCRIBE_PATH,
   REPORT_CONFIRM_PATH, handleReportConfirm, recipientStatuses, reportEligibility, requestConfirmations,
 } from "./agency-report.mjs";
-import { LEADGEN_SUBMIT_PATH, handleLeadgenDashboard, handleLeadgenPublic } from "./agency-leadgen.mjs";
+import { LEADGEN_SUBMIT_PATH, LEADGEN_VERIFY_PATH, handleLeadgenDashboard, handleLeadgenPublic } from "./agency-leadgen.mjs";
 import { isSiteType, normalizeSiteType } from "./site-types.mjs";
 import { NON_LOCAL_DROPPED_PROPS, typedBusinessType, typedCatalogNodes, typedLlmsTxt } from "./site-type-output.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
@@ -529,7 +529,8 @@ export async function handleApi(request, env, ctx) {
   // the agency landing page /p/<slug>. The widget scores with the same cached
   // on-site diagnosis as /api/aeo/score and never calls a paid AI engine.
   const leadgenPublic = await handleLeadgenPublic(request, env, ctx, {
-    scoreUrl: async (raw) => (await cachedAeoDiagnosis(env, raw, ctx)).result,
+    // A namespace keeps each agency's visitor URLs out of the shared cache.
+    scoreUrl: async (raw, { namespace = null } = {}) => (await cachedAeoDiagnosis(env, raw, ctx, { namespace })).result,
     clientIp: requestClientIp,
     memberLocale: memberEmailLocale,
   });
@@ -3778,12 +3779,19 @@ export function hasLiveSubscription(site = {}) {
  * lead widget (agency-leadgen.mjs), which never calls a paid AI engine.
  * Throws AeoScoreError for a URL that cannot be scored.
  */
-async function cachedAeoDiagnosis(env, raw, ctx, { fresh = false } = {}) {
+/**
+ * The on-site diagnosis through the KV cache. `namespace` gives a caller its
+ * own cache entries (the agency widget passes "leadgen:<account>"): they are
+ * neither read from nor written to the shared /api/aeo/score entry, so a URL
+ * one agency's visitor checked cannot be inferred from a cache hit elsewhere.
+ */
+async function cachedAeoDiagnosis(env, raw, ctx, { fresh = false, namespace = null } = {}) {
   const activeRuleset = await loadActiveRuleset(env);
   const definition = rulesetDefinition(activeRuleset);
   const schemaRules = definition.schema;
   const rulesHash = await aeoSha256Hex(JSON.stringify(definition));
-  const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
+  const scope = namespace ? `ns:${await aeoSha256Hex(String(namespace))}:` : "";
+  const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:${scope}url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
   const cached = fresh ? null : await env.WEBMCP_KV?.get(cacheKey, "json");
   if (cached) return { result: cached, cache: "hit" };
   const result = await diagnoseAeoUrl(raw, { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, fresh });
@@ -4893,6 +4901,8 @@ function csrfRequired(path) {
   // The agency lead widget posts from its own frame with no session; the
   // signed form token, honeypot and per-IP / per-key limits protect it.
   if (path === LEADGEN_SUBMIT_PATH) return false;
+  // The contact-address verification link: its signed, expiring token decides.
+  if (path === LEADGEN_VERIFY_PATH) return false;
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;

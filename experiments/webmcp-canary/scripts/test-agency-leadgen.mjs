@@ -142,6 +142,8 @@ const call = (env, method, path, { token = "agency", csrf = true, body, headers 
 }), env, {}));
 const get = (env, path, headers = {}) => quiet(() => handleApi(new Request(`${ORIGIN}${path}`, { headers: { "cf-connecting-ip": "203.0.113.9", ...headers } }), env, {}));
 
+// The agency's privacy policy: the widget cannot be switched on without one.
+const PRIVACY = "https://acme-digital.com/privacy";
 const BRAND = { display_name: "Acme <Digital> & Co", brand_color: "#0a7d5a", contact_email: "hello@acme-digital.com", contact_url: "https://acme-digital.com/contact", footer_text: "Acme Digital Ltd.\nTokyo" };
 
 /* ---------------- 1. validation ---------------- */
@@ -178,7 +180,9 @@ const BRAND = { display_name: "Acme <Digital> & Co", brand_color: "#0a7d5a", con
   for (const word of ["admin", "api", "dashboard", "nurevo", "login", "support", "openai", "perplexity", "official", "nurevo-tokyo", "admin-team"]) assert.equal(slugProblem(word), "slug_reserved", `reserved: ${word}`);
   assert.ok(RESERVED_SLUGS.has("signup") && RESERVED_SLUGS.has("privacy"));
 
-  const ok = validateLeadgenSettings({ widget_enabled: true, allowed_origins: "https://www.acme-digital.com\nacme-digital.com\nhttps://www.acme-digital.com/", notify_email: true, slug: " Acme-Digital ", landing_enabled: true, landing_intro: "Hi\r\n\r\n\r\n\r\nthere\u0007" });
+  assert.deepEqual(validateLeadgenSettings({ widget_enabled: true }).errors, ["privacy_url_required"], "no privacy policy, no widget");
+  assert.deepEqual(validateLeadgenSettings({ widget_enabled: true, privacy_url: "http://acme.com/privacy" }).errors, ["privacy_url"], "https only");
+  const ok = validateLeadgenSettings({ privacy_url: PRIVACY, widget_enabled: true, allowed_origins: "https://www.acme-digital.com\nacme-digital.com\nhttps://www.acme-digital.com/", notify_email: true, slug: " Acme-Digital ", landing_enabled: true, landing_intro: "Hi\r\n\r\n\r\n\r\nthere\u0007" });
   assert.equal(ok.ok, true, JSON.stringify(ok.errors));
   assert.deepEqual(ok.value.allowed_origins, ["https://www.acme-digital.com", "https://acme-digital.com"], "normalised and de-duplicated");
   assert.equal(ok.value.slug, "acme-digital", "lower-cased");
@@ -201,8 +205,12 @@ const BRAND = { display_name: "Acme <Digital> & Co", brand_color: "#0a7d5a", con
   assert.deepEqual(validateLead({ ...lead, consent: undefined }).errors, ["consent"]);
   assert.deepEqual(validateLead({ ...lead, email: "nope", name: "", site_url: "x" }).errors, ["site_url", "name", "email"]);
   assert.deepEqual(validateLead({ ...lead, name: "n".repeat(101) }).errors, ["name"]);
-  assert.match(consentText("en", "Acme"), /Acme may contact me.*controller.*Nurevo processes it on Acme's behalf/);
-  assert.match(consentText("ja", "Acme"), /Acmeから連絡を受けることに同意.*管理者.*Nurevoが/);
+  assert.match(consentText("en", "Acme", PRIVACY), /Acme may contact me.*controller \(privacy policy: https:\/\/acme-digital\.com\/privacy\).*Nurevo processes it on Acme's behalf as processor \(privacy policy: https:\/\/nurevo\.jp\/privacy\)/);
+  assert.match(consentText("ja", "Acme", PRIVACY), /Acmeから連絡を受けることに同意.*管理者.*acme-digital\.com\/privacy.*Nurevoが.*nurevo\.jp\/privacy/);
+  for (const l of LEADGEN_LANGS) {
+    const text = consentText(l, "Acme", PRIVACY);
+    assert.ok(text.includes(PRIVACY) && text.includes("https://nurevo.jp/privacy") && !/\{\w+\}/.test(text), `${l}: both policies named in the consent text`);
+  }
 
   const keys = new Set(Array.from({ length: 500 }, newWidgetKey));
   assert.equal(keys.size, 500);
@@ -252,7 +260,7 @@ let widgetKey;
   assert.equal(first.settings, null, "nothing saved yet");
   assert.equal(first.has_branding, false);
 
-  const SETTINGS = { widget_enabled: true, allowed_origins: "https://www.acme-digital.com\nhttps://acme-digital.com", notify_email: true, slug: "acme-digital", landing_enabled: true, landing_noindex: false, landing_intro: "We help <cafés> & shops." };
+  const SETTINGS = { privacy_url: PRIVACY, widget_enabled: true, allowed_origins: "https://www.acme-digital.com\nhttps://acme-digital.com", notify_email: true, slug: "acme-digital", landing_enabled: true, landing_noindex: false, landing_intro: "We help <cafés> & shops." };
   let res = await call(env, "PUT", "/api/agency/leadgen", { body: SETTINGS });
   assert.equal(res.status, 400);
   assert.deepEqual((await res.json()).fields, ["branding"], "the tools show the agency's brand, so it comes first");
@@ -297,7 +305,7 @@ let widgetKey;
   res = await call(env, "PUT", "/api/agency/leadgen", { token: "other", body: { ...SETTINGS, slug: "ACME-DIGITAL" } });
   assert.equal(res.status, 409);
   assert.deepEqual((await res.json()).fields, ["slug_taken"]);
-  res = await call(env, "PUT", "/api/agency/leadgen", { token: "other", body: { widget_enabled: true, allowed_origins: "https://other-agency.com", slug: "other-agency", landing_enabled: true } });
+  res = await call(env, "PUT", "/api/agency/leadgen", { token: "other", body: { privacy_url: "https://other-agency.com/privacy", widget_enabled: true, allowed_origins: "https://other-agency.com", slug: "other-agency", landing_enabled: true } });
   assert.equal(res.status, 200);
   const otherKey = (await res.json()).settings.widget_key;
   assert.notEqual(otherKey, widgetKey, "one key per agency");
@@ -392,6 +400,9 @@ const LEAD = { site_url: "cafe-sakura.com", name: "Hanako Sato", email: "hanako@
 
   fetched.length = 0;
   mail.length = 0;
+  // The contact address was verified (the flow itself: test-agency-leadgen-hardening.mjs);
+  // until it is, new-lead emails go to the member's own sign-in address.
+  sqlite.prepare("UPDATE agency_leadgen SET contact_verified_email='hello@acme-digital.com', contact_verified_at=1 WHERE account_id=?").run(A);
   const tok = await later();
   res = await submit({ ...LEAD, key: widgetKey, token: tok, lang: "ja" });
   assert.equal(res.status, 200);
@@ -412,7 +423,7 @@ const LEAD = { site_url: "cafe-sakura.com", name: "Hanako Sato", email: "hanako@
   assert.equal(row.source, "widget");
   assert.equal(row.page_origin, "https://www.acme-digital.com");
   assert.equal(row.locale, "ja");
-  assert.equal(row.consent_text, consentText("ja", "Acme <Digital> & Co"), "the exact consent text, stored as plain text");
+  assert.equal(row.consent_text, consentText("ja", "Acme <Digital> & Co", PRIVACY), "the exact consent text, with both privacy policies, stored as plain text");
   assert.ok(row.consent_at > 0 && row.created_at > 0);
 
   // Email to the agency: its contact address, Reply-To the lead, escaped HTML.
@@ -435,12 +446,21 @@ const LEAD = { site_url: "cafe-sakura.com", name: "Hanako Sato", email: "hanako@
   assert.equal(down.score, null);
   assert.deepEqual(down.issues, []);
 
-  // Per-IP limit.
+  // Per-IP limits. Invalid submissions never count against the lead limit...
   const ip = "192.0.2.77";
   let last;
-  for (let i = 0; i <= LEADGEN_LIMITS.ip.limit; i += 1) last = await submit({ ...LEAD, key: widgetKey, token: await later(), consent: false }, { ip });
-  assert.equal(last.status, 429, "per IP");
+  for (let i = 0; i <= LEADGEN_LIMITS.ip.limit + 1; i += 1) last = await submit({ ...LEAD, key: widgetKey, token: await later(), consent: false }, { ip });
+  assert.equal(last.status, 400, "invalid submissions are refused, not counted as leads");
+  // ...valid ones do, per IP...
+  const ipBucket = `leadgen-ip:${sha(`leadgen-ip:${ip}`)}`;
+  sqlite.prepare("INSERT OR REPLACE INTO api_rate_limits (bucket, window_started_at, count, updated_at) VALUES (?,?,?,?)").run(ipBucket, Date.now(), LEADGEN_LIMITS.ip.limit, Date.now());
+  last = await submit({ ...LEAD, key: widgetKey, token: await later() }, { ip });
+  assert.equal(last.status, 429, "per IP, valid leads");
   assert.ok(last.headers.get("retry-after"));
+  // ...and every request from one address is limited first, cheaply.
+  const anyBucket = `leadgen-ip-any:${sha(`leadgen-ip-any:${ip}`)}`;
+  sqlite.prepare("INSERT OR REPLACE INTO api_rate_limits (bucket, window_started_at, count, updated_at) VALUES (?,?,?,?)").run(anyBucket, Date.now(), LEADGEN_LIMITS.ipAny.limit, Date.now());
+  assert.equal((await submit({ key: widgetKey, token: "junk" }, { ip })).status, 429, "the per-IP pre-limit comes before anything else");
   // Per-key limit: every visitor of this agency together.
   const bucket = `leadgen-key:${sha(`leadgen-key:${widgetKey}`)}`;
   sqlite.prepare("INSERT OR REPLACE INTO api_rate_limits (bucket, window_started_at, count, updated_at) VALUES (?,?,?,?)").run(bucket, Date.now(), LEADGEN_LIMITS.key.limit, Date.now());
@@ -455,7 +475,7 @@ const LEAD = { site_url: "cafe-sakura.com", name: "Hanako Sato", email: "hanako@
   assert.equal((await quiet(() => leadgenRateLimit({ DB: { prepare() { throw new Error("d1 down"); } } }, "t", "v", small))).unavailable, true, "fails closed");
 
   // Widget turned off: the frame and the submit stop.
-  const settings = { widget_enabled: false, allowed_origins: "https://www.acme-digital.com", notify_email: true, slug: "acme-digital", landing_enabled: true, landing_intro: "We help <cafés> & shops." };
+  const settings = { privacy_url: PRIVACY, widget_enabled: false, allowed_origins: "https://www.acme-digital.com", notify_email: true, slug: "acme-digital", landing_enabled: true, landing_intro: "We help <cafés> & shops." };
   assert.equal((await call(env, "PUT", "/api/agency/leadgen", { body: settings })).status, 200);
   assert.equal((await get(env, `/api/leadgen/frame/${widgetKey}`)).status, 404);
   assert.equal((await submit({ ...LEAD, key: widgetKey, token: await later() }, { ip: "192.0.2.201" })).status, 404);
@@ -563,7 +583,7 @@ const LEAD = { site_url: "cafe-sakura.com", name: "Hanako Sato", email: "hanako@
   assert.deepEqual({ ...lastLead }, { source: "landing", page_origin: ORIGIN });
 
   // noindex on request.
-  const settings = { widget_enabled: true, allowed_origins: "https://www.acme-digital.com", notify_email: false, slug: "acme-digital", landing_enabled: true, landing_noindex: true };
+  const settings = { privacy_url: PRIVACY, widget_enabled: true, allowed_origins: "https://www.acme-digital.com", notify_email: false, slug: "acme-digital", landing_enabled: true, landing_noindex: true };
   assert.equal((await call(env, "PUT", "/api/agency/leadgen", { body: settings })).status, 200);
   res = await get(env, "/p/acme-digital");
   assert.equal(res.headers.get("x-robots-tag"), "noindex, nofollow");
@@ -625,7 +645,7 @@ const LEAD = { site_url: "cafe-sakura.com", name: "Hanako Sato", email: "hanako@
   assert.equal(embedSnippets(ORIGIN, "wk_x", "xx").script.includes('data-lang="en"'), true);
 
   const pkg = JSON.parse(read("package.json"));
-  assert.equal(pkg.scripts["test:agency-leadgen"], "node scripts/test-agency-leadgen.mjs");
+  assert.equal(pkg.scripts["test:agency-leadgen"], "node scripts/test-agency-leadgen.mjs && node scripts/test-agency-leadgen-hardening.mjs");
   assert.ok(pkg.scripts["test:canary"].includes("npm run test:agency-leadgen"));
   const wrangler = read("wrangler.jsonc");
   assert.ok(wrangler.includes('"pattern": "nurevo.jp/p/*"'), "the landing pages are routed to the worker");

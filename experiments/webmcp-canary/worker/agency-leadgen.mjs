@@ -17,9 +17,24 @@
  *      referral code), the agency's allowed origins (frame-ancestors, plus the
  *      embedding page's Referer when the browser sends one), a signed form
  *      token that carries the time the form was shown (too fast or too old is
- *      refused; single use when KV is bound), a honeypot field, rate limits
- *      per IP and per widget key, strict input validation, no third-party
- *      script, a strict CSP, every value escaped or set as text.
+ *      refused; single use when KV is bound), a honeypot field, strict input
+ *      validation, no third-party script, a strict CSP, every value escaped or
+ *      set as text. Rate limits, in this order (submitLead): a cheap per-IP
+ *      limit on every request first; then the token and honeypot; and only a
+ *      VALID submission counts against the per-IP lead limit and the per-key
+ *      daily limit - so junk cannot use up an agency's daily quota.
+ *
+ *      Privacy: the widget needs the agency's privacy-policy URL. The consent
+ *      text names the agency as controller (with its policy) and Nurevo as
+ *      processor (nurevo.jp/privacy); the landing page links both. A visitor's
+ *      URL is scored through a cache scoped to that agency, never the shared
+ *      /api/aeo/score cache, so one agency's visitors cannot be inferred from
+ *      another's (or the public endpoint's) cache hits.
+ *
+ *      Notifications: a new-lead email goes to the branding contact address
+ *      only once that address was verified with a signed link
+ *      (/api/agency/verify-contact); until then it goes to the member's own
+ *      sign-in address.
  *
  *   2. The agency referral landing page, /p/<slug>: the agency's brand, a short
  *      pitch for Nurevo's free plugin and AI check, buttons to install the
@@ -44,12 +59,15 @@ import { isApprovedPartner } from "./partner.mjs";
 import { DEFAULT_BRAND_COLOR, loadBranding, logoSrc, safeHttpsUrl, validEmail } from "./agency-report.mjs";
 import { DASHBOARD_ORIGIN, mailConfigured, sendResendEmail } from "./lifecycle-email.mjs";
 import { localizeAeoChecks } from "./aeo-score.mjs";
-import { LANG_NAMES, LEADGEN_COPY, LEADGEN_LANGS, LEADGEN_LANG_TAG, SIGNUP_LANG } from "./agency-leadgen-i18n.mjs";
+import { LANG_NAMES, LEADGEN_COPY, LEADGEN_LANGS, LEADGEN_LANG_TAG, LEADGEN_VERIFY_COPY, SIGNUP_LANG } from "./agency-leadgen-i18n.mjs";
 
 export { LEADGEN_LANGS };
 export const LEADGEN_WIDGET_PATH = "/api/leadgen/widget.js";
 export const LEADGEN_FRAME_PREFIX = "/api/leadgen/frame/";
 export const LEADGEN_SUBMIT_PATH = "/api/leadgen/submit";
+/** The signed link that verifies the agency's contact email (public, no session). */
+export const LEADGEN_VERIFY_PATH = "/api/agency/verify-contact";
+export const CONTACT_VERIFY_TTL_MS = 3 * 24 * 60 * 60 * 1000;
 export const LANDING_PREFIX = "/p/";
 export const PLUGIN_URL = "https://wordpress.org/plugins/nurevo-webmcp/";
 export const PRIVACY_URL = "https://nurevo.jp/privacy";
@@ -62,11 +80,16 @@ export const MIN_FILL_MS = 3000;
 /** A form token older than this is refused (reload the page for a new one). */
 export const MAX_FORM_AGE_MS = 2 * 60 * 60 * 1000;
 export const LEADGEN_LIMITS = Object.freeze({
-  // One visitor checks a few sites at most; a script hammering one agency's
-  // form from one address stops here.
+  // Every request from one address, valid or not, checked before anything
+  // else: cheap, and it stops a flood from one place early.
+  ipAny: { limit: 60, windowMs: 60 * 60 * 1000 },
+  // Valid leads from one address: one visitor checks a few sites at most.
   ip: { limit: 10, windowMs: 60 * 60 * 1000 },
-  // Every visitor of one agency together: bounds what a leaked key can cost.
+  // Valid leads of one agency together: bounds what a leaked key can cost.
+  // Junk (a bad token, the honeypot) is refused before this and never counts.
   key: { limit: 300, windowMs: 24 * 60 * 60 * 1000 },
+  // Contact-verification emails per account.
+  verify: { limit: 5, windowMs: 24 * 60 * 60 * 1000 },
 });
 const WIDGET_KEY_RE = /^wk_[a-z0-9]{24}$/;
 const SLUG_RE = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
@@ -168,6 +191,11 @@ export function validateLeadgenSettings(input = {}) {
   if (intro.length > LEADGEN_INTRO_MAX) errors.push("landing_intro");
   const landingEnabled = input.landing_enabled === true;
   if (landingEnabled && !slug) errors.push("slug_required");
+  const privacyRaw = String(input.privacy_url ?? "").trim();
+  const privacyUrl = privacyRaw ? safeHttpsUrl(privacyRaw, 500) : null;
+  if (privacyRaw && !privacyUrl) errors.push("privacy_url");
+  // The consent text names the agency's policy: no policy, no widget.
+  else if (input.widget_enabled === true && !privacyUrl) errors.push("privacy_url_required");
   return {
     ok: errors.length === 0,
     errors,
@@ -180,6 +208,7 @@ export function validateLeadgenSettings(input = {}) {
       landing_enabled: landingEnabled,
       landing_noindex: input.landing_noindex === true,
       landing_intro: intro || null,
+      privacy_url: privacyUrl,
     },
   };
 }
@@ -214,9 +243,24 @@ export function validateLead(input = {}) {
   return { ok: errors.length === 0, errors, value: { site_url: siteUrl, name, email } };
 }
 
-/** The consent text shown next to the checkbox, in one language, as plain text. */
-export function consentText(lang, agencyName) {
-  return fill(leadgenCopy(lang).consent, { agency: singleLine(agencyName) });
+/**
+ * The consent text shown next to the checkbox, in one language, as plain text
+ * (stored verbatim with each lead): the agency as controller with its privacy
+ * policy, Nurevo as processor with nurevo.jp/privacy.
+ */
+export function consentText(lang, agencyName, policyUrl) {
+  return fill(leadgenCopy(lang).consent, { agency: singleLine(agencyName), policy: safeHttpsUrl(policyUrl) || "—", nurevo_policy: PRIVACY_URL });
+}
+
+/** The same text as HTML: escaped, with the two policy URLs as links. */
+export function consentHtml(lang, agencyName, policyUrl) {
+  const policy = safeHttpsUrl(policyUrl);
+  let html = escapeHtml(consentText(lang, agencyName, policyUrl));
+  for (const href of [policy, PRIVACY_URL].filter(Boolean)) {
+    const escaped = escapeHtml(href);
+    html = html.split(escaped).join(`<a href="${escaped}" target="_blank" rel="noopener">${escaped}</a>`);
+  }
+  return html;
 }
 
 /* ------------------------------------------------------------------ *
@@ -309,6 +353,10 @@ function settingsView(row) {
     landing_enabled: Number(row.landing_enabled) === 1,
     landing_noindex: Number(row.landing_noindex) === 1,
     landing_intro: row.landing_intro || null,
+    privacy_url: safeHttpsUrl(row.privacy_url) || null,
+    contact_verified_email: row.contact_verified_email || null,
+    contact_verified_at: row.contact_verified_at ?? null,
+    contact_verify_sent_at: row.contact_verify_sent_at ?? null,
     updated_at: row.updated_at ?? null,
   };
 }
@@ -329,13 +377,13 @@ export async function saveLeadgen(env, accountId, value, { memberId = null, now 
     if (other) throw new SlugTakenError();
   }
   try {
-    await env.DB.prepare(`INSERT INTO agency_leadgen (account_id,widget_key,widget_enabled,allowed_origins_json,notify_email,slug,landing_enabled,landing_noindex,landing_intro,created_at,updated_at,updated_by)
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?)
+    await env.DB.prepare(`INSERT INTO agency_leadgen (account_id,widget_key,widget_enabled,allowed_origins_json,notify_email,slug,landing_enabled,landing_noindex,landing_intro,created_at,updated_at,updated_by,privacy_url)
+      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)
       ON CONFLICT(account_id) DO UPDATE SET widget_enabled=excluded.widget_enabled, allowed_origins_json=excluded.allowed_origins_json,
         notify_email=excluded.notify_email, slug=excluded.slug, landing_enabled=excluded.landing_enabled, landing_noindex=excluded.landing_noindex,
-        landing_intro=excluded.landing_intro, updated_at=excluded.updated_at, updated_by=excluded.updated_by`)
+        landing_intro=excluded.landing_intro, updated_at=excluded.updated_at, updated_by=excluded.updated_by, privacy_url=excluded.privacy_url`)
       .bind(accountId, newWidgetKey(), value.widget_enabled ? 1 : 0, JSON.stringify(value.allowed_origins || []), value.notify_email ? 1 : 0,
-        value.slug, value.landing_enabled ? 1 : 0, value.landing_noindex ? 1 : 0, value.landing_intro, now, now, memberId).run();
+        value.slug, value.landing_enabled ? 1 : 0, value.landing_noindex ? 1 : 0, value.landing_intro, now, now, memberId, value.privacy_url || null).run();
   } catch (error) {
     // Two agencies saving the same address at once: the UNIQUE index decides.
     if (/UNIQUE|constraint/i.test(String(error?.message || error)) && value.slug) throw new SlugTakenError();
@@ -590,7 +638,7 @@ export function renderFrameHtml({ origin, agency, lang, token, key, source = "wi
     },
     links: { contact, plugin },
   };
-  const consent = consentText(lang, name);
+  const consent = consentHtml(lang, name, s.privacy_url);
   return `<!doctype html><html lang="${LEADGEN_LANG_TAG[lang] || "en"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>${escapeHtml(c.title)} | ${escapeHtml(name)}</title>
 <style nonce="${nonce}">${FRAME_CSS(color, textOn(color))}</style></head><body><div class="w">
 <div class="h">${logo ? `<img src="${escapeHtml(logo)}" alt="">` : ""}<b>${escapeHtml(name)}</b></div>
@@ -600,11 +648,11 @@ export function renderFrameHtml({ origin, agency, lang, token, key, source = "wi
 <label for="full_name">${escapeHtml(c.name)}</label><input id="full_name" name="full_name" type="text" maxlength="100" autocomplete="name" required>
 <label for="email">${escapeHtml(c.email)}</label><input id="email" name="email" type="email" maxlength="254" autocomplete="email" required>
 <div class="hp" aria-hidden="true"><label for="hp_comment">Leave this empty</label><input id="hp_comment" name="hp_comment" type="text" tabindex="-1" autocomplete="off"></div>
-<label class="c"><input id="consent" name="consent" type="checkbox" required><span id="consent_text">${escapeHtml(consent)}</span></label>
+<label class="c"><input id="consent" name="consent" type="checkbox" required><span id="consent_text">${consent}</span></label>
 <button id="go" type="submit">${escapeHtml(c.submit)}</button><p class="m" id="msg" role="status" aria-live="polite"></p>
 </form>
 <div class="r" id="result" hidden aria-live="polite"></div>
-<div class="f"><a href="${PRIVACY_URL}" target="_blank" rel="noopener">${escapeHtml(c.privacy)}</a><span>${escapeHtml(c.poweredBy)}</span></div>
+<div class="f"><span>${s.privacy_url ? `<a href="${escapeHtml(s.privacy_url)}" target="_blank" rel="noopener">${escapeHtml(fill(c.agencyPrivacy, { agency: name }))}</a> · ` : ""}<a href="${PRIVACY_URL}" target="_blank" rel="noopener">${escapeHtml(c.privacy)}</a></span><span>${escapeHtml(c.poweredBy)}</span></div>
 </div>
 <script id="cfg" type="application/json">${scriptJson(cfg)}</script>
 <script nonce="${nonce}">${FRAME_JS}</script></body></html>`;
@@ -720,7 +768,7 @@ ${contactUrl ? `<p>${escapeHtml(c.lpWebsite)}: <a href="${escapeHtml(contactUrl)
 ${contactEmail ? `<p><a href="mailto:${escapeHtml(contactEmail)}">${escapeHtml(contactEmail)}</a></p>` : ""}
 ${b.footer_text ? `<p class="note">${String(b.footer_text).split("\n").map(escapeHtml).join("<br>")}</p>` : ""}</section>` : ""}
 </main>
-<footer><p>${escapeHtml(c.poweredBy)} · <a href="${PRIVACY_URL}">${escapeHtml(c.privacy)}</a></p></footer>
+<footer><p>${escapeHtml(c.poweredBy)} · ${s.privacy_url ? `<a href="${escapeHtml(s.privacy_url)}" rel="noopener">${escapeHtml(fill(c.agencyPrivacy, vars))}</a> · ` : ""}<a href="${PRIVACY_URL}">${escapeHtml(c.privacy)}</a></p></footer>
 ${frame ? `<script nonce="${nonce}">(function(){var f=document.getElementById("nurevo-check"),O=location.origin;window.addEventListener("message",function(e){if(e.origin!==O||e.source!==f.contentWindow)return;var d=e.data,h=d&&d.type==="nurevo-leadgen:height"?Number(d.height):0;if(h>200&&h<4000)f.style.height=Math.ceil(h)+"px";});})();</script>` : ""}
 </body></html>`;
 }
@@ -746,8 +794,20 @@ export function leadNotificationEmail({ lang, agencyName, lead, origin = DASHBOA
   };
 }
 
+/**
+ * Where new-lead emails go: the branding contact address once it has been
+ * verified (and is still the address in the branding), else the member's own
+ * sign-in address, which the magic-link sign-in already proved.
+ */
+export function leadNotificationAddress(agency) {
+  const contact = String(agency?.branding?.contact_email || "").trim().toLowerCase();
+  const verified = String(agency?.settings?.contact_verified_email || "").trim().toLowerCase();
+  if (contact && validEmail(contact) && verified && contact === verified) return contact;
+  return validEmail(agency?.account?.email) ? agency.account.email : null;
+}
+
 async function notifyAgency(env, { agency, lead, leadId, fetchImpl, memberLocale }) {
-  const to = agency.branding.contact_email && validEmail(agency.branding.contact_email) ? agency.branding.contact_email : agency.account.email;
+  const to = leadNotificationAddress(agency);
   if (!to || !mailConfigured(env)) return { ok: false, code: "mail_not_configured" };
   let lang = "en";
   try { lang = leadgenLang(memberLocale ? await memberLocale(env, { id: agency.account.member_id, email: agency.account.email }) : "en"); } catch { lang = "en"; }
@@ -757,6 +817,123 @@ async function notifyAgency(env, { agency, lead, leadId, fetchImpl, memberLocale
     try { await env.DB.prepare("UPDATE agency_leads SET notified_at=? WHERE id=?").bind(Date.now(), leadId).run(); } catch { /* the email went; the mark is a nicety */ }
   } else console.error("agency_lead_notify_failed", JSON.stringify({ account: agency.account.id, lead: leadId, code: result.code }));
   return result;
+}
+
+/* ------------------------------------------------------------------ *
+ * Verifying the contact address (before new-lead emails go to it)
+ * ------------------------------------------------------------------ */
+
+export const leadgenVerifyCopy = (lang) => ({ ...LEADGEN_VERIFY_COPY.en, ...(LEADGEN_VERIFY_COPY[LEADGEN_LANGS.includes(lang) ? lang : "en"] || {}) });
+
+async function contactMac(secret, accountId, email, expires) {
+  const key = await crypto.subtle.importKey("raw", utf8(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return new Uint8Array(await crypto.subtle.sign("HMAC", key, utf8(`nurevo-leadgen-contact-v1:${accountId}:${String(email).toLowerCase()}:${expires}`)));
+}
+
+export async function contactVerifyToken(env, accountId, email, expires) {
+  const secret = formSecret(env);
+  if (!secret || !accountId || !validEmail(email) || !Number.isFinite(expires)) return null;
+  const address = String(email).trim().toLowerCase();
+  return [b64url(utf8(String(accountId))), b64url(utf8(address)), String(Math.floor(expires)), b64url(await contactMac(secret, accountId, address, Math.floor(expires)))].join(".");
+}
+
+/** { accountId, email, expires } for a valid, unexpired token, else null. */
+export async function verifyContactToken(env, token, now = Date.now()) {
+  const secret = formSecret(env);
+  const [accountPart, emailPart, expPart, macPart, extra] = String(token || "").split(".");
+  if (!secret || !accountPart || !emailPart || !/^\d{1,15}$/.test(expPart || "") || !macPart || extra !== undefined) return null;
+  try {
+    const accountId = new TextDecoder().decode(fromB64url(accountPart));
+    const email = new TextDecoder().decode(fromB64url(emailPart));
+    const expires = Number(expPart);
+    const expected = await contactMac(secret, accountId, email, expires);
+    const given = fromB64url(macPart);
+    if (given.length !== expected.length) return null;
+    let diff = 0;
+    for (let i = 0; i < given.length; i += 1) diff |= given[i] ^ expected[i];
+    if (diff !== 0 || !validEmail(email) || !/^\d+$/.test(accountId) || expires <= now) return null;
+    return { accountId: Number(accountId), email, expires };
+  } catch {
+    return null;
+  }
+}
+
+export function contactVerifyEmail({ lang, agency, email, url, expires }) {
+  const c = leadgenVerifyCopy(lang);
+  const date = new Date(expires).toISOString().slice(0, 10);
+  const subject = singleLine(fill(c.verifySubject, { email })).slice(0, 200);
+  const lines = [fill(c.verifyIntro, { agency }), "", c.verifyAsk, "", `${c.verifyButton}: ${url}`, fill(c.verifyExpires, { date })];
+  return {
+    subject,
+    text: `${lines.join("\n")}\n`,
+    html: `<!doctype html><html><body style="font:14px/1.65 system-ui,sans-serif;color:#1d1b26;max-width:560px;margin:0 auto;padding:16px"><p>${escapeHtml(fill(c.verifyIntro, { agency }))}</p><p>${escapeHtml(c.verifyAsk)}</p>`
+      + `<p><a href="${escapeHtml(url)}" style="display:inline-block;background:#6f4df6;color:#fff;text-decoration:none;border-radius:8px;padding:10px 16px;font-weight:700">${escapeHtml(c.verifyButton)}</a></p>`
+      + `<p style="font-size:12px;color:#6b6b78">${escapeHtml(fill(c.verifyExpires, { date }))}</p></body></html>`,
+  };
+}
+
+/**
+ * Send the verification email for the account's current contact address.
+ * { ok, status, error? } - at most LEADGEN_LIMITS.verify a day per account.
+ */
+export async function sendContactVerification(env, account, { lang = "en", now = Date.now(), fetchImpl } = {}) {
+  const branding = await loadBranding(env, account.id);
+  const email = String(branding?.contact_email || "").trim().toLowerCase();
+  if (!email || !validEmail(email)) return { ok: false, status: 400, error: "no_contact_email" };
+  const settings = await loadLeadgen(env, account.id);
+  if (!settings) return { ok: false, status: 409, error: "save_settings_first" };
+  if (settings.contact_verified_email === email) return { ok: true, status: 200, already: true };
+  if (!mailConfigured(env) || !formSecret(env)) return { ok: false, status: 503, error: "mail_not_configured" };
+  const limit = await leadgenRateLimit(env, "leadgen-verify", account.id, LEADGEN_LIMITS.verify, now);
+  if (!limit.allowed) return { ok: false, status: limit.unavailable ? 503 : 429, error: limit.unavailable ? "rate_limit_unavailable" : "rate_limited" };
+  const expires = now + CONTACT_VERIFY_TTL_MS;
+  const token = await contactVerifyToken(env, account.id, email, expires);
+  const origin = String(env.PUBLIC_ORIGIN || DASHBOARD_ORIGIN).replace(/\/+$/, "");
+  const l = LEADGEN_LANGS.includes(lang) ? lang : "en";
+  const url = `${origin}${LEADGEN_VERIFY_PATH}?t=${encodeURIComponent(token)}&l=${l}`;
+  const message = contactVerifyEmail({ lang: l, agency: singleLine(branding.display_name), email, url, expires });
+  const result = await sendResendEmail(env, { to: email, ...message, idempotencyKey: `nurevo-leadgen-verify-${account.id}-${now}`, ...(fetchImpl ? { fetchImpl } : {}) });
+  if (!result.ok) return { ok: false, status: 502, error: "send_failed" };
+  await env.DB.prepare("UPDATE agency_leadgen SET contact_verify_sent_at=? WHERE account_id=?").bind(now, account.id).run();
+  return { ok: true, status: 200 };
+}
+
+function verifyPage(lang, status, body, { action = "", email = "", agency = "" } = {}) {
+  const c = leadgenVerifyCopy(lang);
+  const message = body === "done" ? fill(c.verifyDone, { agency }) : body === "invalid" ? c.verifyInvalid : fill(c.verifyPrompt, { email, agency });
+  const form = body === "prompt" ? `<form method="post" action="${escapeHtml(action)}"><button type="submit">${escapeHtml(c.verifyButton)}</button></form>` : "";
+  return new Response(`<!doctype html><html lang="${LEADGEN_LANG_TAG[lang] || "en"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${escapeHtml(c.verifyTitle)}</title><style>body{font-family:system-ui,sans-serif;max-width:32rem;margin:3rem auto;padding:0 16px;line-height:1.6}button{font:inherit;padding:.5rem 1rem}</style></head><body><h1>${escapeHtml(c.verifyTitle)}</h1><p>${escapeHtml(message)}</p>${form}</body></html>`, {
+    status,
+    headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex", "x-content-type-options": "nosniff", "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'; frame-ancestors 'none'" },
+  });
+}
+
+/**
+ * GET shows the question (mail scanners open links, so GET records nothing);
+ * POST verifies the address, if it is still the account's contact address.
+ */
+export async function handleContactVerify(request, env, { now = Date.now() } = {}) {
+  const url = new URL(request.url);
+  const asked = String(url.searchParams.get("l") || "");
+  const lang = LEADGEN_LANGS.includes(asked) ? asked : "en";
+  if (!["GET", "POST"].includes(request.method)) return new Response("method_not_allowed", { status: 405, headers: { allow: "GET, POST" } });
+  const verified = await verifyContactToken(env, url.searchParams.get("t"), now);
+  if (!verified) return verifyPage(lang, 400, "invalid");
+  let branding = null;
+  try { branding = await loadBranding(env, verified.accountId); } catch (error) { if (!isMissing(error)) throw error; }
+  if (!branding || String(branding.contact_email || "").toLowerCase() !== verified.email) return verifyPage(lang, 400, "invalid");
+  const agency = singleLine(branding.display_name);
+  if (request.method === "GET") return verifyPage(lang, 200, "prompt", { action: `${url.pathname}${url.search}`, email: verified.email, agency });
+  let result;
+  try {
+    result = await env.DB.prepare("UPDATE agency_leadgen SET contact_verified_email=?, contact_verified_at=? WHERE account_id=?").bind(verified.email, now, verified.accountId).run();
+  } catch (error) {
+    if (isMissing(error)) return verifyPage(lang, 503, "invalid");
+    throw error;
+  }
+  if (changes(result) !== 1) return verifyPage(lang, 400, "invalid");
+  console.log("agency_contact_verified", JSON.stringify({ account: verified.accountId }));
+  return verifyPage(lang, 200, "done", { agency });
 }
 
 /* ------------------------------------------------------------------ *
@@ -813,7 +990,7 @@ export async function handleLeadgenPublic(request, env, ctx, deps = {}) {
     const key = path.slice(LEADGEN_FRAME_PREFIX.length);
     if (!isWidgetKey(key)) return simplePage(404, lang, c.errUnavailable);
     const agency = await loadPublicAgency(env, { key });
-    if (!agency || !agency.settings.widget_enabled) return simplePage(404, lang, c.errUnavailable);
+    if (!agency || !agency.settings.widget_enabled || !agency.settings.privacy_url) return simplePage(404, lang, c.errUnavailable);
     const source = url.searchParams.get("via") === "landing" ? "landing" : "widget";
     // A browser that sends the embedding page tells us where it is. Anything
     // but our own pages and the agency's list is refused outright; the
@@ -831,6 +1008,7 @@ export async function handleLeadgenPublic(request, env, ctx, deps = {}) {
   }
 
   if (path === LEADGEN_SUBMIT_PATH && method === "POST") return submitLead(request, env, ctx, { ...deps, origin, now });
+  if (path === LEADGEN_VERIFY_PATH) return handleContactVerify(request, env, { now });
 
   const landing = path.match(/^\/p\/([^/]+)\/?$/);
   if (landing && (method === "GET" || method === "HEAD")) {
@@ -858,21 +1036,23 @@ async function submitLead(request, env, ctx, deps) {
   const from = request.headers.get("origin");
   const site = request.headers.get("sec-fetch-site");
   if (from !== origin || (site && site !== "same-origin")) return jsonResponse({ error: "origin_not_allowed" }, 403);
+  const limited = (limit) => jsonResponse({ error: limit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, limit.unavailable ? 503 : 429, limit.unavailable ? {} : { "retry-after": "600" });
+
+  // 1. A cheap per-IP limit on every request, before the body is even read.
+  const ip = deps.clientIp ? deps.clientIp(request) : String(request.headers.get("cf-connecting-ip") || "unknown");
+  const any = await leadgenRateLimit(env, "leadgen-ip-any", ip, LEADGEN_LIMITS.ipAny, now);
+  if (!any.allowed) return limited(any);
+
   const body = await readSmallJson(request);
   if (!body) return jsonResponse({ error: "invalid_json" }, 400);
   const key = String(body.key || "");
   if (!isWidgetKey(key)) return jsonResponse({ error: "unavailable" }, 404);
   const agency = await loadPublicAgency(env, { key });
-  if (!agency || !agency.settings.widget_enabled) return jsonResponse({ error: "unavailable" }, 404);
+  if (!agency || !agency.settings.widget_enabled || !agency.settings.privacy_url) return jsonResponse({ error: "unavailable" }, 404);
 
-  const ip = deps.clientIp ? deps.clientIp(request) : String(request.headers.get("cf-connecting-ip") || "unknown");
-  for (const [scope, value, limits] of [["leadgen-ip", ip, LEADGEN_LIMITS.ip], ["leadgen-key", key, LEADGEN_LIMITS.key]]) {
-    const limit = await leadgenRateLimit(env, scope, value, limits, now);
-    if (!limit.allowed) return jsonResponse({ error: limit.unavailable ? "rate_limit_unavailable" : "rate_limited" }, limit.unavailable ? 503 : 429, limit.unavailable ? {} : { "retry-after": "600" });
-  }
-
-  // Bots: a filled honeypot, or a form sent faster than a person could, or a
-  // token that is forged, expired or for another widget. One answer for all.
+  // 2. Bots: a filled honeypot, or a form sent faster than a person could, or
+  // a token that is forged, expired or for another widget. One answer for
+  // all, and none of it counts against the agency's quota below.
   if (String(body.hp_comment ?? "") !== "") { console.warn("agency_lead_rejected", JSON.stringify({ account: agency.account.id, reason: "honeypot" })); return jsonResponse({ error: "rejected" }, 422); }
   const token = await verifyFormToken(env, body.token, { key, now });
   if (!token.ok) { console.warn("agency_lead_rejected", JSON.stringify({ account: agency.account.id, reason: token.reason })); return jsonResponse({ error: "rejected" }, 422); }
@@ -881,16 +1061,22 @@ async function submitLead(request, env, ctx, deps) {
   const checked = validateLead(body);
   if (!checked.ok) return jsonResponse({ error: "invalid_lead", fields: checked.errors }, 400);
 
-  // One lead per rendering of the form.
-  if (env.WEBMCP_KV && token.nonce) {
-    const nonceKey = `leadgen-nonce:${token.nonce}`;
-    if (await env.WEBMCP_KV.get(nonceKey)) return jsonResponse({ error: "rejected" }, 422);
-    await env.WEBMCP_KV.put(nonceKey, "1", { expirationTtl: Math.ceil(MAX_FORM_AGE_MS / 1000) + 60 });
+  // One lead per rendering of the form: a replayed token is refused here,
+  // before it could count.
+  const nonceKey = env.WEBMCP_KV && token.nonce ? `leadgen-nonce:${token.nonce}` : null;
+  if (nonceKey && await env.WEBMCP_KV.get(nonceKey)) return jsonResponse({ error: "rejected" }, 422);
+
+  // 3. Only a valid submission counts: per IP, then per widget key (daily).
+  for (const [scope, value, limits] of [["leadgen-ip", ip, LEADGEN_LIMITS.ip], ["leadgen-key", key, LEADGEN_LIMITS.key]]) {
+    const limit = await leadgenRateLimit(env, scope, value, limits, now);
+    if (!limit.allowed) return limited(limit);
   }
+  if (nonceKey) await env.WEBMCP_KV.put(nonceKey, "1", { expirationTtl: Math.ceil(MAX_FORM_AGE_MS / 1000) + 60 });
 
   let diagnosis = null;
   try {
-    diagnosis = deps.scoreUrl ? await deps.scoreUrl(checked.value.site_url) : null;
+    // Scored through a cache scoped to this agency, never the shared one.
+    diagnosis = deps.scoreUrl ? await deps.scoreUrl(checked.value.site_url, { namespace: `leadgen:${agency.account.id}` }) : null;
   } catch (error) {
     if (Number(error?.status) === 400) return jsonResponse({ error: "invalid_lead", fields: ["site_url"] }, 400);
     // Unreachable, blocked, too large: the lead still reaches the agency.
@@ -902,7 +1088,7 @@ async function submitLead(request, env, ctx, deps) {
     site_url: checked.value.site_url, name: checked.value.name, email: checked.value.email,
     score: Number.isFinite(Number(diagnosis?.score)) ? Number(diagnosis.score) : null,
     band: ["green", "yellow", "red"].includes(diagnosis?.band) ? diagnosis.band : null,
-    locale: lang, consent_text: consentText(lang, name), created_at: now,
+    locale: lang, consent_text: consentText(lang, name, agency.settings.privacy_url), created_at: now,
   };
   let leadId;
   try { leadId = await storeLead(env, agency.account.id, lead, { now }); } catch (error) {
@@ -937,7 +1123,8 @@ export async function handleLeadgenDashboard(request, env, deps) {
   const listRoute = path === "/api/agency/leads" && method === "GET";
   const csvRoute = path === "/api/agency/leads.csv" && method === "GET";
   const deleteMatch = method === "DELETE" ? path.match(/^\/api\/agency\/leads\/(\d+)$/) : null;
-  if (!settingsRoute && !rotateRoute && !listRoute && !csvRoute && !deleteMatch) return null;
+  const verifyRoute = path === "/api/agency/leadgen/verify-email" && method === "POST";
+  if (!settingsRoute && !rotateRoute && !listRoute && !csvRoute && !deleteMatch && !verifyRoute) return null;
 
   const member = await deps.requireMember(request, env);
   if (!member) return jsonResponse({ error: "unauthorized" }, 401);
@@ -965,6 +1152,14 @@ export async function handleLeadgenDashboard(request, env, deps) {
   }
 
   const approved = isApprovedPartner(account);
+  if (verifyRoute) {
+    if (!canEdit) return jsonResponse({ error: "forbidden" }, 403);
+    let body = {};
+    try { body = await request.json(); } catch { body = {}; }
+    const sent = await sendContactVerification(env, account, { lang: leadgenLang(body?.lang || url.searchParams.get("lang")), fetchImpl: deps.fetchImpl });
+    if (!sent.ok) return jsonResponse({ error: sent.error }, sent.status);
+    console.log("agency_contact_verify_sent", JSON.stringify({ account: account.id, already: !!sent.already }));
+  }
   if (rotateRoute) {
     if (!canEdit) return jsonResponse({ error: "forbidden" }, 403);
     if (!approved) return jsonResponse({ error: "partner_not_approved" }, 403);
@@ -1007,6 +1202,11 @@ export async function handleLeadgenDashboard(request, env, deps) {
     has_branding: !!branding,
     agency_name: branding?.display_name || null,
     has_contact: !!(branding && agencyContactHref(branding)),
+    // New-lead emails go to the contact address only once it is verified.
+    contact_email: branding?.contact_email || null,
+    contact_verified: !!(branding?.contact_email && settings?.contact_verified_email === String(branding.contact_email).toLowerCase()),
+    contact_verify_sent_at: settings?.contact_verify_sent_at ?? null,
+    notify_to: settings ? (leadNotificationAddress({ branding, settings, account: fresh }) === String(branding?.contact_email || "").toLowerCase() ? "contact" : "account") : null,
     referral_code_active: approved && !!fresh.referral_code,
     settings: settings ? { ...settings } : null,
     embed: settings ? embedSnippets(origin, settings.widget_key, lang) : null,

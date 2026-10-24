@@ -612,6 +612,10 @@ CREATE TABLE IF NOT EXISTS agency_leadgen (
   landing_enabled INTEGER NOT NULL DEFAULT 0,
   landing_noindex INTEGER NOT NULL DEFAULT 0, -- 0 = indexed (the default)
   landing_intro TEXT,                         -- plain text, at most 500 characters
+  privacy_url TEXT,                           -- the agency's privacy policy (https); required to enable the widget
+  contact_verified_email TEXT,                -- the branding contact email once verified by a signed link (lead emails go there only then)
+  contact_verified_at INTEGER,
+  contact_verify_sent_at INTEGER,             -- the last verification email
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
   updated_by TEXT                             -- members.id

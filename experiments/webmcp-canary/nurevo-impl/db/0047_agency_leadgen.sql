@@ -7,7 +7,10 @@
 --                   widget is on, the origins allowed to embed it
 --                   (frame-ancestors), whether each new lead is emailed to the
 --                   agency, and the referral landing page /p/<slug> (address,
---                   on/off, noindex, the agency's own intro text).
+--                   on/off, noindex, the agency's own intro text), the
+--                   agency's privacy-policy URL (named in the widget's consent
+--                   text; the widget cannot be switched on without it), and
+--                   the verified contact address new-lead emails may go to.
 --   agency_leads    the leads the widget collected for that account: site URL,
 --                   name, email, the on-site AEO score, when, and the exact
 --                   consent text the visitor agreed to. The agency is the
@@ -25,6 +28,10 @@ CREATE TABLE IF NOT EXISTS agency_leadgen (
   landing_enabled INTEGER NOT NULL DEFAULT 0,
   landing_noindex INTEGER NOT NULL DEFAULT 0, -- 0 = indexed (the default)
   landing_intro TEXT,                         -- plain text, at most 500 characters
+  privacy_url TEXT,                           -- the agency's privacy policy (https); required to enable the widget
+  contact_verified_email TEXT,                -- the branding contact email once verified by a signed link (lead emails go there only then)
+  contact_verified_at INTEGER,
+  contact_verify_sent_at INTEGER,             -- the last verification email
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL,
   updated_by TEXT                             -- members.id
