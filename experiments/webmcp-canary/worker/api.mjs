@@ -34,6 +34,7 @@ import {
   agencyReportAvailable, buildSiteReport, handleLogoRequest, handleReportUnsubscribe, lastSent, loadBranding, loadOptOuts,
   loadReportSettings, logoSrc, previousMonthKey, renderAgencyReportHtml, renderAgencyReportText, resolveBranding, runAgencyReportBatch as runAgencyReports,
   saveBranding, saveReportSettings, validateBranding, validateReportSettings, REPORT_UNSUBSCRIBE_PATH,
+  REPORT_CONFIRM_PATH, handleReportConfirm, recipientStatuses, reportEligibility, requestConfirmations,
 } from "./agency-report.mjs";
 import { isSiteType, normalizeSiteType } from "./site-types.mjs";
 import { NON_LOCAL_DROPPED_PROPS, typedBusinessType, typedCatalogNodes, typedLlmsTxt } from "./site-type-output.mjs";
@@ -519,6 +520,8 @@ export async function handleApi(request, env, ctx) {
   // The agency report's per-site unsubscribe link (agency-report.mjs), and the
   // agency logo it shows (public: email clients load it without a session).
   if (path === REPORT_UNSUBSCRIBE_PATH) return handleReportUnsubscribe(request, env);
+  // Double opt-in: a new recipient confirms with the signed link it was sent.
+  if (path === REPORT_CONFIRM_PATH) return handleReportConfirm(request, env);
   if (path.startsWith(AGENCY_LOGO_PATH) && method === "GET") return handleLogoRequest(request, env);
 
   if (path === "/api/aeo/score" && method === "GET") {
@@ -1783,14 +1786,26 @@ export async function handleApi(request, env, ctx) {
     const now = Date.now();
 
     if (reportSettingsMatch) {
+      let confirmations = null;
       if (method === "PUT") {
         if (member.role === "viewer") return json({ error: "forbidden" }, 403);
         const checked = validateReportSettings(await safeJson(request));
         if (!checked.ok) return json({ error: "invalid_settings", fields: checked.errors, invalid: checked.invalid }, 400);
+        // Only a connected site on a paid plan, or one an approved partner
+        // sets up, may switch the report on (re-checked when sending).
+        if (checked.value.enabled) {
+          const eligibility = await reportEligibility(env, site, { accountId: account?.id ?? null, now });
+          if (!eligibility.ok) return json({ error: "report_not_eligible", reason: eligibility.reason }, 409);
+        }
         await saveReportSettings(env, site.id, checked.value, { accountId: account?.id ?? null, memberId: member.member_id, now });
-        console.log("agency_report_settings_saved", JSON.stringify({ site_id: site.id, enabled: checked.value.enabled, recipients: checked.value.recipients.length }));
+        // Double opt-in: each new address is asked to confirm by email first.
+        confirmations = await requestConfirmations(env, site, await loadReportSettings(env, site.id), {
+          accountId: account?.id ?? null, memberId: member.member_id, canManage: accountCanManageSite, now,
+        });
+        console.log("agency_report_settings_saved", JSON.stringify({ site_id: site.id, enabled: checked.value.enabled, recipients: checked.value.recipients.length, confirmations }));
       }
       const settings = await loadReportSettings(env, site.id);
+      const eligibility = await reportEligibility(env, site, { accountId: settings.account_id ?? account?.id ?? null, now });
       const branding = await resolveBranding(env, site, settings, { canManage: accountCanManageSite, viewerAccountId: account?.id ?? null });
       const own = account ? await loadBranding(env, account.id) : null;
       const day = new Date(now).getUTCDate();
@@ -1803,6 +1818,9 @@ export async function handleApi(request, env, ctx) {
         can_edit: member.role !== "viewer",
         settings: { enabled: settings.enabled, recipients: settings.recipients, locale: settings.locale, branding_source: settings.branding_source, consent_at: settings.consent_at },
         opted_out: (await loadOptOuts(env, site.id)).filter((email) => settings.recipients.includes(email)),
+        recipients_status: (await recipientStatuses(env, site.id, settings.recipients)).map(({ email, status }) => ({ email, status })),
+        eligibility: { ok: eligibility.ok, reason: eligibility.reason },
+        ...(confirmations ? { confirmations } : {}),
         last_sent: sent,
         next_send_on: settings.enabled ? (pendingThisMonth ? new Date(now).toISOString().slice(0, 10) : nextMonthFirst) : null,
         brand: { agency: !!branding, name: branding ? branding.display_name : "Nurevo" },
@@ -4775,6 +4793,13 @@ async function checkApiRateLimit(env, scope, value, { limit, windowMs }) {
 const SITE_FEATURE_DELETES = [
   ["aeo_free_checks", "DELETE FROM aeo_free_checks WHERE site_id=?"],
   ["aeo_sov_engine_usage", "DELETE FROM aeo_sov_engine_usage WHERE scope=? AND engine LIKE 'free:%'"],
+  // The agency report: settings, recipients (and their confirmations), the
+  // per-site opt-outs and the send ledger. The global suppression list
+  // (agency_report_suppressions) is per address and is kept.
+  ["agency_report_settings", "DELETE FROM agency_report_settings WHERE site_id=?"],
+  ["agency_report_recipients", "DELETE FROM agency_report_recipients WHERE site_id=?"],
+  ["agency_report_opt_outs", "DELETE FROM agency_report_opt_outs WHERE site_id=?"],
+  ["agency_report_sends", "DELETE FROM agency_report_sends WHERE site_id=?"],
 ];
 
 async function deleteSiteFeatureRows(env, siteId, statements = SITE_FEATURE_DELETES) {
@@ -4835,6 +4860,8 @@ function csrfRequired(path) {
   // The report unsubscribe link is posted from an email client (RFC 8058) or
   // its own confirm page; the signed token is the authority, not a session.
   if (path === REPORT_UNSUBSCRIBE_PATH) return false;
+  // Same for the confirmation link: the signed, expiring token decides.
+  if (path === REPORT_CONFIRM_PATH) return false;
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;

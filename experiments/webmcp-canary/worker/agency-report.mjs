@@ -28,6 +28,28 @@
  *                Reply-To the agency contact, From "<Agency> via Nurevo" on the
  *                existing MAIL_FROM address.
  *
+ * Abuse controls (review of #35: a white-label email from Nurevo's address
+ * must not be usable for spam or phishing):
+ *   Eligibility  a report is only sent (and can only be switched on) for a
+ *                connected site (siteConnection in free-ai-check.mjs: a paired
+ *                plugin, a detected tag, a published and complete hosted page)
+ *                that is on a paid plan (REPORT_PAID_PLANS) or set up by an
+ *                approved partner (reportEligibility).
+ *   Double opt-in every new recipient first gets a confirmation email
+ *                ("<Agency> via Nurevo wants to send you monthly reports for
+ *                <site>") with an HMAC-signed link that expires after
+ *                REPORT_CONFIRM_TTL_MS; reports go only to confirmed
+ *                addresses. Confirmation emails are capped per site and per
+ *                account per day (agency_report_counters).
+ *   Names        an agency display name that contains a protected brand or
+ *                institution (RESERVED_BRAND_TERMS; case-, width- and
+ *                kana-insensitive) is refused, and never used for a From line.
+ *   Opt-outs     per site, and globally per address (agency_report_suppressions):
+ *                the unsubscribe page offers "all Nurevo reports", and the
+ *                confirmation email has a "never send me reports" link.
+ *   Volume       report emails are capped per account per month
+ *                (AGENCY_REPORT_ACCOUNT_MONTHLY_EMAILS).
+ *
  * Before 0046 is applied every reader reports "migration_pending" and the cron
  * skips; nothing fails. Logs carry ids and counts only, never addresses.
  */
@@ -37,7 +59,8 @@ import { engineDefinition } from "./ai-engines.mjs";
 import { isApprovedPartner } from "./partner.mjs";
 import { DASHBOARD_ORIGIN, mailConfigured, sendResendEmail } from "./lifecycle-email.mjs";
 import { resolveSitePlanFor } from "./billing-plan.mjs";
-import { REPORT_BODY_LANGS, REPORT_CHECK_LANG, REPORT_COPY, REPORT_LANG_TAG } from "./agency-report-i18n.mjs";
+import { REPORT_BODY_LANGS, REPORT_CHECK_LANG, REPORT_CONSENT_COPY, REPORT_COPY, REPORT_LANG_TAG } from "./agency-report-i18n.mjs";
+import { loadCheckState, siteConnection } from "./free-ai-check.mjs";
 
 export { REPORT_BODY_LANGS };
 export const AGENCY_REPORT_VERSION = "agency-report-v1";
@@ -58,6 +81,37 @@ export const AGENCY_REPORT_EMAILS_PER_RUN_DEFAULT = 120;
 export const AGENCY_REPORT_SPACING_MS_DEFAULT = 550;
 export const DEFAULT_BRAND_COLOR = "#6f4df6";
 const SITE_DONE = "*";
+export const REPORT_CONFIRM_PATH = "/api/email/report-confirm";
+/** A confirmation link works for this long. */
+export const REPORT_CONFIRM_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+/** A pending address gets at most one confirmation email in this long. */
+export const REPORT_CONFIRM_RESEND_MS = 24 * 60 * 60 * 1000;
+/** Plans on which any connected site may send reports. Others need an approved partner. */
+export const REPORT_PAID_PLANS = Object.freeze(["standard", "pro"]);
+export const AGENCY_REPORT_CONFIRMS_PER_SITE_DAY_DEFAULT = 10;
+export const AGENCY_REPORT_CONFIRMS_PER_ACCOUNT_DAY_DEFAULT = 30;
+export const AGENCY_REPORT_ACCOUNT_MONTHLY_EMAILS_DEFAULT = 200;
+
+/**
+ * Names an agency may not show as its own: payment brands, big platforms,
+ * banks, carriers, tax and postal authorities, and Nurevo itself. Matched on
+ * the normalized name (normalizeBrandName): Latin terms of five or more
+ * letters anywhere in the name with spaces and punctuation removed; shorter
+ * Latin terms, and those in RESERVED_WORD_ONLY, as a whole word (so "Visalia",
+ * "Bankside" or "Pineapple" pass but "Visa Support", "My Bank" and "Apple
+ * Care" do not); Japanese terms anywhere. One list, the whole policy.
+ */
+export const RESERVED_BRAND_TERMS = Object.freeze([
+  "nurevo", "paypal", "apple", "icloud", "google", "gmail", "youtube", "amazon", "microsoft", "outlook", "office365",
+  "stripe", "visa", "mastercard", "americanexpress", "amex", "jcb", "unionpay", "applepay", "paypay",
+  "facebook", "instagram", "whatsapp", "netflix", "spotify", "dropbox", "docusign", "fedex", "dhl", "ups", "usps",
+  "rakuten", "docomo", "softbank", "kddi", "mercari", "yahoo", "linecorp",
+  "bank", "banking", "mufg", "smbc", "mizuho", "resona", "japanpost", "yamato", "kuroneko", "sagawa",
+  "irs", "hmrc", "nta", "gov", "government", "police", "interpol",
+  "楽天", "ヤマト", "クロネコ", "佐川", "日本郵便", "郵便局", "ゆうちょ", "国税", "税務署", "国税庁", "銀行", "信用金庫", "警察", "年金",
+  "三菱ufj", "三井住友", "みずほ", "りそな", "ドコモ", "ソフトバンク", "メルカリ", "アマゾン", "グーグル", "アップル", "マイクロソフト",
+  "ペイペイ", "ペイパル", "ヌレボ", "ニューレボ",
+]);
 
 const MISSING_TABLE = /no such table|no such column/i;
 const isMissing = (error) => MISSING_TABLE.test(String(error?.message || error));
@@ -83,7 +137,7 @@ export function reportLanguage(value) {
 }
 
 export function reportCopy(lang) {
-  return REPORT_COPY[lang] || REPORT_COPY.en;
+  return { ...REPORT_COPY.en, ...REPORT_CONSENT_COPY.en, ...(REPORT_COPY[lang] || {}), ...(REPORT_CONSENT_COPY[lang] || {}) };
 }
 
 /* ------------------------------------------------------------------ *
@@ -145,6 +199,40 @@ export async function parseLogoUpload(dataUrl) {
   return { ok: true, logo: { type, base64: match[2], hash: (await sha256Hex(bytes)).slice(0, 40) } };
 }
 
+/** Latin terms that are also ordinary words inside other words: matched as a whole word only. */
+const RESERVED_WORD_ONLY = new Set(["apple"]);
+
+/** Common look-alike letters from other scripts, read as Latin. */
+const HOMOGLYPHS = { "а": "a", "е": "e", "о": "o", "р": "p", "с": "c", "у": "y", "х": "x", "і": "i", "ј": "j", "ѕ": "s", "ԁ": "d", "ӏ": "l", "ο": "o", "α": "a", "ρ": "p", "ν": "v", "τ": "t", "ι": "i", "κ": "k" };
+
+/**
+ * A name reduced for comparison: NFKC (full-width letters and half-width kana
+ * become ordinary ones), look-alike letters from other scripts read as Latin,
+ * lower case, katakana read as hiragana. `words` keeps word boundaries (also
+ * between camelCase parts); `compact` drops every space and punctuation.
+ */
+export function normalizeBrandName(value) {
+  const nfkc = String(value ?? "").normalize("NFKC").replace(/[\u200b-\u200f\u2060\ufeff]/g, "");
+  const split = nfkc.replace(/([a-z])([A-Z])/g, "$1 $2");
+  const fold = (text) => [...text.toLowerCase()].map((ch) => HOMOGLYPHS[ch] || ch).join("")
+    .replace(/[\u30a1-\u30f6]/g, (ch) => String.fromCharCode(ch.charCodeAt(0) - 0x60));
+  const words = fold(split).split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+  return { words, compact: words.join("") };
+}
+
+/** The reserved term a name uses, or null. */
+export function reservedBrandTerm(value) {
+  const { words, compact } = normalizeBrandName(value);
+  if (!compact) return null;
+  for (const term of RESERVED_BRAND_TERMS) {
+    const t = normalizeBrandName(term).compact;
+    if (!t) continue;
+    const latin = /^[a-z0-9]+$/.test(t);
+    if (latin && (t.length < 5 || RESERVED_WORD_ONLY.has(t)) ? words.includes(t) : compact.includes(t)) return term;
+  }
+  return null;
+}
+
 /**
  * Check a branding form. Returns { ok, errors: [field], value }. value.logo is
  * "keep" (leave the stored upload), "remove", or a parsed upload.
@@ -153,6 +241,7 @@ export async function validateBranding(input = {}) {
   const errors = [];
   const name = singleLine(input.display_name);
   if (!name || name.length > 80) errors.push("display_name");
+  else if (reservedBrandTerm(name)) errors.push("display_name_reserved");
   const logoUrlRaw = String(input.logo_url ?? "").trim();
   const logoUrl = logoUrlRaw ? safeHttpsUrl(logoUrlRaw, 500) : null;
   if (logoUrlRaw && !logoUrl) errors.push("logo_url");
@@ -304,8 +393,8 @@ function parseRecipients(json) {
 
 /** The site's settings, defaults when none are stored. Throws "no such table" before 0046. */
 export async function loadReportSettings(env, siteId) {
-  const row = await env.DB.prepare("SELECT site_id,enabled,recipients_json,locale,branding_source,brand_account_id,consent_at,consent_by,updated_at FROM agency_report_settings WHERE site_id=? LIMIT 1").bind(siteId).first();
-  if (!row) return { site_id: siteId, enabled: false, recipients: [], locale: null, branding_source: "agency", brand_account_id: null, consent_at: null, stored: false };
+  const row = await env.DB.prepare("SELECT site_id,enabled,recipients_json,locale,branding_source,brand_account_id,account_id,consent_at,consent_by,updated_at FROM agency_report_settings WHERE site_id=? LIMIT 1").bind(siteId).first();
+  if (!row) return { site_id: siteId, enabled: false, recipients: [], locale: null, branding_source: "agency", brand_account_id: null, account_id: null, consent_at: null, stored: false };
   return {
     site_id: row.site_id,
     enabled: Number(row.enabled) === 1,
@@ -313,6 +402,7 @@ export async function loadReportSettings(env, siteId) {
     locale: reportLanguage(row.locale).locale,
     branding_source: row.branding_source === "nurevo" ? "nurevo" : "agency",
     brand_account_id: row.brand_account_id ?? null,
+    account_id: row.account_id ?? null,
     consent_at: row.consent_at ?? null,
     updated_at: row.updated_at ?? null,
     stored: true,
@@ -321,15 +411,15 @@ export async function loadReportSettings(env, siteId) {
 
 export async function saveReportSettings(env, siteId, value, { accountId = null, memberId = null, now = Date.now() } = {}) {
   const consented = value.consent && value.recipients.length > 0;
-  await env.DB.prepare(`INSERT INTO agency_report_settings (site_id,enabled,recipients_json,locale,branding_source,brand_account_id,consent_at,consent_by,updated_at,updated_by)
-    VALUES (?,?,?,?,?,?,?,?,?,?)
+  await env.DB.prepare(`INSERT INTO agency_report_settings (site_id,enabled,recipients_json,locale,branding_source,brand_account_id,consent_at,consent_by,updated_at,updated_by,account_id)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?)
     ON CONFLICT(site_id) DO UPDATE SET enabled=excluded.enabled, recipients_json=excluded.recipients_json, locale=excluded.locale,
-      branding_source=excluded.branding_source, brand_account_id=excluded.brand_account_id,
+      branding_source=excluded.branding_source, brand_account_id=excluded.brand_account_id, account_id=excluded.account_id,
       consent_at=CASE WHEN excluded.consent_at IS NOT NULL THEN excluded.consent_at ELSE agency_report_settings.consent_at END,
       consent_by=CASE WHEN excluded.consent_at IS NOT NULL THEN excluded.consent_by ELSE agency_report_settings.consent_by END,
       updated_at=excluded.updated_at, updated_by=excluded.updated_by`)
     .bind(siteId, value.enabled ? 1 : 0, JSON.stringify(value.recipients), value.locale, value.branding_source,
-      value.branding_source === "agency" ? accountId : null, consented ? now : null, consented ? memberId : null, now, memberId).run();
+      value.branding_source === "agency" ? accountId : null, consented ? now : null, consented ? memberId : null, now, memberId, accountId).run();
   return loadReportSettings(env, siteId);
 }
 
@@ -362,6 +452,10 @@ export async function agencyReportAvailable(env) {
     await env.DB.prepare("SELECT 1 FROM agency_report_settings LIMIT 1").first();
     await env.DB.prepare("SELECT 1 FROM agency_branding LIMIT 1").first();
     await env.DB.prepare("SELECT 1 FROM agency_report_sends LIMIT 1").first();
+    await env.DB.prepare("SELECT 1 FROM agency_report_recipients LIMIT 1").first();
+    await env.DB.prepare("SELECT 1 FROM agency_report_suppressions LIMIT 1").first();
+    await env.DB.prepare("SELECT 1 FROM agency_report_counters LIMIT 1").first();
+    await env.DB.prepare("SELECT account_id FROM agency_report_settings LIMIT 1").first();
     return true;
   } catch (error) {
     if (isMissing(error)) return false;
@@ -407,7 +501,7 @@ export async function resolveBranding(env, site, settings = null, { canManage = 
     tried.add(candidate.id);
     let branding = null;
     try { branding = await loadBranding(env, candidate.id); } catch (error) { if (isMissing(error)) return null; throw error; }
-    if (!branding || !branding.display_name) continue;
+    if (!branding || !branding.display_name || reservedBrandTerm(branding.display_name)) continue;
     if (candidate.check && canManage && !(await canManage(env, candidate.id, site))) continue;
     return branding;
   }
@@ -924,15 +1018,32 @@ export async function reportUnsubscribeUrl(env, siteId, email, lang) {
   return `${origin}${REPORT_UNSUBSCRIBE_PATH}?t=${encodeURIComponent(token)}&l=${encodeURIComponent(REPORT_BODY_LANGS.includes(lang) ? lang : "en")}`;
 }
 
-async function isReportOptedOut(env, siteId, email) {
-  const row = await env.DB.prepare("SELECT 1 AS x FROM agency_report_opt_outs WHERE site_id=? AND email=? LIMIT 1").bind(siteId, String(email).toLowerCase()).first();
+/** Opted out of this site's report, or of every report sent through Nurevo. */
+export async function isReportOptedOut(env, siteId, email) {
+  const address = String(email).toLowerCase();
+  const row = await env.DB.prepare("SELECT 1 AS x FROM agency_report_opt_outs WHERE site_id=? AND email=? LIMIT 1").bind(siteId, address).first();
+  if (row) return true;
+  return isGloballySuppressed(env, address);
+}
+
+/** On the global list: unsubscribed from all reports sent through Nurevo. */
+export async function isGloballySuppressed(env, email) {
+  const row = await env.DB.prepare("SELECT 1 AS x FROM agency_report_suppressions WHERE email=? LIMIT 1").bind(String(email).toLowerCase()).first();
   return !!row;
+}
+
+export async function suppressGlobally(env, email, source, now = Date.now()) {
+  await env.DB.prepare("INSERT OR IGNORE INTO agency_report_suppressions (email,source,created_at) VALUES (?,?,?)").bind(String(email).toLowerCase(), source, now).run();
 }
 
 function unsubscribePage(lang, status, body, { action = "", site = "" } = {}) {
   const c = reportCopy(lang);
-  const message = body === "done" ? c.unsubDone : body === "invalid" ? c.unsubInvalid : fill(c.unsubPrompt, { site });
-  const form = body === "prompt" ? `<form method="post" action="${escapeHtml(action)}"><button type="submit">${escapeHtml(c.unsubButton)}</button></form>` : "";
+  const message = body === "done" ? c.unsubDone : body === "done_all" ? c.unsubAllDone : body === "invalid" ? c.unsubInvalid : fill(c.unsubPrompt, { site });
+  // Two choices: this site's report, or every report sent through Nurevo.
+  const form = body === "prompt"
+    ? `<form method="post" action="${escapeHtml(action)}"><input type="hidden" name="scope" value="site"><button type="submit">${escapeHtml(c.unsubButton)}</button></form>`
+      + `<form method="post" action="${escapeHtml(action)}" style="margin-top:12px"><input type="hidden" name="scope" value="all"><button type="submit">${escapeHtml(c.unsubAllButton)}</button></form>`
+    : "";
   return new Response(
     `<!doctype html><html lang="${escapeHtml(REPORT_LANG_TAG[lang] || "en")}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${escapeHtml(c.unsubTitle)}</title><style>body{font-family:system-ui,sans-serif;max-width:32rem;margin:3rem auto;padding:0 16px;line-height:1.6}button{font:inherit;padding:.5rem 1rem}</style></head><body><h1>${escapeHtml(c.unsubTitle)}</h1><p>${escapeHtml(message)}</p>${form}</body></html>`,
     { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex", "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'" } },
@@ -941,8 +1052,10 @@ function unsubscribePage(lang, status, body, { action = "", site = "" } = {}) {
 
 /**
  * GET shows a confirmation (mail scanners open links, so GET records nothing);
- * POST records the opt-out for that site and address only. One-click clients
- * (RFC 8058) POST to the same URL.
+ * POST records the opt-out: for that site and address, or with scope=all for
+ * every report sent through Nurevo (the global suppression list). One-click
+ * clients (RFC 8058) POST "List-Unsubscribe=One-Click" to the same URL, which
+ * stops that site's report.
  */
 export async function handleReportUnsubscribe(request, env) {
   const url = new URL(request.url);
@@ -957,13 +1070,286 @@ export async function handleReportUnsubscribe(request, env) {
     try { site = siteLabel(await env.DB.prepare("SELECT id,url,website_uri,slug FROM sites WHERE id=? LIMIT 1").bind(verified.siteId).first() || {}); } catch { site = ""; }
     return unsubscribePage(lang, 200, "prompt", { action: `${url.pathname}${url.search}`, site });
   }
+  // The form says which; a one-click POST follows the link (scope=all on the
+  // "never send me reports" link of a confirmation email).
+  let scope = url.searchParams.get("scope") === "all" ? "all" : "site";
+  try {
+    const body = await request.text();
+    if (/(?:^|&)scope=all(?:&|$)/.test(body)) scope = "all";
+    else if (/(?:^|&)scope=site(?:&|$)/.test(body)) scope = "site";
+  } catch { /* keep the link's scope */ }
   try {
     await env.DB.prepare("INSERT OR IGNORE INTO agency_report_opt_outs (site_id,email,created_at) VALUES (?,?,?)").bind(verified.siteId, verified.email.toLowerCase(), Date.now()).run();
+    if (scope === "all") await suppressGlobally(env, verified.email, "unsubscribe");
   } catch (error) {
     console.error("agency_report_unsubscribe_failed", JSON.stringify({ message: String(error?.message || error).slice(0, 120) }));
     return unsubscribePage(lang, 503, "prompt", { action: `${url.pathname}${url.search}` });
   }
-  return unsubscribePage(lang, 200, "done");
+  return unsubscribePage(lang, 200, scope === "all" ? "done_all" : "done");
+}
+
+/* ------------------------------------------------------------------ *
+ * Who may send: eligibility
+ * ------------------------------------------------------------------ */
+
+/**
+ * Whether a site's report may be switched on and sent:
+ *   { ok, reason: null | "not_connected" | "plan_or_partner", plan, partner }
+ * The site must be connected (siteConnection: paired plugin, detected tag,
+ * or a published, complete hosted page; a site merely created on Nurevo's
+ * hosting is not enough), and either on a paid plan (REPORT_PAID_PLANS) or
+ * set up by an account that is an approved partner.
+ */
+export async function reportEligibility(env, site, { accountId = null, plan = null, now = Date.now() } = {}) {
+  const fresh = site?.id && env?.DB ? await loadCheckState(env, site) : site;
+  if (!fresh || fresh.deleted) return { ok: false, reason: "not_connected", plan: null, partner: false };
+  const connection = siteConnection(fresh, { now });
+  const sitePlan = plan || await resolveSitePlanFor(env, fresh);
+  let partner = false;
+  if (accountId) {
+    try {
+      const account = await env.DB.prepare("SELECT * FROM accounts WHERE id=? LIMIT 1").bind(accountId).first();
+      partner = !!(account && isApprovedPartner(account));
+    } catch (error) {
+      if (!isMissing(error)) throw error;
+    }
+  }
+  if (!connection.connected) return { ok: false, reason: "not_connected", plan: sitePlan, partner };
+  if (!REPORT_PAID_PLANS.includes(sitePlan) && !partner) return { ok: false, reason: "plan_or_partner", plan: sitePlan, partner };
+  return { ok: true, reason: null, plan: sitePlan, partner };
+}
+
+/* ------------------------------------------------------------------ *
+ * Counters (agency_report_counters)
+ * ------------------------------------------------------------------ */
+
+const dayKey = (now) => new Date(now).toISOString().slice(0, 10);
+const monthKeyOf = (now) => new Date(now).toISOString().slice(0, 7);
+
+/** Take one from a capped counter; false when the cap is reached. Atomic. */
+export async function takeCounter(env, scope, period, cap, now = Date.now()) {
+  if (!(cap > 0)) return false;
+  await env.DB.prepare("INSERT OR IGNORE INTO agency_report_counters (scope,period,count,updated_at) VALUES (?,?,0,?)").bind(scope, period, now).run();
+  const result = await env.DB.prepare("UPDATE agency_report_counters SET count=count+1, updated_at=? WHERE scope=? AND period=? AND count+1<=?").bind(now, scope, period, cap).run();
+  return changes(result) > 0;
+}
+
+async function giveBackCounter(env, scope, period, now = Date.now()) {
+  try {
+    await env.DB.prepare("UPDATE agency_report_counters SET count=MAX(0,count-1), updated_at=? WHERE scope=? AND period=?").bind(now, scope, period).run();
+  } catch { /* the slot stays taken: errs on the side of sending less */ }
+}
+
+export function reportLimits(env = {}) {
+  const n = (raw, fallback) => numberFromEnv(raw, fallback, 0, 100000);
+  return {
+    confirmsPerSiteDay: n(env.AGENCY_REPORT_CONFIRMS_PER_SITE_DAY, AGENCY_REPORT_CONFIRMS_PER_SITE_DAY_DEFAULT),
+    confirmsPerAccountDay: n(env.AGENCY_REPORT_CONFIRMS_PER_ACCOUNT_DAY, AGENCY_REPORT_CONFIRMS_PER_ACCOUNT_DAY_DEFAULT),
+    emailsPerAccountMonth: n(env.AGENCY_REPORT_ACCOUNT_MONTHLY_EMAILS, AGENCY_REPORT_ACCOUNT_MONTHLY_EMAILS_DEFAULT),
+  };
+}
+
+/* ------------------------------------------------------------------ *
+ * Double opt-in (agency_report_recipients)
+ * ------------------------------------------------------------------ */
+
+async function confirmMac(secret, siteId, email, expires) {
+  const key = await crypto.subtle.importKey("raw", utf8(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+  return new Uint8Array(await crypto.subtle.sign("HMAC", key, utf8(`nurevo-report-confirm-v1:${siteId}:${String(email).toLowerCase()}:${expires}`)));
+}
+
+export async function reportConfirmToken(env, siteId, email, expires) {
+  const secret = String(env.EMAIL_UNSUBSCRIBE_SECRET || "").trim();
+  if (!secret || !siteId || !email || !Number.isFinite(expires)) return null;
+  const normalized = String(email).trim().toLowerCase();
+  return [b64url(utf8(String(siteId))), b64url(utf8(normalized)), String(Math.floor(expires)), b64url(await confirmMac(secret, siteId, normalized, Math.floor(expires)))].join(".");
+}
+
+/** { siteId, email, expires } for a valid, unexpired token, else null. */
+export async function verifyReportConfirmToken(env, token, now = Date.now()) {
+  const secret = String(env.EMAIL_UNSUBSCRIBE_SECRET || "").trim();
+  const [sitePart, emailPart, expPart, macPart, extra] = String(token || "").split(".");
+  if (!secret || !sitePart || !emailPart || !/^\d{1,15}$/.test(expPart || "") || !macPart || extra !== undefined) return null;
+  try {
+    const siteId = new TextDecoder().decode(fromB64url(sitePart));
+    const email = new TextDecoder().decode(fromB64url(emailPart));
+    const expires = Number(expPart);
+    const expected = await confirmMac(secret, siteId, email, expires);
+    const given = fromB64url(macPart);
+    if (given.length !== expected.length) return null;
+    let diff = 0;
+    for (let i = 0; i < given.length; i += 1) diff |= given[i] ^ expected[i];
+    if (diff !== 0 || !email.includes("@") || !siteId) return null;
+    if (expires <= now) return null;
+    return { siteId, email, expires };
+  } catch {
+    return null;
+  }
+}
+
+export async function reportConfirmUrl(env, siteId, email, expires, lang) {
+  const token = await reportConfirmToken(env, siteId, email, expires);
+  if (!token) return null;
+  const origin = String(env.PUBLIC_ORIGIN || DASHBOARD_ORIGIN).replace(/\/+$/, "");
+  return `${origin}${REPORT_CONFIRM_PATH}?t=${encodeURIComponent(token)}&l=${encodeURIComponent(REPORT_BODY_LANGS.includes(lang) ? lang : "en")}`;
+}
+
+/** Each recipient row of a site: email -> { status, requested_at, confirm_expires_at, confirmed_at }. */
+export async function loadRecipientRows(env, siteId) {
+  const { results } = await env.DB.prepare("SELECT email,status,requested_at,confirm_expires_at,confirmed_at FROM agency_report_recipients WHERE site_id=?").bind(siteId).all();
+  return new Map((results || []).map((row) => [String(row.email).toLowerCase(), row]));
+}
+
+/**
+ * What the dashboard shows per recipient: confirmed | pending | opted_out.
+ * (opted_out covers the site's own opt-out and the global list.)
+ */
+export async function recipientStatuses(env, siteId, recipients) {
+  const rows = await loadRecipientRows(env, siteId);
+  const out = [];
+  for (const email of recipients) {
+    let status = rows.get(email)?.status === "confirmed" ? "confirmed" : "pending";
+    if (await isReportOptedOut(env, siteId, email)) status = "opted_out";
+    const row = rows.get(email);
+    out.push({ email, status, requested_at: row?.requested_at ?? null, confirmed_at: row?.confirmed_at ?? null });
+  }
+  return out;
+}
+
+/** The confirmation email for one address. */
+export function confirmationEmail({ lang, agency, sender, site, confirmUrl, neverUrl, expires }) {
+  const c = reportCopy(lang);
+  const date = dateLabel(expires, lang);
+  const subject = singleLine(fill(c.confirmSubject, { sender, site })).slice(0, 200);
+  const text = [
+    fill(c.confirmIntro, { sender, site }), "", fill(c.confirmAsk, {}), "",
+    `${c.confirmButton}: ${confirmUrl}`, fill(c.confirmExpires, { date }), "",
+    neverUrl ? `${c.confirmNever}: ${neverUrl}` : "", fill(c.confirmFooter, { agency }),
+  ].filter((line, i, all) => line !== "" || all[i - 1] !== "").join("\n");
+  const html = `<!doctype html><html lang="${escapeHtml(REPORT_LANG_TAG[lang] || "en")}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHtml(subject)}</title></head>`
+    + `<body style="font-family:system-ui,sans-serif;line-height:1.65;color:#1d1d24;max-width:560px;margin:0 auto;padding:16px">`
+    + `<p>${escapeHtml(fill(c.confirmIntro, { sender, site }))}</p><p>${escapeHtml(c.confirmAsk)}</p>`
+    + `<p><a href="${escapeHtml(confirmUrl)}" style="display:inline-block;background:#6f4df6;color:#fff;text-decoration:none;border-radius:8px;padding:10px 16px;font-weight:700">${escapeHtml(c.confirmButton)}</a></p>`
+    + `<p style="font-size:12px;color:#6b6b78">${escapeHtml(fill(c.confirmExpires, { date }))}</p>`
+    + (neverUrl ? `<p style="font-size:12px"><a href="${escapeHtml(neverUrl)}" style="color:#6b6b78">${escapeHtml(c.confirmNever)}</a></p>` : "")
+    + `<p style="font-size:12px;color:#6b6b78">${escapeHtml(fill(c.confirmFooter, { agency }))}</p></body></html>`;
+  return { subject, text: `${text}\n`, html };
+}
+
+/**
+ * After the recipients were saved: drop rows of addresses no longer listed,
+ * and send a confirmation email to each listed address that is not confirmed,
+ * not opted out, and not asked in the last REPORT_CONFIRM_RESEND_MS - within
+ * the per-site and per-account daily caps. Returns counts only:
+ *   { sent, limited, failed, skipped }
+ */
+export async function requestConfirmations(env, site, settings, { accountId = null, memberId = null, canManage = null, now = Date.now(), fetchImpl = fetch } = {}) {
+  const summary = { sent: 0, limited: 0, failed: 0, skipped: 0 };
+  const recipients = settings.recipients || [];
+  if (recipients.length) {
+    const marks = recipients.map(() => "?").join(",");
+    await env.DB.prepare(`DELETE FROM agency_report_recipients WHERE site_id=? AND email NOT IN (${marks})`).bind(site.id, ...recipients).run();
+  } else {
+    await env.DB.prepare("DELETE FROM agency_report_recipients WHERE site_id=?").bind(site.id).run();
+    return summary;
+  }
+  const rows = await loadRecipientRows(env, site.id);
+  const limits = reportLimits(env);
+  const ready = mailConfigured(env) && String(env.EMAIL_UNSUBSCRIBE_SECRET || "").trim();
+  let branding = null;
+  let lang = reportLanguage(settings.locale).lang;
+  for (const email of recipients) {
+    const row = rows.get(email);
+    if (!row) {
+      await env.DB.prepare("INSERT OR IGNORE INTO agency_report_recipients (site_id,email,status,requested_at,requested_by,confirm_expires_at,confirmed_at,created_at) VALUES (?,?,'pending',NULL,?,NULL,NULL,?)")
+        .bind(site.id, email, memberId, now).run();
+    }
+    if (row?.status === "confirmed") continue;
+    if (row?.requested_at && now - Number(row.requested_at) < REPORT_CONFIRM_RESEND_MS) { summary.skipped += 1; continue; }
+    if (await isReportOptedOut(env, site.id, email)) { summary.skipped += 1; continue; }
+    if (!ready) { summary.failed += 1; continue; }
+    const day = dayKey(now);
+    if (!await takeCounter(env, `confirm:site:${site.id}`, day, limits.confirmsPerSiteDay, now)) { summary.limited += 1; continue; }
+    if (accountId && !await takeCounter(env, `confirm:acct:${accountId}`, day, limits.confirmsPerAccountDay, now)) {
+      await giveBackCounter(env, `confirm:site:${site.id}`, day, now);
+      summary.limited += 1; continue;
+    }
+    if (branding === null) branding = (await resolveBranding(env, site, settings, { canManage, viewerAccountId: accountId })) || false;
+    const agency = branding ? branding.display_name : "Nurevo";
+    const sender = branding ? `${branding.display_name} via Nurevo` : "Nurevo";
+    const expires = now + REPORT_CONFIRM_TTL_MS;
+    const confirmUrl = await reportConfirmUrl(env, site.id, email, expires, lang);
+    const neverUrl = await reportUnsubscribeUrl(env, site.id, email, lang);
+    const message = confirmationEmail({ lang, agency, sender, site: siteLabel(site), confirmUrl, neverUrl: neverUrl ? `${neverUrl}&scope=all` : null, expires });
+    const result = await sendResendEmail(env, {
+      to: email,
+      ...message,
+      from: agencyFrom(branding ? branding.display_name : "", env.MAIL_FROM),
+      headers: neverUrl ? { "List-Unsubscribe": `<${neverUrl}>`, "List-Unsubscribe-Post": "List-Unsubscribe=One-Click" } : undefined,
+      idempotencyKey: `nurevo-agency-report-confirm-${site.id}-${await shortHash(email)}-${day}`,
+      fetchImpl,
+    });
+    if (result.ok) {
+      await env.DB.prepare("UPDATE agency_report_recipients SET requested_at=?, requested_by=?, confirm_expires_at=? WHERE site_id=? AND email=? AND status='pending'")
+        .bind(now, memberId, expires, site.id, email).run();
+      summary.sent += 1;
+    } else {
+      summary.failed += 1;
+      console.error("agency_report_confirm_send_failed", JSON.stringify({ site_id: site.id, code: result.code }));
+    }
+  }
+  return summary;
+}
+
+function confirmPage(lang, status, body, { action = "", site = "", agency = "" } = {}) {
+  const c = reportCopy(lang);
+  const message = body === "done" ? fill(c.confirmDone, { site }) : body === "invalid" ? c.confirmInvalid : fill(c.confirmPrompt, { site, agency });
+  const form = body === "prompt" ? `<form method="post" action="${escapeHtml(action)}"><button type="submit">${escapeHtml(c.confirmButton)}</button></form>` : "";
+  return new Response(
+    `<!doctype html><html lang="${escapeHtml(REPORT_LANG_TAG[lang] || "en")}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>${escapeHtml(c.confirmTitle)}</title><style>body{font-family:system-ui,sans-serif;max-width:32rem;margin:3rem auto;padding:0 16px;line-height:1.6}button{font:inherit;padding:.5rem 1rem}</style></head><body><h1>${escapeHtml(c.confirmTitle)}</h1><p>${escapeHtml(message)}</p>${form}</body></html>`,
+    { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex", "content-security-policy": "default-src 'none'; style-src 'unsafe-inline'; form-action 'self'" } },
+  );
+}
+
+/**
+ * GET /api/email/report-confirm shows the question (scanners open links, so
+ * GET records nothing); POST confirms that address for that site, while the
+ * signed link is unexpired and the address is still a pending recipient.
+ */
+export async function handleReportConfirm(request, env, { now = Date.now() } = {}) {
+  const url = new URL(request.url);
+  if (url.pathname !== REPORT_CONFIRM_PATH) return null;
+  const asked = String(url.searchParams.get("l") || "");
+  const lang = REPORT_BODY_LANGS.includes(asked) ? asked : "en";
+  if (!["GET", "POST"].includes(request.method)) return new Response("method_not_allowed", { status: 405, headers: { allow: "GET, POST" } });
+  const verified = await verifyReportConfirmToken(env, url.searchParams.get("t"), now);
+  if (!verified) return confirmPage(lang, 400, "invalid");
+  let row = null;
+  let site = null;
+  try {
+    row = await env.DB.prepare("SELECT status,confirm_expires_at FROM agency_report_recipients WHERE site_id=? AND email=? LIMIT 1").bind(verified.siteId, verified.email).first();
+    site = await env.DB.prepare("SELECT * FROM sites WHERE id=? LIMIT 1").bind(verified.siteId).first();
+  } catch (error) {
+    if (!isMissing(error)) throw error;
+  }
+  // The link is for the request it was sent with: a removed recipient, a
+  // deleted site or a superseded request (a newer link) is not confirmed.
+  if (!row || !site || Number(row.confirm_expires_at) !== verified.expires) return confirmPage(lang, 400, "invalid");
+  const label = siteLabel(site);
+  if (row.status === "confirmed") return confirmPage(lang, 200, "done", { site: label });
+  if (request.method === "GET") {
+    let agency = "Nurevo";
+    try {
+      const settings = await loadReportSettings(env, site.id);
+      const branding = await resolveBranding(env, site, settings);
+      if (branding) agency = branding.display_name;
+    } catch { agency = "Nurevo"; }
+    return confirmPage(lang, 200, "prompt", { action: `${url.pathname}${url.search}`, site: label, agency });
+  }
+  await env.DB.prepare("UPDATE agency_report_recipients SET status='confirmed', confirmed_at=? WHERE site_id=? AND email=? AND status='pending'").bind(now, verified.siteId, verified.email).run();
+  // Confirming is an explicit new opt-in for this site.
+  await env.DB.prepare("DELETE FROM agency_report_opt_outs WHERE site_id=? AND email=?").bind(verified.siteId, verified.email).run();
+  return confirmPage(lang, 200, "done", { site: label });
 }
 
 /* ------------------------------------------------------------------ *
@@ -1028,7 +1414,7 @@ export async function runAgencyReportBatch(env, { now = Date.now(), fetchImpl = 
   let rows;
   try {
     ({ results: rows } = await env.DB.prepare(`SELECT s.*, r.site_id AS r_site_id, r.recipients_json AS r_recipients, r.locale AS r_locale,
-             r.branding_source AS r_branding_source, r.brand_account_id AS r_brand_account_id
+             r.branding_source AS r_branding_source, r.brand_account_id AS r_brand_account_id, r.account_id AS r_account_id
         FROM agency_report_settings r JOIN sites s ON s.id=r.site_id
        WHERE r.enabled=1 AND r.consent_at IS NOT NULL
          AND (s.delivery_status IS NULL OR s.delivery_status='active')
@@ -1040,18 +1426,37 @@ export async function runAgencyReportBatch(env, { now = Date.now(), fetchImpl = 
   }
   let emails = 0;
   let stop = null;
+  const limits = reportLimits(env);
+  summary.not_eligible = 0;
+  summary.unconfirmed = 0;
+  summary.account_capped = 0;
   for (const row of rows || []) {
     if (stop) break;
     summary.sites += 1;
-    const { r_site_id: siteId, r_recipients: recipientsJson, r_locale: locale, r_branding_source: source, r_brand_account_id: brandAccountId, ...siteRow } = row;
+    const { r_site_id: siteId, r_recipients: recipientsJson, r_locale: locale, r_branding_source: source, r_brand_account_id: brandAccountId, r_account_id: accountId, ...siteRow } = row;
     const site = { ...siteRow, id: siteId };
     const settings = {
       enabled: true, recipients: parseRecipients(recipientsJson), locale: reportLanguage(locale).locale,
-      branding_source: source === "nurevo" ? "nurevo" : "agency", brand_account_id: brandAccountId ?? null,
+      branding_source: source === "nurevo" ? "nurevo" : "agency", brand_account_id: brandAccountId ?? null, account_id: accountId ?? null,
     };
+    // Connected, and paid or set up by an approved partner - re-checked at
+    // send time, so a downgrade or a lost connection stops the report.
+    // Without an account to charge, nothing is sent.
+    const eligibility = accountId ? await reportEligibility(env, site, { accountId, now }) : { ok: false };
+    if (!eligibility.ok) { summary.not_eligible += 1; continue; }
+    // Double opt-in: only addresses that confirmed.
+    let confirmed;
+    try {
+      const recipientRows = await loadRecipientRows(env, site.id);
+      confirmed = settings.recipients.filter((email) => recipientRows.get(email)?.status === "confirmed");
+    } catch (error) {
+      if (isMissing(error)) return { ...summary, status: "migration_pending" };
+      throw error;
+    }
+    summary.unconfirmed += settings.recipients.length - confirmed.length;
     let model = null;
     let complete = true;
-    for (const email of settings.recipients) {
+    for (const email of confirmed) {
       if (emails >= maxEmails) { stop = "email_limit"; complete = false; break; }
       let claimed;
       try { claimed = await claimSend(env, site.id, month, email, now); } catch (error) {
@@ -1065,10 +1470,16 @@ export async function runAgencyReportBatch(env, { now = Date.now(), fetchImpl = 
         // Cannot tell whether they opted out: do not send.
         await releaseSend(env, site.id, month, email); complete = false; summary.skipped += 1; continue;
       }
+      // The account's monthly email cap: past it, this month's report to this
+      // address is recorded as suppressed rather than retried every hour.
+      if (!await takeCounter(env, `emails:acct:${accountId}`, monthKeyOf(now), limits.emailsPerAccountMonth, now)) {
+        await settleSend(env, site.id, month, email, "suppressed", "account_cap"); summary.account_capped += 1; continue;
+      }
       try {
         model = model || await buildSiteReport(env, site, { month, settings, canManage, now });
       } catch (error) {
         await releaseSend(env, site.id, month, email);
+        await giveBackCounter(env, `emails:acct:${accountId}`, monthKeyOf(now), now);
         console.error("agency_report_build_failed", JSON.stringify({ site_id: site.id, message: String(error?.message || error).slice(0, 120) }));
         complete = false; summary.failed += 1; break;
       }
@@ -1085,7 +1496,7 @@ export async function runAgencyReportBatch(env, { now = Date.now(), fetchImpl = 
         fetchImpl,
       });
       if (result.ok) { await settleSend(env, site.id, month, email, "sent"); summary.sent += 1; }
-      else if (result.status === 429) { await releaseSend(env, site.id, month, email); stop = "rate_limited"; complete = false; break; }
+      else if (result.status === 429) { await releaseSend(env, site.id, month, email); await giveBackCounter(env, `emails:acct:${accountId}`, monthKeyOf(now), now); stop = "rate_limited"; complete = false; break; }
       else { await settleSend(env, site.id, month, email, "failed", result.code); summary.failed += 1; console.error("agency_report_send_failed", JSON.stringify({ site_id: site.id, code: result.code })); }
       if (spacing > 0) await sleep(spacing);
     }

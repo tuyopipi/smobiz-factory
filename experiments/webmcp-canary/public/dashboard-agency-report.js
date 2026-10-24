@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-24-agencyreport */
+/* Nurevo dashboard asset revision: 2026-10-24-agencyreport2 */
 /*
  * Agency white-label client reports (worker/agency-report.mjs).
  *
@@ -7,7 +7,9 @@
  *  - Site page: "Monthly client report" - on/off, recipients (up to 5),
  *    language, brand, and the agency's confirmation that the recipients agreed
  *    to receive it; a preview of any month in a sandboxed frame, and a
- *    printable page the browser can save as PDF.
+ *    printable page the browser can save as PDF. Each address is asked by
+ *    email to confirm (double opt-in); the card shows who is confirmed,
+ *    waiting, or unsubscribed, and why a site cannot send reports.
  *
  * Nothing renders before migration 0046 (the API says available:false).
  * Every value from the server is escaped; the preview frame runs no script.
@@ -49,7 +51,7 @@
 
   /* ---------------- agency branding (partner page) ---------------- */
 
-  var FIELD_LABEL = { display_name: "agName", logo_url: "agLogoUrl", logo_upload: "agLogoUpload", logo_size: "agLogoUpload", brand_color: "agColor", contact_email: "agEmail", contact_url: "agUrl", footer_text: "agFooter" };
+  var FIELD_LABEL = { display_name_reserved: "agName", display_name: "agName", logo_url: "agLogoUrl", logo_upload: "agLogoUpload", logo_size: "agLogoUpload", brand_color: "agColor", contact_email: "agEmail", contact_url: "agUrl", footer_text: "agFooter" };
 
   function brandingCard(view) {
     var b = view.branding || {};
@@ -114,6 +116,7 @@
           return;
         }
         var fields = (result.data && result.data.fields) || [];
+        if (msg && fields.indexOf("display_name_reserved") >= 0) { msg.textContent = tr("agNameReserved"); return; }
         if (msg) msg.textContent = fields.length ? tr("agInvalid", { field: fields.map(function (f) { return tr(FIELD_LABEL[f] || "agName"); }).join(", ") }) : tr("crSaveError");
       } catch (error) {
         if (msg) msg.textContent = tr("crSaveError");
@@ -159,6 +162,12 @@
     if (s.enabled && view.next_send_on) status.push(tr("crNextSend", { date: day(view.next_send_on) }));
     if (view.last_sent) status.push(tr("crLastSent", { month: view.last_sent.month, n: view.last_sent.recipients }));
     if (view.opted_out && view.opted_out.length) status.push(tr("crOptedOut", { emails: view.opted_out.join(", ") }));
+    var STATUS_KEY = { confirmed: "crStatusConfirmed", pending: "crStatusPending", opted_out: "crStatusOptedOut" };
+    var people = (view.recipients_status || []).map(function (row) {
+      return '<li><span class="nrv-cr-email">' + esc(row.email) + '</span> <span class="nrv-cr-badge is-' + esc(row.status) + '" data-recipient-status="' + esc(row.status) + '">' + esc(tr(STATUS_KEY[row.status] || "crStatusPending")) + "</span></li>";
+    }).join("");
+    var notEligible = view.eligibility && view.eligibility.ok === false
+      ? '<p class="nrv-cr-warn" data-cr-not-eligible>' + esc(tr("crNotEligible")) + "</p>" : "";
     var noBrand = !view.has_own_branding && !(view.brand && view.brand.agency)
       ? '<p class="nrv-cr-note">' + esc(tr("crNoBrand", { tab: tr("partner") })) + "</p>" : "";
     var section = document.createElement("section");
@@ -166,10 +175,13 @@
     section.innerHTML = '<div class="card panel">'
       + '<div class="nrv-aeo-heading"><div><small>' + esc(tr("agKicker")) + "</small><h2>" + esc(tr("crHeading")) + "</h2></div></div>"
       + '<p class="nrv-ag-lead">' + esc(tr("crLead")) + "</p>"
+      + notEligible
       + (status.length ? '<p class="nrv-cr-status">' + status.map(esc).join("<br>") + "</p>" : "")
+      + (people ? '<ul class="nrv-cr-people">' + people + "</ul>" : "")
       + '<form class="nrv-ag-form" data-cr-form>'
       + '<label class="nrv-ag-inline"><input type="checkbox" name="enabled"' + (s.enabled ? " checked" : "") + disabled + "> " + esc(tr("crEnable")) + "</label>"
       + '<label>' + esc(tr("crRecipients", { n: view.max_recipients || 5 })) + '<textarea class="input" name="recipients" rows="3" autocomplete="off"' + disabled + ">" + esc((s.recipients || []).join("\n")) + "</textarea></label>"
+      + '<p class="nrv-cr-note">' + esc(tr("crConfirmNote")) + "</p>"
       + '<label>' + esc(tr("crLang")) + '<select class="input" name="locale"' + disabled + ">" + localeOptions(locale) + "</select></label>"
       + '<p class="nrv-cr-note">' + esc(tr("crLangNote")) + "</p>"
       + '<label>' + esc(tr("crBrand")) + '<select class="input" name="branding_source"' + disabled + ">"
@@ -233,9 +245,11 @@
           attachReport(replacement, result.data, siteId);
           section.replaceWith(replacement);
           var done = replacement.querySelector("[data-cr-msg]");
-          if (done) done.textContent = tr("saved");
+          var limited = result.data.confirmations && result.data.confirmations.limited > 0;
+          if (done) done.textContent = limited ? tr("saved") + " " + tr("crConfirmLimited") : tr("saved");
           return;
         }
+        if (result.data && result.data.error === "report_not_eligible") { if (msg) msg.textContent = tr("crNotEligible"); return; }
         var fields = (result.data && result.data.fields) || [];
         var invalid = (result.data && result.data.invalid) || [];
         if (msg) msg.textContent = fields.indexOf("recipients_invalid") >= 0 && invalid.length ? tr("crBadEmail", { email: invalid[0] })
@@ -276,7 +290,7 @@
   function mount() { mountBranding(); mountReport(); }
 
   var style = document.createElement("style");
-  style.textContent = ".nrv-client-report{margin-top:18px}.nrv-ag-lead{font-size:13px;line-height:1.7;margin:0 0 10px}.nrv-ag-form{display:grid;gap:10px;max-width:560px}.nrv-ag-form label{display:grid;gap:4px;font-size:12px;font-weight:600}.nrv-ag-form .nrv-ag-inline{display:flex;align-items:center;gap:8px;font-weight:500}.nrv-ag-form input[type=color]{width:64px;height:32px;padding:0;border:1px solid #ddd;border-radius:6px;background:#fff}.nrv-ag-logo{max-height:40px;max-width:160px;object-fit:contain;border:1px solid #eee;border-radius:6px;padding:2px;background:#fff}.nrv-ag-msg{font-size:12px;color:#5d5570}.nrv-cr-note{font-size:11px;color:#6c6579;margin:-4px 0 0;line-height:1.6}.nrv-cr-status{font-size:12px;color:#3d3650;background:#faf8ff;border:1px solid #e6e1f3;border-radius:8px;padding:8px 10px;overflow-wrap:anywhere}.nrv-cr-consent{background:#fff8e6;border-radius:8px;padding:8px 10px}.nrv-cr-preview{margin-top:16px;border-top:1px solid #efecf4;padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.nrv-cr-preview label{font-size:12px;font-weight:600;display:flex;gap:6px;align-items:center}.nrv-cr-preview [data-cr-frame]{flex-basis:100%}.nrv-cr-frame{width:100%;height:720px;border:1px solid #e7e9f1;border-radius:8px;background:#f4f4f6;margin-top:8px}";
+  style.textContent = ".nrv-client-report{margin-top:18px}.nrv-ag-lead{font-size:13px;line-height:1.7;margin:0 0 10px}.nrv-ag-form{display:grid;gap:10px;max-width:560px}.nrv-ag-form label{display:grid;gap:4px;font-size:12px;font-weight:600}.nrv-ag-form .nrv-ag-inline{display:flex;align-items:center;gap:8px;font-weight:500}.nrv-ag-form input[type=color]{width:64px;height:32px;padding:0;border:1px solid #ddd;border-radius:6px;background:#fff}.nrv-ag-logo{max-height:40px;max-width:160px;object-fit:contain;border:1px solid #eee;border-radius:6px;padding:2px;background:#fff}.nrv-ag-msg{font-size:12px;color:#5d5570}.nrv-cr-note{font-size:11px;color:#6c6579;margin:-4px 0 0;line-height:1.6}.nrv-cr-status{font-size:12px;color:#3d3650;background:#faf8ff;border:1px solid #e6e1f3;border-radius:8px;padding:8px 10px;overflow-wrap:anywhere}.nrv-cr-consent{background:#fff8e6;border-radius:8px;padding:8px 10px}.nrv-cr-preview{margin-top:16px;border-top:1px solid #efecf4;padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.nrv-cr-preview label{font-size:12px;font-weight:600;display:flex;gap:6px;align-items:center}.nrv-cr-preview [data-cr-frame]{flex-basis:100%}.nrv-cr-frame{width:100%;height:720px;border:1px solid #e7e9f1;border-radius:8px;background:#f4f4f6;margin-top:8px}.nrv-cr-warn{font-size:12px;color:#8a5a00;background:#fff4e0;border-radius:8px;padding:8px 10px;margin:0 0 10px}.nrv-cr-people{list-style:none;margin:0 0 10px;padding:0;font-size:12px}.nrv-cr-people li{padding:3px 0;overflow-wrap:anywhere}.nrv-cr-badge{font-size:10px;font-weight:700;border-radius:5px;padding:1px 7px;margin-left:6px}.nrv-cr-badge.is-confirmed{background:#e7f5ec;color:#176b3a}.nrv-cr-badge.is-pending{background:#fff4e0;color:#8a5a00}.nrv-cr-badge.is-opted_out{background:#f1eff5;color:#5d5570}";
   document.head.appendChild(style);
   new MutationObserver(function () { mount(); }).observe(document.documentElement, { childList: true, subtree: true });
   setTimeout(mount, 650);
