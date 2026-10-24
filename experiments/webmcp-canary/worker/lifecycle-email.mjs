@@ -665,19 +665,22 @@ async function releaseLifecycleEmail(env, { scope, subjectId, kind, step }) {
  * ------------------------------------------------------------------ */
 
 /** POST to Resend. Never throws. */
-export async function sendResendEmail(env, { to, subject, text, html, headers, idempotencyKey }) {
+export async function sendResendEmail(env, { to, subject, text, html, headers, idempotencyKey, from: fromOverride, replyTo, fetchImpl = fetch }) {
   const apiKey = String(env.RESEND_API_KEY || "").trim();
-  const from = String(env.MAIL_FROM || "").trim();
-  if (!apiKey || !from) return { ok: false, code: "mail_provider_not_configured" };
+  const configuredFrom = String(env.MAIL_FROM || "").trim();
+  // A display-name override (the agency report's "<Agency> via Nurevo") keeps
+  // MAIL_FROM's verified address; the caller builds it from MAIL_FROM.
+  const from = String(fromOverride || configuredFrom).trim();
+  if (!apiKey || !configuredFrom) return { ok: false, code: "mail_provider_not_configured" };
   try {
-    const response = await fetch("https://api.resend.com/emails", {
+    const response = await fetchImpl("https://api.resend.com/emails", {
       method: "POST",
       headers: {
         authorization: `Bearer ${apiKey}`,
         "content-type": "application/json",
         ...(idempotencyKey ? { "idempotency-key": idempotencyKey } : {}),
       },
-      body: JSON.stringify({ from, to: [to], subject, text, html, ...(headers ? { headers } : {}) }),
+      body: JSON.stringify({ from, to: [to], subject, text, html, ...(replyTo ? { reply_to: replyTo } : {}), ...(headers ? { headers } : {}) }),
     });
     if (response.ok) return { ok: true };
     let detail = {};

@@ -499,3 +499,143 @@ CREATE TABLE IF NOT EXISTS aeo_sov_attempts (
   finished_at TEXT,
   reserved_json TEXT
 );
+
+-- 0045: the free monthly AI appearance check (Free / Standard), one row per
+-- site per month. Usage is reserved in aeo_sov_engine_usage as 'free:perplexity'.
+CREATE TABLE IF NOT EXISTS aeo_free_checks (
+  site_id TEXT NOT NULL,
+  month TEXT NOT NULL,
+  trigger TEXT NOT NULL,
+  status TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT,
+  reserved_json TEXT,
+  result_json TEXT,
+  est_cost_usd REAL,
+  PRIMARY KEY (site_id, month)
+);
+
+-- 0046: agency white-label monthly client report: branding per account,
+-- report settings per site, the send ledger, recipient opt-outs, double
+-- opt-in recipients, the global suppression list and send counters.
+CREATE TABLE IF NOT EXISTS agency_branding (
+  account_id INTEGER PRIMARY KEY,           -- accounts.id
+  display_name TEXT NOT NULL,
+  logo_url TEXT,                            -- https only
+  logo_type TEXT,                           -- image/png | image/jpeg | image/webp | image/gif (sniffed)
+  logo_data TEXT,                           -- base64, at most 64 KB decoded
+  logo_hash TEXT,                           -- sha256 prefix of the bytes; the public logo URL
+  brand_color TEXT,                         -- #rrggbb
+  contact_email TEXT,
+  contact_url TEXT,                         -- https only
+  footer_text TEXT,                         -- plain text, at most 300 characters
+  hide_powered_by INTEGER NOT NULL DEFAULT 0, -- honoured only on POWERED_BY_REMOVABLE_PLANS
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT                           -- members.id
+);
+CREATE INDEX IF NOT EXISTS idx_agency_branding_logo ON agency_branding(logo_hash);
+
+CREATE TABLE IF NOT EXISTS agency_report_settings (
+  site_id TEXT PRIMARY KEY,
+  enabled INTEGER NOT NULL DEFAULT 0,
+  recipients_json TEXT NOT NULL DEFAULT '[]',
+  locale TEXT NOT NULL DEFAULT 'en',        -- a dashboard locale code
+  branding_source TEXT NOT NULL DEFAULT 'agency' CHECK (branding_source IN ('agency', 'nurevo')),
+  brand_account_id INTEGER,                 -- the account whose brand is used (re-checked at send time)
+  account_id INTEGER,                       -- the account that set the report up: its eligibility and monthly email cap
+  consent_at INTEGER,                       -- epoch ms the agency confirmed recipient consent
+  consent_by TEXT,                          -- members.id
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT
+);
+
+CREATE TABLE IF NOT EXISTS agency_report_sends (
+  site_id TEXT NOT NULL,
+  month TEXT NOT NULL,                      -- YYYY-MM (UTC), the month reported on
+  email TEXT NOT NULL,                      -- recipient, or '*' for "site finished"
+  status TEXT NOT NULL DEFAULT 'claimed',   -- claimed | sent | failed | suppressed | done
+  detail TEXT,
+  created_at INTEGER NOT NULL,
+  sent_at INTEGER,
+  PRIMARY KEY (site_id, month, email)
+);
+
+CREATE TABLE IF NOT EXISTS agency_report_opt_outs (
+  site_id TEXT NOT NULL,
+  email TEXT NOT NULL COLLATE NOCASE,
+  created_at INTEGER NOT NULL,
+  PRIMARY KEY (site_id, email)
+);
+
+-- Double opt-in: a recipient gets reports only once the address itself
+-- confirmed (a signed, expiring link in a confirmation email).
+CREATE TABLE IF NOT EXISTS agency_report_recipients (
+  site_id TEXT NOT NULL,
+  email TEXT NOT NULL COLLATE NOCASE,
+  status TEXT NOT NULL DEFAULT 'pending',   -- pending | confirmed
+  requested_at INTEGER,                     -- epoch ms the last confirmation email went out (NULL: not sent yet)
+  requested_by TEXT,                        -- members.id
+  confirm_expires_at INTEGER,               -- the confirmation link stops working after this
+  confirmed_at INTEGER,
+  created_at INTEGER NOT NULL,
+  PRIMARY KEY (site_id, email)
+);
+
+-- Addresses that unsubscribed from ALL reports sent through Nurevo, whatever
+-- the site or agency. Kept when a site is deleted.
+CREATE TABLE IF NOT EXISTS agency_report_suppressions (
+  email TEXT PRIMARY KEY COLLATE NOCASE,
+  source TEXT,                              -- unsubscribe | confirm_decline
+  created_at INTEGER NOT NULL
+);
+
+-- Small counters with a period: confirmation emails per site and per account
+-- per day, report emails per account per month. Taken with one conditional
+-- UPDATE, so concurrent requests cannot pass a cap.
+CREATE TABLE IF NOT EXISTS agency_report_counters (
+  scope TEXT NOT NULL,                      -- confirm:site:<id> | confirm:acct:<id> | emails:acct:<id>
+  period TEXT NOT NULL,                     -- YYYY-MM-DD or YYYY-MM (UTC)
+  count INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER,
+  PRIMARY KEY (scope, period)
+);
+
+-- 0047: agency lead-generation tools: the per-agency widget / landing page
+-- settings and the leads the widget collected (agency-leadgen.mjs).
+CREATE TABLE IF NOT EXISTS agency_leadgen (
+  account_id INTEGER PRIMARY KEY,             -- accounts.id
+  widget_key TEXT NOT NULL UNIQUE,            -- wk_ + 24 [a-z0-9]; public, rotatable
+  widget_enabled INTEGER NOT NULL DEFAULT 0,
+  allowed_origins_json TEXT NOT NULL DEFAULT '[]', -- ["https://www.agency.example", ...], at most 10
+  notify_email INTEGER NOT NULL DEFAULT 0,
+  slug TEXT UNIQUE,                           -- lower-case [a-z0-9-], 3-40, reserved words refused
+  landing_enabled INTEGER NOT NULL DEFAULT 0,
+  landing_noindex INTEGER NOT NULL DEFAULT 0, -- 0 = indexed (the default)
+  landing_intro TEXT,                         -- plain text, at most 500 characters
+  privacy_url TEXT,                           -- the agency's privacy policy (https); required to enable the widget
+  contact_verified_email TEXT,                -- the branding contact email once verified by a signed link (lead emails go there only then)
+  contact_verified_at INTEGER,
+  contact_verify_sent_at INTEGER,             -- the last verification email
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT                             -- members.id
+);
+
+CREATE TABLE IF NOT EXISTS agency_leads (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  account_id INTEGER NOT NULL,                -- the agency (accounts.id) the lead belongs to
+  widget_key TEXT,                            -- the key it came through (history; keys rotate)
+  source TEXT NOT NULL DEFAULT 'widget' CHECK (source IN ('widget', 'landing')),
+  page_origin TEXT,                           -- the embedding page's origin, when the browser sent it
+  site_url TEXT NOT NULL,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  score INTEGER,                              -- the on-site AEO score, NULL when it could not be checked
+  band TEXT,                                  -- green | yellow | red
+  locale TEXT,                                -- the widget language (ja en zh tw ko es fr de)
+  consent_text TEXT NOT NULL,                 -- exactly what the visitor agreed to
+  consent_at INTEGER NOT NULL,                -- epoch ms
+  created_at INTEGER NOT NULL,
+  notified_at INTEGER                         -- when the agency was emailed, if it asked to be
+);
+CREATE INDEX IF NOT EXISTS idx_agency_leads_account ON agency_leads(account_id, id DESC);

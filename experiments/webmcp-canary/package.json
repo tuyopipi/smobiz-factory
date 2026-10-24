@@ -36,7 +36,7 @@
     "i18n:dashboard:check": "node scripts/validate-dashboard-i18n.mjs --pending",
     "test:partner": "node scripts/test-partner-auth.mjs && node scripts/test-partner-payouts.mjs && node scripts/test-partner-premigration.mjs && node scripts/test-partner-ui.mjs",
     "test:member-registration": "node scripts/test-member-registration.mjs && node scripts/test-register-form.mjs",
-    "test:canary": "node scripts/test-legal-parity.mjs && npm run test:aeo-score && npm run test:sov && npm run test:profile && npm run test:billing && npm run test:dashboard && npm run test:offsite && npm run test:site-types && npm run test:plans && npm run test:member-registration",
+    "test:canary": "node scripts/test-legal-parity.mjs && npm run test:aeo-score && npm run test:sov && npm run test:profile && npm run test:billing && npm run test:dashboard && npm run test:offsite && npm run test:site-types && npm run test:free-check && npm run test:agency-report && npm run test:agency-leadgen && npm run test:plans && npm run test:member-registration",
     "smoke:sov": "node scripts/smoke-sov.mjs",
     "pro:check": "node scripts/pro-golive-check.mjs",
     "stripe:check": "node scripts/stripe-setup-check.mjs",
@@ -46,6 +46,9 @@
     "test:wp-env": "node scripts/wp-env-smoke.mjs",
     "lint:php": "composer install -d tests/phpcs --no-interaction --no-progress && tests/phpcs/vendor/bin/phpcs --standard=tests/phpcs/phpcs.xml.dist",
     "test:offsite": "node scripts/test-offsite-audit.mjs",
+    "test:free-check": "node scripts/test-free-ai-check.mjs && node scripts/test-free-check-abuse.mjs",
+    "test:agency-report": "node scripts/test-agency-report.mjs && node scripts/test-agency-report-abuse.mjs",
+    "test:agency-leadgen": "node scripts/test-agency-leadgen.mjs && node scripts/test-agency-leadgen-hardening.mjs",
     "test:site-types": "node scripts/test-site-types.mjs && php scripts/test-wordpress-aeo-admin.php",
     "test:continuous": "node scripts/test-continuous-optimization.mjs && node scripts/test-continuous-ui.mjs && node scripts/test-geocoder.mjs",
     "test:study": "node study/tests/test-study-runner.mjs && node study/tests/test-study-analysis.mjs"

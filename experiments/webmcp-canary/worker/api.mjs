@@ -5,7 +5,7 @@ import { ensureAccount, issueReferralCode, partnerSummary, isApprovedPartner, ap
 import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { normalizeDashboardLocale } from "./dashboard-locales.mjs";
-import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
+import { memberEmailLocale, mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, resolveLlmsTxtLang, robotsBlock, matchCrawler, searchCrawlerRobotsLines } from "./ai-crawlers.js";
@@ -28,6 +28,15 @@ import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
 import { geocodeSiteProfile } from "./geocoder.mjs";
 import { offsiteAuditRun, offsiteAuditView } from "./offsite-audit.mjs";
+import { freeCheckView, runFreeCheck, runFreeCheckBatch } from "./free-ai-check.mjs";
+import {
+  AGENCY_LOGO_MAX_BYTES, AGENCY_LOGO_PATH, AGENCY_REPORT_MAX_RECIPIENTS, POWERED_BY_REMOVABLE_PLANS, REPORT_BODY_LANGS, REPORT_SEND_LAST_DAY,
+  agencyReportAvailable, buildSiteReport, handleLogoRequest, handleReportUnsubscribe, lastSent, loadBranding, loadOptOuts,
+  loadReportSettings, logoSrc, previousMonthKey, renderAgencyReportHtml, renderAgencyReportText, resolveBranding, runAgencyReportBatch as runAgencyReports,
+  saveBranding, saveReportSettings, validateBranding, validateReportSettings, REPORT_UNSUBSCRIBE_PATH,
+  REPORT_CONFIRM_PATH, handleReportConfirm, recipientStatuses, reportEligibility, requestConfirmations,
+} from "./agency-report.mjs";
+import { LEADGEN_SUBMIT_PATH, LEADGEN_VERIFY_PATH, handleLeadgenDashboard, handleLeadgenPublic } from "./agency-leadgen.mjs";
 import { isSiteType, normalizeSiteType } from "./site-types.mjs";
 import { NON_LOCAL_DROPPED_PROPS, typedBusinessType, typedCatalogNodes, typedLlmsTxt } from "./site-type-output.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
@@ -64,7 +73,17 @@ const API_RATE_LIMITS = Object.freeze({
   // the only thing the plugin holds. A pairing code is short enough to be
   // read aloud, so guessing it has to be slow from any one caller.
   pairIp: { limit: 10, windowMs: 60 * 60 * 1000 },
+  // Sites a member may add per day (SITE_CREATE_DAILY_LIMIT overrides). Every
+  // hosted site is a page Nurevo serves and, once ready, a free AI check, so
+  // adding them cannot be free-running; a real owner adds a handful.
+  siteCreateMember: { limit: 20, windowMs: 24 * 60 * 60 * 1000 },
 });
+
+/** The per-member daily site-creation limit in force (SITE_CREATE_DAILY_LIMIT, default 20). */
+export function siteCreateLimit(env = {}) {
+  const raw = Number(env.SITE_CREATE_DAILY_LIMIT);
+  return Number.isFinite(raw) && raw >= 1 ? Math.min(10000, Math.floor(raw)) : API_RATE_LIMITS.siteCreateMember.limit;
+}
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 // Referral partners receive 40% of the NET JPY of each paid invoice's charge
@@ -499,6 +518,23 @@ export async function handleApi(request, env, ctx) {
 
   // One-click unsubscribe from the not-connected reminders (lifecycle-email.mjs).
   if (path === UNSUBSCRIBE_PATH) return handleUnsubscribe(request, env);
+  // The agency report's per-site unsubscribe link (agency-report.mjs), and the
+  // agency logo it shows (public: email clients load it without a session).
+  if (path === REPORT_UNSUBSCRIBE_PATH) return handleReportUnsubscribe(request, env);
+  // Double opt-in: a new recipient confirms with the signed link it was sent.
+  if (path === REPORT_CONFIRM_PATH) return handleReportConfirm(request, env);
+  if (path.startsWith(AGENCY_LOGO_PATH) && method === "GET") return handleLogoRequest(request, env);
+  // Agency lead tools (agency-leadgen.mjs, 0047), public: the widget loader,
+  // its frame, the lead submit (own frame only, rate limited, no session) and
+  // the agency landing page /p/<slug>. The widget scores with the same cached
+  // on-site diagnosis as /api/aeo/score and never calls a paid AI engine.
+  const leadgenPublic = await handleLeadgenPublic(request, env, ctx, {
+    // A namespace keeps each agency's visitor URLs out of the shared cache.
+    scoreUrl: async (raw, { namespace = null } = {}) => (await cachedAeoDiagnosis(env, raw, ctx, { namespace })).result,
+    clientIp: requestClientIp,
+    memberLocale: memberEmailLocale,
+  });
+  if (leadgenPublic) return leadgenPublic;
 
   if (path === "/api/aeo/score" && method === "GET") {
     const raw = url.searchParams.get("url") || "";
@@ -515,23 +551,9 @@ export async function handleApi(request, env, ctx) {
         const limited = await aeoFreshRateLimit(env, raw);
         if (limited) return limited;
       }
-      // The cache key deliberately excludes the language: one diagnosis is
-      // reused for every language, and the wording is applied on the way out.
-      // Caching per language would multiply the entries and let the first
-      // visitor's language decide what everyone else sees until it expired.
-      const activeRuleset = await loadActiveRuleset(env);
-  const definition = rulesetDefinition(activeRuleset);
-  const schemaRules = definition.schema;
-      const rulesHash = await aeoSha256Hex(JSON.stringify(definition));
-      const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
-      const cached = fresh ? null : await env.WEBMCP_KV?.get(cacheKey, "json");
+      const { result, cache } = await cachedAeoDiagnosis(env, raw, ctx, { fresh });
       const vary = { "cache-control": `public, max-age=${AEO_CACHE_TTL_SECONDS}`, "vary": "accept-language" };
-      if (cached) return json(aeoResponse(cached, lang), 200, { ...vary, "x-aeo-cache": "hit" });
-      const result = await diagnoseAeoUrl(raw, { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, fresh });
-      // A fresh result is still written back, so the next ordinary visitor
-      // sees the fixed page too instead of the copy the fix replaced.
-      const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(aeoResponse(result)), { expirationTtl: AEO_CACHE_TTL_SECONDS });
-      if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
+      if (cache === "hit") return json(aeoResponse(result, lang), 200, { ...vary, "x-aeo-cache": "hit" });
       if (fresh) return json(aeoResponse(result, lang), 200, { "cache-control": "no-store", "vary": "accept-language", "x-aeo-cache": "bypass" });
       return json(aeoResponse(result, lang), 200, { ...vary, "x-aeo-cache": "miss" });
     } catch (error) {
@@ -859,6 +881,11 @@ export async function handleApi(request, env, ctx) {
     return json({ error: "csrf_failed" }, 403);
   }
 
+  // Agency lead tools, dashboard side (agency-leadgen.mjs): settings, embed
+  // code, landing page address, the leads list, CSV export and deletion.
+  const leadgenDashboard = await handleLeadgenDashboard(request, env, { requireMember: requireActiveMember, ensureAccount, issueReferralCode });
+  if (leadgenDashboard) return leadgenDashboard;
+
   const hostedMatch = path.match(/^\/s\/([^/]+)(?:\/(llms\.txt))?$/i);
   if (hostedMatch && method === "GET") {
     const slug = decodeURIComponent(hostedMatch[1]);
@@ -1013,6 +1040,38 @@ export async function handleApi(request, env, ctx) {
     const result = await reviewPartner(env, partnerReview[1], partnerReview[2], superAdmin.member_id);
     if (result.status === 200) console.log("partner_reviewed", JSON.stringify({ account: Number(partnerReview[1]), decision: partnerReview[2], by: superAdmin.member_id }));
     return json(result.body, result.status);
+  }
+
+  /*
+   * Agency branding (agency-report.mjs, 0046): the signed-in member's own
+   * account. GET reads it; PUT saves it (CSRF-checked by the global gate; a
+   * viewer cannot change it). Before 0046 (or 0030) it reports available:false
+   * and the dashboard hides the card.
+   */
+  if (path === "/api/agency/branding" && (method === "GET" || method === "PUT")) {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    let account = null;
+    try {
+      account = await ensureAccount(env, member.member_id);
+    } catch {
+      account = null;
+    }
+    if (!account || !await agencyReportAvailable(env)) return json({ available: false, reason: "migration_pending" }, method === "GET" ? 200 : 503);
+    const view = (branding) => ({
+      available: true,
+      can_edit: member.role !== "viewer",
+      branding: branding ? { ...branding, logo_src: logoSrc(branding, "") } : null,
+      limits: { logo_max_bytes: AGENCY_LOGO_MAX_BYTES, logo_types: ["image/png", "image/jpeg", "image/webp", "image/gif"] },
+      powered_by_removable_plans: [...POWERED_BY_REMOVABLE_PLANS],
+    });
+    if (method === "GET") return json(view(await loadBranding(env, account.id)));
+    if (member.role === "viewer") return json({ error: "forbidden" }, 403);
+    const checked = await validateBranding(await safeJson(request));
+    if (!checked.ok) return json({ error: "invalid_branding", fields: checked.errors }, 400);
+    const saved = await saveBranding(env, account.id, checked.value, { memberId: member.member_id });
+    console.log("agency_branding_saved", JSON.stringify({ account: account.id, logo: saved?.logo_hash ? "upload" : saved?.logo_url ? "url" : "none" }));
+    return json(view(saved));
   }
 
   if (path === "/api/auth/request" && method === "POST") {
@@ -1328,6 +1387,17 @@ export async function handleApi(request, env, ctx) {
     // Any active member can start onboarding; paid entitlements apply later.
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
+    // Per member, per day. Super admins (support) are not limited. Counted
+    // before the body is read so a flood of bad requests is limited too.
+    if (!member.is_super_admin) {
+      const createLimit = siteCreateLimit(env);
+      const created = await checkApiRateLimit(env, "site-create-member", member.member_id, { limit: createLimit, windowMs: API_RATE_LIMITS.siteCreateMember.windowMs });
+      if (created.unavailable) console.warn("site_create_rate_limit_unavailable", JSON.stringify({ member_id: member.member_id }));
+      else if (!created.allowed) {
+        const retryAfter = Math.ceil(API_RATE_LIMITS.siteCreateMember.windowMs / 1000);
+        return json({ error: "site_creation_rate_limited", limit: createLimit, window_hours: 24, retry_after: retryAfter }, 429, { "retry-after": String(retryAfter) });
+      }
+    }
     const body = await request.json();
     const installType = ["wp", "tag", "hosted", "static"].includes(body?.install_type) ? body.install_type : "tag";
     const siteUrl = String(body?.url || "").trim();
@@ -1581,6 +1651,55 @@ export async function handleApi(request, env, ctx) {
     }
   }
 
+  /*
+   * Free AI check (Free / Standard): a small monthly "does AI mention you?"
+   * check, worker/free-ai-check.mjs. GET is a read and never calls an engine;
+   * the dashboard reads it with the member session, the plugin with its site
+   * key (like GET /sov). POST runs this month's check now, once a month,
+   * counted against the same caps as the scheduled one. The site key is
+   * public, so it cannot start a run: POST takes the owner's session (with the
+   * CSRF token) or the plugin's profile token (bearer, no cookie).
+   */
+  const freeCheckMatch = path.match(/^\/api\/sites\/([^/]+)\/sov\/free-check$/i);
+  if (freeCheckMatch && (method === "GET" || method === "POST")) {
+    const siteId = decodeURIComponent(freeCheckMatch[1]);
+    const bearer = /^bearer\s+\S/i.test(String(request.headers.get("authorization") || ""));
+    const siteKey = url.searchParams.get("site_key") || url.searchParams.get("siteKey");
+    let site = null;
+    if (method === "POST" && bearer) {
+      const auth = await requireProfileToken(request, env, siteId);
+      if (!auth.ok) return auth.response;
+      site = await env.DB.prepare("SELECT * FROM sites WHERE id=? LIMIT 1").bind(siteId).first();
+    } else if (method === "GET" && siteKey) {
+      const auth = await authorizeSiteKey(env, siteKey, { touch: false });
+      if (!auth.registered || String(auth.siteId) !== siteId) return json({ error: "invalid_site_key" }, 404);
+      site = await env.DB.prepare("SELECT * FROM sites WHERE id=? LIMIT 1").bind(siteId).first();
+    } else {
+      // Exempt from the global CSRF gate only so the plugin's bearer POST
+      // works; a cookie-authenticated POST is checked here instead.
+      if (method === "POST" && !csrfValid(request)) return json({ error: "csrf_failed" }, 403);
+      const member = await requireMember(request, env);
+      if (!member) return json({ error: "unauthorized" }, 401);
+      site = await loadOwnedSite(env, member, siteId);
+      if (!site) {
+        const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+        return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+      }
+      // A viewer can read the result but not spend the month's check.
+      if (method === "POST" && member.role === "viewer") return json({ error: "forbidden" }, 403);
+    }
+    if (!site) return json({ error: "not_found" }, 404);
+    const plan = await resolveSitePlanFor(env, site);
+    if (method === "POST") {
+      const outcome = await runFreeCheck(env, site, { trigger: "manual", plan, loadProfile: buildSiteSovProfile });
+      const view = await freeCheckView(env, site, { plan });
+      const ran = ["done", "failed"].includes(outcome.status);
+      return json({ site_id: site.id, outcome: outcome.status, scope: outcome.scope || null, free_check: view },
+        ran ? 200 : outcome.status === "not_found" ? 404 : outcome.status === "pro" ? 409 : ["used_up", "already_checked", "running"].includes(outcome.status) ? 429 : 409);
+    }
+    return json({ site_id: site.id, free_check: await freeCheckView(env, site, { plan }) });
+  }
+
   const sovMatch = path.match(/^\/api\/sites\/([^/]+)\/sov$/i);
   if (sovMatch && method === "GET") {
     const access = await requireProSite(request, env, decodeURIComponent(sovMatch[1]));
@@ -1642,6 +1761,103 @@ export async function handleApi(request, env, ctx) {
       engine_status: result.engines || null,
       ...engineStatus(env),
     });
+  }
+
+  /*
+   * Agency client report, per site (agency-report.mjs, 0046).
+   *   GET/PUT /api/sites/:id/report-settings   who gets it, language, brand
+   *   GET     /api/sites/:id/agency-report     the report itself (preview,
+   *           ?format=html is the printable page, ?month=YYYY-MM, ?lang=)
+   * Only members who can open the site; PUT also needs a non-viewer role and
+   * the CSRF token (global gate). Recipients' addresses are only ever shown to
+   * members of the site's own account.
+   */
+  const reportSettingsMatch = path.match(/^\/api\/sites\/([^/]+)\/report-settings$/i);
+  const agencyReportMatch = path.match(/^\/api\/sites\/([^/]+)\/agency-report$/i);
+  if ((reportSettingsMatch && (method === "GET" || method === "PUT")) || (agencyReportMatch && method === "GET")) {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent((reportSettingsMatch || agencyReportMatch)[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+    }
+    if (!await agencyReportAvailable(env)) return json({ available: false, reason: "migration_pending" }, method === "GET" ? 200 : 503);
+    let account = null;
+    try { account = await ensureAccount(env, member.member_id); } catch { account = null; }
+    const now = Date.now();
+
+    if (reportSettingsMatch) {
+      let confirmations = null;
+      if (method === "PUT") {
+        if (member.role === "viewer") return json({ error: "forbidden" }, 403);
+        const checked = validateReportSettings(await safeJson(request));
+        if (!checked.ok) return json({ error: "invalid_settings", fields: checked.errors, invalid: checked.invalid }, 400);
+        // Only a connected site on a paid plan, or one an approved partner
+        // sets up, may switch the report on (re-checked when sending).
+        if (checked.value.enabled) {
+          const eligibility = await reportEligibility(env, site, { accountId: account?.id ?? null, now });
+          if (!eligibility.ok) return json({ error: "report_not_eligible", reason: eligibility.reason }, 409);
+        }
+        await saveReportSettings(env, site.id, checked.value, { accountId: account?.id ?? null, memberId: member.member_id, now });
+        // Double opt-in: each new address is asked to confirm by email first.
+        confirmations = await requestConfirmations(env, site, await loadReportSettings(env, site.id), {
+          accountId: account?.id ?? null, memberId: member.member_id, canManage: accountCanManageSite, now,
+        });
+        console.log("agency_report_settings_saved", JSON.stringify({ site_id: site.id, enabled: checked.value.enabled, recipients: checked.value.recipients.length, confirmations }));
+      }
+      const settings = await loadReportSettings(env, site.id);
+      const eligibility = await reportEligibility(env, site, { accountId: settings.account_id ?? account?.id ?? null, now });
+      const branding = await resolveBranding(env, site, settings, { canManage: accountCanManageSite, viewerAccountId: account?.id ?? null });
+      const own = account ? await loadBranding(env, account.id) : null;
+      const day = new Date(now).getUTCDate();
+      const sent = await lastSent(env, site.id);
+      const pendingThisMonth = day <= REPORT_SEND_LAST_DAY && sent?.month !== previousMonthKey(now);
+      const nextMonthFirst = new Date(Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth() + 1, 1)).toISOString().slice(0, 10);
+      return json({
+        available: true,
+        site_id: site.id,
+        can_edit: member.role !== "viewer",
+        settings: { enabled: settings.enabled, recipients: settings.recipients, locale: settings.locale, branding_source: settings.branding_source, consent_at: settings.consent_at },
+        opted_out: (await loadOptOuts(env, site.id)).filter((email) => settings.recipients.includes(email)),
+        recipients_status: (await recipientStatuses(env, site.id, settings.recipients)).map(({ email, status }) => ({ email, status })),
+        eligibility: { ok: eligibility.ok, reason: eligibility.reason },
+        ...(confirmations ? { confirmations } : {}),
+        last_sent: sent,
+        next_send_on: settings.enabled ? (pendingThisMonth ? new Date(now).toISOString().slice(0, 10) : nextMonthFirst) : null,
+        brand: { agency: !!branding, name: branding ? branding.display_name : "Nurevo" },
+        has_own_branding: !!own,
+        body_languages: [...REPORT_BODY_LANGS],
+        max_recipients: AGENCY_REPORT_MAX_RECIPIENTS,
+      });
+    }
+
+    const settings = await loadReportSettings(env, site.id);
+    const asked = url.searchParams.get("month") || "";
+    const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(asked) && asked <= new Date(now).toISOString().slice(0, 7) ? asked : previousMonthKey(now);
+    const brandParam = url.searchParams.get("brand");
+    const effective = brandParam === "nurevo" || brandParam === "agency" ? { ...settings, branding_source: brandParam } : settings;
+    const model = await buildSiteReport(env, site, {
+      month, locale: url.searchParams.get("lang") || settings.locale || null, settings: effective,
+      canManage: accountCanManageSite, viewerAccountId: account?.id ?? null, now,
+    });
+    const format = String(url.searchParams.get("format") || "json").toLowerCase();
+    if (format === "html") {
+      return new Response(renderAgencyReportHtml(model, { origin: "" }), {
+        status: 200,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-store",
+          "x-content-type-options": "nosniff",
+          "x-robots-tag": "noindex",
+          // No script at all; images from https (an agency's logo URL) or here.
+          "content-security-policy": "default-src 'none'; img-src 'self' https:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'",
+        },
+      });
+    }
+    if (format === "text") return new Response(renderAgencyReportText(model), { status: 200, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
+    return json({ report: model });
   }
 
   const reportMatch = path.match(/^\/api\/sites\/([^/]+)\/monthly-report$/i);
@@ -2284,6 +2500,7 @@ export async function handleApi(request, env, ctx) {
       env.DB.prepare("DELETE FROM site_settings WHERE site_id=?").bind(site.id),
       env.DB.prepare("DELETE FROM sites WHERE id=?").bind(site.id),
     ]);
+    await deleteSiteFeatureRows(env, site.id);
     return json({ ok: true, id: site.id });
   }
 
@@ -3161,34 +3378,9 @@ async function runSiteSovLocked(env, site, { trigger, deadline, clock }) {
   // Per engine per run: the most a 20-question set at 2 repetitions asks.
   const perRunMax = SOV_LIMITS.maxQuestionsPerRun * 2;
 
-  // Measure the business as its owner describes it: the canonical record is the
-  // same one wp-admin and the dashboard write, so the brand and locality used
-  // here cannot drift from what the operator entered.
-  const canonical = await loadSiteProfile(env, site.id);
-  const settings = {
-    name: canonical?.values?.name || "",
-    business_type: canonical?.values?.business_type_label || canonical?.values?.business_type_schema || "",
-    address: canonical?.values?.address || "",
-  };
-  // An online shop or B2B site is asked about its categories and services
-  // rather than its locality (sov-site-type.mjs); a local site reads nothing more.
-  const siteType = await loadSiteType(env, site.id);
-  if (siteType !== "local") {
-    settings.site_type = siteType;
-    try { settings.catalog = await loadSiteCatalog(env, site.id); } catch { settings.catalog = null; }
-  }
-  const target = sovTargetUrl(site);
-
-  let schemas = [];
-  if (target) {
-    // Published schema only fills gaps the record does not cover; it never
-    // overrides what the owner stated.
-    try { schemas = await fetchSchemaNodes(target); } catch { schemas = []; }
-  }
-
   let profile;
   try {
-    profile = buildBrandProfile({ site, settings, schemas });
+    profile = await buildSiteSovProfile(env, site);
   } catch (error) {
     if (error instanceof SovError) return { error: error.code, status: error.status, usage: budget };
     throw error;
@@ -3275,6 +3467,41 @@ async function runSiteSovLocked(env, site, { trigger, deadline, clock }) {
   if (attemptAt) await finishSovAttempt(env, site.id, attemptAt);
   const usage = await sovRemainingBudget(env, site.id);
   return { measurement, run, usage, profile, engines: plans.map(publicPlan) };
+}
+
+/**
+ * The brand profile a measurement asks about, from the site's canonical
+ * record, its type and catalogue, and its published schema. Shared by the Pro
+ * measurement and the free AI check so both ask the same kind of question.
+ * Throws SovError("brand_name_unavailable") when there is no name to look for.
+ */
+async function buildSiteSovProfile(env, site) {
+  // Measure the business as its owner describes it: the canonical record is the
+  // same one wp-admin and the dashboard write, so the brand and locality used
+  // here cannot drift from what the operator entered.
+  const canonical = await loadSiteProfile(env, site.id);
+  const settings = {
+    name: canonical?.values?.name || "",
+    business_type: canonical?.values?.business_type_label || canonical?.values?.business_type_schema || "",
+    address: canonical?.values?.address || "",
+  };
+  // An online shop or B2B site is asked about its categories and services
+  // rather than its locality (sov-site-type.mjs); a local site reads nothing more.
+  const siteType = await loadSiteType(env, site.id);
+  if (siteType !== "local") {
+    settings.site_type = siteType;
+    try { settings.catalog = await loadSiteCatalog(env, site.id); } catch { settings.catalog = null; }
+  }
+  const target = sovTargetUrl(site);
+
+  let schemas = [];
+  if (target) {
+    // Published schema only fills gaps the record does not cover; it never
+    // overrides what the owner stated.
+    try { schemas = await fetchSchemaNodes(target); } catch { schemas = []; }
+  }
+
+  return buildBrandProfile({ site, settings, schemas });
 }
 
 const MISSING_SOV_TABLE = /no such table|no such column/i;
@@ -3465,8 +3692,43 @@ export async function runSovDailyBatch(env, { limit = 200, now = Date.now(), clo
   };
 }
 
+/**
+ * The free AI check's daily batch (worker/free-ai-check.mjs), with the same
+ * profile builder as the Pro measurement. Its own cron, so it never shares the
+ * Pro batch's time budget.
+ */
+export async function runFreeAiCheckBatch(env, options = {}) {
+  return runFreeCheckBatch(env, { loadProfile: buildSiteSovProfile, ...options });
+}
+
 // Kept for callers/tests from the weekly beta; both names run the same batch.
 export const runSovWeeklyBatch = runSovDailyBatch;
+
+/**
+ * Whether an account (accounts.id) can still manage a site, the same rule the
+ * dashboard uses (loadOwnedSite): its member must be active and not a viewer.
+ * The agency report re-checks this at send time before using that account's
+ * brand, so a member who lost access cannot keep branding a client's report.
+ */
+async function accountCanManageSite(env, accountId, site) {
+  try {
+    const member = await env.DB.prepare("SELECT m.id,m.org_id,m.email,m.role,m.status FROM accounts a JOIN members m ON m.id=a.member_id WHERE a.id=? LIMIT 1").bind(accountId).first();
+    if (!member || member.status !== "active" || member.role === "viewer") return false;
+    return !!(await loadOwnedSite(env, { member_id: member.id, org_id: member.org_id, email: member.email, role: member.role, is_super_admin: false }, site.id));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The agency client reports for the previous month (agency-report.mjs), from
+ * the hourly cron: acts only on the 1st-3rd (UTC), bounded and paced per run,
+ * idempotent per site, month and recipient; skipped until 0046 or while mail
+ * is not configured.
+ */
+export async function runAgencyReportBatch(env, options = {}) {
+  return runAgencyReports(env, { canManage: accountCanManageSite, ...options });
+}
 
 function normalizeAeoPlan(value) {
   return ["standard", "pro"].includes(String(value || "").toLowerCase()) ? String(value).toLowerCase() : "free";
@@ -3505,6 +3767,39 @@ async function aeoSha256Hex(value) {
 export function hasLiveSubscription(site = {}) {
   return !!String(site?.stripe_subscription_id || "").trim()
     && !["cancelled", "canceled", "stopped"].includes(String(site?.contract || "").trim().toLowerCase());
+}
+
+/**
+ * The public on-site diagnosis of one URL, through the shared KV cache: the
+ * same result /api/aeo/score serves, unlocalised (aeoResponse(result) shape).
+ * The cache key deliberately excludes the language: one diagnosis is reused
+ * for every language, and the wording is applied on the way out. Caching per
+ * language would multiply the entries and let the first visitor's language
+ * decide what everyone else sees until it expired. Also used by the agency
+ * lead widget (agency-leadgen.mjs), which never calls a paid AI engine.
+ * Throws AeoScoreError for a URL that cannot be scored.
+ */
+/**
+ * The on-site diagnosis through the KV cache. `namespace` gives a caller its
+ * own cache entries (the agency widget passes "leadgen:<account>"): they are
+ * neither read from nor written to the shared /api/aeo/score entry, so a URL
+ * one agency's visitor checked cannot be inferred from a cache hit elsewhere.
+ */
+async function cachedAeoDiagnosis(env, raw, ctx, { fresh = false, namespace = null } = {}) {
+  const activeRuleset = await loadActiveRuleset(env);
+  const definition = rulesetDefinition(activeRuleset);
+  const schemaRules = definition.schema;
+  const rulesHash = await aeoSha256Hex(JSON.stringify(definition));
+  const scope = namespace ? `ns:${await aeoSha256Hex(String(namespace))}:` : "";
+  const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:${scope}url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
+  const cached = fresh ? null : await env.WEBMCP_KV?.get(cacheKey, "json");
+  if (cached) return { result: cached, cache: "hit" };
+  const result = await diagnoseAeoUrl(raw, { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, fresh });
+  // A fresh result is still written back, so the next ordinary visitor
+  // sees the fixed page too instead of the copy the fix replaced.
+  const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(aeoResponse(result)), { expirationTtl: AEO_CACHE_TTL_SECONDS });
+  if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
+  return { result: aeoResponse(result), cache: fresh ? "bypass" : "miss" };
 }
 
 function aeoFreshRequested(url) {
@@ -4524,6 +4819,37 @@ async function checkApiRateLimit(env, scope, value, { limit, windowMs }) {
   }
 }
 
+/**
+ * Rows of optional features that belong to a deleted site. Each table may not
+ * exist yet (its migration unapplied), so each delete stands alone and a
+ * missing table is skipped. Account- and deployment-wide ledgers are kept on
+ * purpose: the per-account free-check count ("org:<id>" rows) must not be
+ * reset by deleting and re-creating sites, and the global budget is shared.
+ */
+const SITE_FEATURE_DELETES = [
+  ["aeo_free_checks", "DELETE FROM aeo_free_checks WHERE site_id=?"],
+  ["aeo_sov_engine_usage", "DELETE FROM aeo_sov_engine_usage WHERE scope=? AND engine LIKE 'free:%'"],
+  // The agency report: settings, recipients (and their confirmations), the
+  // per-site opt-outs and the send ledger. The global suppression list
+  // (agency_report_suppressions) is per address and is kept.
+  ["agency_report_settings", "DELETE FROM agency_report_settings WHERE site_id=?"],
+  ["agency_report_recipients", "DELETE FROM agency_report_recipients WHERE site_id=?"],
+  ["agency_report_opt_outs", "DELETE FROM agency_report_opt_outs WHERE site_id=?"],
+  ["agency_report_sends", "DELETE FROM agency_report_sends WHERE site_id=?"],
+];
+
+async function deleteSiteFeatureRows(env, siteId, statements = SITE_FEATURE_DELETES) {
+  for (const [table, sql] of statements) {
+    try {
+      await env.DB.prepare(sql).bind(siteId).run();
+    } catch (error) {
+      if (!/no such table|no such column/i.test(String(error?.message || error))) {
+        console.error("site_delete_cleanup_error", JSON.stringify({ table, error: String(error?.message || error).slice(0, 120) }));
+      }
+    }
+  }
+}
+
 async function crawlerHitRateLimit(env, siteId, crawlerId) {
   return checkApiRateLimit(env, "crawler-hit", `${siteId}:${crawlerId}`, API_RATE_LIMITS.crawlerHit);
 }
@@ -4562,8 +4888,21 @@ function csrfRequired(path) {
   // /api/pair is the same shape: the plugin sends a pairing code and no
   // cookie, so a CSRF token proves nothing and the IP limiter is the defence.
   if (path === "/api/pair") return false;
+  // The free AI check's POST takes the plugin's bearer profile token (no
+  // cookie); the session form of the same POST checks the CSRF token itself.
+  if (/^\/api\/sites\/[^/]+\/sov\/free-check$/i.test(path)) return false;
   // The catalogue sync is the profile sync's twin: bearer token, no cookie.
   if (/^\/api\/sites\/[^/]+\/catalog$/i.test(path)) return false;
+  // The report unsubscribe link is posted from an email client (RFC 8058) or
+  // its own confirm page; the signed token is the authority, not a session.
+  if (path === REPORT_UNSUBSCRIBE_PATH) return false;
+  // Same for the confirmation link: the signed, expiring token decides.
+  if (path === REPORT_CONFIRM_PATH) return false;
+  // The agency lead widget posts from its own frame with no session; the
+  // signed form token, honeypot and per-IP / per-key limits protect it.
+  if (path === LEADGEN_SUBMIT_PATH) return false;
+  // The contact-address verification link: its signed, expiring token decides.
+  if (path === LEADGEN_VERIFY_PATH) return false;
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;

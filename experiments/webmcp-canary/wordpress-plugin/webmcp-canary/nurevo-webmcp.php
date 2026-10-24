@@ -34,6 +34,8 @@ define('WEBMCP_CANARY_PROFILE_OPTION', 'webmcp_canary_profile_sync');
 define('WEBMCP_CANARY_PROFILE_TTL', 10 * MINUTE_IN_SECONDS);
 define('WEBMCP_CANARY_SOV_OPTION', 'webmcp_canary_sov_state');
 define('WEBMCP_CANARY_SOV_TTL', 6 * HOUR_IN_SECONDS);
+define('WEBMCP_CANARY_FREE_CHECK_OPTION', 'webmcp_canary_free_check_state');
+define('WEBMCP_CANARY_FREE_CHECK_TTL', HOUR_IN_SECONDS);
 
 /*
  * Translations load themselves. The bundled Japanese catalogue in languages/ is
@@ -1007,6 +1009,7 @@ function webmcp_canary_settings_changed($old_value, $value) {
     delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
     // A plan change also changes whether measurement applies at all.
     delete_option(WEBMCP_CANARY_SOV_OPTION);
+    delete_option(WEBMCP_CANARY_FREE_CHECK_OPTION);
 }
 
 add_action('update_option_' . WEBMCP_CANARY_OPTION, 'webmcp_canary_store_info_changed', 20, 2);
@@ -4907,6 +4910,197 @@ function webmcp_canary_sov_page() {
     <?php
 }
 
+/* -----------------------------------------------------------------------
+ * Free AI check (Free and Standard): once a month the Nurevo service asks
+ * Perplexity a few questions a customer might ask, without the business name,
+ * and records whether the answers named the business or cited the site
+ * (worker/free-ai-check.mjs). The plugin only shows what the service returns
+ * and can ask for this month's check to run now. It never contacts Perplexity.
+ * --------------------------------------------------------------------- */
+
+function webmcp_canary_free_check_available($settings = null) {
+    $settings = is_array($settings) ? $settings : webmcp_canary_settings();
+    return $settings['plan'] !== 'pro' && $settings['site_key'] !== '' && $settings['site_id'] !== '' && webmcp_canary_has_consent();
+}
+
+/** This month's free check as the service reports it, cached for an hour. */
+function webmcp_canary_get_free_check($force_refresh = false) {
+    $settings = webmcp_canary_settings();
+    if (!webmcp_canary_free_check_available($settings)) {
+        return null;
+    }
+    $cached = get_option(WEBMCP_CANARY_FREE_CHECK_OPTION, array());
+    if (!$force_refresh && is_array($cached) && !empty($cached['data']) && !empty($cached['identity'])
+        && hash_equals(webmcp_canary_aeo_score_identity(), $cached['identity'])
+        && time() - intval($cached['saved_at'] ?? 0) < WEBMCP_CANARY_FREE_CHECK_TTL) {
+        return $cached['data'];
+    }
+    foreach (webmcp_canary_api_base_candidates() as $api_base) {
+        $url = add_query_arg(
+            array('site_key' => $settings['site_key']),
+            trailingslashit($api_base) . 'api/sites/' . rawurlencode($settings['site_id']) . '/sov/free-check'
+        );
+        $response = wp_remote_get($url, array(
+            'timeout' => WEBMCP_CANARY_HTTP_TIMEOUT,
+            'headers' => array('accept' => 'application/json'),
+        ));
+        if (is_wp_error($response)) {
+            continue;
+        }
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        if (wp_remote_retrieve_response_code($response) !== 200 || !is_array($body) || !isset($body['free_check']) || !is_array($body['free_check'])) {
+            continue;
+        }
+        webmcp_canary_store_free_check($body['free_check']);
+        return $body['free_check'];
+    }
+    return null;
+}
+
+function webmcp_canary_store_free_check($view) {
+    update_option(WEBMCP_CANARY_FREE_CHECK_OPTION, array(
+        'saved_at' => time(),
+        'identity' => webmcp_canary_aeo_score_identity(),
+        'data' => $view,
+    ), false);
+}
+
+/**
+ * Ask the service to run this month's check now. Authenticated with the
+ * profile token (the site key is public and cannot start a run). Once a month
+ * at most: the service refuses a second run and says when the next one is.
+ */
+function webmcp_canary_run_free_check() {
+    $settings = webmcp_canary_settings();
+    if (!webmcp_canary_free_check_available($settings) || !webmcp_canary_profile_sync_enabled($settings)) {
+        return false;
+    }
+    foreach (webmcp_canary_api_base_candidates() as $api_base) {
+        $response = wp_remote_post(trailingslashit($api_base) . 'api/sites/' . rawurlencode($settings['site_id']) . '/sov/free-check', array(
+            'timeout' => 90,
+            'headers' => array(
+                'accept' => 'application/json',
+                'authorization' => 'Bearer ' . $settings['profile_token'],
+            ),
+        ));
+        if (is_wp_error($response)) {
+            continue;
+        }
+        $body = json_decode(wp_remote_retrieve_body($response), true);
+        if (is_array($body) && isset($body['free_check']) && is_array($body['free_check'])) {
+            webmcp_canary_store_free_check($body['free_check']);
+            return in_array($body['outcome'] ?? '', array('done', 'failed'), true);
+        }
+    }
+    return false;
+}
+
+add_action('admin_post_webmcp_canary_free_check', 'webmcp_canary_free_check_action');
+function webmcp_canary_free_check_action() {
+    if (!current_user_can('manage_options')) {
+        wp_die(esc_html__('You do not have permission to perform this action.', 'nurevo-webmcp'));
+    }
+    check_admin_referer('webmcp_canary_free_check');
+    $ran = webmcp_canary_run_free_check();
+    $args = array('page' => 'webmcp-canary');
+    if (!$ran) {
+        $args['nurevo_free_check_error'] = '1';
+    }
+    wp_safe_redirect(add_query_arg($args, admin_url('admin.php')));
+    exit;
+}
+
+/** A YYYY-MM-DD date from the service in the site's date format. */
+function webmcp_canary_free_check_date($value) {
+    $value = (string) $value;
+    if (!preg_match('/^\d{4}-\d{2}-\d{2}/', $value)) {
+        return '—';
+    }
+    $time = strtotime(substr($value, 0, 10) . ' 00:00:00 UTC');
+    return $time ? date_i18n(get_option('date_format', 'Y-m-d'), $time, true) : substr($value, 0, 10);
+}
+
+/** The compact "Free AI check" card on the AEO screen. Returns escaped HTML. */
+function webmcp_canary_free_check_card($view) {
+    if (!is_array($view) || in_array($view['status'] ?? '', array('pro', 'not_eligible', 'disabled'), true)) {
+        return '';
+    }
+    $status = (string) ($view['status'] ?? '');
+    $next = webmcp_canary_free_check_date($view['next_check_on'] ?? '');
+    $html = '<section class="webmcp-aeo-section webmcp-free-check">';
+    $html .= '<h2>' . esc_html__('Free AI check', 'nurevo-webmcp') . '</h2>';
+    /* translators: %d: number of questions asked each month. */
+    $html .= '<p class="description">' . esc_html(sprintf(__('Once a month we ask Perplexity %d questions a customer might ask, without your business name, and show whether the answer names your business or cites your site.', 'nurevo-webmcp'), intval($view['questions_per_check'] ?? 3))) . '</p>';
+    if ($status === 'used_up') {
+        /* translators: %s: date of the next free check. */
+        $html .= '<p><strong>' . esc_html(sprintf(__('This month\'s free checks are used up. Next check on %s.', 'nurevo-webmcp'), $next)) . '</strong></p>';
+    } elseif ($status === 'done') {
+        /* translators: %s: date of the next free check. */
+        $html .= '<p>' . esc_html(sprintf(__('Next check on %s.', 'nurevo-webmcp'), $next)) . '</p>';
+    } elseif ($status === 'failed') {
+        /* translators: %s: date of the next free check. */
+        $html .= '<p><strong>' . esc_html(sprintf(__('The AI returned no answers this month, so nothing could be checked. Next check on %s.', 'nurevo-webmcp'), $next)) . '</strong></p>';
+    } elseif ($status === 'running') {
+        $html .= '<p>' . esc_html__('Checking now. Reload this page in a minute.', 'nurevo-webmcp') . '</p>';
+    } elseif ($status === 'scheduled') {
+        /* translators: %s: date this month's free check is scheduled for. */
+        $html .= '<p>' . esc_html(sprintf(__('This month\'s check is scheduled for %s.', 'nurevo-webmcp'), webmcp_canary_free_check_date($view['scheduled_on'] ?? ''))) . '</p>';
+        if (!empty($view['can_run_now']) && webmcp_canary_profile_sync_enabled()) {
+            $html .= '<form method="post" action="' . esc_url(admin_url('admin-post.php')) . '">'
+                . '<input type="hidden" name="action" value="webmcp_canary_free_check">'
+                . wp_nonce_field('webmcp_canary_free_check', '_wpnonce', true, false)
+                . '<button type="submit" class="button">' . esc_html__('Check now', 'nurevo-webmcp') . '</button> '
+                . '<span class="description">' . esc_html__('Uses this month\'s free check.', 'nurevo-webmcp') . '</span></form>';
+        }
+    } elseif ($status === 'not_connected' || $status === 'consent_required') {
+        $html .= '<p>' . esc_html__('The free check starts once this site is paired with the Nurevo dashboard.', 'nurevo-webmcp') . '</p>';
+    } else {
+        $html .= '<p>' . esc_html__('The free AI check is not available yet.', 'nurevo-webmcp') . '</p>';
+    }
+    $result = isset($view['result']) && is_array($view['result']) ? $view['result'] : null;
+    if ($result && !empty($result['questions']) && is_array($result['questions'])) {
+        /* translators: 1: answers that named or cited the business, 2: answers received. */
+        $html .= '<p><strong>' . esc_html(sprintf(__('Named or cited in %1$d of %2$d answers', 'nurevo-webmcp'), intval($result['appeared'] ?? 0), intval($result['answered'] ?? 0))) . '</strong></p><ol class="webmcp-free-check-list">';
+        foreach (array_slice($result['questions'], 0, 5) as $row) {
+            if (!is_array($row)) {
+                continue;
+            }
+            $badges = array();
+            if (empty($row['answered'])) {
+                $badges[] = __('No answer', 'nurevo-webmcp');
+            } else {
+                if (!empty($row['named'])) {
+                    $badges[] = __('Named', 'nurevo-webmcp');
+                }
+                if (!empty($row['cited'])) {
+                    $badges[] = __('Site cited', 'nurevo-webmcp');
+                }
+                if (!$badges) {
+                    $badges[] = __('Not mentioned', 'nurevo-webmcp');
+                }
+            }
+            $html .= '<li>' . esc_html((string) ($row['question'] ?? '')) . ' — <strong>' . esc_html(implode(' / ', $badges)) . '</strong>';
+            $others = array();
+            foreach (isset($row['others']) && is_array($row['others']) ? array_slice($row['others'], 0, 3) : array() as $other) {
+                if (is_array($other) && isset($other['label'])) {
+                    $others[] = (string) $other['label'];
+                }
+            }
+            if ($others) {
+                /* translators: %s: comma-separated names or domains of other businesses in the answer. */
+                $html .= '<br><span class="description">' . esc_html(sprintf(__('Also in this answer: %s', 'nurevo-webmcp'), implode(', ', $others))) . '</span>';
+            }
+            $html .= '</li>';
+        }
+        $html .= '</ol>';
+    }
+    $html .= '<p class="description">' . esc_html__('AI answers vary with the time and the model. This is a small sample of a few answers, not a rate, and it guarantees nothing about other or future answers.', 'nurevo-webmcp') . '</p>';
+    $html .= '<p>' . esc_html__('Pro tracks this every week with more questions, ChatGPT as well as Perplexity, competitor share and history.', 'nurevo-webmcp')
+        . ' <a href="https://nurevo.jp/#pro-detail" target="_blank" rel="noopener">' . esc_html__('See Pro details', 'nurevo-webmcp') . '</a></p>';
+    $html .= '</section>';
+    return $html;
+}
+
 /** Describe the "always current" state for the AEO dashboard. */
 function webmcp_canary_auto_follow_view($settings = null) {
     $settings = is_array($settings) ? $settings : webmcp_canary_settings();
@@ -5186,6 +5380,11 @@ function webmcp_canary_aeo_page() {
             <small><?php echo esc_html($alert['note']); ?></small>
         </section>
         <?php endif; ?>
+
+        <?php if (!empty($_GET['nurevo_free_check_error'])) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only. ?>
+            <div class="notice notice-warning inline"><p><?php esc_html_e('The free AI check could not be run. Please try again later.', 'nurevo-webmcp'); ?></p></div>
+        <?php endif; ?>
+        <?php echo webmcp_canary_free_check_card(webmcp_canary_get_free_check(false)); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_free_check_card() ?>
 
         <section class="webmcp-aeo-section">
             <h2><?php esc_html_e('Diagnosis checklist', 'nurevo-webmcp'); ?></h2>

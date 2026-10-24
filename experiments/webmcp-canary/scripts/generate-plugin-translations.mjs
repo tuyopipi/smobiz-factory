@@ -891,6 +891,32 @@ const JA = {
   "This is software (SaaS or an app)": "ソフトウェア（SaaS・アプリ）です",
   "WooCommerce is active, so Online shop is suggested. Change it if this site is something else.": "WooCommerceが有効なため「ECサイト」を提案しています。違う場合は変更してください。",
   "WooCommerce is active, so Online shop is suggested. Nothing changes until you save.": "WooCommerceが有効なため「ECサイト」を提案しています。保存するまで何も変わりません。",
+  // Free AI check card (Free / Standard).
+  "Free AI check": "無料AIチェック",
+  "Once a month we ask Perplexity %d questions a customer might ask, without your business name, and show whether the answer names your business or cites your site.":
+    "毎月1回、お客様がしそうな質問を%d問（お店の名前は入れずに）Perplexityに聞き、回答にお店の名前やサイトが出てくるかを表示します。",
+  "This month's free checks are used up. Next check on %s.": "今月の無料チェックは上限に達しました。次回のチェックは %s です。",
+  "Next check on %s.": "次回のチェックは %s です。",
+  "The AI returned no answers this month, so nothing could be checked. Next check on %s.":
+    "今月はAIから回答が得られず、チェックできませんでした。次回のチェックは %s です。",
+  "Checking now. Reload this page in a minute.": "チェック中です。1分ほどしてからこのページを再読み込みしてください。",
+  "This month's check is scheduled for %s.": "今月のチェックは %s の予定です。",
+  "Check now": "今すぐチェック",
+  "Uses this month's free check.": "今月の無料チェックを使います。",
+  "The free check starts once this site is paired with the Nurevo dashboard.":
+    "このサイトをNurevoダッシュボードとペアリングすると無料チェックが始まります。",
+  "The free AI check is not available yet.": "無料AIチェックはまだ利用できません。",
+  "Named or cited in %1$d of %2$d answers": "%2$d件の回答のうち%1$d件で名前または引用あり",
+  "No answer": "回答なし",
+  "Named": "名前あり",
+  "Site cited": "サイト引用あり",
+  "Not mentioned": "登場なし",
+  "Also in this answer: %s": "この回答に出てきた他のお店・サイト: %s",
+  "AI answers vary with the time and the model. This is a small sample of a few answers, not a rate, and it guarantees nothing about other or future answers.":
+    "AIの回答は実行日時やモデルで変わります。数件の回答を見た小さなサンプルで、割合ではありません。他の回答や今後の回答を保証するものではありません。",
+  "Pro tracks this every week with more questions, ChatGPT as well as Perplexity, competitor share and history.":
+    "Proなら、より多くの質問で毎週測定し、PerplexityとChatGPTの両方、競合との比較、推移まで追えます。",
+  "The free AI check could not be run. Please try again later.": "無料AIチェックを実行できませんでした。時間をおいて再度お試しください。",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo
