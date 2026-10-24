@@ -5,6 +5,7 @@ export default {
     "WordPressのAEO：サイトをAIに読ませる方法"
   ],
   "related": [
+    "local-business-schema-seo-plugins",
     "what-is-aeo",
     "appear-in-chatgpt",
     "llms-txt",

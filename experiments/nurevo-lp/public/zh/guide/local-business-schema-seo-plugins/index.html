@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>为 Yoast、Rank Math、AIOSEO 免费添加本地商家结构化数据 | Nurevo</title>
+<meta name="description" content="SEO 插件的免费版只输出名称和标志。用 Nurevo AEO 免费补上 AI 需要的地址、电话、营业时间、业态、服务和 FAQ。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="zh-Hans" href="https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="zh-Hant" href="https://nurevo.jp/zh-tw/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="ko" href="https://nurevo.jp/ko/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="es" href="https://nurevo.jp/es/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="fr" href="https://nurevo.jp/fr/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="de" href="https://nurevo.jp/de/guide/local-business-schema-seo-plugins/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/local-business-schema-seo-plugins/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="为 Yoast、Rank Math、AIOSEO 免费添加本地商家结构化数据 | Nurevo">
+<meta property="og:description" content="SEO 插件的免费版只输出名称和标志。用 Nurevo AEO 免费补上 AI 需要的地址、电话、营业时间、业态、服务和 FAQ。">
+<meta property="og:url" content="https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="zh_TW">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="de_DE">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="为 Yoast、Rank Math、AIOSEO 免费添加本地商家结构化数据 | Nurevo">
+<meta name="twitter:description" content="SEO 插件的免费版只输出名称和标志。用 Nurevo AEO 免费补上 AI 需要的地址、电话、营业时间、业态、服务和 FAQ。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","zh-Hans","zh-Hant","ko","es","fr","de"]},{"@type":"WebPage","@id":"https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/#webpage","url":"https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/","name":"为 Yoast、Rank Math、AIOSEO 免费添加本地商家结构化数据 | Nurevo","description":"SEO 插件的免费版只输出名称和标志。用 Nurevo AEO 免费补上 AI 需要的地址、电话、营业时间、业态、服务和 FAQ。","inLanguage":"zh-Hans","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://nurevo.jp/zh/"},{"@type":"ListItem","position":2,"name":"AEO Guides","item":"https://nurevo.jp/guide/"},{"@type":"ListItem","position":3,"name":"免费为 Yoast SEO、Rank Math 或 AIOSEO 添加本地商家结构化数据","item":"https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/zh/guide/local-business-schema-seo-plugins/#faq","mainEntity":[{"@type":"Question","name":"Nurevo AEO 会与 SEO 插件的结构化数据重复吗？","acceptedAnswer":{"@type":"Answer","text":"不会。使用 Yoast SEO、Rank Math 或 All in One SEO 时，它只把缺少的信息以同一个商家 @id 添加到 SEO 插件已输出的图中，绝不覆盖插件设置的值。页面始终只有一个描述一家商家的图。"}},{"@type":"Question","name":"需要删除 Yoast SEO、Rank Math 或 AIOSEO 吗？","acceptedAnswer":{"@type":"Answer","text":"不需要。SEO 插件继续负责搜索排名，Nurevo AEO 在其基础上补充 AI 需要的信息。"}},{"@type":"Question","name":"Nurevo AEO 免费吗？","acceptedAnswer":{"@type":"Answer","text":"免费。商家信息、服务、FAQ、AEO 评分、一键修复、JSON-LD、llms.txt 和 AI 爬虫规则都在免费套餐中。付费套餐只增加始终最新的规则集和 AI 曝光度测量（测试版）。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/zh/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="https://wordpress.org/plugins/nurevo-webmcp/">在 WordPress.org 获取 Nurevo AEO</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="/zh/">首页</a> <span aria-hidden="true">›</span> <a href="/guide/">AEO Guides</a> <span aria-hidden="true">›</span> <span>免费为 Yoast SEO、Rank Math 或 AIOSEO 添加本地商家结构化数据</span></nav>
+  <article>
+    <h1>免费为 Yoast SEO、Rank Math 或 AIOSEO 添加本地商家结构化数据</h1>
+    <p class="lead">SEO 插件照常使用即可。免费的 WordPress 插件 Nurevo AEO 会把 AI 描述一家本地商家所需的信息（地址、电话、营业时间、业态、服务和 FAQ）添加到 Yoast SEO、Rank Math 或 All in One SEO 已经输出的结构化数据中，不会重复输出。</p>
+<p>最后核对：2026 年 10 月。各 SEO 插件的套餐可能变化，请以各插件官方页面的当前功能为准。</p>
+<section class="qa"><h2>Yoast SEO、Rank Math、AIOSEO 免费版输出了什么</h2><p>当 AI 回答“附近周六营业的牙科诊所”这类问题时，它需要无需猜测就能读取的事实：属于什么业态、在哪里、电话多少、何时营业。在 WordPress 上，这些事实通常来自 SEO 插件的 JSON-LD。</p>
+<p>免费版会把网站输出为带有名称、URL 和标志的 Organization。大部分本地信息属于付费的本地 SEO 插件或套餐。截至 2026 年 10 月：</p><div class="table-wrap"><table><caption>截至 2026 年 10 月。SEO 插件已设置的值绝不会被覆盖。</caption><thead><tr><th scope="col">信息</th><th scope="col">免费版（2026 年 10 月）</th><th scope="col">Nurevo AEO 添加（免费）</th></tr></thead><tbody><tr><th scope="row">商家名称、URL、标志</th><td>Yoast SEO、Rank Math、AIOSEO 均以 Organization 输出</td><td>完全保留 SEO 插件的输出</td></tr><tr><th scope="row">地址、电话、营业时间</th><td>Yoast SEO 与 AIOSEO：包含在付费本地 SEO 扩展中（Yoast Local SEO、AIOSEO Local SEO）。Rank Math：在其 Local SEO 设置中填写后可输出一个地点，更多本地 SEO 功能在付费套餐中</td><td>缺少时，以同一个 @id 添加到商家节点</td></tr><tr><th scope="row">具体业态</th><td>除非由本地 SEO 功能设置，否则为 Organization</td><td>HairSalon、Dentist 等更具体的类型</td></tr><tr><th scope="row">服务</th><td>不属于 Organization 输出</td><td>你填写的服务，并关联到商家</td></tr><tr><th scope="row">FAQ</th><td>保留 SEO 插件输出的 FAQPage</td><td>在放置了 Nurevo FAQ 区块的页面，把问题添加到该页的 FAQPage</td></tr><tr><th scope="row">WebSite、WebPage、Article、面包屑</th><td>由 SEO 插件输出</td><td>不变</td></tr></tbody></table></div><p>这并非否定这些插件：它们负责搜索排名，Nurevo AEO 的设计是与它们并行工作，而不是取而代之。</p></section>
+<section class="qa"><h2>Nurevo AEO 如何补齐缺失信息而不重复</h2><p>Nurevo AEO 不会在 SEO 插件的结构化数据旁边再输出一套。它挂接各插件构建 JSON-LD 图时使用的过滤器（Yoast SEO 的 wpseo_schema_graph、Rank Math 的 rank_math/schema/validated_data、AIOSEO 的 aioseo_schema_output），只添加缺少的部分：</p><ol><li>地址、电话、营业时间、简介和邮箱以同一个 @id 添加到现有商家节点。</li><li>SEO 插件已设置的值绝不覆盖。如果你已填写 Rank Math 的 Local SEO 设置，这些值会保留。</li><li>你填写的服务会被添加并关联到商家。</li><li>你填写的 FAQ 问题只会在显示 Nurevo FAQ 区块或 [nurevo_faq] 短代码的页面上添加到该页的 FAQPage，已回答的问题会跳过。</li><li>WebSite、WebPage、Article 和面包屑保持 SEO 插件的原样输出。</li></ol><p>最终页面只有一个图、描述一家商家，没有重复。其他配置下（SEOPress、The SEO Framework、主题自带的结构化数据或未使用 SEO 插件），Nurevo AEO 会输出自己的图，并把商家信息放在已有的商家 @id 下，两者仍描述同一家商家。</p></section>
+<section class="qa"><h2>五步完成设置</h2><ol><li>从 <a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.org</a> 安装并启用 Nurevo AEO（插件 &gt; 安装插件，搜索“Nurevo AEO”）。SEO 插件保持启用。</li><li>设置向导只会打开一次。选择网站类型（本地商家、网店或 B2B），确认名称、地址、电话、营业时间和简介，并选择要向 AI 公开的内容。</li><li>检查插件根据现有设置自动填写的信息。它只填写空白字段，不会替换你输入的内容；向导会按将要发布的形式复述营业时间。</li><li>在 Nurevo AEO &gt; Settings 中填写服务和问题，并在要显示 FAQ 的页面放置 Nurevo FAQ 区块（或 [nurevo_faq]）。</li><li>打开 Nurevo AEO &gt; AEO Score，阅读诊断会发送的内容，勾选同意并点击 Run diagnosis，然后应用清单中的一键修复。</li></ol><p>想从外部查看 AI 读到了什么，可以用首页网址运行<a href="/check?lang=zh">免费的 AI 可读性检测</a>。</p></section>
+<section class="qa"><h2>免费包含的功能</h2><p>本页所述全部在免费套餐中运行，无需许可证密钥，也没有试用期：</p><ol><li>AEO 评分：0 到 100 分，带红黄绿提醒和待修复清单。</li><li>基础结构化数据、llms.txt 和 AI 爬虫访问的一键修复。</li><li>服务器端输出的 schema.org JSON-LD，不运行 JavaScript 的爬虫也能读取。</li><li>/llms.txt：由插件根据 WordPress 内容生成。</li><li>在 robots.txt 中允许 AI 搜索用于读取和引用页面的爬虫。</li><li>适用于本地商家、网店和 B2B 企业的网站类型。</li></ol><p>付费套餐只增加始终最新的规则集（Standard）和 AI 曝光度测量（Pro，测试版），本页内容都不需要它们。</p></section>
+<section class="qa"><h2>结构化数据能做什么、不能做什么</h2><p>结构化数据帮助 AI 正确读取你的信息：正确的营业时间、正确的电话、正确的业态。但它不能决定 AI 说什么。没有任何工具能保证 AI 一定会提到你，Nurevo 也不做这样的承诺。</p></section>
+    <section class="qa"><h2>FAQ</h2><h3>Nurevo AEO 会与 SEO 插件的结构化数据重复吗？</h3><p>不会。使用 Yoast SEO、Rank Math 或 All in One SEO 时，它只把缺少的信息以同一个商家 @id 添加到 SEO 插件已输出的图中，绝不覆盖插件设置的值。页面始终只有一个描述一家商家的图。</p>
+<h3>需要删除 Yoast SEO、Rank Math 或 AIOSEO 吗？</h3><p>不需要。SEO 插件继续负责搜索排名，Nurevo AEO 在其基础上补充 AI 需要的信息。</p>
+<h3>Nurevo AEO 免费吗？</h3><p>免费。商家信息、服务、FAQ、AEO 评分、一键修复、JSON-LD、llms.txt 和 AI 爬虫规则都在免费套餐中。付费套餐只增加始终最新的规则集和 AI 曝光度测量（测试版）。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>免费为 SEO 插件的结构化数据补上缺失的商家信息</h2>
+    <p>Nurevo AEO 在 WordPress.org 免费提供。不确定 AI 现在读到了什么？先做免费检测，无需注册。</p>
+    <a class="btn primary lg" href="https://wordpress.org/plugins/nurevo-webmcp/">在 WordPress.org 获取 Nurevo AEO</a>
+    <a class="btn lg" href="/check?lang=zh">免费 AI 可读性检测</a>
+  </aside>
+
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Yoast SEO 是 Yoast BV 的商标，Rank Math 是 Rank Math PVT. LTD. 的商标，All in One SEO（AIOSEO）是 Awesome Motive 的商标。Nurevo 与上述公司无隶属关系。</p><a href="/zh/">Nurevo</a> ・ <a href="/en/terms/">服务条款</a> ・ <a href="/en/privacy/">隐私政策</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
