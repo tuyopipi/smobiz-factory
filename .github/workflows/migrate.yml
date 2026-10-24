@@ -1,0 +1,55 @@
+# Apply one D1 migration file to the production database (nurevo-db).
+#
+# Manual only (Actions > Migrate D1 > Run workflow), or when Claude is asked to
+# run it. The input must name an existing file under
+# experiments/webmcp-canary/nurevo-impl/db/ shaped like 0040_name.sql; anything
+# else is refused before wrangler runs. Migrations here are additive and fail
+# at their first ALTER/CREATE if they were already applied, so a repeat run
+# cannot damage data.
+#
+# Uses the same CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID secrets as Deploy.
+# The token needs "D1: Edit" for this to work.
+name: Migrate D1
+
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: "Migration file name, e.g. 0040_partner_approval_first_customer.sql"
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: d1-migrate-production
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    defaults:
+      run:
+        working-directory: experiments/webmcp-canary
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      MIGRATION_FILE: ${{ inputs.file }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: experiments/webmcp-canary/package-lock.json
+      - name: Validate the file name
+        run: |
+          [[ "$MIGRATION_FILE" =~ ^[0-9]{4}_[a-z0-9_]+\.sql$ ]] || { echo "::error::Invalid migration file name"; exit 1; }
+          test -f "nurevo-impl/db/$MIGRATION_FILE" || { echo "::error::No such migration file"; exit 1; }
+      - name: Install (pinned wrangler from package-lock)
+        run: npm ci --no-audit --no-fund
+      - name: Apply to nurevo-db (remote)
+        run: npx wrangler d1 execute nurevo-db --remote --file "nurevo-impl/db/$MIGRATION_FILE" --yes

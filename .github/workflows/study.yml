@@ -1,0 +1,66 @@
+# Run the AEO validation study (experiments/webmcp-canary/study) with Perplexity.
+#
+# Manual only (Actions > AEO study > Run workflow), or when Claude is asked to
+# run it. Scores the sampled sites, measures them with the same Perplexity
+# adapter the Pro product uses, analyses, and uploads study/out as an artifact.
+# Budget caps (calls and USD) are enforced by the runner itself.
+#
+# Needs repository secret PERPLEXITY_API_KEY.
+name: AEO study
+
+on:
+  workflow_dispatch:
+    inputs:
+      max_calls:
+        description: "Max Perplexity calls (empty = planned total)"
+        type: string
+        default: ""
+      max_usd:
+        description: "Max spend in USD"
+        type: string
+        default: "3"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aeo-study
+  cancel-in-progress: false
+
+jobs:
+  study:
+    runs-on: ubuntu-latest
+    timeout-minutes: 150
+    defaults:
+      run:
+        working-directory: experiments/webmcp-canary
+    env:
+      PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+      MAX_CALLS: ${{ inputs.max_calls }}
+      MAX_USD: ${{ inputs.max_usd }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check inputs and secret
+        run: |
+          test -n "$PERPLEXITY_API_KEY" || { echo "::error::PERPLEXITY_API_KEY secret is missing"; exit 1; }
+          [[ -z "$MAX_CALLS" || "$MAX_CALLS" =~ ^[0-9]+$ ]] || { echo "::error::max_calls must be a number"; exit 1; }
+          [[ "$MAX_USD" =~ ^[0-9]+(\.[0-9]+)?$ ]] || { echo "::error::max_usd must be a number"; exit 1; }
+      - run: npm run test:study
+      - run: node study/run-study.mjs plan
+      - run: node study/run-study.mjs score
+      - name: Measure
+        run: |
+          ARGS=(--max-usd "$MAX_USD")
+          [ -n "$MAX_CALLS" ] && ARGS+=(--max-calls "$MAX_CALLS")
+          node study/run-study.mjs measure "${ARGS[@]}"
+      - run: node study/analyze-study.mjs
+        if: always()
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: aeo-study-out
+          path: experiments/webmcp-canary/study/out/
+          retention-days: 30
