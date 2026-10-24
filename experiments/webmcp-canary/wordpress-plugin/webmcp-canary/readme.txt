@@ -55,7 +55,7 @@ With **Yoast SEO, Rank Math or All in One SEO**, Nurevo AEO hooks the filter eac
 
 The page ends up with one graph, from your SEO plugin, describing one business.
 
-That matters because the free tiers of these plugins publish an Organization with a name, a URL and a logo, but no address, telephone or opening hours - those belong to their paid local-SEO add-ons. Those are exactly the facts an AI needs to describe a local business.
+That matters because the free tiers of these plugins usually publish an Organization with a name, a URL and a logo, but not the address, telephone or opening hours an AI needs to describe a local business. In Yoast SEO and AIOSEO those belong to paid local-SEO add-ons; Rank Math's free version can publish one location if you fill in its Local SEO settings. Nurevo AEO fills whatever is still missing, without overwriting what is already there.
 
 With **any other setup** - SEOPress, The SEO Framework, a theme's own schema, or no SEO plugin - Nurevo AEO prints its own graph at the end of `<head>`. It leaves out what your other plugins already publish and puts the business facts under their business @id, so the two describe one business rather than two.
 
