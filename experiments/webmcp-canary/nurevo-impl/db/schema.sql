@@ -97,7 +97,9 @@ CREATE TABLE IF NOT EXISTS site_settings (
   serve_schema INTEGER DEFAULT 1,      -- schema 出力 ON/OFF（同期対象外）
   allow_crawlers INTEGER DEFAULT 1,    -- AIクローラー許可 ON/OFF（同期対象外）
   updated_at INTEGER,                  -- ms。worker の受信時刻のみを刻む
-  field_sources TEXT                   -- JSON: フィールド単位の出所と時刻
+  field_sources TEXT,                  -- JSON: フィールド単位の出所と時刻
+  -- サイト種別（0044）: local（既定・NULLも local）/ ec / b2b
+  site_type TEXT CHECK (site_type IS NULL OR site_type IN ('local', 'ec', 'b2b'))
 );
 
 -- 将来：AIクローラーの実アクセス数（サーバー/CDNログ or WPプラグインから日次集計）
@@ -204,6 +206,11 @@ CREATE TABLE IF NOT EXISTS site_products (
   -- are different answers and must not collapse into a boolean.
   in_stock INTEGER CHECK (in_stock IS NULL OR in_stock IN (0, 1)),
   categories_json TEXT NOT NULL DEFAULT '[]',
+  -- 0044: only what the shop actually holds; a rating only with real reviews.
+  brand TEXT,
+  image TEXT,
+  rating_value TEXT,
+  review_count INTEGER,
   PRIMARY KEY (site_id, position)
 );
 
@@ -224,6 +231,10 @@ CREATE TABLE IF NOT EXISTS site_services (
   category TEXT,
   -- The URL the operator entered. Never derived.
   reserve_url TEXT,
+  -- 0044: B2B services - what the owner typed, never derived.
+  description TEXT,
+  url TEXT,
+  kind TEXT CHECK (kind IS NULL OR kind IN ('service', 'software')),
   PRIMARY KEY (site_id, position)
 );
 
@@ -248,6 +259,8 @@ CREATE TABLE IF NOT EXISTS site_pages (
   position INTEGER NOT NULL,
   title TEXT NOT NULL,
   url TEXT,
+  -- 0044: return_policy / shipping_policy / pricing / case_studies, or NULL.
+  role TEXT,
   PRIMARY KEY (site_id, position)
 );
 

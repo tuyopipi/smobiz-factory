@@ -71,6 +71,7 @@ function register_post_meta($type, $key, $args) { $GLOBALS['webmcp_test_post_met
 function get_the_ID() { return $GLOBALS['webmcp_test_the_id'] ?? (isset($GLOBALS['webmcp_test_queried']) && $GLOBALS['webmcp_test_queried'] ? (int) $GLOBALS['webmcp_test_queried']->ID : 0); }
 function wp_is_post_revision($post_id) { return false; }
 function checked($checked, $current = true, $echo = true) { $result = ((string) $checked === (string) $current) ? ' checked="checked"' : ''; if ($echo) { echo $result; } return $result; }
+function selected($selected, $current = true, $echo = true) { $result = ((string) $selected === (string) $current) ? ' selected="selected"' : ''; if ($echo) { echo $result; } return $result; }
 function wp_enqueue_script($handle, $src = '', $deps = array(), $ver = false, $in_footer = false) { $GLOBALS['webmcp_test_enqueued'][$handle] = array('src' => $src, 'deps' => $deps); }
 function get_post_types($args = array()) { return array('post' => 'post', 'page' => 'page', 'attachment' => 'attachment'); }
 function add_meta_box($id, $title, $callback, $screen = null, $context = 'advanced', $priority = 'default', $args = null) { $GLOBALS['webmcp_test_meta_boxes'][$screen] = array('id' => $id, 'args' => $args); }
@@ -3277,7 +3278,7 @@ foreach (webmcp_canary_wizard_site_types() as $key => $card) {
         expect(in_array($member, $known_types, true), "card {$key} only claims known types ({$member})");
     }
 }
-expect(array_keys(webmcp_canary_wizard_site_types()) === array('restaurant', 'beauty', 'clinic', 'professional', 'retail', 'lodging', 'other'), 'the seven categories, in order');
+expect(array_keys(webmcp_canary_wizard_site_types()) === array('restaurant', 'beauty', 'clinic', 'professional', 'retail', 'lodging', 'ec', 'b2b', 'other'), 'the nine categories, in order (online shop and B2B before Other)');
 expect(webmcp_canary_wizard_current_site_type(array('business_type' => 'Dentist')) === 'clinic', 'a Dentist shows as Clinic or dental');
 expect(webmcp_canary_wizard_current_site_type(array('business_type' => 'Library')) === 'other', 'an unclaimed type shows as Other');
 expect(webmcp_canary_wizard_current_site_type(array('business_type' => '')) === '', 'nothing is preselected when no type is set');
@@ -3304,7 +3305,7 @@ expect(!$bad_card['ok'] && $bad_card['error'] === 'site_type' && strpos($bad_car
 $GLOBALS['webmcp_test_active_plugins'] = array('wordpress-seo/wp-seo.php');
 ob_start(); webmcp_canary_wizard_render_step_1(webmcp_canary_settings()); $step1 = ob_get_clean();
 expect(strpos($step1, 'Yoast SEO is active. Nurevo adds only the facts missing') !== false, 'step 1 says Nurevo only fills gaps in the SEO plugin graph');
-expect(strpos($step1, '<fieldset>') !== false && strpos($step1, '<legend>') !== false && substr_count($step1, 'type="radio"') === 7, 'step 1 is a fieldset of seven radio cards');
+expect(strpos($step1, '<fieldset>') !== false && strpos($step1, '<legend>') !== false && substr_count($step1, 'type="radio"') === 9, 'step 1 is a fieldset of nine radio cards');
 expect(strpos($step1, 'id="webmcp-wizard-heading" tabindex="-1"') !== false, 'the step heading can take focus');
 $GLOBALS['webmcp_test_active_plugins'] = array();
 ob_start(); webmcp_canary_wizard_render_step_1(webmcp_canary_settings()); $step1_plain = ob_get_clean();
@@ -3637,5 +3638,121 @@ foreach (array('wp_remote_', 'update_option', 'webmcp_canary_get_aeo_score(', 's
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '0';
 expect($run('nurevo/get-business-profile')['published'] === false, 'with output off the profile says it is not published');
 $wizard_reset();
+
+
+/* ---------------- Site types: local (default), online shop, B2B ---------------- */
+{
+    $GLOBALS['webmcp_test_queried'] = null;
+    $GLOBALS['webmcp_test_front_page'] = true;
+    $GLOBALS['webmcp_test_active_plugins'] = array();
+    $GLOBALS['webmcp_test_products'] = array();
+    $base = array_merge(webmcp_canary_default_settings(), array(
+        'enabled' => '1', 'serve_schema' => '1', 'business_name' => 'Example Co', 'business_url' => 'https://example.test/',
+        'business_address' => '東京都渋谷区1-1', 'business_phone' => '03-1234-5678', 'business_hours' => 'Mo-Fr 09:00-18:00',
+    ));
+    update_option(WEBMCP_CANARY_SERVICES_OPTION, array());
+
+    // Unset is local, and a local site publishes exactly what it did.
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $base;
+    expect(webmcp_canary_site_type() === 'local' && webmcp_canary_site_type_choice() === '', 'no choice means local');
+    $local_org = webmcp_canary_own_schema_bundle()['core'][0];
+    expect($local_org['@type'] === 'LocalBusiness', 'a local site with an address stays LocalBusiness');
+    expect(isset($local_org['openingHoursSpecification']) || isset($local_org['openingHours']), 'and keeps its opening hours');
+    expect(!isset($local_org['hasMerchantReturnPolicy']) && !isset($local_org['hasOfferCatalog']), 'and gains nothing');
+    expect(webmcp_canary_typed_business_node($local_org, $base) === $local_org, 'the typed transform leaves a local node untouched');
+
+    // WooCommerce suggests an online shop, but does not choose it.
+    $GLOBALS['webmcp_test_active_plugins'] = array('woocommerce/woocommerce.php');
+    expect(webmcp_canary_suggested_site_type() === 'ec', 'WooCommerce suggests Online shop');
+    expect(webmcp_canary_site_type() === 'local', 'but the type stays local until it is saved');
+    ob_start(); webmcp_canary_site_type_field(); $field = ob_get_clean();
+    expect(strpos($field, 'value="ec" selected') !== false, 'the settings field preselects the suggestion');
+    expect(strpos($field, 'WooCommerce is active, so Online shop is suggested') !== false, 'and says why');
+
+    // Online shop: OnlineStore, no hours/geo, return policy link, OfferCatalog.
+    $GLOBALS['webmcp_test_product_terms'] = array(21 => array('Tea'));
+    $GLOBALS['webmcp_test_products'] = array(
+        new WebmcpTestProduct(array('id' => 21, 'name' => 'Sencha', 'url' => 'https://example.test/p/sencha', 'sku' => 'S1', 'price' => '1200', 'in_stock' => true)),
+        new WebmcpTestProduct(array('id' => 22, 'name' => 'Gift box', 'url' => 'https://example.test/p/gift', 'price' => '', 'in_stock' => false)),
+    );
+    $ec = array_merge($base, array('site_type' => 'ec', 'return_policy_url' => 'https://example.test/returns', 'shipping_policy_url' => 'https://example.test/shipping'));
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $ec;
+    $bundle = webmcp_canary_own_schema_bundle();
+    $org = $bundle['core'][0];
+    expect($org['@type'] === 'OnlineStore', 'an online shop is an OnlineStore');
+    foreach (array('openingHours', 'openingHoursSpecification', 'geo', 'priceRange') as $gone) {
+        expect(!isset($org[$gone]), "an online shop publishes no {$gone}");
+    }
+    expect(isset($org['address']) && isset($org['telephone']), 'an address and phone it has are still real facts and kept');
+    expect(($org['hasMerchantReturnPolicy']['merchantReturnLink'] ?? '') === 'https://example.test/returns', 'the return policy page is linked');
+    $catalog_nodes = array_values(array_filter($bundle['extra'], function ($node) { return ($node['@type'] ?? '') === 'OfferCatalog'; }));
+    expect(count($catalog_nodes) === 1 && ($org['hasOfferCatalog']['@id'] ?? '') === $catalog_nodes[0]['@id'], 'the front page carries the catalogue, referenced by the store');
+    $items = $catalog_nodes[0]['itemListElement'];
+    expect($items[0]['offers']['price'] === '1200' && $items[0]['offers']['priceCurrency'] === 'JPY' && $items[0]['offers']['availability'] === 'https://schema.org/InStock', 'a product carries price, currency and availability');
+    expect(!isset($items[1]['offers']), 'a product without a price gets no Offer');
+    expect(!isset($items[0]['aggregateRating']) && !isset($items[0]['brand']), 'no rating or brand is invented');
+    $rated = webmcp_canary_product_schema_node(array('name' => 'X', 'price' => '1', 'currency' => 'jpy', 'in_stock' => null, 'rating_value' => 4.5, 'review_count' => 3, 'brand' => 'Acme'));
+    expect($rated['aggregateRating']['reviewCount'] === 3 && $rated['brand']['name'] === 'Acme' && !isset($rated['offers']['availability']), 'a real rating and brand are published; unknown stock is not');
+    expect(!isset(webmcp_canary_product_schema_node(array('name' => 'Y', 'rating_value' => 4.5, 'review_count' => 0))['aggregateRating']), 'a rating with no reviews behind it is not');
+    $GLOBALS['webmcp_test_front_page'] = false;
+    expect(empty(array_filter(webmcp_canary_own_schema_bundle()['extra'], function ($node) { return ($node['@type'] ?? '') === 'OfferCatalog'; })), 'the catalogue is on the front page only');
+    $GLOBALS['webmcp_test_front_page'] = true;
+    $ec_llms = webmcp_canary_build_local_llms_txt();
+    expect(strpos($ec_llms, '- Returns: https://example.test/returns') !== false && strpos($ec_llms, '- Shipping: https://example.test/shipping') !== false, 'llms.txt lists the shop policies');
+    expect(strpos($ec_llms, 'Hours:') === false, 'and no opening hours');
+    $payload = webmcp_canary_catalog_payload();
+    $roles = array_values(array_filter(array_map(function ($page) { return $page['role'] ?? null; }, $payload['pages'])));
+    expect($roles === array('return_policy', 'shipping_policy'), 'the policy pages are synced with their role');
+
+    // B2B: Organization, Service / SoftwareApplication from the entered services.
+    $GLOBALS['webmcp_test_active_plugins'] = array();
+    $GLOBALS['webmcp_test_products'] = array();
+    $b2b = array_merge($base, array('site_type' => 'b2b', 'business_type' => '', 'pricing_url' => 'https://example.test/pricing'));
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $b2b;
+    webmcp_canary_save_service_entries(array(
+        array('name' => 'Payroll Cloud', 'description' => 'Payroll for SMEs.', 'url' => 'https://example.test/payroll', 'kind' => 'software', 'category' => 'BusinessApplication', 'price' => '3000', 'currency' => 'jpy'),
+        array('name' => 'Implementation support', 'description' => '', 'category' => 'Consulting'),
+    ));
+    $bundle = webmcp_canary_own_schema_bundle();
+    expect($bundle['core'][0]['@type'] === 'Organization', 'a B2B site is an Organization even with an address');
+    expect(!isset($bundle['core'][0]['openingHoursSpecification']) && !isset($bundle['core'][0]['openingHours']), 'with no opening hours');
+    $services = array_values(array_filter($bundle['extra'], function ($node) { return in_array($node['@type'] ?? '', array('Service', 'SoftwareApplication'), true); }));
+    expect(count($services) === 2 && $services[0]['@type'] === 'SoftwareApplication' && $services[1]['@type'] === 'Service', 'software is a SoftwareApplication, the rest Services');
+    expect($services[0]['description'] === 'Payroll for SMEs.' && $services[0]['url'] === 'https://example.test/payroll' && $services[0]['applicationCategory'] === 'BusinessApplication', 'with the description, page and category entered');
+    expect(!isset($services[1]['description']), 'an empty description is not published');
+    $b2b_llms = webmcp_canary_build_local_llms_txt();
+    expect(strpos($b2b_llms, '- Pricing: https://example.test/pricing') !== false && strpos($b2b_llms, 'Payroll for SMEs.') !== false, 'llms.txt lists pricing and the service descriptions');
+    $payload = webmcp_canary_catalog_payload();
+    expect($payload['services'][0]['kind'] === 'software' && $payload['services'][1]['kind'] === 'service' && $payload['services'][0]['description'] === 'Payroll for SMEs.', 'the services sync with kind and description');
+    update_option(WEBMCP_CANARY_SERVICES_OPTION, array());
+
+    // The type is sent with the profile only when chosen; a remote choice is adopted.
+    expect(webmcp_canary_sanitize_site_type_settings(array('site_type' => 'spaceship'), array())['site_type'] === '', 'an unknown type is not stored');
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($base, array('site_type' => ''));
+    webmcp_canary_apply_remote_profile(array('profile' => array(), 'site_type' => 'local'));
+    expect(webmcp_canary_settings()['site_type'] === '', 'the service default "local" does not count as a choice');
+    webmcp_canary_apply_remote_profile(array('profile' => array(), 'site_type' => 'b2b'));
+    expect(webmcp_canary_settings()['site_type'] === 'b2b', 'a type chosen in the dashboard reaches wp-admin');
+
+    // The wizard: the two new cards set the site type; every other card is local.
+    $wizard_reset();
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $base;
+    webmcp_canary_wizard_process(array('_wpnonce' => md5('webmcp_canary_wizard'), 'step' => '1', 'site_type' => 'ec'));
+    expect(webmcp_canary_settings()['site_type'] === 'ec' && webmcp_canary_settings()['business_type'] === 'OnlineStore', 'the Online shop card sets ec and OnlineStore');
+    expect(webmcp_canary_wizard_current_site_type() === 'ec', 'and shows as chosen');
+    expect(!array_key_exists('business_hours', webmcp_canary_wizard_business_fields()) && !array_key_exists('business_address', webmcp_canary_wizard_business_fields()), 'step 2 asks an online shop for no address or hours');
+    webmcp_canary_wizard_process(array('_wpnonce' => md5('webmcp_canary_wizard'), 'step' => '1', 'site_type' => 'b2b'));
+    expect(webmcp_canary_settings()['site_type'] === 'b2b' && webmcp_canary_settings()['business_type'] === 'Organization', 'the B2B card sets b2b and Organization');
+    webmcp_canary_wizard_process(array('_wpnonce' => md5('webmcp_canary_wizard'), 'step' => '1', 'site_type' => 'beauty'));
+    expect(webmcp_canary_settings()['site_type'] === 'local' && webmcp_canary_settings()['business_type'] === 'BeautySalon', 'a local card makes it local again');
+    expect(array_key_exists('business_hours', webmcp_canary_wizard_business_fields()), 'and step 2 asks for opening hours again');
+    $GLOBALS['webmcp_test_active_plugins'] = array('woocommerce/woocommerce.php');
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($base, array('site_type' => '', 'business_type' => ''));
+    ob_start(); webmcp_canary_wizard_render_step_1(webmcp_canary_settings()); $step1_wc = ob_get_clean();
+    expect(strpos($step1_wc, 'value="ec" checked') !== false && strpos($step1_wc, 'WooCommerce is active, so Online shop is suggested') !== false, 'with WooCommerce the wizard suggests Online shop');
+    $GLOBALS['webmcp_test_active_plugins'] = array();
+    $wizard_reset();
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $base;
+}
 
 echo "WordPress AEO admin tests passed\n";

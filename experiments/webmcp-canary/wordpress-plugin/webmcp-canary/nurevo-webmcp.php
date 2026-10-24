@@ -75,6 +75,13 @@ function webmcp_canary_default_settings() {
         'business_type' => '',
         'business_url' => '',
         'business_email' => '',
+        // Site type (includes/site-types.php): '' until the owner chooses,
+        // which means local. The URLs are pages the owner points at.
+        'site_type' => '',
+        'return_policy_url' => '',
+        'shipping_policy_url' => '',
+        'pricing_url' => '',
+        'case_studies_url' => '',
         'site_email' => get_option('admin_email'),
         'admin_token' => '',
         // Per-site write credential for the profile sync. Never printed publicly.
@@ -147,6 +154,11 @@ function webmcp_canary_service_entries() {
             'currency' => strtoupper(trim((string) ($entry['currency'] ?? ''))),
             'category' => trim((string) ($entry['category'] ?? '')),
             'reserve_url' => trim((string) ($entry['reserve_url'] ?? '')),
+            // B2B services (site types): a one-sentence description, the
+            // service's own page, and whether it is software.
+            'description' => trim((string) ($entry['description'] ?? '')),
+            'url' => trim((string) ($entry['url'] ?? '')),
+            'kind' => ($entry['kind'] ?? '') === 'software' ? 'software' : '',
         );
         if (count($entries) >= WEBMCP_CANARY_MAX_SERVICES) {
             break;
@@ -174,6 +186,9 @@ function webmcp_canary_save_service_entries($input) {
                 'currency' => strtoupper(sanitize_text_field((string) ($entry['currency'] ?? ''))),
                 'category' => sanitize_text_field((string) ($entry['category'] ?? '')),
                 'reserve_url' => esc_url_raw((string) ($entry['reserve_url'] ?? '')),
+                'description' => sanitize_textarea_field((string) ($entry['description'] ?? '')),
+                'url' => esc_url_raw((string) ($entry['url'] ?? '')),
+                'kind' => ($entry['kind'] ?? '') === 'software' ? 'software' : '',
             );
             if (count($clean) >= WEBMCP_CANARY_MAX_SERVICES) {
                 break;
@@ -204,16 +219,25 @@ function webmcp_canary_service_schema_nodes($page_url, $provider_id) {
     $base = rtrim((string) $page_url, '/');
     $nodes = array();
     foreach ($entries as $index => $entry) {
+        $software = ($entry['kind'] ?? '') === 'software';
         $node = array(
-            '@type' => 'Service',
+            // Software the owner marked as such is a SoftwareApplication; the
+            // rest are services.
+            '@type' => $software ? 'SoftwareApplication' : 'Service',
             // Namespaced to this plugin: a booking plugin publishing its own
             // Service some day would be a different document.
             '@id' => $base . '/#nurevo-service-' . ($index + 1),
             'name' => $entry['name'],
             'provider' => array('@id' => $provider_id),
         );
+        if (($entry['description'] ?? '') !== '') {
+            $node['description'] = $entry['description'];
+        }
+        if (($entry['url'] ?? '') !== '') {
+            $node['url'] = $entry['url'];
+        }
         if ($entry['category'] !== '') {
-            $node['category'] = $entry['category'];
+            $node[$software ? 'applicationCategory' : 'category'] = $entry['category'];
         }
         if ($entry['minutes'] > 0) {
             $node['additionalProperty'] = array(
@@ -251,8 +275,13 @@ function webmcp_canary_service_llms_line($entry) {
     $label = $entry['name'];
     if ($entry['reserve_url'] !== '') {
         $label = '[' . $entry['name'] . '](' . $entry['reserve_url'] . ')';
+    } elseif (($entry['url'] ?? '') !== '') {
+        $label = '[' . $entry['name'] . '](' . $entry['url'] . ')';
     }
     $notes = array();
+    if (($entry['description'] ?? '') !== '') {
+        $notes[] = webmcp_canary_llms_line($entry['description']);
+    }
     if ($entry['minutes'] > 0) {
         $notes[] = $entry['minutes'] . ' min';
     }
@@ -930,10 +959,11 @@ function webmcp_canary_register_settings() {
     add_settings_field('serve_llms_txt', __('Serve /llms.txt', 'nurevo-webmcp'), 'webmcp_canary_serve_llms_txt_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('serve_schema', __('Output JSON-LD schema (server-side)', 'nurevo-webmcp'), 'webmcp_canary_serve_schema_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('avoid_schema_duplicates', __('SEO plugin compatibility', 'nurevo-webmcp'), 'webmcp_canary_avoid_schema_duplicates_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('site_type', __('Site type', 'nurevo-webmcp'), 'webmcp_canary_site_type_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('business_details', __('Store / organization information', 'nurevo-webmcp'), 'webmcp_canary_business_details_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('pairing_code', __('Pairing code', 'nurevo-webmcp'), 'webmcp_canary_pairing_code_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('faq', __('Frequently asked questions', 'nurevo-webmcp'), 'webmcp_canary_faq_field', 'webmcp_canary', 'webmcp_canary_main');
-    add_settings_field('services', __('Bookable services', 'nurevo-webmcp'), 'webmcp_canary_services_field', 'webmcp_canary', 'webmcp_canary_main');
+    add_settings_field('services', webmcp_canary_is_typed_site() ? __('Services and products', 'nurevo-webmcp') : __('Bookable services', 'nurevo-webmcp'), 'webmcp_canary_services_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('license_key', __('License key', 'nurevo-webmcp'), 'webmcp_canary_license_key_field', 'webmcp_canary', 'webmcp_canary_main');
     add_settings_field('admin_display', __('Score in wp-admin', 'nurevo-webmcp'), 'webmcp_canary_admin_display_field', 'webmcp_canary', 'webmcp_canary_main');
 
@@ -994,7 +1024,9 @@ function webmcp_canary_store_info_changed($old_value, $value) {
     $old_value = is_array($old_value) ? $old_value : array();
     $value = is_array($value) ? $value : array();
     $dirty = false;
-    foreach (webmcp_canary_profile_field_map() as $option_key) {
+    // The site type and the pages it points at travel with the profile and
+    // the catalogue respectively.
+    foreach (array_merge(array_values(webmcp_canary_profile_field_map()), array('site_type', 'return_policy_url', 'shipping_policy_url', 'pricing_url', 'case_studies_url')) as $option_key) {
         if (($old_value[$option_key] ?? '') !== ($value[$option_key] ?? '')) {
             $dirty = true;
             break;
@@ -1115,7 +1147,7 @@ function webmcp_canary_sanitize_settings($input) {
         // the push is deferred to the next request rather than guessed at here.
         update_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 1, false);
     }
-    return array(
+    return array_merge(array(
         // Connecting (pairing or a licence) is an explicit request to publish,
         // so it switches output on. Before, a paired site showed "Connected" in
         // the dashboard while publishing nothing because output was still off.
@@ -1150,7 +1182,7 @@ function webmcp_canary_sanitize_settings($input) {
         'profile_token' => $profile_token,
         'show_admin_bar_score' => webmcp_canary_sanitize_display_toggle($input, $current, 'show_admin_bar_score'),
         'show_dashboard_widget' => webmcp_canary_sanitize_display_toggle($input, $current, 'show_dashboard_widget'),
-    );
+    ), webmcp_canary_sanitize_site_type_settings($input, $current));
 }
 
 /**
@@ -1476,6 +1508,9 @@ function webmcp_canary_local_business_types() {
         'SportsActivityLocation', 'ExerciseGym', 'EntertainmentBusiness', 'ChildCare',
         'EducationalOrganization', 'School', 'Library', 'TravelAgency', 'ShoppingCenter',
         'ClothingStore', 'GroceryStore', 'Pharmacy', 'PetStore', 'FurnitureStore',
+        // Organization subtypes an online shop or B2B site is published as
+        // (includes/site-types.php), so their node is recognised too.
+        'OnlineStore', 'OnlineBusiness', 'Corporation',
     );
 }
 
@@ -1838,6 +1873,11 @@ function webmcp_canary_screen_title($title, $extra = '') {
 function webmcp_canary_business_schema_type($settings = null) {
     $settings = is_array($settings) ? $settings : webmcp_canary_settings();
     $configured = isset($settings['business_type']) ? (string) $settings['business_type'] : '';
+    // An online shop is an OnlineStore and a B2B site an Organization, whatever
+    // address or phone number they also hold (includes/site-types.php).
+    if (webmcp_canary_is_typed_site($settings)) {
+        return webmcp_canary_typed_business_type(webmcp_canary_site_type($settings), preg_match('/^[A-Za-z][A-Za-z0-9]*$/', $configured) ? $configured : '');
+    }
     if (preg_match('/^[A-Za-z][A-Za-z0-9]*$/', $configured)) {
         return $configured;
     }
@@ -2432,7 +2472,7 @@ function webmcp_canary_site_id_field() {
 function webmcp_canary_services_field() {
     $entries = webmcp_canary_service_entries();
     // One spare row so there is always somewhere to type.
-    $entries[] = array('name' => '', 'minutes' => 0, 'price' => '', 'currency' => '', 'category' => '', 'reserve_url' => '');
+    $entries[] = array('name' => '', 'minutes' => 0, 'price' => '', 'currency' => '', 'category' => '', 'reserve_url' => '', 'description' => '', 'url' => '', 'kind' => '');
     echo '<fieldset id="webmcp-services">';
     foreach ($entries as $index => $entry) {
         printf(
@@ -2456,6 +2496,21 @@ function webmcp_canary_services_field() {
             esc_attr($entry['category']),
             esc_html__('Booking URL', 'nurevo-webmcp'),
             esc_attr($entry['reserve_url'])
+        );
+        // What a B2B service needs on top (site types): what it is, its page,
+        // and whether it is software.
+        printf(
+            '<p><label>%1$s<br><textarea class="large-text" rows="2" name="%2$s[services][%3$d][description]">%4$s</textarea></label></p>'
+            . '<p><label>%5$s<br><input type="url" class="regular-text" name="%2$s[services][%3$d][url]" value="%6$s"></label></p>'
+            . '<p><label><input type="checkbox" name="%2$s[services][%3$d][kind]" value="software"%7$s> %8$s</label></p>',
+            esc_html__('Description (one sentence, optional)', 'nurevo-webmcp'),
+            esc_attr(WEBMCP_CANARY_OPTION),
+            (int) $index,
+            esc_textarea((string) ($entry['description'] ?? '')),
+            esc_html__('Service page URL (optional)', 'nurevo-webmcp'),
+            esc_attr((string) ($entry['url'] ?? '')),
+            checked(($entry['kind'] ?? '') === 'software', true, false),
+            esc_html__('This is software (SaaS or an app)', 'nurevo-webmcp')
         );
     }
     echo '<p class="description">' . esc_html__('Published as Service structured data with a ReserveAction pointing at the booking URL you enter. Leave the name blank to remove a service. Save to add another row.', 'nurevo-webmcp') . '</p>';
@@ -2966,9 +3021,39 @@ function webmcp_canary_woocommerce_products($limit = null) {
             'currency' => function_exists('get_woocommerce_currency') ? (string) get_woocommerce_currency() : '',
             'in_stock' => method_exists($product, 'is_in_stock') ? (bool) $product->is_in_stock() : null,
             'categories' => webmcp_canary_woocommerce_product_categories($product),
-        );
+        ) + webmcp_canary_woocommerce_product_extras($product);
     }
     return $products;
+}
+
+/**
+ * What else WooCommerce holds about a product: its brand (the product_brand
+ * taxonomy, built into WooCommerce since 9.6), its main image, and its rating -
+ * the rating only with the number of reviews behind it, never on its own.
+ */
+function webmcp_canary_woocommerce_product_extras($product) {
+    $extras = array('brand' => '', 'image' => '', 'rating_value' => null, 'review_count' => null);
+    if (method_exists($product, 'get_id') && function_exists('taxonomy_exists') && taxonomy_exists('product_brand') && function_exists('wp_get_post_terms')) {
+        $brands = wp_get_post_terms($product->get_id(), 'product_brand', array('fields' => 'names'));
+        if (is_array($brands) && !empty($brands)) {
+            $extras['brand'] = webmcp_canary_llms_line((string) reset($brands));
+        }
+    }
+    if (method_exists($product, 'get_image_id') && function_exists('wp_get_attachment_image_url')) {
+        $image = wp_get_attachment_image_url((int) $product->get_image_id(), 'full');
+        if (is_string($image) && $image !== '') {
+            $extras['image'] = $image;
+        }
+    }
+    if (method_exists($product, 'get_review_count') && method_exists($product, 'get_average_rating')) {
+        $count = (int) $product->get_review_count();
+        $average = (float) $product->get_average_rating();
+        if ($count > 0 && $average > 0) {
+            $extras['rating_value'] = round($average, 2);
+            $extras['review_count'] = $count;
+        }
+    }
+    return $extras;
 }
 
 function webmcp_canary_woocommerce_product_categories($product) {
@@ -3095,7 +3180,9 @@ function webmcp_canary_build_local_llms_txt() {
         'URL' => $settings['business_url'] !== '' ? $settings['business_url'] : $home,
         'Address' => $settings['business_address'],
         'Phone' => $settings['business_phone'],
-        'Hours' => $settings['business_hours'],
+        // Opening hours describe a place people visit; an online shop or B2B
+        // site does not publish them (includes/site-types.php).
+        'Hours' => webmcp_canary_is_typed_site($settings) ? '' : $settings['business_hours'],
         'Email' => $settings['business_email'],
         'Type' => $settings['business_type'],
     );
@@ -3106,6 +3193,9 @@ function webmcp_canary_build_local_llms_txt() {
             $details[] = '- ' . $label . ': ' . $value;
         }
     }
+    // Online shop / B2B: the pages the owner pointed at (returns, shipping,
+    // pricing, case studies). Nothing for a local site.
+    $details = array_merge($details, webmcp_canary_site_role_llms_lines($settings));
     if (!empty($details)) {
         $lines[] = '## Key facts';
         $lines[] = '';
@@ -4299,6 +4389,15 @@ function webmcp_canary_apply_remote_profile($remote) {
         $settings[$option_key] = $value;
         $changed[] = $option_key;
     }
+    // A type chosen in the dashboard reaches wp-admin here. "local" is also what
+    // the service reports for a site nobody has typed yet, so it is adopted
+    // only over a choice already made here, never over "not chosen".
+    if (isset($remote['site_type']) && in_array($remote['site_type'], array('local', 'ec', 'b2b'), true)
+        && $remote['site_type'] !== (string) ($settings['site_type'] ?? '')
+        && ($remote['site_type'] !== 'local' || (string) ($settings['site_type'] ?? '') !== '')) {
+        $settings['site_type'] = $remote['site_type'];
+        $changed[] = 'site_type';
+    }
     if (!empty($changed)) {
         update_option(WEBMCP_CANARY_OPTION, $settings);
         // The diagnosis describes published output, so re-run it after a change.
@@ -4378,6 +4477,10 @@ function webmcp_canary_catalog_payload() {
             'currency' => $product['currency'],
             'in_stock' => $product['in_stock'],
             'categories' => $product['categories'],
+            'brand' => $product['brand'] ?? '',
+            'image' => $product['image'] ?? '',
+            'rating_value' => $product['rating_value'] ?? null,
+            'review_count' => $product['review_count'] ?? null,
         );
     }
 
@@ -4390,6 +4493,9 @@ function webmcp_canary_catalog_payload() {
             'currency' => $service['currency'],
             'category' => $service['category'],
             'reserve_url' => $service['reserve_url'],
+            'description' => $service['description'],
+            'url' => $service['url'],
+            'kind' => $service['kind'] === 'software' ? 'software' : 'service',
         );
     }
 
@@ -4402,11 +4508,23 @@ function webmcp_canary_catalog_payload() {
         'products' => $products,
         'services' => $services,
         'faqs' => $faqs,
-        'pages' => webmcp_canary_catalog_pages(),
+        // The pages the owner pointed at (return policy, pricing ...) first,
+        // marked with their role, then the recently updated pages.
+        'pages' => array_merge(webmcp_canary_catalog_role_pages(), webmcp_canary_catalog_pages()),
         // Named so the service can tell a shop with no products from a site with
         // no shop at all.
         'product_source' => webmcp_canary_woocommerce_active() ? 'woocommerce' : 'none',
     );
+}
+
+/** The site-type pages as catalogue rows: {title, url, role}. */
+function webmcp_canary_catalog_role_pages() {
+    $labels = webmcp_canary_site_role_labels();
+    $rows = array();
+    foreach (webmcp_canary_site_role_pages() as $role => $url) {
+        $rows[] = array('title' => $labels[$role], 'url' => $url, 'role' => $role);
+    }
+    return $rows;
 }
 
 /** The published pages worth telling a model about. */
@@ -4494,7 +4612,14 @@ function webmcp_canary_push_catalog() {
 }
 
 function webmcp_canary_push_profile() {
-    $result = webmcp_canary_profile_request('PUT', webmcp_canary_local_profile());
+    $body = webmcp_canary_local_profile();
+    // Only a type the owner chose is sent; an unset one leaves the service's
+    // value (which may have been chosen in the dashboard) alone.
+    $site_type = webmcp_canary_site_type_choice();
+    if ($site_type !== '') {
+        $body['site_type'] = $site_type;
+    }
+    $result = webmcp_canary_profile_request('PUT', $body);
     if (is_wp_error($result)) {
         $state = webmcp_canary_profile_state();
         $state['pending'] = true;
@@ -5090,6 +5215,18 @@ function webmcp_canary_aeo_page() {
                                     <?php endforeach; ?>
                                 </details>
                             <?php endif; ?>
+                            <?php if (!empty($check['requirements']) && is_array($check['requirements'])) : ?>
+                                <details open>
+                                    <summary><?php
+                                    /* translators: 1: requirements met, 2: requirements checked. Online shop / B2B sites only. */
+                                    echo esc_html(sprintf(__('Site requirements for this site type: %1$d/%2$d', 'nurevo-webmcp'), count(array_filter($check['requirements'], function ($item) { return !empty($item['present']); })), count($check['requirements'])));
+                                    ?></summary>
+                                    <?php foreach ($check['requirements'] as $requirement) : ?>
+                                        <p><?php echo esc_html((!empty($requirement['present']) ? '✓ ' : '✗ ') . (string) ($requirement['label'] ?? $requirement['id'] ?? '')); ?>
+                                        <?php if (empty($requirement['present']) && !empty($requirement['howTo'])) : ?><br><?php echo esc_html((string) $requirement['howTo']); ?><?php endif; ?></p>
+                                    <?php endforeach; ?>
+                                </details>
+                            <?php endif; ?>
                             <?php foreach (isset($check['hints']) && is_array($check['hints']) ? $check['hints'] : array() as $hint) : ?><p><?php echo esc_html($hint); ?></p><?php endforeach; ?>
                             <?php if ($action && !empty($action['hint'])) : ?>
                                 <p class="webmcp-aeo-howto"><?php echo esc_html($action['hint']); ?></p>
@@ -5479,6 +5616,7 @@ function webmcp_canary_exportable_setting_keys() {
         'faq_page_id', 'business_name', 'business_description', 'business_address', 'business_phone',
         'business_hours', 'business_type', 'business_url', 'business_email',
         'show_admin_bar_score', 'show_dashboard_widget',
+        'site_type', 'return_policy_url', 'shipping_policy_url', 'pricing_url', 'case_studies_url',
     );
 }
 
@@ -6092,6 +6230,9 @@ function webmcp_canary_own_schema_bundle() {
     } else {
         $org = webmcp_canary_normalize_business_facts($org, $settings);
     }
+    // Online shop / B2B: OnlineStore or Organization, no opening hours or geo,
+    // and a shop's return policy link. A local node is unchanged.
+    $org = webmcp_canary_typed_business_node($org, $settings);
     /** Filter: the business node, before coexistence and merging. See docs/developers.md. */
     $filtered_org = apply_filters('webmcp_canary_business_node', $org, $settings);
     if (is_array($filtered_org) && !empty($filtered_org)) {
@@ -6184,6 +6325,17 @@ function webmcp_canary_own_schema_bundle() {
     if ($on_services_page) {
         foreach (webmcp_canary_service_schema_nodes($faq_page_id > 0 ? get_permalink(get_queried_object()) : $site_url, $org_id) as $service_node) {
             $extra[] = $service_node;
+        }
+    }
+
+    // An online shop lists its catalogue on the front page (product pages carry
+    // WooCommerce's own Product markup, which is not repeated).
+    if (webmcp_canary_site_type($settings) === 'ec' && (is_front_page() || is_home())) {
+        $catalog_node = webmcp_canary_offer_catalog_node($site_url);
+        if ($catalog_node !== null) {
+            $extra[] = $catalog_node;
+            $org['hasOfferCatalog'] = array('@id' => $catalog_node['@id']);
+            $graph[0] = $org;
         }
     }
 
@@ -6759,6 +6911,7 @@ function webmcp_canary_central_business_node($local, $settings, $delivery) {
 }
 
 /* Read-only REST route, abilities, the setup wizard and WP-CLI commands, kept in their own files. */
+require_once __DIR__ . '/includes/site-types.php';
 require_once __DIR__ . '/includes/rest.php';
 require_once __DIR__ . '/includes/abilities.php';
 require_once __DIR__ . '/includes/setup-wizard.php';

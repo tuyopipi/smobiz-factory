@@ -72,6 +72,7 @@
 
 import { rowToProfile, parseFieldSources } from "./site-profile.mjs";
 import { resolveSitePlan, resolveSitePlanFor } from "./billing-plan.mjs";
+import { normalizeSiteType } from "./site-types.mjs";
 
 export const OFFSITE_AUDIT_VERSION = 1;
 
@@ -578,7 +579,9 @@ const q = (text) => encodeURIComponent(String(text || "").trim());
  * to compare. Built from our own profile only; nothing here fetches a page.
  * `applies` is true, or "if_applicable" when the business type is not known.
  */
-export function manualChecklist(profile = {}) {
+export function manualChecklist(profile = {}, { siteType = "local" } = {}) {
+  const type = normalizeSiteType(siteType);
+  if (type !== "local") return typedChecklist(profile, type);
   const family = businessFamily(profile);
   const query = [profile.name, profile.address].filter(Boolean).join(" ");
   const nap = ["name", "address", "phone", "hours"];
@@ -625,6 +628,48 @@ export function manualChecklist(profile = {}) {
     },
   ];
   return items.filter((item) => item.applies !== false).map((item) => ({ kind: "manual", status: "manual_check", ...item }));
+}
+
+/**
+ * Where an online shop or a B2B company is described off its own site.
+ *
+ * Map listings answer "where is it and when is it open", which an online shop
+ * or a software company is rarely asked. What AI assistants read about them
+ * instead is the marketplaces the shop also sells on, its product feed, and
+ * the review and company directories buyers compare vendors on. None of these
+ * is read automatically: marketplace and Merchant Center data needs the
+ * seller's own login, and the directories offer no API for this use. Links
+ * use a site search where a directory's own search address is not public.
+ */
+function typedChecklist(profile, type) {
+  const name = String(profile.name || "").trim();
+  const site = (domain) => `https://www.google.com/search?q=${q(`site:${domain} ${name}`)}`;
+  const items = type === "ec" ? [
+    { id: "rakuten", why_manual: "seller_auth", verify: ["name", "price", "stock", "policies"],
+      links: { check: `https://search.rakuten.co.jp/search/mall/${q(name)}/`, manage: "https://glogin.rms.rakuten.co.jp/" }, steps: ["mp_search", "mp_edit"] },
+    { id: "amazon", why_manual: "seller_auth", verify: ["name", "price", "stock", "policies"],
+      links: { check: `https://www.amazon.co.jp/s?k=${q(name)}`, manage: "https://sellercentral.amazon.co.jp/" }, steps: ["mp_search", "mp_edit"] },
+    { id: "yahoo_shopping", why_manual: "seller_auth", verify: ["name", "price", "stock", "policies"],
+      links: { check: `https://shopping.yahoo.co.jp/search?p=${q(name)}`, manage: "https://pro.store.yahoo.co.jp/" }, steps: ["mp_search", "mp_edit"] },
+    { id: "merchant_center", why_manual: "seller_auth", verify: ["name", "website", "price", "stock", "policies"],
+      links: { check: "https://merchants.google.com/", manage: "https://merchants.google.com/" }, steps: ["gmc_check", "gmc_policies"] },
+  ] : [
+    { id: "itreview", why_manual: "no_api", verify: ["name", "website", "description", "category"],
+      links: { check: site("itreview.jp"), manage: "https://www.itreview.jp/" }, steps: ["review_search", "review_claim"] },
+    { id: "boxil", why_manual: "no_api", verify: ["name", "website", "description", "category"],
+      links: { check: site("boxil.jp"), manage: "https://boxil.jp/" }, steps: ["review_search", "review_claim"] },
+    { id: "g2", why_manual: "no_api", verify: ["name", "website", "description", "category"],
+      links: { check: site("g2.com"), manage: "https://sell.g2.com/" }, steps: ["review_search", "review_claim"] },
+    { id: "capterra", why_manual: "no_api", verify: ["name", "website", "description", "category"],
+      links: { check: site("capterra.com"), manage: "https://vendors.capterra.com/" }, steps: ["review_search", "review_claim"] },
+    { id: "linkedin", why_manual: "owner_auth", verify: ["name", "website", "description", "category"],
+      links: { check: site("linkedin.com/company"), manage: "https://www.linkedin.com/company/setup/new/" }, steps: ["li_page"] },
+    { id: "crunchbase", why_manual: "no_api", verify: ["name", "website", "description"],
+      links: { check: site("crunchbase.com/organization"), manage: "https://www.crunchbase.com/" }, steps: ["profile_check"] },
+    { id: "wantedly", why_manual: "owner_auth", verify: ["name", "website", "description"],
+      links: { check: site("wantedly.com/companies"), manage: "https://admin.wantedly.com/" }, steps: ["profile_check"] },
+  ];
+  return items.map((item) => ({ kind: "manual", status: "manual_check", applies: true, ...item }));
 }
 
 /* ------------------------------------------------------------------ *
@@ -879,7 +924,8 @@ export async function loadAuditProfile(env, siteId) {
     env.DB.prepare("SELECT id,website_uri,place_id FROM sites WHERE id=? LIMIT 1").bind(siteId).first(),
   ]);
   if (!site) return null;
-  return { values: rowToProfile(settings || {}, site), sources: parseFieldSources(settings?.field_sources), placeId: site.place_id || null };
+  return { values: rowToProfile(settings || {}, site), sources: parseFieldSources(settings?.field_sources), placeId: site.place_id || null,
+    siteType: normalizeSiteType(settings?.site_type) };
 }
 
 /** The part of our profile shown next to the result (our own data, safe to keep showing). */
@@ -953,27 +999,32 @@ async function auditGoogle(env, siteId, profile, sources, { fetchImpl, now, pin,
 export async function runOffsiteAudit(env, siteId, { trigger = "manual", pin = null, fetchImpl = fetch, now = Date.now(), googleCap = Infinity } = {}) {
   const loaded = await loadAuditProfile(env, siteId);
   if (!loaded) return { error: "not_found" };
-  const { values, sources, placeId } = loaded;
-  const google = await auditGoogle(env, siteId, values, sources, { fetchImpl, now, pin, knownPlaceId: placeId, googleCap });
+  const { values, sources, placeId, siteType } = loaded;
+  // The Google Maps comparison is for businesses people visit. An online shop
+  // or B2B site gets its own checklist and no Places call at all.
+  const google = siteType === "local"
+    ? await auditGoogle(env, siteId, values, sources, { fetchImpl, now, pin, knownPlaceId: placeId, googleCap })
+    : { id: "google", kind: "api", status: "not_applicable" };
   const result = {
     version: OFFSITE_AUDIT_VERSION,
     ran_at: now,
     trigger,
     profile: profileSummary(values),
     sources: [google],
-    manual: manualChecklist(values),
+    manual: manualChecklist(values, { siteType }),
     summary: summarize([google]),
+    ...(siteType !== "local" ? { site_type: siteType } : {}),
   };
   // A run that called nothing (daily ceiling) says nothing new: not stored, so
   // the previous outcome stays on the card and the cron retries the site
   // tomorrow. A scheduled run that failed is likewise retried, not stored.
-  const store = google.status !== "rate_limited" && !(trigger === "scheduled" && google.status === "error");
+  const store = google.status !== "rate_limited" && google.status !== "not_applicable" && !(trigger === "scheduled" && google.status === "error");
   result.id = store ? await saveAudit(env, siteId, result, trigger, now) : null;
   return result;
 }
 
 /** Runs that made no useful Places call; their allowance is given back. */
-const UNSPENT = new Set(["rate_limited", "error", "skipped"]);
+const UNSPENT = new Set(["rate_limited", "error", "skipped", "not_applicable"]);
 
 function summarize(sources) {
   const counts = {};
@@ -1033,6 +1084,8 @@ export async function runOffsiteAuditScheduled(env, { now = Date.now(), fetchImp
     try {
       const result = await runOffsiteAudit(env, site.id, { trigger: "scheduled", fetchImpl, now, googleCap });
       if (result.sources?.some((s) => s.status === "rate_limited")) { stopped = "budget"; break; }
+      // An online shop / B2B site has nothing to check automatically.
+      if (result.sources?.every((s) => s.status === "not_applicable")) continue;
       audited += 1;
     } catch (error) {
       errors.push({ site_id: site.id, error: String(error?.message || error).slice(0, 120) });
@@ -1057,8 +1110,11 @@ export async function offsiteAuditView(env, site, { now = Date.now() } = {}) {
     available,
     configured: sourceStatus(env),
     profile: profileSummary(values),
+    // local (default) / ec / b2b: the dashboard shows the Google Maps section
+    // and the store-information block only for a local site.
+    site_type: loaded?.siteType || "local",
     latest: available ? await loadLatestAudit(env, site.id) : null,
-    checklist: manualChecklist(values),
+    checklist: manualChecklist(values, { siteType: loaded?.siteType }),
     allowance: available ? await manualAllowance(env, site.id, plan, now) : { allowed: false, reason: "unavailable" },
     schedule: plan === "standard" || plan === "pro" ? "weekly" : "manual_monthly",
   };
@@ -1074,6 +1130,13 @@ export async function offsiteAuditView(env, site, { now = Date.now() } = {}) {
 export async function offsiteAuditRun(env, site, body = {}, { now = Date.now(), fetchImpl = fetch } = {}) {
   if (!await offsiteAuditAvailable(env)) return { status: 503, body: { error: "offsite_audit_unavailable" } };
   const plan = await resolveSitePlanFor(env, site);
+  // Nothing is fetched for an online shop / B2B site, so nothing is reserved:
+  // the answer is the checklist.
+  const typed = await loadAuditProfile(env, site.id);
+  if (typed && typed.siteType !== "local") {
+    const result = await runOffsiteAudit(env, site.id, { trigger: "manual", fetchImpl, now });
+    return { status: 200, body: { result, allowance: await manualAllowance(env, site.id, plan, now), configured: sourceStatus(env) } };
+  }
   let pin = null;
   let trigger = "manual";
   let followupOf = null;

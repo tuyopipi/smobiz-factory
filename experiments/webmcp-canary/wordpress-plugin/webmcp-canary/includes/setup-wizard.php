@@ -83,6 +83,10 @@ function webmcp_canary_wizard_site_configured($settings = null) {
     if (trim((string) ($settings['site_key'] ?? '')) !== '') {
         return true;
     }
+    // An online shop or B2B site has no address to require.
+    if (in_array((string) ($settings['site_type'] ?? ''), array('ec', 'b2b'), true)) {
+        return trim((string) ($settings['business_name'] ?? '')) !== '';
+    }
     return trim((string) ($settings['business_name'] ?? '')) !== ''
         && trim((string) ($settings['business_address'] ?? '')) !== '';
 }
@@ -390,6 +394,22 @@ function webmcp_canary_wizard_site_types() {
             'type' => 'LodgingBusiness',
             'family' => array('LodgingBusiness', 'Hotel'),
         ),
+        // Not local businesses: these two set the site type as well
+        // (includes/site-types.php). No address or opening hours are needed.
+        'ec' => array(
+            'label' => __('Online shop (EC)', 'nurevo-webmcp'),
+            'hint' => __('Sells online, with WooCommerce or another cart', 'nurevo-webmcp'),
+            'type' => 'OnlineStore',
+            'family' => array('OnlineStore', 'OnlineBusiness'),
+            'site_type' => 'ec',
+        ),
+        'b2b' => array(
+            'label' => __('B2B / SaaS', 'nurevo-webmcp'),
+            'hint' => __('Software, SaaS and services sold to companies', 'nurevo-webmcp'),
+            'type' => 'Organization',
+            'family' => array('Corporation'),
+            'site_type' => 'b2b',
+        ),
         'other' => array(
             'label' => __('Other', 'nurevo-webmcp'),
             'hint' => __('Any other business or organization', 'nurevo-webmcp'),
@@ -402,6 +422,11 @@ function webmcp_canary_wizard_site_types() {
 /** The card the current business_type belongs to, or '' when none is set. */
 function webmcp_canary_wizard_current_site_type($settings = null) {
     $settings = is_array($settings) ? $settings : webmcp_canary_settings();
+    // A chosen online shop / B2B site type decides the card on its own.
+    $site_type = (string) ($settings['site_type'] ?? '');
+    if ($site_type === 'ec' || $site_type === 'b2b') {
+        return $site_type;
+    }
     $type = (string) ($settings['business_type'] ?? '');
     if ($type === '') {
         return '';
@@ -421,6 +446,11 @@ function webmcp_canary_wizard_business_type_for($card_key, $current_type) {
         return null;
     }
     $current_type = (string) $current_type;
+    if (!empty($cards[$card_key]['site_type'])) {
+        // Keep the owner's own Organization subtype when it suits the site type.
+        $kept = webmcp_canary_typed_business_type($cards[$card_key]['site_type'], $current_type);
+        return $kept === $current_type && $current_type !== '' ? $current_type : $cards[$card_key]['type'];
+    }
     if ($card_key === 'other') {
         // Keep a type of the owner's own that no card claims; otherwise none.
         return webmcp_canary_wizard_current_site_type(array('business_type' => $current_type)) === 'other' ? $current_type : '';
@@ -428,8 +458,20 @@ function webmcp_canary_wizard_business_type_for($card_key, $current_type) {
     return in_array($current_type, $cards[$card_key]['family'], true) ? $current_type : $cards[$card_key]['type'];
 }
 
-/** The business fields on step 2, in order. */
-function webmcp_canary_wizard_business_fields() {
+/**
+ * The business fields on step 2, in order. An online shop or B2B site is not
+ * asked for an address or opening hours (they stay editable in Settings).
+ */
+function webmcp_canary_wizard_business_fields($settings = null) {
+    $settings = is_array($settings) ? $settings : webmcp_canary_settings();
+    if (webmcp_canary_is_typed_site($settings)) {
+        return array(
+            'business_name' => array('label' => __('Business name', 'nurevo-webmcp'), 'kind' => 'text'),
+            'business_description' => array('label' => __('Description', 'nurevo-webmcp'), 'kind' => 'textarea'),
+            'business_email' => array('label' => __('Contact email', 'nurevo-webmcp'), 'kind' => 'text'),
+            'business_phone' => array('label' => __('Phone', 'nurevo-webmcp'), 'kind' => 'tel'),
+        );
+    }
     return array(
         'business_name' => array('label' => __('Business name', 'nurevo-webmcp'), 'kind' => 'text'),
         'business_address' => array('label' => __('Address', 'nurevo-webmcp'), 'kind' => 'text'),
@@ -451,7 +493,7 @@ function webmcp_canary_wizard_prefill($settings = null) {
         'business_description' => (string) get_option('blogdescription', ''),
     );
     $values = array();
-    foreach (array_keys(webmcp_canary_wizard_business_fields()) as $field) {
+    foreach (array_keys(webmcp_canary_wizard_business_fields($settings)) as $field) {
         $saved = trim((string) ($settings[$field] ?? ''));
         if ($saved !== '') {
             $values[$field] = array('value' => $saved, 'source' => 'saved');
@@ -566,10 +608,16 @@ function webmcp_canary_wizard_process($post) {
         if ($type === null) {
             return array('ok' => false, 'error' => 'site_type', 'redirect' => webmcp_canary_wizard_url(1, array('nurevo_error' => 'site_type')));
         }
-        webmcp_canary_wizard_save_settings(array('business_type' => $type));
+        $cards = webmcp_canary_wizard_site_types();
+        // Every card is a choice of site type: the online shop and B2B cards
+        // their own, every other card a local business.
+        webmcp_canary_wizard_save_settings(array(
+            'business_type' => $type,
+            'site_type' => !empty($cards[$card]['site_type']) ? $cards[$card]['site_type'] : 'local',
+        ));
     } elseif ($step === 2) {
         $changes = array();
-        foreach (array_keys(webmcp_canary_wizard_business_fields()) as $field) {
+        foreach (array_keys(webmcp_canary_wizard_business_fields($settings)) as $field) {
             if (isset($post[$field])) {
                 $changes[$field] = (string) $post[$field];
             }
@@ -711,6 +759,11 @@ function webmcp_canary_wizard_heading($text) {
 
 function webmcp_canary_wizard_render_step_1($settings) {
     $current = webmcp_canary_wizard_current_site_type($settings);
+    // WooCommerce suggests an online shop when nothing is chosen yet.
+    $suggested = $current === '' && webmcp_canary_suggested_site_type($settings) === 'ec';
+    if ($suggested) {
+        $current = 'ec';
+    }
     webmcp_canary_wizard_heading(__('What kind of business is this site for?', 'nurevo-webmcp'));
     echo '<p class="webmcp-wizard-lead">' . esc_html__('This sets the schema.org type AI reads your business as. You can refine it later in Settings.', 'nurevo-webmcp') . '</p>';
     webmcp_canary_wizard_form_open(1);
@@ -726,6 +779,9 @@ function webmcp_canary_wizard_render_step_1($settings) {
         );
     }
     echo '</div></fieldset>';
+    if ($suggested) {
+        echo '<p class="webmcp-wizard-note">' . esc_html__('WooCommerce is active, so Online shop is suggested. Change it if this site is something else.', 'nurevo-webmcp') . '</p>';
+    }
     $seo = webmcp_canary_detect_active_seo_plugins();
     if (!empty($seo)) {
         echo '<p class="webmcp-wizard-note">' . esc_html(sprintf(
@@ -751,7 +807,7 @@ function webmcp_canary_wizard_render_step_2($settings) {
     }
     webmcp_canary_wizard_form_open(2);
     echo '<fieldset><legend>' . esc_html__('Business information', 'nurevo-webmcp') . '</legend>';
-    foreach (webmcp_canary_wizard_business_fields() as $field => $definition) {
+    foreach (webmcp_canary_wizard_business_fields($settings) as $field => $definition) {
         $entry = $values[$field];
         $id = 'webmcp-wizard-' . str_replace('_', '-', $field);
         $is_missing = $entry['value'] === '';
