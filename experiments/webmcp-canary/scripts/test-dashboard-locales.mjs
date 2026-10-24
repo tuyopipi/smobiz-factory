@@ -205,13 +205,19 @@ function boot({ storage = {}, languages, files } = {}) {
   assert.equal(two.get("t")("summary"), localeFile("tw").summary, "Hong Kong reads Taiwan's words");
 }
 {
-  // A locale with no file yet (the 35 awaiting translation) is English, key by key, with no raw keys.
-  const app = boot({ storage: { "nrv-dash-lang": "pt_BR" } });
+  // A locale whose file is missing (404) is English, key by key, with no raw keys.
+  const app = boot({ storage: { "nrv-dash-lang": "pt_BR" }, files: {} });
   await app.sandbox.nrvI18n.ready();
   assert.deepEqual(app.fetched, ["pt_BR"]);
   const { I } = inlineDictionary();
   for (const k of Object.keys(I.en)) assert.equal(app.get("t")(k), I.en[k], `pt_BR.${k} falls back to English`);
   assert.equal(app.get("tf")("plProHead", { buy: "X", usd: 40 }), I.en.plProHead.replace("{buy}", "X").replace("{usd}", "40"), "US prices, as in English");
+}
+{
+  // Every shipped translation is used as is (no English fallback for a translated key).
+  const app = boot({ storage: { "nrv-dash-lang": "pt_BR" } });
+  await app.sandbox.nrvI18n.ready();
+  assert.equal(app.get("t")("summary"), localeFile("pt_BR").summary, "pt_BR reads its own file");
 }
 {
   // A partial file: what it has is used, the rest is English. Junk values are ignored.
