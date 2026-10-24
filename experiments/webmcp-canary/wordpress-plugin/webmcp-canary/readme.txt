@@ -1,6 +1,6 @@
-=== Nurevo AEO ===
+=== Nurevo AEO – AI Search Optimization (AEO/GEO), llms.txt & Schema ===
 Contributors: tuyopon
-Tags: aeo, ai-search, schema, structured-data, llms-txt
+Tags: aeo, geo, ai seo, llms.txt, schema
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -8,13 +8,25 @@ Stable tag: 0.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Be read correctly by AI search. Diagnose AI readability and publish schema.org structured data, llms.txt and AI crawler rules, free.
+Get found and cited by ChatGPT, Perplexity and Google AI. Free AEO score, llms.txt and schema for local businesses, online shops and B2B.
 
 == Description ==
 
-Nurevo AEO prepares your WordPress site for AEO (Answer Engine Optimization): being found, read and quoted correctly by AI search services such as ChatGPT, Perplexity, Google AI Overviews, Gemini and Claude.
+When people ask ChatGPT, Perplexity, Google AI Overviews, Gemini or Claude for a business like yours, the answer is built from what those AIs can read about you. Nurevo AEO makes sure they can read your facts correctly: who you are, what you sell, where you are and how to reach you.
 
-Those crawlers usually read raw HTML without running JavaScript. Anything meant for them therefore has to be rendered server-side. Nurevo AEO does that rendering, and tells you what is still missing.
+This is AEO (Answer Engine Optimization), also called GEO (Generative Engine Optimization). Nurevo AEO checks your site, tells you what is missing, and publishes the missing pieces in the formats AI crawlers read: schema.org structured data, llms.txt and AI crawler rules. All of it is rendered on your own server, so crawlers that never run JavaScript still see it.
+
+**Built for three kinds of sites**
+
+* **Local businesses** – shops, salons, clinics, restaurants, hotels and offices: address, phone, opening hours, services and FAQ.
+* **Online shops** – an OnlineStore with your product catalogue, prices and stock where known, and your return policy. Works with WooCommerce without duplicating its product markup.
+* **B2B, SaaS and professional services** – an Organization with the services or software you offer, plus your pricing, case study and FAQ pages in llms.txt.
+
+**Keep your SEO plugin.** Nurevo AEO adds the facts Yoast SEO, Rank Math or All in One SEO leave out, inside the structured data they already publish. One graph, one business, no duplicates.
+
+**In your language.** The plugin and its dashboard are available in 59 locales.
+
+**Ready for AI agents.** On WordPress 6.9 and later it offers read-only abilities through the WordPress Abilities API, so AI assistants connected with the official MCP Adapter can read your AEO status and business facts.
 
 = Free, and genuinely complete =
 
@@ -50,8 +62,8 @@ With **any other setup** - SEOPress, The SEO Framework, a theme's own schema, or
 = Plans =
 
 * **Free — 0 JPY.** Everything listed above, in full.
-* **Standard — 3,000 JPY/month.** "Always current". AEO criteria keep changing. Licensed sites receive the current central ruleset from the Nurevo service and get a notice in wp-admin when the criteria change. Free sites keep running on the ruleset bundled with the plugin.
-* **Pro — from 14,800 JPY/month.** AI visibility measurement: how often your business appears in AI answers, with competitor comparison and history. **This is a beta feature** and the numbers should be read as indicative.
+* **Standard — 3,000 JPY/month (USD 20 outside Japan).** "Always current". AEO criteria keep changing. Licensed sites receive the current central ruleset from the Nurevo service and get a notice in wp-admin when the criteria change. Free sites keep running on the ruleset bundled with the plugin.
+* **Pro — from 14,800 JPY/month (USD 99 outside Japan).** AI visibility measurement: how often your business appears in AI answers, with competitor comparison and history. **This is a beta feature** and the numbers should be read as indicative. AI answers change from day to day, so no plugin can guarantee that an AI will mention you.
 
 No paid PHP is bundled in this plugin and nothing in the download is locked. The only difference a license makes is which ruleset the Nurevo service returns and whether the measurement screen is enabled. Paid plans require an account at https://nurevo.jp/ and are billed there, not through WordPress.
 
@@ -127,6 +139,14 @@ No. The AI integration runs inside your own WordPress, and the AI that uses it i
 = What is AEO? =
 
 AEO (Answer Engine Optimization) is about being quoted correctly inside AI answers from ChatGPT, Perplexity, Google AI and others. Classic SEO is about where you rank in a list of links. AEO is about whether a machine can read your facts at all.
+
+= What is GEO? Is it different from AEO? =
+
+GEO (Generative Engine Optimization) and AEO (Answer Engine Optimization) are two names for the same goal: being read and cited correctly by AI that writes answers. Nurevo AEO covers both.
+
+= Does it work for online shops and B2B or SaaS sites? =
+
+Yes. In the setup wizard or under Settings, choose Local business, Online shop or B2B / SaaS. That decides what is published for AI, what the diagnosis checks and which questions the AI visibility measurement asks. Online shops and B2B sites do not need an address or opening hours.
 
 = Can I use this with Yoast SEO or Rank Math? =
 
