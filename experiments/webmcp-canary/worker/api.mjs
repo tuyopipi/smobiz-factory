@@ -29,6 +29,12 @@ import { buildSiteRecommendations } from "./recommendations.mjs";
 import { geocodeSiteProfile } from "./geocoder.mjs";
 import { offsiteAuditRun, offsiteAuditView } from "./offsite-audit.mjs";
 import { freeCheckView, runFreeCheck, runFreeCheckBatch } from "./free-ai-check.mjs";
+import {
+  AGENCY_LOGO_MAX_BYTES, AGENCY_LOGO_PATH, AGENCY_REPORT_MAX_RECIPIENTS, POWERED_BY_REMOVABLE_PLANS, REPORT_BODY_LANGS, REPORT_SEND_LAST_DAY,
+  agencyReportAvailable, buildSiteReport, handleLogoRequest, handleReportUnsubscribe, lastSent, loadBranding, loadOptOuts,
+  loadReportSettings, logoSrc, previousMonthKey, renderAgencyReportHtml, renderAgencyReportText, resolveBranding, runAgencyReportBatch as runAgencyReports,
+  saveBranding, saveReportSettings, validateBranding, validateReportSettings, REPORT_UNSUBSCRIBE_PATH,
+} from "./agency-report.mjs";
 import { isSiteType, normalizeSiteType } from "./site-types.mjs";
 import { NON_LOCAL_DROPPED_PROPS, typedBusinessType, typedCatalogNodes, typedLlmsTxt } from "./site-type-output.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
@@ -500,6 +506,10 @@ export async function handleApi(request, env, ctx) {
 
   // One-click unsubscribe from the not-connected reminders (lifecycle-email.mjs).
   if (path === UNSUBSCRIBE_PATH) return handleUnsubscribe(request, env);
+  // The agency report's per-site unsubscribe link (agency-report.mjs), and the
+  // agency logo it shows (public: email clients load it without a session).
+  if (path === REPORT_UNSUBSCRIBE_PATH) return handleReportUnsubscribe(request, env);
+  if (path.startsWith(AGENCY_LOGO_PATH) && method === "GET") return handleLogoRequest(request, env);
 
   if (path === "/api/aeo/score" && method === "GET") {
     const raw = url.searchParams.get("url") || "";
@@ -1014,6 +1024,38 @@ export async function handleApi(request, env, ctx) {
     const result = await reviewPartner(env, partnerReview[1], partnerReview[2], superAdmin.member_id);
     if (result.status === 200) console.log("partner_reviewed", JSON.stringify({ account: Number(partnerReview[1]), decision: partnerReview[2], by: superAdmin.member_id }));
     return json(result.body, result.status);
+  }
+
+  /*
+   * Agency branding (agency-report.mjs, 0046): the signed-in member's own
+   * account. GET reads it; PUT saves it (CSRF-checked by the global gate; a
+   * viewer cannot change it). Before 0046 (or 0030) it reports available:false
+   * and the dashboard hides the card.
+   */
+  if (path === "/api/agency/branding" && (method === "GET" || method === "PUT")) {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    let account = null;
+    try {
+      account = await ensureAccount(env, member.member_id);
+    } catch {
+      account = null;
+    }
+    if (!account || !await agencyReportAvailable(env)) return json({ available: false, reason: "migration_pending" }, method === "GET" ? 200 : 503);
+    const view = (branding) => ({
+      available: true,
+      can_edit: member.role !== "viewer",
+      branding: branding ? { ...branding, logo_src: logoSrc(branding, "") } : null,
+      limits: { logo_max_bytes: AGENCY_LOGO_MAX_BYTES, logo_types: ["image/png", "image/jpeg", "image/webp", "image/gif"] },
+      powered_by_removable_plans: [...POWERED_BY_REMOVABLE_PLANS],
+    });
+    if (method === "GET") return json(view(await loadBranding(env, account.id)));
+    if (member.role === "viewer") return json({ error: "forbidden" }, 403);
+    const checked = await validateBranding(await safeJson(request));
+    if (!checked.ok) return json({ error: "invalid_branding", fields: checked.errors }, 400);
+    const saved = await saveBranding(env, account.id, checked.value, { memberId: member.member_id });
+    console.log("agency_branding_saved", JSON.stringify({ account: account.id, logo: saved?.logo_hash ? "upload" : saved?.logo_url ? "url" : "none" }));
+    return json(view(saved));
   }
 
   if (path === "/api/auth/request" && method === "POST") {
@@ -1692,6 +1734,88 @@ export async function handleApi(request, env, ctx) {
       engine_status: result.engines || null,
       ...engineStatus(env),
     });
+  }
+
+  /*
+   * Agency client report, per site (agency-report.mjs, 0046).
+   *   GET/PUT /api/sites/:id/report-settings   who gets it, language, brand
+   *   GET     /api/sites/:id/agency-report     the report itself (preview,
+   *           ?format=html is the printable page, ?month=YYYY-MM, ?lang=)
+   * Only members who can open the site; PUT also needs a non-viewer role and
+   * the CSRF token (global gate). Recipients' addresses are only ever shown to
+   * members of the site's own account.
+   */
+  const reportSettingsMatch = path.match(/^\/api\/sites\/([^/]+)\/report-settings$/i);
+  const agencyReportMatch = path.match(/^\/api\/sites\/([^/]+)\/agency-report$/i);
+  if ((reportSettingsMatch && (method === "GET" || method === "PUT")) || (agencyReportMatch && method === "GET")) {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const siteId = decodeURIComponent((reportSettingsMatch || agencyReportMatch)[1]);
+    const site = await loadOwnedSite(env, member, siteId);
+    if (!site) {
+      const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+      return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+    }
+    if (!await agencyReportAvailable(env)) return json({ available: false, reason: "migration_pending" }, method === "GET" ? 200 : 503);
+    let account = null;
+    try { account = await ensureAccount(env, member.member_id); } catch { account = null; }
+    const now = Date.now();
+
+    if (reportSettingsMatch) {
+      if (method === "PUT") {
+        if (member.role === "viewer") return json({ error: "forbidden" }, 403);
+        const checked = validateReportSettings(await safeJson(request));
+        if (!checked.ok) return json({ error: "invalid_settings", fields: checked.errors, invalid: checked.invalid }, 400);
+        await saveReportSettings(env, site.id, checked.value, { accountId: account?.id ?? null, memberId: member.member_id, now });
+        console.log("agency_report_settings_saved", JSON.stringify({ site_id: site.id, enabled: checked.value.enabled, recipients: checked.value.recipients.length }));
+      }
+      const settings = await loadReportSettings(env, site.id);
+      const branding = await resolveBranding(env, site, settings, { canManage: accountCanManageSite, viewerAccountId: account?.id ?? null });
+      const own = account ? await loadBranding(env, account.id) : null;
+      const day = new Date(now).getUTCDate();
+      const sent = await lastSent(env, site.id);
+      const pendingThisMonth = day <= REPORT_SEND_LAST_DAY && sent?.month !== previousMonthKey(now);
+      const nextMonthFirst = new Date(Date.UTC(new Date(now).getUTCFullYear(), new Date(now).getUTCMonth() + 1, 1)).toISOString().slice(0, 10);
+      return json({
+        available: true,
+        site_id: site.id,
+        can_edit: member.role !== "viewer",
+        settings: { enabled: settings.enabled, recipients: settings.recipients, locale: settings.locale, branding_source: settings.branding_source, consent_at: settings.consent_at },
+        opted_out: (await loadOptOuts(env, site.id)).filter((email) => settings.recipients.includes(email)),
+        last_sent: sent,
+        next_send_on: settings.enabled ? (pendingThisMonth ? new Date(now).toISOString().slice(0, 10) : nextMonthFirst) : null,
+        brand: { agency: !!branding, name: branding ? branding.display_name : "Nurevo" },
+        has_own_branding: !!own,
+        body_languages: [...REPORT_BODY_LANGS],
+        max_recipients: AGENCY_REPORT_MAX_RECIPIENTS,
+      });
+    }
+
+    const settings = await loadReportSettings(env, site.id);
+    const asked = url.searchParams.get("month") || "";
+    const month = /^\d{4}-(0[1-9]|1[0-2])$/.test(asked) && asked <= new Date(now).toISOString().slice(0, 7) ? asked : previousMonthKey(now);
+    const brandParam = url.searchParams.get("brand");
+    const effective = brandParam === "nurevo" || brandParam === "agency" ? { ...settings, branding_source: brandParam } : settings;
+    const model = await buildSiteReport(env, site, {
+      month, locale: url.searchParams.get("lang") || settings.locale || null, settings: effective,
+      canManage: accountCanManageSite, viewerAccountId: account?.id ?? null, now,
+    });
+    const format = String(url.searchParams.get("format") || "json").toLowerCase();
+    if (format === "html") {
+      return new Response(renderAgencyReportHtml(model, { origin: "" }), {
+        status: 200,
+        headers: {
+          "content-type": "text/html; charset=utf-8",
+          "cache-control": "no-store",
+          "x-content-type-options": "nosniff",
+          "x-robots-tag": "noindex",
+          // No script at all; images from https (an agency's logo URL) or here.
+          "content-security-policy": "default-src 'none'; img-src 'self' https:; style-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; frame-ancestors 'self'",
+        },
+      });
+    }
+    if (format === "text") return new Response(renderAgencyReportText(model), { status: 200, headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store" } });
+    return json({ report: model });
   }
 
   const reportMatch = path.match(/^\/api\/sites\/([^/]+)\/monthly-report$/i);
@@ -3537,6 +3661,32 @@ export async function runFreeAiCheckBatch(env, options = {}) {
 // Kept for callers/tests from the weekly beta; both names run the same batch.
 export const runSovWeeklyBatch = runSovDailyBatch;
 
+/**
+ * Whether an account (accounts.id) can still manage a site, the same rule the
+ * dashboard uses (loadOwnedSite): its member must be active and not a viewer.
+ * The agency report re-checks this at send time before using that account's
+ * brand, so a member who lost access cannot keep branding a client's report.
+ */
+async function accountCanManageSite(env, accountId, site) {
+  try {
+    const member = await env.DB.prepare("SELECT m.id,m.org_id,m.email,m.role,m.status FROM accounts a JOIN members m ON m.id=a.member_id WHERE a.id=? LIMIT 1").bind(accountId).first();
+    if (!member || member.status !== "active" || member.role === "viewer") return false;
+    return !!(await loadOwnedSite(env, { member_id: member.id, org_id: member.org_id, email: member.email, role: member.role, is_super_admin: false }, site.id));
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * The agency client reports for the previous month (agency-report.mjs), from
+ * the hourly cron: acts only on the 1st-3rd (UTC), bounded and paced per run,
+ * idempotent per site, month and recipient; skipped until 0046 or while mail
+ * is not configured.
+ */
+export async function runAgencyReportBatch(env, options = {}) {
+  return runAgencyReports(env, { canManage: accountCanManageSite, ...options });
+}
+
 function normalizeAeoPlan(value) {
   return ["standard", "pro"].includes(String(value || "").toLowerCase()) ? String(value).toLowerCase() : "free";
 }
@@ -4636,6 +4786,9 @@ function csrfRequired(path) {
   if (/^\/api\/sites\/[^/]+\/sov\/free-check$/i.test(path)) return false;
   // The catalogue sync is the profile sync's twin: bearer token, no cookie.
   if (/^\/api\/sites\/[^/]+\/catalog$/i.test(path)) return false;
+  // The report unsubscribe link is posted from an email client (RFC 8058) or
+  // its own confirm page; the signed token is the authority, not a session.
+  if (path === REPORT_UNSUBSCRIBE_PATH) return false;
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;

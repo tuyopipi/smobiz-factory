@@ -3,7 +3,8 @@
  *
  *  - wrangler.jsonc lists exactly the crons the handler knows, including the
  *    hourly one, at a minute that is not :00.
- *  - The hourly cron runs the not-connected reminders and nothing else.
+ *  - The hourly cron runs the not-connected reminders, the partner payouts
+ *    and the agency client reports, nothing else.
  *  - The daily and weekly crons run exactly what they ran before, and the
  *    daily one no longer runs the reminders, so they cannot run twice.
  *  - One job failing does not stop the others; an unknown cron runs nothing.
@@ -37,7 +38,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 /* ---------------- what each cron runs ---------------- */
 
 {
-  assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts"], "hourly: the reminders and the partner payouts");
+  assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts", "agency-reports"], "hourly: the reminders, the partner payouts and the agency reports");
   assert.deepEqual([...SCHEDULED_JOBS[DAILY_CRON]], ["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"], "daily: as before, without the reminders");
   assert.deepEqual([...SCHEDULED_JOBS[WEEKLY_CRON]], ["aeo-learning"], "weekly: as before");
   assert.deepEqual([...SCHEDULED_JOBS[OFFSITE_CRON]], ["offsite-audit"], "the off-site listing audit runs alone, daily");
@@ -56,6 +57,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
     ["free-ai-check", "runFreeAiCheckBatch(env)"],
     ["lifecycle-reminders", "runLifecycleReminders(env)"],
     ["partner-payouts", "runPartnerPayouts(env)"],
+    ["agency-reports", "runAgencyReportBatch(env)"],
   ]) {
     assert.ok(index.includes(`"${label}": (env) => ${call},`), `index.mjs runs ${label} as ${call}`);
   }
@@ -91,7 +93,7 @@ async function fire(cron, { fail = [] } = {}) {
 
 {
   const hourly = await fire(HOURLY_CRON);
-  assert.deepEqual(hourly.ran, ["lifecycle-reminders", "partner-payouts"], "the hourly event runs the reminders and the partner payouts, nothing else");
+  assert.deepEqual(hourly.ran, ["agency-reports", "lifecycle-reminders", "partner-payouts"], "the hourly event runs the reminders, the partner payouts and the agency reports, nothing else");
   assert.equal(hourly.waits.length, 1, "inside waitUntil");
   assert.ok(hourly.lines.some((l) => l.startsWith("lifecycle-reminders {")), "and logs under the same label as before");
 
