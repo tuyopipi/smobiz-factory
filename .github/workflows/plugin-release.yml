@@ -1,0 +1,103 @@
+# Publish the WordPress plugin to wordpress.org SVN (slug nurevo-webmcp).
+#
+# Manual only (Actions > Plugin release > Run workflow), or when Claude is
+# asked to run it. Builds the allowlisted zip (npm run plugin:build), copies it
+# into trunk/, creates tags/<version> if it does not exist yet, and commits.
+# The version input must equal the "Stable tag" in readme.txt, so a typo can't
+# publish the wrong tag. Re-running for an existing tag only updates trunk.
+#
+# Optional cleanup: removes an accidental tags/<version>/trunk copy (created by
+# running "svn cp trunk tags/<version>" twice).
+#
+# Needs repository secrets SVN_USERNAME and SVN_PASSWORD (the wordpress.org
+# SVN password from your profile's Account & Security page).
+name: Plugin release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to publish (must equal Stable tag), e.g. 0.8.1"
+        type: string
+        required: true
+      cleanup_nested_trunk:
+        description: "Remove tags/<version>/trunk if it exists"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: plugin-release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: production
+    env:
+      SVN_URL: https://plugins.svn.wordpress.org/nurevo-webmcp
+      SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+      SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+      VERSION: ${{ inputs.version }}
+      CLEANUP: ${{ inputs.cleanup_nested_trunk }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: experiments/webmcp-canary/package-lock.json
+      - name: Check inputs and secrets
+        run: |
+          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Invalid version"; exit 1; }
+          test -n "$SVN_USERNAME" && test -n "$SVN_PASSWORD" || { echo "::error::SVN_USERNAME / SVN_PASSWORD secrets are missing"; exit 1; }
+          STABLE=$(grep -m1 -i '^Stable tag:' experiments/webmcp-canary/wordpress-plugin/webmcp-canary/readme.txt | sed 's/.*: *//' | tr -d '\r ')
+          [ "$STABLE" = "$VERSION" ] || { echo "::error::Stable tag is $STABLE, not $VERSION"; exit 1; }
+      - name: Install and build the plugin
+        working-directory: experiments/webmcp-canary
+        run: |
+          npm ci --no-audit --no-fund
+          npm run plugin:build
+          test -f dist/nurevo-webmcp/nurevo-webmcp.php
+      - name: Install Subversion
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq subversion rsync
+      - name: Check out SVN (trunk + tags list)
+        run: |
+          svn checkout --depth immediates "$SVN_URL" svn --non-interactive
+          svn update --set-depth infinity svn/trunk --non-interactive
+          svn update --set-depth immediates svn/tags --non-interactive
+      - name: Remove accidental nested trunk in the tag
+        if: inputs.cleanup_nested_trunk
+        run: |
+          if svn ls "$SVN_URL/tags/$VERSION/trunk" --non-interactive >/dev/null 2>&1; then
+            svn rm "$SVN_URL/tags/$VERSION/trunk" -m "Remove accidental nested trunk copy from tags/$VERSION" \
+              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --non-interactive --no-auth-cache
+          else
+            echo "No tags/$VERSION/trunk; nothing to remove."
+          fi
+      - name: Sync trunk
+        run: |
+          rsync -a --delete --exclude='.svn' experiments/webmcp-canary/dist/nurevo-webmcp/ svn/trunk/
+          cd svn
+          svn add --force trunk --non-interactive >/dev/null
+          svn status trunk | awk '/^!/ {print $2}' | xargs -r svn rm --non-interactive
+          svn status trunk
+      - name: Commit trunk and create the tag if missing
+        run: |
+          cd svn
+          if [ -n "$(svn status trunk)" ]; then
+            svn commit trunk -m "Release $VERSION (trunk)" \
+              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --non-interactive --no-auth-cache
+          else
+            echo "trunk is already up to date."
+          fi
+          if svn ls "$SVN_URL/tags/$VERSION" --non-interactive >/dev/null 2>&1; then
+            echo "tags/$VERSION already exists; not copying again."
+          else
+            svn copy "$SVN_URL/trunk" "$SVN_URL/tags/$VERSION" -m "Tag $VERSION" \
+              --username "$SVN_USERNAME" --password "$SVN_PASSWORD" --non-interactive --no-auth-cache
+          fi
+          svn ls "$SVN_URL/tags/$VERSION" --non-interactive
