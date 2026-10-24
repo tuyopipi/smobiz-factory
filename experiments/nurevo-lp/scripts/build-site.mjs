@@ -381,11 +381,25 @@ const ARTICLE_CSS = read("src/article.css");
 
 /** Paragraphs of an answer, as HTML. Copy is plain text; blank lines split paragraphs. */
 const paragraphs = (text) => String(text).split(/\n\s*\n/).map((p) => `<p>${esc(p.trim())}</p>`).join("\n");
-const inline = (text) => esc(text).replace(/\[([^\]]+)\]\((\/[^)]+)\)/g, '<a href="$2">$1</a>');
+// Links in copy: [text](/path) on this site, or [text](https://...) elsewhere.
+const inline = (text) => esc(text).replace(/\[([^\]]+)\]\(((?:\/|https:\/\/)[^)]+)\)/g, '<a href="$2">$1</a>');
 const richParagraphs = (items = []) => items.map((item) => `<p>${inline(item)}</p>`).join("\n");
-const contentPath = (lang, slug) => `${lang === "en" ? "/guide/" : `/${lang}/guide/`}${slug}/`;
+// Content pages live under /guide/ in English and /<lang>/guide/ otherwise, in
+// the same lower-case form as the language's home page (/zh-tw/, not /zh-TW/).
+const contentPath = (lang, slug) => `${lang === "en" ? "/guide/" : `/${lang.toLowerCase()}/guide/`}${slug}/`;
+// Guide hubs exist in Japanese and English; every other language points to the English one.
+const hubPath = (lang) => (lang === "ja" ? "/ja/guide/" : "/guide/");
+const hubName = (lang) => (lang === "ja" ? "AEOガイド" : "AEO Guides");
+// The free check reads ?lang=; Japanese is its default.
+const checkHref = (href, lang) => (href === "/check" && lang !== "ja" ? `/check?lang=${lang.toLowerCase()}` : href);
+function richTable(table) {
+  if (!table) return "";
+  const head = `<thead><tr>${table.head.map((cell) => `<th scope="col">${inline(cell)}</th>`).join("")}</tr></thead>`;
+  const rows = table.rows.map((row) => `<tr>${row.map((cell, index) => (index === 0 ? `<th scope="row">${inline(cell)}</th>` : `<td>${inline(cell)}</td>`)).join("")}</tr>`).join("");
+  return `<div class="table-wrap"><table>${table.caption ? `<caption>${esc(table.caption)}</caption>` : ""}${head}<tbody>${rows}</tbody></table></div>`;
+}
 function richSections(copy) {
-  return (copy.sections || []).map((section) => `<section class="qa"><h2>${esc(section.heading)}</h2>${richParagraphs(section.paragraphs)}${section.list?.length ? `<ol>${section.list.map((item) => `<li>${inline(item)}</li>`).join("")}</ol>` : ""}${richParagraphs(section.after)}</section>`).join("\n");
+  return (copy.sections || []).map((section) => `<section class="qa"><h2>${esc(section.heading)}</h2>${richParagraphs(section.paragraphs)}${section.list?.length ? `<ol>${section.list.map((item) => `<li>${inline(item)}</li>`).join("")}</ol>` : ""}${richTable(section.table)}${richParagraphs(section.after)}</section>`).join("\n");
 }
 
 /** One content page in one language. `copy` is that language's block of the content file. */
@@ -402,7 +416,7 @@ function contentPage(page, lang, { draft }) {
     organizationNode(),
     websiteNode(),
     webPageNode({ url, title: copy.title, description: copy.description, lang }),
-    breadcrumbNode(url, [{ name: t("nav.home", lang), url: home }, { name: lang === "ja" ? "AEOガイド" : "AEO Guides", url: ORIGIN + (lang === "en" ? "/guide/" : `/${lang}/guide/`) }, { name: copy.h1, url }]),
+    breadcrumbNode(url, [{ name: t("nav.home", lang), url: home }, { name: hubName(lang), url: ORIGIN + hubPath(lang) }, { name: copy.h1, url }]),
     faqNode(url, faq),
   ];
   const related = (page.related || [])
@@ -418,10 +432,10 @@ ${head({ lang, title: copy.title, description: copy.description, url, type: "art
 <body>
 <header class="nav"><div class="wrap">
   <a class="brand" href="${meta.path}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
-  <a class="btn primary" href="${copy.cta.href === "/check" && lang === "en" ? "/check?lang=en" : copy.cta.href}">${esc(copy.cta.label)}</a>
+  <a class="btn primary" href="${escAttr(checkHref(copy.cta.href, lang))}">${esc(copy.cta.label)}</a>
 </div></header>
 <main class="wrap">
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="${meta.path}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <a href="${lang === "en" ? "/guide/" : `/${lang}/guide/`}">${lang === "ja" ? "AEOガイド" : "AEO Guides"}</a> <span aria-hidden="true">›</span> <span>${esc(copy.h1)}</span></nav>
+  <nav class="crumbs" aria-label="Breadcrumb"><a href="${meta.path}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <a href="${hubPath(lang)}">${hubName(lang)}</a> <span aria-hidden="true">›</span> <span>${esc(copy.h1)}</span></nav>
   <article>
     <h1>${esc(copy.h1)}</h1>
     <p class="lead">${esc(copy.lead)}</p>
@@ -432,11 +446,11 @@ ${copy.sections ? richSections(copy) : copy.questions.map((item) => `    <sectio
   <aside class="cta">
     <h2>${esc(copy.cta.heading)}</h2>
     <p>${esc(copy.cta.body)}</p>
-    <a class="btn primary lg" href="${copy.cta.href === "/check" && lang === "en" ? "/check?lang=en" : copy.cta.href}">${esc(copy.cta.label)}</a>
+    <a class="btn primary lg" href="${escAttr(checkHref(copy.cta.href, lang))}">${esc(copy.cta.label)}</a>${copy.cta.secondary ? `\n    <a class="btn lg" href="${escAttr(checkHref(copy.cta.secondary.href, lang))}">${esc(copy.cta.secondary.label)}</a>` : ""}
   </aside>
 ${related.length ? `  <nav class="related" aria-label="${escAttr(copy.relatedHeading)}"><h2>${esc(copy.relatedHeading)}</h2><ul>${related.join("")}</ul></nav>` : ""}
 </main>
-<footer class="foot"><div class="wrap"><a href="${meta.path}">Nurevo</a> ・ <a href="${lang === "en" ? "/en/terms/" : "/terms"}">${esc(t("foot.terms", lang))}</a> ・ <a href="${lang === "en" ? "/en/privacy/" : "/privacy"}">${esc(t("foot.privacy", lang))}</a></div></footer>
+<footer class="foot"><div class="wrap">${copy.footnote ? `<p class="note">${esc(copy.footnote)}</p>` : ""}<a href="${meta.path}">Nurevo</a> ・ <a href="${lang === "ja" ? "/terms" : "/en/terms/"}">${esc(t("foot.terms", lang))}</a> ・ <a href="${lang === "ja" ? "/privacy" : "/en/privacy/"}">${esc(t("foot.privacy", lang))}</a></div></footer>
 <script src="/assets/ai-referral.js" defer></script>
 </body>
 </html>
