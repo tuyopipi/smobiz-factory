@@ -25,6 +25,9 @@ import {
   wilsonInterval,
 } from "./ai-engines.mjs";
 
+import { normalizeSiteType } from "./site-types.mjs";
+import { typedBrandedQuestions, typedDiscoveryQuestions, typedQuestionTerms } from "./sov-site-type.mjs";
+
 export { SOV_LANGUAGES, resolveSovLanguage } from "./sov-locale.mjs";
 // The engine adapters and their plumbing live in ai-engines.mjs; these names
 // stay importable from here for existing callers.
@@ -198,18 +201,25 @@ export function buildBrandProfile({ site = {}, settings = {}, schemas = [] } = {
     businessType,
     host,
   });
-  return {
+  const aliases = brandAliases(name, fromSchema.name, businessType);
+  const profile = {
     name,
     businessType,
     locality: firstNonEmpty(localityFromAddress(settings.address), fromSchema.locality) || "",
     host,
-    aliases: brandAliases(name, fromSchema.name, businessType),
+    aliases,
     language: decision.language,
     language_source: decision.source,
     // Kept apart from `aliases` so a Japanese profile's identity (and with it
     // the measurement cache key and trend grouping) is unchanged.
     domain_alias: domainAlias(host, name, fromSchema.name, businessType),
   };
+  // An online shop or B2B site is asked about what it sells, not where it is.
+  // A local profile carries none of these keys, so it is unchanged.
+  const siteType = normalizeSiteType(settings.site_type);
+  if (siteType === "local") return profile;
+  const terms = typedQuestionTerms({ siteType, businessType, catalog: settings.catalog, aliases: [...aliases, profile.domain_alias].filter(Boolean) });
+  return { ...profile, siteType, ...terms };
 }
 
 /**
@@ -219,7 +229,10 @@ export function buildBrandProfile({ site = {}, settings = {}, schemas = [] } = {
  */
 export function profileIdentity(profile = {}) {
   const legacy = { name: profile.name, businessType: profile.businessType, locality: profile.locality, host: profile.host, aliases: profile.aliases };
-  return !profile.language || profile.language === "ja" ? legacy : { ...legacy, language: profile.language };
+  const base = !profile.language || profile.language === "ja" ? legacy : { ...legacy, language: profile.language };
+  // A typed site (ec / b2b) starts its own series, keyed on what it is asked about.
+  if (!profile.siteType || profile.siteType === "local") return base;
+  return { ...base, siteType: profile.siteType, category: profile.category || "", task: profile.task || "", software: profile.software === true };
 }
 
 /** Shortest alias that may be matched inside answer text. */
@@ -362,6 +375,8 @@ function stripLegalSuffixes(name) {
  * scheduled run.
  */
 export function buildQuestionSet(profile, limit = SOV_LIMITS.maxQuestionsPerRun) {
+  const typed = typedDiscoveryQuestions(profile);
+  if (typed) return finishQuestions(typed, limit);
   const localized = profile.language && profile.language !== "ja"
     ? localizedDiscoveryQuestions(profile.language, profile) : null;
   if (localized) return finishQuestions(localized, limit);
@@ -400,8 +415,8 @@ function finishQuestions(discovery, limit) {
  * are reported separately from the headline rate.
  */
 export function brandedControlQuestions(profile, limit = 1) {
-  const localized = profile.language && profile.language !== "ja"
-    ? localizedBrandedQuestions(profile.language, profile) : null;
+  const localized = typedBrandedQuestions(profile) || (profile.language && profile.language !== "ja"
+    ? localizedBrandedQuestions(profile.language, profile) : null);
   const type = profile.businessType || "お店";
   const branded = localized || [
     `${profile.name}はどんな${type}？`,

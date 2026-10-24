@@ -1,4 +1,5 @@
 import { diagnosisText, formatMessage, resolveDiagnosisLang } from "./diagnosis-i18n.mjs";
+import { siteTypeText } from "./site-type-i18n.mjs";
 
 export const ENTITY_SCHEMA_FIELDS = Object.freeze({
   "LocalBusiness": {
@@ -81,7 +82,9 @@ export function localizeFields(fields, requested) {
   const t = (key, params) => diagnosisText(lang, key, params);
   return fields.map(item => {
     const key = item.field === 'openingHours' || item.field === 'openinghours' ? 'openingHoursSpecification' : item.field;
-    const label = t(`field.label.${key}`) || item.field;
+    // Properties only online-shop / B2B sites are scored on are worded in
+    // site-type-i18n.mjs until the main catalogs carry them.
+    const label = t(`field.label.${key}`) || siteTypeText(lang, `field.${key}`) || item.field;
     const hint = HOWTO_BY_ENTITY[item.entityType] || "field.howto.business";
     const supported = item.entityType === 'LocalBusiness' ? ['name','address','telephone','openingHours','openingHoursSpecification','url'].includes(item.field)
       : item.entityType === 'Service' ? ['name','provider','serviceType','offers.price'].includes(item.field)

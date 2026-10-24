@@ -657,7 +657,9 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
  * 7. The dashboard card, in every language
  * ================================================================== */
 {
-  const { I, I5 } = loadDictionary();
+  // Each language's own words: inline for ja/en, its dictionary file for the rest.
+  const { I, files } = loadDictionary();
+  const I5 = Object.fromEntries(LANGS.map((l) => [l, ["ja", "en"].includes(l) ? I[l] : files[l]]));
   const src = readFileSync(new URL("../public/dashboard-offsite.js", import.meta.url), "utf8");
   // Every key built from a status or id exists in every language.
   const dynamic = [
@@ -671,8 +673,11 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
   const steps = new Set([...workerSrc.matchAll(/steps: \[([^\]]+)\]/g)].flatMap((m) => [...m[1].matchAll(/"(\w+)"/g)].map((x) => x[1])));
   for (const m of workerSrc.matchAll(/steps\.push\(([^)]+)\)|return \[("[\w"]+(?:, "\w+")*)\]/g)) for (const x of (m[1] || m[2]).matchAll(/"(\w+)"/g)) steps.add(x[1]);
   assert.ok(steps.size >= 25, `every fix step the worker can emit (${steps.size})`);
-  const ids = manualChecklist({}).map((i) => i.id).concat(["google"]);
-  const why = manualChecklist({}).map((i) => i.why_manual);
+  // Every checklist, including the online-shop and B2B ones (site types).
+  const lists = [manualChecklist({}), manualChecklist({}, { siteType: "ec" }), manualChecklist({}, { siteType: "b2b" })].flat();
+  const ids = lists.map((i) => i.id).concat(["google"]);
+  const why = lists.map((i) => i.why_manual);
+  dynamic.push(...[...new Set(lists.flatMap((i) => i.verify || []))].map((f) => `osF_${f}`), "osWhy_ec", "osWhy_b2b", "osNotLocal", "osHeading_typed");
   for (const lang of LANGS) {
     for (const key of [...dynamic, ...[...steps].map((s) => `osStep_${s}`), ...ids.map((i) => `osSrc_${i}`), ...why.map((w) => `osWhyManual_${w}`)]) {
       assert.ok(typeof I5[lang][key] === "string" && I5[lang][key].trim(), `${lang}.${key}`);

@@ -1,6 +1,8 @@
 import { DEFAULT_SCORING } from "./aeo-rules.mjs";
 import { ENTITY_SCHEMA_FIELDS, localizeFields, fieldsSummary, textHint } from "./aeo-fields.mjs";
 import { DIAGNOSIS_LANGS, diagnosisText, resolveDiagnosisLang } from "./diagnosis-i18n.mjs";
+import { normalizeSiteType, siteRequirements, typedFactsInText, typedLlmsFacts, typedSchemaFields } from "./site-types.mjs";
+import { localizeRequirements } from "./site-type-i18n.mjs";
 // Keep these weights independent from extraction so layer-2 citation data can
 // tune the model without changing the public scoring contract.
 export const AEO_SCORE_WEIGHTS = DEFAULT_SCORING.weights;
@@ -86,8 +88,14 @@ export function scoreAeo(input = {}, scoring = DEFAULT_SCORING) {
     : signals.schemaValid && signals.schemaTypeMatches ? signals.schemaCoreProps
       : r.invalidSchemaFactor * signals.schemaCoreProps;
   const schema = schemaFactor >= r.schemaOk ? "OK" : schemaFactor > 0 ? "WARN" : "BAD";
-  const coverageValue = input.schemaFields ? signals.schemaCoreProps : r.coverageMix[0] * signals.coreFieldsFilled + r.coverageMix[1] * signals.bizSpecificFilled;
-  const coverage = input.schemaFields ? schema : statusFor(coverageValue, r.coverageOk, r.coverageWarn);
+  // A typed site (ec / b2b) adds site-level requirements - policy pages,
+  // pricing, proof - to its schema coverage, mixed with the same coverageMix
+  // and banded with the same thresholds. A local site never carries
+  // typedRequirements and takes the original branch unchanged.
+  const typed = Number.isFinite(input.typedRequirements);
+  const coverageValue = typed ? r.coverageMix[0] * signals.schemaCoreProps + r.coverageMix[1] * clamp01(input.typedRequirements)
+    : input.schemaFields ? signals.schemaCoreProps : r.coverageMix[0] * signals.coreFieldsFilled + r.coverageMix[1] * signals.bizSpecificFilled;
+  const coverage = typed ? statusFor(coverageValue, r.coverageOk, r.coverageWarn) : input.schemaFields ? schema : statusFor(coverageValue, r.coverageOk, r.coverageWarn);
   const legibilityValue = r.legibilityMix[0] * signals.factsInText + r.legibilityMix[1] * Number(signals.hasHeadingStructure) + r.legibilityMix[2] * Number(signals.hasFaq);
   const legibility = statusFor(legibilityValue, r.legibilityOk, r.legibilityWarn);
   const llms = !signals.llmsTxtPresent ? "BAD" : signals.llmsTxtQuality >= r.llmsOk ? "OK" : "WARN";
@@ -105,7 +113,7 @@ export function scoreAeo(input = {}, scoring = DEFAULT_SCORING) {
   return { score, band, gatePassed, statuses, metrics: { coverage: coverageValue, legibility: legibilityValue, schema: schemaFactor } };
 }
 
-export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null, schemaRules = null, entityType = null, catalog = null, scoring = DEFAULT_SCORING, rulesetVersion = null, fresh = false } = {}) {
+export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = null, schemaRules = null, entityType = null, catalog = null, scoring = DEFAULT_SCORING, rulesetVersion = null, fresh = false, siteType = null } = {}) {
   const target = publicUrl(raw);
   // fresh: ask any cache between us and the site (a WordPress page cache, a
   // CDN) for the current page, so a fix made a minute ago is what is scored.
@@ -119,10 +127,13 @@ export async function diagnoseAeoUrl(raw, { fetchImpl = fetch, scoredProps = nul
     edgeBlocked: edgeAccess === "blocked",
     edgeUnknown: edgeAccess === "unknown",
     llmsPresent: llms.ok,
-    scoredProps, schemaRules, entityType, catalog, scoring,
+    scoredProps, schemaRules, entityType, catalog, scoring, siteType,
   });
   const result = scoreAeo(signals, scoring);
+  const typed = signals.siteType && signals.siteType !== "local";
   return {
+    // Only a typed site says what it is, so a local result keeps its shape.
+    ...(typed ? { siteType: signals.siteType } : {}),
     rulesetVersion,
     modelVersion: scoring.modelVersion,
     deliveryEvidence: deliveryEvidence(page.text, robots.text, llms.text),
@@ -281,7 +292,7 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
   const publishedProps = publishedSchemaProps(schemas, scoredProps, scoring);
   const schemaFields = diagnoseSchemaFields(schemas, { ...options, commerceDetected: options.commerceDetected || /(?:class|id)=["'][^"']*woocommerce/i.test(html) });
   const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), /(住所|address|電話|phone|営業時間|hours|adresse|dirección|teléfono|telefon|horario|horaires|öffnungszeiten|地址|电话|营业时间|營業時間|주소|전화|영업시간)/i.test(llms)];
-  return {
+  const signals = {
     aiCrawlersAllowed: gateCrawlers(scoring).every((bot) => robotsAllows(robots, bot)),
     edgeBlocked: options.edgeBlocked === true,
     // The bot-UA probe failed or timed out: we do not know. Not a block, so it
@@ -307,6 +318,37 @@ export function extractAeoSignals(html = "", robots = "", llms = "", options = {
     consistent: schemas.length > 0 && schemas.every((item) => !item?.name || visible.includes(String(item.name).toLowerCase())),
     freshSignals: /(dateModified|datePublished|article:modified_time|last-modified)/i.test(`${html} ${schemaText}`)
       || new RegExp(String(new Date().getUTCFullYear())).test(visible),
+  };
+  const siteType = normalizeSiteType(options.siteType);
+  return siteType === "local" ? signals : typedSignals(signals, { siteType, html, visible, llms, schemas, scoring, catalog: options.catalog });
+}
+
+/**
+ * The same signals, re-measured for an online shop or a B2B site.
+ *
+ * What changes is what "complete" means: the entity fields (typedSchemaFields),
+ * the site-level requirements, the facts expected in the text and in llms.txt.
+ * What does not change: the gate, the weights, the bands, schema validity, the
+ * heading / FAQ / freshness / consistency tests.
+ */
+function typedSignals(signals, { siteType, html, visible, llms, schemas, scoring, catalog }) {
+  const schemaFields = typedSchemaFields(schemas, siteType);
+  const requirements = siteRequirements({ siteType, html, nodes: schemas, catalog });
+  const weightTotal = schemaFields.reduce((sum, f) => sum + f.weight, 0);
+  const llmsQualityTests = [llms.length >= scoring.minLlms, /^#\s+.+/m.test(llms), /https?:\/\//i.test(llms), typedLlmsFacts(llms, siteType)];
+  return {
+    ...signals,
+    siteType,
+    schemaFields,
+    schemaCoreProps: schemaFields.reduce((sum, f) => sum + (f.present ? f.weight : 0), 0) / Math.max(1, weightTotal),
+    siteRequirements: requirements,
+    typedRequirements: average(requirements.map((item) => item.present)),
+    // Local properties (address, telephone, hours) are not criteria here, so
+    // nothing downstream turns them into advice.
+    scoredProps: [],
+    publishedProps: [],
+    factsInText: typedFactsInText(visible, siteType, scoring.minFactText),
+    llmsTxtQuality: average(llmsQualityTests),
   };
 }
 
@@ -379,7 +421,7 @@ export function localizeAeoChecks(checks, requested) {
     // An unrecognised status is a finding, not a pass.
     const fields = Array.isArray(check.fields) ? localizeFields(check.fields, lang) : null;
     const message = fields ? fieldsSummary(fields, lang) : (check.unknown === true && wording.UNKNOWN) ? wording.UNKNOWN : wording[status] ?? wording.WARN;
-    return { ...check, label: fields ? `${wording.label} (${fields.filter(f => f.present).length}/${fields.length})` : wording.label, message, ...(fields ? { fields } : {}), ...(check.id === "legibility" ? { hints: [textHint(lang)] } : {}) };
+    return { ...check, label: fields ? `${wording.label} (${fields.filter(f => f.present).length}/${fields.length})` : wording.label, message, ...(fields ? { fields } : {}), ...(Array.isArray(check.requirements) ? { requirements: localizeRequirements(check.requirements, lang) } : {}), ...(check.id === "legibility" ? { hints: [textHint(lang)] } : {}) };
   });
 }
 
@@ -405,6 +447,8 @@ export function buildAeoChecks(signals, result, lang = "ja") {
     ...(unknown[id] ? { unknown: true } : {}),
     fixable,
     ...(["schema", "coverage"].includes(id) && signals.schemaFields ? { fields: signals.schemaFields } : {}),
+    // Typed sites only: the site-level requirements behind the coverage status.
+    ...(id === "coverage" && Array.isArray(signals.siteRequirements) && signals.siteRequirements.length ? { requirements: signals.siteRequirements } : {}),
   }));
   return localizeAeoChecks(checks, lang);
 }

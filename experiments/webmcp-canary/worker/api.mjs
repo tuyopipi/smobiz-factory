@@ -4,6 +4,7 @@ import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEviden
 import { ensureAccount, issueReferralCode, partnerSummary, isApprovedPartner, applyForPartner, reviewPartner, listPartnerApplications, PartnerNotApprovedError } from "./partner.mjs";
 import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
+import { normalizeDashboardLocale } from "./dashboard-locales.mjs";
 import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
@@ -27,6 +28,8 @@ import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
 import { geocodeSiteProfile } from "./geocoder.mjs";
 import { offsiteAuditRun, offsiteAuditView } from "./offsite-audit.mjs";
+import { isSiteType, normalizeSiteType } from "./site-types.mjs";
+import { NON_LOCAL_DROPPED_PROPS, typedBusinessType, typedCatalogNodes, typedLlmsTxt } from "./site-type-output.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
@@ -399,13 +402,20 @@ async function staticSnippetPayload(env, site, lang = "ja") {
   const plan = await resolveSitePlanFor(env, site);
   const ruleset = await rulesetForPlan(env, plan);
   const definition = rulesetDefinition(ruleset);
-  const jsonld = settings.serve_schema === 0 ? null : withBusinessId(buildJsonLd(site, settings, ruleset), site);
+  let jsonld = settings.serve_schema === 0 ? null : withBusinessId(buildJsonLd(site, settings, ruleset), site);
   // The business node plus WebSite / Organization.sameAs. No FAQPage: this is
   // a copy pasted into a page we cannot see, so we cannot promise the FAQ is
   // visible there (Google's FAQ rule). An owner with a visible FAQ marks it up
   // on that page.
-  const jsonldNodes = jsonld ? [jsonld, ...companionNodes(site, settings)] : null;
-  const llms = buildLlmsTxt({ ...settings, url: site.website_uri || site.url }, definition, lang);
+  let jsonldNodes = jsonld ? [jsonld, ...companionNodes(site, settings)] : null;
+  // An online shop or B2B site also gets its catalogue: the products (as an
+  // OfferCatalog of the store) or the services it entered.
+  if (jsonld && normalizeSiteType(settings.site_type) !== "local") {
+    const typed = await typedOutputFor(env, site, settings);
+    jsonld = { ...jsonld, ...typed.businessProps };
+    jsonldNodes = [jsonld, ...companionNodes(site, settings), ...typed.nodes];
+  }
+  const llms = await siteLlmsTxtFor(env, site.id, { ...settings, url: site.website_uri || site.url }, definition, lang);
   const updatedAt = Number(settings.updated_at) || null;
   return {
     site_id: site.id,
@@ -440,8 +450,46 @@ function buildJsonLd(site, settings, ruleset) {
     mappedPrice: schema.priceLevelMap?.[settings.price_level] || settings.price,
   };
   const ld = renderRuleSchema(definition, values, fields);
-
+  const siteType = normalizeSiteType(settings.site_type);
+  if (siteType === "local") return ld;
+  // An online shop or B2B site is an Organization (OnlineStore for a shop):
+  // the owner's type when it fits, and none of the visit-a-place properties.
+  ld["@type"] = typedBusinessType(siteType, settings.business_type_schema);
+  for (const key of NON_LOCAL_DROPPED_PROPS) delete ld[key];
   return ld;
+}
+
+/**
+ * The catalogue nodes and business-node additions of a typed site. A catalogue
+ * that cannot be read (tables missing in an old database) publishes nothing
+ * extra rather than failing the response.
+ */
+async function typedOutputFor(env, site, settings) {
+  const businessId = businessNodeId(site);
+  const base = businessId ? businessId.replace(/#organization$/, "") : null;
+  let catalog = null;
+  try { catalog = await loadSiteCatalog(env, site.id); } catch (error) {
+    console.error("typed-output-catalog", JSON.stringify({ site_id: site?.id, message: String(error?.message || error).slice(0, 160) }));
+  }
+  return typedCatalogNodes({ siteType: settings.site_type, catalog, base, businessId, name: settings.name || "" });
+}
+
+/** llms.txt for a site: the ruleset's file for a local site, the typed one otherwise. */
+async function siteLlmsTxtFor(env, siteId, values, definition, lang = "ja") {
+  const siteType = normalizeSiteType(values?.site_type);
+  if (siteType === "local") return buildLlmsTxt(values, definition, lang);
+  let catalog = null;
+  try { catalog = await loadSiteCatalog(env, siteId); } catch { catalog = null; }
+  const crawlerNames = AI_CRAWLERS.filter((c) => definition.robots.aiCrawlerIds.includes(c.id)).map((c) => `- ${c.ua}`).join("\n");
+  return typedLlmsTxt({ siteType, values, catalog, lang, crawlerNames });
+}
+
+/** What tag.js injects: the business node, its companions and, for a typed site, its catalogue. */
+async function tagJsonLdNodes(env, site, settings, deliveryPayload) {
+  const business = withBusinessId(deliveryPayload, site);
+  if (normalizeSiteType(settings.site_type) === "local") return [business, ...companionNodes(site, settings)];
+  const typed = await typedOutputFor(env, site, settings);
+  return [{ ...business, ...typed.businessProps }, ...companionNodes(site, settings), ...typed.nodes];
 }
 
 export async function handleApi(request, env, ctx) {
@@ -1143,11 +1191,24 @@ export async function handleApi(request, env, ctx) {
     if (!member) return json({ error: "unauthorized" }, 401);
     let body;
     try { body = await request.json(); } catch { return json({ error: "invalid_json" }, 400); }
-    const language = normalizeEmailLocale(body?.language);
-    if (!language) return json({ error: "invalid_language" }, 400);
-    await env.DB.prepare("INSERT INTO member_email_preferences (email,language) VALUES (?,?) ON CONFLICT(email) DO UPDATE SET language=excluded.language")
-      .bind(member.email.toLowerCase(), language).run();
-    return json({ ok: true, language });
+    // Any of the dashboard's locales (worker/dashboard-locales.mjs). The
+    // dashboard locale itself is kept in dashboard_locale (0043); `language`
+    // stays the email language, which has eight values: the chosen locale's
+    // when emails are written in it (es_MX -> es, zh_HK -> zh-tw), else English.
+    const dashboardLocale = normalizeDashboardLocale(body?.language);
+    if (!dashboardLocale) return json({ error: "invalid_language" }, 400);
+    const language = normalizeEmailLocale(dashboardLocale === "tw" ? "zh-tw" : dashboardLocale) || "en";
+    const email = member.email.toLowerCase();
+    try {
+      await env.DB.prepare("INSERT INTO member_email_preferences (email,language,dashboard_locale) VALUES (?,?,?) ON CONFLICT(email) DO UPDATE SET language=excluded.language, dashboard_locale=excluded.dashboard_locale")
+        .bind(email, language, dashboardLocale).run();
+    } catch (error) {
+      // Before migration 0043 there is no dashboard_locale column: keep the email language.
+      if (!isMissingColumnError(error)) throw error;
+      await env.DB.prepare("INSERT INTO member_email_preferences (email,language) VALUES (?,?) ON CONFLICT(email) DO UPDATE SET language=excluded.language")
+        .bind(email, language).run();
+    }
+    return json({ ok: true, language, dashboard_locale: dashboardLocale });
   }
 
   if (path === "/api/me" && method === "GET") {
@@ -1157,6 +1218,11 @@ export async function handleApi(request, env, ctx) {
       .bind(member.member_id, member.org_id).first();
     if (!row) return json({ error: "unauthorized" }, 401);
     const preferences = await loadEmailPreferences(env, row.email);
+    let dashboardLocale = null;
+    try {
+      const pref = await env.DB.prepare("SELECT dashboard_locale FROM member_email_preferences WHERE email=?").bind(row.email.toLowerCase()).first();
+      dashboardLocale = normalizeDashboardLocale(pref?.dashboard_locale);
+    } catch (error) { if (!isMissingColumnError(error)) throw error; }
     // Both stored languages (member_email_preferences, 0029): `language` is the
     // one the member chose in the dashboard, `registration_locale` the one they
     // signed up in. Additive: older clients keep reading `language`.
@@ -1164,6 +1230,9 @@ export async function handleApi(request, env, ctx) {
       email: row.email, role: row.role, org_id: member.org_id, is_super_admin: !!member.is_super_admin,
       language: normalizeEmailLocale(preferences.language) || null,
       registration_locale: normalizeEmailLocale(preferences.registration_locale) || null,
+      // The dashboard language the member chose (one of the dashboard's locale
+      // codes, e.g. "pt_BR"), or null. Added; `language` is unchanged.
+      dashboard_locale: dashboardLocale,
     }), request);
   }
 
@@ -1219,7 +1288,7 @@ export async function handleApi(request, env, ctx) {
       // What tag.js injects: the business node plus WebSite / Organization.sameAs
       // (never FAQPage - see companionNodes). `jsonld` above is unchanged for
       // readers that expect the single business node.
-      jsonld_nodes: deliveryPayload ? [withBusinessId(deliveryPayload, site), ...companionNodes(site, settings)] : null,
+      jsonld_nodes: deliveryPayload ? await tagJsonLdNodes(env, { ...site, id: auth.siteId }, settings, deliveryPayload) : null,
       ruleset_version: Number(ruleset.version || INITIAL_AEO_RULESET.version),
       // The plugin publishes its own @graph, because it has data this service
       // does not - the FAQ, the services, the shop. It cannot use the JSON-LD
@@ -1639,12 +1708,17 @@ export async function handleApi(request, env, ctx) {
     if (method === "GET") {
       const current = await loadSiteProfile(env, siteId);
       if (!current) return json({ error: "not_found" }, 404);
-      return json(profileResponse(current.values, current.sources, current.updated_at));
+      return json({ ...profileResponse(current.values, current.sources, current.updated_at), site_type: await loadSiteType(env, siteId) });
     }
 
     const body = await safeJson(request);
     const result = await writeSiteProfile(env, siteId, pickProfileFields(body), "wordpress");
     if (result.error) return json({ error: result.error }, result.status || 400);
+    // Sent by the plugin only when its owner chose a type (settings or setup
+    // wizard); an absent key leaves the stored type alone.
+    if (Object.prototype.hasOwnProperty.call(body || {}, "site_type")) {
+      return json({ ...result, site_type_result: await writeSiteType(env, siteId, String(body.site_type ?? "")) });
+    }
     return json(result);
   }
 
@@ -1740,7 +1814,7 @@ export async function handleApi(request, env, ctx) {
     // English. No language at all keeps the original Japanese.
     const lang = (String(url.searchParams.get("lang") || "").trim().toLowerCase() === "tw" ? "zh-TW" : requestedAeoLang(request, url)) || "ja";
 
-    const [latest, storedRows, current, scoredProps] = await Promise.all([
+    const [latest, storedRows, current, scoredProps, siteType] = await Promise.all([
       env.DB.prepare(
         "SELECT scanned_at,checks_json FROM aeo_scores WHERE site_id=? ORDER BY scanned_at DESC LIMIT 1",
       ).bind(site.id).first(),
@@ -1749,6 +1823,7 @@ export async function handleApi(request, env, ctx) {
       ).bind(site.id).all(),
       loadSiteProfile(env, site.id),
       activeScoredProps(env),
+      loadSiteType(env, site.id),
     ]);
 
     let checks = [];
@@ -1797,7 +1872,10 @@ export async function handleApi(request, env, ctx) {
         checks,
         profile: current?.values || {},
         // Without a reading, the criteria cannot be compared against anything.
-        scoredProps: schemaRead ? scoredProps : [],
+        // The scored properties are a local business's (address, telephone,
+        // hours); an online shop or B2B site is told about its own gaps by the
+        // checks above instead.
+        scoredProps: schemaRead && siteType === "local" ? scoredProps : [],
         publishedProps,
         plan: access.plan,
         stored: storedRows?.results || [],
@@ -2138,6 +2216,8 @@ export async function handleApi(request, env, ctx) {
       // would switch off the refresh that maintains it.
       ...profileResponse(current.values, current.sources, current.updated_at),
       completeness: profileCompleteness(current.values),
+      // local (default) / ec / b2b - see docs/industries.md.
+      site_type: await loadSiteType(env, site.id),
       // Output toggles are not profile fields - they switch delivery here and
       // page output in WordPress - but the same form owns them.
       serve_schema: settings?.serve_schema == null ? 1 : Number(settings.serve_schema),
@@ -2160,6 +2240,10 @@ export async function handleApi(request, env, ctx) {
         .bind(body.gbp_linked ? 1 : 0, id, member.org_id).run();
       return json({ ok: true, gbp_linked: !!body.gbp_linked });
     }
+    // A site type is validated before anything is written, so a bad value
+    // cannot leave half a save behind.
+    const hasSiteType = Object.prototype.hasOwnProperty.call(body || {}, "site_type");
+    if (hasSiteType && !isSiteType(body.site_type)) return json({ error: "invalid_site_type" }, 400);
     // Store fields go through the shared merger so this screen cannot diverge
     // from wp-admin. Only the keys the request actually carries are passed on:
     // naming every field here meant an absent one arrived as undefined, and a
@@ -2181,7 +2265,8 @@ export async function handleApi(request, env, ctx) {
     }
     await env.DB.prepare("UPDATE sites SET schema_types=?,crawler_allowed=? WHERE id=? AND org_id=?")
       .bind(schemaTypes, body.allow_crawlers ? 1 : 0, id, member.org_id).run();
-    return json({ ok: true, schema_types: schemaTypes, changed: profileResult.changed, rejected: profileResult.rejected });
+    const siteTypeResult = hasSiteType ? await writeSiteType(env, id, body.site_type) : null;
+    return json({ ok: true, schema_types: schemaTypes, changed: profileResult.changed, rejected: profileResult.rejected, ...(siteTypeResult ? { site_type_result: siteTypeResult } : {}) });
   }
   if (match && method === "DELETE") {
     const member = await requireMember(request, env);
@@ -2671,7 +2756,9 @@ async function issueProfileToken(env, siteId) {
 const CATALOG_LISTS = Object.freeze({
   products: {
     table: "site_products",
-    columns: ["name", "url", "sku", "price", "currency", "in_stock", "categories_json"],
+    columns: ["name", "url", "sku", "price", "currency", "in_stock", "categories_json", "brand", "image", "rating_value", "review_count"],
+    // The columns before migration 0044, used when the new ones do not exist yet.
+    legacyColumns: ["name", "url", "sku", "price", "currency", "in_stock", "categories_json"],
     pick: (item) => ({
       name: catalogText(item?.name, 200),
       url: catalogText(item?.url, 2048) || null,
@@ -2685,11 +2772,17 @@ const CATALOG_LISTS = Object.freeze({
         (Array.isArray(item?.categories) ? item.categories : [])
           .map((c) => catalogText(c, 80)).filter(Boolean).slice(0, 10),
       ),
+      brand: catalogText(item?.brand, 120) || null,
+      image: catalogUrl(item?.image),
+      // A rating is kept only with the review count that backs it: a value
+      // without reviews behind it is not a rating anyone gave.
+      ...catalogRating(item?.rating_value, item?.review_count),
     }),
   },
   services: {
     table: "site_services",
-    columns: ["name", "minutes", "price", "currency", "category", "reserve_url"],
+    columns: ["name", "minutes", "price", "currency", "category", "reserve_url", "description", "url", "kind"],
+    legacyColumns: ["name", "minutes", "price", "currency", "category", "reserve_url"],
     pick: (item) => ({
       name: catalogText(item?.name, 200),
       minutes: Number.isFinite(Number(item?.minutes)) && Number(item.minutes) > 0 ? Math.round(Number(item.minutes)) : null,
@@ -2697,6 +2790,11 @@ const CATALOG_LISTS = Object.freeze({
       currency: catalogText(item?.currency, 12).toUpperCase() || null,
       category: catalogText(item?.category, 120) || null,
       reserve_url: catalogText(item?.reserve_url, 2048) || null,
+      // B2B services: what the owner typed. kind picks Service or
+      // SoftwareApplication; anything else is "not stated".
+      description: catalogText(item?.description, 1000) || null,
+      url: catalogUrl(item?.url),
+      kind: ["service", "software"].includes(item?.kind) ? item.kind : null,
     }),
   },
   faqs: {
@@ -2711,27 +2809,57 @@ const CATALOG_LISTS = Object.freeze({
   },
   pages: {
     table: "site_pages",
-    columns: ["title", "url"],
+    columns: ["title", "url", "role"],
+    legacyColumns: ["title", "url"],
     pick: (item) => ({
       title: catalogText(item?.title, 300),
       url: catalogText(item?.url, 2048) || null,
+      // A page the owner pointed at in the settings (return policy, pricing ...).
+      role: CATALOG_PAGE_ROLES.includes(item?.role) ? item.role : null,
     }),
   },
 });
 
 const CATALOG_MAX_ROWS = 100;
+const CATALOG_PAGE_ROLES = Object.freeze(["return_policy", "shipping_policy", "pricing", "case_studies"]);
 
 function catalogText(value, max) {
   return String(value ?? "").replace(/\s+/g, " ").trim().slice(0, max);
 }
 
+function catalogUrl(value) {
+  const text = catalogText(value, 2048);
+  return /^https?:\/\/[^\s]+$/i.test(text) ? text : null;
+}
+
+function catalogRating(value, count) {
+  const rating = Number(value);
+  const reviews = Number(count);
+  if (!Number.isFinite(rating) || rating <= 0 || rating > 5 || !Number.isInteger(reviews) || reviews <= 0) {
+    return { rating_value: null, review_count: null };
+  }
+  return { rating_value: String(Math.round(rating * 100) / 100), review_count: reviews };
+}
+
+/** A D1 error that means "migration 0044 is not applied yet". */
+function missingColumn(error) {
+  return /no such column|has no column named/i.test(String(error?.message || error));
+}
+
 /** Read every list for a site, in the order the plugin sent them. */
 async function loadSiteCatalog(env, siteId) {
+  const list = async (spec) => {
+    const read = (columns) => env.DB.prepare(`SELECT ${columns.join(",")} FROM ${spec.table} WHERE site_id=? ORDER BY position`).bind(siteId).all();
+    try { return await read(spec.columns); } catch (error) {
+      if (!spec.legacyColumns || !missingColumn(error)) throw error;
+      return read(spec.legacyColumns);
+    }
+  };
   const [products, services, faqs, pages, state] = await Promise.all([
-    env.DB.prepare("SELECT name,url,sku,price,currency,in_stock,categories_json FROM site_products WHERE site_id=? ORDER BY position").bind(siteId).all(),
-    env.DB.prepare("SELECT name,minutes,price,currency,category,reserve_url FROM site_services WHERE site_id=? ORDER BY position").bind(siteId).all(),
-    env.DB.prepare("SELECT question,answer FROM site_faqs WHERE site_id=? ORDER BY position").bind(siteId).all(),
-    env.DB.prepare("SELECT title,url FROM site_pages WHERE site_id=? ORDER BY position").bind(siteId).all(),
+    list(CATALOG_LISTS.products),
+    list(CATALOG_LISTS.services),
+    list(CATALOG_LISTS.faqs),
+    list(CATALOG_LISTS.pages),
     env.DB.prepare("SELECT * FROM site_catalog_state WHERE site_id=?").bind(siteId).first(),
   ]);
   return {
@@ -2777,16 +2905,20 @@ async function writeSiteCatalog(env, siteId, body) {
       .filter((row) => Object.values(row).some((value) => value !== null && value !== "" && value !== "[]"))
       .slice(0, CATALOG_MAX_ROWS);
 
-    const statements = [env.DB.prepare(`DELETE FROM ${spec.table} WHERE site_id=?`).bind(siteId)];
-    rows.forEach((row, index) => {
-      const columns = spec.columns;
-      statements.push(
-        env.DB.prepare(
-          `INSERT INTO ${spec.table} (site_id,position,${columns.join(",")}) VALUES (?,?,${columns.map(() => "?").join(",")})`,
-        ).bind(siteId, index, ...columns.map((column) => row[column] ?? null)),
-      );
-    });
-    await env.DB.batch(statements);
+    const statementsFor = (columns) => [
+      env.DB.prepare(`DELETE FROM ${spec.table} WHERE site_id=?`).bind(siteId),
+      ...rows.map((row, index) => env.DB.prepare(
+        `INSERT INTO ${spec.table} (site_id,position,${columns.join(",")}) VALUES (?,?,${columns.map(() => "?").join(",")})`,
+      ).bind(siteId, index, ...columns.map((column) => row[column] ?? null))),
+    ];
+    try {
+      await env.DB.batch(statementsFor(spec.columns));
+    } catch (error) {
+      // Before migration 0044 the new columns do not exist; the batch is one
+      // transaction, so nothing was written - write the columns that do.
+      if (!spec.legacyColumns || !missingColumn(error)) throw error;
+      await env.DB.batch(statementsFor(spec.legacyColumns));
+    }
     written[key] = rows.length;
   }
 
@@ -2804,6 +2936,42 @@ async function writeSiteCatalog(env, siteId, body) {
     current.products.length, current.services.length, current.faqs.length, current.pages.length, Date.now(),
   ).run();
   return { ok: true, written };
+}
+
+/* ---------------- Site type (docs/industries.md) ---------------- */
+
+/**
+ * The site's type: "local" (the default), "ec" or "b2b". Read on its own
+ * rather than as a profile field, so that every profile write keeps working
+ * before migration 0044 adds the column - until then every site is "local".
+ */
+export async function loadSiteType(env, siteId) {
+  if (!env?.DB || !siteId) return "local";
+  try {
+    const row = await env.DB.prepare("SELECT site_type FROM site_settings WHERE site_id=?").bind(siteId).first();
+    return normalizeSiteType(row?.site_type);
+  } catch (error) {
+    if (missingColumn(error)) return "local";
+    throw error;
+  }
+}
+
+/**
+ * Store a site type a person chose (the dashboard, or the plugin's settings and
+ * setup wizard). Both are human sources, so the latest choice wins; the plugin
+ * sends it only when its owner has actually chosen one.
+ */
+async function writeSiteType(env, siteId, value) {
+  if (!isSiteType(value)) return { ok: false, error: "invalid_site_type" };
+  try {
+    await env.DB.prepare(
+      "INSERT INTO site_settings (site_id,site_type) VALUES (?,?) ON CONFLICT(site_id) DO UPDATE SET site_type=excluded.site_type",
+    ).bind(siteId, value).run();
+    return { ok: true, site_type: value };
+  } catch (error) {
+    if (missingColumn(error)) return { ok: false, error: "migration_pending" };
+    throw error;
+  }
 }
 
 /** Keep only the canonical fields from an untrusted request body. */
@@ -3002,6 +3170,13 @@ async function runSiteSovLocked(env, site, { trigger, deadline, clock }) {
     business_type: canonical?.values?.business_type_label || canonical?.values?.business_type_schema || "",
     address: canonical?.values?.address || "",
   };
+  // An online shop or B2B site is asked about its categories and services
+  // rather than its locality (sov-site-type.mjs); a local site reads nothing more.
+  const siteType = await loadSiteType(env, site.id);
+  if (siteType !== "local") {
+    settings.site_type = siteType;
+    try { settings.catalog = await loadSiteCatalog(env, site.id); } catch { settings.catalog = null; }
+  }
   const target = sovTargetUrl(site);
 
   let schemas = [];
@@ -4472,16 +4647,20 @@ export async function diagnosticOptions(env, siteId) {
   const definition = rulesetDefinition(activeRuleset);
   const schemaRules = definition.schema;
   if (!siteId || !env?.DB) return { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version };
-  let catalog = null, profile = null;
+  let catalog = null, profile = null, siteType = "local";
   try {
-    [catalog, profile] = await Promise.all([
+    [catalog, profile, siteType] = await Promise.all([
       loadSiteCatalog(env, siteId),
       env.DB.prepare("SELECT business_type_schema FROM site_settings WHERE site_id=?").bind(siteId).first(),
+      loadSiteType(env, siteId),
     ]);
   } catch (error) {
     if (!String(error?.message || error).includes('no such table')) throw error;
   }
-  return { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, catalog, entityType: profile?.business_type_schema };
+  // siteType is passed only for a typed site, so a local diagnosis is called
+  // with exactly the options it always was.
+  return { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, catalog, entityType: profile?.business_type_schema,
+    ...(siteType && siteType !== "local" ? { siteType } : {}) };
 }
 
 export async function centralLlmsForKey(env, siteKey) {
@@ -4491,7 +4670,7 @@ export async function centralLlmsForKey(env, siteKey) {
   const site = await env.DB.prepare('SELECT * FROM sites WHERE id=?').bind(auth.siteId).first();
   const settings = await env.DB.prepare('SELECT * FROM site_settings WHERE site_id=?').bind(auth.siteId).first() || {};
   const rule = await rulesetForPlan(env, auth.plan);
-  return buildLlmsTxt({...settings,url:site.website_uri || site.url},rulesetDefinition(rule)) + `\n<!-- nurevo-aeo-ruleset:${rule.version} -->\n`;
+  return await siteLlmsTxtFor(env, auth.siteId, {...settings,url:site.website_uri || site.url}, rulesetDefinition(rule)) + `\n<!-- nurevo-aeo-ruleset:${rule.version} -->\n`;
 }
 
 async function generationSettings(env, siteId) {

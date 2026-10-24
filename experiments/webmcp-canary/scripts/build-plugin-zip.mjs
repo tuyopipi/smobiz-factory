@@ -46,6 +46,7 @@ const INCLUDE = [
   "includes/rest.php",       // read-only REST route nurevo/v1/status
   "includes/abilities.php",  // read-only WordPress Abilities (6.9+), guarded by function_exists
   "includes/setup-wizard.php", // first-run setup wizard (Nurevo AEO > Setup)
+  "includes/site-types.php",   // site types: local / online shop / B2B (docs/industries.md)
   "includes/cli.php",        // WP-CLI commands, loaded only under WP-CLI
   "languages/nurevo-webmcp.pot",
   "languages/nurevo-webmcp-ja.po",

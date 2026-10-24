@@ -70,7 +70,9 @@ try {
   assert.ok(await page.getByText('来月以降', { exact: true }).isVisible());
   assert.ok(await page.getByText('月額報酬見込み（手数料控除前の目安）', { exact: true }).isVisible());
   await page.screenshot({ path: `${artifacts}/partner-ja.png`, fullPage: true });
-  // Every payout string exists in all 8 languages.
+  // Every payout string exists in all 8 languages. Languages other than ja/en
+  // are fetched from /dashboard-i18n/ when first needed; load them here.
+  await page.evaluate(() => Promise.all(['zh', 'tw', 'ko', 'es', 'fr', 'de'].map((l) => window.nrvI18n.ready(l))));
   const missing = await page.evaluate(() => {
     const keys = ['ptStatusTitle','ptStatusNone','ptStatusPending','ptStatusApproved','ptStatusRejected','ptApply','ptApplied','ptApplyNote','ptPendingNote','ptApprovedNote','ptRejectedNote','ptCodeInactive','ptCodeNeedsApproval','ptFirstFree','ptFirstCustomer','ptBeforeApproval','ptFirstCustomerInvoices','err_partner_not_approved','paApps','paAppsLead','paReject','paRevoke','paRevokeNote','paNoApps','paApprovedList','ptPayoutTitle','ptPayoutNotStarted','ptPayoutInProgress','ptPayoutReady','ptPayoutUnavailable','ptPayoutDue','ptPayoutStart','ptPayoutContinue','ptPayoutUpdate','ptPayoutSchedule','ptPayoutSecure','ptPayoutJapan','ptPayoutHeldNote','ptHeld','ptNextThisMonth','ptLaterThisMonth','ptNextNextMonth','ptLaterNextMonth','ptPayoutExpired','ptPayoutOpening','ptMonthly','ptRate'];
     const out = [];

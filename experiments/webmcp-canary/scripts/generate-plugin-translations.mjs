@@ -865,6 +865,32 @@ const JA = {
     "これらの情報はこのサイトのJSON-LDで公開されています。",
   "Output is off, so these facts are not published yet. Switch it on in Nurevo AEO > Settings.":
     "出力がオフのため、これらの情報はまだ公開されていません。「Nurevo AEO > 設定」でオンにしてください。",
+  // Site types (docs/industries.md).
+  "B2B / SaaS": "BtoB・SaaS",
+  "B2B / SaaS / professional services": "BtoB・SaaS・専門サービス",
+  "Case studies": "導入事例",
+  "Case studies page (B2B)": "導入事例ページ（BtoB）",
+  "Contact email": "連絡先メールアドレス",
+  "Description (one sentence, optional)": "説明（1文・任意）",
+  "Enter only pages that exist. They are listed in llms.txt; a return policy page is also published as the shop’s MerchantReturnPolicy.": "実在するページだけを入力してください。llms.txtに掲載され、返品ポリシーのページはショップのMerchantReturnPolicyとしても出力されます。",
+  "Local business (shop, salon, clinic, restaurant ...)": "店舗・地域ビジネス（店舗、サロン、クリニック、飲食店など）",
+  "Online shop (e-commerce)": "ECサイト（通販）",
+  "Online shop (EC)": "ECサイト（通販）",
+  "Pricing": "料金",
+  "Pricing page (B2B)": "料金ページ（BtoB）",
+  "Return and refund policy": "返品・返金ポリシー",
+  "Return and refund policy page (online shop)": "返品・返金ポリシーのページ（EC）",
+  "Sells online, with WooCommerce or another cart": "WooCommerceなどで商品をネット販売",
+  "Service page URL (optional)": "サービスページのURL（任意）",
+  "Services and products": "サービス・製品",
+  "Shipping policy": "配送・送料について",
+  "Shipping policy page (online shop)": "配送・送料のページ（EC）",
+  "Site requirements for this site type: %1$d/%2$d": "このサイト種別の要件: %1$d/%2$d",
+  "Software, SaaS and services sold to companies": "法人向けのソフトウェア・SaaS・サービス",
+  "This decides what is published for AI, what the diagnosis checks and which questions the AI visibility measurement asks. Online shops and B2B sites do not need an address or opening hours.": "AI向けに出力する内容、診断でチェックする項目、AI登場率の測定で使う質問がこの種類で決まります。ECサイトとBtoBでは住所・営業時間は必須ではありません。",
+  "This is software (SaaS or an app)": "ソフトウェア（SaaS・アプリ）です",
+  "WooCommerce is active, so Online shop is suggested. Change it if this site is something else.": "WooCommerceが有効なため「ECサイト」を提案しています。違う場合は変更してください。",
+  "WooCommerce is active, so Online shop is suggested. Nothing changes until you save.": "WooCommerceが有効なため「ECサイト」を提案しています。保存するまで何も変わりません。",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo

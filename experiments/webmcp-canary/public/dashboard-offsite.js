@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-23-offsite2 */
+/* Nurevo dashboard asset revision: 2026-10-24-sitetypes */
 /*
  * "Off-site store information" card on the site page.
  *
@@ -48,7 +48,9 @@
     return href ? '<a class="nrv-os-link" href="' + esc(href) + '" target="_blank" rel="noopener">' + esc(tr(key)) + '</a>' : "";
   }
 
-  var FIELD_KEYS = { name: "osF_name", address: "osF_address", phone: "osF_phone", hours: "osF_hours", website: "osF_website", business_status: "osF_business_status" };
+  var FIELD_KEYS = { name: "osF_name", address: "osF_address", phone: "osF_phone", hours: "osF_hours", website: "osF_website", business_status: "osF_business_status",
+    // Online shop / B2B checklists (site types, docs/industries.md).
+    description: "osF_description", category: "osF_category", price: "osF_price", stock: "osF_stock", policies: "osF_policies" };
   var GOOD = { match: 1 };
   var BAD = { mismatch: 1 };
 
@@ -178,6 +180,18 @@
       + '<p class="nrv-os-note">' + esc(tr("osNoGuarantee")) + "</p>";
     if (view && view.available === false) {
       section.innerHTML = html + "<p>" + esc(tr("osUnavailable")) + "</p></div>";
+      return section;
+    }
+    // An online shop or B2B site: no map listing to compare, only where it is
+    // described elsewhere (marketplaces, review sites, company profiles).
+    var siteType = (view && view.site_type) || (result && result.site_type) || "local";
+    if (siteType === "ec" || siteType === "b2b") {
+      var typedList = (view && view.checklist) || (result && result.manual) || [];
+      section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>' + esc(tr("osKicker")) + "</small><h2>" + esc(tr("osHeading_typed")) + "</h2></div></div>"
+        + '<p class="nrv-os-why">' + esc(siteType === "ec" ? tr("osWhy_ec") : tr("osWhy_b2b")) + "</p>"
+        + '<p class="nrv-os-note">' + esc(tr("osNoGuarantee")) + "</p>"
+        + '<p class="nrv-os-note">' + esc(tr("osNotLocal")) + "</p>"
+        + (typedList.length ? "<h3>" + esc(tr("osManualHead")) + "</h3>" + typedList.map(manualBlock).join("") : "") + "</div>";
       return section;
     }
     html += '<div class="nrv-os-run"><button type="button" data-os-run' + (view && view.allowance && view.allowance.allowed === false ? " disabled" : "") + ">" + esc(tr("osRun")) + "</button>"

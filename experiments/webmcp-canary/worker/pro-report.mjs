@@ -94,11 +94,15 @@ export function validateQuerySet(input) {
     return normalizeHost(value);
   });
   if (input.language != null && !SOV_LANGUAGES.includes(input.language)) throw new SovError(422, 'invalid_language');
+  if (input.site_type != null && !['local', 'ec', 'b2b'].includes(input.site_type)) throw new SovError(422, 'invalid_site_type');
   // `language` is recorded only for a non-Japanese set, so a Japanese config
   // (and the cache key hashed from it) is byte-identical to before.
   return { questions: [...new Set(input.questions.map(q => q.trim()))], repetitions: input.repetitions,
     competitors: [...new Set(competitors)], engine: 'perplexity',
-    ...(input.language && input.language !== 'ja' ? { language: input.language } : {}) };
+    ...(input.language && input.language !== 'ja' ? { language: input.language } : {}),
+    // Recorded only for an online shop / B2B set, so a local config (and its
+    // cache key) is byte-identical to before.
+    ...(input.site_type === 'ec' || input.site_type === 'b2b' ? { site_type: input.site_type } : {}) };
 }
 export async function loadQuerySet(env, siteId) {
   const row = await env.DB.prepare('SELECT * FROM aeo_sov_query_sets WHERE site_id=?').bind(siteId).first();
@@ -114,7 +118,8 @@ export async function saveQuerySet(env, siteId, input) {
 export async function ensureQuerySet(env, siteId, profile) {
   const existing = await loadQuerySet(env, siteId);
   if (existing && !isStaleDefaultSet(existing, profile)) return existing;
-  const config = validateQuerySet({ questions: buildQuestionSet(profile).slice(0, 5), repetitions: 2, competitors: [], language: profile.language });
+  const config = validateQuerySet({ questions: buildQuestionSet(profile).slice(0, 5), repetitions: 2, competitors: [], language: profile.language,
+    ...(profile.siteType && profile.siteType !== 'local' ? { site_type: profile.siteType } : {}) });
   if (existing) {
     // Replace only the untouched Japanese default of a site now known to be
     // non-Japanese; the owner's competitors and repetitions are kept.
@@ -132,11 +137,25 @@ export async function ensureQuerySet(env, siteId, profile) {
  * and is left alone.
  */
 function isStaleDefaultSet(existing, profile) {
+  // The site type changed (local -> ec, ec -> b2b ...): an untouched default
+  // set of the old type is replaced; one the owner edited is left alone.
+  const wasType = existing?.site_type || 'local';
+  const nowType = profile?.siteType || 'local';
+  if (wasType !== nowType) return isUntouchedDefault(existing, { ...profile, siteType: wasType === 'local' ? undefined : wasType });
   if (!profile?.language || profile.language === 'ja' || existing.language) return false;
   // Matched by the template wording rather than by regenerating it: the area
   // in an old set came from the Japanese-only parser and cannot be rebuilt.
   return Array.isArray(existing.questions) && existing.questions.length === JA_DEFAULT_ENDINGS.length
     && existing.questions.every((q, i) => typeof q === 'string' && q.endsWith(JA_DEFAULT_ENDINGS[i]));
+}
+function isUntouchedDefault(existing, profileAsBefore) {
+  if (!Array.isArray(existing?.questions)) return false;
+  if (!profileAsBefore.siteType && (!existing.language || existing.language === 'ja')) {
+    return existing.questions.length === JA_DEFAULT_ENDINGS.length
+      && existing.questions.every((q, i) => typeof q === 'string' && q.endsWith(JA_DEFAULT_ENDINGS[i]));
+  }
+  const regenerated = buildQuestionSet({ ...profileAsBefore, language: existing.language || 'ja' }).slice(0, 5);
+  return existing.questions.length === regenerated.length && existing.questions.every((q, i) => q === regenerated[i]);
 }
 const JA_DEFAULT_ENDINGS = ['でおすすめはどこ？', 'を探しています。評判の良いところを教えて。', 'を3つ挙げて。', 'の営業時間を知りたい。', 'で予約できるところは？'];
 /**
