@@ -4,6 +4,7 @@ import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEviden
 import { ensureAccount, issueReferralCode, partnerSummary, isApprovedPartner, applyForPartner, reviewPartner, listPartnerApplications, PartnerNotApprovedError } from "./partner.mjs";
 import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
+import { normalizeDashboardLocale } from "./dashboard-locales.mjs";
 import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
@@ -1143,11 +1144,24 @@ export async function handleApi(request, env, ctx) {
     if (!member) return json({ error: "unauthorized" }, 401);
     let body;
     try { body = await request.json(); } catch { return json({ error: "invalid_json" }, 400); }
-    const language = normalizeEmailLocale(body?.language);
-    if (!language) return json({ error: "invalid_language" }, 400);
-    await env.DB.prepare("INSERT INTO member_email_preferences (email,language) VALUES (?,?) ON CONFLICT(email) DO UPDATE SET language=excluded.language")
-      .bind(member.email.toLowerCase(), language).run();
-    return json({ ok: true, language });
+    // Any of the dashboard's locales (worker/dashboard-locales.mjs). The
+    // dashboard locale itself is kept in dashboard_locale (0043); `language`
+    // stays the email language, which has eight values: the chosen locale's
+    // when emails are written in it (es_MX -> es, zh_HK -> zh-tw), else English.
+    const dashboardLocale = normalizeDashboardLocale(body?.language);
+    if (!dashboardLocale) return json({ error: "invalid_language" }, 400);
+    const language = normalizeEmailLocale(dashboardLocale === "tw" ? "zh-tw" : dashboardLocale) || "en";
+    const email = member.email.toLowerCase();
+    try {
+      await env.DB.prepare("INSERT INTO member_email_preferences (email,language,dashboard_locale) VALUES (?,?,?) ON CONFLICT(email) DO UPDATE SET language=excluded.language, dashboard_locale=excluded.dashboard_locale")
+        .bind(email, language, dashboardLocale).run();
+    } catch (error) {
+      // Before migration 0043 there is no dashboard_locale column: keep the email language.
+      if (!isMissingColumnError(error)) throw error;
+      await env.DB.prepare("INSERT INTO member_email_preferences (email,language) VALUES (?,?) ON CONFLICT(email) DO UPDATE SET language=excluded.language")
+        .bind(email, language).run();
+    }
+    return json({ ok: true, language, dashboard_locale: dashboardLocale });
   }
 
   if (path === "/api/me" && method === "GET") {
@@ -1157,6 +1171,11 @@ export async function handleApi(request, env, ctx) {
       .bind(member.member_id, member.org_id).first();
     if (!row) return json({ error: "unauthorized" }, 401);
     const preferences = await loadEmailPreferences(env, row.email);
+    let dashboardLocale = null;
+    try {
+      const pref = await env.DB.prepare("SELECT dashboard_locale FROM member_email_preferences WHERE email=?").bind(row.email.toLowerCase()).first();
+      dashboardLocale = normalizeDashboardLocale(pref?.dashboard_locale);
+    } catch (error) { if (!isMissingColumnError(error)) throw error; }
     // Both stored languages (member_email_preferences, 0029): `language` is the
     // one the member chose in the dashboard, `registration_locale` the one they
     // signed up in. Additive: older clients keep reading `language`.
@@ -1164,6 +1183,9 @@ export async function handleApi(request, env, ctx) {
       email: row.email, role: row.role, org_id: member.org_id, is_super_admin: !!member.is_super_admin,
       language: normalizeEmailLocale(preferences.language) || null,
       registration_locale: normalizeEmailLocale(preferences.registration_locale) || null,
+      // The dashboard language the member chose (one of the dashboard's locale
+      // codes, e.g. "pt_BR"), or null. Added; `language` is unchanged.
+      dashboard_locale: dashboardLocale,
     }), request);
   }
 
