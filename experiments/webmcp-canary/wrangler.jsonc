@@ -91,6 +91,17 @@
 		// SOV_OPENAI_API_KEY (a dedicated OpenAI project key with its own usage
 		// limit) is set; USD caps default to $3/site and $40/month overall.
 		"SOV_OPENAI_SITE_MONTHLY_CAP": "120",
+		// Agency client reports (worker/agency-report.mjs) go out from the hourly
+		// cron on the 1st-3rd (UTC) through the existing sender: they need the
+		// secrets RESEND_API_KEY, MAIL_FROM (its verified address is kept; the
+		// name becomes "<Agency> via Nurevo") and EMAIL_UNSUBSCRIBE_SECRET, and
+		// migration 0046. Optional vars: AGENCY_REPORT_CRON_LIMIT (sites per run,
+		// default 40), AGENCY_REPORT_EMAILS_PER_RUN (default 120) and
+		// AGENCY_REPORT_SPACING_MS (pause between messages, default 550).
+		// Abuse limits: AGENCY_REPORT_CONFIRMS_PER_SITE_DAY (opt-in confirmation
+		// emails per site per day, default 10), AGENCY_REPORT_CONFIRMS_PER_ACCOUNT_DAY
+		// (default 30) and AGENCY_REPORT_ACCOUNT_MONTHLY_EMAILS (report emails per
+		// account per month, default 200).
 		"WEBMCP_AB_MIN_SAMPLES": "20",
 		"WEBMCP_AB_Z_THRESHOLD": "1.96",
 		"WEBMCP_TRAFFIC_MIN_RESULTS": "20",

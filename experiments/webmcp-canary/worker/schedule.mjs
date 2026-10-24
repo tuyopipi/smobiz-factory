@@ -18,7 +18,10 @@
  *           emails arrive within the hour rather than up to a day late, and
  *           the partner payouts job (held commission released once a
  *           partner's Stripe account is ready, failed transfers/reversals
- *           retried, unresolved charges re-read). Its minute (23) avoids :00
+ *           retried, unresolved charges re-read), and the agency client
+ *           reports (worker/agency-report.mjs), which act only on the 1st-3rd
+ *           (UTC) and send a bounded, paced batch each hour until every
+ *           enabled site's previous month is out. Its minute (23) avoids :00
  *           and the daily/weekly minute (17).
  */
 export const DAILY_CRON = "17 18 * * *";
@@ -31,7 +34,7 @@ export const FREE_CHECK_CRON = "37 19 * * *";
 export const SCHEDULED_JOBS = Object.freeze({
   [DAILY_CRON]: Object.freeze(["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"]),
   [WEEKLY_CRON]: Object.freeze(["aeo-learning"]),
-  [HOURLY_CRON]: Object.freeze(["lifecycle-reminders", "partner-payouts"]),
+  [HOURLY_CRON]: Object.freeze(["lifecycle-reminders", "partner-payouts", "agency-reports"]),
   [OFFSITE_CRON]: Object.freeze(["offsite-audit"]),
   [FREE_CHECK_CRON]: Object.freeze(["free-ai-check"]),
 });
