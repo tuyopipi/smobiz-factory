@@ -14,6 +14,7 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import vm from "node:vm";
+import { preloadInto } from "./dashboard-dictionary.mjs";
 
 const HTML = readFileSync(new URL("../public/dashboard.html", import.meta.url), "utf8");
 const SOURCE = [...HTML.matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]).find((b) => b.includes("function render"));
@@ -84,6 +85,9 @@ function boot({ search = "", storage = {}, languages, apiImpl } = {}) {
   vm.runInContext(`${SOURCE}
 ;globalThis.__get = (n) => eval(n);
 ;globalThis.__set = (n, v) => { eval(n + ' = v'); };`, sandbox);
+  // The browser fetches zh..de from public/dashboard-i18n/ on first use; here
+  // they are put in place up front (scripts/test-dashboard-locales.mjs covers the fetch).
+  preloadInto(sandbox.__get("I"));
   sandbox.api = async (path, init = {}) => {
     calls.push({ path, method: init.method || "GET", body: init.body ? JSON.parse(init.body) : null });
     if (apiImpl) return apiImpl(path, init, calls);
@@ -101,9 +105,11 @@ const flush = () => new Promise((r) => setImmediate(r));
   assert.equal(boot().get("lang"), "ja", "nothing to go on means Japanese");
   assert.equal(boot({ languages: ["fr-FR", "en"] }).get("lang"), "fr", "the browser's language is used");
   assert.equal(boot({ languages: ["zh-TW"] }).get("lang"), "tw", "zh-TW is the dashboard's tw");
-  assert.equal(boot({ languages: ["zh-Hant-HK"] }).get("lang"), "tw", "Traditional Chinese by script");
+  assert.equal(boot({ languages: ["zh-Hant-TW"] }).get("lang"), "tw", "Traditional Chinese by script");
+  assert.equal(boot({ languages: ["zh-Hant-HK"] }).get("lang"), "zh_HK", "Hong Kong has its own locale (reading tw's words until it has its own)");
   assert.equal(boot({ languages: ["zh-CN"] }).get("lang"), "zh");
-  assert.equal(boot({ languages: ["pt-BR", "ko"] }).get("lang"), "ko", "the first supported browser language wins");
+  assert.equal(boot({ languages: ["xx-YY", "ko"] }).get("lang"), "ko", "the first supported browser language wins");
+  assert.equal(boot({ languages: ["pt-BR", "ko"] }).get("lang"), "pt_BR", "Brazilian Portuguese is one of the dashboard's locales");
   assert.equal(boot({ storage: { "nrv-dash-lang": "de" }, languages: ["fr"] }).get("lang"), "de", "a saved choice beats the browser");
   const q = boot({ search: "?lang=es", storage: { "nrv-dash-lang": "de" }, languages: ["fr"] });
   assert.equal(q.get("lang"), "es", "?lang beats everything");
@@ -413,7 +419,7 @@ async function returning(search, { saved, rounds }) {
   assert.ok(table.includes('<a class="rowlink" href="#site:s1" data-site-link>example.com</a>'), "each row has a real link to the site");
   assert.ok(app.sandbox.authPanel().includes('<label for="auth-email">') && app.sandbox.authPanel().includes('id="auth-email"'), "the sign-in email is labelled");
   assert.ok(!/🇯🇵|🇬🇧/.test(HTML), "no flag-only language options");
-  assert.ok(/<option value="tw" lang="zh-TW">繁體中文<\/option>/.test(HTML));
+  assert.ok(/<option value="tw" lang="zh-TW">繁體中文（台灣）<\/option>/.test(HTML));
   assert.ok(/@media\(max-width:760px\)\{\.app\{grid-template-columns:1fr\}\.side\{flex-direction:row/.test(HTML), "the side menu becomes a top bar on phones instead of disappearing");
 }
 

@@ -10,7 +10,7 @@
  *   No website yet -> hosted  (a Nurevo-hosted page to list on Google/Instagram)
  *
  * Strings come from the dashboard dictionary (t() in dashboard.html), so the
- * wizard speaks the same eight languages as the page around it.
+ * wizard speaks the same languages as the page around it.
  */
 (function () {
   "use strict";

@@ -657,7 +657,9 @@ const stored = (sqlite, siteId = "s1") => sqlite.prepare("SELECT result_json FRO
  * 7. The dashboard card, in every language
  * ================================================================== */
 {
-  const { I, I5 } = loadDictionary();
+  // Each language's own words: inline for ja/en, its dictionary file for the rest.
+  const { I, files } = loadDictionary();
+  const I5 = Object.fromEntries(LANGS.map((l) => [l, ["ja", "en"].includes(l) ? I[l] : files[l]]));
   const src = readFileSync(new URL("../public/dashboard-offsite.js", import.meta.url), "utf8");
   // Every key built from a status or id exists in every language.
   const dynamic = [
