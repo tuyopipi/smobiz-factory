@@ -10,6 +10,10 @@
  *           its Places calls and D1 queries have an invocation of their own;
  *           each Standard/Pro site is due once a week, so the sites spread
  *           over the days instead of all falling on Monday
+ *   free    the free AI check for Free/Standard sites (worker/free-ai-check.mjs),
+ *           daily at its own time (04:37 JST) so its Perplexity calls have an
+ *           invocation and a time budget of their own; each site is due once a
+ *           month on its own day, so the checks spread over the month
  *   hourly  the "not connected yet" reminders, so the 24 h and 72 h
  *           emails arrive within the hour rather than up to a day late, and
  *           the partner payouts job (held commission released once a
@@ -21,6 +25,7 @@ export const DAILY_CRON = "17 18 * * *";
 export const WEEKLY_CRON = "17 18 * * 1";
 export const HOURLY_CRON = "23 * * * *";
 export const OFFSITE_CRON = "47 18 * * *";
+export const FREE_CHECK_CRON = "37 19 * * *";
 
 /** What each cron runs, by log label. Nothing runs under two crons. */
 export const SCHEDULED_JOBS = Object.freeze({
@@ -28,6 +33,7 @@ export const SCHEDULED_JOBS = Object.freeze({
   [WEEKLY_CRON]: Object.freeze(["aeo-learning"]),
   [HOURLY_CRON]: Object.freeze(["lifecycle-reminders", "partner-payouts"]),
   [OFFSITE_CRON]: Object.freeze(["offsite-audit"]),
+  [FREE_CHECK_CRON]: Object.freeze(["free-ai-check"]),
 });
 
 /**
