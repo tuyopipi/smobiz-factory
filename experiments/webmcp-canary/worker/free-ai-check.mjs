@@ -29,14 +29,26 @@
  *     default 20 USD). Unused reservation is refunded after the run.
  *   - Each call is reserved at its assumed maximum cost (assumedMaxCallCost),
  *     so the caps hold even when the provider reports nothing.
+ *   - Per account: the Free-plan sites of one account (the org, or the owner
+ *     member when a site has no org) get at most FREE_SOV_SITES_PER_ACCOUNT
+ *     (default 3) checks a month between them, counted in
+ *     aeo_sov_engine_usage under scope "org:<id>" / "member:<id>" and engine
+ *     FREE_ACCOUNT_ENGINE with the same atomic conditional UPDATE. Without
+ *     it, one free account could open site after site and spend the global
+ *     budget alone. Paid Standard sites are not counted against it. A slot is
+ *     taken when a check starts and is not given back when the site is
+ *     deleted later (deleting and re-creating sites must not reset the
+ *     count); it is given back only when the check made no engine call.
  *   - When a cap is reached nothing is called, and the screen says the month's
  *     free checks are used up and when the next one runs.
  *
  * Only connected sites whose owner has agreed to Nurevo contacting services on
  * their behalf are checked (siteConnection): a WordPress site once it has been
  * paired (pairing records the plugin's consent), a tag site once its tag is
- * seen, a hosted page always; tag and hosted sites must belong to a registered
- * owner.
+ * seen, a hosted page once it is published with a complete profile (a
+ * business name plus an address or a website) and is at least 24 hours old;
+ * tag and hosted sites must belong to a registered owner. A deleted site
+ * (no sites row any more) is never checked: every run re-reads the row first.
  *
  * Before migration 0045 (or 0041) is applied the feature reports
  * "migration_pending" and never calls anything.
@@ -46,6 +58,7 @@
  *   FREE_SOV_MONTHLY_USD        global monthly USD cap for all free checks (default 20; 0 = off)
  *   FREE_SOV_SITE_MONTHLY_USD   per-site monthly USD cap (default 0.05; 0 = off)
  *   FREE_SOV_CRON_LIMIT         most sites checked per daily cron run (default 300)
+ *   FREE_SOV_SITES_PER_ACCOUNT  Free-plan sites per account checked a month (default 3; 0 = none)
  *   FREE_SOV_BATCH_TIME_BUDGET_MS / FREE_SOV_BATCH_HARD_STOP_MS  cron time budget
  */
 
@@ -58,6 +71,13 @@ import { resolveSitePlan } from "./billing-plan.mjs";
 export const FREE_CHECK_ENGINE = "perplexity";
 /** The ledger bucket in aeo_sov_engine_usage. Never "perplexity": that is Pro's. */
 export const FREE_USAGE_ENGINE = "free:perplexity";
+/** The per-account ledger bucket: `calls` counts the Free-plan sites checked this month. */
+export const FREE_ACCOUNT_ENGINE = "free:sites";
+export const FREE_SOV_SITES_PER_ACCOUNT_DEFAULT = 3;
+/** The plans whose sites the per-account cap counts. Standard is paid and not limited by it. */
+export const FREE_ACCOUNT_CAPPED_PLANS = Object.freeze(["free"]);
+/** A hosted page must be at least this old before it is checked. */
+export const FREE_CHECK_HOSTED_MIN_AGE_MS = 24 * 60 * 60 * 1000;
 export const FREE_CHECK_PLANS = Object.freeze(["free", "standard"]);
 export const FREE_SOV_QUESTIONS_DEFAULT = 3;
 export const FREE_SOV_QUESTIONS_MAX = 5;
@@ -93,8 +113,10 @@ export function freeCheckConfig(env = {}) {
   const globalUsd = numberFromEnv(env.FREE_SOV_MONTHLY_USD, FREE_SOV_MONTHLY_USD_DEFAULT);
   const siteUsd = numberFromEnv(env.FREE_SOV_SITE_MONTHLY_USD, FREE_SOV_SITE_MONTHLY_USD_DEFAULT);
   const usdPerCall = assumedMaxCallCost(FREE_CHECK_ENGINE, env)?.est_usd || 0;
+  const accountSites = numberFromEnv(env.FREE_SOV_SITES_PER_ACCOUNT, FREE_SOV_SITES_PER_ACCOUNT_DEFAULT, { min: 0, max: 10000, integer: true });
   return {
     questions,
+    accountSites,
     siteCalls: questions,
     globalUsd,
     siteUsd,
@@ -145,8 +167,9 @@ export function freeCheckDueDate(siteId, month) {
  * A tag or hosted site must also belong to a registered owner (who accepted the
  * terms when registering). A stopped site is never checked.
  */
-export function siteConnection(site = {}) {
+export function siteConnection(site = {}, { now = Date.now() } = {}) {
   if (!site || !site.id) return { connected: false, consent: false, reason: "unknown_site" };
+  if (site.deleted) return { connected: false, consent: false, reason: "deleted" };
   if (site.delivery_status && site.delivery_status !== "active") return { connected: false, consent: false, reason: "stopped" };
   const type = String(site.install_type || (site.url ? "tag" : "hosted"));
   if (type === "wp") {
@@ -154,10 +177,53 @@ export function siteConnection(site = {}) {
     return { connected: paired, consent: paired, reason: paired ? null : "not_paired", via: paired ? "pairing" : null };
   }
   const owner = !!site.owner_member_id;
-  if (type === "hosted") return { connected: true, consent: owner, reason: owner ? null : "no_owner", via: owner ? "owner" : null };
+  if (type === "hosted") {
+    const ready = hostedReadiness(site, now);
+    if (!ready.ok) return { connected: false, consent: owner, reason: ready.reason };
+    return { connected: true, consent: owner, reason: owner ? null : "no_owner", via: owner ? "owner" : null };
+  }
   const seen = Number(site.tag_detected) === 1 || ["detected", "active"].includes(String(site.status || ""));
   if (!seen) return { connected: false, consent: owner, reason: "tag_not_seen" };
   return { connected: true, consent: owner, reason: owner ? null : "no_owner", via: owner ? "owner" : null };
+}
+
+/**
+ * Whether a hosted page is ready to be checked: published (it has a public
+ * slug and is not stopped), with a complete profile (a business name, and an
+ * address or a website), and at least FREE_CHECK_HOSTED_MIN_AGE_MS old. A page
+ * created a minute ago with nothing in it is not a business anyone asks AI
+ * about, and asking about it only spends budget. The profile fields are the
+ * site_settings columns, read as profile_name / profile_address (see
+ * loadCheckState); a row without them counts as incomplete.
+ */
+export function hostedReadiness(site = {}, now = Date.now()) {
+  if (!String(site.slug || "").trim()) return { ok: false, reason: "hosted_unpublished" };
+  const name = String(site.profile_name || "").trim();
+  const place = String(site.profile_address || "").trim() || String(site.website_uri || "").trim() || String(site.url || "").trim();
+  if (!name || !place) return { ok: false, reason: "profile_incomplete" };
+  const created = Number(site.created_at);
+  if (!Number.isFinite(created) || created <= 0 || now - created < FREE_CHECK_HOSTED_MIN_AGE_MS) return { ok: false, reason: "too_new" };
+  return { ok: true, reason: null };
+}
+
+/**
+ * The site as it is now, with the profile fields hostedReadiness needs. Read
+ * fresh on every run and view, so a site deleted after the batch listed it is
+ * never checked ({ deleted: true }), and a stale row passed by a caller cannot
+ * stand in for the current one.
+ */
+export async function loadCheckState(env, site) {
+  const row = await env.DB.prepare(`SELECT s.*, ss.name AS profile_name, ss.address AS profile_address
+      FROM sites s LEFT JOIN site_settings ss ON ss.site_id=s.id WHERE s.id=? LIMIT 1`).bind(site.id).first();
+  if (!row) return { ...site, deleted: true };
+  return { ...site, ...row, org_manual_plan: site.org_manual_plan ?? row.org_manual_plan };
+}
+
+/** The ledger scope of a site's account: its org, or its owner when it has none. */
+export function freeCheckAccountScope(site = {}) {
+  if (site.org_id) return `org:${site.org_id}`;
+  if (site.owner_member_id) return `member:${site.owner_member_id}`;
+  return null;
 }
 
 /* ------------------------------------------------------------------ *
@@ -213,6 +279,36 @@ export async function freeCheckBudget(env, siteId, now = Date.now()) {
   if (global.est_cost_usd + config.reserveUsd > config.globalUsd + USD_EPSILON) scope = "global";
   else if (site.calls + config.siteCalls > config.siteCalls || site.est_cost_usd + config.reserveUsd > config.siteUsd + USD_EPSILON) scope = "site";
   return { ok: scope === null, scope, global, site };
+}
+
+/**
+ * The per-account cap for Free-plan sites: { applies, ok, used, cap, scope }.
+ * A read. Standard (and anything not in FREE_ACCOUNT_CAPPED_PLANS) is not
+ * counted.
+ */
+export async function freeCheckAccountBudget(env, site, plan, now = Date.now()) {
+  const config = freeCheckConfig(env);
+  const scope = freeCheckAccountScope(site);
+  if (!FREE_ACCOUNT_CAPPED_PLANS.includes(plan)) return { applies: false, ok: true, used: 0, cap: null, scope };
+  if (!scope) return { applies: true, ok: false, used: 0, cap: config.accountSites, scope };
+  const used = (await readEngineUsage(env, scope, FREE_ACCOUNT_ENGINE, now)).calls;
+  return { applies: true, ok: used + 1 <= config.accountSites, used, cap: config.accountSites, scope };
+}
+
+/** Take one of the account's monthly slots, atomically; false when none is left. */
+async function reserveAccountSlot(env, scope, cap, now) {
+  const month = monthKey(now);
+  const at = new Date(now).toISOString();
+  await env.DB.prepare(`INSERT INTO aeo_sov_engine_usage (scope,engine,month,calls,searches,est_cost_usd,updated_at)
+    VALUES (?,?,?,0,0,0,?) ON CONFLICT(scope,engine,month) DO NOTHING`).bind(scope, FREE_ACCOUNT_ENGINE, month, at).run();
+  const result = await env.DB.prepare(`UPDATE aeo_sov_engine_usage SET calls=calls+1, updated_at=?
+    WHERE scope=? AND engine=? AND month=? AND calls+1<=?`).bind(at, scope, FREE_ACCOUNT_ENGINE, month, cap).run();
+  return Number(result?.meta?.changes ?? result?.changes ?? 0) > 0;
+}
+
+async function releaseAccountSlot(env, scope, now) {
+  await env.DB.prepare(`UPDATE aeo_sov_engine_usage SET calls=MAX(0,calls-1), updated_at=? WHERE scope=? AND engine=? AND month=?`)
+    .bind(new Date(now).toISOString(), scope, FREE_ACCOUNT_ENGINE, monthKey(now)).run();
 }
 
 /* ------------------------------------------------------------------ *
@@ -291,9 +387,10 @@ export function summarizeFreeCheck(measurement = {}, profile = {}) {
  * reserved. Returns { status, ... } where status is one of
  *   done | failed                  the check ran (failed: no answer came back)
  *   already_checked | running      this month's check exists
- *   used_up                        a monthly cap is reached (`scope`)
+ *   used_up                        a monthly cap is reached (`scope`:
+ *                                  global | site | account)
  *   pro | disabled | not_configured | migration_pending | not_connected |
- *   consent_required | brand_unavailable
+ *   consent_required | brand_unavailable | not_found (the site was deleted)
  *
  * `loadProfile(env, site)` builds the brand profile (api.mjs passes the same
  * builder the Pro measurement uses). `plan` may be passed when already known.
@@ -304,18 +401,24 @@ export async function runFreeCheck(env, site, {
 } = {}) {
   const config = freeCheckConfig(env);
   const month = monthKey(now);
+  if (site?.id && env?.DB) {
+    site = await loadCheckState(env, site);
+    if (site.deleted) return { status: "not_found" };
+  }
   const sitePlan = plan || (resolvePlan ? await resolvePlan(env, site) : resolveSitePlan(site, { manual_plan: site?.org_manual_plan }));
   if (!FREE_CHECK_PLANS.includes(sitePlan)) return { status: sitePlan === "pro" ? "pro" : "not_eligible", plan: sitePlan };
   if (!config.enabled) return { status: "disabled" };
   if (!engineConfigured(env, FREE_CHECK_ENGINE)) return { status: "not_configured" };
-  const connection = siteConnection(site);
+  const connection = siteConnection(site, { now });
   if (!connection.connected) return { status: "not_connected", reason: connection.reason };
   if (!connection.consent) return { status: "consent_required", reason: connection.reason };
 
   let existing;
+  let account;
   try {
     existing = (await readFreeChecks(env, site.id, 1)).find((row) => row.month === month) || null;
     await freeCheckBudget(env, site.id, now);
+    account = await freeCheckAccountBudget(env, site, sitePlan, now);
   } catch (error) {
     if (MISSING_TABLE.test(String(error?.message || error))) return { status: "migration_pending" };
     throw error;
@@ -327,6 +430,10 @@ export async function runFreeCheck(env, site, {
   if (!budget.ok) {
     if (existing) await updateMonth(env, site.id, month, { result_json: JSON.stringify({ scope: budget.scope }) });
     return { status: "used_up", scope: budget.scope, month };
+  }
+  if (!account.ok) {
+    if (existing) await updateMonth(env, site.id, month, { result_json: JSON.stringify({ scope: "account" }) });
+    return { status: "used_up", scope: "account", month, account_cap: account.cap };
   }
 
   let profile;
@@ -343,6 +450,12 @@ export async function runFreeCheck(env, site, {
     const row = (await readFreeChecks(env, site.id, 1)).find((entry) => entry.month === month);
     return { status: row?.status === "running" ? "running" : "already_checked", month };
   }
+  // The account's slot first (Free plan only): atomic, so several of one
+  // account's sites starting at once cannot all slip under the cap.
+  if (account.applies && !await reserveAccountSlot(env, account.scope, account.cap, now)) {
+    await updateMonth(env, site.id, month, { status: "cap_reached", result_json: JSON.stringify({ scope: "account" }) });
+    return { status: "used_up", scope: "account", month, account_cap: account.cap };
+  }
   const reserveUsd = round6(questions.length * config.usdPerCall);
   const reservation = await reserveEngineUsage(env, site.id, FREE_USAGE_ENGINE, {
     calls: questions.length,
@@ -350,6 +463,7 @@ export async function runFreeCheck(env, site, {
     caps: { siteCalls: config.siteCalls, globalCalls: null, siteUsd: config.siteUsd, globalUsd: config.globalUsd },
   }, now);
   if (!reservation.ok) {
+    if (account.applies) await releaseAccountSlot(env, account.scope, now);
     await updateMonth(env, site.id, month, { status: "cap_reached", result_json: JSON.stringify({ scope: reservation.scope }) });
     return { status: "used_up", scope: reservation.scope, month };
   }
@@ -380,6 +494,8 @@ export async function runFreeCheck(env, site, {
   const searches = (measurement.samples || []).reduce((sum, sample) => sum + (Number.isFinite(sample.cost?.searches) ? sample.cost.searches : 0), 0);
   // True up: calls and USD not used are given back to both caps.
   await recordEngineUsage(env, site.id, FREE_USAGE_ENGINE, { calls: used - questions.length, estCostUsd: result.est_cost_usd - reserveUsd, searches }, now);
+  // No call was made at all: the account's slot was not used either.
+  if (account.applies && used === 0) await releaseAccountSlot(env, account.scope, now);
   const status = result.answered > 0 ? "done" : "failed";
   await updateMonth(env, site.id, month, {
     status, finished_at: new Date(clock()).toISOString(), result_json: JSON.stringify(result), est_cost_usd: result.est_cost_usd,
@@ -395,6 +511,7 @@ export async function runFreeCheck(env, site, {
 export async function freeCheckView(env, site, { plan = null, now = Date.now() } = {}) {
   const config = freeCheckConfig(env);
   const month = monthKey(now);
+  if (site?.id && env?.DB) site = await loadCheckState(env, site);
   const sitePlan = plan || resolveSitePlan(site, { manual_plan: site?.org_manual_plan });
   const base = {
     plan: sitePlan,
@@ -408,18 +525,21 @@ export async function freeCheckView(env, site, { plan = null, now = Date.now() }
     result: null,
     upsell: { plan: "pro", details_url: FREE_CHECK_DETAILS_URL },
   };
+  if (site?.deleted) return { ...base, status: "not_found" };
   if (!FREE_CHECK_PLANS.includes(sitePlan)) return { ...base, status: sitePlan === "pro" ? "pro" : "not_eligible" };
   if (!config.enabled) return { ...base, status: "disabled" };
   if (!engineConfigured(env, FREE_CHECK_ENGINE)) return { ...base, status: "not_configured" };
-  const connection = siteConnection(site);
+  const connection = siteConnection(site, { now });
   if (!connection.connected) return { ...base, status: "not_connected", reason: connection.reason };
   if (!connection.consent) return { ...base, status: "consent_required", reason: connection.reason };
 
   let rows;
   let budget;
+  let account;
   try {
     rows = await readFreeChecks(env, site.id, 3);
     budget = await freeCheckBudget(env, site.id, now);
+    account = await freeCheckAccountBudget(env, site, sitePlan, now);
   } catch (error) {
     if (MISSING_TABLE.test(String(error?.message || error))) return { ...base, status: "migration_pending" };
     throw error;
@@ -436,6 +556,7 @@ export async function freeCheckView(env, site, { plan = null, now = Date.now() }
     return { ...base, status: stale ? "failed" : "running", result: latestResult, next_check_on: stale ? nextCheckOn : null };
   }
   if (!budget.ok) return { ...base, status: "used_up", scope: budget.scope, result: latestResult, next_check_on: nextCheckOn };
+  if (!account.ok) return { ...base, status: "used_up", scope: "account", account_cap: account.cap, result: latestResult, next_check_on: nextCheckOn };
   const today = new Date(now).toISOString().slice(0, 10);
   const due = freeCheckDueDate(site.id, month);
   return { ...base, status: "scheduled", result: latestResult, scheduled_on: due > today ? due : today, can_run_now: true };
@@ -484,8 +605,9 @@ export async function runFreeCheckBatch(env, { loadProfile, now = Date.now(), cl
   let rows;
   try {
     ({ results: rows } = await env.DB.prepare(`
-      SELECT s.*, o.manual_plan AS org_manual_plan FROM sites s
+      SELECT s.*, o.manual_plan AS org_manual_plan, ss.name AS profile_name, ss.address AS profile_address FROM sites s
         LEFT JOIN orgs o ON o.id = s.org_id
+        LEFT JOIN site_settings ss ON ss.site_id = s.id
        WHERE (s.delivery_status IS NULL OR s.delivery_status='active')
          AND (s.bound_at IS NOT NULL OR s.pairing_code_used_at IS NOT NULL OR s.install_type IN ('tag','hosted'))
          AND NOT EXISTS (SELECT 1 FROM aeo_free_checks f WHERE f.site_id=s.id AND f.month=? AND f.status<>'cap_reached')
@@ -498,7 +620,7 @@ export async function runFreeCheckBatch(env, { loadProfile, now = Date.now(), cl
   const bounded = Math.max(1, Math.min(1000, Math.floor(Number(limit || env.FREE_SOV_CRON_LIMIT || FREE_SOV_CRON_LIMIT_DEFAULT))));
   const eligible = (rows || []).filter((site) => {
     if (!FREE_CHECK_PLANS.includes(resolveSitePlan(site, { manual_plan: site.org_manual_plan }))) return false;
-    const connection = siteConnection(site);
+    const connection = siteConnection(site, { now });
     return connection.connected && connection.consent;
   });
   summary.candidates = eligible.length;

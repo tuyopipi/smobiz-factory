@@ -37,7 +37,10 @@ const sql = (file) => readFileSync(new URL(`../nurevo-impl/db/${file}`, import.m
 const sha = (v) => createHash("sha256").update(v).digest("hex");
 const T0 = Date.parse("2026-10-20T03:00:00Z");
 const NEXT_MONTH = Date.parse("2026-11-02T03:00:00Z");
-const quiet = async (fn) => { const log = console.log; console.log = () => {}; try { return await fn(); } finally { console.log = log; } };
+// Re-entrant: two runs racing under Promise.all must not leave console.log silenced.
+const REAL_LOG = console.log;
+let quietDepth = 0;
+const quiet = async (fn) => { quietDepth += 1; console.log = () => {}; try { return await fn(); } finally { quietDepth -= 1; if (!quietDepth) console.log = REAL_LOG; } };
 
 const PROFILE = { name: "カフェ栞", businessType: "カフェ", locality: "渋谷区", host: "shop.test", aliases: ["カフェ栞"], language: "ja" };
 const loadProfile = async () => PROFILE;
@@ -92,6 +95,8 @@ function makeDb({ free = true, usage = true } = {}) {
     INSERT INTO sites(id,org_id,url,website_uri,site_key,install_type,plan,tag_detected,created_at) VALUES('s6','o1','tag.test','https://tag.test/','k6','tag','free',1,6);
     INSERT INTO sites(id,org_id,url,website_uri,site_key,install_type,plan,owner_member_id,bound_at,delivery_status,created_at) VALUES('s7','o1','stop.test','https://stop.test/','k7','wp','free','m1',1,'stopped',7);`);
   sqlite.prepare("INSERT INTO site_settings(site_id,name,address,business_type_schema) VALUES(?,?,?,?)").run("s1", "カフェ栞", "東京都渋谷区神宮前1-2-3", "CafeOrCoffeeShop");
+  // The hosted page is published, has a complete profile and is days old (created_at=5).
+  sqlite.prepare("INSERT INTO site_settings(site_id,name,address,business_type_schema) VALUES(?,?,?,?)").run("s5", "喫茶ホスト", "東京都渋谷区神南1-1-1", "CafeOrCoffeeShop");
   const DB = {
     prepare(text) {
       const wrap = (args) => ({
@@ -150,7 +155,17 @@ const run = (env, row, opts = {}) => quiet(() => runFreeCheck(env, row, { loadPr
   assert.equal(siteConnection({ id: "a", install_type: "tag", owner_member_id: "m" }).connected, false, "a tag not yet seen");
   assert.deepEqual(siteConnection({ id: "a", install_type: "tag", tag_detected: 1 }).consent, false, "no registered owner, no consent");
   assert.equal(siteConnection({ id: "a", install_type: "tag", tag_detected: 1, owner_member_id: "m" }).consent, true);
-  assert.equal(siteConnection({ id: "a", install_type: "hosted", owner_member_id: "m" }).connected, true);
+  // A hosted page: published, complete profile, 24 h old (see test-free-check-abuse.mjs for the API path).
+  const hosted = { id: "a", install_type: "hosted", owner_member_id: "m", slug: "cafe-a", profile_name: "Cafe A", profile_address: "Tokyo", created_at: T0 - 2 * 86400e3 };
+  assert.equal(siteConnection(hosted, { now: T0 }).connected, true);
+  assert.equal(siteConnection({ ...hosted, slug: "" }, { now: T0 }).reason, "hosted_unpublished");
+  assert.equal(siteConnection({ ...hosted, profile_name: "" }, { now: T0 }).reason, "profile_incomplete");
+  assert.equal(siteConnection({ ...hosted, profile_address: null }, { now: T0 }).reason, "profile_incomplete", "a name alone is not a complete profile");
+  assert.equal(siteConnection({ ...hosted, profile_address: null, website_uri: "https://cafe-a.test/" }, { now: T0 }).connected, true, "a website instead of an address is enough");
+  assert.equal(siteConnection({ ...hosted, created_at: T0 - 3600e3 }, { now: T0 }).reason, "too_new");
+  assert.equal(siteConnection({ ...hosted, deleted: true }, { now: T0 }).reason, "deleted");
+  assert.equal(freeCheckConfig({}).accountSites, 3, "three Free-plan sites per account a month by default");
+  assert.equal(freeCheckConfig({ FREE_SOV_SITES_PER_ACCOUNT: "7" }).accountSites, 7);
 }
 
 /* ---------------- 2. one check ---------------- */

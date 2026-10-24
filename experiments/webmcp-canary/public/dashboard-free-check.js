@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-24-freecheck */
+/* Nurevo dashboard asset revision: 2026-10-24-freecheck2 */
 /*
  * "Free AI check" card on the site page (Free / Standard).
  *
@@ -65,11 +65,13 @@
 
   function stateLine(view) {
     var s = view.status;
+    if (s === "used_up" && view.scope === "account") return '<p class="nrv-fc-state is-warn">' + esc(tr("fcAccountUsedUp", { n: Number(view.account_cap || 0), date: day(view.next_check_on) })) + "</p>";
     if (s === "used_up") return '<p class="nrv-fc-state is-warn">' + esc(tr("fcUsedUp", { date: day(view.next_check_on) })) + "</p>";
     if (s === "done") return '<p class="nrv-fc-state">' + esc(tr("fcNextOn", { date: day(view.next_check_on) })) + "</p>";
     if (s === "failed") return '<p class="nrv-fc-state is-warn">' + esc(tr("fcFailed", { date: day(view.next_check_on) })) + "</p>";
     if (s === "running") return '<p class="nrv-fc-state">' + esc(tr("fcRunning")) + "</p>";
     if (s === "scheduled") return '<p class="nrv-fc-state">' + esc(tr("fcScheduledOn", { date: day(view.scheduled_on) })) + "</p>";
+    if (s === "not_connected" && ["hosted_unpublished", "profile_incomplete", "too_new"].indexOf(view.reason) >= 0) return '<p class="nrv-fc-state">' + esc(tr("fcHostedNotReady")) + "</p>";
     if (s === "not_connected" || s === "consent_required") return '<p class="nrv-fc-state">' + esc(tr("fcNotConnected")) + "</p>";
     return '<p class="nrv-fc-state">' + esc(tr("fcUnavailable")) + "</p>";
   }
@@ -144,7 +146,7 @@
       var view = (await response.json()).free_check;
       // Pro has the full measurement; other states the server cannot offer
       // the check in say nothing useful to the owner.
-      if (!view || view.status === "pro" || view.status === "not_eligible" || view.status === "disabled") return;
+      if (!view || view.status === "pro" || view.status === "not_eligible" || view.status === "disabled" || view.status === "not_found") return;
       var section = card(view);
       attach(section, siteId);
       var sov = main.querySelector(".nrv-sov");

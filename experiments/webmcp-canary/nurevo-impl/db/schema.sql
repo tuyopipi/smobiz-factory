@@ -516,7 +516,8 @@ CREATE TABLE IF NOT EXISTS aeo_free_checks (
 );
 
 -- 0046: agency white-label monthly client report: branding per account,
--- report settings per site, the send ledger and recipient opt-outs.
+-- report settings per site, the send ledger, recipient opt-outs, double
+-- opt-in recipients, the global suppression list and send counters.
 CREATE TABLE IF NOT EXISTS agency_branding (
   account_id INTEGER PRIMARY KEY,           -- accounts.id
   display_name TEXT NOT NULL,
@@ -541,6 +542,7 @@ CREATE TABLE IF NOT EXISTS agency_report_settings (
   locale TEXT NOT NULL DEFAULT 'en',        -- a dashboard locale code
   branding_source TEXT NOT NULL DEFAULT 'agency' CHECK (branding_source IN ('agency', 'nurevo')),
   brand_account_id INTEGER,                 -- the account whose brand is used (re-checked at send time)
+  account_id INTEGER,                       -- the account that set the report up: its eligibility and monthly email cap
   consent_at INTEGER,                       -- epoch ms the agency confirmed recipient consent
   consent_by TEXT,                          -- members.id
   updated_at INTEGER NOT NULL,
@@ -563,6 +565,39 @@ CREATE TABLE IF NOT EXISTS agency_report_opt_outs (
   email TEXT NOT NULL COLLATE NOCASE,
   created_at INTEGER NOT NULL,
   PRIMARY KEY (site_id, email)
+);
+
+-- Double opt-in: a recipient gets reports only once the address itself
+-- confirmed (a signed, expiring link in a confirmation email).
+CREATE TABLE IF NOT EXISTS agency_report_recipients (
+  site_id TEXT NOT NULL,
+  email TEXT NOT NULL COLLATE NOCASE,
+  status TEXT NOT NULL DEFAULT 'pending',   -- pending | confirmed
+  requested_at INTEGER,                     -- epoch ms the last confirmation email went out (NULL: not sent yet)
+  requested_by TEXT,                        -- members.id
+  confirm_expires_at INTEGER,               -- the confirmation link stops working after this
+  confirmed_at INTEGER,
+  created_at INTEGER NOT NULL,
+  PRIMARY KEY (site_id, email)
+);
+
+-- Addresses that unsubscribed from ALL reports sent through Nurevo, whatever
+-- the site or agency. Kept when a site is deleted.
+CREATE TABLE IF NOT EXISTS agency_report_suppressions (
+  email TEXT PRIMARY KEY COLLATE NOCASE,
+  source TEXT,                              -- unsubscribe | confirm_decline
+  created_at INTEGER NOT NULL
+);
+
+-- Small counters with a period: confirmation emails per site and per account
+-- per day, report emails per account per month. Taken with one conditional
+-- UPDATE, so concurrent requests cannot pass a cap.
+CREATE TABLE IF NOT EXISTS agency_report_counters (
+  scope TEXT NOT NULL,                      -- confirm:site:<id> | confirm:acct:<id> | emails:acct:<id>
+  period TEXT NOT NULL,                     -- YYYY-MM-DD or YYYY-MM (UTC)
+  count INTEGER NOT NULL DEFAULT 0,
+  updated_at INTEGER,
+  PRIMARY KEY (scope, period)
 );
 
 -- 0047: agency lead-generation tools: the per-agency widget / landing page

@@ -40,6 +40,14 @@ import { SCHEDULED_JOBS, HOURLY_CRON } from "../worker/schedule.mjs";
 import { LANGS, loadDictionary } from "./dashboard-dictionary.mjs";
 
 const sql = (file) => readFileSync(new URL(`../nurevo-impl/db/${file}`, import.meta.url), "utf8");
+// Saving recipients sends each new address a confirmation email (double
+// opt-in, see test-agency-report-abuse.mjs). Those go through the global
+// fetch: answer them here so nothing reaches the network.
+const CONFIRMATIONS = [];
+globalThis.fetch = async (url, init) => {
+  if (String(url) === "https://api.resend.com/emails") { CONFIRMATIONS.push(JSON.parse(init.body)); return new Response(JSON.stringify({ id: "c" }), { status: 200 }); }
+  throw new Error(`unexpected fetch ${url}`);
+};
 const sha = (v) => createHash("sha256").update(v).digest("hex");
 const CSRF = "c".repeat(64);
 const PNG = Buffer.concat([Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]), Buffer.alloc(40, 7)]);
@@ -66,7 +74,7 @@ function makeDb({ migrated = true, accounts = true } = {}) {
     sqlite.exec(sql("0040_partner_approval_first_customer.sql"));
   }
   sqlite.exec(sql("0042_offsite_listing_audit.sql"));
-  if (!migrated) for (const t of ["agency_branding", "agency_report_settings", "agency_report_sends", "agency_report_opt_outs"]) sqlite.exec(`DROP TABLE ${t}`);
+  if (!migrated) for (const t of ["agency_branding", "agency_report_settings", "agency_report_sends", "agency_report_opt_outs", "agency_report_recipients", "agency_report_suppressions", "agency_report_counters"]) sqlite.exec(`DROP TABLE ${t}`);
   else sqlite.exec(sql("0046_agency_branding.sql")); // idempotent on top of schema.sql
   const later = Date.now() + 3.6e6;
   sqlite.exec(`INSERT INTO orgs(id) VALUES('o1'); INSERT INTO orgs(id) VALUES('o2'); INSERT INTO orgs(id) VALUES('o3');
@@ -78,7 +86,7 @@ function makeDb({ migrated = true, accounts = true } = {}) {
     INSERT INTO sessions(token,member_id,org_id,kind,expires_at) VALUES('${sha("agency")}','m1','o1','session',${later});
     INSERT INTO sessions(token,member_id,org_id,kind,expires_at) VALUES('${sha("viewer")}','m2','o1','session',${later});
     INSERT INTO sessions(token,member_id,org_id,kind,expires_at) VALUES('${sha("other")}','m3','o2','session',${later});
-    INSERT INTO sites(id,org_id,url,website_uri,site_key,install_type,plan,owner_member_id,bound_at,created_at) VALUES('s1','o1','shop.test','https://shop.test/','k1','wp','free','m1',1,1);
+    INSERT INTO sites(id,org_id,url,website_uri,site_key,install_type,plan,owner_member_id,bound_at,created_at) VALUES('s1','o1','shop.test','https://shop.test/','k1','wp','standard','m1',1,1);
     INSERT INTO sites(id,org_id,url,website_uri,site_key,install_type,plan,owner_member_id,bound_at,created_at) VALUES('s2','o1','pro.test','https://pro.test/','k2','wp','pro','m1',1,2);
     INSERT INTO sites(id,org_id,url,website_uri,site_key,install_type,plan,owner_member_id,bound_at,created_at) VALUES('s3','o2','else.test','https://else.test/','k3','wp','free','m3',1,3);
     INSERT INTO sites(id,org_id,url,website_uri,site_key,install_type,plan,owner_member_id,bound_at,created_at) VALUES('s4','o3','cafe.test','https://cafe.test/','k4','wp','standard','m4',1,4);
@@ -384,6 +392,8 @@ async function setup() {
   const made = makeEnv();
   await call(made.env, "PUT", "/api/agency/branding", { body: BRAND });
   await call(made.env, "PUT", "/api/sites/s1/report-settings", { body: { enabled: true, recipients: ["client@cafe.test", "boss@cafe.test"], locale: "de", branding_source: "agency", consent: true } });
+  // Both addresses confirmed (the confirmation flow itself: test-agency-report-abuse.mjs).
+  made.sqlite.exec("UPDATE agency_report_recipients SET status='confirmed', confirmed_at=1");
   made.sqlite.exec(`INSERT INTO aeo_scores(site_id,scanned_at,score,verdict,checks_json) VALUES('s1','2026-10-28T00:00:00.000Z',71,'yellow','${CHECKS_END}')`);
   return made;
 }
@@ -485,7 +495,8 @@ const batch = (env, now, opts = {}, lines = []) => quiet(() => runAgencyReportBa
 /* ---------------- 7. unsubscribe ---------------- */
 {
   const { sqlite, env } = await setup();
-  sqlite.exec(`INSERT INTO agency_report_settings(site_id,enabled,recipients_json,locale,consent_at,updated_at) VALUES('s2',1,'["client@cafe.test"]','en',1,1)`);
+  sqlite.exec(`INSERT INTO agency_report_settings(site_id,enabled,recipients_json,locale,consent_at,updated_at,account_id) VALUES('s2',1,'["client@cafe.test"]','en',1,1,(SELECT id FROM accounts WHERE member_id='m1'));
+    INSERT INTO agency_report_recipients(site_id,email,status,confirmed_at,created_at) VALUES('s2','client@cafe.test','confirmed',1,1);`);
   const token = await reportUnsubscribeToken(env, "s1", "Client@Cafe.test");
   const path = `${REPORT_UNSUBSCRIBE_PATH}?t=${encodeURIComponent(token)}&l=de`;
   const get = await call(env, "GET", path, { token: null });
@@ -561,7 +572,8 @@ const batch = (env, now, opts = {}, lines = []) => quiet(() => runAgencyReportBa
     return sandbox.window.__x;
   }
   const BRAND_VIEW = { available: true, can_edit: true, branding: { display_name: "<b>Acme</b>", logo_src: "/api/agency/logo/" + "a".repeat(40), logo_hash: "a".repeat(40), brand_color: "#0a7d5a", contact_email: "hello@acme.test", footer_text: "<script>x</script>" }, limits: { logo_max_bytes: 65536 } };
-  const REPORT_VIEW = { available: true, can_edit: true, settings: { enabled: true, recipients: ["client@cafe.test", "<x>@y.test"], locale: "pt_BR", branding_source: "agency" }, opted_out: ["client@cafe.test"], last_sent: { month: "2026-10", recipients: 2 }, next_send_on: "2026-12-01", brand: { agency: false, name: "Nurevo" }, has_own_branding: false, max_recipients: 5 };
+  const REPORT_VIEW = { available: true, can_edit: true, settings: { enabled: true, recipients: ["client@cafe.test", "<x>@y.test"], locale: "pt_BR", branding_source: "agency" }, opted_out: ["client@cafe.test"], last_sent: { month: "2026-10", recipients: 2 }, next_send_on: "2026-12-01", brand: { agency: false, name: "Nurevo" }, has_own_branding: false, max_recipients: 5,
+    recipients_status: [{ email: "client@cafe.test", status: "opted_out" }, { email: "<x>@y.test", status: "pending" }, { email: "ok@y.test", status: "confirmed" }], eligibility: { ok: false, reason: "plan_or_partner" } };
   for (const lang of LANGS) {
     const x = load(lang);
     const b = x.brandingCard(BRAND_VIEW).innerHTML;
@@ -576,6 +588,7 @@ const batch = (env, now, opts = {}, lines = []) => quiet(() => runAgencyReportBa
     assert.ok(r.includes('value="pt_BR" selected'), `${lang}: any dashboard locale can be chosen`);
     assert.ok(!b.includes("<b>Acme") && !b.includes("<script>") && !r.includes("<x>"), `${lang}: values escaped`);
     assert.ok(r.includes(htmlEsc(I[lang].crPrint)) && r.includes(htmlEsc(I[lang].crPreview)), `${lang}: preview and print`);
+    for (const key of ["crStatusConfirmed", "crStatusPending", "crStatusOptedOut", "crNotEligible", "crConfirmNote"]) assert.ok(r.includes(htmlEsc(I[lang][key])), `${lang}: ${key} (double opt-in status, eligibility)`);
   }
   assert.ok(SRC.includes('frame.setAttribute("sandbox", "")'), "the preview frame is sandboxed without scripts");
 }

@@ -34,6 +34,7 @@ import {
   agencyReportAvailable, buildSiteReport, handleLogoRequest, handleReportUnsubscribe, lastSent, loadBranding, loadOptOuts,
   loadReportSettings, logoSrc, previousMonthKey, renderAgencyReportHtml, renderAgencyReportText, resolveBranding, runAgencyReportBatch as runAgencyReports,
   saveBranding, saveReportSettings, validateBranding, validateReportSettings, REPORT_UNSUBSCRIBE_PATH,
+  REPORT_CONFIRM_PATH, handleReportConfirm, recipientStatuses, reportEligibility, requestConfirmations,
 } from "./agency-report.mjs";
 import { LEADGEN_SUBMIT_PATH, handleLeadgenDashboard, handleLeadgenPublic } from "./agency-leadgen.mjs";
 import { isSiteType, normalizeSiteType } from "./site-types.mjs";
@@ -72,7 +73,17 @@ const API_RATE_LIMITS = Object.freeze({
   // the only thing the plugin holds. A pairing code is short enough to be
   // read aloud, so guessing it has to be slow from any one caller.
   pairIp: { limit: 10, windowMs: 60 * 60 * 1000 },
+  // Sites a member may add per day (SITE_CREATE_DAILY_LIMIT overrides). Every
+  // hosted site is a page Nurevo serves and, once ready, a free AI check, so
+  // adding them cannot be free-running; a real owner adds a handful.
+  siteCreateMember: { limit: 20, windowMs: 24 * 60 * 60 * 1000 },
 });
+
+/** The per-member daily site-creation limit in force (SITE_CREATE_DAILY_LIMIT, default 20). */
+export function siteCreateLimit(env = {}) {
+  const raw = Number(env.SITE_CREATE_DAILY_LIMIT);
+  return Number.isFinite(raw) && raw >= 1 ? Math.min(10000, Math.floor(raw)) : API_RATE_LIMITS.siteCreateMember.limit;
+}
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 // Referral partners receive 40% of the NET JPY of each paid invoice's charge
@@ -510,6 +521,8 @@ export async function handleApi(request, env, ctx) {
   // The agency report's per-site unsubscribe link (agency-report.mjs), and the
   // agency logo it shows (public: email clients load it without a session).
   if (path === REPORT_UNSUBSCRIBE_PATH) return handleReportUnsubscribe(request, env);
+  // Double opt-in: a new recipient confirms with the signed link it was sent.
+  if (path === REPORT_CONFIRM_PATH) return handleReportConfirm(request, env);
   if (path.startsWith(AGENCY_LOGO_PATH) && method === "GET") return handleLogoRequest(request, env);
   // Agency lead tools (agency-leadgen.mjs, 0047), public: the widget loader,
   // its frame, the lead submit (own frame only, rate limited, no session) and
@@ -1373,6 +1386,17 @@ export async function handleApi(request, env, ctx) {
     // Any active member can start onboarding; paid entitlements apply later.
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
+    // Per member, per day. Super admins (support) are not limited. Counted
+    // before the body is read so a flood of bad requests is limited too.
+    if (!member.is_super_admin) {
+      const createLimit = siteCreateLimit(env);
+      const created = await checkApiRateLimit(env, "site-create-member", member.member_id, { limit: createLimit, windowMs: API_RATE_LIMITS.siteCreateMember.windowMs });
+      if (created.unavailable) console.warn("site_create_rate_limit_unavailable", JSON.stringify({ member_id: member.member_id }));
+      else if (!created.allowed) {
+        const retryAfter = Math.ceil(API_RATE_LIMITS.siteCreateMember.windowMs / 1000);
+        return json({ error: "site_creation_rate_limited", limit: createLimit, window_hours: 24, retry_after: retryAfter }, 429, { "retry-after": String(retryAfter) });
+      }
+    }
     const body = await request.json();
     const installType = ["wp", "tag", "hosted", "static"].includes(body?.install_type) ? body.install_type : "tag";
     const siteUrl = String(body?.url || "").trim();
@@ -1670,7 +1694,7 @@ export async function handleApi(request, env, ctx) {
       const view = await freeCheckView(env, site, { plan });
       const ran = ["done", "failed"].includes(outcome.status);
       return json({ site_id: site.id, outcome: outcome.status, scope: outcome.scope || null, free_check: view },
-        ran ? 200 : outcome.status === "pro" ? 409 : ["used_up", "already_checked", "running"].includes(outcome.status) ? 429 : 409);
+        ran ? 200 : outcome.status === "not_found" ? 404 : outcome.status === "pro" ? 409 : ["used_up", "already_checked", "running"].includes(outcome.status) ? 429 : 409);
     }
     return json({ site_id: site.id, free_check: await freeCheckView(env, site, { plan }) });
   }
@@ -1764,14 +1788,26 @@ export async function handleApi(request, env, ctx) {
     const now = Date.now();
 
     if (reportSettingsMatch) {
+      let confirmations = null;
       if (method === "PUT") {
         if (member.role === "viewer") return json({ error: "forbidden" }, 403);
         const checked = validateReportSettings(await safeJson(request));
         if (!checked.ok) return json({ error: "invalid_settings", fields: checked.errors, invalid: checked.invalid }, 400);
+        // Only a connected site on a paid plan, or one an approved partner
+        // sets up, may switch the report on (re-checked when sending).
+        if (checked.value.enabled) {
+          const eligibility = await reportEligibility(env, site, { accountId: account?.id ?? null, now });
+          if (!eligibility.ok) return json({ error: "report_not_eligible", reason: eligibility.reason }, 409);
+        }
         await saveReportSettings(env, site.id, checked.value, { accountId: account?.id ?? null, memberId: member.member_id, now });
-        console.log("agency_report_settings_saved", JSON.stringify({ site_id: site.id, enabled: checked.value.enabled, recipients: checked.value.recipients.length }));
+        // Double opt-in: each new address is asked to confirm by email first.
+        confirmations = await requestConfirmations(env, site, await loadReportSettings(env, site.id), {
+          accountId: account?.id ?? null, memberId: member.member_id, canManage: accountCanManageSite, now,
+        });
+        console.log("agency_report_settings_saved", JSON.stringify({ site_id: site.id, enabled: checked.value.enabled, recipients: checked.value.recipients.length, confirmations }));
       }
       const settings = await loadReportSettings(env, site.id);
+      const eligibility = await reportEligibility(env, site, { accountId: settings.account_id ?? account?.id ?? null, now });
       const branding = await resolveBranding(env, site, settings, { canManage: accountCanManageSite, viewerAccountId: account?.id ?? null });
       const own = account ? await loadBranding(env, account.id) : null;
       const day = new Date(now).getUTCDate();
@@ -1784,6 +1820,9 @@ export async function handleApi(request, env, ctx) {
         can_edit: member.role !== "viewer",
         settings: { enabled: settings.enabled, recipients: settings.recipients, locale: settings.locale, branding_source: settings.branding_source, consent_at: settings.consent_at },
         opted_out: (await loadOptOuts(env, site.id)).filter((email) => settings.recipients.includes(email)),
+        recipients_status: (await recipientStatuses(env, site.id, settings.recipients)).map(({ email, status }) => ({ email, status })),
+        eligibility: { ok: eligibility.ok, reason: eligibility.reason },
+        ...(confirmations ? { confirmations } : {}),
         last_sent: sent,
         next_send_on: settings.enabled ? (pendingThisMonth ? new Date(now).toISOString().slice(0, 10) : nextMonthFirst) : null,
         brand: { agency: !!branding, name: branding ? branding.display_name : "Nurevo" },
@@ -2460,6 +2499,7 @@ export async function handleApi(request, env, ctx) {
       env.DB.prepare("DELETE FROM site_settings WHERE site_id=?").bind(site.id),
       env.DB.prepare("DELETE FROM sites WHERE id=?").bind(site.id),
     ]);
+    await deleteSiteFeatureRows(env, site.id);
     return json({ ok: true, id: site.id });
   }
 
@@ -4771,6 +4811,37 @@ async function checkApiRateLimit(env, scope, value, { limit, windowMs }) {
   }
 }
 
+/**
+ * Rows of optional features that belong to a deleted site. Each table may not
+ * exist yet (its migration unapplied), so each delete stands alone and a
+ * missing table is skipped. Account- and deployment-wide ledgers are kept on
+ * purpose: the per-account free-check count ("org:<id>" rows) must not be
+ * reset by deleting and re-creating sites, and the global budget is shared.
+ */
+const SITE_FEATURE_DELETES = [
+  ["aeo_free_checks", "DELETE FROM aeo_free_checks WHERE site_id=?"],
+  ["aeo_sov_engine_usage", "DELETE FROM aeo_sov_engine_usage WHERE scope=? AND engine LIKE 'free:%'"],
+  // The agency report: settings, recipients (and their confirmations), the
+  // per-site opt-outs and the send ledger. The global suppression list
+  // (agency_report_suppressions) is per address and is kept.
+  ["agency_report_settings", "DELETE FROM agency_report_settings WHERE site_id=?"],
+  ["agency_report_recipients", "DELETE FROM agency_report_recipients WHERE site_id=?"],
+  ["agency_report_opt_outs", "DELETE FROM agency_report_opt_outs WHERE site_id=?"],
+  ["agency_report_sends", "DELETE FROM agency_report_sends WHERE site_id=?"],
+];
+
+async function deleteSiteFeatureRows(env, siteId, statements = SITE_FEATURE_DELETES) {
+  for (const [table, sql] of statements) {
+    try {
+      await env.DB.prepare(sql).bind(siteId).run();
+    } catch (error) {
+      if (!/no such table|no such column/i.test(String(error?.message || error))) {
+        console.error("site_delete_cleanup_error", JSON.stringify({ table, error: String(error?.message || error).slice(0, 120) }));
+      }
+    }
+  }
+}
+
 async function crawlerHitRateLimit(env, siteId, crawlerId) {
   return checkApiRateLimit(env, "crawler-hit", `${siteId}:${crawlerId}`, API_RATE_LIMITS.crawlerHit);
 }
@@ -4817,6 +4888,8 @@ function csrfRequired(path) {
   // The report unsubscribe link is posted from an email client (RFC 8058) or
   // its own confirm page; the signed token is the authority, not a session.
   if (path === REPORT_UNSUBSCRIBE_PATH) return false;
+  // Same for the confirmation link: the signed, expiring token decides.
+  if (path === REPORT_CONFIRM_PATH) return false;
   // The agency lead widget posts from its own frame with no session; the
   // signed form token, honeypot and per-IP / per-key limits protect it.
   if (path === LEADGEN_SUBMIT_PATH) return false;
