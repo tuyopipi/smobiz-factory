@@ -19,6 +19,10 @@ on:
         description: "Max spend in USD"
         type: string
         default: "3"
+      from_run:
+        description: "Only publish report.md of an earlier run id (no new measurement)"
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -28,7 +32,33 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  publish_report:
+    if: ${{ inputs.from_run != '' }}
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      checks: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      FROM_RUN: ${{ inputs.from_run }}
+    steps:
+      - name: Publish report.md as a check run
+        run: |
+          [[ "$FROM_RUN" =~ ^[0-9]+$ ]] || { echo "::error::from_run must be a number"; exit 1; }
+          gh run download "$FROM_RUN" -R "$GITHUB_REPOSITORY" -n aeo-study-out -D out
+          ls -la out
+          python3 - <<'PY'
+          import json, os
+          text = open('out/report.md', encoding='utf-8').read()
+          body = {"name": "aeo-study-report", "head_sha": os.environ["GITHUB_SHA"], "status": "completed",
+                  "conclusion": "neutral", "output": {"title": "AEO study report", "summary": "report.md of run " + os.environ["FROM_RUN"],
+                  "text": text[:65000]}}
+          json.dump(body, open('body.json', 'w'))
+          PY
+          gh api -X POST "repos/$GITHUB_REPOSITORY/check-runs" --input body.json --jq .id
+
   study:
+    if: ${{ inputs.from_run == '' }}
     runs-on: ubuntu-latest
     timeout-minutes: 150
     defaults:
