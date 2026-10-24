@@ -1,7 +1,7 @@
 import { resolveEmailLocale, loadEmailPreferences, magicLinkEmail } from "./email-i18n.mjs";
 import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
-import { handleApi, runSovDailyBatch, centralLlmsForKey } from "./api.mjs";
+import { handleApi, runSovDailyBatch, runFreeAiCheckBatch, centralLlmsForKey } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 import { runLifecycleReminders } from "./lifecycle-email.mjs";
 import { runScheduled } from "./schedule.mjs";
@@ -64,6 +64,10 @@ const SCHEDULED_RUNNERS = Object.freeze({
   // (worker/offsite-audit.mjs); skipped without GOOGLE_MAPS_API_KEY or until
   // migration 0042, bounded per run by sites, time and the daily Places ceiling.
   "offsite-audit": (env) => runOffsiteAuditScheduled(env),
+  // Free AI check for Free/Standard sites: each due once a month on its own
+  // day, Perplexity only, inside its own monthly USD caps (separate from Pro's);
+  // skipped without the key or until migration 0045 (worker/free-ai-check.mjs).
+  "free-ai-check": (env) => runFreeAiCheckBatch(env),
   // "Not connected yet" reminders for wp sites, 24 h and 72 h after creation;
   // bounded per run, claimed before sending (so a repeat run never resends),
   // skipped while migration 0038 is unapplied.

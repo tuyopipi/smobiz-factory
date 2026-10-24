@@ -499,3 +499,18 @@ CREATE TABLE IF NOT EXISTS aeo_sov_attempts (
   finished_at TEXT,
   reserved_json TEXT
 );
+
+-- 0045: the free monthly AI appearance check (Free / Standard), one row per
+-- site per month. Usage is reserved in aeo_sov_engine_usage as 'free:perplexity'.
+CREATE TABLE IF NOT EXISTS aeo_free_checks (
+  site_id TEXT NOT NULL,
+  month TEXT NOT NULL,
+  trigger TEXT NOT NULL,
+  status TEXT NOT NULL,
+  started_at TEXT NOT NULL,
+  finished_at TEXT,
+  reserved_json TEXT,
+  result_json TEXT,
+  est_cost_usd REAL,
+  PRIMARY KEY (site_id, month)
+);

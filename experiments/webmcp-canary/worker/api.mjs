@@ -28,6 +28,7 @@ import { calculateKickback, kickbackTiersFromEnv } from "./kickback.mjs";
 import { buildSiteRecommendations } from "./recommendations.mjs";
 import { geocodeSiteProfile } from "./geocoder.mjs";
 import { offsiteAuditRun, offsiteAuditView } from "./offsite-audit.mjs";
+import { freeCheckView, runFreeCheck, runFreeCheckBatch } from "./free-ai-check.mjs";
 import { isSiteType, normalizeSiteType } from "./site-types.mjs";
 import { NON_LOCAL_DROPPED_PROPS, typedBusinessType, typedCatalogNodes, typedLlmsTxt } from "./site-type-output.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
@@ -64,7 +65,17 @@ const API_RATE_LIMITS = Object.freeze({
   // the only thing the plugin holds. A pairing code is short enough to be
   // read aloud, so guessing it has to be slow from any one caller.
   pairIp: { limit: 10, windowMs: 60 * 60 * 1000 },
+  // Sites a member may add per day (SITE_CREATE_DAILY_LIMIT overrides). Every
+  // hosted site is a page Nurevo serves and, once ready, a free AI check, so
+  // adding them cannot be free-running; a real owner adds a handful.
+  siteCreateMember: { limit: 20, windowMs: 24 * 60 * 60 * 1000 },
 });
+
+/** The per-member daily site-creation limit in force (SITE_CREATE_DAILY_LIMIT, default 20). */
+export function siteCreateLimit(env = {}) {
+  const raw = Number(env.SITE_CREATE_DAILY_LIMIT);
+  return Number.isFinite(raw) && raw >= 1 ? Math.min(10000, Math.floor(raw)) : API_RATE_LIMITS.siteCreateMember.limit;
+}
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 // Referral partners receive 40% of the NET JPY of each paid invoice's charge
@@ -1328,6 +1339,17 @@ export async function handleApi(request, env, ctx) {
     // Any active member can start onboarding; paid entitlements apply later.
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
+    // Per member, per day. Super admins (support) are not limited. Counted
+    // before the body is read so a flood of bad requests is limited too.
+    if (!member.is_super_admin) {
+      const createLimit = siteCreateLimit(env);
+      const created = await checkApiRateLimit(env, "site-create-member", member.member_id, { limit: createLimit, windowMs: API_RATE_LIMITS.siteCreateMember.windowMs });
+      if (created.unavailable) console.warn("site_create_rate_limit_unavailable", JSON.stringify({ member_id: member.member_id }));
+      else if (!created.allowed) {
+        const retryAfter = Math.ceil(API_RATE_LIMITS.siteCreateMember.windowMs / 1000);
+        return json({ error: "site_creation_rate_limited", limit: createLimit, window_hours: 24, retry_after: retryAfter }, 429, { "retry-after": String(retryAfter) });
+      }
+    }
     const body = await request.json();
     const installType = ["wp", "tag", "hosted", "static"].includes(body?.install_type) ? body.install_type : "tag";
     const siteUrl = String(body?.url || "").trim();
@@ -1579,6 +1601,55 @@ export async function handleApi(request, env, ctx) {
       if (error instanceof SyntaxError) return json({ error: "invalid_json" }, 400);
       throw error;
     }
+  }
+
+  /*
+   * Free AI check (Free / Standard): a small monthly "does AI mention you?"
+   * check, worker/free-ai-check.mjs. GET is a read and never calls an engine;
+   * the dashboard reads it with the member session, the plugin with its site
+   * key (like GET /sov). POST runs this month's check now, once a month,
+   * counted against the same caps as the scheduled one. The site key is
+   * public, so it cannot start a run: POST takes the owner's session (with the
+   * CSRF token) or the plugin's profile token (bearer, no cookie).
+   */
+  const freeCheckMatch = path.match(/^\/api\/sites\/([^/]+)\/sov\/free-check$/i);
+  if (freeCheckMatch && (method === "GET" || method === "POST")) {
+    const siteId = decodeURIComponent(freeCheckMatch[1]);
+    const bearer = /^bearer\s+\S/i.test(String(request.headers.get("authorization") || ""));
+    const siteKey = url.searchParams.get("site_key") || url.searchParams.get("siteKey");
+    let site = null;
+    if (method === "POST" && bearer) {
+      const auth = await requireProfileToken(request, env, siteId);
+      if (!auth.ok) return auth.response;
+      site = await env.DB.prepare("SELECT * FROM sites WHERE id=? LIMIT 1").bind(siteId).first();
+    } else if (method === "GET" && siteKey) {
+      const auth = await authorizeSiteKey(env, siteKey, { touch: false });
+      if (!auth.registered || String(auth.siteId) !== siteId) return json({ error: "invalid_site_key" }, 404);
+      site = await env.DB.prepare("SELECT * FROM sites WHERE id=? LIMIT 1").bind(siteId).first();
+    } else {
+      // Exempt from the global CSRF gate only so the plugin's bearer POST
+      // works; a cookie-authenticated POST is checked here instead.
+      if (method === "POST" && !csrfValid(request)) return json({ error: "csrf_failed" }, 403);
+      const member = await requireMember(request, env);
+      if (!member) return json({ error: "unauthorized" }, 401);
+      site = await loadOwnedSite(env, member, siteId);
+      if (!site) {
+        const exists = await env.DB.prepare("SELECT id FROM sites WHERE id=?").bind(siteId).first();
+        return exists ? json({ error: "forbidden" }, 403) : json({ error: "not_found" }, 404);
+      }
+      // A viewer can read the result but not spend the month's check.
+      if (method === "POST" && member.role === "viewer") return json({ error: "forbidden" }, 403);
+    }
+    if (!site) return json({ error: "not_found" }, 404);
+    const plan = await resolveSitePlanFor(env, site);
+    if (method === "POST") {
+      const outcome = await runFreeCheck(env, site, { trigger: "manual", plan, loadProfile: buildSiteSovProfile });
+      const view = await freeCheckView(env, site, { plan });
+      const ran = ["done", "failed"].includes(outcome.status);
+      return json({ site_id: site.id, outcome: outcome.status, scope: outcome.scope || null, free_check: view },
+        ran ? 200 : outcome.status === "not_found" ? 404 : outcome.status === "pro" ? 409 : ["used_up", "already_checked", "running"].includes(outcome.status) ? 429 : 409);
+    }
+    return json({ site_id: site.id, free_check: await freeCheckView(env, site, { plan }) });
   }
 
   const sovMatch = path.match(/^\/api\/sites\/([^/]+)\/sov$/i);
@@ -2284,6 +2355,7 @@ export async function handleApi(request, env, ctx) {
       env.DB.prepare("DELETE FROM site_settings WHERE site_id=?").bind(site.id),
       env.DB.prepare("DELETE FROM sites WHERE id=?").bind(site.id),
     ]);
+    await deleteSiteFeatureRows(env, site.id);
     return json({ ok: true, id: site.id });
   }
 
@@ -3161,34 +3233,9 @@ async function runSiteSovLocked(env, site, { trigger, deadline, clock }) {
   // Per engine per run: the most a 20-question set at 2 repetitions asks.
   const perRunMax = SOV_LIMITS.maxQuestionsPerRun * 2;
 
-  // Measure the business as its owner describes it: the canonical record is the
-  // same one wp-admin and the dashboard write, so the brand and locality used
-  // here cannot drift from what the operator entered.
-  const canonical = await loadSiteProfile(env, site.id);
-  const settings = {
-    name: canonical?.values?.name || "",
-    business_type: canonical?.values?.business_type_label || canonical?.values?.business_type_schema || "",
-    address: canonical?.values?.address || "",
-  };
-  // An online shop or B2B site is asked about its categories and services
-  // rather than its locality (sov-site-type.mjs); a local site reads nothing more.
-  const siteType = await loadSiteType(env, site.id);
-  if (siteType !== "local") {
-    settings.site_type = siteType;
-    try { settings.catalog = await loadSiteCatalog(env, site.id); } catch { settings.catalog = null; }
-  }
-  const target = sovTargetUrl(site);
-
-  let schemas = [];
-  if (target) {
-    // Published schema only fills gaps the record does not cover; it never
-    // overrides what the owner stated.
-    try { schemas = await fetchSchemaNodes(target); } catch { schemas = []; }
-  }
-
   let profile;
   try {
-    profile = buildBrandProfile({ site, settings, schemas });
+    profile = await buildSiteSovProfile(env, site);
   } catch (error) {
     if (error instanceof SovError) return { error: error.code, status: error.status, usage: budget };
     throw error;
@@ -3275,6 +3322,41 @@ async function runSiteSovLocked(env, site, { trigger, deadline, clock }) {
   if (attemptAt) await finishSovAttempt(env, site.id, attemptAt);
   const usage = await sovRemainingBudget(env, site.id);
   return { measurement, run, usage, profile, engines: plans.map(publicPlan) };
+}
+
+/**
+ * The brand profile a measurement asks about, from the site's canonical
+ * record, its type and catalogue, and its published schema. Shared by the Pro
+ * measurement and the free AI check so both ask the same kind of question.
+ * Throws SovError("brand_name_unavailable") when there is no name to look for.
+ */
+async function buildSiteSovProfile(env, site) {
+  // Measure the business as its owner describes it: the canonical record is the
+  // same one wp-admin and the dashboard write, so the brand and locality used
+  // here cannot drift from what the operator entered.
+  const canonical = await loadSiteProfile(env, site.id);
+  const settings = {
+    name: canonical?.values?.name || "",
+    business_type: canonical?.values?.business_type_label || canonical?.values?.business_type_schema || "",
+    address: canonical?.values?.address || "",
+  };
+  // An online shop or B2B site is asked about its categories and services
+  // rather than its locality (sov-site-type.mjs); a local site reads nothing more.
+  const siteType = await loadSiteType(env, site.id);
+  if (siteType !== "local") {
+    settings.site_type = siteType;
+    try { settings.catalog = await loadSiteCatalog(env, site.id); } catch { settings.catalog = null; }
+  }
+  const target = sovTargetUrl(site);
+
+  let schemas = [];
+  if (target) {
+    // Published schema only fills gaps the record does not cover; it never
+    // overrides what the owner stated.
+    try { schemas = await fetchSchemaNodes(target); } catch { schemas = []; }
+  }
+
+  return buildBrandProfile({ site, settings, schemas });
 }
 
 const MISSING_SOV_TABLE = /no such table|no such column/i;
@@ -3463,6 +3545,15 @@ export async function runSovDailyBatch(env, { limit = 200, now = Date.now(), clo
     min_interval_days: minInterval > 0 ? (minInterval + SOV_INTERVAL_SLACK_MS) / 86400000 : 0,
     errors: errors.slice(0, 20),
   };
+}
+
+/**
+ * The free AI check's daily batch (worker/free-ai-check.mjs), with the same
+ * profile builder as the Pro measurement. Its own cron, so it never shares the
+ * Pro batch's time budget.
+ */
+export async function runFreeAiCheckBatch(env, options = {}) {
+  return runFreeCheckBatch(env, { loadProfile: buildSiteSovProfile, ...options });
 }
 
 // Kept for callers/tests from the weekly beta; both names run the same batch.
@@ -4524,6 +4615,30 @@ async function checkApiRateLimit(env, scope, value, { limit, windowMs }) {
   }
 }
 
+/**
+ * Rows of optional features that belong to a deleted site. Each table may not
+ * exist yet (its migration unapplied), so each delete stands alone and a
+ * missing table is skipped. Account- and deployment-wide ledgers are kept on
+ * purpose: the per-account free-check count ("org:<id>" rows) must not be
+ * reset by deleting and re-creating sites, and the global budget is shared.
+ */
+const SITE_FEATURE_DELETES = [
+  ["aeo_free_checks", "DELETE FROM aeo_free_checks WHERE site_id=?"],
+  ["aeo_sov_engine_usage", "DELETE FROM aeo_sov_engine_usage WHERE scope=? AND engine LIKE 'free:%'"],
+];
+
+async function deleteSiteFeatureRows(env, siteId, statements = SITE_FEATURE_DELETES) {
+  for (const [table, sql] of statements) {
+    try {
+      await env.DB.prepare(sql).bind(siteId).run();
+    } catch (error) {
+      if (!/no such table|no such column/i.test(String(error?.message || error))) {
+        console.error("site_delete_cleanup_error", JSON.stringify({ table, error: String(error?.message || error).slice(0, 120) }));
+      }
+    }
+  }
+}
+
 async function crawlerHitRateLimit(env, siteId, crawlerId) {
   return checkApiRateLimit(env, "crawler-hit", `${siteId}:${crawlerId}`, API_RATE_LIMITS.crawlerHit);
 }
@@ -4562,6 +4677,9 @@ function csrfRequired(path) {
   // /api/pair is the same shape: the plugin sends a pairing code and no
   // cookie, so a CSRF token proves nothing and the IP limiter is the defence.
   if (path === "/api/pair") return false;
+  // The free AI check's POST takes the plugin's bearer profile token (no
+  // cookie); the session form of the same POST checks the CSRF token itself.
+  if (/^\/api\/sites\/[^/]+\/sov\/free-check$/i.test(path)) return false;
   // The catalogue sync is the profile sync's twin: bearer token, no cookie.
   if (/^\/api\/sites\/[^/]+\/catalog$/i.test(path)) return false;
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
