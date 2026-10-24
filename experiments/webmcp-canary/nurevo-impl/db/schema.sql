@@ -564,3 +564,39 @@ CREATE TABLE IF NOT EXISTS agency_report_opt_outs (
   created_at INTEGER NOT NULL,
   PRIMARY KEY (site_id, email)
 );
+
+-- 0047: agency lead-generation tools: the per-agency widget / landing page
+-- settings and the leads the widget collected (agency-leadgen.mjs).
+CREATE TABLE IF NOT EXISTS agency_leadgen (
+  account_id INTEGER PRIMARY KEY,             -- accounts.id
+  widget_key TEXT NOT NULL UNIQUE,            -- wk_ + 24 [a-z0-9]; public, rotatable
+  widget_enabled INTEGER NOT NULL DEFAULT 0,
+  allowed_origins_json TEXT NOT NULL DEFAULT '[]', -- ["https://www.agency.example", ...], at most 10
+  notify_email INTEGER NOT NULL DEFAULT 0,
+  slug TEXT UNIQUE,                           -- lower-case [a-z0-9-], 3-40, reserved words refused
+  landing_enabled INTEGER NOT NULL DEFAULT 0,
+  landing_noindex INTEGER NOT NULL DEFAULT 0, -- 0 = indexed (the default)
+  landing_intro TEXT,                         -- plain text, at most 500 characters
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  updated_by TEXT                             -- members.id
+);
+
+CREATE TABLE IF NOT EXISTS agency_leads (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  account_id INTEGER NOT NULL,                -- the agency (accounts.id) the lead belongs to
+  widget_key TEXT,                            -- the key it came through (history; keys rotate)
+  source TEXT NOT NULL DEFAULT 'widget' CHECK (source IN ('widget', 'landing')),
+  page_origin TEXT,                           -- the embedding page's origin, when the browser sent it
+  site_url TEXT NOT NULL,
+  name TEXT NOT NULL,
+  email TEXT NOT NULL,
+  score INTEGER,                              -- the on-site AEO score, NULL when it could not be checked
+  band TEXT,                                  -- green | yellow | red
+  locale TEXT,                                -- the widget language (ja en zh tw ko es fr de)
+  consent_text TEXT NOT NULL,                 -- exactly what the visitor agreed to
+  consent_at INTEGER NOT NULL,                -- epoch ms
+  created_at INTEGER NOT NULL,
+  notified_at INTEGER                         -- when the agency was emailed, if it asked to be
+);
+CREATE INDEX IF NOT EXISTS idx_agency_leads_account ON agency_leads(account_id, id DESC);

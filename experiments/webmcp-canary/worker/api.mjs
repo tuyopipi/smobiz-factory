@@ -5,7 +5,7 @@ import { ensureAccount, issueReferralCode, partnerSummary, isApprovedPartner, ap
 import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { normalizeDashboardLocale } from "./dashboard-locales.mjs";
-import { mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
+import { memberEmailLocale, mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
 import { ENTITY_SCHEMA_FIELDS } from "./aeo-fields.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, resolveLlmsTxtLang, robotsBlock, matchCrawler, searchCrawlerRobotsLines } from "./ai-crawlers.js";
@@ -35,6 +35,7 @@ import {
   loadReportSettings, logoSrc, previousMonthKey, renderAgencyReportHtml, renderAgencyReportText, resolveBranding, runAgencyReportBatch as runAgencyReports,
   saveBranding, saveReportSettings, validateBranding, validateReportSettings, REPORT_UNSUBSCRIBE_PATH,
 } from "./agency-report.mjs";
+import { LEADGEN_SUBMIT_PATH, handleLeadgenDashboard, handleLeadgenPublic } from "./agency-leadgen.mjs";
 import { isSiteType, normalizeSiteType } from "./site-types.mjs";
 import { NON_LOCAL_DROPPED_PROPS, typedBusinessType, typedCatalogNodes, typedLlmsTxt } from "./site-type-output.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
@@ -510,6 +511,16 @@ export async function handleApi(request, env, ctx) {
   // agency logo it shows (public: email clients load it without a session).
   if (path === REPORT_UNSUBSCRIBE_PATH) return handleReportUnsubscribe(request, env);
   if (path.startsWith(AGENCY_LOGO_PATH) && method === "GET") return handleLogoRequest(request, env);
+  // Agency lead tools (agency-leadgen.mjs, 0047), public: the widget loader,
+  // its frame, the lead submit (own frame only, rate limited, no session) and
+  // the agency landing page /p/<slug>. The widget scores with the same cached
+  // on-site diagnosis as /api/aeo/score and never calls a paid AI engine.
+  const leadgenPublic = await handleLeadgenPublic(request, env, ctx, {
+    scoreUrl: async (raw) => (await cachedAeoDiagnosis(env, raw, ctx)).result,
+    clientIp: requestClientIp,
+    memberLocale: memberEmailLocale,
+  });
+  if (leadgenPublic) return leadgenPublic;
 
   if (path === "/api/aeo/score" && method === "GET") {
     const raw = url.searchParams.get("url") || "";
@@ -526,23 +537,9 @@ export async function handleApi(request, env, ctx) {
         const limited = await aeoFreshRateLimit(env, raw);
         if (limited) return limited;
       }
-      // The cache key deliberately excludes the language: one diagnosis is
-      // reused for every language, and the wording is applied on the way out.
-      // Caching per language would multiply the entries and let the first
-      // visitor's language decide what everyone else sees until it expired.
-      const activeRuleset = await loadActiveRuleset(env);
-  const definition = rulesetDefinition(activeRuleset);
-  const schemaRules = definition.schema;
-      const rulesHash = await aeoSha256Hex(JSON.stringify(definition));
-      const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
-      const cached = fresh ? null : await env.WEBMCP_KV?.get(cacheKey, "json");
+      const { result, cache } = await cachedAeoDiagnosis(env, raw, ctx, { fresh });
       const vary = { "cache-control": `public, max-age=${AEO_CACHE_TTL_SECONDS}`, "vary": "accept-language" };
-      if (cached) return json(aeoResponse(cached, lang), 200, { ...vary, "x-aeo-cache": "hit" });
-      const result = await diagnoseAeoUrl(raw, { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, fresh });
-      // A fresh result is still written back, so the next ordinary visitor
-      // sees the fixed page too instead of the copy the fix replaced.
-      const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(aeoResponse(result)), { expirationTtl: AEO_CACHE_TTL_SECONDS });
-      if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
+      if (cache === "hit") return json(aeoResponse(result, lang), 200, { ...vary, "x-aeo-cache": "hit" });
       if (fresh) return json(aeoResponse(result, lang), 200, { "cache-control": "no-store", "vary": "accept-language", "x-aeo-cache": "bypass" });
       return json(aeoResponse(result, lang), 200, { ...vary, "x-aeo-cache": "miss" });
     } catch (error) {
@@ -869,6 +866,11 @@ export async function handleApi(request, env, ctx) {
   if (["POST", "PUT", "DELETE"].includes(method) && csrfRequired(path) && !csrfValid(request)) {
     return json({ error: "csrf_failed" }, 403);
   }
+
+  // Agency lead tools, dashboard side (agency-leadgen.mjs): settings, embed
+  // code, landing page address, the leads list, CSV export and deletion.
+  const leadgenDashboard = await handleLeadgenDashboard(request, env, { requireMember: requireActiveMember, ensureAccount, issueReferralCode });
+  if (leadgenDashboard) return leadgenDashboard;
 
   const hostedMatch = path.match(/^\/s\/([^/]+)(?:\/(llms\.txt))?$/i);
   if (hostedMatch && method === "GET") {
@@ -3726,6 +3728,32 @@ export function hasLiveSubscription(site = {}) {
     && !["cancelled", "canceled", "stopped"].includes(String(site?.contract || "").trim().toLowerCase());
 }
 
+/**
+ * The public on-site diagnosis of one URL, through the shared KV cache: the
+ * same result /api/aeo/score serves, unlocalised (aeoResponse(result) shape).
+ * The cache key deliberately excludes the language: one diagnosis is reused
+ * for every language, and the wording is applied on the way out. Caching per
+ * language would multiply the entries and let the first visitor's language
+ * decide what everyone else sees until it expired. Also used by the agency
+ * lead widget (agency-leadgen.mjs), which never calls a paid AI engine.
+ * Throws AeoScoreError for a URL that cannot be scored.
+ */
+async function cachedAeoDiagnosis(env, raw, ctx, { fresh = false } = {}) {
+  const activeRuleset = await loadActiveRuleset(env);
+  const definition = rulesetDefinition(activeRuleset);
+  const schemaRules = definition.schema;
+  const rulesHash = await aeoSha256Hex(JSON.stringify(definition));
+  const cacheKey = `aeo-score:${AEO_SCORE_MODEL_VERSION}:${rulesHash}:url:${await aeoSha256Hex(normalizeAeoCacheUrl(raw))}`;
+  const cached = fresh ? null : await env.WEBMCP_KV?.get(cacheKey, "json");
+  if (cached) return { result: cached, cache: "hit" };
+  const result = await diagnoseAeoUrl(raw, { schemaRules, scoring: definition.scoring, rulesetVersion: activeRuleset.version, fresh });
+  // A fresh result is still written back, so the next ordinary visitor
+  // sees the fixed page too instead of the copy the fix replaced.
+  const write = env.WEBMCP_KV?.put(cacheKey, JSON.stringify(aeoResponse(result)), { expirationTtl: AEO_CACHE_TTL_SECONDS });
+  if (write && ctx?.waitUntil) ctx.waitUntil(write); else if (write) await write;
+  return { result: aeoResponse(result), cache: fresh ? "bypass" : "miss" };
+}
+
 function aeoFreshRequested(url) {
   return ["1", "true", "yes"].includes(String(url.searchParams.get("fresh") || "").trim().toLowerCase());
 }
@@ -4789,6 +4817,9 @@ function csrfRequired(path) {
   // The report unsubscribe link is posted from an email client (RFC 8058) or
   // its own confirm page; the signed token is the authority, not a session.
   if (path === REPORT_UNSUBSCRIBE_PATH) return false;
+  // The agency lead widget posts from its own frame with no session; the
+  // signed form token, honeypot and per-IP / per-key limits protect it.
+  if (path === LEADGEN_SUBMIT_PATH) return false;
   // The AI-referral beacon is sent by sendBeacon, which cannot set a header.
   if (path === "/api/lp/ai-referral") return false;
   if (path === "/api/site/ai-referral") return false;
