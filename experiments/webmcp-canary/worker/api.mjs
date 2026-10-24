@@ -71,7 +71,17 @@ const API_RATE_LIMITS = Object.freeze({
   // the only thing the plugin holds. A pairing code is short enough to be
   // read aloud, so guessing it has to be slow from any one caller.
   pairIp: { limit: 10, windowMs: 60 * 60 * 1000 },
+  // Sites a member may add per day (SITE_CREATE_DAILY_LIMIT overrides). Every
+  // hosted site is a page Nurevo serves and, once ready, a free AI check, so
+  // adding them cannot be free-running; a real owner adds a handful.
+  siteCreateMember: { limit: 20, windowMs: 24 * 60 * 60 * 1000 },
 });
+
+/** The per-member daily site-creation limit in force (SITE_CREATE_DAILY_LIMIT, default 20). */
+export function siteCreateLimit(env = {}) {
+  const raw = Number(env.SITE_CREATE_DAILY_LIMIT);
+  return Number.isFinite(raw) && raw >= 1 ? Math.min(10000, Math.floor(raw)) : API_RATE_LIMITS.siteCreateMember.limit;
+}
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 // Referral partners receive 40% of the NET JPY of each paid invoice's charge
@@ -1371,6 +1381,17 @@ export async function handleApi(request, env, ctx) {
     // Any active member can start onboarding; paid entitlements apply later.
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
+    // Per member, per day. Super admins (support) are not limited. Counted
+    // before the body is read so a flood of bad requests is limited too.
+    if (!member.is_super_admin) {
+      const createLimit = siteCreateLimit(env);
+      const created = await checkApiRateLimit(env, "site-create-member", member.member_id, { limit: createLimit, windowMs: API_RATE_LIMITS.siteCreateMember.windowMs });
+      if (created.unavailable) console.warn("site_create_rate_limit_unavailable", JSON.stringify({ member_id: member.member_id }));
+      else if (!created.allowed) {
+        const retryAfter = Math.ceil(API_RATE_LIMITS.siteCreateMember.windowMs / 1000);
+        return json({ error: "site_creation_rate_limited", limit: createLimit, window_hours: 24, retry_after: retryAfter }, 429, { "retry-after": String(retryAfter) });
+      }
+    }
     const body = await request.json();
     const installType = ["wp", "tag", "hosted", "static"].includes(body?.install_type) ? body.install_type : "tag";
     const siteUrl = String(body?.url || "").trim();
@@ -1668,7 +1689,7 @@ export async function handleApi(request, env, ctx) {
       const view = await freeCheckView(env, site, { plan });
       const ran = ["done", "failed"].includes(outcome.status);
       return json({ site_id: site.id, outcome: outcome.status, scope: outcome.scope || null, free_check: view },
-        ran ? 200 : outcome.status === "pro" ? 409 : ["used_up", "already_checked", "running"].includes(outcome.status) ? 429 : 409);
+        ran ? 200 : outcome.status === "not_found" ? 404 : outcome.status === "pro" ? 409 : ["used_up", "already_checked", "running"].includes(outcome.status) ? 429 : 409);
     }
     return json({ site_id: site.id, free_check: await freeCheckView(env, site, { plan }) });
   }
@@ -2458,6 +2479,7 @@ export async function handleApi(request, env, ctx) {
       env.DB.prepare("DELETE FROM site_settings WHERE site_id=?").bind(site.id),
       env.DB.prepare("DELETE FROM sites WHERE id=?").bind(site.id),
     ]);
+    await deleteSiteFeatureRows(env, site.id);
     return json({ ok: true, id: site.id });
   }
 
@@ -4740,6 +4762,30 @@ async function checkApiRateLimit(env, scope, value, { limit, windowMs }) {
   } catch (error) {
     console.error("api_rate_limit_storage_error", JSON.stringify({ scope, error: String(error?.message || "d1_error").slice(0, 120) }));
     return { allowed: false, unavailable: true };
+  }
+}
+
+/**
+ * Rows of optional features that belong to a deleted site. Each table may not
+ * exist yet (its migration unapplied), so each delete stands alone and a
+ * missing table is skipped. Account- and deployment-wide ledgers are kept on
+ * purpose: the per-account free-check count ("org:<id>" rows) must not be
+ * reset by deleting and re-creating sites, and the global budget is shared.
+ */
+const SITE_FEATURE_DELETES = [
+  ["aeo_free_checks", "DELETE FROM aeo_free_checks WHERE site_id=?"],
+  ["aeo_sov_engine_usage", "DELETE FROM aeo_sov_engine_usage WHERE scope=? AND engine LIKE 'free:%'"],
+];
+
+async function deleteSiteFeatureRows(env, siteId, statements = SITE_FEATURE_DELETES) {
+  for (const [table, sql] of statements) {
+    try {
+      await env.DB.prepare(sql).bind(siteId).run();
+    } catch (error) {
+      if (!/no such table|no such column/i.test(String(error?.message || error))) {
+        console.error("site_delete_cleanup_error", JSON.stringify({ table, error: String(error?.message || error).slice(0, 120) }));
+      }
+    }
   }
 }
 
