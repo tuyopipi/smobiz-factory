@@ -8,7 +8,7 @@ Stable tag: 0.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Get found and cited by ChatGPT, Perplexity and Google AI. Free AEO score, llms.txt and schema for local businesses, online shops and B2B.
+Get cited by ChatGPT, Perplexity and Google AI. Free AEO score, llms.txt and business schema. Works with Yoast SEO, Rank Math and AIOSEO.
 
 == Description ==
 
