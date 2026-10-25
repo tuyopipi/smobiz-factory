@@ -1316,6 +1316,28 @@ expect(webmcp_canary_sov_percent(null) === '—', 'a missing rate renders as an 
 expect(webmcp_canary_sov_percent(0) === '0%', 'a measured zero still renders as 0%');
 
 expect(webmcp_canary_sov_sparkline(array()) === '', 'no trend yields no chart');
+// Free AI check card (Free / Standard): what the service says, escaped, never a rate.
+if (!function_exists('date_i18n')) { function date_i18n($format, $time, $gmt = false) { return gmdate('Y-m-d', $time); } }
+expect(webmcp_canary_free_check_card(array('status' => 'pro')) === '', 'a Pro site gets no free card');
+expect(webmcp_canary_free_check_card(null) === '', 'no payload, no card');
+$free_used_up = webmcp_canary_free_check_card(array('status' => 'used_up', 'next_check_on' => '2026-11-09', 'questions_per_check' => 3));
+expect(strpos($free_used_up, "This month&#039;s free checks are used up. Next check on 2026-11-09.") !== false, 'used up says when the next check is');
+expect(strpos($free_used_up, 'webmcp_canary_free_check') === false, 'no run button when used up');
+$free_done = webmcp_canary_free_check_card(array('status' => 'done', 'next_check_on' => '2026-11-09', 'questions_per_check' => 3, 'result' => array(
+    'appeared' => 1, 'answered' => 3,
+    'questions' => array(
+        array('question' => 'Best cafe in Shibuya?', 'answered' => true, 'named' => true, 'cited' => false, 'others' => array(array('label' => '<b>Rival</b>', 'kind' => 'name'))),
+        array('question' => 'q2', 'answered' => true, 'named' => false, 'cited' => false, 'others' => array()),
+        array('question' => 'q3', 'answered' => false),
+    ),
+)));
+expect(strpos($free_done, 'Named or cited in 1 of 3 answers') !== false, 'the free card counts answers, not a rate');
+expect(strpos($free_done, '%') === false, 'no percentage from three answers');
+expect(strpos($free_done, '&lt;b&gt;Rival&lt;/b&gt;') !== false && strpos($free_done, '<b>Rival') === false, 'names from answers are escaped');
+expect(strpos($free_done, 'Not mentioned') !== false && strpos($free_done, 'No answer') !== false, 'each question says what happened');
+expect(strpos($free_done, 'not a rate') !== false, 'the variability notice is shown');
+expect(strpos($free_done, 'Pro tracks this every week') !== false, 'the Pro upsell line is shown');
+
 expect(webmcp_canary_sov_sparkline(array(array('appearance_rate' => 0.4))) === '', 'a single point yields no chart');
 $chart = webmcp_canary_sov_sparkline($sov_payload['trend']);
 expect(strpos($chart, '<svg') === 0 && strpos($chart, '<polyline') !== false, 'two or more points yield an inline SVG chart');

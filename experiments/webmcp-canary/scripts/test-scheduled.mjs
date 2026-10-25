@@ -3,7 +3,8 @@
  *
  *  - wrangler.jsonc lists exactly the crons the handler knows, including the
  *    hourly one, at a minute that is not :00.
- *  - The hourly cron runs the not-connected reminders and nothing else.
+ *  - The hourly cron runs the not-connected reminders, the partner payouts
+ *    and the agency client reports, nothing else.
  *  - The daily and weekly crons run exactly what they ran before, and the
  *    daily one no longer runs the reminders, so they cannot run twice.
  *  - One job failing does not stop the others; an unknown cron runs nothing.
@@ -12,7 +13,7 @@
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON, SCHEDULED_JOBS, runScheduled } from "../worker/schedule.mjs";
+import { DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON, FREE_CHECK_CRON, SCHEDULED_JOBS, runScheduled } from "../worker/schedule.mjs";
 import { parseWranglerConfig } from "./pro-golive-check.mjs";
 import { REMINDER_STEPS, HOUR_MS, dueReminderStep } from "../worker/lifecycle-email.mjs";
 
@@ -22,8 +23,9 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 
 {
   const config = parseWranglerConfig(read("../wrangler.jsonc"));
-  assert.deepEqual([...config.triggers.crons].sort(), [DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON].sort(), "wrangler.jsonc lists the four crons, no more");
-  assert.deepEqual(Object.keys(SCHEDULED_JOBS).sort(), [DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON].sort());
+  assert.deepEqual([...config.triggers.crons].sort(), [DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON, FREE_CHECK_CRON].sort(), "wrangler.jsonc lists the five crons, no more");
+  assert.deepEqual(Object.keys(SCHEDULED_JOBS).sort(), [DAILY_CRON, WEEKLY_CRON, HOURLY_CRON, OFFSITE_CRON, FREE_CHECK_CRON].sort());
+  assert.ok(![DAILY_CRON, OFFSITE_CRON].map((c) => c.split(" ")[0]).includes(FREE_CHECK_CRON.split(" ")[0]), "the free AI check has its own minute, so its own invocation");
   assert.notEqual(OFFSITE_CRON.split(" ")[0], DAILY_CRON.split(" ")[0], "the off-site audit has its own minute, so its own invocation");
   assert.equal(DAILY_CRON, "17 18 * * *", "the daily schedule is unchanged");
   assert.equal(WEEKLY_CRON, "17 18 * * 1", "and the weekly one");
@@ -36,10 +38,11 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 /* ---------------- what each cron runs ---------------- */
 
 {
-  assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts"], "hourly: the reminders and the partner payouts");
+  assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts", "agency-reports"], "hourly: the reminders, the partner payouts and the agency reports");
   assert.deepEqual([...SCHEDULED_JOBS[DAILY_CRON]], ["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"], "daily: as before, without the reminders");
   assert.deepEqual([...SCHEDULED_JOBS[WEEKLY_CRON]], ["aeo-learning"], "weekly: as before");
   assert.deepEqual([...SCHEDULED_JOBS[OFFSITE_CRON]], ["offsite-audit"], "the off-site listing audit runs alone, daily");
+  assert.deepEqual([...SCHEDULED_JOBS[FREE_CHECK_CRON]], ["free-ai-check"], "the free AI check runs alone, daily");
   const all = Object.values(SCHEDULED_JOBS).flat();
   assert.equal(new Set(all).size, all.length, "no job runs under two crons");
 
@@ -51,8 +54,10 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
     ["aeo-sov-daily", "runSovDailyBatch(env)"],
     ["aeo-learning", 'runAeoLearningJob(env, { trigger: "scheduled" })'],
     ["offsite-audit", "runOffsiteAuditScheduled(env)"],
+    ["free-ai-check", "runFreeAiCheckBatch(env)"],
     ["lifecycle-reminders", "runLifecycleReminders(env)"],
     ["partner-payouts", "runPartnerPayouts(env)"],
+    ["agency-reports", "runAgencyReportBatch(env)"],
   ]) {
     assert.ok(index.includes(`"${label}": (env) => ${call},`), `index.mjs runs ${label} as ${call}`);
   }
@@ -88,7 +93,7 @@ async function fire(cron, { fail = [] } = {}) {
 
 {
   const hourly = await fire(HOURLY_CRON);
-  assert.deepEqual(hourly.ran, ["lifecycle-reminders", "partner-payouts"], "the hourly event runs the reminders and the partner payouts, nothing else");
+  assert.deepEqual(hourly.ran, ["agency-reports", "lifecycle-reminders", "partner-payouts"], "the hourly event runs the reminders, the partner payouts and the agency reports, nothing else");
   assert.equal(hourly.waits.length, 1, "inside waitUntil");
   assert.ok(hourly.lines.some((l) => l.startsWith("lifecycle-reminders {")), "and logs under the same label as before");
 

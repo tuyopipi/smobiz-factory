@@ -97,6 +97,7 @@ This plugin relies on the Nurevo service, operated by Bestie. LLC. It is not req
 * Ruleset — sends the site key and receives the current output criteria and plan. When the service suggests changes (for example turning on llms.txt), they are shown in wp-admin and applied only when an administrator clicks Apply. Endpoint: `/api/tag/config`.
 * Site insights — sends the site key and host. Endpoint: `/api/site-insights`.
 * AI visibility measurement (Pro, beta) — sends the site key and site ID. Endpoint: `/api/sites/{id}/sov`.
+* Free AI check (Free and Standard) — reads this month's result with the site key and site ID; "Check now" sends the site ID with the profile token. Endpoint: `/api/sites/{id}/sov/free-check` (GET and POST). Once a month the Nurevo service itself puts three questions a customer might ask, built from your business type and area (never your business name), to Perplexity (https://www.perplexity.ai/, terms: https://www.perplexity.ai/hub/legal/terms-of-service, privacy: https://www.perplexity.ai/hub/legal/privacy-policy) and stores whether the answers named your business or cited your site. The plugin itself never contacts Perplexity.
 
 The plugin also requests your own front page once a day (a loopback request to your own server, not to Nurevo) to see which structured data your other plugins already publish.
 
