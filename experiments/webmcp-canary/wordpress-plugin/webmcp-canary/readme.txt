@@ -22,7 +22,7 @@ This is AEO (Answer Engine Optimization), also called GEO (Generative Engine Opt
 * **Online shops** – an OnlineStore with your product catalogue, prices and stock where known, and your return policy. Works with WooCommerce without duplicating its product markup.
 * **B2B, SaaS and professional services** – an Organization with the services or software you offer, plus your pricing, case study and FAQ pages in llms.txt.
 
-**Keep your SEO plugin.** Nurevo AEO adds the facts Yoast SEO, Rank Math or All in One SEO leave out, inside the structured data they already publish. One graph, one business, no duplicates.
+**Keep your SEO plugin.** Nurevo AEO adds the facts Yoast SEO, Rank Math, All in One SEO or Slim SEO leave out, inside the structured data they already publish. One graph, one business, no duplicates.
 
 **In your language.** The plugin and its dashboard are available in 59 locales.
 
@@ -40,22 +40,24 @@ Everything below runs on the free plan. No license key, no trial period, no feat
 * **Your choice on AI training** — crawlers that collect content to train AI models (GPTBot, ClaudeBot, Google-Extended, Applebot-Extended, CCBot) are left to your robots.txt by default. You can allow or block them in one click. Blocking them does not affect AI search or your AEO score.
 * **Business data extraction** — reads your existing SEO plugin settings, WordPress options and clearly labelled public content to fill in blank fields only. Values you have typed are never overwritten. The WordPress administrator email is never used as your business email.
 
-= Works alongside Yoast SEO and Rank Math =
+= Works alongside Yoast SEO, Rank Math, All in One SEO and Slim SEO =
 
-Keep your SEO plugin. The two jobs are different: Yoast SEO or Rank Math handle search ranking, Nurevo AEO handles whether an AI can read your facts.
+Keep your SEO plugin. The two jobs are different: your SEO plugin handles search ranking, Nurevo AEO handles whether an AI can read your facts.
 
 Nurevo AEO does not publish a second set of structured data next to your SEO plugin's. It adds the missing facts to the one your SEO plugin already publishes.
 
-With **Yoast SEO, Rank Math or All in One SEO**, Nurevo AEO hooks the filter each of them uses to build its JSON-LD graph (`wpseo_schema_graph`, `rank_math/schema/validated_data`, `aioseo_schema_output`) and adds only what is missing:
+With **Yoast SEO, Rank Math, All in One SEO or Slim SEO**, Nurevo AEO hooks the filter each of them uses to build its JSON-LD graph (`wpseo_schema_graph`, `rank_math/schema/validated_data`, `aioseo_schema_output`, `slim_seo_schema_graph`) and adds only what is missing:
 
 * **Your business node** gets the address, telephone, opening hours, description and email it lacks, and a more specific type such as HairSalon or Dentist. Values your SEO plugin already sets are never overwritten.
-* **FAQ** questions you entered in Nurevo are added to the page's existing FAQPage, skipping any question it already answers - on the page where you placed the Nurevo FAQ block or the `[nurevo_faq]` shortcode.
+* **FAQ** questions you entered in Nurevo are added to the page's existing FAQPage, skipping any question it already answers, or as an FAQPage of their own where the page has none (Slim SEO publishes no FAQPage) - only on the page where you placed the Nurevo FAQ block or the `[nurevo_faq]` shortcode.
 * **Services** you entered are added, linked to your business node.
 * **WebSite, WebPage, Article and breadcrumbs** stay exactly as your SEO plugin publishes them.
 
 The page ends up with one graph, from your SEO plugin, describing one business.
 
-That matters because the free tiers of these plugins usually publish an Organization with a name, a URL and a logo, but not the address, telephone or opening hours an AI needs to describe a local business. In Yoast SEO and AIOSEO those belong to paid local-SEO add-ons; Rank Math's free version can publish one location if you fill in its Local SEO settings. Nurevo AEO fills whatever is still missing, without overwriting what is already there.
+That matters because the free tiers of these plugins usually publish an Organization with a name, a URL and a logo, but not the address, telephone or opening hours an AI needs to describe a local business. In Yoast SEO and AIOSEO those belong to paid local-SEO add-ons; Rank Math's free version can publish one location if you fill in its Local SEO settings; Slim SEO publishes an Organization with your site name and URL (and logo, if set). Nurevo AEO fills whatever is still missing, without overwriting what is already there.
+
+Slim SEO prints its graph at the end of the page rather than in `<head>`, so with Slim SEO Nurevo AEO waits until then. If Slim SEO's schema is turned off (Settings > Slim SEO > Features), Nurevo AEO publishes its own graph, as with any other setup.
 
 With **any other setup** - SEOPress, The SEO Framework, a theme's own schema, or no SEO plugin - Nurevo AEO prints its own graph at the end of `<head>`. It leaves out what your other plugins already publish and puts the business facts under their business @id, so the two describe one business rather than two.
 
@@ -149,9 +151,9 @@ GEO (Generative Engine Optimization) and AEO (Answer Engine Optimization) are tw
 
 Yes. In the setup wizard or under Settings, choose Local business, Online shop or B2B / SaaS. That decides what is published for AI, what the diagnosis checks and which questions the AI visibility measurement asks. Online shops and B2B sites do not need an address or opening hours.
 
-= Can I use this with Yoast SEO or Rank Math? =
+= Can I use this with Yoast SEO, Rank Math, All in One SEO or Slim SEO? =
 
-Yes, and you should. Keep your SEO plugin for search ranking and let Nurevo AEO handle the AI-facing output. Nurevo AEO looks at what your site actually publishes and only suppresses what your SEO plugin already covers completely, so you get neither duplicate schema nor a gap.
+Yes, and you should. Keep your SEO plugin for search ranking and let Nurevo AEO handle the AI-facing output. With Yoast SEO, Rank Math, All in One SEO and Slim SEO it adds the missing facts into the graph your SEO plugin already publishes; with others it looks at what your site actually publishes and only suppresses what your SEO plugin already covers completely. Either way you get neither duplicate schema nor a gap.
 
 = My SEO plugin already outputs schema. Will this duplicate it? =
 
@@ -208,7 +210,8 @@ It is a beta feature. It samples AI answers rather than observing every response
 = 0.9.0 =
 * Site types: choose Local business, Online shop or B2B / SaaS in the setup wizard or Settings. The type decides what is published for AI (an OnlineStore with your product catalogue and return policy, or an Organization with its services and software), what the diagnosis checks and which questions the AI visibility measurement asks. Online shops and B2B sites no longer need an address or opening hours. WooCommerce sites get Online shop suggested; nothing changes until you save. Existing sites stay Local business.
 * Free AI check: once a month, connected Free and Standard sites ask Perplexity three questions a customer might ask and show whether your business was named or your site cited, and who appeared instead. Shown on the AEO screen after you have agreed to the diagnosis; "Check now" runs this month's check early.
-* Clearer wordpress.org listing and readme: what the plugin does for local businesses, online shops and B2B sites, and how it works with Yoast SEO, Rank Math and AIOSEO.
+* Slim SEO support: like Yoast SEO, Rank Math and All in One SEO, Nurevo AEO now adds the missing business facts, services and FAQ into Slim SEO's own graph (`slim_seo_schema_graph`) instead of printing a second one, without overwriting Slim SEO's values. With Slim SEO's schema turned off, Nurevo AEO publishes its own graph as before.
+* Clearer wordpress.org listing and readme: what the plugin does for local businesses, online shops and B2B sites, and how it works with Yoast SEO, Rank Math, AIOSEO and Slim SEO.
 
 = 0.8.1 =
 * First-run setup wizard (Nurevo AEO > Setup): the kind of business, the name, address, phone, opening hours and description, what to publish for AI, and the optional diagnosis, in four short steps. It opens once after you activate the plugin on a site that is not set up yet, never after a bulk, network or WP-CLI activation. Skip it at any step and resume later; the opening hours are read back to you as they will be published.
@@ -317,7 +320,7 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 = 0.9.0 =
 
-Adds site types (Local business, Online shop, B2B / SaaS) and a free monthly AI check. Existing sites stay Local business and publish exactly what they did before.
+Adds site types (Local business, Online shop, B2B / SaaS), a free monthly AI check and Slim SEO support. Existing sites stay Local business; with Slim SEO active, the business facts now go into Slim SEO's graph instead of a second one.
 
 = 0.8.1 =
 

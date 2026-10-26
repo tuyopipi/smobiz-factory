@@ -367,8 +367,8 @@ const JA = {
   "Email": "メール",
 
   // SEO plugin coexistence.
-  "🤝 Works alongside Yoast and Rank Math. They do SEO, Nurevo AEO does AI. Duplicate schema is avoided automatically.":
-    "🤝 Yoast / Rank Math と併用OK。SEOは彼ら、AIはNurevo AEO。二重schemaは自動回避中",
+  "🤝 Works alongside Yoast SEO, Rank Math, All in One SEO and Slim SEO. They do SEO, Nurevo AEO does AI. Duplicate schema is avoided automatically.":
+    "🤝 Yoast SEO / Rank Math / All in One SEO / Slim SEO と併用OK。SEOは彼ら、AIはNurevo AEO。二重schemaは自動回避中",
   "(detected: %s)": "（検知: %s）",
   "Which plugin outputs each schema type": "schemaの出力元",
   "schema.org type": "schema.org タイプ",

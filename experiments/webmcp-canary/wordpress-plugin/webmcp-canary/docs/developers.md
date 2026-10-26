@@ -37,9 +37,9 @@ add_filter('webmcp_canary_business_node', function (array $node, array $settings
 }, 10, 2);
 ```
 
-Return an array; anything else is ignored. With Yoast SEO, Rank Math or All in
-One SEO active, the node's properties are merged into their business node as
-usual, so values that plugin already sets still win.
+Return an array; anything else is ignored. With Yoast SEO, Rank Math, All in
+One SEO or Slim SEO active, the node's properties are merged into their business
+node as usual, so values that plugin already sets still win.
 
 ### `webmcp_canary_llms_txt_lines`
 
