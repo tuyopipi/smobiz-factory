@@ -4,7 +4,7 @@ Tags: aeo, geo, ai seo, llms.txt, schema
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.8.1
+Stable tag: 0.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -205,6 +205,11 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.9.0 =
+* Site types: choose Local business, Online shop or B2B / SaaS in the setup wizard or Settings. The type decides what is published for AI (an OnlineStore with your product catalogue and return policy, or an Organization with its services and software), what the diagnosis checks and which questions the AI visibility measurement asks. Online shops and B2B sites no longer need an address or opening hours. WooCommerce sites get Online shop suggested; nothing changes until you save. Existing sites stay Local business.
+* Free AI check: once a month, connected Free and Standard sites ask Perplexity three questions a customer might ask and show whether your business was named or your site cited, and who appeared instead. Shown on the AEO screen after you have agreed to the diagnosis; "Check now" runs this month's check early.
+* Clearer wordpress.org listing and readme: what the plugin does for local businesses, online shops and B2B sites, and how it works with Yoast SEO, Rank Math and AIOSEO.
+
 = 0.8.1 =
 * First-run setup wizard (Nurevo AEO > Setup): the kind of business, the name, address, phone, opening hours and description, what to publish for AI, and the optional diagnosis, in four short steps. It opens once after you activate the plugin on a site that is not set up yet, never after a bulk, network or WP-CLI activation. Skip it at any step and resume later; the opening hours are read back to you as they will be published.
 * WordPress Abilities API (WordPress 6.9+): four read-only abilities for administrators, `nurevo/get-status`, `nurevo/get-aeo-score`, `nurevo/get-fixes` and `nurevo/get-business-profile`, so an AI assistant you use can read your setup. They change no settings, return no keys or tokens, and contact no service; the score is the last stored one. Documented in docs/developers.md. Nothing changes on older WordPress.
@@ -309,6 +314,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.9.0 =
+
+Adds site types (Local business, Online shop, B2B / SaaS) and a free monthly AI check. Existing sites stay Local business and publish exactly what they did before.
 
 = 0.8.1 =
 

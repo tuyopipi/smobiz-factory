@@ -3194,10 +3194,10 @@ expect(strpos($block_js, "title:'Nurevo FAQ'") === false && strpos($block_js, 't
 expect(strpos($block_js, '"title":"Nurevo FAQ"') !== false, 'which is passed in from PHP');
 
 $main_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
-expect(WEBMCP_CANARY_VERSION === '0.8.1' && strpos($main_source, " * Version: 0.8.1\n") !== false, 'the version is 0.8.1 in the header and the constant');
+expect(WEBMCP_CANARY_VERSION === '0.9.0' && strpos($main_source, " * Version: 0.9.0\n") !== false, 'the version is 0.9.0 in the header and the constant');
 $readme_081 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
-expect(strpos($readme_081, "Stable tag: 0.8.1") !== false, 'and in the readme stable tag');
-expect(substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.8.0');
+expect(strpos($readme_081, "Stable tag: 0.9.0") !== false, 'and in the readme stable tag');
+expect(substr_count($readme_081, "= 0.9.0 =") === 2 && substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.8.1 and 0.8.0');
 expect(strpos($readme_081, '= Does the AI integration cost anything? =') !== false, 'the readme answers whether the AI integration costs anything');
 
 /* --- Free is never scored down for data it holds: optIn fields publish unless retired --- */
