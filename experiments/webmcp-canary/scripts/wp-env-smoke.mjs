@@ -130,9 +130,30 @@ function probe(sub) {
   return JSON.parse(line.slice("NUREVO_CI_JSON ".length));
 }
 
+/**
+ * GET a path on the site, following redirects by hand so that a failure can
+ * say which hop failed and why (fetch only says "fetch failed").
+ */
 async function get(urlPath) {
-  const response = await fetch(`${BASE_URL}${urlPath}`, { redirect: "follow", headers: { "cache-control": "no-cache" } });
-  return { status: response.status, type: response.headers.get("content-type") || "", body: await response.text() };
+  let url = `${BASE_URL}${urlPath}`;
+  const hops = [];
+  for (let i = 0; i < 6; i += 1) {
+    let response;
+    try {
+      response = await fetch(url, { redirect: "manual", headers: { "cache-control": "no-cache" } });
+    } catch (error) {
+      const cause = error.cause ? `${error.cause.code || ""} ${error.cause.message || error.cause}`.trim() : "";
+      throw new Error(`GET ${url} failed: ${error.message}${cause ? ` (${cause})` : ""}${hops.length ? `; redirects: ${hops.join(" -> ")}` : ""}`);
+    }
+    const location = response.headers.get("location");
+    if (response.status >= 300 && response.status < 400 && location) {
+      hops.push(`${response.status} ${url}`);
+      url = new URL(location, url).toString();
+      continue;
+    }
+    return { status: response.status, type: response.headers.get("content-type") || "", body: await response.text(), redirects: hops };
+  }
+  throw new Error(`GET ${BASE_URL}${urlPath}: too many redirects: ${hops.join(" -> ")} -> ${url}`);
 }
 
 /** Every <script type="application/ld+json"> on a page, parsed. */
@@ -373,7 +394,16 @@ try {
 console.log("");
 if (crashed) {
   console.error(`wp-env smoke: aborted after ${checks} check(s): ${crashed.message}`);
-  annotate(`aborted after ${checks} check(s): ${crashed.message}`, crashed.stack ? crashed.stack.split("\n").slice(0, 8).join("\n") : undefined);
+  let context = crashed.stack ? crashed.stack.split("\n").slice(0, 6).join("\n") : "";
+  try {
+    // What PHP said, if anything: the usual reason a page stops answering.
+    const log = probe("debuglog");
+    const tail = log.content.split("\n").filter(Boolean).slice(-15).join("\n");
+    if (tail) context += `\ndebug.log (last lines):\n${tail}`;
+  } catch (error) {
+    context += `\n(debug.log unavailable: ${String(error.message).slice(0, 300)})`;
+  }
+  annotate(`aborted after ${checks} check(s): ${crashed.message}`, context);
   process.exit(1);
 }
 if (failures.length) {
