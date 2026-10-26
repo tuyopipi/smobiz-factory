@@ -60,12 +60,28 @@ const STOP = process.argv.includes("--stop");
 const failures = [];
 let checks = 0;
 
+/**
+ * A GitHub Actions error annotation, so a failure can be read from the check
+ * run without the job log. Newlines are encoded as %0A and the text is cut to
+ * stay under the annotation size limit. Outside Actions it is just a log line.
+ */
+function annotate(message, detail) {
+  let text = String(message);
+  if (detail !== undefined) {
+    text += `\n${typeof detail === "string" ? detail : JSON.stringify(detail, null, 2)}`;
+  }
+  if (text.length > 3500) text = `${text.slice(0, 3500)}\n[... truncated]`;
+  const encoded = text.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+  console.log(`::error title=smoke::${encoded}`);
+}
+
 function check(ok, message, detail) {
   checks += 1;
   if (ok) {
     console.log(`  ok   ${message}`);
   } else {
     failures.push(message);
+    annotate(`FAIL ${message}`, detail);
     console.log(`  FAIL ${message}`);
     if (detail !== undefined) {
       console.log(`       ${typeof detail === "string" ? detail : JSON.stringify(detail, null, 2).replace(/\n/g, "\n       ")}`);
@@ -277,13 +293,13 @@ async function main() {
     check(blocks.length === 1, `exactly one application/ld+json block (found ${blocks.length})`, blocks.map((b) => b.attrs));
     const block = blocks[0];
     check(Boolean(block && block.data && !block.error), "the block is valid JSON", block && block.error);
-    check(Boolean(block && /id=["']slim-seo-schema["']/.test(block.attrs)), "the block is Slim SEO's (id=slim-seo-schema)", block && block.attrs);
-    check(!home.body.includes('id="nurevo-aeo-server"'), "Nurevo printed no graph of its own (it merged instead)");
+    check(Boolean(block && /id=["']slim-seo-schema["']/.test(block.attrs)), "the block is Slim SEO's (id=slim-seo-schema)", blocks.map((b) => ({ attrs: b.attrs, data: b.data })));
+    check(!home.body.includes('id="nurevo-aeo-server"'), "Nurevo printed no graph of its own (it merged instead)", blocks.map((b) => b.attrs));
     const graph = graphOf(block);
     console.log(`  graph: ${graph.map((n) => `${types(n).join("/")}${n["@id"] ? ` ${n["@id"]}` : ""}`).join(" | ")}`);
-    check(graph.filter((n) => types(n).includes("WebSite")).length === 1, "Slim SEO's WebSite node is present once");
+    check(graph.filter((n) => types(n).includes("WebSite")).length === 1, "Slim SEO's WebSite node is present once", graph);
     const withPhone = graph.filter((n) => n.telephone === fx.business_phone);
-    check(withPhone.length === 1, `exactly one node carries the fixture telephone (found ${withPhone.length})`);
+    check(withPhone.length === 1, `exactly one node carries the fixture telephone (found ${withPhone.length})`, graph);
     const business = withPhone[0] || {};
     check(typeof business["@id"] === "string" && business["@id"].endsWith("/#organization"), "it is Slim SEO's Organization (@id .../#organization)", business["@id"]);
     check(types(business).includes("Organization") && types(business).includes(fx.business_type), `its type is Organization + ${fx.business_type}`, business["@type"]);
@@ -305,7 +321,7 @@ async function main() {
     const blocks = jsonLdBlocks(home.body);
     check(blocks.length === 1, `Slim SEO schema off: exactly one application/ld+json block (found ${blocks.length})`, blocks.map((b) => b.attrs));
     const block = blocks[0];
-    check(Boolean(block && /nurevo-aeo-server/.test(block.attrs)), "Slim SEO schema off: the block is Nurevo's own graph", block && block.attrs);
+    check(Boolean(block && /nurevo-aeo-server/.test(block.attrs)), "Slim SEO schema off: the block is Nurevo's own graph", blocks.map((b) => ({ attrs: b.attrs, data: b.data })));
     const head = home.body.split(/<\/head>/i)[0];
     check(head.includes('id="nurevo-aeo-server"'), "Slim SEO schema off: printed in <head>, as with any other setup");
     const graph = graphOf(block);
@@ -357,6 +373,7 @@ try {
 console.log("");
 if (crashed) {
   console.error(`wp-env smoke: aborted after ${checks} check(s): ${crashed.message}`);
+  annotate(`aborted after ${checks} check(s): ${crashed.message}`, crashed.stack ? crashed.stack.split("\n").slice(0, 8).join("\n") : undefined);
   process.exit(1);
 }
 if (failures.length) {
