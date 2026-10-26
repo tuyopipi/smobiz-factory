@@ -230,6 +230,32 @@ if (defined('WP_CLI') && WP_CLI) {
         }
 
         /**
+         * Nurevo's structured data output off, everything else unchanged.
+         *
+         * @subcommand nurevo-schema-off
+         */
+        public function nurevo_schema_off() {
+            $this->set_nurevo_schema('0');
+        }
+
+        /**
+         * Nurevo's structured data output back on.
+         *
+         * @subcommand nurevo-schema-on
+         */
+        public function nurevo_schema_on() {
+            $this->set_nurevo_schema('1');
+        }
+
+        private function set_nurevo_schema($value) {
+            $settings = get_option('webmcp_canary_settings', array());
+            $settings = is_array($settings) ? $settings : array();
+            $settings['serve_schema'] = $value;
+            update_option('webmcp_canary_settings', $settings);
+            $this->emit(array('serve_schema' => $value));
+        }
+
+        /**
          * Back to Slim SEO's defaults, where the Schema feature is on.
          *
          * @subcommand slimseo-schema-on

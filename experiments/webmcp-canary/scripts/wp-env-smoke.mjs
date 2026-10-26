@@ -156,6 +156,26 @@ async function get(urlPath) {
   throw new Error(`GET ${BASE_URL}${urlPath}: too many redirects: ${hops.join(" -> ")} -> ${url}`);
 }
 
+/** The last lines of the web server's log (wp-env), for a request that got no response. */
+function serverLogTail(lines = 40) {
+  if (DIRECT_WP) return "";
+  // Bounded: if this wp-env ever ignores --watch=false, it must not hang the job.
+  const result = spawnSync("npx", ["--yes", WP_ENV_PACKAGE, "logs", "development", "--watch=false"],
+    { cwd: ENV_DIR, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: process.env, timeout: 90000 });
+  const out = `${result.stdout || ""}${result.stderr || ""}`;
+  return out.split("\n").filter((l) => l.trim() && !/^\s*[✔ℹ]/.test(l)).slice(-lines).join("\n");
+}
+
+/** get(), but a failed request becomes a failed check (with the server log) instead of an abort. */
+async function tryGet(label, urlPath) {
+  try {
+    return await get(urlPath);
+  } catch (error) {
+    check(false, `${label}: ${error.message}`, serverLogTail());
+    return null;
+  }
+}
+
 /** Every <script type="application/ld+json"> on a page, parsed. */
 function jsonLdBlocks(html) {
   const blocks = [];
@@ -307,15 +327,32 @@ async function main() {
   console.log(`  Slim SEO ${slim.slim_seo}`);
   check(slim.slim_seo_active === true && slim.yoast_active === false, "Slim SEO is active, Yoast SEO is not");
   probe("reset");
+  // Slim SEO on its own first (Nurevo's schema output off), so a failure here
+  // is told apart from one in the merge.
+  probe("nurevo-schema-off");
   {
-    const home = await get("/");
-    check(home.status === 200, `GET / -> ${home.status}`);
-    const blocks = jsonLdBlocks(home.body);
+    const home = await tryGet("Slim SEO alone: GET /", "/");
+    if (home) {
+      check(home.status === 200, `Slim SEO alone: GET / -> ${home.status}`, home.status === 200 ? undefined : home.body.slice(0, 1500));
+      const blocks = jsonLdBlocks(home.body);
+      check(blocks.length === 1 && /slim-seo-schema/.test(blocks[0].attrs), `Slim SEO alone: its one block (found ${blocks.length})`, blocks.map((b) => b.attrs));
+    }
+  }
+  probe("nurevo-schema-on");
+  {
+    const home = await tryGet("Slim SEO + Nurevo: GET /", "/");
+    if (!home) {
+      const log = probe("debuglog");
+      check(false, "Slim SEO + Nurevo: debug.log after the failed request", log.content.split("\n").filter(Boolean).slice(-20).join("\n") || "(empty)");
+    }
+    const page = home || { status: 0, body: "" };
+    check(page.status === 200, `GET / -> ${page.status}`);
+    const blocks = jsonLdBlocks(page.body);
     check(blocks.length === 1, `exactly one application/ld+json block (found ${blocks.length})`, blocks.map((b) => b.attrs));
     const block = blocks[0];
     check(Boolean(block && block.data && !block.error), "the block is valid JSON", block && block.error);
     check(Boolean(block && /id=["']slim-seo-schema["']/.test(block.attrs)), "the block is Slim SEO's (id=slim-seo-schema)", blocks.map((b) => ({ attrs: b.attrs, data: b.data })));
-    check(!home.body.includes('id="nurevo-aeo-server"'), "Nurevo printed no graph of its own (it merged instead)", blocks.map((b) => b.attrs));
+    check(!page.body.includes('id="nurevo-aeo-server"'), "Nurevo printed no graph of its own (it merged instead)", blocks.map((b) => b.attrs));
     const graph = graphOf(block);
     console.log(`  graph: ${graph.map((n) => `${types(n).join("/")}${n["@id"] ? ` ${n["@id"]}` : ""}`).join(" | ")}`);
     check(graph.filter((n) => types(n).includes("WebSite")).length === 1, "Slim SEO's WebSite node is present once", graph);
@@ -337,7 +374,7 @@ async function main() {
   }
   probe("slimseo-schema-off");
   {
-    const home = await get("/");
+    const home = (await tryGet("Slim SEO schema off: GET /", "/")) || { status: 0, body: "" };
     check(home.status === 200, `GET / (Slim SEO schema off) -> ${home.status}`);
     const blocks = jsonLdBlocks(home.body);
     check(blocks.length === 1, `Slim SEO schema off: exactly one application/ld+json block (found ${blocks.length})`, blocks.map((b) => b.attrs));
