@@ -11,6 +11,7 @@ import { authorizeSiteKey } from "./agent-authorization.mjs";
 import { AI_CRAWLERS, AI_SEARCH_CRAWLERS, buildLlmsTxt, resolveLlmsTxtLang, robotsBlock, matchCrawler, searchCrawlerRobotsLines } from "./ai-crawlers.js";
 import { AEO_CACHE_TTL_SECONDS, AEO_FRESH_RATE_LIMIT, AEO_RATE_LIMIT, AEO_SCORE_MODEL_VERSION, AeoScoreError, diagnoseAeoUrl, fetchSchemaNodes, localizeAeoChecks, publishedSchemaProps, resolveAeoCheckLang } from "./aeo-score.mjs";
 import { storeAeoScore } from "./diagnose.mjs";
+import { LEGACY_SCORE_VERSION, currentAeoScore, publicAeoScore, scoreVersionSwitches, selectWithScoreV2 } from "./aeo-score-v2.mjs";
 import {
   SOV_BETA, SOV_LIMITS, SOV_MODEL_VERSION, SOV_RUN_TIME_BUDGET_MS, SovError,
   availableEngines, buildBrandProfile, buildQuestionSet,
@@ -667,8 +668,8 @@ export async function handleApi(request, env, ctx) {
       });
       // Stored history keeps the default wording; only the reply is localised,
       // so the archive stays comparable across requests from different locales.
-      await storeAeoScore(env, site.id, { ...result, verdict: result.band });
-      return json(aeoResponse(result, requestedAeoLang(request, url)), 200, { "vary": "accept-language", ...(fresh ? { "x-aeo-cache": "bypass" } : {}) });
+      const stored = await storeAeoScore(env, site.id, { ...result, verdict: result.band });
+      return json(aeoResponse(result, requestedAeoLang(request, url), stored?.aeoScore), 200, { "vary": "accept-language", ...(fresh ? { "x-aeo-cache": "bypass" } : {}) });
     } catch (error) {
       if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
       throw error;
@@ -706,8 +707,8 @@ export async function handleApi(request, env, ctx) {
       const result = await diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`, {
         ...(await diagnosticOptions(env, siteId)),
       });
-      await storeAeoScore(env, owned.id, { ...result, verdict: result.band });
-      return json(aeoResponse(result, requestedAeoLang(request, url)));
+      const stored = await storeAeoScore(env, owned.id, { ...result, verdict: result.band });
+      return json(aeoResponse(result, requestedAeoLang(request, url), stored?.aeoScore));
     } catch (error) {
       if (error instanceof AeoScoreError) return json({ error: error.code }, error.status);
       throw error;
@@ -1558,14 +1559,15 @@ export async function handleApi(request, env, ctx) {
     const hitDays = Math.min(365, Math.max(1, Number.parseInt(url.searchParams.get("days") || "30", 10) || 30));
     const hitCutoff = new Date(Date.now() - (hitDays - 1) * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
     const [scoreResult, hitResult, referralResult, activeRuleset] = await Promise.all([
-      env.DB.prepare(`
-        SELECT site_id,scanned_at,host,score,verdict,ruleset_version,delivered_ruleset_version,score_model_version,checks_json
+      // With the score v2 columns when the table has them (0048).
+      selectWithScoreV2(env, `
+        SELECT site_id,scanned_at,host,score,verdict,ruleset_version,delivered_ruleset_version,score_model_version,checks_json{V2}
           FROM (
-            SELECT site_id,scanned_at,host,score,verdict,ruleset_version,delivered_ruleset_version,score_model_version,checks_json
+            SELECT *
               FROM aeo_scores WHERE site_id=?
              ORDER BY scanned_at DESC LIMIT ?
           ) ORDER BY scanned_at ASC
-      `).bind(site.id, scoreLimit).all(),
+      `, [site.id, scoreLimit]).then((results) => ({ results })),
       env.DB.prepare(`
         SELECT date,crawler_id,hits
           FROM crawler_hits
@@ -1611,7 +1613,14 @@ export async function handleApi(request, env, ctx) {
       install_type: site.install_type,
       checks: latestChecks,
       checked_at: latestRow?.scanned_at || null,
-      scores: scoreRows.map(({ checks_json, ...row }) => row),
+      // The headline AEO score (v2): AI readiness blended with measured AI
+      // visibility, with both sub-scores. Every surface shows this object.
+      aeo_score: latestRow ? publicAeoScore(await currentAeoScore(env, site.id, latestRow)) : null,
+      // Each row keeps its own version: `score` is always AI readiness;
+      // `headline_score` is the v2 headline (null on a v1 row, whose headline
+      // was `score`). The chart marks where the version changes.
+      scores: scoreRows.map(({ checks_json, visibility_json, ...row }) => ({ ...row, score_version: row.score_version || LEGACY_SCORE_VERSION })),
+      score_version_switches: scoreVersionSwitches(scoreRows),
       crawler_hits: liveDelivery ? (hitResult.results || []) : [],
       crawler_measurement: liveDelivery,
       ai_referrals: referralResult.results || [],
@@ -1750,7 +1759,10 @@ export async function handleApi(request, env, ctx) {
       citation_rate: result.measurement.citation_rate,
       confidence: result.measurement.confidence,
       answers_received: result.measurement.answers_received,
+      // Probes (questions x repetitions x engines), kept for compatibility.
       questions_asked: result.measurement.questions_asked,
+      distinct_questions: result.measurement.distinct_questions ?? null,
+      repetitions: result.measurement.repetitions ?? null,
       competitors: result.measurement.competitors,
       queries_used: result.measurement.queries_used,
       truncated: !!result.measurement.truncated,
@@ -1874,9 +1886,8 @@ export async function handleApi(request, env, ctx) {
     const month = (url.searchParams.get("month") || "").match(/^\d{4}-\d{2}$/)
       ? url.searchParams.get("month")
       : undefined;
-    const scoreResult = await env.DB.prepare(
-      "SELECT scanned_at,score,verdict FROM aeo_scores WHERE site_id=? ORDER BY scanned_at DESC LIMIT 180",
-    ).bind(site.id).all();
+    const scoreResult = { results: await selectWithScoreV2(env,
+      "SELECT scanned_at,score,verdict{V2} FROM aeo_scores WHERE site_id=? ORDER BY scanned_at DESC LIMIT 180", [site.id]) };
     // Only a pro site has SoV data to include; the report says so for others.
     // Enough runs to find the headline engine's last measurement when the
     // latest runs did not ask it (say it was at its monthly cap).
@@ -1890,7 +1901,13 @@ export async function handleApi(request, env, ctx) {
       const pro = await loadProReport(env, site);
       comparison = { rows: pro.competitors, answers: pro.summary?.answers ?? null, basis: pro.sov_basis, recount_note: pro.recount_note };
     }
-    const report = buildMonthlyReport({ site, plan, month, scores: scoreResult.results || [], sov, family, comparison });
+    // The headline as of the period's latest diagnosis (the dashboard's number
+    // when the period is the current month).
+    const periodKey = month || new Date().toISOString().slice(0, 7);
+    const periodRows = (scoreResult.results || []).filter((row) => String(row.scanned_at || "").slice(0, 7) === periodKey);
+    const scoreRow = periodRows[0] || (scoreResult.results || [])[0] || null;
+    const aeoScore = scoreRow ? publicAeoScore(await currentAeoScore(env, site.id, scoreRow)) : null;
+    const report = buildMonthlyReport({ site, plan, month, scores: scoreResult.results || [], sov, family, comparison, aeoScore });
 
     const format = (url.searchParams.get("format") || "json").toLowerCase();
     if (format === "html") {
@@ -2786,11 +2803,18 @@ export async function handleApi(request, env, ctx) {
  * result serves every language. `lang` is undefined for callers that never ask,
  * which keeps their responses byte-identical to before.
  */
-function aeoResponse(result, lang) {
+function aeoResponse(result, lang, aeoScore = null) {
   const checks = lang === undefined ? result.checks : localizeAeoChecks(result.checks, lang);
   const fields = checks.find(c => c.id === "schema")?.fields;
-  return { score: result.score, band: result.band, gatePassed: result.gatePassed, checks, ...(fields ? { structuredData: { fields, filled: fields.filter(f => f.present).length, total: fields.length } } : {}) };
+  // A registered site's diagnosis answers with the v2 headline as `score` /
+  // `band` (what the dashboard shows), and the on-site score as `readiness`.
+  // Without a measurement the two are the same number.
+  const v2 = aeoScore && aeoScore.score != null ? publicAeoScore(aeoScore) : null;
+  const headline = v2 ? { score: v2.score, band: v2.basis === "combined" ? v2.band : result.band } : { score: result.score, band: result.band };
+  return { ...headline, gatePassed: result.gatePassed, checks, ...(fields ? { structuredData: { fields, filled: fields.filter(f => f.present).length, total: fields.length } } : {}),
+    ...(v2 ? { score_version: v2.score_version, basis: v2.basis, readiness: { score: result.score, band: result.band }, visibility: v2.visibility } : {}) };
 }
+
 
 /**
  * Which language to word the checks in.

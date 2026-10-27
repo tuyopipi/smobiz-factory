@@ -307,6 +307,33 @@ expect(webmcp_canary_aeo_view($score)['color'] === '#1a9c6b', 'green band color'
 expect(webmcp_canary_aeo_view(array_merge($score, array('band' => 'yellow')))['heading'] === 'Nearly there - a little more and you are green', 'yellow heading');
 expect(webmcp_canary_aeo_view(array_merge($score, array('band' => 'red')))['heading'] === 'AI is barely reading your site', 'red heading');
 
+/* --- Score v2: the AEO score with its two sub-scores, from the service ----- */
+$legacy_view = webmcp_canary_aeo_view($score);
+expect($legacy_view['breakdown']['readiness'] === 82 && $legacy_view['breakdown']['measured'] === false, 'a response without score v2 is the readiness score alone');
+$legacy_html = webmcp_canary_aeo_breakdown_html($legacy_view['breakdown']);
+expect(strpos($legacy_html, 'AI readiness (on-site): 82 / 100') !== false, 'labelled as AI readiness');
+expect(strpos($legacy_html, 'AI visibility not measured yet. This score is your AI readiness only.') !== false, 'and says visibility was not measured');
+$v2_score = array_merge($score, array(
+    'score' => 83, 'band' => 'green', 'score_version' => 'aeo-v2', 'basis' => 'combined',
+    'readiness' => array('score' => 97, 'band' => 'green'),
+    'visibility' => array('measured' => true, 'score' => 14, 'answers' => 10, 'named' => 0, 'cited' => 0, 'appeared' => 0, 'share' => 0.167, 'window_days' => 90),
+));
+expect(webmcp_canary_validate_aeo_score($v2_score), 'a score v2 response is still a valid diagnosis');
+$v2_view = webmcp_canary_aeo_view($v2_score);
+expect($v2_view['score'] === 83 && $v2_view['band'] === 'green', 'the gauge shows the AEO score the dashboard shows');
+expect($v2_view['breakdown'] === array('readiness' => 97, 'measured' => true, 'visibility' => 14, 'answers' => 10, 'appeared' => 0, 'window_days' => 90), 'with both sub-scores and what they rest on');
+$v2_html = webmcp_canary_aeo_breakdown_html($v2_view['breakdown']);
+expect(strpos($v2_html, 'AI readiness (on-site): 97 / 100') !== false && strpos($v2_html, 'AI visibility (measured): 14 / 100') !== false, 'both sub-scores are shown');
+expect(strpos($v2_html, 'Based on 10 AI answers (0 named or cited, last 90 days).') !== false, 'based on N AI answers');
+expect(strpos($v2_html, 'AI answers vary with the time of the run and the model.') !== false, 'with the variability notice');
+expect(strpos($v2_html, 'NaN') === false && strpos($v2_html, '<script') === false, 'clean markup');
+$unmeasured = webmcp_canary_aeo_view(array_merge($score, array('score' => 64, 'band' => 'yellow', 'score_version' => 'aeo-v2', 'basis' => 'readiness_only', 'readiness' => array('score' => 64, 'band' => 'yellow'), 'visibility' => array('measured' => false, 'score' => null, 'answers' => 0))));
+expect($unmeasured['breakdown']['measured'] === false && $unmeasured['breakdown']['visibility'] === null, 'an unmeasured visibility is not invented');
+expect(strpos(webmcp_canary_aeo_breakdown_html($unmeasured['breakdown']), 'AI visibility not measured yet') !== false, 'and is said to be unmeasured');
+$hostile = webmcp_canary_aeo_breakdown(array_merge($v2_score, array('readiness' => array('score' => '<b>'), 'visibility' => array('measured' => true, 'score' => 500, 'answers' => -4, 'window_days' => 'x'))));
+expect($hostile['readiness'] === 83 && $hostile['visibility'] === 100 && $hostile['answers'] === 0 && $hostile['window_days'] === 90, 'odd values from the service are clamped, not echoed');
+expect(webmcp_canary_aeo_breakdown(null) === null && webmcp_canary_aeo_breakdown_html(null) === '', 'no diagnosis, no breakdown');
+
 expect(webmcp_canary_aeo_alert(null) === null, 'no alert is invented before a diagnosis exists');
 expect(webmcp_canary_aeo_alert($score) === null, 'an all-OK diagnosis shows no warning');
 $alert = webmcp_canary_aeo_alert(array('checks' => array(
@@ -1411,6 +1438,13 @@ expect($measured_view['state'] === 'measured', 'a measured payload renders as me
 expect($measured_view['rate'] === 0.6, 'the appearance rate is carried through');
 expect(round($measured_view['delta'] * 100) === 20.0, 'the change against the previous run is computed');
 expect($measured_view['competitors'][0]['host'] === 'rival.example.net', 'competitors are carried through');
+expect($measured_view['distinct_questions'] === 0 && $measured_view['repetitions'] === 0, 'an older payload has no question breakdown');
+$split_payload = $sov_payload;
+$split_payload['latest']['questions_asked'] = 10;
+$split_payload['latest']['distinct_questions'] = 5;
+$split_payload['latest']['repetitions'] = 2;
+$split_view = webmcp_canary_sov_view($split_payload);
+expect($split_view['questions'] === 10 && $split_view['distinct_questions'] === 5 && $split_view['repetitions'] === 2, 'questions_asked is kept and the 5 x 2 breakdown is carried through');
 
 expect(webmcp_canary_sov_view(array('configured' => false))['state'] === 'unconfigured', 'an unconfigured engine is reported as such');
 expect(webmcp_canary_sov_view(array('configured' => true, 'latest' => null))['state'] === 'pending', 'a pro site with no run yet is pending');
@@ -3274,6 +3308,18 @@ expect(count($admin_bar->nodes) === 1, 'the admin bar shows the score by default
 $GLOBALS['webmcp_test_widgets'] = array();
 webmcp_canary_register_aeo_widget();
 expect(isset($GLOBALS['webmcp_test_widgets']['webmcp_canary_aeo_widget']), 'the Dashboard widget is registered by default');
+// The widget and the admin bar show the same AEO score as the dashboard, and
+// the widget its two sub-scores.
+update_option(WEBMCP_CANARY_CONSENT_OPTION, array('at' => time(), 'via' => 'diagnosis'));
+update_option(WEBMCP_CANARY_AEO_SCORE_OPTION, array('saved_at' => time(), 'identity' => webmcp_canary_aeo_score_identity(), 'data' => $v2_score));
+ob_start();
+webmcp_canary_aeo_widget();
+$widget_html = ob_get_clean();
+expect(strpos($widget_html, '83 / 100') !== false && strpos($widget_html, 'AI readiness (on-site): 97 / 100') !== false && strpos($widget_html, 'AI visibility (measured): 14 / 100') !== false, 'the widget shows the AEO score and both sub-scores');
+$admin_bar->nodes = array();
+webmcp_canary_admin_bar_score($admin_bar);
+expect(strpos($admin_bar->nodes[0]['title'], 'AEO 83') !== false, 'the admin bar shows the same AEO score');
+delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
 
 $hidden = webmcp_canary_sanitize_settings(array_merge(webmcp_canary_settings(), array('admin_display_submitted' => '1', 'show_admin_bar_score' => '', 'show_dashboard_widget' => '')));
 expect($hidden['show_admin_bar_score'] === '0' && $hidden['show_dashboard_widget'] === '0', 'unticking both on the form turns them off');
@@ -3737,6 +3783,7 @@ $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_AEO_SCORE_OPTION] = array('saved_a
 $options_before = serialize($GLOBALS['webmcp_test_options']);
 $score_out = $run('nurevo/get-aeo-score');
 expect($score_out['available'] === true && $score_out['score'] === 58 && $score_out['band'] === 'yellow', 'get-aeo-score returns the stored score and band');
+expect($score_out['readiness'] === 58 && $score_out['visibility'] === null && $score_out['visibility_answers'] === 0, 'and, without score v2 data, the readiness score with no visibility invented');
 expect($score_out['date'] === gmdate('c', $stored_at), 'with the date it was stored');
 expect($score_out['checklist'] === array('total' => 5, 'ok' => 1, 'warn' => 2, 'bad' => 2), 'and a checklist summary');
 $fixes = $run('nurevo/get-fixes');

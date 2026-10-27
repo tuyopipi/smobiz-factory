@@ -61,6 +61,8 @@ import { DASHBOARD_ORIGIN, mailConfigured, sendResendEmail } from "./lifecycle-e
 import { resolveSitePlanFor } from "./billing-plan.mjs";
 import { REPORT_BODY_LANGS, REPORT_CHECK_LANG, REPORT_CONSENT_COPY, REPORT_COPY, REPORT_LANG_TAG } from "./agency-report-i18n.mjs";
 import { loadCheckState, siteConnection } from "./free-ai-check.mjs";
+import { currentAeoScore, publicAeoScore, selectWithScoreV2, storedScoreView } from "./aeo-score-v2.mjs";
+import { normalizeSiteType } from "./site-types.mjs";
 
 export { REPORT_BODY_LANGS };
 export const AGENCY_REPORT_VERSION = "agency-report-v1";
@@ -536,25 +538,76 @@ const toMs = (value) => (typeof value === "number" ? value : /^\d+$/.test(String
  */
 export async function collectReportData(env, site, month) {
   const { start, end, endIso, prevStartIso } = monthBounds(month);
-  const data = { scores: [], freeCheck: null, sov: [], offsite: null };
+  const data = { scores: [], freeCheck: null, sov: [], offsite: null, siteType: "local", sovQuestions: null, aeoScore: null };
   try {
-    const { results } = await env.DB.prepare(`SELECT scanned_at,score,verdict,checks_json FROM aeo_scores
-      WHERE site_id=? AND scanned_at>=? AND scanned_at<? ORDER BY scanned_at LIMIT 400`).bind(site.id, prevStartIso, endIso).all();
-    data.scores = results || [];
+    data.scores = await selectWithScoreV2(env, `SELECT scanned_at,score,verdict,checks_json{V2} FROM aeo_scores
+      WHERE site_id=? AND scanned_at>=? AND scanned_at<? ORDER BY scanned_at LIMIT 400`, [site.id, prevStartIso, endIso]);
+  } catch (error) { if (!isMissing(error)) throw error; }
+  // The headline (score v2) as of the month's last diagnosis: stored on a v2
+  // row; combined from the evidence as of its scan time on an older row.
+  const lastInMonth = [...data.scores].reverse().find((row) => { const at = toMs(row.scanned_at); return at >= start && at < end && row.score != null; });
+  if (lastInMonth) {
+    try { data.aeoScore = publicAeoScore(await currentAeoScore(env, site.id, lastInMonth)); } catch (error) { if (!isMissing(error)) throw error; }
+  }
+  try {
+    const row = await env.DB.prepare("SELECT site_type FROM site_settings WHERE site_id=? LIMIT 1").bind(site.id).first();
+    data.siteType = normalizeSiteType(row?.site_type);
   } catch (error) { if (!isMissing(error)) throw error; }
   try {
     data.freeCheck = await env.DB.prepare("SELECT month,status,finished_at,started_at,result_json FROM aeo_free_checks WHERE site_id=? AND month=? LIMIT 1").bind(site.id, month).first() || null;
   } catch (error) { if (!isMissing(error)) throw error; }
   try {
-    const { results } = await env.DB.prepare(`SELECT ran_at,status,appearance_rate,citation_rate,answers_received,competitors_json,detail_json
+    const { results } = await env.DB.prepare(`SELECT id,ran_at,status,appearance_rate,citation_rate,answers_received,competitors_json,detail_json
       FROM aeo_sov_runs WHERE site_id=? ORDER BY ran_at DESC LIMIT 60`).bind(site.id).all();
     data.sov = (results || []).filter((row) => toMs(row.ran_at) < end);
   } catch (error) { if (!isMissing(error)) throw error; }
+  // The questions of the month's last Pro run, with how often each answer
+  // named or cited the site, so the report shows what was asked.
+  const lastRun = proRunsOf(data.sov).filter((row) => toMs(row.ran_at) >= start && toMs(row.ran_at) < end).pop();
+  if (lastRun?.id) {
+    try {
+      const engine = parseJson(lastRun.detail_json, {})?.headline?.engine || "perplexity";
+      const { results } = await env.DB.prepare(`SELECT question,engine,kind,ok,brand_mentioned,brand_cited FROM aeo_sov_mentions
+        WHERE run_id=? AND site_id=? LIMIT 200`).bind(lastRun.id, site.id).all();
+      data.sovQuestions = { run_id: lastRun.id, rows: proQuestionRows(results || [], engine, parseJson(lastRun.detail_json, {})?.query_set?.questions) };
+    } catch (error) { if (!isMissing(error)) throw error; }
+  }
   try {
     const row = await env.DB.prepare("SELECT ran_at,result_json FROM offsite_audits WHERE site_id=? AND ran_at<? ORDER BY ran_at DESC LIMIT 1").bind(site.id, end).first();
     if (row && Number(row.ran_at) >= start - 62 * 86400e3) data.offsite = { ran_at: Number(row.ran_at), ...JSON.parse(row.result_json || "{}") };
   } catch (error) { if (!isMissing(error) && !(error instanceof SyntaxError)) throw error; }
   return data;
+}
+
+/** Pro runs with a headline rate, oldest first. */
+function proRunsOf(sov = []) {
+  return sov.filter((row) => row && row.appearance_rate != null && Number(row.answers_received) > 0)
+    .sort((a, b) => toMs(a.ran_at) - toMs(b.ran_at));
+}
+
+/**
+ * Per question of one run (headline engine, discovery questions only): how
+ * many answers came back and how many named / cited the site. Questions keep
+ * the order of the run's question set when it is known.
+ */
+export function proQuestionRows(mentions = [], engine = "perplexity", order = null) {
+  const byQuestion = new Map();
+  for (const row of mentions) {
+    if (!row || (row.kind && row.kind !== "discovery") || (row.engine || "perplexity") !== engine) continue;
+    const question = String(row.question || "").slice(0, 300);
+    if (!question) continue;
+    const entry = byQuestion.get(question) || { question, asked: 0, answers: 0, named: 0, cited: 0 };
+    entry.asked += 1;
+    if (Number(row.ok) === 1 || row.ok === true) {
+      entry.answers += 1;
+      if (Number(row.brand_mentioned) === 1 || row.brand_mentioned === true) entry.named += 1;
+      if (Number(row.brand_cited) === 1 || row.brand_cited === true) entry.cited += 1;
+    }
+    byQuestion.set(question, entry);
+  }
+  const rows = [...byQuestion.values()];
+  if (Array.isArray(order)) rows.sort((a, b) => (order.indexOf(a.question) + 1 || 1e3) - (order.indexOf(b.question) + 1 || 1e3));
+  return rows.slice(0, 10);
 }
 
 /* ------------------------------------------------------------------ *
@@ -592,7 +645,7 @@ export function showPoweredBy(plan, branding) {
  * to the end of this one; freeCheck: the month's aeo_free_checks row; sov:
  * aeo_sov_runs rows before the month's end; offsite: the latest audit.
  */
-export function buildAgencyReport({ site = {}, plan = "free", month, locale = "en", scores = [], freeCheck = null, sov = [], offsite = null, branding = null, now = Date.now() } = {}) {
+export function buildAgencyReport({ site = {}, plan = "free", month, locale = "en", scores = [], freeCheck = null, sov = [], offsite = null, branding = null, siteType = "local", sovQuestions = null, aeoScore = null, now = Date.now() } = {}) {
   const period = /^\d{4}-\d{2}$/.test(String(month || "")) ? month : previousMonthKey(now);
   const language = reportLanguage(locale);
   const { start, end } = monthBounds(period);
@@ -602,15 +655,29 @@ export function buildAgencyReport({ site = {}, plan = "free", month, locale = "e
   const scored = inMonth.filter((row) => row.score != null && Number.isFinite(Number(row.score)));
   const latest = scored[scored.length - 1] || null;
   const baselineRow = [...before].reverse().find((row) => row.score != null) || null;
-  const latestScore = latest ? Number(latest.score) : null;
+  // The headline is score v2 (readiness blended with measured AI visibility)
+  // when collectReportData worked it out, else what the row itself stored.
+  // A change is only stated between two scores of the same version.
+  const headline = latest ? (aeoScore && aeoScore.score != null ? aeoScore : publicAeoScore(storedScoreView(latest))) : null;
+  const latestScore = headline ? headline.score : null;
+  const baseline = baselineRow ? storedScoreView(baselineRow) : null;
+  const sameVersion = !!(headline && baseline && baseline.score_version === headline.score_version && baseline.score != null);
+  const versionOf = (row) => storedScoreView(row).score_version;
   const score = {
     available: latestScore != null,
     latest: latestScore,
     band: band(latestScore),
-    delta: latestScore != null && baselineRow ? latestScore - Number(baselineRow.score) : null,
+    delta: latestScore != null && sameVersion ? latestScore - Number(baseline.score) : null,
+    version_changed: !!(headline && baseline && baseline.score != null && !sameVersion),
     samples: scored.length,
-    points: scored.map((row) => ({ at: row.scanned_at, score: Number(row.score) })).slice(-31),
+    // The chart follows one version: the latest point's.
+    points: scored.filter((row) => !headline || versionOf(row) === versionOf(latest))
+      .map((row) => ({ at: row.scanned_at, score: Number(storedScoreView(row).score) })).filter((p) => Number.isFinite(p.score)).slice(-31),
     measured_at: latest?.scanned_at || null,
+    score_version: headline?.score_version || null,
+    basis: headline?.basis || null,
+    readiness: headline?.readiness?.score ?? null,
+    visibility: headline?.visibility || null,
   };
 
   // Fixed: not passing at the start (the last scan before the month, else the
@@ -636,8 +703,7 @@ export function buildAgencyReport({ site = {}, plan = "free", month, locale = "e
   // AI: the month's free check for Free/Standard, the Pro measurement for Pro.
   let ai = { kind: "none" };
   if (plan === "pro") {
-    const runs = sov.filter((row) => row && row.appearance_rate != null && Number(row.answers_received) > 0)
-      .sort((a, b) => toMs(a.ran_at) - toMs(b.ran_at));
+    const runs = proRunsOf(sov);
     const monthRuns = runs.filter((row) => toMs(row.ran_at) >= start && toMs(row.ran_at) < end);
     const last = monthRuns[monthRuns.length - 1] || null;
     if (last) {
@@ -645,8 +711,18 @@ export function buildAgencyReport({ site = {}, plan = "free", month, locale = "e
       const engine = engineOf(last);
       const prior = runs.filter((row) => toMs(row.ran_at) < start && engineOf(row) === engine).pop() || null;
       const competitors = parseJson(last.competitors_json, []);
+      const detail = parseJson(last.detail_json, {}) || {};
+      // The questions asked, each with how its answers named / cited the site.
+      const asked = sovQuestions && sovQuestions.run_id && sovQuestions.run_id === last.id && Array.isArray(sovQuestions.rows) ? sovQuestions.rows : [];
       ai = {
         kind: "pro",
+        distinct_questions: Number.isInteger(detail.distinct_questions) ? detail.distinct_questions : Array.isArray(detail.query_set?.questions) ? detail.query_set.questions.length : asked.length || null,
+        repetitions: Number.isInteger(detail.repetitions) ? detail.repetitions : null,
+        questions: asked.map((q) => ({
+          question: String(q.question || "").slice(0, 300),
+          answered: Number(q.answers) > 0, named: Number(q.named) > 0, cited: Number(q.cited) > 0,
+          answers: Number(q.answers) || 0, named_count: Number(q.named) || 0, cited_count: Number(q.cited) || 0,
+        })),
         engine_label: engineDefinition(engine)?.label || "Perplexity",
         answers: Number(last.answers_received || 0),
         appearance_rate: Number(last.appearance_rate),
@@ -697,6 +773,7 @@ export function buildAgencyReport({ site = {}, plan = "free", month, locale = "e
     lang: language.lang,
     lang_fallback: language.fallback,
     site: { id: site.id || null, label: siteLabel(site) },
+    site_type: normalizeSiteType(siteType),
     plan,
     brand: branding ? {
       agency: true,
@@ -753,7 +830,18 @@ function reportParts(model) {
     band: c[s.band === "green" ? "bandGreen" : s.band === "yellow" ? "bandYellow" : "bandRed"],
     delta: s.delta == null ? c.deltaFirst : s.delta > 0 ? fill(c.deltaUp, { n: s.delta }) : s.delta < 0 ? fill(c.deltaDown, { n: Math.abs(s.delta) }) : c.deltaSame,
     samples: fill(c.measurements, { n: s.samples }),
+    // Score v2: the two sub-scores, what the visibility rests on, and why there
+    // is no change figure when the version changed.
+    lines: s.score_version === "aeo-v2" ? [
+      fill(c.readinessLine, { n: s.readiness ?? "—" }),
+      s.visibility?.measured
+        ? fill(c.visibilityLine, { n: s.visibility.score, answers: s.visibility.answers, k: s.visibility.appeared })
+        : c.visibilityNone,
+      ...(s.visibility?.measured ? [c.scoreSmallSample] : []),
+      ...(s.version_changed ? [c.deltaVersion] : []),
+    ] : [],
   } : null;
+  if (parts.score && s.version_changed) parts.score.delta = "";
   const ai = model.ai;
   if (ai.kind === "free") {
     parts.ai = {
@@ -765,13 +853,20 @@ function reportParts(model) {
     };
   } else if (ai.kind === "pro") {
     const delta = ai.delta == null ? null : `${ai.delta > 0 ? "+" : ""}${Math.round(ai.delta * 100)} pt`;
+    const qs = ai.questions || [];
+    const count = (label, k, n) => `${label} ${k}/${n}`;
     parts.ai = {
-      lead: fill(c.proLead, { engine: ai.engine_label, n: ai.answers }),
+      lead: [fill(c.proLead, { engine: ai.engine_label, n: ai.answers }),
+        ai.distinct_questions > 0 && ai.repetitions > 0 ? fill(c.proAsked, { engine: ai.engine_label, q: ai.distinct_questions, r: ai.repetitions }) : ""].filter(Boolean).join(" "),
       result: fill(c.proRate, { rate: percent(ai.appearance_rate), cite: percent(ai.citation_rate) }),
       change: delta ? fill(c.proChange, { delta }) : null,
       others: ai.competitors.length ? fill(c.competitors, { list: ai.competitors.join(listSep(lang)) }) : null,
       when: ai.measured_at ? fill(c.offsiteChecked, { date: dateLabel(ai.measured_at, lang) }) : null,
-      questions: [],
+      questions: qs.map((q) => ({ q: q.question,
+        tags: !q.answered ? [c.noAnswer]
+          : q.named || q.cited ? [q.named && count(c.named, q.named_count, q.answers), q.cited && count(c.cited, q.cited_count, q.answers)].filter(Boolean)
+          : [count(c.notNamed, q.answers, q.answers)],
+        hit: q.named || q.cited })),
     };
   } else parts.ai = { none: ai.kind === "pro_none" ? c.proNone : c.freeNone };
   if (model.offsite) {
@@ -784,7 +879,14 @@ function reportParts(model) {
       when: o.checked_at ? fill(c.offsiteChecked, { date: dateLabel(o.checked_at, lang) }) : null,
     };
   }
-  parts.next = model.next.map((key) => c[key]);
+  // Wording follows the kind of site, and the advice refers to questions
+  // "above" only when the report shows them.
+  const type = model.site_type === "ec" ? "Ec" : model.site_type === "b2b" ? "B2b" : "";
+  parts.aiHeading = c[`aiHeading${type}`] || c.aiHeading;
+  const shown = parts.ai && Array.isArray(parts.ai.questions) && parts.ai.questions.length > 0;
+  parts.next = model.next.map((key) => key === "nextFaq"
+    ? fill(c[`nextFaq${type}`] || c.nextFaq, { ref: shown ? c.faqRefShown : c.faqRefGeneric })
+    : c[key]);
   return parts;
 }
 
@@ -851,7 +953,8 @@ export function renderAgencyReportHtml(model, { origin = DASHBOARD_ORIGIN, email
 
   out.push(`<section class="rp-sec"><h2>${escapeHtml(c.scoreHeading)}</h2><p class="rp-lead">${escapeHtml(c.scoreLead)}</p>`);
   if (p.score) {
-    out.push(`<div class="rp-score"><strong>${escapeHtml(p.score.value)}</strong><span class="rp-of">/ 100</span><span class="rp-pill ${escapeHtml(model.score.band)}">${escapeHtml(p.score.band)}</span><span>${escapeHtml(p.score.delta)}</span></div>`);
+    out.push(`<div class="rp-score"><strong>${escapeHtml(p.score.value)}</strong><span class="rp-of">/ 100</span><span class="rp-pill ${escapeHtml(model.score.band)}">${escapeHtml(p.score.band)}</span>${p.score.delta ? `<span>${escapeHtml(p.score.delta)}</span>` : ""}</div>`);
+    for (const line of p.score.lines) out.push(`<p class="rp-small" data-score-v2>${escapeHtml(line)}</p>`);
     out.push(`<p class="rp-small">${escapeHtml(p.score.samples)}</p>`);
     if (!email) out.push(sparkline(model.score.points, color));
   } else out.push(`<p>${escapeHtml(c.scoreNone)}</p>`);
@@ -865,7 +968,7 @@ export function renderAgencyReportHtml(model, { origin = DASHBOARD_ORIGIN, email
     : `<p class="rp-small">${escapeHtml(c.openNone)}</p>`;
   out.push(`<section class="rp-sec"><div class="rp-cols"><div><h2>${escapeHtml(c.fixedHeading)}</h2>${fixedList}</div><div><h2>${escapeHtml(c.openHeading)}</h2>${openList}</div></div></section>`);
 
-  out.push(`<section class="rp-sec"><h2>${escapeHtml(c.aiHeading)}</h2>`);
+  out.push(`<section class="rp-sec"><h2>${escapeHtml(p.aiHeading)}</h2>`);
   if (p.ai.none) out.push(`<p>${escapeHtml(p.ai.none)}</p>`);
   else {
     out.push(`<p class="rp-lead">${escapeHtml(p.ai.lead)}</p><p><b>${escapeHtml(p.ai.result)}</b>${p.ai.change ? ` <span class="rp-small">${escapeHtml(p.ai.change)}</span>` : ""}</p>`);
@@ -918,14 +1021,18 @@ export function renderAgencyReportText(model, { unsubscribeUrl = null } = {}) {
   lines.push(fill(c.emailIntro, { agency: brand.name, site: model.site.label, month: p.month }));
   lines.push("");
   lines.push(`■ ${c.scoreHeading}`);
-  if (p.score) { lines.push(`  ${p.score.value} / 100 (${p.score.band}) — ${p.score.delta}`); lines.push(`  ${p.score.samples}`); } else lines.push(`  ${c.scoreNone}`);
+  if (p.score) {
+    lines.push(`  ${p.score.value} / 100 (${p.score.band})${p.score.delta ? ` — ${p.score.delta}` : ""}`);
+    for (const line of p.score.lines) lines.push(`  ${line}`);
+    lines.push(`  ${p.score.samples}`);
+  } else lines.push(`  ${c.scoreNone}`);
   lines.push("");
   lines.push(`■ ${c.fixedHeading}`);
   if (model.fixed.length) for (const f of model.fixed) lines.push(`  ✓ ${f.label}`); else lines.push(`  ${c.fixedNone}`);
   lines.push(`■ ${c.openHeading}`);
   if (model.open.length) for (const f of model.open) lines.push(`  - ${f.label} (${f.status === "bad" ? c.statusBad : c.statusWarn})`); else lines.push(`  ${c.openNone}`);
   lines.push("");
-  lines.push(`■ ${c.aiHeading}`);
+  lines.push(`■ ${p.aiHeading}`);
   if (p.ai.none) lines.push(`  ${p.ai.none}`);
   else {
     lines.push(`  ${p.ai.lead}`);

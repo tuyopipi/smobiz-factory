@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-22-i18n */
+/* Nurevo dashboard asset revision: 2026-10-27-scorev2 */
 (function () {
   "use strict";
   var selectedSiteId = null;
@@ -19,28 +19,75 @@
         && Number.isFinite(Number(item.score));
     });
   }
+  // Score v2: a row's headline under its own version. A v1 row's headline was
+  // its readiness score; a v2 row stores the blended headline beside it.
+  var V2 = 'aeo-v2';
+  function versionOf(row) { return row && row.score_version === V2 ? V2 : 'aeo-v1'; }
+  function headlineOf(row) {
+    if (versionOf(row) === V2) {
+      var h = row.headline_score;
+      return h === null || h === undefined || h === '' || !Number.isFinite(Number(h)) ? null : Number(h);
+    }
+    return Number(row.score);
+  }
+  // The trend of the headline. Points of different score versions are never
+  // joined into one line: each version is its own segment, and the switch is
+  // marked on the chart and said in words under it.
   function sparkline(scores) {
-    var values = validScores(scores);
+    var values = validScores(scores).map(function (item) { return { at: item.scanned_at, score: headlineOf(item), version: versionOf(item) }; })
+      .filter(function (p) { return p.score !== null && Number.isFinite(p.score); });
     if (values.length < 2) return '<div class="nrv-aeo-empty">' + esc(tr('amTrendNeed')) + '</div>';
     var width = 520, height = 150, pad = 18;
-    var numbers = values.map(function (item) { return Number(item.score); });
+    var numbers = values.map(function (item) { return item.score; });
     var min = Math.min.apply(Math, numbers), max = Math.max.apply(Math, numbers), range = Math.max(1, max - min);
-    var points = numbers.map(function (score, index) {
-      var x = pad + index * (width - pad * 2) / Math.max(1, numbers.length - 1);
-      var y = height - pad - (score - min) * (height - pad * 2) / range;
-      return { x: x, y: y, score: score };
+    var points = values.map(function (item, index) {
+      var x = pad + index * (width - pad * 2) / Math.max(1, values.length - 1);
+      var y = height - pad - (item.score - min) * (height - pad * 2) / range;
+      return { x: x, y: y, score: item.score, version: item.version, at: item.at };
     });
-    return '<svg class="nrv-aeo-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + esc(tr('amChartLabel')) + '"><line x1="' + pad + '" y1="' + (height - pad) + '" x2="' + (width - pad) + '" y2="' + (height - pad) + '" class="axis"></line><polyline points="' + points.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ') + '" class="line"></polyline>' + points.map(function (p) { return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4"><title>' + esc(tr('amPoints', { n: p.score })) + '</title></circle>'; }).join('') + '</svg><div class="nrv-aeo-range"><span>' + esc(values[0].scanned_at) + '</span><span>' + esc(values[values.length - 1].scanned_at) + '</span></div>';
+    var segments = [], switches = [];
+    points.forEach(function (p, i) {
+      if (!i || p.version !== points[i - 1].version) { segments.push([]); if (i) switches.push(p); }
+      segments[segments.length - 1].push(p);
+    });
+    var lines = segments.map(function (seg) {
+      return seg.length > 1 ? '<polyline points="' + seg.map(function (p) { return p.x.toFixed(1) + ',' + p.y.toFixed(1); }).join(' ') + '" class="line' + (seg[0].version === V2 ? '' : ' v1') + '"' + (seg[0].version === V2 ? '' : ' stroke-dasharray="4 3" opacity="0.6"') + '></polyline>' : '';
+    }).join('');
+    var marks = switches.map(function (p) {
+      var x = (p.x - (width - pad * 2) / Math.max(1, values.length - 1) / 2).toFixed(1);
+      return '<line x1="' + x + '" y1="' + pad + '" x2="' + x + '" y2="' + (height - pad) + '" class="axis" stroke-dasharray="3 3" data-score-switch="' + esc(p.version) + '"></line>';
+    }).join('');
+    var note = switches.length ? '<p class="notice" data-score-switch-note>' + esc(tr('scVersionSwitch', { date: formatDay(switches[switches.length - 1].at) })) + '</p>' : '';
+    return '<svg class="nrv-aeo-chart" viewBox="0 0 ' + width + ' ' + height + '" role="img" aria-label="' + esc(tr('amChartLabel')) + '"><line x1="' + pad + '" y1="' + (height - pad) + '" x2="' + (width - pad) + '" y2="' + (height - pad) + '" class="axis"></line>' + lines + marks + points.map(function (p) { return '<circle cx="' + p.x.toFixed(1) + '" cy="' + p.y.toFixed(1) + '" r="4"' + (p.version === V2 ? '' : ' opacity="0.6"') + '><title>' + esc(tr('amPoints', { n: p.score }) + (p.version === V2 ? '' : ' (v1)')) + '</title></circle>'; }).join('') + '</svg><div class="nrv-aeo-range"><span>' + esc(values[0].at) + '</span><span>' + esc(values[values.length - 1].at) + '</span></div>' + note;
   }
-  function scoreSummary(scores) {
+  function formatDay(value) {
+    var at = new Date(value);
+    return Number.isFinite(at.getTime()) ? at.toLocaleDateString() : String(value || '—');
+  }
+  // The two sub-scores and what the visibility rests on, or that it has not
+  // been measured - never a number that was not measured.
+  function breakdown(a) {
+    if (!a) return '';
+    var v = a.visibility || {}, r = a.readiness || {};
+    var rows = '<dl class="nrv-sov-meta nrv-aeo-breakdown"><div><dt>' + esc(tr('scReadiness')) + '</dt><dd>' + esc(r.score === null || r.score === undefined ? '—' : r.score) + ' / 100</dd></div>'
+      + '<div><dt>' + esc(tr('scVisibility')) + '</dt><dd>' + (v.measured ? esc(v.score) + ' / 100' : esc(tr('scNotMeasured'))) + '</dd></div></dl>';
+    if (!v.measured) return rows + '<p class="notice">' + esc(tr('scReadinessOnly')) + '</p>';
+    return rows + '<p class="notice">' + esc(tr('scBasedOn', { n: Number(v.answers || 0), k: Number(v.appeared || 0), d: Number(v.window_days || 90) })) + ' · ' + esc(tr('scWeight', { p: Math.round(Number(v.share || 0) * 100) })) + '</p>'
+      + '<p class="notice">' + esc(tr('scVariability')) + '</p>';
+  }
+  function scoreSummary(scores, aeoScore) {
     var values = validScores(scores);
     if (!values.length) return '<div class="nrv-aeo-empty">' + esc(tr('amNoData')) + '</div>';
     var latest = values[values.length - 1];
     var comparable = values.filter(function(row){return latest.ruleset_version != null && latest.score_model_version && latest.delivered_ruleset_version != null && row.ruleset_version === latest.ruleset_version && row.score_model_version === latest.score_model_version && row.delivered_ruleset_version != null;});
-    var previous = comparable.length > 1 ? comparable[comparable.length - 2] : null;
-    var delta = previous ? Number(latest.score) - Number(previous.score) : null;
+    // A change is only stated between two points of the same score version.
+    var sameVersion = comparable.filter(function (row) { return versionOf(row) === versionOf(latest) && headlineOf(row) !== null; });
+    var previous = sameVersion.length > 1 ? sameVersion[sameVersion.length - 2] : null;
+    var current = aeoScore && aeoScore.score !== null && aeoScore.score !== undefined && Number.isFinite(Number(aeoScore.score)) ? Number(aeoScore.score) : headlineOf(latest);
+    var delta = previous && headlineOf(latest) !== null ? headlineOf(latest) - headlineOf(previous) : null;
     var trend = delta == null ? (values.length > 1 ? tr('amAccumulating') : tr('amFirst')) : delta > 0 ? '↗ +' + delta : delta < 0 ? '↘ ' + delta : '→ ' + tr('amNoChange');
-    return '<div class="nrv-aeo-score"><strong>' + esc(latest.score) + '</strong><span>/ 100</span><b class="' + (delta > 0 ? 'up' : delta < 0 ? 'down' : '') + '">' + esc(trend) + '</b></div><p class="notice">' + esc(latest.verdict || '') + ' · ' + esc(latest.scanned_at) + '</p>' + sparkline(comparable);
+    var band = aeoScore && aeoScore.band ? aeoScore.band : (latest.verdict || '');
+    return '<div class="nrv-aeo-score"><strong data-aeo-headline>' + esc(current === null ? '—' : current) + '</strong><span>/ 100</span><b class="' + (delta > 0 ? 'up' : delta < 0 ? 'down' : '') + '">' + esc(trend) + '</b></div><p class="notice">' + esc(band) + ' · ' + esc(latest.scanned_at) + '</p>' + breakdown(aeoScore) + sparkline(comparable);
   }
   function crawlerTable(metrics) {
     if (!metrics.crawler_measurement) return '<div class="nrv-aeo-warning"><b>' + esc(tr('amNoVisitsTitle')) + '</b><br>' + esc(tr('amNoVisitsBody')) + '</div>';
@@ -111,7 +158,7 @@
     var section = document.createElement('section');
     section.className = 'nrv-aeo-metrics';
     section.dataset.siteId = metrics.site_id;
-    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>' + esc(tr('amKicker')) + '</small><h2>' + esc(tr('amHeading')) + '</h2></div>' + rulesetStatus(metrics) + '</div>' + optimizationNotice(metrics) + '<div class="nrv-aeo-grid"><section><h3>' + esc(tr('amScoreDaily')) + '</h3>' + scoreSummary(metrics.scores) + '</section><section><h3>' + esc(tr('amReferralDaily')) + '</h3>' + referralTrend(metrics.ai_referrals) + '</section></div><section class="nrv-aeo-checklist"><h3>' + esc(tr('amCrawlerTitle')) + '</h3>' + crawlerTable(metrics) + '</section><section class="nrv-aeo-checklist"><h3>' + esc(tr('amChecklist')) + '</h3>' + checklist(metrics) + '</section></div>';
+    section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>' + esc(tr('amKicker')) + '</small><h2>' + esc(tr('amHeading')) + '</h2></div>' + rulesetStatus(metrics) + '</div>' + optimizationNotice(metrics) + '<div class="nrv-aeo-grid"><section><h3>' + esc(tr('amScoreDaily')) + '</h3>' + scoreSummary(metrics.scores, metrics.aeo_score) + '</section><section><h3>' + esc(tr('amReferralDaily')) + '</h3>' + referralTrend(metrics.ai_referrals) + '</section></div><section class="nrv-aeo-checklist"><h3>' + esc(tr('amCrawlerTitle')) + '</h3>' + crawlerTable(metrics) + '</section><section class="nrv-aeo-checklist"><h3>' + esc(tr('amChecklist')) + '</h3>' + checklist(metrics) + '</section></div>';
     return section;
   }
   async function resolveSiteId() {

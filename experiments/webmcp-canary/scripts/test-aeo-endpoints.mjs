@@ -70,8 +70,16 @@ const db = {
 const registered = await handleApi(new Request(`https://worker.test/api/sites/${siteId}/aeo-score?site_key=nrv_test`), { DB: db }, ctx);
 const registeredBody = await registered.json();
 assert.equal(registered.status, 200);
-assert.deepEqual(Object.keys(registeredBody), ["score", "band", "gatePassed", "checks", "structuredData"]);
+// Score v2: a registered site's diagnosis also says how its headline was made.
+// Nothing measured here, so the headline is the readiness score and says so.
+assert.deepEqual(Object.keys(registeredBody), ["score", "band", "gatePassed", "checks", "structuredData", "score_version", "basis", "readiness", "visibility"]);
+assert.equal(registeredBody.score_version, "aeo-v2");
+assert.equal(registeredBody.basis, "readiness_only");
+assert.deepEqual(registeredBody.readiness, { score: registeredBody.score, band: registeredBody.band }, "no measurement: headline = AI readiness");
+assert.equal(registeredBody.visibility.measured, false);
+assert.equal(registeredBody.visibility.score, null, "an unmeasured visibility is null, never 0");
 assert.ok(statements.some(({ sql }) => sql.includes("INSERT INTO aeo_scores")));
+assert.ok(statements.some(({ sql, values }) => sql.includes("INSERT INTO aeo_scores") && sql.includes("score_version") && values.includes("aeo-v2")), "the row records its score version");
 assert.ok(registeredBody.structuredData.fields.some(f => f.entityType === 'Product' && f.field === 'offers.priceCurrency' && !f.present), 'catalog selects Product but unpublished catalog facts do not count as public schema');
 
 const denied = await handleApi(new Request(`https://worker.test/api/sites/${siteId}/aeo-score?site_key=`), { DB: db }, ctx);
