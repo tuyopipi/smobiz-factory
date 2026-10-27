@@ -2,6 +2,13 @@
  * Self-calibration wiring: feed measured AI appearance rates (U2) back into the
  * U1 score weights.
  *
+ * EXPLORATORY. This is cross-sectional: it compares sites that pass a check with
+ * sites that do not, at one time, so any difference also carries everything
+ * else that differs between those sites (industry, size, age, area). It is not
+ * a causal estimate and must not be read as one. The causal estimate is the
+ * before/after one in learning.mjs (docs/learning.md), which shows this result
+ * beside its own, labelled exploratory.
+ *
  * Deliberately a scaffold. It collects the paired samples and computes what the
  * weights *would* become, but `applied` is always false and
  * `AEO_SCORE_WEIGHTS` stays fixed. Changing live scoring on a handful of beta
@@ -171,6 +178,8 @@ export async function runCalibration(env, options = {}) {
   const proposal = proposeWeights(samples);
   return {
     ...proposal,
+    // Cross-sectional, so exploratory only (see the header and learning.mjs).
+    exploratory: true,
     engine: options.engine || HEADLINE_ENGINE_DEFAULT,
     sites: new Set(samples.map((sample) => sample.site_id)).size,
     generated_at: new Date().toISOString(),

@@ -41,6 +41,9 @@ import { LEADGEN_SUBMIT_PATH, LEADGEN_VERIFY_PATH, handleLeadgenDashboard, handl
 import { isSiteType, normalizeSiteType } from "./site-types.mjs";
 import { NON_LOCAL_DROPPED_PROPS, typedBusinessType, typedCatalogNodes, typedLlmsTxt } from "./site-type-output.mjs";
 import { loadSitePages, readAiReferrals, recordAiReferral, siteLlmsTxt, siteRobotsTxt, sitemapIndexXml, storesSitemapXml } from "./site-seo.mjs";
+import { ingestPluginEvents, recordServiceEvent, sovEngineCounts } from "./learning-events.mjs";
+import { runBaselineBatch, scheduleBaseline } from "./learning-baseline.mjs";
+import { runLearningReport } from "./learning.mjs";
 
 const LIVE_AEO_CACHE_CONTROL = "public, max-age=60, s-maxage=60, stale-while-revalidate=240";
 const json = (obj, status = 200, extraHeaders = {}) => new Response(JSON.stringify(obj), {
@@ -785,6 +788,8 @@ export async function handleApi(request, env, ctx) {
 
     const bound = await bindLicenseToDomain(env, { license, plan, domainKey, siteUrl, installType });
     if (!bound.ok) return json({ ok: false, error: bound.error }, bound.status);
+    // The learning change log: when this install connected (docs/learning.md).
+    if (bound.body?.site_id) await recordServiceEvent(env, bound.body.site_id, "site_connected", { via: "license", install_type: installType }, { eventId: `svc:site_connected:${bound.body.site_id}` });
     return json(bound.body);
   }
 
@@ -864,6 +869,9 @@ export async function handleApi(request, env, ctx) {
     // write the store profile, and nothing should hold one before it has proved
     // it has the code.
     const profileToken = await issueProfileToken(env, site.id);
+    // The learning change log: the moment the plugin connected (docs/learning.md).
+    // One event per site: a retried pairing from the same domain adds nothing.
+    await recordServiceEvent(env, site.id, "site_connected", { via: "pairing", install_type: installType }, { at: now, eventId: `svc:site_connected:${site.id}` });
     const after = await env.DB.prepare("SELECT plan, manual_plan FROM sites WHERE id=? LIMIT 1").bind(site.id).first();
     return json({
       ok: true,
@@ -1132,6 +1140,18 @@ export async function handleApi(request, env, ctx) {
       "SELECT o.id,o.name,o.plan,o.wholesale_min,COUNT(s.id) AS site_count,SUM(CASE WHEN s.status='active' THEN 1 ELSE 0 END) AS active_sites FROM orgs o LEFT JOIN sites s ON s.org_id=o.id GROUP BY o.id,o.name,o.plan,o.wholesale_min ORDER BY o.created_at",
     ).all();
     return json({ orgs: results || [] });
+  }
+  /*
+   * The learning report (worker/learning.mjs, docs/learning.md): data volume
+   * and the before/after estimates, with the minimum-n gate. Super admins
+   * only. A read: it never changes a score or a ruleset; its "proposals" are
+   * for a human to review.
+   */
+  if (path === "/api/admin/learning" && method === "GET") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    const bootstrap = Math.max(50, Math.min(1000, Number(url.searchParams.get("bootstrap")) || 400));
+    return json(await runLearningReport(env, { bootstrap }));
   }
   if (path === "/api/admin/aeo/rulesets" && method === "GET") {
     const superAdmin = await requireSuperAdmin(request, env);
@@ -1452,6 +1472,11 @@ export async function handleApi(request, env, ctx) {
     // once in plaintext; only the hash is kept. Unlike site_key - which the tag
     // prints into public markup - this one must never reach a public page.
     const profileToken = await issueProfileToken(env, id);
+    // Learning data (docs/learning.md): the change log starts here, and a
+    // WordPress site added before its plugin is paired gets one pre-install
+    // baseline measurement, run by the hourly job inside the free budget.
+    await recordServiceEvent(env, id, "site_created", { install_type: installType, plan: "free" }, { eventId: `svc:site_created:${id}` });
+    await scheduleBaseline(env, { id, install_type: installType });
     const snippet = `<script src="https://nurevo.jp/tag.js" data-webmcp-site-key="${siteKey}" defer></` + "script>";
     // Welcome / next step, once, for the member's first site. Off the request
     // path and never able to fail it; skipped while 0038 is unapplied.
@@ -1976,6 +2001,26 @@ export async function handleApi(request, env, ctx) {
     return json(result);
   }
 
+  /*
+   * The plugin's learning events (worker/learning-events.mjs, docs/learning.md):
+   * what changed on the site and when, as allowlisted flags, field names and
+   * counts. Bearer-authenticated like /catalog - the same sync from the same
+   * install, sent only once the site is connected - and CSRF-exempt for the
+   * same reason. Idempotent per event id.
+   */
+  const eventsMatch = path.match(/^\/api\/sites\/([^/]+)\/events$/i);
+  if (eventsMatch && method === "POST") {
+    const siteId = decodeURIComponent(eventsMatch[1]);
+    const auth = await requireProfileToken(request, env, siteId);
+    if (!auth.ok) return auth.response;
+    const raw = await request.text();
+    if (raw.length > 64 * 1024) return json({ error: "payload_too_large" }, 413);
+    let body;
+    try { body = JSON.parse(raw || "{}"); } catch { return json({ error: "invalid_json" }, 400); }
+    const result = await ingestPluginEvents(env, siteId, body);
+    return json(result.body, result.status);
+  }
+
   // Issue or rotate the per-site profile token. Member-authenticated and
   // CSRF-protected; the plaintext is returned once and only the hash is stored.
   const profileTokenMatch = path.match(/^\/api\/sites\/([^/]+)\/profile-token$/i);
@@ -2095,13 +2140,7 @@ export async function handleApi(request, env, ctx) {
       }
     }
 
-    return json({
-      site_id: site.id,
-      checked_at: latest?.scanned_at || null,
-      // Stated in the response so the dashboard can say "we could not read
-      // your page" rather than implying the list is complete.
-      schema_read: schemaRead,
-      ...buildSiteRecommendations({
+    const recommendations = buildSiteRecommendations({
         checks,
         profile: current?.values || {},
         // Without a reading, the criteria cannot be compared against anything.
@@ -2113,7 +2152,20 @@ export async function handleApi(request, env, ctx) {
         plan: access.plan,
         stored: storedRows?.results || [],
         lang,
-      }),
+      });
+    // The learning change log: which recommendations the owner was shown
+    // (ids only; at most one event per site and day).
+    await recordServiceEvent(env, site.id, "recommendations_shown", {
+      count: recommendations.count,
+      kinds: (recommendations.items || []).map((item) => String(item.id || item.kind || "").toLowerCase().replace(/[^a-z0-9_.-]+/g, ".").replace(/^[^a-z]+/, "")).filter(Boolean),
+    }, { eventId: `svc:recommendations_shown:${new Date().toISOString().slice(0, 10)}` });
+    return json({
+      site_id: site.id,
+      checked_at: latest?.scanned_at || null,
+      // Stated in the response so the dashboard can say "we could not read
+      // your page" rather than implying the list is complete.
+      schema_read: schemaRead,
+      ...recommendations,
       scored_props: scoredProps.map((prop) => String(prop).toLowerCase()),
     });
   }
@@ -2735,9 +2787,15 @@ export async function handleApi(request, env, ctx) {
         endedBefore = await billingSite(env, { siteId: target }).catch(() => null);
       }
       if (derived && target) {
+        let planBefore = null;
+        try { planBefore = (await env.DB.prepare("SELECT plan FROM sites WHERE id=? LIMIT 1").bind(target).first())?.plan || null; } catch { planBefore = null; }
         await env.DB.prepare(
           "UPDATE sites SET plan=?, contract=?, delivery_status=?, stripe_customer_id=COALESCE(?,stripe_customer_id), stripe_subscription_id=COALESCE(?,stripe_subscription_id) WHERE id=?",
         ).bind(derived.plan, derived.contract, derived.delivery_status, object.customer || null, object.id || null, target).run();
+        // The learning change log (docs/learning.md); idempotent per Stripe event.
+        if (planBefore && planBefore !== derived.plan) {
+          await recordServiceEvent(env, target, "plan_changed", { from: planBefore, to: derived.plan }, { eventId: `svc:plan_changed:${event.id || crypto.randomUUID()}` });
+        }
       }
       if (endedBefore && derived?.plan === "free") {
         const mail = runInBackground(ctx, async () => {
@@ -3488,6 +3546,8 @@ async function runSiteSovLocked(env, site, { trigger, deadline, clock }) {
       month_site_est_usd: Object.fromEntries(ready.map((plan) => [plan.engine, Math.round(((plan.est_cost_usd_month || 0) + costs[plan.engine].est_usd) * 1e4) / 1e4])) }));
   }
   const run = await storeSovRun(env, site.id, measurement, { trigger });
+  await recordServiceEvent(env, site.id, "sov_run", { status: String(measurement.status || "").toLowerCase(), trigger, engines: sovEngineCounts(measurement) },
+    { at: run?.ran_at, eventId: `svc:sov_run:${run?.id || crypto.randomUUID()}` });
   if (attemptAt) await finishSovAttempt(env, site.id, attemptAt);
   const usage = await sovRemainingBudget(env, site.id);
   return { measurement, run, usage, profile, engines: plans.map(publicPlan) };
@@ -3723,6 +3783,22 @@ export async function runSovDailyBatch(env, { limit = 200, now = Date.now(), clo
  */
 export async function runFreeAiCheckBatch(env, options = {}) {
   return runFreeCheckBatch(env, { loadProfile: buildSiteSovProfile, ...options });
+}
+
+/**
+ * The pre-install baselines (worker/learning-baseline.mjs): hourly, so a
+ * WordPress site added in the dashboard is measured soon after, normally
+ * before its plugin is paired. Same profile builder and engine as the free
+ * check; the readiness score from the public scorer.
+ */
+export async function runLearningBaselines(env, options = {}) {
+  return runBaselineBatch(env, { loadProfile: buildSiteSovProfile, diagnose: baselineDiagnosis, ...options });
+}
+
+async function baselineDiagnosis(env, site) {
+  const target = String(site.website_uri || site.url || "").trim();
+  if (!target) return null;
+  return diagnoseAeoUrl(/^https?:\/\//i.test(target) ? target : `https://${target}`, { ...(await diagnosticOptions(env, site.id)) });
 }
 
 // Kept for callers/tests from the weekly beta; both names run the same batch.
@@ -4917,6 +4993,8 @@ function csrfRequired(path) {
   if (/^\/api\/sites\/[^/]+\/sov\/free-check$/i.test(path)) return false;
   // The catalogue sync is the profile sync's twin: bearer token, no cookie.
   if (/^\/api\/sites\/[^/]+\/catalog$/i.test(path)) return false;
+  // So is the learning-events sync (bearer profile token, no cookie).
+  if (/^\/api\/sites\/[^/]+\/events$/i.test(path)) return false;
   // The report unsubscribe link is posted from an email client (RFC 8058) or
   // its own confirm page; the signed token is the authority, not a session.
   if (path === REPORT_UNSUBSCRIBE_PATH) return false;

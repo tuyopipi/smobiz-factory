@@ -432,6 +432,8 @@ const JA = {
   "Citation rate": "引用率",
   "vs previous": "前回比",
   "AI readiness (on-site): %d / 100": "AI対応度（サイト上の準備）: %d / 100",
+  "With the site connected, the plugin also sends a record of changes to its own settings: which outputs were switched on or off, which business fields were filled in or cleared (not what was entered), the site type, the SEO plugin in use, the plugin version and the number of FAQ entries, services and products. Nurevo uses these records together with AI search measurements, in aggregate across sites, to learn which changes help businesses appear in AI answers.":
+    "サイトを接続している間、プラグインは自身の設定の変更記録も送信します。どの出力をオン・オフしたか、どの事業情報の項目を入力・削除したか（入力内容そのものは含みません）、サイト種別、使用中のSEOプラグイン、プラグインのバージョン、FAQ・サービス・商品の件数です。Nurevoはこれらの記録をAI検索での計測結果とあわせ、複数のサイトを集計した形で、どのような変更が事業者のAIの回答への登場に役立つかを学ぶために利用します。",
   "AI visibility (measured): %d / 100": "AI登場度（実測）: %d / 100",
   "Based on %1$d AI answers (%2$d named or cited, last %3$d days).": "AIの回答 %1$d件にもとづく（名前・引用あり %2$d件、直近%3$d日）。",
   "AI visibility not measured yet. This score is your AI readiness only.": "AI登場度はまだ測定していません。このスコアはAI対応度のみです。",

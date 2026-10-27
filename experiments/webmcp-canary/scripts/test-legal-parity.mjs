@@ -39,4 +39,20 @@ for (const [path, head, usd] of [
   ["../../nurevo-lp/public/terms.html", "<h2>第4条（料金および支払い）</h2>", /米国のユーザーには米ドル/],
   ["../../nurevo-lp/public/en/terms.html", "<h2>Article 4 (Fees and Payment)</h2>", /in US dollars to users in the United States/],
 ]) assert.match(article(read(path), head), usd, `${path}: article 4 names the currency per country`);
+// Privacy: the purposes of use (article 2) are the same in both copies, and
+// both disclose the aggregated learning use of measurements and change records
+// (docs/learning.md), including the pre-install baseline and that no values
+// are recorded.
+const purposes = (html, head) => {
+  const start = html.indexOf(head);
+  assert.ok(start >= 0, `missing ${head}`);
+  return html.slice(start, html.indexOf("</ul>", start) + 5);
+};
+for (const [lp, worker, head, learning] of [
+  ["../../nurevo-lp/public/privacy.html", "../public/privacy/index.html", "<h2>2. 利用目的</h2>", /基準計測[\s\S]*変更記録[\s\S]*入力内容そのものは含みません[\s\S]*集計/],
+  ["../../nurevo-lp/public/en/privacy.html", "../public/en/privacy/index.html", "<h2>2. Purposes of Use</h2>", /baseline measurement[\s\S]*records of changes to site settings[\s\S]*not the values entered[\s\S]*no score is changed automatically/],
+]) {
+  assert.equal(purposes(read(worker), head), purposes(read(lp), head), `${worker} purposes of use match ${lp}`);
+  assert.match(purposes(read(lp), head), learning, `${lp}: the learning use is disclosed`);
+}
 console.log("legal page parity tests passed");

@@ -77,7 +77,7 @@ assert.equal(I.ja.planGrantOrg && I.ja.planGrantOrg !== "planGrantOrg", true, "p
 
 /* ---------------- 2. the modules use the dictionary ---------------- */
 
-const MODULES = ["dashboard-aeo-metrics.js", "dashboard-sov.js", "dashboard-members.js", "dashboard-rulesets.js", "dashboard-offsite.js", "dashboard-free-check.js", "dashboard-agency-report.js", "dashboard-agency-leadgen.js"];
+const MODULES = ["dashboard-aeo-metrics.js", "dashboard-sov.js", "dashboard-members.js", "dashboard-rulesets.js", "dashboard-offsite.js", "dashboard-free-check.js", "dashboard-agency-report.js", "dashboard-agency-leadgen.js", "dashboard-learning.js"];
 for (const file of MODULES) {
   const src = read(file);
   // Comments may be Japanese-free prose; literals are what reach the page.

@@ -48,6 +48,7 @@ const INCLUDE = [
   "includes/setup-wizard.php", // first-run setup wizard (Nurevo AEO > Setup)
   "includes/site-types.php",   // site types: local / online shop / B2B (docs/industries.md)
   "includes/cli.php",        // WP-CLI commands, loaded only under WP-CLI
+  "includes/learning-events.php", // the change record sent with the sync once connected (docs/learning.md)
   "languages/nurevo-webmcp.pot",
   "languages/nurevo-webmcp-ja.po",
   // One compiled catalogue per shipped locale (languages/i18n/locales.json).
