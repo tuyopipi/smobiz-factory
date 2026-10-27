@@ -15,6 +15,7 @@ import { requestAutoFix } from "./aeo-autofix.mjs";
  */
 
 import { AeoScoreError, diagnoseAeoUrl, localizeAeoChecks } from "./aeo-score.mjs";
+import { SCORE_V2_COLUMNS, scoreV2Columns } from "./aeo-score-v2.mjs";
 import { diagnosisText, resolveDiagnosisLang } from "./diagnosis-i18n.mjs";
 
 const UA = "Nurevo-Diagnostics/1.0 (+https://nurevo.jp)";
@@ -97,10 +98,11 @@ export async function storeAeoScore(env, siteId, result) {
   const scannedAt = result.scannedAt || new Date().toISOString();
   const measured = {...result,scannedAt};
   const deliveredVersion = await verifyDelivery(env, siteId, measured, {persist:false});
-  const scoreStatement = env.DB.prepare(
-    `INSERT INTO aeo_scores (site_id,scanned_at,host,score,verdict,checks_json,ruleset_version,delivered_ruleset_version,score_model_version)
-     VALUES (?,?,?,?,?,?,?,?,?)`,
-  ).bind(
+  // Score v2 (aeo-score-v2.mjs): `score` stays the on-site readiness score, so
+  // its history is comparable across versions; the headline that blends in
+  // the measured AI visibility is stored beside it, tagged with its version.
+  const { v2, values: v2Values } = await scoreV2Columns(env, siteId, result, scannedAt);
+  const legacyValues = [
     siteId,
     scannedAt,
     result.host || null,
@@ -110,11 +112,27 @@ export async function storeAeoScore(env, siteId, result) {
     result.rulesetVersion ?? null,
     deliveredVersion,
     result.modelVersion ?? null,
-  );
-  const statements = [scoreStatement,...(deliveredVersion == null ? [] : deliveryStatements(env,siteId,deliveredVersion,measured))];
-  if (env.DB.batch) await env.DB.batch(statements);
-  else for (const statement of statements) await statement.run();
-  return { ...result, scannedAt, deliveredRulesetVersion: deliveredVersion };
+  ];
+  const legacySql = `INSERT INTO aeo_scores (site_id,scanned_at,host,score,verdict,checks_json,ruleset_version,delivered_ruleset_version,score_model_version)
+     VALUES (?,?,?,?,?,?,?,?,?)`;
+  const v2Sql = `INSERT INTO aeo_scores (site_id,scanned_at,host,score,verdict,checks_json,ruleset_version,delivered_ruleset_version,score_model_version,${SCORE_V2_COLUMNS})
+     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`;
+  const extra = deliveredVersion == null ? [] : deliveryStatements(env,siteId,deliveredVersion,measured);
+  const write = async (statements) => {
+    if (env.DB.batch) await env.DB.batch(statements);
+    else for (const statement of statements) await statement.run();
+  };
+  let stored = true;
+  try {
+    await write([env.DB.prepare(v2Sql).bind(...legacyValues, ...v2Values), ...extra]);
+  } catch (error) {
+    // Before migration 0048 the v2 columns do not exist: store the readiness
+    // score exactly as before; the headline is then computed when read.
+    if (!/no such column|has no column/i.test(String(error?.message || error))) throw error;
+    stored = false;
+    await write([env.DB.prepare(legacySql).bind(...legacyValues), ...extra]);
+  }
+  return { ...result, scannedAt, deliveredRulesetVersion: deliveredVersion, aeoScore: { ...v2, scanned_at: scannedAt, stored } };
 }
 
 export async function diagnoseAndStore(env, site, { lang = "ja" } = {}) {

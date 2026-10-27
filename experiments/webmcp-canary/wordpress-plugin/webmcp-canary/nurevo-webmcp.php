@@ -4789,7 +4789,11 @@ function webmcp_canary_sov_view($payload) {
             : null,
         'confidence' => $latest['confidence'] ?? '',
         'answers' => intval($latest['answers_received'] ?? 0),
+        // questions_asked counts answers asked for (questions x repetitions);
+        // distinct_questions and repetitions say how it breaks down.
         'questions' => intval($latest['questions_asked'] ?? 0),
+        'distinct_questions' => intval($latest['distinct_questions'] ?? 0),
+        'repetitions' => intval($latest['repetitions'] ?? 0),
         'competitors' => isset($latest['competitors']) && is_array($latest['competitors']) ? $latest['competitors'] : array(),
         'trend' => $trend,
         'measured_at' => $latest['ran_at'] ?? '',
@@ -4876,8 +4880,13 @@ function webmcp_canary_sov_page() {
                         </p>
                         <p class="description">
                             <?php
-                            /* translators: 1: number of answers received, 2: number of questions asked, 3: confidence label. */
-                            echo esc_html(sprintf(__('%1$d answers across %2$d questions (confidence: %3$s)', 'nurevo-webmcp'), $view['answers'], $view['questions'], $view['confidence']));
+                            if ($view['distinct_questions'] > 0 && $view['repetitions'] > 0) {
+                                /* translators: 1: number of answers received, 2: number of distinct questions, 3: how many times each was asked, 4: confidence label. */
+                                echo esc_html(sprintf(__('%1$d answers to %2$d questions × %3$d runs (confidence: %4$s)', 'nurevo-webmcp'), $view['answers'], $view['distinct_questions'], $view['repetitions'], $view['confidence']));
+                            } else {
+                                /* translators: 1: number of answers received, 2: number of questions asked, 3: confidence label. */
+                                echo esc_html(sprintf(__('%1$d answers across %2$d questions (confidence: %3$s)', 'nurevo-webmcp'), $view['answers'], $view['questions'], $view['confidence']));
+                            }
                             ?>
                         </p>
                     </div>
@@ -5278,7 +5287,55 @@ function webmcp_canary_aeo_view($score, $error = null) {
         'yellow' => array('#b7791f', __('Needs work', 'nurevo-webmcp'), __('Nearly there - a little more and you are green', 'nurevo-webmcp')),
         'red' => array('#d13b3b', __('At risk', 'nurevo-webmcp'), __('AI is barely reading your site', 'nurevo-webmcp')),
     );
-    return array('score' => max(0, min(100, intval($score['score']))), 'band' => $band, 'color' => $views[$band][0], 'badge' => $views[$band][1], 'heading' => $views[$band][2]);
+    return array('score' => max(0, min(100, intval($score['score']))), 'band' => $band, 'color' => $views[$band][0], 'badge' => $views[$band][1], 'heading' => $views[$band][2], 'breakdown' => webmcp_canary_aeo_breakdown($score));
+}
+
+/**
+ * The two sub-scores behind the AEO score (score v2), as the service sent them.
+ *
+ * The service's AEO score blends "AI readiness" (what this diagnosis checks on
+ * the site) with "AI visibility" (how often AI answers actually name or cite
+ * the business), and says how many answers that rests on. A response without
+ * them (the public diagnosis of an unregistered site, or an older service)
+ * is the readiness score alone and is labelled that way - nothing is
+ * invented for the part that was not measured.
+ */
+function webmcp_canary_aeo_breakdown($score) {
+    if (!is_array($score) || !isset($score['score']) || !is_numeric($score['score'])) {
+        return null;
+    }
+    $v2 = isset($score['score_version']) && $score['score_version'] === 'aeo-v2';
+    $readiness = $v2 && isset($score['readiness']['score']) && is_numeric($score['readiness']['score']) ? intval($score['readiness']['score']) : intval($score['score']);
+    $visibility = $v2 && isset($score['visibility']) && is_array($score['visibility']) ? $score['visibility'] : array();
+    $measured = !empty($visibility['measured']) && isset($visibility['score']) && is_numeric($visibility['score']);
+    $days = isset($visibility['window_days']) ? intval($visibility['window_days']) : 0;
+    return array(
+        'readiness' => max(0, min(100, $readiness)),
+        'measured' => $measured,
+        'visibility' => $measured ? max(0, min(100, intval($visibility['score']))) : null,
+        'answers' => $measured ? max(0, intval($visibility['answers'] ?? 0)) : 0,
+        'appeared' => $measured ? max(0, intval($visibility['appeared'] ?? 0)) : 0,
+        'window_days' => $days > 0 ? $days : 90,
+    );
+}
+
+/** The sub-score lines under the AEO score (already escaped). */
+function webmcp_canary_aeo_breakdown_html($breakdown) {
+    if (!is_array($breakdown)) {
+        return '';
+    }
+    /* translators: %d: the AI readiness sub-score out of 100. */
+    $html = '<p class="webmcp-aeo-breakdown-line">' . esc_html(sprintf(__('AI readiness (on-site): %d / 100', 'nurevo-webmcp'), $breakdown['readiness'])) . '</p>';
+    if ($breakdown['measured']) {
+        /* translators: %d: the AI visibility sub-score out of 100. */
+        $html .= '<p class="webmcp-aeo-breakdown-line">' . esc_html(sprintf(__('AI visibility (measured): %d / 100', 'nurevo-webmcp'), $breakdown['visibility'])) . '</p>';
+        /* translators: 1: number of AI answers, 2: how many of them named or cited the business, 3: number of days looked back. */
+        $html .= '<p class="description">' . esc_html(sprintf(__('Based on %1$d AI answers (%2$d named or cited, last %3$d days).', 'nurevo-webmcp'), $breakdown['answers'], $breakdown['appeared'], $breakdown['window_days'])) . '</p>';
+        $html .= '<p class="description">' . esc_html__('AI answers vary with the time of the run and the model. While there are few answers, AI visibility has only a small effect on the AEO score.', 'nurevo-webmcp') . '</p>';
+    } else {
+        $html .= '<p class="description">' . esc_html__('AI visibility not measured yet. This score is your AI readiness only.', 'nurevo-webmcp') . '</p>';
+    }
+    return '<div class="webmcp-aeo-breakdown">' . $html . '</div>';
 }
 
 /**
@@ -5370,6 +5427,9 @@ function webmcp_canary_aeo_page() {
             <div class="webmcp-aeo-summary">
                 <span class="webmcp-aeo-badge is-<?php echo esc_attr($view['band']); ?>"><?php echo esc_html($view['badge']); ?></span>
                 <h2><?php echo esc_html($view['heading']); ?></h2>
+                <?php if (!empty($view['breakdown'])) : ?>
+                    <?php echo webmcp_canary_aeo_breakdown_html($view['breakdown']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_aeo_breakdown_html() ?>
+                <?php endif; ?>
                 <?php if (is_null($view['score'])) : ?>
                     <p class="description">
                         <?php if ($view['band'] === 'error') : ?>
@@ -5590,7 +5650,11 @@ function webmcp_canary_aeo_widget() {
         return;
     }
     echo '<p style="font-size:30px;font-weight:700;margin:8px 0;color:' . esc_attr($view['color']) . '">' . (is_null($view['score']) ? esc_html__('Checking', 'nurevo-webmcp') : esc_html($view['score'] . ' / 100')) . '</p>';
-    echo '<p>' . esc_html($view['heading']) . '</p><p><a href="' . esc_url(admin_url('admin.php?page=webmcp-canary')) . '">' . esc_html__('See the full diagnosis', 'nurevo-webmcp') . '</a></p>';
+    echo '<p>' . esc_html($view['heading']) . '</p>';
+    if (!empty($view['breakdown'])) {
+        echo webmcp_canary_aeo_breakdown_html($view['breakdown']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_aeo_breakdown_html()
+    }
+    echo '<p><a href="' . esc_url(admin_url('admin.php?page=webmcp-canary')) . '">' . esc_html__('See the full diagnosis', 'nurevo-webmcp') . '</a></p>';
 }
 
 /** Styles shared by every Nurevo AEO screen: title, logo, plan badge, dev block. */
@@ -5622,7 +5686,7 @@ function webmcp_canary_aeo_styles() {
         .webmcp-aeo-hero{display:flex;align-items:center;gap:40px;padding:34px;background:#fff;border:1px solid #e5e7eb;border-radius:24px;box-shadow:0 14px 35px rgba(15,23,42,.07)}
         .webmcp-aeo-gauge{width:190px;height:190px;flex:0 0 190px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--aeo-color) var(--aeo-degrees),#e8eaed 0)}
         .webmcp-aeo-gauge:before{content:"";grid-area:1/1;width:150px;height:150px;border-radius:50%;background:#fff}.webmcp-aeo-gauge>div{grid-area:1/1;z-index:1;text-align:center}
-        .webmcp-aeo-gauge strong{font-size:58px;line-height:1}.webmcp-aeo-gauge span{display:block;color:#6b7280;font-weight:600}.webmcp-aeo-summary h2{font-size:30px;margin:13px 0 6px}
+        .webmcp-aeo-gauge strong{font-size:58px;line-height:1}.webmcp-aeo-gauge span{display:block;color:#6b7280;font-weight:600}.webmcp-aeo-summary h2{font-size:30px;margin:13px 0 6px}.webmcp-aeo-breakdown{margin:6px 0 8px}.webmcp-aeo-breakdown-line{margin:2px 0;font-weight:600}
         .webmcp-aeo-badge{display:inline-block;padding:6px 13px;border-radius:999px;color:#fff;font-weight:700}.webmcp-aeo-badge.is-green{background:#1a9c6b}.webmcp-aeo-badge.is-yellow{background:#b7791f}.webmcp-aeo-badge.is-red{background:#d13b3b}.webmcp-aeo-badge.is-pending{background:#8c8f94}
         .webmcp-aeo-alert{margin:22px 0;padding:22px 24px;background:#fff1f1;border:1px solid #f4b7b7;border-left:5px solid #d13b3b;border-radius:14px}.webmcp-aeo-alert h2{color:#9f2525;margin:0 0 8px}.webmcp-aeo-alert p{font-size:17px;margin:8px 0}
         .webmcp-aeo-section{background:#fff;padding:26px;border:1px solid #e5e7eb;border-radius:20px}.webmcp-aeo-section>h2{margin-top:0}.webmcp-aeo-checks{margin:0;padding:0;list-style:none}.webmcp-aeo-checks li{display:grid;grid-template-columns:38px minmax(0,1fr) auto;align-items:start;gap:12px;padding:17px 2px;border-top:1px solid #edf0f2}.webmcp-aeo-checks li:first-child{border-top:0}.webmcp-aeo-checks p{margin:4px 0 0;color:#5f6875}.webmcp-aeo-check-icon{width:30px;height:30px;display:grid;place-items:center;border-radius:50%;color:#fff;font-size:18px;font-weight:800}.webmcp-aeo-checks .is-ok .webmcp-aeo-check-icon{background:#1a9c6b}.webmcp-aeo-checks .is-warn .webmcp-aeo-check-icon{background:#b7791f}.webmcp-aeo-checks .is-bad .webmcp-aeo-check-icon{background:#d13b3b}.webmcp-aeo-fix,.webmcp-aeo-form-link{min-width:68px;text-align:center;white-space:nowrap}.webmcp-aeo-howto{margin:6px 0 0!important;color:#1d2327!important;font-weight:600;font-size:13px}.webmcp-schema-owners{margin-top:22px}.webmcp-schema-owners table{margin-top:6px;max-width:720px}.webmcp-schema-owners code{background:transparent;padding:0}

@@ -431,6 +431,12 @@ const JA = {
   "How often you appear in AI answers": "AIの回答に登場した割合",
   "Citation rate": "引用率",
   "vs previous": "前回比",
+  "AI readiness (on-site): %d / 100": "AI対応度（サイト上の準備）: %d / 100",
+  "AI visibility (measured): %d / 100": "AI登場度（実測）: %d / 100",
+  "Based on %1$d AI answers (%2$d named or cited, last %3$d days).": "AIの回答 %1$d件にもとづく（名前・引用あり %2$d件、直近%3$d日）。",
+  "AI visibility not measured yet. This score is your AI readiness only.": "AI登場度はまだ測定していません。このスコアはAI対応度のみです。",
+  "AI answers vary with the time of the run and the model. While there are few answers, AI visibility has only a small effect on the AEO score.": "AIの回答は実行日時やモデルで変動します。回答数が少ないうちは、AI登場度がAEOスコアに与える影響を小さくしています。",
+  "%1$d answers to %2$d questions × %3$d runs (confidence: %4$s)": "回答 %1$d件 / 質問 %2$d問 × %3$d回（確度: %4$s）",
   "%1$d answers across %2$d questions (confidence: %3$s)":
     "回答 %1$d件 / 質問 %2$d件（確度: %3$s）",
   "Trend": "推移",

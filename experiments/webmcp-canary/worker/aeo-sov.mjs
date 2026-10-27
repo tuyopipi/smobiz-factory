@@ -593,7 +593,13 @@ export function aggregateSov(samples, profile, { headlineEngine = null } = {}) {
     // before languages existed, which was always Japanese).
     language: profile.language || null,
     language_source: profile.language_source || null,
+    // `questions_asked` is the number of discovery probes - distinct
+    // questions x repetitions x engines asked - not of questions. It keeps
+    // that meaning (and its column) for compatibility; `distinct_questions`
+    // and `repetitions` say how it breaks down ("5問 × 2回").
     questions_asked: discoverySamples.length,
+    distinct_questions: new Set(discoverySamples.map((sample) => normalizeForMatch(sample.question || ""))).size,
+    repetitions: maxRepetitions(discoverySamples),
     // Every engine's answers; the rates below are the headline engine's.
     answers_received: total,
     appearance_rate: headlineRate(mentions),
@@ -617,6 +623,16 @@ export function aggregateSov(samples, profile, { headlineEngine = null } = {}) {
     // letting the gauge imply precision it does not have.
     confidence: sovConfidence(headlineTotal),
   };
+}
+
+/** The most times one question was put to one engine in a set of probes (0 for none). */
+export function maxRepetitions(samples = []) {
+  const counts = new Map();
+  for (const sample of samples) {
+    const key = `${sample.engine || HEADLINE_ENGINE_DEFAULT}\u0000${normalizeForMatch(sample.question || "")}`;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  return counts.size ? Math.max(...counts.values()) : 0;
 }
 
 /** How far a rate from `answers` answers can be trusted (one engine's answers). */
@@ -891,6 +907,7 @@ export async function storeSovRun(env, siteId, result, { trigger = "manual", now
       query_set: result.query_set || null,
       cache_key: result.cache_key || null,
       repetitions: result.repetitions || 1,
+      distinct_questions: Number.isInteger(result.distinct_questions) ? result.distinct_questions : null,
       beta: SOV_BETA,
       truncated: !!result.truncated,
       brand: result.brand,
@@ -1001,6 +1018,12 @@ export async function loadSovHistory(env, siteId, { limit = 26 } = {}) {
         : deriveRateBasis(latest.answers_received),
       rate_basis_derived: !RATE_BASES.includes(detail.rate_basis),
       min_samples_for_rate: Number(detail.min_samples_for_rate) || SOV_MIN_SAMPLES_FOR_RATE,
+      // questions_asked counts probes (questions x repetitions x engines).
+      // These two say how it breaks down; older runs did not store the
+      // distinct count, which is then read from the stored question set.
+      distinct_questions: Number.isInteger(detail.distinct_questions) ? detail.distinct_questions
+        : Array.isArray(detail.query_set?.questions) ? detail.query_set.questions.length : null,
+      repetitions: Number.isInteger(detail.repetitions) ? detail.repetitions : null,
       by_engine: asArray(detail.by_engine),
       parser_control: detail.parser_control ?? null,
       truncated: !!detail.truncated,

@@ -1,4 +1,4 @@
-/* Nurevo dashboard asset revision: 2026-10-23-engines2 */
+/* Nurevo dashboard asset revision: 2026-10-27-scorev2 */
 /*
  * AI Share-of-Voice panel (Pro, beta).
  *
@@ -184,6 +184,24 @@
     return '<p class="nrv-sov-note">' + esc(tr('svControl', { answers: Number(ctl.answers || 0), detected: Number(ctl.detected || 0) })) + '</p>';
   }
 
+  // questions_asked counts probes (questions x repetitions). Show the two
+  // apart - "5問 × 2回" - when the run says them; an older run keeps its number.
+  function questionsAsked(latest) {
+    var q = Number(latest.distinct_questions), r = Number(latest.repetitions);
+    if (q > 0 && r > 0) return tr('svQxR', { q: q, r: r });
+    return Number(latest.questions_asked || 0);
+  }
+
+  // The headline AEO score (v2) and its two sub-scores, as the score panel
+  // shows them. Absent when the site has no diagnosis yet.
+  function aeoScoreLine(score) {
+    if (!score || score.score === null || score.score === undefined) return '';
+    var v = score.visibility || {};
+    var text = tr('scHeadlineOf', { score: score.score, r: score.readiness && score.readiness.score != null ? score.readiness.score : '—', v: v.measured ? v.score : tr('scNotMeasured') });
+    var basis = v.measured ? tr('scBasedOn', { n: Number(v.answers || 0), k: Number(v.appeared || 0), d: Number(v.window_days || 90) }) : tr('scReadinessOnly');
+    return '<p data-pro-aeo-score><b>' + esc(text) + '</b><br><small>' + esc(basis) + '</small></p>';
+  }
+
   function measured(data) {
     var latest = data.latest;
     var byEngine = (latest.by_engine || []).filter(function (row) { return row && row.engine; });
@@ -197,7 +215,7 @@
 
     var asOf = '<dl class="nrv-sov-meta">'
       + '<div><dt>' + esc(tr('svRanAt')) + '</dt><dd>' + esc(formatWhen(latest.ran_at)) + '</dd></div>'
-      + '<div><dt>' + esc(tr('svQuestions')) + '</dt><dd>' + esc(Number(latest.questions_asked || 0)) + '</dd></div>'
+      + '<div><dt>' + esc(tr('svQuestions')) + '</dt><dd>' + esc(questionsAsked(latest)) + '</dd></div>'
       + '<div><dt>' + esc(tr('svAnswers')) + '</dt><dd>' + esc(Number(latest.answers_received || 0)) + '</dd></div>'
       + '<div><dt>' + esc(tr('svQueries')) + '</dt><dd>' + esc(Number(latest.queries_used || 0)) + '</dd></div>'
       + '</dl>';
@@ -273,6 +291,7 @@
       // Headline: appearance rate (business named in the answer). Citation rate
       // (the site among the source URLs) follows as a labelled secondary figure.
       + '<p>' + esc(report.status === 'unconfigured' ? tr('svUnconfigured') : report.status === 'no_data' ? tr('svUnmeasured') : tr('svSummary', { answers: report.summary.answers, rate: pct(report.summary.appearance_rate), cite: pct(report.summary.citation_rate) })) + '</p>'
+      + aeoScoreLine(report.aeo_score)
       + engineReportTable(report)
       + '<p>' + esc(tr('svCacheNote')) + '</p>'
       + '<details><summary>' + esc(tr('svEditSet')) + '</summary><label>' + esc(tr('svQueriesLabel')) + '<textarea data-pro-questions style="width:100%;min-height:120px">' + esc(config.questions.join('\n')) + '</textarea></label>'

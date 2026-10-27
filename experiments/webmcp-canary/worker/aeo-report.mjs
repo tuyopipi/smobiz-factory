@@ -28,6 +28,7 @@ export function buildMonthlyReport({
   sov = null,
   family = null,
   comparison = null,
+  aeoScore = null,
   now = Date.now(),
 } = {}) {
   const period = month || new Date(now).toISOString().slice(0, 7);
@@ -58,6 +59,10 @@ export function buildMonthlyReport({
     period,
     generated_at: new Date(now).toISOString(),
     site: { id: site.id || null, host: site.website_uri || site.url || null, plan },
+    // The headline AEO score (v2) as of the latest diagnosis in the period:
+    // readiness blended with measured AI visibility (aeo-score-v2.mjs). The
+    // same object the dashboard and the plugin show.
+    aeo_score: aeoScore || null,
     readability,
     visibility,
     business_family: family,
@@ -176,7 +181,11 @@ function buildVisibilitySection(plan, sov) {
       : null,
     confidence: current.answers != null ? sovConfidence(current.answers) : sov.latest.confidence,
     answers_received: current.answers ?? sov.latest.answers_received,
+    // Probes (distinct questions x repetitions x engines); kept for
+    // compatibility. distinct_questions x repetitions is what to show.
     questions_asked: current.asked ?? sov.latest.questions_asked,
+    distinct_questions: sov.latest.distinct_questions ?? null,
+    repetitions: sov.latest.repetitions ?? null,
     engines: sov.latest.engines || [],
     competitors: (sov.latest.competitors || []).slice(0, 5),
     measured_at: current.ran_at || sov.latest.ran_at,
@@ -260,6 +269,34 @@ function nextSteps(readability, visibility, family = null) {
   return steps;
 }
 
+/** "質問 5問 × 2回" when the run says both, else the probe count as before. */
+function questionsLabel(visibility) {
+  const q = Number(visibility.distinct_questions), r = Number(visibility.repetitions);
+  return q > 0 && r > 0 ? `質問 ${q}問 × ${r}回` : `質問数: ${visibility.questions_asked}`;
+}
+
+/**
+ * The headline AEO score section, as text lines: heading, the score, the two
+ * sub-scores, what the visibility rests on and the variability notice.
+ */
+export function aeoScoreLines(score) {
+  const lines = ["■ AEOスコア（総合）"];
+  if (!score || score.score == null) {
+    lines.push("  今月の診断結果がありません。");
+    return lines;
+  }
+  const v = score.visibility || {};
+  lines.push(`  ${score.score} / 100 (${BAND_LABEL[score.band] || score.band})${score.basis === "readiness_only" ? " — AI対応度のみ" : ""}`);
+  lines.push(`  AI対応度（サイト上の準備）: ${score.readiness?.score ?? "—"} / 100`);
+  if (v.measured) {
+    lines.push(`  AI登場度（実測）: ${v.score} / 100 — AIの回答 ${v.answers}件にもとづく（名前あり・引用ありの回答 ${v.appeared}件、うち引用 ${v.cited}件、直近${v.window_days || 90}日）`);
+    lines.push("  ※ AIの回答は実行日時やモデルで変動します。回答数が少ないうちは総合スコアへの影響を小さくしています。");
+  } else {
+    lines.push("  AI登場度: まだ測定していません（総合スコアはAI対応度のみで計算しています）");
+  }
+  return lines;
+}
+
 function bandFromScore(score) {
   if (score == null) return null;
   return score >= 80 ? "green" : score >= 50 ? "yellow" : "red";
@@ -280,7 +317,9 @@ export function renderMonthlyReportText(report) {
   lines.push(`Nurevo AEO 月次レポート ${report.period}`);
   if (report.beta) lines.push("※ AI登場率はベータ機能です。");
   lines.push("");
-  lines.push("■ AI可読スコア");
+  for (const line of aeoScoreLines(report.aeo_score)) lines.push(line);
+  lines.push("");
+  lines.push("■ AI対応度（サイト上の準備・AI可読スコア）");
   if (report.readability.available) {
     lines.push(`  ${report.readability.score} / 100 (${BAND_LABEL[report.readability.band] || report.readability.band})`);
     if (report.readability.delta != null) lines.push(`  前回比: ${signed(report.readability.delta, (value) => String(value))}pt`);
@@ -293,7 +332,7 @@ export function renderMonthlyReportText(report) {
   if (report.visibility.available) {
     lines.push(`  ${percent(report.visibility.appearance_rate)} (引用率 ${percent(report.visibility.citation_rate)})`);
     if (report.visibility.delta != null) lines.push(`  前回比: ${signed(report.visibility.delta, points)}`);
-    lines.push(`  回答数: ${report.visibility.answers_received} / 質問数: ${report.visibility.questions_asked}（確度: ${report.visibility.confidence}）`);
+    lines.push(`  回答数: ${report.visibility.answers_received} / ${questionsLabel(report.visibility)}（確度: ${report.visibility.confidence}）`);
     for (const line of engineLines(report.visibility)) lines.push(`  ${line}`);
     if (report.visibility.competitors.length) {
       lines.push("  同じ質問で引用された他サイト:");
@@ -328,7 +367,13 @@ export function renderMonthlyReportHtml(report) {
   if (report.beta) sections.push('<p class="beta">※ AI登場率はベータ機能です。</p>');
   if (report.site.host) sections.push(`<p class="site">${escapeHtml(report.site.host)}（プラン: ${escapeHtml(report.site.plan)}）</p>`);
 
-  sections.push("<h2>AI可読スコア</h2>");
+  const headline = aeoScoreLines(report.aeo_score);
+  sections.push(`<h2>${escapeHtml(headline[0].replace(/^■ /, ""))}</h2>`);
+  sections.push(headline.slice(1).map((line, i) => i === 0 && report.aeo_score?.score != null
+    ? `<p class="metric"><strong>${escapeHtml(String(report.aeo_score.score))}</strong> / 100 — ${escapeHtml(BAND_LABEL[report.aeo_score.band] || String(report.aeo_score.band))}</p>`
+    : `<p${/^ {2}※/.test(line) ? ' class="note"' : ""}>${escapeHtml(line.trim())}</p>`).join("\n"));
+
+  sections.push("<h2>AI対応度（サイト上の準備・AI可読スコア）</h2>");
   if (report.readability.available) {
     sections.push(`<p class="metric"><strong>${report.readability.score}</strong> / 100 — ${escapeHtml(BAND_LABEL[report.readability.band] || String(report.readability.band))}</p>`);
     if (report.readability.delta != null) sections.push(`<p>前回比: ${escapeHtml(signed(report.readability.delta, String))}pt</p>`);
@@ -341,7 +386,7 @@ export function renderMonthlyReportHtml(report) {
   if (report.visibility.available) {
     sections.push(`<p class="metric"><strong>${escapeHtml(percent(report.visibility.appearance_rate))}</strong>（引用率 ${escapeHtml(percent(report.visibility.citation_rate))}）</p>`);
     if (report.visibility.delta != null) sections.push(`<p>前回比: ${escapeHtml(signed(report.visibility.delta, points))}</p>`);
-    sections.push(`<p>回答数 ${report.visibility.answers_received} / 質問数 ${report.visibility.questions_asked}（確度: ${escapeHtml(String(report.visibility.confidence))}）</p>`);
+    sections.push(`<p>回答数 ${report.visibility.answers_received} / ${escapeHtml(questionsLabel(report.visibility))}（確度: ${escapeHtml(String(report.visibility.confidence))}）</p>`);
     const engineHtml = engineLines(report.visibility);
     if (engineHtml.length) sections.push(`<p class="note">${engineHtml.map(escapeHtml).join("<br>")}</p>`);
     if (report.visibility.competitors.length) {
