@@ -43,6 +43,8 @@
  */
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import http from "node:http";
+import https from "node:https";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -131,6 +133,24 @@ function probe(sub) {
 }
 
 /**
+ * One GET on a new connection (no keep-alive pool), so a request never lands
+ * on a socket the server has already closed between steps.
+ */
+function request(url) {
+  return new Promise((resolve, reject) => {
+    const client = url.startsWith("https:") ? https : http;
+    const req = client.get(url, { agent: false, headers: { "cache-control": "no-cache", connection: "close", "user-agent": "node" } }, (res) => {
+      const chunks = [];
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString("utf8") }));
+      res.on("error", reject);
+    });
+    req.setTimeout(120000, () => req.destroy(new Error("no response within 120 s")));
+    req.on("error", reject);
+  });
+}
+
+/**
  * GET a path on the site, following redirects by hand so that a failure can
  * say which hop failed and why (fetch only says "fetch failed").
  */
@@ -140,18 +160,17 @@ async function get(urlPath) {
   for (let i = 0; i < 6; i += 1) {
     let response;
     try {
-      response = await fetch(url, { redirect: "manual", headers: { "cache-control": "no-cache" } });
+      response = await request(url);
     } catch (error) {
-      const cause = error.cause ? `${error.cause.code || ""} ${error.cause.message || error.cause}`.trim() : "";
-      throw new Error(`GET ${url} failed: ${error.message}${cause ? ` (${cause})` : ""}${hops.length ? `; redirects: ${hops.join(" -> ")}` : ""}`);
+      throw new Error(`GET ${url} failed: ${error.code ? `${error.code} ` : ""}${error.message}${hops.length ? `; redirects: ${hops.join(" -> ")}` : ""}`);
     }
-    const location = response.headers.get("location");
+    const location = response.headers.location;
     if (response.status >= 300 && response.status < 400 && location) {
       hops.push(`${response.status} ${url}`);
       url = new URL(location, url).toString();
       continue;
     }
-    return { status: response.status, type: response.headers.get("content-type") || "", body: await response.text(), redirects: hops };
+    return { status: response.status, type: response.headers["content-type"] || "", body: response.body, redirects: hops };
   }
   throw new Error(`GET ${BASE_URL}${urlPath}: too many redirects: ${hops.join(" -> ")} -> ${url}`);
 }

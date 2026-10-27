@@ -6660,7 +6660,18 @@ function webmcp_canary_merge_into_slim_seo_graph($graph) {
     if (webmcp_canary_schema_merged()) {
         return $graph;
     }
-    return webmcp_canary_merge_graph($graph);
+    // Re-entrancy guard: if anything Nurevo calls while building its graph
+    // ended up running Slim SEO's printer again, it gets the graph unchanged.
+    static $running = false;
+    if ($running) {
+        return $graph;
+    }
+    $running = true;
+    try {
+        return webmcp_canary_merge_graph($graph);
+    } finally {
+        $running = false;
+    }
 }
 
 /**
@@ -6934,14 +6945,16 @@ function webmcp_canary_output_server_schema() {
  */
 add_action('wp_footer', 'webmcp_canary_output_deferred_server_schema', 99);
 function webmcp_canary_output_deferred_server_schema() {
-    if (!webmcp_canary_schema_deferred()) {
+    static $running = false;
+    if ($running || !webmcp_canary_schema_deferred()) {
         return;
     }
+    $running = true;
     webmcp_canary_schema_deferred(false);
-    if (!webmcp_canary_schema_request_allowed()) {
-        return;
+    if (webmcp_canary_schema_request_allowed()) {
+        webmcp_canary_print_server_schema();
     }
-    webmcp_canary_print_server_schema();
+    $running = false;
 }
 
 /** Print Nurevo's graph, or only the delivery marker once a merge has happened. */
