@@ -47,7 +47,7 @@ jobs:
           cache-dependency-path: experiments/webmcp-canary/package-lock.json
       - name: Validate the input
         run: |
-          if [[ "$MIGRATION_FILE" =~ ^ops:(grant-pro:[A-Za-z0-9_-]+|revoke:[A-Za-z0-9_-]+|sov:[A-Za-z0-9_-]+)$ ]]; then exit 0; fi
+          if [[ "$MIGRATION_FILE" =~ ^ops:(grant-pro:[A-Za-z0-9_-]+|grant-pro-match:[a-z0-9.-]{3,40}|revoke-match:[a-z0-9.-]{3,40}|revoke:[A-Za-z0-9_-]+|sov:[A-Za-z0-9_-]+)$ ]]; then exit 0; fi
           [[ "$MIGRATION_FILE" =~ ^[0-9]{4}_[a-z0-9_]+\.sql$ ]] || { echo "::error::Invalid migration file name"; exit 1; }
           test -f "nurevo-impl/db/$MIGRATION_FILE" || { echo "::error::No such migration file"; exit 1; }
       - name: Install (pinned wrangler from package-lock)
@@ -64,6 +64,8 @@ jobs:
           op="${MIGRATION_FILE#ops:}"; kind="${op%%:*}"; id="${op#*:}"
           case "$kind" in
             grant-pro) sql="UPDATE sites SET manual_plan='pro', manual_plan_note='owner test' WHERE id='$id'; SELECT COUNT(*) AS pro_sites FROM sites WHERE id='$id' AND manual_plan='pro'" ;;
+            grant-pro-match) sql="UPDATE sites SET manual_plan='pro', manual_plan_note='owner test' WHERE lower(url) LIKE '%$id%' AND (SELECT COUNT(*) FROM sites WHERE lower(url) LIKE '%$id%')=1; SELECT (SELECT COUNT(*) FROM sites WHERE lower(url) LIKE '%$id%') AS matched, (SELECT COUNT(*) FROM sites WHERE lower(url) LIKE '%$id%' AND manual_plan='pro') AS pro_now" ;;
+            revoke-match) sql="UPDATE sites SET manual_plan=NULL WHERE lower(url) LIKE '%$id%' AND manual_plan_note='owner test'; SELECT COUNT(*) AS still_pro FROM sites WHERE lower(url) LIKE '%$id%' AND manual_plan='pro'" ;;
             revoke) sql="UPDATE sites SET manual_plan=NULL WHERE id='$id' AND manual_plan_note='owner test'; SELECT COUNT(*) AS still_pro FROM sites WHERE id='$id' AND manual_plan='pro'" ;;
             sov) sql="SELECT COUNT(*) AS runs FROM aeo_sov_runs WHERE site_id='$id'" ;;
           esac
