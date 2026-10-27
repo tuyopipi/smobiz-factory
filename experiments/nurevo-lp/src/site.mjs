@@ -108,3 +108,10 @@ export const AI_REFERRERS = [
 // so the page never offers something the dashboard would refuse. Flip to true
 // in the same release that turns the Worker switch on.
 export const PRO_ON_SALE = true;
+
+// IndexNow (https://www.indexnow.org/documentation): the key that proves we own
+// nurevo.jp when the deploy workflow tells Bing and the other IndexNow engines
+// which pages changed. It is public by design - the protocol requires it to be
+// served at https://nurevo.jp/<key>.txt - and the build writes that file.
+// Changing it means the old key file stops being served; nothing else changes.
+export const INDEXNOW_KEY = "f2ba3fcf113f1fecfb995ff083ab580c";
