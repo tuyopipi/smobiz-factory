@@ -3,7 +3,7 @@
  * Plugin Name: Nurevo AEO
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
- * Version: 0.8.1
+ * Version: 0.9.0
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Nurevo
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WEBMCP_CANARY_VERSION', '0.8.1');
+define('WEBMCP_CANARY_VERSION', '0.9.0');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
@@ -1359,6 +1359,7 @@ function webmcp_canary_detect_active_seo_plugins() {
         'wordpress-seo/wp-seo.php'                    => 'Yoast SEO',
         'seo-by-rank-math/rank-math.php'              => 'Rank Math SEO',
         'all-in-one-seo-pack/all_in_one_seo_pack.php' => 'All in One SEO',
+        'slim-seo/slim-seo.php'                       => 'Slim SEO',
         // No graph filter to merge into; handled by measurement instead.
         'wp-seopress/seopress.php'                    => 'SEOPress',
         'autodescription/autodescription.php'         => 'The SEO Framework',
@@ -1404,8 +1405,9 @@ function webmcp_canary_schema_type_rules() {
         'BlogPosting'    => array('publishers' => array('seo'), 'basis' => 'measured'),
         // Both Yoast and Rank Math ship an FAQ block that emits FAQPage. It was
         // previously exempt from suppression entirely, which would have produced
-        // two FAQPage nodes on every site using one of those blocks.
-        'FAQPage'        => array('publishers' => array('seo'), 'basis' => 'detected'),
+        // two FAQPage nodes on every site using one of those blocks. 'faq' is
+        // the SEO plugins that have such a block (Slim SEO has none).
+        'FAQPage'        => array('publishers' => array('faq'), 'basis' => 'detected'),
         // WooCommerce publishes this itself, SEO plugin or not.
         'Product'        => array('publishers' => array('commerce'), 'basis' => 'detected'),
         'Offer'          => array('publishers' => array('commerce'), 'basis' => 'detected'),
@@ -1424,6 +1426,16 @@ function webmcp_canary_schema_type_rules() {
     return $rules;
 }
 
+/**
+ * Supported SEO plugins that publish no FAQPage of their own: no FAQ block, no
+ * FAQ schema setting. With only these active, Nurevo's FAQ is not suppressed.
+ * Slim SEO's free plugin builds WebSite, WebPage, BreadcrumbList, Organization,
+ * Article and Person and nothing else (src/Schema/Manager.php).
+ */
+function webmcp_canary_seo_plugins_without_faq() {
+    return array('slim-seo/slim-seo.php');
+}
+
 /** Which publisher groups are active on this site. */
 function webmcp_canary_active_publishers($active_plugins = null, $commerce_plugins = null) {
     if ($active_plugins === null) {
@@ -1435,6 +1447,9 @@ function webmcp_canary_active_publishers($active_plugins = null, $commerce_plugi
     $groups = array();
     if (!empty($active_plugins)) {
         $groups[] = 'seo';
+    }
+    if (!empty(array_diff_key($active_plugins, array_flip(webmcp_canary_seo_plugins_without_faq())))) {
+        $groups[] = 'faq';
     }
     if (!empty($commerce_plugins)) {
         $groups[] = 'commerce';
@@ -2118,7 +2133,7 @@ function webmcp_canary_check_action($check_id, $status = '') {
 }
 
 function webmcp_canary_seo_coexistence_message() {
-    $message = __('🤝 Works alongside Yoast and Rank Math. They do SEO, Nurevo AEO does AI. Duplicate schema is avoided automatically.', 'nurevo-webmcp');
+    $message = __('🤝 Works alongside Yoast SEO, Rank Math, All in One SEO and Slim SEO. They do SEO, Nurevo AEO does AI. Duplicate schema is avoided automatically.', 'nurevo-webmcp');
     $active = webmcp_canary_detect_active_seo_plugins();
     if (!empty($active)) {
         /* translators: %s: comma-separated list of active SEO plugins, e.g. "Yoast SEO, Rank Math". */
@@ -6568,9 +6583,9 @@ function webmcp_canary_finalize_own_graph($graph, $bundle) {
 /* -----------------------------------------------------------------------
  * Coexistence by merging into the SEO plugin's own graph.
  *
- * Yoast SEO, Rank Math and All in One SEO each build one JSON-LD graph and pass
- * it through a filter before printing it. Nurevo hooks those filters and adds
- * only what the graph is missing: properties the business node lacks
+ * Yoast SEO, Rank Math, All in One SEO and Slim SEO each build one JSON-LD
+ * graph and pass it through a filter before printing it. Nurevo hooks those
+ * filters and adds only what the graph is missing: properties the business node lacks
  * (address, telephone, opening hours, ...), FAQ questions it does not already
  * carry, and the services. Nodes the plugin already publishes - WebSite,
  * WebPage, Article and the rest - are left as they are. The page then carries
@@ -6580,6 +6595,11 @@ function webmcp_canary_finalize_own_graph($graph, $bundle) {
  * When none of those filters ran on a request (another SEO plugin, none at all,
  * or the plugin's schema switched off for that page), Nurevo prints its own
  * graph at the end of <head>, after every SEO plugin has printed theirs.
+ *
+ * Slim SEO is the exception to "at the end of <head>": it prints its graph in
+ * wp_footer, so whether it took our facts is only known there. While its
+ * schema printer is hooked, Nurevo's own output waits for the footer and
+ * prints only if Slim SEO's filter did not run.
  * --------------------------------------------------------------------- */
 
 /** Plugins whose graph Nurevo merges into, by plugin file. */
@@ -6588,6 +6608,7 @@ function webmcp_canary_graph_integrations() {
         'wordpress-seo/wp-seo.php',
         'seo-by-rank-math/rank-math.php',
         'all-in-one-seo-pack/all_in_one_seo_pack.php',
+        'slim-seo/slim-seo.php',
     );
 }
 
@@ -6617,6 +6638,76 @@ function webmcp_canary_merge_into_keyed_graph($data) {
         return $data;
     }
     return webmcp_canary_merge_graph($data);
+}
+
+/**
+ * Slim SEO (wordpress.org/plugins/slim-seo).
+ *
+ * SlimSEO\Schema\Manager::output(), hooked to wp_footer, collects its entities
+ * keyed by context ('website', 'webpage', 'organization', 'breadcrumblist',
+ * 'logo', 'article', 'author'...), passes them through `slim_seo_schema_graph`,
+ * then array_values()es them and prints one <script id="slim-seo-schema">.
+ * Its business node is the Organization at home_url('/') . '#organization'.
+ * The keys are dropped after the filter, so it is merged like Rank Math's.
+ */
+add_filter('slim_seo_schema_graph', 'webmcp_canary_merge_into_slim_seo_graph', 99);
+function webmcp_canary_merge_into_slim_seo_graph($graph) {
+    if (!is_array($graph) || empty($graph) || !webmcp_canary_schema_request_allowed()) {
+        return $graph;
+    }
+    // Another SEO plugin's graph on this page already carries the facts (two
+    // SEO plugins active at once): one copy is enough.
+    if (webmcp_canary_schema_merged()) {
+        return $graph;
+    }
+    // Re-entrancy guard: if anything Nurevo calls while building its graph
+    // ended up running Slim SEO's printer again, it gets the graph unchanged.
+    static $running = false;
+    if ($running) {
+        return $graph;
+    }
+    $running = true;
+    try {
+        return webmcp_canary_merge_graph($graph);
+    } finally {
+        $running = false;
+    }
+}
+
+/**
+ * Will Slim SEO print its graph on this request?
+ *
+ * True only while its schema printer, SlimSEO\Schema\Manager::output, is hooked
+ * to wp_footer. Slim SEO adds that hook on `init` only when its "Schema" feature
+ * is on (Settings > Slim SEO > Features), and a developer can remove the service
+ * with $container->disable('schema') on `slim_seo_init`. Either way the hook is
+ * absent and Nurevo publishes its own graph, as with any other setup.
+ */
+function webmcp_canary_slim_seo_prints_schema() {
+    if (!defined('SLIM_SEO_VER') || empty($GLOBALS['wp_filter']['wp_footer'])) {
+        return false;
+    }
+    $hook = $GLOBALS['wp_filter']['wp_footer'];
+    $callbacks = is_object($hook) && isset($hook->callbacks) ? $hook->callbacks : (is_array($hook) ? $hook : array());
+    foreach ((array) $callbacks as $by_priority) {
+        foreach ((array) $by_priority as $callback) {
+            $function = is_array($callback) && isset($callback['function']) ? $callback['function'] : null;
+            if (is_array($function) && isset($function[0], $function[1]) && $function[1] === 'output'
+                && is_object($function[0]) && is_a($function[0], 'SlimSEO\Schema\Manager')) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/** Set when the <head> output stood aside for Slim SEO's footer graph. */
+function webmcp_canary_schema_deferred($set = null) {
+    static $deferred = false;
+    if ($set !== null) {
+        $deferred = (bool) $set;
+    }
+    return $deferred;
 }
 
 /** Types that describe the page itself; the SEO plugin owns these. */
@@ -6837,6 +6928,37 @@ function webmcp_canary_output_server_schema() {
     if (!webmcp_canary_schema_request_allowed()) {
         return;
     }
+    // Slim SEO prints in the footer: wait for it rather than print a second graph.
+    if (!webmcp_canary_schema_merged() && !webmcp_canary_schema_deferred() && webmcp_canary_slim_seo_prints_schema()) {
+        webmcp_canary_schema_deferred(true);
+        return;
+    }
+    webmcp_canary_print_server_schema();
+}
+
+/**
+ * The <head> output, deferred to the footer while Slim SEO prints there.
+ *
+ * Priority 99 runs after Slim SEO's printer (priority 10). If its filter merged
+ * our facts, only the delivery marker is printed; if it did not run (its graph
+ * was emptied, or it printed nothing), our own graph is printed instead.
+ */
+add_action('wp_footer', 'webmcp_canary_output_deferred_server_schema', 99);
+function webmcp_canary_output_deferred_server_schema() {
+    static $running = false;
+    if ($running || !webmcp_canary_schema_deferred()) {
+        return;
+    }
+    $running = true;
+    webmcp_canary_schema_deferred(false);
+    if (webmcp_canary_schema_request_allowed()) {
+        webmcp_canary_print_server_schema();
+    }
+    $running = false;
+}
+
+/** Print Nurevo's graph, or only the delivery marker once a merge has happened. */
+function webmcp_canary_print_server_schema() {
     $settings = webmcp_canary_settings();
     $bundle = webmcp_canary_own_schema_bundle();
     if (webmcp_canary_schema_merged()) {

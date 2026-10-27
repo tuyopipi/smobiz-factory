@@ -8,7 +8,7 @@
 #   test          Worker and plugin tests on Node 22 / PHP 8.3, translations, zip build.
 #   php           php -l and the PHP harness tests on every PHP the plugin supports (7.4-8.4).
 #   plugin-check  WordPress Plugin Check (plugin_repo category) on the built zip.
-#   wp-env-smoke  Real WordPress + Yoast SEO: activate, JSON-LD, /llms.txt, uninstall. Non-blocking for now.
+#   wp-env-smoke  Real WordPress + Yoast SEO, then Slim SEO: activate, one merged JSON-LD graph, /llms.txt, uninstall. Non-blocking for now.
 #   phpcs         WordPress-Extra + PHPCompatibilityWP (7.4-). Report-only for now.
 name: Plugin CI
 
@@ -190,12 +190,15 @@ jobs:
           # newline from a block scalar would leave a trailing comma.
           categories: plugin_repo
 
-  # Real WordPress (latest) with Yoast SEO from wordpress.org, via @wordpress/env
-  # in Docker. See scripts/wp-env-smoke.mjs for every step and assertion.
+  # Real WordPress (latest) with Yoast SEO and Slim SEO from wordpress.org, via
+  # @wordpress/env in Docker (tests/wp-env/.wp-env.json). Each SEO plugin is
+  # checked on its own: exactly one JSON-LD graph, theirs, with Nurevo's facts
+  # merged in; with Slim SEO's schema off, exactly one graph, Nurevo's.
+  # See scripts/wp-env-smoke.mjs for every step and assertion.
   # Outbound HTTP to anything but the site itself is recorded and blocked by a
   # test mu-plugin, so this job calls no external service.
   wp-env-smoke:
-    name: WordPress + Yoast smoke (PHP ${{ matrix.php }})
+    name: WordPress + Yoast / Slim SEO smoke (PHP ${{ matrix.php }})
     runs-on: ubuntu-latest
     timeout-minutes: 25
     # Non-blocking while the job is new: a first-run flake (image pulls,

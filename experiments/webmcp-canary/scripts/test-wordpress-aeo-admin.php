@@ -490,6 +490,110 @@ ob_start();
 webmcp_canary_output_server_schema();
 $suppressed_output = ob_get_clean();
 expect($suppressed_output === '', 'a complete rival prevents duplicate Nurevo schema output');
+
+/* Slim SEO: merged like Yoast, Rank Math and AIOSEO, but it prints its graph in
+ * wp_footer (SlimSEO\Schema\Manager::output), so the <head> output waits for it.
+ * The stand-ins below mirror what Slim SEO registers: the SLIM_SEO_VER constant
+ * and its Manager::output hooked to wp_footer while the Schema feature is on. */
+eval('namespace SlimSEO\Schema; class Manager { public function output() {} }');
+if (!defined('SLIM_SEO_VER')) {
+    define('SLIM_SEO_VER', '4.11.4');
+}
+$slim_footer_hook = (object) array('callbacks' => array(10 => array('slim' => array('function' => array(new \SlimSEO\Schema\Manager(), 'output'), 'accepted_args' => 1))));
+$slim_saved_settings = $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION];
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge($slim_saved_settings, array(
+    'business_name' => 'Slim Bakery', 'business_type' => 'Bakery', 'business_phone' => '03-1234-5678', 'business_address' => '東京都千代田区丸の内1-1-1',
+));
+$GLOBALS['webmcp_test_active_plugins'] = array('slim-seo/slim-seo.php');
+expect(webmcp_canary_detect_active_seo_plugins() === array('slim-seo/slim-seo.php' => 'Slim SEO'), 'Slim SEO is detected through is_plugin_active');
+expect(in_array('slim-seo/slim-seo.php', webmcp_canary_graph_integrations(), true), 'Slim SEO is a graph Nurevo merges into');
+expect(strpos(webmcp_canary_seo_coexistence_message(), 'Slim SEO') !== false, 'the coexistence notice names Slim SEO');
+expect(!in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('slim-seo/slim-seo.php' => 'Slim SEO'), array()), true),
+    'Slim SEO has no FAQ block, so it never suppresses the Nurevo FAQ');
+expect(in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('wordpress-seo/wp-seo.php' => 'Yoast SEO'), array()), true),
+    'Yoast still does (it ships an FAQ block)');
+expect(webmcp_canary_slim_seo_prints_schema() === false, 'Slim SEO schema printer not hooked: nothing to wait for');
+// The daily loopback measurement reads Slim SEO's block, printed in the footer
+// (pretty-printed outside production) with id="slim-seo-schema".
+$slim_html = '<html><head><title>x</title></head><body><p>Hi</p><script type="application/ld+json" id="slim-seo-schema">' . json_encode(array('@context' => 'https://schema.org', '@graph' => array(
+    array('@type' => 'WebSite', '@id' => 'https://example.test/#website', 'url' => 'https://example.test/', 'name' => 'Example'),
+    array('@type' => 'Organization', '@id' => 'https://example.test/#organization', 'url' => 'https://example.test/', 'name' => 'Example'),
+)), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</script></body></html>';
+$slim_measured = webmcp_canary_parse_rival_schema($slim_html);
+expect($slim_measured['business'] === array('state' => 'partial', 'id' => 'https://example.test/#organization'), 'the measurement reads Slim SEO\'s footer graph: an incomplete Organization');
+expect(in_array('WebSite', $slim_measured['types'], true), 'and the types it publishes');
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$slim_signature_without = webmcp_canary_rival_signature();
+$GLOBALS['webmcp_test_active_plugins'] = array('slim-seo/slim-seo.php');
+expect(webmcp_canary_rival_signature() !== $slim_signature_without, 'activating Slim SEO invalidates the stored measurement');
+
+// Slim SEO's real front-page graph, keyed by entity context as its filter gets it.
+$slim_graph = array(
+    'website' => array('@type' => 'WebSite', '@id' => 'https://example.test/#website', 'url' => 'https://example.test/', 'name' => 'Example',
+        'inLanguage' => 'ja', 'potentialAction' => array('@id' => 'https://example.test/#searchaction'), 'publisher' => array('@id' => 'https://example.test/#organization')),
+    'searchaction' => array('@type' => 'SearchAction', '@id' => 'https://example.test/#searchaction', 'target' => 'https://example.test/?s={search_term_string}', 'query-input' => 'required name=search_term_string'),
+    'webpage' => array('@type' => 'WebPage', '@id' => 'https://example.test/#webpage', 'url' => 'https://example.test/', 'inLanguage' => 'ja', 'name' => 'Example',
+        'isPartOf' => array('@id' => 'https://example.test/#website'), 'about' => array('@id' => 'https://example.test/#organization')),
+    'organization' => array('@type' => 'Organization', '@id' => 'https://example.test/#organization', 'url' => 'https://example.test/', 'name' => 'Example'),
+);
+
+// 1. Schema feature on: <head> stands aside, Slim SEO's filter merges, the footer prints nothing more.
+$GLOBALS['wp_filter']['wp_footer'] = $slim_footer_hook;
+expect(webmcp_canary_slim_seo_prints_schema() === true, 'Slim SEO schema printer hooked to wp_footer is recognised');
+webmcp_canary_schema_merged(false);
+ob_start();
+webmcp_canary_output_server_schema();
+$slim_head = ob_get_clean();
+expect($slim_head === '', 'with Slim SEO printing in the footer, nothing is printed in <head>');
+expect(webmcp_canary_schema_deferred() === true, 'the output is deferred to the footer');
+$slim_merged = array_values(apply_filters('slim_seo_schema_graph', $slim_graph));
+$slim_orgs = array_values(array_filter($slim_merged, function ($node) { return webmcp_canary_is_business_node($node); }));
+expect(count($slim_orgs) === 1 && $slim_orgs[0]['@id'] === 'https://example.test/#organization', 'one business node, under Slim SEO\'s @id');
+expect(isset($slim_orgs[0]['telephone'], $slim_orgs[0]['address']) && $slim_orgs[0]['name'] === 'Example', 'Nurevo facts added, Slim SEO\'s name kept');
+expect($slim_orgs[0]['@type'] === array('Organization', 'Bakery'), 'the configured Bakery type is added to Slim SEO\'s Organization');
+expect(count(array_filter($slim_merged, function ($node) { return ($node['@type'] ?? '') === 'WebSite'; })) === 1, 'one WebSite');
+ob_start();
+webmcp_canary_output_deferred_server_schema();
+$slim_footer = ob_get_clean();
+expect(strpos($slim_footer, 'application/ld+json') === false, 'after the merge, no second graph is printed in the footer');
+expect(webmcp_canary_schema_deferred() === false, 'the deferral is used once');
+
+// 2. Hooked, but Slim SEO's graph came out empty (every entity filtered away): ours is printed in the footer.
+webmcp_canary_schema_merged(false);
+ob_start();
+webmcp_canary_output_server_schema();
+expect(ob_get_clean() === '', 'deferred again on the next request');
+expect(apply_filters('slim_seo_schema_graph', array()) === array(), 'an empty Slim SEO graph is left empty');
+ob_start();
+webmcp_canary_output_deferred_server_schema();
+$slim_fallback = ob_get_clean();
+expect(strpos($slim_fallback, 'id="nurevo-aeo-server"') !== false && strpos($slim_fallback, '"@type":"WebSite"') !== false,
+    'when Slim SEO printed no graph, the full Nurevo graph is printed in the footer');
+expect(webmcp_canary_output_deferred_server_schema() === null && webmcp_canary_schema_deferred() === false, 'and only once');
+
+// 3. Two SEO plugins at once: Yoast already merged in <head>, Slim SEO's graph is left alone.
+webmcp_canary_schema_merged(true);
+expect(apply_filters('slim_seo_schema_graph', $slim_graph) === $slim_graph, 'facts already merged into another graph are not merged a second time');
+webmcp_canary_schema_merged(false);
+
+// 4. Schema feature off (or the service disabled): no footer printer, so Nurevo prints its
+//    own graph in <head> like any other setup - and Slim SEO, publishing nothing, suppresses nothing,
+//    whatever a stale measurement says (a complete rival is still stored from above).
+unset($GLOBALS['wp_filter']['wp_footer']);
+ob_start();
+webmcp_canary_output_server_schema();
+$slim_off = ob_get_clean();
+expect(webmcp_canary_schema_deferred() === false, 'Slim SEO schema off: nothing is deferred');
+expect(strpos($slim_off, 'id="nurevo-aeo-server"') !== false && strpos($slim_off, '"telephone"') !== false && strpos($slim_off, '"@type":"WebSite"') !== false,
+    'Slim SEO schema off: Nurevo prints its full graph in <head>');
+
+// 5. A request that carries no Nurevo schema is not merged either.
+$GLOBALS['webmcp_test_options']['blog_public'] = 0;
+expect(apply_filters('slim_seo_schema_graph', $slim_graph) === $slim_graph, 'a request without Nurevo schema leaves Slim SEO\'s graph untouched');
+$GLOBALS['webmcp_test_options']['blog_public'] = 1;
+webmcp_canary_schema_merged(false);
+$GLOBALS['webmcp_test_active_plugins'] = array();
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $slim_saved_settings;
 delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
 $GLOBALS['webmcp_test_active_plugins'] = array();
 ob_start();
@@ -1180,6 +1284,8 @@ expect(strpos($source, "add_action('wp_head', 'webmcp_canary_output_server_schem
 expect(strpos($source, "add_filter('wpseo_schema_graph', 'webmcp_canary_merge_into_list_graph'") !== false, 'Yoast graph merge is registered');
 expect(strpos($source, "add_filter('rank_math/schema/validated_data', 'webmcp_canary_merge_into_keyed_graph'") !== false, 'Rank Math graph merge is registered');
 expect(strpos($source, "add_filter('aioseo_schema_output', 'webmcp_canary_merge_into_list_graph'") !== false, 'AIOSEO graph merge is registered');
+expect(strpos($source, "add_filter('slim_seo_schema_graph', 'webmcp_canary_merge_into_slim_seo_graph', 99)") !== false, 'Slim SEO graph merge is registered');
+expect(strpos($source, "add_action('wp_footer', 'webmcp_canary_output_deferred_server_schema', 99)") !== false, 'the output deferred for Slim SEO is printed in wp_footer');
 
 /* The browser tag is the only code path that puts a third-party script on public
  * pages and reports visitor-side activity, so it must stay opt-in: enabling the
@@ -1859,7 +1965,7 @@ expect($rules['FAQPage']['basis'] === 'detected', 'FAQPage is decided by detecti
 expect($rules['Product']['basis'] === 'detected', 'so is Product');
 expect($rules['Service']['basis'] === 'always', 'Service is ours unconditionally');
 expect($rules['Product']['publishers'] === array('commerce'), 'Product is published by the store plugin, not the SEO one');
-expect($rules['FAQPage']['publishers'] === array('seo'), 'FAQPage is published by the SEO plugins');
+expect($rules['FAQPage']['publishers'] === array('faq'), 'FAQPage is published by the SEO plugins that have an FAQ block');
 
 $yoast_only = array('wordpress-seo/wp-seo.php' => 'Yoast SEO');
 $woo_only = array('woocommerce/woocommerce.php' => 'WooCommerce');
@@ -3194,10 +3300,10 @@ expect(strpos($block_js, "title:'Nurevo FAQ'") === false && strpos($block_js, 't
 expect(strpos($block_js, '"title":"Nurevo FAQ"') !== false, 'which is passed in from PHP');
 
 $main_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
-expect(WEBMCP_CANARY_VERSION === '0.8.1' && strpos($main_source, " * Version: 0.8.1\n") !== false, 'the version is 0.8.1 in the header and the constant');
+expect(WEBMCP_CANARY_VERSION === '0.9.0' && strpos($main_source, " * Version: 0.9.0\n") !== false, 'the version is 0.9.0 in the header and the constant');
 $readme_081 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
-expect(strpos($readme_081, "Stable tag: 0.8.1") !== false, 'and in the readme stable tag');
-expect(substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.8.0');
+expect(strpos($readme_081, "Stable tag: 0.9.0") !== false, 'and in the readme stable tag');
+expect(substr_count($readme_081, "= 0.9.0 =") === 2 && substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.8.1 and 0.8.0');
 expect(strpos($readme_081, '= Does the AI integration cost anything? =') !== false, 'the readme answers whether the AI integration costs anything');
 
 /* --- Free is never scored down for data it holds: optIn fields publish unless retired --- */

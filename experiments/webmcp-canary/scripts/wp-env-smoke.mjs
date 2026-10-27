@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 /**
- * Real-WordPress smoke test for the Nurevo AEO plugin, next to Yoast SEO.
+ * Real-WordPress smoke test for the Nurevo AEO plugin, next to Yoast SEO and Slim SEO.
  *
  * Starts WordPress with @wordpress/env (Docker) from tests/wp-env/.wp-env.json:
- *   - Yoast SEO from wordpress.org, active;
+ *   - Yoast SEO and Slim SEO from wordpress.org (Slim SEO is deactivated at the
+ *     start and only switched on, in place of Yoast, for step 5);
  *   - the BUILT plugin, dist/nurevo-webmcp, mapped in as wp-content/plugins/nurevo-webmcp
  *     (the slug users get) but not activated, so activation is part of the test;
  *   - tests/wp-env/mu-plugins/nurevo-ci-probe.php, which records outbound HTTP,
@@ -20,8 +21,13 @@
  *      service added, and no separate Nurevo graph; no external HTTP from Nurevo
  *      while serving public pages;
  *   4. /llms.txt is served as text/plain with the fixture's name and phone;
- *   5. deactivate (cron cleared), uninstall (every webmcp_canary_* option gone);
- *   6. debug.log has no PHP fatal error, parse error or warning (from any plugin).
+ *   5. Slim SEO instead of Yoast: the home page carries exactly one JSON-LD
+ *      block, Slim SEO's (id=slim-seo-schema, printed in wp_footer), with the
+ *      fixture facts in its one Organization and the service added; with Slim
+ *      SEO's Schema feature off, exactly one block again: Nurevo's own graph in
+ *      <head>. Yoast is switched back on afterwards;
+ *   6. deactivate (cron cleared), uninstall (every webmcp_canary_* option gone);
+ *   7. debug.log has no PHP fatal error, parse error or warning (from any plugin).
  *
  * Every check runs even when an earlier one fails; the summary at the end lists
  * all failures and the exit code is 1 if there were any.
@@ -37,6 +43,8 @@
  */
 import { spawnSync } from "node:child_process";
 import { existsSync } from "node:fs";
+import http from "node:http";
+import https from "node:https";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -54,12 +62,28 @@ const STOP = process.argv.includes("--stop");
 const failures = [];
 let checks = 0;
 
+/**
+ * A GitHub Actions error annotation, so a failure can be read from the check
+ * run without the job log. Newlines are encoded as %0A and the text is cut to
+ * stay under the annotation size limit. Outside Actions it is just a log line.
+ */
+function annotate(message, detail) {
+  let text = String(message);
+  if (detail !== undefined) {
+    text += `\n${typeof detail === "string" ? detail : JSON.stringify(detail, null, 2)}`;
+  }
+  if (text.length > 3500) text = `${text.slice(0, 3500)}\n[... truncated]`;
+  const encoded = text.replace(/%/g, "%25").replace(/\r/g, "%0D").replace(/\n/g, "%0A");
+  console.log(`::error title=smoke::${encoded}`);
+}
+
 function check(ok, message, detail) {
   checks += 1;
   if (ok) {
     console.log(`  ok   ${message}`);
   } else {
     failures.push(message);
+    annotate(`FAIL ${message}`, detail);
     console.log(`  FAIL ${message}`);
     if (detail !== undefined) {
       console.log(`       ${typeof detail === "string" ? detail : JSON.stringify(detail, null, 2).replace(/\n/g, "\n       ")}`);
@@ -108,9 +132,67 @@ function probe(sub) {
   return JSON.parse(line.slice("NUREVO_CI_JSON ".length));
 }
 
+/**
+ * One GET on a new connection (no keep-alive pool), so a request never lands
+ * on a socket the server has already closed between steps.
+ */
+function request(url) {
+  return new Promise((resolve, reject) => {
+    const client = url.startsWith("https:") ? https : http;
+    const req = client.get(url, { agent: false, headers: { "cache-control": "no-cache", connection: "close", "user-agent": "node" } }, (res) => {
+      const chunks = [];
+      res.on("data", (chunk) => chunks.push(chunk));
+      res.on("end", () => resolve({ status: res.statusCode, headers: res.headers, body: Buffer.concat(chunks).toString("utf8") }));
+      res.on("error", reject);
+    });
+    req.setTimeout(120000, () => req.destroy(new Error("no response within 120 s")));
+    req.on("error", reject);
+  });
+}
+
+/**
+ * GET a path on the site, following redirects by hand so that a failure can
+ * say which hop failed and why (fetch only says "fetch failed").
+ */
 async function get(urlPath) {
-  const response = await fetch(`${BASE_URL}${urlPath}`, { redirect: "follow", headers: { "cache-control": "no-cache" } });
-  return { status: response.status, type: response.headers.get("content-type") || "", body: await response.text() };
+  let url = `${BASE_URL}${urlPath}`;
+  const hops = [];
+  for (let i = 0; i < 6; i += 1) {
+    let response;
+    try {
+      response = await request(url);
+    } catch (error) {
+      throw new Error(`GET ${url} failed: ${error.code ? `${error.code} ` : ""}${error.message}${hops.length ? `; redirects: ${hops.join(" -> ")}` : ""}`);
+    }
+    const location = response.headers.location;
+    if (response.status >= 300 && response.status < 400 && location) {
+      hops.push(`${response.status} ${url}`);
+      url = new URL(location, url).toString();
+      continue;
+    }
+    return { status: response.status, type: response.headers["content-type"] || "", body: response.body, redirects: hops };
+  }
+  throw new Error(`GET ${BASE_URL}${urlPath}: too many redirects: ${hops.join(" -> ")} -> ${url}`);
+}
+
+/** The last lines of the web server's log (wp-env), for a request that got no response. */
+function serverLogTail(lines = 40) {
+  if (DIRECT_WP) return "";
+  // Bounded: if this wp-env ever ignores --watch=false, it must not hang the job.
+  const result = spawnSync("npx", ["--yes", WP_ENV_PACKAGE, "logs", "development", "--watch=false"],
+    { cwd: ENV_DIR, encoding: "utf8", maxBuffer: 64 * 1024 * 1024, env: process.env, timeout: 90000 });
+  const out = `${result.stdout || ""}${result.stderr || ""}`;
+  return out.split("\n").filter((l) => l.trim() && !/^\s*[✔ℹ]/.test(l)).slice(-lines).join("\n");
+}
+
+/** get(), but a failed request becomes a failed check (with the server log) instead of an abort. */
+async function tryGet(label, urlPath) {
+  try {
+    return await get(urlPath);
+  } catch (error) {
+    check(false, `${label}: ${error.message}`, serverLogTail());
+    return null;
+  }
 }
 
 /** Every <script type="application/ld+json"> on a page, parsed. */
@@ -173,6 +255,7 @@ async function main() {
     wpEnv(["reset", "development"]);
   }
   probe("reset");
+  wp(["plugin", "deactivate", "slim-seo"], { allowFail: true });
   wp(["plugin", "activate", "wordpress-seo"]);
   wp(["plugin", "deactivate", PLUGIN], { allowFail: true });
   const perma = probe("permalinks");
@@ -180,6 +263,7 @@ async function main() {
   const before = probe("state");
   console.log(`  PHP ${before.php}, WordPress ${before.wp}, Yoast SEO ${before.yoast}, home ${before.home}`);
   check(before.yoast_active === true, "Yoast SEO is active");
+  check(before.slim_seo_active === false, "Slim SEO is installed but inactive");
   check(before.nurevo_active === false, "Nurevo starts inactive");
   check(before.options.length === 0, "no webmcp_canary_* options before activation", before.options);
 
@@ -254,7 +338,81 @@ async function main() {
   check(externalFromNurevo(publicHttp).length === 0, "no external HTTP from Nurevo while serving public pages",
     externalFromNurevo(publicHttp).map((e) => `${e.context} ${e.method} ${e.url}`));
 
-  section("5. Deactivate and uninstall");
+  section("5. Slim SEO instead of Yoast: one merged graph, or ours when its schema is off");
+  wp(["plugin", "deactivate", "wordpress-seo"]);
+  wp(["plugin", "activate", "slim-seo"]);
+  probe("slimseo-schema-on");
+  const slim = probe("state");
+  console.log(`  Slim SEO ${slim.slim_seo}`);
+  check(slim.slim_seo_active === true && slim.yoast_active === false, "Slim SEO is active, Yoast SEO is not");
+  probe("reset");
+  // Slim SEO on its own first (Nurevo's schema output off), so a failure here
+  // is told apart from one in the merge.
+  probe("nurevo-schema-off");
+  {
+    const home = await tryGet("Slim SEO alone: GET /", "/");
+    if (home) {
+      check(home.status === 200, `Slim SEO alone: GET / -> ${home.status}`, home.status === 200 ? undefined : home.body.slice(0, 1500));
+      const blocks = jsonLdBlocks(home.body);
+      check(blocks.length === 1 && /slim-seo-schema/.test(blocks[0].attrs), `Slim SEO alone: its one block (found ${blocks.length})`, blocks.map((b) => b.attrs));
+    }
+  }
+  probe("nurevo-schema-on");
+  {
+    const home = await tryGet("Slim SEO + Nurevo: GET /", "/");
+    if (!home) {
+      const log = probe("debuglog");
+      check(false, "Slim SEO + Nurevo: debug.log after the failed request", log.content.split("\n").filter(Boolean).slice(-20).join("\n") || "(empty)");
+    }
+    const page = home || { status: 0, body: "" };
+    check(page.status === 200, `GET / -> ${page.status}`);
+    const blocks = jsonLdBlocks(page.body);
+    check(blocks.length === 1, `exactly one application/ld+json block (found ${blocks.length})`, blocks.map((b) => b.attrs));
+    const block = blocks[0];
+    check(Boolean(block && block.data && !block.error), "the block is valid JSON", block && block.error);
+    check(Boolean(block && /id=["']slim-seo-schema["']/.test(block.attrs)), "the block is Slim SEO's (id=slim-seo-schema)", blocks.map((b) => ({ attrs: b.attrs, data: b.data })));
+    check(!page.body.includes('id="nurevo-aeo-server"'), "Nurevo printed no graph of its own (it merged instead)", blocks.map((b) => b.attrs));
+    const graph = graphOf(block);
+    console.log(`  graph: ${graph.map((n) => `${types(n).join("/")}${n["@id"] ? ` ${n["@id"]}` : ""}`).join(" | ")}`);
+    check(graph.filter((n) => types(n).includes("WebSite")).length === 1, "Slim SEO's WebSite node is present once", graph);
+    const withPhone = graph.filter((n) => n.telephone === fx.business_phone);
+    check(withPhone.length === 1, `exactly one node carries the fixture telephone (found ${withPhone.length})`, graph);
+    const business = withPhone[0] || {};
+    check(typeof business["@id"] === "string" && business["@id"].endsWith("/#organization"), "it is Slim SEO's Organization (@id .../#organization)", business["@id"]);
+    check(types(business).includes("Organization") && types(business).includes(fx.business_type), `its type is Organization + ${fx.business_type}`, business["@type"]);
+    check(business.address && business.address.streetAddress === fx.business_address, "that node carries the fixture address", business.address);
+    const businessNodes = graph.filter((n) => types(n).some((t) => ["Organization", "LocalBusiness", fx.business_type].includes(t)));
+    check(businessNodes.length === 1, `one business node in the graph (found ${businessNodes.length})`, businessNodes.map((n) => n["@id"]));
+    const services = graph.filter((n) => types(n).includes("Service") && n.name === fx.service_name);
+    check(services.length === 1, `the fixture service is in the graph once (found ${services.length})`);
+    check(Boolean(services[0] && services[0].provider && services[0].provider["@id"] === business["@id"]),
+      "the service's provider is Slim SEO's Organization", services[0] && services[0].provider);
+    const ids = graph.map((n) => n["@id"]).filter(Boolean);
+    const dupes = ids.filter((id, i) => ids.indexOf(id) !== i);
+    check(dupes.length === 0, "no @id appears twice in the graph", dupes);
+  }
+  probe("slimseo-schema-off");
+  {
+    const home = (await tryGet("Slim SEO schema off: GET /", "/")) || { status: 0, body: "" };
+    check(home.status === 200, `GET / (Slim SEO schema off) -> ${home.status}`);
+    const blocks = jsonLdBlocks(home.body);
+    check(blocks.length === 1, `Slim SEO schema off: exactly one application/ld+json block (found ${blocks.length})`, blocks.map((b) => b.attrs));
+    const block = blocks[0];
+    check(Boolean(block && /nurevo-aeo-server/.test(block.attrs)), "Slim SEO schema off: the block is Nurevo's own graph", blocks.map((b) => ({ attrs: b.attrs, data: b.data })));
+    const head = home.body.split(/<\/head>/i)[0];
+    check(head.includes('id="nurevo-aeo-server"'), "Slim SEO schema off: printed in <head>, as with any other setup");
+    const graph = graphOf(block);
+    check(graph.filter((n) => n.telephone === fx.business_phone).length === 1, "Slim SEO schema off: the fixture telephone is published once");
+  }
+  const slimHttp = probe("http");
+  summarizeHttp("while serving / with Slim SEO", slimHttp);
+  check(externalFromNurevo(slimHttp).length === 0, "no external HTTP from Nurevo while serving public pages with Slim SEO",
+    externalFromNurevo(slimHttp).map((e) => `${e.context} ${e.method} ${e.url}`));
+  probe("slimseo-schema-on");
+  wp(["plugin", "deactivate", "slim-seo"]);
+  wp(["plugin", "activate", "wordpress-seo"]);
+
+  section("6. Deactivate and uninstall");
   wp(["plugin", "deactivate", PLUGIN]);
   const deactivated = probe("state");
   check(deactivated.nurevo_active === false, "Nurevo is inactive");
@@ -265,7 +423,7 @@ async function main() {
   check(uninstalled.options.length === 0, "uninstall removed every webmcp_canary_* option and transient", uninstalled.options);
   check(!uninstalled.cron, "no Nurevo cron event left");
 
-  section("6. debug.log");
+  section("7. debug.log");
   {
     const log = probe("debuglog");
     const lines = log.content.split("\n").filter(Boolean);
@@ -292,6 +450,16 @@ try {
 console.log("");
 if (crashed) {
   console.error(`wp-env smoke: aborted after ${checks} check(s): ${crashed.message}`);
+  let context = crashed.stack ? crashed.stack.split("\n").slice(0, 6).join("\n") : "";
+  try {
+    // What PHP said, if anything: the usual reason a page stops answering.
+    const log = probe("debuglog");
+    const tail = log.content.split("\n").filter(Boolean).slice(-15).join("\n");
+    if (tail) context += `\ndebug.log (last lines):\n${tail}`;
+  } catch (error) {
+    context += `\n(debug.log unavailable: ${String(error.message).slice(0, 300)})`;
+  }
+  annotate(`aborted after ${checks} check(s): ${crashed.message}`, context);
   process.exit(1);
 }
 if (failures.length) {

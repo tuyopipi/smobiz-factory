@@ -161,6 +161,8 @@ if (defined('WP_CLI') && WP_CLI) {
                 'home'           => home_url('/'),
                 'yoast'          => defined('WPSEO_VERSION') ? WPSEO_VERSION : null,
                 'yoast_active'   => is_plugin_active('wordpress-seo/wp-seo.php'),
+                'slim_seo'       => defined('SLIM_SEO_VER') ? SLIM_SEO_VER : null,
+                'slim_seo_active' => is_plugin_active('slim-seo/slim-seo.php'),
                 'nurevo_active'  => is_plugin_active('nurevo-webmcp/nurevo-webmcp.php'),
                 'nurevo_version' => defined('WEBMCP_CANARY_VERSION') ? WEBMCP_CANARY_VERSION : null,
                 'options'        => array_values(array_unique($names)),
@@ -174,6 +176,8 @@ if (defined('WP_CLI') && WP_CLI) {
         /**
          * Turn Nurevo's public output on with fixture business data and one
          * service, and give Yoast an organization, so the two graphs meet.
+         * (Slim SEO needs nothing: it always publishes an Organization named
+         * after the site.)
          */
         public function configure() {
             $fixture = nurevo_ci_fixture();
@@ -205,6 +209,60 @@ if (defined('WP_CLI') && WP_CLI) {
                 $yoast = true;
             }
             $this->emit(array('configured' => true, 'yoast_org' => $yoast, 'fixture' => $fixture));
+        }
+
+        /**
+         * Turn Slim SEO's "Schema" feature off: its own feature list without
+         * 'schema' (SlimSEO\Settings\Settings::is_feature_active() reads
+         * get_option('slim_seo')['features']). Its schema printer is then never
+         * hooked to wp_footer.
+         *
+         * @subcommand slimseo-schema-off
+         */
+        public function slimseo_schema_off() {
+            $features = array('meta_title', 'meta_description', 'meta_robots', 'open_graph', 'twitter_cards', 'canonical_url',
+                'rel_links', 'sitemaps', 'images_alt', 'breadcrumbs', 'feed', 'redirection');
+            $option = get_option('slim_seo', array());
+            $option = is_array($option) ? $option : array();
+            $option['features'] = $features;
+            update_option('slim_seo', $option);
+            $this->emit(array('slim_seo_features' => $features));
+        }
+
+        /**
+         * Nurevo's structured data output off, everything else unchanged.
+         *
+         * @subcommand nurevo-schema-off
+         */
+        public function nurevo_schema_off() {
+            $this->set_nurevo_schema('0');
+        }
+
+        /**
+         * Nurevo's structured data output back on.
+         *
+         * @subcommand nurevo-schema-on
+         */
+        public function nurevo_schema_on() {
+            $this->set_nurevo_schema('1');
+        }
+
+        private function set_nurevo_schema($value) {
+            $settings = get_option('webmcp_canary_settings', array());
+            $settings = is_array($settings) ? $settings : array();
+            $settings['serve_schema'] = $value;
+            update_option('webmcp_canary_settings', $settings);
+            $this->emit(array('serve_schema' => $value));
+        }
+
+        /**
+         * Back to Slim SEO's defaults, where the Schema feature is on.
+         *
+         * @subcommand slimseo-schema-on
+         */
+        public function slimseo_schema_on() {
+            delete_option('slim_seo');
+            $this->emit(array('slim_seo_features' => 'default'));
         }
 
         /**
