@@ -26,7 +26,7 @@ import { fileURLToPath, pathToFileURL } from "node:url";
 import I18N from "../src/i18n.mjs";
 import { siteRobotsTxt, siteLlmsTxt } from "../../webmcp-canary/worker/site-seo.mjs";
 import {
-  ORIGIN, LANGS, DEFAULT_LANG, OG_IMAGE, ORGANIZATION, PRODUCT, FAQ_KEYS, STATIC_PAGES, AI_REFERRERS, PRO_ON_SALE,
+  ORIGIN, LANGS, DEFAULT_LANG, OG_IMAGE, ORGANIZATION, PRODUCT, FAQ_KEYS, STATIC_PAGES, AI_REFERRERS, PRO_ON_SALE, INDEXNOW_KEY,
 } from "../src/site.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -604,6 +604,9 @@ files.set("llms-pages.json", `${JSON.stringify({
 }, null, 1)}\n`);
 
 files.set("robots.txt", siteRobotsTxt());
+// IndexNow key file, served by Pages at /<key>.txt (scripts/indexnow-submit.mjs).
+if (!/^[a-f0-9]{32}$/.test(INDEXNOW_KEY)) throw new Error("INDEXNOW_KEY must be 32 lower-case hex characters");
+files.set(`${INDEXNOW_KEY}.txt`, INDEXNOW_KEY);
 const llmsPages = JSON.parse(files.get("llms-pages.json"));
 files.set("llms.txt", siteLlmsTxt(llmsPages, []));
 

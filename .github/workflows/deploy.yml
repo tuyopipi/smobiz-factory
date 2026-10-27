@@ -85,3 +85,14 @@ jobs:
         if: inputs.target == 'all' || inputs.target == 'lp'
         working-directory: experiments/nurevo-lp
         run: ../webmcp-canary/node_modules/.bin/wrangler pages deploy public --project-name nurevo --branch production --commit-hash "$GITHUB_SHA"
+      # Tell Bing and the other IndexNow engines which pages exist, so AI search
+      # built on their indexes picks up new and changed pages sooner. Only after
+      # a successful landing-page deploy; it never fails the deploy (the script
+      # reports problems as warnings and exits 0, and the step is
+      # continue-on-error as well). See experiments/nurevo-lp/scripts/indexnow-submit.mjs.
+      - name: Submit pages to IndexNow
+        if: success() && (inputs.target == 'all' || inputs.target == 'lp')
+        continue-on-error: true
+        timeout-minutes: 3
+        working-directory: experiments/nurevo-lp
+        run: node scripts/indexnow-submit.mjs
