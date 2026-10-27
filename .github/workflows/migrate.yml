@@ -45,11 +45,33 @@ jobs:
           node-version: "22"
           cache: npm
           cache-dependency-path: experiments/webmcp-canary/package-lock.json
-      - name: Validate the file name
+      - name: Validate the input
         run: |
+          if [[ "$MIGRATION_FILE" =~ ^ops:(list-sites|grant-pro:[A-Za-z0-9_-]+|revoke:[A-Za-z0-9_-]+|sov:[A-Za-z0-9_-]+)$ ]]; then exit 0; fi
           [[ "$MIGRATION_FILE" =~ ^[0-9]{4}_[a-z0-9_]+\.sql$ ]] || { echo "::error::Invalid migration file name"; exit 1; }
           test -f "nurevo-impl/db/$MIGRATION_FILE" || { echo "::error::No such migration file"; exit 1; }
       - name: Install (pinned wrangler from package-lock)
         run: npm ci --no-audit --no-fund
       - name: Apply to nurevo-db (remote)
+        if: ${{ !startsWith(inputs.file, 'ops:') }}
         run: npx wrangler d1 execute nurevo-db --remote --file "nurevo-impl/db/$MIGRATION_FILE" --yes
+      # Owner operations (fixed statements only; the site id is validated above).
+      # Results are printed as an annotation so they can be read through the API.
+      - name: Owner operation
+        if: ${{ startsWith(inputs.file, 'ops:') }}
+        run: |
+          set -o pipefail
+          op="${MIGRATION_FILE#ops:}"; kind="${op%%:*}"; id="${op#*:}"
+          case "$kind" in
+            list-sites) sql="SELECT id, url, install_type, plan, manual_plan, status, delivery_status FROM sites ORDER BY rowid DESC LIMIT 40" ;;
+            grant-pro) sql="UPDATE sites SET manual_plan='pro', manual_plan_note='owner test' WHERE id='$id'; SELECT id, url, plan, manual_plan FROM sites WHERE id='$id'" ;;
+            revoke) sql="UPDATE sites SET manual_plan=NULL WHERE id='$id' AND manual_plan_note='owner test'; SELECT id, url, plan, manual_plan FROM sites WHERE id='$id'" ;;
+            sov) sql="SELECT * FROM aeo_sov_runs WHERE site_id='$id' ORDER BY rowid DESC LIMIT 3" ;;
+          esac
+          if npx wrangler d1 execute nurevo-db --remote --command "$sql" --json > out.json 2> err.log; then
+            msg=$(python3 -c "import json;d=json.load(open('out.json'));print(json.dumps([r.get('results') for r in d],ensure_ascii=False)[:3800])" | sed -e 's/%/%25/g')
+            echo "::notice title=d1-ops ${kind}::$msg"
+          else
+            msg=$(tail -n 20 err.log | sed -e 's/%/%25/g' | awk '{printf "%s%%0A", $0}')
+            echo "::error title=d1-ops failed::$msg"; exit 1
+          fi
