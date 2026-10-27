@@ -17,6 +17,7 @@ import { requestAutoFix } from "./aeo-autofix.mjs";
 import { AeoScoreError, diagnoseAeoUrl, localizeAeoChecks } from "./aeo-score.mjs";
 import { SCORE_V2_COLUMNS, scoreV2Columns } from "./aeo-score-v2.mjs";
 import { diagnosisText, resolveDiagnosisLang } from "./diagnosis-i18n.mjs";
+import { recordScoreChange } from "./learning-events.mjs";
 
 const UA = "Nurevo-Diagnostics/1.0 (+https://nurevo.jp)";
 const TIMEOUT_MS = 8000;
@@ -132,6 +133,9 @@ export async function storeAeoScore(env, siteId, result) {
     stored = false;
     await write([env.DB.prepare(legacySql).bind(...legacyValues), ...extra]);
   }
+  // The learning change log (docs/learning.md): a score_changed event when the
+  // readiness score or a component moved. Best-effort; never fails the store.
+  await recordScoreChange(env, siteId, result, { scannedAt, scoreVersion: v2?.score_version || null, headline: v2?.score ?? null });
   return { ...result, scannedAt, deliveredRulesetVersion: deliveredVersion, aeoScore: { ...v2, scanned_at: scannedAt, stored } };
 }
 

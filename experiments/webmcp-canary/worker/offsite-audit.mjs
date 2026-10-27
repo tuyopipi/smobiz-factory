@@ -73,6 +73,7 @@
 import { rowToProfile, parseFieldSources } from "./site-profile.mjs";
 import { resolveSitePlan, resolveSitePlanFor } from "./billing-plan.mjs";
 import { normalizeSiteType } from "./site-types.mjs";
+import { recordServiceEvent } from "./learning-events.mjs";
 
 export const OFFSITE_AUDIT_VERSION = 1;
 
@@ -799,6 +800,10 @@ async function saveAudit(env, siteId, result, trigger, now) {
   await env.DB.prepare(
     `DELETE FROM offsite_audits WHERE site_id=? AND id NOT IN (SELECT id FROM offsite_audits WHERE site_id=? ORDER BY ran_at DESC LIMIT ?)`,
   ).bind(siteId, siteId, OFFSITE_LIMITS.historyPerSite).run();
+  // The learning change log (docs/learning.md): outcome counts only, never a listing's values.
+  await recordServiceEvent(env, siteId, "offsite_audit", {
+    counts: result.summary?.counts || {}, mismatched_fields: (result.summary?.mismatched_fields || []).length, trigger,
+  }, { at: now, eventId: `svc:offsite_audit:${id}` });
   return id;
 }
 

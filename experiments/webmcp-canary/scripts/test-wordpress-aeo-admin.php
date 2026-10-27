@@ -34,7 +34,7 @@ function wp_parse_url($value, $component = -1) { return parse_url($value, $compo
 function trailingslashit($value) { return rtrim($value, '/') . '/'; }
 function wp_json_encode($value, $flags = 0, $depth = 512) { return json_encode($value, $flags, $depth); }
 function add_settings_error() {}
-function wp_remote_post($url, $args) { $GLOBALS['webmcp_test_last_remote'] = array('url' => $url, 'args' => $args); return $GLOBALS['webmcp_test_remote'] ?? new WP_Error('offline', 'offline'); }
+function wp_remote_post($url, $args) { $GLOBALS['webmcp_test_last_remote'] = array('url' => $url, 'args' => $args); $GLOBALS['webmcp_test_remote_log'][] = $GLOBALS['webmcp_test_last_remote']; return $GLOBALS['webmcp_test_remote'] ?? new WP_Error('offline', 'offline'); }
 function wp_remote_retrieve_response_code($response) { return $response['status'] ?? 0; }
 function wp_remote_retrieve_body($response) { return $response['body'] ?? ''; }
 function is_plugin_active($plugin) { return in_array($plugin, $GLOBALS['webmcp_test_active_plugins'], true); }
@@ -2588,10 +2588,12 @@ expect(get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0) == 1, 'pairing leaves
 // The next request stores what the sanitiser returned, then drains the flag.
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $paired;
 unset($GLOBALS['webmcp_test_last_remote']);
+$GLOBALS['webmcp_test_remote_log'] = array();
 webmcp_canary_drain_pending_catalog();
 expect(!get_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION, 0), 'draining clears the flag so it fires once');
+// The catalogue goes first; the learning snapshot follows it in the same sync.
 expect(
-    isset($GLOBALS['webmcp_test_last_remote']) && strpos($GLOBALS['webmcp_test_last_remote']['url'], '/api/sites/paired01/catalog') !== false,
+    isset($GLOBALS['webmcp_test_remote_log'][0]) && strpos($GLOBALS['webmcp_test_remote_log'][0]['url'], '/api/sites/paired01/catalog') !== false,
     'and the catalogue is sent for the site pairing just issued'
 );
 
@@ -3930,6 +3932,145 @@ $wizard_reset();
     $GLOBALS['webmcp_test_active_plugins'] = array();
     $wizard_reset();
     $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $base;
+}
+
+/* ------------------------------------------------------------------ *
+ * Learning events (includes/learning-events.php, docs/learning.md):
+ * what changed and when, as flags, field names and counts - never values;
+ * nothing before the site is connected; queued while offline; sent in
+ * batches with ids; acknowledged ids leave the queue.
+ * ------------------------------------------------------------------ */
+{
+    $reset = function ($settings) {
+        delete_option(WEBMCP_CANARY_LEARNING_QUEUE_OPTION);
+        delete_option(WEBMCP_CANARY_LEARNING_STATE_OPTION);
+        delete_option(WEBMCP_CANARY_FAQ_OPTION);
+        delete_option(WEBMCP_CANARY_SERVICES_OPTION);
+        delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+        $GLOBALS['webmcp_test_active_plugins'] = array();
+        $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $settings;
+    };
+    $secret_address = '東京都渋谷区神南1-2-3 秘密ビル';
+    $secret_phone = '03-9999-1234';
+    $base = array_merge(webmcp_canary_default_settings(), array(
+        'enabled' => '1', 'serve_llms_txt' => '1', 'serve_schema' => '1', 'allow_ai_crawlers' => '1',
+        'business_name' => 'Cafe Learn', 'business_address' => '', 'business_phone' => $secret_phone,
+        'business_hours' => 'Mon-Fri 9:00-18:00', 'business_type' => 'CafeOrCoffeeShop',
+    ));
+
+    // 1. Not connected: nothing is recorded, nothing is sent.
+    $reset($base);
+    $GLOBALS['webmcp_test_remote_log'] = array();
+    expect(!webmcp_canary_learning_enabled(), 'learning events are off until the site is connected');
+    expect(webmcp_canary_learning_observe() === array(), 'an unconnected site records nothing');
+    expect(webmcp_canary_learning_queue() === array(), 'and queues nothing');
+    expect(webmcp_canary_learning_flush() === 0 && empty($GLOBALS['webmcp_test_remote_log']), 'and sends nothing');
+    // A site ID without the write token (not paired) is not enough either.
+    $reset(array_merge($base, array('site_id' => 'learn01', 'profile_token' => '')));
+    expect(!webmcp_canary_learning_enabled() && webmcp_canary_learning_observe() === array(), 'no token, no events');
+
+    // 2. Connected (pairing records consent): the first observation is a snapshot.
+    $connected = array_merge($base, array('site_id' => 'learn01', 'site_key' => 'nrv_learn', 'profile_token' => 'nrvp_learn'));
+    $reset($connected);
+    webmcp_canary_record_consent('pairing');
+    update_option(WEBMCP_CANARY_INSTALLED_OPTION, time() - 3 * DAY_IN_SECONDS);
+    expect(webmcp_canary_learning_enabled(), 'connected and agreed: events are on');
+    expect(webmcp_canary_learning_observe() === array('snapshot'), 'the first observation queues a snapshot');
+    $queue = webmcp_canary_learning_queue();
+    expect(count($queue) === 1 && $queue[0]['type'] === 'snapshot', 'one snapshot');
+    $snap = $queue[0]['data'];
+    expect($snap['switches']['llms_txt'] === true && $snap['switches']['schema'] === true && $snap['switches']['browser_tag'] === false, 'with the output switches');
+    expect(in_array('phone', $snap['fields_filled'], true) && !in_array('address', $snap['fields_filled'], true), 'and which fields are filled (names)');
+    expect($snap['facts_complete'] === false && $snap['installed_days'] === 3 && $snap['plugin_version'] === WEBMCP_CANARY_VERSION, 'facts incomplete, a 3-day-old install, the version');
+    expect($snap['seo_plugins'] === array('none') && $snap['counts'] === array('faq' => 0, 'services' => 0, 'products' => 0), 'no SEO plugin, no FAQ/services/products');
+    expect(preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[0-9a-f]{4}-[0-9a-f]{12}$/', $queue[0]['id']) === 1, 'each event has its own id');
+    expect(preg_match('/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/', $queue[0]['at']) === 1, 'and a UTC timestamp');
+    expect(webmcp_canary_learning_observe() === array(), 'nothing changed, nothing queued');
+
+    // 3. Changes: a switch, a field, the FAQ, an SEO plugin, the site type.
+    $changed = array_merge($connected, array('serve_llms_txt' => '0', 'business_address' => $secret_address, 'site_type' => 'local'));
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $changed;
+    update_option(WEBMCP_CANARY_FAQ_OPTION, array(array('q' => 'Do you have Wi-Fi?', 'a' => 'Yes, free Wi-Fi.')));
+    $GLOBALS['webmcp_test_active_plugins'] = array('wordpress-seo/wp-seo.php');
+    $types = webmcp_canary_learning_observe();
+    sort($types);
+    expect($types === array('counts_changed', 'fields_changed', 'output_toggled', 'seo_plugin_changed', 'site_type_changed'), 'each change is its own event: ' . implode(',', $types));
+    $by_type = array();
+    foreach (webmcp_canary_learning_queue() as $event) { $by_type[$event['type']] = $event['data']; }
+    expect($by_type['output_toggled'] === array('switch' => 'llms_txt', 'on' => false), 'llms.txt switched off');
+    expect($by_type['fields_changed']['filled'] === array('address') && $by_type['fields_changed']['became_complete'] === true, 'the address was filled in, which completed the facts');
+    expect($by_type['counts_changed'] === array('faq' => array('from' => 0, 'to' => 1)), 'one FAQ entry added');
+    expect($by_type['seo_plugin_changed'] === array('from' => array('none'), 'to' => array('yoast')), 'Yoast detected');
+    expect($by_type['site_type_changed'] === array('from' => 'unset', 'to' => 'local'), 'the site type chosen');
+    // No personal data: no value anyone typed is in the queue.
+    $wire = wp_json_encode(webmcp_canary_learning_queue(), JSON_UNESCAPED_UNICODE);
+    foreach (array($secret_address, '渋谷', $secret_phone, '9999', 'Cafe Learn', 'Wi-Fi', 'Mon-Fri', 'owner@example.test') as $needle) {
+        expect(strpos($wire, $needle) === false, "no value leaves the site in an event ({$needle})");
+    }
+
+    // 4. A one-click fix: what was applied, with the switch it turned on.
+    $before = count(webmcp_canary_learning_queue());
+    $fixed = webmcp_canary_apply_aeo_fix(webmcp_canary_settings(), 'llms');
+    $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $fixed;
+    webmcp_canary_learning_record_fix('llms', 'one_click');
+    $tail = array_slice(webmcp_canary_learning_queue(), $before);
+    expect($tail[0]['type'] === 'fix_applied' && $tail[0]['data'] === array('check' => 'llms', 'via' => 'one_click', 'actions' => array()), 'the fix is recorded');
+    expect($tail[1]['type'] === 'output_toggled' && $tail[1]['data'] === array('switch' => 'llms_txt', 'on' => true), 'with the switch it turned on');
+    // An update: the version change is noticed by the next observation.
+    $stored_state = get_option(WEBMCP_CANARY_LEARNING_STATE_OPTION);
+    $stored_state['state']['plugin_version'] = '0.8.1';
+    update_option(WEBMCP_CANARY_LEARNING_STATE_OPTION, $stored_state);
+    expect(webmcp_canary_learning_observe() === array('plugin_version_changed'), 'a plugin update is an event');
+
+    // 5. Offline: the queue stays, nothing is lost.
+    $queued = webmcp_canary_learning_queue();
+    $GLOBALS['webmcp_test_remote'] = new WP_Error('offline', 'offline');
+    $GLOBALS['webmcp_test_remote_log'] = array();
+    $offline = webmcp_canary_learning_flush();
+    expect(is_wp_error($offline), 'an unreachable service is an error');
+    expect(webmcp_canary_learning_queue() === $queued, 'and the queue is kept for the next sync');
+    $request = $GLOBALS['webmcp_test_remote_log'][0];
+    expect(strpos($request['url'], '/api/sites/learn01/events') !== false, 'sent to the events endpoint of this site');
+    expect($request['args']['headers']['authorization'] === 'Bearer nrvp_learn', 'with the profile token, like the profile sync');
+    $sent_body = json_decode($request['args']['body'], true);
+    expect(count($sent_body['events']) === count($queued) && $sent_body['events'][0]['id'] === $queued[0]['id'], 'the batch carries the queued events with their ids');
+
+    // 6. A partial acknowledgement removes only what was acknowledged (stored or refused).
+    $ids = array_map(function ($event) { return $event['id']; }, $queued);
+    $GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => wp_json_encode(array('ok' => true, 'accepted' => array($ids[0], $ids[1]), 'rejected' => array(array('id' => $ids[2], 'reason' => 'unknown_type')))));
+    webmcp_canary_learning_flush(1);
+    $left = array_map(function ($event) { return $event['id']; }, webmcp_canary_learning_queue());
+    expect($left === array_slice($ids, 3), 'acknowledged ids leave the queue; the rest stay');
+    // A refusal (e.g. 503 before the migration) keeps them too.
+    $GLOBALS['webmcp_test_remote'] = array('status' => 503, 'body' => '{"error":"migration_pending"}');
+    expect(is_wp_error(webmcp_canary_learning_flush()) && count(webmcp_canary_learning_queue()) === count($left), 'a refused batch stays queued');
+    // Everything acknowledged: the queue is empty.
+    $GLOBALS['webmcp_test_remote'] = array('status' => 200, 'body' => wp_json_encode(array('ok' => true, 'accepted' => $left, 'rejected' => array())));
+    expect(webmcp_canary_learning_flush() === count($left) && webmcp_canary_learning_queue() === array(), 'all sent, queue empty');
+
+    // 7. The queue is bounded: the oldest events go first.
+    for ($i = 0; $i < WEBMCP_CANARY_LEARNING_QUEUE_MAX + 15; $i++) {
+        webmcp_canary_learning_record('output_toggled', array('switch' => 'schema', 'on' => ($i % 2) === 0));
+    }
+    expect(count(webmcp_canary_learning_queue()) === WEBMCP_CANARY_LEARNING_QUEUE_MAX, 'at most the cap is kept offline');
+    $ids = array_map(function ($event) { return $event['id']; }, webmcp_canary_learning_queue());
+    expect(count(array_unique($ids)) === count($ids), 'every id is unique');
+
+    // 8. The hooks: settings writes and the FAQ/service lists observe; the twice-daily sync sends.
+    expect(in_array('webmcp_canary_learning_settings_changed', $GLOBALS['webmcp_test_hooks']['update_option_' . WEBMCP_CANARY_OPTION], true), 'every settings write is observed');
+    expect(in_array('webmcp_canary_learning_settings_changed', $GLOBALS['webmcp_test_hooks']['update_option_' . WEBMCP_CANARY_FAQ_OPTION], true), 'and the FAQ list');
+    expect(in_array('webmcp_canary_learning_cron', $GLOBALS['webmcp_test_hooks'][WEBMCP_CANARY_RULESET_CRON], true), 'the twice-daily sync sends them');
+    // Disclosed: the privacy policy suggestion says it.
+    expect(strpos(webmcp_canary_privacy_policy_text(), 'a record of changes to its own settings') !== false, 'the privacy policy text discloses the change record');
+    $readme = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
+    expect(strpos($readme, '/api/sites/{id}/events') !== false, 'the readme lists the events endpoint under External services');
+
+    delete_option(WEBMCP_CANARY_LEARNING_QUEUE_OPTION);
+    delete_option(WEBMCP_CANARY_LEARNING_STATE_OPTION);
+    delete_option(WEBMCP_CANARY_FAQ_OPTION);
+    delete_option(WEBMCP_CANARY_CONSENT_OPTION);
+    $GLOBALS['webmcp_test_active_plugins'] = array();
+    unset($GLOBALS['webmcp_test_remote']);
 }
 
 echo "WordPress AEO admin tests passed\n";

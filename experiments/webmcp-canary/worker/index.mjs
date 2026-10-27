@@ -1,7 +1,7 @@
 import { resolveEmailLocale, loadEmailPreferences, magicLinkEmail } from "./email-i18n.mjs";
 import { handleDiagnose, runAeoScoreCron } from "./diagnose.mjs";
 import { authorizeSiteKey } from "./agent-authorization.mjs";
-import { handleApi, runSovDailyBatch, runFreeAiCheckBatch, runAgencyReportBatch, centralLlmsForKey } from "./api.mjs";
+import { handleApi, runSovDailyBatch, runFreeAiCheckBatch, runAgencyReportBatch, runLearningBaselines, centralLlmsForKey } from "./api.mjs";
 import { runAeoLearningJob } from "./aeo-learning.mjs";
 import { runLifecycleReminders } from "./lifecycle-email.mjs";
 import { runScheduled } from "./schedule.mjs";
@@ -79,6 +79,10 @@ const SCHEDULED_RUNNERS = Object.freeze({
   // 1st-3rd (UTC), bounded and paced per run, claimed per site, month and
   // recipient before sending; skipped until migration 0046 or without mail.
   "agency-reports": (env) => runAgencyReportBatch(env),
+  // The pre-install baseline of WordPress sites just added in the dashboard
+  // (worker/learning-baseline.mjs): hourly, so it runs before the plugin is
+  // normally paired; inside the free-check budget; skipped until 0049.
+  "learning-baselines": (env) => runLearningBaselines(env),
 });
 
 export default {

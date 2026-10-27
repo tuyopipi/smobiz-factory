@@ -3912,6 +3912,7 @@ function webmcp_canary_privacy_policy_text() {
         __('This site uses the Nurevo AEO plugin to publish structured data, llms.txt and AI crawler rules. These are produced on this site’s own server. By default the plugin adds no tracking script to public pages and sends no visitor data to the Nurevo service.', 'nurevo-webmcp'),
         __('Only after a site administrator agrees to run the AEO diagnosis, or connects the site to Nurevo with a pairing code, does the plugin contact the Nurevo service at nurevo.jp, operated by Bestie. LLC. It then sends this site’s home page address and WordPress language, and the service reads the site’s public front page, robots.txt and llms.txt.', 'nurevo-webmcp'),
         __('Once the site is connected, the plugin also sends, from the WordPress administration area and twice a day: the business details entered in its settings (name, description, address, telephone, opening hours, business type, website and business email), the products, services and frequently asked questions it publishes, and the titles and addresses of recently updated public posts and pages. This is information about the business, not about visitors.', 'nurevo-webmcp'),
+        __('With the site connected, the plugin also sends a record of changes to its own settings: which outputs were switched on or off, which business fields were filled in or cleared (not what was entered), the site type, the SEO plugin in use, the plugin version and the number of FAQ entries, services and products. Nurevo uses these records together with AI search measurements, in aggregate across sites, to learn which changes help businesses appear in AI answers.', 'nurevo-webmcp'),
         __('If an administrator turns on the optional Nurevo browser tag, a script is loaded from nurevo.jp on public pages. It reports the structure of public forms and whether a submission succeeded, and is designed not to send what visitors type.', 'nurevo-webmcp'),
     );
     $html = '';
@@ -3947,6 +3948,9 @@ function webmcp_canary_activate_aeo_score($network_wide = false) {
 
 /** One site's activation: fill blank business fields locally and schedule the sync. */
 function webmcp_canary_activate_site() {
+    // When the plugin first ran here, kept locally (it tells the learning
+    // snapshot whether this is a fresh install). No request is made.
+    webmcp_canary_installed_at();
     webmcp_canary_autofill_business_data();
     webmcp_canary_schedule_cron();
 }
@@ -4594,6 +4598,10 @@ function webmcp_canary_drain_pending_catalog() {
     delete_option(WEBMCP_CANARY_CATALOG_PENDING_OPTION);
     if (webmcp_canary_profile_sync_enabled()) {
         webmcp_canary_push_catalog();
+        // The site has just connected: its learning snapshot goes with the
+        // first sync rather than waiting for the twice-daily one.
+        webmcp_canary_learning_observe();
+        webmcp_canary_learning_flush(1);
     }
 }
 
@@ -5609,6 +5617,7 @@ function webmcp_canary_fix_aeo() {
         wp_send_json_error(array('message' => 'not_fixable'), 400);
     }
     update_option(WEBMCP_CANARY_OPTION, $settings);
+    webmcp_canary_learning_record_fix($check_id, 'one_click');
     delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
     $result = webmcp_canary_get_aeo_score(true);
     wp_send_json_success(array('score' => is_wp_error($result) ? null : $result));
@@ -7122,6 +7131,7 @@ function webmcp_canary_apply_autofix($job) {
         if (in_array($action, $actions, true)) { $settings[$key] = '1'; }
     }
     update_option(WEBMCP_CANARY_OPTION, $settings, false);
+    webmcp_canary_learning_record_fix('suggested_changes', 'autofix', $actions);
     delete_option(WEBMCP_CANARY_AEO_SCORE_OPTION);
     delete_option('webmcp_canary_llms_cache');
     // Purge the cached front page so the change is visible. Only page caches are
@@ -7300,6 +7310,7 @@ require_once __DIR__ . '/includes/site-types.php';
 require_once __DIR__ . '/includes/rest.php';
 require_once __DIR__ . '/includes/abilities.php';
 require_once __DIR__ . '/includes/setup-wizard.php';
+require_once __DIR__ . '/includes/learning-events.php';
 if (defined('WP_CLI') && WP_CLI) {
     require_once __DIR__ . '/includes/cli.php';
 }

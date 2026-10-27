@@ -38,7 +38,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
 /* ---------------- what each cron runs ---------------- */
 
 {
-  assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts", "agency-reports"], "hourly: the reminders, the partner payouts and the agency reports");
+  assert.deepEqual([...SCHEDULED_JOBS[HOURLY_CRON]], ["lifecycle-reminders", "partner-payouts", "agency-reports", "learning-baselines"], "hourly: the reminders, the partner payouts, the agency reports and the learning baselines");
   assert.deepEqual([...SCHEDULED_JOBS[DAILY_CRON]], ["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"], "daily: as before, without the reminders");
   assert.deepEqual([...SCHEDULED_JOBS[WEEKLY_CRON]], ["aeo-learning"], "weekly: as before");
   assert.deepEqual([...SCHEDULED_JOBS[OFFSITE_CRON]], ["offsite-audit"], "the off-site listing audit runs alone, daily");
@@ -58,6 +58,7 @@ const read = (path) => readFileSync(new URL(path, import.meta.url), "utf8");
     ["lifecycle-reminders", "runLifecycleReminders(env)"],
     ["partner-payouts", "runPartnerPayouts(env)"],
     ["agency-reports", "runAgencyReportBatch(env)"],
+    ["learning-baselines", "runLearningBaselines(env)"],
   ]) {
     assert.ok(index.includes(`"${label}": (env) => ${call},`), `index.mjs runs ${label} as ${call}`);
   }
@@ -93,7 +94,7 @@ async function fire(cron, { fail = [] } = {}) {
 
 {
   const hourly = await fire(HOURLY_CRON);
-  assert.deepEqual(hourly.ran, ["agency-reports", "lifecycle-reminders", "partner-payouts"], "the hourly event runs the reminders, the partner payouts and the agency reports, nothing else");
+  assert.deepEqual(hourly.ran, ["agency-reports", "learning-baselines", "lifecycle-reminders", "partner-payouts"], "the hourly event runs the reminders, the partner payouts, the agency reports and the learning baselines, nothing else");
   assert.equal(hourly.waits.length, 1, "inside waitUntil");
   assert.ok(hourly.lines.some((l) => l.startsWith("lifecycle-reminders {")), "and logs under the same label as before");
 

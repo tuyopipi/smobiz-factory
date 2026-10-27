@@ -22,7 +22,10 @@
  *           reports (worker/agency-report.mjs), which act only on the 1st-3rd
  *           (UTC) and send a bounded, paced batch each hour until every
  *           enabled site's previous month is out. Its minute (23) avoids :00
- *           and the daily/weekly minute (17).
+ *           and the daily/weekly minute (17). Also the learning baselines
+ *           (worker/learning-baseline.mjs): a WordPress site added in the
+ *           dashboard is measured once within the hour, normally before its
+ *           plugin is paired.
  */
 export const DAILY_CRON = "17 18 * * *";
 export const WEEKLY_CRON = "17 18 * * 1";
@@ -34,7 +37,7 @@ export const FREE_CHECK_CRON = "37 19 * * *";
 export const SCHEDULED_JOBS = Object.freeze({
   [DAILY_CRON]: Object.freeze(["webmcp-learning", "aeo-score-cron", "aeo-sov-daily"]),
   [WEEKLY_CRON]: Object.freeze(["aeo-learning"]),
-  [HOURLY_CRON]: Object.freeze(["lifecycle-reminders", "partner-payouts", "agency-reports"]),
+  [HOURLY_CRON]: Object.freeze(["lifecycle-reminders", "partner-payouts", "agency-reports", "learning-baselines"]),
   [OFFSITE_CRON]: Object.freeze(["offsite-audit"]),
   [FREE_CHECK_CRON]: Object.freeze(["free-ai-check"]),
 });

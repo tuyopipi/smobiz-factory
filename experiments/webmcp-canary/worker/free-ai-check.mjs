@@ -67,6 +67,7 @@ import {
 } from "./ai-engines.mjs";
 import { SovError, buildQuestionSet, mentionsBrand, measureSov, normalizeForMatch, normalizeHost } from "./aeo-sov.mjs";
 import { resolveSitePlan } from "./billing-plan.mjs";
+import { recordServiceEvent } from "./learning-events.mjs";
 
 export const FREE_CHECK_ENGINE = "perplexity";
 /** The ledger bucket in aeo_sov_engine_usage. Never "perplexity": that is Pro's. */
@@ -296,7 +297,7 @@ export async function freeCheckAccountBudget(env, site, plan, now = Date.now()) 
 }
 
 /** Take one of the account's monthly slots, atomically; false when none is left. */
-async function reserveAccountSlot(env, scope, cap, now) {
+export async function reserveAccountSlot(env, scope, cap, now) {
   const month = monthKey(now);
   const at = new Date(now).toISOString();
   await env.DB.prepare(`INSERT INTO aeo_sov_engine_usage (scope,engine,month,calls,searches,est_cost_usd,updated_at)
@@ -306,7 +307,7 @@ async function reserveAccountSlot(env, scope, cap, now) {
   return Number(result?.meta?.changes ?? result?.changes ?? 0) > 0;
 }
 
-async function releaseAccountSlot(env, scope, now) {
+export async function releaseAccountSlot(env, scope, now) {
   await env.DB.prepare(`UPDATE aeo_sov_engine_usage SET calls=MAX(0,calls-1), updated_at=? WHERE scope=? AND engine=? AND month=?`)
     .bind(new Date(now).toISOString(), scope, FREE_ACCOUNT_ENGINE, monthKey(now)).run();
 }
@@ -500,6 +501,12 @@ export async function runFreeCheck(env, site, {
   await updateMonth(env, site.id, month, {
     status, finished_at: new Date(clock()).toISOString(), result_json: JSON.stringify(result), est_cost_usd: result.est_cost_usd,
   });
+  // The learning change log (docs/learning.md): counts only, one per site and month.
+  const answeredRows = result.questions.filter((q) => q.answered);
+  await recordServiceEvent(env, site.id, "free_check", {
+    status, trigger, engine: FREE_CHECK_ENGINE, n: result.answered, appeared: result.appeared,
+    named: answeredRows.filter((q) => q.named).length, cited: answeredRows.filter((q) => q.cited).length,
+  }, { eventId: `svc:free_check:${month}` });
   console.log("free-ai-check", JSON.stringify({ site_id: site.id, trigger, status, calls: used, est_usd: result.est_cost_usd, appeared: result.appeared, asked: result.asked }));
   return { status, month, result };
 }
