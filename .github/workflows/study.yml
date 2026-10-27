@@ -19,6 +19,10 @@ on:
         description: "Max spend in USD"
         type: string
         default: "3"
+      pro_e2e:
+        description: "Run the Pro plan end-to-end test (local worker + real Perplexity, nurevo.jp) instead of the study"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -29,6 +33,7 @@ concurrency:
 
 jobs:
   study:
+    if: ${{ !inputs.pro_e2e }}
     runs-on: ubuntu-latest
     timeout-minutes: 150
     defaults:
@@ -64,3 +69,29 @@ jobs:
           name: aeo-study-out
           path: experiments/webmcp-canary/study/out/
           retention-days: 30
+
+  # Pro plan end-to-end test, isolated from production: the worker's API runs
+  # in process on a fresh SQLite D1 (schema.sql + every migration), with the
+  # real Perplexity API and the owner's public site nurevo.jp. Results are
+  # written as annotations. Hard caps: 30 Perplexity calls / $0.30, enforced
+  # by the product's env caps and by the harness itself.
+  pro-e2e:
+    if: ${{ inputs.pro_e2e }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: experiments/webmcp-canary
+    env:
+      PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+      E2E_MAX_CALLS: "30"
+      E2E_MAX_USD: "0.30"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check secret
+        run: test -n "$PERPLEXITY_API_KEY" || { echo "::error::PERPLEXITY_API_KEY secret is missing"; exit 1; }
+      - name: Pro E2E (live)
+        run: node scripts/e2e-pro-live.mjs
