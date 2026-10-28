@@ -135,10 +135,10 @@ const render = (site, opts) => makeSandbox(opts).__detail(SITE(site));
 }
 
 {
-  const html = render({ org_manual_plan: "standard", org_manual_plan_note: "卸パートナー" });
+  const html = render({ org_manual_plan: "standard", org_manual_plan_note: "個別契約パートナー" });
   assert.ok(html.includes("組織に付与"), "a grant made on the org says that instead");
   assert.ok(html.includes("STANDARD"));
-  assert.ok(html.includes("卸パートナー"));
+  assert.ok(html.includes("個別契約パートナー"));
 }
 
 {

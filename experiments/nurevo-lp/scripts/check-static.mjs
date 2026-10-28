@@ -30,10 +30,32 @@ for (const needle of [
 const partner = await readFile(new URL("../public/partner/index.html", import.meta.url), "utf8");
 if (/name=["']invite["']/u.test(partner)) throw new Error("partner registration must not require an invite code");
 if (/Invitation only|招待制/u.test(partner)) throw new Error("partner registration must not be described as invitation-only");
-// There is no wholesale / reseller channel and no OEM offer: partners earn a
-// referral commission. Neither the partner page nor the home page may offer one.
+// There is no wholesale / reseller channel and no OEM offer: agencies, web
+// studios and individuals all join as referral partners and earn a referral
+// commission. No page we publish may offer one: every text file under public/
+// (all languages' pages, guides, scripts, llms.txt, sitemaps) and the guide
+// sources under src/. 卸 is allowed only inside 棚卸し ("inventory").
+const WHOLESALE = /(?<!棚)卸|\bwhole-?sale|\bre-?sell(?:er|ers|ing)?\b|\bOEM\b|批发|批發|도매|mayorista|Großhandel/iu;
 for (const [name, page] of [["partner", partner], ["index.html", index]]) {
-  if (/卸|wholesale|reseller|OEM/iu.test(page)) throw new Error(`${name} must not offer wholesale, reselling or OEM`);
+  if (WHOLESALE.test(page)) throw new Error(`${name} must not offer wholesale, reselling or OEM`);
+}
+{
+  const { readdir } = await import("node:fs/promises");
+  const TEXT = /\.(?:html|js|mjs|json|txt|xml|md|astro|css)$/u;
+  async function scan(dir) {
+    let entries;
+    try { entries = await readdir(new URL(`../${dir}/`, import.meta.url), { withFileTypes: true }); } catch { return; }
+    for (const entry of entries) {
+      const rel = `${dir}/${entry.name}`;
+      if (entry.isDirectory()) await scan(rel);
+      else if (TEXT.test(entry.name)) {
+        const match = (await readFile(new URL(`../${rel}`, import.meta.url), "utf8")).match(WHOLESALE);
+        if (match) throw new Error(`${rel} must not offer wholesale, reselling or OEM (found "${match[0]}")`);
+      }
+    }
+  }
+  await scan("public");
+  await scan("src");
 }
 if (!/40%/u.test(partner) || !/Stripe/u.test(partner)) throw new Error("partner page must state the 40% commission net of Stripe fees");
 
@@ -47,5 +69,8 @@ for (const [name, page] of [["partner", partner], ["member-register", memberRegi
   if (/fetch\(['"]\/api\/members\/register/u.test(page)) throw new Error(`${name} must not post the registration itself`);
 }
 if (/name=["']invite["']\s+required/u.test(memberRegister)) throw new Error("member registration must not require an invite code");
+// Agencies apply as referral partners (role=referrer); there is no agency role.
+if (/value=["']agency["']/u.test(memberRegister)) throw new Error("member registration must not offer an agency role; agencies apply as referral partners");
+if (!/value=["']referrer["']/u.test(memberRegister)) throw new Error("member registration must offer the referral partner role");
 
 console.log("nurevo-lp static check: ok");

@@ -297,7 +297,8 @@ console.log("unbind UI tests passed");
   const html = detailHtml(BOUND({ payment_ui: false, plan: "standard", billing: { status: "active", customer_id: "cus_1" } }));
   assert.equal(html.includes('data-buy="'), false, "no checkout for a wholesale site");
   assert.equal(html.includes('id="planportal"'), false, "and no portal");
-  assert.ok(html.includes("卸請求"), "it says why instead");
+  assert.ok(html.includes("個別契約"), "it says why instead");
+  assert.equal(/卸|wholesale/iu.test(html), false, "without describing a wholesale offer");
 }
 
 {

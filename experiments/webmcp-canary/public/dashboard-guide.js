@@ -74,7 +74,7 @@
    [
     "guide-member",
     "メンバー登録の手順",
-    "招待URLからメールアドレスと役割（店舗・個人紹介者・代理店）を登録します。登録後は管理者の承認待ちとなります。"
+    "メールアドレスと役割（店舗・紹介パートナー）を登録します。代理店・制作会社も紹介パートナーとして申請します。登録後は管理者の承認待ちとなります。"
    ]
   ]
  },
@@ -148,7 +148,7 @@
    [
     "guide-member",
     "Member registration",
-    "Use the invitation URL to choose Store, Referrer, or Agency. Approval follows registration."
+    "Register your email and choose Store or Referral partner (agencies and web studios apply as referral partners). Approval follows registration."
    ]
   ]
  }
