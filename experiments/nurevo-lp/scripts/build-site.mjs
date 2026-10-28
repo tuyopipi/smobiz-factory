@@ -555,6 +555,19 @@ const ALL_CONTENT = [];
 for (const file of readdirSync(join(ROOT, "src/content")).filter((name) => name.endsWith(".mjs")).sort()) {
   ALL_CONTENT.push((await import(pathToFileURL(join(ROOT, "src/content", file)).href)).default);
 }
+// A translation may also live in its own file, src/content/<slug>/<code>.json,
+// holding the same fields as a block of `locales`. One file per language keeps
+// a translation reviewable on its own and lets languages be added in parallel.
+for (const page of ALL_CONTENT) {
+  const dir = join(ROOT, "src/content", page.slug);
+  if (!existsSync(dir)) continue;
+  for (const name of readdirSync(dir).filter((item) => item.endsWith(".json")).sort()) {
+    const code = name.slice(0, -5);
+    if (!langOf(code)) throw new Error(`src/content/${page.slug}/${name}: ${code} is not a language in src/i18n/locales.mjs`);
+    if (page.locales[code]) throw new Error(`src/content/${page.slug}/${name}: ${code} is also in src/content/${page.slug}.mjs`);
+    page.locales[code] = JSON.parse(readFileSync(join(dir, name), "utf8"));
+  }
+}
 
 /* ------------------------------------------------------------------ *
  * Assemble
