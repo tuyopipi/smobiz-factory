@@ -3,21 +3,18 @@
 // structured data that says more than the page does is a fabrication, so a
 // fact is added to the page first and here second.
 
+import { LOCALES, VARIANTS } from "./i18n/locales.mjs";
+
 export const ORIGIN = "https://nurevo.jp";
 
-// code: the key used in src/i18n.mjs. path: where that language's home page is
-// served. hreflang: what search engines are told. The Chinese pages are told
-// apart by script, which is what actually differs between them.
-export const LANGS = [
-  { code: "ja", path: "/", hreflang: "ja", htmlLang: "ja", ogLocale: "ja_JP", label: "🇯🇵 日本語" },
-  { code: "en", path: "/en/", hreflang: "en", htmlLang: "en", ogLocale: "en_US", label: "🇬🇧 English" },
-  { code: "zh", path: "/zh/", hreflang: "zh-Hans", htmlLang: "zh-Hans", ogLocale: "zh_CN", label: "🇨🇳 简体中文" },
-  { code: "zh-TW", path: "/zh-tw/", hreflang: "zh-Hant", htmlLang: "zh-Hant", ogLocale: "zh_TW", label: "🇹🇼 繁體中文" },
-  { code: "ko", path: "/ko/", hreflang: "ko", htmlLang: "ko", ogLocale: "ko_KR", label: "🇰🇷 한국어" },
-  { code: "es", path: "/es/", hreflang: "es", htmlLang: "es", ogLocale: "es_ES", label: "🇪🇸 Español" },
-  { code: "fr", path: "/fr/", hreflang: "fr", htmlLang: "fr", ogLocale: "fr_FR", label: "🇫🇷 Français" },
-  { code: "de", path: "/de/", hreflang: "de", htmlLang: "de", ogLocale: "de_DE", label: "🇩🇪 Deutsch" },
-];
+// The languages with their own pages, from src/i18n/locales.mjs (which also
+// lists the regional variants that are only named in hreflang). code: the key
+// used in src/i18n.mjs / src/i18n/home/<code>.json. path: where that language's
+// home page is served. hreflang: what search engines are told; the Chinese
+// pages are told apart by script, which is what actually differs between them.
+// label: what the language switcher shows - the language's own name.
+export const LANGS = LOCALES.map((locale) => ({ ...locale, dir: locale.dir || "ltr", label: locale.name }));
+export { VARIANTS };
 
 // The page a visitor gets when none of the languages is theirs.
 export const DEFAULT_LANG = "ja";
