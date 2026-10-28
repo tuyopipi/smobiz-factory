@@ -72,7 +72,7 @@ export const FAQ_KEYS = [
 // provided for each static legal page as well.
 export const STATIC_PAGES = [
   { path: "/check/", file: "check/index.html", lang: "ja", title: "AI可読チェッカー", summary: "URLを入れるだけで、AIがそのサイトを読めるかを無料で診断するツール（登録不要）。" },
-  { path: "/partner/", file: "partner/index.html", lang: "ja", title: "販売パートナー募集", summary: "個人紹介パートナーと企業向け販売代理店の募集、登録申請。" },
+  { path: "/partner/", file: "partner/index.html", lang: "ja", title: "パートナープログラム", summary: "Web制作会社・SEO会社向けのパートナープログラム：紹介報酬（紹介したお客様の月額の40%、Stripe手数料控除後、承認制・国内の事業者が対象）、自社ブランドの月次レポート、AI診断ウィジェット、紹介ページ、登録申請。" },
   { path: "/guide/integration", file: "guide/integration.html", lang: "ja", title: "サーバーサイド連携ガイド", summary: "WordPress以外のサイトにschema.orgを埋め込み、最新に保つための連携手順（PHP / Node.js / Next.js）。" },
   { path: "/privacy", file: "privacy.html", lang: "ja", title: "プライバシーポリシー" },
   { path: "/terms", file: "terms.html", lang: "ja", title: "利用規約" },

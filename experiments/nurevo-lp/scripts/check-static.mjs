@@ -30,6 +30,12 @@ for (const needle of [
 const partner = await readFile(new URL("../public/partner/index.html", import.meta.url), "utf8");
 if (/name=["']invite["']/u.test(partner)) throw new Error("partner registration must not require an invite code");
 if (/Invitation only|招待制/u.test(partner)) throw new Error("partner registration must not be described as invitation-only");
+// There is no wholesale / reseller channel and no OEM offer: partners earn a
+// referral commission. Neither the partner page nor the home page may offer one.
+for (const [name, page] of [["partner", partner], ["index.html", index]]) {
+  if (/卸|wholesale|reseller|OEM/iu.test(page)) throw new Error(`${name} must not offer wholesale, reselling or OEM`);
+}
+if (!/40%/u.test(partner) || !/Stripe/u.test(partner)) throw new Error("partner page must state the 40% commission net of Stripe fees");
 
 // Both registration pages hand the submit to one shared script; a page that
 // grows its own handler again brings back the double submit and the raw codes.
