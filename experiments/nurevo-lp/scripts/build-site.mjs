@@ -51,7 +51,7 @@ const langOf = (code) => LANGS.find((lang) => lang.code === code);
 // language can be added or reviewed without touching the others.
 // Names and figures that are the same in every language (plan names, the
 // registered company name, prices in USD) may be left out of those files.
-const INVARIANT = ["price.free.nm", "price.std.nm", "price.top.nm", "price.free.amount", "price.std.amount", "price.top.amount", "stat.3.n", "company.name.v", "company.rep.v", "hero.card.name", "herocheck.ph"];
+const INVARIANT = ["price.free.nm", "price.std.nm", "price.top.nm", "price.free.amount", "price.std.amount", "price.top.amount", "stat.3.n", "stat.4.n", "company.name.v", "company.rep.v", "hero.card.name", "herocheck.ph"];
 for (const lang of LANGS) {
   const file = join(ROOT, "src/i18n/home", `${lang.code}.json`);
   if (!existsSync(file)) continue;
@@ -366,6 +366,18 @@ function landingPage(lang) {
     return `<a class="learn-card" href="${contentPath(guideLang, slug)}"${guideLang !== lang ? ' hreflang="en"' : ""}><span>${esc(page.locales[guideLang].h1)}</span><span aria-hidden="true">→</span></a>`;
   }).join("");
   const learnHeading = guideLang === lang ? ui("learn", lang) : ui("english", lang);
+  // The comparison with SEO plugins links to the full guide, in this language
+  // when it is published, else in English (marked so).
+  const seoGuide = ALL_CONTENT.find((item) => item.slug === "local-business-schema-seo-plugins");
+  const seoGuideLang = isComplete(seoGuide?.locales[lang]) ? lang : "en";
+  if (!isComplete(seoGuide?.locales[seoGuideLang])) throw new Error("Unpublished LP guide: en/local-business-schema-seo-plugins");
+  body = body.replace(/<a href="\{\{seoGuide\}\}"([^>]*)>([^<]*)<\/a>/, (_all, attrs, label) => seoGuideLang === lang
+    ? `<a href="${contentPath(lang, seoGuide.slug)}"${attrs}>${label}</a>`
+    : `<a href="${contentPath("en", seoGuide.slug)}" hreflang="en"${attrs}>${label} (English)</a>`);
+  // The partner page is one page with its own language switcher (ja, en, zh,
+  // zh-TW, ko, es, fr, de; English for every other language): tell it which
+  // language the visitor was reading.
+  if (lang !== "ja") body = body.replaceAll('href="/partner/"', `href="/partner/?lang=${encodeURIComponent(lang)}"`);
   body = body.replace("{{guideNav}}", `<a href="${hubPath(lang)}">${esc(ui("guide", lang))}</a>`)
     .replace("{{guideFooter}}", `<a href="${hubPath(lang)}">${esc(ui("guides", lang))}</a>`)
     .replace("{{learnSection}}", `<section class="learn" id="learn"><div class="wrap"><div class="learn-heading"><h2>${esc(learnHeading)}</h2><a href="${hubPath(lang)}">${esc(ui("allGuides", lang))} →</a></div><div class="learn-cards">${cards}</div></div></section>`);

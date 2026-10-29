@@ -44,7 +44,7 @@ header.nav .btn{white-space:nowrap;} .login-link{white-space:nowrap;}
    tightened and then thinned out before it can start wrapping. */
 @media(max-width:1340px){ header.nav .wrap{gap:12px;} .nav-links{gap:16px; font-size:14px;} }
 /* Log in and Get started are account entry points and stay on the bar at every
-   width. Only the sales-partner link - a niche audience, also linked in the
+   width. Only the agencies link - a niche audience, also linked in the
    footer - steps aside when German or French run the row out of room. */
 @media(max-width:1220px){ .nav-links{gap:13px; font-size:13.5px;} header.nav .btn.ghost.sm{display:none;} }
 /* 961-1040px: the last band before the links drop out entirely at 960. */
@@ -281,6 +281,32 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
   header.nav .btn.sm{padding:8px 10px;}
 }
 .price-note{max-width:760px;margin:20px auto 0;font-size:13px;line-height:1.7;opacity:.75;text-align:center}
+/* site types (under the use cases) */
+.types{margin-top:40px; text-align:center;}
+.types h3{font-size:clamp(19px,2.2vw,23px);}
+.type-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:18px; text-align:start;}
+@media(max-width:760px){ .type-grid{grid-template-columns:1fr;} }
+.type{background:#fff; border-radius:var(--r-sm); padding:18px 20px; box-shadow:var(--sh-sm); border-top:4px solid var(--purple);}
+.type:nth-child(2){border-top-color:var(--coral);} .type:nth-child(3){border-top-color:var(--teal);}
+.type b{display:block; font-weight:900; font-size:16px;} .type p{color:var(--muted); font-size:14px; margin-top:4px;}
+/* with SEO plugins: comparison */
+.cmp{max-width:940px; margin:40px auto 0; overflow-x:auto; border-radius:var(--r); box-shadow:var(--sh-sm);}
+.cmp table{width:100%; min-width:560px; border-collapse:collapse; background:#fff; font-size:14.5px; line-height:1.6;}
+.cmp th,.cmp td{padding:14px 18px; text-align:start; vertical-align:top; border-bottom:1px solid var(--line);}
+.cmp thead th{background:var(--wash); color:var(--purple-d); font-size:13px; font-weight:800;}
+.cmp tbody th{font-weight:800; width:30%;} .cmp tbody td{color:var(--muted);} .cmp tbody td.nv{color:#0a756d; font-weight:700;}
+.cmp tbody tr:last-child th,.cmp tbody tr:last-child td{border-bottom:none;}
+.cmp-foot{max-width:940px; margin:16px auto 0; font-size:12.5px; color:var(--faint); line-height:1.7;}
+.cmp-foot a{color:var(--purple); font-weight:700; white-space:nowrap;}
+.hosted-note{margin-top:18px; font-size:14px; font-weight:700; color:var(--muted); text-align:center;}
+/* for agencies */
+.agencies{background:#f5f1ff;}
+.ag{display:grid; grid-template-columns:1fr 1fr; gap:clamp(28px,5vw,60px); align-items:center;}
+@media(max-width:840px){ .ag{grid-template-columns:1fr;} }
+.ag h2{font-size:clamp(26px,3.6vw,38px);} .ag .lead{color:var(--muted); margin:14px 0 24px; font-size:16.5px; font-weight:500;}
+.ag-list{list-style:none; margin:0; padding:0; display:grid; gap:12px;}
+.ag-list li{display:flex; gap:10px; background:#fff; border-radius:var(--r-sm); padding:15px 18px; box-shadow:var(--sh-sm); font-size:15px; font-weight:600;}
+.ag-list li::before{content:"✓"; color:var(--purple); font-weight:900;}
 </style>
 
 <header class="nav"><div class="wrap">
@@ -289,7 +315,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
   <select class="lang" aria-label="Language" data-i18n-aria="nav.langlabel" onchange="goLang(this.value)">
     <option value="ja">🇯🇵 日本語</option><option value="en">🇬🇧 English</option><option value="zh">🇨🇳 简体中文</option><option value="zh-TW">🇹🇼 繁體中文</option><option value="ko">🇰🇷 한국어</option><option value="es">🇪🇸 Español</option><option value="fr">🇫🇷 Français</option><option value="de">🇩🇪 Deutsch</option>
   </select>
-  <a href="/partner" class="btn ghost sm" data-i18n="nav.partner">販売パートナー様</a>
+  <a href="/partner/" class="btn ghost sm" data-i18n="nav.partner">制作会社の方へ</a>
   <a href="/dashboard" class="login-link" data-i18n="nav.login">ログイン</a>
   <a href="/signup.html" class="btn" data-i18n="nav.signup">新規登録</a>
   <a href="#install" class="btn primary sm" data-i18n="cta.install">導入する</a>
@@ -362,6 +388,11 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
     <div class="case k3"><div class="photo"><img src="/assets/img/case-clinic-640.webp" width="640" height="320" alt="明るく清潔なクリニック受付" data-i18n-alt="img.case.3" loading="lazy" decoding="async"></div><div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 4v16M4 12h16"/></svg><span data-i18n="case.3.t">クリニック</span></div><div class="bd"><p data-i18n="case.3.p">診療科・受付時間・予約をAIに。安心して来院につなげる。</p></div></div>
     <div class="case k4"><div class="photo"><img src="/assets/img/case-realestate-640.webp" width="640" height="320" alt="自然光の入る明るい日本の住居リビング" data-i18n-alt="img.case.4" loading="lazy" decoding="async"></div><div class="label"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 11l8-6 8 6M6 10v9h12v-9"/></svg><span data-i18n="case.4.t">不動産・その他</span></div><div class="bd"><p data-i18n="case.4.p">物件・サービス情報を構造化。問い合わせをAIが後押し。</p></div></div>
   </div>
+  <div class="types"><h3 data-i18n="types.h">店舗だけでなく、オンラインショップやB2Bにも</h3><div class="type-grid">
+    <div class="type"><b data-i18n="types.local.t">店舗・地域ビジネス</b><p data-i18n="types.local.p">住所・電話・営業時間など、来店につながる情報をAIに。</p></div>
+    <div class="type"><b data-i18n="types.ec.t">オンラインショップ</b><p data-i18n="types.ec.p">商品カタログから商品と価格の情報を。住所や営業時間は不要です。</p></div>
+    <div class="type"><b data-i18n="types.b2b.t">B2B・SaaS</b><p data-i18n="types.b2b.p">入力したサービス内容から、会社とサービスの情報をAIに。</p></div>
+  </div></div>
 </div></section>
 
 <!-- STEPS -->
@@ -400,6 +431,20 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
   </div>
 </div></section>
 
+<!-- WITH SEO PLUGINS -->
+<section id="with-seo" style="padding-top:0"><div class="wrap">
+  <div class="head"><span class="kick kick2" data-i18n="seo.kick">SEOプラグインと併用</span><h2 data-i18n-html="seo.h2">Yoast SEOなどはそのまま。<br>Nurevoが無料で足すもの。</h2><p class="lead" data-i18n="seo.lead">SEOプラグインは検索順位のために、NurevoはAIのために。置き換えずに、足りない部分だけを補います。</p></div>
+  <div class="cmp"><table>
+    <thead><tr><th scope="col" data-i18n="seo.th.item">項目</th><th scope="col" data-i18n="seo.th.plugins">SEOプラグイン（2026年10月時点）</th><th scope="col" data-i18n="seo.th.nurevo">Nurevo AEO（無料）</th></tr></thead>
+    <tbody>
+      <tr><th scope="row" data-i18n="seo.r1.item">住所・電話・営業時間の構造化データ</th><td data-i18n="seo.r1.plugins">Yoast SEO・AIOSEOは有料のローカルSEOアドオンで対応。Rank Mathの無料版は1拠点分</td><td class="nv" data-i18n="seo.r1.nurevo">足りない項目を、出力済みの構造化データに追加</td></tr>
+      <tr><th scope="row" data-i18n="seo.r2.item">業種に合った種類</th><td data-i18n="seo.r2.plugins">Organization（ローカルSEO機能で種類を設定した場合を除く）</td><td class="nv" data-i18n="seo.r2.nurevo">HairSalon・Dentistなど、より具体的な種類</td></tr>
+      <tr><th scope="row" data-i18n="seo.r3.item">AIの回答に出ているかの確認</th><td data-i18n="seo.r3.plugins">Yoast SEO：Yoast AI+のAI Brand Insights（有料・年額$358.80）</td><td class="nv" data-i18n="seo.r3.nurevo">毎月の無料AIチェック（Perplexityに3問）</td></tr>
+    </tbody>
+  </table></div>
+  <p class="cmp-foot"><span data-i18n="seo.note">各プラグインの情報は、2026年10月時点の公開情報によります。</span> <a href="{{seoGuide}}" data-i18n="seo.more">詳しい比較と設定手順</a> →</p>
+</div></section>
+
 <!-- INSTALL -->
 <section id="install" class="installsec"><div class="wrap">
   <div class="head"><span class="kick kick2" data-i18n="install.kick">導入</span><h2 data-i18n-html="install.h2">WordPress管理画面から、<br>検索してインストール。</h2><p class="lead" data-i18n="install.lead">WordPressなら、管理画面の「プラグイン」で「Nurevo AEO」を検索してインストール、有効化するだけ。ファイルのアップロードもコードも不要です。</p></div>
@@ -426,6 +471,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
       <p data-i18n="install.g.p">AI経由の訪問を計測し、JavaScriptを実行するブラウザやAIエージェントを補助します。JavaScriptで後から挿入されるため（GTMも同じ）、JavaScriptを実行しないクローラーには届きません。プラグインや静的な貼り付けの代わりにはなりません。</p>
     </div>
   </div>
+  <p class="hosted-note" data-i18n="install.hosted">サイトがないお店は、Nurevoがホストする店舗ページを公開できます。</p>
   <div class="snipfull"><code id="snipCode">&lt;script src="https://nurevo.jp/tag.js" data-webmcp-site-key="YOUR_SITE_KEY" defer&gt;&lt;/script&gt;</code><button class="copy" onclick="copySnip(this)" data-i18n="install.copy">コピー</button></div>
   <div class="keyrow"><span data-i18n="install.keynote">サイトキーの発行・管理はダッシュボードから。</span><a href="/dashboard" class="btn primary" data-i18n="install.dash">ダッシュボードを開く</a></div>
 </div></section>
@@ -450,6 +496,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
         <li data-i18n="price.free.1">AI可読スコア診断（無料でも毎回出ます）</li>
         <li data-i18n="price.free.2">導入時点の基準でschema・llms.txt・AIクローラー許可を出力</li>
         <li data-i18n="price.free.3">店情報の自動抽出</li>
+        <li data-i18n="price.free.5">毎月の無料AIチェック（Perplexityに3問）</li>
         <li data-i18n="price.free.4">基準に新しい項目が加わったら、その項目はご自身で追加します</li>
       </ul>
       <a href="#install" class="btn ghost" data-i18n="price.free.cta">無料ではじめる</a>
@@ -482,6 +529,12 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
   <p class="price-note" data-i18n="price.note">表示価格がお支払いの総額です（消費税を別途いただくことはありません）。日本国外のお客様は事業者に限り、お申し込み時に税番号（VAT番号など）が必要で、所在国の税はリバースチャージによりお客様ご自身で申告いただきます。請求は日本では日本円、米国では米ドルで、その他の国では決済画面にお住まいの国の通貨が自動で表示されます。</p>
 </div></section>
 
+<!-- FOR AGENCIES -->
+<section id="agencies" class="agencies"><div class="wrap"><div class="ag">
+  <div><span class="kick kick2" data-i18n="ag.kick">制作会社・SEO会社の方へ</span><h2 data-i18n="ag.h2">AI検索対策を売る会社の、道具に。</h2><p class="lead" data-i18n="ag.lead">Nurevoは競合ではありません。</p><a href="/partner/" class="btn primary" data-i18n="ag.cta">パートナープログラムを見る</a></div>
+  <ul class="ag-list"><li data-i18n="ag.1">自社ブランドの月次レポート</li><li data-i18n="ag.2">AI診断ウィジェット</li><li data-i18n="ag.3">複数サイトを1つのダッシュボードで</li><li data-i18n="ag.4">紹介報酬</li></ul>
+</div></div></section>
+
 <!-- FAQ -->
 <section id="faq"><div class="wrap">
   <div class="head"><span class="kick kick2" data-i18n="faq.kick">FAQ</span><h2 data-i18n="faq.h2">よくある質問</h2></div>
@@ -499,13 +552,9 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
 <section class="final"><span class="blob x1"></span><span class="blob x2"></span><div class="wrap">
   <h2 data-i18n="final.h2">AIに選ばれるお店に、今日から。</h2>
   <p class="lead" data-i18n="final.lead">まずは無料で、あなたのサイトのスコアを確かめる。</p>
-  <div class="cta" style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap"><a href="/check" class="btn ghost lg" data-i18n="final.cta1">無料で診断する</a><a href="/partner" class="btn primary lg" style="background:#3a1f8f;border-color:#3a1f8f" data-i18n="final.cta2">代理店・OEM相談</a></div>
+  <div class="cta" style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap"><a href="/check" class="btn ghost lg" data-i18n="final.cta1">無料で診断する</a><a href="/partner/" class="btn primary lg" style="background:#3a1f8f;border-color:#3a1f8f" data-i18n="final.cta2">制作会社・パートナーの方へ</a></div>
 </div></section>
-
-<section class="partner-callout"><div class="wrap"><span class="kick kick2" data-i18n="partner.kick">販売パートナー募集</span><h2 data-i18n="partner.h2">AEO市場を一緒に広げる</h2><p class="lead" data-i18n="partner.lead">Nurevoを必要なお店へ届ける、販売パートナーを募集しています。</p><div class="partner-lines"><p><b data-i18n="partner.ref.title">個人紹介パートナー</b> — <span data-i18n="partner.ref.body">レベニューシェア・継続報酬。紹介のみでサポート不要。</span></p><p><b data-i18n="partner.agency.title">企業向け販売代理店</b> — <span data-i18n="partner.agency.body">卸価格で仕入れ、販売価格は自由設定。</span></p></div><a href="/partner" class="btn primary" data-i18n="partner.cta">販売パートナー様はこちら</a></div></section>
-
 </main>
-<style>.partner-callout{padding:64px 0;background:#f5f1ff}.partner-callout .partner-lines{display:grid;gap:4px;margin:22px 0;color:var(--muted)}.partner-callout .partner-lines p{margin:0}</style>
 <!-- FOOTER -->
 <footer class="site" id="company"><div class="wrap">
   <div class="top">
@@ -513,7 +562,7 @@ footer .bottom{border-top:1px solid #2a2537; padding-block:22px; font-size:13px;
       <h2 class="coh" data-i18n="company.h">会社概要</h2>
       <dl><dt data-i18n="company.name">運営会社</dt><dd data-i18n="company.name.v">Bestie.合同会社</dd><dt data-i18n="company.addr">所在地</dt><dd data-i18n="company.addr.v">東京都千代田区神田三崎町3-2-6</dd><dt data-i18n="company.rep">代表者</dt><dd data-i18n="company.rep.v">橋本 剛</dd><dt data-i18n="company.est">設立</dt><dd data-i18n="company.est.v">2025年5月</dd><dt data-i18n="company.biz">事業内容</dt><dd data-i18n="company.biz.v">AI検索対策(AEO)・WebMCPサービス「Nurevo」の開発・提供</dd><dt data-i18n="company.contact">お問い合わせ</dt><dd><!--email_off-->info@nurevo.jp<!--/email_off--></dd></dl>
     </div>
-    <div class="flinks"><span class="h" data-i18n="foot.links">リンク</span><a href="#cases" data-i18n="nav.cases">活用シーン</a><a href="#how" data-i18n="nav.how">仕組み</a><a href="#pricing" data-i18n="nav.pricing">料金</a>{{guideFooter}}<a href="/guide/integration" data-i18n="foot.docs">開発者向けドキュメント</a><a href="/privacy" data-i18n="foot.privacy">プライバシーポリシー</a><a href="/terms" data-i18n="foot.terms">利用規約</a><a href="/tokushoho" data-i18n="foot.legal">特定商取引法に基づく表記</a></div>
+    <div class="flinks"><span class="h" data-i18n="foot.links">リンク</span><a href="#cases" data-i18n="nav.cases">活用シーン</a><a href="#how" data-i18n="nav.how">仕組み</a><a href="#pricing" data-i18n="nav.pricing">料金</a><a href="/partner/" data-i18n="nav.partner">制作会社の方へ</a>{{guideFooter}}<a href="/guide/integration" data-i18n="foot.docs">開発者向けドキュメント</a><a href="/privacy" data-i18n="foot.privacy">プライバシーポリシー</a><a href="/terms" data-i18n="foot.terms">利用規約</a><a href="/tokushoho" data-i18n="foot.legal">特定商取引法に基づく表記</a></div>
   </div>
   <div class="bottom" data-i18n="foot.copyright">© 2026 Bestie.合同会社. All rights reserved.</div>
 </div></footer>
