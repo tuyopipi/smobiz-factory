@@ -24,9 +24,10 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import I18N from "../src/i18n.mjs";
+import UI from "../src/i18n/ui.mjs";
 import { siteRobotsTxt, siteLlmsTxt } from "../../webmcp-canary/worker/site-seo.mjs";
 import {
-  ORIGIN, LANGS, DEFAULT_LANG, OG_IMAGE, ORGANIZATION, PRODUCT, FAQ_KEYS, STATIC_PAGES, AI_REFERRERS, PRO_ON_SALE, INDEXNOW_KEY,
+  ORIGIN, LANGS, VARIANTS, DEFAULT_LANG, OG_IMAGE, ORGANIZATION, PRODUCT, FAQ_KEYS, STATIC_PAGES, AI_REFERRERS, PRO_ON_SALE, INDEXNOW_KEY,
 } from "../src/site.mjs";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
@@ -44,6 +45,45 @@ const jsonLd = (graph) =>
   `<script type="application/ld+json">${JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c")}</script>`;
 
 const langOf = (code) => LANGS.find((lang) => lang.code === code);
+
+// Languages added after the first eight keep their landing-page strings in one
+// file each (src/i18n/home/<code>.json, same keys as src/i18n.mjs), so a
+// language can be added or reviewed without touching the others.
+// Names and figures that are the same in every language (plan names, the
+// registered company name, prices in USD) may be left out of those files.
+const INVARIANT = ["price.free.nm", "price.std.nm", "price.top.nm", "price.free.amount", "price.std.amount", "price.top.amount", "stat.3.n", "company.name.v", "company.rep.v", "hero.card.name", "herocheck.ph"];
+for (const lang of LANGS) {
+  const file = join(ROOT, "src/i18n/home", `${lang.code}.json`);
+  if (!existsSync(file)) continue;
+  for (const key of INVARIANT) I18N[key][lang.code] = I18N[key].en;
+  for (const [key, value] of Object.entries(JSON.parse(readFileSync(file, "utf8")))) {
+    if (!I18N[key]) throw new Error(`src/i18n/home/${lang.code}.json: unknown key ${key}`);
+    if (typeof I18N[key][lang.code] === "string" && !INVARIANT.includes(key)) throw new Error(`src/i18n/home/${lang.code}.json: ${key} is also in src/i18n.mjs`);
+    I18N[key][lang.code] = value;
+  }
+}
+
+/** A guide-chrome string (src/i18n/ui.mjs). */
+function ui(key, lang) {
+  const value = UI[lang]?.[key];
+  if (typeof value !== "string" || !value.trim()) throw new Error(`i18n: ui.${key} has no ${lang} string`);
+  return value;
+}
+
+// No translated string may carry a template placeholder ({name}, {{name}}) or
+// an unreplaced TODO: that is a string somebody meant to finish.
+const PLACEHOLDER = /\{\{?[A-Za-z_][\w.]*\}\}?|\bTODO\b|\bTBD\b/;
+for (const [key, entry] of Object.entries(I18N)) {
+  for (const [code, value] of Object.entries(entry)) if (PLACEHOLDER.test(value)) throw new Error(`i18n: ${key} (${code}) has a placeholder: ${value}`);
+}
+for (const [code, entry] of Object.entries(UI)) {
+  for (const [key, value] of Object.entries(entry)) if (PLACEHOLDER.test(value)) throw new Error(`ui.${key} (${code}) has a placeholder`);
+}
+
+/** The attributes of <html> for a language: lang, and dir for right-to-left scripts. */
+const htmlAttrs = (code) => `lang="${langOf(code).htmlLang}"${langOf(code).dir === "rtl" ? ' dir="rtl"' : ""}`;
+// Mirrors what the layout needs mirrored; logical properties do the rest.
+const RTL_CSS = "<style>[dir=rtl] .related ul,[dir=rtl] ol,[dir=rtl] ul{padding-left:0;padding-right:20px}[dir=rtl] pre,[dir=rtl] code,[dir=rtl] .snip,[dir=rtl] input[type=url]{direction:ltr;text-align:left}[dir=rtl] .learn-card span[aria-hidden],[dir=rtl] .crumbs span[aria-hidden]{display:inline-block;transform:scaleX(-1)}[dir=rtl] .nav .lang{margin-left:0;margin-right:auto}</style>";
 
 /** The string for a key in a language. A missing one is a build error, not a silent fallback. */
 function t(key, lang) {
@@ -161,6 +201,7 @@ function head({ lang, title, description, url, alternates = [], type = "website"
     `<meta name="twitter:description" content="${escAttr(description)}">`,
     `<meta name="twitter:image" content="${OG_IMAGE.url}">`,
     fontLinks(lang),
+    langOf(lang).dir === "rtl" ? RTL_CSS : "",
     extra,
   ];
   return lines.filter(Boolean).join("\n");
@@ -168,7 +209,10 @@ function head({ lang, title, description, url, alternates = [], type = "website"
 
 /** hreflang entries for a page that exists at `pathFor(lang)` in each of `codes`. */
 function alternatesFor(codes, pathFor) {
-  const list = codes.map((code) => ({ hreflang: langOf(code).hreflang, ogLocale: langOf(code).ogLocale, url: ORIGIN + pathFor(code) }));
+  const ordered = LANGS.map((lang) => lang.code).filter((code) => codes.includes(code));
+  const list = ordered.map((code) => ({ hreflang: langOf(code).hreflang, ogLocale: langOf(code).ogLocale, url: ORIGIN + pathFor(code) }));
+  // Regional variants without pages of their own point at their parent's page.
+  for (const variant of VARIANTS) if (codes.includes(variant.page)) list.push({ hreflang: variant.hreflang, url: ORIGIN + pathFor(variant.page) });
   const fallback = codes.includes(DEFAULT_LANG) ? DEFAULT_LANG : codes.includes("en") ? "en" : codes[0];
   if (codes.length > 1) list.push({ hreflang: "x-default", url: ORIGIN + pathFor(fallback) });
   return codes.length > 1 ? list : [];
@@ -311,22 +355,31 @@ function landingPage(lang) {
 
   let body = localize(TEMPLATE, lang).replaceAll("{{home}}", meta.path)
     .replace('href="/signup.html"', `href="/signup.html?lang=${encodeURIComponent(lang)}"`);
-  // Guides are published in Japanese and English; other LPs use English.
-  const guideLang = lang === "ja" ? "ja" : "en";
-  const guideHubPath = guideLang === "ja" ? "/ja/guide/" : "/guide/";
-  const guideLabel = guideLang === "ja" ? "AEOガイド" : "AEO Guide";
+  // The guide block lists this language's own guides. A language with none
+  // published yet points to the English ones, under a heading that says so.
   const guideSlugs = ["what-is-aeo", "aeo-wordpress", "llms-txt", "appear-in-chatgpt", "aeo-vs-seo-vs-geo"];
-  const cards = guideSlugs.map((slug) => {
+  const ownGuides = guideSlugs.filter((slug) => isComplete(ALL_CONTENT.find((item) => item.slug === slug)?.locales[lang]));
+  const guideLang = ownGuides.length ? lang : "en";
+  const cards = (ownGuides.length ? ownGuides : guideSlugs).map((slug) => {
     const page = ALL_CONTENT.find((item) => item.slug === slug);
     if (!page || !isComplete(page.locales[guideLang])) throw new Error(`Unpublished LP guide: ${guideLang}/${slug}`);
-    return `<a class="learn-card" href="${contentPath(guideLang, slug)}"><span>${esc(page.locales[guideLang].h1)}</span><span aria-hidden="true">→</span></a>`;
+    return `<a class="learn-card" href="${contentPath(guideLang, slug)}"${guideLang !== lang ? ' hreflang="en"' : ""}><span>${esc(page.locales[guideLang].h1)}</span><span aria-hidden="true">→</span></a>`;
   }).join("");
-  body = body.replace("{{guideNav}}", `<a href="${guideHubPath}">${guideLang === "ja" ? "ガイド" : "Guide"}</a>`)
-    .replace("{{guideFooter}}", `<a href="${guideHubPath}">${guideLabel}</a>`)
-    .replace("{{learnSection}}", `<section class="learn" id="learn"><div class="wrap"><div class="learn-heading"><h2>${guideLang === "ja" ? "AEOガイド" : "Learn"}</h2><a href="${guideHubPath}">${guideLang === "ja" ? "ガイド一覧" : "All guides"} →</a></div><div class="learn-cards">${cards}</div></div></section>`);
+  const learnHeading = guideLang === lang ? ui("learn", lang) : ui("english", lang);
+  body = body.replace("{{guideNav}}", `<a href="${hubPath(lang)}">${esc(ui("guide", lang))}</a>`)
+    .replace("{{guideFooter}}", `<a href="${hubPath(lang)}">${esc(ui("guides", lang))}</a>`)
+    .replace("{{learnSection}}", `<section class="learn" id="learn"><div class="wrap"><div class="learn-heading"><h2>${esc(learnHeading)}</h2><a href="${hubPath(lang)}">${esc(ui("allGuides", lang))} →</a></div><div class="learn-cards">${cards}</div></div></section>`);
+  // Legal pages exist in Japanese and English. Every language but Japanese
+  // links the English ones and says so.
+  if (lang !== "ja") {
+    const suffix = lang === "en" ? "" : " (English)";
+    body = body
+      .replace(/<a href="\/privacy">([^<]*)<\/a>/, (_all, label) => `<a href="/en/privacy/" hreflang="en">${label}${suffix}</a>`)
+      .replace(/<a href="\/terms">([^<]*)<\/a>/, (_all, label) => `<a href="/en/terms/" hreflang="en">${label}${suffix}</a>`);
+  }
   // Mark the page's own language in the switcher.
   body = body.replace(/(<select class="lang"[^>]*>)[\s\S]*?(<\/select>)/, (_all, open, close) =>
-    `${open}${LANGS.map((item) => `<option value="${item.code}"${item.code === lang ? " selected" : ""}>${item.label}</option>`).join("")}${close}`);
+    `${open}${LANGS.map((item) => `<option value="${item.code}" lang="${item.htmlLang}"${item.code === lang ? " selected" : ""}>${esc(item.label)}</option>`).join("")}${close}`);
   // Section links stay on this language's page; site links are absolute already.
   if (!/<h1[\s>]/.test(body) || body.match(/<h1[\s>]/g).length !== 1) throw new Error(`${lang}: the page must have exactly one h1`);
 
@@ -357,7 +410,7 @@ function landingPage(lang) {
   });
 
   return `<!doctype html>
-<html lang="${meta.htmlLang}">
+<html ${htmlAttrs(lang)}>
 <head>
 ${headHtml}
 </head>
@@ -381,17 +434,31 @@ const ARTICLE_CSS = read("src/article.css");
 
 /** Paragraphs of an answer, as HTML. Copy is plain text; blank lines split paragraphs. */
 const paragraphs = (text) => String(text).split(/\n\s*\n/).map((p) => `<p>${esc(p.trim())}</p>`).join("\n");
-// Links in copy: [text](/path) on this site, or [text](https://...) elsewhere.
-const inline = (text) => esc(text).replace(/\[([^\]]+)\]\(((?:\/|https:\/\/)[^)]+)\)/g, '<a href="$2">$1</a>');
-const richParagraphs = (items = []) => items.map((item) => `<p>${inline(item)}</p>`).join("\n");
-// Content pages live under /guide/ in English and /<lang>/guide/ otherwise, in
-// the same lower-case form as the language's home page (/zh-tw/, not /zh-TW/).
-const contentPath = (lang, slug) => `${lang === "en" ? "/guide/" : `/${lang.toLowerCase()}/guide/`}${slug}/`;
-// Guide hubs exist in Japanese and English; every other language points to the English one.
-const hubPath = (lang) => (lang === "ja" ? "/ja/guide/" : "/guide/");
-const hubName = (lang) => (lang === "ja" ? "AEOガイド" : "AEO Guides");
+// Content pages live under /guide/ in English, /ja/guide/ in Japanese and
+// <home>/guide/ otherwise (/zh-tw/guide/, /pt-br/guide/).
+const hubPath = (lang) => (lang === "en" ? "/guide/" : lang === "ja" ? "/ja/guide/" : `${langOf(lang).path}guide/`);
+const contentPath = (lang, slug) => `${hubPath(lang)}${slug}/`;
 // The free check reads ?lang=; Japanese is its default.
-const checkHref = (href, lang) => (href === "/check" && lang !== "ja" ? `/check?lang=${lang.toLowerCase()}` : href);
+const checkHref = (href, lang) => (/^\/check\/?$/.test(href) && lang !== "ja" ? `/check?lang=${langOf(lang).path.slice(1, -1)}` : href);
+// The language a link in copy is rendered for; set while a content page is built.
+let linkLang = "en";
+/** A link in copy, pointed at the same language: a guide link goes to this language's version when it is published. */
+function localHref(href) {
+  const guide = href.match(/^\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?guide\/([a-z0-9-]+)\/?(#[\w-]*)?$/);
+  if (guide) {
+    const target = ALL_CONTENT.find((page) => page.slug === guide[1]);
+    if (target) {
+      const code = isComplete(target.locales[linkLang]) ? linkLang : isComplete(target.locales.en) ? "en" : null;
+      if (code) return contentPath(code, target.slug) + (guide[2] || "");
+    }
+    return href;
+  }
+  if (/^\/guide\/?$|^\/ja\/guide\/?$/.test(href)) return hubPath(linkLang);
+  return checkHref(href, linkLang);
+}
+// Links in copy: [text](/path) on this site, or [text](https://...) elsewhere.
+const inline = (text) => esc(text).replace(/\[([^\]]+)\]\(((?:\/|https:\/\/)[^)]+)\)/g, (_all, label, href) => `<a href="${href.startsWith("/") ? escAttr(localHref(href)) : href}">${label}</a>`);
+const richParagraphs = (items = []) => items.map((item) => `<p>${inline(item)}</p>`).join("\n");
 function richTable(table) {
   if (!table) return "";
   const head = `<thead><tr>${table.head.map((cell) => `<th scope="col">${inline(cell)}</th>`).join("")}</tr></thead>`;
@@ -405,6 +472,7 @@ function richSections(copy) {
 /** One content page in one language. `copy` is that language's block of the content file. */
 function contentPage(page, lang, { draft }) {
   const meta = langOf(lang);
+  linkLang = lang;
   const copy = page.locales[lang];
   const pathFor = (code) => contentPath(code, page.slug);
   const url = ORIGIN + pathFor(lang);
@@ -416,7 +484,7 @@ function contentPage(page, lang, { draft }) {
     organizationNode(),
     websiteNode(),
     webPageNode({ url, title: copy.title, description: copy.description, lang }),
-    breadcrumbNode(url, [{ name: t("nav.home", lang), url: home }, { name: hubName(lang), url: ORIGIN + hubPath(lang) }, { name: copy.h1, url }]),
+    breadcrumbNode(url, [{ name: t("nav.home", lang), url: home }, { name: ui("guides", lang), url: ORIGIN + hubPath(lang) }, { name: copy.h1, url }]),
     faqNode(url, faq),
   ];
   const related = (page.related || [])
@@ -425,7 +493,7 @@ function contentPage(page, lang, { draft }) {
     .map((other) => `<li><a href="${contentPath(lang, other.slug)}">${esc(other.locales[lang].h1)}</a></li>`);
 
   return `<!doctype html>
-<html lang="${meta.htmlLang}">
+<html ${htmlAttrs(lang)}>
 <head>
 ${head({ lang, title: copy.title, description: copy.description, url, type: "article", noindex: draft, alternates: alternatesFor(published, pathFor), extra: `<style>${ARTICLE_CSS}</style>\n${jsonLd(graph)}` })}
 </head>
@@ -435,13 +503,13 @@ ${head({ lang, title: copy.title, description: copy.description, url, type: "art
   <a class="btn primary" href="${escAttr(checkHref(copy.cta.href, lang))}">${esc(copy.cta.label)}</a>
 </div></header>
 <main class="wrap">
-  <nav class="crumbs" aria-label="Breadcrumb"><a href="${meta.path}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <a href="${hubPath(lang)}">${hubName(lang)}</a> <span aria-hidden="true">›</span> <span>${esc(copy.h1)}</span></nav>
+  <nav class="crumbs" aria-label="${escAttr(ui("crumbs", lang))}"><a href="${meta.path}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <a href="${hubPath(lang)}">${esc(ui("guides", lang))}</a> <span aria-hidden="true">›</span> <span>${esc(copy.h1)}</span></nav>
   <article>
     <h1>${esc(copy.h1)}</h1>
     <p class="lead">${esc(copy.lead)}</p>
 ${richParagraphs(copy.intro)}
 ${copy.sections ? richSections(copy) : copy.questions.map((item) => `    <section class="qa">\n      <h2>${esc(item.q)}</h2>\n${paragraphs(item.a)}\n    </section>`).join("\n")}
-    <section class="qa"><h2>FAQ</h2>${questions.map((item) => `<h3>${esc(item.q)}</h3>${richParagraphs([item.a])}`).join("\n")}</section>
+    <section class="qa"><h2>${esc(ui("faq", lang))}</h2>${questions.map((item) => `<h3>${esc(item.q)}</h3>${richParagraphs([item.a])}`).join("\n")}</section>
   </article>
   <aside class="cta">
     <h2>${esc(copy.cta.heading)}</h2>
@@ -449,12 +517,28 @@ ${copy.sections ? richSections(copy) : copy.questions.map((item) => `    <sectio
     <a class="btn primary lg" href="${escAttr(checkHref(copy.cta.href, lang))}">${esc(copy.cta.label)}</a>${copy.cta.secondary ? `\n    <a class="btn lg" href="${escAttr(checkHref(copy.cta.secondary.href, lang))}">${esc(copy.cta.secondary.label)}</a>` : ""}
   </aside>
 ${related.length ? `  <nav class="related" aria-label="${escAttr(copy.relatedHeading)}"><h2>${esc(copy.relatedHeading)}</h2><ul>${related.join("")}</ul></nav>` : ""}
+${draft ? "" : languageList(lang, published, pathFor)}
 </main>
-<footer class="foot"><div class="wrap">${copy.footnote ? `<p class="note">${esc(copy.footnote)}</p>` : ""}<a href="${meta.path}">Nurevo</a> ・ <a href="${lang === "ja" ? "/terms" : "/en/terms/"}">${esc(t("foot.terms", lang))}</a> ・ <a href="${lang === "ja" ? "/privacy" : "/en/privacy/"}">${esc(t("foot.privacy", lang))}</a></div></footer>
+${footer(lang, copy.footnote)}
 <script src="/assets/ai-referral.js" defer></script>
 </body>
 </html>
 `;
+}
+
+/** Links to the other languages a page exists in, each named in its own language. */
+function languageList(lang, codes, pathFor) {
+  const others = LANGS.filter((item) => item.code !== lang && codes.includes(item.code));
+  if (!others.length) return "";
+  return `  <nav class="langs" aria-label="${escAttr(ui("languages", lang))}"><h2>${esc(ui("languages", lang))}</h2><ul>${others.map((item) => `<li><a href="${pathFor(item.code)}" hreflang="${item.hreflang}" lang="${item.htmlLang}">${esc(item.name)}</a></li>`).join("")}</ul></nav>`;
+}
+
+/** The footer of guide pages: home, then the legal pages (English ones, marked so, outside Japanese). */
+function footer(lang, note) {
+  const legal = (path, key) => lang === "ja"
+    ? `<a href="/${path}">${esc(t(key, lang))}</a>`
+    : `<a href="/en/${path}/" hreflang="en">${esc(t(key, lang))}${lang === "en" ? "" : " (English)"}</a>`;
+  return `<footer class="foot"><div class="wrap">${note ? `<p class="note">${esc(note)}</p>` : ""}<a href="${langOf(lang).path}">Nurevo</a> ・ ${legal("terms", "foot.terms")} ・ ${legal("privacy", "foot.privacy")}</div></footer>`;
 }
 
 /** A locale block is publishable when every field a visitor would read has copy in it. */
@@ -470,6 +554,19 @@ function isComplete(copy) {
 const ALL_CONTENT = [];
 for (const file of readdirSync(join(ROOT, "src/content")).filter((name) => name.endsWith(".mjs")).sort()) {
   ALL_CONTENT.push((await import(pathToFileURL(join(ROOT, "src/content", file)).href)).default);
+}
+// A translation may also live in its own file, src/content/<slug>/<code>.json,
+// holding the same fields as a block of `locales`. One file per language keeps
+// a translation reviewable on its own and lets languages be added in parallel.
+for (const page of ALL_CONTENT) {
+  const dir = join(ROOT, "src/content", page.slug);
+  if (!existsSync(dir)) continue;
+  for (const name of readdirSync(dir).filter((item) => item.endsWith(".json")).sort()) {
+    const code = name.slice(0, -5);
+    if (!langOf(code)) throw new Error(`src/content/${page.slug}/${name}: ${code} is not a language in src/i18n/locales.mjs`);
+    if (page.locales[code]) throw new Error(`src/content/${page.slug}/${name}: ${code} is also in src/content/${page.slug}.mjs`);
+    page.locales[code] = JSON.parse(readFileSync(join(dir, name), "utf8"));
+  }
 }
 
 /* ------------------------------------------------------------------ *
@@ -501,23 +598,29 @@ for (const page of ALL_CONTENT) {
   if (live.length) sitemap.push({ alternates: alternatesFor(live, pathFor), urls: live.map((code) => ORIGIN + pathFor(code)) });
 }
 
+/** The guide hub of a language: its own published guides, or the English ones while it has none. */
 function guideHub(lang) {
-  const ja = lang === "ja";
-  const path = ja ? "/ja/guide/" : "/guide/";
+  const path = hubPath(lang);
   const url = ORIGIN + path;
-  const pillar = ALL_CONTENT.find((page) => page.slug === "what-is-aeo").locales[lang];
-  const guides = ALL_CONTENT.filter((page) => page.slug !== "what-is-aeo" && isComplete(page.locales[lang]));
-  const pending = ALL_CONTENT.filter((page) => page.slug !== "what-is-aeo" && !isComplete(page.locales[lang]));
-  const title = ja ? "AEOガイド | Nurevo" : "AEO Guides | Nurevo";
-  const description = ja ? "AIに読まれ、引用されるサイトを作るためのAEOガイド。" : "Practical guides to making your website readable and citable by AI.";
-  const extra = `<style>${ARTICLE_CSS}</style>\n${jsonLd([organizationNode(), websiteNode(), webPageNode({ url, title, description, lang }), breadcrumbNode(url, [{ name: title, url }])])}`;
-  return `<!doctype html><html lang="${ja ? "ja" : "en"}"><head>${head({ lang, title, description, url, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${ja ? "/" : "/en/"}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a><a class="btn primary" href="${ja ? "/check" : "/check?lang=en"}">${ja ? "無料チェック" : "Free check"}</a></div></header><main class="wrap"><article><h1>${ja ? "AEOガイド" : "AEO Guides"}</h1><p class="lead">${ja ? "AIの答えの中で選ばれるための基礎から実装まで。" : "From the fundamentals to implementation: get your business into AI answers."}</p><section class="qa"><h2>${ja ? "まず読む" : "Start here"}</h2><p><a href="${contentPath(lang, "what-is-aeo")}">${esc(pillar.h1)}</a></p></section><section class="qa"><h2>${ja ? "実践ガイド" : "Practical guides"}</h2><ul>${guides.map((page) => `<li><a href="${contentPath(lang, page.slug)}">${esc(page.locales[lang].h1)}</a></li>`).join("")}</ul></section>${pending.length ? `<section class="qa"><h2>${ja ? "準備中" : "In progress"}</h2><ul>${pending.map((page) => `<li>${esc(page.targetQueries[0])}</li>`).join("")}</ul></section>` : ""}</article></main><script src="/assets/ai-referral.js" defer></script></body></html>`;
+  const home = langOf(lang).path;
+  const own = ALL_CONTENT.filter((page) => isComplete(page.locales[lang]));
+  const listLang = own.length ? lang : "en";
+  const listed = own.length ? own : ALL_CONTENT.filter((page) => isComplete(page.locales.en));
+  const pillar = listed.find((page) => page.slug === "what-is-aeo");
+  const guides = listed.filter((page) => page !== pillar);
+  // Topics still being written are named only where their working title is in
+  // the page's language (the target queries are written in English and Japanese).
+  const pending = lang === "en" || lang === "ja" ? ALL_CONTENT.filter((page) => page.slug !== "what-is-aeo" && !isComplete(page.locales[lang])) : [];
+  const title = `${ui("guides", lang)} | Nurevo`;
+  const description = ui("hubDesc", lang);
+  const hreflang = listLang !== lang ? ' hreflang="en"' : "";
+  const item = (page) => `<li><a href="${contentPath(listLang, page.slug)}"${hreflang}>${esc(page.locales[listLang].h1)}</a></li>`;
+  const extra = `<style>${ARTICLE_CSS}</style>\n${jsonLd([organizationNode(), websiteNode(), webPageNode({ url, title, description, lang }), breadcrumbNode(url, [{ name: t("nav.home", lang), url: ORIGIN + home }, { name: ui("guides", lang), url }])])}`;
+  const alternates = alternatesFor(LANGS.map((item) => item.code), hubPath);
+  return `<!doctype html><html ${htmlAttrs(lang)}><head>${head({ lang, title, description, url, alternates, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${home}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a><a class="btn primary" href="${checkHref("/check", lang)}">${esc(ui("freeCheck", lang))}</a></div></header><main class="wrap"><nav class="crumbs" aria-label="${escAttr(ui("crumbs", lang))}"><a href="${home}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <span>${esc(ui("guides", lang))}</span></nav><article><h1>${esc(ui("guides", lang))}</h1><p class="lead">${esc(ui("hubLead", lang))}</p>${listLang !== lang ? `<section class="qa"><h2>${esc(ui("english", lang))}</h2><ul>${listed.map(item).join("")}</ul></section>` : `${pillar ? `<section class="qa"><h2>${esc(ui("startHere", lang))}</h2><p><a href="${contentPath(lang, pillar.slug)}">${esc(pillar.locales[lang].h1)}</a></p></section>` : ""}${guides.length ? `<section class="qa"><h2>${esc(ui("practical", lang))}</h2><ul>${guides.map(item).join("")}</ul></section>` : ""}`}${pending.length ? `<section class="qa"><h2>${lang === "ja" ? "準備中" : "In progress"}</h2><ul>${pending.map((page) => `<li>${esc(page.targetQueries[0])}</li>`).join("")}</ul></section>` : ""}</article>${languageList(lang, LANGS.map((item) => item.code), hubPath)}</main>${footer(lang)}<script src="/assets/ai-referral.js" defer></script></body></html>`;
 }
-for (const code of ["en", "ja"]) {
-  const path = code === "en" ? "/guide/" : "/ja/guide/";
-  files.set(`${path.slice(1)}index.html`, guideHub(code));
-  sitemap.push({ alternates: [], urls: [ORIGIN + path] });
-}
+for (const lang of LANGS) files.set(`${hubPath(lang.code).slice(1)}index.html`, guideHub(lang.code));
+sitemap.push({ alternates: alternatesFor(LANGS.map((lang) => lang.code), hubPath), urls: LANGS.map((lang) => ORIGIN + hubPath(lang.code)) });
 for (const page of STATIC_PAGES) sitemap.push({ alternates: [], urls: [ORIGIN + page.path] });
 
 /* ------------------------------------------------------------------ *
@@ -597,8 +700,7 @@ files.set("llms-pages.json", `${JSON.stringify({
   home: LANGS.map((lang) => ({ lang: lang.hreflang, url: ORIGIN + lang.path, title: t("meta.title", lang.code) })),
   pages: [
     { lang: "ja", path: "/#pricing", title: "料金 / Pricing", summary: "Standard: ¥3,000 / month / site (US$20 in the US). Pro: ¥14,800 / month / site, US$99 in the US (AI visibility measurement in beta). The price is the total; no consumption tax is added. Elsewhere, checkout shows the local currency." },
-    { lang: "en", path: "/guide/", title: "AEO Guides" },
-    { lang: "ja", path: "/ja/guide/", title: "AEOガイド" },
+    ...LANGS.map((lang) => ({ lang: lang.code, path: hubPath(lang.code), title: ui("guides", lang.code) })),
     ...publishedContent, ...STATIC_PAGES.filter((page) => page.summary)]
     .map((page) => ({ lang: langOf(page.lang).hreflang, url: ORIGIN + page.path, title: page.title, summary: page.summary })),
 }, null, 1)}\n`);
@@ -623,4 +725,4 @@ for (const [name, content] of files) {
   writeFileSync(target, content);
 }
 if (CHECK && stale) { console.error(`${stale} generated file(s) differ from the source. Run: npm run build`); process.exit(1); }
-console.log(`${CHECK ? "checked" : "built"} ${files.size} files (${LANGS.length} languages, ${publishedContent.length} content pages${DRAFTS ? ", drafts included" : ""})`);
+console.log(`${CHECK ? "checked" : "built"} ${files.size} files (${LANGS.length} languages + ${VARIANTS.length} hreflang-only variants, ${LANGS.length * 2} home/hub pages, ${publishedContent.length} content pages${DRAFTS ? ", drafts included" : ""})`);
