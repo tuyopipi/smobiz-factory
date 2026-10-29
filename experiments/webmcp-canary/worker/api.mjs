@@ -89,6 +89,8 @@ export function siteCreateLimit(env = {}) {
   return Number.isFinite(raw) && raw >= 1 ? Math.min(10000, Math.floor(raw)) : API_RATE_LIMITS.siteCreateMember.limit;
 }
 // Centralized defaults; later Stripe/admin settings can replace this object without changing billing logic.
+// wholesale_monthly_yen is kept only for legacy records (orgs on plan 'wholesale', referrers of type
+// 'agency'): the wholesale / reseller channel is discontinued and not offered to anyone new.
 const BILLING_DEFAULTS = Object.freeze({ direct_monthly_yen: 3000, referral_monthly_yen: 1200, wholesale_monthly_yen: 2000 });
 // Referral partners receive 40% of the NET JPY of each paid invoice's charge
 // (after Stripe fees), per invoice, through Stripe Connect. The ledger and the
@@ -4000,6 +4002,10 @@ async function verifyStripeSignature(payload, header, secret) {
 }
 
 async function billingSummary(env, orgId, actor = { role: "admin" }) {
+  // The agency (wholesale) membership is discontinued: agencies are referral
+  // partners. A member still recorded with the legacy "agency" role sees the
+  // partner view (their referral commission), never a wholesale invoice.
+  if (actor.role === "agency") actor = { ...actor, role: "referrer", legacy_role: "agency" };
   if (actor.is_super_admin) {
     const { results: orgs } = await env.DB.prepare("SELECT id FROM orgs ORDER BY created_at").all();
     const summaries = [];
@@ -4035,6 +4041,9 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
       ? { results: [] }
       : await env.DB.prepare(`SELECT r.id,r.name,r.email,COUNT(s.id) AS active_sites, ${referralEstimateSql()} AS monthly_yen FROM referrers r LEFT JOIN sites s ON s.referred_by=r.id AND s.org_id=? AND s.channel='referral' AND s.status='active' AND (s.delivery_status IS NULL OR s.delivery_status='active') GROUP BY r.id,r.name,r.email ORDER BY r.name`).bind(orgId).all();
   const referralPayments = (referrers.results || []).map((row) => ({ id: row.id, name: row.name, email: row.email, active_sites: Number(row.active_sites || 0), monthly_amount_yen: Number(row.monthly_yen || 0) }));
+  // Wholesale is not offered any more. The block below only reports orgs that
+  // were already on the legacy wholesale plan (invoiced outside Stripe), so
+  // their numbers stay correct; nothing tells anyone how to qualify for it.
   const wholesaleEligible = org.plan === "wholesale" && activeCount >= Number(org.wholesale_min || 50);
   if (actor.role === "referrer") {
     const partnerSites = Number(counts.referral || 0);
@@ -4045,19 +4054,11 @@ async function billingSummary(env, orgId, actor = { role: "admin" }) {
       incentive_per_site_yen: BILLING_DEFAULTS.referral_monthly_yen,
       share: REFERRAL_SHARE,
       partner_incentive_yen: referralPayments.reduce((sum, row) => sum + row.monthly_amount_yen, 0),
-    };
-  }
-  if (actor.role === "agency") {
-    return {
-      currency: "jpy",
-      scope: "agency",
-      active_sites: activeCount,
-      wholesale_per_site_yen: BILLING_DEFAULTS.wholesale_monthly_yen,
-      monthly_invoice_yen: activeCount * BILLING_DEFAULTS.wholesale_monthly_yen,
+      ...(actor.legacy_role ? { legacy_role: actor.legacy_role } : {}),
     };
   }
   const roleScoped = actor.role === "store";
-  return { currency: "jpy", unit_prices: { ...BILLING_DEFAULTS }, mrr_yen: actor.role === "store" || actor.role === "referrer" ? 0 : wholesaleEligible ? 0 : directCount * BILLING_DEFAULTS.direct_monthly_yen, active_billing_sites: activeCount, channel_counts: counts, referral_payments: referralPayments, wholesale: { eligible: !roleScoped && wholesaleEligible, active_sites: roleScoped ? 0 : activeCount, minimum_sites: Number(org.wholesale_min || 50), monthly_invoice_yen: !roleScoped && wholesaleEligible ? activeCount * BILLING_DEFAULTS.wholesale_monthly_yen : 0, reason: roleScoped ? null : wholesaleEligible ? null : `稼働${Number(org.wholesale_min || 50)}店以上が必要` }, scope: actor.role };
+  return { currency: "jpy", unit_prices: { ...BILLING_DEFAULTS }, mrr_yen: actor.role === "store" || actor.role === "referrer" ? 0 : wholesaleEligible ? 0 : directCount * BILLING_DEFAULTS.direct_monthly_yen, active_billing_sites: activeCount, channel_counts: counts, referral_payments: referralPayments, wholesale: { eligible: !roleScoped && wholesaleEligible, active_sites: roleScoped ? 0 : activeCount, minimum_sites: Number(org.wholesale_min || 50), monthly_invoice_yen: !roleScoped && wholesaleEligible ? activeCount * BILLING_DEFAULTS.wholesale_monthly_yen : 0, reason: null, legacy: true }, scope: actor.role };
 }
 
 async function safeJson(request) {
@@ -4794,7 +4795,10 @@ async function handleMemberRegistration(request, env) {
   const email = String(body?.email || "").trim().toLowerCase();
   const role = String(body?.role || "");
   const invite = String(body?.invite || "").trim();
-  const roleMap = { store: "store", referrer: "referrer", agency: "agency" };
+  // There is no agency (wholesale / reseller) membership any more: agencies
+  // apply as referral partners. "agency" is still accepted from an older
+  // cached form and recorded as a referrer, so no one gets a bad-role error.
+  const roleMap = { store: "store", referrer: "referrer", agency: "referrer" };
   if (email.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !roleMap[role]) {
     return json({ error: "email_and_role_required", code: roleMap[role] ? "invalid_email" : "invalid_role" }, 400);
   }
