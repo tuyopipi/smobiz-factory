@@ -76,7 +76,7 @@
     var partners = activeBody.partners || [];
     function drawPartners(sortKey) {
       partners = partners.slice().sort(function (a, b) { return sortKey === "joined_at" ? Number(b.joined_at || 0) - Number(a.joined_at || 0) : Number(b[sortKey] || 0) - Number(a[sortKey] || 0); });
-      activeRows.innerHTML = partners.map(function (p) { return '<tr><td>' + esc(p.name || p.id) + '</td><td>' + esc(p.type === "agency" ? tr("paWholesale") : tr("paReferral")) + '</td><td>' + esc(p.active_sites) + '</td><td>¥' + Number(p.monthly_amount_yen || 0).toLocaleString() + '</td><td>' + (p.joined_at ? new Date(p.joined_at).toLocaleDateString() : '—') + '</td></tr>'; }).join("") || '<tr><td colspan="5">' + esc(tr("paNone")) + '</td></tr>';
+      activeRows.innerHTML = partners.map(function (p) { return '<tr><td>' + esc(p.name || p.id) + '</td><td>' + esc(p.type === "agency" ? tr("paLegacyAgency") : tr("paReferral")) + '</td><td>' + esc(p.active_sites) + '</td><td>¥' + Number(p.monthly_amount_yen || 0).toLocaleString() + '</td><td>' + (p.joined_at ? new Date(p.joined_at).toLocaleDateString() : '—') + '</td></tr>'; }).join("") || '<tr><td colspan="5">' + esc(tr("paNone")) + '</td></tr>';
     }
     drawPartners("active_sites");
     main.querySelectorAll("[data-partner-sort]").forEach(function (button) { button.onclick = function () { drawPartners(button.dataset.partnerSort); }; });

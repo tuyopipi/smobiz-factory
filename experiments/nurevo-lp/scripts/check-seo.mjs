@@ -12,11 +12,20 @@
  * present, every FAQ question and answer present in the visible text, every
  * offer price visible, every image with an alt. Across pages: hreflang sets
  * that agree with each other, and a sitemap that lists exactly those pages.
+ *
+ * Translation gates (one page per language, 41 languages): title and
+ * description lengths per script (CJK and Korean count shorter), no template
+ * placeholder left in the text, no paragraph left in English on a page in
+ * another language, one canonical per page, every internal link resolving to a
+ * built page or a route the Worker serves, regional hreflang variants pointing
+ * at their parent's page, and every indexable built page listed in the sitemap.
  */
-import { readFileSync, existsSync } from "node:fs";
+import { readFileSync, existsSync, readdirSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { ORIGIN, LANGS, STATIC_PAGES } from "../src/site.mjs";
+import { ORIGIN, LANGS, VARIANTS, STATIC_PAGES } from "../src/site.mjs";
+import { WIDE_SCRIPT } from "../src/i18n/locales.mjs";
+import GLOSSARY from "../src/i18n/glossary.json" with { type: "json" };
 
 const PUBLIC = join(dirname(fileURLToPath(import.meta.url)), "..", "public");
 const problems = [];
@@ -28,6 +37,39 @@ const visibleText = (html) => decode(html
   .replace(/<(script|style|noscript)\b[\s\S]*?<\/\1>/g, " ")
   .replace(/<[^>]+>/g, " ")).replace(/\s+/g, " ");
 const squash = (value) => String(value).replace(/\s+/g, "");
+
+// Words that only English uses among the site's languages. A block of text in a
+// non-English page with several of them is a paragraph nobody translated.
+const ENGLISH_ONLY = new Set("the and with your that this which from have what when does into their about would should there these those than been were also".split(" "));
+const KEEP = new RegExp(GLOSSARY.keep.map((term) => term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g");
+function englishBlocks(html) {
+  const body = html.replace(/<(script|style|noscript|code|pre|cite|select)\b[\s\S]*?<\/\1>/g, " ");
+  const blocks = [];
+  for (const match of body.matchAll(/<(p|li|h[1-6]|td|th|summary)\b[^>]*>([\s\S]*?)<\/\1>/g)) {
+    // A quoted source title stays in its own language; anything in a lang="en" element or link is meant to be English.
+    const inner = match[2].replace(/<a\b[^>]*hreflang="en"[^>]*>[\s\S]*?<\/a>/g, " ").replace(/<[^>]*\blang="en"[^>]*>[\s\S]*?<\/[a-z]+>/g, " ").replace(/“[^”]*”|"[^"]*"/g, " ");
+    const text = decode(inner.replace(/<[^>]+>/g, " ")).replace(KEEP, " ");
+    const words = text.toLowerCase().match(/[a-z']+/g) || [];
+    const hits = new Set(words.filter((word) => ENGLISH_ONLY.has(word)));
+    if (hits.size >= 3 && words.length >= 6) blocks.push(text.replace(/\s+/g, " ").trim());
+  }
+  return blocks;
+}
+
+// Paths the Worker answers on nurevo.jp (wrangler.jsonc routes) and the pages
+// it serves itself; a link to one of them is valid without a file here.
+const WORKER_PATHS = [/^\/api\//, /^\/dashboard/, /^\/check\/?$/, /^\/en\/(privacy|terms)\/?$/, /^\/s\//, /^\/p\//, /^\/tag\.js$/, /^\/(sitemap|sitemap-stores)\.xml$/, /^\/(robots|llms)\.txt$/, /^\/assets\/onboarding\//];
+const resolved = new Map();
+function internalLinkResolves(href) {
+  const path = href.replace(/[?#].*$/, "") || "/";
+  if (resolved.has(path)) return resolved.get(path);
+  const ok = WORKER_PATHS.some((pattern) => pattern.test(path))
+    || existsSync(join(PUBLIC, path, "index.html"))
+    || (!path.endsWith("/") && (existsSync(join(PUBLIC, path)) && !path.endsWith("/") || existsSync(join(PUBLIC, `${path}.html`))));
+  resolved.set(path, ok);
+  return ok;
+}
+
 
 /** Where a URL of this site lives under public/. */
 function fileFor(url) {
@@ -68,8 +110,19 @@ for (const url of sitemapUrls) {
 
   const title = decode((html.match(/<title>([^<]*)<\/title>/) || [])[1] || "");
   const description = decode((html.match(/<meta name="description" content="([^"]*)"/) || [])[1] || "");
-  if (title.length < 8 || title.length > 70) fail(url, `title is ${title.length} characters`);
-  if (description.length < 20 || description.length > 170) fail(url, `description is ${description.length} characters`);
+  const code = LANGS.find((item) => item.htmlLang === lang)?.code;
+  const [titleMax, descriptionMax] = WIDE_SCRIPT.has(code) ? [55, 120] : [70, 170];
+  if (title.length < 8 || title.length > titleMax) fail(url, `title is ${title.length} characters (max ${titleMax} for ${lang})`);
+  if (description.length < 20 || description.length > descriptionMax) fail(url, `description is ${description.length} characters (max ${descriptionMax} for ${lang})`);
+  if ((html.match(/<link rel="canonical"/g) || []).length !== 1) fail(url, "must have exactly one canonical link");
+  // Hand-written pages (they carry the seo marker) are checked for the head
+  // tags above; the translation gates below are for the pages the build writes.
+  const generated = !html.includes("<!-- seo:generated");
+  if (generated && /\{\{?[A-Za-z_][\w.]*\}\}?/.test(visibleText(html.replace(/<(pre|code)\b[\s\S]*?<\/\1>/g, " ")) + title + description)) fail(url, "a template placeholder is left in the text");
+  if (code && code !== "en") for (const block of englishBlocks(html)) fail(url, `paragraph left in English: ${block.slice(0, 60)}…`);
+  if (generated) for (const link of html.matchAll(/<a\b[^>]*\bhref="(\/[^"]*)"/g)) {
+    if (!internalLinkResolves(decode(link[1]))) fail(url, `internal link does not resolve: ${link[1]}`);
+  }
 
   const canonical = (html.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
   if (canonical !== url) fail(url, `canonical is ${canonical}`);
@@ -181,16 +234,38 @@ for (const [url, page] of pages) {
     if (hreflang === "x-default") continue;
     if (JSON.stringify([...other.alternates]) !== JSON.stringify([...page.alternates])) fail(url, `hreflang set differs from the one on ${target}`);
     const declared = (other.html.match(/<html lang="([^"]+)"/) || [])[1];
-    if (declared !== hreflang) fail(url, `hreflang ${hreflang} points at a page whose lang is ${declared}`);
+    // A regional variant without pages of its own points at its parent's page.
+    const variant = VARIANTS.find((item) => item.hreflang === hreflang);
+    const expected = variant ? LANGS.find((item) => item.code === variant.page).htmlLang : hreflang;
+    if (declared !== expected) fail(url, `hreflang ${hreflang} points at a page whose lang is ${declared}, expected ${expected}`);
   }
 }
 for (const lang of LANGS) {
   const home = pages.get(ORIGIN + lang.path);
   if (!home) { fail(lang.path, "language home page is missing from the sitemap"); continue; }
-  if (home.alternates.size !== LANGS.length + 1) fail(home.url, `${home.alternates.size} hreflang links, expected ${LANGS.length + 1}`);
+  if (home.alternates.size !== LANGS.length + VARIANTS.length + 1) fail(home.url, `${home.alternates.size} hreflang links, expected ${LANGS.length + VARIANTS.length + 1}`);
+  const dir = (home.html.match(/<html [^>]*dir="([^"]+)"/) || [])[1] || "ltr";
+  if (dir !== lang.dir) fail(home.url, `dir is ${dir}, expected ${lang.dir}`);
   // A page in one language must not carry another's script. Japanese kana in a
   // non-Japanese page means a string fell back instead of being translated.
   if (lang.code !== "ja" && /[぀-ヿ]/.test(home.text.replace(/日本語/g, ""))) fail(home.url, "contains Japanese text");
+}
+
+/* ---- sitemap == pages: every indexable page the build wrote is listed ---- */
+(function walk(dir, rel) {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    if (entry.isDirectory()) { if (!["assets", "gtm-test", "static-jsonld-test"].includes(entry.name)) walk(join(dir, entry.name), `${rel}${entry.name}/`); continue; }
+    if (entry.name !== "index.html") continue;
+    const html = readFileSync(join(dir, entry.name), "utf8");
+    if (!html.includes("<!-- seo:generated") && !/<link rel="canonical"/.test(html)) continue;
+    if (/name="robots" content="[^"]*noindex/.test(html)) continue;
+    const canonical = (html.match(/<link rel="canonical" href="([^"]+)"/) || [])[1];
+    if (canonical && !sitemapUrls.includes(canonical)) fail(`/${rel}`, `indexable page ${canonical} is not in the sitemap`);
+  }
+})(PUBLIC, "");
+if (new Set(sitemapUrls).size !== sitemapUrls.length) fail("sitemap", "lists a URL twice");
+for (const variant of VARIANTS) {
+  if (!sitemap.includes(`hreflang="${variant.hreflang}"`)) fail("sitemap", `no alternate for ${variant.hreflang}`);
 }
 
 if (problems.length) {

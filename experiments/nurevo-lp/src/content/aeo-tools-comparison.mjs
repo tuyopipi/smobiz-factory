@@ -32,7 +32,7 @@ export default {
   locales: {
     ja: {
       title: "AEOツール比較と選び方【2026年版】計測型と実装型の違い | Nurevo",
-      description: "AEOツールは「AIでの見え方を測る計測型」と「AIが読める情報をサイトに実装する実装型」の2種類。Otterly.AI・Peec AI・Profound・Semrush・Ahrefs・Nurevoの対象AIと公開価格を比べ、選び方を解説します。",
+      description: "AEOツールは「AIでの見え方を測る計測型」と「AIが読む情報をサイトに出す実装型」の2種類。Otterly.AI・Peec AI・Profound・Semrush・Ahrefs・Nurevoの対象AIと価格を比べ、選び方を解説。",
       h1: "AEOツールの比較と選び方：計測型と実装型、どちらから始めるか",
       lead: "AEOツールは大きく2種類あります。ChatGPTやGoogleのAIの回答に自社が出ているかを測る「計測型」と、AIが読める形で事業の情報をサイトに載せる「実装型」です。AIが読めない状態で測っても改善につながらないため、多くの中小事業者は、まず実装（無料でできる部分が多い）を整え、そのあと追いたいAIの数と予算に合わせて計測ツールを選ぶのが現実的です。",
       intro: [

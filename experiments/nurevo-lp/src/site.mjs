@@ -3,21 +3,18 @@
 // structured data that says more than the page does is a fabrication, so a
 // fact is added to the page first and here second.
 
+import { LOCALES, VARIANTS } from "./i18n/locales.mjs";
+
 export const ORIGIN = "https://nurevo.jp";
 
-// code: the key used in src/i18n.mjs. path: where that language's home page is
-// served. hreflang: what search engines are told. The Chinese pages are told
-// apart by script, which is what actually differs between them.
-export const LANGS = [
-  { code: "ja", path: "/", hreflang: "ja", htmlLang: "ja", ogLocale: "ja_JP", label: "🇯🇵 日本語" },
-  { code: "en", path: "/en/", hreflang: "en", htmlLang: "en", ogLocale: "en_US", label: "🇬🇧 English" },
-  { code: "zh", path: "/zh/", hreflang: "zh-Hans", htmlLang: "zh-Hans", ogLocale: "zh_CN", label: "🇨🇳 简体中文" },
-  { code: "zh-TW", path: "/zh-tw/", hreflang: "zh-Hant", htmlLang: "zh-Hant", ogLocale: "zh_TW", label: "🇹🇼 繁體中文" },
-  { code: "ko", path: "/ko/", hreflang: "ko", htmlLang: "ko", ogLocale: "ko_KR", label: "🇰🇷 한국어" },
-  { code: "es", path: "/es/", hreflang: "es", htmlLang: "es", ogLocale: "es_ES", label: "🇪🇸 Español" },
-  { code: "fr", path: "/fr/", hreflang: "fr", htmlLang: "fr", ogLocale: "fr_FR", label: "🇫🇷 Français" },
-  { code: "de", path: "/de/", hreflang: "de", htmlLang: "de", ogLocale: "de_DE", label: "🇩🇪 Deutsch" },
-];
+// The languages with their own pages, from src/i18n/locales.mjs (which also
+// lists the regional variants that are only named in hreflang). code: the key
+// used in src/i18n.mjs / src/i18n/home/<code>.json. path: where that language's
+// home page is served. hreflang: what search engines are told; the Chinese
+// pages are told apart by script, which is what actually differs between them.
+// label: what the language switcher shows - the language's own name.
+export const LANGS = LOCALES.map((locale) => ({ ...locale, dir: locale.dir || "ltr", label: locale.name }));
+export { VARIANTS };
 
 // The page a visitor gets when none of the languages is theirs.
 export const DEFAULT_LANG = "ja";
@@ -75,7 +72,7 @@ export const FAQ_KEYS = [
 // provided for each static legal page as well.
 export const STATIC_PAGES = [
   { path: "/check/", file: "check/index.html", lang: "ja", title: "AI可読チェッカー", summary: "URLを入れるだけで、AIがそのサイトを読めるかを無料で診断するツール（登録不要）。" },
-  { path: "/partner/", file: "partner/index.html", lang: "ja", title: "販売パートナー募集", summary: "個人紹介パートナーと企業向け販売代理店の募集、登録申請。" },
+  { path: "/partner/", file: "partner/index.html", lang: "ja", title: "パートナープログラム", summary: "Web制作会社・SEO会社向けのパートナープログラム：紹介報酬（紹介したお客様の月額の40%、Stripe手数料控除後、承認制・国内の事業者が対象）、自社ブランドの月次レポート、AI診断ウィジェット、紹介ページ、登録申請。" },
   { path: "/guide/integration", file: "guide/integration.html", lang: "ja", title: "サーバーサイド連携ガイド", summary: "WordPress以外のサイトにschema.orgを埋め込み、最新に保つための連携手順（PHP / Node.js / Next.js）。" },
   { path: "/privacy", file: "privacy.html", lang: "ja", title: "プライバシーポリシー" },
   { path: "/terms", file: "terms.html", lang: "ja", title: "利用規約" },
