@@ -1,0 +1,152 @@
+{
+ "title": "代理商如何按月提供 AI 搜尋優化服務 | Nurevo",
+ "description": "網站或 SEO 代理商如何把 AI 搜尋優化（AEO）做成月費服務：服務範圍、每月工作、月報，以及不承諾排名的定價方式。",
+ "h1": "代理商如何按月提供 AI 搜尋優化（AEO）服務：服務範圍、報告與定價",
+ "lead": "如果您是代理商，準備在月費服務中加入 AI 搜尋優化，建議把初始導入當作一次性專案，月費服務則聚焦兩件事：讓 AI 讀取的事業資訊保持正確；用一組固定的問題檢查 AI 回答並回報結果。AI 的回答每天都在變，因此合約應約定工作內容和報告，而不是被提及的次數或位置。",
+ "intro": [
+  "撰寫於 2026年10月30日。Google、OpenAI 和 Perplexity 的說法皆於當天在其官方文件中確認。它們的指引可能會變動，提案前請查看最新頁面。",
+  "本指南是給已經在建置、維護或優化網站的代理商的服務設計。我們不提供代理商 AEO 服務的市場行情：我們找不到可靠的一手資料。"
+ ],
+ "sections": [
+  {
+   "heading": "月費服務能涵蓋什麼，不能承諾什麼",
+   "paragraphs": [
+    "AI 搜尋優化（AEO，也稱 GEO）是指確保 ChatGPT、Perplexity、Google 的 AI 摘要等在回答與某個事業相關的問題時，能讀到正確的資訊。[什麼是 AEO？](/guide/what-is-aeo)",
+    "Google 表示，要出現在 AI 摘要（AI Overviews）或 AI 模式（AI Mode）中，沒有額外的要求，也不需要特殊優化，SEO 最佳做法依然適用（[Google 搜尋中心：AI 功能與您的網站](https://developers.google.com/search/docs/appearance/ai-features)）。換句話說，AEO 並不是另一套技巧，而是正確、以可讀形式持續發布事業資訊的日常工作。這正適合做成月費服務。",
+    "另一方面，AI 的回答會因日期不同、同一問題的不同次執行而改變。沒有人能承諾「一定會出現在 ChatGPT」或「AI 排名第一」。在提案和合約中，請承諾工作和報告，而不是結果。"
+   ]
+  },
+  {
+   "heading": "把服務分成三部分：初始設定、每月維護、量測與報告",
+   "table": {
+    "head": [
+     "部分",
+     "主要工作",
+     "頻率",
+     "客戶得到什麼"
+    ],
+    "rows": [
+     [
+      "初始設定（一次性）",
+      "schema.org JSON-LD 結構化資料、llms.txt、AI 爬蟲存取、FAQ 內容，並檢查是否與現有 SEO 外掛的標記重複",
+      "開始時一次",
+      "設定前後的檢查結果和已設定項目清單"
+     ],
+     [
+      "每月維護",
+      "反映營業時間、價格和服務的變動，把新頁面加入 llms.txt，檢查結構化資料是否與頁面上可見的文字一致，更新外掛",
+      "每月",
+      "變更紀錄"
+     ],
+     [
+      "量測與報告",
+      "在 AI 平台上詢問一組固定的問題，記錄提及和引用情形，與上月比較，提出下一步建議",
+      "每月（或每季）",
+      "月報"
+     ]
+    ],
+    "caption": "如果把初始設定費用併入月費，設定最短合約期間有助於回收設定工作的成本。"
+   }
+  },
+  {
+   "heading": "初始設定檢查清單",
+   "list": [
+    "結構化資料：網站是否以 schema.org JSON-LD 發布事業名稱、地址、電話、營業時間和業種？Google 說明，LocalBusiness 結構化資料可以告訴它營業時間、部門等資訊（[Google：LocalBusiness 結構化資料](https://developers.google.com/search/docs/appearance/structured-data/local-business)）。也可以使用更具體的類型，例如 HairSalon 或 Dentist。",
+    "與頁面一致：結構化資料是否與訪客看得到的文字一致？Google 也建議讓結構化資料與可見文字保持一致。",
+    "AI 爬蟲存取：robots.txt 是否封鎖了 AI 搜尋使用的爬蟲？OpenAI 表示，選擇封鎖 OAI-SearchBot 的網站不會顯示在 ChatGPT 搜尋的回答中（[OpenAI：爬蟲概覽](https://developers.openai.com/api/docs/bots)），Perplexity 則建議允許 PerplexityBot（[Perplexity：爬蟲](https://docs.perplexity.ai/docs/resources/perplexity-crawlers.md)）。",
+    "訓練用爬蟲需另外決定：是否允許 GPTBot 等為 AI 模型訓練蒐集內容的爬蟲，和能否出現在 AI 搜尋中是兩個不同的問題。請讓客戶自己決定，代理商不應替客戶做主。",
+    "llms.txt：在 /llms.txt 為 AI 摘要說明網站及其重要頁面。Google 表示，它自己的 AI 功能不需要新的 AI 文字檔，因此請把 llms.txt 定位為有用的輔助，而不是承諾。[如何撰寫 llms.txt](/guide/llms-txt)",
+    "與 SEO 外掛重複：確認網站沒有在 Yoast SEO 或 Rank Math 已輸出的內容之外，再把同一個事業重複發布一次。[在 SEO 外掛中加入在地商家 schema](/guide/local-business-schema-seo-plugins)"
+   ]
+  },
+  {
+   "heading": "每月工作",
+   "list": [
+    "保持資訊最新：把營業時間、公休日、價格、菜單、人員和地點的變動，同時反映到頁面和結構化資料中。AI 給出過時的回答，往往源自網站上的過時資訊。",
+    "加入新頁面：新增最新消息、案例或價格頁面時，將其反映到 llms.txt 和內部連結中。",
+    "檢查一組固定的問題：挑選幾個客戶的潛在顧客可能會問的問題，例如「台北週六有看診的牙醫」，每月在相同條件下詢問 AI 平台，並記錄客戶是否被提及或引用。",
+    "查看 Search Console：來自 Google AI 功能的曝光次數和點擊次數，包含在 Search Console 成效報告的「網頁」搜尋類型中（[Google 搜尋中心](https://developers.google.com/search/docs/appearance/ai-features)）。這部分無法單獨拆分，請在報告中說明。"
+   ]
+  },
+  {
+   "heading": "月報要包含什麼",
+   "table": {
+    "head": [
+     "項目",
+     "範例"
+    ],
+    "rows": [
+     [
+      "本月完成的工作",
+      "更新營業時間，新增兩則 FAQ，把新的案例頁面加入 llms.txt"
+     ],
+     [
+      "AI 能讀取網站嗎？",
+      "結構化資料、llms.txt 和 AI 爬蟲存取的檢查結果，並與上月比較"
+     ],
+     [
+      "客戶在 AI 回答中的呈現",
+      "每個追蹤問題的提及和引用情形，以及各問題的詢問次數"
+     ],
+     [
+      "搜尋流量",
+      "Search Console 曝光次數和點擊次數的變化，並註明 AI 功能帶來的流量無法單獨區分"
+     ],
+     [
+      "下個月",
+      "需要客戶提供的內容：照片、價目表、常見問題"
+     ]
+    ]
+   },
+   "after": [
+    "AI 能見度的數據是對一組問題詢問數次所得的樣本，並非所有回答的全貌。請在第一份報告中說明：您比較的是相同問題在相同條件下的趨勢，不會只憑一次結果下判斷。[AEO 工具比較](/guide/aeo-tools-comparison)"
+   ]
+  },
+  {
+   "heading": "定價：從工時和工具成本累加",
+   "paragraphs": [
+    "與其參考同業收費倒推，不如用「每月工時 × 內部時薪 + 工具成本 + 報告時間」累加出月費。這樣更容易向客戶說明，也比較不會虧損。前幾個月請記錄工時，並與估算對照。",
+    "依量測程度區分的方案，例如「僅維護」「維護＋每月檢查」「維護＋持續量測」，客戶比較容易選擇。讓客戶以自己的名義持有工具訂閱，而您只對自己的工作和報告收費，可以讓費用結構一目了然。",
+    "供參考：使用 Nurevo AEO 時，導入為 Free（$0），評分標準自動更新為 Standard（$20/月），持續的 AI 能見度量測（測試版，目前使用 Perplexity）為 Pro（$99/月起）。專用監測工具的價格請見 [AEO 工具比較](/guide/aeo-tools-comparison)。"
+   ]
+  },
+  {
+   "heading": "用 Nurevo 經營這項服務",
+   "paragraphs": [
+    "Nurevo AEO WordPress 外掛是免費的。它可以在管理後台設定結構化資料、llms.txt 和 AI 爬蟲規則，並且只補上 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO 結構化資料中缺少的部分，而不是取代它們。因此很容易在各個客戶網站上統一設定流程。",
+    "針對網站和 SEO 代理商，我們提供：以貴公司名稱、標誌和品牌色製作的客戶月報，可自動寄送電子郵件並列印為 PDF；在一個控制台中管理所有客戶網站；可寄給客戶的 Standard 方案付款連結；以及放在貴公司自己網站上的 AI 檢查小工具（限已核准的合作夥伴）。另外還有推薦佣金：每位推薦客戶月費（扣除 Stripe 手續費後）的 40%（需經審核；目前僅支付給日本境內的合作夥伴）。詳見[合作夥伴計畫](/partner/?lang=zh-tw)。",
+    "持平而論：專用監測工具能追蹤更多 AI 平台和提示詞，競品分析也更深入。用 Nurevo 負責導入和月報，同時搭配另一款監測工具，也是合理的組合。"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "AI 搜尋優化的月費服務可以保證成效嗎？",
+   "a": "我們不建議這麼做。AI 的回答會因日期和同一問題的不同次執行而改變，沒有人能保證被提及或取得某個位置。合約應約定工作內容、報告週期和報告涵蓋的範圍，並把 AI 能見度當作量測結果來呈現。"
+  },
+  {
+   "q": "需要和 SEO 維護合約分開嗎？",
+   "a": "不需要。Google 表示 SEO 最佳做法同樣適用於其 AI 功能，所以很多工作是重疊的。您可以在現有的維護方案中加入「維護結構化資料、llms.txt 和 AI 爬蟲規則」以及「每月 AI 能見度檢查」。[AEO、SEO 與 GEO 的差異](/guide/aeo-vs-seo-vs-geo)"
+  },
+  {
+   "q": "應該追蹤多少個問題？",
+   "a": "沒有固定數量。先從客戶的潛在顧客可能會問的幾個問題開始，每月在相同條件下檢查。問題越多，監測成本和報告工作量就越大。"
+  },
+  {
+   "q": "不是用 WordPress 架設的網站也能提供嗎？",
+   "a": "可以。結構化資料、llms.txt 和 robots.txt 適用於任何網站。Nurevo 為 WordPress 提供免費外掛（[WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)），其他網站可使用程式碼片段，沒有網站的事業則可使用託管頁面。"
+  }
+ ],
+ "relatedHeading": "相關指南",
+ "cta": {
+  "heading": "先看看 AI 如何讀取客戶的網站",
+  "body": "免費檢查可顯示結構化資料、llms.txt 和 AI 爬蟲存取的現況，無須註冊。可當作提案前的診斷。",
+  "label": "執行免費的 AI 可讀性檢查",
+  "href": "/check",
+  "secondary": {
+   "label": "在 WordPress.org 取得 Nurevo AEO",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google、ChatGPT、OpenAI、Perplexity、WordPress、Yoast SEO、Rank Math、All in One SEO、Slim SEO 及其產品名稱為其各自所有者的商標。Nurevo 與上述公司沒有關聯。"
+}
