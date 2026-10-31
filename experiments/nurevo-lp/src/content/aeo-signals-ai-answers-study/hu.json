@@ -1,0 +1,292 @@
+{
+ "title": "Előre jelzi-e az AEO-pontszám az AI-válaszokat? 62 cég | Nurevo",
+ "description": "62 japán helyi vállalkozás AEO-pontszámát vetettük össze azzal, hogy a Perplexity megemlíti-e őket. A pontszám nem jelezte előre a megjelenést (ρ = 0.03).",
+ "h1": "Előre jelzik-e a weboldalon belüli AEO-jelek, hogy egy vállalkozás megjelenik-e az AI-válaszokban? 62 vállalkozást mértünk meg",
+ "lead": "Ebben a vizsgálatban nem. 62 japán helyi vállalkozás körében a weboldalon belüli AEO-pontszámunk (strukturált adatok, llms.txt, crawler-hozzáférés és hasonló jelek) semmilyen összefüggést nem mutatott azzal, hogy a Perplexity milyen gyakran nevezte meg vagy hivatkozta az adott vállalkozást, amikor ajánlást kértünk tőle: Spearman ρ = 0.03 (95% CI: −0.23 és 0.28 között, p = 0.834). 62 vállalkozással a vizsgálat csak a nagyjából |ρ| ≥ 0.35 erősségű korrelációkat tudta megbízhatóan kimutatni, így egy gyengébb összefüggés nem zárható ki.",
+ "intro": [
+  "Közzétéve: 2026. október 28. A mérés időpontja: 2026. október 24. A Nurevo AEO-eszközöket fejleszt, köztük az itt vizsgált pontszámot is; lásd lent az „Összeférhetetlenségünk” című részt."
+ ],
+ "sections": [
+  {
+   "heading": "Összefoglalás",
+   "list": [
+    "Kérdés: gyakrabban jelennek-e meg az AI olyan kérdésekre adott válaszaiban, amelyek nem nevezik meg őket, azok a vállalkozások, amelyeknek a weboldala magasabb értéket ér el a Nurevo AI-olvashatósági pontszámán (0–100)?",
+    "Válasz: nem igazolódott. Összességében ρ = 0.03, és az iparágra és a városra való korrekció után is 0.03.",
+    "Összesítve a vállalkozások a felfedező kérdésekre adott válaszok 21.0%-ában jelentek meg; a 62-ből 25 legalább egyszer szerepelt.",
+    "A többszörös tesztelésre való korrekció után a pontszám egyetlen összetevője (strukturált adatok, llms.txt, lefedettség stb.) sem mutatott összefüggést.",
+    "Amit leszűrünk belőle: a strukturált adatok segítenek az AI-nak helyesen kiolvasni egy vállalkozás adatait, de önmagukban nem döntik el, hogy a vállalkozást megemlítik-e. Más tényezők számítanak többet, nagy valószínűséggel köztük az is, amit más oldalak írnak a vállalkozásról. Ez utóbbi hipotézis, amelyet ez a vizsgálat nem tesztelt."
+   ]
+  },
+  {
+   "heading": "Miért végeztük el ezt a vizsgálatot",
+   "paragraphs": [
+    "Az AEO-val (answer engine optimization, azaz válaszmotor-optimalizálás) kapcsolatos tanácsok – a sajátjainkat is beleértve – azt mondják, hogy ha egy weboldalt könnyen olvashatóvá teszünk az AI számára (schema.org strukturált adatok, llms.txt fájl, az AI-robotok beengedése, szerveroldalon renderelt tartalom), az segít, hogy a vállalkozás megjelenjen az AI-válaszokban. A Nurevo pontosan ezekre a jelekre épülő pontszámot értékesít. Őszinte bizonyítékot akartunk arra, hogy a pontszám követi-e azt, ami a tulajdonosoknak valóban számít: hogy az AI megnevezi-e őket. A hipotézist, az elemzést és a döntési kritériumokat még a válaszok gyűjtése előtt rögzítettük, és vállaltuk, hogy az eredményt – bármilyen is lesz – közzétesszük."
+   ]
+  },
+  {
+   "heading": "Módszer",
+   "list": [
+    "Minta: 72 saját hivatalos weboldallal rendelkező helyi vállalkozás, webes kereséssel kiválasztva (portáloldalak nélkül), 5 iparágból (fogorvosi rendelők, éttermek, szépségszalonok, adótanácsadók, szálláshelyek) és 4 japán városból (Tokió, Oszaka, Fukuoka, Szapporo). 10 vállalkozást kizártunk, mert a weboldalukra nem lehetett pontszámot számolni, így 62 maradt az elemzéshez.",
+    "Pontszám: minden weboldal kezdőlapját, robots.txt- és llms.txt-fájlját ugyanazzal a kóddal pontoztuk, mint a Nurevo nyilvános pontszámát: strukturált adatok (30 pont), lefedettség (25), olvashatóság (20), llms.txt (15) és konzisztencia (10), valamint egy kapufeltétel a crawler-hozzáférésre, az edge-szintű blokkolásra és a szerveroldali renderelésre (ha ez nem teljesül, a pontszám legfeljebb 15 lehet).",
+    "Motor: Perplexity, az Agent API-ján keresztül, „fast” beállítással (egy webes keresés, majd válasz) – ugyanazzal az adapterrel, amelyet a Nurevo fizetős csomagja az AI-láthatóság méréséhez használ. Csak egy motor; lásd a korlátokat.",
+    "Kérdések: vállalkozásonként három „felfedező” kérdés, amely megnevezi a területet és a vállalkozás típusát, de magát a vállalkozást nem (például: „Ajánljon egy fogorvost Umedában”), és amely közös az azonos területen működő, azonos iparágú vállalkozások számára; valamint egy „megnevező” kérdés, amely a vállalkozás címére és nyitvatartására kérdez rá. Minden kérdést háromszor tettünk fel.",
+    "Kimenet: egy vállalkozás akkor „jelent meg” egy válaszban, ha a neve szerepelt a válaszban, vagy a saját domainje a hivatkozott források között volt. A megjelenési arány azt mutatja, hogy a felfedező válaszok mekkora hányadában jelent meg.",
+    "Az érzékelő ellenőrzése: a megnevező kérdésekre adott válaszokban a vállalkozás nevét az esetek 84.3%-ában észleltük, ami meghaladja az érzékelő megbízhatóságához előre meghatározott 70%-os küszöböt.",
+    "Elemzés: Spearman-féle rangkorreláció permutációs p-értékkel és bootstrap konfidenciaintervallummal; parciális korreláció az iparággal és a várossal mint fix hatásokkal; rétegen belüli permutációs teszt; valamint logisztikus regresszió iparági és városi fix hatásokkal és kvázi-binomiális korrekcióval, mivel az ugyanarra a kérdésre adott ismételt válaszok nem függetlenek. A hat összetevőtesztre Holm-korrekciót alkalmaztunk."
+   ],
+   "after": [
+    "Az „igazolt” eredmény kritériumát előre rögzítettük: ρ ≥ 0.3, p < 0.05, nulla feletti 95%-os CI és pozitív korrigált korreláció. A válaszok szövegét nem tároltuk, csak azt, hogy megjelent-e a név, hivatkozták-e a domaint, és hányadik helyen szerepelt a hivatkozás."
+   ]
+  },
+  {
+   "heading": "Eredmények",
+   "paragraphs": [
+    "Az ítélet: „nem igazolt”. A pontszám és a megjelenés közötti összes teszt nullához közeli korrelációt ad:"
+   ],
+   "table": {
+    "head": [
+     "Teszt",
+     "Eredmény",
+     "p-érték"
+    ],
+    "rows": [
+     [
+      "Pontszám vs. megjelenési arány (Spearman ρ, elsődleges)",
+      "0.03 (95% CI: −0.23 és 0.28 között)",
+      "0.834"
+     ],
+     [
+      "Ugyanez, iparágra és városra korrigálva (parciális korreláció)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Ugyanez, rétegen belüli permutációs teszttel",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Pontszám vs. a név megjelenése (felfedező kérdések)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Pontszám vs. a saját oldal hivatkozása (felfedező kérdések)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Pontszám vs. a saját oldal hivatkozása (megnevező kérdések)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logisztikus regresszió iparági/városi fix hatásokkal, kvázi-binomiális: esélyhányados a pontszám +1 SD-nyi (18.81 pont) növekedésére",
+      "×1.01 (95% CI: 0.62 és 1.64 között)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 vállalkozás. Mérés a Perplexityn, 2026. október 24-én."
+   },
+   "after": [
+    "A legnagyobb együttható – 0.18 a pontszám és a vállalkozás saját oldalának hivatkozása között – nem különböztethető meg a nullától (p = 0.149), ezért nem szabad eredményként értelmezni."
+   ]
+  },
+  {
+   "heading": "Pontszámsávok szerint",
+   "paragraphs": [
+    "A Nurevo a pontszámot piros, sárga vagy zöld színnel jelzi. A mintában a legtöbb oldal piros volt, zöldet egy sem ért el, így ez a vizsgálat semmit nem mond a nagyon magas pontszámokról."
+   ],
+   "table": {
+    "head": [
+     "Sáv",
+     "Vállalkozások",
+     "Átlagos megjelenési arány",
+     "Legalább egyszer megjelent"
+    ],
+    "rows": [
+     [
+      "Piros",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Sárga",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Zöld",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "A pontszám összetevői szerint",
+   "paragraphs": [
+    "A pontszám egyik összetevője sem függött össze a megjelenéssel. Holm-korrekció után minden p-érték 1.000. Ezek a tesztek feltáró jellegűek voltak."
+   ],
+   "table": {
+    "head": [
+     "Összetevő",
+     "Spearman ρ a megjelenési aránnyal"
+    ],
+    "rows": [
+     [
+      "Strukturált adatok (schema)",
+      "0.08"
+     ],
+     [
+      "Lefedettség",
+      "0.12"
+     ],
+     [
+      "Olvashatóság",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (esélyhányados 1.41, 95% CI: 0.79 és 2.52 között)"
+     ],
+     [
+      "Konzisztencia",
+      "0.06"
+     ],
+     [
+      "Kapufeltétel (crawler-hozzáférés, edge, szerveroldali renderelés)",
+      "61 teljesítette: 21.3% megjelenés; 1 nem teljesítette: 0%"
+     ]
+    ],
+    "caption": "Holm-korrigált p = 1.000 minden összetevőre."
+   }
+  },
+  {
+   "heading": "Iparág és város szerint",
+   "paragraphs": [
+    "A megjelenés inkább iparág és város szerint változott, mint a pontszám szerint. Ezek kis csoportokra vonatkozó leíró adatok, nem tesztelt különbségek."
+   ],
+   "table": {
+    "head": [
+     "Csoport",
+     "Vállalkozások",
+     "Átlagos pontszám",
+     "Megjelenési arány"
+    ],
+    "rows": [
+     [
+      "Adótanácsadók",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Szálláshelyek",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Fogorvosi rendelők",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Szépségszalonok",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Éttermek",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Oszaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Szapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokió",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Az iparági és a városi sorok egyaránt ugyanazt a 62 vállalkozást fedik le."
+   }
+  },
+  {
+   "heading": "Korlátok",
+   "list": [
+    "Keresztmetszeti vizsgálat: sok oldal egyszeri mérése együttjárást mutat, nem ok-okozati kapcsolatot. Hogy egy oldal fejlesztése megváltoztatja-e a megjelenését, azt ugyanazon oldalak előtte–utána vizsgálatával lehetne megállapítani.",
+    "Statisztikai erő: 62 vállalkozással a nagyjából |ρ| = 0.35-nél gyengébb korrelációk gyakran rejtve maradnának. Az azonos területen és iparágban működő vállalkozások ugyanazokon a válaszokon osztoznak, így a tényleges mintanagyság még kisebb. A „nem találtunk” itt nem jelenti azt, hogy „nem létezik”.",
+    "Egy motor, egy hét: Perplexity „fast” beállítással, mérés 2026. október 24-én. A ChatGPT, a Gemini, a Google AI Overviews szolgáltatása és a Copilot más keresőindexeket és modelleket használ; ezek az eredmények rájuk nem vihetők át.",
+    "Nem megfigyelt zavaró tényezők: az értékeléseket, a márkaismertséget, a hirdetéseket, a működési évek számát és a más oldalakon való szereplést nem mértük. Csak az iparágra és a városra korrigáltunk.",
+    "Minta: a vállalkozásokat webes kereséssel találtuk meg, így a minta a már eleve könnyen megtalálható vállalkozások felé torzul. Egyetlen oldal sem ért el zöld pontszámot. Az 5 iparág és a 4 japán város nem feltétlenül reprezentálja más iparágakat, régiókat vagy nyelveket."
+   ]
+  },
+  {
+   "heading": "Mit jelent ez egy vállalkozás weboldala számára",
+   "paragraphs": [
+    "A strukturált adatok, az llms.txt és a crawler-hozzáférés továbbra is ellátnak egy feladatot: lehetővé teszik, hogy az AI közvetlenül és helyesen olvassa ki a vállalkozás adatait (cím, nyitvatartás, telefonszám, szolgáltatások), ahelyett, hogy találgatna. Ezt a feladatot érdemes elvégezni, de ez más feladat, mint az, hogy ajánljanak. Ebben a vizsgálatban a jobban olvasható oldalt nem említették gyakrabban.",
+    "Munkahipotézisünk az, hogy a weboldalon kívüli források (értékelő- és térképes listák, helyi média, címtárak, a vállalkozást említő más oldalak) nagy súllyal esnek latba abban, hogy az AI megnevez-e egy vállalkozást, amikor ajánlást kérő kérdésre válaszol. Ez a vizsgálat ezeket a forrásokat nem mérte, így ez tesztelendő hipotézis, nem eredmény.",
+    "A gyakorlatban: tartsa rendben a weboldalon belüli alapokat, mert ezek teszik pontossá, amit az AI Önről mond, és mérje meg, hogy az AI valóban megemlíti-e, ahelyett, hogy egy olvashatósági pontszámból következtetne rá."
+   ]
+  },
+  {
+   "heading": "Összeférhetetlenségünk, és amin változtatunk",
+   "paragraphs": [
+    "A Nurevo AEO-eszközöket fejleszt, és az itt vizsgált pontszám az egyik termékünk. Azt az eredményt, hogy a pontszám nem jelzi előre a megjelenést, nem mi választottuk volna; azért tesszük közzé, mert a kritériumokat még az adatok beérkezése előtt rögzítettük, és mert a tulajdonosoknak tudniuk kell, mit árulhat el egy pontszám, és mit nem.",
+    "Amit teszünk: az AI-olvashatósági pontszámot nem mutatjuk be az AI-válaszokban való megjelenés előrejelzőjeként. Ehelyett közvetlenül mérjük a megjelenést: a Pro csomag azt méri, milyen gyakran nevezi meg vagy hivatkozza a Perplexity az adott oldalt (béta), a Free és Standard csomagú oldalak számára pedig egy kisebb havi megjelenési ellenőrzést vezetünk be. Fejlesztjük a pontszám második változatát is, amely a mért AI-láthatóságot ötvözi a weboldalon belüli jelekkel, ahelyett, hogy kizárólag ez utóbbiakra támaszkodna.",
+    "A mért vállalkozások nevét és weboldalát nem tesszük közzé."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Eléri-e a strukturált adat, hogy az AI megemlítse a vállalkozásomat?",
+   "a": "Ebben a 62 helyi vállalkozásra kiterjedő, a Perplexityn végzett vizsgálatban nem találtunk összefüggést az olyan weboldalon belüli jelek, mint a strukturált adatok, és aközött, hogy milyen gyakran említették a vállalkozást (ρ = 0.03). A strukturált adatok segítenek az AI-nak helyesen kiolvasni az Ön adatait, de önmagukban nem jelezték előre az említést."
+  },
+  {
+   "q": "Segít-e az llms.txt abban, hogy egy vállalkozás megjelenjen az AI-válaszokban?",
+   "a": "Ebben a vizsgálatban nem találtunk összefüggést: az llms.txt-összetevő és a megjelenési arány között ρ = −0.02 (Holm-korrigált p = 1.000). A vizsgálat kis mintán, egyetlen motorral készült, így ez nem bizonyítja, hogy az llms.txt soha nem számít."
+  },
+  {
+   "q": "Ez azt jelenti, hogy az AEO értelmetlen?",
+   "a": "Nem. A weboldalon belüli AEO pontossá teszi, amit az AI egy vállalkozásról mond. A vizsgálat arra utal, hogy ez önmagában nem elég ahhoz, hogy ajánlják a vállalkozást, és hogy az említést közvetlenül kell mérni, nem pedig egy olvashatósági pontszámból kikövetkeztetni."
+  },
+  {
+   "q": "Melyik AI-motort vizsgálták?",
+   "a": "Kizárólag a Perplexityt, az Agent API-ján keresztül, „fast” beállítással, 2026. október 24-én. Az eredmények nem vihetők át a ChatGPT-re, a Geminire, a Google AI Overviews szolgáltatására vagy a Copilotra."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Nézze meg, mit olvas ki az AI a weboldaláról",
+  "body": "Az ingyenes ellenőrzés megmutatja, hogy az AI ki tudja-e olvasni vállalkozása adatait. Azt nem jelzi előre, hogy az AI megemlíti-e Önt; azt mérni kell.",
+  "label": "Ingyenes ellenőrzés indítása",
+  "href": "/check"
+ },
+ "footnote": "A vizsgálatot a Nurevo (Bestie.合同会社) végezte. A Perplexity a Perplexity AI, Inc. védjegye. A Nurevo nem áll kapcsolatban a Perplexityvel."
+}

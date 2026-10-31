@@ -1,0 +1,292 @@
+{
+ "title": "¿El AEO on-site predice las respuestas de IA? 62 negocios | Nurevo",
+ "description": "Evaluamos 62 negocios locales de Japón con nuestra puntuación AEO y consultamos a Perplexity. La puntuación no predijo su aparición en las respuestas (ρ = 0.03).",
+ "h1": "¿Predicen las señales AEO on-site la aparición en respuestas de IA? Medimos 62 negocios",
+ "lead": "No, no en este estudio. En 62 negocios locales de Japón, nuestra puntuación AEO on-site (datos estructurados, llms.txt, acceso de rastreadores y señales similares) no mostró relación alguna con la frecuencia con la que Perplexity nombraba o citaba un negocio al pedirle recomendaciones: ρ de Spearman = 0.03 (IC del 95 % −0.23 a 0.28, p = 0.834). Con 62 negocios, el estudio solo podía detectar de forma fiable correlaciones de aproximadamente |ρ| ≥ 0.35, por lo que no puede descartarse una relación más débil.",
+ "intro": [
+  "Publicado el 28 de octubre de 2026. Datos medidos el 24 de octubre de 2026. Nurevo desarrolla herramientas AEO, entre ellas la puntuación evaluada aquí; consulte «Nuestro conflicto de intereses» más abajo."
+ ],
+ "sections": [
+  {
+   "heading": "Resumen",
+   "list": [
+    "Pregunta: ¿los negocios cuyas webs obtienen una puntuación más alta en la puntuación de legibilidad para IA de Nurevo (de 0 a 100) aparecen con más frecuencia en las respuestas de IA a preguntas que no los nombran?",
+    "Respuesta: no se confirma. ρ = 0.03 en conjunto, y sigue siendo 0.03 tras ajustar por sector y ciudad.",
+    "En conjunto, los negocios aparecieron en el 21.0% de las respuestas a preguntas de descubrimiento; 25 de los 62 aparecieron al menos una vez.",
+    "Ningún componente individual de la puntuación (datos estructurados, llms.txt, cobertura, etc.) mostró tampoco relación tras corregir por comparaciones múltiples.",
+    "Lo que concluimos: los datos estructurados ayudan a la IA a leer correctamente la información de un negocio, pero por sí solos no deciden si se menciona. Otros factores pesan más, muy probablemente lo que otros sitios dicen sobre el negocio. Esto último es una hipótesis que este estudio no ha puesto a prueba."
+   ]
+  },
+  {
+   "heading": "Por qué hicimos este estudio",
+   "paragraphs": [
+    "Las recomendaciones de AEO (answer engine optimization), incluidas las nuestras, afirman que hacer que una web sea fácil de leer para la IA (datos estructurados de schema.org, un archivo llms.txt, permitir el acceso a los rastreadores de IA, contenido renderizado en el servidor) ayuda a que un negocio aparezca en las respuestas de IA. Nurevo vende una puntuación basada exactamente en esas señales. Queríamos pruebas honestas de si la puntuación refleja lo que realmente importa a los propietarios: que la IA los nombre. Fijamos la hipótesis, el análisis y los criterios de decisión antes de recopilar ninguna respuesta, y nos comprometimos a publicar el resultado fuera cual fuera."
+   ]
+  },
+  {
+   "heading": "Método",
+   "list": [
+    "Muestra: 72 negocios locales con web oficial propia, seleccionados mediante búsqueda web (excluidos los portales), de 5 sectores (clínicas dentales, restaurantes, salones de belleza, asesores fiscales, alojamiento) y 4 ciudades japonesas (Tokio, Osaka, Fukuoka, Sapporo). Se excluyeron 10 porque no se pudo calcular la puntuación de su web, con lo que quedaron 62 para el análisis.",
+    "Puntuación: la página de inicio, el robots.txt y el llms.txt de cada web se puntuaron con el mismo código que la puntuación pública de Nurevo: datos estructurados (30 puntos), cobertura (25), legibilidad (20), llms.txt (15) y coherencia (10), con un filtro de acceso de rastreadores, bloqueo en el edge y renderizado en servidor (no superarlo limita la puntuación a 15).",
+    "Motor: Perplexity, a través de su Agent API con el preset «fast» (una búsqueda web y luego una respuesta), el mismo adaptador que usa el plan de pago de Nurevo para la visibilidad en IA. Un único motor; véanse las limitaciones.",
+    "Preguntas: tres preguntas «de descubrimiento» por negocio que nombran la zona y el tipo de negocio pero no el negocio (por ejemplo, «Recomiéndame un dentista en Umeda»), comunes a todos los negocios del mismo sector en la misma zona, más una pregunta «nominal» que pide la dirección y el horario de un negocio. Cada pregunta se hizo tres veces.",
+    "Variable de resultado: un negocio «aparecía» en una respuesta si su nombre figuraba en ella o si su propio dominio estaba entre las fuentes citadas. La tasa de aparición es la proporción de sus respuestas a preguntas de descubrimiento en las que apareció.",
+    "Verificación del detector: en las respuestas a las preguntas nominales se detectó el nombre del negocio el 84.3% de las veces, por encima del umbral del 70% que fijamos para confiar en el detector.",
+    "Análisis: correlación de rangos de Spearman con p-valor por permutación e intervalo de confianza por bootstrap; correlación parcial con sector y ciudad como efectos fijos; una prueba de permutación dentro de estratos; y una regresión logística con efectos fijos de sector y ciudad y corrección cuasibinomial, ya que las respuestas repetidas a la misma pregunta no son independientes. Las seis pruebas por componente se corrigen con el método de Holm."
+   ],
+   "after": [
+    "El criterio para considerar la hipótesis «confirmada» se fijó de antemano: ρ ≥ 0.3, p < 0.05, un IC del 95 % por encima de cero y una correlación ajustada positiva. No se almacenó el texto de las respuestas, solo si aparecía un nombre, si se citaba el dominio y la posición de la cita."
+   ]
+  },
+  {
+   "heading": "Resultados",
+   "paragraphs": [
+    "El veredicto es «no se confirma». Todas las pruebas de la puntuación frente a la aparición dan una correlación cercana a cero:"
+   ],
+   "table": {
+    "head": [
+     "Prueba",
+     "Resultado",
+     "p-valor"
+    ],
+    "rows": [
+     [
+      "Puntuación frente a tasa de aparición (ρ de Spearman, principal)",
+      "0.03 (IC del 95 % −0.23 a 0.28)",
+      "0.834"
+     ],
+     [
+      "Igual, ajustada por sector y ciudad (correlación parcial)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Igual, prueba de permutación dentro de estratos",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Puntuación frente a aparición del nombre (preguntas de descubrimiento)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Puntuación frente a cita de la web propia (preguntas de descubrimiento)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Puntuación frente a cita de la web propia (preguntas nominales)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Regresión logística con efectos fijos de sector/ciudad, cuasibinomial: odds por +1 DE de puntuación (18.81 puntos)",
+      "×1.01 (IC del 95 % 0.62 a 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 negocios. Medido en Perplexity el 24 de octubre de 2026."
+   },
+   "after": [
+    "El coeficiente más alto, 0.18 entre la puntuación y la cita de la web propia del negocio, no se distingue de cero (p = 0.149) y no debe interpretarse como un hallazgo."
+   ]
+  },
+  {
+   "heading": "Por franja de puntuación",
+   "paragraphs": [
+    "Nurevo muestra la puntuación en rojo, amarillo o verde. La mayoría de las webs de la muestra estaban en rojo y ninguna llegó al verde, por lo que este estudio no dice nada sobre puntuaciones muy altas."
+   ],
+   "table": {
+    "head": [
+     "Franja",
+     "Negocios",
+     "Tasa de aparición media",
+     "Aparecieron al menos una vez"
+    ],
+    "rows": [
+     [
+      "Rojo",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Amarillo",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Verde",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Por componente de la puntuación",
+   "paragraphs": [
+    "Ninguno de los componentes de la puntuación guardaba relación con la aparición. Tras la corrección de Holm, todos los p-valores son 1.000. Estas pruebas fueron exploratorias."
+   ],
+   "table": {
+    "head": [
+     "Componente",
+     "ρ de Spearman con la tasa de aparición"
+    ],
+    "rows": [
+     [
+      "Datos estructurados (schema)",
+      "0.08"
+     ],
+     [
+      "Cobertura",
+      "0.12"
+     ],
+     [
+      "Legibilidad",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (odds ratio 1.41, IC del 95 % 0.79 a 2.52)"
+     ],
+     [
+      "Coherencia",
+      "0.06"
+     ],
+     [
+      "Filtro (acceso de rastreadores, edge, renderizado en servidor)",
+      "61 lo superaron: 21.3% de aparición; 1 no lo superó: 0%"
+     ]
+    ],
+    "caption": "p corregido por Holm = 1.000 para todos los componentes."
+   }
+  },
+  {
+   "heading": "Por sector y por ciudad",
+   "paragraphs": [
+    "La aparición varió más según el sector y la ciudad que según la puntuación. Son cifras descriptivas de grupos pequeños, no diferencias contrastadas estadísticamente."
+   ],
+   "table": {
+    "head": [
+     "Grupo",
+     "Negocios",
+     "Puntuación media",
+     "Tasa de aparición"
+    ],
+    "rows": [
+     [
+      "Asesores fiscales",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Alojamiento",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Clínicas dentales",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Salones de belleza",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restaurantes",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Las filas por sector y las filas por ciudad abarcan, cada una, los mismos 62 negocios."
+   }
+  },
+  {
+   "heading": "Limitaciones",
+   "list": [
+    "Diseño transversal: una única medición de muchas webs muestra asociación, no causalidad. Para saber si mejorar una web cambia su aparición hace falta un estudio de antes y después sobre las mismas webs.",
+    "Potencia estadística: con 62 negocios, una correlación más débil que aproximadamente |ρ| = 0.35 pasaría a menudo desapercibida. Los negocios de la misma zona y sector comparten las mismas respuestas, por lo que la muestra efectiva es aún menor. Aquí, «no encontrado» no significa «inexistente».",
+    "Un motor, una semana: Perplexity con el preset «fast», medido el 24 de octubre de 2026. ChatGPT, Gemini, los AI Overviews de Google y Copilot utilizan otros índices de búsqueda y otros modelos; estos resultados no son extrapolables a ellos.",
+    "Factores de confusión no observados: no se midieron las reseñas, el reconocimiento de marca, la publicidad, la antigüedad del negocio ni su presencia en otros sitios. Solo se ajustó por sector y ciudad.",
+    "Muestra: los negocios se encontraron mediante búsqueda web, por lo que tienden a ser negocios que ya son fáciles de encontrar. Ninguna web alcanzó el verde. 5 sectores y 4 ciudades de Japón pueden no representar a otros sectores, regiones o idiomas."
+   ]
+  },
+  {
+   "heading": "Qué significa para la web de un negocio",
+   "paragraphs": [
+    "Los datos estructurados, el llms.txt y el acceso de los rastreadores siguen cumpliendo una función: permiten que una IA lea de forma directa y correcta los datos de un negocio (dirección, horario, teléfono, servicios) en lugar de adivinarlos. Es una función que merece la pena, pero es distinta de ser recomendado. En este estudio, una web mejor leída no fue una web más mencionada.",
+    "Nuestra hipótesis de trabajo es que las fuentes externas a la web (fichas de reseñas y mapas, medios locales, directorios, otros sitios que mencionan el negocio) pesan mucho en que una IA nombre un negocio al responder a una petición de recomendación. Este estudio no midió esas fuentes, así que se trata de una hipótesis por comprobar, no de un resultado.",
+    "En la práctica: mantenga en orden los aspectos básicos on-site, porque hacen que lo que la IA dice de usted sea correcto, y mida si la IA realmente le menciona en lugar de deducirlo de una puntuación de legibilidad."
+   ]
+  },
+  {
+   "heading": "Nuestro conflicto de intereses y qué vamos a cambiar",
+   "paragraphs": [
+    "Nurevo desarrolla herramientas AEO, y la puntuación evaluada aquí es uno de nuestros productos. Un resultado según el cual la puntuación no predice la aparición no es el que habríamos elegido; lo publicamos porque los criterios se fijaron antes de disponer de los datos y porque los propietarios deben saber qué puede y qué no puede decirles una puntuación.",
+    "Qué hacemos al respecto: no presentamos la puntuación de legibilidad para IA como un predictor de la aparición en respuestas de IA. En su lugar, medimos la aparición directamente: el plan Pro mide con qué frecuencia Perplexity nombra o cita una web (beta), y estamos añadiendo una pequeña comprobación mensual de aparición para las webs de los planes Free y Standard. Además, estamos desarrollando una segunda versión de la puntuación que combina la visibilidad en IA medida con las señales on-site, en lugar de basarse únicamente en estas.",
+    "No se publican los nombres ni las webs de los negocios medidos."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "¿Los datos estructurados hacen que la IA mencione mi negocio?",
+   "a": "En este estudio de 62 negocios locales en Perplexity no se encontró relación entre las señales on-site, como los datos estructurados, y la frecuencia con la que se mencionaba un negocio (ρ = 0.03). Los datos estructurados ayudan a la IA a leer correctamente su información, pero por sí solos no predijeron las menciones."
+  },
+  {
+   "q": "¿Ayuda el llms.txt a que un negocio aparezca en las respuestas de IA?",
+   "a": "En este estudio no encontramos relación: ρ = −0.02 entre el componente llms.txt y la tasa de aparición (p corregido por Holm = 1.000). El estudio fue pequeño y utilizó un solo motor, así que no demuestra que el llms.txt nunca importe."
+  },
+  {
+   "q": "¿Significa esto que el AEO no sirve para nada?",
+   "a": "No. El AEO on-site hace que lo que la IA dice de un negocio sea correcto. Este estudio sugiere que no basta para ser recomendado, y que las menciones deben medirse directamente en lugar de deducirse de una puntuación de legibilidad."
+  },
+  {
+   "q": "¿Qué motor de IA se midió?",
+   "a": "Solo Perplexity, a través de su Agent API con el preset «fast», el 24 de octubre de 2026. Los resultados no son extrapolables a ChatGPT, Gemini, los AI Overviews de Google ni Copilot."
+  }
+ ],
+ "relatedHeading": "Guías relacionadas",
+ "cta": {
+  "heading": "Descubra qué lee la IA en su web",
+  "body": "El análisis gratuito muestra si la IA puede leer los datos de su negocio. No predice si la IA le mencionará: eso hay que medirlo.",
+  "label": "Hacer el análisis gratuito",
+  "href": "/check"
+ },
+ "footnote": "Estudio de Nurevo (Bestie.合同会社). Perplexity es una marca comercial de Perplexity AI, Inc. Nurevo no está afiliado a Perplexity."
+}

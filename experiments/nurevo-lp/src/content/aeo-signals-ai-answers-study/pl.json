@@ -1,0 +1,292 @@
+{
+ "title": "Czy AEO na stronie przewiduje odpowiedzi AI? Badanie 62 firm | Nurevo",
+ "description": "Oceniliśmy 62 lokalne firmy w Japonii naszym wynikiem AEO i zapytaliśmy o nie Perplexity. Wynik nie przewidywał obecności w odpowiedziach AI (ρ = 0.03).",
+ "h1": "Czy sygnały AEO na stronie przewidują obecność w odpowiedziach AI? Zbadaliśmy 62 firmy",
+ "lead": "Nie, przynajmniej nie w tym badaniu. W grupie 62 lokalnych firm w Japonii nasz wynik AEO dla strony (dane strukturalne, llms.txt, dostęp robotów AI i podobne sygnały) nie wykazał żadnego związku z tym, jak często Perplexity wymieniał lub cytował daną firmę, gdy proszono go o rekomendacje: ρ Spearmana = 0.03 (95% CI od −0.23 do 0.28, p = 0.834). Przy 62 firmach badanie mogło wiarygodnie wykryć jedynie korelacje rzędu |ρ| ≥ 0.35, więc słabszego związku nie można wykluczyć.",
+ "intro": [
+  "Opublikowano 28 października 2026 r. Dane zmierzono 24 października 2026 r. Nurevo tworzy narzędzia AEO, w tym testowany tutaj wynik; zob. sekcję „Nasz konflikt interesów” poniżej."
+ ],
+ "sections": [
+  {
+   "heading": "Podsumowanie",
+   "list": [
+    "Pytanie: czy firmy, których strony uzyskują wyższy wynik czytelności dla AI w Nurevo (od 0 do 100), częściej pojawiają się w odpowiedziach AI na pytania, które ich nie wymieniają z nazwy?",
+    "Odpowiedź: hipoteza nie znalazła potwierdzenia. Ogółem ρ = 0.03, a po uwzględnieniu branży i miasta nadal 0.03.",
+    "Ogółem firmy pojawiły się w 21.0% odpowiedzi na pytania odkrywcze; 25 z 62 pojawiło się co najmniej raz.",
+    "Po korekcie na testy wielokrotne żaden pojedynczy składnik wyniku (dane strukturalne, llms.txt, pokrycie itd.) również nie wykazał związku.",
+    "Nasz wniosek: dane strukturalne pomagają AI poprawnie odczytać informacje o firmie, ale same w sobie nie decydują o tym, czy firma zostanie wymieniona. Większe znaczenie mają inne czynniki, najpewniej m.in. to, co o firmie piszą inne serwisy. Ten ostatni punkt to hipoteza, której to badanie nie testowało."
+   ]
+  },
+  {
+   "heading": "Dlaczego przeprowadziliśmy to badanie",
+   "paragraphs": [
+    "Porady dotyczące AEO (answer engine optimization), także nasze, głoszą, że strona łatwa do odczytania przez AI (dane strukturalne schema.org, plik llms.txt, wpuszczanie robotów AI, treść renderowana po stronie serwera) pomaga firmie pojawiać się w odpowiedziach AI. Nurevo sprzedaje wynik zbudowany właśnie na tych sygnałach. Chcieliśmy rzetelnie sprawdzić, czy wynik odzwierciedla to, na czym właścicielom naprawdę zależy: wymienienie przez AI. Hipotezę, analizę i kryteria decyzji ustaliliśmy przed zebraniem jakichkolwiek odpowiedzi i zobowiązaliśmy się opublikować wynik niezależnie od tego, jaki będzie."
+   ]
+  },
+  {
+   "heading": "Metoda",
+   "list": [
+    "Próba: 72 lokalne firmy z własnymi oficjalnymi stronami, wybrane przez wyszukiwarkę (z wyłączeniem portali), z 5 branż (gabinety stomatologiczne, restauracje, salony kosmetyczne, doradcy podatkowi, noclegi) i 4 japońskich miast (Tokio, Osaka, Fukuoka, Sapporo). 10 wykluczono, ponieważ nie dało się obliczyć wyniku dla ich stron, co pozostawiło do analizy 62.",
+    "Wynik: stronę główną, robots.txt i llms.txt każdej witryny oceniono tym samym kodem, co publiczny wynik Nurevo: dane strukturalne (30 punktów), pokrycie (25), czytelność (20), llms.txt (15) i spójność (10), z bramką obejmującą dostęp robotów, blokowanie na brzegu sieci i renderowanie po stronie serwera (jej niezaliczenie ogranicza wynik do 15).",
+    "Silnik: Perplexity przez Agent API z ustawieniem „fast” (jedno wyszukiwanie w sieci, potem odpowiedź) – ten sam adapter, którego płatny plan Nurevo używa do pomiaru widoczności w AI. Tylko jeden silnik; zob. ograniczenia.",
+    "Pytania: trzy pytania „odkrywcze” na firmę, wymieniające obszar i rodzaj działalności, ale nie samą firmę (np. „Poleć dentystę w Umeda”), wspólne dla wszystkich firm z tej samej branży i obszaru, oraz jedno pytanie „imienne” o adres i godziny otwarcia firmy. Każde pytanie zadano trzykrotnie.",
+    "Miara wyniku: firma „pojawiła się” w odpowiedzi, jeśli jej nazwa wystąpiła w odpowiedzi lub jej własna domena znalazła się wśród cytowanych źródeł. Wskaźnik obecności to odsetek odpowiedzi na pytania odkrywcze, w których się pojawiła.",
+    "Weryfikacja detektora: w odpowiedziach na pytania imienne nazwę firmy wykryto w 84.3% przypadków, czyli powyżej ustalonego przez nas progu 70%, od którego uznajemy detektor za wiarygodny.",
+    "Analiza: korelacja rang Spearmana z p-wartością z testu permutacyjnego i przedziałem ufności bootstrap; korelacja cząstkowa z branżą i miastem jako efektami stałymi; test permutacyjny w obrębie warstw; oraz regresja logistyczna z efektami stałymi branży i miasta i korektą quasi-dwumianową, ponieważ powtarzane odpowiedzi na to samo pytanie nie są niezależne. Sześć testów składników skorygowano metodą Holma."
+   ],
+   "after": [
+    "Kryterium „potwierdzenia” ustalono z góry: ρ ≥ 0.3, p < 0.05, 95% CI powyżej zera oraz dodatnia skorygowana korelacja. Treści odpowiedzi nie zapisywano; rejestrowano jedynie, czy pojawiła się nazwa, czy zacytowano domenę oraz pozycję cytowania."
+   ]
+  },
+  {
+   "heading": "Wyniki",
+   "paragraphs": [
+    "Werdykt brzmi: „brak potwierdzenia”. Każdy test zależności między wynikiem a obecnością daje korelację bliską zeru:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Wynik",
+     "p-wartość"
+    ],
+    "rows": [
+     [
+      "Wynik a wskaźnik obecności (ρ Spearmana, analiza główna)",
+      "0.03 (95% CI od −0.23 do 0.28)",
+      "0.834"
+     ],
+     [
+      "To samo, skorygowane o branżę i miasto (korelacja cząstkowa)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "To samo, test permutacyjny w obrębie warstw",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Wynik a pojawienie się nazwy (pytania odkrywcze)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Wynik a cytowanie własnej strony (pytania odkrywcze)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Wynik a cytowanie własnej strony (pytania imienne)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Regresja logistyczna z efektami stałymi branży/miasta, quasi-dwumianowa: iloraz szans na +1 SD wyniku (18.81 punktu)",
+      "×1.01 (95% CI od 0.62 do 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 firmy. Pomiar w Perplexity 24 października 2026 r."
+   },
+   "after": [
+    "Największy współczynnik, 0.18 między wynikiem a cytowaniem własnej strony firmy, jest nieodróżnialny od zera (p = 0.149) i nie należy go traktować jako ustalenia."
+   ]
+  },
+  {
+   "heading": "Według przedziału wyniku",
+   "paragraphs": [
+    "Nurevo pokazuje wynik jako czerwony, żółty lub zielony. Większość stron w próbie była czerwona, a żadna nie osiągnęła zielonego, więc to badanie nie mówi nic o bardzo wysokich wynikach."
+   ],
+   "table": {
+    "head": [
+     "Przedział",
+     "Firmy",
+     "Średni wskaźnik obecności",
+     "Pojawiły się co najmniej raz"
+    ],
+    "rows": [
+     [
+      "Czerwony",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Żółty",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Zielony",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Według składników wyniku",
+   "paragraphs": [
+    "Żaden ze składników wyniku nie był powiązany z obecnością. Po korekcie Holma każda p-wartość wynosi 1.000. Były to testy eksploracyjne."
+   ],
+   "table": {
+    "head": [
+     "Składnik",
+     "ρ Spearmana ze wskaźnikiem obecności"
+    ],
+    "rows": [
+     [
+      "Dane strukturalne (schema)",
+      "0.08"
+     ],
+     [
+      "Pokrycie",
+      "0.12"
+     ],
+     [
+      "Czytelność",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (iloraz szans 1.41, 95% CI od 0.79 do 2.52)"
+     ],
+     [
+      "Spójność",
+      "0.06"
+     ],
+     [
+      "Bramka (dostęp robotów, brzeg sieci, renderowanie po stronie serwera)",
+      "61 zaliczyło: obecność 21.3%; 1 nie zaliczyła: 0%"
+     ]
+    ],
+    "caption": "Skorygowane metodą Holma p = 1.000 dla każdego składnika."
+   }
+  },
+  {
+   "heading": "Według branży i miasta",
+   "paragraphs": [
+    "Obecność różniła się bardziej w zależności od branży i miasta niż od wyniku. To dane opisowe z małych grup, a nie przetestowane różnice."
+   ],
+   "table": {
+    "head": [
+     "Grupa",
+     "Firmy",
+     "Średni wynik",
+     "Wskaźnik obecności"
+    ],
+    "rows": [
+     [
+      "Doradcy podatkowi",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Noclegi",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Gabinety stomatologiczne",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Salony kosmetyczne",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restauracje",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Wiersze branż i wiersze miast obejmują te same 62 firmy."
+   }
+  },
+  {
+   "heading": "Ograniczenia",
+   "list": [
+    "Badanie przekrojowe: jednorazowy pomiar wielu stron pokazuje współwystępowanie, a nie przyczynę. To, czy ulepszenie strony zmienia jej obecność, wymaga badania tych samych stron przed i po zmianie.",
+    "Moc statystyczna: przy 62 firmach korelacja słabsza niż około |ρ| = 0.35 często zostałaby przeoczona. Firmy z tego samego obszaru i branży dzielą te same odpowiedzi, więc efektywna próba jest jeszcze mniejsza. „Nie wykryto” nie oznacza tu „nie istnieje”.",
+    "Jeden silnik, jeden tydzień: Perplexity z ustawieniem „fast”, pomiar 24 października 2026 r. ChatGPT, Gemini, AI Overviews Google i Copilot korzystają z innych indeksów wyszukiwania i modeli; tych wyników nie można na nie przenosić.",
+    "Nieobserwowane czynniki zakłócające: nie mierzono opinii, rozpoznawalności marki, reklamy, stażu działalności ani wpisów w innych serwisach. Uwzględniono jedynie branżę i miasto.",
+    "Próba: firmy znaleziono przez wyszukiwarkę, więc przeważają te, które już łatwo znaleźć. Żadna strona nie uzyskała zielonego wyniku. 5 branż i 4 miasta w Japonii mogą nie być reprezentatywne dla innych branż, regionów czy języków."
+   ]
+  },
+  {
+   "heading": "Co to oznacza dla strony firmowej",
+   "paragraphs": [
+    "Dane strukturalne, llms.txt i dostęp robotów nadal spełniają swoje zadanie: pozwalają AI odczytać informacje o firmie (adres, godziny otwarcia, numer telefonu, usługi) bezpośrednio i poprawnie, zamiast zgadywać. Warto to robić, ale to inne zadanie niż zdobycie rekomendacji. W tym badaniu strona lepiej odczytywana nie była częściej wymieniana.",
+    "Nasza robocza hipoteza jest taka, że źródła spoza strony (wpisy w serwisach z opiniami i mapach, lokalne media, katalogi, inne serwisy wspominające firmę) mają duży wpływ na to, czy AI wymieni firmę, odpowiadając na prośbę o rekomendację. To badanie nie mierzyło tych źródeł, więc jest to hipoteza do sprawdzenia, a nie wynik.",
+    "W praktyce: dbaj o podstawy na stronie, bo dzięki nim to, co AI mówi o Twojej firmie, jest trafne, i mierz, czy AI faktycznie Cię wymienia, zamiast wnioskować o tym z wyniku czytelności."
+   ]
+  },
+  {
+   "heading": "Nasz konflikt interesów i co zmieniamy",
+   "paragraphs": [
+    "Nurevo tworzy narzędzia AEO, a testowany tutaj wynik jest jednym z naszych produktów. Wniosek, że wynik nie przewiduje obecności, nie jest tym, którego byśmy sobie życzyli. Publikujemy go, ponieważ kryteria ustalono przed zebraniem danych, a właściciele firm powinni wiedzieć, co wynik może, a czego nie może im powiedzieć.",
+    "Co z tym robimy: nie przedstawiamy wyniku czytelności dla AI jako predyktora obecności w odpowiedziach AI. Zamiast tego mierzymy obecność bezpośrednio: plan Pro mierzy, jak często Perplexity wymienia lub cytuje stronę (beta), a dla stron w planach Free i Standard dodajemy niewielką comiesięczną kontrolę obecności. Pracujemy też nad drugą wersją wyniku, która łączy zmierzoną widoczność w AI z sygnałami na stronie, zamiast opierać się wyłącznie na sygnałach na stronie.",
+    "Nazwy i strony badanych firm nie są publikowane."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Czy dane strukturalne sprawiają, że AI wymienia moją firmę?",
+   "a": "W tym badaniu 62 lokalnych firm w Perplexity nie stwierdzono związku między sygnałami na stronie, takimi jak dane strukturalne, a tym, jak często firma była wymieniana (ρ = 0.03). Dane strukturalne pomagają AI poprawnie odczytać informacje o firmie, ale same w sobie nie przewidywały jej wymienienia."
+  },
+  {
+   "q": "Czy llms.txt pomaga firmie pojawiać się w odpowiedziach AI?",
+   "a": "W tym badaniu nie znaleźliśmy związku: ρ = −0.02 między składnikiem llms.txt a wskaźnikiem obecności (p po korekcie Holma = 1.000). Badanie było niewielkie i obejmowało jeden silnik, więc nie dowodzi, że llms.txt nigdy nie ma znaczenia."
+  },
+  {
+   "q": "Czy to znaczy, że AEO nie ma sensu?",
+   "a": "Nie. AEO na stronie sprawia, że to, co AI mówi o firmie, jest trafne. Badanie sugeruje, że nie wystarcza ono do uzyskania rekomendacji, a wymienianie przez AI należy mierzyć bezpośrednio, zamiast wnioskować o nim z wyniku czytelności."
+  },
+  {
+   "q": "Który silnik AI zbadano?",
+   "a": "Wyłącznie Perplexity, przez Agent API z ustawieniem „fast”, 24 października 2026 r. Wyników nie można przenosić na ChatGPT, Gemini, AI Overviews Google ani Copilot."
+  }
+ ],
+ "relatedHeading": "Powiązane poradniki",
+ "cta": {
+  "heading": "Zobacz, co AI odczytuje z Twojej strony",
+  "body": "Bezpłatna kontrola pokazuje, czy AI potrafi odczytać informacje o Twojej firmie. Nie przewiduje, czy AI Cię wymieni – to trzeba zmierzyć.",
+  "label": "Uruchom bezpłatną kontrolę",
+  "href": "/check"
+ },
+ "footnote": "Badanie przeprowadzone przez Nurevo (Bestie.合同会社). Perplexity jest znakiem towarowym Perplexity AI, Inc. Nurevo nie jest powiązane z Perplexity."
+}
