@@ -1,0 +1,292 @@
+{
+ "title": "Ennustaako AEO tekoälyvastauksia? Tutkimus 62 yrityksestä | Nurevo",
+ "description": "Pisteytimme 62 japanilaista paikallisyritystä AEO-pisteillämme ja kysyimme niistä Perplexityltä. Pisteet eivät ennustaneet näkymistä tekoälyvastauksissa (ρ = 0.03).",
+ "h1": "Ennustavatko sivuston AEO-signaalit näkymistä tekoälyvastauksissa? Mittasimme 62 yritystä",
+ "lead": "Eivät ennustaneet, ainakaan tässä tutkimuksessa. 62 japanilaisen paikallisyrityksen joukossa sivustokohtaiset AEO-pisteemme (rakenteinen data, llms.txt, indeksoijien pääsy ja vastaavat signaalit) eivät olleet yhteydessä siihen, kuinka usein Perplexity mainitsi yrityksen tai viittasi siihen, kun siltä pyydettiin suosituksia: Spearmanin ρ = 0.03 (95% LV −0.23–0.28, p = 0.834). 62 yrityksen aineistolla tutkimus pystyi luotettavasti havaitsemaan vain noin |ρ| ≥ 0.35 suuruiset korrelaatiot, joten heikompaa yhteyttä ei voida sulkea pois.",
+ "intro": [
+  "Julkaistu 28.10.2026. Data mitattu 24.10.2026. Nurevo kehittää AEO-työkaluja, mukaan lukien tässä testatut pisteet; katso alta kohta ”Eturistiriitamme”."
+ ],
+ "sections": [
+  {
+   "heading": "Yhteenveto",
+   "list": [
+    "Kysymys: näkyvätkö yritykset, joiden verkkosivustot saavat korkeammat Nurevon tekoälyluettavuuspisteet (0–100), useammin tekoälyvastauksissa kysymyksiin, joissa niitä ei mainita nimeltä?",
+    "Vastaus: ei saa tukea. ρ = 0.03 kokonaisuudessaan ja edelleen 0.03 toimialalla ja kaupungilla vakioituna.",
+    "Kaikkiaan yritykset näkyivät 21.0%:ssa hakukysymysten vastauksista; 62 yrityksestä 25 näkyi vähintään kerran.",
+    "Mikään yksittäinen pisteiden osa-alue (rakenteinen data, llms.txt, kattavuus jne.) ei myöskään ollut yhteydessä näkymiseen monitestauskorjauksen jälkeen.",
+    "Johtopäätöksemme: rakenteinen data auttaa tekoälyä lukemaan yrityksen tiedot oikein, mutta se ei yksinään ratkaise, mainitaanko yritys. Muut tekijät painavat enemmän – hyvin todennäköisesti muun muassa se, mitä muut sivustot kertovat yrityksestä. Viimeinen kohta on hypoteesi, jota tämä tutkimus ei testannut."
+   ]
+  },
+  {
+   "heading": "Miksi teimme tämän tutkimuksen",
+   "paragraphs": [
+    "AEO-neuvot (answer engine optimization), myös omamme, kertovat, että kun verkkosivusto on tekoälylle helppo lukea (schema.org-rakenteinen data, llms.txt-tiedosto, tekoälyindeksoijien päästäminen sivustolle ja palvelimella renderöity sisältö), yritys näkyy todennäköisemmin tekoälyvastauksissa. Nurevo myy pisteitä, jotka perustuvat juuri näihin signaaleihin. Halusimme rehellistä näyttöä siitä, seuraavatko pisteet sitä, mikä yrittäjille oikeasti on tärkeää: että tekoäly mainitsee heidät. Lukitsimme hypoteesin, analyysin ja päätöskriteerit ennen kuin keräsimme yhtään vastausta, ja sitouduimme julkaisemaan tuloksen sen suunnasta riippumatta."
+   ]
+  },
+  {
+   "heading": "Menetelmä",
+   "list": [
+    "Otos: 72 paikallisyritystä, joilla on oma virallinen verkkosivusto, valittuina verkkohaulla (portaalisivustot poissuljettu) 5 toimialalta (hammaslääkäriasemat, ravintolat, kauneushoitolat, veroneuvojat, majoitus) ja 4 japanilaisesta kaupungista (Tokio, Osaka, Fukuoka, Sapporo). 10 suljettiin pois, koska niiden sivustolle ei voitu laskea pisteitä, joten analyysiin jäi 62.",
+    "Pisteet: kunkin sivuston etusivu, robots.txt ja llms.txt pisteytettiin samalla koodilla kuin Nurevon julkiset pisteet: rakenteinen data (30 pistettä), kattavuus (25), luettavuus (20), llms.txt (15) ja johdonmukaisuus (10), lisäksi kynnysehto indeksoijien pääsylle, edge-estolle ja palvelinrenderöinnille (jos sivusto ei läpäise sitä, pisteet ovat enintään 15).",
+    "Moottori: Perplexity sen Agent API:n kautta ”fast”-esiasetuksella (yksi verkkohaku, sitten vastaus) – sama sovitin, jota Nurevon maksullinen tilaus käyttää tekoälynäkyvyyden mittaamiseen. Vain yksi moottori; katso rajoitukset.",
+    "Kysymykset: kolme ”hakukysymystä” yritystä kohden, joissa mainitaan alue ja yrityksen tyyppi mutta ei itse yritystä (esimerkiksi ”Suosittele hammaslääkäriä Umedassa”) ja jotka ovat yhteisiä kaikille saman toimialan ja alueen yrityksille, sekä yksi ”nimetty” kysymys yrityksen osoitteesta ja aukioloajoista. Jokainen kysymys esitettiin kolme kertaa.",
+    "Tulosmuuttuja: yritys ”näkyi” vastauksessa, jos sen nimi esiintyi vastauksessa tai sen oma verkkotunnus oli mainittujen lähteiden joukossa. Näkyvyysosuus on niiden hakuvastausten osuus, joissa yritys näkyi.",
+    "Tunnistimen tarkistus: nimettyjen kysymysten vastauksissa yrityksen nimi tunnistettiin 84.3%:ssa tapauksista, mikä ylittää 70%:n kynnyksen, jonka asetimme tunnistimen luotettavuudelle.",
+    "Analyysi: Spearmanin järjestyskorrelaatio permutaatio-p-arvolla ja bootstrap-luottamusvälillä; osittaiskorrelaatio toimiala ja kaupunki kiinteinä vaikutuksina; permutaatiotesti ositteiden sisällä; sekä logistinen regressio toimialan ja kaupungin kiinteillä vaikutuksilla ja kvasibinomiaalisella korjauksella, koska saman kysymyksen toistetut vastaukset eivät ole toisistaan riippumattomia. Kuuteen osa-aluetestiin on sovellettu Holmin korjausta."
+   ],
+   "after": [
+    "”Saa tukea” -kriteeri määritettiin etukäteen: ρ ≥ 0.3, p < 0.05, 95% LV kokonaan nollan yläpuolella ja positiivinen vakioitu korrelaatio. Vastausten tekstiä ei tallennettu; ainoastaan se, esiintyikö nimi, viitattiinko verkkotunnukseen ja viittauksen sijainti."
+   ]
+  },
+  {
+   "heading": "Tulokset",
+   "paragraphs": [
+    "Johtopäätös on ”ei saa tukea”. Jokainen pisteiden ja näkymisen välinen testi antaa lähes nollan korrelaation:"
+   ],
+   "table": {
+    "head": [
+     "Testi",
+     "Tulos",
+     "p-arvo"
+    ],
+    "rows": [
+     [
+      "Pisteet vs. näkyvyysosuus (Spearmanin ρ, ensisijainen)",
+      "0.03 (95% LV −0.23–0.28)",
+      "0.834"
+     ],
+     [
+      "Sama, vakioitu toimialalla ja kaupungilla (osittaiskorrelaatio)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Sama, permutaatiotesti ositteiden sisällä",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Pisteet vs. nimen esiintyminen (hakukysymykset)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Pisteet vs. viittaus omaan sivustoon (hakukysymykset)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Pisteet vs. viittaus omaan sivustoon (nimetyt kysymykset)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logistinen regressio toimialan/kaupungin kiinteillä vaikutuksilla, kvasibinomiaalinen: vetosuhde pisteiden +1 SD:tä kohden (18.81 pistettä)",
+      "×1.01 (95% LV 0.62–1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 yritystä. Mitattu Perplexityssä 24.10.2026."
+   },
+   "after": [
+    "Suurinta kerrointa, 0.18 pisteiden ja yrityksen omaan sivustoon viittaamisen välillä, ei voida erottaa nollasta (p = 0.149), eikä sitä pidä tulkita löydökseksi."
+   ]
+  },
+  {
+   "heading": "Pistealueittain",
+   "paragraphs": [
+    "Nurevo näyttää pisteet punaisena, keltaisena tai vihreänä. Suurin osa otoksen sivustoista oli punaisia, eikä yksikään yltänyt vihreään, joten tämä tutkimus ei kerro mitään erittäin korkeista pisteistä."
+   ],
+   "table": {
+    "head": [
+     "Alue",
+     "Yrityksiä",
+     "Keskim. näkyvyysosuus",
+     "Näkyi vähintään kerran"
+    ],
+    "rows": [
+     [
+      "Punainen",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Keltainen",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Vihreä",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Pisteiden osa-alueittain",
+   "paragraphs": [
+    "Mikään pisteiden osa-alue ei ollut yhteydessä näkymiseen. Holmin korjauksen jälkeen jokainen p-arvo on 1.000. Nämä testit olivat eksploratiivisia."
+   ],
+   "table": {
+    "head": [
+     "Osa-alue",
+     "Spearmanin ρ näkyvyysosuuden kanssa"
+    ],
+    "rows": [
+     [
+      "Rakenteinen data (schema)",
+      "0.08"
+     ],
+     [
+      "Kattavuus",
+      "0.12"
+     ],
+     [
+      "Luettavuus",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (vetosuhde 1.41, 95% LV 0.79–2.52)"
+     ],
+     [
+      "Johdonmukaisuus",
+      "0.06"
+     ],
+     [
+      "Kynnysehto (indeksoijien pääsy, edge, palvelinrenderöinti)",
+      "61 läpäisi: näkyvyys 21.3%; 1 hylättiin: 0%"
+     ]
+    ],
+    "caption": "Holmin korjattu p = 1.000 jokaiselle osa-alueelle."
+   }
+  },
+  {
+   "heading": "Toimialoittain ja kaupungeittain",
+   "paragraphs": [
+    "Näkyminen vaihteli enemmän toimialan ja kaupungin kuin pisteiden mukaan. Luvut ovat kuvailevia ja perustuvat pieniin ryhmiin; eroja ei ole testattu."
+   ],
+   "table": {
+    "head": [
+     "Ryhmä",
+     "Yrityksiä",
+     "Keskim. pisteet",
+     "Näkyvyysosuus"
+    ],
+    "rows": [
+     [
+      "Veroneuvojat",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Majoitus",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Hammaslääkäriasemat",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Kauneushoitolat",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Ravintolat",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Toimialarivit ja kaupunkirivit kattavat kumpikin samat 62 yritystä."
+   }
+  },
+  {
+   "heading": "Rajoitukset",
+   "list": [
+    "Poikkileikkausasetelma: yksi mittaus monesta sivustosta osoittaa yhteyden, ei syy-seuraussuhdetta. Sen selvittäminen, muuttaako sivuston parantaminen sen näkymistä, vaatii samojen sivustojen ennen–jälkeen-tutkimuksen.",
+    "Tilastollinen voima: 62 yrityksen aineistolla noin |ρ| = 0.35 heikompi korrelaatio jäisi usein huomaamatta. Saman alueen ja toimialan yritykset jakavat samat vastaukset, joten efektiivinen otos on vielä pienempi. ”Ei havaittu” ei tässä tarkoita ”ei ole olemassa”.",
+    "Yksi moottori, yksi viikko: Perplexity ”fast”-esiasetuksella, mitattu 24.10.2026. ChatGPT, Gemini, Googlen AI Overviews ja Copilot käyttävät eri hakuindeksejä ja malleja; tulokset eivät ole siirrettävissä niihin.",
+    "Havaitsemattomat sekoittavat tekijät: arvosteluja, brändin tunnettuutta, mainontaa, toimintavuosia ja listauksia muilla sivustoilla ei mitattu. Vakioinnissa huomioitiin vain toimiala ja kaupunki.",
+    "Otos: yritykset löydettiin verkkohaulla, joten otos painottuu yrityksiin, jotka ovat jo valmiiksi helposti löydettävissä. Yksikään sivusto ei saanut vihreää. 5 toimialaa ja 4 kaupunkia Japanissa eivät välttämättä edusta muita toimialoja, alueita tai kieliä."
+   ]
+  },
+  {
+   "heading": "Mitä tämä tarkoittaa yrityksen verkkosivustolle",
+   "paragraphs": [
+    "Rakenteinen data, llms.txt ja indeksoijien pääsy ovat edelleen hyödyllisiä: niiden avulla tekoäly lukee yrityksen tiedot (osoite, aukioloajat, puhelinnumero, palvelut) suoraan ja oikein arvailun sijaan. Se on tekemisen arvoista, mutta eri asia kuin suositelluksi tuleminen. Tässä tutkimuksessa paremmin luettavaa sivustoa ei mainittu useammin.",
+    "Työhypoteesimme on, että verkkosivuston ulkopuoliset lähteet (arvostelu- ja karttapalvelujen listaukset, paikallinen media, hakemistot ja muut yrityksen mainitsevat sivustot) painavat paljon, kun tekoäly päättää, mainitseeko se yrityksen vastatessaan suosituskysymykseen. Tämä tutkimus ei mitannut näitä lähteitä, joten kyseessä on testattava hypoteesi, ei tulos.",
+    "Käytännössä: pidä oman sivustosi perusasiat kunnossa, koska ne tekevät siitä, mitä tekoäly sinusta kertoo, oikeaa – ja mittaa, mainitseeko tekoäly sinut todella, sen sijaan että päättelisit sen luettavuuspisteistä."
+   ]
+  },
+  {
+   "heading": "Eturistiriitamme ja mitä muutamme",
+   "paragraphs": [
+    "Nurevo kehittää AEO-työkaluja, ja tässä testatut pisteet ovat yksi tuotteistamme. Tulos, jonka mukaan pisteet eivät ennusta näkymistä, ei ole sellainen, jonka olisimme itse valinneet. Julkaisemme sen, koska kriteerit asetettiin ennen datan keräämistä ja koska yrittäjien on hyvä tietää, mitä pisteet voivat kertoa ja mitä eivät.",
+    "Mitä teemme asialle: emme esitä tekoälyluettavuuspisteitä tekoälyvastauksissa näkymisen ennustajana. Sen sijaan mittaamme näkymistä suoraan: Pro-tilaus mittaa, kuinka usein Perplexity mainitsee sivuston tai viittaa siihen (beta), ja lisäämme Free- ja Standard-sivustoille pienen kuukausittaisen näkyvyystarkistuksen. Kehitämme myös pisteiden toista versiota, joka yhdistää mitatun tekoälynäkyvyyden sivuston signaaleihin sen sijaan, että se nojaisi pelkästään sivuston signaaleihin.",
+    "Mitattujen yritysten nimiä ja verkkosivustoja ei julkaista."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Saako rakenteinen data tekoälyn mainitsemaan yritykseni?",
+   "a": "Tässä 62 paikallisyrityksen Perplexity-tutkimuksessa sivuston signaalien, kuten rakenteisen datan, ja yrityksen mainintojen määrän välillä ei havaittu yhteyttä (ρ = 0.03). Rakenteinen data auttaa tekoälyä lukemaan tietosi oikein, mutta se ei yksinään ennustanut mainituksi tulemista."
+  },
+  {
+   "q": "Auttaako llms.txt yritystä näkymään tekoälyvastauksissa?",
+   "a": "Emme havainneet yhteyttä tässä tutkimuksessa: llms.txt-osa-alueen ja näkyvyysosuuden välillä ρ = −0.02 (Holmin korjattu p = 1.000). Tutkimus oli pieni ja käytti yhtä moottoria, joten se ei todista, ettei llms.txt:llä olisi koskaan merkitystä."
+  },
+  {
+   "q": "Tarkoittaako tämä, että AEO on hyödytöntä?",
+   "a": "Ei. Sivuston AEO tekee siitä, mitä tekoäly yrityksestä kertoo, oikeaa. Tutkimuksen perusteella se ei kuitenkaan riitä suositelluksi tulemiseen, ja mainituksi tulemista kannattaa mitata suoraan sen sijaan, että sitä pääteltäisiin luettavuuspisteistä."
+  },
+  {
+   "q": "Mitä tekoälymoottoria mitattiin?",
+   "a": "Vain Perplexityä sen Agent API:n kautta ”fast”-esiasetuksella 24.10.2026. Tulokset eivät ole siirrettävissä ChatGPT:hen, Geminiin, Googlen AI Overviewsiin tai Copilotiin."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso, mitä tekoäly lukee sivustoltasi",
+  "body": "Maksuton tarkistus näyttää, pystyykö tekoäly lukemaan yrityksesi tiedot. Se ei ennusta, mainitseeko tekoäly sinut – se täytyy mitata.",
+  "label": "Tee maksuton tarkistus",
+  "href": "/check"
+ },
+ "footnote": "Tutkimuksen on tehnyt Nurevo (Bestie.合同会社). Perplexity on Perplexity AI, Inc:n tavaramerkki. Nurevo ei ole sidoksissa Perplexityyn."
+}

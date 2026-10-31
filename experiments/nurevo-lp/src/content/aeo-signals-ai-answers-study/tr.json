@@ -1,0 +1,292 @@
+{
+ "title": "Site İçi AEO, Yapay Zekâ Yanıtlarını Öngörür mü? 62 İşletme | Nurevo",
+ "description": "Japonya'daki 62 yerel işletmeyi AEO puanımızla değerlendirip Perplexity'ye sorduk. Puan, yapay zekâ yanıtlarında yer almayı öngörmedi (ρ = 0.03).",
+ "h1": "Site içi AEO sinyalleri, yapay zekâ yanıtlarında yer almayı öngörür mü? 62 işletmeyi ölçtük",
+ "lead": "Bu çalışmada hayır. Japonya'daki 62 yerel işletmede, site içi AEO puanımız (yapılandırılmış veri, llms.txt, tarayıcı erişimi ve benzeri sinyaller) ile Perplexity'nin öneri istendiğinde bir işletmenin adını ne sıklıkla andığı veya onu ne sıklıkla kaynak gösterdiği arasında hiçbir ilişki görülmedi: Spearman ρ = 0.03 (%95 GA −0.23 ile 0.28 arası, p = 0.834). 62 işletmeyle bu çalışma yalnızca yaklaşık |ρ| ≥ 0.35 düzeyindeki korelasyonları güvenilir biçimde saptayabildiğinden, daha zayıf bir ilişki olasılığı dışlanamaz.",
+ "intro": [
+  "Yayın tarihi: 28 Ekim 2026. Ölçüm tarihi: 24 Ekim 2026. Nurevo, burada test edilen puan da dahil olmak üzere AEO araçları geliştirmektedir; aşağıdaki “Çıkar çatışmamız” bölümüne bakın."
+ ],
+ "sections": [
+  {
+   "heading": "Özet",
+   "list": [
+    "Soru: Web siteleri Nurevo'nun yapay zekâ okunabilirlik puanında (0–100) daha yüksek puan alan işletmeler, kendilerinin adını anmayan sorulara verilen yapay zekâ yanıtlarında daha sık yer alıyor mu?",
+    "Yanıt: Desteklenmedi. Genel olarak ρ = 0.03; sektör ve şehir için düzeltme yapıldıktan sonra da 0.03.",
+    "Genel olarak işletmeler, keşif sorularına verilen yanıtların %21.0'ında yer aldı; 62 işletmenin 25'i en az bir kez yer aldı.",
+    "Çoklu test düzeltmesinden sonra puanın hiçbir bileşeni (yapılandırılmış veri, llms.txt, kapsam vb.) de bir ilişki göstermedi.",
+    "Çıkardığımız sonuç: Yapılandırılmış veri, yapay zekânın bir işletmenin bilgilerini doğru okumasına yardımcı olur; ancak tek başına işletmenin anılıp anılmayacağını belirlemez. Başka etkenler daha önemlidir ve bunlar arasında büyük olasılıkla diğer sitelerin işletme hakkında söyledikleri de vardır. Bu son nokta, bu çalışmanın test etmediği bir hipotezdir."
+   ]
+  },
+  {
+   "heading": "Bu çalışmayı neden yaptık",
+   "paragraphs": [
+    "Bizimkiler de dahil olmak üzere AEO (answer engine optimization, yanıt motoru optimizasyonu) tavsiyeleri, bir web sitesini yapay zekânın kolayca okuyabileceği hâle getirmenin (schema.org yapılandırılmış verisi, llms.txt dosyası, yapay zekâ tarayıcılarına izin vermek, sunucu tarafında oluşturulan içerik) işletmenin yapay zekâ yanıtlarında görünmesine yardımcı olduğunu söyler. Nurevo tam da bu sinyallere dayanan bir puan sunmaktadır. Bu puanın, işletme sahiplerinin gerçekten önemsediği şeyi, yani yapay zekâ tarafından adının anılmasını yansıtıp yansıtmadığına dair dürüst bir kanıt istedik. Hipotezi, analizi ve karar ölçütlerini herhangi bir yanıt toplamadan önce sabitledik ve sonuç ne olursa olsun yayımlamayı taahhüt ettik."
+   ]
+  },
+  {
+   "heading": "Yöntem",
+   "list": [
+    "Örneklem: Web araması ile seçilen (portal siteler hariç), kendi resmî web sitesi olan 72 yerel işletme; 5 sektör (diş klinikleri, restoranlar, güzellik salonları, mali müşavirler, konaklama) ve 4 Japon şehri (Tokyo, Osaka, Fukuoka, Sapporo). Sitelerinin puanı hesaplanamadığı için 10 işletme hariç tutuldu ve analize 62 işletme kaldı.",
+    "Puan: Her sitenin ana sayfası, robots.txt ve llms.txt dosyası, Nurevo'nun herkese açık puanıyla aynı kodla puanlandı: yapılandırılmış veri (30 puan), kapsam (25), okunabilirlik (20), llms.txt (15) ve tutarlılık (10); ayrıca tarayıcı erişimi, edge düzeyinde engelleme ve sunucu tarafı oluşturma için bir eşik kontrolü uygulandı (bu kontrolü geçemeyen sitenin puanı en fazla 15 olur).",
+    "Motor: Perplexity, Agent API üzerinden “fast” ön ayarıyla (bir web araması, ardından yanıt); Nurevo'nun ücretli planının yapay zekâ görünürlüğü için kullandığı adaptörün aynısı. Yalnızca bir motor; sınırlamalara bakın.",
+    "Sorular: Her işletme için bölgeyi ve işletme türünü belirten ancak işletmenin adını anmayan üç “keşif” sorusu (örneğin “Umeda'da bir diş hekimi önerir misiniz?”); bu sorular aynı bölgedeki aynı sektörden tüm işletmeler için ortaktır. Buna ek olarak, işletmenin adresini ve çalışma saatlerini soran bir “adlı” soru. Her soru üç kez soruldu.",
+    "Sonuç ölçütü: Bir işletmenin adı yanıtta geçiyorsa veya kendi alan adı kaynak gösterilenler arasındaysa, işletme o yanıtta “yer almış” sayıldı. Yer alma oranı, işletmenin yer aldığı keşif yanıtlarının payıdır.",
+    "Algılayıcı kontrolü: Adlı sorulara verilen yanıtlarda işletmenin adı vakaların %84.3'ünde algılandı; bu, algılayıcıya güvenmek için belirlediğimiz %70 eşiğinin üzerindedir.",
+    "Analiz: Permütasyon p-değeri ve bootstrap güven aralığıyla Spearman sıra korelasyonu; sektör ve şehrin sabit etki olarak alındığı kısmi korelasyon; tabakalar içinde permütasyon testi; ve aynı soruya verilen tekrarlı yanıtlar bağımsız olmadığından sektör ve şehir sabit etkili, quasi-binomial düzeltmeli lojistik regresyon. Altı bileşen testine Holm düzeltmesi uygulandı."
+   ],
+   "after": [
+    "“Desteklendi” ölçütü önceden belirlendi: ρ ≥ 0.3, p < 0.05, %95 GA'nın sıfırın üzerinde olması ve düzeltilmiş korelasyonun pozitif olması. Yanıt metinleri saklanmadı; yalnızca adın geçip geçmediği, alan adının kaynak gösterilip gösterilmediği ve kaynağın sırası kaydedildi."
+   ]
+  },
+  {
+   "heading": "Sonuçlar",
+   "paragraphs": [
+    "Karar: “desteklenmedi”. Puanın yer almayla karşılaştırıldığı her test, sıfıra yakın bir korelasyon veriyor:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Sonuç",
+     "p-değeri"
+    ],
+    "rows": [
+     [
+      "Puan ve yer alma oranı (Spearman ρ, birincil)",
+      "0.03 (%95 GA −0.23 ile 0.28 arası)",
+      "0.834"
+     ],
+     [
+      "Aynısı, sektör ve şehir için düzeltilmiş (kısmi korelasyon)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Aynısı, tabakalar içinde permütasyon testi",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Puan ve adın geçmesi (keşif soruları)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Puan ve kendi sitesinin kaynak gösterilmesi (keşif soruları)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Puan ve kendi sitesinin kaynak gösterilmesi (adlı sorular)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Sektör/şehir sabit etkili, quasi-binomial lojistik regresyon: puandaki +1 SS (18.81 puan) başına olasılık oranı",
+      "×1.01 (%95 GA 0.62 ile 1.64 arası)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 işletme. 24 Ekim 2026'da Perplexity üzerinde ölçülmüştür."
+   },
+   "after": [
+    "En büyük katsayı olan, puan ile işletmenin kendi sitesinin kaynak gösterilmesi arasındaki 0.18, sıfırdan ayırt edilemez (p = 0.149) ve bir bulgu olarak yorumlanmamalıdır."
+   ]
+  },
+  {
+   "heading": "Puan aralığına göre",
+   "paragraphs": [
+    "Nurevo puanı kırmızı, sarı veya yeşil olarak gösterir. Örneklemdeki sitelerin çoğu kırmızıydı ve hiçbiri yeşile ulaşmadı; dolayısıyla bu çalışma çok yüksek puanlar hakkında hiçbir şey söylemez."
+   ],
+   "table": {
+    "head": [
+     "Aralık",
+     "İşletme",
+     "Ortalama yer alma oranı",
+     "En az bir kez yer alan"
+    ],
+    "rows": [
+     [
+      "Kırmızı",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Sarı",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Yeşil",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Puan bileşenine göre",
+   "paragraphs": [
+    "Puanın hiçbir bileşeni yer almayla ilişkili değildi. Holm düzeltmesinden sonra tüm p-değerleri 1.000'dir. Bu testler keşif amaçlıydı."
+   ],
+   "table": {
+    "head": [
+     "Bileşen",
+     "Yer alma oranıyla Spearman ρ"
+    ],
+    "rows": [
+     [
+      "Yapılandırılmış veri (schema)",
+      "0.08"
+     ],
+     [
+      "Kapsam",
+      "0.12"
+     ],
+     [
+      "Okunabilirlik",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (olasılık oranı 1.41, %95 GA 0.79 ile 2.52 arası)"
+     ],
+     [
+      "Tutarlılık",
+      "0.06"
+     ],
+     [
+      "Eşik kontrolü (tarayıcı erişimi, edge, sunucu tarafı oluşturma)",
+      "61 geçti: %21.3 yer alma; 1 geçemedi: %0"
+     ]
+    ],
+    "caption": "Tüm bileşenler için Holm düzeltmeli p = 1.000."
+   }
+  },
+  {
+   "heading": "Sektöre ve şehre göre",
+   "paragraphs": [
+    "Yer alma, puandan çok sektöre ve şehre göre değişti. Bunlar küçük gruplardan elde edilen betimsel rakamlardır; test edilmiş farklar değildir."
+   ],
+   "table": {
+    "head": [
+     "Grup",
+     "İşletme",
+     "Ortalama puan",
+     "Yer alma oranı"
+    ],
+    "rows": [
+     [
+      "Mali müşavirler",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Konaklama",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Diş klinikleri",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Güzellik salonları",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restoranlar",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokyo",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Sektör satırları ve şehir satırları ayrı ayrı aynı 62 işletmeyi kapsar."
+   }
+  },
+  {
+   "heading": "Sınırlamalar",
+   "list": [
+    "Kesitsel tasarım: Çok sayıda sitenin tek seferlik ölçümü nedenselliği değil, ilişkiyi gösterir. Bir siteyi iyileştirmenin yer almayı değiştirip değiştirmediğini anlamak için aynı sitelerde önce-sonra çalışması gerekir.",
+    "İstatistiksel güç: 62 işletmeyle, yaklaşık |ρ| = 0.35'ten zayıf bir korelasyon çoğu zaman gözden kaçar. Aynı bölgedeki ve aynı sektördeki işletmeler aynı yanıtları paylaştığından etkin örneklem daha da küçüktür. Buradaki “bulunamadı”, “yoktur” anlamına gelmez.",
+    "Tek motor, tek hafta: “fast” ön ayarlı Perplexity, 24 Ekim 2026'da ölçüldü. ChatGPT, Gemini, Google'ın AI Overviews özelliği ve Copilot farklı arama dizinleri ve modeller kullanır; bu sonuçlar onlara genellenemez.",
+    "Gözlemlenmeyen karıştırıcı etkenler: Yorumlar, marka bilinirliği, reklam, faaliyet süresi ve diğer sitelerdeki listelemeler ölçülmedi. Yalnızca sektör ve şehir için düzeltme yapıldı.",
+    "Örneklem: İşletmeler web aramasıyla bulunduğundan örneklem, zaten kolayca bulunabilen işletmelere doğru kaymıştır. Hiçbir site yeşil puan almadı. Japonya'daki 5 sektör ve 4 şehir, diğer sektörleri, bölgeleri veya dilleri temsil etmeyebilir."
+   ]
+  },
+  {
+   "heading": "İşletme web siteleri için anlamı",
+   "paragraphs": [
+    "Yapılandırılmış veri, llms.txt ve tarayıcı erişimi hâlâ bir işe yarar: Yapay zekânın bir işletmenin bilgilerini (adres, çalışma saatleri, telefon numarası, hizmetler) tahmin etmek yerine doğrudan ve doğru biçimde okumasını sağlar. Bu yapılmaya değer bir iştir; ancak önerilmekten farklı bir iştir. Bu çalışmada, daha iyi okunan bir site daha sık anılan bir site değildi.",
+    "Çalışma hipotezimiz, web sitesi dışındaki kaynakların (yorum ve harita listelemeleri, yerel medya, rehberler, işletmeden bahseden diğer siteler) bir yapay zekânın öneri sorusunu yanıtlarken bir işletmenin adını anıp anmamasında büyük ağırlık taşıdığıdır. Bu çalışma bu kaynakları ölçmediği için bu bir sonuç değil, test edilmesi gereken bir hipotezdir.",
+    "Uygulamada: Site içi temel unsurları düzenli tutun, çünkü bunlar yapay zekânın sizin hakkınızda söylediklerini doğru kılar; yapay zekânın sizden gerçekten bahsedip bahsetmediğini ise bir okunabilirlik puanından çıkarmak yerine ölçün."
+   ]
+  },
+  {
+   "heading": "Çıkar çatışmamız ve neleri değiştiriyoruz",
+   "paragraphs": [
+    "Nurevo AEO araçları geliştirmektedir ve burada test edilen puan ürünlerimizden biridir. Puanın yer almayı öngörmediği sonucu bizim tercih edeceğimiz bir sonuç değildi; bunu yayımlıyoruz, çünkü ölçütler veriler gelmeden önce belirlenmişti ve işletme sahiplerinin bir puanın neyi söyleyip neyi söyleyemeyeceğini bilmesi gerekir.",
+    "Bu konuda yaptıklarımız: Yapay zekâ okunabilirlik puanını, yapay zekâ yanıtlarında yer almanın bir göstergesi olarak sunmuyoruz. Bunun yerine yer almayı doğrudan ölçüyoruz: Pro planı, Perplexity'nin bir sitenin adını ne sıklıkla andığını veya onu ne sıklıkla kaynak gösterdiğini ölçer (beta) ve Free ile Standard planlarındaki siteler için küçük bir aylık yer alma kontrolü ekliyoruz. Ayrıca yalnızca site içi sinyallere dayanmak yerine ölçülen yapay zekâ görünürlüğünü site içi sinyallerle birleştiren puanın ikinci sürümünü geliştiriyoruz.",
+    "Ölçülen işletmelerin adları ve web siteleri yayımlanmamaktadır."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Yapılandırılmış veri, yapay zekânın işletmemden bahsetmesini sağlar mı?",
+   "a": "Perplexity üzerinde 62 yerel işletmeyle yapılan bu çalışmada, yapılandırılmış veri gibi site içi sinyaller ile bir işletmenin ne sıklıkla anıldığı arasında bir ilişki bulunmadı (ρ = 0.03). Yapılandırılmış veri, yapay zekânın bilgilerinizi doğru okumasına yardımcı olur; ancak tek başına anılmayı öngörmedi."
+  },
+  {
+   "q": "llms.txt, bir işletmenin yapay zekâ yanıtlarında yer almasına yardımcı olur mu?",
+   "a": "Bu çalışmada bir ilişki bulamadık: llms.txt bileşeni ile yer alma oranı arasında ρ = −0.02 (Holm düzeltmeli p = 1.000). Çalışma küçüktü ve tek bir motor kullanıldı; bu nedenle bu sonuç, llms.txt'nin hiçbir zaman önemli olmadığının kanıtı değildir."
+  },
+  {
+   "q": "Bu, AEO'nun anlamsız olduğu anlamına mı geliyor?",
+   "a": "Hayır. Site içi AEO, yapay zekânın bir işletme hakkında söylediklerini doğru kılar. Bu çalışma, bunun önerilmek için yeterli olmadığını ve anılmanın bir okunabilirlik puanından çıkarılmak yerine doğrudan ölçülmesi gerektiğini düşündürmektedir."
+  },
+  {
+   "q": "Hangi yapay zekâ motoru ölçüldü?",
+   "a": "Yalnızca Perplexity; Agent API üzerinden “fast” ön ayarıyla, 24 Ekim 2026'da. Sonuçlar ChatGPT, Gemini, Google'ın AI Overviews özelliği veya Copilot için geçerli değildir."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Yapay zekânın sitenizden neler okuduğunu görün",
+  "body": "Ücretsiz kontrol, yapay zekânın işletmenizin bilgilerini okuyup okuyamadığını gösterir. Yapay zekânın sizden bahsedip bahsetmeyeceğini öngörmez; bunun ölçülmesi gerekir.",
+  "label": "Ücretsiz kontrolü başlatın",
+  "href": "/check"
+ },
+ "footnote": "Çalışma Nurevo (Bestie.合同会社) tarafından yapılmıştır. Perplexity, Perplexity AI, Inc.'in ticari markasıdır. Nurevo'nun Perplexity ile herhangi bir bağlantısı yoktur."
+}

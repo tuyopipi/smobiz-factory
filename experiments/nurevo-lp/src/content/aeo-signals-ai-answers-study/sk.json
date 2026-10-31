@@ -1,0 +1,292 @@
+{
+ "title": "Predpovedá AEO na webe odpovede AI? Štúdia 62 firiem | Nurevo",
+ "description": "Ohodnotili sme 62 miestnych firiem v Japonsku naším skóre AEO a pýtali sa na ne Perplexity. Skóre nepredpovedalo výskyt v odpovediach AI (ρ = 0.03).",
+ "h1": "Predpovedajú signály AEO na webe výskyt v odpovediach AI? Zmerali sme 62 firiem",
+ "lead": "Nie, aspoň nie v tejto štúdii. Pri 62 miestnych firmách v Japonsku nevykázalo naše skóre AEO webu (štruktúrované údaje, llms.txt, prístup AI crawlerov a podobné signály) žiadny vzťah k tomu, ako často Perplexity firmu menoval alebo citoval, keď bol požiadaný o odporúčanie: Spearmanovo ρ = 0.03 (95% CI −0.23 až 0.28, p = 0.834). Pri 62 firmách mohla štúdia spoľahlivo odhaliť iba korelácie približne |ρ| ≥ 0.35, slabší vzťah preto nemožno vylúčiť.",
+ "intro": [
+  "Zverejnené 28. októbra 2026. Údaje namerané 24. októbra 2026. Nurevo vyvíja nástroje AEO vrátane tu testovaného skóre; pozrite si časť „Náš konflikt záujmov“ nižšie."
+ ],
+ "sections": [
+  {
+   "heading": "Zhrnutie",
+   "list": [
+    "Otázka: objavujú sa firmy, ktorých weby dosahujú vyššie skóre čitateľnosti pre AI od Nurevo (0 až 100), častejšie v odpovediach AI na otázky, ktoré ich nemenujú?",
+    "Odpoveď: nepotvrdené. Celkovo ρ = 0.03 a po zohľadnení odvetvia a mesta stále 0.03.",
+    "Celkovo sa firmy objavili v 21.0% odpovedí na objavovacie otázky; 25 zo 62 sa objavilo aspoň raz.",
+    "Po korekcii na viacnásobné testovanie nevykázala vzťah ani žiadna jednotlivá zložka skóre (štruktúrované údaje, llms.txt, pokrytie atď.).",
+    "Čo si z toho berieme: štruktúrované údaje pomáhajú AI správne prečítať údaje o firme, samy osebe však nerozhodujú o tom, či bude firma spomenutá. Väčšiu úlohu zohrávajú iné faktory, veľmi pravdepodobne vrátane toho, čo o firme píšu iné weby. Tento posledný bod je hypotéza, ktorú štúdia netestovala."
+   ]
+  },
+  {
+   "heading": "Prečo sme štúdiu uskutočnili",
+   "paragraphs": [
+    "Odporúčania k AEO (answer engine optimization), vrátane našich, tvrdia, že web ľahko čitateľný pre AI (štruktúrované údaje schema.org, súbor llms.txt, povolenie AI crawlerov, obsah vykresľovaný na serveri) pomáha firme objavovať sa v odpovediach AI. Nurevo predáva skóre postavené práve na týchto signáloch. Chceli sme poctivo overiť, či skóre zodpovedá tomu, na čom majiteľom skutočne záleží: aby ich AI menovala. Hypotézu, analýzu aj rozhodovacie kritériá sme stanovili pred zberom akýchkoľvek odpovedí a zaviazali sme sa výsledok zverejniť bez ohľadu na to, ako dopadne."
+   ]
+  },
+  {
+   "heading": "Metodika",
+   "list": [
+    "Vzorka: 72 miestnych firiem s vlastnými oficiálnymi webmi, vybraných pomocou webového vyhľadávania (bez portálov), z 5 odvetví (zubné ambulancie, reštaurácie, kozmetické salóny, daňoví poradcovia, ubytovanie) a 4 japonských miest (Tokio, Osaka, Fukuoka, Sapporo). 10 bolo vylúčených, pretože pre ich web sa skóre nedalo vypočítať; na analýzu zostalo 62.",
+    "Skóre: domovská stránka, robots.txt a llms.txt každého webu boli ohodnotené rovnakým kódom ako verejné skóre Nurevo: štruktúrované údaje (30 bodov), pokrytie (25), čitateľnosť (20), llms.txt (15) a konzistentnosť (10), s bránou pre prístup crawlerov, blokovanie na okraji siete a vykresľovanie na serveri (jej nesplnenie obmedzí skóre na 15).",
+    "Engine: Perplexity cez Agent API s predvoľbou „fast“ (jedno webové vyhľadávanie, potom odpoveď), ten istý adaptér, ktorý platený plán Nurevo používa na viditeľnosť v AI. Iba jeden engine; pozrite obmedzenia.",
+    "Otázky: tri „objavovacie“ otázky na firmu, ktoré uvádzajú oblasť a typ podniku, ale nie samotnú firmu (napríklad „Odporuč zubára v Umeda“), spoločné pre všetky firmy rovnakého odvetvia v rovnakej oblasti, a jedna „menná“ otázka na adresu a otváracie hodiny firmy. Každá otázka bola položená trikrát.",
+    "Výsledná premenná: firma sa v odpovedi „objavila“, ak v nej bol jej názov alebo ak bola jej vlastná doména medzi citovanými zdrojmi. Miera výskytu je podiel jej odpovedí na objavovacie otázky, v ktorých sa objavila.",
+    "Kontrola detektora: v odpovediach na menné otázky bol názov firmy rozpoznaný v 84.3% prípadov, teda nad prahom 70%, ktorý sme stanovili pre dôveru v detektor.",
+    "Analýza: Spearmanova poradová korelácia s permutačnou p-hodnotou a bootstrapovým intervalom spoľahlivosti; parciálna korelácia s odvetvím a mestom ako fixnými efektmi; permutačný test v rámci strát; a logistická regresia s fixnými efektmi odvetvia a mesta a kvázibinomickou korekciou, pretože opakované odpovede na tú istú otázku nie sú nezávislé. Šesť testov zložiek je korigovaných Holmovou metódou."
+   ],
+   "after": [
+    "Kritérium „potvrdenia“ bolo stanovené vopred: ρ ≥ 0.3, p < 0.05, 95% CI nad nulou a kladná upravená korelácia. Text odpovedí sa neukladal; zaznamenávalo sa iba to, či sa objavil názov, či bola citovaná doména a pozícia citácie."
+   ]
+  },
+  {
+   "heading": "Výsledky",
+   "paragraphs": [
+    "Verdikt znie „nepotvrdené“. Každý test skóre voči výskytu dáva koreláciu blízku nule:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Výsledok",
+     "p-hodnota"
+    ],
+    "rows": [
+     [
+      "Skóre vs. miera výskytu (Spearmanovo ρ, primárny)",
+      "0.03 (95% CI −0.23 až 0.28)",
+      "0.834"
+     ],
+     [
+      "To isté, upravené o odvetvie a mesto (parciálna korelácia)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "To isté, permutačný test v rámci strát",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Skóre vs. výskyt názvu (objavovacie otázky)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Skóre vs. citácia vlastného webu (objavovacie otázky)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Skóre vs. citácia vlastného webu (menné otázky)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logistická regresia s fixnými efektmi odvetvia/mesta, kvázibinomická: pomer šancí na +1 SD skóre (18.81 bodu)",
+      "×1.01 (95% CI 0.62 až 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 firiem. Merané v Perplexity 24. októbra 2026."
+   },
+   "after": [
+    "Najväčší koeficient, 0.18 medzi skóre a citáciou vlastného webu firmy, nemožno odlíšiť od nuly (p = 0.149) a nemal by sa vykladať ako zistenie."
+   ]
+  },
+  {
+   "heading": "Podľa pásma skóre",
+   "paragraphs": [
+    "Nurevo zobrazuje skóre ako červené, žlté alebo zelené. Väčšina webov vo vzorke bola červená a žiadny nedosiahol zelenú, takže táto štúdia o veľmi vysokých skóre nič nehovorí."
+   ],
+   "table": {
+    "head": [
+     "Pásmo",
+     "Firmy",
+     "Priemerná miera výskytu",
+     "Objavili sa aspoň raz"
+    ],
+    "rows": [
+     [
+      "Červené",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Žlté",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Zelené",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Podľa zložiek skóre",
+   "paragraphs": [
+    "Žiadna zo zložiek skóre nesúvisela s výskytom. Po Holmovej korekcii je každá p-hodnota 1.000. Išlo o exploračné testy."
+   ],
+   "table": {
+    "head": [
+     "Zložka",
+     "Spearmanovo ρ s mierou výskytu"
+    ],
+    "rows": [
+     [
+      "Štruktúrované údaje (schema)",
+      "0.08"
+     ],
+     [
+      "Pokrytie",
+      "0.12"
+     ],
+     [
+      "Čitateľnosť",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (pomer šancí 1.41, 95% CI 0.79 až 2.52)"
+     ],
+     [
+      "Konzistentnosť",
+      "0.06"
+     ],
+     [
+      "Brána (prístup crawlerov, okraj siete, vykresľovanie na serveri)",
+      "61 prešlo: výskyt 21.3%; 1 neprešla: 0%"
+     ]
+    ],
+    "caption": "Holmovou metódou korigované p = 1.000 pre každú zložku."
+   }
+  },
+  {
+   "heading": "Podľa odvetvia a mesta",
+   "paragraphs": [
+    "Výskyt sa líšil podľa odvetvia a mesta viac než podľa skóre. Ide o opisné údaje z malých skupín, nie o testované rozdiely."
+   ],
+   "table": {
+    "head": [
+     "Skupina",
+     "Firmy",
+     "Priemerné skóre",
+     "Miera výskytu"
+    ],
+    "rows": [
+     [
+      "Daňoví poradcovia",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Ubytovanie",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Zubné ambulancie",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Kozmetické salóny",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Reštaurácie",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Riadky odvetví aj riadky miest pokrývajú tých istých 62 firiem."
+   }
+  },
+  {
+   "heading": "Obmedzenia",
+   "list": [
+    "Prierezová štúdia: jedno meranie mnohých webov ukazuje súvislosť, nie príčinu. Či zlepšenie webu zmení jeho výskyt, si vyžaduje štúdiu tých istých webov pred zmenou a po nej.",
+    "Štatistická sila: pri 62 firmách by korelácia slabšia než približne |ρ| = 0.35 často zostala nepovšimnutá. Firmy z rovnakej oblasti a odvetvia zdieľajú tie isté odpovede, takže efektívna vzorka je ešte menšia. „Nenájdené“ tu neznamená „neexistuje“.",
+    "Jeden engine, jeden týždeň: Perplexity s predvoľbou „fast“, merané 24. októbra 2026. ChatGPT, Gemini, AI Overviews od Googlu a Copilot používajú iné vyhľadávacie indexy a modely; tieto výsledky na ne nemožno prenášať.",
+    "Nepozorované skresľujúce faktory: recenzie, známosť značky, reklama, dĺžka pôsobenia na trhu ani záznamy na iných weboch sa nemerali. Zohľadnené boli iba odvetvie a mesto.",
+    "Vzorka: firmy boli nájdené cez webové vyhľadávanie, takže prevažujú tie, ktoré sa už ľahko nájdu. Žiadny web nedosiahol zelené skóre. 5 odvetví a 4 mestá v Japonsku nemusia reprezentovať iné odvetvia, regióny či jazyky."
+   ]
+  },
+  {
+   "heading": "Čo to znamená pre firemný web",
+   "paragraphs": [
+    "Štruktúrované údaje, llms.txt a prístup crawlerov majú stále svoj význam: umožňujú AI čítať údaje o firme (adresu, otváracie hodiny, telefónne číslo, služby) priamo a správne, namiesto toho, aby ich odhadovala. Táto práca sa oplatí, no je to iná úloha než získať odporúčanie. V tejto štúdii nebol lepšie čitateľný web spomínaný častejšie.",
+    "Naša pracovná hypotéza je, že zdroje mimo webu (recenzné a mapové záznamy, miestne médiá, katalógy, iné weby spomínajúce firmu) majú veľkú váhu pri tom, či AI firmu pomenuje, keď odpovedá na žiadosť o odporúčanie. Táto štúdia tieto zdroje nemerala, ide teda o hypotézu na overenie, nie o výsledok.",
+    "V praxi: udržiavajte základy na webe v poriadku, pretože vďaka nim je to, čo o vás AI hovorí, presné, a merajte, či vás AI skutočne spomína, namiesto toho, aby ste to vyvodzovali zo skóre čitateľnosti."
+   ]
+  },
+  {
+   "heading": "Náš konflikt záujmov a čo meníme",
+   "paragraphs": [
+    "Nurevo vyvíja nástroje AEO a tu testované skóre je jedným z našich produktov. Výsledok, že skóre nepredpovedá výskyt, by sme si sami nevybrali. Zverejňujeme ho, pretože kritériá boli stanovené skôr, než prišli údaje, a pretože majitelia by mali vedieť, čo im skóre povedať môže a čo nie.",
+    "Čo s tým robíme: skóre čitateľnosti pre AI neprezentujeme ako prediktor výskytu v odpovediach AI. Namiesto toho výskyt meriame priamo: plán Pro meria, ako často Perplexity web menuje alebo cituje (beta), a pre weby v plánoch Free a Standard pridávame malú mesačnú kontrolu výskytu. Vyvíjame aj druhú verziu skóre, ktorá kombinuje nameranú viditeľnosť v AI so signálmi na webe, namiesto toho, aby sa spoliehala len na signály na webe.",
+    "Názvy a weby meraných firiem nezverejňujeme."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Zabezpečia štruktúrované údaje, že AI spomenie moju firmu?",
+   "a": "V tejto štúdii 62 miestnych firiem v Perplexity sa nezistil žiadny vzťah medzi signálmi na webe, ako sú štruktúrované údaje, a tým, ako často bola firma spomenutá (ρ = 0.03). Štruktúrované údaje pomáhajú AI správne čítať vaše údaje, samy osebe však zmienku nepredpovedali."
+  },
+  {
+   "q": "Pomáha llms.txt firme objavovať sa v odpovediach AI?",
+   "a": "V tejto štúdii sme žiadny vzťah nenašli: ρ = −0.02 medzi zložkou llms.txt a mierou výskytu (p po Holmovej korekcii = 1.000). Štúdia bola malá a pracovala s jedným enginom, takže nedokazuje, že llms.txt nikdy nehrá rolu."
+  },
+  {
+   "q": "Znamená to, že AEO nemá zmysel?",
+   "a": "Nie. AEO na webe zabezpečuje, že to, čo AI o firme hovorí, je presné. Táto štúdia naznačuje, že na získanie odporúčania nestačí a že zmienky treba merať priamo, nie ich vyvodzovať zo skóre čitateľnosti."
+  },
+  {
+   "q": "Ktorý AI engine bol meraný?",
+   "a": "Iba Perplexity, cez Agent API s predvoľbou „fast“, dňa 24. októbra 2026. Výsledky nemožno prenášať na ChatGPT, Gemini, AI Overviews od Googlu ani Copilot."
+  }
+ ],
+ "relatedHeading": "Súvisiace príručky",
+ "cta": {
+  "heading": "Zistite, čo AI z vášho webu prečíta",
+  "body": "Bezplatná kontrola ukáže, či AI dokáže prečítať údaje o vašej firme. Nepredpovedá, či vás AI spomenie; to treba zmerať.",
+  "label": "Spustiť bezplatnú kontrolu",
+  "href": "/check"
+ },
+ "footnote": "Štúdia Nurevo (Bestie.合同会社). Perplexity je ochranná známka spoločnosti Perplexity AI, Inc. Nurevo nie je s Perplexity nijako prepojené."
+}

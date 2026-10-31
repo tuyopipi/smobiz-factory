@@ -1,0 +1,292 @@
+{
+ "title": "AEO no site prevê respostas de IA? Estudo com 62 empresas | Nurevo",
+ "description": "Avaliamos 62 empresas locais no Japão com nossa pontuação AEO e perguntamos ao Perplexity sobre elas. A pontuação não previu a presença nas respostas de IA (ρ = 0.03).",
+ "h1": "Os sinais de AEO no site preveem a presença nas respostas de IA? Medimos 62 empresas",
+ "lead": "Não, não neste estudo. Em 62 empresas locais no Japão, nossa pontuação AEO no site (dados estruturados, llms.txt, acesso de crawlers e sinais semelhantes) não mostrou relação com a frequência com que o Perplexity mencionou ou citou uma empresa ao receber pedidos de recomendação: ρ de Spearman = 0.03 (IC de 95% de −0.23 a 0.28, p = 0.834). Com 62 empresas, o estudo só conseguia detectar com segurança correlações de cerca de |ρ| ≥ 0.35, portanto não é possível descartar uma relação mais fraca.",
+ "intro": [
+  "Publicado em 28 de outubro de 2026. Dados medidos em 24 de outubro de 2026. A Nurevo desenvolve ferramentas de AEO, incluindo a pontuação testada aqui; veja \"Nosso conflito de interesses\" mais abaixo."
+ ],
+ "sections": [
+  {
+   "heading": "Resumo",
+   "list": [
+    "Pergunta: empresas cujos sites têm pontuação mais alta na pontuação de legibilidade para IA da Nurevo (de 0 a 100) aparecem com mais frequência em respostas de IA a perguntas que não as mencionam pelo nome?",
+    "Resposta: não confirmado. ρ = 0.03 no geral, e ainda 0.03 após o ajuste por setor e cidade.",
+    "No geral, as empresas apareceram em 21.0% das respostas às perguntas de descoberta; 25 das 62 apareceram pelo menos uma vez.",
+    "Nenhum componente individual da pontuação (dados estruturados, llms.txt, cobertura etc.) mostrou relação, após a correção para testes múltiplos.",
+    "O que concluímos: os dados estruturados ajudam a IA a ler corretamente as informações de uma empresa, mas, sozinhos, não determinam se ela é mencionada. Outros fatores pesam mais, muito provavelmente incluindo o que outros sites dizem sobre a empresa. Este último ponto é uma hipótese que este estudo não testou."
+   ]
+  },
+  {
+   "heading": "Por que realizamos este estudo",
+   "paragraphs": [
+    "As recomendações de AEO (otimização para mecanismos de resposta), inclusive as nossas, afirmam que tornar um site fácil de ler para a IA (dados estruturados schema.org, um arquivo llms.txt, permitir o acesso de crawlers de IA, conteúdo renderizado no servidor) ajuda uma empresa a aparecer nas respostas de IA. A Nurevo vende uma pontuação construída exatamente sobre esses sinais. Queríamos evidências honestas sobre se a pontuação acompanha o que realmente importa para os proprietários: ser mencionado pela IA. Definimos a hipótese, a análise e os critérios de decisão antes de coletar qualquer resposta e nos comprometemos a publicar o resultado, qualquer que fosse."
+   ]
+  },
+  {
+   "heading": "Método",
+   "list": [
+    "Amostra: 72 empresas locais com site oficial próprio, selecionadas por busca na web (excluindo portais), em 5 setores (clínicas odontológicas, restaurantes, salões de beleza, contadores tributários, hospedagem) e 4 cidades japonesas (Tóquio, Osaka, Fukuoka, Sapporo). 10 foram excluídas porque não foi possível calcular a pontuação de seus sites, restando 62 para a análise.",
+    "Pontuação: a página inicial, o robots.txt e o llms.txt de cada site foram avaliados com o mesmo código da pontuação pública da Nurevo: dados estruturados (30 pontos), cobertura (25), legibilidade (20), llms.txt (15) e consistência (10), com um critério eliminatório para acesso de crawlers, bloqueio na borda e renderização no servidor (quem não passa tem a pontuação limitada a 15).",
+    "Mecanismo: Perplexity, por meio de sua Agent API com o preset \"fast\" (uma busca na web seguida de uma resposta), o mesmo adaptador que o plano pago da Nurevo usa para a visibilidade em IA. Apenas um mecanismo; veja as limitações.",
+    "Perguntas: três perguntas de \"descoberta\" por empresa, que mencionam a região e o tipo de negócio, mas não a empresa (por exemplo, \"Recomende um dentista em Umeda\"), compartilhadas por todas as empresas do mesmo setor na mesma região, além de uma pergunta \"nominal\" pedindo o endereço e o horário de funcionamento da empresa. Cada pergunta foi feita três vezes.",
+    "Resultado medido: considerou-se que uma empresa \"apareceu\" em uma resposta se seu nome constava na resposta ou se seu próprio domínio estava entre as fontes citadas. A taxa de aparição é a proporção de respostas de descoberta em que ela apareceu.",
+    "Verificação do detector: nas respostas às perguntas nominais, o nome da empresa foi detectado em 84.3% dos casos, acima do limite de 70% que estabelecemos para confiar no detector.",
+    "Análise: correlação de postos de Spearman com p-valor por permutação e intervalo de confiança por bootstrap; correlação parcial com setor e cidade como efeitos fixos; um teste de permutação dentro de estratos; e uma regressão logística com efeitos fixos de setor e cidade e correção quase-binomial, já que respostas repetidas à mesma pergunta não são independentes. Os seis testes de componentes receberam correção de Holm."
+   ],
+   "after": [
+    "O critério para \"confirmado\" foi definido previamente: ρ ≥ 0.3, p < 0.05, IC de 95% acima de zero e correlação ajustada positiva. O texto das respostas não foi armazenado; apenas se um nome apareceu, se o domínio foi citado e a posição da citação."
+   ]
+  },
+  {
+   "heading": "Resultados",
+   "paragraphs": [
+    "O veredito é \"não confirmado\". Todos os testes da pontuação em relação à aparição resultam em uma correlação próxima de zero:"
+   ],
+   "table": {
+    "head": [
+     "Teste",
+     "Resultado",
+     "p-valor"
+    ],
+    "rows": [
+     [
+      "Pontuação vs taxa de aparição (ρ de Spearman, principal)",
+      "0.03 (IC de 95% de −0.23 a 0.28)",
+      "0.834"
+     ],
+     [
+      "Idem, ajustado por setor e cidade (correlação parcial)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Idem, teste de permutação dentro de estratos",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Pontuação vs menção do nome (perguntas de descoberta)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Pontuação vs citação do próprio site (perguntas de descoberta)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Pontuação vs citação do próprio site (perguntas nominais)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Regressão logística com efeitos fixos de setor/cidade, quase-binomial: chances por +1 DP da pontuação (18.81 pontos)",
+      "×1.01 (IC de 95% de 0.62 a 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 empresas. Medido no Perplexity em 24 de outubro de 2026."
+   },
+   "after": [
+    "O maior coeficiente, 0.18 entre a pontuação e a citação do próprio site da empresa, não se distingue de zero (p = 0.149) e não deve ser interpretado como uma descoberta."
+   ]
+  },
+  {
+   "heading": "Por faixa de pontuação",
+   "paragraphs": [
+    "A Nurevo exibe a pontuação em vermelho, amarelo ou verde. A maioria dos sites da amostra ficou no vermelho e nenhum chegou ao verde, portanto este estudo não diz nada sobre pontuações muito altas."
+   ],
+   "table": {
+    "head": [
+     "Faixa",
+     "Empresas",
+     "Taxa média de aparição",
+     "Apareceram pelo menos uma vez"
+    ],
+    "rows": [
+     [
+      "Vermelho",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Amarelo",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Verde",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Por componente da pontuação",
+   "paragraphs": [
+    "Nenhum dos componentes da pontuação teve relação com a aparição. Após a correção de Holm, todos os p-valores são 1.000. Esses testes foram exploratórios."
+   ],
+   "table": {
+    "head": [
+     "Componente",
+     "ρ de Spearman com a taxa de aparição"
+    ],
+    "rows": [
+     [
+      "Dados estruturados (schema)",
+      "0.08"
+     ],
+     [
+      "Cobertura",
+      "0.12"
+     ],
+     [
+      "Legibilidade",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (razão de chances 1.41, IC de 95% de 0.79 a 2.52)"
+     ],
+     [
+      "Consistência",
+      "0.06"
+     ],
+     [
+      "Critério eliminatório (acesso de crawlers, borda, renderização no servidor)",
+      "61 aprovadas: 21.3% de aparição; 1 reprovada: 0%"
+     ]
+    ],
+    "caption": "p = 1.000 com correção de Holm para todos os componentes."
+   }
+  },
+  {
+   "heading": "Por setor e por cidade",
+   "paragraphs": [
+    "A aparição variou mais por setor e por cidade do que pela pontuação. São números descritivos de grupos pequenos, não diferenças testadas."
+   ],
+   "table": {
+    "head": [
+     "Grupo",
+     "Empresas",
+     "Pontuação média",
+     "Taxa de aparição"
+    ],
+    "rows": [
+     [
+      "Contadores tributários",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Hospedagem",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Clínicas odontológicas",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Salões de beleza",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restaurantes",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tóquio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "As linhas por setor e as linhas por cidade abrangem, cada uma, as mesmas 62 empresas."
+   }
+  },
+  {
+   "heading": "Limitações",
+   "list": [
+    "Estudo transversal: uma única medição de muitos sites mostra associação, não causalidade. Saber se melhorar um site altera sua aparição exige um estudo de antes e depois com os mesmos sites.",
+    "Poder estatístico: com 62 empresas, uma correlação mais fraca que cerca de |ρ| = 0.35 muitas vezes passaria despercebida. Empresas da mesma região e do mesmo setor compartilham as mesmas respostas, então a amostra efetiva é ainda menor. \"Não encontrado\" aqui não significa \"não existe\".",
+    "Um mecanismo, uma semana: Perplexity com o preset \"fast\", medido em 24 de outubro de 2026. ChatGPT, Gemini, AI Overviews do Google e Copilot usam índices de busca e modelos diferentes; estes resultados não se aplicam a eles.",
+    "Fatores de confusão não observados: avaliações, reconhecimento de marca, publicidade, tempo de atuação e presença em outros sites não foram medidos. Apenas setor e cidade foram ajustados.",
+    "Amostra: as empresas foram encontradas por busca na web, então tendem a ser empresas que já são fáceis de encontrar. Nenhum site atingiu o verde. 5 setores e 4 cidades do Japão podem não representar outros setores, regiões ou idiomas."
+   ]
+  },
+  {
+   "heading": "O que isso significa para o site de uma empresa",
+   "paragraphs": [
+    "Dados estruturados, llms.txt e acesso de crawlers continuam cumprindo uma função: permitem que a IA leia as informações de uma empresa (endereço, horário de funcionamento, telefone, serviços) de forma direta e correta, em vez de adivinhar. Vale a pena cumprir essa função, mas ela é diferente de ser recomendado. Neste estudo, um site mais bem lido não foi um site mais mencionado.",
+    "Nossa hipótese de trabalho é que fontes externas ao site (avaliações e perfis em mapas, mídia local, diretórios, outros sites que mencionam a empresa) pesam muito na decisão de uma IA de mencionar uma empresa ao responder a uma pergunta de recomendação. Este estudo não mediu essas fontes, portanto trata-se de uma hipótese a ser testada, não de um resultado.",
+    "Na prática: mantenha em ordem o básico do site, porque isso torna preciso o que a IA diz sobre você, e meça se a IA realmente menciona você, em vez de deduzir isso a partir de uma pontuação de legibilidade."
+   ]
+  },
+  {
+   "heading": "Nosso conflito de interesses e o que estamos mudando",
+   "paragraphs": [
+    "A Nurevo desenvolve ferramentas de AEO, e a pontuação testada aqui é um de nossos produtos. Um resultado mostrando que a pontuação não prevê a aparição não é o que teríamos escolhido, e o publicamos porque os critérios foram definidos antes da chegada dos dados e porque os proprietários devem saber o que uma pontuação pode e o que não pode lhes dizer.",
+    "O que estamos fazendo a respeito: não apresentamos a pontuação de legibilidade para IA como um preditor de aparição nas respostas de IA. Em vez disso, medimos a aparição diretamente: o plano Pro mede com que frequência o Perplexity menciona ou cita um site (beta), e estamos adicionando uma pequena verificação mensal de aparição para os sites dos planos Free e Standard. Também estamos desenvolvendo uma segunda versão da pontuação que combina a visibilidade em IA medida com os sinais do site, em vez de depender apenas dos sinais do site.",
+    "Os nomes e os sites das empresas medidas não são divulgados."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Os dados estruturados fazem a IA mencionar minha empresa?",
+   "a": "Neste estudo com 62 empresas locais no Perplexity, não foi encontrada relação entre sinais do site, como dados estruturados, e a frequência com que uma empresa foi mencionada (ρ = 0.03). Os dados estruturados ajudam a IA a ler corretamente suas informações, mas, sozinhos, não previram a menção."
+  },
+  {
+   "q": "O llms.txt ajuda uma empresa a aparecer nas respostas de IA?",
+   "a": "Não encontramos relação neste estudo: ρ = −0.02 entre o componente llms.txt e a taxa de aparição (p com correção de Holm = 1.000). O estudo foi pequeno e usou um único mecanismo, portanto isso não prova que o llms.txt nunca importa."
+  },
+  {
+   "q": "Isso significa que o AEO é inútil?",
+   "a": "Não. O AEO no site torna preciso o que a IA diz sobre uma empresa. Este estudo sugere que ele não é suficiente para ser recomendado e que a menção deve ser medida diretamente, e não deduzida a partir de uma pontuação de legibilidade."
+  },
+  {
+   "q": "Qual mecanismo de IA foi medido?",
+   "a": "Apenas o Perplexity, por meio de sua Agent API com o preset \"fast\", em 24 de outubro de 2026. Os resultados não se aplicam ao ChatGPT, ao Gemini, aos AI Overviews do Google nem ao Copilot."
+  }
+ ],
+ "relatedHeading": "Guias relacionados",
+ "cta": {
+  "heading": "Veja o que a IA lê no seu site",
+  "body": "A verificação gratuita mostra se a IA consegue ler as informações da sua empresa. Ela não prevê se a IA vai mencionar você; isso precisa ser medido.",
+  "label": "Fazer a verificação gratuita",
+  "href": "/check"
+ },
+ "footnote": "Estudo da Nurevo (Bestie.合同会社). Perplexity é uma marca registrada da Perplexity AI, Inc. A Nurevo não tem vínculo com a Perplexity."
+}
