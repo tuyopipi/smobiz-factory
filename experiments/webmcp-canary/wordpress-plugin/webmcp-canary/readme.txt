@@ -4,7 +4,7 @@ Tags: aeo, geo, ai seo, llms.txt, schema
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.9.0
+Stable tag: 0.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -212,7 +212,7 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
-= Unreleased =
+= 0.9.1 =
 * SEO SIMPLE PACK support: recognised as an active SEO plugin. It publishes no structured data (meta and OGP tags only), so Nurevo AEO keeps publishing its full graph, FAQ included.
 * VK All in One Expansion Unit support: Nurevo AEO no longer prints a second WebSite or Article beside the ones ExUnit prints, and adds only the missing publisher, description and language to ExUnit's Article (`veu_article_structure_data`) without changing its values. ExUnit publishes no business node, so yours stays the only one. With ExUnit's structured data turned off, Nurevo AEO publishes its own nodes as before.
 
@@ -327,6 +327,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.9.1 =
+
+Adds SEO SIMPLE PACK and VK All in One Expansion Unit support: with ExUnit active, Nurevo AEO no longer prints a second WebSite or Article and only fills in what is missing.
 
 = 0.9.0 =
 
