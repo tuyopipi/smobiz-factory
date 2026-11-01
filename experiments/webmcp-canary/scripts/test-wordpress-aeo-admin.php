@@ -621,6 +621,123 @@ $GLOBALS['webmcp_test_options']['blog_public'] = 1;
 webmcp_canary_schema_merged(false);
 $GLOBALS['webmcp_test_active_plugins'] = array();
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = $slim_saved_settings;
+/* SEO SIMPLE PACK 3.7.0 prints meta, OGP and verification/analytics tags only
+ * (class/output.php, SSP_Output::main) and no JSON-LD at all. It is detected so
+ * the notices name it and the measurement runs, but it publishes nothing Nurevo
+ * stands down for. */
+delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
+webmcp_canary_schema_merged(false);
+$GLOBALS['webmcp_test_active_plugins'] = array('seo-simple-pack/seo-simple-pack.php');
+expect(webmcp_canary_detect_active_seo_plugins() === array('seo-simple-pack/seo-simple-pack.php' => 'SEO SIMPLE PACK'), 'SEO SIMPLE PACK is detected through is_plugin_active');
+expect(strpos(webmcp_canary_seo_coexistence_message(), 'SEO SIMPLE PACK') !== false, 'the coexistence notice names SEO SIMPLE PACK as detected');
+expect(!in_array('seo-simple-pack/seo-simple-pack.php', webmcp_canary_measurement_exempt_plugins(), true), 'SEO SIMPLE PACK, with no JSON-LD and no filter, is handled by measurement');
+expect(!in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('seo-simple-pack/seo-simple-pack.php' => 'SEO SIMPLE PACK'), array()), true),
+    'SEO SIMPLE PACK publishes no FAQ, so it never suppresses the Nurevo FAQ');
+ob_start();
+webmcp_canary_output_server_schema();
+$ssp_output = ob_get_clean();
+expect(strpos($ssp_output, 'id="nurevo-aeo-server"') !== false && strpos($ssp_output, '"@type":"WebSite"') !== false && strpos($ssp_output, '"@type":"Organization"') !== false,
+    'SEO SIMPLE PACK: Nurevo prints its full graph in <head>');
+// The front page as SEO SIMPLE PACK serves it: its meta/OGP block and no JSON-LD.
+$ssp_html = '<html><head><!-- SEO SIMPLE PACK 3.7.0 --><meta name="description" content="x"><meta property="og:type" content="website"><!-- / SEO SIMPLE PACK --></head><body></body></html>';
+$ssp_measured = webmcp_canary_parse_rival_schema($ssp_html);
+expect($ssp_measured['business']['state'] === 'none' && $ssp_measured['types'] === array(), 'the measurement finds no JSON-LD from SEO SIMPLE PACK');
+update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, array_merge($ssp_measured, array('measured_at' => time(), 'signature' => 'test')));
+expect(webmcp_canary_suppressed_schema_types(null, array('seo-simple-pack/seo-simple-pack.php' => 'SEO SIMPLE PACK'), array()) === array(), 'so nothing of Nurevo\'s is suppressed');
+// A theme beside it printing an incomplete Organization is merged under its @id, as for SEOPress.
+update_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION, array(
+    'business' => array('state' => 'partial', 'id' => 'https://example.test/#theme-org'),
+    'types' => array('Organization'), 'conflict' => false, 'measured_at' => time(), 'signature' => 'test',
+));
+ob_start();
+webmcp_canary_output_server_schema();
+$ssp_theme = ob_get_clean();
+expect(substr_count($ssp_theme, '"@type":"Organization"') === 1 && strpos($ssp_theme, 'https://example.test/#theme-org') !== false,
+    'SEO SIMPLE PACK + a theme Organization: one business node, under the theme\'s @id');
+delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
+
+/* VK All in One Expansion Unit 9.123.1: a WebSite block on the front page
+ * (VK_WebSite_Srtuctured_Data) and an Article block on single posts
+ * (VK_Article_Srtuctured_Data, filter veu_article_structure_data), both from
+ * wp_head at priority 9999. The stand-ins mirror what a loaded package registers;
+ * a package switched off is never loaded, so its printer is not hooked. */
+class VK_WebSite_Srtuctured_Data { public static function the_website_structure_data() {} }
+class VK_Article_Srtuctured_Data {
+    public static function the_article_structure_data() {}
+    public static function is_output() { return !empty($GLOBALS['webmcp_test_vk_article_output']); }
+}
+$vk_head_hook = function ($website, $article) {
+    $callbacks = array();
+    if ($website) {
+        $callbacks['website'] = array('function' => array('VK_WebSite_Srtuctured_Data', 'the_website_structure_data'), 'accepted_args' => 1);
+    }
+    if ($article) {
+        $callbacks['article'] = array('function' => array('VK_Article_Srtuctured_Data', 'the_article_structure_data'), 'accepted_args' => 1);
+    }
+    return (object) array('callbacks' => array(9999 => $callbacks));
+};
+$GLOBALS['webmcp_test_active_plugins'] = array('vk-all-in-one-expansion-unit/vkExUnit.php');
+expect(webmcp_canary_detect_active_seo_plugins() === array('vk-all-in-one-expansion-unit/vkExUnit.php' => 'VK All in One Expansion Unit'), 'VK All in One Expansion Unit is detected through is_plugin_active');
+expect(in_array('vk-all-in-one-expansion-unit/vkExUnit.php', webmcp_canary_measurement_exempt_plugins(), true), 'ExUnit is handled per request, not by measurement');
+expect(!in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('vk-all-in-one-expansion-unit/vkExUnit.php' => 'VK All in One Expansion Unit'), array()), true),
+    'ExUnit publishes no FAQ, so it never suppresses the Nurevo FAQ');
+expect(webmcp_canary_callback_hooked('wp_head', 'VK_WebSite_Srtuctured_Data', 'the_website_structure_data') === false, 'ExUnit printers not hooked: nothing to wait for');
+
+// 1. WebSite package on, front page: <head> waits for ExUnit, then prints everything but a WebSite.
+$GLOBALS['wp_filter']['wp_head'] = $vk_head_hook(true, true);
+$GLOBALS['webmcp_test_vk_article_output'] = false;
+expect(webmcp_canary_vk_exunit_prints_website() === true && webmcp_canary_vk_exunit_prints_article() === false, 'ExUnit WebSite printer recognised; no Article on the front page');
+ob_start();
+webmcp_canary_output_server_schema();
+$vk_head = ob_get_clean();
+expect($vk_head === '' && webmcp_canary_schema_deferred_for_vk() === true, 'with ExUnit printing later in <head>, Nurevo waits for it');
+ob_start();
+webmcp_canary_output_schema_after_vk_exunit();
+$vk_after = ob_get_clean();
+expect(strpos($vk_after, 'id="nurevo-aeo-server"') !== false && strpos($vk_after, '"@type":"WebSite"') === false,
+    'after ExUnit: Nurevo prints its graph without a second WebSite');
+expect(substr_count($vk_after, '"@type":"Organization"') === 1 && strpos($vk_after, '"@type":"WebPage"') !== false,
+    'its one business node and the WebPage stay (ExUnit publishes neither)');
+expect(webmcp_canary_schema_deferred_for_vk() === false && webmcp_canary_output_schema_after_vk_exunit() === null, 'the deferral is used once');
+
+// 2. Not the front page: ExUnit prints no WebSite there, so Nurevo prints in place, WebSite included.
+$GLOBALS['webmcp_test_front_page'] = false;
+ob_start();
+webmcp_canary_output_server_schema();
+$vk_inner = ob_get_clean();
+expect(webmcp_canary_schema_deferred_for_vk() === false && strpos($vk_inner, '"@type":"WebSite"') !== false, 'ExUnit off the front page: Nurevo prints its WebSite in place');
+$GLOBALS['webmcp_test_front_page'] = true;
+
+// 3. Article: left out of ours only when ExUnit's filtered Article came out non-empty (it then prints it).
+$GLOBALS['webmcp_test_vk_article_output'] = true;
+expect(apply_filters('veu_article_structure_data', array('@type' => 'Article', 'headline' => 'x'), 1, null)['headline'] === 'x', 'ExUnit\'s Article passes through Nurevo\'s filter');
+expect(webmcp_canary_vk_exunit_published_families() === array('website', 'article'), 'a printed ExUnit Article is recognised');
+expect(apply_filters('veu_article_structure_data', array(), 1, null) === array(), 'an emptied ExUnit Article is left empty');
+expect(webmcp_canary_vk_exunit_published_families() === array('website'), 'and then Nurevo keeps its own article node');
+$GLOBALS['webmcp_test_vk_article_output'] = false;
+apply_filters('veu_article_structure_data', array('@type' => 'Article'), 1, null);
+expect(webmcp_canary_vk_exunit_published_families() === array('website'), 'ExUnit not set to print an Article here (excluded type, page): ours stays');
+webmcp_canary_vk_exunit_article_seen(false);
+
+// 4. Guards on ExUnit's Article filter.
+$vk_article = array('@type' => 'Article', 'headline' => 'x', 'author' => array('@type' => 'Organization', 'name' => 'admin'));
+webmcp_canary_schema_merged(true);
+expect(apply_filters('veu_article_structure_data', $vk_article, 1, null) === $vk_article, 'facts merged into another SEO plugin\'s graph: ExUnit\'s Article untouched');
+webmcp_canary_schema_merged(false);
+$GLOBALS['webmcp_test_options']['blog_public'] = 0;
+expect(apply_filters('veu_article_structure_data', $vk_article, 1, null) === $vk_article, 'a request without Nurevo schema leaves ExUnit\'s Article untouched');
+$GLOBALS['webmcp_test_options']['blog_public'] = 1;
+
+// 5. Both packages switched off: no printer hooked, Nurevo prints its full graph in place.
+$GLOBALS['wp_filter']['wp_head'] = $vk_head_hook(false, false);
+ob_start();
+webmcp_canary_output_server_schema();
+$vk_off = ob_get_clean();
+expect(webmcp_canary_schema_deferred_for_vk() === false && strpos($vk_off, '"@type":"WebSite"') !== false && strpos($vk_off, '"@type":"Organization"') !== false,
+    'ExUnit structured data off: Nurevo prints its full graph in <head>');
+unset($GLOBALS['wp_filter']['wp_head']);
+webmcp_canary_vk_exunit_article_seen(false);
+webmcp_canary_schema_merged(false);
 delete_option(WEBMCP_CANARY_RIVAL_SCHEMA_OPTION);
 $GLOBALS['webmcp_test_active_plugins'] = array();
 ob_start();

@@ -14,7 +14,8 @@ $wanted = array(
     'webmcp_canary_question_key', 'webmcp_canary_remap_ids', 'webmcp_canary_page_type_families',
     'webmcp_canary_page_type_family', 'webmcp_canary_schema_node_types', 'webmcp_canary_is_business_node',
     'webmcp_canary_local_business_types', 'webmcp_canary_schema_has_property', 'webmcp_canary_schema_merged',
-    'webmcp_canary_merge_into_slim_seo_graph',
+    'webmcp_canary_merge_into_slim_seo_graph', 'webmcp_canary_fill_vk_exunit_article',
+    'webmcp_canary_drop_page_families',
 );
 
 $tokens = token_get_all(file_get_contents($plugin));
@@ -344,6 +345,53 @@ check('slim seo guard: request without Nurevo schema untouched', webmcp_canary_m
 $GLOBALS['test_request_allowed'] = true;
 webmcp_canary_schema_merged(true);
 check('slim seo guard: not merged twice on one request', webmcp_canary_merge_into_slim_seo_graph(slim_seo_front_page_graph()) === slim_seo_front_page_graph());
+
+/* 7. VK All in One Expansion Unit 9.123.1 (github.com/vektor-inc/vk-all-in-one-expansion-unit).
+ * No graph and no business node. Its Article, built in
+ * inc/article-structure-data/class-vk-article-structure-data.php and passed through
+ * `veu_article_structure_data`, is one node with no @id and an inline author
+ * (Organization by default, url home_url('/')). Its WebSite (front page,
+ * inc/website-structure-data) is name and url only, with no filter. */
+function vk_exunit_article() {
+    return array(
+        '@context' => 'https://schema.org/', '@type' => 'Article', 'headline' => 'We are open',
+        'image' => array('@type' => 'ImageObject', 'url' => 'https://salon.test/open.jpg', 'width' => 1200, 'height' => 630),
+        'datePublished' => '2026-10-01T10:00:00+09:00', 'dateModified' => '2026-10-02T10:00:00+09:00',
+        'author' => array('@type' => 'Organization', 'name' => 'admin', 'url' => 'https://salon.test/'),
+    );
+}
+$own_vk_post = array(
+    $own[0], $own[1],
+    array('@type' => 'BlogPosting', '@id' => 'https://salon.test/news/open/#article', 'url' => 'https://salon.test/news/open/',
+        'headline' => 'Opening day', 'description' => 'Opening news', 'inLanguage' => 'ja',
+        'datePublished' => '2026-09-30T00:00:00+09:00', 'image' => 'https://salon.test/ours.jpg',
+        'isPartOf' => array('@id' => 'https://salon.test/#website'), 'publisher' => array('@id' => 'https://salon.test/#organization'),
+        'author' => array('@type' => 'Person', 'name' => 'Aki')),
+);
+$vk = webmcp_canary_fill_vk_exunit_article(vk_exunit_article(), $own_vk_post);
+check('vk exunit article: type, headline, dates and image kept', $vk['@type'] === 'Article' && $vk['headline'] === 'We are open'
+    && $vk['datePublished'] === '2026-10-01T10:00:00+09:00' && $vk['image']['url'] === 'https://salon.test/open.jpg');
+check('vk exunit article: its inline author untouched', $vk['author'] === vk_exunit_article()['author']);
+check('vk exunit article: publisher points at our business @id', $vk['publisher'] === array('@id' => 'https://salon.test/#organization'));
+check('vk exunit article: missing description, language, url and isPartOf added', $vk['description'] === 'Opening news' && $vk['inLanguage'] === 'ja'
+    && $vk['url'] === 'https://salon.test/news/open/' && $vk['isPartOf'] === array('@id' => 'https://salon.test/#website'));
+check('vk exunit article: our article @id given to it', $vk['@id'] === 'https://salon.test/news/open/#article');
+check('vk exunit article: no business facts on the Article', !isset($vk['address']) && !isset($vk['telephone']));
+$vk_with_id = vk_exunit_article();
+$vk_with_id['@id'] = 'https://salon.test/news/open/#theirs';
+$vk_with_id['publisher'] = array('@type' => 'Organization', 'name' => 'Theirs');
+$vk = webmcp_canary_fill_vk_exunit_article($vk_with_id, $own_vk_post);
+check('vk exunit no-overwrite: their @id and publisher kept', $vk['@id'] === 'https://salon.test/news/open/#theirs' && $vk['publisher'] === array('@type' => 'Organization', 'name' => 'Theirs'));
+check('vk exunit: no article of ours (a page), theirs unchanged', webmcp_canary_fill_vk_exunit_article(vk_exunit_article(), $own) === vk_exunit_article());
+check('vk exunit: an emptied Article stays empty', webmcp_canary_fill_vk_exunit_article(array(), $own_vk_post) === array());
+
+// Our graph on a request where ExUnit prints its WebSite and Article: those leave ours, the business stays.
+$dropped = webmcp_canary_drop_page_families($own_vk_post, array('website', 'article'));
+check('vk exunit drop: no WebSite or BlogPosting of ours', count_types($dropped, 'WebSite') === 0 && count_types($dropped, 'BlogPosting') === 0);
+check('vk exunit drop: our one business node stays', count_types($dropped, 'HairSalon') === 1 && $dropped[0] === $own[0]);
+$dropped = webmcp_canary_drop_page_families($own, array('website'));
+check('vk exunit drop: WebPage, FAQ and services stay', count($dropped) === count($own) - 1 && count_types($dropped, 'FAQPage') === 1 && count_types($dropped, 'Service') === 1 && count_types($dropped, 'WebPage') === 1);
+check('vk exunit drop: nothing published by ExUnit, graph unchanged', webmcp_canary_drop_page_families($own, array()) === $own);
 
 echo $failures === 0 ? "\nall passed\n" : "\n$failures failed\n";
 exit($failures === 0 ? 0 : 1);

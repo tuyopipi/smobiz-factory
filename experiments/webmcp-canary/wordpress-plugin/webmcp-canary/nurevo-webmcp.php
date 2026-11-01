@@ -1360,9 +1360,15 @@ function webmcp_canary_detect_active_seo_plugins() {
         'seo-by-rank-math/rank-math.php'              => 'Rank Math SEO',
         'all-in-one-seo-pack/all_in_one_seo_pack.php' => 'All in One SEO',
         'slim-seo/slim-seo.php'                       => 'Slim SEO',
+        // Prints a WebSite and an Article block of its own with no graph to
+        // merge into; handled per request (see webmcp_canary_vk_exunit_*).
+        'vk-all-in-one-expansion-unit/vkExUnit.php'   => 'VK All in One Expansion Unit',
         // No graph filter to merge into; handled by measurement instead.
         'wp-seopress/seopress.php'                    => 'SEOPress',
         'autodescription/autodescription.php'         => 'The SEO Framework',
+        // Prints meta and OGP tags only, no JSON-LD at all; measured like the
+        // two above, so whatever the theme prints is still taken into account.
+        'seo-simple-pack/seo-simple-pack.php'         => 'SEO SIMPLE PACK',
     );
     $active = array();
     foreach ($supported as $plugin_file => $plugin_name) {
@@ -1433,7 +1439,15 @@ function webmcp_canary_schema_type_rules() {
  * Article and Person and nothing else (src/Schema/Manager.php).
  */
 function webmcp_canary_seo_plugins_without_faq() {
-    return array('slim-seo/slim-seo.php');
+    return array(
+        'slim-seo/slim-seo.php',
+        // SEO SIMPLE PACK 3.7.0 prints no JSON-LD at all (class/output.php:
+        // main() prints meta tags, OGP tags and verification/analytics codes).
+        'seo-simple-pack/seo-simple-pack.php',
+        // VK All in One Expansion Unit 9.123.1 prints only WebSite
+        // (inc/website-structure-data) and Article (inc/article-structure-data).
+        'vk-all-in-one-expansion-unit/vkExUnit.php',
+    );
 }
 
 /** Which publisher groups are active on this site. */
@@ -6673,6 +6687,11 @@ function webmcp_canary_finalize_own_graph($graph, $bundle) {
  * wp_footer, so whether it took our facts is only known there. While its
  * schema printer is hooked, Nurevo's own output waits for the footer and
  * prints only if Slim SEO's filter did not run.
+ *
+ * VK All in One Expansion Unit has no graph and no business node: Nurevo
+ * prints its own graph, leaves out the WebSite/Article ExUnit prints on that
+ * request, and fills ExUnit's Article through its filter (see below).
+ * SEO SIMPLE PACK prints no JSON-LD at all, so it needs nothing here.
  * --------------------------------------------------------------------- */
 
 /** Plugins whose graph Nurevo merges into, by plugin file. */
@@ -6781,6 +6800,210 @@ function webmcp_canary_schema_deferred($set = null) {
         $deferred = (bool) $set;
     }
     return $deferred;
+}
+
+/**
+ * Is $class::$method (a static callback, as array($class, $method) or
+ * "Class::method", or a method of an instance of $class) hooked to $hook?
+ *
+ * Read from $wp_filter rather than has_action(), so the answer does not depend
+ * on how the other plugin spelled its callback.
+ */
+function webmcp_canary_callback_hooked($hook, $class, $method) {
+    if (empty($GLOBALS['wp_filter'][$hook])) {
+        return false;
+    }
+    $registered = $GLOBALS['wp_filter'][$hook];
+    $callbacks = is_object($registered) && isset($registered->callbacks) ? $registered->callbacks : (is_array($registered) ? $registered : array());
+    foreach ((array) $callbacks as $by_priority) {
+        foreach ((array) $by_priority as $callback) {
+            $function = is_array($callback) && isset($callback['function']) ? $callback['function'] : null;
+            if (is_string($function) && strcasecmp($function, $class . '::' . $method) === 0) {
+                return true;
+            }
+            if (!is_array($function) || !isset($function[0], $function[1]) || $function[1] !== $method) {
+                continue;
+            }
+            if ((is_string($function[0]) && strcasecmp(ltrim($function[0], '\\'), $class) === 0)
+                || (is_object($function[0]) && is_a($function[0], $class))) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+/* -----------------------------------------------------------------------
+ * VK All in One Expansion Unit (wordpress.org/plugins/vk-all-in-one-expansion-unit).
+ *
+ * ExUnit 9.123.1 prints two JSON-LD blocks of its own, each a single node
+ * with no @graph and no @id, both from wp_head at priority 9999:
+ *
+ *   WebSite  VK_WebSite_Srtuctured_Data::the_website_structure_data
+ *            (inc/website-structure-data/class-vk-website-structure-data.php),
+ *            front page only: name and url. No filter.
+ *   Article  VK_Article_Srtuctured_Data::the_article_structure_data
+ *            (inc/article-structure-data/class-vk-article-structure-data.php),
+ *            single posts whose type is not excluded (is_output(), filterable
+ *            through veu_article_structure_data_is_output): headline, image,
+ *            dates and an inline author. The array passes through
+ *            `veu_article_structure_data`; an empty result prints nothing.
+ *
+ * It publishes no Organization or LocalBusiness node, so the business node is
+ * Nurevo's alone and is always printed by Nurevo: there is no second business
+ * entity to reconcile. What would duplicate is the page-level nodes, so on a
+ * request where ExUnit prints its WebSite or its Article, Nurevo leaves that
+ * node out of its own graph. The Article gets, through ExUnit's filter, the
+ * properties it lacks from Nurevo's (publisher pointing at Nurevo's business
+ * @id, description, language, isPartOf...); nothing it already carries is
+ * changed, its inline author included.
+ *
+ * Each block is a package that can be switched off under ExUnit > Enable
+ * function settings (active_website_structure_data / active_article_structure_data);
+ * a package that is off is never loaded, so its printer is not hooked and
+ * Nurevo publishes its own node as usual. Because ExUnit prints after Nurevo's
+ * usual wp_head priority (99), Nurevo's output waits until just after it
+ * (priority 10000) on requests where ExUnit will print.
+ * --------------------------------------------------------------------- */
+
+/** Will ExUnit print its WebSite block on this request? */
+function webmcp_canary_vk_exunit_prints_website() {
+    return class_exists('VK_WebSite_Srtuctured_Data', false)
+        && is_front_page()
+        && webmcp_canary_callback_hooked('wp_head', 'VK_WebSite_Srtuctured_Data', 'the_website_structure_data');
+}
+
+/** Is ExUnit set to print its Article block on this request (before its filter)? */
+function webmcp_canary_vk_exunit_prints_article() {
+    if (!class_exists('VK_Article_Srtuctured_Data', false)
+        || !method_exists('VK_Article_Srtuctured_Data', 'is_output')
+        || !webmcp_canary_callback_hooked('wp_head', 'VK_Article_Srtuctured_Data', 'the_article_structure_data')) {
+        return false;
+    }
+    return (bool) VK_Article_Srtuctured_Data::is_output();
+}
+
+/** Will ExUnit print anything Nurevo has to wait for on this request? */
+function webmcp_canary_vk_exunit_pending() {
+    return webmcp_canary_vk_exunit_prints_website() || webmcp_canary_vk_exunit_prints_article();
+}
+
+/**
+ * Set when the last value of `veu_article_structure_data` was a non-empty
+ * array, i.e. ExUnit printed its Article (it prints exactly that value).
+ */
+function webmcp_canary_vk_exunit_article_seen($set = null) {
+    static $seen = false;
+    if ($set !== null) {
+        $seen = (bool) $set;
+    }
+    return $seen;
+}
+
+/** Page-level families ExUnit publishes on this request, so ours stands down. */
+function webmcp_canary_vk_exunit_published_families() {
+    $families = array();
+    if (webmcp_canary_vk_exunit_prints_website()) {
+        $families[] = 'website';
+    }
+    if (webmcp_canary_vk_exunit_article_seen() && webmcp_canary_vk_exunit_prints_article()) {
+        $families[] = 'article';
+    }
+    return $families;
+}
+
+/** Leave out of a graph of ours the page-level nodes of the given families. */
+function webmcp_canary_drop_page_families($graph, $families) {
+    if (empty($families) || !is_array($graph)) {
+        return $graph;
+    }
+    return array_values(array_filter($graph, function ($node) use ($families) {
+        return !in_array(webmcp_canary_page_type_family($node), $families, true);
+    }));
+}
+
+/**
+ * Add to ExUnit's Article the properties it lacks, from Nurevo's article node.
+ * Pure: pass $own (Nurevo's graph) to test it without WordPress.
+ */
+function webmcp_canary_fill_vk_exunit_article($article, $own) {
+    if (!is_array($article) || empty($article) || !is_array($own)) {
+        return $article;
+    }
+    foreach ($own as $node) {
+        if (!is_array($node) || webmcp_canary_page_type_family($node) !== 'article') {
+            continue;
+        }
+        unset($node['@context']);
+        $article = webmcp_canary_fill_missing($article, $node);
+        if (empty($article['@id']) && !empty($node['@id'])) {
+            $article['@id'] = (string) $node['@id'];
+        }
+        break;
+    }
+    return $article;
+}
+
+add_filter('veu_article_structure_data', 'webmcp_canary_merge_into_vk_exunit_article', 99);
+function webmcp_canary_merge_into_vk_exunit_article($article) {
+    if (!is_array($article) || empty($article) || !webmcp_canary_schema_request_allowed()) {
+        return $article;
+    }
+    // The facts went into another SEO plugin's graph, or will (Slim SEO prints
+    // in the footer): Nurevo's ids there may not be its own, so link nothing.
+    if (webmcp_canary_schema_merged() || webmcp_canary_slim_seo_prints_schema()) {
+        return $article;
+    }
+    static $running = false;
+    if ($running) {
+        return $article;
+    }
+    $running = true;
+    try {
+        $bundle = webmcp_canary_own_schema_bundle();
+        return webmcp_canary_fill_vk_exunit_article($article, webmcp_canary_finalize_own_graph($bundle['core'], $bundle));
+    } finally {
+        $running = false;
+    }
+}
+
+// Last, so it sees exactly the value ExUnit decides to print or not.
+add_filter('veu_article_structure_data', 'webmcp_canary_observe_vk_exunit_article', PHP_INT_MAX);
+function webmcp_canary_observe_vk_exunit_article($article) {
+    webmcp_canary_vk_exunit_article_seen(is_array($article) && !empty($article));
+    return $article;
+}
+
+/** Set when the <head> output waits for ExUnit's blocks (wp_head 9999). */
+function webmcp_canary_schema_deferred_for_vk($set = null) {
+    static $deferred = false;
+    if ($set !== null) {
+        $deferred = (bool) $set;
+    }
+    return $deferred;
+}
+
+/** The <head> output, deferred until just after ExUnit has printed. */
+add_action('wp_head', 'webmcp_canary_output_schema_after_vk_exunit', 10000);
+function webmcp_canary_output_schema_after_vk_exunit() {
+    static $running = false;
+    if ($running || !webmcp_canary_schema_deferred_for_vk()) {
+        return;
+    }
+    $running = true;
+    webmcp_canary_schema_deferred_for_vk(false);
+    if (webmcp_canary_schema_request_allowed()) {
+        webmcp_canary_print_server_schema();
+    }
+    $running = false;
+}
+
+/**
+ * Plugins handled per request rather than by measuring the front page: the
+ * graphs Nurevo merges into, and ExUnit, whose blocks are known per request.
+ */
+function webmcp_canary_measurement_exempt_plugins() {
+    return array_merge(webmcp_canary_graph_integrations(), array('vk-all-in-one-expansion-unit/vkExUnit.php'));
 }
 
 /** Types that describe the page itself; the SEO plugin owns these. */
@@ -7006,6 +7229,12 @@ function webmcp_canary_output_server_schema() {
         webmcp_canary_schema_deferred(true);
         return;
     }
+    // VK All in One Expansion Unit prints its WebSite/Article later in <head>
+    // (priority 9999): wait for it, so ours can leave out what it printed.
+    if (!webmcp_canary_schema_merged() && !webmcp_canary_schema_deferred_for_vk() && webmcp_canary_vk_exunit_pending()) {
+        webmcp_canary_schema_deferred_for_vk(true);
+        return;
+    }
     webmcp_canary_print_server_schema();
 }
 
@@ -7048,8 +7277,10 @@ function webmcp_canary_print_server_schema() {
     // are not competing for any node here. Others (SEOPress, The SEO Framework)
     // are still handled by measurement: their nodes are left alone and the
     // business facts go under their business @id, so the two merge.
-    $others = array_diff_key(webmcp_canary_detect_active_seo_plugins(), array_flip(webmcp_canary_graph_integrations()));
+    $others = array_diff_key(webmcp_canary_detect_active_seo_plugins(), array_flip(webmcp_canary_measurement_exempt_plugins()));
     $graph = webmcp_canary_filter_schema_graph($bundle['core'], $settings, $others);
+    // VK All in One Expansion Unit's own WebSite/Article blocks on this request.
+    $graph = webmcp_canary_drop_page_families($graph, webmcp_canary_vk_exunit_published_families());
     $graph = webmcp_canary_finalize_own_graph(array_merge($graph, $bundle['extra']), $bundle);
     $central = !empty($bundle['central']);
     $delivery = $bundle['delivery'];

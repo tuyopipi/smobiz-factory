@@ -59,6 +59,10 @@ That matters because the free tiers of these plugins usually publish an Organiza
 
 Slim SEO prints its graph at the end of the page rather than in `<head>`, so with Slim SEO Nurevo AEO waits until then. If Slim SEO's schema is turned off (Settings > Slim SEO > Features), Nurevo AEO publishes its own graph, as with any other setup.
 
+**SEO SIMPLE PACK** prints meta and OGP tags but no structured data at all, so there is nothing to merge into or to duplicate: Nurevo AEO publishes its own graph, treated like the setups below (so a theme's own schema beside it is still taken into account).
+
+**VK All in One Expansion Unit** publishes no business node, only a WebSite on the front page and an Article on single posts. Nurevo AEO publishes your one business node as usual and, on the pages where ExUnit prints its WebSite or Article, leaves its own out. ExUnit's Article gets, through its `veu_article_structure_data` filter, only what it lacks, such as a publisher pointing at your business node, the description and the language; nothing ExUnit sets, its author included, is changed. If ExUnit's structured data is turned off (its "Structured data - WebSite" / "Structured data - Article" functions), Nurevo AEO publishes its own nodes instead.
+
 With **any other setup** - SEOPress, The SEO Framework, a theme's own schema, or no SEO plugin - Nurevo AEO prints its own graph at the end of `<head>`. It leaves out what your other plugins already publish and puts the business facts under their business @id, so the two describe one business rather than two.
 
 = Plans =
@@ -207,6 +211,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 7. The first-run screen. Nothing is sent to the Nurevo service until you tick the consent box and press "Run diagnosis"; it explains what the diagnosis sends.
 
 == Changelog ==
+
+= Unreleased =
+* SEO SIMPLE PACK support: recognised as an active SEO plugin. It publishes no structured data (meta and OGP tags only), so Nurevo AEO keeps publishing its full graph, FAQ included.
+* VK All in One Expansion Unit support: Nurevo AEO no longer prints a second WebSite or Article beside the ones ExUnit prints, and adds only the missing publisher, description and language to ExUnit's Article (`veu_article_structure_data`) without changing its values. ExUnit publishes no business node, so yours stays the only one. With ExUnit's structured data turned off, Nurevo AEO publishes its own nodes as before.
 
 = 0.9.0 =
 * Change record for learning: once the site is connected, the plugin sends a compact record of changes to its own settings (which outputs are on, which business fields are filled in - names only, never the values - the site type, SEO plugin, version and item counts) with its twice-daily sync, so Nurevo can learn across sites which changes help businesses appear in AI answers. Queued locally while the service is unreachable. See "External services".
