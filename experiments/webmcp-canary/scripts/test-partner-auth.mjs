@@ -86,41 +86,61 @@ try {
   await signup('viaoldcode@example.test', 'AAAAAAAAAAAA');
   assert.equal(sqlite.prepare('SELECT referred_by_account_id FROM accounts WHERE email=?').get('viaoldcode@example.test').referred_by_account_id, null, 'a code of a non-approved account attributes nothing');
   assert.equal((await call('/api/partner/apply', {})).status, 403, 'apply needs CSRF');
-  r = await call('/api/partner/apply', {}, cookie);
-  assert.equal(r.status, 200); assert.equal((await r.json()).partner_status, 'pending');
-  assert.equal((await (await call('/api/partner/apply', {}, cookie)).json()).partner_status, 'pending', 'applying twice stays pending');
-  const parentAccountId = sqlite.prepare('SELECT id FROM accounts WHERE email=?').get('parent@example.test').id;
-  // Approval: super admin only, CSRF-protected.
-  assert.equal((await call('/api/admin/partner-applications')).status, 403);
-  assert.equal((await call('/api/admin/partner-applications', undefined, cookie)).status, 403, 'a member cannot list applications');
-  assert.equal((await call(`/api/admin/partner-applications/${parentAccountId}/approve`, {}, cookie)).status, 403, 'a member cannot approve itself');
-  const boss = await signup('boss@example.test');
-  const bossCookie = (await verify(boss.loginLink)).headers.get('set-cookie').match(/nrv_session=[^;]+/)[0];
-  const apps = await (await call('/api/admin/partner-applications', undefined, bossCookie)).json();
-  assert.deepEqual(apps.pending.map(a => a.email).sort(), ['old@example.test', 'parent@example.test'], 'the existing code holder and the applicant await review');
-  assert.equal(apps.pending.find(a => a.email === 'old@example.test').has_referral_code, true);
-  const noCsrf = await handleApi(new Request(`https://nurevo.jp/api/admin/partner-applications/${parentAccountId}/approve`, { method: 'POST', headers: { cookie: bossCookie, 'cf-connecting-ip': 'test-csrf' } }), env, {});
-  assert.equal(noCsrf.status, 403, 'approval without CSRF is refused');
-  assert.equal(sqlite.prepare('SELECT partner_status FROM accounts WHERE id=?').get(parentAccountId).partner_status, 'pending');
-  const oldAccountId = sqlite.prepare("SELECT id FROM accounts WHERE member_id='old'").get().id;
-  r = await call(`/api/admin/partner-applications/${oldAccountId}/reject`, {}, bossCookie);
-  assert.equal(r.status, 200); assert.equal((await r.json()).partner_status, 'rejected');
-  assert.equal((await call(`/api/admin/partner-applications/${oldAccountId}/approve`, {}, bossCookie)).status, 409, 'a decision is not flipped without a new application');
-  r = await call(`/api/admin/partner-applications/${parentAccountId}/approve`, {}, bossCookie);
-  assert.equal(r.status, 200); assert.equal((await r.json()).partner_status, 'approved');
-  assert.equal((await call(`/api/admin/partner-applications/${parentAccountId}/approve`, {}, bossCookie)).status, 409, 'approved once');
-  assert.equal((await call('/api/admin/partner-applications/999999/approve', {}, bossCookie)).status, 404);
-  assert.equal(sqlite.prepare('SELECT partner_reviewed_by FROM accounts WHERE id=?').get(parentAccountId).partner_reviewed_by, sqlite.prepare('SELECT id FROM members WHERE email=?').get('boss@example.test').id);
-  summary = await (await call('/api/partner', undefined, cookie)).json();
-  assert.equal(summary.partner.status, 'approved'); assert.equal(summary.payout.onboarding_available, true);
-
+  // Auto-approval: applying approves at once (system reviewer) and issues the code.
   const originalRandom = crypto.getRandomValues.bind(crypto);
   let draws = 0;
   crypto.getRandomValues = buffer => ++draws === 1 ? buffer.fill(0) : originalRandom(buffer);
-  const code = (await (await call('/api/partner/code', {}, cookie)).json()).referral_code;
+  sqlite.prepare("UPDATE accounts SET referral_code=? WHERE member_id='old'").run('A'.repeat(12)); // forces one collision on the first draw
+  const beforeApply = Date.now();
+  r = await call('/api/partner/apply', {}, cookie);
   crypto.getRandomValues = originalRandom;
+  assert.equal(r.status, 200);
+  const applied = await r.json();
+  assert.equal(applied.partner_status, 'approved', 'applying approves immediately');
+  assert.ok(applied.approved_at >= beforeApply);
   assert.ok(draws > 1, 'a forced duplicate is retried');
-  assert.match(code, /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{12}$/);
+  const code = applied.referral_code;
+  assert.match(code, /^[ABCDEFGHJKMNPQRSTUVWXYZ23456789]{12}$/, 'the referral code is issued on approval');
+  const parentAccountId = sqlite.prepare('SELECT id FROM accounts WHERE email=?').get('parent@example.test').id;
+  assert.equal(sqlite.prepare('SELECT partner_reviewed_by FROM accounts WHERE id=?').get(parentAccountId).partner_reviewed_by, 'system:auto', 'recorded with the system reviewer');
+  const again = await (await call('/api/partner/apply', {}, cookie)).json();
+  assert.equal(again.partner_status, 'approved', 'applying twice stays approved');
+  assert.equal(again.approved_at, applied.approved_at, 'a second apply does not move the approval time');
+  assert.equal(again.referral_code, code, 'nor the code');
+  summary = await (await call('/api/partner', undefined, cookie)).json();
+  assert.equal(summary.partner.status, 'approved'); assert.equal(summary.payout.onboarding_available, true);
+  assert.equal(summary.referral_code, code); assert.equal(summary.referral_code_active, true);
+  // The admin list and decisions: super admin only, CSRF-protected.
+  assert.equal((await call('/api/admin/partner-applications')).status, 403);
+  assert.equal((await call('/api/admin/partner-applications', undefined, cookie)).status, 403, 'a member cannot list applications');
+  assert.equal((await call(`/api/admin/partner-applications/${parentAccountId}/revoke`, {}, cookie)).status, 403, 'a member cannot review');
+  const boss = await signup('boss@example.test');
+  const bossCookie = (await verify(boss.loginLink)).headers.get('set-cookie').match(/nrv_session=[^;]+/)[0];
+  let apps = await (await call('/api/admin/partner-applications', undefined, bossCookie)).json();
+  assert.deepEqual(apps.pending.map(a => a.email), ['old@example.test'], 'only the 0040 backfill awaits review');
+  assert.equal(apps.pending[0].has_referral_code, true);
+  assert.deepEqual(apps.approved.map(a => [a.email, a.auto_approved, a.payout_method]), [['parent@example.test', true, 'stripe']], 'the auto-approved partner is listed with its payout method');
+  assert.equal(apps.wise_available, false, 'before 0050 no Wise columns');
+  const oldAccountId = sqlite.prepare("SELECT id FROM accounts WHERE member_id='old'").get().id;
+  const noCsrf = await handleApi(new Request(`https://nurevo.jp/api/admin/partner-applications/${oldAccountId}/approve`, { method: 'POST', headers: { cookie: bossCookie, 'cf-connecting-ip': 'test-csrf' } }), env, {});
+  assert.equal(noCsrf.status, 403, 'approval without CSRF is refused');
+  r = await call(`/api/admin/partner-applications/${oldAccountId}/reject`, {}, bossCookie);
+  assert.equal(r.status, 200); assert.equal((await r.json()).partner_status, 'rejected');
+  assert.equal((await call(`/api/admin/partner-applications/${oldAccountId}/approve`, {}, bossCookie)).status, 409, 'a decision is not flipped without a new application');
+  assert.equal((await call(`/api/admin/partner-applications/${parentAccountId}/approve`, {}, bossCookie)).status, 409, 'approved once');
+  assert.equal((await call('/api/admin/partner-applications/999999/approve', {}, bossCookie)).status, 404);
+  // Revoke still works, and a revoked partner cannot approve itself again: its new application waits for a super admin.
+  r = await call(`/api/admin/partner-applications/${parentAccountId}/revoke`, {}, bossCookie);
+  assert.equal(r.status, 200); assert.equal((await r.json()).partner_status, 'rejected');
+  assert.equal((await call('/api/partner/code', {}, cookie)).status, 403, 'a revoked partner cannot issue codes');
+  assert.equal((await (await call('/api/partner/apply', {}, cookie)).json()).partner_status, 'pending', 're-applying after a revoke is reviewed by hand');
+  apps = await (await call('/api/admin/partner-applications', undefined, bossCookie)).json();
+  assert.deepEqual(apps.pending.map(a => a.email), ['parent@example.test']);
+  r = await call(`/api/admin/partner-applications/${parentAccountId}/approve`, {}, bossCookie);
+  assert.equal(r.status, 200); assert.equal((await r.json()).partner_status, 'approved');
+  assert.equal(sqlite.prepare('SELECT partner_reviewed_by FROM accounts WHERE id=?').get(parentAccountId).partner_reviewed_by, sqlite.prepare('SELECT id FROM members WHERE email=?').get('boss@example.test').id);
+  summary = await (await call('/api/partner', undefined, cookie)).json();
+  assert.equal(summary.partner.status, 'approved'); assert.equal(summary.payout.onboarding_available, true);
   assert.equal((await (await call('/api/partner/code', {}, cookie)).json()).referral_code, code, 'issue is idempotent');
   const child = await signup('child@example.test', code.toLowerCase());
   let partner = await (await call('/api/partner', undefined, cookie)).json();
@@ -195,5 +215,5 @@ try {
   assert.equal(responses.filter(r => r.headers.get('location') === '/dashboard').length, 1, 'only one concurrent verification wins');
   for (const lang of EMAIL_LOCALES) { const email = signupLinkEmail('https://nurevo.jp/?a="<>', lang); assert.ok(email.subject && email.text.includes('15')); assert.match(email.html, /&quot;&lt;&gt;/); }
   assert.equal(new Set(Array.from({ length: 1000 }, newReferralCode)).size, 1000);
-  console.log('PASS: 0040 approval (no code/onboarding/attribution before approval, apply, super-admin-only CSRF-protected approve/reject, existing codes pending), migration/backfill, referral signup, regeneration, invalid/self/immutable referral, token hash/single-use/expiry/concurrency, session/CSRF, shared email/IP limits, provider failure, real SQL payout states (ledger only, estimate counts Standard and Pro), onboarding CSRF/unconfigured, 8-language confirmation. No real mail or Stripe calls.');
+  console.log('PASS: 0040 approval (no code/onboarding/attribution before approval; apply auto-approves with the system reviewer and issues the code; super-admin-only CSRF-protected approve/reject/revoke; a revoked partner re-applies to pending; existing codes pending), migration/backfill, referral signup, regeneration, invalid/self/immutable referral, token hash/single-use/expiry/concurrency, session/CSRF, shared email/IP limits, provider failure, real SQL payout states (ledger only, estimate counts Standard and Pro), onboarding CSRF/unconfigured, 8-language confirmation. No real mail or Stripe calls.');
 } finally { globalThis.fetch = originalFetch; sqlite.close(); }

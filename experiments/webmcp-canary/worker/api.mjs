@@ -1,8 +1,8 @@
 import { recordFetched } from "./aeo-delivery.mjs";
 import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
-import { ensureAccount, issueReferralCode, partnerSummary, isApprovedPartner, applyForPartner, reviewPartner, listPartnerApplications, PartnerNotApprovedError } from "./partner.mjs";
-import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn } from "./partner-payouts.mjs";
+import { ensureAccount, issueReferralCode, partnerSummary, isApprovedPartner, applyForPartner, reviewPartner, listPartnerApplications, PartnerNotApprovedError, saveWiseDetails, setPayoutMethod } from "./partner.mjs";
+import { REFERRAL_SHARE, referralCommissionYen, startPayoutOnboarding, recordInvoiceCommission, recordChargeEvent, handleConnectedAccountUpdated, refreshPayoutAfterReturn, markWisePaid, payoutAnchor } from "./partner-payouts.mjs";
 import { normalizeEmailLocale, headerEmailLocale, resolveEmailLocale, loadEmailPreferences, registrationLocaleStatement, magicLinkEmail, signupLinkEmail } from "./email-i18n.mjs";
 import { normalizeDashboardLocale } from "./dashboard-locales.mjs";
 import { memberEmailLocale, mailConfigured, runInBackground, sendWelcomeEmail, sendPaymentFailedEmail, sendPlanEndedEmail, billingSite, handleUnsubscribe, UNSUBSCRIBE_PATH } from "./lifecycle-email.mjs";
@@ -1020,6 +1020,23 @@ export async function handleApi(request, env, ctx) {
     const result = await startPayoutOnboarding(env, account);
     return json(result.body, result.status);
   }
+  // Overseas partners: their own Wise details ({account_name, email, currency,
+  // country}); saving also switches the payout method to Wise (0050). Approved
+  // partners only; CSRF-checked like every POST.
+  if (path === "/api/partner/payout/wise" && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const result = await saveWiseDetails(env, await ensureAccount(env, member.member_id), await safeJson(request));
+    return json(result.body, result.status);
+  }
+  // Switch between "stripe" (Japan, Stripe Connect) and "wise" ({method}).
+  if (path === "/api/partner/payout/method" && method === "POST") {
+    const member = await requireActiveMember(request, env);
+    if (!member) return json({ error: "unauthorized" }, 401);
+    const body = await safeJson(request);
+    const result = await setPayoutMethod(env, await ensureAccount(env, member.member_id), String(body?.method || ""));
+    return json(result.body, result.status);
+  }
   if (["/api/partner/code", "/api/partner/code/regenerate"].includes(path) && method === "POST") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
@@ -1030,12 +1047,14 @@ export async function handleApi(request, env, ctx) {
       throw error;
     }
   }
-  // "パートナー申請": the member asks Nurevo to approve it as a partner. No body is read.
+  // "パートナー申請": approved at once and a referral code is issued (a
+  // previously rejected/revoked account waits for a super admin). No body is read.
   if (path === "/api/partner/apply" && method === "POST") {
     const member = await requireActiveMember(request, env);
     if (!member) return json({ error: "unauthorized" }, 401);
     const result = await applyForPartner(env, await ensureAccount(env, member.member_id));
-    return json({ ok: true, partner_status: result.status, applied_at: result.applied_at });
+    if (result.status === "approved") console.log("partner_auto_approved", JSON.stringify({ member: member.member_id }));
+    return json({ ok: true, partner_status: result.status, applied_at: result.applied_at, approved_at: result.approved_at, referral_code: result.referral_code });
   }
   // Partner applications: listed, approved and rejected by a super admin only
   // (the same check as the other /api/admin routes; POSTs are CSRF-checked above).
@@ -1043,6 +1062,17 @@ export async function handleApi(request, env, ctx) {
     const superAdmin = await requireSuperAdmin(request, env);
     if (!superAdmin) return json({ error: "forbidden" }, 403);
     return json(await listPartnerApplications(env));
+  }
+  // A super admin sent a Wise partner's due commission by hand: record it
+  // ({expected_yen, reference}). expected_yen must equal the amount shown.
+  const wisePaid = path.match(/^\/api\/admin\/partners\/(\d+)\/wise-paid$/);
+  if (wisePaid && method === "POST") {
+    const superAdmin = await requireSuperAdmin(request, env);
+    if (!superAdmin) return json({ error: "forbidden" }, 403);
+    const body = await safeJson(request);
+    const result = await markWisePaid(env, wisePaid[1], { expectedYen: Number(body?.expected_yen), reference: body?.reference ? String(body.reference) : null,
+      by: superAdmin.member_id, anchor: payoutAnchor(env) });
+    return json(result.body, result.status);
   }
   const partnerReview = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject|revoke)$/);
   if (partnerReview && method === "POST") {

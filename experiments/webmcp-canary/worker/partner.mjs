@@ -1,4 +1,4 @@
-import { REFERRAL_SHARE, referralCommissionYen, payoutAnchor, refreshPayoutAccount, partnerLedgerTotals } from "./partner-payouts.mjs";
+import { REFERRAL_SHARE, referralCommissionYen, payoutAnchor, refreshPayoutAccount, partnerLedgerTotals, wiseDue } from "./partner-payouts.mjs";
 // Account identities are per member, independent of organization-level access.
 export async function ensureAccount(env, memberId) {
   await env.DB.prepare(`INSERT INTO accounts(member_id,email,created_at)
@@ -22,11 +22,14 @@ export function newReferralCode() {
   return code;
 }
 /**
- * Partner approval (migration 0040). Only an account Nurevo approved can issue
- * a referral code, set up a payout account, attribute signups or earn
- * commission. none -> pending (the member applies) -> approved | rejected (a
- * super admin decides); approved -> rejected (a super admin revokes); a
- * rejected account may apply again.
+ * Partner approval (migration 0040). Only an approved account can issue a
+ * referral code, set up a payout account, attribute signups or earn
+ * commission. none -> approved: applying approves at once (recorded with
+ * partner_reviewed_by='system:auto') and issues the referral code. A super
+ * admin can still revoke (approved -> rejected). A rejected (or revoked)
+ * account that applies again goes to pending and waits for a super admin, so a
+ * revoke cannot be undone by the member. Accounts already pending (0040
+ * backfill, or applied before auto-approval) stay for a super admin to approve.
  */
 export const PARTNER_STATUSES = Object.freeze(["none", "pending", "approved", "rejected"]);
 export function partnerStatus(account) {
@@ -37,11 +40,26 @@ export const isApprovedPartner = (account) => partnerStatus(account) === "approv
 export class PartnerNotApprovedError extends Error {
   constructor() { super("partner_not_approved"); this.code = "partner_not_approved"; }
 }
+export const AUTO_REVIEWER = "system:auto";
 export async function applyForPartner(env, account, { now = Date.now() } = {}) {
-  await env.DB.prepare("UPDATE accounts SET partner_status='pending', partner_applied_at=?, partner_reviewed_at=NULL, partner_reviewed_by=NULL WHERE id=? AND partner_status IN ('none','rejected')")
+  // Auto-approval: none -> approved at once, the same effect as an admin's
+  // approve (approved_at = now: only customers referred from now on earn).
+  await env.DB.prepare(`UPDATE accounts SET partner_status='approved', partner_applied_at=?, partner_approved_at=?,
+      partner_reviewed_at=?, partner_reviewed_by=? WHERE id=? AND partner_status='none'`)
+    .bind(now, now, now, AUTO_REVIEWER, account.id).run();
+  // A rejected / revoked account waits for a super admin again.
+  await env.DB.prepare("UPDATE accounts SET partner_status='pending', partner_applied_at=?, partner_reviewed_at=NULL, partner_reviewed_by=NULL WHERE id=? AND partner_status='rejected'")
     .bind(now, account.id).run();
-  const row = await env.DB.prepare("SELECT partner_status, partner_applied_at FROM accounts WHERE id=?").bind(account.id).first();
-  return { status: partnerStatus(row), applied_at: row?.partner_applied_at ?? null };
+  let row = await env.DB.prepare("SELECT * FROM accounts WHERE id=?").bind(account.id).first();
+  let referralCode = row?.referral_code || null;
+  if (isApprovedPartner(row)) {
+    try { referralCode = await issueReferralCode(env, row); } catch (error) {
+      // The approval stands; the member can still press 発行 on the Partner page.
+      console.error("partner_auto_code_failed", JSON.stringify({ account: account.id, message: String(error?.message || error).slice(0, 120) }));
+    }
+  }
+  return { status: partnerStatus(row), applied_at: row?.partner_applied_at ?? null, approved_at: isApprovedPartner(row) ? Number(row.partner_approved_at) : null,
+    referral_code: isApprovedPartner(row) ? referralCode : null };
 }
 /**
  * Approve or reject a pending application (super admin only; the route checks
@@ -64,15 +82,122 @@ export async function reviewPartner(env, accountId, decision, reviewerMemberId, 
   if (Number(result.meta?.changes || 0) !== 1) return { status: 409, body: { error: decision === "revoke" ? "not_approved" : "not_pending", partner_status: partnerStatus(row) } };
   return { status: 200, body: { ok: true, id: row.id, partner_status: partnerStatus(row), approved_at: row.partner_approved_at ?? null } };
 }
-export async function listPartnerApplications(env) {
+export async function listPartnerApplications(env, { now = Date.now() } = {}) {
   const { results: pending = [] } = await env.DB.prepare(`SELECT id, email, referral_code, partner_status, partner_applied_at, created_at FROM accounts
     WHERE partner_status='pending' ORDER BY partner_applied_at, id LIMIT 200`).all();
-  const { results: approved = [] } = await env.DB.prepare(`SELECT a.id, a.email, a.referral_code, a.partner_status, a.partner_approved_at,
+  const approvedSql = (extra) => `SELECT a.id, a.email, a.referral_code, a.partner_status, a.partner_approved_at, a.partner_reviewed_by,
+      a.stripe_account_id, a.payout_status${extra},
       (SELECT COUNT(*) FROM accounts c WHERE c.referred_by_account_id=a.id AND c.created_at>=a.partner_approved_at) AS referrals
-    FROM accounts a WHERE a.partner_status='approved' ORDER BY a.partner_approved_at DESC, a.id DESC LIMIT 200`).all();
+    FROM accounts a WHERE a.partner_status='approved' ORDER BY a.partner_approved_at DESC, a.id DESC LIMIT 200`;
+  let approved, wiseAvailable = true;
+  try {
+    ({ results: approved = [] } = await env.DB.prepare(approvedSql(", a.payout_method, a.wise_account_name, a.wise_email, a.wise_currency, a.wise_country, a.wise_updated_at")).all());
+  } catch (error) {
+    // Deployed before 0050 (or 0039): no Wise columns; everyone is on Stripe.
+    if (!/no such column/i.test(String(error?.message || error))) throw error;
+    wiseAvailable = false;
+    try { ({ results: approved = [] } = await env.DB.prepare(approvedSql("")).all()); } catch (inner) {
+      if (!/no such column/i.test(String(inner?.message || inner))) throw inner;
+      ({ results: approved = [] } = await env.DB.prepare(approvedSql("").replace("a.stripe_account_id, a.payout_status", "NULL AS stripe_account_id, NULL AS payout_status")).all());
+    }
+  }
+  const anchor = payoutAnchor(env);
   const view = (r) => ({ account_id: r.id, email: r.email, has_referral_code: !!r.referral_code, partner_status: partnerStatus(r),
     applied_at: r.partner_applied_at ?? null, approved_at: r.partner_approved_at ?? null, ...(r.referrals != null ? { referrals: Number(r.referrals) } : {}) });
-  return { pending: pending.map(view), approved: approved.map(view) };
+  const approvedView = [];
+  for (const r of approved) {
+    const method = payoutMethod(r);
+    const item = { ...view(r), auto_approved: r.partner_reviewed_by === AUTO_REVIEWER, payout_method: method,
+      stripe_payout_status: r.stripe_account_id ? (r.payout_status || "in_progress") : "not_started", wise: null };
+    if (method === "wise") {
+      let due = null;
+      try { due = await wiseDue(env, r.id, { now, anchor }); } catch (error) {
+        console.error("partner_wise_due_unavailable", JSON.stringify({ account: r.id, message: String(error?.message || error).slice(0, 120) }));
+      }
+      // The admin sends the money by hand, so the full address is shown here (super admins only).
+      item.wise = { account_name: r.wise_account_name || null, email: r.wise_email || null, currency: r.wise_currency || null,
+        country: r.wise_country || null, updated_at: r.wise_updated_at ?? null,
+        due_yen: due ? due.due_yen : null, gross_yen: due ? due.gross_yen : null, debt_yen: due ? due.debt_yen : null,
+        later_yen: due ? due.later_yen : null, due_rows: due ? due.rows.length : null, unconfirmed_rows: due ? due.unconfirmed : null,
+        payout_at: due ? due.payout_at : null };
+    }
+    approvedView.push(item);
+  }
+  return { pending: pending.map(view), approved: approvedView, wise_available: wiseAvailable, payout_day: anchor };
+}
+
+/* ---------------- payout method: Stripe (Japan) or Wise (overseas), 0050 ---------------- */
+
+export const PAYOUT_METHODS = Object.freeze(["stripe", "wise"]);
+export const payoutMethod = (account) => account?.payout_method === "wise" ? "wise" : "stripe";
+/** Currencies a partner may ask to receive through Wise. Commission is always computed in JPY. */
+export const WISE_CURRENCIES = Object.freeze(["USD", "EUR", "GBP", "AUD", "CAD", "NZD", "SGD", "HKD", "INR", "JPY", "CHF", "SEK", "NOK", "DKK", "PLN", "KRW", "PHP", "THB", "MYR", "IDR", "BRL", "MXN"]);
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Control characters and markup never belong in a name.
+const BAD_NAME = /[\u0000-\u001f\u007f<>]/;
+
+export function validateWiseDetails(body) {
+  const errors = {};
+  const name = String(body?.account_name ?? "").trim().replace(/\s+/g, " ");
+  const email = String(body?.email ?? "").trim().toLowerCase();
+  const currency = String(body?.currency ?? "").trim().toUpperCase();
+  const country = String(body?.country ?? "").trim().toUpperCase();
+  if (!name || name.length > 100 || BAD_NAME.test(name)) errors.account_name = "invalid";
+  if (email.length > 254 || !EMAIL_RE.test(email)) errors.email = "invalid";
+  if (!WISE_CURRENCIES.includes(currency)) errors.currency = "unsupported";
+  if (!/^[A-Z]{2}$/.test(country)) errors.country = "invalid";
+  return Object.keys(errors).length ? { ok: false, errors } : { ok: true, value: { account_name: name, email, currency, country } };
+}
+
+const columnMissing = (error) => /no such column/i.test(String(error?.message || error));
+const WISE_UNAVAILABLE = { status: 503, body: { error: "wise_unavailable", reason: "migration_pending" } };
+
+/** Save the partner's own Wise details and switch it to Wise. Approved partners only. */
+export async function saveWiseDetails(env, account, body, { now = Date.now() } = {}) {
+  if (!isApprovedPartner(account)) return { status: 403, body: { error: "partner_not_approved" } };
+  const checked = validateWiseDetails(body);
+  if (!checked.ok) return { status: 400, body: { error: "invalid_wise_details", fields: checked.errors } };
+  const v = checked.value;
+  try {
+    await env.DB.prepare(`UPDATE accounts SET payout_method='wise', wise_account_name=?, wise_email=?, wise_currency=?, wise_country=?, wise_updated_at=? WHERE id=?`)
+      .bind(v.account_name, v.email, v.currency, v.country, now, account.id).run();
+  } catch (error) {
+    if (columnMissing(error)) return WISE_UNAVAILABLE;
+    throw error;
+  }
+  console.log("partner_wise_saved", JSON.stringify({ account: account.id, currency: v.currency, country: v.country }));
+  const row = await env.DB.prepare("SELECT * FROM accounts WHERE id=?").bind(account.id).first();
+  return { status: 200, body: { ok: true, method: "wise", wise: wiseView(row) } };
+}
+
+/** Switch between Stripe and Wise. Wise needs saved details first. */
+export async function setPayoutMethod(env, account, method) {
+  if (!isApprovedPartner(account)) return { status: 403, body: { error: "partner_not_approved" } };
+  if (!PAYOUT_METHODS.includes(method)) return { status: 400, body: { error: "invalid_payout_method" } };
+  if (!("payout_method" in (account || {}))) return WISE_UNAVAILABLE;
+  if (method === "wise" && !account.wise_email) return { status: 409, body: { error: "wise_details_required" } };
+  try {
+    await env.DB.prepare("UPDATE accounts SET payout_method=? WHERE id=?").bind(method, account.id).run();
+  } catch (error) {
+    if (columnMissing(error)) return WISE_UNAVAILABLE;
+    throw error;
+  }
+  console.log("partner_payout_method", JSON.stringify({ account: account.id, method }));
+  return { status: 200, body: { ok: true, method } };
+}
+
+export function maskEmail(email) {
+  const value = String(email || "");
+  const at = value.lastIndexOf("@");
+  if (at < 1) return value ? "***" : null;
+  const local = value.slice(0, at);
+  return `${local[0]}${"*".repeat(Math.max(2, Math.min(6, local.length - 1)))}@${value.slice(at + 1)}`;
+}
+/** What the partner's own page shows of its Wise details (the address masked). */
+export function wiseView(account) {
+  if (!account?.wise_email) return null;
+  return { account_name: account.wise_account_name || null, email_masked: maskEmail(account.wise_email), currency: account.wise_currency || null,
+    country: account.wise_country || null, updated_at: account.wise_updated_at ?? null };
 }
 export async function issueReferralCode(env, account, regenerate = false) {
   // A code exists only for an approved partner (an older code is kept but inactive).
@@ -155,6 +280,10 @@ export async function partnerSummary(env, account, { now = Date.now() } = {}) {
       next_payout_at: totals ? totals.window.next : null, next_payout_this_month: totals ? totals.window.nextIsThisMonth : null,
       payout_day: anchor, paid_status: totals ? 'ledger' : 'ledger_unavailable', basis: 'net_after_stripe_fees',
       onboarding_available: approved,
+      // 0050: 'stripe' (Japan, Stripe Connect, automatic) or 'wise' (overseas,
+      // sent by Nurevo by hand). wise_available is false before the migration.
+      method: payoutMethod(account), wise_available: 'payout_method' in account, wise: wiseView(account),
+      wise_currencies: WISE_CURRENCIES,
       account: { status: payoutAccount.status, currently_due: Number(payoutAccount.currently_due || 0) + Number(payoutAccount.past_due || 0),
         disabled_reason: payoutAccount.disabled_reason || null } },
     referrals: accounts.map(a => ({ account_id: a.id, email: a.email, registered_at: a.created_at,

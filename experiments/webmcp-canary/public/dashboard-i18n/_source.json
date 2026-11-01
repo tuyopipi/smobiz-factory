@@ -996,8 +996,8 @@
   "ja": "会社情報・代表者・銀行口座はStripeの安全なページで入力します。Nurevoは口座番号を保存・閲覧しません。"
  },
  "ptPayoutJapan": {
-  "en": "Payouts are for Japan-based businesses and individuals only (a Japanese bank account).",
-  "ja": "受け取りは日本国内の事業者・個人（日本の銀行口座）に限ります。"
+  "en": "Stripe payouts are to bank accounts in Japan only. Outside Japan, choose “Outside Japan (Wise)” as your payout method.",
+  "ja": "Stripeでの受け取りは日本国内の銀行口座のみです。海外の方は受け取り方法で「海外（Wise）」を選んでください。"
  },
  "ptPayoutHeldNote": {
   "en": "Commission earned before setup is complete is held and paid automatically afterwards. Nothing is paid until the customer’s payment has settled in Stripe; anything not settled by the {d}th moves to the next month.",
@@ -1056,12 +1056,12 @@
   "ja": "パートナー申請"
  },
  "ptApplied": {
-  "en": "Application received. Please wait for Nurevo to approve it.",
-  "ja": "申請を受け付けました。Nurevoの承認をお待ちください。"
+  "en": "You are now a Nurevo partner. Your referral code has been issued.",
+  "ja": "パートナーとして承認されました。紹介コードを発行しました。"
  },
  "ptApplyNote": {
-  "en": "Once Nurevo approves you as a partner, you can issue a referral code and set up a payout account. Commission comes from payments by customers you refer after approval.",
-  "ja": "Nurevoがパートナーとして承認すると、紹介コードの発行と報酬の受け取り口座の登録ができます。報酬は承認後に紹介したお客様のお支払いから発生します。"
+  "en": "Applying approves you at once: you can issue a referral code and choose how to receive payouts. Commission comes from payments by customers you refer after approval (from your second customer on).",
+  "ja": "申請するとすぐに自動で承認され、紹介コードの発行と報酬の受け取り方法の登録ができます。報酬は承認後に紹介したお客様のお支払いから発生します（1社目は対象外、2社目から）。"
  },
  "ptPendingNote": {
   "en": "Nurevo is reviewing your application. Until it is approved, your referral code cannot be used and no commission is earned.",
@@ -1692,8 +1692,8 @@
   "ja": "メンバーがいません。"
  },
  "paLead": {
-  "en": "Approve pending referral partners (agencies, web studios and individuals). Partners earn 40% of the monthly fee net of Stripe fees, paid on the 25th via Stripe Connect to Japan-based accounts.",
-  "ja": "紹介パートナー（代理店・制作会社・個人）の承認待ちを管理します。報酬は月額料金（Stripe手数料控除後）の40%で、毎月25日にStripe Connectで日本国内の口座へ支払われます。"
+  "en": "Manage referral partners (agencies, web studios and individuals). Partners earn 40% of the monthly fee net of Stripe fees, from their second customer. Partners in Japan are paid automatically on the 25th via Stripe Connect; Wise (overseas) partners are paid by hand the amount shown here.",
+  "ja": "紹介パートナー（代理店・制作会社・個人）を管理します。報酬は月額料金（Stripe手数料控除後）の40%で、2社目から発生します。国内のパートナーには毎月25日にStripe Connectで自動で支払われ、海外（Wise）のパートナーにはここに表示する金額を手動で送金します。"
  },
  "paPending": {
   "en": "Awaiting approval",
@@ -1760,8 +1760,8 @@
   "ja": "パートナー申請（紹介報酬）"
  },
  "paAppsLead": {
-  "en": "Only approved accounts can issue a referral code; they earn from their second customer referred after approval.",
-  "ja": "承認したアカウントだけが紹介コードを発行し、承認後に紹介したお客様の2社目から報酬を受け取れます。"
+  "en": "Partner applications are approved automatically. Listed here are re-applications from revoked (or rejected) accounts and applications made before auto-approval.",
+  "ja": "パートナー申請は自動で承認されます。ここに表示されるのは、承認を取り消した（または却下した）アカウントの再申請と、自動承認の導入前からの申請です。"
  },
  "paAppsFailed": {
   "en": "Could not load partner applications.",
@@ -3598,5 +3598,129 @@
  "lnPts": {
   "en": "{v} pts",
   "ja": "{v}ポイント"
+ },
+ "ptMethodTitle": {
+  "en": "How you receive payouts",
+  "ja": "受け取り方法"
+ },
+ "ptMethodStripe": {
+  "en": "Bank account in Japan (Stripe)",
+  "ja": "国内の銀行口座（Stripe）"
+ },
+ "ptMethodWise": {
+  "en": "Outside Japan (Wise)",
+  "ja": "海外（Wise）"
+ },
+ "ptMethodCurrentStripe": {
+  "en": "Current method: bank account in Japan (Stripe)",
+  "ja": "現在の受け取り方法：国内の銀行口座（Stripe）"
+ },
+ "ptMethodCurrentWise": {
+  "en": "Current method: outside Japan (Wise)",
+  "ja": "現在の受け取り方法：海外（Wise）"
+ },
+ "ptMethodUseStripe": {
+  "en": "Switch to Stripe payouts",
+  "ja": "Stripeでの受け取りに切り替える"
+ },
+ "ptMethodSwitched": {
+  "en": "Payout method updated.",
+  "ja": "受け取り方法を切り替えました。"
+ },
+ "ptWiseTitle": {
+  "en": "Wise payout details",
+  "ja": "Wiseの受け取り情報"
+ },
+ "ptWiseSaved": {
+  "en": "Saved",
+  "ja": "登録済み"
+ },
+ "ptWiseName": {
+  "en": "Recipient name",
+  "ja": "受取人名"
+ },
+ "ptWiseEmail": {
+  "en": "Email address registered with Wise",
+  "ja": "Wiseに登録したメールアドレス"
+ },
+ "ptWiseEmailHint": {
+  "en": "The saved address is partly hidden. Enter it again when you change your details.",
+  "ja": "登録済みのアドレスは一部を伏せて表示しています。変更するときは、もう一度入力してください。"
+ },
+ "ptWiseCurrency": {
+  "en": "Receiving currency",
+  "ja": "受け取り通貨"
+ },
+ "ptWiseCountry": {
+  "en": "Country (two-letter code, e.g. US, GB, SG)",
+  "ja": "国（2文字の国コード。例：US、GB、SG）"
+ },
+ "ptWiseSave": {
+  "en": "Save",
+  "ja": "保存"
+ },
+ "ptWiseSavedMsg": {
+  "en": "Saved. Your commission will now be paid through Wise.",
+  "ja": "Wiseの受け取り情報を保存しました。今後の報酬はWiseでお支払いします。"
+ },
+ "ptWiseNote": {
+  "en": "Commission is calculated in yen (40% net of Stripe fees, from your second customer) and Nurevo sends it through Wise around the {d}th of each month, converted to your currency at Wise's rate when sent.",
+  "ja": "報酬は日本円で計算し（Stripe手数料控除後の40%、2社目から）、Nurevoが毎月{d}日ごろにWiseで送金します。受け取り通貨への換算は送金時のWiseのレートです。"
+ },
+ "err_invalid_wise_details": {
+  "en": "Please check the details (recipient name, email address, currency and two-letter country code).",
+  "ja": "入力内容を確認してください（受取人名、メールアドレス、受け取り通貨、2文字の国コード）。"
+ },
+ "err_wise_unavailable": {
+  "en": "Wise payouts are not available yet. Please try again later.",
+  "ja": "Wiseでの受け取りはまだ準備中です。しばらくしてからお試しください。"
+ },
+ "err_wise_details_required": {
+  "en": "Save your Wise details first.",
+  "ja": "先にWiseの受け取り情報を保存してください。"
+ },
+ "err_amount_changed": {
+  "en": "The amount has changed. Refresh the list and check again.",
+  "ja": "金額が変わりました。一覧を更新して、もう一度確認してください。"
+ },
+ "err_nothing_due": {
+  "en": "Nothing is due for this payout.",
+  "ja": "今回送金する報酬はありません。"
+ },
+ "paMethod": {
+  "en": "Payout method",
+  "ja": "受け取り方法"
+ },
+ "paMethodStripe": {
+  "en": "Stripe (Japan)",
+  "ja": "Stripe（国内）"
+ },
+ "paMethodWise": {
+  "en": "Wise (overseas)",
+  "ja": "Wise（海外）"
+ },
+ "paAuto": {
+  "en": "Auto-approved",
+  "ja": "自動承認"
+ },
+ "paWiseDue": {
+  "en": "Amount to send",
+  "ja": "今回の送金額"
+ },
+ "paWiseDetail": {
+  "en": "For the {date} payout (refund offset ¥{debt}, unconfirmed {n}, later ¥{later})",
+  "ja": "{date}支払分（返金の相殺 ¥{debt}・未確定 {n}件・翌月以降 ¥{later}）"
+ },
+ "paWisePaid": {
+  "en": "Mark as sent via Wise",
+  "ja": "Wiseで送金済みにする"
+ },
+ "paWiseConfirm": {
+  "en": "Record ¥{yen} as sent via Wise to {email}. Enter the Wise transfer number (optional) and press OK.",
+  "ja": "Wiseで ¥{yen} を {email} に送金済みとして記録します。Wiseの送金番号（任意）を入力してOKを押してください。"
+ },
+ "paWisePaidDone": {
+  "en": "Recorded ¥{yen} as sent.",
+  "ja": "¥{yen}を送金済みとして記録しました。"
  }
 }

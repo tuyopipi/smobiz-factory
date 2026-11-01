@@ -464,6 +464,9 @@ async function destinationFor(env, row, { now, readiness }) {
     // a pending, rejected or revoked partner, including rows created before
     // 0040, stay held until it is approved again.
     if (!account?.stripe_account_id || account.partner_status !== "approved") return null;
+    // A partner who chose Wise (0050) is paid by hand (markWisePaid), never
+    // also by a Stripe transfer. Before 0050 payout_method is undefined: Stripe.
+    if (account.payout_method === "wise") return null;
     const key = `a:${account.id}`;
     if (!readiness.has(key)) readiness.set(key, await refreshPayoutAccount(env, account, { now }));
     return readiness.get(key).status === "ready" ? account.stripe_account_id : null;
@@ -799,6 +802,7 @@ export async function runPartnerPayouts(env, { now = Date.now(), get = stripeGet
   try {
     const result = await releaseHeldPayouts(env, { now, get });
     if (result.skipped) return result;
+    result.wise_synced = await syncWiseRows(env, { now, get });
     const { results: sent = [] } = await env.DB.prepare(`SELECT * FROM referral_payouts WHERE kind='commission' AND status IN ('sent','reversed')
         AND sent_at>? ORDER BY IFNULL(checked_at,0), id LIMIT 10`).bind(now - RECONCILE_DAYS * DAY_MS).all();
     for (const row of sent) { await reconcileCommission(env, row, { now, get }); result.reconciled++; }
@@ -861,4 +865,97 @@ export async function partnerLedgerTotals(env, accountId, { now = Date.now(), an
     else if (effective > window.previous) totals.next += net;
   }
   return { ...totals, window };
+}
+
+/* ---------------- Wise: overseas partners, paid by hand (0050) ---------------- */
+
+/**
+ * Wise partners (accounts.payout_method='wise') are not paid by Stripe
+ * transfers: their commission rows stay held, kept current from the charge
+ * like any held row, and a super admin sends the money through Wise and then
+ * records it (markWisePaid). The commission itself is unchanged: 40% of the
+ * net JPY, from the second customer on, only rows a verified webhook created.
+ *
+ * A row is due for the next payout day when its amount is known from the
+ * charge (synced, no open question: last_error IS NULL), it keeps something,
+ * nothing was ever attempted on it through Stripe (attempts=0, no frozen
+ * transfer amount) and its funds are available by that payout day. Debts from
+ * refunds after an earlier Wise payout are withheld, exactly as a Stripe
+ * transfer withholds them (freezeTransfer / offsets).
+ */
+export async function wiseDue(env, accountId, { now = Date.now(), anchor = DEFAULT_PAYOUT_ANCHOR } = {}) {
+  const window = payoutWindow(now, anchor);
+  const { results: rows = [] } = await env.DB.prepare(`SELECT id, status, amount_yen, kept_yen, available_at, last_error, transfer_amount_yen, attempts
+      FROM referral_payouts WHERE partner_account_id=? AND kind='commission' AND status='held' ORDER BY id`).bind(accountId).all();
+  const out = { gross_yen: 0, debt_yen: 0, due_yen: 0, later_yen: 0, rows: [], unconfirmed: 0, payout_at: window.next };
+  for (const r of rows) {
+    if (r.last_error === FIRST_CUSTOMER) continue;
+    const kept = r.kept_yen == null ? null : Number(r.kept_yen);
+    const ready = kept != null && kept > 0 && Number(r.amount_yen) > 0 && r.last_error == null && r.transfer_amount_yen == null
+      && !(Number(r.attempts) > 0) && Number(r.available_at) > 0;
+    if (!ready) { if (kept == null || r.last_error != null) out.unconfirmed++; continue; }
+    if (Number(r.available_at) <= window.next) { out.gross_yen += kept; out.rows.push(Number(r.id)); }
+    else out.later_yen += kept;
+  }
+  const debts = await debtsFor(env, { id: 0, partner_account_id: accountId, legacy_referrer_id: null });
+  out.debt_yen = debts.reduce((sum, d) => sum + d.owed, 0);
+  out.due_yen = Math.max(0, out.gross_yen - out.debt_yen);
+  return out;
+}
+
+/** Hourly: keep the held rows of Wise partners current (amount, refunds, availability). */
+async function syncWiseRows(env, { now, get, limit = 10 }) {
+  let rows;
+  try {
+    ({ results: rows = [] } = await env.DB.prepare(`SELECT r.id FROM referral_payouts r JOIN accounts a ON a.id=r.partner_account_id
+        WHERE a.payout_method='wise' AND a.partner_status='approved' AND r.kind='commission' AND r.status='held'
+          AND r.transfer_amount_yen IS NULL AND (r.kept_yen IS NULL OR r.last_error IS NOT NULL) AND IFNULL(r.last_error,'')<>?
+          AND IFNULL(r.checked_at,0)<? ORDER BY IFNULL(r.checked_at,0), r.id LIMIT ?`).bind(FIRST_CUSTOMER, now - HOUR_MS, limit).all());
+  } catch (error) {
+    if (/no such column/i.test(String(error?.message || error))) return 0; // 0050 not applied: nobody chose Wise
+    throw error;
+  }
+  for (const r of rows) await payCommission(env, r.id, { now, get });
+  return rows.length;
+}
+
+/**
+ * A super admin sent `expectedYen` to the partner through Wise: record the due
+ * rows as paid (status 'sent', destination 'wise', no Stripe transfer id). The
+ * amount must equal what wiseDue shows now, so a row that changed in between
+ * is never recorded under an amount nobody saw. Each row is claimed with a
+ * conditional UPDATE, so a double click records nothing twice.
+ */
+export async function markWisePaid(env, accountId, { expectedYen, reference = null, by = null, now = Date.now(), anchor = DEFAULT_PAYOUT_ANCHOR } = {}) {
+  const id = Number(accountId);
+  if (!Number.isInteger(id) || id <= 0) return { status: 404, body: { error: "not_found" } };
+  let account;
+  try {
+    account = await env.DB.prepare("SELECT id, partner_status, payout_method FROM accounts WHERE id=?").bind(id).first();
+  } catch (error) {
+    if (/no such column/i.test(String(error?.message || error))) return { status: 503, body: { error: "wise_unavailable", reason: "migration_pending" } };
+    throw error;
+  }
+  if (!account) return { status: 404, body: { error: "not_found" } };
+  if (account.payout_method !== "wise") return { status: 409, body: { error: "not_wise_partner" } };
+  if (account.partner_status !== "approved") return { status: 409, body: { error: "not_approved" } };
+  const due = await wiseDue(env, id, { now, anchor });
+  if (!due.rows.length || due.due_yen <= 0) return { status: 409, body: { error: "nothing_due", wise: due } };
+  if (!Number.isInteger(expectedYen) || expectedYen !== due.due_yen) return { status: 409, body: { error: "amount_changed", wise: due } };
+  let paid = 0;
+  const recorded = [];
+  for (const rowId of due.rows) {
+    const claim = await env.DB.prepare(`UPDATE referral_payouts SET status='sending', attempts=attempts+1, last_attempt_at=?, updated_at=?
+        WHERE id=? AND status='held' AND attempts=0 AND transfer_amount_yen IS NULL`).bind(now, now, rowId).run();
+    if (Number(claim.meta?.changes || 0) !== 1) continue;
+    const row = await freezeTransfer(env, await loadRow(env, rowId), now);
+    const amount = Number(row.transfer_amount_yen || 0);
+    await markSent(env, row, { transferId: null, amount, destination: "wise", now });
+    await env.DB.prepare("UPDATE referral_payouts SET manual_reference=?, manual_paid_by=? WHERE id=?")
+      .bind(reference ? String(reference).slice(0, 120) : null, by, rowId).run();
+    paid += amount;
+    recorded.push(rowId);
+  }
+  console.log("partner_wise_paid", JSON.stringify({ account: id, yen: paid, rows: recorded.length, by }));
+  return { status: 200, body: { ok: true, paid_yen: paid, rows: recorded.length, wise: await wiseDue(env, id, { now, anchor }) } };
 }
