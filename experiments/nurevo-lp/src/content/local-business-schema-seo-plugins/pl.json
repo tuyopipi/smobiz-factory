@@ -1,0 +1,139 @@
+{
+ "title": "Darmowe schema lokalnej firmy dla Yoast, Rank Math i AIOSEO | Nurevo",
+ "description": "Darmowa wersja wtyczki SEO publikuje nazwę i logo. Dodaj za darmo z Nurevo AEO adres, telefon, godziny otwarcia, typ firmy, usługi i FAQ, których potrzebuje AI.",
+ "h1": "Dodaj za darmo schema lokalnej firmy do Yoast SEO, Rank Math lub AIOSEO",
+ "lead": "Zostaw swoją wtyczkę SEO. Nurevo AEO, darmowa wtyczka do WordPress, dodaje informacje, których AI potrzebuje, by opisać lokalną firmę (adres, telefon, godziny otwarcia, typ działalności, usługi i FAQ), do danych strukturalnych, które Yoast SEO, Rank Math lub All in One SEO już publikuje, bez ich duplikowania.",
+ "intro": [
+  "Ostatnia weryfikacja: październik 2026. Plany wtyczek SEO się zmieniają, więc aktualne funkcje sprawdź na stronach poszczególnych wtyczek."
+ ],
+ "sections": [
+  {
+   "heading": "Co publikują darmowe wersje Yoast SEO, Rank Math i AIOSEO",
+   "paragraphs": [
+    "Gdy AI odpowiada na pytanie w rodzaju „który dentysta w pobliżu jest otwarty w sobotę”, potrzebuje informacji, które może odczytać bez zgadywania: jaki to rodzaj działalności, gdzie się znajdujesz, jak do ciebie zadzwonić i kiedy jest otwarte. W WordPress te informacje pochodzą zwykle z JSON-LD twojej wtyczki SEO.",
+    "Darmowe wersje publikują twoją witrynę jako Organization z nazwą, adresem URL i logo. Większość informacji lokalnych jest w płatnych dodatkach lub planach local SEO. Stan na październik 2026:"
+   ],
+   "table": {
+    "head": [
+     "Informacja",
+     "Darmowe wersje (październik 2026)",
+     "Dodawane przez Nurevo AEO (za darmo)"
+    ],
+    "rows": [
+     [
+      "Nazwa firmy, URL, logo",
+      "Publikowane jako Organization przez Yoast SEO, Rank Math i AIOSEO",
+      "Pozostawione dokładnie tak, jak publikuje je twoja wtyczka SEO"
+     ],
+     [
+      "Adres, telefon, godziny otwarcia",
+      "Yoast SEO i AIOSEO: w płatnych dodatkach local SEO (Yoast Local SEO, AIOSEO Local SEO). Rank Math: dane jednej lokalizacji, jeśli wypełnisz ustawienia Local SEO; więcej funkcji local SEO jest w płatnych planach",
+      "Dodawane do węzła twojej firmy tam, gdzie ich brakuje, pod tym samym @id"
+     ],
+     [
+      "Konkretny typ działalności",
+      "Organization, chyba że funkcja local SEO ustawia typ",
+      "Bardziej szczegółowy typ, np. HairSalon lub Dentist"
+     ],
+     [
+      "Usługi",
+      "Nie są częścią danych Organization",
+      "Wprowadzone przez ciebie usługi, powiązane z twoją firmą"
+     ],
+     [
+      "FAQ",
+      "Każda FAQPage publikowana przez twoją wtyczkę SEO zostaje zachowana",
+      "Twoje pytania, dodane do FAQPage strony, na której znajduje się blok FAQ Nurevo"
+     ],
+     [
+      "WebSite, WebPage, Article, okruszki",
+      "Publikowane przez twoją wtyczkę SEO",
+      "Bez zmian"
+     ]
+    ],
+    "caption": "Stan na październik 2026. Wartości, które twoja wtyczka SEO już ustawia, nigdy nie są nadpisywane."
+   },
+   "after": [
+    "To nie jest krytyka tych wtyczek: zajmują się pozycjonowaniem w wyszukiwarkach, a Nurevo AEO zaprojektowano do pracy obok nich, a nie zamiast nich."
+   ]
+  },
+  {
+   "heading": "Jak Nurevo AEO uzupełnia braki bez duplikowania schema",
+   "paragraphs": [
+    "Nurevo AEO nie wypisuje drugiego zestawu danych strukturalnych obok danych twojej wtyczki SEO. Podpina się pod filtr, którego każda wtyczka używa do budowy swojego grafu JSON-LD (wpseo_schema_graph w Yoast SEO, rank_math/schema/validated_data w Rank Math, aioseo_schema_output w AIOSEO), i dodaje tylko to, czego brakuje:"
+   ],
+   "list": [
+    "Adres, telefon, godziny otwarcia, opis i e-mail trafiają do istniejącego węzła twojej firmy, pod tym samym @id.",
+    "Wartość, którą twoja wtyczka SEO już ustawia, nigdy nie jest nadpisywana. Jeśli wypełniłeś ustawienia Local SEO w Rank Math, te wartości zostają.",
+    "Wprowadzone usługi są dodawane i powiązane z twoją firmą.",
+    "Wprowadzone pytania FAQ są dodawane do FAQPage tylko na stronie, która wyświetla blok FAQ Nurevo lub shortcode [nurevo_faq], z pominięciem pytań, na które strona już odpowiada.",
+    "WebSite, WebPage, Article i okruszki pozostają dokładnie takie, jak publikuje je twoja wtyczka SEO."
+   ],
+   "after": [
+    "W efekcie strona ma jeden graf opisujący jedną firmę, bez duplikatów. Przy każdej innej konfiguracji (SEOPress, The SEO Framework, własne schema motywu lub brak wtyczki SEO) Nurevo AEO wypisuje własny graf i umieszcza dane firmy pod istniejącym @id firmy, więc oba nadal opisują jedną firmę."
+   ]
+  },
+  {
+   "heading": "Konfiguracja w pięciu krokach",
+   "list": [
+    "Zainstaluj Nurevo AEO z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) (Wtyczki > Dodaj nową, wyszukaj „Nurevo AEO”) i włącz ją. Pozostaw wtyczkę SEO aktywną.",
+    "Kreator konfiguracji otwiera się raz. Wybierz rodzaj witryny (lokalna firma, sklep internetowy lub B2B), potwierdź nazwę, adres, telefon, godziny otwarcia i opis oraz wybierz, co publikować dla AI.",
+    "Sprawdź informacje, które wtyczka uzupełniła na podstawie istniejących ustawień. Wypełnia tylko puste pola, więc nic, co wpisałeś, nie zostanie zastąpione, a kreator pokazuje godziny otwarcia w takiej postaci, w jakiej zostaną opublikowane.",
+    "Wprowadź usługi i pytania w Nurevo AEO > Ustawienia i umieść blok FAQ Nurevo (lub [nurevo_faq]) na stronie, na której ma się pojawić FAQ.",
+    "Otwórz Nurevo AEO > Wynik AEO, przeczytaj, co wysyła diagnoza, zaznacz pole zgody i kliknij Uruchom diagnozę. Następnie zastosuj poprawki jednym kliknięciem proponowane przez listę kontrolną."
+   ],
+   "after": [
+    "Aby zobaczyć, co AI odczytuje z zewnątrz, uruchom [darmowy test czytelności dla AI](/check) na swojej stronie głównej. Więcej o stronie WordPress: [AEO dla WordPress](/guide/aeo-wordpress/)."
+   ]
+  },
+  {
+   "heading": "Co jest za darmo",
+   "paragraphs": [
+    "Wszystko na tej stronie działa w darmowym planie, bez klucza licencyjnego i bez okresu próbnego:"
+   ],
+   "list": [
+    "Wynik AEO: od 0 do 100, z alertami w kolorach sygnalizacji świetlnej i listą kontrolną rzeczy do poprawienia.",
+    "Poprawki jednym kliknięciem dla podstawowych danych strukturalnych, llms.txt i dostępu robotów AI.",
+    "JSON-LD schema.org renderowany po stronie serwera, dzięki czemu odczytają go także roboty, które nigdy nie uruchamiają JavaScriptu.",
+    "llms.txt pod adresem /llms.txt, budowany w samej wtyczce z treści twojego WordPressa. [Czym jest llms.txt?](/guide/llms-txt/)",
+    "Reguły dla robotów AI w robots.txt dla robotów, których wyszukiwarki AI używają do czytania i cytowania stron.",
+    "Typy witryn dla lokalnych firm, sklepów internetowych i firm B2B."
+   ],
+   "after": [
+    "Płatne plany dodają zawsze aktualny zestaw reguł (Standard) i pomiar widoczności w AI w wersji beta (Pro). Nic z tej strony ich nie wymaga."
+   ]
+  },
+  {
+   "heading": "Co dane strukturalne mogą, a czego nie",
+   "paragraphs": [
+    "Dane strukturalne pomagają AI poprawnie odczytać informacje o tobie: właściwe godziny, właściwy numer telefonu, właściwy rodzaj działalności. Nie decydują o tym, co powie AI. Żadne narzędzie nie zagwarantuje, że AI cię wspomni, i Nurevo tego nie obiecuje."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Czy Nurevo AEO duplikuje schema mojej wtyczki SEO?",
+   "a": "Nie. Z Yoast SEO, Rank Math lub All in One SEO dodaje tylko brakujące informacje do grafu, który twoja wtyczka SEO już publikuje, pod tym samym @id firmy, i nigdy nie nadpisuje wartości ustawionej przez wtyczkę. Strona zachowuje jeden graf opisujący jedną firmę."
+  },
+  {
+   "q": "Czy muszę usunąć Yoast SEO, Rank Math lub AIOSEO?",
+   "a": "Nie. Zostaw wtyczkę SEO do pozycjonowania w wyszukiwarkach. Nurevo AEO dodaje do niej informacje, których potrzebuje AI."
+  },
+  {
+   "q": "Czy Nurevo AEO jest darmowe?",
+   "a": "Tak. Dane firmy, usługi, FAQ, wynik AEO, poprawki jednym kliknięciem, JSON-LD, llms.txt i reguły dla robotów AI są w darmowym planie. Płatne plany dodają tylko zawsze aktualny zestaw reguł i pomiar widoczności w AI (beta)."
+  }
+ ],
+ "relatedHeading": "Powiązane poradniki",
+ "cta": {
+  "heading": "Dodaj za darmo brakujące informacje do schema swojej wtyczki SEO",
+  "body": "Nurevo AEO jest darmowe w WordPress.org. Nie wiesz, co AI odczytuje dziś? Najpierw uruchom darmowy test. Bez rejestracji.",
+  "label": "Pobierz Nurevo AEO z WordPress.org",
+  "href": "https://wordpress.org/plugins/nurevo-webmcp/",
+  "secondary": {
+   "label": "Darmowy test czytelności dla AI",
+   "href": "/check"
+  }
+ },
+ "footnote": "Yoast SEO jest znakiem towarowym Yoast BV, Rank Math – Rank Math PVT. LTD., a All in One SEO (AIOSEO) – Awesome Motive. Nurevo nie jest z nimi powiązane."
+}

@@ -1,0 +1,139 @@
+{
+ "title": "Ilmainen paikallisyrityksen schema: Yoast, Rank Math, AIOSEO | Nurevo",
+ "description": "SEO-lisäosasi ilmaisversio julkaisee nimesi ja logosi. Lisää tekoälyn tarvitsemat osoite, puhelin, aukioloajat, yritystyyppi, palvelut ja UKK ilmaiseksi Nurevo AEO:lla.",
+ "h1": "Lisää paikallisyrityksen schema Yoast SEO:hon, Rank Mathiin tai AIOSEO:hon ilmaiseksi",
+ "lead": "Pidä SEO-lisäosasi. Nurevo AEO, ilmainen WordPress-lisäosa, lisää tiedot, joita tekoäly tarvitsee paikallisen yrityksen kuvaamiseen (osoite, puhelinnumero, aukioloajat, yritystyyppi, palvelut ja UKK), siihen rakenteiseen dataan, jonka Yoast SEO, Rank Math tai All in One SEO jo julkaisee, kopioimatta sitä.",
+ "intro": [
+  "Tarkistettu viimeksi: lokakuu 2026. SEO-lisäosien tilaukset muuttuvat, joten tarkista ajantasaiset ominaisuudet kunkin lisäosan omilta sivuilta."
+ ],
+ "sections": [
+  {
+   "heading": "Mitä Yoast SEO:n, Rank Mathin ja AIOSEO:n ilmaisversiot julkaisevat",
+   "paragraphs": [
+    "Kun tekoäly vastaa kysymykseen kuten ”mikä lähellä oleva hammaslääkäri on auki lauantaina”, se tarvitsee tietoja, jotka se voi lukea arvaamatta: millainen yritys olet, missä sijaitset, miten sinulle soitetaan ja milloin olet auki. WordPressissä nämä tiedot tulevat yleensä SEO-lisäosasi JSON-LD:stä.",
+    "Ilmaisversiot julkaisevat sivustosi Organization-tyyppinä, jossa on nimi, URL ja logo. Suurin osa paikallisista tiedoista on maksullisissa paikallisen SEO:n lisäosissa tai tilauksissa. Tilanne lokakuussa 2026:"
+   ],
+   "table": {
+    "head": [
+     "Tieto",
+     "Ilmaisversiot (lokakuu 2026)",
+     "Nurevo AEO lisää (ilmaiseksi)"
+    ],
+    "rows": [
+     [
+      "Yrityksen nimi, URL, logo",
+      "Yoast SEO, Rank Math ja AIOSEO julkaisevat ne Organization-tyyppinä",
+      "Jätetään täsmälleen sellaisiksi kuin SEO-lisäosasi ne julkaisee"
+     ],
+     [
+      "Osoite, puhelinnumero, aukioloajat",
+      "Yoast SEO ja AIOSEO: maksullisissa paikallisen SEO:n lisäosissa (Yoast Local SEO, AIOSEO Local SEO). Rank Math: yhden toimipisteen tiedot, jos täytät sen Local SEO -asetukset; lisää paikallisen SEO:n ominaisuuksia on maksullisissa tilauksissa",
+      "Lisätään yrityksesi solmuun, jos ne puuttuvat, samalla @id:llä"
+     ],
+     [
+      "Tarkka yritystyyppi",
+      "Organization, ellei jokin paikallisen SEO:n ominaisuus aseta tyyppiä",
+      "Tarkempi tyyppi, kuten HairSalon tai Dentist"
+     ],
+     [
+      "Palvelut",
+      "Eivät kuulu Organization-tulosteeseen",
+      "Syöttämäsi palvelut yritykseesi linkitettyinä"
+     ],
+     [
+      "UKK",
+      "SEO-lisäosasi julkaisema FAQPage säilytetään",
+      "Kysymyksesi lisättynä sivun FAQPageen sillä sivulla, jolla Nurevon UKK-lohko on"
+     ],
+     [
+      "WebSite, WebPage, Article, murupolut",
+      "SEO-lisäosasi julkaisemat",
+      "Ennallaan"
+     ]
+    ],
+    "caption": "Tilanne lokakuussa 2026. SEO-lisäosasi jo asettamia arvoja ei koskaan korvata."
+   },
+   "after": [
+    "Tämä ei ole kritiikkiä näitä lisäosia kohtaan: ne huolehtivat hakukonenäkyvyydestä, ja Nurevo AEO on tehty toimimaan niiden rinnalla, ei niiden sijaan."
+   ]
+  },
+  {
+   "heading": "Näin Nurevo AEO täydentää puutteet ilman päällekkäistä schemaa",
+   "paragraphs": [
+    "Nurevo AEO ei tulosta toista rakenteisen datan kokonaisuutta SEO-lisäosasi datan rinnalle. Se kytkeytyy suodattimeen, jolla kukin lisäosa rakentaa JSON-LD-graafinsa (Yoast SEO:ssa wpseo_schema_graph, Rank Mathissa rank_math/schema/validated_data, AIOSEO:ssa aioseo_schema_output), ja lisää vain puuttuvat tiedot:"
+   ],
+   "list": [
+    "Osoite, puhelinnumero, aukioloajat, kuvaus ja sähköposti lisätään yrityksesi olemassa olevaan solmuun samalla @id:llä.",
+    "SEO-lisäosasi jo asettamaa arvoa ei koskaan korvata. Jos olet täyttänyt Rank Mathin Local SEO -asetukset, ne arvot säilyvät.",
+    "Syöttämäsi palvelut lisätään ja linkitetään yritykseesi.",
+    "Syöttämäsi UKK-kysymykset lisätään sivun FAQPageen vain sillä sivulla, jolla näkyy Nurevon UKK-lohko tai [nurevo_faq]-lyhytkoodi, ja kysymykset, joihin sivu jo vastaa, ohitetaan.",
+    "WebSite, WebPage, Article ja murupolut pysyvät täsmälleen sellaisina kuin SEO-lisäosasi ne julkaisee."
+   ],
+   "after": [
+    "Lopputuloksena sivulla on yksi graafi, joka kuvaa yhtä yritystä, ilman kaksoiskappaleita. Kaikissa muissa kokoonpanoissa (SEOPress, The SEO Framework, teeman oma schema tai ei SEO-lisäosaa lainkaan) Nurevo AEO tulostaa oman graafinsa ja sijoittaa yritystiedot olemassa olevan yrityksen @id:n alle, joten molemmat kuvaavat silti yhtä yritystä."
+   ]
+  },
+  {
+   "heading": "Käyttöönotto viidessä vaiheessa",
+   "list": [
+    "Asenna Nurevo AEO [WordPress.orgista](https://wordpress.org/plugins/nurevo-webmcp/) (Lisäosat > Lisää uusi, hae ”Nurevo AEO”) ja ota se käyttöön. Pidä SEO-lisäosasi käytössä.",
+    "Ohjattu asennus avautuu kerran. Valitse sivuston tyyppi (paikallinen yritys, verkkokauppa tai B2B), vahvista nimi, osoite, puhelinnumero, aukioloajat ja kuvaus, ja valitse, mitä julkaistaan tekoälylle.",
+    "Tarkista tiedot, jotka lisäosa täytti olemassa olevista asetuksistasi. Se täyttää vain tyhjät kentät, joten mitään kirjoittamaasi ei korvata, ja ohjattu asennus näyttää aukioloaikasi sellaisina kuin ne julkaistaan.",
+    "Syötä palvelusi ja kysymyksesi kohdassa Nurevo AEO > Asetukset ja sijoita Nurevon UKK-lohko (tai [nurevo_faq]) sille sivulle, jolla UKK:n pitää näkyä.",
+    "Avaa Nurevo AEO > AEO-pisteet, lue, mitä diagnoosi lähettää, rastita suostumusruutu ja paina Suorita diagnoosi. Ota sitten käyttöön tarkistuslistan tarjoamat yhden napsautuksen korjaukset."
+   ],
+   "after": [
+    "Jos haluat nähdä, mitä tekoäly lukee ulkopuolelta, aja [ilmainen tekoälyluettavuuden tarkistus](/check) etusivullesi. Lisää WordPress-puolesta: [AEO WordPressille](/guide/aeo-wordpress/)."
+   ]
+  },
+  {
+   "heading": "Mikä on ilmaista",
+   "paragraphs": [
+    "Kaikki tällä sivulla toimii ilmaisella tilauksella, ilman lisenssiavainta ja ilman kokeilujaksoa:"
+   ],
+   "list": [
+    "AEO-pisteet: 0–100, liikennevalohälytykset ja tarkistuslista korjattavista asioista.",
+    "Yhden napsautuksen korjaukset perustason rakenteiselle datalle, llms.txt:lle ja tekoälyindeksoijien pääsylle.",
+    "Palvelimella renderöity schema.org-JSON-LD, joten myös indeksoijat, jotka eivät koskaan suorita JavaScriptiä, lukevat sen.",
+    "llms.txt osoitteessa /llms.txt, rakennettu lisäosan sisällä WordPress-sisällöstäsi. [Mikä on llms.txt?](/guide/llms-txt/)",
+    "Tekoälyindeksoijien säännöt robots.txt-tiedostossa niille indeksoijille, joilla tekoälyhaku lukee ja lainaa sivuja.",
+    "Sivustotyypit paikallisille yrityksille, verkkokaupoille ja B2B-yrityksille."
+   ],
+   "after": [
+    "Maksulliset tilaukset lisäävät aina ajantasaisen sääntöjoukon (Standard) ja tekoälynäkyvyyden mittauksen beetana (Pro). Mikään tällä sivulla ei vaadi niitä."
+   ]
+  },
+  {
+   "heading": "Mitä rakenteinen data voi ja ei voi tehdä",
+   "paragraphs": [
+    "Rakenteinen data auttaa tekoälyä lukemaan tietosi oikein: oikeat aukioloajat, oikean puhelinnumeron, oikean yritystyypin. Se ei päätä, mitä tekoäly sanoo. Mikään työkalu ei voi taata, että tekoäly mainitsee sinut, eikä Nurevo lupaa sitä."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kopioiko Nurevo AEO SEO-lisäosani scheman?",
+   "a": "Ei. Yoast SEO:n, Rank Mathin tai All in One SEO:n kanssa se lisää vain puuttuvat tiedot graafiin, jonka SEO-lisäosasi jo julkaisee, saman yrityksen @id:n alle, eikä koskaan korvaa lisäosan asettamaa arvoa. Sivulla säilyy yksi graafi, joka kuvaa yhtä yritystä."
+  },
+  {
+   "q": "Pitääkö minun poistaa Yoast SEO, Rank Math tai AIOSEO?",
+   "a": "Ei. Pidä SEO-lisäosasi hakukonenäkyvyyttä varten. Nurevo AEO lisää sen päälle tiedot, joita tekoäly tarvitsee."
+  },
+  {
+   "q": "Onko Nurevo AEO ilmainen?",
+   "a": "On. Yritystiedot, palvelut, UKK, AEO-pisteet, yhden napsautuksen korjaukset, JSON-LD, llms.txt ja tekoälyindeksoijien säännöt sisältyvät kaikki ilmaiseen tilaukseen. Maksulliset tilaukset lisäävät vain aina ajantasaisen sääntöjoukon ja tekoälynäkyvyyden mittauksen (beeta)."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Lisää puuttuvat tiedot SEO-lisäosasi schemaan ilmaiseksi",
+  "body": "Nurevo AEO on ilmainen WordPress.orgissa. Etkö tiedä, mitä tekoäly lukee nyt? Aja ensin ilmainen tarkistus. Rekisteröitymistä ei tarvita.",
+  "label": "Hae Nurevo AEO WordPress.orgista",
+  "href": "https://wordpress.org/plugins/nurevo-webmcp/",
+  "secondary": {
+   "label": "Ilmainen tekoälyluettavuuden tarkistus",
+   "href": "/check"
+  }
+ },
+ "footnote": "Yoast SEO on Yoast BV:n, Rank Math Rank Math PVT. LTD.:n ja All in One SEO (AIOSEO) Awesome Motiven tavaramerkki. Nurevo ei ole sidoksissa niihin."
+}

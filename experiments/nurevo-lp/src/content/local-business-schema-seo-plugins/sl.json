@@ -1,0 +1,139 @@
+{
+ "title": "Brezplačna shema lokalnega podjetja: Yoast, Rank Math, AIOSEO | Nurevo",
+ "description": "Brezplačna različica SEO vtičnika objavi le ime in logotip. Nurevo AEO brezplačno doda naslov, telefon, delovni čas, vrsto podjetja, storitve in FAQ, ki jih UI potrebuje.",
+ "h1": "Dodajte shemo lokalnega podjetja v Yoast SEO, Rank Math ali AIOSEO, brezplačno",
+ "lead": "Svoj SEO vtičnik obdržite. Nurevo AEO, brezplačen vtičnik za WordPress, v strukturirane podatke, ki jih Yoast SEO, Rank Math ali All in One SEO že objavlja, doda dejstva, ki jih UI potrebuje za opis lokalnega podjetja (naslov, telefon, delovni čas, vrsto podjetja, storitve in FAQ), ne da bi karkoli podvojil.",
+ "intro": [
+  "Nazadnje preverjeno: oktober 2026. Paketi SEO vtičnikov se spreminjajo, zato trenutne funkcije preverite na straneh posameznega vtičnika."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj objavljajo brezplačne različice Yoast SEO, Rank Math in AIOSEO",
+   "paragraphs": [
+    "Ko UI odgovarja na vprašanje, kot je »kateri zobozdravnik v bližini ima odprto v soboto«, potrebuje dejstva, ki jih lahko prebere brez ugibanja: kakšno podjetje ste, kje ste, kako vas pokličejo in kdaj imate odprto. V WordPressu ta dejstva običajno prihajajo iz JSON-LD vašega SEO vtičnika.",
+    "Brezplačne različice vaše spletno mesto objavijo kot Organization z imenom, URL-jem in logotipom. Večina lokalnih podatkov je v plačljivih dodatkih ali paketih za lokalni SEO. Stanje oktobra 2026:"
+   ],
+   "table": {
+    "head": [
+     "Podatek",
+     "Brezplačne različice (oktober 2026)",
+     "Doda Nurevo AEO (brezplačno)"
+    ],
+    "rows": [
+     [
+      "Ime podjetja, URL, logotip",
+      "Yoast SEO, Rank Math in AIOSEO jih objavijo kot Organization",
+      "Ostane natanko tako, kot ga objavi vaš SEO vtičnik"
+     ],
+     [
+      "Naslov, telefon, delovni čas",
+      "Yoast SEO in AIOSEO: v plačljivih dodatkih za lokalni SEO (Yoast Local SEO, AIOSEO Local SEO). Rank Math: podatki ene lokacije, če izpolnite njegove nastavitve Local SEO; več funkcij lokalnega SEO je v plačljivih paketih",
+      "Dodani v vozlišče vašega podjetja, kjer manjkajo, pod istim @id"
+     ],
+     [
+      "Natančna vrsta podjetja",
+      "Organization, razen če vrsto nastavi funkcija lokalnega SEO",
+      "Natančnejša vrsta, na primer HairSalon ali Dentist"
+     ],
+     [
+      "Storitve",
+      "Niso del izpisa Organization",
+      "Storitve, ki jih vnesete, povezane z vašim podjetjem"
+     ],
+     [
+      "FAQ",
+      "Vsaka FAQPage, ki jo objavi vaš SEO vtičnik, se ohrani",
+      "Vaša vprašanja, dodana v FAQPage strani, na kateri je blok Nurevo FAQ"
+     ],
+     [
+      "WebSite, WebPage, Article, drobtinice",
+      "Objavi jih vaš SEO vtičnik",
+      "Nespremenjeno"
+     ]
+    ],
+    "caption": "Stanje oktobra 2026. Vrednosti, ki jih vaš SEO vtičnik že nastavi, se nikoli ne prepišejo."
+   },
+   "after": [
+    "To ni kritika teh vtičnikov: skrbijo za uvrstitve v iskanju, Nurevo AEO pa je zasnovan tako, da deluje ob njih, ne namesto njih."
+   ]
+  },
+  {
+   "heading": "Kako Nurevo AEO zapolni vrzeli brez podvojene sheme",
+   "paragraphs": [
+    "Nurevo AEO poleg podatkov vašega SEO vtičnika ne izpiše drugega nabora strukturiranih podatkov. Priklopi se na filter, s katerim vsak vtičnik sestavi svoj graf JSON-LD (wpseo_schema_graph v Yoast SEO, rank_math/schema/validated_data v Rank Math, aioseo_schema_output v AIOSEO), in doda le tisto, kar manjka:"
+   ],
+   "list": [
+    "Naslov, telefon, delovni čas, opis in e-pošta se dodajo obstoječemu vozlišču vašega podjetja pod istim @id.",
+    "Vrednost, ki jo vaš SEO vtičnik že nastavi, se nikoli ne prepiše. Če ste izpolnili nastavitve Local SEO v Rank Math, te vrednosti ostanejo.",
+    "Storitve, ki jih vnesete, se dodajo in povežejo z vašim podjetjem.",
+    "Vprašanja FAQ, ki jih vnesete, se dodajo v FAQPage le na strani z blokom Nurevo FAQ ali kratko kodo [nurevo_faq], pri čemer se vprašanja, na katera stran že odgovarja, preskočijo.",
+    "WebSite, WebPage, Article in drobtinice ostanejo natanko takšni, kot jih objavi vaš SEO vtičnik."
+   ],
+   "after": [
+    "Stran tako dobi en graf, ki opisuje eno podjetje, brez podvajanja. Pri kateri koli drugi postavitvi (SEOPress, The SEO Framework, lastna shema teme ali brez SEO vtičnika) Nurevo AEO izpiše svoj graf in dejstva o podjetju postavi pod obstoječi @id podjetja, tako da oba še vedno opisujeta eno podjetje."
+   ]
+  },
+  {
+   "heading": "Nastavitev v petih korakih",
+   "list": [
+    "Namestite Nurevo AEO z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) (Vtičniki > Dodaj nov, poiščite »Nurevo AEO«) in ga aktivirajte. SEO vtičnik naj ostane aktiven.",
+    "Čarovnik za nastavitev se odpre enkrat. Izberite vrsto spletnega mesta (lokalno podjetje, spletna trgovina ali B2B), potrdite ime, naslov, telefon, delovni čas in opis ter izberite, kaj naj se objavi za UI.",
+    "Preverite podatke, ki jih je vtičnik prevzel iz vaših obstoječih nastavitev. Izpolni le prazna polja, zato ne zamenja ničesar, kar ste vnesli, čarovnik pa vam delovni čas prebere nazaj natanko tako, kot bo objavljen.",
+    "Storitve in vprašanja vnesite v Nurevo AEO > Settings, blok Nurevo FAQ (ali [nurevo_faq]) pa postavite na stran, kjer naj se FAQ prikaže.",
+    "Odprite Nurevo AEO > AEO Score, preberite, kaj diagnostika pošlje, označite polje za privolitev in kliknite Run diagnosis. Nato uporabite popravke z enim klikom, ki jih ponudi kontrolni seznam."
+   ],
+   "after": [
+    "Če želite videti, kaj UI prebere od zunaj, na domači strani zaženite [brezplačno preverjanje berljivosti za UI](/check). Več o strani WordPressa: [AEO za WordPress](/guide/aeo-wordpress/)."
+   ]
+  },
+  {
+   "heading": "Kaj je brezplačno",
+   "paragraphs": [
+    "Vse na tej strani deluje v brezplačnem paketu, brez licenčnega ključa in brez preizkusnega obdobja:"
+   ],
+   "list": [
+    "Ocena AEO: od 0 do 100, z opozorili v barvah semaforja in kontrolnim seznamom, kaj popraviti.",
+    "Popravki z enim klikom za osnovne strukturirane podatke, llms.txt in dostop pajkov UI.",
+    "JSON-LD po schema.org, upodobljen na strežniku, tako da ga preberejo tudi pajki, ki nikoli ne zaganjajo JavaScripta.",
+    "llms.txt na /llms.txt, sestavljen kar v vtičniku iz vsebine vašega WordPressa. [Kaj je llms.txt?](/guide/llms-txt/)",
+    "Pravila za pajke UI v robots.txt za pajke, s katerimi iskanje z UI bere in navaja strani.",
+    "Vrste spletnih mest za lokalna podjetja, spletne trgovine in podjetja B2B."
+   ],
+   "after": [
+    "Plačljivi paketi dodajo vedno posodobljen nabor pravil (Standard) in merjenje vidnosti v UI v beta različici (Pro). Ničesar na tej strani ne potrebujete zanje."
+   ]
+  },
+  {
+   "heading": "Kaj strukturirani podatki zmorejo in česa ne",
+   "paragraphs": [
+    "Strukturirani podatki pomagajo UI pravilno prebrati vaša dejstva: pravi delovni čas, pravo telefonsko številko, pravo vrsto podjetja. Ne odločajo pa o tem, kaj UI pove. Nobeno orodje ne more zagotoviti, da vas bo UI omenila, in Nurevo tega ne obljublja."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ali Nurevo AEO podvoji shemo mojega SEO vtičnika?",
+   "a": "Ne. Z Yoast SEO, Rank Math ali All in One SEO doda le manjkajoča dejstva v graf, ki ga vaš SEO vtičnik že objavlja, pod istim @id podjetja, in nikoli ne prepiše vrednosti, ki jo nastavi vtičnik. Stran obdrži en graf, ki opisuje eno podjetje."
+  },
+  {
+   "q": "Ali moram odstraniti Yoast SEO, Rank Math ali AIOSEO?",
+   "a": "Ne. SEO vtičnik obdržite za uvrstitve v iskanju. Nurevo AEO mu doda dejstva, ki jih potrebuje UI."
+  },
+  {
+   "q": "Ali je Nurevo AEO brezplačen?",
+   "a": "Da. Dejstva o podjetju, storitve, FAQ, ocena AEO, popravki z enim klikom, JSON-LD, llms.txt in pravila za pajke UI so vsi v brezplačnem paketu. Plačljivi paketi dodajo le vedno posodobljen nabor pravil in merjenje vidnosti v UI (beta)."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Brezplačno dodajte manjkajoča dejstva v shemo svojega SEO vtičnika",
+  "body": "Nurevo AEO je brezplačen na WordPress.org. Ne veste, kaj UI danes prebere? Najprej opravite brezplačno preverjanje. Brez registracije.",
+  "label": "Prenesite Nurevo AEO z WordPress.org",
+  "href": "https://wordpress.org/plugins/nurevo-webmcp/",
+  "secondary": {
+   "label": "Brezplačno preverjanje berljivosti za UI",
+   "href": "/check"
+  }
+ },
+ "footnote": "Yoast SEO je blagovna znamka družbe Yoast BV, Rank Math družbe Rank Math PVT. LTD., All in One SEO (AIOSEO) pa družbe Awesome Motive. Nurevo z njimi ni povezan."
+}

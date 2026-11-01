@@ -1,0 +1,139 @@
+{
+ "title": "Schema LocalBusiness gratuită: Yoast, Rank Math și AIOSEO | Nurevo",
+ "description": "Varianta gratuită a pluginului SEO publică doar numele și logo-ul. Nurevo AEO adaugă gratuit adresa, telefonul, programul, tipul afacerii, serviciile și FAQ pentru AI.",
+ "h1": "Adăugați gratuit schema de afacere locală în Yoast SEO, Rank Math sau AIOSEO",
+ "lead": "Păstrați-vă pluginul SEO. Nurevo AEO, un plugin WordPress gratuit, adaugă faptele de care AI are nevoie pentru a descrie o afacere locală (adresa, telefonul, programul, tipul afacerii, serviciile și FAQ) în datele structurate pe care Yoast SEO, Rank Math sau All in One SEO le publică deja, fără să le dubleze.",
+ "intro": [
+  "Ultima verificare: octombrie 2026. Planurile pluginurilor SEO se schimbă, așa că verificați funcțiile actuale pe paginile fiecărui plugin."
+ ],
+ "sections": [
+  {
+   "heading": "Ce publică variantele gratuite ale Yoast SEO, Rank Math și AIOSEO",
+   "paragraphs": [
+    "Când un AI răspunde la o întrebare precum „ce dentist din apropiere are deschis sâmbăta”, are nevoie de fapte pe care le poate citi fără să ghicească: ce fel de afacere sunteți, unde vă aflați, cum poate fi sunat și când aveți deschis. În WordPress, aceste fapte provin de obicei din JSON-LD-ul pluginului SEO.",
+    "Variantele gratuite vă publică site-ul ca Organization, cu nume, URL și logo. Majoritatea datelor locale se află în extensiile sau planurile plătite pentru SEO local. La data de octombrie 2026:"
+   ],
+   "table": {
+    "head": [
+     "Informație",
+     "Variante gratuite (octombrie 2026)",
+     "Adăugat de Nurevo AEO (gratuit)"
+    ],
+    "rows": [
+     [
+      "Numele afacerii, URL, logo",
+      "Publicate ca Organization de Yoast SEO, Rank Math și AIOSEO",
+      "Rămân exact așa cum le publică pluginul SEO"
+     ],
+     [
+      "Adresă, telefon, program",
+      "Yoast SEO și AIOSEO: în extensiile plătite pentru SEO local (Yoast Local SEO, AIOSEO Local SEO). Rank Math: datele unei singure locații, dacă completați setările Local SEO; mai multe funcții de SEO local sunt în planurile plătite",
+      "Adăugate la nodul afacerii acolo unde lipsesc, sub același @id"
+     ],
+     [
+      "Tipul exact de afacere",
+      "Organization, cu excepția cazului în care o funcție de SEO local setează un tip",
+      "Un tip mai specific, de exemplu HairSalon sau Dentist"
+     ],
+     [
+      "Servicii",
+      "Nu fac parte din ieșirea Organization",
+      "Serviciile introduse de dvs., legate de afacere"
+     ],
+     [
+      "FAQ",
+      "Orice FAQPage publicat de pluginul SEO este păstrat",
+      "Întrebările dvs., adăugate în FAQPage-ul paginii pe care se află blocul Nurevo FAQ"
+     ],
+     [
+      "WebSite, WebPage, Article, breadcrumbs",
+      "Publicate de pluginul SEO",
+      "Neschimbate"
+     ]
+    ],
+    "caption": "La data de octombrie 2026. Valorile pe care pluginul SEO le setează deja nu sunt niciodată suprascrise."
+   },
+   "after": [
+    "Nu este o critică la adresa acestor pluginuri: ele se ocupă de poziționarea în căutare, iar Nurevo AEO este gândit să funcționeze alături de ele, nu în locul lor."
+   ]
+  },
+  {
+   "heading": "Cum completează Nurevo AEO golurile fără schemă dublată",
+   "paragraphs": [
+    "Nurevo AEO nu afișează un al doilea set de date structurate lângă cel al pluginului SEO. Se conectează la filtrul prin care fiecare plugin își construiește graful JSON-LD (wpseo_schema_graph în Yoast SEO, rank_math/schema/validated_data în Rank Math, aioseo_schema_output în AIOSEO) și adaugă doar ce lipsește:"
+   ],
+   "list": [
+    "Adresa, telefonul, programul, descrierea și e-mailul sunt adăugate la nodul existent al afacerii, sub același @id.",
+    "O valoare pe care pluginul SEO o setează deja nu este niciodată suprascrisă. Dacă ați completat setările Local SEO din Rank Math, acele valori rămân.",
+    "Serviciile introduse sunt adăugate și legate de afacerea dvs.",
+    "Întrebările FAQ introduse sunt adăugate în FAQPage-ul paginii doar pe pagina care afișează blocul Nurevo FAQ sau shortcode-ul [nurevo_faq], omițând întrebările la care pagina răspunde deja.",
+    "WebSite, WebPage, Article și breadcrumbs rămân exact așa cum le publică pluginul SEO."
+   ],
+   "after": [
+    "Pagina ajunge să aibă un singur graf care descrie o singură afacere, fără dubluri. În orice altă configurație (SEOPress, The SEO Framework, schema proprie a temei sau fără plugin SEO), Nurevo AEO afișează propriul graf și pune faptele despre afacere sub @id-ul existent al afacerii, astfel încât ambele descriu în continuare aceeași afacere."
+   ]
+  },
+  {
+   "heading": "Configurare în cinci pași",
+   "list": [
+    "Instalați Nurevo AEO de pe [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) (Module > Adaugă, căutați „Nurevo AEO”) și activați-l. Lăsați pluginul SEO activ.",
+    "Asistentul de configurare se deschide o singură dată. Alegeți tipul de site (afacere locală, magazin online sau B2B), confirmați numele, adresa, telefonul, programul și descrierea și alegeți ce se publică pentru AI.",
+    "Verificați datele pe care pluginul le-a preluat din setările existente. Completează doar câmpurile goale, deci nu înlocuiește nimic din ce ați scris, iar asistentul vă arată programul exact așa cum va fi publicat.",
+    "Introduceți serviciile și întrebările în Nurevo AEO > Settings și plasați blocul Nurevo FAQ (sau [nurevo_faq]) pe pagina unde trebuie să apară FAQ-ul.",
+    "Deschideți Nurevo AEO > AEO Score, citiți ce trimite diagnosticarea, bifați caseta de consimțământ și apăsați Run diagnosis. Apoi aplicați remedierile dintr-un clic oferite de lista de verificare."
+   ],
+   "after": [
+    "Ca să vedeți ce citește AI din exterior, rulați [verificarea gratuită a lizibilității pentru AI](/check) pe pagina principală. Mai multe despre partea de WordPress: [AEO pentru WordPress](/guide/aeo-wordpress/)."
+   ]
+  },
+  {
+   "heading": "Ce este gratuit",
+   "paragraphs": [
+    "Tot ce este pe această pagină funcționează în planul gratuit, fără cheie de licență și fără perioadă de probă:"
+   ],
+   "list": [
+    "Scorul AEO: de la 0 la 100, cu alerte în culorile semaforului și o listă de verificare cu ce trebuie remediat.",
+    "Remedieri dintr-un clic pentru datele structurate de bază, llms.txt și accesul crawlerelor AI.",
+    "JSON-LD schema.org generat pe server, astfel încât îl citesc și crawlerele care nu rulează niciodată JavaScript.",
+    "llms.txt la /llms.txt, construit direct în plugin din conținutul WordPress. [Ce este llms.txt?](/guide/llms-txt/)",
+    "Reguli pentru crawlerele AI în robots.txt, pentru crawlerele prin care căutarea AI citește și citează pagini.",
+    "Tipuri de site pentru afaceri locale, magazine online și companii B2B."
+   ],
+   "after": [
+    "Planurile plătite adaugă un set de reguli mereu actualizat (Standard) și măsurarea vizibilității în AI, în versiune beta (Pro). Nimic de pe această pagină nu are nevoie de ele."
+   ]
+  },
+  {
+   "heading": "Ce pot și ce nu pot face datele structurate",
+   "paragraphs": [
+    "Datele structurate ajută AI să vă citească corect faptele: programul corect, numărul de telefon corect, tipul corect de afacere. Ele nu decid ce spune un AI. Niciun instrument nu poate garanta că un AI vă va menționa, iar Nurevo nu promite asta."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Dublează Nurevo AEO schema pluginului meu SEO?",
+   "a": "Nu. Cu Yoast SEO, Rank Math sau All in One SEO adaugă doar faptele lipsă în graful pe care pluginul SEO îl publică deja, sub același @id al afacerii, și nu suprascrie niciodată o valoare setată de plugin. Pagina păstrează un singur graf care descrie o singură afacere."
+  },
+  {
+   "q": "Trebuie să elimin Yoast SEO, Rank Math sau AIOSEO?",
+   "a": "Nu. Păstrați pluginul SEO pentru poziționarea în căutare. Nurevo AEO adaugă peste el faptele de care are nevoie AI."
+  },
+  {
+   "q": "Este Nurevo AEO gratuit?",
+   "a": "Da. Datele afacerii, serviciile, FAQ, scorul AEO, remedierile dintr-un clic, JSON-LD, llms.txt și regulile pentru crawlerele AI sunt toate în planul gratuit. Planurile plătite adaugă doar un set de reguli mereu actualizat și măsurarea vizibilității în AI (beta)."
+  }
+ ],
+ "relatedHeading": "Ghiduri similare",
+ "cta": {
+  "heading": "Adăugați gratuit faptele lipsă în schema pluginului SEO",
+  "body": "Nurevo AEO este gratuit pe WordPress.org. Nu știți ce citește AI astăzi? Rulați mai întâi verificarea gratuită. Fără înregistrare.",
+  "label": "Descărcați Nurevo AEO de pe WordPress.org",
+  "href": "https://wordpress.org/plugins/nurevo-webmcp/",
+  "secondary": {
+   "label": "Verificare gratuită a lizibilității pentru AI",
+   "href": "/check"
+  }
+ },
+ "footnote": "Yoast SEO este marcă comercială a Yoast BV, Rank Math a Rank Math PVT. LTD., iar All in One SEO (AIOSEO) a Awesome Motive. Nurevo nu este afiliat cu acestea."
+}

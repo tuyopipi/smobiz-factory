@@ -1,0 +1,139 @@
+{
+  "title": "Yoast, Rank Math, AIOSEO'ya ücretsiz yerel işletme schema'sı | Nurevo",
+  "description": "Ücretsiz SEO eklentiniz ad ve logo yayınlar. Yapay zekânın istediği adres, telefon, saatler, işletme türü, hizmetler ve SSS'yi Nurevo AEO ile ücretsiz ekleyin.",
+  "h1": "Yoast SEO, Rank Math veya AIOSEO'ya ücretsiz yerel işletme schema'sı ekleyin",
+  "lead": "SEO eklentinizi bırakmayın. Ücretsiz bir WordPress eklentisi olan Nurevo AEO, yapay zekânın yerel bir işletmeyi tanımlamak için ihtiyaç duyduğu bilgileri (adres, telefon, çalışma saatleri, işletme türü, hizmetler ve SSS) Yoast SEO, Rank Math veya All in One SEO'nun zaten yayınladığı yapılandırılmış veriye, hiçbir şeyi çoğaltmadan ekler.",
+  "intro": [
+    "Son kontrol: Ekim 2026. SEO eklentilerinin planları değişebilir; güncel özellikler için her eklentinin kendi sayfalarına bakın."
+  ],
+  "sections": [
+    {
+      "heading": "Yoast SEO, Rank Math ve AIOSEO'nun ücretsiz sürümleri neyi yayınlar",
+      "paragraphs": [
+        "Bir yapay zekâ \"yakınımda cumartesi açık olan diş hekimi hangisi\" gibi bir soruyu yanıtlarken tahmin yürütmeden okuyabileceği bilgilere ihtiyaç duyar: nasıl bir işletme olduğunuz, nerede bulunduğunuz, size nasıl ulaşılacağı ve ne zaman açık olduğunuz. WordPress'te bu bilgiler genellikle SEO eklentinizin JSON-LD çıktısından gelir.",
+        "Ücretsiz sürümler sitenizi ad, URL ve logo içeren bir Organization olarak yayınlar. Yerel bilgilerin çoğu ücretli yerel SEO eklentilerinde veya planlarında yer alır. Ekim 2026 itibarıyla:"
+      ],
+      "table": {
+        "head": [
+          "Bilgi",
+          "Ücretsiz sürümler (Ekim 2026)",
+          "Nurevo AEO'nun ekledikleri (ücretsiz)"
+        ],
+        "rows": [
+          [
+            "İşletme adı, URL, logo",
+            "Yoast SEO, Rank Math ve AIOSEO tarafından Organization olarak yayınlanır",
+            "SEO eklentinizin yayınladığı şekilde aynen bırakılır"
+          ],
+          [
+            "Adres, telefon, çalışma saatleri",
+            "Yoast SEO ve AIOSEO: ücretli yerel SEO eklentilerinde (Yoast Local SEO, AIOSEO Local SEO). Rank Math: Local SEO ayarlarını doldurursanız tek bir konumun bilgileri; daha fazla yerel SEO özelliği ücretli planlarında",
+            "Eksikse işletme düğümünüze, aynı @id altında eklenir"
+          ],
+          [
+            "Belirli işletme türü",
+            "Bir yerel SEO özelliği tür belirlemedikçe Organization",
+            "HairSalon veya Dentist gibi daha belirli bir tür"
+          ],
+          [
+            "Hizmetler",
+            "Organization çıktısının parçası değildir",
+            "Girdiğiniz hizmetler, işletmenize bağlanmış olarak"
+          ],
+          [
+            "SSS",
+            "SEO eklentinizin yayınladığı FAQPage korunur",
+            "Sorularınız, Nurevo FAQ bloğunun bulunduğu sayfada o sayfanın FAQPage'ine eklenir"
+          ],
+          [
+            "WebSite, WebPage, Article, içerik haritası (breadcrumb)",
+            "SEO eklentiniz tarafından yayınlanır",
+            "Değişmez"
+          ]
+        ],
+        "caption": "Ekim 2026 itibarıyla. SEO eklentinizin zaten belirlediği değerlerin üzerine asla yazılmaz."
+      },
+      "after": [
+        "Bu, söz konusu eklentilere bir eleştiri değildir: onlar arama sıralamasıyla ilgilenir; Nurevo AEO ise onların yerine değil, yanında çalışmak üzere tasarlanmıştır."
+      ]
+    },
+    {
+      "heading": "Nurevo AEO, schema'yı çoğaltmadan eksikleri nasıl tamamlar",
+      "paragraphs": [
+        "Nurevo AEO, SEO eklentinizin çıktısının yanına ikinci bir yapılandırılmış veri seti basmaz. Her eklentinin JSON-LD grafiğini oluştururken kullandığı filtreye bağlanır (Yoast SEO'da wpseo_schema_graph, Rank Math'te rank_math/schema/validated_data, AIOSEO'da aioseo_schema_output) ve yalnızca eksik olanı ekler:"
+      ],
+      "list": [
+        "Adres, telefon, çalışma saatleri, açıklama ve e-posta, mevcut işletme düğümünüze aynı @id altında eklenir.",
+        "SEO eklentinizin zaten belirlediği bir değerin üzerine asla yazılmaz. Rank Math'in Local SEO ayarlarını doldurduysanız o değerler olduğu gibi kalır.",
+        "Girdiğiniz hizmetler eklenir ve işletmenize bağlanır.",
+        "Girdiğiniz SSS soruları yalnızca Nurevo FAQ bloğunu veya [nurevo_faq] kısa kodunu gösteren sayfada, o sayfanın FAQPage'ine eklenir; zaten yanıtlanmış sorular atlanır.",
+        "WebSite, WebPage, Article ve içerik haritası, SEO eklentinizin yayınladığı şekilde aynen kalır."
+      ],
+      "after": [
+        "Sonuçta sayfada tek bir işletmeyi tanımlayan tek bir grafik olur, kopya yoktur. Başka herhangi bir kurulumda (SEOPress, The SEO Framework, temanın kendi schema'sı ya da hiç SEO eklentisi olmaması) Nurevo AEO kendi grafiğini basar ve işletme bilgilerini mevcut işletme @id'si altına yerleştirir; böylece ikisi yine tek bir işletmeyi tanımlar."
+      ]
+    },
+    {
+      "heading": "Beş adımda kurun",
+      "list": [
+        "Nurevo AEO'yu [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) üzerinden yükleyin (Eklentiler > Yeni ekle, \"Nurevo AEO\" diye arayın) ve etkinleştirin. SEO eklentinizi etkin bırakın.",
+        "Kurulum sihirbazı bir kez açılır. Site türünü seçin (yerel işletme, online mağaza veya B2B), ad, adres, telefon, çalışma saatleri ve açıklamayı onaylayın ve yapay zekâ için neyin yayınlanacağını seçin.",
+        "Eklentinin mevcut ayarlarınızdan doldurduğu bilgileri kontrol edin. Yalnızca boş alanları doldurduğu için yazdığınız hiçbir şeyin yerini almaz; sihirbaz çalışma saatlerinizi yayınlanacakları hâliyle size okur.",
+        "Hizmetlerinizi ve sorularınızı Nurevo AEO > Settings altında girin ve Nurevo FAQ bloğunu (veya [nurevo_faq]) SSS'nin görüneceği sayfaya yerleştirin.",
+        "Nurevo AEO > AEO Score'u açın, tanılamanın neleri gönderdiğini okuyun, onay kutusunu işaretleyin ve Run diagnosis'e basın. Ardından kontrol listesinin sunduğu tek tıkla düzeltmeleri uygulayın."
+      ],
+      "after": [
+        "Yapay zekânın dışarıdan neyi okuduğunu görmek için ana sayfanızda [ücretsiz yapay zekâ okunabilirlik kontrolünü](/check) çalıştırın. WordPress tarafı hakkında daha fazlası: [WordPress için AEO](/guide/aeo-wordpress/)."
+      ]
+    },
+    {
+      "heading": "Neler ücretsiz",
+      "paragraphs": [
+        "Bu sayfadaki her şey ücretsiz planda, lisans anahtarı ve deneme süresi olmadan çalışır:"
+      ],
+      "list": [
+        "AEO puanı: 0'dan 100'e, trafik ışığı uyarıları ve düzeltilmesi gerekenlerin kontrol listesiyle.",
+        "Temel yapılandırılmış veri, llms.txt ve yapay zekâ tarayıcı erişimi için tek tıkla düzeltmeler.",
+        "Sunucu tarafında oluşturulan schema.org JSON-LD; böylece JavaScript çalıştırmayan tarayıcılar da okuyabilir.",
+        "/llms.txt adresinde, eklentinin içinde WordPress içeriğinizden oluşturulan llms.txt. [llms.txt nedir?](/guide/llms-txt/)",
+        "Yapay zekâ aramasının sayfaları okumak ve kaynak göstermek için kullandığı tarayıcılar için robots.txt'de yapay zekâ tarayıcı kuralları.",
+        "Yerel işletmeler, online mağazalar ve B2B şirketleri için site türleri."
+      ],
+      "after": [
+        "Ücretli planlar her zaman güncel bir kural seti (Standard) ve beta aşamasında yapay zekâ görünürlük ölçümü (Pro) ekler. Bu sayfadaki hiçbir şey bunlara ihtiyaç duymaz."
+      ]
+    },
+    {
+      "heading": "Yapılandırılmış veri neyi yapabilir, neyi yapamaz",
+      "paragraphs": [
+        "Yapılandırılmış veri, yapay zekânın bilgilerinizi doğru okumasına yardım eder: doğru saatler, doğru telefon numarası, doğru işletme türü. Bir yapay zekânın ne söyleyeceğine ise karar vermez. Hiçbir araç bir yapay zekânın sizden bahsedeceğini garanti edemez ve Nurevo da bunu vaat etmez."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Nurevo AEO, SEO eklentimin schema'sını çoğaltır mı?",
+      "a": "Hayır. Yoast SEO, Rank Math veya All in One SEO ile yalnızca eksik bilgileri SEO eklentinizin zaten yayınladığı grafiğe, aynı işletme @id'si altında ekler ve eklentinin belirlediği bir değerin üzerine asla yazmaz. Sayfada tek bir işletmeyi tanımlayan tek bir grafik kalır."
+    },
+    {
+      "q": "Yoast SEO, Rank Math veya AIOSEO'yu kaldırmam gerekir mi?",
+      "a": "Hayır. Arama sıralaması için SEO eklentinizi kullanmaya devam edin. Nurevo AEO, yapay zekânın ihtiyaç duyduğu bilgileri onun üzerine ekler."
+    },
+    {
+      "q": "Nurevo AEO ücretsiz mi?",
+      "a": "Evet. İşletme bilgileri, hizmetler, SSS, AEO puanı, tek tıkla düzeltmeler, JSON-LD, llms.txt ve yapay zekâ tarayıcı kurallarının tümü ücretsiz plandadır. Ücretli planlar yalnızca her zaman güncel bir kural seti ve yapay zekâ görünürlük ölçümü (beta) ekler."
+    }
+  ],
+  "relatedHeading": "İlgili rehberler",
+  "cta": {
+    "heading": "SEO eklentinizin schema'sına eksik bilgileri ücretsiz ekleyin",
+    "body": "Nurevo AEO, WordPress.org'da ücretsizdir. Yapay zekânın bugün neyi okuduğundan emin değil misiniz? Önce ücretsiz kontrolü çalıştırın. Kayıt gerekmez.",
+    "label": "Nurevo AEO'yu WordPress.org'dan edinin",
+    "href": "https://wordpress.org/plugins/nurevo-webmcp/",
+    "secondary": {
+      "label": "Ücretsiz yapay zekâ okunabilirlik kontrolü",
+      "href": "/check"
+    }
+  },
+  "footnote": "Yoast SEO, Yoast BV'nin; Rank Math, Rank Math PVT. LTD.'nin; All in One SEO (AIOSEO) ise Awesome Motive'in ticari markasıdır. Nurevo'nun bu şirketlerle bir bağlantısı yoktur."
+}

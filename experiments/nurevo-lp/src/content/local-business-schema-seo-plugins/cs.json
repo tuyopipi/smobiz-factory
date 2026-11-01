@@ -1,0 +1,139 @@
+{
+ "title": "Schema místní firmy zdarma pro Yoast, Rank Math a AIOSEO | Nurevo",
+ "description": "Bezplatná verze vašeho SEO pluginu publikuje název a logo. S Nurevo AEO zdarma doplníte adresu, telefon, otevírací dobu, typ firmy, služby a FAQ, které AI potřebuje.",
+ "h1": "Přidejte zdarma schema místní firmy do Yoast SEO, Rank Math nebo AIOSEO",
+ "lead": "Ponechte si svůj SEO plugin. Nurevo AEO, bezplatný plugin pro WordPress, doplní údaje, které AI potřebuje k popisu místní firmy (adresu, telefon, otevírací dobu, typ firmy, služby a FAQ), do strukturovaných dat, která už Yoast SEO, Rank Math nebo All in One SEO publikuje, a nic přitom nezdvojuje.",
+ "intro": [
+  "Naposledy ověřeno: říjen 2026. Tarify SEO pluginů se mění, proto aktuální funkce ověřte na stránkách jednotlivých pluginů."
+ ],
+ "sections": [
+  {
+   "heading": "Co publikují bezplatné verze Yoast SEO, Rank Math a AIOSEO",
+   "paragraphs": [
+    "Když AI odpovídá na otázku typu „který zubař v okolí má otevřeno v sobotu“, potřebuje údaje, které přečte bez hádání: jaký typ firmy jste, kde sídlíte, jak vám zavolat a kdy máte otevřeno. Ve WordPressu tyto údaje obvykle pocházejí z JSON-LD vašeho SEO pluginu.",
+    "Bezplatné verze publikují váš web jako Organization s názvem, URL a logem. Většina místních údajů je v placených doplňcích nebo tarifech pro local SEO. Stav k říjnu 2026:"
+   ],
+   "table": {
+    "head": [
+     "Údaj",
+     "Bezplatné verze (říjen 2026)",
+     "Doplní Nurevo AEO (zdarma)"
+    ],
+    "rows": [
+     [
+      "Název firmy, URL, logo",
+      "Publikuje je jako Organization Yoast SEO, Rank Math i AIOSEO",
+      "Ponechány přesně tak, jak je publikuje váš SEO plugin"
+     ],
+     [
+      "Adresa, telefon, otevírací doba",
+      "Yoast SEO a AIOSEO: v placených doplňcích pro local SEO (Yoast Local SEO, AIOSEO Local SEO). Rank Math: údaje jedné provozovny, pokud vyplníte jeho nastavení Local SEO; další funkce local SEO jsou v placených tarifech",
+      "Doplněny do uzlu vaší firmy tam, kde chybí, pod stejným @id"
+     ],
+     [
+      "Konkrétní typ firmy",
+      "Organization, pokud typ nenastaví některá funkce local SEO",
+      "Konkrétnější typ, například HairSalon nebo Dentist"
+     ],
+     [
+      "Služby",
+      "Nejsou součástí výstupu Organization",
+      "Služby, které zadáte, propojené s vaší firmou"
+     ],
+     [
+      "FAQ",
+      "FAQPage, kterou publikuje váš SEO plugin, zůstává zachována",
+      "Vaše otázky, doplněné do FAQPage stránky, na které je blok FAQ od Nurevo"
+     ],
+     [
+      "WebSite, WebPage, Article, drobečková navigace",
+      "Publikuje váš SEO plugin",
+      "Beze změny"
+     ]
+    ],
+    "caption": "Stav k říjnu 2026. Hodnoty, které už váš SEO plugin nastavuje, se nikdy nepřepisují."
+   },
+   "after": [
+    "Nejde o kritiku těchto pluginů: starají se o pozice ve vyhledávání a Nurevo AEO je navržené tak, aby běželo vedle nich, ne místo nich."
+   ]
+  },
+  {
+   "heading": "Jak Nurevo AEO doplní mezery bez duplicitního schema",
+   "paragraphs": [
+    "Nurevo AEO nevypisuje vedle dat vašeho SEO pluginu druhou sadu strukturovaných dat. Napojí se na filtr, kterým každý plugin sestavuje svůj graf JSON-LD (wpseo_schema_graph v Yoast SEO, rank_math/schema/validated_data v Rank Math, aioseo_schema_output v AIOSEO), a doplní jen to, co chybí:"
+   ],
+   "list": [
+    "Adresa, telefon, otevírací doba, popis a e-mail se přidají do stávajícího uzlu vaší firmy pod stejným @id.",
+    "Hodnota, kterou už váš SEO plugin nastavuje, se nikdy nepřepíše. Pokud jste vyplnili nastavení Local SEO v Rank Math, tyto hodnoty zůstanou.",
+    "Služby, které zadáte, se přidají a propojí s vaší firmou.",
+    "Otázky FAQ, které zadáte, se přidají do FAQPage jen na stránce, kde je blok FAQ od Nurevo nebo shortcode [nurevo_faq], a otázky, na které už stránka odpovídá, se přeskočí.",
+    "WebSite, WebPage, Article a drobečková navigace zůstanou přesně tak, jak je publikuje váš SEO plugin."
+   ],
+   "after": [
+    "Stránka tak má jeden graf, který popisuje jednu firmu, bez duplicit. U jakéhokoli jiného nastavení (SEOPress, The SEO Framework, vlastní schema šablony nebo žádný SEO plugin) vypíše Nurevo AEO vlastní graf a údaje o firmě umístí pod stávající @id firmy, takže oba stále popisují jednu firmu."
+   ]
+  },
+  {
+   "heading": "Nastavení v pěti krocích",
+   "list": [
+    "Nainstalujte Nurevo AEO z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) (Pluginy > Instalace pluginů, vyhledejte „Nurevo AEO“) a aktivujte ho. SEO plugin nechte aktivní.",
+    "Jednou se otevře průvodce nastavením. Zvolte typ webu (místní firma, e-shop nebo B2B), potvrďte název, adresu, telefon, otevírací dobu a popis a vyberte, co se má pro AI publikovat.",
+    "Zkontrolujte údaje, které plugin vyplnil z vašich stávajících nastavení. Vyplňuje jen prázdná pole, takže nic, co jste zadali, se nenahradí, a průvodce vám otevírací dobu zobrazí přesně v podobě, v jaké bude publikována.",
+    "Zadejte služby a otázky v Nurevo AEO > Nastavení a vložte blok FAQ od Nurevo (nebo [nurevo_faq]) na stránku, kde se má FAQ zobrazit.",
+    "Otevřete Nurevo AEO > Skóre AEO, přečtěte si, co diagnostika odesílá, zaškrtněte políčko souhlasu a klikněte na Spustit diagnostiku. Pak použijte opravy jedním kliknutím, které nabízí kontrolní seznam."
+   ],
+   "after": [
+    "Chcete-li vidět, co AI čte zvenčí, spusťte na své domovské stránce [bezplatnou kontrolu čitelnosti pro AI](/check). Více o straně WordPressu: [AEO pro WordPress](/guide/aeo-wordpress/)."
+   ]
+  },
+  {
+   "heading": "Co je zdarma",
+   "paragraphs": [
+    "Vše na této stránce funguje v bezplatném tarifu, bez licenčního klíče a bez zkušební doby:"
+   ],
+   "list": [
+    "Skóre AEO: 0 až 100, s upozorněními v barvách semaforu a kontrolním seznamem toho, co opravit.",
+    "Opravy jedním kliknutím pro základní strukturovaná data, llms.txt a přístup AI crawlerů.",
+    "JSON-LD schema.org vykreslované na serveru, takže ho přečtou i crawlery, které nikdy nespouštějí JavaScript.",
+    "llms.txt na adrese /llms.txt, sestavený přímo v pluginu z obsahu vašeho WordPressu. [Co je llms.txt?](/guide/llms-txt/)",
+    "Pravidla pro AI crawlery v robots.txt pro crawlery, kterými AI vyhledávání čte a cituje stránky.",
+    "Typy webů pro místní firmy, e-shopy a B2B firmy."
+   ],
+   "after": [
+    "Placené tarify přidávají vždy aktuální sadu pravidel (Standard) a měření viditelnosti v AI v betaverzi (Pro). Nic na této stránce je nepotřebuje."
+   ]
+  },
+  {
+   "heading": "Co strukturovaná data dokážou a co ne",
+   "paragraphs": [
+    "Strukturovaná data pomáhají AI správně přečíst vaše údaje: správnou otevírací dobu, správné telefonní číslo, správný typ firmy. Nerozhodují o tom, co AI řekne. Žádný nástroj nemůže zaručit, že vás AI zmíní, a Nurevo to neslibuje."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Duplikuje Nurevo AEO schema mého SEO pluginu?",
+   "a": "Ne. S Yoast SEO, Rank Math nebo All in One SEO doplní jen chybějící údaje do grafu, který váš SEO plugin už publikuje, pod stejným @id firmy, a nikdy nepřepíše hodnotu, kterou plugin nastavuje. Stránka si zachová jeden graf popisující jednu firmu."
+  },
+  {
+   "q": "Musím odstranit Yoast SEO, Rank Math nebo AIOSEO?",
+   "a": "Ne. Ponechte si SEO plugin kvůli pozicím ve vyhledávání. Nurevo AEO k němu doplní údaje, které AI potřebuje."
+  },
+  {
+   "q": "Je Nurevo AEO zdarma?",
+   "a": "Ano. Údaje o firmě, služby, FAQ, skóre AEO, opravy jedním kliknutím, JSON-LD, llms.txt i pravidla pro AI crawlery jsou v bezplatném tarifu. Placené tarify přidávají jen vždy aktuální sadu pravidel a měření viditelnosti v AI (beta)."
+  }
+ ],
+ "relatedHeading": "Související průvodce",
+ "cta": {
+  "heading": "Doplňte zdarma chybějící údaje do schema svého SEO pluginu",
+  "body": "Nurevo AEO je zdarma na WordPress.org. Nevíte, co AI dnes čte? Nejdřív spusťte bezplatnou kontrolu. Bez registrace.",
+  "label": "Stáhnout Nurevo AEO z WordPress.org",
+  "href": "https://wordpress.org/plugins/nurevo-webmcp/",
+  "secondary": {
+   "label": "Bezplatná kontrola čitelnosti pro AI",
+   "href": "/check"
+  }
+ },
+ "footnote": "Yoast SEO je ochranná známka společnosti Yoast BV, Rank Math společnosti Rank Math PVT. LTD. a All in One SEO (AIOSEO) společnosti Awesome Motive. Nurevo s nimi není nijak spojeno."
+}

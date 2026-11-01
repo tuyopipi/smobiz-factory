@@ -1,0 +1,145 @@
+{
+ "title": "AI-keresés fodrászatoknak és szalonoknak: árlista, foglalás | Nurevo",
+ "description": "A szalon AEO-ja a szolgáltatások, árak, időtartamok, nyitvatartás és foglalási link pontos közzétételével kezdődik, az oldalszövegben és HairSalon adatokban.",
+ "h1": "AI-keresés fodrászatoknak és szépségszalonoknak: hogyan olvassa helyesen az AI a szolgáltatásait, árait és foglalását",
+ "lead": "Egy fodrászat vagy szépségszalon AI-keresésre optimalizálása (AEO) lényegében egy dolgot jelent: pontosan és mindenhol egyformán közzétenni azt, amit a vendégek kérdeznek (a szolgáltatásokat, az árakat, hogy melyik mennyi ideig tart, a nyitvatartást, a szünnapokat, a címet és a foglalás módját), az oldalak szövegében és a schema.org HairSalon vagy BeautySalon strukturált adatokban egyaránt. Így a ChatGPT, a Perplexity és a Google AI-ja mindent megkap ahhoz, hogy találgatás nélkül válaszoljon arra, hogy „szalon az állomás közelében, vasárnap este nyitva” vagy „ki csinál keratinos hajegyenesítést a közelben”. Saját vélemények közzététele a weboldalon nem rövidíti le az utat a jobb AI- vagy keresési eredményekhez.",
+ "intro": [
+  "Írva: 2026. november 1. (JST). A Google, a schema.org és a japán hatóságok információit a szövegben megadott dátumokon ellenőriztük a megfelelő hivatalos oldalakon.",
+  "Az AI válaszai napról napra és a kérdés megfogalmazásától függően változnak. Az itt leírt lépések olvashatóvá teszik a szalon adatait az AI számára. Nem garantálják, hogy egy AI megemlíti a szalonját, vagy hogy bárhová rangsorolja."
+ ],
+ "sections": [
+  {
+   "heading": "Mit kérdeznek a vendégek az AI-tól, és mit olvas az AI",
+   "paragraphs": [
+    "Amikor valaki arra kéri a ChatGPT-t, a Perplexityt vagy a Google AI Overviews funkcióját, hogy keressen egy szalont, az AI elolvassa, amit a weben talál, és ebből állítja össze a választ. A szalonokról szóló kérdések helyet, napot, időpontot, szolgáltatást és árat kevernek: „fodrászat az állomás közelében, amely jó hajegyenesítésben”, „szalon, ahová vasárnap 19 óra után is tudok foglalni”, „fodrász, aki gyerekeket is nyír”, „hely, ahol egy napon megcsinálják a körmöm és a szempillám”.",
+    "Ahhoz, hogy válaszolni tudjon, az AI-nak szövegként kell elolvasnia, hol van a szalon, mely napokon és meddig van nyitva, milyen szolgáltatásokat kínál, milyen áron és mennyi ideig tartanak, és hol lehet foglalni. Ha az árlista csak képként létezik, minden ár „-tól” indul magyarázat nélkül, a szünnapok oldalanként eltérnek, vagy nincs foglalási link, az AI nehezebben tudja felhasználni a szalonját egy válaszban.",
+    "A Google szerint az AI Overviews vagy az AI Mode megjelenéshez nincs további követelmény és nincs szükség különleges schema.org strukturált adatokra, a szokásos alapok viszont továbbra is számítanak, például hogy a strukturált adatok egyezzenek a látható szöveggel, és hogy a Cégprofil naprakész legyen (ellenőrizve: 2026. november 1.). [Google: Az AI-funkciók és a webhely (angol nyelvű)](https://developers.google.com/search/docs/appearance/ai-features). Ez tehát nem AI-trükk, hanem a szalon adatainak helyes és következetes közzététele."
+   ]
+  },
+  {
+   "heading": "Az adatok, amelyeket egy szalonnak közzé kell tennie",
+   "paragraphs": [
+    "A strukturált adatokban a fodrászatot [schema.org HairSalon](https://schema.org/HairSalon) típusként írjuk le. A HairSalon a HealthAndBeautyBusiness alá tartozik, amely a LocalBusiness egyik fajtája, a BeautySalon, a NailSalon és a DaySpa mellett. A Google helyi vállalkozásokról szóló dokumentációja kötelezőként a name és address tulajdonságot sorolja fel, többek között az openingHoursSpecification, a telephone és az url használatát ajánlja, és azt kéri, hogy a lehető legspecifikusabb LocalBusiness altípust használja (ellenőrizve: 2026. október 29.). [Google: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+   ],
+   "table": {
+    "head": [
+     "Adat",
+     "Az oldalon",
+     "A strukturált adatokban"
+    ],
+    "rows": [
+     [
+      "A szalon neve",
+      "A hivatalos név, mindenhol ugyanúgy írva: a cégtáblán, a Cégprofilban és a foglalási oldalakon",
+      "name (kötelező)"
+     ],
+     [
+      "Cím és megközelítés",
+      "A teljes cím emelettel együtt, valamint gyalogos útvonal a legközelebbi állomástól vagy parkolótól, szövegként",
+      "address (kötelező), geo (ajánlott)"
+     ],
+     [
+      "Nyitvatartás és szünnapok",
+      "Szövegként, nem képként, az utolsó foglalható időpontokkal, és ha van, a festésre vagy dauerra vonatkozó eltérő utolsó időpontokkal",
+      "openingHoursSpecification (ajánlott)"
+     ],
+     [
+      "Szolgáltatások, árak és időtartamok",
+      "Vágás, festés, dauer, egyenesítés stb., mindegyik az árával és szokásos időtartamával",
+      "Szolgáltatásonként egy Service, az árhoz Offer"
+     ],
+     [
+      "Hogyan lehet foglalni",
+      "A telefonszám szövegként és link az online foglalási oldalra",
+      "telephone (ajánlott), foglalási URL"
+     ],
+     [
+      "Gyakori kérdések",
+      "Amit a vendégek valóban kérdeznek: parkolás, gyerek hozható-e, aznapi foglalás, lemondás",
+      "FAQPage, csak azon az oldalon, ahol a kérdések láthatók"
+     ]
+    ],
+    "caption": "Kötelező és ajánlott tulajdonságok a Google helyi vállalkozásokról szóló dokumentációja szerint, 2026. október 29-i állapot. A szolgáltatásokhoz használt Service és Offer schema.org típusok, nem a Google által kötelezőnek vagy ajánlottnak megnevezett tulajdonságok."
+   },
+   "after": [
+    "Az árakat úgy tüntesse fel, ahogyan a helyi szabályok előírják. Japánban például a Nemzeti Adóhivatal megköveteli, hogy a fogyasztóknak előre megjelenített árak a fogyasztási adót is tartalmazzák, bármilyen médiumról legyen is szó (például \"11,000円（税込）\"). [National Tax Agency: total price display (Japanese)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm). Ha egy ár sáv (egy alapártól „-tól”), néhány szóban írja le, mitől függ (hajhossz, senior stylist), hogy se az AI, se az emberek ne értsék félre.",
+    "A legfontosabb, hogy ugyanannak az adatnak mindenhol ugyanaz legyen az értéke: a weboldalon, a strukturált adatokban, a Google Cégprofilban, a foglalási oldalakon és az llms.txt-ben. Ha változnak az árak vagy a nyitvatartás, mindet egyszerre frissítse."
+   ]
+  },
+  {
+   "heading": "Vélemények: mit ne tegyen hozzá az AI kedvéért",
+   "paragraphs": [
+    "Ha a saját szalonoldalán vendégvéleményeket vagy csillagos értékeléseket jelöl meg, attól nem kap csillagokat a Google-ben. A Google 2019-ben kijelentette, hogy az önreklámozó vélemények, vagyis egy vállalkozásról a vállalkozás saját weboldalán elhelyezett vélemények, LocalBusiness és Organization esetén nem megengedettek, és ezekhez nem jelennek meg értékelési kivonatok. [Google Search Central blog, 2019. szeptember 16.](https://developers.google.com/search/blog/2019/09/making-review-rich-results-more-helpful)",
+    "A rejtett reklámra vonatkozó szabályok országonként eltérnek, ezért ellenőrizze az Önre vonatkozókat. Japánban 2023. október 1. óta a rejtett marketing sérti az indokolatlan jutalmak és a megtévesztő tájékoztatás elleni törvényt, és a Fogyasztóvédelmi Ügynökség a vállalkozás reklámjának tekinti azokat a véleményeket és bejegyzéseket, amelyeket a vállalkozás harmadik felektől kér vagy rendel meg. [Consumer Affairs Agency: stealth marketing (Japanese)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/). Ne gyűjtsön fel nem jelölt szponzorált véleményeket abban a reményben, hogy az AI jól fog beszélni Önről.",
+    "Az AI-nak nem dicséretre van szüksége Öntől, hanem ellenőrizhető tényekre: szolgáltatásokra, árakra, időpontokra és helyre. Az olyan állításokat, amelyeket nem tud alátámasztani, mint például „a környék első számú szalonja”, a legbiztonságosabb kihagyni a szövegből és a jelölésből is."
+   ]
+  },
+  {
+   "heading": "Beállítás egy WordPress-alapú szalonoldalon",
+   "list": [
+    "Telepítse a Nurevo AEO-t (ingyenes) a [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) oldalról, és aktiválja. Ha Yoast SEO-t, Rank Mathot, All in One SEO-t vagy Slim SEO-t használ, tartsa meg.",
+    "A beállítási varázslóban válassza a „Beauty salon” lehetőséget. A vállalkozás típusa BeautySalon lesz; fodrászat esetén a Beállításokban módosítsa a „Business type (schema.org type)” mezőt HairSalon értékre, körömszalonnál NailSalon értékre. Ellenőrizze a nevet, a címet, a telefonszámot, a nyitvatartást és a leírást. A meglévő beállításokból csak az üres mezők töltődnek ki; semmi, amit Ön beírt, nem íródik felül.",
+    "A Beállításokban adja hozzá az árlista minden tételét szolgáltatásként. A szolgáltatás nevével, időtartamával (perc), árával, pénznemével, kategóriájával, foglalási URL-jével és leírásával a szalonjához kapcsolt Service-ként jelenik meg (az ár Offer-ként, a foglalási URL foglalási műveletként), és menüsorként szerepel az llms.txt-ben. Az árat csak számjegyekkel adja meg, pénznemjel nélkül.",
+    "Adja meg a gyakori kérdéseket, és helyezze el a Nurevo FAQ blokkot vagy a [nurevo_faq] shortcode-ot azon az oldalon, ahol meg szeretné jeleníteni. A kérdések az adott oldal FAQPage adataihoz adódnak hozzá.",
+    "Futtassa a diagnózist az AEO Score képernyőn, és alkalmazza az ellenőrzőlista által felkínált egykattintásos javításokat. A strukturált adatok, az llms.txt és az AI-robotok hozzáférése (OAI-SearchBot, PerplexityBot, Claude-SearchBot és mások) mind benne vannak az ingyenes csomagban.",
+    "Az [ingyenes AI-olvashatósági ellenőrzéssel](/check) nézze meg, mit olvas az AI kívülről, és győződjön meg róla, hogy a nyitvatartás és az árak egyeznek a Google Cégprofillal és a foglalási oldalakkal."
+   ],
+   "after": [
+    "Aktív SEO-bővítmény mellett a Nurevo AEO nem ír ki egy második strukturáltadat-készletet. Csak a hiányzó címet, telefonszámot, nyitvatartást, egy specifikus típust, például HairSalon-t, valamint a szolgáltatásait adja hozzá ahhoz a gráfhoz, amelyet a SEO-bővítmény már közzétesz. Lásd: [helyi vállalkozás séma hozzáadása a Yoast, Rank Math és AIOSEO bővítményhez](/guide/local-business-schema-seo-plugins/). Nem WordPressszel készült oldalakon ugyanez az elv érvényes: tegye közzé a fenti táblázat adatait az oldalszövegben és a strukturált adatokban."
+   ]
+  },
+  {
+   "heading": "Ellenőrzőlista közzététel előtt",
+   "list": [
+    "Az árlista szövegként szerepel, nem csak képként.",
+    "Az árak a helyi szabályok szerint vannak feltüntetve, és a sávoknál szerepel, mitől függnek.",
+    "A nyitvatartás, a szünnapok és az utolsó foglalható időpontok egyeznek a weboldalon, a Google Cégprofilban és a foglalási oldalakon.",
+    "A strukturált adatok típusa illik a vállalkozáshoz, például HairSalon, BeautySalon vagy NailSalon, nem egy általános Organization.",
+    "A strukturált adatokban szereplő árak és nyitvatartás egyeznek az oldalon látható értékekkel.",
+    "A saját oldalon lévő vélemények nincsenek értékelésként megjelölve, és nincsenek nem jelölt szponzorált vélemények.",
+    "Az llms.txt tartalmazza a szalon bemutatását, az árlistát és az árakat, a megközelítést és a foglalási oldalakat. [Mi az llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Hogyan ellenőrizze, megjelenik-e az AI válaszaiban",
+   "paragraphs": [
+    "Ha az adatok a helyükön vannak, tegye fel az AI-nak azokat a kérdéseket, amelyeket a vendégei feltennének (környék + szolgáltatás + nap vagy időpont), és nézze meg, megjelenik-e a szalonja névvel vagy URL-lel. A válaszok futtatásonként eltérnek, ezért ugyanazokat a kérdéseket tegye fel többször, időben elosztva. Néha a foglalási oldalak lapjait is forrásként használják, ezért ott is tartsa naprakészen az adatokat.",
+    "A Nurevo AEO Free és Standard csomagja havi ellenőrzést tartalmaz: három, a vállalkozás típusából és a környékből (soha nem a szalon nevéből) összeállított kérdést tesz fel a Perplexitynek, és a bővítmény rögzíti, hogy a válaszok megnevezték-e a szalonját vagy hivatkoztak-e az oldalára. A Pro csomag (havi $99-tól) béta AI-láthatósági mérést ad hozzá: milyen gyakran jelenik meg a szalonja az AI válaszaiban, versenytárs-összehasonlítással és előzményekkel (jelenleg a Perplexityn). Mindkettő mintavételezi a válaszokat, nem követ minden egyes választ."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hol kezdje egy fodrászat az AI-keresést?",
+   "a": "Írja le helyesen, szövegként az oldalain a szolgáltatásokat, árakat, időtartamokat, nyitvatartást, szünnapokat, a címet és a foglalás módját. Ezután tegye közzé ugyanezeket az adatokat HairSalon strukturált adatként és az llms.txt-ben, és győződjön meg róla, hogy egyeznek a Google Cégprofillal és a foglalási oldalakkal."
+  },
+  {
+   "q": "HairSalon vagy BeautySalon: melyiket használjam?",
+   "a": "A schema.org-ban mindkettő a HealthAndBeautyBusiness egyik fajtája. Azt a típust válassza, amely a legközelebb áll ahhoz, amit csinál: HairSalon vágáshoz és festéshez, BeautySalon szépségkezelésekhez, NailSalon körömszalonhoz. A Google azt kéri, hogy a lehető legspecifikusabb típust használja."
+  },
+  {
+   "q": "Ha fent vagyok foglalási oldalakon, a saját weboldalamat is rendbe kell tennem?",
+   "a": "Az AI a foglalási oldalak lapjait is felhasználhatja forrásként, de a saját weboldalán teheti közzé a szalon adatait a legrészletesebben és legpontosabban: a szolgáltatások leírását, a megközelítést és a gyakori kérdéseket. A legbiztonságosabb, ha a kettő összhangban van."
+  },
+  {
+   "q": "Ingyenes a Nurevo AEO?",
+   "a": "Igen. A vállalkozás típusa (HairSalon és mások), a cím, a nyitvatartás, a szolgáltatások és a GYIK strukturált adatai, az llms.txt, az AI-robotokra vonatkozó szabályok és az AEO-pontszám az ingyenes csomagban vannak. A fizetős csomagok mindig naprakész szabálykészletet (Standard, havi $20) és béta AI-láthatósági mérést (Pro, havi $99-tól) adnak hozzá. [Nurevo AEO a WordPress.org-on](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garantálja ez, hogy a szalonom megjelenik a ChatGPT-ben?",
+   "a": "Nem. Az AI válaszai változnak, és semmilyen eszköz vagy módszer nem garantálhat említést vagy helyezést. Annyit tehet, hogy az adatait könnyen olvashatóvá teszi az AI számára, és folyamatosan ellenőrzi, megjelenik-e."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Először nézze meg, hogyan olvassa az AI a szalonja weboldalát",
+  "body": "Az ingyenes ellenőrzés megmutatja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát, regisztráció nélkül. WordPressen a Nurevo AEO ingyen pótolja a hiányokat.",
+  "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO letöltése a WordPress.org-ról",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google pedig a Google LLC védjegye. A Yoast SEO, a Rank Math, az All in One SEO és a Slim SEO a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük. Ez a cikk nem minősül jogi vagy adótanácsadásnak."
+}

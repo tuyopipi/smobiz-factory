@@ -1,0 +1,139 @@
+{
+ "title": "Gratis LocalBusiness-schema for Yoast, Rank Math og AIOSEO | Nurevo",
+ "description": "Gratisversjonen av SEO-utvidelsen din publiserer navn og logo. Legg til adresse, telefon, åpningstider, bransjetype, tjenester og FAQ for AI, gratis, med Nurevo AEO.",
+ "h1": "Legg til lokalt bedriftsschema i Yoast SEO, Rank Math eller AIOSEO, gratis",
+ "lead": "Behold SEO-utvidelsen din. Nurevo AEO, en gratis WordPress-utvidelse, legger til opplysningene AI trenger for å beskrive en lokal bedrift (adresse, telefon, åpningstider, bransjetype, tjenester og FAQ) i de strukturerte dataene som Yoast SEO, Rank Math eller All in One SEO allerede publiserer, uten å duplisere dem.",
+ "intro": [
+  "Sist kontrollert: oktober 2026. Abonnementene til SEO-utvidelsene endrer seg, så sjekk hver utvidelses egne sider for gjeldende funksjoner."
+ ],
+ "sections": [
+  {
+   "heading": "Hva gratisversjonene av Yoast SEO, Rank Math og AIOSEO publiserer",
+   "paragraphs": [
+    "Når en AI svarer på et spørsmål som «hvilken tannlege i nærheten har åpent på lørdag», trenger den opplysninger den kan lese uten å gjette: hva slags bedrift du er, hvor du holder til, hvordan man ringer deg og når du har åpent. På WordPress kommer disse opplysningene som regel fra JSON-LD-en til SEO-utvidelsen din.",
+    "Gratisversjonene publiserer nettstedet ditt som en Organization med navn, URL og logo. De fleste lokale opplysningene ligger i betalte tillegg eller abonnementer for lokal SEO. Per oktober 2026:"
+   ],
+   "table": {
+    "head": [
+     "Opplysning",
+     "Gratisversjoner (oktober 2026)",
+     "Lagt til av Nurevo AEO (gratis)"
+    ],
+    "rows": [
+     [
+      "Bedriftsnavn, URL, logo",
+      "Publisert som Organization av Yoast SEO, Rank Math og AIOSEO",
+      "Beholdes nøyaktig slik SEO-utvidelsen din publiserer dem"
+     ],
+     [
+      "Adresse, telefon, åpningstider",
+      "Yoast SEO og AIOSEO: i de betalte tilleggene for lokal SEO (Yoast Local SEO, AIOSEO Local SEO). Rank Math: opplysningene for ett sted hvis du fyller ut Local SEO-innstillingene; flere funksjoner for lokal SEO finnes i de betalte abonnementene",
+      "Lagt til i bedriftsnoden din der de mangler, under samme @id"
+     ],
+     [
+      "Spesifikk bransjetype",
+      "Organization, med mindre en funksjon for lokal SEO angir en type",
+      "En mer spesifikk type, som HairSalon eller Dentist"
+     ],
+     [
+      "Tjenester",
+      "Ikke en del av Organization-utdataene",
+      "Tjenestene du legger inn, koblet til bedriften din"
+     ],
+     [
+      "FAQ",
+      "En FAQPage som SEO-utvidelsen din publiserer, beholdes",
+      "Spørsmålene dine, lagt til i sidens FAQPage der Nurevo FAQ-blokken står på siden"
+     ],
+     [
+      "WebSite, WebPage, Article, brødsmuler",
+      "Publisert av SEO-utvidelsen din",
+      "Uendret"
+     ]
+    ],
+    "caption": "Per oktober 2026. Verdier som SEO-utvidelsen din allerede angir, blir aldri overskrevet."
+   },
+   "after": [
+    "Dette er ingen kritikk av disse utvidelsene: De tar seg av rangeringen i søkemotorer, og Nurevo AEO er laget for å kjøre ved siden av dem, ikke i stedet for dem."
+   ]
+  },
+  {
+   "heading": "Slik fyller Nurevo AEO hullene uten duplisert schema",
+   "paragraphs": [
+    "Nurevo AEO skriver ikke ut et nytt sett med strukturerte data ved siden av SEO-utvidelsens. Det kobler seg på filteret hver utvidelse bruker for å bygge JSON-LD-grafen sin (wpseo_schema_graph i Yoast SEO, rank_math/schema/validated_data i Rank Math, aioseo_schema_output i AIOSEO), og legger bare til det som mangler:"
+   ],
+   "list": [
+    "Adresse, telefon, åpningstider, beskrivelse og e-post legges på den eksisterende bedriftsnoden din, under samme @id.",
+    "En verdi som SEO-utvidelsen din allerede angir, blir aldri overskrevet. Har du fylt ut Local SEO-innstillingene i Rank Math, blir de verdiene stående.",
+    "Tjenester du legger inn, blir lagt til og koblet til bedriften din.",
+    "FAQ-spørsmål du legger inn, legges bare til i sidens FAQPage på siden som viser Nurevo FAQ-blokken eller kortkoden [nurevo_faq], og spørsmål som allerede er besvart der, hoppes over.",
+    "WebSite, WebPage, Article og brødsmuler forblir nøyaktig slik SEO-utvidelsen din publiserer dem."
+   ],
+   "after": [
+    "Siden ender opp med én graf som beskriver én bedrift, uten duplikater. Med ethvert annet oppsett (SEOPress, The SEO Framework, et temas eget schema eller ingen SEO-utvidelse) skriver Nurevo AEO ut sin egen graf og legger bedriftsopplysningene under den eksisterende bedrifts-@id-en, slik at begge fortsatt beskriver én bedrift."
+   ]
+  },
+  {
+   "heading": "Sett det opp i fem trinn",
+   "list": [
+    "Installer Nurevo AEO fra [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) (Utvidelser > Legg til ny, søk etter «Nurevo AEO») og aktiver den. La SEO-utvidelsen din være aktiv.",
+    "Oppsettsveiviseren åpnes én gang. Velg type nettsted (lokal bedrift, nettbutikk eller B2B), bekreft navn, adresse, telefon, åpningstider og beskrivelse, og velg hva som skal publiseres for AI.",
+    "Kontroller opplysningene utvidelsen har fylt inn fra de eksisterende innstillingene dine. Den fyller bare tomme felt, så ingenting du har skrevet blir erstattet, og veiviseren viser deg åpningstidene slik de blir publisert.",
+    "Legg inn tjenestene og spørsmålene dine under Nurevo AEO > Innstillinger, og plasser Nurevo FAQ-blokken (eller [nurevo_faq]) på siden der FAQ-en skal vises.",
+    "Åpne Nurevo AEO > AEO-poengsum, les hva diagnosen sender, kryss av i samtykkeboksen og klikk på Kjør diagnose. Bruk deretter rettelsene med ett klikk som sjekklisten foreslår."
+   ],
+   "after": [
+    "Vil du se hva AI leser utenfra, kan du kjøre den [gratis sjekken av AI-lesbarhet](/check) på forsiden din. Mer om WordPress-siden: [AEO for WordPress](/guide/aeo-wordpress/)."
+   ]
+  },
+  {
+   "heading": "Hva som er gratis",
+   "paragraphs": [
+    "Alt på denne siden fungerer med gratisabonnementet, uten lisensnøkkel og uten prøveperiode:"
+   ],
+   "list": [
+    "AEO-poengsummen: 0 til 100, med trafikklysvarsler og en sjekkliste over hva som bør rettes.",
+    "Rettelser med ett klikk for grunnleggende strukturerte data, llms.txt og tilgang for AI-crawlere.",
+    "Serverrendret schema.org-JSON-LD, slik at også crawlere som aldri kjører JavaScript, kan lese det.",
+    "llms.txt på /llms.txt, bygget i selve utvidelsen fra WordPress-innholdet ditt. [Hva er llms.txt?](/guide/llms-txt/)",
+    "Regler for AI-crawlere i robots.txt for crawlerne som AI-søk bruker til å lese og sitere sider.",
+    "Nettstedstyper for lokale bedrifter, nettbutikker og B2B-bedrifter."
+   ],
+   "after": [
+    "De betalte abonnementene legger til et alltid oppdatert regelsett (Standard) og måling av AI-synlighet i beta (Pro). Ingenting på denne siden krever dem."
+   ]
+  },
+  {
+   "heading": "Hva strukturerte data kan og ikke kan gjøre",
+   "paragraphs": [
+    "Strukturerte data hjelper AI med å lese opplysningene dine riktig: riktige åpningstider, riktig telefonnummer, riktig type bedrift. De bestemmer ikke hva en AI sier. Ingen verktøy kan garantere at en AI nevner deg, og det lover heller ikke Nurevo."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Dupliserer Nurevo AEO schemaet til SEO-utvidelsen min?",
+   "a": "Nei. Med Yoast SEO, Rank Math eller All in One SEO legger det bare til de manglende opplysningene i grafen SEO-utvidelsen din allerede publiserer, under samme bedrifts-@id, og overskriver aldri en verdi utvidelsen angir. Siden beholder én graf som beskriver én bedrift."
+  },
+  {
+   "q": "Må jeg fjerne Yoast SEO, Rank Math eller AIOSEO?",
+   "a": "Nei. Behold SEO-utvidelsen din for rangeringen i søkemotorer. Nurevo AEO legger opplysningene AI trenger, oppå den."
+  },
+  {
+   "q": "Er Nurevo AEO gratis?",
+   "a": "Ja. Bedriftsopplysninger, tjenester, FAQ, AEO-poengsum, rettelser med ett klikk, JSON-LD, llms.txt og regler for AI-crawlere er alle med i gratisabonnementet. De betalte abonnementene legger bare til et alltid oppdatert regelsett og måling av AI-synlighet (beta)."
+  }
+ ],
+ "relatedHeading": "Relaterte guider",
+ "cta": {
+  "heading": "Legg de manglende opplysningene til i SEO-utvidelsens schema, gratis",
+  "body": "Nurevo AEO er gratis på WordPress.org. Usikker på hva AI leser i dag? Kjør den gratis sjekken først. Ingen registrering nødvendig.",
+  "label": "Last ned Nurevo AEO på WordPress.org",
+  "href": "https://wordpress.org/plugins/nurevo-webmcp/",
+  "secondary": {
+   "label": "Gratis sjekk av AI-lesbarhet",
+   "href": "/check"
+  }
+ },
+ "footnote": "Yoast SEO er et varemerke for Yoast BV, Rank Math for Rank Math PVT. LTD. og All in One SEO (AIOSEO) for Awesome Motive. Nurevo er ikke tilknyttet dem."
+}

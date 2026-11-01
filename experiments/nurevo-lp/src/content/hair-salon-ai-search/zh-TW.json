@@ -1,0 +1,145 @@
+{
+  "title": "美髮與美容沙龍的 AI 搜尋：價目表、價格與預約 | Nurevo",
+  "description": "沙龍的 AEO 從正確公開價目表、價格、所需時間、營業時間與預約連結開始：寫在頁面文字中，也寫進 HairSalon 結構化資料。附步驟與檢查清單。",
+  "h1": "美髮與美容沙龍的 AI 搜尋：如何讓 AI 正確讀懂您的價目表、價格與預約方式",
+  "lead": "美髮或美容沙龍的 AI 搜尋最佳化（AEO），重點在於把顧客會問的事實（服務項目、價格、每項服務所需時間、營業時間、公休日、地址與預約方式）正確且一致地公開，既寫在頁面文字裡，也寫進 schema.org 的 HairSalon 或 BeautySalon 結構化資料。如此一來，ChatGPT、Perplexity 和 Google 的 AI 在回答「車站附近週日晚上還有營業的沙龍」或「附近哪裡能做角蛋白直髮」時，就不必用猜的。在自家網站上張貼自己的評論，並不是讓 AI 或搜尋結果變好的捷徑。",
+  "intro": [
+    "本文撰寫於 2026 年 11 月 1 日（日本時間）。來自 Google、schema.org 與日本政府機關的資訊，皆已於文中註明的日期在各官方頁面確認。",
+    "AI 的回答會隨日期與提問方式而改變。本文的步驟能讓 AI 讀懂您沙龍的資訊，但無法保證 AI 一定會提到您的沙龍，也不保證任何排名。"
+  ],
+  "sections": [
+    {
+      "heading": "顧客會問 AI 什麼，AI 又會讀取什麼",
+      "paragraphs": [
+        "當有人請 ChatGPT、Perplexity 或 Google AI Overviews 幫忙找沙龍時，AI 會讀取它在網路上找得到的內容並組成答案。與沙龍有關的問題通常同時包含地點、日期、時段、服務與價格：「車站附近擅長燙直的髮廊」「週日晚上 7 點以後還能預約的沙龍」「可以幫小孩剪髮的髮廊」「同一天能做美甲和睫毛的店」。",
+        "要回答這些問題，AI 必須能以文字讀到：您的沙龍在哪裡、哪幾天營業、營業到幾點、提供哪些服務、各要多少錢與多少時間、在哪裡預約。如果價目表只有圖片、每個價格都寫「起」卻沒有說明依據、各頁面的公休日不一致，或沒有預約連結，您的沙龍就比較難被用在答案中。",
+        "Google 表示，要出現在 AI Overviews 或 AI 模式中，沒有額外的條件，也不需要特殊的 schema.org 結構化資料；平常的基本功依然重要，例如讓結構化資料與頁面上看得到的文字一致、讓商家檔案保持最新（2026 年 11 月 1 日確認）。[Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)。這項工作不是什麼 AI 技巧，而是把沙龍的事實正確、一致地公開。"
+      ]
+    },
+    {
+      "heading": "沙龍應該公開的資訊",
+      "paragraphs": [
+        "在結構化資料中，髮廊以 [schema.org HairSalon](https://schema.org/HairSalon) 來描述。HairSalon 屬於 HealthAndBeautyBusiness（LocalBusiness 的一種），與 BeautySalon、NailSalon 和 DaySpa 並列。Google 的在地商家文件將 name 與 address 列為必要屬性，建議使用 openingHoursSpecification、telephone、url 等屬性，並要求盡可能使用最具體的 LocalBusiness 子類型（2026 年 10 月 29 日確認）。[Google: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+      ],
+      "table": {
+        "head": [
+          "資訊",
+          "頁面上",
+          "結構化資料中"
+        ],
+        "rows": [
+          [
+            "沙龍名稱",
+            "正式名稱，在招牌、商家檔案與預約網站上的寫法完全相同",
+            "name（必要）"
+          ],
+          [
+            "地址與交通方式",
+            "包含樓層的完整地址，以及從最近車站或停車場步行過來的路線，以文字寫出",
+            "address（必要）、geo（建議）"
+          ],
+          [
+            "營業時間與公休日",
+            "以文字而非圖片呈現，寫明最後預約時間；染髮或燙髮的最後受理時間若不同，也一併註明",
+            "openingHoursSpecification（建議）"
+          ],
+          [
+            "價目表、價格與所需時間",
+            "剪髮、染髮、燙髮、燙直等，每項都寫明價格與大約所需時間",
+            "每個服務項目一個 Service，價格以 Offer 表示"
+          ],
+          [
+            "預約方式",
+            "以文字寫出電話號碼，並附上線上預約頁面的連結",
+            "telephone（建議）、預約 URL"
+          ],
+          [
+            "常見問題",
+            "顧客真正會問的：停車、可否帶小孩、可否當天預約、取消規定",
+            "FAQPage，僅用於看得到該 FAQ 的頁面"
+          ]
+        ],
+        "caption": "必要與建議屬性依據 2026 年 10 月 29 日 Google 在地商家文件所列內容。服務項目使用的 Service 與 Offer 為 schema.org 類型，並非 Google 的必要或建議屬性。"
+      },
+      "after": [
+        "請依當地規定的方式標示價格。例如在日本，國稅廳要求事先向消費者顯示的價格必須含消費稅，不論透過何種媒介（例如「11,000円（税込）」）。[National Tax Agency: total price display (Japanese)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm)。若價格是一個區間（基本價「起」），請用簡短幾個字說明取決於什麼（頭髮長度、資深設計師等），以免 AI 和顧客誤解。",
+        "最重要的是，同一項資訊在所有地方都保持相同的值：您的網站、結構化資料、Google 商家檔案、預約網站與 llms.txt。價格或營業時間變動時，請同時全部更新。"
+      ]
+    },
+    {
+      "heading": "評論：不要為了 AI 而加上的內容",
+      "paragraphs": [
+        "在自家沙龍網站上為顧客評論或星等加上標記，並不會讓您在 Google 上獲得評論星等。Google 在 2019 年表示，自我宣傳的評論（也就是把關於某商家的評論放在該商家自己的網站上）對 LocalBusiness 與 Organization 不被允許，也不會為其顯示評論摘要。[Google Search Central blog, September 16, 2019](https://developers.google.com/search/blog/2019/09/making-review-rich-results-more-helpful)",
+        "關於未揭露廣告的規定因國家而異，請確認適用於您的規定。在日本，自 2023 年 10 月 1 日起，隱性行銷已屬違反《不當贈品類及不當標示防止法》的行為，消費者廳將商家請託或指示第三方發布的評論與貼文視為該商家的廣告。[Consumer Affairs Agency: stealth marketing (Japanese)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)。不要為了讓 AI 替您說好話，而累積未揭露的業配評論。",
+        "AI 需要您提供的不是讚美，而是可以查證的事實：服務、價格、時間與地點。「本地區第一」這類無法佐證的說法，最穩妥的做法是在文字與標記中都不寫。"
+      ]
+    },
+    {
+      "heading": "在 WordPress 沙龍網站上設定",
+      "list": [
+        "從 [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) 安裝 Nurevo AEO（免費）並啟用。若您正在使用 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO，可以繼續保留。",
+        "在設定精靈中選擇「Beauty salon」。商家類型會設為 BeautySalon；如果是髮廊，請在設定中把「Business type (schema.org type)」改為 HairSalon，美甲店則改為 NailSalon。確認名稱、地址、電話、營業時間與簡介。只有空白欄位會從現有設定自動帶入，您已輸入的內容不會被覆寫。",
+        "在設定中把每個服務項目新增為服務。填寫服務名稱、所需時間（分鐘）、價格、幣別、類別、預約 URL 與說明後，就會以與您沙龍連結的 Service 公開（價格為 Offer，預約 URL 為預約動作），並在 llms.txt 中列為一行價目。價格請只輸入數字，不要加貨幣符號。",
+        "輸入常見問題，並在想顯示的頁面放上 Nurevo FAQ 區塊或 [nurevo_faq] 短代碼。這些問題會加入該頁面的 FAQPage。",
+        "在 AEO Score 畫面執行診斷，並套用檢查清單提供的一鍵修正。結構化資料、llms.txt 與 AI 爬蟲存取（OAI-SearchBot、PerplexityBot、Claude-SearchBot 等）全都包含在免費方案中。",
+        "用[免費 AI 可讀性檢測](/check)從外部查看 AI 讀到了什麼，並確認營業時間與價格與您的 Google 商家檔案及預約網站一致。"
+      ],
+      "after": [
+        "啟用 SEO 外掛時，Nurevo AEO 不會再輸出第二套結構化資料，只會把缺少的地址、電話、營業時間、HairSalon 等具體類型以及您的服務，補進 SEO 外掛已經發布的圖譜中。請參閱[為 Yoast、Rank Math 與 AIOSEO 加入在地商家 schema](/guide/local-business-schema-seo-plugins/)。不是用 WordPress 建置的網站也是同樣道理：把上表中的資訊寫進頁面文字與結構化資料。"
+      ]
+    },
+    {
+      "heading": "公開前的檢查清單",
+      "list": [
+        "價目表以文字寫出，而不只是圖片。",
+        "價格依當地規定標示，價格區間有註明取決於什麼。",
+        "營業時間、公休日與最後預約時間在網站、Google 商家檔案與預約網站上一致。",
+        "結構化資料類型符合業態，例如 HairSalon、BeautySalon 或 NailSalon，而不是籠統的 Organization。",
+        "結構化資料中的價格與營業時間，與頁面上看得到的數值一致。",
+        "自家網站上的評論沒有被標記為評分，也沒有使用未揭露的業配評論。",
+        "llms.txt 列出了沙龍概要、價目與價格、交通方式與預約頁面。[什麼是 llms.txt？](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "確認您是否出現在 AI 的回答中",
+      "paragraphs": [
+        "資訊整理好之後，用顧客會問的問題（地區 + 服務 + 日期或時段）去問 AI，看看您的沙龍是否以名稱或 URL 出現。每次的回答都會不同，所以請把同樣的問題隔一段時間多問幾次。預約網站的頁面有時也會被當作來源，因此那裡的資訊也要保持最新。",
+        "Nurevo AEO 的 Free 與 Standard 方案包含每月一次的檢查：依您的商家類型與地區（絕不使用沙龍名稱）產生三個問題向 Perplexity 提問，外掛會記錄回答中是否提到您的沙龍或引用您的網站。Pro 方案（每月 $99 起）新增測試版的 AI 曝光度測量：您的沙龍在 AI 回答中出現的頻率，並提供競爭對手比較與歷史紀錄（目前支援 Perplexity）。兩者都是抽樣檢查回答，而非觀察每一個回答。"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "髮廊做 AI 搜尋應該從哪裡開始？",
+      "a": "先在頁面上以文字正確寫出價目表、價格、所需時間、營業時間、公休日、地址與預約方式。接著把同樣的資訊以 HairSalon 結構化資料與 llms.txt 公開，並確認與 Google 商家檔案及預約網站一致。"
+    },
+    {
+      "q": "HairSalon 還是 BeautySalon，該用哪一個？",
+      "a": "在 schema.org 中，兩者都屬於 HealthAndBeautyBusiness。請選擇最接近您業務的類型：以剪髮與染髮為主用 HairSalon，美容護理用 BeautySalon，美甲店用 NailSalon。Google 要求盡可能使用最具體的類型。"
+    },
+    {
+      "q": "已經上架預約網站了，還需要整理自己的網站嗎？",
+      "a": "預約網站的頁面可能會被 AI 當作來源，但您自己的網站才是能最詳細、最正確公開沙龍資訊的地方：服務說明、交通方式與常見問題。讓兩邊保持一致是最穩妥的做法。"
+    },
+    {
+      "q": "Nurevo AEO 是免費的嗎？",
+      "a": "是的。商家類型（HairSalon 等）、地址、營業時間、服務與 FAQ 的結構化資料、llms.txt、AI 爬蟲規則以及 AEO 分數都包含在免費方案中。付費方案新增隨時保持最新的規則集（Standard，每月 $20）與測試版的 AI 曝光度測量（Pro，每月 $99 起）。[WordPress.org 上的 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "這樣做能保證我的沙龍出現在 ChatGPT 中嗎？",
+      "a": "不能。AI 的回答會變動，沒有任何工具或技巧能保證被提及或取得某個位置。您能做的是讓 AI 容易讀懂您的資訊，並持續確認自己是否出現。"
+    }
+  ],
+  "relatedHeading": "相關指南",
+  "cta": {
+    "heading": "先看看 AI 如何讀取您的沙龍網站",
+    "body": "免費檢測可顯示結構化資料、llms.txt 與 AI 爬蟲存取的狀態，無需註冊。在 WordPress 上，Nurevo AEO 能免費補齊缺漏。",
+    "label": "進行免費 AI 可讀性檢測",
+    "href": "/check",
+    "secondary": {
+      "label": "在 WordPress.org 取得 Nurevo AEO",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT 是 OpenAI 的商標，Perplexity 是 Perplexity AI 的商標，Google 是 Google LLC 的商標。Yoast SEO、Rank Math、All in One SEO 與 Slim SEO 為其各自所有者的商標。Nurevo 與上述公司皆無關聯。本文不構成法律或稅務建議。"
+}
