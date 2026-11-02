@@ -1,0 +1,213 @@
+{
+ "title": "Az AI-láthatóság mérése a ChatGPT-ben és a Perplexityben | Nurevo",
+ "description": "Így mérheti, hogy a ChatGPT vagy a Perplexity megemlíti-e vállalkozását: rögzített, név nélküli kérdések, többszöri futtatás, említések és hivatkozások külön.",
+ "h1": "Az AI-láthatóság mérése: a kérdések kiválasztása, a futtatások száma és az eredmények értelmezése",
+ "lead": "Az AI-láthatóságot úgy mérheti, hogy kiválasztja azokat a kérdéseket, amelyeket ügyfelei valóban feltennének, mindegyiket többször felteszi egy AI-nak, majd megszámolja, a válaszok mekkora része nevezi meg vállalkozását vagy hivatkozik forrásként a webhelyére. Három dolog a legfontosabb: használjon rögzített, az Ön nevét nem tartalmazó kérdéssort, ugyanazok között a feltételek között tegye fel őket ismételten, és ne egy-egy válaszból, hanem a futtatásokon átívelő trendből vonjon le következtetést.",
+ "intro": [
+  "Készült 2026. október 31-én. Az OpenAI, a Perplexity és a Google állításait aznap ellenőriztük a saját dokumentációjukban. Ezek változhatnak, ezért nézze meg az aktuális oldalakat is.",
+  "Az AI válaszai napról napra, sőt ugyanannak a kérdésnek az egyes futtatásai között is változnak. Az ezzel a módszerrel kapott számok mintát jelentenek, nem az összes válasz teljes képét. És semmilyen lépés nem garantálhatja, hogy egy AI megemlíti Önt, vagy bármilyen helyen szerepelteti."
+ ],
+ "sections": [
+  {
+   "heading": "Mit jelent az „AI-láthatóság”: négy követendő mutató",
+   "paragraphs": [
+    "Az egyes eszközök kissé eltérő mutatókat értenek „AI-láthatóság” alatt. Ha saját maga méri, és ezt a négyet külön kezeli, később sokkal könnyebb lesz összehasonlítani az eredményeket."
+   ],
+   "table": {
+    "head": [
+     "Mutató",
+     "Hogyan számoljuk",
+     "Mit árul el"
+    ],
+    "rows": [
+     [
+      "Említési arány",
+      "Azok a válaszok, amelyek szövege megnevezi vállalkozását (a gyakori alternatív neveket is beleértve) ÷ kapott válaszok",
+      "Javasolja-e Önt az AI lehetőségként"
+     ],
+     [
+      "Hivatkozási arány",
+      "Azok a válaszok, amelyek forrásai között szerepel az Ön domainje ÷ kapott válaszok",
+      "Használja-e az AI forrásként a webhelyét"
+     ],
+     [
+      "Megjelenési arány",
+      "Említést vagy hivatkozást tartalmazó válaszok ÷ kapott válaszok",
+      "Egyáltalán megjelenik-e a válaszban"
+     ],
+     [
+      "Hivatkozási részesedés a versenytársakhoz képest",
+      "Az Ön domainjére mutató hivatkozások ÷ (az Ön domainjére mutató hivatkozások + a kiválasztott versenytárs-domainekre mutató hivatkozások)",
+      "Milyen gyakran választják Önt forrásként a megnevezett versenytársakhoz képest"
+     ]
+    ],
+    "caption": "A sikertelen, választ nem adó futtatások nem számítanak bele a nevezőbe. Egy válasz több domainre is hivatkozhat, ezért a részesedés nevezője nem a válaszok száma."
+   },
+   "after": [
+    "Előfordulhat, hogy az AI megnevezi Önt, de saját webhelye helyett egy értékelőoldalra vagy térképszolgáltatásra hivatkozik, és ennek a fordítottja is megtörténik. A kettőt külön rögzítse."
+   ]
+  },
+  {
+   "heading": "A mérés hat lépésben",
+   "list": [
+    "Válassza ki az AI-platformokat: kezdje azzal az egy-kettővel, amelyet ügyfelei a legvalószínűbben használnak. Minden platformot külön rögzítsen, és soha ne vonja össze őket. Mindegyik saját keresőrendszert és saját modellt használ, így az egyiken kapott eredmény nem vihető át a másikra.",
+    "Írja meg a kérdéseket: 5–20 olyan „felfedező” kérdés, amely nem tartalmazza az Ön nevét, például „Tudna ajánlani egy fogorvost Umedában?” A nevét tartalmazó kérdések nem számítanak bele az arányba; ezekkel azt ellenőrzi, hogy az AI helyesen közli-e az Önre vonatkozó tényeket (lásd a következő részt).",
+    "Döntse el a futtatások számát: a válaszok minden alkalommal változnak, ezért minden kérdést tegyen fel kétszer-háromszor. Minél kevesebb a futtatás, annál jobban elmozdítja a számot egy szerencsés vagy szerencsétlen válasz.",
+    "Tartsa azonosan a feltételeket: minden alkalommal ugyanaz a megfogalmazás, ugyanaz a platform és mód, kijelentkezett állapotban. A fogyasztói alkalmazások válaszai a bejelentkezéstől, a helyadatoktól és a csevegési előzményektől függően változhatnak.",
+    "Rögzítsen minden választ: dátum és időpont, platform, kérdés, megnevezték-e, szerepelt-e a domainje a források között, ki jelent meg Ön helyett, valamint egy idézet (lásd az alábbi táblázatot).",
+    "Ismételje meg havonta ugyanazzal a kérdéssorral: trendeket csak azonos kérdésekkel, azonos platformon és azonos feltételek mellett végzett futtatások között hasonlítson össze. Ha módosítja a kérdéseket, kezdjen új idősort."
+   ]
+  },
+  {
+   "heading": "A kérdések kiválasztása: a felfedező és a névre szóló kérdéseket tartsa külön",
+   "table": {
+    "head": [
+     "Típus",
+     "Példa (fogorvosi rendelő Umedában, Oszakában)",
+     "Felhasználás"
+    ],
+    "rows": [
+     [
+      "Felfedező",
+      "Tudna ajánlani egy fogorvost Umedában?",
+      "Az arány alapja: valaki, aki nem ismeri az Ön nevét, egy AI-tól kérdez"
+     ],
+     [
+      "Felfedező (konkrét igény)",
+      "Olyan fogorvost keresek Umedában, aki odafigyel a fájdalomcsillapításra. Hová menjek?",
+      "Megmutatja, megjelenik-e azokkal az erősségekkel, amelyekkel valóban rendelkezik"
+     ],
+     [
+      "Névre szóló",
+      "Mi az „XYZ Fogászat” címe és nyitvatartása?",
+      "Nem része az aránynak. Azt ellenőrzi, hogy helyesek-e az olyan tények, mint a cím és a nyitvatartás, és hivatkozik-e az AI a webhelyére"
+     ]
+    ],
+    "caption": "Ezek a Nurevo 2026. októberi vizsgálatában használt kérdések formáját követik. A helyszínt és a vállalkozás típusát cserélje a sajátjára."
+   },
+   "after": [
+    "A névre szóló kérdésekre szinte mindig az Ön nevét kapja vissza. Ha ezeket belekeveri az arányba, az csak magasabbnak tűnik, ezért tartsa őket külön. A felfedező kérdéseket ügyfelei szavaival fogalmazza meg, és hagyja ki azokat, amelyek olyan szolgáltatásokra vonatkoznak, amelyeket nem kínál."
+   ]
+  },
+  {
+   "heading": "Példa a rögzítő táblázatra",
+   "paragraphs": [
+    "Ha egy táblázatban minden válasz külön sort kap, később könnyű lesz az összesítés."
+   ],
+   "table": {
+    "head": [
+     "Oszlop",
+     "Példa"
+    ],
+    "rows": [
+     [
+      "Dátum, platform, mód",
+      "2026-10-31 10:00 / Perplexity / normál keresés"
+     ],
+     [
+      "Kérdésazonosító, megfogalmazás, futtatás sorszáma",
+      "d1 / Tudna ajánlani egy fogorvost Umedában? / 2. futtatás"
+     ],
+     [
+      "Megnevezték",
+      "Igen / nem"
+     ],
+     [
+      "Saját webhelyre hivatkozott",
+      "Igen / nem (szerepelt-e a domainje a források között?)"
+     ],
+     [
+      "Ki jelent meg Ön helyett",
+      "A versenytárs, B értékelőoldal stb."
+     ],
+     [
+      "Idézet és ellenőrzési megjegyzések",
+      "Az Önt említő rész. Ha egy tény hibás, jegyezze fel a helyes tényt és azt, hogy hol van közzétéve"
+     ]
+    ]
+   },
+   "after": [
+    "Ne jelöljön automatikusan helyesnek egy választ: egy embernek kell összevetnie az Ön saját adataival. Ha hibát talál, ellenőrizze, hogy az adott tény (nyitvatartás, cím, szolgáltatások) egyértelműen szerepel-e a webhelyén. Lásd még: [hogyan jelennek meg a vállalkozások a ChatGPT-ben](/guide/appear-in-chatgpt)."
+   ]
+  },
+  {
+   "heading": "Öt szempont az eredmények értelmezéséhez",
+   "list": [
+    "Ne cselekedjen egyetlen futtatás alapján. Az azonos feltételek melletti trendet figyelje. Két-három válaszon alapuló arány nagyon keveset jelent.",
+    "A források sorrendje nem rangsor. A forráslista abban a sorrendben jelenik meg, ahogyan a platform visszaadja; ez nem keresési rangsor és nem „a legjobb elöl” sorrend.",
+    "A számokból nem derül ki, miért nem szerepel. Csupán azt mutatják, hogy a megfigyelt válaszok nem hivatkoztak Önre.",
+    "A webhely fejlesztése és a megjelenés nem mindig mozdul együtt gyorsan. Amikor a Nurevo 62 helyi vállalkozást vizsgált, a webhelyen mért AEO-pontszám nem mutatott összefüggést azzal, hogy a Perplexity milyen gyakran nevezte meg vagy hivatkozott rájuk (ρ = 0.03). Egy ekkora vizsgálat csak meglehetősen erős összefüggéseket képes kimutatni, így ez nem bizonyítja, hogy nincs kapcsolat, de ne feltételezze, hogy pusztán a webhely javítása növeli az arányt. [A vizsgálat elolvasása](/guide/aeo-signals-ai-answers-study)",
+    "Minden platformot külön értékeljen. Attól, hogy megjelenik a Perplexityben, még nem biztos, hogy a ChatGPT-ben vagy a Google AI-funkcióiban is megjelenik."
+   ]
+  },
+  {
+   "heading": "Egyéb mérési módszerek: mit mutatnak meg és mit nem",
+   "table": {
+    "head": [
+     "Módszer",
+     "Mit mutat meg",
+     "Mit nem tud megmutatni"
+    ],
+    "rows": [
+     [
+      "Webanalitika (hivatkozó oldalak)",
+      "Az AI-válaszokból érkező látogatásokat. Az OpenAI szerint a ChatGPT automatikusan hozzáadja a utm_source=chatgpt.com paramétert a ChatGPT keresési találataiból induló linkekhez ([OpenAI: GYIK kiadóknak és fejlesztőknek](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq))",
+      "Azokat a megjelenéseket, amelyekre senki sem kattintott, például ha a válasz csak a nevét említi"
+     ],
+     [
+      "Google Search Console",
+      "A Google AI-funkcióiban (AI Overviews, AI Mode) megjelenő webhelyeket a Teljesítmény jelentés a „Web” keresési típus alatt számolja ([Google: AI-funkciók és az Ön webhelye](https://developers.google.com/search/docs/appearance/ai-features), 2025. december 31-én frissített változat). A Google 2026 júniusában generatív AI-teljesítményjelentéseket is bejelentett a Search Console-ban ([Search Central blog](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports))",
+      "Hogyan jelenik meg a Google-on kívüli AI-platformokon, például a ChatGPT-ben vagy a Perplexityben"
+     ],
+     [
+      "Szerver-hozzáférési naplók",
+      "Hogy az AI-keresőrobotok beolvassák-e az oldalait. Az OpenAI dokumentálja az OAI-SearchBot (kereséshez) és a ChatGPT-User (felhasználói kérésre keres fel egy oldalt) robotot ([OpenAI: a robotok áttekintése](https://developers.openai.com/api/docs/bots)); a Perplexity a PerplexityBot és a Perplexity-User robotot dokumentálja ([Perplexity: robotok](https://docs.perplexity.ai/docs/resources/perplexity-crawlers))",
+      "Az, hogy beolvasták, nem azonos azzal, hogy megjelenik egy válaszban. Megjelenési arányt nem ad"
+     ],
+     [
+      "Monitorozó eszközök",
+      "Ütemezetten küldenek rögzített kérdéssort az AI-platformoknak, és automatikusan rögzítik az említéseket, hivatkozásokat, versenytársakat és trendeket",
+      "A platformok és a kérdések száma eszközönként és csomagonként eltér. [AEO-eszközök összehasonlítása](/guide/aeo-tools-comparison)"
+     ]
+    ]
+   },
+   "after": [
+    "Tájékoztatásul: a Nurevo AEO ingyenes AI-ellenőrzést kínál a csatlakoztatott Free és Standard webhelyek számára. Havonta egyszer három, a vállalkozás típusából és területéből összeállított kérdést tesz fel a Perplexitynek (az Ön nevét soha nem használja), és megmutatja, megnevezték-e, hivatkoztak-e a webhelyére, és ki jelent meg Ön helyett. Egy rögzített kérdéssor folyamatos, azonos feltételek melletti mérése versenytárs-összehasonlítással és előzményekkel a Pro csomag része (havi $99-tól, béta), és jelenleg a Perplexityn működik."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hány kérdés és futtatás elég?",
+   "a": "Nincs egyetlen helyes szám, de 5–20 felfedező kérdés, mindegyik kétszer-háromszor feltéve, gyakorlatias kiindulópont. Minél kevesebb a kérdés és a futtatás, annál jobban befolyásolja a véletlen az eredményt. A legfontosabb, hogy minden hónapban ugyanazokat a kérdéseket mérje ugyanazok között a feltételek között."
+  },
+  {
+   "q": "Nem elég, ha egyszerűen megkérdezem a ChatGPT-t?",
+   "a": "Első betekintésnek hasznos. A válaszok azonban a bejelentkezéstől, a helyadatoktól és a csevegési előzményektől függően változhatnak, és egyetlen válaszban sok a véletlen. Ha táblázatban rögzíti, amit lát, és azonos feltételek mellett megismétli, összehasonlítható számokat kap."
+  },
+  {
+   "q": "Ha az AI megnevez, amikor név szerint kérdeznek rólam, akkor rendben vagyok?",
+   "a": "A névre szóló kérdések szinte mindig visszaadják az Ön nevét, így keveset mondanak a láthatóságról. Arra használja őket, hogy ellenőrizze, helyesek-e az olyan tények, mint a cím és a nyitvatartás, és hivatkozik-e az AI a webhelyére; a láthatóságot pedig az Ön nevét nem tartalmazó kérdésekkel mérje."
+  },
+  {
+   "q": "Alacsony az arányom. Mit tegyek először?",
+   "a": "Először ellenőrizze, hogy az AI be tudja-e olvasni a webhelyét: strukturált adatok, llms.txt, és hogy a robots.txt nem tiltja-e le az AI-keresőrobotokat. Ezután nézze meg, mit írnak magukról azok a vállalkozások és webhelyek, amelyek Ön helyett megjelennek; ebből gyakran kiderül, mely tények hiányoznak Önnél. A webhely javítása nem garantálja, hogy az arány gyorsan emelkedni fog."
+  },
+  {
+   "q": "Ha mérek, az AI meg fogja mutatni a vállalkozásomat?",
+   "a": "Nem. A mérés megmutatja, hol tart, de nem változtatja meg a válaszokat. Az AI válaszai naponta változnak, és semmilyen módszer nem garantálhat említést vagy helyezést."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Először ellenőrizze, hogy az AI be tudja-e olvasni a webhelyét",
+  "body": "Az ingyenes ellenőrzés regisztráció nélkül megmutatja, milyen állapotban vannak az AI által olvasott elemek, például a strukturált adatok és az llms.txt. WordPress esetén a Nurevo AEO ingyenesen pótolja a hiányosságokat.",
+  "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO letöltése a WordPress.org-ról",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT, az OpenAI, a Perplexity, a Google, a Search Console és a hozzájuk tartozó terméknevek a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük."
+}

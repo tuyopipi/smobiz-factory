@@ -1,0 +1,292 @@
+{
+ "title": "Foarseit AEO op de site AI-antwurden? 62 bedriuwen ûndersocht | Nurevo",
+ "description": "Wy joegen 62 lokale bedriuwen yn Japan in AEO-skoare en fregen Perplexity nei harren. De skoare foarsei net oft se yn AI-antwurden ferskynden (ρ = 0.03).",
+ "h1": "Foarsizze AEO-sinjalen op de website oft in bedriuw yn AI-antwurden ferskynt? Wy hawwe 62 bedriuwen metten",
+ "lead": "Nee, net yn dit ûndersyk. Oer 62 lokale bedriuwen yn Japan liet ús AEO-skoare foar de website sels (strukturearre gegevens, llms.txt, tagong foar crawlers en soartgelikense sinjalen) gjin ferbân sjen mei hoe faak Perplexity in bedriuw neamde of oanhelle as der om oanbefellingen frege waard: Spearman ρ = 0.03 (95% BI −0.23 oant 0.28, p = 0.834). Mei 62 bedriuwen koe it ûndersyk allinnich korrelaasjes fan sawat |ρ| ≥ 0.35 betrouber opspoare, dus in swakker ferbân kin net útsletten wurde.",
+ "intro": [
+  "Publisearre op 28 oktober 2026. Gegevens metten op 24 oktober 2026. Nurevo makket AEO-ark, wêrûnder de skoare dy't hjir test wurdt; sjoch “Us belangestriid” hjirûnder."
+ ],
+ "sections": [
+  {
+   "heading": "Gearfetting",
+   "list": [
+    "Fraach: ferskine bedriuwen waans websites heger skoare op Nurevo syn AI-lêsberheidsskoare (0 oant 100) faker yn AI-antwurden op fragen dêr't se net by namme yn neamd wurde?",
+    "Antwurd: net stipe. ρ = 0.03 yn it gehiel, en noch hieltyd 0.03 nei korreksje foar sektor en stêd.",
+    "Yn it gehiel ferskynden de bedriuwen yn 21.0% fan de antwurden op sykfragen; 25 fan de 62 ferskynden op syn minst ien kear.",
+    "Ek gjin inkeld ûnderdiel fan de skoare (strukturearre gegevens, llms.txt, dekking ensafuorthinne) liet in ferbân sjen nei korreksje foar meardere toetsen.",
+    "Wat wy dêrút helje: strukturearre gegevens helpe AI de feiten fan in bedriuw goed te lêzen, mar bepale op harsels net oft in bedriuw neamd wurdt. Oare faktoaren tellen swierder, hiel wierskynlik ûnder oaren wat oare websites oer it bedriuw sizze. Dat lêste punt is in hypoteze dy't dit ûndersyk net test hat."
+   ]
+  },
+  {
+   "heading": "Wêrom't wy dit ûndersyk dien hawwe",
+   "paragraphs": [
+    "Advys oer AEO (answer engine optimization), ús eigen ek, seit dat in website dy't maklik te lêzen is foar AI (schema.org-strukturearre gegevens, in llms.txt-bestân, AI-crawlers tagong jaan en op de server renderde ynhâld) in bedriuw helpt om yn AI-antwurden te ferskinen. Nurevo ferkeapet in skoare dy't krekt op dy sinjalen boud is. Wy woene earlik bewiis oft de skoare oanslút by wat ûndernimmers echt wichtich fine: troch AI neamd wurde. Wy leinen de hypoteze, de analyze en de beslútkritearia fêst foardat wy ek mar ien antwurd sammelen, en sein ta it resultaat yn alle gefallen te publisearjen."
+   ]
+  },
+  {
+   "heading": "Metoade",
+   "list": [
+    "Stekproef: 72 lokale bedriuwen mei in eigen offisjele website, keazen fia websykjen (portalsites útsletten) yn 5 sektoaren (toskedoktersprakken, restaurants, skientmesalons, belestingadviseurs, oernachting) en 4 Japanske stêden (Tokio, Osaka, Fukuoka, Sapporo). 10 waarden útsletten om't de skoare foar harren site net berekkene wurde koe, sadat der 62 oerbleaune foar de analyze.",
+    "Skoare: fan elke site waarden de thússide, robots.txt en llms.txt beoardiele mei deselde koade as Nurevo syn publike skoare: strukturearre gegevens (30 punten), dekking (25), lêsberens (20), llms.txt (15) en konsistinsje (10), mei in drompel foar crawlertagong, edge-blokkearring en serverrendering (wa't dêr net troch komt, krijt maksimaal 15).",
+    "Masine: Perplexity fia de Agent API mei de foarynstelling “fast” (ien websyk, dan in antwurd), deselde adapter dy't Nurevo syn betelle plan brûkt foar AI-sichtberens. Mar ien masine; sjoch de beheiningen.",
+    "Fragen: trije “sykfragen” per bedriuw dy't it gebiet en it soarte bedriuw neame, mar net it bedriuw sels (bygelyks “Advisearje in toskedokter yn Umeda”), dield troch alle bedriuwen yn deselde sektor en itselde gebiet, plus ien “beneamde” fraach nei it adres en de iepeningstiden fan in bedriuw. Elke fraach waard trije kear steld.",
+    "Útkomst: in bedriuw “ferskynde” yn in antwurd as de namme yn it antwurd stie of as it eigen domein ûnder de oanhelle boarnen wie. It ferskiningspersintaazje is it oandiel fan de antwurden op sykfragen dêr't it bedriuw yn ferskynde.",
+    "Kontrôle fan de detektor: yn antwurden op de beneamde fragen waard de namme fan it bedriuw yn 84.3% fan de gefallen fûn, boppe de drompel fan 70% dy't wy steld hiene om de detektor te fertrouwen.",
+    "Analyze: Spearman-rangkorrelaasje mei in permutaasje-p-wearde en bootstrap-betrouberensynterval; partsjele korrelaasje mei sektor en stêd as fêste effekten; in permutaasjetoets binnen strata; en in logistyske regresje mei fêste effekten foar sektor en stêd en in kwasy-binomiale korreksje, om't werhelle antwurden op deselde fraach net ûnôfhinklik binne. De seis komponinttoetsen binne Holm-korrizjearre."
+   ],
+   "after": [
+    "It kritearium foar “stipe” waard foarôf fêstlein: ρ ≥ 0.3, p < 0.05, in 95% BI boppe nul en in positive korrizjearre korrelaasje. De antwurdtekst sels waard net bewarre; allinnich oft der in namme yn foarkaam, oft it domein oanhelle waard en de posysje fan de oanhaling."
+   ]
+  },
+  {
+   "heading": "Resultaten",
+   "paragraphs": [
+    "De konklúzje is “net stipe”. Elke toets fan de skoare tsjin ferskining jout in korrelaasje tichtby nul:"
+   ],
+   "table": {
+    "head": [
+     "Toets",
+     "Resultaat",
+     "p-wearde"
+    ],
+    "rows": [
+     [
+      "Skoare tsjin ferskiningspersintaazje (Spearman ρ, primêr)",
+      "0.03 (95% BI −0.23 oant 0.28)",
+      "0.834"
+     ],
+     [
+      "Itselde, korrizjearre foar sektor en stêd (partsjele korrelaasje)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Itselde, permutaasjetoets binnen strata",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Skoare tsjin namme neamd (sykfragen)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Skoare tsjin eigen site oanhelle (sykfragen)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Skoare tsjin eigen site oanhelle (beneamde fragen)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logistyske regresje mei fêste effekten foar sektor/stêd, kwasy-binomiaal: odds per +1 SD fan de skoare (18.81 punten)",
+      "×1.01 (95% BI 0.62 oant 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 bedriuwen. Metten op Perplexity op 24 oktober 2026."
+   },
+   "after": [
+    "De grutste koëffisjint, 0.18 tusken de skoare en it oanheljen fan de eigen site fan it bedriuw, is net te ûnderskieden fan nul (p = 0.149) en moat net as in befining lêzen wurde."
+   ]
+  },
+  {
+   "heading": "Neffens skoareklasse",
+   "paragraphs": [
+    "Nurevo lit de skoare sjen as read, giel of grien. De measte sites yn de stekproef wiene read en gjinien kaam oan grien, dus dit ûndersyk seit neat oer hiel hege skoares."
+   ],
+   "table": {
+    "head": [
+     "Klasse",
+     "Bedriuwen",
+     "Gem. ferskiningspersintaazje",
+     "Op syn minst ien kear ferskynd"
+    ],
+    "rows": [
+     [
+      "Read",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Giel",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Grien",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Neffens ûnderdiel fan de skoare",
+   "paragraphs": [
+    "Gjin inkeld ûnderdiel fan de skoare hie in ferbân mei ferskining. Nei Holm-korreksje is elke p-wearde 1.000. Dizze toetsen wiene ferkennend."
+   ],
+   "table": {
+    "head": [
+     "Ûnderdiel",
+     "Spearman ρ mei ferskiningspersintaazje"
+    ],
+    "rows": [
+     [
+      "Strukturearre gegevens (schema)",
+      "0.08"
+     ],
+     [
+      "Dekking",
+      "0.12"
+     ],
+     [
+      "Lêsberens",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (oddsferhâlding 1.41, 95% BI 0.79 oant 2.52)"
+     ],
+     [
+      "Konsistinsje",
+      "0.06"
+     ],
+     [
+      "Drompel (crawlertagong, edge, serverrendering)",
+      "61 slagge: 21.3% ferskining; 1 sakke: 0%"
+     ]
+    ],
+    "caption": "Holm-korrizjearre p = 1.000 foar elk ûnderdiel."
+   }
+  },
+  {
+   "heading": "Neffens sektor en stêd",
+   "paragraphs": [
+    "Ferskining ferskilde mear neffens sektor en stêd as neffens skoare. Dit binne beskriuwende sifers fan lytse groepen, gjin toetste ferskillen."
+   ],
+   "table": {
+    "head": [
+     "Groep",
+     "Bedriuwen",
+     "Gem. skoare",
+     "Ferskiningspersintaazje"
+    ],
+    "rows": [
+     [
+      "Belestingadviseurs",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Oernachting",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Toskedoktersprakken",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Skientmesalons",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restaurants",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "De rigen foar sektoaren en de rigen foar stêden omfetsje elk deselde 62 bedriuwen."
+   }
+  },
+  {
+   "heading": "Beheiningen",
+   "list": [
+    "Dwerstrochsneed: ien mjitting fan in protte sites lit in ferbân sjen, gjin oarsaak. Oft it ferbetterjen fan in site de ferskining feroaret, freget om in foar-en-nei-ûndersyk fan deselde sites.",
+    "Statistyske krêft: mei 62 bedriuwen soe in korrelaasje swakker as sawat |ρ| = 0.35 faak mist wurde. Bedriuwen yn itselde gebiet en deselde sektor diele deselde antwurden, dus de effektive stekproef is noch lytser. “Net fûn” betsjut hjir net “bestiet net”.",
+    "Ien masine, ien wike: Perplexity mei de foarynstelling “fast”, metten op 24 oktober 2026. ChatGPT, Gemini, Google syn AI Overviews en Copilot brûke oare sykyndeksen en modellen; dizze resultaten binne net op harren oer te setten.",
+    "Net-waarnommen fersteurende faktoaren: beoardielingen, merkbekendheid, reklame, jierren yn bedriuw en fermeldingen op oare sites binne net metten. Der is allinnich korrizjearre foar sektor en stêd.",
+    "Stekproef: de bedriuwen binne fûn fia websykjen en neigje dêrom nei bedriuwen dy't al maklik te finen binne. Gjin inkelde site skoarde grien. 5 sektoaren en 4 stêden yn Japan binne net needsaaklik represintatyf foar oare sektoaren, regio's of talen."
+   ]
+  },
+  {
+   "heading": "Wat it betsjut foar de website fan in bedriuw",
+   "paragraphs": [
+    "Strukturearre gegevens, llms.txt en tagong foar crawlers dogge noch hieltyd harren wurk: se litte AI de feiten fan in bedriuw (adres, iepeningstiden, telefoannûmer, tsjinsten) direkt en goed lêze yn stee fan te rieden. Dat is it dwaan wurdich, en it is in oare taak as oanrikkemandearre wurde. Yn dit ûndersyk waard in better lêsbere site net faker neamd.",
+    "Us wurkhypoteze is dat boarnen bûten de website (beoardielingen en kaartfermeldingen, lokale media, gidsen en oare sites dy't it bedriuw neame) swier weagje as in AI beslút oft er in bedriuw neamt yn it antwurd op in fraach om in oanbefelling. Dit ûndersyk hat dy boarnen net metten, dus dit is in hypoteze om te toetsen, gjin resultaat.",
+    "Yn 'e praktyk: hâld de basis op jo eigen site op oarder, om't dy soarget dat wat AI oer jo seit klopt, en mjit oft AI jo werklik neamt yn stee fan dat ôf te lieden út in lêsberheidsskoare."
+   ]
+  },
+  {
+   "heading": "Us belangestriid, en wat wy feroarje",
+   "paragraphs": [
+    "Nurevo makket AEO-ark, en de skoare dy't hjir test wurdt is ien fan ús produkten. In resultaat dat de skoare ferskining net foarseit, is net ien dat wy sels keazen hiene. Wy publisearje it om't de kritearia fêstlein waarden foardat de gegevens binnenkamen, en om't ûndernimmers witte moatte wat in skoare harren wol en net fertelle kin.",
+    "Wat wy dêroan dogge: wy presintearje de AI-lêsberheidsskoare net as foarsizzer fan ferskining yn AI-antwurden. Ynstee dêrfan mjitte wy ferskining direkt: it Pro-plan mjit hoe faak Perplexity in site neamt of oanhellet (beta), en wy foegje in lytse moanlikse ferskiningskontrôle ta foar sites op Free en Standard. Wy ûntwikkelje ek in twadde ferzje fan de skoare dy't metten AI-sichtberens kombinearret mei de sinjalen op de site, yn stee fan allinnich op de sinjalen op de site te fertrouwen.",
+    "De nammen en websites fan de metten bedriuwen wurde net publisearre."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Soargje strukturearre gegevens derfoar dat AI myn bedriuw neamt?",
+   "a": "Yn dit ûndersyk fan 62 lokale bedriuwen op Perplexity waard gjin ferbân fûn tusken sinjalen op de site, lykas strukturearre gegevens, en hoe faak in bedriuw neamd waard (ρ = 0.03). Strukturearre gegevens helpe AI jo feiten goed te lêzen, mar foarseinen op harsels net oft jo neamd waarden."
+  },
+  {
+   "q": "Helpt llms.txt in bedriuw om yn AI-antwurden te ferskinen?",
+   "a": "Wy hawwe yn dit ûndersyk gjin ferbân fûn: ρ = −0.02 tusken it llms.txt-ûnderdiel en it ferskiningspersintaazje (Holm-korrizjearre p = 1.000). It ûndersyk wie lyts en brûkte ien masine, dus it is gjin bewiis dat llms.txt nea útmakket."
+  },
+  {
+   "q": "Betsjut dit dat AEO sinleas is?",
+   "a": "Nee. AEO op de site soarget dat wat AI oer in bedriuw seit klopt. Dit ûndersyk suggerearret dat it net genôch is om oanrikkemandearre te wurden, en dat neamd wurde direkt metten wurde moat yn stee fan ôflaat út in lêsberheidsskoare."
+  },
+  {
+   "q": "Hokker AI-masine is metten?",
+   "a": "Allinnich Perplexity, fia de Agent API mei de foarynstelling “fast”, op 24 oktober 2026. De resultaten binne net oer te setten op ChatGPT, Gemini, Google syn AI Overviews of Copilot."
+  }
+ ],
+ "relatedHeading": "Besibbe gidsen",
+ "cta": {
+  "heading": "Sjoch wat AI fan jo site lêst",
+  "body": "De fergese kontrôle lit sjen oft AI de feiten fan jo bedriuw lêze kin. Dy foarseit net oft AI jo neame sil; dat moat metten wurde.",
+  "label": "Doch de fergese kontrôle",
+  "href": "/check"
+ },
+ "footnote": "Undersyk troch Nurevo (Bestie.合同会社). Perplexity is in hannelsmerk fan Perplexity AI, Inc. Nurevo is net oansletten by Perplexity."
+}

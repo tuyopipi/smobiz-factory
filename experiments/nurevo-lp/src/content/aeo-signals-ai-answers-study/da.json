@@ -1,0 +1,292 @@
+{
+ "title": "Forudsiger AEO på sitet AI-svar? Studie af 62 virksomheder | Nurevo",
+ "description": "Vi gav 62 lokale virksomheder i Japan en AEO-score og spurgte Perplexity om dem. Scoren forudsagde ikke, om de optrådte i AI-svar (ρ = 0.03).",
+ "h1": "Forudsiger AEO-signaler på hjemmesiden, om en virksomhed optræder i AI-svar? Vi målte 62 virksomheder",
+ "lead": "Nej, ikke i denne undersøgelse. På tværs af 62 lokale virksomheder i Japan viste vores AEO-score for selve hjemmesiden (strukturerede data, llms.txt, adgang for crawlere og lignende signaler) ingen sammenhæng med, hvor ofte Perplexity nævnte eller citerede en virksomhed, når den blev bedt om anbefalinger: Spearman ρ = 0.03 (95% CI −0.23 til 0.28, p = 0.834). Med 62 virksomheder kunne undersøgelsen kun pålideligt påvise korrelationer på omkring |ρ| ≥ 0.35, så en svagere sammenhæng kan ikke udelukkes.",
+ "intro": [
+  "Udgivet 28. oktober 2026. Data målt 24. oktober 2026. Nurevo udvikler AEO-værktøjer, herunder den score, der testes her; se »Vores interessekonflikt« nedenfor."
+ ],
+ "sections": [
+  {
+   "heading": "Resumé",
+   "list": [
+    "Spørgsmål: Optræder virksomheder, hvis hjemmesider scorer højere på Nurevos AI-læsbarhedsscore (0 til 100), oftere i AI-svar på spørgsmål, der ikke nævner dem ved navn?",
+    "Svar: Ikke understøttet. ρ = 0.03 samlet set og stadig 0.03 efter justering for branche og by.",
+    "Samlet set optrådte virksomhederne i 21.0% af svarene på søgespørgsmål; 25 af de 62 optrådte mindst én gang.",
+    "Heller ingen enkelt del af scoren (strukturerede data, llms.txt, dækning osv.) viste en sammenhæng efter korrektion for multiple test.",
+    "Det tager vi med os: Strukturerede data hjælper AI med at læse en virksomheds fakta korrekt, men afgør ikke i sig selv, om virksomheden bliver nævnt. Andre faktorer betyder mere – meget sandsynligt bl.a. hvad andre sites skriver om virksomheden. Det sidste punkt er en hypotese, som denne undersøgelse ikke har testet."
+   ]
+  },
+  {
+   "heading": "Hvorfor vi lavede denne undersøgelse",
+   "paragraphs": [
+    "Råd om AEO (answer engine optimization), også vores egne, siger, at det hjælper en virksomhed med at dukke op i AI-svar, hvis hjemmesiden er nem for AI at læse (schema.org-strukturerede data, en llms.txt-fil, adgang for AI-crawlere og server-renderet indhold). Nurevo sælger en score, der netop bygger på disse signaler. Vi ville have ærlig dokumentation for, om scoren følger det, ejerne faktisk går op i: at blive nævnt af AI. Vi fastlagde hypotesen, analysen og beslutningskriterierne, før vi indsamlede et eneste svar, og forpligtede os til at offentliggøre resultatet, uanset udfaldet."
+   ]
+  },
+  {
+   "heading": "Metode",
+   "list": [
+    "Stikprøve: 72 lokale virksomheder med deres egen officielle hjemmeside, udvalgt via websøgning (portalsites udelukket) fordelt på 5 brancher (tandlægeklinikker, restauranter, skønhedssaloner, skatterådgivere, overnatning) og 4 japanske byer (Tokyo, Osaka, Fukuoka, Sapporo). 10 blev udelukket, fordi scoren ikke kunne beregnes for deres site, så 62 indgik i analysen.",
+    "Score: Hvert sites forside, robots.txt og llms.txt blev scoret med samme kode som Nurevos offentlige score: strukturerede data (30 point), dækning (25), læsbarhed (20), llms.txt (15) og konsistens (10) samt en adgangskontrol for crawleradgang, edge-blokering og server-rendering (dumper sitet, begrænses scoren til højst 15).",
+    "Motor: Perplexity via deres Agent API med forindstillingen »fast« (én websøgning og derefter et svar) – samme adapter, som Nurevos betalte plan bruger til AI-synlighed. Kun én motor; se begrænsningerne.",
+    "Spørgsmål: Tre »søgespørgsmål« pr. virksomhed, der nævner området og virksomhedstypen, men ikke selve virksomheden (fx »Anbefal en tandlæge i Umeda«), fælles for alle virksomheder i samme branche og område, plus ét »navngivet« spørgsmål om virksomhedens adresse og åbningstider. Hvert spørgsmål blev stillet tre gange.",
+    "Udfald: En virksomhed »optrådte« i et svar, hvis dens navn stod i svaret, eller dens eget domæne var blandt de citerede kilder. Optrædenraten er andelen af virksomhedens søgesvar, hvor den optrådte.",
+    "Kontrol af detektoren: I svar på de navngivne spørgsmål blev virksomhedens navn registreret i 84.3% af tilfældene – over den tærskel på 70%, vi havde sat for at kunne stole på detektoren.",
+    "Analyse: Spearmans rangkorrelation med permutations-p-værdi og bootstrap-konfidensinterval; partiel korrelation med branche og by som faste effekter; en permutationstest inden for strata; og en logistisk regression med faste effekter for branche og by og en kvasi-binomial korrektion, fordi gentagne svar på det samme spørgsmål ikke er uafhængige. De seks komponenttest er Holm-korrigerede."
+   ],
+   "after": [
+    "Kriteriet for »understøttet« blev fastlagt på forhånd: ρ ≥ 0.3, p < 0.05, et 95% CI over nul og en positiv justeret korrelation. Selve svarteksten blev ikke gemt – kun om et navn optrådte, om domænet blev citeret, og citatets placering."
+   ]
+  },
+  {
+   "heading": "Resultater",
+   "paragraphs": [
+    "Konklusionen er »ikke understøttet«. Alle test af scoren mod optræden giver en korrelation tæt på nul:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Resultat",
+     "p-værdi"
+    ],
+    "rows": [
+     [
+      "Score vs. optrædenrate (Spearman ρ, primær)",
+      "0.03 (95% CI −0.23 til 0.28)",
+      "0.834"
+     ],
+     [
+      "Samme, justeret for branche og by (partiel korrelation)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Samme, permutationstest inden for strata",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Score vs. navnet nævnt (søgespørgsmål)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Score vs. eget site citeret (søgespørgsmål)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Score vs. eget site citeret (navngivne spørgsmål)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logistisk regression med faste effekter for branche/by, kvasi-binomial: odds pr. +1 SD i score (18.81 point)",
+      "×1.01 (95% CI 0.62 til 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 virksomheder. Målt på Perplexity den 24. oktober 2026."
+   },
+   "after": [
+    "Den største koefficient, 0.18 mellem scoren og citering af virksomhedens eget site, kan ikke skelnes fra nul (p = 0.149) og bør ikke læses som et fund."
+   ]
+  },
+  {
+   "heading": "Efter scoreinterval",
+   "paragraphs": [
+    "Nurevo viser scoren som rød, gul eller grøn. De fleste sites i stikprøven var røde, og ingen nåede grøn, så denne undersøgelse siger intet om meget høje scorer."
+   ],
+   "table": {
+    "head": [
+     "Interval",
+     "Virksomheder",
+     "Gns. optrædenrate",
+     "Optrådte mindst én gang"
+    ],
+    "rows": [
+     [
+      "Rød",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Gul",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Grøn",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Efter scorens delkomponenter",
+   "paragraphs": [
+    "Ingen af scorens dele hang sammen med optræden. Efter Holm-korrektion er alle p-værdier 1.000. Disse test var eksplorative."
+   ],
+   "table": {
+    "head": [
+     "Komponent",
+     "Spearman ρ med optrædenrate"
+    ],
+    "rows": [
+     [
+      "Strukturerede data (schema)",
+      "0.08"
+     ],
+     [
+      "Dækning",
+      "0.12"
+     ],
+     [
+      "Læsbarhed",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (oddsratio 1.41, 95% CI 0.79 til 2.52)"
+     ],
+     [
+      "Konsistens",
+      "0.06"
+     ],
+     [
+      "Adgangskontrol (crawleradgang, edge, server-rendering)",
+      "61 bestod: 21.3% optræden; 1 dumpede: 0%"
+     ]
+    ],
+    "caption": "Holm-korrigeret p = 1.000 for alle komponenter."
+   }
+  },
+  {
+   "heading": "Efter branche og by",
+   "paragraphs": [
+    "Optræden varierede mere efter branche og by end efter score. Der er tale om beskrivende tal fra små grupper, ikke testede forskelle."
+   ],
+   "table": {
+    "head": [
+     "Gruppe",
+     "Virksomheder",
+     "Gns. score",
+     "Optrædenrate"
+    ],
+    "rows": [
+     [
+      "Skatterådgivere",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Overnatning",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Tandlægeklinikker",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Skønhedssaloner",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restauranter",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokyo",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Rækkerne for brancher og for byer dækker hver især de samme 62 virksomheder."
+   }
+  },
+  {
+   "heading": "Begrænsninger",
+   "list": [
+    "Tværsnitsdesign: Én måling af mange sites viser sammenhæng, ikke årsag. Om en forbedring af et site ændrer dets optræden, kræver en før-og-efter-undersøgelse af de samme sites.",
+    "Statistisk styrke: Med 62 virksomheder ville en korrelation svagere end omkring |ρ| = 0.35 ofte blive overset. Virksomheder i samme område og branche deler de samme svar, så den effektive stikprøve er endnu mindre. »Ikke fundet« betyder her ikke »findes ikke«.",
+    "Én motor, én uge: Perplexity med forindstillingen »fast«, målt den 24. oktober 2026. ChatGPT, Gemini, Googles AI Overviews og Copilot bruger andre søgeindekser og modeller; resultaterne kan ikke overføres til dem.",
+    "Uobserverede confoundere: Anmeldelser, kendskab til brandet, annoncering, antal år i drift og omtale på andre sites blev ikke målt. Der blev kun justeret for branche og by.",
+    "Stikprøve: Virksomhederne blev fundet via websøgning og hælder derfor mod virksomheder, der allerede er lette at finde. Intet site scorede grønt. 5 brancher og 4 byer i Japan er ikke nødvendigvis repræsentative for andre brancher, regioner eller sprog."
+   ]
+  },
+  {
+   "heading": "Hvad det betyder for en virksomheds hjemmeside",
+   "paragraphs": [
+    "Strukturerede data, llms.txt og adgang for crawlere gør stadig nytte: De lader AI læse en virksomheds fakta (adresse, åbningstider, telefonnummer, ydelser) direkte og korrekt i stedet for at gætte. Det er værd at gøre, men det er en anden opgave end at blive anbefalet. I denne undersøgelse blev et site, der var lettere at læse, ikke nævnt oftere.",
+    "Vores arbejdshypotese er, at kilder uden for hjemmesiden (anmeldelser og kortopslag, lokale medier, kataloger og andre sites, der nævner virksomheden) vejer tungt, når en AI afgør, om den skal nævne en virksomhed i svaret på et anbefalingsspørgsmål. Denne undersøgelse målte ikke disse kilder, så det er en hypotese, der skal testes – ikke et resultat.",
+    "I praksis: Hold styr på det grundlæggende på dit eget site, fordi det gør det, AI siger om dig, korrekt – og mål, om AI faktisk nævner dig, i stedet for at udlede det af en læsbarhedsscore."
+   ]
+  },
+  {
+   "heading": "Vores interessekonflikt, og hvad vi ændrer",
+   "paragraphs": [
+    "Nurevo udvikler AEO-værktøjer, og den score, der testes her, er et af vores produkter. Et resultat, der viser, at scoren ikke forudsiger optræden, er ikke et, vi selv ville have valgt. Vi offentliggør det, fordi kriterierne blev fastlagt, før dataene kom ind, og fordi ejere bør vide, hvad en score kan og ikke kan fortælle dem.",
+    "Det gør vi ved det: Vi præsenterer ikke AI-læsbarhedsscoren som en forudsigelse af optræden i AI-svar. I stedet måler vi optræden direkte: Pro-planen måler, hvor ofte Perplexity nævner eller citerer et site (beta), og vi tilføjer et lille månedligt optrædentjek for sites på Free og Standard. Vi udvikler også en ny version af scoren, der kombinerer målt AI-synlighed med signalerne på sitet i stedet for kun at bygge på signalerne på sitet.",
+    "Navne og hjemmesider på de målte virksomheder offentliggøres ikke."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Får strukturerede data AI til at nævne min virksomhed?",
+   "a": "I denne undersøgelse af 62 lokale virksomheder på Perplexity fandt vi ingen sammenhæng mellem signaler på sitet som strukturerede data og hvor ofte en virksomhed blev nævnt (ρ = 0.03). Strukturerede data hjælper AI med at læse dine fakta korrekt, men forudsagde ikke i sig selv, om du blev nævnt."
+  },
+  {
+   "q": "Hjælper llms.txt en virksomhed med at optræde i AI-svar?",
+   "a": "Vi fandt ingen sammenhæng i denne undersøgelse: ρ = −0.02 mellem llms.txt-komponenten og optrædenraten (Holm-korrigeret p = 1.000). Undersøgelsen var lille og brugte én motor, så den beviser ikke, at llms.txt aldrig har betydning."
+  },
+  {
+   "q": "Betyder det, at AEO er nytteløst?",
+   "a": "Nej. AEO på sitet gør det, AI siger om en virksomhed, korrekt. Undersøgelsen tyder på, at det ikke er nok til at blive anbefalet, og at det bør måles direkte, om man bliver nævnt, i stedet for at udlede det af en læsbarhedsscore."
+  },
+  {
+   "q": "Hvilken AI-motor blev målt?",
+   "a": "Kun Perplexity via deres Agent API med forindstillingen »fast«, den 24. oktober 2026. Resultaterne kan ikke overføres til ChatGPT, Gemini, Googles AI Overviews eller Copilot."
+  }
+ ],
+ "relatedHeading": "Relaterede guides",
+ "cta": {
+  "heading": "Se, hvad AI læser på dit site",
+  "body": "Det gratis tjek viser, om AI kan læse din virksomheds fakta. Det forudsiger ikke, om AI vil nævne dig – det skal måles.",
+  "label": "Kør det gratis tjek",
+  "href": "/check"
+ },
+ "footnote": "Undersøgelse udført af Nurevo (Bestie.合同会社). Perplexity er et varemærke tilhørende Perplexity AI, Inc. Nurevo er ikke tilknyttet Perplexity."
+}

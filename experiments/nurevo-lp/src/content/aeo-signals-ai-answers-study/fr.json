@@ -1,0 +1,292 @@
+{
+ "title": "L’AEO on-site prédit-il les réponses IA ? Étude sur 62 sites | Nurevo",
+ "description": "Nous avons évalué 62 entreprises locales au Japon avec notre score AEO et interrogé Perplexity. Le score ne prédit pas la présence dans les réponses IA (ρ = 0.03).",
+ "h1": "Les signaux AEO on-site prédisent-ils la présence dans les réponses de l’IA ? Nous avons mesuré 62 entreprises",
+ "lead": "Non, pas dans cette étude. Sur 62 entreprises locales au Japon, notre score AEO on-site (données structurées, llms.txt, accès des robots et signaux similaires) n’a montré aucun lien avec la fréquence à laquelle Perplexity citait une entreprise ou en donnait le nom en réponse à des demandes de recommandation : ρ de Spearman = 0.03 (IC à 95 % −0.23 à 0.28, p = 0.834). Avec 62 entreprises, l’étude ne pouvait détecter de manière fiable que des corrélations d’environ |ρ| ≥ 0.35 ; une relation plus faible ne peut donc pas être exclue.",
+ "intro": [
+  "Publié le 28 octobre 2026. Données mesurées le 24 octobre 2026. Nurevo conçoit des outils AEO, dont le score testé ici ; voir « Notre conflit d’intérêts » ci-dessous."
+ ],
+ "sections": [
+  {
+   "heading": "Synthèse",
+   "list": [
+    "Question : les entreprises dont le site obtient un meilleur score de lisibilité par l’IA de Nurevo (de 0 à 100) apparaissent-elles plus souvent dans les réponses de l’IA à des questions qui ne les nomment pas ?",
+    "Réponse : non confirmé. ρ = 0.03 au global, et toujours 0.03 après ajustement sur le secteur et la ville.",
+    "Au total, les entreprises sont apparues dans 21.0% des réponses aux questions de découverte ; 25 des 62 sont apparues au moins une fois.",
+    "Aucune composante du score prise isolément (données structurées, llms.txt, couverture, etc.) n’a non plus montré de lien, après correction pour tests multiples.",
+    "Ce que nous en retenons : les données structurées aident l’IA à lire correctement les informations d’une entreprise, mais elles ne déterminent pas à elles seules si l’entreprise est mentionnée. D’autres facteurs pèsent davantage, très probablement ce que d’autres sites disent de l’entreprise. Ce dernier point est une hypothèse que cette étude n’a pas testée."
+   ]
+  },
+  {
+   "heading": "Pourquoi nous avons mené cette étude",
+   "paragraphs": [
+    "Les conseils en AEO (answer engine optimization), y compris les nôtres, affirment qu’un site facile à lire pour l’IA (données structurées schema.org, fichier llms.txt, accès ouvert aux robots d’IA, contenu rendu côté serveur) aide une entreprise à apparaître dans les réponses de l’IA. Nurevo vend un score construit précisément sur ces signaux. Nous voulions des preuves honnêtes : ce score reflète-t-il ce qui compte vraiment pour les dirigeants, à savoir être cité par l’IA ? Nous avons fixé l’hypothèse, l’analyse et les critères de décision avant de collecter la moindre réponse, et nous nous sommes engagés à publier le résultat quel qu’il soit."
+   ]
+  },
+  {
+   "heading": "Méthode",
+   "list": [
+    "Échantillon : 72 entreprises locales disposant de leur propre site officiel, sélectionnées par recherche web (hors portails), dans 5 secteurs (cabinets dentaires, restaurants, salons de beauté, experts-comptables fiscalistes, hébergement) et 4 villes japonaises (Tokyo, Osaka, Fukuoka, Sapporo). 10 ont été exclues car le score n’a pas pu être calculé pour leur site, soit 62 entreprises analysées.",
+    "Score : la page d’accueil, le robots.txt et le llms.txt de chaque site ont été évalués avec le même code que le score public de Nurevo : données structurées (30 points), couverture (25), lisibilité (20), llms.txt (15) et cohérence (10), avec un seuil portant sur l’accès des robots, le blocage en périphérie (edge) et le rendu côté serveur (un échec plafonne le score à 15).",
+    "Moteur : Perplexity, via son Agent API avec le préréglage « fast » (une recherche web, puis une réponse), le même adaptateur que celui utilisé par l’offre payante de Nurevo pour la visibilité dans l’IA. Un seul moteur ; voir les limites.",
+    "Questions : trois questions « de découverte » par entreprise, qui nomment le quartier et le type d’activité mais pas l’entreprise (par exemple « Recommande-moi un dentiste à Umeda »), communes à toutes les entreprises du même secteur dans le même quartier, plus une question « nominative » demandant l’adresse et les horaires d’ouverture d’une entreprise. Chaque question a été posée trois fois.",
+    "Critère mesuré : une entreprise « apparaissait » dans une réponse si son nom figurait dans la réponse ou si son propre domaine faisait partie des sources citées. Le taux d’apparition est la part de ses réponses aux questions de découverte dans lesquelles elle apparaissait.",
+    "Contrôle du détecteur : dans les réponses aux questions nominatives, le nom de l’entreprise a été détecté dans 84.3% des cas, au-dessus du seuil de 70% que nous avions fixé pour considérer le détecteur comme fiable.",
+    "Analyse : corrélation de rang de Spearman avec p-value par permutation et intervalle de confiance par bootstrap ; corrélation partielle avec le secteur et la ville en effets fixes ; test de permutation au sein des strates ; et régression logistique avec effets fixes secteur et ville et correction quasi-binomiale, car les réponses répétées à une même question ne sont pas indépendantes. Les six tests par composante sont corrigés selon la méthode de Holm."
+   ],
+   "after": [
+    "Le critère de « confirmation » avait été fixé à l’avance : ρ ≥ 0.3, p < 0.05, un IC à 95 % au-dessus de zéro et une corrélation ajustée positive. Le texte des réponses n’a pas été conservé ; seuls ont été enregistrés la présence d’un nom, la citation éventuelle du domaine et la position de la citation."
+   ]
+  },
+  {
+   "heading": "Résultats",
+   "paragraphs": [
+    "Le verdict est « non confirmé ». Tous les tests du score face à l’apparition donnent une corrélation proche de zéro :"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Résultat",
+     "p-value"
+    ],
+    "rows": [
+     [
+      "Score vs taux d’apparition (ρ de Spearman, principal)",
+      "0.03 (IC à 95 % −0.23 à 0.28)",
+      "0.834"
+     ],
+     [
+      "Idem, ajusté sur le secteur et la ville (corrélation partielle)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Idem, test de permutation au sein des strates",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Score vs apparition du nom (questions de découverte)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Score vs citation du site propre (questions de découverte)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Score vs citation du site propre (questions nominatives)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Régression logistique avec effets fixes secteur/ville, quasi-binomiale : odds par +1 écart-type de score (18.81 points)",
+      "×1.01 (IC à 95 % 0.62 à 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 entreprises. Mesuré sur Perplexity le 24 octobre 2026."
+   },
+   "after": [
+    "Le coefficient le plus élevé, 0.18 entre le score et la citation du site propre de l’entreprise, ne se distingue pas de zéro (p = 0.149) et ne doit pas être interprété comme un résultat."
+   ]
+  },
+  {
+   "heading": "Par tranche de score",
+   "paragraphs": [
+    "Nurevo affiche le score en rouge, jaune ou vert. La plupart des sites de l’échantillon étaient en rouge et aucun n’a atteint le vert : cette étude ne dit donc rien des scores très élevés."
+   ],
+   "table": {
+    "head": [
+     "Tranche",
+     "Entreprises",
+     "Taux d’apparition moyen",
+     "Apparues au moins une fois"
+    ],
+    "rows": [
+     [
+      "Rouge",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Jaune",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Vert",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Par composante du score",
+   "paragraphs": [
+    "Aucune composante du score n’était liée à l’apparition. Après correction de Holm, toutes les p-values valent 1.000. Ces tests étaient exploratoires."
+   ],
+   "table": {
+    "head": [
+     "Composante",
+     "ρ de Spearman avec le taux d’apparition"
+    ],
+    "rows": [
+     [
+      "Données structurées (schema)",
+      "0.08"
+     ],
+     [
+      "Couverture",
+      "0.12"
+     ],
+     [
+      "Lisibilité",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (odds ratio 1.41, IC à 95 % 0.79 à 2.52)"
+     ],
+     [
+      "Cohérence",
+      "0.06"
+     ],
+     [
+      "Seuil (accès des robots, edge, rendu côté serveur)",
+      "61 réussis : 21.3% d’apparition ; 1 échoué : 0%"
+     ]
+    ],
+    "caption": "p corrigée selon Holm = 1.000 pour chaque composante."
+   }
+  },
+  {
+   "heading": "Par secteur et par ville",
+   "paragraphs": [
+    "L’apparition variait davantage selon le secteur et la ville que selon le score. Il s’agit de chiffres descriptifs issus de petits groupes, et non de différences testées."
+   ],
+   "table": {
+    "head": [
+     "Groupe",
+     "Entreprises",
+     "Score moyen",
+     "Taux d’apparition"
+    ],
+    "rows": [
+     [
+      "Experts-comptables fiscalistes",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Hébergement",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Cabinets dentaires",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Salons de beauté",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restaurants",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokyo",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Les lignes par secteur et les lignes par ville couvrent chacune les mêmes 62 entreprises."
+   }
+  },
+  {
+   "heading": "Limites",
+   "list": [
+    "Étude transversale : une seule mesure sur de nombreux sites montre une association, pas une causalité. Savoir si l’amélioration d’un site modifie son apparition nécessite une étude avant/après sur les mêmes sites.",
+    "Puissance statistique : avec 62 entreprises, une corrélation inférieure à environ |ρ| = 0.35 passerait souvent inaperçue. Les entreprises d’un même quartier et d’un même secteur partagent les mêmes réponses, si bien que l’échantillon effectif est encore plus réduit. « Non détecté » ne signifie pas ici « inexistant ».",
+    "Un seul moteur, une seule semaine : Perplexity avec le préréglage « fast », mesuré le 24 octobre 2026. ChatGPT, Gemini, les AI Overviews de Google et Copilot utilisent d’autres index de recherche et d’autres modèles ; ces résultats ne leur sont pas transposables.",
+    "Facteurs de confusion non observés : les avis, la notoriété de la marque, la publicité, l’ancienneté de l’entreprise et les fiches sur d’autres sites n’ont pas été mesurés. Seuls le secteur et la ville ont fait l’objet d’un ajustement.",
+    "Échantillon : les entreprises ont été trouvées par recherche web, ce qui favorise celles qui sont déjà faciles à trouver. Aucun site n’a atteint le vert. 5 secteurs et 4 villes au Japon ne sont pas forcément représentatifs d’autres secteurs, régions ou langues."
+   ]
+  },
+  {
+   "heading": "Ce que cela signifie pour le site d’une entreprise",
+   "paragraphs": [
+    "Les données structurées, le llms.txt et l’accès des robots restent utiles : ils permettent à une IA de lire directement et correctement les informations d’une entreprise (adresse, horaires, numéro de téléphone, services) au lieu de les deviner. C’est un travail qui en vaut la peine, mais ce n’est pas le même que celui d’être recommandé. Dans cette étude, un site mieux lu n’était pas un site plus souvent mentionné.",
+    "Notre hypothèse de travail est que les sources extérieures au site (fiches d’avis et de cartes, médias locaux, annuaires, autres sites qui mentionnent l’entreprise) pèsent lourd lorsqu’une IA cite une entreprise en réponse à une demande de recommandation. Cette étude n’a pas mesuré ces sources : il s’agit donc d’une hypothèse à tester, et non d’un résultat.",
+    "En pratique : maintenez les fondamentaux on-site en ordre, car ils rendent exact ce que l’IA dit de vous, et mesurez si l’IA vous mentionne réellement plutôt que de le déduire d’un score de lisibilité."
+   ]
+  },
+  {
+   "heading": "Notre conflit d’intérêts, et ce que nous changeons",
+   "paragraphs": [
+    "Nurevo conçoit des outils AEO, et le score testé ici fait partie de nos produits. Un résultat montrant que le score ne prédit pas l’apparition n’est pas celui que nous aurions choisi ; nous le publions parce que les critères avaient été fixés avant l’arrivée des données et parce que les dirigeants doivent savoir ce qu’un score peut et ne peut pas leur dire.",
+    "Ce que nous faisons en conséquence : nous ne présentons pas le score de lisibilité par l’IA comme un indicateur prédictif de la présence dans les réponses de l’IA. Nous mesurons plutôt l’apparition directement : l’offre Pro mesure la fréquence à laquelle Perplexity nomme ou cite un site (bêta), et nous ajoutons une petite vérification mensuelle de l’apparition pour les sites des offres Free et Standard. Nous développons également une deuxième version du score qui combine la visibilité mesurée dans l’IA avec les signaux on-site, plutôt que de s’appuyer uniquement sur ces derniers.",
+    "Les noms et sites web des entreprises mesurées ne sont pas publiés."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Les données structurées font-elles mentionner mon entreprise par l’IA ?",
+   "a": "Dans cette étude portant sur 62 entreprises locales sur Perplexity, aucun lien n’a été trouvé entre les signaux on-site tels que les données structurées et la fréquence de mention d’une entreprise (ρ = 0.03). Les données structurées aident l’IA à lire correctement vos informations, mais à elles seules elles ne prédisaient pas les mentions."
+  },
+  {
+   "q": "Le llms.txt aide-t-il une entreprise à apparaître dans les réponses de l’IA ?",
+   "a": "Nous n’avons trouvé aucun lien dans cette étude : ρ = −0.02 entre la composante llms.txt et le taux d’apparition (p corrigée selon Holm = 1.000). L’étude était de petite taille et portait sur un seul moteur ; elle ne prouve donc pas que le llms.txt n’a jamais d’importance."
+  },
+  {
+   "q": "Cela veut-il dire que l’AEO ne sert à rien ?",
+   "a": "Non. L’AEO on-site rend exact ce que l’IA dit d’une entreprise. Cette étude suggère qu’il ne suffit pas pour être recommandé, et que les mentions doivent être mesurées directement plutôt que déduites d’un score de lisibilité."
+  },
+  {
+   "q": "Quel moteur d’IA a été mesuré ?",
+   "a": "Uniquement Perplexity, via son Agent API avec le préréglage « fast », le 24 octobre 2026. Les résultats ne sont pas transposables à ChatGPT, Gemini, aux AI Overviews de Google ni à Copilot."
+  }
+ ],
+ "relatedHeading": "Guides associés",
+ "cta": {
+  "heading": "Découvrez ce que l’IA lit sur votre site",
+  "body": "Le diagnostic gratuit indique si l’IA peut lire les informations de votre entreprise. Il ne prédit pas si l’IA vous mentionnera : cela doit être mesuré.",
+  "label": "Lancer le diagnostic gratuit",
+  "href": "/check"
+ },
+ "footnote": "Étude réalisée par Nurevo (Bestie.合同会社). Perplexity est une marque de Perplexity AI, Inc. Nurevo n’est pas affilié à Perplexity."
+}

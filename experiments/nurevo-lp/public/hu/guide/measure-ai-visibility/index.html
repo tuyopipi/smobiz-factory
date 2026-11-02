@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="hu">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Az AI-láthatóság mérése a ChatGPT-ben és a Perplexityben | Nurevo</title>
+<meta name="description" content="Így mérheti, hogy a ChatGPT vagy a Perplexity megemlíti-e vállalkozását: rögzített, név nélküli kérdések, többszöri futtatás, említések és hivatkozások külön.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/hu/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="ar" href="https://nurevo.jp/ar/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="bg" href="https://nurevo.jp/bg/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="ca" href="https://nurevo.jp/ca/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="cs" href="https://nurevo.jp/cs/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="da" href="https://nurevo.jp/da/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="de" href="https://nurevo.jp/de/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="el" href="https://nurevo.jp/el/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="et" href="https://nurevo.jp/et/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="fa" href="https://nurevo.jp/fa/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="fi" href="https://nurevo.jp/fi/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="fr" href="https://nurevo.jp/fr/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="fy" href="https://nurevo.jp/fy/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="gl" href="https://nurevo.jp/gl/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="gu" href="https://nurevo.jp/gu/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="he" href="https://nurevo.jp/he/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="hi" href="https://nurevo.jp/hi/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="hr" href="https://nurevo.jp/hr/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="hu" href="https://nurevo.jp/hu/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="id" href="https://nurevo.jp/id/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="it" href="https://nurevo.jp/it/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="ko" href="https://nurevo.jp/ko/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="lo" href="https://nurevo.jp/lo/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="nb" href="https://nurevo.jp/nb/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="nl" href="https://nurevo.jp/nl/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="pl" href="https://nurevo.jp/pl/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="pt-BR" href="https://nurevo.jp/pt-br/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="pt-PT" href="https://nurevo.jp/pt-pt/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="ro" href="https://nurevo.jp/ro/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="ru" href="https://nurevo.jp/ru/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="sk" href="https://nurevo.jp/sk/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="sl" href="https://nurevo.jp/sl/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="sr" href="https://nurevo.jp/sr/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="sv" href="https://nurevo.jp/sv/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="tr" href="https://nurevo.jp/tr/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="uk" href="https://nurevo.jp/uk/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="vi" href="https://nurevo.jp/vi/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="zh-Hans" href="https://nurevo.jp/zh/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="zh-Hant" href="https://nurevo.jp/zh-tw/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="de-AT" href="https://nurevo.jp/de/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="de-CH" href="https://nurevo.jp/de/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es-MX" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es-AR" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es-CL" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es-CO" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es-CR" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es-EC" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es-PE" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="es-VE" href="https://nurevo.jp/es/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="fr-BE" href="https://nurevo.jp/fr/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="fr-CA" href="https://nurevo.jp/fr/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="nl-BE" href="https://nurevo.jp/nl/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="zh-HK" href="https://nurevo.jp/zh-tw/guide/measure-ai-visibility/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/measure-ai-visibility/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="Az AI-láthatóság mérése a ChatGPT-ben és a Perplexityben | Nurevo">
+<meta property="og:description" content="Így mérheti, hogy a ChatGPT vagy a Perplexity megemlíti-e vállalkozását: rögzített, név nélküli kérdések, többszöri futtatás, említések és hivatkozások külön.">
+<meta property="og:url" content="https://nurevo.jp/hu/guide/measure-ai-visibility/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="hu_HU">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:locale:alternate" content="bg_BG">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:locale:alternate" content="cs_CZ">
+<meta property="og:locale:alternate" content="da_DK">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="el_GR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="et_EE">
+<meta property="og:locale:alternate" content="fa_IR">
+<meta property="og:locale:alternate" content="fi_FI">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="fy_NL">
+<meta property="og:locale:alternate" content="gl_ES">
+<meta property="og:locale:alternate" content="gu_IN">
+<meta property="og:locale:alternate" content="he_IL">
+<meta property="og:locale:alternate" content="hi_IN">
+<meta property="og:locale:alternate" content="hr_HR">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:locale:alternate" content="it_IT">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="lo_LA">
+<meta property="og:locale:alternate" content="nb_NO">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="pl_PL">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:locale:alternate" content="pt_PT">
+<meta property="og:locale:alternate" content="ro_RO">
+<meta property="og:locale:alternate" content="ru_RU">
+<meta property="og:locale:alternate" content="sk_SK">
+<meta property="og:locale:alternate" content="sl_SI">
+<meta property="og:locale:alternate" content="sr_RS">
+<meta property="og:locale:alternate" content="sv_SE">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="uk_UA">
+<meta property="og:locale:alternate" content="vi_VN">
+<meta property="og:locale:alternate" content="zh_CN">
+<meta property="og:locale:alternate" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Az AI-láthatóság mérése a ChatGPT-ben és a Perplexityben | Nurevo">
+<meta name="twitter:description" content="Így mérheti, hogy a ChatGPT vagy a Perplexity megemlíti-e vállalkozását: rögzített, név nélküli kérdések, többszöri futtatás, említések és hivatkozások külön.">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/hu/guide/measure-ai-visibility/#webpage","url":"https://nurevo.jp/hu/guide/measure-ai-visibility/","name":"Az AI-láthatóság mérése a ChatGPT-ben és a Perplexityben | Nurevo","description":"Így mérheti, hogy a ChatGPT vagy a Perplexity megemlíti-e vállalkozását: rögzített, név nélküli kérdések, többszöri futtatás, említések és hivatkozások külön.","inLanguage":"hu","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/hu/guide/measure-ai-visibility/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/hu/guide/measure-ai-visibility/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"Kezdőlap","item":"https://nurevo.jp/hu/"},{"@type":"ListItem","position":2,"name":"AEO-útmutatók","item":"https://nurevo.jp/hu/guide/"},{"@type":"ListItem","position":3,"name":"Az AI-láthatóság mérése: a kérdések kiválasztása, a futtatások száma és az eredmények értelmezése","item":"https://nurevo.jp/hu/guide/measure-ai-visibility/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/hu/guide/measure-ai-visibility/#faq","mainEntity":[{"@type":"Question","name":"Hány kérdés és futtatás elég?","acceptedAnswer":{"@type":"Answer","text":"Nincs egyetlen helyes szám, de 5–20 felfedező kérdés, mindegyik kétszer-háromszor feltéve, gyakorlatias kiindulópont. Minél kevesebb a kérdés és a futtatás, annál jobban befolyásolja a véletlen az eredményt. A legfontosabb, hogy minden hónapban ugyanazokat a kérdéseket mérje ugyanazok között a feltételek között."}},{"@type":"Question","name":"Nem elég, ha egyszerűen megkérdezem a ChatGPT-t?","acceptedAnswer":{"@type":"Answer","text":"Első betekintésnek hasznos. A válaszok azonban a bejelentkezéstől, a helyadatoktól és a csevegési előzményektől függően változhatnak, és egyetlen válaszban sok a véletlen. Ha táblázatban rögzíti, amit lát, és azonos feltételek mellett megismétli, összehasonlítható számokat kap."}},{"@type":"Question","name":"Ha az AI megnevez, amikor név szerint kérdeznek rólam, akkor rendben vagyok?","acceptedAnswer":{"@type":"Answer","text":"A névre szóló kérdések szinte mindig visszaadják az Ön nevét, így keveset mondanak a láthatóságról. Arra használja őket, hogy ellenőrizze, helyesek-e az olyan tények, mint a cím és a nyitvatartás, és hivatkozik-e az AI a webhelyére; a láthatóságot pedig az Ön nevét nem tartalmazó kérdésekkel mérje."}},{"@type":"Question","name":"Alacsony az arányom. Mit tegyek először?","acceptedAnswer":{"@type":"Answer","text":"Először ellenőrizze, hogy az AI be tudja-e olvasni a webhelyét: strukturált adatok, llms.txt, és hogy a robots.txt nem tiltja-e le az AI-keresőrobotokat. Ezután nézze meg, mit írnak magukról azok a vállalkozások és webhelyek, amelyek Ön helyett megjelennek; ebből gyakran kiderül, mely tények hiányoznak Önnél. A webhely javítása nem garantálja, hogy az arány gyorsan emelkedni fog."}},{"@type":"Question","name":"Ha mérek, az AI meg fogja mutatni a vállalkozásomat?","acceptedAnswer":{"@type":"Answer","text":"Nem. A mérés megmutatja, hol tart, de nem változtatja meg a válaszokat. Az AI válaszai naponta változnak, és semmilyen módszer nem garantálhat említést vagy helyezést."}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/hu/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check?lang=hu">Ingyenes AI-olvashatósági ellenőrzés indítása</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="Morzsamenü"><a href="/hu/">Kezdőlap</a> <span aria-hidden="true">›</span> <a href="/hu/guide/">AEO-útmutatók</a> <span aria-hidden="true">›</span> <span>Az AI-láthatóság mérése: a kérdések kiválasztása, a futtatások száma és az eredmények értelmezése</span></nav>
+  <article>
+    <h1>Az AI-láthatóság mérése: a kérdések kiválasztása, a futtatások száma és az eredmények értelmezése</h1>
+    <p class="lead">Az AI-láthatóságot úgy mérheti, hogy kiválasztja azokat a kérdéseket, amelyeket ügyfelei valóban feltennének, mindegyiket többször felteszi egy AI-nak, majd megszámolja, a válaszok mekkora része nevezi meg vállalkozását vagy hivatkozik forrásként a webhelyére. Három dolog a legfontosabb: használjon rögzített, az Ön nevét nem tartalmazó kérdéssort, ugyanazok között a feltételek között tegye fel őket ismételten, és ne egy-egy válaszból, hanem a futtatásokon átívelő trendből vonjon le következtetést.</p>
+<p>Készült 2026. október 31-én. Az OpenAI, a Perplexity és a Google állításait aznap ellenőriztük a saját dokumentációjukban. Ezek változhatnak, ezért nézze meg az aktuális oldalakat is.</p>
+<p>Az AI válaszai napról napra, sőt ugyanannak a kérdésnek az egyes futtatásai között is változnak. Az ezzel a módszerrel kapott számok mintát jelentenek, nem az összes válasz teljes képét. És semmilyen lépés nem garantálhatja, hogy egy AI megemlíti Önt, vagy bármilyen helyen szerepelteti.</p>
+<section class="qa"><h2>Mit jelent az „AI-láthatóság”: négy követendő mutató</h2><p>Az egyes eszközök kissé eltérő mutatókat értenek „AI-láthatóság” alatt. Ha saját maga méri, és ezt a négyet külön kezeli, később sokkal könnyebb lesz összehasonlítani az eredményeket.</p><div class="table-wrap"><table><caption>A sikertelen, választ nem adó futtatások nem számítanak bele a nevezőbe. Egy válasz több domainre is hivatkozhat, ezért a részesedés nevezője nem a válaszok száma.</caption><thead><tr><th scope="col">Mutató</th><th scope="col">Hogyan számoljuk</th><th scope="col">Mit árul el</th></tr></thead><tbody><tr><th scope="row">Említési arány</th><td>Azok a válaszok, amelyek szövege megnevezi vállalkozását (a gyakori alternatív neveket is beleértve) ÷ kapott válaszok</td><td>Javasolja-e Önt az AI lehetőségként</td></tr><tr><th scope="row">Hivatkozási arány</th><td>Azok a válaszok, amelyek forrásai között szerepel az Ön domainje ÷ kapott válaszok</td><td>Használja-e az AI forrásként a webhelyét</td></tr><tr><th scope="row">Megjelenési arány</th><td>Említést vagy hivatkozást tartalmazó válaszok ÷ kapott válaszok</td><td>Egyáltalán megjelenik-e a válaszban</td></tr><tr><th scope="row">Hivatkozási részesedés a versenytársakhoz képest</th><td>Az Ön domainjére mutató hivatkozások ÷ (az Ön domainjére mutató hivatkozások + a kiválasztott versenytárs-domainekre mutató hivatkozások)</td><td>Milyen gyakran választják Önt forrásként a megnevezett versenytársakhoz képest</td></tr></tbody></table></div><p>Előfordulhat, hogy az AI megnevezi Önt, de saját webhelye helyett egy értékelőoldalra vagy térképszolgáltatásra hivatkozik, és ennek a fordítottja is megtörténik. A kettőt külön rögzítse.</p></section>
+<section class="qa"><h2>A mérés hat lépésben</h2><ol><li>Válassza ki az AI-platformokat: kezdje azzal az egy-kettővel, amelyet ügyfelei a legvalószínűbben használnak. Minden platformot külön rögzítsen, és soha ne vonja össze őket. Mindegyik saját keresőrendszert és saját modellt használ, így az egyiken kapott eredmény nem vihető át a másikra.</li><li>Írja meg a kérdéseket: 5–20 olyan „felfedező” kérdés, amely nem tartalmazza az Ön nevét, például „Tudna ajánlani egy fogorvost Umedában?” A nevét tartalmazó kérdések nem számítanak bele az arányba; ezekkel azt ellenőrzi, hogy az AI helyesen közli-e az Önre vonatkozó tényeket (lásd a következő részt).</li><li>Döntse el a futtatások számát: a válaszok minden alkalommal változnak, ezért minden kérdést tegyen fel kétszer-háromszor. Minél kevesebb a futtatás, annál jobban elmozdítja a számot egy szerencsés vagy szerencsétlen válasz.</li><li>Tartsa azonosan a feltételeket: minden alkalommal ugyanaz a megfogalmazás, ugyanaz a platform és mód, kijelentkezett állapotban. A fogyasztói alkalmazások válaszai a bejelentkezéstől, a helyadatoktól és a csevegési előzményektől függően változhatnak.</li><li>Rögzítsen minden választ: dátum és időpont, platform, kérdés, megnevezték-e, szerepelt-e a domainje a források között, ki jelent meg Ön helyett, valamint egy idézet (lásd az alábbi táblázatot).</li><li>Ismételje meg havonta ugyanazzal a kérdéssorral: trendeket csak azonos kérdésekkel, azonos platformon és azonos feltételek mellett végzett futtatások között hasonlítson össze. Ha módosítja a kérdéseket, kezdjen új idősort.</li></ol></section>
+<section class="qa"><h2>A kérdések kiválasztása: a felfedező és a névre szóló kérdéseket tartsa külön</h2><div class="table-wrap"><table><caption>Ezek a Nurevo 2026. októberi vizsgálatában használt kérdések formáját követik. A helyszínt és a vállalkozás típusát cserélje a sajátjára.</caption><thead><tr><th scope="col">Típus</th><th scope="col">Példa (fogorvosi rendelő Umedában, Oszakában)</th><th scope="col">Felhasználás</th></tr></thead><tbody><tr><th scope="row">Felfedező</th><td>Tudna ajánlani egy fogorvost Umedában?</td><td>Az arány alapja: valaki, aki nem ismeri az Ön nevét, egy AI-tól kérdez</td></tr><tr><th scope="row">Felfedező (konkrét igény)</th><td>Olyan fogorvost keresek Umedában, aki odafigyel a fájdalomcsillapításra. Hová menjek?</td><td>Megmutatja, megjelenik-e azokkal az erősségekkel, amelyekkel valóban rendelkezik</td></tr><tr><th scope="row">Névre szóló</th><td>Mi az „XYZ Fogászat” címe és nyitvatartása?</td><td>Nem része az aránynak. Azt ellenőrzi, hogy helyesek-e az olyan tények, mint a cím és a nyitvatartás, és hivatkozik-e az AI a webhelyére</td></tr></tbody></table></div><p>A névre szóló kérdésekre szinte mindig az Ön nevét kapja vissza. Ha ezeket belekeveri az arányba, az csak magasabbnak tűnik, ezért tartsa őket külön. A felfedező kérdéseket ügyfelei szavaival fogalmazza meg, és hagyja ki azokat, amelyek olyan szolgáltatásokra vonatkoznak, amelyeket nem kínál.</p></section>
+<section class="qa"><h2>Példa a rögzítő táblázatra</h2><p>Ha egy táblázatban minden válasz külön sort kap, később könnyű lesz az összesítés.</p><div class="table-wrap"><table><thead><tr><th scope="col">Oszlop</th><th scope="col">Példa</th></tr></thead><tbody><tr><th scope="row">Dátum, platform, mód</th><td>2026-10-31 10:00 / Perplexity / normál keresés</td></tr><tr><th scope="row">Kérdésazonosító, megfogalmazás, futtatás sorszáma</th><td>d1 / Tudna ajánlani egy fogorvost Umedában? / 2. futtatás</td></tr><tr><th scope="row">Megnevezték</th><td>Igen / nem</td></tr><tr><th scope="row">Saját webhelyre hivatkozott</th><td>Igen / nem (szerepelt-e a domainje a források között?)</td></tr><tr><th scope="row">Ki jelent meg Ön helyett</th><td>A versenytárs, B értékelőoldal stb.</td></tr><tr><th scope="row">Idézet és ellenőrzési megjegyzések</th><td>Az Önt említő rész. Ha egy tény hibás, jegyezze fel a helyes tényt és azt, hogy hol van közzétéve</td></tr></tbody></table></div><p>Ne jelöljön automatikusan helyesnek egy választ: egy embernek kell összevetnie az Ön saját adataival. Ha hibát talál, ellenőrizze, hogy az adott tény (nyitvatartás, cím, szolgáltatások) egyértelműen szerepel-e a webhelyén. Lásd még: <a href="/hu/guide/appear-in-chatgpt/">hogyan jelennek meg a vállalkozások a ChatGPT-ben</a>.</p></section>
+<section class="qa"><h2>Öt szempont az eredmények értelmezéséhez</h2><ol><li>Ne cselekedjen egyetlen futtatás alapján. Az azonos feltételek melletti trendet figyelje. Két-három válaszon alapuló arány nagyon keveset jelent.</li><li>A források sorrendje nem rangsor. A forráslista abban a sorrendben jelenik meg, ahogyan a platform visszaadja; ez nem keresési rangsor és nem „a legjobb elöl” sorrend.</li><li>A számokból nem derül ki, miért nem szerepel. Csupán azt mutatják, hogy a megfigyelt válaszok nem hivatkoztak Önre.</li><li>A webhely fejlesztése és a megjelenés nem mindig mozdul együtt gyorsan. Amikor a Nurevo 62 helyi vállalkozást vizsgált, a webhelyen mért AEO-pontszám nem mutatott összefüggést azzal, hogy a Perplexity milyen gyakran nevezte meg vagy hivatkozott rájuk (ρ = 0.03). Egy ekkora vizsgálat csak meglehetősen erős összefüggéseket képes kimutatni, így ez nem bizonyítja, hogy nincs kapcsolat, de ne feltételezze, hogy pusztán a webhely javítása növeli az arányt. <a href="/hu/guide/aeo-signals-ai-answers-study/">A vizsgálat elolvasása</a></li><li>Minden platformot külön értékeljen. Attól, hogy megjelenik a Perplexityben, még nem biztos, hogy a ChatGPT-ben vagy a Google AI-funkcióiban is megjelenik.</li></ol></section>
+<section class="qa"><h2>Egyéb mérési módszerek: mit mutatnak meg és mit nem</h2><div class="table-wrap"><table><thead><tr><th scope="col">Módszer</th><th scope="col">Mit mutat meg</th><th scope="col">Mit nem tud megmutatni</th></tr></thead><tbody><tr><th scope="row">Webanalitika (hivatkozó oldalak)</th><td>Az AI-válaszokból érkező látogatásokat. Az OpenAI szerint a ChatGPT automatikusan hozzáadja a utm_source=chatgpt.com paramétert a ChatGPT keresési találataiból induló linkekhez (<a href="https://help.openai.com/en/articles/12627856-publishers-and-developers-faq">OpenAI: GYIK kiadóknak és fejlesztőknek</a>)</td><td>Azokat a megjelenéseket, amelyekre senki sem kattintott, például ha a válasz csak a nevét említi</td></tr><tr><th scope="row">Google Search Console</th><td>A Google AI-funkcióiban (AI Overviews, AI Mode) megjelenő webhelyeket a Teljesítmény jelentés a „Web” keresési típus alatt számolja (<a href="https://developers.google.com/search/docs/appearance/ai-features">Google: AI-funkciók és az Ön webhelye</a>, 2025. december 31-én frissített változat). A Google 2026 júniusában generatív AI-teljesítményjelentéseket is bejelentett a Search Console-ban (<a href="https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports">Search Central blog</a>)</td><td>Hogyan jelenik meg a Google-on kívüli AI-platformokon, például a ChatGPT-ben vagy a Perplexityben</td></tr><tr><th scope="row">Szerver-hozzáférési naplók</th><td>Hogy az AI-keresőrobotok beolvassák-e az oldalait. Az OpenAI dokumentálja az OAI-SearchBot (kereséshez) és a ChatGPT-User (felhasználói kérésre keres fel egy oldalt) robotot (<a href="https://developers.openai.com/api/docs/bots">OpenAI: a robotok áttekintése</a>); a Perplexity a PerplexityBot és a Perplexity-User robotot dokumentálja (<a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity: robotok</a>)</td><td>Az, hogy beolvasták, nem azonos azzal, hogy megjelenik egy válaszban. Megjelenési arányt nem ad</td></tr><tr><th scope="row">Monitorozó eszközök</th><td>Ütemezetten küldenek rögzített kérdéssort az AI-platformoknak, és automatikusan rögzítik az említéseket, hivatkozásokat, versenytársakat és trendeket</td><td>A platformok és a kérdések száma eszközönként és csomagonként eltér. <a href="/guide/aeo-tools-comparison/">AEO-eszközök összehasonlítása</a></td></tr></tbody></table></div><p>Tájékoztatásul: a Nurevo AEO ingyenes AI-ellenőrzést kínál a csatlakoztatott Free és Standard webhelyek számára. Havonta egyszer három, a vállalkozás típusából és területéből összeállított kérdést tesz fel a Perplexitynek (az Ön nevét soha nem használja), és megmutatja, megnevezték-e, hivatkoztak-e a webhelyére, és ki jelent meg Ön helyett. Egy rögzített kérdéssor folyamatos, azonos feltételek melletti mérése versenytárs-összehasonlítással és előzményekkel a Pro csomag része (havi $99-tól, béta), és jelenleg a Perplexityn működik.</p></section>
+    <section class="qa"><h2>Gyakori kérdések</h2><h3>Hány kérdés és futtatás elég?</h3><p>Nincs egyetlen helyes szám, de 5–20 felfedező kérdés, mindegyik kétszer-háromszor feltéve, gyakorlatias kiindulópont. Minél kevesebb a kérdés és a futtatás, annál jobban befolyásolja a véletlen az eredményt. A legfontosabb, hogy minden hónapban ugyanazokat a kérdéseket mérje ugyanazok között a feltételek között.</p>
+<h3>Nem elég, ha egyszerűen megkérdezem a ChatGPT-t?</h3><p>Első betekintésnek hasznos. A válaszok azonban a bejelentkezéstől, a helyadatoktól és a csevegési előzményektől függően változhatnak, és egyetlen válaszban sok a véletlen. Ha táblázatban rögzíti, amit lát, és azonos feltételek mellett megismétli, összehasonlítható számokat kap.</p>
+<h3>Ha az AI megnevez, amikor név szerint kérdeznek rólam, akkor rendben vagyok?</h3><p>A névre szóló kérdések szinte mindig visszaadják az Ön nevét, így keveset mondanak a láthatóságról. Arra használja őket, hogy ellenőrizze, helyesek-e az olyan tények, mint a cím és a nyitvatartás, és hivatkozik-e az AI a webhelyére; a láthatóságot pedig az Ön nevét nem tartalmazó kérdésekkel mérje.</p>
+<h3>Alacsony az arányom. Mit tegyek először?</h3><p>Először ellenőrizze, hogy az AI be tudja-e olvasni a webhelyét: strukturált adatok, llms.txt, és hogy a robots.txt nem tiltja-e le az AI-keresőrobotokat. Ezután nézze meg, mit írnak magukról azok a vállalkozások és webhelyek, amelyek Ön helyett megjelennek; ebből gyakran kiderül, mely tények hiányoznak Önnél. A webhely javítása nem garantálja, hogy az arány gyorsan emelkedni fog.</p>
+<h3>Ha mérek, az AI meg fogja mutatni a vállalkozásomat?</h3><p>Nem. A mérés megmutatja, hol tart, de nem változtatja meg a válaszokat. Az AI válaszai naponta változnak, és semmilyen módszer nem garantálhat említést vagy helyezést.</p></section>
+  </article>
+  <aside class="cta">
+    <h2>Először ellenőrizze, hogy az AI be tudja-e olvasni a webhelyét</h2>
+    <p>Az ingyenes ellenőrzés regisztráció nélkül megmutatja, milyen állapotban vannak az AI által olvasott elemek, például a strukturált adatok és az llms.txt. WordPress esetén a Nurevo AEO ingyenesen pótolja a hiányosságokat.</p>
+    <a class="btn primary lg" href="/check?lang=hu">Ingyenes AI-olvashatósági ellenőrzés indítása</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">Nurevo AEO letöltése a WordPress.org-ról</a>
+  </aside>
+  <nav class="related" aria-label="Kapcsolódó útmutatók"><h2>Kapcsolódó útmutatók</h2><ul><li><a href="/hu/guide/aeo-signals-ai-answers-study/">Előre jelzik-e a weboldalon belüli AEO-jelek, hogy egy vállalkozás megjelenik-e az AI-válaszokban? 62 vállalkozást mértünk meg</a></li><li><a href="/hu/guide/appear-in-chatgpt/">Így jelenhet meg a ChatGPT-ben (és más AI-válaszokban)</a></li><li><a href="/hu/guide/what-is-aeo/">Mi az AEO (Answer Engine Optimization)?</a></li><li><a href="/hu/guide/llms-txt/">Mi az llms.txt? A fájl, amely bemutatja webhelyét az AI-nak</a></li></ul></nav>
+  <nav class="langs" aria-label="További nyelvek"><h2>További nyelvek</h2><ul><li><a href="/ja/guide/measure-ai-visibility/" hreflang="ja" lang="ja">日本語</a></li><li><a href="/guide/measure-ai-visibility/" hreflang="en" lang="en">English</a></li><li><a href="/ar/guide/measure-ai-visibility/" hreflang="ar" lang="ar">العربية</a></li><li><a href="/bg/guide/measure-ai-visibility/" hreflang="bg" lang="bg">Български</a></li><li><a href="/ca/guide/measure-ai-visibility/" hreflang="ca" lang="ca">Català</a></li><li><a href="/cs/guide/measure-ai-visibility/" hreflang="cs" lang="cs">Čeština</a></li><li><a href="/da/guide/measure-ai-visibility/" hreflang="da" lang="da">Dansk</a></li><li><a href="/de/guide/measure-ai-visibility/" hreflang="de" lang="de">Deutsch</a></li><li><a href="/el/guide/measure-ai-visibility/" hreflang="el" lang="el">Ελληνικά</a></li><li><a href="/es/guide/measure-ai-visibility/" hreflang="es" lang="es">Español</a></li><li><a href="/et/guide/measure-ai-visibility/" hreflang="et" lang="et">Eesti</a></li><li><a href="/fa/guide/measure-ai-visibility/" hreflang="fa" lang="fa">فارسی</a></li><li><a href="/fi/guide/measure-ai-visibility/" hreflang="fi" lang="fi">Suomi</a></li><li><a href="/fr/guide/measure-ai-visibility/" hreflang="fr" lang="fr">Français</a></li><li><a href="/fy/guide/measure-ai-visibility/" hreflang="fy" lang="fy">Frysk</a></li><li><a href="/gl/guide/measure-ai-visibility/" hreflang="gl" lang="gl">Galego</a></li><li><a href="/gu/guide/measure-ai-visibility/" hreflang="gu" lang="gu">ગુજરાતી</a></li><li><a href="/he/guide/measure-ai-visibility/" hreflang="he" lang="he">עברית</a></li><li><a href="/hi/guide/measure-ai-visibility/" hreflang="hi" lang="hi">हिन्दी</a></li><li><a href="/hr/guide/measure-ai-visibility/" hreflang="hr" lang="hr">Hrvatski</a></li><li><a href="/id/guide/measure-ai-visibility/" hreflang="id" lang="id">Bahasa Indonesia</a></li><li><a href="/it/guide/measure-ai-visibility/" hreflang="it" lang="it">Italiano</a></li><li><a href="/ko/guide/measure-ai-visibility/" hreflang="ko" lang="ko">한국어</a></li><li><a href="/lo/guide/measure-ai-visibility/" hreflang="lo" lang="lo">ລາວ</a></li><li><a href="/nb/guide/measure-ai-visibility/" hreflang="nb" lang="nb">Norsk bokmål</a></li><li><a href="/nl/guide/measure-ai-visibility/" hreflang="nl" lang="nl">Nederlands</a></li><li><a href="/pl/guide/measure-ai-visibility/" hreflang="pl" lang="pl">Polski</a></li><li><a href="/pt-br/guide/measure-ai-visibility/" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a></li><li><a href="/pt-pt/guide/measure-ai-visibility/" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a></li><li><a href="/ro/guide/measure-ai-visibility/" hreflang="ro" lang="ro">Română</a></li><li><a href="/ru/guide/measure-ai-visibility/" hreflang="ru" lang="ru">Русский</a></li><li><a href="/sk/guide/measure-ai-visibility/" hreflang="sk" lang="sk">Slovenčina</a></li><li><a href="/sl/guide/measure-ai-visibility/" hreflang="sl" lang="sl">Slovenščina</a></li><li><a href="/sr/guide/measure-ai-visibility/" hreflang="sr" lang="sr">Српски</a></li><li><a href="/sv/guide/measure-ai-visibility/" hreflang="sv" lang="sv">Svenska</a></li><li><a href="/tr/guide/measure-ai-visibility/" hreflang="tr" lang="tr">Türkçe</a></li><li><a href="/uk/guide/measure-ai-visibility/" hreflang="uk" lang="uk">Українська</a></li><li><a href="/vi/guide/measure-ai-visibility/" hreflang="vi" lang="vi">Tiếng Việt</a></li><li><a href="/zh/guide/measure-ai-visibility/" hreflang="zh-Hans" lang="zh-Hans">简体中文</a></li><li><a href="/zh-tw/guide/measure-ai-visibility/" hreflang="zh-Hant" lang="zh-Hant">繁體中文</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">A ChatGPT, az OpenAI, a Perplexity, a Google, a Search Console és a hozzájuk tartozó terméknevek a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük.</p><a href="/hu/">Nurevo</a> ・ <a href="/en/terms/" hreflang="en">Feltételek (English)</a> ・ <a href="/en/privacy/" hreflang="en">Adatvédelmi szabályzat (English)</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>

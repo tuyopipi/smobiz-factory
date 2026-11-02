@@ -1,0 +1,292 @@
+{
+ "title": "Förutsäger AEO på webbplatsen AI-svar? Studie av 62 företag | Nurevo",
+ "description": "Vi gav 62 lokala företag i Japan en AEO-poäng och frågade Perplexity om dem. Poängen förutsade inte om de syntes i AI-svar (ρ = 0.03).",
+ "h1": "Förutsäger AEO-signaler på webbplatsen om ett företag syns i AI-svar? Vi mätte 62 företag",
+ "lead": "Nej, inte i den här studien. Bland 62 lokala företag i Japan visade vår AEO-poäng för själva webbplatsen (strukturerad data, llms.txt, åtkomst för crawlers och liknande signaler) inget samband med hur ofta Perplexity nämnde eller citerade ett företag när den ombads ge rekommendationer: Spearman ρ = 0.03 (95% KI −0.23 till 0.28, p = 0.834). Med 62 företag kunde studien bara på ett tillförlitligt sätt upptäcka korrelationer på ungefär |ρ| ≥ 0.35, så ett svagare samband kan inte uteslutas.",
+ "intro": [
+  "Publicerad 28 oktober 2026. Data uppmätta 24 oktober 2026. Nurevo utvecklar AEO-verktyg, däribland poängen som testas här; se ”Vår intressekonflikt” nedan."
+ ],
+ "sections": [
+  {
+   "heading": "Sammanfattning",
+   "list": [
+    "Fråga: Syns företag vars webbplatser får högre värde på Nurevos AI-läsbarhetspoäng (0 till 100) oftare i AI-svar på frågor som inte nämner dem vid namn?",
+    "Svar: Stöds inte. ρ = 0.03 totalt, och fortfarande 0.03 efter justering för bransch och stad.",
+    "Totalt syntes företagen i 21.0% av svaren på upptäcktsfrågor; 25 av de 62 syntes minst en gång.",
+    "Inte heller någon enskild del av poängen (strukturerad data, llms.txt, täckning och så vidare) visade något samband efter korrigering för multipla test.",
+    "Vår slutsats: Strukturerad data hjälper AI att läsa ett företags fakta korrekt, men avgör inte ensamt om företaget nämns. Andra faktorer väger tyngre – mycket sannolikt bland annat vad andra webbplatser skriver om företaget. Den sista punkten är en hypotes som den här studien inte testade."
+   ]
+  },
+  {
+   "heading": "Varför vi gjorde studien",
+   "paragraphs": [
+    "Råd om AEO (answer engine optimization), även våra egna, säger att en webbplats som är lätt för AI att läsa (strukturerad data enligt schema.org, en llms.txt-fil, åtkomst för AI-crawlers och serverrenderat innehåll) hjälper ett företag att synas i AI-svar. Nurevo säljer en poäng som bygger på just de signalerna. Vi ville ha ärliga belägg för om poängen speglar det som företagare faktiskt bryr sig om: att bli nämnda av AI. Vi låste hypotesen, analysen och beslutskriterierna innan vi samlade in några svar och åtog oss att publicera resultatet oavsett utfall."
+   ]
+  },
+  {
+   "heading": "Metod",
+   "list": [
+    "Urval: 72 lokala företag med egna officiella webbplatser, utvalda via webbsökning (portalsajter exkluderade) inom 5 branscher (tandvårdskliniker, restauranger, skönhetssalonger, skatterådgivare, boende) och 4 japanska städer (Tokyo, Osaka, Fukuoka, Sapporo). 10 exkluderades eftersom poängen inte kunde beräknas för deras webbplats, vilket lämnade 62 för analys.",
+    "Poäng: Varje webbplats startsida, robots.txt och llms.txt poängsattes med samma kod som Nurevos publika poäng: strukturerad data (30 poäng), täckning (25), läsbarhet (20), llms.txt (15) och konsekvens (10), med en spärr för crawleråtkomst, edge-blockering och serverrendering (den som inte klarar spärren får högst 15).",
+    "Motor: Perplexity via dess Agent API med förinställningen ”fast” (en webbsökning, sedan ett svar) – samma adapter som Nurevos betalplan använder för AI-synlighet. Endast en motor; se begränsningarna.",
+    "Frågor: tre ”upptäcktsfrågor” per företag som nämner området och typen av verksamhet men inte företaget (till exempel ”Rekommendera en tandläkare i Umeda”), gemensamma för alla företag i samma bransch och område, plus en ”namngiven” fråga om företagets adress och öppettider. Varje fråga ställdes tre gånger.",
+    "Utfall: Ett företag ”syntes” i ett svar om dess namn fanns i svaret eller om dess egen domän fanns bland de citerade källorna. Synlighetsgraden är andelen av företagets upptäcktssvar där det syntes.",
+    "Kontroll av detektorn: I svaren på de namngivna frågorna upptäcktes företagets namn i 84.3% av fallen, över gränsen på 70% som vi satt för att lita på detektorn.",
+    "Analys: Spearmans rangkorrelation med permutations-p-värde och bootstrap-konfidensintervall; partiell korrelation med bransch och stad som fixa effekter; ett permutationstest inom strata; och en logistisk regression med fixa effekter för bransch och stad och en kvasibinomial korrigering, eftersom upprepade svar på samma fråga inte är oberoende. De sex komponenttesten är Holm-korrigerade."
+   ],
+   "after": [
+    "Kriteriet för ”stöds” bestämdes i förväg: ρ ≥ 0.3, p < 0.05, ett 95% KI över noll och en positiv justerad korrelation. Själva svarstexten sparades inte; bara om ett namn förekom, om domänen citerades och citeringens position."
+   ]
+  },
+  {
+   "heading": "Resultat",
+   "paragraphs": [
+    "Slutsatsen är ”stöds inte”. Varje test av poängen mot synlighet ger en korrelation nära noll:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Resultat",
+     "p-värde"
+    ],
+    "rows": [
+     [
+      "Poäng mot synlighetsgrad (Spearman ρ, primärt)",
+      "0.03 (95% KI −0.23 till 0.28)",
+      "0.834"
+     ],
+     [
+      "Samma, justerat för bransch och stad (partiell korrelation)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Samma, permutationstest inom strata",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Poäng mot att namnet förekommer (upptäcktsfrågor)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Poäng mot att den egna webbplatsen citeras (upptäcktsfrågor)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Poäng mot att den egna webbplatsen citeras (namngivna frågor)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logistisk regression med fixa effekter för bransch/stad, kvasibinomial: odds per +1 SD i poäng (18.81 poäng)",
+      "×1.01 (95% KI 0.62 till 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 företag. Uppmätt på Perplexity den 24 oktober 2026."
+   },
+   "after": [
+    "Den största koefficienten, 0.18 mellan poängen och att företagets egen webbplats citeras, går inte att skilja från noll (p = 0.149) och ska inte tolkas som ett fynd."
+   ]
+  },
+  {
+   "heading": "Efter poängintervall",
+   "paragraphs": [
+    "Nurevo visar poängen som röd, gul eller grön. De flesta webbplatserna i urvalet var röda och ingen nådde grönt, så studien säger ingenting om mycket höga poäng."
+   ],
+   "table": {
+    "head": [
+     "Intervall",
+     "Företag",
+     "Genomsnittlig synlighetsgrad",
+     "Syntes minst en gång"
+    ],
+    "rows": [
+     [
+      "Röd",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Gul",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Grön",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Efter poängens delar",
+   "paragraphs": [
+    "Ingen av poängens delar hade något samband med synlighet. Efter Holm-korrigering är varje p-värde 1.000. Dessa test var explorativa."
+   ],
+   "table": {
+    "head": [
+     "Del",
+     "Spearman ρ med synlighetsgrad"
+    ],
+    "rows": [
+     [
+      "Strukturerad data (schema)",
+      "0.08"
+     ],
+     [
+      "Täckning",
+      "0.12"
+     ],
+     [
+      "Läsbarhet",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (oddskvot 1.41, 95% KI 0.79 till 2.52)"
+     ],
+     [
+      "Konsekvens",
+      "0.06"
+     ],
+     [
+      "Spärr (crawleråtkomst, edge, serverrendering)",
+      "61 godkända: 21.3% synlighet; 1 underkänd: 0%"
+     ]
+    ],
+    "caption": "Holm-korrigerat p = 1.000 för varje del."
+   }
+  },
+  {
+   "heading": "Efter bransch och stad",
+   "paragraphs": [
+    "Synligheten varierade mer mellan branscher och städer än efter poäng. Det här är beskrivande siffror från små grupper, inte testade skillnader."
+   ],
+   "table": {
+    "head": [
+     "Grupp",
+     "Företag",
+     "Genomsnittlig poäng",
+     "Synlighetsgrad"
+    ],
+    "rows": [
+     [
+      "Skatterådgivare",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Boende",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Tandvårdskliniker",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Skönhetssalonger",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restauranger",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokyo",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Raderna för branscher och raderna för städer omfattar vardera samma 62 företag."
+   }
+  },
+  {
+   "heading": "Begränsningar",
+   "list": [
+    "Tvärsnittsdesign: En enda mätning av många webbplatser visar samband, inte orsak. Om en förbättrad webbplats ändrar sin synlighet kräver en före-och-efter-studie av samma webbplatser.",
+    "Statistisk styrka: Med 62 företag skulle en korrelation svagare än ungefär |ρ| = 0.35 ofta missas. Företag i samma område och bransch delar samma svar, så det effektiva urvalet är ännu mindre. ”Inte hittat” betyder här inte ”finns inte”.",
+    "En motor, en vecka: Perplexity med förinställningen ”fast”, uppmätt den 24 oktober 2026. ChatGPT, Gemini, Googles AI Overviews och Copilot använder andra sökindex och modeller; resultaten går inte att överföra till dem.",
+    "Oobserverade störfaktorer: Recensioner, varumärkeskännedom, annonsering, antal år i drift och listningar på andra webbplatser mättes inte. Endast bransch och stad justerades för.",
+    "Urval: Företagen hittades via webbsökning och lutar därför mot företag som redan är lätta att hitta. Ingen webbplats fick grönt. 5 branscher och 4 städer i Japan är inte nödvändigtvis representativa för andra branscher, regioner eller språk."
+   ]
+  },
+  {
+   "heading": "Vad det betyder för ett företags webbplats",
+   "paragraphs": [
+    "Strukturerad data, llms.txt och åtkomst för crawlers fyller fortfarande en funktion: de låter AI läsa ett företags fakta (adress, öppettider, telefonnummer, tjänster) direkt och korrekt i stället för att gissa. Det är värt att göra, och det är en annan sak än att bli rekommenderad. I den här studien blev en webbplats som var lättare att läsa inte oftare nämnd.",
+    "Vår arbetshypotes är att källor utanför webbplatsen (recensioner och kartlistningar, lokala medier, kataloger och andra webbplatser som nämner företaget) väger tungt när en AI avgör om den ska nämna ett företag i svaret på en rekommendationsfråga. Den här studien mätte inte de källorna, så det är en hypotes att testa, inte ett resultat.",
+    "I praktiken: Håll ordning på grunderna på din egen webbplats, eftersom de gör det AI säger om dig korrekt – och mät om AI faktiskt nämner dig i stället för att sluta dig till det utifrån en läsbarhetspoäng."
+   ]
+  },
+  {
+   "heading": "Vår intressekonflikt och vad vi ändrar",
+   "paragraphs": [
+    "Nurevo utvecklar AEO-verktyg, och poängen som testas här är en av våra produkter. Ett resultat som visar att poängen inte förutsäger synlighet är inte något vi själva hade valt. Vi publicerar det eftersom kriterierna bestämdes innan data kom in, och eftersom företagare bör veta vad en poäng kan och inte kan säga.",
+    "Det här gör vi: Vi presenterar inte AI-läsbarhetspoängen som en förutsägelse av synlighet i AI-svar. I stället mäter vi synligheten direkt: Pro-planen mäter hur ofta Perplexity nämner eller citerar en webbplats (beta), och vi lägger till en liten månatlig synlighetskontroll för webbplatser på Free och Standard. Vi utvecklar också en andra version av poängen som kombinerar uppmätt AI-synlighet med signalerna på webbplatsen, i stället för att enbart förlita sig på dem.",
+    "Namn och webbplatser för de uppmätta företagen publiceras inte."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Får strukturerad data AI att nämna mitt företag?",
+   "a": "I den här studien av 62 lokala företag på Perplexity fanns inget samband mellan signaler på webbplatsen, som strukturerad data, och hur ofta ett företag nämndes (ρ = 0.03). Strukturerad data hjälper AI att läsa dina fakta korrekt, men förutsade inte ensamt om du nämndes."
+  },
+  {
+   "q": "Hjälper llms.txt ett företag att synas i AI-svar?",
+   "a": "Vi fann inget samband i den här studien: ρ = −0.02 mellan llms.txt-delen och synlighetsgraden (Holm-korrigerat p = 1.000). Studien var liten och använde en enda motor, så den bevisar inte att llms.txt aldrig spelar roll."
+  },
+  {
+   "q": "Betyder det att AEO är meningslöst?",
+   "a": "Nej. AEO på webbplatsen gör det AI säger om ett företag korrekt. Studien tyder på att det inte räcker för att bli rekommenderad, och att det bör mätas direkt om man nämns, i stället för att slutas till utifrån en läsbarhetspoäng."
+  },
+  {
+   "q": "Vilken AI-motor mättes?",
+   "a": "Endast Perplexity, via dess Agent API med förinställningen ”fast”, den 24 oktober 2026. Resultaten går inte att överföra till ChatGPT, Gemini, Googles AI Overviews eller Copilot."
+  }
+ ],
+ "relatedHeading": "Relaterade guider",
+ "cta": {
+  "heading": "Se vad AI läser från din webbplats",
+  "body": "Den kostnadsfria kontrollen visar om AI kan läsa ditt företags fakta. Den förutsäger inte om AI kommer att nämna dig – det måste mätas.",
+  "label": "Kör den kostnadsfria kontrollen",
+  "href": "/check"
+ },
+ "footnote": "Studie genomförd av Nurevo (Bestie.合同会社). Perplexity är ett varumärke som tillhör Perplexity AI, Inc. Nurevo är inte knutet till Perplexity."
+}

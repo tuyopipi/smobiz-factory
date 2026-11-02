@@ -1,0 +1,292 @@
+{
+ "title": "Predviđa li AEO na webu odgovore AI-ja? Studija na 62 tvrtke | Nurevo",
+ "description": "Ocijenili smo 62 lokalne tvrtke u Japanu našom AEO ocjenom i pitali Perplexity o njima. Ocjena nije predvidjela pojavljivanje u odgovorima AI-ja (ρ = 0.03).",
+ "h1": "Predviđaju li AEO signali na webu pojavljivanje u odgovorima AI-ja? Izmjerili smo 62 tvrtke",
+ "lead": "Ne, barem ne u ovoj studiji. Kod 62 lokalne tvrtke u Japanu naša AEO ocjena weba (strukturirani podaci, llms.txt, pristup AI pretraživačkih botova i slični signali) nije pokazala nikakvu povezanost s time koliko je često Perplexity naveo ili citirao tvrtku kad je zamoljen za preporuke: Spearmanov ρ = 0.03 (95% CI od −0.23 do 0.28, p = 0.834). S 62 tvrtke studija je mogla pouzdano otkriti samo korelacije od približno |ρ| ≥ 0.35, pa slabiju povezanost nije moguće isključiti.",
+ "intro": [
+  "Objavljeno 28. listopada 2026. Podaci izmjereni 24. listopada 2026. Nurevo razvija AEO alate, uključujući ovdje testiranu ocjenu; pogledajte odjeljak „Naš sukob interesa” u nastavku."
+ ],
+ "sections": [
+  {
+   "heading": "Sažetak",
+   "list": [
+    "Pitanje: pojavljuju li se tvrtke čije web-stranice imaju višu Nurevo ocjenu čitljivosti za AI (od 0 do 100) češće u odgovorima AI-ja na pitanja u kojima nisu imenovane?",
+    "Odgovor: nije potvrđeno. Ukupno ρ = 0.03, a nakon prilagodbe za djelatnost i grad i dalje 0.03.",
+    "Ukupno su se tvrtke pojavile u 21.0% odgovora na istraživačka pitanja; 25 od 62 pojavilo se barem jednom.",
+    "Nakon korekcije za višestruko testiranje ni jedna pojedinačna sastavnica ocjene (strukturirani podaci, llms.txt, pokrivenost itd.) također nije pokazala povezanost.",
+    "Naš zaključak: strukturirani podaci pomažu AI-ju da ispravno pročita podatke o tvrtki, ali sami po sebi ne odlučuju hoće li tvrtka biti spomenuta. Veću ulogu imaju drugi čimbenici, vrlo vjerojatno uključujući i ono što o tvrtki pišu druge stranice. Ta posljednja točka hipoteza je koju ova studija nije testirala."
+   ]
+  },
+  {
+   "heading": "Zašto smo proveli ovu studiju",
+   "paragraphs": [
+    "Savjeti o AEO-u (answer engine optimization), uključujući naše, tvrde da web-stranica koju AI lako čita (strukturirani podaci schema.org, datoteka llms.txt, dopušten pristup AI pretraživačkim botovima, sadržaj generiran na poslužitelju) pomaže tvrtki da se pojavljuje u odgovorima AI-ja. Nurevo prodaje ocjenu izgrađenu upravo na tim signalima. Htjeli smo pošteno provjeriti prati li ocjena ono do čega je vlasnicima zaista stalo: da ih AI spomene. Hipotezu, analizu i kriterije odlučivanja utvrdili smo prije prikupljanja ikakvih odgovora i obvezali se objaviti rezultat kakav god bio."
+   ]
+  },
+  {
+   "heading": "Metoda",
+   "list": [
+    "Uzorak: 72 lokalne tvrtke s vlastitim službenim web-stranicama, odabrane web-pretraživanjem (bez portala), iz 5 djelatnosti (stomatološke ordinacije, restorani, kozmetički saloni, porezni savjetnici, smještaj) i 4 japanska grada (Tokio, Osaka, Fukuoka, Sapporo). 10 ih je isključeno jer se za njihovu stranicu ocjena nije mogla izračunati, pa je za analizu ostalo 62.",
+    "Ocjena: početna stranica, robots.txt i llms.txt svake web-stranice ocijenjeni su istim kodom kao javna Nurevo ocjena: strukturirani podaci (30 bodova), pokrivenost (25), čitljivost (20), llms.txt (15) i dosljednost (10), uz uvjet za pristup botova, blokiranje na rubu mreže i generiranje na poslužitelju (ako ga stranica ne zadovolji, ocjena je ograničena na 15).",
+    "Tražilica: Perplexity putem Agent API-ja s postavkom „fast” (jedno web-pretraživanje, zatim odgovor), isti adapter koji plaćeni Nurevo paket koristi za vidljivost u AI-ju. Samo jedna tražilica; pogledajte ograničenja.",
+    "Pitanja: tri „istraživačka” pitanja po tvrtki koja navode područje i vrstu djelatnosti, ali ne i samu tvrtku (na primjer „Preporuči stomatologa u Umeda”), zajednička svim tvrtkama iste djelatnosti na istom području, te jedno „imensko” pitanje o adresi i radnom vremenu tvrtke. Svako je pitanje postavljeno tri puta.",
+    "Ishod: tvrtka se „pojavila” u odgovoru ako je njezino ime bilo u odgovoru ili ako je njezina vlastita domena bila među citiranim izvorima. Stopa pojavljivanja udio je njezinih odgovora na istraživačka pitanja u kojima se pojavila.",
+    "Provjera detektora: u odgovorima na imenska pitanja ime tvrtke prepoznato je u 84.3% slučajeva, što je iznad praga od 70% koji smo postavili kao uvjet za povjerenje u detektor.",
+    "Analiza: Spearmanova korelacija rangova s permutacijskom p-vrijednošću i bootstrap intervalom pouzdanosti; parcijalna korelacija s djelatnošću i gradom kao fiksnim efektima; permutacijski test unutar stratuma; te logistička regresija s fiksnim efektima djelatnosti i grada i kvazibinomnom korekcijom, jer ponovljeni odgovori na isto pitanje nisu neovisni. Šest testova sastavnica korigirano je Holmovom metodom."
+   ],
+   "after": [
+    "Kriterij za „potvrđeno” postavljen je unaprijed: ρ ≥ 0.3, p < 0.05, 95% CI iznad nule i pozitivna prilagođena korelacija. Tekst odgovora nije pohranjivan; bilježilo se samo je li se pojavilo ime, je li domena citirana te položaj citata."
+   ]
+  },
+  {
+   "heading": "Rezultati",
+   "paragraphs": [
+    "Zaključak je „nije potvrđeno”. Svaki test ocjene u odnosu na pojavljivanje daje korelaciju blizu nule:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Rezultat",
+     "p-vrijednost"
+    ],
+    "rows": [
+     [
+      "Ocjena i stopa pojavljivanja (Spearmanov ρ, primarni)",
+      "0.03 (95% CI od −0.23 do 0.28)",
+      "0.834"
+     ],
+     [
+      "Isto, prilagođeno za djelatnost i grad (parcijalna korelacija)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Isto, permutacijski test unutar stratuma",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Ocjena i pojavljivanje imena (istraživačka pitanja)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Ocjena i citiranje vlastite stranice (istraživačka pitanja)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Ocjena i citiranje vlastite stranice (imenska pitanja)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logistička regresija s fiksnim efektima djelatnosti/grada, kvazibinomna: omjer izgleda po +1 SD ocjene (18.81 bodova)",
+      "×1.01 (95% CI od 0.62 do 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 tvrtke. Izmjereno u Perplexityju 24. listopada 2026."
+   },
+   "after": [
+    "Najveći koeficijent, 0.18 između ocjene i citiranja vlastite stranice tvrtke, ne razlikuje se od nule (p = 0.149) i ne treba ga tumačiti kao nalaz."
+   ]
+  },
+  {
+   "heading": "Prema rasponu ocjene",
+   "paragraphs": [
+    "Nurevo prikazuje ocjenu kao crvenu, žutu ili zelenu. Većina stranica u uzorku bila je crvena, a nijedna nije dosegla zelenu, pa ova studija ne govori ništa o vrlo visokim ocjenama."
+   ],
+   "table": {
+    "head": [
+     "Raspon",
+     "Tvrtke",
+     "Prosječna stopa pojavljivanja",
+     "Pojavile su se barem jednom"
+    ],
+    "rows": [
+     [
+      "Crvena",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Žuta",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Zelena",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Prema sastavnicama ocjene",
+   "paragraphs": [
+    "Nijedna sastavnica ocjene nije bila povezana s pojavljivanjem. Nakon Holmove korekcije svaka p-vrijednost iznosi 1.000. Bili su to eksploratorni testovi."
+   ],
+   "table": {
+    "head": [
+     "Sastavnica",
+     "Spearmanov ρ sa stopom pojavljivanja"
+    ],
+    "rows": [
+     [
+      "Strukturirani podaci (schema)",
+      "0.08"
+     ],
+     [
+      "Pokrivenost",
+      "0.12"
+     ],
+     [
+      "Čitljivost",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (omjer izgleda 1.41, 95% CI od 0.79 do 2.52)"
+     ],
+     [
+      "Dosljednost",
+      "0.06"
+     ],
+     [
+      "Uvjet (pristup botova, rub mreže, generiranje na poslužitelju)",
+      "61 zadovoljila: pojavljivanje 21.3%; 1 nije: 0%"
+     ]
+    ],
+    "caption": "Holmovom metodom korigiran p = 1.000 za svaku sastavnicu."
+   }
+  },
+  {
+   "heading": "Prema djelatnosti i gradu",
+   "paragraphs": [
+    "Pojavljivanje se više razlikovalo prema djelatnosti i gradu nego prema ocjeni. To su opisni podaci iz malih skupina, a ne testirane razlike."
+   ],
+   "table": {
+    "head": [
+     "Skupina",
+     "Tvrtke",
+     "Prosječna ocjena",
+     "Stopa pojavljivanja"
+    ],
+    "rows": [
+     [
+      "Porezni savjetnici",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Smještaj",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Stomatološke ordinacije",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Kozmetički saloni",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restorani",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Retci djelatnosti i retci gradova obuhvaćaju iste 62 tvrtke."
+   }
+  },
+  {
+   "heading": "Ograničenja",
+   "list": [
+    "Presječna studija: jedno mjerenje mnogo stranica pokazuje povezanost, a ne uzrok. Mijenja li poboljšanje stranice njezino pojavljivanje, zahtijeva studiju istih stranica prije i nakon promjene.",
+    "Statistička snaga: uz 62 tvrtke korelacija slabija od približno |ρ| = 0.35 često bi promaknula. Tvrtke s istog područja i iz iste djelatnosti dijele iste odgovore, pa je efektivni uzorak još manji. „Nije pronađeno” ovdje ne znači „ne postoji”.",
+    "Jedna tražilica, jedan tjedan: Perplexity s postavkom „fast”, izmjereno 24. listopada 2026. ChatGPT, Gemini, Googleovi AI Overviews i Copilot koriste druge indekse pretraživanja i modele; ovi se rezultati na njih ne mogu prenijeti.",
+    "Neopaženi zbunjujući čimbenici: recenzije, prepoznatljivost marke, oglašavanje, godine poslovanja i unosi na drugim stranicama nisu mjereni. Prilagodba je napravljena samo za djelatnost i grad.",
+    "Uzorak: tvrtke su pronađene web-pretraživanjem, pa prevladavaju one koje je već lako pronaći. Nijedna stranica nije dobila zelenu ocjenu. 5 djelatnosti i 4 grada u Japanu možda ne predstavljaju druge djelatnosti, regije ili jezike."
+   ]
+  },
+  {
+   "heading": "Što to znači za web-stranicu tvrtke",
+   "paragraphs": [
+    "Strukturirani podaci, llms.txt i pristup botova i dalje obavljaju svoj posao: omogućuju AI-ju da podatke o tvrtki (adresu, radno vrijeme, broj telefona, usluge) pročita izravno i točno, umjesto da ih nagađa. Taj se posao isplati, ali to je drukčiji zadatak od dobivanja preporuke. U ovoj studiji bolje čitljiva stranica nije bila češće spominjana.",
+    "Naša radna hipoteza jest da izvori izvan web-stranice (unosi na stranicama s recenzijama i kartama, lokalni mediji, imenici, druge stranice koje spominju tvrtku) imaju veliku težinu u tome hoće li AI imenovati tvrtku kad odgovara na zahtjev za preporuku. Ova studija nije mjerila te izvore, pa je riječ o hipotezi koju treba testirati, a ne o rezultatu.",
+    "U praksi: održavajte osnove na stranici u redu jer zahvaljujući njima AI o vama govori točno, i mjerite spominje li vas AI zaista, umjesto da to zaključujete iz ocjene čitljivosti."
+   ]
+  },
+  {
+   "heading": "Naš sukob interesa i što mijenjamo",
+   "paragraphs": [
+    "Nurevo razvija AEO alate, a ovdje testirana ocjena jedan je od naših proizvoda. Rezultat da ocjena ne predviđa pojavljivanje nije onaj koji bismo sami odabrali. Objavljujemo ga jer su kriteriji utvrđeni prije nego što su stigli podaci i zato što vlasnici trebaju znati što im ocjena može, a što ne može reći.",
+    "Što poduzimamo: ocjenu čitljivosti za AI ne predstavljamo kao prediktor pojavljivanja u odgovorima AI-ja. Umjesto toga pojavljivanje mjerimo izravno: paket Pro mjeri koliko često Perplexity imenuje ili citira stranicu (beta), a za stranice u paketima Free i Standard dodajemo malu mjesečnu provjeru pojavljivanja. Razvijamo i drugu verziju ocjene koja kombinira izmjerenu vidljivost u AI-ju sa signalima na stranici, umjesto da se oslanja samo na signale na stranici.",
+    "Nazivi i web-stranice izmjerenih tvrtki ne objavljuju se."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hoće li zbog strukturiranih podataka AI spomenuti moju tvrtku?",
+   "a": "U ovoj studiji 62 lokalne tvrtke u Perplexityju nije pronađena povezanost između signala na stranici, poput strukturiranih podataka, i toga koliko je često tvrtka spominjana (ρ = 0.03). Strukturirani podaci pomažu AI-ju da ispravno pročita vaše podatke, ali sami po sebi nisu predvidjeli spominjanje."
+  },
+  {
+   "q": "Pomaže li llms.txt tvrtki da se pojavljuje u odgovorima AI-ja?",
+   "a": "U ovoj studiji nismo pronašli povezanost: ρ = −0.02 između sastavnice llms.txt i stope pojavljivanja (p nakon Holmove korekcije = 1.000). Studija je bila mala i obuhvatila je jednu tražilicu, pa ne dokazuje da llms.txt nikad nije važan."
+  },
+  {
+   "q": "Znači li to da je AEO besmislen?",
+   "a": "Ne. AEO na stranici osigurava da je ono što AI govori o tvrtki točno. Ova studija upućuje na to da to nije dovoljno za preporuku te da spominjanje treba mjeriti izravno, a ne zaključivati ga iz ocjene čitljivosti."
+  },
+  {
+   "q": "Koja je AI tražilica mjerena?",
+   "a": "Samo Perplexity, putem Agent API-ja s postavkom „fast”, 24. listopada 2026. Rezultati se ne mogu prenijeti na ChatGPT, Gemini, Googleove AI Overviews ni Copilot."
+  }
+ ],
+ "relatedHeading": "Povezani vodiči",
+ "cta": {
+  "heading": "Pogledajte što AI čita s vaše stranice",
+  "body": "Besplatna provjera pokazuje može li AI pročitati podatke o vašoj tvrtki. Ne predviđa hoće li vas AI spomenuti; to treba izmjeriti.",
+  "label": "Pokrenite besplatnu provjeru",
+  "href": "/check"
+ },
+ "footnote": "Studija tvrtke Nurevo (Bestie.合同会社). Perplexity je zaštitni znak tvrtke Perplexity AI, Inc. Nurevo nije povezan s tvrtkom Perplexity."
+}

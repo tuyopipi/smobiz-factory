@@ -1,0 +1,292 @@
+{
+ "title": "AEO pe site prezice răspunsurile AI? Studiu pe 62 de firme | Nurevo",
+ "description": "Am evaluat 62 de firme locale din Japonia cu scorul nostru AEO și am întrebat Perplexity despre ele. Scorul nu a prezis apariția în răspunsurile AI (ρ = 0.03).",
+ "h1": "Prezic semnalele AEO de pe site apariția în răspunsurile AI? Am măsurat 62 de firme",
+ "lead": "Nu, cel puțin nu în acest studiu. La 62 de firme locale din Japonia, scorul nostru AEO pentru site (date structurate, llms.txt, acces pentru crawlere și semnale similare) nu a arătat nicio legătură cu frecvența cu care Perplexity a numit sau a citat o firmă atunci când i s-au cerut recomandări: ρ Spearman = 0.03 (IÎ 95% între −0.23 și 0.28, p = 0.834). Cu 62 de firme, studiul putea detecta în mod fiabil doar corelații de aproximativ |ρ| ≥ 0.35, așa că o legătură mai slabă nu poate fi exclusă.",
+ "intro": [
+  "Publicat pe 28 octombrie 2026. Date măsurate pe 24 octombrie 2026. Nurevo dezvoltă instrumente AEO, inclusiv scorul testat aici; vedeți mai jos „Conflictul nostru de interese”."
+ ],
+ "sections": [
+  {
+   "heading": "Rezumat",
+   "list": [
+    "Întrebare: firmele ale căror site-uri obțin un scor mai mare la scorul Nurevo de lizibilitate pentru AI (de la 0 la 100) apar mai des în răspunsurile AI la întrebări care nu le numesc?",
+    "Răspuns: neconfirmat. ρ = 0.03 per total și tot 0.03 după ajustarea pentru domeniu de activitate și oraș.",
+    "Per total, firmele au apărut în 21.0% dintre răspunsurile la întrebările de descoperire; 25 dintre cele 62 au apărut cel puțin o dată.",
+    "Nicio componentă individuală a scorului (date structurate, llms.txt, acoperire etc.) nu a arătat vreo legătură, după corecția pentru testări multiple.",
+    "Ce reținem: datele structurate ajută AI să citească corect informațiile unei firme, dar singure nu decid dacă firma este menționată. Alți factori contează mai mult, foarte probabil inclusiv ce spun alte site-uri despre firmă. Acest ultim punct este o ipoteză pe care studiul de față nu a testat-o."
+   ]
+  },
+  {
+   "heading": "De ce am realizat acest studiu",
+   "paragraphs": [
+    "Recomandările AEO (optimizare pentru motoarele de răspuns), inclusiv ale noastre, spun că un site ușor de citit pentru AI (date structurate schema.org, un fișier llms.txt, acces permis crawlerelor AI, conținut randat pe server) ajută o firmă să apară în răspunsurile AI. Nurevo vinde un scor construit exact pe aceste semnale. Am vrut dovezi oneste despre măsura în care scorul reflectă ceea ce îi interesează cu adevărat pe proprietari: să fie numiți de AI. Am stabilit ipoteza, analiza și criteriile de decizie înainte de a colecta vreun răspuns și ne-am angajat să publicăm rezultatul, oricare ar fi fost el."
+   ]
+  },
+  {
+   "heading": "Metodă",
+   "list": [
+    "Eșantion: 72 de firme locale cu site oficial propriu, alese prin căutare web (fără portaluri), din 5 domenii (clinici stomatologice, restaurante, saloane de înfrumusețare, consultanți fiscali, cazare) și 4 orașe japoneze (Tokyo, Osaka, Fukuoka, Sapporo). 10 au fost excluse deoarece scorul nu a putut fi calculat pentru site-ul lor, rămânând 62 pentru analiză.",
+    "Scor: pagina principală, robots.txt și llms.txt ale fiecărui site au fost evaluate cu același cod ca scorul public Nurevo: date structurate (30 de puncte), acoperire (25), lizibilitate (20), llms.txt (15) și consecvență (10), cu un filtru eliminatoriu pentru accesul crawlerelor, blocarea la nivel de edge și randarea pe server (nepromovarea lui plafonează scorul la 15).",
+    "Motor: Perplexity, prin Agent API cu presetul „fast” (o căutare web, apoi un răspuns), același adaptor pe care îl folosește planul plătit Nurevo pentru vizibilitatea în AI. Un singur motor; vedeți limitările.",
+    "Întrebări: trei întrebări de „descoperire” per firmă, care numesc zona și tipul de afacere, dar nu și firma (de exemplu, „Recomandă-mi un dentist în Umeda”), comune tuturor firmelor din același domeniu și aceeași zonă, plus o întrebare „nominală” care cere adresa și programul firmei. Fiecare întrebare a fost pusă de trei ori.",
+    "Rezultat: o firmă „a apărut” într-un răspuns dacă numele ei figura în răspuns sau dacă propriul domeniu se afla printre sursele citate. Rata de apariție este proporția răspunsurilor de descoperire în care a apărut.",
+    "Verificarea detectorului: în răspunsurile la întrebările nominale, numele firmei a fost detectat în 84.3% din cazuri, peste pragul de 70% stabilit pentru a avea încredere în detector.",
+    "Analiză: corelația rangurilor Spearman cu valoare p prin permutare și interval de încredere prin bootstrap; corelație parțială cu domeniul și orașul ca efecte fixe; un test de permutare în interiorul straturilor; și o regresie logistică cu efecte fixe pentru domeniu și oraș și corecție cvasi-binomială, deoarece răspunsurile repetate la aceeași întrebare nu sunt independente. Cele șase teste pe componente au fost corectate prin metoda Holm."
+   ],
+   "after": [
+    "Criteriul pentru „confirmat” a fost stabilit dinainte: ρ ≥ 0.3, p < 0.05, un IÎ 95% peste zero și o corelație ajustată pozitivă. Textul răspunsurilor nu a fost stocat; doar dacă a apărut un nume, dacă domeniul a fost citat și poziția citării."
+   ]
+  },
+  {
+   "heading": "Rezultate",
+   "paragraphs": [
+    "Verdictul este „neconfirmat”. Fiecare test al scorului în raport cu apariția dă o corelație apropiată de zero:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Rezultat",
+     "Valoare p"
+    ],
+    "rows": [
+     [
+      "Scor vs rata de apariție (ρ Spearman, principal)",
+      "0.03 (IÎ 95% între −0.23 și 0.28)",
+      "0.834"
+     ],
+     [
+      "Idem, ajustat pentru domeniu și oraș (corelație parțială)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Idem, test de permutare în interiorul straturilor",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Scor vs apariția numelui (întrebări de descoperire)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Scor vs citarea propriului site (întrebări de descoperire)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Scor vs citarea propriului site (întrebări nominale)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Regresie logistică cu efecte fixe domeniu/oraș, cvasi-binomială: cote la +1 AS de scor (18.81 puncte)",
+      "×1.01 (IÎ 95% între 0.62 și 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 de firme. Măsurat pe Perplexity pe 24 octombrie 2026."
+   },
+   "after": [
+    "Cel mai mare coeficient, 0.18 între scor și citarea propriului site al firmei, nu se distinge de zero (p = 0.149) și nu trebuie interpretat ca o constatare."
+   ]
+  },
+  {
+   "heading": "Pe intervale de scor",
+   "paragraphs": [
+    "Nurevo afișează scorul în roșu, galben sau verde. Majoritatea site-urilor din eșantion au fost în roșu și niciunul nu a ajuns la verde, așa că acest studiu nu spune nimic despre scorurile foarte mari."
+   ],
+   "table": {
+    "head": [
+     "Interval",
+     "Firme",
+     "Rata medie de apariție",
+     "Au apărut cel puțin o dată"
+    ],
+    "rows": [
+     [
+      "Roșu",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Galben",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Verde",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Pe componente ale scorului",
+   "paragraphs": [
+    "Niciuna dintre componentele scorului nu a avut legătură cu apariția. După corecția Holm, toate valorile p sunt 1.000. Aceste teste au fost exploratorii."
+   ],
+   "table": {
+    "head": [
+     "Componentă",
+     "ρ Spearman cu rata de apariție"
+    ],
+    "rows": [
+     [
+      "Date structurate (schema)",
+      "0.08"
+     ],
+     [
+      "Acoperire",
+      "0.12"
+     ],
+     [
+      "Lizibilitate",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (odds ratio 1.41, IÎ 95% între 0.79 și 2.52)"
+     ],
+     [
+      "Consecvență",
+      "0.06"
+     ],
+     [
+      "Filtru eliminatoriu (acces crawlere, edge, randare pe server)",
+      "61 promovate: 21.3% apariție; 1 nepromovat: 0%"
+     ]
+    ],
+    "caption": "p corectat Holm = 1.000 pentru fiecare componentă."
+   }
+  },
+  {
+   "heading": "Pe domenii și pe orașe",
+   "paragraphs": [
+    "Apariția a variat mai mult în funcție de domeniu și de oraș decât în funcție de scor. Acestea sunt cifre descriptive pentru grupuri mici, nu diferențe testate."
+   ],
+   "table": {
+    "head": [
+     "Grup",
+     "Firme",
+     "Scor mediu",
+     "Rata de apariție"
+    ],
+    "rows": [
+     [
+      "Consultanți fiscali",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Cazare",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Clinici stomatologice",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Saloane de înfrumusețare",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restaurante",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokyo",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Rândurile pe domenii și rândurile pe orașe acoperă fiecare aceleași 62 de firme."
+   }
+  },
+  {
+   "heading": "Limitări",
+   "list": [
+    "Studiu transversal: o singură măsurare a multor site-uri arată o asociere, nu o cauzalitate. Pentru a afla dacă îmbunătățirea unui site îi schimbă apariția este nevoie de un studiu înainte-și-după pe aceleași site-uri.",
+    "Putere statistică: cu 62 de firme, o corelație mai slabă de aproximativ |ρ| = 0.35 ar fi adesea ratată. Firmele din aceeași zonă și același domeniu împart aceleași răspunsuri, așa că eșantionul efectiv este și mai mic. „Negăsit” nu înseamnă aici „inexistent”.",
+    "Un motor, o săptămână: Perplexity cu presetul „fast”, măsurat pe 24 octombrie 2026. ChatGPT, Gemini, AI Overviews de la Google și Copilot folosesc alți indecși de căutare și alte modele; aceste rezultate nu se transferă la ele.",
+    "Factori de confuzie neobservați: recenziile, notorietatea mărcii, publicitatea, vechimea pe piață și prezența pe alte site-uri nu au fost măsurate. S-a ajustat doar pentru domeniu și oraș.",
+    "Eșantion: firmele au fost găsite prin căutare web, așa că înclină spre firme deja ușor de găsit. Niciun site nu a ajuns la verde. 5 domenii și 4 orașe din Japonia pot să nu fie reprezentative pentru alte domenii, regiuni sau limbi."
+   ]
+  },
+  {
+   "heading": "Ce înseamnă pentru site-ul unei firme",
+   "paragraphs": [
+    "Datele structurate, llms.txt și accesul crawlerelor își fac în continuare treaba: permit AI să citească informațiile unei firme (adresă, program, telefon, servicii) direct și corect, în loc să le ghicească. Este o treabă care merită făcută, dar este diferită de a fi recomandat. În acest studiu, un site mai bine citit nu a fost un site mai des menționat.",
+    "Ipoteza noastră de lucru este că sursele din afara site-ului (recenzii și profiluri pe hărți, presa locală, cataloage, alte site-uri care menționează firma) cântăresc mult în decizia unui AI de a numi o firmă atunci când răspunde la o întrebare de recomandare. Acest studiu nu a măsurat aceste surse, așa că este o ipoteză de testat, nu un rezultat.",
+    "În practică: păstrați în ordine elementele de bază ale site-ului, pentru că ele fac ca ceea ce spune AI despre dumneavoastră să fie corect, și măsurați dacă AI vă menționează efectiv, în loc să deduceți asta dintr-un scor de lizibilitate."
+   ]
+  },
+  {
+   "heading": "Conflictul nostru de interese și ce schimbăm",
+   "paragraphs": [
+    "Nurevo dezvoltă instrumente AEO, iar scorul testat aici este unul dintre produsele noastre. Un rezultat conform căruia scorul nu prezice apariția nu este unul pe care l-am fi ales; îl publicăm pentru că criteriile au fost stabilite înainte de a avea datele și pentru că proprietarii trebuie să știe ce le poate și ce nu le poate spune un scor.",
+    "Ce facem în acest sens: nu prezentăm scorul de lizibilitate pentru AI drept predictor al apariției în răspunsurile AI. În schimb, măsurăm apariția direct: planul Pro măsoară cât de des Perplexity numește sau citează un site (beta), iar pentru site-urile din planurile Free și Standard adăugăm o mică verificare lunară a apariției. Dezvoltăm, de asemenea, o a doua versiune a scorului, care combină vizibilitatea măsurată în AI cu semnalele de pe site, în loc să se bazeze doar pe acestea.",
+    "Numele și site-urile firmelor măsurate nu sunt publicate."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Datele structurate fac ca AI să-mi menționeze firma?",
+   "a": "În acest studiu pe 62 de firme locale, pe Perplexity, nu s-a găsit nicio legătură între semnalele de pe site, precum datele structurate, și frecvența cu care o firmă a fost menționată (ρ = 0.03). Datele structurate ajută AI să vă citească corect informațiile, dar singure nu au prezis menționarea."
+  },
+  {
+   "q": "Ajută llms.txt o firmă să apară în răspunsurile AI?",
+   "a": "În acest studiu nu am găsit nicio legătură: ρ = −0.02 între componenta llms.txt și rata de apariție (p corectat Holm = 1.000). Studiul a fost mic și a folosit un singur motor, așa că nu demonstrează că llms.txt nu contează niciodată."
+  },
+  {
+   "q": "Înseamnă asta că AEO nu are rost?",
+   "a": "Nu. AEO pe site face ca ceea ce spune AI despre o firmă să fie corect. Studiul sugerează că nu este suficient pentru a fi recomandat și că menționarea trebuie măsurată direct, nu dedusă dintr-un scor de lizibilitate."
+  },
+  {
+   "q": "Ce motor AI a fost măsurat?",
+   "a": "Doar Perplexity, prin Agent API cu presetul „fast”, pe 24 octombrie 2026. Rezultatele nu se transferă la ChatGPT, Gemini, AI Overviews de la Google sau Copilot."
+  }
+ ],
+ "relatedHeading": "Ghiduri similare",
+ "cta": {
+  "heading": "Vedeți ce citește AI de pe site-ul dumneavoastră",
+  "body": "Verificarea gratuită arată dacă AI poate citi informațiile firmei dumneavoastră. Nu prezice dacă AI vă va menționa; acest lucru trebuie măsurat.",
+  "label": "Rulați verificarea gratuită",
+  "href": "/check"
+ },
+ "footnote": "Studiu realizat de Nurevo (Bestie.合同会社). Perplexity este o marcă comercială a Perplexity AI, Inc. Nurevo nu este afiliată cu Perplexity."
+}

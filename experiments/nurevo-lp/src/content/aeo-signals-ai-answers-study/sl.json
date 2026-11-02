@@ -1,0 +1,292 @@
+{
+ "title": "Ali AEO na spletnem mestu napove odgovore UI? 62 podjetij | Nurevo",
+ "description": "Z našo oceno AEO smo ocenili 62 lokalnih podjetij na Japonskem in o njih spraševali Perplexity. Ocena ni napovedala pojavljanja v odgovorih UI (ρ = 0.03).",
+ "h1": "Ali signali AEO na spletnem mestu napovedujejo pojavljanje v odgovorih UI? Izmerili smo 62 podjetij",
+ "lead": "Ne, vsaj v tej študiji ne. Pri 62 lokalnih podjetjih na Japonskem naša ocena AEO spletnega mesta (strukturirani podatki, llms.txt, dostop pajkov UI in podobni signali) ni pokazala nobene povezave s tem, kako pogosto je Perplexity podjetje omenil ali navedel, ko smo ga prosili za priporočila: Spearmanov ρ = 0.03 (95% CI od −0.23 do 0.28, p = 0.834). Pri 62 podjetjih je študija lahko zanesljivo zaznala le korelacije približno |ρ| ≥ 0.35, zato šibkejše povezave ni mogoče izključiti.",
+ "intro": [
+  "Objavljeno 28. oktobra 2026. Podatki izmerjeni 24. oktobra 2026. Nurevo razvija orodja AEO, vključno s tukaj preizkušeno oceno; glejte razdelek »Naše navzkrižje interesov« spodaj."
+ ],
+ "sections": [
+  {
+   "heading": "Povzetek",
+   "list": [
+    "Vprašanje: ali se podjetja, katerih spletna mesta dosegajo višjo oceno berljivosti za UI pri Nurevo (od 0 do 100), pogosteje pojavljajo v odgovorih UI na vprašanja, ki jih ne omenjajo po imenu?",
+    "Odgovor: ni potrjeno. Skupno ρ = 0.03 in po upoštevanju panoge in mesta še vedno 0.03.",
+    "Skupno so se podjetja pojavila v 21.0% odgovorov na raziskovalna vprašanja; 25 od 62 se jih je pojavilo vsaj enkrat.",
+    "Po popravku za večkratno testiranje tudi noben posamezen del ocene (strukturirani podatki, llms.txt, pokritost itd.) ni pokazal povezave.",
+    "Naš sklep: strukturirani podatki UI pomagajo pravilno prebrati podatke o podjetju, sami po sebi pa ne odločajo, ali bo podjetje omenjeno. Večjo vlogo imajo drugi dejavniki, zelo verjetno tudi to, kaj o podjetju pišejo druga spletna mesta. Zadnja točka je hipoteza, ki je ta študija ni preizkusila."
+   ]
+  },
+  {
+   "heading": "Zakaj smo izvedli to študijo",
+   "paragraphs": [
+    "Nasveti o AEO (answer engine optimization), tudi naši, pravijo, da spletno mesto, ki ga UI zlahka prebere (strukturirani podatki schema.org, datoteka llms.txt, dovoljen dostop pajkom UI, vsebina, upodobljena na strežniku), podjetju pomaga, da se pojavlja v odgovorih UI. Nurevo prodaja oceno, zgrajeno prav na teh signalih. Želeli smo pošteno preveriti, ali ocena sledi temu, kar lastnikom resnično pomeni: da jih UI omeni. Hipotezo, analizo in merila odločanja smo določili pred zbiranjem kakršnih koli odgovorov in se zavezali, da bomo rezultat objavili ne glede na izid."
+   ]
+  },
+  {
+   "heading": "Metoda",
+   "list": [
+    "Vzorec: 72 lokalnih podjetij z lastnimi uradnimi spletnimi mesti, izbranih s spletnim iskanjem (brez portalov), iz 5 panog (zobozdravstvene ordinacije, restavracije, kozmetični saloni, davčni svetovalci, nastanitve) in 4 japonskih mest (Tokio, Osaka, Fukuoka, Sapporo). 10 smo jih izločili, ker za njihovo spletno mesto ocene ni bilo mogoče izračunati, tako da jih je za analizo ostalo 62.",
+    "Ocena: domačo stran, robots.txt in llms.txt vsakega spletnega mesta smo ocenili z isto kodo kot javno oceno Nurevo: strukturirani podatki (30 točk), pokritost (25), berljivost (20), llms.txt (15) in doslednost (10), z vrati za dostop pajkov, blokiranje na robu omrežja in upodabljanje na strežniku (če jih stran ne prestane, je ocena omejena na 15).",
+    "Iskalnik: Perplexity prek Agent API z nastavitvijo »fast« (eno spletno iskanje, nato odgovor), isti vmesnik, ki ga plačljivi paket Nurevo uporablja za vidnost v UI. Samo en iskalnik; glejte omejitve.",
+    "Vprašanja: tri »raziskovalna« vprašanja na podjetje, ki navajajo območje in vrsto dejavnosti, ne pa podjetja (na primer »Priporoči zobozdravnika v Umeda«), skupna vsem podjetjem iste panoge na istem območju, ter eno »poimensko« vprašanje o naslovu in delovnem času podjetja. Vsako vprašanje smo postavili trikrat.",
+    "Izid: podjetje se je v odgovoru »pojavilo«, če je bilo v odgovoru njegovo ime ali če je bila njegova lastna domena med navedenimi viri. Stopnja pojavljanja je delež njegovih odgovorov na raziskovalna vprašanja, v katerih se je pojavilo.",
+    "Preverjanje detektorja: v odgovorih na poimenska vprašanja je bilo ime podjetja zaznano v 84.3% primerov, kar je nad pragom 70%, ki smo ga določili za zaupanje detektorju.",
+    "Analiza: Spearmanova rangovna korelacija s permutacijsko p-vrednostjo in bootstrap intervalom zaupanja; parcialna korelacija s panogo in mestom kot fiksnima učinkoma; permutacijski test znotraj stratumov; ter logistična regresija s fiksnima učinkoma panoge in mesta in kvazibinomskim popravkom, ker ponovljeni odgovori na isto vprašanje niso neodvisni. Šest testov komponent je popravljenih po Holmovi metodi."
+   ],
+   "after": [
+    "Merilo za »potrjeno« je bilo določeno vnaprej: ρ ≥ 0.3, p < 0.05, 95% CI nad ničlo in pozitivna prilagojena korelacija. Besedila odgovorov nismo shranjevali; beležili smo le, ali se je ime pojavilo, ali je bila domena navedena in položaj navedbe."
+   ]
+  },
+  {
+   "heading": "Rezultati",
+   "paragraphs": [
+    "Sklep je »ni potrjeno«. Vsak test ocene glede na pojavljanje daje korelacijo blizu nič:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Rezultat",
+     "p-vrednost"
+    ],
+    "rows": [
+     [
+      "Ocena glede na stopnjo pojavljanja (Spearmanov ρ, primarni)",
+      "0.03 (95% CI od −0.23 do 0.28)",
+      "0.834"
+     ],
+     [
+      "Enako, prilagojeno za panogo in mesto (parcialna korelacija)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Enako, permutacijski test znotraj stratumov",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Ocena glede na pojav imena (raziskovalna vprašanja)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Ocena glede na navedbo lastnega spletnega mesta (raziskovalna vprašanja)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Ocena glede na navedbo lastnega spletnega mesta (poimenska vprašanja)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logistična regresija s fiksnima učinkoma panoge/mesta, kvazibinomska: razmerje obetov na +1 SD ocene (18.81 točke)",
+      "×1.01 (95% CI od 0.62 do 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 podjetij. Izmerjeno v Perplexity 24. oktobra 2026."
+   },
+   "after": [
+    "Največjega koeficienta, 0.18 med oceno in navedbo lastnega spletnega mesta podjetja, ni mogoče razlikovati od nič (p = 0.149) in ga ne gre razlagati kot ugotovitev."
+   ]
+  },
+  {
+   "heading": "Po razponu ocene",
+   "paragraphs": [
+    "Nurevo prikazuje oceno kot rdečo, rumeno ali zeleno. Večina spletnih mest v vzorcu je bila rdečih, nobeno ni doseglo zelene, zato ta študija o zelo visokih ocenah ne pove ničesar."
+   ],
+   "table": {
+    "head": [
+     "Razpon",
+     "Podjetja",
+     "Povprečna stopnja pojavljanja",
+     "Pojavila so se vsaj enkrat"
+    ],
+    "rows": [
+     [
+      "Rdeča",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Rumena",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Zelena",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Po komponentah ocene",
+   "paragraphs": [
+    "Nobena od komponent ocene ni bila povezana s pojavljanjem. Po Holmovem popravku je vsaka p-vrednost 1.000. Šlo je za raziskovalne teste."
+   ],
+   "table": {
+    "head": [
+     "Komponenta",
+     "Spearmanov ρ s stopnjo pojavljanja"
+    ],
+    "rows": [
+     [
+      "Strukturirani podatki (schema)",
+      "0.08"
+     ],
+     [
+      "Pokritost",
+      "0.12"
+     ],
+     [
+      "Berljivost",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (razmerje obetov 1.41, 95% CI od 0.79 do 2.52)"
+     ],
+     [
+      "Doslednost",
+      "0.06"
+     ],
+     [
+      "Vrata (dostop pajkov, rob omrežja, upodabljanje na strežniku)",
+      "61 jih je prestalo: pojavljanje 21.3%; 1 ni prestalo: 0%"
+     ]
+    ],
+    "caption": "Po Holmovi metodi popravljen p = 1.000 za vsako komponento."
+   }
+  },
+  {
+   "heading": "Po panogi in mestu",
+   "paragraphs": [
+    "Pojavljanje se je bolj razlikovalo po panogi in mestu kot po oceni. To so opisni podatki iz majhnih skupin, ne preizkušene razlike."
+   ],
+   "table": {
+    "head": [
+     "Skupina",
+     "Podjetja",
+     "Povprečna ocena",
+     "Stopnja pojavljanja"
+    ],
+    "rows": [
+     [
+      "Davčni svetovalci",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Nastanitve",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Zobozdravstvene ordinacije",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Kozmetični saloni",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restavracije",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Vrstice panog in vrstice mest zajemajo istih 62 podjetij."
+   }
+  },
+  {
+   "heading": "Omejitve",
+   "list": [
+    "Presečna študija: ena meritev številnih spletnih mest kaže povezanost, ne vzroka. Ali izboljšava spletnega mesta spremeni njegovo pojavljanje, bi zahtevalo študijo istih spletnih mest pred spremembo in po njej.",
+    "Statistična moč: pri 62 podjetjih bi korelacija, šibkejša od približno |ρ| = 0.35, pogosto ostala neopažena. Podjetja z istega območja in iz iste panoge si delijo iste odgovore, zato je dejanski vzorec še manjši. »Ni zaznano« tu ne pomeni »ne obstaja«.",
+    "En iskalnik, en teden: Perplexity z nastavitvijo »fast«, izmerjeno 24. oktobra 2026. ChatGPT, Gemini, Googlovi AI Overviews in Copilot uporabljajo druge iskalne indekse in modele; teh rezultatov ni mogoče prenesti nanje.",
+    "Neopaženi moteči dejavniki: ocen strank, prepoznavnosti blagovne znamke, oglaševanja, let delovanja in vpisov na drugih spletnih mestih nismo merili. Upoštevali smo le panogo in mesto.",
+    "Vzorec: podjetja smo našli s spletnim iskanjem, zato prevladujejo tista, ki jih je že zdaj lahko najti. Nobeno spletno mesto ni doseglo zelene ocene. 5 panog in 4 mesta na Japonskem morda niso reprezentativni za druge panoge, regije ali jezike."
+   ]
+  },
+  {
+   "heading": "Kaj to pomeni za spletno mesto podjetja",
+   "paragraphs": [
+    "Strukturirani podatki, llms.txt in dostop pajkov še vedno opravljajo svojo nalogo: UI omogočajo, da podatke o podjetju (naslov, delovni čas, telefonsko številko, storitve) prebere neposredno in pravilno, namesto da bi jih ugibala. To delo se splača, vendar je drugačna naloga kot dobiti priporočilo. V tej študiji bolje berljivo spletno mesto ni bilo pogosteje omenjeno.",
+    "Naša delovna hipoteza je, da imajo viri zunaj spletnega mesta (vpisi na portalih z ocenami in zemljevidih, lokalni mediji, imeniki, druga spletna mesta, ki omenjajo podjetje) veliko težo pri tem, ali UI podjetje omeni, ko odgovarja na prošnjo za priporočilo. Ta študija teh virov ni merila, zato gre za hipotezo, ki jo je treba preizkusiti, ne za rezultat.",
+    "V praksi: poskrbite za osnove na spletnem mestu, ker zaradi njih UI o vas govori točno, in merite, ali vas UI dejansko omenja, namesto da bi to sklepali iz ocene berljivosti."
+   ]
+  },
+  {
+   "heading": "Naše navzkrižje interesov in kaj spreminjamo",
+   "paragraphs": [
+    "Nurevo razvija orodja AEO in tukaj preizkušena ocena je eden naših izdelkov. Rezultata, da ocena ne napoveduje pojavljanja, si sami ne bi izbrali. Objavljamo ga, ker so bila merila določena, preden so prispeli podatki, in ker bi lastniki morali vedeti, kaj jim ocena lahko pove in česa ne.",
+    "Kaj glede tega ukrepamo: ocene berljivosti za UI ne predstavljamo kot napovednika pojavljanja v odgovorih UI. Namesto tega pojavljanje merimo neposredno: paket Pro meri, kako pogosto Perplexity spletno mesto omeni ali navede (beta), za spletna mesta v paketih Free in Standard pa dodajamo manjše mesečno preverjanje pojavljanja. Razvijamo tudi drugo različico ocene, ki združuje izmerjeno vidnost v UI s signali na spletnem mestu, namesto da bi se zanašala le na signale na spletnem mestu.",
+    "Imen in spletnih mest izmerjenih podjetij ne objavljamo."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ali strukturirani podatki poskrbijo, da UI omeni moje podjetje?",
+   "a": "V tej študiji 62 lokalnih podjetij v Perplexity ni bila ugotovljena nobena povezava med signali na spletnem mestu, kot so strukturirani podatki, in tem, kako pogosto je bilo podjetje omenjeno (ρ = 0.03). Strukturirani podatki UI pomagajo pravilno prebrati vaše podatke, sami po sebi pa omembe niso napovedali."
+  },
+  {
+   "q": "Ali llms.txt podjetju pomaga, da se pojavlja v odgovorih UI?",
+   "a": "V tej študiji nismo našli povezave: ρ = −0.02 med komponento llms.txt in stopnjo pojavljanja (p po Holmovem popravku = 1.000). Študija je bila majhna in je zajela en sam iskalnik, zato ne dokazuje, da llms.txt nikoli ni pomemben."
+  },
+  {
+   "q": "Ali to pomeni, da je AEO nesmiseln?",
+   "a": "Ne. AEO na spletnem mestu poskrbi, da je tisto, kar UI pove o podjetju, točno. Ta študija nakazuje, da to ne zadošča za priporočilo in da je omembe treba meriti neposredno, ne pa jih sklepati iz ocene berljivosti."
+  },
+  {
+   "q": "Kateri iskalnik UI je bil izmerjen?",
+   "a": "Samo Perplexity, prek Agent API z nastavitvijo »fast«, 24. oktobra 2026. Rezultatov ni mogoče prenesti na ChatGPT, Gemini, Googlove AI Overviews ali Copilot."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Preverite, kaj UI prebere z vašega spletnega mesta",
+  "body": "Brezplačno preverjanje pokaže, ali UI lahko prebere podatke o vašem podjetju. Ne napove, ali vas bo UI omenila; to je treba izmeriti.",
+  "label": "Zaženite brezplačno preverjanje",
+  "href": "/check"
+ },
+ "footnote": "Študija podjetja Nurevo (Bestie.合同会社). Perplexity je blagovna znamka družbe Perplexity AI, Inc. Nurevo ni povezan s Perplexity."
+}

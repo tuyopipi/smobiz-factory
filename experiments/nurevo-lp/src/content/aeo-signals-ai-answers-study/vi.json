@@ -1,0 +1,292 @@
+{
+ "title": "AEO có dự đoán câu trả lời AI? Nghiên cứu 62 doanh nghiệp | Nurevo",
+ "description": "Chúng tôi chấm Điểm AEO cho 62 doanh nghiệp địa phương tại Nhật Bản và hỏi Perplexity về họ. Điểm này không dự đoán việc xuất hiện trong câu trả lời AI (ρ = 0.03).",
+ "h1": "Tín hiệu AEO trên website có dự đoán việc xuất hiện trong câu trả lời AI không? Chúng tôi đã đo 62 doanh nghiệp",
+ "lead": "Không, ít nhất là trong nghiên cứu này. Trên 62 doanh nghiệp địa phương tại Nhật Bản, điểm AEO trên website của chúng tôi (dữ liệu có cấu trúc, llms.txt, quyền truy cập của trình thu thập và các tín hiệu tương tự) không cho thấy mối liên hệ nào với tần suất Perplexity nêu tên hoặc trích dẫn một doanh nghiệp khi được hỏi để xin gợi ý: Spearman ρ = 0.03 (95% CI từ −0.23 đến 0.28, p = 0.834). Với 62 doanh nghiệp, nghiên cứu chỉ có thể phát hiện đáng tin cậy các tương quan khoảng |ρ| ≥ 0.35, vì vậy không thể loại trừ một mối liên hệ yếu hơn.",
+ "intro": [
+  "Xuất bản ngày 28/10/2026. Dữ liệu đo ngày 24/10/2026. Nurevo phát triển các công cụ AEO, bao gồm cả điểm số được kiểm định ở đây; xem mục “Xung đột lợi ích của chúng tôi” bên dưới."
+ ],
+ "sections": [
+  {
+   "heading": "Tóm tắt",
+   "list": [
+    "Câu hỏi: những doanh nghiệp có website đạt điểm cao hơn trên thang điểm khả năng đọc của AI của Nurevo (0 đến 100) có xuất hiện thường xuyên hơn trong câu trả lời AI cho những câu hỏi không nêu tên họ hay không?",
+    "Kết luận: không được ủng hộ. ρ = 0.03 trên toàn bộ mẫu, và vẫn là 0.03 sau khi điều chỉnh theo ngành và thành phố.",
+    "Tính chung, các doanh nghiệp xuất hiện trong 21.0% câu trả lời cho các câu hỏi khám phá; 25 trên 62 doanh nghiệp xuất hiện ít nhất một lần.",
+    "Không có thành phần riêng lẻ nào của điểm số (dữ liệu có cấu trúc, llms.txt, độ bao phủ, v.v.) cho thấy mối liên hệ sau khi hiệu chỉnh cho kiểm định bội.",
+    "Điều chúng tôi rút ra: dữ liệu có cấu trúc giúp AI đọc đúng thông tin của một doanh nghiệp, nhưng tự nó không quyết định việc doanh nghiệp có được nhắc đến hay không. Các yếu tố khác quan trọng hơn, rất có thể bao gồm những gì các trang web khác nói về doanh nghiệp. Điểm cuối cùng này là một giả thuyết mà nghiên cứu chưa kiểm định."
+   ]
+  },
+  {
+   "heading": "Vì sao chúng tôi thực hiện nghiên cứu này",
+   "paragraphs": [
+    "Các lời khuyên về AEO (answer engine optimization – tối ưu hóa cho công cụ trả lời), kể cả của chúng tôi, cho rằng việc giúp website dễ đọc đối với AI (dữ liệu có cấu trúc schema.org, tệp llms.txt, cho phép trình thu thập AI truy cập, nội dung được kết xuất phía máy chủ) sẽ giúp doanh nghiệp xuất hiện trong câu trả lời AI. Nurevo bán một điểm số được xây dựng chính trên những tín hiệu đó. Chúng tôi muốn có bằng chứng trung thực về việc điểm số này có phản ánh điều mà chủ doanh nghiệp thực sự quan tâm hay không: được AI nêu tên. Chúng tôi đã cố định giả thuyết, phương pháp phân tích và tiêu chí quyết định trước khi thu thập bất kỳ câu trả lời nào, và cam kết công bố kết quả dù thế nào đi nữa."
+   ]
+  },
+  {
+   "heading": "Phương pháp",
+   "list": [
+    "Mẫu: 72 doanh nghiệp địa phương có website chính thức riêng, được chọn qua tìm kiếm web (loại trừ các trang cổng thông tin), thuộc 5 ngành (phòng khám nha khoa, nhà hàng, salon làm đẹp, dịch vụ kế toán thuế, cơ sở lưu trú) và 4 thành phố Nhật Bản (Tokyo, Osaka, Fukuoka, Sapporo). 10 doanh nghiệp bị loại vì không thể tính điểm cho website của họ, còn lại 62 doanh nghiệp để phân tích.",
+    "Điểm số: trang chủ, robots.txt và llms.txt của mỗi website được chấm điểm bằng cùng mã nguồn với điểm số công khai của Nurevo: dữ liệu có cấu trúc (30 điểm), độ bao phủ (25), khả năng đọc (20), llms.txt (15) và tính nhất quán (10), kèm một điều kiện ngưỡng về quyền truy cập của trình thu thập, chặn ở tầng edge và kết xuất phía máy chủ (nếu không đạt, điểm tối đa là 15).",
+    "Công cụ: Perplexity, thông qua Agent API với thiết lập sẵn “fast” (một lần tìm kiếm web, sau đó trả lời), cùng bộ chuyển đổi mà gói trả phí của Nurevo dùng để đo mức độ hiển thị trên AI. Chỉ một công cụ; xem phần hạn chế.",
+    "Câu hỏi: ba câu hỏi “khám phá” cho mỗi doanh nghiệp, nêu khu vực và loại hình kinh doanh nhưng không nêu tên doanh nghiệp (ví dụ: “Hãy gợi ý một nha sĩ ở Umeda”), dùng chung cho mọi doanh nghiệp cùng ngành trong cùng khu vực, cùng với một câu hỏi “có tên” hỏi địa chỉ và giờ mở cửa của doanh nghiệp. Mỗi câu hỏi được hỏi ba lần.",
+    "Kết quả đo: một doanh nghiệp được coi là “xuất hiện” trong câu trả lời nếu tên của doanh nghiệp có trong câu trả lời hoặc tên miền riêng của doanh nghiệp nằm trong số các nguồn được trích dẫn. Tỷ lệ xuất hiện là tỷ lệ câu trả lời khám phá có doanh nghiệp đó xuất hiện.",
+    "Kiểm tra bộ phát hiện: trong câu trả lời cho các câu hỏi có tên, tên doanh nghiệp được phát hiện trong 84.3% trường hợp, cao hơn ngưỡng 70% mà chúng tôi đặt ra để tin cậy bộ phát hiện.",
+    "Phân tích: tương quan hạng Spearman với p-value hoán vị và khoảng tin cậy bootstrap; tương quan riêng phần với ngành và thành phố là hiệu ứng cố định; kiểm định hoán vị trong từng tầng; và hồi quy logistic với hiệu ứng cố định theo ngành và thành phố cùng hiệu chỉnh quasi-binomial, vì các câu trả lời lặp lại cho cùng một câu hỏi không độc lập với nhau. Sáu kiểm định thành phần được hiệu chỉnh theo phương pháp Holm."
+   ],
+   "after": [
+    "Tiêu chí để kết luận “được ủng hộ” đã được đặt trước: ρ ≥ 0.3, p < 0.05, 95% CI nằm trên 0 và tương quan sau điều chỉnh có giá trị dương. Nội dung câu trả lời không được lưu lại; chỉ lưu việc tên có xuất hiện hay không, tên miền có được trích dẫn hay không và vị trí trích dẫn."
+   ]
+  },
+  {
+   "heading": "Kết quả",
+   "paragraphs": [
+    "Kết luận là “không được ủng hộ”. Mọi kiểm định giữa điểm số và việc xuất hiện đều cho tương quan gần bằng 0:"
+   ],
+   "table": {
+    "head": [
+     "Kiểm định",
+     "Kết quả",
+     "p-value"
+    ],
+    "rows": [
+     [
+      "Điểm số so với tỷ lệ xuất hiện (Spearman ρ, chính)",
+      "0.03 (95% CI từ −0.23 đến 0.28)",
+      "0.834"
+     ],
+     [
+      "Tương tự, điều chỉnh theo ngành và thành phố (tương quan riêng phần)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Tương tự, kiểm định hoán vị trong từng tầng",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Điểm số so với việc tên xuất hiện (câu hỏi khám phá)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Điểm số so với việc website của chính doanh nghiệp được trích dẫn (câu hỏi khám phá)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Điểm số so với việc website của chính doanh nghiệp được trích dẫn (câu hỏi có tên)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Hồi quy logistic với hiệu ứng cố định ngành/thành phố, quasi-binomial: odds trên mỗi +1 SD điểm số (18.81 điểm)",
+      "×1.01 (95% CI từ 0.62 đến 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 doanh nghiệp. Đo trên Perplexity ngày 24/10/2026."
+   },
+   "after": [
+    "Hệ số lớn nhất, 0.18 giữa điểm số và việc website của chính doanh nghiệp được trích dẫn, không thể phân biệt với 0 (p = 0.149) và không nên được hiểu là một phát hiện."
+   ]
+  },
+  {
+   "heading": "Theo mức điểm",
+   "paragraphs": [
+    "Nurevo hiển thị điểm số bằng màu đỏ, vàng hoặc xanh lá. Phần lớn website trong mẫu ở mức đỏ và không website nào đạt mức xanh lá, vì vậy nghiên cứu này không cho biết gì về những điểm số rất cao."
+   ],
+   "table": {
+    "head": [
+     "Mức",
+     "Doanh nghiệp",
+     "Tỷ lệ xuất hiện trung bình",
+     "Xuất hiện ít nhất một lần"
+    ],
+    "rows": [
+     [
+      "Đỏ",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Vàng",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Xanh lá",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Theo thành phần của điểm số",
+   "paragraphs": [
+    "Không thành phần nào của điểm số có liên hệ với việc xuất hiện. Sau hiệu chỉnh Holm, mọi p-value đều là 1.000. Đây là các kiểm định mang tính thăm dò."
+   ],
+   "table": {
+    "head": [
+     "Thành phần",
+     "Spearman ρ với tỷ lệ xuất hiện"
+    ],
+    "rows": [
+     [
+      "Dữ liệu có cấu trúc (schema)",
+      "0.08"
+     ],
+     [
+      "Độ bao phủ",
+      "0.12"
+     ],
+     [
+      "Khả năng đọc",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (tỷ số odds 1.41, 95% CI từ 0.79 đến 2.52)"
+     ],
+     [
+      "Tính nhất quán",
+      "0.06"
+     ],
+     [
+      "Điều kiện ngưỡng (truy cập của trình thu thập, edge, kết xuất phía máy chủ)",
+      "61 đạt: xuất hiện 21.3%; 1 không đạt: 0%"
+     ]
+    ],
+    "caption": "p sau hiệu chỉnh Holm = 1.000 cho mọi thành phần."
+   }
+  },
+  {
+   "heading": "Theo ngành và theo thành phố",
+   "paragraphs": [
+    "Việc xuất hiện khác biệt theo ngành và theo thành phố nhiều hơn là theo điểm số. Đây là các số liệu mô tả từ những nhóm nhỏ, không phải các khác biệt đã được kiểm định."
+   ],
+   "table": {
+    "head": [
+     "Nhóm",
+     "Doanh nghiệp",
+     "Điểm trung bình",
+     "Tỷ lệ xuất hiện"
+    ],
+    "rows": [
+     [
+      "Dịch vụ kế toán thuế",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Cơ sở lưu trú",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Phòng khám nha khoa",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Salon làm đẹp",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Nhà hàng",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokyo",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Các dòng theo ngành và các dòng theo thành phố đều bao gồm cùng 62 doanh nghiệp."
+   }
+  },
+  {
+   "heading": "Hạn chế",
+   "list": [
+    "Nghiên cứu cắt ngang: một lần đo trên nhiều website cho thấy mối liên quan, không phải quan hệ nhân quả. Để biết việc cải thiện website có thay đổi khả năng xuất hiện hay không, cần một nghiên cứu trước–sau trên cùng các website.",
+    "Lực thống kê: với 62 doanh nghiệp, một tương quan yếu hơn khoảng |ρ| = 0.35 thường sẽ bị bỏ sót. Các doanh nghiệp cùng khu vực và cùng ngành dùng chung câu trả lời, nên cỡ mẫu hiệu dụng còn nhỏ hơn nữa. “Không tìm thấy” ở đây không có nghĩa là “không tồn tại”.",
+    "Một công cụ, một tuần: Perplexity với thiết lập sẵn “fast”, đo ngày 24/10/2026. ChatGPT, Gemini, AI Overviews của Google và Copilot sử dụng chỉ mục tìm kiếm và mô hình khác nhau; các kết quả này không áp dụng cho chúng.",
+    "Yếu tố gây nhiễu chưa quan sát: đánh giá, mức độ nhận biết thương hiệu, quảng cáo, số năm hoạt động và thông tin niêm yết trên các trang khác không được đo. Chỉ điều chỉnh theo ngành và thành phố.",
+    "Mẫu: các doanh nghiệp được tìm thấy qua tìm kiếm web, nên mẫu thiên về những doanh nghiệp vốn đã dễ tìm thấy. Không website nào đạt điểm xanh lá. 5 ngành và 4 thành phố tại Nhật Bản có thể không đại diện cho các ngành, khu vực hoặc ngôn ngữ khác."
+   ]
+  },
+  {
+   "heading": "Ý nghĩa đối với website doanh nghiệp",
+   "paragraphs": [
+    "Dữ liệu có cấu trúc, llms.txt và quyền truy cập của trình thu thập vẫn có vai trò riêng: chúng giúp AI đọc thông tin của doanh nghiệp (địa chỉ, giờ mở cửa, số điện thoại, dịch vụ) một cách trực tiếp và chính xác thay vì phải phỏng đoán. Việc đó đáng làm, nhưng đó là một việc khác với việc được gợi ý. Trong nghiên cứu này, website được đọc tốt hơn không phải là website được nhắc đến nhiều hơn.",
+    "Giả thuyết làm việc của chúng tôi là các nguồn bên ngoài website (trang đánh giá và bản đồ, truyền thông địa phương, danh bạ, các trang khác nhắc đến doanh nghiệp) có trọng số lớn trong việc AI có nêu tên một doanh nghiệp khi trả lời câu hỏi xin gợi ý hay không. Nghiên cứu này chưa đo các nguồn đó, vì vậy đây là giả thuyết cần kiểm định, không phải kết quả.",
+    "Trên thực tế: hãy giữ các yếu tố cơ bản trên website luôn chỉn chu vì chúng giúp những gì AI nói về bạn được chính xác, và hãy đo trực tiếp xem AI có thực sự nhắc đến bạn hay không thay vì suy ra từ một điểm số khả năng đọc."
+   ]
+  },
+  {
+   "heading": "Xung đột lợi ích của chúng tôi và những gì chúng tôi thay đổi",
+   "paragraphs": [
+    "Nurevo phát triển các công cụ AEO, và điểm số được kiểm định ở đây là một trong các sản phẩm của chúng tôi. Kết quả cho thấy điểm số không dự đoán việc xuất hiện không phải là kết quả chúng tôi mong muốn. Chúng tôi công bố nó vì các tiêu chí đã được đặt ra trước khi có dữ liệu và vì chủ doanh nghiệp cần biết một điểm số có thể và không thể cho họ biết điều gì.",
+    "Những gì chúng tôi làm: chúng tôi không trình bày điểm khả năng đọc của AI như một chỉ báo dự đoán việc xuất hiện trong câu trả lời AI. Thay vào đó, chúng tôi đo trực tiếp việc xuất hiện: gói Pro đo tần suất Perplexity nêu tên hoặc trích dẫn một website (beta), và chúng tôi đang bổ sung một bước kiểm tra xuất hiện nhỏ hằng tháng cho các website dùng gói Free và Standard. Chúng tôi cũng đang phát triển phiên bản thứ hai của điểm số, kết hợp mức độ hiển thị trên AI đo được với các tín hiệu trên website, thay vì chỉ dựa vào tín hiệu trên website.",
+    "Tên và website của các doanh nghiệp được đo không được công bố."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Dữ liệu có cấu trúc có khiến AI nhắc đến doanh nghiệp của tôi không?",
+   "a": "Trong nghiên cứu này với 62 doanh nghiệp địa phương trên Perplexity, không tìm thấy mối liên hệ giữa các tín hiệu trên website như dữ liệu có cấu trúc và tần suất doanh nghiệp được nhắc đến (ρ = 0.03). Dữ liệu có cấu trúc giúp AI đọc đúng thông tin của bạn, nhưng tự nó không dự đoán việc được nhắc đến."
+  },
+  {
+   "q": "llms.txt có giúp doanh nghiệp xuất hiện trong câu trả lời AI không?",
+   "a": "Chúng tôi không tìm thấy mối liên hệ nào trong nghiên cứu này: ρ = −0.02 giữa thành phần llms.txt và tỷ lệ xuất hiện (p sau hiệu chỉnh Holm = 1.000). Nghiên cứu có quy mô nhỏ và chỉ dùng một công cụ, nên đây không phải bằng chứng rằng llms.txt không bao giờ có tác dụng."
+  },
+  {
+   "q": "Vậy có phải AEO là vô ích?",
+   "a": "Không. AEO trên website giúp những gì AI nói về doanh nghiệp được chính xác. Nghiên cứu này cho thấy chỉ như vậy thì chưa đủ để được gợi ý, và việc được nhắc đến nên được đo trực tiếp thay vì suy ra từ một điểm số khả năng đọc."
+  },
+  {
+   "q": "Công cụ AI nào đã được đo?",
+   "a": "Chỉ Perplexity, thông qua Agent API với thiết lập sẵn “fast”, vào ngày 24/10/2026. Kết quả không áp dụng cho ChatGPT, Gemini, AI Overviews của Google hay Copilot."
+  }
+ ],
+ "relatedHeading": "Hướng dẫn liên quan",
+ "cta": {
+  "heading": "Xem AI đọc được gì từ website của bạn",
+  "body": "Bài kiểm tra miễn phí cho biết AI có đọc được thông tin doanh nghiệp của bạn hay không. Bài kiểm tra không dự đoán việc AI có nhắc đến bạn hay không; điều đó cần được đo.",
+  "label": "Kiểm tra miễn phí",
+  "href": "/check"
+ },
+ "footnote": "Nghiên cứu do Nurevo (Bestie.合同会社) thực hiện. Perplexity là nhãn hiệu của Perplexity AI, Inc. Nurevo không liên kết với Perplexity."
+}

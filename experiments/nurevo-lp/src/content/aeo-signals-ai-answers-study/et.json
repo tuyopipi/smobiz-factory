@@ -1,0 +1,292 @@
+{
+ "title": "Kas veebilehe AEO ennustab TI vastuseid? 62 ettevõtte uuring | Nurevo",
+ "description": "Hindasime 62 kohalikku ettevõtet Jaapanis meie AEO skooriga ja küsisime nende kohta Perplexitylt. Skoor ei ennustanud TI vastustes esinemist (ρ = 0.03).",
+ "h1": "Kas veebilehe AEO signaalid ennustavad TI vastustes esinemist? Mõõtsime 62 ettevõtet",
+ "lead": "Ei, vähemalt mitte selles uuringus. 62 kohaliku ettevõtte puhul Jaapanis ei näidanud meie veebilehe AEO skoor (struktureeritud andmed, llms.txt, roomikute ligipääs ja sarnased signaalid) mingit seost sellega, kui sageli Perplexity ettevõtet soovituste küsimisel nimetas või viitena tõi: Spearman ρ = 0.03 (95% CI −0.23 kuni 0.28, p = 0.834). 62 ettevõttega suutis uuring usaldusväärselt tuvastada vaid korrelatsioone suurusega umbes |ρ| ≥ 0.35, seega nõrgemat seost ei saa välistada.",
+ "intro": [
+  "Avaldatud 28.10.2026. Andmed mõõdetud 24.10.2026. Nurevo arendab AEO tööriistu, sealhulgas siin testitud skoori; vaadake allpool jaotist „Meie huvide konflikt“."
+ ],
+ "sections": [
+  {
+   "heading": "Kokkuvõte",
+   "list": [
+    "Küsimus: kas ettevõtted, mille veebilehed saavad Nurevo TI-loetavuse skooril (0 kuni 100) kõrgema tulemuse, esinevad sagedamini TI vastustes küsimustele, milles neid nimeliselt ei mainita?",
+    "Vastus: ei leidnud kinnitust. ρ = 0.03 kokku ja endiselt 0.03 pärast tegevusala ja linnaga korrigeerimist.",
+    "Kokku esinesid ettevõtted 21.0% avastamisküsimuste vastustest; 25 ettevõtet 62-st esines vähemalt korra.",
+    "Ka ükski skoori üksikosa (struktureeritud andmed, llms.txt, katvus jne) ei näidanud pärast mitmese testimise korrektsiooni seost.",
+    "Meie järeldus: struktureeritud andmed aitavad TI-l ettevõtte andmeid õigesti lugeda, kuid üksi ei otsusta need, kas ettevõtet mainitakse. Olulisemad on muud tegurid, väga tõenäoliselt ka see, mida teised veebilehed ettevõtte kohta ütlevad. Viimane on hüpotees, mida see uuring ei testinud."
+   ]
+  },
+  {
+   "heading": "Miks me selle uuringu tegime",
+   "paragraphs": [
+    "AEO (answer engine optimization) nõuanded, sealhulgas meie omad, väidavad, et TI jaoks hästi loetav veebileht (schema.org struktureeritud andmed, llms.txt fail, TI-roomikute lubamine, serveris renderdatud sisu) aitab ettevõttel TI vastustes esile tulla. Nurevo müüb skoori, mis põhineb just neil signaalidel. Soovisime ausaid tõendeid selle kohta, kas skoor peegeldab seda, mis omanikele tegelikult korda läheb: et TI neid nimetaks. Fikseerisime hüpoteesi, analüüsi ja otsustuskriteeriumid enne ühegi vastuse kogumist ning lubasime tulemuse avaldada, olgu see milline tahes."
+   ]
+  },
+  {
+   "heading": "Metoodika",
+   "list": [
+    "Valim: 72 kohalikku ettevõtet, kellel on oma ametlik veebileht, valitud veebiotsingu kaudu (portaalid välja jäetud), 5 tegevusalalt (hambakliinikud, restoranid, ilusalongid, maksunõustajad, majutus) ja 4 Jaapani linnast (Tokyo, Osaka, Fukuoka, Sapporo). 10 jäeti välja, sest nende veebilehele ei õnnestunud skoori arvutada, seega jäi analüüsiks 62.",
+    "Skoor: iga veebilehe avaleht, robots.txt ja llms.txt hinnati sama koodiga nagu Nurevo avalik skoor: struktureeritud andmed (30 punkti), katvus (25), loetavus (20), llms.txt (15) ja järjepidevus (10), lisaks lävend roomikute ligipääsu, edge-tasandi blokeerimise ja serveripoolse renderdamise jaoks (selle läbikukkumisel on skoori ülempiir 15).",
+    "Mootor: Perplexity, selle Agent API kaudu eelseadistusega „fast“ (üks veebiotsing, seejärel vastus) – sama adapter, mida Nurevo tasuline pakett kasutab TI-nähtavuse mõõtmiseks. Ainult üks mootor; vaadake piiranguid.",
+    "Küsimused: iga ettevõtte kohta kolm „avastamisküsimust“, mis nimetavad piirkonda ja tegevusala, kuid mitte ettevõtet ennast (näiteks „Soovitage hambaarsti Umedas“) ning on ühised kõigile sama piirkonna sama tegevusala ettevõtetele, pluss üks „nimeline“ küsimus ettevõtte aadressi ja lahtiolekuaegade kohta. Iga küsimust esitati kolm korda.",
+    "Tulemus: ettevõte „esines“ vastuses, kui selle nimi oli vastuses või selle oma domeen oli viidatud allikate hulgas. Esinemismäär on nende avastamisküsimuste vastuste osakaal, milles ettevõte esines.",
+    "Detektori kontroll: nimeliste küsimuste vastustes tuvastati ettevõtte nimi 84.3% juhtudest, mis ületab 70% läve, mille seadsime detektori usaldamise tingimuseks.",
+    "Analüüs: Spearmani astakkorrelatsioon permutatsioonil põhineva p-väärtuse ja bootstrap-usaldusvahemikuga; osakorrelatsioon tegevusala ja linnaga fikseeritud efektidena; permutatsioonitest kihtide sees; ning logistiline regressioon tegevusala ja linna fikseeritud efektide ja kvaasibinoomse korrektsiooniga, sest korduvad vastused samale küsimusele ei ole sõltumatud. Kuuele komponendi testile on rakendatud Holmi korrektsiooni."
+   ],
+   "after": [
+    "„Kinnitatud“ kriteerium seati eelnevalt: ρ ≥ 0.3, p < 0.05, 95% CI üle nulli ja positiivne korrigeeritud korrelatsioon. Vastuste teksti ei salvestatud; registreeriti ainult see, kas nimi esines, kas domeenile viidati ja viite positsioon."
+   ]
+  },
+  {
+   "heading": "Tulemused",
+   "paragraphs": [
+    "Otsus on „ei leidnud kinnitust“. Iga skoori ja esinemise vaheline test annab nullilähedase korrelatsiooni:"
+   ],
+   "table": {
+    "head": [
+     "Test",
+     "Tulemus",
+     "p-väärtus"
+    ],
+    "rows": [
+     [
+      "Skoor vs esinemismäär (Spearman ρ, peamine)",
+      "0.03 (95% CI −0.23 kuni 0.28)",
+      "0.834"
+     ],
+     [
+      "Sama, korrigeeritud tegevusala ja linnaga (osakorrelatsioon)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Sama, permutatsioonitest kihtide sees",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Skoor vs nime esinemine (avastamisküsimused)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Skoor vs oma veebilehele viitamine (avastamisküsimused)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Skoor vs oma veebilehele viitamine (nimelised küsimused)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Logistiline regressioon tegevusala/linna fikseeritud efektidega, kvaasibinoomne: šansside suhe skoori +1 SD kohta (18.81 punkti)",
+      "×1.01 (95% CI 0.62 kuni 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 ettevõtet. Mõõdetud Perplexity abil 24.10.2026."
+   },
+   "after": [
+    "Suurimat kordajat, 0.18 skoori ja ettevõtte oma veebilehele viitamise vahel, ei saa nullist eristada (p = 0.149) ning seda ei tohiks tõlgendada leiuna."
+   ]
+  },
+  {
+   "heading": "Skooritsoonide kaupa",
+   "paragraphs": [
+    "Nurevo kuvab skoori punase, kollase või rohelisena. Enamik valimi veebilehti oli punases tsoonis ja ükski ei jõudnud rohelisse, seega ei ütle see uuring väga kõrgete skooride kohta midagi."
+   ],
+   "table": {
+    "head": [
+     "Tsoon",
+     "Ettevõtted",
+     "Keskmine esinemismäär",
+     "Esines vähemalt korra"
+    ],
+    "rows": [
+     [
+      "Punane",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Kollane",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Roheline",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Skoori komponentide kaupa",
+   "paragraphs": [
+    "Ükski skoori osa ei olnud esinemisega seotud. Pärast Holmi korrektsiooni on iga p-väärtus 1.000. Need testid olid uurimusliku iseloomuga."
+   ],
+   "table": {
+    "head": [
+     "Komponent",
+     "Spearman ρ esinemismääraga"
+    ],
+    "rows": [
+     [
+      "Struktureeritud andmed (schema)",
+      "0.08"
+     ],
+     [
+      "Katvus",
+      "0.12"
+     ],
+     [
+      "Loetavus",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (šansside suhe 1.41, 95% CI 0.79 kuni 2.52)"
+     ],
+     [
+      "Järjepidevus",
+      "0.06"
+     ],
+     [
+      "Lävend (roomikute ligipääs, edge, serveripoolne renderdamine)",
+      "61 läbis: 21.3% esinemine; 1 ei läbinud: 0%"
+     ]
+    ],
+    "caption": "Holmi korrektsiooniga p = 1.000 iga komponendi puhul."
+   }
+  },
+  {
+   "heading": "Tegevusalade ja linnade kaupa",
+   "paragraphs": [
+    "Esinemine erines tegevusalade ja linnade lõikes rohkem kui skoori lõikes. Need on väikeste rühmade kirjeldavad näitajad, mitte testitud erinevused."
+   ],
+   "table": {
+    "head": [
+     "Rühm",
+     "Ettevõtted",
+     "Keskmine skoor",
+     "Esinemismäär"
+    ],
+    "rows": [
+     [
+      "Maksunõustajad",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Majutus",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Hambakliinikud",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Ilusalongid",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restoranid",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokyo",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Tegevusalade read ja linnade read hõlmavad samu 62 ettevõtet."
+   }
+  },
+  {
+   "heading": "Piirangud",
+   "list": [
+    "Läbilõikeuuring: paljude veebilehtede ühekordne mõõtmine näitab seost, mitte põhjust. Et teada saada, kas veebilehe parandamine muudab selle esinemist, on vaja samade veebilehtede uuringut enne ja pärast.",
+    "Statistiline võimsus: 62 ettevõtte puhul jääks umbes |ρ| = 0.35-st nõrgem korrelatsioon sageli märkamata. Sama piirkonna ja tegevusala ettevõtted jagavad samu vastuseid, seega on efektiivne valim veelgi väiksem. „Ei leitud“ ei tähenda siin „ei ole olemas“.",
+    "Üks mootor, üks nädal: Perplexity eelseadistusega „fast“, mõõdetud 24.10.2026. ChatGPT, Gemini, Google'i AI Overviews ja Copilot kasutavad teistsuguseid otsinguindekseid ja mudeleid; need tulemused nendele üle ei kandu.",
+    "Mõõtmata segavad tegurid: arvustusi, brändi tuntust, reklaami, tegutsemisaastaid ja kirjeid teistel veebilehtedel ei mõõdetud. Korrigeeriti ainult tegevusala ja linnaga.",
+    "Valim: ettevõtted leiti veebiotsingu kaudu, seega on ülekaalus need, keda on niigi lihtne leida. Ükski veebileht ei saanud rohelist skoori. 5 tegevusala ja 4 linna Jaapanis ei pruugi esindada teisi tegevusalasid, piirkondi ega keeli."
+   ]
+  },
+  {
+   "heading": "Mida see tähendab ettevõtte veebilehe jaoks",
+   "paragraphs": [
+    "Struktureeritud andmed, llms.txt ja roomikute ligipääs täidavad endiselt oma ülesannet: need võimaldavad TI-l lugeda ettevõtte andmeid (aadress, lahtiolekuajad, telefoninumber, teenused) otse ja õigesti, ilma oletamata. Seda tööd tasub teha, kuid see on teine töö kui soovitatuks saamine. Selles uuringus ei mainitud paremini loetavat veebilehte sagedamini.",
+    "Meie tööhüpotees on, et veebilehevälised allikad (arvustused ja kaardikirjed, kohalik meedia, kataloogid, teised ettevõtet mainivad veebilehed) kaaluvad palju selles, kas TI soovitusküsimusele vastates ettevõtet nimetab. See uuring neid allikaid ei mõõtnud, seega on tegemist testimist vajava hüpoteesi, mitte tulemusega.",
+    "Praktikas: hoidke veebilehe põhitõed korras, sest need muudavad täpseks selle, mida TI teie kohta ütleb, ning mõõtke, kas TI teid tegelikult mainib, selle asemel et seda loetavuse skoori põhjal järeldada."
+   ]
+  },
+  {
+   "heading": "Meie huvide konflikt ja mida me muudame",
+   "paragraphs": [
+    "Nurevo arendab AEO tööriistu ja siin testitud skoor on üks meie toodetest. Tulemus, et skoor ei ennusta esinemist, ei ole see, mida oleksime valinud. Avaldame selle, sest kriteeriumid seati enne andmete laekumist ja sest omanikud peaksid teadma, mida skoor neile öelda saab ja mida mitte.",
+    "Mida me ette võtame: me ei esitle TI-loetavuse skoori TI vastustes esinemise ennustajana. Selle asemel mõõdame esinemist otse: Pro pakett mõõdab, kui sageli Perplexity veebilehte nimetab või sellele viitab (beeta), ning Free ja Standard pakettide veebilehtedele lisame väikese igakuise esinemiskontrolli. Samuti arendame skoori teist versiooni, mis ühendab mõõdetud TI-nähtavuse veebilehe signaalidega, selle asemel et tugineda ainult veebilehe signaalidele.",
+    "Mõõdetud ettevõtete nimesid ja veebilehti ei avaldata."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kas struktureeritud andmed panevad TI minu ettevõtet mainima?",
+   "a": "Selles 62 kohaliku ettevõtte uuringus Perplexity peal ei leitud seost veebilehe signaalide, näiteks struktureeritud andmete, ja ettevõtte mainimise sageduse vahel (ρ = 0.03). Struktureeritud andmed aitavad TI-l teie andmeid õigesti lugeda, kuid üksi ei ennustanud need mainimist."
+  },
+  {
+   "q": "Kas llms.txt aitab ettevõttel TI vastustes esineda?",
+   "a": "Selles uuringus seost ei leitud: ρ = −0.02 llms.txt komponendi ja esinemismäära vahel (Holmi korrektsiooniga p = 1.000). Uuring oli väike ja kasutas üht mootorit, seega ei tõesta see, et llms.txt ei oleks kunagi oluline."
+  },
+  {
+   "q": "Kas see tähendab, et AEO on mõttetu?",
+   "a": "Ei. Veebilehe AEO muudab täpseks selle, mida TI ettevõtte kohta ütleb. See uuring viitab sellele, et sellest ei piisa soovitatuks saamiseks ning et mainimist tuleks mõõta otse, mitte järeldada loetavuse skoori põhjal."
+  },
+  {
+   "q": "Millist TI-mootorit mõõdeti?",
+   "a": "Ainult Perplexityt, selle Agent API kaudu eelseadistusega „fast“, 24.10.2026. Tulemused ei kandu üle ChatGPT-le, Geminile, Google'i AI Overviewsile ega Copilotile."
+  }
+ ],
+ "relatedHeading": "Seotud juhendid",
+ "cta": {
+  "heading": "Vaadake, mida TI teie veebilehelt loeb",
+  "body": "Tasuta kontroll näitab, kas TI suudab teie ettevõtte andmeid lugeda. See ei ennusta, kas TI teid mainib – seda tuleb mõõta.",
+  "label": "Käivitage tasuta kontroll",
+  "href": "/check"
+ },
+ "footnote": "Uuringu viis läbi Nurevo (Bestie.合同会社). Perplexity on ettevõtte Perplexity AI, Inc. kaubamärk. Nurevo ei ole Perplexityga seotud."
+}

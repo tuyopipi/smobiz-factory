@@ -1,0 +1,292 @@
+{
+ "title": "Apakah AEO On-site Memprediksi Jawaban AI? Studi 62 Bisnis | Nurevo",
+ "description": "Kami menilai 62 bisnis lokal di Jepang dengan Skor AEO kami dan bertanya kepada Perplexity. Skor tersebut tidak memprediksi kemunculan di jawaban AI (ρ = 0.03).",
+ "h1": "Apakah sinyal AEO on-site memprediksi kemunculan di jawaban AI? Kami mengukur 62 bisnis",
+ "lead": "Tidak, setidaknya tidak dalam studi ini. Pada 62 bisnis lokal di Jepang, skor AEO on-site kami (data terstruktur, llms.txt, akses crawler, dan sinyal serupa) tidak menunjukkan hubungan dengan seberapa sering Perplexity menyebut atau mengutip sebuah bisnis saat diminta memberikan rekomendasi: Spearman ρ = 0.03 (95% CI −0.23 hingga 0.28, p = 0.834). Dengan 62 bisnis, studi ini hanya dapat mendeteksi secara andal korelasi sekitar |ρ| ≥ 0.35, sehingga hubungan yang lebih lemah tidak dapat dikesampingkan.",
+ "intro": [
+  "Diterbitkan 28 Oktober 2026. Data diukur pada 24 Oktober 2026. Nurevo membuat alat AEO, termasuk skor yang diuji di sini; lihat bagian “Konflik kepentingan kami” di bawah."
+ ],
+ "sections": [
+  {
+   "heading": "Ringkasan",
+   "list": [
+    "Pertanyaan: apakah bisnis yang situs webnya memperoleh nilai lebih tinggi pada skor keterbacaan AI Nurevo (0 hingga 100) lebih sering muncul di jawaban AI atas pertanyaan yang tidak menyebut nama mereka?",
+    "Jawaban: tidak didukung. ρ = 0.03 secara keseluruhan, dan tetap 0.03 setelah disesuaikan untuk industri dan kota.",
+    "Secara keseluruhan, bisnis muncul di 21.0% jawaban atas pertanyaan penemuan; 25 dari 62 bisnis muncul setidaknya sekali.",
+    "Tidak ada satu pun komponen skor (data terstruktur, llms.txt, cakupan, dan sebagainya) yang menunjukkan hubungan setelah dikoreksi untuk pengujian berganda.",
+    "Yang kami simpulkan: data terstruktur membantu AI membaca fakta sebuah bisnis dengan benar, tetapi dengan sendirinya tidak menentukan apakah bisnis tersebut disebut. Faktor lain lebih berpengaruh, kemungkinan besar termasuk apa yang dikatakan situs lain tentang bisnis tersebut. Poin terakhir ini adalah hipotesis yang tidak diuji dalam studi ini."
+   ]
+  },
+  {
+   "heading": "Mengapa kami melakukan studi ini",
+   "paragraphs": [
+    "Saran tentang AEO (answer engine optimization), termasuk saran kami sendiri, menyatakan bahwa membuat situs web mudah dibaca oleh AI (data terstruktur schema.org, file llms.txt, mengizinkan crawler AI, konten yang dirender di server) membantu bisnis muncul di jawaban AI. Nurevo menjual skor yang dibangun tepat di atas sinyal-sinyal tersebut. Kami ingin bukti yang jujur apakah skor ini sejalan dengan hal yang benar-benar penting bagi pemilik bisnis: disebut oleh AI. Kami menetapkan hipotesis, analisis, dan kriteria keputusan sebelum mengumpulkan jawaban apa pun, serta berkomitmen untuk memublikasikan hasilnya apa pun itu."
+   ]
+  },
+  {
+   "heading": "Metode",
+   "list": [
+    "Sampel: 72 bisnis lokal yang memiliki situs web resmi sendiri, dipilih melalui pencarian web (situs portal dikecualikan), dari 5 industri (klinik gigi, restoran, salon kecantikan, konsultan pajak, penginapan) dan 4 kota di Jepang (Tokyo, Osaka, Fukuoka, Sapporo). 10 bisnis dikecualikan karena skor situsnya tidak dapat dihitung, sehingga tersisa 62 untuk dianalisis.",
+    "Skor: halaman beranda, robots.txt, dan llms.txt setiap situs dinilai dengan kode yang sama dengan skor publik Nurevo: data terstruktur (30 poin), cakupan (25), keterbacaan (20), llms.txt (15), dan konsistensi (10), dengan syarat ambang untuk akses crawler, pemblokiran di edge, dan rendering di server (jika gagal, skor dibatasi maksimal 15).",
+    "Mesin: Perplexity, melalui Agent API dengan preset “fast” (satu pencarian web, lalu jawaban), adaptor yang sama dengan yang digunakan paket berbayar Nurevo untuk visibilitas AI. Hanya satu mesin; lihat bagian keterbatasan.",
+    "Pertanyaan: tiga pertanyaan “penemuan” per bisnis yang menyebut area dan jenis bisnis tetapi tidak menyebut nama bisnisnya (misalnya, “Rekomendasikan dokter gigi di Umeda”), yang sama untuk semua bisnis dari industri yang sama di area yang sama, ditambah satu pertanyaan “bernama” yang menanyakan alamat dan jam buka bisnis tersebut. Setiap pertanyaan diajukan tiga kali.",
+    "Hasil yang diukur: sebuah bisnis dianggap “muncul” dalam jawaban jika namanya ada di jawaban atau domainnya sendiri termasuk di antara sumber yang dikutip. Tingkat kemunculan adalah proporsi jawaban penemuan yang memuat bisnis tersebut.",
+    "Pemeriksaan detektor: dalam jawaban atas pertanyaan bernama, nama bisnis terdeteksi pada 84.3% kasus, di atas ambang 70% yang kami tetapkan agar detektor dapat dipercaya.",
+    "Analisis: korelasi peringkat Spearman dengan p-value permutasi dan interval kepercayaan bootstrap; korelasi parsial dengan industri dan kota sebagai efek tetap; uji permutasi di dalam strata; serta regresi logistik dengan efek tetap industri dan kota dan koreksi quasi-binomial, karena jawaban berulang atas pertanyaan yang sama tidak independen. Enam uji komponen dikoreksi dengan metode Holm."
+   ],
+   "after": [
+    "Kriteria “didukung” ditetapkan sebelumnya: ρ ≥ 0.3, p < 0.05, 95% CI di atas nol, dan korelasi yang disesuaikan bernilai positif. Teks jawaban tidak disimpan; hanya apakah nama muncul, apakah domain dikutip, dan posisi kutipannya."
+   ]
+  },
+  {
+   "heading": "Hasil",
+   "paragraphs": [
+    "Kesimpulannya adalah “tidak didukung”. Setiap uji skor terhadap kemunculan menghasilkan korelasi yang mendekati nol:"
+   ],
+   "table": {
+    "head": [
+     "Uji",
+     "Hasil",
+     "p-value"
+    ],
+    "rows": [
+     [
+      "Skor vs tingkat kemunculan (Spearman ρ, utama)",
+      "0.03 (95% CI −0.23 hingga 0.28)",
+      "0.834"
+     ],
+     [
+      "Sama, disesuaikan untuk industri dan kota (korelasi parsial)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Sama, uji permutasi di dalam strata",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Skor vs kemunculan nama (pertanyaan penemuan)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Skor vs situs sendiri dikutip (pertanyaan penemuan)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Skor vs situs sendiri dikutip (pertanyaan bernama)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Regresi logistik dengan efek tetap industri/kota, quasi-binomial: odds per +1 SD skor (18.81 poin)",
+      "×1.01 (95% CI 0.62 hingga 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 bisnis. Diukur di Perplexity pada 24 Oktober 2026."
+   },
+   "after": [
+    "Koefisien terbesar, yaitu 0.18 antara skor dan dikutipnya situs milik bisnis itu sendiri, tidak dapat dibedakan dari nol (p = 0.149) dan tidak boleh dibaca sebagai temuan."
+   ]
+  },
+  {
+   "heading": "Berdasarkan rentang skor",
+   "paragraphs": [
+    "Nurevo menampilkan skor dalam warna merah, kuning, atau hijau. Sebagian besar situs dalam sampel berwarna merah dan tidak ada yang mencapai hijau, sehingga studi ini tidak dapat menyimpulkan apa pun tentang skor yang sangat tinggi."
+   ],
+   "table": {
+    "head": [
+     "Rentang",
+     "Bisnis",
+     "Rata-rata tingkat kemunculan",
+     "Muncul setidaknya sekali"
+    ],
+    "rows": [
+     [
+      "Merah",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Kuning",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Hijau",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Berdasarkan komponen skor",
+   "paragraphs": [
+    "Tidak ada komponen skor yang berhubungan dengan kemunculan. Setelah koreksi Holm, setiap p-value bernilai 1.000. Uji-uji ini bersifat eksploratif."
+   ],
+   "table": {
+    "head": [
+     "Komponen",
+     "Spearman ρ dengan tingkat kemunculan"
+    ],
+    "rows": [
+     [
+      "Data terstruktur (schema)",
+      "0.08"
+     ],
+     [
+      "Cakupan",
+      "0.12"
+     ],
+     [
+      "Keterbacaan",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (rasio odds 1.41, 95% CI 0.79 hingga 2.52)"
+     ],
+     [
+      "Konsistensi",
+      "0.06"
+     ],
+     [
+      "Syarat ambang (akses crawler, edge, rendering di server)",
+      "61 lolos: kemunculan 21.3%; 1 gagal: 0%"
+     ]
+    ],
+    "caption": "p terkoreksi Holm = 1.000 untuk setiap komponen."
+   }
+  },
+  {
+   "heading": "Berdasarkan industri dan kota",
+   "paragraphs": [
+    "Kemunculan lebih bervariasi menurut industri dan kota daripada menurut skor. Angka-angka ini bersifat deskriptif dari kelompok kecil, bukan perbedaan yang telah diuji."
+   ],
+   "table": {
+    "head": [
+     "Kelompok",
+     "Bisnis",
+     "Rata-rata skor",
+     "Tingkat kemunculan"
+    ],
+    "rows": [
+     [
+      "Konsultan pajak",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Penginapan",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Klinik gigi",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Salon kecantikan",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restoran",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tokyo",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Baris industri dan baris kota masing-masing mencakup 62 bisnis yang sama."
+   }
+  },
+  {
+   "heading": "Keterbatasan",
+   "list": [
+    "Studi potong lintang: satu kali pengukuran terhadap banyak situs menunjukkan asosiasi, bukan sebab-akibat. Untuk mengetahui apakah perbaikan situs mengubah kemunculannya, diperlukan studi sebelum-sesudah pada situs yang sama.",
+    "Kekuatan statistik: dengan 62 bisnis, korelasi yang lebih lemah dari sekitar |ρ| = 0.35 sering kali tidak akan terdeteksi. Bisnis di area dan industri yang sama berbagi jawaban yang sama, sehingga sampel efektifnya bahkan lebih kecil. “Tidak ditemukan” di sini tidak berarti “tidak ada”.",
+    "Satu mesin, satu minggu: Perplexity dengan preset “fast”, diukur pada 24 Oktober 2026. ChatGPT, Gemini, AI Overviews dari Google, dan Copilot menggunakan indeks pencarian dan model yang berbeda; hasil ini tidak berlaku untuk mereka.",
+    "Faktor perancu yang tidak diamati: ulasan, pengenalan merek, iklan, lama usaha berdiri, dan listing di situs lain tidak diukur. Penyesuaian hanya dilakukan untuk industri dan kota.",
+    "Sampel: bisnis ditemukan melalui pencarian web, sehingga sampel cenderung condong ke bisnis yang sudah mudah ditemukan. Tidak ada situs yang mendapat skor hijau. 5 industri dan 4 kota di Jepang mungkin tidak mewakili industri, wilayah, atau bahasa lain."
+   ]
+  },
+  {
+   "heading": "Artinya bagi situs web bisnis",
+   "paragraphs": [
+    "Data terstruktur, llms.txt, dan akses crawler tetap memiliki fungsi: memungkinkan AI membaca fakta sebuah bisnis (alamat, jam buka, nomor telepon, layanan) secara langsung dan benar alih-alih menebak. Fungsi itu layak dikerjakan, tetapi berbeda dengan direkomendasikan. Dalam studi ini, situs yang lebih mudah dibaca tidak lebih sering disebut.",
+    "Hipotesis kerja kami adalah bahwa sumber di luar situs web (listing ulasan dan peta, media lokal, direktori, situs lain yang menyebut bisnis tersebut) sangat berpengaruh terhadap apakah AI menyebut sebuah bisnis saat menjawab pertanyaan rekomendasi. Studi ini tidak mengukur sumber-sumber tersebut, sehingga ini adalah hipotesis yang perlu diuji, bukan hasil.",
+    "Dalam praktiknya: jaga dasar-dasar on-site tetap rapi karena hal itu membuat apa yang dikatakan AI tentang Anda akurat, dan ukur apakah AI benar-benar menyebut Anda alih-alih menyimpulkannya dari skor keterbacaan."
+   ]
+  },
+  {
+   "heading": "Konflik kepentingan kami, dan apa yang kami ubah",
+   "paragraphs": [
+    "Nurevo membuat alat AEO, dan skor yang diuji di sini adalah salah satu produk kami. Hasil bahwa skor tidak memprediksi kemunculan bukanlah hasil yang akan kami pilih. Kami memublikasikannya karena kriterianya ditetapkan sebelum data masuk dan karena pemilik bisnis perlu tahu apa yang dapat dan tidak dapat diungkapkan oleh sebuah skor.",
+    "Yang kami lakukan: kami tidak menyajikan skor keterbacaan AI sebagai prediktor kemunculan di jawaban AI. Sebagai gantinya, kami mengukur kemunculan secara langsung: paket Pro mengukur seberapa sering Perplexity menyebut atau mengutip sebuah situs (beta), dan kami menambahkan pemeriksaan kemunculan bulanan berskala kecil untuk situs dengan paket Free dan Standard. Kami juga sedang mengembangkan versi kedua skor yang memadukan visibilitas AI yang terukur dengan sinyal on-site, alih-alih hanya mengandalkan sinyal on-site.",
+    "Nama dan situs web bisnis yang diukur tidak dipublikasikan."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Apakah data terstruktur membuat AI menyebut bisnis saya?",
+   "a": "Dalam studi terhadap 62 bisnis lokal di Perplexity ini, tidak ditemukan hubungan antara sinyal on-site seperti data terstruktur dan seberapa sering sebuah bisnis disebut (ρ = 0.03). Data terstruktur membantu AI membaca fakta Anda dengan benar, tetapi dengan sendirinya tidak memprediksi apakah bisnis Anda disebut."
+  },
+  {
+   "q": "Apakah llms.txt membantu bisnis muncul di jawaban AI?",
+   "a": "Kami tidak menemukan hubungan dalam studi ini: ρ = −0.02 antara komponen llms.txt dan tingkat kemunculan (p terkoreksi Holm = 1.000). Studi ini berskala kecil dan hanya menggunakan satu mesin, sehingga ini bukan bukti bahwa llms.txt tidak pernah berpengaruh."
+  },
+  {
+   "q": "Apakah ini berarti AEO tidak ada gunanya?",
+   "a": "Tidak. AEO on-site membuat apa yang dikatakan AI tentang sebuah bisnis menjadi akurat. Studi ini mengindikasikan bahwa hal itu tidak cukup untuk direkomendasikan, dan bahwa penyebutan perlu diukur secara langsung alih-alih disimpulkan dari skor keterbacaan."
+  },
+  {
+   "q": "Mesin AI mana yang diukur?",
+   "a": "Hanya Perplexity, melalui Agent API dengan preset “fast”, pada 24 Oktober 2026. Hasilnya tidak berlaku untuk ChatGPT, Gemini, AI Overviews dari Google, atau Copilot."
+  }
+ ],
+ "relatedHeading": "Panduan terkait",
+ "cta": {
+  "heading": "Lihat apa yang dibaca AI dari situs Anda",
+  "body": "Pemeriksaan gratis menunjukkan apakah AI dapat membaca fakta bisnis Anda. Pemeriksaan ini tidak memprediksi apakah AI akan menyebut Anda; hal itu harus diukur.",
+  "label": "Jalankan pemeriksaan gratis",
+  "href": "/check"
+ },
+ "footnote": "Studi oleh Nurevo (Bestie.合同会社). Perplexity adalah merek dagang Perplexity AI, Inc. Nurevo tidak berafiliasi dengan Perplexity."
+}

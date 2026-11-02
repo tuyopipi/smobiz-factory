@@ -1,0 +1,292 @@
+{
+ "title": "L'AEO del web prediu respostes d'IA? Estudi de 62 empreses | Nurevo",
+ "description": "Vam avaluar 62 empreses locals del Japó amb la nostra puntuació AEO i en vam preguntar a Perplexity. La puntuació no va predir l'aparició a respostes d'IA (ρ = 0.03).",
+ "h1": "Els senyals d'AEO del web prediuen l'aparició a les respostes d'IA? Hem mesurat 62 empreses",
+ "lead": "No, almenys en aquest estudi. En 62 empreses locals del Japó, la nostra puntuació AEO del web (dades estructurades, llms.txt, accés dels rastrejadors i senyals similars) no va mostrar cap relació amb la freqüència amb què Perplexity anomenava o citava una empresa quan se li demanaven recomanacions: ρ de Spearman = 0.03 (IC del 95% de −0.23 a 0.28, p = 0.834). Amb 62 empreses, l'estudi només podia detectar amb fiabilitat correlacions d'aproximadament |ρ| ≥ 0.35, de manera que no es pot descartar una relació més feble.",
+ "intro": [
+  "Publicat el 28 d'octubre de 2026. Dades mesurades el 24 d'octubre de 2026. Nurevo desenvolupa eines d'AEO, inclosa la puntuació que s'hi posa a prova; vegeu \"El nostre conflicte d'interessos\" més avall."
+ ],
+ "sections": [
+  {
+   "heading": "Resum",
+   "list": [
+    "Pregunta: les empreses amb un web que obté una puntuació més alta en la puntuació de llegibilitat per a la IA de Nurevo (de 0 a 100) apareixen més sovint a les respostes d'IA a preguntes que no les anomenen?",
+    "Resposta: no confirmat. ρ = 0.03 en conjunt, i continua sent 0.03 després d'ajustar per sector i ciutat.",
+    "En conjunt, les empreses van aparèixer en el 21.0% de les respostes a preguntes de descoberta; 25 de les 62 van aparèixer almenys una vegada.",
+    "Cap component individual de la puntuació (dades estructurades, llms.txt, cobertura, etc.) no va mostrar cap relació, després de corregir per proves múltiples.",
+    "El que en traiem: les dades estructurades ajuden la IA a llegir correctament la informació d'una empresa, però per si soles no decideixen si se la menciona. Hi pesen més altres factors, molt probablement inclòs el que diuen altres webs sobre l'empresa. Aquest darrer punt és una hipòtesi que aquest estudi no ha posat a prova."
+   ]
+  },
+  {
+   "heading": "Per què vam fer aquest estudi",
+   "paragraphs": [
+    "Els consells d'AEO (optimització per a motors de resposta), inclosos els nostres, diuen que fer que un web sigui fàcil de llegir per a la IA (dades estructurades schema.org, un fitxer llms.txt, deixar entrar els rastrejadors d'IA, contingut renderitzat al servidor) ajuda una empresa a aparèixer a les respostes d'IA. Nurevo ven una puntuació construïda precisament sobre aquests senyals. Volíem proves honestes de si la puntuació reflecteix allò que realment importa als propietaris: que la IA els anomeni. Vam fixar la hipòtesi, l'anàlisi i els criteris de decisió abans de recollir cap resposta, i ens vam comprometre a publicar-ne el resultat fos quin fos."
+   ]
+  },
+  {
+   "heading": "Mètode",
+   "list": [
+    "Mostra: 72 empreses locals amb web oficial propi, seleccionades mitjançant cerca web (excloent-ne els portals), de 5 sectors (clíniques dentals, restaurants, salons de bellesa, assessors fiscals, allotjament) i 4 ciutats japoneses (Tòquio, Osaka, Fukuoka, Sapporo). Se'n van excloure 10 perquè no es va poder calcular la puntuació del seu web, i en van quedar 62 per a l'anàlisi.",
+    "Puntuació: la pàgina d'inici, el robots.txt i el llms.txt de cada web es van avaluar amb el mateix codi que la puntuació pública de Nurevo: dades estructurades (30 punts), cobertura (25), llegibilitat (20), llms.txt (15) i coherència (10), amb un filtre per a l'accés dels rastrejadors, el bloqueig a l'edge i la renderització al servidor (si no se supera, la puntuació queda limitada a 15).",
+    "Motor: Perplexity, mitjançant la seva Agent API amb el preset \"fast\" (una cerca web i després una resposta), el mateix adaptador que fa servir el pla de pagament de Nurevo per a la visibilitat en IA. Només un motor; vegeu les limitacions.",
+    "Preguntes: tres preguntes de \"descoberta\" per empresa que indiquen la zona i el tipus de negoci però no l'empresa (per exemple, \"Recomana'm un dentista a Umeda\"), compartides per totes les empreses del mateix sector a la mateixa zona, més una pregunta \"nominal\" que demana l'adreça i l'horari de l'empresa. Cada pregunta es va fer tres vegades.",
+    "Resultat: es considera que una empresa \"apareixia\" en una resposta si el seu nom hi figurava o si el seu propi domini era entre les fonts citades. La taxa d'aparició és la proporció de respostes de descoberta en què apareixia.",
+    "Comprovació del detector: a les respostes a les preguntes nominals, el nom de l'empresa es va detectar el 84.3% de les vegades, per sobre del llindar del 70% que havíem fixat per confiar en el detector.",
+    "Anàlisi: correlació de rangs de Spearman amb valor p per permutació i interval de confiança per bootstrap; correlació parcial amb sector i ciutat com a efectes fixos; una prova de permutació dins d'estrats; i una regressió logística amb efectes fixos de sector i ciutat i correcció quasibinomial, perquè les respostes repetides a la mateixa pregunta no són independents. Les sis proves per component es van corregir amb el mètode de Holm."
+   ],
+   "after": [
+    "El criteri de \"confirmat\" es va fixar per endavant: ρ ≥ 0.3, p < 0.05, un IC del 95% per sobre de zero i una correlació ajustada positiva. No es va desar el text de les respostes; només si hi apareixia un nom, si se citava el domini i la posició de la citació."
+   ]
+  },
+  {
+   "heading": "Resultats",
+   "paragraphs": [
+    "El veredicte és \"no confirmat\". Totes les proves de la puntuació respecte a l'aparició donen una correlació propera a zero:"
+   ],
+   "table": {
+    "head": [
+     "Prova",
+     "Resultat",
+     "Valor p"
+    ],
+    "rows": [
+     [
+      "Puntuació vs taxa d'aparició (ρ de Spearman, principal)",
+      "0.03 (IC del 95% de −0.23 a 0.28)",
+      "0.834"
+     ],
+     [
+      "Ídem, ajustada per sector i ciutat (correlació parcial)",
+      "0.03",
+      "0.845"
+     ],
+     [
+      "Ídem, prova de permutació dins d'estrats",
+      "0.03",
+      "0.829"
+     ],
+     [
+      "Puntuació vs aparició del nom (preguntes de descoberta)",
+      "−0.04",
+      "0.782"
+     ],
+     [
+      "Puntuació vs citació del web propi (preguntes de descoberta)",
+      "0.18",
+      "0.149"
+     ],
+     [
+      "Puntuació vs citació del web propi (preguntes nominals)",
+      "−0.03",
+      "0.813"
+     ],
+     [
+      "Regressió logística amb efectes fixos de sector/ciutat, quasibinomial: odds per +1 DE de puntuació (18.81 punts)",
+      "×1.01 (IC del 95% de 0.62 a 1.64)",
+      "0.972"
+     ]
+    ],
+    "caption": "n = 62 empreses. Mesurat a Perplexity el 24 d'octubre de 2026."
+   },
+   "after": [
+    "El coeficient més alt, 0.18 entre la puntuació i la citació del web propi de l'empresa, no es distingeix de zero (p = 0.149) i no s'ha d'interpretar com una troballa."
+   ]
+  },
+  {
+   "heading": "Per franja de puntuació",
+   "paragraphs": [
+    "Nurevo mostra la puntuació en vermell, groc o verd. La majoria dels webs de la mostra eren vermells i cap no va arribar al verd, de manera que aquest estudi no diu res sobre puntuacions molt altes."
+   ],
+   "table": {
+    "head": [
+     "Franja",
+     "Empreses",
+     "Taxa mitjana d'aparició",
+     "Han aparegut almenys una vegada"
+    ],
+    "rows": [
+     [
+      "Vermell",
+      "54",
+      "20.8%",
+      "22"
+     ],
+     [
+      "Groc",
+      "8",
+      "22.2%",
+      "3"
+     ],
+     [
+      "Verd",
+      "0",
+      "-",
+      "-"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Per component de la puntuació",
+   "paragraphs": [
+    "Cap dels components de la puntuació no va tenir relació amb l'aparició. Després de la correcció de Holm, tots els valors p són 1.000. Aquestes proves eren exploratòries."
+   ],
+   "table": {
+    "head": [
+     "Component",
+     "ρ de Spearman amb la taxa d'aparició"
+    ],
+    "rows": [
+     [
+      "Dades estructurades (schema)",
+      "0.08"
+     ],
+     [
+      "Cobertura",
+      "0.12"
+     ],
+     [
+      "Llegibilitat",
+      "−0.17"
+     ],
+     [
+      "llms.txt",
+      "−0.02 (odds ratio 1.41, IC del 95% de 0.79 a 2.52)"
+     ],
+     [
+      "Coherència",
+      "0.06"
+     ],
+     [
+      "Filtre (accés dels rastrejadors, edge, renderització al servidor)",
+      "61 superats: 21.3% d'aparició; 1 no superat: 0%"
+     ]
+    ],
+    "caption": "p corregit amb Holm = 1.000 per a tots els components."
+   }
+  },
+  {
+   "heading": "Per sector i per ciutat",
+   "paragraphs": [
+    "L'aparició va variar més segons el sector i la ciutat que segons la puntuació. Són xifres descriptives de grups petits, no diferències contrastades."
+   ],
+   "table": {
+    "head": [
+     "Grup",
+     "Empreses",
+     "Puntuació mitjana",
+     "Taxa d'aparició"
+    ],
+    "rows": [
+     [
+      "Assessors fiscals",
+      "13",
+      "27.92",
+      "10.3%"
+     ],
+     [
+      "Allotjament",
+      "13",
+      "21.08",
+      "23.9%"
+     ],
+     [
+      "Clíniques dentals",
+      "13",
+      "40.15",
+      "25.6%"
+     ],
+     [
+      "Salons de bellesa",
+      "8",
+      "24.25",
+      "8.3%"
+     ],
+     [
+      "Restaurants",
+      "15",
+      "24.20",
+      "30.4%"
+     ],
+     [
+      "Osaka",
+      "15",
+      "26.27",
+      "15.6%"
+     ],
+     [
+      "Sapporo",
+      "17",
+      "29.41",
+      "9.8%"
+     ],
+     [
+      "Tòquio",
+      "15",
+      "25.53",
+      "31.1%"
+     ],
+     [
+      "Fukuoka",
+      "15",
+      "29.27",
+      "28.9%"
+     ]
+    ],
+    "caption": "Les files de sector i les files de ciutat cobreixen, cadascuna, les mateixes 62 empreses."
+   }
+  },
+  {
+   "heading": "Limitacions",
+   "list": [
+    "Estudi transversal: una sola mesura de molts webs mostra associació, no causalitat. Per saber si millorar un web en canvia l'aparició cal un estudi d'abans i després amb els mateixos webs.",
+    "Potència estadística: amb 62 empreses, sovint passaria per alt una correlació més feble que aproximadament |ρ| = 0.35. Les empreses de la mateixa zona i sector comparteixen les mateixes respostes, de manera que la mostra efectiva és encara més petita. Aquí \"no trobat\" no vol dir \"no existeix\".",
+    "Un motor, una setmana: Perplexity amb el preset \"fast\", mesurat el 24 d'octubre de 2026. ChatGPT, Gemini, els AI Overviews de Google i Copilot fan servir índexs de cerca i models diferents; aquests resultats no s'hi poden extrapolar.",
+    "Factors de confusió no observats: no es van mesurar les ressenyes, el reconeixement de marca, la publicitat, els anys d'activitat ni la presència en altres webs. Només es va ajustar per sector i ciutat.",
+    "Mostra: les empreses es van trobar mitjançant cerca web, de manera que tendeixen a ser empreses que ja són fàcils de trobar. Cap web no va arribar al verd. 5 sectors i 4 ciutats del Japó poden no ser representatius d'altres sectors, regions o idiomes."
+   ]
+  },
+  {
+   "heading": "Què vol dir per al web d'una empresa",
+   "paragraphs": [
+    "Les dades estructurades, el llms.txt i l'accés dels rastrejadors continuen fent una feina: permeten que la IA llegeixi la informació d'una empresa (adreça, horari, telèfon, serveis) de manera directa i correcta, en lloc d'endevinar-la. És una feina que val la pena fer, i és diferent de ser recomanat. En aquest estudi, un web més ben llegit no va ser un web més mencionat.",
+    "La nostra hipòtesi de treball és que les fonts externes al web (ressenyes i fitxes de mapes, mitjans locals, directoris, altres webs que mencionen l'empresa) tenen molt de pes a l'hora que una IA anomeni una empresa quan respon una pregunta de recomanació. Aquest estudi no va mesurar aquestes fonts, de manera que és una hipòtesi per posar a prova, no un resultat.",
+    "A la pràctica: mantingueu en ordre els aspectes bàsics del web, perquè fan que el que la IA diu de vosaltres sigui exacte, i mesureu si la IA realment us menciona en lloc de deduir-ho d'una puntuació de llegibilitat."
+   ]
+  },
+  {
+   "heading": "El nostre conflicte d'interessos i què estem canviant",
+   "paragraphs": [
+    "Nurevo desenvolupa eines d'AEO, i la puntuació que s'hi posa a prova és un dels nostres productes. Un resultat segons el qual la puntuació no prediu l'aparició no és el que hauríem triat, i el publiquem perquè els criteris es van fixar abans de tenir les dades i perquè els propietaris han de saber què els pot dir una puntuació i què no.",
+    "Què hi estem fent: no presentem la puntuació de llegibilitat per a la IA com un predictor de l'aparició a les respostes d'IA. En lloc d'això, mesurem l'aparició directament: el pla Pro mesura amb quina freqüència Perplexity anomena o cita un web (beta), i estem afegint una petita comprovació mensual d'aparició per als webs dels plans Free i Standard. També estem desenvolupant una segona versió de la puntuació que combina la visibilitat en IA mesurada amb els senyals del web, en lloc de basar-se només en aquests senyals.",
+    "No es publiquen els noms ni els webs de les empreses mesurades."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Les dades estructurades fan que la IA mencioni la meva empresa?",
+   "a": "En aquest estudi de 62 empreses locals a Perplexity no es va trobar cap relació entre els senyals del web, com les dades estructurades, i la freqüència amb què es mencionava una empresa (ρ = 0.03). Les dades estructurades ajuden la IA a llegir correctament la vostra informació, però per si soles no van predir la menció."
+  },
+  {
+   "q": "El llms.txt ajuda una empresa a aparèixer a les respostes d'IA?",
+   "a": "En aquest estudi no hi vam trobar cap relació: ρ = −0.02 entre el component llms.txt i la taxa d'aparició (p corregit amb Holm = 1.000). L'estudi era petit i va fer servir un sol motor, de manera que això no demostra que el llms.txt no importi mai."
+  },
+  {
+   "q": "Vol dir això que l'AEO no serveix de res?",
+   "a": "No. L'AEO del web fa que el que la IA diu d'una empresa sigui exacte. Aquest estudi suggereix que no n'hi ha prou per ser recomanat i que les mencions s'han de mesurar directament en lloc de deduir-les d'una puntuació de llegibilitat."
+  },
+  {
+   "q": "Quin motor d'IA es va mesurar?",
+   "a": "Només Perplexity, mitjançant la seva Agent API amb el preset \"fast\", el 24 d'octubre de 2026. Els resultats no es poden extrapolar a ChatGPT, Gemini, els AI Overviews de Google ni Copilot."
+  }
+ ],
+ "relatedHeading": "Guies relacionades",
+ "cta": {
+  "heading": "Vegeu què llegeix la IA del vostre web",
+  "body": "La comprovació gratuïta mostra si la IA pot llegir la informació de la vostra empresa. No prediu si la IA us mencionarà; això s'ha de mesurar.",
+  "label": "Feu la comprovació gratuïta",
+  "href": "/check"
+ },
+ "footnote": "Estudi de Nurevo (Bestie.合同会社). Perplexity és una marca comercial de Perplexity AI, Inc. Nurevo no està afiliada a Perplexity."
+}
