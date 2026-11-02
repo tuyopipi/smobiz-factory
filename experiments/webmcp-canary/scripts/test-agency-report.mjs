@@ -337,7 +337,12 @@ const NOW = Date.parse("2026-11-02T05:00:00Z");
   assert.deepEqual(put.settings.recipients, ["client@cafe.test", "boss@cafe.test"]);
   assert.ok(put.settings.consent_at > 0, "the consent confirmation is recorded");
   assert.equal(sqlite.prepare("SELECT consent_by FROM agency_report_settings WHERE site_id='s1'").get().consent_by, "m1", "and by whom");
-  assert.equal(put.next_send_on.slice(8), "01", "next send: the 1st of next month");
+  {
+    // Days 1-3 of a month (UTC) with last month's report not yet sent: the send is due today; otherwise the 1st of next month.
+    const today = new Date(); const inWindow = today.getUTCDate() <= 3;
+    const expected = inWindow ? today.toISOString().slice(0, 10) : new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() + 1, 1)).toISOString().slice(0, 10);
+    assert.equal(put.next_send_on, expected, "next send: today inside the 1st-3rd send window, else the 1st of next month");
+  }
   const viewerRead = await (await call(env, "GET", "/api/sites/s1/report-settings", { token: "viewer" })).json();
   assert.equal(viewerRead.can_edit, false, "a viewer reads but cannot edit");
 

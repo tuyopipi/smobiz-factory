@@ -122,14 +122,15 @@ await quiet(async () => {
 /* ---- 3. the batch respects the same account cap ---- */
 {
   const batchSetup = setup();
+  const batchNow = Date.parse("2026-10-28T19:37:00Z"); // the batch's clock; the sites are three days older than it (not than the real clock)
   for (let i = 0; i < 6; i += 1) {
     batchSetup.sqlite.prepare("INSERT INTO sites(id,org_id,url,site_key,install_type,plan,slug,owner_member_id,created_at) VALUES(?,?,?,?,?,?,?,?,?)")
-      .run(`h${i}`, "o1", "", `kh${i}`, "hosted", "free", `cafe-h${i}`, "m1", Date.now() - 3 * DAY);
+      .run(`h${i}`, "o1", "", `kh${i}`, "hosted", "free", `cafe-h${i}`, "m1", batchNow - 3 * DAY);
     batchSetup.sqlite.prepare("INSERT INTO site_settings(site_id,name,address) VALUES(?,?,?)").run(`h${i}`, `Cafe ${i}`, "Tokyo");
   }
   const before = pplx;
   const loadProfile = async () => ({ name: "Cafe", businessType: "カフェ", locality: "渋谷区", host: "", aliases: ["Cafe"], language: "ja" });
-  const summary = await quiet(() => runFreeCheckBatch(batchSetup.env, { loadProfile, now: Date.parse("2026-10-28T19:37:00Z") }));
+  const summary = await quiet(() => runFreeCheckBatch(batchSetup.env, { loadProfile, now: batchNow }));
   assert.equal(summary.checked, 3, "the batch checks three of the account's six Free sites");
   assert.equal(summary.skipped, 3);
   assert.equal(pplx - before, 9);
