@@ -1,0 +1,146 @@
+{
+ "title": "网店的 AI 搜索优化：商品、库存与退货信息 | Nurevo",
+ "description": "网店做 AEO，第一步是在商品页文字和结构化数据中准确公开商品名称、价格、库存、运费和退货条件。附检查清单。",
+ "h1": "网店的 AI 搜索优化：让 AI 准确读取商品、价格、库存和退货条件",
+ "lead": "网店的 AI 搜索优化（AEO），归根结底就是把商品名称、价格、库存、运费、退货条件以及店铺经营者等信息，准确且一致地公开在商品页文字和 schema.org 的 Product、Offer、OnlineStore 结构化数据中。这样，ChatGPT、Perplexity 和 Google 的 AI 在回答“X 在网上哪里能买到？”“哪家网店卖 X 并且免费退货？”这类问题时，就能拿到所需的信息，而不必去猜。这并不是给 AI 添加什么特殊标签。",
+ "intro": [
+  "撰写于 2026 年 11 月 2 日（日本时间）。Google、OpenAI 和日本消费者厅的相关信息均已于当日在各自官方页面上核实。",
+  "AI 的回答每天都在变化，也会因提问方式不同而不同。本文介绍的做法是让 AI 能够读懂您店铺和商品的事实信息，并不保证 AI 一定会提及您的店铺，也不保证任何排名。"
+ ],
+ "sections": [
+  {
+   "heading": "顾客向 AI 问什么，AI 读取什么",
+   "paragraphs": [
+    "人们向 AI 提出的购物问题，往往同时涉及商品、价格、库存、运费和退货：“敏感肌能用的防晒霜在网上哪里买？”“有没有卖日本产木质砧板的店？”“X 有货吗？运费多少？”“退货方便的网上鞋店”。要回答这些问题，AI 必须能以文字形式读到：您以什么价格卖哪些商品、现在能不能买、运费和退货要花多少钱，以及卖家是谁。",
+    "Google 表示，出现在 AI Overviews 或 AI Mode 中没有额外要求，也不需要特殊的 schema.org 结构化数据，常规的基本功依然重要，例如让结构化数据与页面上可见的文字一致，并及时更新 Merchant Center 和商家资料（Business Profile）中的信息。[Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)",
+    "关于 ChatGPT，OpenAI 表示：搜索中的商品结果由 ChatGPT 独立选出，并非广告；它会参考来自第一方和第三方提供者的结构化元数据，例如价格和商品描述；商家的排序依据包括有无库存、价格、质量，以及是否为制造商或主要销售者等因素。Shopify 商家的商品数据已通过 Shopify Catalog 接入，其他商家可以申请直接提供商品 feed（2026 年 11 月 2 日核实）。[OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "网店应该公开的信息",
+   "paragraphs": [
+    "Google 的组织（Organization）文档没有必需属性，要求使用最具体的子类型，并建议电商网站使用 OnlineStore 而不是 OnlineBusiness。[Google: Organization structured data](https://developers.google.com/search/docs/appearance/structured-data/organization)。对于商品，Google 的商家商品详情（merchant listing）结构化数据要求 Product 具备 name、image 和 offers，Offer 具备 price（大于零）和 priceCurrency；availability 为推荐属性。[Google: Merchant listing structured data](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "信息",
+     "页面上",
+     "结构化数据中"
+    ],
+    "rows": [
+     [
+      "店铺（谁在卖）",
+      "在“关于我们”或法定信息页面上写明店铺名称、运营公司和联系方式",
+      "OnlineStore（Organization 的一种）；无必需属性"
+     ],
+     [
+      "商品名称和图片",
+      "写在每个商品页上，名称要能体现型号、尺寸或颜色的差异",
+      "Product 的 name 和 image（必需）"
+     ],
+     [
+      "价格",
+      "以文字写明售价，以及促销价何时结束",
+      "Offer 的 price 和 priceCurrency（必需）"
+     ],
+     [
+      "库存",
+      "有货、缺货或预订，与实际状态一致",
+      "Offer 的 availability（推荐）"
+     ],
+     [
+      "退货条件",
+      "在一个页面上写明退货期限、条件以及退货运费由谁承担",
+      "Organization 的 hasMerchantReturnPolicy；仅提供退货页面链接（merchantReturnLink）也可以"
+     ],
+     [
+      "配送",
+      "运费（按地区或订单金额）和送达时间",
+      "Organization 的 hasShippingService（shippingConditions 为必需）"
+     ]
+    ],
+    "caption": "必需和推荐属性依据 2026 年 11 月 2 日 Google 文档中的说明。"
+   },
+   "after": [
+    "商家商品详情标记适用于顾客可以购买该商品的页面，Google 建议将其添加到商品页，而不是商品列表页。退货和配送最好作为全店统一的政策，在 Organization 上描述一次，而不是在每个商品上重复。[Google: Return policy](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: Shipping policy](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "在 Google 中，Merchant Center 或 Search Console 里的退货和配送设置优先于网站上的结构化数据。只在一处修改数值会造成信息冲突，因此当价格、运费或退货条件发生变化时，请同时更新商品页、结构化数据、Merchant Center、电商平台店铺页面和 llms.txt。"
+   ]
+  },
+  {
+   "heading": "法律可能已经要求您在页面上公开的信息",
+   "paragraphs": [
+    "网上销售的规定因国家而异，请确认适用于您的规定。以日本为例，《特定商业交易法》要求通信销售广告标明含消费税的价格、运费、买方需承担的其他费用、付款时间和方式、商品交付时间、取消和退货条件，以及卖家的名称、地址和电话号码。[消费者厅：通信销售广告（日文）](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html)。这些正是 AI 回答“运费多少？”“能退货吗？”时所需要的信息。",
+    "据消费者厅解释，根据同一法律，如果没有标明退货条件，买方可以在收到商品后八天内解除合同，退货费用由买方承担。[消费者厅：通信销售退货案例（日文）](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html)。无论您的政策如何，都请用文字清楚写明，并确保结构化数据中链接的退货页面内容与之一致。",
+    "只展示来自真实顾客的评分和评价。在日本，自 2023 年 10 月 1 日起，隐性营销（stealth marketing）已属于违反《不当赠品类及不当标示防止法》的行为；企业委托或指示第三方发布的内容（包括评价）均视为该企业的广告。[消费者厅：隐性营销（日文）](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "在 WordPress（WooCommerce）网店中设置",
+   "list": [
+    "从 [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) 安装 Nurevo AEO（免费）并启用。如果您在用 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO，可以继续保留。",
+    "在设置（或设置向导）中将网站类型设为“网店”。启用 WooCommerce 时会自动推荐该选项，但在保存之前不会有任何改变。店铺将以 OnlineStore 的形式公开，无需填写地址或营业时间（已填写的地址或电话仍会公开）。",
+    "填写退货退款政策页面和配送政策页面的 URL。退货页面会作为店铺的 MerchantReturnPolicy（指向该页面的链接）公开，两个页面都会列入 llms.txt。配送不会转换为结构化数据，因为插件无法得知其具体条件（费用和时间），该页面只会列入 llms.txt。",
+    "商品页保留 WooCommerce 输出的 Product 标记，Nurevo AEO 不会重复输出。在首页，它会将最近发布的最多 30 个商品作为商品目录（OfferCatalog）公开，并在已知时附上价格、币种和库存。只有拥有真实评价的商品才会添加评分。商品也会列入 llms.txt。",
+    "填写常见问题（运费、送达时间、礼品包装、退货方法），并在想要显示的页面上放置 Nurevo FAQ 区块或 [nurevo_faq] 短代码。",
+    "在 AEO 分数界面运行诊断。对于网店，它会检查是否有带价格和库存的商品、退货页面、配送页面和联系方式，并列出缺少的项目。",
+    "使用[免费 AI 可读性检测](/check)从外部查看 AI 读取到的内容，并确认价格、运费和退货条件与 Merchant Center 及电商平台店铺页面一致。"
+   ],
+   "after": [
+    "对于不是用 WordPress 搭建的网店（例如 Shopify），思路相同：在商品页文字和结构化数据中公开上表中的信息，并在 llms.txt 中列出店铺概况、退货、配送和主要商品页面。[什么是 llms.txt？](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "发布前检查清单",
+   "list": [
+    "每个商品页都以文字（而不仅是图片）显示商品名称、价格和库存状态。",
+    "结构化数据中的价格和库存与页面上可见的数值一致，已售罄的商品没有被标记为有货。",
+    "运费、送达时间和退货条件有各自的页面，并从商品页或页脚链接过去。",
+    "已公开卖家的名称、地址、电话号码以及其他法定必须标示的信息。",
+    "店铺的结构化数据类型与业务相符，例如 OnlineStore。",
+    "评分和评价标记只来自真实顾客的评价。",
+    "价格、运费和退货条件在您的网站、Merchant Center、电商平台和社交媒体店铺页面上保持一致。"
+   ]
+  },
+  {
+   "heading": "检查您是否出现在 AI 回答中",
+   "paragraphs": [
+    "信息准备好之后，用顾客可能会问的问题去问 AI（“买 X 最好的网店”“哪里买 X 包邮”），看看您的店铺或商品是否以名称或 URL 的形式出现。每次回答都会变化，所以请在不同时间多问几次同样的问题。",
+    "将网站连接到 Nurevo 服务后，Free 和 Standard 方案包含每月一次的检查：根据您的商品类别（绝不使用店铺名称）生成三个问题向 Perplexity 提问，插件会记录回答中是否提到了您的店铺或引用了您的网站。Pro 方案（每月 $99 起）新增测试版的 AI 可见度测量：您的店铺在 AI 回答中出现的频率，并提供竞争对手对比和历史记录（目前支持 Perplexity）。两者都是对回答进行抽样，而不是观察每一条回答。"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "网店做 AI 搜索优化应该从哪里开始？",
+   "a": "在每个商品页上以文字准确写明商品名称、价格和库存状态，并把配送、退货和卖家信息放在各自的页面上。然后将同样的信息以 Product、Offer、OnlineStore 结构化数据以及 llms.txt 的形式公开，并确保与 Merchant Center 和电商平台上的商品信息一致。"
+  },
+  {
+   "q": "要让商品出现在 ChatGPT 中需要付费吗？",
+   "a": "OpenAI 表示，ChatGPT 搜索中的商品结果是独立选出的，并非广告。Shopify 商家已通过 Shopify Catalog 接入，其他商家可以申请直接提供商品 feed。无论哪种情况，都不保证一定会出现。"
+  },
+  {
+   "q": "如果我在 Amazon 等电商平台上销售，还需要完善自己的网站吗？",
+   "a": "电商平台的页面也可能被 AI 用作信息来源，但只有在自己的网站上，您才能最详细、最准确地公开商品描述、退货条件和常见问题。让两处的价格、运费和退货条件保持一致，是最稳妥的做法。"
+  },
+  {
+   "q": "Nurevo AEO 是免费的吗？",
+   "a": "是的。网店类型（OnlineStore）、商品目录、退货政策和常见问题的结构化数据、llms.txt、AI 爬虫规则以及 AEO 分数都包含在免费方案中。付费方案增加了始终保持最新的规则集（Standard，每月 $20）和测试版的 AI 可见度测量（Pro，每月 $99 起）。[WordPress.org 上的 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "这样做能保证我的商品出现在 AI 回答中吗？",
+   "a": "不能。AI 的回答会变化，任何工具或技术都无法保证被提及或获得某个位置。您能做的，是让商品和店铺的信息便于 AI 读取，并持续检查是否出现。"
+  }
+ ],
+ "relatedHeading": "相关指南",
+ "cta": {
+  "heading": "先看看 AI 如何读取您的网店",
+  "body": "免费检测可查看结构化数据、llms.txt 和 AI 爬虫访问的状态，无需注册。如果使用 WordPress，Nurevo AEO 可以免费补齐缺失的部分。",
+  "label": "免费检测 AI 可读性",
+  "href": "/check",
+  "secondary": {
+   "label": "在 WordPress.org 获取 Nurevo AEO",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT 是 OpenAI 的商标，Perplexity 是 Perplexity AI 的商标，Google 和 Google Merchant Center 是 Google LLC 的商标。WooCommerce、Shopify、Amazon、Yoast SEO、Rank Math、All in One SEO 和 Slim SEO 是其各自所有者的商标。Nurevo 与上述公司均无关联。本文不构成法律建议。"
+}

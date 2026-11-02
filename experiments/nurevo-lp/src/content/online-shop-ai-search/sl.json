@@ -1,0 +1,146 @@
+{
+ "title": "Iskanje z UI za spletne trgovine: izdelki, zaloga, vračila | Nurevo",
+ "description": "AEO za spletno trgovino se začne s pravilno objavo imen, cen, zaloge, dostave in pogojev vračila na straneh izdelkov in v strukturiranih podatkih. S kontrolnim seznamom.",
+ "h1": "Iskanje z UI za spletne trgovine: kako doseči, da UI pravilno prebere vaše izdelke, cene, zalogo in pogoje vračila",
+ "lead": "Optimizacija za iskanje z UI (AEO) v spletni trgovini se v bistvu zreducira na to, da imena izdelkov, cene, zalogo, stroške dostave, pogoje vračila in podatke o upravljavcu trgovine objavite natančno in usklajeno – tako v besedilu strani izdelkov kot v strukturiranih podatkih schema.org Product, Offer in OnlineStore. Tako imajo ChatGPT, Perplexity in UI Googla vse, kar potrebujejo, da brez ugibanja odgovorijo na vprašanja, kot sta »kje lahko X kupim na spletu?« ali »katera trgovina prodaja X z brezplačnim vračilom?«. Ne gre za dodajanje posebnih oznak za UI.",
+ "intro": [
+  "Napisano 2. novembra 2026 (JST). Podatke Googla, OpenAI in japonske Agencije za potrošniške zadeve (Consumer Affairs Agency) smo ta dan preverili na vsaki od uradnih strani.",
+  "Odgovori UI se spreminjajo iz dneva v dan in glede na to, kako je vprašanje zastavljeno. Tukaj opisani koraki naredijo dejstva o vaši trgovini in izdelkih berljiva za UI. Ne zagotavljajo, da bo UI vašo trgovino omenila ali jo kamor koli uvrstila."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj kupci sprašujejo UI in kaj UI bere",
+   "paragraphs": [
+    "Nakupovalna vprašanja za UI združujejo izdelek, ceno, zalogo, dostavo in vračila: »kje lahko na spletu kupim kremo za sončenje za občutljivo kožo?«, »trgovina, ki prodaja lesene deske za rezanje, izdelane na Japonskem«, »ali je X na zalogi in koliko stane dostava?«, »spletna trgovina s čevlji, kjer je vračilo preprosto«. Da bi UI lahko odgovorila, mora kot besedilo prebrati, katere izdelke prodajate in po kakšni ceni, ali jih je mogoče kupiti takoj, koliko staneta dostava in vračilo ter kdo je prodajalec.",
+    "Google navaja, da za prikaz v AI Overviews ali AI Mode ni dodatnih zahtev in ni potrebnih posebnih strukturiranih podatkov schema.org ter da še vedno štejejo običajne osnove, na primer da se strukturirani podatki ujemajo z vidnim besedilom in da so podatki v Merchant Center in Profilu podjetja posodobljeni. [Google: Funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)",
+    "Za ChatGPT OpenAI navaja, da rezultate izdelkov v iskanju ChatGPT izbira neodvisno in da niso oglasi; da upošteva strukturirane metapodatke, kot sta cena in opis izdelka, od lastnih in zunanjih ponudnikov; ter da trgovce razvršča po dejavnikih, kot so razpoložljivost, cena, kakovost in to, ali so proizvajalec ali glavni prodajalec. Podatki o izdelkih trgovcev na Shopify so že vključeni prek Shopify Catalog, drugi trgovci pa lahko zaprosijo za neposredno posredovanje vira izdelkov (preverjeno 2. novembra 2026). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Dejstva, ki bi jih morala spletna trgovina objaviti",
+   "paragraphs": [
+    "Googlova dokumentacija za organizacije nima obveznih lastnosti, priporoča uporabo čim bolj specifičnega podtipa in za spletno trgovino priporoča OnlineStore namesto OnlineBusiness. [Google: Strukturirani podatki organizacije](https://developers.google.com/search/docs/appearance/structured-data/organization). Pri izdelkih strukturirani podatki za ponudbe trgovcev pri Product zahtevajo name, image in offers, pri Offer pa price (večjo od nič) in priceCurrency; availability je priporočena. [Google: Strukturirani podatki ponudb trgovcev](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Dejstvo",
+     "Na strani",
+     "V strukturiranih podatkih"
+    ],
+    "rows": [
+     [
+      "Trgovina (kdo prodaja)",
+      "Ime trgovine, podjetje upravljavec in kontaktni podatki na strani »O nas« ali v pravnem obvestilu",
+      "OnlineStore (vrsta Organization); brez obveznih lastnosti"
+     ],
+     [
+      "Ime in slika izdelka",
+      "Na vsaki strani izdelka, z imenom, ki pokaže razlike v modelu, velikosti ali barvi",
+      "Product name in image (obvezno)"
+     ],
+     [
+      "Cena",
+      "Prodajna cena kot besedilo in datum, ko se akcijska cena konča",
+      "Offer price in priceCurrency (obvezno)"
+     ],
+     [
+      "Zaloga",
+      "Na zalogi, ni na zalogi ali prednaročilo – skladno z dejanskim stanjem",
+      "Offer availability (priporočeno)"
+     ],
+     [
+      "Pogoji vračila",
+      "Rok za vračilo, pogoji in kdo plača poštnino za vračilo – na eni strani",
+      "Organization hasMerchantReturnPolicy; sprejemljiva je tudi samo povezava na stran z vračili (merchantReturnLink)"
+     ],
+     [
+      "Dostava",
+      "Stroški dostave (po regiji ali vrednosti naročila) in roki dostave",
+      "Organization hasShippingService (shippingConditions obvezno)"
+     ]
+    ],
+    "caption": "Obvezne in priporočene lastnosti, kot jih je navajala Googlova dokumentacija 2. novembra 2026."
+   },
+   "after": [
+    "Oznake za ponudbe trgovcev so namenjene stranem, na katerih lahko kupec izdelek kupi, Google pa jih priporoča dodati na strani izdelkov in ne na strani s seznami izdelkov. Vračila in dostavo je najbolje opisati enkrat, kot pravila za celotno trgovino, v Organization, namesto pri vsakem izdelku. [Google: Pravilnik o vračilih](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: Pravilnik o dostavi](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "Pri Googlu imajo nastavitve vračil in dostave v Merchant Center ali Search Console prednost pred strukturiranimi podatki na vašem spletnem mestu. Če vrednost spremenite samo na enem mestu, si podatki nasprotujejo, zato ob spremembi cene, stroškov dostave ali pogojev vračila hkrati posodobite strani izdelkov, strukturirane podatke, Merchant Center, strani trgovine na tržnicah in llms.txt."
+   ]
+  },
+  {
+   "heading": "Dejstva, ki jih na vaših straneh morda že zahteva zakon",
+   "paragraphs": [
+    "Pravila za spletno prodajo se razlikujejo od države do države, zato preverite tista, ki veljajo za vas. Na Japonskem na primer zakon o določenih poslovnih transakcijah (Act on Specified Commercial Transactions) zahteva, da oglaševanje prodaje na daljavo navaja ceno z vključenim potrošnim davkom, stroške dostave, vse druge stroške, ki jih plača kupec, kdaj in kako se plača, kdaj bo blago dostavljeno, pogoje za preklic in vračilo ter ime, naslov in telefonsko številko prodajalca. [Consumer Affairs Agency: oglaševanje prodaje na daljavo (v japonščini)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Prav ta dejstva UI potrebuje, da odgovori na vprašanje »koliko stane dostava?« ali »ali lahko to vrnem?«.",
+    "Po istem zakonu, kot pojasnjuje Consumer Affairs Agency, lahko kupec, če pogoji vračila niso prikazani, odstopi od nakupa v osmih dneh po prejemu blaga in sam krije stroške vračila. [Consumer Affairs Agency: primer vračila pri prodaji na daljavo (v japonščini)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Ne glede na to, kakšna so vaša pravila, jih jasno navedite v besedilu in poskrbite, da stran z vračili, na katero povezujete iz strukturiranih podatkov, pravi isto.",
+    "Prikazujte ocene in mnenja samo resničnih kupcev. Na Japonskem je prikrito trženje (stealth marketing) od 1. oktobra 2023 kršitev zakona proti neupravičenim nagradam in zavajajočim navedbam (Act against Unjustifiable Premiums and Misleading Representations); objave, za katere podjetje prosi tretje osebe ali jim jih naroči, štejejo za njegovo oglaševanje, vključno z mnenji. [Consumer Affairs Agency: prikrito trženje (v japonščini)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Nastavitev v trgovini na WordPressu (WooCommerce)",
+   "list": [
+    "Namestite Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) in ga aktivirajte. Če uporabljate Yoast SEO, Rank Math, All in One SEO ali Slim SEO, jih obdržite.",
+    "V nastavitvah (ali v čarovniku za nastavitev) nastavite vrsto mesta na »Spletna trgovina«. Ko je WooCommerce aktiven, je predlagana samodejno, vendar se nič ne spremeni, dokler ne shranite. Trgovina je objavljena kot OnlineStore, naslov in delovni čas pa nista potrebna (vnesen naslov ali telefon je kljub temu objavljen).",
+    "Vnesite URL-ja strani s pravili vračil in povračil ter strani s pravili dostave. Stran z vračili je objavljena kot MerchantReturnPolicy trgovine (povezava na to stran), obe strani pa sta navedeni v llms.txt. Dostava se ne pretvori v strukturirane podatke, ker vtičnik ne pozna njenih pogojev (stroškov in rokov); stran je le navedena v llms.txt.",
+    "Strani izdelkov obdržijo oznake Product, ki jih izpiše WooCommerce; Nurevo AEO jih ne podvaja. Na naslovni strani objavi katalog (OfferCatalog) z največ 30 nazadnje objavljenimi izdelki, s ceno, valuto in zalogo, kjer so znane. Ocena je dodana samo izdelkom z resničnimi mnenji. Izdelki so navedeni tudi v llms.txt.",
+    "Vnesite pogosta vprašanja (stroški dostave, roki dostave, darilno pakiranje, kako vrniti izdelek) in postavite blok Nurevo FAQ ali kratko kodo [nurevo_faq] na stran, kjer naj bodo prikazana.",
+    "Zaženite diagnostiko na zaslonu Ocena AEO. Za spletno trgovino preveri izdelke s ceno in zalogo, stran z vračili, stran z dostavo in kontaktne podatke ter izpiše, kaj manjka.",
+    "S [brezplačnim preverjanjem berljivosti za UI](/check) si od zunaj oglejte, kaj UI prebere, in potrdite, da se cene, dostava in pogoji vračila ujemajo z Merchant Center in stranmi vaše trgovine na tržnicah."
+   ],
+   "after": [
+    "Pri trgovinah, ki niso zgrajene na WordPressu, na primer na Shopify, velja ista zamisel: dejstva iz zgornje tabele objavite v besedilu strani izdelkov in v strukturiranih podatkih, v llms.txt pa navedite pregled trgovine, strani z vračili in dostavo ter glavne strani izdelkov. [Kaj je llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Vsaka stran izdelka prikazuje ime izdelka, ceno in stanje zaloge kot besedilo, ne le na sliki.",
+    "Cene in zaloga v strukturiranih podatkih se ujemajo z vrednostmi, vidnimi na strani, razprodani izdelki pa niso označeni kot na zalogi.",
+    "Stroški dostave, roki dostave in pogoji vračila imajo svoje strani, na katere vodijo povezave s strani izdelkov ali iz noge.",
+    "Ime, naslov in telefonska številka prodajalca ter drugi zakonsko zahtevani podatki so objavljeni.",
+    "Vrsta strukturiranih podatkov trgovine ustreza dejavnosti, na primer OnlineStore.",
+    "Oznake ocen in mnenj izhajajo samo iz resničnih mnenj kupcev.",
+    "Cene, dostava in pogoji vračila se ujemajo na vašem spletnem mestu, v Merchant Center, na tržnicah in na straneh trgovine na družbenih omrežjih."
+   ]
+  },
+  {
+   "heading": "Kako preveriti, ali se pojavljate v odgovorih UI",
+   "paragraphs": [
+    "Ko so dejstva urejena, UI zastavite vprašanja, ki bi jih zastavili vaši kupci (»najboljša spletna trgovina za X«, »kje kupiti X z brezplačno dostavo«), in preverite, ali se vaša trgovina ali izdelki pojavijo z imenom ali URL-jem. Odgovori se med posameznimi poskusi razlikujejo, zato ista vprašanja zastavite večkrat, v časovnih presledkih.",
+    "Ko je vaše spletno mesto povezano s storitvijo Nurevo, paketa Free in Standard vključujeta mesečno preverjanje: tri vprašanja, sestavljena iz kategorij vaših izdelkov (nikoli iz imena trgovine), so zastavljena Perplexity, vtičnik pa zabeleži, ali so odgovori omenili vašo trgovino ali navedli vaše spletno mesto. Paket Pro (od $99 na mesec) doda merjenje vidnosti v UI v različici beta: kako pogosto se vaša trgovina pojavlja v odgovorih UI, s primerjavo s konkurenco in zgodovino (trenutno v Perplexity). Oboje temelji na vzorcu odgovorov in ne spremlja vsakega odgovora."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kje naj spletna trgovina začne z iskanjem z UI?",
+   "a": "Na strani vsakega izdelka kot besedilo pravilno zapišite ime, ceno in stanje zaloge, dostavo, vračila in podatke o prodajalcu pa objavite na ločenih straneh. Nato ista dejstva objavite kot strukturirane podatke Product, Offer in OnlineStore ter v llms.txt in preverite, da se ujemajo z Merchant Center in vašimi ponudbami na tržnicah."
+  },
+  {
+   "q": "Ali moram plačati, da se moji izdelki pojavijo v ChatGPT?",
+   "a": "OpenAI navaja, da so rezultati izdelkov v iskanju ChatGPT izbrani neodvisno in niso oglasi. Trgovci na Shopify so že vključeni prek Shopify Catalog, drugi trgovci pa lahko zaprosijo za neposredno posredovanje vira izdelkov. V nobenem primeru prikaz ni zagotovljen."
+  },
+  {
+   "q": "Če prodajam na tržnicah, kot je Amazon, ali moram vseeno urediti svoje spletno mesto?",
+   "a": "Strani tržnic lahko UI uporabi kot vir, vendar lahko opise izdelkov, pogoje vračila in pogosta vprašanja najpodrobneje in najnatančneje objavite na svojem spletnem mestu. Najvarneje je, da cene, dostavo in pogoje vračila na obeh mestih ohranjate usklajene."
+  },
+  {
+   "q": "Ali je Nurevo AEO brezplačen?",
+   "a": "Da. Vrsta spletne trgovine (OnlineStore), katalog izdelkov, strukturirani podatki pravil vračil in pogostih vprašanj, llms.txt, pravila za pajke UI in Ocena AEO so v brezplačnem paketu. Plačljiva paketa dodata vedno posodobljen nabor pravil (Standard, $20 na mesec) in merjenje vidnosti v UI v različici beta (Pro, od $99 na mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Ali bo to zagotovilo, da se moji izdelki pojavijo v odgovorih UI?",
+   "a": "Ne. Odgovori UI se spreminjajo in nobeno orodje ali tehnika ne more zagotoviti omembe ali položaja. Lahko pa poskrbite, da so dejstva o vaših izdelkih in trgovini za UI lahko berljiva, in redno preverjate, ali se pojavljate."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Najprej poglejte, kako UI bere spletno mesto vaše trgovine",
+  "body": "Brezplačno preverjanje pokaže stanje vaših strukturiranih podatkov, llms.txt in dostopa pajkov UI, brez registracije. V WordPressu Nurevo AEO vrzeli zapolni brezplačno.",
+  "label": "Zaženite brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Prenesite Nurevo AEO z WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI, Google in Google Merchant Center pa družbe Google LLC. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO in Slim SEO so blagovne znamke svojih lastnikov. Nurevo z njimi ni povezan. Ta članek ni pravni nasvet."
+}

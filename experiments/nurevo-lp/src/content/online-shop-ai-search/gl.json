@@ -1,0 +1,146 @@
+{
+ "title": "IA e tendas en liña: produtos, stock e devolucións | Nurevo",
+ "description": "O AEO dunha tenda en liña comeza por publicar ben nomes, prezos, stock, envíos e devolucións, en cada ficha e en datos estruturados. Con lista de comprobación.",
+ "h1": "Busca con IA para tendas en liña: como conseguir que a IA lea ben os teus produtos, prezos, stock e condicións de devolución",
+ "lead": "A optimización para a busca con IA (AEO) dunha tenda en liña redúcese a publicar de xeito exacto e coherente os nomes dos teus produtos, os prezos, o stock, os gastos de envío, as condicións de devolución e quen xestiona a tenda, tanto no texto das páxinas de produto coma nos datos estruturados de schema.org Product, Offer e OnlineStore. Así ChatGPT, Perplexity e a IA de Google teñen o que precisan para responder a «onde podo mercar X en liña?» ou «que tenda vende X con devolucións gratuítas?» sen ter que adiviñar. Non se trata de engadir etiquetas especiais para a IA.",
+ "intro": [
+  "Redactado o 2 de novembro de 2026 (JST). A información de Google, OpenAI e da Axencia de Asuntos do Consumidor de Xapón (Consumer Affairs Agency) comprobouse ese día nas súas respectivas páxinas oficiais.",
+  "As respostas da IA cambian dun día para outro e segundo como se formule a pregunta. Os pasos que se describen aquí fan que os datos da túa tenda e dos teus produtos sexan lexibles para a IA. Non garanten que unha IA mencione a túa tenda nin que a sitúe en ningunha posición concreta."
+ ],
+ "sections": [
+  {
+   "heading": "Que lle preguntan os compradores á IA e que le a IA",
+   "paragraphs": [
+    "As preguntas de compra que se lle fan á IA mesturan produto, prezo, stock, envío e devolucións: «onde podo mercar en liña un protector solar para pel sensible?», «unha tenda que venda táboas de cortar de madeira feitas en Xapón», «hai stock de X e canto custa o envío?», «unha zapataría en liña con devolucións doadas». Para respondelas, unha IA ten que poder ler, como texto, que produtos vendes e a que prezo, se se poden mercar agora, canto custan o envío e as devolucións e quen é o vendedor.",
+    "Google afirma que non hai requisitos adicionais nin datos estruturados especiais de schema.org para aparecer en AI Overviews ou AI Mode, e que o básico de sempre segue contando, como que os datos estruturados coincidan co texto visible e que a información de Merchant Center e do Perfil da empresa estea ao día. [Google: as funcións de IA e o teu sitio web](https://developers.google.com/search/docs/appearance/ai-features)",
+    "No caso de ChatGPT, OpenAI explica que os resultados de produtos na busca os selecciona ChatGPT de forma independente e non son anuncios; que ten en conta metadatos estruturados, como o prezo e a descrición do produto, de provedores propios e de terceiros; e que os comerciantes se clasifican segundo factores como a dispoñibilidade, o prezo, a calidade e se son o fabricante ou o vendedor principal. Os datos de produto dos comerciantes de Shopify xa están integrados a través de Shopify Catalog, e os demais comerciantes poden solicitar fornecer directamente un feed de produtos (comprobado o 2 de novembro de 2026). [OpenAI: mercar con ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Os datos que debe publicar unha tenda en liña",
+   "paragraphs": [
+    "A documentación de Google sobre organizacións non ten propiedades obrigatorias, pide usar o subtipo máis específico e recomenda OnlineStore en lugar de OnlineBusiness para un sitio de comercio electrónico. [Google: datos estruturados de organización](https://developers.google.com/search/docs/appearance/structured-data/organization). Para os produtos, os datos estruturados de fichas de comerciante de Google esixen name, image e offers no Product, e price (maior ca cero) e priceCurrency no Offer; availability é recomendable. [Google: datos estruturados de fichas de comerciante](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Dato",
+     "Na páxina",
+     "Nos datos estruturados"
+    ],
+    "rows": [
+     [
+      "A tenda (quen vende)",
+      "Nome da tenda, empresa que a xestiona e datos de contacto, nunha páxina «Quen somos» ou de aviso legal",
+      "OnlineStore (un tipo de Organization); sen propiedades obrigatorias"
+     ],
+     [
+      "Nome e imaxe do produto",
+      "En cada páxina de produto, cun nome que reflicta as diferenzas de modelo, talla ou cor",
+      "Product name e image (obrigatorios)"
+     ],
+     [
+      "Prezo",
+      "O prezo de venda como texto, e cando remata un prezo de oferta",
+      "Offer price e priceCurrency (obrigatorios)"
+     ],
+     [
+      "Stock",
+      "En stock, esgotado ou en reserva, segundo a situación real",
+      "Offer availability (recomendado)"
+     ],
+     [
+      "Condicións de devolución",
+      "Prazo de devolución, condicións e quen paga o envío da devolución, nunha soa páxina",
+      "Organization hasMerchantReturnPolicy; abonda cunha ligazón á páxina de devolucións (merchantReturnLink)"
+     ],
+     [
+      "Envío",
+      "Gastos de envío (por rexión ou importe do pedido) e prazos de entrega",
+      "Organization hasShippingService (shippingConditions obrigatorio)"
+     ]
+    ],
+    "caption": "Propiedades obrigatorias e recomendadas segundo a documentación de Google a 2 de novembro de 2026."
+   },
+   "after": [
+    "O marcado de fichas de comerciante está pensado para páxinas nas que o comprador pode adquirir o produto, e Google recomenda engadilo ás páxinas de produto e non ás que mostran listaxes de produtos. O mellor é describir as devolucións e o envío unha soa vez, como políticas de toda a tenda na túa Organization, en lugar de en cada produto. [Google: política de devolucións](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: política de envío](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "En Google, a configuración de devolucións e envío de Merchant Center ou Search Console prevalece sobre os datos estruturados do teu sitio. Se cambias un valor nun só lugar, quedan en conflito; por iso, cando cambie un prezo, un gasto de envío ou unha condición de devolución, actualiza á vez as páxinas de produto, os datos estruturados, Merchant Center, as páxinas da túa tenda en marketplaces e o llms.txt."
+   ]
+  },
+  {
+   "heading": "Datos que a lei quizais xa esixe nas túas páxinas",
+   "paragraphs": [
+    "As normas da venda en liña varían segundo o país, así que comproba as que che afectan. En Xapón, por exemplo, a Lei de transaccións comerciais especificadas (Act on Specified Commercial Transactions) obriga a que a publicidade de venda a distancia mostre o prezo co imposto sobre o consumo incluído, os gastos de envío, calquera outro custo que pague o comprador, cando e como se paga, cando se entregan os produtos, as condicións de cancelación e devolución, e o nome, o enderezo e o teléfono do vendedor. [Consumer Affairs Agency: publicidade de venda a distancia (en xaponés)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Son xusto os datos que precisa unha IA para responder a «canto custa o envío?» ou «podo devolvelo?».",
+    "Segundo esa mesma lei, se non se mostran condicións de devolución, o comprador pode cancelar nos oito días seguintes á recepción dos produtos e paga o custo de devolvelos, explica a Consumer Affairs Agency. [Consumer Affairs Agency: caso de devolución en venda a distancia (en xaponés)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Sexa cal sexa a túa política, exponla con claridade en texto e asegúrate de que a páxina de devolucións ligada desde os datos estruturados diga o mesmo.",
+    "Mostra só valoracións e opinións de clientes reais. En Xapón, o marketing encuberto (stealth marketing) é unha infracción da Lei contra premios inxustificables e representacións enganosas (Act against Unjustifiable Premiums and Misleading Representations) desde o 1 de outubro de 2023; as publicacións que unha empresa pide ou encarga a terceiros contan como publicidade súa, opinións incluídas. [Consumer Affairs Agency: marketing encuberto (en xaponés)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Configuración nunha tenda WordPress (WooCommerce)",
+   "list": [
+    "Instala Nurevo AEO (gratuíto) desde [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) e actívao. Se usas Yoast SEO, Rank Math, All in One SEO ou Slim SEO, podes mantelo.",
+    "En Axustes (ou no asistente de configuración), escolle o tipo de sitio «Tenda en liña (comercio electrónico)». Suxírese cando WooCommerce está activo, pero non cambia nada ata que gardes. A tenda publícase como OnlineStore e non fai falla enderezo nin horario de apertura (se introduciches un enderezo ou un teléfono, publícanse igualmente).",
+    "Introduce os URL da túa páxina de política de devolucións e reembolsos e da túa páxina de política de envíos. A páxina de devolucións publícase como a MerchantReturnPolicy da tenda (unha ligazón a esa páxina) e ambas as páxinas inclúense en llms.txt. O envío non se converte en datos estruturados porque o plugin non coñece as súas condicións (gastos e prazos); a páxina só se inclúe en llms.txt.",
+    "As páxinas de produto conservan o marcado Product que xera WooCommerce; Nurevo AEO non o repite. Na páxina de inicio publica ata os 30 produtos publicados máis recentemente como catálogo (OfferCatalog), con prezo, moeda e stock cando se coñecen. Só se engade unha valoración aos produtos con opinións reais. Os produtos tamén se inclúen en llms.txt.",
+    "Introduce as túas preguntas frecuentes (gastos de envío, prazos de entrega, envoltorio de agasallo, como devolver) e coloca o bloque Nurevo FAQ ou o shortcode [nurevo_faq] na páxina onde queiras mostralas.",
+    "Executa o diagnóstico na pantalla Puntuación AEO. Para unha tenda en liña comproba que haxa produtos con prezo e stock, unha páxina de devolucións, unha páxina de envíos e datos de contacto, e enumera o que falta.",
+    "Mira desde fóra o que le a IA coa [comprobación gratuíta de lexibilidade para IA](/check) e confirma que os prezos, o envío e as condicións de devolución coinciden con Merchant Center e coas páxinas da túa tenda en marketplaces."
+   ],
+   "after": [
+    "Nas tendas que non están feitas con WordPress, como Shopify, a idea é a mesma: publica os datos da táboa anterior no texto das páxinas de produto e en datos estruturados, e inclúe en llms.txt a presentación da túa tenda, as devolucións, o envío e as principais páxinas de produto. [Que é llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Lista de comprobación antes de publicar",
+   "list": [
+    "Cada páxina de produto mostra o nome, o prezo e o estado do stock como texto, non só nunha imaxe.",
+    "Os prezos e o stock dos datos estruturados coinciden cos valores visibles na páxina, e os produtos esgotados non figuran como dispoñibles.",
+    "Os gastos de envío, os prazos de entrega e as condicións de devolución teñen páxinas propias, ligadas desde as páxinas de produto ou o pé de páxina.",
+    "Publícanse o nome, o enderezo e o teléfono do vendedor, así como o resto de datos que esixe a lei.",
+    "O tipo de datos estruturados da tenda axústase ao negocio, por exemplo OnlineStore.",
+    "O marcado de valoracións e opinións procede unicamente de opinións reais de clientes.",
+    "Os prezos, o envío e as condicións de devolución coinciden no teu sitio, en Merchant Center, nos marketplaces e nas tendas de redes sociais."
+   ]
+  },
+  {
+   "heading": "Como comprobar se apareces nas respostas da IA",
+   "paragraphs": [
+    "Cando teñas os datos en orde, faille á IA as preguntas que farían os teus clientes («a mellor tenda en liña para X», «onde mercar X con envío gratuíto») e comproba se a túa tenda ou os teus produtos aparecen polo seu nome ou URL. As respostas cambian dunha vez a outra, así que repite as mesmas preguntas varias veces, espazadas no tempo.",
+    "Se o teu sitio está conectado ao servizo Nurevo, os plans Free e Standard inclúen unha comprobación mensual: formúlanselle a Perplexity tres preguntas creadas a partir das túas categorías de produto (nunca co nome da túa tenda) e o plugin rexistra se as respostas nomearon a túa tenda ou citaron o teu sitio. O plan Pro (desde $99/mes) engade a medición de visibilidade na IA en beta: con que frecuencia aparece a túa tenda nas respostas da IA, con comparación coa competencia e historial (polo momento en Perplexity). En ambos os casos analízase unha mostra de respostas, non todas."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Por onde debe comezar unha tenda en liña coa busca con IA?",
+   "a": "Escribe correctamente como texto o nome, o prezo e o estado do stock de cada produto na súa páxina, e pon o envío, as devolucións e os datos do vendedor en páxinas propias. Despois publica eses mesmos datos como datos estruturados Product, Offer e OnlineStore e en llms.txt, e asegúrate de que coinciden con Merchant Center e coas túas fichas en marketplaces."
+  },
+  {
+   "q": "Teño que pagar para que os meus produtos aparezan en ChatGPT?",
+   "a": "OpenAI afirma que os resultados de produtos na busca de ChatGPT se seleccionan de forma independente e non son anuncios. Os comerciantes de Shopify xa están integrados a través de Shopify Catalog, e os demais poden solicitar fornecer directamente un feed de produtos. En ningún caso está garantido aparecer."
+  },
+  {
+   "q": "Se vendo en marketplaces como Amazon, teño que mellorar igualmente o meu propio sitio?",
+   "a": "A IA pode usar as páxinas dos marketplaces como fonte, pero é no teu propio sitio onde podes publicar as descricións de produto, as condicións de devolución e as preguntas frecuentes con máis detalle e precisión. O máis seguro é manter os prezos, o envío e as condicións de devolución iguais en ambos os lugares."
+  },
+  {
+   "q": "Nurevo AEO é gratuíto?",
+   "a": "Si. O tipo de sitio tenda en liña (OnlineStore), o catálogo de produtos, os datos estruturados de política de devolucións e de preguntas frecuentes, llms.txt, as regras para rastrexadores de IA e a Puntuación AEO están no plan gratuíto. Os plans de pagamento engaden un conxunto de regras sempre actualizado (Standard, $20/mes) e a medición de visibilidade na IA en beta (Pro, desde $99/mes). [Nurevo AEO en WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Isto garante que os meus produtos aparezan nas respostas da IA?",
+   "a": "Non. As respostas da IA cambian, e ningunha ferramenta nin técnica pode garantir unha mención ou unha posición. O que si podes facer é que os datos dos teus produtos e da túa tenda sexan doados de ler para a IA e seguir comprobando se apareces."
+  }
+ ],
+ "relatedHeading": "Guías relacionadas",
+ "cta": {
+  "heading": "Primeiro, mira como le a IA o sitio da túa tenda",
+  "body": "A comprobación gratuíta mostra o estado dos teus datos estruturados, do llms.txt e do acceso dos rastrexadores de IA, sen rexistro. En WordPress, Nurevo AEO cobre o que falta de balde.",
+  "label": "Facer a comprobación gratuíta de lexibilidade para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Descargar Nurevo AEO en WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é unha marca de OpenAI; Perplexity, de Perplexity AI; e Google e Google Merchant Center, de Google LLC. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO e Slim SEO son marcas dos seus respectivos titulares. Nurevo non está afiliado a ningún deles. Este artigo non constitúe asesoramento xurídico."
+}

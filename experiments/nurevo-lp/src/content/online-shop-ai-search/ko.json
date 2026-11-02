@@ -1,0 +1,146 @@
+{
+ "title": "온라인 쇼핑몰의 AI 검색 대응: 상품·재고·반품 정보 | Nurevo",
+ "description": "온라인 쇼핑몰의 AEO는 상품명, 가격, 재고, 배송비, 반품 조건을 상품 페이지 텍스트와 구조화 데이터에 정확히 공개하는 데서 시작합니다. 체크리스트 포함.",
+ "h1": "온라인 쇼핑몰의 AI 검색 대응: 상품, 가격, 재고, 반품 조건을 AI가 정확히 읽게 하는 방법",
+ "lead": "온라인 쇼핑몰의 AI 검색 최적화(AEO)는 결국 상품명, 가격, 재고, 배송비, 반품 조건, 그리고 쇼핑몰 운영자 정보를 상품 페이지 텍스트와 schema.org의 Product, Offer, OnlineStore 구조화 데이터에 정확하고 일관되게 공개하는 일입니다. 그러면 ChatGPT, Perplexity, Google의 AI가 “X를 온라인에서 어디서 살 수 있어?”, “X를 무료 반품으로 파는 쇼핑몰은?” 같은 질문에 추측하지 않고 답하는 데 필요한 정보를 얻을 수 있습니다. AI용 특별한 태그를 추가하는 일이 아닙니다.",
+ "intro": [
+  "2026년 11월 2일(일본 시간) 작성. Google, OpenAI, 일본 소비자청의 정보는 같은 날 각 공식 페이지에서 확인했습니다.",
+  "AI의 답변은 날마다, 그리고 질문 방식에 따라 달라집니다. 이 글의 방법은 쇼핑몰과 상품의 사실 정보를 AI가 읽을 수 있게 만드는 것이며, AI가 쇼핑몰을 언급하거나 특정 순위에 올린다는 보장은 아닙니다."
+ ],
+ "sections": [
+  {
+   "heading": "고객이 AI에 묻는 것, AI가 읽는 것",
+   "paragraphs": [
+    "AI에 던지는 쇼핑 질문에는 상품, 가격, 재고, 배송, 반품이 함께 섞여 있습니다. “민감성 피부용 선크림 온라인에서 어디서 사?”, “일본산 나무 도마 파는 쇼핑몰”, “X 재고 있어? 배송비는 얼마?”, “반품이 쉬운 온라인 신발 가게” 같은 식입니다. 이런 질문에 답하려면 AI가 어떤 상품을 얼마에 파는지, 지금 살 수 있는지, 배송과 반품에 비용이 얼마나 드는지, 누가 판매하는지를 텍스트로 읽을 수 있어야 합니다.",
+    "Google은 AI Overviews나 AI Mode에 표시되기 위한 추가 요건이나 특별한 schema.org 구조화 데이터는 없으며, 구조화 데이터를 화면에 보이는 텍스트와 일치시키고 Merchant Center와 비즈니스 프로필(Business Profile) 정보를 최신으로 유지하는 등 평소의 기본이 여전히 중요하다고 설명합니다. [Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)",
+    "ChatGPT에 대해 OpenAI는 검색의 상품 결과는 ChatGPT가 독립적으로 선택하며 광고가 아니라는 점, 퍼스트파티 및 서드파티 제공자의 가격·상품 설명 같은 구조화된 메타데이터를 고려한다는 점, 판매자 순위는 재고 여부, 가격, 품질, 제조사 또는 주요 판매자인지 등의 요소로 정해진다는 점을 밝히고 있습니다. Shopify 판매자의 상품 데이터는 이미 Shopify Catalog를 통해 연동되어 있으며, 그 밖의 판매자는 상품 피드를 직접 제공하도록 신청할 수 있습니다(2026년 11월 2일 확인). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "온라인 쇼핑몰이 공개해야 할 정보",
+   "paragraphs": [
+    "Google의 조직(Organization) 문서에는 필수 속성이 없으며, 가장 구체적인 하위 유형을 쓰도록 하고 전자상거래 사이트에는 OnlineBusiness보다 OnlineStore를 권장합니다. [Google: Organization structured data](https://developers.google.com/search/docs/appearance/structured-data/organization). 상품의 경우 Google의 판매자 등록정보(merchant listing) 구조화 데이터는 Product에 name, image, offers를, Offer에 price(0보다 큰 값)와 priceCurrency를 필수로 요구하며, availability는 권장 속성입니다. [Google: Merchant listing structured data](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "정보",
+     "페이지에서",
+     "구조화 데이터에서"
+    ],
+    "rows": [
+     [
+      "쇼핑몰(누가 파는가)",
+      "회사 소개나 사업자 정보 페이지에 쇼핑몰명, 운영 회사, 연락처",
+      "OnlineStore(Organization의 일종). 필수 속성 없음"
+     ],
+     [
+      "상품명과 이미지",
+      "각 상품 페이지에, 모델·사이즈·색상의 차이가 드러나는 이름으로",
+      "Product의 name과 image(필수)"
+     ],
+     [
+      "가격",
+      "판매 가격을 텍스트로, 세일 가격이 언제 끝나는지도",
+      "Offer의 price와 priceCurrency(필수)"
+     ],
+     [
+      "재고",
+      "재고 있음, 품절, 예약 판매 중 실제 상태와 일치하게",
+      "Offer의 availability(권장)"
+     ],
+     [
+      "반품 조건",
+      "반품 기간, 조건, 반품 배송비 부담 주체를 한 페이지에",
+      "Organization의 hasMerchantReturnPolicy. 반품 페이지 링크(merchantReturnLink)만으로도 가능"
+     ],
+     [
+      "배송",
+      "배송비(지역별 또는 주문 금액별)와 배송 기간",
+      "Organization의 hasShippingService(shippingConditions 필수)"
+     ]
+    ],
+    "caption": "필수 및 권장 속성은 2026년 11월 2일 기준 Google 문서에 기재된 내용입니다."
+   },
+   "after": [
+    "판매자 등록정보 마크업은 고객이 상품을 구매할 수 있는 페이지용이며, Google은 상품 목록 페이지가 아닌 상품 페이지에 추가하도록 권장합니다. 반품과 배송은 상품마다 쓰기보다 쇼핑몰 전체 정책으로 Organization에 한 번만 기술하는 것이 좋습니다. [Google: Return policy](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: Shipping policy](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "Google에서는 Merchant Center나 Search Console의 반품·배송 설정이 사이트의 구조화 데이터보다 우선합니다. 한 곳의 값만 바꾸면 정보가 서로 어긋나므로, 가격이나 배송비, 반품 조건이 바뀌면 상품 페이지, 구조화 데이터, Merchant Center, 오픈마켓 상점 페이지, llms.txt를 함께 업데이트하세요."
+   ]
+  },
+  {
+   "heading": "법률상 이미 페이지에 표시해야 할 수 있는 정보",
+   "paragraphs": [
+    "온라인 판매 규정은 나라마다 다르므로 자신에게 적용되는 규정을 확인하세요. 예를 들어 일본에서는 특정상거래법이 통신판매 광고에 소비세 포함 가격, 배송비, 구매자가 부담하는 그 밖의 비용, 결제 시기와 방법, 상품 인도 시기, 청약 철회 및 반품 조건, 판매자의 이름·주소·전화번호를 표시하도록 정하고 있습니다. [일본 소비자청: 통신판매 광고(일본어)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). 이는 AI가 “배송비 얼마야?”, “반품할 수 있어?”에 답할 때 필요한 정보와 정확히 일치합니다.",
+    "소비자청 설명에 따르면 같은 법에서 반품 조건이 표시되지 않은 경우 구매자는 상품을 받은 날부터 8일 이내에 계약을 해제할 수 있으며, 반품 비용은 구매자가 부담합니다. [일본 소비자청: 통신판매 반품 사례(일본어)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). 어떤 정책이든 텍스트로 분명히 적고, 구조화 데이터에서 링크한 반품 페이지의 내용도 같게 유지하세요.",
+    "평점과 리뷰는 실제 고객의 것만 표시하세요. 일본에서는 2023년 10월 1일부터 스텔스 마케팅이 경품표시법 위반이 되었으며, 사업자가 제3자에게 의뢰하거나 지시해 올린 게시물은 리뷰를 포함해 그 사업자의 광고로 간주됩니다. [일본 소비자청: 스텔스 마케팅(일본어)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "WordPress(WooCommerce) 쇼핑몰에서 설정하기",
+   "list": [
+    "[WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)에서 Nurevo AEO(무료)를 설치하고 활성화합니다. Yoast SEO, Rank Math, All in One SEO, Slim SEO를 사용 중이라면 그대로 두어도 됩니다.",
+    "설정(또는 설정 마법사)에서 사이트 유형을 “온라인 쇼핑몰”로 지정합니다. WooCommerce가 활성화되어 있으면 이 유형이 제안되지만, 저장하기 전에는 아무것도 바뀌지 않습니다. 쇼핑몰은 OnlineStore로 공개되며 주소나 영업시간은 필요 없습니다(입력한 주소나 전화번호는 그대로 공개됩니다).",
+    "반품·환불 정책 페이지와 배송 정책 페이지의 URL을 입력합니다. 반품 페이지는 쇼핑몰의 MerchantReturnPolicy(해당 페이지로의 링크)로 공개되고, 두 페이지 모두 llms.txt에 나열됩니다. 배송은 플러그인이 조건(비용과 기간)을 알 수 없으므로 구조화 데이터로 만들지 않고, 페이지를 llms.txt에 나열하기만 합니다.",
+    "상품 페이지는 WooCommerce가 출력하는 Product 마크업을 그대로 쓰며, Nurevo AEO는 이를 중복 출력하지 않습니다. 첫 페이지에서는 가장 최근에 공개된 상품을 최대 30개까지 상품 카탈로그(OfferCatalog)로 공개하며, 알 수 있는 경우 가격, 통화, 재고도 포함합니다. 평점은 실제 리뷰가 있는 상품에만 추가됩니다. 상품은 llms.txt에도 나열됩니다.",
+    "FAQ(배송비, 배송 기간, 선물 포장, 반품 방법)를 입력하고, 표시하고 싶은 페이지에 Nurevo FAQ 블록이나 [nurevo_faq] 숏코드를 배치합니다.",
+    "AEO 점수 화면에서 진단을 실행합니다. 온라인 쇼핑몰의 경우 가격과 재고가 있는 상품, 반품 페이지, 배송 페이지, 연락처가 있는지 확인하고 부족한 항목을 보여 줍니다.",
+    "[무료 AI 가독성 진단](/check)으로 외부에서 AI가 무엇을 읽는지 확인하고, 가격·배송비·반품 조건이 Merchant Center 및 오픈마켓 상점 페이지와 일치하는지 점검합니다."
+   ],
+   "after": [
+    "Shopify처럼 WordPress로 만들지 않은 쇼핑몰도 생각은 같습니다. 위 표의 정보를 상품 페이지 텍스트와 구조화 데이터에 공개하고, 쇼핑몰 개요, 반품, 배송, 주요 상품 페이지를 llms.txt에 나열하세요. [llms.txt란?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "공개 전 체크리스트",
+   "list": [
+    "각 상품 페이지에 상품명, 가격, 재고 상태가 이미지만이 아니라 텍스트로 표시되어 있다.",
+    "구조화 데이터의 가격과 재고가 페이지에 보이는 값과 일치하며, 품절 상품이 재고 있음으로 표시되어 있지 않다.",
+    "배송비, 배송 기간, 반품 조건에 각각 전용 페이지가 있고, 상품 페이지나 푸터에서 링크되어 있다.",
+    "판매자의 이름, 주소, 전화번호 등 법적으로 필요한 정보가 공개되어 있다.",
+    "쇼핑몰의 구조화 데이터 유형이 OnlineStore처럼 사업에 맞게 설정되어 있다.",
+    "평점·리뷰 마크업은 실제 고객 리뷰에서만 가져온다.",
+    "가격, 배송비, 반품 조건이 자사 사이트, Merchant Center, 오픈마켓, SNS 상점 페이지에서 모두 일치한다."
+   ]
+  },
+  {
+   "heading": "AI 답변에 노출되는지 확인하기",
+   "paragraphs": [
+    "정보를 갖춘 뒤에는 고객이 물어볼 만한 질문(“X 사기 좋은 온라인 쇼핑몰”, “X 무료 배송으로 살 수 있는 곳”)을 AI에 던져 보고, 쇼핑몰이나 상품이 이름이나 URL로 나오는지 확인하세요. 답변은 매번 달라지므로 같은 질문을 시간 간격을 두고 여러 번 물어보세요.",
+    "사이트를 Nurevo 서비스에 연결하면 Free와 Standard 플랜에는 매월 한 번의 확인이 포함됩니다. 상품 카테고리를 바탕으로 만든 질문 세 개(쇼핑몰 이름은 절대 사용하지 않음)를 Perplexity에 묻고, 플러그인이 답변에서 쇼핑몰이 언급되었는지 또는 사이트가 인용되었는지를 기록합니다. Pro 플랜(월 $99부터)에는 베타 버전의 AI 노출 측정이 추가되어, AI 답변에 쇼핑몰이 얼마나 자주 나오는지를 경쟁사 비교 및 이력과 함께 볼 수 있습니다(현재 Perplexity 대상). 두 기능 모두 모든 응답을 관찰하는 것이 아니라 답변을 표본으로 확인합니다."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "온라인 쇼핑몰은 AI 검색 대응을 어디서부터 시작해야 하나요?",
+   "a": "각 상품 페이지에 상품명, 가격, 재고 상태를 텍스트로 정확히 적고, 배송, 반품, 판매자 정보를 각각 전용 페이지에 두세요. 그런 다음 같은 정보를 Product, Offer, OnlineStore 구조화 데이터와 llms.txt로 공개하고, Merchant Center 및 오픈마켓 등록 정보와 일치하는지 확인하세요."
+  },
+  {
+   "q": "ChatGPT에 상품을 노출하려면 비용을 내야 하나요?",
+   "a": "OpenAI는 ChatGPT 검색의 상품 결과가 독립적으로 선택되며 광고가 아니라고 밝히고 있습니다. Shopify 판매자는 이미 Shopify Catalog를 통해 연동되어 있고, 그 밖의 판매자는 상품 피드를 직접 제공하도록 신청할 수 있습니다. 어느 경우든 노출이 보장되지는 않습니다."
+  },
+  {
+   "q": "Amazon 같은 오픈마켓에서 팔고 있어도 자사 사이트를 정비해야 하나요?",
+   "a": "오픈마켓 페이지도 AI의 정보원으로 쓰일 수 있지만, 상품 설명, 반품 조건, FAQ를 가장 자세하고 정확하게 공개할 수 있는 곳은 자사 사이트입니다. 양쪽의 가격, 배송비, 반품 조건을 일치시켜 두는 것이 가장 안전합니다."
+  },
+  {
+   "q": "Nurevo AEO는 무료인가요?",
+   "a": "네. 온라인 쇼핑몰 유형(OnlineStore), 상품 카탈로그, 반품 정책 및 FAQ 구조화 데이터, llms.txt, AI 크롤러 규칙, AEO 점수는 무료 플랜에 포함됩니다. 유료 플랜에서는 항상 최신으로 유지되는 규칙 세트(Standard, 월 $20)와 베타 버전의 AI 노출 측정(Pro, 월 $99부터)이 추가됩니다. [WordPress.org의 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "이렇게 하면 AI 답변에 상품이 반드시 나오나요?",
+   "a": "아닙니다. AI 답변은 변하며, 어떤 도구나 기법도 언급이나 순위를 보장할 수 없습니다. 할 수 있는 일은 상품과 쇼핑몰의 정보를 AI가 읽기 쉽게 만들고, 노출 여부를 꾸준히 확인하는 것입니다."
+  }
+ ],
+ "relatedHeading": "관련 가이드",
+ "cta": {
+  "heading": "먼저 AI가 쇼핑몰 사이트를 어떻게 읽는지 확인하세요",
+  "body": "무료 진단으로 구조화 데이터, llms.txt, AI 크롤러 접근 상태를 가입 없이 확인할 수 있습니다. WordPress라면 Nurevo AEO가 부족한 부분을 무료로 채워 줍니다.",
+  "label": "무료 AI 가독성 진단 실행",
+  "href": "/check",
+  "secondary": {
+   "label": "WordPress.org에서 Nurevo AEO 받기",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT는 OpenAI의, Perplexity는 Perplexity AI의, Google 및 Google Merchant Center는 Google LLC의 상표입니다. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO, Slim SEO는 각 소유자의 상표입니다. Nurevo는 이들과 제휴 관계가 없습니다. 이 글은 법률 자문이 아닙니다."
+}

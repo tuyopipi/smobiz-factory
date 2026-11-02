@@ -1,0 +1,146 @@
+{
+ "title": "Tekoälyhaku verkkokaupoille: tuotteet, varasto ja palautus | Nurevo",
+ "description": "Verkkokaupan AEO alkaa tuotenimien, hintojen, varastotilanteen, toimituksen ja palautusehtojen oikeasta julkaisusta sivuilla ja rakenteisessa datassa. Tarkistuslistalla.",
+ "h1": "Tekoälyhaku verkkokaupoille: näin tekoäly lukee tuotteesi, hintasi, varastotilanteesi ja palautusehtosi oikein",
+ "lead": "Verkkokaupan tekoälyhakuoptimointi (AEO) tarkoittaa käytännössä sitä, että tuotenimet, hinnat, varastotilanne, toimituskulut, palautusehdot ja kaupan ylläpitäjä julkaistaan tarkasti ja yhdenmukaisesti sekä tuotesivujen tekstissä että schema.org-rakenteisessa datassa (Product, Offer ja OnlineStore). Silloin ChatGPT:llä, Perplexityllä ja Googlen tekoälyllä on tarvittavat tiedot vastata kysymyksiin ”mistä voin ostaa X:n verkosta?” tai ”mikä kauppa myy X:ää ilmaisella palautuksella?” arvailematta. Kyse ei ole erityisten tekoälytunnisteiden lisäämisestä.",
+ "intro": [
+  "Kirjoitettu 2. marraskuuta 2026 (Japanin aikaa). Googlen, OpenAI:n ja Japanin kuluttajaviraston (Consumer Affairs Agency) tiedot tarkistettiin kunkin virallisilta sivuilta tuona päivänä.",
+  "Tekoälyn vastaukset muuttuvat päivästä toiseen ja kysymyksen muotoilun mukaan. Tämän oppaan vaiheet tekevät kauppasi ja tuotteidesi tiedoista tekoälylle luettavia. Ne eivät takaa, että tekoäly mainitsee kauppasi tai nostaa sen tietylle sijalle."
+ ],
+ "sections": [
+  {
+   "heading": "Mitä ostajat kysyvät tekoälyltä ja mitä tekoäly lukee",
+   "paragraphs": [
+    "Tekoälylle esitetyt ostokysymykset yhdistelevät tuotetta, hintaa, varastoa, toimitusta ja palautuksia: ”mistä voin ostaa aurinkovoidetta herkälle iholle verkosta?”, ”kauppa, joka myy Japanissa valmistettuja puisia leikkuulautoja”, ”onko X varastossa ja paljonko toimitus maksaa?”, ”verkon kenkäkauppa, jossa palautus on helppoa”. Vastatakseen tekoälyn täytyy pystyä lukemaan tekstinä, mitä tuotteita myyt ja mihin hintaan, voiko niitä ostaa nyt, mitä toimitus ja palautus maksavat ja kuka myy.",
+    "Google kertoo, että AI Overviews- tai AI Mode -näkyvyyteen ei ole lisävaatimuksia eikä erityistä schema.org-rakenteista dataa tarvita, ja että tavalliset perusasiat ovat edelleen tärkeitä, kuten rakenteisen datan vastaaminen näkyvää tekstiä sekä Merchant Centerin ja yritysprofiilin tietojen pitäminen ajan tasalla. [Google: tekoälyominaisuudet ja sivustosi](https://developers.google.com/search/docs/appearance/ai-features)",
+    "ChatGPT:n osalta OpenAI kertoo, että ChatGPT valitsee haun tuotetulokset itsenäisesti eivätkä ne ole mainoksia; että se huomioi rakenteisia metatietoja, kuten hinnan ja tuotekuvauksen, sekä omista että kolmansien osapuolten lähteistä; ja että kauppiaat järjestetään esimerkiksi saatavuuden, hinnan, laadun ja sen perusteella, ovatko ne valmistaja tai päämyyjä. Shopify-kauppiaiden tuotetiedot on jo integroitu Shopify Catalogin kautta, ja muut kauppiaat voivat hakea mahdollisuutta toimittaa tuotesyöte suoraan (tarkistettu 2. marraskuuta 2026). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Tiedot, jotka verkkokaupan kannattaa julkaista",
+   "paragraphs": [
+    "Googlen organisaatioita koskevassa dokumentaatiossa ei ole pakollisia ominaisuuksia, siinä kehotetaan käyttämään tarkinta alatyyppiä ja suositellaan verkkokauppasivustolle OnlineStore-tyyppiä OnlineBusinessin sijaan. [Google: organisaation rakenteinen data](https://developers.google.com/search/docs/appearance/structured-data/organization). Tuotteiden osalta Googlen kauppiasluettelon rakenteinen data edellyttää Productilta name-, image- ja offers-ominaisuudet sekä Offerilta price (suurempi kuin nolla) ja priceCurrency; availability on suositeltu. [Google: kauppiasluettelon rakenteinen data](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Tieto",
+     "Sivulla",
+     "Rakenteisessa datassa"
+    ],
+    "rows": [
+     [
+      "Kauppa (kuka myy)",
+      "Kaupan nimi, ylläpitävä yritys ja yhteystiedot tietoa meistä- tai oikeudelliset tiedot -sivulla",
+      "OnlineStore (Organizationin alatyyppi); ei pakollisia ominaisuuksia"
+     ],
+     [
+      "Tuotteen nimi ja kuva",
+      "Jokaisella tuotesivulla, nimellä, josta näkyvät mallin, koon tai värin erot",
+      "Productin name ja image (pakollisia)"
+     ],
+     [
+      "Hinta",
+      "Myyntihinta tekstinä sekä se, milloin tarjoushinta päättyy",
+      "Offerin price ja priceCurrency (pakollisia)"
+     ],
+     [
+      "Varasto",
+      "Varastossa, loppunut tai ennakkotilattavissa, todellisen tilanteen mukaan",
+      "Offerin availability (suositeltu)"
+     ],
+     [
+      "Palautusehdot",
+      "Palautusaika, ehdot ja kuka maksaa palautuksen postikulut, yhdellä sivulla",
+      "Organizationin hasMerchantReturnPolicy; pelkkä linkki palautussivulle (merchantReturnLink) hyväksytään"
+     ],
+     [
+      "Toimitus",
+      "Toimituskulut (alueen tai tilauksen arvon mukaan) ja toimitusajat",
+      "Organizationin hasShippingService (shippingConditions pakollinen)"
+     ]
+    ],
+    "caption": "Pakolliset ja suositellut ominaisuudet Googlen dokumentaation mukaan 2. marraskuuta 2026."
+   },
+   "after": [
+    "Kauppiasluettelon merkintä on tarkoitettu sivuille, joilta ostaja voi ostaa tuotteen, ja Google suosittelee lisäämään sen tuotesivuille eikä tuotteita listaaville sivuille. Palautukset ja toimitus kannattaa kuvata kerran koko kauppaa koskevina käytäntöinä Organization-tiedoissa sen sijaan, että ne toistettaisiin jokaisella tuotteella. [Google: palautuskäytäntö](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: toimituskäytäntö](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "Googlessa Merchant Centerin tai Search Consolen palautus- ja toimitusasetukset menevät sivustosi rakenteisen datan edelle. Jos muutat arvoa vain yhdessä paikassa, tiedot ovat ristiriidassa, joten kun hinta, toimituskulu tai palautusehto muuttuu, päivitä tuotesivut, rakenteinen data, Merchant Center, kauppapaikkojen myymäläsivut ja llms.txt samalla kertaa."
+   ]
+  },
+  {
+   "heading": "Tiedot, joita laki saattaa jo edellyttää sivuillasi",
+   "paragraphs": [
+    "Verkkokaupan säännöt vaihtelevat maittain, joten tarkista omaasi koskevat. Japanissa esimerkiksi tiettyjä kaupallisia liiketoimia koskeva laki (Act on Specified Commercial Transactions) edellyttää, että etämyynnin mainonnassa näytetään hinta kulutusveroineen, toimituskulut, muut ostajan maksettavat kulut, maksuaika ja -tapa, tavaroiden toimitusaika, peruutus- ja palautusehdot sekä myyjän nimi, osoite ja puhelinnumero. [Consumer Affairs Agency: etämyynnin mainonta (japaniksi)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Juuri näitä tietoja tekoäly tarvitsee vastatakseen kysymyksiin ”paljonko toimitus maksaa?” tai ”voinko palauttaa sen?”.",
+    "Saman lain mukaan, jos palautusehtoja ei ole ilmoitettu, ostaja voi perua kaupan kahdeksan päivän kuluessa tavaroiden vastaanottamisesta ja maksaa itse niiden palautuskulut, kertoo Consumer Affairs Agency. [Consumer Affairs Agency: etämyynnin palautustapaus (japaniksi)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Olipa käytäntösi mikä tahansa, kirjoita se selkeästi tekstinä ja varmista, että rakenteisesta datasta linkitetty palautussivu kertoo saman.",
+    "Näytä arvosanoja ja arvosteluja vain oikeilta asiakkailta. Japanissa piilomarkkinointi (stealth marketing) on 1. lokakuuta 2023 alkaen rikkonut perusteettomia etuja ja harhaanjohtavia esityksiä koskevaa lakia (Act against Unjustifiable Premiums and Misleading Representations); julkaisut, joita yritys pyytää tai ohjeistaa kolmansia osapuolia tekemään, katsotaan sen omaksi mainonnaksi, arvostelut mukaan lukien. [Consumer Affairs Agency: piilomarkkinointi (japaniksi)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Käyttöönotto WordPress-verkkokaupassa (WooCommerce)",
+   "list": [
+    "Asenna Nurevo AEO (ilmainen) [WordPress.orgista](https://wordpress.org/plugins/nurevo-webmcp/) ja ota se käyttöön. Pidä Yoast SEO, Rank Math, All in One SEO tai Slim SEO, jos käytät jotakin niistä.",
+    "Valitse Asetuksissa (tai ohjatussa käyttöönotossa) sivustotyypiksi ”Verkkokauppa”. Sitä ehdotetaan, kun WooCommerce on käytössä, mutta mikään ei muutu ennen kuin tallennat. Kauppa julkaistaan OnlineStore-tyyppinä, eikä osoitetta tai aukioloaikoja tarvita (syöttämäsi osoite tai puhelinnumero julkaistaan silti).",
+    "Syötä palautus- ja hyvityskäytäntösivusi sekä toimituskäytäntösivusi URL-osoitteet. Palautussivu julkaistaan kaupan MerchantReturnPolicy-tietona (linkkinä sivulle), ja molemmat sivut listataan llms.txt-tiedostoon. Toimitusta ei muunneta rakenteiseksi dataksi, koska lisäosa ei tiedä sen ehtoja (kuluja ja aikoja); sivu vain listataan llms.txt-tiedostoon.",
+    "Tuotesivut säilyttävät WooCommercen tulostaman Product-merkinnän; Nurevo AEO ei toista sitä. Etusivulla se julkaisee enintään 30 viimeksi julkaistua tuotetta luettelona (OfferCatalog), hinnan, valuutan ja varastotilanteen kanssa, kun ne tiedetään. Arvosana lisätään vain tuotteille, joilla on oikeita arvosteluja. Tuotteet listataan myös llms.txt-tiedostoon.",
+    "Syötä usein kysytyt kysymyksesi (toimituskulut, toimitusajat, lahjapaketointi, palautusohjeet) ja sijoita Nurevo FAQ -lohko tai [nurevo_faq]-lyhytkoodi sivulle, jolla haluat ne näkyviin.",
+    "Suorita diagnoosi AEO-pisteet-näkymässä. Verkkokaupan kohdalla se tarkistaa, onko tuotteita hinnalla ja varastotilanteella, palautussivu, toimitussivu ja yhteystiedot, ja listaa puuttuvat asiat.",
+    "Katso ulkopuolelta, mitä tekoäly lukee, [ilmaisella tekoälyluettavuuden tarkistuksella](/check), ja varmista, että hinnat, toimitus ja palautusehdot vastaavat Merchant Centeriä ja kauppapaikkojen myymäläsivujasi."
+   ],
+   "after": [
+    "Muilla kuin WordPressillä rakennetuissa kaupoissa, kuten Shopifyssa, sama periaate pätee: julkaise yllä olevan taulukon tiedot tuotesivujen tekstissä ja rakenteisessa datassa, ja listaa kaupan yleiskuvaus, palautus- ja toimitussivut sekä tärkeimmät tuotesivut llms.txt-tiedostoon. [Mikä on llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Tarkistuslista ennen julkaisua",
+   "list": [
+    "Jokainen tuotesivu näyttää tuotteen nimen, hinnan ja varastotilanteen tekstinä, ei pelkästään kuvassa.",
+    "Rakenteisen datan hinnat ja varastotiedot vastaavat sivulla näkyviä arvoja, eikä loppuunmyytyjä tuotteita ole merkitty varastossa oleviksi.",
+    "Toimituskuluilla, toimitusajoilla ja palautusehdoilla on omat sivunsa, joihin linkitetään tuotesivuilta tai alatunnisteesta.",
+    "Myyjän nimi, osoite, puhelinnumero ja muut lakisääteiset tiedot on julkaistu.",
+    "Kaupan rakenteisen datan tyyppi sopii liiketoimintaan, esimerkiksi OnlineStore.",
+    "Arvosana- ja arvostelumerkinnät perustuvat vain oikeiden asiakkaiden arvosteluihin.",
+    "Hinnat, toimitus ja palautusehdot ovat samat sivustollasi, Merchant Centerissä, kauppapaikoilla ja sosiaalisen median kaupoissa."
+   ]
+  },
+  {
+   "heading": "Näin tarkistat, näkyykö kauppasi tekoälyn vastauksissa",
+   "paragraphs": [
+    "Kun tiedot ovat kunnossa, esitä tekoälylle kysymyksiä, joita asiakkaasi esittäisivät (”paras verkkokauppa X:lle”, ”mistä ostaa X ilmaisella toimituksella”), ja katso, mainitaanko kauppasi tai tuotteesi nimeltä tai URL-osoitteella. Vastaukset vaihtelevat kerrasta toiseen, joten esitä samat kysymykset muutaman kerran eri aikoina.",
+    "Kun sivustosi on yhdistetty Nurevo-palveluun, Free- ja Standard-tilauksiin sisältyy kuukausittainen tarkistus: Perplexitylle esitetään kolme tuotekategorioidesi pohjalta muodostettua kysymystä (ei koskaan kaupan nimellä), ja lisäosa kirjaa, mainitsivatko vastaukset kauppasi nimeltä tai viittasivatko ne sivustoosi. Pro-tilaus (alkaen $99/kk) lisää beetavaiheessa olevan tekoälynäkyvyyden mittauksen: kuinka usein kauppasi esiintyy tekoälyn vastauksissa, kilpailijavertailun ja historian kera (tällä hetkellä Perplexityssä). Molemmat perustuvat otokseen vastauksista eivätkä seuraa jokaista vastausta."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Mistä verkkokaupan kannattaa aloittaa tekoälyhaun kanssa?",
+   "a": "Kirjoita jokaisen tuotteen nimi, hinta ja varastotilanne oikein tekstinä sen tuotesivulle, ja tee toimitukselle, palautuksille ja myyjän tiedoille omat sivunsa. Julkaise sitten samat tiedot Product-, Offer- ja OnlineStore-rakenteisena datana ja llms.txt-tiedostossa, ja varmista, että ne vastaavat Merchant Centeriä ja kauppapaikkojen ilmoituksiasi."
+  },
+  {
+   "q": "Pitääkö minun maksaa, jotta tuotteeni näkyvät ChatGPT:ssä?",
+   "a": "OpenAI kertoo, että ChatGPT-haun tuotetulokset valitaan itsenäisesti eivätkä ne ole mainoksia. Shopify-kauppiaat on jo integroitu Shopify Catalogin kautta, ja muut kauppiaat voivat hakea mahdollisuutta toimittaa tuotesyöte suoraan. Kummassakaan tapauksessa näkyminen ei ole taattua."
+  },
+  {
+   "q": "Jos myyn Amazonin kaltaisilla kauppapaikoilla, pitääkö omaa sivustoa silti parantaa?",
+   "a": "Tekoäly voi käyttää kauppapaikkojen sivuja lähteinä, mutta omalla sivustollasi voit julkaista tuotekuvaukset, palautusehdot ja usein kysytyt kysymykset kaikkein yksityiskohtaisimmin ja tarkimmin. Turvallisinta on pitää hinnat, toimitus ja palautusehdot yhtenäisinä molemmissa paikoissa."
+  },
+  {
+   "q": "Onko Nurevo AEO ilmainen?",
+   "a": "On. Verkkokauppatyyppi (OnlineStore), tuoteluettelo, palautuskäytännön ja usein kysyttyjen kysymysten rakenteinen data, llms.txt, tekoälyindeksoijien säännöt ja AEO-pisteet sisältyvät ilmaiseen tilaukseen. Maksulliset tilaukset lisäävät aina ajantasaisen sääntökokoelman (Standard, $20/kk) ja beetavaiheessa olevan tekoälynäkyvyyden mittauksen (Pro, alkaen $99/kk). [Nurevo AEO WordPress.orgissa](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Takaako tämä, että tuotteeni näkyvät tekoälyn vastauksissa?",
+   "a": "Ei. Tekoälyn vastaukset muuttuvat, eikä mikään työkalu tai tekniikka voi taata mainintaa tai sijoitusta. Voit kuitenkin tehdä tuotteidesi ja kauppasi tiedoista tekoälylle helposti luettavia ja seurata jatkuvasti, näkyykö kauppasi."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso ensin, miten tekoäly lukee kauppasi sivustoa",
+  "body": "Ilmainen tarkistus näyttää rakenteisen datan, llms.txt-tiedoston ja tekoälyindeksoijien pääsyn tilan ilman rekisteröitymistä. WordPressissä Nurevo AEO paikkaa puutteet ilmaiseksi.",
+  "label": "Tee ilmainen tekoälyluettavuuden tarkistus",
+  "href": "/check",
+  "secondary": {
+   "label": "Lataa Nurevo AEO WordPress.orgista",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI:n tavaramerkki, Perplexity Perplexity AI:n sekä Google ja Google Merchant Center Google LLC:n tavaramerkkejä. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO ja Slim SEO ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa niihin. Tämä artikkeli ei ole oikeudellista neuvontaa."
+}

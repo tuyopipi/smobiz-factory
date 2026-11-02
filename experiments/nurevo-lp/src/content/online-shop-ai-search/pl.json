@@ -1,0 +1,146 @@
+{
+ "title": "Wyszukiwanie AI dla sklepów: produkty, stany, zwroty | Nurevo",
+ "description": "AEO dla sklepu internetowego zaczyna się od poprawnych nazw, cen, stanów, dostawy i zasad zwrotów w treści stron produktów i w danych strukturalnych. Z listą kontrolną.",
+ "h1": "Wyszukiwanie AI dla sklepów internetowych: jak sprawić, by AI poprawnie odczytywała Twoje produkty, ceny, stany magazynowe i zasady zwrotów",
+ "lead": "Optymalizacja pod wyszukiwanie AI (AEO) w sklepie internetowym sprowadza się do tego, by nazwy produktów, ceny, stany magazynowe, koszty dostawy, zasady zwrotów i dane właściciela sklepu publikować dokładnie i spójnie – zarówno w treści stron produktów, jak i w danych strukturalnych schema.org Product, Offer i OnlineStore. Dzięki temu ChatGPT, Perplexity i AI Google mają wszystko, czego potrzebują, by bez zgadywania odpowiedzieć na pytania typu „gdzie kupię X przez internet?” albo „który sklep sprzedaje X z darmowym zwrotem?”. Nie chodzi tu o dodawanie specjalnych znaczników dla AI.",
+ "intro": [
+  "Tekst napisany 2 listopada 2026 r. (JST). Informacje od Google, OpenAI i japońskiej Agencji ds. Konsumentów (Consumer Affairs Agency) sprawdziliśmy tego dnia na każdej z oficjalnych stron.",
+  "Odpowiedzi AI zmieniają się z dnia na dzień i zależą od sformułowania pytania. Opisane tu kroki sprawiają, że fakty o Twoim sklepie i produktach stają się czytelne dla AI. Nie gwarantują, że AI wspomni o Twoim sklepie ani że umieści go na jakiejkolwiek pozycji."
+ ],
+ "sections": [
+  {
+   "heading": "O co klienci pytają AI i co AI czyta",
+   "paragraphs": [
+    "Pytania zakupowe kierowane do AI łączą produkt, cenę, dostępność, dostawę i zwroty: „gdzie kupię online krem z filtrem do skóry wrażliwej?”, „sklep z drewnianymi deskami do krojenia made in Japan”, „czy X jest dostępny i ile kosztuje dostawa?”, „sklep internetowy z butami, w którym łatwo zwrócić towar”. Żeby na nie odpowiedzieć, AI musi móc odczytać w postaci tekstu, jakie produkty sprzedajesz i w jakiej cenie, czy można je kupić od ręki, ile kosztują dostawa i zwrot oraz kto jest sprzedawcą.",
+    "Google podaje, że do pojawienia się w AI Overviews lub AI Mode nie są potrzebne żadne dodatkowe wymagania ani specjalne dane strukturalne schema.org, a nadal liczą się zwykłe podstawy, takie jak zgodność danych strukturalnych z widocznym tekstem i aktualne informacje w Merchant Center oraz Profilu Firmy. [Google: funkcje AI a Twoja witryna](https://developers.google.com/search/docs/appearance/ai-features)",
+    "W przypadku ChatGPT OpenAI wyjaśnia, że wyniki produktowe w wyszukiwaniu ChatGPT wybiera samodzielnie i nie są one reklamami; że bierze pod uwagę metadane strukturalne, takie jak cena i opis produktu, pochodzące od dostawców własnych i zewnętrznych; oraz że sprzedawców szereguje według czynników takich jak dostępność, cena, jakość i to, czy są producentem lub głównym sprzedawcą. Dane produktowe sprzedawców korzystających z Shopify są już zintegrowane przez Shopify Catalog, a pozostali sprzedawcy mogą złożyć wniosek o bezpośrednie przekazywanie pliku produktowego (stan na 2 listopada 2026 r.). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Fakty, które sklep internetowy powinien opublikować",
+   "paragraphs": [
+    "Dokumentacja Google dotycząca organizacji nie zawiera wymaganych właściwości, zaleca użycie najbardziej szczegółowego podtypu, a dla serwisu e-commerce rekomenduje OnlineStore zamiast OnlineBusiness. [Google: dane strukturalne organizacji](https://developers.google.com/search/docs/appearance/structured-data/organization). W przypadku produktów dane strukturalne informacji o produktach sprzedawcy wymagają w Product właściwości name, image i offers, a w Offer – price (większej od zera) i priceCurrency; availability jest zalecane. [Google: dane strukturalne informacji o produktach sprzedawcy](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Fakt",
+     "Na stronie",
+     "W danych strukturalnych"
+    ],
+    "rows": [
+     [
+      "Sklep (kto sprzedaje)",
+      "Nazwa sklepu, firma prowadząca i dane kontaktowe na stronie „O nas” lub w nocie prawnej",
+      "OnlineStore (rodzaj Organization); brak wymaganych właściwości"
+     ],
+     [
+      "Nazwa i zdjęcie produktu",
+      "Na każdej stronie produktu, z nazwą pokazującą różnice modelu, rozmiaru lub koloru",
+      "Product name i image (wymagane)"
+     ],
+     [
+      "Cena",
+      "Cena sprzedaży jako tekst oraz data zakończenia promocji",
+      "Offer price i priceCurrency (wymagane)"
+     ],
+     [
+      "Dostępność",
+      "Dostępny, niedostępny lub w przedsprzedaży – zgodnie ze stanem faktycznym",
+      "Offer availability (zalecane)"
+     ],
+     [
+      "Zasady zwrotów",
+      "Termin zwrotu, warunki i kto płaci za odesłanie – na jednej stronie",
+      "Organization hasMerchantReturnPolicy; akceptowany jest sam link do strony zwrotów (merchantReturnLink)"
+     ],
+     [
+      "Dostawa",
+      "Koszty dostawy (według regionu lub wartości zamówienia) i czas realizacji",
+      "Organization hasShippingService (shippingConditions wymagane)"
+     ]
+    ],
+    "caption": "Właściwości wymagane i zalecane według dokumentacji Google z 2 listopada 2026 r."
+   },
+   "after": [
+    "Znaczniki informacji o produktach sprzedawcy są przeznaczone dla stron, na których klient może kupić produkt, a Google zaleca dodawanie ich na stronach produktów, a nie na stronach z listami produktów. Zwroty i dostawę najlepiej opisać raz, jako zasady obowiązujące w całym sklepie, w Organization, zamiast przy każdym produkcie. [Google: zasady zwrotów](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: zasady dostawy](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "W Google ustawienia zwrotów i dostawy w Merchant Center lub Search Console mają pierwszeństwo przed danymi strukturalnymi w Twojej witrynie. Zmiana wartości tylko w jednym miejscu powoduje sprzeczność, dlatego gdy zmienia się cena, koszt dostawy lub zasady zwrotów, zaktualizuj jednocześnie strony produktów, dane strukturalne, Merchant Center, strony sklepu w marketplace’ach i llms.txt."
+   ]
+  },
+  {
+   "heading": "Fakty, których prawo może już wymagać na Twoich stronach",
+   "paragraphs": [
+    "Przepisy dotyczące sprzedaży internetowej różnią się w zależności od kraju, więc sprawdź te, które dotyczą Ciebie. W Japonii na przykład ustawa o określonych transakcjach handlowych (Act on Specified Commercial Transactions) wymaga, by reklama sprzedaży wysyłkowej podawała cenę z podatkiem konsumpcyjnym, koszty dostawy, wszelkie inne koszty ponoszone przez kupującego, termin i sposób płatności, termin dostawy towaru, warunki odstąpienia i zwrotu oraz nazwę, adres i numer telefonu sprzedawcy. [Consumer Affairs Agency: reklama sprzedaży wysyłkowej (po japońsku)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). To dokładnie te fakty, których AI potrzebuje, by odpowiedzieć na pytania „ile kosztuje dostawa?” czy „czy mogę to zwrócić?”.",
+    "Jak wyjaśnia Consumer Affairs Agency, na mocy tej samej ustawy, jeśli warunki zwrotu nie są podane, kupujący może odstąpić od umowy w ciągu ośmiu dni od otrzymania towaru i sam pokrywa koszt jego odesłania. [Consumer Affairs Agency: przypadek zwrotu w sprzedaży wysyłkowej (po japońsku)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Bez względu na to, jakie masz zasady, opisz je jasno w tekście i dbaj o to, by strona zwrotów, do której linkujesz w danych strukturalnych, mówiła to samo.",
+    "Pokazuj oceny i opinie wyłącznie od prawdziwych klientów. W Japonii ukryty marketing (stealth marketing) jest od 1 października 2023 r. naruszeniem ustawy o nieuzasadnionych premiach i wprowadzających w błąd oznaczeniach (Act against Unjustifiable Premiums and Misleading Representations); wpisy, o które firma prosi osoby trzecie lub które im zleca, uznaje się za jej reklamę – dotyczy to także opinii. [Consumer Affairs Agency: ukryty marketing (po japońsku)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Konfiguracja w sklepie na WordPressie (WooCommerce)",
+   "list": [
+    "Zainstaluj Nurevo AEO (za darmo) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) i włącz wtyczkę. Jeśli korzystasz z Yoast SEO, Rank Math, All in One SEO lub Slim SEO, zostaw je.",
+    "W ustawieniach (lub w kreatorze konfiguracji) ustaw typ witryny na „Sklep internetowy”. Jest on podpowiadany, gdy WooCommerce jest aktywne, ale nic się nie zmienia, dopóki nie zapiszesz. Sklep jest publikowany jako OnlineStore i nie trzeba podawać adresu ani godzin otwarcia (wpisany adres lub telefon nadal zostanie opublikowany).",
+    "Wpisz adresy URL strony z zasadami zwrotów i refundacji oraz strony z zasadami dostawy. Strona zwrotów jest publikowana jako MerchantReturnPolicy sklepu (link do tej strony), a obie strony trafiają do llms.txt. Dostawa nie jest zamieniana na dane strukturalne, ponieważ wtyczka nie zna jej warunków (kosztów i czasu); strona jest jedynie wymieniona w llms.txt.",
+    "Strony produktów zachowują znaczniki Product generowane przez WooCommerce; Nurevo AEO ich nie powiela. Na stronie głównej publikuje katalog (OfferCatalog) z maksymalnie 30 ostatnio opublikowanymi produktami, z ceną, walutą i dostępnością, jeśli są znane. Ocena jest dodawana tylko do produktów z prawdziwymi opiniami. Produkty są też wymienione w llms.txt.",
+    "Wpisz FAQ (koszty dostawy, czas realizacji, pakowanie na prezent, sposób zwrotu) i umieść blok Nurevo FAQ lub shortcode [nurevo_faq] na stronie, na której ma się wyświetlać.",
+    "Uruchom diagnozę na ekranie Wynik AEO. Dla sklepu internetowego sprawdza ona produkty z ceną i dostępnością, stronę zwrotów, stronę dostawy i dane kontaktowe, a następnie wypisuje, czego brakuje.",
+    "Zobacz z zewnątrz, co odczytuje AI, korzystając z [bezpłatnego testu czytelności dla AI](/check), i upewnij się, że ceny, koszty dostawy i zasady zwrotów są zgodne z Merchant Center i stronami Twojego sklepu w marketplace’ach."
+   ],
+   "after": [
+    "W sklepach niezbudowanych na WordPressie, np. na Shopify, obowiązuje ta sama zasada: publikuj fakty z powyższej tabeli w treści stron produktów i w danych strukturalnych, a w llms.txt wymień przegląd sklepu, strony zwrotów i dostawy oraz najważniejsze strony produktów. [Czym jest llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Lista kontrolna przed publikacją",
+   "list": [
+    "Każda strona produktu pokazuje nazwę produktu, cenę i dostępność jako tekst, a nie tylko na obrazku.",
+    "Ceny i dostępność w danych strukturalnych są zgodne z wartościami widocznymi na stronie, a wyprzedane produkty nie są oznaczone jako dostępne.",
+    "Koszty dostawy, czas realizacji i zasady zwrotów mają własne strony, do których prowadzą linki ze stron produktów lub ze stopki.",
+    "Opublikowane są nazwa, adres i numer telefonu sprzedawcy oraz inne dane wymagane przez prawo.",
+    "Typ danych strukturalnych sklepu pasuje do działalności, np. OnlineStore.",
+    "Znaczniki ocen i opinii pochodzą wyłącznie z prawdziwych opinii klientów.",
+    "Ceny, koszty dostawy i zasady zwrotów są takie same w Twojej witrynie, w Merchant Center, w marketplace’ach i na stronach sklepu w mediach społecznościowych."
+   ]
+  },
+  {
+   "heading": "Jak sprawdzić, czy pojawiasz się w odpowiedziach AI",
+   "paragraphs": [
+    "Gdy fakty są już na miejscu, zadaj AI pytania, które zadaliby Twoi klienci („najlepszy sklep internetowy z X”, „gdzie kupić X z darmową dostawą”), i sprawdź, czy Twój sklep lub produkty pojawiają się z nazwy albo z adresu URL. Odpowiedzi różnią się między kolejnymi próbami, więc zadawaj te same pytania kilka razy, w odstępach czasu.",
+    "Gdy Twoja witryna jest połączona z usługą Nurevo, plany Free i Standard obejmują comiesięczne sprawdzenie: trzy pytania utworzone na podstawie kategorii Twoich produktów (nigdy nazwy sklepu) są zadawane Perplexity, a wtyczka zapisuje, czy odpowiedzi wymieniły Twój sklep lub zacytowały Twoją witrynę. Plan Pro (od $99 miesięcznie) dodaje pomiar widoczności w AI w wersji beta: jak często Twój sklep pojawia się w odpowiedziach AI, z porównaniem z konkurencją i historią (obecnie w Perplexity). Oba rozwiązania badają próbkę odpowiedzi, a nie każdą odpowiedź."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Od czego sklep internetowy powinien zacząć z wyszukiwaniem AI?",
+   "a": "Poprawnie zapisz nazwę, cenę i dostępność każdego produktu jako tekst na jego stronie, a dostawę, zwroty i dane sprzedawcy umieść na osobnych stronach. Następnie opublikuj te same fakty jako dane strukturalne Product, Offer i OnlineStore oraz w llms.txt i upewnij się, że zgadzają się z Merchant Center i ofertami w marketplace’ach."
+  },
+  {
+   "q": "Czy muszę płacić, żeby moje produkty pojawiły się w ChatGPT?",
+   "a": "OpenAI podaje, że wyniki produktowe w wyszukiwaniu ChatGPT są wybierane niezależnie i nie są reklamami. Sprzedawcy na Shopify są już zintegrowani przez Shopify Catalog, a pozostali mogą złożyć wniosek o bezpośrednie przekazywanie pliku produktowego. W obu przypadkach pojawienie się nie jest gwarantowane."
+  },
+  {
+   "q": "Jeśli sprzedaję w marketplace’ach, np. na Amazonie, czy nadal muszę poprawiać własną witrynę?",
+   "a": "Strony marketplace’ów mogą być dla AI źródłem, ale to na własnej witrynie możesz najdokładniej i najbardziej szczegółowo opublikować opisy produktów, zasady zwrotów i FAQ. Najbezpieczniej jest dbać o to, by ceny, koszty dostawy i zasady zwrotów zgadzały się w obu miejscach."
+  },
+  {
+   "q": "Czy Nurevo AEO jest darmowe?",
+   "a": "Tak. Typ sklepu internetowego (OnlineStore), katalog produktów, dane strukturalne zasad zwrotów i FAQ, llms.txt, reguły dla robotów AI oraz Wynik AEO są dostępne w planie darmowym. Płatne plany dodają stale aktualny zestaw reguł (Standard, $20 miesięcznie) i pomiar widoczności w AI w wersji beta (Pro, od $99 miesięcznie). [Nurevo AEO w WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Czy to zagwarantuje, że moje produkty pojawią się w odpowiedziach AI?",
+   "a": "Nie. Odpowiedzi AI się zmieniają i żadne narzędzie ani technika nie zagwarantuje wzmianki ani pozycji. Możesz natomiast sprawić, że fakty o Twoich produktach i sklepie będą łatwe do odczytania dla AI, i regularnie sprawdzać, czy się pojawiasz."
+  }
+ ],
+ "relatedHeading": "Powiązane poradniki",
+ "cta": {
+  "heading": "Najpierw zobacz, jak AI czyta witrynę Twojego sklepu",
+  "body": "Bezpłatny test pokazuje stan danych strukturalnych, llms.txt i dostępu robotów AI – bez rejestracji. Na WordPressie Nurevo AEO bezpłatnie uzupełni braki.",
+  "label": "Uruchom bezpłatny test czytelności dla AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Pobierz Nurevo AEO z WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT jest znakiem towarowym OpenAI, Perplexity – Perplexity AI, a Google i Google Merchant Center – Google LLC. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO i Slim SEO są znakami towarowymi ich właścicieli. Nurevo nie jest z nimi powiązane. Ten artykuł nie stanowi porady prawnej."
+}

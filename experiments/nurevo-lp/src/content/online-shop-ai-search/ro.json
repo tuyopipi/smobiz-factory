@@ -1,0 +1,146 @@
+{
+ "title": "Căutarea AI pentru magazine online: produse, stoc, retur | Nurevo",
+ "description": "AEO pentru un magazin online începe cu publicarea corectă a denumirilor, prețurilor, stocului, livrării și returului pe paginile de produs și în date structurate.",
+ "h1": "Căutarea AI pentru magazine online: cum faceți ca AI să citească corect produsele, prețurile, stocul și condițiile de retur",
+ "lead": "Optimizarea pentru căutarea AI (AEO) a unui magazin online se reduce la a publica denumirile produselor, prețurile, stocul, costurile de livrare, condițiile de retur și informațiile despre cine operează magazinul în mod corect și consecvent, atât în textul paginilor de produs, cât și în datele structurate schema.org Product, Offer și OnlineStore. Astfel, ChatGPT, Perplexity și AI-ul Google au tot ce le trebuie ca să răspundă fără să ghicească la întrebări precum „de unde pot cumpăra X online?” sau „ce magazin vinde X cu retur gratuit?”. Nu este vorba despre adăugarea unor etichete speciale pentru AI.",
+ "intro": [
+  "Scris pe 2 noiembrie 2026 (JST). Informațiile de la Google, OpenAI și Agenția japoneză pentru Protecția Consumatorilor (Consumer Affairs Agency) au fost verificate în acea zi pe fiecare pagină oficială.",
+  "Răspunsurile AI se schimbă de la o zi la alta și în funcție de cum este formulată întrebarea. Pașii de aici fac ca informațiile despre magazinul și produsele dvs. să poată fi citite de AI. Nu garantează că un AI vă va menționa magazinul sau că îl va clasa undeva."
+ ],
+ "sections": [
+  {
+   "heading": "Ce întreabă cumpărătorii AI-ul și ce citește AI-ul",
+   "paragraphs": [
+    "Întrebările de cumpărături adresate AI-ului combină produsul, prețul, stocul, livrarea și returul: „de unde pot cumpăra online o cremă de protecție solară pentru pielea sensibilă?”, „un magazin care vinde tocătoare din lemn fabricate în Japonia”, „X este în stoc și cât costă livrarea?”, „un magazin online de încălțăminte cu retur ușor”. Ca să le poată răspunde, un AI trebuie să poată citi, sub formă de text, ce produse vindeți și la ce preț, dacă pot fi cumpărate acum, cât costă livrarea și returul și cine este vânzătorul.",
+    "Google afirmă că nu există cerințe suplimentare și nici date structurate schema.org speciale necesare pentru a apărea în AI Overviews sau AI Mode și că elementele de bază obișnuite contează în continuare, de exemplu ca datele structurate să corespundă textului vizibil și ca informațiile din Merchant Center și din Profilul companiei să fie actualizate. [Google: funcțiile AI și site-ul dvs.](https://developers.google.com/search/docs/appearance/ai-features)",
+    "În cazul ChatGPT, OpenAI spune că rezultatele de produse din căutare sunt selectate independent de ChatGPT și nu sunt reclame; că ia în considerare metadate structurate, precum prețul și descrierea produsului, de la furnizori proprii și terți; și că ordonează comercianții după factori precum disponibilitatea, prețul, calitatea și faptul că sunt producătorul sau vânzătorul principal. Datele de produs ale comercianților Shopify sunt deja integrate prin Shopify Catalog, iar alți comercianți pot aplica pentru a furniza direct un feed de produse (verificat pe 2 noiembrie 2026). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Informațiile pe care ar trebui să le publice un magazin online",
+   "paragraphs": [
+    "Documentația Google pentru organizații nu are proprietăți obligatorii, vă cere să folosiți subtipul cel mai specific și recomandă OnlineStore în loc de OnlineBusiness pentru un site de e-commerce. [Google: date structurate pentru organizații](https://developers.google.com/search/docs/appearance/structured-data/organization). Pentru produse, datele structurate Google pentru listările comercianților cer name, image și offers pe Product, iar pe Offer price (mai mare decât zero) și priceCurrency; availability este recomandată. [Google: date structurate pentru listările comercianților](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Informație",
+     "Pe pagină",
+     "În datele structurate"
+    ],
+    "rows": [
+     [
+      "Magazinul (cine vinde)",
+      "Numele magazinului, compania care îl operează și datele de contact, pe o pagină „Despre noi” sau în mențiunile legale",
+      "OnlineStore (un tip de Organization); fără proprietăți obligatorii"
+     ],
+     [
+      "Denumirea și imaginea produsului",
+      "Pe fiecare pagină de produs, cu o denumire care arată diferențele de model, mărime sau culoare",
+      "Product name și image (obligatorii)"
+     ],
+     [
+      "Prețul",
+      "Prețul de vânzare ca text și data la care se încheie o reducere",
+      "Offer price și priceCurrency (obligatorii)"
+     ],
+     [
+      "Stocul",
+      "În stoc, stoc epuizat sau precomandă, conform situației reale",
+      "Offer availability (recomandată)"
+     ],
+     [
+      "Condițiile de retur",
+      "Termenul de retur, condițiile și cine plătește transportul la retur, pe o singură pagină",
+      "Organization hasMerchantReturnPolicy; este acceptat și doar un link către pagina de retur (merchantReturnLink)"
+     ],
+     [
+      "Livrarea",
+      "Costurile de livrare (pe regiuni sau după valoarea comenzii) și termenele de livrare",
+      "Organization hasShippingService (shippingConditions obligatorie)"
+     ]
+    ],
+    "caption": "Proprietăți obligatorii și recomandate conform documentației Google din 2 noiembrie 2026."
+   },
+   "after": [
+    "Marcajul pentru listările comercianților este destinat paginilor de pe care un cumpărător poate cumpăra produsul, iar Google recomandă adăugarea lui pe paginile de produs, nu pe paginile care listează produse. Returul și livrarea se descriu cel mai bine o singură dată, ca politici valabile pentru întregul magazin, în Organization, nu la fiecare produs. [Google: politica de retur](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: politica de livrare](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "La Google, setările de retur și livrare din Merchant Center sau Search Console au prioritate față de datele structurate de pe site-ul dvs. Dacă schimbați o valoare într-un singur loc, informațiile vor intra în conflict, așa că atunci când se schimbă un preț, un cost de livrare sau o condiție de retur, actualizați împreună paginile de produs, datele structurate, Merchant Center, paginile magazinului de pe marketplace-uri și llms.txt."
+   ]
+  },
+  {
+   "heading": "Informații pe care legea le poate cere deja pe paginile dvs.",
+   "paragraphs": [
+    "Regulile pentru vânzarea online diferă de la o țară la alta, așa că verificați-le pe cele care vi se aplică. În Japonia, de exemplu, Legea privind anumite tranzacții comerciale (Act on Specified Commercial Transactions) cere ca publicitatea pentru vânzarea prin corespondență să afișeze prețul cu taxa de consum inclusă, costurile de livrare, orice alte costuri suportate de cumpărător, când și cum se plătește, când se livrează bunurile, condițiile de anulare și retur, precum și numele, adresa și numărul de telefon ale vânzătorului. [Consumer Affairs Agency: publicitatea pentru vânzarea prin corespondență (în japoneză)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Acestea sunt exact informațiile de care un AI are nevoie ca să răspundă la „cât costă livrarea?” sau „îl pot returna?”.",
+    "Conform aceleiași legi, după cum explică Consumer Affairs Agency, dacă nu sunt afișate condiții de retur, cumpărătorul poate anula achiziția în termen de opt zile de la primirea bunurilor și suportă costul returnării lor. [Consumer Affairs Agency: caz de retur la vânzarea prin corespondență (în japoneză)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Oricare ar fi politica dvs., formulați-o clar în text și asigurați-vă că pagina de retur către care trimiteți din datele structurate spune același lucru.",
+    "Afișați evaluări și recenzii doar de la clienți reali. În Japonia, marketingul ascuns (stealth marketing) este, din 1 octombrie 2023, o încălcare a Legii împotriva premiilor nejustificate și a prezentărilor înșelătoare (Act against Unjustifiable Premiums and Misleading Representations); postările pe care o firmă le cere sau le comandă unor terți sunt considerate publicitatea ei, inclusiv recenziile. [Consumer Affairs Agency: marketing ascuns (în japoneză)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Configurarea pe un magazin WordPress (WooCommerce)",
+   "list": [
+    "Instalați Nurevo AEO (gratuit) de pe [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) și activați-l. Păstrați Yoast SEO, Rank Math, All in One SEO sau Slim SEO dacă folosiți unul dintre ele.",
+    "În Setări (sau în asistentul de configurare), setați tipul site-ului la „Magazin online”. Este sugerat atunci când WooCommerce este activ, dar nimic nu se schimbă până nu salvați. Magazinul este publicat ca OnlineStore și nu sunt necesare adresa sau programul (o adresă sau un telefon introduse sunt totuși publicate).",
+    "Introduceți URL-urile paginii cu politica de retur și rambursare și ale paginii cu politica de livrare. Pagina de retur este publicată ca MerchantReturnPolicy a magazinului (un link către acea pagină), iar ambele pagini sunt listate în llms.txt. Livrarea nu este transformată în date structurate, deoarece pluginul nu îi cunoaște condițiile (costuri și termene); pagina este doar listată în llms.txt.",
+    "Paginile de produs păstrează marcajul Product generat de WooCommerce; Nurevo AEO nu îl dublează. Pe prima pagină publică un catalog (OfferCatalog) cu cele mai recente cel mult 30 de produse publicate, cu preț, monedă și stoc acolo unde sunt cunoscute. O evaluare se adaugă doar pentru produsele cu recenzii reale. Produsele sunt listate și în llms.txt.",
+    "Introduceți întrebările frecvente (costuri de livrare, termene de livrare, ambalare pentru cadou, cum se face returul) și plasați blocul Nurevo FAQ sau shortcode-ul [nurevo_faq] pe pagina pe care doriți să apară.",
+    "Rulați diagnosticul pe ecranul Scor AEO. Pentru un magazin online, verifică produsele cu preț și stoc, pagina de retur, pagina de livrare și datele de contact și listează ce lipsește.",
+    "Vedeți din exterior ce citește AI-ul cu [verificarea gratuită a lizibilității pentru AI](/check) și confirmați că prețurile, livrarea și condițiile de retur corespund cu Merchant Center și cu paginile magazinului dvs. de pe marketplace-uri."
+   ],
+   "after": [
+    "Pentru magazinele care nu sunt construite pe WordPress, cum ar fi cele pe Shopify, se aplică aceeași idee: publicați informațiile din tabelul de mai sus în textul paginilor de produs și în datele structurate, iar în llms.txt listați prezentarea magazinului, paginile de retur și livrare și principalele pagini de produs. [Ce este llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Checklist înainte de publicare",
+   "list": [
+    "Fiecare pagină de produs afișează denumirea produsului, prețul și starea stocului ca text, nu doar într-o imagine.",
+    "Prețurile și stocul din datele structurate corespund valorilor vizibile pe pagină, iar produsele epuizate nu sunt marcate ca fiind în stoc.",
+    "Costurile de livrare, termenele de livrare și condițiile de retur au pagini proprii, cu linkuri din paginile de produs sau din subsol.",
+    "Numele, adresa și numărul de telefon ale vânzătorului și celelalte informații cerute de lege sunt publicate.",
+    "Tipul de date structurate al magazinului se potrivește activității, de exemplu OnlineStore.",
+    "Marcajul pentru evaluări și recenzii provine doar din recenzii reale ale clienților.",
+    "Prețurile, livrarea și condițiile de retur coincid pe site-ul dvs., în Merchant Center, pe marketplace-uri și pe paginile magazinului de pe rețelele sociale."
+   ]
+  },
+  {
+   "heading": "Cum verificați dacă apăreți în răspunsurile AI",
+   "paragraphs": [
+    "După ce informațiile sunt la locul lor, puneți AI-ului întrebările pe care le-ar pune clienții dvs. („cel mai bun magazin online pentru X”, „de unde cumpăr X cu livrare gratuită”) și vedeți dacă magazinul sau produsele dvs. apar cu numele sau cu URL-ul. Răspunsurile diferă de la o încercare la alta, așa că puneți aceleași întrebări de câteva ori, la intervale de timp.",
+    "Când site-ul dvs. este conectat la serviciul Nurevo, planurile Free și Standard includ o verificare lunară: trei întrebări formulate pe baza categoriilor dvs. de produse (niciodată pe baza numelui magazinului) sunt adresate Perplexity, iar pluginul înregistrează dacă răspunsurile v-au numit magazinul sau v-au citat site-ul. Planul Pro (de la $99/lună) adaugă măsurarea vizibilității în AI, în versiune beta: cât de des apare magazinul dvs. în răspunsurile AI, cu comparație cu concurenții și istoric (în prezent pe Perplexity). Ambele analizează un eșantion de răspunsuri, nu fiecare răspuns."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Cu ce ar trebui să înceapă un magazin online în privința căutării AI?",
+   "a": "Scrieți corect, ca text, pe pagina fiecărui produs denumirea, prețul și starea stocului și puneți livrarea, returul și datele vânzătorului pe pagini separate. Apoi publicați aceleași informații ca date structurate Product, Offer și OnlineStore și în llms.txt și asigurați-vă că se potrivesc cu Merchant Center și cu listările dvs. de pe marketplace-uri."
+  },
+  {
+   "q": "Trebuie să plătesc ca produsele mele să apară în ChatGPT?",
+   "a": "OpenAI spune că rezultatele de produse din căutarea ChatGPT sunt selectate independent și nu sunt reclame. Comercianții Shopify sunt deja integrați prin Shopify Catalog, iar alți comercianți pot aplica pentru a furniza direct un feed de produse. În niciun caz apariția nu este garantată."
+  },
+  {
+   "q": "Dacă vând pe marketplace-uri precum Amazon, mai trebuie să-mi îmbunătățesc propriul site?",
+   "a": "Paginile de pe marketplace-uri pot fi folosite ca surse de AI, dar pe propriul site puteți publica cel mai detaliat și cel mai corect descrierile produselor, condițiile de retur și întrebările frecvente. Cea mai sigură abordare este să mențineți prețurile, livrarea și condițiile de retur în acord în ambele locuri."
+  },
+  {
+   "q": "Nurevo AEO este gratuit?",
+   "a": "Da. Tipul de magazin online (OnlineStore), catalogul de produse, datele structurate pentru politica de retur și întrebările frecvente, llms.txt, regulile pentru crawlerele AI și scorul AEO sunt incluse în planul gratuit. Planurile plătite adaugă un set de reguli mereu actualizat (Standard, $20/lună) și măsurarea vizibilității în AI în versiune beta (Pro, de la $99/lună). [Nurevo AEO pe WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garantează acest lucru că produsele mele vor apărea în răspunsurile AI?",
+   "a": "Nu. Răspunsurile AI se schimbă și niciun instrument sau tehnică nu poate garanta o mențiune sau o poziție. Ce puteți face este să faceți informațiile despre produsele și magazinul dvs. ușor de citit pentru AI și să verificați constant dacă apăreți."
+  }
+ ],
+ "relatedHeading": "Ghiduri similare",
+ "cta": {
+  "heading": "Mai întâi, vedeți cum citește AI-ul site-ul magazinului dvs.",
+  "body": "Verificarea gratuită arată starea datelor structurate, a fișierului llms.txt și a accesului crawlerelor AI, fără înregistrare. Pe WordPress, Nurevo AEO completează gratuit ce lipsește.",
+  "label": "Rulați verificarea gratuită a lizibilității pentru AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Descărcați Nurevo AEO de pe WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT este marcă comercială a OpenAI, Perplexity a Perplexity AI, iar Google și Google Merchant Center ale Google LLC. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO și Slim SEO sunt mărci comerciale ale proprietarilor respectivi. Nurevo nu este afiliat cu aceștia. Acest articol nu constituie consultanță juridică."
+}
