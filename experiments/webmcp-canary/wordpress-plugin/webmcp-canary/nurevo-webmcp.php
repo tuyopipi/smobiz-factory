@@ -4284,6 +4284,86 @@ function webmcp_canary_dismiss_off_notice_ajax() {
     wp_send_json_success();
 }
 
+/** User meta that remembers "Do not show again" on the review request. */
+if (!defined('WEBMCP_CANARY_REVIEW_NOTICE_META')) {
+    define('WEBMCP_CANARY_REVIEW_NOTICE_META', 'webmcp_canary_review_notice_dismissed');
+}
+/** How long after the first install the review request may appear. */
+if (!defined('WEBMCP_CANARY_REVIEW_NOTICE_DELAY')) {
+    define('WEBMCP_CANARY_REVIEW_NOTICE_DELAY', 7 * DAY_IN_SECONDS);
+}
+if (!defined('WEBMCP_CANARY_REVIEW_URL')) {
+    define('WEBMCP_CANARY_REVIEW_URL', 'https://wordpress.org/support/plugin/nurevo-webmcp/reviews/#new-post');
+}
+
+/*
+ * Installs from before the install time was recorded get it on their first
+ * admin screen, so they too wait the full delay before the review request.
+ */
+add_action('admin_init', 'webmcp_canary_installed_at');
+
+add_action('admin_notices', 'webmcp_canary_review_notice');
+/**
+ * A small, dismissible request for a WordPress.org review. Shown only on this
+ * plugin's own screens (never the setup wizard, the Plugins list or the rest of
+ * the admin), only once output is on and the plugin has been installed for a
+ * week, and never again for a user who dismissed it. It links to the review
+ * form as it is: no rating pre-selected, no incentive, nothing tracked.
+ */
+function webmcp_canary_review_notice() {
+    if (!current_user_can('manage_options')) {
+        return;
+    }
+    $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen check.
+    if (strpos($page, 'webmcp-canary') !== 0 || $page === 'webmcp-canary-setup') {
+        return;
+    }
+    $settings = webmcp_canary_settings();
+    if ($settings['enabled'] !== '1') {
+        return;
+    }
+    if (time() - webmcp_canary_installed_at() < WEBMCP_CANARY_REVIEW_NOTICE_DELAY) {
+        return;
+    }
+    if (get_user_meta(get_current_user_id(), WEBMCP_CANARY_REVIEW_NOTICE_META, true)) {
+        return;
+    }
+    printf(
+        '<div id="nurevo-review-notice" class="notice notice-info is-dismissible"><p>%1$s <a href="%2$s" target="_blank" rel="noopener noreferrer">%3$s</a> <button type="button" class="button-link nurevo-review-dismiss">%4$s</button></p></div>',
+        esc_html__('Is Nurevo AEO helping? A short review on WordPress.org helps other site owners find it.', 'nurevo-webmcp'),
+        esc_url(WEBMCP_CANARY_REVIEW_URL),
+        esc_html__('Write a review', 'nurevo-webmcp'),
+        esc_html__('Do not show again', 'nurevo-webmcp')
+    );
+    // Either "Do not show again" or the close button tells the server, so the
+    // request stays dismissed for this user.
+    printf(
+        '<script>(function(){var n=document.getElementById("nurevo-review-notice");if(!n){return;}var sent=false;function send(){if(sent){return;}sent=true;var b=new URLSearchParams({action:"webmcp_canary_dismiss_review_notice",nonce:%1$s});fetch(%2$s,{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:b.toString()});}n.addEventListener("click",function(e){var t=e.target;if(!t||!t.classList){return;}if(t.classList.contains("nurevo-review-dismiss")){e.preventDefault();send();n.parentNode&&n.parentNode.removeChild(n);}else if(t.classList.contains("notice-dismiss")){send();}});}());</script>',
+        wp_json_encode(wp_create_nonce('webmcp_canary_dismiss_review_notice')),
+        wp_json_encode(admin_url('admin-ajax.php'))
+    );
+}
+
+/** Remember that this user does not want the review request again. */
+function webmcp_canary_dismiss_review_notice_for_user($user_id) {
+    $user_id = (int) $user_id;
+    if ($user_id <= 0) {
+        return false;
+    }
+    update_user_meta($user_id, WEBMCP_CANARY_REVIEW_NOTICE_META, 1);
+    return true;
+}
+
+add_action('wp_ajax_webmcp_canary_dismiss_review_notice', 'webmcp_canary_dismiss_review_notice_ajax');
+function webmcp_canary_dismiss_review_notice_ajax() {
+    check_ajax_referer('webmcp_canary_dismiss_review_notice', 'nonce');
+    if (!current_user_can('manage_options')) {
+        wp_send_json_error(array('message' => 'forbidden'), 403);
+    }
+    webmcp_canary_dismiss_review_notice_for_user(get_current_user_id());
+    wp_send_json_success();
+}
+
 add_action('admin_notices', 'webmcp_canary_ruleset_notice');
 function webmcp_canary_ruleset_notice() {
     if (!current_user_can('manage_options')) {
