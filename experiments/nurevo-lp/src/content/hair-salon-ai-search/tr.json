@@ -1,0 +1,145 @@
+{
+ "title": "Kuaförler için yapay zekâ araması: hizmetler, fiyat, randevu | Nurevo",
+ "description": "Salonlar için AEO; hizmetleri, fiyatları, süreleri, çalışma saatlerini ve randevu bağlantısını sayfa metninde ve HairSalon verisinde doğru yayımlamakla başlar.",
+ "h1": "Kuaför ve güzellik salonları için yapay zekâ araması: yapay zekânın hizmetlerinizi, fiyatlarınızı ve randevu bilgilerinizi doğru okuması için",
+ "lead": "Bir kuaför ya da güzellik salonu için yapay zekâ araması optimizasyonu (AEO) tek bir şeye dayanır: müşterilerin sorduğu bilgileri (hizmetleriniz, fiyatlarınız, her hizmetin ne kadar sürdüğü, çalışma saatleri, kapalı günler, adres ve randevu alma yolu) hem sayfa metninizde hem de schema.org HairSalon veya BeautySalon yapılandırılmış verisinde doğru ve her yerde aynı şekilde yayımlamak. Böylece ChatGPT, Perplexity ve Google'ın yapay zekâsı, “istasyona yakın, pazar akşamı açık bir salon” ya da “yakınımda keratin düzleştirme yapan yer” gibi sorulara tahmin yürütmeden yanıt verebilir. Kendi sitenizde kendi yorumlarınızı yayımlamak, yapay zekâda veya aramada daha iyi sonuç almanın kestirme yolu değildir.",
+ "intro": [
+  "1 Kasım 2026'da (JST) yazılmıştır. Google, schema.org ve Japon kamu kurumlarına ait bilgiler, metinde belirtilen tarihlerde ilgili resmî sayfalarda kontrol edilmiştir.",
+  "Yapay zekâ yanıtları günden güne ve sorunun nasıl sorulduğuna göre değişir. Buradaki adımlar salonunuzun bilgilerini yapay zekâ için okunabilir hâle getirir. Bir yapay zekânın salonunuzdan bahsedeceğini ya da onu bir yere sıralayacağını garanti etmez."
+ ],
+ "sections": [
+  {
+   "heading": "Müşteriler yapay zekâya ne soruyor, yapay zekâ neyi okuyor",
+   "paragraphs": [
+    "Biri ChatGPT, Perplexity ya da Google'ın AI Overviews özelliğinden salon bulmasını istediğinde yapay zekâ web'de bulabildiklerini okur ve bir yanıt oluşturur. Salon soruları yer, gün, saat, hizmet ve fiyatı bir arada içerir: “istasyona yakın, düzleştirmede iyi bir kuaför”, “pazar günü saat 19.00'dan sonra randevu alabileceğim bir salon”, “çocuk saçı kesen bir kuaför”, “aynı gün hem tırnak hem kirpik yaptırabileceğim bir yer”.",
+    "Bunlara yanıt verebilmek için yapay zekânın salonunuzun nerede olduğunu, hangi günler ve saat kaça kadar açık olduğunu, hangi hizmetleri hangi fiyata ve ne kadar sürede sunduğunuzu ve nereden randevu alınabileceğini metin olarak okuyabilmesi gerekir. Fiyat listeniz yalnızca görsel olarak varsa, tüm fiyatlar açıklamasız “başlayan fiyatlarla” verilmişse, kapalı günler sayfadan sayfaya farklıysa ya da randevu bağlantısı yoksa salonunuz bir yanıtta daha zor kullanılır.",
+    "Google, AI Overviews veya AI Mode'da görünmek için ek bir gereklilik ya da özel bir schema.org yapılandırılmış verisi olmadığını, yapılandırılmış verinin görünür metinle eşleşmesi ve İşletme Profili'nin güncel tutulması gibi temel kuralların hâlâ önemli olduğunu belirtiyor (1 Kasım 2026'da kontrol edildi). [Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features). Yapılacak iş bir yapay zekâ hilesi değil; salonunuzun bilgilerini doğru ve tutarlı biçimde yayımlamaktır."
+   ]
+  },
+  {
+   "heading": "Bir salonun yayımlaması gereken bilgiler",
+   "paragraphs": [
+    "Yapılandırılmış veride bir kuaför [schema.org HairSalon](https://schema.org/HairSalon) olarak tanımlanır. HairSalon; BeautySalon, NailSalon ve DaySpa ile birlikte, bir LocalBusiness türü olan HealthAndBeautyBusiness altında yer alır. Google'ın yerel işletme belgeleri name ve address özelliklerini zorunlu sayar, openingHoursSpecification, telephone, url ve diğerlerini önerir ve mümkün olan en özel LocalBusiness alt türünü kullanmanızı ister (29 Ekim 2026'da kontrol edildi). [Google: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+   ],
+   "table": {
+    "head": [
+     "Bilgi",
+     "Sayfada",
+     "Yapılandırılmış veride"
+    ],
+    "rows": [
+     [
+      "Salon adı",
+      "Resmî adınız, her yerde aynı şekilde yazılmış olarak: tabelada, İşletme Profili'nde ve randevu sitelerinde",
+      "name (zorunlu)"
+     ],
+     [
+      "Adres ve ulaşım",
+      "Kat bilgisi dahil tam adres ve en yakın istasyondan ya da otoparktan yürüyüş tarifi, metin olarak",
+      "address (zorunlu), geo (önerilen)"
+     ],
+     [
+      "Çalışma saatleri ve kapalı günler",
+      "Görsel değil metin olarak; son randevu saatleri ve varsa boya ya da perma için farklı son saatlerle birlikte",
+      "openingHoursSpecification (önerilen)"
+     ],
+     [
+      "Hizmetler, fiyatlar ve süreler",
+      "Kesim, boya, perma, düzleştirme vb.; her biri fiyatı ve ortalama süresiyle",
+      "Her hizmet kalemi için bir Service, fiyat için Offer"
+     ],
+     [
+      "Randevu nasıl alınır",
+      "Metin olarak telefon numarası ve online randevu sayfanıza bağlantı",
+      "telephone (önerilen), randevu URL'si"
+     ],
+     [
+      "Sık sorulan sorular",
+      "Müşterilerin gerçekten sorduğu şeyler: otopark, çocukla gelme, aynı gün randevu, iptal",
+      "FAQPage, yalnızca SSS'nin görünür olduğu sayfada"
+     ]
+    ],
+    "caption": "Google'ın yerel işletme belgelerinde 29 Ekim 2026 itibarıyla listelenen zorunlu ve önerilen özellikler. Hizmet kalemleri için Service ve Offer, Google'ın zorunlu veya önerilen özellikleri değil, schema.org türleridir."
+   },
+   "after": [
+    "Fiyatları yerel kuralların gerektirdiği şekilde gösterin. Örneğin Japonya'da Ulusal Vergi İdaresi, tüketicilere önceden gösterilen fiyatların, ortam ne olursa olsun tüketim vergisini içermesini şart koşar (örneğin \"11,000円（税込）\"). [National Tax Agency: total price display (Japanese)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm). Bir fiyat aralık olarak verildiğinde (bir taban fiyattan “başlayan”), neye bağlı olduğunu birkaç kelimeyle belirtin (saç uzunluğu, kıdemli stilist); böylece ne yapay zekâ ne de insanlar yanlış anlar.",
+    "En önemlisi, aynı bilginin her yerde aynı değere sahip olmasıdır: sitenizde, yapılandırılmış veride, Google İşletme Profili'nde, randevu sitelerinde ve llms.txt'de. Fiyatlar veya çalışma saatleri değiştiğinde hepsini birlikte güncelleyin."
+   ]
+  },
+  {
+   "heading": "Yorumlar: yapay zekâ için eklememeniz gerekenler",
+   "paragraphs": [
+    "Kendi salon sitenizde müşteri yorumlarını veya yıldız puanlarını işaretlemek size Google'da yıldız kazandırmaz. Google 2019'da, kendi kendine hizmet eden yorumların, yani bir işletme hakkında o işletmenin kendi sitesine yerleştirilen yorumların LocalBusiness ve Organization için kabul edilmediğini ve bunlar için yorum snippet'lerinin gösterilmediğini açıkladı. [Google Search Central blog, 16 Eylül 2019](https://developers.google.com/search/blog/2019/09/making-review-rich-results-more-helpful)",
+    "Gizli reklamla ilgili kurallar ülkeden ülkeye değişir; size uygulananları kontrol edin. Japonya'da gizli pazarlama 1 Ekim 2023'ten bu yana Haksız Primler ve Yanıltıcı Beyanlar Kanunu'nun ihlalidir ve Tüketici İşleri Ajansı, bir işletmenin üçüncü kişilerden istediği veya onlara talimat verdiği yorum ve paylaşımları o işletmenin reklamı sayar. [Consumer Affairs Agency: stealth marketing (Japanese)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/). Yapay zekâ sizden iyi söz etsin diye açıklanmamış sponsorlu yorumlar biriktirmeyin.",
+    "Yapay zekânın sizden ihtiyacı olan övgü değil, doğrulayabileceği bilgilerdir: hizmetler, fiyatlar, saatler ve yer. “Bölgenin 1 numarası” gibi kanıtlayamayacağınız iddiaları hem metninizden hem de işaretlemenizden çıkarmak en güvenlisidir."
+   ]
+  },
+  {
+   "heading": "WordPress salon sitesinde kurulum",
+   "list": [
+    "Nurevo AEO'yu (ücretsiz) [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) üzerinden yükleyip etkinleştirin. Yoast SEO, Rank Math, All in One SEO veya Slim SEO kullanıyorsanız onu koruyun.",
+    "Kurulum sihirbazında “Beauty salon” seçeneğini seçin. İşletme türü BeautySalon olur; kuaför için Ayarlar'daki “Business type (schema.org type)” alanını HairSalon, tırnak salonu için NailSalon olarak değiştirin. Ad, adres, telefon, çalışma saatleri ve açıklamayı onaylayın. Mevcut ayarlarınızdan yalnızca boş alanlar doldurulur; girdiğiniz hiçbir şeyin üzerine yazılmaz.",
+    "Ayarlar'da her hizmet kalemini bir hizmet olarak ekleyin. Hizmet adı, süre (dakika), fiyat, para birimi, kategori, randevu URL'si ve açıklamayla birlikte salonunuza bağlı bir Service olarak yayımlanır (fiyat Offer, randevu URL'si rezervasyon eylemi olarak) ve llms.txt'de bir menü satırı olarak listelenir. Fiyatı para birimi simgesi olmadan, yalnızca rakamla girin.",
+    "SSS'nizi girin ve Nurevo FAQ bloğunu veya [nurevo_faq] kısa kodunu, gösterilmesini istediğiniz sayfaya yerleştirin. Sorular o sayfanın FAQPage verisine eklenir.",
+    "AEO Score ekranında tanılamayı çalıştırın ve kontrol listesinin sunduğu tek tıklamalı düzeltmeleri uygulayın. Yapılandırılmış veri, llms.txt ve yapay zekâ tarayıcılarının erişimi (OAI-SearchBot, PerplexityBot, Claude-SearchBot ve diğerleri) ücretsiz planda yer alır.",
+    "Yapay zekânın dışarıdan ne okuduğunu [ücretsiz yapay zekâ okunabilirlik kontrolü](/check) ile görün ve çalışma saatleriyle fiyatların Google İşletme Profili ve randevu sitelerinizle eşleştiğini doğrulayın."
+   ],
+   "after": [
+    "Etkin bir SEO eklentisi varken Nurevo AEO ikinci bir yapılandırılmış veri kümesi basmaz. SEO eklentinizin zaten yayımladığı grafa yalnızca eksik adresi, telefonu, çalışma saatlerini, HairSalon gibi özel bir türü ve hizmetlerinizi ekler. Bkz. [Yoast, Rank Math ve AIOSEO'ya yerel işletme schema'sı ekleme](/guide/local-business-schema-seo-plugins/). WordPress ile yapılmamış sitelerde de aynı fikir geçerlidir: yukarıdaki tablodaki bilgileri sayfa metninizde ve yapılandırılmış veride yayımlayın."
+   ]
+  },
+  {
+   "heading": "Yayımlamadan önce kontrol listesi",
+   "list": [
+    "Hizmet listeniz yalnızca görsel olarak değil, metin olarak yazılmış.",
+    "Fiyatlar yerel kuralların gerektirdiği şekilde gösteriliyor ve aralıklarda neye bağlı oldukları belirtiliyor.",
+    "Çalışma saatleri, kapalı günler ve son randevu saatleri sitenizde, Google İşletme Profili'nde ve randevu sitelerinde aynı.",
+    "Yapılandırılmış veri türü işletmeye uygun: genel bir Organization değil, HairSalon, BeautySalon veya NailSalon gibi.",
+    "Yapılandırılmış verideki fiyatlar ve saatler sayfada görünen değerlerle eşleşiyor.",
+    "Kendi sitenizdeki yorumlar puan olarak işaretlenmemiş ve açıklanmamış sponsorlu yorum kullanılmıyor.",
+    "llms.txt salon tanıtımınızı, hizmet listenizi ve fiyatlarınızı, ulaşım bilgisini ve randevu sayfalarını içeriyor. [llms.txt nedir?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Yapay zekâ yanıtlarında görünüp görünmediğinizi kontrol etmek",
+   "paragraphs": [
+    "Bilgiler yerine oturduktan sonra yapay zekâya müşterilerinizin soracağı soruları sorun (bölge + hizmet + gün veya saat) ve salonunuzun adıyla ya da URL'siyle çıkıp çıkmadığına bakın. Yanıtlar her çalıştırmada değişir; bu yüzden aynı soruları farklı zamanlara yayarak birkaç kez sorun. Randevu sitelerindeki sayfalar da bazen kaynak olarak kullanılır; oradaki bilgileri de güncel tutun.",
+    "Nurevo AEO'nun Free ve Standard planları aylık bir kontrol içerir: işletme türünüz ve bölgenizden (asla salonunuzun adından değil) oluşturulan üç soru Perplexity'ye sorulur ve eklenti, yanıtların salonunuzu adıyla anıp anmadığını veya sitenizi kaynak gösterip göstermediğini kaydeder. Pro plan (aylık $99'dan başlayan) beta olarak yapay zekâ görünürlük ölçümü ekler: salonunuzun yapay zekâ yanıtlarında ne sıklıkla göründüğü, rakip karşılaştırması ve geçmişle birlikte (şu an Perplexity'de). Her ikisi de her yanıtı izlemez, yanıtlardan örnek alır."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Bir kuaför yapay zekâ aramasına nereden başlamalı?",
+   "a": "Hizmetlerinizi, fiyatlarınızı, sürelerinizi, çalışma saatlerinizi, kapalı günlerinizi, adresinizi ve randevu alma yolunu sayfalarınıza metin olarak doğru şekilde yazın. Ardından aynı bilgileri HairSalon yapılandırılmış verisi olarak ve llms.txt'de yayımlayın ve Google İşletme Profili ile randevu sitelerinizle eşleştiğinden emin olun."
+  },
+  {
+   "q": "HairSalon mı, BeautySalon mı: hangisini kullanmalıyım?",
+   "a": "schema.org'da her ikisi de HealthAndBeautyBusiness türüdür. Yaptığınız işe en yakın türü seçin: kesim ve boya için HairSalon, güzellik bakımları için BeautySalon, tırnak stüdyosu için NailSalon. Google mümkün olan en özel türü kullanmanızı ister."
+  },
+  {
+   "q": "Randevu sitelerinde yer alıyorsam kendi sitemi yine de düzeltmem gerekir mi?",
+   "a": "Randevu sitelerindeki sayfalar yapay zekâ tarafından kaynak olarak kullanılabilir; ancak salonunuzun bilgilerini en ayrıntılı ve en doğru şekilde kendi sitenizde yayımlayabilirsiniz: hizmet açıklamaları, ulaşım bilgisi ve SSS. En güvenli yol, ikisini birbiriyle uyumlu tutmaktır."
+  },
+  {
+   "q": "Nurevo AEO ücretsiz mi?",
+   "a": "Evet. İşletme türü (HairSalon ve diğerleri), adres, çalışma saatleri, hizmetler ve SSS yapılandırılmış verisi, llms.txt, yapay zekâ tarayıcı kuralları ve AEO puanı ücretsiz plandadır. Ücretli planlar her zaman güncel bir kural seti (Standard, aylık $20) ve beta olarak yapay zekâ görünürlük ölçümü (Pro, aylık $99'dan başlayan) ekler. [WordPress.org'da Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Bu, salonumun ChatGPT'de görüneceğini garanti eder mi?",
+   "a": "Hayır. Yapay zekâ yanıtları değişir ve hiçbir araç ya da teknik bir anılmayı veya sıralamayı garanti edemez. Yapabileceğiniz şey, bilgilerinizi yapay zekânın kolayca okuyabileceği hâle getirmek ve görünüp görünmediğinizi kontrol etmeye devam etmektir."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Önce yapay zekânın salon sitenizi nasıl okuduğunu görün",
+  "body": "Ücretsiz kontrol; yapılandırılmış verinizin, llms.txt'nin ve yapay zekâ tarayıcı erişiminin durumunu kayıt gerektirmeden gösterir. WordPress'te Nurevo AEO eksikleri ücretsiz tamamlar.",
+  "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü çalıştırın",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO'yu WordPress.org'dan edinin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT, OpenAI'ın; Perplexity, Perplexity AI'ın; Google ise Google LLC'nin ticari markasıdır. Yoast SEO, Rank Math, All in One SEO ve Slim SEO ilgili sahiplerinin ticari markalarıdır. Nurevo'nun bu şirketlerle bir bağlantısı yoktur. Bu makale hukuki veya vergi danışmanlığı değildir."
+}
