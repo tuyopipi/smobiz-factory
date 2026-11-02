@@ -1,0 +1,146 @@
+{
+ "title": "Busca com IA para lojas virtuais: produtos, estoque e trocas | Nurevo",
+ "description": "AEO para lojas virtuais começa por publicar corretamente nome, preço, estoque, frete e devolução dos produtos, no texto e nos dados estruturados. Com checklist.",
+ "h1": "Busca com IA para lojas virtuais: como fazer a IA ler corretamente seus produtos, preços, estoque e política de devolução",
+ "lead": "A otimização para buscas com IA (AEO) de uma loja virtual se resume a publicar nomes de produtos, preços, estoque, frete, política de devolução e quem opera a loja de forma precisa e coerente, tanto no texto das páginas de produto quanto nos dados estruturados schema.org Product, Offer e OnlineStore. Assim, ChatGPT, Perplexity e a IA do Google têm o que precisam para responder “onde compro X pela internet?” ou “que loja vende X com devolução grátis?” sem adivinhar. Não se trata de adicionar tags especiais para IA.",
+ "intro": [
+  "Escrito em 2 de novembro de 2026 (horário do Japão). As informações do Google, da OpenAI e da Agência de Defesa do Consumidor do Japão foram conferidas nas páginas oficiais nessa data.",
+  "As respostas da IA mudam de um dia para o outro e conforme a forma da pergunta. Os passos aqui tornam os dados da sua loja e dos seus produtos legíveis para a IA. Eles não garantem que uma IA vá mencionar sua loja nem colocá-la em determinada posição."
+ ],
+ "sections": [
+  {
+   "heading": "O que o consumidor pergunta à IA e o que a IA lê",
+   "paragraphs": [
+    "As perguntas de compra feitas à IA misturam produto, preço, estoque, frete e devolução: “onde compro protetor solar para pele sensível pela internet?”, “uma loja que venda tábuas de corte de madeira feitas no Japão”, “X tem em estoque e quanto custa o frete?”, “uma loja online de calçados com troca fácil”. Para respondê-las, a IA precisa conseguir ler, em forma de texto, quais produtos você vende e a que preço, se dá para comprá-los agora, quanto custam o frete e a devolução e quem está vendendo.",
+    "O Google afirma que não há requisitos adicionais nem dados estruturados schema.org especiais para aparecer em AI Overviews ou no AI Mode, e que o básico de sempre continua valendo, como fazer os dados estruturados corresponderem ao texto visível e manter atualizadas as informações do Merchant Center e do Perfil da Empresa. [Google: recursos de IA e seu site](https://developers.google.com/search/docs/appearance/ai-features)",
+    "Quanto ao ChatGPT, a OpenAI diz que os resultados de produtos na busca são selecionados de forma independente pelo ChatGPT e não são anúncios; que ele considera metadados estruturados, como preço e descrição do produto, de fornecedores próprios e de terceiros; e que os lojistas são classificados por fatores como disponibilidade, preço, qualidade e se são o fabricante ou o vendedor principal. Os dados de produtos de lojistas Shopify já estão integrados via Shopify Catalog, e outros lojistas podem se inscrever para fornecer um feed de produtos diretamente (conferido em 2 de novembro de 2026). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "As informações que uma loja virtual deve publicar",
+   "paragraphs": [
+    "A documentação do Google sobre organizações não tem propriedades obrigatórias, pede que você use o subtipo mais específico e recomenda OnlineStore em vez de OnlineBusiness para sites de comércio eletrônico. [Google: dados estruturados de organização](https://developers.google.com/search/docs/appearance/structured-data/organization). Para produtos, os dados estruturados de listagem do comerciante do Google exigem name, image e offers no Product, e price (maior que zero) e priceCurrency no Offer; availability é recomendado. [Google: dados estruturados de listagem do comerciante](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Informação",
+     "Na página",
+     "Nos dados estruturados"
+    ],
+    "rows": [
+     [
+      "A loja (quem vende)",
+      "Nome da loja, empresa responsável e contatos, numa página “sobre” ou de informações legais",
+      "OnlineStore (um tipo de Organization); sem propriedades obrigatórias"
+     ],
+     [
+      "Nome e imagem do produto",
+      "Em cada página de produto, com um nome que deixe claras as diferenças de modelo, tamanho ou cor",
+      "name e image do Product (obrigatórios)"
+     ],
+     [
+      "Preço",
+      "O preço de venda em texto e quando termina um preço promocional",
+      "price e priceCurrency do Offer (obrigatórios)"
+     ],
+     [
+      "Estoque",
+      "Em estoque, esgotado ou pré-venda, de acordo com a situação real",
+      "availability do Offer (recomendado)"
+     ],
+     [
+      "Política de devolução",
+      "Prazo, condições e quem paga o frete de devolução, numa única página",
+      "hasMerchantReturnPolicy na Organization; basta um link para a página de devoluções (merchantReturnLink)"
+     ],
+     [
+      "Frete",
+      "Valores de frete (por região ou valor do pedido) e prazos de entrega",
+      "hasShippingService na Organization (shippingConditions obrigatório)"
+     ]
+    ],
+    "caption": "Propriedades obrigatórias e recomendadas conforme a documentação do Google em 2 de novembro de 2026."
+   },
+   "after": [
+    "A marcação de listagem do comerciante serve para páginas em que o consumidor pode comprar o produto, e o Google recomenda adicioná-la às páginas de produto, não às páginas que listam produtos. Devolução e frete ficam melhor descritos uma única vez, como políticas da loja inteira na sua Organization, do que em cada produto. [Google: política de devolução](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: política de frete](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "No Google, as configurações de devolução e frete no Merchant Center ou no Search Console têm prioridade sobre os dados estruturados do seu site. Alterar um valor em um só lugar deixa as informações em conflito; por isso, quando mudar um preço, um valor de frete ou uma condição de devolução, atualize juntos as páginas de produto, os dados estruturados, o Merchant Center, as páginas da loja nos marketplaces e o llms.txt."
+   ]
+  },
+  {
+   "heading": "Informações que a lei talvez já exija nas suas páginas",
+   "paragraphs": [
+    "As regras para vendas online variam de país para país, então verifique as que se aplicam a você. No Japão, por exemplo, a Lei de Transações Comerciais Específicas exige que a publicidade de vendas a distância mostre o preço com o imposto sobre consumo incluído, o frete, quaisquer outros custos pagos pelo comprador, quando e como pagar, quando a mercadoria é entregue, as condições de cancelamento e devolução e o nome, endereço e telefone do vendedor. [Agência de Defesa do Consumidor: publicidade de vendas a distância (em japonês)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). São exatamente as informações de que a IA precisa para responder “quanto é o frete?” ou “posso devolver?”.",
+    "Pela mesma lei, se nenhuma condição de devolução for informada, o comprador pode desistir da compra em até oito dias após receber a mercadoria e arca com o custo de devolvê-la, explica a Agência de Defesa do Consumidor. [Agência de Defesa do Consumidor: caso de devolução em vendas a distância (em japonês)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Seja qual for sua política, escreva-a com clareza em texto e mantenha a página de devoluções indicada nos dados estruturados dizendo a mesma coisa.",
+    "Mostre avaliações e comentários apenas de clientes reais. No Japão, o marketing oculto (stealth marketing) é uma infração à Lei contra Brindes Injustificáveis e Representações Enganosas desde 1º de outubro de 2023; publicações que uma empresa pede ou orienta terceiros a fazer contam como publicidade dela, inclusive avaliações. [Agência de Defesa do Consumidor: marketing oculto (em japonês)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Como configurar numa loja WordPress (WooCommerce)",
+   "list": [
+    "Instale o Nurevo AEO (gratuito) pelo [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) e ative-o. Se você usa Yoast SEO, Rank Math, All in One SEO ou Slim SEO, pode mantê-los.",
+    "Em Configurações (ou no assistente de configuração), defina o tipo de site como “Loja virtual”. Ele é sugerido quando o WooCommerce está ativo, mas nada muda até você salvar. A loja é publicada como OnlineStore, e não é preciso informar endereço nem horário de funcionamento (um endereço ou telefone que você tenha preenchido continua sendo publicado).",
+    "Informe as URLs da sua página de política de troca e reembolso e da sua página de política de frete. A página de devoluções é publicada como a MerchantReturnPolicy da loja (um link para essa página), e as duas páginas são listadas no llms.txt. O frete não é convertido em dados estruturados, porque o plugin não conhece suas condições (valores e prazos); a página só é listada no llms.txt.",
+    "As páginas de produto mantêm a marcação Product que o WooCommerce gera; o Nurevo AEO não a duplica. Na página inicial, ele publica até os 30 produtos publicados mais recentemente como um catálogo (OfferCatalog), com preço, moeda e estoque quando conhecidos. A avaliação só é incluída para produtos com avaliações reais. Os produtos também são listados no llms.txt.",
+    "Cadastre suas perguntas frequentes (valor do frete, prazos de entrega, embalagem para presente, como devolver) e coloque o bloco Nurevo FAQ ou o shortcode [nurevo_faq] na página onde quer exibi-las.",
+    "Rode o diagnóstico na tela Pontuação AEO. Para uma loja virtual, ele verifica se há produtos com preço e estoque, uma página de devoluções, uma página de frete e dados de contato, e lista o que está faltando.",
+    "Veja de fora o que a IA lê com a [verificação gratuita de legibilidade para IA](/check) e confirme se preços, frete e condições de devolução batem com o Merchant Center e com as páginas da sua loja nos marketplaces."
+   ],
+   "after": [
+    "Em lojas que não usam WordPress, como a Shopify, a ideia é a mesma: publique as informações da tabela acima no texto das páginas de produto e nos dados estruturados, e liste no llms.txt a apresentação da loja, as páginas de devolução e frete e as principais páginas de produto. [O que é llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Checklist antes de publicar",
+   "list": [
+    "Cada página de produto mostra nome, preço e situação do estoque em texto, e não só numa imagem.",
+    "Preços e estoque nos dados estruturados batem com os valores visíveis na página, e produtos esgotados não aparecem como em estoque.",
+    "Frete, prazos de entrega e condições de devolução têm páginas próprias, com links a partir das páginas de produto ou do rodapé.",
+    "O nome, o endereço e o telefone do vendedor e as demais informações exigidas por lei estão publicados.",
+    "O tipo de dados estruturados da loja corresponde ao negócio, por exemplo OnlineStore.",
+    "A marcação de notas e avaliações vem só de avaliações reais de clientes.",
+    "Preços, frete e condições de devolução são os mesmos no seu site, no Merchant Center, nos marketplaces e nas lojas em redes sociais."
+   ]
+  },
+  {
+   "heading": "Como verificar se você aparece nas respostas da IA",
+   "paragraphs": [
+    "Com as informações no lugar, faça à IA as perguntas que seus clientes fariam (“melhor loja online para X”, “onde comprar X com frete grátis”) e veja se sua loja ou seus produtos aparecem pelo nome ou pela URL. As respostas mudam a cada vez, então repita as mesmas perguntas algumas vezes, em momentos diferentes.",
+    "Quando seu site está conectado ao serviço Nurevo, os planos Free e Standard incluem uma verificação mensal: três perguntas montadas a partir das categorias dos seus produtos (nunca com o nome da loja) são feitas ao Perplexity, e o plugin registra se as respostas citaram sua loja pelo nome ou seu site como fonte. O plano Pro (a partir de $99/mês) acrescenta a medição de visibilidade em IA em versão beta: com que frequência sua loja aparece nas respostas da IA, com comparação com concorrentes e histórico (atualmente no Perplexity). Ambos trabalham com amostras de respostas, sem observar todas."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Por onde uma loja virtual deve começar na busca com IA?",
+   "a": "Escreva corretamente, em texto, o nome, o preço e a situação do estoque de cada produto na página dele, e coloque frete, devoluções e dados do vendedor em páginas próprias. Depois publique as mesmas informações como dados estruturados Product, Offer e OnlineStore e no llms.txt, e garanta que batem com o Merchant Center e com seus anúncios nos marketplaces."
+  },
+  {
+   "q": "Preciso pagar para meus produtos aparecerem no ChatGPT?",
+   "a": "A OpenAI diz que os resultados de produtos na busca do ChatGPT são selecionados de forma independente e não são anúncios. Lojistas Shopify já estão integrados via Shopify Catalog, e outros lojistas podem se inscrever para fornecer um feed de produtos diretamente. Em nenhum dos casos o aparecimento é garantido."
+  },
+  {
+   "q": "Se eu vendo em marketplaces como a Amazon, ainda preciso ajustar meu próprio site?",
+   "a": "As páginas de marketplace podem ser usadas como fonte pela IA, mas é no seu próprio site que você consegue publicar descrições de produtos, condições de devolução e perguntas frequentes com mais detalhe e precisão. O mais seguro é manter preços, frete e condições de devolução iguais nos dois lugares."
+  },
+  {
+   "q": "O Nurevo AEO é gratuito?",
+   "a": "Sim. O tipo de site loja virtual (OnlineStore), o catálogo de produtos, os dados estruturados de política de devolução e de perguntas frequentes, o llms.txt, as regras para crawlers de IA e a pontuação AEO estão no plano gratuito. Os planos pagos acrescentam um conjunto de regras sempre atualizado (Standard, $20/mês) e a medição de visibilidade em IA em beta (Pro, a partir de $99/mês). [Nurevo AEO no WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Isso garante que meus produtos apareçam nas respostas da IA?",
+   "a": "Não. As respostas da IA mudam, e nenhuma ferramenta ou técnica pode garantir uma menção ou uma posição. O que você pode fazer é deixar as informações dos seus produtos e da sua loja fáceis de ler para a IA e continuar verificando se você aparece."
+  }
+ ],
+ "relatedHeading": "Guias relacionados",
+ "cta": {
+  "heading": "Primeiro, veja como a IA lê o site da sua loja",
+  "body": "A verificação gratuita mostra a situação dos seus dados estruturados, do llms.txt e do acesso dos crawlers de IA, sem cadastro. No WordPress, o Nurevo AEO preenche as lacunas de graça.",
+  "label": "Fazer a verificação gratuita de legibilidade para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Baixar o Nurevo AEO no WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é marca registrada da OpenAI; Perplexity, da Perplexity AI; Google e Google Merchant Center, da Google LLC. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO e Slim SEO são marcas de seus respectivos proprietários. A Nurevo não tem vínculo com eles. Este artigo não constitui aconselhamento jurídico."
+}

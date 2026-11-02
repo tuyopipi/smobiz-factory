@@ -1,0 +1,146 @@
+{
+ "title": "AI-keresés webáruházaknak: termékek, készlet, visszaküldés | Nurevo",
+ "description": "A webáruház AEO-ja a terméknevek, árak, készlet, szállítás és visszaküldés pontos közzétételével kezdődik, a szövegben és a strukturált adatokban. Ellenőrzőlistával.",
+ "h1": "AI-keresés webáruházaknak: így olvassa helyesen az AI a termékeit, árait, készletét és visszaküldési feltételeit",
+ "lead": "Egy webáruház AI-keresésre optimalizálása (AEO) abból áll, hogy a terméknevek, árak, készletinformációk, szállítási díjak, visszaküldési feltételek és az üzemeltető adatai pontosan és egységesen jelennek meg mind a termékoldalak szövegében, mind a schema.org Product, Offer és OnlineStore strukturált adataiban. Így a ChatGPT, a Perplexity és a Google AI-ja mindent megkap ahhoz, hogy találgatás nélkül válaszoljon az olyan kérdésekre, mint „hol vehetek X-et online?” vagy „melyik bolt árul X-et ingyenes visszaküldéssel?”. Nem arról van szó, hogy külön AI-címkéket kellene hozzáadni.",
+ "intro": [
+  "Írva: 2026. november 2. (japán idő szerint). A Google, az OpenAI és a japán Fogyasztóvédelmi Hivatal (Consumer Affairs Agency) információit ezen a napon ellenőriztük a hivatalos oldalaikon.",
+  "Az AI válaszai napról napra és a kérdés megfogalmazásától függően változnak. Az itt leírt lépések az AI számára olvashatóvá teszik üzlete és termékei adatait. Nem garantálják, hogy egy AI megemlíti az üzletét, vagy bármilyen helyre sorolja."
+ ],
+ "sections": [
+  {
+   "heading": "Mit kérdeznek a vásárlók az AI-tól, és mit olvas az AI",
+   "paragraphs": [
+    "Az AI-nak feltett vásárlási kérdések vegyítik a terméket, az árat, a készletet, a szállítást és a visszaküldést: „hol vehetek online fényvédőt érzékeny bőrre?”, „egy bolt, amely Japánban készült fa vágódeszkákat árul”, „van X raktáron, és mennyi a szállítás?”, „online cipőbolt egyszerű visszaküldéssel”. A válaszhoz az AI-nak szövegként kell tudnia kiolvasni, milyen termékeket árul milyen áron, megvásárolhatók-e most, mennyibe kerül a szállítás és a visszaküldés, és ki az eladó.",
+    "A Google szerint az AI Overviews-ban vagy az AI Mode-ban való megjelenéshez nincsenek további követelmények, és nincs szükség különleges schema.org strukturált adatokra; a szokásos alapok továbbra is számítanak, például hogy a strukturált adatok egyezzenek a látható szöveggel, és hogy a Merchant Center és a Cégprofil adatai naprakészek legyenek. [Google: AI-funkciók és az Ön webhelye](https://developers.google.com/search/docs/appearance/ai-features)",
+    "A ChatGPT esetében az OpenAI azt mondja, hogy a keresés termékeredményeit a ChatGPT függetlenül választja ki, és ezek nem hirdetések; hogy figyelembe veszi a saját és harmadik féltől származó strukturált metaadatokat, például az árat és a termékleírást; és hogy a kereskedőket olyan tényezők alapján rangsorolja, mint az elérhetőség, az ár, a minőség, valamint hogy ők-e a gyártók vagy az elsődleges eladók. A Shopify-kereskedők termékadatai a Shopify Catalogon keresztül már integrálva vannak, a többi kereskedő pedig jelentkezhet, hogy közvetlenül termékfeedet adjon (ellenőrizve: 2026. november 2.). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Az adatok, amelyeket egy webáruháznak közzé kell tennie",
+   "paragraphs": [
+    "A Google szervezetekről szóló dokumentációjában nincsenek kötelező tulajdonságok, a lehető legspecifikusabb altípus használatát kéri, és webáruházhoz az OnlineBusiness helyett az OnlineStore típust ajánlja. [Google: Szervezet strukturált adatai](https://developers.google.com/search/docs/appearance/structured-data/organization). Termékeknél a Google kereskedői listázás strukturált adatai a Productnál a name, image és offers, az Offernél pedig a price (nullánál nagyobb) és a priceCurrency tulajdonságot követelik meg; az availability ajánlott. [Google: Kereskedői listázás strukturált adatai](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Adat",
+     "Az oldalon",
+     "A strukturált adatokban"
+    ],
+    "rows": [
+     [
+      "Az üzlet (ki az eladó)",
+      "Az üzlet neve, az üzemeltető cég és az elérhetőségek egy „rólunk” vagy jogi tájékoztató oldalon",
+      "OnlineStore (az Organization egyik fajtája); nincsenek kötelező tulajdonságok"
+     ],
+     [
+      "Terméknév és kép",
+      "Minden termékoldalon, olyan névvel, amely mutatja a modell, méret vagy szín közti különbségeket",
+      "Product name és image (kötelező)"
+     ],
+     [
+      "Ár",
+      "Az eladási ár szövegként, és hogy mikor ér véget egy akciós ár",
+      "Offer price és priceCurrency (kötelező)"
+     ],
+     [
+      "Készlet",
+      "Raktáron, elfogyott vagy előrendelhető, a valós állapotnak megfelelően",
+      "Offer availability (ajánlott)"
+     ],
+     [
+      "Visszaküldési feltételek",
+      "Visszaküldési határidő, feltételek, és ki fizeti a visszaküldés postaköltségét, egyetlen oldalon",
+      "Organization hasMerchantReturnPolicy; önmagában a visszaküldési oldalra mutató link (merchantReturnLink) is elfogadott"
+     ],
+     [
+      "Szállítás",
+      "Szállítási díjak (régió vagy rendelési érték szerint) és szállítási idők",
+      "Organization hasShippingService (a shippingConditions kötelező)"
+     ]
+    ],
+    "caption": "Kötelező és ajánlott tulajdonságok a Google dokumentációja szerint, 2026. november 2-i állapot."
+   },
+   "after": [
+    "A kereskedői listázás jelölése olyan oldalakra való, ahol a vásárló megveheti a terméket, és a Google azt javasolja, hogy termékoldalakra tegye, ne pedig terméklistázó oldalakra. A visszaküldést és a szállítást érdemes egyszer, az egész üzletre vonatkozó szabályzatként leírni az Organizationnél, nem pedig minden terméknél. [Google: Visszaküldési szabályzat](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: Szállítási szabályzat](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "A Google-nál a Merchant Centerben vagy a Search Console-ban megadott visszaküldési és szállítási beállítások elsőbbséget élveznek a webhelyén lévő strukturált adatokkal szemben. Ha egy értéket csak egy helyen módosít, az adatok ellentmondanak egymásnak, ezért amikor egy ár, szállítási díj vagy visszaküldési feltétel változik, egyszerre frissítse a termékoldalakat, a strukturált adatokat, a Merchant Centert, a piactereken lévő üzletoldalakat és az llms.txt fájlt."
+   ]
+  },
+  {
+   "heading": "Adatok, amelyeket a jog talán már most is előír az oldalain",
+   "paragraphs": [
+    "Az online értékesítés szabályai országonként eltérnek, ezért nézze meg, melyek vonatkoznak Önre. Japánban például a meghatározott kereskedelmi ügyletekről szóló törvény (Act on Specified Commercial Transactions) előírja, hogy a csomagküldő értékesítés hirdetése feltüntesse a fogyasztási adót is tartalmazó árat, a szállítási díjakat, a vevő által fizetendő egyéb költségeket, a fizetés idejét és módját, az áru szállításának idejét, az elállás és a visszaküldés feltételeit, valamint az eladó nevét, címét és telefonszámát. [Consumer Affairs Agency: csomagküldő értékesítés hirdetése (japánul)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Pontosan ezekre az adatokra van szüksége az AI-nak, hogy válaszolni tudjon arra, hogy „mennyi a szállítás?” vagy „visszaküldhetem?”.",
+    "Ugyanezen törvény szerint, ha nincsenek feltüntetve visszaküldési feltételek, a vevő az áru kézhezvételétől számított nyolc napon belül elállhat, és ő fizeti a visszaküldés költségét – magyarázza a Consumer Affairs Agency. [Consumer Affairs Agency: csomagküldő visszaküldési eset (japánul)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Bármi is a szabályzata, írja le világosan szövegként, és gondoskodjon róla, hogy a strukturált adatokból hivatkozott visszaküldési oldal ugyanezt mondja.",
+    "Csak valódi vásárlóktól származó értékeléseket és véleményeket jelenítsen meg. Japánban a rejtett marketing (stealth marketing) 2023. október 1. óta sérti az indokolatlan ajándékok és megtévesztő tájékoztatás elleni törvényt (Act against Unjustifiable Premiums and Misleading Representations); azok a bejegyzések, amelyeket egy vállalkozás harmadik felektől kér vagy rájuk bíz, a vállalkozás saját hirdetésének számítanak, beleértve az értékeléseket is. [Consumer Affairs Agency: rejtett marketing (japánul)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Beállítás WordPress-webáruházban (WooCommerce)",
+   "list": [
+    "Telepítse a Nurevo AEO-t (ingyenes) a [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) oldaláról, és aktiválja. Ha Yoast SEO-t, Rank Mathot, All in One SEO-t vagy Slim SEO-t használ, megtarthatja.",
+    "A Beállításokban (vagy a beállítási varázslóban) állítsa a webhely típusát „Webáruház” értékre. Ezt a bővítmény felajánlja, ha a WooCommerce aktív, de semmi sem változik, amíg nem ment. Az üzlet OnlineStore-ként jelenik meg, és nincs szükség címre vagy nyitvatartásra (a megadott cím vagy telefonszám azért továbbra is megjelenik).",
+    "Adja meg a visszaküldési és visszatérítési szabályzat oldalának, valamint a szállítási szabályzat oldalának URL-jét. A visszaküldési oldal az üzlet MerchantReturnPolicy adataként jelenik meg (az oldalra mutató linkként), és mindkét oldal szerepel az llms.txt fájlban. A szállításból nem lesz strukturált adat, mert a bővítmény nem ismeri a feltételeit (díjakat és időket); az oldal csak az llms.txt fájlban szerepel.",
+    "A termékoldalakon megmarad a WooCommerce által kiírt Product-jelölés; a Nurevo AEO nem ismétli meg. A kezdőlapon legfeljebb a 30 legutóbb közzétett terméket teszi közzé katalógusként (OfferCatalog), árral, pénznemmel és készletinformációval, ha ezek ismertek. Értékelés csak valódi véleményekkel rendelkező termékekhez kerül. A termékek az llms.txt fájlban is szerepelnek.",
+    "Adja meg a GYIK-et (szállítási díjak, szállítási idők, ajándékcsomagolás, a visszaküldés módja), és helyezze el a Nurevo FAQ blokkot vagy a [nurevo_faq] rövidkódot azon az oldalon, ahol meg szeretné jeleníteni.",
+    "Futtassa a diagnózist az AEO-pontszám képernyőn. Webáruháznál ellenőrzi, hogy vannak-e árral és készletinformációval ellátott termékek, visszaküldési oldal, szállítási oldal és elérhetőségek, és felsorolja, mi hiányzik.",
+    "Nézze meg kívülről, mit olvas az AI, az [ingyenes AI-olvashatósági ellenőrzéssel](/check), és győződjön meg róla, hogy az árak, a szállítás és a visszaküldési feltételek egyeznek a Merchant Centerrel és a piactereken lévő üzletoldalaival."
+   ],
+   "after": [
+    "A nem WordPressszel készült üzletekben, például a Shopifyban, ugyanez az elv érvényes: tegye közzé a fenti táblázat adatait a termékoldalak szövegében és a strukturált adatokban, és sorolja fel az llms.txt fájlban az üzlet bemutatását, a visszaküldési és szállítási oldalakat, valamint a fő termékoldalakat. [Mi az llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Ellenőrzőlista közzététel előtt",
+   "list": [
+    "Minden termékoldal szövegként mutatja a terméknevet, az árat és a készletállapotot, nem csak képen.",
+    "A strukturált adatokban szereplő árak és készletadatok egyeznek az oldalon látható értékekkel, és az elfogyott termékek nincsenek raktáron lévőként jelölve.",
+    "A szállítási díjaknak, szállítási időknek és visszaküldési feltételeknek saját oldaluk van, amelyekre a termékoldalakról vagy a láblécből mutat link.",
+    "Az eladó neve, címe, telefonszáma és a többi jogszabályban előírt adat közzé van téve.",
+    "Az üzlet strukturált adattípusa illik a vállalkozáshoz, például OnlineStore.",
+    "Az értékelési és véleményjelölés csak valódi vásárlói véleményekből származik.",
+    "Az árak, a szállítás és a visszaküldési feltételek egyeznek a webhelyén, a Merchant Centerben, a piactereken és a közösségimédia-üzletekben."
+   ]
+  },
+  {
+   "heading": "Hogyan ellenőrizze, megjelenik-e az AI válaszaiban",
+   "paragraphs": [
+    "Ha az adatok a helyükön vannak, tegye fel az AI-nak azokat a kérdéseket, amelyeket a vásárlói feltennének („legjobb webáruház X-hez”, „hol vehető X ingyenes szállítással”), és nézze meg, hogy az üzlete vagy a termékei megjelennek-e név vagy URL szerint. A válaszok futtatásonként változnak, ezért ugyanazokat a kérdéseket tegye fel többször, időben elosztva.",
+    "Ha webhelye csatlakozik a Nurevo szolgáltatáshoz, a Free és a Standard csomag havi ellenőrzést tartalmaz: a Perplexitynek három, a termékkategóriái alapján összeállított kérdést teszünk fel (soha nem az üzlet nevével), és a bővítmény rögzíti, hogy a válaszok megnevezték-e az üzletét vagy hivatkoztak-e a webhelyére. A Pro csomag (havi $99-tól) béta AI-láthatósági mérést ad hozzá: milyen gyakran jelenik meg az üzlete az AI válaszaiban, versenytárs-összehasonlítással és előzményekkel (jelenleg a Perplexityn). Mindkettő mintavételezi a válaszokat, nem figyel meg minden választ."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hol kezdje egy webáruház az AI-keresést?",
+   "a": "Írja be helyesen, szövegként minden termék nevét, árát és készletállapotát a termékoldalára, és helyezze a szállítást, a visszaküldést és az eladó adatait külön oldalakra. Ezután tegye közzé ugyanezeket az adatokat Product, Offer és OnlineStore strukturált adatként és az llms.txt fájlban, és győződjön meg róla, hogy egyeznek a Merchant Centerrel és a piactéri hirdetéseivel."
+  },
+  {
+   "q": "Fizetnem kell azért, hogy a termékeim megjelenjenek a ChatGPT-ben?",
+   "a": "Az OpenAI szerint a ChatGPT-keresés termékeredményeit függetlenül választják ki, és ezek nem hirdetések. A Shopify-kereskedők a Shopify Catalogon keresztül már integrálva vannak, a többi kereskedő pedig jelentkezhet, hogy közvetlenül termékfeedet adjon. A megjelenés egyik esetben sem garantált."
+  },
+  {
+   "q": "Ha olyan piactereken árulok, mint az Amazon, akkor is rendbe kell tennem a saját webhelyemet?",
+   "a": "A piactéri oldalakat az AI forrásként használhatja, de a saját webhelyén tudja a termékleírásokat, a visszaküldési feltételeket és a GYIK-et a legrészletesebben és legpontosabban közzétenni. A legbiztonságosabb, ha az árak, a szállítás és a visszaküldési feltételek mindkét helyen egyeznek."
+  },
+  {
+   "q": "Ingyenes a Nurevo AEO?",
+   "a": "Igen. A webáruház típus (OnlineStore), a termékkatalógus, a visszaküldési szabályzat és a GYIK strukturált adatai, az llms.txt, az AI-robotokra vonatkozó szabályok és az AEO-pontszám az ingyenes csomag része. A fizetős csomagok mindig naprakész szabálykészletet (Standard, havi $20) és béta AI-láthatósági mérést (Pro, havi $99-tól) adnak hozzá. [Nurevo AEO a WordPress.org-on](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garantálja ez, hogy a termékeim megjelennek az AI válaszaiban?",
+   "a": "Nem. Az AI válaszai változnak, és semmilyen eszköz vagy módszer nem garantálhat említést vagy helyezést. Azt teheti meg, hogy termékei és üzlete adatait könnyen olvashatóvá teszi az AI számára, és folyamatosan ellenőrzi, megjelenik-e."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Először nézze meg, hogyan olvassa az AI az üzlete webhelyét",
+  "body": "Az ingyenes ellenőrzés regisztráció nélkül megmutatja strukturált adatai, llms.txt fájlja és az AI-robotok hozzáférésének állapotát. WordPressen a Nurevo AEO ingyen pótolja a hiányokat.",
+  "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+  "href": "/check",
+  "secondary": {
+   "label": "A Nurevo AEO letöltése a WordPress.org-ról",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google és a Google Merchant Center pedig a Google LLC védjegye. A WooCommerce, a Shopify, az Amazon, a Yoast SEO, a Rank Math, az All in One SEO és a Slim SEO a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük. Ez a cikk nem minősül jogi tanácsadásnak."
+}

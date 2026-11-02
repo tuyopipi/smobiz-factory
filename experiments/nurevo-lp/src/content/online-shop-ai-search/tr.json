@@ -1,0 +1,146 @@
+{
+ "title": "Online mağazalar için yapay zekâ araması: ürün, stok, iade | Nurevo",
+ "description": "Online mağaza için AEO, ürün adı, fiyat, stok, kargo ve iade koşullarını ürün sayfası metninde ve yapılandırılmış veride doğru yayımlamakla başlar. Kontrol listesiyle.",
+ "h1": "Online mağazalar için yapay zekâ araması: yapay zekânın ürünlerinizi, fiyatlarınızı, stokunuzu ve iade koşullarınızı doğru okuması",
+ "lead": "Bir online mağaza için yapay zekâ arama optimizasyonu (AEO), ürün adlarını, fiyatları, stok durumunu, kargo ücretlerini, iade koşullarını ve mağazayı kimin işlettiğini hem ürün sayfası metninde hem de schema.org Product, Offer ve OnlineStore yapılandırılmış verisinde doğru ve tutarlı biçimde yayımlamaya dayanır. Böylece ChatGPT, Perplexity ve Google'ın yapay zekâsı, \"X'i internetten nereden alabilirim?\" ya da \"X'i ücretsiz iadeyle hangi mağaza satıyor?\" gibi sorulara tahmin yürütmeden yanıt verebilmek için ihtiyaç duyduğu bilgiye ulaşır. Mesele yapay zekâ için özel etiketler eklemek değildir.",
+ "intro": [
+  "2 Kasım 2026'da (JST) yazılmıştır. Google, OpenAI ve Japonya Tüketici İşleri Ajansı'na ait bilgiler o tarihte her birinin resmî sayfasında kontrol edilmiştir.",
+  "Yapay zekâ yanıtları günden güne ve sorunun nasıl sorulduğuna göre değişir. Buradaki adımlar mağazanızın ve ürünlerinizin bilgilerini yapay zekâ için okunabilir hâle getirir. Bir yapay zekânın mağazanızı anacağını ya da belirli bir sıraya koyacağını garanti etmez."
+ ],
+ "sections": [
+  {
+   "heading": "Alışveriş yapanlar yapay zekâya ne soruyor, yapay zekâ ne okuyor",
+   "paragraphs": [
+    "Yapay zekâya sorulan alışveriş soruları ürünü, fiyatı, stoku, kargoyu ve iadeyi bir arada içerir: \"hassas cilt için güneş kremini internetten nereden alabilirim?\", \"Japonya'da üretilmiş ahşap kesme tahtası satan bir mağaza\", \"X stokta var mı, kargo ne kadar?\", \"iadesi kolay bir online ayakkabı mağazası\". Bunlara yanıt verebilmek için yapay zekânın hangi ürünleri hangi fiyata sattığınızı, şu anda satın alınıp alınamayacağını, kargo ve iadenin ne kadar tuttuğunu ve satıcının kim olduğunu metin olarak okuyabilmesi gerekir.",
+    "Google, AI Overviews veya AI Mode'da görünmek için ek bir gereklilik ya da özel schema.org yapılandırılmış verisi gerekmediğini, yapılandırılmış verinin görünen metinle örtüşmesi ve Merchant Center ile İşletme Profili bilgilerinizin güncel tutulması gibi olağan temellerin ise önemini koruduğunu belirtiyor. [Google: Yapay zekâ özellikleri ve web siteniz](https://developers.google.com/search/docs/appearance/ai-features)",
+    "ChatGPT için OpenAI, aramadaki ürün sonuçlarının ChatGPT tarafından bağımsız olarak seçildiğini ve reklam olmadığını; birinci ve üçüncü taraf sağlayıcılardan gelen fiyat ve ürün açıklaması gibi yapılandırılmış meta verileri dikkate aldığını; satıcıların da stok durumu, fiyat, kalite ve üretici ya da ana satıcı olup olmadıkları gibi etkenlere göre sıralandığını söylüyor. Shopify satıcılarının ürün verileri Shopify Catalog üzerinden zaten entegre durumda; diğer satıcılar ise doğrudan ürün feed'i sağlamak için başvurabiliyor (2 Kasım 2026'da kontrol edildi). [OpenAI: ChatGPT Search ile alışveriş](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Bir online mağazanın yayımlaması gereken bilgiler",
+   "paragraphs": [
+    "Google'ın kuruluş belgelerinde zorunlu özellik yoktur; Google en özel alt türü kullanmanızı ister ve bir e-ticaret sitesi için OnlineBusiness yerine OnlineStore önerir. [Google: Organization yapılandırılmış verisi](https://developers.google.com/search/docs/appearance/structured-data/organization). Ürünler için Google'ın satıcı listeleme yapılandırılmış verisi, Product'ta name, image ve offers; Offer'da ise price (sıfırdan büyük) ve priceCurrency ister; availability önerilir. [Google: Satıcı listeleme yapılandırılmış verisi](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Bilgi",
+     "Sayfada",
+     "Yapılandırılmış veride"
+    ],
+    "rows": [
+     [
+      "Mağaza (kim satıyor)",
+      "Mağaza adı, işleten şirket ve iletişim bilgileri; hakkımızda veya yasal bilgiler sayfasında",
+      "OnlineStore (bir Organization türü); zorunlu özellik yok"
+     ],
+     [
+      "Ürün adı ve görseli",
+      "Her ürün sayfasında, model, beden veya renk farklarını gösteren bir adla",
+      "Product name ve image (zorunlu)"
+     ],
+     [
+      "Fiyat",
+      "Satış fiyatı metin olarak ve indirimli fiyatın ne zaman bittiği",
+      "Offer price ve priceCurrency (zorunlu)"
+     ],
+     [
+      "Stok",
+      "Stokta, tükendi veya ön sipariş; gerçek durumla uyumlu",
+      "Offer availability (önerilir)"
+     ],
+     [
+      "İade koşulları",
+      "İade süresi, koşullar ve iade kargosunu kimin ödediği; tek bir sayfada",
+      "Organization hasMerchantReturnPolicy; yalnızca iade sayfasına bağlantı (merchantReturnLink) de kabul edilir"
+     ],
+     [
+      "Kargo",
+      "Kargo ücretleri (bölgeye veya sipariş tutarına göre) ve teslimat süreleri",
+      "Organization hasShippingService (shippingConditions zorunlu)"
+     ]
+    ],
+    "caption": "Zorunlu ve önerilen özellikler, 2 Kasım 2026 itibarıyla Google belgelerinde listelendiği şekliyle."
+   },
+   "after": [
+    "Satıcı listeleme işaretlemesi, alışveriş yapanın ürünü satın alabildiği sayfalar içindir ve Google bunun ürün listeleyen sayfalara değil ürün sayfalarına eklenmesini önerir. İade ve kargo, her üründe ayrı ayrı değil, Organization üzerinde mağaza genelinde geçerli politikalar olarak bir kez tanımlanmalıdır. [Google: İade politikası](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: Kargo politikası](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "Google'da, Merchant Center veya Search Console'daki iade ve kargo ayarları sitenizdeki yapılandırılmış veriden önceliklidir. Bir değeri yalnızca tek bir yerde değiştirmek çelişkiye yol açar; bu nedenle fiyat, kargo ücreti veya iade koşulu değiştiğinde ürün sayfalarınızı, yapılandırılmış veriyi, Merchant Center'ı, pazaryeri mağaza sayfalarınızı ve llms.txt'yi birlikte güncelleyin."
+   ]
+  },
+  {
+   "heading": "Yasanın sayfalarınızda zaten zorunlu tutabileceği bilgiler",
+   "paragraphs": [
+    "Online satış kuralları ülkeden ülkeye değişir; size uygulananları kontrol edin. Örneğin Japonya'da Belirli Ticari İşlemler Kanunu, mesafeli satış reklamlarında tüketim vergisi dâhil fiyatın, kargo ücretinin, alıcının ödediği diğer masrafların, ödeme zamanı ve yönteminin, malın teslim zamanının, iptal ve iade koşullarının ve satıcının adı, adresi ve telefon numarasının gösterilmesini zorunlu tutar. [Tüketici İşleri Ajansı: mesafeli satış reklamları (Japonca)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Bunlar, bir yapay zekânın \"kargo ne kadar?\" veya \"iade edebilir miyim?\" sorularına yanıt vermek için ihtiyaç duyduğu bilgilerin ta kendisidir.",
+    "Tüketici İşleri Ajansı'nın açıklamasına göre aynı kanun uyarınca iade koşulları gösterilmemişse alıcı, malı teslim aldıktan sonraki sekiz gün içinde sözleşmeden dönebilir ve iade masrafını kendisi öder. [Tüketici İşleri Ajansı: mesafeli satışta iade örneği (Japonca)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Politikanız ne olursa olsun, onu metin olarak açıkça yazın ve yapılandırılmış veriden bağlantı verdiğiniz iade sayfasının aynı şeyi söylediğinden emin olun.",
+    "Puanları ve yorumları yalnızca gerçek müşterilerden gösterin. Japonya'da gizli pazarlama, 1 Ekim 2023'ten bu yana Haksız Promosyonlar ve Yanıltıcı Beyanlar Kanunu'nun ihlali sayılıyor; bir işletmenin üçüncü kişilerden istediği veya onlara yaptırdığı paylaşımlar, yorumlar dâhil, o işletmenin reklamı kabul ediliyor. [Tüketici İşleri Ajansı: gizli pazarlama (Japonca)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "WordPress (WooCommerce) mağazasında kurulum",
+   "list": [
+    "Nurevo AEO'yu (ücretsiz) [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) üzerinden kurun ve etkinleştirin. Yoast SEO, Rank Math, All in One SEO veya Slim SEO kullanıyorsanız onları koruyun.",
+    "Ayarlar'da (veya kurulum sihirbazında) site türünü \"Online mağaza\" olarak belirleyin. WooCommerce etkin olduğunda bu seçenek önerilir, ancak kaydedene kadar hiçbir şey değişmez. Mağaza OnlineStore olarak yayımlanır; adres veya çalışma saatleri gerekmez (girdiğiniz bir adres veya telefon yine de yayımlanır).",
+    "İade ve geri ödeme politikası sayfanızın ve kargo politikası sayfanızın URL'lerini girin. İade sayfası mağazanın MerchantReturnPolicy'si (o sayfaya bir bağlantı) olarak yayımlanır ve her iki sayfa da llms.txt'de listelenir. Kargonun koşulları (ücretler ve süreler) eklenti tarafından bilinmediği için kargo yapılandırılmış veriye dönüştürülmez; sayfa yalnızca llms.txt'de listelenir.",
+    "Ürün sayfaları, WooCommerce'in çıkardığı Product işaretlemesini korur; Nurevo AEO bunu tekrarlamaz. Ana sayfada, en son yayımlanan en fazla 30 ürünü, bilindiği durumlarda fiyat, para birimi ve stok bilgisiyle birlikte bir katalog (OfferCatalog) olarak yayımlar. Puan yalnızca gerçek yorumları olan ürünlere eklenir. Ürünler ayrıca llms.txt'de listelenir.",
+    "SSS'nizi girin (kargo ücretleri, teslimat süreleri, hediye paketi, nasıl iade edilir) ve Nurevo FAQ bloğunu ya da [nurevo_faq] kısa kodunu görünmesini istediğiniz sayfaya yerleştirin.",
+    "AEO puanı ekranında teşhisi çalıştırın. Online mağaza için fiyatı ve stoku olan ürünleri, iade sayfasını, kargo sayfasını ve iletişim bilgilerini kontrol eder ve eksikleri listeler.",
+    "Yapay zekânın dışarıdan ne okuduğunu [ücretsiz yapay zekâ okunabilirlik kontrolü](/check) ile görün ve fiyatların, kargonun ve iade koşullarının Merchant Center ve pazaryeri mağaza sayfalarınızla örtüştüğünü doğrulayın."
+   ],
+   "after": [
+    "Shopify gibi WordPress ile kurulmamış mağazalarda da aynı fikir geçerlidir: yukarıdaki tablodaki bilgileri ürün sayfası metninde ve yapılandırılmış veride yayımlayın; mağaza tanıtımınızı, iade ve kargo sayfalarınızı ve ana ürün sayfalarınızı llms.txt'de listeleyin. [llms.txt nedir?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Yayımlamadan önce kontrol listesi",
+   "list": [
+    "Her ürün sayfası ürün adını, fiyatını ve stok durumunu yalnızca görselde değil, metin olarak gösteriyor.",
+    "Yapılandırılmış verideki fiyat ve stok, sayfada görünen değerlerle örtüşüyor; tükenen ürünler stokta olarak işaretlenmiyor.",
+    "Kargo ücretleri, teslimat süreleri ve iade koşullarının ürün sayfalarından veya alt bilgiden bağlantı verilen kendi sayfaları var.",
+    "Satıcının adı, adresi, telefon numarası ve yasanın istediği diğer bilgiler yayımlanmış.",
+    "Mağazanın yapılandırılmış veri türü işletmeye uygun, örneğin OnlineStore.",
+    "Puan ve yorum işaretlemesi yalnızca gerçek müşteri yorumlarından geliyor.",
+    "Fiyatlar, kargo ve iade koşulları sitenizde, Merchant Center'da, pazaryerlerinde ve sosyal medya mağaza sayfalarında aynı."
+   ]
+  },
+  {
+   "heading": "Yapay zekâ yanıtlarında görünüp görünmediğinizi kontrol etmek",
+   "paragraphs": [
+    "Bilgiler yerine oturduktan sonra yapay zekâya müşterilerinizin soracağı soruları sorun (\"X için en iyi online mağaza\", \"X'i ücretsiz kargoyla nereden alabilirim\") ve mağazanızın veya ürünlerinizin adıyla ya da URL'siyle çıkıp çıkmadığına bakın. Yanıtlar her denemede değişir; bu yüzden aynı soruları zamana yayarak birkaç kez sorun.",
+    "Siteniz Nurevo hizmetine bağlıysa Free ve Standard planlar aylık bir kontrol içerir: ürün kategorilerinizden oluşturulan (asla mağazanızın adından değil) üç soru Perplexity'ye sorulur ve eklenti, yanıtların mağazanızı anıp anmadığını veya sitenizi kaynak gösterip göstermediğini kaydeder. Pro plan (aylık $99'dan başlayan) beta aşamasında yapay zekâ görünürlüğü ölçümü ekler: mağazanızın yapay zekâ yanıtlarında ne sıklıkla göründüğü, rakip karşılaştırması ve geçmişle birlikte (şu an Perplexity'de). İkisi de her yanıtı izlemek yerine yanıtlardan örnek alır."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Bir online mağaza yapay zekâ aramasına nereden başlamalı?",
+   "a": "Her ürünün adını, fiyatını ve stok durumunu ürün sayfasında metin olarak doğru yazın; kargo, iade ve satıcı bilgilerini kendi sayfalarına koyun. Ardından aynı bilgileri Product, Offer ve OnlineStore yapılandırılmış verisi olarak ve llms.txt'de yayımlayın; Merchant Center ve pazaryeri ilanlarınızla örtüştüğünden emin olun."
+  },
+  {
+   "q": "Ürünlerimin ChatGPT'de görünmesi için ödeme yapmam gerekir mi?",
+   "a": "OpenAI, ChatGPT aramasındaki ürün sonuçlarının bağımsız olarak seçildiğini ve reklam olmadığını söylüyor. Shopify satıcıları Shopify Catalog üzerinden zaten entegre; diğer satıcılar doğrudan ürün feed'i sağlamak için başvurabiliyor. Her iki durumda da görünmek garanti değildir."
+  },
+  {
+   "q": "Amazon gibi pazaryerlerinde satış yapıyorsam kendi sitemi yine de düzeltmem gerekir mi?",
+   "a": "Pazaryeri sayfaları yapay zekâ tarafından kaynak olarak kullanılabilir, ancak ürün açıklamalarını, iade koşullarını ve SSS'yi en ayrıntılı ve en doğru biçimde yayımlayabileceğiniz yer kendi sitenizdir. Fiyatları, kargoyu ve iade koşullarını her iki yerde de uyumlu tutmak en güvenli yaklaşımdır."
+  },
+  {
+   "q": "Nurevo AEO ücretsiz mi?",
+   "a": "Evet. Online mağaza türü (OnlineStore), ürün kataloğu, iade politikası ve SSS yapılandırılmış verisi, llms.txt, yapay zekâ tarayıcı kuralları ve AEO puanı ücretsiz plandadır. Ücretli planlar her zaman güncel bir kural seti (Standard, aylık $20) ve beta aşamasında yapay zekâ görünürlüğü ölçümü (Pro, aylık $99'dan başlayan) ekler. [WordPress.org'da Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Bu, ürünlerimin yapay zekâ yanıtlarında görüneceğini garanti eder mi?",
+   "a": "Hayır. Yapay zekâ yanıtları değişir ve hiçbir araç ya da teknik bir anılmayı veya sıralamayı garanti edemez. Yapabileceğiniz şey, ürünlerinizin ve mağazanızın bilgilerini yapay zekânın kolayca okuyabileceği hâle getirmek ve görünüp görünmediğinizi düzenli olarak kontrol etmektir."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Önce yapay zekânın mağaza sitenizi nasıl okuduğunu görün",
+  "body": "Ücretsiz kontrol, yapılandırılmış verinizin, llms.txt'nizin ve yapay zekâ tarayıcı erişiminin durumunu gösterir; kayıt gerekmez. WordPress'te Nurevo AEO eksikleri ücretsiz tamamlar.",
+  "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü başlatın",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO'yu WordPress.org'dan edinin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT, OpenAI'ın; Perplexity, Perplexity AI'ın; Google ve Google Merchant Center ise Google LLC'nin ticari markalarıdır. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO ve Slim SEO, ilgili sahiplerinin ticari markalarıdır. Nurevo bunlarla bağlantılı değildir. Bu makale hukuki tavsiye değildir."
+}

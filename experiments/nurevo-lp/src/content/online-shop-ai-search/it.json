@@ -1,0 +1,146 @@
+{
+ "title": "Ricerca IA per negozi online: prodotti, scorte, resi | Nurevo",
+ "description": "L’AEO per un negozio online parte dal pubblicare bene nomi, prezzi, disponibilità, spedizioni e resi, nel testo delle schede e nei dati strutturati. Con checklist.",
+ "h1": "Ricerca IA per negozi online: come far leggere correttamente all’IA prodotti, prezzi, disponibilità e condizioni di reso",
+ "lead": "L’ottimizzazione per la ricerca IA (AEO) di un negozio online si riduce a pubblicare in modo accurato e coerente i nomi dei prodotti, i prezzi, la disponibilità, le spese di spedizione, le condizioni di reso e chi gestisce il negozio, sia nel testo delle schede prodotto sia nei dati strutturati schema.org Product, Offer e OnlineStore. Così ChatGPT, Perplexity e l’IA di Google hanno ciò che serve per rispondere a «dove posso comprare X online?» o «quale negozio vende X con reso gratuito?» senza tirare a indovinare. Non si tratta di aggiungere tag speciali per l’IA.",
+ "intro": [
+  "Scritto il 2 novembre 2026 (JST). Le informazioni di Google, OpenAI e dell’Agenzia giapponese per i consumatori (Consumer Affairs Agency) sono state verificate quel giorno sulle rispettive pagine ufficiali.",
+  "Le risposte dell’IA cambiano da un giorno all’altro e a seconda di come è formulata la domanda. I passaggi descritti qui rendono leggibili per l’IA i dati del tuo negozio e dei tuoi prodotti. Non garantiscono che un’IA citi il tuo negozio né che lo collochi in una certa posizione."
+ ],
+ "sections": [
+  {
+   "heading": "Cosa chiedono gli acquirenti all’IA e cosa legge l’IA",
+   "paragraphs": [
+    "Le domande di acquisto rivolte all’IA mescolano prodotto, prezzo, disponibilità, spedizione e resi: «dove posso comprare online una crema solare per pelli sensibili?», «un negozio che vende taglieri in legno fatti in Giappone», «X è disponibile e quanto costa la spedizione?», «un negozio di scarpe online con resi facili». Per rispondere, un’IA deve poter leggere, come testo, quali prodotti vendi e a che prezzo, se si possono acquistare subito, quanto costano spedizione e reso e chi è il venditore.",
+    "Google afferma che per comparire in AI Overviews o AI Mode non ci sono requisiti aggiuntivi né dati strutturati schema.org speciali, e che le basi di sempre restano importanti, come far corrispondere i dati strutturati al testo visibile e mantenere aggiornate le informazioni in Merchant Center e nel Profilo dell’attività. [Google: le funzionalità di IA e il tuo sito web](https://developers.google.com/search/docs/appearance/ai-features)",
+    "Per ChatGPT, OpenAI spiega che i risultati di prodotto nella ricerca sono selezionati in modo indipendente da ChatGPT e non sono annunci; che tiene conto di metadati strutturati, come prezzo e descrizione del prodotto, provenienti da fornitori propri e di terze parti; e che i commercianti sono classificati in base a fattori come disponibilità, prezzo, qualità e l’essere il produttore o il venditore principale. I dati di prodotto dei commercianti Shopify sono già integrati tramite Shopify Catalog, mentre gli altri commercianti possono fare richiesta per fornire direttamente un feed di prodotti (verificato il 2 novembre 2026). [OpenAI: fare acquisti con ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "I dati che un negozio online dovrebbe pubblicare",
+   "paragraphs": [
+    "La documentazione di Google sulle organizzazioni non prevede proprietà obbligatorie, chiede di usare il sottotipo più specifico e consiglia OnlineStore anziché OnlineBusiness per un sito di e-commerce. [Google: dati strutturati Organization](https://developers.google.com/search/docs/appearance/structured-data/organization). Per i prodotti, i dati strutturati delle schede commerciante di Google richiedono name, image e offers nel Product, e price (maggiore di zero) e priceCurrency nell’Offer; availability è consigliata. [Google: dati strutturati delle schede commerciante](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Dato",
+     "Sulla pagina",
+     "Nei dati strutturati"
+    ],
+    "rows": [
+     [
+      "Il negozio (chi vende)",
+      "Nome del negozio, società che lo gestisce e contatti, in una pagina «Chi siamo» o di note legali",
+      "OnlineStore (un tipo di Organization); nessuna proprietà obbligatoria"
+     ],
+     [
+      "Nome e immagine del prodotto",
+      "In ogni scheda prodotto, con un nome che distingua modello, taglia o colore",
+      "Product name e image (obbligatori)"
+     ],
+     [
+      "Prezzo",
+      "Il prezzo di vendita come testo, e quando termina un prezzo scontato",
+      "Offer price e priceCurrency (obbligatori)"
+     ],
+     [
+      "Disponibilità",
+      "Disponibile, esaurito o in preordine, in linea con la situazione reale",
+      "Offer availability (consigliata)"
+     ],
+     [
+      "Condizioni di reso",
+      "Termine per il reso, condizioni e chi paga la spedizione di ritorno, in un’unica pagina",
+      "Organization hasMerchantReturnPolicy; è accettato anche il solo link alla pagina dei resi (merchantReturnLink)"
+     ],
+     [
+      "Spedizione",
+      "Spese di spedizione (per area o importo dell’ordine) e tempi di consegna",
+      "Organization hasShippingService (shippingConditions obbligatorio)"
+     ]
+    ],
+    "caption": "Proprietà obbligatorie e consigliate secondo la documentazione di Google al 2 novembre 2026."
+   },
+   "after": [
+    "Il markup delle schede commerciante è pensato per le pagine in cui l’acquirente può comprare il prodotto, e Google consiglia di aggiungerlo alle schede prodotto anziché alle pagine che elencano più prodotti. Resi e spedizioni conviene descriverli una sola volta, come politiche valide per tutto il negozio nella tua Organization, invece che su ogni prodotto. [Google: politica di reso](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: politica di spedizione](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "In Google, le impostazioni di reso e spedizione in Merchant Center o Search Console prevalgono sui dati strutturati del tuo sito. Modificare un valore in un solo punto crea un conflitto: quando cambiano un prezzo, una spesa di spedizione o una condizione di reso, aggiorna insieme schede prodotto, dati strutturati, Merchant Center, pagine del negozio sui marketplace e llms.txt."
+   ]
+  },
+  {
+   "heading": "Dati che la legge potrebbe già richiedere sulle tue pagine",
+   "paragraphs": [
+    "Le regole per la vendita online cambiano da paese a paese, quindi verifica quelle che ti riguardano. In Giappone, per esempio, la legge sulle transazioni commerciali specificate (Act on Specified Commercial Transactions) impone che la pubblicità della vendita per corrispondenza indichi il prezzo comprensivo dell’imposta sui consumi, le spese di spedizione, ogni altro costo a carico dell’acquirente, quando e come pagare, quando viene consegnata la merce, le condizioni di annullamento e reso, e nome, indirizzo e numero di telefono del venditore. [Consumer Affairs Agency: pubblicità della vendita per corrispondenza (in giapponese)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Sono esattamente i dati di cui un’IA ha bisogno per rispondere a «quanto costa la spedizione?» o «posso restituirlo?».",
+    "Secondo la stessa legge, se non sono indicate condizioni di reso, l’acquirente può annullare l’acquisto entro otto giorni dal ricevimento della merce e paga le spese per restituirla, spiega la Consumer Affairs Agency. [Consumer Affairs Agency: caso di reso nella vendita per corrispondenza (in giapponese)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Qualunque sia la tua politica, esponila chiaramente come testo e fai in modo che la pagina dei resi collegata dai dati strutturati dica la stessa cosa.",
+    "Mostra solo valutazioni e recensioni di clienti reali. In Giappone il marketing occulto (stealth marketing) è una violazione della legge contro premi ingiustificati e rappresentazioni ingannevoli (Act against Unjustifiable Premiums and Misleading Representations) dal 1° ottobre 2023; i contenuti che un’azienda chiede o incarica a terzi di pubblicare valgono come sua pubblicità, recensioni comprese. [Consumer Affairs Agency: marketing occulto (in giapponese)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Configurazione su un negozio WordPress (WooCommerce)",
+   "list": [
+    "Installa Nurevo AEO (gratuito) da [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) e attivalo. Se usi Yoast SEO, Rank Math, All in One SEO o Slim SEO, puoi continuare a farlo.",
+    "In Impostazioni (o nella procedura guidata di configurazione) imposta il tipo di sito su «Negozio online (e-commerce)». Viene suggerito quando WooCommerce è attivo, ma non cambia nulla finché non salvi. Il negozio viene pubblicato come OnlineStore e non servono indirizzo né orari di apertura (un indirizzo o un telefono inseriti vengono comunque pubblicati).",
+    "Inserisci gli URL della pagina con la politica di reso e rimborso e della pagina con la politica di spedizione. La pagina dei resi viene pubblicata come MerchantReturnPolicy del negozio (un link a quella pagina) ed entrambe le pagine vengono elencate in llms.txt. La spedizione non viene trasformata in dati strutturati perché le sue condizioni (costi e tempi) non sono note al plugin; la pagina viene solo elencata in llms.txt.",
+    "Le schede prodotto mantengono il markup Product generato da WooCommerce; Nurevo AEO non lo ripete. In home page pubblica fino ai 30 prodotti pubblicati più di recente come catalogo (OfferCatalog), con prezzo, valuta e disponibilità quando noti. La valutazione viene aggiunta solo ai prodotti con recensioni reali. I prodotti vengono elencati anche in llms.txt.",
+    "Inserisci le tue FAQ (spese di spedizione, tempi di consegna, confezione regalo, come fare un reso) e inserisci il blocco Nurevo FAQ o lo shortcode [nurevo_faq] nella pagina in cui vuoi mostrarle.",
+    "Avvia la diagnosi nella schermata Punteggio AEO. Per un negozio online verifica la presenza di prodotti con prezzo e disponibilità, di una pagina dei resi, di una pagina delle spedizioni e dei contatti, ed elenca cosa manca.",
+    "Guarda dall’esterno cosa legge l’IA con il [controllo gratuito di leggibilità per l’IA](/check) e verifica che prezzi, spedizioni e condizioni di reso corrispondano a Merchant Center e alle pagine del negozio sui marketplace."
+   ],
+   "after": [
+    "Per i negozi non realizzati con WordPress, come Shopify, vale lo stesso principio: pubblica i dati della tabella qui sopra nel testo delle schede prodotto e nei dati strutturati, ed elenca in llms.txt la presentazione del negozio, resi, spedizioni e le principali schede prodotto. [Che cos’è llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Checklist prima della pubblicazione",
+   "list": [
+    "Ogni scheda prodotto mostra nome, prezzo e disponibilità come testo, non solo in un’immagine.",
+    "Prezzi e disponibilità nei dati strutturati corrispondono ai valori visibili sulla pagina, e i prodotti esauriti non risultano disponibili.",
+    "Spese di spedizione, tempi di consegna e condizioni di reso hanno pagine proprie, collegate dalle schede prodotto o dal footer.",
+    "Nome, indirizzo e numero di telefono del venditore e gli altri dati richiesti per legge sono pubblicati.",
+    "Il tipo di dati strutturati del negozio è adatto all’attività, per esempio OnlineStore.",
+    "Il markup di valutazioni e recensioni proviene solo da recensioni reali dei clienti.",
+    "Prezzi, spedizioni e condizioni di reso coincidono tra il tuo sito, Merchant Center, i marketplace e i negozi sui social."
+   ]
+  },
+  {
+   "heading": "Verificare se compari nelle risposte dell’IA",
+   "paragraphs": [
+    "Una volta sistemati i dati, fai all’IA le domande che farebbero i tuoi clienti («miglior negozio online per X», «dove comprare X con spedizione gratuita») e controlla se il tuo negozio o i tuoi prodotti compaiono per nome o URL. Le risposte cambiano da una volta all’altra, quindi ripeti le stesse domande più volte, a distanza di tempo.",
+    "Quando il tuo sito è collegato al servizio Nurevo, i piani Free e Standard includono un controllo mensile: tre domande costruite a partire dalle tue categorie di prodotto (mai dal nome del negozio) vengono poste a Perplexity, e il plugin registra se le risposte hanno nominato il tuo negozio o citato il tuo sito. Il piano Pro (da $99/mese) aggiunge la misurazione della visibilità nell’IA in beta: quanto spesso il tuo negozio compare nelle risposte dell’IA, con confronto con i concorrenti e cronologia (attualmente su Perplexity). Entrambi analizzano un campione di risposte, non ogni singola risposta."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Da dove dovrebbe iniziare un negozio online con la ricerca IA?",
+   "a": "Scrivi correttamente come testo nome, prezzo e disponibilità di ogni prodotto nella sua scheda, e metti spedizioni, resi e dati del venditore in pagine dedicate. Poi pubblica gli stessi dati come dati strutturati Product, Offer e OnlineStore e in llms.txt, e assicurati che corrispondano a Merchant Center e alle tue inserzioni sui marketplace."
+  },
+  {
+   "q": "Devo pagare per far comparire i miei prodotti in ChatGPT?",
+   "a": "OpenAI afferma che i risultati di prodotto nella ricerca di ChatGPT sono selezionati in modo indipendente e non sono annunci. I commercianti Shopify sono già integrati tramite Shopify Catalog, mentre gli altri possono fare richiesta per fornire direttamente un feed di prodotti. In entrambi i casi la comparsa non è garantita."
+  },
+  {
+   "q": "Se vendo su marketplace come Amazon, devo comunque sistemare il mio sito?",
+   "a": "Le pagine dei marketplace possono essere usate come fonti dall’IA, ma è sul tuo sito che puoi pubblicare descrizioni dei prodotti, condizioni di reso e FAQ nel modo più dettagliato e preciso. La soluzione più sicura è mantenere allineati prezzi, spedizioni e condizioni di reso in entrambi i luoghi."
+  },
+  {
+   "q": "Nurevo AEO è gratuito?",
+   "a": "Sì. Il tipo di sito negozio online (OnlineStore), il catalogo prodotti, i dati strutturati per politica di reso e FAQ, llms.txt, le regole per i crawler IA e il Punteggio AEO sono inclusi nel piano gratuito. I piani a pagamento aggiungono un insieme di regole sempre aggiornato (Standard, $20/mese) e la misurazione della visibilità nell’IA in beta (Pro, da $99/mese). [Nurevo AEO su WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Questo garantisce che i miei prodotti compaiano nelle risposte dell’IA?",
+   "a": "No. Le risposte dell’IA cambiano, e nessuno strumento o tecnica può garantire una citazione o una posizione. Quello che puoi fare è rendere i dati dei tuoi prodotti e del tuo negozio facili da leggere per l’IA e continuare a verificare se compari."
+  }
+ ],
+ "relatedHeading": "Guide correlate",
+ "cta": {
+  "heading": "Per prima cosa, guarda come l’IA legge il sito del tuo negozio",
+  "body": "Il controllo gratuito mostra lo stato dei tuoi dati strutturati, del llms.txt e dell’accesso dei crawler IA, senza registrazione. Su WordPress, Nurevo AEO colma le lacune gratuitamente.",
+  "label": "Avvia il controllo gratuito di leggibilità per l’IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Scarica Nurevo AEO da WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT è un marchio di OpenAI, Perplexity di Perplexity AI, Google e Google Merchant Center di Google LLC. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO e Slim SEO sono marchi dei rispettivi proprietari. Nurevo non è affiliato con nessuno di essi. Questo articolo non costituisce consulenza legale."
+}

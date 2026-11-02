@@ -1,0 +1,146 @@
+{
+ "title": "TI-otsing e-poodidele: tooted, laoseis ja tagastus | Nurevo",
+ "description": "E-poe AEO algab sellest, et tootenimed, hinnad, laoseis, tarne- ja tagastustingimused avaldatakse õigesti lehe tekstis ja struktureeritud andmetes. Kontrollnimekirjaga.",
+ "h1": "TI-otsing e-poodidele: kuidas panna TI teie tooteid, hindu, laoseisu ja tagastustingimusi õigesti lugema",
+ "lead": "E-poe TI-otsingu optimeerimine (AEO) taandub sellele, et tootenimed, hinnad, laoseis, tarnekulud, tagastustingimused ja poe pidaja avaldatakse täpselt ja ühtmoodi nii tootelehtede tekstis kui ka schema.org struktureeritud andmetes Product, Offer ja OnlineStore. Nii on ChatGPT-l, Perplexityl ja Google'i TI-l olemas kõik, mida on vaja küsimustele „kust saab X-i veebist osta?“ või „milline pood müüb X-i tasuta tagastusega?“ vastamiseks ilma arvamata. Asi ei ole TI jaoks mõeldud eriliste siltide lisamises.",
+ "intro": [
+  "Kirjutatud 2. novembril 2026 (Jaapani aja järgi). Google'i, OpenAI ja Jaapani Tarbijakaitseameti (Consumer Affairs Agency) teavet kontrolliti sel kuupäeval nende ametlikel lehtedel.",
+  "TI vastused muutuvad päevast päeva ja sõltuvalt küsimuse sõnastusest. Siinsed sammud teevad teie poe ja toodete andmed TI-le loetavaks. Need ei taga, et TI teie poodi mainib või selle kuhugi kohale paigutab."
+ ],
+ "sections": [
+  {
+   "heading": "Mida ostjad TI-lt küsivad ja mida TI loeb",
+   "paragraphs": [
+    "TI-le esitatud ostuküsimused segavad toodet, hinda, laoseisu, tarnet ja tagastust: „kust saab veebist osta tundlikule nahale sobivat päikesekreemi?“, „pood, mis müüb Jaapanis valmistatud puidust lõikelaudu“, „kas X on laos ja kui palju tarne maksab?“, „lihtsa tagastusega veebipõhine kingapood“. Vastamiseks peab TI suutma tekstina lugeda, milliseid tooteid te millise hinnaga müüte, kas neid saab kohe osta, mis maksavad tarne ja tagastus ning kes müüb.",
+    "Google ütleb, et AI Overviews'is või AI Mode'is kuvamiseks ei ole lisanõudeid ega vajata erilisi schema.org struktureeritud andmeid ning et tavapärased alused on endiselt olulised, näiteks see, et struktureeritud andmed vastaksid nähtavale tekstile ning Merchant Centeri ja ettevõtteprofiili andmed oleksid ajakohased. [Google: TI-funktsioonid ja teie veebisait](https://developers.google.com/search/docs/appearance/ai-features)",
+    "ChatGPT kohta ütleb OpenAI, et otsingu tootetulemused valib ChatGPT sõltumatult ja need ei ole reklaamid; et arvesse võetakse struktureeritud metaandmeid, nagu hind ja tootekirjeldus, nii esimese kui ka kolmanda osapoole allikatest; ning et kauplejad järjestatakse selliste tegurite järgi nagu saadavus, hind, kvaliteet ja see, kas nad on tootja või peamine müüja. Shopify kauplejate tooteandmed on Shopify Catalogi kaudu juba integreeritud ja teised kauplejad saavad taotleda tootevoo otse edastamist (kontrollitud 2. novembril 2026). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Andmed, mida e-pood peaks avaldama",
+   "paragraphs": [
+    "Google'i organisatsiooni dokumentatsioonis ei ole kohustuslikke omadusi, see palub kasutada kõige täpsemat alamtüüpi ja soovitab e-kaubanduse saidile OnlineBusinessi asemel tüüpi OnlineStore. [Google: organisatsiooni struktureeritud andmed](https://developers.google.com/search/docs/appearance/structured-data/organization). Toodete puhul nõuavad Google'i kaupmehe kirje struktureeritud andmed Producti juures omadusi name, image ja offers ning Offeri juures omadusi price (suurem kui null) ja priceCurrency; availability on soovitatav. [Google: kaupmehe kirje struktureeritud andmed](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Andmed",
+     "Lehel",
+     "Struktureeritud andmetes"
+    ],
+    "rows": [
+     [
+      "Pood (kes müüb)",
+      "Poe nimi, haldav ettevõte ja kontaktandmed meist- või õigusteabe lehel",
+      "OnlineStore (Organizationi liik); kohustuslikke omadusi pole"
+     ],
+     [
+      "Toote nimi ja pilt",
+      "Igal tootelehel, nimega, millest on näha mudeli, suuruse või värvi erinevused",
+      "Producti name ja image (kohustuslikud)"
+     ],
+     [
+      "Hind",
+      "Müügihind tekstina ja see, millal soodushind lõpeb",
+      "Offeri price ja priceCurrency (kohustuslikud)"
+     ],
+     [
+      "Laoseis",
+      "Laos, otsas või eeltellitav, vastavalt tegelikule olukorrale",
+      "Offeri availability (soovitatav)"
+     ],
+     [
+      "Tagastustingimused",
+      "Tagastusaeg, tingimused ja see, kes tasub tagastamise saatekulu, ühel lehel",
+      "Organizationi hasMerchantReturnPolicy; piisab ka ainult lingist tagastuslehele (merchantReturnLink)"
+     ],
+     [
+      "Tarne",
+      "Tarnekulud (piirkonna või tellimuse summa järgi) ja tarneajad",
+      "Organizationi hasShippingService (shippingConditions kohustuslik)"
+     ]
+    ],
+    "caption": "Kohustuslikud ja soovitatavad omadused Google'i dokumentatsiooni järgi 2. novembri 2026 seisuga."
+   },
+   "after": [
+    "Kaupmehe kirje märgistus on mõeldud lehtedele, kus ostja saab toote osta, ja Google soovitab lisada selle tootelehtedele, mitte tooteid loetlevatele lehtedele. Tagastust ja tarnet on parem kirjeldada üks kord kogu poodi hõlmavate põhimõtetena teie Organizationi juures, mitte iga toote juures eraldi. [Google: tagastuspõhimõtted](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: tarnepõhimõtted](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "Google'is on Merchant Centeri või Search Console'i tagastus- ja tarneseaded teie saidi struktureeritud andmete suhtes ülimuslikud. Kui muudate väärtust ainult ühes kohas, lähevad andmed omavahel vastuollu, nii et kui hind, tarnekulu või tagastustingimus muutub, uuendage korraga tootelehti, struktureeritud andmeid, Merchant Centerit, platvormide poelehti ja faili llms.txt."
+   ]
+  },
+  {
+   "heading": "Andmed, mida seadus võib teie lehtedel juba nõuda",
+   "paragraphs": [
+    "Veebimüügi reeglid erinevad riigiti, seega kontrollige, millised kehtivad teie kohta. Näiteks Jaapanis nõuab eriliste äritehingute seadus (Act on Specified Commercial Transactions), et kaugmüügi reklaamis oleks näidatud hind koos tarbimismaksuga, tarnekulud, muud ostja makstavad kulud, millal ja kuidas maksta, millal kaup tarnitakse, tühistamise ja tagastamise tingimused ning müüja nimi, aadress ja telefoninumber. [Consumer Affairs Agency: kaugmüügi reklaam (jaapani keeles)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Need on täpselt need andmed, mida TI vajab, et vastata küsimustele „kui palju tarne maksab?“ või „kas saan selle tagastada?“.",
+    "Sama seaduse järgi võib ostja, kui tagastustingimusi pole näidatud, lepingust taganeda kaheksa päeva jooksul pärast kauba kättesaamist ja tasub ise kauba tagasisaatmise kulu, selgitab Consumer Affairs Agency. [Consumer Affairs Agency: kaugmüügi tagastamise juhtum (jaapani keeles)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Olgu teie põhimõtted millised tahes, kirjutage need tekstina selgelt välja ja hoolitsege, et struktureeritud andmetest lingitud tagastusleht ütleks sama.",
+    "Näidake hinnanguid ja arvustusi ainult päris klientidelt. Jaapanis on varjatud turundus (stealth marketing) alates 1. oktoobrist 2023 põhjendamatute preemiate ja eksitavate esitluste vastase seaduse (Act against Unjustifiable Premiums and Misleading Representations) rikkumine; postitused, mida ettevõte palub või juhendab kolmandaid isikuid tegema, loetakse ettevõtte enda reklaamiks, sealhulgas arvustused. [Consumer Affairs Agency: varjatud turundus (jaapani keeles)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Seadistamine WordPressi e-poes (WooCommerce)",
+   "list": [
+    "Paigaldage Nurevo AEO (tasuta) saidilt [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) ja aktiveerige see. Kui kasutate Yoast SEO-d, Rank Mathi, All in One SEO-d või Slim SEO-d, jätke see alles.",
+    "Valige seadetes (või seadistusviisardis) saidi tüübiks „E-pood“. Seda pakutakse, kui WooCommerce on aktiivne, kuid midagi ei muutu enne salvestamist. Pood avaldatakse tüübina OnlineStore ning aadressi ega lahtiolekuaegu pole vaja (sisestatud aadress või telefon avaldatakse siiski).",
+    "Sisestage oma tagastus- ja raha tagastamise põhimõtete lehe ning tarnepõhimõtete lehe URL-id. Tagastusleht avaldatakse poe MerchantReturnPolicyna (lingina sellele lehele) ja mõlemad lehed loetletakse failis llms.txt. Tarnet struktureeritud andmeteks ei muudeta, sest pistikprogramm ei tea selle tingimusi (kulusid ja aegu); leht loetletakse ainult failis llms.txt.",
+    "Tootelehtedele jääb WooCommerce'i väljastatud Product-märgistus; Nurevo AEO seda ei korda. Avalehel avaldab see kuni 30 viimati avaldatud toodet kataloogina (OfferCatalog), koos hinna, valuuta ja laoseisuga, kui need on teada. Hinnang lisatakse ainult päris arvustustega toodetele. Tooted loetletakse ka failis llms.txt.",
+    "Sisestage oma KKK (tarnekulud, tarneajad, kinkepakkimine, kuidas tagastada) ja paigutage plokk Nurevo FAQ või lühikood [nurevo_faq] lehele, kus soovite neid näidata.",
+    "Käivitage diagnostika AEO skoori vaates. E-poe puhul kontrollib see, kas leidub hinna ja laoseisuga tooteid, tagastusleht, tarneleht ja kontaktandmed, ning loetleb puuduva.",
+    "Vaadake väljastpoolt, mida TI loeb, [tasuta TI-loetavuse kontrolliga](/check) ja veenduge, et hinnad, tarne ja tagastustingimused ühtivad Merchant Centeri ja teie platvormide poelehtedega."
+   ],
+   "after": [
+    "Poodides, mis ei ole tehtud WordPressiga, näiteks Shopifys, kehtib sama põhimõte: avaldage ülaltoodud tabeli andmed tootelehtede tekstis ja struktureeritud andmetes ning loetlege failis llms.txt poe ülevaade, tagastus- ja tarnelehed ning peamised tootelehed. [Mis on llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Kontrollnimekiri enne avaldamist",
+   "list": [
+    "Iga tooteleht näitab toote nime, hinda ja laoseisu tekstina, mitte ainult pildil.",
+    "Struktureeritud andmete hinnad ja laoseis vastavad lehel nähtavatele väärtustele ning läbimüüdud tooteid pole märgitud laos olevaks.",
+    "Tarnekuludel, tarneaegadel ja tagastustingimustel on oma lehed, millele viidatakse tootelehtedelt või jalusest.",
+    "Müüja nimi, aadress, telefoninumber ja muud seadusega nõutud andmed on avaldatud.",
+    "Poe struktureeritud andmete tüüp sobib ettevõttele, näiteks OnlineStore.",
+    "Hinnangute ja arvustuste märgistus pärineb ainult päris klientide arvustustest.",
+    "Hinnad, tarne ja tagastustingimused ühtivad teie saidil, Merchant Centeris, platvormidel ja sotsiaalmeedia poelehtedel."
+   ]
+  },
+  {
+   "heading": "Kuidas kontrollida, kas ilmute TI vastustes",
+   "paragraphs": [
+    "Kui andmed on paigas, esitage TI-le küsimusi, mida teie kliendid esitaksid („parim e-pood X-i jaoks“, „kust osta X-i tasuta tarnega“), ja vaadake, kas teie pood või tooted mainitakse nime või URL-iga. Vastused erinevad kordade vahel, seega esitage samu küsimusi mitu korda eri aegadel.",
+    "Kui teie sait on ühendatud teenusega Nurevo, sisaldavad paketid Free ja Standard igakuist kontrolli: Perplexityle esitatakse kolm teie tootekategooriate põhjal koostatud küsimust (mitte kunagi poe nimega) ja pistikprogramm salvestab, kas vastused nimetasid teie poodi või viitasid teie saidile. Pakett Pro (alates $99 kuus) lisab beetaversioonis TI-nähtavuse mõõtmise: kui sageli teie pood TI vastustes ilmub, koos konkurentide võrdluse ja ajalooga (praegu Perplexitys). Mõlemad põhinevad vastuste valimil ega jälgi iga vastust."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Millest peaks e-pood TI-otsinguga alustama?",
+   "a": "Kirjutage iga toote nimi, hind ja laoseis tekstina õigesti tootelehele ning pange tarne, tagastus ja müüja andmed eraldi lehtedele. Seejärel avaldage samad andmed Product-, Offer- ja OnlineStore-tüüpi struktureeritud andmetena ja failis llms.txt ning veenduge, et need ühtiksid Merchant Centeri ja teie platvormide kuulutustega."
+  },
+  {
+   "q": "Kas pean maksma, et mu tooted ChatGPT-s ilmuksid?",
+   "a": "OpenAI ütleb, et ChatGPT otsingu tootetulemused valitakse sõltumatult ja need ei ole reklaamid. Shopify kauplejad on Shopify Catalogi kaudu juba integreeritud ja teised kauplejad saavad taotleda tootevoo otse edastamist. Kummalgi juhul ei ole ilmumine tagatud."
+  },
+  {
+   "q": "Kui müün Amazoni-sugustel platvormidel, kas pean ikkagi oma saiti parandama?",
+   "a": "TI võib platvormide lehti allikana kasutada, kuid just oma saidil saate avaldada tootekirjeldused, tagastustingimused ja KKK kõige üksikasjalikumalt ja täpsemalt. Kõige kindlam on hoida hinnad, tarne ja tagastustingimused mõlemas kohas kooskõlas."
+  },
+  {
+   "q": "Kas Nurevo AEO on tasuta?",
+   "a": "Jah. E-poe tüüp (OnlineStore), tootekataloog, tagastuspõhimõtete ja KKK struktureeritud andmed, llms.txt, TI-roomikute reeglid ja AEO skoor kuuluvad tasuta paketti. Tasulised paketid lisavad alati ajakohase reeglistiku (Standard, $20 kuus) ja beetaversioonis TI-nähtavuse mõõtmise (Pro, alates $99 kuus). [Nurevo AEO saidil WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Kas see tagab, et mu tooted ilmuvad TI vastustes?",
+   "a": "Ei. TI vastused muutuvad ja ükski tööriist ega võte ei saa mainimist ega positsiooni tagada. Saate teha oma toodete ja poe andmed TI-le hõlpsasti loetavaks ning jätkuvalt kontrollida, kas ilmute."
+  }
+ ],
+ "relatedHeading": "Seotud juhendid",
+ "cta": {
+  "heading": "Vaadake kõigepealt, kuidas TI teie poe saiti loeb",
+  "body": "Tasuta kontroll näitab teie struktureeritud andmete, faili llms.txt ja TI-roomikute ligipääsu olukorda, registreerumata. WordPressis täidab Nurevo AEO lüngad tasuta.",
+  "label": "Tee tasuta TI-loetavuse kontroll",
+  "href": "/check",
+  "secondary": {
+   "label": "Hangi Nurevo AEO saidilt WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI kaubamärk, Perplexity on Perplexity AI kaubamärk ning Google ja Google Merchant Center on Google LLC kaubamärgid. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO ja Slim SEO on nende vastavate omanike kaubamärgid. Nurevo ei ole nendega seotud. See artikkel ei ole õigusnõustamine."
+}

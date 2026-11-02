@@ -1,0 +1,146 @@
+{
+ "title": "AI-søgning for webshops: produkter, lager og returnering | Nurevo",
+ "description": "AEO for webshops begynder med at offentliggøre produktnavne, priser, lager, fragt og returvilkår korrekt i sidetekst og strukturerede data. Med tjekliste.",
+ "h1": "AI-søgning for webshops: sådan får du AI til at læse dine produkter, priser, lagerstatus og returvilkår korrekt",
+ "lead": "Optimering til AI-søgning (AEO) for en webshop handler om at offentliggøre produktnavne, priser, lagerstatus, fragtpriser, returvilkår og hvem der driver shoppen præcist og ensartet, både i teksten på produktsiderne og i schema.org-strukturerede data som Product, Offer og OnlineStore. Så har ChatGPT, Perplexity og Googles AI det, de skal bruge for at svare på „hvor kan jeg købe X online?“ eller „hvilken shop sælger X med gratis returnering?“ uden at gætte. Det handler ikke om at tilføje særlige tags til AI.",
+ "intro": [
+  "Skrevet 2. november 2026 (japansk tid). Oplysningerne fra Google, OpenAI og Japans forbrugermyndighed (Consumer Affairs Agency) blev kontrolleret på de officielle sider på denne dato.",
+  "AI-svar ændrer sig fra dag til dag og afhængigt af, hvordan spørgsmålet stilles. Trinene her gør fakta om din shop og dine produkter læsbare for AI. De garanterer ikke, at en AI nævner din shop eller placerer den et bestemt sted."
+ ],
+ "sections": [
+  {
+   "heading": "Hvad kunderne spørger AI om, og hvad AI læser",
+   "paragraphs": [
+    "Købsspørgsmål til AI blander produkt, pris, lager, fragt og returnering: „hvor kan jeg købe solcreme til sensitiv hud online?“, „en shop, der sælger skærebrætter i træ lavet i Japan“, „er X på lager, og hvad koster fragten?“, „en online skobutik med nem returnering“. For at kunne svare skal en AI kunne læse som tekst, hvilke produkter du sælger til hvilken pris, om de kan købes nu, hvad fragt og returnering koster, og hvem der sælger.",
+    "Google oplyser, at der ikke er yderligere krav og ikke er brug for særlige schema.org-strukturerede data for at blive vist i AI Overviews eller AI Mode, og at det grundlæggende stadig gælder, fx at de strukturerede data skal stemme med den synlige tekst, og at oplysningerne i Merchant Center og din virksomhedsprofil skal holdes opdateret. [Google: AI-funktioner og dit website](https://developers.google.com/search/docs/appearance/ai-features)",
+    "Om ChatGPT siger OpenAI, at produktresultater i søgningen vælges uafhængigt af ChatGPT og ikke er annoncer; at der tages højde for strukturerede metadata som pris og produktbeskrivelse fra både førsteparts- og tredjepartsudbydere; og at forhandlere rangeres efter faktorer som tilgængelighed, pris, kvalitet og om de er producent eller primær forhandler. Produktdata fra Shopify-forhandlere er allerede integreret via Shopify Catalog, og andre forhandlere kan ansøge om at levere et produktfeed direkte (kontrolleret 2. november 2026). [OpenAI: Shopping with ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "De fakta, en webshop bør offentliggøre",
+   "paragraphs": [
+    "Googles dokumentation om organisationer har ingen påkrævede egenskaber, beder dig bruge den mest specifikke undertype og anbefaler OnlineStore frem for OnlineBusiness til et e-handelswebsite. [Google: Strukturerede data for organisationer](https://developers.google.com/search/docs/appearance/structured-data/organization). For produkter kræver Googles strukturerede data for forhandleropslag name, image og offers på Product samt price (større end nul) og priceCurrency på Offer; availability anbefales. [Google: Strukturerede data for forhandleropslag](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Fakta",
+     "På siden",
+     "I strukturerede data"
+    ],
+    "rows": [
+     [
+      "Shoppen (hvem der sælger)",
+      "Shoppens navn, virksomheden bag og kontaktoplysninger på en om-side eller side med juridiske oplysninger",
+      "OnlineStore (en slags Organization); ingen påkrævede egenskaber"
+     ],
+     [
+      "Produktnavn og billede",
+      "På hver produktside med et navn, der viser forskelle i model, størrelse eller farve",
+      "Product name og image (påkrævet)"
+     ],
+     [
+      "Pris",
+      "Salgsprisen som tekst, og hvornår en tilbudspris udløber",
+      "Offer price og priceCurrency (påkrævet)"
+     ],
+     [
+      "Lager",
+      "På lager, udsolgt eller forudbestilling, svarende til den faktiske status",
+      "Offer availability (anbefalet)"
+     ],
+     [
+      "Returvilkår",
+      "Returfrist, betingelser og hvem der betaler returfragten, samlet på én side",
+      "Organization hasMerchantReturnPolicy; et link til retursiden (merchantReturnLink) alene accepteres"
+     ],
+     [
+      "Fragt",
+      "Fragtpriser (efter region eller ordrebeløb) og leveringstider",
+      "Organization hasShippingService (shippingConditions påkrævet)"
+     ]
+    ],
+    "caption": "Påkrævede og anbefalede egenskaber ifølge Googles dokumentation pr. 2. november 2026."
+   },
+   "after": [
+    "Markup for forhandleropslag er beregnet til sider, hvor kunden kan købe produktet, og Google anbefaler at tilføje den på produktsider frem for på sider, der viser lister over produkter. Returnering og fragt beskrives bedst én gang som politikker for hele shoppen på din Organization frem for på hvert produkt. [Google: Returpolitik](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: Fragtpolitik](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "Hos Google har indstillinger for returnering og fragt i Merchant Center eller Search Console forrang frem for de strukturerede data på dit website. Ændrer du en værdi ét sted, er oplysningerne i modstrid, så når en pris, en fragtpris eller et returvilkår ændres, skal du opdatere produktsider, strukturerede data, Merchant Center, butikssider på markedspladser og llms.txt samtidig."
+   ]
+  },
+  {
+   "heading": "Fakta, loven måske allerede kræver på dine sider",
+   "paragraphs": [
+    "Reglerne for onlinesalg varierer fra land til land, så tjek dem, der gælder for dig. I Japan kræver loven om specificerede handelstransaktioner (Act on Specified Commercial Transactions) for eksempel, at annoncering af fjernsalg viser prisen inklusive forbrugsafgift, fragtpriser, eventuelle andre omkostninger for køberen, hvornår og hvordan der betales, hvornår varerne leveres, vilkår for annullering og returnering samt sælgerens navn, adresse og telefonnummer. [Consumer Affairs Agency: annoncering af fjernsalg (på japansk)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Det er præcis de fakta, en AI skal bruge for at svare på „hvad koster fragten?“ eller „kan jeg returnere den?“.",
+    "Efter samme lov kan køberen, hvis der ikke er angivet returvilkår, træde tilbage inden for otte dage efter modtagelsen af varerne og betaler selv for at sende dem retur, forklarer Consumer Affairs Agency. [Consumer Affairs Agency: eksempel på returnering ved fjernsalg (på japansk)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Uanset hvad din politik er, så skriv den tydeligt som tekst, og sørg for, at den returside, du linker til fra de strukturerede data, siger det samme.",
+    "Vis kun bedømmelser og anmeldelser fra rigtige kunder. I Japan har skjult markedsføring (stealth marketing) siden 1. oktober 2023 været en overtrædelse af loven mod urimelige præmier og vildledende fremstillinger (Act against Unjustifiable Premiums and Misleading Representations); opslag, som en virksomhed beder eller instruerer tredjeparter om at lave, tæller som virksomhedens egen reklame, også anmeldelser. [Consumer Affairs Agency: skjult markedsføring (på japansk)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Opsætning i en WordPress-webshop (WooCommerce)",
+   "list": [
+    "Installer Nurevo AEO (gratis) fra [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/), og aktiver det. Behold Yoast SEO, Rank Math, All in One SEO eller Slim SEO, hvis du bruger et af dem.",
+    "Under Indstillinger (eller i opsætningsguiden) skal du sætte sitetypen til „Webshop“. Den foreslås, når WooCommerce er aktivt, men intet ændres, før du gemmer. Shoppen offentliggøres som OnlineStore, og der kræves ingen adresse eller åbningstider (en adresse eller et telefonnummer, du har indtastet, offentliggøres stadig).",
+    "Indtast URL'erne til din side med retur- og refusionspolitik og din side med fragtpolitik. Retursiden offentliggøres som shoppens MerchantReturnPolicy (et link til siden), og begge sider står i llms.txt. Fragt omsættes ikke til strukturerede data, fordi pluginet ikke kender betingelserne (priser og tider); siden står kun i llms.txt.",
+    "Produktsider beholder den Product-markup, WooCommerce udskriver; Nurevo AEO gentager den ikke. På forsiden offentliggør det op til de 30 senest udgivne produkter som et katalog (OfferCatalog) med pris, valuta og lagerstatus, hvor de kendes. En bedømmelse tilføjes kun for produkter med rigtige anmeldelser. Produkterne står også i llms.txt.",
+    "Indtast dine ofte stillede spørgsmål (fragtpriser, leveringstider, gaveindpakning, sådan returnerer du) og placer blokken Nurevo FAQ eller kortkoden [nurevo_faq] på den side, hvor de skal vises.",
+    "Kør diagnosen på skærmen AEO-score. For en webshop kontrollerer den, om der er produkter med pris og lagerstatus, en returside, en fragtside og kontaktoplysninger, og viser, hvad der mangler.",
+    "Se udefra, hvad AI læser, med det [gratis tjek af AI-læsbarhed](/check), og bekræft, at priser, fragt og returvilkår stemmer med Merchant Center og dine butikssider på markedspladser."
+   ],
+   "after": [
+    "I shops, der ikke er bygget med WordPress, fx Shopify, gælder samme princip: offentliggør fakta fra tabellen ovenfor i produktsidernes tekst og i strukturerede data, og angiv din shopoversigt, retur- og fragtsider og vigtigste produktsider i llms.txt. [Hvad er llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Tjekliste før du offentliggør",
+   "list": [
+    "Hver produktside viser produktnavn, pris og lagerstatus som tekst, ikke kun i et billede.",
+    "Priser og lager i de strukturerede data stemmer med værdierne på siden, og udsolgte produkter er ikke markeret som på lager.",
+    "Fragtpriser, leveringstider og returvilkår har egne sider, der linkes til fra produktsiderne eller sidefoden.",
+    "Sælgerens navn, adresse, telefonnummer og andre lovpligtige oplysninger er offentliggjort.",
+    "Shoppens type af strukturerede data passer til forretningen, fx OnlineStore.",
+    "Markup for bedømmelser og anmeldelser stammer kun fra rigtige kundeanmeldelser.",
+    "Priser, fragt og returvilkår stemmer overens på dit website, i Merchant Center, på markedspladser og i shops på sociale medier."
+   ]
+  },
+  {
+   "heading": "Sådan tjekker du, om du dukker op i AI-svar",
+   "paragraphs": [
+    "Når fakta er på plads, så stil AI de spørgsmål, dine kunder ville stille („bedste webshop til X“, „hvor kan jeg købe X med gratis fragt“), og se, om din shop eller dine produkter nævnes ved navn eller URL. Svarene varierer fra gang til gang, så stil de samme spørgsmål nogle gange, spredt over tid.",
+    "Når dit website er forbundet til Nurevo-tjenesten, indeholder planerne Free og Standard et månedligt tjek: tre spørgsmål bygget ud fra dine produktkategorier (aldrig din shops navn) stilles til Perplexity, og pluginet registrerer, om svarene nævnte din shop eller citerede dit website. Planen Pro (fra $99/måned) tilføjer måling af AI-synlighed i beta: hvor ofte din shop optræder i AI-svar, med sammenligning med konkurrenter og historik (i øjeblikket på Perplexity). Begge bygger på stikprøver af svar og observerer ikke alle svar."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hvor skal en webshop starte med AI-søgning?",
+   "a": "Skriv hvert produkts navn, pris og lagerstatus korrekt som tekst på produktsiden, og læg fragt, returnering og sælgeroplysninger på egne sider. Offentliggør derefter de samme fakta som strukturerede data med Product, Offer og OnlineStore og i llms.txt, og sørg for, at de stemmer med Merchant Center og dine opslag på markedspladser."
+  },
+  {
+   "q": "Skal jeg betale for at få mine produkter med i ChatGPT?",
+   "a": "OpenAI siger, at produktresultater i ChatGPT-søgning vælges uafhængigt og ikke er annoncer. Shopify-forhandlere er allerede integreret via Shopify Catalog, og andre forhandlere kan ansøge om at levere et produktfeed direkte. I begge tilfælde er det ikke garanteret, at du bliver vist."
+  },
+  {
+   "q": "Hvis jeg sælger på markedspladser som Amazon, skal jeg så stadig forbedre mit eget website?",
+   "a": "AI kan bruge markedspladssider som kilder, men det er på dit eget website, du kan offentliggøre produktbeskrivelser, returvilkår og ofte stillede spørgsmål mest detaljeret og præcist. Det sikreste er at holde priser, fragt og returvilkår ens begge steder."
+  },
+  {
+   "q": "Er Nurevo AEO gratis?",
+   "a": "Ja. Webshoptypen (OnlineStore), produktkataloget, strukturerede data for returpolitik og ofte stillede spørgsmål, llms.txt, regler for AI-crawlere og AEO-scoren er med i den gratis plan. De betalte planer tilføjer et altid opdateret regelsæt (Standard, $20/måned) og måling af AI-synlighed i beta (Pro, fra $99/måned). [Nurevo AEO på WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garanterer det, at mine produkter vises i AI-svar?",
+   "a": "Nej. AI-svar ændrer sig, og intet værktøj eller nogen teknik kan garantere en omtale eller en placering. Det, du kan gøre, er at gøre fakta om dine produkter og din shop lette for AI at læse og blive ved med at tjekke, om du dukker op."
+  }
+ ],
+ "relatedHeading": "Relaterede guides",
+ "cta": {
+  "heading": "Se først, hvordan AI læser din shops website",
+  "body": "Det gratis tjek viser status for dine strukturerede data, din llms.txt og AI-crawleres adgang, uden tilmelding. På WordPress udfylder Nurevo AEO hullerne gratis.",
+  "label": "Kør det gratis tjek af AI-læsbarhed",
+  "href": "/check",
+  "secondary": {
+   "label": "Hent Nurevo AEO på WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT er et varemærke tilhørende OpenAI, Perplexity tilhørende Perplexity AI, og Google og Google Merchant Center tilhørende Google LLC. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO og Slim SEO er varemærker tilhørende deres respektive ejere. Nurevo er ikke tilknyttet dem. Denne artikel er ikke juridisk rådgivning."
+}

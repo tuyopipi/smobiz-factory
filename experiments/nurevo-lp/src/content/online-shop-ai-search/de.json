@@ -1,0 +1,146 @@
+{
+ "title": "KI-Suche für Onlineshops: Produkte, Bestand, Rückgabe | Nurevo",
+ "description": "AEO für Onlineshops heißt: Produktnamen, Preise, Bestand, Versand und Rückgabe korrekt veröffentlichen – im Seitentext und als strukturierte Daten. Mit Checkliste.",
+ "h1": "KI-Suche für Onlineshops: So liest KI Ihre Produkte, Preise, Lagerbestände und Rückgabebedingungen richtig",
+ "lead": "KI-Suchoptimierung (AEO) für einen Onlineshop bedeutet im Kern, Produktnamen, Preise, Lagerbestand, Versandkosten, Rückgabebedingungen und den Betreiber des Shops korrekt und einheitlich zu veröffentlichen – sowohl im Text Ihrer Produktseiten als auch in den strukturierten Daten von schema.org (Product, Offer und OnlineStore). So haben ChatGPT, Perplexity und die KI von Google alles, was sie brauchen, um Fragen wie „Wo kann ich X online kaufen?“ oder „Welcher Shop verkauft X mit kostenloser Rücksendung?“ zu beantworten, ohne raten zu müssen. Spezielle Tags für KI braucht es dafür nicht.",
+ "intro": [
+  "Verfasst am 2. November 2026 (JST). Die Angaben von Google, OpenAI und der japanischen Verbraucherbehörde (Consumer Affairs Agency) wurden an diesem Tag auf den jeweiligen offiziellen Seiten geprüft.",
+  "KI-Antworten ändern sich von Tag zu Tag und je nach Formulierung der Frage. Die hier beschriebenen Schritte machen die Fakten zu Ihrem Shop und Ihren Produkten für KI lesbar. Sie garantieren nicht, dass eine KI Ihren Shop erwähnt oder an einer bestimmten Stelle nennt."
+ ],
+ "sections": [
+  {
+   "heading": "Was Käufer die KI fragen – und was die KI liest",
+   "paragraphs": [
+    "Einkaufsfragen an die KI mischen Produkt, Preis, Bestand, Versand und Rückgabe: „Wo kann ich online eine Sonnencreme für empfindliche Haut kaufen?“, „ein Shop, der Holzschneidebretter aus Japan verkauft“, „Ist X vorrätig und was kostet der Versand?“, „ein Online-Schuhgeschäft mit unkomplizierter Rückgabe“. Um solche Fragen zu beantworten, muss eine KI als Text lesen können, welche Produkte Sie zu welchem Preis verkaufen, ob sie jetzt erhältlich sind, was Versand und Rücksendung kosten und wer der Verkäufer ist.",
+    "Google erklärt, dass es für die Anzeige in AI Overviews oder AI Mode keine zusätzlichen Anforderungen und keine speziellen strukturierten Daten von schema.org gibt und dass die üblichen Grundlagen weiterhin zählen – etwa, dass strukturierte Daten zum sichtbaren Text passen und Ihre Angaben in Merchant Center und im Unternehmensprofil aktuell sind. [Google: KI-Funktionen und Ihre Website](https://developers.google.com/search/docs/appearance/ai-features)",
+    "Für ChatGPT erklärt OpenAI, dass Produktergebnisse in der Suche unabhängig von ChatGPT ausgewählt werden und keine Werbung sind; dass strukturierte Metadaten wie Preis und Produktbeschreibung von eigenen und fremden Anbietern berücksichtigt werden; und dass Händler nach Faktoren wie Verfügbarkeit, Preis, Qualität und danach gereiht werden, ob sie Hersteller oder Hauptverkäufer sind. Die Produktdaten von Shopify-Händlern sind bereits über Shopify Catalog eingebunden, andere Händler können sich bewerben, um direkt einen Produkt-Feed bereitzustellen (Stand: 2. November 2026). [OpenAI: Shopping mit ChatGPT Search](https://help.openai.com/en/articles/11128490)"
+   ]
+  },
+  {
+   "heading": "Diese Fakten sollte ein Onlineshop veröffentlichen",
+   "paragraphs": [
+    "Die Google-Dokumentation zu Organisationen kennt keine Pflichtattribute, empfiehlt den spezifischsten Untertyp und für E-Commerce-Websites OnlineStore statt OnlineBusiness. [Google: Strukturierte Daten für Organisationen](https://developers.google.com/search/docs/appearance/structured-data/organization). Für Produkte verlangen Googles strukturierte Daten für Händlereinträge name, image und offers beim Product sowie price (größer als null) und priceCurrency beim Offer; availability wird empfohlen. [Google: Strukturierte Daten für Händlereinträge](https://developers.google.com/search/docs/appearance/structured-data/merchant-listing)"
+   ],
+   "table": {
+    "head": [
+     "Fakt",
+     "Auf der Seite",
+     "In den strukturierten Daten"
+    ],
+    "rows": [
+     [
+      "Der Shop (wer verkauft)",
+      "Shopname, Betreiberfirma und Kontaktdaten, auf einer „Über uns“- oder Impressumsseite",
+      "OnlineStore (eine Art von Organization); keine Pflichtattribute"
+     ],
+     [
+      "Produktname und Bild",
+      "Auf jeder Produktseite, mit einem Namen, der Unterschiede bei Modell, Größe oder Farbe erkennen lässt",
+      "Product name und image (Pflicht)"
+     ],
+     [
+      "Preis",
+      "Der Verkaufspreis als Text und das Ende eines Aktionspreises",
+      "Offer price und priceCurrency (Pflicht)"
+     ],
+     [
+      "Lagerbestand",
+      "Vorrätig, ausverkauft oder vorbestellbar – entsprechend dem tatsächlichen Stand",
+      "Offer availability (empfohlen)"
+     ],
+     [
+      "Rückgabebedingungen",
+      "Rückgabefrist, Bedingungen und wer die Rücksendekosten trägt, auf einer Seite",
+      "Organization hasMerchantReturnPolicy; ein Link zur Rückgabeseite (merchantReturnLink) allein genügt"
+     ],
+     [
+      "Versand",
+      "Versandkosten (nach Region oder Bestellwert) und Lieferzeiten",
+      "Organization hasShippingService (shippingConditions Pflicht)"
+     ]
+    ],
+    "caption": "Pflicht- und empfohlene Attribute laut Google-Dokumentation, Stand 2. November 2026."
+   },
+   "after": [
+    "Das Markup für Händlereinträge ist für Seiten gedacht, auf denen man das Produkt kaufen kann; Google empfiehlt, es auf Produktseiten statt auf Seiten mit Produktlisten einzusetzen. Rückgabe und Versand beschreiben Sie am besten einmal als shopweite Richtlinien in Ihrer Organization statt bei jedem einzelnen Produkt. [Google: Rückgaberichtlinie](https://developers.google.com/search/docs/appearance/structured-data/return-policy) / [Google: Versandrichtlinie](https://developers.google.com/search/docs/appearance/structured-data/shipping-policy)",
+    "Bei Google haben die Rückgabe- und Versandeinstellungen in Merchant Center oder Search Console Vorrang vor den strukturierten Daten auf Ihrer Website. Wer einen Wert nur an einer Stelle ändert, erzeugt einen Widerspruch. Ändern sich also Preis, Versandkosten oder Rückgabebedingungen, aktualisieren Sie Produktseiten, strukturierte Daten, Merchant Center, Ihre Shopseiten auf Marktplätzen und llms.txt gemeinsam."
+   ]
+  },
+  {
+   "heading": "Angaben, die das Gesetz womöglich ohnehin vorschreibt",
+   "paragraphs": [
+    "Die Regeln für den Onlinehandel unterscheiden sich von Land zu Land; prüfen Sie daher, welche für Sie gelten. In Japan zum Beispiel verlangt das Gesetz über besondere Handelsgeschäfte (Act on Specified Commercial Transactions), dass Werbung im Versandhandel den Preis inklusive Verbrauchsteuer, die Versandkosten, alle weiteren vom Käufer zu tragenden Kosten, Zeitpunkt und Art der Zahlung, den Liefertermin, die Bedingungen für Widerruf und Rückgabe sowie Name, Anschrift und Telefonnummer des Verkäufers angibt. [Consumer Affairs Agency: Werbung im Versandhandel (auf Japanisch)](https://www.no-trouble.caa.go.jp/what/mailorder/advertising.html). Genau diese Fakten braucht eine KI, um Fragen wie „Was kostet der Versand?“ oder „Kann ich das zurückgeben?“ zu beantworten.",
+    "Nach demselben Gesetz kann der Käufer, wenn keine Rückgabebedingungen angegeben sind, innerhalb von acht Tagen nach Erhalt der Ware vom Kauf zurücktreten und trägt die Kosten der Rücksendung, so die Consumer Affairs Agency. [Consumer Affairs Agency: Fallbeispiel Rückgabe im Versandhandel (auf Japanisch)](https://www.no-trouble.caa.go.jp/case/mailorder/case01.html). Wie auch immer Ihre Regelung aussieht: Formulieren Sie sie klar als Text und sorgen Sie dafür, dass die Rückgabeseite, auf die Ihre strukturierten Daten verweisen, dasselbe sagt.",
+    "Zeigen Sie nur Bewertungen und Rezensionen echter Kunden. In Japan ist Schleichwerbung (Stealth Marketing) seit dem 1. Oktober 2023 ein Verstoß gegen das Gesetz gegen ungerechtfertigte Prämien und irreführende Darstellungen (Act against Unjustifiable Premiums and Misleading Representations); Beiträge, um die ein Unternehmen Dritte bittet oder die es anweist, gelten als seine Werbung – Rezensionen eingeschlossen. [Consumer Affairs Agency: Stealth Marketing (auf Japanisch)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing)"
+   ]
+  },
+  {
+   "heading": "Einrichtung in einem WordPress-Shop (WooCommerce)",
+   "list": [
+    "Installieren Sie Nurevo AEO (kostenlos) von [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) und aktivieren Sie es. Yoast SEO, Rank Math, All in One SEO oder Slim SEO können Sie weiter nutzen.",
+    "Stellen Sie unter Einstellungen (oder im Einrichtungsassistenten) den Website-Typ auf „Onlineshop“. Er wird vorgeschlagen, wenn WooCommerce aktiv ist, doch es ändert sich nichts, bis Sie speichern. Der Shop wird als OnlineStore veröffentlicht, Adresse oder Öffnungszeiten sind nicht nötig (eine eingegebene Adresse oder Telefonnummer wird trotzdem veröffentlicht).",
+    "Geben Sie die URLs Ihrer Seite mit den Rückgabe- und Erstattungsbedingungen und Ihrer Seite mit den Versandbedingungen ein. Die Rückgabeseite wird als MerchantReturnPolicy des Shops veröffentlicht (als Link auf diese Seite), und beide Seiten werden in llms.txt aufgeführt. Der Versand wird nicht in strukturierte Daten umgewandelt, weil dem Plugin die Bedingungen (Kosten und Lieferzeiten) nicht bekannt sind; die Seite wird nur in llms.txt aufgeführt.",
+    "Produktseiten behalten das Product-Markup, das WooCommerce ausgibt; Nurevo AEO wiederholt es nicht. Auf der Startseite veröffentlicht es bis zu 30 der zuletzt veröffentlichten Produkte als Katalog (OfferCatalog), mit Preis, Währung und Bestand, soweit bekannt. Eine Bewertung wird nur bei Produkten mit echten Rezensionen hinzugefügt. Die Produkte werden außerdem in llms.txt aufgeführt.",
+    "Tragen Sie Ihre FAQ ein (Versandkosten, Lieferzeiten, Geschenkverpackung, Ablauf der Rücksendung) und platzieren Sie den Nurevo FAQ-Block oder den Shortcode [nurevo_faq] auf der Seite, auf der sie erscheinen sollen.",
+    "Starten Sie die Diagnose im Bereich AEO-Score. Für einen Onlineshop prüft sie Produkte mit Preis und Bestand, eine Rückgabeseite, eine Versandseite und Kontaktdaten und listet auf, was fehlt.",
+    "Sehen Sie mit dem [kostenlosen KI-Lesbarkeitscheck](/check) von außen, was KI liest, und prüfen Sie, ob Preise, Versand- und Rückgabebedingungen mit Merchant Center und Ihren Shopseiten auf Marktplätzen übereinstimmen."
+   ],
+   "after": [
+    "Bei Shops, die nicht mit WordPress gebaut sind, etwa mit Shopify, gilt dasselbe Prinzip: Veröffentlichen Sie die Fakten aus der Tabelle oben im Text der Produktseiten und in strukturierten Daten und führen Sie Ihre Shopübersicht, Rückgabe, Versand und die wichtigsten Produktseiten in llms.txt auf. [Was ist llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Checkliste vor der Veröffentlichung",
+   "list": [
+    "Jede Produktseite zeigt Produktname, Preis und Lagerstatus als Text, nicht nur in einem Bild.",
+    "Preise und Bestand in den strukturierten Daten stimmen mit den sichtbaren Werten auf der Seite überein, und ausverkaufte Produkte sind nicht als vorrätig markiert.",
+    "Versandkosten, Lieferzeiten und Rückgabebedingungen haben eigene Seiten, die von den Produktseiten oder aus dem Footer verlinkt sind.",
+    "Name, Anschrift und Telefonnummer des Verkäufers sowie weitere gesetzlich vorgeschriebene Angaben sind veröffentlicht.",
+    "Der Typ der strukturierten Daten des Shops passt zum Geschäft, etwa OnlineStore.",
+    "Markup für Bewertungen und Rezensionen stammt ausschließlich aus echten Kundenrezensionen.",
+    "Preise, Versand- und Rückgabebedingungen stimmen auf Ihrer Website, in Merchant Center, auf Marktplätzen und in Social-Media-Shops überein."
+   ]
+  },
+  {
+   "heading": "Prüfen, ob Sie in KI-Antworten erscheinen",
+   "paragraphs": [
+    "Sobald die Fakten stehen, stellen Sie der KI die Fragen, die Ihre Kunden stellen würden („bester Onlineshop für X“, „wo kaufe ich X mit kostenlosem Versand“), und sehen Sie nach, ob Ihr Shop oder Ihre Produkte mit Namen oder URL auftauchen. Die Antworten ändern sich von Durchlauf zu Durchlauf, stellen Sie dieselben Fragen also mehrmals und über einen längeren Zeitraum verteilt.",
+    "Ist Ihre Website mit dem Nurevo-Dienst verbunden, enthalten die Tarife Free und Standard eine monatliche Prüfung: Drei Fragen, die aus Ihren Produktkategorien gebildet werden (nie aus dem Namen Ihres Shops), werden Perplexity gestellt, und das Plugin hält fest, ob die Antworten Ihren Shop genannt oder Ihre Website zitiert haben. Der Tarif Pro (ab $99/Monat) ergänzt die KI-Sichtbarkeitsmessung als Beta: wie oft Ihr Shop in KI-Antworten erscheint, mit Wettbewerbsvergleich und Verlauf (derzeit für Perplexity). Beide werten Stichproben von Antworten aus, statt jede einzelne Antwort zu beobachten."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Wo sollte ein Onlineshop bei der KI-Suche anfangen?",
+   "a": "Schreiben Sie Name, Preis und Lagerstatus jedes Produkts korrekt als Text auf die jeweilige Produktseite und stellen Sie Versand, Rückgabe und Verkäuferangaben auf eigene Seiten. Veröffentlichen Sie dann dieselben Fakten als strukturierte Daten (Product, Offer und OnlineStore) und in llms.txt und stellen Sie sicher, dass sie mit Merchant Center und Ihren Marktplatz-Angeboten übereinstimmen."
+  },
+  {
+   "q": "Muss ich bezahlen, damit meine Produkte in ChatGPT erscheinen?",
+   "a": "Laut OpenAI werden Produktergebnisse in der ChatGPT-Suche unabhängig ausgewählt und sind keine Werbung. Shopify-Händler sind bereits über Shopify Catalog eingebunden, andere Händler können sich bewerben, um direkt einen Produkt-Feed bereitzustellen. In beiden Fällen ist eine Anzeige nicht garantiert."
+  },
+  {
+   "q": "Wenn ich auf Marktplätzen wie Amazon verkaufe, muss ich dann trotzdem meine eigene Website verbessern?",
+   "a": "Marktplatzseiten können der KI als Quelle dienen, aber auf Ihrer eigenen Website können Sie Produktbeschreibungen, Rückgabebedingungen und FAQ am ausführlichsten und genauesten veröffentlichen. Am sichersten ist es, Preise, Versand- und Rückgabebedingungen an beiden Orten übereinstimmend zu halten."
+  },
+  {
+   "q": "Ist Nurevo AEO kostenlos?",
+   "a": "Ja. Der Website-Typ Onlineshop (OnlineStore), der Produktkatalog, strukturierte Daten für Rückgaberichtlinie und FAQ, llms.txt, Regeln für KI-Crawler und der AEO-Score sind im kostenlosen Tarif enthalten. Die kostenpflichtigen Tarife ergänzen ein stets aktuelles Regelwerk (Standard, $20/Monat) und die KI-Sichtbarkeitsmessung als Beta (Pro, ab $99/Monat). [Nurevo AEO auf WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garantiert das, dass meine Produkte in KI-Antworten erscheinen?",
+   "a": "Nein. KI-Antworten ändern sich, und kein Tool und keine Technik kann eine Erwähnung oder Platzierung garantieren. Sie können aber dafür sorgen, dass die Fakten zu Ihren Produkten und Ihrem Shop für KI leicht lesbar sind, und regelmäßig prüfen, ob Sie erscheinen."
+  }
+ ],
+ "relatedHeading": "Verwandte Ratgeber",
+ "cta": {
+  "heading": "Sehen Sie zuerst, wie KI die Website Ihres Shops liest",
+  "body": "Der kostenlose Check zeigt den Stand Ihrer strukturierten Daten, Ihrer llms.txt und des Zugangs für KI-Crawler – ohne Registrierung. Unter WordPress schließt Nurevo AEO die Lücken kostenlos.",
+  "label": "Kostenlosen KI-Lesbarkeitscheck starten",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO auf WordPress.org holen",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT ist eine Marke von OpenAI, Perplexity von Perplexity AI, Google und Google Merchant Center von Google LLC. WooCommerce, Shopify, Amazon, Yoast SEO, Rank Math, All in One SEO und Slim SEO sind Marken ihrer jeweiligen Inhaber. Nurevo steht in keiner Verbindung zu ihnen. Dieser Artikel ist keine Rechtsberatung."
+}
