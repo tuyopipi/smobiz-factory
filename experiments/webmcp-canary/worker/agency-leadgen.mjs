@@ -548,20 +548,39 @@ const newNonce = () => b64url(crypto.getRandomValues(new Uint8Array(16)));
  * The embed
  * ------------------------------------------------------------------ */
 
+/** Nurevo's home page: the target of the brand-name attribution links. */
+export const NUREVO_HOME_URL = "https://nurevo.jp/";
+const ATTRIBUTION_STYLE = "font-size:12px;margin:6px 0 0";
+
+/**
+ * The plain, visible attribution line under the widget, outside the iframe
+ * (the frame page is noindex). The anchor text is the brand name only. The
+ * agency may remove it.
+ */
+export function attributionHtml(lang = "en") {
+  const [before, after = ""] = leadgenCopy(lang).attribution.split("{nurevo}");
+  return `<p style="${ATTRIBUTION_STYLE}">${escapeHtml(before)}<a href="${NUREVO_HOME_URL}">Nurevo</a>${escapeHtml(after)}</p>`;
+}
+
 export function embedSnippets(origin, key, lang = "en") {
   const l = LEADGEN_LANGS.includes(lang) ? lang : "en";
   return {
+    // The loader adds the same attribution line after the iframe it places.
     script: `<script src="${origin}${LEADGEN_WIDGET_PATH}" data-key="${key}" data-lang="${l}" async></script>`,
-    iframe: `<iframe src="${origin}${LEADGEN_FRAME_PREFIX}${key}?lang=${l}" title="AI visibility check" style="width:100%;max-width:560px;height:720px;border:0" loading="lazy"></iframe>`,
+    iframe: `<iframe src="${origin}${LEADGEN_FRAME_PREFIX}${key}?lang=${l}" title="AI visibility check" style="width:100%;max-width:560px;height:720px;border:0" loading="lazy"></iframe>\n${attributionHtml(l)}`,
   };
 }
 
-/** The loader the agency's page includes: it only places the iframe and sizes it. */
+/** The loader the agency's page includes: it places the iframe and the attribution line, and sizes the iframe. */
 export function widgetLoaderJs(origin) {
-  return `/* Nurevo AI visibility check loader. It adds one iframe from ${origin} and nothing else. */
+  // Text before and after the brand name, per language, for the attribution line.
+  const attribution = Object.fromEntries(LEADGEN_LANGS.map((l) => [l, leadgenCopy(l).attribution.split("{nurevo}")]));
+  return `/* Nurevo AI visibility check loader. It adds one iframe from ${origin} and a one-line "by Nurevo" link under it, nothing else. */
 (function () {
   "use strict";
   var ORIGIN = ${JSON.stringify(origin)};
+  var HOME = ${JSON.stringify(NUREVO_HOME_URL)};
+  var ATTRIBUTION = ${scriptJson(attribution)};
   var s = document.currentScript;
   if (!s) { var all = document.querySelectorAll('script[data-key][src*="${LEADGEN_WIDGET_PATH}"]:not([data-nurevo-mounted])'); s = all[0]; }
   if (!s || s.getAttribute("data-nurevo-mounted")) return;
@@ -577,6 +596,18 @@ export function widgetLoaderJs(origin) {
   f.style.cssText = "display:block;width:100%;max-width:560px;height:720px;border:0;overflow:hidden";
   var id = s.getAttribute("data-target"), target = id ? document.getElementById(id) : null;
   if (target) target.appendChild(f); else s.parentNode.insertBefore(f, s.nextSibling);
+  var lc = lang.toLowerCase().replace(/_/g, "-");
+  var al = (lc === "tw" || /^zh-(tw|hk|mo|hant)/.test(lc)) ? "tw" : lc.split("-")[0];
+  var at = ATTRIBUTION[al] || ATTRIBUTION.en;
+  var p = document.createElement("p");
+  p.style.cssText = ${JSON.stringify(ATTRIBUTION_STYLE)};
+  var a = document.createElement("a");
+  a.href = HOME;
+  a.textContent = "Nurevo";
+  p.appendChild(document.createTextNode(at[0]));
+  p.appendChild(a);
+  if (at[1]) p.appendChild(document.createTextNode(at[1]));
+  f.parentNode.insertBefore(p, f.nextSibling);
   window.addEventListener("message", function (e) {
     if (e.origin !== ORIGIN || e.source !== f.contentWindow) return;
     var d = e.data;
@@ -652,7 +683,7 @@ export function renderFrameHtml({ origin, agency, lang, token, key, source = "wi
 <button id="go" type="submit">${escapeHtml(c.submit)}</button><p class="m" id="msg" role="status" aria-live="polite"></p>
 </form>
 <div class="r" id="result" hidden aria-live="polite"></div>
-<div class="f"><span>${s.privacy_url ? `<a href="${escapeHtml(s.privacy_url)}" target="_blank" rel="noopener">${escapeHtml(fill(c.agencyPrivacy, { agency: name }))}</a> · ` : ""}<a href="${PRIVACY_URL}" target="_blank" rel="noopener">${escapeHtml(c.privacy)}</a></span><span>${escapeHtml(c.poweredBy)}</span></div>
+<div class="f"><span>${s.privacy_url ? `<a href="${escapeHtml(s.privacy_url)}" target="_blank" rel="noopener">${escapeHtml(fill(c.agencyPrivacy, { agency: name }))}</a> · ` : ""}<a href="${PRIVACY_URL}" target="_blank" rel="noopener">${escapeHtml(c.privacy)}</a></span><span><a href="${NUREVO_HOME_URL}" target="_blank" rel="noopener">${escapeHtml(c.poweredBy)}</a></span></div>
 </div>
 <script id="cfg" type="application/json">${scriptJson(cfg)}</script>
 <script nonce="${nonce}">${FRAME_JS}</script></body></html>`;

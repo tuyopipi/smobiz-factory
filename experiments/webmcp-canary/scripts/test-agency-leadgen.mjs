@@ -34,7 +34,7 @@ import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { DatabaseSync } from "node:sqlite";
 import {
-  LEADGEN_LIMITS, LEADGEN_LANGS, MAX_FORM_AGE_MS, MIN_FILL_MS, RESERVED_SLUGS, consentText, csvCell, embedSnippets, frameAncestors,
+  LEADGEN_LIMITS, LEADGEN_LANGS, MAX_FORM_AGE_MS, MIN_FILL_MS, RESERVED_SLUGS, attributionHtml, consentText, csvCell, embedSnippets, frameAncestors,
   issueFormToken, isWidgetKey, leadgenLang, leadgenRateLimit, leadsCsv, newWidgetKey, normalizeLeadUrl, normalizeOrigin, renderLandingHtml,
   signupUrl, slugProblem, textOn, validateLead, validateLeadgenSettings, verifyFormToken, widgetLoaderJs,
 } from "../worker/agency-leadgen.mjs";
@@ -47,6 +47,7 @@ const read = (file) => readFileSync(new URL(`../${file}`, import.meta.url), "utf
 const sha = (v) => createHash("sha256").update(v).digest("hex");
 const CSRF = "c".repeat(64);
 const ORIGIN = "https://nurevo.jp";
+const escapeHtmlForTest = (v) => String(v).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const lines = [];
 const quiet = async (fn) => {
   const saved = [console.log, console.warn, console.error];
@@ -343,6 +344,7 @@ let frameToken;
   assert.ok(!html.includes("Acme <Digital>"), "never raw");
   assert.ok(html.includes('<html lang="ja">'));
   assert.ok(html.includes(LEADGEN_COPY.ja.title));
+  assert.ok(html.includes(`<a href="https://nurevo.jp/" target="_blank" rel="noopener">${LEADGEN_COPY.ja.poweredBy}</a>`), "the in-frame Powered by Nurevo links to Nurevo in a new tab");
   assert.ok(html.includes("Acme &lt;Digital&gt; &amp; Coから連絡を受けることに同意"), "consent names the agency");
   assert.ok(html.includes("https://nurevo.jp/privacy"), "privacy notice linked");
   assert.ok(html.includes('name="hp_comment"') && html.includes('tabindex="-1"'), "honeypot present and out of tab order");
@@ -643,6 +645,52 @@ const LEAD = { site_url: "cafe-sakura.com", name: "Hanako Sato", email: "hanako@
   assert.ok(!/innerHTML|eval\(|document\.write/.test(js), "the loader writes no markup");
   assert.deepEqual([...js.matchAll(/https?:\/\/[^\s"'`)]+/g)].map((m) => m[0]).filter((u) => !u.startsWith(ORIGIN)), [], "no third-party URL");
   assert.equal(embedSnippets(ORIGIN, "wk_x", "xx").script.includes('data-lang="en"'), true);
+
+  // A plain, visible brand-name attribution link outside the (noindex) iframe.
+  const ATTR_EN = '<p style="font-size:12px;margin:6px 0 0">AI visibility check by <a href="https://nurevo.jp/">Nurevo</a></p>';
+  assert.equal(attributionHtml("en"), ATTR_EN);
+  assert.ok(embedSnippets(ORIGIN, "wk_x", "en").iframe.endsWith(`</iframe>\n${ATTR_EN}`), "the iframe snippet carries the attribution after the iframe");
+  assert.ok(embedSnippets(ORIGIN, "wk_x", "xx").iframe.endsWith(ATTR_EN), "unknown languages read English");
+  for (const lang of LEADGEN_LANGS) {
+    const html = attributionHtml(lang);
+    assert.equal((html.match(/<a /g) || []).length, 1, `${lang}: one link`);
+    assert.ok(html.includes('<a href="https://nurevo.jp/">Nurevo</a>'), `${lang}: brand-only anchor text to the home page`);
+    assert.ok(!/display:\s*none|visibility:\s*hidden|font-size:\s*0|rel="(?:no)?follow|sponsored/.test(html), `${lang}: visible, plain link`);
+    assert.ok(html.includes(escapeHtmlForTest(LEADGEN_COPY[lang].attribution.split("{nurevo}")[0])), `${lang}: localized`);
+    assert.ok(embedSnippets(ORIGIN, "wk_x", lang).iframe.endsWith(html), `${lang}: iframe snippet`);
+  }
+  assert.ok(js.includes('var HOME = "https://nurevo.jp/";') && js.includes('a.textContent = "Nurevo";'), "the loader adds the same brand-name link");
+
+  // Run the loader against a tiny fake DOM: it places the iframe, then the attribution right after it.
+  const loaderRun = (lang, withTarget = false) => {
+    const node = (tag) => ({ tagName: tag, children: [], style: {}, attrs: {}, parentNode: null, nextSibling: null,
+      setAttribute(k, v) { this.attrs[k] = String(v); }, getAttribute(k) { return this.attrs[k] ?? null; },
+      appendChild(c) { c.parentNode = this; this.children.push(c); return c; },
+      insertBefore(c, ref) { c.parentNode = this; const i = ref ? this.children.indexOf(ref) : -1; if (i < 0) this.children.push(c); else this.children.splice(i, 0, c); return c; } });
+    const parent = node("div"), target = node("div");
+    const script = node("script");
+    Object.assign(script.attrs, { "data-key": "wk_" + "a".repeat(24), "data-lang": lang });
+    if (withTarget) script.attrs["data-target"] = "slot";
+    parent.appendChild(script);
+    const document = { currentScript: script, documentElement: { lang: "" },
+      createElement: (t) => node(t), createTextNode: (d) => ({ data: d }),
+      getElementById: (id) => (id === "slot" ? target : null), querySelectorAll: () => [] };
+    const window = { addEventListener() {} };
+    new Function("document", "window", js)(document, window);
+    return withTarget ? target.children : parent.children.slice(1);
+  };
+  for (const [lang, expectLang] of [["en", "en"], ["ja", "ja"], ["zh-Hant", "tw"], ["de-AT", "de"], ["pt-BR", "en"]]) {
+    const [frame, p] = loaderRun(lang);
+    assert.equal(frame.tagName, "iframe", `${lang}: iframe first`);
+    assert.equal(p.tagName, "p", `${lang}: then the attribution`);
+    assert.equal(p.style.cssText, "font-size:12px;margin:6px 0 0");
+    const link = p.children.find((c) => c.tagName === "a");
+    assert.equal(link.href, "https://nurevo.jp/");
+    assert.equal(link.textContent, "Nurevo");
+    assert.equal(p.children.map((c) => c.data ?? c.textContent).join(""), LEADGEN_COPY[expectLang].attribution.replace("{nurevo}", "Nurevo"), `${lang}: localized as ${expectLang}`);
+  }
+  const inTarget = loaderRun("en", true);
+  assert.deepEqual(inTarget.map((c) => c.tagName), ["iframe", "p"], "with data-target both go into the target");
 
   const pkg = JSON.parse(read("package.json"));
   assert.equal(pkg.scripts["test:agency-leadgen"], "node scripts/test-agency-leadgen.mjs && node scripts/test-agency-leadgen-hardening.mjs");

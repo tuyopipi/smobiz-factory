@@ -46,6 +46,8 @@ export const LEADGEN_COPY = Object.freeze({
     errUnavailable: "このチェックは現在利用できません。",
     errGeneric: "送信できませんでした。時間をおいて再度お試しください。",
     poweredBy: "Powered by Nurevo",
+    // Below the widget on the agency's page, outside the iframe. {nurevo} is the brand-name link.
+    attribution: "AI可視性チェック提供：{nurevo}",
     lpTitle: "{agency}がおすすめするNurevo",
     lpHeadline: "あなたのビジネスを、AIアシスタントに見つけてもらう",
     lpLead: "お客様がChatGPT、Perplexity、GoogleのAIに質問したとき、あなたのビジネスが答えに出てくるように。{agency}はそのためにNurevoを使っています。",
@@ -100,6 +102,8 @@ export const LEADGEN_COPY = Object.freeze({
     errUnavailable: "This check is not available right now.",
     errGeneric: "Could not send. Please try again later.",
     poweredBy: "Powered by Nurevo",
+    // Below the widget on the agency's page, outside the iframe. {nurevo} is the brand-name link.
+    attribution: "AI visibility check by {nurevo}",
     lpTitle: "{agency} recommends Nurevo",
     lpHeadline: "Get your business found by AI assistants",
     lpLead: "When customers ask ChatGPT, Perplexity or Google's AI, your business should be in the answer. {agency} uses Nurevo to make that happen.",
@@ -154,6 +158,8 @@ export const LEADGEN_COPY = Object.freeze({
     errUnavailable: "此检查目前不可用。",
     errGeneric: "发送失败，请稍后再试。",
     poweredBy: "Powered by Nurevo",
+    // Below the widget on the agency's page, outside the iframe. {nurevo} is the brand-name link.
+    attribution: "AI 可见度检测由 {nurevo} 提供",
     lpTitle: "{agency}推荐 Nurevo",
     lpHeadline: "让 AI 助手找到您的业务",
     lpLead: "当顾客询问 ChatGPT、Perplexity 或 Google 的 AI 时，答案中应该有您的业务。{agency}使用 Nurevo 来实现这一点。",
@@ -208,6 +214,8 @@ export const LEADGEN_COPY = Object.freeze({
     errUnavailable: "此檢查目前無法使用。",
     errGeneric: "送出失敗，請稍後再試。",
     poweredBy: "Powered by Nurevo",
+    // Below the widget on the agency's page, outside the iframe. {nurevo} is the brand-name link.
+    attribution: "AI 能見度檢測由 {nurevo} 提供",
     lpTitle: "{agency}推薦 Nurevo",
     lpHeadline: "讓 AI 助理找到您的事業",
     lpLead: "當顧客詢問 ChatGPT、Perplexity 或 Google 的 AI 時，答案中應該有您的事業。{agency}使用 Nurevo 來做到這一點。",
@@ -262,6 +270,8 @@ export const LEADGEN_COPY = Object.freeze({
     errUnavailable: "지금은 이 점검을 사용할 수 없습니다.",
     errGeneric: "전송하지 못했습니다. 나중에 다시 시도해 주세요.",
     poweredBy: "Powered by Nurevo",
+    // Below the widget on the agency's page, outside the iframe. {nurevo} is the brand-name link.
+    attribution: "AI 가시성 점검 제공: {nurevo}",
     lpTitle: "{agency}이(가) 추천하는 Nurevo",
     lpHeadline: "AI 어시스턴트가 당신의 비즈니스를 찾도록",
     lpLead: "고객이 ChatGPT, Perplexity, Google AI에 질문할 때 답변에 당신의 비즈니스가 나와야 합니다. {agency}은(는) 이를 위해 Nurevo를 사용합니다.",
@@ -316,6 +326,8 @@ export const LEADGEN_COPY = Object.freeze({
     errUnavailable: "Esta comprobación no está disponible ahora mismo.",
     errGeneric: "No se pudo enviar. Inténtalo más tarde.",
     poweredBy: "Powered by Nurevo",
+    // Below the widget on the agency's page, outside the iframe. {nurevo} is the brand-name link.
+    attribution: "Comprobación de visibilidad en IA de {nurevo}",
     lpTitle: "{agency} recomienda Nurevo",
     lpHeadline: "Haz que los asistentes de IA encuentren tu negocio",
     lpLead: "Cuando tus clientes preguntan a ChatGPT, Perplexity o la IA de Google, tu negocio debería estar en la respuesta. {agency} usa Nurevo para conseguirlo.",
@@ -370,6 +382,8 @@ export const LEADGEN_COPY = Object.freeze({
     errUnavailable: "Cette vérification n'est pas disponible pour le moment.",
     errGeneric: "Envoi impossible. Réessayez plus tard.",
     poweredBy: "Powered by Nurevo",
+    // Below the widget on the agency's page, outside the iframe. {nurevo} is the brand-name link.
+    attribution: "Vérification de la visibilité IA par {nurevo}",
     lpTitle: "{agency} recommande Nurevo",
     lpHeadline: "Faites trouver votre entreprise par les assistants IA",
     lpLead: "Quand vos clients interrogent ChatGPT, Perplexity ou l'IA de Google, votre entreprise doit figurer dans la réponse. {agency} utilise Nurevo pour y parvenir.",
@@ -424,6 +438,8 @@ export const LEADGEN_COPY = Object.freeze({
     errUnavailable: "Diese Prüfung ist derzeit nicht verfügbar.",
     errGeneric: "Senden fehlgeschlagen. Bitte versuchen Sie es später erneut.",
     poweredBy: "Powered by Nurevo",
+    // Below the widget on the agency's page, outside the iframe. {nurevo} is the brand-name link.
+    attribution: "KI-Sichtbarkeitscheck von {nurevo}",
     lpTitle: "{agency} empfiehlt Nurevo",
     lpHeadline: "Sorgen Sie dafür, dass KI-Assistenten Ihr Unternehmen finden",
     lpLead: "Wenn Kunden ChatGPT, Perplexity oder die KI von Google fragen, sollte Ihr Unternehmen in der Antwort stehen. {agency} nutzt dafür Nurevo.",
