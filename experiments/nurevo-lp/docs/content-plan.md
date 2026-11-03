@@ -65,3 +65,10 @@
 4. 飲食店のAI検索対策：メニュー・営業時間・予約・アレルギー表示の書き方【業種別】
 5. 商品フィードとAI：Merchant Center・ChatGPTの商品フィード・構造化データの役割分担（online-shop-ai-search の続き）
 メモ：多言語の仕組み（src/i18n/locales.mjs）は main にマージ済み。新しい記事は ja/en を .mjs、他の39言語を src/content/<slug>/<code>.json に書く。dental-clinic-ai-search（PR未マージ）は ja/en のみのため、マージ後に翻訳を補う。
+| 2026-11-03 | restaurant-ai-search | 飲食店・カフェ・バーのAI検索対策（質問の型と必要な事実の表、AIが読む情報源、メニューを文字で・総額表示・GBPのメニュー機能、Restaurantの構造化データ〔Google推奨のmenu・servesCuisine・priceRange、schema.orgのacceptsReservations・hasMenu〕、アレルギー情報の出し方〔外食は表示義務の対象外・コンタミ・更新〕、口コミ、WordPressでの設定、AIの回答が間違ったときの直し方、測り方）。41言語 | 業種別 | content/daily-20261103-08 |
+翻訳の補完ログ：2026-11-03 dental-clinic-ai-search に39言語を追加（ja/en と合わせて41言語）。main の公開記事はすべて41言語にそろった（未マージPR #50・#51 は ja/en のみ、マージ後に補完）。
+1. AIからのアクセスを解析ツールで見分ける方法（GA4の参照元・utm_source=chatgpt.com・AIクローラのログ）
+2. 士業（税理士・弁護士・行政書士）のAI検索対策：取扱業務・料金・相談方法と広告規程【業種別】
+3. 宿泊施設（旅館・ホテル）のAI検索対策：部屋・料金・アクセス・予約サイトとの整合【業種別】
+4. MEO会社・WordPress保守会社がAI検索対策を既存の月額に組み込む方法【制作会社向け】
+5. 商品フィードとAI：Merchant Center・ChatGPTの商品フィード・構造化データの役割分担

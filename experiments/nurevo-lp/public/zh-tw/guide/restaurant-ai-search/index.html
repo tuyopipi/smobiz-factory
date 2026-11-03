@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>餐廳的 AI 搜尋：菜單、營業時間、訂位與過敏原 | Nurevo</title>
+<meta name="description" content="餐廳的 AEO：把菜單、價格、營業時間、料理類型與訂位方式寫成文字並以 Restaurant 結構化資料公開，與 Google 商家檔案一致，並謹慎處理過敏原資訊。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/zh-tw/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="ar" href="https://nurevo.jp/ar/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="bg" href="https://nurevo.jp/bg/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="ca" href="https://nurevo.jp/ca/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="cs" href="https://nurevo.jp/cs/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="da" href="https://nurevo.jp/da/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="de" href="https://nurevo.jp/de/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="el" href="https://nurevo.jp/el/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="et" href="https://nurevo.jp/et/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="fa" href="https://nurevo.jp/fa/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="fi" href="https://nurevo.jp/fi/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="fr" href="https://nurevo.jp/fr/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="fy" href="https://nurevo.jp/fy/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="gl" href="https://nurevo.jp/gl/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="gu" href="https://nurevo.jp/gu/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="he" href="https://nurevo.jp/he/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="hi" href="https://nurevo.jp/hi/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="hr" href="https://nurevo.jp/hr/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="hu" href="https://nurevo.jp/hu/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="id" href="https://nurevo.jp/id/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="it" href="https://nurevo.jp/it/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="ko" href="https://nurevo.jp/ko/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="lo" href="https://nurevo.jp/lo/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="nb" href="https://nurevo.jp/nb/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="nl" href="https://nurevo.jp/nl/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="pl" href="https://nurevo.jp/pl/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="pt-BR" href="https://nurevo.jp/pt-br/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="pt-PT" href="https://nurevo.jp/pt-pt/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="ro" href="https://nurevo.jp/ro/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="ru" href="https://nurevo.jp/ru/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="sk" href="https://nurevo.jp/sk/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="sl" href="https://nurevo.jp/sl/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="sr" href="https://nurevo.jp/sr/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="sv" href="https://nurevo.jp/sv/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="tr" href="https://nurevo.jp/tr/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="uk" href="https://nurevo.jp/uk/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="vi" href="https://nurevo.jp/vi/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="zh-Hans" href="https://nurevo.jp/zh/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="zh-Hant" href="https://nurevo.jp/zh-tw/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="de-AT" href="https://nurevo.jp/de/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="de-CH" href="https://nurevo.jp/de/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es-MX" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es-AR" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es-CL" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es-CO" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es-CR" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es-EC" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es-PE" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="es-VE" href="https://nurevo.jp/es/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="fr-BE" href="https://nurevo.jp/fr/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="fr-CA" href="https://nurevo.jp/fr/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="nl-BE" href="https://nurevo.jp/nl/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="zh-HK" href="https://nurevo.jp/zh-tw/guide/restaurant-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/restaurant-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="餐廳的 AI 搜尋：菜單、營業時間、訂位與過敏原 | Nurevo">
+<meta property="og:description" content="餐廳的 AEO：把菜單、價格、營業時間、料理類型與訂位方式寫成文字並以 Restaurant 結構化資料公開，與 Google 商家檔案一致，並謹慎處理過敏原資訊。">
+<meta property="og:url" content="https://nurevo.jp/zh-tw/guide/restaurant-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_TW">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:locale:alternate" content="bg_BG">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:locale:alternate" content="cs_CZ">
+<meta property="og:locale:alternate" content="da_DK">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="el_GR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="et_EE">
+<meta property="og:locale:alternate" content="fa_IR">
+<meta property="og:locale:alternate" content="fi_FI">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="fy_NL">
+<meta property="og:locale:alternate" content="gl_ES">
+<meta property="og:locale:alternate" content="gu_IN">
+<meta property="og:locale:alternate" content="he_IL">
+<meta property="og:locale:alternate" content="hi_IN">
+<meta property="og:locale:alternate" content="hr_HR">
+<meta property="og:locale:alternate" content="hu_HU">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:locale:alternate" content="it_IT">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="lo_LA">
+<meta property="og:locale:alternate" content="nb_NO">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="pl_PL">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:locale:alternate" content="pt_PT">
+<meta property="og:locale:alternate" content="ro_RO">
+<meta property="og:locale:alternate" content="ru_RU">
+<meta property="og:locale:alternate" content="sk_SK">
+<meta property="og:locale:alternate" content="sl_SI">
+<meta property="og:locale:alternate" content="sr_RS">
+<meta property="og:locale:alternate" content="sv_SE">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="uk_UA">
+<meta property="og:locale:alternate" content="vi_VN">
+<meta property="og:locale:alternate" content="zh_CN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="餐廳的 AI 搜尋：菜單、營業時間、訂位與過敏原 | Nurevo">
+<meta name="twitter:description" content="餐廳的 AEO：把菜單、價格、營業時間、料理類型與訂位方式寫成文字並以 Restaurant 結構化資料公開，與 Google 商家檔案一致，並謹慎處理過敏原資訊。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/zh-tw/guide/restaurant-ai-search/#webpage","url":"https://nurevo.jp/zh-tw/guide/restaurant-ai-search/","name":"餐廳的 AI 搜尋：菜單、營業時間、訂位與過敏原 | Nurevo","description":"餐廳的 AEO：把菜單、價格、營業時間、料理類型與訂位方式寫成文字並以 Restaurant 結構化資料公開，與 Google 商家檔案一致，並謹慎處理過敏原資訊。","inLanguage":"zh-Hant","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/zh-tw/guide/restaurant-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/zh-tw/guide/restaurant-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"首頁","item":"https://nurevo.jp/zh-tw/"},{"@type":"ListItem","position":2,"name":"AEO 指南","item":"https://nurevo.jp/zh-tw/guide/"},{"@type":"ListItem","position":3,"name":"餐廳、咖啡廳與酒吧的 AI 搜尋：讓 AI 正確讀懂您的菜單、營業時間、訂位與過敏原資訊","item":"https://nurevo.jp/zh-tw/guide/restaurant-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/zh-tw/guide/restaurant-ai-search/#faq","mainEntity":[{"@type":"Question","name":"餐廳做 AI 搜尋應該從哪裡開始？","acceptedAnswer":{"@type":"Answer","text":"先在自己的網站上以文字寫出菜單（菜名與價格）、營業時間、最後點餐時間、公休日、地址與訂位方式。接著讓 Google 商家檔案與美食指南與它一致，並把同樣的事實以 Restaurant 結構化資料與 llms.txt 公開。"}},{"@type":"Question","name":"已經登上美食指南網站，還需要自己的網站嗎？","acceptedAnswer":{"@type":"Answer","text":"美食指南上的店家資訊可能會被 AI 當作來源，但您自己的網站才是能最詳細、最正確地公開餐廳資訊的地方，也是您更正其他管道時的基準。讓兩邊保持一致是最穩妥的做法。"}},{"@type":"Question","name":"放一張菜單照片就夠了嗎？","acceptedAnswer":{"@type":"Answer","text":"如果只有照片或 PDF，就無法保證菜名與價格能被正確讀取。比較好的做法是準備一個以文字寫出菜名、價格與說明的菜單頁面，再搭配照片。"}},{"@type":"Question","name":"應該把過敏原的對應方式告訴 AI 嗎？","acceptedAnswer":{"@type":"Answer","text":"只有在您能保持資訊正確與最新的情況下才應該。公開時，請把範圍、交叉接觸風險與確認方式一起寫出來。如果無法確定，說明您不提供過敏原資訊也很重要。"}},{"@type":"Question","name":"Nurevo AEO 是免費的嗎？","acceptedAnswer":{"@type":"Answer","text":"是的。商家類型（Restaurant 等）、地址、營業時間、套餐等服務、FAQ 結構化資料、llms.txt、AI 爬蟲規則以及 AEO 分數都包含在免費方案中。付費方案新增隨時保持最新的規則集（Standard，每月 $20）與測試版的 AI 曝光度測量（Pro，每月 $99 起）。WordPress.org 上的 Nurevo AEO"}},{"@type":"Question","name":"這樣做能保證 ChatGPT 推薦我的餐廳嗎？","acceptedAnswer":{"@type":"Answer","text":"不能。AI 的回答會隨提問的用字與提問者所在的位置而改變，沒有任何工具或技巧能保證被提及或取得某個位置。您能做的是讓 AI 容易讀懂您的事實，並持續確認自己是否出現、回答是否正確。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/zh-tw/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check?lang=zh-tw">進行免費 AI 可讀性檢測</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="麵包屑導覽"><a href="/zh-tw/">首頁</a> <span aria-hidden="true">›</span> <a href="/zh-tw/guide/">AEO 指南</a> <span aria-hidden="true">›</span> <span>餐廳、咖啡廳與酒吧的 AI 搜尋：讓 AI 正確讀懂您的菜單、營業時間、訂位與過敏原資訊</span></nav>
+  <article>
+    <h1>餐廳、咖啡廳與酒吧的 AI 搜尋：讓 AI 正確讀懂您的菜單、營業時間、訂位與過敏原資訊</h1>
+    <p class="lead">餐廳、咖啡廳或酒吧的 AI 搜尋最佳化（AEO），就是在自己的網站上以文字寫清楚菜單與價格、營業時間與最後點餐時間、公休日、料理類型、座位與包廂，以及訂位方式，再把同樣的事實公開在結構化資料（schema.org 的 Restaurant 及其同類類型）與 Google 商家檔案中。如此一來，ChatGPT、Perplexity 和 Google 的 AI 在回答「車站附近有包廂、晚上 10 點後還有營業的酒吧」這類問題時，就有不必用猜的依據。如果要公開過敏原資訊，只公開您能保持正確與最新的內容，並同時說明交叉接觸的風險。</p>
+<p>本文撰寫於 2026 年 11 月 3 日（日本時間）。來自 Google、schema.org、OpenAI 與日本公家機關的資訊，皆已於當天在各官方頁面確認。</p>
+<p>AI 的回答會隨日期、提問的用字以及提問者所在的位置而改變。本文的步驟能讓 AI 讀懂您餐廳的事實，但無法保證 AI 一定會推薦您，也不保證您會排在前面。</p>
+<section class="qa"><h2>顧客會問 AI 什麼，回答又需要哪些事實</h2><p>與餐廳有關的問題，常常把地點、時間、人數、場合、預算與飲食需求塞進同一句話。AI 會尋找能逐一核對這些條件的資訊，所以第一步是讓您的餐廳符合哪些條件能以文字被讀到。下表整理了各類問題需要的事實，以及應該公開在哪裡。</p><div class="table-wrap"><table><caption>這些問題是為本指南撰寫的範例。屬性名稱依據 schema.org 與 Google 的文件（2026 年 11 月 3 日確認）。</caption><thead><tr><th scope="col">常見問題</th><th scope="col">回答所需的事實</th><th scope="col">公開位置</th></tr></thead><tbody><tr><th scope="row">「車站附近現在就能直接進去的店」</th><td>地址、從車站步行所需時間、每天的營業時間、最後點餐時間、公休日</td><td>店家資訊頁面的內文、結構化資料（address、openingHoursSpecification）、Google 商家檔案</td></tr><tr><th scope="row">「適合招待客戶、有包廂的安靜餐廳」</th><td>料理類型、包廂的有無與可容納人數、座位數、對氣氛的描述</td><td>頁面內文（座位與包廂）、結構化資料（servesCuisine）</td></tr><tr><th scope="row">「每人約 40 美元、含飲料的聚餐」</th><td>套餐的內容、價格、用餐時間與最低人數；飲料方案的條件</td><td>套餐或宴會頁面、價格範圍（priceRange）</td></tr><tr><th scope="row">「適合帶小孩的咖啡廳」「推嬰兒車也能進去的店」</th><td>兒童椅與兒童餐具、嬰兒車能否進入、階梯、吸菸規定</td><td>常見問題、店家資訊頁面、Google 商家檔案的屬性</td></tr><tr><th scope="row">「有不含蛋料理的店」「有素食選擇的店」</th><td>能與不能配合的範圍、如何確認食材、交叉接觸風險、詢問窗口</td><td>過敏原與飲食需求頁面（依照下文的注意事項）</td></tr><tr><th scope="row">「可以訂位嗎？」「可以外帶嗎？」</th><td>訂位方式（電話或線上）與受理時間、外帶與外送</td><td>頁面內文、訂位頁面的連結、Google 商家檔案</td></tr></tbody></table></div><p>每一列的公開位置都包含頁面內文，因為只靠結構化資料是不夠的。Google 表示，要出現在其生成式 AI 功能中，不需要特殊的 schema.org 標記（指南最後更新於 2026 年 7 月 10 日）。<a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">Google：針對生成式 AI 功能的最佳化指南</a></p></section>
+<section class="qa"><h2>AI 從哪裡讀取您餐廳的資訊</h2><p>AI 回答餐廳相關問題時，來源大致分為幾類：您自己的網站、Google 商家檔案（您在 Google 地圖上的店家資訊）、美食指南與訂位網站、評論與社群媒體，以及新聞或整理文章。Google 表示，商家檔案可以幫助您的商家在 AI 回答與其他 Google 搜尋結果中被找到。<a href="https://developers.google.com/search/docs/fundamentals/ai-optimization-guide">Google：針對生成式 AI 功能的最佳化指南</a></p>
+<p>ChatGPT 搜尋網路時，會根據 IP 位址使用大致的位置資訊，回答中會附上行內引用與「Sources（來源）」清單。<a href="https://help.openai.com/en/articles/9237897-searching-the-web-with-chatgpt">OpenAI：Searching the web with ChatGPT</a>。也就是說，對於「附近的店」這類問題，答案取決於提問者在哪裡。自己測試時，請在問題中寫上所在地區的名稱，結果才方便比較。</p>
+<p>沒有任何 AI 服務公開它給每個來源多少權重。可以確定的是，如果您的網站、商家檔案與美食指南上的營業時間或價格不一致，AI 就無法判斷哪個正確，可能會重複過時或錯誤的資訊。這項工作的核心，是把自己的網站當作正確資訊的基準，並讓其他所有管道與它一致。</p></section>
+<section class="qa"><h2>把菜單以文字放在頁面上，而不只是圖片或 PDF</h2><p>如果菜單只有照片或 PDF，就無法保證 AI 或搜尋引擎能正確讀出菜名與價格。請在網站上準備一個菜單頁面，以文字寫出菜名、價格與簡短說明，再搭配照片。季節菜單要註明供應期間（「冬季套餐，12 月至隔年 2 月」），結束後就刪除。</p>
+<p>請依當地規定的方式標示價格。例如在日本，國稅廳要求事先向消費者顯示的價格必須含消費稅，不論透過何種媒介。<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm">日本國稅廳：總額標示（日文）</a>。如果內用與外帶價格不同，請兩者都寫出來，以免顧客與 AI 誤讀。</p>
+<p>Google 商家檔案為餐飲業者提供菜單編輯器，可以填寫分類、菜名、價格與說明，菜單連結則在另一個欄位設定。Google 也可能從您的網站轉錄菜單資料；如有錯誤，您可以編輯或刪除，也可以選擇停止轉錄。<a href="https://support.google.com/business/answer/9455840?hl=en">Google 商家檔案說明：關於菜單編輯器</a>。在這裡，保持自己網站上的菜單正確同樣會帶來回報。</p></section>
+<section class="qa"><h2>結構化資料：Restaurant 裡該寫什麼</h2><p>在結構化資料中，您的店屬於 <a href="https://schema.org/FoodEstablishment">schema.org FoodEstablishment</a> 的一種，而 FoodEstablishment 又是 LocalBusiness 的一種。其子類型包括 Restaurant、CafeOrCoffeeShop、BarOrPub、Bakery、FastFoodRestaurant 與 IceCreamShop 等。Google 的在地商家文件要求盡量使用最具體的類型，其範例本身也使用 Restaurant（文件最後更新於 2026 年 9 月 8 日，11 月 3 日確認）。<a href="https://developers.google.com/search/docs/appearance/structured-data/local-business">Google：在地商家結構化資料</a></p><div class="table-wrap"><table><caption>「在 Google 文件中的地位」依據 2026 年 11 月 3 日 Google 在地商家文件所列內容。acceptsReservations 與 hasMenu 是在 schema.org FoodEstablishment 中定義的屬性。</caption><thead><tr><th scope="col">屬性</th><th scope="col">填寫內容</th><th scope="col">在 Google 文件中的地位</th></tr></thead><tbody><tr><th scope="row">name / address</th><td>店名（與招牌和商家檔案上的寫法完全相同）與地址</td><td>必要</td></tr><tr><th scope="row">openingHoursSpecification</th><td>每天的開店與打烊時間；若午餐與晚餐之間有休息，分成兩筆</td><td>建議</td></tr><tr><th scope="row">telephone / url / geo</th><td>電話號碼、網站 URL、緯度與經度</td><td>建議</td></tr><tr><th scope="row">servesCuisine</th><td>供應的料理類型（例如日本料理、義大利菜、烤雞串）</td><td>建議</td></tr><tr><th scope="row">menu</th><td>菜單頁面的完整 URL</td><td>建議</td></tr><tr><th scope="row">priceRange</th><td>大致的價格範圍（例如「$20–40」），少於 100 個字元</td><td>建議</td></tr><tr><th scope="row">acceptsReservations / hasMenu</th><td>是否接受訂位（是或否，或訂位頁面的 URL）／以結構化資料描述的菜單本身</td><td>schema.org 屬性，Google 文件中未列出</td></tr></tbody></table></div><p>使用 hasMenu，可以用 Menu、MenuSection 與 MenuItem 描述每一道菜，schema.org 的範例中也示範了飲食適用性（suitableForDiet）。不過，Google 的文件只建議菜單 URL（menu）。如果菜單經常變動，逐道菜加上標記也很容易過時，所以請先把頁面上的文字菜單做對。</p>
+<p>結構化資料中的值應與頁面上顯示的內容一致。不要把頁面上沒有的菜色，或與實際不符的價格範圍，只寫進標記裡。</p></section>
+<section class="qa"><h2>過敏原與飲食需求資訊：告訴 AI 之前先決定好</h2><p>各國規定不同，請確認適用於您的規定。在日本，餐廳供應的料理不在《食品標示法》強制過敏原標示的範圍內。一份關於外食時提供過敏原資訊的業界指引，要求公開此類資訊的餐廳：對照供應商的規格書確認食材並保持資訊最新；告知顧客因為共用廚房，可能發生非預期的交叉接觸；無法提供可靠資訊時，要事先說明。該指引也指出，網站上的資訊方便顧客在來店前查看，但若沒有持續更新，就會成為誤食的原因。<a href="https://www.jfnet.or.jp/wp/wp-content/uploads/2025/08/%E3%80%90%E9%A3%9F%E3%81%AE%E5%AE%89%E5%85%A8%E3%83%BB%E5%AE%89%E5%BF%83%E9%96%A2%E9%80%A3%E3%82%A2%E3%83%AC%E3%83%AB%E3%82%B2%E3%83%B3%E3%80%91%E5%A4%96%E9%A3%9F%E3%83%BB%E4%B8%AD%E9%A3%9F%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%AC%E3%83%AB%E3%82%B2%E3%83%B3%E6%83%85%E5%A0%B1%E3%81%AE%E6%8F%90%E4%BE%9B%E3%81%AB%E5%90%91%E3%81%91%E3%81%9F%E6%89%8B%E5%BC%95%E3%81%8D.pdf">外食與中食業過敏原資訊提供指引（日文；業界協議會，2023 年 3 月 9 日修訂）</a></p>
+<p>AI 會摘要您網站上的文字。如果您只寫「過敏友善」或「無麩質，安心吃」這樣的簡短標籤，條件與例外可能會在摘要中遺失。如果要公開這類資訊，請把範圍（「我們提供三道不含蛋與乳製品的料理」）、交叉接觸風險（「同一廚房會處理蛋與乳製品」）與確認方式（「請於訂位時來電洽詢」）寫在同一段裡。如果無法配合過敏需求，如實說明也是有用的資訊。</p>
+<p>在結構化資料中，不要宣稱您無法確認的內容。schema.org 有表示飲食適用性的屬性，但它無法表達交叉接觸風險，因此凡是與過敏有關的內容，在頁面內文中連同條件一起說明會比較安全。</p></section>
+<section class="qa"><h2>評論與美食指南：不要為了 AI 而做的事</h2><p>在自己的網站上為您張貼的評論或星級評分加上標記，並不能讓您在 Google 中獲得評論星等。Google 在 2019 年表示，自我推銷式評論（也就是把關於某商家的評論放在該商家自己的網站上）對 LocalBusiness 與 Organization 不被允許。<a href="https://developers.google.com/search/blog/2019/09/making-review-rich-results-more-helpful">Google 搜尋中心部落格，2019 年 9 月 16 日</a></p>
+<p>關於未揭露廣告的規定因國家而異。在日本，自 2023 年 10 月 1 日起，隱性行銷已屬於違反《不當贈品類及不當標示防止法》的行為，商家請求或指示第三方發布的貼文或評論，都會被視為該商家的廣告。<a href="https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/">日本消費者廳：隱性行銷（日文）</a>。不要期待 AI 替您說好話，而去累積未揭露的業配評論，或「本地第一」這類無法證實的說法。</p>
+<p>美食指南與訂位網站有時會被 AI 當作來源。能自己編輯的，請把營業時間、價格與公休日更新成與您網站相同；無法編輯的，請聯絡該網站要求更正。</p></section>
+<section class="qa"><h2>在 WordPress 餐廳網站上設定</h2><ol><li>從 <a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.org</a> 安裝 Nurevo AEO（免費）並啟用。若您正在使用 Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK 或 VK All in One Expansion Unit，可以繼續保留。</li><li>在設定精靈中選擇「餐廳或咖啡廳」。商家類型會設為 Restaurant；如果是咖啡廳、酒吧或麵包店，請在設定中把「商家類型（schema.org 類型）」改為 CafeOrCoffeeShop、BarOrPub 或 Bakery。確認名稱、地址、電話、營業時間與簡介，並在簡介中說明您供應什麼、有什麼特色（例如「炭火烤雞串與清酒。設有包廂，最多可容納 12 人。」）。只有空白欄位會從現有設定自動帶入，您已輸入的內容不會被覆寫。</li><li>把需要事先預訂的項目，例如套餐、宴會方案或包場，在設定中逐一新增為服務。填寫名稱、所需時間（分鐘）、價格（只輸入數字）、幣別、類別、預約 URL 與說明後，每一項都會以與您餐廳連結的 Service 公開（價格為 Offer，預約 URL 為預約動作），並在 llms.txt 中列為一行。</li><li>把顧客真正會問的問題，例如停車、帶小孩、吸菸、自帶酒水與取消規定，輸入為常見問題，並在想顯示的頁面放上 Nurevo 常見問題區塊或 [nurevo_faq] 短代碼。</li><li>在「AEO 分數」畫面執行診斷，並套用檢查清單提供的一鍵修正。結構化資料、llms.txt 與 AI 爬蟲存取（OAI-SearchBot、PerplexityBot、Claude-SearchBot 等）全都包含在免費方案中。</li><li>用<a href="/check?lang=zh-tw">免費 AI 可讀性檢測</a>從外部查看 AI 讀到了什麼，並確認營業時間與價格與您的 Google 商家檔案及美食指南一致。</li></ol><p>目前版本的 Nurevo AEO（0.9.1）不會輸出 servesCuisine、menu（hasMenu）或 acceptsReservations。只要料理類型寫在簡介與頁面內文中、菜單放在文字菜單頁面上，AI 就能從頁面讀到。如果也想把它們加入結構化資料，請透過佈景主題或其他方式加入（Google 將它們列為建議而非必要）。啟用 SEO 外掛時，Nurevo AEO 不會再輸出第二套結構化資料，只會補上缺少的地址、電話、營業時間、Restaurant 等具體類型以及您的服務。<a href="/zh-tw/guide/local-business-schema-seo-plugins/">為 Yoast、Rank Math 與 AIOSEO 加入在地商家 schema</a></p></section>
+<section class="qa"><h2>當 AI 的回答把您的餐廳說錯時</h2><ol><li>打開 AI 回答中的來源連結，找出錯誤資訊來自哪個頁面。</li><li>如果來源是您的網站，請修正頁面內文與結構化資料；如果是您的商家檔案，請在 Google 的管理介面修正。</li><li>如果來源是美食指南或整理文章，請編輯您的店家資訊，或請發布者更正。也請檢查是否還留有已歇業分店的頁面，或搬遷前的舊地址。</li><li>臨時休業、更改營業時間或調整價格時，請在同一天更新您的網站、商家檔案、美食指南與 llms.txt。</li><li>修正不一定會立刻反映在 AI 的回答中。請在幾天到幾週後，再用同樣的問題確認一次。</li></ol></section>
+<section class="qa"><h2>公開前的檢查清單</h2><ol><li>菜單以文字寫出，包含菜名與價格；季節菜色註明了供應期間。</li><li>每天的營業時間、最後點餐時間與公休日，在網站、商家檔案與美食指南上一致。</li><li>結構化資料類型符合業態（Restaurant、CafeOrCoffeeShop、BarOrPub 等），並包含地址、電話與營業時間。</li><li>頁面內文寫明了供應的料理類型、座位與包廂，以及帶小孩、吸菸等條件。</li><li>套餐與宴會方案寫明了內容、價格、用餐時間與訂位方式。</li><li>若公開了過敏原資訊，有寫明範圍、交叉接觸風險與確認方式；若沒有公開，頁面上也有說明。</li><li>自家網站上的評論沒有被標記為評分，也沒有使用未揭露的業配評論。</li><li>llms.txt 列出了店家概要、菜單、交通方式與訂位頁面。<a href="/zh-tw/guide/llms-txt/">什麼是 llms.txt？</a></li></ol></section>
+<section class="qa"><h2>確認您是否出現在 AI 的回答中</h2><p>挑選十個左右顧客會問的問題，組合地區、料理類型與場合（午餐、商務聚餐、帶小孩、深夜）。分別去問 ChatGPT、Perplexity 與 Google 的 AI 功能，記錄您的餐廳是否以名稱或 URL 出現，以及給出的營業時間與價格是否正確。每次的回答都會不同，所以請隔一段時間重複同樣的問題。具體方法請見<a href="/zh-tw/guide/measure-ai-visibility/">如何衡量 AI 曝光度</a>。</p>
+<p>Nurevo AEO 的 Free 與 Standard 方案包含每月一次的檢查：根據您的商家類型與地區（絕不使用餐廳名稱）產生三個問題向 Perplexity 提問，外掛會記錄回答中是否提到您的餐廳或引用您的網站。Pro 方案（每月 $99 起）新增測試版的 AI 曝光度測量：您的餐廳在 AI 回答中出現的頻率，並提供競爭對手比較與歷史紀錄（目前支援 Perplexity）。兩者都是對回答進行抽樣，而不是觀察每一則回答。</p></section>
+    <section class="qa"><h2>常見問題</h2><h3>餐廳做 AI 搜尋應該從哪裡開始？</h3><p>先在自己的網站上以文字寫出菜單（菜名與價格）、營業時間、最後點餐時間、公休日、地址與訂位方式。接著讓 Google 商家檔案與美食指南與它一致，並把同樣的事實以 Restaurant 結構化資料與 llms.txt 公開。</p>
+<h3>已經登上美食指南網站，還需要自己的網站嗎？</h3><p>美食指南上的店家資訊可能會被 AI 當作來源，但您自己的網站才是能最詳細、最正確地公開餐廳資訊的地方，也是您更正其他管道時的基準。讓兩邊保持一致是最穩妥的做法。</p>
+<h3>放一張菜單照片就夠了嗎？</h3><p>如果只有照片或 PDF，就無法保證菜名與價格能被正確讀取。比較好的做法是準備一個以文字寫出菜名、價格與說明的菜單頁面，再搭配照片。</p>
+<h3>應該把過敏原的對應方式告訴 AI 嗎？</h3><p>只有在您能保持資訊正確與最新的情況下才應該。公開時，請把範圍、交叉接觸風險與確認方式一起寫出來。如果無法確定，說明您不提供過敏原資訊也很重要。</p>
+<h3>Nurevo AEO 是免費的嗎？</h3><p>是的。商家類型（Restaurant 等）、地址、營業時間、套餐等服務、FAQ 結構化資料、llms.txt、AI 爬蟲規則以及 AEO 分數都包含在免費方案中。付費方案新增隨時保持最新的規則集（Standard，每月 $20）與測試版的 AI 曝光度測量（Pro，每月 $99 起）。<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.org 上的 Nurevo AEO</a></p>
+<h3>這樣做能保證 ChatGPT 推薦我的餐廳嗎？</h3><p>不能。AI 的回答會隨提問的用字與提問者所在的位置而改變，沒有任何工具或技巧能保證被提及或取得某個位置。您能做的是讓 AI 容易讀懂您的事實，並持續確認自己是否出現、回答是否正確。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>先看看 AI 是如何讀取您餐廳網站的</h2>
+    <p>免費檢測可顯示結構化資料、llms.txt 與 AI 爬蟲存取的狀態，無需註冊。在 WordPress 上，Nurevo AEO 可以免費補齊缺漏。</p>
+    <a class="btn primary lg" href="/check?lang=zh-tw">進行免費 AI 可讀性檢測</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">在 WordPress.org 取得 Nurevo AEO</a>
+  </aside>
+  <nav class="related" aria-label="相關指南"><h2>相關指南</h2><ul><li><a href="/zh-tw/guide/local-business-schema-seo-plugins/">免費為 Yoast SEO、Rank Math 或 AIOSEO 加入在地商家結構化資料</a></li><li><a href="/zh-tw/guide/measure-ai-visibility/">如何衡量 AI 能見度：問題的挑選、提問次數與數據解讀</a></li><li><a href="/zh-tw/guide/llms-txt/">什麼是 llms.txt？向 AI 介紹網站的檔案</a></li><li><a href="/zh-tw/guide/appear-in-chatgpt/">如何出現在 ChatGPT（及其他 AI 回答）中</a></li><li><a href="/zh-tw/guide/hair-salon-ai-search/">美髮與美容沙龍的 AI 搜尋：如何讓 AI 正確讀懂您的價目表、價格與預約方式</a></li></ul></nav>
+  <nav class="langs" aria-label="其他語言"><h2>其他語言</h2><ul><li><a href="/ja/guide/restaurant-ai-search/" hreflang="ja" lang="ja">日本語</a></li><li><a href="/guide/restaurant-ai-search/" hreflang="en" lang="en">English</a></li><li><a href="/ar/guide/restaurant-ai-search/" hreflang="ar" lang="ar">العربية</a></li><li><a href="/bg/guide/restaurant-ai-search/" hreflang="bg" lang="bg">Български</a></li><li><a href="/ca/guide/restaurant-ai-search/" hreflang="ca" lang="ca">Català</a></li><li><a href="/cs/guide/restaurant-ai-search/" hreflang="cs" lang="cs">Čeština</a></li><li><a href="/da/guide/restaurant-ai-search/" hreflang="da" lang="da">Dansk</a></li><li><a href="/de/guide/restaurant-ai-search/" hreflang="de" lang="de">Deutsch</a></li><li><a href="/el/guide/restaurant-ai-search/" hreflang="el" lang="el">Ελληνικά</a></li><li><a href="/es/guide/restaurant-ai-search/" hreflang="es" lang="es">Español</a></li><li><a href="/et/guide/restaurant-ai-search/" hreflang="et" lang="et">Eesti</a></li><li><a href="/fa/guide/restaurant-ai-search/" hreflang="fa" lang="fa">فارسی</a></li><li><a href="/fi/guide/restaurant-ai-search/" hreflang="fi" lang="fi">Suomi</a></li><li><a href="/fr/guide/restaurant-ai-search/" hreflang="fr" lang="fr">Français</a></li><li><a href="/fy/guide/restaurant-ai-search/" hreflang="fy" lang="fy">Frysk</a></li><li><a href="/gl/guide/restaurant-ai-search/" hreflang="gl" lang="gl">Galego</a></li><li><a href="/gu/guide/restaurant-ai-search/" hreflang="gu" lang="gu">ગુજરાતી</a></li><li><a href="/he/guide/restaurant-ai-search/" hreflang="he" lang="he">עברית</a></li><li><a href="/hi/guide/restaurant-ai-search/" hreflang="hi" lang="hi">हिन्दी</a></li><li><a href="/hr/guide/restaurant-ai-search/" hreflang="hr" lang="hr">Hrvatski</a></li><li><a href="/hu/guide/restaurant-ai-search/" hreflang="hu" lang="hu">Magyar</a></li><li><a href="/id/guide/restaurant-ai-search/" hreflang="id" lang="id">Bahasa Indonesia</a></li><li><a href="/it/guide/restaurant-ai-search/" hreflang="it" lang="it">Italiano</a></li><li><a href="/ko/guide/restaurant-ai-search/" hreflang="ko" lang="ko">한국어</a></li><li><a href="/lo/guide/restaurant-ai-search/" hreflang="lo" lang="lo">ລາວ</a></li><li><a href="/nb/guide/restaurant-ai-search/" hreflang="nb" lang="nb">Norsk bokmål</a></li><li><a href="/nl/guide/restaurant-ai-search/" hreflang="nl" lang="nl">Nederlands</a></li><li><a href="/pl/guide/restaurant-ai-search/" hreflang="pl" lang="pl">Polski</a></li><li><a href="/pt-br/guide/restaurant-ai-search/" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a></li><li><a href="/pt-pt/guide/restaurant-ai-search/" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a></li><li><a href="/ro/guide/restaurant-ai-search/" hreflang="ro" lang="ro">Română</a></li><li><a href="/ru/guide/restaurant-ai-search/" hreflang="ru" lang="ru">Русский</a></li><li><a href="/sk/guide/restaurant-ai-search/" hreflang="sk" lang="sk">Slovenčina</a></li><li><a href="/sl/guide/restaurant-ai-search/" hreflang="sl" lang="sl">Slovenščina</a></li><li><a href="/sr/guide/restaurant-ai-search/" hreflang="sr" lang="sr">Српски</a></li><li><a href="/sv/guide/restaurant-ai-search/" hreflang="sv" lang="sv">Svenska</a></li><li><a href="/tr/guide/restaurant-ai-search/" hreflang="tr" lang="tr">Türkçe</a></li><li><a href="/uk/guide/restaurant-ai-search/" hreflang="uk" lang="uk">Українська</a></li><li><a href="/vi/guide/restaurant-ai-search/" hreflang="vi" lang="vi">Tiếng Việt</a></li><li><a href="/zh/guide/restaurant-ai-search/" hreflang="zh-Hans" lang="zh-Hans">简体中文</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">ChatGPT 是 OpenAI 的商標，Perplexity 是 Perplexity AI 的商標，Google 是 Google LLC 的商標。Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK 與 VK All in One Expansion Unit 是其各自所有者的商標。Nurevo 與上述公司皆無關聯。本文不構成法律或稅務建議，也不構成關於食物過敏的醫療建議。</p><a href="/zh-tw/">Nurevo</a> ・ <a href="/en/terms/" hreflang="en">服務條款 (English)</a> ・ <a href="/en/privacy/" hreflang="en">隱私政策 (English)</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>

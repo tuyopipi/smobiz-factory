@@ -1,0 +1,143 @@
+{
+  "title": "牙醫診所的 AI 搜尋：讓 AI 正確讀懂您的診所 | Nurevo",
+  "description": "牙醫的 AEO 從正確公開看診時間、診療項目、地址與預約方式開始：寫在頁面文字中，也寫進 Dentist 結構化資料。附步驟與檢查清單。",
+  "h1": "牙醫診所的 AI 搜尋：如何讓 AI 正確讀懂您診所的事實資訊",
+  "lead": "牙醫診所的 AI 搜尋最佳化（AEO），重點在於把病患會問的事實（看診時間、休診日、診療項目、地址、電話號碼與預約方式）正確且一致地公開，既寫在頁面文字裡，也寫進 schema.org 的 Dentist 結構化資料。如此一來，ChatGPT、Perplexity 和 Google 的 AI 在回答「附近哪家牙醫週六有看診？」時，就不必用猜的。醫療廣告規定同樣適用於您的網站，所以不要因為讀者是機器，就加上病患見證或誇大的說法。",
+  "intro": [
+    "本文撰寫於 2026 年 10 月 29 日（日本時間）。來自 Google、schema.org 與日本厚生勞動省的資訊，皆已於當天在各官方頁面確認。",
+    "AI 的回答會隨日期與提問方式而改變。本文的步驟能讓 AI 讀懂您診所的事實資訊，但無法保證 AI 一定會提到您的診所，也不保證任何排名。"
+  ],
+  "sections": [
+    {
+      "heading": "病患會問 AI 什麼，AI 又會讀取什麼",
+      "paragraphs": [
+        "當有人請 ChatGPT、Perplexity 或 Google AI Overviews 幫忙找牙醫時，AI 會讀取它在網路上找得到的內容並組成答案。這些問題通常與地點、日期、時段和治療內容有關：「車站附近週六有看診的牙醫」「可以幫小孩看牙的家庭牙醫」「晚上 7 點以後還能預約的牙醫診所」。",
+        "要回答這些問題，AI 必須能讀到：您的診所在哪裡、哪幾天幾點看診、診治哪些項目。如果看診時間只有圖片、各頁面的休診日不一致，或診療項目從未以文字寫出，您的診所就比較難被用在答案中。",
+        "Google 表示，要出現在 AI Overviews 或 AI 模式中，沒有額外的條件，也不需要特殊的 schema.org 結構化資料；平常的 SEO 基本功依然重要，例如讓結構化資料與頁面上看得到的文字一致、讓商家檔案保持最新。[Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)。這項工作不是什麼 AI 技巧，而是把診所的事實正確、一致地公開。"
+      ]
+    },
+    {
+      "heading": "牙醫診所應該公開的資訊",
+      "paragraphs": [
+        "在結構化資料中，牙醫診所以 [schema.org Dentist](https://schema.org/Dentist) 來描述，它是 LocalBusiness 的一種。Google 的在地商家文件將 name 與 address 列為必要屬性，建議使用 openingHoursSpecification、telephone、url 等屬性，並要求盡可能使用最具體的 LocalBusiness 子類型。[Google: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+      ],
+      "table": {
+        "head": [
+          "資訊",
+          "頁面上",
+          "結構化資料中（Dentist）"
+        ],
+        "rows": [
+          [
+            "診所名稱",
+            "正式名稱，各處寫法完全相同，與招牌和商家檔案一致",
+            "name（必要）"
+          ],
+          [
+            "地址與交通方式",
+            "完整地址，以及附近車站、停車場或地標，以文字寫出",
+            "address（必要）、geo（建議）"
+          ],
+          [
+            "電話與預約",
+            "以文字寫出電話號碼；若有線上預約，附上連結",
+            "telephone、url（建議）"
+          ],
+          [
+            "看診時間與休診日",
+            "以文字表格而非圖片呈現，寫明午休、週六縮短時段與國定假日的安排",
+            "openingHoursSpecification（建議）"
+          ],
+          [
+            "診療項目",
+            "一般牙科、兒童牙科、齒顎矯正、口腔外科等，以文字寫出",
+            "與診所連結的服務（Service）"
+          ],
+          [
+            "常見問題",
+            "病患真正會問的：停車、保險、初診需要帶什麼",
+            "FAQPage，僅用於看得到該 FAQ 的頁面"
+          ]
+        ],
+        "caption": "必要與建議屬性依據 2026 年 10 月 29 日 Google 在地商家文件所列內容。"
+      },
+      "after": [
+        "最重要的是，同一項資訊在所有地方都保持相同的值：頁面文字、結構化資料、Google 商家檔案與 llms.txt。假日或臨時休診使看診時間變動時，請同時全部更新。"
+      ]
+    },
+    {
+      "heading": "醫療廣告規定：不要為了 AI 而加上的內容",
+      "paragraphs": [
+        "各國規定不同，請確認適用於您的規定。在日本，2018 年 6 月 1 日施行的《醫療法》修正案，將醫療機構的網站納入醫療廣告規定的範圍。厚生勞動省關於網站的案例解說書，將虛假與誇大的說法、宣稱優於其他診所、病患見證以及治療前後對照照片，列為禁止廣告的例子。[厚生勞動省案例解說書（分科會資料，日文）](https://www.mhlw.go.jp/content/10800000/001232587.pdf) / [第 5 版通知，2025 年 3 月 11 日（日文）](https://www.mhlw.go.jp/content/001440134.pdf)",
+        "因此，不要為了 AI 在結構化資料或 FAQ 中加入「本地區第一」「無痛治療」之類的說法，或病患評論與見證。結構化資料就是為機器寫的頁面內容：頁面上不能說的，標記裡也不要說。",
+        "另一方面，案例解說書也列出一些條件：符合這些條件時，病患主動查閱的網站可以說明更多內容，例如自費治療的內容、費用、主要風險與副作用，以及洽詢聯絡方式。特定措辭是否允許，請查閱官方指引或洽詢當地衛生主管機關。"
+      ]
+    },
+    {
+      "heading": "在 WordPress 牙醫網站上設定",
+      "list": [
+        "從 [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) 安裝 Nurevo AEO（免費）並啟用。若您正在使用 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO，可以繼續保留。",
+        "在設定精靈中選擇「診所或牙科」，並把商家類型設為 Dentist。確認名稱、地址、電話、看診時間與簡介。只有空白欄位會從現有設定自動帶入，您已輸入的內容不會被覆寫。",
+        "在設定中把診療項目（一般牙科、兒童牙科等）新增為服務，並輸入常見問題。FAQ 的問題會加入您放上 Nurevo FAQ 區塊或 [nurevo_faq] 短代碼的頁面的 FAQPage。",
+        "在「AEO 分數」畫面執行診斷，並套用檢查清單提供的一鍵修正。結構化資料、llms.txt 與 AI 爬蟲存取（OAI-SearchBot、PerplexityBot、Claude-SearchBot 等）全都包含在免費方案中。",
+        "用[免費 AI 可讀性檢測](/check)從外部查看 AI 讀到了什麼，並確認看診時間與您的 Google 商家檔案一致。"
+      ],
+      "after": [
+        "啟用 SEO 外掛時，Nurevo AEO 不會再輸出第二套結構化資料，只會把缺少的地址、電話、看診時間與 Dentist 類型，補進 SEO 外掛已經發布的圖譜中。請參閱[為 Yoast、Rank Math 與 AIOSEO 加入在地商家 schema](/guide/local-business-schema-seo-plugins/)。不是用 WordPress 建置的網站也是同樣道理：把上表中的資訊寫進頁面文字與結構化資料。"
+      ]
+    },
+    {
+      "heading": "公開前的檢查清單",
+      "list": [
+        "看診時間與休診日以文字寫出，而不是圖片。",
+        "名稱、地址與電話在網站與 Google 商家檔案上一致。",
+        "結構化資料類型是 Dentist，而不是籠統的 Organization。",
+        "結構化資料中的看診時間，與頁面上看得到的時間一致。",
+        "FAQ 結構化資料只出現在看得到該 FAQ 的頁面上。",
+        "不論文字或標記中，都沒有病患見證、治療前後對照照片，或比較性、誇大的說法。",
+        "llms.txt 列出了診所概要、診療項目、交通方式與預約頁面。[什麼是 llms.txt？](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "確認您是否出現在 AI 的回答中",
+      "paragraphs": [
+        "資訊整理好之後，用病患會問的問題去問 AI，看看您的診所是否以名稱或 URL 出現。每次的回答都會不同，所以請把同樣的問題隔一段時間多問幾次。",
+        "Nurevo AEO 的 Free 與 Standard 方案包含每月一次的檢查：依您的商家類型與地區（絕不使用診所名稱）產生三個問題向 Perplexity 提問，外掛會記錄回答中是否提到您的診所或引用您的網站。Pro 方案（每月 $99 起）新增測試版的 AI 曝光度測量：您的診所在 AI 回答中出現的頻率，並提供競爭對手比較與歷史紀錄（目前支援 Perplexity）。兩者都是抽樣檢查回答，而非觀察每一個回答。"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "牙醫診所做 AI 搜尋應該從哪裡開始？",
+      "a": "先在頁面上以文字正確寫出看診時間、休診日、地址、電話與診療項目。接著把同樣的資訊以 Dentist 結構化資料與 llms.txt 公開，並確認與 Google 商家檔案一致。"
+    },
+    {
+      "q": "牙醫診所用 Organization 或 LocalBusiness 結構化資料是錯的嗎？",
+      "a": "不算錯，但 Google 要求盡可能使用最具體的類型。對牙醫診所來說，就是 schema.org 的 Dentist。"
+    },
+    {
+      "q": "應該為了 AI 加上病患評論或見證嗎？",
+      "a": "請先確認當地的規定。在日本，診所網站受醫療廣告規定規範，病患見證被視為禁止的廣告。也不要為了 AI 把它們加進結構化資料或 FAQ。"
+    },
+    {
+      "q": "Nurevo AEO 是免費的嗎？",
+      "a": "是的。商家類型（Dentist）、地址、看診時間、服務與 FAQ 的結構化資料、llms.txt、AI 爬蟲規則以及 AEO 分數都包含在免費方案中。付費方案新增隨時保持最新的規則集（Standard，每月 $20）與測試版的 AI 曝光度測量（Pro，每月 $99 起）。[WordPress.org 上的 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "這樣做能保證我的診所出現在 ChatGPT 中嗎？",
+      "a": "不能。AI 的回答會變動，沒有任何工具或技巧能保證被提及或取得某個位置。您能做的是讓 AI 容易讀懂您的資訊，並持續確認自己是否出現。"
+    }
+  ],
+  "relatedHeading": "相關指南",
+  "cta": {
+    "heading": "先看看 AI 如何讀取您的診所網站",
+    "body": "免費檢測可顯示結構化資料、llms.txt 與 AI 爬蟲存取的狀態，無需註冊。在 WordPress 上，Nurevo AEO 能免費補齊缺漏。",
+    "label": "進行免費 AI 可讀性檢測",
+    "href": "/check",
+    "secondary": {
+      "label": "在 WordPress.org 取得 Nurevo AEO",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT 是 OpenAI 的商標，Perplexity 是 Perplexity AI 的商標，Google 是 Google LLC 的商標。Yoast SEO、Rank Math、All in One SEO 與 Slim SEO 為其各自所有者的商標。Nurevo 與上述公司皆無關聯。本文不構成法律建議。"
+}
