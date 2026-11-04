@@ -1,0 +1,230 @@
+{
+ "title": "Iskanje z UI za restavracije: meni, delovni čas, rezervacije | Nurevo",
+ "description": "AEO za restavracije: meni, cene, delovni čas, kuhinjo in rezervacije objavite v besedilu in podatkih Restaurant, uskladite jih s Profilom podjetja, alergene pa previdno.",
+ "h1": "Iskanje z UI za restavracije, kavarne in bare: kako doseči, da UI pravilno prebere vaš meni, delovni čas, rezervacije in podatke o alergenih",
+ "lead": "Optimizacija za iskanje z UI (AEO) v restavraciji, kavarni ali baru pomeni, da na lastnem spletnem mestu kot besedilo zapišete meni in cene, delovni čas in zadnja naročila, dneve, ko je zaprto, vrsto kuhinje, sedežna mesta in zasebne sobe ter način rezervacije, nato pa ista dejstva objavite v strukturiranih podatkih (schema.org Restaurant in sorodne vrste) in v Googlovem Profilu podjetja. Tako imajo ChatGPT, Perplexity in Googlova UI vse, kar potrebujejo, da brez ugibanja odgovorijo na vprašanje „bar blizu postaje z zasebno sobo, odprt po 22. uri“. Če objavljate podatke o alergenih, objavite samo to, kar lahko vzdržujete točno in posodobljeno, skupaj s tveganjem navzkrižne kontaminacije.",
+ "intro": [
+  "Napisano 3. novembra 2026 (JST). Podatki Googla, schema.org, OpenAI in japonskih javnih organov so bili ta dan preverjeni na posameznih uradnih straneh.",
+  "Odgovori UI se spreminjajo iz dneva v dan, glede na to, kako je vprašanje zastavljeno, in glede na to, kje je oseba, ki sprašuje. Koraki v tem članku poskrbijo, da UI lahko prebere podatke o vaši restavraciji. Ne zagotavljajo, da vas bo UI priporočila ali vas uvrstila visoko na seznam."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj gostje sprašujejo UI in katera dejstva potrebuje odgovor",
+   "paragraphs": [
+    "Vprašanja o restavracijah v en stavek strnejo kraj, čas, število oseb, priložnost, proračun in prehranske omejitve. UI išče podatke, s katerimi lahko preveri vsak pogoj, zato je izhodišče to, da je iz besedila mogoče razbrati, katere pogoje vaša restavracija izpolnjuje. Spodaj je pregled vrst vprašanj, dejstev, ki jih potrebujejo, in mest, kjer jih objaviti."
+   ],
+   "table": {
+    "head": [
+     "Tipično vprašanje",
+     "Dejstva, potrebna za odgovor",
+     "Kje jih objaviti"
+    ],
+    "rows": [
+     [
+      "„Nekaj blizu postaje, kamor lahko pridem zdaj brez rezervacije“",
+      "Naslov, čas hoje od postaje, delovni čas za vsak dan, zadnja naročila, dnevi, ko je zaprto",
+      "Besedilo strani z lokacijo, strukturirani podatki (address, openingHoursSpecification), Googlov Profil podjetja"
+     ],
+     [
+      "„Mirno mesto z zasebno sobo za večerjo s stranko“",
+      "Vrsta kuhinje, zasebne sobe in njihova velikost, število sedežev, opis vzdušja",
+      "Besedilo strani (sedežna mesta in sobe), strukturirani podatki (servesCuisine)"
+     ],
+     [
+      "„Skupinska večerja s pijačo v ceni, okoli $40 na osebo“",
+      "Meniji z vsebino, ceno, trajanjem in najmanjšim številom oseb; pogoji paketa pijač",
+      "Stran z meniji ali dogodki, cenovni razpon (priceRange)"
+     ],
+     [
+      "„Kavarna, prijazna do otrok“ ali „brez stopnic, z vozičkom“",
+      "Otroški stolčki in pribor, dostop z vozičkom, stopnice, pravila o kajenju",
+      "Pogosta vprašanja, stran z lokacijo, atributi v Googlovem Profilu podjetja"
+     ],
+     [
+      "„Lokali z jedmi brez jajc“ ali „vegetarijanske možnosti“",
+      "Kaj lahko in česa ne morete zagotoviti, kako se preverjajo sestavine, tveganje navzkrižne kontaminacije, koga vprašati",
+      "Stran o alergenih in prehranskih zahtevah, ob upoštevanju opozoril spodaj"
+     ],
+     [
+      "„Ali lahko rezerviram?“ „Imajo hrano za s seboj?“",
+      "Kako in kdaj rezervirati (po telefonu ali na spletu), hrana za s seboj in dostava",
+      "Besedilo strani, povezava na stran za rezervacije, Googlov Profil podjetja"
+     ]
+    ],
+    "caption": "Vprašanja so primeri, pripravljeni za ta vodnik. Imena lastnosti izhajajo iz schema.org in Googlove dokumentacije (preverjeno 3. novembra 2026)."
+   },
+   "after": [
+    "V vsaki vrstici je kot mesto objave navedeno besedilo strani, ker strukturirani podatki sami niso dovolj. Google navaja, da za prikaz v njegovih funkcijah generativne UI ni potrebna nobena posebna oznaka schema.org (vodnik nazadnje posodobljen 10. julija 2026). [Google: optimizacija za funkcije generativne UI](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)"
+   ]
+  },
+  {
+   "heading": "Kje UI bere o vaši restavraciji",
+   "paragraphs": [
+    "Ko UI odgovarja o restavracijah, se njeni viri delijo v nekaj skupin: vaše spletno mesto, Googlov Profil podjetja (vaš vnos v Google Zemljevidih), kulinarični vodniki in spletna mesta za rezervacije, ocene in družbena omrežja ter novice in lestvice. Google navaja, da lahko Profil podjetja pomaga, da je vaše podjetje najdeno tako v odgovorih UI kot v drugih rezultatih Googlovega iskanja. [Google: optimizacija za funkcije generativne UI](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)",
+    "Ko ChatGPT išče po spletu, uporablja približno lokacijo na podlagi naslova IP, njegovi odgovori pa vsebujejo navedbe virov v besedilu in seznam virov. [OpenAI: Searching the web with ChatGPT](https://help.openai.com/en/articles/9237897-searching-the-web-with-chatgpt). Pri vprašanjih tipa „v bližini“ je odgovor torej odvisen od tega, kje je oseba, ki sprašuje. Ko preizkušate sami, v vprašanje vpišite ime svojega območja, da bodo rezultati primerljivi.",
+    "Nobena storitev UI ne objavlja, kakšno težo daje posameznemu viru. Gotovo pa je, da ko se vaše spletno mesto, Profil podjetja in vnosi v vodnikih razlikujejo glede delovnega časa ali cen, UI ne more vedeti, kaj drži, in lahko ponavlja zastarele ali napačne podatke. Bistvo dela je, da lastno spletno mesto postane referenca za pravilne podatke in da z njim uskladite vse druge vnose."
+   ]
+  },
+  {
+   "heading": "Meni objavite na strani kot besedilo, ne le kot slike ali PDF",
+   "paragraphs": [
+    "Če meni obstaja samo kot fotografije ali PDF, ni zagotovila, da bodo UI in iskalniki pravilno prebrali imena jedi in cene. Na spletnem mestu pripravite stran z menijem, na kateri so imena jedi, cene in kratki opisi zapisani kot besedilo, fotografije pa dodajte zraven. Pri sezonskih menijih navedite obdobje („Zimski meni, od decembra do februarja“) in postavke odstranite, ko se izteče.",
+    "Cene prikazujte tako, kot zahtevajo lokalni predpisi. Na Japonskem na primer Državna davčna agencija zahteva, da cene, ki so potrošnikom prikazane vnaprej, vključujejo potrošni davek, ne glede na medij. [National Tax Agency: prikaz končne cene (v japonščini)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm). Če se cene za postrežbo v lokalu in za s seboj razlikujejo, navedite obe, da ju ne napačno razumejo ne ljudje ne UI.",
+    "Googlov Profil podjetja ima za gostinske lokale urejevalnik menija z razdelki, imeni jedi, cenami in opisi ter ločeno polje za povezavo do menija. Google lahko podatke o meniju tudi prepiše z vašega spletnega mesta; napačne postavke lahko uredite ali izbrišete ali pa se prepisovanju odpoveste. [Pomoč za Googlov Profil podjetja: O urejevalniku menija](https://support.google.com/business/answer/9455840?hl=en). Tudi tu se splača imeti meni na lastnem spletnem mestu pravilen."
+   ]
+  },
+  {
+   "heading": "Strukturirani podatki: kaj vpisati v Restaurant",
+   "paragraphs": [
+    "V strukturiranih podatkih je vaš lokal vrsta [schema.org FoodEstablishment](https://schema.org/FoodEstablishment), ta pa je vrsta LocalBusiness. Med njegovimi podvrstami so Restaurant, CafeOrCoffeeShop, BarOrPub, Bakery, FastFoodRestaurant in IceCreamShop. Googlova dokumentacija za lokalna podjetja zahteva, da uporabite čim bolj specifično vrsto, njen lastni primer pa uporablja Restaurant (dokument nazadnje posodobljen 8. septembra 2026, preverjeno 3. novembra). [Google: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+   ],
+   "table": {
+    "head": [
+     "Lastnost",
+     "Kaj vpisati",
+     "Status v Googlovi dokumentaciji"
+    ],
+    "rows": [
+     [
+      "name / address",
+      "Ime natanko tako, kot je na napisu in v Profilu podjetja, ter naslov",
+      "Obvezno"
+     ],
+     [
+      "openingHoursSpecification",
+      "Ura odprtja in zaprtja za vsak dan; če med kosilom in večerjo zaprete, ju vpišite kot dva ločena vnosa",
+      "Priporočeno"
+     ],
+     [
+      "telephone / url / geo",
+      "Telefonska številka, URL spletnega mesta, zemljepisna širina in dolžina",
+      "Priporočeno"
+     ],
+     [
+      "servesCuisine",
+      "Vrsta kuhinje, ki jo strežete (na primer japonska, italijanska, yakitori)",
+      "Priporočeno"
+     ],
+     [
+      "menu",
+      "Celoten URL strani z menijem",
+      "Priporočeno"
+     ],
+     [
+      "priceRange",
+      "Okvirna raven cen (na primer „$20–40“), manj kot 100 znakov",
+      "Priporočeno"
+     ],
+     [
+      "acceptsReservations / hasMenu",
+      "Ali sprejemate rezervacije (da ali ne ali URL strani za rezervacije) / sam meni kot strukturirani podatki",
+      "Lastnosti schema.org, ki jih v Googlovi dokumentaciji ni"
+     ]
+    ],
+    "caption": "Status po Googlovi dokumentaciji za lokalna podjetja na dan 3. novembra 2026. acceptsReservations in hasMenu sta opredeljeni v schema.org FoodEstablishment."
+   },
+   "after": [
+    "S hasMenu lahko vsako jed opišete z Menu, MenuSection in MenuItem, primeri na schema.org pa prikazujejo tudi primernost za prehranske zahteve (suitableForDiet). Googlova dokumentacija pa priporoča le URL menija (menu). Označevanje vsake jedi lahko tudi hitro zastari, če meni pogosto spreminjate, zato najprej uredite besedilni meni na strani.",
+    "Vrednosti v strukturiranih podatkih se morajo ujemati s tem, kar prikazuje stran. Samo v oznake ne vpisujte jedi, ki jih na strani ni, ali cenovnega razpona, ki ne ustreza resničnosti."
+   ]
+  },
+  {
+   "heading": "Podatki o alergenih in prehranskih zahtevah: odločite se, preden jih poveste UI",
+   "paragraphs": [
+    "Pravila se med državami razlikujejo, zato preverite tista, ki veljajo za vas. Na Japonskem hrana, ki jo strežejo v restavracijah, ni zajeta v obvezno označevanje alergenov po zakonu o označevanju živil. Panožni vodnik o zagotavljanju podatkov o alergenih v gostinstvu od restavracij, ki take podatke objavljajo, zahteva, da sestavine preverjajo po specifikacijah dobaviteljev in podatke sproti posodabljajo, da goste opozorijo, da zaradi skupne kuhinje lahko pride do nenamerne navzkrižne kontaminacije, in da vnaprej povedo, kadar zanesljivih podatkov ne morejo zagotoviti. Opozarja tudi, da so podatki na spletnem mestu priročni, ker jih gostje lahko preverijo pred obiskom, a postanejo vzrok nenamerne izpostavljenosti, če niso posodobljeni. [Vodnik za zagotavljanje podatkov o alergenih v gostinstvu in prodaji pripravljenih jedi (v japonščini; panožni svet, revizija 9. marca 2023)](https://www.jfnet.or.jp/wp/wp-content/uploads/2025/08/%E3%80%90%E9%A3%9F%E3%81%AE%E5%AE%89%E5%85%A8%E3%83%BB%E5%AE%89%E5%BF%83%E9%96%A2%E9%80%A3%E3%82%A2%E3%83%AC%E3%83%AB%E3%82%B2%E3%83%B3%E3%80%91%E5%A4%96%E9%A3%9F%E3%83%BB%E4%B8%AD%E9%A3%9F%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%AC%E3%83%AB%E3%82%B2%E3%83%B3%E6%83%85%E5%A0%B1%E3%81%AE%E6%8F%90%E4%BE%9B%E3%81%AB%E5%90%91%E3%81%91%E3%81%9F%E6%89%8B%E5%BC%95%E3%81%8D.pdf)",
+    "UI povzema besedilo z vašega spletnega mesta. Če napišete le kratko oznako, kot je „primerno za alergike“ ali „brez glutena, brez skrbi“, se lahko pogoji in izjeme v povzetku izgubijo. Če te podatke objavljate, v isti odstavek vključite obseg („ponujamo tri jedi, pripravljene brez jajc in mlečnih izdelkov“), tveganje navzkrižne kontaminacije („jajca in mlečne izdelke uporabljamo v isti kuhinji“) in način potrditve („pokličite nas ob rezervaciji“). Če alergij ne morete upoštevati, je koristen podatek tudi to, da to napišete.",
+    "V strukturiranih podatkih ne navajajte ničesar, česar ne morete preveriti. schema.org ima lastnost za primernost za prehranske zahteve, vendar z njo ni mogoče izraziti tveganja navzkrižne kontaminacije, zato je vse, kar zadeva alergije, varneje razložiti v besedilu strani, skupaj s pogoji."
+   ]
+  },
+  {
+   "heading": "Ocene in kulinarični vodniki: česa ne početi zaradi UI",
+   "paragraphs": [
+    "Označevanje ocen ali zvezdic, ki jih objavljate na lastnem spletnem mestu, vam ne bo prineslo zvezdic v Googlu. Google je leta 2019 sporočil, da t. i. samopromocijske ocene, torej ocene podjetja, objavljene na njegovem lastnem spletnem mestu, za LocalBusiness in Organization niso dovoljene. [Google Search Central blog, 16. september 2019](https://developers.google.com/search/blog/2019/09/making-review-rich-results-more-helpful)",
+    "Pravila o prikritem oglaševanju se med državami razlikujejo. Na Japonskem je prikrito trženje od 1. oktobra 2023 kršitev zakona proti neupravičenim nagradam in zavajajočim navedbam, objave in ocene, za katere podjetje prosi tretje osebe ali jim jih naroči, pa štejejo za oglaševanje tega podjetja. [Consumer Affairs Agency: prikrito trženje (v japonščini)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/). Ne zbirajte neoznačenih plačanih ocen ali trditev, ki jih ne morete podpreti, na primer „št. 1 v mestu“, v upanju, da bo UI o vas govorila lepo.",
+    "Kulinarične vodnike in spletna mesta za rezervacije UI včasih uporablja kot vire. Kjer lahko svoj vnos urejate, ga posodobite na isti delovni čas, cene in dneve, ko je zaprto, kot na spletnem mestu; kjer ne morete, spletno mesto prosite za popravek."
+   ]
+  },
+  {
+   "heading": "Nastavitev na spletnem mestu restavracije v WordPressu",
+   "list": [
+    "Namestite Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) in ga aktivirajte. Če uporabljate Yoast SEO, Rank Math, All in One SEO, SEO SIMPLE PACK ali VK All in One Expansion Unit, ga obdržite.",
+    "V čarovniku za nastavitev izberite „Restavracija ali kavarna“. Vrsta dejavnosti postane Restaurant; za kavarno, bar ali pekarno v Nastavitvah spremenite „Vrsta dejavnosti (vrsta schema.org)“ v CafeOrCoffeeShop, BarOrPub ali Bakery. Preverite ime, naslov, telefon, delovni čas in opis, v opisu pa povejte, kaj strežete in po čem se razlikujete (na primer „Yakitori na oglju in sake. Zasebna soba za do 12 oseb.“). Iz obstoječih nastavitev se izpolnijo samo prazna polja; nič, kar ste vnesli, se ne prepiše.",
+    "Vse, kar gostje rezervirajo vnaprej, na primer degustacijske menije, pakete za zabave ali najem celotnega lokala, v Nastavitvah dodajte kot storitve. Z imenom, trajanjem (v minutah), ceno (samo številke), valuto, kategorijo, URL-jem za rezervacijo in opisom se vsaka objavi kot Service, povezana z vašo restavracijo (cena kot Offer, URL za rezervacijo kot dejanje rezervacije), in navede kot vrstica v llms.txt.",
+    "Kot pogosta vprašanja vnesite vprašanja, ki jih res dobivate, o parkiranju, otrocih, kajenju, lastni pijači in odpovedih, in na stran, kjer jih želite prikazati, postavite blok Nurevo FAQ ali kratko kodo [nurevo_faq].",
+    "Zaženite diagnostiko na zaslonu Ocena AEO in uporabite popravke z enim klikom, ki jih ponudi kontrolni seznam. Strukturirani podatki, llms.txt in dostop pajkov UI (OAI-SearchBot, PerplexityBot, Claude-SearchBot in drugi) so vsi v brezplačnem paketu.",
+    "Z [brezplačnim preverjanjem berljivosti za UI](/check) si oglejte, kaj UI prebere od zunaj, in preverite, ali se delovni čas in cene ujemajo z Googlovim Profilom podjetja in vnosi v vodnikih."
+   ],
+   "after": [
+    "Trenutna različica Nurevo AEO (0.9.1) ne objavlja servesCuisine, menu (hasMenu) ali acceptsReservations. Če je vrsta kuhinje v opisu in besedilu strani, meni pa na besedilni strani z menijem, ju UI lahko prebere s strani. Če ju želite imeti tudi v strukturiranih podatkih, ju dodajte prek teme ali na drug način (Google ju navaja kot priporočeni, ne obvezni). Ko je aktiven SEO vtičnik, Nurevo AEO ne izpiše drugega niza strukturiranih podatkov; doda samo manjkajoči naslov, telefon, delovni čas, specifično vrsto, kot je Restaurant, in vaše storitve. [Dodajanje sheme lokalnega podjetja v Yoast, Rank Math in AIOSEO](/guide/local-business-schema-seo-plugins/)"
+   ]
+  },
+  {
+   "heading": "Ko odgovor UI o vaši restavraciji navaja napačne podatke",
+   "list": [
+    "Odprite povezave do virov v odgovoru UI in poiščite stran, s katere izvira napačen podatek.",
+    "Če je vir vaše spletno mesto, popravite besedilo strani in strukturirane podatke. Če je to Profil podjetja, ga popravite v Googlovi nadzorni plošči.",
+    "Če je vir kulinarični vodnik ali članek z lestvico, uredite svoj vnos ali izdajatelja prosite za popravek. Preverite, ali so ostale strani o zaprti poslovalnici ali o naslovu pred selitvijo.",
+    "Ko lokal začasno zaprete ali spremenite delovni čas ali cene, isti dan posodobite spletno mesto, Profil podjetja, vnose v vodnikih in llms.txt.",
+    "Popravki se v odgovorih UI ne odrazijo vedno takoj. Isto vprašanje zastavite znova po nekaj dneh do nekaj tednih."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Meni je zapisan kot besedilo z imeni jedi in cenami; pri sezonskih postavkah je navedeno obdobje.",
+    "Delovni čas za vsak dan, zadnja naročila in dnevi, ko je zaprto, se ujemajo na spletnem mestu, v Profilu podjetja in v vodnikih.",
+    "Vrsta v strukturiranih podatkih ustreza dejavnosti (Restaurant, CafeOrCoffeeShop, BarOrPub ipd.) in vključuje naslov, telefon in delovni čas.",
+    "Besedilo strani pove, kakšno kuhinjo strežete, kakšna sedežna mesta in zasebne sobe imate ter kakšni so pogoji, na primer glede otrok in kajenja.",
+    "Pri menijih in paketih za zabave so navedeni vsebina, cena, trajanje in način rezervacije.",
+    "Podatki o alergenih, če so objavljeni, navajajo obseg, tveganje navzkrižne kontaminacije in način potrditve; če niso, stran to pove.",
+    "Ocene na vašem spletnem mestu niso označene kot ocene z zvezdicami in ne uporabljate neoznačenih plačanih ocen.",
+    "llms.txt navaja pregled lokala, meni, navodila za pot in strani za rezervacije. [Kaj je llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Kako preveriti, ali se pojavljate v odgovorih UI",
+   "paragraphs": [
+    "Izberite okoli deset vprašanj, ki bi jih zastavili vaši gostje, in v njih združite območje, vrsto kuhinje in priložnost (kosilo, poslovna večerja, z otroki, pozno zvečer). Zastavite jih ChatGPT, Perplexity in Googlovim funkcijam UI ter zabeležite, ali se vaša restavracija pojavi z imenom ali URL-jem in ali sta navedena delovni čas in cene pravilna. Odgovori se od poizvedbe do poizvedbe razlikujejo, zato ista vprašanja ponavljajte skozi čas. Metodo opisuje vodnik [kako meriti vidnost v UI](/guide/measure-ai-visibility/).",
+    "Paketa Free in Standard v Nurevo AEO vključujeta mesečno preverjanje: tri vprašanja, sestavljena iz vrste vaše dejavnosti in območja (nikoli iz imena restavracije), se zastavijo Perplexity, vtičnik pa zabeleži, ali so odgovori omenili vašo restavracijo ali navedli vaše spletno mesto. Paket Pro (od $99/mesec) doda merjenje vidnosti v UI v beta različici: kako pogosto se vaša restavracija pojavlja v odgovorih UI, s primerjavo s konkurenco in zgodovino (zaenkrat na Perplexity). Obe funkciji delata z vzorcem odgovorov in ne spremljata vsakega odgovora."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kje naj restavracija začne z iskanjem z UI?",
+   "a": "Na lastnem spletnem mestu kot besedilo zapišite meni (imena jedi in cene), delovni čas, zadnja naročila, dneve, ko je zaprto, naslov in način rezervacije. Nato z njim uskladite Googlov Profil podjetja in vnose v vodnikih ter ista dejstva objavite v strukturiranih podatkih Restaurant in v llms.txt."
+  },
+  {
+   "q": "Če sem v kulinaričnih vodnikih, ali še potrebujem lastno spletno mesto?",
+   "a": "Vnose v vodnikih UI lahko uporablja kot vire, vendar lahko podatke o restavraciji najpodrobneje in najnatančneje objavite na lastnem spletnem mestu, ki je tudi referenca, po kateri popravljate druge vnose. Najvarneje je skrbeti, da se ujemajo."
+  },
+  {
+   "q": "Ali zadošča fotografija menija?",
+   "a": "Samo s fotografijami ali PDF-jem ni zagotovila, da bodo imena jedi in cene pravilno prebrani. Boljša izbira je stran z menijem, na kateri so imena jedi, cene in opisi zapisani kot besedilo, fotografije pa so zraven."
+  },
+  {
+   "q": "Ali naj UI povem za možnosti za alergike?",
+   "a": "Le če lahko podatke vzdržujete točne in posodobljene. Če jih objavite, skupaj navedite obseg, tveganje navzkrižne kontaminacije in način potrditve. Če niste prepričani, je pomembno tudi napisati, da podatkov o alergenih ne zagotavljate."
+  },
+  {
+   "q": "Ali je Nurevo AEO brezplačen?",
+   "a": "Da. Vrsta dejavnosti (Restaurant in druge), naslov, delovni čas, storitve, kot so degustacijski meniji, strukturirani podatki FAQ, llms.txt, pravila za pajke UI in ocena AEO so v brezplačnem paketu. Plačljivi paketi dodajo vedno posodobljen nabor pravil (Standard, $20/mesec) in merjenje vidnosti v UI v beta različici (Pro, od $99/mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Ali to zagotavlja, da bo ChatGPT priporočil mojo restavracijo?",
+   "a": "Ne. Odgovori UI se spreminjajo glede na to, kako je vprašanje zastavljeno in kje je oseba, ki sprašuje, in nobeno orodje ali tehnika ne more zagotoviti omembe ali položaja. Lahko pa poskrbite, da UI vaše podatke zlahka prebere, in redno preverjate, ali se pojavljate in ali so odgovori pravilni."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Najprej poglejte, kako UI bere spletno mesto vaše restavracije",
+  "body": "Brezplačno preverjanje pokaže stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI, brez registracije. V WordPressu Nurevo AEO vrzeli zapolni brezplačno.",
+  "label": "Opravite brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Prenesite Nurevo AEO z WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI, Google pa družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, SEO SIMPLE PACK in VK All in One Expansion Unit so blagovne znamke svojih lastnikov. Nurevo z njimi ni povezan. Ta članek ni pravno ali davčno svetovanje niti zdravstveni nasvet o prehranskih alergijah."
+}
