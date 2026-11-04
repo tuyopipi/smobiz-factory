@@ -65,3 +65,10 @@
 4. 飲食店のAI検索対策：メニュー・営業時間・予約・アレルギー表示の書き方【業種別】
 5. 商品フィードとAI：Merchant Center・ChatGPTの商品フィード・構造化データの役割分担（online-shop-ai-search の続き）
 メモ：多言語の仕組み（src/i18n/locales.mjs）は main にマージ済み。新しい記事は ja/en を .mjs、他の39言語を src/content/<slug>/<code>.json に書く。dental-clinic-ai-search（PR未マージ）は ja/en のみのため、マージ後に翻訳を補う。
+| 2026-11-02 20時 | b2b-saas-ai-search | BtoB・SaaSのAI検索対策（質問の型6つ、Organization・Service・SoftwareApplication、SoftwareApplicationのリッチリザルト要件〔評価・レビュー必須〕とレビューの見返り開示、FAQリッチリザルト終了〔2026-06-15〕、料金ページ・比較ページ・導入事例の書き方、法人番号、レビューサイト等の社外情報の一致、OAI-SearchBot・PerplexityBot、WordPressでの設定）。ja/en（他の39言語は後日の8時台で補完） | 業種別 | content/daily-20261102-20 |
+1. AIからのアクセスを解析ツールで見分ける方法（参照元・utm_source・AIクローラのログ）
+2. 飲食店のAI検索対策：メニュー・営業時間・予約・アレルギー表示の書き方【業種別】
+3. 士業（税理士・行政書士・弁護士）のAI検索対策：取扱業務・料金・広告規程【業種別】
+4. MEO会社・WordPress保守会社がAI検索対策を保守メニューに足す方法【制作会社向け】
+5. 商品フィードとAI：Merchant Center・ChatGPTの商品フィード・構造化データの役割分担（online-shop-ai-search の続き）
+翻訳の補完待ち：b2b-saas-ai-search（ja/en のみ）、agency-aeo-proposal-audit（PR #50 マージ後）、dental-clinic-ai-search（未マージなら）。
