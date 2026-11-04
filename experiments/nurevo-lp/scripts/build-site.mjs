@@ -378,6 +378,9 @@ function landingPage(lang) {
   // zh-TW, ko, es, fr, de; English for every other language): tell it which
   // language the visitor was reading.
   if (lang !== "ja") body = body.replaceAll('href="/partner/"', `href="/partner/?lang=${encodeURIComponent(lang)}"`);
+  // Links to the free checker (final CTA, mobile CTA bar) open it in this
+  // language, as the hero form already does.
+  body = body.replaceAll('href="/check"', `href="${checkHref("/check", lang)}"`);
   body = body.replace("{{guideNav}}", `<a href="${hubPath(lang)}">${esc(ui("guide", lang))}</a>`)
     .replace("{{guideFooter}}", `<a href="${hubPath(lang)}">${esc(ui("guides", lang))}</a>`)
     .replace("{{learnSection}}", `<section class="learn" id="learn"><div class="wrap"><div class="learn-heading"><h2>${esc(learnHeading)}</h2><a href="${hubPath(lang)}">${esc(ui("allGuides", lang))} →</a></div><div class="learn-cards">${cards}</div></div></section>`);
