@@ -47,6 +47,9 @@ function webmcp_canary_uninstall_site() {
 delete_metadata('user', 0, 'webmcp_canary_off_notice_dismissed', '', true);
 // And of the "setup is not finished" notice (0.8.1).
 delete_metadata('user', 0, 'webmcp_canary_setup_notice_dismissed', '', true);
+// And of the WordPress.org review request (0.9.1). The install time it waits on
+// (webmcp_canary_installed_at) is an option, removed with the prefix match below.
+delete_metadata('user', 0, 'webmcp_canary_review_notice_dismissed', '', true);
 
 if (is_multisite()) {
     $site_ids = get_sites(array('fields' => 'ids', 'number' => 0));
