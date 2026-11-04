@@ -215,6 +215,8 @@ It is a beta feature. It samples AI answers rather than observing every response
 = 0.9.1 =
 * SEO SIMPLE PACK support: recognised as an active SEO plugin. It publishes no structured data (meta and OGP tags only), so Nurevo AEO keeps publishing its full graph, FAQ included.
 * VK All in One Expansion Unit support: Nurevo AEO no longer prints a second WebSite or Article beside the ones ExUnit prints, and adds only the missing publisher, description and language to ExUnit's Article (`veu_article_structure_data`) without changing its values. ExUnit publishes no business node, so yours stays the only one. With ExUnit's structured data turned off, Nurevo AEO publishes its own nodes as before.
+* The plugin's name in the Plugins list now matches its WordPress.org listing: "Nurevo AEO – AI Search Optimization, llms.txt & Schema". The admin menu is still "Nurevo AEO".
+* A one-line request for a WordPress.org review, shown only on Nurevo AEO's own screens, only once output is on and the plugin has been installed for a week. "Do not show again" (or the close button) hides it for you for good.
 
 = 0.9.0 =
 * Change record for learning: once the site is connected, the plugin sends a compact record of changes to its own settings (which outputs are on, which business fields are filled in - names only, never the values - the site type, SEO plugin, version and item counts) with its twice-daily sync, so Nurevo can learn across sites which changes help businesses appear in AI answers. Queued locally while the service is unreachable. See "External services".

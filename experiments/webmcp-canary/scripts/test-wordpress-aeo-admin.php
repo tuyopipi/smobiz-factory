@@ -2984,6 +2984,49 @@ ob_start(); webmcp_canary_output_off_notice(); $on_notice = ob_get_clean();
 expect($on_notice === '', 'no off notice once output is on');
 unset($_GET['page']);
 
+// The review request: Nurevo screens only, output on, installed a week, dismissible per user.
+expect(in_array('webmcp_canary_installed_at', $GLOBALS['webmcp_test_hooks']['admin_init'], true), 'existing installs get an install time on their first admin screen');
+expect(in_array('webmcp_canary_dismiss_review_notice_ajax', $GLOBALS['webmcp_test_hooks']['wp_ajax_webmcp_canary_dismiss_review_notice'], true), 'the review dismissal endpoint is registered');
+$review_saved_installed = get_option(WEBMCP_CANARY_INSTALLED_OPTION, null);
+$review_render = function ($page, $screen = null) {
+    if ($page === null) { unset($_GET['page']); } else { $_GET['page'] = $page; }
+    if ($screen === null) { unset($GLOBALS['webmcp_test_screen']); } else { $GLOBALS['webmcp_test_screen'] = (object) array('id' => $screen); }
+    ob_start(); webmcp_canary_review_notice(); $html = ob_get_clean();
+    unset($_GET['page'], $GLOBALS['webmcp_test_screen']);
+    return $html;
+};
+$GLOBALS['webmcp_test_user_id'] = 21;
+unset($GLOBALS['webmcp_test_options'][WEBMCP_CANARY_INSTALLED_OPTION]);
+$review_fresh = $review_render('webmcp-canary');
+expect($review_fresh === '', 'a site with no install time yet is not asked');
+expect((int) get_option(WEBMCP_CANARY_INSTALLED_OPTION, 0) >= time() - 5, 'and its install time is recorded as now, so it waits the full week');
+update_option(WEBMCP_CANARY_INSTALLED_OPTION, time() - 6 * DAY_IN_SECONDS);
+expect($review_render('webmcp-canary') === '', 'not before seven days');
+update_option(WEBMCP_CANARY_INSTALLED_OPTION, time() - 8 * DAY_IN_SECONDS);
+$review_html = $review_render('webmcp-canary');
+expect(strpos($review_html, 'Is Nurevo AEO helping?') !== false, 'after a week, with output on, Nurevo screens ask for a review');
+expect(strpos($review_html, 'https://wordpress.org/support/plugin/nurevo-webmcp/reviews/#new-post') !== false && strpos($review_html, 'target="_blank"') !== false, 'linking to the wp.org review form in a new tab');
+expect(strpos($review_html, 'notice-info') !== false && strpos($review_html, 'is-dismissible') !== false, 'as a small dismissible info notice');
+expect(strpos($review_html, 'Do not show again') !== false && strpos($review_html, 'webmcp_canary_dismiss_review_notice') !== false, 'with a "Do not show again" that is sent to the server');
+expect(!preg_match('/rating=|stars?=|utm_|★/i', $review_html), 'no star gating, rating preset or tracking');
+expect(strpos($review_render('webmcp-canary-settings'), 'Is Nurevo AEO helping?') !== false, 'on every Nurevo screen');
+expect($review_render('webmcp-canary-setup') === '', 'but not in the setup wizard');
+expect($review_render(null, 'plugins') === '', 'not on the Plugins list');
+expect($review_render(null, 'dashboard') === '' && $review_render('some-other-plugin') === '', 'and nowhere else in the admin');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '0';
+expect($review_render('webmcp-canary') === '', 'not while output is off');
+$GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION]['enabled'] = '1';
+$GLOBALS['webmcp_test_denied_caps'] = array('manage_options');
+expect($review_render('webmcp-canary') === '', 'only administrators are asked');
+unset($GLOBALS['webmcp_test_denied_caps']);
+expect(webmcp_canary_dismiss_review_notice_for_user(0) === false, 'a review dismissal needs a user');
+expect(webmcp_canary_dismiss_review_notice_for_user(21) === true, 'a user can dismiss the review request');
+expect($review_render('webmcp-canary') === '', 'once dismissed it stays hidden for that user');
+$GLOBALS['webmcp_test_user_id'] = 22;
+expect(strpos($review_render('webmcp-canary'), 'Is Nurevo AEO helping?') !== false, 'the review dismissal is per user');
+unset($GLOBALS['webmcp_test_user_id']);
+if ($review_saved_installed === null) { unset($GLOBALS['webmcp_test_options'][WEBMCP_CANARY_INSTALLED_OPTION]); } else { update_option(WEBMCP_CANARY_INSTALLED_OPTION, $review_saved_installed); }
+
 // A forced check asks the service to rescan; a normal view does not.
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('tag_url' => 'https://nurevo.jp/tag.js'));
 expect(strpos(webmcp_canary_aeo_score_endpoints(true)[0], 'fresh=1') !== false, 'Check again requests a fresh scan');

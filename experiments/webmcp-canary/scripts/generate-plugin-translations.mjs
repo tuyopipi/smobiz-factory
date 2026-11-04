@@ -924,7 +924,10 @@ const JA = {
     "AIの回答は実行日時やモデルで変わります。数件の回答を見た小さなサンプルで、割合ではありません。他の回答や今後の回答を保証するものではありません。",
   "Pro tracks this every week with more questions, ChatGPT as well as Perplexity, competitor share and history.":
     "Proなら、より多くの質問で毎週測定し、PerplexityとChatGPTの両方、競合との比較、推移まで追えます。",
-  "The free AI check could not be run. Please try again later.": "無料AIチェックを実行できませんでした。時間をおいて再度お試しください。",
+  "The free AI check could not be run. Please try again later.": "無料AIチェックを実行できませんでした。時間をおいて再度お試しください。",  // WordPress.org review request (0.9.1).
+  "Is Nurevo AEO helping? A short review on WordPress.org helps other site owners find it.":
+    "Nurevo AEOはお役に立っていますか？WordPress.orgに短いレビューを書いていただくと、他のサイト運営者が見つけやすくなります。",
+  "Write a review": "レビューを書く",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo
