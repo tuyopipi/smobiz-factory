@@ -61,7 +61,10 @@ export const PRODUCT = {
 // The questions the page answers, in page order.
 export const FAQ_KEYS = [
   ["faq.1.q", "faq.1.a"],
+  ["faq.5.q", "faq.5.a"],
+  ["faq.6.q", "faq.6.a"],
   ["faq.2.q", "faq.2.a"],
+  ["faq.7.q", "faq.7.a"],
   ["faq.3.q", "faq.3.a"],
   ["faq.4.q", "faq.4.a"],
 ];

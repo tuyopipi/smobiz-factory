@@ -46,3 +46,17 @@ function copySnip(btn){
   try{ navigator.clipboard.writeText(txt).then(done).catch(()=>{ const r=document.createRange(); r.selectNode(code); const s=getSelection(); s.removeAllRanges(); s.addRange(r); done(); }); }
   catch(e){ try{ const r=document.createRange(); r.selectNode(code); const s=getSelection(); s.removeAllRanges(); s.addRange(r); done(); }catch(_){} }
 }
+
+/* Mobile CTA bar: hidden while the hero's own check form or buttons are on
+   screen (the bar would only repeat them), shown once they scroll away. */
+(function(){
+  const bar=document.getElementById('mcta'); if(!bar) return;
+  const watched=[document.getElementById('heroCheck'),document.querySelector('.hero .cta')].filter(Boolean);
+  if(!watched.length||!('IntersectionObserver' in window)){ bar.classList.remove('off'); return; }
+  const inView=new Set();
+  const io=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if(e.isIntersecting) inView.add(e.target); else inView.delete(e.target); });
+    bar.classList.toggle('off',inView.size>0);
+  });
+  watched.forEach(function(el){ io.observe(el); });
+}());
