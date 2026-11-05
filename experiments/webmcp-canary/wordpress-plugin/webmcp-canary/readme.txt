@@ -1,6 +1,6 @@
-=== Nurevo AEO – AI Search Optimization (AEO/GEO), llms.txt & Schema ===
+=== Nurevo AEO – AI Search Optimization, llms.txt & Schema ===
 Contributors: tuyopon
-Tags: aeo, geo, ai seo, llms.txt, schema
+Tags: aeo, llms.txt, ai search, geo, ai seo
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
@@ -8,7 +8,7 @@ Stable tag: 0.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Get cited by ChatGPT, Perplexity and Google AI. Free AEO score, llms.txt and business schema. Works with Yoast SEO, Rank Math and AIOSEO.
+Show up in ChatGPT, Google AI Overviews, Gemini and Perplexity. Free AEO score, llms.txt and business schema. Works with Yoast and Rank Math.
 
 == Description ==
 
@@ -143,6 +143,22 @@ Yes. **Nurevo AEO > Settings > Tools** exports the settings (output switches, bu
 = Does the AI integration cost anything? =
 
 No. The AI integration runs inside your own WordPress, and the AI that uses it is your own assistant. Nurevo AEO makes no calls to any AI API, so there is no usage fee behind it. On WordPress 6.9 and later it offers read-only abilities through the WordPress Abilities API: your status, the last stored AEO score, what is left to fix, and the business facts you already publish. They change nothing and run no new diagnosis.
+
+= How do I add llms.txt to WordPress? =
+
+Install Nurevo AEO and turn the output on. The plugin serves `/llms.txt` straight away, built from your pages, posts, services and business details, and keeps it current as you publish. Nothing to upload or hand-write, and it works without an account or network access. You can leave single pages out from the editor sidebar.
+
+= How do I get my business to show up in ChatGPT or Google AI Overviews? =
+
+AI answers are built from what AI can read about you. Nurevo AEO publishes your name, address, phone, opening hours, services and FAQ as schema.org structured data, serves llms.txt and lets the crawlers AI search uses read your pages. The free AEO score shows what is still missing. No plugin can guarantee that an AI will mention you, but missing facts are the most common reason it doesn't.
+
+= Does it work for Gemini, Perplexity and Claude too? =
+
+Yes. The structured data and llms.txt are plain web standards that every AI search engine can read, and the crawler rules cover the search crawlers of ChatGPT, Claude and Perplexity. Google AI Overviews and Gemini use Google's own crawler, which your existing robots.txt rules already govern.
+
+= Is there a Japanese version? =
+
+Yes. The plugin, its admin screens and the diagnosis are available in Japanese and 58 other locales. 日本語の管理画面で、AI検索対策（AEO・LLMO）、llms.txt と構造化データの設定ができます。
 
 = What is AEO? =
 
