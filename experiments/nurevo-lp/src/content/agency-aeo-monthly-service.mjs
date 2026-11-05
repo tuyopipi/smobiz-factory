@@ -109,7 +109,7 @@ export default {
           heading: "Nurevoで月額サービスを回す場合",
           paragraphs: [
             "Nurevo AEOのWordPressプラグインは無料で、構造化データ・llms.txt・AIクローラ設定を管理画面から整えられ、Yoast SEO・Rank Math・All in One SEO・Slim SEOの構造化データを置き換えずに不足分だけを足します。初期実装を標準化しやすいのが利点です。",
-            "制作会社・SEO会社向けには、社名・ロゴ・ブランドカラーで毎月自動送信できる月次レポート（PDFにも印刷可）、複数サイトを1つのダッシュボードで管理する機能、お客様に送れるStandardプランの支払いリンク、自社サイトに置けるAI診断ウィジェットがあります（ウィジェットは承認されたパートナー向け）。また、紹介したお客様の月額の40%（Stripe手数料控除後）をお支払いする紹介報酬があります（承認制・国内の事業者が対象）。詳しくは[パートナープログラム](/partner/)をご覧ください。",
+            "制作会社・SEO会社向けには、社名・ロゴ・ブランドカラーで毎月自動送信できる月次レポート（PDFにも印刷可）、複数サイトを1つのダッシュボードで管理する機能、お客様に送れるStandardプランの支払いリンク、自社サイトに置けるAI診断ウィジェットがあります（ウィジェットは承認されたパートナー向け）。また、紹介したお客様の月額の40%（Stripe手数料控除後）をお支払いする紹介報酬があります（承認制。日本国内の事業者にはStripe Connectで、日本国外の事業者にはWiseでお支払いし、日本国外の事業者はWiseアカウントが必要です）。詳しくは[パートナープログラム](/partner/)をご覧ください。",
             "正直に言うと、追えるAIの数やプロンプト数、競合分析の深さでは、計測を専門にするツールのほうが上です。実装と月次の報告はNurevo、計測は別のツール、という組み合わせも選択肢になります。",
           ],
         },
@@ -209,7 +209,7 @@ export default {
           heading: "Running the service with Nurevo",
           paragraphs: [
             "The Nurevo AEO WordPress plugin is free. It sets up structured data, llms.txt and AI crawler rules from the admin screen, and adds only what is missing to the structured data of Yoast SEO, Rank Math, All in One SEO or Slim SEO instead of replacing it. That makes setup easy to standardise across client sites.",
-            "For web and SEO agencies there are monthly client reports under your own name, logo and brand color, emailed automatically and printable as PDF; every client site in one dashboard; Standard plan payment links you can send to clients; and an AI check widget for your own site (for approved partners). There is also a referral commission of 40% of each referred customer's monthly fee, net of Stripe fees (approval required; payouts currently only to partners based in Japan). See the [partner program](/partner/?lang=en).",
+            "For web and SEO agencies there are monthly client reports under your own name, logo and brand color, emailed automatically and printable as PDF; every client site in one dashboard; Standard plan payment links you can send to clients; and an AI check widget for your own site (for approved partners). There is also a referral commission of 40% of each referred customer's monthly fee, net of Stripe fees (approval required; payouts via Stripe Connect for partners in Japan, or via Wise for partners outside Japan, who need a Wise account). See the [partner program](/partner/?lang=en).",
             "To be fair about it: dedicated monitoring tools track more AI platforms and prompts and go deeper on competitor analysis. Using Nurevo for implementation and monthly reporting alongside a separate monitoring tool is a reasonable setup too.",
           ],
         },
