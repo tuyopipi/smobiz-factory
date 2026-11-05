@@ -1,0 +1,12 @@
+-- Additive. Partner tier: freelancers earn from their FIRST paying referred customer.
+-- Apply BEFORE deploying the Worker that reads it:
+--   wrangler d1 execute nurevo-db --remote --file nurevo-impl/db/0050_partner_tier.sql
+--
+-- accounts.partner_tier: 'agency' (default) | 'freelance'.
+--   agency    : the 0040 rule applies (the first paying referred customer never earns).
+--   freelance : an individual designer/developer. Every paying referred customer earns,
+--               the first one included. Set by a super admin when approving
+--               (POST /api/admin/partner-applications/:id/approve with {"tier":"freelance"}),
+--               or later with POST /api/admin/partner-applications/:id/tier {"tier": ...}.
+--   Changing the tier never reopens invoices already recorded as 'first_customer'.
+ALTER TABLE accounts ADD COLUMN partner_tier TEXT NOT NULL DEFAULT 'agency';
