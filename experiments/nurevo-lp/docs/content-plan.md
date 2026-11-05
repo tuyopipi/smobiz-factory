@@ -65,3 +65,4 @@
 4. 飲食店のAI検索対策：メニュー・営業時間・予約・アレルギー表示の書き方【業種別】
 5. 商品フィードとAI：Merchant Center・ChatGPTの商品フィード・構造化データの役割分担（online-shop-ai-search の続き）
 メモ：多言語の仕組み（src/i18n/locales.mjs）は main にマージ済み。新しい記事は ja/en を .mjs、他の39言語を src/content/<slug>/<code>.json に書く。dental-clinic-ai-search（PR未マージ）は ja/en のみのため、マージ後に翻訳を補う。
+| 2026-11-05 | research-web-agency-ai-search-2026 | 調査レポート（総論）：国内Web制作会社の自社サイト2,357件のAI検索対応状況（llms.txt 13.6%・AIクローラー拒否1.3%・JSON-LD 68.9%、WordPress/非WordPress、AI対応スコア分布、海外WordPress参考値）。データ：nurevo-outreach summary_2026-11-05。ja/en | 調査 | content/research-20261105 |
