@@ -45,7 +45,7 @@ assert.match(html, /history\.replaceState/);
 assert.match(html, /body\.checks\.forEach/);
 assert.match(html, /@media\(max-width:760px\)/);
 const externalScripts = [...html.matchAll(/<script[^>]+src=["']([^"']+)["']/gi)].map(m => m[1]);
-assert.deepEqual(externalScripts, ['/assets/ai-referral.js'], 'only the existing referral measurement script is allowed');
+assert.deepEqual(externalScripts, ['/assets/outreach.js', '/assets/ai-referral.js'], 'only reviewed first-party navigation/measurement scripts are allowed');
 assert.doesNotMatch(html, /react|vue|angular/i);
 const scripts = [...html.matchAll(/<script>([\s\S]*?)<\/script>/gi)];
 assert.equal(scripts.length, 1, "checker must have one inline script");

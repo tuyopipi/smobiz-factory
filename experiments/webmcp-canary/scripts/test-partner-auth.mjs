@@ -18,6 +18,7 @@ sqlite.prepare("UPDATE accounts SET referral_code='AAAAAAAAAAAA' WHERE member_id
 sqlite.exec(readFileSync(new URL('../nurevo-impl/db/0040_partner_approval_first_customer.sql', import.meta.url), 'utf8'));
 assert.deepEqual({ ...sqlite.prepare("SELECT referral_code, partner_status, partner_approved_at FROM accounts WHERE member_id='old'").get() },
   { referral_code: 'AAAAAAAAAAAA', partner_status: 'pending', partner_approved_at: null }, 'existing code kept, pending, not approved');
+sqlite.exec(readFileSync(new URL('../nurevo-impl/db/0050_outreach_attribution.sql', import.meta.url), 'utf8'));
 const DB = {
   prepare(sql) {
     const stmt = sqlite.prepare(sql);
@@ -48,12 +49,12 @@ async function call(path, body, cookie = '', fixedIp) {
   return handleApi(new Request('https://nurevo.jp' + path, { method: body === undefined ? 'GET' : 'POST', headers, ...(body === undefined ? {} : { body: JSON.stringify(body) }) }), env, {});
 }
 async function signup(email, referral_code) {
-  const response = await call('/api/auth/signup', { email, referral_code, locale: 'ja' });
+  const response = await call('/api/auth/signup', { email, referral_code, locale: 'ja', ...(email==='parent@example.test'?{outreach_id:'a'.repeat(32),outreach_consent:true}:{}) });
   assert.equal(response.status, 200); return response.json();
 }
 // A magic link no longer signs in on GET (mail scanners prefetch it): GET
 // renders a confirm page, and its form POSTs the token back.
-async function verify(link) {
+async function verify(link, outreachConsent=true) {
   const target = new URL(link);
   const page = await call(target.pathname + target.search);
   if (page.status !== 200) return page;
@@ -61,13 +62,21 @@ async function verify(link) {
   const token = html.match(/name="token" value="([a-f0-9]{64})"/)[1];
   const confirm = html.match(/name="confirm" value="([a-f0-9]{64})"/)[1];
   const cookie = page.headers.get('set-cookie').match(/nrv_magic_confirm=[^;]+/)[0];
-  return handleApi(new Request('https://nurevo.jp' + target.pathname, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', origin: 'https://nurevo.jp', cookie, 'cf-connecting-ip': `test-${++ip}` }, body: new URLSearchParams({ token, confirm }).toString() }), env, {});
+  return handleApi(new Request('https://nurevo.jp' + target.pathname, { method: 'POST', headers: { 'content-type': 'application/x-www-form-urlencoded', origin: 'https://nurevo.jp', cookie, 'cf-connecting-ip': `test-${++ip}` }, body: new URLSearchParams({ token, confirm, ...(outreachConsent && html.includes('name="outreach_consent"') ? {outreach_consent:'yes'} : {}) }).toString() }), env, {});
 }
 try {
   const parent = await signup('parent@example.test');
+  assert.equal(sqlite.prepare('SELECT outreach_id,verified_at FROM outreach_attribution').get().outreach_id,'a'.repeat(32));
+  assert.equal(sqlite.prepare('SELECT verified_at FROM outreach_attribution').get().verified_at,null);
+  const declined = await verify(parent.loginLink, false);
+  assert.equal(declined.status,303,'sign-in works without measurement consent');
+  assert.equal(sqlite.prepare('SELECT verified_at FROM outreach_attribution').get().verified_at,null,'email ownership alone never verifies measurement consent');
+  const fresh=await call('/api/auth/magic-link',{email:'parent@example.test',locale:'ja'});
+  parent.loginLink=(await fresh.json()).loginLink;
   const token = new URL(parent.loginLink).searchParams.get('token');
   assert.equal(sqlite.prepare('SELECT token FROM auth_tokens WHERE email=?').get('parent@example.test').token === token, false, 'token stored hashed');
   const loggedIn = await verify(parent.loginLink);
+  assert.ok(sqlite.prepare('SELECT verified_at FROM outreach_attribution').get().verified_at);
   assert.equal(loggedIn.status, 303); assert.equal(loggedIn.headers.get('location'), '/dashboard');
   const cookie = loggedIn.headers.get('set-cookie').match(/nrv_session=[^;]+/)[0];
   assert.ok(sqlite.prepare('SELECT used_at FROM auth_tokens WHERE email=?').get('parent@example.test').used_at);

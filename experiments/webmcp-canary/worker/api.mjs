@@ -1,3 +1,4 @@
+import { captureOutreach, verifyOutreach, pendingOutreach, outreachConfirmHtml } from './outreach-attribution.mjs';
 import { recordFetched } from "./aeo-delivery.mjs";
 import { INITIAL_AEO_RULESET, DEFAULT_SCORING, renderRuleSchema } from "./aeo-rules.mjs";
 import { loadQuerySet, saveQuerySet, ensureQuerySet, loadProReport, reviewEvidence, measurementKey, loadCachedRun, acquireMeasurementLock, releaseMeasurementLock } from "./pro-report.mjs";
@@ -4494,6 +4495,7 @@ async function handleMagicRequest(request, env, { accountAuth = false, signup = 
   // could only fail at the callback. Saying so here lets the form explain it.
   if (member.status === "pending") return json({ error: "pending_approval" }, 403);
   const account = accountAuth ? await ensureAccount(env, member.id) : null;
+  if (signup && member.created) await captureOutreach(env, member.id, body);
   const emailLocale = resolveEmailLocale(await loadEmailPreferences(env, email), request.headers.get("accept-language"));
   // Where to land after sign-in. Only /dashboard paths and plan=standard|pro
   // survive; anything else becomes the default /dashboard.
@@ -4589,6 +4591,7 @@ async function handleMagicCallback(request, env, accountAuth = false) {
     ? await env.DB.prepare("UPDATE auth_tokens SET used_at=? WHERE token=? AND used_at IS NULL AND expires_at>?").bind(now, tokenHash, now).run()
     : await env.DB.prepare("UPDATE sessions SET kind='magic_used' WHERE token=? AND kind='magic' AND expires_at>?").bind(tokenHash, now).run();
   if (Number(consumed?.meta?.changes || 0) !== 1) return authErrorRedirect(request, "used", magic.locale);
+  if (form.outreach_consent === 'yes') await verifyOutreach(env, magic.member_id, now);
 
   const rawSession = randomHex(32);
   const sessionHash = await sha256Hex(rawSession);
@@ -4618,7 +4621,8 @@ async function handleMagicConfirmPage(request, env, accountAuth) {
   if (reason) return authErrorRedirect(request, reason, magic?.locale);
   const locale = authPageLocale(magic.locale, request);
   const confirm = randomHex(32);
-  const html = renderMagicConfirmPage({ locale, action: url.pathname, token: rawToken, confirm });
+  let html = renderMagicConfirmPage({ locale, action: url.pathname, token: rawToken, confirm });
+  if (await pendingOutreach(env, magic.member_id)) html=html.replace('</form>', outreachConfirmHtml(locale)+'</form>');
   const headers = new Headers({
     "content-type": "text/html; charset=utf-8",
     "cache-control": "no-store",
@@ -4829,6 +4833,7 @@ async function handleMemberRegistration(request, env) {
   if (inviteHash) statements.push(env.DB.prepare("DELETE FROM sessions WHERE token=? AND kind='member_invite'").bind(inviteHash));
   statements.push(registrationLocaleStatement(env, email, normalizeEmailLocale(body?.locale || body?.lang) || headerEmailLocale(request.headers.get("accept-language"))));
   await env.DB.batch(statements);
+  await captureOutreach(env, memberId, body);
   return json({ ok: true, status: "pending", member_id: memberId, role: roleMap[role] }, 201);
 }
 

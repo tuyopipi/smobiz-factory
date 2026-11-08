@@ -28,6 +28,9 @@ const wrap = (sql, args) => ({
   async run() { return { meta: sqlite.prepare(sql).run(...args) }; },
 });
 const DB = { prepare(sql) { return { ...wrap(sql, []), bind: (...args) => wrap(sql, args) }; }, async batch(list) { return Promise.all(list.map((s) => s.run())); } };
+// This is a plan-selection test, never an external engine integration test.
+// Missing network mocks previously attempted real requests with a fixture key.
+globalThis.fetch = async () => { throw new Error("offline plan resolver fixture"); };
 const env = { DB, PERPLEXITY_API_KEY: "test" };
 
 sqlite.exec(`

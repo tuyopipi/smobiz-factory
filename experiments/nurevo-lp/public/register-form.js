@@ -172,6 +172,7 @@
     var baseClass = statusEl.className || "";
     var button = form.querySelector("button");
     var busy = false;
+    root.nrvOutreach?.addConsent(form,options.lang ? options.lang() : 'ja');
 
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -193,6 +194,7 @@
 
       var payload = options.payload(new root.FormData(form));
       payload.locale = lang;
+      Object.assign(payload,root.nrvOutreach?.payload(form) || {});
       return root.fetch("/api/members/register", {
         method: "POST",
         headers: { "content-type": "application/json" },

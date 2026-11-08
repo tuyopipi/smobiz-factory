@@ -41,13 +41,14 @@
   document.getElementById('login').textContent = c[6];
   document.getElementById('login').href = '/dashboard?lang=' + encodeURIComponent(locale);
   const form = document.getElementById('signup'), button = document.getElementById('submit'), message = document.getElementById('message');
+  window.nrvOutreach?.addConsent(form,locale);
   form.elements.referral_code.value = params.get('referral_code') || '';
   form.addEventListener('submit', async event => {
     event.preventDefault(); button.disabled = true; message.textContent = '';
     let response;
     try {
       response = await fetch('/api/auth/signup', { method: 'POST', headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ email: form.elements.email.value, referral_code: form.elements.referral_code.value, locale }) });
+        body: JSON.stringify({ email: form.elements.email.value, referral_code: form.elements.referral_code.value, locale, ...(window.nrvOutreach?.payload(form) || {}) }) });
     } catch { message.textContent = errorText('network', 0); button.disabled = false; return; }
     if (response.ok) { message.textContent = c[4]; form.hidden = true; return; }
     const body = await response.json().catch(() => ({}));
