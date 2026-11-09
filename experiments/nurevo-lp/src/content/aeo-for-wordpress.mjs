@@ -104,6 +104,12 @@ export default {
           "paragraphs": [
             "WordPressを作るなら、AEOは自前でツールを作らずに全クライアントに出せる新サービス＋継続収益になります。[ChatGPTに載る方法](/ja/guide/appear-in-chatgpt)"
           ]
+        },
+        {
+          "heading": "WordPress × AI の困りごとを相談できる場所",
+          "paragraphs": [
+            "設定でつまずいたときや、制作会社どうしで情報交換したいときは、WordPressとAI活用の無料サポート掲示板「[WordPress × AI 無料サポート掲示板](https://equals-web.com/)」（株式会社イコールズ運営）も役立ちます。Nurevo AEO もパートナーとして参加しており、[紹介トピック](https://equals-web.com/forums/topic/2433/)で質問を受け付けています。"
+          ]
         }
       ],
       "faqs": [
