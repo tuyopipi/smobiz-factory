@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WordPress保守会社のAI検索対策：保守作業の事故を防ぐ確認表 | Nurevo</title>
+<meta name="description" content="WordPress保守会社向けに、サーバー移転・WAFやCDNの設定・SEOプラグインの変更・robots.txtの編集などの保守作業で、AIがサイトを読めなくなる事故を防ぐ確認方法と、月次報告に足す項目を解説。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/wordpress-maintenance-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/wordpress-maintenance-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/wordpress-maintenance-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/wordpress-maintenance-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/wordpress-maintenance-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/wordpress-maintenance-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="WordPress保守会社のAI検索対策：保守作業の事故を防ぐ確認表 | Nurevo">
+<meta property="og:description" content="WordPress保守会社向けに、サーバー移転・WAFやCDNの設定・SEOプラグインの変更・robots.txtの編集などの保守作業で、AIがサイトを読めなくなる事故を防ぐ確認方法と、月次報告に足す項目を解説。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WordPress保守会社のAI検索対策：保守作業の事故を防ぐ確認表 | Nurevo">
+<meta name="twitter:description" content="WordPress保守会社向けに、サーバー移転・WAFやCDNの設定・SEOプラグインの変更・robots.txtの編集などの保守作業で、AIがサイトを読めなくなる事故を防ぐ確認方法と、月次報告に足す項目を解説。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/","name":"WordPress保守会社のAI検索対策：保守作業の事故を防ぐ確認表 | Nurevo","description":"WordPress保守会社向けに、サーバー移転・WAFやCDNの設定・SEOプラグインの変更・robots.txtの編集などの保守作業で、AIがサイトを読めなくなる事故を防ぐ確認方法と、月次報告に足す項目を解説。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"WordPress保守会社のAI検索対策：保守作業でAIに読めなくなる事故を防ぐチェックリスト","item":"https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/wordpress-maintenance-ai-search/#faq","mainEntity":[{"@type":"Question","name":"保守契約にAI検索対策を入れるには、何から始めればよいですか？","acceptedAnswer":{"@type":"Answer","text":"まず今の保守の手順書に、作業のあとの確認（noindex がないか、構造化データが出ているか）と、毎月の robots.txt・llms.txt の確認を足すところからです。新しい施策より、今のサイトがAIに読める状態を保つことが先です。"}},{"@type":"Question","name":"セキュリティを強めると、AI検索に出にくくなりますか？","acceptedAnswer":{"@type":"Answer","text":"設定しだいです。ボット対策やWAFがAI検索のクローラまで止めると、そのAIはページを読めません。用途ごとに許可・拒否を選べる設定もあるので、何を止めるのかを確認してから適用し、アクセスログで応答コードを確かめましょう。"}},{"@type":"Question","name":"robots.txt に問題がなければ、インデックスの拒否はしていないと言えますか？","acceptedAnswer":{"@type":"Answer","text":"言えません。WordPress 5.3 以降、「検索エンジンがサイトをインデックスしないようにする」は robots.txt ではなく robots メタタグで伝えます。サーバーの X-Robots-Tag ヘッダーでも拒否できるので、HTMLソースとレスポンスヘッダーの両方を確認します。"}},{"@type":"Question","name":"学習用のAIクローラは止めてもよいですか？","acceptedAnswer":{"@type":"Answer","text":"お客様の方針しだいです。学習用クローラ（GPTBot など）の扱いは、AI検索のクローラ（OAI-SearchBot など）とは別の判断です。保守会社が決めず、お客様に選んでもらい、その内容を記録しておきましょう。"}},{"@type":"Question","name":"AIでの見え方まで毎月測る必要がありますか？","acceptedAnswer":{"@type":"Answer","text":"必須ではありません。保守として最低限やるべきなのは「AIが読める状態か」の確認です。見え方の計測は、お客様が希望する場合に、決めた質問を同じ条件で確かめる形で追加すると無理がありません。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check">無料でAI可読性をチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>WordPress保守会社のAI検索対策：保守作業でAIに読めなくなる事故を防ぐチェックリスト</span></nav>
+  <article>
+    <h1>WordPress保守会社のAI検索対策：保守作業でAIに読めなくなる事故を防ぐチェックリスト</h1>
+    <p class="lead">WordPress保守会社がAI検索対策でまずやるべきことは、新しい施策を足すことより、日々の保守作業（移転、セキュリティ・CDNの設定、プラグインやテーマの変更、robots.txtの編集）が、AIのクローラや構造化データを壊していないかを毎回確かめることです。確認は「作業のたび」「毎月」「移転のとき」の3つのタイミングに分けると、既存の保守の流れに無理なく入ります。</p>
+<p>作成日：2026年11月10日（JST）。Cloudflare と WordPress の仕様は同日に各公式ドキュメントで確認したものです。仕様は変わることがあるため、作業の前に最新の情報をご確認ください。</p>
+<p>この記事は、すでにWordPressの保守・運用を請けている会社やフリーランスの方向けです。AI検索対策を月額サービスとして設計する方法（作業範囲・価格）は<a href="/ja/guide/agency-aeo-monthly-service/">制作会社がAI検索対策を月額サービスにする方法</a>にまとめています。ここでは、保守の現場で起きやすい「気づかないうちにAIから見えなくなる」事故と、その見つけ方に絞ります。</p>
+<section class="qa"><h2>なぜ保守会社がAI検索対策の要になるのか</h2><p>ChatGPT・Perplexity・GoogleのAI機能が事業について答えるとき、使われるのはクローラが読めたページと、そこに書かれた事実です。Googleは、AI OverviewsやAI Modeに表示されるための追加の要件や特別な最適化はなく、通常のSEOのベストプラクティスが当てはまると説明しています（<a href="https://developers.google.com/search/docs/appearance/ai-features">Google検索セントラル：AI機能とウェブサイト</a>）。OpenAIは、OAI-SearchBotを拒否したサイトはChatGPTの検索回答に表示されないとしています（<a href="https://developers.openai.com/api/docs/bots">OpenAI：クローラの概要</a>）。</p>
+<p>つまり、AIに読まれるかどうかは「クローラが入れるか」「インデックスを拒否していないか」「構造化データと本文の事実が正しいか」で決まり、これらはどれも保守作業で変わるものです。サーバー移転のときに残った設定、セキュリティを強めたときのボット対策、SEOプラグインの乗り換えなど、善意の作業がAIからの見え方を止めてしまうことがあります。</p>
+<p>しかも、この種の事故はサイトを人が見ても気づけません。表示は普段どおりで、問い合わせが少し減ったように見えるだけです。だからこそ、サイトの中を定期的に触っている保守会社が確認を持つのがいちばん確実です。なお、AIの回答は同じ質問でも日や回によって変わります。ここでの確認は「AIが読める状態を保つ」ためのもので、AIに必ず表示されることを約束するものではありません。</p></section>
+<section class="qa"><h2>保守作業ごとに起きやすい事故と確認方法</h2><div class="table-wrap"><table><caption>どれも特別なツールなしで確認できます。作業の記録に「確認した」欄を1つ足すだけでも、見落としは減ります。</caption><thead><tr><th scope="col">保守作業</th><th scope="col">起きやすい事故</th><th scope="col">確認方法</th></tr></thead><tbody><tr><th scope="row">ステージングからの本番反映・サーバー移転</th><td>「設定 › 表示設定」の「検索エンジンがサイトをインデックスしないようにする」にチェックが入ったまま公開される</td><td>本番のHTMLソースに noindex の robots メタタグがないか確認。設定画面のチェックも外れているか見る</td></tr><tr><th scope="row">移転・新しいホスティングへの切り替え</th><td>ステージング用の Basic 認証や X-Robots-Tag ヘッダー、IP制限がそのまま残る</td><td>ログインしていない状態・別の回線から主要ページを開き、レスポンスヘッダーに X-Robots-Tag: noindex がないか確認</td></tr><tr><th scope="row">セキュリティプラグイン・WAF・CDNの設定変更</th><td>ボット対策やレート制限で、AI検索のクローラまで止める</td><td>CDN・WAFのボット設定を確認し、サーバーのアクセスログで OAI-SearchBot・PerplexityBot などの応答コードを見る</td></tr><tr><th scope="row">robots.txt の手編集・ファイルの設置</th><td>サーバーに robots.txt ファイルを置いたことで、WordPress やプラグインが出していた robots.txt の記述が使われなくなる</td><td>/robots.txt を開き、意図した内容が返っているか、AI検索のクローラを Disallow していないか確認</td></tr><tr><th scope="row">SEOプラグインの乗り換え・テーマの変更</th><td>店舗・会社の構造化データが消える、または2つの事業として二重に出る</td><td>主要ページのHTMLソースで application/ld+json の数と中身（名前・住所・電話・営業時間）を確認</td></tr><tr><th scope="row">キャッシュ・高速化プラグインの設定変更</th><td>古いHTMLが配信され続ける、最適化の設定で構造化データや本文が意図どおりに出ない</td><td>キャッシュを消したあと、ログアウト状態でHTMLソースを確認</td></tr><tr><th scope="row">お客様からの情報変更の依頼（営業時間・料金・住所）</th><td>ページの文章だけ直し、構造化データ・llms.txt・Googleビジネスプロフィールが古いまま</td><td>変更した項目を、ページ・構造化データ・llms.txt・外部のプロフィールで突き合わせる</td></tr><tr><th scope="row">SSL証明書・ドメインの更新</th><td>期限切れで誰も読めなくなる</td><td>期限の監視。保守の通常業務の範囲</td></tr></tbody></table></div></section>
+<section class="qa"><h2>移転のあとに残りやすい「インデックスしない」設定</h2><p>WordPressの「検索エンジンがサイトをインデックスしないようにする」は、WordPress 5.3 から robots.txt に Disallow を書く方法をやめ、ページに robots メタタグ（noindex, nofollow）を出す方法に変わりました（<a href="https://make.wordpress.org/core/2019/09/02/changes-to-prevent-search-engines-indexing-sites/">Make WordPress Core：検索エンジンにインデックスさせない仕組みの変更</a>）。そのため、robots.txt だけを見て「問題なし」と判断すると見落とします。HTMLソースで meta name='robots' を確認しましょう。</p>
+<p>同じ記事では、開発・ステージング環境には、画像やPDFも含めてサーバー側で X-Robots-Tag: noindex, nofollow のヘッダーを付ける方法を勧めています。これはWordPressの設定ではなくサーバーやホスティングの設定なので、本番に切り替えたあとにヘッダーが残っていないか、レスポンスヘッダーで確かめる必要があります。</p></section>
+<section class="qa"><h2>セキュリティ・CDN・WAFでAIのクローラを止めていないか</h2><p>保守会社がセキュリティを強めるときに、いちばん気づきにくいのがここです。ボット対策の多くは、AIのクローラを「よくわからない自動アクセス」としてまとめて止められます。</p>
+<p>例えば Cloudflare には、AIのクローラとエージェントへの対応を、用途ごとに「Search（質問に答えるために収集・インデックスするもの）」「Agent（人の代わりにリアルタイムで動くもの）」「Training（モデルの学習に使うもの）」に分けて、ブロック・広告のあるページだけブロック・許可から選ぶ設定があります。公式ドキュメントでは、新しいドメインは3つとも「許可（ブロックしない）」が初期値とされています。一方で、Training には学習と検索の両方に使う「兼用のクローラ」も含まれると説明されています（<a href="https://developers.cloudflare.com/bots/additional-configurations/block-ai-bots/">Cloudflare：AI Crawler and Agent access policies</a>、2026年11月2日更新）。学習を止めるつもりで設定を変えたとき、何が止まるのかを設定画面の説明で確認してから適用しましょう。</p>
+<p>確認には、サーバーのアクセスログがいちばん確実です。OAI-SearchBot や PerplexityBot などのリクエストが来ているか、応答が 200 か 403 かを見ます。curl でユーザーエージェントだけを名乗って試す方法もありますが、Cloudflare は「検証済みボット」を署名・公開されたIPアドレスの一覧・逆引きDNSなどで見分けるとしているため（<a href="https://developers.cloudflare.com/bots/concepts/bot/verified-bots/">Cloudflare：Verified bots</a>）、名乗っただけのリクエストは本物のクローラと同じ扱いにならないことがあります。テストの結果だけで判断しないようにしましょう。</p>
+<p>クローラの名前と用途は、各社のページで確認できます（<a href="https://developers.openai.com/api/docs/bots">OpenAI</a>、<a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers.md">Perplexity</a>）。学習用のクローラ（GPTBot など）を許可するかどうかはAI検索への表示とは別の判断なので、保守会社が決めず、お客様に選んでもらうのが安全です。</p></section>
+<section class="qa"><h2>保守チェックリスト：作業のたび・毎月・移転のとき</h2><p>次の3つに分けて、今の保守の手順書にそのまま足せる形にしています。</p><ol><li>【作業のたび】プラグイン・テーマの更新や設定変更のあと、トップページと主要ページ（サービス・料金・アクセス・FAQ）のHTMLソースで、noindex がないこと、application/ld+json が1つの事業として出ていることを確認する。</li><li>【作業のたび】セキュリティ・CDN・WAFの設定を変えたら、変えた内容と日付を記録し、翌日以降のアクセスログでAI検索のクローラの応答コードを見る。</li><li>【毎月】/robots.txt と /llms.txt が 200 で返り、内容が意図どおりか確認する。<a href="/ja/guide/llms-txt/">llms.txtの書き方</a></li><li>【毎月】お客様の営業時間・料金・住所・サービスに変更がなかったか聞き、ページ・構造化データ・llms.txt・外部のプロフィールを突き合わせる。</li><li>【毎月】決めた質問をAIに聞き、事業が名前で出たか、サイトが引用されたかを記録する（任意。手順は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>）。</li><li>【移転のとき】「検索エンジンがサイトをインデックスしないようにする」のチェック、X-Robots-Tag ヘッダー、Basic認証、IP制限が本番に残っていないかを確認する。</li><li>【移転のとき】サーバーに robots.txt ファイルを持ち込んでいないか、持ち込んだならその内容が意図どおりかを確認する。</li><li>【SEOプラグインを変えるとき】構造化データの出し方が変わるので、重複と抜けを確認する。<a href="/ja/guide/local-business-schema-seo-plugins/">SEOプラグインに店舗の構造化データを足す方法</a></li></ol></section>
+<section class="qa"><h2>月次報告に足す「AIが読めるか」の行</h2><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">書き方の例</th></tr></thead><tbody><tr><th scope="row">インデックスの拒否</th><td>主要5ページで noindex なし（前月と同じ）</td></tr><tr><th scope="row">robots.txt</th><td>AI検索のクローラの拒否なし。今月の変更なし</td></tr><tr><th scope="row">AIクローラのアクセス</th><td>OAI-SearchBot・PerplexityBot のリクエストあり、応答は200（アクセスログで確認）</td></tr><tr><th scope="row">構造化データ</th><td>トップページに事業の情報が1件。営業時間の変更を反映</td></tr><tr><th scope="row">llms.txt</th><td>200で返る。新しいお知らせページを反映</td></tr><tr><th scope="row">今月の設定変更</th><td>WAFのボット対策を強化（日付）。AI検索のクローラへの影響なしを確認</td></tr><tr><th scope="row">AIでの見え方（任意）</th><td>決めた質問ごとの言及・引用の有無と、何回聞いた結果か</td></tr></tbody></table></div><p>多くの保守報告にはすでに「更新したプラグイン」「バックアップ」「稼働状況」の行があります。そこに上の数行を足すだけで、AI検索対策を保守の一部として説明できます。AIでの見え方は、すべての回答を観測したものではなくサンプルなので、1回の結果で判断しないことも報告に書き添えましょう。</p></section>
+<section class="qa"><h2>お客様への説明と契約で気をつけること</h2><ol><li>AIに表示されること・順位は約束しない。約束するのは、確認の頻度と項目、見つけたときの対応です。</li><li>学習用クローラの許可・拒否は、お客様の判断として記録する。AI検索のクローラとは分けて説明します。</li><li>プラグインの導入や robots.txt の変更は、事前にお客様に知らせる。導入のお知らせ文の例は<a href="/partner/">パートナープログラム</a>のページにあります。</li><li>CDN・WAFの契約がお客様名義のときは、誰が設定を変えてよいかを決めておく。</li></ol></section>
+<section class="qa"><h2>Nurevo AEOで確認を回す場合</h2><p>Nurevo AEOのWordPressプラグイン（<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.org</a>）は無料で、0〜100のAEOスコアと直すべき項目のチェックリスト、構造化データ・llms.txt・AIクローラの許可設定を管理画面から整えられます。robots.txt に追加する記述は、/wp-admin/ などサイトの既存のルールをAIのクローラにも繰り返して適用します。Yoast SEO・Rank Math・All in One SEO・Slim SEO の構造化データには不足分だけを足し、二重に出しません。0.9.1 からは SEO SIMPLE PACK・VK All in One Expansion Unit とも、構造化データが重ならないように併用できます。</p>
+<p>多くのサイトを保守している場合は、WP-CLI の wp nurevo status で、そのサイトの出力が有効か、構造化データ・llms.txt・AIクローラの設定のどれを公開しているかを確かめられます。設定は wp nurevo export / import でほかのサイトへ写せます（キーや接続情報は含まれません）。管理者は REST の GET /wp-json/nurevo/v1/status でも状態を読めます。まとめて導入する手順は<a href="/partner/">パートナープログラム</a>のページにあります。</p>
+<p>正直に書くと、Nurevoの診断は、Nurevoのサービスがサイトのトップページ・robots.txt・llms.txtを取得して行うもので、AIのクローラとして取得するわけではありません。CDNやWAFがAIのクローラだけを止めている場合は、診断では分からないことがあります。その確認は、上のとおりアクセスログで行ってください。</p>
+<p>AIでの見え方は、接続したFree・Standardのサイトなら毎月の無料AIチェック（Perplexityに3問）、Pro（月14,800円〜、ベータ）ならPerplexityでのAI登場率を継続して計測できます。評価基準の自動更新はStandard（月3,000円）です。制作会社・保守会社向けには、自社ブランドの月次レポートや、紹介したお客様の有料プランの月額の40%（Stripe手数料控除後）をお支払いする紹介報酬があります（条件は<a href="/partner/">パートナープログラム</a>をご覧ください）。</p></section>
+    <section class="qa"><h2>よくある質問</h2><h3>保守契約にAI検索対策を入れるには、何から始めればよいですか？</h3><p>まず今の保守の手順書に、作業のあとの確認（noindex がないか、構造化データが出ているか）と、毎月の robots.txt・llms.txt の確認を足すところからです。新しい施策より、今のサイトがAIに読める状態を保つことが先です。</p>
+<h3>セキュリティを強めると、AI検索に出にくくなりますか？</h3><p>設定しだいです。ボット対策やWAFがAI検索のクローラまで止めると、そのAIはページを読めません。用途ごとに許可・拒否を選べる設定もあるので、何を止めるのかを確認してから適用し、アクセスログで応答コードを確かめましょう。</p>
+<h3>robots.txt に問題がなければ、インデックスの拒否はしていないと言えますか？</h3><p>言えません。WordPress 5.3 以降、「検索エンジンがサイトをインデックスしないようにする」は robots.txt ではなく robots メタタグで伝えます。サーバーの X-Robots-Tag ヘッダーでも拒否できるので、HTMLソースとレスポンスヘッダーの両方を確認します。</p>
+<h3>学習用のAIクローラは止めてもよいですか？</h3><p>お客様の方針しだいです。学習用クローラ（GPTBot など）の扱いは、AI検索のクローラ（OAI-SearchBot など）とは別の判断です。保守会社が決めず、お客様に選んでもらい、その内容を記録しておきましょう。</p>
+<h3>AIでの見え方まで毎月測る必要がありますか？</h3><p>必須ではありません。保守として最低限やるべきなのは「AIが読める状態か」の確認です。見え方の計測は、お客様が希望する場合に、決めた質問を同じ条件で確かめる形で追加すると無理がありません。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>保守しているサイトを、AIがどう読んでいるか確認</h2>
+    <p>登録不要の無料チェックで、構造化データ・llms.txt・AIクローラ設定の現状がわかります。保守の月次確認の入口にお使いください。</p>
+    <a class="btn primary lg" href="/check">無料でAI可読性をチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgでNurevo AEOを入手</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/agency-aeo-monthly-service/">制作会社がAI検索対策（AEO）を月額サービスにする方法：作業範囲・レポート・価格の決め方</a></li><li><a href="/ja/guide/local-business-schema-seo-plugins/">Yoast SEO・Rank Math・AIOSEOに店舗情報の構造化データを無料で足す方法</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/aeo-wordpress/">WordPressのAEO：サイトをAIに読ませる方法</a></li><li><a href="/ja/guide/llms-txt/">llms.txt とは？ サイトをAIに説明するファイル</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/wordpress-maintenance-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Google、ChatGPT、OpenAI、Perplexity、Cloudflare、WordPress、Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unitおよび各製品名は、それぞれの権利者の商標または登録商標です。Nurevoはこれらの企業と提携・協賛関係にありません。</p><a href="/">Nurevo</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>

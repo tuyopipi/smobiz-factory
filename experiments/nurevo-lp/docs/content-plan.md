@@ -65,3 +65,10 @@
 4. 飲食店のAI検索対策：メニュー・営業時間・予約・アレルギー表示の書き方【業種別】
 5. 商品フィードとAI：Merchant Center・ChatGPTの商品フィード・構造化データの役割分担（online-shop-ai-search の続き）
 メモ：多言語の仕組み（src/i18n/locales.mjs）は main にマージ済み。新しい記事は ja/en を .mjs、他の39言語を src/content/<slug>/<code>.json に書く。dental-clinic-ai-search（PR未マージ）は ja/en のみのため、マージ後に翻訳を補う。
+| 2026-11-10 17時 | wordpress-maintenance-ai-search | WordPress保守会社のAI検索対策（保守作業ごとの事故と確認方法の表〔移転時の「インデックスしない」設定＝WP5.3以降はrobotsメタタグ、X-Robots-Tag・Basic認証の持ち込み、WAF・CDNのボット対策〔Cloudflare の Search/Agent/Training ポリシー、兼用クローラ〕、物理robots.txt、SEOプラグイン・テーマ変更、キャッシュ〕、作業のたび・毎月・移転時のチェックリスト、月次報告に足す行、アクセスログでの確認〔UA偽装テストの限界〕、Nurevo診断の限界）。2言語（ja・en） | 制作会社向け | content/daily-20261110-17 |
+1. 整骨院・接骨院のAI検索対策（施術内容・保険の扱い・広告規制との関係）【業種別】
+2. 不動産会社のAI検索対策（物件情報・対応エリア・RealEstateAgent）【業種別】
+3. MEO会社のAI検索対策：Googleビジネスプロフィールとサイトの事実をそろえる（保守会社向けとは別の読者）【制作会社向け】
+4. Search ConsoleでGoogleのAI機能（AIによる概要・AIモード）の影響を見る方法
+5. SWELL・Lightningでの構造化データとllms.txtの整え方（テーマ別の注意）
+翻訳の残り（8時台で補完）：wordpress-maintenance-ai-search（ja/en のみ）ほか未マージPRの ja/en 記事。
