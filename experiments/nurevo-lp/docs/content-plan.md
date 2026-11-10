@@ -65,3 +65,9 @@
 4. 飲食店のAI検索対策：メニュー・営業時間・予約・アレルギー表示の書き方【業種別】
 5. 商品フィードとAI：Merchant Center・ChatGPTの商品フィード・構造化データの役割分担（online-shop-ai-search の続き）
 メモ：多言語の仕組み（src/i18n/locales.mjs）は main にマージ済み。新しい記事は ja/en を .mjs、他の39言語を src/content/<slug>/<code>.json に書く。dental-clinic-ai-search（PR未マージ）は ja/en のみのため、マージ後に翻訳を補う。
+| 2026-11-10 | ai-traffic-google-analytics | GA4でAIからの流入を見る方法（標準の「AI アシスタント」チャネル、Perplexity・Claudeの取りこぼし、カスタムチャネルグループの正規表現と並び順、AIによる概要・AIモードはオーガニック検索、参照元のない訪問はダイレクト、着地ページとキーイベント、月次の記録表、GA4で見えないものとの分担、WordPress〔Site Kit〕での導入確認）。2言語（ja・en） | 実践ガイド | content/daily-20261110-14 |
+1. 制作会社・WordPress保守会社向け：保守プランにAI検索対策を組み込む方法（作業範囲・月次報告にGA4のAIの行と登場率を入れる）【制作会社向け】
+2. 整骨院・接骨院のAI検索対策（施術内容・保険の扱い・広告規制との関係）【業種別】
+3. 不動産会社のAI検索対策（物件情報・対応エリア・RealEstateAgent）【業種別】
+4. Search ConsoleでGoogleのAI機能（AIによる概要・AIモード）の影響を見る方法（ai-traffic-google-analytics の続き）
+5. SWELL・Lightningでの構造化データとllms.txtの整え方（テーマ別の注意）
