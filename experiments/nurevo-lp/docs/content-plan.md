@@ -15,6 +15,7 @@
 | aeo-wordpress | WordPressのAEO |
 | local-business-schema-seo-plugins | Yoast・Rank Math・AIOSEOに店舗の構造化データを追加 |
 | aeo-signals-ai-answers-study | AEOシグナルとAI回答の調査 |
+| research-japan-web-agencies-ai-search-2026 | 調査レポート：国内Web制作会社サイトのAI検索対応状況（総論、2,357件、2026-11-05集計） |
 | ai-visibility-check | （枠のみ・未公開）AIに見えているかの確認 |
 
 ## 日次ログ
@@ -72,3 +73,11 @@
 4. SWELL・Lightningでの構造化データとllms.txtの整え方（テーマ別の注意）
 5. 学習塾のAI検索対策（コース・料金・対象学年・体験授業）【業種別】
 翻訳の残り（8時台で補完）：search-console-ai-features（ja/en のみ）ほか未マージPRの ja/en 記事。
+
+## 調査レポート（research-）ログ
+
+| 日付（JST） | スラッグ | 切り口 | データ | 言語 | PR |
+|---|---|---|---|---|---|
+| 2026-11-10 | research-japan-web-agencies-ai-search-2026 | 総論（国内Web制作会社サイトのAI検索対応状況） | summary_2026-11-05 | ja/en | content/research-20261110（未マージの #57・#60 と同じ切り口。#60 の原稿を最新の main に載せ直したもの） |
+
+未着手の切り口：AIクローラーのブロック実態（ボット別）／llms.txt 導入率／構造化データの種類と壊れ率／都道府県別／WordPress と非WordPress／SEOプラグイン別／日本と海外の比較／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。
