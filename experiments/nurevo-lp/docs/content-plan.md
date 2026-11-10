@@ -65,3 +65,11 @@
 4. 飲食店のAI検索対策：メニュー・営業時間・予約・アレルギー表示の書き方【業種別】
 5. 商品フィードとAI：Merchant Center・ChatGPTの商品フィード・構造化データの役割分担（online-shop-ai-search の続き）
 メモ：多言語の仕組み（src/i18n/locales.mjs）は main にマージ済み。新しい記事は ja/en を .mjs、他の39言語を src/content/<slug>/<code>.json に書く。dental-clinic-ai-search（PR未マージ）は ja/en のみのため、マージ後に翻訳を補う。
+| 2026-11-02 17時 | agency-aeo-proposal-audit | 制作会社向け：AI検索対策の初回診断と提案書の進め方（診断を「読めるか／どう見えているか」に分ける7ステップ、質問の3種類、結果の優先順位表、提案書の8章テンプレート、約束してはいけない表現の言い換え〔Google「SEOの専門家が必要ですか？」・生成AI最適化ガイド・第三者ツールのページ〕、Search Console生成AIパフォーマンスレポート）。ja/en のみ（他言語は後日の8時台で補完） | 制作会社向け | content/daily-20261102-17 |
+翻訳の残り（8時台で補完）：dental-clinic-ai-search、agency-aeo-proposal-audit。
+次の候補：
+1. BtoB・SaaSのAI検索対策：サービス・料金・導入事例ページとllms.txt【業種別】
+2. 飲食店のAI検索対策：メニュー・営業時間・予約・アレルギー表示の書き方【業種別】
+3. AIからのアクセスを解析ツールで見分ける方法（参照元・utm_source・AIクローラのログ、Search Console生成AIパフォーマンスレポート）
+4. 士業（税理士・行政書士・弁護士）のAI検索対策：専門分野・対応地域・料金表示と広告規程【業種別】
+5. SWELL・Lightning・SEO SIMPLE PACKでのAI検索対策（テーマ・プラグイン別の構造化データの出方）
