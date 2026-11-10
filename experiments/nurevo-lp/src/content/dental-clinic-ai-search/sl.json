@@ -1,0 +1,143 @@
+{
+ "title": "Iskanje z UI za zobozdravstvene ordinacije: pravilni podatki | Nurevo",
+ "description": "AEO za zobozdravnike se začne s pravilno objavljenim delovnim časom, storitvami, naslovom in naročanjem v besedilu strani in podatkih Dentist. Koraki in seznam.",
+ "h1": "Iskanje z UI za zobozdravstvene ordinacije: kako doseči, da UI pravilno prebere podatke o vaši ordinaciji",
+ "lead": "Optimizacija za iskanje z UI (AEO) pri zobozdravstveni ordinaciji se v bistvu skrči na eno: točno in povsod enako objaviti tisto, kar sprašujejo pacienti (delovni čas, dneve, ko je zaprto, storitve, naslov, telefonsko številko in način naročanja), in to v besedilu strani in v strukturiranih podatkih schema.org Dentist. Tako ChatGPT, Perplexity in Googlova UI dobijo vse, kar potrebujejo, da brez ugibanja odgovorijo na vprašanje „kateri zobozdravnik v bližini je odprt v soboto?“. Pravila o oglaševanju v zdravstvu za vaše spletno mesto še vedno veljajo, zato ne dodajajte izjav pacientov ali drznih trditev samo zato, ker je bralec stroj.",
+ "intro": [
+  "Napisano 29. oktobra 2026 (JST). Podatki Googla, schema.org in japonskega Ministrstva za zdravje, delo in socialne zadeve so bili ta dan preverjeni na posameznih uradnih straneh.",
+  "Odgovori UI se spreminjajo iz dneva v dan in glede na to, kako je vprašanje zastavljeno. Koraki v tem članku poskrbijo, da UI lahko prebere podatke o vaši ordinaciji. Ne zagotavljajo, da bo UI vašo ordinacijo omenila ali jo kamor koli uvrstila."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj pacienti sprašujejo UI in kaj UI bere",
+   "paragraphs": [
+    "Ko nekdo prosi ChatGPT, Perplexity ali Google AI Overviews, naj mu poiščejo zobozdravnika, UI prebere, kar najde na spletu, in sestavi odgovor. Vprašanja se navadno nanašajo na kraj, dan, uro in storitev: „zobozdravnik blizu postaje, ki je odprt v soboto“, „družinski zobozdravnik, ki sprejema otroke“, „zobozdravstvena ordinacija z večernimi termini po 19. uri“.",
+    "Da lahko odgovori, mora UI znati prebrati, kje je vaša ordinacija, katere dni in ob katerih urah je odprta ter kaj zdravi. Če je delovni čas le na sliki, se dnevi, ko je zaprto, razlikujejo med stranmi ali storitve nikjer niso zapisane kot besedilo, je vašo ordinacijo težje uporabiti v odgovoru.",
+    "Google navaja, da za prikaz v AI Overviews ali AI Mode ni dodatnih zahtev in ni potrebnih posebnih oznak schema.org ter da običajne osnove SEO še vedno veljajo, na primer da se strukturirani podatki ujemajo z vidnim besedilom in da je Profil podjetja posodobljen. [Google: funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features). Ne gre za trik za UI, temveč za pravilno in dosledno objavo podatkov o vaši ordinaciji."
+   ]
+  },
+  {
+   "heading": "Podatki, ki jih mora objaviti zobozdravstvena ordinacija",
+   "paragraphs": [
+    "V strukturiranih podatkih je zobozdravstvena ordinacija opisana kot [schema.org Dentist](https://schema.org/Dentist), vrsta LocalBusiness. Googlova dokumentacija za lokalna podjetja navaja name in address kot obvezna, priporoča med drugim openingHoursSpecification, telephone in url ter prosi za uporabo čim bolj specifične podvrste LocalBusiness. [Google: strukturirani podatki lokalnega podjetja](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+   ],
+   "table": {
+    "head": [
+     "Podatek",
+     "Na strani",
+     "V strukturiranih podatkih (Dentist)"
+    ],
+    "rows": [
+     [
+      "Ime ordinacije",
+      "Uradno ime, povsod zapisano enako, usklajeno z napisom in Profilom podjetja",
+      "name (obvezno)"
+     ],
+     [
+      "Naslov in dostop",
+      "Polni naslov ter kot besedilo bližnje postaje, parkirišče ali orientacijske točke",
+      "address (obvezno), geo (priporočeno)"
+     ],
+     [
+      "Telefon in naročanje",
+      "Telefonska številka kot besedilo in povezava na spletno naročanje, če ga imate",
+      "telephone, url (priporočeno)"
+     ],
+     [
+      "Delovni čas in dnevi, ko je zaprto",
+      "Tabela v besedilu, ne slika, vključno z opoldanskim odmorom, krajšimi sobotami in prazniki",
+      "openingHoursSpecification (priporočeno)"
+     ],
+     [
+      "Storitve",
+      "Splošno zobozdravstvo, otroško zobozdravstvo, ortodontija, oralna kirurgija itd., zapisano kot besedilo",
+      "Storitve (Service), povezane z ordinacijo"
+     ],
+     [
+      "Pogosta vprašanja",
+      "Kar pacienti res sprašujejo: parkiranje, zavarovanje, kaj prinesti na prvi obisk",
+      "FAQPage, samo na strani, kjer so pogosta vprašanja vidna"
+     ]
+    ],
+    "caption": "Obvezne in priporočene lastnosti, kot so bile navedene v Googlovi dokumentaciji za lokalna podjetja 29. oktobra 2026."
+   },
+   "after": [
+    "Najpomembneje je, da ima isti podatek povsod isto vrednost: v besedilu strani, v strukturiranih podatkih, v Googlovem Profilu podjetja in v llms.txt. Ko prazniki ali začasna zaprtja spremenijo delovni čas, posodobite vse hkrati."
+   ]
+  },
+  {
+   "heading": "Pravila o oglaševanju v zdravstvu: česa ne dodajati zaradi UI",
+   "paragraphs": [
+    "Pravila se razlikujejo po državah, zato preverite tista, ki veljajo za vas. Na Japonskem je sprememba zakona o zdravstveni oskrbi, ki je začela veljati 1. junija 2018, spletna mesta zdravstvenih ustanov uvrstila pod pravila o oglaševanju v zdravstvu. Zbirka primerov Ministrstva za zdravje, delo in socialne zadeve o spletnih mestih obravnava lažne in pretirane trditve, trditve o tem, da je ordinacija boljša od drugih, izjave pacientov ter fotografije pred zdravljenjem in po njem kot primere prepovedanega oglaševanja. [Zbirka primerov MHLW (gradivo odbora, v japonščini)](https://www.mhlw.go.jp/content/10800000/001232587.pdf) / [Obvestilo o 5. izdaji, 11. marec 2025 (v japonščini)](https://www.mhlw.go.jp/content/001440134.pdf)",
+    "Zato zaradi UI v strukturirane podatke ali pogosta vprašanja ne dodajajte fraz, kot sta „številka 1 v okolici“ ali „neboleče zdravljenje“, niti mnenj in izjav pacientov. Strukturirani podatki so vsebina vaše strani, zapisana za stroje: česar ne morete napisati na stran, tega ne pišite niti v oznake.",
+    "Po drugi strani zbirka primerov določa pogoje, pod katerimi lahko spletno mesto, ki ga pacienti poiščejo sami, pojasni več, na primer vsebino, stroške ter glavna tveganja in stranske učinke zdravljenja, ki ga plača pacient, s kontaktnimi podatki za vprašanja. Ali je določena formulacija dovoljena, preverite v uradnih smernicah ali pri lokalnem zdravstvenem organu."
+   ]
+  },
+  {
+   "heading": "Nastavitev na spletnem mestu zobozdravstvene ordinacije v WordPressu",
+   "list": [
+    "Namestite Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) in ga aktivirajte. Če uporabljate Yoast SEO, Rank Math, All in One SEO ali Slim SEO, ga obdržite.",
+    "V čarovniku za nastavitev izberite „Clinic or dental“ in vrsto podjetja nastavite na Dentist. Preverite ime, naslov, telefon, delovni čas in opis. Iz obstoječih nastavitev se izpolnijo samo prazna polja; nič, kar ste vnesli, se ne prepiše.",
+    "V Nastavitvah dodajte svoje storitve (splošno, otroško zobozdravstvo itd.) kot storitve in vnesite pogosta vprašanja. Vprašanja iz pogostih vprašanj se dodajo v FAQPage na strani, kamor postavite blok Nurevo FAQ ali kratko kodo [nurevo_faq].",
+    "Zaženite diagnostiko na zaslonu AEO Score in uporabite popravke z enim klikom, ki jih ponudi kontrolni seznam. Strukturirani podatki, llms.txt in dostop pajkov UI (OAI-SearchBot, PerplexityBot, Claude-SearchBot in drugi) so vsi v brezplačnem paketu.",
+    "Z [brezplačnim preverjanjem berljivosti za UI](/check) si oglejte, kaj UI prebere od zunaj, in preverite, ali se delovni čas ujema z Googlovim Profilom podjetja."
+   ],
+   "after": [
+    "Ko je aktiven SEO vtičnik, Nurevo AEO ne izpiše drugega niza strukturiranih podatkov. V graf, ki ga vaš SEO vtičnik že objavlja, doda samo manjkajoči naslov, telefon, delovni čas in vrsto Dentist. Glejte [dodajanje sheme lokalnega podjetja v Yoast, Rank Math in AIOSEO](/guide/local-business-schema-seo-plugins/). Na spletnih mestih, ki niso izdelana v WordPressu, velja isto načelo: podatke iz zgornje tabele objavite v besedilu strani in v strukturiranih podatkih."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Delovni čas in dnevi, ko je zaprto, so zapisani kot besedilo, ne prikazani na sliki.",
+    "Ime, naslov in telefon se ujemajo na spletnem mestu in v Googlovem Profilu podjetja.",
+    "Vrsta strukturiranih podatkov je Dentist, ne splošni Organization.",
+    "Delovni čas v strukturiranih podatkih se ujema z delovnim časom, vidnim na strani.",
+    "Strukturirani podatki FAQ so samo na strani, kjer so ta pogosta vprašanja vidna.",
+    "Brez izjav pacientov, fotografij pred in po ter primerjalnih ali pretiranih trditev, ne v besedilu ne v oznakah.",
+    "llms.txt navaja strani s predstavitvijo ordinacije, storitvami, dostopom in naročanjem. [Kaj je llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Kako preveriti, ali se pojavljate v odgovorih UI",
+   "paragraphs": [
+    "Ko so podatki urejeni, UI zastavite vprašanja, ki bi jih zastavili vaši pacienti, in preverite, ali se vaša ordinacija pojavi z imenom ali URL-jem. Odgovori se med posameznimi poskusi spreminjajo, zato ista vprašanja zastavite večkrat, v časovnih presledkih.",
+    "Paketa Free in Standard v Nurevo AEO vključujeta mesečno preverjanje: tri vprašanja, sestavljena iz vrste vaše dejavnosti in območja (nikoli iz imena ordinacije), se zastavijo Perplexity, vtičnik pa zabeleži, ali so odgovori omenili vašo ordinacijo ali navedli vaše spletno mesto. Paket Pro (od $99/mesec) doda merjenje vidnosti v UI v beta različici: kako pogosto se vaša ordinacija pojavlja v odgovorih UI, s primerjavo s konkurenco in zgodovino (zaenkrat na Perplexity). Obe funkciji delata z vzorcem odgovorov in ne spremljata vsakega odgovora."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kje naj zobozdravstvena ordinacija začne z iskanjem z UI?",
+   "a": "Na svojih straneh pravilno kot besedilo zapišite delovni čas, dneve, ko je zaprto, naslov, telefon in storitve. Nato iste podatke objavite kot strukturirane podatke Dentist in v llms.txt ter preverite, ali se ujemajo z Googlovim Profilom podjetja."
+  },
+  {
+   "q": "Ali so strukturirani podatki Organization ali LocalBusiness za zobozdravnika napačni?",
+   "a": "Niso napačni, vendar Google prosi za uporabo čim bolj specifične vrste. Za zobozdravstveno ordinacijo je to schema.org Dentist."
+  },
+  {
+   "q": "Ali naj zaradi UI dodam mnenja ali izjave pacientov?",
+   "a": "Najprej preverite lokalna pravila. Na Japonskem za spletna mesta ordinacij veljajo pravila o oglaševanju v zdravstvu, izjave pacientov pa se štejejo za prepovedano oglaševanje. Ne dodajajte jih niti v strukturirane podatke ali pogosta vprašanja zaradi UI."
+  },
+  {
+   "q": "Ali je Nurevo AEO brezplačen?",
+   "a": "Da. Vrsta podjetja (Dentist), naslov, delovni čas, storitve in strukturirani podatki FAQ, llms.txt, pravila za pajke UI in ocena AEO so v brezplačnem paketu. Plačljivi paketi dodajo vedno posodobljen nabor pravil (Standard, $20/mesec) in merjenje vidnosti v UI v beta različici (Pro, od $99/mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Ali to zagotavlja, da se bo moja ordinacija pojavila v ChatGPT?",
+   "a": "Ne. Odgovori UI se spreminjajo in nobeno orodje ali tehnika ne more zagotoviti omembe ali položaja. Lahko pa poskrbite, da UI vaše podatke zlahka prebere, in sproti preverjate, ali se pojavljate."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Najprej poglejte, kako UI bere spletno mesto vaše ordinacije",
+  "body": "Brezplačno preverjanje pokaže stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI, brez registracije. V WordPressu Nurevo AEO vrzeli zapolni brezplačno.",
+  "label": "Opravite brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Prenesite Nurevo AEO z WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI, Google pa družbe Google LLC. Yoast SEO, Rank Math, All in One SEO in Slim SEO so blagovne znamke svojih lastnikov. Nurevo z njimi ni povezan. Ta članek ni pravno svetovanje."
+}

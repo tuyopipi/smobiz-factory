@@ -1,0 +1,143 @@
+{
+ "title": "Tekoälyhaku hammasklinikoille: näin tiedot luetaan oikein | Nurevo",
+ "description": "Hammaslääkärin AEO alkaa siitä, että aukioloajat, hoidot, osoite ja ajanvaraus ovat oikein sivun tekstissä ja Dentist-rakenteisessa datassa. Vaiheet ja tarkistuslista.",
+ "h1": "Tekoälyhaku hammasklinikoille: näin tekoäly lukee vastaanottosi tiedot oikein",
+ "lead": "Hammasklinikan tekoälyhakuoptimointi (AEO) tarkoittaa ennen kaikkea sitä, että potilaiden kysymät tiedot (aukioloajat, suljetut päivät, hoidot, osoite, puhelinnumero ja ajanvaraustapa) julkaistaan tarkasti ja yhtenäisesti sekä sivujen tekstissä että schema.org Dentist -tyyppisenä rakenteisena datana. Silloin ChatGPT:llä, Perplexityllä ja Googlen tekoälyllä on kaikki, mitä ne tarvitsevat vastatakseen kysymykseen ”mikä lähellä oleva hammaslääkäri on auki lauantaina?” arvaamatta. Terveydenhuollon mainontaa koskevat säännöt koskevat edelleen sivustoasi, joten älä lisää potilaskokemuksia tai rohkeita väitteitä vain siksi, että lukijana on kone.",
+ "intro": [
+  "Kirjoitettu 29. lokakuuta 2026 (JST). Googlen, schema.orgin ja Japanin terveys-, työ- ja hyvinvointiministeriön tiedot tarkistettiin kunkin virallisilta sivuilta samana päivänä.",
+  "Tekoälyn vastaukset muuttuvat päivästä toiseen ja kysymyksen muotoilun mukaan. Tässä kuvatut vaiheet tekevät vastaanottosi tiedoista tekoälylle luettavia. Ne eivät takaa, että tekoäly mainitsee klinikkasi tai sijoittaa sen mihinkään."
+ ],
+ "sections": [
+  {
+   "heading": "Mitä potilaat kysyvät tekoälyltä, ja mitä tekoäly lukee",
+   "paragraphs": [
+    "Kun joku pyytää ChatGPT:tä, Perplexityä tai Googlen tekoälyn yhteenvetoja etsimään hammaslääkärin, tekoäly lukee verkosta löytämänsä ja muodostaa vastauksen. Kysymykset koskevat yleensä paikkaa, päivää, aikaa ja hoitoa: ”hammaslääkäri aseman lähellä, joka on auki lauantaina”, ”perhehammaslääkäri, joka hoitaa lapsia”, ”hammasklinikka, jossa on iltavastaanotto klo 19 jälkeen”.",
+    "Vastatakseen niihin tekoälyn on pystyttävä lukemaan, missä vastaanottosi sijaitsee, minä päivinä ja aikoina se on auki ja mitä se hoitaa. Jos aukioloajat ovat olemassa vain kuvana, suljetut päivät eroavat sivujen välillä tai hoitoja ei ole koskaan kirjoitettu tekstinä, klinikkaasi on vaikeampi käyttää vastauksessa.",
+    "Google sanoo, että tekoälyn yhteenvedoissa tai AI-tilassa näkyminen ei edellytä lisävaatimuksia eikä erityistä schema.org-merkintää, ja että tavalliset SEO:n perusasiat ovat edelleen tärkeitä, kuten se, että rakenteinen data vastaa näkyvää tekstiä ja yritysprofiili pidetään ajan tasalla. [Google: Tekoälyominaisuudet ja sivustosi](https://developers.google.com/search/docs/appearance/ai-features). Työ ei ole tekoälytemppu: kyse on vastaanottosi tietojen julkaisemisesta oikein ja johdonmukaisesti."
+   ]
+  },
+  {
+   "heading": "Tiedot, jotka hammasklinikan kannattaa julkaista",
+   "paragraphs": [
+    "Rakenteisessa datassa hammasklinikka kuvataan tyypillä [schema.org Dentist](https://schema.org/Dentist), joka on LocalBusinessin alatyyppi. Googlen paikallisten yritysten dokumentaatio merkitsee name- ja address-ominaisuudet pakollisiksi, suosittelee muun muassa openingHoursSpecification-, telephone- ja url-ominaisuuksia ja pyytää käyttämään tarkinta mahdollista LocalBusinessin alatyyppiä. [Google: Paikallisen yrityksen rakenteinen data](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+   ],
+   "table": {
+    "head": [
+     "Tieto",
+     "Sivulla",
+     "Rakenteisessa datassa (Dentist)"
+    ],
+    "rows": [
+     [
+      "Vastaanoton nimi",
+      "Virallinen nimesi, kirjoitettuna samoin kaikkialla, kylttisi ja yritysprofiilisi mukaisesti",
+      "name (pakollinen)"
+     ],
+     [
+      "Osoite ja reittiohjeet",
+      "Täydellinen osoite sekä lähimmät asemat, pysäköinti tai maamerkit tekstinä",
+      "address (pakollinen), geo (suositeltu)"
+     ],
+     [
+      "Puhelin ja ajanvaraus",
+      "Puhelinnumero tekstinä ja linkki verkkoajanvaraukseen, jos sellainen on",
+      "telephone, url (suositeltu)"
+     ],
+     [
+      "Aukioloajat ja suljetut päivät",
+      "Tekstitaulukko, ei kuva, mukaan lukien lounastauot, lyhyet lauantait ja pyhäpäivät",
+      "openingHoursSpecification (suositeltu)"
+     ],
+     [
+      "Hoidot",
+      "Yleishammashoito, lasten hammashoito, oikomishoito, suukirurgia ja niin edelleen, kirjoitettuna tekstinä",
+      "Vastaanottoon liitetyt palvelut (Service)"
+     ],
+     [
+      "Usein kysytyt kysymykset",
+      "Mitä potilaat todella kysyvät: pysäköinti, vakuutus, mitä ottaa mukaan ensikäynnille",
+      "FAQPage, vain sivulla, jolla kysymykset näkyvät"
+     ]
+    ],
+    "caption": "Pakolliset ja suositellut ominaisuudet Googlen paikallisten yritysten dokumentaation mukaan 29. lokakuuta 2026."
+   },
+   "after": [
+    "Tärkeintä on, että samalla tiedolla on sama arvo kaikkialla: sivun tekstissä, rakenteisessa datassa, Googlen yritysprofiilissa ja llms.txt-tiedostossa. Kun pyhät tai tilapäiset sulkemiset muuttavat aukioloaikoja, päivitä ne kaikki yhdessä."
+   ]
+  },
+  {
+   "heading": "Terveydenhuollon mainontasäännöt: mitä ei kannata lisätä tekoälyä varten",
+   "paragraphs": [
+    "Säännöt vaihtelevat maittain, joten tarkista sinua koskevat säännöt. Japanissa 1. kesäkuuta 2018 voimaan tullut terveydenhuoltolain (Medical Care Act) muutos toi lääketieteellisten laitosten verkkosivustot lääketieteellisen mainonnan sääntöjen piiriin. Terveys-, työ- ja hyvinvointiministeriön verkkosivustoja koskeva esimerkkikokoelma pitää kiellettyinä mainontana esimerkiksi vääriä ja liioiteltuja väitteitä, väitteitä muita klinikoita paremmasta, potilaskokemuksia sekä ennen ja jälkeen -hoitokuvia. [MHLW:n esimerkkikokoelma (komitean aineisto, japaniksi)](https://www.mhlw.go.jp/content/10800000/001232587.pdf) / [5. painoksen tiedote, 11. maaliskuuta 2025 (japaniksi)](https://www.mhlw.go.jp/content/001440134.pdf)",
+    "Älä siis lisää rakenteiseen dataan tai UKK:hon tekoälyn vuoksi ilmauksia kuten ”alueen nro 1” tai ”kivuton hoito”, äläkä potilasarvosteluja tai potilaskokemuksia. Rakenteinen data on sivusi sisältö koneille kirjoitettuna: jos et voi sanoa sitä sivulla, älä sano sitä merkinnöissä.",
+    "Toisaalta esimerkkikokoelma määrittelee ehdot, joilla potilaiden itse hakemalla sivustolla voidaan kertoa enemmän, kuten itse maksettavan hoidon sisällöstä, hinnasta sekä tärkeimmistä riskeistä ja sivuvaikutuksista, yhteystietoineen kysymyksiä varten. Tarkista virallisesta ohjeistuksesta tai paikalliselta terveysviranomaiselta, onko jokin tietty muotoilu sallittu."
+   ]
+  },
+  {
+   "heading": "Käyttöönotto WordPress-hammaslääkärisivustolla",
+   "list": [
+    "Asenna Nurevo AEO (ilmainen) [WordPress.orgista](https://wordpress.org/plugins/nurevo-webmcp/) ja ota se käyttöön. Pidä Yoast SEO, Rank Math, All in One SEO tai Slim SEO, jos käytät jotakin niistä.",
+    "Valitse ohjatussa asennuksessa ”Klinikka tai hammaslääkäri” ja aseta yritystyypiksi Dentist. Vahvista nimi, osoite, puhelin, aukioloajat ja kuvaus. Vain tyhjät kentät täytetään nykyisistä asetuksistasi; mitään kirjoittamaasi ei korvata.",
+    "Lisää asetuksissa hoitosi (yleishammashoito, lasten hammashoito ja niin edelleen) palveluiksi ja syötä UKK. UKK-kysymykset lisätään sivun FAQPage-dataan sillä sivulla, jolle sijoitat Nurevo FAQ -lohkon tai [nurevo_faq]-lyhytkoodin.",
+    "Suorita diagnoosi AEO-pisteet-näkymässä ja ota käyttöön tarkistuslistan tarjoamat yhden napsautuksen korjaukset. Rakenteinen data, llms.txt ja tekoälyindeksoijien pääsy (OAI-SearchBot, PerplexityBot, Claude-SearchBot ja muut) sisältyvät kaikki ilmaiseen tilaukseen.",
+    "Katso, mitä tekoäly lukee ulkopuolelta, [ilmaisella tekoälyluettavuuden tarkistuksella](/check), ja varmista, että aukioloajat vastaavat Googlen yritysprofiiliasi."
+   ],
+   "after": [
+    "Kun SEO-lisäosa on käytössä, Nurevo AEO ei tulosta toista rakenteisen datan sarjaa. Se lisää vain puuttuvan osoitteen, puhelimen, aukioloajat ja Dentist-tyypin graafiin, jonka SEO-lisäosasi jo julkaisee. Katso [paikallisen yrityksen schema Yoastiin, Rank Mathiin ja AIOSEOon](/guide/local-business-schema-seo-plugins/). Muilla kuin WordPressillä tehdyillä sivustoilla pätee sama ajatus: julkaise yllä olevan taulukon tiedot sivun tekstissä ja rakenteisessa datassa."
+   ]
+  },
+  {
+   "heading": "Tarkistuslista ennen julkaisua",
+   "list": [
+    "Aukioloajat ja suljetut päivät on kirjoitettu tekstinä, ei näytetty kuvana.",
+    "Nimi, osoite ja puhelin ovat samat sivustollasi ja Googlen yritysprofiilissa.",
+    "Rakenteisen datan tyyppi on Dentist, ei yleinen Organization.",
+    "Rakenteisen datan aukioloajat vastaavat sivulla näkyviä aukioloaikoja.",
+    "UKK:n rakenteinen data on vain sillä sivulla, jolla kyseiset kysymykset näkyvät.",
+    "Ei potilaskokemuksia, ennen ja jälkeen -kuvia tai vertailevia tai liioiteltuja väitteitä, ei tekstissä eikä merkinnöissä.",
+    "llms.txt sisältää vastaanottosi esittelyn, hoidot, reittiohjeet ja ajanvaraussivut. [Mikä on llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Näin tarkistat, näytkö tekoälyn vastauksissa",
+   "paragraphs": [
+    "Kun tiedot ovat kunnossa, kysy tekoälyltä kysymyksiä, joita potilaasi kysyisivät, ja katso, mainitaanko vastaanottosi nimellä tai URL-osoitteella. Vastaukset vaihtelevat kerrasta toiseen, joten kysy samat kysymykset muutaman kerran eri aikoina.",
+    "Nurevo AEO:n Free- ja Standard-tilauksiin sisältyy kuukausittainen tarkistus: kolme yritystyypin ja alueen perusteella muodostettua kysymystä (ei koskaan klinikkasi nimeä) esitetään Perplexitylle, ja lisäosa kirjaa, mainitsivatko vastaukset vastaanottosi tai viittasivatko ne sivustoosi. Pro-tilaus (alkaen $99/kk) lisää beta-vaiheessa olevan tekoälynäkyvyyden mittauksen: kuinka usein vastaanottosi näkyy tekoälyn vastauksissa, kilpailijavertailun ja historian kanssa (tällä hetkellä Perplexityssä). Molemmat perustuvat otantaan eivätkä seuraa jokaista vastausta."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Mistä hammasklinikan kannattaa aloittaa tekoälyhaun kanssa?",
+   "a": "Kirjoita aukioloajat, suljetut päivät, osoite, puhelin ja hoidot oikein tekstinä sivuillesi. Julkaise sitten samat tiedot Dentist-tyyppisenä rakenteisena datana ja llms.txt-tiedostossa, ja varmista, että ne vastaavat Googlen yritysprofiiliasi."
+  },
+  {
+   "q": "Onko Organization- tai LocalBusiness-tyyppinen rakenteinen data väärin hammaslääkärille?",
+   "a": "Ei väärin, mutta Google pyytää käyttämään tarkinta mahdollista tyyppiä. Hammasklinikalle se on schema.org Dentist."
+  },
+  {
+   "q": "Pitäisikö minun lisätä potilasarvosteluja tai potilaskokemuksia tekoälyä varten?",
+   "a": "Tarkista ensin paikalliset säännöt. Japanissa klinikoiden verkkosivustot kuuluvat lääketieteellisen mainonnan sääntöjen piiriin, ja potilaskokemuksia pidetään kiellettynä mainontana. Älä lisää niitä myöskään rakenteiseen dataan tai UKK:hon tekoälyä varten."
+  },
+  {
+   "q": "Onko Nurevo AEO ilmainen?",
+   "a": "On. Yritystyypin (Dentist), osoitteen, aukioloaikojen, palveluiden ja usein kysyttyjen kysymysten rakenteinen data, llms.txt, tekoälyindeksoijien säännöt ja AEO-pisteet sisältyvät ilmaiseen tilaukseen. Maksulliset tilaukset lisäävät aina ajantasaisen sääntökokoelman (Standard, $20/kk) ja beta-vaiheessa olevan tekoälynäkyvyyden mittauksen (Pro, alkaen $99/kk). [Nurevo AEO WordPress.orgissa](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Takaako tämä, että vastaanottoni näkyy ChatGPT:ssä?",
+   "a": "Ei. Tekoälyn vastaukset muuttuvat, eikä mikään työkalu tai tekniikka voi taata mainintaa tai sijoitusta. Voit kuitenkin tehdä tiedoistasi tekoälylle helposti luettavia ja tarkistaa säännöllisesti, näytkö vastauksissa."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso ensin, miten tekoäly lukee vastaanottosi sivustoa",
+  "body": "Ilmainen tarkistus näyttää rakenteisen datasi, llms.txt-tiedostosi ja tekoälyindeksoijien pääsyn tilan, ilman rekisteröitymistä. WordPressissä Nurevo AEO paikkaa puutteet ilmaiseksi.",
+  "label": "Tee ilmainen tekoälyluettavuuden tarkistus",
+  "href": "/check",
+  "secondary": {
+   "label": "Hanki Nurevo AEO WordPress.orgista",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI:n, Perplexity Perplexity AI:n ja Google Google LLC:n tavaramerkki. Yoast SEO, Rank Math, All in One SEO ja Slim SEO ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa niihin. Tämä artikkeli ei ole oikeudellista neuvontaa."
+}
