@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Search ConsoleでAIによる概要・AIモードの表示を見る方法 | Nurevo</title>
+<meta name="description" content="Search Consoleの「生成AIパフォーマンスレポート」の開き方、表示回数の数え方、通常のレポートとの読み合わせ方、除外設定の注意、WordPressでの手順をまとめました。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/search-console-ai-features/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/search-console-ai-features/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/search-console-ai-features/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/search-console-ai-features/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/search-console-ai-features/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/search-console-ai-features/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/search-console-ai-features/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/search-console-ai-features/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/search-console-ai-features/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="Search ConsoleでAIによる概要・AIモードの表示を見る方法 | Nurevo">
+<meta property="og:description" content="Search Consoleの「生成AIパフォーマンスレポート」の開き方、表示回数の数え方、通常のレポートとの読み合わせ方、除外設定の注意、WordPressでの手順をまとめました。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/search-console-ai-features/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Search ConsoleでAIによる概要・AIモードの表示を見る方法 | Nurevo">
+<meta name="twitter:description" content="Search Consoleの「生成AIパフォーマンスレポート」の開き方、表示回数の数え方、通常のレポートとの読み合わせ方、除外設定の注意、WordPressでの手順をまとめました。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/search-console-ai-features/#webpage","url":"https://nurevo.jp/ja/guide/search-console-ai-features/","name":"Search ConsoleでAIによる概要・AIモードの表示を見る方法 | Nurevo","description":"Search Consoleの「生成AIパフォーマンスレポート」の開き方、表示回数の数え方、通常のレポートとの読み合わせ方、除外設定の注意、WordPressでの手順をまとめました。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/search-console-ai-features/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/search-console-ai-features/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"Search ConsoleでAIによる概要・AIモードの表示を見る方法：生成AIレポートの読み方と注意点","item":"https://nurevo.jp/ja/guide/search-console-ai-features/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/search-console-ai-features/#faq","mainEntity":[{"@type":"Question","name":"生成AIパフォーマンスレポートはどこにありますか？","acceptedAnswer":{"@type":"Answer","text":"Search Console ヘルプにある直接のURL（search.google.com/search-console/performance/search-analytics/ai）から開けます。2026年8月31日時点で全世界のサイトに提供されています。表示されない場合は、AI機能での表示回数が少ないか、「検索の生成 AI」設定で除外されている可能性があります。"}},{"@type":"Question","name":"AIによる概要からのクリック数は見られますか？","acceptedAnswer":{"@type":"Answer","text":"生成AIパフォーマンスレポートで見られるのは表示回数です。GoogleのAI機能からのクリックや表示は、通常の検索パフォーマンスの「ウェブ」の数字に含まれますが、AI機能の分だけを切り分けたクリック数は見られません。ページ別に、AI機能の表示回数と通常のクリック数を並べて読むのが現実的です。"}},{"@type":"Question","name":"グラフの合計と、ページ表の合計が違うのはなぜですか？","acceptedAnswer":{"@type":"Answer","text":"グラフはサイト単位、ページ表はページ単位で数えるためです。同じAIの回答に自社の2ページが出た場合、グラフでは1回、ページ表では各ページに1回ずつ数えられます。報告書では2つを足し合わせないようにします。"}},{"@type":"Question","name":"「検索の生成 AI」設定で除外すると、通常の検索順位は下がりますか？","acceptedAnswer":{"@type":"Answer","text":"Googleは、この設定は検索のほかの部分の順位や掲載の判断には使わないとしています。ただし、除外するとAIによる概要・AIモード・Discoverの生成AI機能からの表示とアクセスはなくなります。AIの学習への利用を制限したい場合は、この設定ではなくGoogle-Extendedを使います。"}},{"@type":"Question","name":"ChatGPTやPerplexityでの表示もSearch Consoleでわかりますか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。Search ConsoleはGoogleのデータだけです。ChatGPTやPerplexityは、アクセス解析の参照元、決めた質問を定期的に聞く方法、計測ツールなどで別に確認します。"}},{"@type":"Question","name":"表示回数を増やすために特別な設定はありますか？","acceptedAnswer":{"@type":"Answer","text":"Googleは、AI機能に表示されるための追加の要件や特別な最適化はないとしています。インデックスされていてスニペット付きで表示できること、内容が質問に直接答えていること、構造化データがページの見える内容と一致していることなど、通常の基本を整えるのが近道です。表示が保証される方法はありません。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check">無料でAI可読性をチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>Search ConsoleでAIによる概要・AIモードの表示を見る方法：生成AIレポートの読み方と注意点</span></nav>
+  <article>
+    <h1>Search ConsoleでAIによる概要・AIモードの表示を見る方法：生成AIレポートの読み方と注意点</h1>
+    <p class="lead">GoogleのAIによる概要（AI Overviews）とAIモードにあなたのサイトがどれだけ表示されたかは、Search Consoleの「生成AIパフォーマンスレポート（検索）」で見られます。2026年8月31日から全世界のサイトに提供されています。わかるのは表示回数で、ページ・国・デバイス・日付ごとに分けられます。クリックはこのレポートには出ないため、通常の検索パフォーマンスと並べて読みます。</p>
+<p>作成日：2026年11月10日。Googleの仕様は、同日にSearch Consoleヘルプと検索セントラルの公式ページで確認したものです。画面や仕様は変わることがあるため、最新のヘルプもあわせてご確認ください。</p>
+<p>このレポートで見えるのはGoogleの検索の中のAI機能だけです。ChatGPTやPerplexityでの見え方は、別の方法で確かめる必要があります（後の章）。また、どんな対策をしても、AIの回答に必ず表示される・順位が保証されるということはありません。AIの回答は日々変わります。</p>
+<section class="qa"><h2>生成AIパフォーマンスレポートでわかること・わからないこと</h2><p>Googleは2026年6月3日にこのレポートを発表し（<a href="https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports">検索セントラル ブログ</a>）、最初は一部のサイトから提供を始めました。ヘルプによると、2026年8月31日時点で全世界のすべてのサイトに提供されています（<a href="https://support.google.com/webmasters/answer/16984139?hl=ja">Search Console ヘルプ：生成 AI パフォーマンス レポート（検索）</a>）。要点は次のとおりです。</p><div class="table-wrap"><table><caption>表示回数のほかに、クリック数・掲載順位・検索キーワードをこのレポートで見られるとは、ヘルプには書かれていません。</caption><thead><tr><th scope="col">項目</th><th scope="col">内容（2026年11月10日時点のヘルプによる）</th></tr></thead><tbody><tr><th scope="row">対象</th><td>Google検索のAIによる概要とAIモード。Search Labsの試験機能のデータは含まれません</td></tr><tr><th scope="row">指標</th><td>表示回数（AI機能の中で、あなたのサイトへのリンクが利用者に表示された回数）</td></tr><tr><th scope="row">分け方</th><td>ページ、国、デバイス（パソコン・タブレット・モバイル）、日付</td></tr><tr><th scope="row">検索タイプ</th><td>「ウェブ：テキストベース」と「ウェブ：マルチモーダル」（Googleレンズ、かこって検索、画像のアップロードなど）</td></tr><tr><th scope="row">時刻</th><td>日付は太平洋時間。直近のデータは暫定値で、グラフでは点線で示されます</td></tr><tr><th scope="row">書き出し</th><td>グラフと表をダウンロード可能。画面で「~」や「-」と表示された値は、ファイルでは0になります</td></tr><tr><th scope="row">通常のレポートとの関係</th><td>通常の検索パフォーマンスの「ウェブ」のデータに含まれる分を、AI機能に絞って見せるもの</td></tr><tr><th scope="row">Discover</th><td>Discoverの生成AI機能は、別の「生成 AI パフォーマンス レポート（Discover）」で見ます</td></tr></tbody></table></div><p>わからないことも押さえておきます。どんな検索語でAIに表示されたか、AIの回答の中で何番目に出たか、AIの回答からのクリック数は、このレポートでは見られません。GoogleのAI機能からのクリックや表示は、通常の検索パフォーマンスの「ウェブ」の数字に含めて集計されます（<a href="https://developers.google.com/search/docs/appearance/ai-features">Google：AI機能とウェブサイト</a>）。Discoverのレポートは<a href="https://support.google.com/webmasters/answer/16983858?hl=ja">こちらのヘルプ</a>にあります。</p></section>
+<section class="qa"><h2>レポートの開き方と、表示されないときの確認</h2><ol><li>Search Consoleで対象のプロパティを選び、生成AIパフォーマンスレポート（検索）を開きます。直接開くURLは https://search.google.com/search-console/performance/search-analytics/ai です（ログインが必要です）。</li><li>期間を「過去3か月」などに広げ、グラフで表示回数の推移を見ます。直近の点線部分は暫定値なので、月の比較からは外します。</li><li>表の「ページ」タブで、AI機能に表示されたページを確認します。リダイレクト後の最終URLで集計されます。</li><li>「国」「デバイス」タブで、どの地域・端末で表示されているかを見ます。店舗や地域の事業なら、国内の比率を確認します。</li><li>検索タイプのフィルタで「ウェブ：マルチモーダル」に切り替え、画像を使った検索での表示があるかも見ておきます（商品や料理、建物などの写真が多いサイト向け）。</li></ol><p>レポートが出てこない、または数字が空のときは、まず2つを確認します。1つは、AI機能での表示回数がまだ少ない場合で、ヘルプはこれがよくある理由だとしています。もう1つは、後で説明する「検索の生成 AI」設定でサイトが除外されている場合です（<a href="https://support.google.com/webmasters/answer/16984139?hl=ja">ヘルプ</a>）。</p>
+<p>なお、2026年8月13日〜17日はGoogle側の記録の不具合で表示回数が少なく出ていましたが、データは後に復元されたと公表されています（<a href="https://support.google.com/webmasters/answer/6211453?hl=ja">Search Console のデータ異常</a>）。過去の数字に不自然な落ち込みがあるときは、まずこのページを見ます。</p></section>
+<section class="qa"><h2>数え方の注意：グラフと表の合計が合わない理由</h2><p>このレポートは、場所によって数え方が違います。知らずに比べると、数字が合わずに混乱します。</p><div class="table-wrap"><table><caption>Search Console ヘルプ（生成 AI パフォーマンス レポート（検索））の説明をもとに作成。</caption><thead><tr><th scope="col">見ている場所</th><th scope="col">数え方</th><th scope="col">例：同じAIの回答に、自社の2ページのリンクが出た</th></tr></thead><tbody><tr><th scope="row">グラフの合計</th><td>プロパティ（サイト）単位</td><td>1回</td></tr><tr><th scope="row">表の「ページ」</th><td>ページ単位</td><td>ページAに1回、ページBに1回（合計2回）</td></tr><tr><th scope="row">表の「国」「デバイス」「日付」</th><td>プロパティ単位</td><td>1回</td></tr><tr><th scope="row">グラフ（URLで絞り込んだとき）</th><td>URL単位</td><td>絞り込んだページの1回</td></tr></tbody></table></div><p>このため、ページ表の合計はグラフの合計より大きくなることがあります。報告書に書くときは「サイト全体の表示回数（グラフ）」と「ページごとの表示回数（表）」を分けて書き、足し合わせないようにします。表は通常のレポートと同じく1,000行までの制限があります。</p></section>
+<section class="qa"><h2>通常の検索パフォーマンスと並べて読む</h2><p>生成AIレポートは表示回数しかないため、単独では「表示が増えて良かった」以上のことが言えません。通常の検索パフォーマンス（検索タイプ：ウェブ）のページ別のクリック数・表示回数と、同じ期間・同じページで並べると、読み取れることが増えます。</p><div class="table-wrap"><table><caption>原因は数字からは断定できません。あくまで仮説を立てて確かめるための目安です。</caption><thead><tr><th scope="col">AI機能の表示回数</th><th scope="col">通常レポートのクリック数</th><th scope="col">考えられること・次にやること</th></tr></thead><tbody><tr><th scope="row">増えた</th><td>増えた・変わらない</td><td>AI機能でも通常の結果でも見つけられている。そのページの事実（料金・営業時間など）が最新かを定期的に確認</td></tr><tr><th scope="row">増えた</th><td>減った</td><td>AIの回答で用が足りて、クリックが減っている可能性。ページの中に、AIの要約だけでは伝わらない情報（予約、見積もり、写真、事例）があるかを見直す</td></tr><tr><th scope="row">少ない・ない</th><td>多い</td><td>通常の検索では強いが、AI機能のリンクにはあまり出ていない。質問に直接答える文章や、ページの見える内容と一致した構造化データがあるかを確認</td></tr><tr><th scope="row">少ない・ない</th><td>少ない</td><td>まずは通常のSEOの基本（インデックス、スニペット表示の可否、内容の充実）から</td></tr></tbody></table></div><p>Googleは、AI機能に表示されるための追加の要件や特別な最適化はなく、ページがインデックスされ、スニペット付きで表示できる状態であることが条件だとしています（<a href="https://developers.google.com/search/docs/appearance/ai-features">Google：AI機能とウェブサイト</a>）。表示が少ないページは、まず通常の検索での状態を確認するのが近道です。</p></section>
+<section class="qa"><h2>毎月の確認チェックリスト</h2><ol><li>期間を前月1か月（太平洋時間の日付）に固定し、グラフの表示回数を記録する。暫定値の日は含めない</li><li>ページ表の上位10ページと、前月からの増減を記録する</li><li>同じ10ページについて、通常の検索パフォーマンス（ウェブ）のクリック数と表示回数を並べて記録する</li><li>国・デバイスの比率に大きな変化がないかを見る</li><li>データ異常のページで、その月に記録の不具合が公表されていないかを確認する</li><li>「検索の生成 AI」設定が意図どおり（通常は「含める」または親から継承）かを確認する</li><li>ChatGPT・Perplexityなど、Google以外のAIでの見え方を別の方法で記録する（後の章）</li></ol><p>記録表の列は「月／AI機能の表示回数（サイト）／上位ページ／そのページのウェブのクリック数・表示回数／メモ（サイトの変更・不具合）」の5つで十分です。サイトの変更（ページの追加、構造化データの修正、テーマ変更）をメモに書いておくと、後で増減の理由を考えやすくなります。</p></section>
+<section class="qa"><h2>「検索の生成 AI」設定：除外すると何が起きるか</h2><p>レポートと同時に、AI機能へのサイトの表示を止める設定も用意されました。Search Consoleの［設定］＞［検索の生成 AI］にあり、2026年8月31日時点で全世界のサイトに提供されています（<a href="https://support.google.com/webmasters/answer/16908024?hl=ja">Search Console ヘルプ：検索の生成 AI 設定</a>）。</p><div class="table-wrap"><table><caption>Search Console ヘルプ（検索の生成 AI 設定）と、Google検索セントラル（AI機能とウェブサイト）をもとに作成。</caption><thead><tr><th scope="col">選択肢・方法</th><th scope="col">起きること</th></tr></thead><tbody><tr><th scope="row">含める（既定）</th><td>AIによる概要・AIモード・Discoverの生成AI機能に、サイトのリンクと内容が使われる</td></tr><tr><th scope="row">除外</th><td>これらのAI機能にリンクと内容が出なくなり、回答を作る材料にも使われない。AI機能からの表示やアクセスもなくなる</td></tr><tr><th scope="row">親から継承</th><td>ドメインプロパティなど上位のプロパティの設定に従う（上位がある場合の既定）</td></tr><tr><th scope="row">Google-Extended（robots.txt）</th><td>AIの学習への利用を制限するためのもの。「検索の生成 AI」設定は学習には影響しない</td></tr><tr><th scope="row">noindex</th><td>Google検索そのものから外す</td></tr><tr><th scope="row">nosnippet・data-nosnippet・max-snippet</th><td>検索結果やAI機能での抜粋（プレビュー）に使われる範囲を制限する</td></tr></tbody></table></div><p>Googleは、この設定は検索のほかの部分の順位や掲載の判断には使わないとしています。除外は設定から1〜2日で反映され、キャッシュなどの都合でもっとかかる場合があります。</p>
+<p>多くの事業者にとって、AI機能はお客様に見つけてもらう入口の1つです。除外するのは、会員向けの情報や、要約されると誤解を招く内容が中心のサイトなど、はっきりした理由がある場合に限るのが無難です。一部の文章だけ要約に使われたくないなら、サイト全体の除外ではなく data-nosnippet を使う方法もあります。</p></section>
+<section class="qa"><h2>WordPressでの手順</h2><ol><li>プロパティはドメインプロパティで登録する：DNSのTXTレコードで所有権を確認します。上位のドメインプロパティの「検索の生成 AI」設定は下位のURLプレフィックスのプロパティに引き継がれるため、www付き・なし、http・httpsをまとめて管理できます。</li><li>インデックスを止めていないか確認する：WordPressの［設定］＞［表示設定］の「検索エンジンでの表示」にチェックが入っていると、検索エンジンにインデックスしないよう求めます。移転や公開直後に外し忘れがないかを見ます。</li><li>robots.txtでGooglebotを止めていないか確認する：ブラウザで /robots.txt を開き、Googlebot や全体（User-agent: *）に Disallow: / がないかを見ます。</li><li>要約に使われたくない一部分には data-nosnippet：ブロックエディタでその段落を「HTMLとして編集」にし、囲む要素に data-nosnippet 属性を付けます。ページ全体を止めたいときは、使っているSEOプラグインのページごとの設定（noindex など）を使います。</li><li>構造化データとページの見える内容をそろえる：営業時間・料金・住所などは、ページの文章と構造化データで同じ値にします。食い違いはAIの回答の誤りの原因になります。</li></ol><p>Nurevo AEO（WordPressプラグイン、無料）は、構造化データ・llms.txt・AI検索のクローラ向けのrobots.txtをサーバー側で出力します。AIの学習用のクローラ（Google-Extendedなど）は、初期設定ではサイトのrobots.txtのとおりにしておき、許可か拒否かを管理画面から選べます。これはrobots.txtの仕組みで、Search Consoleの「検索の生成 AI」設定とは別のものです。<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgで入手</a></p></section>
+<section class="qa"><h2>Search Consoleでわからないこと：ChatGPT・Perplexityの見え方</h2><p>Search Consoleが扱うのはGoogleだけです。ChatGPTやPerplexityの回答にあなたの会社や店が出ているかは、次の方法で補います。</p><div class="table-wrap"><table><thead><tr><th scope="col">方法</th><th scope="col">わかること</th></tr></thead><tbody><tr><th scope="row">アクセス解析の参照元</th><td>AIの回答からサイトに来た訪問。OpenAIは、ChatGPTの検索結果からのリンクに utm_source=chatgpt.com を付けるとしています（<a href="https://help.openai.com/en/articles/12627856-publishers-and-developers-faq">OpenAI：パブリッシャー向けFAQ</a>）</td></tr><tr><th scope="row">決めた質問を定期的に聞く</th><td>店名を含まない質問で、名前が出たか・サイトが引用されたかの割合。<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a></td></tr><tr><th scope="row">計測ツール</th><td>質問のセットを自動で聞き、言及・引用・競合・推移を記録。<a href="/ja/guide/aeo-tools-comparison/">AEOツールの比較</a></td></tr></tbody></table></div><p>Nurevo AEOでは、接続したFree・Standardのサイトに、業種と地域から作った店名を含まない3つの質問を月1回Perplexityに聞く無料のAIチェックがあります。決めた質問のセットを継続して測るPro（月14,800円〜、ベータ）も、現在はPerplexityで測っています。Search ConsoleのGoogleの数字と、こうしたGoogle以外のAIの記録を、同じ月の表に並べておくと全体像がつかめます。</p></section>
+    <section class="qa"><h2>よくある質問</h2><h3>生成AIパフォーマンスレポートはどこにありますか？</h3><p>Search Console ヘルプにある直接のURL（search.google.com/search-console/performance/search-analytics/ai）から開けます。2026年8月31日時点で全世界のサイトに提供されています。表示されない場合は、AI機能での表示回数が少ないか、「検索の生成 AI」設定で除外されている可能性があります。</p>
+<h3>AIによる概要からのクリック数は見られますか？</h3><p>生成AIパフォーマンスレポートで見られるのは表示回数です。GoogleのAI機能からのクリックや表示は、通常の検索パフォーマンスの「ウェブ」の数字に含まれますが、AI機能の分だけを切り分けたクリック数は見られません。ページ別に、AI機能の表示回数と通常のクリック数を並べて読むのが現実的です。</p>
+<h3>グラフの合計と、ページ表の合計が違うのはなぜですか？</h3><p>グラフはサイト単位、ページ表はページ単位で数えるためです。同じAIの回答に自社の2ページが出た場合、グラフでは1回、ページ表では各ページに1回ずつ数えられます。報告書では2つを足し合わせないようにします。</p>
+<h3>「検索の生成 AI」設定で除外すると、通常の検索順位は下がりますか？</h3><p>Googleは、この設定は検索のほかの部分の順位や掲載の判断には使わないとしています。ただし、除外するとAIによる概要・AIモード・Discoverの生成AI機能からの表示とアクセスはなくなります。AIの学習への利用を制限したい場合は、この設定ではなくGoogle-Extendedを使います。</p>
+<h3>ChatGPTやPerplexityでの表示もSearch Consoleでわかりますか？</h3><p>いいえ。Search ConsoleはGoogleのデータだけです。ChatGPTやPerplexityは、アクセス解析の参照元、決めた質問を定期的に聞く方法、計測ツールなどで別に確認します。</p>
+<h3>表示回数を増やすために特別な設定はありますか？</h3><p>Googleは、AI機能に表示されるための追加の要件や特別な最適化はないとしています。インデックスされていてスニペット付きで表示できること、内容が質問に直接答えていること、構造化データがページの見える内容と一致していることなど、通常の基本を整えるのが近道です。表示が保証される方法はありません。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、AIがあなたのサイトを読めるか確認</h2>
+    <p>登録不要の無料チェックで、構造化データやllms.txt、AI検索のクローラの許可など、AIが読む情報の状態がわかります。WordPressなら、Nurevo AEOで不足分を無料で整えられます。</p>
+    <a class="btn primary lg" href="/check">無料でAI可読性をチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgでNurevo AEOを入手</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/aeo-vs-seo-vs-geo/">AEO vs SEO vs GEO：何が違う？</a></li><li><a href="/ja/guide/agency-aeo-monthly-service/">制作会社がAI検索対策（AEO）を月額サービスにする方法：作業範囲・レポート・価格の決め方</a></li><li><a href="/ja/guide/aeo-tools-comparison/">AEOツールの比較と選び方：計測型と実装型、どちらから始めるか</a></li><li><a href="/ja/guide/what-is-aeo/">AEO（アンサーエンジン最適化）とは？</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/search-console-ai-features/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Google、Search Console、Google Discover、ChatGPT、OpenAI、Perplexity、WordPressおよび各製品名は、それぞれの権利者の商標または登録商標です。Nurevoはこれらの企業と提携・協賛関係にありません。</p><a href="/">Nurevo</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
