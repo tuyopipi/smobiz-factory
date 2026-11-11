@@ -2835,6 +2835,7 @@ async function handleAuthRequest(request, env) {
       },
       body: JSON.stringify({
         from: env.MAIL_FROM,
+        reply_to: "tsuyoshi.hashimoto@nurevo.jp",
         to: [email],
         ...magicLinkEmail(link, resolveEmailLocale(await loadEmailPreferences(env, email), request.headers.get("accept-language")))
       })

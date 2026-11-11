@@ -38,11 +38,16 @@ const COPY = {
   de: ["Anmeldelink für Nurevo", "Öffnen Sie den folgenden Link, um sich bei Nurevo anzumelden.", "Bei Nurevo anmelden", "Dieser Link läuft nach 15 Minuten ab.", "Wenn Sie diese E-Mail nicht angefordert haben, können Sie sie ignorieren."]
 };
 const escapeHtml = value => String(value).replace(/[&<>"']/g, c => ({"&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"}[c]));
+
+// 11/11：ログインメールが迷惑メールに入ったため、送り主が分かる署名（事業者名・サイト・問い合わせ先）を付ける。
+// リンクだけの短いメールは、なりすましメールと見分けがつかず迷惑メール判定されやすい。
+const FOOTER_TEXT = "--\nNurevo (Bestie LLC)\nhttps://nurevo.jp/\nsupport: tsuyoshi.hashimoto@nurevo.jp";
+const FOOTER_HTML = '<hr><p style="color:#666;font-size:12px">Nurevo (Bestie LLC)<br><a href="https://nurevo.jp/">https://nurevo.jp/</a><br>support: tsuyoshi.hashimoto@nurevo.jp</p>';
 export function magicLinkEmail(link, locale) {
   const lang = normalizeEmailLocale(locale) || "en";
   const [subject, intro, action, expiry, ignore] = COPY[lang];
-  return { subject, text: `${intro}\n\n${link}\n\n${expiry}\n${ignore}`,
-    html: `<html lang="${lang}"><body><p>${escapeHtml(intro)}</p><p><a href="${escapeHtml(link)}">${escapeHtml(action)}</a></p><p>${escapeHtml(expiry)}</p><p>${escapeHtml(ignore)}</p></body></html>` };
+  return { subject, text: `${intro}\n\n${link}\n\n${expiry}\n${ignore}\n\n${FOOTER_TEXT}`,
+    html: `<html lang="${lang}"><body><p>${escapeHtml(intro)}</p><p><a href="${escapeHtml(link)}">${escapeHtml(action)}</a></p><p>${escapeHtml(expiry)}</p><p>${escapeHtml(ignore)}</p>${FOOTER_HTML}</body></html>` };
 }
 
 // Confirmation uses the same 15-minute, single-use credential as sign-in.
@@ -60,6 +65,6 @@ export function signupLinkEmail(link, locale) {
   const lang = normalizeEmailLocale(locale) || "en";
   const [subject, intro] = SIGNUP_COPY[lang];
   const [, , action, expiry, ignore] = COPY[lang];
-  return { subject, text: `${intro}\n\n${link}\n\n${expiry}\n${ignore}`,
-    html: `<html lang="${lang}"><body><p>${escapeHtml(intro)}</p><p><a href="${escapeHtml(link)}">${escapeHtml(action)}</a></p><p>${escapeHtml(expiry)}</p><p>${escapeHtml(ignore)}</p></body></html>` };
+  return { subject, text: `${intro}\n\n${link}\n\n${expiry}\n${ignore}\n\n${FOOTER_TEXT}`,
+    html: `<html lang="${lang}"><body><p>${escapeHtml(intro)}</p><p><a href="${escapeHtml(link)}">${escapeHtml(action)}</a></p><p>${escapeHtml(expiry)}</p><p>${escapeHtml(ignore)}</p>${FOOTER_HTML}</body></html>` };
 }
