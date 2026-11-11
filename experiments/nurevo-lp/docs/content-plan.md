@@ -74,6 +74,15 @@
 5. 学習塾のAI検索対策（コース・料金・対象学年・体験授業）【業種別】
 翻訳の残り（8時台で補完）：search-console-ai-features（ja/en のみ）ほか未マージPRの ja/en 記事。
 
+| 2026-11-11 20時 | swell-lightning-ai-search | SWELL・Lightning（＋SEO SIMPLE PACK・VK ExUnit）のAI検索対策（構成別の構造化データ出力表〔SWELL 2.19.0：トップ WebSite・Organization、投稿 WebPage・Article、BreadcrumbList、FAQブロックは共通設定と別〕、SSP 3.7.0 は JSON-LD なし、ExUnit 9.123.1 は WebSite・Article のみ、Lightning パンくずは microdata）、5分でできる重複確認、Nurevo 0.9.1 の実際の動き〔対応SEOプラグイン有効時のみトップページ実測で控える、投稿では SWELL の Article と Nurevo の BlogPosting が重なり得る→webmcp_canary_schema_graph か SWELL の「JSON-LDを自動生成する」で寄せる、FAQは1ページ1か所、ExUnit とは per request で調整〕、llms.txt・AIクローラ、チェックリスト、測り方）。SWELL公式・ex-unit.nagoya・wordpress.org は今回取得できず、SWELL は第三者の版付き検証記事を出典に。2言語（ja・en） | 実践ガイド（テーマ別） | content/daily-20261111-20 |
+1. 学習塾のAI検索対策（コース・料金・対象学年・体験授業）【業種別】
+2. 工務店・リフォーム会社のAI検索対策（施工エリア・施工事例・資格）【業種別】
+3. 複数店舗チェーンのAI検索対策：店舗ページの作り方と事実の台帳の運用【制作会社向け】
+4. ポータル・口コミサイトとAI：食べログ・ホットペッパー等の掲載情報と自社サイトの役割分担【業種横断】
+5. Cocoon・JIN:R など他の国内テーマでの構造化データの重複確認（swell-lightning-ai-search の続き）
+翻訳の残り（8時台で補完）：search-console-ai-features、real-estate-ai-search、meo-agency-ai-search、swell-lightning-ai-search（ja/en のみ）ほか未マージPRの ja/en 記事。
+メモ（製品）：SWELL 単体（対応SEOプラグインなし）では Nurevo 0.9.1 はテーマの JSON-LD を見て控えないため WebSite 等が重なる。readme の「a theme's own schema」の記述と合わせて、テーマ検出かトップ以外の実測を検討する価値あり。
+
 ## 調査レポート（research-）ログ
 
 | 日付（JST） | スラッグ | 切り口 | データ | 言語 | PR |

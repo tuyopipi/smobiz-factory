@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SWELL・LightningのAI検索対策：構造化データとllms.txt | Nurevo</title>
+<meta name="description" content="SWELL・Lightning・SEO SIMPLE PACK・VK ExUnitが出す構造化データ、重複の確かめ方、AIに足りない店舗情報・llms.txt・クローラ設定の足し方をまとめました。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/swell-lightning-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/swell-lightning-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/swell-lightning-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/swell-lightning-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/swell-lightning-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/swell-lightning-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/swell-lightning-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/swell-lightning-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/swell-lightning-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="SWELL・LightningのAI検索対策：構造化データとllms.txt | Nurevo">
+<meta property="og:description" content="SWELL・Lightning・SEO SIMPLE PACK・VK ExUnitが出す構造化データ、重複の確かめ方、AIに足りない店舗情報・llms.txt・クローラ設定の足し方をまとめました。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/swell-lightning-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SWELL・LightningのAI検索対策：構造化データとllms.txt | Nurevo">
+<meta name="twitter:description" content="SWELL・Lightning・SEO SIMPLE PACK・VK ExUnitが出す構造化データ、重複の確かめ方、AIに足りない店舗情報・llms.txt・クローラ設定の足し方をまとめました。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/swell-lightning-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/swell-lightning-ai-search/","name":"SWELL・LightningのAI検索対策：構造化データとllms.txt | Nurevo","description":"SWELL・Lightning・SEO SIMPLE PACK・VK ExUnitが出す構造化データ、重複の確かめ方、AIに足りない店舗情報・llms.txt・クローラ設定の足し方をまとめました。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/swell-lightning-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/swell-lightning-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"SWELL・LightningのAI検索対策：テーマの構造化データを活かして、重複させずに足りない事実を足す手順","item":"https://nurevo.jp/ja/guide/swell-lightning-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/swell-lightning-ai-search/#faq","mainEntity":[{"@type":"Question","name":"SWELLを使っていれば、AI検索対策の構造化データは十分ですか？","acceptedAnswer":{"@type":"Answer","text":"記事やサイトの説明（WebSite・Article・パンくずなど）は出ていますが、確認した範囲では住所・電話・営業時間を持つ事業者の情報、llms.txt、AIクローラの許可は含まれません。店舗や会社のサイトなら、これらを足すと AI が事実を確かめやすくなります。"}},{"@type":"Question","name":"SEO SIMPLE PACK は構造化データを出しますか？","acceptedAnswer":{"@type":"Answer","text":"出しません。meta タグ・OGP・認証コードなどを出すプラグインです（3.7.0 のコードで確認）。そのため SWELL と組み合わせた場合、構造化データは SWELL の出力が中心になります。"}},{"@type":"Question","name":"SWELLのJSON-LDはオフにしたほうがいいですか？","acceptedAnswer":{"@type":"Answer","text":"多くの場合は残して構いません。足りない事業者の情報だけを足し、投稿ページで Article が2つになっていないかを確かめれば十分です。オフにするとパンくずの構造化データも止まる点に注意してください。"}},{"@type":"Question","name":"Lightning で Nurevo AEO を入れると、ExUnit と構造化データが重なりませんか？","acceptedAnswer":{"@type":"Answer","text":"Nurevo AEO 0.9.1 は、ExUnit が WebSite・Article を出しているページでは自分の分を出さず、ExUnit の Article に足りない項目だけを足します。ExUnit は事業者のノードを出さないので、事業者の情報は1つになります。"}},{"@type":"Question","name":"llms.txt を置けば ChatGPT に出るようになりますか？","acceptedAnswer":{"@type":"Answer","text":"表示が保証されるものではありません。llms.txt はサイトの要点をAIが読みやすい形で渡す補助です。本文・構造化データ・Googleビジネスプロフィールの事実をそろえることとあわせて行います。"}},{"@type":"Question","name":"テーマを SWELL から Lightning に変えたら、やり直すことはありますか？","acceptedAnswer":{"@type":"Answer","text":"あります。テーマごとに出す構造化データが違うので、変更後にトップ・投稿・FAQのある固定ページの3つで重複の確認をやり直してください。llms.txt と robots.txt の設定はテーマに依存しないため、プラグインで出していればそのまま残ります。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check">無料でAI可読性をチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>SWELL・LightningのAI検索対策：テーマの構造化データを活かして、重複させずに足りない事実を足す手順</span></nav>
+  <article>
+    <h1>SWELL・LightningのAI検索対策：テーマの構造化データを活かして、重複させずに足りない事実を足す手順</h1>
+    <p class="lead">SWELLとLightning（＋VK All in One Expansion Unit）は、サイトと記事を説明する構造化データ（WebSite・Article など）を自動で出します。一方、AIが店や会社を説明するのに使う住所・電話・営業時間・サービス、llms.txt、AI検索のクローラの許可は出しません（この記事で確認した範囲）。SEO SIMPLE PACK は構造化データを出しません。テーマの出力は残し、足りない事実だけを同じ事業者の情報として足し、最後に重複がないことをページごとに確かめるのが基本の手順です。</p>
+<p>作成日：2026年11月11日（JST）。SWELLの出力内容は、SWELL 2.19.0 を2026年9月30日に検証した解説記事（出典を本文に記載）にもとづきます。今回はSWELL公式サイトを読み込めなかったため、テーマの版によって違う可能性があります。必ず後半の手順で、ご自分のサイトの実際の出力を確認してください。</p>
+<p>どんな設定をしても、ChatGPT・Perplexity・GoogleのAIに必ず表示される、順位が保証されるということはありません。AIの回答は日々変わります。この記事の目的は、AIがあなたのサイトの事実を「読み違えない」状態にすることです。</p>
+<section class="qa"><h2>構成ごとに、いま何が出ているか</h2><p>国内のWordPressでよく見る組み合わせごとに、構造化データ（JSON-LD など）の出力をまとめました。左の列が自分のサイトの構成です。</p><div class="table-wrap"><table><caption>SEO SIMPLE PACK・VK ExUnit の内容は、Nurevo AEO 0.9.1 の開発時に各プラグインのコードで確認したもの（版は表のとおり）。</caption><thead><tr><th scope="col">構成</th><th scope="col">出している構造化データ</th><th scope="col">AIに足りないもの</th></tr></thead><tbody><tr><th scope="row">SWELL（2.19.0）</th><td>トップ：WebSite・Organization。投稿・固定ページ：WebSite・WebPage・Article・Organization。カテゴリーなど：CollectionPage。パンくずがあれば BreadcrumbList。FAQブロックは出力設定がオンのとき FAQPage（<a href="https://motoki-design.co.jp/wordpress/swell-structured-data-jsonld/">解説記事</a>）</td><td>Organization は名前・URL・ロゴ・SNSのリンクが中心で、住所・電話・営業時間は含まれない。llms.txt・AIクローラの許可もなし</td></tr><tr><th scope="row">SEO SIMPLE PACK（3.7.0）</th><td>なし。meta タグ・OGP・認証コードなどを出すプラグインで、JSON-LD は出さない</td><td>構造化データ全般（テーマが出す分を除く）</td></tr><tr><th scope="row">Lightning ＋ VK ExUnit（9.123.1）</th><td>ExUnit がトップに WebSite、記事に Article を出す。Lightning のパンくずはHTMLに埋め込む形式（microdata）の構造化データ（<a href="https://www.vektor-inc.co.jp/product-update/lightning-update-change-log/">Lightning 変更履歴</a>）</td><td>事業者の情報（ExUnit は事業者のノードを出さない）、FAQ、llms.txt、AIクローラの許可</td></tr><tr><th scope="row">Lightning（ExUnit の構造化データをオフ）</th><td>パンくずの microdata のみ</td><td>上に加えて WebSite・Article</td></tr></tbody></table></div><p>つまり、どの構成でも「ブログやサイトの説明」はある程度出ていて、「店や会社の事実」と「AI向けの入口（llms.txt・クローラの許可）」が抜けています。ここを埋めるのが、テーマを使ったサイトのAI検索対策の中心です。</p></section>
+<section class="qa"><h2>テーマの構造化データだけでは足りない理由</h2><p>「土曜も開いている近くの整骨院は？」「〇〇市でWordPressに強い制作会社は？」のような質問に答えるとき、AIが必要とするのは、業種・所在地・電話・営業時間・提供しているサービス・料金の目安といった事実です。テーマが出す Article や WebSite は「このページは誰がいつ書いた記事か」を説明するもので、これらの事実は入っていません。</p>
+<p>もちろん、ページの本文に住所や営業時間が書いてあればAIはそれを読めます。ただ、フッターやバナー画像の中に散らばっていると読み違えやすく、構造化データ・llms.txt で同じ事実をはっきり渡しておくと、本文とあわせて確かめられる材料が増えます。大事なのは、本文・構造化データ・Googleビジネスプロフィールで事実が食い違わないことです。</p></section>
+<section class="qa"><h2>まず重複を確かめる：5分でできる手順</h2><ol><li>確かめるページを3種類決めます：トップページ、ふつうの投稿1本、FAQブロックを置いた固定ページ（あれば）。</li><li>それぞれを<a href="https://search.google.com/test/rich-results">リッチリザルト テスト</a>または<a href="https://validator.schema.org/">Schema Markup Validator</a>にかけ、検出された型（@type）を書き出します。</li><li>同じ型が2つ出ていないかを見ます。特に、事業者（Organization や LocalBusiness）が別々の @id で2つ、WebSite が2つ、Article と BlogPosting が別々に1つずつ、FAQPage が2つ、の4つに注意します。</li><li>ブラウザでページのソースを開き「application/ld+json」で検索すると、出力の塊がいくつあるか、どれがテーマでどれがプラグインかを見分けやすくなります。</li><li>重複があれば、どちらか一方を残すと決め、もう一方を止めます（次の章）。止めたら、同じ3ページでもう一度テストします。</li></ol><p>重複そのものがすぐに大きな問題になるとは限りませんが、同じ会社が2社あるように見える、記事が2本あるように見える状態は、AIにも検索エンジンにも余計な判断をさせます。一度確かめておけば、テーマやプラグインを更新するまで同じ状態が続きます。</p></section>
+<section class="qa"><h2>SWELL ＋ SEO SIMPLE PACK での整え方</h2><p>いちばん多い組み合わせです。SEO SIMPLE PACK は meta と OGP のために残し、SWELL の構造化データも残したまま、足りない事実を足します。Nurevo AEO を使う場合の動きは次のとおりです（0.9.1）。</p><ol><li>Nurevo AEO の設定で、業種（歯科・美容室など）、住所、電話、営業時間、メール、サービス、FAQを入力します。空欄は、SEOプラグインの設定やWordPressの設定から読める範囲で補われ、入力済みの値は上書きされません。</li><li>SEO SIMPLE PACK が有効だと、Nurevo AEO はトップページを自分で読み込み（有効化時・保存時・プラグインの組み合わせが変わったとき・毎日）、他が出している型を記録します。SWELL の WebSite が見つかれば、自分の WebSite は出しません。</li><li>SWELL の Organization に住所や電話がなければ、Nurevo AEO は同じ @id で事業者の情報を出し、1つの事業者として足し合わされるようにします（SWELL の Organization に @id がない場合は自分の @id を使います）。</li><li>注意：この読み込みはトップページだけです。SWELL はトップに Article を出さないため、投稿ページでは SWELL の Article と Nurevo AEO の BlogPosting が両方出ることがあります。前の章の手順で投稿ページを確かめ、2つ出ていたらどちらかに寄せます。</li><li>寄せ方の例：SWELL の Article を残す場合は、Nurevo AEO の開発者向けフィルター webmcp_canary_schema_graph で、core から BlogPosting と WebPage を外します。逆に Nurevo AEO に任せる場合は、SWELL設定 →「構造化データ」の「JSON-LDを自動生成する」をオフにできますが、SWELL の BreadcrumbList も止まる点に注意します（Nurevo AEO はパンくずを出しません）。</li><li>FAQは1ページに1か所。SWELL のFAQブロックの構造化データは、共通のJSON-LDをオフにしても止まりません。同じページに Nurevo のFAQブロック（または [nurevo_faq]）を置くと FAQPage が2つになるので、どちらか一方にします。</li></ol><p>SWELL の設定名と、FAQブロックが共通設定と別に動く点は、<a href="https://motoki-design.co.jp/wordpress/swell-disable-jsonld/">解説記事（JSON-LDを止める方法）</a>の SWELL 2.19.0 での検証によるものです。SEOプラグインを何も入れずに SWELL だけで運用している場合、Nurevo AEO 0.9.1 は控える判断をせず自分の一式を出すため、WebSite などが重なりやすくなります。この場合も上の手順で確かめてください。</p></section>
+<section class="qa"><h2>Lightning ＋ VK ExUnit での整え方</h2><p>Lightning では、構造化データは主に ExUnit が担当します。ExUnit の構造化データは「Structured data - WebSite」「Structured data - Article」の2つの機能で、ExUnit の有効化設定でそれぞれオン・オフできます。Nurevo AEO 0.9.1 は ExUnit に合わせて、次のように動きます。</p><ol><li>ExUnit が WebSite や Article を出しているページでは、Nurevo AEO は自分の WebSite・記事のノードを出しません。</li><li>ExUnit の Article には、足りない項目（事業者を指す publisher、説明文、言語）だけを ExUnit のフィルター（veu_article_structure_data）で足します。著者など ExUnit が設定した値は変えません。</li><li>ExUnit は事業者のノードを出さないので、住所・電話・営業時間を持つ事業者の情報は Nurevo AEO の1つだけになります。</li><li>ExUnit の構造化データをオフにしている場合は、Nurevo AEO が自分の WebSite・記事のノードを出します。</li><li>Lightning のパンくずは microdata で、Nurevo AEO はパンくずを出さないため、ここは重なりません。</li></ol><p>Lightning 本体は2026年9月9日の 15.42.0 まで更新が続いています（<a href="https://www.vektor-inc.co.jp/product-update/lightning-update-change-log/">変更履歴</a>）。パンくずの表示位置の変更は Lightning G3 Pro Unit の機能です（<a href="https://lightning.vektor-inc.co.jp/features/">Lightning の特徴</a>）。テーマや ExUnit を更新したあとは、重複の確認をもう一度行うと安心です。</p></section>
+<section class="qa"><h2>llms.txt と AIクローラの許可は、テーマとは別に用意する</h2><p>この記事で確認した資料の範囲では、SWELL・Lightning・SEO SIMPLE PACK・ExUnit の機能として llms.txt の出力や、AI検索のクローラを名前で許可する設定は挙がっていません。テーマを替えても変わらない部分なので、プラグインか手作業で用意します。</p><div class="table-wrap"><table><caption>Nurevo AEO の内容は WordPress.org の readme（0.9.1）による。</caption><thead><tr><th scope="col">項目</th><th scope="col">役割</th><th scope="col">Nurevo AEO（無料）での扱い</th></tr></thead><tbody><tr><th scope="row">llms.txt</th><td>サイトの概要と主なページの一覧を、AI向けにテキストでまとめたもの</td><td>/llms.txt で配信。WordPressの内容からプラグイン内で作るため、サイトキーも通信も不要</td></tr><tr><th scope="row">AI検索のクローラ</th><td>ChatGPT・Claude・Perplexity が回答のためにページを読みに来るボット</td><td>robots.txt で OAI-SearchBot・ChatGPT-User・Claude-SearchBot・Claude-User・PerplexityBot・Perplexity-User を許可。/wp-admin/ など既存のルールはそのまま</td></tr><tr><th scope="row">AIの学習用クローラ</th><td>AIモデルの学習のために集めるボット</td><td>GPTBot・ClaudeBot・Google-Extended・Applebot-Extended・CCBot は既定で robots.txt に任せ、ワンクリックで許可・拒否を選べる。拒否してもAI検索やスコアには影響しない</td></tr></tbody></table></div><p>Nurevo AEO の詳しい仕様は<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.org のプラグインページ</a>にあります。</p>
+<p>robots.txt で許可していても、サーバーやCDNのボット対策の設定で止まっていることがあります。ホスティングの管理画面にボット対策の項目があれば、AI検索のクローラを止めていないかもあわせて確認します。</p></section>
+<section class="qa"><h2>チェックリスト</h2><ol><li>トップ・投稿・FAQのある固定ページの3つで、事業者・WebSite・記事・FAQPage がそれぞれ1つずつになっている</li><li>事業者の情報に、業種・住所・電話・営業時間が入っていて、本文・Googleビジネスプロフィールと同じ表記になっている</li><li>FAQブロックは、SWELL か Nurevo のどちらか一方だけをページに置いている</li><li>https://（自分のドメイン）/llms.txt が開き、主なページ（料金・サービス・会社情報・アクセス）が載っている</li><li>robots.txt にAI検索のクローラの許可があり、学習用クローラの扱いを自分で決めている</li><li>テーマ・SEO SIMPLE PACK・ExUnit を更新したら、3ページで重複の確認をやり直す</li></ol></section>
+<section class="qa"><h2>効果の確かめ方</h2><p>設定直後は、まず<a href="/check">無料チェック</a>で、構造化データ・llms.txt・AIクローラの許可が読める状態かを確かめます。Nurevo AEO をサイトとつないでいる場合、無料版とStandardでも月に1回、業種と地域から作った3つの質問を Perplexity に聞き、回答があなたの事業者名を挙げたか・サイトを出典にしたかを記録します（質問に事業者名は入れません）。Pro（月14,800円〜、ベータ）では、競合との比較と推移を測れます（現在は Perplexity。ChatGPT は設定され次第）。</p>
+<p>AIの回答は同じ質問でも日によって変わるため、1回の結果で判断せず、同じ質問を続けて記録して傾向を見ます。測り方の詳細は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>にまとめています。</p></section>
+    <section class="qa"><h2>よくある質問</h2><h3>SWELLを使っていれば、AI検索対策の構造化データは十分ですか？</h3><p>記事やサイトの説明（WebSite・Article・パンくずなど）は出ていますが、確認した範囲では住所・電話・営業時間を持つ事業者の情報、llms.txt、AIクローラの許可は含まれません。店舗や会社のサイトなら、これらを足すと AI が事実を確かめやすくなります。</p>
+<h3>SEO SIMPLE PACK は構造化データを出しますか？</h3><p>出しません。meta タグ・OGP・認証コードなどを出すプラグインです（3.7.0 のコードで確認）。そのため SWELL と組み合わせた場合、構造化データは SWELL の出力が中心になります。</p>
+<h3>SWELLのJSON-LDはオフにしたほうがいいですか？</h3><p>多くの場合は残して構いません。足りない事業者の情報だけを足し、投稿ページで Article が2つになっていないかを確かめれば十分です。オフにするとパンくずの構造化データも止まる点に注意してください。</p>
+<h3>Lightning で Nurevo AEO を入れると、ExUnit と構造化データが重なりませんか？</h3><p>Nurevo AEO 0.9.1 は、ExUnit が WebSite・Article を出しているページでは自分の分を出さず、ExUnit の Article に足りない項目だけを足します。ExUnit は事業者のノードを出さないので、事業者の情報は1つになります。</p>
+<h3>llms.txt を置けば ChatGPT に出るようになりますか？</h3><p>表示が保証されるものではありません。llms.txt はサイトの要点をAIが読みやすい形で渡す補助です。本文・構造化データ・Googleビジネスプロフィールの事実をそろえることとあわせて行います。</p>
+<h3>テーマを SWELL から Lightning に変えたら、やり直すことはありますか？</h3><p>あります。テーマごとに出す構造化データが違うので、変更後にトップ・投稿・FAQのある固定ページの3つで重複の確認をやり直してください。llms.txt と robots.txt の設定はテーマに依存しないため、プラグインで出していればそのまま残ります。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、AIがあなたのサイトを読めるか確認</h2>
+    <p>登録不要の無料チェックで、構造化データ・llms.txt・AI検索のクローラの許可の状態がわかります。SWELL・Lightning のサイトなら、Nurevo AEO で足りない事実を無料で足せます。</p>
+    <a class="btn primary lg" href="/check">無料でAI可読性をチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgでNurevo AEOを無料で入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/local-business-schema-seo-plugins/">Yoast SEO・Rank Math・AIOSEOに店舗情報の構造化データを無料で足す方法</a></li><li><a href="/ja/guide/llms-txt/">llms.txt とは？ サイトをAIに説明するファイル</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/aeo-wordpress/">WordPressのAEO：サイトをAIに読ませる方法</a></li><li><a href="/ja/guide/what-is-aeo/">AEO（アンサーエンジン最適化）とは？</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/swell-lightning-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">SWELL、Lightning、SEO SIMPLE PACK、VK All in One Expansion Unit、WordPress、Google、ChatGPT、Claude、Perplexityおよび各製品名は、それぞれの権利者の商標または登録商標です。Nurevoはこれらの企業と提携・協賛関係にありません。</p><a href="/">Nurevo</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
