@@ -1,4 +1,4 @@
-=== Nurevo AEO – AI Search Optimization (AIO/AEO/GEO), llms.txt & Schema ===
+=== Nurevo AIO/AEO – AI Search Optimization (GEO), llms.txt & Schema ===
 Contributors: tuyopon
 Tags: aio, aeo, geo, llms.txt, ai seo
 Requires at least: 6.1
@@ -213,7 +213,7 @@ It is a beta feature. It samples AI answers rather than observing every response
 == Changelog ==
 
 = 0.9.2 =
-* Name and description now say AIO as well as AEO and GEO, the term most people in Japan search for.
+* The plugin is now listed as "Nurevo AIO/AEO": AIO is the term most people in Japan search for. The admin menu stays "Nurevo AEO" and the slug is unchanged.
 * Site type: the B2B choice now also names freelancers and businesses without a storefront (Japanese label), so they can turn off the address, phone and hours criteria.
 
 = 0.9.1 =

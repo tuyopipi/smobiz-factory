@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: Nurevo AEO – AI Search Optimization (AIO/AEO/GEO), llms.txt & Schema
+ * Plugin Name: Nurevo AIO/AEO – AI Search Optimization (GEO), llms.txt & Schema
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
  * Version: 0.9.2
