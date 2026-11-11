@@ -71,10 +71,10 @@ export default {
       }
     },
     "ja": {
-      "title": "WordPressのAEO：サイトをAIに読ませる方法 | Nurevo",
-      "description": "WordPressサイトをAIに読ませるための構造化データ・llms.txt・クローラ許可と、コードを触らずに導入する方法を解説します。",
-      "h1": "WordPressのAEO：サイトをAIに読ませる方法",
-      "lead": "WordPressはウェブの大きな割合を占めるので、AEOを正しくやるのが一番ラクな場所です——AIの回答エンジンが何を必要とするか分かっていれば。ここでは、その要素と、コードを触らずWordPressでやる方法を。",
+      "title": "WordPressのAEO・LLMO・GEO・AIO対策：AIに正しく読ませて測る | Nurevo",
+      "description": "AEO・LLMO・GEO・AIOは呼び方が違うだけで、やることはほぼ同じです。WordPressでAIに事業者の情報を正しく読ませる構造化データ・llms.txt・クローラ許可と、AIの回答に実際に出ているかを測る方法を解説します。",
+      "h1": "WordPressのAEO・LLMO・GEO・AIO対策：AIに正しく読ませて、出ているか測る",
+      "lead": "AEO（回答エンジン最適化）・LLMO（大規模言語モデル最適化）・GEO（生成エンジン最適化）・AIO（AI最適化）は、どれも「ChatGPTやGoogleのAIの回答で、事業者が正しく紹介されるようにする」対策の別名です。WordPressなら、AIが読む情報をサーバー側で整えるところまではコードを触らずにできます。ただし当社の調査（地域事業者62件）では、サイトを整えるだけでAIに名前を挙げられるとは限りませんでした。だからここでは、整える方法と、AIの回答に実際に出ているかを測る方法をセットで説明します。",
       "sections": [
         {
           "heading": "AIがWordPressサイトに求めるもの",
