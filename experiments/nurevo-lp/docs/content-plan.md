@@ -81,3 +81,11 @@
 | 2026-11-10 | research-japan-web-agencies-ai-search-2026 | 総論（国内Web制作会社サイトのAI検索対応状況） | summary_2026-11-05 | ja/en | content/research-20261110（未マージの #57・#60 と同じ切り口。#60 の原稿を最新の main に載せ直したもの） |
 
 未着手の切り口：AIクローラーのブロック実態（ボット別）／llms.txt 導入率／構造化データの種類と壊れ率／都道府県別／WordPress と非WordPress／SEOプラグイン別／日本と海外の比較／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。
+| 2026-11-11 8時 | （新規記事なし） | 不動産会社のAI検索対策を予定。上位記事の調査は済んだが、一次情報（schema.org・不動産公正取引協議会・e-Gov）をこの回は取得できなかった（実行中の取得許可が得られず）ため、確認できない事実を書かないルールに従い見送り | — | content/daily-20261111-08 |
+翻訳の補完ログ：2026-11-11 dental-clinic-ai-search に39言語を追加（ja/en と合わせて41言語）。残り：search-console-ai-features、research-japan-web-agencies-ai-search-2026（ja/en のみ）ほか未マージPRの ja/en 記事。
+
+### 調査メモ：不動産会社のAI検索対策（2026-11-11、次の回で執筆）
+上位記事（日本語）：assist-all.co.jp/note/llmo-ai-real-estate-roadmap/、jinrai.co.jp/blog/2026/05/20/real-estate-aio-optimization-strategy/、uravation.com/llmo/fudosan-aio-taisaku/、0120.co.jp/blog/aio-145/、koukoku.jp/service/suketto/marketer/?p=29364。
+上位記事（英語）：housingwire.com（seven tips / cited-in-ai-answers）、colibrirealestate.com、singlegrain.com（GEO for Realtors）、jefflenney.com/real-estate/schema-markup-guide、nowbam.com、thepaperlessagent.com。
+共通の不足：AIでの登場を繰り返し測る方法がない／WordPressでの手順がない（JSON-LDの実例は Lenney のみ）／出典のない統計が多い・売り込みが強い／日本の広告ルール（宅建業法32条・34条、不動産の表示に関する公正競争規約の徒歩80m=1分・取引態様・おとり広告・免許番号）に触れていない／FAQ・HowTo・自社レビューの構造化データについて古い・誤った助言がある。
+書く前に一次情報で確認すること：schema.org RealEstateAgent の親（LocalBusiness）と RealEstateListing、Google の検索ギャラリーに不動産物件のリッチリザルトがないこと、rftc.jp の表示規約・施行規則の条番号、e-Gov の宅建業法32条・34条。Nurevo の事実：設定の「専門サービス」カードの仲間に RealEstateAgent（includes/setup-wizard.php）、RealEstateListing はページ種別としてSEOプラグイン側に任せる（nurevo-webmcp.php webmcp_canary_page_type_families）。
