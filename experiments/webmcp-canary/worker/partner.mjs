@@ -48,12 +48,22 @@ export async function applyForPartner(env, account, { now = Date.now() } = {}) {
  * that). Conditional on 'pending', so a double click or two admins cannot
  * approve twice or flip a decision already made.
  */
-export async function reviewPartner(env, accountId, decision, reviewerMemberId, { now = Date.now() } = {}) {
-  if (!["approve", "reject", "revoke"].includes(decision)) return { status: 400, body: { error: "invalid_decision" } };
+export const PARTNER_TIERS = ["agency", "freelance"];
+export async function reviewPartner(env, accountId, decision, reviewerMemberId, { now = Date.now(), tier = null } = {}) {
+  if (!["approve", "reject", "revoke", "tier"].includes(decision)) return { status: 400, body: { error: "invalid_decision" } };
+  if (tier != null && !PARTNER_TIERS.includes(tier)) return { status: 400, body: { error: "invalid_tier" } };
   const id = Number(accountId);
   if (!Number.isInteger(id) || id <= 0) return { status: 404, body: { error: "not_found" } };
   // revoke: approved -> rejected. From then on no new code use, no new
   // commission and held rows stay held (destinationFor); the member may apply again.
+  // tier: agency | freelance (0050). Freelancers earn from their first paying customer.
+  if (decision === "tier") {
+    if (!tier) return { status: 400, body: { error: "invalid_tier" } };
+    const t = await env.DB.prepare("UPDATE accounts SET partner_tier=? WHERE id=? AND partner_status='approved'").bind(tier, id).run();
+    if (Number(t.meta?.changes || 0) !== 1) return { status: 409, body: { error: "not_approved" } };
+    return { status: 200, body: { ok: true, id, partner_tier: tier } };
+  }
+  if (decision === "approve" && tier) await env.DB.prepare("UPDATE accounts SET partner_tier=? WHERE id=? AND partner_status='pending'").bind(tier, id).run();
   const result = decision === "approve"
     ? await env.DB.prepare("UPDATE accounts SET partner_status='approved', partner_approved_at=?, partner_reviewed_at=?, partner_reviewed_by=? WHERE id=? AND partner_status='pending'")
       .bind(now, now, reviewerMemberId, id).run()

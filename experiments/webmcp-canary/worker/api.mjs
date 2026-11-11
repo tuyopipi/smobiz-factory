@@ -1045,11 +1045,12 @@ export async function handleApi(request, env, ctx) {
     if (!superAdmin) return json({ error: "forbidden" }, 403);
     return json(await listPartnerApplications(env));
   }
-  const partnerReview = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject|revoke)$/);
+  const partnerReview = path.match(/^\/api\/admin\/partner-applications\/(\d+)\/(approve|reject|revoke|tier)$/);
   if (partnerReview && method === "POST") {
     const superAdmin = await requireSuperAdmin(request, env);
     if (!superAdmin) return json({ error: "forbidden" }, 403);
-    const result = await reviewPartner(env, partnerReview[1], partnerReview[2], superAdmin.member_id);
+    let reviewBody = {}; try { reviewBody = await request.clone().json(); } catch { reviewBody = {}; }
+    const result = await reviewPartner(env, partnerReview[1], partnerReview[2], superAdmin.member_id, { tier: typeof reviewBody?.tier === "string" ? reviewBody.tier : null });
     if (result.status === 200) console.log("partner_reviewed", JSON.stringify({ account: Number(partnerReview[1]), decision: partnerReview[2], by: superAdmin.member_id }));
     return json(result.body, result.status);
   }

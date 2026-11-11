@@ -26,6 +26,7 @@ sqlite.exec(read("../nurevo-impl/db/0029_member_email_preferences.sql"));
 sqlite.exec(read("../nurevo-impl/db/0030_account_referrals.sql"));
 sqlite.exec(read("../nurevo-impl/db/0039_partner_payouts.sql"));
 sqlite.exec(read("../nurevo-impl/db/0040_partner_approval_first_customer.sql"));
+sqlite.exec(read("../nurevo-impl/db/0050_partner_tier.sql"));
 const DB = {
   prepare(sql) {
     const stmt = sqlite.prepare(sql);
@@ -686,6 +687,23 @@ try {
     assert.equal(summary.referrals.find((x) => x.email === "fp-a@example.test").commission, "first_customer");
     assert.equal(summary.referrals.find((x) => x.email === "fp-b@example.test").commission, "eligible");
     assert.equal(summary.payout.monthly_estimate_yen, 1200, "the estimate leaves the first customer (Pro) out: only B's Standard");
+  }
+
+  /* ================= 0050: a freelance partner earns from the first customer ================= */
+  {
+    const fr = await member("fr_partner", "fr@example.test");
+    approve(fr, Date.now() - HOUR);
+    sqlite.prepare("UPDATE accounts SET partner_tier='freelance' WHERE id=?").run(fr.account.id);
+    readyAccount(fr.account.id, "acct_fr");
+    const c1 = await member("fr_c1", "fr-c1@example.test");
+    await refer(c1, fr, { first: "none" });
+    site("site_fr1", "fr_c1", "sub_fr1");
+    charge("ch_fr1");
+    r = await webhook("invoice.paid", invoice("in_fr1", "ch_fr1", "sub_fr1"));
+    assert.equal(r.status, 200);
+    assert.equal(row("in_fr1").amount_yen, 1156, "a freelancer's FIRST customer earns 40% of the net");
+    assert.equal(transfersFor("ch_fr1").length, 1);
+    assert.equal(sqlite.prepare("SELECT partner_first_customer_account_id AS f FROM accounts WHERE id=?").get(fr.account.id).f, null, "no first customer is recorded for a freelancer");
   }
 
   /* --- concurrent first invoices of two customers: exactly one first customer --- */

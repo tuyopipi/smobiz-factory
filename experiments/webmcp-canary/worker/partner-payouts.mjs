@@ -22,6 +22,8 @@
  *     customer wins a race), and each of its invoices gets a ledger row with
  *     status='void', amount 0, last_error='first_customer'. From the second
  *     distinct paying customer on, every paid invoice earns as below.
+ *   - Exception (migration 0050): a partner with partner_tier='freelance'
+ *     earns from its FIRST paying customer; no first customer is recorded.
  *
  * kept_yen is always recomputed from the charge's CURRENT state (read from
  * Stripe when paying, when a refund/dispute event arrives and by the hourly
@@ -364,8 +366,10 @@ export async function recordInvoiceCommission(env, { invoice, siteId = null, now
   const key = `invoice:${invoice.id}`;
   let row = await env.DB.prepare("SELECT id FROM referral_payouts WHERE source_key=?").bind(key).first();
   if (!row && partner.partnerAccountId && partner.customerAccountId) {
-    // The partner's first paying customer never earns, on any invoice, ever.
-    if (await firstCustomerOf(env, partner.partnerAccountId, partner.customerAccountId) === Number(partner.customerAccountId)) {
+    // The partner's first paying customer never earns, on any invoice, ever,
+    // unless the partner is a freelancer (0050: partner_tier='freelance').
+    const tierRow = await env.DB.prepare("SELECT partner_tier AS tier FROM accounts WHERE id=?").bind(partner.partnerAccountId).first().catch(() => null);
+    if (tierRow?.tier !== "freelance" && await firstCustomerOf(env, partner.partnerAccountId, partner.customerAccountId) === Number(partner.customerAccountId)) {
       await env.DB.prepare(`INSERT OR IGNORE INTO referral_payouts
           (kind, source_key, invoice_id, charge_id, partner_account_id, site_id, amount_yen, kept_yen, status, last_error, created_at, updated_at)
           VALUES ('commission', ?, ?, NULL, ?, ?, 0, 0, 'void', ?, ?, ?)`)
