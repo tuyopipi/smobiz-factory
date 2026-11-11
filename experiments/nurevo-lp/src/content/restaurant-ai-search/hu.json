@@ -1,0 +1,230 @@
+{
+ "title": "AI-keresés éttermeknek: étlap, nyitvatartás, foglalás | Nurevo",
+ "description": "Éttermi AEO: tegye közzé étlapját, árait, nyitvatartását, konyháját és a foglalást szövegként és Restaurant strukturált adatként, és kezelje gondosan az allergéneket.",
+ "h1": "AI-keresés éttermeknek, kávézóknak és bároknak: hogyan olvassa helyesen az AI az étlapot, a nyitvatartást, a foglalást és az allergéninformációkat",
+ "lead": "Egy étterem, kávézó vagy bár AI-keresésre optimalizálása (AEO) azt jelenti, hogy a saját weboldalán szövegként leírja az étlapot és az árakat, a nyitvatartást és az utolsó rendelés idejét, a szünnapokat, a konyha jellegét, az ülőhelyeket és a különtermeket, valamint a foglalás módját, majd ugyanezeket a tényeket strukturált adatokban (schema.org Restaurant és rokon típusai) és a Google Cégprofiljában is közzéteszi. Így a ChatGPT, a Perplexity és a Google AI-ja találgatás nélkül tud válaszolni egy olyan kérdésre, mint „bár az állomás közelében, különteremmel, este 10 után is nyitva”. Ha allergéninformációt tesz közzé, csak azt tegye közzé, amit pontosan és naprakészen tud tartani, a keresztszennyeződés kockázatával együtt.",
+ "intro": [
+  "Írva: 2026. november 3. (JST). A Google, a schema.org, az OpenAI és japán közintézmények információit aznap ellenőriztük a megfelelő hivatalos oldalakon.",
+  "Az AI válaszai a naptól, a kérdés megfogalmazásától és a kérdező tartózkodási helyétől függően változnak. Az itt leírt lépések olvashatóvá teszik az étterme adatait az AI számára. Nem garantálják, hogy egy AI ajánlani fogja Önt, vagy az élen sorolja fel."
+ ],
+ "sections": [
+  {
+   "heading": "Mit kérdeznek a vendégek az AI-tól, és milyen tények kellenek a válaszhoz",
+   "paragraphs": [
+    "Az éttermi kérdések egyetlen mondatba sűrítik a helyet, az időpontot, a létszámot, az alkalmat, a költségkeretet és az étrendi igényeket. Az AI olyan információt keres, amellyel minden feltételt ellenőrizni tud, ezért az a kiindulópont, hogy szövegként olvasható legyen, mely feltételeknek felel meg az étterme. Az alábbi táblázat megmutatja, melyik kérdéstípushoz milyen tények kellenek, és hol érdemes ezeket közzétenni."
+   ],
+   "table": {
+    "head": [
+     "Jellemző kérdés",
+     "A válaszhoz szükséges tények",
+     "Hol tegye közzé"
+    ],
+    "rows": [
+     [
+      "„Egy hely az állomás közelében, ahová most rögtön betérhetek”",
+      "Cím, gyalogos távolság az állomástól, nyitvatartás naponként, utolsó rendelés, szünnapok",
+      "Az elérhetőségi oldal szövege, strukturált adatok (address, openingHoursSpecification), Google Cégprofil"
+     ],
+     [
+      "„Csendes hely különteremmel egy üzleti vacsorához”",
+      "Konyha, különtermek és méretük, ülőhelyek száma, a hangulat leírása",
+      "Oldalszöveg (ülőhelyek és termek), strukturált adatok (servesCuisine)"
+     ],
+     [
+      "„Csoportos vacsora italokkal együtt fejenként kb. 40 dollárért”",
+      "Menük tartalma, ára, időtartama és minimális létszáma; az italcsomag feltételei",
+      "Menü- vagy rendezvényoldal, ársáv (priceRange)"
+     ],
+     [
+      "„Gyerekbarát kávézó” vagy „babakocsival is akadálymentes”",
+      "Etetőszék és gyerekevőeszközök, babakocsis megközelítés, lépcsők, dohányzási szabályok",
+      "GYIK, elérhetőségi oldal, a Google Cégprofil jellemzői"
+     ],
+     [
+      "„Helyek tojásmentes ételekkel” vagy „vegetáriánus lehetőségek”",
+      "Mit tud és mit nem tud vállalni, hogyan ellenőrzik az összetevőket, keresztszennyeződés kockázata, kitől lehet érdeklődni",
+      "Allergén- és étrendi oldal, az alábbi figyelmeztetések szerint"
+     ],
+     [
+      "„Lehet asztalt foglalni?” „Van elvitel?”",
+      "A foglalás módja (telefon vagy online) és ideje, elvitel és kiszállítás",
+      "Oldalszöveg, link a foglalási oldalra, Google Cégprofil"
+     ]
+    ],
+    "caption": "A kérdések ehhez az útmutatóhoz írt példák. A tulajdonságnevek a schema.org-ból és a Google dokumentációjából származnak (ellenőrizve: 2026. november 3.)."
+   },
+   "after": [
+    "Minden sorban szerepel az oldalszöveg mint közzétételi hely, mert a strukturált adatok önmagukban nem elegendők. A Google szerint nincs szükség különleges schema.org-jelölésre ahhoz, hogy egy oldal megjelenjen a generatív AI-funkcióiban (az útmutató utolsó frissítése: 2026. július 10.). [Google: optimalizálás a generatív AI-funkciókhoz](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)"
+   ]
+  },
+  {
+   "heading": "Honnan tájékozódik az AI az étterméről",
+   "paragraphs": [
+    "Amikor egy AI éttermekről válaszol, a forrásai néhány csoportba sorolhatók: az Ön saját weboldala, a Google Cégprofilja (a Google Térképen szereplő adatlapja), éttermi kalauzok és foglalási oldalak, vélemények és közösségi média, valamint hírek és listás cikkek. A Google szerint a Cégprofil segíthet abban, hogy a vállalkozását megtalálják az AI-válaszokban és a Google Keresés egyéb találataiban is. [Google: optimalizálás a generatív AI-funkciókhoz](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)",
+    "Amikor a ChatGPT a weben keres, az IP-cím alapján meghatározott általános helyadatokat használja, a válaszai pedig szövegközi hivatkozásokat és egy Források listát tartalmaznak. [OpenAI: Webes keresés a ChatGPT-vel (angol nyelvű)](https://help.openai.com/en/articles/9237897-searching-the-web-with-chatgpt). A „közelemben” típusú kérdéseknél tehát a válasz attól függ, hol tartózkodik a kérdező. Amikor saját maga tesztel, írja bele a kérdésbe a környék nevét, hogy az eredmények összehasonlíthatók legyenek.",
+    "Egyetlen AI-szolgáltatás sem teszi közzé, mekkora súlyt ad az egyes forrásoknak. Az viszont biztos, hogy ha a weboldala, a Cégprofilja és a kalauzokban szereplő adatlapjai eltérnek a nyitvatartásban vagy az árakban, az AI nem tudja eldönteni, melyik a helyes, és elavult vagy téves információt ismételhet. A munka lényege, hogy a saját weboldala legyen a helyes információ hivatkozási alapja, és minden más adatlapot ehhez igazítson."
+   ]
+  },
+  {
+   "heading": "Az étlap szövegként kerüljön az oldalra, ne csak képként vagy PDF-ként",
+   "paragraphs": [
+    "Ha az étlapja csak fotóként vagy PDF-ként létezik, nincs garancia arra, hogy az AI vagy a keresőmotorok helyesen olvassák ki az ételek nevét és árát. Hozzon létre egy étlapoldalt, amelyen az ételek neve, ára és rövid leírása szövegként szerepel, és tegyen mellé fotókat. Szezonális menüknél adja meg az időszakot („Téli menü, decembertől februárig”), és a lejárta után vegye le a tételeket.",
+    "Az árakat a helyi szabályok szerint tüntesse fel. Japánban például a Nemzeti Adóhivatal előírja, hogy a fogyasztóknak előre megjelenített árak – bármilyen médiumban – tartalmazzák a fogyasztási adót. [Nemzeti Adóhivatal: teljes ár feltüntetése (japán nyelvű)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm). Ha a helyben fogyasztás és az elvitel ára eltér, mindkettőt tüntesse fel, hogy se az emberek, se az AI ne értse félre.",
+    "A Google Cégprofil étlapszerkesztőt kínál vendéglátóhelyeknek, szakaszokkal, ételnevekkel, árakkal és leírásokkal, valamint külön mezőt az étlap linkjének. A Google a weboldaláról is átírhat étlapadatokat; a téves tételeket szerkesztheti vagy törölheti, illetve kikapcsolhatja az átírást. [Google Cégprofil súgó: Az étlapszerkesztő](https://support.google.com/business/answer/9455840?hl=en). A saját oldalán lévő pontos étlap itt is megtérül."
+   ]
+  },
+  {
+   "heading": "Strukturált adatok: mit tegyen a Restaurant típusba",
+   "paragraphs": [
+    "A strukturált adatokban a vállalkozása a [schema.org FoodEstablishment](https://schema.org/FoodEstablishment) egyik fajtája, amely maga a LocalBusiness egyik fajtája. Altípusai közé tartozik a Restaurant, a CafeOrCoffeeShop, a BarOrPub, a Bakery, a FastFoodRestaurant és az IceCreamShop. A Google helyi vállalkozásokról szóló dokumentációja a lehető legspecifikusabb típus használatát kéri, és a saját példája is a Restaurant típust használja (a dokumentum utolsó frissítése: 2026. szeptember 8., ellenőrizve: november 3.). [Google: Helyi vállalkozás strukturált adatai](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+   ],
+   "table": {
+    "head": [
+     "Tulajdonság",
+     "Mit írjon bele",
+     "Státusz a Google dokumentációjában"
+    ],
+    "rows": [
+     [
+      "name / address",
+      "A neve pontosan úgy, ahogy a cégtábláján és a Cégprofilban szerepel, valamint a címe",
+      "Kötelező"
+     ],
+     [
+      "openingHoursSpecification",
+      "Nyitás és zárás naponként; ha ebéd és vacsora között zárva tart, bontsa két bejegyzésre",
+      "Ajánlott"
+     ],
+     [
+      "telephone / url / geo",
+      "Telefonszám, a weboldal URL-je, földrajzi szélesség és hosszúság",
+      "Ajánlott"
+     ],
+     [
+      "servesCuisine",
+      "A konyha, amelyet kínál (például japán, olasz, jakitori)",
+      "Ajánlott"
+     ],
+     [
+      "menu",
+      "Az étlapoldal teljes URL-je",
+      "Ajánlott"
+     ],
+     [
+      "priceRange",
+      "Az árszint jelzése (például „$20–40”), 100 karakternél rövidebben",
+      "Ajánlott"
+     ],
+     [
+      "acceptsReservations / hasMenu",
+      "Fogad-e foglalást (igen vagy nem, vagy a foglalási oldal URL-je) / maga az étlap strukturált adatként",
+      "schema.org-tulajdonságok, a Google dokumentációjában nem szerepelnek"
+     ]
+    ],
+    "caption": "A státusz a Google helyi vállalkozásokról szóló dokumentációja szerint, 2026. november 3-án. Az acceptsReservations és a hasMenu a schema.org FoodEstablishment típusban van definiálva."
+   },
+   "after": [
+    "A hasMenu segítségével minden ételt leírhat a Menu, a MenuSection és a MenuItem típusokkal, és a schema.org példái az étrendi alkalmasságot (suitableForDiet) is bemutatják. A Google dokumentációja azonban csak az étlap URL-jét (menu) ajánlja. Ha gyakran változik az étlapja, az összes étel megjelölése hamar elavulhat, ezért először az oldalon lévő szöveges étlapot tegye rendbe.",
+    "A strukturált adatok értékeinek egyezniük kell az oldalon láthatóval. Ne tegyen csak a jelölésbe olyan ételeket, amelyek nem szerepelnek az oldalon, vagy olyan ársávot, amely nem tükrözi a valóságot."
+   ]
+  },
+  {
+   "heading": "Allergén- és étrendi információk: döntsön erről, mielőtt az AI-nak elmondja",
+   "paragraphs": [
+    "A szabályok országonként eltérnek, ezért ellenőrizze az Önre vonatkozókat. Japánban az éttermekben felszolgált ételekre nem vonatkozik az élelmiszer-jelölési törvény kötelező allergénjelölése. Egy, az étkezésen kívüli allergéntájékoztatásról szóló iparági útmutató arra kéri az ezt közzétevő éttermeket, hogy az összetevőket vessék össze a beszállítók specifikációival, és tartsák naprakészen az információt, tájékoztassák a vendégeket, hogy a közös konyha miatt nem szándékos keresztszennyeződés előfordulhat, és előre jelezzék, ha nem tudnak megbízható információt adni. Megjegyzi azt is, hogy a weboldalon közölt információ kényelmes, mert a vendégek látogatás előtt ellenőrizhetik, de ha nem tartják naprakészen, véletlen allergénexpozíció okozójává válik. [Útmutató az allergéninformációk nyújtásához a vendéglátásban és a készételek területén (japán nyelvű; iparági tanács, felülvizsgálva: 2023. március 9.)](https://www.jfnet.or.jp/wp/wp-content/uploads/2025/08/%E3%80%90%E9%A3%9F%E3%81%AE%E5%AE%89%E5%85%A8%E3%83%BB%E5%AE%89%E5%BF%83%E9%96%A2%E9%80%A3%E3%82%A2%E3%83%AC%E3%83%AB%E3%82%B2%E3%83%B3%E3%80%91%E5%A4%96%E9%A3%9F%E3%83%BB%E4%B8%AD%E9%A3%9F%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%A2%E3%83%AC%E3%83%AB%E3%82%B2%E3%83%B3%E6%83%85%E5%A0%B1%E3%81%AE%E6%8F%90%E4%BE%9B%E3%81%AB%E5%90%91%E3%81%91%E3%81%9F%E6%89%8B%E5%BC%95%E3%81%8D.pdf)",
+    "Az AI a weboldala szövegét foglalja össze. Ha csak egy rövid címkét ír, például „allergiabarát” vagy „gluténmentes, aggodalom nélkül”, a feltételek és kivételek elveszhetnek az összefoglalóban. Ha közzéteszi ezt az információt, ugyanabban a bekezdésben adja meg a kört („három ételt kínálunk tojás és tejtermék nélkül”), a keresztszennyeződés kockázatát („a tojást és a tejtermékeket ugyanabban a konyhában kezeljük”) és az ellenőrzés módját („kérjük, foglaláskor hívjon minket”). Ha nem tud allergiás igényeket kiszolgálni, ennek kimondása is hasznos információ.",
+    "A strukturált adatokban ne állítson olyat, amit nem tud ellenőrizni. A schema.org-ban van tulajdonság az étrendi alkalmasságra, de a keresztszennyeződés kockázatát nem tudja kifejezni, ezért mindent, ami allergiát érint, biztonságosabb az oldalszövegben, a feltételeivel együtt elmagyarázni."
+   ]
+  },
+  {
+   "heading": "Vélemények és éttermi kalauzok: mit ne tegyen az AI kedvéért",
+   "paragraphs": [
+    "Ha a saját oldalán közzétett véleményeket vagy csillagos értékeléseket megjelöli, attól nem kap értékelési csillagokat a Google-ben. A Google 2019-ben kijelentette, hogy az önreklámozó vélemények, vagyis egy vállalkozásról a vállalkozás saját weboldalán elhelyezett vélemények, LocalBusiness és Organization esetén nem megengedettek. [Google Search Central blog, 2019. szeptember 16.](https://developers.google.com/search/blog/2019/09/making-review-rich-results-more-helpful)",
+    "A rejtett reklámra vonatkozó szabályok országonként eltérnek. Japánban 2023. október 1. óta a rejtett marketing sérti az indokolatlan jutalmak és a megtévesztő tájékoztatás elleni törvényt, és azok a bejegyzések vagy vélemények, amelyeket egy vállalkozás harmadik felektől kér vagy rendel meg, a vállalkozás reklámjának számítanak. [Fogyasztóvédelmi Ügynökség: rejtett marketing (japán nyelvű)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/). Ne gyűjtsön fel nem jelölt szponzorált véleményeket vagy alá nem támasztható állításokat, mint például „a város első számú étterme”, abban a reményben, hogy az AI jól fog beszélni Önről.",
+    "Az AI néha éttermi kalauzokat és foglalási oldalakat is forrásként használ. Ahol szerkesztheti az adatlapját, frissítse ugyanarra a nyitvatartásra, árakra és szünnapokra, amelyek a weboldalán szerepelnek; ahol nem, kérje az oldalt a javításra."
+   ]
+  },
+  {
+   "heading": "Beállítás egy WordPress-alapú éttermi oldalon",
+   "list": [
+    "Telepítse a Nurevo AEO-t (ingyenes) a [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) oldalról, és aktiválja. Ha Yoast SEO-t, Rank Mathot, All in One SEO-t, SEO SIMPLE PACK-et vagy VK All in One Expansion Unitot használ, tartsa meg.",
+    "A beállítási varázslóban válassza az „Étterem vagy kávézó” lehetőséget. A vállalkozás típusa Restaurant lesz; kávézó, bár vagy pékség esetén a Beállításokban módosítsa a „Vállalkozás típusa (schema.org típus)” mezőt CafeOrCoffeeShop, BarOrPub vagy Bakery értékre. Ellenőrizze a nevet, a címet, a telefonszámot, a nyitvatartást és a leírást, és a leírásban mondja el, mit kínál és mitől különleges (például „Faszénen grillezett jakitori és szaké. Különterem legfeljebb 12 főre.”). A meglévő beállításokból csak az üres mezők töltődnek ki; semmi, amit Ön beírt, nem íródik felül.",
+    "Mindazt, amit előre foglalnak – menüket, rendezvénycsomagokat vagy teljes bérlést –, adja hozzá szolgáltatásként a Beállításokban. Névvel, időtartammal (perc), árral (csak számjegyek), pénznemmel, kategóriával, foglalási URL-lel és leírással mindegyik az étterméhez kapcsolt Service-ként jelenik meg (az ár Offer-ként, a foglalási URL foglalási műveletként), és sorként szerepel az llms.txt-ben.",
+    "Adja meg GYIK-ként azokat a kérdéseket, amelyeket valóban feltesznek – parkolás, gyerekek, dohányzás, saját ital behozatala, lemondás –, és helyezze el a Nurevo FAQ blokkot vagy a [nurevo_faq] shortcode-ot azon az oldalon, ahol meg szeretné jeleníteni.",
+    "Futtassa a diagnózist az AEO-pontszám képernyőn, és alkalmazza az ellenőrzőlista által felkínált egykattintásos javításokat. A strukturált adatok, az llms.txt és az AI-robotok hozzáférése (OAI-SearchBot, PerplexityBot, Claude-SearchBot és mások) mind benne vannak az ingyenes csomagban.",
+    "Az [ingyenes AI-olvashatósági ellenőrzéssel](/check) nézze meg, mit olvas az AI kívülről, és győződjön meg róla, hogy a nyitvatartás és az árak egyeznek a Google Cégprofillal és a kalauzokban szereplő adatlapokkal."
+   ],
+   "after": [
+    "A Nurevo AEO jelenlegi verziója (0.9.1) nem teszi közzé a servesCuisine, a menu (hasMenu) és az acceptsReservations tulajdonságot. Ha a konyha jellege szerepel a leírásban és az oldalszövegben, az étlap pedig egy szöveges étlapoldalon, az AI ki tudja olvasni ezeket az oldalról. Ha strukturált adatokban is szeretné látni őket, adja hozzá a témán vagy más módszerrel (a Google ajánlottként, nem kötelezőként sorolja fel őket). Aktív SEO-bővítmény mellett a Nurevo AEO nem ír ki egy második strukturáltadat-készletet; csak a hiányzó címet, telefonszámot, nyitvatartást, egy specifikus típust, például Restaurant-ot, valamint a szolgáltatásait adja hozzá. [Helyi vállalkozás séma hozzáadása a Yoast, Rank Math és AIOSEO bővítményhez](/guide/local-business-schema-seo-plugins/)"
+   ]
+  },
+  {
+   "heading": "Ha egy AI-válasz tévesen írja le az éttermét",
+   "list": [
+    "Nyissa meg az AI válaszában szereplő forráslinkeket, és derítse ki, melyik oldalról származik a téves információ.",
+    "Ha a forrás az Ön weboldala, javítsa az oldalszöveget és a strukturált adatokat. Ha a Cégprofil, javítsa a Google felületén.",
+    "Ha a forrás egy éttermi kalauz vagy egy listás cikk, szerkessze az adatlapját, vagy kérje a kiadót a javításra. Ellenőrizze, maradtak-e oldalak egy bezárt egységről vagy a költözés előtti címéről.",
+    "Ideiglenes bezárás, nyitvatartás- vagy árváltozás esetén ugyanazon a napon frissítse a weboldalát, a Cégprofilját, a kalauzokban szereplő adatlapjait és az llms.txt-t.",
+    "A javítások nem mindig jelennek meg azonnal az AI válaszaiban. Néhány nap vagy néhány hét múlva tegye fel újra ugyanazt a kérdést."
+   ]
+  },
+  {
+   "heading": "Ellenőrzőlista közzététel előtt",
+   "list": [
+    "Az étlap szövegként szerepel, ételnevekkel és árakkal; a szezonális tételeknél fel van tüntetve az időszak.",
+    "A napi nyitvatartás, az utolsó rendelés és a szünnapok egyeznek a weboldalon, a Cégprofilban és a kalauzokban szereplő adatlapokon.",
+    "A strukturált adatok típusa illik a vállalkozáshoz (Restaurant, CafeOrCoffeeShop, BarOrPub stb.), és tartalmazza a címet, a telefonszámot és a nyitvatartást.",
+    "Az oldalszöveg leírja, milyen konyhát kínál, milyenek az ülőhelyek és a különtermek, és milyen feltételek vonatkoznak például a gyerekekre és a dohányzásra.",
+    "A menüknél és rendezvénycsomagoknál szerepel a tartalom, az ár, az időtartam és a foglalás módja.",
+    "Az allergéninformáció, ha közzéteszi, tartalmazza a kört, a keresztszennyeződés kockázatát és az ellenőrzés módját; ha nem teszi közzé, az oldal ezt kimondja.",
+    "A saját oldalon lévő vélemények nincsenek értékelésként megjelölve, és nincsenek nem jelölt szponzorált vélemények.",
+    "Az llms.txt tartalmazza a bemutatkozó, az étlap-, a megközelítési és a foglalási oldalakat. [Mi az llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Hogyan ellenőrizze, megjelenik-e az AI válaszaiban",
+   "paragraphs": [
+    "Válasszon ki körülbelül tíz olyan kérdést, amelyet a vendégei feltennének, kombinálva a környéket, a konyhát és az alkalmat (ebéd, üzleti vacsora, gyerekekkel, késő este). Tegye fel őket a ChatGPT-nek, a Perplexitynek és a Google AI-funkcióinak, és jegyezze fel, megjelenik-e az étterme névvel vagy URL-lel, és helyes-e a megadott nyitvatartás és ár. A válaszok futtatásonként eltérnek, ezért ugyanazokat a kérdéseket ismételje meg időről időre. A módszert a [hogyan mérje az AI-láthatóságot](/guide/measure-ai-visibility/) című útmutató írja le.",
+    "A Nurevo AEO Free és Standard csomagja havi ellenőrzést tartalmaz: három, a vállalkozás típusából és a környékből (soha nem az étterem nevéből) összeállított kérdést tesz fel a Perplexitynek, és a bővítmény rögzíti, hogy a válaszok megnevezték-e az éttermét vagy hivatkoztak-e az oldalára. A Pro csomag (havi $99-tól) béta AI-láthatósági mérést ad hozzá: milyen gyakran jelenik meg az étterme az AI válaszaiban, versenytárs-összehasonlítással és előzményekkel (jelenleg a Perplexityn). Mindkettő mintavételezi a válaszokat, nem követ minden egyes választ."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hol kezdje egy étterem az AI-keresést?",
+   "a": "Írja le szövegként a saját oldalán az étlapját (ételnevek és árak), a nyitvatartását, az utolsó rendelés idejét, a szünnapokat, a címét és a foglalás módját. Ezután igazítsa ehhez a Google Cégprofilját és a kalauzokban szereplő adatlapjait, és tegye közzé ugyanezeket a tényeket Restaurant strukturált adatokban és az llms.txt-ben."
+  },
+  {
+   "q": "Ha szerepelek éttermi kalauzokban, szükségem van még saját weboldalra?",
+   "a": "Az AI a kalauzok adatlapjait is használhatja forrásként, de a saját oldalán teheti közzé a legrészletesebben és legpontosabban az étterme adatait, és ez a hivatkozási alap, amikor más adatlapokat javíttat. A legbiztonságosabb, ha mindegyik egyezik."
+  },
+  {
+   "q": "Elég egy fotó az étlapomról?",
+   "a": "Ha csak fotó vagy PDF van, nincs garancia arra, hogy az ételek nevét és árát helyesen olvassák ki. Jobb választás egy étlapoldal, amelyen az ételnevek, árak és leírások szövegként szerepelnek, mellettük fotókkal."
+  },
+  {
+   "q": "Elmondjam az AI-nak, milyen allergénmentes lehetőségeim vannak?",
+   "a": "Csak ha pontosan és naprakészen tudja tartani az információt. Ahol közzéteszi, együtt adja meg a kört, a keresztszennyeződés kockázatát és az ellenőrzés módját. Ha nem biztos benne, az is fontos, hogy kimondja: nem ad allergéninformációt."
+  },
+  {
+   "q": "Ingyenes a Nurevo AEO?",
+   "a": "Igen. A vállalkozás típusa (Restaurant és mások), a cím, a nyitvatartás, a szolgáltatások, például menük, a GYIK strukturált adatai, az llms.txt, az AI-robotokra vonatkozó szabályok és az AEO-pontszám az ingyenes csomagban vannak. A fizetős csomagok mindig naprakész szabálykészletet (Standard, havi $20) és béta AI-láthatósági mérést (Pro, havi $99-tól) adnak hozzá. [Nurevo AEO a WordPress.org-on](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garantálja ez, hogy a ChatGPT ajánlani fogja az éttermemet?",
+   "a": "Nem. Az AI válaszai a kérdés megfogalmazásától és a kérdező tartózkodási helyétől függően változnak, és semmilyen eszköz vagy módszer nem garantálhat említést vagy helyezést. Annyit tehet, hogy az adatait könnyen olvashatóvá teszi az AI számára, és folyamatosan ellenőrzi, megjelenik-e, és helyesek-e a válaszok."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Először nézze meg, hogyan olvassa az AI az étterme weboldalát",
+  "body": "Az ingyenes ellenőrzés megmutatja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát, regisztráció nélkül. WordPressen a Nurevo AEO ingyen pótolja a hiányokat.",
+  "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO letöltése a WordPress.org-ról",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google pedig a Google LLC védjegye. A Yoast SEO, a Rank Math, az All in One SEO, a SEO SIMPLE PACK és a VK All in One Expansion Unit a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük. Ez a cikk nem minősül jogi vagy adótanácsadásnak, sem az ételallergiákkal kapcsolatos orvosi tanácsnak."
+}
