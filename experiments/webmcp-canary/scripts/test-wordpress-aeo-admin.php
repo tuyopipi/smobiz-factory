@@ -1862,7 +1862,7 @@ foreach (array('AI appearance rate', 'Citation rate', 'vs previous', 'Trend', 'C
 $readme = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
 $readme_lines = explode("\n", $readme);
 // wordpress.org shows this line as the listing title; it may add a descriptive subtitle after the plugin name.
-expect($readme_lines[0] === '=== Nurevo AEO ===' || strpos($readme_lines[0], '=== Nurevo AEO – ') === 0, 'readme declares the Nurevo AEO plugin name');
+expect($readme_lines[0] === '=== Nurevo AEO ===' || strpos($readme_lines[0], '=== Nurevo AEO – ') === 0 || strpos($readme_lines[0], '=== Nurevo AIO/AEO – ') === 0, 'readme declares the Nurevo plugin name');
 expect(substr($readme_lines[0], -4) === ' ===' && mb_strlen($readme_lines[0]) <= 80, 'readme title is well formed and not overlong');
 
 $headers = array();
