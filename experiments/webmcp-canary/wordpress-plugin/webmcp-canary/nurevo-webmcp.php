@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name: Nurevo AEO – AI Search Optimization, llms.txt & Schema
+ * Plugin Name: Nurevo AEO – AI Search Optimization (AIO/AEO/GEO), llms.txt & Schema
  * Plugin URI: https://nurevo.jp/
  * Description: Diagnoses AI readability (AEO) and publishes basic schema.org JSON-LD, llms.txt, and AI crawler rules server-side. Free to run, and compatible with Yoast SEO and Rank Math.
- * Version: 0.9.1
+ * Version: 0.9.2
  * Requires at least: 6.1
  * Requires PHP: 7.4
  * Author: Nurevo
@@ -19,7 +19,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('WEBMCP_CANARY_VERSION', '0.9.1');
+define('WEBMCP_CANARY_VERSION', '0.9.2');
 define('WEBMCP_CANARY_OPTION', 'webmcp_canary_settings');
 define('WEBMCP_CANARY_HTTP_TIMEOUT', 10);
 define('WEBMCP_CANARY_INSIGHTS_CACHE_TTL', 10 * MINUTE_IN_SECONDS);
