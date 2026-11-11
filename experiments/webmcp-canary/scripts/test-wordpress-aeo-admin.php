@@ -1862,7 +1862,7 @@ foreach (array('AI appearance rate', 'Citation rate', 'vs previous', 'Trend', 'C
 $readme = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
 $readme_lines = explode("\n", $readme);
 // wordpress.org shows this line as the listing title; it may add a descriptive subtitle after the plugin name.
-expect($readme_lines[0] === '=== Nurevo AEO ===' || strpos($readme_lines[0], '=== Nurevo AEO – ') === 0, 'readme declares the Nurevo AEO plugin name');
+expect($readme_lines[0] === '=== Nurevo AEO ===' || strpos($readme_lines[0], '=== Nurevo AEO – ') === 0 || strpos($readme_lines[0], '=== Nurevo AIO/AEO – ') === 0, 'readme declares the Nurevo plugin name');
 expect(substr($readme_lines[0], -4) === ' ===' && mb_strlen($readme_lines[0]) <= 80, 'readme title is well formed and not overlong');
 
 $headers = array();
@@ -3508,10 +3508,10 @@ expect(strpos($block_js, "title:'Nurevo FAQ'") === false && strpos($block_js, 't
 expect(strpos($block_js, '"title":"Nurevo FAQ"') !== false, 'which is passed in from PHP');
 
 $main_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
-expect(WEBMCP_CANARY_VERSION === '0.9.1' && strpos($main_source, " * Version: 0.9.1\n") !== false, 'the version is 0.9.1 in the header and the constant');
+expect(WEBMCP_CANARY_VERSION === '0.9.2' && strpos($main_source, " * Version: 0.9.2\n") !== false, 'the version is 0.9.2 in the header and the constant');
 $readme_081 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
-expect(strpos($readme_081, "Stable tag: 0.9.1") !== false, 'and in the readme stable tag');
-expect(substr_count($readme_081, "= 0.9.1 =") === 2 && substr_count($readme_081, "= 0.9.0 =") === 2 && substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.9.0, 0.8.1 and 0.8.0');
+expect(strpos($readme_081, "Stable tag: 0.9.2") !== false, 'and in the readme stable tag');
+expect(substr_count($readme_081, "= 0.9.2 =") === 2 && substr_count($readme_081, "= 0.9.1 =") === 2 && substr_count($readme_081, "= 0.9.0 =") === 2 && substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.9.0, 0.8.1 and 0.8.0');
 expect(strpos($readme_081, '= Does the AI integration cost anything? =') !== false, 'the readme answers whether the AI integration costs anything');
 
 /* --- Free is never scored down for data it holds: optIn fields publish unless retired --- */

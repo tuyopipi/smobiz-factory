@@ -1,14 +1,14 @@
-=== Nurevo AEO – AI Search Optimization (AEO/GEO), llms.txt & Schema ===
+=== Nurevo AIO/AEO – AI Search Optimization (GEO), llms.txt & Schema ===
 Contributors: tuyopon
-Tags: aeo, geo, ai seo, llms.txt, schema
+Tags: aio, aeo, geo, llms.txt, ai seo
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Get cited by ChatGPT, Perplexity and Google AI. Free AEO score, llms.txt and business schema. Works with Yoast SEO, Rank Math and AIOSEO.
+AI search optimization (AIO/AEO/GEO) without the manual work: free llms.txt, business schema and AI score. Works with Yoast, Rank Math and AIOSEO.
 
 == Description ==
 
@@ -212,6 +212,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.9.2 =
+* The plugin is now listed as "Nurevo AIO/AEO": AIO is the term most people in Japan search for. The admin menu stays "Nurevo AEO" and the slug is unchanged.
+* Site type: the B2B choice now also names freelancers and businesses without a storefront (Japanese label), so they can turn off the address, phone and hours criteria.
+
 = 0.9.1 =
 * SEO SIMPLE PACK support: recognised as an active SEO plugin. It publishes no structured data (meta and OGP tags only), so Nurevo AEO keeps publishing its full graph, FAQ included.
 * VK All in One Expansion Unit support: Nurevo AEO no longer prints a second WebSite or Article beside the ones ExUnit prints, and adds only the missing publisher, description and language to ExUnit's Article (`veu_article_structure_data`) without changing its values. ExUnit publishes no business node, so yours stays the only one. With ExUnit's structured data turned off, Nurevo AEO publishes its own nodes as before.
@@ -329,6 +333,10 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.9.2 =
+
+Clearer site-type label for freelancers and businesses without a storefront.
 
 = 0.9.1 =
 
