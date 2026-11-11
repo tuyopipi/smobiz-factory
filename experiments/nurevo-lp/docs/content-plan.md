@@ -73,6 +73,13 @@
 4. SWELL・Lightningでの構造化データとllms.txtの整え方（テーマ別の注意）
 5. 学習塾のAI検索対策（コース・料金・対象学年・体験授業）【業種別】
 翻訳の残り（8時台で補完）：search-console-ai-features（ja/en のみ）ほか未マージPRの ja/en 記事。
+| 2026-11-11 11時 | seikotsuin-ai-search | 整骨院・接骨院のAI検索対策（令和7年2月18日のあはき・柔整広告ガイドライン：サイトは原則広告ではない／広告・バナー・SNSは3要件で広告、サイトに書くべきでない表現、広告できる事項と「各種保険取扱い」「交通事故取扱い」の不可、協会けんぽの保険の対象・対象外・医師の同意・令和9年1月の償還払い、自費メニューの書き方、MedicalBusiness/LocalBusinessの選び方、WordPressでの手順、チェック表）。2言語（ja・en） | 業種別 | content/daily-20261111-11 |
+1. 不動産会社のAI検索対策（物件情報・対応エリア・RealEstateAgent、宅建業法の広告ルール）【業種別】
+2. MEO会社のAI検索対策：Googleビジネスプロフィールとサイトの事実をそろえる【制作会社向け】
+3. SWELL・Lightningでの構造化データとllms.txtの整え方（テーマ別の注意）
+4. 学習塾のAI検索対策（コース・料金・対象学年・体験授業）【業種別】
+5. 鍼灸院・マッサージ院のAI検索対策（あはき法の広告事項、整骨院記事との違い）【業種別】
+翻訳の残り（8時台で補完）：search-console-ai-features、seikotsuin-ai-search（ja/en のみ）ほか未マージPRの ja/en 記事。
 
 ## 調査レポート（research-）ログ
 
