@@ -1,0 +1,199 @@
+{
+ "title": "酒店、旅馆与民宿的 AI 搜索：入住时间与设施 | Nurevo",
+ "description": "住宿业的 AEO 从在自家网站上正确发布入住时间、设施、房型、价格规则、交通和预约方式开始，并与 OTA 上的信息保持一致。",
+ "h1": "酒店、旅馆与度假民宿的 AI 搜索：如何让 AI 正确读取入住时间、设施和预订信息",
+ "lead": "酒店、旅馆、民宿或度假租赁的 AI 搜索优化（AEO），归根结底是在自家网站上发布能让 AI 不靠猜测就回答条件式问题的信息，例如“适合带孩子的温泉旅馆”“机场附近、免费停车、晚上 11 点后也能入住的酒店”。请把入住和退房时间、设施、房型、价格的设定方式、交通方式和预订方式，同时写进页面文字和 schema.org LodgingBusiness 或 Hotel 结构化数据，并让预订网站（OTA）上的房源信息和 Google 商家资料保持相同的内容。",
+ "intro": [
+  "本文撰写于 2026 年 11 月 10 日（日本时间）。来自 schema.org、Google 和日本政府机构的信息，均已在文中注明的日期于各官方页面核实。",
+  "AI 的回答每天都会变化，也会因提问方式而不同。本文的步骤是让 AI 能读取您住宿设施的信息，并不保证 AI 一定会提到您的设施或给出某个排名。"
+ ],
+ "sections": [
+  {
+   "heading": "旅客会问 AI 什么，AI 又依据什么挑选住处",
+   "paragraphs": [
+    "当有人请 ChatGPT、Perplexity 或 Google 的 AI 摘要推荐住处时，AI 会读取它在网上能找到的内容，整理出一份候选清单。住宿类问题很少只关乎地点，而是多个条件的组合：“京都站 30 分钟内、带私人露天浴池的旅馆”“可以带狗入住、能在房间用晚餐的地方”“机场附近、接受深夜入住的酒店”“有轮椅可用浴室的酒店”。时间、设施、适合什么人、怎么去，都会被考虑进去。",
+    "要回答这些问题，AI 需要在可核实的地方找到以文字写明的每一个条件。如果您的设施列表只是一张图片、网站上找不到最晚入住时间，或者宠物政策只写了“请联系我们”，AI 就只能依赖预订网站、点评网站或自行猜测。如果预订网站上的信息已经过时，您的设施可能会被按旧信息介绍。",
+    "Google 表示，出现在 AI 摘要或 AI 模式中没有额外要求，也不需要特殊的 schema.org 结构化数据，通常的基本功依然重要，例如让结构化数据与页面上可见的文字一致（2026 年 11 月 1 日核实）。[Google：AI 功能与您的网站](https://developers.google.com/search/docs/appearance/ai-features)。住宿业也一样，这项工作不是什么技巧，而是把设施信息正确发布出来，并在所有地方保持一致。"
+   ]
+  },
+  {
+   "heading": "自家网站与 OTA 房源：为什么只有一个不够",
+   "paragraphs": [
+    "大多数住宿设施都在 Booking.com、Expedia 等预订网站（在线旅行社，简称 OTA）上架。OTA 页面信息详细，AI 有时也会把它们当作来源。但自家网站依然重要，因为只有在这里，您才能用自己的语言、以最详细、最准确的方式介绍您的设施。"
+   ],
+   "table": {
+    "head": [
+     "项目",
+     "自家网站能做的",
+     "OTA 和 Google 商家资料上需要注意的"
+    ],
+    "rows": [
+     [
+      "设施名称",
+      "确定正式名称、读音和英文拼写，并在所有地方统一使用",
+      "使用与网站相同的名称（不要用旧馆名或简称）"
+     ],
+     [
+      "入住与退房",
+      "写明开始时间、最晚时间，以及晚到时该怎么做",
+      "每次变更后，确认 OTA 的设置与网站一致"
+     ],
+     [
+      "设施与服务",
+      "写清细节：浴场开放时间、私人浴池如何预约、接驳车条件",
+      "确认勾选的设施确实存在（没有仍在列出的已关闭设施）"
+     ],
+     [
+      "适合人群",
+      "家庭、宠物、无障碍、食物过敏，分别写明能做到和做不到的",
+      "OTA 没有对应栏位的条件，写进自家网站的常见问题"
+     ],
+     [
+      "价格",
+      "说明价格如何随日期和人数变化，以及税费和服务费如何处理",
+      "确认价格基准（是否含税、按房间还是按人）与网站不矛盾"
+     ]
+    ],
+    "caption": "简单的理解方式：自家网站用来说明理由和条件；OTA 和 Google 商家资料则用来确认显示的是相同的数值。"
+   },
+   "after": [
+    "当 AI 的回答把您的名称或条件弄错时，通常是某处还留着旧的数值。请为价格调整、设施变更、翻修和停业定好流程：同时更新自家网站、各个 OTA、Google 商家资料和 llms.txt。"
+   ]
+  },
+  {
+   "heading": "需要发布的信息，以及对应的结构化数据",
+   "paragraphs": [
+    "在结构化数据中，住宿设施用 [schema.org LodgingBusiness](https://schema.org/LodgingBusiness) 来描述。LodgingBusiness 是 LocalBusiness 的一种，更具体的类型有 Hotel、Resort、Hostel、BedAndBreakfast、Motel、Campground 和 VacationRental。LodgingBusiness 本身具有 checkinTime（最早可入住时间）、checkoutTime、amenityFeature、petsAllowed、numberOfRooms、availableLanguage、starRating 和 audience 等属性（2026 年 11 月 10 日核实，schema.org V30.1）。Google 的本地商家文档将 name 和 address 列为必填，并要求尽量使用最具体的子类型（2026 年 10 月 29 日核实）。[Google：本地商家结构化数据](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+   ],
+   "table": {
+    "head": [
+     "信息",
+     "页面上写什么",
+     "对应的 schema.org 属性"
+    ],
+    "rows": [
+     [
+      "类型与名称",
+      "用几个字说明您是什么：酒店、旅馆、民宿、整栋出租",
+      "Hotel、Resort、Hostel、BedAndBreakfast、VacationRental 等 / name"
+     ],
+     [
+      "地址与交通",
+      "完整地址、从最近的车站或机场怎么来、需要多长时间、有没有接驳车及其条件",
+      "address、geo"
+     ],
+     [
+      "入住与退房",
+      "开始时间和最晚时间，例如“下午 3 点至晚上 10 点”，以及晚到时如何通知您",
+      "checkinTime、checkoutTime"
+     ],
+     [
+      "设施",
+      "浴场、私人浴池、停车场（价格和车位数）、Wi-Fi、电动车充电；注明哪些免费、哪些收费",
+      "amenityFeature（它不表示免费或收费，所以请写在正文中）"
+     ],
+     [
+      "宠物、儿童、无障碍",
+      "不只是可以或不可以，还要写条件：宠物的数量和体型、可与大人同床的年龄、无台阶客房有几间",
+      "petsAllowed、audience 等"
+     ],
+     [
+      "客房",
+      "每种房型的面积、可住人数、床或被褥、景观、是否有独立浴室",
+      "HotelRoom、Suite 等（属于 Accommodation，与商家本身分开）"
+     ],
+     [
+      "语言",
+      "前台和预订人员能应对的语言",
+      "availableLanguage"
+     ],
+     [
+      "预订方式",
+      "自家预订页面的链接、电话号码和受理时间",
+      "telephone、预订 URL"
+     ]
+    ],
+    "caption": "属性名称于 2026 年 11 月 10 日在 schema.org 核实。Google 的必填和推荐属性以其本地商家文档所列为准；以上并非都是 Google 的要求。"
+   },
+   "after": [
+    "schema.org 的酒店指南把住宿商家本身、客人入住的住宿单元（如 HotelRoom 这样的 Accommodation）以及其销售所依据的报价区分开来，并指出 amenityFeature 不表示某项设施是免费还是收费。[schema.org：Hotels](https://schema.org/docs/hotels.html)。如果停车或早餐需要另付费用，请在页面文字中写明金额。",
+    "请按当地规定显示价格。例如在日本，国税厅要求事先向消费者显示的价格必须包含消费税，无论使用何种媒介（2026 年 11 月 1 日核实）。[国税厅：总额显示（日语）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm)。房价会随日期、人数和方案变化，因此与其在结构化数据中写入固定价格，不如在正文中说明计价基准，例如“两人一间时每人价格”或“不含当地住宿税”，这样更不容易被误读。",
+    "Google 也提供了酒店价格的结构化数据文档，但那是用于在 Google 的酒店产品（Hotel Center）中核对价格准确性的（2026 年 11 月 10 日核实）。[Google：酒店价格结构化数据](https://developers.google.com/hotels/hotel-prices/structured-data/hotel-price-structured-data)。它并不是出现在 AI 回答中的必要条件。"
+   ]
+  },
+  {
+   "heading": "度假租赁与民宿",
+   "paragraphs": [
+    "对民宿来说，登记号或备案号也是需要发布的信息之一。例如在日本，观光厅表示，民宿（minpaku）预订平台在上架房源前必须确认经营者的姓名、地址和备案号，无法确认的房源不得上架，并且必须在房源页面上显示该编号（2026 年 11 月 10 日核实）。[观光厅：防止违法房源上架（日语）](https://www.mlit.go.jp/kankocho/minpaku/business/mediation/prevention.html)。各国家和城市的规定不同，请确认您所在地的规定。在自家网站上显示与平台相同的编号、名称和地址，能让 AI 和旅客更容易确认这是同一个地方。",
+    "整栋出租和度假屋有专门的结构化数据类型 VacationRental。最多可住人数、床或被褥的数量、有没有厨房或洗衣机、钥匙如何交接、关于邻里的入住规则（噪音、垃圾）等，都是旅客会问 AI 的内容。如果现场没有工作人员，还请发布紧急联系方式及其受理时间。"
+   ]
+  },
+  {
+   "heading": "在 WordPress 住宿网站上进行设置",
+   "list": [
+    "从 [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) 安装 Nurevo AEO（免费）并启用。如果您在用 Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK 或 VK All in One Expansion Unit，可以继续保留。",
+    "在设置向导中选择“Lodging”。商家类型会设为 LodgingBusiness。请在设置中把“Business type (schema.org type)”改为最接近的类型：酒店选 Hotel，度假村选 Resort，民宿选 Hostel 或 BedAndBreakfast，整栋出租选 VacationRental。确认名称、地址、电话和简介，并把前台服务时间填为营业时间。只有空白字段会从现有设置中自动填入，您已输入的内容不会被覆盖。",
+    "凡是有固定价格的项目（日归温泉、接驳车、体验活动、私人浴池），都可以在设置中添加为服务。填写名称、所需时间、价格、货币、预约 URL 和说明后，它会作为与您的设施关联的 Service 发布（价格作为 Offer，预约 URL 作为预约操作），并在 llms.txt 中列为一行。随日期变化的房价，与其硬填一个固定数字，不如不填更稳妥。",
+    "把入住和退房时间、宠物、儿童和无障碍的条件、停车、接驳车和餐食，以问答形式填入 Nurevo AEO 的常见问题，并在常见问题页或住宿须知页上放置 Nurevo FAQ 区块或 [nurevo_faq] 短代码。这些问题会加入该页面的 FAQPage，并显示在页面文字中。Nurevo AEO 目前不会单独输出 checkinTime 或 amenityFeature 属性，所以这些信息是通过正文和常见问题传达给 AI 的。",
+    "在 AEO Score 页面运行诊断，并应用检查清单提供的一键修复。结构化数据、llms.txt 和 AI 爬虫访问（OAI-SearchBot、PerplexityBot、Claude-SearchBot 等）全部包含在免费方案中。",
+    "用[免费 AI 可读性检测](/check)从外部查看 AI 读到了什么，并确认各 OTA 和 Google 商家资料上的入住时间、设施和名称与您的网站一致。"
+   ],
+   "after": [
+    "启用 SEO 插件时，Nurevo AEO 不会再输出第二套结构化数据，而只会把缺少的地址、电话、营业时间、Hotel 等具体类型以及您的服务，补充到 SEO 插件已经发布的图谱中。请参阅[为 Yoast、Rank Math 和 AIOSEO 添加本地商家 schema](/guide/local-business-schema-seo-plugins)。如果您的预订引擎在另一个域名上运行，也请把设施的基本信息以文字写在自家网站的页面上，而不要只出现在空房查询结果里。"
+   ]
+  },
+  {
+   "heading": "发布前的检查清单",
+   "list": [
+    "入住开始时间、最晚入住时间和退房时间，在网站、OTA 和 Google 商家资料上一致。",
+    "设施以文字写出，而不只是图片；收费项目（停车、早餐）写明了价格或条件。",
+    "宠物、儿童、无障碍和食物过敏都写明了条件：能做到什么、做不到什么。",
+    "结构化数据类型与设施相符，例如 Hotel、Resort、Hostel 或 VacationRental，而不是笼统的 Organization。",
+    "价格按当地规定显示，并写明计价基准：按房间还是按人，以及当地住宿税如何处理。",
+    "对于民宿，平台上和网站上的登记号、名称和地址一致。",
+    "llms.txt 列出了概况、客房、设施、交通、常见问题和预订页面。[什么是 llms.txt？](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "检查您是否出现在 AI 回答中",
+   "paragraphs": [
+    "信息准备好之后，用旅客会问的问题（地区 + 条件 + 目的）去问 AI，看看您的设施是否以名称或 URL 出现，例如“[温泉地]适合带孩子的旅馆”“[车站]附近可免费停车的酒店”。对于包含设施名称的问题，还要确认 AI 所说的内容（入住时间、设施）是否正确。回答每次都会变化，所以请把同样的问题隔一段时间多问几次，并做好记录。[如何测量 AI 可见度](/guide/measure-ai-visibility)介绍了具体方法。",
+    "Nurevo AEO 的 Free 和 Standard 方案包含每月一次的检查：根据您的商家类型和地区（绝不使用设施名称）生成三个问题向 Perplexity 提问，插件会记录回答中是否提到了您的设施或引用了您的网站。Pro 方案（$99/月起）增加了测试版的 AI 可见度测量：您的设施在 AI 回答中出现的频率，并提供竞争对手比较和历史记录（目前支持 Perplexity）。两者都是对回答进行抽样，而不是观察每一个回答。"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "酒店或旅馆应该从哪里开始做 AI 搜索优化？",
+   "a": "先在自家网站上以文字正确写出入住和退房时间、设施、客房、宠物和儿童的条件、交通方式和预订方式。然后把同样的信息发布为 Hotel（或其他住宿类型）结构化数据并写进 llms.txt，同时确认 OTA 房源和 Google 商家资料上的数值相同。"
+  },
+  {
+   "q": "已经在 OTA 上架了，还需要完善自家网站吗？",
+   "a": "OTA 页面也可能成为 AI 的来源，但它们的栏位是固定的，接驳车条件或私人浴池的预约方式等细节往往放不进去。自家网站是能最详细介绍您设施的地方。让两者保持一致是最稳妥的做法。"
+  },
+  {
+   "q": "传统日式旅馆应该用 Hotel 还是 LodgingBusiness？",
+   "a": "schema.org 没有传统日式旅馆的专用类型。请选择最接近的类型，例如 Hotel，温泉住宿也可以选 Resort；如果都不合适，就保留通用的 LodgingBusiness。并在正文和简介中说明这是什么样的地方。"
+  },
+  {
+   "q": "Nurevo AEO 是免费的吗？",
+   "a": "是的。商家类型（Hotel 等）、地址、营业时间、服务和 FAQ 的结构化数据、llms.txt、AI 爬虫规则以及 AEO 分数都包含在免费方案中。付费方案增加了始终保持最新的规则集（Standard，$20/月）和测试版的 AI 可见度测量（Pro，$99/月起）。[WordPress.org 上的 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "这样做能保证我的设施出现在 ChatGPT 中吗？",
+   "a": "不能。AI 的回答会变化，任何工具或技巧都无法保证被提及或获得某个位置。您能做的是让信息易于 AI 读取，并持续检查自己是否出现、是否被正确描述。"
+  }
+ ],
+ "relatedHeading": "相关指南",
+ "cta": {
+  "heading": "先看看 AI 是如何读取您住宿设施网站的",
+  "body": "免费检测可显示结构化数据、llms.txt 和 AI 爬虫访问的状态，无需注册。在 WordPress 上，Nurevo AEO 可以免费补齐缺漏。",
+  "label": "进行免费 AI 可读性检测",
+  "href": "/check",
+  "secondary": {
+   "label": "在 WordPress.org 获取 Nurevo AEO",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT 是 OpenAI 的商标，Perplexity 是 Perplexity AI 的商标，Google 是 Google LLC 的商标。Booking.com、Expedia、Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK 和 VK All in One Expansion Unit 是其各自所有者的商标。Nurevo 与上述公司均无关联。本文不构成法律或税务建议。"
+}

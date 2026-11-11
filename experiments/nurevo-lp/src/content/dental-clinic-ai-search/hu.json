@@ -1,0 +1,143 @@
+{
+ "title": "AI-keresés fogorvosoknak: hogy az AI jól olvassa a rendelőt | Nurevo",
+ "description": "A fogorvosi AEO a rendelési idő, a kezelések, a cím és az időpontfoglalás helyes közzétételével kezdődik, az oldal szövegében és Dentist strukturált adatokban.",
+ "h1": "AI-keresés fogorvosi rendelőknek: hogyan olvassa helyesen az AI a rendelője adatait",
+ "lead": "A fogorvosi rendelő AI-keresési optimalizálása (AEO) azon múlik, hogy a betegek által keresett tényeket (rendelési idő, szünnapok, kezelések, cím, telefonszám és az időpontfoglalás módja) pontosan és mindenhol egyformán tegye közzé, az oldal szövegében és schema.org Dentist strukturált adatokban is. Így a ChatGPT, a Perplexity és a Google AI-ja találgatás nélkül válaszolhat arra, hogy „melyik közeli fogorvos rendel szombaton?”. Az egészségügyi reklámszabályok továbbra is vonatkoznak a weboldalára, ezért ne tegyen fel betegvéleményeket vagy merész állításokat csak azért, mert az olvasó egy gép.",
+ "intro": [
+  "Készült 2026. október 29-én (JST). A Google, a schema.org és a japán Egészségügyi, Munkaügyi és Népjóléti Minisztérium információit aznap ellenőriztük az adott hivatalos oldalakon.",
+  "Az AI válaszai napról napra és a kérdés megfogalmazásától függően változnak. Az itt leírt lépések olvashatóvá teszik a rendelője adatait az AI számára. Nem garantálják, hogy egy AI megemlíti a rendelőjét, vagy bármilyen helyre sorolja."
+ ],
+ "sections": [
+  {
+   "heading": "Mit kérdeznek a betegek az AI-tól, és mit olvas az AI",
+   "paragraphs": [
+    "Amikor valaki a ChatGPT-től, a Perplexitytől vagy a Google AI Overviews-tól kér fogorvost, az AI elolvassa, amit a weben talál, és ebből állítja össze a választ. A kérdések általában helyre, napra, időpontra és kezelésre vonatkoznak: „szombaton is rendelő fogorvos az állomás közelében”, „családi fogorvos, aki gyerekeket is ellát”, „fogorvosi rendelő esti időpontokkal 19 óra után”.",
+    "Ahhoz, hogy válaszolni tudjon, az AI-nak ki kell tudnia olvasni, hol van a rendelője, mely napokon és órákban rendel, és mit kezel. Ha a rendelési idő csak képként szerepel, a szünnapok oldalanként eltérnek, vagy a kezelések sehol nincsenek szövegként leírva, a rendelőjét nehezebb felhasználni egy válaszban.",
+    "A Google szerint nincs további követelmény, és nincs szükség különleges schema.org jelölésre ahhoz, hogy megjelenjen az AI Overviews-ban vagy az AI Mode-ban, a szokásos SEO-alapok viszont továbbra is számítanak, például hogy a strukturált adatok egyezzenek a látható szöveggel, és a cégprofilja naprakész legyen. [Google: AI-funkciók és az Ön webhelye](https://developers.google.com/search/docs/appearance/ai-features). Ez tehát nem AI-trükk, hanem a rendelője adatainak helyes és következetes közzététele."
+   ]
+  },
+  {
+   "heading": "Milyen adatokat tegyen közzé egy fogorvosi rendelő",
+   "paragraphs": [
+    "A strukturált adatokban a fogorvosi rendelőt [schema.org Dentist](https://schema.org/Dentist) típusként írjuk le, amely a LocalBusiness egyik fajtája. A Google helyi vállalkozásokról szóló dokumentációja a name és az address tulajdonságot kötelezőként, az openingHoursSpecification, a telephone, az url és más tulajdonságokat ajánlottként sorolja fel, és azt kéri, hogy a lehető legpontosabb LocalBusiness altípust használja. [Google: helyi vállalkozások strukturált adatai](https://developers.google.com/search/docs/appearance/structured-data/local-business)"
+   ],
+   "table": {
+    "head": [
+     "Adat",
+     "Az oldalon",
+     "A strukturált adatokban (Dentist)"
+    ],
+    "rows": [
+     [
+      "A rendelő neve",
+      "A hivatalos név, mindenhol ugyanúgy írva, a cégtáblával és a cégprofillal egyezően",
+      "name (kötelező)"
+     ],
+     [
+      "Cím és megközelítés",
+      "A teljes cím, valamint a közeli állomások, parkolás vagy tájékozódási pontok szövegként",
+      "address (kötelező), geo (ajánlott)"
+     ],
+     [
+      "Telefon és időpontfoglalás",
+      "A telefonszám szövegként, és link az online foglaláshoz, ha van",
+      "telephone, url (ajánlott)"
+     ],
+     [
+      "Rendelési idő és szünnapok",
+      "Szöveges táblázat, nem kép, az ebédszünettel, a rövidített szombattal és az ünnepnapokkal együtt",
+      "openingHoursSpecification (ajánlott)"
+     ],
+     [
+      "Kezelések",
+      "Általános fogászat, gyermekfogászat, fogszabályozás, szájsebészet stb., szövegként leírva",
+      "A rendelőhöz kapcsolt szolgáltatások (Service)"
+     ],
+     [
+      "Gyakori kérdések",
+      "Amit a betegek valóban kérdeznek: parkolás, biztosítás, mit hozzanak az első vizitre",
+      "FAQPage, csak azon az oldalon, ahol a GYIK látható"
+     ]
+    ],
+    "caption": "Kötelező és ajánlott tulajdonságok a Google helyi vállalkozásokról szóló dokumentációja szerint, 2026. október 29-i állapot."
+   },
+   "after": [
+    "A legfontosabb, hogy ugyanannak a ténynek mindenhol ugyanaz legyen az értéke: az oldal szövegében, a strukturált adatokban, a Google Cégprofilban és az llms.txt-ben. Ha ünnepek vagy ideiglenes zárva tartás miatt változik a rendelési idő, mindegyiket egyszerre frissítse."
+   ]
+  },
+  {
+   "heading": "Egészségügyi reklámszabályok: mit ne tegyen fel az AI kedvéért",
+   "paragraphs": [
+    "A szabályok országonként eltérnek, ezért ellenőrizze az Önre vonatkozókat. Japánban az egészségügyi ellátásról szóló törvény 2018. június 1-jén hatályba lépett módosítása az egészségügyi intézmények weboldalait is az egészségügyi reklámszabályok hatálya alá vonta. Az Egészségügyi, Munkaügyi és Népjóléti Minisztérium weboldalakra vonatkozó esetgyűjteménye a hamis és túlzó állításokat, a más klinikáknál jobbnak mondott állításokat, a betegvéleményeket és a kezelés előtti és utáni fotókat a tiltott reklám példái között említi. [MHLW esetgyűjtemény (bizottsági anyag, japánul)](https://www.mhlw.go.jp/content/10800000/001232587.pdf) / [Az 5. kiadásról szóló közlemény, 2025. március 11. (japánul)](https://www.mhlw.go.jp/content/001440134.pdf)",
+    "Ezért ne tegyen az AI kedvéért a strukturált adatokba vagy a GYIK-be olyan kifejezéseket, mint „a környék első számú rendelője” vagy „fájdalommentes kezelés”, sem betegvéleményeket és ajánlásokat. A strukturált adat az oldal tartalma gépeknek leírva: ha az oldalon nem mondhatja ki, a jelölésben se mondja.",
+    "Másrészt az esetgyűjtemény feltételeket is megad, amelyek mellett egy olyan weboldal, amelyet a betegek maguk keresnek fel, többet is elmondhat, például a saját költségen fizetett kezelés tartalmát, árát, fő kockázatait és mellékhatásait, a kérdésekhez szükséges elérhetőségekkel. Hogy egy adott megfogalmazás megengedett-e, azt a hivatalos útmutatóban vagy a helyi egészségügyi hatóságnál ellenőrizze."
+   ]
+  },
+  {
+   "heading": "Beállítás egy WordPress-alapú fogorvosi oldalon",
+   "list": [
+    "Telepítse a Nurevo AEO-t (ingyenes) a [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) oldalról, és aktiválja. Ha Yoast SEO-t, Rank Math-ot, All in One SEO-t vagy Slim SEO-t használ, tartsa meg.",
+    "A beállítóvarázslóban válassza a „Clinic or dental” lehetőséget, és állítsa a vállalkozás típusát Dentist értékre. Ellenőrizze a nevet, a címet, a telefonszámot, a rendelési időt és a leírást. A meglévő beállításokból csak az üres mezők töltődnek ki; semmi, amit Ön beírt, nem íródik felül.",
+    "A Beállításokban adja hozzá a kezeléseket (általános fogászat, gyermekfogászat stb.) szolgáltatásként, és írja be a GYIK-et. A GYIK kérdései annak az oldalnak a FAQPage-éhez adódnak hozzá, ahol a Nurevo FAQ blokkot vagy a [nurevo_faq] shortcode-ot elhelyezi.",
+    "Futtassa a diagnózist az AEO Score képernyőn, és alkalmazza az ellenőrzőlista által felkínált egykattintásos javításokat. A strukturált adatok, az llms.txt és az AI-robotok hozzáférése (OAI-SearchBot, PerplexityBot, Claude-SearchBot és mások) mind benne vannak a Free csomagban.",
+    "Nézze meg kívülről, mit olvas az AI, az [ingyenes AI-olvashatósági ellenőrzéssel](/check?lang=en), és győződjön meg róla, hogy a rendelési idő egyezik a Google Cégprofiljával."
+   ],
+   "after": [
+    "Aktív SEO-bővítmény mellett a Nurevo AEO nem ad ki második strukturáltadat-készletet. Csak a hiányzó címet, telefonszámot, rendelési időt és a Dentist típust adja hozzá ahhoz a gráfhoz, amelyet a SEO-bővítménye már közzétesz. Lásd: [helyi vállalkozás séma hozzáadása a Yoasthoz, a Rank Math-hoz és az AIOSEO-hoz](/guide/local-business-schema-seo-plugins/). A nem WordPress-szel készült oldalakon ugyanez a gondolat érvényes: tegye közzé a fenti táblázat adatait az oldal szövegében és strukturált adatokban."
+   ]
+  },
+  {
+   "heading": "Ellenőrzőlista közzététel előtt",
+   "list": [
+    "A rendelési idő és a szünnapok szövegként szerepelnek, nem képként.",
+    "A név, a cím és a telefonszám egyezik az egész webhelyen és a Google Cégprofilban.",
+    "A strukturált adatok típusa Dentist, nem pedig általános Organization.",
+    "A strukturált adatokban szereplő rendelési idő egyezik az oldalon láthatóval.",
+    "A GYIK strukturált adatai csak azon az oldalon szerepelnek, ahol az adott GYIK látható.",
+    "Nincsenek betegvélemények, előtte-utána fotók, összehasonlító vagy túlzó állítások sem a szövegben, sem a jelölésben.",
+    "Az llms.txt felsorolja a rendelő bemutatását, a kezeléseket, a megközelítést és a foglalást tartalmazó oldalakat. [Mi az az llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Hogyan ellenőrizze, megjelenik-e az AI válaszaiban",
+   "paragraphs": [
+    "Ha az adatok a helyükön vannak, tegye fel az AI-nak azokat a kérdéseket, amelyeket a betegei tennének fel, és nézze meg, megjelenik-e a rendelője névvel vagy URL-lel. A válaszok futtatásonként változnak, ezért ugyanazokat a kérdéseket időben elosztva többször is tegye fel.",
+    "A Nurevo AEO Free és Standard csomagja havi ellenőrzést tartalmaz: három, a vállalkozás típusából és a környékből (soha nem a rendelő nevéből) összeállított kérdést tesz fel a Perplexitynek, és a bővítmény rögzíti, hogy a válaszok megnevezték-e a rendelőjét vagy hivatkoztak-e az oldalára. A Pro csomag (havi $99-tól) béta AI-láthatósági mérést ad hozzá: milyen gyakran jelenik meg a rendelője az AI válaszaiban, versenytárs-összehasonlítással és előzményekkel (jelenleg a Perplexityn). Mindkettő mintavételezi a válaszokat, nem követ minden egyes választ."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hol kezdje egy fogorvosi rendelő az AI-keresést?",
+   "a": "Írja le helyesen, szövegként az oldalain a rendelési időt, a szünnapokat, a címet, a telefonszámot és a kezeléseket. Ezután tegye közzé ugyanezeket az adatokat Dentist strukturált adatként és az llms.txt-ben, és ellenőrizze, hogy egyeznek-e a Google Cégprofiljával."
+  },
+  {
+   "q": "Hiba Organization vagy LocalBusiness strukturált adatot használni egy fogorvosnál?",
+   "a": "Nem hiba, de a Google azt kéri, hogy a lehető legpontosabb típust használja. Fogorvosi rendelőnél ez a schema.org Dentist."
+  },
+  {
+   "q": "Tegyek fel betegvéleményeket vagy ajánlásokat az AI kedvéért?",
+   "a": "Először ellenőrizze a helyi szabályokat. Japánban a klinikák weboldalaira az egészségügyi reklámszabályok vonatkoznak, és a betegvélemények tiltott reklámnak számítanak. Az AI kedvéért se tegye őket a strukturált adatokba vagy a GYIK-be."
+  },
+  {
+   "q": "Ingyenes a Nurevo AEO?",
+   "a": "Igen. A vállalkozás típusa (Dentist), a cím, a rendelési idő, a szolgáltatások és a GYIK strukturált adatai, az llms.txt, az AI-robotokra vonatkozó szabályok és az AEO-pontszám a Free csomagban vannak. A fizetős csomagok mindig naprakész szabálykészletet (Standard, havi $20) és béta AI-láthatósági mérést (Pro, havi $99-tól) adnak hozzá. [Nurevo AEO a WordPress.org-on](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garantálja ez, hogy a rendelőm megjelenik a ChatGPT-ben?",
+   "a": "Nem. Az AI válaszai változnak, és semmilyen eszköz vagy technika nem garantálhat említést vagy helyezést. Annyit tehet, hogy az adatait könnyen olvashatóvá teszi az AI számára, és folyamatosan ellenőrzi, megjelenik-e."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Először nézze meg, hogyan olvassa az AI a rendelője oldalát",
+  "body": "Az ingyenes ellenőrzés regisztráció nélkül megmutatja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát. WordPressen a Nurevo AEO ingyen pótolja a hiányokat.",
+  "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO letöltése a WordPress.org-ról",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google a Google LLC védjegye. A Yoast SEO, a Rank Math, az All in One SEO és a Slim SEO a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük. Ez a cikk nem minősül jogi tanácsadásnak."
+}

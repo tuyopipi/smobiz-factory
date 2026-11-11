@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GA4でAIからの流入を見る方法：ChatGPT・Perplexityの見分け方 | Nurevo</title>
+<meta name="description" content="ChatGPTやPerplexityなどAIからの訪問をGA4で見る手順。標準の「AI アシスタント」チャネル、取りこぼしを拾うカスタムチャネルグループの正規表現、Directに埋もれる訪問、GA4では見えないものまで。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/ai-traffic-google-analytics/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/ai-traffic-google-analytics/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/ai-traffic-google-analytics/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/ai-traffic-google-analytics/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/ai-traffic-google-analytics/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/ai-traffic-google-analytics/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/ai-traffic-google-analytics/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/ai-traffic-google-analytics/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/ai-traffic-google-analytics/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="GA4でAIからの流入を見る方法：ChatGPT・Perplexityの見分け方 | Nurevo">
+<meta property="og:description" content="ChatGPTやPerplexityなどAIからの訪問をGA4で見る手順。標準の「AI アシスタント」チャネル、取りこぼしを拾うカスタムチャネルグループの正規表現、Directに埋もれる訪問、GA4では見えないものまで。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/ai-traffic-google-analytics/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GA4でAIからの流入を見る方法：ChatGPT・Perplexityの見分け方 | Nurevo">
+<meta name="twitter:description" content="ChatGPTやPerplexityなどAIからの訪問をGA4で見る手順。標準の「AI アシスタント」チャネル、取りこぼしを拾うカスタムチャネルグループの正規表現、Directに埋もれる訪問、GA4では見えないものまで。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/ai-traffic-google-analytics/#webpage","url":"https://nurevo.jp/ja/guide/ai-traffic-google-analytics/","name":"GA4でAIからの流入を見る方法：ChatGPT・Perplexityの見分け方 | Nurevo","description":"ChatGPTやPerplexityなどAIからの訪問をGA4で見る手順。標準の「AI アシスタント」チャネル、取りこぼしを拾うカスタムチャネルグループの正規表現、Directに埋もれる訪問、GA4では見えないものまで。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/ai-traffic-google-analytics/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/ai-traffic-google-analytics/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"GA4でAIからの流入を見る方法：ChatGPT・Perplexityからの訪問の見分け方と、見えないもの","item":"https://nurevo.jp/ja/guide/ai-traffic-google-analytics/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/ai-traffic-google-analytics/#faq","mainEntity":[{"@type":"Question","name":"GA4に「AI アシスタント」の行が出てきません。設定が必要ですか？","acceptedAnswer":{"@type":"Answer","text":"標準のチャネルなので設定は不要です。行がないのは、その期間にこのチャネルに入った訪問がなかったためです。参照元の列でAIのドメインがほかのチャネルに入っていないかも確認してください。"}},{"@type":"Question","name":"Perplexityからの訪問はどこに入りますか？","acceptedAnswer":{"@type":"Answer","text":"Googleのヘルプでは、AI アシスタント チャネルの例にPerplexityの名前はありません。「参照」に入っていることもあるため、セッションの参照元で perplexity.ai を探すか、カスタムチャネルグループで確実にAIの行にまとめてください。"}},{"@type":"Question","name":"GoogleのAIによる概要（AI Overviews）からの訪問だけを数えられますか？","acceptedAnswer":{"@type":"Answer","text":"GA4ではできません。Googleは、AIによる概要とAIモードからの訪問をオーガニック検索に含めるとしています。GoogleのAI機能での表示は、Search Consoleの検索パフォーマンスで、通常の検索とあわせて見ることになります。"}},{"@type":"Question","name":"ChatGPTのアプリから来た人は数えられますか？","acceptedAnswer":{"@type":"Answer","text":"ChatGPTの検索結果のリンクには utm_source=chatgpt.com が付くとOpenAIは説明しているので、それが残っていれば chatgpt.com として数えられます。参照元もパラメータも残らない開き方では、GA4ではダイレクトになり、区別できません。"}},{"@type":"Question","name":"カスタムチャネルグループを作ると、元のレポートが変わってしまいますか？","acceptedAnswer":{"@type":"Answer","text":"変わりません。デフォルト チャネル グループはそのまま残り、作ったグループはレポートの切り替えで選んだときだけ使われます。過去の期間にもさかのぼって適用できます。"}},{"@type":"Question","name":"AIからの訪問を増やす方法はありますか？","acceptedAnswer":{"@type":"Answer","text":"保証できる方法はありません。できるのは、AI検索のクローラがページを読める状態にし、料金・営業時間・対応地域などの事実をはっきり書き、構造化データやllms.txtで伝わりやすくすることです。そのうえで、GA4のAIの行と登場率を分けて、毎月同じ方法で記録していきます。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check">無料でAI可読性をチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>GA4でAIからの流入を見る方法：ChatGPT・Perplexityからの訪問の見分け方と、見えないもの</span></nav>
+  <article>
+    <h1>GA4でAIからの流入を見る方法：ChatGPT・Perplexityからの訪問の見分け方と、見えないもの</h1>
+    <p class="lead">GA4では、まず「集客」＞「トラフィック獲得」の「AI アシスタント」チャネルを見ます。Googleはこのチャネルを、ChatGPT・Gemini・DeepSeek・Copilot・Grokなどから来た訪問としています。ここに入らないAI（Perplexityなど）は参照元の列で確かめ、必要ならAIサービスのドメインを並べたカスタムチャネルグループを作ると、過去の期間も含めて一つの行で追えます。ただし、GoogleのAIによる概要・AIモードからの訪問は「オーガニック検索」に入り、参照元を伝えない訪問は「ダイレクト」に入るため、GA4だけでAIの影響をすべて数えることはできません。</p>
+<p>作成日：2026年11月10日。Google アナリティクスのヘルプ、OpenAI・Perplexityの公式ドキュメントで、同日に確認した内容です。画面の名前や仕様は変わることがあるため、最新のヘルプもあわせてご確認ください。</p>
+<p>この記事で扱うのは「AIの回答からリンクをクリックしてサイトに来た訪問」です。AIの回答の中で名前が出たか、サイトが出典に使われたか（登場率）は、クリックされなければGA4には残りません。そちらの測り方は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>にまとめています。なお、AIの回答は日や回によって変わり、どんな対策をしてもAIからの訪問が必ず増えるわけではありません。</p>
+<section class="qa"><h2>AIからの訪問は、GA4のどこに入るか</h2><p>同じ「AIから来た人」でも、来かたによってGA4での入り先が変わります。最初にこの違いを知っておくと、数字の読み間違いを防げます。</p><div class="table-wrap"><table><caption>AI アシスタント チャネルに入るサービスの範囲は、Googleのヘルプでは「〜など」と例で書かれています。PerplexityやClaudeがどちらに入っているかは、自社のレポートの参照元の列で確かめてください。</caption><thead><tr><th scope="col">来かた</th><th scope="col">GA4での入り先</th><th scope="col">見分け方</th></tr></thead><tbody><tr><th scope="row">ChatGPT・Gemini・Copilot・DeepSeek・Grokの回答のリンクを、ブラウザでクリック</th><td>「AI アシスタント」チャネル。Googleはこのチャネルの例としてこれらのサービスを挙げています（<a href="https://support.google.com/analytics/answer/9756891?hl=ja">Google アナリティクス ヘルプ：デフォルト チャネル グループ</a>）</td><td>トラフィック獲得レポートの「AI アシスタント」の行</td></tr><tr><th scope="row">Perplexity・Claudeなど、Googleの例に名前がないAIからのクリック</th><td>「AI アシスタント」に入るとは限らず、「参照（Referral）」に入ることがあります</td><td>ディメンションを「セッションの参照元」に切り替えて、ドメイン（perplexity.ai など）で探す</td></tr><tr><th scope="row">GoogleのAIによる概要（AI Overviews）・AIモードのリンク</th><td>「オーガニック検索」。Googleは、AI アシスタントからは除き、オーガニック検索に含めると明記しています（<a href="https://support.google.com/analytics/answer/9756891?hl=ja">同ヘルプ</a>）</td><td>GA4では通常の検索と分けられません。Search Consoleを使います（後の章）</td></tr><tr><th scope="row">アプリ内で開いた、URLをコピーして貼った、ブラウザが参照元を送らなかった</th><td>参照元もキャンペーンの情報もなければ「ダイレクト」。Googleの定義では、参照元が「(direct)」の訪問がダイレクトです（<a href="https://support.google.com/analytics/answer/9756891?hl=ja">同ヘルプ</a>）</td><td>GA4では普通のダイレクトと区別できません。問い合わせフォームの「何で知りましたか」などで補います</td></tr><tr><th scope="row">AIのクローラ（OAI-SearchBot、ChatGPT-User、PerplexityBot など）がページを読みに来た</th><td>GA4の計測はページに入れたタグ（JavaScript）が訪問者のブラウザで動くことで記録されるため、ページを取得するだけのクローラは基本的に現れません</td><td>サーバーのアクセスログで、ユーザーエージェント名を見る</td></tr></tbody></table></div><p>ChatGPTについては、OpenAIが「ChatGPTの検索結果からのリンクには utm_source=chatgpt.com を自動で付ける」としています（<a href="https://help.openai.com/en/articles/12627856-publishers-and-developers-faq">OpenAI：パブリッシャー・開発者向けFAQ</a>）。そのため、ブラウザが参照元を送らない場合でも、このパラメータが残っていれば参照元は chatgpt.com として記録されます。URLをコピーしたときにパラメータが消えていれば、ダイレクトになります。</p></section>
+<section class="qa"><h2>手順1：GA4がサイトに正しく入っているか確認する（WordPressの場合）</h2><ol><li>WordPressなら、Google公式のプラグイン「Site Kit by Google」でGA4をつなぐのがわかりやすい方法です（<a href="https://wordpress.org/plugins/google-site-kit/">WordPress.org：Site Kit by Google</a>）。テーマの設定欄や別のプラグインですでにタグを入れている場合は、どちらか一方にします。二重に入っていると、訪問が二重に数えられます。</li><li>GA4の「レポート」＞「リアルタイム」を開いたまま、自分のスマホでサイトを開き、訪問が表示されることを確認します。</li><li>キャッシュ系のプラグインやCDNを使っている場合は、変更後にキャッシュを消してから確認します。</li></ol></section>
+<section class="qa"><h2>手順2：標準の「AI アシスタント」チャネルを見る</h2><ol><li>GA4の「レポート」＞「集客」＞「トラフィック獲得」を開きます。</li><li>表の最初の列が「セッションのデフォルト チャネル グループ」になっていることを確認し、「AI アシスタント」の行を探します。行がない場合は、その期間にこのチャネルに入った訪問がなかったということです。</li><li>表の上の「＋」から、2つ目のディメンションに「セッションの参照元」を足すと、AI アシスタントの中身（chatgpt.com、gemini.google.com など）がわかります。</li><li>続けて、最初の列を「セッションの参照元」に切り替え、検索窓に perplexity や claude と入れて、AI アシスタント以外の行に入っているAIがないかを見ます。</li></ol></section>
+<section class="qa"><h2>手順3：取りこぼしを拾うカスタムチャネルグループを作る</h2><p>標準のチャネルに入らないAIがある、または過去の期間とも比べたい場合は、自分でチャネルグループを作ります。Googleのヘルプによると、カスタムチャネルグループは過去のデータにもさかのぼって適用できます（<a href="https://support.google.com/analytics/answer/13051316?hl=ja">Google アナリティクス ヘルプ：カスタム チャネル グループ</a>）。</p><ol><li>「管理」＞「データの表示」＞「チャネルグループ」を開きます。</li><li>「デフォルト チャネル グループ」の「コピーして新規作成」を選びます。ゼロから作るより、既存のチャネルがそのまま残るので安全です。</li><li>グループ名を「AIを分けたチャネル」などにし、「新しいチャネルを追加」でチャネル名を「AI（すべて）」とします。</li><li>条件に「参照元」「正規表現に一致」を選び、次の章の正規表現を貼り付けます。</li><li>「並べ替え」で、このチャネルを「オーガニック検索」「参照」より上に移します。Googleのヘルプにあるとおり、訪問は上から順に見て最初に条件が合ったチャネルに入るため、下に置くと参照などに先に取られます。</li><li>保存したら、トラフィック獲得レポートの最初の列の切り替えから、作ったグループを選びます。</li></ol><p>カスタムチャネルグループは、通常のGA4プロパティでは2つまで（GA4 360では5つまで）、1つのグループにチャネルは50個までです。また、BigQueryへのエクスポートには含まれません（いずれも同ヘルプ）。</p></section>
+<section class="qa"><h2>そのまま使える正規表現と、書くときの注意</h2><p>参照元の条件に、次の正規表現を使えます（2026年11月時点で主なAIサービスのドメインを並べたもの）。</p>
+<p>chatgpt\.com|chat\.openai\.com|(www\.)?perplexity\.ai|claude\.ai|gemini\.google\.com|copilot\.microsoft\.com|copilot\.com|chat\.deepseek\.com|grok\.com</p>
+<p>GA4の正規表現は、何も付けなければ「完全一致」で判定されます（<a href="https://support.google.com/analytics/answer/1034324?hl=ja">Google アナリティクス ヘルプ：正規表現</a>）。そのため上の書き方では、chatgpt.com そのものには一致し、chatgpt.com を一部に含む別のドメインには一致しません。</p><ol><li>貼る前に、自社のレポートで実際に出ている参照元の値を見て、足りないドメインがあれば | で区切って足します。AIサービスのドメインは変わることがあります。</li><li>openai.com は入れていません。開発者向けのドキュメントなど、AIの回答以外から来た訪問も混ざるためです。</li><li>「ai を含む」「gpt を含む」のような広い書き方は、AIと関係ないサイトからの訪問まで拾うことがあるので、ドメインを並べる書き方をおすすめします。</li><li>ドットは \. と書きます。ただの . は「どの1文字でもよい」という意味になります。</li></ol></section>
+<section class="qa"><h2>手順4：AIから来た人が、どのページで何をしたかを見る</h2><p>AIからの訪問は、件数よりも「どのページに着いたか」「問い合わせや予約につながったか」を見ると、サイトのどこがAIに使われているかがわかります。</p><ol><li>「探索」＞「自由形式」を開き、ディメンションに「セッションの参照元」「ランディング ページ」、指標に「セッション」「キーイベント」を入れます。</li><li>フィルタで「セッションの参照元」「正規表現に一致」に上の正規表現を入れると、AIからの訪問だけになります。</li><li>着地が多いページは、AIがあなたのサイトのどこを回答に使っているかの手がかりです。そのページの事実（料金、営業時間、対応地域など）が最新か、まず確認しましょう。</li><li>問い合わせ・予約・購入をキーイベントに設定していない場合は、先に設定します。設定前の期間の数は後から出せません。</li></ol></section>
+<section class="qa"><h2>毎月の記録表の例</h2><div class="table-wrap"><table><thead><tr><th scope="col">記録する数字</th><th scope="col">見るところ</th><th scope="col">読み方の注意</th></tr></thead><tbody><tr><th scope="row">AIからのセッション数</th><td>カスタムチャネルグループの「AI（すべて）」の行</td><td>数が少ない月は、数件の増減を「傾向」と読まない</td></tr><tr><th scope="row">AIの内訳</th><td>AIの行 × セッションの参照元</td><td>サービスごとに分けて見る。合計だけだと何が動いたかわからない</td></tr><tr><th scope="row">全体に占める割合</th><td>AIのセッション ÷ 全セッション</td><td>全体の訪問が減った月は、割合だけ上がって見えることがある</td></tr><tr><th scope="row">着地ページの上位</th><td>探索の「ランディング ページ」</td><td>毎月の顔ぶれの変化を見る</td></tr><tr><th scope="row">AIからのキーイベント</th><td>探索の「キーイベント」</td><td>問い合わせフォームの「何で知りましたか」の回答とも突き合わせる</td></tr><tr><th scope="row">Googleの検索全体の動き</th><td>Search Console の検索パフォーマンス</td><td>AIによる概要・AIモードはGA4のAIの行には入らない</td></tr></tbody></table></div></section>
+<section class="qa"><h2>GA4で見えないものと、ほかの道具の分担</h2><div class="table-wrap"><table><thead><tr><th scope="col">道具</th><th scope="col">わかること</th><th scope="col">わからないこと</th></tr></thead><tbody><tr><th scope="row">GA4（標準の AI アシスタント）</th><td>設定なしで、主なAIからのクリックを一つの行で見られる</td><td>Googleの例にないAIの一部、AIによる概要・AIモード、参照元のない訪問</td></tr><tr><th scope="row">GA4（カスタムチャネルグループ）</th><td>自分で決めたAIの範囲で、過去の期間も含めて一つの行で見られる</td><td>参照元のない訪問。ドメインの追加は自分で行う</td></tr><tr><th scope="row">Search Console</th><td>GoogleのAI機能（AIによる概要・AIモード）に表示されたサイトも、検索パフォーマンスの「ウェブ」の数字に含まれます（<a href="https://developers.google.com/search/docs/appearance/ai-features">Google：AI機能とウェブサイト</a>）</td><td>ChatGPTやPerplexityなど、Google以外のAI</td></tr><tr><th scope="row">サーバーのアクセスログ</th><td>AI検索のクローラが読みに来ているか。OpenAIは OAI-SearchBot と ChatGPT-User（<a href="https://developers.openai.com/api/docs/bots">OpenAI：クローラ</a>）、Perplexityは PerplexityBot と Perplexity-User（<a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity：クローラ</a>）を公開しています</td><td>読まれたことと、回答に出たこと・クリックされたことは別</td></tr><tr><th scope="row">登場率の計測</th><td>AIの回答に名前が出たか、サイトが出典になったか（クリックされなくても）</td><td>クリック後の行動。<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a></td></tr></tbody></table></div><p>AIの回答は、リンクをクリックされないまま読み終えられることも多い形式です。GA4のAIの行が少なくても、AIの回答に出ていないとは限りませんし、逆にAIの行が増えたことだけで「AIでの評価が上がった」とも言えません。クリック（GA4）と登場（回答の記録）を分けて追うのが確実です。</p></section>
+<section class="qa"><h2>AIからの訪問が0のとき、先に確認すること</h2><ol><li>AI検索のクローラを robots.txt で止めていないか。止めていると、AIはページを読んで出典にすることができません。セキュリティ系のプラグインやCDNのボット対策が、意図せず止めていることもあります。</li><li>期間が短すぎないか。小さなサイトでは、AIからの訪問は月に数件ということも普通です。3か月程度の期間で見ます。</li><li>参照元の列で、AIのドメインが「参照」やほかのチャネルに入っていないか。</li><li>GA4のタグが全ページに入っているか（手順1）。</li></ol><p>参考までに、WordPressプラグインのNurevo AEOは、AI検索のクローラ（OAI-SearchBot、ChatGPT-User、Claude-SearchBot、Claude-User、PerplexityBot、Perplexity-User）にページを読ませるrobots.txtのルール、構造化データ、llms.txtをサーバー側で出力します。Nurevo AEOは公開ページに外部のスクリプトを加えず、訪問者のデータも送らないため、訪問数の計測はGA4などのアクセス解析で行います。AIの回答に名前が出ているかは、接続したFree・Standardのサイトなら、業種と地域から作った3つの質問を月1回Perplexityに聞く無料のAIチェックで確認でき、決めた質問を継続して測る計測はPro（月14,800円〜、現在はPerplexityで計測）にあります。</p></section>
+    <section class="qa"><h2>よくある質問</h2><h3>GA4に「AI アシスタント」の行が出てきません。設定が必要ですか？</h3><p>標準のチャネルなので設定は不要です。行がないのは、その期間にこのチャネルに入った訪問がなかったためです。参照元の列でAIのドメインがほかのチャネルに入っていないかも確認してください。</p>
+<h3>Perplexityからの訪問はどこに入りますか？</h3><p>Googleのヘルプでは、AI アシスタント チャネルの例にPerplexityの名前はありません。「参照」に入っていることもあるため、セッションの参照元で perplexity.ai を探すか、カスタムチャネルグループで確実にAIの行にまとめてください。</p>
+<h3>GoogleのAIによる概要（AI Overviews）からの訪問だけを数えられますか？</h3><p>GA4ではできません。Googleは、AIによる概要とAIモードからの訪問をオーガニック検索に含めるとしています。GoogleのAI機能での表示は、Search Consoleの検索パフォーマンスで、通常の検索とあわせて見ることになります。</p>
+<h3>ChatGPTのアプリから来た人は数えられますか？</h3><p>ChatGPTの検索結果のリンクには utm_source=chatgpt.com が付くとOpenAIは説明しているので、それが残っていれば chatgpt.com として数えられます。参照元もパラメータも残らない開き方では、GA4ではダイレクトになり、区別できません。</p>
+<h3>カスタムチャネルグループを作ると、元のレポートが変わってしまいますか？</h3><p>変わりません。デフォルト チャネル グループはそのまま残り、作ったグループはレポートの切り替えで選んだときだけ使われます。過去の期間にもさかのぼって適用できます。</p>
+<h3>AIからの訪問を増やす方法はありますか？</h3><p>保証できる方法はありません。できるのは、AI検索のクローラがページを読める状態にし、料金・営業時間・対応地域などの事実をはっきり書き、構造化データやllms.txtで伝わりやすくすることです。そのうえで、GA4のAIの行と登場率を分けて、毎月同じ方法で記録していきます。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>AIがあなたのサイトを読める状態か、まず確認</h2>
+    <p>登録不要の無料チェックで、構造化データ、llms.txt、AI検索のクローラへの対応など、AIが読む情報の状態がわかります。WordPressなら、Nurevo AEOで不足分を無料で整えられます。</p>
+    <a class="btn primary lg" href="/check">無料でAI可読性をチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgでNurevo AEOを入手（無料）</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/appear-in-chatgpt/">ChatGPTに載る方法（他のAIの回答にも）</a></li><li><a href="/ja/guide/aeo-tools-comparison/">AEOツールの比較と選び方：計測型と実装型、どちらから始めるか</a></li><li><a href="/ja/guide/llms-txt/">llms.txt とは？ サイトをAIに説明するファイル</a></li><li><a href="/ja/guide/aeo-wordpress/">WordPressのAEO：サイトをAIに読ませる方法</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/ai-traffic-google-analytics/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Google、Google アナリティクス、Search Console、Gemini、Site Kit、ChatGPT、OpenAI、Perplexity、Claude、Anthropic、Microsoft Copilot、DeepSeek、Grok、WordPressおよび各製品名は、それぞれの権利者の商標または登録商標です。Nurevoはこれらの企業と提携・協賛関係にありません。</p><a href="/">Nurevo</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
