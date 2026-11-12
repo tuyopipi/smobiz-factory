@@ -74,6 +74,14 @@
 5. 学習塾のAI検索対策（コース・料金・対象学年・体験授業）【業種別】
 翻訳の残り（8時台で補完）：search-console-ai-features（ja/en のみ）ほか未マージPRの ja/en 記事。
 
+| 2026-11-12 17時 | web-agency-own-site-ai-search | Web制作会社の自社サイトをAI検索に選ばれる形にする手順（制作会社自身の集客：AIが「おすすめの制作会社」を答える仕組み〔OAI-SearchBot・PerplexityBot・Google AI機能〕、自社調査2,357件の数字〔PostalAddress 16.3%・llms.txt 13.6%・FAQPage 3.9%・AIブロック1.3%〕、質問の型→必要な事実→置く場所の表、会社概要・料金・実績の書き方、Organization＋areaServed・sameAs〔ProfessionalServiceは非推奨〕、robots/WAF、llms.txt、外部掲載の統一とステマ規制、月1回の測り方、チェックリスト）。2言語（ja・en） | 制作会社向け | content/daily-20261112-17 |
+1. 整体・ヨガ・ジムなどフィットネス施設のAI検索対策（料金・体験・予約）【業種別】
+2. 税理士・社労士以外の専門サービス：コンサル・士業以外のBtoB個人事業主のAI検索対策（実績・料金の書き方）
+3. 制作会社向け：お客様にAI検索対策を説明する1枚資料（よくある誤解と答え方）【制作会社向け】
+4. 地域×業種のAI検索の傾向：同じ質問を地域を変えて聞いたときの出典の違い（測定記事）
+5. ChatGPTの「場所」検索と地図情報：店舗の住所・営業時間がどこから来るか
+翻訳の残り（8時台で補完）：web-agency-own-site-ai-search（ja/en のみ）ほか ja/en だけの記事。
+
 ## 調査レポート（research-）ログ
 
 | 日付（JST） | スラッグ | 切り口 | データ | 言語 | PR |
