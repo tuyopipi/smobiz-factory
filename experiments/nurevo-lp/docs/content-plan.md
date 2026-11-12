@@ -81,3 +81,11 @@
 | 2026-11-10 | research-japan-web-agencies-ai-search-2026 | 総論（国内Web制作会社サイトのAI検索対応状況） | summary_2026-11-05 | ja/en | content/research-20261110（未マージの #57・#60 と同じ切り口。#60 の原稿を最新の main に載せ直したもの） |
 
 未着手の切り口：AIクローラーのブロック実態（ボット別）／llms.txt 導入率／構造化データの種類と壊れ率／都道府県別／WordPress と非WordPress／SEOプラグイン別／日本と海外の比較／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。
+| 2026-11-12 8時 | tutoring-school-ai-search | 学習塾のAI検索対策（読ませたい事実の表、EducationalOrganization は LocalBusiness の下位ではない・Course/CourseInstance、Course Info の終了〔2025-06〕とコースリスト、特定継続的役務提供〔2か月超・5万円超・8日・中途解約上限〕、時間単価表示の措置命令〔2023-03-02〕、合格実績〔2011〕とNo.1表示報告書〔2024-09-26〕、WordPressでの手順〔「その他」＋EducationalOrganization、コースをServiceで登録、Course は出さない〕、測り方）。41言語 | 業種別 | content/daily-20261112-08 |
+翻訳の補完ログ：2026-11-12 search-console-ai-features に39言語を追加（41言語）。残り：research-japan-web-agencies-ai-search-2026（ja/en）、未マージPRの ja/en 記事（#62〜#76 ほか、マージ後に順に補完）。
+1. 学習塾の続き：家庭教師・オンライン家庭教師のAI検索対策（特定継続的役務提供の家庭教師区分）【業種別】
+2. 制作会社向け：AI検索対策の月次レポートの作り方（登場率・Search Console・GA4を1枚に）【制作会社向け】
+3. 工務店・リフォーム会社のAI検索対策（施工エリア・施工事例・HomeAndConstructionBusiness）【業種別】
+4. 動物病院のAI検索対策（VeterinaryCare、診療対象動物・夜間対応）【業種別】
+5. AIに間違った情報を答えられたときの直し方（情報源の特定と修正の順番）
+メモ：多くの daily PR（#50〜#76）が全チェック成功のまま未マージ。今回のマージ可否で原因を確認する。

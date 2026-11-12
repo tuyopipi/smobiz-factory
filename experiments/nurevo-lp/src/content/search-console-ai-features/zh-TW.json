@@ -1,0 +1,292 @@
+{
+  "title": "如何在 Search Console 查看 AI Overviews 與 AI Mode | Nurevo",
+  "description": "開啟 Search Console 的生成式 AI 成效報告，了解曝光次數的計算方式，搭配成效報告解讀數據，並決定如何設定 AI 控制選項。",
+  "h1": "如何在 Search Console 查看 AI Overviews 與 AI Mode：解讀生成式 AI 成效報告",
+  "lead": "Search Console 的「生成式 AI 成效報告（搜尋）」會顯示您網站的連結在 Google 的 AI Overviews 和 AI Mode 中出現的頻率。自 2026年8月31日起，全球所有網站皆可使用。報告提供曝光次數，並可依網頁、國家/地區、裝置和日期細分。報告不會顯示點擊次數，因此請與一般的成效報告對照閱讀。",
+  "intro": [
+    "本文撰寫於 2026年11月10日。文中所述的 Google 相關規則已於當天在 Search Console 說明中心和 Google Search Central 上確認。畫面與規則可能會變動，請同時參閱最新的說明頁面。",
+    "這份報告只涵蓋 Google 搜尋內的 AI 功能。您在 ChatGPT 或 Perplexity 中的出現情況，需要用其他方法確認（見下文）。此外，任何做法都無法保證 AI 回答一定會包含您，或將您排在某個位置。AI 的回答每天都在變化。"
+  ],
+  "sections": [
+    {
+      "heading": "報告能顯示什麼、不能顯示什麼",
+      "paragraphs": [
+        "Google 於 2026年6月3日宣布推出這份報告（[Search Central 部落格](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)），起初只向部分網站開放。根據說明頁面，自 2026年8月31日起已向全球所有網站推出（[Search Console 說明：生成式 AI 成效報告（搜尋）](https://support.google.com/webmasters/answer/16984139?hl=en)）。重點如下："
+      ],
+      "table": {
+        "head": [
+          "項目",
+          "說明頁面的內容（截至 2026年11月10日）"
+        ],
+        "rows": [
+          [
+            "涵蓋範圍",
+            "Google 搜尋中的 AI Overviews 和 AI Mode。不包含 Search Labs 實驗的資料"
+          ],
+          [
+            "指標",
+            "曝光次數：您網站的連結在生成式 AI 功能中向使用者顯示的次數"
+          ],
+          [
+            "細分維度",
+            "網頁、國家/地區、裝置（電腦、平板電腦、行動裝置）和日期"
+          ],
+          [
+            "搜尋類型",
+            "「Web: text-based」和「Web: multimodal」（Google 智慧鏡頭、Circle to Search、上傳的圖片等）"
+          ],
+          [
+            "時區",
+            "日期採用太平洋時間。最新資料可能是初步資料，會以虛線顯示"
+          ],
+          [
+            "匯出",
+            "可以下載圖表和表格資料。顯示為 ~ 或 - 的值在檔案中會變成 0"
+          ],
+          [
+            "與主報告的關係",
+            "它顯示成效報告「網頁」搜尋類型資料中，來自 AI 功能的那一部分"
+          ],
+          [
+            "Discover",
+            "Discover 中的生成式 AI 功能另有專屬報告，即生成式 AI 成效報告（Discover）"
+          ]
+        ],
+        "caption": "說明頁面並未提到這份報告中的點擊次數、排名或查詢。"
+      },
+      "after": [
+        "請清楚了解它的限制。這份報告不會告訴您是哪些查詢觸發了 AI 功能、您的連結出現在回答中的哪個位置，也不會告訴您 AI 回答為您帶來多少點擊。來自 Google AI 功能的點擊和曝光，會計入一般成效報告的「網頁」搜尋類型（[Google：AI 功能與您的網站](https://developers.google.com/search/docs/appearance/ai-features)）。Discover 報告的說明請參閱[這篇說明文章](https://support.google.com/webmasters/answer/16983858?hl=en)。"
+      ]
+    },
+    {
+      "heading": "如何開啟報告，以及找不到報告時要檢查什麼",
+      "list": [
+        "在 Search Console 中選擇您的資源，開啟生成式 AI 成效報告（搜尋）。直接連結為 https://search.google.com/search-console/performance/search-analytics/ai（需要登入）。",
+        "將日期範圍放寬，例如過去三個月，查看圖表中曝光次數的趨勢。做月對月比較時，請排除以虛線顯示的初步資料日期。",
+        "在表格的「網頁」分頁中，查看哪些網頁曾在 AI 功能中顯示。網頁是以重新導向後的最終網址計算。",
+        "透過「國家/地區」和「裝置」分頁，了解您在哪裡、在什麼裝置上出現。如果是在地商家，請查看來自本國的比例。",
+        "將搜尋類型篩選器切換為「Web: multimodal」，看看您是否出現在以圖片為主的搜尋中。對於產品、餐點或建築照片較多的網站，這一點特別重要。"
+      ],
+      "after": [
+        "如果報告沒有出現或沒有資料，請檢查兩件事。根據 Google 的說明，常見原因是您的網站在生成式 AI 功能中的曝光次數還不夠。另一個原因是網站已透過下文介紹的搜尋生成式 AI 控制選項被排除（[說明頁面](https://support.google.com/webmasters/answer/16984139?hl=en)）。",
+        "另請注意，2026年8月13日至17日，Google 的記錄問題導致這份報告的曝光次數偏低。Google 表示缺少的資料之後已經補回（[Search Console 資料異常](https://support.google.com/webmasters/answer/6211453?hl=en)）。如果過去某段期間的下滑看起來不太對勁，請先查看該頁面。"
+      ]
+    },
+    {
+      "heading": "曝光次數如何計算，以及總數為何不一致",
+      "paragraphs": [
+        "這份報告的計算方式會因查看位置而不同。若不了解這一點就直接比較數字，結果會兜不起來。"
+      ],
+      "table": {
+        "head": [
+          "查看位置",
+          "計算單位",
+          "範例：一則 AI 回答顯示了您兩個網頁的連結"
+        ],
+        "rows": [
+          [
+            "圖表總數",
+            "資源（整個網站）",
+            "1"
+          ],
+          [
+            "表格的「網頁」分頁",
+            "網頁",
+            "網頁 A 計 1，網頁 B 計 1（共 2）"
+          ],
+          [
+            "表格的「國家/地區」「裝置」「日期」",
+            "資源",
+            "1"
+          ],
+          [
+            "套用網址篩選器的圖表",
+            "網址",
+            "所篩選的網頁計 1"
+          ]
+        ],
+        "caption": "依據 Search Console 說明中的「生成式 AI 成效報告（搜尋）」。"
+      },
+      "after": [
+        "因此，「網頁」表格的加總可能高於圖表總數。在報告中，請將全站曝光次數（圖表）與各網頁曝光次數（表格）分開記錄，絕對不要相加。與一般報告相同，表格最多顯示 1,000 列。"
+      ]
+    },
+    {
+      "heading": "與一般成效報告對照閱讀",
+      "paragraphs": [
+        "由於這份報告只有曝光次數，單看它，幾乎只能得出「曝光比上個月多」這類結論。將它與一般成效報告（搜尋類型：網頁）中相同網頁、相同日期的資料並列，就能解讀出更多資訊。"
+      ],
+      "table": {
+        "head": [
+          "AI 功能曝光次數",
+          "一般報告中的點擊次數",
+          "可能的意義與下一步"
+        ],
+        "rows": [
+          [
+            "上升",
+            "上升或持平",
+            "您在 AI 功能和一般搜尋結果中都能被找到。請讓該網頁上的資訊（價格、營業時間）保持最新"
+          ],
+          [
+            "上升",
+            "下降",
+            "AI 回答可能已滿足了搜尋需求，所以點擊的人變少。請檢查該網頁是否提供摘要無法取代的內容：預約、報價、照片、案例"
+          ],
+          [
+            "很少或沒有",
+            "多",
+            "在一般搜尋結果中表現強，但很少在 AI 功能中被連結。請檢查是否有直接回答問題的文字，以及與頁面可見內容一致的結構化資料"
+          ],
+          [
+            "很少或沒有",
+            "少",
+            "先從 SEO 基礎做起：建立索引、能否顯示摘要、內容深度"
+          ]
+        ],
+        "caption": "這些數字無法證明因果關係，請把它們當作有待驗證的假設。"
+      },
+      "after": [
+        "Google 表示，要出現在 AI 功能中沒有額外的條件，也不需要特別的最佳化；網頁只要已建立索引，並符合在 Google 搜尋中搭配摘要顯示的資格即可（[Google：AI 功能與您的網站](https://developers.google.com/search/docs/appearance/ai-features)）。對於 AI 曝光次數少的網頁，先檢查它在一般搜尋中的狀態是最快的起點。"
+      ]
+    },
+    {
+      "heading": "每月檢查清單",
+      "list": [
+        "將日期範圍固定為上個月（以太平洋時間日期為準），記錄圖表中的曝光次數。排除初步資料的日期",
+        "記錄「網頁」表格中前十名的網頁，以及它們與上個月相比的變化",
+        "針對這十個網頁，在旁邊記錄一般成效報告（網頁）中的點擊次數和曝光次數",
+        "留意國家/地區和裝置的組成是否有大幅變化",
+        "查看資料異常頁面，確認 Google 是否回報了當月的記錄問題",
+        "確認搜尋生成式 AI 控制選項已依預期設定（通常為「包含」，或沿用上層資源的設定）",
+        "透過其他方法記錄您在 Google 以外的 AI（例如 ChatGPT 和 Perplexity）中的出現情況（見下文）"
+      ],
+      "after": [
+        "記錄表只需五欄：月份、AI 功能曝光次數（全站）、主要網頁、這些網頁在「網頁」搜尋類型中的點擊和曝光次數，以及備註（網站變更、已知問題）。把新增網頁、修正結構化資料、更換佈景主題等網站變更記下來，日後要解釋數字的升降會容易許多。"
+      ]
+    },
+    {
+      "heading": "搜尋生成式 AI 控制選項：排除會帶來什麼結果",
+      "paragraphs": [
+        "在推出報告的同時，Google 也新增了一項設定，可以讓您的網站不出現在其 AI 功能中。它位於 Search Console 的「Settings > Search generative AI」，自 2026年8月31日起向全球所有網站開放（[Search Console 說明：搜尋生成式 AI 控制選項](https://support.google.com/webmasters/answer/16908024?hl=en)）。"
+      ],
+      "table": {
+        "head": [
+          "選項或方法",
+          "結果"
+        ],
+        "rows": [
+          [
+            "包含（預設）",
+            "您的連結和內容可用於 AI Overviews、AI Mode 以及 Discover 中的生成式 AI 功能"
+          ],
+          [
+            "排除",
+            "您的連結和內容不會再出現在這些功能中，也不會被當作產生回答的輸入。您也無法從中獲得任何曝光或流量"
+          ],
+          [
+            "沿用上層資源的控制設定",
+            "遵循網域資源等上層資源的設定（有上層資源時的預設值）"
+          ],
+          [
+            "Google-Extended（robots.txt）",
+            "限制您的內容被用於 AI 訓練。搜尋生成式 AI 控制選項不會影響訓練"
+          ],
+          [
+            "noindex",
+            "將網頁從 Google 搜尋中完全移除"
+          ],
+          [
+            "nosnippet、data-nosnippet、max-snippet",
+            "限制網頁在搜尋結果和 AI 功能中可作為預覽的內容量"
+          ]
+        ],
+        "caption": "依據 Search Console 說明（搜尋生成式 AI 控制選項）和 Google Search Central（AI 功能與您的網站）。"
+      },
+      "after": [
+        "Google 表示，這個控制選項不會作為搜尋其他部分的排名或收錄信號。排除會在一到兩天內生效，部分內容可能因快取而需要更久。",
+        "對多數商家而言，AI 功能是讓客戶找到自己的另一條管道。只有在理由明確時才選擇排除，例如網站以會員專屬內容為主，或內容一經摘要就容易造成誤解。如果只是部分段落不想出現在摘要中，可以在這些段落使用 data-nosnippet，而不必排除整個網站。"
+      ]
+    },
+    {
+      "heading": "WordPress 的操作步驟",
+      "list": [
+        "註冊網域資源：使用 DNS TXT 記錄驗證擁有權。網域資源的搜尋生成式 AI 設定會由其下的網址前置字元資源沿用，因此有無 www、http 與 https 都能在同一處統一管理。",
+        "確認沒有封鎖索引：WordPress 的「設定 > 閱讀」中有「搜尋引擎可見度」選項。勾選後，WordPress 會要求搜尋引擎不要為網站建立索引。搬家或網站上線後請務必檢查。",
+        "確認 robots.txt 沒有封鎖 Googlebot：在瀏覽器中開啟 /robots.txt，查看 Googlebot 或 User-agent: * 底下是否有 Disallow: /。",
+        "用 data-nosnippet 讓某段內容不出現在預覽中：在區塊編輯器中，對該區塊選擇「以 HTML 編輯」，並在包住該段內容的元素加上 data-nosnippet 屬性。若要排除整個網頁，請使用 SEO 外掛的單頁設定，例如 noindex。",
+        "讓結構化資料與可見文字保持一致：營業時間、價格和地址在頁面文字與結構化資料中應為相同的值。兩者不一致是 AI 回答出錯的常見原因。"
+      ],
+      "after": [
+        "Nurevo AEO 是一款免費的 WordPress 外掛，可從您自己的伺服器輸出結構化資料、llms.txt，以及針對 AI 搜尋爬蟲的 robots.txt 規則。對於 Google-Extended 等為 AI 訓練蒐集內容的爬蟲，預設交由您的 robots.txt 處理，您也可以在管理畫面中允許或封鎖。這屬於 robots.txt 規則，與 Search Console 的搜尋生成式 AI 控制選項是兩回事。[在 WordPress.org 取得](https://wordpress.org/plugins/nurevo-webmcp/)"
+      ]
+    },
+    {
+      "heading": "Search Console 看不到的部分：ChatGPT 與 Perplexity",
+      "paragraphs": [
+        "Search Console 只涵蓋 Google。若想了解 ChatGPT 或 Perplexity 是否提到您的商家，請補充以下方法："
+      ],
+      "table": {
+        "head": [
+          "方法",
+          "能得知什麼"
+        ],
+        "rows": [
+          [
+            "分析工具中的參照來源",
+            "來自 AI 回答的造訪。OpenAI 表示會在 ChatGPT 搜尋結果的連結中加上 utm_source=chatgpt.com（[OpenAI：Publishers and Developers FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)）"
+          ],
+          [
+            "定期提出固定問題",
+            "使用不含您名稱的問題，計算回答中提到您或引用您網站的比例。[如何衡量 AI 能見度](/guide/measure-ai-visibility)"
+          ],
+          [
+            "測量工具",
+            "自動提出一組問題，並記錄提及、引用、競爭對手與趨勢。[AEO 工具比較](/guide/aeo-tools-comparison)"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo AEO 為已連結的 Free 與 Standard 網站提供免費 AI 檢查：每月一次，根據您的業種與地區產生三個不含您名稱的問題，向 Perplexity 提問。持續測量固定問題組的 Pro（每月 USD 99 起，測試版）目前同樣在 Perplexity 上測量。將 Search Console 中的 Google 數據和這些來自其他 AI 平台的紀錄放進同一張月報表，就能掌握全貌。"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "生成式 AI 成效報告在哪裡？",
+      "a": "Search Console 說明中心提供了直接連結（search.google.com/search-console/performance/search-analytics/ai）。自 2026年8月31日起，全球所有網站皆可使用。如果看不到，可能是您的網站在 AI 功能中的曝光次數還不夠，或已透過搜尋生成式 AI 控制選項被排除。"
+    },
+    {
+      "q": "能看到來自 AI Overviews 的點擊嗎？",
+      "a": "生成式 AI 成效報告顯示的是曝光次數。來自 Google AI 功能的點擊和曝光包含在一般成效報告的「網頁」搜尋類型中，但無法單獨分離出來自 AI 功能的點擊。實際可行的做法是逐頁比較 AI 功能曝光次數與一般點擊次數。"
+    },
+    {
+      "q": "為什麼圖表總數與「網頁」表格不一致？",
+      "a": "圖表以資源計算，「網頁」表格則以網頁計算。如果一則 AI 回答顯示了您的兩個網頁，圖表計為一次曝光，而表格中每個網頁各計一次。在報告中請勿將兩者相加。"
+    },
+    {
+      "q": "用搜尋生成式 AI 控制選項排除網站，會影響排名嗎？",
+      "a": "Google 表示，這個控制選項不會作為搜尋其他部分的排名或收錄信號。但一旦排除，您就無法從 AI Overviews、AI Mode 或 Discover 中的生成式 AI 功能獲得任何曝光或流量。若想限制 AI 訓練，請使用 Google-Extended，而不是這個控制選項。"
+    },
+    {
+      "q": "Search Console 會顯示 ChatGPT 或 Perplexity 的資料嗎？",
+      "a": "不會。Search Console 只有 Google 的資料。請透過分析工具的參照來源、定期提出固定問題，或使用測量工具，另外查看 ChatGPT 和 Perplexity 的情況。"
+    },
+    {
+      "q": "有沒有能增加 AI 曝光次數的特殊設定？",
+      "a": "Google 表示，AI 功能沒有額外的條件，也不需要特別的最佳化。把基礎做好是最快的方法：網頁已建立索引且可以顯示摘要、有直接回答問題的文字，以及與頁面可見內容一致的結構化資料。沒有任何方法能保證您一定會被顯示。"
+    }
+  ],
+  "relatedHeading": "相關指南",
+  "cta": {
+    "heading": "首先，確認 AI 能否讀取您的網站",
+    "body": "免費檢查無需註冊，即可顯示結構化資料、llms.txt 以及 AI 搜尋爬蟲存取等 AI 讀取內容的狀態。若使用 WordPress，Nurevo AEO 可免費補齊缺少的項目。",
+    "label": "執行免費 AI 可讀性檢查",
+    "href": "/check",
+    "secondary": {
+      "label": "在 WordPress.org 取得 Nurevo AEO",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "Google、Search Console、Google Discover、ChatGPT、OpenAI、Perplexity、WordPress 及其產品名稱皆為各自所有者的商標。Nurevo 與上述公司並無任何關聯。"
+}

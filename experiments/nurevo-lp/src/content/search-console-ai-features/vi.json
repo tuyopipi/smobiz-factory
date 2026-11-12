@@ -1,0 +1,292 @@
+{
+  "title": "Cách xem AI Overviews và AI Mode trong Search Console | Nurevo",
+  "description": "Mở báo cáo AI tạo sinh của Search Console, hiểu cách đếm lượt hiển thị, đọc cùng báo cáo Hiệu suất và quyết định về chế độ cài đặt AI.",
+  "h1": "Cách xem AI Overviews và AI Mode trong Search Console: đọc báo cáo \"Generative AI performance report\"",
+  "lead": "Báo cáo \"Generative AI performance report (Search)\" của Search Console cho biết đường liên kết đến trang web của bạn xuất hiện trong AI Overviews và AI Mode của Google thường xuyên đến mức nào. Báo cáo này đã có cho mọi trang web trên toàn thế giới từ ngày 31 tháng 8 năm 2026. Báo cáo cung cấp lượt hiển thị, chia theo trang, quốc gia, thiết bị và ngày. Báo cáo không hiển thị lượt nhấp, vì vậy hãy đọc song song với báo cáo Hiệu suất thông thường.",
+  "intro": [
+    "Viết ngày 10 tháng 11 năm 2026. Hành vi của Google mô tả ở đây đã được kiểm tra cùng ngày trong Trung tâm trợ giúp Search Console và trên Google Search Central. Giao diện và quy định có thể thay đổi, vì vậy hãy xem cả các trang trợ giúp hiện hành.",
+    "Báo cáo này chỉ bao gồm các tính năng AI bên trong Google Tìm kiếm. Cách bạn xuất hiện trong ChatGPT hay Perplexity phải được kiểm tra theo cách khác (xem bên dưới). Và không điều gì bạn làm có thể đảm bảo câu trả lời AI sẽ nhắc đến bạn hoặc xếp bạn ở vị trí nào. Câu trả lời AI thay đổi theo từng ngày."
+  ],
+  "sections": [
+    {
+      "heading": "Báo cáo cho thấy gì và không cho thấy gì",
+      "paragraphs": [
+        "Google công bố báo cáo này vào ngày 3 tháng 6 năm 2026 ([Search Central Blog](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)) và ban đầu triển khai cho một phần các trang web. Theo trang trợ giúp, báo cáo đã đến với mọi trang web trên toàn thế giới kể từ ngày 31 tháng 8 năm 2026 ([Search Console Help: Generative AI performance report (Search)](https://support.google.com/webmasters/answer/16984139?hl=en)). Những điểm chính:"
+      ],
+      "table": {
+        "head": [
+          "Mục",
+          "Trang trợ giúp nói gì (tính đến ngày 10 tháng 11 năm 2026)"
+        ],
+        "rows": [
+          [
+            "Phạm vi",
+            "AI Overviews và AI Mode trong Google Tìm kiếm. Không bao gồm dữ liệu từ các thử nghiệm của Search Labs"
+          ],
+          [
+            "Chỉ số",
+            "Lượt hiển thị: số lần đường liên kết đến trang web của bạn được hiển thị cho người dùng trong một tính năng AI tạo sinh"
+          ],
+          [
+            "Phân tách",
+            "Trang, quốc gia, thiết bị (máy tính, máy tính bảng, thiết bị di động) và ngày"
+          ],
+          [
+            "Loại tìm kiếm",
+            "\"Web: text-based\" và \"Web: multimodal\" (Google Ống kính, Khoanh tròn để tìm, hình ảnh tải lên và tương tự)"
+          ],
+          [
+            "Múi giờ",
+            "Ngày tính theo giờ Thái Bình Dương. Dữ liệu mới nhất có thể là sơ bộ và được vẽ bằng đường chấm"
+          ],
+          [
+            "Xuất dữ liệu",
+            "Có thể tải xuống dữ liệu biểu đồ và bảng. Các giá trị hiển thị là ~ hoặc - sẽ thành số 0 trong tệp"
+          ],
+          [
+            "Quan hệ với báo cáo chính",
+            "Cho thấy phần dữ liệu loại tìm kiếm Web trong báo cáo Hiệu suất đến từ các tính năng AI"
+          ],
+          [
+            "Discover",
+            "Các tính năng AI tạo sinh trong Discover có báo cáo riêng là Generative AI performance report (Discover)"
+          ]
+        ],
+        "caption": "Trang trợ giúp không mô tả lượt nhấp, vị trí hay truy vấn trong báo cáo này."
+      },
+      "after": [
+        "Hãy hiểu rõ những khoảng trống. Báo cáo này không cho biết truy vấn nào đã kích hoạt tính năng AI, đường liên kết của bạn xuất hiện ở đâu trong câu trả lời hay câu trả lời AI đã mang lại bao nhiêu lượt nhấp. Lượt nhấp và lượt hiển thị từ các tính năng AI của Google được tính trong báo cáo Hiệu suất thông thường, ở loại tìm kiếm Web ([Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Báo cáo Discover được mô tả [trong bài trợ giúp này](https://support.google.com/webmasters/answer/16983858?hl=en)."
+      ]
+    },
+    {
+      "heading": "Mở báo cáo, và cần kiểm tra gì khi không thấy",
+      "list": [
+        "Trong Search Console, chọn sản phẩm của bạn và mở báo cáo \"Generative AI performance report (Search)\". Đường liên kết trực tiếp là https://search.google.com/search-console/performance/search-analytics/ai (bạn cần đăng nhập).",
+        "Mở rộng phạm vi ngày, ví dụ đến ba tháng gần nhất, và xem xu hướng lượt hiển thị trên biểu đồ. Loại các ngày sơ bộ vẽ bằng đường chấm khỏi mọi so sánh giữa các tháng.",
+        "Trong thẻ Trang của bảng, xem những trang nào đã được hiển thị trong tính năng AI. Trang được báo cáo theo URL cuối cùng sau khi chuyển hướng.",
+        "Dùng thẻ Quốc gia và Thiết bị để xem bạn xuất hiện ở đâu và trên thiết bị nào. Với doanh nghiệp địa phương, hãy kiểm tra tỷ lệ đến từ quốc gia của mình.",
+        "Chuyển bộ lọc loại tìm kiếm sang \"Web: multimodal\" để xem bạn có xuất hiện trong tìm kiếm bằng hình ảnh hay không. Điều này quan trọng nhất với các trang web có nhiều ảnh sản phẩm, món ăn hoặc công trình."
+      ],
+      "after": [
+        "Nếu báo cáo không xuất hiện hoặc trống, hãy kiểm tra hai điều. Lý do phổ biến, theo Google, là trang web của bạn chưa có đủ lượt hiển thị trong các tính năng AI tạo sinh. Lý do còn lại là trang web đã bị loại trừ bằng chế độ cài đặt \"Search generative AI\" được mô tả bên dưới ([trang trợ giúp](https://support.google.com/webmasters/answer/16984139?hl=en)).",
+        "Cũng lưu ý rằng từ ngày 13 đến 17 tháng 8 năm 2026, một sự cố ghi nhật ký tại Google đã làm giảm lượt hiển thị trong báo cáo này. Google cho biết dữ liệu bị thiếu sau đó đã được khôi phục ([Search Console data anomalies](https://support.google.com/webmasters/answer/6211453?hl=en)). Khi một đợt sụt giảm cũ trông bất thường, hãy xem trang đó trước."
+      ]
+    },
+    {
+      "heading": "Lượt hiển thị được đếm như thế nào, và vì sao các tổng không khớp",
+      "paragraphs": [
+        "Báo cáo đếm khác nhau tùy theo nơi bạn xem. Nếu so sánh số liệu mà không biết điều này, các con số sẽ không khớp nhau."
+      ],
+      "table": {
+        "head": [
+          "Nơi bạn xem",
+          "Đơn vị đếm",
+          "Ví dụ: một câu trả lời AI hiển thị đường liên kết đến hai trang của bạn"
+        ],
+        "rows": [
+          [
+            "Tổng trên biểu đồ",
+            "Sản phẩm (toàn bộ trang web)",
+            "1"
+          ],
+          [
+            "Bảng, thẻ Trang",
+            "Trang",
+            "1 cho trang A và 1 cho trang B (tổng cộng 2)"
+          ],
+          [
+            "Bảng, Quốc gia, Thiết bị, Ngày",
+            "Sản phẩm",
+            "1"
+          ],
+          [
+            "Biểu đồ có bộ lọc URL",
+            "URL",
+            "1 cho trang được lọc"
+          ]
+        ],
+        "caption": "Dựa trên Trung tâm trợ giúp Search Console, Generative AI performance report (Search)."
+      },
+      "after": [
+        "Vì vậy tổng của bảng Trang có thể cao hơn tổng trên biểu đồ. Trong báo cáo, hãy ghi riêng lượt hiển thị toàn trang web (biểu đồ) và lượt hiển thị theo từng trang (bảng), và đừng bao giờ cộng chúng lại. Giống như báo cáo thông thường, bảng bị giới hạn ở 1.000 hàng."
+      ]
+    },
+    {
+      "heading": "Đọc song song với báo cáo Hiệu suất thông thường",
+      "paragraphs": [
+        "Vì báo cáo chỉ có lượt hiển thị, tự nó khó nói được nhiều hơn \"lượt hiển thị nhiều hơn tháng trước\". Đặt nó cạnh báo cáo Hiệu suất thông thường (loại tìm kiếm: Web) cho cùng các trang và cùng khoảng ngày, bạn sẽ đọc được nhiều hơn hẳn."
+      ],
+      "table": {
+        "head": [
+          "Lượt hiển thị trong tính năng AI",
+          "Lượt nhấp trong báo cáo thông thường",
+          "Ý nghĩa có thể có, và việc nên làm tiếp"
+        ],
+        "rows": [
+          [
+            "Tăng",
+            "Tăng hoặc đi ngang",
+            "Bạn được tìm thấy cả trong tính năng AI lẫn kết quả thông thường. Giữ các thông tin trên trang đó (giá, giờ mở cửa) luôn cập nhật"
+          ],
+          [
+            "Tăng",
+            "Giảm",
+            "Câu trả lời AI có thể đã đáp ứng nhu cầu tìm kiếm nên ít người nhấp hơn. Kiểm tra xem trang có cung cấp điều mà bản tóm tắt không làm được không: đặt lịch, báo giá, hình ảnh, dự án tiêu biểu"
+          ],
+          [
+            "Thấp hoặc không có",
+            "Cao",
+            "Mạnh trong kết quả thông thường nhưng hiếm khi được dẫn liên kết trong tính năng AI. Kiểm tra xem có đoạn văn trả lời thẳng câu hỏi và dữ liệu có cấu trúc khớp với trang hiển thị hay không"
+          ],
+          [
+            "Thấp hoặc không có",
+            "Thấp",
+            "Bắt đầu từ nền tảng SEO: lập chỉ mục, khả năng hiển thị đoạn trích, độ sâu nội dung"
+          ]
+        ],
+        "caption": "Con số không thể chứng minh nguyên nhân. Hãy dùng những điều này như giả thuyết để kiểm chứng."
+      },
+      "after": [
+        "Google cho biết không có yêu cầu bổ sung hay tối ưu hóa đặc biệt nào để xuất hiện trong tính năng AI, và trang phải được lập chỉ mục và đủ điều kiện hiển thị trong Google Tìm kiếm kèm đoạn trích ([Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Với một trang có ít lượt hiển thị AI, kiểm tra tình trạng của nó trong tìm kiếm thông thường là cách bắt đầu nhanh nhất."
+      ]
+    },
+    {
+      "heading": "Danh sách kiểm tra hằng tháng",
+      "list": [
+        "Cố định phạm vi ngày là tháng trước (ngày theo giờ Thái Bình Dương) và ghi lại lượt hiển thị trên biểu đồ. Loại các ngày sơ bộ",
+        "Ghi lại mười trang đứng đầu trong bảng Trang và mức thay đổi so với tháng trước",
+        "Với cùng mười trang đó, ghi kèm lượt nhấp và lượt hiển thị từ báo cáo Hiệu suất thông thường (Web)",
+        "Tìm các thay đổi lớn trong tỷ lệ theo quốc gia và thiết bị",
+        "Xem trang bất thường dữ liệu để biết Google có báo cáo sự cố ghi nhật ký nào trong tháng đó không",
+        "Xác nhận chế độ cài đặt \"Search generative AI\" đúng như ý định (thường là \"Include\" hoặc kế thừa từ sản phẩm mẹ)",
+        "Ghi lại theo cách khác việc bạn xuất hiện trong AI ngoài Google, như ChatGPT và Perplexity (xem bên dưới)"
+      ],
+      "after": [
+        "Năm cột là đủ cho nhật ký: tháng, lượt hiển thị trong tính năng AI (trang web), các trang hàng đầu, lượt nhấp và lượt hiển thị Web của các trang đó, và ghi chú (thay đổi trên trang web, sự cố đã biết). Ghi lại các thay đổi trên trang web như trang mới, sửa dữ liệu có cấu trúc hay đổi giao diện sẽ giúp sau này giải thích mức tăng hoặc giảm dễ dàng hơn nhiều."
+      ]
+    },
+    {
+      "heading": "Chế độ cài đặt \"Search generative AI\": loại trừ có tác dụng gì",
+      "paragraphs": [
+        "Cùng với báo cáo, Google đã thêm một chế độ cài đặt ngăn trang web của bạn xuất hiện trong các tính năng AI của Google. Chế độ này nằm ở Cài đặt > Search generative AI trong Search Console, và đã có cho mọi trang web trên toàn thế giới kể từ ngày 31 tháng 8 năm 2026 ([Search Console Help: Search generative AI control](https://support.google.com/webmasters/answer/16908024?hl=en))."
+      ],
+      "table": {
+        "head": [
+          "Tùy chọn hoặc phương pháp",
+          "Điều gì xảy ra"
+        ],
+        "rows": [
+          [
+            "\"Include\" (mặc định)",
+            "Đường liên kết và nội dung của bạn có thể được dùng trong AI Overviews, AI Mode và các tính năng AI tạo sinh trong Discover"
+          ],
+          [
+            "\"Exclude\"",
+            "Đường liên kết và nội dung của bạn không còn xuất hiện trong các tính năng đó và không được dùng làm đầu vào để tạo câu trả lời. Bạn cũng không nhận được lượt hiển thị hay lưu lượng truy cập từ chúng"
+          ],
+          [
+            "\"Inherit control from parent\"",
+            "Theo chế độ cài đặt của sản phẩm mẹ, chẳng hạn sản phẩm miền (mặc định khi có sản phẩm mẹ)"
+          ],
+          [
+            "Google-Extended (robots.txt)",
+            "Hạn chế việc dùng nội dung của bạn để huấn luyện AI. Chế độ cài đặt \"Search generative AI\" không ảnh hưởng đến việc huấn luyện"
+          ],
+          [
+            "noindex",
+            "Xóa hoàn toàn trang khỏi Google Tìm kiếm"
+          ],
+          [
+            "nosnippet, data-nosnippet, max-snippet",
+            "Giới hạn phần trang có thể được dùng làm bản xem trước trong kết quả và tính năng AI"
+          ]
+        ],
+        "caption": "Dựa trên Trung tâm trợ giúp Search Console (Search generative AI control) và Google Search Central (AI features and your website)."
+      },
+      "after": [
+        "Google cho biết chế độ cài đặt này không được dùng làm tín hiệu xếp hạng hay đưa vào cho các phần khác của Tìm kiếm. Việc loại trừ có hiệu lực trong vòng một đến hai ngày, và một số nội dung có thể lâu hơn do bộ nhớ đệm.",
+        "Với phần lớn doanh nghiệp, tính năng AI là thêm một con đường để khách hàng tìm đến họ. Chỉ loại trừ khi có lý do rõ ràng, chẳng hạn trang web chủ yếu xây dựng quanh nội dung chỉ dành cho thành viên, hoặc văn bản dễ gây hiểu lầm khi bị tóm tắt. Nếu chỉ một số đoạn cần nằm ngoài bản tóm tắt, đặt data-nosnippet cho những đoạn đó là một lựa chọn thay cho việc loại trừ toàn bộ trang web."
+      ]
+    },
+    {
+      "heading": "Các bước trong WordPress",
+      "list": [
+        "Đăng ký sản phẩm miền: xác minh quyền sở hữu bằng bản ghi DNS TXT. Chế độ cài đặt \"Search generative AI\" của sản phẩm miền được các sản phẩm tiền tố URL bên dưới kế thừa, nên www và không www, http và https được quản lý ở một nơi.",
+        "Đảm bảo việc lập chỉ mục không bị chặn: trong WordPress, mục Cài đặt > Đọc có tùy chọn \"Hiển thị với công cụ tìm kiếm\". Khi tùy chọn này được đánh dấu, WordPress yêu cầu công cụ tìm kiếm không lập chỉ mục trang web. Hãy kiểm tra sau khi chuyển dữ liệu hoặc ra mắt.",
+        "Đảm bảo robots.txt không chặn Googlebot: mở /robots.txt trong trình duyệt và tìm Disallow: / dưới Googlebot hoặc dưới User-agent: *.",
+        "Giữ một đoạn ngoài bản xem trước bằng data-nosnippet: trong trình soạn thảo khối, chọn \"Chỉnh sửa dưới dạng HTML\" cho khối đó và thêm thuộc tính data-nosnippet vào phần tử bao quanh. Để chặn cả trang, hãy dùng cài đặt theo từng trang của plugin SEO, chẳng hạn noindex.",
+        "Giữ dữ liệu có cấu trúc và văn bản hiển thị thống nhất: giờ mở cửa, giá và địa chỉ phải có cùng giá trị trong nội dung trang và trong dữ liệu có cấu trúc. Sự không khớp là nguồn phổ biến gây ra câu trả lời AI sai."
+      ],
+      "after": [
+        "Nurevo AEO, một plugin WordPress miễn phí, xuất dữ liệu có cấu trúc, llms.txt và quy tắc robots.txt cho các trình thu thập dữ liệu tìm kiếm AI từ chính máy chủ của bạn. Các trình thu thập dữ liệu thu thập nội dung để huấn luyện AI, như Google-Extended, theo mặc định được để cho robots.txt của bạn quyết định, và bạn có thể cho phép hoặc chặn chúng từ màn hình quản trị. Đó là một quy tắc robots.txt, tách biệt với chế độ cài đặt \"Search generative AI\" của Search Console. [Tải trên WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+      ]
+    },
+    {
+      "heading": "Điều Search Console không thể cho thấy: ChatGPT và Perplexity",
+      "paragraphs": [
+        "Search Console chỉ bao gồm Google. Để xem ChatGPT hay Perplexity có nhắc đến doanh nghiệp của bạn không, hãy bổ sung những cách sau:"
+      ],
+      "table": {
+        "head": [
+          "Phương pháp",
+          "Cho bạn biết điều gì"
+        ],
+        "rows": [
+          [
+            "Nguồn giới thiệu trong công cụ phân tích",
+            "Lượt truy cập đến từ câu trả lời AI. OpenAI cho biết họ thêm utm_source=chatgpt.com vào đường liên kết từ kết quả tìm kiếm của ChatGPT ([OpenAI: Publishers and Developers FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq))"
+          ],
+          [
+            "Đặt các câu hỏi cố định định kỳ",
+            "Với các câu hỏi không chứa tên bạn, tỷ lệ câu trả lời nêu tên bạn hoặc trích dẫn trang web của bạn. [Cách đo mức độ hiện diện trong AI](/guide/measure-ai-visibility)"
+          ],
+          [
+            "Công cụ đo lường",
+            "Tự động đặt một bộ câu hỏi và ghi lại lượt nhắc đến, trích dẫn, đối thủ và xu hướng. [So sánh công cụ AEO](/guide/aeo-tools-comparison)"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo AEO có kiểm tra AI miễn phí cho các trang web Free và Standard đã kết nối: mỗi tháng một lần, công cụ hỏi Perplexity ba câu được xây dựng từ ngành nghề và khu vực của bạn, không kèm tên bạn. Pro (từ USD 99 mỗi tháng, bản beta), gói liên tục đo một bộ câu hỏi cố định, hiện cũng đo trên Perplexity. Hãy đưa số liệu của Google từ Search Console và các ghi chép từ những nền tảng AI khác này vào cùng một bảng hằng tháng để thấy toàn cảnh."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "\"Generative AI performance report\" nằm ở đâu?",
+      "a": "Trung tâm trợ giúp Search Console cung cấp đường liên kết trực tiếp đến báo cáo (search.google.com/search-console/performance/search-analytics/ai). Báo cáo đã có cho mọi trang web trên toàn thế giới kể từ ngày 31 tháng 8 năm 2026. Nếu bạn không thấy, có thể trang web của bạn chưa có đủ lượt hiển thị trong tính năng AI, hoặc đã bị loại trừ bằng chế độ cài đặt \"Search generative AI\"."
+    },
+    {
+      "q": "Tôi có xem được lượt nhấp từ AI Overviews không?",
+      "a": "\"Generative AI performance report\" hiển thị lượt hiển thị. Lượt nhấp và lượt hiển thị từ các tính năng AI của Google được tính trong báo cáo Hiệu suất thông thường ở loại tìm kiếm Web, nhưng bạn không thể tách riêng lượt nhấp đến từ tính năng AI. Cách làm thực tế là so sánh lượt hiển thị trong tính năng AI với lượt nhấp thông thường theo từng trang."
+    },
+    {
+      "q": "Vì sao tổng trên biểu đồ khác với bảng Trang?",
+      "a": "Biểu đồ đếm theo sản phẩm, còn bảng Trang đếm theo trang. Nếu một câu trả lời AI hiển thị hai trang của bạn, biểu đồ tính một lượt hiển thị còn bảng tính mỗi trang một lượt. Đừng cộng hai con số này trong báo cáo."
+    },
+    {
+      "q": "Loại trừ trang web bằng chế độ cài đặt \"Search generative AI\" có làm giảm thứ hạng không?",
+      "a": "Google cho biết chế độ cài đặt này không được dùng làm tín hiệu xếp hạng hay đưa vào cho các phần khác của Tìm kiếm. Nhưng khi đã loại trừ, bạn không nhận được lượt hiển thị hay lưu lượng truy cập từ AI Overviews, AI Mode hay các tính năng AI tạo sinh trong Discover. Để hạn chế việc huấn luyện AI, hãy dùng Google-Extended thay vì chế độ cài đặt này."
+    },
+    {
+      "q": "Search Console có hiển thị ChatGPT hay Perplexity không?",
+      "a": "Không. Search Console chỉ có dữ liệu của Google. Hãy kiểm tra ChatGPT và Perplexity riêng bằng nguồn giới thiệu trong công cụ phân tích, bằng cách đặt các câu hỏi cố định định kỳ, hoặc bằng công cụ đo lường."
+    },
+    {
+      "q": "Có chế độ cài đặt đặc biệt nào giúp tăng lượt hiển thị AI không?",
+      "a": "Google cho biết không có yêu cầu bổ sung hay tối ưu hóa đặc biệt nào cho tính năng AI. Cách nhanh nhất là làm đúng những điều cơ bản: trang được lập chỉ mục và có thể hiển thị đoạn trích, văn bản trả lời thẳng câu hỏi, và dữ liệu có cấu trúc khớp với trang hiển thị. Không phương pháp nào đảm bảo bạn sẽ được hiển thị."
+    }
+  ],
+  "relatedHeading": "Hướng dẫn liên quan",
+  "cta": {
+    "heading": "Trước tiên, hãy kiểm tra AI có đọc được trang web của bạn không",
+    "body": "Một lượt kiểm tra miễn phí, không cần đăng ký, cho thấy tình trạng những gì AI đọc trên trang web của bạn: dữ liệu có cấu trúc, llms.txt và quyền truy cập cho trình thu thập dữ liệu tìm kiếm AI. Trên WordPress, Nurevo AEO bổ sung miễn phí những gì còn thiếu.",
+    "label": "Chạy kiểm tra khả năng đọc của AI miễn phí",
+    "href": "/check",
+    "secondary": {
+      "label": "Tải Nurevo AEO trên WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "Google, Search Console, Google Discover, ChatGPT, OpenAI, Perplexity, WordPress và tên sản phẩm của họ là nhãn hiệu của chủ sở hữu tương ứng. Nurevo không liên kết với họ."
+}

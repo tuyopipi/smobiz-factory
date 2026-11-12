@@ -1,0 +1,180 @@
+{
+  "title": "补习班的 AI 搜索：课程、费用与试听课 | Nurevo",
+  "description": "在页面正文和结构化数据中公开年级、课程、上课形式、全部费用、课表、试听课与校区。附 schema 类型、法律要点和 WordPress 设置步骤。",
+  "h1": "补习班与培训机构的 AI 搜索：让 AI 正确读懂年级、课程、费用和试听课",
+  "lead": "补习班的 AI 搜索优化（AEO），归根结底就是在页面正文和结构化数据中准确、一致地公开以下信息：招收的年级、课程、上课形式（小班、一对一、线上）、全部费用、课表、试听课的预约方式以及各校区的位置。这样 ChatGPT、Perplexity 和 Google 的 AI 功能在回答家长的问题时，例如“车站附近能给初二孩子一对一补数学的补习班”，就不必靠猜测。升学率和“第一”之类的宣传并不是影响 AI 的手段，而是需要连同依据一起准确说明的事实。",
+  "intro": [
+    "本文写于 2026 年 11 月 12 日（日本时间）。来自 Google、schema.org 和日本监管机构的信息均已于当日在其官方页面上核实。",
+    "AI 的回答会随日期和提问方式而变化。本文的方法是让 AI 更容易正确读取您机构的事实信息，并不保证您一定会出现在 AI 回答中或排名更靠前。法律相关内容仅为一般说明，不构成法律建议；请确认您所在地区适用的规定。"
+  ],
+  "sections": [
+    {
+      "heading": "家长和学生会向 AI 问什么",
+      "paragraphs": [
+        "关于补习的提问往往同时包含地点、年级、科目、目标、形式、时间和价格：“车站附近、适合数学薄弱的初二学生的一对一补习班”“中考选小班补习还是一对一家教，各要多少钱”“孩子社团活动结束后晚上 8 点还能去的地方”“英语考试的线上备考辅导”。ChatGPT、Perplexity 和 Google AI Overviews 会读取网上的页面，并据此组织回答。",
+        "AI 只能使用它能以文字形式读取、且彼此不矛盾的事实。如果费用表只是一张图片、价格信息只有“请咨询”、各校区页面的上课时间不一致，或者没有指向试听课表单的链接，AI 就缺少可用的信息，它对您的描述也更容易出错。在 AI 回答偏向大型连锁机构的地区，独立补习班更有理由把自己的信息写清楚。"
+      ]
+    },
+    {
+      "heading": "需要公开的信息",
+      "paragraphs": [
+        "请先把下列项目写进页面正文，再用结构化数据以机器易读的形式补充同样的事实。Google 表示，出现在 AI Overviews 或 AI Mode 中不需要特殊的 schema.org 标记，并要求结构化数据与页面上可见的文字一致。[Google：AI 功能与您的网站](https://developers.google.com/search/docs/appearance/ai-features)"
+      ],
+      "table": {
+        "head": [
+          "项目",
+          "示例",
+          "放在哪里"
+        ],
+        "rows": [
+          [
+            "招收对象",
+            "小学四年级至高三；不招收成人学员",
+            "首页、课程列表"
+          ],
+          [
+            "课程与目标",
+            "中考、高考、校内考试辅导、英语考试备考、为不上学的学生提供支持",
+            "每门课程一个页面"
+          ],
+          [
+            "上课形式",
+            "小班（每班最多 12 人）、一对一或一位老师对两名学生、线上",
+            "每门课程一个页面"
+          ],
+          [
+            "科目与课时",
+            "数学和英语，每节 80 分钟，每周一次起",
+            "每门课程一个页面"
+          ],
+          [
+            "全部费用",
+            "入学费、每月学费、教材费、季节课程、模拟考试、其他费用，以及一年总额的计算示例",
+            "费用页面"
+          ],
+          [
+            "课表与休息日",
+            "按星期列出的上课时间、自习室开放时间、休息日",
+            "校区页面"
+          ],
+          [
+            "试听课或咨询",
+            "是否免费、几次、每次多长时间、预约链接",
+            "试听课页面"
+          ],
+          [
+            "位置",
+            "地址、最近车站及步行时间、电话、自行车或汽车停车位",
+            "校区页面"
+          ],
+          [
+            "老师与支持",
+            "专职老师还是学生讲师、如何分配老师、与家长面谈的频率",
+            "师资或教学理念页面"
+          ],
+          [
+            "成绩",
+            "注明年份、统计对象和统计方法的升学成绩",
+            "成绩页面"
+          ]
+        ],
+        "caption": "请按照当地消费者相关规定显示价格（在日本须为含税价格）。如果总额会变化，例如因季节课程而不同，请说明取决于哪些因素。"
+      }
+    },
+    {
+      "heading": "结构化数据类型：EducationalOrganization 与 Course",
+      "paragraphs": [
+        "schema.org 没有专门针对补习班的类型。对机构本身而言，最接近的是 [EducationalOrganization](https://schema.org/EducationalOrganization)。它位于 Organization 和 CivicStructure 之下，而不在美发店和牙科诊所所用的 LocalBusiness 之下。您仍然可以填写地址、电话和营业时间，但不要以为它会被当作本地商家信息处理。有些希望以本地商家身份呈现的机构会同时声明 LocalBusiness 和 EducationalOrganization；无论哪种做法，标记都必须与页面上显示的事实一致。",
+        "课程用 [Course](https://schema.org/Course) 描述：名称、description、provider、educationalLevel，以及表示价格的 offers。上课日期、时间以及线下还是线上，属于通过 hasCourseInstance 关联的 [CourseInstance](https://schema.org/CourseInstance)，用 courseMode、courseSchedule 和 courseWorkload 表示。",
+        "Google 的展示方式已经发生变化。2025 年 6 月，Google 宣布将逐步停用七项搜索功能，其中包括显示课程详情的 Course Info。[Google Search Central 博客，2025 年 6 月 12 日](https://developers.google.com/search/blog/2025/06/simplifying-search-results)。截至 2026 年 11 月 12 日，可并排显示三门及以上课程的课程列表文档仍在发布中（[Google：课程列表](https://developers.google.com/search/docs/appearance/structured-data/course)），但不保证一定会显示。最稳妥的做法是不把结构化数据当作搜索结果的装饰，而是把它当作向 AI 和搜索引擎准确无歧义地传递事实的方式。"
+      ]
+    },
+    {
+      "heading": "费用页面与消费者法规：您写什么，AI 就复述什么",
+      "paragraphs": [
+        "各国对补习合同的规定不同。在日本，期限超过两个月、总金额（入学费、学费、教材费等）超过 ¥50,000 的补习班合同，属于《特定商业交易法》规定的“特定持续性服务”。机构必须在签约前提供概要书面文件，签约后提供合同书面文件；顾客可在收到合同书面文件之日起八天内无条件解约（冷静期）；如果顾客中途解约，机构最多可收取的费用为：开课前 ¥11,000，开课后为已上课程的费用加上 ¥20,000 与一个月学费中较低者。家教上门服务属于另一类别，上限不同。[消费者厅：特定持续性服务（日语）](https://www.no-trouble.caa.go.jp/what/continuousservices/)",
+        "当 AI 被问到价格时只捕捉到每月学费，家长事后会觉得被误导。请在费用页面列出一年的全部开支，包括入学费、教材费、季节课程和模拟考试，并按年级和课程给出总额的计算示例。如果您有关于解约和冷静期的页面，请从费用页面链接过去，这样 AI 就能用事实回答“中途可以退出吗？”。",
+        "注意不要使用让价格看起来更低的措辞。2023 年 3 月 2 日，日本依据《不当赠品类及不当表示防止法》发布了一项措施命令，针对的是某个别辅导补习班的课时学费显示方式让价格看起来比实际更优惠。[日本公正交易委员会新闻稿，2023 年 3 月 2 日（日语）](https://www.jftc.go.jp/houdou/pressrelease/2023/mar/230302_chugoku_keihyou.html)。AI 会概括您公开的内容，因此误导性的显示也会通过 AI 回答传播开来。"
+      ]
+    },
+    {
+      "heading": "升学率和“第一”宣传：写明依据",
+      "paragraphs": [
+        "家长经常问成绩，但没有统计方法的数字，家长和 AI 都无法比较。2011 年，日本曾针对把其他学校学生和未上过课的学生计入大学合格人数的做法发布命令。[消费者委员会资料，2011 年 11 月 24 日（日语）](https://www.cao.go.jp/consumer/iinkai/2011/074/doc/074_111124_shiryou2-2-1.pdf)。在成绩页面上，请务必注明统计对象、年份和统计方法，例如“X 年度在籍学生 N 人中；只参加季节课程的学生不计入”。",
+        "对于“本地区满意度第一”之类的宣传也要小心。日本消费者厅在 2024 年 9 月 26 日的报告中指出，“第一”宣传需要恰当选择比较对象、回答者和调查方法，且宣传内容须与调查结果一致；而以从未使用过服务的人对网站印象为依据的调查，可能存在问题。补习班和培训机构的广告主也在受访对象之列。[消费者厅：关于“No.1”宣传的报告（日语）](https://www.caa.go.jp/notice/entry/039459/)。AI 更依赖可以核实的事实而不是强烈的措辞，所以无法证实的宣传，正文和标记中都不要写。"
+      ]
+    },
+    {
+      "heading": "在 WordPress 补习班网站上进行设置",
+      "list": [
+        "从 [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) 安装 Nurevo AEO（免费）并启用。如果您在用 Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK 或 VK All in One Expansion Unit，可以继续保留。",
+        "设置向导中没有教育类的选项卡，请选择“Other”。然后在设置的“Business type (schema.org type)”中填入 EducationalOrganization。Nurevo AEO 会把该类型作为您的商家类型，并发布名称、地址、电话、上课时间和简介。只有空白字段会从现有设置中自动填入，您已输入的内容不会被覆盖。",
+        "在设置中把每门课程添加为服务。填写课程名称、课时（分钟）、价格、货币、类别（例如中考）、预约 URL（您的试听课表单）和说明后，它会作为与您机构关联的 Service 发布（价格作为 Offer，预约 URL 作为预约操作），并在 llms.txt 中列为一行课程。价格只填数字，并在说明中写明是按月还是按节收费。",
+        "Nurevo AEO 发布的是 Service，而不是 Course 或 CourseInstance。如果您希望把课程标记为 Course，请通过主题、其他插件或手写 JSON-LD 添加，并确保同一门课程不会以不同内容重复出现。",
+        "录入常见问题，并在想显示的页面放置 Nurevo FAQ 区块或 [nurevo_faq] 短代码。请选择家长真正会问的问题：“试听课免费吗？”“学期中途可以插班吗？”“缺课可以调课吗？”",
+        "在 AEO Score 页面运行诊断，并应用检查清单提供的修复。结构化数据、llms.txt 和 AI 爬虫访问（OAI-SearchBot、PerplexityBot、Claude-SearchBot 等）全部包含在免费方案中。",
+        "用[免费 AI 可读性检测](/check?lang=en)从外部查看 AI 读到了什么，并确认上课时间和费用与您的 Google 商家资料及各补习班信息网站一致。"
+      ],
+      "after": [
+        "启用 SEO 插件时，Nurevo AEO 不会再输出第二套结构化数据。它只会在 SEO 插件已发布的图谱中补充缺少的地址、电话、营业时间、类型和课程（作为 Service）。请参阅[在 Yoast、Rank Math 和 AIOSEO 中添加本地商家 schema](/guide/local-business-schema-seo-plugins/)。Google 表示 Google 搜索不使用 llms.txt（[Google：针对 AI 搜索进行优化](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)）；请把它视为一种省力的辅助手段，供其他读取网站摘要的 AI 工具使用。[什么是 llms.txt？](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "发布前的检查清单",
+      "list": [
+        "年级、课程、上课形式、科目和课时都以文字写明，而不只是显示在图片中。",
+        "价格按当地规定显示，并附有包含入学费、教材费和季节课程的一年总额计算示例。",
+        "如果您的合同属于日本“特定持续性服务”之类的消费者法规范围，已有关于书面文件、冷静期和解约的页面，并从费用页面链接过去。",
+        "课表、休息日、地址和最近车站在您的网站、Google 商家资料和各信息网站上保持一致。",
+        "页面上写有试听课条件（是否免费、次数、时长）和预约表单的链接。",
+        "成绩注明了年份、统计对象和统计方法，且没有无法证实的“第一”宣传。",
+        "结构化数据中的类型、价格和时间与页面显示的一致。[Google：结构化数据通用指南](https://developers.google.com/search/docs/appearance/structured-data/sd-policies)"
+      ]
+    },
+    {
+      "heading": "检查您是否出现在 AI 回答中",
+      "paragraphs": [
+        "信息整理好之后，用家长会问的问题（地区＋年级＋科目或目标＋形式）去问 AI，看看您的机构是否以名称或 URL 出现，以及费用和上课时间是否描述正确。每次回答都会不同，所以请在不同日子把同样的问题问几遍并做好记录。在新学年、暑期课程或考试季等繁忙时期之前检查，就有时间修正问题。在试听课表单的“您是通过什么途径了解到我们的？”中加入“AI（ChatGPT 等）”选项，就能统计通过 AI 来的咨询。完整方法请见[如何衡量 AI 可见度](/guide/measure-ai-visibility/)。",
+        "Nurevo AEO 的 Free 和 Standard（$20/月）方案包含每月检查：根据您的商家类型和地区（绝不使用机构名称）生成三个问题提交给 Perplexity，插件会记录回答中是否提到您的机构或引用了您的网站。Pro 方案（$99/月起）增加了测试版的 AI 可见度衡量：您在 AI 回答中出现的频率，并提供竞争对手比较和历史记录（目前支持 Perplexity）。两者都是对回答进行抽样，而非观察每一次回答。"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "补习班做 AI 搜索应该从哪里开始？",
+      "a": "把招收年级、课程、上课形式、全部费用、课表、试听课和位置以文字而不是图片的形式正确写在页面上。然后把同样的事实发布为结构化数据和 llms.txt，并确保它们与您的 Google 商家资料和各信息网站的内容一致。"
+    },
+    {
+      "q": "补习班应该使用哪种 schema.org 类型？",
+      "a": "没有专门针对补习班的类型，所以机构用 EducationalOrganization、每门课程用 Course 最为接近。请注意，EducationalOrganization 不是 LocalBusiness 的子类型。无论选择哪种类型，都必须与页面显示的内容一致。"
+    },
+    {
+      "q": "写“价格请咨询”可以吗？",
+      "a": "您没有公开的价格，AI 无法说出来，因此您更可能被当作费用不明的机构。请公开每月学费、入学费、教材费和季节课程费用，并按年级和课程给出一年总额的计算示例。"
+    },
+    {
+      "q": "升学率对 AI 搜索有帮助吗？",
+      "a": "成绩是常见的问题，但没有统计方法的数字无法比较。请写明年份、统计对象和统计方法。在日本，把其他学校学生计入的显示方式曾导致监管命令。"
+    },
+    {
+      "q": "Nurevo AEO 是免费的吗？",
+      "a": "是的。商家类型（EducationalOrganization 等）、地址、营业时间、课程和 FAQ 的结构化数据、llms.txt、AI 爬虫规则以及 AEO 分数都包含在免费方案中。付费方案增加始终保持最新的规则集（Standard，$20/月）和测试版的 AI 可见度衡量（Pro，$99/月起）。[WordPress.org 上的 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "这样做能保证我的机构出现在 ChatGPT 中吗？",
+      "a": "不能。AI 的回答会变化，没有任何工具或技巧能保证被提及或获得某个位置。您能做的是让自己的信息容易被 AI 读取，并持续检查自己是否出现。"
+    }
+  ],
+  "relatedHeading": "相关指南",
+  "cta": {
+    "heading": "先看看 AI 是如何读取您补习班网站的",
+    "body": "免费检测可显示结构化数据、llms.txt 和 AI 爬虫访问的状态，无需注册。在 WordPress 上，Nurevo AEO 可以免费补齐缺漏。",
+    "label": "进行免费 AI 可读性检测",
+    "href": "/check",
+    "secondary": {
+      "label": "在 WordPress.org 获取 Nurevo AEO",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT 是 OpenAI 的商标，Perplexity 是 Perplexity AI 的商标，Google 是 Google LLC 的商标。Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK 和 VK All in One Expansion Unit 是其各自所有者的商标。Nurevo 与上述公司均无关联。本文不构成法律建议。"
+}

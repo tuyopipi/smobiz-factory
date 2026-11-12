@@ -1,0 +1,292 @@
+{
+  "title": "Cómo ver AI Overviews y AI Mode en Search Console | Nurevo",
+  "description": "Abra el informe de rendimiento de IA generativa de Search Console, entienda cómo cuenta impresiones, léalo con el de Rendimiento y decida sobre el control de IA.",
+  "h1": "Cómo ver AI Overviews y AI Mode en Search Console: cómo leer el informe de rendimiento de IA generativa",
+  "lead": "El informe «Generative AI performance report (Search)» de Search Console muestra cuántas veces aparecieron enlaces a su sitio en los AI Overviews y el AI Mode de Google. Está disponible para todos los sitios web del mundo desde el 31 de agosto de 2026. Muestra impresiones, desglosadas por página, país, dispositivo y fecha. No muestra clics, así que léalo junto al informe de Rendimiento habitual.",
+  "intro": [
+    "Redactado el 10 de noviembre de 2026. El comportamiento de Google que se describe aquí se comprobó ese día en la Ayuda de Search Console y en Google Search Central. Las pantallas y las reglas pueden cambiar, así que consulte también las páginas de ayuda actuales.",
+    "Este informe solo abarca las funciones de IA de la Búsqueda de Google. Cómo aparece en ChatGPT o Perplexity debe comprobarse de otra forma (véase más abajo). Y nada de lo que haga puede garantizar que una respuesta de IA lo incluya o lo sitúe en un puesto concreto. Las respuestas de IA cambian de un día para otro."
+  ],
+  "sections": [
+    {
+      "heading": "Qué muestra el informe y qué no",
+      "paragraphs": [
+        "Google anunció el informe el 3 de junio de 2026 ([Search Central Blog](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)) y lo implantó primero en una parte de los sitios. Según la página de ayuda, llegó a todos los sitios web del mundo el 31 de agosto de 2026 ([Search Console Help: Generative AI performance report (Search)](https://support.google.com/webmasters/answer/16984139?hl=en)). Lo esencial:"
+      ],
+      "table": {
+        "head": [
+          "Elemento",
+          "Lo que dice la página de ayuda (a 10 de noviembre de 2026)"
+        ],
+        "rows": [
+          [
+            "Alcance",
+            "AI Overviews y AI Mode en la Búsqueda de Google. No incluye datos de los experimentos de Search Labs"
+          ],
+          [
+            "Métrica",
+            "Impresiones: cuántas veces se mostraron a un usuario enlaces a su sitio en una función de IA generativa"
+          ],
+          [
+            "Desgloses",
+            "Páginas, países, dispositivos (ordenador, tablet, móvil) y fechas"
+          ],
+          [
+            "Tipo de búsqueda",
+            "«Web: text-based» y «Web: multimodal» (Google Lens, Rodea para buscar, imágenes subidas y similares)"
+          ],
+          [
+            "Zona horaria",
+            "Las fechas están en hora del Pacífico. Los datos más recientes pueden ser provisionales y se dibujan con una línea discontinua"
+          ],
+          [
+            "Exportación",
+            "Los datos del gráfico y de la tabla se pueden descargar. Los valores que aparecen como ~ o - se convierten en ceros en el archivo"
+          ],
+          [
+            "Relación con el informe principal",
+            "Muestra la parte de los datos del tipo de búsqueda «Web» del informe de Rendimiento que procede de funciones de IA"
+          ],
+          [
+            "Discover",
+            "Las funciones de IA generativa de Discover tienen su propio informe, el Generative AI performance report (Discover)"
+          ]
+        ],
+        "caption": "La página de ayuda no describe clics, posiciones ni consultas en este informe."
+      },
+      "after": [
+        "Tenga claras las carencias. Este informe no indica qué consultas activaron la función de IA, en qué lugar de la respuesta apareció su enlace ni cuántos clics le envió la respuesta de IA. Los clics y las impresiones de las funciones de IA de Google se cuentan dentro del informe de Rendimiento habitual, en el tipo de búsqueda «Web» ([Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). El informe de Discover se describe [en este artículo de ayuda](https://support.google.com/webmasters/answer/16983858?hl=en)."
+      ]
+    },
+    {
+      "heading": "Cómo abrir el informe y qué revisar si no aparece",
+      "list": [
+        "En Search Console, elija su propiedad y abra el informe de rendimiento de IA generativa (Search). El enlace directo es https://search.google.com/search-console/performance/search-analytics/ai (debe haber iniciado sesión).",
+        "Amplíe el intervalo de fechas, por ejemplo a los últimos tres meses, y observe la tendencia de las impresiones en el gráfico. Deje fuera de cualquier comparación mensual los días provisionales con línea discontinua.",
+        "En la pestaña Páginas de la tabla, vea qué páginas se mostraron en funciones de IA. Las páginas se indican por su URL final tras las redirecciones.",
+        "Use las pestañas Países y Dispositivos para ver dónde y en qué dispositivos aparece. Si es un negocio local, compruebe qué proporción procede de su propio país.",
+        "Cambie el filtro de tipo de búsqueda a «Web: multimodal» para ver si aparece en búsquedas a partir de imágenes. Es especialmente importante para sitios con muchas fotos de productos, comida o edificios."
+      ],
+      "after": [
+        "Si el informe no aparece o está vacío, revise dos cosas. El motivo habitual, según Google, es que su sitio todavía no ha tenido suficientes impresiones en funciones de IA generativa. El otro es que el sitio se haya excluido con el control «Search generative AI» que se describe más abajo ([página de ayuda](https://support.google.com/webmasters/answer/16984139?hl=en)).",
+        "Tenga en cuenta además que del 13 al 17 de agosto de 2026 un problema de registro en Google redujo las impresiones de este informe. Google afirma que los datos que faltaban se restauraron después ([Search Console data anomalies](https://support.google.com/webmasters/answer/6211453?hl=en)). Si una caída antigua le parece extraña, consulte primero esa página."
+      ]
+    },
+    {
+      "heading": "Cómo se cuentan las impresiones y por qué no coinciden los totales",
+      "paragraphs": [
+        "El informe cuenta de forma distinta según dónde mire. Si compara cifras sin saberlo, no le cuadrarán."
+      ],
+      "table": {
+        "head": [
+          "Dónde mira",
+          "Se cuenta por",
+          "Ejemplo: una respuesta de IA muestra enlaces a dos de sus páginas"
+        ],
+        "rows": [
+          [
+            "Total del gráfico",
+            "Propiedad (todo el sitio)",
+            "1"
+          ],
+          [
+            "Tabla, pestaña Páginas",
+            "Página",
+            "1 para la página A y 1 para la página B (2 en total)"
+          ],
+          [
+            "Tabla, Países, Dispositivos, Fechas",
+            "Propiedad",
+            "1"
+          ],
+          [
+            "Gráfico con filtro de URL",
+            "URL",
+            "1 para la página filtrada"
+          ]
+        ],
+        "caption": "Basado en la Ayuda de Search Console, Generative AI performance report (Search)."
+      },
+      "after": [
+        "Por eso, la suma de la tabla Páginas puede ser mayor que el total del gráfico. En un informe, anote por separado las impresiones de todo el sitio (gráfico) y las impresiones por página (tabla), y no las sume nunca. Como en el informe habitual, la tabla está limitada a 1.000 filas."
+      ]
+    },
+    {
+      "heading": "Léalo junto al informe de Rendimiento habitual",
+      "paragraphs": [
+        "Como el informe solo tiene impresiones, por sí solo apenas puede decirle algo más que «más impresiones que el mes pasado». Póngalo junto al informe de Rendimiento habitual (tipo de búsqueda: Web) para las mismas páginas y las mismas fechas, y podrá sacar mucho más."
+      ],
+      "table": {
+        "head": [
+          "Impresiones en funciones de IA",
+          "Clics en el informe habitual",
+          "Qué puede significar y qué hacer a continuación"
+        ],
+        "rows": [
+          [
+            "Suben",
+            "Suben o se mantienen",
+            "Lo encuentran tanto en las funciones de IA como en los resultados normales. Mantenga al día los datos de esa página (precios, horarios)"
+          ],
+          [
+            "Suben",
+            "Bajan",
+            "Puede que la respuesta de IA ya satisfaga la búsqueda y menos personas hagan clic. Compruebe si la página ofrece lo que un resumen no puede: reservas, presupuestos, fotos, casos prácticos"
+          ],
+          [
+            "Pocas o ninguna",
+            "Muchos",
+            "Fuerte en los resultados normales, pero rara vez enlazado en las funciones de IA. Compruebe si hay texto que responda directamente a la pregunta y datos estructurados que coincidan con la página visible"
+          ],
+          [
+            "Pocas o ninguna",
+            "Pocos",
+            "Empiece por lo básico del SEO: indexación, si se puede mostrar un fragmento, profundidad del contenido"
+          ]
+        ],
+        "caption": "Las cifras no pueden demostrar una causa. Úselas como hipótesis que hay que comprobar."
+      },
+      "after": [
+        "Google afirma que no hay requisitos adicionales ni optimizaciones especiales para aparecer en las funciones de IA, y que una página debe estar indexada y poder mostrarse en la Búsqueda de Google con un fragmento ([Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). En una página con pocas impresiones de IA, revisar su estado en la búsqueda normal es la forma más rápida de empezar."
+      ]
+    },
+    {
+      "heading": "Lista de comprobación mensual",
+      "list": [
+        "Fije el intervalo de fechas en el mes anterior (fechas en hora del Pacífico) y anote las impresiones del gráfico. Deje fuera los días provisionales",
+        "Anote las diez primeras páginas de la tabla Páginas y su variación respecto al mes anterior",
+        "Para esas mismas diez páginas, anote al lado los clics y las impresiones del informe de Rendimiento habitual (Web)",
+        "Busque cambios grandes en el reparto por países y dispositivos",
+        "Revise la página de anomalías de datos por si Google informó de algún problema de registro ese mes",
+        "Confirme que el control «Search generative AI» está configurado como desea (normalmente «Include», o heredado de la propiedad principal)",
+        "Registre de otra forma cómo aparece en IA fuera de Google, como ChatGPT y Perplexity (véase más abajo)"
+      ],
+      "after": [
+        "Para el registro bastan cinco columnas: mes, impresiones en funciones de IA (sitio), páginas principales, clics e impresiones Web de esas páginas, y notas (cambios en el sitio, problemas conocidos). Anotar los cambios del sitio, como páginas nuevas, correcciones de datos estructurados o un cambio de tema, facilita mucho explicar después una subida o una bajada."
+      ]
+    },
+    {
+      "heading": "El control «Search generative AI»: qué hace la exclusión",
+      "paragraphs": [
+        "Junto con el informe, Google añadió un ajuste que impide que su sitio aparezca en sus funciones de IA. Está en Search Console, en Configuración > «Search generative AI», y está disponible para todos los sitios web del mundo desde el 31 de agosto de 2026 ([Search Console Help: Search generative AI control](https://support.google.com/webmasters/answer/16908024?hl=en))."
+      ],
+      "table": {
+        "head": [
+          "Opción o método",
+          "Qué ocurre"
+        ],
+        "rows": [
+          [
+            "«Include» (predeterminado)",
+            "Sus enlaces y su contenido pueden usarse en AI Overviews, AI Mode y las funciones de IA generativa de Discover"
+          ],
+          [
+            "«Exclude»",
+            "Sus enlaces y su contenido dejan de aparecer en esas funciones y no se usan como base para generar una respuesta. Tampoco recibe impresiones ni tráfico de ellas"
+          ],
+          [
+            "«Inherit control from parent»",
+            "Sigue la configuración de una propiedad principal, como una propiedad de dominio (es el valor predeterminado cuando existe una principal)"
+          ],
+          [
+            "Google-Extended (robots.txt)",
+            "Limita el uso de su contenido para entrenar IA. El control «Search generative AI» no afecta al entrenamiento"
+          ],
+          [
+            "noindex",
+            "Elimina la página de la Búsqueda de Google por completo"
+          ],
+          [
+            "nosnippet, data-nosnippet, max-snippet",
+            "Limitan qué parte de la página puede usarse como vista previa en los resultados y en las funciones de IA"
+          ]
+        ],
+        "caption": "Basado en la Ayuda de Search Console (Search generative AI control) y Google Search Central (AI features and your website)."
+      },
+      "after": [
+        "Google afirma que el control no se usa como señal de posicionamiento ni de inclusión para otras partes de la Búsqueda. La exclusión surte efecto en uno o dos días, y algunos contenidos pueden tardar más por la caché.",
+        "Para la mayoría de los negocios, las funciones de IA son una vía más para que los clientes los encuentren. Excluya su sitio solo por un motivo claro, como un sitio construido principalmente en torno a contenido exclusivo para socios o textos que inducen a error al resumirse. Si solo algunos pasajes deben quedar fuera de los resúmenes, data-nosnippet en esos pasajes es una alternativa a excluir todo el sitio."
+      ]
+    },
+    {
+      "heading": "Pasos en WordPress",
+      "list": [
+        "Registre una propiedad de dominio: verifique la propiedad con un registro DNS TXT. Las propiedades de prefijo de URL que dependen de una propiedad de dominio heredan su ajuste «Search generative AI», de modo que www y sin www, http y https se gestionan en un solo lugar.",
+        "Asegúrese de que la indexación no está bloqueada: en WordPress, Ajustes > Lectura tiene la opción «Visibilidad en los motores de búsqueda». Si está marcada, WordPress pide a los motores de búsqueda que no indexen el sitio. Revísela después de una migración o un lanzamiento.",
+        "Asegúrese de que robots.txt no bloquea a Googlebot: abra /robots.txt en un navegador y busque Disallow: / bajo Googlebot o bajo User-agent: *.",
+        "Deje un pasaje fuera de las vistas previas con data-nosnippet: en el editor de bloques, elija «Editar como HTML» en ese bloque y añada el atributo data-nosnippet al elemento que lo rodea. Para bloquear una página entera, use el ajuste por página de su plugin de SEO, como noindex.",
+        "Mantenga coherentes los datos estructurados y el texto visible: horarios, precios y direcciones deben tener los mismos valores en el texto de la página y en los datos estructurados. Una discrepancia es una causa frecuente de respuestas de IA erróneas."
+      ],
+      "after": [
+        "Nurevo AEO, un plugin gratuito para WordPress, genera desde su propio servidor datos estructurados, llms.txt y reglas de robots.txt para los rastreadores de búsqueda con IA. Los rastreadores que recopilan contenido para entrenar IA, como Google-Extended, se dejan por defecto a lo que diga su robots.txt, y puede permitirlos o bloquearlos desde la pantalla de administración. Se trata de una regla de robots.txt, independiente del control «Search generative AI» de Search Console. [Descárguelo en WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+      ]
+    },
+    {
+      "heading": "Lo que Search Console no puede mostrar: ChatGPT y Perplexity",
+      "paragraphs": [
+        "Search Console solo abarca Google. Para saber si ChatGPT o Perplexity mencionan su negocio, añada estos métodos:"
+      ],
+      "table": {
+        "head": [
+          "Método",
+          "Qué le indica"
+        ],
+        "rows": [
+          [
+            "Sitios de referencia en su herramienta de analítica",
+            "Visitas que llegaron desde una respuesta de IA. OpenAI indica que añade utm_source=chatgpt.com a los enlaces de los resultados de búsqueda de ChatGPT ([OpenAI: Publishers and Developers FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq))"
+          ],
+          [
+            "Hacer preguntas fijas con regularidad",
+            "Con preguntas que no contienen su nombre, la proporción de respuestas que lo mencionan o citan su sitio. [Cómo medir la visibilidad en IA](/guide/measure-ai-visibility)"
+          ],
+          [
+            "Herramientas de medición",
+            "Plantean automáticamente un conjunto de preguntas y registran menciones, citas, competidores y tendencias. [Comparativa de herramientas AEO](/guide/aeo-tools-comparison)"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo AEO incluye una comprobación de IA gratuita para los sitios conectados con Free y Standard: una vez al mes plantea a Perplexity tres preguntas creadas a partir de su sector y su zona, sin su nombre. Pro (desde 99 USD al mes, en beta), que mide de forma continua un conjunto fijo de preguntas, también mide en Perplexity por ahora. Reúna las cifras de Google de Search Console y estos registros de otras plataformas de IA en la misma hoja mensual para ver el panorama completo."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "¿Dónde está el informe de rendimiento de IA generativa?",
+      "a": "La Ayuda de Search Console ofrece un enlace directo (search.google.com/search-console/performance/search-analytics/ai). Está disponible para todos los sitios web del mundo desde el 31 de agosto de 2026. Si no lo ve, puede que su sitio aún no tenga suficientes impresiones en funciones de IA o que esté excluido con el control «Search generative AI»."
+    },
+    {
+      "q": "¿Puedo ver los clics que llegan de AI Overviews?",
+      "a": "El informe de rendimiento de IA generativa muestra impresiones. Los clics y las impresiones de las funciones de IA de Google se incluyen en el informe de Rendimiento habitual, en el tipo de búsqueda «Web», pero no se pueden aislar los clics que vinieron de funciones de IA. Lo práctico es comparar, página por página, las impresiones en funciones de IA con los clics normales."
+    },
+    {
+      "q": "¿Por qué el total del gráfico no coincide con la tabla Páginas?",
+      "a": "El gráfico cuenta por propiedad y la tabla Páginas cuenta por página. Si una respuesta de IA muestra dos de sus páginas, el gráfico cuenta una impresión y la tabla una por cada página. No sume ambas cifras en un informe."
+    },
+    {
+      "q": "¿Excluir mi sitio con el control «Search generative AI» perjudica mi posicionamiento?",
+      "a": "Google afirma que el control no se usa como señal de posicionamiento ni de inclusión para otras partes de la Búsqueda. Pero, una vez excluido, no recibe impresiones ni tráfico de AI Overviews, AI Mode ni de las funciones de IA generativa de Discover. Para limitar el entrenamiento de IA, use Google-Extended en lugar de este control."
+    },
+    {
+      "q": "¿Search Console muestra ChatGPT o Perplexity?",
+      "a": "No. Search Console solo tiene datos de Google. Compruebe ChatGPT y Perplexity por separado con los sitios de referencia de su analítica, haciendo preguntas fijas con regularidad o con una herramienta de medición."
+    },
+    {
+      "q": "¿Hay algún ajuste especial que aumente las impresiones de IA?",
+      "a": "Google afirma que no hay requisitos adicionales ni optimizaciones especiales para las funciones de IA. El camino más rápido es cuidar lo básico: páginas indexadas que puedan mostrar un fragmento, texto que responda directamente a la pregunta y datos estructurados que coincidan con la página visible. Ningún método garantiza que se le muestre."
+    }
+  ],
+  "relatedHeading": "Guías relacionadas",
+  "cta": {
+    "heading": "Primero, compruebe si la IA puede leer su sitio",
+    "body": "Una comprobación gratuita y sin registro muestra el estado de lo que la IA lee en su sitio: datos estructurados, llms.txt y acceso de los rastreadores de búsqueda con IA. En WordPress, Nurevo AEO completa gratis lo que falte.",
+    "label": "Hacer la comprobación gratuita de legibilidad para IA",
+    "href": "/check",
+    "secondary": {
+      "label": "Obtener Nurevo AEO en WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "Google, Search Console, Google Discover, ChatGPT, OpenAI, Perplexity, WordPress y los nombres de sus productos son marcas comerciales de sus respectivos propietarios. Nurevo no está afiliado a ellos."
+}
