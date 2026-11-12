@@ -1,0 +1,180 @@
+{
+  "title": "補習班的 AI 搜尋：課程、費用與試聽課 | Nurevo",
+  "description": "在頁面內文與結構化資料中公開年級、課程、上課形式、全部費用、課表、試聽課與分校。附 schema 類型、法律重點與 WordPress 設定步驟。",
+  "h1": "補習班與升學補習班的 AI 搜尋：讓 AI 正確讀懂年級、課程、費用與試聽課",
+  "lead": "補習班的 AI 搜尋最佳化（AEO），說到底就是在頁面內文與結構化資料中，準確且一致地公開以下資訊：招收的年級、課程、上課形式（團體班、一對一、線上）、全部費用、課表、試聽課的預約方式，以及各分校的位置。如此一來，ChatGPT、Perplexity 與 Google 的 AI 功能在回答家長的問題時，例如「車站附近能幫國二孩子一對一補數學的補習班」，就不必靠猜測。升學率與「第一」之類的宣傳並不是影響 AI 的手段，而是必須連同依據一起準確說明的事實。",
+  "intro": [
+    "本文撰寫於 2026 年 11 月 12 日（日本時間）。來自 Google、schema.org 與日本主管機關的資訊，皆已於當日在其官方頁面上確認。",
+    "AI 的回答會隨日期與提問方式而改變。本文的做法是讓 AI 更容易正確讀取您補習班的事實資訊，並不保證您一定會出現在 AI 回答中或排名更前面。法律相關內容僅為一般說明，不構成法律建議；請確認您所在地區適用的規定。"
+  ],
+  "sections": [
+    {
+      "heading": "家長與學生會問 AI 什麼",
+      "paragraphs": [
+        "關於補習的提問通常同時包含地點、年級、科目、目標、形式、時間與價格：「車站附近、適合數學較弱的國二生的一對一補習班」「準備高中入學考試該選團體補習班還是一對一家教，各要多少錢」「孩子社團練習結束後晚上 8 點還能去的地方」「英文檢定的線上備考課程」。ChatGPT、Perplexity 與 Google AI Overviews 會讀取網路上的頁面，並據此整理出回答。",
+        "AI 只能使用它能以文字讀取、且彼此不矛盾的事實。如果費用表只是一張圖片、價格資訊只有「歡迎洽詢」、各分校頁面的上課時間不一致，或沒有連到試聽課表單的連結，AI 就缺少可用的資訊，它對您的描述也更容易出錯。在 AI 回答偏向大型連鎖體系的地區，獨立補習班更有理由把自己的資訊寫清楚。"
+      ]
+    },
+    {
+      "heading": "應該公開的資訊",
+      "paragraphs": [
+        "請先把下列項目寫進頁面內文，再以結構化資料用機器容易讀取的形式補充相同的事實。Google 表示，要出現在 AI Overviews 或 AI Mode 中不需要特殊的 schema.org 標記，並要求結構化資料與頁面上可見的文字一致。[Google：AI 功能與您的網站](https://developers.google.com/search/docs/appearance/ai-features)"
+      ],
+      "table": {
+        "head": [
+          "項目",
+          "範例",
+          "放在哪裡"
+        ],
+        "rows": [
+          [
+            "招收對象",
+            "小學四年級至高三；不招收成人學員",
+            "首頁、課程列表"
+          ],
+          [
+            "課程與目標",
+            "高中入學、大學入學、校內考試輔導、英文檢定準備、支援未到校就學的學生",
+            "每個課程一個頁面"
+          ],
+          [
+            "上課形式",
+            "團體班（每班最多 12 人）、一對一或一位老師對兩名學生、線上",
+            "每個課程一個頁面"
+          ],
+          [
+            "科目與課堂時長",
+            "數學與英文，每堂 80 分鐘，每週一次起",
+            "每個課程一個頁面"
+          ],
+          [
+            "全部費用",
+            "入學費、每月學費、教材費、季節課程、模擬考、其他費用，以及一年總額的試算範例",
+            "費用頁面"
+          ],
+          [
+            "課表與休息日",
+            "依星期列出的上課時間、自習室開放時間、休息日",
+            "分校頁面"
+          ],
+          [
+            "試聽課或諮詢",
+            "是否免費、幾次、每次多久、預約連結",
+            "試聽課頁面"
+          ],
+          [
+            "位置",
+            "地址、最近車站與步行時間、電話、腳踏車或汽車停車位",
+            "分校頁面"
+          ],
+          [
+            "老師與輔導",
+            "專任老師或學生講師、如何安排老師、與家長面談的頻率",
+            "師資或教學理念頁面"
+          ],
+          [
+            "成果",
+            "註明年度、統計對象與統計方式的升學成果",
+            "成果頁面"
+          ]
+        ],
+        "caption": "請依當地消費者相關規定標示價格（在日本須為含稅價格）。若總額會變動，例如因季節課程而不同，請說明取決於哪些條件。"
+      }
+    },
+    {
+      "heading": "結構化資料類型：EducationalOrganization 與 Course",
+      "paragraphs": [
+        "schema.org 沒有專為補習班設計的類型。對補習班本身而言，最接近的是 [EducationalOrganization](https://schema.org/EducationalOrganization)。它位於 Organization 與 CivicStructure 之下，而不在美髮店與牙醫診所使用的 LocalBusiness 之下。您仍然可以填寫地址、電話與營業時間，但不要以為它會被當成在地商家資訊處理。有些希望以在地商家身分呈現的補習班，會同時宣告 LocalBusiness 與 EducationalOrganization；無論採用哪種做法，標記都必須與頁面上顯示的事實一致。",
+        "課程以 [Course](https://schema.org/Course) 描述：名稱、description、provider、educationalLevel，以及表示價格的 offers。上課日期、時間以及實體或線上，屬於以 hasCourseInstance 連結的 [CourseInstance](https://schema.org/CourseInstance)，透過 courseMode、courseSchedule 與 courseWorkload 表示。",
+        "Google 的呈現方式已經改變。2025 年 6 月，Google 宣布將逐步停用七項搜尋功能，其中包括顯示課程詳細資訊的 Course Info。[Google Search Central 部落格，2025 年 6 月 12 日](https://developers.google.com/search/blog/2025/06/simplifying-search-results)。截至 2026 年 11 月 12 日，可並列顯示三個以上課程的課程清單文件仍有公開（[Google：課程清單](https://developers.google.com/search/docs/appearance/structured-data/course)），但不保證一定會顯示。最穩當的做法，是不把結構化資料當作搜尋結果的裝飾，而是當作把事實毫無歧義地交給 AI 與搜尋引擎的方式。"
+      ]
+    },
+    {
+      "heading": "費用頁面與消費者法規：您寫什麼，AI 就轉述什麼",
+      "paragraphs": [
+        "各國對補習契約的規定不同。在日本，期間超過兩個月、總金額（入學費、學費、教材費等）超過 ¥50,000 的補習班契約，屬於《特定商業交易法》所稱的「特定持續性服務」。補習班必須在締約前交付概要書面，締約後交付契約書面；消費者可在收到契約書面之日起八天內行使冷卻期解約；若消費者中途解約，補習班最多可收取的費用為：開課前 ¥11,000，開課後為已上課程的費用加上 ¥20,000 與一個月學費兩者中較低者。到府家教屬於另一類別，上限不同。[消費者廳：特定持續性服務（日文）](https://www.no-trouble.caa.go.jp/what/continuousservices/)",
+        "當 AI 被問到價格卻只抓到每月學費時，家長事後會覺得被誤導。請在費用頁面列出一年的全部支出，包括入學費、教材費、季節課程與模擬考，並依年級與課程提供總額試算範例。如果您有說明解約與冷卻期的頁面，請從費用頁面連過去，讓 AI 能以事實回答「可以中途退出嗎？」。",
+        "請留意讓價格看起來更低的措辭。2023 年 3 月 2 日，日本依《不當贈品類及不當標示防止法》發布了一項措施命令，對象是某家個別指導補習班以時數計算學費的標示方式，讓價格看起來比實際更划算。[日本公平交易委員會新聞稿，2023 年 3 月 2 日（日文）](https://www.jftc.go.jp/houdou/pressrelease/2023/mar/230302_chugoku_keihyou.html)。AI 會摘要您公開的內容，因此誤導性的標示也會透過 AI 回答擴散出去。"
+      ]
+    },
+    {
+      "heading": "升學率與「第一」宣傳：寫明依據",
+      "paragraphs": [
+        "家長常問成果，但沒有統計方式的數字，家長和 AI 都無法比較。2011 年，日本曾針對把其他補習班學生和未上過課的學生計入大學錄取實績的做法發布命令。[消費者委員會資料，2011 年 11 月 24 日（日文）](https://www.cao.go.jp/consumer/iinkai/2011/074/doc/074_111124_shiryou2-2-1.pdf)。在成果頁面上，請務必註明統計對象、年度與統計方式，例如「X 年度在籍學生 N 人中；只參加季節課程的學生不計入」。",
+        "對於「本地區滿意度第一」之類的宣傳也要小心。日本消費者廳在 2024 年 9 月 26 日的報告中指出，「第一」宣傳需要適當選擇比較對象、回答者與調查方法，且宣傳內容須與調查結果相符；而以從未使用過服務的人對網站印象為依據的調查，可能有問題。補習班與升學補習班的廣告主也在受訪對象之列。[消費者廳：關於「No.1」標示的報告（日文）](https://www.caa.go.jp/notice/entry/039459/)。AI 依賴的是可以查證的事實，而非強烈的字眼，因此無法佐證的宣傳，內文和標記都不要寫。"
+      ]
+    },
+    {
+      "heading": "在 WordPress 補習班網站上設定",
+      "list": [
+        "從 [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) 安裝 Nurevo AEO（免費）並啟用。若您正在使用 Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK 或 VK All in One Expansion Unit，可以繼續保留。",
+        "設定精靈中沒有教育類的卡片，請選擇「Other」。接著在設定的「Business type (schema.org type)」中輸入 EducationalOrganization。Nurevo AEO 會把這個類型當作您的商家類型，並公開名稱、地址、電話、上課時間與簡介。只有空白欄位會從現有設定自動帶入，您已輸入的內容不會被覆寫。",
+        "在設定中把每個課程新增為服務。填寫課程名稱、課堂時長（分鐘）、價格、幣別、類別（例如高中入學）、預約 URL（您的試聽課表單）與說明後，就會以與您補習班連結的 Service 公開（價格為 Offer，預約 URL 為預約動作），並在 llms.txt 中列為一行課程。價格請只輸入數字，並在說明中寫明是按月還是按堂計費。",
+        "Nurevo AEO 公開的是 Service，而不是 Course 或 CourseInstance。若您希望以 Course 標記課程，請透過佈景主題、其他外掛或手寫 JSON-LD 加入，並確認同一個課程不會以不同內容重複出現。",
+        "輸入常見問題，並在想顯示的頁面放置 Nurevo FAQ 區塊或 [nurevo_faq] 短代碼。請挑選家長真正會問的問題：「試聽課免費嗎？」「學期中可以插班嗎？」「缺課可以補課嗎？」",
+        "在 AEO Score 畫面執行診斷，並套用檢查清單提供的修正。結構化資料、llms.txt 與 AI 爬蟲存取（OAI-SearchBot、PerplexityBot、Claude-SearchBot 等）全都包含在免費方案中。",
+        "用[免費 AI 可讀性檢測](/check?lang=en)從外部查看 AI 讀到了什麼，並確認上課時間與費用與您的 Google 商家檔案及各補習班資訊網站一致。"
+      ],
+      "after": [
+        "啟用 SEO 外掛時，Nurevo AEO 不會再輸出第二套結構化資料。它只會在 SEO 外掛已公開的圖譜中，補上缺少的地址、電話、營業時間、類型與課程（以 Service 形式）。請參閱[在 Yoast、Rank Math 與 AIOSEO 中加入在地商家 schema](/guide/local-business-schema-seo-plugins/)。Google 表示 Google 搜尋不使用 llms.txt（[Google：針對 AI 搜尋進行最佳化](https://developers.google.com/search/docs/fundamentals/ai-optimization-guide)）；請把它視為一種省力的輔助，供其他會讀取網站摘要的 AI 工具使用。[什麼是 llms.txt？](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "公開前的檢查清單",
+      "list": [
+        "年級、課程、上課形式、科目與課堂時長都以文字寫出，而不只是顯示在圖片中。",
+        "價格依當地規定標示，並附有包含入學費、教材費與季節課程的一年總額試算範例。",
+        "若您的契約屬於日本「特定持續性服務」之類的消費者法規範圍，已有說明書面文件、冷卻期與解約的頁面，並從費用頁面連結過去。",
+        "課表、休息日、地址與最近車站在您的網站、Google 商家檔案與各資訊網站上一致。",
+        "頁面上寫有試聽課條件（是否免費、次數、時長）以及預約表單的連結。",
+        "成果註明了年度、統計對象與統計方式，且沒有無法佐證的「第一」宣傳。",
+        "結構化資料中的類型、價格與時間與頁面顯示的一致。[Google：結構化資料一般指南](https://developers.google.com/search/docs/appearance/structured-data/sd-policies)"
+      ]
+    },
+    {
+      "heading": "確認您是否出現在 AI 回答中",
+      "paragraphs": [
+        "資訊整理好之後，用家長會問的問題（地區＋年級＋科目或目標＋形式）去問 AI，看看您的補習班是否以名稱或 URL 出現，以及費用與上課時間是否描述正確。每次回答都可能不同，所以請在不同日子把相同問題問幾次並留下紀錄。在新學年、暑期課程或考試季等旺季之前確認，就有時間修正。在試聽課表單的「您從哪裡得知本班？」加入「AI（ChatGPT 等）」選項，就能統計透過 AI 而來的詢問。完整方法請見[如何衡量 AI 能見度](/guide/measure-ai-visibility/)。",
+        "Nurevo AEO 的 Free 與 Standard（$20/月）方案包含每月檢查：依您的商家類型與地區（絕不使用補習班名稱）產生三個問題向 Perplexity 提問，外掛會記錄回答中是否提到您的補習班或引用您的網站。Pro 方案（$99/月起）增加測試版的 AI 能見度衡量：您在 AI 回答中出現的頻率，並提供競爭對手比較與歷史紀錄（目前支援 Perplexity）。兩者都是抽樣回答，而非觀察每一次回答。"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "補習班做 AI 搜尋應該從哪裡開始？",
+      "a": "把招收年級、課程、上課形式、全部費用、課表、試聽課與位置，以文字而非圖片的形式正確寫在頁面上。接著把相同的事實公開為結構化資料與 llms.txt，並確認它們與您的 Google 商家檔案及各資訊網站一致。"
+    },
+    {
+      "q": "補習班應該使用哪種 schema.org 類型？",
+      "a": "沒有專為補習班設計的類型，所以補習班本身用 EducationalOrganization、每個課程用 Course 最為接近。請注意，EducationalOrganization 不是 LocalBusiness 的子類型。無論選擇哪種類型，都必須與頁面顯示的內容一致。"
+    },
+    {
+      "q": "寫「價格歡迎洽詢」可以嗎？",
+      "a": "您沒有公開的價格，AI 無法說出來，因此您更可能被當成費用不明的補習班。請公開每月學費、入學費、教材費與季節課程費用，並依年級與課程提供一年總額的試算範例。"
+    },
+    {
+      "q": "升學率對 AI 搜尋有幫助嗎？",
+      "a": "成果是常見的問題，但沒有統計方式的數字無法比較。請寫明年度、統計對象與統計方式。在日本，把其他補習班學生計入的標示曾導致主管機關發布命令。"
+    },
+    {
+      "q": "Nurevo AEO 是免費的嗎？",
+      "a": "是的。商家類型（EducationalOrganization 等）、地址、營業時間、課程與 FAQ 的結構化資料、llms.txt、AI 爬蟲規則以及 AEO 分數都包含在免費方案中。付費方案增加隨時保持最新的規則集（Standard，$20/月）與測試版的 AI 能見度衡量（Pro，$99/月起）。[WordPress.org 上的 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "這樣做能保證我的補習班出現在 ChatGPT 中嗎？",
+      "a": "不能。AI 的回答會變動，沒有任何工具或技巧能保證被提及或取得特定位置。您能做的是讓自己的資訊容易被 AI 讀取，並持續確認自己是否出現。"
+    }
+  ],
+  "relatedHeading": "相關指南",
+  "cta": {
+    "heading": "先看看 AI 如何讀取您的補習班網站",
+    "body": "免費檢測可顯示結構化資料、llms.txt 與 AI 爬蟲存取的狀態，無需註冊。在 WordPress 上，Nurevo AEO 能免費補齊缺漏。",
+    "label": "進行免費 AI 可讀性檢測",
+    "href": "/check",
+    "secondary": {
+      "label": "在 WordPress.org 取得 Nurevo AEO",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT 是 OpenAI 的商標，Perplexity 是 Perplexity AI 的商標，Google 是 Google LLC 的商標。Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK 與 VK All in One Expansion Unit 為其各自所有者的商標。Nurevo 與上述公司皆無關聯。本文不構成法律建議。"
+}

@@ -1,0 +1,292 @@
+{
+  "title": "Se AI Overviews och AI Mode i Search Console | Nurevo",
+  "description": "Öppna Search Consoles rapport om generativ AI, förstå hur visningarna räknas, läs den bredvid Performance-rapporten och ta ställning till AI-kontrollen.",
+  "h1": "Så ser du AI Overviews och AI Mode i Search Console: läs rapporten om generativ AI-prestanda",
+  "lead": "Search Consoles ”Generative AI performance report (Search)” visar hur ofta länkar till din webbplats har visats i Googles AI Overviews och AI Mode. Den har varit tillgänglig för alla webbplatser i hela världen sedan 31 augusti 2026. Rapporten visar visningar uppdelade på sida, land, enhet och datum. Den visar inte klick, så läs den sida vid sida med den vanliga ”Performance”-rapporten.",
+  "intro": [
+    "Skrivet 10 november 2026. Googles beteende som beskrivs här kontrollerades samma dag i Search Console-hjälpen och på Google Search Central. Skärmar och regler kan ändras, så kontrollera även de aktuella hjälpsidorna.",
+    "Rapporten täcker bara AI-funktioner i Google Sök. Hur du syns i ChatGPT eller Perplexity måste kontrolleras på annat sätt (se nedan). Och inget du gör kan garantera att ett AI-svar tar med dig eller placerar dig på en viss plats. AI-svar ändras från dag till dag."
+  ],
+  "sections": [
+    {
+      "heading": "Vad rapporten visar och vad den inte visar",
+      "paragraphs": [
+        "Google tillkännagav rapporten den 3 juni 2026 ([Search Central Blog](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)) och rullade först ut den till en del av webbplatserna. Enligt hjälpsidan nådde den alla webbplatser i hela världen den 31 augusti 2026 ([Search Console-hjälpen: Generative AI performance report (Search)](https://support.google.com/webmasters/answer/16984139?hl=en)). Det viktigaste:"
+      ],
+      "table": {
+        "head": [
+          "Punkt",
+          "Vad hjälpsidan säger (per 10 november 2026)"
+        ],
+        "rows": [
+          [
+            "Omfattning",
+            "AI Overviews och AI Mode i Google Sök. Data från experiment i Search Labs ingår inte"
+          ],
+          [
+            "Mätvärde",
+            "Visningar: hur många gånger länkar till din webbplats visades för en användare i en generativ AI-funktion"
+          ],
+          [
+            "Uppdelningar",
+            "Sidor, länder, enheter (dator, surfplatta, mobil) och datum"
+          ],
+          [
+            "Söktyp",
+            "”Web: text-based” och ”Web: multimodal” (Google Lens, Circle to Search, uppladdade bilder och liknande)"
+          ],
+          [
+            "Tidszon",
+            "Datum anges i Pacific Time. De senaste uppgifterna kan vara preliminära och visas som en streckad linje"
+          ],
+          [
+            "Export",
+            "Data från diagram och tabell kan laddas ned. Värden som visas som ~ eller - blir nollor i filen"
+          ],
+          [
+            "Förhållande till huvudrapporten",
+            "Den visar den del av ”Performance”-rapportens data för söktypen ”Web” som kom från AI-funktioner"
+          ],
+          [
+            "Discover",
+            "Generativa AI-funktioner i Discover har en egen rapport, Generative AI performance report (Discover)"
+          ]
+        ],
+        "caption": "Hjälpsidan beskriver inte klick, positioner eller sökfrågor i den här rapporten."
+      },
+      "after": [
+        "Var medveten om luckorna. Rapporten talar inte om vilka sökfrågor som utlöste AI-funktionen, var i svaret din länk visades eller hur många klick AI-svaret gav dig. Klick och visningar från Googles AI-funktioner räknas i den vanliga ”Performance”-rapporten under söktypen ”Web” ([Google: AI-funktioner och din webbplats](https://developers.google.com/search/docs/appearance/ai-features)). Discover-rapporten beskrivs [i den här hjälpartikeln](https://support.google.com/webmasters/answer/16983858?hl=en)."
+      ]
+    },
+    {
+      "heading": "Så öppnar du rapporten – och vad du kontrollerar om den saknas",
+      "list": [
+        "Välj din egendom i Search Console och öppna ”Generative AI performance report (Search)”. Direktlänken är https://search.google.com/search-console/performance/search-analytics/ai (du måste vara inloggad).",
+        "Utöka datumintervallet, till exempel till de senaste tre månaderna, och titta på trenden för visningar i diagrammet. Utelämna de streckade, preliminära dagarna när du jämför månad för månad.",
+        "Se på tabellens flik ”Pages” vilka sidor som visades i AI-funktioner. Sidor rapporteras med sin slutliga URL efter omdirigeringar.",
+        "Använd flikarna ”Countries” och ”Devices” för att se var och på vilka enheter du syns. För ett lokalt företag bör du kontrollera andelen från ditt eget land.",
+        "Byt söktypsfiltret till ”Web: multimodal” för att se om du syns i bildbaserade sökningar. Det spelar störst roll för webbplatser med många foton av produkter, mat eller byggnader."
+      ],
+      "after": [
+        "Om rapporten inte visas eller är tom, kontrollera två saker. Den vanliga orsaken är enligt Google att din webbplats ännu inte har fått tillräckligt många visningar i generativa AI-funktioner. Den andra är att webbplatsen har exkluderats med kontrollen för generativ AI i Sök som beskrivs nedan ([hjälpsida](https://support.google.com/webmasters/answer/16984139?hl=en)).",
+        "Observera också att ett loggningsproblem hos Google mellan 13 och 17 augusti 2026 minskade visningarna i rapporten. Google uppger att de saknade uppgifterna senare återställdes ([Dataavvikelser i Search Console](https://support.google.com/webmasters/answer/6211453?hl=en)). När en äldre nedgång ser konstig ut, kontrollera den sidan först."
+      ]
+    },
+    {
+      "heading": "Hur visningar räknas och varför summorna skiljer sig",
+      "paragraphs": [
+        "Rapporten räknar olika beroende på var du tittar. Jämför du siffror utan att känna till det går de inte ihop."
+      ],
+      "table": {
+        "head": [
+          "Var du tittar",
+          "Räknas per",
+          "Exempel: ett AI-svar visar länkar till två av dina sidor"
+        ],
+        "rows": [
+          [
+            "Diagrammets summa",
+            "Egendom (hela webbplatsen)",
+            "1"
+          ],
+          [
+            "Tabell, fliken ”Pages”",
+            "Sida",
+            "1 för sida A och 1 för sida B (2 totalt)"
+          ],
+          [
+            "Tabell, ”Countries”, ”Devices”, ”Dates”",
+            "Egendom",
+            "1"
+          ],
+          [
+            "Diagram med URL-filter",
+            "URL",
+            "1 för den filtrerade sidan"
+          ]
+        ],
+        "caption": "Baserat på Search Console-hjälpen, Generative AI performance report (Search)."
+      },
+      "after": [
+        "Summan av tabellen ”Pages” kan alltså vara högre än diagrammets summa. Redovisa i en rapport visningarna för hela webbplatsen (diagram) och visningarna per sida (tabell) separat och lägg aldrig ihop dem. Precis som i den vanliga rapporten är tabellen begränsad till 1 000 rader."
+      ]
+    },
+    {
+      "heading": "Läs den bredvid den vanliga Performance-rapporten",
+      "paragraphs": [
+        "Eftersom rapporten bara har visningar kan den på egen hand säga dig knappt mer än ”fler visningar än förra månaden”. Lägg den bredvid den vanliga ”Performance”-rapporten (söktyp: ”Web”) för samma sidor och samma datum, så kan du läsa ut mycket mer."
+      ],
+      "table": {
+        "head": [
+          "Visningar i AI-funktioner",
+          "Klick i den vanliga rapporten",
+          "Vad det kan betyda och vad du gör sedan"
+        ],
+        "rows": [
+          [
+            "Upp",
+            "Upp eller oförändrat",
+            "Du hittas både i AI-funktioner och i vanliga resultat. Håll fakta på sidan (priser, öppettider) aktuella"
+          ],
+          [
+            "Upp",
+            "Ned",
+            "AI-svaret kanske besvarar sökningen, så färre klickar. Kontrollera om sidan erbjuder det en sammanfattning inte kan: bokning, offerter, foton, kundcase"
+          ],
+          [
+            "Låga eller inga",
+            "Högt",
+            "Stark i vanliga resultat men sällan länkad i AI-funktioner. Leta efter text som svarar direkt på frågan och strukturerad data som stämmer med den synliga sidan"
+          ],
+          [
+            "Låga eller inga",
+            "Lågt",
+            "Börja med grunderna i SEO: indexering, om ett utdrag kan visas, innehållets djup"
+          ]
+        ],
+        "caption": "Siffrorna kan inte bevisa en orsak. Använd dem som hypoteser att testa."
+      },
+      "after": [
+        "Google säger att det inte finns några ytterligare krav eller särskilda optimeringar för att visas i AI-funktioner, och att en sida måste vara indexerad och kunna visas i Google Sök med ett utdrag ([Google: AI-funktioner och din webbplats](https://developers.google.com/search/docs/appearance/ai-features)). För en sida med få AI-visningar är det snabbaste första steget att kontrollera hur den står sig i den vanliga sökningen."
+      ]
+    },
+    {
+      "heading": "Månatlig checklista",
+      "list": [
+        "Lås datumintervallet till förra månaden (datum i Pacific Time) och anteckna diagrammets visningar. Utelämna preliminära dagar",
+        "Anteckna de tio främsta sidorna i tabellen ”Pages” och deras förändring jämfört med månaden innan",
+        "Anteckna för samma tio sidor klick och visningar från den vanliga ”Performance”-rapporten (”Web”) bredvid",
+        "Leta efter stora förskjutningar i fördelningen mellan länder och enheter",
+        "Kontrollera sidan med dataavvikelser för loggningsproblem som Google rapporterat den månaden",
+        "Bekräfta att kontrollen för generativ AI i Sök är inställd som avsett (normalt ”Include” eller ärvd från den överordnade egendomen)",
+        "Anteckna på annat sätt hur du syns i AI utanför Google, till exempel i ChatGPT och Perplexity (se nedan)"
+      ],
+      "after": [
+        "Fem kolumner räcker för loggen: månad, visningar i AI-funktioner (webbplats), toppsidor, de sidornas klick och visningar i ”Web” samt anteckningar (ändringar på webbplatsen, kända problem). Skriver du ned ändringar som nya sidor, korrigeringar av strukturerad data eller ett nytt tema blir det mycket lättare att förklara en ökning eller minskning i efterhand."
+      ]
+    },
+    {
+      "heading": "Kontrollen för generativ AI i Sök: vad exkludering innebär",
+      "paragraphs": [
+        "Tillsammans med rapporten har Google lagt till en inställning som hindrar din webbplats från att visas i Googles AI-funktioner. Den finns under ”Settings > Search generative AI” i Search Console och var tillgänglig för alla webbplatser i hela världen den 31 augusti 2026 ([Search Console-hjälpen: Search generative AI control](https://support.google.com/webmasters/answer/16908024?hl=en))."
+      ],
+      "table": {
+        "head": [
+          "Alternativ eller metod",
+          "Vad som händer"
+        ],
+        "rows": [
+          [
+            "”Include” (standard)",
+            "Dina länkar och ditt innehåll kan användas i AI Overviews, AI Mode och generativa AI-funktioner i Discover"
+          ],
+          [
+            "”Exclude”",
+            "Dina länkar och ditt innehåll visas inte längre i dessa funktioner och används inte som underlag för att generera ett svar. Du får inte heller några visningar eller någon trafik från dem"
+          ],
+          [
+            "”Inherit control from parent”",
+            "Följer inställningen för en överordnad egendom, till exempel en domänegendom (standard när en överordnad egendom finns)"
+          ],
+          [
+            "Google-Extended (robots.txt)",
+            "Begränsar användningen av ditt innehåll för AI-träning. Kontrollen för generativ AI i Sök påverkar inte träning"
+          ],
+          [
+            "noindex",
+            "Tar bort sidan helt från Google Sök"
+          ],
+          [
+            "nosnippet, data-nosnippet, max-snippet",
+            "Begränsar hur mycket av sidan som får användas som förhandsvisning i resultat och AI-funktioner"
+          ]
+        ],
+        "caption": "Baserat på Search Console-hjälpen (Search generative AI control) och Google Search Central (AI-funktioner och din webbplats)."
+      },
+      "after": [
+        "Google säger att kontrollen inte används som signal för ranking eller medtagande i andra delar av Sök. Exkluderingen träder i kraft inom en till två dagar, och för visst innehåll kan det ta längre tid på grund av cachning.",
+        "För de flesta företag är AI-funktioner ytterligare ett sätt för kunder att hitta dem. Exkludera bara av ett tydligt skäl, till exempel en webbplats som främst är byggd kring innehåll för medlemmar eller text som blir missvisande när den sammanfattas. Om bara vissa avsnitt ska hållas utanför sammanfattningar är data-nosnippet på de avsnitten ett alternativ till att exkludera hela webbplatsen."
+      ]
+    },
+    {
+      "heading": "Steg i WordPress",
+      "list": [
+        "Registrera en domänegendom: verifiera ägarskapet med en DNS TXT-post. En domänegendoms inställning för generativ AI i Sök ärvs av URL-prefix-egendomar under den, så att www och utan www, http och https hanteras på ett ställe.",
+        "Se till att indexering inte är blockerad: i WordPress finns under Inställningar > Läsa alternativet ”Synlighet för sökmotorer”. När det är markerat ber WordPress sökmotorer att inte indexera webbplatsen. Kontrollera det efter en flytt eller en lansering.",
+        "Se till att robots.txt inte blockerar Googlebot: öppna /robots.txt i en webbläsare och leta efter Disallow: / under Googlebot eller under User-agent: *.",
+        "Håll ett avsnitt utanför förhandsvisningar med data-nosnippet: välj ”Redigera som HTML” på blocket i blockredigeraren och lägg till attributet data-nosnippet på elementet runt det. För att stoppa en hel sida använder du ditt SEO-tilläggs inställning per sida, till exempel noindex.",
+        "Håll strukturerad data och synlig text samstämmiga: öppettider, priser och adresser ska ha samma värden i sidans text och i den strukturerade datan. Avvikelser är en vanlig källa till felaktiga AI-svar."
+      ],
+      "after": [
+        "Nurevo AEO, ett kostnadsfritt WordPress-tillägg, levererar strukturerad data, llms.txt och robots.txt-regler för AI-sökcrawlers från din egen server. Crawlers som samlar in innehåll för AI-träning, till exempel Google-Extended, lämnas som standard åt din robots.txt, och du kan tillåta eller blockera dem från administrationsvyn. Det är en regel i robots.txt, skild från Search Consoles kontroll för generativ AI i Sök. [Hämta det på WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+      ]
+    },
+    {
+      "heading": "Vad Search Console inte kan visa: ChatGPT och Perplexity",
+      "paragraphs": [
+        "Search Console täcker bara Google. För att se om ChatGPT eller Perplexity nämner ditt företag behöver du lägga till följande:"
+      ],
+      "table": {
+        "head": [
+          "Metod",
+          "Vad den säger dig"
+        ],
+        "rows": [
+          [
+            "Hänvisningskällor i ditt analysverktyg",
+            "Besök som kom från ett AI-svar. OpenAI uppger att man lägger till utm_source=chatgpt.com i länkar från sökresultat i ChatGPT ([OpenAI: Publishers and Developers FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq))"
+          ],
+          [
+            "Fasta frågor som ställs regelbundet",
+            "Med frågor som inte innehåller ditt namn: andelen svar som nämner dig eller citerar din webbplats. [Så mäter du AI-synlighet](/guide/measure-ai-visibility)"
+          ],
+          [
+            "Mätverktyg",
+            "Ställer automatiskt en uppsättning frågor och registrerar omnämnanden, citeringar, konkurrenter och trender. [AEO-verktyg jämförda](/guide/aeo-tools-comparison)"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo AEO innehåller en kostnadsfri AI-kontroll för anslutna Free- och Standard-webbplatser: en gång i månaden ställer den tre frågor till Perplexity, byggda utifrån din bransch och ditt område, utan ditt namn. Pro (från $99/månad, beta), som löpande mäter en fast uppsättning frågor, mäter också på Perplexity tills vidare. Lägg Googles siffror från Search Console och dessa uppgifter från andra AI-plattformar i samma månadsblad så får du hela bilden."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Var finns rapporten om generativ AI-prestanda?",
+      "a": "Search Console-hjälpen ger en direktlänk till den (search.google.com/search-console/performance/search-analytics/ai). Den var tillgänglig för alla webbplatser i hela världen den 31 augusti 2026. Om du inte ser den har din webbplats kanske ännu inte tillräckligt många visningar i AI-funktioner, eller så är den exkluderad med kontrollen för generativ AI i Sök."
+    },
+    {
+      "q": "Kan jag se klick från AI Overviews?",
+      "a": "Rapporten om generativ AI-prestanda visar visningar. Klick och visningar från Googles AI-funktioner ingår i den vanliga ”Performance”-rapporten under söktypen ”Web”, men du kan inte särskilja de klick som kom från AI-funktioner. Det praktiska tillvägagångssättet är att jämföra visningar i AI-funktioner med vanliga klick sida för sida."
+    },
+    {
+      "q": "Varför skiljer sig diagrammets summa från tabellen ”Pages”?",
+      "a": "Diagrammet räknar per egendom och tabellen ”Pages” räknar per sida. Om ett AI-svar visar två av dina sidor räknar diagrammet en visning och tabellen en för varje sida. Lägg inte ihop de två i en rapport."
+    },
+    {
+      "q": "Skadar det min ranking att exkludera webbplatsen med kontrollen för generativ AI i Sök?",
+      "a": "Google säger att kontrollen inte används som signal för ranking eller medtagande i andra delar av Sök. Men när du väl är exkluderad får du inga visningar eller någon trafik från AI Overviews, AI Mode eller generativa AI-funktioner i Discover. För att begränsa AI-träning använder du Google-Extended i stället för den här kontrollen."
+    },
+    {
+      "q": "Visar Search Console ChatGPT eller Perplexity?",
+      "a": "Nej. Search Console har bara Googles data. Kontrollera ChatGPT och Perplexity separat med hänvisningskällorna i ditt analysverktyg, genom att regelbundet ställa fasta frågor eller med ett mätverktyg."
+    },
+    {
+      "q": "Finns det en särskild inställning som ökar AI-visningarna?",
+      "a": "Google säger att det inte finns några ytterligare krav eller särskilda optimeringar för AI-funktioner. Det snabbaste är att få grunderna på plats: sidor som är indexerade och kan visa ett utdrag, text som svarar direkt på frågan och strukturerad data som stämmer med den synliga sidan. Ingen metod garanterar att du visas."
+    }
+  ],
+  "relatedHeading": "Relaterade guider",
+  "cta": {
+    "heading": "Kontrollera först om AI kan läsa din webbplats",
+    "body": "En kostnadsfri kontroll utan registrering visar statusen för det AI läser på din webbplats: strukturerad data, llms.txt och åtkomst för AI-sökcrawlers. På WordPress fyller Nurevo AEO i det som saknas, kostnadsfritt.",
+    "label": "Kör den kostnadsfria kontrollen av AI-läsbarhet",
+    "href": "/check",
+    "secondary": {
+      "label": "Hämta Nurevo AEO på WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "Google, Search Console, Google Discover, ChatGPT, OpenAI, Perplexity, WordPress och deras produktnamn är varumärken som tillhör respektive ägare. Nurevo är inte knutet till dem."
+}

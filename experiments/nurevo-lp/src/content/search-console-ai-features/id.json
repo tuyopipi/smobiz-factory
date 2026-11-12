@@ -1,0 +1,292 @@
+{
+  "title": "Cara Melihat AI Overviews dan AI Mode di Search Console | Nurevo",
+  "description": "Buka laporan AI generatif di Search Console, pahami cara tayangannya dihitung, baca bersama laporan Performa, dan putuskan pengaturan AI-nya.",
+  "h1": "Cara melihat AI Overviews dan AI Mode di Search Console: membaca \"Generative AI performance report\"",
+  "lead": "Laporan \"Generative AI performance report (Search)\" di Search Console menunjukkan seberapa sering link ke situs Anda muncul di AI Overviews dan AI Mode Google. Laporan ini tersedia untuk semua situs di seluruh dunia sejak 31 Agustus 2026. Isinya tayangan, dirinci per halaman, negara, perangkat, dan tanggal. Laporan ini tidak menampilkan klik, jadi bacalah berdampingan dengan laporan Performa biasa.",
+  "intro": [
+    "Ditulis pada 10 November 2026. Perilaku Google yang dijelaskan di sini diperiksa pada hari yang sama di Bantuan Search Console dan Google Search Central. Tampilan dan aturan bisa berubah, jadi periksa juga halaman bantuan terbaru.",
+    "Laporan ini hanya mencakup fitur AI di dalam Google Penelusuran. Cara Anda tampil di ChatGPT atau Perplexity harus diperiksa dengan cara lain (lihat di bawah). Dan tidak ada tindakan yang dapat menjamin jawaban AI akan menyertakan Anda atau menempatkan Anda di posisi tertentu. Jawaban AI berubah dari hari ke hari."
+  ],
+  "sections": [
+    {
+      "heading": "Apa yang ditampilkan laporan dan apa yang tidak",
+      "paragraphs": [
+        "Google mengumumkan laporan ini pada 3 Juni 2026 ([Search Central Blog](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)) dan awalnya meluncurkannya untuk sebagian situs. Menurut halaman bantuan, laporan ini sudah tersedia untuk semua situs di seluruh dunia per 31 Agustus 2026 ([Search Console Help: Generative AI performance report (Search)](https://support.google.com/webmasters/answer/16984139?hl=en)). Poin pentingnya:"
+      ],
+      "table": {
+        "head": [
+          "Item",
+          "Isi halaman bantuan (per 10 November 2026)"
+        ],
+        "rows": [
+          [
+            "Cakupan",
+            "AI Overviews dan AI Mode di Google Penelusuran. Data dari eksperimen Search Labs tidak termasuk"
+          ],
+          [
+            "Metrik",
+            "Tayangan: berapa kali link ke situs Anda ditampilkan kepada pengguna dalam fitur AI generatif"
+          ],
+          [
+            "Perincian",
+            "Halaman, negara, perangkat (desktop, tablet, seluler), dan tanggal"
+          ],
+          [
+            "Jenis penelusuran",
+            "\"Web: text-based\" dan \"Web: multimodal\" (Google Lens, Circle to Search, gambar yang diunggah, dan sejenisnya)"
+          ],
+          [
+            "Zona waktu",
+            "Tanggal memakai Waktu Pasifik. Data terbaru bisa bersifat sementara dan digambar dengan garis putus-putus"
+          ],
+          [
+            "Ekspor",
+            "Data diagram dan tabel bisa diunduh. Nilai yang tampil sebagai ~ atau - menjadi nol di file"
+          ],
+          [
+            "Hubungan dengan laporan utama",
+            "Menampilkan bagian data jenis penelusuran Web di laporan Performa yang berasal dari fitur AI"
+          ],
+          [
+            "Discover",
+            "Fitur AI generatif di Discover punya laporan sendiri, yaitu Generative AI performance report (Discover)"
+          ]
+        ],
+        "caption": "Halaman bantuan tidak menjelaskan klik, posisi, atau kueri dalam laporan ini."
+      },
+      "after": [
+        "Pahami kekurangannya dengan jelas. Laporan ini tidak memberi tahu kueri mana yang memicu fitur AI, di bagian mana dalam jawaban link Anda muncul, atau berapa klik yang dikirim jawaban AI kepada Anda. Klik dan tayangan dari fitur AI Google dihitung di dalam laporan Performa biasa pada jenis penelusuran Web ([Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Laporan Discover dijelaskan [di artikel bantuan ini](https://support.google.com/webmasters/answer/16983858?hl=en)."
+      ]
+    },
+    {
+      "heading": "Membuka laporan, dan yang perlu dicek jika tidak muncul",
+      "list": [
+        "Di Search Console, pilih properti Anda lalu buka laporan \"Generative AI performance report (Search)\". Link langsungnya adalah https://search.google.com/search-console/performance/search-analytics/ai (Anda harus login).",
+        "Perluas rentang tanggal, misalnya ke tiga bulan terakhir, dan lihat tren tayangan di diagram. Jangan masukkan hari-hari sementara yang bergaris putus-putus ke dalam perbandingan bulanan.",
+        "Di tab Halaman pada tabel, lihat halaman mana yang ditampilkan di fitur AI. Halaman dilaporkan berdasarkan URL akhirnya setelah pengalihan.",
+        "Gunakan tab Negara dan Perangkat untuk melihat di mana dan di perangkat apa Anda muncul. Untuk bisnis lokal, periksa porsi yang berasal dari negara Anda sendiri.",
+        "Ubah filter jenis penelusuran ke \"Web: multimodal\" untuk melihat apakah Anda muncul dalam penelusuran berbasis gambar. Ini paling penting bagi situs dengan banyak foto produk, makanan, atau bangunan."
+      ],
+      "after": [
+        "Jika laporan tidak muncul atau kosong, periksa dua hal. Penyebab yang umum, menurut Google, adalah situs Anda belum mendapat cukup tayangan di fitur AI generatif. Penyebab lainnya adalah situs telah dikecualikan dengan pengaturan \"Search generative AI\" yang dijelaskan di bawah ([halaman bantuan](https://support.google.com/webmasters/answer/16984139?hl=en)).",
+        "Perhatikan juga bahwa pada 13 hingga 17 Agustus 2026, masalah pencatatan di Google mengurangi tayangan di laporan ini. Google menyatakan data yang hilang kemudian dipulihkan ([Search Console data anomalies](https://support.google.com/webmasters/answer/6211453?hl=en)). Jika penurunan lama terlihat aneh, periksa halaman itu lebih dulu."
+      ]
+    },
+    {
+      "heading": "Cara tayangan dihitung, dan mengapa totalnya berbeda",
+      "paragraphs": [
+        "Laporan ini menghitung secara berbeda tergantung di mana Anda melihat. Jika membandingkan angka tanpa mengetahui hal ini, angkanya tidak akan cocok."
+      ],
+      "table": {
+        "head": [
+          "Tempat Anda melihat",
+          "Dihitung per",
+          "Contoh: satu jawaban AI menampilkan link ke dua halaman Anda"
+        ],
+        "rows": [
+          [
+            "Total diagram",
+            "Properti (seluruh situs)",
+            "1"
+          ],
+          [
+            "Tabel, tab Halaman",
+            "Halaman",
+            "1 untuk halaman A dan 1 untuk halaman B (total 2)"
+          ],
+          [
+            "Tabel, Negara, Perangkat, Tanggal",
+            "Properti",
+            "1"
+          ],
+          [
+            "Diagram dengan filter URL",
+            "URL",
+            "1 untuk halaman yang difilter"
+          ]
+        ],
+        "caption": "Berdasarkan Bantuan Search Console, Generative AI performance report (Search)."
+      },
+      "after": [
+        "Jadi jumlah di tabel Halaman bisa lebih tinggi daripada total diagram. Dalam laporan, tuliskan tayangan seluruh situs (diagram) dan tayangan per halaman (tabel) secara terpisah dan jangan pernah menjumlahkannya. Seperti di laporan biasa, tabel dibatasi hingga 1.000 baris."
+      ]
+    },
+    {
+      "heading": "Baca berdampingan dengan laporan Performa biasa",
+      "paragraphs": [
+        "Karena laporan ini hanya berisi tayangan, jika berdiri sendiri ia hanya bisa memberi tahu sedikit lebih banyak dari \"tayangan lebih banyak daripada bulan lalu\". Letakkan di samping laporan Performa biasa (jenis penelusuran: Web) untuk halaman dan tanggal yang sama, dan Anda bisa membaca jauh lebih banyak."
+      ],
+      "table": {
+        "head": [
+          "Tayangan fitur AI",
+          "Klik di laporan biasa",
+          "Kemungkinan artinya, dan langkah berikutnya"
+        ],
+        "rows": [
+          [
+            "Naik",
+            "Naik atau datar",
+            "Anda ditemukan di fitur AI maupun di hasil biasa. Jaga agar fakta di halaman itu (harga, jam buka) tetap terbaru"
+          ],
+          [
+            "Naik",
+            "Turun",
+            "Jawaban AI mungkin sudah memenuhi penelusuran, sehingga lebih sedikit orang mengklik. Periksa apakah halaman menawarkan hal yang tidak bisa diberikan ringkasan: pemesanan, penawaran harga, foto, studi kasus"
+          ],
+          [
+            "Rendah atau tidak ada",
+            "Tinggi",
+            "Kuat di hasil biasa tetapi jarang ditautkan di fitur AI. Periksa apakah ada teks yang langsung menjawab pertanyaan, dan data terstruktur yang sesuai dengan halaman yang terlihat"
+          ],
+          [
+            "Rendah atau tidak ada",
+            "Rendah",
+            "Mulailah dari dasar SEO: pengindeksan, apakah cuplikan bisa ditampilkan, kedalaman konten"
+          ]
+        ],
+        "caption": "Angka tidak bisa membuktikan penyebab. Gunakan ini sebagai hipotesis untuk diuji."
+      },
+      "after": [
+        "Google menyatakan tidak ada persyaratan tambahan atau optimasi khusus untuk tampil di fitur AI, dan bahwa halaman harus diindeks serta memenuhi syarat untuk ditampilkan di Google Penelusuran dengan cuplikan ([Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Untuk halaman dengan sedikit tayangan AI, memeriksa kondisinya di penelusuran biasa adalah awal tercepat."
+      ]
+    },
+    {
+      "heading": "Daftar periksa bulanan",
+      "list": [
+        "Tetapkan rentang tanggal ke bulan lalu (tanggal Waktu Pasifik) dan catat tayangan di diagram. Jangan sertakan hari-hari sementara",
+        "Catat sepuluh halaman teratas di tabel Halaman dan perubahannya dari bulan sebelumnya",
+        "Untuk sepuluh halaman yang sama, catat klik dan tayangan dari laporan Performa biasa (Web) di sebelahnya",
+        "Cari pergeseran besar dalam pembagian per negara dan perangkat",
+        "Periksa halaman anomali data untuk masalah pencatatan yang dilaporkan Google bulan itu",
+        "Pastikan pengaturan \"Search generative AI\" sudah sesuai keinginan (biasanya \"Include\", atau diwarisi dari properti induk)",
+        "Catat dengan cara lain bagaimana Anda tampil di AI di luar Google, seperti ChatGPT dan Perplexity (lihat di bawah)"
+      ],
+      "after": [
+        "Lima kolom sudah cukup untuk catatan: bulan, tayangan fitur AI (situs), halaman teratas, klik dan tayangan Web halaman-halaman itu, dan catatan (perubahan situs, masalah yang diketahui). Mencatat perubahan situs seperti halaman baru, perbaikan data terstruktur, atau penggantian tema membuat kenaikan atau penurunan jauh lebih mudah dijelaskan nantinya."
+      ]
+    },
+    {
+      "heading": "Pengaturan \"Search generative AI\": apa efek pengecualian",
+      "paragraphs": [
+        "Bersamaan dengan laporan ini, Google menambahkan pengaturan yang mencegah situs Anda muncul di fitur AI-nya. Pengaturan ini ada di Setelan > Search generative AI di Search Console, dan tersedia untuk semua situs di seluruh dunia per 31 Agustus 2026 ([Search Console Help: Search generative AI control](https://support.google.com/webmasters/answer/16908024?hl=en))."
+      ],
+      "table": {
+        "head": [
+          "Opsi atau metode",
+          "Yang terjadi"
+        ],
+        "rows": [
+          [
+            "\"Include\" (default)",
+            "Link dan konten Anda dapat digunakan di AI Overviews, AI Mode, dan fitur AI generatif di Discover"
+          ],
+          [
+            "\"Exclude\"",
+            "Link dan konten Anda tidak lagi muncul di fitur tersebut dan tidak digunakan sebagai masukan untuk menghasilkan jawaban. Anda juga tidak mendapat tayangan atau traffic dari fitur itu"
+          ],
+          [
+            "\"Inherit control from parent\"",
+            "Mengikuti pengaturan properti induk seperti properti domain (default jika ada induk)"
+          ],
+          [
+            "Google-Extended (robots.txt)",
+            "Membatasi penggunaan konten Anda untuk pelatihan AI. Pengaturan \"Search generative AI\" tidak memengaruhi pelatihan"
+          ],
+          [
+            "noindex",
+            "Menghapus halaman dari Google Penelusuran sepenuhnya"
+          ],
+          [
+            "nosnippet, data-nosnippet, max-snippet",
+            "Membatasi seberapa banyak bagian halaman yang bisa dipakai sebagai pratinjau di hasil dan fitur AI"
+          ]
+        ],
+        "caption": "Berdasarkan Bantuan Search Console (Search generative AI control) dan Google Search Central (AI features and your website)."
+      },
+      "after": [
+        "Google menyatakan pengaturan ini tidak digunakan sebagai sinyal peringkat atau penyertaan untuk bagian lain dari Penelusuran. Pengecualian berlaku dalam satu hingga dua hari, dan sebagian konten bisa memakan waktu lebih lama karena cache.",
+        "Bagi sebagian besar bisnis, fitur AI adalah satu lagi cara pelanggan menemukan mereka. Kecualikan hanya jika ada alasan yang jelas, misalnya situs yang terutama dibangun di sekitar konten khusus anggota atau teks yang menyesatkan jika diringkas. Jika hanya beberapa bagian yang perlu dijauhkan dari ringkasan, data-nosnippet pada bagian tersebut adalah alternatif untuk mengecualikan seluruh situs."
+      ]
+    },
+    {
+      "heading": "Langkah-langkah di WordPress",
+      "list": [
+        "Daftarkan properti domain: verifikasi kepemilikan dengan data DNS TXT. Pengaturan \"Search generative AI\" pada properti domain diwarisi oleh properti awalan URL di bawahnya, sehingga www dan non-www, http dan https dikelola di satu tempat.",
+        "Pastikan pengindeksan tidak diblokir: di WordPress, Pengaturan > Membaca memiliki opsi \"Visibilitas Mesin Pencari\". Jika dicentang, WordPress meminta mesin pencari untuk tidak mengindeks situs. Periksa setelah migrasi atau peluncuran.",
+        "Pastikan robots.txt tidak memblokir Googlebot: buka /robots.txt di browser dan cari Disallow: / di bawah Googlebot atau di bawah User-agent: *.",
+        "Jauhkan satu bagian dari pratinjau dengan data-nosnippet: di editor blok, pilih \"Edit sebagai HTML\" pada blok tersebut dan tambahkan atribut data-nosnippet ke elemen yang membungkusnya. Untuk menghentikan seluruh halaman, gunakan pengaturan per halaman di plugin SEO Anda, seperti noindex.",
+        "Jaga agar data terstruktur dan teks yang terlihat selaras: jam buka, harga, dan alamat harus bernilai sama di teks halaman dan di data terstruktur. Ketidakcocokan adalah sumber umum jawaban AI yang salah."
+      ],
+      "after": [
+        "Nurevo AEO, plugin WordPress gratis, menghasilkan data terstruktur, llms.txt, dan aturan robots.txt untuk crawler penelusuran AI dari server Anda sendiri. Crawler yang mengumpulkan konten untuk pelatihan AI, seperti Google-Extended, secara default diserahkan ke robots.txt Anda, dan Anda dapat mengizinkan atau memblokirnya dari layar admin. Itu adalah aturan robots.txt, terpisah dari pengaturan \"Search generative AI\" di Search Console. [Dapatkan di WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+      ]
+    },
+    {
+      "heading": "Yang tidak bisa ditampilkan Search Console: ChatGPT dan Perplexity",
+      "paragraphs": [
+        "Search Console hanya mencakup Google. Untuk melihat apakah ChatGPT atau Perplexity menyebut bisnis Anda, tambahkan cara-cara berikut:"
+      ],
+      "table": {
+        "head": [
+          "Metode",
+          "Yang diberitahukannya"
+        ],
+        "rows": [
+          [
+            "Perujuk di analitik Anda",
+            "Kunjungan yang datang dari jawaban AI. OpenAI menyatakan menambahkan utm_source=chatgpt.com ke link dari hasil penelusuran ChatGPT ([OpenAI: Publishers and Developers FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq))"
+          ],
+          [
+            "Mengajukan pertanyaan tetap secara rutin",
+            "Dengan pertanyaan yang tidak memuat nama Anda, porsi jawaban yang menyebut Anda atau mengutip situs Anda. [Cara mengukur visibilitas di AI](/guide/measure-ai-visibility)"
+          ],
+          [
+            "Alat pengukuran",
+            "Mengajukan serangkaian pertanyaan secara otomatis dan mencatat penyebutan, kutipan, pesaing, dan tren. [Perbandingan alat AEO](/guide/aeo-tools-comparison)"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo AEO menyertakan pemeriksaan AI gratis untuk situs Free dan Standard yang terhubung: sebulan sekali, ia mengajukan tiga pertanyaan kepada Perplexity yang disusun dari bidang usaha dan wilayah Anda, tanpa nama Anda. Pro (mulai USD 99 per bulan, versi beta), yang terus mengukur serangkaian pertanyaan tetap, untuk saat ini juga mengukur di Perplexity. Masukkan angka Google dari Search Console dan catatan dari platform AI lain ini ke lembar bulanan yang sama untuk melihat gambaran utuhnya."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Di mana \"Generative AI performance report\"?",
+      "a": "Bantuan Search Console memberikan link langsung ke laporan ini (search.google.com/search-console/performance/search-analytics/ai). Laporan ini tersedia untuk semua situs di seluruh dunia per 31 Agustus 2026. Jika tidak terlihat, mungkin situs Anda belum punya cukup tayangan di fitur AI, atau situs dikecualikan dengan pengaturan \"Search generative AI\"."
+    },
+    {
+      "q": "Bisakah saya melihat klik dari AI Overviews?",
+      "a": "\"Generative AI performance report\" menampilkan tayangan. Klik dan tayangan dari fitur AI Google termasuk dalam laporan Performa biasa pada jenis penelusuran Web, tetapi Anda tidak bisa memisahkan klik yang berasal dari fitur AI. Pendekatan praktisnya adalah membandingkan tayangan fitur AI dengan klik biasa per halaman."
+    },
+    {
+      "q": "Mengapa total diagram berbeda dari tabel Halaman?",
+      "a": "Diagram menghitung per properti, sedangkan tabel Halaman menghitung per halaman. Jika satu jawaban AI menampilkan dua halaman Anda, diagram menghitung satu tayangan dan tabel menghitung satu untuk masing-masing halaman. Jangan menjumlahkan keduanya dalam laporan."
+    },
+    {
+      "q": "Apakah mengecualikan situs dengan pengaturan \"Search generative AI\" akan merugikan peringkat saya?",
+      "a": "Google menyatakan pengaturan ini tidak digunakan sebagai sinyal peringkat atau penyertaan untuk bagian lain dari Penelusuran. Namun setelah dikecualikan, Anda tidak mendapat tayangan atau traffic dari AI Overviews, AI Mode, atau fitur AI generatif di Discover. Untuk membatasi pelatihan AI, gunakan Google-Extended, bukan pengaturan ini."
+    },
+    {
+      "q": "Apakah Search Console menampilkan ChatGPT atau Perplexity?",
+      "a": "Tidak. Search Console hanya berisi data Google. Periksa ChatGPT dan Perplexity secara terpisah dengan perujuk di analitik Anda, dengan mengajukan pertanyaan tetap secara rutin, atau dengan alat pengukuran."
+    },
+    {
+      "q": "Apakah ada pengaturan khusus yang meningkatkan tayangan AI?",
+      "a": "Google menyatakan tidak ada persyaratan tambahan atau optimasi khusus untuk fitur AI. Jalan tercepat adalah membenahi dasar-dasarnya: halaman yang diindeks dan dapat menampilkan cuplikan, teks yang langsung menjawab pertanyaan, dan data terstruktur yang sesuai dengan halaman yang terlihat. Tidak ada metode yang menjamin Anda akan ditampilkan."
+    }
+  ],
+  "relatedHeading": "Panduan terkait",
+  "cta": {
+    "heading": "Pertama, periksa apakah AI bisa membaca situs Anda",
+    "body": "Pemeriksaan gratis tanpa pendaftaran menunjukkan kondisi hal-hal yang dibaca AI di situs Anda: data terstruktur, llms.txt, dan akses untuk crawler penelusuran AI. Di WordPress, Nurevo AEO melengkapi yang kurang secara gratis.",
+    "label": "Jalankan pemeriksaan keterbacaan AI gratis",
+    "href": "/check",
+    "secondary": {
+      "label": "Dapatkan Nurevo AEO di WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "Google, Search Console, Google Discover, ChatGPT, OpenAI, Perplexity, WordPress, dan nama produknya adalah merek dagang dari pemiliknya masing-masing. Nurevo tidak berafiliasi dengan mereka."
+}

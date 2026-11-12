@@ -1,0 +1,292 @@
+{
+  "title": "AI Overviews in AI Mode v Search Console | Nurevo",
+  "description": "Odprite poročilo o generativni UI v Search Console, razumite štetje prikazov, berite ga ob poročilu Performance in se odločite o nastavitvi za UI.",
+  "h1": "Kako si ogledati AI Overviews in AI Mode v Search Console: branje poročila o uspešnosti generativne UI",
+  "lead": "Poročilo »Generative AI performance report (Search)« v Search Console pokaže, kako pogosto so se povezave do vašega spletnega mesta pojavile v Googlovih AI Overviews in AI Mode. Od 31. avgusta 2026 je na voljo vsem spletnim mestom po svetu. Prikazuje prikaze, razčlenjene po strani, državi, napravi in datumu. Klikov ne prikazuje, zato ga berite vzporedno z običajnim poročilom »Performance«.",
+  "intro": [
+    "Napisano 10. novembra 2026. Googlovo delovanje, opisano tukaj, smo isti dan preverili v pomoči za Search Console in na Google Search Central. Zasloni in pravila se lahko spremenijo, zato preverite tudi trenutne strani pomoči.",
+    "To poročilo zajema samo funkcije UI v Googlovem iskanju. Kako se pojavljate v ChatGPT ali Perplexity, morate preveriti drugače (glejte spodaj). Nobeno vaše dejanje pa ne more zagotoviti, da vas bo odgovor UI vključil ali uvrstil na določeno mesto. Odgovori UI se spreminjajo iz dneva v dan."
+  ],
+  "sections": [
+    {
+      "heading": "Kaj poročilo pokaže in česa ne",
+      "paragraphs": [
+        "Google je poročilo napovedal 3. junija 2026 ([Search Central Blog](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)) in ga najprej uvedel za del spletnih mest. Po navedbah strani pomoči je bilo od 31. avgusta 2026 na voljo vsem spletnim mestom po svetu ([Pomoč za Search Console: Generative AI performance report (Search)](https://support.google.com/webmasters/answer/16984139?hl=en)). Bistvo:"
+      ],
+      "table": {
+        "head": [
+          "Postavka",
+          "Kaj navaja stran pomoči (stanje 10. novembra 2026)"
+        ],
+        "rows": [
+          [
+            "Obseg",
+            "AI Overviews in AI Mode v Googlovem iskanju. Podatki iz preizkusov Search Labs niso vključeni"
+          ],
+          [
+            "Meritev",
+            "Prikazi: kolikokrat so bile povezave do vašega spletnega mesta prikazane uporabniku v funkciji generativne UI"
+          ],
+          [
+            "Razčlenitve",
+            "Strani, države, naprave (računalnik, tablica, mobilna naprava) in datumi"
+          ],
+          [
+            "Vrsta iskanja",
+            "»Web: text-based« in »Web: multimodal« (Google Lens, Circle to Search, naložene slike in podobno)"
+          ],
+          [
+            "Časovni pas",
+            "Datumi so v pacifiškem času (Pacific Time). Najnovejši podatki so lahko predhodni in so prikazani s pikčasto črto"
+          ],
+          [
+            "Izvoz",
+            "Podatke iz grafikona in tabele lahko prenesete. Vrednosti, prikazane kot ~ ali -, v datoteki postanejo ničle"
+          ],
+          [
+            "Povezava z glavnim poročilom",
+            "Prikazuje tisti del podatkov za vrsto iskanja »Web« iz poročila »Performance«, ki izvira iz funkcij UI"
+          ],
+          [
+            "Discover",
+            "Funkcije generativne UI v Discover imajo lastno poročilo, Generative AI performance report (Discover)"
+          ]
+        ],
+        "caption": "Stran pomoči v tem poročilu ne opisuje klikov, položajev ali poizvedb."
+      },
+      "after": [
+        "Zavedajte se vrzeli. Poročilo ne pove, katere poizvedbe so sprožile funkcijo UI, kje v odgovoru se je pojavila vaša povezava ali koliko klikov vam je prinesel odgovor UI. Kliki in prikazi iz Googlovih funkcij UI se štejejo v običajnem poročilu »Performance« pod vrsto iskanja »Web« ([Google: Funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)). Poročilo za Discover je opisano [v tem članku pomoči](https://support.google.com/webmasters/answer/16983858?hl=en)."
+      ]
+    },
+    {
+      "heading": "Kako odprete poročilo in kaj preverite, če ga ni",
+      "list": [
+        "V Search Console izberite svojo lastnost in odprite »Generative AI performance report (Search)«. Neposredna povezava je https://search.google.com/search-console/performance/search-analytics/ai (biti morate prijavljeni).",
+        "Razširite časovno obdobje, na primer na zadnje tri mesece, in na grafikonu spremljajte gibanje prikazov. Pikčaste predhodne dneve izpustite iz primerjav med meseci.",
+        "Na zavihku »Pages« v tabeli si oglejte, katere strani so bile prikazane v funkcijah UI. Strani so navedene s končnim URL-jem po preusmeritvah.",
+        "Z zavihkoma »Countries« in »Devices« si oglejte, kje in na katerih napravah se pojavljate. Pri lokalnem podjetju preverite delež iz lastne države.",
+        "Filter vrste iskanja preklopite na »Web: multimodal« in preverite, ali se pojavljate v iskanjih na podlagi slik. To je najpomembnejše za spletna mesta z veliko fotografijami izdelkov, hrane ali stavb."
+      ],
+      "after": [
+        "Če se poročilo ne prikaže ali je prazno, preverite dve stvari. Po Googlovih navedbah je običajni razlog, da vaše spletno mesto še ni imelo dovolj prikazov v funkcijah generativne UI. Drugi razlog je, da je bilo spletno mesto izključeno z nastavitvijo generativne UI v iskanju, opisano spodaj ([stran pomoči](https://support.google.com/webmasters/answer/16984139?hl=en)).",
+        "Upoštevajte tudi, da je od 13. do 17. avgusta 2026 težava z beleženjem pri Googlu zmanjšala prikaze v tem poročilu. Google navaja, da so bili manjkajoči podatki pozneje obnovljeni ([Anomalije podatkov v Search Console](https://support.google.com/webmasters/answer/6211453?hl=en)). Ko je starejši padec videti nenavaden, najprej preverite to stran."
+      ]
+    },
+    {
+      "heading": "Kako se štejejo prikazi in zakaj se seštevki razlikujejo",
+      "paragraphs": [
+        "Poročilo šteje različno, odvisno od tega, kje gledate. Če številke primerjate, ne da bi to vedeli, se ne bodo ujemale."
+      ],
+      "table": {
+        "head": [
+          "Kje gledate",
+          "Šteje se po",
+          "Primer: en odgovor UI prikaže povezave do dveh vaših strani"
+        ],
+        "rows": [
+          [
+            "Seštevek na grafikonu",
+            "Lastnost (celotno spletno mesto)",
+            "1"
+          ],
+          [
+            "Tabela, zavihek »Pages«",
+            "Stran",
+            "1 za stran A in 1 za stran B (skupaj 2)"
+          ],
+          [
+            "Tabela, »Countries«, »Devices«, »Dates«",
+            "Lastnost",
+            "1"
+          ],
+          [
+            "Grafikon s filtrom URL",
+            "URL",
+            "1 za filtrirano stran"
+          ]
+        ],
+        "caption": "Na podlagi pomoči za Search Console, Generative AI performance report (Search)."
+      },
+      "after": [
+        "Seštevek tabele »Pages« je torej lahko višji od seštevka na grafikonu. V poročilu navedite prikaze za celotno spletno mesto (grafikon) in prikaze po straneh (tabela) ločeno in jih nikoli ne seštevajte. Tako kot v običajnem poročilu je tabela omejena na 1000 vrstic."
+      ]
+    },
+    {
+      "heading": "Berite ga ob običajnem poročilu Performance",
+      "paragraphs": [
+        "Ker poročilo vsebuje samo prikaze, vam samo po sebi pove komaj kaj več kot »več prikazov kot prejšnji mesec«. Postavite ga ob običajno poročilo »Performance« (vrsta iskanja: »Web«) za iste strani in iste datume, pa boste iz njega razbrali veliko več."
+      ],
+      "table": {
+        "head": [
+          "Prikazi v funkcijah UI",
+          "Kliki v običajnem poročilu",
+          "Kaj to lahko pomeni in kaj storiti naprej"
+        ],
+        "rows": [
+          [
+            "Naraščajo",
+            "Naraščajo ali so nespremenjeni",
+            "Najdejo vas tako v funkcijah UI kot v običajnih rezultatih. Dejstva na tej strani (cene, delovni čas) naj bodo posodobljena"
+          ],
+          [
+            "Naraščajo",
+            "Padajo",
+            "Odgovor UI morda zadovolji iskanje, zato manj ljudi klikne. Preverite, ali stran ponuja to, česar povzetek ne more: rezervacije, ponudbe, fotografije, primere iz prakse"
+          ],
+          [
+            "Nizki ali jih ni",
+            "Visoki",
+            "Močni v običajnih rezultatih, a redko povezani v funkcijah UI. Preverite, ali je na strani besedilo, ki neposredno odgovori na vprašanje, in strukturirani podatki, ki se ujemajo z vidno stranjo"
+          ],
+          [
+            "Nizki ali jih ni",
+            "Nizki",
+            "Začnite z osnovami SEO: indeksiranje, ali je mogoče prikazati izsek, poglobljenost vsebine"
+          ]
+        ],
+        "caption": "Številke ne morejo dokazati vzroka. Uporabite jih kot hipoteze, ki jih preizkusite."
+      },
+      "after": [
+        "Google navaja, da za prikaz v funkcijah UI ni dodatnih zahtev ali posebnih optimizacij ter da mora biti stran indeksirana in primerna za prikaz v Googlovem iskanju z izsekom ([Google: Funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)). Pri strani z malo prikazi v UI je najhitrejši začetek preverjanje njenega stanja v običajnem iskanju."
+      ]
+    },
+    {
+      "heading": "Mesečni kontrolni seznam",
+      "list": [
+        "Časovno obdobje nastavite na prejšnji mesec (datumi v pacifiškem času) in zabeležite prikaze z grafikona. Predhodne dneve izpustite",
+        "Zabeležite deset najboljših strani iz tabele »Pages« in njihovo spremembo glede na prejšnji mesec",
+        "Ob istih deset strani zapišite klike in prikaze iz običajnega poročila »Performance« (»Web«)",
+        "Poiščite večje premike v razdelitvi po državah in napravah",
+        "Na strani z anomalijami podatkov preverite, ali je Google tisti mesec poročal o težavi z beleženjem",
+        "Potrdite, da je nastavitev generativne UI v iskanju takšna, kot ste jo želeli (običajno »Include« ali podedovana od nadrejene lastnosti)",
+        "Na drug način zabeležite, kako se pojavljate v UI zunaj Googla, na primer v ChatGPT in Perplexity (glejte spodaj)"
+      ],
+      "after": [
+        "Za dnevnik zadošča pet stolpcev: mesec, prikazi v funkcijah UI (spletno mesto), najboljše strani, kliki in prikazi teh strani v »Web« ter opombe (spremembe na spletnem mestu, znane težave). Če si zapisujete spremembe, kot so nove strani, popravki strukturiranih podatkov ali zamenjava teme, boste pozneje veliko lažje pojasnili rast ali padec."
+      ]
+    },
+    {
+      "heading": "Nastavitev generativne UI v iskanju: kaj naredi izključitev",
+      "paragraphs": [
+        "Skupaj s poročilom je Google dodal nastavitev, ki prepreči, da bi se vaše spletno mesto pojavljalo v njegovih funkcijah UI. Najdete jo v Search Console pod »Settings > Search generative AI« in od 31. avgusta 2026 je bila na voljo vsem spletnim mestom po svetu ([Pomoč za Search Console: Search generative AI control](https://support.google.com/webmasters/answer/16908024?hl=en))."
+      ],
+      "table": {
+        "head": [
+          "Možnost ali metoda",
+          "Kaj se zgodi"
+        ],
+        "rows": [
+          [
+            "»Include« (privzeto)",
+            "Vaše povezave in vsebina se lahko uporabljajo v AI Overviews, AI Mode in funkcijah generativne UI v Discover"
+          ],
+          [
+            "»Exclude«",
+            "Vaše povezave in vsebina se v teh funkcijah ne prikazujejo več in se ne uporabljajo kot vhod za ustvarjanje odgovora. Iz njih tudi ne dobite prikazov ali prometa"
+          ],
+          [
+            "»Inherit control from parent«",
+            "Sledi nastavitvi nadrejene lastnosti, na primer domenske lastnosti (privzeto, kadar nadrejena lastnost obstaja)"
+          ],
+          [
+            "Google-Extended (robots.txt)",
+            "Omeji uporabo vaše vsebine za učenje UI. Nastavitev generativne UI v iskanju na učenje ne vpliva"
+          ],
+          [
+            "noindex",
+            "Stran v celoti odstrani iz Googlovega iskanja"
+          ],
+          [
+            "nosnippet, data-nosnippet, max-snippet",
+            "Omejijo, koliko strani se lahko uporabi kot predogled v rezultatih in funkcijah UI"
+          ]
+        ],
+        "caption": "Na podlagi pomoči za Search Console (Search generative AI control) in Google Search Central (Funkcije UI in vaše spletno mesto)."
+      },
+      "after": [
+        "Google navaja, da se ta nastavitev ne uporablja kot signal za razvrščanje ali vključitev v drugih delih iskanja. Izključitev začne veljati v enem do dveh dneh, pri nekaterih vsebinah pa lahko zaradi predpomnjenja traja dlje.",
+        "Za večino podjetij so funkcije UI še ena pot, po kateri jih stranke najdejo. Izključite le z jasnim razlogom, na primer pri spletnem mestu, ki temelji predvsem na vsebini samo za člane, ali pri besedilu, ki je v povzetku zavajajoče. Če morajo iz povzetkov ostati le nekateri odlomki, je data-nosnippet na teh odlomkih alternativa izključitvi celotnega spletnega mesta."
+      ]
+    },
+    {
+      "heading": "Koraki v WordPressu",
+      "list": [
+        "Registrirajte domensko lastnost: lastništvo potrdite z zapisom DNS TXT. Nastavitev generativne UI v iskanju za domensko lastnost podedujejo lastnosti s predpono URL pod njo, zato različice z www in brez www, http in https upravljate na enem mestu.",
+        "Prepričajte se, da indeksiranje ni blokirano: v WordPressu je pod Nastavitve > Branje možnost »Vidnost za iskalnike«. Ko je označena, WordPress iskalnike prosi, naj spletnega mesta ne indeksirajo. Preverite jo po selitvi ali zagonu.",
+        "Prepričajte se, da robots.txt ne blokira Googlebota: v brskalniku odprite /robots.txt in poiščite Disallow: / pod Googlebot ali pod User-agent: *.",
+        "Odlomek izločite iz predogledov z data-nosnippet: v urejevalniku blokov za ta blok izberite »Uredi kot HTML« in elementu okoli njega dodajte atribut data-nosnippet. Za celotno stran uporabite nastavitev za posamezno stran v svojem vtičniku SEO, na primer noindex.",
+        "Strukturirani podatki in vidno besedilo naj se ujemajo: delovni čas, cene in naslovi morajo imeti enake vrednosti v besedilu strani in v strukturiranih podatkih. Neujemanje je pogost vir napačnih odgovorov UI."
+      ],
+      "after": [
+        "Nurevo AEO, brezplačen vtičnik za WordPress, z vašega lastnega strežnika zagotavlja strukturirane podatke, llms.txt in pravila robots.txt za pajke iskanja z UI. Pajke, ki zbirajo vsebino za učenje UI, na primer Google-Extended, privzeto prepusti vašemu robots.txt, v skrbniškem zaslonu pa jih lahko dovolite ali blokirate. To je pravilo v robots.txt, ločeno od nastavitve generativne UI v iskanju v Search Console. [Prenesite ga z WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+      ]
+    },
+    {
+      "heading": "Česar Search Console ne more pokazati: ChatGPT in Perplexity",
+      "paragraphs": [
+        "Search Console zajema samo Google. Če želite videti, ali ChatGPT ali Perplexity omenjata vaše podjetje, dodajte naslednje:"
+      ],
+      "table": {
+        "head": [
+          "Metoda",
+          "Kaj vam pove"
+        ],
+        "rows": [
+          [
+            "Napotitveni viri v analitiki",
+            "Obiski, ki so prišli iz odgovora UI. OpenAI navaja, da povezavam iz rezultatov iskanja ChatGPT doda utm_source=chatgpt.com ([OpenAI: Publishers and Developers FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq))"
+          ],
+          [
+            "Redno zastavljanje stalnih vprašanj",
+            "Pri vprašanjih brez vašega imena delež odgovorov, ki vas omenijo ali navedejo vaše spletno mesto. [Kako meriti vidnost v UI](/guide/measure-ai-visibility)"
+          ],
+          [
+            "Orodja za merjenje",
+            "Samodejno zastavijo nabor vprašanj in beležijo omembe, navedbe, konkurente in trende. [Primerjava orodij AEO](/guide/aeo-tools-comparison)"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo AEO vključuje brezplačno preverjanje UI za povezana spletna mesta v paketih Free in Standard: enkrat na mesec Perplexity zastavi tri vprašanja, sestavljena iz vaše dejavnosti in območja, brez vašega imena. Paket Pro (od $99/mesec, beta), ki stalno meri določen nabor vprašanj, za zdaj prav tako meri na Perplexity. Googlove številke iz Search Console in te zapise z drugih platform UI zberite v isti mesečni preglednici, da vidite celotno sliko."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Kje je poročilo o uspešnosti generativne UI?",
+      "a": "Pomoč za Search Console navaja neposredno povezavo do njega (search.google.com/search-console/performance/search-analytics/ai). Od 31. avgusta 2026 je bilo na voljo vsem spletnim mestom po svetu. Če ga ne vidite, vaše spletno mesto morda še nima dovolj prikazov v funkcijah UI ali pa je izključeno z nastavitvijo generativne UI v iskanju."
+    },
+    {
+      "q": "Ali lahko vidim klike iz AI Overviews?",
+      "a": "Poročilo o uspešnosti generativne UI prikazuje prikaze. Kliki in prikazi iz Googlovih funkcij UI so vključeni v običajno poročilo »Performance« pod vrsto iskanja »Web«, vendar klikov iz funkcij UI ni mogoče ločiti. V praksi je najbolje primerjati prikaze v funkcijah UI z običajnimi kliki stran za stranjo."
+    },
+    {
+      "q": "Zakaj se seštevek na grafikonu razlikuje od tabele »Pages«?",
+      "a": "Grafikon šteje po lastnosti, tabela »Pages« pa po strani. Če en odgovor UI prikaže dve vaši strani, grafikon šteje en prikaz, tabela pa enega za vsako stran. V poročilu ju ne seštevajte."
+    },
+    {
+      "q": "Ali bo izključitev spletnega mesta z nastavitvijo generativne UI v iskanju škodila mojim uvrstitvam?",
+      "a": "Google navaja, da se ta nastavitev ne uporablja kot signal za razvrščanje ali vključitev v drugih delih iskanja. Po izključitvi pa ne dobite prikazov ali prometa iz AI Overviews, AI Mode ali funkcij generativne UI v Discover. Za omejitev učenja UI namesto te nastavitve uporabite Google-Extended."
+    },
+    {
+      "q": "Ali Search Console prikazuje ChatGPT ali Perplexity?",
+      "a": "Ne. Search Console vsebuje samo Googlove podatke. ChatGPT in Perplexity preverjajte ločeno: z napotitvenimi viri v analitiki, z rednim zastavljanjem stalnih vprašanj ali z orodjem za merjenje."
+    },
+    {
+      "q": "Ali obstaja posebna nastavitev, ki poveča prikaze v UI?",
+      "a": "Google navaja, da za funkcije UI ni dodatnih zahtev ali posebnih optimizacij. Najhitrejša pot je urediti osnove: strani, ki so indeksirane in lahko prikažejo izsek, besedilo, ki neposredno odgovori na vprašanje, in strukturirani podatki, ki se ujemajo z vidno stranjo. Nobena metoda ne zagotavlja, da boste prikazani."
+    }
+  ],
+  "relatedHeading": "Sorodni vodniki",
+  "cta": {
+    "heading": "Najprej preverite, ali UI lahko prebere vaše spletno mesto",
+    "body": "Brezplačno preverjanje brez registracije pokaže stanje tega, kar UI bere na vašem spletnem mestu: strukturirani podatki, llms.txt in dostop za pajke iskanja z UI. Na spletnih mestih WordPress Nurevo AEO brezplačno dopolni manjkajoče.",
+    "label": "Zaženite brezplačno preverjanje berljivosti za UI",
+    "href": "/check",
+    "secondary": {
+      "label": "Prenesite Nurevo AEO z WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "Google, Search Console, Google Discover, ChatGPT, OpenAI, Perplexity, WordPress in imena njihovih izdelkov so blagovne znamke ustreznih lastnikov. Nurevo ni povezan z njimi."
+}
