@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIが自社の情報を間違えるときの直し方：原因別の手順 | Nurevo</title>
+<meta name="description" content="ChatGPT・Perplexity・GoogleのAIによる概要が営業時間や閉業、料金を間違えるときに、原因を見分けて直す順番、WordPressで直す場所、報告と測り直しの方法をまとめました。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/fix-wrong-ai-answers/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/fix-wrong-ai-answers/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/fix-wrong-ai-answers/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/fix-wrong-ai-answers/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/fix-wrong-ai-answers/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/fix-wrong-ai-answers/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/fix-wrong-ai-answers/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/fix-wrong-ai-answers/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/fix-wrong-ai-answers/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="AIが自社の情報を間違えるときの直し方：原因別の手順 | Nurevo">
+<meta property="og:description" content="ChatGPT・Perplexity・GoogleのAIによる概要が営業時間や閉業、料金を間違えるときに、原因を見分けて直す順番、WordPressで直す場所、報告と測り直しの方法をまとめました。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/fix-wrong-ai-answers/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AIが自社の情報を間違えるときの直し方：原因別の手順 | Nurevo">
+<meta name="twitter:description" content="ChatGPT・Perplexity・GoogleのAIによる概要が営業時間や閉業、料金を間違えるときに、原因を見分けて直す順番、WordPressで直す場所、報告と測り直しの方法をまとめました。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/fix-wrong-ai-answers/#webpage","url":"https://nurevo.jp/ja/guide/fix-wrong-ai-answers/","name":"AIが自社の情報を間違えるときの直し方：原因別の手順 | Nurevo","description":"ChatGPT・Perplexity・GoogleのAIによる概要が営業時間や閉業、料金を間違えるときに、原因を見分けて直す順番、WordPressで直す場所、報告と測り直しの方法をまとめました。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/fix-wrong-ai-answers/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/fix-wrong-ai-answers/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"AIが自社について間違った情報を答えるときの直し方：原因の見分け方と、直す順番","item":"https://nurevo.jp/ja/guide/fix-wrong-ai-answers/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/fix-wrong-ai-answers/#faq","mainEntity":[{"@type":"Question","name":"AIの運営会社に頼めば、自社の情報を直してもらえますか？","acceptedAnswer":{"@type":"Answer","text":"回答そのものを会社の依頼で書き換えてもらう仕組みは、この記事の作成時点で各社の公式ページから確認できませんでした。GoogleのAIによる概要には「問題を報告」の機能がありますが、確実に直す手段ではありません。効果の中心は、AIが読む元の情報（自社サイト、ビジネスプロフィール、掲載先）を直すことです。"}},{"@type":"Question","name":"直してから、どのくらいで反映されますか？","acceptedAnswer":{"@type":"Answer","text":"AIや検索エンジンがページを読み直す時期によって違い、決まった期間は公式に示されていません。1〜2週間ごとなど間隔を決めて、同じ質問で記録し、変化を確かめてください。"}},{"@type":"Question","name":"自社サイトは正しいのに、AIが間違えます。なぜですか？","acceptedAnswer":{"@type":"Answer","text":"出典が第三者のページ（古い掲載情報、同名の別の会社など）になっているか、答えに必要な事実がサイトに書かれていないことが多い原因です。出典URLを開いて原因を分け、構造化データとrobots.txtも確かめてください。"}},{"@type":"Question","name":"llms.txtを置けば、間違いは直りますか？","acceptedAnswer":{"@type":"Answer","text":"llms.txtはサイトの要点と主なページをAIに伝える補助のファイルで、それだけで回答が直るとは限りません。ページの文章、構造化データ、掲載情報とあわせて、同じ正しい事実を出すことが大切です。"}},{"@type":"Question","name":"閉店したと表示されてしまいます。いちばん先にやることは？","acceptedAnswer":{"@type":"Answer","text":"Googleビジネスプロフィールの営業状態と営業時間を確認し、自社サイトのトップページと会社概要に、営業中であることと所在地をはっきり書きます。同名の店の閉店ニュースが出典になっていないかも確かめてください。"}},{"@type":"Question","name":"ChatGPTとPerplexityとGoogleで、やることは違いますか？","acceptedAnswer":{"@type":"Answer","text":"元の情報を直すという基本は同じです。違いは確かめ方で、Perplexityは番号付きの出典で元のページをたどりやすく、Googleは報告の機能とSearch Consoleの表示回数が使えます。ChatGPTの検索に出るには、robots.txtでOAI-SearchBotを止めていないことが前提です。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check">無料でAI可読性をチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>AIが自社について間違った情報を答えるときの直し方：原因の見分け方と、直す順番</span></nav>
+  <article>
+    <h1>AIが自社について間違った情報を答えるときの直し方：原因の見分け方と、直す順番</h1>
+    <p class="lead">AIの回答そのものを、会社や店が直接書き換える方法はありません。直せるのは、AIが答えを作るときに読んでいる「元の情報」です。間違いを記録して出典をたどり、原因に合わせて自社サイト → Googleビジネスプロフィールなどの掲載情報 → 第三者のページの順に直し、そのうえで報告し、同じ質問で測り直します。</p>
+<p>作成日：2026年11月12日。Google・Perplexityの仕様は、同日に各社の公式ヘルプで確認したものです（本文にリンク）。画面や仕様は変わることがあるため、最新の公式ページもあわせてご確認ください。</p>
+<p>この記事は「営業時間が違う」「閉店したと言われる」「やっていないサービスを紹介される」「同じ名前の別の会社と混ざる」といった、事実の間違いを直すための手順です。AIの回答は質問のたびに変わり、どんな対策でも、正しい内容で必ず表示されると保証することはできません。目指すのは、AIが読む情報をそろえて、間違いが出にくい状態にすることです。</p>
+<section class="qa"><h2>まず押さえること：直す場所は「AIが読む元の情報」</h2><p>ChatGPTの検索、Perplexity、GoogleのAIによる概要のような検索型のAIは、質問を受けるとウェブを検索し、見つけたページをもとに答えを書きます。Perplexityは、答えに番号付きの出典を付け、元のページへのリンクで確かめられるようにしていると説明しています（<a href="https://www.perplexity.ai/help-center/en/articles/10352895-how-does-perplexity-work">Perplexity ヘルプセンター</a>）。Googleも、AIによる概要には間違いが含まれることがあると明記しています（<a href="https://support.google.com/websearch/answer/14901683?hl=ja">Google 検索ヘルプ</a>）。</p>
+<p>つまり、間違いの多くには「どこかにそう読めるページがある」か「答えに必要な事実がどこにも書かれていない」という原因があります。前者なら元のページを直す、後者なら正しい事実をはっきり書いて公開する、が基本です。報告のボタンは補助で、元の情報が古いままだと、報告しても同じ間違いが出続けることがあります。</p></section>
+<section class="qa"><h2>手順1：間違いを記録する（1回だけで判断しない）</h2><p>最初に、何が・どのAIで・どんな質問のときに間違っているかを記録します。同じ質問でも回答は変わるため、日を変えて2〜3回聞き、毎回同じ間違いが出るのか、たまに出るのかを分けておきます。記録は、あとで「直ったか」を確かめるときの比較の基準にもなります。</p><div class="table-wrap"><table><thead><tr><th scope="col">記録する項目</th><th scope="col">記入例</th></tr></thead><tbody><tr><th scope="row">日時・AI・モード</th><td>2026-11-12 10:00／Perplexity／通常の検索</td></tr><tr><th scope="row">質問文（そのまま）</th><td>〇〇市の△△歯科は日曜も診療していますか</td></tr><tr><th scope="row">間違っている内容</th><td>「日曜も10時から診療」と回答。実際は日曜休診</td></tr><tr><th scope="row">正しい事実と根拠</th><td>日曜休診（自社サイトの診療時間ページ、2026年4月改定）</td></tr><tr><th scope="row">回答に付いた出典URL</th><td>出典1：ポータルサイトの古い掲載ページ／出典2：自社サイト</td></tr><tr><th scope="row">何回中何回出たか</th><td>3回中2回</td></tr></tbody></table></div><p>社名を入れた質問（「△△歯科の診療時間は」）と、社名を入れない質問（「〇〇市で日曜に開いている歯医者は」）の両方で確かめると、間違いの広がり方がわかります。質問の選び方と回数の決め方は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>で詳しく説明しています。</p></section>
+<section class="qa"><h2>手順2：出典をたどって、原因を6つに分ける</h2><p>記録した出典URLを開き、間違った内容がどこに書かれているかを探します。Perplexityは出典が番号で示されるのでたどりやすく、GoogleのAIによる概要も回答の横や下にリンクが出ます。出典に間違いが見つからない場合も、それ自体が手がかりです。次の表で、原因の型と直す場所を決めます。</p><div class="table-wrap"><table><thead><tr><th scope="col">原因の型</th><th scope="col">見分け方</th><th scope="col">直す場所</th></tr></thead><tbody><tr><th scope="row">①自社サイトが古い・ページ間で食い違う</th><td>出典が自社ページ。古いお知らせ、旧料金表、ページごとに違う営業時間が残っている</td><td>自社サイト（手順3・4）</td></tr><tr><th scope="row">②構造化データだけが古い</th><td>ページの文章は正しいが、構造化データ（JSON-LD）の営業時間や住所が古い</td><td>SEOプラグイン・テーマの設定（手順4）</td></tr><tr><th scope="row">③掲載情報が古い</th><td>出典がGoogleビジネスプロフィール、地図、予約・ポータルサイト</td><td>各掲載先の管理画面（手順5）</td></tr><tr><th scope="row">④第三者のページ</th><td>古いニュース、まとめ記事、口コミサイト、退職者のブログなど</td><td>掲載元への修正依頼（手順5）</td></tr><tr><th scope="row">⑤同じ名前の別の会社・店</th><td>別の地域や業種の、同名の会社の情報が混ざっている</td><td>自社サイトで正式名称・所在地・業種をはっきり書く（手順3）</td></tr><tr><th scope="row">⑥出典なしの推測</th><td>どの出典にも書かれていない。答えに必要な事実が公開されていない</td><td>その事実を自社サイトに書く（手順3）</td></tr></tbody></table></div><p>もう一つ、AIがそもそも自社サイトを読めていない可能性も確かめます。robots.txtでAI検索のクローラを止めていると、自社の正しいページが出典に使われず、古い第三者のページだけが読まれることがあります。OpenAIは、OAI-SearchBotを拒否したサイトはChatGPTの検索回答に表示されないと説明しています（<a href="https://developers.openai.com/api/docs/bots">OpenAI：クローラの概要</a>）。</p></section>
+<section class="qa"><h2>手順3：自社サイトを「いちばん正しい情報源」にする</h2><p>どの原因でも、まず自社サイトに正しい事実が一か所にまとまっていることが土台になります。AIが複数のページを比べたとき、自社の公式ページがはっきりしていれば、それが選ばれやすくなります（選ばれることの保証ではありません）。</p><ol><li>会社概要・店舗情報のページに、正式名称、住所、電話番号、営業時間（定休日・祝日・季節の例外も）、対応エリア、主なサービスを文章で書く。画像だけで書かない。</li><li>「最終更新日」をページに書く。営業時間や料金を変えたら日付も更新する。</li><li>古い情報が残るページを片付ける。終わったキャンペーン、旧料金表、移転前の地図は、削除するか、冒頭に「この情報は〇年〇月で終了しました」と書く。</li><li>閉業・移転・休業は、トップページと会社概要の両方にはっきり書く。一時休業なら再開予定日も書く。</li><li>同名の会社と混ざるときは、「〇〇県〇〇市の△△（〇年創業、□□業）です。△△株式会社（東京都）とは別の会社です」のように、区別できる事実を書く。</li><li>やっていないサービスを紹介されるときは、よくある質問に「〇〇は行っていません。代わりに□□を行っています」と、否定の答えを書く。AIは書かれていないことを推測で埋めることがあるため、「やっていない」も事実として書く価値があります。</li></ol></section>
+<section class="qa"><h2>手順4：WordPressで確かめる場所</h2><p>WordPressのサイトでは、同じ事実が複数の場所から出力されていることがよくあります。文章だけ直して、構造化データやllms.txtが古いまま、ということがないよう、次の場所を順に確かめます。Googleは、構造化データはページの見える内容と一致させるよう求めています（<a href="https://developers.google.com/search/docs/appearance/ai-features">Google 検索セントラル：AI機能とウェブサイト</a>）。</p><div class="table-wrap"><table><thead><tr><th scope="col">場所</th><th scope="col">確かめること</th></tr></thead><tbody><tr><th scope="row">固定ページ（会社概要・店舗情報・料金・よくある質問）</th><td>手順3の事実が正しく、ページ間で同じ値になっているか</td></tr><tr><th scope="row">SEOプラグインの組織・店舗設定（Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACKなど）</th><td>会社名、住所、電話番号、営業時間、ロゴが最新か</td></tr><tr><th scope="row">テーマの構造化データ（SWELL、Lightningなど）</th><td>テーマ側でも組織情報を出していないか。出しているなら同じ値か</td></tr><tr><th scope="row">ページのソース（ブラウザで「ページのソースを表示」→ application/ld+json を検索）</th><td>実際に公開されている構造化データの値。古い営業時間が残っていないか</td></tr><tr><th scope="row">/llms.txt</th><td>会社の説明、主なページ、サービスの一覧が最新か。古いページを載せていないか</td></tr><tr><th scope="row">/robots.txt</th><td>OAI-SearchBot、PerplexityBotなどAI検索のクローラを止めていないか</td></tr><tr><th scope="row">キャッシュ（キャッシュ系プラグイン・CDN）</th><td>直したあとにキャッシュを消し、公開ページに新しい値が出ているか</td></tr></tbody></table></div><p>Nurevo AEOを入れている場合は、AEOスコアの画面で診断を実行すると、構造化データ・llms.txt・AIクローラの許可の状態をまとめて確かめられます。Nurevo AEOは空欄だけを埋め、SEOプラグインに入力済みの値は上書きしません。そのため、元の値が古いときは、SEOプラグイン側の設定を直してください。Nurevoの設定画面で自動で読み取った店舗情報も、間違いがないか見直します。</p></section>
+<section class="qa"><h2>手順5：掲載情報と第三者のページを直す</h2><p>Googleビジネスプロフィールは、オーナー確認済みのビジネスなら、Google検索やマップのプロフィールから「プロフィールを編集」で直せます。Googleは、変更を審査してから公開すると説明しています（<a href="https://support.google.com/business/answer/3039617?hl=ja">Googleビジネスプロフィール ヘルプ</a>）。営業時間・臨時休業・住所・電話番号・ウェブサイトのURLを、自社サイトと同じ値にそろえます。Googleは、AI機能に出るための特別な対策はなく、ビジネスプロフィールの情報を最新にすることなど、通常の基本が大切だとしています（<a href="https://developers.google.com/search/docs/appearance/ai-features">Google 検索セントラル</a>）。</p>
+<p>予約サイト、ポータルサイト、業界団体の名簿などは、それぞれの管理画面か問い合わせ窓口から直します。自分で直せない第三者の記事や口コミサイトは、掲載元に「どこが・何に・なぜ変わったか」を、根拠のページ（自社の公式ページ）のURLを添えて依頼します。依頼しても直らないことはあるため、自社サイトの記述をはっきりさせる（手順3）ことと並行して進めます。</p></section>
+<section class="qa"><h2>手順6：各AIに報告する</h2><p>GoogleのAIによる概要は、回答の下にある低評価（よくない）のアイコンから「問題を報告」を選び、当てはまる項目を選んで送信できます。送ったフィードバックには、直近の検索語句とその検索結果が含まれるとGoogleは説明しています（<a href="https://support.google.com/websearch/answer/14901683?hl=ja">Google 検索ヘルプ</a>）。報告するときは、間違いが出た質問で検索した直後に送ると、どの回答の話かが伝わります。</p>
+<p>ChatGPTやPerplexityにも回答への評価の機能がありますが、会社や店が自社の情報の訂正を申し込む専用の窓口は、この記事の作成時点で両社の公式ページから確認できませんでした。そのため、報告は「気づいたときに送る」補助と考え、効果の中心は手順3〜5の元の情報の修正に置きます。</p></section>
+<section class="qa"><h2>手順7：同じ質問で測り直す</h2><p>直したあとは、手順1と同じ質問・同じAI・同じモードで聞き直し、記録を並べます。どのくらいで反映されるかは、AIや検索エンジンがページを読み直す時期によって違い、各社の公式ページで決まった期間は示されていません。1〜2週間ごとなど、間隔を決めて同じ形で記録し、「3回中2回」が「3回中0回」になったか、出典が古いページから自社ページに変わったかを見ます。</p>
+<p>Googleについては、Search Consoleの生成AIパフォーマンスレポートで、AI機能に自社のページがどれだけ表示されているかも確認できます（<a href="/ja/guide/search-console-ai-features/">Search ConsoleでAIによる概要を見る方法</a>）。ただし表示回数であり、回答の中身が正しいかどうかはわかりません。中身は、記録した回答で確かめます。</p></section>
+<section class="qa"><h2>よくある間違いの種類別の対処</h2><div class="table-wrap"><table><thead><tr><th scope="col">間違い</th><th scope="col">まず確かめる場所</th><th scope="col">直し方の要点</th></tr></thead><tbody><tr><th scope="row">閉店した・休業中と言われる</th><td>Googleビジネスプロフィールの状態、古い休業のお知らせ、同名の店の閉店ニュース</td><td>プロフィールの営業中の状態と営業時間を確認。休業のお知らせを終了表示に。自社サイトに「現在営業しています」と所在地を明記</td></tr><tr><th scope="row">営業時間・定休日が違う</th><td>自社サイトの複数ページ、構造化データ、プロフィール、予約サイト</td><td>すべてを同じ値にそろえる。祝日・季節の例外も文章で書く</td></tr><tr><th scope="row">料金が古い</th><td>旧料金表のページ、PDF、ポータルの掲載</td><td>古いページを削除または終了表示。料金ページに改定日を書く</td></tr><tr><th scope="row">やっていないサービスを紹介される</th><td>似た業種の一般的な説明、他店の情報</td><td>よくある質問に「行っていません」と書き、実際に行うサービスを一覧にする</td></tr><tr><th scope="row">同名の別の会社と混ざる</th><td>出典のドメインと所在地</td><td>正式名称・所在地・創業年・業種を会社概要に書き、別の会社であることを明記</td></tr><tr><th scope="row">住所・電話番号が古い</th><td>移転前のページ、名簿、地図サービス</td><td>掲載先を一つずつ直す。自社サイトの全ページのフッターも確認</td></tr></tbody></table></div></section>
+<section class="qa"><h2>やってはいけないこと</h2><ol><li>AIだけに読ませる隠しテキストや、ページの内容と違う構造化データを書くこと。Googleは構造化データを見える内容と一致させるよう求めています。</li><li>自作自演の口コミや、事実と違う比較記事を作ること。間違いを別の間違いで上書きすることになり、景品表示法などの問題にもなり得ます。</li><li>robots.txtでAIのクローラをすべて止めること。間違いは消えず、正しい自社ページが読まれなくなるおそれがあります。学習用と検索用のクローラは別の名前なので、止めるなら学習用だけにするなど、目的に合わせて選びます。</li><li>1回の回答だけで「直った」「直らない」と判断すること。必ず同じ条件で何回か確かめます。</li></ol></section>
+<section class="qa"><h2>チェックリスト</h2><ol><li>間違いを、日時・AI・質問文・回答・出典URL・出た回数で記録した</li><li>出典を開き、原因を6つの型のどれかに分けた</li><li>自社サイトの会社概要・店舗情報に、正しい事実を文章で書き、最終更新日を入れた</li><li>古いお知らせ・料金表・地図を削除または終了表示にした</li><li>構造化データ（SEOプラグイン・テーマ）とllms.txtの値を、ページの文章と同じにした</li><li>robots.txtでAI検索のクローラを止めていないことを確かめた</li><li>キャッシュを消し、公開ページで新しい値を確認した</li><li>Googleビジネスプロフィールと主な掲載先を同じ値にそろえた</li><li>直せない第三者のページには、根拠URLを添えて修正を依頼した</li><li>GoogleのAIによる概要で、間違いが出た回答を報告した</li><li>1〜2週間ごとに同じ質問で測り直す予定を決めた</li></ol></section>
+<section class="qa"><h2>Nurevo AEOでできること</h2><p>Nurevo AEOは、WordPressのサイトの事実（会社・店舗の情報、サービス、よくある質問）を、AIが読む形式（構造化データ、llms.txt、AIクローラのルール）で公開する無料のプラグインです。SEOプラグインが出している構造化データに足りない事実を足し、二重に出力しません。</p>
+<p>サイトを接続したFree・Standardプランでは、無料のAIチェックとして、月に1回、業種と地域から作ったお客さまが聞きそうな3つの質問（社名は入れません）をPerplexityに聞き、自社の名前が出たか、自社サイトが引用されたか、代わりにどこが出たかを表示します。Pro（月14,800円〜、ベータ版）では、決めた質問のセットで登場率を続けて測れます（現在はPerplexityで計測）。回答の正しさの判断は自動では行わないため、間違いの確認は、この記事の手順1の記録とあわせて行ってください。</p></section>
+    <section class="qa"><h2>よくある質問</h2><h3>AIの運営会社に頼めば、自社の情報を直してもらえますか？</h3><p>回答そのものを会社の依頼で書き換えてもらう仕組みは、この記事の作成時点で各社の公式ページから確認できませんでした。GoogleのAIによる概要には「問題を報告」の機能がありますが、確実に直す手段ではありません。効果の中心は、AIが読む元の情報（自社サイト、ビジネスプロフィール、掲載先）を直すことです。</p>
+<h3>直してから、どのくらいで反映されますか？</h3><p>AIや検索エンジンがページを読み直す時期によって違い、決まった期間は公式に示されていません。1〜2週間ごとなど間隔を決めて、同じ質問で記録し、変化を確かめてください。</p>
+<h3>自社サイトは正しいのに、AIが間違えます。なぜですか？</h3><p>出典が第三者のページ（古い掲載情報、同名の別の会社など）になっているか、答えに必要な事実がサイトに書かれていないことが多い原因です。出典URLを開いて原因を分け、構造化データとrobots.txtも確かめてください。</p>
+<h3>llms.txtを置けば、間違いは直りますか？</h3><p>llms.txtはサイトの要点と主なページをAIに伝える補助のファイルで、それだけで回答が直るとは限りません。ページの文章、構造化データ、掲載情報とあわせて、同じ正しい事実を出すことが大切です。</p>
+<h3>閉店したと表示されてしまいます。いちばん先にやることは？</h3><p>Googleビジネスプロフィールの営業状態と営業時間を確認し、自社サイトのトップページと会社概要に、営業中であることと所在地をはっきり書きます。同名の店の閉店ニュースが出典になっていないかも確かめてください。</p>
+<h3>ChatGPTとPerplexityとGoogleで、やることは違いますか？</h3><p>元の情報を直すという基本は同じです。違いは確かめ方で、Perplexityは番号付きの出典で元のページをたどりやすく、Googleは報告の機能とSearch Consoleの表示回数が使えます。ChatGPTの検索に出るには、robots.txtでOAI-SearchBotを止めていないことが前提です。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、AIがあなたのサイトの事実を読めるか確認</h2>
+    <p>登録不要の無料チェックで、構造化データやllms.txt、AI検索のクローラの許可など、AIが読む情報の状態がわかります。WordPressなら、Nurevo AEOで不足分を無料で整えられます。</p>
+    <a class="btn primary lg" href="/check">無料でAI可読性をチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgでNurevo AEOを無料で入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/appear-in-chatgpt/">ChatGPTに載る方法（他のAIの回答にも）</a></li><li><a href="/ja/guide/local-business-schema-seo-plugins/">Yoast SEO・Rank Math・AIOSEOに店舗情報の構造化データを無料で足す方法</a></li><li><a href="/ja/guide/llms-txt/">llms.txt とは？ サイトをAIに説明するファイル</a></li><li><a href="/ja/guide/search-console-ai-features/">Search ConsoleでAIによる概要・AIモードの表示を見る方法：生成AIレポートの読み方と注意点</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/fix-wrong-ai-answers/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Google、Googleビジネスプロフィール、Search Console、ChatGPT、OpenAI、Perplexity、WordPress、Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK、SWELL、Lightningおよび各製品名は、それぞれの権利者の商標または登録商標です。Nurevoはこれらの企業と提携・協賛関係にありません。</p><a href="/">Nurevo</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
