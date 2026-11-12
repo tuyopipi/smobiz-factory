@@ -16,6 +16,7 @@
 | local-business-schema-seo-plugins | Yoast・Rank Math・AIOSEOに店舗の構造化データを追加 |
 | aeo-signals-ai-answers-study | AEOシグナルとAI回答の調査 |
 | research-japan-web-agencies-ai-search-2026 | 調査レポート：国内Web制作会社サイトのAI検索対応状況（総論、2,357件、2026-11-05集計） |
+| research-llms-txt-adoption-2026 | 調査レポート：llms.txt 導入率（日本・海外25か国、WordPress・SEOプラグイン別、15,838件、2026-11-12集計） |
 | ai-visibility-check | （枠のみ・未公開）AIに見えているかの確認 |
 
 ## 日次ログ
@@ -79,5 +80,7 @@
 | 日付（JST） | スラッグ | 切り口 | データ | 言語 | PR |
 |---|---|---|---|---|---|
 | 2026-11-10 | research-japan-web-agencies-ai-search-2026 | 総論（国内Web制作会社サイトのAI検索対応状況） | summary_2026-11-05 | ja/en | content/research-20261110（未マージの #57・#60 と同じ切り口。#60 の原稿を最新の main に載せ直したもの） |
+| 2026-11-12 | research-llms-txt-adoption-2026 | llms.txt 導入率（日本と海外・国別・WordPress/非WP・SEOプラグイン別・他項目との同時出現・行数） | raw/summary_2026-11-12（11-05 分を含む累積。前回比は同一サイトの変化ではないため出さない） | ja/en | content/research-20261112 |
 
-未着手の切り口：AIクローラーのブロック実態（ボット別）／llms.txt 導入率／構造化データの種類と壊れ率／都道府県別／WordPress と非WordPress／SEOプラグイン別／日本と海外の比較／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。
+（AIクローラーのブロック実態は PR #77 で作成済み・未マージ）
+未着手の切り口：構造化データの種類と壊れ率／都道府県別／WordPress と非WordPress／SEOプラグイン別／日本と海外の比較／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。
