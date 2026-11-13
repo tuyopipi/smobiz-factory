@@ -1,0 +1,211 @@
+{
+ "title": "AI-sök för veterinärer: djurslag, öppettider, jour | Nurevo",
+ "description": "AI-sök för veterinärkliniker: publicera djurslag, öppettider, jour och bokning i text och strukturerad data. Förbehållet om VeterinaryCare och steg för WordPress.",
+ "h1": "AI-sök för veterinärkliniker: få AI att läsa rätt om vilka djur ni behandlar, era öppettider och er jour",
+ "lead": "AI-sökoptimering (AEO) för en veterinärklinik eller ett djursjukhus handlar om att publicera de uppgifter djurägare frågar efter — vilka djurslag ni behandlar, öppettider och sista tid för ankomst, hur ni hanterar kvällar, helger och akuta fall, om ni tar emot tidsbokning eller drop-in, parkering och betalning — korrekt och konsekvent, i texten på era sidor och i strukturerad data (schema.orgs VeterinaryCare). Två saker skiljer kliniker åt i AI-svar mer än något annat: att tydligt säga vilka djur ni tar emot (och vilka ni inte tar emot), och att berätta vad som gäller utanför öppettid, inklusive vart ni hänvisar folk när ni har stängt.",
+ "intro": [
+  "Skriven 13 november 2026 (JST). Uppgifter om schema.org, Google, OpenAI och japansk reglering kontrollerades de datum som anges i texten. Regler för marknadsföring av veterinärverksamhet skiljer sig mellan länder; kontrollera vad er egen tillsynsmyndighet säger.",
+  "AI-svar varierar från dag till dag och beroende på hur frågan formuleras. Stegen här gör det lätt för AI att läsa klinikens uppgifter rätt. De kan inte garantera att ni syns i ett AI-svar eller hamnar på en viss plats."
+ ],
+ "sections": [
+  {
+   "heading": "Vad djurägare frågar AI",
+   "paragraphs": [
+    "När någon ber ChatGPT, Perplexity eller Google AI Overviews att hitta en veterinär läser AI det den hittar på webben och svarar med några kliniknamn. Frågorna är sällan bara \"veterinär nära mig\". De låter snarare som \"en veterinär i [ort] som tar emot kaniner\", \"vilket djursjukhus har öppet söndag kväll\", \"var kan jag få min katts tänder rengjorda\" eller \"en veterinär med parkering nära stationen\". Djurslag, dag och tid, tjänsten och hur lätt kliniken är att ta sig till finns alla med i frågan.",
+    "Den stora skillnaden mot en tandläkar- eller läkarmottagning för människor är att djurslaget smalnar av listan först. Vissa kliniker tar bara emot hundar och katter, andra även kaniner, illrar, fåglar eller reptiler, och vissa bara katter. Det vill djurägare veta före allt annat. Ändå står djurslagen på många klinikwebbplatser bara i en bannerbild, eller inte alls. AI är dålig på att fylla i det som inte står skrivet, så en klinik som aldrig skriver \"vi tar emot kaniner\" hamnar lätt utanför ett svar på \"veterinär för kaniner\".",
+    "Den andra är jouren. De frågorna ställs ofta när ett djur är sjukt, och ett felaktigt svar kostar mer här än någon annanstans. Google säger att det inte finns några extra krav eller någon särskild strukturerad data för att synas i AI Overviews eller AI Mode, och att de vanliga SEO-grunderna gäller: strukturerad data ska stämma med den synliga texten och er företagsprofil ska vara aktuell (kontrollerat 12 november 2026). [Google: AI-funktioner och din webbplats](https://developers.google.com/search/docs/appearance/ai-features). Arbetet är inget trick; det handlar om att få klinikens uppgifter rätt och hålla dem rätt.",
+    "Fristående kliniker har anledning att bry sig. En nyhetsartikel från juni 2026 citerade resultat som tillskrivs 5W Public Relations: några få stora kedjor fick en stor andel av veterinärrekommendationerna i AI-svar, och de flesta testade fristående kliniker syntes knappt. Artikeln publicerade varken metod eller urval, så se siffrorna bara som en fingervisning. [myVETcandy, 14 juni 2026](https://www.myvetcandy.com/news/2026/6/14/chatgpt-keeps-recommending-the-same-veterinary-chains-independent-vets-are-barely-showing-up)"
+   ]
+  },
+  {
+   "heading": "Uppgifterna ni ska publicera och hur ni skriver dem",
+   "paragraphs": [
+    "Tabellen visar vad ni ska skriva som text på webbplatsen så att AI kan svara på djurägarnas frågor. Kolumnen till höger visar var varje uppgift hör hemma i strukturerad data eller i Nurevo AEO."
+   ],
+   "table": {
+    "head": [
+     "Uppgift",
+     "Så skriver ni den",
+     "Strukturerad data och inställningar"
+    ],
+    "rows": [
+     [
+      "Djurslag ni behandlar",
+      "\"Hundar, katter, kaniner och illrar. Vi tar inte emot fåglar eller reptiler.\" Skriv även vad ni inte behandlar",
+      "Ingen egen property, så använd beskrivningen, tjänster, FAQ och sidtext"
+     ],
+     [
+      "Öppettider och sista ankomst",
+      "\"9:00–12:00 (sista ankomst 11:30) och 16:00–19:00; stängt onsdagar och helgdagar\"",
+      "Öppettider (openingHoursSpecification); sista ankomst i text och FAQ"
+     ],
+     [
+      "Hur man bokar",
+      "Tidsbokning eller först till kvarn, telefonnummer och sida för bokning, och om ni tar emot utan bokning",
+      "Boknings-URL på tjänster; FAQ"
+     ],
+     [
+      "Kvällar, helger, akut",
+      "De tider och villkor ni täcker. Om inte, skriv \"Utanför våra öppettider hänvisar vi till [akutsjukhus]\"",
+      "Text och FAQ; ta inte med tider ni inte täcker i öppettiderna"
+     ],
+     [
+      "Hembesök",
+      "Om ni gör dem, område och hur man bokar",
+      "En tjänst"
+     ],
+     [
+      "Specialområden",
+      "Allmänpraktik, dermatologi, tandvård, ögonsjukdomar och så vidare",
+      "En tjänst var"
+     ],
+     [
+      "Förebyggande vård och hälsokontroller",
+      "Vaccinationer, parasitförebyggande, hälsokontroller, chipmärkning",
+      "Tjänster"
+     ],
+     [
+      "Utrustning",
+      "Den diagnostiska utrustning ni har (CT, ultraljud) och vart ni remitterar för undersökningar ni inte kan göra",
+      "Sidtext; kontrollera marknadsföringsreglerna innan ni återanvänder det i annonser"
+     ],
+     [
+      "Hitta hit",
+      "Adress, närmaste station, antal parkeringsplatser, betalsätt",
+      "Adress och telefon i strukturerad data; parkering och betalning i text och FAQ"
+     ],
+     [
+      "Djurförsäkring",
+      "Vilka försäkringsbolag ni kan fakturera direkt, eller att ägaren själv gör anspråk",
+      "FAQ"
+     ]
+    ],
+    "caption": "En startlista. Skriv bara det ni faktiskt gör, som det ser ut i dag. När något ändras, uppdatera sidan, strukturerad data, Google-företagsprofilen och bokningssajter samma dag."
+   },
+   "after": [
+    "Skriv varje uppgift som en mening som AI kan lyfta rakt in i ett svar. \"Exotiska djur välkomna, fråga gärna\" hjälper mindre än \"Vi behandlar kaniner, illrar och hamstrar. Vi behandlar inte fåglar eller reptiler.\" Den andra svarar på fler frågor, och när ni skriver vad ni inte gör minskar risken att AI skickar någon till er av misstag."
+   ]
+  },
+  {
+   "heading": "Typ av strukturerad data: ett förbehåll om VeterinaryCare",
+   "paragraphs": [
+    "schema.org har en typ för veterinärer: [VeterinaryCare](https://schema.org/VeterinaryCare). Det som är värt att veta är var den ligger. VeterinaryCare är en undertyp till [MedicalOrganization](https://schema.org/MedicalOrganization). Till skillnad från Dentist eller Physician ligger den inte under [LocalBusiness](https://schema.org/LocalBusiness), typen för verksamheter med en fysisk plats (kontrollerat 13 november 2026 mot typdefinitionerna i schema-dts 2.1.0, som genereras från schema.org-vokabulären). Öppettider (openingHoursSpecification) är en property på en Place, och LocalBusiness är en sorts Place.",
+    "Googles dokumentation om strukturerad data för lokala företag ber er använda den mest specifika undertypen till LocalBusiness som går (kontrollerat 29 oktober 2026). [Google: Strukturerad data för lokala företag](https://developers.google.com/search/docs/appearance/structured-data/local-business). Det finns ingen veterinärundertyp under LocalBusiness, så varje alternativ har en nackdel."
+   ],
+   "table": {
+    "head": [
+     "Alternativ",
+     "Vad det säger",
+     "Nackdel"
+    ],
+    "rows": [
+     [
+      "VeterinaryCare",
+      "Det här är en veterinärklinik",
+      "Inte en LocalBusiness-typ, så platsuppgifter som öppettider hamnar utanför typens definition"
+     ],
+     [
+      "Både VeterinaryCare och LocalBusiness (två typer i JSON-LD)",
+      "En veterinärklinik som man kan besöka",
+      "Fungerar där ni skriver JSON-LD för hand eller där ett tillägg accepterar mer än en typ; visning i Google utlovas inte"
+     ],
+     [
+      "Bara LocalBusiness",
+      "En verksamhet som man kan besöka",
+      "Strukturerad data säger inte längre att det är en veterinär; beskrivningen och sidtexten måste bära det"
+     ]
+    ],
+    "caption": "Vilket ni än väljer förutsätter det att sidtexten redan anger djurslag, öppettider och plats. Strukturerad data återger sidans uppgifter för maskiner; den lägger inte till uppgifter som saknas på sidan."
+   },
+   "after": [
+    "Fältet för verksamhetstyp i Nurevo AEO tar en typ. För att göra det tydligt för AI att ni är veterinär visar den här guiden hur ni anger VeterinaryCare. Er adress, ert telefonnummer och era öppettider publiceras då på den noden."
+   ]
+  },
+  {
+   "heading": "Marknadsföringsregler och text skriven för AI",
+   "paragraphs": [
+    "Marknadsföring av veterinärverksamhet är reglerad i många länder, och AI-vänlig text är fortfarande marknadsföring. Undvik jämförelser och superlativ (\"stadens bästa veterinär\", \"säkrare operationer än någon annanstans\") och resultatlöften ni inte kan belägga. AI återanvänder ofta era formuleringar, och samma text hamnar ofta i annonser. Det AI faktiskt kan använda i ett svar är kontrollerbara uppgifter: djurslag, öppettider, utrustning och kostnader.",
+    "I Japan begränsar till exempel Veterinary Practice Act (artikel 17) och dess riktlinje vad en klinik får marknadsföra. En revidering 2024, i kraft från 1 april 2024, utökade listan, och för de nytillåtna punkterna ber den kliniker att samtidigt ange kontakt för frågor, den vanliga behandlingen, de viktigaste riskerna eller biverkningarna och kostnaden. [Aichi prefektur (japanska)](https://www.pref.aichi.jp/soshiki/chikusan/juiryokoukokuseigen.html). Riktlinjen (i sin lydelse från 2014) ser i princip inte klinikens egen webbplats som marknadsföring enligt lagen, men sökannonser och bannerannonser kan vara det, och den förbjuder jämförande och överdriven marknadsföring. [Riktlinjen som PDF (japanska)](https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/305/guideline.pdf). Kliniker i andra länder bör kontrollera sin egen tillsynsmyndighets regler innan de publicerar."
+   ]
+  },
+  {
+   "heading": "Så ställer ni in det på en veterinärkliniks WordPress-webbplats",
+   "list": [
+    "Installera och aktivera Nurevo AEO (gratis) från [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK och VK All in One Expansion Unit fortsätter att fungera som vanligt.",
+    "Välj \"Klinik eller tandvård\" i installationsguiden. Ange sedan VeterinaryCare i \"Verksamhetstyp (schema.org-typ)\" under Inställningar. VeterinaryCare räknas till gruppen \"Klinik eller tandvård\", så om ni öppnar guiden igen senare behålls typen.",
+    "Kontrollera klinikens namn, adress, telefon, öppettider och beskrivning. Öppettider skrivna i en vanlig form, som \"9:00-12:00, 16:00-19:00, stängt onsdag\", publiceras som öppettider i strukturerad data, och guiden visar dem som de kommer att publiceras. Tider den inte kan läsa gissas inte; de publiceras som ni skrev dem. Skriv sista ankomsttid och vad som gäller utanför öppettid i beskrivningen och sidtexten.",
+    "Skriv i beskrivningen, med en eller två meningar, vilka djurslag ni behandlar och vad som utmärker er. Till exempel: \"Djursjukhus fem minuter från [station]. Vi behandlar hundar, katter, kaniner och illrar. Tidsbokning; parkering för sex bilar. Utanför öppettid hänvisar vi till [akutsjukhus].\"",
+    "Lägg under Inställningar till allmänna besök, vaccinationer, hälsokontroller, tandvård, hembesök och så vidare som tjänster, en i taget. Ange namn, beskrivning, sid-URL, kategori och längd i minuter, och er bokningssida som boknings-URL. Ange bara ett pris där ni publicerar ett fast pris (med tomt pris publiceras inget pris). Varje tjänst publiceras som en Service kopplad till kliniken och visas som en rad i llms.txt.",
+    "Lägg till FAQ (vilka djurslag ni behandlar, om ni tar emot utan bokning, vad man gör om djuret blir sjukt på natten eller en helgdag, parkering, betalning, direktfakturering till försäkring) och placera blocket Nurevo FAQ (eller kortkoden [nurevo_faq]) på sidan där de ska visas.",
+    "Kör kontrollen på skärmen för AEO-poäng och åtgärda det checklistan visar med korrigeringar med ett klick. Strukturerad data, llms.txt och regler för AI-crawlers skrivs ut i gratisplanen.",
+    "Se hur webbplatsen ser ut utifrån med den [kostnadsfria kontrollen av AI-läsbarhet](/check), och kontrollera att öppettider och stängda dagar stämmer med er Google-företagsprofil och eventuella bokningssajter."
+   ],
+   "after": [
+    "Tillsammans med ett SEO-tillägg publicerar Nurevo AEO ingen andra klinik-nod. Det lägger bara till det som saknas i SEO-tilläggets graf: adress, telefon, öppettider, typen VeterinaryCare och era tjänster. Se [lägga till uppgifter om lokala företag i Yoast, Rank Math och AIOSEO](/guide/local-business-schema-seo-plugins).",
+    "OpenAI säger att webbplatser som blockerar OAI-SearchBot inte visas i ChatGPT:s söksvar (kontrollerat 31 oktober 2026). [OpenAI: Översikt över crawlers](https://developers.openai.com/api/docs/bots). Se till att robots.txt eller ett säkerhetstillägg inte blockerar den utan att ni vet om det."
+   ]
+  },
+  {
+   "heading": "Checklista innan ni publicerar",
+   "list": [
+    "Djurslagen ni behandlar, inklusive dem ni inte behandlar, står som text.",
+    "Öppettider, sista ankomsttid och stängda dagar står som text, inte som bild.",
+    "Vad som gäller kvällar, helger och akut är beskrivet, med en hänvisning om ni inte täcker det själva.",
+    "Klinikens namn, adress, telefon och öppettider stämmer överens på webbplatsen, Google-företagsprofilen och bokningssajter.",
+    "Typen i strukturerad data är VeterinaryCare i stället för en kvarglömd LocalBusiness eller MedicalBusiness (eller så har ni valt ett annat alternativ av en anledning).",
+    "Öppettiderna i strukturerad data stämmer med dem som visas på sidan.",
+    "Inga jämförelser, superlativ eller obelagda resultatlöften i texten eller i strukturerad data.",
+    "llms.txt listar era sidor med översikt, djurslag, öppettider, bokning, vägbeskrivning och FAQ. [Vad är llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Kontrollera om ni syns i AI-svar",
+   "paragraphs": [
+    "När uppgifterna är på plats, ställ de frågor till AI som djurägare skulle ställa (område + djurslag + dag eller tid + tjänst), utan klinikens namn, och se om kliniken nämns med namn eller URL. Fråga sedan med namn — \"Tar [klinik] emot kaniner? Har den öppet på söndag?\" — och jämför svaret med dagens uppgifter. Om det är fel, se vilken sida AI hänvisade till och rätta den sidan eller den externa uppgiften. AI-svar ändras från gång till gång, så ställ samma frågor flera gånger med mellanrum och för logg. Stegen och en loggmall finns i [så mäter du AI-synlighet](/guide/measure-ai-visibility), och visningar i Googles AI-funktioner i [guiden om Search Console](/guide/search-console-ai-features).",
+    "I planerna Free och Standard ställer Nurevo AEO en gång i månaden tre frågor till Perplexity, byggda på er verksamhetstyp och ert område (aldrig klinikens namn), och registrerar om kliniken eller webbplatsen syntes. Planen Pro (från $99/månad) lägger till mätning av AI-synlighet i beta: andelen AI-svar där kliniken förekommer, jämfört med konkurrenter över tid (mäts i dag på Perplexity, på ChatGPT när det är konfigurerat). Båda tittar på ett urval av svar, inte alla svar."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Var ska en veterinärklinik börja med AI-sök?",
+   "a": "Skriv djurslagen ni behandlar (och dem ni inte behandlar), öppettider och sista ankomst, stängda dagar, vad som gäller utanför öppettid och hur man bokar som text på era sidor. Publicera sedan samma uppgifter i strukturerad data och llms.txt, och se till att de stämmer med er Google-företagsprofil och bokningssajter."
+  },
+  {
+   "q": "Vilken typ av strukturerad data passar en veterinärklinik?",
+   "a": "schema.org har VeterinaryCare. Den ligger under MedicalOrganization, inte LocalBusiness, så platsuppgifter som öppettider hamnar utanför dess definition. Använd VeterinaryCare för att säga att ni är veterinär, eller både VeterinaryCare och LocalBusiness där ni kan publicera två typer. Alla alternativ förutsätter att uppgifterna står på sidan."
+  },
+  {
+   "q": "Hur visar vi att vi behandlar kaniner eller fåglar?",
+   "a": "Det finns ingen property i strukturerad data för vilka djurslag en klinik behandlar, så skriv det i beskrivningen, tjänster, FAQ och sidtext: \"Vi behandlar kaniner och illrar. Vi behandlar inte fåglar.\" När ni skriver vad ni inte behandlar minskar risken att AI skickar fel djurägare till er."
+  },
+  {
+   "q": "Ska vi skriva det om vi inte har jour?",
+   "a": "Ja. Skriv att ni inte har det och vart ni hänvisar: \"Utanför våra öppettider hänvisar vi till [akutsjukhus].\" Frågor utanför öppettid är ofta brådskande, och ett AI-svar som skickar en djurägare till en stängd klinik gör verklig skada."
+  },
+  {
+   "q": "Kan vi skriva \"stadens bästa veterinär\" för AI:s skull?",
+   "a": "Undvik det. Reglerna för marknadsföring av veterinärverksamhet i många länder begränsar jämförande och överdrivna påståenden, och AI har mycket mer nytta av kontrollerbara uppgifter än av slogans. Kontrollera tillsynsmyndighetens regler innan ni publicerar sådana formuleringar."
+  },
+  {
+   "q": "Är Nurevo AEO gratis?",
+   "a": "Ja. Verksamhetstyp (VeterinaryCare), adress, öppettider, tjänster och FAQ i strukturerad data, llms.txt, regler för AI-crawlers och AEO-poäng ingår i gratisplanen. De betalda planerna lägger till en alltid aktuell regeluppsättning (Standard, $20/månad) och mätning av AI-synlighet i beta (Pro, från $99/månad). [Nurevo AEO på WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garanterar detta att min klinik syns i ChatGPT?",
+   "a": "Nej. AI-svar ändras, och inget verktyg eller någon teknik kan garantera ett omnämnande eller en placering. Det ni kan göra är att göra era uppgifter lätta för AI att läsa och fortsätta kontrollera om ni syns."
+  }
+ ],
+ "relatedHeading": "Relaterade guider",
+ "cta": {
+  "heading": "Se först hur AI läser klinikens webbplats",
+  "body": "Den kostnadsfria kontrollen visar läget för er strukturerade data, llms.txt och åtkomst för AI-crawlers, utan registrering. På WordPress fyller Nurevo AEO luckorna gratis.",
+  "label": "Kör den kostnadsfria kontrollen av AI-läsbarhet",
+  "href": "/check",
+  "secondary": {
+   "label": "Hämta Nurevo AEO på WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT är ett varumärke som tillhör OpenAI, Perplexity tillhör Perplexity AI och Google tillhör Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK och VK All in One Expansion Unit är varumärken som tillhör respektive ägare. Nurevo är inte knutet till dem. Den här artikeln är inte juridisk rådgivning."
+}
