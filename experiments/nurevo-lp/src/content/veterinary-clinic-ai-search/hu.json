@@ -1,0 +1,211 @@
+{
+ "title": "AI-keresés állatorvosoknak: fajok, nyitvatartás, ügyelet | Nurevo",
+ "description": "AI-keresés állatorvosi rendelőknek: kezelt fajok, nyitvatartás, ügyelet és foglalás szövegben és strukturált adatokban. A VeterinaryCare buktatója és WordPress-lépések.",
+ "h1": "AI-keresés állatorvosi rendelőknek: hogy az AI helyesen olvassa a kezelt fajokat, a nyitvatartást és az ügyeletet",
+ "lead": "Egy állatorvosi rendelő vagy állatkórház AI-keresésre optimalizálása (AEO) azt jelenti, hogy pontosan és mindenhol egyformán közzéteszi azokat az adatokat, amelyekre a gazdik rákérdeznek: milyen fajokat kezel, mikor van nyitva és meddig lehet utoljára érkezni, hogyan oldja meg az éjszakákat, hétvégéket és sürgős eseteket, időpontra vagy érkezési sorrendben fogad-e, hol lehet parkolni és hogyan lehet fizetni. Mindezt az oldalak szövegében és a strukturált adatokban (schema.org VeterinaryCare) is. Az AI válaszaiban két dolog különbözteti meg leginkább a rendelőket: ha egyértelműen leírják, milyen állatokat fogadnak (és milyeneket nem), és ha megmondják, mi a teendő zárás után, beleértve azt is, hová küldik a gazdikat, amikor zárva vannak.",
+ "intro": [
+  "Írva: 2026. november 13. (JST). A schema.org-ra, a Google-re, az OpenAI-ra és a japán szabályozásra vonatkozó tényeket a szövegben megadott napokon ellenőriztük. Az állatorvosi reklám szabályai országonként eltérnek; nézze meg a saját állatorvosi felügyeleti szervének előírásait.",
+  "Az AI válaszai napról napra és a kérdés megfogalmazásától függően változnak. Az itt leírt lépések megkönnyítik, hogy az AI helyesen olvassa a rendelője adatait. Azt nem tudják garantálni, hogy megjelenik egy AI-válaszban, vagy hogy bármilyen helyezést ér el."
+ ],
+ "sections": [
+  {
+   "heading": "Mit kérdeznek a gazdik az AI-tól",
+   "paragraphs": [
+    "Amikor valaki a ChatGPT-t, a Perplexityt vagy a Google AI Overviewst kéri meg, hogy keressen állatorvost, az AI elolvassa, amit a weben talál, és néhány rendelő nevével válaszol. A kérdés ritkán csak annyi, hogy „állatorvos a közelemben”. Inkább így hangzik: „állatorvos [településen], aki nyulakat is ellát”, „melyik állatkórház van nyitva vasárnap este”, „hol lehet a macskám fogkőeltávolítását elvégeztetni” vagy „állatorvos parkolóval az állomás közelében”. A faj, a nap és az időpont, a szolgáltatás és a megközelíthetőség mind benne van a kérdésben.",
+    "A nagy különbség egy humán fogorvosi vagy orvosi rendelőhöz képest az, hogy a listát először a faj szűkíti. Van rendelő, amely csak kutyákat és macskákat fogad, van, amely nyulakat, görényeket, madarakat vagy hüllőket is, és van, amely csak macskákat. A gazdik ezt akarják tudni mindenekelőtt. Mégis sok rendelő weboldalán a fajok csak egy bannerképen szerepelnek, vagy sehol. Az AI rosszul pótolja azt, ami nincs leírva, így az a rendelő, amely sehol nem írja le, hogy „nyulakat is ellátunk”, könnyen kimarad a „nyúlhoz állatorvos” válaszból.",
+    "A másik az ügyelet. Ezeket a kérdéseket gyakran akkor teszik fel, amikor az állat beteg, és itt egy rossz válasz többe kerül, mint bárhol máshol. A Google szerint nincsenek külön követelmények vagy speciális strukturált adatok az AI Overviewsban vagy az AI Mode-ban való megjelenéshez, és a szokásos SEO-alapok érvényesek: a strukturált adatoknak egyezniük kell a látható szöveggel, a cégprofilnak pedig naprakésznek kell lennie (ellenőrizve: 2026. november 12.). [Google: AI-funkciók és az Ön webhelye](https://developers.google.com/search/docs/appearance/ai-features). Ez a munka nem trükk, hanem a rendelő adatainak pontossá tétele és pontosan tartása.",
+    "A független rendelőknek van okuk foglalkozni ezzel. Egy 2026. júniusi hír az 5W Public Relationsnek tulajdonított eredményekre hivatkozott, amelyek szerint néhány nagy lánc kapta az AI-válaszokban az állatorvosi ajánlások nagy részét, a vizsgált független rendelők többsége pedig alig volt jelen. A cikk nem közölte a módszert és a mintát, ezért a számokat csak tájékoztató jellegűnek tekintse. [myVETcandy, 2026. június 14.](https://www.myvetcandy.com/news/2026/6/14/chatgpt-keeps-recommending-the-same-veterinary-chains-independent-vets-are-barely-showing-up)"
+   ]
+  },
+  {
+   "heading": "Milyen adatokat tegyen közzé, és hogyan írja le őket",
+   "paragraphs": [
+    "A táblázat azt sorolja fel, mit érdemes szövegként leírni a weboldalon, hogy az AI válaszolni tudjon a gazdik kérdéseire. A jobb oldali oszlop azt mutatja, hová kerül az egyes adat a strukturált adatokban vagy a Nurevo AEO-ban."
+   ],
+   "table": {
+    "head": [
+     "Adat",
+     "Hogyan írja le",
+     "Strukturált adatok és beállítások"
+    ],
+    "rows": [
+     [
+      "Kezelt fajok",
+      "„Kutyák, macskák, nyulak és görények. Madarakat és hüllőket nem fogadunk.” Azt is írja le, mit nem kezel",
+      "Nincs külön tulajdonság, ezért a leírást, a szolgáltatásokat, a GYIK-et és az oldal szövegét használja"
+     ],
+     [
+      "Nyitvatartás és utolsó érkezés",
+      "„9:00–12:00 (utolsó érkezés 11:30) és 16:00–19:00; szerdán és ünnepnapokon zárva”",
+      "Nyitvatartás (openingHoursSpecification); az utolsó érkezés a szövegben és a GYIK-ben"
+     ],
+     [
+      "Foglalás módja",
+      "Időpontra vagy érkezési sorrendben, a foglalási telefonszám és oldal, valamint az, hogy bejelentkezés nélkül is fogadnak-e",
+      "Foglalási URL a szolgáltatásoknál; GYIK"
+     ],
+     [
+      "Éjszaka, hétvége, sürgős eset",
+      "Az időszakok és feltételek, amelyekben ellátást nyújt. Ha nem nyújt, írja le: „Rendelési időn kívül a(z) [sürgősségi állatkórház] felé irányítjuk Önt”",
+      "Szöveg és GYIK; a nyitvatartásba ne írjon olyan időszakot, amikor nem rendel"
+     ],
+     [
+      "Háznál történő ellátás",
+      "Vállalja-e, milyen területen és hogyan lehet kérni",
+      "Egy szolgáltatás"
+     ],
+     [
+      "Szakterületek",
+      "Általános praxis, bőrgyógyászat, fogászat, szemészet stb.",
+      "Mindegyik külön szolgáltatás"
+     ],
+     [
+      "Megelőzés és szűrés",
+      "Oltások, parazitamegelőzés, állapotfelmérés, chipezés",
+      "Szolgáltatások"
+     ],
+     [
+      "Felszereltség",
+      "A diagnosztikai eszközei (CT, ultrahang), és hová küldi azokat a vizsgálatokat, amelyeket nem tud elvégezni",
+      "Az oldal szövege; mielőtt hirdetésben használja, nézze meg a reklámszabályokat"
+     ],
+     [
+      "Megközelítés",
+      "Cím, legközelebbi állomás, parkolóhelyek száma, fizetési módok",
+      "Cím és telefon a strukturált adatokban; parkolás és fizetés a szövegben és a GYIK-ben"
+     ],
+     [
+      "Kisállat-biztosítás",
+      "Mely biztosítókkal számol el közvetlenül, vagy hogy a gazdi maga intézi a térítést",
+      "GYIK"
+     ]
+    ],
+    "caption": "Kiinduló lista. Csak azt írja le, amit ténylegesen csinál, a mai állapot szerint. Ha valami változik, ugyanazon a napon frissítse az oldalt, a strukturált adatokat, a Google Cégprofilt és a foglalási oldalakat."
+   },
+   "after": [
+    "Minden adatot olyan mondatként írjon le, amelyet az AI egyenesen átvehet egy válaszba. A „Egzotikus kedvencek is jöhetnek, kérdezzen” kevésbé segít, mint a „Nyulakat, görényeket és hörcsögöket kezelünk. Madarakat és hüllőket nem.” A második több kérdésre válaszol, és ha leírja, mit nem csinál, kisebb az esélye, hogy az AI tévedésből Önhöz küld valakit."
+   ]
+  },
+  {
+   "heading": "A strukturált adatok típusa: a VeterinaryCare buktatója",
+   "paragraphs": [
+    "A schema.org-ban van típus az állatorvosoknak: [VeterinaryCare](https://schema.org/VeterinaryCare). Azt érdemes tudni, hol helyezkedik el. A VeterinaryCare a [MedicalOrganization](https://schema.org/MedicalOrganization) altípusa. A Dentisttel vagy a Physiciannel ellentétben nem a [LocalBusiness](https://schema.org/LocalBusiness) alatt van, amely a fizikai hellyel rendelkező vállalkozások típusa (ellenőrizve 2026. november 13-án a schema-dts 2.1.0 típusdefiníciói alapján, amelyeket a schema.org szókészletéből generálnak). A nyitvatartás (openingHoursSpecification) a Place tulajdonsága, a LocalBusiness pedig a Place egy fajtája.",
+    "A Google helyi vállalkozásokra vonatkozó strukturált adatos dokumentációja azt kéri, hogy a lehető legpontosabb LocalBusiness-altípust használja (ellenőrizve: 2026. október 29.). [Google: Helyi vállalkozás strukturált adatai](https://developers.google.com/search/docs/appearance/structured-data/local-business). A LocalBusiness alatt nincs állatorvosi altípus, így minden lehetőségnek megvan a maga kompromisszuma."
+   ],
+   "table": {
+    "head": [
+     "Lehetőség",
+     "Mit állít",
+     "Kompromisszum"
+    ],
+    "rows": [
+     [
+      "VeterinaryCare",
+      "Ez egy állatorvosi rendelő",
+      "Nem LocalBusiness-típus, így a helyhez kötött adatok, például a nyitvatartás, kívül esnek a típus definícióján"
+     ],
+     [
+      "VeterinaryCare és LocalBusiness együtt (két típus a JSON-LD-ben)",
+      "Állatorvosi rendelő, amelyet fel lehet keresni",
+      "Ott működik, ahol kézzel írja a JSON-LD-t, vagy a bővítmény több típust is elfogad; a Google semmilyen megjelenítést nem ígér"
+     ],
+     [
+      "Csak LocalBusiness",
+      "Vállalkozás, amelyet fel lehet keresni",
+      "A strukturált adatok már nem mondják, hogy állatorvosról van szó; ezt a leírásnak és az oldal szövegének kell hordoznia"
+     ]
+    ],
+    "caption": "Bármelyiket választja, feltételezi, hogy az oldal szövege már tartalmazza a fajokat, a nyitvatartást és a helyet. A strukturált adatok a gépek számára ismétlik meg az oldal tényeit; nem adnak hozzá olyat, ami az oldalon nincs."
+   },
+   "after": [
+    "A Nurevo AEO vállalkozástípus-mezője egy típust fogad el. Hogy az AI számára egyértelmű legyen, hogy Ön állatorvos, ez az útmutató azt mutatja be, hogyan adja meg a VeterinaryCare-t. A címe, telefonszáma és nyitvatartása ezután ezen a csomóponton jelenik meg."
+   ]
+  },
+  {
+   "heading": "Reklámszabályok és az AI-nak írt szöveg",
+   "paragraphs": [
+    "Az állatorvosi reklámot sok országban szabályozzák, és az AI-barát szöveg is reklámszöveg. Kerülje az összehasonlításokat és a felsőfokot („a város legjobb állatorvosa”, „biztonságosabb műtét, mint bárhol máshol”), valamint az alá nem támasztható eredményígéreteket. Az AI hajlamos átvenni a megfogalmazását, és ugyanaz a szöveg gyakran a hirdetésekbe is bekerül. Amit az AI ténylegesen fel tud használni egy válaszban, azok az ellenőrizhető tények: fajok, nyitvatartás, felszereltség és költségek.",
+    "Japánban például az állatorvosi törvény (17. cikk) és annak irányelve korlátozza, mit hirdethet egy rendelő. Egy 2024-es módosítás, amely 2024. április 1-jén lépett hatályba, bővítette a listát, és az újonnan engedélyezett tételeknél azt kéri, hogy a rendelők mellettük tüntessék fel a kapcsolattartási elérhetőséget, a szokásos kezelést, a főbb kockázatokat vagy mellékhatásokat és a költséget. [Aichi prefektúra (japánul)](https://www.pref.aichi.jp/soshiki/chikusan/juiryokoukokuseigen.html). Az irányelv (a 2014-es módosítás szerint) a rendelő saját weboldalát elvben nem tekinti a törvény szerinti reklámnak, a keresési és bannerhirdetések viszont annak minősülhetnek, és tiltja az összehasonlító és túlzó reklámot. [Az irányelv PDF-ben (japánul)](https://www.pref.okinawa.jp/_res/projects/default_project/_page_/001/011/305/guideline.pdf). Más országokban működő rendelők közzététel előtt nézzék meg a saját felügyeleti szervük szabályait."
+   ]
+  },
+  {
+   "heading": "Beállítás egy WordPressen futó állatorvosi oldalon",
+   "list": [
+    "Telepítse és aktiválja a Nurevo AEO-t (ingyenes) a [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) oldalról. A Yoast SEO, a Rank Math, az All in One SEO, a Slim SEO, a SEO SIMPLE PACK és a VK All in One Expansion Unit ugyanúgy működik tovább.",
+    "A beállítási varázslóban válassza a „Klinika vagy fogászat” lehetőséget. Ezután a Beállításokban adja meg a VeterinaryCare értéket a „Vállalkozás típusa (schema.org típus)” mezőben. A VeterinaryCare a „Klinika vagy fogászat” csoport része, így ha később újra megnyitja a varázslót, a típus megmarad.",
+    "Ellenőrizze a rendelő nevét, címét, telefonszámát, nyitvatartását és leírását. A szokásos formában megadott nyitvatartás, például „9:00-12:00, 16:00-19:00, szerdán zárva”, nyitvatartásként jelenik meg a strukturált adatokban, és a varázsló úgy mutatja vissza, ahogyan közzé lesz téve. Amit nem tud értelmezni, azt nem találgatja ki; úgy teszi közzé, ahogyan beírta. Az utolsó érkezés idejét és az ügyeleti rendet a leírásba és az oldal szövegébe írja.",
+    "A leírásban egy-két mondatban mondja el, milyen fajokat kezel, és mi a különlegessége. Például: „Állatkórház öt percre a(z) [állomástól]. Kutyákat, macskákat, nyulakat és görényeket kezelünk. Időpontfoglalással; parkoló hat autónak. Rendelési időn kívül a(z) [sürgősségi állatkórház] felé irányítunk.”",
+    "A Beállításokban egyenként adja hozzá szolgáltatásként az általános vizsgálatot, az oltásokat, az állapotfelmérést, a fogászatot, a háznál történő ellátást stb. Adja meg a nevet, a leírást, az oldal URL-jét, a kategóriát és az időtartamot percben, foglalási URL-ként pedig a foglalási oldalát. Árat csak ott adjon meg, ahol rögzített árat tesz közzé (üres árnál nem jelenik meg ár). Minden szolgáltatás a rendelőjéhez kapcsolt Service-ként jelenik meg, és egy sorként szerepel az llms.txt-ben.",
+    "Adjon hozzá GYIK-et (milyen fajokat kezel, fogad-e bejelentkezés nélkül, mi a teendő, ha az állat éjjel vagy ünnepnapon lesz rosszul, parkolás, fizetés, biztosítási elszámolás), és helyezze el a Nurevo GYIK blokkot (vagy a [nurevo_faq] rövidkódot) azon az oldalon, ahol meg kell jelenniük.",
+    "Futtassa az ellenőrzést az AEO-pontszám képernyőn, és javítsa ki az ellenőrzőlistán látható hibákat az egykattintásos javításokkal. A strukturált adatok, az llms.txt és az AI-robotokra vonatkozó szabályok az ingyenes csomagban is elkészülnek.",
+    "Nézze meg kívülről, hogyan látszik az oldala, az [ingyenes AI-olvashatósági ellenőrzéssel](/check), és győződjön meg róla, hogy a nyitvatartás és a szünnapok egyeznek a Google Cégprofillal és a foglalási oldalakkal."
+   ],
+   "after": [
+    "Egy SEO-bővítmény mellett a Nurevo AEO nem hoz létre második rendelő-csomópontot. Csak azt egészíti ki, ami a SEO-bővítmény gráfjából hiányzik: címet, telefonszámot, nyitvatartást, a VeterinaryCare típust és a szolgáltatásokat. Lásd: [helyi vállalkozás adatainak hozzáadása Yoasthoz, Rank Mathhoz és AIOSEO-hoz](/guide/local-business-schema-seo-plugins).",
+    "Az OpenAI szerint az OAI-SearchBotot letiltó webhelyek nem jelennek meg a ChatGPT keresési válaszaiban (ellenőrizve: 2026. október 31.). [OpenAI: A robotok áttekintése](https://developers.openai.com/api/docs/bots). Győződjön meg róla, hogy a robots.txt vagy egy biztonsági bővítmény nem tiltja le a tudta nélkül."
+   ]
+  },
+  {
+   "heading": "Ellenőrzőlista közzététel előtt",
+   "list": [
+    "A kezelt fajok – azok is, amelyeket nem kezel – szövegként szerepelnek.",
+    "A nyitvatartás, az utolsó érkezés ideje és a szünnapok szövegként, nem képként szerepelnek.",
+    "Az ügyeleti és sürgősségi rend le van írva, és ha nem nyújt ilyet, szerepel, hová irányít.",
+    "A rendelő neve, címe, telefonszáma és nyitvatartása egyezik a weboldalán, a Google Cégprofilban és a foglalási oldalakon.",
+    "A strukturált adatok típusa VeterinaryCare, nem egy bennmaradt LocalBusiness vagy MedicalBusiness (vagy okkal döntött egy másik lehetőség mellett).",
+    "A strukturált adatokban szereplő nyitvatartás egyezik az oldalon látható nyitvatartással.",
+    "Sem a szövegben, sem a strukturált adatokban nincs összehasonlítás, felsőfok vagy alá nem támasztott eredményígéret.",
+    "Az llms.txt felsorolja az áttekintő, a fajokról, a nyitvatartásról, a foglalásról, a megközelítésről szóló és a GYIK-oldalakat. [Mi az llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Hogyan ellenőrizze, megjelenik-e az AI válaszaiban",
+   "paragraphs": [
+    "Ha az adatok a helyükön vannak, tegye fel az AI-nak azokat a kérdéseket, amelyeket a gazdik feltennének (terület + faj + nap vagy időpont + szolgáltatás), a rendelő neve nélkül, és nézze meg, felbukkan-e a rendelője névvel vagy URL-lel. Ezután kérdezzen rá név szerint – „A(z) [rendelő] ellát nyulakat? Vasárnap nyitva van?” –, és vesse össze a választ a mai tényekkel. Ha téves, nézze meg, melyik oldalt idézte az AI, és javítsa azt az oldalt vagy a külső bejegyzést. Az AI válaszai futtatásról futtatásra változnak, ezért ugyanazokat a kérdéseket többször, időben elosztva tegye fel, és vezessen nyilvántartást. A lépések és egy naplósablon a [hogyan mérje az AI-láthatóságot](/guide/measure-ai-visibility) útmutatóban vannak, a Google AI-funkcióiban elért megjelenések pedig [a Search Console-útmutatóban](/guide/search-console-ai-features).",
+    "A Free és a Standard csomagban a Nurevo AEO havonta egyszer három kérdést tesz fel a Perplexitynek, amelyeket a vállalkozás típusa és a terület alapján állít össze (soha nem a rendelő nevével), és rögzíti, megjelent-e a rendelője vagy a weboldala. A Pro csomag (havi $99-tól) béta AI-láthatósági mérést ad hozzá: az AI-válaszok hányadában jelenik meg a rendelője, a versenytársakhoz viszonyítva, időben követve (ma a Perplexityn mérve, a ChatGPT-n beállítás után). Mindkettő a válaszok egy mintáját vizsgálja, nem minden választ."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hol kezdje egy állatorvosi rendelő az AI-keresést?",
+   "a": "Írja le szövegként az oldalain a kezelt fajokat (és azokat, amelyeket nem kezel), a nyitvatartást és az utolsó érkezést, a szünnapokat, az ügyeleti rendet és a foglalás módját. Ezután tegye közzé ugyanezeket a tényeket a strukturált adatokban és az llms.txt-ben, és hangolja össze őket a Google Cégprofillal és a foglalási oldalakkal."
+  },
+  {
+   "q": "Milyen strukturált adattípus illik egy állatorvosi rendelőhöz?",
+   "a": "A schema.org-ban ott a VeterinaryCare. Ez a MedicalOrganization alatt van, nem a LocalBusiness alatt, így a helyhez kötött adatok, például a nyitvatartás, kívül esnek a definícióján. A VeterinaryCare-rel mondhatja meg, hogy állatorvos, vagy használja a VeterinaryCare-t és a LocalBusinesst együtt, ahol két típust is közzé tud tenni. Minden lehetőség feltételezi, hogy a tények az oldalon vannak."
+  },
+  {
+   "q": "Hogyan mutassam meg, hogy nyulakat vagy madarakat is kezelünk?",
+   "a": "A rendelő által kezelt fajokra nincs strukturált adatos tulajdonság, ezért írja be a leírásba, a szolgáltatásokba, a GYIK-be és az oldal szövegébe: „Nyulakat és görényeket kezelünk. Madarakat nem.” Ha leírja, mit nem kezel, kisebb az esélye, hogy az AI rossz gazdikat küld Önhöz."
+  },
+  {
+   "q": "Le kell írnunk, ha nem nyújtunk ügyeletet?",
+   "a": "Igen. Írja le, hogy nem nyújt, és hová irányítja a gazdikat: „Rendelési időn kívül a(z) [sürgősségi állatkórház] felé irányítunk.” Az ügyeleti kérdések gyakran sürgősek, és egy AI-válasz, amely zárva tartó rendelőbe küld egy gazdit, valódi kárt okoz."
+  },
+  {
+   "q": "Beírhatjuk az AI kedvéért, hogy „a város legjobb állatorvosa”?",
+   "a": "Kerülje. Sok országban az állatorvosi reklámszabályok korlátozzák az összehasonlító és túlzó állításokat, és az AI az ellenőrizhető tényeket sokkal jobban tudja használni, mint a jelszavakat. Ilyen megfogalmazás közzététele előtt nézze meg a felügyeleti szerve szabályait."
+  },
+  {
+   "q": "Ingyenes a Nurevo AEO?",
+   "a": "Igen. A vállalkozás típusa (VeterinaryCare), a cím, a nyitvatartás, a szolgáltatások és a GYIK strukturált adatai, az llms.txt, az AI-robotokra vonatkozó szabályok és az AEO-pontszám az ingyenes csomagban vannak. A fizetős csomagok mindig naprakész szabálykészletet (Standard, havi $20) és béta AI-láthatósági mérést (Pro, havi $99-tól) adnak hozzá. [Nurevo AEO a WordPress.org-on](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garantálja ez, hogy a rendelőm megjelenik a ChatGPT-ben?",
+   "a": "Nem. Az AI válaszai változnak, és semmilyen eszköz vagy módszer nem garantálhat említést vagy helyezést. Annyit tehet, hogy az adatait könnyen olvashatóvá teszi az AI számára, és folyamatosan ellenőrzi, megjelenik-e."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Először nézze meg, hogyan olvassa az AI a rendelője weboldalát",
+  "body": "Az ingyenes ellenőrzés megmutatja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát, regisztráció nélkül. WordPressen a Nurevo AEO ingyen pótolja a hiányokat.",
+  "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO letöltése a WordPress.org-ról",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google pedig a Google LLC védjegye. A Yoast SEO, a Rank Math, az All in One SEO, a Slim SEO, a SEO SIMPLE PACK és a VK All in One Expansion Unit a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük. Ez a cikk nem minősül jogi tanácsadásnak."
+}
