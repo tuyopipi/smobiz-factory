@@ -79,5 +79,6 @@
 | 日付（JST） | スラッグ | 切り口 | データ | 言語 | PR |
 |---|---|---|---|---|---|
 | 2026-11-10 | research-japan-web-agencies-ai-search-2026 | 総論（国内Web制作会社サイトのAI検索対応状況） | summary_2026-11-05 | ja/en | content/research-20261110（未マージの #57・#60 と同じ切り口。#60 の原稿を最新の main に載せ直したもの） |
+| 2026-11-13 | research-structured-data-2026 | 構造化データの種類と壊れ率（日本・海外、WP/非WP、SEOプラグイン別、国別） | raw/summary_2026-11-12 | ja/en | content/research-20261113（#77 ボット別・#83 llms.txt は未マージ） |
 
-未着手の切り口：AIクローラーのブロック実態（ボット別）／llms.txt 導入率／構造化データの種類と壊れ率／都道府県別／WordPress と非WordPress／SEOプラグイン別／日本と海外の比較／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。
+未着手の切り口：AIクローラーのブロック実態（ボット別）／llms.txt 導入率／都道府県別／WordPress と非WordPress／SEOプラグイン別／日本と海外の比較／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。
