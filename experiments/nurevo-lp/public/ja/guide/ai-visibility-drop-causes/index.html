@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI登場率が下がったときの原因の切り分け：制作会社の報告手順 | Nurevo</title>
+<meta name="description" content="AIでの登場率が下がったら、①本当に下がったか②どのAI・どの質問で下がったか③サイト側・外部・AI側のどれが原因かの順に確かめます。お客様への報告の書き方、WordPressでの確認手順も。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/ai-visibility-drop-causes/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/ai-visibility-drop-causes/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/ai-visibility-drop-causes/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/ai-visibility-drop-causes/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/ai-visibility-drop-causes/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/ai-visibility-drop-causes/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/ai-visibility-drop-causes/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/ai-visibility-drop-causes/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/ai-visibility-drop-causes/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="AI登場率が下がったときの原因の切り分け：制作会社の報告手順 | Nurevo">
+<meta property="og:description" content="AIでの登場率が下がったら、①本当に下がったか②どのAI・どの質問で下がったか③サイト側・外部・AI側のどれが原因かの順に確かめます。お客様への報告の書き方、WordPressでの確認手順も。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/ai-visibility-drop-causes/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AI登場率が下がったときの原因の切り分け：制作会社の報告手順 | Nurevo">
+<meta name="twitter:description" content="AIでの登場率が下がったら、①本当に下がったか②どのAI・どの質問で下がったか③サイト側・外部・AI側のどれが原因かの順に確かめます。お客様への報告の書き方、WordPressでの確認手順も。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/ai-visibility-drop-causes/#webpage","url":"https://nurevo.jp/ja/guide/ai-visibility-drop-causes/","name":"AI登場率が下がったときの原因の切り分け：制作会社の報告手順 | Nurevo","description":"AIでの登場率が下がったら、①本当に下がったか②どのAI・どの質問で下がったか③サイト側・外部・AI側のどれが原因かの順に確かめます。お客様への報告の書き方、WordPressでの確認手順も。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/ai-visibility-drop-causes/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/ai-visibility-drop-causes/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"AIでの登場率が下がったときの原因の切り分け：制作会社がお客様に報告するまでの手順","item":"https://nurevo.jp/ja/guide/ai-visibility-drop-causes/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/ai-visibility-drop-causes/#faq","mainEntity":[{"@type":"Question","name":"AIでの登場率が先月より下がりました。まず何をすればよいですか？","acceptedAnswer":{"@type":"Answer","text":"施策を変える前に、前月と同じ質問・回数・AIで測ったかを確かめ、日を変えて何回か測り直してください。1回の計測では10〜30ポイントの上下が出ることもあります。下がりが続くときに、どのAI・どの質問で下がったかを絞り込みます。"}},{"@type":"Question","name":"何回測れば「下がった」と言えますか？","acceptedAnswer":{"@type":"Answer","text":"決まった回数はありません。回数が多いほど上下の幅は小さくなり、民間の調査では1回と10回の平均の差が平均約30ポイント、5回で約11ポイントでした。お客様と回数を決め、同じ回数で比べることが大切です。"}},{"@type":"Question","name":"ChatGPTだけで下がりました。サイトの問題ですか？","acceptedAnswer":{"@type":"Answer","text":"1つのAIだけで下がったときは、まずそのAIの検索用クローラ（ChatGPTならOAI-SearchBot）がrobots.txtやボット対策で止められていないかを確かめます。止まっていなければ、そのAI側の変化の可能性がありますが、確かめられないときは推測として報告します。"}},{"@type":"Question","name":"原因がわからないとき、お客様にどう報告すればよいですか？","acceptedAnswer":{"@type":"Answer","text":"観測した事実、計測条件、確かめたこと、わからないこと、次の対応と次の計測を分けて書きます。「AIのアルゴリズムが変わったため」と根拠なく書くより、確かめた範囲を正直に伝えるほうが、翌月以降の信頼につながります。"}},{"@type":"Question","name":"GPTBotをブロックしたせいで下がったのでしょうか？","acceptedAnswer":{"@type":"Answer","text":"GPTBotはAIの学習用のクローラで、ChatGPTの検索で使われるのはOAI-SearchBotです。学習用を止めても、AI検索での引用には直接関係しません。robots.txtで止めているのがどちらかを確かめてください。"}},{"@type":"Question","name":"Nurevo AEOの無料AIチェックで「出なかった」と表示されました。","acceptedAnswer":{"@type":"Answer","text":"無料AIチェックは月1回、3つの質問をPerplexityに聞いた結果です。回数が少ないため月ごとの上下は大きく出ます。［今すぐチェック］で確かめつつ、AEOスコアの診断でサイト側に問題がないかを見てください。"}},{"@type":"Question","name":"この手順で数字は必ず戻りますか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。AIの回答は変動し、どのツールや方法でも表示や順位は保証できません。この手順は、下がった理由を確かめ、サイト側で直せることを直し、お客様に正確に伝えるためのものです。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check">無料でAIの読みやすさをチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>AIでの登場率が下がったときの原因の切り分け：制作会社がお客様に報告するまでの手順</span></nav>
+  <article>
+    <h1>AIでの登場率が下がったときの原因の切り分け：制作会社がお客様に報告するまでの手順</h1>
+    <p class="lead">AIでの登場率（AIの回答に名前が出る・サイトが引用される割合）が先月より下がったら、すぐに施策を変えるのではなく、①計測の条件が同じか、複数回測っても下がっているか、②どのAI・どの質問・言及と引用のどちらで下がったか、③原因はサイト側・サイトの外・AI側のどれか、の順に切り分けます。1回の計測での上下は珍しくなく、原因が確かめられないことも多いため、お客様への報告では「観測した事実」「確かめたこと」「わからないこと」「次に測ること」を分けて書きます。</p>
+<p>作成日：2026年11月14日（JST）。対象は、お客様のサイトのAI検索対策を月額で請け負い、毎月AIでの見え方を報告している制作会社・SEO会社・代理店です。</p>
+<p>AI検索対策に取り組む担当者が挙げる課題の1位は「効果測定・KPI設計の難しさ」（37.9%）だったという民間調査があります（GMO NIKKO、2026年8月、1,003人。<a href="https://www.koukoku.jp/truemarketing/aio/20260929/">TRUE MARKETING</a>）。測るのが難しい数字は、下がったときの説明はもっと難しくなります。この記事は、その場面のための手順です。</p>
+<p>AIの回答は日や聞き方によって変わります。この記事の手順は、下がった理由を確かめ、お客様に正確に伝えるためのものです。AIの回答に必ず表示されることや、数字が戻ることを保証するものではありません。</p>
+<section class="qa"><h2>まず確かめる：1回の計測の上下は珍しくない</h2><p>AIは同じ質問にも毎回少しずつ違う答えを返します。SparkToroとGumshoeの調査では、約600人のボランティアが12個の同じ質問をChatGPT・Claude・GoogleのAIに3,000回近く投げたところ、同じおすすめの一覧が2回返ってくる確率は100回に1回未満、同じ順番まで一致するのは約1,000回に1回でした。一方で、ある意図の質問に対して回答の60〜90%に登場するブランドもありました（<a href="https://searchengineland.com/ai-recommendation-lists-rarely-repeat-study-468076">Search Engine Landの記事</a>）。順位ではなく「何回のうち何回出たか」で見るべき理由です。</p>
+<p>回数による差も大きく出ます。AI検索ドック（ステラジェント社）の自社調査（2026年10月、30問×3つのAI×10回）では、1回だけ聞いた結果と10回の平均との差は平均29.9ポイント、3回で16.5ポイント、5回で10.7ポイントでした（<a href="https://stellagent.ai/ja/ai-search-dock/blog/llmo-effect">同社の記事</a>）。一事業者の調査ですが、毎月1回ずつ聞いて比べるだけでは、10〜30ポイントの上下が起きても不思議ではないことがわかります。</p>
+<p>そこで、「下がった」と報告する前に、次の2つを確かめます。</p><ol><li>同じ質問を同じ条件で、日を変えて複数回聞き直しても下がっているか。</li><li>前月と今月で、計測の条件（次の項目）が同じか。</li></ol></section>
+<section class="qa"><h2>段階1：計測の条件が変わっていないか</h2><p>数字が変わった原因が、サイトでもAIでもなく、測り方の変化だったということはよくあります。前月の記録と、次の項目を1つずつ照らし合わせてください。</p><div class="table-wrap"><table><caption>条件が違う月どうしは、そのまま並べて比べず、条件を変えた月として報告します。</caption><thead><tr><th scope="col">確かめる項目</th><th scope="col">変わると何が起きるか</th></tr></thead><tbody><tr><th scope="row">質問の文言・本数</th><td>1問の入れ替えや言い回しの違いで、出てくる会社が変わる。分母も変わる</td></tr><tr><th scope="row">聞いた回数</th><td>回数が減ると、上下の幅が大きくなる（上の調査を参照）</td></tr><tr><th scope="row">AIの種類・モデル</th><td>ChatGPTとPerplexityは別のもの。同じAIでもモデルや設定が変わると比べられない</td></tr><tr><th scope="row">言語・地域・ログイン状態</th><td>地域名を含む質問は、どこから聞いたかで答えが変わりうる</td></tr><tr><th scope="row">計測ツールの仕様</th><td>ツールの更新で、判定のしかたや取得元が変わることがある。更新履歴を確認する</td></tr><tr><th scope="row">失敗した回の扱い</th><td>取得に失敗した回を「出なかった」に数えると、率が下がって見える</td></tr></tbody></table></div><p>計測する側のデータの問題もありえます。Googleは、2026年8月13日〜17日にSearch Consoleで記録の不具合があり、後にデータを復元したと公表しています（<a href="https://support.google.com/webmasters/answer/6211453?hl=ja">Search Console のデータ異常</a>）。また、ChatGPTの検索でreddit.comが引用される割合が2026年8月に3.83%から0.52%に下がったという計測会社Promptwatchのデータについて、同社自身が暫定の値で、自社側の取得の問題も否定できないとしています（<a href="https://www.searchenginejournal.com/why-reddits-chatgpt-citation-drop-isnt-fully-explained/534572/">Search Engine Journal</a>）。急な落ち込みを見たら、まず計測側を疑うのが安全です。</p></section>
+<section class="qa"><h2>段階2：どこで下がったかを絞り込む</h2><p>本当に下がっているとわかったら、次は「どこで」を絞ります。AI別、質問別、そして「言及（名前が出た）」と「引用（サイトが出典に出た）」を分けて、前月と比べてください。下がり方の形で、疑う場所が変わります。</p><div class="table-wrap"><table><caption>会社名を入れた質問（指名）と入れない質問（発見）は分けて集計します。指名の質問はほぼ必ず名前が出るため、混ぜると率の動きが見えにくくなります。</caption><thead><tr><th scope="col">下がり方の形</th><th scope="col">まず疑うところ</th></tr></thead><tbody><tr><th scope="row">どのAIでも同時に下がった</th><td>サイト側の変化（クローラを止めた、ページが消えた、インデックスから外れた）か、計測条件の変化</td></tr><tr><th scope="row">1つのAIだけ下がった</th><td>そのAIのクローラだけ止まっていないか。止まっていなければ、そのAI側の変化の可能性</td></tr><tr><th scope="row">特定の質問だけ下がった</th><td>その質問に答えるページの変更・削除、または競合の新しいページ</td></tr><tr><th scope="row">名前は出るが、引用だけ減った</th><td>出典がポータルサイトや口コミサイトなど別のサイトに移った</td></tr><tr><th scope="row">自社は同じだが、競合が増えた</th><td>自社が下がったのではなく、競合が上がった。比べる相手（分母）を確認する</td></tr><tr><th scope="row">会社名で聞いた質問で、内容が間違っている</th><td>登場率ではなく事実の問題。サイト・Googleビジネスプロフィール・ポータルの情報の食い違いを確認する</td></tr></tbody></table></div></section>
+<section class="qa"><h2>段階3：原因の候補と、確かめ方</h2><p>絞り込んだ場所に合わせて、原因の候補を確かめます。自分で確かめられるサイト側から順に見ていくと、無駄がありません。</p><div class="table-wrap"><table><caption>AIの学習用クローラ（GPTBotなど）を止めても、AI検索での引用には直接関係しません。止めているクローラが学習用か検索用かを区別してください。</caption><thead><tr><th scope="col">原因の候補</th><th scope="col">確かめ方</th></tr></thead><tbody><tr><th scope="row">AI検索のクローラを止めている</th><td>/robots.txt を開き、OAI-SearchBot（ChatGPTの検索）やPerplexityBot（Perplexity）がDisallowになっていないか（<a href="https://developers.openai.com/api/docs/bots">OpenAI：クローラ</a>、<a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity：クローラ</a>）。セキュリティ系のプラグインやサーバーのボット対策の設定も確認する</td></tr><tr><th scope="row">Googleでの表示条件を外れた</th><td>GoogleはAI機能に出る条件を「インデックスされ、スニペット付きで表示できること」としている（<a href="https://developers.google.com/search/docs/appearance/ai-features">Google：AI機能とウェブサイト</a>）。noindex・nosnippetの追加、URL検査でのインデックス状態を確認する</td></tr><tr><th scope="row">Search Consoleで除外した</th><td>［設定］＞［検索の生成 AI］で、サイトがAI機能から除外されていないか（<a href="https://support.google.com/webmasters/answer/16908024?hl=ja">Search Console ヘルプ</a>）</td></tr><tr><th scope="row">ページの削除・URLの変更</th><td>リニューアルやパーマリンクの変更で、引用されていたURLが404やリダイレクトになっていないか</td></tr><tr><th scope="row">構造化データ・llms.txtが消えた</th><td>テーマやSEOプラグインの変更・更新のあと、ページのソースにJSON-LDが残っているか、/llms.txt が開けるか</td></tr><tr><th scope="row">事実が古い・食い違う</th><td>営業時間・料金・所在地が、サイト・Googleビジネスプロフィール・ポータルで同じか</td></tr><tr><th scope="row">競合や他のサイトが出典になった</th><td>回答の出典に並ぶサイトを前月と比べ、新しく入ったサイトとそのページの内容を見る</td></tr><tr><th scope="row">AI側の変化</th><td>公式の発表や業界ニュースを確認する。確かめられなければ「AI側の変化の可能性」にとどめる</td></tr></tbody></table></div><p>原因がAI側にあるとき、制作会社がすぐにできることは多くありません。たとえば上のreddit.comの例でも、ChatGPTの検索の仕組みの変更と同じ時期に起きたものの、時期が完全には一致せず、原因は説明されていません（<a href="https://www.searchenginejournal.com/why-reddits-chatgpt-citation-drop-isnt-fully-explained/534572/">Search Engine Journal</a>）。根拠のないまま「AIのアルゴリズムが変わったため」と報告すると、次に別の理由で下がったときに説明がつかなくなります。</p></section>
+<section class="qa"><h2>WordPressでの確認手順（Nurevo AEOを使っている場合）</h2><p>お客様のサイトがWordPressでNurevo AEOを使っている場合は、段階3のサイト側の確認を次の順で短くできます。まだ入れていないサイトでも、<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.org</a>から無料で入れて、診断だけ使うこともできます。</p><ol><li>管理画面の［Nurevo AEO］＞［AEOスコア］で［もう一度診断する］を押し、信号の色とチェックリストを前月と比べる。診断ではトップページ、/robots.txt、/llms.txt が確認されます。</li><li>サイトをNurevoのサービスに接続している場合は、診断の履歴で、いつからスコアが変わったかを確かめる。</li><li>設定の［ツール］から設定をJSONで書き出し（WP-CLIなら wp nurevo export）、前月に書き出したものと比べて、事業情報や出力の設定が変わっていないか確かめる。毎月の作業として書き出しておくと、比べる材料になります。</li><li>SEOプラグインやテーマを入れ替えたときは、構造化データがどちらから出ているか、重複・消失がないかをページのソースで確かめる（Nurevo AEOはYoast SEO・Rank Math・AIOSEO・Slim SEO・SEO SIMPLE PACK・VK All in One Expansion Unitとの併用に対応しています）。</li><li>ほかのプラグインやサーバーの設定で、AI検索のクローラが止められていないかを /robots.txt で確かめる。Nurevo AEOは検索用のクローラ（OAI-SearchBot、ChatGPT-User、Claude-SearchBot、Claude-User、PerplexityBot、Perplexity-User）を許可し、学習用のクローラはrobots.txtの設定に任せます。</li></ol><p>無料プランとStandardプランの「無料AIチェック」は、月に1回、業種と地域から作った3つの質問（店名は入れません）をPerplexityに聞き、名前が出たか・サイトが引用されたか、代わりに誰が出たかを表示します。3問×1回の結果なので、月ごとの上下は大きく出ます。下がったときは［今すぐチェック］で今月分を早めに確かめつつ、1か月の結果だけで判断しないでください。</p></section>
+<section class="qa"><h2>お客様への報告の書き方</h2><p>下がった月の報告では、確かめたことと推測を混ぜないことがいちばん大切です。次の5つの欄に分けて書くと、お客様も判断しやすく、翌月以降の説明もぶれません。</p><ol><li>「必ず戻ります」「順位を回復させます」と約束しない。</li><li>1回の結果で、ページの書き直しなど大きな施策を決めない。下がりが続くことを確かめてから。</li><li>原因がサイト側にあった場合（制作会社の作業によるものも含めて）は、そのまま書く。直した日を記録し、その後の計測で効果を確かめる。</li></ol><div class="table-wrap"><table><thead><tr><th scope="col">欄</th><th scope="col">書くこと</th><th scope="col">書き方の例</th></tr></thead><tbody><tr><th scope="row">観測した事実</th><td>どの質問・どのAIで、何回中何回が、前月の何回からどう変わったか</td><td>Perplexityで「〇〇市 歯医者 土曜」を5回聞き、名前が出たのは1回（前月は5回中3回）</td></tr><tr><th scope="row">計測条件</th><td>前月と同じか、違えば何が違うか</td><td>質問・回数・AIは前月と同じ</td></tr><tr><th scope="row">確かめたこと</th><td>段階3で確認した項目と結果</td><td>robots.txt・インデックス・構造化データ・llms.txtに問題なし。出典に新しく地域のポータルサイトが入った</td></tr><tr><th scope="row">わからないこと</th><td>確かめられなかった原因の候補</td><td>AI側の仕組みの変化があったかは、公表された情報がなく不明</td></tr><tr><th scope="row">次の対応と次の計測</th><td>やること、やらないこと、次にいつ何を測るか</td><td>ポータルの掲載情報をサイトと同じ内容に更新。来週に同じ条件で5回測り直す</td></tr></tbody></table></div></section>
+<section class="qa"><h2>次に下がったときに慌てないための、毎月の仕組み</h2><ol><li>質問・回数・AI・言語の計測条件を固定し、記録しておく。変えるときは、変えた月を明記する。</li><li>1つの質問は、少なくとも数回聞いて率で見る。回数を増やすほど上下の幅は小さくなるが、費用と手間も増えるので、お客様と回数を決めておく。</li><li>サイトの変更（テーマ・プラグインの更新、ページの追加・削除、URLの変更）を日付つきで記録する。変更の前後で測ると、原因を確かめやすい。</li><li>指名と発見の質問、言及と引用を分けて集計する。</li><li>契約書や提案書には、AIの回答が変動することと、掲載や順位を保証しないことを書いておく（<a href="/ja/guide/agency-aeo-monthly-service/">月額サービスにする方法</a>）。</li></ol><p>Nurevo AEOのProプラン（月14,800円〜、ベータ）の継続計測は、現在Perplexityで行い、設定・事業情報・モデル・AIの条件が同じ回どうしだけを推移として並べます。取得に失敗した回は分母に入れず、回答が2件未満のときは率を出しません。引用がなかった質問は「引用が観測されなかった」と示し、原因を推測して表示することはしません。サンプルにもとづく数字なので、正確な割合ではなく傾向として読んでください。</p>
+<p>制作会社向けには、複数のサイトを1つの画面で管理する機能と、社名・ロゴ入りの月次レポートがあります。正直に言えば、追えるAIの数や質問の数では計測専門のツールのほうが多く、計測は別のツールと組み合わせるのも選択肢です（<a href="/ja/guide/aeo-tools-comparison/">AEOツールの比較</a>）。詳しくは<a href="https://nurevo.jp/partner/">パートナープログラム</a>をご覧ください。</p></section>
+<section class="qa"><h2>下がったときのチェックリスト</h2><ol><li>前月と同じ質問・回数・AI・言語で測ったか</li><li>日を変えて複数回測り直しても下がっているか</li><li>計測ツールの更新や取得の失敗がなかったか（Search Consoleのデータ異常のページも確認）</li><li>どのAI・どの質問・言及と引用のどちらで下がったかを分けたか</li><li>自社が下がったのか、競合が上がったのかを分けたか</li><li>robots.txtで検索用のクローラが止められていないか</li><li>noindex・nosnippet・Search Consoleの除外設定がないか</li><li>引用されていたページが残っているか（404・リダイレクト）</li><li>構造化データとllms.txtが出ているか</li><li>サイト・Googleビジネスプロフィール・ポータルの事実が同じか</li><li>報告で、観測した事実・確かめたこと・わからないことを分けたか</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>AIでの登場率が先月より下がりました。まず何をすればよいですか？</h3><p>施策を変える前に、前月と同じ質問・回数・AIで測ったかを確かめ、日を変えて何回か測り直してください。1回の計測では10〜30ポイントの上下が出ることもあります。下がりが続くときに、どのAI・どの質問で下がったかを絞り込みます。</p>
+<h3>何回測れば「下がった」と言えますか？</h3><p>決まった回数はありません。回数が多いほど上下の幅は小さくなり、民間の調査では1回と10回の平均の差が平均約30ポイント、5回で約11ポイントでした。お客様と回数を決め、同じ回数で比べることが大切です。</p>
+<h3>ChatGPTだけで下がりました。サイトの問題ですか？</h3><p>1つのAIだけで下がったときは、まずそのAIの検索用クローラ（ChatGPTならOAI-SearchBot）がrobots.txtやボット対策で止められていないかを確かめます。止まっていなければ、そのAI側の変化の可能性がありますが、確かめられないときは推測として報告します。</p>
+<h3>原因がわからないとき、お客様にどう報告すればよいですか？</h3><p>観測した事実、計測条件、確かめたこと、わからないこと、次の対応と次の計測を分けて書きます。「AIのアルゴリズムが変わったため」と根拠なく書くより、確かめた範囲を正直に伝えるほうが、翌月以降の信頼につながります。</p>
+<h3>GPTBotをブロックしたせいで下がったのでしょうか？</h3><p>GPTBotはAIの学習用のクローラで、ChatGPTの検索で使われるのはOAI-SearchBotです。学習用を止めても、AI検索での引用には直接関係しません。robots.txtで止めているのがどちらかを確かめてください。</p>
+<h3>Nurevo AEOの無料AIチェックで「出なかった」と表示されました。</h3><p>無料AIチェックは月1回、3つの質問をPerplexityに聞いた結果です。回数が少ないため月ごとの上下は大きく出ます。［今すぐチェック］で確かめつつ、AEOスコアの診断でサイト側に問題がないかを見てください。</p>
+<h3>この手順で数字は必ず戻りますか？</h3><p>いいえ。AIの回答は変動し、どのツールや方法でも表示や順位は保証できません。この手順は、下がった理由を確かめ、サイト側で直せることを直し、お客様に正確に伝えるためのものです。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、お客様のサイトをAIがどう読んでいるか確認</h2>
+    <p>無料チェックは登録不要で、構造化データ・llms.txt・AIクローラの許可の状態がわかります。下がったときの最初の確認に使えます。制作会社向けの複数サイト管理と月次レポートはパートナープログラムで。</p>
+    <a class="btn primary lg" href="/check">無料でAIの読みやすさをチェック</a>
+    <a class="btn lg" href="https://nurevo.jp/partner/">パートナープログラムを見る</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/agency-aeo-monthly-service/">制作会社がAI検索対策（AEO）を月額サービスにする方法：作業範囲・レポート・価格の決め方</a></li><li><a href="/ja/guide/search-console-ai-features/">Search ConsoleでAIによる概要・AIモードの表示を見る方法：生成AIレポートの読み方と注意点</a></li><li><a href="/ja/guide/llms-txt/">llms.txt とは？ サイトをAIに説明するファイル</a></li><li><a href="/ja/guide/aeo-tools-comparison/">AEOツールの比較と選び方：計測型と実装型、どちらから始めるか</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/ai-visibility-drop-causes/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">ChatGPTはOpenAI、PerplexityはPerplexity AI、ClaudeはAnthropic、GoogleとSearch ConsoleはGoogle LLC、Redditはreddit, Inc.の商標です。Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unitはそれぞれの権利者の商標です。Nurevoはこれらの企業と提携・承認の関係にありません。</p><a href="/">Nurevo</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
