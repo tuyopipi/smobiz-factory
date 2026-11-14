@@ -1,0 +1,379 @@
+{
+ "title": "Gotowość na AI: 2,357 stron agencji webowych z Japonii (2026) | Nurevo",
+ "description": "Zbadaliśmy 2,357 stron japońskich agencji webowych: 13.6% ma llms.txt, 68.9% ma JSON-LD, a 1.3% blokuje bota AI w robots.txt. Metoda, dane, ograniczenia.",
+ "h1": "Gotowość na wyszukiwanie AI własnych stron japońskich agencji projektujących strony WWW: 2,357 witryn (listopad 2026)",
+ "lead": "Pobraliśmy stronę główną, robots.txt i llms.txt z 2,357 witryn japońskich agencji projektujących strony WWW. 13.6% (321) miało llms.txt, 68.9% (1,624) miało dane strukturalne (JSON-LD), a 1.3% (28 z 2,158 witryn z plikiem robots.txt) blokowało w robots.txt co najmniej jednego bota AI.",
+ "intro": [
+  "Opublikowano 2026-11-10. Dane zagregowano 2026-11-05. Badanie: Nurevo AEO (Bestie.合同会社). Nurevo sprzedaje narzędzia do optymalizacji pod wyszukiwanie AI (AEO), więc ma interes w tym temacie."
+ ],
+ "sections": [
+  {
+   "heading": "Najważniejsze wnioski",
+   "list": [
+    "13.6% stron japońskich agencji webowych (321 z 2,357) ma llms.txt; 0.6% (14) ma llms-full.txt.",
+    "1.3% (28 z 2,158 witryn z plikiem robots.txt) blokuje w robots.txt co najmniej jednego bota AI. Prawie nikt nie odprawia robotów AI.",
+    "68.9% ma dane strukturalne (JSON-LD), 58.3% ma węzeł typu Organization, a 3.9% ma FAQPage."
+   ]
+  },
+  {
+   "heading": "O badaniu",
+   "list": [
+    "Populacja: firmowe strony 2,756 agencji projektujących strony WWW w Japonii, co do których mogliśmy potwierdzić, że są agencjami. Nie jest to próba wszystkich stron firmowych.",
+    "Osiągnięte: stronę główną udało się pobrać dla 2,357 witryn (85.5%). Wszystkie wyniki dotyczą tych 2,357 witryn.",
+    "Pobrano: stronę główną każdej witryny, /robots.txt, /llms.txt i /llms-full.txt, każdy raz (User-Agent: NurevoSurvey/1.0), na początku listopada 2026, z agregacją 2026-11-05.",
+    "Sposób oceny: dane strukturalne przez parsowanie JSON-LD strony głównej i zliczanie wartości @type (JSON-LD, którego nie da się sparsować, liczy się jako uszkodzony). llms.txt jest liczony, jeśli zwraca status 200 z tekstem innym niż HTML, dłuższym niż 20 znaków. W robots.txt bot jest uznany za zablokowanego, jeśli grupa, która go dotyczy, zabrania dostępu do strony głównej (/), według najdłuższej pasującej reguły.",
+    "Ten sam przebieg objął też agencje spoza Japonii (łącznie 20,720 witryn, 15,657 osiągniętych). Porównanie ukaże się w osobnym raporcie."
+   ]
+  },
+  {
+   "heading": "Wyniki: główne elementy",
+   "paragraphs": [
+    "Podstawowe ustawienia SEO (HTTPS, meta description, robots.txt, canonical) są wdrożone na ponad 80 do 90 procentach witryn. Nowsze elementy skierowane do AI, takie jak llms.txt i FAQPage, wciąż występują u mniejszości."
+   ],
+   "table": {
+    "head": [
+     "Element",
+     "Witryny",
+     "Udział"
+    ],
+    "rows": [
+     [
+      "Działa przez HTTPS",
+      "2,355 / 2,357",
+      "99.9%"
+     ],
+     [
+      "Zbudowana na WordPress",
+      "2,166 / 2,357",
+      "91.9%"
+     ],
+     [
+      "Ma meta description",
+      "2,139 / 2,357",
+      "90.8%"
+     ],
+     [
+      "Ma robots.txt",
+      "2,158 / 2,357",
+      "91.6%"
+     ],
+     [
+      "robots.txt wskazuje Sitemap",
+      "1,988 / 2,158",
+      "92.1%"
+     ],
+     [
+      "Ma link canonical",
+      "1,988 / 2,357",
+      "84.3%"
+     ],
+     [
+      "Ma Open Graph (og:title)",
+      "1,909 / 2,357",
+      "81.0%"
+     ],
+     [
+      "Ma dane strukturalne (JSON-LD)",
+      "1,624 / 2,357",
+      "68.9%"
+     ],
+     [
+      "Ma dane strukturalne typu Organization",
+      "1,373 / 2,357",
+      "58.3%"
+     ],
+     [
+      "Ma llms.txt",
+      "321 / 2,357",
+      "13.6%"
+     ],
+     [
+      "Ma mikrodane schema.org",
+      "184 / 2,357",
+      "7.8%"
+     ],
+     [
+      "Ma dane strukturalne FAQPage",
+      "92 / 2,357",
+      "3.9%"
+     ],
+     [
+      "robots.txt blokuje co najmniej jednego bota AI",
+      "28 / 2,158",
+      "1.3%"
+     ],
+     [
+      "Ma llms-full.txt",
+      "14 / 2,357",
+      "0.6%"
+     ]
+    ],
+    "caption": "Podstawa: 2,357 witryn japońskich agencji projektujących strony WWW, których stronę główną udało się pobrać. Wiersze dotyczące robots.txt odnoszą się do 2,158 witryn z plikiem robots.txt. Dane zagregowano 2026-11-05."
+   }
+  },
+  {
+   "heading": "Jak robots.txt traktuje roboty AI",
+   "paragraphs": [
+    "Spośród 2,158 witryn z plikiem robots.txt 2.5% (54) wymienia bota AI z nazwy, a 1.3% (28) zabrania co najmniej jednemu botowi AI dostępu do strony głównej. Większość blokad dotyczy robotów zbierających dane treningowe (GPTBot, Google-Extended, CCBot i podobnych). Żadna witryna nie zablokowała robotów wyszukiwania OAI-SearchBot ani Claude-SearchBot."
+   ],
+   "table": {
+    "head": [
+     "Bot",
+     "Witryny blokujące",
+     "Udział"
+    ],
+    "rows": [
+     [
+      "GPTBot (OpenAI)",
+      "27",
+      "1.3%"
+     ],
+     [
+      "Google-Extended (Google)",
+      "24",
+      "1.1%"
+     ],
+     [
+      "CCBot (Common Crawl)",
+      "24",
+      "1.1%"
+     ],
+     [
+      "Bytespider (ByteDance)",
+      "24",
+      "1.1%"
+     ],
+     [
+      "anthropic-ai (Anthropic)",
+      "22",
+      "1.0%"
+     ],
+     [
+      "ClaudeBot (Anthropic)",
+      "21",
+      "1.0%"
+     ],
+     [
+      "Applebot-Extended (Apple)",
+      "21",
+      "1.0%"
+     ],
+     [
+      "ChatGPT-User (OpenAI)",
+      "2",
+      "0.1%"
+     ],
+     [
+      "PerplexityBot (Perplexity)",
+      "1",
+      "0.05%"
+     ],
+     [
+      "OAI-SearchBot (OpenAI)",
+      "0",
+      "0%"
+     ],
+     [
+      "Claude-SearchBot (Anthropic)",
+      "0",
+      "0%"
+     ],
+     [
+      "Googlebot (Google)",
+      "0",
+      "0%"
+     ],
+     [
+      "Bingbot (Microsoft)",
+      "0",
+      "0%"
+     ]
+    ],
+    "caption": "Podstawa: 2,158 witryn z plikiem robots.txt. Zablokowany oznacza, że grupa dotycząca danego bota zabrania dostępu do /."
+   }
+  },
+  {
+   "heading": "llms.txt",
+   "paragraphs": [
+    "321 z 2,357 witryn (13.6%) ma llms.txt. Mediana długości llms.txt wśród nich to 96 wierszy. 14 witryn (0.6%) ma również pełnotekstowy plik llms-full.txt."
+   ]
+  },
+  {
+   "heading": "Typy danych strukturalnych",
+   "paragraphs": [
+    "Spośród 1,624 witryn z JSON-LD 1.7% (27) zawiera JSON-LD, którego nie da się sparsować. Najczęstsze typy to WebSite, Organization i BreadcrumbList; PostalAddress występuje na 16.3% witryn, LocalBusiness na 5.3%, a FAQPage na 3.9%."
+   ],
+   "table": {
+    "head": [
+     "@type",
+     "Udział"
+    ],
+    "rows": [
+     [
+      "WebSite",
+      "62.4%"
+     ],
+     [
+      "Organization",
+      "53.7%"
+     ],
+     [
+      "BreadcrumbList",
+      "43.0%"
+     ],
+     [
+      "ImageObject",
+      "38.1%"
+     ],
+     [
+      "WebPage",
+      "34.1%"
+     ],
+     [
+      "SearchAction",
+      "28.6%"
+     ],
+     [
+      "PostalAddress",
+      "16.3%"
+     ],
+     [
+      "Person",
+      "10.1%"
+     ],
+     [
+      "ContactPoint",
+      "6.4%"
+     ],
+     [
+      "ProfessionalService",
+      "5.6%"
+     ],
+     [
+      "LocalBusiness",
+      "5.3%"
+     ],
+     [
+      "FAQPage",
+      "3.9%"
+     ]
+    ],
+    "caption": "Wartości @type znalezione w JSON-LD strony głównej, łącznie z zagnieżdżonymi. Podstawa: 2,357 witryn."
+   }
+  },
+  {
+   "heading": "Test sześciu elementów",
+   "paragraphs": [
+    "Policzyliśmy, ile z sześciu elementów spełnia każda witryna: (1) ma llms.txt; (2) ma JSON-LD; (3) ma typ Organization lub LocalBusiness; (4) ma robots.txt, który nie blokuje żadnego z botów GPTBot, ClaudeBot, PerplexityBot i OAI-SearchBot; (5) ma meta description; (6) ma link canonical. To prosta liczba przygotowana na potrzeby tego badania, a nie produktowy wynik Nurevo w skali 0–100. Średnia wynosi 4.0 elementu; 10.5% spełnia wszystkie sześć."
+   ],
+   "table": {
+    "head": [
+     "Spełnione elementy",
+     "Witryny",
+     "Udział"
+    ],
+    "rows": [
+     [
+      "0",
+      "40",
+      "1.7%"
+     ],
+     [
+      "1",
+      "116",
+      "4.9%"
+     ],
+     [
+      "2",
+      "254",
+      "10.8%"
+     ],
+     [
+      "3",
+      "369",
+      "15.7%"
+     ],
+     [
+      "4",
+      "360",
+      "15.3%"
+     ],
+     [
+      "5",
+      "971",
+      "41.2%"
+     ],
+     [
+      "6",
+      "247",
+      "10.5%"
+     ]
+    ],
+    "caption": "Podstawa: 2,357 witryn."
+   }
+  },
+  {
+   "heading": "Jak cytować to badanie",
+   "paragraphs": [
+    "Liczby i tabele można swobodnie cytować i publikować, o ile podasz źródło „Nurevo AEO survey (nurevo.jp)” i dodasz link do tej strony. Zdania gotowe do cytowania:"
+   ],
+   "list": [
+    "13.6% z 2,357 stron japońskich agencji projektujących strony WWW miało plik llms.txt (badanie Nurevo AEO, listopad 2026).",
+    "Tylko 1.3% stron japońskich agencji projektujących strony WWW (28 z 2,158 z plikiem robots.txt) blokowało bota AI w robots.txt (badanie Nurevo AEO, listopad 2026).",
+    "68.9% stron japońskich agencji projektujących strony WWW miało dane strukturalne JSON-LD na stronie głównej, ale tylko 3.9% miało FAQPage (badanie Nurevo AEO, listopad 2026).",
+    "91.9% stron japońskich agencji projektujących strony WWW działa na WordPress (badanie Nurevo AEO, listopad 2026)."
+   ]
+  },
+  {
+   "heading": "Ograniczenia",
+   "list": [
+    "Zbadano tylko stronę główną. Dane strukturalne na podstronach i stan witryny jako całości nie są uwzględnione.",
+    "robots.txt oceniano tylko dla strony głównej (/). Witryna blokująca jedynie niektóre katalogi liczy się jako nieblokująca. Blokowania innymi metodami (zapory, ochrona przed botami w CDN) nie mierzono.",
+    "Populacja to własne strony agencji projektujących strony WWW, a nie firm w ogóle. Lista agencji jest nasza i nie obejmuje wszystkich agencji w Japonii.",
+    "Jedno pobranie na witrynę: 399 witryn, których strony głównej nie udało się pobrać (łącznie z błędami tymczasowymi), wykluczono. W przypadku llms.txt sprawdzaliśmy tylko, czy istnieje, a nie jego jakość."
+   ]
+  },
+  {
+   "heading": "Nasza interpretacja (opinia)",
+   "paragraphs": [
+    "Poniższe to nasza opinia, a nie wynik badania. Strony agencji mają podstawowe ustawienia SEO w dużej mierze wdrożone i bardzo niewiele z nich odprawia roboty AI. Elementy, które pomagają AI odczytać informacje o firmie, takie jak llms.txt i FAQPage, są wciąż obecne tylko na części witryn. Ich dodanie nie gwarantuje pojawienia się w odpowiedziach AI (w [innym naszym badaniu](/guide/aeo-signals-ai-answers-study) sygnały na stronie nie wykazały związku z obecnością w odpowiedziach), ale uważamy, że warto je sprawdzić jako podstawę do tego, by AI poprawnie odczytywała fakty o firmie."
+   ]
+  },
+  {
+   "heading": "Sprawdź własną stronę lub strony klientów",
+   "paragraphs": [
+    "[Bezpłatna kontrola](https://nurevo.jp/check) pokazuje llms.txt, dane strukturalne i dostęp robotów AI w około minutę. Na WordPress [wtyczka Nurevo WebMCP](https://wordpress.org/plugins/nurevo-webmcp/) publikuje llms.txt i dane strukturalne. Agencje, które chcą wdrożyć ją na stronach klientów, mogą zapoznać się z [programem partnerskim](https://nurevo.jp/partner/)."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Jak powszechny jest llms.txt na stronach japońskich agencji webowych?",
+   "a": "W tym badaniu 321 z 2,357 witryn japońskich agencji projektujących strony WWW (13.6%) miało llms.txt (listopad 2026)."
+  },
+  {
+   "q": "Czy wiele agencji blokuje roboty AI w robots.txt?",
+   "a": "Niewiele. Spośród 2,158 witryn z plikiem robots.txt 28 (1.3%) blokowało co najmniej jednego bota AI. Żadna nie zablokowała robotów wyszukiwania OAI-SearchBot ani Claude-SearchBot."
+  },
+  {
+   "q": "Czy te liczby dotyczą stron firmowych w ogóle?",
+   "a": "Niekoniecznie. Badanie obejmuje własne strony agencji projektujących strony WWW, i to tylko ich strony główne."
+  },
+  {
+   "q": "Czy mogę użyć tych liczb w artykule?",
+   "a": "Tak. Podaj źródło „Nurevo AEO survey (nurevo.jp)” i dodaj link do tej strony, a możesz je swobodnie cytować i publikować."
+  }
+ ],
+ "relatedHeading": "Powiązane poradniki",
+ "cta": {
+  "heading": "Sprawdź gotowość swojej strony na AI",
+  "body": "Bezpłatna kontrola pokazuje Twój llms.txt, dane strukturalne i dostęp robotów AI. Nie gwarantuje pojawienia się w odpowiedziach AI.",
+  "label": "Uruchom bezpłatną kontrolę",
+  "href": "/check",
+  "secondary": {
+   "label": "Program partnerski dla agencji",
+   "href": "/partner/"
+  }
+ },
+ "footnote": "Badanie: Nurevo AEO (Bestie.合同会社). Nazwy produktów i firm są znakami towarowymi ich właścicieli. Nazwy poszczególnych firm i domen nie są publikowane."
+}
