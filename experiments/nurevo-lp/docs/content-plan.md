@@ -106,3 +106,12 @@
 4. 皮膚科・美容皮膚科のAI検索対策（保険診療と自費の書き分け、料金表示と限定解除）【業種別】
 5. 会社概要ページのAI検索対策（Organization・沿革・役員・所在地の表記ゆれ）【全業種】
 翻訳の残り（8時台で補完）：medical-clinic-ai-search・recruiting-page-ai-search（ja/en のみ）。
+| 2026-11-14 17時 | ai-visibility-drop-causes | 制作会社向け：AIでの登場率が下がったときの原因の切り分けと報告（1回の計測のばらつき〔SparkToro/Gumshoe調査・AI検索ドック調査〕、段階1 計測条件の確認表〔質問・回数・AI・地域・ツール・失敗回〕とデータ側の問題〔Search Consoleデータ異常 2026-08-13〜17、Promptwatchのreddit.com引用の暫定値〕、段階2 下がり方の形で疑う場所の表、段階3 原因の候補と確かめ方の表〔検索用クローラ・noindex/nosnippet・検索の生成AI設定・URL変更・構造化データ/llms.txtの消失・事実の食い違い・出典の入れ替わり・AI側〕、WordPress手順〔AEOスコアの再診断・診断履歴・設定の書き出し wp nurevo export・SEOプラグイン併用・robots.txt〕、無料AIチェックの読み方、報告書の5欄テンプレート、毎月の仕組み、Proの同条件推移、チェックリスト、FAQ 7問）。2言語（ja・en） | 制作会社向け | content/daily-20261114-17 |
+次の候補：
+1. 結婚式場のAI検索対策（見積もりと総額、収容人数、持ち込み料）【業種別】
+2. 薬局・ドラッグストアのAI検索対策（営業時間・在宅対応・取り扱い、医療情報ネットとの整合）【業種別】
+3. 皮膚科・美容皮膚科のAI検索対策（保険診療と自費の書き分け、料金表示と限定解除）【業種別】
+4. 会社概要ページのAI検索対策（Organization・沿革・役員・所在地の表記ゆれ）【全業種】
+5. 制作会社向け：AI検索対策の初回診断と提案書の進め方（無料チェックの使い方、約束してはいけないこと）【制作会社向け】
+翻訳の残り（8時台で補完）：medical-clinic-ai-search・recruiting-page-ai-search・ai-visibility-drop-causes（ja/en のみ）。
+メモ：2026-11-14 17時の回は、WebFetchの許可待ちで一次情報（OpenAI・Perplexity・Google・SparkToro原典）を再取得できなかった。これらは既存記事で確認済みの範囲（2026-10-31・11-10）だけを書き、SparkToroは Search Engine Land の記事を出典にした。
