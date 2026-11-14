@@ -1,0 +1,379 @@
+{
+ "title": "日本 2,357 家網頁製作公司網站的 AI 搜尋就緒度（2026） | Nurevo",
+ "description": "我們檢查了日本 2,357 家網頁設計公司的網站：13.6% 有 llms.txt，68.9% 有 JSON-LD，1.3% 在 robots.txt 中封鎖了 AI 機器人。附方法、資料與限制。",
+ "h1": "日本網頁設計公司自家網站的 AI 搜尋就緒度：2,357 個網站（2026 年 11 月）",
+ "lead": "我們抓取了日本 2,357 家網頁設計公司網站的首頁、robots.txt 和 llms.txt。其中 13.6%（321 個）設有 llms.txt，68.9%（1,624 個）有結構化資料（JSON-LD），1.3%（在 2,158 個有 robots.txt 的網站中占 28 個）在 robots.txt 中封鎖了至少一個 AI 機器人。",
+ "intro": [
+  "發布於 2026-11-10。資料彙整於 2026-11-05。調查單位：Nurevo AEO（Bestie.合同会社）。Nurevo 銷售 AI 搜尋最佳化（AEO）工具，因此與本主題有利益關係。"
+ ],
+ "sections": [
+  {
+   "heading": "主要發現",
+   "list": [
+    "13.6% 的日本網頁製作公司網站（2,357 個中的 321 個）設有 llms.txt；0.6%（14 個）設有 llms-full.txt。",
+    "1.3%（在 2,158 個有 robots.txt 的網站中占 28 個）在 robots.txt 中封鎖了至少一個 AI 機器人。幾乎沒有網站拒絕 AI 爬蟲。",
+    "68.9% 有結構化資料（JSON-LD），58.3% 有 Organization 類型節點，3.9% 有 FAQPage。"
+   ]
+  },
+  {
+   "heading": "關於本次調查",
+   "list": [
+    "調查對象：我們能確認為網頁設計公司的日本 2,756 家公司的官網。這並非所有企業網站的樣本。",
+    "可存取：其中 2,357 個（85.5%）的首頁能夠成功抓取。所有結果皆以這 2,357 個網站為準。",
+    "抓取內容：每個網站的首頁、/robots.txt、/llms.txt 和 /llms-full.txt，各抓取一次（User-Agent: NurevoSurvey/1.0），時間為 2026 年 11 月上旬，於 2026-11-05 彙整。",
+    "判定方式：結構化資料透過解析首頁的 JSON-LD 並計算 @type 值來判斷（無法解析的 JSON-LD 計為損毀）。llms.txt 須回傳狀態 200，且內容為長度超過 20 個字元的非 HTML 文字，才計為存在。對於 robots.txt，若適用於某個機器人的群組禁止存取首頁（/），則依最長比對規則計為該機器人遭封鎖。",
+    "同一輪調查也涵蓋了日本以外的網頁製作公司（共 20,720 個網站，其中 15,657 個可存取）。比較結果將另以報告發布。"
+   ]
+  },
+  {
+   "heading": "結果：主要項目",
+   "paragraphs": [
+    "基本 SEO 設定（HTTPS、meta description、robots.txt、canonical）在八成到九成以上的網站中都已到位。而 llms.txt、FAQPage 等針對 AI 的新項目仍屬少數。"
+   ],
+   "table": {
+    "head": [
+     "項目",
+     "網站數",
+     "比例"
+    ],
+    "rows": [
+     [
+      "透過 HTTPS 提供",
+      "2,355 / 2,357",
+      "99.9%"
+     ],
+     [
+      "以 WordPress 建置",
+      "2,166 / 2,357",
+      "91.9%"
+     ],
+     [
+      "有 meta description",
+      "2,139 / 2,357",
+      "90.8%"
+     ],
+     [
+      "有 robots.txt",
+      "2,158 / 2,357",
+      "91.6%"
+     ],
+     [
+      "robots.txt 中列出了 Sitemap",
+      "1,988 / 2,158",
+      "92.1%"
+     ],
+     [
+      "有 canonical 連結",
+      "1,988 / 2,357",
+      "84.3%"
+     ],
+     [
+      "有 Open Graph（og:title）",
+      "1,909 / 2,357",
+      "81.0%"
+     ],
+     [
+      "有結構化資料（JSON-LD）",
+      "1,624 / 2,357",
+      "68.9%"
+     ],
+     [
+      "有 Organization 類型的結構化資料",
+      "1,373 / 2,357",
+      "58.3%"
+     ],
+     [
+      "有 llms.txt",
+      "321 / 2,357",
+      "13.6%"
+     ],
+     [
+      "有 schema.org 微資料",
+      "184 / 2,357",
+      "7.8%"
+     ],
+     [
+      "有 FAQPage 結構化資料",
+      "92 / 2,357",
+      "3.9%"
+     ],
+     [
+      "robots.txt 封鎖了至少一個 AI 機器人",
+      "28 / 2,158",
+      "1.3%"
+     ],
+     [
+      "有 llms-full.txt",
+      "14 / 2,357",
+      "0.6%"
+     ]
+    ],
+    "caption": "基數：首頁可存取的 2,357 個日本網頁設計公司網站。robots.txt 相關列以 2,158 個有 robots.txt 的網站為基數。彙整於 2026-11-05。"
+   }
+  },
+  {
+   "heading": "robots.txt 如何對待 AI 爬蟲",
+   "paragraphs": [
+    "在 2,158 個有 robots.txt 的網站中，2.5%（54 個）點名提到 AI 機器人，1.3%（28 個）對至少一個 AI 機器人禁止存取首頁。大多數封鎖針對的是訓練用爬蟲（GPTBot、Google-Extended、CCBot 等）。沒有任何網站封鎖搜尋爬蟲 OAI-SearchBot 或 Claude-SearchBot。"
+   ],
+   "table": {
+    "head": [
+     "機器人",
+     "封鎖的網站數",
+     "比例"
+    ],
+    "rows": [
+     [
+      "GPTBot (OpenAI)",
+      "27",
+      "1.3%"
+     ],
+     [
+      "Google-Extended (Google)",
+      "24",
+      "1.1%"
+     ],
+     [
+      "CCBot (Common Crawl)",
+      "24",
+      "1.1%"
+     ],
+     [
+      "Bytespider (ByteDance)",
+      "24",
+      "1.1%"
+     ],
+     [
+      "anthropic-ai (Anthropic)",
+      "22",
+      "1.0%"
+     ],
+     [
+      "ClaudeBot (Anthropic)",
+      "21",
+      "1.0%"
+     ],
+     [
+      "Applebot-Extended (Apple)",
+      "21",
+      "1.0%"
+     ],
+     [
+      "ChatGPT-User (OpenAI)",
+      "2",
+      "0.1%"
+     ],
+     [
+      "PerplexityBot (Perplexity)",
+      "1",
+      "0.05%"
+     ],
+     [
+      "OAI-SearchBot (OpenAI)",
+      "0",
+      "0%"
+     ],
+     [
+      "Claude-SearchBot (Anthropic)",
+      "0",
+      "0%"
+     ],
+     [
+      "Googlebot (Google)",
+      "0",
+      "0%"
+     ],
+     [
+      "Bingbot (Microsoft)",
+      "0",
+      "0%"
+     ]
+    ],
+    "caption": "基數：2,158 個有 robots.txt 的網站。「封鎖」指適用於該機器人的群組禁止存取 /。"
+   }
+  },
+  {
+   "heading": "llms.txt",
+   "paragraphs": [
+    "2,357 個網站中有 321 個（13.6%）設有 llms.txt。其中 llms.txt 長度的中位數為 96 行。另有 14 個網站（0.6%）也設有全文版的 llms-full.txt。"
+   ]
+  },
+  {
+   "heading": "結構化資料的類型",
+   "paragraphs": [
+    "在 1,624 個有 JSON-LD 的網站中，1.7%（27 個）含有無法解析的 JSON-LD。最常見的類型是 WebSite、Organization 和 BreadcrumbList；PostalAddress 出現在 16.3% 的網站上，LocalBusiness 為 5.3%，FAQPage 為 3.9%。"
+   ],
+   "table": {
+    "head": [
+     "@type",
+     "比例"
+    ],
+    "rows": [
+     [
+      "WebSite",
+      "62.4%"
+     ],
+     [
+      "Organization",
+      "53.7%"
+     ],
+     [
+      "BreadcrumbList",
+      "43.0%"
+     ],
+     [
+      "ImageObject",
+      "38.1%"
+     ],
+     [
+      "WebPage",
+      "34.1%"
+     ],
+     [
+      "SearchAction",
+      "28.6%"
+     ],
+     [
+      "PostalAddress",
+      "16.3%"
+     ],
+     [
+      "Person",
+      "10.1%"
+     ],
+     [
+      "ContactPoint",
+      "6.4%"
+     ],
+     [
+      "ProfessionalService",
+      "5.6%"
+     ],
+     [
+      "LocalBusiness",
+      "5.3%"
+     ],
+     [
+      "FAQPage",
+      "3.9%"
+     ]
+    ],
+    "caption": "首頁 JSON-LD 中出現的 @type 值，包含巢狀的類型。基數：2,357 個網站。"
+   }
+  },
+  {
+   "heading": "六項檢查",
+   "paragraphs": [
+    "我們計算了每個網站符合以下六項中的幾項：(1) 有 llms.txt；(2) 有 JSON-LD；(3) 有 Organization 或 LocalBusiness 類型；(4) 有 robots.txt，且未封鎖 GPTBot、ClaudeBot、PerplexityBot 和 OAI-SearchBot 中的任何一個；(5) 有 meta description；(6) 有 canonical 連結。這是為本次調查設計的簡單計數，並非 Nurevo 產品的 0–100 分評分。平均符合 4.0 項；10.5% 的網站六項全部符合。"
+   ],
+   "table": {
+    "head": [
+     "符合項數",
+     "網站數",
+     "比例"
+    ],
+    "rows": [
+     [
+      "0",
+      "40",
+      "1.7%"
+     ],
+     [
+      "1",
+      "116",
+      "4.9%"
+     ],
+     [
+      "2",
+      "254",
+      "10.8%"
+     ],
+     [
+      "3",
+      "369",
+      "15.7%"
+     ],
+     [
+      "4",
+      "360",
+      "15.3%"
+     ],
+     [
+      "5",
+      "971",
+      "41.2%"
+     ],
+     [
+      "6",
+      "247",
+      "10.5%"
+     ]
+    ],
+    "caption": "基數：2,357 個網站。"
+   }
+  },
+  {
+   "heading": "引用本調查",
+   "paragraphs": [
+    "只要註明「Nurevo AEO survey (nurevo.jp)」並連結至本頁面，即可自由引用及轉載其中的數據與表格。可直接引用的句子："
+   ],
+   "list": [
+    "在 2,357 個日本網頁設計公司網站中，13.6% 設有 llms.txt 檔案（Nurevo AEO survey，2026 年 11 月）。",
+    "僅有 1.3% 的日本網頁設計公司網站（在 2,158 個有 robots.txt 的網站中占 28 個）在 robots.txt 中封鎖了 AI 機器人（Nurevo AEO survey，2026 年 11 月）。",
+    "68.9% 的日本網頁設計公司網站在首頁有 JSON-LD 結構化資料，但只有 3.9% 有 FAQPage（Nurevo AEO survey，2026 年 11 月）。",
+    "91.9% 的日本網頁設計公司網站以 WordPress 運作（Nurevo AEO survey，2026 年 11 月）。"
+   ]
+  },
+  {
+   "heading": "限制",
+   "list": [
+    "只檢查了首頁。內頁的結構化資料以及整個網站的狀態均未納入。",
+    "robots.txt 只針對首頁（/）進行判定。只封鎖部分目錄的網站計為未封鎖。透過其他方式（防火牆、CDN 的機器人防護）進行的封鎖未予測量。",
+    "調查對象是網頁設計公司自家的網站，而非一般企業。公司名單由我們自行整理，並未涵蓋日本所有的網頁製作公司。",
+    "每個網站只抓取一次：首頁無法存取的 399 個網站（含暫時性錯誤）已排除。對於 llms.txt，我們只檢查是否存在，未評估其品質。"
+   ]
+  },
+  {
+   "heading": "我們的解讀（意見）",
+   "paragraphs": [
+    "以下是我們的意見，而非調查結果。網頁製作公司的網站在基本 SEO 設定上大致到位，拒絕 AI 爬蟲的極少。而 llms.txt、FAQPage 等協助 AI 讀取公司資訊的項目，目前只有部分網站具備。加入這些項目並不保證會出現在 AI 的回答中（在[我們的另一項研究](/guide/aeo-signals-ai-answers-study)中，站內訊號與是否出現之間並未顯示出關聯），但我們認為，作為讓 AI 正確讀取公司事實的基礎，它們值得檢查。"
+   ]
+  },
+  {
+   "heading": "檢查您自己或客戶的網站",
+   "paragraphs": [
+    "[免費檢測](https://nurevo.jp/check)約一分鐘即可顯示 llms.txt、結構化資料與 AI 爬蟲存取的狀態。在 WordPress 上，[Nurevo WebMCP 外掛](https://wordpress.org/plugins/nurevo-webmcp/)可發布 llms.txt 與結構化資料。想在客戶網站上大規模導入的網頁製作公司，可以參考[合作夥伴計畫](https://nurevo.jp/partner/)。"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "llms.txt 在日本網頁製作公司網站中有多普及？",
+   "a": "在本次調查中，2,357 個日本網頁設計公司網站中有 321 個（13.6%）設有 llms.txt（2026 年 11 月）。"
+  },
+  {
+   "q": "很多公司會在 robots.txt 中封鎖 AI 爬蟲嗎？",
+   "a": "很少。在 2,158 個有 robots.txt 的網站中，有 28 個（1.3%）封鎖了至少一個 AI 機器人。沒有任何網站封鎖搜尋爬蟲 OAI-SearchBot 或 Claude-SearchBot。"
+  },
+  {
+   "q": "這些數據適用於一般企業網站嗎？",
+   "a": "不一定。本調查只涵蓋網頁設計公司自家的網站，而且只檢查了首頁。"
+  },
+  {
+   "q": "我可以在文章中使用這些數據嗎？",
+   "a": "可以。只要註明「Nurevo AEO survey (nurevo.jp)」並連結至本頁面，即可自由引用及轉載。"
+  }
+ ],
+ "relatedHeading": "相關指南",
+ "cta": {
+  "heading": "檢查您網站的 AI 就緒度",
+  "body": "免費檢測可顯示您的 llms.txt、結構化資料與 AI 爬蟲存取狀態。但不保證會出現在 AI 的回答中。",
+  "label": "進行免費檢測",
+  "href": "/check",
+  "secondary": {
+   "label": "網頁製作公司合作夥伴計畫",
+   "href": "/partner/"
+  }
+ },
+ "footnote": "調查單位：Nurevo AEO（Bestie.合同会社）。產品名稱與公司名稱均為其各自所有者的商標。不公開個別公司與網域。"
+}

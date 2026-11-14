@@ -1,0 +1,192 @@
+{
+ "title": "Tekoälyhaku hoivakodeille: maksut, asukasvalinta, paikat | Nurevo",
+ "description": "AEO hoivakodeille: julkaise maksujen erittely, hyväksytyt hoidon tarpeet, henkilöstö ja vapaat paikat tekstinä ja rakenteisena datana. Säännöt, vaiheet, lista.",
+ "h1": "Tekoälyhaku hoiva- ja hoitokodeille: näin tekoäly lukee maksunne, asukasvalinnan perusteet ja vapaat paikat oikein",
+ "lead": "Hoivakodin tekoälyhakuoptimointi tarkoittaa sitä, että vastaatte selkeällä tekstillä, lukujen ja ehtojen kera, niihin kysymyksiin, joita omaiset ja palveluohjaajat nykyään esittävät tekoälylle: mitä asuminen maksaa kuukaudessa (mitä hintaan sisältyy ja mitä tulee lisäksi), mitä hoidon tarpeita ja sairaanhoitoa otatte vastaan, kuinka monta työntekijää on yövuorossa, ja onko paikkoja vapaana ja miten tutustumiskäynnin voi varata. Sen jälkeen julkaisette samat tiedot yhdenmukaisesti rakenteisena datana, llms.txt-tiedostossa ja kaikissa virallisissa hoivapalvelurekistereissä, joissa olette mukana. Hoivakotien markkinointia koskevat säännöt pätevät edelleen, joten epämääräiset väitteet kuten ”täysi miehitys” eivät kuulu tekoälylle kirjoitettuun sisältöönkään.",
+ "intro": [
+  "Kirjoitettu 14. marraskuuta 2026 (JST). Japanin prefektuurien, kuntien ja kuluttajaviraston (Consumer Affairs Agency) asiakirjat sekä schema.orgin tyyppiluettelo tarkistettiin samana päivänä. Sääntöesimerkit ovat Japanista; tarkista omalla toiminta-alueellasi voimassa olevat säännöt.",
+  "Tekoälyn vastaukset muuttuvat päivästä toiseen ja sen mukaan, miten kysymys muotoillaan. Tämän oppaan vaiheet tekevät tiedoistanne tekoälylle luettavia. Ne eivät takaa, että tekoäly mainitsee kotinne tai sijoittaa sen mihinkään tiettyyn kohtaan."
+ ],
+ "sections": [
+  {
+   "heading": "Mitä omaiset ja palveluohjaajat kysyvät tekoälyltä",
+   "paragraphs": [
+    "Hoivakotia etsii usein poika tai tytär ennen kuin tuleva asukas on mukana. Heidän tekoälylle esittämänsä kysymykset yhdistävät monta ehtoa kerralla: ”hoivakoti [kaupungissa], joka ottaa vastaan paljon hoitoa tarvitsevan äidin tietyn kuukausibudjetin alle”, ”hoitokoti, joka hyväksyy letkuravitsemuksen”, ”koti, jossa annetaan saattohoitoa”, ”muistisairaiden yksikkö, jossa on nyt vapaa paikka”.",
+    "Jotta tekoäly voisi nimetä kotinne tällaisessa vastauksessa, sen täytyy pystyä lukemaan tekstinä, että täytätte nämä ehdot. Sivu, jossa lukee vain ”alkaen X kuukaudessa” ilman erittelyä, asukasvalinnan perusteet, joissa lukee vain ”kysy lisää”, tai vapaiden paikkojen ilmoitus ilman päivämäärää, on vaikea hyödyntää, kun kysymyksessä on ehtoja.",
+    "Googlen mukaan AI Overviewsissa tai AI Modessa näkyminen ei edellytä lisävaatimuksia eikä erityistä rakenteista dataa, ja tavalliset hakukoneoptimoinnin perusteet pätevät edelleen. [Google: tekoälyominaisuudet ja verkkosivustosi](https://developers.google.com/search/docs/appearance/ai-features). Hoivakodille tämä työ ei ole temppu: kyse on siitä, että kirjoitatte tarkasti ylös ne tiedot, joiden perusteella perhe tekee päätöksensä."
+   ]
+  },
+  {
+   "heading": "Julkaistavat tiedot ja miten ne kirjoitetaan",
+   "paragraphs": [
+    "Useimmat kärkisijoilla olevat artikkelit pysähtyvät neuvoon ”julkaise hinnat, vapaat paikat ja tutustumiskäyntien varaus”. Se, pystyykö tekoäly käyttämään tietoja, riippuu siitä, kuinka pitkälle menette. Yksityiskohdat vaihtelevat kodin tyypin mukaan (hoivakoti, palvelutalo, ympärivuorokautinen palveluasuminen, muistisairaiden yksikkö, päivätoiminta), mutta tämä on hyvä lähtökohta:"
+   ],
+   "table": {
+    "head": [
+     "Tieto",
+     "Miten se kirjoitetaan sivulle",
+     "Huomioitavaa"
+    ],
+    "rows": [
+     [
+      "Kodin tyyppi",
+      "Virallinen luokka, jolla teillä on lupa tai johon olette rekisteröityneet",
+      "Pelkkä ”hoivakoti” jättää tekoälyn arvailemaan, minkä tyyppinen olette"
+     ],
+     [
+      "Muuttokustannukset",
+      "Mahdollinen sisäänmuuttomaksu tai vakuus, summa ja palautusehdot",
+      "Jos mainostatte ”ei sisäänmuuttomaksua”, kertokaa, onko sillä vaihtoehdolla korkeampi kuukausimaksu"
+     ],
+     [
+      "Kuukausimaksun erittely",
+      "Vuokra, palvelu- tai hallinnointimaksu, ateriat, sähkö ja vesi – kukin summan ja kattavuuden kera",
+      "Älkää jääkö maksun nimeen: kertokaa, mihin se käytetään (katso säännöt alla)"
+     ],
+     [
+      "Kuukausimaksun ulkopuoliset kulut",
+      "Hoidon omavastuut, sairaanhoitokulut, inkontinenssituotteet, kampaaja, saattaminen vastaanotoille ja niin edelleen",
+      "Käyttökertaan perustuvista maksuista kirjoittakaa ”kerralta” ja hinta"
+     ],
+     [
+      "Asukasvalinnan perusteet",
+      "Hyväksymänne hoidon tarpeet, muistisairaus ja kukin sairaanhoidon muoto (imu, letkuravitsemus, insuliini, kotihappi)",
+      "Älkää jättäkö sitä muotoon ”kysy meiltä”: jakakaa kyllä, kyllä ehdoin ja ei"
+     ],
+     [
+      "Henkilöstö",
+      "Hoito- ja sairaanhoitohenkilöstön määrä (henkilötyövuosina), yövuoron vähimmäismiehitys, tunnit jolloin sairaanhoitaja on paikalla",
+      "Lukuja, ei ”huolehtivaa” tai ”runsasta”"
+     ],
+     [
+      "Yhteistyössä olevat terveydenhuollon yksiköt",
+      "Nimet ja mitä yhteistyö kattaa (kotikäynnit, saattaminen vastaanotoille)",
+      "Älkää saako yhteistyötä näyttämään laajemmalta kuin se on"
+     ],
+     [
+      "Vapaat paikat ja tutustumiskäynnit",
+      "Vapaiden paikkojen määrä tai ”vapaana” / ”jonossa” sekä viimeisimmän päivityksen päivämäärä; miten ja milloin tutustumiskäynnin voi varata",
+      "Päivämäärättömiä tietoja vapaista paikoista pidetään helposti vanhentuneina"
+     ],
+     [
+      "Milloin asukas voi joutua muuttamaan pois",
+      "Tilanteet kuten pitkä sairaalajakso tai sairaanhoidon tarve, johon ette pysty vastaamaan",
+      "Jos lupaatte ”loppuelämäksi”, kirjoittakaa ehdot samalle sivulle"
+     ]
+    ],
+    "caption": "Luettelo perustuu kohtiin, jotka Japani velvoittaa hoivapalvelujen tuottajat julkaisemaan verkossa, sekä kohtiin, joita maan hoivakotien markkinointisäännöt koskevat (molemmat alla)."
+   },
+   "after": [
+    "Pitäkää jokainen arvo samana sivun tekstissä, rakenteisessa datassa, Google Business Profilessa, esitteessä ja kaikissa virallisissa rekistereissä. Kun maksut muuttuvat, päivittäkää kaikki kerralla."
+   ]
+  },
+  {
+   "heading": "Japanissa keskeisten tietojen julkaiseminen verkossa on ollut pakollista huhtikuusta 2025",
+   "paragraphs": [
+    "Japanin vuoden 2024 pitkäaikaishoidon korvausuudistuksen jälkeen jokaisen pitkäaikaishoidon palveluntuottajan on 1. huhtikuuta 2025 alkaen täytynyt julkaista keskeiset tietonsa (重要事項) verkkosivustolla – joko omalla tai ylläpitäjänsä sivustolla tai terveys-, työ- ja hyvinvointiministeriön (Ministry of Health, Labour and Welfare) hoivapalvelujen tietojärjestelmässä. [Tochigin prefektuurin tiedote (PDF, japaniksi)](https://www.pref.tochigi.lg.jp/e11/documents/20250313134433.pdf)",
+    "Kohtiin kuuluvat yhteenveto toimintasäännöistä, henkilöstörakenne, yhteistyössä olevat terveydenhuollon yksiköt, maksut ja muut tiedot, jotka auttavat valinnassa. Erään kunnan koulutusaineisto lisää, että henkilöstö voidaan esittää lukumäärinä ammattinimikkeittäin sekä koko- ja osa-aikaisuuden mukaan (nimiä ei tarvita), ja mainitsee onnettomuuksiin reagoinnin, valitusten käsittelyn sekä sen, onko ulkopuolinen arviointi tehty. Aiempi velvoite pitää tiedot esillä toimipisteessä on edelleen voimassa. [Toyoaken kaupungin koulutusaineisto (PDF, japaniksi)](https://www.city.toyoake.lg.jp/secure/26317/2.webkeisai.pdf). Tarkat kohdat riippuvat kunkin palvelutyypin standardeista, joten tarkistakaa asia teidät nimenneeltä viranomaiselta.",
+    "Tekoälyhaun näkökulmasta nämä keskeiset tiedot ovat juuri sitä, mitä perheet haluavat tietää. Sen sijaan, että lataisitte vain PDF-tiedoston, laittakaa olennaisimmat tiedot (maksut, henkilöstö, yhteistyössä olevat terveydenhuollon yksiköt) myös HTML-sivulle ja linkittäkää sieltä PDF:ään. Se on helpompi lukea sekä tekoälylle että ihmisille."
+   ]
+  },
+  {
+   "heading": "Hoivakotien markkinointisäännöt: mitä ei pidä kirjoittaa tekoälylle",
+   "paragraphs": [
+    "Japanissa maksullisia vanhusten hoivakoteja (有料老人ホーム) koskee perusteettomia etuja ja harhaanjohtavia esityksiä koskevan lain (Act against Unjustifiable Premiums and Misleading Representations) nojalla annettu ilmoitus ”Maksullisia vanhusten hoivakoteja koskevat harhaanjohtavat esitykset” sekä sen soveltamisohjeet (lueteltu kuluttajaviraston [ilmoitusten ja ohjeiden sivulla](https://www.caa.go.jp/policies/policy/representation/fair_labeling/guideline/), japaniksi). Ohjeisiin sisältyy esimerkiksi seuraavat kohdat. [Soveltamisohjeet, Wakayaman prefektuurin julkaisema kopio (PDF, japaniksi)](https://wave.pref.wakayama.lg.jp/kaigodenet/careprov/careref/yuryorojin/hyouji-unyou.pdf)"
+   ],
+   "list": [
+    "Hoitohenkilöstön kuvaaminen ”runsaaksi” tai ”riittäväksi” ilman konkreettisia lukuja on ongelma. Esittäkää lukuja, kuten henkilötyövuosien määrä.",
+    "Öiden osalta esittäkää kodin määrittelemät yöajan tunnit ja hoito- ja sairaanhoitohenkilöstön vähimmäismäärä vuorossa tuona aikana.",
+    "Maksuista, kuten ”hallinnointimaksusta” tai ”palvelumaksusta”, on kerrottava, mihin ne käytetään, ja erittelyn on vastattava todellista käyttöä.",
+    "Pitkäaikaishoitovakuutuksen ulkopuolisista palveluista on kustakin kerrottava sisältö, hinta ja laskutustapa.",
+    "Pakolliset tiedot on sijoitettava lähelle väitettä, jota ne täsmentävät, muodossa jota iäkkäät lukijat voivat helposti lukea."
+   ],
+   "after": [
+    "Rakenteinen data, FAQ ja llms.txt ovat sivunne sisältöä koneille kirjoitettuna. Jos ette voi sanoa jotain sivulla (perustelematon ”alueen paras”, ”erinomainen sairaanhoito” ilman lukuja), älkää sanoko sitä myöskään tekoälylle kirjoitetuissa kohdissa. Muissa maissa on omat lupa- ja markkinointisääntönsä, ja Japanissa säännöt vaihtelevat kodin tyypin mukaan, joten tarkistakaa asia teistä vastaavalta viranomaiselta."
+   ]
+  },
+  {
+   "heading": "Rakenteinen data: hoivakodeille ei ole omaa tyyppiä",
+   "paragraphs": [
+    "schema.orgissa ei ole tyyppiä hoitokodeille, hoivakodeille tai palvelutaloille (tarkistettu schema.orgin tyyppiluettelosta 14. marraskuuta 2026). MedicalBusiness-tyypin alla on tyypit Nursing ja Geriatric, mutta ne kuvaavat terveydenhuollon ammattia ja lääketieteen alaa, eivät kotityyppiä. Jos käytätte niitä kodistanne, se saatetaan tulkita sairaalaksi tai klinikaksi, joten on turvallisempaa jättää ne käyttämättä.",
+    "Turvallisempi vaihtoehto on kuvata koti [LocalBusiness](https://schema.org/LocalBusiness)-tyyppinä nimen, osoitteen, puhelinnumeron, vierailu- tai yhteydenottoaikojen ja URL-osoitteen kanssa, liittää kodin tyyppi ja palvelut kuten päivätoiminta palveluina ja selittää yksityiskohdat sivun tekstissä. Googlen paikallisten yritysten rakenteisessa datassa nimi ja osoite ovat pakollisia. [Google: Paikallisen yrityksen rakenteinen data](https://developers.google.com/search/docs/appearance/structured-data/local-business)",
+    "Vapaiden paikkojen määrät ja yksityiskohtaiset maksuerittelyt muuttuvat usein, eikä niille ole vakiintunutta paikkaa rakenteisessa datassa, joten käytännöllisin paikka niille on sivun tekstissä oleva taulukko päivityspäivämäärän kera. Rajatkaa rakenteinen data harvoin muuttuviin tietoihin: nimi, sijainti, yhteystiedot ja palvelutyypit."
+   ]
+  },
+  {
+   "heading": "Käyttöönotto hoivakodin WordPress-sivustolla",
+   "list": [
+    "Asenna Nurevo AEO (ilmainen) [WordPress.orgista](https://wordpress.org/plugins/nurevo-webmcp/) ja aktivoi se. Pitäkää Yoast SEO, Rank Math, All in One SEO tai Slim SEO, jos käytätte jotakin niistä. Versiosta 0.9.1 alkaen se toimii myös yhdessä SEO SIMPLE PACKin ja VK All in One Expansion Unitin kanssa ilman rakenteisen datan päällekkäisyyttä.",
+    "Valitse ohjatussa asennuksessa ”Other”. Tämä kortti ei aseta mitään tiettyä tyyppiä, joten lisäosa julkaisee LocalBusinessin, kunhan osoite, puhelinnumero tai aukioloajat on täytetty. Vahvista nimi, osoite, puhelinnumero ja kuvaus. Vain tyhjät kentät täytetään olemassa olevista asetuksistanne; mitään kirjoittamaanne ei korvata.",
+    "Käyttäkää aukioloaikakenttää aikoihin, jolloin otatte vastaan yhteydenottoja ja vierailuja, ja kertokaa tämä sivun tekstissä, koska asukkaita hoidetaan ympäri vuorokauden.",
+    "Lisätkää Asetuksissa kodin tyyppi ja mahdolliset paikan päällä tarjottavat palvelut (päivätoiminta, lyhytaikaishoito, hoidon suunnittelu) palveluina ja kirjoittakaa FAQ-osioon perheiden yleisimmät kysymykset. FAQ-kysymykset lisätään sivun FAQPage-dataan sillä sivulla, jolle sijoitatte Nurevo FAQ -lohkon tai lyhytkoodin [nurevo_faq].",
+    "Laittakaa maksujen erittely, asukasvalinnan perusteet, henkilöstö ja vapaat paikat (päivityspäivämäärän kera) taulukoiksi sivun tekstiin ja linkittäkää keskeisten tietojen PDF-tiedostoon.",
+    "Suorita diagnoosi AEO Score -näkymässä ja ota käyttöön yhden napsautuksen korjaukset. Tarkista ulkopuolelta, miten tekoäly lukee teitä, [ilmaisella tekoälyluettavuuden tarkistuksella](/check)."
+   ],
+   "after": [
+    "Kun SEO-lisäosa on käytössä, Nurevo AEO ei tulosta toista rakenteisen datan kokonaisuutta. Se lisää vain puuttuvan osoitteen, puhelinnumeron ja aukioloajat graafiin, jonka SEO-lisäosanne jo julkaisee. Katso [paikallisen yrityksen skeeman lisääminen Yoastiin, Rank Mathiin ja AIOSEO:hon](/guide/local-business-schema-seo-plugins/)."
+   ]
+  },
+  {
+   "heading": "Tarkistuslista ennen julkaisua",
+   "list": [
+    "Kodin tyyppi on kirjoitettu virallisena luokkana, ei pelkkänä ”hoivakotina”.",
+    "Kuukausimaksu on eritelty, ja sen ulkopuoliset kulut on esitetty hintoineen tai ”kerralta”-summina.",
+    "Asukasvalinnan perusteet on kirjoitettu hoitotason, muistisairauden ja kunkin sairaanhoidon muodon osalta muodossa kyllä, kyllä ehdoin tai ei.",
+    "Henkilöstö on esitetty henkilötyövuosina ja yövuoron vähimmäismääränä, ei pelkillä sanoilla kuten ”runsas”.",
+    "Vapaiden paikkojen tiedoissa on päivityspäivämäärä.",
+    "Pakolliset keskeiset tiedot on julkaistu sivustollanne tai virallisessa rekisterissä, ja luvut vastaavat sivustoanne.",
+    "Rakenteisen datan nimi, osoite ja puhelinnumero vastaavat sivua ja Google Business Profilea, eikä tyyppi ole lääketieteellinen, kuten Nursing tai Hospital.",
+    "llms.txt luettelee yleiskatsaus-, maksu-, asukasvalinta- ja tutustumissivunne. [Mikä on llms.txt?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Näin tarkistatte, näyttekö tekoälyn vastauksissa",
+   "paragraphs": [
+    "Kun tiedot ovat kunnossa, kirjoittakaa viidestä kymmeneen kysymystä, joita perhe voisi kysyä ja joissa yhdistyvät alue, hoitotaso, budjetti ja sairaanhoidon tarpeet. Esittäkää ne ChatGPT:lle ja Perplexitylle ja kirjatkaa, mainitaanko kotinne nimeltä tai URL-osoitteella ja kerrotaanko maksut ja asukasvalinnan perusteet oikein. Vastaukset vaihtelevat kerrasta toiseen, joten toistakaa samat kysymykset ajan mittaan. [Näin mittaat näkyvyyttä tekoälyssä](/guide/measure-ai-visibility/) käy menetelmän läpi tarkemmin.",
+    "Nurevo AEO:n Free- ja Standard-tilauksiin kuuluu kuukausittainen tarkistus: kolme toimialanne ja alueenne perusteella muodostettua kysymystä (ei koskaan kotinne nimeä) esitetään Perplexitylle, ja lisäosa kirjaa, mainitsivatko vastaukset teidät tai viittasivatko ne sivustoonne. Pro-tilaus (alkaen $99/kk) lisää beetavaiheessa olevan tekoälynäkyvyyden mittauksen: kuinka usein näytte tekoälyn vastauksissa, kilpailijavertailun ja historian kera (tällä hetkellä Perplexityssä). Molemmat perustuvat vastausten otantaan eivätkä seuraa jokaista vastausta."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Mistä hoivakodin kannattaa aloittaa tekoälyhaun kanssa?",
+   "a": "Kirjoittakaa sivuillenne tekstinä kuukausimaksun erittely ja sen ulkopuoliset kulut, hyväksymänne hoidon tarpeet ja sairaanhoito, henkilöstönne sekä vapaat paikat (päivityspäivämäärän kera). Varmistakaa sitten, että nimi, osoite ja puhelinnumero ovat samat rakenteisessa datassa ja Google Business Profilessa."
+  },
+  {
+   "q": "Mitä rakenteisen datan tyyppiä hoivakodin kannattaa käyttää?",
+   "a": "schema.orgissa ei ole hoivakotityyppiä, joten käyttäkää LocalBusinessia ja liittäkää kodin tyyppi ja palvelut kuten päivätoiminta palveluina. Nursing ja Geriatric kuvaavat ammattia ja lääketieteen alaa, joten ne eivät sovi hyvin itse kotiin."
+  },
+  {
+   "q": "Emme pysty päivittämään vapaiden paikkojen määrää joka päivä. Pitäisikö se jättää pois?",
+   "a": "Jo tila kuten ”vapaana” tai ”jonossa” viimeisimmän päivityksen päivämäärän kera on hyödyllinen. Päivämäärättömiä tietoja vapaista paikoista pidetään helposti vanhentuneina, joten valitkaa muoto, jonka pystytte pitämään ajan tasalla."
+  },
+  {
+   "q": "Voimmeko kirjoittaa ”täysi miehitys”, jotta tekoäly valitsisi meidät?",
+   "a": "Japanissa hoivakotien markkinointiohjeet pitävät ongelmallisina väitteitä runsaasta tai riittävästä henkilöstöstä ilman lukuja. Käyttäkää sen sijaan lukuja, kuten henkilötyövuosien määrää ja yövuoron vähimmäismäärää. Tarkistakaa toiminta-alueellanne sovellettavat säännöt."
+  },
+  {
+   "q": "Jos olemme virallisessa hoivapalvelurekisterissä, tarvitsemmeko silti oman sivuston?",
+   "a": "Japanissa virallinen järjestelmä on hyväksytty paikka pakollisten keskeisten tietojen julkaisemiseen. Oma sivustonne voi kuitenkin kertoa maksuista, asukasvalinnan perusteista ja tutustumiskäynneistä paljon yksityiskohtaisemmin, ja juuri niiden perusteella perheet tekevät päätöksensä. Pitäkää arvot molemmissa samoina."
+  },
+  {
+   "q": "Onko Nurevo AEO ilmainen?",
+   "a": "Kyllä. Rakenteinen data osoitteelle, yhteystiedoille, aukioloajoille, palveluille ja FAQ:lle sekä llms.txt, tekoälyindeksoijien säännöt ja AEO-pisteet kuuluvat ilmaiseen tilaukseen. Maksulliset tilaukset lisäävät aina ajantasaisen sääntökokoelman (Standard, $20/kk) ja beetavaiheessa olevan tekoälynäkyvyyden mittauksen (Pro, alkaen $99/kk). [Nurevo AEO WordPress.orgissa](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Takaako tämä, että kotimme näkyy ChatGPT:ssä?",
+   "a": "Ei. Tekoälyn vastaukset muuttuvat, eikä mikään työkalu tai tekniikka voi taata mainintaa tai sijoitusta. Voitte kuitenkin tehdä tiedoistanne tekoälylle helppolukuisia ja jatkaa sen seuraamista, näyttekö vastauksissa."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso ensin, miten tekoäly lukee kotinne verkkosivustoa",
+  "body": "Ilmainen tarkistus näyttää rakenteisen datan, llms.txt-tiedoston ja tekoälyindeksoijien pääsyn tilan ilman rekisteröitymistä. WordPressissä Nurevo AEO täyttää aukot ilmaiseksi.",
+  "label": "Tee ilmainen tekoälyluettavuuden tarkistus",
+  "href": "/check",
+  "secondary": {
+   "label": "Hanki Nurevo AEO WordPress.orgista",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI:n, Perplexity Perplexity AI:n ja Google Google LLC:n tavaramerkki. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK ja VK All in One Expansion Unit ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa niihin. Tämä artikkeli ei ole oikeudellista neuvontaa."
+}
