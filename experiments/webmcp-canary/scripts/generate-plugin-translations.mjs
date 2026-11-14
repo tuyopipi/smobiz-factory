@@ -875,7 +875,7 @@ const JA = {
     "出力がオフのため、これらの情報はまだ公開されていません。「Nurevo AEO > 設定」でオンにしてください。",
   // Site types (docs/industries.md).
   "B2B / SaaS": "BtoB・SaaS",
-  "B2B / SaaS / professional services": "BtoB・SaaS・専門サービス",
+  "B2B / SaaS / professional services": "BtoB・SaaS・専門サービス・フリーランス（店舗なし）",
   "Case studies": "導入事例",
   "Case studies page (B2B)": "導入事例ページ（BtoB）",
   "Contact email": "連絡先メールアドレス",
