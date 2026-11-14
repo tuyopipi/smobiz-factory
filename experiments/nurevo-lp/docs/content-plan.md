@@ -115,3 +115,5 @@
 5. 制作会社向け：AI検索対策の初回診断と提案書の進め方（無料チェックの使い方、約束してはいけないこと）【制作会社向け】
 翻訳の残り（8時台で補完）：medical-clinic-ai-search・recruiting-page-ai-search・ai-visibility-drop-causes（ja/en のみ）。
 メモ：2026-11-14 17時の回は、WebFetchの許可待ちで一次情報（OpenAI・Perplexity・Google・SparkToro原典）を再取得できなかった。これらは既存記事で確認済みの範囲（2026-10-31・11-10）だけを書き、SparkToroは Search Engine Land の記事を出典にした。
+| 2026-11-14 調査 | research-wordpress-seo-plugins-2026 | SEOプラグイン別（WordPress 12,376件：日本2,295・海外10,081。シェア〔日本 AIOSEO 35.2%・Yoast 14.4%・Rank Math 1.7%・検出なし48.6%／海外 Yoast 53.1%・Rank Math 22.2%・AIOSEO 6.1%〕、国別シェア13か国〔WP100件以上〕、プラグイン別の llms.txt・JSON-LD・Organization系・BreadcrumbList・OGP・canonical・AIボットブロック・6項目、限界〔文字列判定の優先順・SEO SIMPLE PACK等は検出なし〕） | raw_2026-11-12（summary_2026-11-12 と一致） | ja/en | content/research-20261114 |
+調査レポートの未着手の切り口：都道府県別／WordPress と非WordPress／日本と海外の比較（総論）／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。メモ：#77（AIクローラー）・#83（llms.txt）・#89（構造化データ）は checks 成功のまま未マージ。
