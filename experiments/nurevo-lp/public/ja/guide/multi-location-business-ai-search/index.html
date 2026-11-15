@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>多店舗・チェーンのAI検索対策：店舗ごとの事実を正しく読ませる | Nurevo</title>
+<meta name="description" content="AIに「〇〇の梅田店は日曜も開いている？」と聞かれたときに、別の店の情報で答えられないための手順。店舗ページの項目表、閉店・移転の扱い、本部と店舗をつなぐ構造化データ、WordPressでの実装と確かめ方。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/multi-location-business-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/multi-location-business-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/multi-location-business-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/multi-location-business-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/multi-location-business-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/multi-location-business-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/multi-location-business-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/multi-location-business-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/multi-location-business-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo">
+<meta property="og:title" content="多店舗・チェーンのAI検索対策：店舗ごとの事実を正しく読ませる | Nurevo">
+<meta property="og:description" content="AIに「〇〇の梅田店は日曜も開いている？」と聞かれたときに、別の店の情報で答えられないための手順。店舗ページの項目表、閉店・移転の扱い、本部と店舗をつなぐ構造化データ、WordPressでの実装と確かめ方。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/multi-location-business-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="多店舗・チェーンのAI検索対策：店舗ごとの事実を正しく読ませる | Nurevo">
+<meta name="twitter:description" content="AIに「〇〇の梅田店は日曜も開いている？」と聞かれたときに、別の店の情報で答えられないための手順。店舗ページの項目表、閉店・移転の扱い、本部と店舗をつなぐ構造化データ、WordPressでの実装と確かめ方。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/multi-location-business-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/multi-location-business-ai-search/","name":"多店舗・チェーンのAI検索対策：店舗ごとの事実を正しく読ませる | Nurevo","description":"AIに「〇〇の梅田店は日曜も開いている？」と聞かれたときに、別の店の情報で答えられないための手順。店舗ページの項目表、閉店・移転の扱い、本部と店舗をつなぐ構造化データ、WordPressでの実装と確かめ方。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/multi-location-business-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/multi-location-business-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"多店舗・チェーンのAI検索対策：店舗ごとの営業時間・住所・サービスをAIに取り違えさせない手順","item":"https://nurevo.jp/ja/guide/multi-location-business-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/multi-location-business-ai-search/#faq","mainEntity":[{"@type":"Question","name":"店舗ごとにページを作るべきですか？店舗一覧の1ページではだめですか？","acceptedAnswer":{"@type":"Answer","text":"店舗ごとの質問（その店の営業時間や設備）に答えるには、1店1ページのほうが確実です。一覧の1ページだけだと、どの値がどの店のものかをAIが取り違えやすくなります。店舗が少ない場合でも、各店に見出しと住所・営業時間をまとめた区切りを作ってください。"}},{"@type":"Question","name":"全店の営業時間が同じなら、各店のページに書かなくてもいいですか？","acceptedAnswer":{"@type":"Answer","text":"各店のページにも書くことをおすすめします。AIは店舗ページだけを読んで答えることがあるので、そのページに営業時間がないと、ほかのページや外部のサイトの値が使われます。"}},{"@type":"Question","name":"branchOf と parentOrganization はどちらを使えばいいですか？","acceptedAnswer":{"@type":"Answer","text":"schema.orgでは branchOf は非推奨で、parentOrganization を使うよう案内されています。店舗のLocalBusinessから、本部のOrganizationの @id を parentOrganization で指してください。"}},{"@type":"Question","name":"閉店した店のページはすぐ消すべきですか？","acceptedAnswer":{"@type":"Answer","text":"すぐ消すより、閉店日と近くの店へのリンクを書いたお知らせにして、店舗一覧と構造化データから外すほうが、閉店したことが伝わります。移転の場合は、移転先の店舗ページへ転送するか、移転先を明記します。"}},{"@type":"Question","name":"フランチャイズ店が独自のサイトやSNSを持っています。どうそろえればいいですか？","acceptedAnswer":{"@type":"Answer","text":"本部の店舗の一覧表を正として、店名・住所・電話・営業時間の書き方を加盟店と共有し、加盟店のサイトやプロフィールも同じ値にしてもらいます。加盟店のサイトから本部のサイトへ、本部の店舗ページから加盟店のサイトへ、お互いにリンクしておくと関係がわかりやすくなります。"}},{"@type":"Question","name":"店舗が多くてllms.txtに全部載りません。全店を載せるべきですか？","acceptedAnswer":{"@type":"Answer","text":"全店を並べる必要はありません。店舗一覧のページと、主な店舗ページが載っていれば、そこから各店のページへたどれます。Nurevo AEOでは、webmcp_canary_llms_txt_lines フィルターで店舗一覧への行を足せます。"}},{"@type":"Question","name":"この手順で、すべての店がAIの答えに正しく出ますか？","acceptedAnswer":{"@type":"Answer","text":"保証はできません。AIの回答は日や聞き方で変わります。この手順は、店と店の情報が混ざる原因を減らし、AIが読む元の情報を正確にそろえるためのものです。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="btn primary" href="/check">無料でAIの読みやすさをチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>多店舗・チェーンのAI検索対策：店舗ごとの営業時間・住所・サービスをAIに取り違えさせない手順</span></nav>
+  <article>
+    <h1>多店舗・チェーンのAI検索対策：店舗ごとの営業時間・住所・サービスをAIに取り違えさせない手順</h1>
+    <p class="lead">店舗が複数ある会社でAIの答えが間違う原因の多くは、店と店の情報が混ざることです。1店舗に1ページを用意して、その店の事実（住所・電話・営業時間・臨時休業・店ごとの違い）を文字で書き、構造化データで本部とつなぎ、Googleビジネスプロフィールなど社外の情報と同じ値にそろえる。対策の中心はこの3つです。</p>
+<p>作成日：2026年11月15日（JST）。対象は、飲食・美容・クリニック・小売・教室・不動産など、2店舗以上（または複数の拠点）を持つ会社と、そのサイトを作る制作会社です。会社そのものの説明（社名・設立・代表者）は<a href="/ja/guide/company-profile-page-ai-search/">会社概要ページのAI検索対策</a>、1店舗の構造化データの基本は<a href="/ja/guide/local-business-schema-seo-plugins/">店舗の構造化データとSEOプラグイン</a>で扱っています。この記事は「店がいくつもある」ことで起きる問題に絞ります。</p>
+<p>AIの回答は日や聞き方によって変わります。この記事の手順は、AIが読む元の情報を正確にするためのもので、AIの回答に出ることや順位を保証するものではありません。</p>
+<section class="qa"><h2>多店舗の会社で、AIの答えはどう間違うのか</h2><p>ChatGPTの検索、Perplexity、GoogleのAIによる概要は、ウェブのページを読んで答えを組み立て、出典を示します。店舗が1つなら「その会社の情報」はほぼ1つですが、店舗が複数あると、AIが読むページの中に、違う店の住所・営業時間・電話番号が並びます。どの値がどの店のものかが文字ではっきりしていないと、ほかの店の値で答えが組み立てられることがあります。</p>
+<p>多店舗の会社がAIに聞かれる質問は、ブランド全体の質問と、1つの店の質問に分かれます。</p><ol><li>「〇〇（ブランド名）の梅田店は日曜も開いている？」（その店の営業時間・定休日）</li><li>「〇〇で駐車場があるのはどの店？」（店ごとの設備の違い）</li><li>「〇〇の新宿店はまだある？移転した？」（閉店・移転）</li><li>「京都駅の近くに〇〇はある？」（地域と店舗の対応）</li><li>「〇〇はどの店でも同じメニュー（施術・診療）を受けられる？」（店ごとのサービスの違い）</li><li>「〇〇の本部（運営会社）はどこ？」（ブランドと会社の関係）</li></ol><p>よくある間違いは、本店や旗艦店の営業時間を全店の値として答える、閉店した店を今もあるように答える、代表番号を店の電話として答える、一部の店にしかないサービスを全店にあるように答える、の4つです。どれも、店ごとの事実が店ごとのページに書かれていれば起きにくくなります。</p>
+<p>Googleは、AIによる概要やAIモードに出るための特別な構造化データや追加の要件はなく、通常のSEOの基本がそのまま当てはまるとしています（<a href="https://developers.google.com/search/docs/appearance/ai-features?hl=ja">Google 検索セントラル：AI 機能とウェブサイト</a>）。多店舗の対策も、AI向けの特別な書き方ではなく、店ごとの事実を正しく、読める形で、どこでも同じ値で出すことが本体です。</p></section>
+<section class="qa"><h2>サイトの形：ブランドページ・店舗一覧・店舗ページの役割を分ける</h2><p>まず、どの質問をどのページで受けるかを決めます。1ページにすべての店を並べるだけでは、AIはどの段落がどの店の話かを取り違えやすくなります。</p><div class="table-wrap"><table><thead><tr><th scope="col">ページ</th><th scope="col">受ける質問</th><th scope="col">書くこと</th><th scope="col">構造化データ</th></tr></thead><tbody><tr><th scope="row">ブランド（トップ・会社概要）</th><td>「〇〇はどんな会社？」「運営会社は？」</td><td>ブランドと運営会社の関係、全店共通のサービス、店舗数（時点つき）</td><td>Organization（本部）</td></tr><tr><th scope="row">店舗一覧</th><td>「〇〇は大阪に何店ある？」「京都駅の近くにある？」</td><td>都道府県・市区町村ごとの店名と住所、各店舗ページへのリンク</td><td>なくてもよい（各店舗ページに置く）</td></tr><tr><th scope="row">店舗ページ（1店1ページ）</th><td>「梅田店は日曜も開いている？」「駐車場は？」</td><td>その店だけの事実（次の表）</td><td>LocalBusinessの具体的な型（1店に1つ）</td></tr><tr><th scope="row">閉店・移転のお知らせ</th><td>「新宿店はまだある？」</td><td>閉店日・移転先・近くの店へのリンク</td><td>店舗の構造化データは外す</td></tr></tbody></table></div><p>URLは「/stores/osaka/umeda/」のように、店ごとに変わらない形にします。店名やURLを途中で変えると、古いURLを読んだAIや外部サイトとの食い違いが増えます。変えるときは、古いURLから新しいURLへ転送します。</p>
+<p>店舗がない地域のページ（「〇〇市の△△なら当社へ」のような、地名だけを入れ替えたページ）は作らないでください。店舗がない地域のことを聞かれたときに、AIが存在しない店を答える原因にもなります。</p></section>
+<section class="qa"><h2>店舗ページに書く項目と、構造化データとの対応</h2><p>次の表は、店舗ページに文字で書いておきたい項目と、対応するschema.orgのプロパティです。Googleのローカルビジネスの説明では、name と address が必須、openingHoursSpecification・telephone・url・geo・department などが推奨とされ、いちばん具体的な型（Dentist、HairSalon、Restaurant など）を使うよう勧めています（<a href="https://developers.google.com/search/docs/appearance/structured-data/local-business?hl=ja">Google：ローカル ビジネスの構造化データ</a>）。</p><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">書き方</th><th scope="col">AIで起きやすい間違い</th><th scope="col">プロパティ</th></tr></thead><tbody><tr><th scope="row">店名</th><td>「ブランド名＋地名＋店」の決まった形（例：サンプル歯科 梅田院）。全店で同じ形にする</td><td>ほかの店と混ざる、略称だけで呼ばれる</td><td>name</td></tr><tr><th scope="row">住所</th><td>郵便番号から建物名・階まで。最寄り駅と出口も文で書く</td><td>移転前の住所、近くの別の店の住所</td><td>address、geo、hasMap</td></tr><tr><th scope="row">電話</th><td>店の直通か、予約センター（代表）かを明記する</td><td>代表番号を店の番号として答える</td><td>telephone</td></tr><tr><th scope="row">営業時間・定休日</th><td>店ごとに書く。全店共通でも、各店のページに書く</td><td>本店の営業時間を全店の値として答える</td><td>openingHoursSpecification</td></tr><tr><th scope="row">臨時休業・年末年始</th><td>期間を日付で書き、終わったら消す</td><td>臨時休業の情報が古いまま残る</td><td>specialOpeningHoursSpecification</td></tr><tr><th scope="row">その店のサービス・設備</th><td>全店共通のものと、その店だけのものを分けて書く（例：「この店では土曜の矯正相談を受けていません」）</td><td>一部の店のサービスを全店にあると答える</td><td>本文、FAQ、department（店内の別部門）</td></tr><tr><th scope="row">駐車場・支払い・言語</th><td>台数や提携駐車場、使える支払い方法、対応できる言語</td><td>ほかの店の設備で答える</td><td>本文（paymentAccepted など）</td></tr><tr><th scope="row">店舗コード</th><td>社内とGoogleビジネスプロフィールで使っている番号</td><td>同じ名前の店の取り違え</td><td>branchCode</td></tr><tr><th scope="row">本部との関係</th><td>「運営：株式会社〇〇」と書き、会社概要へリンク</td><td>フランチャイズの運営会社と本部の混同</td><td>parentOrganization</td></tr><tr><th scope="row">開店日・最終更新日</th><td>ページの最後に「〇年〇月〇日更新」</td><td>いつの情報か判断できない</td><td>本文</td></tr></tbody></table></div><p>店舗ページは、店名と住所だけを差し替えた同じ文章になりがちです。それでも構いませんが、その店にしかない事実（設備、担当できるサービス、混みやすい時間、アクセスの説明など）を最低3つは書くと、AIが店を区別する手がかりになります。</p>
+<p>店ごとのよくある質問は、全店共通の質問と分けて、その店のページに置きます。「この店に駐車場はありますか」「この店で〇〇はできますか」のように、その店の名前で答えられる質問にします。</p></section>
+<section class="qa"><h2>閉店・移転・一時休業の扱い</h2><p>多店舗の会社でいちばん長く残る間違いは、閉店した店の情報です。店のページを消すだけでは、外部のサイトやAIが以前に読んだ情報が残ります。次の順で片付けます。</p><ol><li>閉店した店のページは、すぐに消さず「20XX年〇月〇日に閉店しました」と書き換え、近くの店へのリンクを置く。移転なら移転先の店舗ページへ転送するか、移転先を明記する。</li><li>店舗一覧から外し、その店の構造化データを外す（閉店した店をLocalBusinessとして出し続けない）。</li><li>Googleビジネスプロフィールで、閉業や移転の扱いに更新する。</li><li>サイト内のほかの場所（フッター、採用ページ、キャンペーンのページ、PDFのチラシ）に残っていないか探す。</li><li>社外の掲載先（予約サイト、ポータル、自治体や団体の名簿）に更新を依頼する。</li><li>一時休業は、期間を日付で書き、specialOpeningHoursSpecification や臨時のお知らせで示す。再開したら必ず消す。</li></ol></section>
+<section class="qa"><h2>構造化データ：本部と店舗をつなぐ</h2><p>多店舗の構造化データでは、「どの会社の、どの店か」を機械にもわかる形にします。考え方は次のとおりです。</p><ol><li>本部（ブランド・運営会社）は、トップページか会社概要に Organization として1つ置き、固定の @id（例：https://example.jp/#organization）を付ける。</li><li>各店舗ページには、その店のLocalBusiness（具体的な型）を1つだけ置き、店ごとに違う @id（例：https://example.jp/stores/osaka/umeda/#store）を付ける。</li><li>店舗から本部へは parentOrganization で本部の @id を指す。schema.orgでは、以前の <a href="https://schema.org/branchOf">branchOf</a> は非推奨で、<a href="https://schema.org/parentOrganization">parentOrganization</a> を使うよう案内されています。</li><li>店舗コードは <a href="https://schema.org/branchCode">branchCode</a>（schema.orgの説明でも「store code」）に入れる。</li><li>1つの店の中に別の部門がある場合（schema.orgの例では、薬局のある店、カフェのあるパン屋）は、<a href="https://schema.org/department">department</a> でつなぎ、部門ごとの営業時間を分けて書ける。</li><li>店舗一覧ページに全店のLocalBusinessをまとめて並べるより、各店の値は各店のページに置く。本文に書いていない値を構造化データだけに入れない。</li></ol><p>Googleは、構造化データをページに見えている内容と一致させることを基本の1つに挙げ、Googleビジネスプロフィールの情報も最新にしておくよう勧めています（<a href="https://developers.google.com/search/docs/appearance/ai-features?hl=ja">AI 機能とウェブサイト</a>）。構造化データは、店舗ページの本文の「答え合わせの表」です。</p></section>
+<section class="qa"><h2>Googleビジネスプロフィールとサイトを同じ値にする</h2><p>店舗ごとのGoogleビジネスプロフィールと、店舗ページの値が違うと、どちらが正しいかAIにも人にもわかりません。いちばん効くのは、全店の事実を1つの「店舗の一覧表（マスタ）」で管理し、サイト・Googleビジネスプロフィール・予約サイトを同じ表から更新することです。</p><div class="table-wrap"><table><thead><tr><th scope="col">一覧表の列</th><th scope="col">決めておくこと</th></tr></thead><tbody><tr><th scope="row">店舗コード</th><td>社内・サイト・Googleビジネスプロフィールで同じ番号</td></tr><tr><th scope="row">店名</th><td>「ブランド名＋地名＋店」の決まった形</td></tr><tr><th scope="row">住所・電話</th><td>番地やハイフンの書き方を1つに決める</td></tr><tr><th scope="row">営業時間・定休日・臨時休業</th><td>変更日と、誰が直すか</td></tr><tr><th scope="row">店ごとのサービス・設備</th><td>全店共通とその店だけを分ける</td></tr><tr><th scope="row">店舗ページのURL</th><td>変えない。変えたら転送</td></tr><tr><th scope="row">状態</th><td>営業中・一時休業・閉店（日付つき）</td></tr><tr><th scope="row">最終確認日</th><td>月1回など、決めた周期で確認</td></tr></tbody></table></div><p>店舗が多い場合の一括でのオーナー確認や、複数の店舗をまとめて管理する機能、店舗コードの扱いには、Googleが決めた条件があります。条件は変わることがあるので、<a href="https://support.google.com/business/?hl=ja">Googleビジネスプロフィール ヘルプ</a>で最新の内容を確かめてください。店長が各自でプロフィールを直せる運用にする場合も、一覧表の値とずれないよう、直す前に一覧表を更新する順番を決めておきます。</p></section>
+<section class="qa"><h2>WordPressでの手順（Nurevo AEOの場合）</h2><p>WordPressのサイトなら、<a href="https://wordpress.org/plugins/nurevo-webmcp/">Nurevo AEO（無料）</a>で本部の情報を構造化データとllms.txtに出し、店舗ページは次のように組み合わせます。Nurevoの設定に入る事業者は1つ（1つのサイトに1つの事業者）なので、そこには本部（ブランド）の情報を入れます。</p><ol><li>店舗ページの本文を、上の表に沿って先に書く（構造化データより先に本文）。店舗は固定ページか、店舗用の投稿タイプで1店1ページにする。</li><li>Nurevoの基本情報には、本部（ブランド・運営会社）の名前・説明・住所・電話番号・URL・メールを入れる。店舗が1つしかない地域ビジネスと違い、ここに1店舗の営業時間を入れると、全店の値のように見えるので注意する。</li><li>店ごとのよくある質問は、その店舗ページの編集画面の「Nurevo AEO」パネルで、そのページだけの質問として入力し、Nurevo FAQブロックを「このページ専用の質問」に設定して置く。そのページにだけFAQPageとして出ます。</li><li>店舗ごとのLocalBusinessを出したい場合は、開発者向けの webmcp_canary_schema_graph フィルターで、店舗ページにだけ店のノードを extra に足す。本部の @id は $bundle['org_id'] で受け取れるので、parentOrganization にその @id を入れる。店の値は、店舗ページの本文と同じ値（カスタムフィールドなど）から作る。</li><li>Yoast SEO・Rank Math・All in One SEO・Slim SEOを使っている場合、Nurevoはそのプラグインの構造化データに足りない事実だけを足し、新しいノード（店のノードなど）はその構造化データに追加されます。SEO SIMPLE PACK、VK All in One Expansion Unitとも併用できます（0.9.1から）。</li><li>店舗検索のプラグインなど、別の仕組みがすでに店舗ごとの構造化データを出している場合は、二重にならないよう、店舗ページの「このページではNurevoの構造化データを出力しない」を使うか、どちらか一方に決める。</li><li>/llms.txt を開いて店舗一覧と主な店舗ページが載っているか確かめる。llms.txtには更新日の新しい固定ページ・投稿30件が載るため、店舗が多いと載らないページが出ます。webmcp_canary_llms_txt_lines フィルターで店舗一覧への行を足せます。閉店した店のページは「このページをllms.txtに載せない」で外せます。</li><li>フランチャイズなどで店ごとに別のWordPressサイトがある場合は、wp nurevo export で設定を書き出し、wp nurevo import でほかのサイトに読み込んでから、店の名前・住所・電話・営業時間だけを直す（キーやトークンは書き出されません）。</li></ol><p>WordPress以外のサイトでも、確かめる項目は同じです。登録不要の<a href="/check">無料チェック</a>にURLを入れると、構造化データ・llms.txt・AIクローラの許可の状態を確認できます。店舗ページのURLも1つずつ入れて確かめられます。</p></section>
+<section class="qa"><h2>確かめ方：店ごとに、店名を入れた質問と入れない質問</h2><p>多店舗の確かめ方は、店を選んで、店ごとに記録することです。全店を毎回聞く必要はありません。営業時間や住所が変わった店、閉店・移転した店、問い合わせの多い店から始めます。同じ質問を、同じAIに、日を変えて何回か聞き、1回の答えだけで判断しないでください。</p><div class="table-wrap"><table><thead><tr><th scope="col">記録すること</th><th scope="col">例</th></tr></thead><tbody><tr><th scope="row">日付・AI・質問</th><td>11/15、Perplexity、「サンプル歯科の梅田院は日曜も診療している？」</td></tr><tr><th scope="row">答えの中の事実</th><td>営業時間・住所・電話・サービスが、その店の値か、ほかの店の値か</td></tr><tr><th scope="row">出典</th><td>その店の店舗ページか、店舗一覧か、外部の予約サイトか</td></tr><tr><th scope="row">店名を入れない質問</th><td>「梅田で日曜に開いている歯医者は？」で店が出るか</td></tr><tr><th scope="row">閉店した店</th><td>閉店した店を今もあるように答えていないか</td></tr></tbody></table></div><p>Nurevoの無料のAIチェック（サイトを接続したFree・Standardのサイトで月1回）は、設定の業種と地域から作った質問で、名前を入れずに聞きます。地域は設定に入れた1つなので、ほかの店の地域は上の表で手で確かめます。Proの登場率の計測（ベータ版）は現在Perplexityが対象です。測り方の全体は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>にまとめています。</p></section>
+<section class="qa"><h2>多店舗のチェックリスト</h2><ol><li>1店舗に1ページあり、URLは店ごとに変わらない形になっている。</li><li>店名の書き方（ブランド名＋地名＋店）が全店で同じ。</li><li>各店のページに、その店の住所・電話（直通か代表か）・営業時間・定休日が文字で書いてある。</li><li>臨時休業・年末年始は日付つきで書き、終わったら消している。</li><li>全店共通のサービスと、その店だけのサービスが分けて書いてある。</li><li>閉店・移転した店は、お知らせに書き換え、店舗一覧と構造化データから外している。</li><li>各店のLocalBusinessは店ごとに違う @id を持ち、parentOrganization で本部につながっている。</li><li>構造化データの値が、店舗ページの本文と一致している。</li><li>サイトとGoogleビジネスプロフィールの値が、同じ一覧表から更新されている。</li><li>店舗が地域ごとに一覧でき、各店舗ページへリンクしている。</li><li>店を選び、店名を入れた質問と入れない質問で、日を変えて確かめ、記録した。</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>店舗ごとにページを作るべきですか？店舗一覧の1ページではだめですか？</h3><p>店舗ごとの質問（その店の営業時間や設備）に答えるには、1店1ページのほうが確実です。一覧の1ページだけだと、どの値がどの店のものかをAIが取り違えやすくなります。店舗が少ない場合でも、各店に見出しと住所・営業時間をまとめた区切りを作ってください。</p>
+<h3>全店の営業時間が同じなら、各店のページに書かなくてもいいですか？</h3><p>各店のページにも書くことをおすすめします。AIは店舗ページだけを読んで答えることがあるので、そのページに営業時間がないと、ほかのページや外部のサイトの値が使われます。</p>
+<h3>branchOf と parentOrganization はどちらを使えばいいですか？</h3><p>schema.orgでは branchOf は非推奨で、parentOrganization を使うよう案内されています。店舗のLocalBusinessから、本部のOrganizationの @id を parentOrganization で指してください。</p>
+<h3>閉店した店のページはすぐ消すべきですか？</h3><p>すぐ消すより、閉店日と近くの店へのリンクを書いたお知らせにして、店舗一覧と構造化データから外すほうが、閉店したことが伝わります。移転の場合は、移転先の店舗ページへ転送するか、移転先を明記します。</p>
+<h3>フランチャイズ店が独自のサイトやSNSを持っています。どうそろえればいいですか？</h3><p>本部の店舗の一覧表を正として、店名・住所・電話・営業時間の書き方を加盟店と共有し、加盟店のサイトやプロフィールも同じ値にしてもらいます。加盟店のサイトから本部のサイトへ、本部の店舗ページから加盟店のサイトへ、お互いにリンクしておくと関係がわかりやすくなります。</p>
+<h3>店舗が多くてllms.txtに全部載りません。全店を載せるべきですか？</h3><p>全店を並べる必要はありません。店舗一覧のページと、主な店舗ページが載っていれば、そこから各店のページへたどれます。Nurevo AEOでは、webmcp_canary_llms_txt_lines フィルターで店舗一覧への行を足せます。</p>
+<h3>この手順で、すべての店がAIの答えに正しく出ますか？</h3><p>保証はできません。AIの回答は日や聞き方で変わります。この手順は、店と店の情報が混ざる原因を減らし、AIが読む元の情報を正確にそろえるためのものです。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>店舗ページをAIがどう読んでいるか確認</h2>
+    <p>無料チェックは登録不要で、URLを入れるだけで構造化データ・llms.txt・AIクローラの許可の状態がわかります。店舗ページのURLも1つずつ確かめられます。WordPressなら、無料のプラグインで本部の情報を構造化データに出せます。</p>
+    <a class="btn primary lg" href="/check">無料でAIの読みやすさをチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPressプラグインを無料で入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/local-business-schema-seo-plugins/">Yoast SEO・Rank Math・AIOSEOに店舗情報の構造化データを無料で足す方法</a></li><li><a href="/ja/guide/company-profile-page-ai-search/">会社概要ページのAI検索対策：社名・所在地・設立・事業内容をAIに正しく読ませる手順</a></li><li><a href="/ja/guide/llms-txt/">llms.txt とは？ サイトをAIに説明するファイル</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/multi-location-business-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">ChatGPTはOpenAI、PerplexityはPerplexity AI、GoogleはGoogle LLCの商標です。Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit、WordPressはそれぞれの権利者の商標です。Nurevoはこれらの企業と提携・協賛関係にありません。</p><a href="/">Nurevo</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
