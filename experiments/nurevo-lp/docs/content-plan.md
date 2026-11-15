@@ -117,3 +117,12 @@
 メモ：2026-11-14 17時の回は、WebFetchの許可待ちで一次情報（OpenAI・Perplexity・Google・SparkToro原典）を再取得できなかった。これらは既存記事で確認済みの範囲（2026-10-31・11-10）だけを書き、SparkToroは Search Engine Land の記事を出典にした。
 | 2026-11-14 調査 | research-wordpress-seo-plugins-2026 | SEOプラグイン別（WordPress 12,376件：日本2,295・海外10,081。シェア〔日本 AIOSEO 35.2%・Yoast 14.4%・Rank Math 1.7%・検出なし48.6%／海外 Yoast 53.1%・Rank Math 22.2%・AIOSEO 6.1%〕、国別シェア13か国〔WP100件以上〕、プラグイン別の llms.txt・JSON-LD・Organization系・BreadcrumbList・OGP・canonical・AIボットブロック・6項目、限界〔文字列判定の優先順・SEO SIMPLE PACK等は検出なし〕） | raw_2026-11-12（summary_2026-11-12 と一致） | ja/en | content/research-20261114 |
 調査レポートの未着手の切り口：都道府県別／WordPress と非WordPress／日本と海外の比較（総論）／国別（UK・US・AU・CA・DE・FR など）／AI対応スコア分布。メモ：#77（AIクローラー）・#83（llms.txt）・#89（構造化データ）は checks 成功のまま未マージ。
+| 2026-11-15 8時 | wedding-venue-ai-search | 結婚式場のAI検索対策（カップルがAIに聞く条件つきの質問〔The Knot 2026 Real Weddings Study：AI利用36%〕、公開する事実の表〔会場の種類と挙式スタイル・会場ごとの収容人数・人数別の見積もり例・増えやすい項目・品目ごとの持ち込み可否と持ち込み料・申込金とキャンセル料の表・空き日・設備・見学〕、全国平均〔ゼクシィ結婚トレンド調査2024：52.0人・343.9万円〕を自社の数字と分けて書く、滋賀県の消費生活ページの事例と消費者契約法第9条1号「平均的な損害」、schema.orgに結婚式場の型がない・EventVenueはPlaceでLocalBusinessではない・maximumAttendeeCapacity、WordPress手順〔ウィザード「その他」・ページ専用FAQ・webmcp_canary_schema_graph〕、チェックリスト、測り方、FAQ 7問）。41言語 | 業種別 | content/daily-20261115-08 |
+翻訳の補完ログ：2026-11-15 medical-clinic-ai-search に39言語を追加（41言語）。
+翻訳の残り（8時台で補完）：recruiting-page-ai-search・ai-visibility-drop-causes・research-wordpress-seo-plugins-2026（ja/en のみ）。search-console-ai-features・dental-clinic-ai-search は未マージPRに翻訳あり。
+次の候補：
+1. 薬局・ドラッグストアのAI検索対策（営業時間・在宅対応・取り扱い、医療情報ネットとの整合）【業種別】
+2. 皮膚科・美容皮膚科のAI検索対策（保険診療と自費の書き分け、料金表示と限定解除）【業種別】
+3. 会社概要ページのAI検索対策（Organization・沿革・役員・所在地の表記ゆれ）【全業種】
+4. 制作会社向け：AI検索対策の初回診断と提案書の進め方（無料チェックの使い方、約束してはいけないこと）【制作会社向け】
+5. 写真館・フォトスタジオのAI検索対策（撮影プラン・データ納品・衣装・予約）【業種別】

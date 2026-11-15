@@ -1,0 +1,245 @@
+{
+ "title": "AI pretraživanje za ordinacije: radno vrijeme, hitni dolasci | Nurevo",
+ "description": "AEO za ordinacije obiteljske medicine i pedijatrije: objavite kraj prijema, dolaske bez narudžbe, postupak kod vrućice i termine cijepljenja kao tekst i usklađenu shemu.",
+ "h1": "AI pretraživanje za ordinacije obiteljske medicine i pedijatrije: kako postići da AI točno pročita radno vrijeme, dolaske isti dan i cijepljenja",
+ "lead": "Optimizacija ordinacije obiteljske medicine ili pedijatrije za AI pretraživanje svodi se na to da na stranici, točno do dana i minute, odgovorite na pitanja koja pacijenti i roditelji danas postavljaju AI-ju: radite li sada i do kada se mogu prijaviti, možete li me primiti danas i trebam li narudžbu, mogu li doći s vrućicom i što trebam prvo učiniti te kada moje dijete može primiti cjepivo ili obaviti sistematski pregled. Zatim iste činjenice dosljedno objavite u strukturiranim podacima, llms.txt, Google profilu tvrtke i službenom registru zdravstvenih ustanova u kojem ste navedeni. Pravila o oglašavanju u zdravstvu vrijede za tekst pisan za AI jednako kao i za ostatak weba.",
+ "intro": [
+  "Napisano 14. studenoga 2026. (JST). Toga su dana provjereni stranica japanskog ministarstva zdravstva o nacionalnom registru zdravstvenih ustanova, tipovi schema.org (kako su definirani u schema-dts 2.1.0) i navedena istraživanja. Primjeri pravila potječu iz Japana; provjerite pravila ondje gdje radite.",
+  "Odgovori AI-ja mijenjaju se iz dana u dan i ovisno o tome kako je pitanje postavljeno. Ovdje opisani koraci čine činjenice o vašoj ordinaciji čitljivima za AI. Ne jamče da će AI spomenuti vašu ordinaciju ili je bilo gdje rangirati."
+ ],
+ "sections": [
+  {
+   "heading": "Što pacijenti i roditelji pitaju AI",
+   "paragraphs": [
+    "Obiteljsku medicinu i pedijatriju ljudi traže kad se netko upravo razbolio. Zato pitanja nose vrijeme i uvjete: „obiteljski liječnik blizu [stanice] koji me može primiti sada”, „pedijatar koji radi u subotu poslijepodne”, „imam vrućicu, mogu li doći bez narudžbe?”, „gdje mogu cijepiti dijete od dva mjeseca?”, „ordinacija koja nudi online konzultacije”.",
+    "Da bi AI naveo vašu ordinaciju u takvom odgovoru, mora iz teksta moći pročitati da ispunjavate te uvjete. Radno vrijeme prikazano samo kao slika, bez kraja prijema, ili rečenica „pacijenti s vrućicom neka nazovu” bez vremena teško su iskoristivi kad pitanje sadrži uvjete.",
+    "Istraživanje 5.460 odgovora ChatGPT-a japanske tvrtke Mayui (srpanj 2026., 19 specijalnosti, šest gradova) pokazalo je da su službeni webovi ordinacija citirani u 96 % odgovora na pitanja o cijenama, ali samo u 31 % odgovora o ugledu, gdje su se u 76 % pojavljivale stranice s recenzijama i usporedbama. [Priopćenje za medije (na japanskom)](https://kyodonewsprwire.jp/release/202609166024). Kad se AI pita za činjenice, vaš vlastiti web vjerojatan je izvor, pa se činjenice poput radnog vremena i načina dolaska isplati ondje precizno zapisati. Ti podaci dolaze od jedne tvrtke, a AI odgovori se mijenjaju."
+   ]
+  },
+  {
+   "heading": "Koje činjenice objaviti i kako ih zapisati",
+   "paragraphs": [
+    "Većina dobro rangiranih članaka staje na „točno navedite radno vrijeme, specijalnosti i lokaciju”. U obiteljskoj medicini i pedijatriji o tome hoće li ih AI moći iskoristiti odlučuje koliko detaljno razradite vrijeme i uvjete. Ovo je dobra osnova:"
+   ],
+   "table": {
+    "head": [
+     "Činjenica",
+     "Kako je zapisati na stranici",
+     "Pazite na"
+    ],
+    "rows": [
+     [
+      "Radno vrijeme i prijem",
+      "Jutarnje i poslijepodnevno radno vrijeme za svaki dan te posljednje vrijeme prijema (na primjer, ujutro prijem do 11:30)",
+      "Samo „9:00–12:00” zvuči kao da je dolazak u 11:55 u redu"
+     ],
+     [
+      "Neradni dani",
+      "Neradni dani, poludnevni rad i što vrijedi za blagdane",
+      "Odvojite cijele dane i poludnevni rad: „ne radimo četvrtkom poslijepodne, nedjeljom i blagdanima”"
+     ],
+     [
+      "Privremena zatvaranja i godišnji odmori",
+      "Datumi i kamo se pacijenti mogu obratiti umjesto vama",
+      "Stavite ih uz radno vrijeme, ne samo u novosti"
+     ],
+     [
+      "Narudžbe i dolasci isti dan",
+      "Samo uz narudžbu, redoslijed dolaska ili i bez narudžbe; vrijeme za online i telefonsko naručivanje",
+      "Ako naručeni imaju prednost, napišite što je s nenaručenima"
+     ],
+     [
+      "Vrućica ili sumnja na infekciju",
+      "Treba li prvo nazvati, vrijeme za takve dolaske, odvojeni ulaz ili čekaonica, koje testove možete napraviti",
+      "Ne stajati na „nazovite”: navedite vrijeme i broj"
+     ],
+     [
+      "Djeca",
+      "Od koje dobi primate djecu, dani i vrijeme sistematskih pregleda i cijepljenja, kako se naručiti, što ponijeti",
+      "Ako se odvijaju u drugo vrijeme od općeg rada, dajte im zasebnu tablicu"
+     ],
+     [
+      "Cijepljenja i pregledi",
+      "Koja cijepljenja i preglede nudite, treba li narudžba, cijene usluga koje se plaćaju same",
+      "Odvojite cijepljenja iz kalendara cijepljenja od neobaveznih"
+     ],
+     [
+      "Online konzultacije",
+      "Nudite li ih, za koga (na primjer, samo kontrolni pregledi), kako se naručiti, koju uslugu koristite",
+      "Bez uvjeta čitatelji pretpostavljaju da su mogući i prvi pregledi"
+     ],
+     [
+      "Specijalnosti i liječnici",
+      "Specijalnosti koje smijete isticati te ime, područje i kvalifikacije svakog liječnika",
+      "Bez usporednih ili pretjeranih formulacija (vidi pravila niže)"
+     ],
+     [
+      "Plaćanje i pristup",
+      "Zdravstvene iskaznice i bezgotovinsko plaćanje, parkiralište, pristup s dječjim kolicima i invalidskim kolicima",
+      "Kad se nešto promijeni, ažurirajte web i profil tvrtke zajedno"
+     ],
+     [
+      "Noći i vikendi",
+      "Kamo se obratiti izvan vašeg radnog vremena (lokalna dežurna služba, telefonska linija za zdravlje djece poput japanske #8000)",
+      "Jasno napišite kada ne primate, a zatim kamo ići"
+     ]
+    ],
+    "caption": "Popis se temelji na uvjetima o kojima se AI pita u obiteljskoj medicini i pedijatriji te na stavkama koje su dobro rangirani članci izostavili."
+   },
+   "after": [
+    "Svaku vrijednost držite jednakom u tekstu stranice, strukturiranim podacima, Google profilu tvrtke, unosu u službenom registru i obavijesti na vratima. Google preporučuje da profil tvrtke bude ažuran, među ostalim i zbog svojih AI značajki. [Google: AI značajke i vaše web-mjesto](https://developers.google.com/search/docs/appearance/ai-features)"
+   ]
+  },
+  {
+   "heading": "Zapišite radno vrijeme kao tekst, a ne kao sliku",
+   "paragraphs": [
+    "Webovi ordinacija često prikazuju radno vrijeme kao sliku tablice s kvačicama i križićima. Ljudi je mogu pročitati, ali ne može se računati na to da će AI pretraživački botovi pročitati tekst unutar slike. Iste podatke stavite u HTML tablicu ili rečenicu.",
+    "Na primjer: „Pon, uto, sri, pet 9:00–12:00 (prijem do 11:30) i 15:00–18:00 (prijem do 17:30). Sub 9:00–12:00. Ne radimo četvrtkom poslijepodne, nedjeljom i blagdanima. Ako imate vrućicu, nazovite tijekom radnog vremena i dođite u vrijeme koje vam kažemo.” Dani, vrijeme, kraj prijema, neradni dani i iznimke na jednom mjestu.",
+    "Kad se AI pita radite li sada, odgovara upravo na temelju toga. Ako nedostaju blagdani ili kraj prijema, može nekome reći da radite kad ne radite."
+   ]
+  },
+  {
+   "heading": "Uskladite se sa službenim registrom zdravstvenih ustanova",
+   "paragraphs": [
+    "Mnoge zemlje vode službeni registar liječnika i ordinacija. U Japanu Ministarstvo zdravstva, rada i socijalne skrbi od travnja 2024. vodi nacionalni registar 医療情報ネット (nadimak ナビイ). Obuhvaća bolnice, ordinacije i ljekarne, a može se pretraživati po danima rada i specijalnostima te po bolestima i postupcima kojima se ordinacija bavi i uslugama koje nudi. [MHLW: informacijski sustav o medicinskim funkcijama (na japanskom)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/teikyouseido/index.html) / [医療情報ネット](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+    "Unosi u registru nastaju iz onoga što ordinacije prijavljuju vlastima. Ako ih AI ili pacijent usporedi s vašim webom i pronađe drukčije radno vrijeme, nijedno ne može znati što je točno. Kad mijenjate radno vrijeme ili specijalnosti, uz web i profil tvrtke provjerite i ono što ste prijavili."
+   ]
+  },
+  {
+   "heading": "Pravila o oglašavanju u zdravstvu: što ne pisati za AI",
+   "paragraphs": [
+    "U Japanu na webove ordinacija primjenjuju se pravila o oglašavanju u zdravstvu. Ministarstvova zbirka primjera među zabranjenim primjerima navodi lažne, pretjerane i usporedne tvrdnje te svjedočanstva pacijenata. [MHLW: zbirka primjera za web-mjesta (PDF, na japanskom)](https://www.mhlw.go.jp/content/10800000/001232587.pdf). Isto vrijedi za tekst, FAQ i strukturirane podatke pisane za AI. Druge zemlje imaju vlastita pravila; provjerite ona koja se odnose na vas."
+   ],
+   "list": [
+    "Bez superlativa, usporedbi ili obećanih ishoda: „najbolji u okolici”, „zajamčeno izlječenje”, „primamo brže od ikoga”.",
+    "Bez svjedočanstava ili komentara pacijenata u FAQ-u ili kao recenzija u strukturiranim podacima.",
+    "Na stranicama o simptomima ne povezujte simptom s dijagnozom. Napišite kada se javiti liječniku i što vaša ordinacija može učiniti (pretrage i liječenje koje nudite).",
+    "Za cijepljenja i pretrage koje se plaćaju same navedite sadržaj i cijenu zajedno."
+   ],
+   "after": [
+    "Ako niste sigurni, provjerite zbirku primjera ili se obratite lokalnom zdravstvenom tijelu. Primjere za stomatologiju potražite u [AI pretraživanju za stomatološke ordinacije](/guide/dental-clinic-ai-search/)."
+   ]
+  },
+  {
+   "heading": "Strukturirani podaci: MedicalClinic ili Physician",
+   "paragraphs": [
+    "schema.org ima nekoliko tipova za ordinaciju (provjereno u definicijama tipova schema-dts 2.1.0 14. studenoga 2026.). Svi su vrsta LocalBusiness, pa sadrže adresu, telefonski broj i radno vrijeme."
+   ],
+   "table": {
+    "head": [
+     "Tip ili svojstvo",
+     "Što znači",
+     "Kako ga koristiti u primarnoj zaštiti"
+    ],
+    "rows": [
+     [
+      "[MedicalClinic](https://schema.org/MedicalClinic)",
+      "Ustanova za dijagnostiku i zdravstvenu skrb",
+      "Ordinacija s više liječnika ili ambulantna ustanova"
+     ],
+     [
+      "Physician / [PhysiciansOffice](https://schema.org/PhysiciansOffice)",
+      "Liječnik ili liječnička ordinacija (PhysiciansOffice je „liječnička ordinacija ili klinika”)",
+      "Ordinacija jednog liječnika. Physician je i među vrstama poslovanja u Nurevo AEO"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Medicinska specijalnost pružatelja usluga",
+      "Vrijednosti uključuju PrimaryCare i Pediatric"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Primaju li se novi pacijenti (svojstvo MedicalOrganization)",
+      "Za razdoblja kad primate samo upisane pacijente"
+     ],
+     [
+      "openingHoursSpecification",
+      "Radno vrijeme po danima u tjednu",
+      "Jutarnju i poslijepodnevnu smjenu podijelite u dva retka"
+     ]
+    ]
+   },
+   "after": [
+    "Googleovi strukturirani podaci za lokalne tvrtke zahtijevaju naziv i adresu te traže da koristite što specifičniji tip. [Google: Strukturirani podaci lokalne tvrtke](https://developers.google.com/search/docs/appearance/structured-data/local-business). Važnije od tipa jest da se svaka vrijednost podudara s tekstom stranice. Činjenice koje u strukturiranim podacima nemaju određeno mjesto, poput kraja prijema i postupka kod vrućice, pripadaju tekstu stranice."
+   ]
+  },
+  {
+   "heading": "Postavljanje na WordPress webu ordinacije",
+   "list": [
+    "Instalirajte i aktivirajte Nurevo AEO (besplatno) s [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Zadržite Yoast SEO, Rank Math, All in One SEO ili Slim SEO. Od verzije 0.9.1 radi i uz SEO SIMPLE PACK i VK All in One Expansion Unit bez dupliciranja strukturiranih podataka.",
+    "U čarobnjaku za postavljanje odaberite „Ordinacija ili stomatologija” (to postavlja tip MedicalBusiness). Za objavu specifičnijeg tipa u Postavkama promijenite polje „Vrsta poslovanja (tip schema.org)” u Physician ili drugi tip.",
+    "Provjerite naziv ordinacije, adresu, telefon i opis. Iz postojećih postavki popunjavaju se samo prazna polja; vrijednosti koje ste upisali nikad se ne prepisuju.",
+    "U polje radnog vremena upišite samo dane i vrijeme, na primjer „Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-12:00”. Nurevo AEO to pretvara u radno vrijeme po danima, s jutrom i poslijepodnevom u dva retka. Ako tekst sadrži blagdane, napomenu „zadnji prijem” ili „drugi utorak”, objavljuje se onako kako je napisan, bez pretvaranja, kako se ne bi objavilo pogrešno radno vrijeme; kraj prijema i blagdane stavite u tekst stranice.",
+    "U Postavkama dodajte ono što nudite kao usluge (opća medicina, pedijatrija, cijepljenja, sistematski pregledi djece, online konzultacije) i dodajte česta pitanja u FAQ (kako doći s vrućicom, treba li narudžba, od koje dobi primate djecu). FAQ se dodaje u FAQPage na stranici na koju postavite blok Nurevo FAQ ili kratki kod [nurevo_faq].",
+    "Pokrenite dijagnostiku na zaslonu AEO i primijenite popravke jednim klikom. Kako vaš web izgleda izvana, provjerite [besplatnom provjerom čitljivosti za AI](/check)."
+   ],
+   "after": [
+    "Uz SEO dodatak Nurevo AEO ne objavljuje drugi skup strukturiranih podataka. Dodaje samo ono što grafu SEO dodatka nedostaje: adresu, telefon, radno vrijeme i specifičniji tip. Pogledajte [dodavanje podataka o tvrtki u Yoast, Rank Math i AIOSEO](/guide/local-business-schema-seo-plugins/)."
+   ]
+  },
+  {
+   "heading": "Kontrolni popis prije objave",
+   "list": [
+    "Radno vrijeme zapisano je kao tekst, ne samo kao slika, s krajem prijema, poludnevnim radom i blagdanima.",
+    "Navedeno je primate li uz narudžbu, po redoslijedu dolaska ili i bez narudžbe.",
+    "Postupak kod vrućice ili sumnje na infekciju zapisan je s brojem za poziv i vremenom.",
+    "Za djecu su navedeni dob od koje ih primate te dani, vrijeme i način naručivanja za cijepljenja i preglede.",
+    "Navedeno je nudite li online konzultacije i za koga.",
+    "Privremena zatvaranja i datumi godišnjih odmora nalaze se uz radno vrijeme.",
+    "Naziv, adresa, telefon i radno vrijeme u strukturiranim podacima, profilu tvrtke i službenom registru podudaraju se s tekstom stranice.",
+    "U FAQ-u i strukturiranim podacima nema superlativa, usporedbi ni svjedočanstava.",
+    "llms.txt navodi stranice s uslugama, radnim vremenom, pristupom i naručivanjem. [Što je llms.txt](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Provjera pojavljujete li se u AI odgovorima",
+   "paragraphs": [
+    "Kad su činjenice na mjestu, napišite pet do deset pitanja koja bi postavio pacijent ili roditelj, kombinirajući područje, dan ili vrijeme, vrstu simptoma i naručivanje. Postavite ih ChatGPT-u i Perplexityju i zabilježite pojavljuje li se vaša ordinacija imenom ili URL-om te jesu li radno vrijeme i način dolaska točno navedeni. Odgovori se razlikuju od pokušaja do pokušaja, pa ista pitanja ponovno postavljajte tijekom vremena. Metodu opisuje [kako mjeriti vidljivost u AI-ju](/guide/measure-ai-visibility/).",
+    "U SAD-u je analiza MGMA postavila ChatGPT-u oko 4.950 upita o 200 neovisnih ordinacija i nije pronašla nijednu koja je bila i spomenuta i citirana. U anketi MGMA Stat među 218 medicinskih grupa 55 % ih je reklo da nema strategiju za AI pretraživanje. [MGMA Stat](https://www.mgma.com/mgma-stat/can-ai-find-your-practice-when-patients-ask). Okolnosti se razlikuju po zemljama, ali poanta ostaje: ne pretpostavljajte da se pojavljujete; pitajte i provjeravajte.",
+    "Paketi Free i Standard Nurevo AEO uključuju mjesečnu provjeru: tri pitanja sastavljena od vrste poslovanja i područja (nikad od naziva vaše ordinacije) postavljaju se Perplexityju, a dodatak bilježi jesu li vas odgovori spomenuli ili citirali vaš web. Paket Pro (od 99 USD mjesečno) dodaje mjerenje vidljivosti u AI-ju u beta verziji, koje pokazuje koliko se često vaša ordinacija pojavljuje u AI odgovorima, s usporedbom s konkurencijom i poviješću (trenutačno mjeri Perplexity). Oba gledaju uzorak odgovora, a ne svaki odgovor."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Odakle ordinacija obiteljske medicine treba početi s AI pretraživanjem?",
+   "a": "Zapišite radno vrijeme kao tekst, s krajem prijema, poludnevnim radom i blagdanima. Zatim u tekst stranice stavite pravila naručivanja, postupak kod vrućice te termine cijepljenja i pregleda, a naziv, adresu, telefon i radno vrijeme uskladite u strukturiranim podacima, Google profilu tvrtke i službenom registru."
+  },
+  {
+   "q": "Treba li ordinacija koristiti strukturirane podatke MedicalClinic ili Physician?",
+   "a": "Oba su vrsta LocalBusiness i sadrže adresu i radno vrijeme. Okvirno, koristite MedicalClinic za ordinaciju s više liječnika, a Physician za ordinaciju jednog liječnika (za liječničku ordinaciju postoji i PhysiciansOffice). Važnije je da se vrijednosti podudaraju s tekstom stranice nego koji tip odaberete."
+  },
+  {
+   "q": "Trebamo li ukloniti sliku s radnim vremenom?",
+   "a": "Ne morate je uklanjati, ali iste podatke zapišite i kao tekst, u HTML tablici ili rečenici. Ne može se računati na to da će AI pretraživački botovi pročitati tekst unutar slike."
+  },
+  {
+   "q": "Koliko trebamo napisati o dolascima s vrućicom?",
+   "a": "Navedite trebaju li pacijenti prvo nazvati, vrijeme za takve dolaske, broj za poziv, imate li odvojeni ulaz ili čekaonicu i koje testove možete napraviti. Uz samo „nazovite” AI ne može znati hoće li netko biti primljen."
+  },
+  {
+   "q": "Možemo li dodati recenzije pacijenata u FAQ da nas AI odabere?",
+   "a": "Najprije provjerite lokalna pravila. U Japanu se na webove ordinacija primjenjuju pravila o oglašavanju u zdravstvu, a svjedočanstva pacijenata smatraju se zabranjenima. Ne stavljajte ih ni u FAQ ili strukturirane podatke pisane za AI."
+  },
+  {
+   "q": "Je li Nurevo AEO besplatan?",
+   "a": "Da. Strukturirani podaci za vrstu poslovanja, adresu, radno vrijeme, usluge i FAQ, kao i llms.txt, pravila za AI pretraživačke botove i AEO ocjena, dio su besplatnog paketa. Plaćeni paketi dodaju uvijek ažuran skup pravila (Standard, 20 USD mjesečno) i mjerenje vidljivosti u AI-ju u beta verziji (Pro, od 99 USD mjesečno). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Jamči li to da će se naša ordinacija pojaviti u ChatGPT-u?",
+   "a": "Ne. AI odgovori se mijenjaju i nijedan alat ili tehnika ne može jamčiti spominjanje ili poziciju. Ono što možete jest učiniti svoje činjenice lako čitljivima za AI i redovito provjeravati pojavljujete li se."
+  }
+ ],
+ "relatedHeading": "Povezani vodiči",
+ "cta": {
+  "heading": "Najprije pogledajte kako AI čita web vaše ordinacije",
+  "body": "Besplatna provjera pokazuje stanje strukturiranih podataka, llms.txt i pristupa AI pretraživačkih botova, bez registracije. Na WordPressu Nurevo AEO besplatno popunjava praznine.",
+  "label": "Pokrenite besplatnu provjeru čitljivosti za AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Preuzmite Nurevo AEO s WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je zaštitni znak tvrtke OpenAI, Perplexity tvrtke Perplexity AI, a Google tvrtke Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK i VK All in One Expansion Unit zaštitni su znakovi svojih vlasnika. Nurevo nije povezan s njima. Ovaj članak nije pravni ni medicinski savjet."
+}

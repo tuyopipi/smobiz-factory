@@ -1,0 +1,245 @@
+{
+ "title": "Iskanje z UI za ambulante: delovni čas, nujni obiski | Nurevo",
+ "description": "AEO za družinske in pediatrične ambulante: objavite konec sprejema, obiske brez naročila, postopek ob vročini in termine cepljenj kot besedilo in ujemajočo se shemo.",
+ "h1": "Iskanje z UI za družinske in pediatrične ambulante: kako doseči, da UI pravilno prebere delovni čas, obiske isti dan in cepljenja",
+ "lead": "Optimizacija družinske ali pediatrične ambulante za iskanje z UI se skrči na to, da na strani, natančno do dneva in minute, odgovorite na vprašanja, ki jih pacienti in starši danes zastavljajo UI: ali imate zdaj odprto in do kdaj se lahko prijavim, ali me lahko sprejmete danes in ali potrebujem naročilo, ali lahko pridem z vročino in kaj naj najprej storim ter kdaj lahko moj otrok dobi cepljenje ali gre na preventivni pregled. Nato ista dejstva dosledno objavite v strukturiranih podatkih, llms.txt, profilu podjetja v Googlu in morebitnem uradnem registru zdravstvenih ustanov, v katerem ste navedeni. Pravila o oglaševanju v zdravstvu veljajo za besedilo, napisano za UI, enako kot za preostanek spletnega mesta.",
+ "intro": [
+  "Napisano 14. novembra 2026 (JST). Tisti dan so bili preverjeni stran japonskega ministrstva za zdravje o nacionalnem registru zdravstvenih ustanov, tipi schema.org (kot so opredeljeni v schema-dts 2.1.0) in navedene raziskave. Primeri pravil so iz Japonske; preverite pravila, ki veljajo tam, kjer delujete.",
+  "Odgovori UI se spreminjajo iz dneva v dan in glede na to, kako je vprašanje zastavljeno. Tukaj opisani koraki naredijo dejstva o vaši ambulanti berljiva za UI. Ne zagotavljajo, da bo UI vašo ambulanto omenila ali jo kamor koli uvrstila."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj pacienti in starši sprašujejo UI",
+   "paragraphs": [
+    "Družinsko in pediatrično ambulanto ljudje iščejo, ko je nekdo pravkar zbolel. Zato vprašanja vsebujejo čas in pogoje: »družinski zdravnik blizu [postaje], ki me lahko sprejme zdaj«, »pediater, ki dela v soboto popoldne«, »imam vročino, ali lahko pridem brez naročila?«, »kje lahko cepim dvomesečnega otroka?«, »ambulanta, ki ponuja posvete na daljavo«.",
+    "Da bi UI vašo ambulanto omenila v takem odgovoru, mora iz besedila razbrati, da te pogoje izpolnjujete. Delovni čas, prikazan le kot slika, manjkajoč konec sprejema ali zgolj stavek »pacienti z vročino, pokličite« brez ur so težko uporabni, ko vprašanje vsebuje pogoje.",
+    "Raziskava 5.460 odgovorov ChatGPT japonskega podjetja Mayui (julij 2026, 19 specialnosti, šest mest) je pokazala, da so bila uradna spletna mesta ambulant navedena v 96 % odgovorov na vprašanja o cenah, a le v 31 % odgovorov o ugledu, kjer so se v 76 % pojavljala spletna mesta z ocenami in primerjavami. [Sporočilo za javnost (v japonščini)](https://kyodonewsprwire.jp/release/202609166024). Ko UI sprašujejo po dejstvih, je vaše spletno mesto verjeten vir, zato se dejstva, kot sta delovni čas in način obiska, splača tam zapisati natančno. Podatki so od enega samega podjetja, odgovori UI pa se spreminjajo."
+   ]
+  },
+  {
+   "heading": "Katera dejstva objaviti in kako jih zapisati",
+   "paragraphs": [
+    "Večina dobro uvrščenih člankov se ustavi pri »pravilno navedite delovni čas, specialnosti in lokacijo«. Pri družinski in pediatrični medicini je od tega, kako natančno zapišete ure in pogoje, odvisno, ali jih UI lahko uporabi. To je dobro izhodišče:"
+   ],
+   "table": {
+    "head": [
+     "Dejstvo",
+     "Kako ga zapisati na strani",
+     "Pazite na"
+    ],
+    "rows": [
+     [
+      "Delovni čas in sprejem",
+      "Dopoldanske in popoldanske ure za vsak dan ter zadnji čas sprejema (na primer dopoldne sprejem do 11.30)",
+      "Samo »9.00–12.00« izzveni, kot da je prihod ob 11.55 v redu"
+     ],
+     [
+      "Dnevi, ko ne delate",
+      "Zaprti dnevi, poldnevi in kaj velja ob praznikih",
+      "Ločite cele dneve in poldneve: »zaprto v četrtek popoldne, v nedeljo in ob praznikih«"
+     ],
+     [
+      "Začasna zaprtja in dopusti",
+      "Datumi in kam se lahko pacienti obrnejo namesto k vam",
+      "Navedite jih ob delovnem času, ne le med novicami"
+     ],
+     [
+      "Naročanje in obiski isti dan",
+      "Samo z naročilom, vrstni red ob prihodu ali tudi brez naročila; ure za spletno in telefonsko naročanje",
+      "Če imajo naročeni prednost, napišite, kaj velja za nenaročene"
+     ],
+     [
+      "Vročina ali sum okužbe",
+      "Ali najprej poklicati, ure za takšne obiske, ločen vhod ali čakalnica, katere teste lahko opravite",
+      "Ne ustavite se pri »pokličite«: navedite ure in številko"
+     ],
+     [
+      "Otroci",
+      "Od katere starosti sprejemate otroke, dnevi in ure preventivnih pregledov in cepljenj, kako se naročiti, kaj prinesti",
+      "Če potekajo ob drugih urah kot splošna ambulanta, jim namenite svojo tabelo"
+     ],
+     [
+      "Cepljenja in pregledi",
+      "Katera cepljenja in preglede ponujate, ali je potrebno naročilo, cene samoplačniških storitev",
+      "Ločite cepljenja iz programa cepljenja od neobveznih"
+     ],
+     [
+      "Posveti na daljavo",
+      "Ali jih ponujate, za koga (na primer samo kontrolni obiski), kako se naročiti, katero storitev uporabljate",
+      "Brez pogojev bralci domnevajo, da so možni tudi prvi obiski"
+     ],
+     [
+      "Specialnosti in zdravniki",
+      "Specialnosti, ki jih smete navajati, ter ime, področje in kvalifikacije vsakega zdravnika",
+      "Brez primerjalnih ali pretiranih izrazov (glejte pravila spodaj)"
+     ],
+     [
+      "Plačilo in dostop",
+      "Kartice zdravstvenega zavarovanja in brezgotovinsko plačilo, parkiranje, dostop z otroškim vozičkom in invalidskim vozičkom",
+      "Ko se kaj spremeni, hkrati posodobite spletno mesto in profil podjetja"
+     ],
+     [
+      "Noči in vikendi",
+      "Kam se obrniti zunaj vašega delovnega časa (lokalna dežurna služba, telefonska linija za zdravje otrok, kot je japonska #8000)",
+      "Jasno napišite, kdaj ne sprejemate, nato pa, kam iti"
+     ]
+    ],
+    "caption": "Seznam temelji na pogojih, po katerih UI sprašujejo pri družinski in pediatrični medicini, ter na postavkah, ki so jih dobro uvrščeni članki izpustili."
+   },
+   "after": [
+    "Vsako vrednost ohranite enako v besedilu strani, strukturiranih podatkih, profilu podjetja v Googlu, vpisu v uradnem registru in obvestilu na vratih. Google priporoča, da profil podjetja redno posodabljate, tudi zaradi svojih funkcij UI. [Google: Funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)"
+   ]
+  },
+  {
+   "heading": "Delovni čas zapišite kot besedilo, ne kot sliko",
+   "paragraphs": [
+    "Spletna mesta ambulant delovni čas pogosto prikažejo kot sliko tabele s kljukicami in križci. Ljudje jo preberejo, ni pa mogoče računati na to, da bodo pajki UI prebrali besedilo v sliki. Iste podatke navedite v tabeli HTML ali v stavku.",
+    "Na primer: »Pon, tor, sre, pet 9.00–12.00 (sprejem do 11.30) in 15.00–18.00 (sprejem do 17.30). Sob 9.00–12.00. Zaprto v četrtek popoldne, v nedeljo in ob praznikih. Če imate vročino, pokličite v delovnem času in pridite ob uri, ki vam jo sporočimo.« Dnevi, ure, konec sprejema, zaprtja in izjeme na enem mestu.",
+    "Ko UI vprašajo, ali imate zdaj odprto, odgovori prav na podlagi tega. Če manjkajo prazniki ali konec sprejema, lahko komu reče, da imate odprto, ko nimate."
+   ]
+  },
+  {
+   "heading": "Uskladitev z uradnim registrom zdravstvenih ustanov",
+   "paragraphs": [
+    "Številne države vodijo uradni register zdravnikov in ambulant. Na Japonskem ministrstvo za zdravje, delo in socialne zadeve od aprila 2024 upravlja nacionalni register 医療情報ネット (z vzdevkom ナビイ). Zajema bolnišnice, ambulante in lekarne, iskati pa je mogoče po dnevih ordinacije in specialnostih ter po boleznih in posegih, s katerimi se ambulanta ukvarja, in storitvah, ki jih ponuja. [MHLW: informacijski sistem o zdravstvenih funkcijah (v japonščini)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/teikyouseido/index.html) / [医療情報ネット](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+    "Vpisi v registru nastanejo iz podatkov, ki jih ambulante sporočijo oblastem. Če jih UI ali pacient primerja z vašim spletnim mestom in najde drugačen delovni čas, nobeden ne ve, kaj je pravilno. Ko spremenite delovni čas ali specialnosti, poleg spletnega mesta in profila podjetja preverite tudi sporočene podatke."
+   ]
+  },
+  {
+   "heading": "Pravila o oglaševanju v zdravstvu: česa ne pisati za UI",
+   "paragraphs": [
+    "Na Japonskem za spletna mesta ambulant veljajo pravila o oglaševanju v zdravstvu. Ministrstvova zbirka primerov med prepovedanimi primeri navaja lažne, pretirane in primerjalne trditve ter pričevanja pacientov. [MHLW: zbirka primerov za spletna mesta (PDF, v japonščini)](https://www.mhlw.go.jp/content/10800000/001232587.pdf). Enako velja za besedilo, FAQ in strukturirane podatke, napisane za UI. Druge države imajo svoja pravila; preverite tista, ki veljajo za vas."
+   ],
+   "list": [
+    "Brez presežnikov, primerjav ali obljubljenih izidov: »najboljši v okolici«, »zagotovljena ozdravitev«, »sprejmemo vas hitreje kot kdorkoli drug«.",
+    "Brez pričevanj ali komentarjev pacientov v FAQ ali kot ocen v strukturiranih podatkih.",
+    "Na straneh o simptomih simptoma ne povezujte z diagnozo. Napišite, kdaj k zdravniku in kaj lahko stori vaša ambulanta (preiskave in zdravljenje, ki jih ponujate).",
+    "Pri samoplačniških cepljenjih in preiskavah navedite vsebino in ceno skupaj."
+   ],
+   "after": [
+    "Če niste prepričani, preverite zbirko primerov ali se obrnite na lokalni zdravstveni organ. Primere za zobozdravstvo najdete v [iskanju z UI za zobozdravstvene ambulante](/guide/dental-clinic-ai-search/)."
+   ]
+  },
+  {
+   "heading": "Strukturirani podatki: MedicalClinic ali Physician",
+   "paragraphs": [
+    "schema.org ima za ambulanto več tipov (preverjeno v definicijah tipov schema-dts 2.1.0 14. novembra 2026). Vsi so vrsta LocalBusiness, zato vsebujejo naslov, telefonsko številko in delovni čas."
+   ],
+   "table": {
+    "head": [
+     "Tip ali lastnost",
+     "Kaj pomeni",
+     "Kako ga uporabiti v osnovnem zdravstvu"
+    ],
+    "rows": [
+     [
+      "[MedicalClinic](https://schema.org/MedicalClinic)",
+      "Ustanova za diagnostiko in zdravstveno oskrbo",
+      "Ambulanta z več zdravniki ali ambulantna ustanova"
+     ],
+     [
+      "Physician / [PhysiciansOffice](https://schema.org/PhysiciansOffice)",
+      "Zdravnik ali zdravniška ordinacija (PhysiciansOffice je »zdravniška ordinacija ali klinika«)",
+      "Ambulanta z enim zdravnikom. Physician je tudi med vrstami podjetij Nurevo AEO"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Medicinska specialnost izvajalca",
+      "Vrednosti vključujejo PrimaryCare in Pediatric"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Ali se sprejemajo novi pacienti (lastnost MedicalOrganization)",
+      "Za obdobja, ko sprejemate le registrirane paciente"
+     ],
+     [
+      "openingHoursSpecification",
+      "Delovni čas po dnevih v tednu",
+      "Dopoldansko in popoldansko ordinacijo razdelite v dve vrstici"
+     ]
+    ]
+   },
+   "after": [
+    "Googlovi strukturirani podatki za lokalna podjetja zahtevajo ime in naslov ter priporočajo čim bolj specifičen tip. [Google: Strukturirani podatki lokalnega podjetja](https://developers.google.com/search/docs/appearance/structured-data/local-business). Pomembnejše od tipa je, da se vsaka vrednost ujema z besedilom strani. Dejstva, ki v strukturiranih podatkih nimajo določenega mesta, kot sta konec sprejema in postopek ob vročini, sodijo v besedilo strani."
+   ]
+  },
+  {
+   "heading": "Nastavitev na spletnem mestu ambulante v WordPressu",
+   "list": [
+    "Namestite in aktivirajte Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Obdržite Yoast SEO, Rank Math, All in One SEO ali Slim SEO. Od različice 0.9.1 deluje tudi skupaj s SEO SIMPLE PACK in VK All in One Expansion Unit brez podvajanja strukturiranih podatkov.",
+    "V čarovniku za nastavitev izberite »Ambulanta ali zobozdravnik« (to nastavi tip MedicalBusiness). Če želite objaviti bolj specifičen tip, v Nastavitvah spremenite polje »Vrsta podjetja (tip schema.org)« v Physician ali drug tip.",
+    "Preverite ime ambulante, naslov, telefon in opis. Iz obstoječih nastavitev se izpolnijo le prazna polja; vnesene vrednosti se nikoli ne prepišejo.",
+    "V polje delovnega časa vpišite samo dneve in ure, na primer »Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-12:00«. Nurevo AEO to pretvori v delovni čas po dnevih, z dopoldnevom in popoldnevom v dveh vrsticah. Če besedilo vsebuje praznike, opombo »zadnji sprejem« ali »drugi torek«, se objavi tako, kot je zapisano, brez pretvorbe, da se ne objavi napačen delovni čas; konec sprejema in praznike navedite v besedilu strani.",
+    "V Nastavitvah dodajte, kar ponujate, kot storitve (splošna medicina, pediatrija, cepljenja, preventivni pregledi otrok, posveti na daljavo), v FAQ pa pogosta vprašanja (kako priti z vročino, ali je potrebno naročilo, od katere starosti sprejemate otroke). FAQ se doda v FAQPage na strani, kamor postavite blok Nurevo FAQ ali kratko kodo [nurevo_faq].",
+    "Zaženite diagnostiko na zaslonu AEO in uporabite popravke z enim klikom. Kako je vaše spletno mesto videti od zunaj, preverite z [brezplačnim preverjanjem berljivosti za UI](/check)."
+   ],
+   "after": [
+    "Ob vtičniku SEO Nurevo AEO ne objavi drugega nabora strukturiranih podatkov. Doda le, kar grafu vtičnika SEO manjka: naslov, telefon, delovni čas in bolj specifičen tip. Glejte [dodajanje podatkov o podjetju v Yoast, Rank Math in AIOSEO](/guide/local-business-schema-seo-plugins/)."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Delovni čas je zapisan kot besedilo, ne le kot slika, s koncem sprejema, poldnevi in prazniki.",
+    "Navedeno je, ali so obiski z naročilom, po vrstnem redu ali tudi brez naročila.",
+    "Postopek ob vročini ali sumu okužbe je zapisan s številko, ki jo je treba poklicati, in urami.",
+    "Za otroke so zapisani starost, od katere jih sprejemate, ter dnevi, ure in način naročanja na cepljenja in preglede.",
+    "Zapisano je, ali ponujate posvete na daljavo in za koga.",
+    "Začasna zaprtja in datumi dopustov so ob delovnem času.",
+    "Ime, naslov, telefon in delovni čas v strukturiranih podatkih, profilu podjetja in uradnem registru se ujemajo z besedilom strani.",
+    "V FAQ in strukturiranih podatkih ni presežnikov, primerjav ali pričevanj.",
+    "llms.txt navaja strani s storitvami, delovnim časom, dostopom in naročanjem. [Kaj je llms.txt](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Preverjanje, ali se pojavljate v odgovorih UI",
+   "paragraphs": [
+    "Ko so dejstva na mestu, napišite pet do deset vprašanj, ki bi jih zastavil pacient ali starš, in pri tem združite območje, dan ali uro, vrsto simptomov in naročanje. Zastavite jih ChatGPT in Perplexity ter zabeležite, ali se vaša ambulanta pojavi z imenom ali URL-jem in ali sta delovni čas in način obiska navedena pravilno. Odgovori se med poskusi razlikujejo, zato ista vprašanja sčasoma ponovno zastavite. Metodo opisuje [kako meriti vidnost v UI](/guide/measure-ai-visibility/).",
+    "V ZDA je analiza MGMA ChatGPT zastavila približno 4.950 pozivov o 200 neodvisnih ambulantah in ni našla nobene, ki bi bila hkrati omenjena in navedena kot vir. V anketi MGMA Stat med 218 zdravniškimi skupinami jih je 55 % odgovorilo, da nimajo strategije za iskanje z UI. [MGMA Stat](https://www.mgma.com/mgma-stat/can-ai-find-your-practice-when-patients-ask). Razmere se med državami razlikujejo, bistvo pa ostaja: ne domnevajte, da se pojavljate; sprašujte in preverjajte.",
+    "Paketa Free in Standard Nurevo AEO vključujeta mesečno preverjanje: tri vprašanja, sestavljena iz vrste podjetja in območja (nikoli iz imena vaše ambulante), se zastavijo Perplexity, vtičnik pa zabeleži, ali so vas odgovori omenili ali navedli vaše spletno mesto. Paket Pro (od 99 USD/mesec) doda merjenje vidnosti v UI v beta različici, ki pokaže, kako pogosto se vaša ambulanta pojavlja v odgovorih UI, s primerjavo s konkurenco in zgodovino (trenutno meri Perplexity). Oba pregledujeta vzorec odgovorov, ne vsakega odgovora."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kje naj družinska ambulanta začne z iskanjem z UI?",
+   "a": "Delovni čas zapišite kot besedilo, s koncem sprejema, poldnevi in prazniki. Nato v besedilo strani dodajte pravila naročanja, postopek ob vročini ter termine cepljenj in pregledov, ime, naslov, telefon in delovni čas pa uskladite v strukturiranih podatkih, profilu podjetja v Googlu in morebitnem uradnem registru."
+  },
+  {
+   "q": "Ali naj ambulanta uporabi strukturirane podatke MedicalClinic ali Physician?",
+   "a": "Oba sta vrsta LocalBusiness in vsebujeta naslov in delovni čas. Kot vodilo: MedicalClinic za ambulanto z več zdravniki in Physician za ambulanto z enim zdravnikom (za zdravniško ordinacijo obstaja tudi PhysiciansOffice). Ujemanje vrednosti z besedilom strani je pomembnejše od izbire tipa."
+  },
+  {
+   "q": "Ali naj odstranimo sliko z delovnim časom?",
+   "a": "Ni je treba odstraniti, vendar iste podatke zapišite tudi kot besedilo, v tabeli HTML ali v stavku. Ni mogoče računati na to, da bodo pajki UI prebrali besedilo v sliki."
+  },
+  {
+   "q": "Koliko naj napišemo o obiskih z vročino?",
+   "a": "Navedite, ali naj pacienti najprej pokličejo, ure za takšne obiske, telefonsko številko, ali imate ločen vhod ali čakalnico in katere teste lahko opravite. Ob zgolj »pokličite« UI ne more vedeti, ali bo nekdo sprejet."
+  },
+  {
+   "q": "Ali lahko v FAQ dodamo ocene pacientov, da nas UI izbere?",
+   "a": "Najprej preverite lokalna pravila. Na Japonskem za spletna mesta ambulant veljajo pravila o oglaševanju v zdravstvu, pričevanja pacientov pa veljajo za prepovedana. Ne dajajte jih niti v FAQ ali strukturirane podatke, napisane za UI."
+  },
+  {
+   "q": "Ali je Nurevo AEO brezplačen?",
+   "a": "Da. Strukturirani podatki za vrsto podjetja, naslov, delovni čas, storitve in FAQ ter llms.txt, pravila za pajke UI in Ocena AEO so v brezplačnem paketu. Plačljiva paketa dodata vedno posodobljen nabor pravil (Standard, 20 USD/mesec) in merjenje vidnosti v UI v beta različici (Pro, od 99 USD/mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Ali to zagotavlja, da se bo naša ambulanta pojavila v ChatGPT?",
+   "a": "Ne. Odgovori UI se spreminjajo in nobeno orodje ali tehnika ne more zagotoviti omembe ali položaja. Lahko pa poskrbite, da so vaša dejstva za UI lahko berljiva, in redno preverjate, ali se pojavljate."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Najprej poglejte, kako UI bere spletno mesto vaše ambulante",
+  "body": "Brezplačno preverjanje pokaže stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI, brez registracije. V WordPressu Nurevo AEO vrzeli zapolni brezplačno.",
+  "label": "Opravite brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Prenesite Nurevo AEO z WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI, Google pa družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK in VK All in One Expansion Unit so blagovne znamke svojih lastnikov. Nurevo z njimi ni povezan. Ta članek ni pravno ali medicinsko svetovanje."
+}
