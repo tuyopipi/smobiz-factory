@@ -1,0 +1,245 @@
+{
+ "title": "AI-søk for legekontor: åpningstider, time samme dag | Nurevo",
+ "description": "AEO for fastlege- og barnelegekontor: publiser siste oppmøtetid, regler for drop-in, oppmøte ved feber og vaksinetider som tekst og samsvarende schema.",
+ "h1": "AI-søk for fastlege- og barnelegekontor: slik får du AI til å lese åpningstider, time samme dag og vaksiner riktig",
+ "lead": "AI-søkeoptimalisering for et fastlege- eller barnelegekontor handler om å svare, på siden og ned til dag og minutt, på spørsmålene pasienter og foreldre nå stiller AI: har dere åpent nå og hvor sent kan jeg møte opp, kan jeg få time i dag og må jeg bestille, kan jeg komme med feber og hva bør jeg gjøre først, og når kan barnet mitt få vaksine eller helsekontroll. Deretter publiserer du de samme opplysningene konsekvent i strukturerte data, llms.txt, Google-bedriftsprofilen din og eventuelle offisielle helseregistre dere er oppført i. Reglene for markedsføring av helsetjenester gjelder for tekst skrevet for AI på samme måte som for resten av nettstedet.",
+ "intro": [
+  "Skrevet 14. november 2026 (JST). Det japanske helsedepartementets side om det nasjonale medisinske registeret, schema.orgs typer (slik de er definert i schema-dts 2.1.0) og de siterte studiene ble kontrollert den dagen. Eksemplene på regler er fra Japan; sjekk reglene der dere praktiserer.",
+  "AI-svar endrer seg fra dag til dag og etter hvordan spørsmålet formuleres. Stegene her gjør opplysningene om legekontoret lesbare for AI. De garanterer ikke at en AI nevner legekontoret deres eller rangerer det noe sted."
+ ],
+ "sections": [
+  {
+   "heading": "Hva pasienter og foreldre spør AI om",
+   "paragraphs": [
+    "Allmennlege og barnelege er det folk leter etter når noen nettopp har blitt syke. Derfor inneholder spørsmålene tid og vilkår: \"en lege nær [stasjon] som kan ta meg nå\", \"en barnelege som har åpent lørdag ettermiddag\", \"jeg har feber, kan jeg komme uten time?\", \"hvor kan babyen min på to måneder bli vaksinert?\", \"et legekontor som tilbyr videokonsultasjon\".",
+    "For at en AI skal nevne legekontoret deres i et slikt svar, må den kunne lese, som tekst, at dere oppfyller vilkårene. Åpningstider som bare vises som bilde, ingen siste oppmøtetid, eller en linje som bare sier \"pasienter med feber bes ringe\" uten tider, er vanskelige å bruke når spørsmålet har vilkår.",
+    "En studie av 5 460 ChatGPT-svar utført av det japanske selskapet Mayui (juli 2026, 19 spesialiteter, seks byer) fant at legekontorenes offisielle nettsteder ble sitert i 96 % av svarene på spørsmål om priser, men bare i 31 % av svarene om omdømme, der vurderings- og sammenligningsnettsteder dukket opp i 76 %. [Pressemelding (japansk)](https://kyodonewsprwire.jp/release/202609166024). Når AI blir spurt om fakta, er deres eget nettsted en sannsynlig kilde, så opplysninger som åpningstider og hvordan man kommer til, er verdt å skrive presist der. Tallene kommer fra én enkelt leverandør, og AI-svar endrer seg."
+   ]
+  },
+  {
+   "heading": "Opplysningene dere bør publisere, og hvordan dere skriver dem",
+   "paragraphs": [
+    "De fleste høyt rangerte artikler stopper ved \"få åpningstider, spesialiteter og beliggenhet riktig\". For allmennlege og barnelege avgjøres det av hvor nøye dere skriver ut tider og vilkår, om AI kan bruke dem. Dette er et godt utgangspunkt:"
+   ],
+   "table": {
+    "head": [
+     "Opplysning",
+     "Slik skriver dere det på siden",
+     "Pass på"
+    ],
+    "rows": [
+     [
+      "Åpningstider og oppmøtetider",
+      "Formiddags- og ettermiddagstider for hver dag, og siste oppmøtetid (for eksempel oppmøte på formiddagen innen 11.30)",
+      "Bare \"9.00-12.00\" kan leses som at det går fint å komme 11.55"
+     ],
+     [
+      "Stengte dager",
+      "Stengte dager, halve dager og hva som gjelder på helligdager",
+      "Skill mellom hele og halve dager: \"stengt torsdag ettermiddag, søndag og helligdager\""
+     ],
+     [
+      "Midlertidig stengt og ferie",
+      "Datoene, og hvor pasienter kan henvende seg i stedet",
+      "Plasser dem ved åpningstidene, ikke bare i en nyhetsliste"
+     ],
+     [
+      "Timebestilling og time samme dag",
+      "Bare timebestilling, kø ved oppmøte eller drop-in; tider for bestilling på nett og telefon",
+      "Hvis timebestillinger har forrang, si hva som skjer med dem som kommer uten time"
+     ],
+     [
+      "Feber eller mistanke om infeksjon",
+      "Om man skal ringe først, tidene for disse besøkene, egen inngang eller eget venterom, hvilke tester dere kan ta",
+      "Ikke stopp ved \"ring oss\": oppgi tidene og nummeret"
+     ],
+     [
+      "Barn",
+      "Fra hvilken alder dere tar imot barn, dager og tider for helsekontroller og vaksinasjon, hvordan man bestiller, hva man skal ta med",
+      "Hvis disse har egne tider utenom vanlige konsultasjoner, gi dem en egen tabell"
+     ],
+     [
+      "Vaksiner og helsekontroller",
+      "Hvilke vaksiner og kontroller dere tilbyr, om det kreves timebestilling, og priser for det som er egenbetalt",
+      "Skill vaksiner i det offentlige programmet fra valgfrie"
+     ],
+     [
+      "Videokonsultasjon",
+      "Om dere tilbyr det, for hvem (for eksempel bare oppfølgingstimer), hvordan man bestiller, hvilken tjeneste dere bruker",
+      "Uten vilkårene antar leserne at også førstegangstimer er mulig"
+     ],
+     [
+      "Spesialiteter og leger",
+      "Spesialitetene dere er registrert for å vise, og hver leges navn, fagområde og kvalifikasjoner",
+      "Ingen sammenlignende eller overdrevne formuleringer (se reglene nedenfor)"
+     ],
+     [
+      "Betaling og adkomst",
+      "Trygdekort og kontantløs betaling, parkering, adkomst med barnevogn og rullestol",
+      "Når noe endres, oppdater nettstedet og bedriftsprofilen samtidig"
+     ],
+     [
+      "Kvelder og helger",
+      "Hvor man kan henvende seg utenom åpningstidene (den lokale legevakten, en telefonlinje om barns helse som Japans #8000)",
+      "Si tydelig når dere ikke tar imot pasienter, og deretter hvor man skal gå"
+     ]
+    ],
+    "caption": "Listen bygger på vilkårene AI blir spurt om innen allmennlege og barnelege, og punktene de høyt rangerte artiklene utelot."
+   },
+   "after": [
+    "Hold hver verdi lik i sideteksten, de strukturerte dataene, Google-bedriftsprofilen, oppføringen i det offisielle registeret og oppslaget på døren. Google anbefaler å holde bedriftsprofilen oppdatert, også for sine AI-funksjoner. [Google: AI-funksjoner og nettstedet ditt](https://developers.google.com/search/docs/appearance/ai-features)"
+   ]
+  },
+  {
+   "heading": "Skriv åpningstidene som tekst, ikke som bilde",
+   "paragraphs": [
+    "Nettsteder for legekontor viser ofte åpningstidene som et bilde av et rutenett med haker og kryss. Mennesker kan lese det, men man kan ikke regne med at AI-crawlere leser tekst inne i et bilde. Legg den samme informasjonen i en HTML-tabell eller en setning.",
+    "For eksempel: \"Man, tir, ons, fre 9.00-12.00 (oppmøte innen 11.30) og 15.00-18.00 (oppmøte innen 17.30). Lør 9.00-12.00. Stengt torsdag ettermiddag, søndag og helligdager. Har du feber, ring i åpningstiden og kom til tidspunktet vi gir deg.\" Dager, tider, siste oppmøte, stengte dager og unntak samlet på ett sted.",
+    "Når AI blir spurt om dere har åpent nå, er det dette den svarer ut fra. Mangler helligdager eller siste oppmøtetid, kan den fortelle noen at dere har åpent når dere ikke har det."
+   ]
+  },
+  {
+   "heading": "Stem overens med det offisielle medisinske registeret",
+   "paragraphs": [
+    "Mange land har et offisielt register over leger og legekontor. I Japan har departementet for helse, arbeid og velferd siden april 2024 drevet det nasjonale registeret 医療情報ネット (med kallenavnet ナビイ). Det omfatter sykehus, legekontor og apotek, og kan søkes etter konsultasjonsdager og spesialiteter samt etter tilstandene og behandlingene et legekontor håndterer og tjenestene det tilbyr. [MHLW: informasjonssystem om medisinske funksjoner (japansk)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iryou/teikyouseido/index.html) / [医療情報ネット](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+    "Oppføringene i registeret bygger på det legekontorene rapporterer til myndighetene. Hvis en AI eller en pasient sammenligner dem med nettstedet deres og finner ulike åpningstider, kan ingen av dem vite hva som er riktig. Når dere endrer åpningstider eller spesialiteter, sjekk det dere har rapportert i tillegg til nettstedet og bedriftsprofilen."
+   ]
+  },
+  {
+   "heading": "Regler for markedsføring av helsetjenester: hva dere ikke skal skrive for AI",
+   "paragraphs": [
+    "I Japan er nettsteder for legekontor omfattet av regler for medisinsk markedsføring. Departementets eksempelsamling regner falske, overdrevne og sammenlignende påstander og pasientuttalelser blant de forbudte eksemplene. [MHLWs eksempelsamling for nettsteder (PDF, japansk)](https://www.mhlw.go.jp/content/10800000/001232587.pdf). Det samme gjelder tekst, FAQ og strukturerte data skrevet for AI. Andre land har egne regler; sjekk dem som gjelder for dere."
+   ],
+   "list": [
+    "Ingen superlativer, sammenligninger eller lovede resultater: \"best i området\", \"garantert helbredelse\", \"raskere time enn noe annet sted\".",
+    "Ingen pasientuttalelser eller -kommentarer i FAQ, eller som vurderinger i strukturerte data.",
+    "På symptomsider, ikke knytt et symptom til en diagnose. Si når man bør oppsøke lege, og hva legekontoret kan gjøre (undersøkelser og behandling dere tilbyr).",
+    "For egenbetalte vaksiner og tester, oppgi innhold og pris sammen."
+   ],
+   "after": [
+    "Er dere usikre, sjekk eksempelsamlingen eller den lokale helsemyndigheten. For eksempler fra tannhelse, se [AI-søk for tannklinikker](/guide/dental-clinic-ai-search/)."
+   ]
+  },
+  {
+   "heading": "Strukturerte data: MedicalClinic eller Physician",
+   "paragraphs": [
+    "schema.org har flere typer for et legekontor (kontrollert i typedefinisjonene i schema-dts 2.1.0 den 14. november 2026). Alle er varianter av LocalBusiness, så de har adresse, telefonnummer og åpningstider."
+   ],
+   "table": {
+    "head": [
+     "Type eller egenskap",
+     "Hva den betyr",
+     "Slik brukes den i allmennpraksis"
+    ],
+    "rows": [
+     [
+      "[MedicalClinic](https://schema.org/MedicalClinic)",
+      "En virksomhet for diagnose og helsehjelp",
+      "Et legesenter med flere leger, eller en poliklinikk"
+     ],
+     [
+      "Physician / [PhysiciansOffice](https://schema.org/PhysiciansOffice)",
+      "En lege eller et legekontor (PhysiciansOffice er \"a doctor's office or clinic\")",
+      "Et legekontor drevet av én lege. Physician er også blant Nurevo AEOs virksomhetstyper"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Tilbyderens medisinske spesialitet",
+      "Verdiene omfatter PrimaryCare og Pediatric"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Om nye pasienter tas imot (en egenskap ved MedicalOrganization)",
+      "For perioder der dere bare tar imot pasienter på listen"
+     ],
+     [
+      "openingHoursSpecification",
+      "Åpningstider per ukedag",
+      "Del formiddags- og ettermiddagsøkter i to rader"
+     ]
+    ]
+   },
+   "after": [
+    "Googles strukturerte data for lokale bedrifter krever navn og adresse og ber dere bruke den mest spesifikke typen dere kan. [Google: Strukturerte data for lokale bedrifter](https://developers.google.com/search/docs/appearance/structured-data/local-business). Viktigere enn typen er at hver verdi stemmer med sideteksten. Opplysninger som ikke har en fast plass i strukturerte data, som siste oppmøtetid og hvordan man kommer med feber, hører hjemme i sideteksten."
+   ]
+  },
+  {
+   "heading": "Oppsett på et WordPress-nettsted for et legekontor",
+   "list": [
+    "Installer og aktiver Nurevo AEO (gratis) fra [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Behold Yoast SEO, Rank Math, All in One SEO eller Slim SEO. Siden 0.9.1 fungerer det også sammen med SEO SIMPLE PACK og VK All in One Expansion Unit uten å duplisere strukturerte data.",
+    "Velg \"Klinikk eller tannlege\" i oppsettsveiviseren (det setter typen til MedicalBusiness). For å publisere en mer spesifikk type, endre feltet \"Virksomhetstype (schema.org-type)\" under Innstillinger til Physician eller en annen type.",
+    "Sjekk legekontorets navn, adresse, telefon og beskrivelse. Bare tomme felt fylles ut fra de eksisterende innstillingene; verdier dere har skrevet, blir aldri overskrevet.",
+    "Skriv bare dager og tider i feltet for åpningstider, for eksempel \"Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-12:00\". Nurevo AEO gjør det om til åpningstider per dag, med formiddag og ettermiddag som to rader. Hvis teksten inneholder helligdager, en merknad om \"siste oppmøte\" eller \"andre tirsdag\", publiseres den som skrevet i stedet for å konverteres, slik at ingen feil tider publiseres; skriv i stedet siste oppmøte og helligdager i sideteksten.",
+    "Under Innstillinger legger dere til det dere tilbyr som tjenester (allmennmedisin, barnelege, vaksinasjon, helsekontroller for barn, videokonsultasjon), og legger til vanlige spørsmål i FAQ (hvordan man kommer med feber, om man må bestille time, fra hvilken alder dere tar imot barn). FAQ legges til i sidens FAQPage der dere plasserer Nurevo FAQ-blokken eller kortkoden [nurevo_faq].",
+    "Kjør diagnosen på AEO-skjermen og bruk ettklikksrettelsene. For å se hvordan nettstedet ser ut utenfra, bruk den [gratis sjekken av AI-lesbarhet](/check)."
+   ],
+   "after": [
+    "Med en SEO-utvidelse publiserer ikke Nurevo AEO et ekstra sett strukturerte data. Den legger bare til det SEO-utvidelsens graf mangler: adresse, telefon, åpningstider og en mer spesifikk type. Se [legge til bedriftsopplysninger i Yoast, Rank Math og AIOSEO](/guide/local-business-schema-seo-plugins/)."
+   ]
+  },
+  {
+   "heading": "Sjekkliste før publisering",
+   "list": [
+    "Åpningstidene er skrevet som tekst, ikke bare som bilde, med siste oppmøtetid, halve dager og helligdager.",
+    "Dere sier om besøk skjer etter timebestilling, i kø eller som drop-in.",
+    "Hvordan man kommer ved feber eller mistanke om infeksjon, er beskrevet med nummeret man skal ringe og tidene.",
+    "For barn er alderen dere tar imot fra, og dager, tider og bestillingsmåte for vaksinasjon og helsekontroller beskrevet.",
+    "Det står om dere tilbyr videokonsultasjon, og for hvem.",
+    "Midlertidig stengte dager og feriedatoer står ved åpningstidene.",
+    "Navn, adresse, telefon og åpningstider i strukturerte data, bedriftsprofilen og det offisielle registeret stemmer med sideteksten.",
+    "Ingen superlativer, sammenligninger eller pasientuttalelser i FAQ eller strukturerte data.",
+    "llms.txt lister sidene for tjenester, åpningstider, adkomst og timebestilling. [Hva er llms.txt](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Slik sjekker dere om dere vises i AI-svar",
+   "paragraphs": [
+    "Når opplysningene er på plass, skriv fem til ti spørsmål en pasient eller forelder ville stilt, som kombinerer område, dag eller tidspunkt, type symptom og timebestilling. Still dem til ChatGPT og Perplexity, og noter om legekontoret vises med navn eller URL, og om åpningstider og hvordan man kommer til, gjengis riktig. Svarene varierer fra gang til gang, så still de samme spørsmålene igjen over tid. Se [slik måler du AI-synlighet](/guide/measure-ai-visibility/) for metoden.",
+    "I USA stilte en MGMA-analyse rundt 4 950 spørsmål til ChatGPT om 200 uavhengige legepraksiser og fant ingen som både ble nevnt og sitert. I en MGMA Stat-undersøkelse blant 218 legegrupper sa 55 % at de ikke hadde noen strategi for AI-søk. [MGMA Stat](https://www.mgma.com/mgma-stat/can-ai-find-your-practice-when-patients-ask). Forholdene er ulike fra land til land, men poenget står seg: ikke anta at dere vises; spør og sjekk.",
+    "Nurevo AEOs Free- og Standard-abonnement inkluderer en månedlig sjekk: tre spørsmål bygget på virksomhetstypen og området deres (aldri legekontorets navn) stilles til Perplexity, og utvidelsen registrerer om svarene nevnte dere eller siterte nettstedet. Pro-abonnementet (fra 99 $/måned) legger til måling av AI-synlighet i beta, som viser hvor ofte legekontoret vises i AI-svar, med sammenligning med konkurrenter og historikk (måler for øyeblikket Perplexity). Begge ser på et utvalg av svar, ikke hvert eneste svar."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hvor bør et fastlegekontor begynne med AI-søk?",
+   "a": "Skriv åpningstidene som tekst, med siste oppmøtetid, halve dager og helligdager. Legg deretter regler for timebestilling, hvordan man kommer med feber og tider for vaksinasjon og helsekontroller inn i sideteksten, og sørg for at navn, adresse, telefon og åpningstider stemmer overens i strukturerte data, Google-bedriftsprofilen og eventuelle offisielle registre."
+  },
+  {
+   "q": "Bør et legekontor bruke strukturerte data av typen MedicalClinic eller Physician?",
+   "a": "Begge er varianter av LocalBusiness og har adresse og åpningstider. Som tommelfingerregel bruker man MedicalClinic for et legesenter med flere leger og Physician for et legekontor med én lege (PhysiciansOffice finnes også for et legekontor). At verdiene stemmer med sideteksten, betyr mer enn hvilken type dere velger."
+  },
+  {
+   "q": "Bør vi fjerne bildet av åpningstidene våre?",
+   "a": "Dere trenger ikke fjerne det, men skriv den samme informasjonen som tekst også, i en HTML-tabell eller en setning. Man kan ikke regne med at AI-crawlere leser tekst inne i et bilde."
+  },
+  {
+   "q": "Hvor mye bør vi skrive om besøk ved feber?",
+   "a": "Skriv om pasienter skal ringe først, tidene for disse besøkene, nummeret man skal ringe, om dere har egen inngang eller eget venterom, og hvilke tester dere kan ta. Med bare \"ring oss\" kan ikke en AI vite om noen kan få time."
+  },
+  {
+   "q": "Kan vi legge pasientvurderinger i FAQ for å hjelpe AI med å velge oss?",
+   "a": "Sjekk de lokale reglene først. I Japan er nettsteder for legekontor omfattet av regler for medisinsk markedsføring, og pasientuttalelser regnes som forbudt. Ikke legg dem inn i FAQ eller strukturerte data skrevet for AI heller."
+  },
+  {
+   "q": "Er Nurevo AEO gratis?",
+   "a": "Ja. Strukturerte data for virksomhetstype, adresse, åpningstider, tjenester og FAQ, i tillegg til llms.txt, regler for AI-crawlere og AEO-poengsummen, er med i gratisabonnementet. De betalte abonnementene legger til et alltid oppdatert regelsett (Standard, 20 $/måned) og måling av AI-synlighet i beta (Pro, fra 99 $/måned). [Nurevo AEO på WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garanterer dette at legekontoret vårt vises i ChatGPT?",
+   "a": "Nei. AI-svar endrer seg, og ingen verktøy eller teknikker kan garantere en omtale eller en plassering. Det dere kan gjøre, er å gjøre opplysningene lette for AI å lese og fortsette å sjekke om dere vises."
+  }
+ ],
+ "relatedHeading": "Relaterte veiledninger",
+ "cta": {
+  "heading": "Se først hvordan AI leser nettstedet til legekontoret deres",
+  "body": "Den gratis sjekken viser status for strukturerte data, llms.txt og tilgang for AI-crawlere, uten registrering. På WordPress fyller Nurevo AEO hullene gratis.",
+  "label": "Kjør den gratis sjekken av AI-lesbarhet",
+  "href": "/check",
+  "secondary": {
+   "label": "Hent Nurevo AEO på WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT er et varemerke for OpenAI, Perplexity for Perplexity AI og Google for Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK og VK All in One Expansion Unit er varemerker for sine respektive eiere. Nurevo er ikke tilknyttet dem. Denne artikkelen er ikke juridisk eller medisinsk rådgivning."
+}
