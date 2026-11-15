@@ -143,3 +143,12 @@
 3. 写真館・フォトスタジオのAI検索対策（撮影プラン・データ納品・衣装・予約）【業種別】
 4. 多店舗チェーンのAI検索対策（店舗ごとのページ・営業時間・Googleビジネスプロフィールの一括管理）【全業種】
 5. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
+| 2026-11-15 17時 | company-profile-page-ai-search | 会社概要ページのAI検索対策（全業種。社名を含む質問の型6つ、書く項目の表12項目〔正式な社名=legalName・通称/ブランド/英語表記=alternateName・所在地・連絡先・設立=foundingDate ISO 8601・代表者〔本文だけ〕・事業内容・従業員数/資本金〔時点〕・法人番号〔本文、taxIDに入れるかはGoogleに記載なし〕・sameAs・logo 112px・最終更新日〕、紹介文2〜3文＋表、沿革に旧社名/移転、表記ゆれの表〔前株/後株・英語表記・番地・電話・旧表記〕とサイト内/社外の確認場所、同名の会社との区別〔iso6523Code・naics〕、Google Organization構造化データ〔2026-09-15更新：必須なし・トップか会社概要の1ページ・地域ビジネスはLocalBusinessの下位型・logo 112×112〕、AboutPage、WordPress手順〔ウィザード B2B/SaaS=Organization・基本情報8欄・住所はPostalAddressの1文字列・サイトロゴ・SEOプラグイン側の値が優先・legalName/alternateName/foundingDate/sameAs は webmcp_canary_business_node・llms.txt 30件と webmcp_canary_llms_txt_lines〕、社名ありの質問での確かめ方の表、チェックリスト11、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261115-17 |
+メモ：2026-11-15 17時の回は国税庁 法人番号公表サイト・gBizINFO・Yoast/Rank Mathのヘルプ・OpenAIのボット一覧を WebFetch の許可待ちで取得できなかった。法人番号は公表サイトへのリンクだけにし、桁数や公表項目は書いていない。Google の Organization ページは zh-cn 表示で取得（日本語の文言は引用していない）。
+翻訳の残り（8時台で補完）：recruiting-page-ai-search・ai-visibility-drop-causes・research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search（ja/en のみ）。
+次の候補：
+1. 皮膚科・美容皮膚科のAI検索対策（保険診療と自費の書き分け、料金表示と限定解除）【業種別】
+2. 写真館・フォトスタジオのAI検索対策（撮影プラン・データ納品・衣装・予約）【業種別】
+3. 多店舗チェーンのAI検索対策（店舗ごとのページ・営業時間・Googleビジネスプロフィールの一括管理）【全業種】
+4. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
+5. 代表者・専門家のプロフィールページのAI検索対策（Person・資格・経歴の書き方）【全業種】
