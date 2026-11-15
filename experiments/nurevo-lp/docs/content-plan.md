@@ -152,3 +152,12 @@
 3. 多店舗チェーンのAI検索対策（店舗ごとのページ・営業時間・Googleビジネスプロフィールの一括管理）【全業種】
 4. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
 5. 代表者・専門家のプロフィールページのAI検索対策（Person・資格・経歴の書き方）【全業種】
+| 2026-11-15 20時 | multi-location-business-ai-search | 多店舗・チェーンのAI検索対策（全業種。店舗の質問の型6つとよくある間違い4つ、ブランド/店舗一覧/店舗ページ/閉店のお知らせの役割表、店舗ページの項目表10項目〔店名の決まった形・住所/geo/hasMap・直通か代表か・店ごとの営業時間・specialOpeningHoursSpecification・店ごとのサービスとdepartment・branchCode・parentOrganization〕、閉店・移転・一時休業の片付け順、本部Organizationと店舗LocalBusinessの @id と parentOrganization〔schema.org：branchOf は非推奨〕、店舗の一覧表（マスタ）の列、GBPの一括確認等はヘルプ参照（数字は書いていない）、WordPress手順〔設定は本部・営業時間を入れない注意・ページ専用FAQ・webmcp_canary_schema_graph の extra と org_id・店舗検索プラグインとの重複回避・llms.txt 30件と行の追加・wp nurevo export/import〕、店ごとの確かめ方、チェックリスト11、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261115-20 |
+メモ：2026-11-15 20時の回は Google（LocalBusiness・AI features）、GBPヘルプ、schema.org を WebFetch の許可待ちで取得できなかった。Googleの記述は dental-clinic-ai-search（2026-10-29確認）の範囲だけ、schema.org の定義は schema-dts 2.1.0 で確認。GBPの一括確認の店舗数などは書いていない。
+翻訳の残り（8時台で補完）：recruiting-page-ai-search・ai-visibility-drop-causes・research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search（ja/en のみ）。
+次の候補：
+1. 皮膚科・美容皮膚科のAI検索対策（保険診療と自費の書き分け、料金表示と限定解除）【業種別】
+2. 写真館・フォトスタジオのAI検索対策（撮影プラン・データ納品・衣装・予約）【業種別】
+3. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
+4. 代表者・専門家のプロフィールページのAI検索対策（Person・資格・経歴の書き方）【全業種】
+5. フランチャイズ本部向け：加盟店サイトとAI検索（表記ルール・リンク・本部と加盟店の役割）【制作会社・本部向け】
