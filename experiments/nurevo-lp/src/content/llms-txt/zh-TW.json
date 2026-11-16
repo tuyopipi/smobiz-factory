@@ -1,19 +1,300 @@
 {
-"title": "什麼是 llms.txt？向 AI 介紹網站的檔案 | Nurevo",
-"description": "了解 llms.txt 的內容、放置位置、與 robots.txt 和 sitemap.xml 的差異，以及如何在 WordPress 上保持最新。",
-"h1": "什麼是 llms.txt？向 AI 介紹網站的檔案",
-"lead": "llms.txt 是放在網域根目錄（yoursite.com/llms.txt）的一個簡單文字檔，用清楚、便於機器處理的語言向 AI 介紹您的網站，並指向最重要的頁面。可以把它想成「寫給 AI 的 README」。",
-"sections": [
-{"heading": "它為什麼存在", "paragraphs": ["robots.txt 告訴爬蟲可以存取什麼；sitemap 列出 URL。兩者都不會告訴 AI 您的網站是關於什麼、該引用什麼。llms.txt 補上了這個缺口——一份簡潔、經過挑選、AI 能快速讀完的摘要。"]},
-{"heading": "裡面寫什麼", "list": ["對您的事業或網站的簡短描述", "關鍵事實：做什麼、在哪裡、營業時間、聯絡方式", "指向最重要頁面的連結，每個附一行說明", "（選擇性）您最希望 AI 依據的內容"]},
-{"heading": "它能保證被引用嗎？", "paragraphs": ["不能。它只是多個訊號之一——還有結構化資料、爬蟲存取和一致性。但它能讓您成為更容易、更清楚的引用來源。[什麼是 AEO？](/guide/what-is-aeo)"]},
-{"heading": "如何在 WordPress 上加入", "paragraphs": ["可以手動建立，但網站變動後它會過時。外掛可以自動產生並保持更新。[WordPress 的 AEO](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "llms.txt 是官方標準嗎？", "a": "它是一種新興的慣例，正逐漸被認可。加入它不花錢，只有好處。"},
-{"q": "它具體放在哪裡？", "a": "放在網域根目錄：https://yoursite.com/llms.txt"},
-{"q": "它和 robots.txt 或 sitemap.xml 一樣嗎？", "a": "不一樣。那兩者用於控制存取和列出 URL；llms.txt 則是為 AI 介紹並精選您的網站內容。"}
-],
-"relatedHeading": "相關指南",
-"cta": {"heading": "看看您的網站是否有（以及是否需要）llms.txt", "body": "無需註冊。", "label": "免費檢測", "href": "/check"}
+  "title": "什麼是 llms.txt？寫法、效果與 WordPress 新增方法 | Nurevo",
+  "description": "以範例說明 llms.txt：檔案格式、AI 是否真的使用它的已知事實、何時值得新增、在 WordPress 上新增的三種方法，以及發布後的檢查方式。",
+  "h1": "什麼是 llms.txt？寫法、關於效果的已知事實，以及在 WordPress 上的新增方法",
+  "lead": "llms.txt 是放在網域根目錄（/llms.txt）下的 Markdown 文字檔，用來概述網站內容並連結到最重要的頁面。它於 2024 年被提出，並非正式標準。Google 表示其 AI 功能並不需要它，我們也沒有找到 ChatGPT 或 Perplexity 公開表示會在回答中使用其他網站 llms.txt 的說明。撰寫它大約只需 30 分鐘，因此較合理的做法是：先確保頁面上的事實正確，再把它當成一份簡短、正確的摘要補上。",
+  "intro": [
+    "撰寫於 2026 年 11 月 16 日（日本時間）。本文在重新研讀排名前列的指南與一手資料後，全面改寫了我們 2026 年 10 月 23 日發布的頁面。適合正在考慮是否新增 llms.txt 的企業經營者，以及正在考慮是否為客戶網站新增它的網站製作公司。",
+    "AI 的回答每天都在變化，也會因提問方式而不同。本文的步驟能讓 AI 讀取到的資訊更正確，但無法保證您一定會出現在 AI 的回答中。"
+  ],
+  "sections": [
+    {
+      "heading": "llms.txt 的用途",
+      "paragraphs": [
+        "llms.txt 是 Answer.AI 的 Jeremy Howard 於 2024 年 9 月 3 日發表的一項提案（[Answer.AI 公告](https://www.answer.ai/posts/2024-09-03-llmstxt.html)；規格見 [llmstxt.org](https://llmstxt.org/)）。其構想是：與其讓 AI（大型語言模型）逐一爬取 HTML 頁面，不如交給它一個檔案，裡面包含網站摘要和值得閱讀的頁面清單。它最初針對的是希望 AI 程式開發工具讀取的軟體文件。",
+        "它很容易與網站根目錄下的其他檔案混淆，以下說明它們的差異。"
+      ],
+      "table": {
+        "head": [
+          "檔案",
+          "作用",
+          "地位",
+          "與 AI 的關係"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "告訴爬蟲可以擷取哪些內容",
+            "標準（[RFC 9309](https://www.rfc-editor.org/rfc/rfc9309)）",
+            "AI 公司表示其爬蟲會遵守它。封鎖或允許 AI 要在這裡設定"
+          ],
+          [
+            "sitemap.xml",
+            "向搜尋引擎提供網址清單",
+            "搜尋引擎支援的格式",
+            "有助於頁面被發現，但不描述任何內容"
+          ],
+          [
+            "結構化資料（JSON-LD）",
+            "以機器可讀的形式說明每個頁面的事實（地址、營業時間、價格）",
+            "schema.org 詞彙；Google 等公司公開了其用法",
+            "用於搜尋結果功能。AI 回答如何使用它，沒有任何服務商提供詳細說明"
+          ],
+          [
+            "llms.txt",
+            "在一個 Markdown 檔案中概述網站並連結重要頁面",
+            "提案，非正式標準",
+            "就我們所知，尚無 AI 搜尋服務表示會使用它（截至 2026 年 11 月 16 日）"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt 無法取代 robots.txt。AI 爬蟲能否造訪由 robots.txt 決定；llms.txt 的作用是告訴對方「如果要讀這個網站，請從這裡開始」。"
+      ]
+    },
+    {
+      "heading": "它有效嗎？已知與未知",
+      "paragraphs": [
+        "常常能看到「新增 llms.txt 就會被 AI 引用」的說法，但其中能被驗證的內容少之又少。以下是截至 2026 年 11 月 16 日公開資料所能支持的事實。"
+      ],
+      "table": {
+        "head": [
+          "問題",
+          "已知事實",
+          "來源"
+        ],
+        "rows": [
+          [
+            "Google AI Overviews 和 AI 模式會使用它嗎？",
+            "Google 表示，要出現在其 AI 功能中，不需要建立新的 AI 文字檔或特殊標記，一般的 SEO 最佳做法同樣適用",
+            "[Google 搜尋中心：AI 功能與您的網站](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "ChatGPT、Perplexity 和 Claude 會使用它嗎？",
+            "我們沒有找到顯示它們會在回答中使用其他網站 llms.txt 的公開文件，但也沒有找到它們表示不使用的說明",
+            "各服務商的公開文件（以撰寫時我們能查到的範圍為準）"
+          ],
+          [
+            "AI 機器人真的會請求它嗎？",
+            "一家日本公司公開了自家伺服器 28 天的記錄：在 72,100 次機器人請求中，請求 llms.txt 的只有 4 次（全部來自 Amazonbot）；ChatGPT-User 發出了 18,553 次請求，沒有一次是請求 llms.txt。這只是單一網站的資料",
+            "[Stellagent 的 AI Search Dock 部落格（日文）](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "有多少網站設置了它？",
+            "在 2,486 家日本網站製作公司的網站中占 13.4%，在 13,352 家海外網站製作公司的網站中占 26.4%（2026 年 11 月）",
+            "[Nurevo 調查](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "設置了它的網站會更常被 AI 推薦嗎？",
+            "在日本 62 家在地商家中，包括 llms.txt 在內的網站端訊號與是否出現在 Perplexity 回答中沒有關聯",
+            "[Nurevo 調查](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "簡單來說：目前沒有證據顯示 llms.txt 能讓您更常出現在 AI 搜尋中，也沒有官方說法指出它會帶來負面影響。由於成本很低，較客觀的立場是「可以新增，但不要以為加了就大功告成」。AI 回答通常依據的是頁面文字和結構化資料，所以請先把這些事實寫正確。"
+      ]
+    },
+    {
+      "heading": "該不該新增？依網站類型判斷",
+      "paragraphs": [
+        "既然效果尚未獲得證實，決定因素就是工作量以及檔案內容過時的風險。手寫的 llms.txt 如果無人更新，就會一直對外公開與頁面不一致的舊價格或舊營業時間。"
+      ],
+      "table": {
+        "head": [
+          "網站",
+          "建議",
+          "理由"
+        ],
+        "rows": [
+          [
+            "開發者文件、API 參考",
+            "新增",
+            "這是最初的使用情境；AI 程式開發工具會被指向這類檔案"
+          ],
+          [
+            "小型在地商家、診所、律師或會計事務所",
+            "如果能自動產生就新增",
+            "頁面少，容易概述。手寫的話需要有人負責更新營業時間和價格"
+          ],
+          [
+            "B2B 和 SaaS",
+            "新增，並連結價格、客戶案例和公司簡介頁面",
+            "把比較類問題需要的資訊集中在一處"
+          ],
+          [
+            "網路商店",
+            "如果能自動產生就新增",
+            "商品和價格變動太多，手動無法跟上"
+          ],
+          [
+            "無人維護的網站",
+            "不新增，或只採用自動產生",
+            "公開過時的事實比沒有檔案危害更大"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "寫法：檔案格式",
+      "paragraphs": [
+        "提案中的格式是 Markdown，依以下順序撰寫（[llmstxt.org](https://llmstxt.org/)）。只有第一個標題是必要的，其餘皆為選填。"
+      ],
+      "list": [
+        "一個以「# 」開頭的標題：網站、公司或商家的名稱（必要）",
+        "一個以「> 」開頭的引用區塊：用一到三句話說明網站是什麼（選填，但建議寫上）",
+        "不帶標題的內文：希望寫進摘要的事實，例如所在地、服務對象和營業時間（選填）",
+        "放在「## 」標題下的連結清單，每行寫成「- [頁面名稱](URL): 一句話說明」（選填）",
+        "名為「## Optional」的標題下的清單：需要縮短上下文時可以略過的頁面（選填）"
+      ],
+      "after": [
+        "檔名為 llms.txt，放在網域根目錄下（https://example.com/llms.txt）。以 UTF-8 儲存，並使用網站本身的語言撰寫。提案還建議在每個頁面的 URL 後加上 .md，提供該頁面的 Markdown 版本；有些網站也會公開包含全部文字的第二個檔案（通常稱為 llms-full.txt）。兩者都是選用的，對小型商家網站來說，一個 llms.txt 就足夠了。"
+      ]
+    },
+    {
+      "heading": "範例：B2B SaaS 公司的 llms.txt",
+      "paragraphs": [
+        "這是一家虛構的公司。一個畫面內就能看清它做什麼、服務誰，以及每個連結頁面包含什麼內容。"
+      ],
+      "code": "# Example Cloud Inc.\n\n> Example Cloud 開發「Example Time」，這是一款專為 10 至 300 名員工企業設計的雲端出勤管理應用程式。按月計費，提供 14 天免費試用。\n\n總公司位於大阪，成立於 2018 年。平日 9:00 至 18:00（日本時間）提供電話和電子郵件支援。\n\n## 產品與價格\n\n- [Example Time 功能](https://example.com/features/): 打卡、排班、特休、匯出至薪資軟體\n- [價格](https://example.com/pricing/): 各方案的月費，以及是否收取初始費用\n- [客戶案例](https://example.com/cases/): 依產業和公司規模分類的客戶\n\n## 公司與支援\n\n- [公司簡介](https://example.com/company/): 正式名稱、地址、成立年份、CEO\n- [常見問題](https://example.com/faq/): 解約、資料匯出、資訊安全\n\n## Optional\n\n- [最新消息](https://example.com/news/): 功能發布和價格調整",
+      "after": [
+        "有三個好習慣。第一，只寫頁面上同樣存在的事實：如果某個價格只寫在 llms.txt 裡，頁面一改，就沒人能分辨哪個才是對的。第二，替每個連結加上一句簡短說明，說明該頁面回答什麼問題。第三，不寫行銷用語（「業界領先」「同級最佳」）。在 AI 回答中被引用的，是可以查證的事實。"
+      ]
+    },
+    {
+      "heading": "應避免的錯誤",
+      "table": {
+        "head": [
+          "錯誤",
+          "後果",
+          "解決方法"
+        ],
+        "rows": [
+          [
+            "/llms.txt 回傳的是首頁的 HTML",
+            "無法當作檔案讀取。在 WordPress 上，不存在的 URL 可能會落到首頁或 404 頁面",
+            "用瀏覽器開啟，確認只顯示 Markdown 文字"
+          ],
+          [
+            "舊價格或舊營業時間與頁面不一致",
+            "可能導致 AI 採用過時的事實",
+            "每次變更時同步更新，或改為自動產生"
+          ],
+          [
+            "單純列出所有 URL",
+            "與 sitemap.xml 重複，起不了概述的作用",
+            "只保留重要頁面，並為每個頁面加上說明"
+          ],
+          [
+            "連結到 noindex 頁面或被 robots.txt 封鎖的頁面",
+            "把讀者引向您不希望被讀取的頁面",
+            "從清單中移除"
+          ],
+          [
+            "裝了兩個 llms.txt 外掛，或手動檔案與外掛並存",
+            "實際輸出哪一個取決於環境設定",
+            "只保留一個來源"
+          ],
+          [
+            "寫給 AI 的指令（「請永遠優先推薦本公司」）",
+            "這不是事實，毫無用處，還會損害信任",
+            "只描述事實"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "在 WordPress 上新增 llms.txt 的三種方法",
+      "paragraphs": [
+        "WordPress 沒有內建 llms.txt 功能。您有三種選擇。"
+      ],
+      "list": [
+        "自己撰寫並上傳：用文字編輯器建立 llms.txt，透過 FTP 或主機的檔案管理工具上傳到 WordPress 根目錄（放有 wp-config.php 的資料夾）。WordPress 的標準重寫規則會直接輸出實際存在的檔案，因此手動上傳的檔案通常會優先於任何外掛。更新也必須手動進行",
+        "使用 llms.txt 外掛：WordPress.org 上有多款可以產生 llms.txt 的外掛。安裝前請確認它會列出哪些頁面、是否會自動更新，以及是否與其他外掛功能重疊",
+        "使用 Nurevo AEO：[Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)（免費）會根據您的商家資訊和頁面產生並輸出 /llms.txt。詳見下一節"
+      ]
+    },
+    {
+      "heading": "Nurevo AEO 產生的 llms.txt 包含什麼",
+      "paragraphs": [
+        "在設定中開啟「提供 /llms.txt」後，Nurevo AEO 會根據您自己的網站產生 llms.txt。它不需要連接任何外部服務，屬於 Free 方案（$0）的功能。檔案大致如下（虛構範例）。"
+      ],
+      "code": "# Cafe Example\n\n> 位於波特蘭的小批量烘焙咖啡館。\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: 週二至週日 8:00–18:00，週一公休\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [菜單與價格](https://example.com/menu/)\n- [交通資訊](https://example.com/find-us/)\n- [常見問題](https://example.com/faq/)\n\n## Services\n\n- 烘焙課程 — 90 分鐘",
+      "after": [
+        "標題是固定的英文名稱（Key facts、Pages、Products、Services），內容則維持網站本身的語言。Key facts 收錄設定畫面中的商家資訊：URL、地址、電話、營業時間、電子郵件和業務類型。當網站類型為「網路商店」或「B2B / SaaS」時，會省略營業時間，改為列出您設定的退貨、配送、價格和客戶案例頁面。",
+        "Pages 列出最近修改過的 30 個已發布頁面和文章。如果不想列入某個頁面，請在編輯器的 Nurevo AEO 面板中勾選「不將此頁面列入 llms.txt」。WooCommerce 商品會連同價格和庫存狀態列在 Products 下，您填寫的服務則列在 Services 下。",
+        "儲存頁面或設定時，檔案會重新產生，並以 Content-Type: text/plain 輸出。如需新增 30 個以外的頁面，或加入政策頁面等額外內容，開發者可以使用 webmcp_canary_llms_txt_lines 篩選器。Nurevo AEO 不會產生 llms-full.txt。"
+      ]
+    },
+    {
+      "heading": "發布後如何檢查",
+      "list": [
+        "用瀏覽器開啟 https://your-domain/llms.txt：應顯示 Markdown 文字而非 HTML，且沒有亂碼",
+        "執行 curl -I https://your-domain/llms.txt：應回傳 200，不會重新導向到其他 URL，且 Content-Type 為 text/plain（或 text/markdown）",
+        "確認名稱、地址、電話、營業時間和價格與頁面文字及結構化資料完全一致",
+        "在伺服器記錄中統計 /llms.txt 的請求次數及其使用者代理，了解哪些機器人會擷取它（為零也不代表有問題）",
+        "使用 Nurevo 的[免費檢測](/check)，同時查看 llms.txt、結構化資料和 AI 爬蟲的存取狀況"
+      ],
+      "after": [
+        "在 Nurevo AEO 的 AEO 分數中，llms.txt 占 100 分中的 15 分。檔案必須存在，並且在以下四項檢查中至少通過三項才會判定為合格：不少於 120 個字元、有「# 」標題、至少包含一個 URL、包含地址、電話或營業時間等商家資訊。這個分數衡量的是您的網站對 AI 而言是否容易讀取，而不是 AI 是否會推薦您。要了解自己是否出現在 AI 回答中，請參考[如何衡量 AI 能見度](/guide/measure-ai-visibility)：反覆提出相同的問題並記錄回答。請注意，新增 llms.txt 後出現的變化，通常無法與同一時期的其他變化區分開來。"
+      ]
+    },
+    {
+      "heading": "發布前檢查清單",
+      "list": [
+        "第一行是帶有您名稱的「# 」標題",
+        "「> 」摘要說明了您是誰、在哪裡、向誰提供什麼",
+        "所有事實都與頁面文字、結構化資料和 Google 商家檔案一致",
+        "連結僅限重要頁面，並且每個都有說明",
+        "沒有 noindex 頁面、沒有被 robots.txt 封鎖的頁面、沒有失效連結",
+        "沒有行銷用語，也沒有寫給 AI 的指令",
+        "https://your-domain/llms.txt 回傳 200，顯示的是文字而非 HTML",
+        "只有一個來源輸出該檔案（手動檔案或一個外掛）",
+        "價格或營業時間變動時有專人負責更新（自動產生則不需要）",
+        "robots.txt 沒有封鎖您希望讀取網站的 AI 爬蟲"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "llms.txt 是正式標準嗎？",
+      "a": "不是。它是 Answer.AI 的 Jeremy Howard 於 2024 年發表的提案，而不是標準化組織制定的規格。截至 2026 年 11 月 16 日，我們沒有找到任何 AI 搜尋服務公開表示會使用其他網站的 llms.txt。"
+    },
+    {
+      "q": "llms.txt 會影響 Google 排名或 AI Overviews 嗎？",
+      "a": "Google 表示，要出現在其 AI 功能中，不需要新的 AI 文字檔。也沒有官方說法指出該檔案會提高或降低排名。對 Google 而言，頁面文字和結構化資料才是首要的。"
+    },
+    {
+      "q": "還需要 llms-full.txt 嗎？",
+      "a": "不需要。它是包含網站全部文字的檔案，有時會被大型文件網站使用。商家或企業網站只用 llms.txt 就足夠了。Nurevo AEO 不會產生 llms-full.txt。"
+    },
+    {
+      "q": "如果 robots.txt 封鎖了 AI 爬蟲，它們還會讀取 llms.txt 嗎？",
+      "a": "llms.txt 不會改變 robots.txt 的設定。如果爬蟲被封鎖，應視為它什麼都不會擷取，包括 llms.txt。如果希望 AI 讀取您的網站，請先確認 robots.txt 沒有封鎖 AI 搜尋爬蟲。"
+    },
+    {
+      "q": "可以用自己的語言撰寫嗎？",
+      "a": "可以。提案沒有規定語言，請使用您的客戶所使用的語言撰寫。Nurevo AEO 使用固定的英文標題，內容則維持網站本身的語言。"
+    },
+    {
+      "q": "應該列出多少個頁面？",
+      "a": "沒有硬性規定。只保留能回答人們向 AI 詢問您的問題的頁面即可：公司簡介、價格、服務、常見問題、地點。Nurevo AEO 會自動列出最近修改過的 30 個頁面，您也可以排除任何頁面。"
+    },
+    {
+      "q": "應該多久更新一次？",
+      "a": "只要其中的事實有所變動，就應立即更新。如果手動維護，請把「更新 llms.txt」加入價格和營業時間變更的例行流程。Nurevo AEO 會在您每次儲存頁面或設定時重新產生它。"
+    }
+  ],
+  "relatedHeading": "相關指南",
+  "cta": {
+    "heading": "檢查您網站的 llms.txt 和結構化資料",
+    "body": "免費檢測會顯示您是否設置了 llms.txt、結構化資料狀況以及 AI 爬蟲的存取情況，無需註冊。在 WordPress 上，Nurevo AEO（免費）可以為您產生 llms.txt。但它無法保證您出現在 AI 回答中。",
+    "label": "免費檢測 AI 可讀性",
+    "href": "/check",
+    "secondary": {
+      "label": "前往 WordPress.org 取得 Nurevo AEO",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT 是 OpenAI 的商標，Perplexity 是 Perplexity AI 的商標，Claude 是 Anthropic 的商標，Google 是 Google LLC 的商標；Amazonbot 是 Amazon 的爬蟲。其他公司名稱和產品名稱均為其各自所有者的商標。Nurevo 與上述公司均無關聯，亦未獲得其認可。"
 }

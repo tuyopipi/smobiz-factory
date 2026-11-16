@@ -1,19 +1,300 @@
 {
-"title": "Mi az llms.txt? A fájl, amely bemutatja webhelyét az AI-nak | Nurevo",
-"description": "Mit tartalmaz az llms.txt, hová kerül, miben különbözik a robots.txt-től és a sitemap.xml-től, és hogyan tartható naprakészen WordPressben.",
-"h1": "Mi az llms.txt? A fájl, amely bemutatja webhelyét az AI-nak",
-"lead": "Az llms.txt egy egyszerű szöveges fájl a domain gyökerében (azonwebhelye.hu/llms.txt), amely világos, gépbarát nyelven leírja webhelyét az AI-nak, és a legfontosabb oldalakra mutat. Gondoljon rá úgy, mint egy „README-re az AI számára”.",
-"sections": [
-{"heading": "Miért létezik", "paragraphs": ["A robots.txt megmondja a robotoknak, mihez férhetnek hozzá; az oldaltérkép URL-eket sorol fel. Egyik sem mondja meg az AI-nak, miről szól a webhelye, vagy mit idézzen. Az llms.txt ezt a hiányt pótolja – tömör, válogatott összefoglaló, amelyet az AI gyorsan elolvas."]},
-{"heading": "Mi kerül bele", "list": ["Rövid leírás a vállalkozásáról vagy webhelyéről", "Kulcsadatok: mivel foglalkozik, hol, nyitvatartás, elérhetőség", "Linkek a legfontosabb oldalakra, mindegyik egysoros leírással", "Igény szerint az a tartalom, amelyre az AI leginkább támaszkodjon"]},
-{"heading": "Garantálja az idézést?", "paragraphs": ["Nem. Egy jel a sok közül – strukturált adatok, robot-hozzáférés, következetesség. De könnyebben és világosabban idézhető forrássá teszi Önt. [Mi az AEO?](/guide/what-is-aeo)"]},
-{"heading": "Így adhatja hozzá WordPressben", "paragraphs": ["Elkészítheti kézzel, de a webhely változásával elavul. Egy bővítmény automatikusan előállíthatja és naprakészen tarthatja. [AEO WordPresshez](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Az llms.txt hivatalos szabvány?", "a": "Kialakulóban lévő, egyre inkább elismert konvenció. Hozzáadása semmibe sem kerül, és csak segíthet."},
-{"q": "Pontosan hová kerül?", "a": "A domain gyökerébe: https://azonwebhelye.hu/llms.txt"},
-{"q": "Ugyanaz, mint a robots.txt vagy a sitemap.xml?", "a": "Nem. Azok a hozzáférést szabályozzák és URL-eket sorolnak fel. Az llms.txt leírja webhelyét, és kiválogatja a tartalmat az AI számára."}
-],
-"relatedHeading": "Kapcsolódó útmutatók",
-"cta": {"heading": "Nézze meg, van-e (és kell-e) llms.txt a webhelyén", "body": "Regisztráció nélkül.", "label": "Ingyenes ellenőrzés", "href": "/check"}
+  "title": "Mi az llms.txt? Hogyan írjuk meg, és működik-e? | Nurevo",
+  "description": "Az llms.txt példákkal: a formátum, mit tudunk arról, hogy az AI használja-e, mikor érdemes bevezetni, három módszer WordPressen és az ellenőrzés.",
+  "h1": "Mi az llms.txt? Hogyan írjuk meg, mit tudunk a hatásáról, és hogyan adjuk hozzá WordPressen",
+  "lead": "Az llms.txt egy Markdown szövegfájl a domain gyökerében (/llms.txt), amely összefoglalja a webhelyet, és a legfontosabb oldalaira mutató linkeket tartalmaz. 2024-ben javasolták, és nem hivatalos szabvány. A Google szerint az AI-funkcióinak nincs szüksége rá, és sem a ChatGPT-től, sem a Perplexitytől nem találtunk nyilvános közlést arról, hogy más webhelyek llms.txt fájljait felhasználnák a válaszaikban. Megírása nagyjából 30 percet vesz igénybe, ezért érdemes rövid, pontos összefoglalóként kezelni, amelyet akkor ad hozzá, amikor az oldalain szereplő tények már helyesek.",
+  "intro": [
+    "Készült 2026. november 16-án (JST). Ez a 2026. október 23-i oldalunk teljes átdolgozása, a legjobb helyezésű útmutatók és az elsődleges források friss áttekintése alapján. Azoknak a cégtulajdonosoknak szól, akik azon gondolkodnak, bevezessék-e az llms.txt-t, illetve azoknak a webügynökségeknek, amelyek azt mérlegelik, felvegyék-e ügyfeleik webhelyeire.",
+    "Az AI-válaszok napról napra és a kérdés megfogalmazásától függően is változnak. Az itt leírt lépések pontosabbá teszik azt az információt, amelyet az AI olvas, de nem garantálják, hogy megjelenik egy AI-válaszban."
+  ],
+  "sections": [
+    {
+      "heading": "Mire való az llms.txt",
+      "paragraphs": [
+        "Az llms.txt Jeremy Howard (Answer.AI) 2024. szeptember 3-án közzétett javaslata ([az Answer.AI bejelentése](https://www.answer.ai/posts/2024-09-03-llmstxt.html); specifikáció: [llmstxt.org](https://llmstxt.org/)). Az alapötlet: ahelyett, hogy az AI (egy nagy nyelvi modell) egyenként járná végig a HTML-oldalakat, kapjon egyetlen fájlt a webhely összefoglalójával és az elolvasásra érdemes oldalak listájával. Eredetileg szoftverdokumentációkhoz szánták, amelyeket a fejlesztők az AI-alapú programozási eszközökkel szeretnének olvastatni.",
+        "Könnyű összekeverni a webhely gyökerében lévő más fájlokkal, ezért íme a különbségek."
+      ],
+      "table": {
+        "head": [
+          "Fájl",
+          "Feladata",
+          "Státusz",
+          "Kapcsolata az AI-jal"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Megmondja a robotoknak, mit tölthetnek le",
+            "Szabvány ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Az AI-cégek szerint a robotjaik betartják. Itt lehet az AI-t letiltani vagy engedélyezni"
+          ],
+          [
+            "sitemap.xml",
+            "Átadja a keresőknek az URL-ek listáját",
+            "A keresőmotorok által támogatott formátum",
+            "Segíti a felfedezést. Semmit sem ír le"
+          ],
+          [
+            "Strukturált adatok (JSON-LD)",
+            "Oldalanként, géppel olvasható formában rögzíti a tényeket (cím, nyitvatartás, árak)",
+            "schema.org szókészlet; a Google és mások dokumentálják a felhasználását",
+            "A találati oldal funkcióihoz használják. Hogy az AI-válaszok hogyan használják, azt egyetlen szolgáltató sem dokumentálja részletesen"
+          ],
+          [
+            "llms.txt",
+            "Egyetlen Markdown-fájlban összefoglalja a webhelyet, és linkeli a fő oldalait",
+            "Javaslat, nem hivatalos szabvány",
+            "Egyetlen általunk ismert AI-keresőszolgáltatás sem közölte, hogy használja (2026. november 16-i állapot)"
+          ]
+        ]
+      },
+      "after": [
+        "Az llms.txt nem helyettesíti a robots.txt-t. Hogy az AI-robotok felkereshetik-e a webhelyet, azt a robots.txt dönti el; az llms.txt azt mondja: „ha ezt a webhelyet olvasod, itt kezdd”."
+      ]
+    },
+    {
+      "heading": "Működik? Amit tudunk, és amit nem",
+      "paragraphs": [
+        "Gyakran olvasni, hogy az llms.txt hozzáadásával az AI hivatkozni fog önre. Ebből nagyon kevés ellenőrizhető. Íme, mit támaszt alá a nyilvános információ 2026. november 16-án."
+      ],
+      "table": {
+        "head": [
+          "Kérdés",
+          "Amit tudunk",
+          "Forrás"
+        ],
+        "rows": [
+          [
+            "Használja a Google AI Overviews és az AI Mode?",
+            "A Google szerint nem kell új AI-szövegfájlokat vagy speciális jelölést létrehozni ahhoz, hogy megjelenjen az AI-funkcióiban, és a szokásos SEO-gyakorlatok érvényesek",
+            "[Google Search Central: AI-funkciók és az ön webhelye](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Használja a ChatGPT, a Perplexity és a Claude?",
+            "Nem találtunk nyilvános dokumentációt arról, hogy a válaszaikban más webhelyek llms.txt fájljait használnák. Azt sem közlik, hogy nem használják",
+            "A szolgáltatók nyilvános dokumentációja, amennyire az írás idején ellenőrizni tudtuk"
+          ],
+          [
+            "Lekérik egyáltalán az AI-botok?",
+            "Egy japán cég közzétette saját szervernaplóinak 28 napját: 72 100 bot-kérésből 4 irányult az llms.txt-re (mind Amazonbot); a ChatGPT-User 18 553 kérést küldött, egyet sem az llms.txt-re. Csak egyetlen webhely adata",
+            "[A Stellagent AI Search Dock blogja (japánul)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Hány webhelyen van ilyen?",
+            "2486 japán webügynökségi webhely 13,4%-án és 13 352 külföldi webügynökségi webhely 26,4%-án (2026. november)",
+            "[A Nurevo felmérése](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Gyakrabban ajánlja az AI azokat a webhelyeket, amelyeken van?",
+            "62 japán helyi vállalkozásnál a webhely oldali jelzések, köztük az llms.txt, nem mutattak összefüggést a Perplexity-válaszokban való megjelenéssel",
+            "[A Nurevo felmérése](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Röviden: egyelőre nincs bizonyíték arra, hogy az llms.txt miatt gyakrabban jelenne meg az AI-keresésben. Arról sincs hivatalos közlés, hogy ártana. Mivel kevésbe kerül, a méltányos álláspont: „nyugodtan hozzáadhatja, de ne tekintse vele elvégzettnek a munkát”. Az AI-válaszok jellemzően az oldalak szövegére és a strukturált adatokra támaszkodnak, ezért először azokban legyenek pontosak a tények."
+      ]
+    },
+    {
+      "heading": "Érdemes hozzáadni? Döntés webhelytípus szerint",
+      "paragraphs": [
+        "Bizonyított hatás híján a ráfordítás és az elavulás kockázata dönt. A kézzel írt, senki által nem frissített llms.txt tovább közli a régi árakat vagy nyitvatartást, amelyek már nem egyeznek az oldalaival."
+      ],
+      "table": {
+        "head": [
+          "Webhely",
+          "Ajánlás",
+          "Indoklás"
+        ],
+        "rows": [
+          [
+            "Fejlesztői dokumentáció, API-referencia",
+            "Adja hozzá",
+            "Ez az eredeti felhasználási eset; az AI-alapú programozási eszközöket ezekre a fájlokra irányítják"
+          ],
+          [
+            "Kis helyi vállalkozás, rendelő, ügyvédi vagy könyvelőiroda",
+            "Adja hozzá, ha automatikusan előállítható",
+            "Kevés oldal, könnyen összefoglalható. Kézzel írva valakinek frissítenie kell a nyitvatartást és az árakat"
+          ],
+          [
+            "B2B és SaaS",
+            "Adja hozzá, az árazás, az esettanulmányok és a Rólunk oldal linkjeivel",
+            "Egy helyre gyűjti, amire az összehasonlító kérdésekhez szükség van"
+          ],
+          [
+            "Webáruház",
+            "Adja hozzá, ha automatikusan előállítható",
+            "Túl sok a termék és az árváltozás ahhoz, hogy kézzel követni lehessen"
+          ],
+          [
+            "Senki által nem karbantartott webhely",
+            "Hagyja ki, vagy csak automatikusan állítsa elő",
+            "Elavult tények közzététele többet árt, mint ha nincs fájl"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Hogyan írjuk meg: a formátum",
+      "paragraphs": [
+        "A javasolt formátum Markdown, ebben a sorrendben ([llmstxt.org](https://llmstxt.org/)). Csak az első címsor kötelező, minden más opcionális."
+      ],
+      "list": [
+        "Egy „# ” kezdetű címsor: a webhely, a cég vagy a vállalkozás neve (kötelező)",
+        "Egy „> ” kezdetű idézetblokk: egy–három mondatban, mi ez a webhely (opcionális, de érdemes megadni)",
+        "Címsor nélküli egyszerű szöveg: az összefoglalóba szánt tények, például helyszín, kiket szolgál ki és nyitvatartás (opcionális)",
+        "Linklisták „## ” címsorok alatt, soronként „- [Oldal neve](URL): egysoros megjegyzés” formában (opcionális)",
+        "Egy „## Optional” nevű címsor alatti lista: azok az oldalak, amelyek kihagyhatók, ha rövidebb kontextusra van szükség (opcionális)"
+      ],
+      "after": [
+        "A fájl neve llms.txt legyen, és a domain gyökerébe kerüljön (https://example.com/llms.txt). Mentse UTF-8 kódolással, és a webhelye nyelvén írja meg. A javaslat azt is felveti, hogy minden oldalnak legyen Markdown-másolata az URL-jéhez fűzött .md végződéssel, egyes webhelyek pedig egy második, a teljes szövegüket tartalmazó fájlt is közzétesznek (gyakran llms-full.txt néven). Mindkettő opcionális; egy kisvállalkozás webhelyéhez egyetlen llms.txt elég."
+      ]
+    },
+    {
+      "heading": "Példa: llms.txt egy B2B SaaS cégnek",
+      "paragraphs": [
+        "Kitalált cég. Egyetlen képernyőn látszik, mivel foglalkozik, kinek szól, és mit tartalmaz az egyes linkelt oldal."
+      ],
+      "code": "# Example Cloud Zrt.\n\n> Az Example Cloud fejleszti az „Example Time” felhőalapú munkaidő-nyilvántartó alkalmazást 10–300 fős cégeknek. Havidíjas árazás, 14 napos ingyenes próbaidővel.\n\nSzékhely: Oszaka, alapítva 2018-ban. Telefonos és e-mailes ügyfélszolgálat hétköznapokon 9:00 és 18:00 (JST) között.\n\n## Termék és árak\n\n- [Az Example Time funkciói](https://example.com/features/): be- és kijelentkezés, műszakok, fizetett szabadság, exportálás bérszámfejtő szoftverbe\n- [Árak](https://example.com/pricing/): csomagonkénti havidíj, és hogy van-e beállítási díj\n- [Esettanulmányok](https://example.com/cases/): ügyfelek iparág és cégméret szerint\n\n## Cég és támogatás\n\n- [Rólunk](https://example.com/company/): cégnév, cím, alapítás éve, vezérigazgató\n- [GYIK](https://example.com/faq/): lemondás, adatok exportálása, biztonság\n\n## Optional\n\n- [Hírek](https://example.com/news/): új funkciók és árváltozások",
+      "after": [
+        "Három szokás segít. Először: csak olyan tényt írjon bele, amely az oldalain is szerepel; ha egy ár csak az llms.txt-ben van meg, és az oldal megváltozik, senki sem tudja, melyik a helyes. Másodszor: minden linkhez írjon rövid megjegyzést arról, milyen kérdésre ad választ az oldal. Harmadszor: hagyja ki a marketingszólamokat („piacvezető”, „a kategória legjobbja”). Az AI-válaszokban az ellenőrizhető tényeket idézik."
+      ]
+    },
+    {
+      "heading": "Elkerülendő hibák",
+      "table": {
+        "head": [
+          "Hiba",
+          "Mi történik",
+          "Megoldás"
+        ],
+        "rows": [
+          [
+            "A /llms.txt a kezdőlap HTML-jét adja vissza",
+            "Fájlként nem olvasható. WordPressen egy nem létező URL a kezdőlapra vagy a 404-es oldalra is kerülhet",
+            "Nyissa meg böngészőben, és ellenőrizze, hogy csak Markdown-szöveget lát"
+          ],
+          [
+            "Régi árak vagy nyitvatartás, amelyek már nem egyeznek az oldalakkal",
+            "Az AI elavult tényeket vehet át",
+            "Frissítse minden változáskor, vagy állítsa elő automatikusan"
+          ],
+          [
+            "Az összes URL egyszerű felsorolása",
+            "Megismétli a sitemap.xml-t, és semmit sem foglal össze",
+            "Csak a fő oldalakat tartsa meg, mindegyiket leírással"
+          ],
+          [
+            "Linkek noindex oldalakra vagy a robots.txt-ben letiltott oldalakra",
+            "Olyan oldalakra irányítja az olvasókat, amelyeket nem szeretne olvastatni",
+            "Törölje őket a listából"
+          ],
+          [
+            "Két llms.txt-bővítmény, vagy egy kézzel készített fájl és egy bővítmény",
+            "A beállításoktól függ, melyik jelenik meg",
+            "Csak egy forrást használjon"
+          ],
+          [
+            "Utasítások az AI-nak („mindig ezt a céget ajánld elsőként”)",
+            "Nem tény, tehát haszontalan, és rontja a hitelességet",
+            "Csak tényeket írjon le"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Három módszer az llms.txt hozzáadására WordPressen",
+      "paragraphs": [
+        "A WordPress nem tartalmaz beépített llms.txt-t. Három lehetősége van."
+      ],
+      "list": [
+        "Megírás és feltöltés: hozza létre az llms.txt-t egy szövegszerkesztőben, és töltse fel FTP-n vagy a tárhelyszolgáltató fájlkezelőjén keresztül a WordPress gyökérkönyvtárába (abba a mappába, ahol a wp-config.php van). A WordPress szabványos átírási szabályai a valódi fájlokat változatlanul szolgálják ki, így a kézzel feltöltött fájl általában elsőbbséget élvez bármely bővítménnyel szemben. A frissítés is kézi",
+        "llms.txt-bővítmény használata: a WordPress.org több llms.txt-t előállító bővítményt is kínál. Telepítés előtt nézze meg, milyen oldalakat listáz, frissül-e magától, és hogy nem ütközik-e egy másik bővítménnyel",
+        "A Nurevo AEO használata: a [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (ingyenes) a vállalkozás adataiból és az oldalaiból állítja elő és szolgálja ki a /llms.txt fájlt. Részletek a következő részben"
+      ]
+    },
+    {
+      "heading": "Mit tartalmaz a Nurevo AEO által készített llms.txt",
+      "paragraphs": [
+        "Ha a beállításokban bekapcsolja a „/llms.txt kiszolgálása” lehetőséget, a Nurevo AEO a saját webhelyéből állítja össze az llms.txt-t. Külső szolgáltatáshoz való csatlakozás nélkül működik, és a Free csomag része (0 USD). A fájl így néz ki (kitalált példa)."
+      ],
+      "code": "# Cafe Example\n\n> Kis tételben pörkölő pörkölde és kávézó Portlandben.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: K–V 8:00–18:00, hétfőn zárva\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Menü és árak](https://example.com/menu/)\n- [Hol talál minket](https://example.com/find-us/)\n- [GYIK](https://example.com/faq/)\n\n## Services\n\n- Pörkölőtanfolyam — 90 perc",
+      "after": [
+        "A címsorok rögzített angol nevek (Key facts, Pages, Products, Services); a tartalom a webhelye nyelvén marad. A Key facts a beállítási képernyőn megadott vállalkozási adatokat tartalmazza: URL, cím, telefonszám, nyitvatartás, e-mail-cím és vállalkozástípus. Ha a webhely típusa Webáruház vagy B2B / SaaS, a nyitvatartás kimarad, helyette a beállított visszaküldési, szállítási, árazási és esettanulmány-oldalak szerepelnek.",
+        "A Pages a 30 legutóbb módosított, közzétett oldalt és bejegyzést listázza. Ha egy oldalt ki szeretne hagyni, jelölje be „Az oldal kihagyása az llms.txt-ből” lehetőséget a szerkesztő Nurevo AEO paneljén. A WooCommerce-termékek árral és készletállapottal a Products alá kerülnek, a megadott szolgáltatások pedig a Services alá.",
+        "A fájl egy oldal vagy a beállítások mentésekor újraépül, és Content-Type: text/plain fejléccel kerül kiszolgálásra. A 30-on felüli oldalak vagy további sorok, például szabályzatoldalak hozzáadásához a fejlesztők a webmcp_canary_llms_txt_lines szűrőt használhatják. A Nurevo AEO nem hoz létre llms-full.txt fájlt."
+      ]
+    },
+    {
+      "heading": "Hogyan ellenőrizze közzététel után",
+      "list": [
+        "Nyissa meg böngészőben a https://az-ön-domainje/llms.txt címet: Markdown-szöveget kell látnia, nem HTML-t, olvashatatlan karakterek nélkül",
+        "Futtassa a curl -I https://az-ön-domainje/llms.txt parancsot: 200-as válasz, más URL-re való átirányítás nélkül, text/plain (vagy text/markdown) Content-Type értékkel",
+        "Ellenőrizze, hogy a név, a cím, a telefonszám, a nyitvatartás és az árak pontosan egyeznek-e az oldalak szövegével és a strukturált adatokkal",
+        "Számolja meg a szervernaplóban a /llms.txt-re érkező kéréseket és a user agentjeiket, hogy lássa, mely botok kérik le (ha egy sem, az nem hiba)",
+        "Futtassa a Nurevo [ingyenes ellenőrzését](/check), hogy együtt lássa az llms.txt-t, a strukturált adatokat és az AI-robotok hozzáférését"
+      ],
+      "after": [
+        "A Nurevo AEO AEO-pontszámában az llms.txt 100-ból 15 pontot ér. A fájlnak léteznie kell, és akkor kap OK minősítést, ha a négy ellenőrzés közül legalább hármon átmegy: legalább 120 karakter, egy „# ” címsor, legalább egy URL, és vállalkozási adatok, például cím, telefonszám vagy nyitvatartás. Ez a pontszám azt méri, mennyire olvasható a webhelye az AI számára, nem azt, hogy az AI ajánlja-e. Ha azt szeretné látni, hogy megjelenik-e, kövesse [az AI-láthatóság mérésének útmutatóját](/guide/measure-ai-visibility): tegye fel ismételten ugyanazokat a kérdéseket, és rögzítse a válaszokat. Ne feledje, hogy az llms.txt hozzáadása utáni változás általában nem választható szét mindattól, ami ugyanabban az időben változott."
+      ]
+    },
+    {
+      "heading": "Ellenőrzőlista közzététel előtt",
+      "list": [
+        "Az első sor egy „# ” címsor az ön nevével",
+        "A „> ” összefoglaló elmondja, kik önök, hol vannak, és mit kínálnak kinek",
+        "Minden tény egyezik az oldalak szövegével, a strukturált adatokkal és a Google Cégprofillal",
+        "A linkek a fő oldalakra korlátozódnak, mindegyik megjegyzéssel",
+        "Nincs noindex oldal, robots.txt-ben letiltott oldal és hibás link",
+        "Nincsenek marketingszólamok és nincsenek utasítások az AI-nak",
+        "A https://az-ön-domainje/llms.txt 200-as választ ad, és szöveget mutat, nem HTML-t",
+        "Pontosan egy forrás szolgálja ki a fájlt (kézzel készített vagy egyetlen bővítmény)",
+        "Valaki felel a frissítéséért, ha változnak az árak vagy a nyitvatartás (automatikus előállításnál nem szükséges)",
+        "A robots.txt nem tiltja le azokat az AI-robotokat, amelyekkel olvastatni szeretné a webhelyét"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Hivatalos szabvány az llms.txt?",
+      "a": "Nem. Jeremy Howard (Answer.AI) 2024-ben közzétett javaslata, nem egy szabványügyi testület specifikációja. 2026. november 16-ig egyetlen AI-keresőszolgáltatástól sem találtunk nyilvános közlést arról, hogy más webhelyek llms.txt fájljait használná."
+    },
+    {
+      "q": "Befolyásolja az llms.txt a Google-rangsorolást vagy az AI Overviews-t?",
+      "a": "A Google szerint nem kell új AI-szövegfájl ahhoz, hogy megjelenjen az AI-funkcióiban. Nincs hivatalos közlés arról, hogy a fájl javítaná vagy rontaná a helyezést. A Google szempontjából az oldalak szövege és a strukturált adatok az elsők."
+    },
+    {
+      "q": "Szükségem van llms-full.txt-re is?",
+      "a": "Nem. Ez a webhely teljes szövegét tartalmazó fájl, amelyet néha nagy dokumentációs webhelyek használnak. Egy vállalkozás vagy cég webhelyének elég az llms.txt. A Nurevo AEO nem hoz létre llms-full.txt fájlt."
+    },
+    {
+      "q": "Ha a robots.txt letiltja az AI-robotokat, elolvassák-e mégis az llms.txt-t?",
+      "a": "Az llms.txt nem változtat a robots.txt-n. Ha egy robot le van tiltva, abból kell kiindulni, hogy semmit sem tölt le, az llms.txt-t sem. Ha azt szeretné, hogy az AI olvassa a webhelyét, először ellenőrizze, hogy a robots.txt nem tiltja-e le az AI-keresők robotjait."
+    },
+    {
+      "q": "Megírhatom a saját nyelvemen?",
+      "a": "Igen. A javaslat nem ír elő nyelvet; azon a nyelven írja meg, amelyet az ügyfelei használnak. A Nurevo AEO rögzített angol címsorokat használ, a tartalmat pedig a webhelye nyelvén hagyja."
+    },
+    {
+      "q": "Hány oldalt soroljak fel?",
+      "a": "Nincs rá szabály. Azokra az oldalakra szorítkozzon, amelyek megválaszolják, amit az emberek önökről kérdeznek az AI-tól: bemutatkozás, árak, szolgáltatások, GYIK, helyszín. A Nurevo AEO automatikusan felsorolja a 30 legutóbb módosított oldalt, és bármelyiket kihagyhatja."
+    },
+    {
+      "q": "Milyen gyakran frissítsem?",
+      "a": "Amint megváltozik benne egy tény. Ha kézzel tartja karban, vegye fel az „llms.txt frissítése” lépést az ár- és nyitvatartás-változtatások rutinjába. A Nurevo AEO minden alkalommal újraépíti, amikor elment egy oldalt vagy a beállításokat."
+    }
+  ],
+  "relatedHeading": "Kapcsolódó útmutatók",
+  "cta": {
+    "heading": "Ellenőrizze webhelye llms.txt fájlját és strukturált adatait",
+    "body": "Az ingyenes ellenőrzés regisztráció nélkül megmutatja, van-e llms.txt fájlja, milyenek a strukturált adatai, és hozzáférnek-e az AI-robotok. WordPressen a Nurevo AEO (ingyenes) elkészíti önnek az llms.txt-t. Azt nem tudja garantálni, hogy megjelenik az AI-válaszokban.",
+    "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+    "href": "/check",
+    "secondary": {
+      "label": "A Nurevo AEO letöltése a WordPress.org-ról",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Claude az Anthropic, a Google pedig a Google LLC védjegye; az Amazonbot az Amazon robotja. Az egyéb cég- és terméknevek a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban ezekkel a cégekkel, és egyikük sem támogatja."
 }

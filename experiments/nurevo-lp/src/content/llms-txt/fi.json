@@ -1,19 +1,300 @@
 {
-"title": "Mikä on llms.txt? Tiedosto, joka esittelee sivustosi | Nurevo",
-"description": "Mitä llms.txt sisältää, mihin se sijoitetaan, miten se eroaa robots.txt- ja sitemap.xml-tiedostoista ja miten pidät sen ajan tasalla WordPressissä.",
-"h1": "Mikä on llms.txt? Tiedosto, joka esittelee sivustosi tekoälylle",
-"lead": "llms.txt on yksinkertainen tekstitiedosto verkkotunnuksesi juuressa (sivustosi.fi/llms.txt). Se kuvaa sivustosi tekoälylle selkeällä, koneystävällisellä kielellä ja ohjaa tärkeimmille sivuillesi. Ajattele sitä ”README-tiedostona tekoälylle”.",
-"sections": [
-{"heading": "Miksi se on olemassa", "paragraphs": ["robots.txt kertoo indeksoijille, mihin ne saavat mennä; sivukartta luettelee URL-osoitteita. Kumpikaan ei kerro tekoälylle, mistä sivustossasi on kyse tai mitä siitä pitäisi lainata. llms.txt täyttää tämän aukon: tiivis, valikoitu yhteenveto, jonka tekoäly lukee nopeasti."]},
-{"heading": "Mitä siihen kirjoitetaan", "list": ["Lyhyt kuvaus yrityksestäsi tai sivustostasi", "Keskeiset tiedot: mitä teet, missä, aukioloajat, yhteystiedot", "Linkit tärkeimmille sivuillesi, kukin yhden rivin kuvauksella", "Halutessasi sisältö, johon haluat tekoälyn eniten nojaavan"]},
-{"heading": "Takaako se viittaukset?", "paragraphs": ["Ei. Se on yksi signaali muiden joukossa – rakenteinen data, indeksoijien pääsy, johdonmukaisuus. Mutta se tekee sinusta helpomman ja selkeämmän lähteen. [Mitä AEO tarkoittaa?](/guide/what-is-aeo)"]},
-{"heading": "Näin lisäät sen WordPressiin", "paragraphs": ["Voit tehdä sen käsin, mutta se vanhenee sivuston muuttuessa. Lisäosa voi luoda sen ja pitää sen ajan tasalla automaattisesti. [AEO WordPressissä](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Onko llms.txt virallinen standardi?", "a": "Se on kehittyvä käytäntö, jonka tunnettuus kasvaa. Sen lisääminen ei maksa mitään eikä voi olla haitaksi."},
-{"q": "Mihin se tarkalleen sijoitetaan?", "a": "Verkkotunnuksen juureen: https://sivustosi.fi/llms.txt"},
-{"q": "Onko se sama asia kuin robots.txt tai sitemap.xml?", "a": "Ei. Ne ohjaavat pääsyä ja luettelevat URL-osoitteita. llms.txt kuvaa sivustosi ja valikoi sen sisällön tekoälylle."}
-],
-"relatedHeading": "Aiheeseen liittyvät oppaat",
-"cta": {"heading": "Katso, onko sivustollasi llms.txt (ja tarvitseeko se sitä)", "body": "Ei rekisteröitymistä.", "label": "Tarkista ilmaiseksi", "href": "/check"}
+  "title": "Mikä on llms.txt? Näin kirjoitat sen – ja toimiiko se? | Nurevo",
+  "description": "llms.txt esimerkein: muoto, mitä tiedetään tekoälyn käytöstä, milloin tiedosto kannattaa lisätä, kolme tapaa lisätä se WordPressiin ja miten sen toimivuus tarkistetaan.",
+  "h1": "Mikä on llms.txt? Näin kirjoitat sen, mitä sen toimivuudesta tiedetään ja miten lisäät sen WordPressiin",
+  "lead": "llms.txt on Markdown-muotoinen tekstitiedosto verkkotunnuksesi juuressa (/llms.txt). Se tiivistää sivustosi sisällön ja linkittää sen tärkeimmille sivuille. Tiedostoa ehdotettiin vuonna 2024, eikä se ole virallinen standardi. Googlen mukaan sen tekoälyominaisuudet eivät tarvitse sitä, emmekä löytäneet ChatGPT:ltä tai Perplexityltä julkista lausuntoa siitä, että ne käyttäisivät muiden sivustojen llms.txt-tiedostoja vastauksissaan. Kirjoittamiseen menee noin 30 minuuttia, joten järkevintä on pitää sitä lyhyenä ja paikkansapitävänä tiivistelmänä, jonka lisäät vasta, kun sivujesi tiedot ovat kunnossa.",
+  "intro": [
+    "Kirjoitettu 16. marraskuuta 2026 (JST). Tämä on täysin uudelleen kirjoitettu versio 23. lokakuuta 2026 julkaistusta sivustamme, ja se perustuu hakutulosten kärjessä olevien oppaiden ja alkuperäislähteiden uuteen läpikäyntiin. Se on tarkoitettu yrittäjille, jotka harkitsevat llms.txt-tiedoston lisäämistä, ja verkkotoimistoille, jotka harkitsevat sen lisäämistä asiakkaidensa sivustoille.",
+    "Tekoälyn vastaukset vaihtelevat päivästä toiseen ja sen mukaan, miten kysymys esitetään. Tässä kuvatut toimet tekevät tekoälyn lukemista tiedoista tarkempia, mutta ne eivät voi taata, että näyt tekoälyn vastauksessa."
+  ],
+  "sections": [
+    {
+      "heading": "Mihin llms.txt on tarkoitettu",
+      "paragraphs": [
+        "llms.txt on ehdotus, jonka Jeremy Howard Answer.AI:sta julkaisi 3. syyskuuta 2024 ([Answer.AI:n tiedote](https://www.answer.ai/posts/2024-09-03-llmstxt.html); määrittely osoitteessa [llmstxt.org](https://llmstxt.org/)). Ajatus: sen sijaan, että tekoäly (suuri kielimalli) indeksoisi HTML-sivuja yksi kerrallaan, sille annetaan yksi tiedosto, jossa on sivuston tiivistelmä ja luettelo lukemisen arvoisista sivuista. Alun perin se oli tarkoitettu ohjelmistodokumentaatiolle, jota haluttiin tekoälypohjaisten koodaustyökalujen lukevan.",
+        "Se on helppo sekoittaa muihin sivuston juuressa oleviin tiedostoihin, joten tässä erot."
+      ],
+      "table": {
+        "head": [
+          "Tiedosto",
+          "Tehtävä",
+          "Asema",
+          "Yhteys tekoälyyn"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Kertoo indeksoijille, mitä ne saavat hakea",
+            "Standardi ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Tekoälyyhtiöiden mukaan niiden indeksoijat noudattavat sitä. Tässä tiedostossa estät tai sallit tekoälyn"
+          ],
+          [
+            "sitemap.xml",
+            "Antaa hakukoneille luettelon URL-osoitteistasi",
+            "Hakukoneiden tukema muoto",
+            "Auttaa sivujen löytymisessä. Ei kuvaa mitään"
+          ],
+          [
+            "Rakenteinen data (JSON-LD)",
+            "Ilmoittaa sivukohtaiset tiedot (osoite, aukioloajat, hinnat) koneluettavassa muodossa",
+            "schema.org-sanasto; Google ja muut dokumentoivat sen käytön",
+            "Käytetään hakutulosten ominaisuuksissa. Yksikään palveluntarjoaja ei ole dokumentoinut tarkasti, miten tekoälyn vastaukset käyttävät sitä"
+          ],
+          [
+            "llms.txt",
+            "Tiivistää sivuston ja linkittää sen tärkeimmille sivuille yhdessä Markdown-tiedostossa",
+            "Ehdotus, ei virallinen standardi",
+            "Yksikään tuntemamme tekoälyhakupalvelu ei ole kertonut käyttävänsä sitä (16. marraskuuta 2026)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt ei korvaa robots.txt-tiedostoa. Se, saavatko tekoälyindeksoijat vierailla sivustolla, päätetään robots.txt-tiedostossa; llms.txt sanoo: ”jos luet tätä sivustoa, aloita tästä”."
+      ]
+    },
+    {
+      "heading": "Toimiiko se? Mitä tiedetään ja mitä ei",
+      "paragraphs": [
+        "Usein väitetään, että llms.txt saa tekoälyn viittaamaan sinuun. Hyvin vähän tästä voi tarkistaa. Tässä on se, mitä julkiset lähteet tukevat 16. marraskuuta 2026."
+      ],
+      "table": {
+        "head": [
+          "Kysymys",
+          "Mitä tiedetään",
+          "Lähde"
+        ],
+        "rows": [
+          [
+            "Käyttävätkö Google AI Overviews ja AI Mode sitä?",
+            "Googlen mukaan sinun ei tarvitse luoda uusia tekoälylle tarkoitettuja tekstitiedostoja tai erityistä merkintää näkyäksesi sen tekoälyominaisuuksissa, ja tavalliset SEO:n hyvät käytännöt pätevät",
+            "[Google Search Central: tekoälyominaisuudet ja verkkosivustosi](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Käyttävätkö ChatGPT, Perplexity ja Claude sitä?",
+            "Emme löytäneet julkista dokumentaatiota siitä, että ne käyttäisivät muiden sivustojen llms.txt-tiedostoja vastauksissaan. Ne eivät myöskään sano, etteivät käyttäisi",
+            "Palveluntarjoajien julkinen dokumentaatio siltä osin kuin pystyimme sen kirjoitushetkellä tarkistamaan"
+          ],
+          [
+            "Hakevatko tekoälybotit sitä oikeasti?",
+            "Japanilainen yritys julkaisi 28 päivän palvelinlokinsa: 72 100 botin pyynnöstä 4 koski llms.txt-tiedostoa (kaikki Amazonbotilta); ChatGPT-User teki 18 553 pyyntöä, eikä yksikään niistä koskenut llms.txt-tiedostoa. Vain yksi sivusto",
+            "[Stellagentin AI Search Dock -blogi (japaniksi)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Kuinka monella sivustolla se on?",
+            "13,4 %:lla 2 486 japanilaisesta ja 26,4 %:lla 13 352 ulkomaisesta verkkotoimiston sivustosta (marraskuu 2026)",
+            "[Nurevon tutkimus](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Suositteleeko tekoäly useammin sivustoja, joilla se on?",
+            "62 japanilaisen paikallisyrityksen joukossa sivuston signaaleilla, llms.txt mukaan lukien, ei ollut yhteyttä Perplexityn vastauksissa näkymiseen",
+            "[Nurevon tutkimus](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Lyhyesti: toistaiseksi ei ole näyttöä siitä, että llms.txt saisi sinut näkymään useammin tekoälyhaussa. Ei ole myöskään virallista lausuntoa siitä, että siitä olisi haittaa. Koska se ei maksa paljon, kohtuullinen kanta on ”lisää vain, mutta älä pidä työtä tehtynä”. Tekoälyn vastaukset perustuvat yleensä sivujen tekstiin ja rakenteiseen dataan, joten laita ne tiedot kuntoon ensin."
+      ]
+    },
+    {
+      "heading": "Kannattaako se lisätä? Päätös sivustotyypin mukaan",
+      "paragraphs": [
+        "Koska vaikutusta ei ole osoitettu, ratkaisevia ovat vaiva ja riski siitä, että tiedosto vanhenee. Käsin kirjoitettu llms.txt, jota kukaan ei päivitä, julkaisee yhä vanhoja hintoja tai aukioloaikoja, jotka eivät enää vastaa sivujasi."
+      ],
+      "table": {
+        "head": [
+          "Sivusto",
+          "Suositus",
+          "Miksi"
+        ],
+        "rows": [
+          [
+            "Kehittäjädokumentaatio, API-viitteet",
+            "Lisää se",
+            "Alkuperäinen käyttötarkoitus; tekoälypohjaiset koodaustyökalut ohjataan näihin tiedostoihin"
+          ],
+          [
+            "Pieni paikallinen yritys, klinikka, asianajo- tai tilitoimisto",
+            "Lisää, jos sen voi luoda automaattisesti",
+            "Vähän sivuja, helppo tiivistää. Käsin kirjoitettuna jonkun on päivitettävä aukioloajat ja hinnat"
+          ],
+          [
+            "B2B ja SaaS",
+            "Lisää se ja linkitä hinnasto, asiakastarinat ja Tietoa meistä -sivu",
+            "Kokoaa yhteen paikkaan sen, mitä vertailukysymyksiin tarvitaan"
+          ],
+          [
+            "Verkkokauppa",
+            "Lisää, jos sen voi luoda automaattisesti",
+            "Liikaa tuotteita ja hinnanmuutoksia käsin ylläpidettäväksi"
+          ],
+          [
+            "Sivusto, jota kukaan ei ylläpidä",
+            "Jätä väliin tai luo se vain automaattisesti",
+            "Vanhentuneiden tietojen julkaiseminen tekee enemmän haittaa kuin tiedoston puuttuminen"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Näin kirjoitat sen: muoto",
+      "paragraphs": [
+        "Ehdotettu muoto on Markdown tässä järjestyksessä ([llmstxt.org](https://llmstxt.org/)). Vain ensimmäinen otsikko on pakollinen; kaikki muu on valinnaista."
+      ],
+      "list": [
+        "Yksi otsikko, joka alkaa merkeillä ”# ”: sivuston, yrityksen tai liiketoiminnan nimi (pakollinen)",
+        "Lainauslohko, joka alkaa merkeillä ”> ”: mikä sivusto on, yhdestä kolmeen virkkeeseen (valinnainen, mutta ota mukaan)",
+        "Tavallista tekstiä ilman otsikoita: tiedot, jotka haluat tiivistelmään, kuten sijainti, kenelle palvelet ja aukioloajat (valinnainen)",
+        "Linkkiluetteloita ”## ”-otsikoiden alla, jokainen rivi muodossa ”- [Sivun nimi](URL): lyhyt kuvaus” (valinnainen)",
+        "Luettelo otsikon ”## Optional” alla: sivut, jotka voi ohittaa, kun tarvitaan lyhyempi konteksti (valinnainen)"
+      ],
+      "after": [
+        "Nimeä tiedosto llms.txt ja sijoita se verkkotunnuksesi juureen (https://example.com/llms.txt). Tallenna se UTF-8-muodossa ja kirjoita se sivustosi kielellä. Ehdotuksessa suositellaan myös jokaisesta sivusta Markdown-kopiota sivun URL-osoitteeseen, jonka perään lisätään .md, ja jotkin sivustot julkaisevat toisen tiedoston, jossa on niiden koko teksti (usein nimeltään llms-full.txt). Molemmat ovat valinnaisia; pienyrityksen sivustolle yksi llms.txt riittää."
+      ]
+    },
+    {
+      "heading": "Esimerkki: B2B SaaS -yrityksen llms.txt",
+      "paragraphs": [
+        "Kuvitteellinen yritys. Yhdeltä näytöltä näet, mitä se tekee, kenelle se on tarkoitettu ja mitä kukin linkitetty sivu sisältää."
+      ],
+      "code": "# Example Cloud Inc.\n\n> Example Cloud kehittää Example Time -sovellusta, pilvipohjaista työajanseurantaa 10–300 työntekijän yrityksille. Kuukausihinnoittelu ja 14 päivän maksuton kokeilujakso.\n\nPääkonttori Osakassa, perustettu 2018. Tuki puhelimitse ja sähköpostitse arkisin klo 9.00–18.00 JST.\n\n## Tuote ja hinnat\n\n- [Example Timen ominaisuudet](https://example.com/features/): kellotus, vuorosuunnittelu, palkalliset lomat, vienti palkanlaskentaohjelmistoon\n- [Hinnasto](https://example.com/pricing/): kuukausihinta paketeittain ja se, onko käyttöönottomaksua\n- [Asiakastarinat](https://example.com/cases/): asiakkaat toimialan ja yrityksen koon mukaan\n\n## Yritys ja tuki\n\n- [Tietoa meistä](https://example.com/company/): virallinen nimi, osoite, perustamisvuosi, toimitusjohtaja\n- [Usein kysytyt kysymykset](https://example.com/faq/): irtisanominen, tietojen vienti, tietoturva\n\n## Optional\n\n- [Uutiset](https://example.com/news/): uudet ominaisuudet ja hinnanmuutokset",
+      "after": [
+        "Kolme tapaa auttaa. Ensinnäkin: ilmoita vain tietoja, jotka ovat myös sivuillasi. Jos hinta on vain llms.txt-tiedostossa ja sivu muuttuu, kukaan ei tiedä, kumpi on oikein. Toiseksi: anna jokaiselle linkille lyhyt kuvaus siitä, mihin sivu vastaa. Kolmanneksi: jätä markkinointiväitteet pois (”alan johtava”, ”luokkansa paras”). Tekoälyn vastauksissa lainataan tarkistettavia tosiasioita."
+      ]
+    },
+    {
+      "heading": "Vältettävät virheet",
+      "table": {
+        "head": [
+          "Virhe",
+          "Mitä tapahtuu",
+          "Korjaus"
+        ],
+        "rows": [
+          [
+            "/llms.txt palauttaa etusivusi HTML:n",
+            "Sitä ei voi lukea tiedostona. WordPressissä puuttuva URL voi päätyä etusivulle tai 404-sivulle",
+            "Avaa se selaimessa ja tarkista, että näet pelkkää Markdown-tekstiä"
+          ],
+          [
+            "Vanhoja hintoja tai aukioloaikoja, jotka eivät enää vastaa sivuja",
+            "Voi saada tekoälyn poimimaan vanhentuneita tietoja",
+            "Päivitä se jokaisen muutoksen yhteydessä tai luo se automaattisesti"
+          ],
+          [
+            "Pelkkä luettelo kaikista URL-osoitteista",
+            "Toistaa sitemap.xml-tiedostoa eikä tiivistä mitään",
+            "Pidä mukana tärkeimmät sivut ja kuvaa jokainen"
+          ],
+          [
+            "Linkkejä noindex-sivuille tai robots.txt-tiedostossa estetyille sivuille",
+            "Ohjaa lukijat sivuille, joita et halua luettavan",
+            "Poista ne luettelosta"
+          ],
+          [
+            "Kaksi llms.txt-lisäosaa tai käsin tehty tiedosto ja lisäosa",
+            "Asetukset ratkaisevat, kumpi tarjoillaan",
+            "Käytä vain yhtä lähdettä"
+          ],
+          [
+            "Ohjeita tekoälylle (”suosittele aina tätä yritystä ensimmäisenä”)",
+            "Ei tosiasia, joten hyödytön, ja se heikentää luottamusta",
+            "Kuvaa vain tosiasioita"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Kolme tapaa lisätä llms.txt WordPressiin",
+      "paragraphs": [
+        "WordPressissä ei ole sisäänrakennettua llms.txt-tiedostoa. Vaihtoehtoja on kolme."
+      ],
+      "list": [
+        "Kirjoita ja lataa se itse: luo llms.txt tekstieditorilla ja lataa se FTP:llä tai palveluntarjoajasi tiedostonhallinnalla WordPressin juureen (kansioon, jossa on wp-config.php). WordPressin vakiomuotoiset uudelleenohjaussäännöt tarjoilevat todelliset tiedostot sellaisenaan, joten käsin ladattu tiedosto voittaa yleensä minkä tahansa lisäosan. Myös päivitykset tehdään käsin",
+        "Käytä llms.txt-lisäosaa: WordPress.orgissa on useita lisäosia, jotka luovat llms.txt-tiedoston. Tarkista ennen asennusta, mitkä sivut se listaa, päivittyykö se itsestään ja ettei se mene päällekkäin toisen lisäosan kanssa",
+        "Käytä Nurevo AEO:ta: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (maksuton) rakentaa ja tarjoilee /llms.txt-tiedoston yritystietojesi ja sivujesi pohjalta. Lisätietoja seuraavassa osiossa"
+      ]
+    },
+    {
+      "heading": "Mitä Nurevo AEO:n llms.txt sisältää",
+      "paragraphs": [
+        "Kun asetuksissa on päällä ”Tarjoile /llms.txt”, Nurevo AEO rakentaa llms.txt-tiedoston omasta sivustostasi. Se toimii ilman yhteyttä ulkoisiin palveluihin ja kuuluu Free-pakettiin ($0). Tiedosto näyttää tältä (kuvitteellinen esimerkki)."
+      ],
+      "code": "# Cafe Example\n\n> Pienpaahtimo ja kahvila Portlandissa.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: ti–su 8.00–18.00, maanantaisin suljettu\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Menu ja hinnat](https://example.com/menu/)\n- [Löydä perille](https://example.com/find-us/)\n- [Usein kysytyt kysymykset](https://example.com/faq/)\n\n## Services\n\n- Paahtokurssi — 90 minuuttia",
+      "after": [
+        "Otsikot ovat kiinteitä englanninkielisiä nimiä (Key facts, Pages, Products, Services); sisältö pysyy sivustosi kielellä. Key facts sisältää asetusnäytön yritystiedot: URL-osoitteen, osoitteen, puhelinnumeron, aukioloajat, sähköpostin ja yritystyypin. Kun sivustotyyppi on Verkkokauppa tai B2B / SaaS, aukioloajat jätetään pois ja niiden sijaan listataan määrittämäsi palautus-, toimitus-, hinnasto- ja asiakastarinasivut.",
+        "Pages listaa 30 viimeksi muokattua julkaistua sivua ja artikkelia. Jos haluat jättää sivun pois, valitse editorin Nurevo AEO -paneelista ”Jätä tämä sivu pois llms.txt-tiedostosta”. WooCommerce-tuotteet näkyvät Products-kohdassa hinnan ja varastotilanteen kanssa, ja syöttämäsi palvelut näkyvät Services-kohdassa.",
+        "Tiedosto rakennetaan uudelleen, kun tallennat sivun tai asetukset, ja se tarjoillaan muodossa Content-Type: text/plain. Jos haluat lisätä enemmän kuin 30 sivua tai lisärivejä, kuten käytäntösivuja, kehittäjät voivat käyttää suodatinta webmcp_canary_llms_txt_lines. Nurevo AEO ei luo llms-full.txt-tiedostoa."
+      ]
+    },
+    {
+      "heading": "Näin tarkistat sen julkaisun jälkeen",
+      "list": [
+        "Avaa https://oma-verkkotunnus/llms.txt selaimessa: sinun pitäisi nähdä Markdown-tekstiä, ei HTML:ää, eikä merkkien pitäisi olla sotkeutuneita",
+        "Suorita curl -I https://oma-verkkotunnus/llms.txt: odotettu tulos on 200, ei uudelleenohjausta toiseen URL-osoitteeseen ja Content-Type text/plain (tai text/markdown)",
+        "Tarkista, että nimi, osoite, puhelinnumero, aukioloajat ja hinnat vastaavat täsmälleen sivujesi tekstiä ja rakenteista dataa",
+        "Laske palvelinlokeista /llms.txt-pyynnöt ja niiden user agentit nähdäksesi, mitkä botit hakevat sitä (se, ettei yksikään hae, ei ole vika)",
+        "Suorita Nurevon [maksuton tarkistus](/check), niin näet llms.txt-tiedoston yhdessä rakenteisen datasi ja tekoälyindeksoijien pääsyn kanssa"
+      ],
+      "after": [
+        "Nurevo AEO:n AEO-pisteissä llms.txt on 15 pisteen arvoinen 100:sta. Tiedoston on oltava olemassa, ja se merkitään OK-tilaan, kun se läpäisee vähintään kolme neljästä tarkistuksesta: vähintään 120 merkkiä, ”# ”-otsikko, vähintään yksi URL-osoite ja yritystietoja, kuten osoite, puhelinnumero tai aukioloajat. Pisteet mittaavat, kuinka luettava sivustosi on tekoälylle, eivät sitä, suositteleeko tekoäly sinua. Jos haluat nähdä, näytkö vastauksissa, noudata ohjetta [näin mittaat näkyvyyttä tekoälyssä](/guide/measure-ai-visibility): esitä samat kysymykset toistuvasti ja kirjaa vastaukset ylös. Huomaa, että llms.txt-tiedoston lisäämisen jälkeistä muutosta ei yleensä voi erottaa kaikesta muusta, mikä muuttui samaan aikaan."
+      ]
+    },
+    {
+      "heading": "Tarkistuslista ennen julkaisua",
+      "list": [
+        "Ensimmäinen rivi on ”# ”-otsikko, jossa on nimesi",
+        "”> ”-tiivistelmä kertoo, mikä olet, missä ja mitä tarjoat kenelle",
+        "Kaikki tiedot vastaavat sivujesi tekstiä, rakenteista dataa ja Google-yritysprofiiliasi",
+        "Linkit on rajattu tärkeimpiin sivuihin, ja jokaisella on kuvaus",
+        "Ei noindex-sivuja, ei robots.txt-tiedostossa estettyjä sivuja, ei rikkinäisiä linkkejä",
+        "Ei markkinointiväitteitä eikä ohjeita tekoälylle",
+        "https://oma-verkkotunnus/llms.txt palauttaa 200 ja näyttää tekstiä, ei HTML:ää",
+        "Täsmälleen yksi lähde tarjoilee tiedoston (käsin tehty tai yksi lisäosa)",
+        "Joku vastaa sen päivittämisestä, kun hinnat tai aukioloajat muuttuvat (ei tarpeen, jos se luodaan automaattisesti)",
+        "robots.txt ei estä niitä tekoälyindeksoijia, joiden haluat lukevan sivustoasi"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Onko llms.txt virallinen standardi?",
+      "a": "Ei. Se on Jeremy Howardin (Answer.AI) vuonna 2024 julkaisema ehdotus, ei standardointielimen määrittely. 16. marraskuuta 2026 mennessä emme löytäneet yhdenkään tekoälyhakupalvelun julkista lausuntoa siitä, että se käyttäisi muiden sivustojen llms.txt-tiedostoja."
+    },
+    {
+      "q": "Vaikuttaako llms.txt Googlen sijoituksiin tai AI Overviews -näkyvyyteen?",
+      "a": "Googlen mukaan et tarvitse uusia tekoälylle tarkoitettuja tekstitiedostoja näkyäksesi sen tekoälyominaisuuksissa. Ei ole virallista lausuntoa siitä, että tiedosto nostaisi tai laskisi sijoituksia. Googlelle sivujen teksti ja rakenteinen data ovat etusijalla."
+    },
+    {
+      "q": "Tarvitsenko myös llms-full.txt-tiedoston?",
+      "a": "Et. Se on tiedosto, jossa on sivuston koko teksti, ja sitä käyttävät joskus suuret dokumentaatiosivustot. Yrityksen sivustolle pelkkä llms.txt riittää. Nurevo AEO ei luo llms-full.txt-tiedostoa."
+    },
+    {
+      "q": "Jos robots.txt estää tekoälyindeksoijat, lukevatko ne silti llms.txt-tiedoston?",
+      "a": "llms.txt ei muuta robots.txt-tiedostoa. Jos indeksoija on estetty, oleta, ettei se hae mitään, ei myöskään llms.txt-tiedostoa. Jos haluat tekoälyn lukevan sivustoasi, tarkista ensin, ettei robots.txt estä tekoälyhakujen indeksoijia."
+    },
+    {
+      "q": "Voinko kirjoittaa sen omalla kielelläni?",
+      "a": "Voit. Ehdotus ei määrää kieltä; kirjoita se kielellä, jota asiakkaasi käyttävät. Nurevo AEO käyttää kiinteitä englanninkielisiä otsikoita ja pitää sisällön sivustosi kielellä."
+    },
+    {
+      "q": "Kuinka monta sivua siihen kannattaa listata?",
+      "a": "Sääntöä ei ole. Rajoitu sivuihin, jotka vastaavat kysymyksiin, joita ihmiset kysyvät tekoälyltä sinusta: tietoa meistä, hinnat, palvelut, usein kysytyt kysymykset, sijainti. Nurevo AEO listaa automaattisesti 30 viimeksi muokattua sivua, ja voit jättää minkä tahansa sivun pois."
+    },
+    {
+      "q": "Kuinka usein se pitäisi päivittää?",
+      "a": "Heti, kun jokin sen tiedoista muuttuu. Jos ylläpidät sitä käsin, lisää ”päivitä llms.txt” rutiiniisi hintojen ja aukioloaikojen muuttuessa. Nurevo AEO rakentaa sen uudelleen aina, kun tallennat sivun tai asetukset."
+    }
+  ],
+  "relatedHeading": "Aiheeseen liittyvät oppaat",
+  "cta": {
+    "heading": "Tarkista sivustosi llms.txt ja rakenteinen data",
+    "body": "Maksuton tarkistus näyttää ilman rekisteröitymistä, onko sinulla llms.txt, millainen rakenteinen datasi on ja pääsevätkö tekoälyindeksoijat sivustollesi. WordPressissä Nurevo AEO (maksuton) rakentaa llms.txt-tiedoston puolestasi. Se ei voi taata, että näyt tekoälyn vastauksissa.",
+    "label": "Tee maksuton tekoälyluettavuuden tarkistus",
+    "href": "/check",
+    "secondary": {
+      "label": "Hae Nurevo AEO WordPress.orgista",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT on OpenAI:n, Perplexity Perplexity AI:n, Claude Anthropicin ja Google Google LLC:n tavaramerkki; Amazonbot on Amazonin indeksoija. Muut yritysten ja tuotteiden nimet ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa mihinkään näistä yrityksistä, eikä mikään niistä ole hyväksynyt sitä."
 }
