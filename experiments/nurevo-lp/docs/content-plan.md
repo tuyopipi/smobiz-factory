@@ -200,3 +200,12 @@
 3. 記事・ブログのAI検索対策（AIに引用されやすい記事の書き方：答えの先出し・表・更新日・出典）【全業種】
 4. フランチャイズ本部向け：加盟店サイトとAI検索（表記ルール・リンク・本部と加盟店の役割）【制作会社・本部向け】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-16 20時 | photo-studio-ai-search | 写真館・フォトスタジオのAI検索対策（業種別。家族の質問の型6つの表〔総額・受け取り方・衣装支度・時期・予約の条件・撮影の種類〕、上位記事〔uravation×2・renue・キャクル・@SOHO・aurant・PhotoBiz×3・Texta・LinkGraph〕の抜け、「持ち帰る総額」の表6項目と税込（国税庁6902）・早撮り割引は期間と対象を書き比較価格は価格表示ルールで確認、データ納品6項目〔枚数・形式・受け取り・保存期限・使い方・レタッチ〕、衣装・支度・撮影の種類の書き分け、時期のページは年度と期間・空きは予約システムへ・キャンセル表と体調不良FAQ、作例の代替テキストと掲載同意・ステマ規制、構造化データ〔写真館の型なし・Photographは作品・ProfessionalServiceは非推奨（schema-dts 2.1.0で確認）→ LocalBusiness＋Service/Offer〕とNurevoのService出力例（additionalProperty duration・ReserveAction）、WordPress手順〔ウィザード「その他」・「専門サービス」は選ばない・サービス最大20件・FAQ・ページ専用FAQ・昨年のページをllms.txtから外す〕、チェックリスト10、時期を分けた測り方、FAQ 7問）。2言語（ja・en） | 業種別 | content/daily-20261116-20 |
+メモ：2026-11-16 20時の回は schema.org・Google（AI features）・財務省・消費者庁（価格表示ガイドライン）を WebFetch の許可待ちで取得できなかった。Google・国税庁・消費者庁（ステマ）の記述は hair-salon-ai-search（2026-11-01確認）の範囲だけ。二重価格（比較対照価格・8週間）の具体的なルール、子どもの写真の肖像権・個人情報の法令、format.com の記事は書いていない／読めていない。
+翻訳の残り（8時台で補完）：ai-visibility-drop-causes・research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search（ja/en のみ）。
+次の候補：
+1. 眼科・コンタクトのAI検索対策（検査の予約・処方箋・保険と自費のレーシック等）【業種別】
+2. 記事・ブログのAI検索対策（AIに引用されやすい記事の書き方：答えの先出し・表・更新日・出典）【全業種】
+3. フランチャイズ本部向け：加盟店サイトとAI検索（表記ルール・リンク・本部と加盟店の役割）【制作会社・本部向け】
+4. 料理教室・習い事教室のAI検索対策（体験・月謝・振替・持ち物）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
