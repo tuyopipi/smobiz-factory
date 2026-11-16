@@ -134,7 +134,7 @@ const sqlString = (value) => `'${String(value).replace(/'/g, "''")}'`;
  * Run
  * ------------------------------------------------------------------ */
 const month = sovMonthKey();
-console.log(`\nNurevo AEO — SoV 最小スモーク（Perplexityのみ / 合計${MAX_ENGINE_CALLS}リクエスト / ローカル）`);
+console.log(`\nNurevo AIO — SoV 最小スモーク（Perplexityのみ / 合計${MAX_ENGINE_CALLS}リクエスト / ローカル）`);
 console.log(`実行: ${new Date().toISOString()}  月次キー: ${month}\n`);
 
 const quotaBefore = d1Count(`SELECT COALESCE(SUM(queries_used),0) AS n FROM aeo_sov_usage WHERE month='${month}';`);

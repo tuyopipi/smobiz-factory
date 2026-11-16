@@ -1,5 +1,5 @@
 /**
- * Nurevo AEO setup wizard: progressive enhancement only.
+ * Nurevo AIO setup wizard: progressive enhancement only.
  *
  * The wizard is a set of plain server-rendered forms and works without this
  * file. It only moves keyboard and screen-reader focus to the step heading

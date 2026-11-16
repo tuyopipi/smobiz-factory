@@ -46,13 +46,13 @@ const fill = (template, vars) => String(template).replace(/\{(\w+)\}/g, (_, key)
 
 const COPY = {
   ja: {
-    sign: "Nurevo AEO",
+    sign: "Nurevo AIO",
     open: "ダッシュボードでサイトを開く",
     welcome: {
-      subject: "{site} の次のステップ（Nurevo AEO）",
-      intro: "{site} を Nurevo AEO に追加していただき、ありがとうございます。あと少しで、AIアシスタントがサイトの情報を読み取れるようになります。",
+      subject: "{site} の次のステップ（Nurevo AIO）",
+      intro: "{site} を Nurevo AIO に追加していただき、ありがとうございます。あと少しで、AIアシスタントがサイトの情報を読み取れるようになります。",
       wp: [
-        "WordPress の管理画面で「プラグイン > 新規追加」を開き、「Nurevo AEO」を検索します。",
+        "WordPress の管理画面で「プラグイン > 新規追加」を開き、「Nurevo AIO」を検索します。",
         "プラグインをインストールして、有効化します。",
         "Nurevo のダッシュボードでサイトを開き、ペアリングコードをコピーして、プラグインに貼り付けます。",
       ],
@@ -67,10 +67,10 @@ const COPY = {
     reminder: {
       subject1: "{site} はまだ接続されていません",
       subject2: "再送：{site} はまだ接続されていません",
-      intro: "{site} は Nurevo AEO に追加されていますが、WordPress プラグインとの接続がまだ完了していません。次の点をご確認ください。",
+      intro: "{site} は Nurevo AIO に追加されていますが、WordPress プラグインとの接続がまだ完了していません。次の点をご確認ください。",
       checklist: [
-        "Nurevo AEO プラグインがインストールされ、有効になっていること（WordPress の「プラグイン」）。",
-        "「Nurevo AEO > 設定」で「このサイトのAI向け情報を出力する」がオンになっていること。",
+        "Nurevo AIO プラグインがインストールされ、有効になっていること（WordPress の「プラグイン」）。",
+        "「Nurevo AIO > 設定」で「このサイトのAI向け情報を出力する」がオンになっていること。",
         "WordPress のサイトアドレス（「設定 > 一般」）が {site} と一致していること。",
       ],
       reissue: "確認できたら、ペアリングコードをプラグインに貼り付けてください。コードの有効期限が切れている場合は、こちらから新しいコードを発行できます：",
@@ -79,12 +79,12 @@ const COPY = {
     },
     paymentFailed: {
       subject: "{site} のお支払いができませんでした",
-      intro: "{site} の Nurevo AEO プランについて、最新のお支払いを処理できませんでした。Stripe が数日かけてお支払いを再試行します。その間もサイトは引き続きご利用いただけます。",
+      intro: "{site} の Nurevo AIO プランについて、最新のお支払いを処理できませんでした。Stripe が数日かけてお支払いを再試行します。その間もサイトは引き続きご利用いただけます。",
       action: "お支払い方法を更新するには、ダッシュボードでサイトを開き、「支払いを管理」を選んでください。",
       ignore: "すでに更新済みの場合は、このメールは無視してください。",
     },
     planEnded: {
-      subject: "{site} の Nurevo AEO プランが終了しました",
+      subject: "{site} の Nurevo AIO プランが終了しました",
       intro: "{site} の {plan} プランが終了し、サイトは Free プランになりました。",
       keepsTitle: "Free プランでも、次の機能は引き続きご利用いただけます。",
       keeps: [
@@ -95,13 +95,13 @@ const COPY = {
     },
   },
   en: {
-    sign: "Nurevo AEO",
+    sign: "Nurevo AIO",
     open: "Open your site in the dashboard",
     welcome: {
-      subject: "Next step for {site} on Nurevo AEO",
-      intro: "Thanks for adding {site} to Nurevo AEO. One more step and AI assistants can start reading your site.",
+      subject: "Next step for {site} on Nurevo AIO",
+      intro: "Thanks for adding {site} to Nurevo AIO. One more step and AI assistants can start reading your site.",
       wp: [
-        "In WordPress, go to Plugins > Add New and search for \"Nurevo AEO\".",
+        "In WordPress, go to Plugins > Add New and search for \"Nurevo AIO\".",
         "Install and activate the plugin.",
         "Open your site in the Nurevo dashboard, copy the pairing code and paste it into the plugin.",
       ],
@@ -116,10 +116,10 @@ const COPY = {
     reminder: {
       subject1: "{site} isn't connected yet",
       subject2: "Reminder: {site} still isn't connected",
-      intro: "{site} is in Nurevo AEO, but the WordPress plugin hasn't connected yet. A quick check:",
+      intro: "{site} is in Nurevo AIO, but the WordPress plugin hasn't connected yet. A quick check:",
       checklist: [
-        "The Nurevo AEO plugin is installed and active (Plugins in WordPress).",
-        "In Nurevo AEO > Settings, \"Output AI-facing information for this site\" is ON.",
+        "The Nurevo AIO plugin is installed and active (Plugins in WordPress).",
+        "In Nurevo AIO > Settings, \"Output AI-facing information for this site\" is ON.",
         "The site address in WordPress (Settings > General) matches {site}.",
       ],
       reissue: "Then paste a pairing code into the plugin. If your code has expired, you can issue a new one here:",
@@ -128,12 +128,12 @@ const COPY = {
     },
     paymentFailed: {
       subject: "Payment failed for {site}",
-      intro: "We couldn't take the latest payment for your Nurevo AEO plan on {site}. Stripe will retry over the next few days, and your site keeps working in the meantime.",
+      intro: "We couldn't take the latest payment for your Nurevo AIO plan on {site}. Stripe will retry over the next few days, and your site keeps working in the meantime.",
       action: "To update your payment method, open your site in the dashboard and choose \"Manage billing\".",
       ignore: "If you've already updated it, you can ignore this email.",
     },
     planEnded: {
-      subject: "Your Nurevo AEO plan for {site} has ended",
+      subject: "Your Nurevo AIO plan for {site} has ended",
       intro: "Your {plan} plan for {site} has ended, and the site is now on the Free plan.",
       keepsTitle: "On Free you still have:",
       keeps: [
@@ -144,13 +144,13 @@ const COPY = {
     },
   },
   zh: {
-    sign: "Nurevo AEO",
+    sign: "Nurevo AIO",
     open: "在控制台中打开您的网站",
     welcome: {
-      subject: "{site} 的下一步（Nurevo AEO）",
-      intro: "感谢您将 {site} 添加到 Nurevo AEO。只需再完成一步，AI 助手就能开始读取您的网站信息。",
+      subject: "{site} 的下一步（Nurevo AIO）",
+      intro: "感谢您将 {site} 添加到 Nurevo AIO。只需再完成一步，AI 助手就能开始读取您的网站信息。",
       wp: [
-        "在 WordPress 后台打开“插件 > 安装插件”，搜索“Nurevo AEO”。",
+        "在 WordPress 后台打开“插件 > 安装插件”，搜索“Nurevo AIO”。",
         "安装并启用该插件。",
         "在 Nurevo 控制台中打开您的网站，复制配对码并粘贴到插件中。",
       ],
@@ -165,10 +165,10 @@ const COPY = {
     reminder: {
       subject1: "{site} 尚未连接",
       subject2: "提醒：{site} 仍未连接",
-      intro: "{site} 已添加到 Nurevo AEO，但 WordPress 插件尚未完成连接。请检查以下几点：",
+      intro: "{site} 已添加到 Nurevo AIO，但 WordPress 插件尚未完成连接。请检查以下几点：",
       checklist: [
-        "Nurevo AEO 插件已安装并启用（WordPress 的“插件”）。",
-        "在“Nurevo AEO > 设置”中，“为此站点输出面向 AI 的信息”已开启。",
+        "Nurevo AIO 插件已安装并启用（WordPress 的“插件”）。",
+        "在“Nurevo AIO > 设置”中，“为此站点输出面向 AI 的信息”已开启。",
         "WordPress 中的站点地址（“设置 > 常规”）与 {site} 一致。",
       ],
       reissue: "然后将配对码粘贴到插件中。如果配对码已过期，可以在这里重新获取：",
@@ -177,12 +177,12 @@ const COPY = {
     },
     paymentFailed: {
       subject: "{site} 付款失败",
-      intro: "我们未能收取 {site} 的 Nurevo AEO 方案的最近一笔费用。Stripe 会在接下来几天内重试，在此期间您的网站仍可正常使用。",
+      intro: "我们未能收取 {site} 的 Nurevo AIO 方案的最近一笔费用。Stripe 会在接下来几天内重试，在此期间您的网站仍可正常使用。",
       action: "如需更新付款方式，请在控制台中打开您的网站，然后选择“管理付款”。",
       ignore: "如果您已更新，请忽略此邮件。",
     },
     planEnded: {
-      subject: "{site} 的 Nurevo AEO 方案已结束",
+      subject: "{site} 的 Nurevo AIO 方案已结束",
       intro: "{site} 的 {plan} 方案已结束，网站现已切换为 Free 方案。",
       keepsTitle: "Free 方案仍包括：",
       keeps: [
@@ -193,13 +193,13 @@ const COPY = {
     },
   },
   "zh-tw": {
-    sign: "Nurevo AEO",
+    sign: "Nurevo AIO",
     open: "在主控台開啟您的網站",
     welcome: {
-      subject: "{site} 的下一個步驟（Nurevo AEO）",
-      intro: "感謝您將 {site} 加入 Nurevo AEO。只要再完成一個步驟，AI 助理就能開始讀取您的網站資訊。",
+      subject: "{site} 的下一個步驟（Nurevo AIO）",
+      intro: "感謝您將 {site} 加入 Nurevo AIO。只要再完成一個步驟，AI 助理就能開始讀取您的網站資訊。",
       wp: [
-        "在 WordPress 控制台開啟「外掛 > 安裝外掛」，搜尋「Nurevo AEO」。",
+        "在 WordPress 控制台開啟「外掛 > 安裝外掛」，搜尋「Nurevo AIO」。",
         "安裝並啟用外掛。",
         "在 Nurevo 主控台開啟您的網站，複製配對碼並貼到外掛中。",
       ],
@@ -214,10 +214,10 @@ const COPY = {
     reminder: {
       subject1: "{site} 尚未連線",
       subject2: "提醒：{site} 仍未連線",
-      intro: "{site} 已加入 Nurevo AEO，但 WordPress 外掛尚未完成連線。請確認以下幾點：",
+      intro: "{site} 已加入 Nurevo AIO，但 WordPress 外掛尚未完成連線。請確認以下幾點：",
       checklist: [
-        "Nurevo AEO 外掛已安裝並啟用（WordPress 的「外掛」）。",
-        "在「Nurevo AEO > 設定」中，「為此網站輸出給 AI 的資訊」已開啟。",
+        "Nurevo AIO 外掛已安裝並啟用（WordPress 的「外掛」）。",
+        "在「Nurevo AIO > 設定」中，「為此網站輸出給 AI 的資訊」已開啟。",
         "WordPress 的網站網址（「設定 > 一般」）與 {site} 一致。",
       ],
       reissue: "接著將配對碼貼到外掛中。如果配對碼已過期，可以在這裡重新發行：",
@@ -226,12 +226,12 @@ const COPY = {
     },
     paymentFailed: {
       subject: "{site} 付款失敗",
-      intro: "我們無法收取 {site} 的 Nurevo AEO 方案的最近一筆款項。Stripe 會在接下來幾天內重試，在此期間您的網站仍可正常運作。",
+      intro: "我們無法收取 {site} 的 Nurevo AIO 方案的最近一筆款項。Stripe 會在接下來幾天內重試，在此期間您的網站仍可正常運作。",
       action: "若要更新付款方式，請在主控台開啟您的網站，然後選擇「管理付款」。",
       ignore: "如果您已更新，請忽略此郵件。",
     },
     planEnded: {
-      subject: "{site} 的 Nurevo AEO 方案已結束",
+      subject: "{site} 的 Nurevo AIO 方案已結束",
       intro: "{site} 的 {plan} 方案已結束，網站現已改為 Free 方案。",
       keepsTitle: "Free 方案仍包含：",
       keeps: [
@@ -242,13 +242,13 @@ const COPY = {
     },
   },
   ko: {
-    sign: "Nurevo AEO",
+    sign: "Nurevo AIO",
     open: "대시보드에서 사이트 열기",
     welcome: {
-      subject: "{site}의 다음 단계 (Nurevo AEO)",
-      intro: "{site}을(를) Nurevo AEO에 추가해 주셔서 감사합니다. 한 단계만 더 하면 AI 어시스턴트가 사이트 정보를 읽을 수 있습니다.",
+      subject: "{site}의 다음 단계 (Nurevo AIO)",
+      intro: "{site}을(를) Nurevo AIO에 추가해 주셔서 감사합니다. 한 단계만 더 하면 AI 어시스턴트가 사이트 정보를 읽을 수 있습니다.",
       wp: [
-        "WordPress 관리자에서 \"플러그인 > 새로 추가\"를 열고 \"Nurevo AEO\"를 검색합니다.",
+        "WordPress 관리자에서 \"플러그인 > 새로 추가\"를 열고 \"Nurevo AIO\"를 검색합니다.",
         "플러그인을 설치하고 활성화합니다.",
         "Nurevo 대시보드에서 사이트를 열고 페어링 코드를 복사해 플러그인에 붙여 넣습니다.",
       ],
@@ -263,10 +263,10 @@ const COPY = {
     reminder: {
       subject1: "{site}이(가) 아직 연결되지 않았습니다",
       subject2: "다시 알림: {site}이(가) 아직 연결되지 않았습니다",
-      intro: "{site}은(는) Nurevo AEO에 추가되었지만 WordPress 플러그인이 아직 연결되지 않았습니다. 다음을 확인해 주세요:",
+      intro: "{site}은(는) Nurevo AIO에 추가되었지만 WordPress 플러그인이 아직 연결되지 않았습니다. 다음을 확인해 주세요:",
       checklist: [
-        "Nurevo AEO 플러그인이 설치되어 활성화되어 있는지 (WordPress의 \"플러그인\").",
-        "\"Nurevo AEO > 설정\"에서 \"이 사이트의 AI용 정보 출력\"이 켜져 있는지.",
+        "Nurevo AIO 플러그인이 설치되어 활성화되어 있는지 (WordPress의 \"플러그인\").",
+        "\"Nurevo AIO > 설정\"에서 \"이 사이트의 AI용 정보 출력\"이 켜져 있는지.",
         "WordPress의 사이트 주소(\"설정 > 일반\")가 {site}와(과) 일치하는지.",
       ],
       reissue: "그다음 페어링 코드를 플러그인에 붙여 넣어 주세요. 코드가 만료되었다면 여기에서 새 코드를 발급할 수 있습니다:",
@@ -275,12 +275,12 @@ const COPY = {
     },
     paymentFailed: {
       subject: "{site}의 결제에 실패했습니다",
-      intro: "{site}의 Nurevo AEO 플랜에 대한 최근 결제를 처리하지 못했습니다. Stripe가 며칠 동안 결제를 다시 시도하며, 그동안 사이트는 계속 정상적으로 작동합니다.",
+      intro: "{site}의 Nurevo AIO 플랜에 대한 최근 결제를 처리하지 못했습니다. Stripe가 며칠 동안 결제를 다시 시도하며, 그동안 사이트는 계속 정상적으로 작동합니다.",
       action: "결제 수단을 변경하려면 대시보드에서 사이트를 열고 \"결제 관리\"를 선택해 주세요.",
       ignore: "이미 변경하셨다면 이 메일은 무시하셔도 됩니다.",
     },
     planEnded: {
-      subject: "{site}의 Nurevo AEO 플랜이 종료되었습니다",
+      subject: "{site}의 Nurevo AIO 플랜이 종료되었습니다",
       intro: "{site}의 {plan} 플랜이 종료되어 사이트가 Free 플랜으로 전환되었습니다.",
       keepsTitle: "Free 플랜에서도 다음 기능은 계속 이용할 수 있습니다:",
       keeps: [
@@ -291,13 +291,13 @@ const COPY = {
     },
   },
   es: {
-    sign: "Nurevo AEO",
+    sign: "Nurevo AIO",
     open: "Abrir tu sitio en el panel",
     welcome: {
-      subject: "Siguiente paso para {site} en Nurevo AEO",
-      intro: "Gracias por añadir {site} a Nurevo AEO. Con un paso más, los asistentes de IA podrán empezar a leer tu sitio.",
+      subject: "Siguiente paso para {site} en Nurevo AIO",
+      intro: "Gracias por añadir {site} a Nurevo AIO. Con un paso más, los asistentes de IA podrán empezar a leer tu sitio.",
       wp: [
-        "En WordPress, ve a Plugins > Añadir nuevo y busca \"Nurevo AEO\".",
+        "En WordPress, ve a Plugins > Añadir nuevo y busca \"Nurevo AIO\".",
         "Instala y activa el plugin.",
         "Abre tu sitio en el panel de Nurevo, copia el código de emparejamiento y pégalo en el plugin.",
       ],
@@ -312,10 +312,10 @@ const COPY = {
     reminder: {
       subject1: "{site} aún no está conectado",
       subject2: "Recordatorio: {site} sigue sin conectarse",
-      intro: "{site} está en Nurevo AEO, pero el plugin de WordPress aún no se ha conectado. Una comprobación rápida:",
+      intro: "{site} está en Nurevo AIO, pero el plugin de WordPress aún no se ha conectado. Una comprobación rápida:",
       checklist: [
-        "El plugin Nurevo AEO está instalado y activo (Plugins en WordPress).",
-        "En Nurevo AEO > Ajustes, \"Generar información para la IA en este sitio\" está activado.",
+        "El plugin Nurevo AIO está instalado y activo (Plugins en WordPress).",
+        "En Nurevo AIO > Ajustes, \"Generar información para la IA en este sitio\" está activado.",
         "La dirección del sitio en WordPress (Ajustes > Generales) coincide con {site}.",
       ],
       reissue: "Después, pega un código de emparejamiento en el plugin. Si tu código ha caducado, puedes generar uno nuevo aquí:",
@@ -324,12 +324,12 @@ const COPY = {
     },
     paymentFailed: {
       subject: "No se pudo cobrar el pago de {site}",
-      intro: "No hemos podido cobrar el último pago de tu plan de Nurevo AEO para {site}. Stripe volverá a intentarlo durante los próximos días y, mientras tanto, tu sitio sigue funcionando.",
+      intro: "No hemos podido cobrar el último pago de tu plan de Nurevo AIO para {site}. Stripe volverá a intentarlo durante los próximos días y, mientras tanto, tu sitio sigue funcionando.",
       action: "Para actualizar tu método de pago, abre tu sitio en el panel y elige \"Gestionar pagos\".",
       ignore: "Si ya lo has actualizado, puedes ignorar este correo.",
     },
     planEnded: {
-      subject: "Tu plan de Nurevo AEO para {site} ha terminado",
+      subject: "Tu plan de Nurevo AIO para {site} ha terminado",
       intro: "Tu plan {plan} para {site} ha terminado y el sitio ahora está en el plan Free.",
       keepsTitle: "Con Free sigues teniendo:",
       keeps: [
@@ -340,13 +340,13 @@ const COPY = {
     },
   },
   fr: {
-    sign: "Nurevo AEO",
+    sign: "Nurevo AIO",
     open: "Ouvrir votre site dans le tableau de bord",
     welcome: {
-      subject: "Prochaine étape pour {site} sur Nurevo AEO",
-      intro: "Merci d’avoir ajouté {site} à Nurevo AEO. Encore une étape, et les assistants IA pourront commencer à lire votre site.",
+      subject: "Prochaine étape pour {site} sur Nurevo AIO",
+      intro: "Merci d’avoir ajouté {site} à Nurevo AIO. Encore une étape, et les assistants IA pourront commencer à lire votre site.",
       wp: [
-        "Dans WordPress, allez dans Extensions > Ajouter une extension et recherchez « Nurevo AEO ».",
+        "Dans WordPress, allez dans Extensions > Ajouter une extension et recherchez « Nurevo AIO ».",
         "Installez puis activez l’extension.",
         "Ouvrez votre site dans le tableau de bord Nurevo, copiez le code d’appairage et collez-le dans l’extension.",
       ],
@@ -361,10 +361,10 @@ const COPY = {
     reminder: {
       subject1: "{site} n’est pas encore connecté",
       subject2: "Rappel : {site} n’est toujours pas connecté",
-      intro: "{site} est bien dans Nurevo AEO, mais l’extension WordPress n’est pas encore connectée. Une petite vérification :",
+      intro: "{site} est bien dans Nurevo AIO, mais l’extension WordPress n’est pas encore connectée. Une petite vérification :",
       checklist: [
-        "L’extension Nurevo AEO est installée et activée (Extensions dans WordPress).",
-        "Dans Nurevo AEO > Réglages, « Générer les informations destinées à l’IA pour ce site » est activé.",
+        "L’extension Nurevo AIO est installée et activée (Extensions dans WordPress).",
+        "Dans Nurevo AIO > Réglages, « Générer les informations destinées à l’IA pour ce site » est activé.",
         "L’adresse du site dans WordPress (Réglages > Général) correspond à {site}.",
       ],
       reissue: "Collez ensuite un code d’appairage dans l’extension. Si votre code a expiré, vous pouvez en obtenir un nouveau ici :",
@@ -373,12 +373,12 @@ const COPY = {
     },
     paymentFailed: {
       subject: "Échec du paiement pour {site}",
-      intro: "Nous n’avons pas pu encaisser le dernier paiement de votre offre Nurevo AEO pour {site}. Stripe va réessayer dans les prochains jours, et votre site continue de fonctionner en attendant.",
+      intro: "Nous n’avons pas pu encaisser le dernier paiement de votre offre Nurevo AIO pour {site}. Stripe va réessayer dans les prochains jours, et votre site continue de fonctionner en attendant.",
       action: "Pour mettre à jour votre moyen de paiement, ouvrez votre site dans le tableau de bord et choisissez « Gérer la facturation ».",
       ignore: "Si vous l’avez déjà mis à jour, vous pouvez ignorer cet e-mail.",
     },
     planEnded: {
-      subject: "Votre offre Nurevo AEO pour {site} a pris fin",
+      subject: "Votre offre Nurevo AIO pour {site} a pris fin",
       intro: "Votre offre {plan} pour {site} a pris fin, et le site est maintenant sur l’offre Free.",
       keepsTitle: "Avec Free, vous conservez :",
       keeps: [
@@ -389,13 +389,13 @@ const COPY = {
     },
   },
   de: {
-    sign: "Nurevo AEO",
+    sign: "Nurevo AIO",
     open: "Website im Dashboard öffnen",
     welcome: {
-      subject: "Nächster Schritt für {site} bei Nurevo AEO",
-      intro: "Danke, dass Sie {site} zu Nurevo AEO hinzugefügt haben. Noch ein Schritt, dann können KI-Assistenten Ihre Website lesen.",
+      subject: "Nächster Schritt für {site} bei Nurevo AIO",
+      intro: "Danke, dass Sie {site} zu Nurevo AIO hinzugefügt haben. Noch ein Schritt, dann können KI-Assistenten Ihre Website lesen.",
       wp: [
-        "Öffnen Sie in WordPress „Plugins > Installieren“ und suchen Sie nach „Nurevo AEO“.",
+        "Öffnen Sie in WordPress „Plugins > Installieren“ und suchen Sie nach „Nurevo AIO“.",
         "Installieren und aktivieren Sie das Plugin.",
         "Öffnen Sie Ihre Website im Nurevo-Dashboard, kopieren Sie den Kopplungscode und fügen Sie ihn im Plugin ein.",
       ],
@@ -410,10 +410,10 @@ const COPY = {
     reminder: {
       subject1: "{site} ist noch nicht verbunden",
       subject2: "Erinnerung: {site} ist immer noch nicht verbunden",
-      intro: "{site} ist in Nurevo AEO angelegt, aber das WordPress-Plugin ist noch nicht verbunden. Bitte prüfen Sie kurz:",
+      intro: "{site} ist in Nurevo AIO angelegt, aber das WordPress-Plugin ist noch nicht verbunden. Bitte prüfen Sie kurz:",
       checklist: [
-        "Das Plugin Nurevo AEO ist installiert und aktiviert (Plugins in WordPress).",
-        "Unter „Nurevo AEO > Einstellungen“ ist „KI-relevante Informationen für diese Website ausgeben“ eingeschaltet.",
+        "Das Plugin Nurevo AIO ist installiert und aktiviert (Plugins in WordPress).",
+        "Unter „Nurevo AIO > Einstellungen“ ist „KI-relevante Informationen für diese Website ausgeben“ eingeschaltet.",
         "Die Website-Adresse in WordPress (Einstellungen > Allgemein) stimmt mit {site} überein.",
       ],
       reissue: "Fügen Sie danach einen Kopplungscode im Plugin ein. Ist Ihr Code abgelaufen, können Sie hier einen neuen erstellen:",
@@ -422,12 +422,12 @@ const COPY = {
     },
     paymentFailed: {
       subject: "Zahlung für {site} fehlgeschlagen",
-      intro: "Die letzte Zahlung für Ihren Nurevo AEO-Tarif für {site} konnte nicht eingezogen werden. Stripe versucht es in den nächsten Tagen erneut; Ihre Website läuft in der Zwischenzeit weiter.",
+      intro: "Die letzte Zahlung für Ihren Nurevo AIO-Tarif für {site} konnte nicht eingezogen werden. Stripe versucht es in den nächsten Tagen erneut; Ihre Website läuft in der Zwischenzeit weiter.",
       action: "Um Ihre Zahlungsmethode zu aktualisieren, öffnen Sie Ihre Website im Dashboard und wählen Sie „Zahlungen verwalten“.",
       ignore: "Wenn Sie sie bereits aktualisiert haben, können Sie diese E-Mail ignorieren.",
     },
     planEnded: {
-      subject: "Ihr Nurevo AEO-Tarif für {site} ist beendet",
+      subject: "Ihr Nurevo AIO-Tarif für {site} ist beendet",
       intro: "Ihr {plan}-Tarif für {site} ist beendet, und die Website nutzt jetzt den Free-Tarif.",
       keepsTitle: "Mit Free behalten Sie:",
       keeps: [

@@ -17,7 +17,7 @@ if (!defined('WP_CLI') || !WP_CLI || !class_exists('WP_CLI')) {
 }
 
 /**
- * Inspect and manage Nurevo AEO.
+ * Inspect and manage Nurevo AIO.
  */
 class Webmcp_Canary_CLI_Command {
 
@@ -120,7 +120,7 @@ class Webmcp_Canary_CLI_Command {
     }
 
     /**
-     * Import settings exported from Nurevo AEO.
+     * Import settings exported from Nurevo AIO.
      *
      * Files that contain keys, tokens or settings this version does not know
      * are refused.

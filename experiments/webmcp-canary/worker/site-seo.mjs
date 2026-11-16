@@ -67,9 +67,9 @@ export function storesSitemapXml(rows) {
  */
 export function siteLlmsTxt(pages, stores) {
   const lines = [
-    "# Nurevo",
+    "# Nurevo AIO",
     "",
-    "> Nurevo is an AEO (answer engine optimization) tool. It measures how AI search engines such as ChatGPT and Perplexity read a website, and puts in place what they need to read and cite it: server-side schema.org structured data, llms.txt and AI crawler access. It is installed as the WordPress plugin \"Nurevo AEO\", or as a single tag on any other site, and works alongside Yoast SEO and Rank Math.",
+    "> Nurevo is an AEO (answer engine optimization) tool. It measures how AI search engines such as ChatGPT and Perplexity read a website, and puts in place what they need to read and cite it: server-side schema.org structured data, llms.txt and AI crawler access. It is installed as the WordPress plugin \"Nurevo AIO\", or as a single tag on any other site, and works alongside Yoast SEO and Rank Math.",
     "",
     "Nurevoは、AI検索（ChatGPT・Perplexityなど）がサイトをどう読んでいるかを測り、引用される土台（サーバーサイドの構造化データ・llms.txt・AIクローラー許可）を整えるAEOツールです。",
     "",

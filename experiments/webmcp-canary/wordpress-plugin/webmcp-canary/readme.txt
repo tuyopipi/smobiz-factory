@@ -1,10 +1,10 @@
-=== Nurevo AEO – AI Search Optimization (AEO/GEO), llms.txt & Schema ===
+=== Nurevo AIO ===
 Contributors: tuyopon
 Tags: aeo, geo, ai seo, llms.txt, schema
 Requires at least: 6.1
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -212,10 +212,13 @@ It is a beta feature. It samples AI answers rather than observing every response
 
 == Changelog ==
 
+= 0.9.2 =
+* Renamed the product to Nurevo AIO across plugin screens and translations. Existing settings, connections, URLs and plugin identifiers are unchanged.
+
 = 0.9.1 =
 * SEO SIMPLE PACK support: recognised as an active SEO plugin. It publishes no structured data (meta and OGP tags only), so Nurevo AEO keeps publishing its full graph, FAQ included.
 * VK All in One Expansion Unit support: Nurevo AEO no longer prints a second WebSite or Article beside the ones ExUnit prints, and adds only the missing publisher, description and language to ExUnit's Article (`veu_article_structure_data`) without changing its values. ExUnit publishes no business node, so yours stays the only one. With ExUnit's structured data turned off, Nurevo AEO publishes its own nodes as before.
-* The plugin's name in the Plugins list now matches its WordPress.org listing: "Nurevo AEO – AI Search Optimization, llms.txt & Schema". The admin menu is still "Nurevo AEO".
+* The plugin's name in the Plugins list now matches its WordPress.org listing: "Nurevo AEO – AI Search Optimization, llms.txt & Schema". The admin menu is still "Nurevo AIO".
 * A one-line request for a WordPress.org review, shown only on Nurevo AEO's own screens, only once output is on and the plugin has been installed for a week. "Do not show again" (or the close button) hides it for you for good.
 
 = 0.9.0 =
@@ -329,6 +332,9 @@ It is a beta feature. It samples AI answers rather than observing every response
 * Server-side LocalBusiness JSON-LD, llms.txt and robots.txt output under the Nurevo WebMCP name.
 
 == Upgrade Notice ==
+
+= 0.9.2 =
+Product display-name update to Nurevo AIO. Existing settings and connections are preserved.
 
 = 0.9.1 =
 

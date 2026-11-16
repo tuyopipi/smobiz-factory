@@ -18,8 +18,7 @@
  */
 (function () {
   "use strict";
-  var selectedSiteId = null;
-  var loadingSiteId = null;
+  var loadingDetail = null;
 
   function tr(key, vars) {
     var text = typeof t === "function" ? String(t(key)) : key;
@@ -96,16 +95,17 @@
     return section;
   }
 
-  async function resolveSiteId() {
-    if (selectedSiteId) return selectedSiteId;
-    var heading = document.querySelector("#main > .top h1");
-    if (!heading) return null;
-    var response = await fetch("/api/sites", { credentials: "include", cache: "no-store" });
-    if (!response.ok) return null;
-    var sites = (await response.json()).sites || [];
-    var name = heading.textContent.trim();
-    var site = sites.find(function (item) { return (item.url || item.slug || "Hosted store") === name; });
-    return site ? site.id : null;
+  // The rendered identity is authoritative. Names/domains are not unique,
+  // and a click cache cannot follow Back/Forward or direct hash navigation.
+  function resolveSiteId() {
+    var detail = document.querySelector('#main .detail');
+    var match = /^#site:(.+)$/.exec(String(location.hash || ''));
+    if (!detail || !match) return null;
+    var id; try { id = decodeURIComponent(match[1]); } catch (_) { return null; }
+    return detail.getAttribute('data-site-id') === id ? id : null;
+  }
+  function currentDetail(main, detail, siteId) {
+    return main === document.querySelector('#main') && detail === main.querySelector('.detail') && resolveSiteId() === siteId;
   }
 
   function attach(section, siteId) {
@@ -134,16 +134,17 @@
 
   async function mount() {
     var main = document.querySelector("#main"), detail = main && main.querySelector(".detail");
-    if (!main || !detail) { loadingSiteId = null; return; }
+    if (!main || !detail) { loadingDetail = null; return; }
     if (main.querySelector(".nrv-free-check")) return;
-    var siteId = await resolveSiteId();
-    if (!siteId || loadingSiteId === siteId || main.querySelector(".nrv-free-check")) return;
-    loadingSiteId = siteId;
+    var siteId = resolveSiteId();
+    if (!siteId || loadingDetail === detail || main.querySelector(".nrv-free-check")) return;
+    loadingDetail = detail;
     try {
       // A read: the stored result and the next date. No engine is asked.
       var response = await fetch("/api/sites/" + encodeURIComponent(siteId) + "/sov/free-check", { credentials: "include", cache: "no-store" });
       if (!response.ok || main.querySelector(".nrv-free-check")) return;
       var view = (await response.json()).free_check;
+      if (!currentDetail(main, detail, siteId)) return;
       // Pro has the full measurement; other states the server cannot offer
       // the check in say nothing useful to the owner.
       if (!view || view.status === "pro" || view.status === "not_eligible" || view.status === "disabled" || view.status === "not_found") return;
@@ -154,15 +155,9 @@
       else main.appendChild(section);
     } catch (error) {
       /* fail open - the rest of the dashboard is unaffected */
-    } finally { loadingSiteId = null; }
+    } finally { if (loadingDetail === detail) loadingDetail = null; }
   }
 
-  document.addEventListener("click", function (event) {
-    var row = event.target.closest && event.target.closest("[data-site]");
-    if (row) selectedSiteId = row.getAttribute("data-site");
-    var back = event.target.closest && event.target.closest('[data-view="sites"]');
-    if (back) selectedSiteId = null;
-  }, true);
 
   var style = document.createElement("style");
   style.textContent = ".nrv-free-check{margin-top:18px}.nrv-fc-lead{font-size:13px;line-height:1.7;margin:0 0 8px}.nrv-fc-state{font-size:12px;margin:6px 0;color:#3d3650}.nrv-fc-state.is-warn{color:#8a5a00;font-weight:700}.nrv-fc-run{margin:10px 0}.nrv-fc-run button{background:#6f4df6;color:#fff;border:0;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer}.nrv-fc-run button[disabled]{opacity:.5;cursor:default}.nrv-fc-sub{font-size:11px;color:#8b8498;margin:14px 0 0}.nrv-fc-summary{font-size:13px;margin:8px 0}.nrv-fc-when{font-size:11px;color:#8b8498;font-weight:400}.nrv-fc-list{margin:6px 0;padding-left:18px}.nrv-fc-list li{padding:6px 0;border-top:1px solid #f3f1f7;font-size:12px}.nrv-fc-list li:first-child{border-top:0}.nrv-fc-q{font-weight:600;margin-bottom:4px;overflow-wrap:anywhere}.nrv-fc-badges{display:flex;flex-wrap:wrap;gap:6px}.nrv-fc-badge{font-size:10px;border-radius:5px;padding:2px 7px;font-weight:700}.nrv-fc-badge.is-yes{background:#e7f5ec;color:#176b3a}.nrv-fc-badge.is-no{background:#f1eff5;color:#5d5570}.nrv-fc-badge.is-none{background:#fff4e0;color:#8a5a00}.nrv-fc-others{font-size:11px;color:#5d5570;margin:4px 0 0;overflow-wrap:anywhere}.nrv-fc-comp{margin-top:12px;border-top:1px solid #efecf4;padding-top:10px}.nrv-fc-comp h4{font-size:12px;margin:0 0 6px}.nrv-fc-comp ul{list-style:none;margin:0;padding:0}.nrv-fc-comp li{display:flex;justify-content:space-between;gap:10px;padding:4px 0;font-size:12px;border-top:1px solid #f3f1f7;overflow-wrap:anywhere}.nrv-fc-comp li:first-child{border-top:0}.nrv-fc-note{font-size:11px;color:#6c6579;line-height:1.6;margin:8px 0 0}.nrv-fc-upsell{font-size:12px;margin:10px 0 0;padding:10px 12px;background:#faf8ff;border:1px solid #e6e1f3;border-radius:8px}.nrv-fc-upsell a{color:#6f4df6;font-weight:700}";

@@ -17,7 +17,7 @@
 // - Partner page: branded monthly reports, multi-site dashboard, Standard
 //   payment links, AI check widget and referral page for approved partners;
 //   40% of the client's payment net of Stripe fees, from the 2nd referred
-//   client, approval required, Japanese businesses only, paid on the 25th.
+//   client, approval required, Japan automated payouts use Stripe Connect; overseas Wise eligibility reviewed individually.
 //   Tell the client before installing on their site; paid plans only with
 //   the client's own consent. Agencies are referral partners only (see the
 //   channel rule in scripts/check-static.mjs).
@@ -206,7 +206,7 @@ export default {
             "複数のお客様に広げる：「設定 › ツール」またはWP-CLI（wp nurevo export / import）で設定をJSONに書き出し、ほかのサイトに読み込む。キー・トークン・プランは書き出されません。",
           ],
           after: [
-            `制作会社向けには、社名・ロゴ入りの月次レポートの自動送信、複数サイトの管理画面、お客様に送れるStandardプランの支払いリンクがあります。有料プランはお客様ご本人の同意を得て、お客様が契約します。紹介したお客様の支払いからStripe手数料を引いた額の40%を毎月お支払いする紹介報酬もあります（承認制、2社目のご紹介から、受け取りは国内の事業者のみ）。詳しくは[パートナープログラム](${PARTNER})をご覧ください。`,
+            `制作会社向けには、社名・ロゴ入りの月次レポートの自動送信、複数サイトの管理画面、お客様に送れるStandardプランの支払いリンクがあります。有料プランはお客様ご本人の同意を得て、お客様が契約します。紹介したお客様の支払いからStripe手数料を引いた額の40%を月ごとに計算する紹介報酬もあります（2社目のご紹介から。承認制。海外パートナーも申請できます。海外への支払いはWiseの対応国・通貨・受取条件を個別確認し、支払方法・時期・手数料の扱いを事前に案内します。国内の自動支払いはStripe Connectを利用します）。詳しくは[パートナープログラム](${PARTNER})をご覧ください。`,
             "正直に言えば、追えるAIの数や質問の数では計測を専門にするツールのほうが多く、ProのAI登場率の計測は現在Perplexityが対象です（ベータ版）。計測は別のツールと組み合わせるのも選択肢です（[AEOツールの比較](/guide/aeo-tools-comparison)）。",
           ],
         },
@@ -369,7 +369,7 @@ export default {
             "Roll out to other clients: export the settings as JSON under Settings > Tools or with WP-CLI (wp nurevo export / import) and import them elsewhere. Keys, tokens and the plan are never exported.",
           ],
           after: [
-            `For agencies there are monthly client reports under your name and logo sent automatically, a dashboard for several client sites, and Standard plan payment links to send clients. Paid plans are taken out by the client, with the client's own consent. A referral commission is paid monthly: 40% of each referred client's payment net of Stripe fees (approval required, from the second referred client, payouts to businesses in Japan only). See the [partner program](${PARTNER}).`,
+            `For agencies there are monthly client reports under your name and logo sent automatically, a dashboard for several client sites, and Standard plan payment links to send clients. Paid plans are taken out by the client, with the client's own consent. A referral commission is calculated monthly: 40% of each referred client's payment net of Stripe fees (from the second referred client; approval required; overseas partners may also apply. For overseas payouts, Wise country, currency and recipient eligibility is reviewed individually; payment method, timing and fees are communicated in advance. Automated payouts in Japan use Stripe Connect). See the [partner program](${PARTNER}).`,
             "To be fair, dedicated measurement tools track more AIs and more questions, and Pro's AI visibility measurement currently covers Perplexity (beta). Pairing Nurevo with a measurement tool is a reasonable choice ([AEO tools compared](/guide/aeo-tools-comparison)).",
           ],
         },

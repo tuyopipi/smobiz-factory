@@ -1,6 +1,6 @@
 <?php
 /**
- * Uninstall cleanup for Nurevo AEO.
+ * Uninstall cleanup for Nurevo AIO.
  *
  * Removes everything the plugin stored: settings, FAQ and service entries,
  * diagnosis and measurement caches, catalog, ruleset and autofix state, the

@@ -35,7 +35,7 @@
     return c[7];
   }
   document.documentElement.lang = locale;
-  document.title = `Nurevo — ${c[0]}`;
+  document.title = `Nurevo AIO — ${c[0]}`;
   ['heading','email-label','referral-label','submit'].forEach((id,i) => document.getElementById(id).textContent = c[i]);
   document.getElementById('note').textContent = c[5];
   document.getElementById('login').textContent = c[6];

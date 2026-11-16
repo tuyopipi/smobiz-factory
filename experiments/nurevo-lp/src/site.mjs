@@ -24,7 +24,7 @@ export const OG_IMAGE = { url: `${ORIGIN}/ogp.png`, width: 1200, height: 630 };
 // The operator, as the company profile in the footer states it.
 export const ORGANIZATION = {
   legalName: "Bestie.合同会社",
-  brand: "Nurevo",
+  brand: "Nurevo AIO",
   email: "info@nurevo.jp",
   founder: "橋本 剛",
   foundingDate: "2025-05",
@@ -39,7 +39,7 @@ export const ORGANIZATION = {
 };
 
 export const PRODUCT = {
-  name: "Nurevo AEO",
+  name: "Nurevo AIO",
   category: "BusinessApplication",
   operatingSystem: "WordPress",
   downloadUrl: "https://wordpress.org/plugins/nurevo-webmcp/",
@@ -75,7 +75,7 @@ export const FAQ_KEYS = [
 // provided for each static legal page as well.
 export const STATIC_PAGES = [
   { path: "/check/", file: "check/index.html", lang: "ja", title: "AI可読チェッカー", summary: "URLを入れるだけで、AIがそのサイトを読めるかを無料で診断するツール（登録不要）。" },
-  { path: "/partner/", file: "partner/index.html", lang: "ja", title: "パートナープログラム", summary: "Web制作会社・SEO会社向けのパートナープログラム：紹介報酬（紹介したお客様の月額の40%、Stripe手数料控除後、承認制・国内の事業者が対象）、自社ブランドの月次レポート、AI診断ウィジェット、紹介ページ、登録申請。" },
+  { path: "/partner/", file: "partner/index.html", lang: "ja", title: "パートナープログラム", summary: "Web制作会社・SEO会社向けのパートナープログラム：紹介報酬（紹介したお客様の月額の40%、Stripe手数料控除後、承認制・海外も申請可、Wiseの支払条件は個別確認・事前案内、国内の自動受取はStripe Connect）、自社ブランドの月次レポート、AI診断ウィジェット、紹介ページ、登録申請。" },
   { path: "/guide/integration", file: "guide/integration.html", lang: "ja", title: "サーバーサイド連携ガイド", summary: "WordPress以外のサイトにschema.orgを埋め込み、最新に保つための連携手順（PHP / Node.js / Next.js）。" },
   { path: "/privacy", file: "privacy.html", lang: "ja", title: "プライバシーポリシー" },
   { path: "/terms", file: "terms.html", lang: "ja", title: "利用規約" },

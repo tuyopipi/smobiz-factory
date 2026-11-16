@@ -24,6 +24,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import I18N from "../src/i18n.mjs";
+import { WIDE_SCRIPT } from "../src/i18n/locales.mjs";
 import UI from "../src/i18n/ui.mjs";
 import { siteRobotsTxt, siteLlmsTxt } from "../../webmcp-canary/worker/site-seo.mjs";
 import {
@@ -185,7 +186,7 @@ function head({ lang, title, description, url, alternates = [], type = "website"
     '<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">',
     '<meta name="theme-color" content="#6f4df6">',
     `<meta property="og:type" content="${type}">`,
-    '<meta property="og:site_name" content="Nurevo">',
+    '<meta property="og:site_name" content="Nurevo AIO">',
     `<meta property="og:title" content="${escAttr(title)}">`,
     `<meta property="og:description" content="${escAttr(description)}">`,
     `<meta property="og:url" content="${escAttr(url)}">`,
@@ -488,7 +489,22 @@ function richSections(copy) {
 function contentPage(page, lang, { draft }) {
   const meta = langOf(lang);
   linkLang = lang;
-  const copy = page.locales[lang];
+  // Metadata uses the current display brand without changing archived prose.
+  // Reserve space within the existing SEO limit; the full heading stays intact.
+  const original = page.locales[lang];
+  const suffix = " | Nurevo AIO";
+  let title = original.title;
+  if (/ \| Nurevo(?: AIO)?$/.test(title)) {
+    let stem = title.replace(/ \| Nurevo(?: AIO)?$/, "");
+    const budget = (WIDE_SCRIPT.has(lang) ? 55 : 70) - suffix.length;
+    if (stem.length > budget) {
+      stem = stem.slice(0, budget - 1).trimEnd();
+      if (!WIDE_SCRIPT.has(lang) && stem.includes(" ")) stem = stem.replace(/\s+\S*$/, "");
+      stem += "…";
+    }
+    title = stem + suffix;
+  }
+  const copy = { ...original, title };
   const pathFor = (code) => contentPath(code, page.slug);
   const url = ORIGIN + pathFor(lang);
   const home = ORIGIN + meta.path;
@@ -514,7 +530,7 @@ ${head({ lang, title: copy.title, description: copy.description, url, type: "art
 </head>
 <body>
 <header class="nav"><div class="wrap">
-  <a class="brand" href="${meta.path}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a>
+  <a class="brand" href="${meta.path}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
   <a class="btn primary" href="${escAttr(checkHref(copy.cta.href, lang))}">${esc(copy.cta.label)}</a>
 </div></header>
 <main class="wrap">
@@ -553,7 +569,7 @@ function footer(lang, note) {
   const legal = (path, key) => lang === "ja"
     ? `<a href="/${path}">${esc(t(key, lang))}</a>`
     : `<a href="/en/${path}/" hreflang="en">${esc(t(key, lang))}${lang === "en" ? "" : " (English)"}</a>`;
-  return `<footer class="foot"><div class="wrap">${note ? `<p class="note">${esc(note)}</p>` : ""}<a href="${langOf(lang).path}">Nurevo</a> ・ ${legal("terms", "foot.terms")} ・ ${legal("privacy", "foot.privacy")}</div></footer>`;
+  return `<footer class="foot"><div class="wrap">${note ? `<p class="note">${esc(note)}</p>` : ""}<a href="${langOf(lang).path}">Nurevo AIO</a> ・ ${legal("terms", "foot.terms")} ・ ${legal("privacy", "foot.privacy")}</div></footer>`;
 }
 
 /** A locale block is publishable when every field a visitor would read has copy in it. */
@@ -626,13 +642,13 @@ function guideHub(lang) {
   // Topics still being written are named only where their working title is in
   // the page's language (the target queries are written in English and Japanese).
   const pending = lang === "en" || lang === "ja" ? ALL_CONTENT.filter((page) => page.slug !== "what-is-aeo" && !isComplete(page.locales[lang])) : [];
-  const title = `${ui("guides", lang)} | Nurevo`;
+  const title = `${ui("guides", lang)} | Nurevo AIO`;
   const description = ui("hubDesc", lang);
   const hreflang = listLang !== lang ? ' hreflang="en"' : "";
   const item = (page) => `<li><a href="${contentPath(listLang, page.slug)}"${hreflang}>${esc(page.locales[listLang].h1)}</a></li>`;
   const extra = `<style>${ARTICLE_CSS}</style>\n${jsonLd([organizationNode(), websiteNode(), webPageNode({ url, title, description, lang }), breadcrumbNode(url, [{ name: t("nav.home", lang), url: ORIGIN + home }, { name: ui("guides", lang), url }])])}`;
   const alternates = alternatesFor(LANGS.map((item) => item.code), hubPath);
-  return `<!doctype html><html ${htmlAttrs(lang)}><head>${head({ lang, title, description, url, alternates, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${home}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo</a><a class="btn primary" href="${checkHref("/check", lang)}">${esc(ui("freeCheck", lang))}</a></div></header><main class="wrap"><nav class="crumbs" aria-label="${escAttr(ui("crumbs", lang))}"><a href="${home}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <span>${esc(ui("guides", lang))}</span></nav><article><h1>${esc(ui("guides", lang))}</h1><p class="lead">${esc(ui("hubLead", lang))}</p>${listLang !== lang ? `<section class="qa"><h2>${esc(ui("english", lang))}</h2><ul>${listed.map(item).join("")}</ul></section>` : `${pillar ? `<section class="qa"><h2>${esc(ui("startHere", lang))}</h2><p><a href="${contentPath(lang, pillar.slug)}">${esc(pillar.locales[lang].h1)}</a></p></section>` : ""}${guides.length ? `<section class="qa"><h2>${esc(ui("practical", lang))}</h2><ul>${guides.map(item).join("")}</ul></section>` : ""}`}${pending.length ? `<section class="qa"><h2>${lang === "ja" ? "準備中" : "In progress"}</h2><ul>${pending.map((page) => `<li>${esc(page.targetQueries[0])}</li>`).join("")}</ul></section>` : ""}</article>${languageList(lang, LANGS.map((item) => item.code), hubPath)}</main>${footer(lang)}<script src="/assets/ai-referral.js" defer></script></body></html>`;
+  return `<!doctype html><html ${htmlAttrs(lang)}><head>${head({ lang, title, description, url, alternates, extra })}</head><body><header class="nav"><div class="wrap"><a class="brand" href="${home}"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a><a class="btn primary" href="${checkHref("/check", lang)}">${esc(ui("freeCheck", lang))}</a></div></header><main class="wrap"><nav class="crumbs" aria-label="${escAttr(ui("crumbs", lang))}"><a href="${home}">${esc(t("nav.home", lang))}</a> <span aria-hidden="true">›</span> <span>${esc(ui("guides", lang))}</span></nav><article><h1>${esc(ui("guides", lang))}</h1><p class="lead">${esc(ui("hubLead", lang))}</p>${listLang !== lang ? `<section class="qa"><h2>${esc(ui("english", lang))}</h2><ul>${listed.map(item).join("")}</ul></section>` : `${pillar ? `<section class="qa"><h2>${esc(ui("startHere", lang))}</h2><p><a href="${contentPath(lang, pillar.slug)}">${esc(pillar.locales[lang].h1)}</a></p></section>` : ""}${guides.length ? `<section class="qa"><h2>${esc(ui("practical", lang))}</h2><ul>${guides.map(item).join("")}</ul></section>` : ""}`}${pending.length ? `<section class="qa"><h2>${lang === "ja" ? "準備中" : "In progress"}</h2><ul>${pending.map((page) => `<li>${esc(page.targetQueries[0])}</li>`).join("")}</ul></section>` : ""}</article>${languageList(lang, LANGS.map((item) => item.code), hubPath)}</main>${footer(lang)}<script src="/assets/ai-referral.js" defer></script></body></html>`;
 }
 for (const lang of LANGS) files.set(`${hubPath(lang.code).slice(1)}index.html`, guideHub(lang.code));
 sitemap.push({ alternates: alternatesFor(LANGS.map((lang) => lang.code), hubPath), urls: LANGS.map((lang) => ORIGIN + hubPath(lang.code)) });
@@ -660,7 +676,7 @@ function withSeoBlock(source, page) {
     `<link rel="canonical" href="${escAttr(url)}">`,
     '<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">',
     '<meta property="og:type" content="website">',
-    '<meta property="og:site_name" content="Nurevo">',
+    '<meta property="og:site_name" content="Nurevo AIO">',
     `<meta property="og:title" content="${escAttr(title)}">`,
     `<meta property="og:description" content="${escAttr(description)}">`,
     `<meta property="og:url" content="${escAttr(url)}">`,

@@ -1,8 +1,7 @@
 /* Nurevo dashboard asset revision: 2026-10-27-scorev2 */
 (function () {
   "use strict";
-  var selectedSiteId = null;
-  var loadingSiteId = null;
+  var loadingDetail = null;
   // Words come from the dashboard dictionary (t() in dashboard.html), as in
   // dashboard-onboarding.js, so this panel speaks the page's language.
   function tr(key, vars) {
@@ -161,24 +160,25 @@
     section.innerHTML = '<div class="card panel"><div class="nrv-aeo-heading"><div><small>' + esc(tr('amKicker')) + '</small><h2>' + esc(tr('amHeading')) + '</h2></div>' + rulesetStatus(metrics) + '</div>' + optimizationNotice(metrics) + '<div class="nrv-aeo-grid"><section><h3>' + esc(tr('amScoreDaily')) + '</h3>' + scoreSummary(metrics.scores, metrics.aeo_score) + '</section><section><h3>' + esc(tr('amReferralDaily')) + '</h3>' + referralTrend(metrics.ai_referrals) + '</section></div><section class="nrv-aeo-checklist"><h3>' + esc(tr('amCrawlerTitle')) + '</h3>' + crawlerTable(metrics) + '</section><section class="nrv-aeo-checklist"><h3>' + esc(tr('amChecklist')) + '</h3>' + checklist(metrics) + '</section></div>';
     return section;
   }
-  async function resolveSiteId() {
-    if (selectedSiteId) return selectedSiteId;
-    var heading = document.querySelector('#main > .top h1');
-    if (!heading) return null;
-    var response = await fetch('/api/sites', { credentials: 'include', cache: 'no-store' });
-    if (!response.ok) return null;
-    var sites = (await response.json()).sites || [];
-    var name = heading.textContent.trim();
-    var site = sites.find(function (item) { return (item.url || item.slug || 'Hosted store') === name; });
-    return site ? site.id : null;
+  // The rendered identity is authoritative. Names/domains are not unique,
+  // and a click cache cannot follow Back/Forward or direct hash navigation.
+  function resolveSiteId() {
+    var detail = document.querySelector('#main .detail');
+    var match = /^#site:(.+)$/.exec(String(location.hash || ''));
+    if (!detail || !match) return null;
+    var id; try { id = decodeURIComponent(match[1]); } catch (_) { return null; }
+    return detail.getAttribute('data-site-id') === id ? id : null;
+  }
+  function currentDetail(main, detail, siteId) {
+    return main === document.querySelector('#main') && detail === main.querySelector('.detail') && resolveSiteId() === siteId;
   }
   async function mount() {
     var main = document.querySelector('#main'), detail = main && main.querySelector('.detail');
-    if (!main || !detail) { loadingSiteId = null; return; }
+    if (!main || !detail) { loadingDetail = null; return; }
     if (main.querySelector('.nrv-aeo-metrics')) return;
-    var siteId = await resolveSiteId();
-    if (!siteId || loadingSiteId === siteId || main.querySelector('.nrv-aeo-metrics')) return;
-    loadingSiteId = siteId;
+    var siteId = resolveSiteId();
+    if (!siteId || loadingDetail === detail || main.querySelector('.nrv-aeo-metrics')) return;
+    loadingDetail = detail;
     var placeholder = document.createElement('section');
     placeholder.className = 'nrv-aeo-metrics';
     placeholder.innerHTML = '<div class="card panel"><p class="notice">' + esc(tr('amLoading')) + '</p></div>';
@@ -192,17 +192,12 @@
       var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/aeo-metrics?limit=30&days=30&lang=' + encodeURIComponent(lang), { credentials: 'include', cache: 'no-store' });
       var metrics = await response.json();
       if (!response.ok) throw new Error(metrics.error || tr('amLoadFailed'));
-      if (placeholder.isConnected) placeholder.replaceWith(panel(metrics));
+      if (currentDetail(main, detail, siteId) && placeholder.isConnected) placeholder.replaceWith(panel(metrics));
     } catch (error) {
-      if (placeholder.isConnected) placeholder.innerHTML = '<div class="card panel"><div class="nrv-aeo-empty">' + esc(error.message) + '</div></div>';
-    } finally { loadingSiteId = null; }
+      if (currentDetail(main, detail, siteId) && placeholder.isConnected) placeholder.innerHTML = '<div class="card panel"><div class="nrv-aeo-empty">' + esc(error.message) + '</div></div>';
+    } finally { if (loadingDetail === detail) loadingDetail = null; }
   }
-  document.addEventListener('click', function (event) {
-    var row = event.target.closest && event.target.closest('[data-site]');
-    if (row) selectedSiteId = row.getAttribute('data-site');
-    var back = event.target.closest && event.target.closest('[data-view="sites"]');
-    if (back) selectedSiteId = null;
-  }, true);
+
   var style = document.createElement('style');
   style.textContent = '.nrv-aeo-metrics{margin-top:18px}.nrv-aeo-heading{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap;margin-bottom:18px}.nrv-aeo-heading small{color:#6f4df6;font-weight:800}.nrv-aeo-heading h2{font-size:19px;margin:2px 0}.nrv-aeo-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}.nrv-aeo-grid h3{font-size:14px;margin:0 0 12px}.nrv-aeo-score{display:flex;align-items:baseline;gap:5px}.nrv-aeo-score strong{font-size:36px;color:#4b31c6}.nrv-aeo-score b{margin-left:auto;font-size:12px;color:#667085}.nrv-aeo-score b.up{color:#128a48}.nrv-aeo-score b.down{color:#c83f49}.nrv-aeo-chart{display:block;width:100%;height:auto;min-height:120px;background:#faf9fe;border-radius:10px}.nrv-aeo-chart .axis{stroke:#ded9ea;stroke-width:1}.nrv-aeo-chart .line{fill:none;stroke:#6f4df6;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}.nrv-aeo-chart circle{fill:#fff;stroke:#6f4df6;stroke-width:3}.nrv-aeo-range{display:flex;justify-content:space-between;color:#8b8498;font-size:10px}.nrv-ruleset{display:grid;gap:1px;border-radius:9px;padding:8px 11px;font-size:12px}.nrv-ruleset.latest{background:#eaf8ef;color:#176b3a}.nrv-ruleset.static,.nrv-aeo-warning{background:#fff7d6;border:1px solid #f0c75e;color:#6d5000}.nrv-ruleset span{font-size:11px}.nrv-aeo-warning,.nrv-aeo-empty{border-radius:9px;padding:14px;font-size:12px}.nrv-aeo-checklist{margin-top:22px;border-top:1px solid #efecf4;padding-top:18px}.nrv-aeo-checks{list-style:none;margin:0;padding:0}.nrv-aeo-check{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;padding:11px 0;border-top:1px solid #f3f1f7}.nrv-aeo-check:first-child{border-top:0}.nrv-aeo-check strong{display:block;font-size:13px}.nrv-aeo-check p{margin:2px 0 0;color:#6c6579;font-size:12px}.nrv-aeo-check-icon{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;color:#fff;font-size:12px;font-weight:800}.nrv-aeo-check.is-ok .nrv-aeo-check-icon{background:#1a9c6b}.nrv-aeo-check.is-warn .nrv-aeo-check-icon{background:#b7791f}.nrv-aeo-check.is-bad .nrv-aeo-check-icon{background:#d13b3b}.nrv-aeo-empty{background:#f6f7fb;color:#687080;text-align:center}.nrv-hit-cell{position:relative;min-width:100px}.nrv-hit-bar{display:block;height:20px;border-radius:5px;background:#dcd3ff}.nrv-hit-cell b{position:absolute;left:7px;top:0;line-height:20px;font-size:11px}.nrv-aeo-grid code{font-size:11px}@media(max-width:800px){.nrv-aeo-grid{grid-template-columns:1fr}}';
   document.head.appendChild(style);

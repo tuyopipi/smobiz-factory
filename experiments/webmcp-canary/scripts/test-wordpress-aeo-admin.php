@@ -536,7 +536,7 @@ expect(webmcp_canary_detect_active_seo_plugins() === array('slim-seo/slim-seo.ph
 expect(in_array('slim-seo/slim-seo.php', webmcp_canary_graph_integrations(), true), 'Slim SEO is a graph Nurevo merges into');
 expect(strpos(webmcp_canary_seo_coexistence_message(), 'Slim SEO') !== false, 'the coexistence notice names Slim SEO');
 expect(!in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('slim-seo/slim-seo.php' => 'Slim SEO'), array()), true),
-    'Slim SEO has no FAQ block, so it never suppresses the Nurevo FAQ');
+    'Slim SEO has no FAQ block, so it never suppresses the Nurevo AIO FAQ');
 expect(in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('wordpress-seo/wp-seo.php' => 'Yoast SEO'), array()), true),
     'Yoast still does (it ships an FAQ block)');
 expect(webmcp_canary_slim_seo_prints_schema() === false, 'Slim SEO schema printer not hooked: nothing to wait for');
@@ -632,7 +632,7 @@ expect(webmcp_canary_detect_active_seo_plugins() === array('seo-simple-pack/seo-
 expect(strpos(webmcp_canary_seo_coexistence_message(), 'SEO SIMPLE PACK') !== false, 'the coexistence notice names SEO SIMPLE PACK as detected');
 expect(!in_array('seo-simple-pack/seo-simple-pack.php', webmcp_canary_measurement_exempt_plugins(), true), 'SEO SIMPLE PACK, with no JSON-LD and no filter, is handled by measurement');
 expect(!in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('seo-simple-pack/seo-simple-pack.php' => 'SEO SIMPLE PACK'), array()), true),
-    'SEO SIMPLE PACK publishes no FAQ, so it never suppresses the Nurevo FAQ');
+    'SEO SIMPLE PACK publishes no FAQ, so it never suppresses the Nurevo AIO FAQ');
 ob_start();
 webmcp_canary_output_server_schema();
 $ssp_output = ob_get_clean();
@@ -680,7 +680,7 @@ $GLOBALS['webmcp_test_active_plugins'] = array('vk-all-in-one-expansion-unit/vkE
 expect(webmcp_canary_detect_active_seo_plugins() === array('vk-all-in-one-expansion-unit/vkExUnit.php' => 'VK All in One Expansion Unit'), 'VK All in One Expansion Unit is detected through is_plugin_active');
 expect(in_array('vk-all-in-one-expansion-unit/vkExUnit.php', webmcp_canary_measurement_exempt_plugins(), true), 'ExUnit is handled per request, not by measurement');
 expect(!in_array('FAQPage', webmcp_canary_suppressed_schema_types(null, array('vk-all-in-one-expansion-unit/vkExUnit.php' => 'VK All in One Expansion Unit'), array()), true),
-    'ExUnit publishes no FAQ, so it never suppresses the Nurevo FAQ');
+    'ExUnit publishes no FAQ, so it never suppresses the Nurevo AIO FAQ');
 expect(webmcp_canary_callback_hooked('wp_head', 'VK_WebSite_Srtuctured_Data', 'the_website_structure_data') === false, 'ExUnit printers not hooked: nothing to wait for');
 
 // 1. WebSite package on, front page: <head> waits for ExUnit, then prints everything but a WebSite.
@@ -1683,7 +1683,7 @@ foreach (array('無料', '標準', '上位') as $retired) {
     expect(strpos(webmcp_canary_plan_badge('free') . webmcp_canary_plan_badge('standard') . webmcp_canary_plan_badge('pro'), $retired) === false, "retired plan label is gone: {$retired}");
 }
 expect(strpos($source, '上位プラン') === false && strpos($source, '標準プラン') === false, 'no retired plan name remains in the plugin UI');
-$title = webmcp_canary_screen_title('Nurevo AEO');
+$title = webmcp_canary_screen_title('Nurevo AIO');
 expect(strpos($title, 'assets/logo.svg') !== false && strpos($title, 'webmcp-plan-badge') !== false, 'the screen title carries the logo and the plan badge');
 
 // Schema ownership is stated as fact, per detected SEO plugin.
@@ -1862,7 +1862,7 @@ foreach (array('AI appearance rate', 'Citation rate', 'vs previous', 'Trend', 'C
 $readme = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
 $readme_lines = explode("\n", $readme);
 // wordpress.org shows this line as the listing title; it may add a descriptive subtitle after the plugin name.
-expect($readme_lines[0] === '=== Nurevo AEO ===' || strpos($readme_lines[0], '=== Nurevo AEO – ') === 0, 'readme declares the Nurevo AEO plugin name');
+expect($readme_lines[0] === '=== Nurevo AIO ===', 'readme declares the Nurevo AIO plugin name');
 expect(substr($readme_lines[0], -4) === ' ===' && mb_strlen($readme_lines[0]) <= 80, 'readme title is well formed and not overlong');
 
 $headers = array();
@@ -2950,13 +2950,13 @@ expect($failed_settings['enabled'] === '0', 'a failed pairing does not switch ou
 $GLOBALS['webmcp_test_options'][WEBMCP_CANARY_OPTION] = array_merge(webmcp_canary_default_settings(), array('enabled' => '0'));
 $_GET['page'] = 'webmcp-canary';
 ob_start(); webmcp_canary_output_off_notice(); $off_notice = ob_get_clean();
-expect(strpos($off_notice, 'Nurevo AEO is off') !== false, 'the plugin screen says output is off');
+expect(strpos($off_notice, 'Nurevo AIO is off') !== false, 'the plugin screen says output is off');
 $_GET['page'] = 'some-other-plugin';
 ob_start(); webmcp_canary_output_off_notice(); $elsewhere = ob_get_clean();
 expect($elsewhere === '', 'other admin screens are not nagged');
 $GLOBALS['webmcp_test_screen'] = (object) array('id' => 'plugins');
 ob_start(); webmcp_canary_output_off_notice(); $plugins_screen = ob_get_clean();
-expect(strpos($plugins_screen, 'Nurevo AEO is off') !== false, 'the Plugins list says output is off');
+expect(strpos($plugins_screen, 'Nurevo AIO is off') !== false, 'the Plugins list says output is off');
 // 0.8.0: information, not an error, and dismissible per user on the Plugins screen.
 expect(strpos($off_notice, 'notice-error') === false && strpos($off_notice, 'notice-info') !== false, 'on Nurevo screens it is an informational notice');
 expect(strpos($off_notice, 'is-dismissible') === false, 'which stays on Nurevo screens, where the switch is');
@@ -2969,12 +2969,12 @@ ob_start(); webmcp_canary_output_off_notice(); $after_dismiss = ob_get_clean();
 expect($after_dismiss === '', 'once dismissed it no longer shows on the Plugins screen for that user');
 $GLOBALS['webmcp_test_user_id'] = 8;
 ob_start(); webmcp_canary_output_off_notice(); $other_user = ob_get_clean();
-expect(strpos($other_user, 'Nurevo AEO is off') !== false, 'the dismissal is stored per user');
+expect(strpos($other_user, 'Nurevo AIO is off') !== false, 'the dismissal is stored per user');
 $GLOBALS['webmcp_test_user_id'] = 7;
 unset($GLOBALS['webmcp_test_screen']);
 $_GET['page'] = 'webmcp-canary';
 ob_start(); webmcp_canary_output_off_notice(); $nurevo_after_dismiss = ob_get_clean();
-expect(strpos($nurevo_after_dismiss, 'Nurevo AEO is off') !== false, 'dismissing on the Plugins screen does not hide it on Nurevo screens');
+expect(strpos($nurevo_after_dismiss, 'Nurevo AIO is off') !== false, 'dismissing on the Plugins screen does not hide it on Nurevo screens');
 unset($GLOBALS['webmcp_test_user_id']);
 expect(in_array('webmcp_canary_dismiss_off_notice_ajax', $GLOBALS['webmcp_test_hooks']['wp_ajax_webmcp_canary_dismiss_off_notice'], true), 'the dismissal endpoint is registered');
 unset($GLOBALS['webmcp_test_screen'], $_GET['page']);
@@ -3004,12 +3004,12 @@ update_option(WEBMCP_CANARY_INSTALLED_OPTION, time() - 6 * DAY_IN_SECONDS);
 expect($review_render('webmcp-canary') === '', 'not before seven days');
 update_option(WEBMCP_CANARY_INSTALLED_OPTION, time() - 8 * DAY_IN_SECONDS);
 $review_html = $review_render('webmcp-canary');
-expect(strpos($review_html, 'Is Nurevo AEO helping?') !== false, 'after a week, with output on, Nurevo screens ask for a review');
+expect(strpos($review_html, 'Is Nurevo AIO helping?') !== false, 'after a week, with output on, Nurevo screens ask for a review');
 expect(strpos($review_html, 'https://wordpress.org/support/plugin/nurevo-webmcp/reviews/#new-post') !== false && strpos($review_html, 'target="_blank"') !== false, 'linking to the wp.org review form in a new tab');
 expect(strpos($review_html, 'notice-info') !== false && strpos($review_html, 'is-dismissible') !== false, 'as a small dismissible info notice');
 expect(strpos($review_html, 'Do not show again') !== false && strpos($review_html, 'webmcp_canary_dismiss_review_notice') !== false, 'with a "Do not show again" that is sent to the server');
 expect(!preg_match('/rating=|stars?=|utm_|★/i', $review_html), 'no star gating, rating preset or tracking');
-expect(strpos($review_render('webmcp-canary-settings'), 'Is Nurevo AEO helping?') !== false, 'on every Nurevo screen');
+expect(strpos($review_render('webmcp-canary-settings'), 'Is Nurevo AIO helping?') !== false, 'on every Nurevo screen');
 expect($review_render('webmcp-canary-setup') === '', 'but not in the setup wizard');
 expect($review_render(null, 'plugins') === '', 'not on the Plugins list');
 expect($review_render(null, 'dashboard') === '' && $review_render('some-other-plugin') === '', 'and nowhere else in the admin');
@@ -3023,7 +3023,7 @@ expect(webmcp_canary_dismiss_review_notice_for_user(0) === false, 'a review dism
 expect(webmcp_canary_dismiss_review_notice_for_user(21) === true, 'a user can dismiss the review request');
 expect($review_render('webmcp-canary') === '', 'once dismissed it stays hidden for that user');
 $GLOBALS['webmcp_test_user_id'] = 22;
-expect(strpos($review_render('webmcp-canary'), 'Is Nurevo AEO helping?') !== false, 'the review dismissal is per user');
+expect(strpos($review_render('webmcp-canary'), 'Is Nurevo AIO helping?') !== false, 'the review dismissal is per user');
 unset($GLOBALS['webmcp_test_user_id']);
 if ($review_saved_installed === null) { unset($GLOBALS['webmcp_test_options'][WEBMCP_CANARY_INSTALLED_OPTION]); } else { update_option(WEBMCP_CANARY_INSTALLED_OPTION, $review_saved_installed); }
 
@@ -3453,7 +3453,7 @@ expect(strpos($serve_body, 'nocache_headers') === false, 'and no longer as uncac
 $GLOBALS['webmcp_test_privacy'] = array();
 webmcp_canary_add_privacy_policy_content();
 expect(in_array('webmcp_canary_add_privacy_policy_content', $GLOBALS['webmcp_test_hooks']['admin_init'], true), 'the privacy text is offered from admin_init');
-$privacy = $GLOBALS['webmcp_test_privacy']['Nurevo AEO'] ?? '';
+$privacy = $GLOBALS['webmcp_test_privacy']['Nurevo AIO'] ?? '';
 expect($privacy !== '', 'privacy policy text is suggested to WordPress');
 foreach (array('nurevo.jp', 'Only after a site administrator agrees', 'pairing code', 'home page address', 'business details', 'no visitor data', 'https://nurevo.jp/privacy') as $disclosed) {
     expect(strpos($privacy, $disclosed) !== false, "the privacy text states: {$disclosed}");
@@ -3504,14 +3504,14 @@ expect($shown_again['show_admin_bar_score'] === '1' && $shown_again['show_dashbo
 expect(in_array('show_admin_bar_score', webmcp_canary_exportable_setting_keys(), true), 'the switches travel with an export');
 
 $block_js = webmcp_canary_faq_block_editor_js();
-expect(strpos($block_js, "title:'Nurevo FAQ'") === false && strpos($block_js, 'title:t.title') !== false, 'the FAQ block title comes from a translated string');
-expect(strpos($block_js, '"title":"Nurevo FAQ"') !== false, 'which is passed in from PHP');
+expect(strpos($block_js, "title:'Nurevo AIO FAQ'") === false && strpos($block_js, 'title:t.title') !== false, 'the FAQ block title comes from a translated string');
+expect(strpos($block_js, '"title":"Nurevo AIO FAQ"') !== false, 'which is passed in from PHP');
 
 $main_source = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/nurevo-webmcp.php');
-expect(WEBMCP_CANARY_VERSION === '0.9.1' && strpos($main_source, " * Version: 0.9.1\n") !== false, 'the version is 0.9.1 in the header and the constant');
+expect(WEBMCP_CANARY_VERSION === '0.9.2' && strpos($main_source, " * Version: 0.9.2\n") !== false, 'the version is 0.9.2 in the header and the constant');
 $readme_081 = file_get_contents(dirname(__DIR__) . '/wordpress-plugin/webmcp-canary/readme.txt');
-expect(strpos($readme_081, "Stable tag: 0.9.1") !== false, 'and in the readme stable tag');
-expect(substr_count($readme_081, "= 0.9.1 =") === 2 && substr_count($readme_081, "= 0.9.0 =") === 2 && substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.9.0, 0.8.1 and 0.8.0');
+expect(strpos($readme_081, "Stable tag: 0.9.2") !== false, 'and in the readme stable tag');
+expect(substr_count($readme_081, "= 0.9.2 =") === 2 && substr_count($readme_081, "= 0.9.1 =") === 2 && substr_count($readme_081, "= 0.9.0 =") === 2 && substr_count($readme_081, "= 0.8.1 =") === 2 && substr_count($readme_081, "= 0.8.0 =") === 2, 'with a changelog entry and an upgrade notice, keeping 0.9.0, 0.8.1 and 0.8.0');
 expect(strpos($readme_081, '= Does the AI integration cost anything? =') !== false, 'the readme answers whether the AI integration costs anything');
 
 /* --- Free is never scored down for data it holds: optIn fields publish unless retired --- */
@@ -3541,12 +3541,12 @@ $wizard_reset = function ($settings = array()) {
 };
 $interactive = array('cli' => false, 'ajax' => false, 'rest' => false, 'network' => false, 'bulk' => false);
 $wizard_url = webmcp_canary_wizard_url();
-expect(strpos($wizard_url, 'page=webmcp-canary-setup') !== false, 'the wizard lives at Nurevo AEO > Setup');
+expect(strpos($wizard_url, 'page=webmcp-canary-setup') !== false, 'the wizard lives at Nurevo AIO > Setup');
 
 // Reachable later from the Nurevo menu.
 $GLOBALS['webmcp_test_submenus'] = array();
 webmcp_canary_wizard_menu();
-expect(($GLOBALS['webmcp_test_submenus']['webmcp-canary-setup']['parent'] ?? '') === 'webmcp-canary', 'Setup is a submenu of Nurevo AEO');
+expect(($GLOBALS['webmcp_test_submenus']['webmcp-canary-setup']['parent'] ?? '') === 'webmcp-canary', 'Setup is a submenu of Nurevo AIO');
 expect($GLOBALS['webmcp_test_submenus']['webmcp-canary-setup']['title'] === 'Setup' && $GLOBALS['webmcp_test_submenus']['webmcp-canary-setup']['capability'] === 'manage_options', 'labelled Setup, for administrators');
 
 // The activation hook asks for the redirect, and passes on whether it was network-wide.
@@ -3708,7 +3708,7 @@ expect(webmcp_canary_settings()['enabled'] === '0' && webmcp_canary_settings()['
 ob_start(); webmcp_canary_wizard_render_step_4(webmcp_canary_settings()); $step4 = ob_get_clean();
 expect(strpos($step4, 'nothing has been sent') !== false, 'step 4 says nothing was sent');
 expect(count($GLOBALS['webmcp_test_remote_get_log']) === $log_before && $GLOBALS['webmcp_test_last_remote'] === null, 'the wizard makes no HTTP request before consent');
-expect(strpos($step4, 'Add the Nurevo FAQ block to a page') !== false && strpos($step4, 'Connect to nurevo.jp') !== false && strpos($step4, 'Per-page settings:') !== false, 'step 4 lists the next steps');
+expect(strpos($step4, 'Add the Nurevo AIO FAQ block to a page') !== false && strpos($step4, 'Connect to nurevo.jp') !== false && strpos($step4, 'Per-page settings:') !== false, 'step 4 lists the next steps');
 expect(substr_count($step4, 'Standard') <= 1, 'at most one line about Standard');
 
 // With consent, step 4 shows the score through the existing function and cache.
@@ -3921,7 +3921,7 @@ expect($status['ai_training'] === 'block' && $status['connected'] === true && $s
 
 $no_score = $run('nurevo/get-aeo-score');
 expect($no_score['available'] === false && $no_score['score'] === null, 'get-aeo-score says when no diagnosis is stored');
-expect(strpos($no_score['message'], 'Nurevo AEO > AEO Score') !== false, 'and tells the user where to run one');
+expect(strpos($no_score['message'], 'Nurevo AIO > AEO Score') !== false, 'and tells the user where to run one');
 $no_fixes = $run('nurevo/get-fixes');
 expect($no_fixes['available'] === false && $no_fixes['fixes'] === array(), 'get-fixes has nothing to list without a diagnosis');
 delete_option(WEBMCP_CANARY_CONSENT_OPTION);
@@ -3951,7 +3951,7 @@ expect($score_out['checklist'] === array('total' => 5, 'ok' => 1, 'warn' => 2, '
 $fixes = $run('nurevo/get-fixes');
 expect(count($fixes['fixes']) === 4 && $fixes['fixes'][0]['id'] === 'llms', 'get-fixes lists only the WARN and BAD items');
 expect(strpos($fixes['fixes'][0]['next_step'], 'press "Create it"') !== false, 'a one-click fix says which button to press');
-expect(strpos($fixes['fixes'][1]['next_step'], 'Open Nurevo AEO > Settings') !== false, 'a missing-facts item points to the business details');
+expect(strpos($fixes['fixes'][1]['next_step'], 'Open Nurevo AIO > Settings') !== false, 'a missing-facts item points to the business details');
 expect(strpos($fixes['fixes'][2]['next_step'], 'headings') !== false, 'an editorial item gets the editorial advice');
 expect($fixes['fixes'][3]['next_step'] === 'Do the new thing.', 'an unknown check falls back to the service hints');
 

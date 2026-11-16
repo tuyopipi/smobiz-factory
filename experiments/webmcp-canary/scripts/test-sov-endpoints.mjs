@@ -435,7 +435,7 @@ const operatorEnv = (extra) => ({ DB: operatorDb(), SUPER_ADMIN_EMAILS: "ops@nur
   assert.equal(body.report.site.plan, "pro", "the report records the plan");
   assert.equal(body.delivery.email_enabled, false, "email delivery is not enabled");
   assert.equal(body.delivery.status, "generation_only", "the endpoint is generation-only");
-  assert.ok(body.preview.text.includes("Nurevo AEO 月次レポート"), "a text preview is generated");
+  assert.ok(body.preview.text.includes("Nurevo AIO 月次レポート"), "a text preview is generated");
 
   const html = await get(`/api/sites/${SITE_ID}/monthly-report?format=html`, env, { cookie: SESSION });
   assert.equal(html.headers.get("content-type"), "text/html; charset=utf-8", "HTML format is served as HTML");

@@ -74,6 +74,7 @@
       section.innerHTML = head + '<p class="notice" data-lg-needs-approval>' + esc(tr("lgNeedsApproval")) + "</p></div>";
       return section;
     }
+    head += '<p><a class="btn" href="/agency-sales-kit.html?lang=' + pageLang() + '" target="_blank" rel="noopener">' + esc(tr("lgSalesKit")) + '</a></p>';
     var s = view.settings || {};
     var dis = view.can_edit ? "" : " disabled";
     var checked = function (v) { return v ? " checked" : ""; };
@@ -172,16 +173,32 @@
   function leadsCard(data, canDelete) {
     var section = document.createElement("section");
     section.className = "nrv-leads";
+    var statuses = [tr("lgSalesNew"), tr("lgSalesProposed"), tr("lgSalesTrial"), tr("lgSalesWon"), tr("lgSalesLost")];
+    var keys = ["new", "proposed", "trial", "won", "lost"];
     var rows = (data.leads || []).map(function (l) {
       return "<tr data-lead=\"" + esc(l.id) + "\"><td>" + esc(when(l.created_at)) + "</td><td class=\"nrv-lg-wrap\">" + esc(l.site_url) + "</td><td>" + esc(l.name) + "</td><td class=\"nrv-lg-wrap\">" + esc(l.email)
         + "</td><td>" + (l.score == null ? "—" : esc(l.score)) + "</td><td>" + esc(tr(l.source === "landing" ? "lgSrcLanding" : "lgSrcWidget"))
-        + "</td><td>" + (canDelete ? '<button type="button" class="btn" data-lg-delete="' + esc(l.id) + '">' + esc(tr("del")) + "</button>" : "") + "</td></tr>";
+        + "</td><td>" + (data.sales_status_available ? '<select aria-label="' + esc(tr("lgSalesStage")) + '" data-lg-status="' + esc(l.id) + '" data-original="' + esc(l.sales_status || "new") + '"' + (data.can_edit_sales ? '' : ' disabled') + '>' + keys.map(function(k, i) { return '<option value="' + k + '"' + (k === (l.sales_status || "new") ? ' selected' : '') + '>' + esc(statuses[i]) + '</option>'; }).join('') + '</select>' : '—')
+        + '<a class="btn" href="/agency-sales-kit.html?lead=' + encodeURIComponent(l.id) + '&lang=' + pageLang() + '" target="_blank" rel="noopener">' + esc(tr("lgSalesProposal")) + '</a></td><td>' + (canDelete ? '<button type="button" class="btn" data-lg-delete="' + esc(l.id) + '">' + esc(tr("del")) + "</button>" : "") + "</td></tr>";
     }).join("");
     section.innerHTML = '<div class="card panel" style="margin-top:18px"><div class="nrv-aeo-heading"><div><h2>' + esc(tr("lgLeads")) + "</h2></div>"
       + ((data.leads || []).length ? '<a class="btn" data-lg-csv href="/api/agency/leads.csv" download>' + esc(tr("lgCsv")) + "</a>" : "") + "</div>"
       + '<p class="nrv-lg-lead">' + esc(tr("lgLeadsLead")) + "</p>"
-      + '<div class="nrv-lg-table"><table><thead><tr><th>' + esc(tr("svDateTime")) + "</th><th>" + esc(tr("lgSite")) + "</th><th>" + esc(tr("lgPerson")) + "</th><th>" + esc(tr("email")) + "</th><th>" + esc(tr("lgScore")) + "</th><th>" + esc(tr("lgSource")) + "</th><th></th></tr></thead><tbody>"
-      + (rows || '<tr><td colspan="7" data-lg-empty>' + esc(tr("lgNoLeads")) + "</td></tr>") + "</tbody></table></div></div>";
+      + '<div class="nrv-lg-table"><table><thead><tr><th>' + esc(tr("svDateTime")) + "</th><th>" + esc(tr("lgSite")) + "</th><th>" + esc(tr("lgPerson")) + "</th><th>" + esc(tr("email")) + "</th><th>" + esc(tr("lgScore")) + "</th><th>" + esc(tr("lgSource")) + "</th><th>" + esc(tr("lgSalesHeading")) + "</th><th></th></tr></thead><tbody>"
+      + (rows || '<tr><td colspan="8" data-lg-empty>' + esc(tr("lgNoLeads")) + "</td></tr>") + "</tbody></table></div></div>";
+    var feedback = document.createElement("p"); feedback.setAttribute("role", "status"); section.appendChild(feedback);
+    section.querySelectorAll("[data-lg-status]").forEach(function (select) {
+      select.addEventListener("change", async function () {
+        var old = select.getAttribute("data-original"); select.disabled = true;
+        try {
+          var result = await send("PUT", "/api/agency/leads/" + encodeURIComponent(select.getAttribute("data-lg-status")) + "/sales-status", {status: select.value});
+          if (!result.ok) throw new Error("save_failed");
+          select.setAttribute("data-original", select.value);
+          feedback.textContent = tr("lgSalesSaved");
+        } catch (e) { select.value = old; feedback.textContent = tr("crSaveError"); }
+        finally { select.disabled = false; }
+      });
+    });
     section.querySelectorAll("[data-lg-delete]").forEach(function (button) {
       button.addEventListener("click", async function () {
         if (!window.confirm(tr("lgDeleteConfirm"))) return;

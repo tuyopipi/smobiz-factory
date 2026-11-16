@@ -16,8 +16,7 @@
  */
 (function () {
   "use strict";
-  var selectedSiteId = null;
-  var loadingSiteId = null;
+  var loadingDetail = null;
   // Words come from the dashboard dictionary (t() in dashboard.html), as in
   // dashboard-onboarding.js. Server text (upgrade copy, notices, gap reasons)
   // is shown as the server sent it; the Pro report is requested in the
@@ -261,19 +260,22 @@
     return section;
   }
 
-  async function resolveSiteId() {
-    if (selectedSiteId) return selectedSiteId;
-    var heading = document.querySelector('#main > .top h1');
-    if (!heading) return null;
-    var response = await fetch('/api/sites', { credentials: 'include', cache: 'no-store' });
-    if (!response.ok) return null;
-    var sites = (await response.json()).sites || [];
-    var name = heading.textContent.trim();
-    var site = sites.find(function (item) { return (item.url || item.slug || 'Hosted store') === name; });
-    return site ? site.id : null;
+  // The rendered identity is authoritative. Names/domains are not unique,
+  // and a click cache cannot follow Back/Forward or direct hash navigation.
+  function resolveSiteId() {
+    var detail = document.querySelector('#main .detail');
+    var match = /^#site:(.+)$/.exec(String(location.hash || ''));
+    if (!detail || !match) return null;
+    var id; try { id = decodeURIComponent(match[1]); } catch (_) { return null; }
+    return detail.getAttribute('data-site-id') === id ? id : null;
+  }
+  function currentDetail(main, detail, siteId) {
+    return main === document.querySelector('#main') && detail === main.querySelector('.detail') && resolveSiteId() === siteId;
   }
 
   async function addProReport(main, siteId) {
+    var detail = main.querySelector('.detail');
+    if (!currentDetail(main, detail, siteId)) return;
     var section = main.querySelector('.nrv-sov');
     if (!section || section.querySelector('.nrv-sov-locked')) return;
     // Ask for the report's own sentences (notice, basis, gap reasons) in the
@@ -282,6 +284,7 @@
     var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov/report?lang=' + encodeURIComponent(pageLang), { credentials: 'include' });
     if (!response.ok || !section.isConnected) return;
     var report = (await response.json()).report;
+    if (!currentDetail(main, detail, siteId) || !section.isConnected) return;
     var box = document.createElement('div'); box.className = 'card panel';
     var config = report.current_query_set || { questions: [], repetitions: 2, competitors: [] };
     var table = function (rows) { return '<table style="width:100%">' + rows.map(function (row) { return '<tr>' + row.map(function (cell) { return '<td style="padding:6px">' + esc(cell) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>'; };
@@ -336,16 +339,16 @@
 
   async function mount() {
     var main = document.querySelector('#main'), detail = main && main.querySelector('.detail');
-    if (!main || !detail) { loadingSiteId = null; return; }
+    if (!main || !detail) { loadingDetail = null; return; }
     if (main.querySelector('.nrv-sov')) return;
-    var siteId = await resolveSiteId();
-    if (!siteId || loadingSiteId === siteId || main.querySelector('.nrv-sov')) return;
-    loadingSiteId = siteId;
+    var siteId = resolveSiteId();
+    if (!siteId || loadingDetail === detail || main.querySelector('.nrv-sov')) return;
+    loadingDetail = detail;
     try {
       // A read. The endpoint reports a stored run and never calls an engine.
       var response = await fetch('/api/sites/' + encodeURIComponent(siteId) + '/sov?limit=8', { credentials: 'include', cache: 'no-store' });
       var data = await response.json();
-      if (main.querySelector('.nrv-sov')) return;
+      if (!currentDetail(main, detail, siteId) || main.querySelector('.nrv-sov')) return;
       if (response.status === 402) {
         // The plan is the server's answer, not something this script works out.
         main.appendChild(panel({ kind: 'locked', data: data }));
@@ -357,15 +360,9 @@
       // anything true is worse than no panel.
     } catch (error) {
       /* fail open - the rest of the dashboard is unaffected */
-    } finally { loadingSiteId = null; }
+    } finally { if (loadingDetail === detail) loadingDetail = null; }
   }
 
-  document.addEventListener('click', function (event) {
-    var row = event.target.closest && event.target.closest('[data-site]');
-    if (row) selectedSiteId = row.getAttribute('data-site');
-    var back = event.target.closest && event.target.closest('[data-view="sites"]');
-    if (back) selectedSiteId = null;
-  }, true);
 
   var style = document.createElement('style');
   style.textContent = '.nrv-sov{margin-top:18px}.nrv-sov-beta{font-size:10px;background:#efe9ff;color:#5a3ad6;border-radius:5px;padding:2px 6px;margin-left:6px;vertical-align:middle;font-weight:800}.nrv-sov-meta{display:flex;flex-wrap:wrap;gap:18px;margin:0 0 16px;padding:0}.nrv-sov-meta div{margin:0}.nrv-sov-meta dt{font-size:10px;color:#8b8498;margin:0}.nrv-sov-meta dd{margin:1px 0 0;font-size:13px;font-weight:700}.nrv-sov-engines{display:grid;grid-template-columns:1fr 1fr;gap:14px}.nrv-sov-engine{border:1px solid #ece9f3;border-radius:10px;padding:13px}.nrv-sov-engine.is-headline{border-color:#cdbcff;background:#faf8ff}.nrv-sov-engine-head{display:flex;flex-direction:column;gap:5px;margin-bottom:9px}.nrv-sov-engine-head strong{font-size:13px}.nrv-sov-tag{font-size:10px;border-radius:5px;padding:2px 6px;align-self:flex-start;font-weight:700}.nrv-sov-tag.is-live{background:#e7f5ec;color:#176b3a}.nrv-sov-tag.is-static{background:#f1eff5;color:#5d5570}.nrv-sov-tag b{display:block;font-size:9px;font-weight:800;opacity:.85}.nrv-sov-rate{font-size:28px;font-weight:800;color:#4b31c6}.nrv-sov-n{font-size:11px;color:#8b8498;margin-left:6px}.nrv-sov-none{font-size:12px;color:#6c6579}.nrv-sov-fail{display:block;margin-top:6px;font-size:10px;color:#9a6b00}.nrv-sov-roster{list-style:none;margin:0 0 10px;padding:0}.nrv-sov-roster li{display:flex;gap:8px;align-items:center;padding:6px 0;font-size:13px;border-top:1px solid #f3f1f7}.nrv-sov-roster li:first-child{border-top:0}.nrv-sov-note{margin:10px 0 0;font-size:11px;color:#6c6579;line-height:1.6}.nrv-sov-competitors{margin-top:18px;border-top:1px solid #efecf4;padding-top:14px}.nrv-sov-competitors h4{font-size:12px;margin:0 0 8px}.nrv-sov-competitors ul{list-style:none;margin:0;padding:0}.nrv-sov-competitors li{display:flex;justify-content:space-between;padding:5px 0;font-size:12px;border-top:1px solid #f3f1f7}.nrv-sov-competitors li:first-child{border-top:0}.nrv-sov-locked{background:#faf9fe;border:1px solid #e6e1f3;border-radius:10px;padding:18px}.nrv-sov-locked-head{margin:0 0 6px;font-size:14px}.nrv-sov-locked p{margin:0 0 6px;font-size:12px;color:#5d5570}.nrv-sov-cta{display:inline-block;margin-top:6px;background:#6f4df6;color:#fff;border-radius:8px;padding:8px 14px;font-size:12px;font-weight:700;text-decoration:none}.nrv-sov-sources{margin:6px 0;padding-left:18px;font-size:12px;word-break:break-all}@media(max-width:800px){.nrv-sov-engines{grid-template-columns:1fr}}';
