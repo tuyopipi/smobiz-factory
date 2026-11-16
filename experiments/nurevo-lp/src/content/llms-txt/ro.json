@@ -1,19 +1,300 @@
 {
-"title": "Ce este llms.txt? Fișierul care prezintă site-ul AI | Nurevo",
-"description": "Ce conține llms.txt, unde îl puneți, prin ce diferă de robots.txt și sitemap.xml și cum îl țineți la zi în WordPress.",
-"h1": "Ce este llms.txt? Fișierul care vă prezintă site-ul pentru AI",
-"lead": "llms.txt este un fișier text simplu în rădăcina domeniului (siteuldvs.ro/llms.txt) care vă descrie site-ul pentru AI într-un limbaj clar, ușor de procesat de mașini, și trimite spre cele mai importante pagini. Gândiți-vă la el ca la un „README pentru AI”.",
-"sections": [
-{"heading": "De ce există", "paragraphs": ["robots.txt le spune crawlerelor la ce au acces; un sitemap listează URL-uri. Niciunul nu îi spune unei AI despre ce este site-ul sau ce să citeze. llms.txt umple acest gol – un rezumat concis și selectat, pe care AI îl citește repede."]},
-{"heading": "Ce conține", "list": ["O scurtă descriere a afacerii sau a site-ului", "Fapte cheie: ce faceți, unde, program, contact", "Linkuri către cele mai importante pagini, fiecare cu o descriere de un rând", "Opțional, conținutul pe care vreți ca AI să se bazeze cel mai mult"]},
-{"heading": "Garantează citarea?", "paragraphs": ["Nu. Este un semnal dintre mai multe – date structurate, acces pentru crawlere, coerență. Dar vă face o sursă mai ușor și mai clar de citat. [Ce este AEO?](/guide/what-is-aeo)"]},
-{"heading": "Cum îl adăugați în WordPress", "paragraphs": ["Îl puteți crea manual, dar se învechește pe măsură ce site-ul se schimbă. Un modul îl poate genera și menține la zi automat. [AEO pentru WordPress](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Este llms.txt un standard oficial?", "a": "Este o convenție emergentă, tot mai recunoscută. Adăugarea lui nu costă nimic și nu poate decât să ajute."},
-{"q": "Unde anume se pune?", "a": "În rădăcina domeniului: https://siteuldvs.ro/llms.txt"},
-{"q": "Este același lucru cu robots.txt sau sitemap.xml?", "a": "Nu. Acelea controlează accesul și listează URL-uri. llms.txt vă descrie site-ul și selectează conținutul pentru AI."}
-],
-"relatedHeading": "Ghiduri similare",
-"cta": {"heading": "Vedeți dacă site-ul are (și are nevoie de) llms.txt", "body": "Fără înregistrare.", "label": "Verificați gratuit", "href": "/check"}
+  "title": "Ce este llms.txt? Cum îl scrieți și funcționează? | Nurevo",
+  "description": "llms.txt explicat cu exemple: formatul, ce se știe cu adevărat despre folosirea lui de AI, când să-l adăugați, trei metode în WordPress și verificarea.",
+  "h1": "Ce este llms.txt? Cum îl scrieți, ce știm despre eficiența lui și cum îl adăugați în WordPress",
+  "lead": "llms.txt este un fișier text Markdown aflat în rădăcina domeniului (/llms.txt), care rezumă site-ul și trimite către cele mai importante pagini ale sale. A fost propus în 2024 și nu este un standard oficial. Google spune că funcțiile sale AI nu au nevoie de el, iar de la ChatGPT sau Perplexity nu am găsit nicio declarație publică potrivit căreia ar folosi în răspunsuri fișierele llms.txt ale altor site-uri. Scrierea lui durează cam 30 de minute, așa că abordarea rezonabilă este să-l tratați ca pe un rezumat scurt și exact, pe care îl adăugați după ce faptele de pe pagini sunt corecte.",
+  "intro": [
+    "Scris pe 16 noiembrie 2026 (JST). Este o rescriere completă a paginii noastre din 23 octombrie 2026, pe baza unei noi lecturi a ghidurilor cel mai bine clasate și a surselor primare. Se adresează proprietarilor de afaceri care decid dacă să adauge llms.txt și agențiilor web care se gândesc dacă să-l adauge pe site-urile clienților.",
+    "Răspunsurile AI se schimbă de la o zi la alta și în funcție de modul în care este formulată întrebarea. Pașii de aici fac mai exacte informațiile pe care le citește AI; nu pot garanta că veți apărea într-un răspuns AI."
+  ],
+  "sections": [
+    {
+      "heading": "La ce folosește llms.txt",
+      "paragraphs": [
+        "llms.txt este o propunere publicată de Jeremy Howard de la Answer.AI pe 3 septembrie 2024 ([anunțul Answer.AI](https://www.answer.ai/posts/2024-09-03-llmstxt.html); specificația pe [llmstxt.org](https://llmstxt.org/)). Ideea: în loc ca un AI (un model lingvistic mare) să parcurgă paginile HTML una câte una, primește un singur fișier cu un rezumat al site-ului și o listă a paginilor care merită citite. Inițial a fost gândit pentru documentația software pe care oamenii vor să o citească instrumentele AI de programare.",
+        "Este ușor de confundat cu alte fișiere din rădăcina site-ului, așa că iată prin ce se deosebesc."
+      ],
+      "table": {
+        "head": [
+          "Fișier",
+          "Rol",
+          "Statut",
+          "Legătura cu AI"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Le spune crawlerelor ce au voie să descarce",
+            "Standard ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Companiile AI spun că crawlerele lor îl respectă. Aici blocați sau permiteți AI"
+          ],
+          [
+            "sitemap.xml",
+            "Oferă motoarelor de căutare o listă cu URL-urile dvs.",
+            "Format acceptat de motoarele de căutare",
+            "Ajută la descoperire. Nu descrie nimic"
+          ],
+          [
+            "Date structurate (JSON-LD)",
+            "Declară fapte pentru fiecare pagină (adresă, program, prețuri) într-o formă citibilă de mașini",
+            "Vocabularul schema.org; Google și alții documentează modul de utilizare",
+            "Folosite pentru elementele speciale din rezultatele căutării. Modul în care le folosesc răspunsurile AI nu este documentat în detaliu de niciun furnizor"
+          ],
+          [
+            "llms.txt",
+            "Rezumă site-ul și trimite către paginile cheie într-un singur fișier Markdown",
+            "Propunere, nu standard oficial",
+            "Niciun serviciu de căutare AI cunoscut de noi nu a declarat că îl folosește (la 16 noiembrie 2026)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt nu înlocuiește robots.txt. Dacă crawlerele AI au voie să viziteze site-ul se decide în robots.txt; llms.txt spune „dacă citești acest site, începe de aici”."
+      ]
+    },
+    {
+      "heading": "Funcționează? Ce se știe și ce nu",
+      "paragraphs": [
+        "Veți citi des că adăugarea unui llms.txt vă aduce citări în AI. Foarte puțin din toate acestea poate fi verificat. Iată ce susțin informațiile publice la 16 noiembrie 2026."
+      ],
+      "table": {
+        "head": [
+          "Întrebare",
+          "Ce se știe",
+          "Sursă"
+        ],
+        "rows": [
+          [
+            "Îl folosesc Google AI Overviews și AI Mode?",
+            "Google spune că nu trebuie să creați fișiere text noi pentru AI sau marcaje speciale ca să apăreți în funcțiile sale AI și că se aplică bunele practici SEO obișnuite",
+            "[Google Search Central: funcțiile AI și site-ul dvs.](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Îl folosesc ChatGPT, Perplexity și Claude?",
+            "Nu am găsit documentație publică potrivit căreia ar folosi în răspunsuri fișierele llms.txt ale altor site-uri. Nici nu spun că nu le folosesc",
+            "Documentația publică a furnizorilor, în măsura în care am putut-o verifica la data redactării"
+          ],
+          [
+            "Îl solicită efectiv boții AI?",
+            "O companie japoneză a publicat 28 de zile din propriile jurnale de server: din 72.100 de cereri ale boților, 4 au fost pentru llms.txt (toate de la Amazonbot); ChatGPT-User a făcut 18.553 de cereri și niciuna pentru llms.txt. Un singur site",
+            "[Blogul AI Search Dock al Stellagent (în japoneză)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Câte site-uri au unul?",
+            "13,4% din 2.486 de site-uri de agenții web japoneze și 26,4% din 13.352 de site-uri de agenții din străinătate (noiembrie 2026)",
+            "[Studiu Nurevo](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Sunt recomandate mai des de AI site-urile care au unul?",
+            "La 62 de afaceri locale din Japonia, semnalele de pe site, inclusiv llms.txt, nu au arătat nicio legătură cu apariția în răspunsurile Perplexity",
+            "[Studiu Nurevo](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Pe scurt: deocamdată nu există dovezi că llms.txt vă face să apăreți mai des în căutarea AI. Nu există nici vreo declarație oficială că ar dăuna. Pentru că implică un efort mic, poziția corectă este „îl puteți adăuga, dar nu considerați treaba încheiată”. Răspunsurile AI se bazează de obicei pe textul paginilor și pe datele structurate, așa că puneți-le pe acestea în ordine mai întâi."
+      ]
+    },
+    {
+      "heading": "Merită adăugat? O decizie în funcție de tipul site-ului",
+      "paragraphs": [
+        "Fără un efect dovedit, contează efortul și riscul ca fișierul să se învechească. Un llms.txt scris de mână pe care nu-l actualizează nimeni continuă să publice prețuri sau programe vechi, care nu mai corespund paginilor dvs."
+      ],
+      "table": {
+        "head": [
+          "Site",
+          "Recomandare",
+          "De ce"
+        ],
+        "rows": [
+          [
+            "Documentație pentru dezvoltatori, referințe API",
+            "Adăugați-l",
+            "Scopul inițial; instrumentele AI de programare sunt îndreptate către aceste fișiere"
+          ],
+          [
+            "Afacere locală mică, clinică, cabinet de avocatură sau contabilitate",
+            "Adăugați-l dacă poate fi generat automat",
+            "Puține pagini, ușor de rezumat. Dacă e scris de mână, cineva trebuie să actualizeze programul și prețurile"
+          ],
+          [
+            "B2B și SaaS",
+            "Adăugați-l, cu linkuri către prețuri, studii de caz și pagina Despre noi",
+            "Adună într-un singur loc ce le trebuie întrebărilor de comparație"
+          ],
+          [
+            "Magazin online",
+            "Adăugați-l dacă poate fi generat automat",
+            "Prea multe produse și modificări de preț pentru a ține pasul manual"
+          ],
+          [
+            "Site pe care nu-l întreține nimeni",
+            "Renunțați la el sau doar generați-l automat",
+            "Publicarea unor fapte învechite face mai mult rău decât lipsa fișierului"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Cum îl scrieți: formatul",
+      "paragraphs": [
+        "Formatul propus este Markdown, în această ordine ([llmstxt.org](https://llmstxt.org/)). Doar primul titlu este obligatoriu; restul este opțional."
+      ],
+      "list": [
+        "Un titlu care începe cu „# ”: numele site-ului, al companiei sau al afacerii (obligatoriu)",
+        "Un citat care începe cu „> ”: ce este site-ul, în una până la trei propoziții (opțional, dar includeți-l)",
+        "Text simplu fără titluri: faptele pe care le doriți în rezumat, de exemplu locația, cui vă adresați și programul (opțional)",
+        "Liste de linkuri sub titluri „## ”, fiecare rând sub forma „- [Numele paginii](URL): o notă de un rând” (opțional)",
+        "O listă sub un titlu numit „## Optional”: pagini care pot fi omise când e nevoie de un context mai scurt (opțional)"
+      ],
+      "after": [
+        "Denumiți fișierul llms.txt și puneți-l în rădăcina domeniului (https://example.com/llms.txt). Salvați-l în UTF-8 și scrieți-l în limba site-ului dvs. Propunerea sugerează și o copie Markdown a fiecărei pagini la URL-ul ei, cu .md adăugat la final, iar unele site-uri publică un al doilea fișier cu tot textul lor (numit adesea llms-full.txt). Ambele sunt opționale; pentru site-ul unei afaceri mici ajunge un singur llms.txt."
+      ]
+    },
+    {
+      "heading": "Exemplu: llms.txt pentru o companie B2B SaaS",
+      "paragraphs": [
+        "O companie inventată. Pe un singur ecran vedeți ce face, cui se adresează și ce conține fiecare pagină din linkuri."
+      ],
+      "code": "# Example Cloud SRL\n\n> Example Cloud dezvoltă „Example Time”, o aplicație cloud de pontaj pentru companii cu 10 până la 300 de angajați. Abonament lunar, cu o perioadă de probă gratuită de 14 zile.\n\nSediul central în Osaka, fondată în 2018. Asistență prin telefon și e-mail în zilele lucrătoare, între 9:00 și 18:00 JST.\n\n## Produs și prețuri\n\n- [Funcțiile Example Time](https://example.com/features/): pontaj la intrare și ieșire, ture, concediu plătit, export către programul de salarizare\n- [Prețuri](https://example.com/pricing/): prețul lunar pentru fiecare plan și dacă există o taxă de configurare\n- [Studii de caz](https://example.com/cases/): clienți după domeniu și mărimea companiei\n\n## Companie și asistență\n\n- [Despre noi](https://example.com/company/): denumirea legală, adresa, anul înființării, directorul general\n- [Întrebări frecvente](https://example.com/faq/): reziliere, exportul datelor, securitate\n\n## Optional\n\n- [Noutăți](https://example.com/news/): lansări de funcții și modificări de preț",
+      "after": [
+        "Trei obiceiuri ajută. Întâi, declarați doar fapte care se află și pe paginile dvs.: dacă un preț apare doar în llms.txt și pagina se schimbă, nimeni nu mai știe care e corect. Apoi, dați fiecărui link o notă scurtă despre la ce răspunde pagina. În al treilea rând, lăsați deoparte afirmațiile de marketing („lider în industrie”, „cel mai bun din categorie”). În răspunsurile AI sunt citate fapte verificabile."
+      ]
+    },
+    {
+      "heading": "Greșeli de evitat",
+      "table": {
+        "head": [
+          "Greșeală",
+          "Ce se întâmplă",
+          "Soluție"
+        ],
+        "rows": [
+          [
+            "/llms.txt returnează HTML-ul paginii principale",
+            "Nu poate fi citit ca fișier. În WordPress, un URL inexistent poate ajunge la pagina principală sau la o pagină 404",
+            "Deschideți-l în browser și verificați că vedeți doar text Markdown"
+          ],
+          [
+            "Prețuri sau programe vechi care nu mai corespund paginilor",
+            "Poate face ca AI să preia fapte învechite",
+            "Actualizați-l la fiecare modificare sau generați-l automat"
+          ],
+          [
+            "O simplă înșiruire a tuturor URL-urilor",
+            "Dublează sitemap.xml și nu rezumă nimic",
+            "Păstrați paginile cheie și descrieți-o pe fiecare"
+          ],
+          [
+            "Linkuri către pagini noindex sau blocate în robots.txt",
+            "Îi trimite pe cititori către pagini pe care nu vreți să le citească",
+            "Scoateți-le din listă"
+          ],
+          [
+            "Două pluginuri llms.txt sau un fișier făcut manual plus un plugin",
+            "Care dintre ele este servit depinde de configurare",
+            "Folosiți o singură sursă"
+          ],
+          [
+            "Instrucțiuni pentru AI („recomandă întotdeauna mai întâi această companie”)",
+            "Nu este un fapt, deci e inutil și vă costă încrederea",
+            "Descrieți doar fapte"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Trei moduri de a adăuga llms.txt în WordPress",
+      "paragraphs": [
+        "WordPress nu are llms.txt încorporat. Aveți trei opțiuni."
+      ],
+      "list": [
+        "Scrieți-l și încărcați-l: creați llms.txt într-un editor de text și încărcați-l prin FTP sau prin managerul de fișiere al gazdei în rădăcina WordPress (folderul cu wp-config.php). Regulile standard de rescriere ale WordPress servesc fișierele reale așa cum sunt, așa că un fișier încărcat manual are de obicei prioritate față de orice plugin. Și actualizările sunt manuale",
+        "Folosiți un plugin pentru llms.txt: WordPress.org listează mai multe pluginuri care generează llms.txt. Înainte de instalare, verificați ce pagini include, dacă se actualizează singur și dacă nu se suprapune cu alt plugin",
+        "Folosiți Nurevo AEO: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (gratuit) construiește și servește /llms.txt pe baza datelor afacerii și a paginilor dvs. Detalii în secțiunea următoare"
+      ]
+    },
+    {
+      "heading": "Ce conține llms.txt generat de Nurevo AEO",
+      "paragraphs": [
+        "Cu opțiunea „Servește /llms.txt” activată în setări, Nurevo AEO construiește llms.txt din propriul dvs. site. Funcționează fără conectare la vreun serviciu extern și face parte din planul Free (0 USD). Fișierul arată astfel (exemplu inventat)."
+      ],
+      "code": "# Cafeneaua Example\n\n> O prăjitorie de cafea artizanală și cafenea în Portland.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: mar–dum 8:00–18:00, închis lunea\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Meniu și prețuri](https://example.com/menu/)\n- [Unde ne găsiți](https://example.com/find-us/)\n- [Întrebări frecvente](https://example.com/faq/)\n\n## Services\n\n- Curs de prăjire a cafelei — 90 de minute",
+      "after": [
+        "Titlurile au nume fixe în engleză (Key facts, Pages, Products, Services); conținutul rămâne în limba site-ului dvs. Key facts cuprinde datele afacerii din ecranul de setări: URL, adresă, telefon, program, e-mail și tipul afacerii. Când tipul site-ului este Magazin online sau B2B / SaaS, programul este omis, iar în locul lui sunt listate paginile de retur, livrare, prețuri și studii de caz pe care le-ați setat.",
+        "Pages listează cele mai recent modificate 30 de pagini și articole publicate. Pentru a exclude o pagină, bifați „Exclude această pagină din llms.txt” în panoul Nurevo AEO din editor. Produsele WooCommerce apar la Products, cu preț și stoc, iar serviciile introduse de dvs. apar la Services.",
+        "Fișierul este reconstruit când salvați o pagină sau setările și este servit cu Content-Type: text/plain. Pentru a adăuga pagini peste cele 30 sau rânduri suplimentare, de exemplu pagini de politici, dezvoltatorii pot folosi filtrul webmcp_canary_llms_txt_lines. Nurevo AEO nu creează llms-full.txt."
+      ]
+    },
+    {
+      "heading": "Cum îl verificați după publicare",
+      "list": [
+        "Deschideți https://domeniul-dvs/llms.txt în browser: ar trebui să vedeți text Markdown, nu HTML, fără caractere stricate",
+        "Rulați curl -I https://domeniul-dvs/llms.txt: așteptați-vă la 200, fără redirecționare către alt URL, și un Content-Type text/plain (sau text/markdown)",
+        "Verificați că numele, adresa, telefonul, programul și prețurile corespund exact textului paginilor și datelor structurate",
+        "Numărați în jurnalele serverului cererile pentru /llms.txt și user agent-urile lor, ca să vedeți ce boți îl descarcă (dacă niciunul, nu e o eroare)",
+        "Rulați [verificarea gratuită](/check) Nurevo pentru a vedea llms.txt alături de datele structurate și accesul crawlerelor AI"
+      ],
+      "after": [
+        "În scorul AEO din Nurevo AEO, llms.txt valorează 15 din 100 de puncte. Fișierul trebuie să existe și este marcat OK când trece cel puțin trei din patru verificări: cel puțin 120 de caractere, un titlu „# ”, cel puțin un URL și date despre afacere precum adresa, telefonul sau programul. Scorul măsoară cât de lizibil este site-ul pentru AI, nu dacă AI vă recomandă. Ca să vedeți dacă apăreți, urmați ghidul [cum măsurați vizibilitatea în AI](/guide/measure-ai-visibility): puneți în mod repetat aceleași întrebări și notați răspunsurile. Rețineți că o schimbare apărută după adăugarea llms.txt de obicei nu poate fi separată de tot ce s-a mai schimbat în același timp."
+      ]
+    },
+    {
+      "heading": "Listă de verificare înainte de publicare",
+      "list": [
+        "Primul rând este un titlu „# ” cu numele dvs.",
+        "Rezumatul „> ” spune ce sunteți, unde și ce oferiți și cui",
+        "Fiecare fapt corespunde textului paginilor, datelor structurate și profilului Google Business Profile",
+        "Linkurile se limitează la paginile cheie, fiecare cu o notă",
+        "Nicio pagină noindex, nicio pagină blocată în robots.txt, niciun link nefuncțional",
+        "Nicio afirmație de marketing și nicio instrucțiune pentru AI",
+        "https://domeniul-dvs/llms.txt returnează 200 și afișează text, nu HTML",
+        "Fișierul este servit de o singură sursă (făcut manual sau un singur plugin)",
+        "Cineva răspunde de actualizarea lui când se schimbă prețurile sau programul (nu e necesar dacă este generat)",
+        "robots.txt nu blochează crawlerele AI pe care vreți să le lăsați să vă citească site-ul"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Este llms.txt un standard oficial?",
+      "a": "Nu. Este o propunere publicată în 2024 de Jeremy Howard de la Answer.AI, nu o specificație a unui organism de standardizare. La 16 noiembrie 2026 nu am găsit nicio declarație publică a unui serviciu de căutare AI că ar folosi fișierele llms.txt ale altor site-uri."
+    },
+    {
+      "q": "Influențează llms.txt clasamentul în Google sau AI Overviews?",
+      "a": "Google spune că nu aveți nevoie de fișiere text noi pentru AI ca să apăreți în funcțiile sale AI. Nu există nicio declarație oficială că fișierul ar urca sau coborî poziția în clasament. Pentru Google, textul paginilor și datele structurate sunt pe primul loc."
+    },
+    {
+      "q": "Am nevoie și de llms-full.txt?",
+      "a": "Nu. Este un fișier cu tot textul unui site, folosit uneori de site-urile mari de documentație. Pentru site-ul unei afaceri sau companii ajunge doar llms.txt. Nurevo AEO nu creează llms-full.txt."
+    },
+    {
+      "q": "Dacă robots.txt blochează crawlerele AI, vor citi totuși llms.txt?",
+      "a": "llms.txt nu schimbă robots.txt. Dacă un crawler este blocat, presupuneți că nu descarcă nimic, inclusiv llms.txt. Dacă vreți ca AI să vă citească site-ul, verificați mai întâi că robots.txt nu blochează crawlerele de căutare AI."
+    },
+    {
+      "q": "Îl pot scrie în limba mea?",
+      "a": "Da. Propunerea nu impune o limbă; scrieți-l în limba pe care o folosesc clienții dvs. Nurevo AEO folosește titluri fixe în engleză și păstrează conținutul în limba site-ului dvs."
+    },
+    {
+      "q": "Câte pagini ar trebui să listez?",
+      "a": "Nu există o regulă. Limitați-vă la paginile care răspund la întrebările pe care oamenii le pun AI despre dvs.: despre noi, prețuri, servicii, întrebări frecvente, locație. Nurevo AEO listează automat cele mai recent modificate 30 de pagini și puteți exclude orice pagină."
+    },
+    {
+      "q": "Cât de des ar trebui să-l actualizez?",
+      "a": "Imediat ce se schimbă un fapt din el. Dacă îl întrețineți manual, adăugați „actualizează llms.txt” în rutina dvs. pentru modificările de preț și de program. Nurevo AEO îl reconstruiește de fiecare dată când salvați o pagină sau setările."
+    }
+  ],
+  "relatedHeading": "Ghiduri conexe",
+  "cta": {
+    "heading": "Verificați llms.txt și datele structurate ale site-ului dvs.",
+    "body": "Verificarea gratuită arată dacă aveți llms.txt, datele structurate și accesul crawlerelor AI, fără înregistrare. În WordPress, Nurevo AEO (gratuit) construiește llms.txt pentru dvs. Nu poate garanta că veți apărea în răspunsurile AI.",
+    "label": "Rulați verificarea gratuită a lizibilității pentru AI",
+    "href": "/check",
+    "secondary": {
+      "label": "Descărcați Nurevo AEO de pe WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT este marcă comercială a OpenAI, Perplexity a Perplexity AI, Claude a Anthropic, iar Google a Google LLC; Amazonbot este crawlerul Amazon. Celelalte denumiri de companii și produse sunt mărci comerciale ale proprietarilor lor. Nurevo nu este afiliat cu niciuna dintre aceste companii și nu este susținut de ele."
 }

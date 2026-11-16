@@ -1,19 +1,300 @@
 {
-"title": "Kaj je llms.txt? Datoteka, ki UI predstavi vaše mesto | Nurevo",
-"description": "Kaj vsebuje llms.txt, kam ga postaviti, v čem se razlikuje od robots.txt in sitemap.xml ter kako ga v WordPressu ohraniti posodobljenega.",
-"h1": "Kaj je llms.txt? Datoteka, ki UI predstavi vaše mesto",
-"lead": "llms.txt je preprosta besedilna datoteka v korenu vaše domene (vasemesto.si/llms.txt), ki vaše mesto UI opiše v jasnem, strojno prijaznem jeziku in pokaže na najpomembnejše strani. Predstavljajte si jo kot »README za UI«.",
-"sections": [
-{"heading": "Zakaj obstaja", "paragraphs": ["robots.txt pajkom pove, kam smejo; zemljevid strani našteje URL-je. Nobeden UI ne pove, o čem je vaše mesto ali kaj naj navaja. llms.txt zapolni to vrzel – jedrnat, izbran povzetek, ki ga UI hitro prebere."]},
-{"heading": "Kaj vanjo zapišemo", "list": ["Kratek opis podjetja ali mesta", "Ključna dejstva: kaj počnete, kje, delovni čas, stik", "Povezave na najpomembnejše strani, vsaka z enovrstičnim opisom", "Po želji vsebino, na katero naj se UI najbolj opira"]},
-{"heading": "Ali zagotavlja navedbo?", "paragraphs": ["Ne. Je eden od več signalov – strukturirani podatki, dostop pajkov, doslednost. A naredi vas za lažji in jasnejši vir za navajanje. [Kaj je AEO?](/guide/what-is-aeo)"]},
-{"heading": "Kako jo dodati v WordPressu", "paragraphs": ["Lahko jo ustvarite ročno, a ob spremembah mesta zastari. Vtičnik jo lahko samodejno ustvari in posodablja. [AEO za WordPress](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Ali je llms.txt uradni standard?", "a": "Gre za nastajajočo konvencijo, ki je vse bolj priznana. Dodati jo ne stane nič in lahko samo pomaga."},
-{"q": "Kam točno spada?", "a": "V koren vaše domene: https://vasemesto.si/llms.txt"},
-{"q": "Ali je to isto kot robots.txt ali sitemap.xml?", "a": "Ne. Ti urejata dostop in naštevata URL-je. llms.txt vaše mesto za UI opiše in iz njega izbere vsebino."}
-],
-"relatedHeading": "Sorodni vodniki",
-"cta": {"heading": "Preverite, ali vaše mesto ima (in potrebuje) llms.txt", "body": "Brez registracije.", "label": "Brezplačno preverite", "href": "/check"}
+  "title": "Kaj je llms.txt? Kako ga napisati in ali deluje? | Nurevo",
+  "description": "llms.txt s primeri: oblika, kaj zares vemo o tem, ali ga UI uporablja, kdaj ga dodati, trije načini v WordPressu in kako ga preveriti.",
+  "h1": "Kaj je llms.txt? Kako ga napisati, kaj vemo o tem, ali deluje, in kako ga dodati v WordPress",
+  "lead": "llms.txt je besedilna datoteka v obliki Markdown v korenu vaše domene (/llms.txt), ki povzame vašo spletno stran in se povezuje na njene najpomembnejše strani. Predlagan je bil leta 2024 in ni uradni standard. Google pravi, da ga njegove funkcije UI ne potrebujejo, od ChatGPT ali Perplexity pa nismo našli nobene javne izjave, da bi v odgovorih uporabljali datoteke llms.txt drugih spletnih mest. Pisanje vzame približno 30 minut, zato ga je smiselno obravnavati kot kratek in točen povzetek, ki ga dodate, ko so dejstva na vaših straneh pravilna.",
+  "intro": [
+    "Napisano 16. novembra 2026 (JST). Gre za popolnoma prenovljeno različico naše strani z dne 23. oktobra 2026, pripravljeno na podlagi novega branja najbolje uvrščenih vodnikov in primarnih virov. Namenjena je lastnikom podjetij, ki se odločajo, ali naj dodajo llms.txt, in spletnim agencijam, ki razmišljajo, ali naj ga dodajo na strani strank.",
+    "Odgovori UI se spreminjajo iz dneva v dan in glede na to, kako je vprašanje zastavljeno. Koraki v tem vodniku izboljšajo točnost informacij, ki jih UI bere; ne morejo pa zagotoviti, da se boste pojavili v odgovoru UI."
+  ],
+  "sections": [
+    {
+      "heading": "Čemu je namenjen llms.txt",
+      "paragraphs": [
+        "llms.txt je predlog, ki ga je 3. septembra 2024 objavil Jeremy Howard iz podjetja Answer.AI ([objava Answer.AI](https://www.answer.ai/posts/2024-09-03-llmstxt.html); specifikacija na [llmstxt.org](https://llmstxt.org/)). Zamisel je naslednja: namesto da UI (veliki jezikovni model) pregleduje strani HTML eno za drugo, ji ponudimo eno datoteko s povzetkom spletnega mesta in seznamom strani, ki jih je vredno prebrati. Sprva je bil namenjen dokumentaciji programske opreme, ki naj bi jo brala orodja UI za programiranje.",
+        "Zlahka ga zamenjamo z drugimi datotekami v korenu spletnega mesta, zato poglejmo, kako se razlikujejo."
+      ],
+      "table": {
+        "head": [
+          "Datoteka",
+          "Naloga",
+          "Status",
+          "Povezava z UI"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Pajkom pove, kaj smejo prenesti",
+            "Standard ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Podjetja UI pravijo, da ga njihovi pajki upoštevajo. Tu UI blokirate ali dovolite"
+          ],
+          [
+            "sitemap.xml",
+            "Iskalnikom poda seznam vaših URL-jev",
+            "Oblika, ki jo podpirajo iskalniki",
+            "Pomaga pri odkrivanju. Ničesar ne opisuje"
+          ],
+          [
+            "Strukturirani podatki (JSON-LD)",
+            "Za vsako stran navedejo dejstva (naslov, delovni čas, cene) v strojno berljivi obliki",
+            "Besednjak schema.org; Google in drugi dokumentirajo njihovo uporabo",
+            "Uporabljajo se za posebne prikaze v rezultatih iskanja. Kako jih uporabljajo odgovori UI, noben ponudnik podrobno ne dokumentira"
+          ],
+          [
+            "llms.txt",
+            "Povzame spletno mesto in poveže ključne strani v eni datoteki Markdown",
+            "Predlog, ne uradni standard",
+            "Nobena nam znana iskalna storitev UI ni sporočila, da ga uporablja (stanje 16. novembra 2026)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt ne nadomešča robots.txt. O tem, ali smejo pajki UI obiskati spletno mesto, odloča robots.txt; llms.txt pa pove: »če bereš to spletno mesto, začni tukaj«."
+      ]
+    },
+    {
+      "heading": "Ali deluje? Kaj vemo in česa ne",
+      "paragraphs": [
+        "Pogosto boste prebrali, da vas bo UI zaradi llms.txt citirala. Le malo tega je mogoče preveriti. Tole podpirajo javno dostopni podatki na dan 16. novembra 2026."
+      ],
+      "table": {
+        "head": [
+          "Vprašanje",
+          "Kaj vemo",
+          "Vir"
+        ],
+        "rows": [
+          [
+            "Ali ga uporabljata Google AI Overviews in AI Mode?",
+            "Google pravi, da za prikaz v njegovih funkcijah UI ni treba ustvarjati novih besedilnih datotek za UI ali posebnih oznak in da veljajo običajne dobre prakse SEO",
+            "[Google Search Central: funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Ali ga uporabljajo ChatGPT, Perplexity in Claude?",
+            "Nismo našli javne dokumentacije, ki bi navajala, da v odgovorih uporabljajo datoteke llms.txt drugih spletnih mest. Prav tako ne navajajo, da jih ne uporabljajo",
+            "Javna dokumentacija ponudnikov, kolikor smo jo lahko preverili ob pisanju"
+          ],
+          [
+            "Ali ga boti UI dejansko zahtevajo?",
+            "Japonsko podjetje je objavilo 28 dni lastnih strežniških dnevnikov: od 72.100 zahtev botov so se 4 nanašale na llms.txt (vse od Amazonbot); ChatGPT-User je poslal 18.553 zahtev, nobene za llms.txt. Gre le za eno spletno mesto",
+            "[Blog AI Search Dock podjetja Stellagent (v japonščini)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Koliko spletnih mest ga ima?",
+            "13,4 % od 2.486 japonskih in 26,4 % od 13.352 tujih spletnih mest agencij (november 2026)",
+            "[Raziskava Nurevo](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Ali UI spletna mesta z njim pogosteje priporoča?",
+            "Pri 62 lokalnih podjetjih na Japonskem signali na strani spletnega mesta, vključno z llms.txt, niso bili povezani s pojavljanjem v odgovorih Perplexity",
+            "[Raziskava Nurevo](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Na kratko: zaenkrat ni dokazov, da bi se zaradi llms.txt pogosteje pojavljali v iskanju UI. Prav tako ni uradne izjave, da bi škodoval. Ker stane malo, je pošteno stališče »lahko ga dodate, a ne mislite, da je delo s tem opravljeno«. Odgovori UI se običajno opirajo na besedilo strani in strukturirane podatke, zato najprej uredite ta dejstva."
+      ]
+    },
+    {
+      "heading": "Ali ga dodati? Odločitev glede na vrsto spletnega mesta",
+      "paragraphs": [
+        "Ker učinek ni dokazan, odločata vloženi trud in tveganje, da datoteka zastari. Ročno napisan llms.txt, ki ga nihče ne posodablja, še naprej objavlja stare cene ali delovni čas, ki se ne ujemajo več z vašimi stranmi."
+      ],
+      "table": {
+        "head": [
+          "Spletno mesto",
+          "Priporočilo",
+          "Zakaj"
+        ],
+        "rows": [
+          [
+            "Dokumentacija za razvijalce, reference API",
+            "Dodajte ga",
+            "Prvotni namen; orodja UI za programiranje so usmerjena na te datoteke"
+          ],
+          [
+            "Majhno lokalno podjetje, ambulanta, odvetniška ali računovodska pisarna",
+            "Dodajte ga, če ga je mogoče ustvarjati samodejno",
+            "Malo strani, ki jih je lahko povzeti. Pri ročnem pisanju mora nekdo posodabljati delovni čas in cene"
+          ],
+          [
+            "B2B in SaaS",
+            "Dodajte ga s povezavami na cenik, študije primerov in stran O nas",
+            "Vse, kar potrebujejo primerjalna vprašanja, je na enem mestu"
+          ],
+          [
+            "Spletna trgovina",
+            "Dodajte ga, če ga je mogoče ustvarjati samodejno",
+            "Preveč izdelkov in sprememb cen za ročno vzdrževanje"
+          ],
+          [
+            "Spletno mesto, ki ga nihče ne vzdržuje",
+            "Izpustite ga ali ga samo samodejno ustvarjajte",
+            "Objavljanje zastarelih dejstev škodi bolj kot odsotnost datoteke"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Kako ga napisati: oblika",
+      "paragraphs": [
+        "Predlagana oblika je Markdown v tem vrstnem redu ([llmstxt.org](https://llmstxt.org/)). Obvezen je le prvi naslov; vse drugo je neobvezno."
+      ],
+      "list": [
+        "En naslov, ki se začne z »# «: ime spletnega mesta, podjetja ali dejavnosti (obvezno)",
+        "Citat, ki se začne z »> «: kaj je vaše spletno mesto, v enem do treh stavkih (neobvezno, a ga vključite)",
+        "Navadno besedilo brez naslovov: dejstva, ki jih želite v povzetku, na primer lokacija, komu ste namenjeni in delovni čas (neobvezno)",
+        "Seznami povezav pod naslovi »## «, vsaka vrstica v obliki »- [Ime strani](URL): opomba v eni vrstici« (neobvezno)",
+        "Seznam pod naslovom »## Optional«: strani, ki jih je mogoče izpustiti, ko je potreben krajši kontekst (neobvezno)"
+      ],
+      "after": [
+        "Datoteko poimenujte llms.txt in jo postavite v koren domene (https://example.com/llms.txt). Shranite jo v kodiranju UTF-8 in jo napišite v jeziku svojega spletnega mesta. Predlog priporoča tudi kopijo vsake strani v obliki Markdown na njenem URL-ju s pripono .md, nekatera spletna mesta pa objavljajo še drugo datoteko z vsem svojim besedilom (pogosto imenovano llms-full.txt). Oboje je neobvezno; za spletno mesto majhnega podjetja zadostuje en llms.txt."
+      ]
+    },
+    {
+      "heading": "Primer: llms.txt za podjetje B2B SaaS",
+      "paragraphs": [
+        "Izmišljeno podjetje. Na enem zaslonu vidite, kaj počne, komu je namenjeno in kaj vsebuje vsaka povezana stran."
+      ],
+      "code": "# Example Cloud d.o.o.\n\n> Example Cloud razvija »Example Time«, aplikacijo v oblaku za evidenco delovnega časa za podjetja z 10 do 300 zaposlenimi. Mesečna naročnina s 14-dnevnim brezplačnim preizkusom.\n\nSedež v Osaki, ustanovljeno leta 2018. Podpora po telefonu in e-pošti ob delavnikih od 9.00 do 18.00 JST.\n\n## Izdelek in cene\n\n- [Funkcije Example Time](https://example.com/features/): prihodi in odhodi, izmene, plačan dopust, izvoz v programsko opremo za plače\n- [Cenik](https://example.com/pricing/): mesečna cena posameznih paketov in ali se plača pristojbina za vzpostavitev\n- [Študije primerov](https://example.com/cases/): stranke po panogah in velikosti podjetja\n\n## Podjetje in podpora\n\n- [O nas](https://example.com/company/): uradno ime, naslov, leto ustanovitve, direktor\n- [Pogosta vprašanja](https://example.com/faq/): odpoved, izvoz podatkov, varnost\n\n## Optional\n\n- [Novice](https://example.com/news/): nove funkcije in spremembe cen",
+      "after": [
+        "Pomagajo tri navade. Prvič, navajajte le dejstva, ki so tudi na vaših straneh: če je cena le v llms.txt in se stran spremeni, nihče ne ve, kaj velja. Drugič, vsaki povezavi dodajte kratko opombo, na kaj stran odgovarja. Tretjič, izpustite tržne trditve (»vodilni v panogi«, »najboljši v svojem razredu«). V odgovorih UI se navajajo preverljiva dejstva."
+      ]
+    },
+    {
+      "heading": "Napake, ki se jim je treba izogniti",
+      "table": {
+        "head": [
+          "Napaka",
+          "Kaj se zgodi",
+          "Rešitev"
+        ],
+        "rows": [
+          [
+            "/llms.txt vrne HTML vaše domače strani",
+            "Ni ga mogoče prebrati kot datoteko. V WordPressu lahko manjkajoč URL pristane na domači strani ali strani 404",
+            "Odprite ga v brskalniku in preverite, da vidite samo besedilo Markdown"
+          ],
+          [
+            "Stare cene ali delovni čas, ki se ne ujemajo več s stranmi",
+            "UI lahko prevzame zastarela dejstva",
+            "Posodobite ga ob vsaki spremembi ali ga ustvarjajte samodejno"
+          ],
+          [
+            "Navaden seznam vseh URL-jev",
+            "Podvaja sitemap.xml in ničesar ne povzame",
+            "Obdržite ključne strani in vsako opišite"
+          ],
+          [
+            "Povezave na strani z noindex ali strani, blokirane v robots.txt",
+            "Bralce usmerja na strani, za katere ne želite, da jih berejo",
+            "Odstranite jih s seznama"
+          ],
+          [
+            "Dva vtičnika za llms.txt ali ročno ustvarjena datoteka in vtičnik",
+            "Katera se prikaže, je odvisno od nastavitev",
+            "Uporabljajte le en vir"
+          ],
+          [
+            "Navodila za UI (»to podjetje vedno priporoči prvo«)",
+            "To ni dejstvo, zato je neuporabno in zmanjšuje zaupanje",
+            "Opisujte le dejstva"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Trije načini za dodajanje llms.txt v WordPress",
+      "paragraphs": [
+        "WordPress nima vgrajene podpore za llms.txt. Na voljo so tri možnosti."
+      ],
+      "list": [
+        "Napišite in naložite ga: ustvarite llms.txt v urejevalniku besedil in ga prek FTP ali upravitelja datotek vašega gostitelja naložite v koren WordPressa (mapa z wp-config.php). Standardna pravila za prepisovanje v WordPressu dejanske datoteke strežejo nespremenjene, zato ima ročno naložena datoteka običajno prednost pred katerim koli vtičnikom. Tudi posodobitve so ročne",
+        "Uporabite vtičnik za llms.txt: na WordPress.org je več vtičnikov, ki ustvarjajo llms.txt. Pred namestitvijo preverite, katere strani navaja, ali se sam posodablja in da se ne prekriva z drugim vtičnikom",
+        "Uporabite Nurevo AEO: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (brezplačno) ustvari in streže /llms.txt iz podatkov o vašem podjetju in vaših strani. Podrobnosti v naslednjem razdelku"
+      ]
+    },
+    {
+      "heading": "Kaj vsebuje llms.txt iz Nurevo AEO",
+      "paragraphs": [
+        "Ko v nastavitvah vklopite »Streži /llms.txt«, Nurevo AEO ustvari llms.txt iz vašega lastnega spletnega mesta. Deluje brez povezave s katero koli zunanjo storitvijo in je del paketa Free (0 USD). Datoteka je videti takole (izmišljen primer)."
+      ],
+      "code": "# Kavarna Example\n\n> Majhna pražarna in kavarna v Portlandu.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: tor–ned 8.00–18.00, ob ponedeljkih zaprto\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Meni in cene](https://example.com/menu/)\n- [Kje smo](https://example.com/find-us/)\n- [Pogosta vprašanja](https://example.com/faq/)\n\n## Services\n\n- Tečaj praženja — 90 minut",
+      "after": [
+        "Naslovi imajo stalna angleška imena (Key facts, Pages, Products, Services); vsebina ostane v jeziku vašega spletnega mesta. Key facts vsebuje podatke o podjetju z zaslona nastavitev: URL, naslov, telefon, delovni čas, e-pošto in vrsto dejavnosti. Če je vrsta spletnega mesta Spletna trgovina ali B2B / SaaS, se delovni čas izpusti, namesto njega pa se navedejo strani o vračilih, dostavi, cenah in študijah primerov, ki ste jih nastavili.",
+        "Pages navaja 30 nazadnje spremenjenih objavljenih strani in prispevkov. Če želite stran izpustiti, v urejevalniku na plošči Nurevo AEO označite »Izpusti to stran iz llms.txt«. Izdelki WooCommerce so navedeni pod Products s ceno in stanjem zaloge, storitve, ki ste jih vnesli, pa pod Services.",
+        "Datoteka se znova ustvari, ko shranite stran ali nastavitve, in se streže z glavo Content-Type: text/plain. Za dodajanje strani prek 30 ali dodatnih vrstic, na primer strani s pravilniki, lahko razvijalci uporabijo filter webmcp_canary_llms_txt_lines. Nurevo AEO ne ustvarja llms-full.txt."
+      ]
+    },
+    {
+      "heading": "Kako ga preveriti po objavi",
+      "list": [
+        "Odprite https://vasa-domena/llms.txt v brskalniku: videti morate besedilo Markdown, ne HTML, brez popačenih znakov",
+        "Zaženite curl -I https://vasa-domena/llms.txt: pričakujte 200, brez preusmeritve na drug URL, in Content-Type text/plain (ali text/markdown)",
+        "Preverite, ali se ime, naslov, telefon, delovni čas in cene natančno ujemajo z besedilom strani in strukturiranimi podatki",
+        "V strežniških dnevnikih preštejte zahteve za /llms.txt in njihove user agente, da vidite, kateri boti ga prenašajo (če nobeden, to ni napaka)",
+        "Zaženite [brezplačno preverjanje](/check) Nurevo, da vidite llms.txt skupaj s strukturiranimi podatki in dostopom pajkov UI"
+      ],
+      "after": [
+        "V oceni AEO v Nurevo AEO je llms.txt vreden 15 od 100 točk. Datoteka mora obstajati in je označena kot v redu, ko izpolni vsaj tri od štirih preverjanj: 120 ali več znakov, naslov »# «, vsaj en URL in podatki o podjetju, kot so naslov, telefon ali delovni čas. Ta ocena meri, kako berljivo je vaše spletno mesto za UI, ne pa, ali vas UI priporoča. Ali se pojavljate, ugotovite po vodniku [kako meriti vidnost v UI](/guide/measure-ai-visibility): večkrat zastavite ista vprašanja in beležite odgovore. Upoštevajte, da spremembe po dodajanju llms.txt običajno ni mogoče ločiti od vsega drugega, kar se je spremenilo v istem času."
+      ]
+    },
+    {
+      "heading": "Kontrolni seznam pred objavo",
+      "list": [
+        "Prva vrstica je naslov »# « z vašim imenom",
+        "Povzetek »> « pove, kaj ste, kje delujete ter kaj in komu ponujate",
+        "Vsako dejstvo se ujema z besedilom strani, strukturiranimi podatki in profilom Google Business Profile",
+        "Povezave so omejene na ključne strani, vsaka z opombo",
+        "Brez strani z noindex, brez strani, blokiranih v robots.txt, brez nedelujočih povezav",
+        "Brez tržnih trditev in brez navodil za UI",
+        "https://vasa-domena/llms.txt vrne 200 in prikaže besedilo, ne HTML",
+        "Datoteko streže natanko en vir (ročno ustvarjena ali en vtičnik)",
+        "Nekdo je odgovoren za posodabljanje ob spremembah cen ali delovnega časa (ni potrebno, če se ustvarja samodejno)",
+        "robots.txt ne blokira pajkov UI, za katere želite, da berejo vaše spletno mesto"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Je llms.txt uradni standard?",
+      "a": "Ne. Gre za predlog, ki ga je leta 2024 objavil Jeremy Howard iz podjetja Answer.AI, ne za specifikacijo standardizacijskega organa. Na dan 16. novembra 2026 nismo našli javne izjave nobene iskalne storitve UI, da uporablja datoteke llms.txt drugih spletnih mest."
+    },
+    {
+      "q": "Ali llms.txt vpliva na uvrstitve v Googlu ali na AI Overviews?",
+      "a": "Google pravi, da za prikaz v njegovih funkcijah UI ne potrebujete novih besedilnih datotek za UI. Ni uradne izjave, da bi datoteka uvrstitve izboljšala ali poslabšala. Za Google sta na prvem mestu besedilo strani in strukturirani podatki."
+    },
+    {
+      "q": "Ali potrebujem tudi llms-full.txt?",
+      "a": "Ne. To je datoteka z vsem besedilom spletnega mesta, ki jo včasih uporabljajo velika dokumentacijska spletna mesta. Za spletno mesto podjetja zadostuje sam llms.txt. Nurevo AEO ne ustvarja llms-full.txt."
+    },
+    {
+      "q": "Če robots.txt blokira pajke UI, ali bodo llms.txt vseeno prebrali?",
+      "a": "llms.txt ne spreminja robots.txt. Če je pajek blokiran, računajte, da ne prenese ničesar, tudi llms.txt ne. Če želite, da UI bere vaše spletno mesto, najprej preverite, da robots.txt ne blokira pajkov iskanja UI."
+    },
+    {
+      "q": "Ga lahko napišem v svojem jeziku?",
+      "a": "Da. Predlog ne določa jezika; napišite ga v jeziku, ki ga uporabljajo vaše stranke. Nurevo AEO uporablja stalne angleške naslove, vsebino pa ohrani v jeziku vašega spletnega mesta."
+    },
+    {
+      "q": "Koliko strani naj navedem?",
+      "a": "Pravila ni. Omejite se na strani, ki odgovarjajo na vprašanja, ki jih ljudje o vas postavljajo UI: o nas, cene, storitve, pogosta vprašanja, lokacija. Nurevo AEO samodejno navede 30 nazadnje spremenjenih strani, vsako stran pa lahko izpustite."
+    },
+    {
+      "q": "Kako pogosto naj ga posodabljam?",
+      "a": "Takoj, ko se kakšno dejstvo v njem spremeni. Če ga vzdržujete ročno, ob spremembah cen in delovnega časa v svoj postopek dodajte »posodobi llms.txt«. Nurevo AEO ga znova ustvari ob vsakem shranjevanju strani ali nastavitev."
+    }
+  ],
+  "relatedHeading": "Sorodni vodniki",
+  "cta": {
+    "heading": "Preverite llms.txt in strukturirane podatke svojega spletnega mesta",
+    "body": "Brezplačno preverjanje brez registracije pokaže, ali imate llms.txt, kakšni so vaši strukturirani podatki in dostop pajkov UI. V WordPressu vam llms.txt ustvari Nurevo AEO (brezplačno). Ne more zagotoviti, da se boste pojavili v odgovorih UI.",
+    "label": "Zaženite brezplačno preverjanje berljivosti za UI",
+    "href": "/check",
+    "secondary": {
+      "label": "Prenesite Nurevo AEO z WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT je blagovna znamka podjetja OpenAI, Perplexity podjetja Perplexity AI, Claude podjetja Anthropic in Google podjetja Google LLC; Amazonbot je pajek podjetja Amazon. Druga imena podjetij in izdelkov so blagovne znamke njihovih lastnikov. Nurevo ni povezan z nobenim od teh podjetij niti ga ta ne podpirajo."
 }

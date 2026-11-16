@@ -1,19 +1,300 @@
 {
-"title": "Mis on llms.txt? Fail, mis tutvustab saiti TI-le | Nurevo",
-"description": "Mida llms.txt sisaldab, kuhu see panna, mille poolest see erineb robots.txt-st ja sitemap.xml-ist ning kuidas seda WordPressis ajakohasena hoida.",
-"h1": "Mis on llms.txt? Fail, mis tutvustab teie saiti TI-le",
-"lead": "llms.txt on lihtne tekstifail teie domeeni juurkaustas (teiesait.ee/llms.txt), mis kirjeldab saiti TI-le selges, masinasõbralikus keeles ja osutab kõige olulisematele lehtedele. Mõelge sellest kui „README-st TI jaoks”.",
-"sections": [
-{"heading": "Miks see olemas on", "paragraphs": ["robots.txt ütleb roomikutele, kuhu nad pääsevad; saidikaart loetleb URL-e. Kumbki ei ütle TI-le, millest teie sait räägib või mida tsiteerida. llms.txt täidab selle lünga – lühike, valitud kokkuvõte, mille TI kiiresti läbi loeb."]},
-{"heading": "Mis sinna kirjutada", "list": ["Lühike kirjeldus teie ettevõttest või saidist", "Põhifaktid: mida teete, kus, lahtiolekuajad, kontakt", "Lingid kõige olulisematele lehtedele, igaühel üherealine kirjeldus", "Soovi korral sisu, millele TI peaks kõige rohkem toetuma"]},
-{"heading": "Kas see tagab viitamise?", "paragraphs": ["Ei. See on üks signaal mitme seas – struktureeritud andmed, roomikute ligipääs, järjepidevus. Kuid see teeb teist lihtsama ja selgema allika, millele viidata. [Mis on AEO?](/guide/what-is-aeo)"]},
-{"heading": "Kuidas see WordPressi lisada", "paragraphs": ["Saate selle luua käsitsi, kuid saidi muutudes see vananeb. Pistikprogramm saab selle automaatselt luua ja ajakohasena hoida. [AEO WordPressis](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Kas llms.txt on ametlik standard?", "a": "See on kujunev kokkulepe, mida tunnustatakse üha laiemalt. Selle lisamine ei maksa midagi ja saab ainult aidata."},
-{"q": "Kuhu täpselt see käib?", "a": "Domeeni juurkausta: https://teiesait.ee/llms.txt"},
-{"q": "Kas see on sama mis robots.txt või sitemap.xml?", "a": "Ei. Need juhivad ligipääsu ja loetlevad URL-e. llms.txt kirjeldab teie saiti ja valib TI jaoks sisu välja."}
-],
-"relatedHeading": "Seotud juhendid",
-"cta": {"heading": "Vaadake, kas teie saidil on (ja kas on vaja) llms.txt", "body": "Registreerumata.", "label": "Kontrolli tasuta", "href": "/check"}
+  "title": "Mis on llms.txt? Kuidas seda kirjutada ja kas see toimib? | Nurevo",
+  "description": "llms.txt näidetega: vorming, mida on teada selle kasutamisest TI poolt, millal see lisada, kolm viisi selle lisamiseks WordPressis ja kuidas seda kontrollida.",
+  "h1": "Mis on llms.txt? Kuidas seda kirjutada, mida teame selle toimimisest ja kuidas see WordPressis lisada",
+  "lead": "llms.txt on Markdown-vormingus tekstifail sinu domeeni juurkaustas (/llms.txt), mis võtab sinu veebisaidi kokku ja lingib selle olulisematele lehtedele. See pakuti välja 2024. aastal ega ole ametlik standard. Google ütleb, et tema TI-funktsioonid seda ei vaja, ning me ei leidnud ChatGPT-lt ega Perplexitylt avalikku avaldust, et nad kasutaksid vastustes teiste saitide llms.txt-faile. Selle kirjutamine võtab umbes 30 minutit, nii et mõistlik on käsitleda seda lühikese ja täpse kokkuvõttena, mille lisad siis, kui sinu lehtedel olevad faktid on korras.",
+  "intro": [
+    "Kirjutatud 16. novembril 2026 (JST). See on meie 23. oktoobri 2026 lehe täielikult ümber kirjutatud versioon, mis põhineb otsingutulemuste tipus olevate juhendite ja algallikate värskel läbitöötamisel. See on mõeldud ettevõtjatele, kes kaaluvad llms.txt lisamist, ja veebiagentuuridele, kes kaaluvad selle lisamist klientide saitidele.",
+    "TI vastused muutuvad päevast päeva ja sõltuvalt sellest, kuidas küsimus on sõnastatud. Siinsed sammud muudavad TI loetava teabe täpsemaks; need ei saa tagada, et sa TI vastuses ilmud."
+  ],
+  "sections": [
+    {
+      "heading": "Milleks llms.txt on mõeldud",
+      "paragraphs": [
+        "llms.txt on ettepanek, mille Jeremy Howard (Answer.AI) avaldas 3. septembril 2024 ([Answer.AI teadaanne](https://www.answer.ai/posts/2024-09-03-llmstxt.html); spetsifikatsioon aadressil [llmstxt.org](https://llmstxt.org/)). Mõte on selles, et selle asemel, et lasta TI-l (suurel keelemudelil) HTML-lehti ükshaaval läbi roomata, antakse talle üks fail saidi kokkuvõtte ja lugemist väärt lehtede loendiga. Algselt oli see mõeldud tarkvaradokumentatsioonile, mida taheti TI-põhiste programmeerimistööriistadega lugeda.",
+        "Seda on lihtne segi ajada teiste saidi juurkaustas olevate failidega, nii et siin on erinevused."
+      ],
+      "table": {
+        "head": [
+          "Fail",
+          "Ülesanne",
+          "Staatus",
+          "Seos TI-ga"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Ütleb roomikutele, mida nad tohivad alla laadida",
+            "Standard ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "TI-ettevõtted ütlevad, et nende roomikud järgivad seda. Siin blokeerid või lubad TI"
+          ],
+          [
+            "sitemap.xml",
+            "Annab otsingumootoritele sinu URL-ide loendi",
+            "Otsingumootorite toetatud vorming",
+            "Aitab lehti leida. Ei kirjelda midagi"
+          ],
+          [
+            "Struktureeritud andmed (JSON-LD)",
+            "Esitab lehepõhised faktid (aadress, lahtiolekuajad, hinnad) masinloetaval kujul",
+            "schema.org-i sõnavara; Google ja teised dokumenteerivad selle kasutamist",
+            "Kasutatakse otsingutulemuste funktsioonides. Kuidas TI vastused neid kasutavad, pole ükski teenusepakkuja üksikasjalikult dokumenteerinud"
+          ],
+          [
+            "llms.txt",
+            "Võtab saidi kokku ja lingib selle olulisematele lehtedele ühes Markdown-failis",
+            "Ettepanek, mitte ametlik standard",
+            "Ükski meile teadaolev TI-otsinguteenus pole öelnud, et kasutab seda (16. novembri 2026 seisuga)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt ei asenda faili robots.txt. Seda, kas TI-roomikud tohivad saiti külastada, otsustatakse failis robots.txt; llms.txt ütleb: „kui loed seda saiti, alusta siit“."
+      ]
+    },
+    {
+      "heading": "Kas see toimib? Mida teatakse ja mida mitte",
+      "paragraphs": [
+        "Sageli loeb, et llms.txt lisamine paneb TI sind tsiteerima. Väga vähe sellest on kontrollitav. Siin on see, mida avalikud allikad 16. novembri 2026 seisuga toetavad."
+      ],
+      "table": {
+        "head": [
+          "Küsimus",
+          "Mida teatakse",
+          "Allikas"
+        ],
+        "rows": [
+          [
+            "Kas Google AI Overviews ja AI Mode kasutavad seda?",
+            "Google ütleb, et tema TI-funktsioonides ilmumiseks ei pea looma uusi TI-tekstifaile ega erilist märgistust ning kehtivad tavalised SEO head tavad",
+            "[Google Search Central: TI-funktsioonid ja sinu veebisait](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Kas ChatGPT, Perplexity ja Claude kasutavad seda?",
+            "Me ei leidnud avalikku dokumentatsiooni, mille kohaselt nad kasutaksid vastustes teiste saitide llms.txt-faile. Samas ei ütle nad ka, et ei kasuta",
+            "Teenusepakkujate avalik dokumentatsioon, niivõrd kui saime seda kirjutamise ajal kontrollida"
+          ],
+          [
+            "Kas TI-robotid seda tegelikult küsivad?",
+            "Üks Jaapani ettevõte avaldas oma 28 päeva serverilogid: 72 100 robotipäringust 4 olid llms.txt kohta (kõik Amazonbotilt); ChatGPT-User tegi 18 553 päringut ja mitte ühtegi llms.txt kohta. Ainult üks sait",
+            "[Stellagenti AI Search Docki blogi (jaapani keeles)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Kui paljudel saitidel see on?",
+            "13,4%-l 2486 Jaapani ja 26,4%-l 13 352 välismaa veebiagentuuri saidist (november 2026)",
+            "[Nurevo uuring](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Kas TI soovitab sellega saite rohkem?",
+            "62 Jaapani kohaliku ettevõtte seas ei olnud saidipoolsetel signaalidel, sealhulgas llms.txt-l, seost Perplexity vastustes ilmumisega",
+            "[Nurevo uuring](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Lühidalt: seni pole tõendeid, et llms.txt paneks sind TI-otsingus sagedamini ilmuma. Pole ka ametlikku avaldust, et see kahjustaks. Kuna see on odav, on õiglane seisukoht „võib lisada, aga ära pea tööd sellega tehtuks“. TI vastused tuginevad tavaliselt lehe tekstile ja struktureeritud andmetele, nii et pane need faktid kõigepealt paika."
+      ]
+    },
+    {
+      "heading": "Kas peaksid selle lisama? Otsus saidi tüübi järgi",
+      "paragraphs": [
+        "Kuna mõju pole tõestatud, otsustavad vaev ja oht, et fail aegub. Käsitsi kirjutatud llms.txt, mida keegi ei uuenda, avaldab edasi vanu hindu või lahtiolekuaegu, mis ei vasta enam sinu lehtedele."
+      ],
+      "table": {
+        "head": [
+          "Sait",
+          "Soovitus",
+          "Põhjus"
+        ],
+        "rows": [
+          [
+            "Arendajadokumentatsioon, API viited",
+            "Lisa see",
+            "Algne kasutusjuht; TI-põhised programmeerimistööriistad suunatakse nende failide juurde"
+          ],
+          [
+            "Väike kohalik ettevõte, kliinik, advokaadi- või raamatupidamisbüroo",
+            "Lisa, kui seda saab automaatselt luua",
+            "Vähe lehti, lihtne kokku võtta. Käsitsi kirjutamine tähendab, et keegi peab lahtiolekuaegu ja hindu uuendama"
+          ],
+          [
+            "B2B ja SaaS",
+            "Lisa see ning lingi hinnakiri, juhtumiuuringud ja leht Meist",
+            "Koondab ühte kohta selle, mida võrdlusküsimused vajavad"
+          ],
+          [
+            "E-pood",
+            "Lisa, kui seda saab automaatselt luua",
+            "Liiga palju tooteid ja hinnamuutusi, et käsitsi järge pidada"
+          ],
+          [
+            "Sait, mida keegi ei halda",
+            "Jäta vahele või loo see ainult automaatselt",
+            "Aegunud faktide avaldamine teeb rohkem kahju kui faili puudumine"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Kuidas seda kirjutada: vorming",
+      "paragraphs": [
+        "Pakutud vorming on Markdown, selles järjekorras ([llmstxt.org](https://llmstxt.org/)). Kohustuslik on ainult esimene pealkiri; kõik muu on valikuline."
+      ],
+      "list": [
+        "Üks pealkiri, mis algab märkidega „# “: saidi, ettevõtte või äri nimi (kohustuslik)",
+        "Tsitaadiplokk, mis algab märkidega „> “: mis sait see on, ühe kuni kolme lausega (valikuline, kuid lisa see)",
+        "Tavaline tekst ilma pealkirjadeta: faktid, mida soovid kokkuvõttesse, näiteks asukoht, keda teenindad ja lahtiolekuajad (valikuline)",
+        "Linkide loendid „## “-pealkirjade all, iga rida kujul „- [Lehe nimi](URL): lühike märkus“ (valikuline)",
+        "Loend pealkirja „## Optional“ all: lehed, mille võib vahele jätta, kui on vaja lühemat konteksti (valikuline)"
+      ],
+      "after": [
+        "Nimeta fail llms.txt ja pane see oma domeeni juurkausta (https://example.com/llms.txt). Salvesta see UTF-8 kodeeringus ja kirjuta oma saidi keeles. Ettepanek soovitab ka iga lehe Markdown-koopiat selle URL-il, millele on lisatud .md, ja mõned saidid avaldavad teise faili kogu oma tekstiga (sageli nimega llms-full.txt). Mõlemad on valikulised; väikeettevõtte saidile piisab ühest llms.txt-st."
+      ]
+    },
+    {
+      "heading": "Näide: B2B SaaS-ettevõtte llms.txt",
+      "paragraphs": [
+        "Väljamõeldud ettevõte. Ühelt ekraanilt näed, mida see teeb, kellele see on mõeldud ja mida iga lingitud leht sisaldab."
+      ],
+      "code": "# Example Cloud Inc.\n\n> Example Cloud teeb rakendust „Example Time“ – pilvepõhist tööaja arvestust 10–300 töötajaga ettevõtetele. Kuupõhine hinnastamine ja 14-päevane tasuta prooviperiood.\n\nPeakontor Osakas, asutatud 2018. Tugi telefoni ja e-posti teel tööpäevadel kell 9.00–18.00 JST.\n\n## Toode ja hinnad\n\n- [Example Time'i funktsioonid](https://example.com/features/): sisse- ja väljaregistreerimine, vahetuste plaanimine, tasustatud puhkus, eksport palgatarkvarasse\n- [Hinnakiri](https://example.com/pricing/): paketi kuuhind ja kas on liitumistasu\n- [Juhtumiuuringud](https://example.com/cases/): kliendid tegevusala ja ettevõtte suuruse järgi\n\n## Ettevõte ja tugi\n\n- [Meist](https://example.com/company/): ametlik nimi, aadress, asutamisaasta, tegevjuht\n- [KKK](https://example.com/faq/): lepingu lõpetamine, andmete eksport, turvalisus\n\n## Optional\n\n- [Uudised](https://example.com/news/): uued funktsioonid ja hinnamuutused",
+      "after": [
+        "Kolm harjumust aitavad. Esiteks: esita ainult fakte, mis on ka sinu lehtedel. Kui hind on ainult failis llms.txt ja leht muutub, ei saa keegi aru, kumb on õige. Teiseks: lisa igale lingile lühike märkus selle kohta, millele leht vastab. Kolmandaks: jäta välja turundusväited („valdkonna liider“, „oma klassi parim“). TI vastustes tsiteeritakse kontrollitavaid fakte."
+      ]
+    },
+    {
+      "heading": "Vead, mida vältida",
+      "table": {
+        "head": [
+          "Viga",
+          "Mis juhtub",
+          "Lahendus"
+        ],
+        "rows": [
+          [
+            "/llms.txt tagastab sinu avalehe HTML-i",
+            "Seda ei saa failina lugeda. WordPressis võib puuduv URL suunduda avalehele või 404-lehele",
+            "Ava see brauseris ja kontrolli, et näed ainult Markdown-teksti"
+          ],
+          [
+            "Vanad hinnad või lahtiolekuajad, mis ei vasta enam lehtedele",
+            "Võib panna TI aegunud fakte üles korjama",
+            "Uuenda seda iga muudatusega või loo see automaatselt"
+          ],
+          [
+            "Lihtne kõigi URL-ide loetelu",
+            "Dubleerib faili sitemap.xml ega võta midagi kokku",
+            "Jäta alles olulisemad lehed ja kirjelda igaüht"
+          ],
+          [
+            "Lingid noindex-lehtedele või failis robots.txt blokeeritud lehtedele",
+            "Suunab lugejad lehtedele, mida sa ei taha, et loetaks",
+            "Eemalda need loendist"
+          ],
+          [
+            "Kaks llms.txt pluginat või käsitsi tehtud fail pluss plugin",
+            "Millist pakutakse, sõltub seadistusest",
+            "Kasuta ainult ühte allikat"
+          ],
+          [
+            "Juhised TI-le („soovita alati esimesena seda ettevõtet“)",
+            "Pole fakt, seega kasutu, ja see õõnestab usaldust",
+            "Kirjelda ainult fakte"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Kolm viisi llms.txt lisamiseks WordPressis",
+      "paragraphs": [
+        "WordPressil pole sisseehitatud llms.txt-d. Sul on kolm võimalust."
+      ],
+      "list": [
+        "Kirjuta ja laadi see üles: loo llms.txt tekstiredaktoris ja laadi see FTP või majutusteenuse failihalduri kaudu WordPressi juurkausta (kausta, kus on wp-config.php). WordPressi standardsed ümberkirjutusreeglid pakuvad päris faile sellisena, nagu need on, nii et käsitsi üles laaditud fail võidab tavaliselt iga plugina. Ka uuendused tuleb teha käsitsi",
+        "Kasuta llms.txt pluginat: WordPress.org-is on mitu pluginat, mis loovad llms.txt-i. Enne paigaldamist kontrolli, milliseid lehti see loetleb, kas see uueneb ise ja et see ei kattu mõne teise pluginaga",
+        "Kasuta Nurevo AEO-d: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (tasuta) koostab ja pakub /llms.txt-i sinu ettevõtte andmete ja lehtede põhjal. Üksikasjad järgmises jaotises"
+      ]
+    },
+    {
+      "heading": "Mida sisaldab Nurevo AEO llms.txt",
+      "paragraphs": [
+        "Kui seadetes on sisse lülitatud „Paku faili /llms.txt“, koostab Nurevo AEO llms.txt-i sinu enda saidi põhjal. See töötab ilma ühegi välise teenusega ühendamata ja kuulub Free-paketti ($0). Fail näeb välja selline (väljamõeldud näide)."
+      ],
+      "code": "# Cafe Example\n\n> Väike kohvipõletuskoda ja kohvik Portlandis.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: T–P 8.00–18.00, esmaspäeviti suletud\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Menüü ja hinnad](https://example.com/menu/)\n- [Kuidas meid leida](https://example.com/find-us/)\n- [KKK](https://example.com/faq/)\n\n## Services\n\n- Kohvipõletuse kursus — 90 minutit",
+      "after": [
+        "Pealkirjad on fikseeritud ingliskeelsed nimed (Key facts, Pages, Products, Services); sisu jääb sinu saidi keelde. Key facts sisaldab seadete ekraanilt pärit ettevõtte andmeid: URL, aadress, telefon, lahtiolekuajad, e-post ja ettevõtte tüüp. Kui saidi tüüp on E-pood või B2B / SaaS, jäetakse lahtiolekuajad välja ning nende asemel loetletakse sinu määratud tagastuse, tarne, hinnakirja ja juhtumiuuringute lehed.",
+        "Pages loetleb 30 viimati muudetud avaldatud lehte ja postitust. Lehe välja jätmiseks märgi redaktori Nurevo AEO paneelil „Jäta see leht llms.txt-st välja“. WooCommerce'i tooted lähevad jaotisse Products koos hinna ja laoseisuga ning sinu sisestatud teenused jaotisse Services.",
+        "Fail koostatakse uuesti, kui salvestad lehe või seaded, ja seda pakutakse kujul Content-Type: text/plain. Kui soovid lisada rohkem kui 30 lehte või lisaridu, näiteks põhimõtete lehti, saavad arendajad kasutada filtrit webmcp_canary_llms_txt_lines. Nurevo AEO ei loo faili llms-full.txt."
+      ]
+    },
+    {
+      "heading": "Kuidas seda pärast avaldamist kontrollida",
+      "list": [
+        "Ava brauseris https://sinu-domeen/llms.txt: peaksid nägema Markdown-teksti, mitte HTML-i, ja ilma moonutatud märkideta",
+        "Käivita curl -I https://sinu-domeen/llms.txt: oota vastust 200, mitte ümbersuunamist teisele URL-ile, ja Content-Type väärtust text/plain (või text/markdown)",
+        "Kontrolli, et nimi, aadress, telefon, lahtiolekuajad ja hinnad vastaksid täpselt sinu lehe tekstile ja struktureeritud andmetele",
+        "Loe serverilogidest kokku /llms.txt päringud ja nende user agent'id, et näha, millised robotid seda alla laadivad (kui ükski ei lae, pole see viga)",
+        "Käivita Nurevo [tasuta kontroll](/check), et näha llms.txt-i koos oma struktureeritud andmete ja TI-roomikute ligipääsuga"
+      ],
+      "after": [
+        "Nurevo AEO AEO skooris annab llms.txt 15 punkti 100-st. Fail peab olemas olema ja see märgitakse OK-ks, kui see läbib vähemalt kolm neljast kontrollist: vähemalt 120 märki, „# “-pealkiri, vähemalt üks URL ning ettevõtte faktid, nagu aadress, telefon või lahtiolekuajad. See skoor mõõdab, kui loetav on sinu sait TI jaoks, mitte seda, kas TI sind soovitab. Et näha, kas sa ilmud vastustes, järgi juhendit [kuidas mõõta nähtavust TI-s](/guide/measure-ai-visibility): esita samu küsimusi korduvalt ja pane vastused kirja. Pea meeles, et pärast llms.txt lisamist toimunud muutust ei saa tavaliselt eristada kõigest muust, mis samal ajal muutus."
+      ]
+    },
+    {
+      "heading": "Kontrollnimekiri enne avaldamist",
+      "list": [
+        "Esimene rida on „# “-pealkiri sinu nimega",
+        "„> “-kokkuvõte ütleb, kes sa oled, kus ja mida kellele pakud",
+        "Kõik faktid vastavad sinu lehe tekstile, struktureeritud andmetele ja Google'i ettevõtteprofiilile",
+        "Lingid piirduvad olulisemate lehtedega, igaühel märkus",
+        "Pole noindex-lehti, failis robots.txt blokeeritud lehti ega katkisi linke",
+        "Pole turundusväiteid ega juhiseid TI-le",
+        "https://sinu-domeen/llms.txt tagastab 200 ja näitab teksti, mitte HTML-i",
+        "Faili pakub täpselt üks allikas (käsitsi tehtud või üks plugin)",
+        "Keegi vastutab selle uuendamise eest, kui hinnad või lahtiolekuajad muutuvad (pole vaja, kui see luuakse automaatselt)",
+        "robots.txt ei blokeeri TI-roomikuid, kes peaksid sinu saiti lugema"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Kas llms.txt on ametlik standard?",
+      "a": "Ei. See on Jeremy Howardi (Answer.AI) 2024. aastal avaldatud ettepanek, mitte standardiorganisatsiooni spetsifikatsioon. 16. novembri 2026 seisuga ei leidnud me ühegi TI-otsinguteenuse avalikku avaldust, et see kasutaks teiste saitide llms.txt-faile."
+    },
+    {
+      "q": "Kas llms.txt mõjutab Google'i asetust või AI Overviews't?",
+      "a": "Google ütleb, et tema TI-funktsioonides ilmumiseks pole vaja uusi TI-tekstifaile. Ametlikku avaldust, et fail asetust tõstaks või langetaks, pole. Google'i jaoks on esikohal lehe tekst ja struktureeritud andmed."
+    },
+    {
+      "q": "Kas mul on vaja ka faili llms-full.txt?",
+      "a": "Ei. See on fail saidi kogu tekstiga, mida mõnikord kasutavad suured dokumentatsioonisaidid. Ettevõtte saidile piisab ainult llms.txt-st. Nurevo AEO ei loo faili llms-full.txt."
+    },
+    {
+      "q": "Kui robots.txt blokeerib TI-roomikud, kas nad loevad llms.txt-i ikkagi?",
+      "a": "llms.txt ei muuda faili robots.txt. Kui roomik on blokeeritud, eelda, et see ei laadi midagi alla, ka llms.txt-i mitte. Kui soovid, et TI sinu saiti loeks, kontrolli kõigepealt, et robots.txt ei blokeeriks TI-otsinguteenuste roomikuid."
+    },
+    {
+      "q": "Kas võin selle kirjutada oma emakeeles?",
+      "a": "Jah. Ettepanek ei määra keelt; kirjuta see keeles, mida sinu kliendid kasutavad. Nurevo AEO kasutab fikseeritud ingliskeelseid pealkirju ja hoiab sisu sinu saidi keeles."
+    },
+    {
+      "q": "Mitu lehte peaksin loetlema?",
+      "a": "Reeglit pole. Piirdu lehtedega, mis vastavad küsimustele, mida inimesed TI-lt sinu kohta küsivad: meist, hinnad, teenused, KKK, asukoht. Nurevo AEO loetleb automaatselt 30 viimati muudetud lehte ja sa võid ükskõik millise lehe välja jätta."
+    },
+    {
+      "q": "Kui tihti peaksin seda uuendama?",
+      "a": "Niipea kui mõni selles olev fakt muutub. Kui haldad seda käsitsi, lisa „uuenda llms.txt-i“ oma hinna- ja lahtiolekuaegade muutmise rutiini. Nurevo AEO koostab selle uuesti iga kord, kui salvestad lehe või seaded."
+    }
+  ],
+  "relatedHeading": "Seotud juhendid",
+  "cta": {
+    "heading": "Kontrolli oma saidi llms.txt-i ja struktureeritud andmeid",
+    "body": "Tasuta kontroll näitab ilma registreerumata, kas sul on llms.txt, millised on sinu struktureeritud andmed ja kas TI-roomikutel on ligipääs. WordPressis koostab Nurevo AEO (tasuta) llms.txt-i sinu eest. See ei saa tagada, et sa TI vastustes ilmud.",
+    "label": "Tee tasuta TI-loetavuse kontroll",
+    "href": "/check",
+    "secondary": {
+      "label": "Hangi Nurevo AEO WordPress.org-ist",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT on OpenAI, Perplexity Perplexity AI, Claude Anthropicu ja Google Google LLC kaubamärk; Amazonbot on Amazoni roomik. Teised ettevõtete ja toodete nimed on nende vastavate omanike kaubamärgid. Nurevo ei ole ühegi nimetatud ettevõttega seotud ega nende poolt heaks kiidetud."
 }

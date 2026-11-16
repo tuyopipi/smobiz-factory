@@ -1,19 +1,300 @@
 {
-"title": "Czym jest llms.txt? Plik, który opisuje stronę dla AI | Nurevo",
-"description": "Co zawiera llms.txt, gdzie go umieścić, czym różni się od robots.txt i sitemap.xml oraz jak utrzymać go w aktualności w WordPressie.",
-"h1": "Czym jest llms.txt? Plik, który opisuje Twoją stronę dla AI",
-"lead": "llms.txt to prosty plik tekstowy w katalogu głównym domeny (twojastrona.pl/llms.txt), który opisuje stronę dla AI jasnym, przyjaznym dla maszyn językiem i wskazuje najważniejsze podstrony. To coś w rodzaju „README dla AI”.",
-"sections": [
-{"heading": "Po co istnieje", "paragraphs": ["robots.txt mówi robotom, do czego mają dostęp; mapa witryny wymienia adresy URL. Żaden z nich nie mówi AI, o czym jest Twoja strona ani co cytować. llms.txt wypełnia tę lukę – to zwięzłe, wyselekcjonowane podsumowanie, które AI szybko przeczyta."]},
-{"heading": "Co się w nim umieszcza", "list": ["Krótki opis firmy lub strony", "Kluczowe fakty: czym się zajmujesz, gdzie, godziny otwarcia, kontakt", "Linki do najważniejszych podstron, każdy z jednozdaniowym opisem", "Opcjonalnie treści, na których AI ma się najbardziej opierać"]},
-{"heading": "Czy gwarantuje cytowanie?", "paragraphs": ["Nie. To jeden z kilku sygnałów – obok danych strukturalnych, dostępu robotów i spójności. Ale czyni Cię łatwiejszym i jaśniejszym źródłem do cytowania. [Czym jest AEO?](/guide/what-is-aeo)"]},
-{"heading": "Jak dodać go w WordPressie", "paragraphs": ["Możesz utworzyć go ręcznie, ale zdezaktualizuje się, gdy strona się zmieni. Wtyczka może go generować i automatycznie aktualizować. [AEO dla WordPressa](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Czy llms.txt to oficjalny standard?", "a": "To nowa konwencja, coraz szerzej uznawana. Dodanie go nic nie kosztuje i może tylko pomóc."},
-{"q": "Gdzie dokładnie go umieścić?", "a": "W katalogu głównym domeny: https://twojastrona.pl/llms.txt"},
-{"q": "Czy to to samo co robots.txt lub sitemap.xml?", "a": "Nie. Tamte kontrolują dostęp i wymieniają adresy URL. llms.txt opisuje stronę i wybiera z niej treści dla AI."}
-],
-"relatedHeading": "Powiązane poradniki",
-"cta": {"heading": "Sprawdź, czy Twoja strona ma (i czy potrzebuje) llms.txt", "body": "Bez rejestracji.", "label": "Sprawdź za darmo", "href": "/check"}
+  "title": "Czym jest llms.txt? Jak go napisać i czy działa? | Nurevo",
+  "description": "llms.txt z przykładami: format, co wiadomo o tym, czy AI z niego korzysta, kiedy go dodać, trzy sposoby na dodanie go w WordPressie i jak go sprawdzić.",
+  "h1": "Czym jest llms.txt? Jak go napisać, co wiemy o tym, czy działa, i jak dodać go w WordPressie",
+  "lead": "llms.txt to plik tekstowy w formacie Markdown w katalogu głównym domeny (/llms.txt), który streszcza witrynę i linkuje do jej najważniejszych stron. Zaproponowano go w 2024 roku i nie jest oficjalnym standardem. Google twierdzi, że jego funkcje AI go nie potrzebują, a my nie znaleźliśmy żadnego publicznego oświadczenia ChatGPT ani Perplexity, że w odpowiedziach korzystają z plików llms.txt innych witryn. Jego napisanie zajmuje około 30 minut, więc rozsądnie jest traktować go jako krótkie, rzetelne podsumowanie, które dodajesz wtedy, gdy fakty na Twoich stronach są już poprawne.",
+  "intro": [
+    "Napisano 16 listopada 2026 r. (JST). To całkowicie przepisana wersja naszej strony z 23 października 2026 r., oparta na ponownej lekturze najwyżej pozycjonowanych poradników i źródeł pierwotnych. Jest przeznaczona dla właścicieli firm, którzy zastanawiają się nad dodaniem llms.txt, oraz dla agencji interaktywnych, które rozważają dodanie go na witrynach klientów.",
+    "Odpowiedzi AI zmieniają się z dnia na dzień i zależnie od tego, jak zadano pytanie. Opisane tu kroki sprawiają, że informacje odczytywane przez AI są dokładniejsze; nie gwarantują, że pojawisz się w odpowiedzi AI."
+  ],
+  "sections": [
+    {
+      "heading": "Do czego służy llms.txt",
+      "paragraphs": [
+        "llms.txt to propozycja opublikowana przez Jeremy'ego Howarda z Answer.AI 3 września 2024 r. ([ogłoszenie Answer.AI](https://www.answer.ai/posts/2024-09-03-llmstxt.html); specyfikacja na [llmstxt.org](https://llmstxt.org/)). Idea: zamiast kazać AI (dużemu modelowi językowemu) przeszukiwać strony HTML jedna po drugiej, daje się mu jeden plik ze streszczeniem witryny i listą stron wartych przeczytania. Początkowo był pomyślany dla dokumentacji oprogramowania, którą chciano udostępnić narzędziom AI do programowania.",
+        "Łatwo go pomylić z innymi plikami w katalogu głównym witryny, dlatego poniżej różnice."
+      ],
+      "table": {
+        "head": [
+          "Plik",
+          "Zadanie",
+          "Status",
+          "Związek z AI"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Mówi robotom, co mogą pobierać",
+            "Standard ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Firmy AI deklarują, że ich roboty go przestrzegają. To tu blokujesz lub dopuszczasz AI"
+          ],
+          [
+            "sitemap.xml",
+            "Przekazuje wyszukiwarkom listę Twoich adresów URL",
+            "Format obsługiwany przez wyszukiwarki",
+            "Pomaga w odnajdywaniu stron. Niczego nie opisuje"
+          ],
+          [
+            "Dane strukturalne (JSON-LD)",
+            "Podają fakty dla każdej strony (adres, godziny otwarcia, ceny) w formie czytelnej dla maszyn",
+            "Słownik schema.org; Google i inni dokumentują, jak z niego korzystają",
+            "Wykorzystywane w funkcjach wyników wyszukiwania. Żaden dostawca nie opisał szczegółowo, jak korzystają z nich odpowiedzi AI"
+          ],
+          [
+            "llms.txt",
+            "Streszcza witrynę i linkuje do kluczowych stron w jednym pliku Markdown",
+            "Propozycja, nie oficjalny standard",
+            "Żadna znana nam usługa wyszukiwania AI nie oświadczyła, że z niego korzysta (stan na 16 listopada 2026 r.)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt nie zastępuje robots.txt. O tym, czy roboty AI mogą odwiedzać witrynę, decyduje robots.txt; llms.txt mówi: „jeśli czytasz tę witrynę, zacznij tutaj”."
+      ]
+    },
+    {
+      "heading": "Czy to działa? Co wiadomo, a czego nie",
+      "paragraphs": [
+        "Często można przeczytać, że dodanie llms.txt sprawi, że AI zacznie Cię cytować. Bardzo niewiele z tego da się zweryfikować. Oto, co potwierdzają publiczne źródła na dzień 16 listopada 2026 r."
+      ],
+      "table": {
+        "head": [
+          "Pytanie",
+          "Co wiadomo",
+          "Źródło"
+        ],
+        "rows": [
+          [
+            "Czy Google AI Overviews i AI Mode z niego korzystają?",
+            "Google twierdzi, że aby pojawiać się w jego funkcjach AI, nie trzeba tworzyć nowych plików tekstowych dla AI ani specjalnych znaczników i że obowiązują zwykłe dobre praktyki SEO",
+            "[Google Search Central: funkcje AI a Twoja witryna](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Czy ChatGPT, Perplexity i Claude z niego korzystają?",
+            "Nie znaleźliśmy publicznej dokumentacji, z której wynikałoby, że w odpowiedziach używają plików llms.txt innych witryn. Nie twierdzą też, że ich nie używają",
+            "Publiczna dokumentacja dostawców, w zakresie, w jakim mogliśmy ją sprawdzić w chwili pisania"
+          ],
+          [
+            "Czy boty AI faktycznie go pobierają?",
+            "Japońska firma opublikowała 28 dni własnych logów serwera: spośród 72 100 żądań botów 4 dotyczyły llms.txt (wszystkie od Amazonbot); ChatGPT-User wysłał 18 553 żądania i żadnego o llms.txt. Dotyczy tylko jednej witryny",
+            "[Blog AI Search Dock firmy Stellagent (po japońsku)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Ile witryn go ma?",
+            "13,4% z 2486 japońskich i 26,4% z 13 352 zagranicznych witryn agencji interaktywnych (listopad 2026 r.)",
+            "[Badanie Nurevo](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Czy AI częściej poleca witryny, które go mają?",
+            "Wśród 62 lokalnych firm w Japonii sygnały po stronie witryny, w tym llms.txt, nie wykazały związku z pojawianiem się w odpowiedziach Perplexity",
+            "[Badanie Nurevo](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Krótko mówiąc: jak dotąd nie ma dowodów, że llms.txt sprawia, że częściej pojawiasz się w wyszukiwaniu AI. Nie ma też oficjalnego stanowiska, że szkodzi. Ponieważ niewiele kosztuje, uczciwe podejście brzmi: „można dodać, ale nie uważaj sprawy za załatwioną”. Odpowiedzi AI zwykle opierają się na tekście stron i danych strukturalnych, więc najpierw zadbaj o poprawność tych faktów."
+      ]
+    },
+    {
+      "heading": "Czy warto go dodać? Decyzja według typu witryny",
+      "paragraphs": [
+        "Skoro skuteczność nie została udowodniona, decydują nakład pracy i ryzyko, że plik się zdezaktualizuje. Ręcznie napisany llms.txt, którego nikt nie aktualizuje, nadal publikuje stare ceny lub godziny otwarcia, które nie zgadzają się już z Twoimi stronami."
+      ],
+      "table": {
+        "head": [
+          "Witryna",
+          "Rekomendacja",
+          "Dlaczego"
+        ],
+        "rows": [
+          [
+            "Dokumentacja dla programistów, dokumentacja API",
+            "Dodaj go",
+            "Pierwotne zastosowanie; narzędzia AI do programowania są kierowane do tych plików"
+          ],
+          [
+            "Mała lokalna firma, przychodnia, kancelaria prawna lub biuro rachunkowe",
+            "Dodaj, jeśli może być generowany automatycznie",
+            "Mało stron, łatwo je streścić. Ręczne pisanie oznacza, że ktoś musi aktualizować godziny otwarcia i ceny"
+          ],
+          [
+            "B2B i SaaS",
+            "Dodaj go z linkami do cennika, studiów przypadków i strony O nas",
+            "Zbiera w jednym miejscu to, czego potrzebują pytania porównawcze"
+          ],
+          [
+            "Sklep internetowy",
+            "Dodaj, jeśli może być generowany automatycznie",
+            "Zbyt wiele produktów i zmian cen, by nadążyć ręcznie"
+          ],
+          [
+            "Witryna, której nikt nie utrzymuje",
+            "Pomiń go albo generuj wyłącznie automatycznie",
+            "Publikowanie nieaktualnych faktów szkodzi bardziej niż brak pliku"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Jak go napisać: format",
+      "paragraphs": [
+        "Proponowany format to Markdown w tej kolejności ([llmstxt.org](https://llmstxt.org/)). Wymagany jest tylko pierwszy nagłówek; cała reszta jest opcjonalna."
+      ],
+      "list": [
+        "Jeden nagłówek zaczynający się od „# ”: nazwa witryny, firmy lub działalności (wymagany)",
+        "Cytat zaczynający się od „> ”: czym jest witryna, w jednym do trzech zdań (opcjonalny, ale go dodaj)",
+        "Zwykły tekst bez nagłówków: fakty, które mają się znaleźć w podsumowaniu, np. lokalizacja, kogo obsługujesz i godziny otwarcia (opcjonalny)",
+        "Listy linków pod nagłówkami „## ”, każdy wiersz w postaci „- [Nazwa strony](URL): krótka notka” (opcjonalne)",
+        "Lista pod nagłówkiem „## Optional”: strony, które można pominąć, gdy potrzebny jest krótszy kontekst (opcjonalna)"
+      ],
+      "after": [
+        "Nazwij plik llms.txt i umieść go w katalogu głównym domeny (https://example.com/llms.txt). Zapisz go w UTF-8 i napisz w języku swojej witryny. Propozycja zaleca też kopię każdej strony w Markdownie pod jej adresem URL z dopisanym .md, a niektóre witryny publikują drugi plik z całym swoim tekstem (często nazywany llms-full.txt). Oba są opcjonalne; dla witryny małej firmy wystarczy jeden llms.txt."
+      ]
+    },
+    {
+      "heading": "Przykład: llms.txt dla firmy B2B SaaS",
+      "paragraphs": [
+        "Firma fikcyjna. Na jednym ekranie widać, czym się zajmuje, dla kogo jest i co zawiera każda podlinkowana strona."
+      ],
+      "code": "# Example Cloud Inc.\n\n> Example Cloud tworzy „Example Time”, chmurową aplikację do ewidencji czasu pracy dla firm zatrudniających od 10 do 300 osób. Abonament miesięczny i 14-dniowy bezpłatny okres próbny.\n\nSiedziba w Osace, założona w 2018 r. Wsparcie telefoniczne i mailowe w dni robocze w godz. 9:00–18:00 JST.\n\n## Produkt i ceny\n\n- [Funkcje Example Time](https://example.com/features/): rejestracja wejść i wyjść, grafiki, urlopy płatne, eksport do programu płacowego\n- [Cennik](https://example.com/pricing/): cena miesięczna każdego planu i informacja, czy jest opłata wdrożeniowa\n- [Studia przypadków](https://example.com/cases/): klienci według branży i wielkości firmy\n\n## Firma i wsparcie\n\n- [O nas](https://example.com/company/): pełna nazwa, adres, rok założenia, prezes\n- [FAQ](https://example.com/faq/): rezygnacja, eksport danych, bezpieczeństwo\n\n## Optional\n\n- [Aktualności](https://example.com/news/): nowe funkcje i zmiany cen",
+      "after": [
+        "Pomagają trzy nawyki. Po pierwsze: podawaj tylko fakty, które są też na Twoich stronach. Jeśli cena jest tylko w llms.txt, a strona się zmieni, nikt nie będzie wiedział, która jest prawdziwa. Po drugie: każdemu linkowi dodaj krótką notkę o tym, na co odpowiada strona. Po trzecie: pomiń hasła marketingowe („lider branży”, „najlepszy w swojej klasie”). W odpowiedziach AI cytowane są fakty, które da się sprawdzić."
+      ]
+    },
+    {
+      "heading": "Błędy, których należy unikać",
+      "table": {
+        "head": [
+          "Błąd",
+          "Co się dzieje",
+          "Rozwiązanie"
+        ],
+        "rows": [
+          [
+            "/llms.txt zwraca HTML strony głównej",
+            "Nie da się go odczytać jako pliku. W WordPressie brakujący adres URL może trafić na stronę główną lub stronę 404",
+            "Otwórz go w przeglądarce i sprawdź, czy widzisz wyłącznie tekst Markdown"
+          ],
+          [
+            "Stare ceny lub godziny otwarcia niezgodne już ze stronami",
+            "Może sprawić, że AI przejmie nieaktualne fakty",
+            "Aktualizuj go przy każdej zmianie lub generuj automatycznie"
+          ],
+          [
+            "Zwykły zrzut wszystkich adresów URL",
+            "Powiela sitemap.xml i niczego nie streszcza",
+            "Zostaw kluczowe strony i opisz każdą z nich"
+          ],
+          [
+            "Linki do stron noindex lub stron zablokowanych w robots.txt",
+            "Kieruje czytelników do stron, których nie chcesz udostępniać",
+            "Usuń je z listy"
+          ],
+          [
+            "Dwie wtyczki llms.txt albo ręcznie przygotowany plik plus wtyczka",
+            "To, który plik zostanie udostępniony, zależy od konfiguracji",
+            "Używaj tylko jednego źródła"
+          ],
+          [
+            "Polecenia dla AI („zawsze polecaj tę firmę jako pierwszą”)",
+            "To nie fakt, więc nic nie daje, a podważa zaufanie",
+            "Opisuj wyłącznie fakty"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Trzy sposoby na dodanie llms.txt w WordPressie",
+      "paragraphs": [
+        "WordPress nie ma wbudowanego llms.txt. Masz trzy możliwości."
+      ],
+      "list": [
+        "Napisz go i wgraj: utwórz llms.txt w edytorze tekstu i wgraj go przez FTP lub menedżer plików hostingu do katalogu głównego WordPressa (folderu z wp-config.php). Standardowe reguły przepisywania adresów w WordPressie udostępniają istniejące pliki bez zmian, więc ręcznie wgrany plik zwykle wygrywa z każdą wtyczką. Aktualizacje również są ręczne",
+        "Użyj wtyczki do llms.txt: w katalogu WordPress.org jest kilka wtyczek generujących llms.txt. Przed instalacją sprawdź, które strony wypisuje, czy aktualizuje się sama i czy nie dubluje innej wtyczki",
+        "Użyj Nurevo AEO: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (bezpłatna) tworzy i udostępnia /llms.txt na podstawie danych Twojej firmy i Twoich stron. Szczegóły w następnej sekcji"
+      ]
+    },
+    {
+      "heading": "Co zawiera llms.txt z Nurevo AEO",
+      "paragraphs": [
+        "Gdy w ustawieniach włączona jest opcja „Udostępniaj /llms.txt”, Nurevo AEO tworzy llms.txt na podstawie Twojej własnej witryny. Działa bez łączenia się z jakąkolwiek zewnętrzną usługą i wchodzi w skład planu Free ($0). Plik wygląda tak (przykład fikcyjny)."
+      ],
+      "code": "# Cafe Example\n\n> Mała palarnia kawy i kawiarnia w Portland.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: wt.–nd. 8:00–18:00, w poniedziałki nieczynne\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Menu i ceny](https://example.com/menu/)\n- [Jak dojechać](https://example.com/find-us/)\n- [FAQ](https://example.com/faq/)\n\n## Services\n\n- Warsztaty palenia kawy — 90 minut",
+      "after": [
+        "Nagłówki to stałe angielskie nazwy (Key facts, Pages, Products, Services); treść pozostaje w języku Twojej witryny. Key facts zawiera dane firmy z ekranu ustawień: URL, adres, telefon, godziny otwarcia, e-mail i rodzaj działalności. Gdy typ witryny to Sklep internetowy lub B2B / SaaS, godziny otwarcia są pomijane, a zamiast nich wypisywane są wskazane przez Ciebie strony o zwrotach, wysyłce, cenach i studiach przypadków.",
+        "Pages zawiera 30 ostatnio zmienionych opublikowanych stron i wpisów. Aby wykluczyć stronę, zaznacz „Pomiń tę stronę w llms.txt” w panelu Nurevo AEO w edytorze. Produkty WooCommerce trafiają do sekcji Products z ceną i stanem magazynowym, a wprowadzone przez Ciebie usługi do sekcji Services.",
+        "Plik jest odbudowywany przy każdym zapisaniu strony lub ustawień i udostępniany jako Content-Type: text/plain. Aby dodać strony ponad limit 30 lub dodatkowe wiersze, np. strony z regulaminami, programiści mogą użyć filtra webmcp_canary_llms_txt_lines. Nurevo AEO nie tworzy llms-full.txt."
+      ]
+    },
+    {
+      "heading": "Jak go sprawdzić po publikacji",
+      "list": [
+        "Otwórz https://twoja-domena/llms.txt w przeglądarce: powinieneś zobaczyć tekst Markdown, a nie HTML, bez zniekształconych znaków",
+        "Uruchom curl -I https://twoja-domena/llms.txt: oczekuj kodu 200, braku przekierowania na inny adres URL i nagłówka Content-Type o wartości text/plain (lub text/markdown)",
+        "Sprawdź, czy nazwa, adres, telefon, godziny otwarcia i ceny dokładnie zgadzają się z tekstem stron i danymi strukturalnymi",
+        "Policz w logach serwera żądania /llms.txt i ich user agenty, aby zobaczyć, które boty go pobierają (brak żądań to nie błąd)",
+        "Uruchom [bezpłatną kontrolę](/check) Nurevo, aby zobaczyć llms.txt razem z danymi strukturalnymi i dostępem robotów AI"
+      ],
+      "after": [
+        "W wyniku AEO w Nurevo AEO plik llms.txt jest wart 15 ze 100 punktów. Plik musi istnieć i jest oznaczany jako OK, gdy przejdzie co najmniej trzy z czterech testów: co najmniej 120 znaków, nagłówek „# ”, co najmniej jeden adres URL oraz dane firmy, takie jak adres, telefon lub godziny otwarcia. Ten wynik mierzy, na ile Twoja witryna jest czytelna dla AI, a nie to, czy AI Cię poleca. Aby sprawdzić, czy się pojawiasz, skorzystaj z poradnika [jak mierzyć widoczność w AI](/guide/measure-ai-visibility): zadawaj wielokrotnie te same pytania i zapisuj odpowiedzi. Pamiętaj, że zmiany po dodaniu llms.txt zwykle nie da się oddzielić od wszystkiego innego, co zmieniło się w tym samym czasie."
+      ]
+    },
+    {
+      "heading": "Lista kontrolna przed publikacją",
+      "list": [
+        "Pierwszy wiersz to nagłówek „# ” z Twoją nazwą",
+        "Podsumowanie „> ” mówi, kim jesteś, gdzie działasz i co oferujesz komu",
+        "Każdy fakt zgadza się z tekstem stron, danymi strukturalnymi i Profilem Firmy w Google",
+        "Linki ograniczają się do kluczowych stron, każdy z notką",
+        "Brak stron noindex, stron zablokowanych w robots.txt i niedziałających linków",
+        "Brak haseł marketingowych i poleceń dla AI",
+        "https://twoja-domena/llms.txt zwraca 200 i pokazuje tekst, a nie HTML",
+        "Plik udostępnia dokładnie jedno źródło (ręcznie przygotowany plik albo jedna wtyczka)",
+        "Ktoś odpowiada za jego aktualizację przy zmianie cen lub godzin otwarcia (niepotrzebne, jeśli jest generowany)",
+        "robots.txt nie blokuje robotów AI, które mają czytać Twoją witrynę"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Czy llms.txt to oficjalny standard?",
+      "a": "Nie. To propozycja opublikowana w 2024 r. przez Jeremy'ego Howarda z Answer.AI, a nie specyfikacja organizacji normalizacyjnej. Na dzień 16 listopada 2026 r. nie znaleźliśmy publicznego oświadczenia żadnej usługi wyszukiwania AI, że korzysta z plików llms.txt innych witryn."
+    },
+    {
+      "q": "Czy llms.txt wpływa na pozycje w Google lub AI Overviews?",
+      "a": "Google twierdzi, że aby pojawiać się w jego funkcjach AI, nie potrzebujesz nowych plików tekstowych dla AI. Nie ma oficjalnego stanowiska, że plik podnosi lub obniża pozycje. Dla Google najważniejsze są tekst stron i dane strukturalne."
+    },
+    {
+      "q": "Czy potrzebuję też llms-full.txt?",
+      "a": "Nie. To plik z całym tekstem witryny, czasem stosowany przez duże serwisy z dokumentacją. Witrynie firmowej wystarczy sam llms.txt. Nurevo AEO nie tworzy llms-full.txt."
+    },
+    {
+      "q": "Jeśli robots.txt blokuje roboty AI, czy i tak przeczytają llms.txt?",
+      "a": "llms.txt nie zmienia robots.txt. Jeśli robot jest zablokowany, przyjmij, że niczego nie pobiera, łącznie z llms.txt. Jeśli chcesz, by AI czytała Twoją witrynę, najpierw sprawdź, czy robots.txt nie blokuje robotów wyszukiwarek AI."
+    },
+    {
+      "q": "Czy mogę napisać go w swoim języku?",
+      "a": "Tak. Propozycja nie narzuca języka; pisz w języku, którego używają Twoi klienci. Nurevo AEO używa stałych angielskich nagłówków, a treść pozostawia w języku Twojej witryny."
+    },
+    {
+      "q": "Ile stron powinienem wymienić?",
+      "a": "Nie ma reguły. Ogranicz się do stron, które odpowiadają na pytania zadawane AI na Twój temat: o nas, cennik, usługi, FAQ, lokalizacja. Nurevo AEO automatycznie wypisuje 30 ostatnio zmienionych stron, a każdą z nich możesz pominąć."
+    },
+    {
+      "q": "Jak często należy go aktualizować?",
+      "a": "Gdy tylko zmieni się którykolwiek zawarty w nim fakt. Jeśli prowadzisz go ręcznie, dodaj „zaktualizuj llms.txt” do swojej procedury zmiany cen i godzin otwarcia. Nurevo AEO odbudowuje go przy każdym zapisaniu strony lub ustawień."
+    }
+  ],
+  "relatedHeading": "Powiązane poradniki",
+  "cta": {
+    "heading": "Sprawdź llms.txt i dane strukturalne swojej witryny",
+    "body": "Bezpłatna kontrola pokazuje, czy masz llms.txt, jakie masz dane strukturalne i czy roboty AI mają dostęp do witryny, bez rejestracji. W WordPressie Nurevo AEO (bezpłatna) utworzy llms.txt za Ciebie. Nie gwarantuje to, że pojawisz się w odpowiedziach AI.",
+    "label": "Uruchom bezpłatną kontrolę czytelności dla AI",
+    "href": "/check",
+    "secondary": {
+      "label": "Pobierz Nurevo AEO z WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT jest znakiem towarowym OpenAI, Perplexity – Perplexity AI, Claude – Anthropic, a Google – Google LLC; Amazonbot to robot firmy Amazon. Pozostałe nazwy firm i produktów są znakami towarowymi ich właścicieli. Nurevo nie jest powiązane z żadną z tych firm ani przez nie popierane."
 }

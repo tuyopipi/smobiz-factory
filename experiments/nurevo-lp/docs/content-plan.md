@@ -163,3 +163,13 @@
 3. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
 4. 代表者・専門家のプロフィールページのAI検索対策（Person・資格・経歴の書き方）【全業種】
 5. フランチャイズ本部向け：加盟店サイトとAI検索（表記ルール・リンク・本部と加盟店の役割）【制作会社・本部向け】
+| 2026-11-16 8時（月曜・書き直し） | llms-txt | スカイスクレイパー方式で全面書き直し（2026-10-23の短い版から）：llms.txtとは〔Answer.AI Jeremy Howard 2024-09-03の提案・robots.txt/sitemap.xml/構造化データとの違い表〕、効果について分かっていること表〔Google「AI機能とウェブサイト」＝新しいAI向けファイル不要・AI各社の公式説明なし・ステラジェントの自社ログ28日〔llms.txt 4回すべてAmazonbot、ChatGPT-User 18,553回で0回〕・Nurevo調査の設置率〔日本13.4%・海外26.4%〕・62件の調査で関係なし〕、サイト種類別の判断表、形式〔H1必須・引用・本文・H2リンク一覧・Optional、.md版とllms-full.txtは任意〕、BtoB/SaaSの例（コードブロック）、よくある間違い表、WordPressの置き方3つ〔手で置く・生成プラグイン・Nurevo AEO〕、Nurevo AEOの生成内容〔Key facts/Pages 30件/Products/Services・サイト種類で営業時間を出さない・「このページをllms.txtに載せない」・webmcp_canary_llms_txt_lines・llms-full.txtは作らない〕、公開後の確かめ方〔ブラウザ・curl -I・ログ・AEOスコア15点の4つの確認〕、チェックリスト10、FAQ 7問）。41言語（39言語は書き直した英語から再翻訳）。ビルドに section.code（<pre>）を追加 | 書き直し | content/daily-20261116-08 |
+翻訳の補完ログ：2026-11-16 recruiting-page-ai-search に39言語を追加（41言語）。
+翻訳の残り（8時台で補完）：ai-visibility-drop-causes・research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search（ja/en のみ）。
+メモ：2026-11-16 8時の回は llmstxt.org・answer.ai・Google（AI features / AI optimization guide）・Ahrefs・Search Engine Journal・Chrome Lighthouse を WebFetch の許可待ちで取得できなかった。Googleの説明は 2026-10-30/11-01 に確認済みの範囲だけ、形式は提案の基本部分だけを書き、Ahrefs・SE Ranking等の第三者調査、Google担当者の発言、仕様の改訂（「v2」）、Lighthouseの llms.txt 監査は書いていない。次に更新するときに一次情報で確かめて足す。
+次の候補：
+1. 皮膚科・美容皮膚科のAI検索対策（保険診療と自費の書き分け、料金表示と限定解除）【業種別】
+2. 写真館・フォトスタジオのAI検索対策（撮影プラン・データ納品・衣装・予約）【業種別】
+3. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
+4. 代表者・専門家のプロフィールページのAI検索対策（Person・資格・経歴の書き方）【全業種】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
