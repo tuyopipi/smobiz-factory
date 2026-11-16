@@ -1,19 +1,300 @@
 {
-"title": "Hva er llms.txt? Filen som forklarer nettstedet for AI | Nurevo",
-"description": "Hva llms.txt inneholder, hvor den skal ligge, hvordan den skiller seg fra robots.txt og sitemap.xml, og hvordan du holder den oppdatert på WordPress.",
-"h1": "Hva er llms.txt? Filen som forklarer nettstedet ditt for AI",
-"lead": "llms.txt er en enkel tekstfil i roten av domenet ditt (dittnettsted.no/llms.txt) som beskriver nettstedet for AI på et tydelig, maskinvennlig språk og peker på de viktigste sidene. Tenk på den som en «README for AI».",
-"sections": [
-{"heading": "Hvorfor den finnes", "paragraphs": ["robots.txt forteller crawlere hva de har tilgang til; et sitemap lister URL-er. Ingen av dem forteller en AI hva nettstedet handler om eller hva den skal sitere. llms.txt fyller det hullet – et kort, utvalgt sammendrag AI kan lese raskt."]},
-{"heading": "Hva den skal inneholde", "list": ["En kort beskrivelse av bedriften eller nettstedet", "Nøkkelfakta: hva du gjør, hvor, åpningstider, kontakt", "Lenker til de viktigste sidene, hver med en beskrivelse på én linje", "Eventuelt innholdet du helst vil at AI skal bygge på"]},
-{"heading": "Garanterer den at du blir sitert?", "paragraphs": ["Nei. Den er ett signal blant flere – strukturerte data, crawlertilgang, konsistens. Men den gjør deg til en enklere og tydeligere kilde å sitere. [Hva er AEO?](/guide/what-is-aeo)"]},
-{"heading": "Slik legger du den til på WordPress", "paragraphs": ["Du kan lage den for hånd, men den blir utdatert når nettstedet endres. En utvidelse kan generere den og holde den oppdatert automatisk. [AEO for WordPress](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Er llms.txt en offisiell standard?", "a": "En ny konvensjon som i økende grad blir anerkjent. Den koster ingenting å legge til og kan bare hjelpe."},
-{"q": "Hvor skal den ligge nøyaktig?", "a": "I roten av domenet: https://dittnettsted.no/llms.txt"},
-{"q": "Er det det samme som robots.txt eller sitemap.xml?", "a": "Nei. De styrer tilgang og lister URL-er. llms.txt beskriver nettstedet og velger ut innholdet for AI."}
-],
-"relatedHeading": "Relaterte guider",
-"cta": {"heading": "Se om nettstedet ditt har (og trenger) en llms.txt", "body": "Ingen registrering.", "label": "Sjekk gratis", "href": "/check"}
+  "title": "Hva er llms.txt? Slik skriver du den, og virker den? | Nurevo",
+  "description": "llms.txt forklart med eksempler: formatet, hva man vet om AI bruker den, når du bør legge den til, tre måter å gjøre det på i WordPress og hvordan du sjekker den.",
+  "h1": "Hva er llms.txt? Slik skriver du den, hva vi vet om den virker, og slik legger du den til i WordPress",
+  "lead": "llms.txt er en tekstfil i Markdown i roten av domenet ditt (/llms.txt) som oppsummerer nettstedet og lenker til de viktigste sidene. Den ble foreslått i 2024 og er ingen offisiell standard. Google sier at selskapets AI-funksjoner ikke trenger den, og vi har ikke funnet noen offentlig uttalelse fra ChatGPT eller Perplexity om at de bruker andre nettsteders llms.txt-filer i svarene sine. Den tar rundt 30 minutter å skrive, så det fornuftige er å se på den som en kort, korrekt oppsummering du legger til når faktaene på sidene dine er riktige.",
+  "intro": [
+    "Skrevet 16. november 2026 (JST). Dette er en fullstendig omskriving av siden vår fra 23. oktober 2026, basert på en ny gjennomlesning av de høyest rangerte veiledningene og primærkildene. Den er for bedriftseiere som vurderer å legge til llms.txt, og for webbyråer som vurderer å legge den til på kunders nettsteder.",
+    "AI-svar endrer seg fra dag til dag og etter hvordan spørsmålet stilles. Stegene her gjør informasjonen AI leser mer presis; de kan ikke garantere at du kommer med i et AI-svar."
+  ],
+  "sections": [
+    {
+      "heading": "Hva llms.txt er til for",
+      "paragraphs": [
+        "llms.txt er et forslag som Jeremy Howard i Answer.AI publiserte 3. september 2024 ([kunngjøringen fra Answer.AI](https://www.answer.ai/posts/2024-09-03-llmstxt.html); spesifikasjon på [llmstxt.org](https://llmstxt.org/)). Ideen: I stedet for å la en AI (en stor språkmodell) gjennomsøke HTML-sider én etter én, gir man den én fil med en oppsummering av nettstedet og en liste over sidene som er verdt å lese. Den var opprinnelig ment for programvaredokumentasjon som man vil at AI-kodeverktøy skal lese.",
+        "Den er lett å forveksle med andre filer i roten av et nettsted, så her er forskjellene."
+      ],
+      "table": {
+        "head": [
+          "Fil",
+          "Oppgave",
+          "Status",
+          "Forhold til AI"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Forteller crawlere hva de har lov til å hente",
+            "Standard ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "AI-selskapene sier at crawlerne deres følger den. Det er her du blokkerer eller tillater AI"
+          ],
+          [
+            "sitemap.xml",
+            "Gir søkemotorer en liste over URL-ene dine",
+            "Format som søkemotorene støtter",
+            "Hjelper med å bli funnet. Beskriver ingenting"
+          ],
+          [
+            "Strukturerte data (JSON-LD)",
+            "Oppgir fakta per side (adresse, åpningstider, priser) i maskinlesbar form",
+            "schema.org-vokabular; Google og andre dokumenterer hvordan de bruker det",
+            "Brukes til funksjoner i søkeresultatene. Hvordan AI-svar bruker det, er ikke dokumentert i detalj av noen leverandør"
+          ],
+          [
+            "llms.txt",
+            "Oppsummerer nettstedet og lenker til de viktigste sidene i én Markdown-fil",
+            "Forslag, ikke en offisiell standard",
+            "Ingen AI-søketjeneste vi kjenner til, har sagt at den bruker den (per 16. november 2026)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt erstatter ikke robots.txt. Om AI-crawlere får besøke nettstedet, avgjøres i robots.txt; llms.txt sier «hvis du leser dette nettstedet, start her»."
+      ]
+    },
+    {
+      "heading": "Virker den? Hva man vet, og hva man ikke vet",
+      "paragraphs": [
+        "Man leser ofte at llms.txt får AI til å sitere deg. Svært lite av dette kan etterprøves. Her er hva offentlig tilgjengelige kilder støtter per 16. november 2026."
+      ],
+      "table": {
+        "head": [
+          "Spørsmål",
+          "Hva man vet",
+          "Kilde"
+        ],
+        "rows": [
+          [
+            "Bruker Google AI Overviews og AI Mode den?",
+            "Google sier at du ikke trenger å lage nye AI-tekstfiler eller spesiell markering for å vises i Googles AI-funksjoner, og at vanlig god SEO-praksis gjelder",
+            "[Google Search Central: AI-funksjoner og nettstedet ditt](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Bruker ChatGPT, Perplexity og Claude den?",
+            "Vi har ikke funnet offentlig dokumentasjon på at de bruker andre nettsteders llms.txt-filer i svarene sine. De sier heller ikke at de ikke gjør det",
+            "Leverandørenes offentlige dokumentasjon, så langt vi kunne sjekke da vi skrev dette"
+          ],
+          [
+            "Henter AI-boter den faktisk?",
+            "Et japansk selskap publiserte 28 dager med egne serverlogger: Av 72 100 botforespørsler gjaldt 4 llms.txt (alle fra Amazonbot); ChatGPT-User sendte 18 553 forespørsler og ingen etter llms.txt. Bare ett nettsted",
+            "[Stellagents AI Search Dock-blogg (japansk)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Hvor mange nettsteder har en?",
+            "13,4 % av 2 486 japanske og 26,4 % av 13 352 utenlandske webbyråers nettsteder (november 2026)",
+            "[Nurevo-undersøkelse](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Blir nettsteder med en anbefalt mer av AI?",
+            "Blant 62 lokale bedrifter i Japan viste signaler på nettstedet, inkludert llms.txt, ingen sammenheng med å vises i svar fra Perplexity",
+            "[Nurevo-undersøkelse](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Kort sagt: Det finnes foreløpig ingen bevis for at llms.txt gjør at du vises oftere i AI-søk. Det finnes heller ingen offisiell uttalelse om at den skader. Siden den koster lite, er den rimelige holdningen «greit å legge til, men ikke regn jobben som gjort». Det AI-svar som regel bygger på, er sidetekst og strukturerte data, så få orden på de faktaene først."
+      ]
+    },
+    {
+      "heading": "Bør du legge til en? En vurdering etter type nettsted",
+      "paragraphs": [
+        "Når det ikke finnes noen påvist effekt, er det innsatsen og risikoen for at filen blir utdatert, som avgjør. En håndskrevet llms.txt som ingen oppdaterer, fortsetter å publisere gamle priser eller åpningstider som ikke lenger stemmer med sidene dine."
+      ],
+      "table": {
+        "head": [
+          "Nettsted",
+          "Anbefaling",
+          "Hvorfor"
+        ],
+        "rows": [
+          [
+            "Utviklerdokumentasjon, API-referanser",
+            "Legg til en",
+            "Det opprinnelige bruksområdet; AI-kodeverktøy blir pekt mot disse filene"
+          ],
+          [
+            "Liten lokal bedrift, klinikk, advokat- eller regnskapskontor",
+            "Legg til en hvis den kan genereres automatisk",
+            "Få sider, lett å oppsummere. Håndskrevet betyr at noen må oppdatere åpningstider og priser"
+          ],
+          [
+            "B2B og SaaS",
+            "Legg til en som lenker til priser, kundehistorier og Om oss-siden",
+            "Samler det sammenligningsspørsmål trenger, på ett sted"
+          ],
+          [
+            "Nettbutikk",
+            "Legg til en hvis den kan genereres automatisk",
+            "For mange produkter og prisendringer til å holde følge for hånd"
+          ],
+          [
+            "Nettsted som ingen vedlikeholder",
+            "Dropp den, eller generer den bare automatisk",
+            "Å publisere utdaterte fakta gjør mer skade enn å ikke ha noen fil"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Slik skriver du den: formatet",
+      "paragraphs": [
+        "Det foreslåtte formatet er Markdown, i denne rekkefølgen ([llmstxt.org](https://llmstxt.org/)). Bare den første overskriften er påkrevd; alt annet er valgfritt."
+      ],
+      "list": [
+        "Én overskrift som starter med «# »: navnet på nettstedet, selskapet eller bedriften (påkrevd)",
+        "Et sitat som starter med «> »: hva nettstedet er, i én til tre setninger (valgfritt, men ta det med)",
+        "Vanlig tekst uten overskrifter: fakta du vil ha med i oppsummeringen, for eksempel beliggenhet, hvem du betjener, og åpningstider (valgfritt)",
+        "Lenkelister under «## »-overskrifter, hver linje som «- [Sidenavn](URL): kort merknad» (valgfritt)",
+        "En liste under en overskrift som heter «## Optional»: sider som kan hoppes over når det trengs kortere kontekst (valgfritt)"
+      ],
+      "after": [
+        "Kall filen llms.txt og legg den i roten av domenet ditt (https://example.com/llms.txt). Lagre den som UTF-8 og skriv den på nettstedets språk. Forslaget anbefaler også en Markdown-kopi av hver side på sidens URL med .md lagt til, og noen nettsteder publiserer en ekstra fil med all teksten sin (ofte kalt llms-full.txt). Begge deler er valgfrie; for nettstedet til en liten bedrift holder det med én llms.txt."
+      ]
+    },
+    {
+      "heading": "Eksempel: llms.txt for et B2B SaaS-selskap",
+      "paragraphs": [
+        "Et oppdiktet selskap. På én skjerm ser du hva det gjør, hvem det er for, og hva hver lenket side inneholder."
+      ],
+      "code": "# Example Cloud Inc.\n\n> Example Cloud lager «Example Time», en skybasert app for timeregistrering for bedrifter med 10 til 300 ansatte. Månedlig betaling og 14 dagers gratis prøveperiode.\n\nHovedkontor i Osaka, grunnlagt i 2018. Support på telefon og e-post på hverdager kl. 9.00–18.00 JST.\n\n## Produkt og priser\n\n- [Funksjoner i Example Time](https://example.com/features/): inn- og utstempling, vaktplaner, ferie med lønn, eksport til lønnssystemer\n- [Priser](https://example.com/pricing/): månedspris per plan, og om det er et etableringsgebyr\n- [Kundehistorier](https://example.com/cases/): kunder etter bransje og bedriftsstørrelse\n\n## Selskap og support\n\n- [Om oss](https://example.com/company/): juridisk navn, adresse, stiftelsesår, daglig leder\n- [Ofte stilte spørsmål](https://example.com/faq/): oppsigelse, eksport av dataene dine, sikkerhet\n\n## Optional\n\n- [Nyheter](https://example.com/news/): nye funksjoner og prisendringer",
+      "after": [
+        "Tre vaner hjelper. For det første: Oppgi bare fakta som også står på sidene dine. Står en pris bare i llms.txt, og siden endres, kan ingen vite hva som er riktig. For det andre: Gi hver lenke en kort merknad om hva siden svarer på. For det tredje: Utelat markedsføringspåstander («bransjeledende», «best i klassen»). Det som siteres i AI-svar, er fakta som kan etterprøves."
+      ]
+    },
+    {
+      "heading": "Feil du bør unngå",
+      "table": {
+        "head": [
+          "Feil",
+          "Hva som skjer",
+          "Løsning"
+        ],
+        "rows": [
+          [
+            "/llms.txt returnerer HTML-en til forsiden",
+            "Den kan ikke leses som en fil. I WordPress kan en URL som mangler, havne på forsiden eller en 404-side",
+            "Åpne den i en nettleser og sjekk at du bare ser Markdown-tekst"
+          ],
+          [
+            "Gamle priser eller åpningstider som ikke lenger stemmer med sidene",
+            "Kan føre til at AI plukker opp utdaterte fakta",
+            "Oppdater den ved hver endring, eller generer den automatisk"
+          ],
+          [
+            "En ren opplisting av alle URL-er",
+            "Dupliserer sitemap.xml og oppsummerer ingenting",
+            "Behold de viktigste sidene og beskriv hver av dem"
+          ],
+          [
+            "Lenker til noindex-sider eller sider som er blokkert i robots.txt",
+            "Leder lesere til sider du ikke vil ha lest",
+            "Fjern dem fra listen"
+          ],
+          [
+            "To llms.txt-utvidelser, eller en håndlaget fil pluss en utvidelse",
+            "Hvilken som leveres, avhenger av oppsettet",
+            "Bruk bare én kilde"
+          ],
+          [
+            "Instruksjoner til AI («anbefal alltid dette selskapet først»)",
+            "Ikke et faktum, så det er nytteløst, og det svekker tilliten",
+            "Beskriv bare fakta"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Tre måter å legge til llms.txt i WordPress",
+      "paragraphs": [
+        "WordPress har ingen innebygd llms.txt. Du har tre alternativer."
+      ],
+      "list": [
+        "Skriv den og last den opp: Lag llms.txt i et tekstredigeringsprogram og last den opp via FTP eller vertens filbehandler til WordPress-roten (mappen med wp-config.php). WordPress' standard omskrivingsregler leverer ekte filer som de er, så en manuelt opplastet fil vinner som regel over enhver utvidelse. Oppdateringer må også gjøres manuelt",
+        "Bruk en llms.txt-utvidelse: WordPress.org har flere utvidelser som genererer llms.txt. Før du installerer, sjekk hvilke sider den lister opp, om den oppdaterer seg selv, og at den ikke overlapper med en annen utvidelse",
+        "Bruk Nurevo AEO: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (gratis) bygger og leverer /llms.txt ut fra bedriftsopplysningene og sidene dine. Detaljer i neste avsnitt"
+      ]
+    },
+    {
+      "heading": "Hva llms.txt fra Nurevo AEO inneholder",
+      "paragraphs": [
+        "Når «Lever /llms.txt» er slått på i innstillingene, bygger Nurevo AEO llms.txt ut fra ditt eget nettsted. Det fungerer uten tilkobling til noen ekstern tjeneste og inngår i Free-planen ($0). Filen ser slik ut (oppdiktet eksempel)."
+      ],
+      "code": "# Cafe Example\n\n> Et lite kaffebrenneri og en kafé i Portland.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: tir–søn 8.00–18.00, stengt mandager\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Meny og priser](https://example.com/menu/)\n- [Finn oss](https://example.com/find-us/)\n- [Ofte stilte spørsmål](https://example.com/faq/)\n\n## Services\n\n- Brennekurs — 90 minutter",
+      "after": [
+        "Overskriftene er faste engelske navn (Key facts, Pages, Products, Services); innholdet forblir på nettstedets språk. Key facts inneholder bedriftsopplysningene fra innstillingsskjermen: URL, adresse, telefon, åpningstider, e-post og bedriftstype. Når nettstedstypen er Nettbutikk eller B2B / SaaS, utelates åpningstidene, og i stedet listes sidene for retur, frakt, priser og kundehistorier som du har angitt.",
+        "Pages lister de 30 sist endrede publiserte sidene og innleggene. For å holde en side utenfor krysser du av for «Utelat denne siden fra llms.txt» i Nurevo AEO-panelet i redigeringsverktøyet. WooCommerce-produkter havner under Products med pris og lagerstatus, og tjenestene du har lagt inn, havner under Services.",
+        "Filen bygges på nytt når du lagrer en side eller innstillingene, og leveres som Content-Type: text/plain. For å legge til flere sider enn de 30, eller ekstra linjer som for eksempel retningslinjesider, kan utviklere bruke filteret webmcp_canary_llms_txt_lines. Nurevo AEO lager ikke llms-full.txt."
+      ]
+    },
+    {
+      "heading": "Slik sjekker du den etter publisering",
+      "list": [
+        "Åpne https://ditt-domene/llms.txt i en nettleser: Du skal se Markdown-tekst, ikke HTML, uten forvrengte tegn",
+        "Kjør curl -I https://ditt-domene/llms.txt: forvent 200, ingen omdirigering til en annen URL og en Content-Type på text/plain (eller text/markdown)",
+        "Sjekk at navn, adresse, telefon, åpningstider og priser stemmer nøyaktig med sideteksten og de strukturerte dataene dine",
+        "Tell forespørsler etter /llms.txt og user agentene deres i serverloggene for å se hvilke boter som henter den (ingen er ikke en feil)",
+        "Kjør Nurevos [gratis sjekk](/check) for å se llms.txt sammen med de strukturerte dataene dine og AI-crawlernes tilgang"
+      ],
+      "after": [
+        "I AEO-poengsummen til Nurevo AEO er llms.txt verdt 15 av 100 poeng. Filen må finnes, og den markeres som OK når den består minst tre av fire kontroller: 120 tegn eller mer, en «# »-overskrift, minst én URL og bedriftsfakta som adresse, telefon eller åpningstider. Poengsummen måler hvor lesbart nettstedet ditt er for AI, ikke om AI anbefaler deg. For å se om du vises, følg [slik måler du AI-synlighet](/guide/measure-ai-visibility): Still de samme spørsmålene gjentatte ganger og noter svarene. Vær klar over at en endring etter at du la til llms.txt, som regel ikke kan skilles fra alt annet som endret seg samtidig."
+      ]
+    },
+    {
+      "heading": "Sjekkliste før du publiserer",
+      "list": [
+        "Første linje er en «# »-overskrift med navnet ditt",
+        "Oppsummeringen med «> » sier hva du er, hvor, og hva du tilbyr hvem",
+        "Alle fakta stemmer med sideteksten, de strukturerte dataene og Google-bedriftsprofilen din",
+        "Lenkene er begrenset til de viktigste sidene, hver med en merknad",
+        "Ingen noindex-sider, ingen sider blokkert i robots.txt, ingen døde lenker",
+        "Ingen markedsføringspåstander og ingen instruksjoner til AI",
+        "https://ditt-domene/llms.txt returnerer 200 og viser tekst, ikke HTML",
+        "Nøyaktig én kilde leverer filen (håndlaget eller én utvidelse)",
+        "Noen har ansvaret for å oppdatere den når priser eller åpningstider endres (ikke nødvendig hvis den genereres)",
+        "robots.txt blokkerer ikke AI-crawlerne du vil skal lese nettstedet ditt"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Er llms.txt en offisiell standard?",
+      "a": "Nei. Det er et forslag som Jeremy Howard i Answer.AI publiserte i 2024, ikke en spesifikasjon fra et standardiseringsorgan. Per 16. november 2026 har vi ikke funnet noen offentlig uttalelse fra en AI-søketjeneste om at den bruker andre nettsteders llms.txt-filer."
+    },
+    {
+      "q": "Påvirker llms.txt rangeringen i Google eller AI Overviews?",
+      "a": "Google sier at du ikke trenger nye AI-tekstfiler for å vises i Googles AI-funksjoner. Det finnes ingen offisiell uttalelse om at filen hever eller senker rangeringen. For Google kommer sidetekst og strukturerte data først."
+    },
+    {
+      "q": "Trenger jeg også llms-full.txt?",
+      "a": "Nei. Det er en fil med all teksten på et nettsted, som av og til brukes av store dokumentasjonsnettsteder. Et bedriftsnettsted klarer seg fint med bare llms.txt. Nurevo AEO lager ikke llms-full.txt."
+    },
+    {
+      "q": "Hvis robots.txt blokkerer AI-crawlere, leser de likevel llms.txt?",
+      "a": "llms.txt endrer ikke robots.txt. Hvis en crawler er blokkert, bør du gå ut fra at den ikke henter noe, heller ikke llms.txt. Vil du at AI skal lese nettstedet ditt, sjekk først at robots.txt ikke blokkerer crawlerne til AI-søketjenestene."
+    },
+    {
+      "q": "Kan jeg skrive den på mitt eget språk?",
+      "a": "Ja. Forslaget fastsetter ikke noe språk; skriv den på språket kundene dine bruker. Nurevo AEO bruker faste engelske overskrifter og beholder innholdet på nettstedets språk."
+    },
+    {
+      "q": "Hvor mange sider bør jeg liste opp?",
+      "a": "Det finnes ingen regel. Hold deg til sider som svarer på spørsmålene folk stiller AI om deg: om oss, priser, tjenester, ofte stilte spørsmål, beliggenhet. Nurevo AEO lister automatisk de 30 sist endrede sidene, og du kan utelate hvilken som helst side."
+    },
+    {
+      "q": "Hvor ofte bør jeg oppdatere den?",
+      "a": "Så snart et faktum i den endrer seg. Vedlikeholder du den for hånd, legg «oppdater llms.txt» inn i rutinen for endringer i priser og åpningstider. Nurevo AEO bygger den på nytt hver gang du lagrer en side eller innstillingene."
+    }
+  ],
+  "relatedHeading": "Relaterte veiledninger",
+  "cta": {
+    "heading": "Sjekk nettstedets llms.txt og strukturerte data",
+    "body": "Den gratis sjekken viser om du har llms.txt, de strukturerte dataene dine og AI-crawlernes tilgang, uten registrering. I WordPress bygger Nurevo AEO (gratis) llms.txt for deg. Det kan ikke garantere at du vises i AI-svar.",
+    "label": "Kjør den gratis sjekken av AI-lesbarhet",
+    "href": "/check",
+    "secondary": {
+      "label": "Hent Nurevo AEO på WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT er et varemerke som tilhører OpenAI, Perplexity tilhører Perplexity AI, Claude tilhører Anthropic og Google tilhører Google LLC; Amazonbot er Amazons crawler. Andre selskaps- og produktnavn er varemerker som tilhører sine respektive eiere. Nurevo er ikke tilknyttet eller godkjent av noen av disse selskapene."
 }

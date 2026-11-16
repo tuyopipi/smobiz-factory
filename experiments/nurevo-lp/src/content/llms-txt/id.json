@@ -1,19 +1,300 @@
 {
-"title": "Apa itu llms.txt? File yang menjelaskan situs ke AI | Nurevo",
-"description": "Isi llms.txt, tempat menaruhnya, perbedaannya dengan robots.txt dan sitemap.xml, serta cara menjaganya tetap mutakhir di WordPress.",
-"h1": "Apa itu llms.txt? File yang menjelaskan situs Anda ke AI",
-"lead": "llms.txt adalah file teks sederhana di root domain Anda (situsanda.com/llms.txt) yang menjelaskan situs Anda kepada AI dengan bahasa yang jelas dan mudah diproses mesin, serta menunjuk ke halaman terpenting. Anggap saja sebagai “README untuk AI”.",
-"sections": [
-{"heading": "Mengapa file ini ada", "paragraphs": ["robots.txt memberi tahu crawler apa yang boleh diakses; sitemap mencantumkan URL. Keduanya tidak memberi tahu AI tentang apa situs Anda atau apa yang perlu dikutip. llms.txt mengisi celah itu – ringkasan singkat dan terpilih yang bisa dibaca AI dengan cepat."]},
-{"heading": "Apa isinya", "list": ["Deskripsi singkat bisnis atau situs Anda", "Fakta penting: apa yang Anda lakukan, di mana, jam buka, kontak", "Tautan ke halaman terpenting, masing-masing dengan deskripsi satu baris", "Opsional, konten yang paling Anda ingin jadikan acuan AI"]},
-{"heading": "Apakah menjamin dikutip?", "paragraphs": ["Tidak. Ini satu sinyal di antara beberapa – data terstruktur, akses crawler, konsistensi. Namun file ini menjadikan Anda sumber yang lebih mudah dan jelas untuk dikutip. [Apa itu AEO?](/guide/what-is-aeo)"]},
-{"heading": "Cara menambahkannya di WordPress", "paragraphs": ["Anda bisa membuatnya secara manual, tetapi akan usang seiring situs berubah. Plugin dapat membuat dan memperbaruinya secara otomatis. [AEO untuk WordPress](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Apakah llms.txt standar resmi?", "a": "Ini konvensi yang sedang berkembang dan makin diakui. Menambahkannya tidak berbiaya dan hanya bisa membantu."},
-{"q": "Tepatnya ditaruh di mana?", "a": "Di root domain Anda: https://situsanda.com/llms.txt"},
-{"q": "Apakah sama dengan robots.txt atau sitemap.xml?", "a": "Tidak. Keduanya mengatur akses dan mencantumkan URL. llms.txt menjelaskan situs Anda dan memilih kontennya untuk AI."}
-],
-"relatedHeading": "Panduan terkait",
-"cta": {"heading": "Cek apakah situs Anda punya (dan perlu) llms.txt", "body": "Tanpa daftar.", "label": "Cek gratis", "href": "/check"}
+  "title": "Apa Itu llms.txt? Cara Menulis dan Apakah Efektif? | Nurevo",
+  "description": "Penjelasan llms.txt dengan contoh: format, fakta tentang apakah AI memakainya, kapan perlu ditambahkan, tiga cara menambahkannya di WordPress, dan cara memeriksanya.",
+  "h1": "Apa Itu llms.txt? Cara Menulisnya, Apa yang Diketahui tentang Efektivitasnya, dan Cara Menambahkannya di WordPress",
+  "lead": "llms.txt adalah file teks Markdown di root domain Anda (/llms.txt) yang merangkum situs dan menautkan halaman-halaman terpentingnya. File ini diusulkan pada 2024 dan bukan standar resmi. Google menyatakan fitur AI-nya tidak membutuhkan file ini, dan kami tidak menemukan pernyataan publik dari ChatGPT maupun Perplexity bahwa mereka memakai file llms.txt situs lain dalam jawaban. Menulisnya hanya butuh sekitar 30 menit, jadi cara yang masuk akal adalah memperlakukannya sebagai ringkasan singkat dan akurat yang Anda tambahkan setelah fakta di halaman Anda sudah benar.",
+  "intro": [
+    "Ditulis 16 November 2026 (JST). Ini adalah penulisan ulang menyeluruh atas halaman kami tertanggal 23 Oktober 2026, berdasarkan pembacaan ulang panduan peringkat teratas dan sumber primer. Artikel ini ditujukan bagi pemilik usaha yang sedang menimbang apakah perlu menambahkan llms.txt, dan bagi agensi web yang sedang menimbang apakah perlu menambahkannya ke situs klien.",
+    "Jawaban AI berubah dari hari ke hari dan bergantung pada cara pertanyaan diajukan. Langkah-langkah di sini membuat informasi yang dibaca AI lebih akurat, tetapi tidak dapat menjamin Anda akan muncul dalam jawaban AI."
+  ],
+  "sections": [
+    {
+      "heading": "Untuk apa llms.txt",
+      "paragraphs": [
+        "llms.txt adalah usulan yang dipublikasikan oleh Jeremy Howard dari Answer.AI pada 3 September 2024 ([pengumuman Answer.AI](https://www.answer.ai/posts/2024-09-03-llmstxt.html); spesifikasi di [llmstxt.org](https://llmstxt.org/)). Idenya: alih-alih membuat AI (model bahasa besar) merayapi halaman HTML satu per satu, berikan satu file berisi ringkasan situs dan daftar halaman yang layak dibaca. Awalnya file ini ditujukan untuk dokumentasi perangkat lunak yang ingin dibaca oleh alat pemrograman AI.",
+        "File ini mudah tertukar dengan file lain di root situs, jadi berikut perbedaannya."
+      ],
+      "table": {
+        "head": [
+          "File",
+          "Fungsi",
+          "Status",
+          "Kaitan dengan AI"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Memberi tahu crawler apa yang boleh diambil",
+            "Standar ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Perusahaan AI menyatakan crawler mereka mematuhinya. Di sinilah Anda memblokir atau mengizinkan AI"
+          ],
+          [
+            "sitemap.xml",
+            "Memberikan daftar URL Anda kepada mesin pencari",
+            "Format yang didukung mesin pencari",
+            "Membantu penemuan halaman. Tidak menjelaskan apa pun"
+          ],
+          [
+            "Data terstruktur (JSON-LD)",
+            "Menyatakan fakta per halaman (alamat, jam buka, harga) dalam bentuk yang dapat dibaca mesin",
+            "Kosakata schema.org; Google dan lainnya mendokumentasikan penggunaannya",
+            "Dipakai untuk fitur hasil penelusuran. Cara jawaban AI memakainya tidak didokumentasikan secara rinci oleh penyedia mana pun"
+          ],
+          [
+            "llms.txt",
+            "Merangkum situs dan menautkan halaman utamanya dalam satu file Markdown",
+            "Usulan, bukan standar resmi",
+            "Sepengetahuan kami, belum ada layanan penelusuran AI yang menyatakan memakainya (per 16 November 2026)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt tidak menggantikan robots.txt. Boleh tidaknya crawler AI berkunjung ditentukan di robots.txt; llms.txt hanya mengatakan \"jika Anda membaca situs ini, mulailah dari sini\"."
+      ]
+    },
+    {
+      "heading": "Apakah efektif? Yang diketahui dan yang belum",
+      "paragraphs": [
+        "Anda akan sering membaca bahwa menambahkan llms.txt membuat Anda dikutip oleh AI. Sangat sedikit dari klaim itu yang bisa diverifikasi. Berikut yang didukung oleh catatan publik per 16 November 2026."
+      ],
+      "table": {
+        "head": [
+          "Pertanyaan",
+          "Yang diketahui",
+          "Sumber"
+        ],
+        "rows": [
+          [
+            "Apakah Google AI Overviews dan Mode AI memakainya?",
+            "Google menyatakan Anda tidak perlu membuat file teks AI baru atau markup khusus agar muncul di fitur AI-nya, dan praktik terbaik SEO biasa tetap berlaku",
+            "[Google Search Central: Fitur AI dan situs Anda](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Apakah ChatGPT, Perplexity, dan Claude memakainya?",
+            "Kami tidak menemukan dokumentasi publik yang menyatakan mereka memakai file llms.txt situs lain dalam jawaban. Mereka juga tidak menyatakan tidak memakainya",
+            "Dokumentasi publik para penyedia, sejauh yang dapat kami periksa saat menulis"
+          ],
+          [
+            "Apakah bot AI benar-benar memintanya?",
+            "Sebuah perusahaan Jepang memublikasikan log server miliknya selama 28 hari: dari 72.100 permintaan bot, 4 di antaranya untuk llms.txt (semuanya Amazonbot); ChatGPT-User membuat 18.553 permintaan dan tidak satu pun untuk llms.txt. Hanya satu situs",
+            "[Blog AI Search Dock milik Stellagent (bahasa Jepang)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Berapa banyak situs yang memilikinya?",
+            "13,4% dari 2.486 situs agensi web Jepang dan 26,4% dari 13.352 situs agensi web luar negeri (November 2026)",
+            "[Studi Nurevo](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Apakah situs yang memilikinya lebih sering direkomendasikan AI?",
+            "Pada 62 usaha lokal di Jepang, sinyal dari sisi situs termasuk llms.txt tidak menunjukkan hubungan dengan kemunculan dalam jawaban Perplexity",
+            "[Studi Nurevo](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Singkatnya: sejauh ini tidak ada bukti bahwa llms.txt membuat Anda lebih sering muncul di penelusuran AI. Tidak ada pula pernyataan resmi bahwa file ini merugikan. Karena biayanya kecil, sikap yang adil adalah \"boleh ditambahkan, tetapi jangan anggap pekerjaan sudah selesai\". Jawaban AI biasanya bersumber dari teks halaman dan data terstruktur, jadi pastikan fakta-fakta itu benar terlebih dahulu."
+      ]
+    },
+    {
+      "heading": "Perlukah Anda menambahkannya? Keputusan menurut jenis situs",
+      "paragraphs": [
+        "Karena efeknya belum terbukti, faktor penentunya adalah usaha yang dibutuhkan dan risiko file menjadi usang. llms.txt yang ditulis manual dan tidak pernah diperbarui akan terus memublikasikan harga atau jam buka lama yang sudah tidak cocok dengan halaman Anda."
+      ],
+      "table": {
+        "head": [
+          "Situs",
+          "Rekomendasi",
+          "Alasan"
+        ],
+        "rows": [
+          [
+            "Dokumentasi developer, referensi API",
+            "Tambahkan",
+            "Ini kasus penggunaan awalnya; alat pemrograman AI diarahkan ke file seperti ini"
+          ],
+          [
+            "Usaha lokal kecil, klinik, kantor hukum atau akuntan",
+            "Tambahkan jika bisa dibuat otomatis",
+            "Halamannya sedikit, mudah dirangkum. Jika ditulis manual, harus ada yang memperbarui jam buka dan harga"
+          ],
+          [
+            "B2B dan SaaS",
+            "Tambahkan, dengan tautan ke halaman harga, studi kasus, dan Tentang Kami",
+            "Mengumpulkan apa yang dibutuhkan pertanyaan perbandingan di satu tempat"
+          ],
+          [
+            "Toko online",
+            "Tambahkan jika bisa dibuat otomatis",
+            "Terlalu banyak produk dan perubahan harga untuk diikuti secara manual"
+          ],
+          [
+            "Situs yang tidak dikelola siapa pun",
+            "Lewati, atau hanya buat secara otomatis",
+            "Memublikasikan fakta usang lebih merugikan daripada tidak punya file sama sekali"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Cara menulis: formatnya",
+      "paragraphs": [
+        "Format yang diusulkan adalah Markdown, dengan urutan berikut ([llmstxt.org](https://llmstxt.org/)). Hanya judul pertama yang wajib; selebihnya opsional."
+      ],
+      "list": [
+        "Satu judul yang diawali \"# \": nama situs, perusahaan, atau usaha (wajib)",
+        "Blok kutipan yang diawali \"> \": apa situs ini, dalam satu hingga tiga kalimat (opsional, tetapi sebaiknya ada)",
+        "Teks biasa tanpa judul: fakta yang ingin dimasukkan ke ringkasan, seperti lokasi, siapa yang dilayani, dan jam buka (opsional)",
+        "Daftar tautan di bawah judul \"## \", setiap baris berbentuk \"- [Nama halaman](URL): catatan satu baris\" (opsional)",
+        "Daftar di bawah judul bernama \"## Optional\": halaman yang boleh dilewati jika konteks yang lebih pendek dibutuhkan (opsional)"
+      ],
+      "after": [
+        "Beri nama file llms.txt dan letakkan di root domain Anda (https://example.com/llms.txt). Simpan sebagai UTF-8 dan tulis dalam bahasa situs Anda. Usulan ini juga menyarankan salinan Markdown setiap halaman di URL-nya dengan tambahan .md, dan sebagian situs memublikasikan file kedua berisi seluruh teks mereka (sering disebut llms-full.txt). Keduanya opsional; untuk situs usaha kecil, satu llms.txt sudah cukup."
+      ]
+    },
+    {
+      "heading": "Contoh: llms.txt untuk perusahaan SaaS B2B",
+      "paragraphs": [
+        "Perusahaan rekaan. Dalam satu layar Anda bisa melihat apa yang dilakukannya, untuk siapa, dan apa isi setiap halaman yang ditautkan."
+      ],
+      "code": "# Example Cloud Inc.\n\n> Example Cloud membuat \"Example Time\", aplikasi pencatatan kehadiran berbasis cloud untuk perusahaan dengan 10 hingga 300 karyawan. Harga bulanan, dengan uji coba gratis 14 hari.\n\nKantor pusat di Osaka, didirikan pada 2018. Dukungan melalui telepon dan email pada hari kerja, pukul 9.00 hingga 18.00 JST.\n\n## Produk dan harga\n\n- [Fitur Example Time](https://example.com/features/): absensi, jadwal shift, cuti berbayar, ekspor ke perangkat lunak penggajian\n- [Harga](https://example.com/pricing/): harga bulanan per paket, dan ada tidaknya biaya penyiapan\n- [Studi kasus](https://example.com/cases/): pelanggan menurut industri dan ukuran perusahaan\n\n## Perusahaan dan dukungan\n\n- [Tentang kami](https://example.com/company/): nama resmi, alamat, tahun berdiri, CEO\n- [FAQ](https://example.com/faq/): pembatalan, ekspor data, keamanan\n\n## Optional\n\n- [Berita](https://example.com/news/): rilis fitur dan perubahan harga",
+      "after": [
+        "Ada tiga kebiasaan yang membantu. Pertama, cantumkan hanya fakta yang juga ada di halaman Anda: jika sebuah harga hanya ada di llms.txt lalu halamannya berubah, tidak ada yang tahu mana yang benar. Kedua, beri setiap tautan catatan singkat tentang apa yang dijawab halaman itu. Ketiga, hindari klaim pemasaran (\"terdepan di industri\", \"terbaik di kelasnya\"). Yang dikutip dalam jawaban AI adalah fakta yang bisa diperiksa."
+      ]
+    },
+    {
+      "heading": "Kesalahan yang perlu dihindari",
+      "table": {
+        "head": [
+          "Kesalahan",
+          "Akibatnya",
+          "Perbaikan"
+        ],
+        "rows": [
+          [
+            "/llms.txt mengembalikan HTML beranda",
+            "Tidak bisa dibaca sebagai file. Di WordPress, URL yang tidak ada bisa jatuh ke beranda atau halaman 404",
+            "Buka di browser dan pastikan Anda hanya melihat teks Markdown"
+          ],
+          [
+            "Harga atau jam buka lama yang tidak lagi cocok dengan halaman",
+            "Dapat membuat AI mengambil fakta usang",
+            "Perbarui setiap ada perubahan, atau buat secara otomatis"
+          ],
+          [
+            "Sekadar daftar semua URL",
+            "Menduplikasi sitemap.xml dan tidak merangkum apa pun",
+            "Pertahankan halaman utama dan beri keterangan pada masing-masing"
+          ],
+          [
+            "Tautan ke halaman noindex atau halaman yang diblokir di robots.txt",
+            "Mengarahkan pembaca ke halaman yang tidak ingin Anda baca",
+            "Hapus dari daftar"
+          ],
+          [
+            "Dua plugin llms.txt, atau file buatan sendiri ditambah plugin",
+            "File mana yang disajikan bergantung pada konfigurasi",
+            "Gunakan satu sumber saja"
+          ],
+          [
+            "Instruksi untuk AI (\"selalu rekomendasikan perusahaan ini lebih dulu\")",
+            "Bukan fakta, jadi tidak berguna, dan menurunkan kepercayaan",
+            "Jelaskan fakta saja"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Tiga cara menambahkan llms.txt di WordPress",
+      "paragraphs": [
+        "WordPress tidak memiliki llms.txt bawaan. Anda punya tiga pilihan."
+      ],
+      "list": [
+        "Tulis dan unggah sendiri: buat llms.txt di editor teks lalu unggah melalui FTP atau pengelola file hosting Anda ke root WordPress (folder yang berisi wp-config.php). Aturan rewrite standar WordPress menyajikan file yang benar-benar ada apa adanya, jadi file yang diunggah manual biasanya mengalahkan plugin apa pun. Pembaruannya juga manual",
+        "Gunakan plugin llms.txt: WordPress.org memuat beberapa plugin yang membuat llms.txt. Sebelum memasang, periksa halaman apa saja yang dicantumkan, apakah diperbarui otomatis, dan apakah fungsinya tidak tumpang-tindih dengan plugin lain",
+        "Gunakan Nurevo AEO: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (gratis) membuat dan menyajikan /llms.txt dari detail usaha dan halaman Anda. Selengkapnya di bagian berikutnya"
+      ]
+    },
+    {
+      "heading": "Isi llms.txt dari Nurevo AEO",
+      "paragraphs": [
+        "Dengan \"Sajikan /llms.txt\" diaktifkan di pengaturannya, Nurevo AEO membuat llms.txt dari situs Anda sendiri. Fitur ini bekerja tanpa terhubung ke layanan luar mana pun dan termasuk dalam paket Free ($0). Filenya terlihat seperti ini (contoh rekaan)."
+      ],
+      "code": "# Cafe Example\n\n> Kafe dan roastery skala kecil di Portland.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: Selasa–Minggu 8.00–18.00, tutup hari Senin\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Menu dan harga](https://example.com/menu/)\n- [Lokasi kami](https://example.com/find-us/)\n- [FAQ](https://example.com/faq/)\n\n## Services\n\n- Kelas roasting — 90 menit",
+      "after": [
+        "Judul-judulnya adalah nama bahasa Inggris yang tetap (Key facts, Pages, Products, Services); isinya tetap dalam bahasa situs Anda. Key facts memuat detail usaha dari layar pengaturan: URL, alamat, telepon, jam buka, email, dan jenis usaha. Jika jenis situs adalah Toko online atau B2B / SaaS, jam buka tidak dicantumkan dan sebagai gantinya ditampilkan halaman pengembalian, pengiriman, harga, dan studi kasus yang Anda atur.",
+        "Pages mencantumkan 30 halaman dan pos terbit yang paling baru diubah. Untuk mengecualikan sebuah halaman, centang \"Jangan sertakan halaman ini di llms.txt\" di panel Nurevo AEO pada editor. Produk WooCommerce masuk ke Products beserta harga dan status stok, sedangkan layanan yang Anda masukkan masuk ke Services.",
+        "File dibuat ulang setiap kali Anda menyimpan halaman atau pengaturan, dan disajikan sebagai Content-Type: text/plain. Untuk menambahkan halaman di luar 30 halaman tersebut, atau baris tambahan seperti halaman kebijakan, developer dapat memakai filter webmcp_canary_llms_txt_lines. Nurevo AEO tidak membuat llms-full.txt."
+      ]
+    },
+    {
+      "heading": "Cara memeriksanya setelah dipublikasikan",
+      "list": [
+        "Buka https://your-domain/llms.txt di browser: Anda seharusnya melihat teks Markdown, bukan HTML, tanpa karakter yang rusak",
+        "Jalankan curl -I https://your-domain/llms.txt: hasilnya harus 200, tidak dialihkan ke URL lain, dan Content-Type berupa text/plain (atau text/markdown)",
+        "Pastikan nama, alamat, telepon, jam buka, dan harga sama persis dengan teks halaman dan data terstruktur Anda",
+        "Hitung permintaan ke /llms.txt beserta user agent-nya di log server untuk melihat bot mana yang mengambilnya (nol permintaan bukan berarti ada masalah)",
+        "Jalankan [pemeriksaan gratis](/check) Nurevo untuk melihat llms.txt bersama data terstruktur dan akses crawler AI Anda"
+      ],
+      "after": [
+        "Dalam Skor AEO Nurevo AEO, llms.txt bernilai 15 dari 100 poin. File harus ada, dan dinyatakan OK jika lolos setidaknya tiga dari empat pemeriksaan: minimal 120 karakter, judul \"# \", setidaknya satu URL, dan fakta usaha seperti alamat, telepon, atau jam buka. Skor itu mengukur seberapa mudah situs Anda dibaca oleh AI, bukan apakah AI merekomendasikan Anda. Untuk mengetahui apakah Anda muncul, ikuti [cara mengukur visibilitas AI](/guide/measure-ai-visibility): ajukan pertanyaan yang sama berulang kali dan catat jawabannya. Perlu diingat, perubahan setelah menambahkan llms.txt biasanya tidak dapat dipisahkan dari hal lain yang berubah pada waktu yang sama."
+      ]
+    },
+    {
+      "heading": "Daftar periksa sebelum dipublikasikan",
+      "list": [
+        "Baris pertama adalah judul \"# \" berisi nama Anda",
+        "Ringkasan \"> \" menyebutkan siapa Anda, di mana, dan apa yang Anda tawarkan kepada siapa",
+        "Setiap fakta cocok dengan teks halaman, data terstruktur, dan Profil Bisnis Google Anda",
+        "Tautan dibatasi pada halaman utama, masing-masing dengan catatan",
+        "Tidak ada halaman noindex, halaman yang diblokir di robots.txt, atau tautan rusak",
+        "Tidak ada klaim pemasaran dan tidak ada instruksi untuk AI",
+        "https://your-domain/llms.txt mengembalikan 200 dan menampilkan teks, bukan HTML",
+        "Hanya ada satu sumber yang menyajikan file (buatan sendiri atau satu plugin)",
+        "Ada yang bertanggung jawab memperbaruinya saat harga atau jam buka berubah (tidak perlu jika dibuat otomatis)",
+        "robots.txt tidak memblokir crawler AI yang Anda inginkan membaca situs Anda"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Apakah llms.txt standar resmi?",
+      "a": "Bukan. Ini adalah usulan yang dipublikasikan pada 2024 oleh Jeremy Howard dari Answer.AI, bukan spesifikasi dari badan standar. Per 16 November 2026, kami tidak menemukan pernyataan publik dari layanan penelusuran AI mana pun bahwa mereka memakai file llms.txt situs lain."
+    },
+    {
+      "q": "Apakah llms.txt memengaruhi peringkat Google atau AI Overviews?",
+      "a": "Google menyatakan Anda tidak perlu file teks AI baru untuk muncul di fitur AI-nya. Tidak ada pernyataan resmi bahwa file ini menaikkan atau menurunkan peringkat. Untuk Google, teks halaman dan data terstruktur adalah yang utama."
+    },
+    {
+      "q": "Apakah saya juga perlu llms-full.txt?",
+      "a": "Tidak. Itu adalah file berisi seluruh teks situs, yang kadang dipakai oleh situs dokumentasi besar. Situs usaha atau perusahaan cukup dengan llms.txt saja. Nurevo AEO tidak membuat llms-full.txt."
+    },
+    {
+      "q": "Jika robots.txt memblokir crawler AI, apakah mereka tetap membaca llms.txt?",
+      "a": "llms.txt tidak mengubah robots.txt. Jika crawler diblokir, anggap crawler itu tidak mengambil apa pun, termasuk llms.txt. Jika Anda ingin AI membaca situs Anda, pastikan dulu robots.txt tidak memblokir crawler penelusuran AI."
+    },
+    {
+      "q": "Bolehkah saya menulisnya dalam bahasa saya sendiri?",
+      "a": "Boleh. Usulan ini tidak menetapkan bahasa; tulislah dalam bahasa yang dipakai pelanggan Anda. Nurevo AEO memakai judul bahasa Inggris yang tetap dan mempertahankan isinya dalam bahasa situs Anda."
+    },
+    {
+      "q": "Berapa banyak halaman yang sebaiknya dicantumkan?",
+      "a": "Tidak ada aturannya. Batasi pada halaman yang menjawab pertanyaan orang kepada AI tentang Anda: tentang kami, harga, layanan, FAQ, lokasi. Nurevo AEO otomatis mencantumkan 30 halaman yang paling baru diubah, dan Anda dapat mengecualikan halaman mana pun."
+    },
+    {
+      "q": "Seberapa sering saya harus memperbaruinya?",
+      "a": "Segera setelah ada fakta di dalamnya yang berubah. Jika Anda mengelolanya secara manual, tambahkan \"perbarui llms.txt\" ke rutinitas setiap kali harga dan jam buka berubah. Nurevo AEO membuatnya ulang setiap kali Anda menyimpan halaman atau pengaturan."
+    }
+  ],
+  "relatedHeading": "Panduan terkait",
+  "cta": {
+    "heading": "Periksa llms.txt dan data terstruktur situs Anda",
+    "body": "Pemeriksaan gratis menunjukkan apakah Anda memiliki llms.txt, kondisi data terstruktur, dan akses crawler AI Anda, tanpa perlu mendaftar. Di WordPress, Nurevo AEO (gratis) membuatkan llms.txt untuk Anda. Pemeriksaan ini tidak dapat menjamin Anda muncul dalam jawaban AI.",
+    "label": "Jalankan pemeriksaan keterbacaan AI gratis",
+    "href": "/check",
+    "secondary": {
+      "label": "Dapatkan Nurevo AEO di WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT adalah merek dagang OpenAI, Perplexity milik Perplexity AI, Claude milik Anthropic, dan Google milik Google LLC; Amazonbot adalah crawler milik Amazon. Nama perusahaan dan produk lainnya adalah merek dagang dari pemiliknya masing-masing. Nurevo tidak berafiliasi dengan maupun didukung oleh perusahaan-perusahaan tersebut."
 }

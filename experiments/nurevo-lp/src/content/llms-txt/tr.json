@@ -1,19 +1,300 @@
 {
-"title": "llms.txt nedir? Sitenizi yapay zekâya anlatan dosya | Nurevo",
-"description": "llms.txt dosyasının içeriği, nereye konduğu, robots.txt ve sitemap.xml'den farkı ve WordPress'te nasıl güncel tutulacağı.",
-"h1": "llms.txt nedir? Sitenizi yapay zekâya anlatan dosya",
-"lead": "llms.txt, alan adınızın kökünde (sitenizin.com/llms.txt) duran ve sitenizi yapay zekâya açık, makine dostu bir dille tanıtıp en önemli sayfalarınızı gösteren basit bir metin dosyasıdır. Onu “yapay zekâ için bir README” olarak düşünün.",
-"sections": [
-{"heading": "Neden var", "paragraphs": ["robots.txt tarayıcılara neye erişebileceklerini söyler; site haritası URL'leri listeler. Hiçbiri yapay zekâya sitenizin ne hakkında olduğunu ya da neyi alıntılaması gerektiğini söylemez. llms.txt bu boşluğu doldurur – yapay zekânın hızla okuyabileceği kısa, seçilmiş bir özet."]},
-{"heading": "İçine ne yazılır", "list": ["İşletmenizin veya sitenizin kısa bir tanımı", "Temel bilgiler: ne yaptığınız, nerede, çalışma saatleri, iletişim", "En önemli sayfalarınıza bağlantılar ve her biri için tek satırlık açıklama", "İsteğe bağlı olarak, yapay zekânın en çok dayanmasını istediğiniz içerik"]},
-{"heading": "Kaynak gösterilmeyi garanti eder mi?", "paragraphs": ["Hayır. Birkaç sinyalden biridir – yapılandırılmış veri, tarayıcı erişimi, tutarlılık. Ama sizi alıntılanması daha kolay ve daha net bir kaynak yapar. [AEO nedir?](/guide/what-is-aeo)"]},
-{"heading": "WordPress'te nasıl eklenir", "paragraphs": ["Elle oluşturabilirsiniz ama siteniz değiştikçe eskir. Bir eklenti onu otomatik üretebilir ve güncel tutabilir. [WordPress için AEO](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "llms.txt resmî bir standart mı?", "a": "Giderek daha çok tanınan, yeni ortaya çıkan bir gelenektir. Eklemek hiçbir şeye mal olmaz ve ancak yardımı dokunur."},
-{"q": "Tam olarak nereye konur?", "a": "Alan adınızın köküne: https://sitenizin.com/llms.txt"},
-{"q": "robots.txt veya sitemap.xml ile aynı şey mi?", "a": "Hayır. Onlar erişimi denetler ve URL'leri listeler. llms.txt ise sitenizi yapay zekâya tanıtır ve içeriği onun için seçer."}
-],
-"relatedHeading": "İlgili rehberler",
-"cta": {"heading": "Sitenizde llms.txt olup olmadığını (ve gerekip gerekmediğini) görün", "body": "Kayıt gerekmez.", "label": "Ücretsiz kontrol edin", "href": "/check"}
+  "title": "llms.txt nedir? Nasıl yazılır, gerçekten işe yarar mı? | Nurevo",
+  "description": "Örneklerle llms.txt: biçimi, yapay zekânın onu kullanıp kullanmadığına dair bilinenler, ne zaman eklenmeli, WordPress'te üç yöntem ve kontrolü.",
+  "h1": "llms.txt nedir? Nasıl yazılır, işe yarayıp yaramadığı hakkında ne biliniyor ve WordPress'e nasıl eklenir",
+  "lead": "llms.txt, alan adınızın kökünde (/llms.txt) duran, sitenizi özetleyen ve en önemli sayfalarına bağlantı veren bir Markdown metin dosyasıdır. 2024'te önerildi ve resmî bir standart değildir. Google, yapay zekâ özelliklerinin buna ihtiyaç duymadığını söylüyor; ChatGPT ya da Perplexity'nin yanıtlarında başka sitelerin llms.txt dosyalarını kullandığına dair herhangi bir kamuya açık açıklama da bulamadık. Yazması yaklaşık 30 dakika sürer; bu yüzden en makul yaklaşım, onu sayfalarınızdaki bilgiler doğru hâle geldikten sonra eklediğiniz kısa ve doğru bir özet olarak görmektir.",
+  "intro": [
+    "16 Kasım 2026'da (JST) yazıldı. Bu, 23 Ekim 2026 tarihli sayfamızın, üst sıralardaki rehberlerin ve birincil kaynakların yeniden okunmasına dayanan baştan sona yeniden yazılmış hâlidir. llms.txt ekleyip eklemeyeceğine karar veren işletme sahipleri ve bunu müşteri sitelerine ekleyip eklemeyeceğine karar veren web ajansları için hazırlandı.",
+    "Yapay zekâ yanıtları günden güne ve sorunun nasıl sorulduğuna göre değişir. Buradaki adımlar yapay zekânın okuduğu bilgiyi daha doğru hâle getirir; bir yapay zekâ yanıtında yer alacağınızı garanti edemez."
+  ],
+  "sections": [
+    {
+      "heading": "llms.txt ne işe yarar",
+      "paragraphs": [
+        "llms.txt, Answer.AI'dan Jeremy Howard'ın 3 Eylül 2024'te yayımladığı bir öneridir ([Answer.AI duyurusu](https://www.answer.ai/posts/2024-09-03-llmstxt.html); spesifikasyon: [llmstxt.org](https://llmstxt.org/)). Fikir şu: Yapay zekânın (büyük bir dil modelinin) HTML sayfalarını tek tek taramasını beklemek yerine ona sitenin özetini ve okunmaya değer sayfaların listesini içeren tek bir dosya vermek. İlk hedefi, geliştiricilerin yapay zekâ kodlama araçlarına okutmak istediği yazılım dokümantasyonuydu.",
+        "Sitenin kökündeki diğer dosyalarla kolayca karıştırılır; aradaki farklar şöyle."
+      ],
+      "table": {
+        "head": [
+          "Dosya",
+          "Görevi",
+          "Durumu",
+          "Yapay zekâyla ilişkisi"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Tarayıcılara neyi çekebileceklerini söyler",
+            "Standart ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Yapay zekâ şirketleri tarayıcılarının buna uyduğunu söylüyor. Yapay zekâyı engellediğiniz ya da izin verdiğiniz yer burasıdır"
+          ],
+          [
+            "sitemap.xml",
+            "Arama motorlarına URL'lerinizin listesini verir",
+            "Arama motorlarının desteklediği biçim",
+            "Keşfedilmeye yardımcı olur. Hiçbir şeyi tanımlamaz"
+          ],
+          [
+            "Yapılandırılmış veri (JSON-LD)",
+            "Sayfa başına bilgileri (adres, çalışma saatleri, fiyatlar) makinelerin okuyabileceği biçimde belirtir",
+            "schema.org sözlüğü; Google ve diğerleri kullanımını belgeliyor",
+            "Arama sonucu özellikleri için kullanılır. Yapay zekâ yanıtlarının bunu nasıl kullandığını hiçbir sağlayıcı ayrıntılı olarak belgelemiyor"
+          ],
+          [
+            "llms.txt",
+            "Siteyi tek bir Markdown dosyasında özetler ve temel sayfalarına bağlantı verir",
+            "Öneri, resmî standart değil",
+            "Bildiğimiz hiçbir yapay zekâ arama hizmeti bunu kullandığını söylemedi (16 Kasım 2026 itibarıyla)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt, robots.txt'nin yerini almaz. Yapay zekâ tarayıcılarının siteyi ziyaret edip edemeyeceğine robots.txt karar verir; llms.txt ise \"bu siteyi okuyorsan buradan başla\" der."
+      ]
+    },
+    {
+      "heading": "İşe yarıyor mu? Bilinenler ve bilinmeyenler",
+      "paragraphs": [
+        "llms.txt eklemenin yapay zekâda kaynak gösterilmenizi sağladığını sık sık okursunuz. Bunun çok azı doğrulanabilir. 16 Kasım 2026 itibarıyla kamuya açık kayıtların desteklediği bilgiler şunlar."
+      ],
+      "table": {
+        "head": [
+          "Soru",
+          "Bilinen",
+          "Kaynak"
+        ],
+        "rows": [
+          [
+            "Google AI Overviews ve AI Mode bunu kullanıyor mu?",
+            "Google, yapay zekâ özelliklerinde görünmek için yeni yapay zekâ metin dosyaları ya da özel işaretleme oluşturmanız gerekmediğini ve olağan SEO en iyi uygulamalarının geçerli olduğunu söylüyor",
+            "[Google Search Central: Yapay zekâ özellikleri ve web siteniz](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "ChatGPT, Perplexity ve Claude bunu kullanıyor mu?",
+            "Yanıtlarında başka sitelerin llms.txt dosyalarını kullandıklarını söyleyen kamuya açık bir dokümantasyon bulamadık. Kullanmadıklarını da söylemiyorlar",
+            "Sağlayıcıların kamuya açık dokümantasyonu, yazım sırasında kontrol edebildiğimiz kadarıyla"
+          ],
+          [
+            "Yapay zekâ botları bu dosyayı gerçekten istiyor mu?",
+            "Bir Japon şirketi kendi sunucu günlüklerinin 28 gününü yayımladı: 72.100 bot isteğinden 4'ü llms.txt içindi (hepsi Amazonbot); ChatGPT-User 18.553 istek yaptı ve hiçbiri llms.txt için değildi. Yalnızca tek bir site",
+            "[Stellagent'ın AI Search Dock blogu (Japonca)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Kaç sitede var?",
+            "2.486 Japon web ajansı sitesinin %13,4'ünde ve 13.352 yurt dışı web ajansı sitesinin %26,4'ünde (Kasım 2026)",
+            "[Nurevo araştırması](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Bu dosyaya sahip siteler yapay zekâ tarafından daha çok öneriliyor mu?",
+            "Japonya'daki 62 yerel işletmede, llms.txt dahil site tarafı sinyaller Perplexity yanıtlarında yer almakla hiçbir ilişki göstermedi",
+            "[Nurevo araştırması](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Kısacası: llms.txt'nin yapay zekâ aramasında daha çok görünmenizi sağladığına dair şimdiye kadar hiçbir kanıt yok. Zarar verdiğine dair resmî bir açıklama da yok. Maliyeti düşük olduğu için adil tutum şudur: \"eklemekte sakınca yok, ama işi bitmiş saymayın\". Yapay zekâ yanıtları genellikle sayfa metnine ve yapılandırılmış veriye dayanır; bu yüzden önce oradaki bilgileri doğru hâle getirin."
+      ]
+    },
+    {
+      "heading": "Eklemeli misiniz? Site türüne göre karar",
+      "paragraphs": [
+        "Kanıtlanmış bir etkisi olmadığına göre belirleyici olan, harcanan emek ve dosyanın eskime riskidir. Elle yazılmış ve kimsenin güncellemediği bir llms.txt, artık sayfalarınızla uyuşmayan eski fiyatları ya da çalışma saatlerini yayımlamaya devam eder."
+      ],
+      "table": {
+        "head": [
+          "Site",
+          "Öneri",
+          "Neden"
+        ],
+        "rows": [
+          [
+            "Geliştirici dokümantasyonu, API referansları",
+            "Ekleyin",
+            "Asıl kullanım alanı; yapay zekâ kodlama araçları bu dosyalara yönlendiriliyor"
+          ],
+          [
+            "Küçük yerel işletme, klinik, hukuk ya da muhasebe bürosu",
+            "Otomatik oluşturulabiliyorsa ekleyin",
+            "Az sayfa var, özetlemesi kolay. Elle yazılırsa birinin çalışma saatlerini ve fiyatları güncellemesi gerekir"
+          ],
+          [
+            "B2B ve SaaS",
+            "Fiyatlandırma, başarı hikâyeleri ve Hakkımızda sayfasına bağlantı vererek ekleyin",
+            "Karşılaştırma sorularının ihtiyaç duyduğu bilgileri tek yerde toplar"
+          ],
+          [
+            "Çevrim içi mağaza",
+            "Otomatik oluşturulabiliyorsa ekleyin",
+            "Elle takip edilemeyecek kadar çok ürün ve fiyat değişikliği var"
+          ],
+          [
+            "Kimsenin bakımını yapmadığı site",
+            "Eklemeyin ya da yalnızca otomatik oluşturun",
+            "Eskimiş bilgileri yayımlamak, hiç dosya olmamasından daha zararlıdır"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Nasıl yazılır: biçim",
+      "paragraphs": [
+        "Önerilen biçim Markdown'dır ve şu sırayı izler ([llmstxt.org](https://llmstxt.org/)). Yalnızca ilk başlık zorunludur; geri kalan her şey isteğe bağlıdır."
+      ],
+      "list": [
+        "\"# \" ile başlayan tek bir başlık: sitenin, şirketin ya da işletmenin adı (zorunlu)",
+        "\"> \" ile başlayan bir alıntı bloğu: sitenin ne olduğu, bir ila üç cümleyle (isteğe bağlı, ama ekleyin)",
+        "Başlıksız düz metin: konum, kime hizmet verdiğiniz ve çalışma saatleri gibi özette yer almasını istediğiniz bilgiler (isteğe bağlı)",
+        "\"## \" başlıkları altında bağlantı listeleri; her satır \"- [Sayfa adı](URL): tek satırlık not\" biçiminde (isteğe bağlı)",
+        "\"## Optional\" adlı bir başlık altında bir liste: daha kısa bir bağlam gerektiğinde atlanabilecek sayfalar (isteğe bağlı)"
+      ],
+      "after": [
+        "Dosyayı llms.txt olarak adlandırın ve alan adınızın köküne koyun (https://example.com/llms.txt). UTF-8 olarak kaydedin ve sitenizin dilinde yazın. Öneri ayrıca her sayfanın, URL'sine .md eklenmiş adreste bir Markdown kopyasının bulunmasını önerir; bazı siteler de tüm metinlerini içeren ikinci bir dosya yayımlar (çoğunlukla llms-full.txt adıyla). İkisi de isteğe bağlıdır; küçük bir işletme sitesi için tek bir llms.txt yeterlidir."
+      ]
+    },
+    {
+      "heading": "Örnek: B2B SaaS şirketi için llms.txt",
+      "paragraphs": [
+        "Hayalî bir şirket. Tek ekranda ne yaptığını, kimin için olduğunu ve bağlantı verilen her sayfanın ne içerdiğini görebilirsiniz."
+      ],
+      "code": "# Example Cloud A.Ş.\n\n> Example Cloud, 10 ila 300 çalışanı olan şirketler için bulut tabanlı mesai takip uygulaması \"Example Time\"ı geliştirir. Aylık fiyatlandırma, 14 günlük ücretsiz deneme.\n\nGenel merkez Osaka'da, 2018'de kuruldu. Hafta içi 9:00–18:00 (JST) arası telefon ve e-posta desteği.\n\n## Ürün ve fiyatlar\n\n- [Example Time özellikleri](https://example.com/features/): giriş-çıkış kaydı, vardiyalar, ücretli izin, bordro yazılımına aktarma\n- [Fiyatlar](https://example.com/pricing/): plan başına aylık fiyat ve kurulum ücreti olup olmadığı\n- [Başarı hikâyeleri](https://example.com/cases/): sektöre ve şirket büyüklüğüne göre müşteriler\n\n## Şirket ve destek\n\n- [Hakkımızda](https://example.com/company/): ticari unvan, adres, kuruluş yılı, CEO\n- [SSS](https://example.com/faq/): iptal, verilerinizi dışa aktarma, güvenlik\n\n## Optional\n\n- [Haberler](https://example.com/news/): yeni özellikler ve fiyat değişiklikleri",
+      "after": [
+        "Üç alışkanlık yardımcı olur. Birincisi, yalnızca sayfalarınızda da yer alan bilgileri yazın: Bir fiyat yalnızca llms.txt'de varsa ve sayfa değişirse, hangisinin doğru olduğunu kimse bilemez. İkincisi, her bağlantıya sayfanın hangi soruyu yanıtladığını belirten kısa bir not ekleyin. Üçüncüsü, pazarlama iddialarını (\"sektör lideri\", \"sınıfının en iyisi\") dışarıda bırakın. Yapay zekâ yanıtlarında alıntılanan şey doğrulanabilir bilgidir."
+      ]
+    },
+    {
+      "heading": "Kaçınılması gereken hatalar",
+      "table": {
+        "head": [
+          "Hata",
+          "Ne olur",
+          "Çözüm"
+        ],
+        "rows": [
+          [
+            "/llms.txt ana sayfanızın HTML'ini döndürüyor",
+            "Dosya olarak okunamaz. WordPress'te var olmayan bir URL ana sayfaya ya da bir 404 sayfasına düşebilir",
+            "Tarayıcıda açın ve yalnızca Markdown metni gördüğünüzden emin olun"
+          ],
+          [
+            "Artık sayfalarla uyuşmayan eski fiyatlar ya da çalışma saatleri",
+            "Yapay zekânın eskimiş bilgileri almasına yol açabilir",
+            "Her değişiklikte güncelleyin ya da otomatik oluşturun"
+          ],
+          [
+            "Tüm URL'lerin düz bir dökümü",
+            "sitemap.xml'i tekrarlar ve hiçbir şeyi özetlemez",
+            "Temel sayfaları tutun ve her birini açıklayın"
+          ],
+          [
+            "noindex sayfalara ya da robots.txt'de engellenmiş sayfalara bağlantılar",
+            "Okuyucuları okunmasını istemediğiniz sayfalara yönlendirir",
+            "Bunları listeden çıkarın"
+          ],
+          [
+            "İki llms.txt eklentisi ya da elle hazırlanmış bir dosya artı bir eklenti",
+            "Hangisinin sunulacağı kuruluma bağlıdır",
+            "Yalnızca tek bir kaynak kullanın"
+          ],
+          [
+            "Yapay zekâya talimatlar (\"her zaman önce bu şirketi öner\")",
+            "Bilgi değildir, bu yüzden işe yaramaz ve güven kaybettirir",
+            "Yalnızca bilgileri anlatın"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "WordPress'e llms.txt eklemenin üç yolu",
+      "paragraphs": [
+        "WordPress'te yerleşik bir llms.txt yoktur. Üç seçeneğiniz var."
+      ],
+      "list": [
+        "Yazın ve yükleyin: llms.txt dosyasını bir metin düzenleyicide oluşturun ve FTP ya da barındırma hizmetinizin dosya yöneticisiyle WordPress kök dizinine (wp-config.php dosyasının bulunduğu klasör) yükleyin. WordPress'in standart yeniden yazma kuralları gerçek dosyaları olduğu gibi sunar; bu nedenle elle yüklenen bir dosya genellikle her eklentiye üstün gelir. Güncellemeler de elle yapılır",
+        "Bir llms.txt eklentisi kullanın: WordPress.org'da llms.txt oluşturan birkaç eklenti bulunur. Kurmadan önce hangi sayfaları listelediğini, kendi kendini güncelleyip güncellemediğini ve başka bir eklentiyle çakışmadığını kontrol edin",
+        "Nurevo AEO kullanın: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (ücretsiz), işletme bilgilerinizden ve sayfalarınızdan /llms.txt dosyasını oluşturur ve sunar. Ayrıntılar bir sonraki bölümde"
+      ]
+    },
+    {
+      "heading": "Nurevo AEO'nun oluşturduğu llms.txt neler içerir",
+      "paragraphs": [
+        "Ayarlarında \"/llms.txt sun\" seçeneği açık olduğunda Nurevo AEO, llms.txt dosyasını kendi sitenizden oluşturur. Herhangi bir dış hizmete bağlanmadan çalışır ve Free planına (0 USD) dahildir. Dosya şuna benzer (hayalî örnek)."
+      ],
+      "code": "# Cafe Example\n\n> Portland'da küçük partiler hâlinde kavurma yapan bir kavurma atölyesi ve kafe.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: Salı–Pazar 8:00–18:00, pazartesi kapalı\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Menü ve fiyatlar](https://example.com/menu/)\n- [Bize ulaşın](https://example.com/find-us/)\n- [SSS](https://example.com/faq/)\n\n## Services\n\n- Kavurma atölyesi — 90 dakika",
+      "after": [
+        "Başlıklar sabit İngilizce adlardır (Key facts, Pages, Products, Services); içerik sitenizin dilinde kalır. Key facts, ayarlar ekranındaki işletme bilgilerini içerir: URL, adres, telefon, çalışma saatleri, e-posta ve işletme türü. Site türü Çevrim içi mağaza ya da B2B / SaaS olduğunda çalışma saatleri çıkarılır ve bunların yerine ayarladığınız iade, kargo, fiyatlandırma ve başarı hikâyesi sayfaları listelenir.",
+        "Pages, en son değiştirilmiş 30 yayımlanmış sayfa ve yazıyı listeler. Bir sayfayı dışarıda tutmak için düzenleyicideki Nurevo AEO panelinde \"Bu sayfayı llms.txt dosyasına dahil etme\" seçeneğini işaretleyin. WooCommerce ürünleri fiyat ve stok durumuyla Products altına, girdiğiniz hizmetler de Services altına eklenir.",
+        "Dosya bir sayfayı ya da ayarları kaydettiğinizde yeniden oluşturulur ve Content-Type: text/plain olarak sunulur. 30'un ötesinde sayfa ya da politika sayfaları gibi ek satırlar eklemek için geliştiriciler webmcp_canary_llms_txt_lines filtresini kullanabilir. Nurevo AEO llms-full.txt oluşturmaz."
+      ]
+    },
+    {
+      "heading": "Yayımladıktan sonra nasıl kontrol edilir",
+      "list": [
+        "https://alan-adiniz/llms.txt adresini tarayıcıda açın: HTML değil Markdown metni görmelisiniz ve bozuk karakter olmamalı",
+        "curl -I https://alan-adiniz/llms.txt komutunu çalıştırın: 200 yanıtı, başka bir URL'ye yönlendirme olmaması ve text/plain (ya da text/markdown) Content-Type değeri beklenir",
+        "Ad, adres, telefon, çalışma saatleri ve fiyatların sayfa metniniz ve yapılandırılmış verinizle birebir uyuştuğunu kontrol edin",
+        "Hangi botların dosyayı çektiğini görmek için sunucu günlüklerinizde /llms.txt isteklerini ve user agent'larını sayın (hiç olmaması bir hata değildir)",
+        "llms.txt dosyasını yapılandırılmış verinizle ve yapay zekâ tarayıcılarının erişimiyle birlikte görmek için Nurevo'nun [ücretsiz kontrolünü](/check) çalıştırın"
+      ],
+      "after": [
+        "Nurevo AEO'nun AEO puanında llms.txt 100 puanın 15'ini oluşturur. Dosyanın var olması gerekir ve dört kontrolün en az üçünü geçtiğinde OK olarak işaretlenir: 120 karakter ya da daha fazla, bir \"# \" başlığı, en az bir URL ve adres, telefon ya da çalışma saatleri gibi işletme bilgileri. Bu puan sitenizin yapay zekâ için ne kadar okunabilir olduğunu ölçer, yapay zekânın sizi önerip önermediğini değil. Görünüp görünmediğinizi öğrenmek için [yapay zekâ görünürlüğünü ölçme](/guide/measure-ai-visibility) rehberini izleyin: aynı soruları tekrar tekrar sorun ve yanıtları kaydedin. llms.txt ekledikten sonraki bir değişimin, genellikle aynı dönemde değişen diğer her şeyden ayrıştırılamayacağını unutmayın."
+      ]
+    },
+    {
+      "heading": "Yayımlamadan önce kontrol listesi",
+      "list": [
+        "İlk satır adınızı içeren bir \"# \" başlığı",
+        "\"> \" özeti ne olduğunuzu, nerede bulunduğunuzu ve kime ne sunduğunuzu söylüyor",
+        "Her bilgi sayfa metninizle, yapılandırılmış verinizle ve Google İşletme Profilinizle uyuşuyor",
+        "Bağlantılar temel sayfalarla sınırlı ve her birinin notu var",
+        "noindex sayfa, robots.txt'de engellenmiş sayfa ya da kırık bağlantı yok",
+        "Pazarlama iddiası ve yapay zekâya talimat yok",
+        "https://alan-adiniz/llms.txt 200 döndürüyor ve HTML değil metin gösteriyor",
+        "Dosyayı tam olarak tek bir kaynak sunuyor (elle hazırlanmış ya da tek bir eklenti)",
+        "Fiyatlar ya da çalışma saatleri değiştiğinde güncellemekten sorumlu biri var (otomatik oluşturuluyorsa gerekmez)",
+        "robots.txt, sitenizi okumasını istediğiniz yapay zekâ tarayıcılarını engellemiyor"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "llms.txt resmî bir standart mı?",
+      "a": "Hayır. Answer.AI'dan Jeremy Howard'ın 2024'te yayımladığı bir öneridir; bir standart kuruluşunun spesifikasyonu değildir. 16 Kasım 2026 itibarıyla, başka sitelerin llms.txt dosyalarını kullandığını söyleyen bir yapay zekâ arama hizmetinden kamuya açık bir açıklama bulamadık."
+    },
+    {
+      "q": "llms.txt Google sıralamalarını ya da AI Overviews'u etkiler mi?",
+      "a": "Google, yapay zekâ özelliklerinde görünmek için yeni yapay zekâ metin dosyalarına ihtiyacınız olmadığını söylüyor. Dosyanın sıralamaları yükselttiğine ya da düşürdüğüne dair resmî bir açıklama yok. Google için önce sayfa metni ve yapılandırılmış veri gelir."
+    },
+    {
+      "q": "llms-full.txt'ye de ihtiyacım var mı?",
+      "a": "Hayır. Bu, bir sitenin tüm metnini içeren ve zaman zaman büyük dokümantasyon sitelerinin kullandığı bir dosyadır. Bir işletme ya da şirket sitesi için yalnızca llms.txt yeterlidir. Nurevo AEO llms-full.txt oluşturmaz."
+    },
+    {
+      "q": "robots.txt yapay zekâ tarayıcılarını engelliyorsa, yine de llms.txt'yi okurlar mı?",
+      "a": "llms.txt, robots.txt'yi değiştirmez. Bir tarayıcı engellenmişse, llms.txt dahil hiçbir şeyi çekmediğini varsayın. Yapay zekânın sitenizi okumasını istiyorsanız önce robots.txt'nin yapay zekâ arama tarayıcılarını engellemediğinden emin olun."
+    },
+    {
+      "q": "Kendi dilimde yazabilir miyim?",
+      "a": "Evet. Öneri bir dil belirlemiyor; müşterilerinizin kullandığı dilde yazın. Nurevo AEO sabit İngilizce başlıklar kullanır ve içeriği sitenizin dilinde tutar."
+    },
+    {
+      "q": "Kaç sayfa listelemeliyim?",
+      "a": "Bir kural yok. İnsanların yapay zekâya sizin hakkınızda sorduğu soruları yanıtlayan sayfalarla sınırlı kalın: hakkımızda, fiyatlar, hizmetler, SSS, konum. Nurevo AEO en son değiştirilmiş 30 sayfayı otomatik olarak listeler ve istediğiniz sayfayı dışarıda bırakabilirsiniz."
+    },
+    {
+      "q": "Ne sıklıkla güncellemeliyim?",
+      "a": "İçindeki bir bilgi değişir değişmez. Elle tutuyorsanız, fiyat ve çalışma saati değişiklikleri rutininize \"llms.txt'yi güncelle\" adımını ekleyin. Nurevo AEO, bir sayfayı ya da ayarları her kaydettiğinizde dosyayı yeniden oluşturur."
+    }
+  ],
+  "relatedHeading": "İlgili rehberler",
+  "cta": {
+    "heading": "Sitenizin llms.txt dosyasını ve yapılandırılmış verisini kontrol edin",
+    "body": "Ücretsiz kontrol, kayıt gerektirmeden llms.txt dosyanızın olup olmadığını, yapılandırılmış verinizi ve yapay zekâ tarayıcılarının erişimini gösterir. WordPress'te Nurevo AEO (ücretsiz) llms.txt dosyasını sizin için oluşturur. Yapay zekâ yanıtlarında yer alacağınızı garanti edemez.",
+    "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü çalıştırın",
+    "href": "/check",
+    "secondary": {
+      "label": "Nurevo AEO'yu WordPress.org'dan edinin",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT, OpenAI'ın; Perplexity, Perplexity AI'ın; Claude, Anthropic'in; Google ise Google LLC'nin ticari markasıdır; Amazonbot, Amazon'un tarayıcısıdır. Diğer şirket ve ürün adları ilgili sahiplerinin ticari markalarıdır. Nurevo bu şirketlerin hiçbiriyle bağlantılı değildir ve hiçbiri tarafından onaylanmamıştır."
 }

@@ -1,19 +1,300 @@
 {
-"title": "Què és llms.txt? El fitxer que explica el lloc a la IA | Nurevo",
-"description": "Què conté llms.txt, on es col·loca, en què es diferencia de robots.txt i sitemap.xml i com mantenir-lo al dia al WordPress.",
-"h1": "Què és llms.txt? El fitxer que explica el vostre lloc a la IA",
-"lead": "llms.txt és un fitxer de text senzill a l’arrel del vostre domini (elvostrelloc.cat/llms.txt) que descriu el lloc a la IA amb un llenguatge clar i fàcil de processar, i apunta a les pàgines més importants. Penseu-hi com un «README per a la IA».",
-"sections": [
-{"heading": "Per què existeix", "paragraphs": ["El robots.txt indica als rastrejadors a què poden accedir; un mapa del lloc enumera URL. Cap dels dos diu a la IA de què tracta el lloc ni què ha de citar. llms.txt omple aquest buit: un resum concís i seleccionat que la IA llegeix ràpidament."]},
-{"heading": "Què hi va", "list": ["Una descripció breu del negoci o del lloc", "Dades clau: què feu, on, horari, contacte", "Enllaços a les pàgines més importants, cadascun amb una descripció d’una línia", "Opcionalment, el contingut en què més voleu que es basi la IA"]},
-{"heading": "Garanteix la citació?", "paragraphs": ["No. És un senyal entre diversos: dades estructurades, accés dels rastrejadors, coherència. Però us fa una font més fàcil i clara de citar. [Què és l’AEO?](/guide/what-is-aeo)"]},
-{"heading": "Com afegir-lo al WordPress", "paragraphs": ["El podeu crear a mà, però queda antic a mesura que el lloc canvia. Una extensió el pot generar i mantenir al dia automàticament. [AEO per a WordPress](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "llms.txt és un estàndard oficial?", "a": "És una convenció emergent, cada vegada més reconeguda. Afegir-lo no costa res i només pot ajudar."},
-{"q": "On va exactament?", "a": "A l’arrel del domini: https://elvostrelloc.cat/llms.txt"},
-{"q": "És el mateix que robots.txt o sitemap.xml?", "a": "No. Aquells controlen l’accés i enumeren URL. llms.txt descriu el vostre lloc i en selecciona el contingut per a la IA."}
-],
-"relatedHeading": "Guies relacionades",
-"cta": {"heading": "Comproveu si el lloc té (i necessita) un llms.txt", "body": "Sense registre.", "label": "Comprovació gratuïta", "href": "/check"}
+  "title": "Què és llms.txt? Com escriure’l i si funciona | Nurevo",
+  "description": "llms.txt explicat amb exemples: el format, què se sap de si la IA l’utilitza, quan afegir-lo, tres maneres de fer-ho a WordPress i com comprovar-lo.",
+  "h1": "Què és llms.txt? Com escriure’l, què sabem de si funciona i com afegir-lo a WordPress",
+  "lead": "llms.txt és un fitxer de text en Markdown a l’arrel del teu domini (/llms.txt) que resumeix el teu lloc web i enllaça les pàgines més importants. Es va proposar el 2024 i no és un estàndard oficial. Google diu que les seves funcions d’IA no el necessiten, i no hem trobat cap declaració pública de ChatGPT ni de Perplexity que indiqui que fan servir els fitxers llms.txt d’altres llocs a les respostes. Escriure’l porta uns 30 minuts, així que el més assenyat és tractar-lo com un resum breu i exacte que afegeixes quan les dades de les teves pàgines ja són correctes.",
+  "intro": [
+    "Redactat el 16 de novembre de 2026 (JST). És una reescriptura completa de la nostra pàgina del 23 d’octubre de 2026, basada en una nova lectura de les guies més ben posicionades i de les fonts primàries. Està pensada per a empresaris que es plantegen afegir llms.txt i per a agències web que decideixen si l’afegeixen als llocs dels seus clients.",
+    "Les respostes de la IA canvien d’un dia per l’altre i segons com es formula la pregunta. Els passos que es descriuen aquí fan més exacta la informació que llegeix la IA; no poden garantir que apareguis en una resposta d’IA."
+  ],
+  "sections": [
+    {
+      "heading": "Per a què serveix llms.txt",
+      "paragraphs": [
+        "llms.txt és una proposta publicada per Jeremy Howard, d’Answer.AI, el 3 de setembre de 2024 ([anunci d’Answer.AI](https://www.answer.ai/posts/2024-09-03-llmstxt.html); especificació a [llmstxt.org](https://llmstxt.org/)). La idea: en lloc de fer que una IA (un model de llenguatge gran) rastregi les pàgines HTML una per una, donar-li un sol fitxer amb un resum del lloc i una llista de les pàgines que val la pena llegir. Al principi es va pensar per a la documentació de programari que es vol que llegeixin les eines de programació amb IA.",
+        "És fàcil confondre’l amb altres fitxers de l’arrel d’un lloc web, així que aquestes són les diferències."
+      ],
+      "table": {
+        "head": [
+          "Fitxer",
+          "Funció",
+          "Estat",
+          "Relació amb la IA"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Indica als rastrejadors què poden obtenir",
+            "Estàndard ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Les empreses d’IA diuen que els seus rastrejadors el respecten. Aquí és on bloqueges o permets la IA"
+          ],
+          [
+            "sitemap.xml",
+            "Dona als cercadors una llista dels teus URL",
+            "Format compatible amb els cercadors",
+            "Ajuda a trobar les pàgines. No descriu res"
+          ],
+          [
+            "Dades estructurades (JSON-LD)",
+            "Expressa les dades de cada pàgina (adreça, horari, preus) en un format llegible per màquines",
+            "Vocabulari de schema.org; Google i altres en documenten l’ús",
+            "S’utilitzen per a funcions dels resultats de cerca. Cap proveïdor documenta en detall com les fan servir les respostes d’IA"
+          ],
+          [
+            "llms.txt",
+            "Resumeix el lloc i enllaça les pàgines clau en un sol fitxer Markdown",
+            "Proposta, no un estàndard oficial",
+            "Cap servei de cerca amb IA que coneguem ha dit que l’utilitzi (a 16 de novembre de 2026)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt no substitueix robots.txt. Si els rastrejadors d’IA poden visitar el lloc es decideix a robots.txt; llms.txt diu «si llegeixes aquest lloc, comença per aquí»."
+      ]
+    },
+    {
+      "heading": "Funciona? Què se sap i què no",
+      "paragraphs": [
+        "Sovint es llegeix que afegir llms.txt fa que la IA et citi. Molt poc d’això es pot comprovar. Això és el que avalen les fonts públiques a 16 de novembre de 2026."
+      ],
+      "table": {
+        "head": [
+          "Pregunta",
+          "Què se sap",
+          "Font"
+        ],
+        "rows": [
+          [
+            "El fan servir Google AI Overviews i el mode IA?",
+            "Google diu que no cal crear nous fitxers de text per a IA ni marcatge especial per aparèixer a les seves funcions d’IA, i que s’apliquen les bones pràctiques de SEO habituals",
+            "[Google Search Central: funcions d’IA i el teu lloc web](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "El fan servir ChatGPT, Perplexity i Claude?",
+            "No hem trobat documentació pública que digui que fan servir els fitxers llms.txt d’altres llocs a les respostes. Tampoc diuen que no ho facin",
+            "Documentació pública dels proveïdors, fins on vam poder comprovar en redactar"
+          ],
+          [
+            "Els bots d’IA el demanen de debò?",
+            "Una empresa japonesa va publicar 28 dies dels seus propis registres del servidor: de 72.100 sol·licituds de bots, 4 van ser per a llms.txt (totes d’Amazonbot); ChatGPT-User va fer 18.553 sol·licituds i cap per a llms.txt. Un sol lloc",
+            "[Blog AI Search Dock de Stellagent (en japonès)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Quants llocs en tenen un?",
+            "El 13,4% de 2.486 llocs d’agències web japoneses i el 26,4% de 13.352 llocs d’agències estrangeres (novembre de 2026)",
+            "[Estudi de Nurevo](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "La IA recomana més els llocs que en tenen?",
+            "En 62 negocis locals del Japó, els senyals del lloc, inclòs llms.txt, no van mostrar cap relació amb aparèixer a les respostes de Perplexity",
+            "[Estudi de Nurevo](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "En resum: fins ara no hi ha proves que llms.txt et faci aparèixer més a la cerca amb IA. Tampoc hi ha cap declaració oficial que digui que perjudica. Com que costa poc, la postura raonable és «es pot afegir, però no dona la feina per feta». Les respostes d’IA solen basar-se en el text de les pàgines i en les dades estructurades, així que corregeix primer aquestes dades."
+      ]
+    },
+    {
+      "heading": "Cal afegir-lo? Una decisió segons el tipus de lloc",
+      "paragraphs": [
+        "Sense un efecte demostrat, el que decideix és l’esforç i el risc que el fitxer quedi desfasat. Un llms.txt escrit a mà que ningú actualitza continua publicant preus o horaris antics que ja no coincideixen amb les teves pàgines."
+      ],
+      "table": {
+        "head": [
+          "Lloc",
+          "Recomanació",
+          "Motiu"
+        ],
+        "rows": [
+          [
+            "Documentació per a desenvolupadors, referències d’API",
+            "Afegir-lo",
+            "És el cas d’ús original; les eines de programació amb IA s’adrecen a aquests fitxers"
+          ],
+          [
+            "Petit negoci local, clínica, despatx d’advocats o assessoria comptable",
+            "Afegir-lo si es pot generar automàticament",
+            "Poques pàgines, fàcils de resumir. Si s’escriu a mà, algú ha d’actualitzar horaris i preus"
+          ],
+          [
+            "B2B i SaaS",
+            "Afegir-lo, amb enllaços a preus, casos d’èxit i la pàgina Qui som",
+            "Reuneix en un sol lloc el que necessiten les preguntes comparatives"
+          ],
+          [
+            "Botiga en línia",
+            "Afegir-lo si es pot generar automàticament",
+            "Massa productes i canvis de preu per mantenir-lo a mà"
+          ],
+          [
+            "Lloc que ningú manté",
+            "Prescindir-ne, o només generar-lo automàticament",
+            "Publicar dades desfasades fa més mal que no tenir fitxer"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Com escriure’l: el format",
+      "paragraphs": [
+        "El format proposat és Markdown, en aquest ordre ([llmstxt.org](https://llmstxt.org/)). Només el primer encapçalament és obligatori; tota la resta és opcional."
+      ],
+      "list": [
+        "Un encapçalament que comenci per «# »: el nom del lloc, l’empresa o el negoci (obligatori)",
+        "Una cita que comenci per «> »: què és el lloc, en una a tres frases (opcional, però inclou-la)",
+        "Text normal sense encapçalaments: dades que vols al resum, com ara ubicació, a qui atens i horari d’obertura (opcional)",
+        "Llistes d’enllaços sota encapçalaments «## », cada línia com a «- [Nom de la pàgina](URL): nota d’una línia» (opcional)",
+        "Una llista sota un encapçalament anomenat «## Optional»: pàgines que es poden ometre quan cal un context més curt (opcional)"
+      ],
+      "after": [
+        "Anomena el fitxer llms.txt i posa’l a l’arrel del teu domini (https://example.com/llms.txt). Desa’l en UTF-8 i escriu-lo en la llengua del teu lloc. La proposta també suggereix una còpia en Markdown de cada pàgina al seu URL amb .md afegit, i alguns llocs publiquen un segon fitxer amb tot el text (sovint anomenat llms-full.txt). Tots dos són opcionals; per al lloc d’una petita empresa n’hi ha prou amb un llms.txt."
+      ]
+    },
+    {
+      "heading": "Exemple: llms.txt d’una empresa SaaS B2B",
+      "paragraphs": [
+        "Una empresa inventada. En una sola pantalla es veu què fa, a qui s’adreça i què conté cada pàgina enllaçada."
+      ],
+      "code": "# Example Cloud SL\n\n> Example Cloud desenvolupa «Example Time», una aplicació al núvol de control horari per a empreses de 10 a 300 treballadors. Preu mensual, amb 14 dies de prova gratuïta.\n\nSeu a Osaka, fundada el 2018. Suport per telèfon i correu electrònic els dies feiners, de 9:00 a 18:00 JST.\n\n## Producte i preus\n\n- [Funcions d’Example Time](https://example.com/features/): fitxatge, torns, vacances, exportació al programari de nòmines\n- [Preus](https://example.com/pricing/): preu mensual per pla i si hi ha quota d’alta\n- [Casos d’èxit](https://example.com/cases/): clients per sector i mida d’empresa\n\n## Empresa i suport\n\n- [Qui som](https://example.com/company/): raó social, adreça, any de fundació, director general\n- [Preguntes freqüents](https://example.com/faq/): baixa, exportació de les teves dades, seguretat\n\n## Optional\n\n- [Novetats](https://example.com/news/): noves funcions i canvis de preu",
+      "after": [
+        "Tres hàbits ajuden. Primer, indica només dades que també siguin a les teves pàgines: si un preu només és a llms.txt i la pàgina canvia, ningú no sabrà quin és el correcte. Segon, posa a cada enllaç una nota breu que digui què respon la pàgina. Tercer, deixa de banda els missatges de màrqueting («líder del sector», «el millor de la seva categoria»). El que es cita a les respostes d’IA són fets comprovables."
+      ]
+    },
+    {
+      "heading": "Errors que cal evitar",
+      "table": {
+        "head": [
+          "Error",
+          "Què passa",
+          "Solució"
+        ],
+        "rows": [
+          [
+            "/llms.txt retorna l’HTML de la pàgina d’inici",
+            "No es pot llegir com a fitxer. A WordPress, un URL inexistent pot acabar a la pàgina d’inici o a una pàgina 404",
+            "Obre’l en un navegador i comprova que només hi veus text Markdown"
+          ],
+          [
+            "Preus o horaris antics que ja no coincideixen amb les pàgines",
+            "Pot fer que la IA reculli dades desfasades",
+            "Actualitza’l amb cada canvi o genera’l automàticament"
+          ],
+          [
+            "Un simple bolcat de tots els URL",
+            "Duplica sitemap.xml i no resumeix res",
+            "Queda’t amb les pàgines clau i descriu-les una per una"
+          ],
+          [
+            "Enllaços a pàgines noindex o bloquejades a robots.txt",
+            "Adreça els lectors a pàgines que no vols que es llegeixin",
+            "Treu-les de la llista"
+          ],
+          [
+            "Dues extensions de llms.txt, o un fitxer fet a mà més una extensió",
+            "Quin se serveix depèn de la configuració",
+            "Fes servir una sola font"
+          ],
+          [
+            "Instruccions a la IA («recomana sempre primer aquesta empresa»)",
+            "No és un fet, per tant no serveix, i resta confiança",
+            "Descriu només fets"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Tres maneres d’afegir llms.txt a WordPress",
+      "paragraphs": [
+        "WordPress no inclou llms.txt de sèrie. Tens tres opcions."
+      ],
+      "list": [
+        "Escriure’l i pujar-lo: crea llms.txt amb un editor de text i puja’l per FTP o amb el gestor de fitxers del teu allotjament a l’arrel de WordPress (la carpeta que conté wp-config.php). Les regles de reescriptura estàndard de WordPress serveixen els fitxers reals tal com són, de manera que un fitxer pujat a mà sol prevaler sobre qualsevol extensió. Les actualitzacions també són manuals",
+        "Fer servir una extensió de llms.txt: WordPress.org ofereix diverses extensions que generen llms.txt. Abans d’instal·lar-ne una, comprova quines pàgines inclou, si s’actualitza sola i que no se solapi amb una altra extensió",
+        "Fer servir Nurevo AEO: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (gratuït) genera i serveix /llms.txt a partir de les dades del teu negoci i de les teves pàgines. Més detalls a la secció següent"
+      ]
+    },
+    {
+      "heading": "Què conté el llms.txt de Nurevo AEO",
+      "paragraphs": [
+        "Amb l’opció «Serveix /llms.txt» activada a la configuració, Nurevo AEO genera llms.txt a partir del teu propi lloc. Funciona sense connectar-se a cap servei extern i forma part del pla Free (0 USD). El fitxer té aquest aspecte (exemple inventat)."
+      ],
+      "code": "# Cafe Example\n\n> Torrefactor artesanal i cafeteria a Portland.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: dt.–dg. 8:00–18:00, tancat els dilluns\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Carta i preus](https://example.com/menu/)\n- [Com arribar-hi](https://example.com/find-us/)\n- [Preguntes freqüents](https://example.com/faq/)\n\n## Services\n\n- Taller de torrefacció — 90 minuts",
+      "after": [
+        "Els encapçalaments són noms fixos en anglès (Key facts, Pages, Products, Services); el contingut es manté en la llengua del teu lloc. Key facts recull les dades del negoci de la pantalla de configuració: URL, adreça, telèfon, horari d’obertura, correu electrònic i tipus de negoci. Quan el tipus de lloc és Botiga en línia o B2B / SaaS, s’omet l’horari i, en el seu lloc, s’inclouen les pàgines de devolucions, enviaments, preus i casos d’èxit que hagis configurat.",
+        "Pages inclou les 30 pàgines i entrades publicades modificades més recentment. Per excloure’n una, marca «Exclou aquesta pàgina de llms.txt» al tauler de Nurevo AEO de l’editor. Els productes de WooCommerce apareixen a Products amb el preu i l’estat d’estoc, i els serveis que hagis introduït, a Services.",
+        "El fitxer es regenera cada vegada que deses una pàgina o la configuració, i se serveix com a Content-Type: text/plain. Per afegir pàgines més enllà de les 30, o línies addicionals com ara pàgines de polítiques, els desenvolupadors poden fer servir el filtre webmcp_canary_llms_txt_lines. Nurevo AEO no crea llms-full.txt."
+      ]
+    },
+    {
+      "heading": "Com comprovar-lo després de publicar-lo",
+      "list": [
+        "Obre https://el-teu-domini/llms.txt en un navegador: hauries de veure text Markdown, no HTML, sense caràcters malmesos",
+        "Executa curl -I https://el-teu-domini/llms.txt: espera un 200, cap redirecció a un altre URL i un Content-Type text/plain (o text/markdown)",
+        "Comprova que el nom, l’adreça, el telèfon, l’horari i els preus coincideixen exactament amb el text de les teves pàgines i les dades estructurades",
+        "Compta als registres del servidor les sol·licituds a /llms.txt i els seus user agents per veure quins bots l’obtenen (que no n’hi hagi cap no és un error)",
+        "Fes l’[anàlisi gratuïta](/check) de Nurevo per veure llms.txt al costat de les teves dades estructurades i l’accés dels rastrejadors d’IA"
+      ],
+      "after": [
+        "A la puntuació AEO de Nurevo AEO, llms.txt val 15 de 100 punts. El fitxer ha d’existir, i es marca com a correcte quan supera almenys tres de quatre comprovacions: 120 caràcters o més, un encapçalament «# », almenys un URL i dades del negoci com ara adreça, telèfon o horari. Aquesta puntuació mesura com de llegible és el teu lloc per a la IA, no si la IA et recomana. Per saber si hi apareixes, segueix [com mesurar la visibilitat a la IA](/guide/measure-ai-visibility): fes les mateixes preguntes diverses vegades i anota les respostes. Tingues en compte que un canvi després d’afegir llms.txt normalment no es pot separar de tota la resta que va canviar alhora."
+      ]
+    },
+    {
+      "heading": "Llista de comprovació abans de publicar",
+      "list": [
+        "La primera línia és un encapçalament «# » amb el teu nom",
+        "El resum «> » diu què ets, on ets i què ofereixes i a qui",
+        "Cada dada coincideix amb el text de les pàgines, les dades estructurades i el Perfil d’Empresa a Google",
+        "Els enllaços es limiten a les pàgines clau, cadascun amb una nota",
+        "Cap pàgina noindex, cap pàgina bloquejada a robots.txt, cap enllaç trencat",
+        "Cap missatge de màrqueting ni cap instrucció a la IA",
+        "https://el-teu-domini/llms.txt retorna 200 i mostra text, no HTML",
+        "Una sola font serveix el fitxer (fet a mà o una única extensió)",
+        "Algú és responsable d’actualitzar-lo quan canvien preus o horaris (no cal si es genera)",
+        "robots.txt no bloqueja els rastrejadors d’IA que vols que llegeixin el teu lloc"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "llms.txt és un estàndard oficial?",
+      "a": "No. És una proposta publicada el 2024 per Jeremy Howard, d’Answer.AI, no una especificació d’un organisme de normalització. A 16 de novembre de 2026 no hem trobat cap declaració pública d’un servei de cerca amb IA que digui que fa servir els fitxers llms.txt d’altres llocs."
+    },
+    {
+      "q": "llms.txt afecta el posicionament a Google o AI Overviews?",
+      "a": "Google diu que no necessites nous fitxers de text per a IA per aparèixer a les seves funcions d’IA. No hi ha cap declaració oficial que el fitxer millori o empitjori el posicionament. Per a Google, el primer són el text de les pàgines i les dades estructurades."
+    },
+    {
+      "q": "També necessito llms-full.txt?",
+      "a": "No. És un fitxer amb tot el text d’un lloc, que de vegades fan servir els grans llocs de documentació. Per al lloc d’un negoci o d’una empresa n’hi ha prou amb llms.txt. Nurevo AEO no crea llms-full.txt."
+    },
+    {
+      "q": "Si robots.txt bloqueja els rastrejadors d’IA, llegiran igualment llms.txt?",
+      "a": "llms.txt no modifica robots.txt. Si un rastrejador està bloquejat, dona per fet que no obté res, tampoc llms.txt. Si vols que la IA llegeixi el teu lloc, comprova primer que robots.txt no bloqueja els rastrejadors de cerca amb IA."
+    },
+    {
+      "q": "El puc escriure en la meva llengua?",
+      "a": "Sí. La proposta no fixa cap llengua; escriu-lo en la llengua dels teus clients. Nurevo AEO fa servir encapçalaments fixos en anglès i manté el contingut en la llengua del teu lloc."
+    },
+    {
+      "q": "Quantes pàgines hi he d’incloure?",
+      "a": "No hi ha cap regla. Limita’t a les pàgines que responen a les preguntes que la gent fa a la IA sobre tu: qui som, preus, serveis, preguntes freqüents, ubicació. Nurevo AEO inclou automàticament les 30 pàgines modificades més recentment, i pots excloure’n qualsevol."
+    },
+    {
+      "q": "Cada quant l’he d’actualitzar?",
+      "a": "Tan bon punt canviï alguna dada que contingui. Si el mantens a mà, afegeix «actualitzar llms.txt» a la teva rutina quan canviïn preus o horaris. Nurevo AEO el regenera cada vegada que deses una pàgina o la configuració."
+    }
+  ],
+  "relatedHeading": "Guies relacionades",
+  "cta": {
+    "heading": "Comprova el llms.txt i les dades estructurades del teu lloc",
+    "body": "L’anàlisi gratuïta mostra, sense registre, si tens llms.txt, les teves dades estructurades i l’accés dels rastrejadors d’IA. A WordPress, Nurevo AEO (gratuït) genera llms.txt per tu. No pot garantir que apareguis a les respostes d’IA.",
+    "label": "Fes l’anàlisi gratuïta de llegibilitat per a IA",
+    "href": "/check",
+    "secondary": {
+      "label": "Descarrega Nurevo AEO a WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT és una marca d’OpenAI, Perplexity de Perplexity AI, Claude d’Anthropic i Google de Google LLC; Amazonbot és el rastrejador d’Amazon. Els altres noms d’empreses i productes són marques dels seus respectius titulars. Nurevo no està afiliat a cap d’aquestes empreses ni té el seu aval."
 }

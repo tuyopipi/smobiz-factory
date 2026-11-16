@@ -482,7 +482,7 @@ function richTable(table) {
   return `<div class="table-wrap"><table>${table.caption ? `<caption>${esc(table.caption)}</caption>` : ""}${head}<tbody>${rows}</tbody></table></div>`;
 }
 function richSections(copy) {
-  return (copy.sections || []).map((section) => `<section class="qa"><h2>${esc(section.heading)}</h2>${richParagraphs(section.paragraphs)}${section.list?.length ? `<ol>${section.list.map((item) => `<li>${inline(item)}</li>`).join("")}</ol>` : ""}${richTable(section.table)}${richParagraphs(section.after)}</section>`).join("\n");
+  return (copy.sections || []).map((section) => `<section class="qa"><h2>${esc(section.heading)}</h2>${richParagraphs(section.paragraphs)}${section.list?.length ? `<ol>${section.list.map((item) => `<li>${inline(item)}</li>`).join("")}</ol>` : ""}${section.code ? `<pre class="code" dir="ltr"><code>${esc(section.code)}</code></pre>` : ""}${richTable(section.table)}${richParagraphs(section.after)}</section>`).join("\n");
 }
 
 /** One content page in one language. `copy` is that language's block of the content file. */

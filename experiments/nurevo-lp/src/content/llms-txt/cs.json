@@ -1,19 +1,300 @@
 {
-"title": "Co je llms.txt? Soubor, který AI vysvětlí váš web | Nurevo",
-"description": "Co obsahuje llms.txt, kam ho umístit, čím se liší od robots.txt a sitemap.xml a jak ho ve WordPressu udržovat aktuální.",
-"h1": "Co je llms.txt? Soubor, který AI vysvětlí váš web",
-"lead": "llms.txt je jednoduchý textový soubor v kořeni vaší domény (vasweb.cz/llms.txt), který AI popisuje váš web srozumitelným, strojově přívětivým jazykem a odkazuje na nejdůležitější stránky. Berte ho jako „README pro AI“.",
-"sections": [
-{"heading": "Proč existuje", "paragraphs": ["robots.txt říká crawlerům, kam smějí; sitemap vypisuje URL. Ani jeden AI neřekne, o čem váš web je nebo co citovat. llms.txt tuto mezeru vyplňuje – stručné, vybrané shrnutí, které AI rychle přečte."]},
-{"heading": "Co do něj patří", "list": ["Krátký popis vaší firmy nebo webu", "Klíčová fakta: co děláte, kde, otevírací doba, kontakt", "Odkazy na nejdůležitější stránky, každý s jednořádkovým popisem", "Volitelně obsah, o který se má AI nejvíce opírat"]},
-{"heading": "Zaručuje citaci?", "paragraphs": ["Ne. Je to jeden signál z několika – strukturovaná data, přístup crawlerů, konzistence. Ale dělá z vás snazší a srozumitelnější zdroj k citaci. [Co je AEO?](/guide/what-is-aeo)"]},
-{"heading": "Jak ho přidat ve WordPressu", "paragraphs": ["Můžete ho vytvořit ručně, ale se změnami webu zastará. Plugin ho může automaticky generovat a udržovat aktuální. [AEO pro WordPress](/guide/aeo-wordpress)"]}
-],
-"faqs": [
-{"q": "Je llms.txt oficiální standard?", "a": "Je to vznikající konvence, kterou uznává stále víc subjektů. Přidat ho nic nestojí a může jen pomoci."},
-{"q": "Kam přesně patří?", "a": "Do kořene vaší domény: https://vasweb.cz/llms.txt"},
-{"q": "Je to totéž co robots.txt nebo sitemap.xml?", "a": "Ne. Ty řídí přístup a vypisují URL. llms.txt váš web pro AI popisuje a vybírá z něj obsah."}
-],
-"relatedHeading": "Související návody",
-"cta": {"heading": "Zjistěte, jestli váš web má (a potřebuje) llms.txt", "body": "Bez registrace.", "label": "Zkontrolovat zdarma", "href": "/check"}
+  "title": "Co je llms.txt? Jak ho napsat a funguje vůbec? | Nurevo",
+  "description": "llms.txt s příklady: formát, co je známo o tom, zda ho AI používá, kdy ho přidat, tři způsoby, jak ho přidat ve WordPressu, a jak ho zkontrolovat.",
+  "h1": "Co je llms.txt? Jak ho napsat, co víme o tom, zda funguje, a jak ho přidat ve WordPressu",
+  "lead": "llms.txt je textový soubor ve formátu Markdown v kořenovém adresáři vaší domény (/llms.txt), který shrnuje váš web a odkazuje na jeho nejdůležitější stránky. Byl navržen v roce 2024 a není oficiálním standardem. Google uvádí, že jeho funkce AI ho nepotřebují, a nenašli jsme žádné veřejné prohlášení ChatGPT ani Perplexity, že by v odpovědích používaly soubory llms.txt jiných webů. Jeho napsání zabere asi 30 minut, takže rozumné je brát ho jako krátké a přesné shrnutí, které přidáte, až budou fakta na vašich stránkách v pořádku.",
+  "intro": [
+    "Napsáno 16. listopadu 2026 (JST). Jde o kompletně přepracovanou verzi naší stránky z 23. října 2026, založenou na novém pročtení nejvýše hodnocených návodů a primárních zdrojů. Je určena majitelům firem, kteří se rozhodují, zda llms.txt přidat, a webovým agenturám, které zvažují jeho přidání na weby klientů.",
+    "Odpovědi AI se mění ze dne na den a podle toho, jak je otázka položena. Zde popsané kroky zpřesňují informace, které AI čte; nemohou zaručit, že se v odpovědi AI objevíte."
+  ],
+  "sections": [
+    {
+      "heading": "K čemu llms.txt slouží",
+      "paragraphs": [
+        "llms.txt je návrh, který 3. září 2024 zveřejnil Jeremy Howard ze společnosti Answer.AI ([oznámení Answer.AI](https://www.answer.ai/posts/2024-09-03-llmstxt.html); specifikace na [llmstxt.org](https://llmstxt.org/)). Myšlenka: místo toho, aby AI (velký jazykový model) procházela HTML stránky jednu po druhé, dostane jeden soubor se shrnutím webu a seznamem stránek, které stojí za přečtení. Původně byl určen pro softwarovou dokumentaci, kterou mají číst nástroje AI pro programování.",
+        "Snadno se plete s jinými soubory v kořenovém adresáři webu, proto uvádíme rozdíly."
+      ],
+      "table": {
+        "head": [
+          "Soubor",
+          "Úloha",
+          "Status",
+          "Vztah k AI"
+        ],
+        "rows": [
+          [
+            "robots.txt",
+            "Říká crawlerům, co smějí stahovat",
+            "Standard ([RFC 9309](https://www.rfc-editor.org/rfc/rfc9309))",
+            "Společnosti AI uvádějí, že se jím jejich crawlery řídí. Zde AI blokujete nebo povolujete"
+          ],
+          [
+            "sitemap.xml",
+            "Předává vyhledávačům seznam vašich URL",
+            "Formát podporovaný vyhledávači",
+            "Pomáhá s nalezením stránek. Nic nepopisuje"
+          ],
+          [
+            "Strukturovaná data (JSON-LD)",
+            "Uvádějí fakta pro každou stránku (adresu, otevírací dobu, ceny) ve strojově čitelné podobě",
+            "Slovník schema.org; Google a další dokumentují, jak je používají",
+            "Používají se pro funkce ve výsledcích vyhledávání. Jak je využívají odpovědi AI, žádný poskytovatel podrobně nepopsal"
+          ],
+          [
+            "llms.txt",
+            "Shrnuje web a odkazuje na jeho klíčové stránky v jednom souboru Markdown",
+            "Návrh, nikoli oficiální standard",
+            "Žádná nám známá služba vyhledávání s AI neuvedla, že ho používá (k 16. listopadu 2026)"
+          ]
+        ]
+      },
+      "after": [
+        "llms.txt nenahrazuje robots.txt. O tom, zda crawlery AI smějí web navštívit, rozhoduje robots.txt; llms.txt říká: „pokud čtete tento web, začněte tady“."
+      ]
+    },
+    {
+      "heading": "Funguje to? Co je známo a co ne",
+      "paragraphs": [
+        "Často se píše, že přidání llms.txt zajistí, že vás AI bude citovat. Ověřit se z toho dá jen velmi málo. Tady je, co k 16. listopadu 2026 dokládají veřejné zdroje."
+      ],
+      "table": {
+        "head": [
+          "Otázka",
+          "Co je známo",
+          "Zdroj"
+        ],
+        "rows": [
+          [
+            "Používají ho Google AI Overviews a AI Mode?",
+            "Google uvádí, že k zobrazení v jeho funkcích AI nemusíte vytvářet nové textové soubory pro AI ani zvláštní značkování a že platí běžné osvědčené postupy SEO",
+            "[Google Search Central: funkce AI a váš web](https://developers.google.com/search/docs/appearance/ai-features)"
+          ],
+          [
+            "Používají ho ChatGPT, Perplexity a Claude?",
+            "Nenašli jsme veřejnou dokumentaci, podle níž by v odpovědích používaly soubory llms.txt jiných webů. Neuvádějí ani, že je nepoužívají",
+            "Veřejná dokumentace poskytovatelů, nakolik jsme ji v době psaní mohli ověřit"
+          ],
+          [
+            "Stahují ho boti AI skutečně?",
+            "Jedna japonská firma zveřejnila 28 dní svých serverových logů: ze 72 100 požadavků botů se 4 týkaly llms.txt (všechny od Amazonbot); ChatGPT-User poslal 18 553 požadavků a žádný na llms.txt. Jde jen o jeden web",
+            "[Blog AI Search Dock společnosti Stellagent (japonsky)](https://stellagent.ai/ja/ai-search-dock/blog/llms-txt)"
+          ],
+          [
+            "Kolik webů ho má?",
+            "13,4 % z 2 486 japonských a 26,4 % z 13 352 zahraničních webů webových agentur (listopad 2026)",
+            "[Studie Nurevo](/guide/research-ai-readiness-score-distribution-2026)"
+          ],
+          [
+            "Doporučuje AI weby s ním častěji?",
+            "U 62 místních firem v Japonsku nevykazovaly signály na straně webu, včetně llms.txt, žádnou souvislost se zobrazením v odpovědích Perplexity",
+            "[Studie Nurevo](/guide/aeo-signals-ai-answers-study)"
+          ]
+        ]
+      },
+      "after": [
+        "Stručně: zatím neexistuje důkaz, že by llms.txt zvyšoval vaši viditelnost ve vyhledávání s AI. Neexistuje ani oficiální prohlášení, že by škodil. Protože stojí málo, férový postoj zní „klidně ho přidejte, ale nepovažujte práci za hotovou“. Odpovědi AI obvykle vycházejí z textu stránek a strukturovaných dat, proto nejprve dejte do pořádku tato fakta."
+      ]
+    },
+    {
+      "heading": "Vyplatí se ho přidat? Rozhodnutí podle typu webu",
+      "paragraphs": [
+        "Když účinek není prokázaný, rozhoduje pracnost a riziko, že soubor zastará. Ručně napsaný llms.txt, který nikdo neaktualizuje, dál zveřejňuje staré ceny nebo otevírací dobu, které už neodpovídají vašim stránkám."
+      ],
+      "table": {
+        "head": [
+          "Web",
+          "Doporučení",
+          "Proč"
+        ],
+        "rows": [
+          [
+            "Vývojářská dokumentace, reference API",
+            "Přidejte ho",
+            "Původní účel; nástroje AI pro programování se na tyto soubory odkazují"
+          ],
+          [
+            "Malá místní firma, ordinace, advokátní nebo účetní kancelář",
+            "Přidejte ho, pokud ho lze generovat automaticky",
+            "Málo stránek, snadno se shrnou. Ruční psaní znamená, že někdo musí aktualizovat otevírací dobu a ceny"
+          ],
+          [
+            "B2B a SaaS",
+            "Přidejte ho s odkazy na ceník, případové studie a stránku O nás",
+            "Soustředí na jedno místo to, co potřebují srovnávací dotazy"
+          ],
+          [
+            "E-shop",
+            "Přidejte ho, pokud ho lze generovat automaticky",
+            "Příliš mnoho produktů a změn cen na ruční údržbu"
+          ],
+          [
+            "Web, který nikdo nespravuje",
+            "Vynechte ho, nebo ho generujte jen automaticky",
+            "Zveřejňování zastaralých faktů škodí víc než žádný soubor"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Jak ho napsat: formát",
+      "paragraphs": [
+        "Navrhovaný formát je Markdown v tomto pořadí ([llmstxt.org](https://llmstxt.org/)). Povinný je jen první nadpis; vše ostatní je volitelné."
+      ],
+      "list": [
+        "Jeden nadpis začínající „# “: název webu, společnosti nebo podniku (povinné)",
+        "Citace začínající „> “: co je web zač, v jedné až třech větách (volitelné, ale uveďte ji)",
+        "Prostý text bez nadpisů: fakta, která chcete mít ve shrnutí, například místo, komu sloužíte a otevírací doba (volitelné)",
+        "Seznamy odkazů pod nadpisy „## “, každý řádek ve tvaru „- [Název stránky](URL): krátká poznámka“ (volitelné)",
+        "Seznam pod nadpisem „## Optional“: stránky, které lze vynechat, když je potřeba kratší kontext (volitelné)"
+      ],
+      "after": [
+        "Soubor pojmenujte llms.txt a umístěte ho do kořenového adresáře domény (https://example.com/llms.txt). Uložte ho v kódování UTF-8 a napište ho v jazyce svého webu. Návrh doporučuje také kopii každé stránky v Markdownu na její URL s připojeným .md a některé weby zveřejňují druhý soubor s veškerým svým textem (často pojmenovaný llms-full.txt). Obojí je volitelné; pro web malé firmy stačí jeden llms.txt."
+      ]
+    },
+    {
+      "heading": "Příklad: llms.txt pro firmu B2B SaaS",
+      "paragraphs": [
+        "Smyšlená firma. Na jedné obrazovce vidíte, co dělá, pro koho je a co obsahuje každá odkazovaná stránka."
+      ],
+      "code": "# Example Cloud Inc.\n\n> Example Cloud vyvíjí „Example Time“, cloudovou aplikaci pro evidenci docházky pro firmy s 10 až 300 zaměstnanci. Měsíční předplatné a 14denní zkušební verze zdarma.\n\nSídlo v Ósace, založeno v roce 2018. Podpora po telefonu a e-mailem v pracovní dny 9:00–18:00 JST.\n\n## Produkt a ceny\n\n- [Funkce Example Time](https://example.com/features/): příchody a odchody, směny, placená dovolená, export do mzdového softwaru\n- [Ceník](https://example.com/pricing/): měsíční cena jednotlivých tarifů a zda se platí zřizovací poplatek\n- [Případové studie](https://example.com/cases/): zákazníci podle odvětví a velikosti firmy\n\n## Společnost a podpora\n\n- [O nás](https://example.com/company/): obchodní název, adresa, rok založení, generální ředitel\n- [Časté dotazy](https://example.com/faq/): zrušení, export vašich dat, zabezpečení\n\n## Optional\n\n- [Novinky](https://example.com/news/): nové funkce a změny cen",
+      "after": [
+        "Pomáhají tři zásady. Za prvé: uvádějte jen fakta, která jsou také na vašich stránkách. Pokud je cena jen v llms.txt a stránka se změní, nikdo nepozná, co platí. Za druhé: ke každému odkazu připojte krátkou poznámku, na co stránka odpovídá. Za třetí: vynechte marketingová tvrzení („lídr v oboru“, „nejlepší ve své třídě“). V odpovědích AI se citují ověřitelná fakta."
+      ]
+    },
+    {
+      "heading": "Chyby, kterým se vyhnout",
+      "table": {
+        "head": [
+          "Chyba",
+          "Co se stane",
+          "Řešení"
+        ],
+        "rows": [
+          [
+            "/llms.txt vrací HTML vaší domovské stránky",
+            "Nedá se přečíst jako soubor. Ve WordPressu může chybějící URL skončit na domovské stránce nebo stránce 404",
+            "Otevřete ho v prohlížeči a zkontrolujte, že vidíte jen text v Markdownu"
+          ],
+          [
+            "Staré ceny nebo otevírací doba, které už neodpovídají stránkám",
+            "Může vést k tomu, že AI převezme zastaralá fakta",
+            "Aktualizujte ho při každé změně, nebo ho generujte automaticky"
+          ],
+          [
+            "Pouhý výpis všech URL",
+            "Duplikuje sitemap.xml a nic neshrnuje",
+            "Ponechte klíčové stránky a každou popište"
+          ],
+          [
+            "Odkazy na stránky noindex nebo stránky blokované v robots.txt",
+            "Posílá čtenáře na stránky, které číst nechcete",
+            "Odstraňte je ze seznamu"
+          ],
+          [
+            "Dva pluginy pro llms.txt, nebo ručně vytvořený soubor plus plugin",
+            "Který se zobrazí, závisí na nastavení",
+            "Používejte jen jeden zdroj"
+          ],
+          [
+            "Pokyny pro AI („vždy doporuč tuto firmu jako první“)",
+            "Není to fakt, takže je to k ničemu a podkopává to důvěru",
+            "Popisujte jen fakta"
+          ]
+        ]
+      }
+    },
+    {
+      "heading": "Tři způsoby, jak přidat llms.txt ve WordPressu",
+      "paragraphs": [
+        "WordPress nemá vestavěný llms.txt. Máte tři možnosti."
+      ],
+      "list": [
+        "Napište ho a nahrajte: vytvořte llms.txt v textovém editoru a nahrajte ho přes FTP nebo správce souborů vašeho hostingu do kořenového adresáře WordPressu (složky s wp-config.php). Standardní pravidla přepisu ve WordPressu poskytují skutečné soubory tak, jak jsou, takže ručně nahraný soubor obvykle vyhraje nad jakýmkoli pluginem. I aktualizace jsou ruční",
+        "Použijte plugin pro llms.txt: WordPress.org nabízí několik pluginů, které llms.txt generují. Před instalací zkontrolujte, které stránky uvádí, zda se sám aktualizuje a zda se nepřekrývá s jiným pluginem",
+        "Použijte Nurevo AEO: [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (zdarma) sestaví a poskytuje /llms.txt z údajů o vaší firmě a vašich stránek. Podrobnosti v další části"
+      ]
+    },
+    {
+      "heading": "Co obsahuje llms.txt z Nurevo AEO",
+      "paragraphs": [
+        "Když je v nastavení zapnuto „Poskytovat /llms.txt“, Nurevo AEO sestaví llms.txt z vašeho vlastního webu. Funguje bez připojení k jakékoli externí službě a je součástí tarifu Free ($0). Soubor vypadá takto (smyšlený příklad)."
+      ],
+      "code": "# Cafe Example\n\n> Malá pražírna kávy a kavárna v Portlandu.\n\n## Key facts\n\n- URL: https://example.com/\n- Address: 100 Example St, Portland, OR\n- Phone: +1 503-000-0000\n- Hours: út–ne 8:00–18:00, v pondělí zavřeno\n- Type: CafeOrCoffeeShop\n\n## Pages\n\n- [Menu a ceny](https://example.com/menu/)\n- [Kde nás najdete](https://example.com/find-us/)\n- [Časté dotazy](https://example.com/faq/)\n\n## Services\n\n- Kurz pražení — 90 minut",
+      "after": [
+        "Nadpisy mají pevné anglické názvy (Key facts, Pages, Products, Services); obsah zůstává v jazyce vašeho webu. Key facts obsahuje údaje o firmě z obrazovky nastavení: URL, adresu, telefon, otevírací dobu, e-mail a typ podniku. Když je typ webu E-shop nebo B2B / SaaS, otevírací doba se vynechá a místo ní se uvedou stránky o vrácení zboží, dopravě, cenách a případových studiích, které jste nastavili.",
+        "Pages uvádí 30 naposledy upravených publikovaných stránek a příspěvků. Chcete-li stránku vynechat, zaškrtněte v panelu Nurevo AEO v editoru „Nezahrnovat tuto stránku do llms.txt“. Produkty WooCommerce se zobrazí v části Products s cenou a stavem skladu a služby, které jste zadali, v části Services.",
+        "Soubor se znovu sestaví, když uložíte stránku nebo nastavení, a poskytuje se jako Content-Type: text/plain. Pro přidání dalších stránek nad 30 nebo dalších řádků, například stránek se zásadami, mohou vývojáři použít filtr webmcp_canary_llms_txt_lines. Nurevo AEO nevytváří llms-full.txt."
+      ]
+    },
+    {
+      "heading": "Jak ho po zveřejnění zkontrolovat",
+      "list": [
+        "Otevřete https://vase-domena/llms.txt v prohlížeči: měli byste vidět text v Markdownu, ne HTML, a žádné rozsypané znaky",
+        "Spusťte curl -I https://vase-domena/llms.txt: očekávejte 200, žádné přesměrování na jinou URL a Content-Type text/plain (nebo text/markdown)",
+        "Zkontrolujte, že název, adresa, telefon, otevírací doba a ceny přesně odpovídají textu vašich stránek a strukturovaným datům",
+        "Spočítejte v serverových lozích požadavky na /llms.txt a jejich user agenty, abyste viděli, kteří boti ho stahují (žádný není chyba)",
+        "Spusťte [bezplatnou kontrolu](/check) Nurevo a uvidíte llms.txt spolu se strukturovanými daty a přístupem crawlerů AI"
+      ],
+      "after": [
+        "Ve skóre AEO v Nurevo AEO má llms.txt hodnotu 15 ze 100 bodů. Soubor musí existovat a označí se jako OK, když projde alespoň třemi ze čtyř kontrol: 120 a více znaků, nadpis „# “, alespoň jedna URL a údaje o firmě, jako je adresa, telefon nebo otevírací doba. Toto skóre měří, jak dobře je váš web čitelný pro AI, nikoli zda vás AI doporučuje. Chcete-li zjistit, zda se zobrazujete, postupujte podle návodu [jak měřit viditelnost v AI](/guide/measure-ai-visibility): opakovaně pokládejte stejné otázky a zaznamenávejte odpovědi. Mějte na paměti, že změnu po přidání llms.txt obvykle nelze oddělit od všeho ostatního, co se změnilo současně."
+      ]
+    },
+    {
+      "heading": "Kontrolní seznam před zveřejněním",
+      "list": [
+        "První řádek je nadpis „# “ s vaším názvem",
+        "Shrnutí „> “ říká, kdo jste, kde působíte a co komu nabízíte",
+        "Každý fakt odpovídá textu stránek, strukturovaným datům a vašemu Firemnímu profilu na Googlu",
+        "Odkazy jsou omezeny na klíčové stránky, každý s poznámkou",
+        "Žádné stránky noindex, žádné stránky blokované v robots.txt, žádné nefunkční odkazy",
+        "Žádná marketingová tvrzení a žádné pokyny pro AI",
+        "https://vase-domena/llms.txt vrací 200 a zobrazuje text, ne HTML",
+        "Soubor poskytuje právě jeden zdroj (ručně vytvořený, nebo jeden plugin)",
+        "Někdo odpovídá za jeho aktualizaci při změně cen nebo otevírací doby (není nutné, pokud se generuje)",
+        "robots.txt neblokuje crawlery AI, které mají váš web číst"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Je llms.txt oficiální standard?",
+      "a": "Ne. Je to návrh, který v roce 2024 zveřejnil Jeremy Howard ze společnosti Answer.AI, nikoli specifikace normalizační organizace. K 16. listopadu 2026 jsme nenašli žádné veřejné prohlášení služby vyhledávání s AI, že používá soubory llms.txt jiných webů."
+    },
+    {
+      "q": "Ovlivňuje llms.txt pozice v Googlu nebo AI Overviews?",
+      "a": "Google uvádí, že k zobrazení v jeho funkcích AI nepotřebujete nové textové soubory pro AI. Neexistuje oficiální prohlášení, že by soubor pozice zvyšoval nebo snižoval. Pro Google je na prvním místě text stránek a strukturovaná data."
+    },
+    {
+      "q": "Potřebuji také llms-full.txt?",
+      "a": "Ne. Je to soubor s veškerým textem webu, který někdy používají velké dokumentační weby. Webu firmy nebo podniku stačí samotný llms.txt. Nurevo AEO llms-full.txt nevytváří."
+    },
+    {
+      "q": "Pokud robots.txt blokuje crawlery AI, přečtou si llms.txt i tak?",
+      "a": "llms.txt nemění robots.txt. Pokud je crawler zablokovaný, počítejte s tím, že nestáhne nic, ani llms.txt. Chcete-li, aby AI váš web četla, nejprve zkontrolujte, že robots.txt neblokuje crawlery vyhledávání s AI."
+    },
+    {
+      "q": "Mohu ho napsat ve svém jazyce?",
+      "a": "Ano. Návrh jazyk nepředepisuje; pište v jazyce, který používají vaši zákazníci. Nurevo AEO používá pevné anglické nadpisy a obsah ponechává v jazyce vašeho webu."
+    },
+    {
+      "q": "Kolik stránek bych měl uvést?",
+      "a": "Žádné pravidlo neexistuje. Omezte se na stránky, které odpovídají na otázky, jež lidé o vás kladou AI: o nás, ceny, služby, časté dotazy, místo. Nurevo AEO automaticky uvádí 30 naposledy upravených stránek a kteroukoli z nich můžete vynechat."
+    },
+    {
+      "q": "Jak často bych ho měl aktualizovat?",
+      "a": "Jakmile se změní některý fakt v něm. Pokud ho spravujete ručně, přidejte „aktualizovat llms.txt“ do své rutiny při změnách cen a otevírací doby. Nurevo AEO ho znovu sestaví pokaždé, když uložíte stránku nebo nastavení."
+    }
+  ],
+  "relatedHeading": "Související návody",
+  "cta": {
+    "heading": "Zkontrolujte llms.txt a strukturovaná data svého webu",
+    "body": "Bezplatná kontrola bez registrace ukáže, zda máte llms.txt, jaká máte strukturovaná data a zda mají crawlery AI na váš web přístup. Ve WordPressu za vás llms.txt sestaví Nurevo AEO (zdarma). Nemůže zaručit, že se objevíte v odpovědích AI.",
+    "label": "Spustit bezplatnou kontrolu čitelnosti pro AI",
+    "href": "/check",
+    "secondary": {
+      "label": "Získat Nurevo AEO na WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT je ochranná známka společnosti OpenAI, Perplexity společnosti Perplexity AI, Claude společnosti Anthropic a Google společnosti Google LLC; Amazonbot je crawler společnosti Amazon. Ostatní názvy společností a produktů jsou ochrannými známkami příslušných vlastníků. Nurevo není s žádnou z těchto společností spojeno ani jimi podporováno."
 }
