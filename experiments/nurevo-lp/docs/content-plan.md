@@ -173,3 +173,12 @@
 3. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
 4. 代表者・専門家のプロフィールページのAI検索対策（Person・資格・経歴の書き方）【全業種】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-16 11時 | dermatology-clinic-ai-search | 皮膚科・美容皮膚科のAI検索対策（業種別。一般皮膚科と美容皮膚科の質問の型、上位記事の抜け4点、保険/自費の書き分け表5ページ〔厚労省Q&A A3-9/A3-18：承認品の自費は自由診療である旨と標準的な費用〕、自費の施術ページの型8項目〔限定解除：Q6-12 治療内容・費用・主なリスク副作用（短所1〜2個では不足）、Q6-10 問い合わせ先（予約専用・自動応答は不可）、Q6-11 見やすさ、Q2-14 承認外使用は未承認医薬品と同じ扱い〕、美容医療の検討会報告書〔2024-11-22：ネットパトロール強化・施術後の相談窓口〕、国民生活センターの相談件数〔2023年6,281・2024年10,744・2025年7,944、2026-05-31現在〕、口コミ・症例写真と一般的なAI対策の助言の衝突表〔Q1-18/Q2-9 体験談、Q2-8/Q3-14 術前術後写真、Q2-11 依頼していない第三者口コミは広告でない〕、構造化データ〔Dermatology＝MedicalBusinessの下位型・medicalSpecialty Dermatology/PlasticSurgery・Service+Offer・isAcceptingNewPatients、schema-dts 2.1.0で確認〕、WordPress手順〔ウィザード「クリニック・歯科」→業種欄を Dermatology・サービスに料金/所要時間・ページ専用FAQ・llms.txtから外す〕、webmcp_canary_business_node で medicalSpecialty を足すコード、チェックリスト10、測り方、MGMA 200件、FAQ 7問）。2言語（ja・en） | 業種別 | content/daily-20261116-11 |
+メモ：2026-11-16 11時の回は厚労省の医療広告規制のページ・ガイドライン本体・schema.org・Google（AI features）を WebFetch の許可待ちで取得できなかった。限定解除の4条件は全文を書かず、Q&A（令和8年3月改定まで記載の版）で確認できた項目だけを書いた。未承認医薬品で書くべき項目（入手経路など）は書いていない。Googleの記述は dental-clinic-ai-search（2026-10-29確認）の範囲だけ。
+翻訳の残り（8時台で補完）：ai-visibility-drop-causes・research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search（ja/en のみ）。
+次の候補：
+1. 写真館・フォトスタジオのAI検索対策（撮影プラン・データ納品・衣装・予約）【業種別】
+2. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
+3. 代表者・専門家のプロフィールページのAI検索対策（Person・資格・経歴の書き方）【全業種】
+4. 眼科・コンタクトのAI検索対策（検査の予約・処方箋・保険と自費のレーシック等）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
