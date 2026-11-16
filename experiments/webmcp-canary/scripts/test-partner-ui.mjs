@@ -65,7 +65,7 @@ try {
   assert.ok(await page.getByText('毎月25日にまとめて口座へ入金', { exact: true }).isVisible());
   assert.ok(await page.getByText('未登録', { exact: true }).isVisible());
   assert.ok(await page.getByText(/Nurevoは口座番号を保存・閲覧しません/).isVisible());
-  assert.ok(await page.getByText(/日本国内の事業者・個人/).isVisible());
+  assert.ok(await page.getByText(/Stripe Connectの自動受取は日本国内の事業者・個人/).isVisible());
   assert.ok(await page.getByText('今月25日に入金予定', { exact: true }).isVisible());
   assert.ok(await page.getByText('来月以降', { exact: true }).isVisible());
   assert.ok(await page.getByText('月額報酬見込み（手数料控除前の目安）', { exact: true }).isVisible());
@@ -189,5 +189,5 @@ try {
   await lp.goto('https://nurevo.test/');
   assert.ok(await lp.locator('header').getByRole('link', { name: '新規登録', exact: true }).isVisible());
   await lp.screenshot({ path: `${artifacts}/lp-mobile.png` });
-  console.log(`PASS: partner approval states (apply, pending, approved; inactive old code; no issue/onboarding before approval), first-customer note and labels, super-admin approve/reject/revoke UI with CSRF, payout account card (status, button, monthly 25th, Japan-only, bank details on Stripe), payout strings in 8 languages, JP/EN Partner routing for store accounts, issue/regenerate, automatic referral table, payout values, LP header/mobile button, signup payload/success, localized form. Screenshots: ${artifacts}`);
+  console.log(`PASS: partner approval states (apply, pending, approved; inactive old code; no issue/onboarding before approval), first-customer note and labels, super-admin approve/reject/revoke UI with CSRF, payout account card (status, button, monthly 25th, domestic Stripe / overseas Wise review, bank details on Stripe), payout strings in 8 languages, JP/EN Partner routing for store accounts, issue/regenerate, automatic referral table, payout values, LP header/mobile button, signup payload/success, localized form. Screenshots: ${artifacts}`);
 } finally { await browser.close(); }

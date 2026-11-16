@@ -24,6 +24,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from 
 import { dirname, join } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import I18N from "../src/i18n.mjs";
+import { WIDE_SCRIPT } from "../src/i18n/locales.mjs";
 import UI from "../src/i18n/ui.mjs";
 import { siteRobotsTxt, siteLlmsTxt } from "../../webmcp-canary/worker/site-seo.mjs";
 import {
@@ -488,7 +489,22 @@ function richSections(copy) {
 function contentPage(page, lang, { draft }) {
   const meta = langOf(lang);
   linkLang = lang;
-  const copy = page.locales[lang];
+  // Metadata uses the current display brand without changing archived prose.
+  // Reserve space within the existing SEO limit; the full heading stays intact.
+  const original = page.locales[lang];
+  const suffix = " | Nurevo AIO";
+  let title = original.title;
+  if (/ \| Nurevo(?: AIO)?$/.test(title)) {
+    let stem = title.replace(/ \| Nurevo(?: AIO)?$/, "");
+    const budget = (WIDE_SCRIPT.has(lang) ? 55 : 70) - suffix.length;
+    if (stem.length > budget) {
+      stem = stem.slice(0, budget - 1).trimEnd();
+      if (!WIDE_SCRIPT.has(lang) && stem.includes(" ")) stem = stem.replace(/\s+\S*$/, "");
+      stem += "…";
+    }
+    title = stem + suffix;
+  }
+  const copy = { ...original, title };
   const pathFor = (code) => contentPath(code, page.slug);
   const url = ORIGIN + pathFor(lang);
   const home = ORIGIN + meta.path;
