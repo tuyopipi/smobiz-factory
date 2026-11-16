@@ -191,3 +191,12 @@
 3. 眼科・コンタクトのAI検索対策（検査の予約・処方箋・保険と自費のレーシック等）【業種別】
 4. 記事・ブログのAI検索対策（AIに引用されやすい記事の書き方：答えの先出し・表・更新日・出典）【全業種】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-16 17時 | agency-aeo-client-handover | 制作会社向け：AI検索対策の契約を終える・引き継ぐときの手順（上位の引き継ぎ記事12本〔oflight・@SOHO×3・アイミツ・StockSun・Rocket.net・Seer・Chaser・White Label Coders・DEV/InstaRenewal・ManyRequests〕に抜けていたAI検索の項目6つの表、残す/止める/移すの選び方の表、AI向けの出力の一覧表〔構造化データを誰が足しているか・FAQ・llms.txt・robots.txt・ページごとの設定・自作のコード〕、Nurevo AEOを外すと消えるもの〔無料の出力は接続なしで動く・SEOプラグインのグラフに足した住所/電話/営業時間が消える・robots_txt フィルタ＝仮想robots.txt・アンインストールでページごとのメタまで全削除・Standard→同梱の基準で継続・利用規約第5条〕、書き出しに入る項目と入らないページごとの設定〔_nurevo_exclude_llms/_nurevo_exclude_schema/_nurevo_faq を wp post list で一覧〕、止めるもの表〔WP管理者・Google系は権限名を書かずヘルプ参照・ダッシュボードとペアリングコード・月次レポート・有料プランはお客様の判断・ウィジェット〕、引き継ぎ後の確かめ方、最初の契約書に入れること、チェックリスト10、FAQ 7問）。2言語（ja・en） | 制作会社向け | content/daily-20261116-17 |
+メモ：2026-11-16 17時の回は support.google.com（Search Console の権限、GA4 のアクセス管理、ビジネスプロフィールのオーナー移行）を WebFetch の許可待ちで取得できなかった。権限の名前・待機期間・移行の手順は書かず「各サービスのヘルプで確認」とした。ICANN の移管ルールも書いていない。
+翻訳の残り（8時台で補完）：ai-visibility-drop-causes・research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover（ja/en のみ）。
+次の候補：
+1. 写真館・フォトスタジオのAI検索対策（撮影プラン・データ納品・衣装・予約）【業種別】
+2. 眼科・コンタクトのAI検索対策（検査の予約・処方箋・保険と自費のレーシック等）【業種別】
+3. 記事・ブログのAI検索対策（AIに引用されやすい記事の書き方：答えの先出し・表・更新日・出典）【全業種】
+4. フランチャイズ本部向け：加盟店サイトとAI検索（表記ルール・リンク・本部と加盟店の役割）【制作会社・本部向け】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
