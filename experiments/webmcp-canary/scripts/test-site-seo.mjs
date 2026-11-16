@@ -89,7 +89,7 @@ const get = (path, env, init = {}) => handleApi(new Request(`https://nurevo.jp${
     pages: [{ lang: "ja", url: "https://nurevo.jp/check/", title: "AI可読チェッカー", summary: "無料診断" }],
   };
   const text = siteLlmsTxt(pages, STORES);
-  assert.ok(text.startsWith("# Nurevo\n\n> "), "opens with the name and a summary, as llms.txt asks");
+  assert.ok(text.startsWith("# Nurevo AIO\n\n> "), "opens with the name and a summary, as llms.txt asks");
   assert.ok(text.includes("answer engine optimization"), "says what the product is");
   assert.ok(text.includes("- [Nurevo EN](https://nurevo.jp/en/) (en)"), "links the language home pages");
   assert.ok(text.includes("- [AI可読チェッカー](https://nurevo.jp/check/): 無料診断"), "and the main pages");
@@ -102,13 +102,13 @@ const get = (path, env, init = {}) => handleApi(new Request(`https://nurevo.jp${
   // The page list comes from the Pages build; when it cannot be read the file
   // still says what Nurevo is, and lists no page it could not confirm.
   const fallback = siteLlmsTxt(null, []);
-  assert.ok(fallback.startsWith("# Nurevo"));
+  assert.ok(fallback.startsWith("# Nurevo AIO"));
   assert.equal(fallback.includes("## Pages"), false);
   assert.equal(fallback.includes("## Hosted stores"), false);
 
   const served = await get("/llms.txt", makeEnv());
   assert.equal(served.status, 200);
-  assert.ok((await served.text()).startsWith("# Nurevo"), "served even with the page list unreachable");
+  assert.ok((await served.text()).startsWith("# Nurevo AIO"), "served even with the page list unreachable");
 }
 
 /* ---------------- AI referrals ---------------- */

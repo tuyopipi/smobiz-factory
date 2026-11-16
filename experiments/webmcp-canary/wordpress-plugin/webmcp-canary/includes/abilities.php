@@ -49,8 +49,8 @@ function webmcp_canary_register_ability_category() {
         return;
     }
     wp_register_ability_category('nurevo', array(
-        'label' => __('Nurevo AEO', 'nurevo-webmcp'),
-        'description' => __('Read-only information about what Nurevo AEO publishes for AI on this site.', 'nurevo-webmcp'),
+        'label' => __('Nurevo AIO', 'nurevo-webmcp'),
+        'description' => __('Read-only information about what Nurevo AIO publishes for AI on this site.', 'nurevo-webmcp'),
     ));
 }
 
@@ -95,8 +95,8 @@ function webmcp_canary_ability_definitions() {
     );
     return array(
         'nurevo/get-status' => array(
-            'label' => __('Get Nurevo AEO status', 'nurevo-webmcp'),
-            'description' => __('Whether Nurevo AEO output is on, which outputs are active (JSON-LD, llms.txt, robots.txt rules), the AI training crawler choice, whether the site is connected to nurevo.jp, the plan, and whether diagnosis consent was given.', 'nurevo-webmcp'),
+            'label' => __('Get Nurevo AIO status', 'nurevo-webmcp'),
+            'description' => __('Whether Nurevo AIO output is on, which outputs are active (JSON-LD, llms.txt, robots.txt rules), the AI training crawler choice, whether the site is connected to nurevo.jp, the plan, and whether diagnosis consent was given.', 'nurevo-webmcp'),
             'execute_callback' => 'webmcp_canary_ability_get_status',
             'output_schema' => array(
                 'type' => 'object',
@@ -185,7 +185,7 @@ function webmcp_canary_ability_definitions() {
         ),
         'nurevo/get-business-profile' => array(
             'label' => __('Get the published business profile', 'nurevo-webmcp'),
-            'description' => __('The business facts Nurevo AEO publishes in this site’s JSON-LD: type, name, description, URL, address, phone, opening hours and any published email.', 'nurevo-webmcp'),
+            'description' => __('The business facts Nurevo AIO publishes in this site’s JSON-LD: type, name, description, URL, address, phone, opening hours and any published email.', 'nurevo-webmcp'),
             'execute_callback' => 'webmcp_canary_ability_get_business_profile',
             'output_schema' => array(
                 'type' => 'object',
@@ -265,8 +265,8 @@ function webmcp_canary_ability_stored_score() {
 /** What to say when there is no stored diagnosis. */
 function webmcp_canary_ability_no_score_message() {
     return webmcp_canary_has_consent()
-        ? __('No AEO diagnosis is stored yet. In WordPress admin, open Nurevo AEO > AEO Score; the diagnosis runs there.', 'nurevo-webmcp')
-        : __('No AEO diagnosis has been run yet. In WordPress admin, open Nurevo AEO > AEO Score and press Run diagnosis. Nothing is sent to the Nurevo service until you agree there.', 'nurevo-webmcp');
+        ? __('No AEO diagnosis is stored yet. In WordPress admin, open Nurevo AIO > AEO Score; the diagnosis runs there.', 'nurevo-webmcp')
+        : __('No AEO diagnosis has been run yet. In WordPress admin, open Nurevo AIO > AEO Score and press Run diagnosis. Nothing is sent to the Nurevo service until you agree there.', 'nurevo-webmcp');
 }
 
 function webmcp_canary_ability_score_date($stored) {
@@ -327,7 +327,7 @@ function webmcp_canary_ability_next_step($check) {
         return array(
             'next_step' => trim(sprintf(
                 /* translators: 1: button label, e.g. "Fix it". 2: what the button does. */
-                __('On the Nurevo AEO > AEO Score screen, press "%1$s" next to this item. %2$s', 'nurevo-webmcp'),
+                __('On the Nurevo AIO > AEO Score screen, press "%1$s" next to this item. %2$s', 'nurevo-webmcp'),
                 $action['label'],
                 $action['hint']
             )),
@@ -336,7 +336,7 @@ function webmcp_canary_ability_next_step($check) {
     }
     if (is_array($action) && $action['mode'] === 'form') {
         return array(
-            'next_step' => trim(__('Open Nurevo AEO > Settings and fill in the business details.', 'nurevo-webmcp') . ' ' . $action['hint']),
+            'next_step' => trim(__('Open Nurevo AIO > Settings and fill in the business details.', 'nurevo-webmcp') . ' ' . $action['hint']),
             'where' => admin_url('admin.php?page=webmcp-canary-settings'),
         );
     }
@@ -346,7 +346,7 @@ function webmcp_canary_ability_next_step($check) {
     // A check this version does not know: the service's own hints, if any.
     $hints = isset($check['hints']) && is_array($check['hints']) ? array_filter(array_map('strval', $check['hints'])) : array();
     return array(
-        'next_step' => !empty($hints) ? implode(' ', $hints) : __('See this item on the Nurevo AEO > AEO Score screen for details.', 'nurevo-webmcp'),
+        'next_step' => !empty($hints) ? implode(' ', $hints) : __('See this item on the Nurevo AIO > AEO Score screen for details.', 'nurevo-webmcp'),
         'where' => admin_url('admin.php?page=webmcp-canary'),
     );
 }
@@ -432,6 +432,6 @@ function webmcp_canary_ability_get_business_profile($input = null) {
         'json_ld' => $node,
         'message' => $published
             ? __('These facts are published in this site’s JSON-LD.', 'nurevo-webmcp')
-            : __('Output is off, so these facts are not published yet. Switch it on in Nurevo AEO > Settings.', 'nurevo-webmcp'),
+            : __('Output is off, so these facts are not published yet. Switch it on in Nurevo AIO > Settings.', 'nurevo-webmcp'),
     );
 }

@@ -48,7 +48,7 @@ function pluginCatalog(code) {
   }
   return null;
 }
-const PLUGIN_TERMS = { obPasteWhere: ["Nurevo AEO", "Settings", "Pairing code", "Store / organization information"], obI2: ["Settings"], obI3: ["Pairing code"] };
+const PLUGIN_TERMS = { obPasteWhere: ["Nurevo AIO", "Settings", "Pairing code", "Store / organization information"], obI2: ["Settings"], obI3: ["Pairing code"] };
 
 export function validate() {
   const errors = [];

@@ -68,11 +68,11 @@ console.log("SoV error detail tests passed");
     id: "resp_1", model: "openai/gpt-6-luna", status: "completed",
     output: [
       { type: "search_results", queries: ["aeo plugin"], results: [{ title: "Nurevo", url: "https://nurevo.jp/" }, { title: "Other", url: "https://other.example/" }] },
-      { type: "message", content: [{ type: "output_text", text: "Nurevo AEO is a WordPress plugin [1]." }] },
+      { type: "message", content: [{ type: "output_text", text: "Nurevo AIO is a WordPress plugin [1]." }] },
     ],
     usage: { input_tokens: 120, output_tokens: 40, total_tokens: 160, cost: { input_cost: 0.0001, output_cost: 0.0002, total_cost: 0.0053 } },
   };
-  assert.deepEqual(parsePerplexityAgent(agent), { answer: "Nurevo AEO is a WordPress plugin [1].", citations: ["https://nurevo.jp/", "https://other.example/"], model: "openai/gpt-6-luna", status: "completed" });
+  assert.deepEqual(parsePerplexityAgent(agent), { answer: "Nurevo AIO is a WordPress plugin [1].", citations: ["https://nurevo.jp/", "https://other.example/"], model: "openai/gpt-6-luna", status: "completed" });
 
   let sent = null;
   const result = await measureSov({ PERPLEXITY_API_KEY: "pk" }, profile, { questions: ["Best AEO plugin?"], engineIds: ["perplexity"],

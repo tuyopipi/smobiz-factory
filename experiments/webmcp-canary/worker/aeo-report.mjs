@@ -314,7 +314,7 @@ const points = (value) => `${Math.round(value * 100)}pt`;
 
 export function renderMonthlyReportText(report) {
   const lines = [];
-  lines.push(`Nurevo AEO 月次レポート ${report.period}`);
+  lines.push(`Nurevo AIO 月次レポート ${report.period}`);
   if (report.beta) lines.push("※ AI登場率はベータ機能です。");
   lines.push("");
   for (const line of aeoScoreLines(report.aeo_score)) lines.push(line);
@@ -363,7 +363,7 @@ export function renderMonthlyReportText(report) {
 
 export function renderMonthlyReportHtml(report) {
   const sections = [];
-  sections.push(`<h1>Nurevo AEO 月次レポート ${escapeHtml(report.period)}</h1>`);
+  sections.push(`<h1>Nurevo AIO 月次レポート ${escapeHtml(report.period)}</h1>`);
   if (report.beta) sections.push('<p class="beta">※ AI登場率はベータ機能です。</p>');
   if (report.site.host) sections.push(`<p class="site">${escapeHtml(report.site.host)}（プラン: ${escapeHtml(report.site.plan)}）</p>`);
 
@@ -417,7 +417,7 @@ export function renderMonthlyReportHtml(report) {
     sections.push(`<h2>次のアクション</h2><ul>${items}</ul>`);
   }
 
-  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>Nurevo AEO 月次レポート ${escapeHtml(report.period)}</title><style>
+  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><title>Nurevo AIO 月次レポート ${escapeHtml(report.period)}</title><style>
 body{font-family:system-ui,-apple-system,"Hiragino Sans",sans-serif;max-width:680px;margin:0 auto;padding:28px;color:#1f2937;line-height:1.7}
 .note{font-size:12px;color:#6b7280}tr.own td{font-weight:700}
 h1{font-size:24px}h2{font-size:18px;margin-top:28px;border-top:1px solid #e5e7eb;padding-top:18px}h3{font-size:15px}

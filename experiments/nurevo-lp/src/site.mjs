@@ -24,7 +24,7 @@ export const OG_IMAGE = { url: `${ORIGIN}/ogp.png`, width: 1200, height: 630 };
 // The operator, as the company profile in the footer states it.
 export const ORGANIZATION = {
   legalName: "Bestie.合同会社",
-  brand: "Nurevo",
+  brand: "Nurevo AIO",
   email: "info@nurevo.jp",
   founder: "橋本 剛",
   foundingDate: "2025-05",
@@ -39,7 +39,7 @@ export const ORGANIZATION = {
 };
 
 export const PRODUCT = {
-  name: "Nurevo AEO",
+  name: "Nurevo AIO",
   category: "BusinessApplication",
   operatingSystem: "WordPress",
   downloadUrl: "https://wordpress.org/plugins/nurevo-webmcp/",

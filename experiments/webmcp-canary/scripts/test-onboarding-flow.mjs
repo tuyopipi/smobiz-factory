@@ -356,7 +356,7 @@ async function submit(box, values) {
     assert.ok(text && text !== I.en.obPasteWhere || lang === "en", `${lang}: obPasteWhere is its own translation`);
     assert.ok(box.innerHTML.includes(`<p class="nrv-paste-where">${app.get("esc")(text)}</p>`), `${lang}: the description is shown instead`);
     const catalog = plugin(PLUGIN_LOCALE[lang]);
-    for (const msgid of ["Nurevo AEO", "Settings", "Pairing code", "Store / organization information"]) {
+    for (const msgid of ["Nurevo AIO", "Settings", "Pairing code", "Store / organization information"]) {
       assert.ok(text.includes(word(catalog, msgid)), `${lang}: names "${word(catalog, msgid)}" as the plugin does`);
     }
     // The numbered steps around it use the same names.

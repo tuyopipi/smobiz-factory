@@ -1,5 +1,5 @@
 /**
- * Nurevo AEO: per-post settings in the block editor sidebar.
+ * Nurevo AIO: per-post settings in the block editor sidebar.
  *
  * Plain JavaScript with wp.element.createElement, so there is no build step.
  * Edits three post meta keys registered by the plugin (show_in_rest, edit_post

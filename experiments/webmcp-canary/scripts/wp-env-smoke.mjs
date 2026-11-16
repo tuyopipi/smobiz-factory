@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Real-WordPress smoke test for the Nurevo AEO plugin, next to Yoast SEO and Slim SEO.
+ * Real-WordPress smoke test for the Nurevo AIO plugin, next to Yoast SEO and Slim SEO.
  *
  * Starts WordPress with @wordpress/env (Docker) from tests/wp-env/.wp-env.json:
  *   - Yoast SEO and Slim SEO from wordpress.org (Slim SEO is deactivated at the

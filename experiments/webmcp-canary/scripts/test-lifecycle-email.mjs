@@ -115,7 +115,7 @@ const ledger = (sqlite) => sqlite.prepare("SELECT scope,subject_id,kind,step,sta
   assert.equal(lifecycleCopy("tw"), lifecycleCopy("zh-tw"));
   assert.equal(lifecycleCopy("zh-Hant-TW"), lifecycleCopy("zh-tw"));
   assert.equal(lifecycleCopy("pt-BR"), lifecycleCopy("en"), "unknown languages fall back to en");
-  assert.equal(welcomeEmail({ locale: "xx", site: { id: "s", install_type: "wp", url: "a.test" } }).subject, "Next step for a.test on Nurevo AEO");
+  assert.equal(welcomeEmail({ locale: "xx", site: { id: "s", install_type: "wp", url: "a.test" } }).subject, "Next step for a.test on Nurevo AIO");
   // A schema without 0037 still answers.
   const broken = { DB: { prepare() { throw new Error("no such column: locale"); } } };
   assert.equal(await memberEmailLocale(broken, { id: "z", email: "z@example.test" }), "en");
@@ -130,7 +130,7 @@ const ledger = (sqlite) => sqlite.prepare("SELECT scope,subject_id,kind,step,sta
   for (const locale of EMAIL_LOCALES) {
     const all = [];
     const w = welcomeEmail({ locale, site: wp });
-    assert.match(w.text, /Nurevo AEO/);
+    assert.match(w.text, /Nurevo AIO/);
     assert.ok(w.text.includes("https://nurevo.jp/dashboard#site:site9"), `${locale} welcome links the site`);
     assert.ok(w.html.includes("https://nurevo.jp/dashboard#site:site9"));
     assert.ok(w.subject.includes("shop.example"), `${locale} subject names the site`);
@@ -149,7 +149,7 @@ const ledger = (sqlite) => sqlite.prepare("SELECT scope,subject_id,kind,step,sta
       assert.ok(r.html.includes("unsubscribe?t=abc"));
       assert.equal(r.text.split("\n").filter((l) => l.startsWith("- ")).length, 3, `${locale} three checklist items`);
       assert.ok(r.text.includes(SETTING_LABEL[locale]), `${locale} names the setting as the plugin translation shows it`);
-      assert.ok(r.text.includes("Nurevo AEO >"), `${locale} names the settings menu`);
+      assert.ok(r.text.includes("Nurevo AIO >"), `${locale} names the settings menu`);
     }
     assert.notEqual(r1.subject, r2.subject);
     assert.ok(r2.text.length > r1.text.length, `${locale} the second reminder says it is the last`);

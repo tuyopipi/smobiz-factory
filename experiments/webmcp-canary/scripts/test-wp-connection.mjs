@@ -101,7 +101,7 @@ function card(html) {
   assert.ok(c.includes("⚠️") && c.includes("WordPressと未接続"), "it warns that the site is not connected");
   assert.ok(c.includes("ここでインストールして導入し、ペアリングしてください。"), "with the lead sentence");
   const steps = [
-    "WordPress管理画面 → プラグイン → 新規追加 →「Nurevo AEO」で検索 → インストール → 有効化",
+    "WordPress管理画面 → プラグイン → 新規追加 →「Nurevo AIO」で検索 → インストール → 有効化",
     "発行されたペアリングコードをプラグイン設定画面に貼り付け",
     "接続完了",
   ];

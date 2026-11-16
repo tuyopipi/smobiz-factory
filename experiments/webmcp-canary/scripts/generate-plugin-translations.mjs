@@ -1,5 +1,5 @@
 /**
- * Regenerate the Nurevo AEO plugin translation catalogs from the plugin source.
+ * Regenerate the Nurevo AIO plugin translation catalogs from the plugin source.
  *
  * The .pot is extracted from the PHP so it cannot drift from the code, then the
  * ja and en_US catalogs are emitted from it. Run `npm run i18n` after changing
@@ -70,7 +70,7 @@ const JA = {
   "License key": "ライセンスキー",
   "Owner email": "所有者メールアドレス",
   "Admin token": "管理トークン",
-  "Nurevo AEO": "Nurevo AEO",
+  "Nurevo AIO": "Nurevo AIO",
   "AEO Score": "AEOスコア",
   "Technical report": "技術レポート",
   "Dashboard": "ダッシュボード",
@@ -115,14 +115,14 @@ const JA = {
   "Only used by this WordPress admin screen for protected management actions such as key rotation and disablement. It is never printed on public pages.":
     "キーのローテーションや無効化など、保護された管理操作のためにWordPress管理画面だけで使用されます。公開ページには出力されません。",
   "AI visibility": "AIでの露出測定",
-  "Nurevo AEO settings": "Nurevo AEO 設定",
-  "Enable Nurevo AEO": "Nurevo AEO を有効化",
+  "Nurevo AIO settings": "Nurevo AIO 設定",
+  "Enable Nurevo AIO": "Nurevo AIO を有効化",
   "Output AI-facing information for this site": "このサイトのAI向け情報を出力する",
-  "Applied only while Nurevo AEO is enabled and the site is visible to search engines.":
-    "Nurevo AEO が有効で、かつサイトが検索エンジンに公開されている場合にのみ適用されます。",
-  "Requires Nurevo AEO to be enabled.": "Nurevo AEO の有効化が必要です。",
-  "Built from this site content. Requires Nurevo AEO to be enabled.":
-    "このサイトの内容から生成します。Nurevo AEO の有効化が必要です。",
+  "Applied only while Nurevo AIO is enabled and the site is visible to search engines.":
+    "Nurevo AIO が有効で、かつサイトが検索エンジンに公開されている場合にのみ適用されます。",
+  "Requires Nurevo AIO to be enabled.": "Nurevo AIO の有効化が必要です。",
+  "Built from this site content. Requires Nurevo AIO to be enabled.":
+    "このサイトの内容から生成します。Nurevo AIO の有効化が必要です。",
   "Nurevo service URL": "NurevoサービスURL",
   "Base URL of the Nurevo service this site talks to. Change only when instructed.":
     "このサイトが接続するNurevoサービスのURLです。指示があった場合のみ変更してください。",
@@ -167,8 +167,8 @@ const JA = {
     "このサイトは中央ruleset v%2$d に追従しています（以前は v%1$d）。新しい基準で再診断しました。",
   "View the updated diagnosis": "更新後の診断を見る",
   "Dismiss": "閉じる",
-  "AEO diagnosis needs the service URL. Open Nurevo AEO > Settings and confirm it.":
-    "AEO診断にはサービスURLが必要です。Nurevo AEO > 設定で確認してください。",
+  "AEO diagnosis needs the service URL. Open Nurevo AIO > Settings and confirm it.":
+    "AEO診断にはサービスURLが必要です。Nurevo AIO > 設定で確認してください。",
   "AEO diagnosis is not available yet.": "AEO診断はまだ利用できません。",
   "診断中": "診断中",
   "The tag.js URL is not configured. Open WebMCP > Settings and configure it.":
@@ -367,14 +367,14 @@ const JA = {
   "Email": "メール",
 
   // SEO plugin coexistence.
-  "🤝 Works alongside Yoast SEO, Rank Math, All in One SEO and Slim SEO. They do SEO, Nurevo AEO does AI. Duplicate schema is avoided automatically.":
-    "🤝 Yoast SEO / Rank Math / All in One SEO / Slim SEO と併用OK。SEOは彼ら、AIはNurevo AEO。二重schemaは自動回避中",
+  "🤝 Works alongside Yoast SEO, Rank Math, All in One SEO and Slim SEO. They do SEO, Nurevo AIO does AI. Duplicate schema is avoided automatically.":
+    "🤝 Yoast SEO / Rank Math / All in One SEO / Slim SEO と併用OK。SEOは彼ら、AIはNurevo AIO。二重schemaは自動回避中",
   "(detected: %s)": "（検知: %s）",
   "Which plugin outputs each schema type": "schemaの出力元",
   "schema.org type": "schema.org タイプ",
   "Output by": "出力元",
   "%s (Nurevo suppressed)": "%s（Nurevoは抑制）",
-  "Nurevo AEO (filling what %s leaves out)": "Nurevo AEO（%s が出力しない項目を補完）",
+  "Nurevo AIO (filling what %s leaves out)": "Nurevo AIO（%s が出力しない項目を補完）",
   "Detected SEO plugins: %s": "検知したSEOプラグイン: %s",
   "No SEO plugin was detected.": "SEOプラグインは検知されていません。",
 
@@ -412,8 +412,8 @@ const JA = {
   "Answer": "回答",
   "Leave a question or its answer blank to remove the pair. Save to add another row.": "質問または回答を空にすると、その組は削除されます。保存すると入力欄が1組増えます。",
   "To publish the FAQ, place the %1$s block or the %2$s shortcode on the page where it should appear. The questions are shown there and published as FAQPage structured data on that page only; search engines accept FAQ markup only for questions visitors can read.": "FAQを公開するには、表示したいページに %1$s ブロックまたは %2$s ショートコードを配置してください。質問はそのページに表示され、そのページでのみ FAQPage 構造化データとして出力されます。検索エンジンは、訪問者が読める質問のFAQマークアップしか認めません。",
-  "Nurevo FAQ": "Nurevo FAQ",
-  "Shows the questions and answers entered in Nurevo AEO settings.": "Nurevo AEO の設定で入力した質問と回答を表示します。",
+  "Nurevo AIO FAQ": "Nurevo AIO FAQ",
+  "Shows the questions and answers entered in Nurevo AIO settings.": "Nurevo AIO の設定で入力した質問と回答を表示します。",
   "Page ID that carries the services (0 = front page)": "サービスを掲載するページID（0 = フロントページ）",
   "Add the site on the nurevo.jp dashboard, then paste the pairing code it shows here. The code is used once; re-issue it from the dashboard if you need another.": "nurevo.jp のダッシュボードでサイトを追加し、表示されたペアリングコードをここに貼り付けてください。コードは一度だけ使えます。必要な場合はダッシュボードから再発行できます。",
   "Paired. This site is registered as %1$s. Plan: %2$s.": "接続しました。このサイトは %1$s として登録されています。プラン: %2$s。",
@@ -557,7 +557,7 @@ const JA = {
     "プランを購入・解約した直後ですか？次の同期を待たずに、今すぐ確認できます。",
   "Plan checked: %s (unchanged).": "プランを確認しました：%s（変更なし）",
   "Plan updated: %1$s → %2$s.": "プランを更新しました：%1$s → %2$s",
-  "Nurevo AEO is off: nothing is published yet.": "Nurevo AEO はオフです。まだ何も公開されていません。",
+  "Nurevo AIO is off: nothing is published yet.": "Nurevo AIO はオフです。まだ何も公開されていません。",
   "Structured data, llms.txt and AI crawler rules start once you switch on output.":
     "出力をオンにすると、構造化データ・llms.txt・AIクローラーの設定が有効になります。",
   "Turn on in settings": "設定でオンにする",
@@ -568,8 +568,8 @@ const JA = {
   "Automatic optimization found information that needs your confirmation. Please publish only real information.":
     "自動最適化で、確認が必要な情報が見つかりました。実在する情報だけを公開してください。",
   // Consent before contacting the service (0.8.0).
-  "The diagnosis has not been run yet. Open Nurevo AEO and press Run diagnosis to agree to contact the Nurevo service.":
-    "診断はまだ実行されていません。Nurevo AEO を開き、「診断を実行」を押してNurevoサービスへの接続に同意してください。",
+  "The diagnosis has not been run yet. Open Nurevo AIO and press Run diagnosis to agree to contact the Nurevo service.":
+    "診断はまだ実行されていません。Nurevo AIO を開き、「診断を実行」を押してNurevoサービスへの接続に同意してください。",
   "Run your first AEO diagnosis":
     "最初のAEO診断を実行する",
   "The diagnosis is run by the Nurevo service at nurevo.jp. Nothing has been sent yet: the plugin contacts the service only after you agree here.":
@@ -605,8 +605,8 @@ const JA = {
     "このページではNurevoの構造化データを出力しない",
   "Questions and answers for this page":
     "このページのよくある質問",
-  "Shown where you place the Nurevo FAQ block set to this page’s own questions, or the [nurevo_faq source=\"post\"] shortcode. Published as FAQPage on this page only.":
-    "「このページ専用の質問」に設定したNurevo FAQブロック、または [nurevo_faq source=\"post\"] ショートコードを置いた場所に表示されます。FAQPageとしてはこのページでのみ公開されます。",
+  "Shown where you place the Nurevo AIO FAQ block set to this page’s own questions, or the [nurevo_faq source=\"post\"] shortcode. Published as FAQPage on this page only.":
+    "「このページ専用の質問」に設定したNurevo AIO FAQブロック、または [nurevo_faq source=\"post\"] ショートコードを置いた場所に表示されます。FAQPageとしてはこのページでのみ公開されます。",
   "Add a question":
     "質問を追加",
   "Remove":
@@ -614,8 +614,8 @@ const JA = {
   // Tools: export/import, WP-CLI (0.8.0).
   "AEO score: %1$d/100 (%2$s)":
     "AEOスコア: %1$d/100（%2$s）",
-  "Choose a settings file exported from Nurevo AEO.":
-    "Nurevo AEO から書き出した設定ファイルを選んでください。",
+  "Choose a settings file exported from Nurevo AIO.":
+    "Nurevo AIO から書き出した設定ファイルを選んでください。",
   "Copy these settings to another site. The file holds the output switches, the business details, the FAQ and the services. Keys, tokens, the plan and the connection are never exported or imported.":
     "この設定を別のサイトにコピーできます。ファイルには出力のオン・オフ、店舗情報、よくある質問、サービスが含まれます。キー・トークン・プラン・接続情報は書き出しも読み込みもしません。",
   "Could not read the file.":
@@ -638,23 +638,23 @@ const JA = {
     "ファイルにキーまたは接続設定が含まれています。これらは読み込みません: %s",
   "The file contains settings this version does not know: %s":
     "ファイルに、このバージョンが認識できない設定が含まれています: %s",
-  "The file is not a valid Nurevo AEO settings file.":
-    "有効なNurevo AEO設定ファイルではありません。",
+  "The file is not a valid Nurevo AIO settings file.":
+    "有効なNurevo AIO設定ファイルではありません。",
   "The file is not valid JSON.":
     "ファイルが正しいJSONではありません。",
-  "This is not a Nurevo AEO settings file.":
-    "Nurevo AEO の設定ファイルではありません。",
+  "This is not a Nurevo AIO settings file.":
+    "Nurevo AIO の設定ファイルではありません。",
   "Tools":
     "ツール",
   // Owner-facing connection messages (0.8.0).
-  "The Nurevo service URL is not set. Open Nurevo AEO > Settings and check it under Advanced.":
-    "NurevoサービスのURLが設定されていません。Nurevo AEO > 設定 を開き、「詳細設定」で確認してください。",
+  "The Nurevo service URL is not set. Open Nurevo AIO > Settings and check it under Advanced.":
+    "NurevoサービスのURLが設定されていません。Nurevo AIO > 設定 を開き、「詳細設定」で確認してください。",
   "The Nurevo service sent a response this plugin could not read.":
     "Nurevoサービスから、このプラグインが読み取れない応答が返されました。",
   "The Nurevo service returned an error: %s":
     "Nurevoサービスがエラーを返しました: %s",
-  "This site is not connected to Nurevo yet. Open Nurevo AEO > Settings and pair it with a pairing code.":
-    "このサイトはまだNurevoに接続されていません。Nurevo AEO > 設定 を開き、ペアリングコードで接続してください。",
+  "This site is not connected to Nurevo yet. Open Nurevo AIO > Settings and pair it with a pairing code.":
+    "このサイトはまだNurevoに接続されていません。Nurevo AIO > 設定 を開き、ペアリングコードで接続してください。",
   "Could not reach the Nurevo service. Please try again later.":
     "Nurevoサービスに接続できませんでした。しばらくしてから再度お試しください。",
   "Showing the last data received from Nurevo, because the service cannot be reached right now.":
@@ -672,8 +672,8 @@ const JA = {
   "The Nurevo service URL in Settings did not lead to the Nurevo service: %s":
     "設定にあるNurevoサービスのURLは、Nurevoサービスにつながりませんでした: %s",
   // Suggested privacy policy text (0.8.0).
-  "This site uses the Nurevo AEO plugin to publish structured data, llms.txt and AI crawler rules. These are produced on this site’s own server. By default the plugin adds no tracking script to public pages and sends no visitor data to the Nurevo service.":
-    "このサイトでは、構造化データ・llms.txt・AIクローラーの設定を公開するために Nurevo AEO プラグインを使用しています。これらはこのサイト自身のサーバーで生成されます。初期設定では、公開ページに追跡用のスクリプトは追加されず、訪問者のデータがNurevoサービスに送信されることもありません。",
+  "This site uses the Nurevo AIO plugin to publish structured data, llms.txt and AI crawler rules. These are produced on this site’s own server. By default the plugin adds no tracking script to public pages and sends no visitor data to the Nurevo service.":
+    "このサイトでは、構造化データ・llms.txt・AIクローラーの設定を公開するために Nurevo AIO プラグインを使用しています。これらはこのサイト自身のサーバーで生成されます。初期設定では、公開ページに追跡用のスクリプトは追加されず、訪問者のデータがNurevoサービスに送信されることもありません。",
   "Only after a site administrator agrees to run the AEO diagnosis, or connects the site to Nurevo with a pairing code, does the plugin contact the Nurevo service at nurevo.jp, operated by Bestie. LLC. It then sends this site’s home page address and WordPress language, and the service reads the site’s public front page, robots.txt and llms.txt.":
     "サイト管理者がAEO診断の実行に同意した場合、またはペアリングコードでサイトをNurevoに接続した場合に限り、プラグインは Bestie. LLC. が運営する nurevo.jp のNurevoサービスに接続します。その際、このサイトのホームページのアドレスとWordPressの言語が送信され、サービスはサイトの公開中のトップページ・robots.txt・llms.txtを読み取ります。",
   "Once the site is connected, the plugin also sends, from the WordPress administration area and twice a day: the business details entered in its settings (name, description, address, telephone, opening hours, business type, website and business email), the products, services and frequently asked questions it publishes, and the titles and addresses of recently updated public posts and pages. This is information about the business, not about visitors.":
@@ -687,11 +687,11 @@ const JA = {
     "管理画面でのスコア表示",
   "Show the AEO score in the admin bar":
     "管理バーにAEOスコアを表示する",
-  "Show the Nurevo AEO widget on the Dashboard":
-    "ダッシュボードにNurevo AEOウィジェットを表示する",
+  "Show the Nurevo AIO widget on the Dashboard":
+    "ダッシュボードにNurevo AIOウィジェットを表示する",
   // Setup wizard (0.8.1).
-  "Set up Nurevo AEO":
-    "Nurevo AEO の初期設定",
+  "Set up Nurevo AIO":
+    "Nurevo AIO の初期設定",
   "Setup":
     "初期設定",
   "Setup progress":
@@ -816,33 +816,33 @@ const JA = {
     "AEOスコア画面を開く",
   "Next steps":
     "次にやること",
-  "Add the Nurevo FAQ block to a page, so AI can quote your answers.":
-    "ページにNurevo FAQブロックを追加すると、AIがあなたの回答を引用できるようになります。",
+  "Add the Nurevo AIO FAQ block to a page, so AI can quote your answers.":
+    "ページにNurevo AIO FAQブロックを追加すると、AIがあなたの回答を引用できるようになります。",
   "Open your pages":
     "固定ページ一覧を開く",
   "Connect this site to nurevo.jp to see it in the dashboard (optional, free).":
     "nurevo.jp に接続すると、ダッシュボードでこのサイトを確認できます（任意・無料）。",
   "Connect to nurevo.jp":
     "nurevo.jp に接続",
-  "Per-page settings: leave a page out, or give it its own FAQ, from the Nurevo AEO panel in the editor.":
-    "ページごとの設定: エディターのNurevo AEOパネルから、ページを対象外にしたり、ページ専用のFAQを設定したりできます。",
+  "Per-page settings: leave a page out, or give it its own FAQ, from the Nurevo AIO panel in the editor.":
+    "ページごとの設定: エディターのNurevo AIOパネルから、ページを対象外にしたり、ページ専用のFAQを設定したりできます。",
   "Standard keeps your output following new AI criteria automatically, if you ever want that.":
     "必要になったら、Standardプランで出力を新しいAIの評価基準に自動で追従させることもできます。",
-  "Go to Nurevo AEO":
-    "Nurevo AEOへ",
-  "Nurevo AEO setup is not finished. It takes about three minutes.":
-    "Nurevo AEOの初期設定が終わっていません。3分ほどで完了します。",
+  "Go to Nurevo AIO":
+    "Nurevo AIOへ",
+  "Nurevo AIO setup is not finished. It takes about three minutes.":
+    "Nurevo AIOの初期設定が終わっていません。3分ほどで完了します。",
   "Resume setup":
     "設定を再開",
   "Do not show again":
     "今後表示しない",
   // Abilities API (0.8.1).
-  "Read-only information about what Nurevo AEO publishes for AI on this site.":
-    "このサイトでNurevo AEOがAI向けに公開している内容の読み取り専用情報。",
-  "Get Nurevo AEO status":
-    "Nurevo AEOの状態を取得",
-  "Whether Nurevo AEO output is on, which outputs are active (JSON-LD, llms.txt, robots.txt rules), the AI training crawler choice, whether the site is connected to nurevo.jp, the plan, and whether diagnosis consent was given.":
-    "Nurevo AEOの出力がオンかどうか、有効な出力（JSON-LD・llms.txt・robots.txtのルール）、AI学習クローラーの設定、nurevo.jpとの接続状況、プラン、診断への同意の有無。",
+  "Read-only information about what Nurevo AIO publishes for AI on this site.":
+    "このサイトでNurevo AIOがAI向けに公開している内容の読み取り専用情報。",
+  "Get Nurevo AIO status":
+    "Nurevo AIOの状態を取得",
+  "Whether Nurevo AIO output is on, which outputs are active (JSON-LD, llms.txt, robots.txt rules), the AI training crawler choice, whether the site is connected to nurevo.jp, the plan, and whether diagnosis consent was given.":
+    "Nurevo AIOの出力がオンかどうか、有効な出力（JSON-LD・llms.txt・robots.txtのルール）、AI学習クローラーの設定、nurevo.jpとの接続状況、プラン、診断への同意の有無。",
   "Get the last AEO score":
     "最新のAEOスコアを取得",
   "The last stored AEO diagnosis: score out of 100, band, date and a checklist summary. It never runs a new diagnosis.":
@@ -853,26 +853,26 @@ const JA = {
     "保存済みの最新のAEO診断で対応が必要な項目（WARN・BAD）と、それぞれのわかりやすい次の対応。",
   "Get the published business profile":
     "公開中の事業者情報を取得",
-  "The business facts Nurevo AEO publishes in this site’s JSON-LD: type, name, description, URL, address, phone, opening hours and any published email.":
-    "Nurevo AEOがこのサイトのJSON-LDで公開している事業者情報（種類・名称・説明・URL・住所・電話番号・営業時間・公開しているメールアドレス）。",
-  "No AEO diagnosis is stored yet. In WordPress admin, open Nurevo AEO > AEO Score; the diagnosis runs there.":
-    "保存されたAEO診断はまだありません。WordPress管理画面で「Nurevo AEO > AEOスコア」を開くと診断が実行されます。",
-  "No AEO diagnosis has been run yet. In WordPress admin, open Nurevo AEO > AEO Score and press Run diagnosis. Nothing is sent to the Nurevo service until you agree there.":
-    "AEO診断はまだ実行されていません。WordPress管理画面で「Nurevo AEO > AEOスコア」を開き、「診断を実行」を押してください。そこで同意するまで、Nurevoサービスには何も送信されません。",
-  "On the Nurevo AEO > AEO Score screen, press \"%1$s\" next to this item. %2$s":
-    "「Nurevo AEO > AEOスコア」画面で、この項目の横にある「%1$s」を押してください。%2$s",
-  "Open Nurevo AEO > Settings and fill in the business details.":
-    "「Nurevo AEO > 設定」を開き、店舗情報を入力してください。",
-  "See this item on the Nurevo AEO > AEO Score screen for details.":
-    "詳しくは「Nurevo AEO > AEOスコア」画面でこの項目を確認してください。",
+  "The business facts Nurevo AIO publishes in this site’s JSON-LD: type, name, description, URL, address, phone, opening hours and any published email.":
+    "Nurevo AIOがこのサイトのJSON-LDで公開している事業者情報（種類・名称・説明・URL・住所・電話番号・営業時間・公開しているメールアドレス）。",
+  "No AEO diagnosis is stored yet. In WordPress admin, open Nurevo AIO > AEO Score; the diagnosis runs there.":
+    "保存されたAEO診断はまだありません。WordPress管理画面で「Nurevo AIO > AEOスコア」を開くと診断が実行されます。",
+  "No AEO diagnosis has been run yet. In WordPress admin, open Nurevo AIO > AEO Score and press Run diagnosis. Nothing is sent to the Nurevo service until you agree there.":
+    "AEO診断はまだ実行されていません。WordPress管理画面で「Nurevo AIO > AEOスコア」を開き、「診断を実行」を押してください。そこで同意するまで、Nurevoサービスには何も送信されません。",
+  "On the Nurevo AIO > AEO Score screen, press \"%1$s\" next to this item. %2$s":
+    "「Nurevo AIO > AEOスコア」画面で、この項目の横にある「%1$s」を押してください。%2$s",
+  "Open Nurevo AIO > Settings and fill in the business details.":
+    "「Nurevo AIO > 設定」を開き、店舗情報を入力してください。",
+  "See this item on the Nurevo AIO > AEO Score screen for details.":
+    "詳しくは「Nurevo AIO > AEOスコア」画面でこの項目を確認してください。",
   "Nothing to fix: every item in the last diagnosis passed.":
     "改善が必要な項目はありません。最新の診断ではすべての項目が合格でした。",
   "%d item(s) in the last diagnosis need attention.":
     "最新の診断で %d 件の項目に対応が必要です。",
   "These facts are published in this site’s JSON-LD.":
     "これらの情報はこのサイトのJSON-LDで公開されています。",
-  "Output is off, so these facts are not published yet. Switch it on in Nurevo AEO > Settings.":
-    "出力がオフのため、これらの情報はまだ公開されていません。「Nurevo AEO > 設定」でオンにしてください。",
+  "Output is off, so these facts are not published yet. Switch it on in Nurevo AIO > Settings.":
+    "出力がオフのため、これらの情報はまだ公開されていません。「Nurevo AIO > 設定」でオンにしてください。",
   // Site types (docs/industries.md).
   "B2B / SaaS": "BtoB・SaaS",
   "B2B / SaaS / professional services": "BtoB・SaaS・専門サービス",
@@ -925,16 +925,16 @@ const JA = {
   "Pro tracks this every week with more questions, ChatGPT as well as Perplexity, competitor share and history.":
     "Proなら、より多くの質問で毎週測定し、PerplexityとChatGPTの両方、競合との比較、推移まで追えます。",
   "The free AI check could not be run. Please try again later.": "無料AIチェックを実行できませんでした。時間をおいて再度お試しください。",  // WordPress.org review request (0.9.1).
-  "Is Nurevo AEO helping? A short review on WordPress.org helps other site owners find it.":
-    "Nurevo AEOはお役に立っていますか？WordPress.orgに短いレビューを書いていただくと、他のサイト運営者が見つけやすくなります。",
+  "Is Nurevo AIO helping? A short review on WordPress.org helps other site owners find it.":
+    "Nurevo AIOはお役に立っていますか？WordPress.orgに短いレビューを書いていただくと、他のサイト運営者が見つけやすくなります。",
   "Write a review": "レビューを書く",
 };
 
 const POT_HEADER = `# Copyright (C) 2026 Nurevo
-# This file is distributed under the same license as the Nurevo AEO package.
+# This file is distributed under the same license as the Nurevo AIO package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Nurevo AEO 0.1.0\\n"
+"Project-Id-Version: Nurevo AIO 0.1.0\\n"
 "Report-Msgid-Bugs-To: https://nurevo.jp/nurevo-webmcp/\\n"
 "MIME-Version: 1.0\\n"
 "Content-Type: text/plain; charset=UTF-8\\n"
@@ -964,10 +964,10 @@ function pluralForms(locale) {
 
 function poHeader(locale) {
   return `# Copyright (C) 2026 Nurevo
-# This file is distributed under the same license as the Nurevo AEO package.
+# This file is distributed under the same license as the Nurevo AIO package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Nurevo AEO\\n"
+"Project-Id-Version: Nurevo AIO\\n"
 "Report-Msgid-Bugs-To: https://nurevo.jp/nurevo-webmcp/\\n"
 "Last-Translator: Nurevo <support@nurevo.jp>\\n"
 "Language-Team: ${locale} <support@nurevo.jp>\\n"
@@ -1036,7 +1036,7 @@ function moBuffer(headerText, pairs) {
 /** The header block of a .po, as the msgstr of the empty msgid. */
 function headerMsgstr(locale) {
   return [
-    "Project-Id-Version: Nurevo AEO",
+    "Project-Id-Version: Nurevo AIO",
     `Language: ${locale}`,
     "MIME-Version: 1.0",
     "Content-Type: text/plain; charset=UTF-8",

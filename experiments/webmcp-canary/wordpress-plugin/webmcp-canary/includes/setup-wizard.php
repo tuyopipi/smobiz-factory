@@ -1,6 +1,6 @@
 <?php
 /**
- * First-run setup wizard: Nurevo AEO > Setup.
+ * First-run setup wizard: Nurevo AIO > Setup.
  *
  * Four short steps from install to "readable by AI": what kind of business
  * this is, its basic facts, what to publish, and a summary. Everything is a
@@ -192,7 +192,7 @@ function webmcp_canary_wizard_menu() {
     }
     add_submenu_page(
         'webmcp-canary',
-        __('Set up Nurevo AEO', 'nurevo-webmcp'),
+        __('Set up Nurevo AIO', 'nurevo-webmcp'),
         __('Setup', 'nurevo-webmcp'),
         'manage_options',
         WEBMCP_CANARY_WIZARD_PAGE,
@@ -286,7 +286,7 @@ function webmcp_canary_wizard_skipped_notice() {
     $dismiss_url = wp_nonce_url(add_query_arg(array('page' => $page, 'nurevo_dismiss_setup' => '1'), admin_url('admin.php')), 'webmcp_canary_dismiss_setup');
     printf(
         '<div id="nurevo-setup-notice" class="notice notice-info is-dismissible"><p>%1$s <a href="%2$s">%3$s</a> <a class="webmcp-setup-notice-hide" href="%4$s">%5$s</a></p></div>',
-        esc_html__('Nurevo AEO setup is not finished. It takes about three minutes.', 'nurevo-webmcp'),
+        esc_html__('Nurevo AIO setup is not finished. It takes about three minutes.', 'nurevo-webmcp'),
         esc_url(webmcp_canary_wizard_url()),
         esc_html__('Resume setup', 'nurevo-webmcp'),
         esc_url($dismiss_url),
@@ -683,7 +683,7 @@ function webmcp_canary_wizard_page() {
     $settings = webmcp_canary_settings();
     ?>
     <div class="wrap webmcp-wizard">
-        <?php echo webmcp_canary_screen_title(__('Set up Nurevo AEO', 'nurevo-webmcp')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_screen_title() ?>
+        <?php echo webmcp_canary_screen_title(__('Set up Nurevo AIO', 'nurevo-webmcp')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in webmcp_canary_screen_title() ?>
         <nav aria-label="<?php esc_attr_e('Setup progress', 'nurevo-webmcp'); ?>">
             <ol class="webmcp-wizard-steps">
                 <?php foreach ($steps as $number => $title) : ?>
@@ -958,7 +958,7 @@ function webmcp_canary_wizard_render_step_4($settings) {
     echo '<h3>' . esc_html__('Next steps', 'nurevo-webmcp') . '</h3><ul class="webmcp-wizard-next">';
     printf(
         '<li>%1$s <a href="%2$s">%3$s</a></li>',
-        esc_html__('Add the Nurevo FAQ block to a page, so AI can quote your answers.', 'nurevo-webmcp'),
+        esc_html__('Add the Nurevo AIO FAQ block to a page, so AI can quote your answers.', 'nurevo-webmcp'),
         esc_url(admin_url('edit.php?post_type=page')),
         esc_html__('Open your pages', 'nurevo-webmcp')
     );
@@ -970,7 +970,7 @@ function webmcp_canary_wizard_render_step_4($settings) {
     );
     printf(
         '<li>%s</li>',
-        esc_html__('Per-page settings: leave a page out, or give it its own FAQ, from the Nurevo AEO panel in the editor.', 'nurevo-webmcp')
+        esc_html__('Per-page settings: leave a page out, or give it its own FAQ, from the Nurevo AIO panel in the editor.', 'nurevo-webmcp')
     );
     echo '</ul>';
     if (($settings['plan'] ?? 'free') === 'free') {
@@ -979,6 +979,6 @@ function webmcp_canary_wizard_render_step_4($settings) {
     printf(
         '<div class="webmcp-wizard-actions"><a class="button button-primary" href="%1$s">%2$s</a></div>',
         esc_url(admin_url('admin.php?page=webmcp-canary')),
-        esc_html__('Go to Nurevo AEO', 'nurevo-webmcp')
+        esc_html__('Go to Nurevo AIO', 'nurevo-webmcp')
     );
 }

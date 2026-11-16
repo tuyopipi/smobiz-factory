@@ -49,7 +49,7 @@
    [
     "guide-wp",
     "① WordPressプラグイン",
-    "手順 1. WordPress管理画面→プラグイン→新規追加で「Nurevo AEO」を検索→インストール→有効化。\n2. ダッシュボードのサイト詳細で「ペアリングコードを発行」。\n3. WordPress管理画面→Nurevo AEO→設定にコードを貼って保存。\n4. 同じ画面で「このサイトのAI向け情報を出力する」がオンになっていることを確認。\n5. 公開ページのソースで application/ld+json と LocalBusiness を確認（キャッシュ系プラグインがあればキャッシュをクリア）。"
+    "手順 1. WordPress管理画面→プラグイン→新規追加で「Nurevo AIO」を検索→インストール→有効化。\n2. ダッシュボードのサイト詳細で「ペアリングコードを発行」。\n3. WordPress管理画面→Nurevo AIO→設定にコードを貼って保存。\n4. 同じ画面で「このサイトのAI向け情報を出力する」がオンになっていることを確認。\n5. 公開ページのソースで application/ld+json と LocalBusiness を確認（キャッシュ系プラグインがあればキャッシュをクリア）。"
    ],
    [
     "guide-tag",
@@ -123,7 +123,7 @@
    [
     "guide-wp",
     "WordPress plugin",
-    "1. WordPress admin → Plugins → Add New, search for \"Nurevo AEO\" → Install → Activate.\n2. On the site page in this dashboard, press \"Issue a pairing code\".\n3. Paste the code into Nurevo AEO → Settings in WordPress admin and save.\n4. On the same screen, make sure \"Output AI-facing information for this site\" is ON.\n5. View the source of a public page and look for LocalBusiness in application/ld+json (clear the cache if you use a caching plugin)."
+    "1. WordPress admin → Plugins → Add New, search for \"Nurevo AIO\" → Install → Activate.\n2. On the site page in this dashboard, press \"Issue a pairing code\".\n3. Paste the code into Nurevo AIO → Settings in WordPress admin and save.\n4. On the same screen, make sure \"Output AI-facing information for this site\" is ON.\n5. View the source of a public page and look for LocalBusiness in application/ld+json (clear the cache if you use a caching plugin)."
    ],
    [
     "guide-tag",
