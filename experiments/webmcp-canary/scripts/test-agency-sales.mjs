@@ -53,3 +53,17 @@ for(const language of ['en','ja']){
 }
 assert.ok(!read('public/agency-sales-kit.js').includes('localStorage'));
 console.log('PASS agency sales: tenant isolation, roles, CSRF, status validation, legacy migration, safe proposal model. No external calls.');
+
+// Production routing: a 200 LP fallback is not the proposal editor. Route all
+// linked entry URLs, canonical redirects and assets to this Worker's ASSETS.
+{
+ const config=read('wrangler.jsonc');
+ const patterns=[...config.matchAll(/"pattern"\s*:\s*"([^"\n]+)"/g)].map(m=>m[1]);
+ const matches=(url)=>patterns.some(p=>p.endsWith('*')?url.startsWith(p.slice(0,-1)):url===p);
+ for(const path of ['/agency-sales-kit.html','/agency-sales-kit','/agency-sales-kit.html?lead=7&lang=ja','/agency-sales-kit?lang=en','/agency-sales-kit.js','/agency-sales-kit.css'])assert.ok(matches('nurevo.jp'+path), `Worker route covers ${path}`);
+ for(const path of ['/','/ja/','/en/','/ja/agency/','/assets/logo.png'])assert.equal(matches('nurevo.jp'+path),false, `Pages keeps ${path}`);
+ const html=read('public/agency-sales-kit.html');
+ assert.ok(html.includes('id="proposal-form"'));
+ for(const file of ['agency-sales-kit.js','agency-sales-kit.css']){assert.ok(html.includes(file));assert.ok(read('public/'+file).length>100);}
+ console.log('PASS agency sales production routes: editor, canonical URL, query strings and dependencies; unrelated LP paths untouched.');
+}
