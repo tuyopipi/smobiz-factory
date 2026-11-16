@@ -442,12 +442,24 @@ export async function storeLead(env, accountId, lead, { now = Date.now() } = {})
 
 const LEAD_COLUMNS = "id,created_at,source,page_origin,site_url,name,email,score,band,locale,consent_text,consent_at,notified_at";
 
+export const SALES_STATUSES = Object.freeze(["new", "proposed", "trial", "won", "lost"]);
+export async function salesStatusAvailable(env) {
+  try { await env.DB.prepare("SELECT sales_status,sales_updated_at FROM agency_leads LIMIT 0").all(); return true; }
+  catch (error) { if (isMissing(error)) return false; throw error; }
+}
+export async function updateSalesStatus(env, accountId, leadId, status, now = Date.now()) {
+  const id = Number(leadId);
+  if (!Number.isSafeInteger(id) || id <= 0 || !SALES_STATUSES.includes(status)) return false;
+  return changes(await env.DB.prepare("UPDATE agency_leads SET sales_status=?,sales_updated_at=? WHERE id=? AND account_id=?")
+    .bind(status, now, id, accountId).run()) === 1;
+}
 export async function listLeads(env, accountId, { limit = 100, before = null } = {}) {
   const max = Math.min(Math.max(Number(limit) || 100, 1), 5000);
   const cursor = Number(before);
+  const columns = LEAD_COLUMNS + (await salesStatusAvailable(env) ? ",sales_status,sales_updated_at" : "");
   const { results = [] } = Number.isSafeInteger(cursor) && cursor > 0
-    ? await env.DB.prepare(`SELECT ${LEAD_COLUMNS} FROM agency_leads WHERE account_id=? AND id<? ORDER BY id DESC LIMIT ?`).bind(accountId, cursor, max).all()
-    : await env.DB.prepare(`SELECT ${LEAD_COLUMNS} FROM agency_leads WHERE account_id=? ORDER BY id DESC LIMIT ?`).bind(accountId, max).all();
+    ? await env.DB.prepare(`SELECT ${columns} FROM agency_leads WHERE account_id=? AND id<? ORDER BY id DESC LIMIT ?`).bind(accountId, cursor, max).all()
+    : await env.DB.prepare(`SELECT ${columns} FROM agency_leads WHERE account_id=? ORDER BY id DESC LIMIT ?`).bind(accountId, max).all();
   return results;
 }
 
@@ -1154,8 +1166,9 @@ export async function handleLeadgenDashboard(request, env, deps) {
   const listRoute = path === "/api/agency/leads" && method === "GET";
   const csvRoute = path === "/api/agency/leads.csv" && method === "GET";
   const deleteMatch = method === "DELETE" ? path.match(/^\/api\/agency\/leads\/(\d+)$/) : null;
+  const salesMatch = method === "PUT" ? path.match(/^\/api\/agency\/leads\/(\d+)\/sales-status$/) : null;
   const verifyRoute = path === "/api/agency/leadgen/verify-email" && method === "POST";
-  if (!settingsRoute && !rotateRoute && !listRoute && !csvRoute && !deleteMatch && !verifyRoute) return null;
+  if (!settingsRoute && !rotateRoute && !listRoute && !csvRoute && !deleteMatch && !verifyRoute && !salesMatch) return null;
 
   const member = await deps.requireMember(request, env);
   if (!member) return jsonResponse({ error: "unauthorized" }, 401);
@@ -1165,9 +1178,17 @@ export async function handleLeadgenDashboard(request, env, deps) {
   const canEdit = member.role !== "viewer";
   const origin = url.origin;
 
+  if (salesMatch) {
+    if (!canEdit || !isApprovedPartner(account)) return jsonResponse({ error: "forbidden" }, 403);
+    if (!await salesStatusAvailable(env)) return jsonResponse({ error: "migration_pending" }, 503);
+    let body; try { body = await request.json(); } catch { return jsonResponse({ error: "invalid_json" }, 400); }
+    if (!SALES_STATUSES.includes(body?.status)) return jsonResponse({ error: "invalid_status" }, 400);
+    const ok = await updateSalesStatus(env, account.id, salesMatch[1], body.status);
+    return ok ? jsonResponse({ ok: true, status: body.status }) : jsonResponse({ error: "not_found" }, 404);
+  }
   if (listRoute) {
     const rows = await listLeads(env, account.id, { limit: url.searchParams.get("limit") || 100, before: url.searchParams.get("before") });
-    return jsonResponse({ available: true, leads: rows, next_before: rows.length ? rows[rows.length - 1].id : null, total: await countLeads(env, account.id) });
+    return jsonResponse({ available: true, sales_status_available: await salesStatusAvailable(env), can_edit_sales: canEdit && isApprovedPartner(account), leads: rows, next_before: rows.length ? rows[rows.length - 1].id : null, total: await countLeads(env, account.id) });
   }
   if (csvRoute) {
     const rows = await listLeads(env, account.id, { limit: 5000 });

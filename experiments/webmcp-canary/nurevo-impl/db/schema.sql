@@ -636,7 +636,9 @@ CREATE TABLE IF NOT EXISTS agency_leads (
   consent_text TEXT NOT NULL,                 -- exactly what the visitor agreed to
   consent_at INTEGER NOT NULL,                -- epoch ms
   created_at INTEGER NOT NULL,
-  notified_at INTEGER                         -- when the agency was emailed, if it asked to be
+  notified_at INTEGER,                        -- when the agency was emailed, if it asked to be
+  sales_status TEXT NOT NULL DEFAULT 'new' CHECK (sales_status IN ('new','proposed','trial','won','lost')),
+  sales_updated_at INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_agency_leads_account ON agency_leads(account_id, id DESC);
 
