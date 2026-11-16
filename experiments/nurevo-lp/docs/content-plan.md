@@ -182,3 +182,12 @@
 3. 代表者・専門家のプロフィールページのAI検索対策（Person・資格・経歴の書き方）【全業種】
 4. 眼科・コンタクトのAI検索対策（検査の予約・処方箋・保険と自費のレーシック等）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-16 14時 | person-profile-page-ai-search | 代表者・専門家・著者のプロフィールページのAI検索対策（全業種。人についての質問の型6つ〔名前なしの専門分野からの発見を含む〕、Googleの公式見解の表〔有用なコンテンツの作成 2026-10-05更新：正確な著者情報・バイラインを強く推奨、AI顔写真・作った名前・偽の資格は欺瞞、E-E-A-Tそのものはランキング要因ではない・Trustが最重要・YMYLで重み大／ProfilePage：主役が1人か1組織のページ・店のトップは対象外・必須 mainEntity と name・dateModified は人の編集のみ／AI機能に特別なマークアップ不要〕、上位記事でよく見る主張の根拠表〔「16%」等の割合はリンク・定義なし、Person必須説、sameAs多いほど良い説、名前だけの監修、最適な字数〕、役割別（代表者・専門家・著者・外部監修者）の置き場所とつなぎ方表、書く項目11と schema.org の対応〔name/alternateName・jobTitle/worksFor・hasCredential/EducationalOccupationalCredential・knowsAbout〔示唆するが意味しない〕・alumniOf・award・sameAs・image・dateModified、schema-dts 2.1.0で確認〕、1文目の型、医師等資格確認検索、著者と監修〔reviewedBy は author と別〕、AI下書きの開示、ProfilePage+Person の JSON-LD 例、WordPress手順〔表示名＝Nurevo独自グラフの BlogPosting の author、SEOプラグイン4種・ExUnit の Article/著者は変更しない、webmcp_canary_business_node で founder・webmcp_canary_schema_graph の extra で ProfilePage、二重出力の確認、llms.txt 30件〕、名前を入れた質問の記録表、チェックリスト11、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261116-14 |
+メモ：2026-11-16 14時の回は Google の Article 構造化データ（著者のマークアップのベストプラクティス）、AI features、Rank Math の Author SEO を WebFetch の許可待ちで取得できなかった。Article の author.name/url の扱いは書いていない。AI features の記述は 2026-11-01 確認の範囲だけ。日弁連・税理士の検索サイトは確認できず、医師等資格確認検索（厚労省）だけリンク。
+翻訳の残り（8時台で補完）：ai-visibility-drop-causes・research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search（ja/en のみ）。
+次の候補：
+1. 写真館・フォトスタジオのAI検索対策（撮影プラン・データ納品・衣装・予約）【業種別】
+2. 制作会社向け：AI検索対策の作業をお客様に引き継ぐ・解約するときの手順（設定の書き出し、出力の止め方、報告の締め方）【制作会社向け】
+3. 眼科・コンタクトのAI検索対策（検査の予約・処方箋・保険と自費のレーシック等）【業種別】
+4. 記事・ブログのAI検索対策（AIに引用されやすい記事の書き方：答えの先出し・表・更新日・出典）【全業種】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
