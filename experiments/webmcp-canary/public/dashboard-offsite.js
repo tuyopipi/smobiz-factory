@@ -27,8 +27,7 @@
  */
 (function () {
   "use strict";
-  var selectedSiteId = null;
-  var loadingSiteId = null;
+  var loadingDetail = null;
 
   function tr(key, vars) {
     var text = typeof t === "function" ? String(t(key)) : key;
@@ -209,16 +208,17 @@
     return section;
   }
 
-  async function resolveSiteId() {
-    if (selectedSiteId) return selectedSiteId;
-    var heading = document.querySelector("#main > .top h1");
-    if (!heading) return null;
-    var response = await fetch("/api/sites", { credentials: "include", cache: "no-store" });
-    if (!response.ok) return null;
-    var sites = (await response.json()).sites || [];
-    var name = heading.textContent.trim();
-    var site = sites.find(function (item) { return (item.url || item.slug || "Hosted store") === name; });
-    return site ? site.id : null;
+  // The rendered identity is authoritative. Names/domains are not unique,
+  // and a click cache cannot follow Back/Forward or direct hash navigation.
+  function resolveSiteId() {
+    var detail = document.querySelector('#main .detail');
+    var match = /^#site:(.+)$/.exec(String(location.hash || ''));
+    if (!detail || !match) return null;
+    var id; try { id = decodeURIComponent(match[1]); } catch (_) { return null; }
+    return detail.getAttribute('data-site-id') === id ? id : null;
+  }
+  function currentDetail(main, detail, siteId) {
+    return main === document.querySelector('#main') && detail === main.querySelector('.detail') && resolveSiteId() === siteId;
   }
 
   async function post(siteId, body) {
@@ -259,30 +259,25 @@
 
   async function mount() {
     var main = document.querySelector("#main"), detail = main && main.querySelector(".detail");
-    if (!main || !detail) { loadingSiteId = null; return; }
+    if (!main || !detail) { loadingDetail = null; return; }
     if (main.querySelector(".nrv-offsite")) return;
-    var siteId = await resolveSiteId();
-    if (!siteId || loadingSiteId === siteId || main.querySelector(".nrv-offsite")) return;
-    loadingSiteId = siteId;
+    var siteId = resolveSiteId();
+    if (!siteId || loadingDetail === detail || main.querySelector(".nrv-offsite")) return;
+    loadingDetail = detail;
     try {
       // A read: the stored outcome and the checklist. No listing is fetched.
       var response = await fetch("/api/sites/" + encodeURIComponent(siteId) + "/offsite-audit", { credentials: "include", cache: "no-store" });
       if (!response.ok || main.querySelector(".nrv-offsite")) return;
       var view = await response.json();
+      if (!currentDetail(main, detail, siteId)) return;
       var section = panel(view, null);
       attach(section, view, siteId);
       main.appendChild(section);
     } catch (error) {
       /* fail open - the rest of the dashboard is unaffected */
-    } finally { loadingSiteId = null; }
+    } finally { if (loadingDetail === detail) loadingDetail = null; }
   }
 
-  document.addEventListener("click", function (event) {
-    var row = event.target.closest && event.target.closest("[data-site]");
-    if (row) selectedSiteId = row.getAttribute("data-site");
-    var back = event.target.closest && event.target.closest('[data-view="sites"]');
-    if (back) selectedSiteId = null;
-  }, true);
 
   var style = document.createElement("style");
   style.textContent = ".nrv-offsite{margin-top:18px}.nrv-os-why{font-size:13px;line-height:1.7;margin:0 0 6px}.nrv-os-note{font-size:11px;color:#6c6579;line-height:1.6;margin:4px 0}.nrv-os-run{margin:12px 0}.nrv-os-run button,.nrv-os-cands button{background:#6f4df6;color:#fff;border:0;border-radius:8px;padding:7px 13px;font-size:12px;font-weight:700;cursor:pointer}.nrv-os-run button[disabled]{opacity:.5;cursor:default}.nrv-offsite h3{font-size:13px;margin:18px 0 8px}.nrv-os-source{border:1px solid #ece9f3;border-radius:10px;padding:12px 14px;margin:0 0 10px}.nrv-os-head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}.nrv-os-kind{font-size:10px;color:#8b8498}.nrv-os-badge{font-size:10px;border-radius:5px;padding:2px 7px;font-weight:700}.nrv-os-badge.is-ok{background:#e7f5ec;color:#176b3a}.nrv-os-badge.is-bad{background:#fdecec;color:#a12828}.nrv-os-badge.is-manual{background:#efe9ff;color:#5a3ad6}.nrv-os-badge.is-neutral{background:#f1eff5;color:#5d5570}.nrv-os-lines{margin:6px 0;padding-left:18px;font-size:12px;line-height:1.7}.nrv-os-lines li.is-bad{color:#a12828}.nrv-os-lines li.is-warn{color:#8a5a00}.nrv-os-lines li.is-note{color:#6c6579}.nrv-os-ok{font-size:12px;color:#176b3a;margin:4px 0}.nrv-os-steps{margin:6px 0;padding-left:18px;font-size:12px;line-height:1.7}.nrv-os-links{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;margin:4px 0 0}.nrv-os-link{color:#6f4df6;font-weight:700}.nrv-os-attr{font-size:12px;color:#5e5e5e;margin:6px 0 0;line-height:1.5}.nrv-os-gmaps{font-family:Roboto,Arial,sans-serif;font-style:normal;font-weight:400;font-size:12px;letter-spacing:normal;color:#5e5e5e;text-transform:none}.nrv-os-providers a{color:#5e5e5e}.nrv-os-cands{list-style:none;padding:0;margin:6px 0;font-size:12px}.nrv-os-cands li{padding:6px 0;border-top:1px solid #f3f1f7}.nrv-os-profile{font-size:12px;margin:8px 0}.nrv-os-profile dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px 16px;margin:8px 0 0}.nrv-os-profile dt{font-size:10px;color:#8b8498}.nrv-os-profile dd{margin:0;white-space:pre-wrap}";

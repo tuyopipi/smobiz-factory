@@ -85,7 +85,7 @@ const BOUND = { bound: true, bound_at: 1_760_000_000_000, domain_key: "example.c
 function card(html) {
   const start = html.indexOf('id="wpconn"');
   if (start === -1) return "";
-  return html.slice(start, html.indexOf('<div class="detail">'));
+  return html.slice(start, html.indexOf('<div class="detail"'));
 }
 
 /* ---------------- unconnected: the way to connect comes first ---------------- */
@@ -94,7 +94,7 @@ function card(html) {
   const html = detailHtml(SITE());
   const at = html.indexOf('id="wpconn"');
   assert.ok(at !== -1, "the connection item is rendered");
-  assert.ok(at < html.indexOf('<div class="detail">'), "above the profile, score and plan panels");
+  assert.ok(at < html.indexOf('<div class="detail"'), "above the profile, score and plan panels");
   assert.ok(at < html.indexOf("AEOスコア"), "and above the score");
 
   const c = card(html);
@@ -127,7 +127,7 @@ function card(html) {
   assert.equal(c.includes("WordPressと未接続"), false, "the warning is gone");
   assert.equal(c.includes("ペアリングしてください"), false, "as are the instructions");
   assert.equal(c.includes("issuecodetop"), false, "and the issue button");
-  assert.ok(html.indexOf('id="wpconn"') < html.indexOf('<div class="detail">'), "still at the top");
+  assert.ok(html.indexOf('id="wpconn"') < html.indexOf('<div class="detail"'), "still at the top");
 
   const legacy = card(detailHtml(SITE({ ...BOUND, bound_via: "license" })));
   assert.ok(legacy.includes("ライセンスキー（旧方式）"), "a licence-bound site names its own method");
