@@ -1,0 +1,381 @@
+{
+ "title": "Kako pisati članke za blog, ki jih navaja iskanje z UI | Nurevo",
+ "description": "Članki, ki jih lahko navajajo ChatGPT, Perplexity in Google AI Overviews: dejstva proti govoricam, eno vprašanje na članek, primer predelave, koraki v WordPressu.",
+ "h1": "Kako pisati članke za blog, ki jih navaja iskanje z UI: koraki, preverjeni v uradnih virih, in kako prepoznati „trike pisanja za UI“ brez kakršnih koli dokazov",
+ "lead": "Da bi UI navedla vaš članek, mora biti ta najprej berljiv za iskalnike, odgovor pa mora biti v besedilu v obliki, ki je smiselna tudi, ko jo vzamemo iz konteksta. Google navaja, da za prikaz v AI Overviews ali AI Mode ni dodatnih zahtev in ne posebne optimizacije. Resnično razliko naredijo tri stvari: v članku odgovorite na eno vprašanje, in to takoj na začetku; dodajte dejstva, ki jih imate samo vi (svoje številke, postopke in primere); na strani pa prikažite datume, avtorja in vire.",
+ "intro": [
+  "Napisano 17. novembra 2026 (JST). Objavo na blogu Google Search Central „Top ways to ensure your content performs well in Google's AI experiences on Search“ (21. maj 2025) smo prebrali tisti dan. Googlov dokument „AI features and your website“, poročilo o uspešnosti generativne UI v Search Console ter dokumentacijo pajkov OpenAI in Perplexity uporabljamo le toliko, kolikor so jih oktobra in novembra 2026 potrdili drugi vodniki na tem spletnem mestu. Vodnik je namenjen tistim, ki pišejo bloge podjetij ali spletnih trgovin, kolumne in članke z navodili, ter agencijam, ki jih pišejo za stranke.",
+  "Odgovori UI se spreminjajo iz dneva v dan in glede na to, kako je vprašanje zastavljeno. Ti koraki naredijo vaše članke berljive in uporabne za UI; ne zagotavljajo, da se boste pojavili v katerem koli odgovoru UI ali da vas bo ta navedel."
+ ],
+ "sections": [
+  {
+   "heading": "Kako članek postane vir za UI",
+   "paragraphs": [
+    "Iskanje ChatGPT, Perplexity in Googlovi AI Overviews vzamejo vprašanje, preiščejo splet, preberejo najdene strani, sestavijo odgovor in strani, ki so jih uporabili, prikažejo kot vire. Da članek postane eden od teh virov, ga je treba najprej najti v iskanju in ga prebrati. Tehnika pisanja pride šele nato."
+   ],
+   "table": {
+    "head": [
+     "UI",
+     "Kaj ponudnik pravi o tem, kdaj je stran kandidat",
+     "Kje preveriti"
+    ],
+    "rows": [
+     [
+      "Google AI Overviews in AI Mode",
+      "Stran je indeksirana v običajnem iskanju in se lahko prikaže z izrezkom. Brez dodatnih zahtev ali posebne optimizacije",
+      "[Google: funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)"
+     ],
+     [
+      "Iskanje ChatGPT",
+      "Spletna mesta, ki v robots.txt blokirajo OAI-SearchBot, se v odgovorih iskanja ChatGPT ne prikažejo",
+      "[OpenAI: pregled pajkov](https://developers.openai.com/api/docs/bots)"
+     ],
+     [
+      "Perplexity",
+      "Opisuje PerplexityBot (za iskanje) in Perplexity-User (odpira strani, ko ukrepa uporabnik)",
+      "[Perplexity: pajki](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)"
+     ]
+    ]
+   },
+   "after": [
+    "Google opozarja tudi, da strožje kot so nastavitve predogleda (nosnippet, data-nosnippet, max-snippet, noindex), bolj je vaša vsebina omejena v njegovih funkcijah UI ([blog Google Search Central](https://developers.google.com/search/blog/2025/05/succeeding-in-ai-search)). Preverite, ali predloga objave ali vtičnik SEO nista nastavila nizke vrednosti max-snippet."
+   ]
+  },
+  {
+   "heading": "Pogoste trditve v najbolje uvrščenih člankih in kako zdržijo",
+   "paragraphs": [
+    "Prebrali smo 13 japonskih in angleških člankov, ki se uvrščajo za poizvedbo „kako doseči, da te UI navaja“. Veliko njihovih nasvetov (najprej odgovor, naslovi v obliki vprašanj, navajanje virov) olajša branje tudi ljudem, zato ne škodi. Veliko številk pa ni imelo povezave na izvirno študijo ali pa je bila ista študija v različnih člankih navedena z različnimi številkami. Ta vodnik ne uporablja številk, ki jih nismo mogli preveriti."
+   ],
+   "table": {
+    "head": [
+     "Pogosta trditev",
+     "Kaj smo ugotovili",
+     "Kako jo obravnava ta vodnik"
+    ],
+    "rows": [
+     [
+      "„Za UI je treba pisati na poseben način“",
+      "Google pravi, da ni dodatnih zahtev ali posebne optimizacije",
+      "Glavna naloga je dober članek za bralce. Nobenega posebnega „sloga za UI“"
+     ],
+     [
+      "„Dodajanje statistike poveča število navedb za 40 %“ in druge številke iz študij",
+      "Članki, ki navajajo isto študijo (arXiv 2311.09735), podajajo različne številke, izvirnika pa tokrat nismo mogli prebrati",
+      "Številk ne uporabljamo. Številke z virom pa bralcem pomagajo"
+     ],
+     [
+      "„44 % navedb prihaja iz prvih 30 % strani“",
+      "Večina člankov ne navaja povezave na izvirnik ne metode (katera UI, koliko odgovorov)",
+      "Ne uporabljamo. Odgovor na začetku vseeno priporočamo, zaradi bralcev, ne da bi se opirali na to številko"
+     ],
+     [
+      "„Mediana dolžine navedenega članka je 941 besed“",
+      "Lastna analiza podjetja Evertune, ki zajema približno 33.000 URL-jev, ki jih navaja ChatGPT ([Evertune](https://www.evertune.ai/resources/insights-on-ai/9-ways-to-structure-your-content-to-be-cited-by-chatgpt)); malo podatkov o tem, kako so bili izbrani",
+      "Le za orientacijo. Pišite toliko, kolikor je treba za odgovor na vprašanje, ne po številu besed"
+     ],
+     [
+      "„Dodajte strukturirane podatke FAQ in navajali vas bodo“",
+      "Članki se niso strinjali, kako Google trenutno obravnava obogatene rezultate FAQ, uradne izjave o vplivu na UI pa ni",
+      "FAQ pišite vidno za bralce; morebitne oznake naj bodo enake prikazani vsebini"
+     ],
+     [
+      "„Dodajte llms.txt in UI bo brala vaše objave“",
+      "Google pravi, da ni potreben; nismo našli uradne izjave podjetij UI, da bi v odgovorih uporabljala llms.txt drugih spletnih mest",
+      "Če ga dodate, ga obravnavajte kot povzetek. Ne nadomešča vsebine članka ([kako napisati llms.txt](/guide/llms-txt))"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Preden začnete pisati: eno vprašanje na članek",
+   "paragraphs": [
+    "Vprašanja, ki jih ljudje zastavljajo UI, presegajo definicije, kot je „kaj je X?“. Sprašujejo „kako izbrati?“, „koliko stane?“, „kje začeti?“ in „kaj, če ne deluje?“. Če v en članek stlačite več vprašanj, se zabriše, na katero vprašanje odgovarja kateri del. Za vsak članek izberite eno vprašanje in ga uporabite, dobesedno ali rahlo urejeno, v naslovu in prvem podnaslovu.",
+    "Vaši lastni zapisi so boljši vir vprašanj kot zunanja orodja. Zapišite si vprašanja enega meseca iz kontaktnega obrazca, e-pošte in telefonskih klicev, dolge poizvedbe v obliki stavkov iz Search Console in to, kar vaši prodajniki ali osebje na recepciji razlagajo vsak teden. Tako dobite seznam člankov, ki jih je vredno napisati."
+   ],
+   "table": {
+    "head": [
+     "Vrsta vprašanja",
+     "Primer",
+     "Vrsta članka",
+     "Kaj sodi na začetek"
+    ],
+    "rows": [
+     [
+      "Definicija",
+      "„Kaj je cash ISA?“ „Kaj je AEO?“",
+      "Pojasnjevalni članek",
+      "Definicija v enem stavku in za koga je pomembna"
+     ],
+     [
+      "Navodila",
+      "„Kako odprem poslovni bančni račun?“",
+      "Vodnik po korakih",
+      "Koliko je korakov, koliko časa traja, prvi korak"
+     ],
+     [
+      "Primerjava ali izbira",
+      "„Katera računovodska programska oprema ustreza majhnemu podjetju SaaS?“",
+      "Članek s primerjalno tabelo",
+      "Merila in izbira za vsak primer"
+     ],
+     [
+      "Cena",
+      "„Koliko stane barvanje fasade?“",
+      "Razčlenitev stroškov",
+      "Običajen razpon, kaj nanj vpliva, ali je DDV vključen"
+     ],
+     [
+      "Težava",
+      "„UI prikazuje napačen naslov našega podjetja“",
+      "Rešitve po vzrokih",
+      "Najpogostejši vzroki in kaj najprej preveriti"
+     ],
+     [
+      "Lokalno ali pogojno",
+      "„Kateri zobozdravnik v bližini dela ob sobotah?“",
+      "Strani podjetja namesto člankov",
+      "Ni tema za članek: popravite delovni čas in strani poslovalnic"
+     ]
+    ]
+   },
+   "after": [
+    "Kot kaže zadnja vrstica, se na vprašanja, ki vsebujejo kraj ali delovni čas, običajno odgovarja na podlagi dejstev o samem podjetju (stran O nas, strani poslovalnic, Google Profil podjetja), ne pa iz člankov. Ne poskušajte jih pokriti z objavo na blogu; najprej uredite podatke o podjetju, na primer s [strukturiranimi podatki za lokalno podjetje](/guide/local-business-schema-seo-plugins)."
+   ]
+  },
+  {
+   "heading": "Kako pisati: odstavki, ki so smiselni tudi izvzeti",
+   "paragraphs": [
+    "UI sestavi odgovor iz odstavkov in tabel, ki ustrezajo vprašanju, ne iz celotnega članka. Dober preizkus je, ali je odstavek smiseln, ko ga preberete samostojno."
+   ],
+   "list": [
+    "Na vprašanje odgovorite v prvih dveh ali treh stavkih. Ne začnite z uvajanjem („V zadnjih letih je X deležen vse več pozornosti“) ali predstavljanjem sebe.",
+    "Podnaslove pišite z besedami bralcev, tako da podnaslov pove, kaj sledi („Običajna cena in kaj vpliva nanjo“).",
+    "Ne zanašajte se na „to“, „zgoraj navedeno“ ali „kot omenjeno“; v vsakem odstavku znova poimenujte temo.",
+    "Vsaki številki dodajte datum in vir („stanje oktobra 2026“, „iz raziskave X“). Pri lastnih številkah povejte, kako ste šteli.",
+    "Primerjave dajte v tabele, in to v tabele HTML. Tabele, shranjene kot slike, težko berejo tako UI kot iskalniki.",
+    "Ko je odgovor odvisen od okoliščin, ga razdelite po njih („če ste samostojni podjetnik“, „če imate družbo“).",
+    "Vključite dejstva, ki jih imate samo vi: dejanske številke, koliko dni je nekaj trajalo, korake, ki ste jih izvedli, običajne napake in kako ste jih odpravili."
+   ],
+   "after": [
+    "Tu je primer predelave (kolumna izmišljenega računovodskega servisa).",
+    "Prej: „V zadnjih letih narašča zanimanje za Making Tax Digital. Naš servis je prejel veliko povpraševanj. V tem članku bi vam radi glede na zgoraj navedeno ozadje temo podrobno razložili.“",
+    "Potem: „Če ste samostojni podjetnik in vaš dohodek preseže prag, boste potrebovali programsko opremo, ki vodi digitalne evidence in pošilja četrtletne posodobitve. Od strank, ki smo jim leta 2026 pomagali pri prehodu, jih je večina izbrala programsko opremo, ki jo je že uporabljal njihov knjigovodja. To so tri stvari, o katerih se morate odločiti najprej.“",
+    "Predelani odstavek v prvih treh stavkih poda odgovor (ali moram ukrepati?), podlago za odločitev in dejstvo iz prve roke (kaj so izbrale stranke). Preden navedete pragove ali pravila, preverite trenutne vrednosti v uradnem viru (v tem primeru pri davčnem organu) in nanj povežite."
+   ]
+  },
+  {
+   "heading": "Vzorci, ki UI otežujejo uporabo člankov, in kako jih popraviti",
+   "table": {
+    "head": [
+     "Vzorec",
+     "Zakaj otežuje uporabo",
+     "Rešitev"
+    ],
+    "rows": [
+     [
+      "Sklep je na koncu",
+      "Ustrezni odstavek je najden, a ne vsebuje odgovora",
+      "Sklep premaknite na začetek; razlogi in koraki sledijo"
+     ],
+     [
+      "Ceniki ali primerjalne tabele samo kot slike",
+      "Ni jih mogoče prebrati kot besedilo",
+      "Uporabite tabele HTML; če sliko obdržite, ključne točke vpišite v njeno nadomestno besedilo"
+     ],
+     [
+      "Ni datuma ali je navedeno zastarelo leto",
+      "Nihče ne ve, iz katerega časa so informacije, zato se lahko štejejo za stare",
+      "V besedilu prikažite datum nastanka in posodobitve; datum posodobitve spremenite le, ko pregledate vsebino"
+     ],
+     [
+      "Številke brez virov",
+      "Bralci jih ne morejo preveriti",
+      "Povežite na primarni vir; številke, ki jih ne morete preveriti, izbrišite"
+     ],
+     [
+      "Preoblikovanje drugih člankov",
+      "Ni razloga, da bi izbrali prav vašega",
+      "Dodajte dejstva, ki jih imate samo vi: številke, primere, korake, fotografije"
+     ],
+     [
+      "Vsebina, skrita za zavihki ali gumbi in naložena z JavaScriptom",
+      "Pajki besedila morda ne vidijo",
+      "Ključne odgovore postavite v HTML že od začetka; z ukazom „Prikaži izvorno kodo strani“ preverite, da je besedilo tam"
+     ],
+     [
+      "Več člankov, ki odgovarjajo na isto vprašanje",
+      "Ni jasno, kateri odgovor je pravi, in uporabi se lahko star članek",
+      "Združite jih v enega in stare preusmerite"
+     ],
+     [
+      "Množično ustvarjeni članki UI, objavljeni brez preverjanja",
+      "Prikradejo se napake, vsebina pa je enaka kot pri vseh drugih",
+      "Pred objavo naj človek preveri dejstva in doda vaše lastne informacije"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Prikažite datume, avtorja in vire",
+   "paragraphs": [
+    "Google spodbuja točne podatke o avtorstvu, na primer navedbo avtorja, povsod, kjer jih bralci pričakujejo, in predlaga, da bralcem poveste, kako je vsebina nastala, vključno s tem, ali sta bili uporabljeni avtomatizacija ali UI ([Google: ustvarjanje koristne vsebine](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)). Te štiri stvari vključite v sam članek."
+   ],
+   "list": [
+    "Datum nastanka in posodobitve, na vrhu ali na dnu. Zaradi popravka tipkarske napake datuma posodobitve ne spreminjajte. Ko pregledate vsebino, spremenite datum in dodajte en stavek o tem, kaj se je spremenilo; to bralcem in UI pove, kako aktualne so informacije.",
+    "Avtor: ime in vloga, s povezavo na stran s profilom avtorja ([kako ustvariti stran s profilom](/guide/person-profile-page-ai-search)). Če je članek nekdo strokovno pregledal, ločeno od avtorja navedite, kaj je pregledal in kdaj.",
+    "Viri: številke, predpise in specifikacije drugih podjetij povežite na primarni vir (državni organ, uradna stran proizvajalca, izvirna študija). Izogibajte se navajanju povzetkov, ki sami navajajo nekoga drugega.",
+    "Kako je nastal: če je osnutek napisala UI, to povejte in dodajte, da ga je preveril človek."
+   ],
+   "after": [
+    "Strukturirani podatki (BlogPosting ali Article) objavijo iste vrednosti v strojno berljivi obliki. Google prosi, da je vsebina oznak vidna tudi na strani ([blog Google Search Central](https://developers.google.com/search/blog/2025/05/succeeding-in-ai-search)). V oznake ne vpisujte avtorja ali datuma, ki ga besedilo ne prikazuje."
+   ]
+  },
+  {
+   "heading": "Koraki v WordPressu (z Nurevo AEO)",
+   "paragraphs": [
+    "V WordPressu strukturirane podatke članka običajno objavi tema ali vtičnik SEO. Brezplačni vtičnik Nurevo AEO pusti WebSite, WebPage, Article in drobtine iz vašega vtičnika SEO (Yoast SEO, Rank Math, All in One SEO, SEO SIMPLE PACK in drugih) nespremenjene in doda le tisto, kar manjka, na primer podatke o podjetju. Brez vtičnika SEO Nurevo AEO za vsako objavo objavi BlogPosting s temi vrednostmi."
+   ],
+   "table": {
+    "head": [
+     "Lastnost BlogPosting",
+     "Od kod prihaja v WordPressu",
+     "Na kaj paziti"
+    ],
+    "rows": [
+     [
+      "headline, name",
+      "Naslov objave",
+      "Naslov naj bo vprašanje ali naj iz njega jasno izhaja odgovor"
+     ],
+     [
+      "description",
+      "Izvleček; če je prazen, prvih 40 besed objave",
+      "V polje izvlečka v enem ali dveh stavkih zapišite uvodni odgovor"
+     ],
+     [
+      "datePublished, dateModified",
+      "Čas objave in zadnje spremembe",
+      "WordPress spremeni čas spremembe ob vsakem shranjevanju; popravke tipkarskih napak naredite naenkrat"
+     ],
+     [
+      "author",
+      "Prikazno ime avtorja („Javno prikaži ime kot“ v profilu uporabnika)",
+      "Uporabite pravo ime, ki ga prikazujete ob člankih, ne uporabniškega imena za prijavo"
+     ],
+     [
+      "image",
+      "Izpostavljena slika",
+      "Nastavite sliko, ki prikazuje, o čem je članek"
+     ],
+     [
+      "publisher",
+      "Podatki o podjetju, ki ste jih vnesli v Nurevo AEO",
+      "V nastavitvah natančno vnesite ime podjetja, naslov itd."
+     ]
+    ]
+   },
+   "after": [
+    "Koraki:",
+    "1. Namestite Nurevo AEO z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) in v čarovniku za nastavitev vnesite podatke o podjetju. 2. Napišite članek in uvodni odgovor vpišite v polje izvlečka. 3. Preverite prikazno ime avtorja in izpostavljeno sliko. 4. Če bralci k članku pogosto zastavljajo dodatna vprašanja, jih vnesite v razdelek „Vprašanja in odgovori za to stran“ v plošči Nurevo AEO na desni strani urejevalnika, v objavo pa vstavite blok Nurevo FAQ, nastavljen na „Lastna vprašanja te strani“. Vprašanja se prikažejo v objavi in se objavijo kot FAQPage samo za to objavo. 5. Ko članek zastari, v isti plošči označite „Izpusti to stran iz llms.txt“ ali ga združite z novejšim člankom.",
+    "llms.txt v Nurevo AEO navaja 30 nazadnje spremenjenih objavljenih strani in objav. Na spletnem mestu, ki objavlja veliko, starejše objave samodejno izpadejo s seznama; da bi določen članek ostal na seznamu, lahko razvijalci dodajo vrstice s filtrom webmcp_canary_llms_txt_lines."
+   ]
+  },
+  {
+   "heading": "Kaj preveriti po objavi",
+   "paragraphs": [
+    "Nobeno posamezno orodje vam ne pove, ali je bil članek naveden. Združite te štiri vire in rezultate beležite približno enkrat na mesec."
+   ],
+   "table": {
+    "head": [
+     "Kaj spremljati",
+     "Kaj vam pove",
+     "Česa ne pove"
+    ],
+    "rows": [
+     [
+      "Poročilo o uspešnosti generativne UI v Search Console (Iskanje)",
+      "Prikazi v Google AI Overviews in AI Mode po straneh. Na voljo za vsa spletna mesta od 31. avgusta 2026 ([Pomoč](https://support.google.com/webmasters/answer/16984139?hl=en))",
+      "Klikov; pojavljanja v ChatGPT ali Perplexity"
+     ],
+     [
+      "Napotitelji v analitiki",
+      "Obiski iz odgovorov UI. OpenAI navaja, da povezavam v rezultatih iskanja ChatGPT doda utm_source=chatgpt.com ([OpenAI](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq))",
+      "Navedb, na katere nihče ni kliknil"
+     ],
+     [
+      "Dnevniki dostopa strežnika",
+      "Ali OAI-SearchBot, PerplexityBot in drugi pridobivajo članek",
+      "Ali je bilo prebrano uporabljeno v odgovoru"
+     ],
+     [
+      "Spraševanje in beleženje",
+      "UI zastavite vprašanje, na katero odgovarja članek; zabeležite datum, ali je bil članek vir in ali se je pojavilo vaše ime",
+      "En poskus je večinoma naključje; sprašujte na različne dni"
+     ]
+    ]
+   },
+   "after": [
+    "Brezplačno preverjanje UI v Nurevo AEO vsak mesec zastavi Perplexity tri vprašanja, sestavljena glede na dejavnost in območje vašega podjetja, in zabeleži, ali je bilo vaše podjetje omenjeno ali vaše spletno mesto navedeno (posameznih člankov ne meri). Merjenje v paketu Pro (beta) trenutno zajema Perplexity. Metodo opisuje vodnik [kako meriti vidnost v UI](/guide/measure-ai-visibility).",
+    "Iskreno: ko je Nurevo raziskal 62 podjetij, nismo našli jasne povezave med oceno pripravljenosti spletnega mesta in pojavljanjem v odgovorih Perplexity ([raziskava](/guide/aeo-signals-ai-answers-study)). Dobro strukturirano besedilo je izhodišče; ali se boste pojavili, je odvisno tudi od vprašanja in od tega, kaj pišejo druga spletna mesta. Najzanesljivejše merilo članka je, ali je pravilno uporabljen za vprašanje, na katero odgovarja, ne pa, kolikokrat je naveden."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Članek odgovarja na eno vprašanje in to vprašanje je v naslovu in prvem podnaslovu.",
+    "Prvi dva ali trije stavki nanj odgovorijo.",
+    "Vsak odstavek poimenuje svojo temo in je smiseln samostojno.",
+    "Primerjave, cene in koraki so tabele HTML ali oštevilčeni seznami, ne samo slike.",
+    "Številke imajo datum in povezavo na vir; številk, ki jih ni bilo mogoče preveriti, ni več.",
+    "Vključena so dejstva, ki jih imate samo vi (številke, primeri, koraki, napake).",
+    "Datum nastanka, datum posodobitve in ime avtorja so vidni, ime pa vodi na stran avtorja.",
+    "Ključni odgovori niso skriti za zavihki ali gumbi (besedilo je v izvorni kodi strani).",
+    "robots.txt ne blokira OAI-SearchBot ali PerplexityBot; ni noindex ali nizke vrednosti max-snippet.",
+    "Avtor, datumi in slika v strukturiranih podatkih se ujemajo z besedilom.",
+    "Noben starejši članek ne odgovarja na isto vprašanje (če je, je bil združen in preusmerjen)."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kako dolg naj bo članek?",
+   "a": "Določene dolžine ni. Napišite toliko, kolikor je treba, da v celoti odgovorite na vprašanje. Ponudniki orodij včasih objavijo mediano dolžine navedenih člankov, ni pa dokazov, da samo dodajanje besed pomaga."
+  },
+  {
+   "q": "Ali naj bo vsak podnaslov vprašanje?",
+   "a": "Ni nujno. Pomembno je, da podnaslovi uporabljajo besede bralcev in povedo, kaj sledi. „Običajna cena in kaj vpliva nanjo“ deluje enako dobro."
+  },
+  {
+   "q": "Ali članki, ki jih napiše UI, nikoli niso navedeni?",
+   "a": "Niso izključeni. Nobena uradna izjava ne pravi, da že sama uporaba UI izloči članek. Osnutki UI pa pogosto vsebujejo napake in ponavljajo, kar pravijo vsi drugi, zato naj pred objavo človek preveri dejstva in doda vaše lastne informacije. Google predlaga, da bralcem poveste, kako je vsebina nastala."
+  },
+  {
+   "q": "Ali naj stare članke izbrišem?",
+   "a": "Če na isto vprašanje odgovarja novejši članek, vanj prenesite uporabno vsebino in starega preusmerite. Če je star članek vreden ohraniti kot zapis, na začetku navedite, na katero leto se nanaša, in povežite na novejši članek."
+  },
+  {
+   "q": "Ali FAQ na koncu poveča verjetnost navedbe?",
+   "a": "Če gre za vprašanja, ki jih bralci res zastavljajo, pomaga bralcem. Uradne izjave, da poveča število navedb, ni. FAQ naj bo viden na strani, in če objavljate oznake, naj bodo enake prikazani vsebini."
+  },
+  {
+   "q": "Ali bo UI članek štela za novega, če osvežim datum posodobitve?",
+   "a": "Spreminjanje samo datuma ni priporočljivo. Spremenite ga, ko pregledate vsebino, in dodajte stavek o tem, kaj se je spremenilo. Svež datum pri zastareli vsebini stane zaupanje bralcev."
+  },
+  {
+   "q": "Ali bo UI moj članek vedno navedla, če upoštevam te korake?",
+   "a": "Tega ni mogoče zagotoviti. Odgovori UI se razlikujejo glede na dan in ubeseditev ter so odvisni tudi od drugih spletnih mest. Ti koraki naredijo vaš članek berljiv in uporaben za UI."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Preverite, ali UI lahko bere članke na vašem spletnem mestu",
+  "body": "Brezplačno preverjanje ne zahteva registracije: vnesite URL in si oglejte stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. V WordPressu brezplačni vtičnik objavi avtorje in datume objav ter podatke o podjetju kot strukturirane podatke.",
+  "label": "Zaženite brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Preizkusite brezplačni vtičnik za WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT in OpenAI sta blagovni znamki družbe OpenAI, Perplexity družbe Perplexity AI, Google in Search Console pa družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, SEO SIMPLE PACK, Evertune, WordPress in imena njihovih izdelkov so blagovne znamke njihovih lastnikov. Nurevo ni povezan s temi družbami niti ga te ne podpirajo."
+}

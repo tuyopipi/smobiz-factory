@@ -1,0 +1,381 @@
+{
+ "title": "Kako pisati blog članke koje AI pretraživanje citira | Nurevo",
+ "description": "Članci koje mogu citirati ChatGPT, Perplexity i Google AI Overviews: provjerene činjenice i glasine, jedno pitanje po članku, primjer prerade, koraci u WordPressu.",
+ "h1": "Kako pisati blog članke koje AI pretraživanje citira: koraci provjereni u službenim izvorima i kako prepoznati „trikove pisanja za AI“ iza kojih nema dokaza",
+ "lead": "Da bi AI citirao vaš članak, on najprije mora biti čitljiv tražilicama, a odgovor mora stajati u tekstu u obliku koji ima smisla i kad se izvuče iz konteksta. Google navodi da za pojavljivanje u AI Overviews ili AI Mode ne postoje dodatni zahtjevi ni posebna optimizacija. Stvarnu razliku čine tri stvari: odgovoriti na jedno pitanje po članku, odmah na početku; dodati činjenice koje imate samo vi (vlastite brojke, postupke i slučajeve); te na stranici prikazati datume, autora i izvore.",
+ "intro": [
+  "Napisano 17. studenoga 2026. (JST). Objavu na blogu Google Search Central „Top ways to ensure your content performs well in Google's AI experiences on Search“ (21. svibnja 2025.) pročitali smo toga dana. Googleov dokument „AI features and your website“, izvješće o izvedbi generativnog AI-ja u Search Consoleu te dokumentaciju pretraživačkih botova OpenAI-ja i Perplexityja koristimo samo u mjeri u kojoj su ih u listopadu i studenome 2026. potvrdili drugi vodiči na ovoj stranici. Vodič je namijenjen onima koji pišu blogove tvrtki ili trgovina, kolumne i članke s uputama te agencijama koje ih pišu za klijente.",
+  "AI odgovori mijenjaju se iz dana u dan i ovisno o tome kako je pitanje sročeno. Ovi koraci čine vaše članke čitljivima i upotrebljivima za AI; ne jamče da ćete se pojaviti u bilo kojem AI odgovoru ni da će vas on citirati."
+ ],
+ "sections": [
+  {
+   "heading": "Kako članak postaje izvor za AI",
+   "paragraphs": [
+    "ChatGPT pretraživanje, Perplexity i Googleovi AI Overviews uzimaju pitanje, pretražuju web, čitaju pronađene stranice, sastavljaju odgovor i stranice koje su koristili prikazuju kao izvore. Da bi članak postao jedan od tih izvora, najprije ga mora biti moguće pronaći u pretraživanju i pročitati. Tehnika pisanja dolazi tek nakon toga."
+   ],
+   "table": {
+    "head": [
+     "AI",
+     "Što pružatelj kaže o tome kada je stranica kandidat",
+     "Gdje provjeriti"
+    ],
+    "rows": [
+     [
+      "Google AI Overviews i AI Mode",
+      "Stranica je indeksirana u običnom pretraživanju i može se prikazati s isječkom. Bez dodatnih zahtjeva ili posebne optimizacije",
+      "[Google: AI značajke i vaša web-stranica](https://developers.google.com/search/docs/appearance/ai-features)"
+     ],
+     [
+      "ChatGPT pretraživanje",
+      "Stranice koje u robots.txt blokiraju OAI-SearchBot ne prikazuju se u odgovorima ChatGPT pretraživanja",
+      "[OpenAI: pregled pretraživačkih botova](https://developers.openai.com/api/docs/bots)"
+     ],
+     [
+      "Perplexity",
+      "Opisuje PerplexityBot (za pretraživanje) i Perplexity-User (otvara stranice kad korisnik nešto zatraži)",
+      "[Perplexity: pretraživački botovi](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)"
+     ]
+    ]
+   },
+   "after": [
+    "Google također napominje da što su vaše postavke pretpregleda strože (nosnippet, data-nosnippet, max-snippet, noindex), to je vaš sadržaj ograničeniji u njegovim AI značajkama ([blog Google Search Central](https://developers.google.com/search/blog/2025/05/succeeding-in-ai-search)). Provjerite nisu li predložak objave ili SEO dodatak postavili nisku vrijednost max-snippet."
+   ]
+  },
+  {
+   "heading": "Česte tvrdnje u najbolje rangiranim člancima i koliko su utemeljene",
+   "paragraphs": [
+    "Pročitali smo 13 japanskih i engleskih članaka koji se rangiraju za upit „kako dobiti AI citate“. Mnogi njihovi savjeti (prvo odgovor, naslovi u obliku pitanja, navođenje izvora) olakšavaju čitanje i ljudima, pa ne štete. No mnoge brojke nisu imale poveznicu na izvorno istraživanje ili je isto istraživanje u različitim člancima citirano s različitim brojkama. Ovaj vodič ne koristi brojke koje nismo mogli provjeriti."
+   ],
+   "table": {
+    "head": [
+     "Česta tvrdnja",
+     "Što smo utvrdili",
+     "Kako je tretira ovaj vodič"
+    ],
+    "rows": [
+     [
+      "„Za AI treba pisati na poseban način“",
+      "Google kaže da nema dodatnih zahtjeva ni posebne optimizacije",
+      "Glavni posao je dobar članak za čitatelje. Nema zasebnog „stila za AI“"
+     ],
+     [
+      "„Dodavanje statistike povećava broj citata za 40 %“ i druge brojke iz istraživanja",
+      "Članci koji citiraju isto istraživanje (arXiv 2311.09735) navode različite brojke, a izvornik ovaj put nismo mogli pročitati",
+      "Brojke ne koristimo. Brojke s izvorom ipak pomažu čitateljima"
+     ],
+     [
+      "„44 % citata dolazi iz prvih 30 % stranice“",
+      "Većina članaka ne daje poveznicu na izvornik ni metodu (koji AI, koliko odgovora)",
+      "Ne koristimo. Odgovor na početku i dalje preporučujemo, zbog čitatelja, bez oslanjanja na tu brojku"
+     ],
+     [
+      "„Medijan duljine citiranog članka je 941 riječ“",
+      "Vlastita analiza tvrtke Evertune na oko 33.000 URL-ova koje citira ChatGPT ([Evertune](https://www.evertune.ai/resources/insights-on-ai/9-ways-to-structure-your-content-to-be-cited-by-chatgpt)); malo podataka o tome kako su odabrani",
+      "Samo za orijentaciju. Pišite onoliko koliko treba da odgovorite na pitanje, ne prema broju riječi"
+     ],
+     [
+      "„Dodajte FAQ strukturirane podatke i bit ćete citirani“",
+      "Članci se nisu slagali oko toga kako Google trenutačno tretira FAQ obogaćene rezultate, a službene izjave o učinku na AI nema",
+      "FAQ pišite vidljivo za čitatelje; eventualne oznake neka budu identične prikazanom sadržaju"
+     ],
+     [
+      "„Dodajte llms.txt i AI će čitati vaše objave“",
+      "Google kaže da nije potreban; nismo pronašli službenu izjavu AI tvrtki da u odgovorima koriste llms.txt drugih stranica",
+      "Ako ga dodate, tretirajte ga kao sažetak. Ne zamjenjuje sadržaj članka ([kako napisati llms.txt](/guide/llms-txt))"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Prije pisanja: jedno pitanje po članku",
+   "paragraphs": [
+    "Pitanja koja ljudi postavljaju AI-ju nadilaze definicije poput „što je X?“. Pitaju „kako odabrati?“, „koliko košta?“, „odakle početi?“ i „što ako ne radi?“. Ako u jedan članak nagurate nekoliko pitanja, zamagli se na koje pitanje odgovara koji dio. Za svaki članak odaberite jedno pitanje i upotrijebite ga, doslovno ili blago dotjerano, u naslovu i prvom podnaslovu.",
+    "Vaše vlastite evidencije bolji su izvor pitanja od vanjskih alata. Zapišite pitanja iz jednog mjeseca: s kontaktnog obrasca, iz e-pošte i telefonskih poziva, duge upite nalik rečenicama iz Search Consolea te ono što vaši prodavači ili osoblje na recepciji objašnjavaju svaki tjedan. Tako dobivate popis članaka koje se isplati napisati."
+   ],
+   "table": {
+    "head": [
+     "Vrsta pitanja",
+     "Primjer",
+     "Vrsta članka",
+     "Što ide na početak"
+    ],
+    "rows": [
+     [
+      "Definicija",
+      "„Što je cash ISA?“ „Što je AEO?“",
+      "Članak s objašnjenjem",
+      "Definicija u jednoj rečenici i za koga je važna"
+     ],
+     [
+      "Upute",
+      "„Kako otvoriti poslovni bankovni račun?“",
+      "Vodič korak po korak",
+      "Koliko ima koraka, koliko traje, prvi korak"
+     ],
+     [
+      "Usporedba ili izbor",
+      "„Koji računovodstveni softver odgovara maloj SaaS tvrtki?“",
+      "Članak s usporednom tablicom",
+      "Kriteriji i izbor za svaku situaciju"
+     ],
+     [
+      "Cijena",
+      "„Koliko košta bojenje fasade?“",
+      "Raščlamba troškova",
+      "Uobičajeni raspon, što ga mijenja, je li PDV uključen"
+     ],
+     [
+      "Problem",
+      "„AI prikazuje pogrešnu adresu naše tvrtke“",
+      "Rješenja prema uzroku",
+      "Najčešći uzroci i što prvo provjeriti"
+     ],
+     [
+      "Lokalno ili uvjetno",
+      "„Koji zubar u blizini radi subotom?“",
+      "Stranice tvrtke umjesto članaka",
+      "Nije tema za članak: ispravite radno vrijeme i stranice poslovnica"
+     ]
+    ]
+   },
+   "after": [
+    "Kao što pokazuje zadnji redak, na pitanja koja sadrže mjesto ili radno vrijeme obično se odgovara na temelju činjenica o samoj tvrtki (stranica O nama, stranice poslovnica, Google profil tvrtke), a ne iz članaka. Ne pokušavajte ih pokriti objavom na blogu; najprije uredite podatke o tvrtki, primjerice [strukturiranim podacima za lokalnu tvrtku](/guide/local-business-schema-seo-plugins)."
+   ]
+  },
+  {
+   "heading": "Kako pisati: odlomci koji imaju smisla i kad se izdvoje",
+   "paragraphs": [
+    "AI sastavlja odgovor od odlomaka i tablica koji odgovaraju pitanju, a ne od cijelog članka. Dobar test je ima li odlomak smisla kad ga pročitate zasebno."
+   ],
+   "list": [
+    "Odgovorite na pitanje u prve dvije ili tri rečenice. Ne počinjite uvodom („Posljednjih godina X privlači sve više pažnje“) ni predstavljanjem sebe.",
+    "Podnaslove pišite riječima čitatelja, tako da podnaslov govori što slijedi („Uobičajena cijena i o čemu ovisi“).",
+    "Ne oslanjajte se na „to“, „gore navedeno“ ili „kao što je spomenuto“; u svakom odlomku ponovno imenujte temu.",
+    "Svakoj brojci dodajte datum i izvor („stanje u listopadu 2026.“, „iz istraživanja X“). Za vlastite brojke navedite kako ste brojali.",
+    "Usporedbe stavite u tablice, i to HTML tablice. Tablice spremljene kao slike teško čitaju i AI i tražilice.",
+    "Kad odgovor ovisi o okolnostima, podijelite ga prema njima („ako ste obrtnik“, „ako imate trgovačko društvo“).",
+    "Uključite činjenice koje imate samo vi: stvarne brojke, koliko je dana nešto trajalo, korake koje ste proveli, uobičajene pogreške i kako ste ih ispravili."
+   ],
+   "after": [
+    "Evo primjera prerade (kolumna izmišljenog računovodstvenog ureda).",
+    "Prije: „Posljednjih godina raste interes za Making Tax Digital. Naš ured primio je mnogo upita. U ovom članku željeli bismo vam, s obzirom na navedenu pozadinu, detaljno objasniti tu temu.“",
+    "Poslije: „Ako ste obrtnik čiji prihod prelazi prag, trebat će vam softver koji vodi digitalnu evidenciju i šalje tromjesečna ažuriranja. Od klijenata kojima smo 2026. pomogli s prelaskom, većina je odabrala softver koji je njihov knjigovođa već koristio. Ovo su tri stvari o kojima treba najprije odlučiti.“",
+    "Prerađeni odlomak u prve tri rečenice donosi odgovor (moram li nešto poduzeti?), temelj za odluku i činjenicu iz prve ruke (što su klijenti odabrali). Prije nego što navedete pragove ili pravila, provjerite aktualne vrijednosti u službenom izvoru (u ovom slučaju kod porezne uprave) i povežite na njega."
+   ]
+  },
+  {
+   "heading": "Obrasci koji AI-ju otežavaju korištenje članaka i kako ih ispraviti",
+   "table": {
+    "head": [
+     "Obrazac",
+     "Zašto otežava korištenje",
+     "Rješenje"
+    ],
+    "rows": [
+     [
+      "Zaključak je na kraju",
+      "Odgovarajući odlomak se pronađe, ali ne sadrži odgovor",
+      "Premjestite zaključak na početak; razlozi i koraci slijede"
+     ],
+     [
+      "Cjenici ili usporedne tablice samo kao slike",
+      "Ne mogu se pročitati kao tekst",
+      "Koristite HTML tablice; ako zadržite sliku, ključne točke stavite u njezin alternativni tekst"
+     ],
+     [
+      "Nema datuma ili je navedena zastarjela godina",
+      "Nitko ne zna iz kojeg su vremena podaci, pa se mogu smatrati starima",
+      "U tekstu prikažite datum pisanja i ažuriranja; datum ažuriranja mijenjajte samo kad pregledate sadržaj"
+     ],
+     [
+      "Brojke bez izvora",
+      "Čitatelji ih ne mogu provjeriti",
+      "Povežite na primarni izvor; izbrišite brojke koje ne možete provjeriti"
+     ],
+     [
+      "Preoblikovanje tuđih članaka",
+      "Nema razloga odabrati baš vaš",
+      "Dodajte činjenice koje imate samo vi: brojke, slučajeve, korake, fotografije"
+     ],
+     [
+      "Sadržaj skriven iza kartica ili gumba i učitan JavaScriptom",
+      "Pretraživački botovi možda ne vide tekst",
+      "Ključne odgovore stavite u HTML od početka; naredbom „Prikaži izvorni kod stranice“ provjerite je li tekst ondje"
+     ],
+     [
+      "Više članaka odgovara na isto pitanje",
+      "Nije jasno koji je odgovor točan, a može se upotrijebiti stari članak",
+      "Spojite ih u jedan i preusmjerite stare"
+     ],
+     [
+      "Masovno generirani AI članci objavljeni bez provjere",
+      "Potkradaju se pogreške, a sadržaj je isti kao kod svih ostalih",
+      "Prije objave neka čovjek provjeri činjenice i doda vaše vlastite informacije"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Prikažite datume, autora i izvore",
+   "paragraphs": [
+    "Google potiče točne informacije o autorstvu, poput potpisa autora, svugdje gdje ih čitatelji očekuju, i predlaže da čitateljima kažete kako je sadržaj nastao, uključujući je li korištena automatizacija ili AI ([Google: stvaranje korisnog sadržaja](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)). Te četiri stvari stavite u sam članak."
+   ],
+   "list": [
+    "Datum pisanja i ažuriranja, na vrhu ili na dnu. Ne mijenjajte datum ažuriranja zbog ispravka tipfelera. Kad pregledate sadržaj, promijenite datum i dodajte jednu rečenicu o tome što se promijenilo; to čitateljima i AI-ju govori koliko su informacije aktualne.",
+    "Autor: ime i uloga, s poveznicom na stranicu profila autora ([kako izraditi stranicu profila](/guide/person-profile-page-ai-search)). Ako je netko stručno pregledao članak, odvojeno od autora navedite što je pregledao i kada.",
+    "Izvori: brojke, propise i specifikacije drugih tvrtki povežite na primarni izvor (državno tijelo, službena stranica proizvođača, izvorno istraživanje). Izbjegavajte citiranje pregleda koji i sami citiraju nekog drugog.",
+    "Kako je nastao: ako je nacrt napisao AI, recite to i navedite da ga je provjerio čovjek."
+   ],
+   "after": [
+    "Strukturirani podaci (BlogPosting ili Article) objavljuju iste vrijednosti u strojno čitljivom obliku. Google traži da sadržaj oznaka bude vidljiv i na stranici ([blog Google Search Central](https://developers.google.com/search/blog/2025/05/succeeding-in-ai-search)). Ne stavljajte u oznake autora ili datum koje tekst ne prikazuje."
+   ]
+  },
+  {
+   "heading": "Koraci u WordPressu (s Nurevo AEO)",
+   "paragraphs": [
+    "U WordPressu strukturirane podatke članka obično objavljuje tema ili SEO dodatak. Besplatni dodatak Nurevo AEO ostavlja WebSite, WebPage, Article i navigacijske putove iz vašeg SEO dodatka (Yoast SEO, Rank Math, All in One SEO, SEO SIMPLE PACK i drugih) nepromijenjenima i dodaje samo ono što nedostaje, primjerice podatke o tvrtki. Bez SEO dodatka Nurevo AEO za svaku objavu objavljuje BlogPosting s ovim vrijednostima."
+   ],
+   "table": {
+    "head": [
+     "Svojstvo BlogPosting",
+     "Odakle dolazi u WordPressu",
+     "Na što paziti"
+    ],
+    "rows": [
+     [
+      "headline, name",
+      "Naslov objave",
+      "Neka naslov bude pitanje ili neka iz njega bude jasan odgovor"
+     ],
+     [
+      "description",
+      "Sažetak; ako je prazan, prvih 40 riječi objave",
+      "U polje sažetka u jednoj ili dvije rečenice upišite uvodni odgovor"
+     ],
+     [
+      "datePublished, dateModified",
+      "Vrijeme objave i zadnje izmjene",
+      "WordPress mijenja vrijeme izmjene pri svakom spremanju; ispravke tipfelera radite odjednom"
+     ],
+     [
+      "author",
+      "Prikazno ime autora („Javno prikaži ime kao“ u korisničkom profilu)",
+      "Koristite pravo ime koje prikazujete uz članke, a ne korisničko ime za prijavu"
+     ],
+     [
+      "image",
+      "Istaknuta slika",
+      "Postavite sliku koja pokazuje o čemu je članak"
+     ],
+     [
+      "publisher",
+      "Podaci o tvrtki uneseni u Nurevo AEO",
+      "U postavkama točno unesite naziv tvrtke, adresu i ostalo"
+     ]
+    ]
+   },
+   "after": [
+    "Koraci:",
+    "1. Instalirajte Nurevo AEO s [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) i u čarobnjaku za postavljanje unesite podatke o tvrtki. 2. Napišite članak i uvodni odgovor stavite u polje sažetka. 3. Provjerite prikazno ime autora i istaknutu sliku. 4. Ako čitatelji o članku često postavljaju dodatna pitanja, unesite ih pod „Pitanja i odgovori za ovu stranicu“ u ploči Nurevo AEO s desne strane uređivača, a u objavu umetnite blok Nurevo FAQ postavljen na „Vlastita pitanja ove stranice“. Pitanja se prikazuju u objavi i objavljuju kao FAQPage samo na toj objavi. 5. Kad članak zastari, u istoj ploči označite „Izostavi ovu stranicu iz llms.txt“ ili ga spojite s novijim člankom.",
+    "llms.txt u Nurevo AEO navodi 30 posljednje izmijenjenih objavljenih stranica i objava. Na stranici koja mnogo objavljuje starije objave automatski ispadaju s popisa; da bi određeni članak ostao na popisu, programeri mogu dodati retke filtrom webmcp_canary_llms_txt_lines."
+   ]
+  },
+  {
+   "heading": "Što provjeriti nakon objave",
+   "paragraphs": [
+    "Nijedan pojedinačni alat ne govori vam je li članak citiran. Kombinirajte ova četiri izvora i bilježite rezultate otprilike jednom mjesečno."
+   ],
+   "table": {
+    "head": [
+     "Što pratiti",
+     "Što vam govori",
+     "Što ne govori"
+    ],
+    "rows": [
+     [
+      "Izvješće o izvedbi generativnog AI-ja u Search Consoleu (Pretraživanje)",
+      "Prikazivanja u Google AI Overviews i AI Mode po stranicama. Dostupno svim web-stranicama od 31. kolovoza 2026. ([Pomoć](https://support.google.com/webmasters/answer/16984139?hl=en))",
+      "Klikove; pojavljivanja u ChatGPT-ju ili Perplexityju"
+     ],
+     [
+      "Izvori preporuka u analitici",
+      "Posjete iz AI odgovora. OpenAI navodi da poveznicama u rezultatima ChatGPT pretraživanja dodaje utm_source=chatgpt.com ([OpenAI](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq))",
+      "Citate na koje nitko nije kliknuo"
+     ],
+     [
+      "Zapisnici pristupa poslužitelju",
+      "Dohvaćaju li OAI-SearchBot, PerplexityBot i drugi članak",
+      "Je li pročitano upotrijebljeno u odgovoru"
+     ],
+     [
+      "Postavljanje pitanja i bilježenje",
+      "Postavite AI-ju pitanje na koje članak odgovara; zabilježite datum, je li članak bio izvor i je li se pojavio vaš naziv",
+      "Jedan pokušaj uglavnom je slučajnost; pitajte u različite dane"
+     ]
+    ]
+   },
+   "after": [
+    "Besplatna AI provjera u Nurevo AEO svaki mjesec postavlja Perplexityju tri pitanja sastavljena prema djelatnosti i području vaše tvrtke te bilježi je li vaša tvrtka spomenuta ili vaša stranica citirana (pojedinačne članke ne mjeri). Mjerenje u paketu Pro (beta) trenutačno obuhvaća Perplexity. Metodu opisuje vodič [kako mjeriti vidljivost u AI-ju](/guide/measure-ai-visibility).",
+    "Iskreno: kad je Nurevo istražio 62 tvrtke, nismo pronašli jasnu vezu između ocjene spremnosti stranice i pojavljivanja u odgovorima Perplexityja ([istraživanje](/guide/aeo-signals-ai-answers-study)). Dobro strukturiran tekst polazna je točka; hoćete li se pojaviti ovisi i o pitanju i o tome što pišu druge stranice. Najpouzdanije mjerilo članka jest koristi li se ispravno za pitanje na koje odgovara, a ne koliko je puta citiran."
+   ]
+  },
+  {
+   "heading": "Kontrolni popis prije objave",
+   "list": [
+    "Članak odgovara na jedno pitanje, a to je pitanje u naslovu i prvom podnaslovu.",
+    "Prve dvije ili tri rečenice odgovaraju na njega.",
+    "Svaki odlomak imenuje svoju temu i ima smisla zasebno.",
+    "Usporedbe, cijene i koraci su HTML tablice ili numerirani popisi, a ne samo slike.",
+    "Brojke imaju datum i poveznicu na izvor; brojke koje nije bilo moguće provjeriti uklonjene su.",
+    "Uključene su činjenice koje imate samo vi (brojke, slučajevi, koraci, pogreške).",
+    "Datum pisanja, datum ažuriranja i ime autora su vidljivi, a ime vodi na stranicu autora.",
+    "Ključni odgovori nisu skriveni iza kartica ili gumba (tekst je u izvornom kodu stranice).",
+    "robots.txt ne blokira OAI-SearchBot ni PerplexityBot; nema noindex ni niske vrijednosti max-snippet.",
+    "Autor, datumi i slika u strukturiranim podacima odgovaraju tekstu.",
+    "Nijedan stariji članak ne odgovara na isto pitanje (ako jest, spojen je i preusmjeren)."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Koliko dug treba biti članak?",
+   "a": "Nema propisane duljine. Napišite onoliko koliko treba da u potpunosti odgovorite na pitanje. Pružatelji alata ponekad objavljuju medijan duljine citiranih članaka, ali nema dokaza da samo dodavanje riječi pomaže."
+  },
+  {
+   "q": "Treba li svaki podnaslov biti pitanje?",
+   "a": "Ne nužno. Važno je da podnaslovi koriste riječi čitatelja i govore što slijedi. „Uobičajena cijena i o čemu ovisi“ jednako dobro funkcionira."
+  },
+  {
+   "q": "Zar se članci koje je napisao AI nikad ne citiraju?",
+   "a": "Citiraju se. Nijedna službena izjava ne kaže da samo korištenje AI-ja isključuje članak. No AI nacrti često sadrže pogreške i ponavljaju ono što govore svi drugi, pa prije objave neka čovjek provjeri činjenice i doda vaše vlastite informacije. Google predlaže da čitateljima kažete kako je sadržaj nastao."
+  },
+  {
+   "q": "Trebam li brisati stare članke?",
+   "a": "Ako noviji članak odgovara na isto pitanje, prebacite korisni sadržaj u njega i preusmjerite stari. Ako stari članak vrijedi zadržati kao zapis, na početku navedite na koju se godinu odnosi i povežite na noviji članak."
+  },
+  {
+   "q": "Povećava li FAQ na kraju vjerojatnost citiranja?",
+   "a": "Ako su to pitanja koja čitatelji stvarno postavljaju, pomaže čitateljima. Nema službene izjave da povećava broj citata. FAQ neka bude vidljiv na stranici, a ako objavljujete oznake, neka budu identične prikazanom sadržaju."
+  },
+  {
+   "q": "Ako osvježim datum ažuriranja, hoće li AI članak smatrati novim?",
+   "a": "Mijenjanje samo datuma ne preporučuje se. Promijenite ga kad pregledate sadržaj i dodajte rečenicu o tome što se promijenilo. Svjež datum na zastarjelom sadržaju košta povjerenja čitatelja."
+  },
+  {
+   "q": "Ako slijedim ove korake, hoće li AI uvijek citirati moj članak?",
+   "a": "To se ne može jamčiti. AI odgovori razlikuju se ovisno o danu i formulaciji te ovise i o drugim stranicama. Ovi koraci čine vaš članak čitljivim i upotrebljivim za AI."
+  }
+ ],
+ "relatedHeading": "Povezani vodiči",
+ "cta": {
+  "heading": "Provjerite može li AI čitati članke na vašoj web-stranici",
+  "body": "Besplatna provjera ne zahtijeva registraciju: unesite URL i pogledajte stanje strukturiranih podataka, llms.txt i pristupa AI pretraživačkih botova. Na WordPressu besplatni dodatak objavljuje autore i datume objava te podatke o tvrtki kao strukturirane podatke.",
+  "label": "Pokrenite besplatnu provjeru čitljivosti za AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Isprobajte besplatni WordPress dodatak",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT i OpenAI zaštitni su znakovi tvrtke OpenAI, Perplexity tvrtke Perplexity AI, a Google i Search Console tvrtke Google LLC. Yoast SEO, Rank Math, All in One SEO, SEO SIMPLE PACK, Evertune, WordPress i nazivi njihovih proizvoda zaštitni su znakovi svojih vlasnika. Nurevo nije povezan ni s jednom od tih tvrtki niti ga one podržavaju."
+}
