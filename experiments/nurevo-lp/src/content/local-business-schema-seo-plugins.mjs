@@ -24,9 +24,9 @@ export default {
   locales: {
     en: {
       title: "Free Local Business Schema for Yoast, Rank Math & AIOSEO | Nurevo",
-      description: "Your SEO plugin's free tier publishes your name and logo. Add the address, phone, opening hours, business type, services and FAQ that AI needs, free, with Nurevo AEO.",
+      description: "Your SEO plugin's free tier publishes your name and logo. Add the address, phone, opening hours, business type, services and FAQ that AI needs, free, with Nurevo AIO.",
       h1: "Add local business schema to Yoast SEO, Rank Math or AIOSEO, free",
-      lead: "Keep your SEO plugin. Nurevo AEO, a free WordPress plugin, adds the facts AI needs to describe a local business (address, telephone, opening hours, business type, services and FAQ) into the structured data Yoast SEO, Rank Math or All in One SEO already publishes, without duplicating it.",
+      lead: "Keep your SEO plugin. Nurevo AIO, a free WordPress plugin, adds the facts AI needs to describe a local business (address, telephone, opening hours, business type, services and FAQ) into the structured data Yoast SEO, Rank Math or All in One SEO already publishes, without duplicating it.",
       intro: ["Last checked: October 2026. SEO plugin plans change, so check each plugin's own pages for its current features."],
       sections: [
         {
@@ -36,7 +36,7 @@ export default {
             "The free tiers publish your site as an Organization with a name, a URL and a logo. Most of the local facts sit in paid local SEO add-ons or plans. As of October 2026:",
           ],
           table: {
-            head: ["Fact", "Free tiers (October 2026)", "Added by Nurevo AEO (free)"],
+            head: ["Fact", "Free tiers (October 2026)", "Added by Nurevo AIO (free)"],
             rows: [
               ["Business name, URL, logo", "Published as an Organization by Yoast SEO, Rank Math and AIOSEO", "Left exactly as your SEO plugin publishes it"],
               ["Address, telephone, opening hours", "Yoast SEO and AIOSEO: in their paid local SEO add-ons (Yoast Local SEO, AIOSEO Local SEO). Rank Math: one location's details if you fill in its Local SEO settings; more local SEO features are in its paid plans", "Added to your business node where missing, under the same @id"],
@@ -48,13 +48,13 @@ export default {
             caption: "As of October 2026. Values your SEO plugin already sets are never overwritten.",
           },
           after: [
-            "This is not a criticism of these plugins: they handle search ranking, and Nurevo AEO is built to run next to them, not instead of them.",
+            "This is not a criticism of these plugins: they handle search ranking, and Nurevo AIO is built to run next to them, not instead of them.",
           ],
         },
         {
-          heading: "How Nurevo AEO fills the gaps without duplicate schema",
+          heading: "How Nurevo AIO fills the gaps without duplicate schema",
           paragraphs: [
-            "Nurevo AEO does not print a second set of structured data beside your SEO plugin's. It hooks the filter each plugin uses to build its JSON-LD graph (wpseo_schema_graph in Yoast SEO, rank_math/schema/validated_data in Rank Math, aioseo_schema_output in AIOSEO) and adds only what is missing:",
+            "Nurevo AIO does not print a second set of structured data beside your SEO plugin's. It hooks the filter each plugin uses to build its JSON-LD graph (wpseo_schema_graph in Yoast SEO, rank_math/schema/validated_data in Rank Math, aioseo_schema_output in AIOSEO) and adds only what is missing:",
           ],
           list: [
             "Address, telephone, opening hours, description and email go onto your existing business node, under the same @id.",
@@ -64,17 +64,17 @@ export default {
             "WebSite, WebPage, Article and breadcrumbs stay exactly as your SEO plugin publishes them.",
           ],
           after: [
-            "The page ends up with one graph describing one business, with no duplicates. With any other setup (SEOPress, The SEO Framework, a theme's own schema, or no SEO plugin), Nurevo AEO prints its own graph and puts the business facts under the existing business @id, so the two still describe one business.",
+            "The page ends up with one graph describing one business, with no duplicates. With any other setup (SEOPress, The SEO Framework, a theme's own schema, or no SEO plugin), Nurevo AIO prints its own graph and puts the business facts under the existing business @id, so the two still describe one business.",
           ],
         },
         {
           heading: "Set it up in five steps",
           list: [
-            `Install Nurevo AEO from [WordPress.org](${WP_ORG}) (Plugins > Add New, search for "Nurevo AEO") and activate it. Keep your SEO plugin active.`,
+            `Install Nurevo AIO from [WordPress.org](${WP_ORG}) (Plugins > Add New, search for "Nurevo AIO") and activate it. Keep your SEO plugin active.`,
             "The setup wizard opens once. Choose the kind of site (local business, online shop or B2B), confirm the name, address, telephone, opening hours and description, and choose what to publish for AI.",
             "Check the facts the plugin filled in from your existing settings. It only fills blank fields, so nothing you typed is replaced, and the wizard reads your opening hours back to you as they will be published.",
-            "Enter your services and questions under Nurevo AEO > Settings, and place the Nurevo FAQ block (or [nurevo_faq]) on the page where the FAQ should appear.",
-            "Open Nurevo AEO > AEO Score, read what the diagnosis sends, tick the consent box and press Run diagnosis. Then apply the one-click fixes the checklist offers.",
+            "Enter your services and questions under Nurevo AIO > Settings, and place the Nurevo FAQ block (or [nurevo_faq]) on the page where the FAQ should appear.",
+            "Open Nurevo AIO > AEO Score, read what the diagnosis sends, tick the consent box and press Run diagnosis. Then apply the one-click fixes the checklist offers.",
           ],
           after: [
             "To see what AI reads from the outside, run the [free AI readability check](/check?lang=en) on your home page. More on the WordPress side: [AEO for WordPress](/guide/aeo-wordpress/).",
@@ -101,15 +101,15 @@ export default {
         },
       ],
       faqs: [
-        { q: "Does Nurevo AEO duplicate my SEO plugin's schema?", a: "No. With Yoast SEO, Rank Math or All in One SEO it adds only the missing facts into the graph your SEO plugin already publishes, under the same business @id, and never overwrites a value the plugin sets. The page keeps one graph describing one business." },
-        { q: "Do I need to remove Yoast SEO, Rank Math or AIOSEO?", a: "No. Keep your SEO plugin for search ranking. Nurevo AEO adds the facts AI needs on top of it." },
-        { q: "Is Nurevo AEO free?", a: "Yes. The business facts, services, FAQ, AEO score, one-click fixes, JSON-LD, llms.txt and AI crawler rules are all on the free plan. The paid plans only add an always-current ruleset and AI visibility measurement (beta)." },
+        { q: "Does Nurevo AIO duplicate my SEO plugin's schema?", a: "No. With Yoast SEO, Rank Math or All in One SEO it adds only the missing facts into the graph your SEO plugin already publishes, under the same business @id, and never overwrites a value the plugin sets. The page keeps one graph describing one business." },
+        { q: "Do I need to remove Yoast SEO, Rank Math or AIOSEO?", a: "No. Keep your SEO plugin for search ranking. Nurevo AIO adds the facts AI needs on top of it." },
+        { q: "Is Nurevo AIO free?", a: "Yes. The business facts, services, FAQ, AEO score, one-click fixes, JSON-LD, llms.txt and AI crawler rules are all on the free plan. The paid plans only add an always-current ruleset and AI visibility measurement (beta)." },
       ],
       relatedHeading: "Related guides",
       cta: {
         heading: "Add the missing facts to your SEO plugin's schema, free",
-        body: "Nurevo AEO is free on WordPress.org. Not sure what AI reads today? Run the free check first. No sign-up required.",
-        label: "Get Nurevo AEO on WordPress.org",
+        body: "Nurevo AIO is free on WordPress.org. Not sure what AI reads today? Run the free check first. No sign-up required.",
+        label: "Get Nurevo AIO on WordPress.org",
         href: WP_ORG,
         secondary: { label: "Free AI readability check", href: "/check" },
       },
