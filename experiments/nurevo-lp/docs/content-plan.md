@@ -239,3 +239,12 @@
 3. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
 4. 比較サイト・ポータルに載っている自社情報の直し方（求人・飲食・フランチャイズのポータル、更新依頼の出し方）【全業種】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-17 17時 | lesson-studio-ai-search | 習い事教室（ピアノ・料理・書道・華道・茶道・手芸など、自宅教室を含む）のAI検索対策（業種別。生徒・保護者の質問の型6つの表、上位記事（uravation×3〔音楽教室・スクール・英会話〕・coeteco〔ドローンスクール〕・Texta〔ピアノ〕・bili-ai〔音楽教室〕・trakkr〔質問例〕、firstsalesは中身なし）の抜け〔振替・休会・退会、1年の総額、自宅教室の住所、構造化データの形、WordPress、測り方〕と出典なしの「口コミ50件・星4.5」、1年の総額の表6項目〔月謝の回数と時間・入会金・教材費/材料費・発表会/検定・楽器/道具・総額の例〕と税込（国税庁6902）、振替・休会・退会のリスト、特定継続的役務提供（京都府 2025-04-30更新：7役務・外国語会話教室/学習塾/家庭教師/パソコン教室は2か月超・5万円超・クーリング・オフ8日、料理・音楽は対象外）、体験と講師（資格は発行団体名）、自宅教室の住所の4つの形の表と「本文にない番地を構造化データに入れない」・Googleのリッチリザルトは住所必須、構造化データ〔schema-dts 2.1.0：習い事専用の型なし・EducationalOrganizationは学校向けでLocalBusinessではない・Course/CourseInstance courseMode はNurevo非出力〕と住所なしのService出力例、WordPress手順〔「その他」・住所欄を空けても電話か営業時間があればLocalBusiness（webmcp_canary_business_schema_type）・コース名に回数と時間・体験ページ専用FAQ〕、チェックリスト9、時期を分けた測り方、FAQ 7問）。2言語（ja・en） | 業種別 | content/daily-20261117-17 |
+メモ：2026-11-17 17時の回は 消費者庁（特定商取引法ガイド）、Googleビジネスプロフィールのガイドライン、Google の LocalBusiness・Course info・検索セントラル ブログ（2025-06 の検索結果の簡素化）を WebFetch の許可待ちで取得できなかった。特定継続的役務提供は京都府のページだけで確認（中途解約の上限額は本文に書いていない）。GBPで住所を非表示にする条件・Course info のリッチリザルトの現状は書かず「ガイドラインで確認」とした。Google の記述は 2026-10-29〜11-01 確認の範囲だけ。
+翻訳の残り（8時台で補完）：research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search（ja/en のみ）。
+次の候補：
+1. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
+2. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
+3. 比較サイト・ポータルに載っている自社情報の直し方（求人・飲食・フランチャイズのポータル、更新依頼の出し方）【全業種】
+4. 結婚相談所のAI検索対策（料金の内訳・特定継続的役務提供・成婚の定義）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
