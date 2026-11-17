@@ -211,3 +211,13 @@
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
 | 2026-11-16 調査 | research-prefecture-ranking-2026 | 都道府県別ランキング（所在地が分かる国内制作会社サイト2,098件、到達30件以上の23都道府県〔市区町村つき表記を都道府県にまとめた〕、6項目平均3.69 京都〜4.38 広島・llms.txt 5.9% 新潟〜22.5% 広島、カイ二乗検定で差ははっきりしない〔llms.txt p=0.36・5項目以上 p=0.56・JSON-LD p=0.79・地方別 llms.txt p=0.90〕、地方別6区分＋所在地不明388件、東京 vs 東京以外〔llms.txt 16.4% vs 12.8%〕、限界〔件数は収集リスト由来で事業者分布ではない〕） | raw_2026-11-12（summary_2026-11-12 と日本全体の値が一致） | ja/en | content/research-20261116 |
 調査レポートの未着手の切り口（2026-11-16 時点）：WordPress と非WordPress／日本と海外の比較（総論）／国別（UK・US・AU・CA・DE・FR など）。AIクローラー（#77）・llms.txt（#83）・構造化データ（#89）は未マージPRあり。
+| 2026-11-17 8時 | blog-articles-ai-citations | AIに引用される記事・ブログの書き方（全業種。AI別の「候補に入る条件」表〔Google：インデックス＋スニペット表示可・追加要件なし／OpenAI：OAI-SearchBot拒否で非表示／Perplexity：PerplexityBot・Perplexity-User〕、プレビュー制御（nosnippet・max-snippet等）を強くするほどAI機能での表示が限られる〔Google検索セントラル ブログ 2025-05-21〕、上位記事13本でよく見る主張と根拠の強さ表〔AI専用の書き方・GEO論文の数字（記事ごとに食い違い）・「44％が最初の30％」（原典なし）・Evertuneの中央値941語（ベンダー分析）・FAQ構造化データ・llms.txt〕、1記事1質問と質問の型6つの表〔地域・営業時間の質問は記事でなく事業の情報〕、抜き出しても意味が通る段落の型7つと書き直し例（架空の税理士事務所）、使われにくい記事のパターン8つ、更新日・著者・出典・AI利用の書き方〔Google有用なコンテンツ〕、WordPress手順〔NurevoのBlogPosting：抜粋→description・更新日時・表示名→author・アイキャッチ→image・SEOプラグインのArticleはそのまま・ページ専用FAQ・llms.txt 30件〕、公開後の確かめ方4つ〔生成AIパフォーマンスレポート・utm_source=chatgpt.com・ログ・質問の記録〕と62件調査、チェックリスト11、FAQ 7問）。41言語 | 全業種 | content/daily-20261117-08 |
+翻訳の補完ログ：2026-11-17 ai-visibility-drop-causes に39言語を追加（41言語）。
+翻訳の残り（8時台で補完）：research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search（ja/en のみ）。
+メモ：2026-11-17 8時の回は Google（AI features・AI optimization guide・publication dates）、OpenAI・Perplexity のクローラのページ、arXiv（GEO論文）、growth-memo.com を WebFetch の許可待ちで取得できなかった。Google の検索セントラル ブログ（2025-05-21）だけ当日確認。他の公式の記述は既存ガイドで確認済みの範囲だけ。GEO論文の数字・「44.2%」・チャンク分割についてのGoogleの記述・FAQリッチリザルトの変更日は書いていない（「確かめられなかった」と明記）。
+次の候補：
+1. 眼科・コンタクトのAI検索対策（検査の予約・処方箋・保険と自費、多焦点眼内レンズ）【業種別】
+2. フランチャイズ本部向け：加盟店サイトとAI検索（表記ルール・リンク・本部と加盟店の役割）【制作会社・本部向け】
+3. 料理教室・習い事教室のAI検索対策（体験・月謝・振替・持ち物）【業種別】
+4. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
