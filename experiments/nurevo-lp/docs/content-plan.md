@@ -230,3 +230,12 @@
 3. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
 4. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-17 14時 | franchise-headquarters-ai-search | フランチャイズ本部のAI検索対策（制作会社・本部向け。お客様と加盟検討者の質問の型6つの表、ブランディングワークス調査〔PR TIMES 2026-10-12：ChatGPT/Gemini API・有効54件、ChatGPTの89%がブランド名なし、引用元上位は比較サイト web-repo.jp 8.8%・entrenet.jp 7.7%、切り口「初期費用の安さ」35.2%、調査会社がLLMO支援を販売・小規模〕、上位記事（日本語〔キャククル×2・Aurant・assist-all・PR TIMES×2〕・英語〔Reshift Media・Uberall・BizIQ・AirOps・Franchising.com・AI Growth Agent〕）の抜け6点の表、直営店と加盟店の書き分け表6項目〔運営会社・価格・支払い・窓口・返品苦情・求人〕、構造化データ〔schema-dts 2.1.0：subOrganization＝子会社などの包含関係・franchise系プロパティなし→加盟店は brand=本部・parentOrganization=運営会社＋legalName、直営は parentOrganization=本部、branchCode〕とJSON-LD例、加盟募集ページの項目表7〔費用内訳・ロイヤルティ・契約・店舗数は直営/加盟別で日付・モデル収支の前提・支援・募集エリア〕と法定開示書面に合わせる、Franchising.com（2025-11-30）、本部・加盟店・制作会社の役割表、譲渡時の同日変更、WordPress手順〔webmcp_canary_schema_graph で brand/parentOrganization を出し分けるPHP、加盟募集ページ専用FAQ、llms.txt、設定の書き出し/読み込み〕、2種類の質問の記録表、チェックリスト11、FAQ 7問、パートナー導線）。2言語（ja・en） | 制作会社・本部向け | content/daily-20261117-14 |
+メモ：2026-11-17 14時の回は 公正取引委員会（フランチャイズ・ガイドライン）、e-Gov（中小小売商業振興法）、JFA、Googleビジネスプロフィールのガイドライン、schema.org を WebFetch の許可待ちで取得できなかった。法定開示の項目・条文番号・販売価格の制限のルール・GBPのオーナーの決まりは書かず「原文で確認」とした。schema.org の定義は schema-dts 2.1.0 で確認。Google の記述は 2026-10-29 確認の範囲だけ。franchise.org の記事はリダイレクトのループで読めず。
+翻訳の残り（8時台で補完）：research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search（ja/en のみ）。
+次の候補：
+1. 料理教室・習い事教室のAI検索対策（体験・月謝・振替・持ち物）【業種別】
+2. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
+3. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
+4. 比較サイト・ポータルに載っている自社情報の直し方（求人・飲食・フランチャイズのポータル、更新依頼の出し方）【全業種】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
