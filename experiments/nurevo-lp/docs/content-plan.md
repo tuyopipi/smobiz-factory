@@ -248,3 +248,12 @@
 3. 比較サイト・ポータルに載っている自社情報の直し方（求人・飲食・フランチャイズのポータル、更新依頼の出し方）【全業種】
 4. 結婚相談所のAI検索対策（料金の内訳・特定継続的役務提供・成婚の定義）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-17 20時 | b2b-saas-ai-search | BtoB・SaaSのAI検索対策（業種別。買い手の質問の型6つの表〔カテゴリ・条件・比較・料金・乗り換え・社名〕と答えるページ、TaTap調査〔2026-11、n=135：62.2%が生成AIに「おすすめの会社」を質問・27.4%が名前の出ない会社を外す/優先度を下げる、支援会社の小規模調査と明記〕、上位記事13本〔jinrai×2・uravation・0120.co.jp・ITreview labo（PR記事）・TaTap／TripleDart・Superlines・Texta・Rock The Rankings・Discovered Labs・Pepper・Linkflow〕でよく見る主張と根拠の強さ表〔CVR何倍・7割がAIで調べ始める等は使わない〕、料金ページの項目表8〔課金単位・プラン差・初期費用/最低契約・税込税抜・トライアル・オプション・見積もり制の決まり方と下限・更新日〕、導入事例の項目表8〔業種規模・部署・課題・選定条件・機能・期間・結果と測り方・時点〕、比較/乗り換えページ（同じ条件・確認日と出典・向かない条件）、連携/対応環境/セキュリティ/サポート、レビューサイト（掲載情報の更新・ステマ規制 2023-10-01）、JavaScript描画とOAI-SearchBot/PerplexityBot、構造化データ〔Organization＋SoftwareApplication（CreativeWork・WebApplication下位型、schema-dts 2.1.0）/Service、NurevoのSoftwareApplication出力例・作った評価を出さない・Googleのリッチリザルト要件は原文で〕、llms.txt（Pricing/Case studies の Key facts 出力例）、WordPress手順〔サイト種類「BtoB・SaaS」・BtoBで使える型・サービス最大20件と「ソフトウェア（SaaS・アプリ）です」・カテゴリが計測の質問になる・料金/導入事例ページURL・診断の4要件〕、社名なし/ありの記録表、チェックリスト11、FAQ 7問、パートナー導線）。2言語（ja・en） | 業種別 | content/daily-20261117-20 |
+メモ：2026-11-17 20時の回は Google（ソフトウェアアプリの構造化データ・AI features）、OpenAI・Perplexity のクローラのページ、schema.org、消費者庁を WebFetch の許可待ちで取得できなかった。これらの記述は既存ガイドで確認済みの範囲（2026-10-31〜11-10）と schema-dts 2.1.0 だけ。ソフトウェアアプリのリッチリザルトの要件、比較広告の法令、各レビューサイトの謝礼つきレビューのルールは書かず「原文で確認」とした。funnel-ai.jp の記事は別ホストへのリダイレクトで読めず。
+翻訳の残り（8時台で補完）：research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search（ja/en のみ）。
+次の候補：
+1. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
+2. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
+3. 比較サイト・ポータルに載っている自社情報の直し方（求人・飲食・フランチャイズ・SaaSレビューサイト、更新依頼の出し方）【全業種】
+4. 結婚相談所のAI検索対策（料金の内訳・特定継続的役務提供・成婚の定義）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
