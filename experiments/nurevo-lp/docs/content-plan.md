@@ -221,3 +221,12 @@
 3. 料理教室・習い事教室のAI検索対策（体験・月謝・振替・持ち物）【業種別】
 4. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-17 11時 | eye-clinic-ai-search | 眼科のAI検索対策（業種別。患者・家族の質問の型6つ〔地域×症状・コンタクト・白内障・子どもの近視・屈折矯正・検査と予約〕、上位記事（日本語5本〔uravation×2・0120.co.jp・assist-all・koukoku.jp〕・英語6本〔Specialty Vision・Texta・Medical Marketing Firm・Healio・EyeSmart・Officite〕）に眼科特化の日本語記事なし・出典のない「レビュー50件・星4.5」「約40%」、保険・選定療養・自費の書き分け表5行〔多焦点眼内レンズ＝令和2年4月から選定療養・追加分は全額自己負担・病院例 234,300〜272,800円（片眼・税込）／低濃度アトロピン点眼 2024-12-27承認（薬事日報）・医療機関例：5〜15歳・検査は保険・薬は自費30日5,000円〕、自費ページの型7項目〔医療広告Q&A Q6-10/11/12〕、コンタクト：処方は医院・販売は販売店〔消費者庁 2021-09-10 高度管理医療機器・カラー含む／政府広報 104件 2014-08〜2022-12・通販が半数以上／厚労省通知 2012-07-18 販売時の受診確認〕、口コミ・術後の見え方の衝突表、構造化データ〔Ophthalmology・Optometric（米国の検眼）・Optician（販売店）・medicalSpecialty、schema-dts 2.1.0で確認〕、WordPress手順〔業種欄 Ophthalmology・レンズ代をサービスに・ページ専用FAQ〕、medicalSpecialty のフィルター、チェックリスト10、測り方、FAQ 7問）。2言語（ja・en） | 業種別 | content/daily-20261117-11 |
+メモ：2026-11-17 11時の回は、選定療養の厚労省の告示・通知そのもの、消費者庁のレーシック注意喚起（2013年）を確認できなかったため書いていない。多焦点の費用と低濃度アトロピンの扱いは「1つの医療機関の例」として書いた。医療広告Q&Aは 2026-11-16 確認の範囲、Google は 2026-10-29 確認の範囲。
+翻訳の残り（8時台で補完）：research-wordpress-seo-plugins-2026・pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search（ja/en のみ）。
+次の候補：
+1. フランチャイズ本部向け：加盟店サイトとAI検索（表記ルール・リンク・本部と加盟店の役割）【制作会社・本部向け】
+2. 料理教室・習い事教室のAI検索対策（体験・月謝・振替・持ち物）【業種別】
+3. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
+4. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
