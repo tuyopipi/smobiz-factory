@@ -257,3 +257,5 @@
 3. 比較サイト・ポータルに載っている自社情報の直し方（求人・飲食・フランチャイズ・SaaSレビューサイト、更新依頼の出し方）【全業種】
 4. 結婚相談所のAI検索対策（料金の内訳・特定継続的役務提供・成婚の定義）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-17 調査 | research-us-web-agencies-ai-search-2026 | 国別レポート1本目：米国（到達4,472件〔うちHTTP 202が671件、202を除いた値も併記〕、llms.txt 23.1%〔日本13.4%・202除く27.2%〕、JSON-LD 69.0%〔日本69.4%〕、6項目すべて18.9%〔日本10.4%〕、AIボットのブロック4.3%〔147/3,404、日本1.3%〕、ボット別表〔学習用3〜4%台・OAI-SearchBot/Claude-SearchBot/PerplexityBot 0.3%〕、GPTBotブロック128件中119件がOAI-SearchBotは許可、7ボット同一の組み合わせ93/159、英国・カナダ・豪州・米国以外の海外との比較表、WordPress 74.5%・SEOプラグイン別 llms.txt〔AIOSEO 53.4%・Rank Math 38.2%・Yoast 28.0%〕、6項目の分布、カイ二乗 p<0.001）。PR TIMES 用リリース文を PR 本文に記載 | raw_2026-11-12（summary.byCountry.US と一致） | ja/en | content/research-20261117 |
+調査レポートの未着手の切り口（2026-11-17 時点）：WordPress と非WordPress／日本と海外の比較（総論）／国別（UK・AU・CA・IN・FR・ES など。米国は公開済み）。AIクローラー（#77）・llms.txt（#83）・構造化データ（#89）は未マージPRあり。
