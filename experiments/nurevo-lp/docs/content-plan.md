@@ -305,3 +305,4 @@
 3. Gemini アプリ・Claude に自社が出る仕組み（公式の説明と確かめ方）【全業種】
 4. 耳鼻咽喉科のAI検索対策（予約・アレルギー・子どもの受診）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-18 調査 | research-uk-web-agencies-ai-search-2026 | 国別レポート2本目：英国（掲載1,555件中到達942件〔うちHTTP 202が140件、202を除いた値も併記〕、llms.txt 21.5%〔203件、日本13.4%・米国23.1%・202除く25.3%〕、JSON-LD 68.8%、6項目すべて17.7%〔日本10.4%〕、AIボットのブロック4.7%〔33/699、日本1.3%〕、ボット別表〔学習用3.9〜4.7%・OAI-SearchBot 1件・PerplexityBot/Claude-SearchBot/ChatGPT-User 0件〕、GPTBotブロック28件すべてOAI-SearchBotは許可、7ボット同一の組み合わせ27/35、構造化データの型〔英・米・日〕、WordPress 73.4%・Yoast 58.0%・Rank Math 20.7%〔AIOSEO 25件・SEOPress 4件は30件未満で省略〕、6項目の分布、カイ二乗：対日本 p<0.001・対米国は差なし〔p=0.31〕）。PR TIMES 文なし（国別の初回ではないため） | raw_2026-11-12（summary.byCountry.GB と一致） | ja/en | content/research-20261118 |
