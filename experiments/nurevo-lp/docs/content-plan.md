@@ -278,3 +278,12 @@
 3. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
 4. 引越し業者のAI検索対策（見積もりの種類・標準引越運送約款・繁忙期）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-18 14時 | agency-content-refresh-service | 制作会社が既存記事のAI検索向けの見直しを月額サービスにする方法（制作会社向け。上位記事13本〔jinrai GEOリライト（2026-11-10）・GMO AIかんたん集客×2（2026-11-16）・StockSun・AI革命（サービスページ）／AirOps（2026-10-13）・Winston Digital（2026-06-14）・Frase（2026-04-30）・Quattr（2026-05-15）・Digital Applied（2026-10-04）・The Rank Masters〕の抜け6点の表、棚卸し（スポット）＋毎月の見直し＋前後の報告の3区分、棚卸しの表の10列〔答えている質問・時点のある事実・Search Console と生成AIパフォーマンスレポートのページ別表示〕、判定5つ〔残す・更新・書き直し・統合（301で寄せ内部リンク付け替え）・外す（承認制）〕、Googleの日付ガイド〔2026-02-20更新：公開日か大きな変更日を推定・ラベル付きの表示日付と datePublished/dateModified の一致・未来日不可・表示保証なし〕、WordPressは保存のたびに更新日時が変わる→NurevoのBlogPosting dateModified も同じ日時、作業別の更新日の表、Nurevo の llms.txt は更新日時の新しい順に30件→保存で入れ替わる、前後の比べ方の表〔同じ期間・同じ質問・同じ回数、utm_source=chatgpt.com、無料AIチェック3問/月〕、成果を保証しない契約の文例4つ、判定ごとの時間で積み上げる価格、WordPress手順、チェックリスト11、FAQ 7問、パートナー導線）。2言語（ja・en） | 制作会社向け | content/daily-20261118-14 |
+メモ：2026-11-18 14時の回は Google の creating-helpful-content・spam-policies・301-redirects・consolidate-duplicate-urls・HTTPエラーのページを WebFetch の許可待ちで取得できなかった。スパムポリシーの中身、転送の種類、404/410、正規URLの強さは書かず「原文で確認」とした。helpful content の記述は 2026-11-16 確認の範囲だけ。funnel-ai.jp は別ドメインへのリダイレクトで読めず。
+翻訳の残り（8時台で補完）：pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service（ja/en のみ）。
+次の候補：
+1. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
+2. 引越し業者のAI検索対策（見積もりの種類・標準引越運送約款・繁忙期）【業種別】
+3. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
+4. 税理士・社労士事務所のAI検索対策（顧問料の内訳・対応地域・業種の得意分野）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
