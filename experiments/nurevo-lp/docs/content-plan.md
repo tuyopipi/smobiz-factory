@@ -296,3 +296,12 @@
 3. Google の AI モード・AI による概要に出典として出る仕組み（公式の説明と確かめ方）【全業種】
 4. 耳鼻咽喉科のAI検索対策（予約・アレルギー・子どもの受診）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-18 20時 | google-ai-overviews-citations | GoogleのAIによる概要・AIモードに出典として出る条件と確かめ方（全業種。Googleの資料にあること・ないことの表7行〔AI機能とウェブサイト 2025-12-10更新：インデックス＋スニペット付きで表示できること・追加要件なし・クエリ・ファンアウト・出ない検索も多い・特別なファイル/schema不要・「ウェブ」に含めて集計／最適化ガイド 2026-07更新：Search Consoleの「検索の生成 AI」設定で含まれていること・llms.txtはGoogle検索が無視・チャンク不要・AEO/GEOもSEO〕、上位記事8本〔Ahrefs×3・Souzoh／LLM Pulse・The HOTH・WebFX・Contently、Surfer・Previsibleは転送先が読めず〕の主張と根拠の強さ表〔Ahrefs自社調査 76.10%が上位10位（2025）は傾向として、40〜60語・ドメイン別シェアは使わない〕、ファンアウトの例と小さな質問ごとの答え、Search Consoleでの前提確認表5行、表示を制限する設定の表7行〔robots.txt・noindex・nosnippet・max-snippet・data-nosnippet・検索の生成AI設定・Google-Extendedは「その他のシステム」向け〕とコード例、しなくていいこと4点とスパムポリシー、ページ側の6点、ビジネスプロフィール/Merchant Center の表、WordPress手順〔表示設定のnoindex・SEOプラグイン・robots.txt・WAF・Nurevoの構造化データは本文と一致・URL検査〕、確かめ方の表〔生成AIパフォーマンスレポート・ウェブ・手での記録〕、Nurevoの無料AIチェックはPerplexityでGoogleは測らないと明記、チェックリスト10、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261118-20 |
+メモ：2026-11-18 20時の回は Google の robots メタタグのページと一般的なクローラー（Google-Extended）のページを WebFetch の許可待ちで取得できなかった。nosnippet などは名前と「AI機能とウェブサイト」の記述の範囲だけ書き、Google-Extended がAIによる概要に影響するかは「その他のシステム向け」という記述だけにした。最適化ガイドの「AIのための書き直し」「不自然な言及」の項は要約でしか読めず書いていない。AIモードの提供国、CTRの調査、ドメイン別の引用シェアは書いていない。Ahrefs の英語版URLは確認できず、英語ページも日本語版にリンク。
+翻訳の残り（8時台で補完）：pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service・perplexity-citations・google-ai-overviews-citations（ja/en のみ）。
+次の候補：
+1. 引越し業者のAI検索対策（見積もりの種類・標準引越運送約款・繁忙期）【業種別】
+2. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
+3. Gemini アプリ・Claude に自社が出る仕組み（公式の説明と確かめ方）【全業種】
+4. 耳鼻咽喉科のAI検索対策（予約・アレルギー・子どもの受診）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
