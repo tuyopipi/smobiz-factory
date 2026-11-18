@@ -269,3 +269,12 @@
 3. 比較サイト・ポータルに載っている自社情報の直し方（求人・飲食・フランチャイズ・SaaSレビュー・結婚相談所の比較サイト、更新依頼の出し方）【全業種】
 4. 探偵事務所・興信所のAI検索対策（届出番号・料金の内訳・調査の範囲）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-18 11時 | detective-agency-ai-search | 探偵事務所・興信所のAI検索対策（業種別。依頼者の質問の型6つの表〔調査の種類×地域／料金／届出・信頼／引き受ける範囲／報告と書類／秘密・解約〕、上位記事〔Uravation 探偵LLMO（2026-09）・Texta（2025-03・出典なし「口コミ100件」）・ClickSlice 英国NPI事例（3.9%→30.6%、測り方の記載なし）・seolocal・Insites〕の抜け、2024-04-01施行の改正〔届出証明書の廃止→自作の標識をA4白地黒字で営業所とサイトに掲示、従業者5人以下・サイトなしは免除、役員・個人事業主は数えず事務員は数える、外部委託でも免除なし、受理番号へ名称変更〕（神奈川・長野・茨城県警）、標識の載せ方の表と文字でも書く、料金は第8条「概算額及び支払時期」に合わせた見積もりの例の表6項目と税込、扱う調査と引き受けない依頼（第2・7・9条）、相談〜報告の流れと第8条1項9項目・2項8項目の対応表、秘密（第10条）と事例の匿名化、国民生活センター2016の注意喚起（消費生活センターに似た名乗り・警察と連携の虚偽・高額解約料）、構造化データ〔専用の型なし・ProfessionalService非推奨（schema-dts 2.1.0）〕と無料相談のService出力例、WordPress手順、チェックリスト10、時期を分けた測り方、FAQ 7問）。2言語（ja・en） | 業種別 | content/daily-20261118-11 |
+メモ：2026-11-18 11時の回は 探偵業法の条文を衆議院の制定法律ページ（2006年制定時）で確認し、改正点は県警の案内で補った。e-Gov の現行条文、探偵契約のクーリング・オフ、広告での届出番号表示の義務、探偵向けの広告規制は確認できず書いていない。国民生活センターの旧FAQ（t_box）は 2026-09-07 で終了。mandr-group は読めず。
+翻訳の残り（8時台で補完）：pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search（ja/en のみ）。
+次の候補：
+1. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
+2. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
+3. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
+4. 引越し業者のAI検索対策（見積もりの種類・標準引越運送約款・繁忙期）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
