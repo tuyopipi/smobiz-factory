@@ -259,3 +259,13 @@
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
 | 2026-11-17 調査 | research-us-web-agencies-ai-search-2026 | 国別レポート1本目：米国（到達4,472件〔うちHTTP 202が671件、202を除いた値も併記〕、llms.txt 23.1%〔日本13.4%・202除く27.2%〕、JSON-LD 69.0%〔日本69.4%〕、6項目すべて18.9%〔日本10.4%〕、AIボットのブロック4.3%〔147/3,404、日本1.3%〕、ボット別表〔学習用3〜4%台・OAI-SearchBot/Claude-SearchBot/PerplexityBot 0.3%〕、GPTBotブロック128件中119件がOAI-SearchBotは許可、7ボット同一の組み合わせ93/159、英国・カナダ・豪州・米国以外の海外との比較表、WordPress 74.5%・SEOプラグイン別 llms.txt〔AIOSEO 53.4%・Rank Math 38.2%・Yoast 28.0%〕、6項目の分布、カイ二乗 p<0.001）。PR TIMES 用リリース文を PR 本文に記載 | raw_2026-11-12（summary.byCountry.US と一致） | ja/en | content/research-20261117 |
 調査レポートの未着手の切り口（2026-11-17 時点）：WordPress と非WordPress／日本と海外の比較（総論）／国別（UK・AU・CA・IN・FR・ES など。米国は公開済み）。AIクローラー（#77）・llms.txt（#83）・構造化データ（#89）は未マージPRあり。
+| 2026-11-18 8時 | marriage-agency-ai-search | 結婚相談所のAI検索対策（業種別。婚活中の人の質問の型6つの表〔年代・状況×地域／総額／成婚の定義／会員と出会いの数／解約・休会／安心〕、上位記事（日本語〔uravation（2026-08-27）・PR TIMES ブランディングワークス調査（2026-10-03：gpt-5.1/gemini-3.1-pro API・1問×60回・引用元1位24.9%・2位18.2%はランキング/比較サイト）・みんなの結婚相談所（2026-10-27）・オリコン料金・スペースシップアース〕・英語〔Texta（2025-03・出典なし「口コミ50件」）・SEO Design Chicago・5W Dating App Index（2026-10-30更新：AI Overviews 41件中25件で reddit 引用）・eSEOspace・Hall・TechRadar〕）の抜け、「入会から成婚までの総額」の表6項目と税込（国税庁6902）、成婚の定義の書き方4点（定義は各社で違う：交際開始〜婚約〜退会届）と実績の分母・期間、自社と連盟の会員数の分け方の表、特定継続的役務提供（大阪府FAQ 2024-05-14更新：2か月超・5万円超・8日・中途解約上限 サービス前3万円／開始後 対価＋2万円か残額2割の低いほう、広島県 2024-08-01更新で同じ上限・契約金額に入会金と関連商品）、入会書類・認証（大阪府 2026-05-29更新：IMS認証・マル適マークCMS）・体験談とステマ規制、構造化データ〔schema-dts 2.1.0：専用の型なし・ProfessionalService非推奨・memberOfはあるがNurevo非出力〕と無料カウンセリングのService出力例、WordPress手順〔「その他」・「専門サービス」は選ばない・サービス最大20件と説明欄に内訳・料金ページ専用FAQ・終わったイベントをllms.txtから外す〕、チェックリスト10、改定前後で分けた測り方、FAQ 7問）。41言語 | 業種別 | content/daily-20261118-08 |
+翻訳の補完ログ：2026-11-18 research-wordpress-seo-plugins-2026 に39言語を追加（41言語）。
+メモ：2026-11-18 8時の回は 国税庁6902（許可待ちで取得できず）・Google AI features・消費者庁ステマは 2026-11-01 確認の範囲だけ。消費者庁の特定商取引法ガイド、概要書面・契約書面の記載事項、成婚率の広告表示のルールは確認できなかったため書いていない。国民生活センターの「消費者トラブル解説集」は 2026-09-07 で終了していた。ekitan.com・datingnews.com は読めず。
+翻訳の残り（8時台で補完）：pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search（ja/en のみ）。
+次の候補：
+1. 制作会社向け：ブログ記事のAI検索向けリライトを月額サービスにする方法（記事の棚卸し・統合・更新日の運用）【制作会社向け】
+2. 耳鼻咽喉科・小児科のAI検索対策（予約・発熱外来・対象年齢）【業種別】
+3. 比較サイト・ポータルに載っている自社情報の直し方（求人・飲食・フランチャイズ・SaaSレビュー・結婚相談所の比較サイト、更新依頼の出し方）【全業種】
+4. 探偵事務所・興信所のAI検索対策（届出番号・料金の内訳・調査の範囲）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）

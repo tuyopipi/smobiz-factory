@@ -1,0 +1,284 @@
+{
+ "title": "Evlilik Ajansları için Yapay Zekâ Araması: Ücretler, Üyeler | Nurevo",
+ "description": "Evlilik ajansları ve çöpçatanlar için AEO: eşleşmeye kadar toplam maliyeti, kendi eşleşme tanımınızı, kendi ve ağ üyelerinizi ve iptal kurallarını yayımlayın.",
+ "h1": "Evlilik ajansları ve çöpçatanlar için yapay zekâ araması: toplam ücretlerinizi, neyin eşleşme sayıldığını, üye sayılarını ve iptal kurallarını yapay zekânın doğru okuması",
+ "lead": "Bir evlilik ajansı ya da çöpçatanlık hizmeti için yapay zekâ arama optimizasyonu, bekârların artık yapay zekâya sorduğu soruları kendi sayfalarınızda düz metinle yanıtlamaya dayanır: üyelikten eşleşmeye kadar toplam ne kadar tutar, başarı ücreti ne zaman ödenir, gerçekte kaç üye vardır ve erken bırakırsanız ne geri alırsınız. Ajanslar “eşleşme”yi farklı tanımlar ve üyeleri farklı sayar; kendi tanımlarınızı belirtmezseniz yapay zekâ boşluğu başka ajanslardan ya da karşılaştırma sitelerinden doldurur. Ardından aynı bilgileri yapılandırılmış veride, llms.txt dosyasında, Google İşletme Profilinizde ve sizi listeleyen karşılaştırma siteleri ile ağlarda tutarlı biçimde yayımlarsınız.",
+ "intro": [
+  "18 Kasım 2026'da (JST) yazıldı. Osaka ve Hiroşima vilayet sayfaları, PR TIMES anket bülteni ve karşılaştırma makaleleri o gün okundu. schema.org türleri aynı gün schema-dts 2.1.0 ile kontrol edildi. Google, Ulusal Vergi Ajansı ve Tüketici İşleri Ajansı sayfaları 1 Kasım 2026'da kontrol edildi. Hukuki örnekler, evlilik ajanslarının (kekkon soudanjo) büyük bir sektör olduğu Japonya'dan alınmıştır; faaliyet gösterdiğiniz yerdeki kuralları kontrol edin.",
+  "Bu rehber, danışman eşliğinde, veri tabanı eşleştirmeli ya da çevrim içi çalışan evlilik ajansları ve çöpçatanlar içindir. Arkadaşlık uygulamaları ve düğün mekânları farklı sorular ve kurallar doğurduğu için kapsanmamıştır (mekânlar için [düğün mekânları için yapay zekâ araması](/guide/wedding-venue-ai-search/) rehberine bakın). Yapay zekâ yanıtları günden güne ve sorunun nasıl sorulduğuna göre değişir. Buradaki adımlar bilgilerinizi yapay zekânın okuyabileceği hâle getirir. Bir yapay zekânın ajansınızdan bahsedeceğini ya da sizi belirli bir sıraya koyacağını garanti etmez. Bu makale hukuki tavsiye değildir."
+ ],
+ "sections": [
+  {
+   "heading": "Bekârlar yapay zekâya ne soruyor",
+   "paragraphs": [
+    "Çöpçatanlarla ilgili sorular yaşı, bölgeyi, hizmetin işleyişini ve maliyeti üst üste koyar. Örneğin: “[şehir] içinde, yoğun bir işi olan otuzlarının sonundaki bir kadın için çöpçatan”, “boşanmış erkekleri kabul eden ve çevrim içi görüşme sunan bir ajans” ya da “başarı ücreti yok, bir yıl için yaklaşık $X”. Bir yapay zekânın ajansınızın adını vermesi için sitenizdeki metnin bu koşulları karşıladığınızı göstermesi gerekir.",
+    "Google, AI Overviews ya da AI Mode'da görünmek için ek bir gereklilik ya da özel bir yapılandırılmış veri olmadığını; önemli olanın sıradan SEO temelleri, görünür metinle örtüşen yapılandırılmış veri ve güncel bir İşletme Profili olduğunu belirtiyor. [Google: Yapay zekâ özellikleri ve web siteniz](https://developers.google.com/search/docs/appearance/ai-features). Bir çöpçatan için de iş bir hile değil; insanların karşılaştırmada kullandığı tutarları ve tanımları doğru biçimde yazıya dökmektir."
+   ],
+   "table": {
+    "head": [
+     "Soru türü",
+     "Örnek",
+     "Yanıtın ihtiyaç duyduğu bilgiler"
+    ],
+    "rows": [
+     [
+      "Yaş ya da durum ve bölge",
+      "Boşanmışsam ve kırklı yaşlarımdaysam üye olabilir miyim? [istasyon] yakınında biri var mı?",
+      "Kime hizmet verdiğiniz, müşterilerle nerede görüştüğünüz (ofis ya da çevrim içi), hizmet verilen bölgeler"
+     ],
+     [
+      "Toplam maliyet",
+      "Üyelikten eşleşmeye kadar ne kadar tutar?",
+      "Kayıt, aylık ücret, tanıştırma ya da buluşma ücretleri, başarı ücreti, ek hizmetler ve örnek bir toplam"
+     ],
+     [
+      "Neyin eşleşme sayıldığı",
+      "Başarı ücretini ne zaman öderim?",
+      "Ajansınızın neye eşleşme dediği ve başarı ücretinin ne zaman ödenmesi gerektiği"
+     ],
+     [
+      "Üyeler ve tanıştırmalar",
+      "Kaç üye var? Ayda kaç kişiyle tanışabilirim?",
+      "Kendi üyeleriniz ile ortak ağ üyeleri, tarih, tanıştırma sınırları"
+     ],
+     [
+      "İptal ve dondurma",
+      "Erken bırakırsam ne olur? Üyeliği dondurabilir miyim?",
+      "Cayma hakkı, erken iptalin nasıl hesaplandığı, dondurma süresi ve ücretleri"
+     ],
+     [
+      "Güven",
+      "İnsanların bekâr olduğunu kontrol ediyor musunuz? Sertifikanız var mı?",
+      "Kayıtta istenen belgeler, kimlik kontrolleri, sertifikalar, şikâyet iletişimi"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Üst sıradaki makalelerin atladıkları",
+   "paragraphs": [
+    "Evlilik ajansı ve çöpçatan yapay zekâ araması için üst sıradaki Japonca ve İngilizce sonuçları okuduk: evlilik ajansları için Japonca bir LLMO rehberi, üretken yapay zekânın hangi ajansları önerdiğine dair bir anket bülteni, ajansların ücretlerini ve eşleşme tanımlarını listeleyen karşılaştırma makaleleri, çöpçatanlar için İngilizce bir GEO rehberi, yerel işletmeler için bir ChatGPT rehberi ve yapay zekâ yanıtlarında arkadaşlık uygulamalarına dair bir çalışma. Ücretleri kalemlere ayırmak, dondurma kurallarını yazmak, bir ağın üye sayısını kendi büyüklüğünüzle karıştırmamak ve metni, SSS'yi ve yapılandırılmış veriyi tutarlı tutmak en kapsamlı Japonca rehberde ele alınıyor; bu rehber de bunları kapsıyor.",
+    "Neredeyse hiçbiri erken iptal ücretlerinin yasal üst sınırlarını, eşleşme tanımınızı yazmak için bir kalıbı, örnek bir toplamın nasıl sunulacağını, yapılandırılmış verinin gerçek biçimini, WordPress'te nasıl kurulacağını ya da yapay zekâ yanıtlarının zaman içinde nasıl kontrol edileceğini kaynaklarıyla göstermedi. İngilizce çöpçatan rehberi, “50'den fazla doğrulanmış yorumu” olan işletmelerin öne çıkarıldığını kaynak göstermeden söylüyordu. Bu rehber, bir kaynağa dayandıramadığımız rakamları kullanmaz.",
+    "Yapay zekânın neyi okuduğuna dair ipuçları var. Eylül 2026'da Japon bir pazarlama firması ChatGPT ve Gemini'ye API'leri üzerinden, web araması açıkken, 10 gün boyunca 60 kez “Hangi evlilik ajansını önerirsiniz?” diye sordu. En çok atıf yapılan kaynaklar sıralama ve karşılaştırma siteleriydi: ilk sıradaki atıfların %24,9'unu, ikinci sıradaki %18,2'sini oluşturuyordu. Tek bir soruydu ve firma yapay zekâ arama hizmetleri satıyor. [PR TIMES: Branding Works anketi, 3 Ekim 2026 (Japonca)](https://prtimes.jp/main/html/rd/p/000000004.000155520.html). Kendi sitenizin yanı sıra karşılaştırma sitelerinin ve ağların sizin hakkınızda söylediklerinin güncel olup olmadığını kontrol etmeye değer."
+   ]
+  },
+  {
+   "heading": "Yalnızca aylık ücreti değil, yolculuğun tamamını fiyatlayın",
+   "paragraphs": [
+    "Ajans maliyetleri; kayıt ya da üyelik ücreti (çoğu zaman birlikte “başlangıç ücreti” olarak gösterilir), aylık ücret, tanıştırma ya da ilk buluşma başına ücret, başarı ücreti ve profil fotoğrafı ya da birebir koçluk gibi ek hizmetlere ayrılır. Karşılaştırma makaleleri ajansları bu kalemlere göre yan yana koyar, ancak “başlangıç ücreti”nin neleri kapsadığı değişir. Yalnızca aylık ücret öne çıkıyorsa yapay zekâ bunu toplam maliyet gibi sunabilir. Her plan için bu kalemleri ve örnek bir toplamı bir tabloda gösterin."
+   ],
+   "table": {
+    "head": [
+     "Kalem",
+     "Nasıl yazılır",
+     "Dikkat edilecekler"
+    ],
+    "rows": [
+     [
+      "Üyelik ve kayıt",
+      "Üyelik ücreti $X + kayıt $Y",
+      "Tek bir “başlangıç ücreti” gösterseniz bile kalemlere ayırın. Kampanyaların tarihleri ve koşulları olmalı"
+     ],
+     [
+      "Aylık ücret",
+      "Ayda $X, en fazla N tanıştırma talebi",
+      "Dahil olan desteği (danışmanla görüşme sayısı) aynı satıra yazın"
+     ],
+     [
+      "Tanıştırma ya da buluşma ücreti",
+      "İlk görüşme başına $X / ücretsiz",
+      "Yalnızca görüşme gerçekleştiğinde mi, yoksa talep başına mı alındığı"
+     ],
+     [
+      "Başarı ücreti",
+      "$X, tanımımıza göre eşleştiğinizde ödenir",
+      "Tetikleyiciyi aşağıdaki eşleşme tanımının yanına koyun"
+     ],
+     [
+      "Ek hizmetler",
+      "Profil fotoğrafı çekimi $X (isteğe bağlı)",
+      "Zorunlu mu, isteğe bağlı mı; iş ortaklarının ayrıca ücret alıp almadığı"
+     ],
+     [
+      "Örnek toplam",
+      "Eşleşmeye kadar bir yıl: başlangıç ücreti + 12 ay + buluşma ücretleri + başarı ücreti = $X",
+      "Biri eşleşmesiz olmak üzere iki ya da üç tipik süre"
+     ]
+    ]
+   },
+   "after": [
+    "Japonya'da tüketicilere önceden gösterilen fiyatlar, hangi mecrada olursa olsun tüketim vergisini içermelidir. [Ulusal Vergi Ajansı: toplam fiyat gösterimi (Japonca)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm). Nerede faaliyet gösterirseniz gösterin, verginin dahil olup olmadığını belirtin.",
+    "Başarı ücretli ve başarı ücretsiz planlar sunuyorsanız, yapay zekânın hangi koşullarda hangisinin daha ucuz olduğunu söyleyebilmesi için toplamları aynı süre üzerinden gösterin."
+   ]
+  },
+  {
+   "heading": "“Eşleşme”yi kendi sözcüklerinizle tanımlayın",
+   "paragraphs": [
+    "Ajanslar eşleşmeyi farklı tanımlar. Japonca bir karşılaştırma makalesi, “evlilik amacıyla flört etmeye başlamak”, “tek eşli bir ilişkiye girmek” ve “her ikisinin de evlenme niyetini teyit etmesi”nden “nişanlanmak” ve “flört, nişan ya da evlilik nedeniyle ajanstan ayrılmak”a kadar uzanan tanımları listeliyor ve her ajansın sonuçlarını da farklı saydığını not ediyor. [Minna no Kekkon Soudanjo: ajans sıralaması, 27 Ekim 2026 (Japonca)](https://www.mwed.jp/matchagent/3271/)",
+    "Kendi tanımınızı yayımlamazsanız yapay zekâ başka bir ajansınkiyle yanıt verebilir; örneğin başarı ücretinin nişanda ödendiğini söyleyebilir. Ücretlerinizin ve başarı ücreti açıklamanızın yakınında şu dört şeyi belirtin:"
+   ],
+   "list": [
+    "Ajansınızın eşleşme saydığı nokta (örneğin “her iki üye de evlenme niyetini teyit edip ajanstan birlikte ayrıldığında”).",
+    "Başarı ücretinin ne zaman doğduğu ve ödeme son tarihi.",
+    "Eşleşmeden sonra ilişki biterse ne olacağı (örneğin yeniden üyelik ücreti).",
+    "Bir başarı oranı yayımlıyorsanız: neyin sayıldığı (tanım), payda, dönem ve tarih. Örneğin: “Nisan 2025'ten Mart 2026'ya kadar aktif olan N üyeden M'si, bizim tanımımıza göre eşleşerek ayrıldı.”"
+   ],
+   "after": [
+    "Yalın bir “%X başarı oranı”, farklı tanımlar ve paydalar kullanan diğer ajansların rakamlarıyla karşılaştırılır. Tanım ve payda aynı paragrafta olduğunda, rakamı aktaran bir yapay zekânın koşulları da birlikte aktarma olasılığı artar."
+   ]
+  },
+  {
+   "heading": "Kendi üyelerinizi ağın üyelerinden ayırın",
+   "paragraphs": [
+    "Birçok Japon ajansı, üye profillerini paylaşan ajanslardan oluşan bir ağ olan bir federasyona üyedir ve karşılaştırma makaleleri bir ajansın üye sayısının ağın üyelerini içerebileceğini belirtir. [Minna no Kekkon Soudanjo (Japonca)](https://www.mwed.jp/matchagent/3271/). Ortak ağlar başka yerlerde de var. Siteniz yalnızca ağ rakamını veriyorsa yapay zekâ bunu ajansınızın büyüklüğü gibi sunabilir."
+   ],
+   "table": {
+    "head": [
+     "Rakam",
+     "Nasıl yazılır",
+     "Dikkat edilecekler"
+    ],
+    "rows": [
+     [
+      "Kendi üyeleriniz",
+      "N aktif üye (1 Ekim 2026 itibarıyla)",
+      "Tarihi her zaman verin; dondurulmuş üyelerin dahil olup olmadığını belirtin"
+     ],
+     [
+      "Üye olduğunuz ağ",
+      "[ağ] üyesi, toplam yaklaşık N üye (ağın yayımladığı rakam, ay ve yıl)",
+      "Ağ rakamı için kaynak ve tarih; birden fazla ağdaysanız çakışmaların nasıl ele alındığı"
+     ],
+     [
+      "Tanıştırma talepleri",
+      "Ayda en fazla N gönderilen ve M alınan talep",
+      "Plana göre değişiyorsa bir tablo kullanın"
+     ],
+     [
+      "Cinsiyet ve yaş dağılımı",
+      "Üyelerinizin cinsiyete ve yaş grubuna göre oranı (tarih)",
+      "Ağın rakamıysa bunu belirtin"
+     ]
+    ]
+   },
+   "after": [
+    "schema.org'da bir işletmenin üye olduğu kuruluşlar için bir memberOf özelliği vardır. [schema.org: memberOf](https://schema.org/memberOf). Nurevo AEO bunu çıktı olarak vermez. Ekleseniz bile yapay zekânın bir yanıtta kullandığı şey, metninizdeki ağ adı ve rakamların ayrımıdır."
+   ]
+  },
+  {
+   "heading": "Cayma, erken iptal ve dondurma kurallarını yayımlayın",
+   "paragraphs": [
+    "Japonya'da iki aydan uzun süren ve 50.000 yeni aşan çöpçatanlık sözleşmeleri, Belirli Ticari İşlemler Kanunu kapsamında “belirli sürekli hizmetler”dir (tokutei keizokuteki ekimu teikyo). Müşteriler yasal olarak zorunlu belgeyi aldıktan sonraki sekiz gün içinde cayma hakkıyla iptal edebilir, bundan sonra da sözleşme süresi içinde herhangi bir nedenle istedikleri zaman iptal edebilir. Erken iptal ücretinin üst sınırı vardır: hizmet başlamadan önce 30.000 yen; başladıktan sonra ise alınmış hizmetlerin bedeli artı 20.000 yen ile kullanılmamış tutarın %20'sinden düşük olanı. [Osaka Vilayeti: çöpçatanlık sözleşmesinin iptali, 14 Mayıs 2024'te güncellendi (Japonca)](https://www.pref.osaka.lg.jp/faq/faq_002098.html). Hiroşima Vilayeti tüketici merkezi aynı üst sınırları veriyor ve sözleşme tutarının üyelik ücretlerini ve sözleşmenin gerektirdiği ilgili ürünleri içerdiğini belirtiyor. [Hiroşima Vilayeti: erken iptal hakları (Japonca)](https://www.pref.hiroshima.lg.jp/site/syouhiseikatsucenter/chuutokaiyaku.html)",
+    "Bir ajansı değerlendirenler yapay zekâya bunu soruyor. Ücret sayfanızda ya da sözleşme koşulları sayfanızda en azından şunları belirtin:"
+   ],
+   "list": [
+    "Cayma süresi ve bildirimin nasıl yapılacağı.",
+    "Erken iptalin nasıl yapılacağı ve iadenin nasıl hesaplandığı (peşin ödenmiş aylık ve başlangıç ücretleri). Yasal üst sınırları aşan koşullar koymayın.",
+    "Dondurma: kaç ay süreyle, dondurma sırasında ücretler ve tanıştırmaların durup durmadığı.",
+    "Eşleşmeyle ayrılmak ile başka nedenlerle ayrılmak arasındaki prosedür ya da ücret farkı.",
+    "İmzadan önce verdiğiniz belgeler ve şikâyetin nereye iletileceği (kendi iletişim bilginiz ve Japonya'da 188 tüketici hattı)."
+   ],
+   "after": [
+    "Sözleşme belgelerinin neleri içermesi gerektiği gibi ayrıntılı kurallar için Tüketici İşleri Ajansı'nın ya da kendi tüketici makamınızın en güncel bilgilerini kontrol edin."
+   ]
+  },
+  {
+   "heading": "Kayıt belgeleri, sertifikalar ve referanslar",
+   "paragraphs": [
+    "Güven sorularını da metninizde yanıtlayın: “bekâr olduğumu kanıtlamam gerekiyor mu?” ve “bu ajans güvenilir mi?”. Kayıtta istediğiniz belgeleri (bekârlık belgesi ve fotoğraflı kimlik gibi; gerçekte ne istiyorsanız) ve bunları nasıl kontrol ettiğinizi listeleyin.",
+    "Osaka Vilayeti, Japonya'da çöpçatanlık hizmetleri için iki özel üçüncü taraf sertifikasını tanımlıyor: internet tabanlı hizmetler için “IMS sertifikası” (Evlilik Partneri Tanıştırma Hizmeti Sertifikasyon Kuruluşu adlı NPO tarafından yürütülür) ve “Maru-teki Mark CMS” (Japonya Yaşam Tasarımı Danışmanları Derneği adlı NPO tarafından yürütülür). Bunların kullanıcılara verilen bilgileri, açık sözleşmeleri ve iptali, kimlik kontrollerini ve bekârlık kanıtını ve bir şikâyet masasını denetlediğini söylüyor. [Osaka Vilayeti: eşleştirme hizmetlerini güvenle kullanmak, 29 Mayıs 2026'da güncellendi (Japonca)](https://www.pref.osaka.lg.jp/o090135/kosodateshien/enzyoi/ninsyo.html). Bir sertifikanız varsa resmî adını, yürüten kuruluşu ve aldığınız yılı belirtin. Sahip olmadığınız bir işareti asla göstermeyin.",
+    "Çiftlerden referans yayımladığınızda onaylarını alın ve ödülleri ya da bir şeyin reklam olduğunu gizlemeyin. Japonya'da 1 Ekim 2023'ten bu yana, reklam olduğunu gizleyen reklamcılık (gizli pazarlama), Haksız Promosyonlar ve Yanıltıcı Beyanlara Karşı Kanun kapsamında haksız bir beyandır. [Tüketici İşleri Ajansı: gizli pazarlama (Japonca)](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/). ABD'de arkadaşlık uygulamalarına dair bir çalışma da Google AI Overviews'in forum gönderilerine yoğun biçimde atıf yaptığını buldu: 41 özetin 25'inde reddit.com. [5W: Dating App AI Visibility Index 2026](https://www.5wpr.com/ai-visibility-index/dating-app-ai-visibility-index-2026/). Başkalarının yazdıklarını yeniden yazamazsınız; bu yüzden ücretlerinizi ve tanımlarınızı kendi sitenizde açıkça belirtmek yanlış anlamaları azaltmanın en sağlam yoludur."
+   ]
+  },
+  {
+   "heading": "Yapılandırılmış veri: çöpçatan türü yok",
+   "paragraphs": [
+    "schema.org'da evlilik ajansları ya da çöpçatanlar için bir tür yoktur. ProfessionalService, Service ile karıştırıldığı için kullanımdan kaldırılmıştır. [schema.org: ProfessionalService](https://schema.org/ProfessionalService). Mantıklı yapı, ücretsiz danışmanlığınızın ve planlarınızın Service olarak bağlandığı, fiyatın Offer olarak verildiği bir LocalBusiness'tır.",
+    "Nurevo AEO'ya ücretsiz bir danışmanlığı hizmet olarak girdiğinizde şu biçimde çıktı verilir (değerler örnektir):"
+   ],
+   "code": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"LocalBusiness\",\n      \"@id\": \"https://example.com/#business\",\n      \"name\": \"Example Matchmaking\",\n      \"address\": \"5F, 1-2-3 Example St, Example City\",\n      \"telephone\": \"+1-000-000-0000\",\n      \"url\": \"https://example.com/\",\n      \"openingHours\": \"Tu-Su 10:00-20:00\"\n    },\n    {\n      \"@type\": \"Service\",\n      \"@id\": \"https://example.com/#nurevo-service-1\",\n      \"name\": \"Free consultation (60 min, online available)\",\n      \"description\": \"We explain fees, what counts as a match and how the process works. We do not ask you to sign up on the day.\",\n      \"category\": \"Matchmaking\",\n      \"provider\": { \"@id\": \"https://example.com/#business\" },\n      \"additionalProperty\": {\n        \"@type\": \"PropertyValue\", \"name\": \"duration\",\n        \"value\": 60, \"unitCode\": \"MIN\", \"unitText\": \"minutes\"\n      },\n      \"offers\": { \"@type\": \"Offer\", \"price\": \"0\", \"priceCurrency\": \"USD\" },\n      \"potentialAction\": {\n        \"@type\": \"ReserveAction\",\n        \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/consultation\" },\n        \"result\": { \"@type\": \"Reservation\", \"name\": \"Free consultation (60 min, online available)\" }\n      }\n    }\n  ]\n}",
+   "after": [
+    "Yapılandırılmış veri görünür sayfayla örtüşmelidir. Planları da hizmet olarak ekleyebilirsiniz, ancak bir Offer tek bir tutar taşır. Aylık ücreti fiyat olarak girin; kalemleri (üyelik ücreti, başarı ücreti vb.) hizmet açıklamasına ve sayfadaki tabloya yazın."
+   ]
+  },
+  {
+   "heading": "WordPress ajans sitesinde kurulum",
+   "list": [
+    "Nurevo AEO'yu (ücretsiz) [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) üzerinden kurup etkinleştirin. Yoast SEO, Rank Math, All in One SEO ve Slim SEO çalışmaya devam eder. 0.9.1 sürümünden itibaren SEO SIMPLE PACK ve VK All in One Expansion Unit ile de yapılandırılmış veriyi çoğaltmadan birlikte çalışır.",
+    "Kurulum sihirbazında “Diğer”i seçin. “Profesyonel hizmetler”i seçmeyin: bu, schema.org'un kullanımdan kaldırdığı ProfessionalService'i ayarlar. “Diğer” bir işletme türü ayarlamaz ve eklenti, bir adres, telefon ya da çalışma saatleri ayarlandığında bir LocalBusiness yayımlar.",
+    "Ajans adınızı, adresinizi (müşterilerle görüştüğünüz yer), telefonunuzu, çalışma saatlerinizi (kapalı günler dahil) ve açıklamanızı kontrol edin. Açıklamada kime ve nerede hizmet verdiğinizi, hangi ağa üye olduğunuzu ve çevrim içi görüşme sunup sunmadığınızı belirtin.",
+    "Ayarlar'daki Hizmetler bölümünde ücretsiz danışmanlığınızı ve her planı (en fazla 20) ekleyin: ad, dakika cinsinden süre, vergi dahil fiyat, para birimi, kategori, rezervasyon URL'si ve açıklama. Her biri Offer ve rezervasyon eylemi (ReserveAction) içeren bir Service olarak yayımlanır ve llms.txt dosyasında kendi satırını alır. Her planın açıklamasında kalemleri verin; örneğin “Üyelik ücreti $X, kayıt $Y, başarı ücreti $Z”.",
+    "En çok sorulan soruları (eşleşme tanımınız, başarı ücretinin ne zaman ödendiği, dondurma, erken iptal, gerekli belgeler, çevrim içi etkinlik) SSS'ye ekleyin. SSS'ler, Nurevo FAQ bloğunu (ya da [nurevo_faq] kısa kodunu) içeren sayfalarda FAQPage'e eklenir. Yalnızca ücret sayfasına ait sorular, blok düzenleyicideki Nurevo AEO panelinde yalnızca o sayfa için girilebilir.",
+    "Örnek toplamları, eşleşme tanımınızı, üye rakamlarını ve iptal ile dondurma kurallarını sayfa metnine tablolar hâlinde koyun. Geçmiş kampanyalara ya da etkinliklere (bekârlar partileri gibi) ait sayfalar aynı Nurevo AEO panelinden llms.txt dışında bırakılabilir.",
+    "AEO puanı ekranında bir tanılama çalıştırın ve eksikleri tek tıkla düzeltmelerle giderin. Sitenizin dışarıdan nasıl göründüğünü [ücretsiz yapay zekâ okunabilirlik kontrolü](/check) ile kontrol edin."
+   ],
+   "after": [
+    "Bir SEO eklentisiyle birlikte kullanıldığında Nurevo AEO ikinci bir yapılandırılmış veri seti üretmez; yalnızca SEO eklentisinin grafiğinde eksik olan adres, telefon, çalışma saatleri, hizmetler ve SSS'yi ekler. Bkz. [Yoast, Rank Math ve AIOSEO'ya işletme bilgileri eklemek](/guide/local-business-schema-seo-plugins/)."
+   ]
+  },
+  {
+   "heading": "Yayın öncesi kontrol listesi",
+   "list": [
+    "Kime hizmet verdiğiniz, müşterilerle nerede görüştüğünüz (ofis ya da çevrim içi) ve hizmet verdiğiniz bölgeler belirtilmiş.",
+    "Her plan üyelik ve kayıt ücretlerini, aylık ücreti, tanıştırma ücretlerini, başarı ücretini ve ek hizmetleri, vergi durumuyla birlikte kalem kalem gösteriyor.",
+    "Biri eşleşmesiz olmak üzere tipik süreler için iki ya da üç örnek toplam gösterilmiş.",
+    "Eşleşme tanımınız ve başarı ücretinin ne zaman ödendiği ücretlerinizin yanında yer alıyor.",
+    "Her başarı oranının tanımı, paydası, dönemi ve tarihi aynı paragrafta.",
+    "Kendi üye sayınız ile ağınki, her biri tarihiyle birlikte ayrı gösterilmiş.",
+    "Cayma, erken iptalin nasıl hesaplandığı, dondurma kuralları ve bir şikâyet iletişimi belirtilmiş.",
+    "Kayıt belgeleri ve varsa sertifikanın resmî adı, kuruluşu ve yılı belirtilmiş. Referanslar onaylı ve reklam olduklarını gizlemiyor.",
+    "Ad, adres, telefon ve ücretler siteniz, yapılandırılmış veri, Google İşletme Profili ve ağ ya da karşılaştırma listelemeleri arasında örtüşüyor.",
+    "llms.txt ücret, eşleşme tanımı, iptal ve ücretsiz danışmanlık sayfalarınızı listeliyor. [llms.txt nedir?](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Yapay zekâ yanıtlarında görünüp görünmediğinizi kontrol etmek",
+   "paragraphs": [
+    "Bilgiler yerine oturduktan sonra, bekâr birinin soracağı; yaşı, bölgeyi, durumu (boşanmış, yoğun iş vb.), bütçeyi ve insanlarla nasıl tanışmak istediğini birleştiren beş ila on soru yazın. Bunları ChatGPT ve Perplexity'ye sorun ve ajansınızın adıyla ya da URL'siyle görünüp görünmediğini, ücretlerin ve eşleşme tanımınızın doğru belirtilip belirtilmediğini ve atıf yapılan kaynağın siteniz mi yoksa bir karşılaştırma sitesi mi olduğunu kaydedin. Yanıtlar her denemede değişir; bu yüzden aynı soruları zaman içinde tekrarlayın. Bir ücret değişikliğinden önce ve sonra ya da bir karşılaştırma sitesi listelemesini düzelttikten sonra ayrı ayrı kayıt tutmak, hangi değişikliğin fark yarattığını gösterir. [Yapay zekâ görünürlüğü nasıl ölçülür](/guide/measure-ai-visibility/)",
+    "Nurevo AEO'nun Free ve Standard planları aylık bir kontrol içerir: işletme türünüzden ve bölgenizden oluşturulan (ajansınızın adı asla kullanılmaz) üç soru Perplexity'ye sorulur ve eklenti, yanıtların sizden bahsedip bahsetmediğini ya da sitenize atıf yapıp yapmadığını kaydeder. Pro planı (ayda $99'dan başlayan) beta aşamasında yapay zekâ görünürlüğü ölçümü ekler: yapay zekâ yanıtlarında ne sıklıkla göründüğünüz, rakip karşılaştırması ve geçmişiyle birlikte (şu anda Perplexity üzerinde ölçülüyor). Her ikisi de her yanıta değil, yanıtlardan bir örnekleme bakar."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Bir evlilik ajansı yapay zekâ aramasına nereden başlamalı?",
+   "a": "Sayfalarınıza metin ve tablo olarak her planın üyelik, kayıt, aylık, tanıştırma ve başarı ücretlerini örnek bir toplamla birlikte, kendi eşleşme tanımınızı, herhangi bir ağınkinden ayrılmış kendi üye sayınızı ve iptal ile dondurma kurallarınızı yazın. Ardından adınızın, adresinizin, telefonunuzun ve ücretlerinizin yapılandırılmış veri, Google İşletme Profiliniz ve karşılaştırma listelemeleri arasında örtüşmesini sağlayın."
+  },
+  {
+   "q": "Eşleşme tanımımızı gerçekten yayımlamamız gerekiyor mu?",
+   "a": "Evet. Ajanslar eşleşmeyi farklı tanımlar ve bu, başarı ücretinin ne zaman ödeneceğini değiştirir. Sayfada kendi tanımınız yoksa yapay zekâ başka bir ajansınkiyle yanıt verebilir. Eşleşme saydığınız noktayı ve ödemenin ne zaman yapılacağını başarı ücretinin yanına koyun."
+  },
+  {
+   "q": "Ağımızın üye sayısını yayımlayabilir miyiz?",
+   "a": "Evet, ancak ağın adı, kaynağı ve tarihiyle birlikte kendi üye sayınızdan ayrı tutun. Yalnızca ağ rakamı görünürse yapay zekâ bunu ajansınızın büyüklüğü gibi sunabilir."
+  },
+  {
+   "q": "Erken iptali nasıl açıklamalıyız?",
+   "a": "Japonya'da iki aydan uzun ve 50.000 yeni aşan çöpçatanlık sözleşmeleri belirli sürekli hizmetlerdir: sekiz günlük bir cayma süresi vardır ve erken iptal ücretlerinin üst sınırı bulunur (hizmet başlamadan önce 30.000 yen; başladıktan sonra alınmış hizmetlerin bedeli artı 20.000 yen ile kullanılmamış tutarın %20'sinden düşük olanı). Bu sınırlar içinde bir iptali nasıl hesapladığınızı sayfanızda belirtin ve faaliyet gösterdiğiniz yerdeki kuralları kontrol edin. Bu makale hukuki tavsiye değildir."
+  },
+  {
+   "q": "Bir çöpçatan hangi yapılandırılmış veri türünü kullanmalı?",
+   "a": "schema.org'da çöpçatan türü yoktur ve ProfessionalService kullanımdan kaldırılmıştır. Ajansı bir LocalBusiness olarak yayımlayın ve ücretsiz danışmanlığınızı ve planlarınızı Offer içeren Service olarak bağlayın."
+  },
+  {
+   "q": "Nurevo AEO ücretsiz mi?",
+   "a": "Evet. İletişim bilgileriniz, çalışma saatleriniz, hizmetleriniz ve SSS için yapılandırılmış veri ile llms.txt, yapay zekâ tarayıcı kuralları ve AEO puanı ücretsiz plandadır. Ücretli planlar her zaman güncel bir kural seti (Standard, ayda $20) ve beta aşamasında yapay zekâ görünürlüğü ölçümü (Pro, ayda $99'dan başlayan) ekler. [WordPress.org'da Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Bu, ajansımızın ChatGPT'de görünmesini garanti eder mi?",
+   "a": "Hayır. Yapay zekâ yanıtları değişir ve hiçbir araç ya da teknik bir anılmayı ya da bir sırayı garanti edemez. Yapabileceğiniz şey, bilgilerinizi yapay zekânın kolayca okuyabileceği hâle getirmek ve görünüp görünmediğinizi kontrol etmeyi sürdürmektir."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Önce yapay zekânın ajansınızın web sitesini nasıl okuduğunu görün",
+  "body": "Ücretsiz kontrol, yapılandırılmış verinizin, llms.txt dosyanızın ve yapay zekâ tarayıcı erişiminizin durumunu kayıt gerektirmeden gösterir. WordPress'te Nurevo AEO eksikleri ücretsiz tamamlar.",
+  "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü çalıştırın",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO'yu WordPress.org'dan edinin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT, OpenAI'nin; Perplexity, Perplexity AI'ın; Gemini ve Google ise Google LLC'nin ticari markalarıdır. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK ve VK All in One Expansion Unit ilgili sahiplerinin ticari markalarıdır. Nurevo bunlarla ya da bahsedilen sertifikasyon kuruluşları veya ağlarla bağlantılı değildir. Bu makale hukuki tavsiye değildir."
+}
