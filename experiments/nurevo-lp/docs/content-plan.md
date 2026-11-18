@@ -287,3 +287,12 @@
 3. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
 4. 税理士・社労士事務所のAI検索対策（顧問料の内訳・対応地域・業種の得意分野）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-18 17時 | perplexity-citations | Perplexityに自社サイトが引用される仕組みと確かめ方（全業種。公式の資料にあること・ないことの表7行〔PerplexityBot＝検索結果に出してリンク・Perplexity-User＝質問時に取得し robots.txt を一般に無視・学習には使わない・反映最大24時間・IP範囲JSON／出典の選び方・件数・Bing依存は非公開・未確認〕、上位記事13本〔fyve・alejandrorioja・jinrai・0120.co.jp×2・GMO koukoku.jp／Pepper・Discovered Labs・LLM Pulse・Texta・Fuel Online・Wix Studio・NAV43〕の主張と根拠の強さ表〔候補数5〜10/約10/20〜50の食い違い・採点の重み・Reddit 46.7%の出典と対象の食い違い・引用までの日数は使わない〕、2つのクローラーの比較表、robots.txt の例とグループ内で全体の決まりを書き直す理由、WAF/CDN はUAとIP範囲の両方で、Cloudflareの報告〔2025-08-04：名乗らないクローラー・確認済みボットから除外／Perplexityは反論（PC Gamer 2025-08-05）、件数は書かない〕、ページ側の手入れ6点、62事業者調査（ρ=0.03）、WordPress手順〔仮想 robots.txt と実ファイルの優先・Nurevoの許可設定・WAF/セキュリティプラグイン・curl/アクセスログで確認〕、3つの確かめ方の表、無料AIチェック（月3問・社名なし）とPro（最大20問×1〜3回・出典順は出典一覧の順）、チェックリスト10、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261118-17 |
+メモ：2026-11-18 17時の回は Cloudflare のブログが途中で切れたため、リクエスト数・ドメイン数は書いていない。Perplexity の2つの資料でUAの例とIP範囲のドメイン（perplexity.com / perplexity.ai）が違うため「最新のページで確認」とした。Perplexity の Publishers Program、有料プランでの出典の違い、Bing の利用は確認できず書いていない。
+翻訳の残り（8時台で補完）：pharmacy-ai-search・agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service・perplexity-citations（ja/en のみ）。
+次の候補：
+1. 引越し業者のAI検索対策（見積もりの種類・標準引越運送約款・繁忙期）【業種別】
+2. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
+3. Google の AI モード・AI による概要に出典として出る仕組み（公式の説明と確かめ方）【全業種】
+4. 耳鼻咽喉科のAI検索対策（予約・アレルギー・子どもの受診）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）

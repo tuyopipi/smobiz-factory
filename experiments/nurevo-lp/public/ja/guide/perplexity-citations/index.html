@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Perplexityに引用される仕組みと確かめ方：2つのクローラー | Nurevo AIO</title>
+<meta name="description" content="Perplexityがサイトを読む2つのクローラー（PerplexityBotとPerplexity-User）の違い、robots.txtとWAFの設定、公式に分かっていること・いないこと、WordPressの手順と引用の確かめ方。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/perplexity-citations/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/perplexity-citations/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/perplexity-citations/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/perplexity-citations/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/perplexity-citations/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/perplexity-citations/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/perplexity-citations/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/perplexity-citations/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/perplexity-citations/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="Perplexityに引用される仕組みと確かめ方：2つのクローラー | Nurevo AIO">
+<meta property="og:description" content="Perplexityがサイトを読む2つのクローラー（PerplexityBotとPerplexity-User）の違い、robots.txtとWAFの設定、公式に分かっていること・いないこと、WordPressの手順と引用の確かめ方。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/perplexity-citations/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Perplexityに引用される仕組みと確かめ方：2つのクローラー | Nurevo AIO">
+<meta name="twitter:description" content="Perplexityがサイトを読む2つのクローラー（PerplexityBotとPerplexity-User）の違い、robots.txtとWAFの設定、公式に分かっていること・いないこと、WordPressの手順と引用の確かめ方。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/perplexity-citations/#webpage","url":"https://nurevo.jp/ja/guide/perplexity-citations/","name":"Perplexityに引用される仕組みと確かめ方：2つのクローラー | Nurevo AIO","description":"Perplexityがサイトを読む2つのクローラー（PerplexityBotとPerplexity-User）の違い、robots.txtとWAFの設定、公式に分かっていること・いないこと、WordPressの手順と引用の確かめ方。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/perplexity-citations/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/perplexity-citations/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"Perplexityに自社サイトが引用される仕組みと、引用されているかの確かめ方","item":"https://nurevo.jp/ja/guide/perplexity-citations/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/perplexity-citations/#faq","mainEntity":[{"@type":"Question","name":"PerplexityBot を許可すれば、Perplexityに引用されますか？","acceptedAnswer":{"@type":"Answer","text":"引用されるとは限りません。許可は読まれるための前提で、どのページを出典にするかはPerplexityが決め、その基準は公開されていません。"}},{"@type":"Question","name":"robots.txt で Perplexity-User を Disallow にすれば、読まれなくなりますか？","acceptedAnswer":{"@type":"Answer","text":"Perplexityの資料では、Perplexity-User はユーザーが求めた取得なので robots.txt の決まりを一般に無視するとされています。止めたい場合は、WAFでユーザーエージェントとIP範囲を見て止める方法を検討してください。"}},{"@type":"Question","name":"Perplexityは読んだページをAIの学習に使いますか？","acceptedAnswer":{"@type":"Answer","text":"Perplexityの資料では、PerplexityBot も Perplexity-User も、AIの基盤モデルの学習のためにコンテンツを集めるものではないと説明されています。"}},{"@type":"Question","name":"robots.txt を直したら、すぐ反映されますか？","acceptedAnswer":{"@type":"Answer","text":"Perplexityの資料では、変更が反映されるまで最大24時間かかることがあるとされています。確かめるのは翌日以降にしてください。回答に出るかどうかは、また別の話です。"}},{"@type":"Question","name":"Perplexityで有料版を使うと、出典が変わりますか？","acceptedAnswer":{"@type":"Answer","text":"プランやモードで回答の作り方が違う可能性はありますが、出典の選び方の違いは公開されていません。記録するときは、プラン・モード・ログインの有無をそろえてください。"}},{"@type":"Question","name":"llms.txt を置くとPerplexityに引用されやすくなりますか？","acceptedAnswer":{"@type":"Answer","text":"Perplexityがサイトの llms.txt を出典選びに使うという公式の説明は見つかりませんでした。置く場合は、主なページへの入口と事実の要約として扱ってください。詳しくはllms.txtのガイドにあります。"}},{"@type":"Question","name":"Perplexityが自社について間違ったことを答えます。どうすればいいですか？","acceptedAnswer":{"@type":"Answer","text":"回答の出典をたどり、自社サイトの古い記述なら直し、他のサイトの記述なら掲載元に更新を頼みます。AIの回答そのものを直接書き換えることはできず、反映までの時間も決まっていません。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">AI対応を無料でチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>Perplexityに自社サイトが引用される仕組みと、引用されているかの確かめ方</span></nav>
+  <article>
+    <h1>Perplexityに自社サイトが引用される仕組みと、引用されているかの確かめ方</h1>
+    <p class="lead">Perplexityは、質問を受けるとウェブを検索し、読んだページを回答の出典として番号付きで示します。サイト側でできることは、①Perplexityの2つのクローラー（検索用のPerplexityBotと、質問に応じてページを読むPerplexity-User）を robots.txt とWAF（ファイアウォール）で止めていないかを確かめ、②質問への答えと事実を本文の文字で書き、③社名を入れない質問で実際に引用されているかを繰り返し記録することです。どのページを出典に選ぶかの基準は、Perplexityから公開されていません。</p>
+<p>作成日：2026年11月18日（JST）。ChatGPTを中心にした手順は<a href="/ja/guide/appear-in-chatgpt/">ChatGPTに載る方法</a>、AIでの登場率の測り方全般は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>で扱っています。この記事は、Perplexityに絞って、公式の資料で確かめられることと、サイト側で確かめる手順を書きます。</p>
+<p>AIの回答は日や聞き方によって変わります。この記事の手順は、Perplexityがサイトを読める状態にし、引用されているかを正しく測るためのもので、回答に出ることや順位を保証するものではありません。</p>
+<section class="qa"><h2>Perplexityについて、公式に分かっていること・分かっていないこと</h2><p>Perplexityの回答には、多くの場合、本文の中の番号と、出典のリンクの一覧が付きます。どのページがどこで使われたかが見えるため、他のAIより「引用されたか」を確かめやすいのが特徴です。一方で、候補のページをどう集め、どう順位を付け、何件を出典にするかは公開されていません。</p>
+<p>上位の記事には「候補を5〜10件集めて3〜4件を引用する」「候補は20〜50件」など具体的な数字がありますが、記事によって食い違い、Perplexityの資料に根拠を確認できませんでした。この記事では、Perplexityが自社の資料に書いていることだけを事実として扱います。</p><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">公式の資料にあるか</th><th scope="col">内容</th></tr></thead><tbody><tr><th scope="row">使うクローラーの名前と目的</th><td>ある</td><td>PerplexityBot（検索結果にサイトを出してリンクするため）と Perplexity-User（ユーザーの質問に応じてページを読むため）の2つ（<a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity：クローラーの説明</a>）</td></tr><tr><th scope="row">AIモデルの学習に使うか</th><td>ある</td><td>どちらも、AIの基盤モデルの学習のためにコンテンツを集めるものではない、としています</td></tr><tr><th scope="row">robots.txt に従うか</th><td>一部ある</td><td>Perplexity-User は「ユーザーが求めた取得なので、robots.txt の決まりを一般に無視する」と書かれています。PerplexityBot は robots.txt で管理する前提で説明されています</td></tr><tr><th scope="row">設定の反映にかかる時間</th><td>ある</td><td>変更がシステムに反映されるまで最大24時間かかることがある、としています</td></tr><tr><th scope="row">クローラーのIPアドレスの範囲</th><td>ある</td><td>JSONで公開（<a href="https://www.perplexity.com/perplexitybot.json">PerplexityBot</a>・<a href="https://www.perplexity.com/perplexity-user.json">Perplexity-User</a>）</td></tr><tr><th scope="row">出典を選ぶ基準・件数・順番</th><td>ない</td><td>公開されていません。記事に出てくる「重み付け」「候補の件数」は推測です</td></tr><tr><th scope="row">Bingなど他の検索エンジンの結果を使うか</th><td>確認できず</td><td>「一部Bingを使う」と書く記事がありますが、一次情報を確認できませんでした</td></tr></tbody></table></div></section>
+<section class="qa"><h2>上位の記事でよく見る主張と、根拠の強さ</h2><p>「Perplexity 引用される 方法」「how to get cited by Perplexity」で上位に出る日本語6本・英語7本を読みました。「質問への答えを先に書く」「一次情報と日付を書く」「PerplexityBotを止めない」は、ほぼすべてに共通します。一方で、数字の多くは出典がないか、書いた会社自身の観察でした。</p><div class="table-wrap"><table><thead><tr><th scope="col">よく見る主張</th><th scope="col">根拠の強さ</th><th scope="col">この記事での扱い</th></tr></thead><tbody><tr><th scope="row">「PerplexityBotを許可すれば引用される」</th><td>許可は必要条件。許可だけで引用されるという根拠はない</td><td>止めていないかを確かめる手順として書く</td></tr><tr><th scope="row">「候補は◯件、引用は◯件」</th><td>記事によって5〜10件、約10件、20〜50件とばらばら</td><td>使わない</td></tr><tr><th scope="row">「関連性30%・品質25%…」のような採点の重み</th><td>Perplexityは公開していない</td><td>使わない</td></tr><tr><th scope="row">「Redditが引用の46.7%」</th><td>記事によって出典の会社も、対象（全体か、特定のモードか）も違う</td><td>使わない</td></tr><tr><th scope="row">「変更から引用まで平均◯日」</th><td>著者自身の、件数の書かれていない試し</td><td>使わない。反映は最大24時間という公式の記述だけを書く</td></tr><tr><th scope="row">「FAQの構造化データで引用が増える」</th><td>支援会社の観察が中心。公式の説明はない</td><td>本文の質問と答えを機械にも分かる形で添えるもの、として扱う</td></tr><tr><th scope="row">「robots.txtで許可すれば全部通る」</th><td>Perplexity-User は robots.txt を一般に無視する。逆に、WAFやCDNのボット対策で止まることがある</td><td>robots.txt とWAFの両方を確かめる</td></tr></tbody></table></div><p>13本のうち、2つのクローラーの違いを説明していたのは数本だけで、robots.txt が Perplexity-User には効かないことまで書いた記事、WAFでの確かめ方、WordPressでの手順、2025年のCloudflareの報告に触れた記事はほとんどありませんでした。以下はそこを中心に書きます。</p></section>
+<section class="qa"><h2>2つのクローラー：PerplexityBot と Perplexity-User の違い</h2><p>Perplexityの資料に書かれている2つのクローラーは、役割も robots.txt との関係も違います。片方だけ許可していると、引用の確かめ方を誤ります。</p><div class="table-wrap"><table><thead><tr><th scope="col"></th><th scope="col">PerplexityBot</th><th scope="col">Perplexity-User</th></tr></thead><tbody><tr><th scope="row">目的</th><td>Perplexityの検索結果にサイトを出し、リンクするためにページを集める</td><td>ユーザーが質問したときに、正確に答えるためにページを読み、回答にリンクを付ける</td></tr><tr><th scope="row">来るタイミング</th><td>質問とは関係なく、定期的に</td><td>誰かが質問したとき</td></tr><tr><th scope="row">robots.txt</th><td>robots.txt で許可・不許可を管理する前提</td><td>ユーザーが求めた取得なので、robots.txt の決まりを一般に無視する</td></tr><tr><th scope="row">止めたいとき</th><td>robots.txt の Disallow</td><td>robots.txt では止まらないことがある。WAFでユーザーエージェントとIP範囲を見て止める</td></tr><tr><th scope="row">通したいとき</th><td>robots.txt で止めない＋WAFで公開IP範囲を許可</td><td>WAFで公開IP範囲を許可</td></tr><tr><th scope="row">AIモデルの学習</th><td>使わない、と説明</td><td>使わない、と説明</td></tr></tbody></table></div><p>ユーザーエージェントの書き方とIP範囲は、<a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">クローラーの説明</a>と<a href="https://docs.perplexity.ai/guides/perplexitybot">PerplexityBotのガイド</a>に載っています。2つのページで例の書き方とIP範囲のファイルのドメインが少し違うため、WAFに登録するときは最新のページで確かめてください。</p></section>
+<section class="qa"><h2>robots.txt とWAFの設定：通したい場合・止めたい場合</h2><p>Perplexityの回答に自社サイトを出典として出したい場合は、2つのクローラーを止めないことが前提です。robots.txt で個別のグループを作る場合は、サイト全体に効かせている決まり（例：/wp-admin/ を読ませない）も、そのグループの中に書き直します。クローラーは自分の名前のグループがあると、そのグループの決まりだけを見るためです。</p><pre class="code" dir="ltr"><code># Perplexity の検索・回答に使われるクローラーを通す例
+User-agent: PerplexityBot
+Allow: /
+Disallow: /wp-admin/
+
+User-agent: Perplexity-User
+Allow: /
+Disallow: /wp-admin/</code></pre><p>robots.txt を直しても、サーバーやCDNのボット対策（WAF、レンタルサーバーの「海外からのアクセス制限」、セキュリティ用のプラグインなど）が先にアクセスを拒否していることがあります。Perplexityの資料は、WAFではユーザーエージェントとIP範囲の両方で見分けるよう説明しています。名前だけで許可すると、名前をまねた別のアクセスまで通ってしまうためです。</p>
+<p>反対に、Perplexityに読まれたくない場合は、PerplexityBot を robots.txt で Disallow にし、Perplexity-User はWAFで止めます。止めても、他のサイトに書かれた自社の情報をもとに回答が作られることはあります。どちらの場合も、設定の反映には最大24時間かかることがあるとされています。</p></section>
+<section class="qa"><h2>2025年のCloudflareの報告：知っておくべきこと</h2><p>Cloudflareは2025年8月4日、Perplexityが、クロールを禁止したテスト用のドメインに対して、名乗らないクローラーでアクセスしていたと報告し、Perplexityを「確認済みのボット」の一覧から外したと公表しました（<a href="https://blog.cloudflare.com/perplexity-is-using-stealth-undeclared-crawlers-to-evade-website-no-crawl-directives/">Cloudflareのブログ</a>）。Perplexityはこの報告に反論しています（<a href="https://www.pcgamer.com/software/ai/cloudflare-calls-out-perplexity-for-hiding-crawling-activity-as-ai-bot-scrapes-websites-that-explicitly-disallow-it-perplexity-responds-by-calling-them-more-flair-than-cloud">PC Gamer、2025年8月5日</a>）。</p>
+<p>サイト運営者にとっての意味は2つです。1つ目は、CloudflareなどのCDNを使っている場合、AIボットを止める設定がPerplexityにも効いている可能性があることです。引用されたいのに止めていないか、管理画面のボット対策の設定を確かめてください。2つ目は、読まれたくない場合に robots.txt だけに頼らず、WAFで止める設定もあわせて検討することです。どちらの主張が正しいかを、この記事では判断していません。</p></section>
+<section class="qa"><h2>出典に選ばれやすくするために、ページ側でできること</h2><p>Perplexityは選び方の基準を公開していませんが、出典として使える情報がページにないと、引用はされません。次は、Perplexityに限らず、AIが答えの根拠として使いやすいページにするための手入れです。記事の書き方の詳細は<a href="/ja/guide/blog-articles-ai-citations/">AIに引用される記事の書き方</a>にまとめています。</p><ol><li>質問に対する答えを、見出しのすぐ下の1〜2文で書く（「◯◯市で土曜に診療している歯科は？」なら、診療日と時間をそのまま書く）。</li><li>料金・営業時間・対応地域・対象など、答えになる事実を画像やPDFだけにせず、HTMLの文字や表で書く。</li><li>数字には、いつの時点の値か（「2026年11月改定」）と、他社の数字なら出典のリンクを付ける。</li><li>1ページで扱う質問を絞る。サービスや店舗ごとにページを分け、ページ同士で事実を食い違わせない。</li><li>社名・所在地・連絡先を、会社概要や構造化データ、外部のプロフィール（Googleビジネスプロフィールなど）とそろえる。</li><li>JavaScriptを動かさないと本文が出ないページは、サーバー側で本文を出す形にする（クローラーがJavaScriptを動かすかは公開されていないため）。</li></ol><p>Nurevoが日本の地域事業者62件で行った調査では、サイトの中のAEO対策を測るスコアと、Perplexityに名前を挙げられる・引用される割合の間に、関係は見られませんでした（<a href="/ja/guide/aeo-signals-ai-answers-study/">調査の詳細</a>）。構造化データやllms.txtは、読める状態にするための土台で、それだけで引用が増えると考えないほうが安全です。</p></section>
+<section class="qa"><h2>WordPressでの手順</h2><p>WordPressは、サイトの直下に robots.txt のファイルがない場合、WordPress自身が robots.txt を作って返します（仮想の robots.txt）。プラグインで追加する決まりは、この仮想の robots.txt に入ります。サーバーに robots.txt のファイルを置いていると、そちらが優先され、プラグインの設定は反映されません。</p><ol><li>ブラウザで https://自社のドメイン/robots.txt を開き、PerplexityBot と Perplexity-User の行があるか、User-agent: * で全体を Disallow にしていないかを見る。</li><li><a href="https://wordpress.org/plugins/nurevo-webmcp/">Nurevo AEO（無料）</a>を入れると、AI検索のクローラーを仮想の robots.txt で許可する設定で、PerplexityBot と Perplexity-User（ChatGPT・Claudeの検索用クローラーも）を許可する行が入ります。サイトで使っている /wp-admin/ などの決まりは、そのグループにも書き直されます。AIの学習用クローラーは、初期設定では変えません。</li><li>サーバーに robots.txt のファイルがある場合は、そのファイルに上の例の行を足すか、ファイルを消して仮想の robots.txt を使う（消す前に中身を控える）。</li><li>セキュリティ用のプラグインやレンタルサーバーのWAF、CDNで、ボットや海外のIPを止めていないかを確かめる。止めているなら、Perplexityが公開しているIP範囲を許可に足す。</li><li>本文：答えになる事実を固定ページの文字で書く。Nurevo AEOは店舗・会社・サービスの事実を構造化データとllms.txtに出しますが、本文に書いていない事実を足すものではありません。</li><li>下のコマンドで、robots.txt と、PerplexityBot を名乗ったアクセスへの応答を確かめる。</li></ol><pre class="code" dir="ltr"><code># 1) robots.txt に2つのクローラーの行があるか
+curl -s https://example.jp/robots.txt | grep -i -A3 perplexity
+
+# 2) PerplexityBot を名乗ったアクセスが 200 で返るか（403・503・確認画面は要注意）
+curl -s -o /dev/null -w "%{http_code}\n" \
+  -A "Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; PerplexityBot/1.0; +https://perplexity.ai/perplexitybot)" \
+  https://example.jp/
+
+# 3) アクセスログで実際に来ているか（ログの場所はサーバーによって違う）
+grep -E "PerplexityBot|Perplexity-User" access.log | tail -20</code></pre><p>2つ目のコマンドは「名前で止めていないか」だけを確かめるものです。IP範囲で許可・拒否する設定の確認にはならないので、本当に来ているかは3つ目のアクセスログで見ます。ログに PerplexityBot が来ていて 403 や 503 が返っていれば、WAFなどで止まっています。</p></section>
+<section class="qa"><h2>引用されているかの確かめ方</h2><p>Perplexityの回答は聞くたびに変わるため、1回聞いて出た・出なかったで判断しないでください。次の3つを組み合わせます。</p><div class="table-wrap"><table><thead><tr><th scope="col">方法</th><th scope="col">分かること</th><th scope="col">分からないこと・注意</th></tr></thead><tbody><tr><th scope="row">手で聞いて記録する</th><td>社名を入れない質問（「◯◯市 歯科 土曜」など）で、名前が出たか、出典の一覧に自社のURLがあるか、何番目か</td><td>1回では偶然が大きい。同じ質問を日を変えて複数回聞き、ログインの有無や地域の設定もそろえる</td></tr><tr><th scope="row">アクセス解析の参照元</th><td>回答のリンクから来た訪問（参照元に perplexity.ai などが残る場合）</td><td>リンクをクリックされなかった引用や、名前だけの登場は分からない。アプリによっては参照元が残らないことがある</td></tr><tr><th scope="row">サーバーのアクセスログ</th><td>PerplexityBot・Perplexity-User が来ているか、どのページを読んだか、エラーになっていないか</td><td>読まれたことと、回答に使われたことは別</td></tr></tbody></table></div><p>社名を入れた質問（「◯◯歯科の土曜の診療時間は？」）は、事実を正しく読めているかの確認に使い、登場率の計算からは外します。社名を入れると出るのが当たり前で、新しいお客様が実際に聞く質問とは違うためです。</p>
+<p>Nurevo AEO の無料プランとStandardでは、月に1回、業種と地域から作った社名なしの質問3つをNurevoのサービスがPerplexityに聞き、名前が出たか・サイトが引用されたか・代わりに誰が出たかを管理画面に表示します（プラグイン自体はPerplexityに接続しません）。Pro（月14,800円〜、ベータ）では、最大20の質問を1〜3回ずつ聞き、競合のドメインと引用の回数を比べます。出典の順番はPerplexityが返した出典一覧の順で、検索順位やおすすめの順位ではありません。失敗した回は分母に入れず、回答が2件未満のときは率を出しません。</p></section>
+<section class="qa"><h2>チェックリスト</h2><ol><li>robots.txt に PerplexityBot と Perplexity-User を止める行がない（User-agent: * の Disallow: / も含めて）</li><li>個別のグループを作った場合、/wp-admin/ など全体の決まりもそのグループに書いた</li><li>WAF・CDN・セキュリティ用プラグインで、Perplexityの公開IP範囲を止めていない</li><li>PerplexityBot を名乗ったアクセスに 200 が返る</li><li>アクセスログに PerplexityBot が来ていて、エラーになっていない</li><li>答えになる事実（料金・時間・地域・対象）が本文の文字にある</li><li>数字に時点と、他社の数字なら出典がある</li><li>社名・所在地・連絡先が、サイト内と外部のプロフィールでそろっている</li><li>社名なしの質問を決め、同じ条件で複数回聞いて記録している</li><li>設定を変えた日を記録し、最大24時間後以降に確かめている</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>PerplexityBot を許可すれば、Perplexityに引用されますか？</h3><p>引用されるとは限りません。許可は読まれるための前提で、どのページを出典にするかはPerplexityが決め、その基準は公開されていません。</p>
+<h3>robots.txt で Perplexity-User を Disallow にすれば、読まれなくなりますか？</h3><p>Perplexityの資料では、Perplexity-User はユーザーが求めた取得なので robots.txt の決まりを一般に無視するとされています。止めたい場合は、WAFでユーザーエージェントとIP範囲を見て止める方法を検討してください。</p>
+<h3>Perplexityは読んだページをAIの学習に使いますか？</h3><p>Perplexityの資料では、PerplexityBot も Perplexity-User も、AIの基盤モデルの学習のためにコンテンツを集めるものではないと説明されています。</p>
+<h3>robots.txt を直したら、すぐ反映されますか？</h3><p>Perplexityの資料では、変更が反映されるまで最大24時間かかることがあるとされています。確かめるのは翌日以降にしてください。回答に出るかどうかは、また別の話です。</p>
+<h3>Perplexityで有料版を使うと、出典が変わりますか？</h3><p>プランやモードで回答の作り方が違う可能性はありますが、出典の選び方の違いは公開されていません。記録するときは、プラン・モード・ログインの有無をそろえてください。</p>
+<h3>llms.txt を置くとPerplexityに引用されやすくなりますか？</h3><p>Perplexityがサイトの llms.txt を出典選びに使うという公式の説明は見つかりませんでした。置く場合は、主なページへの入口と事実の要約として扱ってください。詳しくは<a href="/ja/guide/llms-txt/">llms.txtのガイド</a>にあります。</p>
+<h3>Perplexityが自社について間違ったことを答えます。どうすればいいですか？</h3><p>回答の出典をたどり、自社サイトの古い記述なら直し、他のサイトの記述なら掲載元に更新を頼みます。AIの回答そのものを直接書き換えることはできず、反映までの時間も決まっていません。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>AIが自社サイトを読めるか確かめる</h2>
+    <p>無料チェックは登録不要です。URLを入れると、AIクローラーの許可、構造化データ、llms.txtの状態が分かります。WordPressなら無料のプラグインで、PerplexityBot と Perplexity-User を許可する設定と、事業の事実の構造化データをまとめて整えられます。</p>
+    <a class="btn primary lg" href="/check">AI対応を無料でチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">無料のWordPressプラグインを入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/appear-in-chatgpt/">ChatGPTに載る方法（他のAIの回答にも）</a></li><li><a href="/ja/guide/aeo-signals-ai-answers-study/">サイトの中のAEO対策はAIの答えへの登場と関係するか：62事業者を計測</a></li><li><a href="/ja/guide/blog-articles-ai-citations/">AIに引用される記事・ブログの書き方：公式情報で確かめた手順と、根拠のない「AI向けテクニック」の見分け方</a></li><li><a href="/ja/guide/llms-txt/">llms.txtとは？書き方の例、効果について分かっていること、WordPressでの置き方と確かめ方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/perplexity-citations/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">PerplexityはPerplexity AI、ChatGPTはOpenAI、GoogleはGoogle LLC、CloudflareはCloudflare, Inc.の商標です。Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit、WordPressはそれぞれの権利者の商標または登録商標です。Nurevoはこれらの企業と提携・協賛関係にありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
