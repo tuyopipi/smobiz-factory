@@ -1,0 +1,39 @@
+# robots.txt — AIクローラー許可（非WordPressサイトのドメイン直下に置く）
+# ------------------------------------------------------------------
+# プラグインが入らない素のサイトでは、このファイルを「ドメイン直下」に配置して
+# AIクローラーのアクセスを明示的に許可します（例: https://あなたの店.jp/robots.txt）。
+# 既存の robots.txt がある場合は、以下の User-agent ブロックを追記してください。
+#
+# 補足: Cloudflare等のCDN側で「AIボットをブロック」する設定が入っていると、
+#       robots.txt で許可してもエッジで止められます。CDN側の設定も必ず確認を。
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# 通常の検索エンジンはそのまま
+User-agent: *
+Allow: /
+
+# サイトマップがあれば（任意）
+# Sitemap: https://あなたの店.jp/sitemap.xml

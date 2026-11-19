@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/build-site.mjs",
+    "build": "python3 scripts/integration-kit.py && node scripts/build-site.mjs",
     "preview:drafts": "rm -rf .preview && cp -R public .preview && node scripts/build-site.mjs --drafts --out .preview && npx wrangler@latest pages dev .preview",
-    "check": "node --check public/assets/app.js && node scripts/build-site.mjs --check && node scripts/check-static.mjs && node scripts/check-seo.mjs && node scripts/check-indexnow.mjs",
+    "check": "node --check public/assets/app.js && node scripts/build-site.mjs --check && node scripts/check-static.mjs && node scripts/check-seo.mjs && node scripts/check-indexnow.mjs && python3 scripts/integration-kit.py --check && node scripts/test-integration-kit.mjs",
     "indexnow": "node scripts/indexnow-submit.mjs",
     "check:aeo": "node scripts/check-aeo-checker.mjs",
     "preview": "npx wrangler@latest pages dev public",

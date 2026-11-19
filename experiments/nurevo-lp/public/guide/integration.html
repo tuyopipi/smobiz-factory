@@ -146,7 +146,7 @@ footer a{color:var(--muted)}
       ▼
 生HTMLの &lt;head&gt; に &lt;script type="application/ld+json"&gt; を埋めて返す</pre>
     </div>
-    <p>Nurevo中央の「脳（ruleset）」が更新されると、各サイトは次回取得時（最大10分）に自動で最新化。API障害時は直近キャッシュを使うので、<strong>店のページは絶対に壊れません</strong>（フェイルオープン）。</p>
+    <p>Nurevo中央の「脳（ruleset）」が更新されると、各サイトはキャッシュ更新後の取得成功時に反映します。既定の再取得間隔は10分ですが、アクセス頻度・障害・配信キャッシュにより反映時刻は変わります。PHP / Node.js は取得失敗時に手元のキャッシュを使い、無ければJSON-LDを出力しません。Next.js版は取得失敗時に <code>null</code> を返します。</p>
   </div>
 </section>
 
@@ -224,10 +224,10 @@ curl -s -A "GPTBot" https://あなたの店.jp/ | grep -o 'application/ld+json' 
 <section>
   <div class="wrap">
     <h2>よくある質問</h2>
-    <details><summary>キャッシュ10分だと「常に最新」じゃないのでは？</summary><div class="a">中央更新は最大10分で全サイトに反映されます。毎リクエストでAPIを叩くと遅く・重くなるための設計です。<code>cacheTtl</code> で短縮も可能。</div></details>
+    <details><summary>キャッシュ10分だと「常に最新」じゃないのでは？</summary><div class="a">10分は既定のキャッシュ間隔で、反映の保証時間ではありません。PHPは <code>cacheTtl</code>（秒）、Node.jsは <code>ttlMs</code>（ミリ秒）で変更できます。Next.js版は <code>revalidate: 600</code> を指定しています。</div></details>
     <details><summary>tag.js（1行JSタグ）を貼ってはダメ？</summary><div class="a">設置確認（稼働検知）には使えますが、AEO目的（AIに読ませる）では無効です。必ず本キット（サーバー側）を使ってください。</div></details>
-    <details><summary>APIが落ちたらページは？</summary><div class="a">直近キャッシュを使い、無ければJSON-LDを出さないだけ。店のページ本体は一切壊れません（フェイルオープン）。</div></details>
-    <details><summary>エンドポイントの仕様は？</summary><div class="a"><code>GET https://nurevo.jp/api/tag/config?k=&lt;siteKey&gt;</code> → <code>{ "ok": true, "jsonld": {…}, "crawlerAllowed": bool }</code>。本キットは <code>cfg.jsonld</code> をそのまま <code>&lt;script type="application/ld+json"&gt;</code> に出力します。</div></details>
+    <details><summary>APIが落ちたらページは？</summary><div class="a">PHP / Node.js は利用可能なキャッシュを使い、無ければJSON-LDを出力しません。Next.js版は取得失敗時に null を返します。Next.jsの実際の再検証・キャッシュ動作と表示遅延は、導入先のバージョン・配信環境で確認してください。</div></details>
+    <details><summary>エンドポイントの仕様は？</summary><div class="a"><code>GET https://nurevo.jp/api/tag/config?k=&lt;siteKey&gt;</code> → <code>{ "ok": true, "jsonld": {…}, "crawlerAllowed": bool }</code>。本キットは <code>cfg.jsonld</code> をそのまま <code>&lt;script type="application/ld+json"&gt;</code> に出力します。既存の構造化データとの自動統合・重複除去は行いません。導入先で既存出力と整合性を確認してください。</div></details>
   </div>
 </section>
 
