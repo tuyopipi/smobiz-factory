@@ -1,0 +1,246 @@
+{
+  "title": "AI vyhľadávanie pre lekárne: otváracie hodiny, lekárnik | Nurevo",
+  "description": "AEO pre lekárne a drogérie: zverejnite otváracie hodiny aj výdaj na recept, neprítomnosť lekárnika, pomoc mimo prevádzky a návštevy doma ako text a zhodnú schému.",
+  "h1": "AI vyhľadávanie pre lekárne a drogérie: ako zabezpečiť, aby AI správne čítala vaše otváracie hodiny, prítomnosť lekárnika a návštevy doma",
+  "lead": "Optimalizácia lekárne pre AI vyhľadávanie spočíva v tom, že na webe s presnosťou na deň a minútu odpoviete na otázky, ktoré dnes ľudia kladú AI: máte teraz otvorené, je v službe lekárnik (môžem kúpiť liek vydávaný len lekárnikom), vydáte liek na recept z tejto ambulancie, môžem dostať radu mimo otváracích hodín a doručíte lieky alebo prídete domov. Tie isté fakty potom konzistentne zverejníte v štruktúrovaných údajoch, llms.txt, v profile firmy na Googli a v každom oficiálnom registri lekární, do ktorého hlásite údaje. V Japonsku je týmto registrom národný portál zdravotníckych informácií (Navii), ktorý čerpá z hlásení o funkciách lekárne, ktoré každá lekáreň podáva svojej prefektúre.",
+  "intro": [
+    "Napísané 15. novembra 2026 (JST). V ten deň boli skontrolované stránky Tokia a Saitamy o japonskom systéme hlásenia funkcií lekární a typy schema.org (podľa definícií v schema-dts 2.1.0). Príklady pravidiel pochádzajú z Japonska; overte si pravidlá platné tam, kde pôsobíte.",
+    "Odpovede AI sa menia zo dňa na deň a podľa toho, ako je otázka položená. Tu opísané kroky robia fakty o vašej lekárni pre AI čitateľnými. Nezaručujú, že AI vašu lekáreň spomenie alebo ju niekam zaradí."
+  ],
+  "sections": [
+    {
+      "heading": "Na čo sa ľudia pýtajú AI v súvislosti s lekárňami",
+      "paragraphs": [
+        "Ľudia hľadajú lekáreň cestou od lekára alebo keď niekto ochorie večer či cez víkend. Ich otázky preto obsahujú časy a podmienky: „lekáreň pri [ambulancii] otvorená po 19. hodine“, „kde vyberiem liek na recept v nedeľu“, „drogéria, kde je práve teraz lekárnik“, „lekáreň, ktorá doručí lieky domov môjmu rodičovi“, „lekáreň, kde sa môžem opýtať po anglicky“.",
+        "Aby AI v odpovedi na takúto otázku uviedla vašu lekáreň, musí z textu vyčítať, že podmienku spĺňate. Stránka, kde sú otváracie hodiny len na obrázku, kde sa nerozlišujú otváracie hodiny a čas výdaja na recept a kde sú návštevy doma opísané len ako „informujte sa u nás“, sa pre otázku s podmienkou použiť ťažko.",
+        "Prečítali sme najlepšie hodnotené stránky na túto tému v japončine a angličtine. Väčšina končí pri všeobecných radách: aktualizujte profil firmy na Googli, zbierajte recenzie, pridajte štruktúrované údaje. Takmer žiadna nerieši súlad webu s oficiálnymi hláseniami, ktoré lekáreň už podáva, ako písať otváracie hodiny, keď lekárnik nie je prítomný, konkrétne nastavenie vo WordPress ani ako overiť, či sa objavujete. Tento sprievodca tieto medzery dopĺňa."
+      ]
+    },
+    {
+      "heading": "Fakty, ktoré sa oplatí zverejniť, a ako ich zapísať",
+      "paragraphs": [
+        "Berte tabuľku ako vodidlo. Lekáreň zameraná na výdaj na recept a drogéria so širokou ponukou voľnopredajných prípravkov kladú dôraz inak, no pre obe platí, že o tom, či AI vašu stránku využije, rozhoduje zápis otváracích hodín a informácia o tom, kto je k dispozícii."
+      ],
+      "table": {
+        "head": [
+          "Fakt",
+          "Ako ho zapísať na stránke",
+          "Na čo si dať pozor"
+        ],
+        "rows": [
+          [
+            "Otváracie dni a hodiny",
+            "Hodiny pre každý deň, zatváracie dni, postup počas sviatkov",
+            "Ak sa čas výdaja na recept líši od otváracích hodín, uveďte ho osobitne"
+          ],
+          [
+            "Čas výdaja na recept",
+            "Kedy prijímate recepty a do kedy možno recept naposledy predložiť",
+            "Prepíšte „do 30 minút pred zatvorením“ na konkrétny čas"
+          ],
+          [
+            "Prítomnosť a neprítomnosť lekárnika",
+            "Dni a časy bez lekárnika a čo v tom čase nemožno urobiť",
+            "Jasne uveďte, kedy nie sú dostupné lieky vydávané len lekárnikom a výdaj na recept"
+          ],
+          [
+            "Poradenstvo mimo otváracích hodín",
+            "Či možno po zatvorení dostať radu, číslo a hodiny",
+            "Ak píšete „24 hodín“, uveďte, či ide len o telefonickú radu, alebo aj o výdaj liekov"
+          ],
+          [
+            "Recepty",
+            "Či prijímate recepty z akejkoľvek ambulancie, z ktorých okolitých ambulancií recepty často vydávate, ako recept poslať vopred (fax alebo aplikácia)",
+            "Vyhnite sa formuláciám, ktoré naznačujú, že obsluhujete len jednu ambulanciu"
+          ],
+          [
+            "Návštevy doma",
+            "Obsluhovaná oblasť, koho navštevujete (domácnosti, opatrovateľské zariadenia), ako o návštevu požiadať, kde nájsť ceny",
+            "Nekončite pri „informujte sa“; uveďte oblasť a podmienky"
+          ],
+          [
+            "Certifikácie a označenia",
+            "Oficiálne certifikácie alebo označenia, ktoré máte (v Japonsku: lekáreň miestnej alebo špecializovanej spolupráce, lekáreň podporujúca zdravie)",
+            "Nikdy neuvádzajte také, ktoré nemáte. Uvádzajte názov programu spolu so svojím statusom"
+          ],
+          [
+            "Sortiment",
+            "Kategórie liekov, opatrovateľské potreby, zdravotnícky materiál, potreby pre bábätká, či môžete tovar objednať a ako dlho to trvá",
+            "Zásoby sa menia, preto napíšte „dostupnosť si overte telefonicky“"
+          ],
+          [
+            "Platby, prístup a jazyky",
+            "Prijímané platby, parkovanie, bezbariérový prístup, jazyky, v ktorých poradíte",
+            "Keď sa niečo zmení, aktualizujte web aj profil firmy na Googli naraz"
+          ],
+          [
+            "Dočasné zatvorenia a sviatky",
+            "Dátumy a okolité alebo pohotovostné lekárne, ktoré možno namiesto vás využiť",
+            "Uveďte ich vedľa otváracích hodín, nie len v aktualitách"
+          ]
+        ],
+        "caption": "Zostavené z podmienok, ktoré ľudia pripájajú k otázkam na lekárne, a z bodov, ktoré najlepšie hodnotené stránky vynechali."
+      },
+      "after": [
+        "Udržujte každú hodnotu zhodnú na webe, v štruktúrovaných údajoch, v profile firmy na Googli, v oficiálnom registri aj na tabuli pri dverách. Google odporúča udržiavať profil firmy aktuálny aj kvôli svojim funkciám AI. [Google: Funkcie AI a váš web](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Súlad s oficiálnymi hláseniami lekární (Japonsko: Navii)",
+      "paragraphs": [
+        "V Japonsku ukladá článok 8-2 zákona o liečivách a zdravotníckych pomôckach (Pharmaceuticals and Medical Devices Act) každej lekárni hlásiť svoje funkcie prefektúre (systém informácií o funkciách lekární). Podľa Metropolitnej vlády Tokia sa hlásenia od januára 2024 podávajú online cez G-MIS a od apríla 2024 sa zverejňujú na národnom portáli zdravotníckych informácií Navii. [Metropolitná vláda Tokia (po japonsky)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (po japonsky)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Každoročne sa podáva hlásenie o stave k 31. decembru (v Tokiu zvyčajne medzi začiatkom januára a koncom februára) a niektoré položky treba hlásiť bezodkladne pri každej zmene. Patria k nim otváracie dni, otváracie hodiny, hodiny, keď je k dispozícii poradenstvo mimo otváracích hodín, či lekáreň uvádza status lekárne podporujúcej zdravie, či má certifikáciu lekárne miestnej alebo špecializovanej spolupráce a či existujú hodiny bez prítomnosti lekárnika. Stránka prefektúry Saitama k tomuto zoznamu pridáva prerušenie, obnovenie a ukončenie prevádzky. [Prefektúra Saitama (po japonsky)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "Pre AI vyhľadávanie je to užitočné. To, na čo sa AI v súvislosti s lekárňou pýta (dokedy má otvorené, či je k dispozícii rada mimo otváracích hodín, či je prítomný lekárnik, či má certifikáciu), sa takmer presne kryje s položkami, ktoré lekáreň už hlási. Ak sa nahlásené hodnoty a váš web líšia, AI ani pacient nespoznajú, čo platí. Stanovte si pravidlo, že hlásenie, web, profil firmy na Googli a tabuľu meníte v ten istý deň. Mimo Japonska uplatnite rovnaký princíp na oficiálny register alebo adresár zdravotných služieb, kde je vaša lekáreň uvedená."
+      ]
+    },
+    {
+      "heading": "Ako zapísať „lekárnik nie je prítomný“ a poradenstvo mimo otváracích hodín",
+      "paragraphs": [
+        "Drogéria môže mať otvorené, aj keď v nej nie je lekárnik. Keď sa niekto AI opýta na „obchod, kde teraz kúpim liek vydávaný len lekárnikom“, a vaša stránka uvádza len otváracie hodiny, môže odpovedať kladne v čase, keď ho predať nemôžete.",
+        "Príklad: „Predajňa otvorená 9:00 – 22:00, denne. Recepty po – pi 9:00 – 19:00 (posledný recept 18:45), so 9:00 – 13:00. V utorok 19:00 – 22:00 bez lekárnika: v tom čase nevydávame lieky na recept ani nepredávame lieky vydávané len lekárnikom. Poradenstvo mimo otváracích hodín: registrovaní pacienti môžu volať na 0X-XXXX-XXXX od 22:00 do 9:00.“ Informácie o predajni, výdaji na recept, lekárnikovi a poradenstve mimo otváracích hodín uveďte na jednom mieste (číslo je len ilustračné).",
+        "Lieky vydávané len lekárnikom a to, čo musí zobrazovať internetová lekáreň, upravujú samostatné pravidlá, ktoré sa stále menia. Presné požiadavky si overte v aktuálnych predpisoch a usmerneniach svojho dozorného orgánu."
+      ]
+    },
+    {
+      "heading": "Pravidlá reklamy platia aj pre texty písané pre AI",
+      "paragraphs": [
+        "V Japonsku sa na reklamu liekov vzťahujú ustanovenia o reklame v zákone o liečivách a zdravotníckych pomôckach a štandardy ministerstva zdravotníctva pre primeranú reklamu liekov. [Ministerstvo zdravotníctva, práce a sociálnych vecí (po japonsky)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). FAQ, štruktúrované údaje a blogové príspevky písané tak, aby si ich AI vybrala, podliehajú rovnakým pravidlám. Väčšina krajín má obdobné predpisy."
+      ],
+      "list": [
+        "Nesľubujte účinok ani bezpečnosť („vždy zaberie“, „bez vedľajších účinkov“) a nepoužívajte superlatívy ani porovnania („najlepšia v meste“).",
+        "V článkoch o príznakoch nepíšte „na tento príznak užite tento liek“. Napíšte, kedy ísť k lekárovi a s čím vám môžete v lekárni pomôcť.",
+        "Neuvádzajte lieky na predpis ako tovar s cenami.",
+        "Nevkladajte komentáre zákazníkov do FAQ ani do značiek recenzií ako dôkaz, že niečo funguje."
+      ],
+      "after": [
+        "Ak si nie ste istí, obráťte sa na dozorný orgán alebo si overte usmernenia svojej profesijnej komory. Pohľad ambulancií opisuje [AI vyhľadávanie pre všeobecných a detských lekárov](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Štruktúrované údaje: typ Pharmacy a užitočné vlastnosti",
+      "paragraphs": [
+        "schema.org má typ Pharmacy opísaný ako „A pharmacy or drugstore“ (lekáreň alebo drogéria; overené v definíciách typov schema-dts 2.1.0 dňa 15. novembra 2026). Pharmacy je druhom MedicalBusiness a nesie vlastnosti LocalBusiness aj MedicalOrganization. Drogéria môže namiesto Store použiť Pharmacy."
+      ],
+      "table": {
+        "head": [
+          "Typ alebo vlastnosť",
+          "Význam",
+          "Využitie v lekárni"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Lekáreň alebo drogéria",
+            "Lekárne s výdajom na recept aj drogérie. Priamo obsahuje adresu, telefón a otváracie hodiny"
+          ],
+          [
+            "openingHoursSpecification",
+            "Otváracie hodiny podľa dní",
+            "Otváracie hodiny predajne. Čas výdaja na recept a neprítomnosť lekárnika uveďte v texte stránky"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Hodiny odlišné od bežných",
+            "Dátumy sviatkov a dočasných zatvorení"
+          ],
+          [
+            "knowsLanguage",
+            "Jazyky, ktorými firma komunikuje",
+            "Ak radíte po anglicky, čínsky alebo v iných jazykoch"
+          ],
+          [
+            "paymentAccepted",
+            "Platobné metódy",
+            "Ak uvádzate platby kartou alebo mobilom"
+          ],
+          [
+            "hasOfferCatalog",
+            "Zoznam ponúkaných služieb",
+            "Výdaj na recept, návštevy doma, zdravotné poradenstvo a podobné služby"
+          ]
+        ]
+      },
+      "after": [
+        "Štruktúrované údaje Googlu pre miestne firmy vyžadujú názov a adresu a odporúčajú čo najkonkrétnejší typ. [Google: Štruktúrované údaje miestnej firmy](https://developers.google.com/search/docs/appearance/structured-data/local-business). Fakty bez zjavnej vlastnosti, ako neprítomnosť lekárnika alebo poradenstvo mimo otváracích hodín, je najbezpečnejšie uviesť v texte stránky."
+      ]
+    },
+    {
+      "heading": "Nastavenie na webe lekárne vo WordPress",
+      "list": [
+        "Nainštalujte a aktivujte Nurevo AEO (zadarmo) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO a Slim SEO fungujú ďalej bez zmeny. Od verzie 0.9.1 plugin funguje aj spolu so SEO SIMPLE PACK a VK All in One Expansion Unit bez duplikovania štruktúrovaných údajov.",
+        "V sprievodcovi nastavením zvoľte „Maloobchod“ (nastaví typ Store). Potom v Nastaveniach zmeňte pole „Typ podnikania (typ schema.org)“ na Pharmacy. Pharmacy je jedným z ponúkaných typov podnikania a sprievodca ho radí do maloobchodnej skupiny.",
+        "Skontrolujte názov lekárne, adresu, telefón a popis. Z vašich existujúcich nastavení sa dopĺňajú len prázdne polia; hodnoty, ktoré ste zadali, sa nikdy neprepisujú.",
+        "Do poľa otváracích hodín zapíšte len dni a časy predajne, napríklad „Mon-Sat 9:00-22:00 / Sun 10:00-20:00“. Ak pridáte sviatky alebo poznámku o „poslednom recepte“, plugin radšej zverejní váš text tak, ako je, než by riskoval nesprávne hodiny, preto čas výdaja na recept, neprítomnosť lekárnika a pravidlá pre sviatky uveďte v texte stránky.",
+        "V Nastaveniach pridajte ponúkané služby (výdaj na recept, návštevy doma, zdravotné poradenstvo, voľnopredajné lieky) a časté otázky (zaslanie receptu vopred, poradenstvo mimo otváracích hodín, ako požiadať o návštevu doma) pridajte ako FAQ. Položky FAQ sa pridajú do FAQPage stránky, na ktorú vložíte blok Nurevo FAQ (alebo shortcode [nurevo_faq]).",
+        "Spustite kontrolu na obrazovke Skóre AEO a použite opravy jedným kliknutím. Ako váš web vyzerá zvonku, zistíte pomocou [bezplatnej kontroly čitateľnosti pre AI](/check)."
+      ],
+      "after": [
+        "So SEO pluginom Nurevo AEO nevypisuje druhú sadu štruktúrovaných údajov. Do grafu, ktorý už váš SEO plugin zverejňuje, doplní len chýbajúcu adresu, telefón, otváracie hodiny a konkrétnejší typ. Pozri [Ako pridať údaje miestnej firmy do Yoast, Rank Math a AIOSEO](/guide/local-business-schema-seo-plugins/). Ak máte viac pobočiek, dajte každej vlastnú stránku s jej otváracími hodinami, časmi lekárnika a oblasťou návštev doma."
+      ]
+    },
+    {
+      "heading": "Kontrolný zoznam pred zverejnením",
+      "list": [
+        "Otváracie hodiny sú uvedené ako text, nielen na obrázku, vrátane zatváracích dní a postupu počas sviatkov.",
+        "Čas výdaja na recept a posledný čas na predloženie receptu sú uvedené oddelene od otváracích hodín.",
+        "Ak existujú hodiny bez lekárnika, sú uvedené dni, časy a čo v tom čase nemožno urobiť.",
+        "Je uvedené, či je k dispozícii poradenstvo mimo otváracích hodín, číslo a hodiny.",
+        "Je uvedené, ako recept predložiť alebo poslať vopred, a pri návštevách doma oblasť, komu sú určené a ako o ne požiadať.",
+        "Certifikácie a označenia sú uvedené len podľa skutočnosti.",
+        "Názov, adresa, telefón a otváracie hodiny sa zhodujú na webe, v štruktúrovaných údajoch, v profile firmy na Googli a v oficiálnom registri lekární.",
+        "Žiadne sľuby účinku, superlatívy ani porovnania a žiadne komentáre zákazníkov použité ako dôkaz vo FAQ či štruktúrovaných údajoch.",
+        "llms.txt uvádza stránky s otváracími hodinami, prístupom, receptami a návštevami doma. [Čo je llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Overte, či vás AI spomína",
+      "paragraphs": [
+        "Keď budú fakty na mieste, spíšte 5 až 10 otázok, ktoré by ľudia mohli položiť, kombinujúcich oblasť, dennú dobu a podmienku (recept, lekárnik, návšteva doma, jazyk), a položte ich ChatGPT a Perplexity. Napríklad: „Ktorá lekáreň pri [stanici] vydá liek na recept v pracovný deň o 20. hodine?“ alebo „Ktoré lekárne v [meste] robia návštevy doma?“ Zaznamenajte, či bola vaša lekáreň uvedená alebo odkázaná a či sú otváracie hodiny a podmienky správne. Odpovede AI sa medzi dopytmi líšia, preto rovnaké otázky v čase opakujte. Postup opisuje [Ako merať viditeľnosť v AI](/guide/measure-ai-visibility/).",
+        "Ak AI uvádza nesprávne otváracie hodiny, zistite, odkiaľ hodnota pochádza. Ak odpoveď uvádza zdroj, skontrolujte túto stránku (váš web, profil firmy na Googli, oficiálny register, mapový alebo recenzný web) a opravte tú, ktorá nesúhlasí.",
+        "S Nurevo AEO aj plány Free a Standard raz mesačne položia Perplexity tri otázky zostavené z vášho typu podnikania a oblasti (nikdy nie z názvu vašej lekárne) a zaznamenajú, či odpovede uviedli vašu lekáreň alebo citovali váš web. V pláne Pro (od $99/mesiac) ukazuje meranie viditeľnosti v AI vo verzii beta, ako často sa vaša lekáreň objavuje v odpovediach AI, s porovnaním s konkurenciou a trendmi (aktuálne merané na Perplexity). Oboje pracuje so vzorkou odpovedí, nie so všetkými odpoveďami."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Kde by mala lekáreň s AI vyhľadávaním začať?",
+      "a": "Zapíšte ako text zvlášť otváracie hodiny a čas výdaja na recept a doplňte, kedy nie je prítomný lekárnik a či je k dispozícii poradenstvo mimo otváracích hodín. Potom tieto hodnoty zosúlaďte so štruktúrovanými údajmi, profilom firmy na Googli a oficiálnym registrom lekární."
+    },
+    {
+      "q": "Má drogéria v štruktúrovaných údajoch použiť Store, alebo Pharmacy?",
+      "a": "Ak predávate lieky a máte lekárnika, lepšie sedí Pharmacy. schema.org opisuje Pharmacy ako „A pharmacy or drugstore“ (lekáreň alebo drogéria) a ako druh LocalBusiness priamo obsahuje adresu a otváracie hodiny. Dôležitejšie ako typ je, aby hodnoty zodpovedali vašej stránke."
+    },
+    {
+      "q": "Čo sa stane, keď sa oficiálny register a náš web líšia?",
+      "a": "AI ani pacienti nespoznajú, čomu veriť. V Japonsku sú otváracie dni a hodiny, poradenstvo mimo otváracích hodín a neprítomnosť lekárnika položky, ktoré musí lekáreň pri zmene bezodkladne nahlásiť. Aktualizácia hlásenia, webu a profilu firmy na Googli v ten istý deň nesúladu zabráni."
+    },
+    {
+      "q": "Nie je lepšie hodiny bez lekárnika vôbec nespomínať?",
+      "a": "Bezpečnejšie je ich uviesť. Inak môže AI tvrdiť, že lieky vydávané len lekárnikom možno kúpiť v čase, keď to nejde, a ľudia prídu zbytočne. V Japonsku je to, či existujú hodiny bez lekárnika, tiež hlásenou položkou."
+    },
+    {
+      "q": "Môžeme písať články o príznakoch a liekoch na ne, aby si ich AI vybrala?",
+      "a": "Reklama liekov je regulovaná (v Japonsku zákonom o liečivách a zdravotníckych pomôckach a reklamnými štandardmi ministerstva zdravotníctva). Nesľubujte účinok a nepoužívajte superlatívy; zamerajte sa na to, kedy ísť k lekárovi a s čím môže pomôcť lekáreň. Ak si nie ste istí, obráťte sa na dozorný orgán."
+    },
+    {
+      "q": "Je Nurevo AEO zadarmo?",
+      "a": "Áno. Štruktúrované údaje pre typ podnikania, adresu, otváracie hodiny, služby a FAQ a tiež llms.txt, pravidlá pre AI crawlery a Skóre AEO sú v bezplatnom pláne. Platené plány pridávajú stále aktuálnu sadu pravidiel (Standard, $20/mesiac) a meranie viditeľnosti v AI vo verzii beta (Pro, od $99/mesiac). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Zaručí to, že sa naša lekáreň objaví v ChatGPT?",
+      "a": "Nie. Odpovede AI sa menia a žiadny nástroj ani technika nemôže zaručiť zmienku ani pozíciu. Môžete však zabezpečiť, aby vaše fakty boli pre AI ľahko čitateľné, a priebežne kontrolovať, či sa objavujete."
+    }
+  ],
+  "relatedHeading": "Súvisiaci sprievodcovia",
+  "cta": {
+    "heading": "Najprv zistite, ako AI číta web vašej lekárne",
+    "body": "Bezplatná kontrola ukáže stav vašich štruktúrovaných údajov, llms.txt a prístupu AI crawlerov, bez registrácie. Vo WordPress Nurevo AEO medzery zadarmo doplní.",
+    "label": "Spustiť bezplatnú kontrolu čitateľnosti pre AI",
+    "href": "/check",
+    "secondary": {
+      "label": "Stiahnuť Nurevo AEO z WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT je ochranná známka spoločnosti OpenAI, Perplexity spoločnosti Perplexity AI a Google spoločnosti Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK a VK All in One Expansion Unit sú ochranné známky príslušných vlastníkov. Nurevo s nimi nie je prepojené. Tento článok nie je právne poradenstvo."
+}

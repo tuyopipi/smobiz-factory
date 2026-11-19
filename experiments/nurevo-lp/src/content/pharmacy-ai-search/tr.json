@@ -1,0 +1,246 @@
+{
+  "title": "Eczaneler için Yapay Zekâ Araması: Saatler, Eczacı | Nurevo",
+  "description": "Eczaneler için AEO: mağaza ve reçete saatlerini, eczacının olmadığı saatleri, mesai dışı danışmayı ve evde hizmeti metin ve uyumlu şema olarak yayımlayın.",
+  "h1": "Eczaneler ve drogeriler için yapay zekâ araması: yapay zekânın çalışma saatlerinizi, eczacı bulunurluğunu ve evde hizmetlerinizi doğru okumasını sağlamak",
+  "lead": "Bir eczane için yapay zekâ araması optimizasyonu, insanların artık yapay zekâya sorduğu sorulara sayfada gün ve dakika hassasiyetinde yanıt vermekten ibarettir: şu an açık mısınız, görevde eczacı var mı (yalnızca eczacı tarafından verilebilen ilaçları alabilir miyim), bu klinikten gelen reçeteyi karşılıyor musunuz, mesai dışında danışabilir miyim, eve ilaç getiriyor ya da ev ziyareti yapıyor musunuz. Ardından aynı bilgileri yapılandırılmış veride, llms.txt dosyasında, Google İşletme Profilinizde ve bildirim yaptığınız her resmî eczane rehberinde tutarlı biçimde yayımlarsınız. Japonya'da bu rehber, her eczanenin kendi valiliğine sunduğu eczane işlev bildirimleriyle beslenen ulusal tıbbi bilgi sitesi Navii'dir.",
+  "intro": [
+    "15 Kasım 2026'da (JST) yazılmıştır. Japonya'nın eczane işlev bildirim sistemine ilişkin Tokyo ve Saitama sayfaları ile schema.org türleri (schema-dts 2.1.0'da tanımlandığı biçimiyle) aynı gün kontrol edilmiştir. Kural örnekleri Japonya'dandır; faaliyet gösterdiğiniz yerdeki kuralları kontrol edin.",
+    "Yapay zekâ yanıtları günden güne ve sorunun nasıl sorulduğuna göre değişir. Buradaki adımlar eczanenize ait bilgileri yapay zekâ için okunabilir hâle getirir. Bir yapay zekânın eczanenizden bahsedeceğini ya da onu herhangi bir sıraya koyacağını garanti etmez."
+  ],
+  "sections": [
+    {
+      "heading": "İnsanlar eczaneler hakkında yapay zekâya neler soruyor",
+      "paragraphs": [
+        "İnsanlar eczaneyi doktordan dönerken ya da biri akşam veya hafta sonu hastalandığında arar. Bu yüzden sorular saat ve koşul içerir: \"[klinik] yakınında akşam 7'den sonra açık eczane\", \"pazar günü reçetemi nerede yaptırabilirim\", \"şu anda eczacısı görevde olan bir eczane\", \"annemin babamın evine ilaç getiren eczane\", \"İngilizce soru sorabileceğim eczane\".",
+        "Bir yapay zekânın bu sorulardan birine yanıt verirken eczanenizin adını anabilmesi için, koşulu karşıladığınızı metin olarak okuyabilmesi gerekir. Çalışma saatleri yalnızca görselde olan, mağaza saatleriyle reçete karşılama saatlerini ayırmayan ya da ev ziyaretlerini yalnızca \"lütfen bize sorun\" diye anlatan bir sayfa, koşullu bir soru için kullanılmaya elverişli değildir.",
+        "Bu konuda Japonca ve İngilizce üst sıralardaki sayfaları okuduk. Çoğu genel tavsiyelerde kalıyor: Google İşletme Profilinizi güncelleyin, yorum toplayın, yapılandırılmış veri ekleyin. Neredeyse hiçbiri sitenizi bir eczanenin zaten sunduğu resmî bildirimlerle eşleştirmeyi, eczacının bulunmadığı saatlerin nasıl yazılacağını, somut bir WordPress kurulumunu ya da görünüp görünmediğinizi nasıl kontrol edeceğinizi ele almıyor. Bu rehber bu boşlukları dolduruyor."
+      ]
+    },
+    {
+      "heading": "Yayımlanmaya değer bilgiler ve nasıl yazılacakları",
+      "paragraphs": [
+        "Tabloyu kılavuz olarak kullanın. Reçete ağırlıklı bir eczane ile geniş bir reçetesiz ürün yelpazesine sahip bir drogeri bunlara farklı ağırlık verir; ama ikisi için de saatleri ve kimin hizmet verdiğini nasıl yazdığınız, bir yapay zekânın sayfanızı kullanıp kullanamayacağını belirler."
+      ],
+      "table": {
+        "head": [
+          "Bilgi",
+          "Sayfaya nasıl yazılır",
+          "Dikkat edilecek nokta"
+        ],
+        "rows": [
+          [
+            "Açık günler ve saatler",
+            "Her gün için saatler, kapalı günler, resmî tatillerde ne yapıldığı",
+            "Reçete karşılama saatleri mağaza saatlerinden farklıysa ayrı ayrı yazın"
+          ],
+          [
+            "Reçete karşılama saatleri",
+            "Reçeteleri ne zaman kabul ettiğiniz ve reçete teslimi için son saat",
+            "\"Kapanıştan 30 dakika öncesine kadar\" ifadesini saate çevirin"
+          ],
+          [
+            "Eczacının bulunduğu ya da bulunmadığı zamanlar",
+            "Eczacının olmadığı gün ve saatler ve o sırada yapılamayanlar",
+            "Yalnızca eczacının verebildiği ilaçların ve reçete karşılamanın ne zaman mümkün olmadığını açıkça belirtin"
+          ],
+          [
+            "Mesai dışı danışma",
+            "Kapanıştan sonra danışılabilip danışılamayacağı, numara ve saatler",
+            "\"24 saat\" diyorsanız bunun yalnızca telefonla danışma mı yoksa reçete karşılama da mı olduğunu belirtin"
+          ],
+          [
+            "Reçeteler",
+            "Her klinikten reçete kabul edip etmediğiniz, sık reçete karşıladığınız yakın klinikler, reçetenin önceden nasıl gönderileceği (faks ya da uygulama)",
+            "Yalnızca tek bir kliniğe hizmet verdiğiniz izlenimi uyandıran ifadelerden kaçının"
+          ],
+          [
+            "Ev ziyaretleri",
+            "Hizmet bölgesi, kimleri ziyaret ettiğiniz (evler, bakım kurumları), nasıl talep edileceği, ücretlerin nerede bulunacağı",
+            "\"Lütfen sorun\" ile yetinmeyin; bölgeyi ve koşulları verin"
+          ],
+          [
+            "Sertifikalar ve unvanlar",
+            "Sahip olduğunuz resmî sertifikalar ya da unvanlar (Japonya'da: toplum iş birliği ya da uzman iş birliği eczanesi, sağlık destek eczanesi)",
+            "Sahip olmadığınız bir unvanı asla iddia etmeyin. Program adını ve durumunuzu birlikte belirtin"
+          ],
+          [
+            "Ürün yelpazesi",
+            "İlaç kategorileri, bakım ürünleri, tıbbi malzemeler, bebek ürünleri, sipariş verip veremeyeceğiniz ve ne kadar sürdüğü",
+            "Stok değişir; bu yüzden \"stok için arayın\" yazın"
+          ],
+          [
+            "Ödeme, erişim ve diller",
+            "Kabul edilen ödeme yöntemleri, otopark, tekerlekli sandalye erişimi, danışmanlık verebildiğiniz diller",
+            "Biri değiştiğinde siteyi ve Google İşletme Profilinizi birlikte güncelleyin"
+          ],
+          [
+            "Geçici kapanışlar ve tatiller",
+            "Tarihler ve bunun yerine gidilebilecek yakın ya da nöbetçi eczaneler",
+            "Bunları yalnızca bir duyuruya değil, çalışma saatlerinin yanına koyun"
+          ]
+        ],
+        "caption": "İnsanların eczane sorularına eklediği koşullardan ve üst sıralardaki sayfaların atladığı maddelerden derlenmiştir."
+      },
+      "after": [
+        "Her değeri sayfada, yapılandırılmış veride, Google İşletme Profilinizde, resmî rehberde ve kapıdaki tabelada aynı tutun. Google, yapay zekâ özellikleri için de İşletme Profilinizi güncel tutmanızı önerir. [Google: Yapay zekâ özellikleri ve web siteniz](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Resmî eczane bildirimleriyle eşleştirin (Japonya: Navii)",
+      "paragraphs": [
+        "Japonya'da İlaç ve Tıbbi Cihazlar Kanunu'nun (Pharmaceuticals and Medical Devices Act) 8-2. maddesi, her eczanenin işlevlerini valiliğine bildirmesini zorunlu kılar (eczane işlev bilgi sistemi). Tokyo Büyükşehir Yönetimi'ne göre bildirimler Ocak 2024'ten beri G-MIS üzerinden çevrim içi sunulmakta ve Nisan 2024'ten beri ulusal tıbbi bilgi sitesi Navii'de yayımlanmaktadır. [Tokyo Büyükşehir Yönetimi (Japonca)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (Japonca)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "31 Aralık itibarıyla durumu gösteren yıllık bir bildirim vardır (Tokyo'da genellikle ocak başı ile şubat sonu arasında sunulur) ve bazı maddeler her değiştiğinde derhâl bildirilmelidir. Bu maddeler arasında açık günler, çalışma saatleri, mesai dışında danışmanlığın mümkün olduğu saatler, eczanenin sağlık destek eczanesi statüsünü gösterip göstermediği, toplum iş birliği ya da uzman iş birliği sertifikasına sahip olup olmadığı ve eczacının bulunmadığı saatlerin olup olmadığı yer alır. Saitama Valiliği'nin sayfası bu listeye faaliyetin askıya alınmasını, yeniden başlamasını ve kapanmayı ekler. [Saitama Valiliği (Japonca)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "Bu, yapay zekâ araması için işe yarar. Yapay zekâya bir eczane hakkında sorulanlar (ne zamana kadar açık, kapanıştan sonra danışılabiliyor mu, eczacı orada mı, sertifikalı mı) neredeyse tam olarak bir eczanenin zaten bildirdiği maddelerdir. Bildirilen değerler ile web siteniz uyuşmazsa ne yapay zekâ ne de hasta hangisinin doğru olduğunu anlayabilir. Bildirimi, web sitesini, Google İşletme Profilinizi ve tabelayı aynı gün değiştirmeyi kural hâline getirin. Japonya dışında aynı fikri eczanenizin listelendiği resmî sicile ya da sağlık hizmetleri rehberine uygulayın."
+      ]
+    },
+    {
+      "heading": "\"Görevde eczacı yok\" durumu ve mesai dışı danışma nasıl yazılır",
+      "paragraphs": [
+        "Bir drogeri görevde eczacı yokken de açık olabilir. Bir yapay zekâya \"şu anda yalnızca eczacının verebildiği bir ilacı alabileceğim dükkân\" sorulursa ve sayfanızda yalnızca mağaza saatleri yazıyorsa, bu ilacı satamadığınız bir saatte evet diyebilir.",
+        "Bir örnek: \"Mağaza her gün 9:00-22:00 açık. Reçeteler Pzt-Cum 9:00-19:00 (son reçete 18:45), Cmt 9:00-13:00. Salı günleri 19:00-22:00 arası eczacı yok: bu saatlerde reçete karşılayamaz ve yalnızca eczacının verebildiği ilaçları satamayız. Mesai dışı danışma: kayıtlı hastalar 22:00-9:00 arası 0X-XXXX-XXXX numarasını arayabilir.\" Mağaza, reçete, eczacı ve mesai dışı bilgilerini tek bir yerde toplayın (numara yer tutucudur).",
+        "Yalnızca eczacının verebildiği ilaçlar ve bir çevrim içi eczanenin göstermesi gerekenler ayrı kurallara tabidir ve bu kurallar sürekli değişir. Tam maddeler için yürürlükteki mevzuatı ve denetim kurumunuzun rehberini kontrol edin."
+      ]
+    },
+    {
+      "heading": "Reklam kuralları yapay zekâ için yazılan metinlere de uygulanır",
+      "paragraphs": [
+        "Japonya'da ilaç reklamları, İlaç ve Tıbbi Cihazlar Kanunu'nun reklam hükümlerine ve Sağlık Bakanlığı'nın ilaçların uygun reklamına ilişkin standartlarına tabidir. [Sağlık, Çalışma ve Refah Bakanlığı (Japonca)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). Yapay zekâ tarafından seçilmek için yazılan SSS, yapılandırılmış veri ve blog yazıları da aynı şekilde kapsam içindedir. Çoğu ülkede benzer kurallar vardır."
+      ],
+      "list": [
+        "Sonuç ya da güvenlik vaat etmeyin (\"her zaman işe yarar\", \"yan etkisi yok\") ve üstünlük ifadeleri ya da karşılaştırmalar kullanmayın (\"şehrin en iyisi\").",
+        "Belirti yazılarında \"bu belirti için bu ilacı alın\" demeyin. Ne zaman doktora gidilmesi gerektiğini ve eczanede neye yardımcı olabileceğinizi söyleyin.",
+        "Reçeteli ilaçları fiyatlı ürünler gibi listelemeyin.",
+        "Müşteri yorumlarını bir şeyin işe yaradığına kanıt olarak SSS ya da yorum işaretlemesine koymayın."
+      ],
+      "after": [
+        "Emin değilseniz denetim kurumunuza danışın ya da meslek kuruluşunuzun rehberine bakın. Klinik tarafı için [Aile hekimliği ve çocuk klinikleri için yapay zekâ araması](/guide/medical-clinic-ai-search/) rehberine bakın."
+      ]
+    },
+    {
+      "heading": "Yapılandırılmış veri: Pharmacy türü ve işe yarar özellikler",
+      "paragraphs": [
+        "schema.org'da \"A pharmacy or drugstore\" (eczane ya da drogeri) olarak tanımlanan bir Pharmacy türü vardır (15 Kasım 2026'da schema-dts 2.1.0 tür tanımlarında kontrol edilmiştir). Pharmacy, bir MedicalBusiness türüdür ve hem LocalBusiness hem de MedicalOrganization özelliklerini taşır. Bir drogeri Store yerine Pharmacy kullanabilir."
+      ],
+      "table": {
+        "head": [
+          "Tür ya da özellik",
+          "Anlamı",
+          "Eczanede kullanımı"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Eczane ya da drogeri",
+            "Hem reçete karşılayan eczaneler hem drogeriler. Adresi, telefonu ve saatleri doğrudan içerir"
+          ],
+          [
+            "openingHoursSpecification",
+            "Günlere göre çalışma saatleri",
+            "Mağaza saatleri. Reçete saatlerini ve eczacının bulunmadığı zamanları sayfa metnine yazın"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Normalden farklı saatler",
+            "Tatil ve geçici kapanış tarihleri"
+          ],
+          [
+            "knowsLanguage",
+            "İşletmenin kullanabildiği diller",
+            "İngilizce, Çince ya da başka dillerde danışmanlık verebiliyorsanız"
+          ],
+          [
+            "paymentAccepted",
+            "Ödeme yöntemleri",
+            "Kart ya da mobil ödemeleri listeliyorsanız"
+          ],
+          [
+            "hasOfferCatalog",
+            "Sunulan hizmetlerin listesi",
+            "Reçete karşılama, ev ziyaretleri, sağlık danışmanlığı ve benzeri hizmetler"
+          ]
+        ]
+      },
+      "after": [
+        "Google'ın yerel işletme yapılandırılmış verisi ad ve adres gerektirir ve kullanabileceğiniz en spesifik türü önerir. [Google: Yerel işletme yapılandırılmış verisi](https://developers.google.com/search/docs/appearance/structured-data/local-business). Eczacının bulunmadığı zamanlar ya da mesai dışı danışma gibi belirgin bir özelliği olmayan bilgileri sayfa metnine yazmak en güvenlisidir."
+      ]
+    },
+    {
+      "heading": "WordPress eczane sitesinde kurulum",
+      "list": [
+        "Nurevo AEO'yu (ücretsiz) [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) üzerinden kurup etkinleştirin. Yoast SEO, Rank Math, All in One SEO ve Slim SEO olduğu gibi çalışmaya devam eder. 0.9.1 sürümünden itibaren SEO SIMPLE PACK ve VK All in One Expansion Unit ile de yapılandırılmış veriyi çoğaltmadan birlikte çalışır.",
+        "Kurulum sihirbazında \"Perakende mağaza\"yı seçin (bu, türü Store olarak ayarlar). Ardından Ayarlar'daki \"İşletme türü (schema.org türü)\" alanını Pharmacy olarak değiştirin. Pharmacy listelenen işletme türlerinden biridir ve sihirbaz onu perakende ailesinin bir parçası olarak ele alır.",
+        "Eczanenin adını, adresini, telefonunu ve açıklamasını kontrol edin. Mevcut ayarlarınızdan yalnızca boş alanlar doldurulur; girdiğiniz değerlerin üzerine asla yazılmaz.",
+        "Çalışma saatleri alanına yalnızca mağazanın gün ve saatlerini yazın; örneğin \"Mon-Sat 9:00-22:00 / Sun 10:00-20:00\". Tatilleri ya da \"son reçete\" notunu eklerseniz eklenti, yanlış saat yayımlama riskine girmek yerine metninizi yazıldığı gibi yayımlar; bu yüzden reçete saatlerini, eczacının bulunmadığı zamanları ve tatil kurallarını sayfa metnine koyun.",
+        "Ayarlar'da sunduğunuz hizmetleri (reçete karşılama, ev ziyaretleri, sağlık danışmanlığı, reçetesiz ilaçlar) ekleyin ve sık sorulan soruları (reçeteyi önceden gönderme, mesai dışı danışma, ev ziyareti talebi) SSS olarak ekleyin. SSS girdileri, Nurevo FAQ bloğunu (ya da [nurevo_faq] kısa kodunu) yerleştirdiğiniz sayfanın FAQPage'ine eklenir.",
+        "AEO puanı ekranında bir kontrol çalıştırın ve tek tıkla düzeltmeleri uygulayın. Sitenizin dışarıdan nasıl göründüğünü görmek için [ücretsiz yapay zekâ okunabilirlik kontrolünü](/check) kullanın."
+      ],
+      "after": [
+        "Bir SEO eklentisiyle birlikte kullanıldığında Nurevo AEO ikinci bir yapılandırılmış veri seti üretmez. SEO eklentinizin zaten yayımladığı grafiğe yalnızca eksik adresi, telefonu, çalışma saatlerini ve daha spesifik türü ekler. Bkz. [Yoast, Rank Math ve AIOSEO'ya yerel işletme bilgileri eklemek](/guide/local-business-schema-seo-plugins/). Birden fazla şubeniz varsa her şubeye kendi saatleri, eczacı saatleri ve ev ziyareti bölgesiyle ayrı bir sayfa verin."
+      ]
+    },
+    {
+      "heading": "Yayımlamadan önce kontrol listesi",
+      "list": [
+        "Çalışma saatleri yalnızca görselde değil, metin olarak yazılmış; kapalı günler ve tatillerde ne yapıldığı belirtilmiş.",
+        "Reçete karşılama saatleri ve reçete teslimi için son saat, mağaza saatlerinden ayrı olarak listelenmiş.",
+        "Eczacının olmadığı saatler varsa günler, saatler ve o sırada yapılamayanlar belirtilmiş.",
+        "Mesai dışı danışmanın mümkün olup olmadığı, numara ve saatler belirtilmiş.",
+        "Reçetenin nasıl teslim edileceği ya da önceden gönderileceği; ev ziyaretlerinin bölgesi, kimlere yapıldığı ve talep yöntemi belirtilmiş.",
+        "Sertifikalar ve unvanlar yalnızca gerçekte olduğu gibi belirtilmiş.",
+        "Ad, adres, telefon ve saatler sitede, yapılandırılmış veride, Google İşletme Profilinde ve resmî eczane rehberinde birbiriyle uyumlu.",
+        "Sonuç vaadi, üstünlük ifadesi ya da karşılaştırma yok; SSS'de veya yapılandırılmış veride kanıt olarak müşteri yorumu kullanılmamış.",
+        "llms.txt dosyası çalışma saatleri, ulaşım, reçete ve ev ziyareti sayfalarınızı listeliyor. [llms.txt nedir](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Yapay zekânın sizden bahsedip bahsetmediğini kontrol edin",
+      "paragraphs": [
+        "Bilgiler yerine oturduktan sonra bölge, günün saati ve bir koşulu (reçete, eczacı, ev ziyareti, dil) birleştiren, insanların sorabileceği 5 ila 10 soru yazın ve bunları ChatGPT ile Perplexity'ye sorun. Örneğin: \"[istasyon] yakınında hafta içi akşam 8'de reçete karşılayabilecek eczane hangisi?\" ya da \"[şehir]'de hangi eczaneler ev ziyareti yapıyor?\" Eczanenizin adının geçip geçmediğini ya da bağlantı verilip verilmediğini ve saatlerle koşulların doğru olup olmadığını kaydedin. Yapay zekâ yanıtları her denemede değişir; bu yüzden aynı soruları zaman içinde tekrarlayın. Yöntem için [Yapay zekâ görünürlüğü nasıl ölçülür](/guide/measure-ai-visibility/) rehberine bakın.",
+        "Bir yapay zekâ yanlış saatler gösterirse değerin nereden geldiğini bulun. Yanıt bir kaynak gösteriyorsa o sayfayı (siteniz, Google İşletme Profili, resmî rehber, bir harita ya da yorum sitesi) kontrol edin ve uyuşmayanı düzeltin.",
+        "Nurevo AEO ile Free ve Standard planlar bile ayda bir kez Perplexity'ye işletme türünüz ve bölgenizden oluşturulan (asla eczanenizin adından değil) üç soru sorar ve yanıtlarda eczanenizin adının geçip geçmediğini ya da sitenizin kaynak gösterilip gösterilmediğini kaydeder. Pro planda (aylık $99'dan başlayan), beta aşamasındaki yapay zekâ görünürlüğü ölçümü, eczanenizin yapay zekâ yanıtlarında ne sıklıkla göründüğünü rakip karşılaştırması ve eğilimlerle gösterir (şu anda Perplexity üzerinde ölçülür). Her ikisi de tüm yanıtlara değil, bir yanıt örneklemine bakar."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Bir eczane yapay zekâ aramasına nereden başlamalı?",
+      "a": "Mağaza saatlerini ve reçete karşılama saatlerini metin olarak ayrı ayrı yazın; eczacının bulunmadığı zamanları ve mesai dışı danışmanın mümkün olup olmadığını ekleyin. Ardından bu değerleri yapılandırılmış verinizle, Google İşletme Profilinizle ve resmî eczane rehberiyle uyumlu hâle getirin."
+    },
+    {
+      "q": "Bir drogeri yapılandırılmış veride Store mu yoksa Pharmacy mi kullanmalı?",
+      "a": "İlaç satıyor ve eczacınız varsa Pharmacy daha uygundur. schema.org, Pharmacy'yi \"A pharmacy or drugstore\" (eczane ya da drogeri) olarak tanımlar ve bir LocalBusiness türü olarak adresi ve saatleri doğrudan içerir. Değerlerin sayfanızla uyuşması türden daha önemlidir."
+    },
+    {
+      "q": "Resmî rehber ile web sitemiz uyuşmazsa ne olur?",
+      "a": "Yapay zekâ da hastalar da hangisine güveneceğini bilemez. Japonya'da açık günler ve saatler, mesai dışı danışma ve eczacının bulunmadığı zamanlar, bir eczanenin değiştiğinde derhâl bildirmesi gereken maddelerdir. Bildirimi, siteyi ve Google İşletme Profilinizi aynı gün güncellemek uyumsuzluğu önler."
+    },
+    {
+      "q": "Eczacının olmadığı saatlerden hiç bahsetmemek daha iyi değil mi?",
+      "a": "Bahsetmek daha güvenlidir. Aksi hâlde bir yapay zekâ, yalnızca eczacının verebildiği ilaçların alınamayacağı bir saatte alınabileceğini söyleyebilir ve insanlar gelip hayal kırıklığına uğrar. Japonya'da eczacısız saatlerin olup olmadığı da bildirilen bir maddedir."
+    },
+    {
+      "q": "Yapay zekâ tarafından seçilmek için belirtiler ve onları tedavi eden ilaçlar hakkında yazı yazabilir miyiz?",
+      "a": "İlaç reklamları düzenlemeye tabidir (Japonya'da İlaç ve Tıbbi Cihazlar Kanunu ve Sağlık Bakanlığı'nın reklam standartları ile). Sonuç vaat etmekten ve üstünlük ifadelerinden kaçının; ne zaman doktora gidilmesi gerektiğine ve eczanenin neye yardımcı olabileceğine odaklanın. Emin değilseniz denetim kurumunuza danışın."
+    },
+    {
+      "q": "Nurevo AEO ücretsiz mi?",
+      "a": "Evet. İşletme türünüz, adresiniz, saatleriniz, hizmetleriniz ve SSS için yapılandırılmış veri ile llms.txt, yapay zekâ tarayıcı kuralları ve AEO puanı ücretsiz plandadır. Ücretli planlar her zaman güncel bir kural seti (Standard, aylık $20) ve beta aşamasında yapay zekâ görünürlüğü ölçümü (Pro, aylık $99'dan başlayan) ekler. [WordPress.org'da Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Bu, eczanemizin ChatGPT'de görüneceğini garanti eder mi?",
+      "a": "Hayır. Yapay zekâ yanıtları değişir ve hiçbir araç ya da teknik bir bahsedilmeyi ya da sırayı garanti edemez. Yapabileceğiniz şey, bilgilerinizi yapay zekânın kolayca okuyabileceği hâle getirmek ve görünüp görünmediğinizi düzenli olarak kontrol etmektir."
+    }
+  ],
+  "relatedHeading": "İlgili rehberler",
+  "cta": {
+    "heading": "Önce yapay zekânın eczanenizin web sitesini nasıl okuduğunu görün",
+    "body": "Ücretsiz kontrol; yapılandırılmış verinizin, llms.txt dosyanızın ve yapay zekâ tarayıcı erişiminin durumunu üyelik gerektirmeden gösterir. WordPress'te Nurevo AEO eksikleri ücretsiz tamamlar.",
+    "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü çalıştırın",
+    "href": "/check",
+    "secondary": {
+      "label": "Nurevo AEO'yu WordPress.org'dan edinin",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT, OpenAI'nin; Perplexity, Perplexity AI'ın; Google ise Google LLC'nin ticari markalarıdır. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK ve VK All in One Expansion Unit ilgili sahiplerinin ticari markalarıdır. Nurevo bunlarla bağlantılı değildir. Bu makale hukuki tavsiye değildir."
+}

@@ -1,0 +1,246 @@
+{
+  "title": "Pencarian AI untuk Apotek: Jam Buka, Apoteker Jaga | Nurevo",
+  "description": "AEO untuk apotek dan toko obat: publikasikan jam toko dan jam layanan resep, jam tanpa apoteker, konsultasi di luar jam buka, dan layanan ke rumah dalam teks dan schema.",
+  "h1": "Pencarian AI untuk apotek dan toko obat: cara agar AI membaca jam buka, ketersediaan apoteker, dan layanan ke rumah Anda dengan benar",
+  "lead": "Optimasi pencarian AI untuk apotek pada dasarnya adalah menjawab di halaman, hingga ke hari dan menitnya, pertanyaan yang kini diajukan orang kepada AI: apakah sedang buka, apakah ada apoteker yang bertugas (bisakah membeli obat yang memerlukan apoteker), apakah menerima resep dari klinik ini, apakah bisa berkonsultasi di luar jam buka, dan apakah melayani antar obat atau kunjungan ke rumah. Kemudian publikasikan fakta yang sama secara konsisten di data terstruktur, llms.txt, Profil Bisnis Google, dan direktori apotek resmi mana pun tempat Anda melapor. Di Jepang, direktori itu adalah situs informasi medis nasional (Navii), yang diisi dari laporan fungsi apotek yang diserahkan setiap apotek ke prefekturnya.",
+  "intro": [
+    "Ditulis 15 November 2026 (JST). Halaman Tokyo dan Saitama tentang sistem pelaporan fungsi apotek di Jepang serta tipe schema.org (sebagaimana didefinisikan dalam schema-dts 2.1.0) diperiksa pada hari itu. Contoh aturan berasal dari Jepang; periksa aturan di tempat Anda berpraktik.",
+    "Jawaban AI berubah dari hari ke hari dan bergantung pada cara pertanyaan diajukan. Langkah-langkah di sini membuat fakta apotek Anda dapat dibaca AI. Langkah ini tidak menjamin AI akan menyebut apotek Anda atau menempatkannya di peringkat tertentu."
+  ],
+  "sections": [
+    {
+      "heading": "Apa yang ditanyakan orang kepada AI tentang apotek",
+      "paragraphs": [
+        "Orang mencari apotek dalam perjalanan pulang dari dokter, atau ketika ada yang sakit di malam hari atau akhir pekan. Karena itu pertanyaannya membawa waktu dan syarat: \"apotek dekat [klinik] yang buka setelah jam 7 malam\", \"di mana bisa menebus resep pada hari Minggu\", \"toko obat yang sekarang ada apotekernya\", \"apotek yang bisa mengantar obat ke rumah orang tua saya\", \"apotek tempat saya bisa bertanya dalam bahasa Inggris\".",
+        "Agar AI menyebut apotek Anda saat menjawab salah satu pertanyaan ini, AI harus bisa membaca, sebagai teks, bahwa Anda memenuhi syarat tersebut. Halaman yang jam bukanya hanya ada di gambar, tidak membedakan jam toko dan jam layanan resep, atau menjelaskan layanan ke rumah hanya dengan \"silakan hubungi kami\" sulit dipakai untuk pertanyaan bersyarat.",
+        "Kami membaca halaman peringkat teratas untuk topik ini dalam bahasa Jepang dan Inggris. Sebagian besar berhenti pada saran umum: perbarui Profil Bisnis Google, kumpulkan ulasan, tambahkan data terstruktur. Hampir tidak ada yang membahas cara menyelaraskan situs Anda dengan laporan resmi yang sudah diserahkan apotek, cara menulis jam ketika tidak ada apoteker, penyiapan WordPress yang konkret, atau cara memeriksa apakah Anda muncul. Panduan ini mengisi celah tersebut."
+      ]
+    },
+    {
+      "heading": "Fakta yang layak dipublikasikan, dan cara menulisnya",
+      "paragraphs": [
+        "Gunakan tabel ini sebagai panduan. Apotek yang berfokus pada resep dan toko obat dengan banyak produk bebas memberi bobot berbeda pada hal-hal ini, tetapi bagi keduanya, cara menulis jam dan siapa yang tersedia menentukan apakah AI bisa memakai halaman Anda."
+      ],
+      "table": {
+        "head": [
+          "Fakta",
+          "Cara menulisnya di halaman",
+          "Perhatikan"
+        ],
+        "rows": [
+          [
+            "Hari dan jam buka",
+            "Jam untuk setiap hari, hari libur, cara menangani hari libur nasional",
+            "Jika jam layanan resep berbeda dari jam toko, cantumkan terpisah"
+          ],
+          [
+            "Jam layanan resep",
+            "Kapan Anda menerima resep, dan batas waktu terakhir menyerahkannya",
+            "Ubah \"hingga 30 menit sebelum tutup\" menjadi jam yang pasti"
+          ],
+          [
+            "Kapan apoteker ada atau tidak ada",
+            "Hari dan jam tanpa apoteker, serta apa yang tidak bisa dilakukan saat itu",
+            "Jelaskan kapan obat yang memerlukan apoteker dan layanan resep tidak tersedia"
+          ],
+          [
+            "Konsultasi di luar jam buka",
+            "Apakah orang bisa berkonsultasi setelah tutup, nomor telepon dan jamnya",
+            "Jika Anda menulis \"24 jam\", jelaskan apakah itu hanya konsultasi telepon atau juga layanan resep"
+          ],
+          [
+            "Resep",
+            "Apakah Anda menerima resep dari klinik mana pun, klinik terdekat mana yang sering Anda layani, cara mengirim resep lebih dulu (faks atau aplikasi)",
+            "Hindari kata-kata yang mengesankan Anda hanya melayani satu klinik"
+          ],
+          [
+            "Layanan ke rumah",
+            "Wilayah yang dilayani, siapa yang Anda kunjungi (rumah, fasilitas perawatan), cara meminta, di mana melihat biayanya",
+            "Jangan berhenti di \"silakan tanyakan\"; sebutkan wilayah dan syaratnya"
+          ],
+          [
+            "Sertifikasi dan penetapan",
+            "Sertifikasi atau penetapan resmi yang Anda miliki (di Jepang: apotek kerja sama komunitas atau kerja sama spesialis, apotek pendukung kesehatan)",
+            "Jangan pernah mengklaim yang tidak Anda miliki. Sebutkan nama skema dan status Anda bersama-sama"
+          ],
+          [
+            "Ragam produk",
+            "Kategori obat, perlengkapan perawatan, bahan medis, produk bayi, apakah bisa memesan dan berapa lama",
+            "Stok berubah, jadi tulis \"hubungi kami untuk cek stok\""
+          ],
+          [
+            "Pembayaran, akses, dan bahasa",
+            "Metode pembayaran yang diterima, parkir, akses kursi roda, bahasa yang bisa dipakai untuk konsultasi",
+            "Saat salah satunya berubah, perbarui situs dan Profil Bisnis Google bersamaan"
+          ],
+          [
+            "Penutupan sementara dan libur",
+            "Tanggalnya, serta apotek terdekat atau apotek piket yang bisa dipakai sebagai gantinya",
+            "Letakkan di samping jam buka, bukan hanya di pos berita"
+          ]
+        ],
+        "caption": "Disusun dari syarat yang biasa disertakan orang dalam pertanyaan tentang apotek, dan hal-hal yang terlewat oleh halaman peringkat teratas."
+      },
+      "after": [
+        "Jaga setiap nilai tetap sama di halaman, data terstruktur, Profil Bisnis Google, direktori resmi, dan papan pengumuman di pintu. Google juga menyarankan agar Profil Bisnis selalu diperbarui untuk fitur AI-nya. [Google: Fitur AI dan situs Anda](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Selaraskan dengan laporan apotek resmi (Jepang: Navii)",
+      "paragraphs": [
+        "Di Jepang, Pasal 8-2 Undang-Undang Farmasi dan Alat Kesehatan mewajibkan setiap apotek melaporkan fungsinya ke prefektur (sistem informasi fungsi apotek). Menurut Pemerintah Metropolitan Tokyo, laporan diserahkan secara daring melalui G-MIS sejak Januari 2024 dan dipublikasikan di situs informasi medis nasional, Navii, sejak April 2024. [Pemerintah Metropolitan Tokyo (bahasa Jepang)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (bahasa Jepang)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Ada laporan tahunan tentang kondisi per 31 Desember (di Tokyo biasanya diserahkan antara awal Januari dan akhir Februari), dan beberapa hal harus segera dilaporkan setiap kali berubah. Hal-hal itu mencakup hari buka, jam buka, jam ketika konsultasi tersedia di luar jam buka, apakah apotek menampilkan status apotek pendukung kesehatan, apakah memiliki sertifikasi apotek kerja sama komunitas atau kerja sama spesialis, dan apakah ada jam tanpa apoteker. Halaman Prefektur Saitama menambahkan penghentian sementara, pembukaan kembali, dan penutupan ke daftar tersebut. [Prefektur Saitama (bahasa Jepang)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "Ini berguna untuk pencarian AI. Hal-hal yang ditanyakan kepada AI tentang apotek (sampai jam berapa buka, apakah ada konsultasi di luar jam buka, apakah ada apoteker, apakah bersertifikat) hampir persis sama dengan hal-hal yang sudah dilaporkan apotek. Jika nilai yang dilaporkan dan situs Anda tidak sama, baik AI maupun pasien tidak bisa tahu mana yang benar. Jadikan aturan untuk mengubah laporan, situs, Profil Bisnis Google, dan papan pengumuman pada hari yang sama. Di luar Jepang, terapkan gagasan yang sama pada register resmi atau direktori layanan kesehatan mana pun yang mencantumkan apotek Anda."
+      ]
+    },
+    {
+      "heading": "Cara menulis \"tidak ada apoteker yang bertugas\" dan konsultasi di luar jam buka",
+      "paragraphs": [
+        "Toko obat bisa tetap buka saat tidak ada apoteker yang bertugas. Jika AI ditanya \"toko yang sekarang menjual obat yang memerlukan apoteker\" dan halaman Anda hanya mencantumkan jam toko, AI bisa menjawab ya pada saat Anda sebenarnya tidak bisa menjualnya.",
+        "Contoh: \"Toko buka 09.00-22.00, setiap hari. Layanan resep Senin-Jumat 09.00-19.00 (resep terakhir 18.45), Sabtu 09.00-13.00. Tidak ada apoteker pada hari Selasa 19.00-22.00: saat itu kami tidak dapat melayani resep atau menjual obat yang memerlukan apoteker. Konsultasi di luar jam buka: pasien terdaftar dapat menelepon 0X-XXXX-XXXX dari 22.00 hingga 09.00.\" Letakkan informasi toko, layanan resep, apoteker, dan di luar jam buka di satu tempat (nomornya hanya contoh).",
+        "Obat yang memerlukan apoteker dan hal yang wajib ditampilkan toko apotek daring diatur oleh aturan tersendiri, dan aturan itu terus berubah. Periksa undang-undang yang berlaku dan panduan regulator Anda untuk item persisnya."
+      ]
+    },
+    {
+      "heading": "Aturan iklan berlaku untuk teks yang ditulis bagi AI",
+      "paragraphs": [
+        "Di Jepang, iklan obat tunduk pada ketentuan iklan dalam Undang-Undang Farmasi dan Alat Kesehatan serta standar iklan obat yang layak dari Kementerian Kesehatan. [Kementerian Kesehatan, Tenaga Kerja, dan Kesejahteraan (bahasa Jepang)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). FAQ, data terstruktur, dan artikel blog yang ditulis agar dipilih AI juga tercakup dengan cara yang sama. Sebagian besar negara memiliki aturan serupa."
+      ],
+      "list": [
+        "Jangan menjanjikan hasil atau keamanan (\"pasti manjur\", \"tanpa efek samping\"), dan jangan memakai superlatif atau perbandingan (\"terbaik di kota\").",
+        "Dalam artikel tentang gejala, jangan menulis \"untuk gejala ini, minum obat ini\". Sebutkan kapan harus ke dokter, dan apa yang bisa dibantu di apotek.",
+        "Jangan mencantumkan obat resep seperti produk lengkap dengan harga.",
+        "Jangan memasukkan komentar pelanggan ke FAQ atau markup ulasan sebagai bukti bahwa sesuatu manjur."
+      ],
+      "after": [
+        "Jika ragu, tanyakan kepada regulator Anda atau periksa panduan organisasi profesi Anda. Untuk sisi klinik, lihat [Pencarian AI untuk klinik umum dan klinik anak](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Data terstruktur: tipe Pharmacy dan properti yang berguna",
+      "paragraphs": [
+        "schema.org memiliki tipe Pharmacy, yang dijelaskan sebagai \"A pharmacy or drugstore\" (apotek atau toko obat) (diperiksa dalam definisi tipe schema-dts 2.1.0 pada 15 November 2026). Pharmacy adalah jenis MedicalBusiness dan membawa properti dari LocalBusiness maupun MedicalOrganization. Toko obat bisa memakai Pharmacy alih-alih Store."
+      ],
+      "table": {
+        "head": [
+          "Tipe atau properti",
+          "Arti",
+          "Penggunaan di apotek"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Apotek atau toko obat",
+            "Untuk apotek resep maupun toko obat. Langsung memuat alamat, telepon, dan jam buka"
+          ],
+          [
+            "openingHoursSpecification",
+            "Jam buka per hari",
+            "Jam toko. Tulis jam layanan resep dan jam tanpa apoteker di teks halaman"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Jam yang berbeda dari biasanya",
+            "Tanggal libur dan penutupan sementara"
+          ],
+          [
+            "knowsLanguage",
+            "Bahasa yang dapat digunakan bisnis",
+            "Jika Anda bisa berkonsultasi dalam bahasa Inggris, Mandarin, atau bahasa lain"
+          ],
+          [
+            "paymentAccepted",
+            "Metode pembayaran",
+            "Jika Anda mencantumkan pembayaran kartu atau seluler"
+          ],
+          [
+            "hasOfferCatalog",
+            "Daftar layanan yang ditawarkan",
+            "Layanan resep, kunjungan ke rumah, konsultasi kesehatan, dan layanan serupa"
+          ]
+        ]
+      },
+      "after": [
+        "Data terstruktur bisnis lokal Google mewajibkan nama dan alamat serta menyarankan tipe paling spesifik yang bisa Anda gunakan. [Google: Data terstruktur bisnis lokal](https://developers.google.com/search/docs/appearance/structured-data/local-business). Fakta tanpa properti yang jelas, seperti jam tanpa apoteker atau konsultasi di luar jam buka, paling aman ditulis di teks halaman."
+      ]
+    },
+    {
+      "heading": "Menyiapkannya di situs apotek WordPress",
+      "list": [
+        "Pasang dan aktifkan Nurevo AEO (gratis) dari [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO, dan Slim SEO tetap berfungsi seperti biasa. Sejak 0.9.1, plugin ini juga bekerja berdampingan dengan SEO SIMPLE PACK dan VK All in One Expansion Unit tanpa menduplikasi data terstruktur.",
+        "Di wizard penyiapan, pilih \"Toko ritel\" (ini mengatur tipe menjadi Store). Lalu ubah kolom \"Jenis bisnis (tipe schema.org)\" di Pengaturan menjadi Pharmacy. Pharmacy adalah salah satu jenis bisnis yang tersedia di daftar, dan wizard memperlakukannya sebagai bagian dari kelompok ritel.",
+        "Periksa nama apotek, alamat, telepon, dan deskripsi. Hanya kolom kosong yang diisi dari pengaturan yang sudah ada; nilai yang Anda masukkan tidak pernah ditimpa.",
+        "Di kolom jam buka, tulis hanya hari dan jam toko, misalnya \"Mon-Sat 9:00-22:00 / Sun 10:00-20:00\". Jika Anda menambahkan hari libur atau catatan \"resep terakhir\", plugin akan memublikasikan teks Anda apa adanya daripada berisiko menampilkan jam yang salah, jadi tulis jam layanan resep, jam tanpa apoteker, dan aturan hari libur di teks halaman.",
+        "Di Pengaturan, tambahkan layanan yang Anda tawarkan (layanan resep, kunjungan ke rumah, konsultasi kesehatan, obat bebas), dan tambahkan pertanyaan umum (mengirim resep lebih dulu, konsultasi di luar jam buka, cara meminta kunjungan ke rumah) sebagai FAQ. Entri FAQ ditambahkan ke FAQPage di halaman tempat Anda meletakkan blok Nurevo FAQ (atau shortcode [nurevo_faq]).",
+        "Jalankan pemeriksaan di layar Skor AEO dan terapkan perbaikan sekali klik. Untuk melihat tampilan situs Anda dari luar, gunakan [pemeriksaan keterbacaan AI gratis](/check)."
+      ],
+      "after": [
+        "Bersama plugin SEO, Nurevo AEO tidak mencetak set data terstruktur kedua. Plugin ini hanya menambahkan alamat, telepon, jam buka yang belum ada, dan tipe yang lebih spesifik ke graf yang sudah diterbitkan plugin SEO Anda. Lihat [Cara menambahkan detail bisnis lokal ke Yoast, Rank Math, dan AIOSEO](/guide/local-business-schema-seo-plugins/). Jika Anda memiliki beberapa cabang, beri setiap cabang halamannya sendiri dengan jam buka, jam apoteker, dan wilayah layanan ke rumahnya masing-masing."
+      ]
+    },
+    {
+      "heading": "Daftar periksa sebelum publikasi",
+      "list": [
+        "Jam buka ditulis sebagai teks, bukan hanya di gambar, lengkap dengan hari libur dan penanganan hari libur nasional.",
+        "Jam layanan resep dan batas waktu terakhir menyerahkan resep dicantumkan terpisah dari jam toko.",
+        "Jika ada jam tanpa apoteker, hari, jam, dan apa yang tidak bisa dilakukan saat itu sudah dicantumkan.",
+        "Ketersediaan konsultasi di luar jam buka, nomor telepon, dan jamnya sudah dicantumkan.",
+        "Cara menyerahkan atau mengirim resep lebih dulu, serta wilayah, penerima, dan cara meminta layanan ke rumah sudah dicantumkan.",
+        "Sertifikasi dan penetapan dicantumkan hanya sesuai keadaan sebenarnya.",
+        "Nama, alamat, telepon, dan jam buka sama di situs, data terstruktur, Profil Bisnis Google, dan direktori apotek resmi.",
+        "Tidak ada janji hasil, tidak ada superlatif atau perbandingan, dan tidak ada komentar pelanggan yang dipakai sebagai bukti di FAQ atau data terstruktur.",
+        "llms.txt mencantumkan halaman jam buka, akses, resep, dan layanan ke rumah. [Apa itu llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Periksa apakah AI menyebut Anda",
+      "paragraphs": [
+        "Setelah faktanya lengkap, tulis 5 sampai 10 pertanyaan yang mungkin diajukan orang, dengan menggabungkan wilayah, waktu, dan satu syarat (resep, apoteker, layanan ke rumah, bahasa), lalu ajukan ke ChatGPT dan Perplexity. Misalnya: \"Apotek mana di dekat [stasiun] yang bisa melayani resep pukul 8 malam pada hari kerja?\" atau \"Apotek mana di [kota] yang melayani kunjungan ke rumah?\" Catat apakah apotek Anda disebut atau ditautkan, dan apakah jam serta syaratnya benar. Jawaban AI berubah setiap kali dijalankan, jadi ulangi pertanyaan yang sama dari waktu ke waktu. Lihat [Cara mengukur visibilitas AI](/guide/measure-ai-visibility/) untuk metodenya.",
+        "Jika AI menampilkan jam yang salah, cari dari mana nilai itu berasal. Jika jawabannya mengutip sumber, periksa halaman itu (situs Anda, Profil Bisnis Google, direktori resmi, situs peta atau ulasan) dan perbaiki mana pun yang tidak sesuai.",
+        "Dengan Nurevo AEO, bahkan paket Free dan Standard mengajukan tiga pertanyaan yang disusun dari jenis bisnis dan wilayah Anda (tidak pernah memakai nama apotek Anda) ke Perplexity sebulan sekali, dan mencatat apakah jawabannya menyebut apotek Anda atau mengutip situs Anda. Di paket Pro (mulai $99/bulan), pengukuran visibilitas AI versi beta menunjukkan seberapa sering apotek Anda muncul dalam jawaban AI, dengan perbandingan pesaing dan tren (saat ini diukur di Perplexity). Keduanya melihat sampel jawaban, bukan setiap jawaban."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Dari mana apotek sebaiknya memulai pencarian AI?",
+      "a": "Tulis jam toko dan jam layanan resep secara terpisah sebagai teks, lalu tambahkan kapan tidak ada apoteker dan apakah konsultasi tersedia di luar jam buka. Kemudian samakan nilai-nilai itu dengan data terstruktur, Profil Bisnis Google, dan direktori apotek resmi."
+    },
+    {
+      "q": "Haruskah toko obat memakai Store atau Pharmacy dalam data terstruktur?",
+      "a": "Jika Anda menjual obat dan memiliki apoteker, Pharmacy lebih cocok. schema.org menjelaskan Pharmacy sebagai \"A pharmacy or drugstore\" (apotek atau toko obat), dan sebagai jenis LocalBusiness, tipe ini langsung memuat alamat dan jam buka. Kesesuaian nilai dengan halaman Anda lebih penting daripada tipenya."
+    },
+    {
+      "q": "Apa yang terjadi jika direktori resmi dan situs kami tidak sama?",
+      "a": "AI dan pasien tidak bisa tahu mana yang harus dipercaya. Di Jepang, hari dan jam buka, konsultasi di luar jam buka, dan jam tanpa apoteker adalah hal yang wajib segera dilaporkan apotek saat berubah. Memperbarui laporan, situs, dan Profil Bisnis Google pada hari yang sama mencegah ketidaksesuaian."
+    },
+    {
+      "q": "Bukankah lebih baik tidak menyebutkan jam tanpa apoteker?",
+      "a": "Lebih aman menyebutkannya. Jika tidak, AI bisa mengatakan orang dapat membeli obat yang memerlukan apoteker pada saat mereka sebenarnya tidak bisa, dan mereka datang lalu kecewa. Di Jepang, ada tidaknya jam tanpa apoteker juga termasuk hal yang dilaporkan."
+    },
+    {
+      "q": "Bolehkah kami menulis artikel tentang gejala dan obatnya agar dipilih AI?",
+      "a": "Iklan obat diatur (di Jepang, oleh Undang-Undang Farmasi dan Alat Kesehatan serta standar iklan Kementerian Kesehatan). Hindari menjanjikan hasil atau memakai superlatif; fokuslah pada kapan harus ke dokter dan apa yang bisa dibantu apotek. Tanyakan kepada regulator Anda jika ragu."
+    },
+    {
+      "q": "Apakah Nurevo AEO gratis?",
+      "a": "Ya. Data terstruktur untuk jenis bisnis, alamat, jam buka, layanan, dan FAQ, ditambah llms.txt, aturan crawler AI, dan Skor AEO, tersedia di paket gratis. Paket berbayar menambahkan set aturan yang selalu terbaru (Standard, $20/bulan) dan pengukuran visibilitas AI versi beta (Pro, mulai $99/bulan). [Nurevo AEO di WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Apakah ini menjamin apotek kami muncul di ChatGPT?",
+      "a": "Tidak. Jawaban AI berubah, dan tidak ada alat atau teknik yang bisa menjamin penyebutan atau posisi tertentu. Yang bisa Anda lakukan adalah membuat fakta Anda mudah dibaca AI dan terus memeriksa apakah Anda muncul."
+    }
+  ],
+  "relatedHeading": "Panduan terkait",
+  "cta": {
+    "heading": "Pertama, lihat bagaimana AI membaca situs apotek Anda",
+    "body": "Pemeriksaan gratis menunjukkan kondisi data terstruktur, llms.txt, dan akses crawler AI Anda, tanpa perlu mendaftar. Di WordPress, Nurevo AEO melengkapi kekurangannya secara gratis.",
+    "label": "Jalankan pemeriksaan keterbacaan AI gratis",
+    "href": "/check",
+    "secondary": {
+      "label": "Dapatkan Nurevo AEO di WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT adalah merek dagang OpenAI, Perplexity milik Perplexity AI, dan Google milik Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, dan VK All in One Expansion Unit adalah merek dagang dari pemiliknya masing-masing. Nurevo tidak berafiliasi dengan mereka. Artikel ini bukan nasihat hukum."
+}

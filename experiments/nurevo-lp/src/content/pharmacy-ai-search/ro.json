@@ -1,0 +1,246 @@
+{
+  "title": "Căutarea AI pentru farmacii: program și farmacist | Nurevo",
+  "description": "AEO pentru farmacii și drogherii: publicați în text și schema programul magazinului și de eliberare, absențele farmacistului, sfaturi după program și vizite la domiciliu.",
+  "h1": "Căutarea AI pentru farmacii și drogherii: cum faceți ca AI să citească corect programul, prezența farmacistului și vizitele la domiciliu",
+  "lead": "Optimizarea unei farmacii pentru căutarea AI se reduce la a răspunde chiar pe pagină, la zi și la minut, la întrebările pe care oamenii le pun acum AI: sunteți deschiși acum, este de serviciu un farmacist (pot cumpăra medicamente care necesită farmacist), onorați rețete de la această clinică, pot primi sfaturi după program, livrați sau faceți vizite la domiciliu. Apoi publicați aceleași informații în mod consecvent în date structurate, în llms.txt, în Profilul companiei pe Google și în orice registru oficial de farmacii căruia îi raportați. În Japonia, acest registru este site-ul național de informații medicale (Navii), alimentat de rapoartele privind funcțiile pe care fiecare farmacie le depune la prefectura sa.",
+  "intro": [
+    "Scris pe 15 noiembrie 2026 (JST). În acea zi au fost verificate paginile din Tokyo și Saitama despre sistemul japonez de raportare a funcțiilor farmaciilor, precum și tipurile schema.org (așa cum sunt definite în schema-dts 2.1.0). Exemplele de reguli provin din Japonia; verificați regulile din locul în care profesați.",
+    "Răspunsurile AI se schimbă de la o zi la alta și în funcție de cum este formulată întrebarea. Pașii de aici fac informațiile farmaciei dumneavoastră lizibile pentru AI. Ei nu garantează că un AI va menționa farmacia dumneavoastră sau că o va plasa pe o anumită poziție."
+  ],
+  "sections": [
+    {
+      "heading": "Ce întreabă oamenii AI despre farmacii",
+      "paragraphs": [
+        "Oamenii caută o farmacie la întoarcerea de la medic sau când cineva se îmbolnăvește seara ori în weekend. De aceea, întrebările conțin ore și condiții: „farmacie lângă [clinică] deschisă după ora 19”, „unde pot onora o rețetă duminică”, „drogherie cu farmacist de serviciu chiar acum”, „farmacie care livrează medicamente acasă la părinții mei”, „farmacie unde pot cere sfaturi în engleză”.",
+        "Pentru ca un AI să numească farmacia dumneavoastră ca răspuns la o astfel de întrebare, trebuie să poată citi, în text, că îndepliniți condiția. O pagină cu programul doar într-o imagine, fără diferență între programul magazinului și programul de eliberare a rețetelor, sau cu vizitele la domiciliu descrise doar prin „vă rugăm să ne întrebați” este greu de folosit pentru o întrebare cu condiții.",
+        "Am citit paginile cel mai bine clasate pe acest subiect, în japoneză și în engleză. Cele mai multe se opresc la sfaturi generale: actualizați Profilul companiei pe Google, strângeți recenzii, adăugați date structurate. Aproape niciuna nu abordează punerea site-ului în concordanță cu rapoartele oficiale pe care farmacia le depune deja, modul de a scrie orele în care nu este prezent un farmacist, o configurare concretă în WordPress sau verificarea faptului că apăreți. Acest ghid acoperă aceste goluri."
+      ]
+    },
+    {
+      "heading": "Informațiile care merită publicate și cum să le scrieți",
+      "paragraphs": [
+        "Folosiți tabelul ca reper. O farmacie axată pe eliberarea rețetelor și o drogherie cu o gamă largă de produse fără prescripție acordă o importanță diferită acestor puncte, dar pentru ambele, modul în care scrieți programul și cine este disponibil decide dacă un AI vă poate folosi pagina."
+      ],
+      "table": {
+        "head": [
+          "Informație",
+          "Cum o scrieți pe pagină",
+          "Atenție la"
+        ],
+        "rows": [
+          [
+            "Zile și program de funcționare",
+            "Programul pentru fiecare zi, zilele în care este închis, cum sunt tratate sărbătorile legale",
+            "Dacă programul de eliberare diferă de programul magazinului, indicați-le separat"
+          ],
+          [
+            "Programul de eliberare a rețetelor",
+            "Când primiți rețete și ora limită până la care se poate preda una",
+            "Transformați „până cu 30 de minute înainte de închidere” într-o oră exactă"
+          ],
+          [
+            "Când este sau nu prezent un farmacist",
+            "Zilele și orele fără farmacist și ce nu se poate face atunci",
+            "Precizați clar când nu se pot elibera rețete și nici vinde medicamente care necesită farmacist"
+          ],
+          [
+            "Sfaturi după program",
+            "Dacă se pot primi sfaturi după închidere, numărul de telefon și orele",
+            "Dacă scrieți „non-stop”, precizați dacă este vorba doar de sfaturi telefonice sau și de eliberare"
+          ],
+          [
+            "Rețete",
+            "Dacă primiți rețete de la orice clinică, de la ce clinici din apropiere onorați des rețete, cum se poate trimite una în avans (fax sau aplicație)",
+            "Evitați formulări care sugerează că deserviți o singură clinică"
+          ],
+          [
+            "Vizite la domiciliu",
+            "Zona acoperită, pe cine vizitați (locuințe, centre de îngrijire), cum se solicită, unde se găsesc costurile",
+            "Nu vă opriți la „vă rugăm să ne întrebați”; indicați zona și condițiile"
+          ],
+          [
+            "Certificări și desemnări",
+            "Certificările sau desemnările oficiale pe care le dețineți (în Japonia: farmacie de cooperare comunitară sau de cooperare specializată, farmacie de sprijin pentru sănătate)",
+            "Nu revendicați niciodată una pe care nu o dețineți. Indicați împreună numele schemei și statutul dumneavoastră"
+          ],
+          [
+            "Gama de produse",
+            "Categorii de medicamente, articole de îngrijire, materiale medicale, produse pentru bebeluși, dacă puteți comanda și în cât timp",
+            "Stocul se schimbă, așa că scrieți „sunați pentru a verifica stocul”"
+          ],
+          [
+            "Plată, acces și limbi",
+            "Metodele de plată acceptate, parcare, acces pentru scaune rulante, limbile în care puteți oferi sfaturi",
+            "Când se schimbă ceva, actualizați site-ul și Profilul companiei pe Google în același timp"
+          ],
+          [
+            "Închideri temporare și sărbători",
+            "Datele și farmaciile din apropiere sau de gardă la care se poate apela în schimb",
+            "Puneți-le lângă programul de funcționare, nu doar într-o știre"
+          ]
+        ],
+        "caption": "Alcătuit pe baza condițiilor pe care oamenii le adaugă întrebărilor despre farmacii și a punctelor omise de paginile cel mai bine clasate."
+      },
+      "after": [
+        "Păstrați fiecare valoare identică pe pagină, în datele structurate, în Profilul companiei pe Google, în registrul oficial și pe afișul de la intrare. Google recomandă menținerea Profilului companiei la zi și pentru funcțiile sale AI. [Google: funcțiile AI și site-ul dumneavoastră](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Puneți site-ul în concordanță cu rapoartele oficiale ale farmaciei (Japonia: Navii)",
+      "paragraphs": [
+        "În Japonia, articolul 8-2 din Legea privind produsele farmaceutice și dispozitivele medicale obligă fiecare farmacie să își raporteze funcțiile la prefectură (sistemul de informații privind funcțiile farmaciilor). Potrivit Guvernului Metropolitan Tokyo, din ianuarie 2024 rapoartele se depun online prin G-MIS, iar din aprilie 2024 sunt publicate pe site-ul național de informații medicale, Navii. [Guvernul Metropolitan Tokyo (în japoneză)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (în japoneză)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Există un raport anual cu situația la 31 decembrie (în Tokyo, depus de obicei între începutul lui ianuarie și sfârșitul lui februarie), iar unele puncte trebuie raportate prompt ori de câte ori se schimbă. Printre ele se numără zilele și programul de funcționare, orele în care sunt disponibile sfaturi în afara programului, dacă farmacia afișează statutul de farmacie de sprijin pentru sănătate, dacă deține certificarea de cooperare comunitară sau de cooperare specializată și dacă există ore fără farmacist prezent. Pagina Prefecturii Saitama adaugă pe această listă suspendarea, redeschiderea și închiderea definitivă. [Prefectura Saitama (în japoneză)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "Acest lucru este util pentru căutarea AI. Ce se întreabă AI despre o farmacie (până la ce oră este deschisă, dacă sunt disponibile sfaturi după program, dacă există farmacist, dacă este certificată) coincide aproape exact cu punctele pe care farmacia le raportează deja. Dacă valorile raportate și site-ul nu se potrivesc, nici AI, nici pacientul nu pot ști care sunt corecte. Stabiliți regula de a modifica raportul, site-ul, Profilul companiei pe Google și afișul în aceeași zi. În afara Japoniei, aplicați aceeași idee registrului oficial sau directorului de servicii de sănătate în care apare farmacia dumneavoastră."
+      ]
+    },
+    {
+      "heading": "Cum scrieți „fără farmacist de serviciu” și sfaturile după program",
+      "paragraphs": [
+        "O drogherie poate fi deschisă fără ca vreun farmacist să fie de serviciu. Dacă cineva cere AI „un magazin de unde pot cumpăra acum un medicament care necesită farmacist”, iar pagina dumneavoastră indică doar programul magazinului, AI poate răspunde afirmativ într-un moment în care nu îl puteți vinde.",
+        "Un exemplu: „Magazin deschis 9:00-22:00, zilnic. Rețete luni-vineri 9:00-19:00 (ultima rețetă la 18:45), sâmbătă 9:00-13:00. Marțea, între 19:00 și 22:00, nu este prezent niciun farmacist: atunci nu putem elibera rețete și nici vinde medicamente care necesită farmacist. Sfaturi după program: pacienții înregistrați pot suna la 0X-XXXX-XXXX între 22:00 și 9:00.” Reuniți într-un singur loc informațiile despre magazin, eliberarea rețetelor, farmacist și sfaturile după program (numărul este fictiv).",
+        "Reguli separate se aplică medicamentelor care necesită farmacist și informațiilor pe care trebuie să le afișeze o farmacie online, iar acestea se schimbă constant. Verificați legislația în vigoare și ghidurile autorității dumneavoastră de reglementare pentru punctele exacte."
+      ]
+    },
+    {
+      "heading": "Regulile de publicitate se aplică și textelor scrise pentru AI",
+      "paragraphs": [
+        "În Japonia, publicitatea pentru medicamente intră sub incidența prevederilor privind publicitatea din Legea privind produsele farmaceutice și dispozitivele medicale și a standardelor Ministerului Sănătății pentru publicitatea adecvată a medicamentelor. [Ministerul Sănătății, Muncii și Bunăstării (în japoneză)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). Întrebările frecvente, datele structurate și articolele de blog scrise pentru a fi alese de AI sunt vizate în același mod. Majoritatea țărilor au reguli comparabile."
+      ],
+      "list": [
+        "Nu promiteți rezultate sau siguranță („funcționează întotdeauna”, „fără efecte secundare”) și nu folosiți superlative sau comparații („cea mai bună din oraș”).",
+        "În articolele despre simptome, nu spuneți „pentru acest simptom, luați acest medicament”. Spuneți când trebuie consultat un medic și cu ce poate ajuta farmacia.",
+        "Nu prezentați medicamentele eliberate doar pe bază de rețetă ca produse cu preț.",
+        "Nu folosiți comentariile clienților în întrebările frecvente sau în marcajul pentru recenzii ca dovadă că ceva funcționează."
+      ],
+      "after": [
+        "Dacă nu sunteți sigur, întrebați autoritatea de reglementare sau consultați ghidurile organizației dumneavoastră profesionale. Pentru partea clinicilor, vedeți [Căutarea AI pentru cabinete de medicină de familie și pediatrie](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Date structurate: tipul Pharmacy și proprietăți utile",
+      "paragraphs": [
+        "schema.org are un tip Pharmacy, descris ca „A pharmacy or drugstore” (o farmacie sau drogherie), conform definițiilor de tipuri din schema-dts 2.1.0 verificate pe 15 noiembrie 2026. Pharmacy este un fel de MedicalBusiness și are proprietățile atât ale LocalBusiness, cât și ale MedicalOrganization. O drogherie poate folosi Pharmacy în loc de Store."
+      ],
+      "table": {
+        "head": [
+          "Tip sau proprietate",
+          "Semnificație",
+          "Utilizare într-o farmacie"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "O farmacie sau drogherie",
+            "Atât farmaciile care eliberează rețete, cât și drogheriile. Conține direct adresa, telefonul și programul"
+          ],
+          [
+            "openingHoursSpecification",
+            "Programul de funcționare pe zile",
+            "Programul magazinului. Scrieți programul de eliberare și absențele farmacistului în textul paginii"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Program diferit de cel obișnuit",
+            "Datele sărbătorilor și ale închiderilor temporare"
+          ],
+          [
+            "knowsLanguage",
+            "Limbile pe care le poate folosi afacerea",
+            "Dacă puteți oferi sfaturi în engleză, chineză sau alte limbi"
+          ],
+          [
+            "paymentAccepted",
+            "Metode de plată",
+            "Dacă menționați plata cu cardul sau prin telefonul mobil"
+          ],
+          [
+            "hasOfferCatalog",
+            "O listă a serviciilor oferite",
+            "Eliberarea rețetelor, vizite la domiciliu, consiliere pentru sănătate și servicii similare"
+          ]
+        ]
+      },
+      "after": [
+        "Datele structurate Google pentru afaceri locale cer numele și adresa și recomandă cel mai specific tip pe care îl puteți folosi. [Google: date structurate pentru afaceri locale](https://developers.google.com/search/docs/appearance/structured-data/local-business). Informațiile fără o proprietate evidentă, cum ar fi absențele farmacistului sau sfaturile după program, este cel mai sigur să fie puse în textul paginii."
+      ]
+    },
+    {
+      "heading": "Configurarea pe un site de farmacie WordPress",
+      "list": [
+        "Instalați și activați Nurevo AEO (gratuit) de pe [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO și Slim SEO continuă să funcționeze ca până acum. Începând cu versiunea 0.9.1, funcționează și împreună cu SEO SIMPLE PACK și VK All in One Expansion Unit fără a duplica datele structurate.",
+        "În asistentul de configurare, alegeți „Retail shop” (astfel tipul devine Store). Apoi schimbați câmpul „Business type (schema.org type)” din Setări în Pharmacy. Pharmacy este unul dintre tipurile de afacere din listă, iar asistentul îl tratează ca parte a familiei comerțului cu amănuntul.",
+        "Verificați numele, adresa, telefonul și descrierea farmaciei. Doar câmpurile goale se completează din setările existente; valorile pe care le-ați introdus nu sunt niciodată suprascrise.",
+        "În câmpul pentru program, scrieți doar zilele și orele magazinului, de exemplu „Mon-Sat 9:00-22:00 / Sun 10:00-20:00”. Dacă adăugați sărbători sau o notă despre „ultima rețetă”, pluginul publică textul exact așa cum l-ați scris, ca să nu riște un program greșit, așa că puneți programul de eliberare, absențele farmacistului și regulile pentru sărbători în textul paginii.",
+        "În Setări, adăugați ce oferiți ca servicii (eliberarea rețetelor, vizite la domiciliu, consiliere pentru sănătate, medicamente fără prescripție) și adăugați întrebările frecvente (trimiterea în avans a unei rețete, sfaturi după program, cum se solicită o vizită la domiciliu) ca FAQ. Întrebările sunt adăugate la FAQPage al paginii pe care plasați blocul Nurevo FAQ (sau shortcode-ul [nurevo_faq]).",
+        "Rulați o verificare în ecranul Scor AEO și aplicați corecturile cu un singur clic. Pentru a vedea cum arată site-ul dumneavoastră din exterior, folosiți [verificarea gratuită a lizibilității pentru AI](/check)."
+      ],
+      "after": [
+        "Alături de un plugin SEO, Nurevo AEO nu generează un al doilea set de date structurate. Adaugă doar adresa, telefonul, programul și tipul mai specific care lipsesc din graful pe care pluginul SEO îl publică deja. Vedeți [Cum adăugați datele de afacere locală în Yoast, Rank Math și AIOSEO](/guide/local-business-schema-seo-plugins/). Dacă aveți mai multe puncte de lucru, dați fiecăruia propria pagină, cu propriul program, orele farmacistului și zona pentru vizitele la domiciliu."
+      ]
+    },
+    {
+      "heading": "Listă de verificare înainte de publicare",
+      "list": [
+        "Programul de funcționare este scris ca text, nu doar într-o imagine, cu zilele de închidere și modul în care sunt tratate sărbătorile.",
+        "Programul de eliberare și ora limită pentru predarea unei rețete sunt indicate separat de programul magazinului.",
+        "Dacă există ore fără farmacist, sunt precizate zilele, orele și ce nu se poate face atunci.",
+        "Este precizat dacă există sfaturi după program, cu numărul de telefon și orele.",
+        "Sunt precizate cum se predă sau se trimite în avans o rețetă și, pentru vizitele la domiciliu, zona, destinatarii și modul de solicitare.",
+        "Certificările și desemnările sunt menționate doar așa cum sunt în realitate.",
+        "Numele, adresa, telefonul și programul coincid pe site, în datele structurate, în Profilul companiei pe Google și în registrul oficial al farmaciilor.",
+        "Fără promisiuni de rezultate, fără superlative sau comparații și fără comentarii ale clienților folosite ca dovadă în întrebările frecvente sau în datele structurate.",
+        "llms.txt include paginile cu programul, accesul, rețetele și vizitele la domiciliu. [Ce este llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Verificați dacă AI vă menționează",
+      "paragraphs": [
+        "După ce informațiile sunt la locul lor, scrieți 5-10 întrebări pe care oamenii le-ar putea pune, combinând zona, momentul zilei și o condiție (rețetă, farmacist, vizită la domiciliu, limbă), și adresați-le lui ChatGPT și Perplexity. De exemplu: „Ce farmacie de lângă [stație] poate onora o rețetă la ora 20, într-o zi lucrătoare?” sau „Ce farmacii din [oraș] fac vizite la domiciliu?”. Notați dacă farmacia dumneavoastră este numită sau are un link și dacă programul și condițiile sunt corecte. Răspunsurile AI diferă de la o rulare la alta, așa că repetați aceleași întrebări în timp. Metoda este descrisă în [Cum măsurați vizibilitatea în AI](/guide/measure-ai-visibility/).",
+        "Dacă un AI afișează un program greșit, aflați de unde provine valoarea. Dacă răspunsul citează o sursă, verificați pagina respectivă (site-ul dumneavoastră, Profilul companiei pe Google, registrul oficial, un site de hărți sau de recenzii) și corectați-o pe cea care nu se potrivește.",
+        "Cu Nurevo AEO, chiar și planurile Free și Standard adresează o dată pe lună lui Perplexity trei întrebări construite pe baza tipului de afacere și a zonei (niciodată cu numele farmaciei) și înregistrează dacă răspunsurile au numit farmacia dumneavoastră sau au citat site-ul. Pe planul Pro (de la $99/lună), măsurarea vizibilității în AI, în beta, arată cât de des apare farmacia dumneavoastră în răspunsurile AI, cu comparație cu concurenții și tendințe (măsurată în prezent pe Perplexity). Ambele analizează un eșantion de răspunsuri, nu toate răspunsurile."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Cu ce ar trebui să înceapă o farmacie în căutarea AI?",
+      "a": "Scrieți separat, ca text, programul magazinului și programul de eliberare a rețetelor și adăugați când nu este prezent un farmacist și dacă sunt disponibile sfaturi după program. Apoi puneți aceste valori în concordanță cu datele structurate, Profilul companiei pe Google și registrul oficial al farmaciilor."
+    },
+    {
+      "q": "O drogherie ar trebui să folosească Store sau Pharmacy în datele structurate?",
+      "a": "Dacă vindeți medicamente și aveți un farmacist, Pharmacy se potrivește mai bine. schema.org descrie Pharmacy ca „A pharmacy or drugstore” (o farmacie sau drogherie) și, fiind un fel de LocalBusiness, conține direct adresa și programul. Mai important decât tipul este ca valorile să coincidă cu pagina dumneavoastră."
+    },
+    {
+      "q": "Ce se întâmplă dacă registrul oficial și site-ul nostru nu se potrivesc?",
+      "a": "Nici AI, nici pacienții nu pot ști în care să aibă încredere. În Japonia, zilele și programul de funcționare, sfaturile după program și absențele farmacistului sunt puncte pe care farmacia trebuie să le raporteze prompt când se schimbă. Actualizarea raportului, a site-ului și a Profilului companiei pe Google în aceeași zi previne nepotrivirea."
+    },
+    {
+      "q": "Nu e mai bine să nu menționăm orele fără farmacist?",
+      "a": "Este mai sigur să le menționați. Altfel, un AI poate spune că se pot cumpăra medicamente care necesită farmacist într-un moment în care nu se poate, iar oamenii vin și pleacă dezamăgiți. În Japonia, existența orelor fără farmacist este și ea un punct raportat."
+    },
+    {
+      "q": "Putem scrie articole despre simptome și medicamentele care le tratează, ca să fim aleși de AI?",
+      "a": "Publicitatea pentru medicamente este reglementată (în Japonia, prin Legea privind produsele farmaceutice și dispozitivele medicale și prin standardele de publicitate ale Ministerului Sănătății). Evitați să promiteți rezultate sau să folosiți superlative; concentrați-vă pe momentul în care trebuie consultat un medic și pe ce poate face farmacia. Dacă nu sunteți sigur, întrebați autoritatea de reglementare."
+    },
+    {
+      "q": "Este Nurevo AEO gratuit?",
+      "a": "Da. Datele structurate pentru tipul de afacere, adresă, program, servicii și întrebări frecvente, plus llms.txt, regulile pentru crawlerele AI și Scorul AEO, sunt incluse în planul gratuit. Planurile plătite adaugă un set de reguli mereu actualizat (Standard, $20/lună) și măsurarea vizibilității în AI, în beta (Pro, de la $99/lună). [Nurevo AEO pe WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Garantează acest lucru că farmacia noastră va apărea în ChatGPT?",
+      "a": "Nu. Răspunsurile AI se schimbă, iar niciun instrument sau tehnică nu poate garanta o mențiune sau o poziție. Ce puteți face este să vă faceți informațiile ușor de citit pentru AI și să verificați în continuare dacă apăreți."
+    }
+  ],
+  "relatedHeading": "Ghiduri conexe",
+  "cta": {
+    "heading": "Mai întâi, vedeți cum citește AI site-ul farmaciei dumneavoastră",
+    "body": "Verificarea gratuită arată starea datelor structurate, a llms.txt și a accesului crawlerelor AI, fără înregistrare. Pe WordPress, Nurevo AEO completează gratuit lipsurile.",
+    "label": "Rulați verificarea gratuită a lizibilității pentru AI",
+    "href": "/check",
+    "secondary": {
+      "label": "Obțineți Nurevo AEO de pe WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT este marcă comercială a OpenAI, Perplexity a Perplexity AI, iar Google a Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK și VK All in One Expansion Unit sunt mărci comerciale ale proprietarilor lor. Nurevo nu este afiliată cu aceștia. Acest articol nu constituie consultanță juridică."
+}
