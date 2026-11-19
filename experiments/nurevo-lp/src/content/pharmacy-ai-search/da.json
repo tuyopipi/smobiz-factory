@@ -1,0 +1,246 @@
+{
+  "title": "AI-søgning for apoteker: åbningstider og farmaceut | Nurevo",
+  "description": "AEO for apoteker og drogerier: udgiv åbnings- og ekspeditionstider, tider uden farmaceut, rådgivning uden for åbningstid og hjemmebesøg som tekst og som schema.",
+  "h1": "AI-søgning for apoteker og drogerier: sådan læser AI jeres åbningstider, farmaceutens tilstedeværelse og hjemmebesøg korrekt",
+  "lead": "AI-søgeoptimering for et apotek handler om at besvare de spørgsmål, folk nu stiller AI, direkte på siden og helt ned på dag og minut: har I åbent nu, er der en farmaceut på vagt (kan jeg købe apoteksforbeholdt medicin), ekspederer I recepter fra denne klinik, kan jeg få rådgivning uden for åbningstid, og leverer I eller kommer I på hjemmebesøg. Derefter udgiver I de samme oplysninger ensartet i strukturerede data, llms.txt, jeres Google Business Profile og i det officielle apoteksregister, I indberetter til. I Japan er registret det nationale sundhedsinformationssite (Navii), som fødes af de funktionsindberetninger, hvert apotek sender til sit præfektur.",
+  "intro": [
+    "Skrevet 15. november 2026 (JST). Tokyos og Saitamas sider om Japans indberetningssystem for apoteksfunktioner og schema.orgs typer (som defineret i schema-dts 2.1.0) blev kontrolleret samme dag. Eksemplerne på regler stammer fra Japan; tjek reglerne der, hvor I driver apotek.",
+    "AI-svar ændrer sig fra dag til dag og alt efter, hvordan spørgsmålet formuleres. Trinene her gør jeres apoteks oplysninger læsbare for AI. De garanterer ikke, at en AI nævner jeres apotek eller placerer det et bestemt sted."
+  ],
+  "sections": [
+    {
+      "heading": "Hvad folk spørger AI om apoteker",
+      "paragraphs": [
+        "Folk leder efter et apotek på vej hjem fra lægen, eller når nogen bliver syg om aftenen eller i weekenden. Derfor rummer spørgsmålene tidspunkter og betingelser: \"et apotek nær [klinik] med åbent efter kl. 19\", \"hvor kan jeg hente medicin på recept om søndagen\", \"et drogeri med en farmaceut på vagt lige nu\", \"et apotek, der leverer medicin hjem til min mor eller far\", \"et apotek, hvor jeg kan spørge på engelsk\".",
+        "For at en AI kan nævne jeres apotek som svar på et af disse spørgsmål, skal den kunne læse som tekst, at I opfylder betingelsen. En side, hvor åbningstiderne kun står i et billede, hvor der ikke skelnes mellem butikkens åbningstid og ekspeditionstid, eller hvor hjemmebesøg kun beskrives med \"kontakt os\", er svær at bruge til et betinget spørgsmål.",
+        "Vi har læst de højest placerede sider om emnet på japansk og engelsk. De fleste stopper ved generelle råd: opdater jeres Google Business Profile, saml anmeldelser, tilføj strukturerede data. Næsten ingen dækker, hvordan I afstemmer hjemmesiden med de officielle indberetninger, et apotek allerede sender, hvordan I skriver tidspunkterne uden farmaceut, en konkret WordPress-opsætning, eller hvordan I tjekker, om I bliver nævnt. Denne guide udfylder de huller."
+      ]
+    },
+    {
+      "heading": "De oplysninger, der er værd at udgive, og hvordan I skriver dem",
+      "paragraphs": [
+        "Brug tabellen som rettesnor. Et receptapotek og et drogeri med et bredt udvalg af håndkøbsvarer vægter punkterne forskelligt, men for begge afgør måden, I skriver tiderne og bemandingen på, om en AI kan bruge jeres side."
+      ],
+      "table": {
+        "head": [
+          "Oplysning",
+          "Sådan skriver I det på siden",
+          "Vær opmærksom på"
+        ],
+        "rows": [
+          [
+            "Åbningsdage og åbningstider",
+            "Tider for hver dag, lukkedage, hvordan helligdage håndteres",
+            "Hvis ekspeditionstiden afviger fra butikkens åbningstid, så angiv dem hver for sig"
+          ],
+          [
+            "Ekspeditionstider",
+            "Hvornår I tager imod recepter, og seneste tidspunkt for aflevering",
+            "Omskriv \"indtil 30 minutter før lukketid\" til et klokkeslæt"
+          ],
+          [
+            "Hvornår der er eller ikke er en farmaceut",
+            "De dage og tidspunkter uden farmaceut, og hvad der ikke kan lade sig gøre imens",
+            "Gør det tydeligt, hvornår apoteksforbeholdt medicin og receptekspedition ikke er mulig"
+          ],
+          [
+            "Rådgivning uden for åbningstid",
+            "Om man kan få rådgivning efter lukketid, nummeret og tidspunkterne",
+            "Hvis I skriver \"døgnåbent\", så angiv, om det kun gælder telefonrådgivning eller også ekspedition"
+          ],
+          [
+            "Recepter",
+            "Om I tager imod recepter fra alle klinikker, hvilke nærliggende klinikker I ofte ekspederer for, hvordan man sender en recept i forvejen (fax eller app)",
+            "Undgå formuleringer, der antyder, at I kun betjener én klinik"
+          ],
+          [
+            "Hjemmebesøg",
+            "Det dækkede område, hvem I besøger (private hjem, plejeboliger), hvordan man bestiller, hvor man finder priserne",
+            "Stop ikke ved \"kontakt os\"; angiv område og betingelser"
+          ],
+          [
+            "Certificeringer og udpegninger",
+            "Officielle certificeringer eller udpegninger, I har (i Japan: apotek for lokalt samarbejde eller specialiseret samarbejde, sundhedsstøtteapotek)",
+            "Påberåb jer aldrig en, I ikke har. Angiv ordningens navn og jeres status sammen"
+          ],
+          [
+            "Sortiment",
+            "Medicinkategorier, plejeartikler, sygeplejeartikler, babyprodukter, om I kan bestille hjem og hvor lang tid det tager",
+            "Lagerbeholdningen skifter, så skriv \"ring og hør, om varen er på lager\""
+          ],
+          [
+            "Betaling, adgang og sprog",
+            "Betalingsformer, parkering, kørestolsadgang, sprog I kan rådgive på",
+            "Når noget ændres, så opdater hjemmesiden og jeres Google Business Profile samtidig"
+          ],
+          [
+            "Midlertidig lukning og ferie",
+            "Datoerne og nærliggende apoteker eller vagtapoteker, man kan bruge i stedet",
+            "Placer dem ved åbningstiderne, ikke kun i et nyhedsindlæg"
+          ]
+        ],
+        "caption": "Bygget ud fra de betingelser, folk knytter til spørgsmål om apoteker, og de punkter, de højest placerede sider udelod."
+      },
+      "after": [
+        "Hold alle værdier identiske på siden, i strukturerede data, på jeres Google Business Profile, i det officielle register og på skiltet ved døren. Google anbefaler også at holde jeres Business Profile opdateret af hensyn til sine AI-funktioner. [Google: AI-funktioner og dit website](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Afstem med de officielle apoteksindberetninger (Japan: Navii)",
+      "paragraphs": [
+        "I Japan pålægger artikel 8-2 i loven om lægemidler og medicinsk udstyr (Pharmaceuticals and Medical Devices Act) hvert apotek at indberette sine funktioner til præfekturet (informationssystemet for apoteksfunktioner). Ifølge Tokyo Metropolitan Government er indberetningerne siden januar 2024 sendt online via G-MIS og siden april 2024 offentliggjort på det nationale sundhedsinformationssite Navii. [Tokyo Metropolitan Government (japansk)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (japansk)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Der er en årlig indberetning af situationen pr. 31. december (i Tokyo normalt indsendt mellem starten af januar og slutningen af februar), og visse punkter skal indberettes straks, når de ændres. Det gælder blandt andet åbningsdage, åbningstider, tidspunkter hvor der kan gives rådgivning uden for åbningstid, om apoteket viser status som sundhedsstøtteapotek, om det har certificering som apotek for lokalt eller specialiseret samarbejde, og om der er tidspunkter uden farmaceut til stede. Saitama præfekturs side føjer suspension, genåbning og lukning til listen. [Saitama præfektur (japansk)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "Det er nyttigt for AI-søgning. Det, AI bliver spurgt om et apotek (hvor længe det har åbent, om der er rådgivning efter lukketid, om der er en farmaceut, om det er certificeret), er næsten præcis de punkter, et apotek allerede indberetter. Hvis de indberettede værdier og hjemmesiden ikke stemmer overens, kan hverken AI eller patienten se, hvad der er rigtigt. Gør det til en regel at ændre indberetningen, hjemmesiden, jeres Google Business Profile og skiltet samme dag. Uden for Japan gælder samme princip for det officielle register eller den sundhedsportal, hvor jeres apotek er opført."
+      ]
+    },
+    {
+      "heading": "Sådan skriver I \"ingen farmaceut til stede\" og rådgivning uden for åbningstid",
+      "paragraphs": [
+        "Et drogeri kan have åbent, mens der ikke er en farmaceut på vagt. Hvis en AI bliver spurgt om \"en butik, hvor jeg kan købe apoteksforbeholdt medicin nu\", og jeres side kun viser butikkens åbningstid, kan den svare ja på et tidspunkt, hvor I ikke må sælge den.",
+        "Et eksempel: \"Butikken har åbent 9:00-22:00 alle dage. Recepter man-fre 9:00-19:00 (seneste recept 18:45), lør 9:00-13:00. Ingen farmaceut tirsdage 19:00-22:00: vi kan ikke ekspedere recepter eller sælge apoteksforbeholdt medicin i det tidsrum. Rådgivning uden for åbningstid: registrerede patienter kan ringe på 0X-XXXX-XXXX fra 22:00 til 9:00.\" Saml oplysninger om butik, ekspedition, farmaceut og rådgivning uden for åbningstid ét sted (nummeret er en pladsholder).",
+        "Der gælder særskilte regler for apoteksforbeholdt medicin og for, hvad en onlineapoteksbutik skal vise, og de ændres løbende. Tjek den gældende lovgivning og tilsynsmyndighedens vejledning for de præcise krav."
+      ]
+    },
+    {
+      "heading": "Reklamereglerne gælder også for tekst skrevet til AI",
+      "paragraphs": [
+        "I Japan er reklame for lægemidler omfattet af reklamebestemmelserne i Pharmaceuticals and Medical Devices Act og sundhedsministeriets standarder for passende reklame for lægemidler. [Ministry of Health, Labour and Welfare (japansk)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). FAQ, strukturerede data og blogindlæg skrevet for at blive valgt af AI er omfattet på samme måde. De fleste lande har tilsvarende regler."
+      ],
+      "list": [
+        "Lov ikke virkning eller sikkerhed (\"virker altid\", \"ingen bivirkninger\"), og brug ikke superlativer eller sammenligninger (\"byens bedste\").",
+        "Skriv ikke \"tag denne medicin mod dette symptom\" i artikler om symptomer. Skriv, hvornår man bør gå til lægen, og hvad I kan hjælpe med på apoteket.",
+        "Vis ikke receptpligtig medicin som varer med priser.",
+        "Brug ikke kundeudtalelser i FAQ- eller anmeldelsesmarkup som bevis for, at noget virker."
+      ],
+      "after": [
+        "Er I i tvivl, så spørg tilsynsmyndigheden eller se jeres faglige organisations vejledning. For klinikkernes side, se [AI-søgning for almen praksis og børneklinikker](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Strukturerede data: typen Pharmacy og nyttige egenskaber",
+      "paragraphs": [
+        "schema.org har typen Pharmacy, beskrevet som \"A pharmacy or drugstore\" (et apotek eller drogeri; kontrolleret i typedefinitionerne i schema-dts 2.1.0 den 15. november 2026). Pharmacy er en slags MedicalBusiness og har egenskaberne fra både LocalBusiness og MedicalOrganization. Et drogeri kan bruge Pharmacy i stedet for Store."
+      ],
+      "table": {
+        "head": [
+          "Type eller egenskab",
+          "Betydning",
+          "Brug på et apotek"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Et apotek eller drogeri",
+            "Både receptapoteker og drogerier. Rummer adresse, telefon og åbningstider direkte"
+          ],
+          [
+            "openingHoursSpecification",
+            "Åbningstider pr. dag",
+            "Butikkens åbningstid. Skriv ekspeditionstider og tider uden farmaceut i sideteksten"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Tider, der afviger fra de normale",
+            "Datoer for ferie og midlertidig lukning"
+          ],
+          [
+            "knowsLanguage",
+            "Sprog, virksomheden kan bruge",
+            "Hvis I kan rådgive på engelsk, kinesisk eller andre sprog"
+          ],
+          [
+            "paymentAccepted",
+            "Betalingsformer",
+            "Hvis I angiver kort- eller mobilbetaling"
+          ],
+          [
+            "hasOfferCatalog",
+            "En liste over tilbudte ydelser",
+            "Receptekspedition, hjemmebesøg, sundhedsrådgivning og lignende ydelser"
+          ]
+        ]
+      },
+      "after": [
+        "Googles strukturerede data for lokale virksomheder kræver navn og adresse og anbefaler den mest specifikke type, I kan bruge. [Google: Strukturerede data for lokale virksomheder](https://developers.google.com/search/docs/appearance/structured-data/local-business). Oplysninger uden en oplagt egenskab, som tider uden farmaceut eller rådgivning uden for åbningstid, står sikrest i sideteksten."
+      ]
+    },
+    {
+      "heading": "Opsætning på et apoteks WordPress-site",
+      "list": [
+        "Installer og aktiver Nurevo AEO (gratis) fra [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO og Slim SEO fungerer fortsat. Siden 0.9.1 fungerer det også sammen med SEO SIMPLE PACK og VK All in One Expansion Unit uden at duplikere strukturerede data.",
+        "Vælg \"Detailbutik\" i opsætningsguiden (det sætter typen til Store). Skift derefter feltet \"Virksomhedstype (schema.org-type)\" under Indstillinger til Pharmacy. Pharmacy er en af de listede virksomhedstyper, og guiden behandler den som en del af detailhandelsfamilien.",
+        "Tjek apotekets navn, adresse, telefonnummer og beskrivelse. Kun tomme felter udfyldes fra jeres eksisterende indstillinger; værdier, I selv har indtastet, overskrives aldrig.",
+        "Skriv kun dage og klokkeslæt for butikken i feltet for åbningstider, f.eks. \"Mon-Sat 9:00-22:00 / Sun 10:00-20:00\". Tilføjer I helligdage eller en note om \"seneste recept\", udgiver pluginnet jeres tekst, som den står, i stedet for at risikere forkerte tider, så skriv ekspeditionstider, tider uden farmaceut og regler for helligdage i sideteksten.",
+        "Tilføj under Indstillinger det, I tilbyder, som ydelser (receptekspedition, hjemmebesøg, sundhedsrådgivning, håndkøbsmedicin), og tilføj almindelige spørgsmål (at sende en recept i forvejen, rådgivning uden for åbningstid, hvordan man bestiller hjemmebesøg) som FAQ. FAQ-punkterne føjes til FAQPage på den side, hvor I placerer Nurevo FAQ-blokken (eller shortcoden [nurevo_faq]).",
+        "Kør et tjek på skærmen med AEO-score, og anvend rettelserne med ét klik. For at se, hvordan jeres site ser ud udefra, kan I bruge [det gratis tjek af AI-læsbarhed](/check)."
+      ],
+      "after": [
+        "Med et SEO-plugin udgiver Nurevo AEO ikke et ekstra sæt strukturerede data. Det tilføjer kun den manglende adresse, telefon, åbningstider og den mere specifikke type til den graf, jeres SEO-plugin allerede udgiver. Se [Sådan tilføjer I oplysninger om lokal virksomhed i Yoast, Rank Math og AIOSEO](/guide/local-business-schema-seo-plugins/). Har I flere filialer, så giv hver filial sin egen side med egne åbningstider, farmaceuttider og område for hjemmebesøg."
+      ]
+    },
+    {
+      "heading": "Tjekliste, før I udgiver",
+      "list": [
+        "Åbningstiderne står som tekst, ikke kun i et billede, med lukkedage og håndtering af helligdage.",
+        "Ekspeditionstider og seneste tidspunkt for aflevering af recept står adskilt fra butikkens åbningstid.",
+        "Hvis der er tidspunkter uden farmaceut, er dage, klokkeslæt og det, der ikke kan lade sig gøre imens, angivet.",
+        "Det fremgår, om der er rådgivning uden for åbningstid, med nummer og tidspunkter.",
+        "Det fremgår, hvordan man afleverer eller sender en recept i forvejen, og hvilket område, hvilke modtagere og hvilken bestillingsmåde der gælder for hjemmebesøg.",
+        "Certificeringer og udpegninger angives kun, som de faktisk er.",
+        "Navn, adresse, telefon og åbningstider stemmer overens på sitet, i strukturerede data, på Google Business Profile og i det officielle apoteksregister.",
+        "Ingen løfter om virkning, ingen superlativer eller sammenligninger og ingen kundeudtalelser brugt som bevis i FAQ eller strukturerede data.",
+        "llms.txt angiver jeres sider om åbningstider, adgang, recepter og hjemmebesøg. [Hvad er llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Tjek, om AI nævner jer",
+      "paragraphs": [
+        "Når oplysningerne er på plads, så skriv 5 til 10 spørgsmål, folk kunne stille, der kombinerer område, tidspunkt og en betingelse (recept, farmaceut, hjemmebesøg, sprog), og stil dem til ChatGPT og Perplexity. For eksempel: \"Hvilket apotek nær [station] kan ekspedere en recept kl. 20 på en hverdag?\" eller \"Hvilke apoteker i [by] tilbyder hjemmebesøg?\" Notér, om jeres apotek nævnes eller linkes, og om tider og betingelser er korrekte. AI-svar varierer fra gang til gang, så gentag de samme spørgsmål over tid. Se [Sådan måler I AI-synlighed](/guide/measure-ai-visibility/) for metoden.",
+        "Hvis en AI viser forkerte åbningstider, så find ud af, hvor værdien kommer fra. Henviser svaret til en kilde, så tjek den side (jeres site, Google Business Profile, det officielle register, et kort- eller anmeldelsessite), og ret den, der afviger.",
+        "Med Nurevo AEO stiller selv Free- og Standard-planerne én gang om måneden tre spørgsmål, bygget ud fra jeres virksomhedstype og område (aldrig apotekets navn), til Perplexity og registrerer, om svarene nævnte jeres apotek eller citerede jeres site. På Pro-planen (fra $99/måned) viser måling af AI-synlighed i beta, hvor ofte jeres apotek optræder i AI-svar, med sammenligning med konkurrenter og udvikling over tid (måles i øjeblikket på Perplexity). Begge ser på et udsnit af svar, ikke alle svar."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Hvor skal et apotek begynde med AI-søgning?",
+      "a": "Skriv butikkens åbningstid og ekspeditionstider hver for sig som tekst, og tilføj, hvornår der ikke er en farmaceut, og om der er rådgivning uden for åbningstid. Sørg derefter for, at værdierne stemmer overens med jeres strukturerede data, Google Business Profile og det officielle apoteksregister."
+    },
+    {
+      "q": "Skal et drogeri bruge Store eller Pharmacy i strukturerede data?",
+      "a": "Sælger I medicin og har en farmaceut, passer Pharmacy bedre. schema.org beskriver Pharmacy som \"A pharmacy or drugstore\" (et apotek eller drogeri), og som en slags LocalBusiness rummer typen adresse og åbningstider direkte. At værdierne stemmer overens med jeres side, betyder mere end typen."
+    },
+    {
+      "q": "Hvad sker der, hvis det officielle register og vores hjemmeside ikke stemmer overens?",
+      "a": "Hverken AI eller patienter kan se, hvad de skal stole på. I Japan er åbningsdage og åbningstider, rådgivning uden for åbningstid og tider uden farmaceut punkter, et apotek skal indberette straks, når de ændres. Opdaterer I indberetningen, sitet og jeres Google Business Profile samme dag, undgår I uoverensstemmelsen."
+    },
+    {
+      "q": "Er det ikke bedre at lade være med at nævne tider uden farmaceut?",
+      "a": "Det er sikrere at nævne dem. Ellers kan en AI sige, at man kan købe apoteksforbeholdt medicin på et tidspunkt, hvor det ikke er muligt, og folk møder skuffede op. I Japan er det også et indberetningspunkt, om der er tider uden farmaceut."
+    },
+    {
+      "q": "Kan vi skrive artikler om symptomer og den medicin, der behandler dem, for at blive valgt af AI?",
+      "a": "Reklame for lægemidler er reguleret (i Japan af Pharmaceuticals and Medical Devices Act og sundhedsministeriets reklamestandarder). Undgå at love virkning eller bruge superlativer; fokuser på, hvornår man bør gå til lægen, og hvad apoteket kan hjælpe med. Spørg tilsynsmyndigheden, hvis I er i tvivl."
+    },
+    {
+      "q": "Er Nurevo AEO gratis?",
+      "a": "Ja. Strukturerede data for jeres virksomhedstype, adresse, åbningstider, ydelser og FAQ samt llms.txt, regler for AI-crawlere og AEO-scoren er med i den gratis plan. De betalte planer tilføjer et regelsæt, der altid er opdateret (Standard, $20/måned), og måling af AI-synlighed i beta (Pro, fra $99/måned). [Nurevo AEO på WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Garanterer det, at vores apotek dukker op i ChatGPT?",
+      "a": "Nej. AI-svar ændrer sig, og intet værktøj eller nogen teknik kan garantere en omtale eller en placering. Det, I kan gøre, er at gøre jeres oplysninger lette for AI at læse og løbende tjekke, om I bliver nævnt."
+    }
+  ],
+  "relatedHeading": "Relaterede guider",
+  "cta": {
+    "heading": "Se først, hvordan AI læser jeres apoteks hjemmeside",
+    "body": "Det gratis tjek viser status for jeres strukturerede data, llms.txt og adgang for AI-crawlere, uden tilmelding. På WordPress udfylder Nurevo AEO hullerne gratis.",
+    "label": "Kør det gratis tjek af AI-læsbarhed",
+    "href": "/check",
+    "secondary": {
+      "label": "Hent Nurevo AEO på WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT er et varemærke tilhørende OpenAI, Perplexity tilhørende Perplexity AI og Google tilhørende Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK og VK All in One Expansion Unit er varemærker tilhørende deres respektive ejere. Nurevo er ikke tilknyttet dem. Denne artikel er ikke juridisk rådgivning."
+}

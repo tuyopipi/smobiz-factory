@@ -1,0 +1,246 @@
+{
+  "title": "AI-keresés gyógyszertáraknak: nyitvatartás, gyógyszerész | Nurevo",
+  "description": "AEO gyógyszertáraknak és drogériáknak: nyitvatartás, vényexpediálási idő, a gyógyszerész távolléte, ügyeleti segítség és házhoz járás szövegben és sémában közzétéve.",
+  "h1": "AI-keresés gyógyszertáraknak és drogériáknak: hogyan olvassa helyesen az AI a nyitvatartást, a gyógyszerész jelenlétét és a házhoz járást",
+  "lead": "Egy gyógyszertár AI-keresésre optimalizálása arról szól, hogy a saját oldalán, napra és percre pontosan megválaszolja azokat a kérdéseket, amelyeket az emberek ma az AI-nak tesznek fel: nyitva van-e most, van-e szolgálatban gyógyszerész (megvehetők-e a csak gyógyszerész által kiadható gyógyszerek), kiváltható-e az adott rendelő receptje, kérhető-e tanács nyitvatartási időn kívül, és van-e házhozszállítás vagy házhoz járás. Ezután ugyanezeket a tényeket következetesen közzéteszi a strukturált adatokban, az llms.txt-ben, a Google Business Profile-jában és minden olyan hivatalos gyógyszertár-nyilvántartásban, amelynek adatot szolgáltat. Japánban ez a nemzeti egészségügyi információs oldal (Navii), amelyet a gyógyszertári funkciójelentések töltenek fel; ezt minden gyógyszertár benyújtja a prefektúrájának.",
+  "intro": [
+    "Írva 2026. november 15-én (JST). Aznap ellenőriztük Tokió és Szaitama oldalait a japán gyógyszertári funkciójelentési rendszerről, valamint a schema.org típusait (a schema-dts 2.1.0 definíciói szerint). A szabályokra vonatkozó példák Japánból származnak; ellenőrizze az Ön működési helyén érvényes szabályokat.",
+    "Az AI válaszai napról napra és a kérdés megfogalmazásától függően változnak. Az itt leírt lépések olvashatóvá teszik gyógyszertára adatait az AI számára. Nem garantálják, hogy az AI megemlíti a gyógyszertárát, vagy bármilyen helyre rangsorolja."
+  ],
+  "sections": [
+    {
+      "heading": "Mit kérdeznek az emberek az AI-tól a gyógyszertárakról",
+      "paragraphs": [
+        "Az emberek az orvostól hazafelé, vagy akkor keresnek gyógyszertárat, amikor valaki este vagy hétvégén megbetegszik. Ezért a kérdések időpontot és feltételeket tartalmaznak: „gyógyszertár a [rendelő] közelében, amely 19 óra után is nyitva van”, „hol válthatok ki receptet vasárnap”, „drogéria, ahol éppen most van gyógyszerész”, „gyógyszertár, amely házhoz viszi a gyógyszert a szüleimnek”, „gyógyszertár, ahol angolul is kérdezhetek”.",
+        "Ahhoz, hogy az AI egy ilyen kérdésre az Ön gyógyszertárát nevezze meg, szövegként kell kiolvasnia, hogy Ön megfelel a feltételnek. Egy olyan oldal, ahol a nyitvatartás csak képen szerepel, nem különül el az üzlet nyitvatartása és a vényexpediálás ideje, vagy a házhoz járásról csak annyi áll, hogy „érdeklődjön nálunk”, nehezen használható egy feltételes kérdéshez.",
+        "Elolvastuk a témában legjobb helyen rangsorolt japán és angol nyelvű oldalakat. A legtöbb megáll az általános tanácsoknál: frissítse a Google Business Profile-t, gyűjtsön értékeléseket, adjon hozzá strukturált adatokat. Szinte egyik sem foglalkozik azzal, hogyan hangolja össze a webhelyet a gyógyszertár által már benyújtott hivatalos jelentésekkel, hogyan írja le a nyitvatartást, amikor nincs jelen gyógyszerész, hogyan állítsa be konkrétan a WordPress-t, vagy hogyan ellenőrizze, megjelenik-e. Ez az útmutató ezeket a hiányokat pótolja."
+      ]
+    },
+    {
+      "heading": "A közzétételre érdemes tények és megfogalmazásuk",
+      "paragraphs": [
+        "Használja a táblázatot iránymutatásként. Egy vényeket expediáló gyógyszertár és egy széles vény nélküli kínálatú drogéria eltérő súlyt ad ezeknek, de mindkettőnél a nyitvatartás megfogalmazása és az, hogy ki érhető el, dönti el, használni tudja-e az AI az oldalát."
+      ],
+      "table": {
+        "head": [
+          "Tény",
+          "Hogyan írja az oldalra",
+          "Mire figyeljen"
+        ],
+        "rows": [
+          [
+            "Nyitvatartási napok és idő",
+            "Nyitvatartás minden napra, szünnapok, ünnepnapi működés",
+            "Ha a vényexpediálás ideje eltér az üzlet nyitvatartásától, adja meg külön"
+          ],
+          [
+            "Vényexpediálás ideje",
+            "Mikor fogad receptet, és mikor lehet legkésőbb leadni egyet",
+            "A „zárás előtt 30 percig” helyett adjon meg pontos időpontot"
+          ],
+          [
+            "Mikor van jelen vagy távol a gyógyszerész",
+            "Azok a napok és órák, amikor nincs gyógyszerész, és ami akkor nem lehetséges",
+            "Tegye egyértelművé, mikor nem érhetők el a csak gyógyszerész által kiadható gyógyszerek és a vényexpediálás"
+          ],
+          [
+            "Tanácsadás nyitvatartáson kívül",
+            "Kérhető-e tanács zárás után, a telefonszám és az időszak",
+            "Ha „0–24”-et ír, adja meg, hogy ez csak telefonos tanácsadás, vagy gyógyszerkiadás is"
+          ],
+          [
+            "Receptek",
+            "Fogad-e receptet bármely rendelőből, mely közeli rendelők receptjeit váltják ki gyakran, hogyan küldhető el előre a recept (faxon vagy alkalmazással)",
+            "Kerülje az olyan megfogalmazást, amely azt sugallja, hogy csak egy rendelőt szolgál ki"
+          ],
+          [
+            "Házhoz járás",
+            "Az ellátott terület, kiket látogat (otthonok, gondozási intézmények), hogyan kérhető, hol találhatók a díjak",
+            "Ne álljon meg az „érdeklődjön” szónál; adja meg a területet és a feltételeket"
+          ],
+          [
+            "Tanúsítványok és minősítések",
+            "Az Ön hivatalos tanúsítványai vagy minősítései (Japánban: közösségi együttműködő vagy szakosodott együttműködő gyógyszertár, egészségtámogató gyógyszertár)",
+            "Soha ne állítson olyat, amivel nem rendelkezik. A program nevét és az Ön státuszát együtt adja meg"
+          ],
+          [
+            "Kínálat",
+            "Gyógyszerkategóriák, ápolási termékek, gyógyászati segédeszközök, babatermékek, lehet-e rendelni és mennyi idő alatt",
+            "A készlet változik, ezért írja: „a készletről telefonon érdeklődjön”"
+          ],
+          [
+            "Fizetés, megközelítés és nyelvek",
+            "Elfogadott fizetési módok, parkolás, akadálymentes bejutás, a tanácsadás nyelvei",
+            "Ha valami változik, a webhelyet és a Google Business Profile-t egyszerre frissítse"
+          ],
+          [
+            "Ideiglenes zárva tartás és ünnepek",
+            "A dátumok, valamint a helyettük igénybe vehető közeli vagy ügyeletes gyógyszertárak",
+            "A nyitvatartás mellé tegye, ne csak egy hírbejegyzésbe"
+          ]
+        ],
+        "caption": "Az emberek által a gyógyszertári kérdésekhez fűzött feltételek és a legjobb helyen rangsorolt oldalakból hiányzó pontok alapján összeállítva."
+      },
+      "after": [
+        "Minden érték legyen azonos az oldalon, a strukturált adatokban, a Google Business Profile-ban, a hivatalos nyilvántartásban és az ajtón lévő táblán. A Google az AI-funkciói miatt is azt javasolja, hogy tartsa naprakészen a Business Profile-t. [Google: Az AI-funkciók és az Ön webhelye](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Hangolja össze a hivatalos gyógyszertári jelentésekkel (Japán: Navii)",
+      "paragraphs": [
+        "Japánban a gyógyszerekről és orvostechnikai eszközökről szóló törvény 8-2. cikke minden gyógyszertárat kötelez, hogy jelentse funkcióit a prefektúrájának (gyógyszertári funkcióinformációs rendszer). A Tokiói Fővárosi Kormány szerint a jelentéseket 2024 januárja óta online, a G-MIS rendszeren keresztül nyújtják be, és 2024 áprilisa óta a nemzeti egészségügyi információs oldalon, a Navii-n teszik közzé. [Tokiói Fővárosi Kormány (japánul)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (japánul)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Van egy éves jelentés a december 31-i állapotról (Tokióban általában január eleje és február vége között nyújtják be), egyes adatokat pedig minden változáskor haladéktalanul jelenteni kell. Ezek közé tartoznak a nyitvatartási napok, a nyitvatartási idő, a nyitvatartáson kívüli tanácsadás időszakai, hogy a gyógyszertár feltünteti-e az egészségtámogató gyógyszertári státuszt, hogy rendelkezik-e közösségi együttműködő vagy szakosodott együttműködő gyógyszertári tanúsítvánnyal, és hogy vannak-e olyan órák, amikor nincs jelen gyógyszerész. Szaitama prefektúra oldala a felfüggesztést, az újranyitást és a megszűnést is hozzáteszi a listához. [Szaitama prefektúra (japánul)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "Ez hasznos az AI-keresés szempontjából. Amit egy gyógyszertárról az AI-tól kérdeznek (meddig van nyitva, kérhető-e tanács zárás után, van-e gyógyszerész, rendelkezik-e tanúsítvánnyal), szinte pontosan megegyezik azokkal az adatokkal, amelyeket a gyógyszertár már jelent. Ha a jelentett értékek és a webhelye eltérnek, sem az AI, sem a beteg nem tudja eldönteni, melyik a helyes. Legyen szabály, hogy a jelentést, a webhelyet, a Google Business Profile-t és a táblát ugyanazon a napon módosítja. Japánon kívül ugyanezt az elvet alkalmazza arra a hivatalos nyilvántartásra vagy egészségügyi szolgáltatási jegyzékre, amelyben a gyógyszertára szerepel."
+      ]
+    },
+    {
+      "heading": "Hogyan írja meg, hogy „nincs szolgálatban gyógyszerész”, és a nyitvatartáson kívüli tanácsadást",
+      "paragraphs": [
+        "Egy drogéria nyitva lehet akkor is, amikor nincs szolgálatban gyógyszerész. Ha az AI-tól „olyan boltot” kérnek, „ahol most megvehetek egy csak gyógyszerész által kiadható gyógyszert”, és az oldalán csak az üzlet nyitvatartása szerepel, igent mondhat egy olyan időpontra, amikor Ön nem árusíthatja.",
+        "Egy példa: „Az üzlet nyitva 9:00–22:00, minden nap. Receptek h–p 9:00–19:00 (utolsó recept 18:45-kor), szo 9:00–13:00. Keddenként 19:00 és 22:00 között nincs gyógyszerész: ilyenkor nem tudunk receptet kiváltani, és nem árusíthatunk csak gyógyszerész által kiadható gyógyszereket. Nyitvatartáson kívüli tanácsadás: a regisztrált betegek 22:00 és 9:00 között hívhatják a 0X-XXXX-XXXX számot.” Az üzletre, a vényexpediálásra, a gyógyszerészre és a nyitvatartáson kívüli tanácsadásra vonatkozó információkat egy helyen adja meg (a telefonszám csak példa).",
+        "Külön szabályok vonatkoznak a csak gyógyszerész által kiadható gyógyszerekre és arra, mit kell egy online gyógyszertárnak feltüntetnie, és ezek folyamatosan változnak. A pontos előírásokat a hatályos jogszabályokban és a hatóság útmutatásaiban ellenőrizze."
+      ]
+    },
+    {
+      "heading": "A reklámszabályok az AI-nak írt szövegekre is vonatkoznak",
+      "paragraphs": [
+        "Japánban a gyógyszerreklámra a gyógyszerekről és orvostechnikai eszközökről szóló törvény reklámrendelkezései és az Egészségügyi Minisztérium gyógyszerek megfelelő reklámozására vonatkozó normái vonatkoznak. [Egészségügyi, Munkaügyi és Népjóléti Minisztérium (japánul)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). Az AI általi kiválasztásra írt FAQ, strukturált adatok és blogbejegyzések ugyanígy ezek alá esnek. A legtöbb országban hasonló szabályok vannak."
+      ],
+      "list": [
+        "Ne ígérjen eredményt vagy biztonságot („mindig hat”, „mellékhatások nélkül”), és ne használjon felsőfokot vagy összehasonlítást („a legjobb a városban”).",
+        "A tünetekről szóló cikkekben ne írja, hogy „erre a tünetre vegye be ezt a gyógyszert”. Írja le, mikor kell orvoshoz fordulni, és miben tud segíteni a gyógyszertárban.",
+        "Ne sorolja fel a vényköteles gyógyszereket árakkal, termékként.",
+        "Ne tegyen vásárlói véleményeket a FAQ-ba vagy az értékelési jelölésbe annak bizonyítékaként, hogy valami hat."
+      ],
+      "after": [
+        "Ha bizonytalan, forduljon a hatósághoz, vagy nézze meg szakmai kamarája útmutatását. A rendelők oldaláról lásd: [AI-keresés háziorvosi és gyermekorvosi rendelőknek](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Strukturált adatok: a Pharmacy típus és hasznos tulajdonságok",
+      "paragraphs": [
+        "A schema.org-ban van egy Pharmacy típus, amelynek leírása „A pharmacy or drugstore” (gyógyszertár vagy drogéria; a schema-dts 2.1.0 típusdefiníciói alapján ellenőrizve 2026. november 15-én). A Pharmacy a MedicalBusiness egyik fajtája, és a LocalBusiness és a MedicalOrganization tulajdonságaival is rendelkezik. Egy drogéria a Store helyett használhatja a Pharmacy típust."
+      ],
+      "table": {
+        "head": [
+          "Típus vagy tulajdonság",
+          "Jelentés",
+          "Használat gyógyszertárban"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Gyógyszertár vagy drogéria",
+            "Vényeket expediáló gyógyszertárakhoz és drogériákhoz is. Közvetlenül tartalmazza a címet, a telefonszámot és a nyitvatartást"
+          ],
+          [
+            "openingHoursSpecification",
+            "Nyitvatartás naponként",
+            "Az üzlet nyitvatartása. A vényexpediálás idejét és a gyógyszerész távollétét az oldal szövegében adja meg"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "A szokásostól eltérő nyitvatartás",
+            "Ünnepnapok és ideiglenes zárva tartás dátumai"
+          ],
+          [
+            "knowsLanguage",
+            "A vállalkozás által használt nyelvek",
+            "Ha angolul, kínaiul vagy más nyelven is tud tanácsot adni"
+          ],
+          [
+            "paymentAccepted",
+            "Fizetési módok",
+            "Ha feltünteti a kártyás vagy mobilos fizetést"
+          ],
+          [
+            "hasOfferCatalog",
+            "A kínált szolgáltatások listája",
+            "Vényexpediálás, házhoz járás, egészségügyi tanácsadás és hasonló szolgáltatások"
+          ]
+        ]
+      },
+      "after": [
+        "A Google helyi vállalkozásokra vonatkozó strukturált adataihoz kötelező a név és a cím, és a lehető legkonkrétabb típus használata ajánlott. [Google: Helyi vállalkozások strukturált adatai](https://developers.google.com/search/docs/appearance/structured-data/local-business). Azokat a tényeket, amelyekhez nincs egyértelmű tulajdonság, például a gyógyszerész távollétét vagy a nyitvatartáson kívüli tanácsadást, legbiztonságosabb az oldal szövegében megadni."
+      ]
+    },
+    {
+      "heading": "Beállítás egy WordPress-alapú gyógyszertári webhelyen",
+      "list": [
+        "Telepítse és aktiválja a Nurevo AEO-t (ingyenes) a [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) oldalról. A Yoast SEO, a Rank Math, az All in One SEO és a Slim SEO ugyanúgy működik tovább. A 0.9.1-es verziótól a SEO SIMPLE PACK és a VK All in One Expansion Unit mellett is működik a strukturált adatok megkettőzése nélkül.",
+        "A beállítási varázslóban válassza a „Kiskereskedelmi üzlet” lehetőséget (ez a Store típust állítja be). Ezután a Beállításokban módosítsa a „Vállalkozástípus (schema.org típus)” mezőt Pharmacy-re. A Pharmacy a felsorolt vállalkozástípusok egyike, és a varázsló a kiskereskedelmi csoport részeként kezeli.",
+        "Ellenőrizze a gyógyszertár nevét, címét, telefonszámát és leírását. A meglévő beállításokból csak az üres mezők töltődnek ki; az Ön által megadott értékeket soha nem írja felül.",
+        "A nyitvatartás mezőbe csak az üzlet napjait és óráit írja, például „H–Szo 9:00–22:00 / V 10:00–20:00”. Ha ünnepnapokat vagy „utolsó recept” megjegyzést is hozzáad, a bővítmény a szöveget változatlanul teszi közzé, hogy ne kockáztasson hibás nyitvatartást, ezért a vényexpediálás idejét, a gyógyszerész távollétét és az ünnepnapi szabályokat az oldal szövegében adja meg.",
+        "A Beállításokban vegye fel szolgáltatásként, amit kínál (vényexpediálás, házhoz járás, egészségügyi tanácsadás, vény nélküli gyógyszerek), a gyakori kérdéseket (recept előre küldése, nyitvatartáson kívüli tanácsadás, házhoz járás kérése) pedig FAQ-ként. A FAQ-bejegyzések annak az oldalnak a FAQPage-ébe kerülnek, ahová a Nurevo FAQ blokkot (vagy a [nurevo_faq] rövidkódot) elhelyezi.",
+        "Futtasson ellenőrzést az AEO-pontszám képernyőn, és alkalmazza az egykattintásos javításokat. Hogy kívülről milyennek látszik a webhelye, azt az [ingyenes AI-olvashatósági ellenőrzéssel](/check) nézheti meg."
+      ],
+      "after": [
+        "Egy SEO-bővítmény mellett a Nurevo AEO nem ad ki második strukturáltadat-készletet. Csak a hiányzó címet, telefonszámot, nyitvatartást és a konkrétabb típust egészíti ki abban a gráfban, amelyet a SEO-bővítménye már közzétesz. Lásd: [Helyi vállalkozási adatok hozzáadása a Yoast, a Rank Math és az AIOSEO esetén](/guide/local-business-schema-seo-plugins/). Ha több fiókja van, mindegyiknek adjon saját oldalt a saját nyitvatartásával, gyógyszerészi idősávjaival és házhoz járási területével."
+      ]
+    },
+    {
+      "heading": "Ellenőrzőlista közzététel előtt",
+      "list": [
+        "A nyitvatartás szövegként szerepel, nem csak képen, a szünnapokkal és az ünnepnapi működéssel együtt.",
+        "A vényexpediálás ideje és a recept leadásának legkésőbbi időpontja az üzlet nyitvatartásától külön szerepel.",
+        "Ha vannak órák gyógyszerész nélkül, szerepelnek a napok, az időpontok és az, ami akkor nem lehetséges.",
+        "Szerepel, hogy elérhető-e nyitvatartáson kívüli tanácsadás, a telefonszám és az időszak.",
+        "Szerepel, hogyan adható le vagy küldhető el előre a recept, valamint a házhoz járás területe, igénybe vevői és kérésének módja.",
+        "A tanúsítványok és minősítések csak a valóságnak megfelelően szerepelnek.",
+        "A név, a cím, a telefonszám és a nyitvatartás egyezik a webhelyen, a strukturált adatokban, a Google Business Profile-ban és a hivatalos gyógyszertár-nyilvántartásban.",
+        "Nincsenek eredményígéretek, felsőfokok vagy összehasonlítások, és a FAQ-ban vagy a strukturált adatokban nincsenek bizonyítékként használt vásárlói vélemények.",
+        "Az llms.txt felsorolja a nyitvatartásról, a megközelítésről, a receptekről és a házhoz járásról szóló oldalakat. [Mi az llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Ellenőrizze, megemlíti-e az AI",
+      "paragraphs": [
+        "Ha a tények a helyükön vannak, írjon 5–10 kérdést, amelyet az emberek feltehetnek, a területet, a napszakot és egy feltételt (recept, gyógyszerész, házhoz járás, nyelv) kombinálva, és tegye fel őket a ChatGPT-nek és a Perplexitynek. Például: „Melyik gyógyszertár tud a [megálló] közelében hétköznap este 8-kor receptet kiváltani?” vagy „Mely gyógyszertárak járnak házhoz [városban]?” Jegyezze fel, hogy megnevezték-e vagy belinkelték-e a gyógyszertárát, és helyes-e a nyitvatartás és a feltételek. Az AI válaszai futtatásról futtatásra változnak, ezért ugyanazokat a kérdéseket időről időre ismételje meg. A módszert lásd: [Hogyan mérjük az AI-láthatóságot](/guide/measure-ai-visibility/).",
+        "Ha az AI rossz nyitvatartást mutat, derítse ki, honnan származik az érték. Ha a válasz forrást idéz, nézze meg azt az oldalt (a webhelyét, a Google Business Profile-t, a hivatalos nyilvántartást, egy térkép- vagy értékelőoldalt), és javítsa azt, amelyik eltér.",
+        "A Nurevo AEO-val már a Free és a Standard csomag is havonta egyszer feltesz a Perplexitynek három kérdést, amelyeket a vállalkozástípusából és a területből állít össze (soha nem a gyógyszertár nevéből), és rögzíti, hogy a válaszok megnevezték-e a gyógyszertárát, vagy hivatkoztak-e a webhelyére. A Pro csomagban (havi $99-tól) a béta AI-láthatósági mérés megmutatja, milyen gyakran jelenik meg a gyógyszertára az AI válaszaiban, versenytárs-összehasonlítással és trendekkel (jelenleg a Perplexityn mérve). Mindkettő a válaszok egy mintáját vizsgálja, nem minden választ."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Hol kezdje egy gyógyszertár az AI-keresést?",
+      "a": "Írja le szövegként, külön az üzlet nyitvatartását és a vényexpediálás idejét, és tegye hozzá, mikor nincs jelen gyógyszerész, és kérhető-e tanács nyitvatartáson kívül. Ezután hangolja össze ezeket az értékeket a strukturált adatokkal, a Google Business Profile-lal és a hivatalos gyógyszertár-nyilvántartással."
+    },
+    {
+      "q": "Store vagy Pharmacy típust használjon egy drogéria a strukturált adatokban?",
+      "a": "Ha gyógyszert árusít és van gyógyszerésze, a Pharmacy illik jobban. A schema.org a Pharmacy-t „A pharmacy or drugstore” (gyógyszertár vagy drogéria) néven írja le, és a LocalBusiness egyik fajtájaként közvetlenül tartalmazza a címet és a nyitvatartást. A típusnál fontosabb, hogy az értékek egyezzenek az oldalával."
+    },
+    {
+      "q": "Mi történik, ha a hivatalos nyilvántartás és a webhelyünk eltér?",
+      "a": "Sem az AI, sem a betegek nem tudják, melyiknek higgyenek. Japánban a nyitvatartási napok és idő, a nyitvatartáson kívüli tanácsadás és a gyógyszerész távolléte olyan adatok, amelyeket a gyógyszertárnak változáskor haladéktalanul jelentenie kell. Ha a jelentést, a webhelyet és a Google Business Profile-t ugyanazon a napon frissíti, elkerülhető az eltérés."
+    },
+    {
+      "q": "Nem jobb, ha nem említjük a gyógyszerész nélküli órákat?",
+      "a": "Biztonságosabb megemlíteni őket. Különben az AI azt mondhatja, hogy a csak gyógyszerész által kiadható gyógyszerek olyankor is megvehetők, amikor nem, és az emberek hiába mennek el. Japánban az is jelentendő adat, hogy vannak-e gyógyszerész nélküli órák."
+    },
+    {
+      "q": "Írhatunk cikkeket tünetekről és az azokra való gyógyszerekről, hogy az AI minket válasszon?",
+      "a": "A gyógyszerreklám szabályozott (Japánban a gyógyszerekről és orvostechnikai eszközökről szóló törvény és az Egészségügyi Minisztérium reklámnormái szerint). Kerülje az eredményígéreteket és a felsőfokot; arra összpontosítson, mikor kell orvoshoz fordulni, és miben segíthet a gyógyszertár. Ha bizonytalan, kérdezze meg a hatóságot."
+    },
+    {
+      "q": "Ingyenes a Nurevo AEO?",
+      "a": "Igen. A vállalkozástípus, a cím, a nyitvatartás, a szolgáltatások és a FAQ strukturált adatai, valamint az llms.txt, az AI-robotokra vonatkozó szabályok és az AEO-pontszám az ingyenes csomagban érhetők el. A fizetős csomagok mindig naprakész szabálykészletet (Standard, havi $20) és béta AI-láthatósági mérést (Pro, havi $99-tól) adnak hozzá. [Nurevo AEO a WordPress.org-on](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Garantálja ez, hogy a gyógyszertárunk megjelenik a ChatGPT-ben?",
+      "a": "Nem. Az AI válaszai változnak, és semmilyen eszköz vagy módszer nem garantálhat említést vagy helyezést. Annyit tehet, hogy tényeit könnyen olvashatóvá teszi az AI számára, és folyamatosan ellenőrzi, megjelenik-e."
+    }
+  ],
+  "relatedHeading": "Kapcsolódó útmutatók",
+  "cta": {
+    "heading": "Először nézze meg, hogyan olvassa az AI a gyógyszertára webhelyét",
+    "body": "Az ingyenes ellenőrzés regisztráció nélkül megmutatja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát. WordPress esetén a Nurevo AEO ingyenesen pótolja a hiányokat.",
+    "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+    "href": "/check",
+    "secondary": {
+      "label": "A Nurevo AEO letöltése a WordPress.org-ról",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google a Google LLC védjegye. A Yoast SEO, a Rank Math, az All in One SEO, a Slim SEO, a SEO SIMPLE PACK és a VK All in One Expansion Unit a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük. Ez a cikk nem jogi tanácsadás."
+}

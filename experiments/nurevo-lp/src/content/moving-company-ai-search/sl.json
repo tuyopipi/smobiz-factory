@@ -1,0 +1,226 @@
+{
+  "title": "Iskanje z UI za selitvena podjetja: ocene, stroški | Nurevo",
+  "description": "Kako doseči, da UI pravilno opiše selitveno podjetje: ocene, kaj vpliva na ceno, stroški odpovedi, reklamacije in območje storitev s shemo MovingCompany.",
+  "h1": "Iskanje z UI za selitvena podjetja: kako doseči, da se vaše ocene, cenovni pogoji, stroški odpovedi in območje storitev berejo pravilno",
+  "lead": "Za selitveno podjetje optimizacija za iskanje z UI pomeni predvsem to, da v besedilu lastnih strani odgovorite na vprašanja, ki jih ljudje pred naročilom zastavijo asistentu UI: »Je ocena brezplačna in mora kdo priti na ogled?«, »Koliko približno stane selitev enosobnega stanovanja in kaj vpliva na ceno?«, »Do kdaj lahko brezplačno odpovem ali prestavim termin?«, »Kaj se zgodi, če se kaj poškoduje?« in »Ali pokrivate moje območje?«. Pravila za odpoved in ocene zapišite tako, kot jih določajo vaši pogodbeni pogoji (na Japonskem standardni pogoji pogodbe o selitvi, ki jih objavlja ministrstvo za promet), nato pa iste vrednosti objavite kot strukturirane podatke: podjetje kot schema.org MovingCompany, območje kot areaServed in brezplačno oceno kot Service.",
+  "intro": [
+    "Napisano 19. novembra 2026 (JST). Tisti dan smo prebrali strani japonskega ministrstva za promet in regionalnih uradov, potrošniški letak prefekture Hjogo, poročanje o certifikacijskem znaku in najbolje uvrščene članke. Tipe schema.org smo isti dan preverili v schema-dts 2.1.0. Strani Googla in Nacionalne davčne agencije odražajo stanje, ki smo ga preverili 1. novembra 2026.",
+    "Ta vodnik je napisan za selitvena podjetja na Japonskem, kjer ima Nurevo sedež, zato deli o pogodbah opisujejo japonska pravila. Če delujete drugje, enak pristop velja za pogoje in potrošniška pravila, ki urejajo selitve v vaši državi. Odgovori UI se spreminjajo glede na dan in ubeseditev in nič ne more zagotoviti, da se boste v njih pojavili. Cilj je, da UI o vašem podjetju ne navaja napačnih dejstev in ima vse, kar potrebuje, da vas priporoči. To ni pravni nasvet."
+  ],
+  "sections": [
+    {
+      "heading": "Kaj UI sprašujejo ljudje, ki načrtujejo selitev",
+      "paragraphs": [
+        "Vprašanja o selitvi združujejo kraj, čas, količino, denar in skrbi: »Konec marca se v dvoje selimo iz [mesto] v [mesto]. Koliko bo približno stalo in koga izbrati?«, »Ali moram zaradi ocene koga spustiti v stanovanje?«, »Koliko plačam, če odpovem dan prej?«, »Je hladilnik zavarovan, če se poškoduje?«, »Katera selitvena podjetja demontirajo tudi klimatsko napravo?«",
+        "Da lahko odgovori, UI potrebuje, da vaša spletna stran v besedilu navaja območja, ki jih pokrivate, kako potekajo ocene in koliko stanejo, kaj vpliva na ceno, stroške odpovedi in prestavitve, kako prijaviti škodo ter dodatna dela, ki jih opravljate (pakiranje, montaža pohištva, klimatske naprave). Če pri cenah piše samo »pokličite za ponudbo«, je območje slika zemljevida in so pogoji odpovedi skriti v PDF-ju, se UI zateče k primerjalnikom in splošnim člankom.",
+        "Google navaja, da za AI Overviews in AI Mode ni dodatnih zahtev ali posebnih strukturiranih podatkov: pomembne so osnove, torej strukturirani podatki, ki se ujemajo z vidnim besedilom, in posodobljen Profil podjetja. [Google: Funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features). Za selitveno podjetje je delo enako: dejstva zapisati in jih ohranjati usklajena, ne iskati trikov."
+      ],
+      "table": {
+        "head": [
+          "Pogosto vprašanje",
+          "Kaj napisati",
+          "Kje"
+        ],
+        "rows": [
+          [
+            "Je ocena brezplačna, mora kdo priti?",
+            "Ali opravljate ocene na domu, prek videa in po telefonu, koliko časa traja vsaka, da ocena ni plačljiva in da izročite pisno oceno",
+            "Stran z oceno, FAQ"
+          ],
+          [
+            "Koliko približno stane?",
+            "Kaj spremeni ceno (količina, razdalja, sezona, delavnik ali vikend, čas dneva, stopnice ali dvigalo, število delavcev) ter dva ali trije zgledi z vsemi pogoji, z davkom in datumom",
+            "Cenik"
+          ],
+          [
+            "Do kdaj lahko brezplačno odpovem ali prestavim?",
+            "Razredi stroškov po vaših pogojih (dan selitve, dan prej, dva dni prej), od kdaj je odpoved brezplačna, kako vas obvestiti",
+            "Cenik, FAQ, ocena"
+          ],
+          [
+            "Kaj, če se kaj poškoduje ali izgubi?",
+            "Rok in kontakt za reklamacije, predmeti, ki jih je treba prijaviti vnaprej (lomljivi in dragoceni predmeti)",
+            "Stran z reklamacijami, FAQ"
+          ],
+          [
+            "Ali pokrivate moje območje?",
+            "Imena prefektur in mest v besedilu ter kako izvajate selitve na dolge razdalje",
+            "Stran z območjem storitev"
+          ],
+          [
+            "Kaj še lahko naredite?",
+            "Pakiranje in razpakiranje, montaža pohištva, klimatske naprave, klavirji, nepotrebni predmeti (sami ali prek partnerja)",
+            "Stran s storitvami"
+          ]
+        ],
+        "caption": "Vprašanja so primeri, ki smo jih sestavili med pisanjem tega vodnika, in ne statistika o tem, kako pogosto jih ljudje zastavljajo."
+      }
+    },
+    {
+      "heading": "Česa najbolje uvrščeni članki ne povedo",
+      "paragraphs": [
+        "Prebrali smo osem najbolje uvrščenih člankov v japonščini in angleščini za »moving company AI search« in japonsko ustreznico. V japonščini je bil najbolj konkreten [uravation (15. avgust 2026)](https://uravation.com/llmo/hikkoshi-gyosha-llmo-taisaku/), ki je zajel cenovne razpone, visoko sezono ter ocene na domu v primerjavi s spletnimi. V angleščini je [Movers Development (posodobljeno 24. oktobra 2026)](https://moversdev.com/how-moving-companies-can-show-up-in-chatgpt-search-results/) vseboval primer robots.txt in nabor testnih vprašanj.",
+        "Nobeden ni podal primera strukturiranih podatkov ali korakov nastavitve v WordPressu, cenovne tabele pa so ostale prazne. Večina številk v angleških člankih je lastnih navedb brez vira; ocena »15–25 % strank najde selitveno podjetje prek UI« iz [Netpeak (10. junij 2026)](https://netpeak.us/blog/what-percent-of-customers-find-their-moving-company-through-ai-assistants-chatgpt/) je po besedah samega avtorja izpeljana iz sorodnih podatkov in ne iz raziskave selitvene panoge. Ta vodnik združuje pisanje v skladu z uradnimi pogodbenimi pogoji, strukturirane podatke MovingCompany in območja storitev, korake v WordPressu in način merjenja."
+      ]
+    },
+    {
+      "heading": "Ocene in stroške odpovedi zapišite tako, kot jih določajo vaši pogoji",
+      "paragraphs": [
+        "Japonski standardni pogoji pogodbe o selitvi (標準引越運送約款), ki jih objavlja Ministrstvo za zemljišča, infrastrukturo, promet in turizem, so bili spremenjeni z veljavnostjo od 1. junija 2018. Zgornja meja stroškov odpovedi in prestavitve je zdaj 50 % prevoznine in stroškov na dan selitve, 30 % dan prej in 20 % dva dni prej (prej 20 % na dan selitve in 10 % dan prej). Pogoji so začeli veljati tudi za skupne selitve, pri katerih en tovornjak prevaža stvari več gospodinjstev. [MLIT: sprememba standardnih pogojev za selitve](https://www.mlit.go.jp/jidosha/jidosha_tk4_000033.html) · [Okrožni prometni urad Čugoku](https://wwwtb.mlit.go.jp/chugoku/jidousha/truckhikkoshioshirase.html)",
+        "Potrošniški letak prefekture Hjogo (februar 2019) navaja glavne točke spremenjenih pogojev: ocena ni plačljiva in ob oceni se ne plača predujem; selitveno podjetje morebitne spremembe potrdi najpozneje tri dni pred datumom prevzema, navedenim v oceni; poškodbo ali izgubo je treba prijaviti v treh mesecih od selitve. Potrošnikom svetuje, naj podjetje osebno pregleda stanovanje, namesto da bi ponudbo dalo samo po telefonu ali na spletu, in naj vnaprej preverijo stroške odpovedi. [Prefektura Hjogo: težave pri selitvah (PDF, v japonščini)](https://web.pref.hyogo.lg.jp/kf13/shohiseikatsu/sonota/suishinhombu/documents/toraburu11.pdf)",
+        "Na vprašanje »koliko plačam, če odpovem dan prej?« lahko UI odgovori s splošnim pravilom. Če uporabljate standardne pogoje, to napišite in razrede navedite v ceniku in FAQ. Če ste velikodušnejši (na primer brezplačno do dveh dni prej), to jasno navedite. Če pogoje naložite samo kot PDF, jih ljudje in UI težko preberejo."
+      ],
+      "table": {
+        "head": [
+          "Šteto od dneva selitve",
+          "Zgornja meja stroškov odpovedi ali prestavitve (standardni pogoji)",
+          "Kako to zapisati na strani"
+        ],
+        "rows": [
+          [
+            "Dan selitve",
+            "Do 50 % prevoznine in stroškov",
+            "»Odpoved ali prestavitev na dan selitve: do 50 % prevoznine in stroškov«"
+          ],
+          [
+            "Dan prej",
+            "Do 30 %",
+            "»Dan prej: do 30 %«"
+          ],
+          [
+            "Dva dni prej",
+            "Do 20 %",
+            "»Dva dni prej: do 20 %«"
+          ],
+          [
+            "Prej",
+            "Ni zajeto v zgornjih razredih",
+            "Svoje pravilo zapišite takšno, kot je (npr. »brezplačno, če nam sporočite vsaj tri dni prej«)"
+          ]
+        ],
+        "caption": "Zgornje meje iz standardnih pogojev za selitve, veljavnih od 1. junija 2018 (preverjeno na strani MLIT 19. novembra 2026). Če uporabljate lastne pogoje ali so bili pogoji medtem spremenjeni, navedite vrednosti iz pogojev, ki jih dejansko uporabljate."
+      },
+      "after": [
+        "Cene navajajte z davkom. Japonska Nacionalna davčna agencija od podjetij, ki potrošnikom vnaprej prikazujejo cene, zahteva, da prikažejo skupni znesek z davkom na potrošnjo. [National Tax Agency: Tax Answer No. 6902 (v japonščini)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm)"
+      ]
+    },
+    {
+      "heading": "Cene objavite kot zglede s pogoji",
+      "paragraphs": [
+        "Cena selitve je odvisna od količine, razdalje, termina in stavbe, zato ene fiksne cene ni mogoče navesti. Toda samo »pokličite za ponudbo« UI ne ponudi nič boljšega kot »odvisno od podjetja«. Dva ali trije zgledi, vsak z vsemi pogoji in mesecem, ko je nastal, ljudem in UI omogočijo, da preberejo »pri teh pogojih približno toliko«."
+      ],
+      "list": [
+        "Pogoji vsakega zgleda: število oseb in velikost stanovanja, količina (glavno pohištvo in aparati, število škatel), razdalja (isto mesto, ista prefektura, izven prefekture), termin (mesec, delavnik ali vikend, čas dneva), stavba (nadstropje, dvigalo ali ne, razdalja od mesta, kjer parkira tovornjak), število delavcev in velikost vozila ter kaj je vključeno (embalaža, zaščita tal, montaža pohištva).",
+        "Zneske navedite z davkom ter z mesecem in letom ocene. Stare zglede posodobite ali odstranite.",
+        "Za visoko sezono pojasnite, zakaj se cene zvišajo (na primer vaše lastne omejitve glede delavcev in vozil) in kako jih spremeni zgodnja rezervacija ali prilagodljiv datum. Panožne podatke o povpraševanju uporabite le, če lahko preverite njihov vir.",
+        "Navedite, kdaj se zaračunajo doplačila (več stvari na dan selitve, dvigovanje skozi okno, dolgo prenašanje) in kako se določijo. Letak iz Hjoga opozarja, da ocene ni mogoče zvišati zaradi priročnosti selitvenega podjetja."
+      ]
+    },
+    {
+      "heading": "Območje storitev, reklamacije in znaki zaupanja",
+      "paragraphs": [
+        "Območje storitev zapišite kot imena prefektur in mest v besedilu, ne samo kot sliko zemljevida. Napišite, ali sprejemate selitve na dolge razdalje ali izven prefekture in ali jih izvajate drugače. Če imate več poslovalnic, dajte vsaki svojo stran z naslovom, telefonsko številko in območjem. [Iskanje z UI za podjetja z več lokacijami](/guide/multi-location-business-ai-search/)",
+        "Za reklamacije navedite rok (tri mesece od selitve po standardnih pogojih), kam jih prijaviti, kaj prijaviti vnaprej in, če imate zavarovanje, kaj krije. Vsi objavljeni zneski se morajo ujemati s polico.",
+        "Eden od znakov zaupanja na Japonskem je Hikkoshi Anshin Mark (引越安心マーク). Izhaja iz certifikacijske sheme, ki jo je Japan Trucking Association ustanovila v poslovnem letu 2014 za selitvena podjetja, ki jih priznava kot ponudnike varnih in zanesljivih selitvenih storitev. [MLIT: certificiranje odličnih selitvenih podjetij (v japonščini)](https://www.mlit.go.jp/jidosha/jidosha_tk4_000026.html). Med zahtevami so, da je vsaka poslovalnica, ki izvaja selitve, certificiran varen prevoznik (G-mark) ali enakovredno, upoštevanje standardnih pogojev in sistem za obravnavo pritožb. [Okrožni prometni urad Kjušu (v japonščini)](https://wwwtb.mlit.go.jp/kyushu/yuryo.html). Po poročanju iz decembra 2025 je bilo v poslovnem letu 2025 certificiranih 41 selitvenih podjetij (veljavnost od 1. januarja 2026 do 31. decembra 2028), znak pa je imelo 348 podjetij s 1.673 poslovalnicami. [LOGISTICS TODAY, 22. december 2025 (v japonščini)](https://www.logi-today.com/892661)",
+        "Če imate certifikat, na strani o podjetju v besedilu navedite njegovo ime, organ, ki ga podeljuje, in obdobje veljavnosti, ne samo logotipa. Če certifikata nimate, ne uporabljajte podobnih formulacij. Mnenja zbirajte na zunanjih mestih, kot je vaš Profil podjetja v Googlu, namesto da bi ugled napihovali z mnenji, objavljenimi na lastni strani."
+      ]
+    },
+    {
+      "heading": "Strukturirani podatki: MovingCompany in areaServed",
+      "paragraphs": [
+        "schema.org ima za selitvena podjetja tip [MovingCompany](https://schema.org/MovingCompany), enega od tipov podjetij za dom in gradnjo (HomeAndConstructionBusiness) pod LocalBusiness. Območje, ki ga pokrivate, sodi v [areaServed](https://schema.org/areaServed), kjer lahko prefekture ali mesta navedete kot AdministrativeArea. Brezplačna ocena na domu je lahko Service z Offer v vrednosti 0.",
+        "Ko v Nurevo AEO nastavite MovingCompany, vnesete oceno na domu kot storitev in dodate območje s spodnjim filtrom, je izpis videti takole (vrednosti so primeri):"
+      ],
+      "code": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"MovingCompany\",\n      \"@id\": \"https://example.com/#organization\",\n      \"name\": \"Example Movers\",\n      \"address\": { \"@type\": \"PostalAddress\", \"streetAddress\": \"1-2-3 Example St, Example City\" },\n      \"telephone\": \"+1-000-000-0000\",\n      \"url\": \"https://example.com/\",\n      \"openingHours\": \"Mo-Su 08:00-20:00\",\n      \"areaServed\": [\n        { \"@type\": \"AdministrativeArea\", \"name\": \"Example County\" },\n        { \"@type\": \"AdministrativeArea\", \"name\": \"Example City\" }\n      ]\n    },\n    {\n      \"@type\": \"Service\",\n      \"@id\": \"https://example.com/#nurevo-service-1\",\n      \"name\": \"In-home estimate (free, about 30 min)\",\n      \"description\": \"We check the amount of furniture and the route out of your home, then give you a written estimate with its conditions. No obligation to book.\",\n      \"category\": \"Moving\",\n      \"provider\": { \"@id\": \"https://example.com/#organization\" },\n      \"additionalProperty\": {\n        \"@type\": \"PropertyValue\", \"name\": \"duration\",\n        \"value\": 30, \"unitCode\": \"MIN\", \"unitText\": \"minutes\"\n      },\n      \"offers\": { \"@type\": \"Offer\", \"price\": \"0\", \"priceCurrency\": \"USD\" },\n      \"potentialAction\": {\n        \"@type\": \"ReserveAction\",\n        \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/estimate\" },\n        \"result\": { \"@type\": \"Reservation\", \"name\": \"In-home estimate (free, about 30 min)\" }\n      }\n    }\n  ]\n}",
+      "after": [
+        "Strukturirani podatki naj bodo enaki besedilu strani. Offer vsebuje en sam znesek, zato cene paketov pustite v zgledih na strani, v strukturirane podatke pa vnesite le fiksne zneske, kot je brezplačna ocena."
+      ]
+    },
+    {
+      "heading": "Nastavitev na spletni strani selitvenega podjetja v WordPressu",
+      "list": [
+        "Namestite in aktivirajte Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO in Slim SEO delujejo naprej. Od različice 0.9.1 deluje tudi skupaj s SEO SIMPLE PACK in VK All in One Expansion Unit brez podvajanja strukturiranih podatkov.",
+        "V čarovniku za nastavitev izberite »Drugo«, nato v Nastavitvah > »Vrsta dejavnosti (tip schema.org)« vnesite MovingCompany. Ne izberite »Strokovne storitve«, ki nastavi ProfessionalService.",
+        "Preverite ime podjetja, naslov, telefonsko številko, delovni čas in opis. V opisu na kratko navedite območje, vrste selitev, ki jih sprejemate (posamezniki, družine, pisarne), in kako potekajo ocene.",
+        "Storitve dodajajte eno za drugo (do 20): ocena na domu (0 in trajanje), spletna ocena, glavni paketi in dodatne storitve, kot so klimatske naprave. Ime, trajanje v minutah, cena z davkom in valuto, kategorija, URL za rezervacijo in opis se objavijo kot Service, Offer in rezervacijsko dejanje (ReserveAction), vsaka storitev pa dobi vrstico v llms.txt. Pri paketih, katerih cena je odvisna od pogojev, pustite ceno prazno in pogoje zapišite v opis.",
+        "Območje storitev dodajte kot areaServed z razvijalskim filtrom webmcp_canary_business_node (koda spodaj; v functions.php podrejene teme ali v vtičniku za izseke kode). Ko je aktiven vtičnik SEO, se lastnost združi z vozliščem podjetja tega vtičnika, prednost pa imajo vrednosti, ki jih vtičnik že nastavlja.",
+        "Vprašanja, ki jih ljudje zastavljajo (cena in način ocene, stroški odpovedi in prestavitve, reklamacije, doplačila na dan selitve, načini plačila, selitve izven vašega območja), vnesite kot FAQ in vstavite blok Nurevo FAQ (ali kratko kodo [nurevo_faq]). Vprašanja samo za cenik lahko nastavite kot lastni FAQ te strani v plošči Nurevo AEO v urejevalniku blokov.",
+        "Odprite /llms.txt in preverite, ali so navedene strani s cenikom, ocenami, območjem, reklamacijami in o podjetju. Strani zaključenih akcij lahko iz llms.txt izključite v plošči Nurevo AEO. Zaženite diagnostiko na zaslonu Ocena AEO in uporabite popravke z enim klikom."
+      ],
+      "code": "// Add the service area to the mover's node (same values as your \"Areas we cover\" page)\nadd_filter('webmcp_canary_business_node', function (array $node, array $settings) {\n    $node['areaServed'] = array(\n        array('@type' => 'AdministrativeArea', 'name' => 'Example County'),\n        array('@type' => 'AdministrativeArea', 'name' => 'Example City'),\n    );\n    return $node;\n}, 10, 2);",
+      "after": [
+        "Na spletni strani, ki ne teče na WordPressu, preverite isto: vnesite URL v [brezplačno preverjanje](/check), brez registracije, in videli boste stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. O sočasni uporabi z vtičniki SEO glejte [dodajanje podatkov o podjetju v Yoast, Rank Math in AIOSEO](/guide/local-business-schema-seo-plugins/)."
+      ]
+    },
+    {
+      "heading": "Usklajenost s primerjalniki in portali za ponudbe",
+      "paragraphs": [
+        "UI poleg vaše strani bere tudi primerjalnike ponudb, primerjalne članke in vaš Profil podjetja v Googlu. Če se ime, naslov, telefon, območje ali delovni čas od mesta do mesta razlikujejo, UI ne ve, kaj drži. Vodite seznam mest, kjer ste navedeni, in vsako enkrat ali dvakrat na leto uskladite s svojo stranjo.",
+        "Cene in akcije se med portali lahko razlikujejo. Če na lastni strani navedete, da je »referenčna cena pisna ocena« in da »akcije na portalih veljajo pod pogoji posameznega portala«, zmanjšate možnost, da UI ponovi potekel popust."
+      ]
+    },
+    {
+      "heading": "Kontrolni seznam pred objavo",
+      "list": [
+        "Za vsak način ocene (na domu, spletno, po telefonu): brez plačila, koliko časa traja in da se izroči pisna ocena.",
+        "Cenik vsebuje dva ali tri zglede z vsemi pogoji, z davkom in datumom.",
+        "Razredi stroškov odpovedi in prestavitve (dan selitve, dan prej, dva dni prej) ter od kdaj je odpoved brezplačna so zapisani v besedilu v ceniku in v FAQ.",
+        "Naveden je rok in kontakt za reklamacije ter predmeti, ki jih je treba prijaviti vnaprej.",
+        "Območje je zapisano kot imena prefektur in mest in se ujema z areaServed v strukturiranih podatkih.",
+        "Vrsta dejavnosti je MovingCompany, ime, naslov, telefon in delovni čas pa se ujemajo na strani, v strukturiranih podatkih, v Profilu podjetja v Googlu in na portalih.",
+        "Vsak certifikat je izpisan z imenom, organom podelitve in obdobjem veljavnosti (in nič, česar nimate).",
+        "Nobenih trditev, ki jih ne morete dokazati, kot sta »najceneje v panogi« ali »zajamčeno«.",
+        "llms.txt navaja strani s cenikom, ocenami, območjem, reklamacijami in o podjetju. [Kaj je llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Kako preveriti, ali se pojavljate v odgovorih UI",
+      "paragraphs": [
+        "Ko so strani urejene, napišite 5–10 vprašanj, ki bi jih lahko zastavila potencialna stranka, in v njih združite območje, termin, velikost gospodinjstva in skrbi (stroški odpovedi, reklamacije, ocene). Zastavite jih v ChatGPT in Perplexity ter zabeležite, ali se vaše podjetje pojavi z imenom ali URL-jem, ali so cene in stroški odpovedi opisani pravilno in ali je navedeni vir vaša stran ali portal za ponudbe. Odgovori UI se med poizvedbami spreminjajo, zato ista vprašanja ponavljajte skozi čas in zapise pred mesecem, ko ste spremenili cenik, in po njem hranite ločeno. [Kako meriti vidnost v UI](/guide/measure-ai-visibility/)",
+        "V paketih Free in Standard Nurevo AEO enkrat na mesec Perplexity zastavi tri vprašanja, sestavljena iz vrste dejavnosti in območja (nikoli iz imena podjetja), in zabeleži, ali se pojavi vaše ime ali stran. V paketu Pro (od $99/mesec) merjenje vidnosti v UI v različici beta pokaže, kako pogosto se pojavljate, s primerjavo s konkurenco in trendom (trenutno merjeno na Perplexity). Oboje zajema vzorec odgovorov, ne vseh odgovorov."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Kje naj selitveno podjetje začne z iskanjem z UI?",
+      "a": "V cenik dodajte zglede cen s pogoji, v besedilu zapišite stroške odpovedi in prestavitve ter rok za reklamacije in navedite območje storitev z imeni mest. Nato objavite strukturirane podatke s tipom MovingCompany ter uskladite Profil podjetja v Googlu in portale."
+    },
+    {
+      "q": "Ali nas objava cen ne bo postavila v slabši položaj?",
+      "a": "Z objavo zgledov s pogoji namesto ene same cene se izognete vtisu, da bo ponudba povsem enaka. Brez kakršnih koli številk lahko UI odgovori s številkami iz primerjalnikov ali splošnih člankov. Vedno dodajte pogoje in mesec, ko je nastal posamezen zgled."
+    },
+    {
+      "q": "Kako zapisati stroške odpovedi?",
+      "a": "Po japonskih standardnih pogojih za selitve, veljavnih od 1. junija 2018, so zgornje meje 50 % prevoznine in stroškov na dan selitve, 30 % dan prej in 20 % dva dni prej. Vrednosti iz pogojev, ki jih uporabljate, in od kdaj je odpoved brezplačna, zapišite v besedilu v ceniku in v FAQ."
+    },
+    {
+      "q": "Ali mora ocena potekati osebno?",
+      "a": "To ni pravilo, vendar potrošniški letak prefekture Hjogo svetuje, naj podjetje stanovanje pregleda, namesto da bi se zanašali samo na ponudbo po telefonu ali na spletu. Pojasnilo, kaj je mogoče oceniti z vsakim načinom (na domu, spletno, po telefonu) in kako se izroči pisna ocena, pomaga UI razložiti razliko."
+    },
+    {
+      "q": "Kateri tip strukturiranih podatkov naj uporabi selitveno podjetje?",
+      "a": "schema.org MovingCompany. Območje storitev sodi v areaServed, brezplačna ocena pa je lahko Service z Offer v vrednosti 0. Vrednosti naj bodo enake besedilu strani."
+    },
+    {
+      "q": "Ali lahko Nurevo AEO uporabljam brezplačno?",
+      "a": "Da. Strukturirani podatki za kontaktne podatke, delovni čas, storitve in FAQ ter llms.txt, pravila za pajke UI in Ocena AEO so v brezplačnem paketu. Plačljiva paketa dodata vedno posodobljen nabor pravil (Standard, $20/mesec) in merjenje vidnosti v UI v različici beta (Pro, od $99/mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Ali to zagotavlja, da nas bo ChatGPT priporočil?",
+      "a": "Ne. Odgovori UI se razlikujejo in nobeno orodje ali metoda ne more zagotoviti pojavitve ali uvrstitve. Lahko pa poskrbite, da UI vaša dejstva prebere pravilno, in redno preverjate, ali se pojavljate."
+    }
+  ],
+  "relatedHeading": "Sorodni vodniki",
+  "cta": {
+    "heading": "Najprej poglejte, kako UI bere vašo spletno stran",
+    "body": "Brezplačno preverjanje brez registracije pokaže stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. V WordPressu Nurevo AEO vrzeli zapolni brezplačno.",
+    "label": "Brezplačno preverite berljivost za UI",
+    "href": "/check",
+    "secondary": {
+      "label": "Prenesite Nurevo AEO z WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI, Google pa družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK in VK All in One Expansion Unit so blagovne znamke svojih lastnikov. Hikkoshi Anshin Mark je certifikacijska shema Japan Trucking Association. Nurevo ni povezan z njimi niti s katerim koli podjetjem ali organizacijo, omenjeno v tem vodniku. To ni pravni nasvet."
+}

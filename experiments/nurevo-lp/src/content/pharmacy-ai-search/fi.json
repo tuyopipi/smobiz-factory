@@ -1,0 +1,246 @@
+{
+  "title": "Tekoälyhaku apteekeille: aukioloajat ja farmaseutti | Nurevo",
+  "description": "AEO apteekeille: julkaiskaa aukiolo- ja reseptiajat, ajat ilman farmaseuttia, neuvonta aukioloaikojen ulkopuolella ja kotikäynnit tekstinä ja schemana.",
+  "h1": "Tekoälyhaku apteekeille ja lääkemyymälöille: näin tekoäly lukee aukioloajat, farmaseutin paikallaolon ja kotikäynnit oikein",
+  "lead": "Apteekin tekoälyhakuoptimointi tarkoittaa, että vastaatte sivulla, päivän ja minuutin tarkkuudella, kysymyksiin, joita ihmiset nyt esittävät tekoälylle: onko teillä auki nyt, onko farmaseutti paikalla (voinko ostaa farmaseutin myytäväksi rajattuja lääkkeitä), toimitatteko reseptin tältä vastaanotolta, saanko neuvontaa aukioloaikojen ulkopuolella ja toimitatteko lääkkeitä kotiin tai teettekö kotikäyntejä. Sen jälkeen julkaisette samat tiedot yhdenmukaisesti rakenteisessa datassa, llms.txt-tiedostossa, Google Business Profile -profiilissa ja siinä virallisessa apteekkirekisterissä, johon raportoitte. Japanissa rekisteri on kansallinen terveydenhuollon tietopalvelu (Navii), jonka tiedot tulevat toimintailmoituksista, jotka jokainen apteekki tekee prefektuurilleen.",
+  "intro": [
+    "Kirjoitettu 15. marraskuuta 2026 (JST). Tokion ja Saitaman sivut Japanin apteekkien toimintailmoitusjärjestelmästä sekä schema.orgin tyypit (schema-dts 2.1.0:n määritelmien mukaan) tarkistettiin samana päivänä. Esimerkit säännöistä ovat Japanista; tarkistakaa säännöt omalla toiminta-alueellanne.",
+    "Tekoälyn vastaukset vaihtelevat päivästä toiseen ja sen mukaan, miten kysymys muotoillaan. Tämän oppaan vaiheet tekevät apteekkinne tiedoista tekoälylle luettavia. Ne eivät takaa, että tekoäly mainitsee apteekkinne tai sijoittaa sen tietylle paikalle."
+  ],
+  "sections": [
+    {
+      "heading": "Mitä ihmiset kysyvät tekoälyltä apteekeista",
+      "paragraphs": [
+        "Apteekkia etsitään lääkäriltä palatessa tai silloin, kun joku sairastuu illalla tai viikonloppuna. Siksi kysymyksissä on aikoja ja ehtoja: \"apteekki [vastaanoton] lähellä, joka on auki klo 19 jälkeen\", \"mistä saan reseptilääkkeet sunnuntaina\", \"lääkemyymälä, jossa on farmaseutti paikalla juuri nyt\", \"apteekki, joka toimittaa lääkkeet vanhempani kotiin\", \"apteekki, jossa voin kysyä englanniksi\".",
+        "Jotta tekoäly voi mainita apteekkinne vastauksena tällaiseen kysymykseen, sen on pystyttävä lukemaan tekstinä, että täytätte ehdon. Sivu, jolla aukioloajat ovat vain kuvana, jolla myymälän aukioloaikoja ja reseptien toimitusaikoja ei eroteta toisistaan tai jolla kotikäynneistä sanotaan vain \"kysykää meiltä\", on vaikea hyödyntää ehdollisessa kysymyksessä.",
+        "Luimme aiheen parhaiten sijoittuneet sivut japaniksi ja englanniksi. Useimmat jäävät yleisiin neuvoihin: päivittäkää Google Business Profile, keräkää arvosteluja, lisätkää rakenteinen data. Lähes mikään ei käsittele sivuston yhdenmukaistamista niiden virallisten ilmoitusten kanssa, jotka apteekki jo tekee, sitä, miten ajat kirjoitetaan silloin, kun farmaseuttia ei ole paikalla, konkreettista WordPress-määritystä tai sitä, miten tarkistetaan, näkyykö apteekki vastauksissa. Tämä opas täyttää nuo aukot."
+      ]
+    },
+    {
+      "heading": "Julkaisemisen arvoiset tiedot ja miten ne kirjoitetaan",
+      "paragraphs": [
+        "Käyttäkää taulukkoa ohjeena. Reseptiapteekki ja laajan itsehoitovalikoiman lääkemyymälä painottavat kohtia eri tavoin, mutta molemmille se, miten ajat ja paikalla oleva henkilökunta kirjoitetaan, ratkaisee, voiko tekoäly käyttää sivuanne."
+      ],
+      "table": {
+        "head": [
+          "Tieto",
+          "Miten se kirjoitetaan sivulle",
+          "Huomioitavaa"
+        ],
+        "rows": [
+          [
+            "Aukiolopäivät ja -ajat",
+            "Ajat jokaiselle päivälle, suljetut päivät, miten arkipyhät hoidetaan",
+            "Jos reseptien toimitusajat poikkeavat myymälän aukioloajoista, ilmoittakaa ne erikseen"
+          ],
+          [
+            "Reseptien toimitusajat",
+            "Milloin otatte reseptejä vastaan ja viimeinen aika jättää resepti",
+            "Muuttakaa \"30 minuuttia ennen sulkemista\" kellonajaksi"
+          ],
+          [
+            "Milloin farmaseutti on tai ei ole paikalla",
+            "Päivät ja ajat ilman farmaseuttia ja mitä silloin ei voi tehdä",
+            "Kertokaa selvästi, milloin farmaseutin myytäväksi rajatut lääkkeet ja reseptien toimitus eivät ole saatavilla"
+          ],
+          [
+            "Neuvonta aukioloaikojen ulkopuolella",
+            "Saako sulkemisen jälkeen neuvontaa, numero ja ajat",
+            "Jos sanotte \"24 tuntia\", kertokaa, koskeeko se vain puhelinneuvontaa vai myös reseptien toimitusta"
+          ],
+          [
+            "Reseptit",
+            "Otatteko vastaan reseptejä kaikilta vastaanotoilta, minkä lähivastaanottojen reseptejä toimitatte usein, miten reseptin voi lähettää etukäteen (faksi tai sovellus)",
+            "Välttäkää sanamuotoja, joista saa käsityksen, että palvelette vain yhtä vastaanottoa"
+          ],
+          [
+            "Kotikäynnit",
+            "Kattamanne alue, keitä käytte tapaamassa (kodit, hoivakodit), miten käynti tilataan, mistä hinnat löytyvät",
+            "Älkää jääkö sanoihin \"kysykää meiltä\"; kertokaa alue ja ehdot"
+          ],
+          [
+            "Sertifioinnit ja nimitykset",
+            "Viralliset sertifioinnit tai nimitykset, jotka teillä on (Japanissa: paikallisen tai erikoistuneen yhteistyön apteekki, terveyttä tukeva apteekki)",
+            "Älkää koskaan väittäkö omaavanne sellaista, jota teillä ei ole. Kertokaa järjestelmän nimi ja oma asemanne yhdessä"
+          ],
+          [
+            "Valikoima",
+            "Lääkeryhmät, hoitotarvikkeet, sairaanhoitotarvikkeet, vauvatuotteet, voitteko tilata tuotteita ja kuinka kauan se kestää",
+            "Varasto muuttuu, joten kirjoittakaa \"soittakaa ja tarkistakaa saatavuus\""
+          ],
+          [
+            "Maksutavat, esteettömyys ja kielet",
+            "Hyväksytyt maksutavat, pysäköinti, esteetön pääsy pyörätuolilla, kielet, joilla voitte neuvoa",
+            "Kun jokin muuttuu, päivittäkää sivusto ja Google Business Profile samanaikaisesti"
+          ],
+          [
+            "Tilapäiset sulkemiset ja lomat",
+            "Päivämäärät sekä lähellä olevat apteekit tai päivystävät apteekit, joita voi käyttää sen sijaan",
+            "Sijoittakaa ne aukioloaikojen yhteyteen, ei vain uutiseen"
+          ]
+        ],
+        "caption": "Koottu niistä ehdoista, joita ihmiset liittävät apteekkeja koskeviin kysymyksiin, sekä kohdista, jotka parhaiten sijoittuneilta sivuilta puuttuivat."
+      },
+      "after": [
+        "Pitäkää jokainen arvo samana sivulla, rakenteisessa datassa, Google Business Profile -profiilissa, virallisessa rekisterissä ja oven kyltissä. Google suosittelee pitämään Business Profile -profiilin ajan tasalla myös sen tekoälyominaisuuksia varten. [Google: Tekoälyominaisuudet ja verkkosivustosi](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Yhdenmukaistakaa tiedot virallisten apteekki-ilmoitusten kanssa (Japani: Navii)",
+      "paragraphs": [
+        "Japanissa lääke- ja lääkinnällisistä laitteista annetun lain (Pharmaceuticals and Medical Devices Act) 8-2 pykälä velvoittaa jokaisen apteekin ilmoittamaan toimintansa prefektuurilleen (apteekkien toimintatietojärjestelmä). Tokio Metropolitan Governmentin mukaan ilmoitukset on tehty verkossa G-MIS-järjestelmän kautta tammikuusta 2024 alkaen, ja ne on julkaistu kansallisessa terveydenhuollon tietopalvelussa Naviissa huhtikuusta 2024 alkaen. [Tokyo Metropolitan Government (japaniksi)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (japaniksi)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Vuosittain ilmoitetaan tilanne 31. joulukuuta (Tokiossa yleensä tammikuun alun ja helmikuun lopun välillä), ja tietyt kohdat on ilmoitettava viipymättä aina, kun ne muuttuvat. Niihin kuuluvat aukiolopäivät, aukioloajat, ajat, jolloin neuvontaa on saatavilla aukioloaikojen ulkopuolella, ilmoittaako apteekki olevansa terveyttä tukeva apteekki, onko sillä paikallisen tai erikoistuneen yhteistyön apteekin sertifiointi ja onko aikoja, jolloin farmaseuttia ei ole paikalla. Saitaman prefektuurin sivu lisää luetteloon toiminnan keskeyttämisen, uudelleen avaamisen ja lopettamisen. [Saitaman prefektuuri (japaniksi)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "Tästä on hyötyä tekoälyhaussa. Se, mitä tekoälyltä kysytään apteekista (kuinka myöhään se on auki, saako neuvontaa sulkemisen jälkeen, onko farmaseutti paikalla, onko se sertifioitu), on lähes täsmälleen samat kohdat, jotka apteekki jo ilmoittaa. Jos ilmoitetut arvot ja sivustonne ovat ristiriidassa, tekoäly tai potilas ei voi tietää, kumpi pitää paikkansa. Ottakaa säännöksi muuttaa ilmoitus, sivusto, Google Business Profile ja kyltti samana päivänä. Japanin ulkopuolella soveltakaa samaa periaatetta siihen viralliseen rekisteriin tai terveyspalveluhakemistoon, jossa apteekkinne on mainittu."
+      ]
+    },
+    {
+      "heading": "Miten kirjoitetaan \"farmaseutti ei paikalla\" ja neuvonta aukioloaikojen ulkopuolella",
+      "paragraphs": [
+        "Lääkemyymälä voi olla auki silloinkin, kun farmaseuttia ei ole töissä. Jos tekoälyltä kysytään \"kauppaa, josta voin ostaa farmaseutin myytäväksi rajatun lääkkeen nyt\" ja sivullanne on vain myymälän aukioloajat, se voi vastata myöntävästi aikaan, jolloin ette voi myydä sitä.",
+        "Esimerkki: \"Myymälä auki 9:00-22:00 joka päivä. Reseptit ma-pe 9:00-19:00 (viimeinen resepti 18:45), la 9:00-13:00. Ei farmaseuttia tiistaisin 19:00-22:00: silloin emme voi toimittaa reseptejä emmekä myydä farmaseutin myytäväksi rajattuja lääkkeitä. Neuvonta aukioloaikojen ulkopuolella: rekisteröityneet potilaat voivat soittaa numeroon 0X-XXXX-XXXX klo 22:00-9:00.\" Kootkaa myymälän, reseptien, farmaseutin ja aukioloaikojen ulkopuolisen neuvonnan tiedot yhteen paikkaan (numero on paikkamerkki).",
+        "Farmaseutin myytäväksi rajattuja lääkkeitä ja verkkoapteekin pakollisia tietoja koskevat omat säännöt, ja ne muuttuvat jatkuvasti. Tarkistakaa tarkat vaatimukset voimassa olevasta laista ja valvontaviranomaisen ohjeista."
+      ]
+    },
+    {
+      "heading": "Mainontasäännöt koskevat myös tekoälylle kirjoitettua tekstiä",
+      "paragraphs": [
+        "Japanissa lääkemainontaa säätelevät Pharmaceuticals and Medical Devices Act -lain mainontasäännökset ja terveysministeriön standardit lääkkeiden asianmukaisesta mainonnasta. [Ministry of Health, Labour and Welfare (japaniksi)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). Säännöt koskevat samalla tavalla UKK-sisältöä, rakenteista dataa ja blogikirjoituksia, jotka on kirjoitettu tekoälyn poimittaviksi. Useimmissa maissa on vastaavat säännöt."
+      ],
+      "list": [
+        "Älkää luvatko tehoa tai turvallisuutta (\"toimii aina\", \"ei sivuvaikutuksia\"), älkääkä käyttäkö superlatiiveja tai vertailuja (\"kaupungin paras\").",
+        "Älkää kirjoittako oireartikkeleissa \"tähän oireeseen ottakaa tätä lääkettä\". Kertokaa, milloin on syytä hakeutua lääkäriin ja missä apteekissa voidaan auttaa.",
+        "Älkää listatko reseptilääkkeitä tuotteina hintoineen.",
+        "Älkää käyttäkö asiakkaiden kommentteja UKK- tai arvostelumerkinnöissä todisteena siitä, että jokin toimii."
+      ],
+      "after": [
+        "Jos olette epävarmoja, kysykää valvontaviranomaiselta tai tutustukaa ammattijärjestönne ohjeisiin. Vastaanottojen näkökulmasta, ks. [Tekoälyhaku yleislääkärin- ja lastenvastaanotoille](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Rakenteinen data: Pharmacy-tyyppi ja hyödylliset ominaisuudet",
+      "paragraphs": [
+        "schema.orgissa on Pharmacy-tyyppi, jonka kuvaus on \"A pharmacy or drugstore\" (apteekki tai lääkemyymälä; tarkistettu schema-dts 2.1.0:n tyyppimäärittelyistä 15. marraskuuta 2026). Pharmacy on MedicalBusiness-tyypin alatyyppi, ja sillä on sekä LocalBusiness- että MedicalOrganization-tyyppien ominaisuudet. Lääkemyymälä voi käyttää Pharmacy-tyyppiä Store-tyypin sijaan."
+      ],
+      "table": {
+        "head": [
+          "Tyyppi tai ominaisuus",
+          "Merkitys",
+          "Käyttö apteekissa"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Apteekki tai lääkemyymälä",
+            "Sekä reseptiapteekit että lääkemyymälät. Sisältää suoraan osoitteen, puhelinnumeron ja aukioloajat"
+          ],
+          [
+            "openingHoursSpecification",
+            "Aukioloajat päivittäin",
+            "Myymälän aukioloajat. Kirjoittakaa reseptien toimitusajat ja ajat ilman farmaseuttia sivun tekstiin"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Tavallisesta poikkeavat ajat",
+            "Lomien ja tilapäisten sulkemisten päivämäärät"
+          ],
+          [
+            "knowsLanguage",
+            "Kielet, joita yritys voi käyttää",
+            "Jos voitte neuvoa englanniksi, kiinaksi tai muilla kielillä"
+          ],
+          [
+            "paymentAccepted",
+            "Maksutavat",
+            "Jos ilmoitatte kortti- tai mobiilimaksut"
+          ],
+          [
+            "hasOfferCatalog",
+            "Luettelo tarjotuista palveluista",
+            "Reseptien toimitus, kotikäynnit, terveysneuvonta ja vastaavat palvelut"
+          ]
+        ]
+      },
+      "after": [
+        "Googlen paikallisten yritysten rakenteinen data edellyttää nimeä ja osoitetta ja suosittelee tarkinta mahdollista tyyppiä. [Google: Paikallisten yritysten rakenteinen data](https://developers.google.com/search/docs/appearance/structured-data/local-business). Tiedot, joille ei ole ilmeistä ominaisuutta, kuten ajat ilman farmaseuttia tai neuvonta aukioloaikojen ulkopuolella, ovat turvallisimmin sivun tekstissä."
+      ]
+    },
+    {
+      "heading": "Määritys apteekin WordPress-sivustolla",
+      "list": [
+        "Asentakaa ja ottakaa käyttöön Nurevo AEO (maksuton) [WordPress.orgista](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO ja Slim SEO toimivat edelleen. Versiosta 0.9.1 alkaen se toimii myös SEO SIMPLE PACKin ja VK All in One Expansion Unitin rinnalla ilman päällekkäistä rakenteista dataa.",
+        "Valitkaa ohjatussa asennuksessa \"Vähittäiskauppa\" (se asettaa tyypiksi Store). Vaihtakaa sen jälkeen Asetusten kenttään \"Yritystyyppi (schema.org-tyyppi)\" arvoksi Pharmacy. Pharmacy on yksi luetelluista yritystyypeistä, ja ohjattu asennus käsittelee sitä osana vähittäiskaupan ryhmää.",
+        "Tarkistakaa apteekin nimi, osoite, puhelinnumero ja kuvaus. Vain tyhjät kentät täytetään nykyisistä asetuksistanne; itse syöttämiänne arvoja ei koskaan korvata.",
+        "Kirjoittakaa aukioloaikakenttään vain myymälän päivät ja kellonajat, esimerkiksi \"Mon-Sat 9:00-22:00 / Sun 10:00-20:00\". Jos lisäätte arkipyhiä tai merkinnän \"viimeinen resepti\", lisäosa julkaisee tekstinne sellaisenaan sen sijaan, että se ottaisi riskin virheellisistä ajoista, joten kirjoittakaa reseptien toimitusajat, ajat ilman farmaseuttia ja arkipyhien säännöt sivun tekstiin.",
+        "Lisätkää Asetuksissa tarjoamanne palvelut (reseptien toimitus, kotikäynnit, terveysneuvonta, itsehoitolääkkeet) ja lisätkää yleiset kysymykset (reseptin lähettäminen etukäteen, neuvonta aukioloaikojen ulkopuolella, kotikäynnin tilaaminen) UKK:ksi. UKK-kohdat lisätään sen sivun FAQPage-tietoihin, jolle sijoitatte Nurevo FAQ -lohkon (tai [nurevo_faq]-lyhytkoodin).",
+        "Suorittakaa tarkistus AEO-pisteet-näkymässä ja ottakaa käyttöön yhden napsautuksen korjaukset. Nähdäksenne, miltä sivustonne näyttää ulkopuolelta, käyttäkää [maksutonta tekoälyluettavuuden tarkistusta](/check)."
+      ],
+      "after": [
+        "SEO-lisäosan kanssa Nurevo AEO ei tulosta toista rakenteisen datan joukkoa. Se lisää vain puuttuvan osoitteen, puhelinnumeron, aukioloajat ja tarkemman tyypin siihen graafiin, jonka SEO-lisäosanne jo julkaisee. Ks. [Paikallisen yrityksen tietojen lisääminen Yoastiin, Rank Mathiin ja AIOSEOon](/guide/local-business-schema-seo-plugins/). Jos teillä on useita toimipisteitä, antakaa jokaiselle oma sivu omine aukioloaikoineen, farmaseuttiaikoineen ja kotikäyntialueineen."
+      ]
+    },
+    {
+      "heading": "Tarkistuslista ennen julkaisua",
+      "list": [
+        "Aukioloajat ovat tekstinä, eivät vain kuvana, ja niissä ovat suljetut päivät ja arkipyhien käytäntö.",
+        "Reseptien toimitusajat ja viimeinen aika jättää resepti on ilmoitettu erikseen myymälän aukioloajoista.",
+        "Jos on aikoja ilman farmaseuttia, päivät, kellonajat ja se, mitä silloin ei voi tehdä, on kerrottu.",
+        "On kerrottu, saako neuvontaa aukioloaikojen ulkopuolella, sekä numero ja ajat.",
+        "On kerrottu, miten resepti jätetään tai lähetetään etukäteen, sekä kotikäyntien alue, kohderyhmät ja tilaustapa.",
+        "Sertifioinnit ja nimitykset on ilmoitettu vain sellaisina kuin ne todella ovat.",
+        "Nimi, osoite, puhelinnumero ja aukioloajat ovat samat sivustolla, rakenteisessa datassa, Google Business Profile -profiilissa ja virallisessa apteekkirekisterissä.",
+        "Ei tehon lupauksia, ei superlatiiveja tai vertailuja eikä asiakkaiden kommentteja todisteena UKK:ssa tai rakenteisessa datassa.",
+        "llms.txt luettelee aukioloaika-, saapumisohje-, resepti- ja kotikäyntisivunne. [Mikä on llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Tarkistakaa, mainitseeko tekoäly teidät",
+      "paragraphs": [
+        "Kun tiedot ovat kunnossa, kirjoittakaa 5-10 kysymystä, joita ihmiset voisivat esittää ja joissa yhdistyvät alue, kellonaika ja jokin ehto (resepti, farmaseutti, kotikäynti, kieli), ja esittäkää ne ChatGPT:lle ja Perplexitylle. Esimerkiksi: \"Mikä apteekki [aseman] lähellä voi toimittaa reseptin klo 20 arkipäivänä?\" tai \"Mitkä apteekit [kaupungissa] tekevät kotikäyntejä?\" Kirjatkaa, mainitaanko apteekkinne tai linkitetäänkö siihen ja ovatko ajat ja ehdot oikein. Tekoälyn vastaukset vaihtelevat kerrasta toiseen, joten toistakaa samat kysymykset ajan mittaan. Menetelmä on kuvattu oppaassa [Näin mittaatte näkyvyyttä tekoälyssä](/guide/measure-ai-visibility/).",
+        "Jos tekoäly näyttää väärät aukioloajat, selvittäkää, mistä arvo on peräisin. Jos vastaus viittaa lähteeseen, tarkistakaa se sivu (oma sivustonne, Google Business Profile, virallinen rekisteri, kartta- tai arvostelusivusto) ja korjatkaa se, joka poikkeaa.",
+        "Nurevo AEO:lla jopa Free- ja Standard-tilaukset esittävät kerran kuukaudessa Perplexitylle kolme kysymystä, jotka on muodostettu yritystyypistänne ja alueestanne (ei koskaan apteekkinne nimestä), ja kirjaavat, mainitsivatko vastaukset apteekkinne tai viittasivatko ne sivustoonne. Pro-tilauksessa (alkaen $99/kk) beta-vaiheessa oleva tekoälynäkyvyyden mittaus näyttää, kuinka usein apteekkinne esiintyy tekoälyn vastauksissa, kilpailijavertailun ja kehityksen kanssa (mitataan tällä hetkellä Perplexityssä). Molemmat tarkastelevat otosta vastauksista, eivät jokaista vastausta."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Mistä apteekin kannattaa aloittaa tekoälyhaun kanssa?",
+      "a": "Kirjoittakaa myymälän aukioloajat ja reseptien toimitusajat erikseen tekstinä ja lisätkää, milloin farmaseuttia ei ole paikalla ja saako neuvontaa aukioloaikojen ulkopuolella. Varmistakaa sitten, että arvot vastaavat rakenteista dataa, Google Business Profile -profiilia ja virallista apteekkirekisteriä."
+    },
+    {
+      "q": "Pitäisikö lääkemyymälän käyttää rakenteisessa datassa Store- vai Pharmacy-tyyppiä?",
+      "a": "Jos myytte lääkkeitä ja teillä on farmaseutti, Pharmacy sopii paremmin. schema.org kuvaa Pharmacy-tyypin sanoin \"A pharmacy or drugstore\" (apteekki tai lääkemyymälä), ja LocalBusiness-tyypin alatyyppinä se sisältää suoraan osoitteen ja aukioloajat. Se, että arvot vastaavat sivuanne, on tärkeämpää kuin tyyppi."
+    },
+    {
+      "q": "Mitä tapahtuu, jos virallinen rekisteri ja verkkosivustomme ovat ristiriidassa?",
+      "a": "Tekoäly ja potilaat eivät voi tietää, kumpaan luottaa. Japanissa aukiolopäivät ja -ajat, neuvonta aukioloaikojen ulkopuolella ja ajat ilman farmaseuttia ovat kohtia, jotka apteekin on ilmoitettava viipymättä, kun ne muuttuvat. Kun päivitätte ilmoituksen, sivuston ja Google Business Profile -profiilin samana päivänä, ristiriitaa ei synny."
+    },
+    {
+      "q": "Eikö olisi parempi jättää ajat ilman farmaseuttia mainitsematta?",
+      "a": "On turvallisempaa mainita ne. Muuten tekoäly voi kertoa, että farmaseutin myytäväksi rajattuja lääkkeitä voi ostaa aikaan, jolloin se ei ole mahdollista, ja ihmiset tulevat paikalle turhaan. Japanissa se, onko aikoja ilman farmaseuttia, on myös ilmoitettava kohta."
+    },
+    {
+      "q": "Voimmeko kirjoittaa artikkeleita oireista ja niitä hoitavista lääkkeistä, jotta tekoäly poimisi meidät?",
+      "a": "Lääkemainonta on säänneltyä (Japanissa Pharmaceuticals and Medical Devices Act -lailla ja terveysministeriön mainontastandardeilla). Välttäkää tehon lupaamista ja superlatiiveja; keskittykää siihen, milloin on syytä hakeutua lääkäriin ja missä apteekki voi auttaa. Kysykää valvontaviranomaiselta, jos olette epävarmoja."
+    },
+    {
+      "q": "Onko Nurevo AEO maksuton?",
+      "a": "Kyllä. Rakenteinen data yritystyypille, osoitteelle, aukioloajoille, palveluille ja UKK:lle sekä llms.txt, tekoälyindeksoijien säännöt ja AEO-pisteet sisältyvät maksuttomaan tilaukseen. Maksulliset tilaukset lisäävät aina ajantasaisen sääntöjoukon (Standard, $20/kk) ja beta-vaiheessa olevan tekoälynäkyvyyden mittauksen (Pro, alkaen $99/kk). [Nurevo AEO WordPress.orgissa](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Takaako tämä, että apteekkimme näkyy ChatGPT:ssä?",
+      "a": "Ei. Tekoälyn vastaukset muuttuvat, eikä mikään työkalu tai tekniikka voi taata mainintaa tai sijoitusta. Voitte tehdä tiedoistanne helposti tekoälyn luettavia ja jatkaa sen tarkistamista, näyttekö vastauksissa."
+    }
+  ],
+  "relatedHeading": "Aiheeseen liittyvät oppaat",
+  "cta": {
+    "heading": "Katsokaa ensin, miten tekoäly lukee apteekkinne verkkosivustoa",
+    "body": "Maksuton tarkistus näyttää rakenteisen datanne, llms.txt-tiedoston ja tekoälyindeksoijien pääsyn tilan ilman rekisteröitymistä. WordPressissä Nurevo AEO täyttää aukot maksutta.",
+    "label": "Suorita maksuton tekoälyluettavuuden tarkistus",
+    "href": "/check",
+    "secondary": {
+      "label": "Hae Nurevo AEO WordPress.orgista",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT on OpenAI:n, Perplexity Perplexity AI:n ja Google Google LLC:n tavaramerkki. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK ja VK All in One Expansion Unit ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa niihin. Tämä artikkeli ei ole oikeudellista neuvontaa."
+}

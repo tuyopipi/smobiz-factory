@@ -306,3 +306,12 @@
 4. 耳鼻咽喉科のAI検索対策（予約・アレルギー・子どもの受診）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
 | 2026-11-18 調査 | research-uk-web-agencies-ai-search-2026 | 国別レポート2本目：英国（掲載1,555件中到達942件〔うちHTTP 202が140件、202を除いた値も併記〕、llms.txt 21.5%〔203件、日本13.4%・米国23.1%・202除く25.3%〕、JSON-LD 68.8%、6項目すべて17.7%〔日本10.4%〕、AIボットのブロック4.7%〔33/699、日本1.3%〕、ボット別表〔学習用3.9〜4.7%・OAI-SearchBot 1件・PerplexityBot/Claude-SearchBot/ChatGPT-User 0件〕、GPTBotブロック28件すべてOAI-SearchBotは許可、7ボット同一の組み合わせ27/35、構造化データの型〔英・米・日〕、WordPress 73.4%・Yoast 58.0%・Rank Math 20.7%〔AIOSEO 25件・SEOPress 4件は30件未満で省略〕、6項目の分布、カイ二乗：対日本 p<0.001・対米国は差なし〔p=0.31〕）。PR TIMES 文なし（国別の初回ではないため） | raw_2026-11-12（summary.byCountry.GB と一致） | ja/en | content/research-20261118 |
+| 2026-11-19 8時 | moving-company-ai-search | 引越し業者のAI検索対策（業種別。AIに聞かれる質問6つと書く場所の表、上位記事8本〔uravation 2026-08-15・起業LOG 2026-08-07／Movers Development×2・The Mover〔冒頭のみ〕・CallRail・Netpeak〔15〜25%は筆者の推定〕・ThinkProfits〕の抜け〔構造化データの例・WordPress手順なし、料金表が空欄、数字の出典なし〕、標準引越運送約款〔国交省：2018-06-01施行、キャンセル・延期料の上限 当日50%・前日30%・前々日20%、積合せにも適用〕と兵庫県の消費者向け資料〔2019-02：見積料・内金なし、3日前の確認、破損は3か月以内に申し出、下見をすすめる、見積額は業者の都合で増やせない〕、キャンセル料の書き方表、条件つきの料金の例の書き方、税込表示〔国税庁6902〕、対応エリア・補償、引越安心マーク〔全ト協・2014年度創設、Gマーク等の要件〔九州運輸局〕、2025年度41社認定・有効期間2026-01-01〜2028-12-31・計348社1,673事業所〔LOGISTICS TODAY 2025-12-22〕〕、MovingCompany＋areaServed〔schema-dts 2.1.0〕のJSON-LD例、WordPress手順〔ウィザード「その他」＋業種欄に MovingCompany、webmcp_canary_business_node で areaServed を足すPHP、無料見積もりを Service 0円〕、一括見積もりサイトとのそろえ方、チェックリスト9、測り方、FAQ 7問）。41言語 | 業種別 | content/daily-20261119-08 |
+メモ：2026-11-19 8時の回は 国交省の標準約款のページ（jidosha_tk4_000009、令和6年6月1日施行の版へのリンク先）と全日本トラック協会の認定事業者名簿のページを WebFetch の許可待ちで取得できなかった。2024年の改正が引越の約款に及ぶかは確認できず、2018年施行の値だけを書き「自社で使っている約款の値を書く」とした。約款の条文番号、見積書の交付義務の条文、下見費用の扱い、繁忙期の需要の数字、不用品回収の許可は書いていない。3日前の確認・3か月の申し出期限は兵庫県の資料の要約による。翻訳の補完：pharmacy-ai-search に39言語を追加（41言語）。
+翻訳の残り（8時台で補完）：agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service・perplexity-citations・google-ai-overviews-citations（ja/en のみ）。
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
+2. Gemini アプリ・Claude に自社が出る仕組み（公式の説明と確かめ方）【全業種】
+3. 耳鼻咽喉科のAI検索対策（予約・アレルギー・子どもの受診）【業種別】
+4. 制作会社向け：AI検索対策の提案書と見積もりの作り方（項目と工数の目安の出し方）【制作会社向け】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）

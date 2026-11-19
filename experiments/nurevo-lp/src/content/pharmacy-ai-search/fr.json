@@ -1,0 +1,246 @@
+{
+  "title": "Recherche IA pour pharmacies : horaires, pharmacien présent | Nurevo",
+  "description": "AEO pour pharmacies et parapharmacies : publiez horaires d’ouverture et de délivrance, absences du pharmacien, conseil hors horaires et visites à domicile.",
+  "h1": "Recherche IA pour pharmacies et parapharmacies : faire lire correctement à l’IA vos horaires, la présence du pharmacien et vos visites à domicile",
+  "lead": "Optimiser une pharmacie pour la recherche IA revient à répondre sur votre page, au jour et à la minute près, aux questions que l’on pose désormais à l’IA : êtes-vous ouvert maintenant, un pharmacien est-il présent (puis-je acheter un médicament que seul un pharmacien peut délivrer), acceptez-vous les ordonnances de tel cabinet, puis-je obtenir un conseil en dehors des horaires, livrez-vous ou vous déplacez-vous à domicile ? Ensuite, vous publiez ces mêmes informations de façon cohérente dans les données structurées, llms.txt, votre fiche d’établissement Google et tout annuaire officiel des pharmacies auquel vous transmettez des données. Au Japon, cet annuaire est le site national d’information médicale (Navii), alimenté par les déclarations de fonctions que chaque pharmacie dépose auprès de sa préfecture.",
+  "intro": [
+    "Rédigé le 15 novembre 2026 (JST). Les pages de Tokyo et de Saitama sur le système japonais de déclaration des fonctions des pharmacies, ainsi que les types de schema.org (tels que définis dans schema-dts 2.1.0), ont été vérifiés ce jour-là. Les exemples de règles viennent du Japon ; vérifiez celles qui s’appliquent là où vous exercez.",
+    "Les réponses de l’IA changent d’un jour à l’autre et selon la formulation de la question. Les étapes décrites ici rendent les informations de votre pharmacie lisibles par l’IA. Elles ne garantissent pas qu’une IA mentionnera votre pharmacie ni qu’elle la placera à un rang donné."
+  ],
+  "sections": [
+    {
+      "heading": "Ce que l’on demande à l’IA sur les pharmacies",
+      "paragraphs": [
+        "On cherche une pharmacie en sortant de chez le médecin, ou quand quelqu’un tombe malade le soir ou le week-end. Les questions contiennent donc des horaires et des conditions : « une pharmacie près de [cabinet] ouverte après 19 h », « où faire exécuter une ordonnance le dimanche », « une parapharmacie avec un pharmacien présent en ce moment », « une pharmacie qui livre les médicaments chez mes parents », « une pharmacie où l’on peut demander conseil en anglais ».",
+        "Pour qu’une IA cite votre pharmacie en réponse à l’une de ces questions, elle doit pouvoir lire, sous forme de texte, que vous remplissez la condition. Une page où les horaires ne figurent que dans une image, où horaires d’ouverture et de délivrance ne sont pas distingués, ou où les visites à domicile se résument à « renseignez-vous auprès de nous », est difficile à exploiter pour une question conditionnelle.",
+        "Nous avons lu les pages les mieux classées sur ce sujet en japonais et en anglais. La plupart s’en tiennent à des conseils généraux : mettre à jour sa fiche d’établissement Google, collecter des avis, ajouter des données structurées. Presque aucune n’aborde la mise en cohérence du site avec les déclarations officielles qu’une pharmacie dépose déjà, la façon d’indiquer les heures sans pharmacien, une configuration WordPress concrète ou la manière de vérifier si l’on apparaît. Ce guide comble ces lacunes."
+      ]
+    },
+    {
+      "heading": "Les informations à publier, et comment les rédiger",
+      "paragraphs": [
+        "Servez-vous du tableau comme repère. Une pharmacie d’officine centrée sur les ordonnances et une parapharmacie au large rayon de produits sans ordonnance ne leur accordent pas le même poids, mais pour l’une comme pour l’autre, la façon d’écrire les horaires et de dire qui est disponible détermine si une IA peut utiliser votre page."
+      ],
+      "table": {
+        "head": [
+          "Information",
+          "Comment l’écrire sur la page",
+          "Points d’attention"
+        ],
+        "rows": [
+          [
+            "Jours et horaires d’ouverture",
+            "Horaires de chaque jour, jours de fermeture, fonctionnement les jours fériés",
+            "Si les horaires de délivrance diffèrent des horaires d’ouverture, les indiquer séparément"
+          ],
+          [
+            "Horaires de délivrance",
+            "Quand vous acceptez les ordonnances, et l’heure limite pour en déposer une",
+            "Transformer « jusqu’à 30 minutes avant la fermeture » en heure précise"
+          ],
+          [
+            "Présence ou absence du pharmacien",
+            "Les jours et heures sans pharmacien, et ce qui est alors impossible",
+            "Indiquer clairement quand les médicaments réservés au pharmacien et la délivrance ne sont pas disponibles"
+          ],
+          [
+            "Conseil hors horaires",
+            "Si l’on peut obtenir un conseil après la fermeture, le numéro et les horaires",
+            "Si vous écrivez « 24 h/24 », préciser s’il s’agit uniquement de conseil téléphonique ou aussi de délivrance"
+          ],
+          [
+            "Ordonnances",
+            "Si vous acceptez les ordonnances de tout prescripteur, les cabinets voisins dont vous traitez souvent les ordonnances, comment envoyer une ordonnance à l’avance (fax ou application)",
+            "Éviter les formulations laissant croire que vous ne servez qu’un seul cabinet"
+          ],
+          [
+            "Visites à domicile",
+            "La zone desservie, les personnes visitées (domiciles, établissements de soins), comment faire la demande, où trouver les tarifs",
+            "Ne pas s’arrêter à « renseignez-vous » ; donner la zone et les conditions"
+          ],
+          [
+            "Certifications et labels",
+            "Les certifications ou désignations officielles que vous détenez (au Japon : pharmacie de coopération régionale ou de coopération spécialisée, pharmacie de soutien à la santé)",
+            "Ne jamais revendiquer une certification que vous n’avez pas. Indiquer ensemble le nom du dispositif et votre statut"
+          ],
+          [
+            "Assortiment",
+            "Catégories de médicaments, produits de soin, matériel médical, produits pour bébé, possibilité de commander et délai",
+            "Le stock varie : écrire « appelez pour vérifier la disponibilité »"
+          ],
+          [
+            "Paiement, accès et langues",
+            "Moyens de paiement acceptés, stationnement, accès en fauteuil roulant, langues dans lesquelles vous pouvez conseiller",
+            "Quand l’un change, mettre à jour en même temps le site et la fiche d’établissement Google"
+          ],
+          [
+            "Fermetures temporaires et congés",
+            "Les dates, et les pharmacies voisines ou de garde à utiliser à la place",
+            "Les placer à côté des horaires d’ouverture, pas seulement dans une actualité"
+          ]
+        ],
+        "caption": "Établi à partir des conditions que l’on associe aux questions sur les pharmacies, et des points que les pages les mieux classées omettaient."
+      },
+      "after": [
+        "Gardez chaque valeur identique sur la page, dans les données structurées, sur la fiche d’établissement Google, dans l’annuaire officiel et sur l’affichage à la porte. Google recommande de tenir à jour votre fiche d’établissement, y compris pour ses fonctionnalités d’IA. [Google : fonctionnalités d’IA et votre site web](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "S’aligner sur les déclarations officielles des pharmacies (Japon : Navii)",
+      "paragraphs": [
+        "Au Japon, l’article 8-2 de la loi sur les produits pharmaceutiques et les dispositifs médicaux (Pharmaceuticals and Medical Devices Act) oblige chaque pharmacie à déclarer ses fonctions à sa préfecture (le système d’information sur les fonctions des pharmacies). Selon le gouvernement métropolitain de Tokyo, les déclarations se font en ligne via G-MIS depuis janvier 2024 et sont publiées sur le site national d’information médicale, Navii, depuis avril 2024. [Gouvernement métropolitain de Tokyo (japonais)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (japonais)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Il existe une déclaration annuelle de la situation au 31 décembre (à Tokyo, généralement déposée entre début janvier et fin février), et certains éléments doivent être déclarés sans délai à chaque changement. Parmi eux : les jours d’ouverture, les horaires d’ouverture, les heures pendant lesquelles un conseil est possible en dehors des horaires, l’affichage ou non du statut de pharmacie de soutien à la santé, la détention ou non de la certification de coopération régionale ou spécialisée, et l’existence d’heures sans pharmacien présent. La page de la préfecture de Saitama ajoute à cette liste la suspension, la reprise et la cessation d’activité. [Préfecture de Saitama (japonais)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "C’est utile pour la recherche IA. Ce que l’on demande à l’IA à propos d’une pharmacie (jusqu’à quelle heure elle est ouverte, si un conseil est possible après la fermeture, si un pharmacien est présent, si elle est certifiée) correspond presque exactement aux éléments qu’une pharmacie déclare déjà. Si les valeurs déclarées et votre site divergent, ni l’IA ni le patient ne peuvent savoir lesquelles sont justes. Faites-en une règle : modifier la déclaration, le site, la fiche d’établissement Google et l’affichage le même jour. Hors du Japon, appliquez le même principe au registre officiel ou à l’annuaire de santé qui référence votre pharmacie."
+      ]
+    },
+    {
+      "heading": "Comment indiquer « pas de pharmacien présent » et le conseil hors horaires",
+      "paragraphs": [
+        "Une parapharmacie peut être ouverte sans qu’aucun pharmacien ne soit présent. Si l’on demande à une IA « un magasin où acheter maintenant un médicament réservé au pharmacien » et que votre page n’indique que les horaires d’ouverture, elle risque de répondre oui à un moment où vous ne pouvez pas le vendre.",
+        "Un exemple : « Magasin ouvert de 9 h à 22 h, tous les jours. Ordonnances du lundi au vendredi de 9 h à 19 h (dernière ordonnance à 18 h 45), le samedi de 9 h à 13 h. Pas de pharmacien le mardi de 19 h à 22 h : nous ne pouvons alors ni délivrer d’ordonnance ni vendre de médicaments réservés au pharmacien. Conseil hors horaires : les patients inscrits peuvent appeler le 0X-XXXX-XXXX de 22 h à 9 h. » Regroupez au même endroit les informations sur le magasin, la délivrance, le pharmacien et le conseil hors horaires (le numéro est fictif).",
+        "Des règles spécifiques encadrent les médicaments réservés au pharmacien et les mentions obligatoires d’une boutique de pharmacie en ligne, et elles évoluent sans cesse. Vérifiez les éléments exacts dans le droit en vigueur et les recommandations de votre autorité de tutelle."
+      ]
+    },
+    {
+      "heading": "Les règles publicitaires s’appliquent aux textes écrits pour l’IA",
+      "paragraphs": [
+        "Au Japon, la publicité pour les médicaments relève des dispositions publicitaires du Pharmaceuticals and Medical Devices Act et des normes du ministère de la Santé sur la publicité appropriée des médicaments. [Ministère de la Santé, du Travail et des Affaires sociales (japonais)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). Les FAQ, données structurées et articles de blog rédigés pour être repris par l’IA sont concernés de la même manière. La plupart des pays ont des règles comparables."
+      ],
+      "list": [
+        "Ne promettez ni résultat ni innocuité (« efficace à tous les coups », « sans effets secondaires ») et n’utilisez ni superlatifs ni comparaisons (« la meilleure de la ville »).",
+        "Dans les articles sur des symptômes, n’écrivez pas « pour ce symptôme, prenez ce médicament ». Indiquez quand consulter un médecin et en quoi la pharmacie peut aider.",
+        "Ne présentez pas les médicaments soumis à prescription comme des produits avec un prix.",
+        "N’utilisez pas de commentaires clients dans un balisage FAQ ou d’avis comme preuve qu’un produit est efficace."
+      ],
+      "after": [
+        "En cas de doute, interrogez votre autorité de tutelle ou consultez les recommandations de votre ordre professionnel. Pour le côté cabinet, voir [Recherche IA pour cabinets de médecine générale et de pédiatrie](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Données structurées : le type Pharmacy et les propriétés utiles",
+      "paragraphs": [
+        "schema.org propose un type Pharmacy, décrit comme « A pharmacy or drugstore » (une pharmacie ou une parapharmacie ; vérifié dans les définitions de types de schema-dts 2.1.0 le 15 novembre 2026). Pharmacy est une sorte de MedicalBusiness et porte les propriétés de LocalBusiness comme de MedicalOrganization. Une parapharmacie peut utiliser Pharmacy plutôt que Store."
+      ],
+      "table": {
+        "head": [
+          "Type ou propriété",
+          "Signification",
+          "Usage en pharmacie"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Une pharmacie ou une parapharmacie",
+            "Pharmacies d’officine comme parapharmacies. Contient directement l’adresse, le téléphone et les horaires"
+          ],
+          [
+            "openingHoursSpecification",
+            "Horaires d’ouverture par jour",
+            "Horaires du magasin. Indiquer les horaires de délivrance et les absences du pharmacien dans le texte de la page"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Horaires différents de l’ordinaire",
+            "Dates de congés et de fermetures temporaires"
+          ],
+          [
+            "knowsLanguage",
+            "Langues que l’établissement peut utiliser",
+            "Si vous pouvez conseiller en anglais, en chinois ou dans d’autres langues"
+          ],
+          [
+            "paymentAccepted",
+            "Moyens de paiement",
+            "Si vous indiquez la carte ou le paiement mobile"
+          ],
+          [
+            "hasOfferCatalog",
+            "Une liste des services proposés",
+            "Délivrance d’ordonnances, visites à domicile, conseil santé et services similaires"
+          ]
+        ]
+      },
+      "after": [
+        "Les données structurées Google pour les établissements locaux exigent le nom et l’adresse et recommandent le type le plus précis possible. [Google : données structurées pour les établissements locaux](https://developers.google.com/search/docs/appearance/structured-data/local-business). Les informations sans propriété évidente, comme les absences du pharmacien ou le conseil hors horaires, sont plus sûres dans le texte de la page."
+      ]
+    },
+    {
+      "heading": "Mise en place sur un site WordPress de pharmacie",
+      "list": [
+        "Installez et activez Nurevo AEO (gratuit) depuis [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO et Slim SEO continuent de fonctionner tels quels. Depuis la version 0.9.1, il fonctionne aussi avec SEO SIMPLE PACK et VK All in One Expansion Unit sans dupliquer les données structurées.",
+        "Dans l’assistant de configuration, choisissez « Commerce de détail » (ce qui définit le type Store). Puis, dans les réglages, remplacez la valeur du champ « Type d’activité (type schema.org) » par Pharmacy. Pharmacy fait partie des types d’activité proposés, et l’assistant le range dans la famille du commerce de détail.",
+        "Vérifiez le nom, l’adresse, le téléphone et la description de la pharmacie. Seuls les champs vides sont remplis à partir de vos réglages existants ; les valeurs que vous avez saisies ne sont jamais écrasées.",
+        "Dans le champ des horaires d’ouverture, n’écrivez que les jours et heures du magasin, par exemple « Mon-Sat 9:00-22:00 / Sun 10:00-20:00 ». Si vous ajoutez des jours fériés ou une mention « dernière ordonnance », l’extension publie votre texte tel quel plutôt que de risquer des horaires erronés ; placez donc horaires de délivrance, absences du pharmacien et règles des jours fériés dans le texte de la page.",
+        "Dans les réglages, ajoutez ce que vous proposez comme services (délivrance d’ordonnances, visites à domicile, conseil santé, médicaments sans ordonnance), et les questions fréquentes (envoyer une ordonnance à l’avance, conseil hors horaires, demander une visite à domicile) comme FAQ. Les entrées de FAQ sont ajoutées au FAQPage de la page où vous placez le bloc FAQ Nurevo (ou le shortcode [nurevo_faq]).",
+        "Lancez une vérification sur l’écran Score AEO et appliquez les corrections en un clic. Pour voir comment votre site apparaît de l’extérieur, utilisez la [vérification gratuite de lisibilité par l’IA](/check)."
+      ],
+      "after": [
+        "Avec une extension SEO, Nurevo AEO n’émet pas un second jeu de données structurées. Il ajoute seulement l’adresse, le téléphone, les horaires manquants et le type plus précis au graphe que votre extension SEO publie déjà. Voir [Ajouter les informations d’établissement local dans Yoast, Rank Math et AIOSEO](/guide/local-business-schema-seo-plugins/). Si vous avez plusieurs officines, donnez à chacune sa propre page avec ses horaires, ses heures de présence du pharmacien et sa zone de visites à domicile."
+      ]
+    },
+    {
+      "heading": "Liste de contrôle avant publication",
+      "list": [
+        "Les horaires d’ouverture sont écrits en texte, pas seulement dans une image, avec les jours de fermeture et le fonctionnement les jours fériés.",
+        "Les horaires de délivrance et l’heure limite de dépôt d’une ordonnance sont indiqués séparément des horaires du magasin.",
+        "S’il existe des heures sans pharmacien, les jours, les heures et ce qui est alors impossible sont précisés.",
+        "La disponibilité d’un conseil hors horaires, le numéro et les horaires sont précisés.",
+        "La façon de déposer ou d’envoyer une ordonnance à l’avance, ainsi que la zone, les bénéficiaires et le mode de demande des visites à domicile, sont précisés.",
+        "Les certifications et labels sont indiqués uniquement tels qu’ils sont réellement.",
+        "Le nom, l’adresse, le téléphone et les horaires concordent entre le site, les données structurées, la fiche d’établissement Google et l’annuaire officiel des pharmacies.",
+        "Aucune promesse de résultat, aucun superlatif ni comparaison, et aucun commentaire client utilisé comme preuve dans la FAQ ou les données structurées.",
+        "llms.txt répertorie vos pages horaires, accès, ordonnances et visites à domicile. [Qu’est-ce que llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Vérifier si l’IA vous mentionne",
+      "paragraphs": [
+        "Une fois les informations en place, rédigez 5 à 10 questions que l’on pourrait poser, en combinant un lieu, un moment de la journée et une condition (ordonnance, pharmacien, visite à domicile, langue), et posez-les à ChatGPT et à Perplexity. Par exemple : « Quelle pharmacie près de [gare] peut délivrer une ordonnance à 20 h un jour de semaine ? » ou « Quelles pharmacies de [ville] font des visites à domicile ? » Notez si votre pharmacie est citée ou mise en lien, et si les horaires et conditions sont exacts. Les réponses de l’IA varient d’une fois à l’autre : reposez les mêmes questions dans la durée. Pour la méthode, voir [Comment mesurer la visibilité dans l’IA](/guide/measure-ai-visibility/).",
+        "Si une IA affiche de mauvais horaires, trouvez d’où vient la valeur. Si la réponse cite une source, vérifiez cette page (votre site, la fiche d’établissement Google, l’annuaire officiel, un site de cartes ou d’avis) et corrigez celle qui diverge.",
+        "Avec Nurevo AEO, même les offres Free et Standard posent une fois par mois à Perplexity trois questions construites à partir de votre type d’activité et de votre zone (jamais du nom de votre pharmacie) et enregistrent si les réponses ont cité votre pharmacie ou votre site. Avec l’offre Pro (à partir de 99 $/mois), la mesure de la visibilité dans l’IA (bêta) montre à quelle fréquence votre pharmacie apparaît dans les réponses de l’IA, avec comparaison aux concurrents et évolution (mesurée actuellement sur Perplexity). Les deux portent sur un échantillon de réponses, pas sur toutes."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Par où une pharmacie doit-elle commencer pour la recherche IA ?",
+      "a": "Écrivez séparément, en texte, les horaires du magasin et les horaires de délivrance, et ajoutez quand aucun pharmacien n’est présent et si un conseil est possible hors horaires. Faites ensuite concorder ces valeurs avec vos données structurées, votre fiche d’établissement Google et l’annuaire officiel des pharmacies."
+    },
+    {
+      "q": "Une parapharmacie doit-elle utiliser Store ou Pharmacy dans ses données structurées ?",
+      "a": "Si vous vendez des médicaments et avez un pharmacien, Pharmacy convient mieux. schema.org décrit Pharmacy comme « A pharmacy or drugstore » et, en tant que sorte de LocalBusiness, ce type contient directement l’adresse et les horaires. La concordance des valeurs avec votre page compte davantage que le type."
+    },
+    {
+      "q": "Que se passe-t-il si l’annuaire officiel et notre site divergent ?",
+      "a": "L’IA et les patients ne peuvent pas savoir à quelle source se fier. Au Japon, les jours et horaires d’ouverture, le conseil hors horaires et les absences du pharmacien font partie des éléments qu’une pharmacie doit déclarer sans délai en cas de changement. Mettre à jour la déclaration, le site et la fiche d’établissement Google le même jour évite l’incohérence."
+    },
+    {
+      "q": "Ne vaut-il pas mieux taire les heures sans pharmacien ?",
+      "a": "Il est plus sûr de les mentionner. Sinon, une IA risque d’affirmer que l’on peut acheter des médicaments réservés au pharmacien à un moment où ce n’est pas possible, et les gens se déplacent pour rien. Au Japon, l’existence d’heures sans pharmacien est d’ailleurs un élément à déclarer."
+    },
+    {
+      "q": "Pouvons-nous écrire des articles sur des symptômes et les médicaments qui les soignent, pour être repris par l’IA ?",
+      "a": "La publicité pour les médicaments est encadrée (au Japon, par le Pharmaceuticals and Medical Devices Act et les normes publicitaires du ministère de la Santé). Évitez les promesses de résultat et les superlatifs ; concentrez-vous sur le moment où il faut consulter un médecin et sur ce que la pharmacie peut apporter. En cas de doute, interrogez votre autorité de tutelle."
+    },
+    {
+      "q": "Nurevo AEO est-il gratuit ?",
+      "a": "Oui. Les données structurées pour votre type d’activité, adresse, horaires, services et FAQ, ainsi que llms.txt, les règles pour les robots d’IA et le Score AEO, sont inclus dans l’offre gratuite. Les offres payantes ajoutent un ensemble de règles toujours à jour (Standard, 20 $/mois) et la mesure de la visibilité dans l’IA en bêta (Pro, à partir de 99 $/mois). [Nurevo AEO sur WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Cela garantit-il que notre pharmacie apparaîtra dans ChatGPT ?",
+      "a": "Non. Les réponses de l’IA changent, et aucun outil ni aucune technique ne peut garantir une mention ou une position. Ce que vous pouvez faire, c’est rendre vos informations faciles à lire pour l’IA et vérifier régulièrement si vous apparaissez."
+    }
+  ],
+  "relatedHeading": "Guides associés",
+  "cta": {
+    "heading": "Voyez d’abord comment l’IA lit le site de votre pharmacie",
+    "body": "La vérification gratuite montre l’état de vos données structurées, de llms.txt et de l’accès des robots d’IA, sans inscription. Sous WordPress, Nurevo AEO comble les lacunes gratuitement.",
+    "label": "Lancer la vérification gratuite de lisibilité par l’IA",
+    "href": "/check",
+    "secondary": {
+      "label": "Obtenir Nurevo AEO sur WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT est une marque d’OpenAI, Perplexity de Perplexity AI et Google de Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK et VK All in One Expansion Unit sont des marques de leurs propriétaires respectifs. Nurevo n’est pas affilié à ceux-ci. Cet article ne constitue pas un conseil juridique."
+}

@@ -1,0 +1,246 @@
+{
+  "title": "Wyszukiwanie AI dla aptek: godziny, dyżur farmaceuty | Nurevo",
+  "description": "AEO dla aptek i drogerii: godziny otwarcia i realizacji recept, nieobecność farmaceuty, porady po godzinach i wizyty domowe jako tekst i zgodne dane strukturalne.",
+  "h1": "Wyszukiwanie AI dla aptek i drogerii: jak sprawić, by AI poprawnie odczytała godziny, dostępność farmaceuty i wizyty domowe",
+  "lead": "Optymalizacja apteki pod wyszukiwanie AI sprowadza się do tego, by na stronie, z dokładnością do dnia i minuty, odpowiedzieć na pytania, które ludzie zadają dziś AI: czy jesteście teraz otwarci, czy jest farmaceuta na dyżurze (czy kupię lek dostępny tylko przy farmaceucie), czy zrealizujecie receptę z tej przychodni, czy można uzyskać poradę po godzinach i czy dowozicie leki lub przychodzicie do domu. Następnie te same fakty publikujesz spójnie w danych strukturalnych, llms.txt, profilu firmy w Google i w każdym oficjalnym rejestrze aptek, do którego składasz zgłoszenia. W Japonii takim rejestrem jest krajowy serwis informacji medycznej (Navii), zasilany zgłoszeniami funkcji apteki, które każda apteka składa w swojej prefekturze.",
+  "intro": [
+    "Tekst napisany 15 listopada 2026 r. (JST). Tego dnia sprawdzono strony Tokio i Saitamy o japońskim systemie zgłaszania funkcji aptek oraz typy schema.org (według definicji w schema-dts 2.1.0). Przykłady przepisów pochodzą z Japonii; sprawdź przepisy obowiązujące tam, gdzie działasz.",
+    "Odpowiedzi AI zmieniają się z dnia na dzień i zależą od sformułowania pytania. Opisane tu kroki sprawiają, że fakty o twojej aptece są czytelne dla AI. Nie gwarantują, że AI wspomni twoją aptekę ani że umieści ją na jakiejkolwiek pozycji."
+  ],
+  "sections": [
+    {
+      "heading": "O co ludzie pytają AI w sprawie aptek",
+      "paragraphs": [
+        "Ludzie szukają apteki w drodze od lekarza albo gdy ktoś zachoruje wieczorem lub w weekend. Dlatego ich pytania zawierają godziny i warunki: „apteka koło [przychodni] otwarta po 19:00”, „gdzie zrealizuję receptę w niedzielę”, „drogeria, w której teraz jest farmaceuta”, „apteka, która dowiezie leki do domu mojego rodzica”, „apteka, w której mogę zapytać po angielsku”.",
+        "Aby AI wskazała twoją aptekę w odpowiedzi na takie pytanie, musi móc odczytać jako tekst, że spełniasz dany warunek. Strona, na której godziny otwarcia są tylko na obrazku, nie ma rozróżnienia między godzinami otwarcia a godzinami realizacji recept, a wizyty domowe opisano jedynie jako „prosimy o kontakt”, trudno wykorzystać przy pytaniu z warunkiem.",
+        "Przeczytaliśmy najwyżej pozycjonowane strony na ten temat po japońsku i po angielsku. Większość kończy się na ogólnych radach: zaktualizuj profil firmy w Google, zbieraj opinie, dodaj dane strukturalne. Prawie żadna nie omawia dopasowania strony do oficjalnych zgłoszeń, które apteka i tak składa, sposobu zapisu godzin, gdy nie ma farmaceuty, konkretnej konfiguracji WordPress ani sposobu sprawdzenia, czy się pojawiasz. Ten poradnik uzupełnia te luki."
+      ]
+    },
+    {
+      "heading": "Fakty, które warto opublikować, i jak je zapisać",
+      "paragraphs": [
+        "Traktuj tabelę jako wskazówkę. Apteka realizująca recepty i drogeria z szerokim asortymentem leków bez recepty rozkładają akcenty inaczej, ale w obu przypadkach o tym, czy AI może wykorzystać twoją stronę, decyduje sposób zapisu godzin i informacja, kto jest dostępny."
+      ],
+      "table": {
+        "head": [
+          "Fakt",
+          "Jak zapisać go na stronie",
+          "Na co uważać"
+        ],
+        "rows": [
+          [
+            "Dni i godziny otwarcia",
+            "Godziny dla każdego dnia, dni zamknięcia, postępowanie w święta",
+            "Jeśli godziny realizacji recept różnią się od godzin otwarcia, podaj je osobno"
+          ],
+          [
+            "Godziny realizacji recept",
+            "Kiedy przyjmujesz recepty i do której można ostatnio je złożyć",
+            "Zamień „do 30 minut przed zamknięciem” na konkretną godzinę"
+          ],
+          [
+            "Obecność i nieobecność farmaceuty",
+            "Dni i godziny bez farmaceuty oraz czego wtedy nie da się zrobić",
+            "Jasno wskaż, kiedy leki dostępne tylko przy farmaceucie i realizacja recept są niedostępne"
+          ],
+          [
+            "Porady po godzinach",
+            "Czy po zamknięciu można uzyskać poradę, numer i godziny",
+            "Jeśli piszesz „24 godziny”, wyjaśnij, czy chodzi tylko o poradę telefoniczną, czy także o realizację recept"
+          ],
+          [
+            "Recepty",
+            "Czy przyjmujesz recepty z każdej przychodni, z których pobliskich przychodni realizujesz je najczęściej, jak przesłać receptę wcześniej (faks lub aplikacja)",
+            "Unikaj sformułowań sugerujących, że obsługujesz tylko jedną przychodnię"
+          ],
+          [
+            "Wizyty domowe",
+            "Obsługiwany obszar, kogo odwiedzasz (domy, placówki opiekuńcze), jak zamówić wizytę, gdzie znaleźć koszty",
+            "Nie poprzestawaj na „prosimy o kontakt”; podaj obszar i warunki"
+          ],
+          [
+            "Certyfikaty i oznaczenia",
+            "Oficjalne certyfikaty lub oznaczenia, które posiadasz (w Japonii: apteka współpracy lokalnej lub specjalistycznej, apteka wspierająca zdrowie)",
+            "Nigdy nie podawaj takich, których nie masz. Podawaj razem nazwę programu i swój status"
+          ],
+          [
+            "Asortyment",
+            "Kategorie leków, artykuły pielęgnacyjne, materiały medyczne, produkty dla niemowląt, czy możesz zamówić towar i ile to trwa",
+            "Stany magazynowe się zmieniają, więc napisz „zadzwoń, by sprawdzić dostępność”"
+          ],
+          [
+            "Płatności, dojazd i języki",
+            "Akceptowane płatności, parking, dostęp dla wózków, języki, w których udzielasz porad",
+            "Gdy coś się zmieni, zaktualizuj jednocześnie stronę i profil firmy w Google"
+          ],
+          [
+            "Tymczasowe zamknięcia i święta",
+            "Daty oraz pobliskie lub dyżurne apteki, z których można wtedy skorzystać",
+            "Umieść je obok godzin otwarcia, nie tylko w aktualnościach"
+          ]
+        ],
+        "caption": "Opracowane na podstawie warunków, które ludzie dodają do pytań o apteki, oraz elementów pominiętych przez najwyżej pozycjonowane strony."
+      },
+      "after": [
+        "Utrzymuj każdą wartość identyczną na stronie, w danych strukturalnych, w profilu firmy w Google, w oficjalnym rejestrze i na tabliczce przy drzwiach. Google zaleca aktualizowanie profilu firmy także ze względu na swoje funkcje AI. [Google: funkcje AI a twoja witryna](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Zgodność z oficjalnymi zgłoszeniami aptek (Japonia: Navii)",
+      "paragraphs": [
+        "W Japonii art. 8-2 ustawy o produktach farmaceutycznych i wyrobach medycznych (Pharmaceuticals and Medical Devices Act) zobowiązuje każdą aptekę do zgłaszania swoich funkcji prefekturze (system informacji o funkcjach aptek). Według Rządu Metropolitalnego Tokio od stycznia 2024 r. zgłoszenia składa się online przez G-MIS, a od kwietnia 2024 r. są publikowane w krajowym serwisie informacji medycznej Navii. [Rząd Metropolitalny Tokio (po japońsku)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (po japońsku)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Co roku składa się zgłoszenie stanu na 31 grudnia (w Tokio zwykle między początkiem stycznia a końcem lutego), a niektóre pozycje trzeba zgłaszać niezwłocznie przy każdej zmianie. Należą do nich dni otwarcia, godziny otwarcia, godziny, w których można uzyskać poradę poza godzinami otwarcia, informacja, czy apteka posługuje się statusem apteki wspierającej zdrowie, czy ma certyfikat apteki współpracy lokalnej lub specjalistycznej oraz czy są godziny bez farmaceuty. Strona prefektury Saitama dodaje do tej listy zawieszenie, wznowienie i zamknięcie działalności. [Prefektura Saitama (po japońsku)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "To przydaje się w wyszukiwaniu AI. To, o co AI jest pytana w sprawie apteki (do której jest otwarta, czy po godzinach można uzyskać poradę, czy jest farmaceuta, czy ma certyfikat), niemal dokładnie pokrywa się z pozycjami, które apteka już zgłasza. Jeśli zgłoszone wartości i twoja strona się różnią, ani AI, ani pacjent nie wiedzą, co jest prawdą. Przyjmij zasadę, że zgłoszenie, stronę, profil firmy w Google i tabliczkę zmieniasz tego samego dnia. Poza Japonią zastosuj tę samą zasadę do oficjalnego rejestru lub katalogu usług zdrowotnych, w którym figuruje twoja apteka."
+      ]
+    },
+    {
+      "heading": "Jak zapisać „brak farmaceuty” i porady po godzinach",
+      "paragraphs": [
+        "Drogeria może być otwarta, gdy nie ma w niej farmaceuty. Jeśli AI zostanie zapytana o „sklep, w którym mogę teraz kupić lek dostępny tylko przy farmaceucie”, a twoja strona podaje wyłącznie godziny otwarcia, może odpowiedzieć twierdząco w porze, gdy nie możesz go sprzedać.",
+        "Przykład: „Sklep czynny 9:00–22:00, codziennie. Recepty pn–pt 9:00–19:00 (ostatnia recepta 18:45), sob 9:00–13:00. We wtorki 19:00–22:00 brak farmaceuty: nie realizujemy wtedy recept ani nie sprzedajemy leków dostępnych tylko przy farmaceucie. Porady po godzinach: zarejestrowani pacjenci mogą dzwonić pod 0X-XXXX-XXXX od 22:00 do 9:00”. Zbierz informacje o sklepie, recepturze, farmaceucie i poradach po godzinach w jednym miejscu (numer jest przykładowy).",
+        "Leki dostępne tylko przy farmaceucie i to, co musi wyświetlać apteka internetowa, regulują odrębne przepisy, które ciągle się zmieniają. Dokładne wymagania sprawdź w aktualnym prawie i wytycznych swojego organu nadzoru."
+      ]
+    },
+    {
+      "heading": "Przepisy o reklamie obejmują też teksty pisane dla AI",
+      "paragraphs": [
+        "W Japonii reklamę leków regulują przepisy o reklamie ustawy o produktach farmaceutycznych i wyrobach medycznych oraz standardy Ministerstwa Zdrowia dotyczące właściwej reklamy leków. [Ministerstwo Zdrowia, Pracy i Opieki Społecznej (po japońsku)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). FAQ, dane strukturalne i wpisy na blogu pisane po to, by wybrała je AI, podlegają tym samym zasadom. Większość krajów ma podobne przepisy."
+      ],
+      "list": [
+        "Nie obiecuj skuteczności ani bezpieczeństwa („zawsze działa”, „bez skutków ubocznych”) i nie używaj superlatywów ani porównań („najlepsza w mieście”).",
+        "W artykułach o objawach nie pisz „na ten objaw weź ten lek”. Napisz, kiedy iść do lekarza i w czym możesz pomóc w aptece.",
+        "Nie wystawiaj leków na receptę jak produktów z cenami.",
+        "Nie umieszczaj komentarzy klientów w FAQ ani w znacznikach opinii jako dowodu, że coś działa."
+      ],
+      "after": [
+        "W razie wątpliwości zapytaj organ nadzoru lub sprawdź wytyczne swojego samorządu zawodowego. O stronie przychodni przeczytasz w poradniku [Wyszukiwanie AI dla przychodni POZ i pediatrycznych](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Dane strukturalne: typ Pharmacy i przydatne właściwości",
+      "paragraphs": [
+        "schema.org ma typ Pharmacy, opisany jako „A pharmacy or drugstore” (apteka lub drogeria; sprawdzone w definicjach typów schema-dts 2.1.0 15 listopada 2026 r.). Pharmacy jest rodzajem MedicalBusiness i ma właściwości zarówno LocalBusiness, jak i MedicalOrganization. Drogeria może użyć Pharmacy zamiast Store."
+      ],
+      "table": {
+        "head": [
+          "Typ lub właściwość",
+          "Znaczenie",
+          "Zastosowanie w aptece"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Apteka lub drogeria",
+            "Zarówno apteki realizujące recepty, jak i drogerie. Bezpośrednio przechowuje adres, telefon i godziny"
+          ],
+          [
+            "openingHoursSpecification",
+            "Godziny otwarcia według dni",
+            "Godziny otwarcia sklepu. Godziny realizacji recept i nieobecności farmaceuty zapisz w tekście strony"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Godziny odbiegające od zwykłych",
+            "Daty świąt i tymczasowych zamknięć"
+          ],
+          [
+            "knowsLanguage",
+            "Języki, którymi posługuje się firma",
+            "Jeśli udzielasz porad po angielsku, chińsku lub w innych językach"
+          ],
+          [
+            "paymentAccepted",
+            "Metody płatności",
+            "Jeśli podajesz płatności kartą lub mobilne"
+          ],
+          [
+            "hasOfferCatalog",
+            "Lista oferowanych usług",
+            "Realizacja recept, wizyty domowe, porady zdrowotne i podobne usługi"
+          ]
+        ]
+      },
+      "after": [
+        "Dane strukturalne Google dla firm lokalnych wymagają nazwy i adresu i zalecają możliwie najbardziej szczegółowy typ. [Google: dane strukturalne firmy lokalnej](https://developers.google.com/search/docs/appearance/structured-data/local-business). Fakty bez oczywistej właściwości, takie jak nieobecność farmaceuty czy porady po godzinach, najbezpieczniej umieścić w tekście strony."
+      ]
+    },
+    {
+      "heading": "Konfiguracja na stronie apteki w WordPress",
+      "list": [
+        "Zainstaluj i włącz Nurevo AEO (bezpłatnie) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO i Slim SEO działają dalej bez zmian. Od wersji 0.9.1 wtyczka współpracuje też z SEO SIMPLE PACK i VK All in One Expansion Unit bez dublowania danych strukturalnych.",
+        "W kreatorze konfiguracji wybierz „Sklep detaliczny” (ustawia typ Store). Następnie w Ustawieniach zmień pole „Typ działalności (typ schema.org)” na Pharmacy. Pharmacy jest jednym z dostępnych typów działalności, a kreator traktuje go jako część rodziny handlu detalicznego.",
+        "Sprawdź nazwę apteki, adres, telefon i opis. Z istniejących ustawień uzupełniane są tylko puste pola; wprowadzone przez ciebie wartości nigdy nie są nadpisywane.",
+        "W polu godzin otwarcia wpisz tylko dni i godziny pracy sklepu, np. „Mon-Sat 9:00-22:00 / Sun 10:00-20:00”. Jeśli dodasz święta lub uwagę o „ostatniej recepcie”, wtyczka opublikuje twój tekst tak, jak go wpisano, zamiast ryzykować błędne godziny, więc godziny realizacji recept, nieobecności farmaceuty i zasady świąteczne umieść w tekście strony.",
+        "W Ustawieniach dodaj oferowane usługi (realizacja recept, wizyty domowe, porady zdrowotne, leki bez recepty), a częste pytania (wcześniejsze przesłanie recepty, porady po godzinach, jak zamówić wizytę domową) dodaj jako FAQ. Wpisy FAQ trafiają do FAQPage strony, na której umieścisz blok Nurevo FAQ (lub shortcode [nurevo_faq]).",
+        "Uruchom sprawdzenie na ekranie Wynik AEO i zastosuj poprawki jednym kliknięciem. Aby zobaczyć, jak twoja strona wygląda z zewnątrz, użyj [bezpłatnego testu czytelności dla AI](/check)."
+      ],
+      "after": [
+        "Przy wtyczce SEO Nurevo AEO nie publikuje drugiego zestawu danych strukturalnych. Dodaje jedynie brakujący adres, telefon, godziny otwarcia i bardziej szczegółowy typ do grafu, który już publikuje twoja wtyczka SEO. Zobacz [Jak dodać dane firmy lokalnej w Yoast, Rank Math i AIOSEO](/guide/local-business-schema-seo-plugins/). Jeśli masz kilka placówek, daj każdej osobną stronę z jej godzinami, godzinami pracy farmaceuty i obszarem wizyt domowych."
+      ]
+    },
+    {
+      "heading": "Lista kontrolna przed publikacją",
+      "list": [
+        "Godziny otwarcia są zapisane jako tekst, nie tylko na obrazku, wraz z dniami zamknięcia i zasadami na święta.",
+        "Godziny realizacji recept i ostatnia godzina złożenia recepty są podane osobno od godzin otwarcia.",
+        "Jeśli są godziny bez farmaceuty, podano dni, godziny i to, czego wtedy nie da się zrobić.",
+        "Podano, czy dostępne są porady po godzinach, numer i godziny.",
+        "Podano, jak złożyć lub wcześniej przesłać receptę, a także obszar, adresatów i sposób zamawiania wizyt domowych.",
+        "Certyfikaty i oznaczenia podano wyłącznie zgodnie ze stanem faktycznym.",
+        "Nazwa, adres, telefon i godziny są zgodne na stronie, w danych strukturalnych, w profilu firmy w Google i w oficjalnym rejestrze aptek.",
+        "Brak obietnic skuteczności, superlatywów i porównań, a w FAQ ani danych strukturalnych nie ma komentarzy klientów użytych jako dowód.",
+        "llms.txt wymienia strony z godzinami, dojazdem, receptami i wizytami domowymi. [Czym jest llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Sprawdź, czy AI cię wymienia",
+      "paragraphs": [
+        "Gdy fakty są już na miejscu, napisz 5–10 pytań, które mogą zadać ludzie, łącząc okolicę, porę dnia i warunek (recepta, farmaceuta, wizyta domowa, język), i zadaj je ChatGPT i Perplexity. Na przykład: „Która apteka koło [stacji] zrealizuje receptę w dzień powszedni o 20:00?” albo „Które apteki w [mieście] robią wizyty domowe?”. Zapisuj, czy twoja apteka została wymieniona lub podlinkowana i czy godziny oraz warunki są poprawne. Odpowiedzi AI zmieniają się przy każdym zapytaniu, więc powtarzaj te same pytania w czasie. Metodę opisuje [Jak mierzyć widoczność w AI](/guide/measure-ai-visibility/).",
+        "Jeśli AI podaje błędne godziny, ustal, skąd pochodzi ta wartość. Jeśli odpowiedź wskazuje źródło, sprawdź tę stronę (twoją witrynę, profil firmy w Google, oficjalny rejestr, serwis mapowy lub z opiniami) i popraw tę, która się nie zgadza.",
+        "W Nurevo AEO nawet plany Free i Standard raz w miesiącu zadają Perplexity trzy pytania zbudowane z typu działalności i okolicy (nigdy z nazwy twojej apteki) i zapisują, czy odpowiedzi wymieniły twoją aptekę lub cytowały twoją stronę. W planie Pro (od $99/miesiąc) pomiar widoczności w AI w wersji beta pokazuje, jak często twoja apteka pojawia się w odpowiedziach AI, z porównaniem z konkurencją i trendami (obecnie mierzone w Perplexity). Oba rozwiązania analizują próbkę odpowiedzi, a nie wszystkie odpowiedzi."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Od czego apteka powinna zacząć w wyszukiwaniu AI?",
+      "a": "Zapisz jako tekst osobno godziny otwarcia i godziny realizacji recept, dodaj, kiedy nie ma farmaceuty i czy po godzinach można uzyskać poradę. Następnie dopasuj te wartości do danych strukturalnych, profilu firmy w Google i oficjalnego rejestru aptek."
+    },
+    {
+      "q": "Czy drogeria powinna użyć w danych strukturalnych Store czy Pharmacy?",
+      "a": "Jeśli sprzedajesz leki i masz farmaceutę, lepiej pasuje Pharmacy. schema.org opisuje Pharmacy jako „A pharmacy or drugstore” (apteka lub drogeria), a jako rodzaj LocalBusiness bezpośrednio przechowuje adres i godziny. Ważniejsza od typu jest zgodność wartości z twoją stroną."
+    },
+    {
+      "q": "Co się stanie, jeśli oficjalny rejestr i nasza strona się różnią?",
+      "a": "AI i pacjenci nie wiedzą, czemu wierzyć. W Japonii dni i godziny otwarcia, porady po godzinach i nieobecność farmaceuty to pozycje, które apteka musi niezwłocznie zgłosić przy zmianie. Aktualizacja zgłoszenia, strony i profilu firmy w Google tego samego dnia zapobiega rozbieżnościom."
+    },
+    {
+      "q": "Czy nie lepiej nie wspominać o godzinach bez farmaceuty?",
+      "a": "Bezpieczniej o nich wspomnieć. W przeciwnym razie AI może powiedzieć, że można kupić leki dostępne tylko przy farmaceucie w porze, gdy nie jest to możliwe, a ludzie przyjdą i odejdą rozczarowani. W Japonii to, czy są godziny bez farmaceuty, również jest pozycją zgłoszenia."
+    },
+    {
+      "q": "Czy możemy pisać artykuły o objawach i lekach na nie, aby wybrała je AI?",
+      "a": "Reklama leków jest regulowana (w Japonii przez ustawę o produktach farmaceutycznych i wyrobach medycznych oraz standardy reklamowe Ministerstwa Zdrowia). Unikaj obiecywania skuteczności i superlatywów; skup się na tym, kiedy iść do lekarza i w czym może pomóc apteka. W razie wątpliwości zapytaj organ nadzoru."
+    },
+    {
+      "q": "Czy Nurevo AEO jest bezpłatne?",
+      "a": "Tak. Dane strukturalne dla typu działalności, adresu, godzin, usług i FAQ, a także llms.txt, reguły dla robotów AI i Wynik AEO są w planie bezpłatnym. Płatne plany dodają zawsze aktualny zestaw reguł (Standard, $20/miesiąc) i pomiar widoczności w AI w wersji beta (Pro, od $99/miesiąc). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Czy to zagwarantuje, że nasza apteka pojawi się w ChatGPT?",
+      "a": "Nie. Odpowiedzi AI się zmieniają i żadne narzędzie ani technika nie zagwarantuje wzmianki ani pozycji. Możesz natomiast sprawić, by twoje fakty były łatwe do odczytania dla AI, i regularnie sprawdzać, czy się pojawiasz."
+    }
+  ],
+  "relatedHeading": "Powiązane poradniki",
+  "cta": {
+    "heading": "Najpierw zobacz, jak AI odczytuje stronę twojej apteki",
+    "body": "Bezpłatny test pokazuje stan danych strukturalnych, llms.txt i dostępu robotów AI, bez rejestracji. W WordPress Nurevo AEO bezpłatnie uzupełnia braki.",
+    "label": "Uruchom bezpłatny test czytelności dla AI",
+    "href": "/check",
+    "secondary": {
+      "label": "Pobierz Nurevo AEO z WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT jest znakiem towarowym OpenAI, Perplexity — Perplexity AI, a Google — Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK i VK All in One Expansion Unit są znakami towarowymi ich właścicieli. Nurevo nie jest z nimi powiązane. Ten artykuł nie stanowi porady prawnej."
+}

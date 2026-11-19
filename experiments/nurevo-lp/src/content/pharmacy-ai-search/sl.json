@@ -1,0 +1,246 @@
+{
+  "title": "Iskanje z UI za lekarne: delovni čas, dežurni farmacevt | Nurevo",
+  "description": "AEO za lekarne in drogerije: objavite delovni čas in čas izdaje zdravil, odsotnost farmacevta, pomoč izven delovnega časa in obiske na domu kot besedilo in shemo.",
+  "h1": "Iskanje z UI za lekarne in drogerije: kako doseči, da UI pravilno prebere vaš delovni čas, prisotnost farmacevta in obiske na domu",
+  "lead": "Optimizacija lekarne za iskanje z UI pomeni, da na strani, natančno do dneva in minute, odgovorite na vprašanja, ki jih ljudje zdaj zastavljajo UI: ali imate zdaj odprto, ali je farmacevt v službi (ali lahko kupim zdravilo, ki ga izda le farmacevt), ali boste izdali zdravilo na recept iz te ambulante, ali lahko dobim nasvet izven delovnega časa in ali zdravila dostavite oziroma pridete na dom. Nato ista dejstva dosledno objavite v strukturiranih podatkih, llms.txt, profilu podjetja v Googlu in v vsakem uradnem registru lekarn, ki mu sporočate podatke. Na Japonskem je to nacionalni portal zdravstvenih informacij (Navii), ki ga napajajo poročila o funkcijah lekarne, ki jih vsaka lekarna oddaja svoji prefekturi.",
+  "intro": [
+    "Napisano 15. novembra 2026 (JST). Tisti dan smo preverili strani Tokia in Saitame o japonskem sistemu poročanja o funkcijah lekarn ter tipe schema.org (kot so opredeljeni v schema-dts 2.1.0). Primeri pravil so z Japonske; preverite pravila, ki veljajo tam, kjer delujete.",
+    "Odgovori UI se spreminjajo iz dneva v dan in glede na to, kako je vprašanje zastavljeno. Tu opisani koraki naredijo dejstva o vaši lekarni berljiva za UI. Ne zagotavljajo, da bo UI vašo lekarno omenila ali jo kamor koli uvrstila."
+  ],
+  "sections": [
+    {
+      "heading": "Kaj ljudje sprašujejo UI o lekarnah",
+      "paragraphs": [
+        "Ljudje iščejo lekarno na poti od zdravnika ali ko nekdo zboli zvečer ali med vikendom. Zato njihova vprašanja vsebujejo čas in pogoje: »lekarna blizu [ambulante], odprta po 19. uri«, »kje lahko v nedeljo dvignem zdravilo na recept«, »drogerija, kjer je prav zdaj farmacevt«, »lekarna, ki dostavi zdravila na dom mojemu staršu«, »lekarna, kjer lahko vprašam v angleščini«.",
+        "Da bi UI v odgovoru na takšno vprašanje navedla vašo lekarno, mora iz besedila razbrati, da izpolnjujete pogoj. Stran, kjer je delovni čas le na sliki, kjer ni razlike med delovnim časom in časom izdaje zdravil na recept in kjer so obiski na domu opisani le z »vprašajte nas«, je za vprašanje s pogojem težko uporabna.",
+        "Prebrali smo najbolje uvrščene strani o tej temi v japonščini in angleščini. Večina se ustavi pri splošnih nasvetih: posodobite profil podjetja v Googlu, zbirajte ocene, dodajte strukturirane podatke. Skoraj nobena ne obravnava usklajenosti spletne strani z uradnimi poročili, ki jih lekarna že oddaja, zapisa delovnega časa, ko farmacevta ni, konkretne nastavitve v WordPress ali načina, kako preveriti, ali se pojavljate. Ta vodnik zapolnjuje te vrzeli."
+      ]
+    },
+    {
+      "heading": "Dejstva, ki jih je vredno objaviti, in kako jih zapisati",
+      "paragraphs": [
+        "Tabelo uporabite kot vodilo. Lekarna, ki izdaja zdravila na recept, in drogerija s široko ponudbo zdravil brez recepta dajeta različnim točkam različno težo, a pri obeh o tem, ali lahko UI uporabi vašo stran, odloča zapis delovnega časa in podatek, kdo je na voljo."
+      ],
+      "table": {
+        "head": [
+          "Dejstvo",
+          "Kako ga zapisati na strani",
+          "Na kaj paziti"
+        ],
+        "rows": [
+          [
+            "Delovni dnevi in ure",
+            "Ure za vsak dan, dnevi zaprtja, ravnanje ob praznikih",
+            "Če se čas izdaje zdravil na recept razlikuje od delovnega časa, ga navedite posebej"
+          ],
+          [
+            "Čas izdaje zdravil na recept",
+            "Kdaj sprejemate recepte in do kdaj je mogoče zadnjič oddati recept",
+            "»Do 30 minut pred zaprtjem« pretvorite v točno uro"
+          ],
+          [
+            "Prisotnost in odsotnost farmacevta",
+            "Dnevi in ure brez farmacevta ter kaj takrat ni mogoče",
+            "Jasno navedite, kdaj zdravila, ki jih izda le farmacevt, in izdaja na recept niso na voljo"
+          ],
+          [
+            "Nasvet izven delovnega časa",
+            "Ali je mogoče po zaprtju dobiti nasvet, številka in ure",
+            "Če pišete »24 ur«, navedite, ali gre le za telefonski nasvet ali tudi za izdajo zdravil"
+          ],
+          [
+            "Recepti",
+            "Ali sprejemate recepte iz katere koli ambulante, za katere bližnje ambulante pogosto izdajate zdravila, kako recept poslati vnaprej (faks ali aplikacija)",
+            "Izogibajte se formulacijam, ki namigujejo, da služite le eni ambulanti"
+          ],
+          [
+            "Obiski na domu",
+            "Območje, koga obiskujete (domove, ustanove za oskrbo), kako naročiti obisk, kje najti cene",
+            "Ne ustavite se pri »vprašajte nas«; navedite območje in pogoje"
+          ],
+          [
+            "Certifikati in oznake",
+            "Uradni certifikati ali oznake, ki jih imate (na Japonskem: lekarna lokalnega ali specialističnega sodelovanja, lekarna za podporo zdravju)",
+            "Nikoli ne navajajte takšnih, ki jih nimate. Ime programa in svoj status navedite skupaj"
+          ],
+          [
+            "Ponudba",
+            "Kategorije zdravil, pripomočki za nego, medicinski material, izdelki za dojenčke, ali lahko blago naročite in koliko časa to traja",
+            "Zaloga se spreminja, zato zapišite »za zalogo pokličite«"
+          ],
+          [
+            "Plačilo, dostop in jeziki",
+            "Sprejeti načini plačila, parkiranje, dostop za invalidske vozičke, jeziki, v katerih svetujete",
+            "Ko se kaj spremeni, hkrati posodobite spletno stran in profil podjetja v Googlu"
+          ],
+          [
+            "Začasna zaprtja in prazniki",
+            "Datumi ter bližnje ali dežurne lekarne, ki jih je mogoče uporabiti namesto vas",
+            "Navedite jih ob delovnem času, ne le v novicah"
+          ]
+        ],
+        "caption": "Sestavljeno iz pogojev, ki jih ljudje dodajajo vprašanjem o lekarnah, in točk, ki so jih najbolje uvrščene strani izpustile."
+      },
+      "after": [
+        "Vsaka vrednost naj bo enaka na strani, v strukturiranih podatkih, v profilu podjetja v Googlu, v uradnem registru in na tabli ob vratih. Google priporoča, da profil podjetja posodabljate tudi zaradi njegovih funkcij UI. [Google: Funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Uskladitev z uradnimi poročili lekarn (Japonska: Navii)",
+      "paragraphs": [
+        "Na Japonskem 8-2. člen zakona o farmacevtskih izdelkih in medicinskih pripomočkih (Pharmaceuticals and Medical Devices Act) vsaki lekarni nalaga, da svoje funkcije sporoči prefekturi (sistem informacij o funkcijah lekarn). Po navedbah metropolitanske vlade Tokia se poročila od januarja 2024 oddajajo prek spleta v sistemu G-MIS, od aprila 2024 pa so objavljena na nacionalnem portalu zdravstvenih informacij Navii. [Metropolitanska vlada Tokia (v japonščini)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (v japonščini)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Vsako leto se odda poročilo o stanju na dan 31. decembra (v Tokiu običajno med začetkom januarja in koncem februarja), nekatere postavke pa je treba sporočiti takoj ob vsaki spremembi. Med njimi so delovni dnevi, delovni čas, ure, ko je nasvet na voljo izven delovnega časa, ali lekarna navaja status lekarne za podporo zdravju, ali ima certifikat lekarne lokalnega ali specialističnega sodelovanja in ali obstajajo ure brez prisotnosti farmacevta. Stran prefekture Saitama temu seznamu dodaja prekinitev, ponovni začetek in prenehanje delovanja. [Prefektura Saitama (v japonščini)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "To je koristno za iskanje z UI. Kar UI sprašujejo o lekarni (do kdaj je odprta, ali je nasvet na voljo izven delovnega časa, ali je prisoten farmacevt, ali ima certifikat), se skoraj natančno ujema s postavkami, ki jih lekarna že sporoča. Če se sporočene vrednosti in vaša spletna stran razlikujejo, ne UI ne pacient ne moreta vedeti, kaj drži. Postavite si pravilo, da poročilo, spletno stran, profil podjetja v Googlu in tablo spremenite isti dan. Zunaj Japonske uporabite isto načelo za uradni register ali imenik zdravstvenih storitev, v katerem je navedena vaša lekarna."
+      ]
+    },
+    {
+      "heading": "Kako zapisati »farmacevt ni prisoten« in nasvet izven delovnega časa",
+      "paragraphs": [
+        "Drogerija je lahko odprta, ko v njej ni farmacevta. Če UI kdo vpraša za »trgovino, kjer lahko zdaj kupim zdravilo, ki ga izda le farmacevt«, vaša stran pa navaja le delovni čas trgovine, lahko pritrdi ob času, ko ga ne morete prodati.",
+        "Primer: »Trgovina odprta 9.00–22.00, vsak dan. Recepti pon.–pet. 9.00–19.00 (zadnji recept ob 18.45), sob. 9.00–13.00. Ob torkih 19.00–22.00 ni farmacevta: takrat ne izdajamo zdravil na recept in ne prodajamo zdravil, ki jih izda le farmacevt. Nasvet izven delovnega časa: registrirani pacienti lahko od 22.00 do 9.00 pokličejo 0X-XXXX-XXXX.« Podatke o trgovini, izdaji zdravil, farmacevtu in nasvetih izven delovnega časa zberite na enem mestu (številka je le primer).",
+        "Zdravila, ki jih izda le farmacevt, in to, kar mora prikazovati spletna lekarna, urejajo posebna pravila, ki se nenehno spreminjajo. Natančne zahteve preverite v veljavni zakonodaji in smernicah svojega regulatorja."
+      ]
+    },
+    {
+      "heading": "Pravila oglaševanja veljajo tudi za besedila, napisana za UI",
+      "paragraphs": [
+        "Na Japonskem oglaševanje zdravil urejajo določbe o oglaševanju v zakonu o farmacevtskih izdelkih in medicinskih pripomočkih ter standardi ministrstva za zdravje za ustrezno oglaševanje zdravil. [Ministrstvo za zdravje, delo in socialne zadeve (v japonščini)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). Za FAQ, strukturirane podatke in objave na blogu, napisane zato, da bi jih izbrala UI, velja enako. Večina držav ima podobna pravila."
+      ],
+      "list": [
+        "Ne obljubljajte učinka ali varnosti (»vedno deluje«, »brez stranskih učinkov«) in ne uporabljajte presežnikov ali primerjav (»najboljša v mestu«).",
+        "V člankih o simptomih ne pišite »za ta simptom vzemite to zdravilo«. Napišite, kdaj k zdravniku in pri čem lahko pomagate v lekarni.",
+        "Zdravil na recept ne navajajte kot izdelkov s cenami.",
+        "Komentarjev strank ne vstavljajte v FAQ ali oznake ocen kot dokaz, da nekaj deluje."
+      ],
+      "after": [
+        "Če niste prepričani, vprašajte regulatorja ali preverite smernice svoje poklicne zbornice. Za stran ambulant glejte [Iskanje z UI za splošne in pediatrične ambulante](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Strukturirani podatki: tip Pharmacy in uporabne lastnosti",
+      "paragraphs": [
+        "schema.org ima tip Pharmacy, opisan kot »A pharmacy or drugstore« (lekarna ali drogerija; preverjeno v definicijah tipov schema-dts 2.1.0 15. novembra 2026). Pharmacy je vrsta MedicalBusiness in ima lastnosti tako LocalBusiness kot MedicalOrganization. Drogerija lahko namesto Store uporabi Pharmacy."
+      ],
+      "table": {
+        "head": [
+          "Tip ali lastnost",
+          "Pomen",
+          "Uporaba v lekarni"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Lekarna ali drogerija",
+            "Lekarne z izdajo zdravil na recept in drogerije. Neposredno vsebuje naslov, telefon in delovni čas"
+          ],
+          [
+            "openingHoursSpecification",
+            "Delovni čas po dnevih",
+            "Delovni čas trgovine. Čas izdaje zdravil na recept in odsotnost farmacevta zapišite v besedilu strani"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Delovni čas, ki odstopa od običajnega",
+            "Datumi praznikov in začasnih zaprtij"
+          ],
+          [
+            "knowsLanguage",
+            "Jeziki, ki jih podjetje uporablja",
+            "Če svetujete v angleščini, kitajščini ali drugih jezikih"
+          ],
+          [
+            "paymentAccepted",
+            "Načini plačila",
+            "Če navajate plačilo s kartico ali mobilno plačilo"
+          ],
+          [
+            "hasOfferCatalog",
+            "Seznam ponujenih storitev",
+            "Izdaja zdravil na recept, obiski na domu, zdravstveni nasveti in podobne storitve"
+          ]
+        ]
+      },
+      "after": [
+        "Googlovi strukturirani podatki za lokalna podjetja zahtevajo ime in naslov ter priporočajo čim bolj specifičen tip. [Google: Strukturirani podatki lokalnega podjetja](https://developers.google.com/search/docs/appearance/structured-data/local-business). Dejstva brez očitne lastnosti, kot sta odsotnost farmacevta ali nasvet izven delovnega časa, je najvarneje navesti v besedilu strani."
+      ]
+    },
+    {
+      "heading": "Nastavitev na spletni strani lekarne v WordPress",
+      "list": [
+        "Namestite in aktivirajte Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO in Slim SEO delujejo naprej kot doslej. Od različice 0.9.1 vtičnik deluje tudi skupaj s SEO SIMPLE PACK in VK All in One Expansion Unit brez podvajanja strukturiranih podatkov.",
+        "V čarovniku za nastavitev izberite »Maloprodaja« (to nastavi tip Store). Nato v Nastavitvah polje »Vrsta dejavnosti (tip schema.org)« spremenite v Pharmacy. Pharmacy je ena od ponujenih vrst dejavnosti in čarovnik jo obravnava kot del maloprodajne skupine.",
+        "Preverite ime lekarne, naslov, telefon in opis. Iz obstoječih nastavitev se izpolnijo le prazna polja; vrednosti, ki ste jih vnesli, se nikoli ne prepišejo.",
+        "V polje za delovni čas vpišite le dneve in ure trgovine, na primer »Mon-Sat 9:00-22:00 / Sun 10:00-20:00«. Če dodate praznike ali opombo o »zadnjem receptu«, vtičnik raje objavi vaše besedilo, kot je zapisano, kot da bi tvegal napačen delovni čas, zato čas izdaje zdravil na recept, odsotnost farmacevta in pravila za praznike zapišite v besedilu strani.",
+        "V Nastavitvah dodajte ponujene storitve (izdaja zdravil na recept, obiski na domu, zdravstveni nasveti, zdravila brez recepta), pogosta vprašanja (pošiljanje recepta vnaprej, nasvet izven delovnega časa, kako naročiti obisk na domu) pa dodajte kot FAQ. Vnosi FAQ se dodajo v FAQPage strani, na katero postavite blok Nurevo FAQ (ali kratko kodo [nurevo_faq]).",
+        "Na zaslonu Ocena AEO zaženite preverjanje in uporabite popravke z enim klikom. Kako je vaša stran videti od zunaj, preverite z [brezplačnim preverjanjem berljivosti za UI](/check)."
+      ],
+      "after": [
+        "Ob vtičniku SEO Nurevo AEO ne izpiše drugega nabora strukturiranih podatkov. V graf, ki ga vaš vtičnik SEO že objavlja, doda le manjkajoči naslov, telefon, delovni čas in bolj specifičen tip. Glejte [Kako dodati podatke lokalnega podjetja v Yoast, Rank Math in AIOSEO](/guide/local-business-schema-seo-plugins/). Če imate več poslovalnic, dajte vsaki svojo stran z njenim delovnim časom, časom prisotnosti farmacevta in območjem obiskov na domu."
+      ]
+    },
+    {
+      "heading": "Kontrolni seznam pred objavo",
+      "list": [
+        "Delovni čas je zapisan kot besedilo, ne le na sliki, skupaj z dnevi zaprtja in ravnanjem ob praznikih.",
+        "Čas izdaje zdravil na recept in zadnja ura za oddajo recepta sta navedena ločeno od delovnega časa.",
+        "Če obstajajo ure brez farmacevta, so navedeni dnevi, ure in kaj takrat ni mogoče.",
+        "Navedeno je, ali je nasvet izven delovnega časa na voljo, številka in ure.",
+        "Navedeno je, kako recept oddati ali poslati vnaprej, ter za obiske na domu območje, komu so namenjeni in kako jih naročiti.",
+        "Certifikati in oznake so navedeni le v skladu z dejanskim stanjem.",
+        "Ime, naslov, telefon in delovni čas se ujemajo na spletni strani, v strukturiranih podatkih, v profilu podjetja v Googlu in v uradnem registru lekarn.",
+        "Ni obljub učinka, presežnikov ali primerjav in ni komentarjev strank, uporabljenih kot dokaz v FAQ ali strukturiranih podatkih.",
+        "llms.txt navaja strani z delovnim časom, dostopom, recepti in obiski na domu. [Kaj je llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Preverite, ali vas UI omenja",
+      "paragraphs": [
+        "Ko so dejstva urejena, napišite 5 do 10 vprašanj, ki bi jih ljudje lahko zastavili, in v njih združite območje, čas dneva in pogoj (recept, farmacevt, obisk na domu, jezik), nato jih zastavite ChatGPT in Perplexity. Na primer: »Katera lekarna blizu [postaje] izda zdravilo na recept ob delavnikih ob 20. uri?« ali »Katere lekarne v [mestu] opravljajo obiske na domu?« Zabeležite, ali je bila vaša lekarna imenovana ali povezana in ali sta delovni čas in pogoji pravilni. Odgovori UI se od poizvedbe do poizvedbe razlikujejo, zato ista vprašanja ponavljajte skozi čas. Metodo opisuje [Kako meriti vidnost v UI](/guide/measure-ai-visibility/).",
+        "Če UI prikazuje napačen delovni čas, ugotovite, od kod izvira vrednost. Če odgovor navaja vir, preverite to stran (vaše spletno mesto, profil podjetja v Googlu, uradni register, zemljevid ali stran z ocenami) in popravite tisto, ki se ne ujema.",
+        "Z Nurevo AEO že paketa Free in Standard enkrat mesečno zastavita Perplexity tri vprašanja, sestavljena iz vaše vrste dejavnosti in območja (nikoli iz imena vaše lekarne), in zabeležita, ali so odgovori omenili vašo lekarno ali navedli vašo stran. V paketu Pro (od $99/mesec) merjenje vidnosti v UI v različici beta pokaže, kako pogosto se vaša lekarna pojavlja v odgovorih UI, s primerjavo s konkurenco in trendi (trenutno merjeno na Perplexity). Oboje zajema vzorec odgovorov, ne vseh odgovorov."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Kje naj lekarna začne pri iskanju z UI?",
+      "a": "Delovni čas trgovine in čas izdaje zdravil na recept zapišite ločeno kot besedilo ter dodajte, kdaj farmacevt ni prisoten in ali je nasvet na voljo izven delovnega časa. Nato te vrednosti uskladite s strukturiranimi podatki, profilom podjetja v Googlu in uradnim registrom lekarn."
+    },
+    {
+      "q": "Naj drogerija v strukturiranih podatkih uporabi Store ali Pharmacy?",
+      "a": "Če prodajate zdravila in imate farmacevta, je Pharmacy primernejši. schema.org Pharmacy opisuje kot »A pharmacy or drugstore« (lekarna ali drogerija), kot vrsta LocalBusiness pa neposredno vsebuje naslov in delovni čas. Pomembneje od tipa je, da se vrednosti ujemajo z vašo stranjo."
+    },
+    {
+      "q": "Kaj se zgodi, če se uradni register in naša spletna stran razlikujeta?",
+      "a": "UI in pacienti ne vedo, čemu verjeti. Na Japonskem so delovni dnevi in čas, nasvet izven delovnega časa in odsotnost farmacevta postavke, ki jih mora lekarna ob spremembi takoj sporočiti. Posodobitev poročila, spletne strani in profila podjetja v Googlu isti dan prepreči neskladje."
+    },
+    {
+      "q": "Ali ni bolje, da ur brez farmacevta ne omenjamo?",
+      "a": "Varneje jih je omeniti. Sicer lahko UI trdi, da je zdravila, ki jih izda le farmacevt, mogoče kupiti ob času, ko to ni mogoče, in ljudje pridejo zaman. Na Japonskem je to, ali obstajajo ure brez farmacevta, prav tako postavka v poročilu."
+    },
+    {
+      "q": "Ali lahko pišemo članke o simptomih in zdravilih zanje, da bi jih izbrala UI?",
+      "a": "Oglaševanje zdravil je regulirano (na Japonskem z zakonom o farmacevtskih izdelkih in medicinskih pripomočkih ter oglaševalskimi standardi ministrstva za zdravje). Izogibajte se obljubam učinka in presežnikom; osredotočite se na to, kdaj k zdravniku in pri čem lahko pomaga lekarna. Če niste prepričani, vprašajte regulatorja."
+    },
+    {
+      "q": "Ali je Nurevo AEO brezplačen?",
+      "a": "Da. Strukturirani podatki za vrsto dejavnosti, naslov, delovni čas, storitve in FAQ ter llms.txt, pravila za pajke UI in Ocena AEO so v brezplačnem paketu. Plačljiva paketa dodata vedno posodobljen nabor pravil (Standard, $20/mesec) in merjenje vidnosti v UI v različici beta (Pro, od $99/mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Ali to zagotavlja, da se bo naša lekarna pojavila v ChatGPT?",
+      "a": "Ne. Odgovori UI se spreminjajo in nobeno orodje ali tehnika ne more zagotoviti omembe ali položaja. Lahko pa poskrbite, da so vaša dejstva za UI lahko berljiva, in redno preverjate, ali se pojavljate."
+    }
+  ],
+  "relatedHeading": "Sorodni vodniki",
+  "cta": {
+    "heading": "Najprej poglejte, kako UI bere spletno stran vaše lekarne",
+    "body": "Brezplačno preverjanje pokaže stanje vaših strukturiranih podatkov, llms.txt in dostopa pajkov UI, brez registracije. V WordPress Nurevo AEO vrzeli zapolni brezplačno.",
+    "label": "Zaženite brezplačno preverjanje berljivosti za UI",
+    "href": "/check",
+    "secondary": {
+      "label": "Prenesite Nurevo AEO z WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI, Google pa družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK in VK All in One Expansion Unit so blagovne znamke svojih lastnikov. Nurevo ni povezan z njimi. Ta članek ni pravni nasvet."
+}

@@ -1,0 +1,226 @@
+{
+  "title": "Tìm kiếm AI cho công ty chuyển nhà: báo giá, phí, khu vực | Nurevo",
+  "description": "Cách để tìm kiếm AI mô tả đúng công ty chuyển nhà: giải thích báo giá, yếu tố quyết định giá, phí hủy, bồi thường và khu vực phục vụ, kèm schema MovingCompany.",
+  "h1": "Tìm kiếm AI cho công ty chuyển nhà: để AI đọc đúng báo giá, điều kiện giá, phí hủy và khu vực phục vụ của bạn",
+  "lead": "Với một công ty chuyển nhà, tối ưu cho tìm kiếm AI chủ yếu là trả lời ngay trong nội dung trang của mình những điều người ta hỏi trợ lý AI trước khi đặt dịch vụ: \"Báo giá có miễn phí không, có phải đến tận nhà xem không?\", \"Căn một phòng ngủ khoảng bao nhiêu tiền, và giá thay đổi theo những gì?\", \"Đến khi nào thì được hủy hoặc đổi ngày miễn phí?\", \"Đồ bị vỡ thì sao?\" và \"Bên bạn có phục vụ khu vực của tôi không?\". Hãy viết quy định về hủy và báo giá đúng như điều khoản hợp đồng của bạn (tại Nhật Bản là điều khoản hợp đồng chuyển nhà tiêu chuẩn do Bộ Giao thông công bố), rồi công bố cùng các giá trị đó dưới dạng dữ liệu có cấu trúc: công ty là MovingCompany của schema.org, khu vực là areaServed và báo giá miễn phí là một Service.",
+  "intro": [
+    "Viết ngày 19 tháng 11 năm 2026 (giờ Nhật Bản). Các trang của Bộ Giao thông Nhật Bản và các cục vận tải khu vực, một tờ rơi dành cho người tiêu dùng của tỉnh Hyogo, các bản tin về dấu chứng nhận và các bài viết xếp hạng cao đã được đọc trong ngày đó. Các kiểu schema.org được kiểm tra cùng ngày trên schema-dts 2.1.0. Các trang của Google và Cục Thuế Quốc gia Nhật Bản phản ánh nội dung chúng tôi kiểm tra ngày 1 tháng 11 năm 2026.",
+    "Hướng dẫn này viết cho các công ty chuyển nhà tại Nhật Bản, nơi Nurevo đặt trụ sở, nên các phần về hợp đồng mô tả quy định của Nhật Bản. Nếu bạn hoạt động ở nơi khác, cách làm tương tự áp dụng cho các điều khoản và quy định bảo vệ người tiêu dùng về chuyển nhà ở nước bạn. Câu trả lời của AI thay đổi theo ngày và cách hỏi, và không gì có thể đảm bảo bạn sẽ xuất hiện. Mục tiêu là để AI không nói sai thông tin của bạn và có đủ những gì cần để giới thiệu bạn. Đây không phải là tư vấn pháp lý."
+  ],
+  "sections": [
+    {
+      "heading": "Người chuẩn bị chuyển nhà hỏi AI những gì",
+      "paragraphs": [
+        "Câu hỏi về chuyển nhà kết hợp địa điểm, thời gian, khối lượng đồ, chi phí và nỗi lo: \"Hai người chúng tôi chuyển từ [thành phố] đến [thành phố] vào cuối tháng 3. Khoảng bao nhiêu tiền, nên thuê bên nào?\", \"Báo giá có bắt buộc phải cho người vào nhà không?\", \"Hủy trước một ngày thì mất bao nhiêu?\", \"Tủ lạnh bị hỏng có được bồi thường không?\", \"Công ty chuyển nhà nào tháo luôn cả điều hòa?\"",
+        "Để trả lời, AI cần trang web của bạn ghi rõ bằng văn bản: khu vực bạn phục vụ, cách báo giá và chi phí báo giá, yếu tố quyết định giá, phí hủy và phí dời ngày, cách yêu cầu bồi thường hư hỏng và các việc phụ bạn nhận làm (đóng gói, lắp ráp đồ nội thất, điều hòa). Nếu trang giá chỉ ghi \"liên hệ để nhận báo giá\", khu vực chỉ là một hình bản đồ và điều khoản hủy nằm trong một file PDF, AI sẽ dựa vào các trang so sánh và các bài viết chung chung.",
+        "Google cho biết AI Overviews và AI Mode không có yêu cầu bổ sung hay dữ liệu có cấu trúc đặc biệt nào: dữ liệu có cấu trúc khớp với văn bản hiển thị và Hồ sơ doanh nghiệp được cập nhật là những điều cơ bản quan trọng. [Google: Tính năng AI và trang web của bạn](https://developers.google.com/search/docs/appearance/ai-features). Với công ty chuyển nhà cũng vậy: việc cần làm là ghi rõ thông tin và giữ nhất quán, không phải mẹo gì cả."
+      ],
+      "table": {
+        "head": [
+          "Câu hỏi thường gặp",
+          "Cần viết gì",
+          "Ở đâu"
+        ],
+        "rows": [
+          [
+            "Báo giá có miễn phí không, có phải đến nhà không?",
+            "Bạn có báo giá tại nhà, qua video và qua điện thoại hay không, mỗi cách mất bao lâu, không thu phí báo giá và có giao báo giá bằng văn bản",
+            "Trang báo giá, FAQ"
+          ],
+          [
+            "Khoảng bao nhiêu tiền?",
+            "Các yếu tố làm thay đổi giá (khối lượng, quãng đường, mùa, ngày thường hay cuối tuần, khung giờ, cầu thang hay thang máy, số nhân công) và hai, ba ví dụ giá ghi đủ điều kiện, đã gồm thuế và có ghi ngày",
+            "Trang giá"
+          ],
+          [
+            "Đến khi nào được hủy hoặc dời ngày miễn phí?",
+            "Các mức phí theo điều khoản (ngày chuyển, trước một ngày, trước hai ngày), từ khi nào thì miễn phí, cách báo cho bạn",
+            "Trang giá, FAQ, báo giá"
+          ],
+          [
+            "Đồ bị vỡ hoặc thất lạc thì sao?",
+            "Thời hạn và đầu mối yêu cầu bồi thường, những món cần khai báo trước (đồ dễ vỡ, đồ có giá trị)",
+            "Trang bồi thường, FAQ"
+          ],
+          [
+            "Có phục vụ khu vực của tôi không?",
+            "Tên tỉnh và thành phố bằng văn bản, và cách xử lý chuyển nhà đường dài",
+            "Trang khu vực phục vụ"
+          ],
+          [
+            "Còn làm được gì nữa?",
+            "Đóng gói và mở đồ, lắp ráp đồ nội thất, điều hòa, đàn piano, đồ không dùng nữa (tự làm hay chuyển cho đối tác)",
+            "Trang dịch vụ"
+          ]
+        ],
+        "caption": "Các câu hỏi là ví dụ chúng tôi tổng hợp khi viết hướng dẫn này, không phải thống kê tần suất mỗi câu được hỏi."
+      }
+    },
+    {
+      "heading": "Những gì các bài viết xếp hạng cao bỏ sót",
+      "paragraphs": [
+        "Chúng tôi đã đọc tám bài viết xếp hạng cao bằng tiếng Nhật và tiếng Anh cho cụm \"moving company AI search\" và cụm tương đương trong tiếng Nhật. Ở tiếng Nhật, [uravation (15 tháng 8 năm 2026)](https://uravation.com/llmo/hikkoshi-gyosha-llmo-taisaku/) cụ thể nhất, đề cập khoảng giá, mùa cao điểm và báo giá tại nhà so với trực tuyến. Ở tiếng Anh, [Movers Development (cập nhật 24 tháng 10 năm 2026)](https://moversdev.com/how-moving-companies-can-show-up-in-chatgpt-search-results/) có một ví dụ robots.txt và một bộ câu hỏi thử nghiệm.",
+        "Không bài nào đưa ra ví dụ dữ liệu có cấu trúc hay các bước thiết lập WordPress, và bảng giá đều để trống. Phần lớn số liệu trong các bài tiếng Anh là tự công bố, không có nguồn; ước tính \"15–25% khách hàng tìm công ty chuyển nhà qua AI\" của [Netpeak (10 tháng 6 năm 2026)](https://netpeak.us/blog/what-percent-of-customers-find-their-moving-company-through-ai-assistants-chatgpt/), theo chính lời tác giả, được suy ra từ dữ liệu liên quan chứ không phải từ một nghiên cứu về ngành chuyển nhà. Hướng dẫn này tổng hợp cách viết theo điều khoản hợp đồng chính thức, dữ liệu có cấu trúc MovingCompany và khu vực phục vụ, các bước trên WordPress và cách đo lường."
+      ]
+    },
+    {
+      "heading": "Viết báo giá và phí hủy đúng như điều khoản quy định",
+      "paragraphs": [
+        "Điều khoản hợp đồng chuyển nhà tiêu chuẩn của Nhật Bản (標準引越運送約款), do Bộ Đất đai, Hạ tầng, Giao thông và Du lịch công bố, được sửa đổi và có hiệu lực từ ngày 1 tháng 6 năm 2018. Mức trần phí hủy và phí dời ngày trở thành 50% cước phí và các khoản phí vào ngày chuyển, 30% trước một ngày và 20% trước hai ngày (trước đây là 20% vào ngày chuyển và 10% trước một ngày). Điều khoản cũng bắt đầu áp dụng cho chuyển nhà ghép xe, khi một xe tải chở đồ của nhiều hộ. [MLIT: sửa đổi điều khoản chuyển nhà tiêu chuẩn](https://www.mlit.go.jp/jidosha/jidosha_tk4_000033.html) · [Cục Vận tải khu vực Chugoku](https://wwwtb.mlit.go.jp/chugoku/jidousha/truckhikkoshioshirase.html)",
+        "Một tờ rơi dành cho người tiêu dùng của tỉnh Hyogo (tháng 2 năm 2019) liệt kê các điểm chính của điều khoản sửa đổi: không thu phí báo giá và không thu tiền đặt cọc khi báo giá; công ty chuyển nhà xác nhận mọi thay đổi chậm nhất ba ngày trước ngày nhận đồ ghi trong báo giá; hư hỏng hoặc mất mát phải được báo trong vòng ba tháng kể từ ngày chuyển. Tờ rơi khuyên người tiêu dùng nên để công ty đến xem trực tiếp thay vì chỉ báo giá qua điện thoại hoặc trực tuyến, và kiểm tra trước phí hủy. [Tỉnh Hyogo: rắc rối khi chuyển nhà (PDF, tiếng Nhật)](https://web.pref.hyogo.lg.jp/kf13/shohiseikatsu/sonota/suishinhombu/documents/toraburu11.pdf)",
+        "Khi được hỏi \"hủy trước một ngày thì mất bao nhiêu?\", AI có thể trả lời theo quy định chung. Nếu bạn áp dụng điều khoản tiêu chuẩn, hãy nói rõ và liệt kê các mức trên trang giá và trong FAQ. Nếu bạn rộng rãi hơn (ví dụ miễn phí đến trước hai ngày), hãy ghi rõ điều đó. Chỉ tải điều khoản lên dưới dạng PDF khiến cả người lẫn AI đều khó đọc."
+      ],
+      "table": {
+        "head": [
+          "Tính từ ngày chuyển",
+          "Mức trần phí hủy hoặc dời ngày (điều khoản tiêu chuẩn)",
+          "Cách viết trên trang"
+        ],
+        "rows": [
+          [
+            "Ngày chuyển",
+            "Tối đa 50% cước phí và các khoản phí",
+            "\"Hủy hoặc dời vào ngày chuyển: tối đa 50% cước phí và các khoản phí\""
+          ],
+          [
+            "Trước một ngày",
+            "Tối đa 30%",
+            "\"Trước một ngày: tối đa 30%\""
+          ],
+          [
+            "Trước hai ngày",
+            "Tối đa 20%",
+            "\"Trước hai ngày: tối đa 20%\""
+          ],
+          [
+            "Sớm hơn",
+            "Không thuộc các mức trên",
+            "Ghi đúng quy định của bạn (ví dụ \"miễn phí nếu báo trước từ ba ngày trở lên\")"
+          ]
+        ],
+        "caption": "Mức trần theo điều khoản chuyển nhà tiêu chuẩn có hiệu lực từ ngày 1 tháng 6 năm 2018 (kiểm tra trên trang MLIT ngày 19 tháng 11 năm 2026). Nếu bạn dùng điều khoản riêng, hoặc điều khoản đã được sửa đổi sau đó, hãy ghi các giá trị trong điều khoản bạn thực sự áp dụng."
+      },
+      "after": [
+        "Hiển thị giá đã gồm thuế. Cục Thuế Quốc gia Nhật Bản yêu cầu các doanh nghiệp hiển thị giá trước cho người tiêu dùng phải hiển thị tổng số tiền đã gồm thuế tiêu dùng. [Cục Thuế Quốc gia: Tax Answer No. 6902 (tiếng Nhật)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm)"
+      ]
+    },
+    {
+      "heading": "Công bố giá bằng ví dụ kèm điều kiện",
+      "paragraphs": [
+        "Giá chuyển nhà phụ thuộc vào khối lượng, quãng đường, thời điểm và tòa nhà, nên không thể niêm yết một mức giá cố định. Nhưng chỉ ghi \"liên hệ để nhận báo giá\" thì AI không có gì để nói hơn \"tùy từng công ty\". Hai, ba ví dụ giá, mỗi ví dụ ghi đủ điều kiện và tháng viết, giúp cả người lẫn AI đọc được \"với những điều kiện này thì khoảng chừng này\"."
+      ],
+      "list": [
+        "Điều kiện cho mỗi ví dụ: số người và diện tích nhà, khối lượng (đồ nội thất và thiết bị chính, số thùng), quãng đường (cùng thành phố, cùng tỉnh, khác tỉnh), thời điểm (tháng, ngày thường hay cuối tuần, khung giờ), tòa nhà (tầng, có thang máy không, khoảng cách từ chỗ đỗ xe tải), nhân công và cỡ xe tải, và những gì đã bao gồm (vật liệu đóng gói, bảo vệ sàn, lắp ráp đồ nội thất).",
+        "Ghi số tiền đã gồm thuế kèm tháng và năm báo giá. Cập nhật hoặc gỡ bỏ các ví dụ cũ.",
+        "Với mùa cao điểm, hãy giải thích vì sao giá tăng (ví dụ giới hạn về nhân công và xe của chính bạn) và việc đặt sớm hoặc linh hoạt ngày giờ thay đổi giá ra sao. Chỉ dùng số liệu nhu cầu toàn ngành nếu bạn kiểm chứng được nguồn.",
+        "Nêu rõ khi nào phát sinh phụ phí (đồ nhiều hơn vào ngày chuyển, cẩu kéo, khiêng xa) và cách quyết định. Tờ rơi của Hyogo lưu ý rằng công ty chuyển nhà không được nâng báo giá vì lý do của mình."
+      ]
+    },
+    {
+      "heading": "Khu vực phục vụ, bồi thường và tín hiệu tin cậy",
+      "paragraphs": [
+        "Viết khu vực phục vụ bằng tên tỉnh và thành phố dưới dạng văn bản, không chỉ là một hình bản đồ. Nói rõ bạn có nhận chuyển nhà đường dài hoặc khác tỉnh không và có xử lý khác không. Nếu có nhiều chi nhánh, hãy làm cho mỗi chi nhánh một trang riêng với địa chỉ, số điện thoại và khu vực. [Tìm kiếm AI cho doanh nghiệp nhiều chi nhánh](/guide/multi-location-business-ai-search/)",
+        "Về bồi thường, hãy ghi thời hạn (ba tháng kể từ ngày chuyển theo điều khoản tiêu chuẩn), nơi báo, những gì cần khai báo trước và, nếu có bảo hiểm, phạm vi bảo hiểm. Mọi số tiền bạn công bố nên khớp với hợp đồng bảo hiểm.",
+        "Một tín hiệu tin cậy ở Nhật Bản là Hikkoshi Anshin Mark (引越安心マーク). Dấu này đến từ chương trình chứng nhận do Hiệp hội Xe tải Nhật Bản lập ra trong năm tài chính 2014, dành cho các công ty chuyển nhà mà hiệp hội công nhận cung cấp dịch vụ chuyển nhà an toàn và đáng tin cậy. [MLIT: chứng nhận công ty chuyển nhà xuất sắc (tiếng Nhật)](https://www.mlit.go.jp/jidosha/jidosha_tk4_000026.html). Yêu cầu bao gồm mọi chi nhánh nhận chuyển nhà đều là cơ sở được chứng nhận an toàn (G-mark) hoặc tương đương, tuân thủ điều khoản tiêu chuẩn và có hệ thống xử lý khiếu nại. [Cục Vận tải khu vực Kyushu (tiếng Nhật)](https://wwwtb.mlit.go.jp/kyushu/yuryo.html). Theo tin tháng 12 năm 2025, 41 công ty chuyển nhà được chứng nhận trong năm tài chính 2025 (hiệu lực từ 1 tháng 1 năm 2026 đến 31 tháng 12 năm 2028), và 348 công ty với 1.673 chi nhánh đang giữ dấu này. [LOGISTICS TODAY, 22 tháng 12 năm 2025 (tiếng Nhật)](https://www.logi-today.com/892661)",
+        "Nếu bạn có chứng nhận, hãy ghi tên chứng nhận, cơ quan cấp và thời hạn hiệu lực bằng văn bản trên trang giới thiệu công ty, không chỉ đặt logo. Đừng dùng cách diễn đạt tương tự nếu bạn chưa được chứng nhận. Hãy thu thập đánh giá trên các nền tảng bên thứ ba như Hồ sơ doanh nghiệp trên Google thay vì tự đăng đánh giá lên trang của mình để thổi phồng uy tín."
+      ]
+    },
+    {
+      "heading": "Dữ liệu có cấu trúc: MovingCompany và areaServed",
+      "paragraphs": [
+        "schema.org có một kiểu dành cho công ty chuyển nhà, [MovingCompany](https://schema.org/MovingCompany), là một trong các kiểu doanh nghiệp nhà ở và xây dựng (HomeAndConstructionBusiness) thuộc LocalBusiness. Khu vực bạn phục vụ đặt trong [areaServed](https://schema.org/areaServed), nơi có thể liệt kê tỉnh hoặc thành phố dưới dạng AdministrativeArea. Báo giá tại nhà miễn phí có thể là một Service với Offer bằng 0.",
+        "Khi đặt Nurevo AEO thành MovingCompany, nhập báo giá tại nhà như một dịch vụ và thêm khu vực bằng filter bên dưới, kết quả xuất ra trông như sau (các giá trị là ví dụ):"
+      ],
+      "code": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"MovingCompany\",\n      \"@id\": \"https://example.com/#organization\",\n      \"name\": \"Example Movers\",\n      \"address\": { \"@type\": \"PostalAddress\", \"streetAddress\": \"1-2-3 Example St, Example City\" },\n      \"telephone\": \"+1-000-000-0000\",\n      \"url\": \"https://example.com/\",\n      \"openingHours\": \"Mo-Su 08:00-20:00\",\n      \"areaServed\": [\n        { \"@type\": \"AdministrativeArea\", \"name\": \"Example County\" },\n        { \"@type\": \"AdministrativeArea\", \"name\": \"Example City\" }\n      ]\n    },\n    {\n      \"@type\": \"Service\",\n      \"@id\": \"https://example.com/#nurevo-service-1\",\n      \"name\": \"In-home estimate (free, about 30 min)\",\n      \"description\": \"We check the amount of furniture and the route out of your home, then give you a written estimate with its conditions. No obligation to book.\",\n      \"category\": \"Moving\",\n      \"provider\": { \"@id\": \"https://example.com/#organization\" },\n      \"additionalProperty\": {\n        \"@type\": \"PropertyValue\", \"name\": \"duration\",\n        \"value\": 30, \"unitCode\": \"MIN\", \"unitText\": \"minutes\"\n      },\n      \"offers\": { \"@type\": \"Offer\", \"price\": \"0\", \"priceCurrency\": \"USD\" },\n      \"potentialAction\": {\n        \"@type\": \"ReserveAction\",\n        \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/estimate\" },\n        \"result\": { \"@type\": \"Reservation\", \"name\": \"In-home estimate (free, about 30 min)\" }\n      }\n    }\n  ]\n}",
+      "after": [
+        "Giữ dữ liệu có cấu trúc giống hệt văn bản trên trang. Một Offer chỉ chứa một số tiền, vì vậy hãy để giá các gói trong ví dụ giá trên trang và chỉ đưa các số tiền cố định, như báo giá miễn phí, vào dữ liệu có cấu trúc."
+      ]
+    },
+    {
+      "heading": "Thiết lập trên trang web chuyển nhà dùng WordPress",
+      "list": [
+        "Cài đặt và kích hoạt Nurevo AEO (miễn phí) từ [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO và Slim SEO vẫn hoạt động bình thường. Từ phiên bản 0.9.1, plugin cũng chạy cùng SEO SIMPLE PACK và VK All in One Expansion Unit mà không lặp dữ liệu có cấu trúc.",
+        "Trong trình hướng dẫn thiết lập, chọn \"Khác\", rồi nhập MovingCompany vào Cài đặt > \"Loại hình kinh doanh (kiểu schema.org)\". Đừng chọn \"Dịch vụ chuyên nghiệp\", vì lựa chọn đó đặt thành ProfessionalService.",
+        "Kiểm tra tên công ty, địa chỉ, số điện thoại, giờ làm việc và phần mô tả. Trong phần mô tả, nêu ngắn gọn khu vực của bạn, các loại hình chuyển nhà bạn nhận (một người, gia đình, văn phòng) và cách báo giá.",
+        "Thêm từng dịch vụ (tối đa 20): báo giá tại nhà (0 và thời lượng), báo giá trực tuyến, các gói chính và dịch vụ phụ như điều hòa. Tên, thời lượng tính bằng phút, giá đã gồm thuế kèm đơn vị tiền tệ, danh mục, URL đặt lịch và mô tả được công bố dưới dạng Service, Offer và hành động đặt lịch (ReserveAction), và mỗi dịch vụ có một dòng trong llms.txt. Với các gói có giá tùy điều kiện, để trống giá và ghi điều kiện trong phần mô tả.",
+        "Thêm khu vực phục vụ dưới dạng areaServed bằng filter dành cho nhà phát triển webmcp_canary_business_node (mã bên dưới; đặt trong functions.php của child theme hoặc một plugin code snippets). Khi có plugin SEO đang hoạt động, thuộc tính này được gộp vào node doanh nghiệp của plugin đó, và các giá trị plugin đã đặt sẽ được ưu tiên.",
+        "Nhập các câu hỏi người ta hay hỏi (chi phí và cách báo giá, phí hủy và dời ngày, bồi thường, phụ phí vào ngày chuyển, phương thức thanh toán, chuyển nhà ngoài khu vực) làm FAQ và đặt block Nurevo FAQ (hoặc shortcode [nurevo_faq]). Các câu hỏi chỉ dành cho trang giá có thể đặt làm FAQ riêng của trang đó trong bảng Nurevo AEO của trình soạn thảo khối.",
+        "Mở /llms.txt và kiểm tra rằng các trang giá, báo giá, khu vực, bồi thường và giới thiệu công ty đều được liệt kê. Có thể loại các trang của chiến dịch đã kết thúc khỏi llms.txt trong bảng Nurevo AEO. Chạy chẩn đoán trên màn hình Điểm AEO và áp dụng các sửa lỗi một chạm."
+      ],
+      "code": "// Add the service area to the mover's node (same values as your \"Areas we cover\" page)\nadd_filter('webmcp_canary_business_node', function (array $node, array $settings) {\n    $node['areaServed'] = array(\n        array('@type' => 'AdministrativeArea', 'name' => 'Example County'),\n        array('@type' => 'AdministrativeArea', 'name' => 'Example City'),\n    );\n    return $node;\n}, 10, 2);",
+      "after": [
+        "Với trang không dùng WordPress, hãy kiểm tra những điểm tương tự: nhập URL của bạn vào [công cụ kiểm tra miễn phí](/check), không cần đăng ký, để xem tình trạng dữ liệu có cấu trúc, llms.txt và quyền truy cập của trình thu thập AI. Về việc chạy cùng các plugin SEO, xem [thêm thông tin doanh nghiệp vào Yoast, Rank Math và AIOSEO](/guide/local-business-schema-seo-plugins/)."
+      ]
+    },
+    {
+      "heading": "Giữ thông tin nhất quán trên các trang so sánh và báo giá",
+      "paragraphs": [
+        "AI đọc các trang so sánh báo giá, bài viết so sánh và Hồ sơ doanh nghiệp trên Google của bạn, chứ không chỉ trang web của bạn. Nếu tên, địa chỉ, số điện thoại, khu vực hoặc giờ làm việc mỗi nơi một khác, AI không thể biết đâu là đúng. Hãy giữ một danh sách những nơi bạn được đăng và đồng bộ từng nơi với trang của bạn một hoặc hai lần mỗi năm.",
+        "Giá và chương trình khuyến mãi có thể khác nhau giữa các trang đăng tin. Ghi trên trang của bạn rằng \"báo giá bằng văn bản là giá tham chiếu\" và \"khuyến mãi trên các trang đăng tin theo điều kiện của từng trang\" sẽ giảm khả năng AI nhắc lại một ưu đãi đã hết hạn."
+      ]
+    },
+    {
+      "heading": "Danh sách kiểm tra trước khi công bố",
+      "list": [
+        "Với mỗi cách báo giá (tại nhà, trực tuyến, điện thoại): không thu phí, mất bao lâu và có giao báo giá bằng văn bản.",
+        "Trang giá có hai, ba ví dụ giá ghi đủ điều kiện, đã gồm thuế và có ghi ngày.",
+        "Các mức phí hủy và dời ngày (ngày chuyển, trước một ngày, trước hai ngày) và thời điểm được hủy miễn phí được viết bằng văn bản trên trang giá và trong FAQ.",
+        "Đã nêu thời hạn và đầu mối yêu cầu bồi thường, cùng những món cần khai báo trước.",
+        "Khu vực được viết bằng tên tỉnh và thành phố, và khớp với areaServed trong dữ liệu có cấu trúc.",
+        "Loại hình kinh doanh là MovingCompany, và tên, địa chỉ, số điện thoại, giờ làm việc khớp nhau giữa trang web, dữ liệu có cấu trúc, Hồ sơ doanh nghiệp trên Google và các trang đăng tin.",
+        "Mọi chứng nhận đều được ghi rõ tên, cơ quan cấp và thời hạn hiệu lực (không ghi những gì bạn không có).",
+        "Không có tuyên bố nào bạn không chứng minh được, như \"rẻ nhất ngành\" hay \"cam kết\".",
+        "llms.txt liệt kê các trang giá, báo giá, khu vực, bồi thường và giới thiệu công ty. [llms.txt là gì](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Kiểm tra xem bạn có xuất hiện trong câu trả lời của AI không",
+      "paragraphs": [
+        "Khi các trang đã hoàn chỉnh, hãy viết 5–10 câu hỏi mà một khách hàng tiềm năng có thể hỏi, kết hợp khu vực, thời điểm, quy mô hộ gia đình và nỗi lo (phí hủy, bồi thường, báo giá). Hỏi trên ChatGPT và Perplexity rồi ghi lại công ty bạn có xuất hiện theo tên hoặc URL không, giá và phí hủy có được mô tả đúng không, và nguồn được trích dẫn là trang của bạn hay một trang báo giá. Câu trả lời của AI thay đổi giữa các lần hỏi, nên hãy lặp lại cùng câu hỏi theo thời gian và tách riêng các ghi chép trước và sau tháng bạn thay đổi trang giá. [Cách đo mức độ hiển thị trên AI](/guide/measure-ai-visibility/)",
+        "Ở gói Free và Standard, Nurevo AEO mỗi tháng một lần gửi tới Perplexity ba câu hỏi được tạo từ loại hình kinh doanh và khu vực của bạn (không bao giờ chứa tên công ty) và ghi lại tên hoặc trang của bạn có xuất hiện không. Ở gói Pro (từ $99/tháng), tính năng đo mức độ hiển thị trên AI bản beta cho thấy tần suất bạn xuất hiện, kèm so sánh với đối thủ và xu hướng (hiện đo trên Perplexity). Cả hai đều xem một mẫu câu trả lời, không phải mọi câu trả lời."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Công ty chuyển nhà nên bắt đầu với tìm kiếm AI từ đâu?",
+      "a": "Đặt các ví dụ giá kèm điều kiện lên trang giá, viết bằng văn bản phí hủy, phí dời ngày và thời hạn yêu cầu bồi thường, và liệt kê khu vực phục vụ theo tên thành phố. Sau đó công bố dữ liệu có cấu trúc với kiểu MovingCompany và đồng bộ Hồ sơ doanh nghiệp trên Google cùng các trang đăng tin."
+    },
+    {
+      "q": "Công khai giá có làm chúng tôi bất lợi không?",
+      "a": "Công khai ví dụ giá kèm điều kiện, thay vì một mức giá duy nhất, giúp tránh ấn tượng rằng báo giá sẽ khớp chính xác. Nếu không có con số nào, AI có thể trả lời bằng số liệu từ các trang so sánh hoặc bài viết chung chung. Luôn ghi kèm điều kiện và tháng viết của từng ví dụ."
+    },
+    {
+      "q": "Nên viết phí hủy như thế nào?",
+      "a": "Theo điều khoản chuyển nhà tiêu chuẩn của Nhật Bản có hiệu lực từ ngày 1 tháng 6 năm 2018, mức trần là 50% cước phí và các khoản phí vào ngày chuyển, 30% trước một ngày và 20% trước hai ngày. Hãy viết các giá trị trong điều khoản bạn dùng, và thời điểm được hủy miễn phí, bằng văn bản trên trang giá và FAQ."
+    },
+    {
+      "q": "Báo giá có bắt buộc phải làm trực tiếp không?",
+      "a": "Đó không phải là quy định, nhưng tờ rơi dành cho người tiêu dùng của tỉnh Hyogo khuyên mọi người nên để công ty đến xem thay vì chỉ dựa vào báo giá qua điện thoại hoặc trực tuyến. Giải thích mỗi cách (tại nhà, trực tuyến, điện thoại) đánh giá được gì và báo giá bằng văn bản được giao thế nào sẽ giúp AI giải thích sự khác biệt."
+    },
+    {
+      "q": "Công ty chuyển nhà nên dùng kiểu dữ liệu có cấu trúc nào?",
+      "a": "MovingCompany của schema.org. Khu vực phục vụ đặt trong areaServed và báo giá miễn phí có thể là một Service với Offer bằng 0. Giữ các giá trị giống hệt văn bản trên trang."
+    },
+    {
+      "q": "Tôi có thể dùng Nurevo AEO miễn phí không?",
+      "a": "Có. Dữ liệu có cấu trúc cho thông tin liên hệ, giờ làm việc, dịch vụ và FAQ, llms.txt, quy tắc cho trình thu thập AI và Điểm AEO đều có trong gói miễn phí. Các gói trả phí bổ sung bộ quy tắc luôn được cập nhật (Standard, $20/tháng) và tính năng đo mức độ hiển thị trên AI bản beta (Pro, từ $99/tháng). [Nurevo AEO trên WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Làm vậy có đảm bảo ChatGPT sẽ giới thiệu chúng tôi không?",
+      "a": "Không. Câu trả lời của AI thay đổi, và không công cụ hay phương pháp nào đảm bảo được việc xuất hiện hay thứ hạng. Điều bạn có thể làm là đảm bảo AI đọc đúng thông tin của bạn và tiếp tục kiểm tra xem bạn có xuất hiện không."
+    }
+  ],
+  "relatedHeading": "Hướng dẫn liên quan",
+  "cta": {
+    "heading": "Trước tiên, hãy xem AI đọc trang của bạn thế nào",
+    "body": "Công cụ kiểm tra miễn phí, không cần đăng ký, cho thấy tình trạng dữ liệu có cấu trúc, llms.txt và quyền truy cập của trình thu thập AI. Trên WordPress, Nurevo AEO lấp các chỗ thiếu miễn phí.",
+    "label": "Kiểm tra khả năng đọc của AI miễn phí",
+    "href": "/check",
+    "secondary": {
+      "label": "Tải Nurevo AEO trên WordPress.org",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT là nhãn hiệu của OpenAI, Perplexity của Perplexity AI và Google của Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK và VK All in One Expansion Unit là nhãn hiệu của các chủ sở hữu tương ứng. Hikkoshi Anshin Mark là chương trình chứng nhận của Hiệp hội Xe tải Nhật Bản. Nurevo không liên kết với các bên này, hay với bất kỳ công ty hoặc tổ chức nào được nhắc đến trong hướng dẫn này. Đây không phải là tư vấn pháp lý."
+}

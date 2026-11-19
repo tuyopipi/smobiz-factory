@@ -1,0 +1,246 @@
+{
+  "title": "KI-Suche für Apotheken: Öffnungszeiten, Apothekerdienst | Nurevo",
+  "description": "AEO für Apotheken und Drogerien: Öffnungs- und Abgabezeiten, Zeiten ohne Apotheker, Beratung außerhalb der Öffnungszeiten und Hausbesuche als Text und Schema.",
+  "h1": "KI-Suche für Apotheken und Drogerien: So liest die KI Ihre Öffnungszeiten, die Anwesenheit des Apothekers und Ihre Hausbesuche richtig",
+  "lead": "KI-Suchoptimierung für eine Apotheke heißt, die Fragen, die Menschen heute der KI stellen, auf Ihrer Seite tag- und minutengenau zu beantworten: Haben Sie jetzt geöffnet, ist ein Apotheker im Dienst (kann ich apothekenpflichtige Arzneimittel kaufen, die nur ein Apotheker abgeben darf), lösen Sie ein Rezept dieser Praxis ein, kann ich mich außerhalb der Öffnungszeiten beraten lassen, und liefern Sie nach Hause oder kommen Sie vorbei? Anschließend veröffentlichen Sie dieselben Fakten einheitlich in strukturierten Daten, llms.txt, Ihrem Google-Unternehmensprofil und in jedem offiziellen Apothekenverzeichnis, an das Sie Daten melden. In Japan ist dieses Verzeichnis die nationale Website für medizinische Informationen (Navii), gespeist aus den Meldungen zu Apothekenfunktionen, die jede Apotheke bei ihrer Präfektur einreicht.",
+  "intro": [
+    "Verfasst am 15. November 2026 (JST). Die Seiten von Tokio und Saitama zum japanischen Meldesystem für Apothekenfunktionen sowie die Typen von schema.org (wie in schema-dts 2.1.0 definiert) wurden an diesem Tag geprüft. Die Beispiele für Vorschriften stammen aus Japan; prüfen Sie die Regeln, die dort gelten, wo Sie tätig sind.",
+    "KI-Antworten ändern sich von Tag zu Tag und je nach Formulierung der Frage. Die hier beschriebenen Schritte machen die Fakten Ihrer Apotheke für KI lesbar. Sie garantieren nicht, dass eine KI Ihre Apotheke erwähnt oder irgendwo platziert."
+  ],
+  "sections": [
+    {
+      "heading": "Was Menschen die KI über Apotheken fragen",
+      "paragraphs": [
+        "Menschen suchen eine Apotheke auf dem Rückweg vom Arzt oder wenn abends oder am Wochenende jemand krank wird. Ihre Fragen enthalten deshalb Uhrzeiten und Bedingungen: „eine Apotheke in der Nähe von [Praxis], die nach 19 Uhr geöffnet hat“, „wo kann ich am Sonntag ein Rezept einlösen“, „eine Drogerie, in der gerade ein Apotheker im Dienst ist“, „eine Apotheke, die Medikamente zu meinen Eltern nach Hause liefert“, „eine Apotheke, in der ich auf Englisch fragen kann“.",
+        "Damit eine KI Ihre Apotheke auf eine dieser Fragen hin nennt, muss sie als Text lesen können, dass Sie die Bedingung erfüllen. Eine Seite, auf der die Öffnungszeiten nur als Bild stehen, Laden- und Abgabezeiten nicht unterschieden werden oder Hausbesuche nur mit „bitte fragen Sie uns“ beschrieben sind, lässt sich für eine Frage mit Bedingung kaum verwenden.",
+        "Wir haben die bestplatzierten Seiten zu diesem Thema auf Japanisch und Englisch gelesen. Die meisten bleiben bei allgemeinen Ratschlägen: Google-Unternehmensprofil aktualisieren, Bewertungen sammeln, strukturierte Daten hinzufügen. Kaum eine behandelt den Abgleich Ihrer Website mit den offiziellen Meldungen, die eine Apotheke ohnehin einreicht, wie man Zeiten ohne anwesenden Apotheker angibt, eine konkrete WordPress-Einrichtung oder wie man prüft, ob man erscheint. Dieser Leitfaden schließt diese Lücken."
+      ]
+    },
+    {
+      "heading": "Welche Fakten sich zu veröffentlichen lohnen und wie Sie sie formulieren",
+      "paragraphs": [
+        "Nutzen Sie die Tabelle als Orientierung. Eine Apotheke mit Schwerpunkt auf Rezepten und eine Drogerie mit breitem Sortiment rezeptfreier Produkte gewichten diese Punkte unterschiedlich, doch für beide entscheidet die Art, wie Öffnungszeiten und Ansprechpartner angegeben sind, darüber, ob eine KI Ihre Seite verwenden kann."
+      ],
+      "table": {
+        "head": [
+          "Fakt",
+          "So steht es auf der Seite",
+          "Worauf Sie achten sollten"
+        ],
+        "rows": [
+          [
+            "Öffnungstage und -zeiten",
+            "Zeiten für jeden Tag, Ruhetage, Regelung an Feiertagen",
+            "Wenn die Abgabezeiten von den Ladenzeiten abweichen, beide getrennt angeben"
+          ],
+          [
+            "Abgabezeiten",
+            "Wann Sie Rezepte annehmen und bis wann man spätestens eines abgeben kann",
+            "Aus „bis 30 Minuten vor Ladenschluss“ eine Uhrzeit machen"
+          ],
+          [
+            "Wann ein Apotheker anwesend ist und wann nicht",
+            "Die Tage und Zeiten ohne Apotheker und was dann nicht möglich ist",
+            "Deutlich machen, wann apothekerpflichtige Arzneimittel und die Rezeptabgabe nicht verfügbar sind"
+          ],
+          [
+            "Beratung außerhalb der Öffnungszeiten",
+            "Ob man sich nach Ladenschluss beraten lassen kann, Telefonnummer und Zeiten",
+            "Bei „24 Stunden“ angeben, ob nur telefonische Beratung oder auch Abgabe gemeint ist"
+          ],
+          [
+            "Rezepte",
+            "Ob Sie Rezepte jeder Praxis annehmen, für welche nahen Praxen Sie häufig einlösen, wie man ein Rezept vorab schickt (Fax oder App)",
+            "Formulierungen vermeiden, die nahelegen, dass Sie nur eine Praxis bedienen"
+          ],
+          [
+            "Hausbesuche",
+            "Das Gebiet, wen Sie besuchen (Privathaushalte, Pflegeeinrichtungen), wie man anfragt, wo die Kosten stehen",
+            "Nicht bei „bitte fragen Sie“ stehen bleiben, sondern Gebiet und Bedingungen nennen"
+          ],
+          [
+            "Zertifizierungen und Anerkennungen",
+            "Offizielle Zertifizierungen oder Anerkennungen, die Sie besitzen (in Japan: Apotheke für regionale Zusammenarbeit oder für fachliche Zusammenarbeit, Gesundheitsförderungsapotheke)",
+            "Nie eine angeben, die Sie nicht besitzen. Name des Programms und Ihren Status zusammen nennen"
+          ],
+          [
+            "Sortiment",
+            "Arzneimittelkategorien, Pflegebedarf, medizinische Hilfsmittel, Babyprodukte, ob Sie bestellen können und wie lange das dauert",
+            "Der Bestand ändert sich, daher „Bestand bitte telefonisch erfragen“ schreiben"
+          ],
+          [
+            "Zahlung, Anfahrt und Sprachen",
+            "Akzeptierte Zahlungsarten, Parkplätze, Rollstuhlzugang, Sprachen, in denen Sie beraten können",
+            "Ändert sich etwas, Website und Google-Unternehmensprofil gleichzeitig aktualisieren"
+          ],
+          [
+            "Vorübergehende Schließungen und Urlaub",
+            "Die Daten sowie nahe gelegene oder notdiensthabende Apotheken als Alternative",
+            "Direkt neben die Öffnungszeiten stellen, nicht nur in eine Neuigkeiten-Meldung"
+          ]
+        ],
+        "caption": "Zusammengestellt aus den Bedingungen, die Menschen an Fragen zu Apotheken knüpfen, und den Punkten, die die bestplatzierten Seiten auslassen."
+      },
+      "after": [
+        "Halten Sie jeden Wert identisch auf der Seite, in den strukturierten Daten, im Google-Unternehmensprofil, im offiziellen Verzeichnis und auf dem Schild an der Tür. Google empfiehlt, das Unternehmensprofil auch für seine KI-Funktionen aktuell zu halten. [Google: KI-Funktionen und Ihre Website](https://developers.google.com/search/docs/appearance/ai-features)"
+      ]
+    },
+    {
+      "heading": "Abgleich mit den offiziellen Apothekenmeldungen (Japan: Navii)",
+      "paragraphs": [
+        "In Japan verpflichtet Artikel 8-2 des Gesetzes über Arzneimittel und Medizinprodukte (Pharmaceuticals and Medical Devices Act) jede Apotheke, ihre Funktionen der Präfektur zu melden (das Informationssystem für Apothekenfunktionen). Laut der Stadtverwaltung Tokio werden die Meldungen seit Januar 2024 online über G-MIS eingereicht und seit April 2024 auf der nationalen Website für medizinische Informationen, Navii, veröffentlicht. [Stadtverwaltung Tokio (Japanisch)](https://www.hokeniryo.metro.tokyo.lg.jp/anzen/iyaku/yakkyokuinfo.html) / [Navii (Japanisch)](https://www.iryou.teikyouseido.mhlw.go.jp/)",
+        "Es gibt eine jährliche Meldung zum Stand am 31. Dezember (in Tokio in der Regel zwischen Anfang Januar und Ende Februar einzureichen), und einige Angaben müssen bei jeder Änderung umgehend gemeldet werden. Dazu gehören Öffnungstage, Öffnungszeiten, Zeiten, in denen außerhalb der Öffnungszeiten Beratung möglich ist, ob die Apotheke den Status als Gesundheitsförderungsapotheke ausweist, ob sie als Apotheke für regionale oder fachliche Zusammenarbeit anerkannt ist und ob es Zeiten ohne anwesenden Apotheker gibt. Die Seite der Präfektur Saitama ergänzt diese Liste um Betriebsunterbrechung, Wiederaufnahme und Schließung. [Präfektur Saitama (Japanisch)](https://www.pref.saitama.lg.jp/a0707/y-kinou.html)",
+        "Das ist für die KI-Suche nützlich. Was die KI zu einer Apotheke gefragt wird (wie lange sie geöffnet hat, ob nach Ladenschluss Beratung möglich ist, ob ein Apotheker da ist, ob sie anerkannt ist), deckt sich fast genau mit den Angaben, die eine Apotheke ohnehin meldet. Weichen die gemeldeten Werte und Ihre Website voneinander ab, können weder die KI noch die Patienten erkennen, was stimmt. Machen Sie es zur Regel, Meldung, Website, Google-Unternehmensprofil und Schild am selben Tag zu ändern. Außerhalb Japans wenden Sie denselben Gedanken auf das offizielle Register oder Gesundheitsverzeichnis an, in dem Ihre Apotheke geführt wird."
+      ]
+    },
+    {
+      "heading": "So formulieren Sie „kein Apotheker im Dienst“ und Beratung außerhalb der Öffnungszeiten",
+      "paragraphs": [
+        "Eine Drogerie kann geöffnet haben, während kein Apotheker im Dienst ist. Wird eine KI nach „einem Geschäft, in dem ich jetzt ein apothekerpflichtiges Arzneimittel kaufen kann“ gefragt und Ihre Seite nennt nur die Ladenzeiten, antwortet sie womöglich mit Ja – zu einer Zeit, in der Sie es nicht verkaufen können.",
+        "Ein Beispiel: „Laden geöffnet 9:00–22:00 Uhr, täglich. Rezepte Mo–Fr 9:00–19:00 Uhr (letzte Rezeptannahme 18:45 Uhr), Sa 9:00–13:00 Uhr. Dienstags 19:00–22:00 Uhr kein Apotheker: In dieser Zeit können wir keine Rezepte beliefern und keine apothekerpflichtigen Arzneimittel verkaufen. Beratung außerhalb der Öffnungszeiten: Registrierte Patienten erreichen uns von 22:00 bis 9:00 Uhr unter 0X-XXXX-XXXX.“ Fassen Sie Laden-, Abgabe-, Apotheker- und Notfallinformationen an einer Stelle zusammen (die Nummer ist ein Platzhalter).",
+        "Für apothekerpflichtige Arzneimittel und für die Pflichtangaben eines Online-Apothekenshops gelten eigene Vorschriften, und sie ändern sich laufend. Prüfen Sie die genauen Punkte im aktuellen Recht und in den Hinweisen Ihrer Aufsichtsbehörde."
+      ]
+    },
+    {
+      "heading": "Werbevorschriften gelten auch für Texte, die für KI geschrieben sind",
+      "paragraphs": [
+        "In Japan fällt Arzneimittelwerbung unter die Werbebestimmungen des Pharmaceuticals and Medical Devices Act und die Standards des Gesundheitsministeriums für angemessene Arzneimittelwerbung. [Ministerium für Gesundheit, Arbeit und Soziales (Japanisch)](https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/kenkou_iryou/iyakuhin/koukokukisei/index.html). FAQ, strukturierte Daten und Blogbeiträge, die geschrieben werden, damit die KI sie aufgreift, sind genauso erfasst. In den meisten Ländern gibt es vergleichbare Regeln."
+      ],
+      "list": [
+        "Versprechen Sie weder Wirkung noch Sicherheit („wirkt immer“, „keine Nebenwirkungen“) und verwenden Sie keine Superlative oder Vergleiche („die beste in der Stadt“).",
+        "Schreiben Sie in Artikeln über Beschwerden nicht „bei diesem Symptom nehmen Sie dieses Arzneimittel“. Schreiben Sie, wann man zum Arzt gehen sollte und wobei Sie in der Apotheke helfen können.",
+        "Listen Sie verschreibungspflichtige Arzneimittel nicht wie Produkte mit Preisen auf.",
+        "Verwenden Sie Kundenstimmen nicht in FAQ- oder Bewertungs-Markup als Beleg dafür, dass etwas wirkt."
+      ],
+      "after": [
+        "Im Zweifel fragen Sie Ihre Aufsichtsbehörde oder ziehen die Hinweise Ihrer Berufsorganisation heran. Für die Praxisseite siehe [KI-Suche für Hausarzt- und Kinderarztpraxen](/guide/medical-clinic-ai-search/)."
+      ]
+    },
+    {
+      "heading": "Strukturierte Daten: der Typ Pharmacy und nützliche Eigenschaften",
+      "paragraphs": [
+        "schema.org hat einen Typ Pharmacy, beschrieben als „A pharmacy or drugstore“ (eine Apotheke oder Drogerie; geprüft in den Typdefinitionen von schema-dts 2.1.0 am 15. November 2026). Pharmacy ist eine Art von MedicalBusiness und trägt die Eigenschaften sowohl von LocalBusiness als auch von MedicalOrganization. Eine Drogerie kann Pharmacy statt Store verwenden."
+      ],
+      "table": {
+        "head": [
+          "Typ oder Eigenschaft",
+          "Bedeutung",
+          "Verwendung in einer Apotheke"
+        ],
+        "rows": [
+          [
+            "[Pharmacy](https://schema.org/Pharmacy)",
+            "Eine Apotheke oder Drogerie",
+            "Sowohl für Apotheken mit Rezeptabgabe als auch für Drogerien. Enthält Adresse, Telefon und Öffnungszeiten direkt"
+          ],
+          [
+            "openingHoursSpecification",
+            "Öffnungszeiten nach Wochentag",
+            "Ladenzeiten. Abgabezeiten und Zeiten ohne Apotheker im Seitentext angeben"
+          ],
+          [
+            "[specialOpeningHoursSpecification](https://schema.org/specialOpeningHoursSpecification)",
+            "Vom Normalfall abweichende Zeiten",
+            "Feiertage und vorübergehende Schließungen"
+          ],
+          [
+            "knowsLanguage",
+            "Sprachen, die das Unternehmen beherrscht",
+            "Wenn Sie auf Englisch, Chinesisch oder in anderen Sprachen beraten können"
+          ],
+          [
+            "paymentAccepted",
+            "Zahlungsarten",
+            "Wenn Sie Karten- oder Mobilzahlung angeben"
+          ],
+          [
+            "hasOfferCatalog",
+            "Eine Liste angebotener Leistungen",
+            "Rezeptabgabe, Hausbesuche, Gesundheitsberatung und ähnliche Leistungen"
+          ]
+        ]
+      },
+      "after": [
+        "Die strukturierten Daten für lokale Unternehmen von Google verlangen Name und Adresse und empfehlen den spezifischsten passenden Typ. [Google: Strukturierte Daten für lokale Unternehmen](https://developers.google.com/search/docs/appearance/structured-data/local-business). Fakten ohne naheliegende Eigenschaft, etwa Zeiten ohne Apotheker oder Beratung außerhalb der Öffnungszeiten, stehen am sichersten im Seitentext."
+      ]
+    },
+    {
+      "heading": "Einrichtung auf einer WordPress-Apothekenwebsite",
+      "list": [
+        "Installieren und aktivieren Sie Nurevo AEO (kostenlos) von [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO und Slim SEO funktionieren unverändert weiter. Ab Version 0.9.1 arbeitet es auch mit SEO SIMPLE PACK und VK All in One Expansion Unit zusammen, ohne strukturierte Daten doppelt auszugeben.",
+        "Wählen Sie im Einrichtungsassistenten „Einzelhandel“ (damit wird der Typ auf Store gesetzt). Ändern Sie dann in den Einstellungen das Feld „Unternehmenstyp (schema.org-Typ)“ auf Pharmacy. Pharmacy gehört zu den aufgeführten Unternehmenstypen, und der Assistent ordnet ihn der Einzelhandelsgruppe zu.",
+        "Prüfen Sie Name, Adresse, Telefonnummer und Beschreibung der Apotheke. Nur leere Felder werden aus Ihren bestehenden Einstellungen befüllt; von Ihnen eingegebene Werte werden nie überschrieben.",
+        "Tragen Sie im Feld für die Öffnungszeiten nur Tage und Uhrzeiten des Ladens ein, etwa „Mon-Sat 9:00-22:00 / Sun 10:00-20:00“. Fügen Sie Feiertage oder einen Hinweis zur „letzten Rezeptannahme“ hinzu, veröffentlicht das Plugin Ihren Text unverändert, statt falsche Zeiten zu riskieren. Abgabezeiten, Zeiten ohne Apotheker und Feiertagsregeln gehören daher in den Seitentext.",
+        "Fügen Sie in den Einstellungen Ihr Angebot als Leistungen hinzu (Rezeptabgabe, Hausbesuche, Gesundheitsberatung, rezeptfreie Arzneimittel) und häufige Fragen (Rezept vorab schicken, Beratung außerhalb der Öffnungszeiten, Hausbesuch anfragen) als FAQ. FAQ-Einträge werden der FAQPage der Seite hinzugefügt, auf der Sie den Nurevo-FAQ-Block (oder den Shortcode [nurevo_faq]) platzieren.",
+        "Führen Sie im Bildschirm „AEO-Score“ eine Prüfung durch und übernehmen Sie die Ein-Klick-Korrekturen. Wie Ihre Website von außen wirkt, zeigt die [kostenlose Prüfung der KI-Lesbarkeit](/check)."
+      ],
+      "after": [
+        "Mit einem SEO-Plugin gibt Nurevo AEO keinen zweiten Satz strukturierter Daten aus. Es ergänzt nur fehlende Adresse, Telefonnummer, Öffnungszeiten und den spezifischeren Typ im Graphen, den Ihr SEO-Plugin bereits veröffentlicht. Siehe [Unternehmensangaben in Yoast, Rank Math und AIOSEO ergänzen](/guide/local-business-schema-seo-plugins/). Haben Sie mehrere Filialen, geben Sie jeder eine eigene Seite mit eigenen Öffnungszeiten, Apothekerzeiten und eigenem Gebiet für Hausbesuche."
+      ]
+    },
+    {
+      "heading": "Checkliste vor der Veröffentlichung",
+      "list": [
+        "Die Öffnungszeiten stehen als Text, nicht nur als Bild, mit Ruhetagen und Regelung an Feiertagen.",
+        "Abgabezeiten und der späteste Zeitpunkt für die Rezeptabgabe sind getrennt von den Ladenzeiten angegeben.",
+        "Gibt es Zeiten ohne Apotheker, sind Tage, Uhrzeiten und das, was dann nicht möglich ist, genannt.",
+        "Ob Beratung außerhalb der Öffnungszeiten möglich ist, mit Telefonnummer und Zeiten, ist angegeben.",
+        "Wie man ein Rezept abgibt oder vorab schickt sowie Gebiet, Zielgruppe und Anfrageweg für Hausbesuche sind angegeben.",
+        "Zertifizierungen und Anerkennungen sind nur so angegeben, wie sie tatsächlich bestehen.",
+        "Name, Adresse, Telefonnummer und Öffnungszeiten stimmen auf der Website, in den strukturierten Daten, im Google-Unternehmensprofil und im offiziellen Apothekenverzeichnis überein.",
+        "Keine Wirkversprechen, keine Superlative oder Vergleiche und keine Kundenstimmen als Beleg in FAQ oder strukturierten Daten.",
+        "llms.txt führt Ihre Seiten zu Öffnungszeiten, Anfahrt, Rezepten und Hausbesuchen auf. [Was ist llms.txt](/guide/llms-txt/)"
+      ]
+    },
+    {
+      "heading": "Prüfen, ob die KI Sie erwähnt",
+      "paragraphs": [
+        "Sobald die Fakten stehen, formulieren Sie 5 bis 10 Fragen, die Menschen stellen könnten, und kombinieren Sie dabei Gegend, Tageszeit und eine Bedingung (Rezept, Apotheker, Hausbesuch, Sprache). Stellen Sie sie ChatGPT und Perplexity. Zum Beispiel: „Welche Apotheke in der Nähe von [Bahnhof] kann an einem Werktag um 20 Uhr ein Rezept beliefern?“ oder „Welche Apotheken in [Stadt] machen Hausbesuche?“ Notieren Sie, ob Ihre Apotheke genannt oder verlinkt wird und ob Zeiten und Bedingungen stimmen. KI-Antworten ändern sich von Durchlauf zu Durchlauf, wiederholen Sie also dieselben Fragen über einen längeren Zeitraum. Zur Methode siehe [So messen Sie die KI-Sichtbarkeit](/guide/measure-ai-visibility/).",
+        "Zeigt eine KI falsche Öffnungszeiten an, finden Sie heraus, woher der Wert stammt. Nennt die Antwort eine Quelle, prüfen Sie diese Seite (Ihre Website, Google-Unternehmensprofil, offizielles Verzeichnis, eine Karten- oder Bewertungsseite) und korrigieren Sie die, die abweicht.",
+        "Mit Nurevo AEO stellen schon die Tarife Free und Standard einmal im Monat drei Fragen an Perplexity, die aus Ihrem Unternehmenstyp und Ihrer Gegend gebildet werden (nie aus dem Namen Ihrer Apotheke), und halten fest, ob die Antworten Ihre Apotheke nannten oder Ihre Website zitierten. Im Tarif Pro (ab 99 $/Monat) zeigt die KI-Sichtbarkeitsmessung (Beta), wie oft Ihre Apotheke in KI-Antworten erscheint, mit Wettbewerbervergleich und Verlauf (derzeit auf Perplexity gemessen). Beide betrachten eine Stichprobe von Antworten, nicht jede Antwort."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Womit sollte eine Apotheke bei der KI-Suche anfangen?",
+      "a": "Geben Sie Laden- und Abgabezeiten getrennt als Text an und ergänzen Sie, wann kein Apotheker anwesend ist und ob außerhalb der Öffnungszeiten Beratung möglich ist. Bringen Sie diese Werte dann mit Ihren strukturierten Daten, Ihrem Google-Unternehmensprofil und dem offiziellen Apothekenverzeichnis in Übereinstimmung."
+    },
+    {
+      "q": "Sollte eine Drogerie in den strukturierten Daten Store oder Pharmacy verwenden?",
+      "a": "Wenn Sie Arzneimittel verkaufen und einen Apotheker haben, passt Pharmacy besser. schema.org beschreibt Pharmacy als „A pharmacy or drugstore“, und als Art von LocalBusiness enthält der Typ Adresse und Öffnungszeiten direkt. Wichtiger als der Typ ist, dass die Werte mit Ihrer Seite übereinstimmen."
+    },
+    {
+      "q": "Was passiert, wenn das offizielle Verzeichnis und unsere Website voneinander abweichen?",
+      "a": "KI und Patienten können nicht erkennen, welcher Angabe sie trauen sollen. In Japan sind Öffnungstage und -zeiten, Beratung außerhalb der Öffnungszeiten und Zeiten ohne Apotheker Angaben, die eine Apotheke bei Änderungen umgehend melden muss. Wer Meldung, Website und Google-Unternehmensprofil am selben Tag aktualisiert, verhindert die Abweichung."
+    },
+    {
+      "q": "Ist es nicht besser, Zeiten ohne Apotheker gar nicht zu erwähnen?",
+      "a": "Es ist sicherer, sie zu erwähnen. Sonst sagt eine KI womöglich, man könne zu einer bestimmten Zeit apothekerpflichtige Arzneimittel kaufen, obwohl das nicht geht, und die Leute kommen umsonst. In Japan ist zudem meldepflichtig, ob es Zeiten ohne Apotheker gibt."
+    },
+    {
+      "q": "Können wir Artikel über Beschwerden und passende Arzneimittel schreiben, damit die KI sie aufgreift?",
+      "a": "Arzneimittelwerbung ist reguliert (in Japan durch den Pharmaceuticals and Medical Devices Act und die Werbestandards des Gesundheitsministeriums). Vermeiden Sie Wirkversprechen und Superlative; konzentrieren Sie sich darauf, wann man zum Arzt gehen sollte und wobei die Apotheke helfen kann. Im Zweifel fragen Sie Ihre Aufsichtsbehörde."
+    },
+    {
+      "q": "Ist Nurevo AEO kostenlos?",
+      "a": "Ja. Strukturierte Daten für Unternehmenstyp, Adresse, Öffnungszeiten, Leistungen und FAQ sowie llms.txt, Regeln für KI-Crawler und der AEO-Score sind im kostenlosen Tarif enthalten. Die kostenpflichtigen Tarife ergänzen ein stets aktuelles Regelwerk (Standard, 20 $/Monat) und die KI-Sichtbarkeitsmessung (Beta) (Pro, ab 99 $/Monat). [Nurevo AEO auf WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Garantiert das, dass unsere Apotheke in ChatGPT erscheint?",
+      "a": "Nein. KI-Antworten ändern sich, und kein Tool und keine Technik kann eine Erwähnung oder eine Platzierung garantieren. Sie können Ihre Fakten für KI leicht lesbar machen und regelmäßig prüfen, ob Sie erscheinen."
+    }
+  ],
+  "relatedHeading": "Verwandte Leitfäden",
+  "cta": {
+    "heading": "Sehen Sie zuerst, wie die KI die Website Ihrer Apotheke liest",
+    "body": "Die kostenlose Prüfung zeigt den Stand Ihrer strukturierten Daten, llms.txt und des Zugangs für KI-Crawler, ohne Anmeldung. Unter WordPress schließt Nurevo AEO die Lücken kostenlos.",
+    "label": "Kostenlose KI-Lesbarkeitsprüfung starten",
+    "href": "/check",
+    "secondary": {
+      "label": "Nurevo AEO auf WordPress.org holen",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT ist eine Marke von OpenAI, Perplexity von Perplexity AI und Google von Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK und VK All in One Expansion Unit sind Marken ihrer jeweiligen Inhaber. Nurevo steht in keiner Verbindung zu ihnen. Dieser Artikel ist keine Rechtsberatung."
+}
