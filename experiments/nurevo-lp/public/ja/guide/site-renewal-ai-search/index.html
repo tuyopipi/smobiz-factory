@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>リニューアルでAI検索の出典を失わない手順：制作会社向け | Nurevo AIO</title>
+<meta name="description" content="制作会社がサイトのリニューアル・ドメイン変更をするときに、ChatGPT・Perplexity・GoogleのAI機能に引用されたページを失わない手順。棚卸し、URL対応表と301、公開日の確認、WordPressでの作業、前後の測り方。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/site-renewal-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/site-renewal-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/site-renewal-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/site-renewal-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/site-renewal-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/site-renewal-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/site-renewal-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/site-renewal-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/site-renewal-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="リニューアルでAI検索の出典を失わない手順：制作会社向け | Nurevo AIO">
+<meta property="og:description" content="制作会社がサイトのリニューアル・ドメイン変更をするときに、ChatGPT・Perplexity・GoogleのAI機能に引用されたページを失わない手順。棚卸し、URL対応表と301、公開日の確認、WordPressでの作業、前後の測り方。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/site-renewal-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="リニューアルでAI検索の出典を失わない手順：制作会社向け | Nurevo AIO">
+<meta name="twitter:description" content="制作会社がサイトのリニューアル・ドメイン変更をするときに、ChatGPT・Perplexity・GoogleのAI機能に引用されたページを失わない手順。棚卸し、URL対応表と301、公開日の確認、WordPressでの作業、前後の測り方。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/site-renewal-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/site-renewal-ai-search/","name":"リニューアルでAI検索の出典を失わない手順：制作会社向け | Nurevo AIO","description":"制作会社がサイトのリニューアル・ドメイン変更をするときに、ChatGPT・Perplexity・GoogleのAI機能に引用されたページを失わない手順。棚卸し、URL対応表と301、公開日の確認、WordPressでの作業、前後の測り方。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/site-renewal-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/site-renewal-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"サイトリニューアルでAI検索の出典を失わない手順：制作会社が公開前・公開日・公開後にやること","item":"https://nurevo.jp/ja/guide/site-renewal-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/site-renewal-ai-search/#faq","mainEntity":[{"@type":"Question","name":"リニューアルすると、AIの回答から自社のサイトは消えますか？","acceptedAnswer":{"@type":"Answer","text":"必ず消えるわけではありません。ただ、引用されていたURLが404になったり、事実の載った表が抜けたり、新しいサーバーでAIのクローラーが止められたりすると、出典として使われにくくなります。公開前の棚卸しと、公開日の確認で防げることがほとんどです。"}},{"@type":"Question","name":"301と302はAI検索でも違いますか？","acceptedAnswer":{"@type":"Answer","text":"Googleは、301・308を恒久的、302・303・307を一時的なリダイレクトとして扱うと公開しています。ChatGPT・Perplexity・Claudeの扱いを説明した公式の資料は見つかりませんでしたが、戻す予定のない移転は301か308にしておくのが確実です。"}},{"@type":"Question","name":"リダイレクトはいつまで残せばいいですか？","acceptedAnswer":{"@type":"Answer","text":"Googleは、できるだけ長く、一般に1年以上残すことを勧めています。ドメインを変えた場合のアドレス変更ツールのヘルプは、少なくとも180日、Google検索からの流入が残っていればそれより長く残し、旧ドメインは少なくとも1年は契約し続けることを勧めています。"}},{"@type":"Question","name":"llms.txtはリニューアルでどうすればいいですか？","acceptedAnswer":{"@type":"Answer","text":"手で置いたファイルなら、新URLに書き直すか、作り直します。Nurevo AEOのように自動で作る仕組みなら、新しいパーマリンクで作り直されますが、会社のURLなど手で入れた値は旧ドメインのまま残ることがあるので確かめます。"}},{"@type":"Question","name":"テーマを変えるだけでもAI検索に影響しますか？","acceptedAnswer":{"@type":"Answer","text":"URLが変わらなければリダイレクトは要りませんが、テーマが構造化データを出す・出さないが変わったり、営業時間や料金の表の作りが変わったりします。新しいテーマで構造化データと本文の事実が公開前と同じかを確かめてください。"}},{"@type":"Question","name":"公開後、AIが古いURLや古い情報を出し続けます。どうすればいいですか？","acceptedAnswer":{"@type":"Answer","text":"まず旧URLが1回の301で新URLに届くか、新しいページに同じ事実が載っているかを確かめます。そのうえで、同じ質問で日を変えて記録を続けます。AIの回答がいつ切り替わるかは公開されていないため、事実の側を正しく保つことがいちばん確実です。"}},{"@type":"Question","name":"サイトを統合するとき、統合される側のページはどうしますか？","acceptedAnswer":{"@type":"Answer","text":"内容の近いページがあれば、そのページへ301で送ります。対応する内容がなければ404か410を返します。関係のないページ（トップページなど）にまとめて送ると、Googleではソフト404として扱われることがあります。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">無料でAIの読みやすさをチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>サイトリニューアルでAI検索の出典を失わない手順：制作会社が公開前・公開日・公開後にやること</span></nav>
+  <article>
+    <h1>サイトリニューアルでAI検索の出典を失わない手順：制作会社が公開前・公開日・公開後にやること</h1>
+    <p class="lead">リニューアルでAI検索の出典を失わないためには、①公開前に、AIの回答に引用されているURLと、構造化データ・llms.txt・robots.txtなどAI向けの出力を棚卸しし、②旧URLから新URLへ1対1のサーバー側の恒久的なリダイレクト（301か308）を用意し、③公開日に、新しいサーバーでAIのクローラーが止められていないか、構造化データやllms.txtに旧URLが残っていないかを確かめ、④同じ質問で前後を測ります。リダイレクトの決まりはGoogleが公開していますが、ChatGPT・Perplexity・Claudeがリダイレクトをどう扱うかの公式の説明は見つかりません。だからこそ、AIがどのURLを読みに来ても同じ事実にたどり着ける状態を、公開日に作っておくことが大切です。</p>
+<p>作成日：2026年11月19日（JST）。対象は、お客様のサイトのリニューアル、テーマやCMSの入れ替え、常時SSL化、ドメイン変更、複数サイトの統合を請け負う制作会社・SEO会社・WordPress保守会社です。契約を終えて別の会社にサイトを渡す場合は<a href="/ja/guide/agency-aeo-client-handover/">AI検索対策の解約・引き継ぎの手順</a>を、リニューアルの後にAIでの表示が落ちた原因を探す場合は<a href="/ja/guide/ai-visibility-drop-causes/">AIでの表示が下がったときの原因</a>を見てください。</p>
+<p>AIの回答は日や聞き方によって変わります。この記事の手順は、リニューアルで引用されていたページや事実が消えたり食い違ったりしないようにするためのもので、リニューアル後もAIの回答に出ることや、出る日数を保証するものではありません。</p>
+<section class="qa"><h2>よく読まれているリニューアルの記事と、足りないこと</h2><p>「サイトリニューアル SEO」「サイトリニューアル AI検索」「website migration AI search」で上位に出る日本語5本と英語7本を、2026年11月19日に読みました（日本語のもう1本は取得できず）。301リダイレクトを使うこと、旧URLと新URLを1対1で対応させること、リダイレクトを1年以上残すことは、ほぼすべての記事が一致しています。一方で、次の点はほとんどの記事に書かれていませんでした。</p><div class="table-wrap"><table><caption>記事ごとの良し悪しではなく、抜けやすい点をまとめています。Googleのリダイレクトの決まりは、日本語の記事でもよく整理されていました。</caption><thead><tr><th scope="col">足りない点</th><th scope="col">この記事で書いていること</th></tr></thead><tbody><tr><th scope="row">日本語の記事の多くはGoogleの順位だけを扱い、AIのクローラー・llms.txt・構造化データに触れていない（触れていたのは1本）</th><td>AI向けの出力を棚卸しの表に入れ、公開日に確かめる手順にした</td></tr><tr><th scope="row">英語の記事はAI検索を扱うが、WordPressでの手順がない</th><td>WordPressでの作業（旧ドメインの置き換え、設定の移し方、仮想のrobots.txtと実ファイル）を書いた</td></tr><tr><th scope="row">構造化データは「引き継ぐ」とだけ書かれ、URLが入っている場所の話がない</th><td>会社のURL・@id・サービスのURLなど、ドメインを変えると古くなる項目を挙げた</td></tr><tr><th scope="row">新しいサーバー・CDN・WAFでAIのクローラーが止められていないかを確かめる記事が少ない</th><td>公開日の確認表に入れた</td></tr><tr><th scope="row">「AIが新しいURLを引用するまで◯週間」という数字が出典なし、または1社の自社データ</th><td>日数は書かず、同じ質問で前後を測る方法を書いた</td></tr></tbody></table></div></section>
+<section class="qa"><h2>まず、変更の種類を分ける</h2><p>Googleは「URLが変わるサイト移転」と「URLが変わらない移転（サーバーの引っ越しなど）」を分けて手順を書いています（<a href="https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes?hl=ja">Google 検索セントラル：サイトを移転する</a>）。AI検索でも同じで、URLが変わるかどうかで作業の量が大きく変わります。</p><div class="table-wrap"><table><caption>アドレス変更ツールの対象は、Search Consoleのヘルプによります（[アドレス変更ツール](https://support.google.com/webmasters/answer/9370220?hl=ja)）。http→https、サイト内のパスの変更、www の有無、URLが変わらないサーバーの変更には使いません。</caption><thead><tr><th scope="col">変更</th><th scope="col">例</th><th scope="col">必要な作業</th><th scope="col">アドレス変更ツール</th></tr></thead><tbody><tr><th scope="row">URLは変わらない</th><td>サーバーの引っ越し、テーマの入れ替え、デザインの変更</td><td>リダイレクトは不要。新しいサーバー・テーマで構造化データ・robots.txt・llms.txt・本文の事実が同じか確かめる</td><td>使わない</td></tr><tr><th scope="row">ページのURLが変わる</th><td>/service.html → /services/、パーマリンクの変更</td><td>URL対応表と1対1の301。内部リンク・サイトマップ・canonicalを新URLに</td><td>使わない</td></tr><tr><th scope="row">http → https</th><td>常時SSL化</td><td>全URLを https へ301。混在がないか確かめる</td><td>使わない</td></tr><tr><th scope="row">ドメインが変わる</th><td>old-example.jp → example.jp、社名変更</td><td>上のすべて＋旧ドメインを残して転送を続ける。構造化データ・llms.txtの会社のURLを直す</td><td>使う（ドメイン・サブドメインの移転だけが対象）</td></tr><tr><th scope="row">サイトの統合</th><td>店舗ごとのサイトを1つに</td><td>残すページを決め、統合されるページを内容の近いページへ301。対応する内容がないページは404か410</td><td>ドメインごと移すなら使う</td></tr></tbody></table></div><p>Googleは「一度に1つだけ変える」ことを勧めています。デザインの刷新、URLの変更、ドメインの変更、本文の書き直しを同じ日に行うと、AIでの表示が変わったときに原因を切り分けられません。予算や日程の都合で一度に行う場合も、少なくとも「URLと本文の事実は同じ日に変えない」ように、作業の順番をお客様と決めておくと後で説明しやすくなります。</p></section>
+<section class="qa"><h2>公開前①：AI検索に関わるものを棚卸しする</h2><p>通常のリニューアルの棚卸しは、全URL・検索での流入・被リンクを集めます。Googleも、旧URLの一覧はサイトマップ・サーバーのログ・アナリティクス・Search Consoleのリンクのレポートから集めるよう書いています。AI検索のためには、これに次の行を足します。</p><div class="table-wrap"><table><caption>AIへの質問の結果は日によって変わります。同じ質問を同じAIに、日を変えて2回以上聞き、両方を記録しておくと、公開後に比べやすくなります。</caption><thead><tr><th scope="col">棚卸しするもの</th><th scope="col">集め方</th><th scope="col">なぜ要るか</th></tr></thead><tbody><tr><th scope="row">AIの回答で引用されているURL</th><td>お客様の業種・地域で実際に聞かれそうな質問を10〜20個決め、ChatGPT・Perplexity・GoogleのAIによる概要で聞き、出典に出たURLを記録する</td><td>通常の流入の多いページと一致しないことがある。引用されているページは、対応表で必ず内容の同じページへ送る</td></tr><tr><th scope="row">AIからの流入があるページ</th><td>アナリティクスで、参照元が chatgpt.com・perplexity.ai などのセッションの入口ページ</td><td>引用されたページのうち、人が実際にクリックしているもの</td></tr><tr><th scope="row">GoogleのAI機能での表示</th><td>Search Consoleの生成AIパフォーマンスレポート（<a href="https://support.google.com/webmasters/answer/16984139?hl=ja">ヘルプ</a>）でページごとの表示回数</td><td>公開後に新しいプロパティで比べるための基準</td></tr><tr><th scope="row">構造化データ（JSON-LD）</th><td>主なページのソースと<a href="https://search.google.com/test/rich-results">リッチリザルトテスト</a>。どのプラグイン・テーマ・コードが出しているか</td><td>テーマやSEOプラグインを変えると、出す側が変わって消えたり二重になったりする</td></tr><tr><th scope="row">/llms.txt と /robots.txt</th><td>ブラウザで開いて保存。プラグインが返しているのか、サーバーに実ファイルを置いているのか</td><td>新しいサーバーで実ファイルが置かれていない・古い実ファイルが残る、が起きやすい</td></tr><tr><th scope="row">事実の載ったページ</th><td>料金・営業時間・所在地・対応エリア・会社概要・FAQのページのURLと、載っている値</td><td>AIが答えに使う事実は、デザインを変えても値を変えない。変えるなら公開日とは別の日に</td></tr></tbody></table></div></section>
+<section class="qa"><h2>公開前②：URL対応表とリダイレクトを作る</h2><p>リダイレクトの扱いは、Googleが詳しく公開しています（<a href="https://developers.google.com/search/docs/crawling-indexing/301-redirects?hl=ja">リダイレクトと Google 検索</a>、<a href="https://developers.google.com/search/docs/crawling-indexing/site-move-with-url-changes?hl=ja">サイトを移転する</a>）。要点は次のとおりです。</p><ol><li>できるかぎりサーバー側の恒久的なリダイレクト（301か308）を使う。Googleは、301などの恒久的なリダイレクトでPageRankは失われないとしている。</li><li>302・303・307は一時的なリダイレクトとして扱われ、転送先を正規のURLとする手がかりにはならない。戻す予定がないなら恒久的なものを使う。JavaScriptでの転送は、サーバー側やメタリフレッシュができない場合だけ。</li><li>旧URLは、内容の対応する新URLへ直接送る。多くの旧URLを関係のないページ（トップページなど）にまとめて送ると、ソフト404として扱われることがある。</li><li>対応する内容がなくなったページは、404か410を返す。</li><li>転送を何段も重ねない。Googlebotは10回まで追うが、最終の転送先へ直接送ることを勧めている（できない場合も5回未満、できれば3回以下）。</li><li>リダイレクトはできるだけ長く、一般に1年以上残す。新しいURLには自分自身を指す canonical を付け、内部リンク・サイトマップ・hreflang を新URLに直す。</li><li>移転中は順位が一時的に変動することがあり、中規模のサイトで新しいURLに入れ替わるまで数週間以上かかる。</li></ol><pre class="code" dir="ltr"><code># Apache（.htaccess）: ページのURLが変わったとき（1ページずつ、移転先へ直接）
+Redirect 301 /service.html https://www.example.jp/services/
+Redirect 301 /company/access.html https://www.example.jp/access/
+
+# Apache: ドメインを変えたとき（パスは同じ）
+RewriteEngine On
+RewriteCond %{HTTP_HOST} ^(www\.)?old-example\.jp$ [NC]
+RewriteRule ^(.*)$ https://www.example.jp/$1 [R=301,L]
+
+# nginx: ドメインを変えたとき（旧ドメインの server ブロック）
+return 301 https://www.example.jp$request_uri;</code></pre><p>対応表には「旧URL・新URL・ステータス（301/404/410）・AIで引用されていたか・載っている事実」の列を作ります。AIで引用されていた行は、新URLの本文に同じ事実（料金・時間・住所など）が載っていることまで、行ごとに確かめます。</p>
+<p>ChatGPT・Perplexity・Claudeについては、リダイレクトをどう扱い、旧URLの引用をいつ新URLに切り替えるかを説明した公式の資料は見つけられませんでした（2026年11月19日時点）。Googleの決まりに沿って1回の恒久的なリダイレクトにしておけば、どのAIのクローラーが旧URLを読みに来ても、同じ内容のページにたどり着けます。</p></section>
+<section class="qa"><h2>公開日：AI検索のために追加で確かめること</h2><p>通常の公開日の確認（noindex の外し忘れ、ステージングの robots.txt、計測タグ）に加えて、AI検索のために次を確かめます。</p><div class="table-wrap"><table><thead><tr><th scope="col">確かめること</th><th scope="col">起きやすいこと</th><th scope="col">確かめ方</th></tr></thead><tbody><tr><th scope="row">robots.txt でAI検索のクローラーを止めていないか</th><td>ステージングで入れた Disallow: / がそのまま本番に出る。新しいサーバーに古い実ファイルの robots.txt が置かれる</td><td>https://ドメイン/robots.txt を開き、OAI-SearchBot・PerplexityBot・Claude-SearchBot などの扱いが公開前と同じか見る</td></tr><tr><th scope="row">サーバー・CDN・WAFで止めていないか</th><td>新しいサーバーや CDN のボット対策が初期設定で、AIのクローラーを止める</td><td>UA（名前）だけでなく各社が公開しているIPの範囲で許可する。Perplexityは、設定の反映に最大24時間かかることがあるとしている（<a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity：クローラー</a>）</td></tr><tr><th scope="row">構造化データに旧URLが残っていないか</th><td>会社のURL・@id・ロゴ・サービスのURLが、手で入れた旧ドメインのまま</td><td>リッチリザルトテストで主なページを確かめ、ソースで旧ドメインを検索する</td></tr><tr><th scope="row">構造化データが二重・空になっていないか</th><td>新しいテーマが自前の構造化データを出し、SEOプラグインと会社の情報が2つになる。逆に外したプラグインの分が消える</td><td>リッチリザルトテストで、会社・店舗の情報が1つにまとまっているか</td></tr><tr><th scope="row">llms.txt が新URLを指しているか</th><td>手で置いた llms.txt が旧URLのまま残る</td><td>https://ドメイン/llms.txt を開き、リンクが新URLか、リンク先が200を返すか</td></tr><tr><th scope="row">事実が変わっていないか</th><td>デザインの作り直しで、営業時間の表や料金の注記が抜ける</td><td>棚卸しの「事実の載ったページ」の値を、新しいページと1つずつ照らす</td></tr></tbody></table></div></section>
+<section class="qa"><h2>WordPressでの手順（Nurevo AEOを使っている場合）</h2><p>WordPressのサイトでは、次の順番で進めると漏れが少なくなります。Nurevo AEO（<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgの無料プラグイン</a>）を使っている場合の動きも合わせて書いておきます。</p><ol><li>新しいサイトを別の環境で作る場合は、旧サイトで設定を書き出し（Nurevo AEOのメニューの「設定 › ツール」か wp nurevo export）、新しいサイトで読み込みます。事業の情報・FAQ・サービス・出力のオン・オフが移ります。キー・トークン・プラン・接続は入らないので、接続しているサイトは新しいサイトでつなぎ直します。ページごとの設定（llms.txt や構造化データから外したページ、ページ専用のFAQ）は書き出しに入らないので、データベースごと移さない場合は手で設定し直します。</li><li>ドメインを変えたら、データベースに残る旧ドメインを wp search-replace で置き換えます。まず --dry-run で件数を見て、バックアップを取ってから実行します。</li><li>Nurevo AEOの設定の「URL」が空欄なら、構造化データの会社のURL・@id と llms.txt の URL は、WordPressのサイトのアドレス（新しいドメイン）が自動で使われます。旧ドメインを手で入れていた場合は、そのまま旧ドメインが出続けるので、新しいドメインに直すか空欄にします。サービスに入れたURLと予約のURLも手で入れた値なので、1つずつ直します。</li><li>Nurevo AEOの llms.txt のページの一覧は、公開中の固定ページ・投稿を更新の新しい順に最大30件、今のパーマリンクで作っています。パーマリンクを変えれば一覧も新しいURLになります。</li><li>AIのクローラーの許可は、WordPressが自動で作る仮想の robots.txt に足しています。新しいサーバーのドキュメントルートに robots.txt の実ファイルがあると、そちらが返され、許可の行は出ません。実ファイルを使うなら、同じ内容をそのファイルに書きます。</li><li>テーマやSEOプラグインを変える場合、Yoast SEO・Rank Math・All in One SEO・Slim SEO と一緒なら、Nurevo AEOはそれらの構造化データの中に足りない事実を足します。テーマが自前の構造化データを出す場合は、それと重ならないように自前のまとまりを出します。入れ替えた後にリッチリザルトテストで1つにまとまっているかを確かめてください。</li></ol><pre class="code" dir="ltr"><code># 1. 旧URLが1回で新URLへ恒久的に転送されるか（転送の回数とステータスを全部表示）
+curl -sIL https://old-example.jp/service.html | grep -i -E "^HTTP|^location"
+
+# 2. 新サイトのAI向けの出力
+curl -s https://www.example.jp/robots.txt
+curl -s https://www.example.jp/llms.txt | head -20
+wp nurevo status
+
+# 3. データベースに旧ドメインが残っていないか（まず --dry-run で件数だけ見る）
+wp search-replace 'https://old-example.jp' 'https://www.example.jp' --dry-run
+
+# 4. 公開前のサイトから設定を移す（キー・トークン・プランは入らない）
+wp nurevo export --file=nurevo-settings.json   # 旧サイト・ステージングで
+wp nurevo import nurevo-settings.json          # 新サイトで</code></pre><p>curl -sIL の結果で、1行目が 301（または308）、次の location が新URL、最後が 200 になっていれば、1回の恒久的な転送です。302 や、location が2回以上出る場合は直します。なお、curl で UA を変えても、IPの範囲で判定するWAFの動きは確かめられません。WAFはサーバー・CDNの管理画面のログで、AIのクローラーが止められていないかを見ます。</p></section>
+<section class="qa"><h2>公開後：前後を測り、旧ドメインを手放さない</h2><div class="table-wrap"><table><thead><tr><th scope="col">いつ</th><th scope="col">見るもの</th><th scope="col">見方</th></tr></thead><tbody><tr><th scope="row">公開日〜1週間</th><td>旧URLのリダイレクト、404の増加、サーバーのログのAIのクローラー</td><td>引用されていたURLの行から順に、転送先が200か確かめる。ログでAIのクローラーが403などで止められていないか</td></tr><tr><th scope="row">ドメイン変更の直後</th><td>Search Consoleのアドレス変更ツール（<a href="https://support.google.com/webmasters/answer/9370220?hl=ja">ヘルプ</a>）</td><td>旧・新の両方のプロパティのオーナーであること、旧トップページから新トップページへの301が条件。180日間、新しいサイトのクロールが優先される</td></tr><tr><th scope="row">毎週〜毎月</th><td>Search Consoleの検索パフォーマンスと生成AIパフォーマンスレポート（旧・新のプロパティ）</td><td>旧の数字が減り、新の数字が増えていくか。公開前の同じ期間と比べる</td></tr><tr><th scope="row">公開前と同じ間隔で</th><td>棚卸しで決めた10〜20の質問</td><td>同じAI・同じ質問で、名前が出たか、出典が旧URL・新URL・他社のどれかを記録する。1回の結果で判断しない</td></tr><tr><th scope="row">1年以上</th><td>旧ドメインの契約とリダイレクト</td><td>Googleはリダイレクトを一般に1年以上残すよう勧め、アドレス変更ツールのヘルプは旧ドメインを少なくとも1年は契約し続けることを勧めている</td></tr></tbody></table></div><p>「AIが新しいURLを引用するまでの日数」を示す記事もありますが、私たちが確認できたのは、1社が自社の利用者のデータとして示した数字（<a href="https://maxaeo.ai/blog/site-migration-ai-visibility/">MaxAEO</a>）だけでした。お客様への説明には使わず、「同じ質問で測って記録する」と伝えるほうが確実です。</p>
+<p>Nurevo AEOの無料のAIチェック（接続した無料・Standardのサイトで月1回、社名を入れない3問をPerplexityに聞く）とPro（ベータ版、最大20問、現在はPerplexityが対象）は、出典に自分のサイトのホストが入っているかで「引用」を数えます。ドメインを変えた直後は旧ドメインでの引用は自社として数えられないため、その期間は旧ドメインの引用を手で記録しておくと、前後を比べられます。測り方の全体は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>にまとめています。</p></section>
+<section class="qa"><h2>見積もりと契約に入れておくこと（制作会社向け）</h2><ol><li>作業範囲に「AI検索に関わるものの棚卸し（引用されているURL、構造化データ、llms.txt、robots.txt、事実の載ったページ）」と「URL対応表」を、別の行として入れる。デザインの作業に含めると、時間が足りなくなったときに真っ先に削られる。</li><li>公開後の確認期間（例：公開後1か月の転送とログの確認、3か月目の質問の記録）を決めて書く。</li><li>旧ドメインの契約を誰が、いつまで払うかを決める。転送を1年以上続けるには、旧ドメインとその転送の設定を残す必要がある。</li><li>AIの回答は変わるため、リニューアル後にAIに出ることや順位は保証しないこと、前後の測り方と報告の形を書く。</li><li>料金・営業時間などの事実の変更は、お客様の確認を取ってから、公開日とは別の日に行うこと。</li></ol><p>リニューアルの後も月額でAI検索対策を続ける場合の作業範囲は<a href="/ja/guide/agency-aeo-monthly-service/">AI検索対策を月額サービスにする方法</a>に、制作会社が自社ブランドでお客様に報告する仕組みは<a href="https://nurevo.jp/partner/">パートナープログラム</a>にまとめています。</p></section>
+<section class="qa"><h2>リニューアルのチェックリスト</h2><ol><li>変更の種類（URLが変わらない・パス・https・ドメイン・統合）を決め、一度に変えるものをお客様と決めた。</li><li>AIの回答で引用されているURLと、事実の載ったページを棚卸しした。</li><li>公開前の基準として、決めた質問の結果と、Search Consoleの数字を記録した。</li><li>旧URLから新URLへの1対1の301（または308）を用意し、転送が1回で終わることを確かめた。</li><li>対応する内容のないページは404か410にし、トップページへのまとめての転送をしていない。</li><li>新しいサイトの robots.txt・サーバー・CDN・WAFで、AI検索のクローラーを止めていない。</li><li>構造化データ・llms.txtに旧URLが残っておらず、会社の情報が1つにまとまっている。</li><li>内部リンク・サイトマップ・canonical・hreflang を新URLにした。</li><li>ドメインを変えた場合、アドレス変更ツールを使い、旧ドメインと転送を1年以上残す段取りをした。</li><li>公開後、同じ質問で前後を測り、旧ドメインでの引用も記録している。</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>リニューアルすると、AIの回答から自社のサイトは消えますか？</h3><p>必ず消えるわけではありません。ただ、引用されていたURLが404になったり、事実の載った表が抜けたり、新しいサーバーでAIのクローラーが止められたりすると、出典として使われにくくなります。公開前の棚卸しと、公開日の確認で防げることがほとんどです。</p>
+<h3>301と302はAI検索でも違いますか？</h3><p>Googleは、301・308を恒久的、302・303・307を一時的なリダイレクトとして扱うと公開しています。ChatGPT・Perplexity・Claudeの扱いを説明した公式の資料は見つかりませんでしたが、戻す予定のない移転は301か308にしておくのが確実です。</p>
+<h3>リダイレクトはいつまで残せばいいですか？</h3><p>Googleは、できるだけ長く、一般に1年以上残すことを勧めています。ドメインを変えた場合のアドレス変更ツールのヘルプは、少なくとも180日、Google検索からの流入が残っていればそれより長く残し、旧ドメインは少なくとも1年は契約し続けることを勧めています。</p>
+<h3>llms.txtはリニューアルでどうすればいいですか？</h3><p>手で置いたファイルなら、新URLに書き直すか、作り直します。Nurevo AEOのように自動で作る仕組みなら、新しいパーマリンクで作り直されますが、会社のURLなど手で入れた値は旧ドメインのまま残ることがあるので確かめます。</p>
+<h3>テーマを変えるだけでもAI検索に影響しますか？</h3><p>URLが変わらなければリダイレクトは要りませんが、テーマが構造化データを出す・出さないが変わったり、営業時間や料金の表の作りが変わったりします。新しいテーマで構造化データと本文の事実が公開前と同じかを確かめてください。</p>
+<h3>公開後、AIが古いURLや古い情報を出し続けます。どうすればいいですか？</h3><p>まず旧URLが1回の301で新URLに届くか、新しいページに同じ事実が載っているかを確かめます。そのうえで、同じ質問で日を変えて記録を続けます。AIの回答がいつ切り替わるかは公開されていないため、事実の側を正しく保つことがいちばん確実です。</p>
+<h3>サイトを統合するとき、統合される側のページはどうしますか？</h3><p>内容の近いページがあれば、そのページへ301で送ります。対応する内容がなければ404か410を返します。関係のないページ（トップページなど）にまとめて送ると、Googleではソフト404として扱われることがあります。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>リニューアルの前と後に、AIがサイトをどう読んでいるか確認</h2>
+    <p>無料チェックは登録不要で、URLを入れるだけで構造化データ・llms.txt・AIクローラーの許可の状態がわかります。公開前の基準と、公開日の確認に使えます。</p>
+    <a class="btn primary lg" href="/check">無料でAIの読みやすさをチェック</a>
+    <a class="btn lg" href="https://nurevo.jp/partner/">パートナープログラムを見る</a>
+  </aside>
+  <nav class="related" aria-label="あわせて読みたい"><h2>あわせて読みたい</h2><ul><li><a href="/ja/guide/agency-aeo-client-handover/">AI検索対策の契約を終える・引き継ぐときの手順：制作会社がお客様に渡すもの、止めるもの</a></li><li><a href="/ja/guide/ai-visibility-drop-causes/">AIでの登場率が下がったときの原因の切り分け：制作会社がお客様に報告するまでの手順</a></li><li><a href="/ja/guide/google-ai-overviews-citations/">GoogleのAIによる概要・AIモードに、自社サイトが出典として出る条件と確かめ方</a></li><li><a href="/ja/guide/llms-txt/">llms.txtとは？書き方の例、効果について分かっていること、WordPressでの置き方と確かめ方</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/site-renewal-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">ChatGPTはOpenAI、PerplexityはPerplexity AI、ClaudeはAnthropic、Google・Search ConsoleはGoogle LLCの商標です。WordPress、Yoast SEO、Rank Math、All in One SEO、Slim SEO、Apache、nginxはそれぞれの権利者の商標です。Nurevoはこれらの企業と提携・承認の関係にありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>

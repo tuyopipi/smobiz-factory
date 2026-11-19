@@ -333,3 +333,12 @@
 3. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
 4. AIの学習を止めて検索には出る robots.txt の書き方（ボット別一覧・AIPREF）【全業種】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-19 17時 | site-renewal-ai-search | サイトリニューアル・ドメイン変更でAI検索の出典を失わない手順（制作会社向け。上位記事12本〔uravation（2026-09-05更新）・jinrai（2026-11-10更新）・issoh（2026-11-16更新）・mobinc（2026-02-14）・MarkeZine（2025-05-29、1ページ目のみ）／Codal・MaxAEO・Vincent Schmalbach・Koozai・eSEOspace・Answerburst(Moburst)・BrightEdge〕の抜けの表、変更の種類5つ×必要な作業×アドレス変更ツールの表〔対象はドメイン・サブドメインの移転だけ〕、AI向けの棚卸し表6行〔AIで引用されているURL・AIからの流入・生成AIパフォーマンスレポート・構造化データ・llms.txt/robots.txt・事実の載ったページ〕、Googleのリダイレクトの決まり〔サイト移転 ja 2026-09-11更新：301/308・PageRankは失われない・1対1・トップへのまとめ転送はソフト404・404/410・10回まで追うが直接（5回未満・できれば3回以下）・1年以上・canonical/内部リンク/サイトマップ/hreflang・数週間以上・一度に1つ／リダイレクト 2026-11-16更新：恒久と一時の区分〕、Apache/nginx の例、ChatGPT・Perplexity・Claudeのリダイレクトの扱いは公式資料なしと明記、公開日の確認表6行〔robots.txt・CDN/WAF（Perplexityの反映最大24時間）・構造化データの旧URL・二重/空・llms.txt・事実〕、WordPress手順〔export/import〔キー等は入らない・ページごとの設定は入らない〕・wp search-replace --dry-run・Nurevoの「URL」設定が空なら home_url、入力済みなら旧ドメインが残る・サービス/予約URL・llms.txt は最大30件を今のパーマリンクで・仮想robots.txtと実ファイル・SEOプラグインとテーマの構造化データ〕、curl -sIL の確認、公開後の表〔アドレス変更ツール180日・旧ドメインを1年以上〕、日数の数字はMaxAEOの自社データのみで使わない、Nurevoの「引用」はホストで数えるためドメイン変更直後は旧ドメインを手で記録、見積もり・契約に入れること5点、チェックリスト10、FAQ 7問）。2言語（ja・en） | 制作会社向け | content/daily-20261119-17 |
+メモ：2026-11-19 17時の回は stock-sun の記事を取得できなかった。Google「サイトを移転する」の英語版の更新日は確認できず、日本語版（2026-09-11）で確認した内容で書いた。Bing のサイト移動ツールと Bing の AI パフォーマンスレポートは一次資料を読めず書いていない。ChatGPT・Perplexity・Claude のリダイレクトの扱いは、公式資料が見つからなかった（eSEOspace・Schmalbach も未公開と記載）。AIが新URLを引用するまでの日数（MaxAEO 38件の自社データ）は数字を書かず、出典として紹介だけした。リニューアルの費用相場は書いていない。
+翻訳の残り（8時台で補完）：agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service・perplexity-citations・google-ai-overviews-citations・ent-clinic-ai-search・gemini-claude-citations・site-renewal-ai-search（ja/en のみ）。
+次の候補：
+1. 産婦人科・婦人科のAI検索対策（分娩の予約時期・費用・出産育児一時金）【業種別】（20時で）
+2. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
+3. AIの学習を止めて検索には出る robots.txt の書き方（ボット別一覧・AIPREF）【全業種】
+4. 制作会社向け：AI検索対策を保守契約に組み込むときの作業範囲と月次報告の型（PR #65・agency-aeo-monthly-service と重ならない切り口が見つかれば）【制作会社向け】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
