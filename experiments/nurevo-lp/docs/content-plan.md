@@ -315,3 +315,12 @@
 3. 耳鼻咽喉科のAI検索対策（予約・アレルギー・子どもの受診）【業種別】
 4. 制作会社向け：AI検索対策の提案書と見積もりの作り方（項目と工数の目安の出し方）【制作会社向け】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-19 11時 | ent-clinic-ai-search | 耳鼻咽喉科のAI検索対策（業種別。AIに聞かれる質問の型6つの表〔地域×症状×時間・花粉症の時期・舌下免疫療法・聞こえと補聴器・めまい耳鳴り・手術と紹介〕、上位記事8本〔0120.co.jp aio-142（2026-10-20更新）・uravation 医療クリニック（2026-09-05）・お名前.com MEO（2025-07、AI言及なし）／Texta ENT（日付・出典なし）・Officite（2026-09-23）・Netpeak（2025-11）・Emulent（出典なしの63〜84%）・AAO-HNS Bulletin（2026-06、臨床・請求中心）〕の抜け、季節の受付変更を期間つきで書く表、舌下免疫療法〔2014年から保険適用（日本医事新報）、スギはシーズンを外して開始・ダニは原則制限なし（日本耳鼻咽喉科免疫アレルギー感染症学会 委員会 2023-07）、シダキュア 2017-09承認・成人及び小児・治験5〜64歳（鳥居薬品）、ミティキュア 2018-02 小児追加承認で12歳以上の制限なし（日刊薬業）、シダキュア限定出荷2023〜・2025秋から段階増（薬事日報 2025-02-14）、3年以上推奨は1病院の資料として〕、補聴器〔補聴器相談医＝日本耳鼻咽喉科頭頸部外科学会の委嘱・名簿、認定補聴器技能者・専門店＝テクノエイド協会（滋賀県・島根県）、医療費控除は補聴器相談医の「補聴器適合に関する診療情報提供書（2018）」（国税庁 2018-04-16）、医院と販売店を分ける〕、子どもの受診、医療広告Q&Aとぶつかる助言の表、構造化データ〔Otolaryngologic・Audiology は MedicalBusiness の下位、medicalSpecialty に Otolaryngologic/Audiology/Pediatric（schema-dts 2.1.0）〕、WordPress手順と medicalSpecialty のフィルター、チェックリスト10、測り方（花粉の時期と時期外の両方で）、FAQ 7問）。2言語（ja・en） | 業種別 | content/daily-20261119-11 |
+メモ：2026-11-19 11時の回は 添付文書を読んでおらず、舌下錠の正確な下限年齢・治療期間の推奨は書かず「自院の方針として」とした。シダキュアの現在の出荷状況は確認できず、2025-02の報道の範囲だけ。日刊薬業・薬事日報・日本医事新報は会員向けで冒頭のみ読めた。補聴器相談医の名簿URLは島根県のページのリンク先（直接は未取得）。学会名は国税庁（2018）が旧称、県の案内が現称。
+翻訳の残り（8時台で補完）：agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service・perplexity-citations・google-ai-overviews-citations・ent-clinic-ai-search（ja/en のみ）。
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
+2. Gemini アプリ・Claude に自社が出る仕組み（公式の説明と確かめ方）【全業種】
+3. 制作会社向け：AI検索対策を保守契約に組み込むときの作業範囲と月次報告の型【制作会社向け】
+4. 産婦人科・婦人科のAI検索対策（分娩の予約時期・費用・出産育児一時金）【業種別】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
