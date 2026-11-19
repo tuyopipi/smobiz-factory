@@ -13,7 +13,13 @@ with zipfile.ZipFile(buffer, 'w', compression=zipfile.ZIP_DEFLATED) as archive:
 result = buffer.getvalue()
 target = ROOT / 'public/downloads/nurevo-server-integration.zip'
 if '--check' in sys.argv:
-    assert target.read_bytes() == result, 'ZIP missing/stale; run npm run build'
+    # Compare what is inside, not the compressed bytes: deflate output differs
+    # between zlib builds (e.g. zlib vs zlib-ng), so a byte comparison fails on
+    # a machine other than the one that built the ZIP.
+    def entries(data):
+        with zipfile.ZipFile(io.BytesIO(data)) as archive:
+            return [(i.filename, i.date_time, i.external_attr, i.compress_type, archive.read(i)) for i in archive.infolist()]
+    assert target.exists() and entries(target.read_bytes()) == entries(result), 'ZIP missing/stale; run npm run build'
     assert '/downloads/nurevo-server-integration.zip' in (ROOT/'public/guide/integration.html').read_text()
 else:
     target.parent.mkdir(parents=True, exist_ok=True)
