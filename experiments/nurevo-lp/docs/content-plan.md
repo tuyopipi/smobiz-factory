@@ -342,3 +342,12 @@
 3. AIの学習を止めて検索には出る robots.txt の書き方（ボット別一覧・AIPREF）【全業種】
 4. 制作会社向け：AI検索対策を保守契約に組み込むときの作業範囲と月次報告の型（PR #65・agency-aeo-monthly-service と重ならない切り口が見つかれば）【制作会社向け】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-19 20時 | faq-page-ai-search | FAQページとFAQ構造化データはAI検索に効くか（全業種。変わったこと・変わっていないことの表6行〔GoogleのFAQリッチリザルト 2026-05-07 表示終了・2023-08から政府/保健医療に限定（SEJ 2026-05-10・Search Engine Land）／Search ConsoleのFAQレポート・リッチリザルトテストは2026-06、APIは2026-08に終了と予告（TechWyseが引用するGoogleの告知、実施は未確認）／FAQPage型は有効・残しても問題なし／AI機能に特別な構造化データは不要・本文と一致（AI機能とウェブサイト、11-18確認）／ChatGPT・Perplexity・ClaudeがFAQPageを使うと明記した公式資料は見つからず〕、上位記事8本〔GMO koukoku.jp（2026-11-16更新、終了に触れず最優先のまま）・0120.co.jp aio-108（2026-10-19更新）・jinrai（2026-11-10更新）・issoh（2026-08-15、終了したテストを確認方法に勧める食い違い）／ThePlusAddons（2026-05-29）・Frase（2026-09-01更新）・NAV43（2026-05-25）・Contently（2026-03）〕の主張と根拠の強さ表、質問の集め方5つ、答えの悪い例・良い例の表、置き場所の表、FAQPageの決まりとJSON-LD例、既存マークアップを消さずに直す3点、WordPress手順〔Nurevo AIO 設定・「Nurevo AIO FAQ」ブロック・このページ専用の質問・SEOプラグインのFAQに足りない質問だけ足す・SEO SIMPLE PACK・Schema Markup Validator〕、測り方〔社名なしの質問を前後で記録、無料AIチェック・ProはPerplexity、62事業者調査 ρ=0.03〕、チェックリスト10、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261119-20 |
+メモ：2026-11-19 20時の回は developers.google.com（FAQのドキュメント・検索の更新履歴・2023年のブログ）と schema.org を WebFetch の許可待ちで取得できなかった。2026年の終了と6月・8月の予告は SEJ・TechWyse が引用した Google の告知の文で書き、6月・8月の実施は「各ツールで確認」とした。2019年の開始日、QAPage との違い、答えの語数の目安、AIでの引用の倍率は書いていない。業種別は今日すでに2本（引越し・耳鼻咽喉科）のため、20時は全業種のテーマにした。
+翻訳の残り（8時台で補完）：agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service・perplexity-citations・google-ai-overviews-citations・ent-clinic-ai-search・gemini-claude-citations・site-renewal-ai-search・faq-page-ai-search（ja/en のみ）。
+次の候補：
+1. 産婦人科・婦人科のAI検索対策（分娩の予約時期・費用・出産育児一時金）【業種別】（明日8時で）
+2. 比較サイト・ポータルに載っている自社情報の直し方（PR #80 fix-wrong-ai-answers と重ならない「掲載先の一覧と更新依頼の文例」に絞れれば）【全業種】
+3. 制作会社向け：AI検索対策の見積もり項目と工数の出し方（agency-aeo-first-audit-proposal と重ならない切り口で）【制作会社向け】
+4. 料金ページをAIに正しく読ませる書き方（税込表示・条件つき料金・Offer）【全業種】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
