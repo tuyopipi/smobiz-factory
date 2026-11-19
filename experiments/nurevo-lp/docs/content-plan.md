@@ -324,3 +324,12 @@
 3. 制作会社向け：AI検索対策を保守契約に組み込むときの作業範囲と月次報告の型【制作会社向け】
 4. 産婦人科・婦人科のAI検索対策（分娩の予約時期・費用・出産育児一時金）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-19 14時 | gemini-claude-citations | GeminiアプリとClaudeに自社サイトが出典として出る仕組みと確かめ方（全業種。Geminiアプリ・Google検索のAI機能・Claudeを分ける表〔読むもの・管理する名前・止めたときの影響・出典の見え方〕、公式の資料にあること・ないことの表7行〔Google-Extended＝Geminiモデルの学習＋GeminiアプリとVertex AIのグラウンディング、Google検索の掲載・順位には影響なし、専用UAなし（Googleのクローラー一覧 2026-10-30更新）／Claudeの3つ：ClaudeBot学習・Claude-SearchBot索引・Claude-User質問時取得、3つとも robots.txt に従う・Crawl-delay対応・CAPTCHA回避なし・IP一覧 bots.json（Anthropicヘルプ）／ウェブ検索の提供元は非公開、画像検索はBing、Brave は TechCrunch 2025-03-21 の報道として／選び方は非公開〕、Perplexity-User との違い、上位記事10本〔jinrai（2026-11-18更新）・GMO koukoku.jp（2026-11-16更新）・crystal-method・SEOmator（独）／Moburst・Lilach Bullock・Saffron Edge・TripleDart・Nex.ad・Marie Haynes〕の主張と根拠の強さ表、目的別 robots.txt〔Claudeは検索用を通し ClaudeBot だけ止める例／Google-Extended は学習とグラウンディングを分けられない→Geminiアプリに出たいなら止めない、Googleは2027年初めにAIPREF対応予定、Anthropicは2026-10-30から aipref 信号を認識・ClaudeBot 名指しが優先〕、ページ側5点、WordPress手順〔Nurevo の学習用ブロックは Google-Extended も止める点を明記、実ファイル優先・WAF・curl・ログ（Google-Extended はログに出ない）〕、確かめ方〔Geminiの「ソース」ボタンは付かない回答もある・Claudeはウェブ検索時に出典・記録表5行、Nurevoの計測はPerplexityでGemini/Claudeは手で記録と明記〕、チェックリスト8、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261119-14 |
+メモ：2026-11-19 14時の回は Anthropic のヘルプに更新日がなく（「2週間以上前に更新」）、2026-11-19 に読んだ内容で書いた。bots.json の中身は取得していない。Claude の新しい画面（切り替えなし）の提供範囲、プラン別のウェブ検索の可否、Gemini の「回答を再確認」機能は確認できず書いていない。Cloudflare Radar のシェア、クロールと送客の比、Claude の市場シェアは使っていない。AIPREF 対応後の Google-Extended の扱いは未公開。
+翻訳の残り（8時台で補完）：agency-aeo-first-audit-proposal・company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service・perplexity-citations・google-ai-overviews-citations・ent-clinic-ai-search・gemini-claude-citations（ja/en のみ）。
+次の候補：
+1. 制作会社向け：AI検索対策を保守契約に組み込むときの作業範囲と月次報告の型【制作会社向け】（17時か20時で）
+2. 産婦人科・婦人科のAI検索対策（分娩の予約時期・費用・出産育児一時金）【業種別】
+3. 比較サイト・ポータルに載っている自社情報の直し方（更新依頼の出し方）【全業種】
+4. AIの学習を止めて検索には出る robots.txt の書き方（ボット別一覧・AIPREF）【全業種】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）

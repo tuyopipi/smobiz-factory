@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GeminiとClaudeに自社サイトが出る仕組みと確かめ方 | Nurevo AIO</title>
+<meta name="description" content="Geminiアプリの出典を左右するGoogle-Extendedと、Claudeの3つのクローラーの違い、目的別のrobots.txt、公式に分かっていること・いないこと、WordPressの手順と記録の仕方。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/gemini-claude-citations/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/gemini-claude-citations/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/gemini-claude-citations/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/gemini-claude-citations/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/gemini-claude-citations/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/gemini-claude-citations/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/gemini-claude-citations/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/gemini-claude-citations/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/gemini-claude-citations/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="GeminiとClaudeに自社サイトが出る仕組みと確かめ方 | Nurevo AIO">
+<meta property="og:description" content="Geminiアプリの出典を左右するGoogle-Extendedと、Claudeの3つのクローラーの違い、目的別のrobots.txt、公式に分かっていること・いないこと、WordPressの手順と記録の仕方。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/gemini-claude-citations/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GeminiとClaudeに自社サイトが出る仕組みと確かめ方 | Nurevo AIO">
+<meta name="twitter:description" content="Geminiアプリの出典を左右するGoogle-Extendedと、Claudeの3つのクローラーの違い、目的別のrobots.txt、公式に分かっていること・いないこと、WordPressの手順と記録の仕方。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/gemini-claude-citations/#webpage","url":"https://nurevo.jp/ja/guide/gemini-claude-citations/","name":"GeminiとClaudeに自社サイトが出る仕組みと確かめ方 | Nurevo AIO","description":"Geminiアプリの出典を左右するGoogle-Extendedと、Claudeの3つのクローラーの違い、目的別のrobots.txt、公式に分かっていること・いないこと、WordPressの手順と記録の仕方。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/gemini-claude-citations/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/gemini-claude-citations/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"GeminiアプリとClaudeに自社サイトが出典として出る仕組みと、出ているかの確かめ方","item":"https://nurevo.jp/ja/guide/gemini-claude-citations/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/gemini-claude-citations/#faq","mainEntity":[{"@type":"Question","name":"Google-Extended を止めると、Google検索やAIによる概要から消えますか？","acceptedAnswer":{"@type":"Answer","text":"Googleは、Google-Extended はGoogle検索への掲載にも順位にも影響しないとしています。影響するのはGeminiモデルの学習と、GeminiアプリやVertex AIでのグラウンディングです。"}},{"@type":"Question","name":"Geminiの学習だけを止めて、Geminiアプリの出典には出られますか？","acceptedAnswer":{"@type":"Answer","text":"Googleの説明では、Google-Extended は学習とグラウンディングをまとめて管理しているため、その2つを分ける設定はありません。Googleは2027年の初めに共通の学習拒否の信号（AIPREF）に対応する予定としていますが、その後の扱いは公開を待つ必要があります。"}},{"@type":"Question","name":"ClaudeBot を止めると、Claudeの回答に出なくなりますか？","acceptedAnswer":{"@type":"Answer","text":"Anthropicの説明では、ClaudeBot は学習用で、検索と回答は Claude-SearchBot と Claude-User です。この2つを止めていなければ、ClaudeBot を止めても検索や回答のための読み込みは続きます。"}},{"@type":"Question","name":"Claudeはどの検索エンジンの結果を使っていますか？","acceptedAnswer":{"@type":"Answer","text":"Anthropicのヘルプには、画像検索はBingとありますが、ウェブ検索の提供元は書かれていません。2025年3月にBrave Searchが委託先の一覧に加わったと報じられましたが、仕組みとして公表されたものではありません。"}},{"@type":"Question","name":"アクセスログに Google-Extended が出てきません。設定が効いていないのですか？","acceptedAnswer":{"@type":"Answer","text":"Google-Extended には専用のユーザーエージェントがなく、既存のGoogleのクローラーで読むため、ログには出ません。効いているかは robots.txt の中身で確かめます。"}},{"@type":"Question","name":"robots.txt を変えたら、すぐにGeminiやClaudeの回答に反映されますか？","acceptedAnswer":{"@type":"Answer","text":"反映までの時間は、どちらも公開していません。設定を変えた日を記録し、数日あけて同じ条件で確かめてください。出典に出るかは、設定とは別にAIが決めます。"}},{"@type":"Question","name":"GeminiやClaudeが自社について間違ったことを言います。どうすればいいですか？","acceptedAnswer":{"@type":"Answer","text":"出典が示されていればそこをたどり、自社サイトの古い記述を直し、外部の掲載には更新を依頼します。AIの回答を直接書き換える方法はなく、直るまでの期間も決まっていません。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">AI対応を無料でチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>GeminiアプリとClaudeに自社サイトが出典として出る仕組みと、出ているかの確かめ方</span></nav>
+  <article>
+    <h1>GeminiアプリとClaudeに自社サイトが出典として出る仕組みと、出ているかの確かめ方</h1>
+    <p class="lead">Geminiアプリは、Googleがクロールしたページを回答の根拠（グラウンディング）に使うことがあり、それを許すかどうかは robots.txt の「Google-Extended」で決まります。Claudeは、検索用のClaude-SearchBotと、質問に応じてページを読むClaude-Userでサイトを読み、学習用のClaudeBotとは別に止めたり通したりできます。サイト側でできるのは、①この4つの名前を目的どおりに設定し、②答えと事実を本文の文字で書き、③社名を入れない質問で出典に出ているかを記録することです。どのページを出典に選ぶかの基準は、GoogleもAnthropicも公開していません。</p>
+<p>作成日：2026年11月19日（JST）。GoogleのAIによる概要・AIモードは<a href="/ja/guide/google-ai-overviews-citations/">AIによる概要に出典として出る条件</a>、Perplexityは<a href="/ja/guide/perplexity-citations/">Perplexityに引用される仕組み</a>、ChatGPTは<a href="/ja/guide/appear-in-chatgpt/">ChatGPTに載る方法</a>で扱いました。この記事は、残る2つ、GeminiアプリとClaudeに絞って、公式の資料で確かめられることと、サイト側の手順を書きます。</p>
+<p>AIの回答は日・聞き方・プランによって変わります。この記事の手順は、GeminiとClaudeがサイトを読める状態にし、出典に出ているかを正しく記録するためのもので、回答に出ることや順位を保証するものではありません。</p>
+<section class="qa"><h2>まず分ける：Geminiアプリ・Google検索のAI機能・Claude</h2><p>上位の記事には「GeminiとAIによる概要は基本的に同じ」と書くものがありますが、サイト側の設定ではこの2つは別物です。Google検索のAIによる概要・AIモードは検索の一部で、Googlebotがページを読めて検索結果に出せれば対象になります。一方、Geminiアプリ（gemini.google.com やスマートフォンのGemini）でGoogleがクロールしたページを回答の根拠に使ってよいかは、Google-Extended という別の名前で管理されています。</p><div class="table-wrap"><table><thead><tr><th scope="col"></th><th scope="col">Google検索のAIによる概要・AIモード</th><th scope="col">Geminiアプリ</th><th scope="col">Claude</th></tr></thead><tbody><tr><th scope="row">ページを読むもの</th><td>Googlebot</td><td>Googlebot（専用のクローラーはない）</td><td>Claude-SearchBot・Claude-User</td></tr><tr><th scope="row">サイト側で管理する名前</th><td>Googlebot・noindex・nosnippet など</td><td>Google-Extended（robots.txt の名前だけ）</td><td>Claude-SearchBot・Claude-User（学習は ClaudeBot）</td></tr><tr><th scope="row">止めたときの影響</th><td>検索結果そのものからも外れる</td><td>Geminiの学習とGeminiアプリのグラウンディングに使われなくなる。Google検索には影響しない</td><td>Claudeの検索結果・回答で出にくくなる、とAnthropicが説明</td></tr><tr><th scope="row">出典の見え方</th><td>回答の横や下にリンク</td><td>「ソース」ボタンや本文中のリンク。付かない回答もある</td><td>ウェブ検索を使った回答には出典が付く</td></tr></tbody></table></div><p>Google-Extended の説明は<a href="https://developers.google.com/crawling/docs/crawlers-fetchers/google-common-crawlers?hl=en">Googleのクローラー一覧（2026-10-30更新）</a>、Claudeのクローラーは<a href="https://support.claude.com/en/articles/8896518-does-anthropic-crawl-data-from-the-web-and-how-can-site-owners-block-the-crawler">Anthropicのヘルプ</a>（<a href="https://support.claude.com/ja/articles/8896518">日本語版</a>）にあります。</p></section>
+<section class="qa"><h2>公式に分かっていること・分かっていないこと</h2><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">公式の資料にあるか</th><th scope="col">内容</th></tr></thead><tbody><tr><th scope="row">Google-Extended が管理するもの</th><td>ある</td><td>Googleがクロールした内容を、Geminiアプリなどを動かす将来のGeminiモデルの学習と、GeminiアプリやVertex AIでのグラウンディング（回答時に検索インデックスの内容をモデルに渡すこと）に使ってよいか</td></tr><tr><th scope="row">Google-Extended とGoogle検索</th><td>ある</td><td>Google検索への掲載にも順位にも影響しない、と明記</td></tr><tr><th scope="row">Google-Extended のアクセス</th><td>ある</td><td>専用のユーザーエージェントはなく、既存のGoogleのクローラーで読む。robots.txt の名前としてだけ働く</td></tr><tr><th scope="row">Claudeの3つのクローラー</th><td>ある</td><td>ClaudeBot（学習）・Claude-SearchBot（検索の品質のための索引）・Claude-User（ユーザーの質問に応じた取得）</td></tr><tr><th scope="row">Claudeのクローラーと robots.txt</th><td>ある</td><td>3つとも robots.txt に従い、Crawl-delay にも対応、CAPTCHAは回避しない。IPアドレスで止める方法は確実ではないとしつつ、IPの一覧を公開</td></tr><tr><th scope="row">Claudeのウェブ検索が使う検索エンジン</th><td>ない</td><td>ヘルプには「画像検索はBing」とだけあり、ウェブ検索の提供元は書かれていません。2025年3月に、AnthropicがBrave Searchを委託先の一覧に加えたと報じられましたが、記事の公開時点でAnthropicは回答していません（<a href="https://techcrunch.com/2025/03/21/anthropic-appears-to-be-using-brave-to-power-web-searches-for-its-claude-chatbot/">TechCrunch、2025-03-21</a>）</td></tr><tr><th scope="row">出典を選ぶ基準・件数・順番</th><td>ない</td><td>GoogleもAnthropicも公開していません</td></tr></tbody></table></div><p>Perplexityの Perplexity-User は「robots.txt を一般に無視する」と説明されていますが、Claude-User はAnthropicの説明では robots.txt に従います。同じ「質問に応じて読むクローラー」でも扱いが違うので、Perplexityの設定をそのまま当てはめないでください。</p></section>
+<section class="qa"><h2>上位の記事でよく見る主張と、根拠の強さ</h2><p>「Gemini 自社 表示される 方法」「Claude 引用される」「how to get cited by Claude」などで上位の日本語4本・英語6本を読みました。「答えを先に書く」「会社情報をそろえる」は共通していますが、GeminiアプリとAIによる概要を分けた記事はほぼなく、Claudeの3つのクローラーをAnthropicの資料に沿って説明した記事も、WordPressでの手順を書いた記事もありませんでした。</p><div class="table-wrap"><table><thead><tr><th scope="col">よく見る主張</th><th scope="col">根拠の強さ</th><th scope="col">この記事での扱い</th></tr></thead><tbody><tr><th scope="row">「GeminiとAIによる概要は同じ対策でよい」</th><td>設定の面では違う。Geminiアプリには Google-Extended が関わる</td><td>分けて書く</td></tr><tr><th scope="row">「Google-Extended を止めてもAI検索には影響しない」</th><td>Google検索（AIによる概要を含む）には影響しない。Geminiアプリのグラウンディングには影響する</td><td>目的に合わせて選ぶ</td></tr><tr><th scope="row">「ClaudeはBrave Searchを使っている」</th><td>2025年3月の報道と委託先の一覧が根拠。Anthropicのヘルプには書かれていない</td><td>断定しない</td></tr><tr><th scope="row">「ClaudeBotを許可すれば引用される」</th><td>ClaudeBot は学習用。検索と回答は Claude-SearchBot と Claude-User</td><td>検索用の2つを確かめる</td></tr><tr><th scope="row">Claudeのシェア・引用率・反映までの日数</th><td>多くは書いた会社自身の集計で、方法が十分に書かれていない</td><td>使わない</td></tr></tbody></table></div></section>
+<section class="qa"><h2>目的別の robots.txt：検索には出たい・学習は止めたい</h2><p>いちばん多い希望は「AIの検索や回答には出たいが、学習には使われたくない」です。Claudeについては名前が分かれているので、Claude-SearchBot と Claude-User を通し、ClaudeBot だけを止められます。個別のグループを作るときは、サイト全体の決まり（例：/wp-admin/ を読ませない）もそのグループの中に書き直します。クローラーは自分の名前のグループがあると、そのグループだけを見るためです。</p><pre class="code" dir="ltr"><code># 例：Claude の検索と回答には読ませ、学習用の ClaudeBot だけ止める
+User-agent: Claude-SearchBot
+Allow: /
+Disallow: /wp-admin/
+
+User-agent: Claude-User
+Allow: /
+Disallow: /wp-admin/
+
+User-agent: ClaudeBot
+Disallow: /
+
+# Google-Extended は書かない（＝止めない）。
+# Disallow にすると、Gemini の学習だけでなく
+# Gemini アプリのグラウンディングにも使われなくなる（Googleの説明）。</code></pre><p>Geminiは事情が違います。Google-Extended は学習とGeminiアプリのグラウンディングをまとめて管理するため、「学習だけ止めて、Geminiアプリの出典には出る」という設定は、Googleの説明の範囲ではできません。Geminiアプリに出典として出たいなら、Google-Extended は止めない、が答えです。なお、Googleは2027年の初めに、学習の可否を伝える共通の仕組み（AIPREF、「user-agent: __usage_ai-training」）に対応する予定としています。</p>
+<p>Anthropicも2026年10月30日から、学習を望まないことを伝える機械可読の信号（IETFの aipref の草案）を認識し始めた、としています。ただし robots.txt で ClaudeBot を名指ししていれば、そちらが優先されます。設定が食い違わないよう、どちらか一方で意図をはっきり書いてください。</p></section>
+<section class="qa"><h2>出典に選ばれやすくするために、ページ側でできること</h2><p>読める状態にしても、質問への答えがページになければ出典にはなりません。GeminiもClaudeも基準は公開していないため、次はAI全般に共通する手入れです。詳しくは<a href="/ja/guide/blog-articles-ai-citations/">AIに引用される記事の書き方</a>と<a href="/ja/guide/llms-txt/">llms.txtの書き方</a>にまとめています。</p><ol><li>質問に対する答えを、見出しのすぐ下の1〜2文で書く（料金・営業時間・対応エリア・対象など）</li><li>数字には日付を付け、他社の数字には出典を付ける</li><li>社名・住所・電話番号を、自社サイトとGoogleビジネスプロフィールなど外部の掲載でそろえる</li><li>画像やPDFの中だけにある事実を、本文の文字でも書く</li><li>構造化データは本文と同じ内容にする（本文にないことを書かない）</li></ol></section>
+<section class="qa"><h2>WordPressでの手順（Nurevo AEO の場合）</h2><p>Nurevo AEO（無料のWordPressプラグイン）は、WordPressの仮想 robots.txt に、AI検索で使われるクローラー（ChatGPTの OAI-SearchBot・ChatGPT-User、Claudeの Claude-SearchBot・Claude-User、Perplexityの PerplexityBot・Perplexity-User）を許可する行を足します。サイトの既存の決まり（/wp-admin/ など）は、これらのグループにも書き写されます。</p>
+<p>学習用のクローラー（GPTBot・ClaudeBot・Google-Extended・Applebot-Extended・CCBot）は、初期設定ではサイトの robots.txt に任せ、ワンクリックで許可・ブロックを選べます。ここで「ブロック」を選ぶと Google-Extended も止まります。Googleの説明では、その場合Geminiアプリのグラウンディングにも使われなくなるので、Geminiアプリに出典として出たいサイトは、学習用をまとめてブロックする前に考えてください。ClaudeBot だけを止めたい場合は、上の例のように自分で robots.txt に書きます。</p><ol><li>管理画面の Nurevo AIO → 設定で「AI検索のクローラー（ChatGPT検索・Claude・Perplexity）を仮想robots.txtで許可する」が有効か確かめる</li><li>学習用クローラーの選択肢を、Geminiアプリへの影響を踏まえて選ぶ</li><li>サーバーに robots.txt の実ファイルがあると仮想 robots.txt より優先されるので、実ファイルがないか確かめる</li><li>SEOプラグインやセキュリティプラグイン、レンタルサーバーのWAF・海外アクセス制限がクローラーを止めていないか確かめる</li><li>下のコマンドで、robots.txt の中身とアクセスの応答を確かめる</li></ol><pre class="code" dir="ltr"><code># 1) robots.txt の中身（Claude の3つと Google-Extended の行）
+curl -s https://example.jp/robots.txt | grep -i -E -A3 "claude|google-extended"
+
+# 2) Claude-SearchBot を名乗ったアクセスが 200 で返るか（403・503・確認画面は要注意）
+curl -s -o /dev/null -w "%{http_code}\n" -A "Claude-SearchBot" https://example.jp/
+
+# 3) アクセスログで実際に来ているか（ログの場所はサーバーによって違う）
+grep -E "ClaudeBot|Claude-SearchBot|Claude-User" access.log | tail -20
+# Google-Extended は専用のユーザーエージェントがないので、ログには出ない</code></pre><p>ログに来たアクセスが本当にAnthropicのものかは、<a href="https://claude.com/crawling/bots.json">公開されているIPの一覧</a>と照らし合わせます。Google-Extended はログに出ないので、robots.txt の中身で確かめるしかありません。</p></section>
+<section class="qa"><h2>出典に出ているかの確かめ方</h2><p>Geminiアプリでは、出典があると回答の下や本文中に「ソース」ボタンが出ます。ただしGoogleは「すべての回答に関連リンクやソースが付くわけではない」としています（<a href="https://support.google.com/gemini/answer/14143489?hl=en">Geminiアプリのヘルプ</a>）。ボタンがなければ、その回答ではリンクを示していないということです。Googleは、Geminiが不正確な内容を事実のように示すことがあるとも書いています（<a href="https://support.google.com/gemini/answer/16279220?hl=en">回答についてのヘルプ</a>）。</p>
+<p>Claudeは、ウェブ検索を使った回答には出典が付きます（<a href="https://support.claude.com/en/articles/10684626-enabling-and-using-web-search">Claudeのヘルプ</a>、API でも<a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/web-search-tool">ウェブ検索では出典が常に有効</a>）。新しい画面ではウェブ検索の切り替えがなく、必要なときにClaudeが検索します。検索しなかった回答には出典が付かないので、「出典がない＝読まれていない」とは限りません。</p><div class="table-wrap"><table><thead><tr><th scope="col">記録すること</th><th scope="col">理由</th></tr></thead><tbody><tr><th scope="row">社名を入れない質問（例：「◯◯市で土曜に診てくれる歯科は？」）を5〜20個決める</th><td>社名で聞くと出るのは当たり前で、比べられない</td></tr><tr><th scope="row">日付・アプリ（Gemini／Claude）・プラン・ログイン状態・モデル</th><td>条件が変わると回答も変わる</td></tr><tr><th scope="row">回答に社名が出たか、出典に自社のURLがあったか</th><td>名前が出ることと、出典に選ばれることは別</td></tr><tr><th scope="row">同じ質問を2〜3回聞く</th><td>1回の結果は偶然のことがある</td></tr><tr><th scope="row">設定を変えた日</th><td>変える前と後を比べるため</td></tr></tbody></table></div><p>Nurevoの無料AIチェックとProのAI登場率は、現在 Perplexity で測っています（ChatGPTは設定され次第）。GeminiとClaudeは測っていないので、上の表のように手で記録してください。測り方の全体は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>にあります。</p></section>
+<section class="qa"><h2>チェックリスト</h2><ol><li>GeminiアプリとGoogle検索のAI機能を分けて考えている</li><li>Google-Extended を止めるかどうかを、Geminiアプリへの影響を踏まえて決めた</li><li>Claude-SearchBot と Claude-User を robots.txt で止めていない</li><li>ClaudeBot（学習）の扱いを、検索用の2つとは別に決めた</li><li>個別のグループにも /wp-admin/ などの決まりを書き写した</li><li>WAF・セキュリティプラグインがClaudeのクローラーに 403 を返していない</li><li>質問への答えと事実が本文の文字にある</li><li>社名を入れない質問を決め、同じ条件で繰り返し記録している</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>Google-Extended を止めると、Google検索やAIによる概要から消えますか？</h3><p>Googleは、Google-Extended はGoogle検索への掲載にも順位にも影響しないとしています。影響するのはGeminiモデルの学習と、GeminiアプリやVertex AIでのグラウンディングです。</p>
+<h3>Geminiの学習だけを止めて、Geminiアプリの出典には出られますか？</h3><p>Googleの説明では、Google-Extended は学習とグラウンディングをまとめて管理しているため、その2つを分ける設定はありません。Googleは2027年の初めに共通の学習拒否の信号（AIPREF）に対応する予定としていますが、その後の扱いは公開を待つ必要があります。</p>
+<h3>ClaudeBot を止めると、Claudeの回答に出なくなりますか？</h3><p>Anthropicの説明では、ClaudeBot は学習用で、検索と回答は Claude-SearchBot と Claude-User です。この2つを止めていなければ、ClaudeBot を止めても検索や回答のための読み込みは続きます。</p>
+<h3>Claudeはどの検索エンジンの結果を使っていますか？</h3><p>Anthropicのヘルプには、画像検索はBingとありますが、ウェブ検索の提供元は書かれていません。2025年3月にBrave Searchが委託先の一覧に加わったと報じられましたが、仕組みとして公表されたものではありません。</p>
+<h3>アクセスログに Google-Extended が出てきません。設定が効いていないのですか？</h3><p>Google-Extended には専用のユーザーエージェントがなく、既存のGoogleのクローラーで読むため、ログには出ません。効いているかは robots.txt の中身で確かめます。</p>
+<h3>robots.txt を変えたら、すぐにGeminiやClaudeの回答に反映されますか？</h3><p>反映までの時間は、どちらも公開していません。設定を変えた日を記録し、数日あけて同じ条件で確かめてください。出典に出るかは、設定とは別にAIが決めます。</p>
+<h3>GeminiやClaudeが自社について間違ったことを言います。どうすればいいですか？</h3><p>出典が示されていればそこをたどり、自社サイトの古い記述を直し、外部の掲載には更新を依頼します。AIの回答を直接書き換える方法はなく、直るまでの期間も決まっていません。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>AIが自社サイトを読めるか確かめる</h2>
+    <p>無料チェックは登録不要です。URLを入れると、AIクローラーの許可、構造化データ、llms.txtの状態が分かります。WordPressなら無料のプラグインで、Claude-SearchBot と Claude-User を許可する設定と、学習用クローラーの選択、事業の事実の構造化データをまとめて整えられます。</p>
+    <a class="btn primary lg" href="/check">AI対応を無料でチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">無料のWordPressプラグインを入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/perplexity-citations/">Perplexityに自社サイトが引用される仕組みと、引用されているかの確かめ方</a></li><li><a href="/ja/guide/google-ai-overviews-citations/">GoogleのAIによる概要・AIモードに、自社サイトが出典として出る条件と確かめ方</a></li><li><a href="/ja/guide/appear-in-chatgpt/">ChatGPTに載る方法（他のAIの回答にも）</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/llms-txt/">llms.txtとは？書き方の例、効果について分かっていること、WordPressでの置き方と確かめ方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/gemini-claude-citations/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Gemini、Google、Google 検索、Vertex AIはGoogle LLC、ClaudeはAnthropic, PBC、ChatGPTはOpenAI、PerplexityはPerplexity AI、BraveはBrave Software, Inc.、BingはMicrosoft Corporationの商標です。WordPress、Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACKはそれぞれの権利者の商標または登録商標です。Nurevoはこれらの企業と提携・協賛関係にありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
