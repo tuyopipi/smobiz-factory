@@ -1,0 +1,356 @@
+{
+ "title": "AI-sökning för gynekologmottagningar: bokning, kostnad, EDA | Nurevo",
+ "description": "AEO för obstetrik och gynekologi: ange sista bokningsvecka för förlossning, kostnader med villkor och datum, uppgifter om EDA och använd Obstetric eller Gynecologic.",
+ "h1": "AI-sökning för mottagningar inom obstetrik och gynekologi: så publicerar ni sista bokningsdag för förlossning, kostnader och information om epiduralbedövning så att AI läser rätt",
+ "lead": "Det mest användbara en mottagning inom obstetrik och gynekologi kan göra för AI-sökning är att på sin egen webbplats, i daterad text, ange senast vilken graviditetsvecka och hur en förlossning måste bokas, vad den kostar och hur det förhåller sig till offentliga ersättningar, samt hur epiduralbedövning (smärtlindring under förlossning) är organiserad. Den som just fått veta att hon är gravid frågar AI innan hon väljer var hon ska föda. Om mottagningens webbplats inte anger dessa villkor svarar AI utifrån gamla omdömen, jämförelsesajter eller ett annat sjukhus uppgifter. Se sedan till att samma fakta stämmer i offentliga register, försäkringssystemens förteckningar, strukturerad data och Google-företagsprofilen.",
+ "intro": [
+  "Skrivet den 20 november 2026 (JST). Exemplen kommer från Japan, där Nurevo har sin bas. Engångsersättningen vid förlossning (Japan Health Insurance Association), 2026 års ändring av hälso- och sjukförsäkringslagen (översikt från Ministry of Health, Labour and Welfare), registret 出産なび (MHLW:s broschyr och kommittéunderlag), antalet mödravårdskontroller (MHLW:s meddelande och enkät), uppgifter som ska redovisas om epiduralbedövning (MHLW:s checklista för egenkontroll, utgåva maj 2025), förlossningsskadeersättningssystemet (den japanska regeringens informationswebbplats) och schema.org-typerna (V30.1) kontrollerades den dagen. Punkterna i MHLW:s frågor och svar om marknadsföring av vård är kontrollerade den 16 november 2026. Utanför Japan skiljer sig ersättningar, försäkringar och regler för marknadsföring åt: kontrollera vad som gäller i ert land.",
+  "AI-svar ändras från dag till dag och beroende på hur frågan ställs. Den här guiden gör er mottagnings fakta läsbara för AI. Den garanterar inte att ni syns i AI-svar eller rankas högre. Den är inte juridisk eller medicinsk rådgivning."
+ ],
+ "sections": [
+  {
+   "heading": "Vad gravida och deras anhöriga frågar AI",
+   "paragraphs": [
+    "Frågor om förlossning handlar mindre om symtom och mer om tidpunkter, kostnader och hur vården är organiserad. Även de som planerar att föda nära sina föräldrar, partner och blivande mor- och farföräldrar gör efterforskningar. Inom gynekologi är frågor om undersökningar, preventivmedel och klimakteriet vanliga. Sex typer av frågor är vanligast."
+   ],
+   "table": {
+    "head": [
+     "Typ av fråga",
+     "Exempel",
+     "Vad AI använder för att svara"
+    ],
+    "rows": [
+     [
+      "Boka förlossning",
+      "”Sjukhus i stad X där jag kan föda: senast vilken vecka måste jag boka?”",
+      "Om förlossningar erbjuds, sista bokningsvecka, hur man bokar, eventuell handpenning, om remiss krävs"
+     ],
+     [
+      "Kostnad",
+      "”Vad kostar det att föda på mottagning X? Hur mycket täcker engångsersättningen?”",
+      "Kostnadsuppgift med villkor (enkelrum, utanför ordinarie tider), om direktbetalning till mottagningen är möjlig"
+     ],
+     [
+      "Epiduralbedövning",
+      "”En förlossningsklinik som erbjuder EDA” ”Finns det dygnet runt?”",
+      "Om den erbjuds, planerad eller vid behov, narkosläkare, antal fall, tilläggskostnad"
+     ],
+     [
+      "Föda på annan ort",
+      "”Tar ni emot kvinnor som kommer hem för att föda? När ska jag byta?”",
+      "Om det tas emot, när man ska höra av sig, senast vilken vecka man ska ha besökt mottagningen"
+     ],
+     [
+      "Endast kontroller",
+      "”En gynekolog bara för kontroller, med förlossning på ett annat sjukhus”",
+      "Om patienter som bara går på kontroller tas emot, samarbetande förlossningssjukhus, om kommunala kuponger godtas"
+     ],
+     [
+      "Gynekologisk öppenvård",
+      "”En gynekolog för cellprovtagning på lördag” ”Finns det en kvinnlig läkare?”",
+      "Öppettider per dag, typer av undersökningar och om bokning krävs, läkarnas dagar"
+     ]
+    ]
+   },
+   "after": [
+    "I samtliga fall kan AI bara använda sidor som anger villkoren i text. Ett pressmeddelande om ett företags egen undersökning av 5 460 ChatGPT-svar på sökningar efter mottagningar visade att mottagningens egen webbplats citerades i 96 % av svaren på prisfrågor (september 2026). [Pressmeddelande (japanska)](https://www.excite.co.jp/news/article/Atpress_633888/). Kostnader och bokningsvillkor är just den information som AI gärna hämtar från er egen webbplats."
+   ]
+  },
+  {
+   "heading": "Vad de högst rankade artiklarna utelämnar",
+   "paragraphs": [
+    "Vi läste de främsta resultaten för sökningar som ”産婦人科 AI検索対策”, ”婦人科 LLMO” och ”OB-GYN AI search optimization”: sju på japanska och sex på engelska. De japanska var antingen allmänna artiklar om AI-sökning för mottagningar (deras råd om marknadsföringsregler och enhetliga mottagningsuppgifter är praktiska) eller marknadsföringsartiklar för obstetrik och gynekologi som inte nämner AI; obstetriken fick ungefär en tabellrad. De engelska var mest sammanställningar av verktyg eller generiska sexstegsmanualer, och vissa angav siffror utan källa, som ”50 omdömen räcker” eller ”Perplexity återspeglar ändringar inom 30–60 dagar”.",
+    "Ingen av dem tog upp dessa fem punkter, som är den här guidens fokus."
+   ],
+   "list": [
+    "Hur man anger sista bokningsdag och bokningssätt för förlossning så att AI kan använda dem i ett svar.",
+    "Hur man anger kostnader korrekt, med engångsersättningen vid förlossning (JPY 500 000 i Japan) och det nya systemet i 2026 års lag.",
+    "Hur man publicerar information om epiduralbedövning med samma punkter som MHLW:s checklista för egenkontroll.",
+    "Hur man håller webbplatsen samstämmig med det nationella förlossningsregistret och förlossningsskadeersättningssystemet.",
+    "schema.org-typerna för obstetrik och gynekologi (Obstetric, Gynecologic), konkreta inställningar i WordPress och hur man kontrollerar om man syns i AI-svar."
+   ]
+  },
+  {
+   "heading": "Förlossningsbokning: ange sista bokningsdag i veckor, och bokningssättet",
+   "paragraphs": [
+    "Sista bokningsdag varierar kraftigt. Aiiku Hospitals vanliga frågor anger till exempel att förlossning bokas ”vanligtvis i vecka 8–9”, och Japanese Red Cross Medical Center ber om bokning ”senast vecka 20”. [Aiiku Hospital (PDF, japanska)](https://www.aiiku.net/clinic/files/sanka_question.pdf), [Japanese Red Cross Medical Center (PDF, japanska)](https://www.med.jrc.or.jp/Portals/0/resources/hospital/clinic/sanka/mternity_note/maternity_02_20250912.pdf). AI får frågan ”senast vilken vecka måste jag boka?” rakt på sak, så ange ett veckonummer, inte ”boka i god tid”."
+   ],
+   "table": {
+    "head": [
+     "Vad ni ska skriva",
+     "Exempel",
+     "Undvik"
+    ],
+    "rows": [
+     [
+      "Sista bokningsdag",
+      "”Boka er förlossning senast i graviditetsvecka 20”",
+      "Bara ”boka i god tid”"
+     ],
+     [
+      "Hur man bokar",
+      "”Bokning sker vid ert första mottagningsbesök. Vi tar inte emot förlossningsbokningar per telefon eller via webben”",
+      "Inget bokningssätt angivet"
+     ],
+     [
+      "Handpenning",
+      "Om det finns en och hur den hanteras, till exempel ”handpenning på X, som dras av från förlossningsavgiften”",
+      "Ett belopp utan uppgift om återbetalning eller avdrag"
+     ],
+     [
+      "Tillgänglighet",
+      "”Bokningar för beräknad förlossning i maj 2027 är stängda (per den 20 november 2026)”",
+      "Bara ”vi har mycket att göra”, utan datum"
+     ],
+     [
+      "Föda på annan ort",
+      "Om det tas emot, när man ska höra av sig, senast vilken vecka man ska ha besökt er",
+      "Bara ”fråga oss gärna”"
+     ]
+    ]
+   },
+   "after": [
+    "Tillgängligheten ändras från månad till månad. Lägg den i ett daterat meddelande och skriv om det när något ändras. Om ett inaktuellt meddelande ligger kvar på nätet kan AI fortfarande svara ”bokningen är stängd” flera månader senare."
+   ]
+  },
+  {
+   "heading": "Kostnader: engångsersättningen, och systemet som ska ändras",
+   "paragraphs": [
+    "I Japan är engångsersättningen vid förlossning för födslar från och med den 1 april 2023 JPY 500 000 per barn när förlossningen sker i vecka 22 eller senare på en vårdinrättning som är ansluten till förlossningsskadeersättningssystemet (JPY 488 000 före vecka 22). Med direktbetalningssystemet får vårdinrättningen ersättningen direkt från försäkringsgivaren, och patienten betalar bara det belopp som överstiger den. [Japan Health Insurance Association (japanska)](https://www.kyoukaikenpo.or.jp/benefit/childbirth/002).",
+    "Systemet ska ändras. Ändringen av hälso- och sjukförsäkringslagen som utfärdades den 5 juni 2026 inför ett nationellt grundpris för förlossning som sjukförsäkringen betalar direkt till vårdinrättningen (förmån in natura), tillsammans med en enhetlig kontant ersättning till alla gravida. Den träder i kraft ett datum som fastställs genom regeringsförordning inom två år från utfärdandet, och tills vidare får varje vårdinrättning stanna kvar i det nuvarande systemet. [MHLW:s översikt (PDF, japanska)](https://www.mhlw.go.jp/content/12400000/001713111.pdf), [Kommittéunderlag, 1 oktober 2026 (PDF, japanska)](https://www.mhlw.go.jp/content/12401000/001754832.pdf). Vid den här guidens datum har startdatum och belopp inte fastställts.",
+    "Skriv därför kostnadssidan med villkor och datum, enligt nedan. Skriv inte sådant som ännu inte är beslutat, som ”nu är det gratis att föda”."
+   ],
+   "list": [
+    "En kostnadsuppgift och dess villkor (vaginal förlossning eller kejsarsnitt, enkelrum eller delat rum, vardag dagtid eller natt och helg, tilläggskostnad för EDA).",
+    "Om ni tar emot direktbetalningssystemet.",
+    "Om ni är anslutna till förlossningsskadeersättningssystemet (det påverkar engångsersättningens belopp).",
+    "Ett datum som ”belopp per månad/år”.",
+    "Om ni nämner det nya systemet, skriv ”startdatumet är ännu inte fastställt; vi uppdaterar sidan när det är det”, och uppdatera den när det sker."
+   ]
+  },
+  {
+   "heading": "Epiduralbedövning: publicera samma punkter som i checklistan för egenkontroll",
+   "paragraphs": [
+    "MHLW:s checklista för egenkontroll av epiduralbedövning (utgåva maj 2025) räknar upp de punkter som vårdinrättningar som erbjuder epidural smärtlindring vid förlossning bör publicera på sin egen webbplats och på webbplatsen för det japanska samarbetsrådet för förlossningsanalgesi (JALA), uppdaterade minst en gång om året. [Checklista för egenkontroll (PDF, japanska)](https://www.mhlw.go.jp/content/10800000/001488916.pdf). Punkterna är också de konkreta fakta AI kan använda när någon frågar ”är EDA på den här mottagningen säker?”."
+   ],
+   "list": [
+    "Klinisk erfarenhet (till exempel antal fall).",
+    "Standarddokumentet med information till patienten och standardmetoden (planerad eller tillgänglig dygnet runt).",
+    "Beredskapen för akuta situationer och dokumentationen av krisövningar.",
+    "Utbildning och kurser för den ansvariga narkosläkaren och läkarna, samt giltighetstiden för deras återupplivningskurser.",
+    "Deltagande i Japan Association of Obstetricians and Gynecologists program för rapportering av avvikelser och mödradödsfall.",
+    "Datum och tid för senaste uppdatering av webbplatsen."
+   ],
+   "after": [
+    "Skriv dessa fakta i stället för ord som utlovar effekt eller säkerhet, som ”smärtfri” eller ”trygg EDA”. Se till att er egen webbplats och JALA:s webbplats säger samma sak."
+   ]
+  },
+  {
+   "heading": "Stäm av er webbplats mot förlossningsregistret och ersättningssystemet",
+   "paragraphs": [
+    "出産なび är en webbplats som MHLW lanserade den 30 maj 2024 och som visar tjänster och kostnader hos förlossningsinrättningar i hela landet. Den listar inrättningar som använder direktbetalning och har 21 eller fler förlossningar per år (mindre inrättningar kan ansluta sig frivilligt), och listade 2 097 inrättningar per den 20 februari 2026. Kostnadsuppgifterna uppdateras kvartalsvis utifrån faktureringsdata. [Broschyr om 出産なび (PDF, japanska)](https://birth-navi.mhlw.go.jp/assets/leaflet-CWn72mWw.pdf), [Kommittéunderlag (PDF, japanska)](https://www.mhlw.go.jp/content/12401000/001754832.pdf). AI läser både de offentliga webbplatserna och er webbplats, så en skillnad kan få den ena att se felaktig ut."
+   ],
+   "table": {
+    "head": [
+     "Var informationen visas",
+     "Vad som ska stämma med er webbplats",
+     "Hur ni kontrollerar"
+    ],
+    "rows": [
+     [
+      "出産なび",
+      "Om EDA erbjuds, tjänster som förlossningsstöd och samvård med barnet, kostnader",
+      "Öppna er post och jämför den punkt för punkt med er webbplats. Se över kostnaderna varje kvartal"
+     ],
+     [
+      "Förlossningsskadeersättningssystemet",
+      "Att ni är anslutna (anslutna inrättningar visar systemets symbol)",
+      "Kontrollera i Japan Council for Quality Health Cares sökning efter anslutna inrättningar. [Japans regering (japanska)](https://www.gov-online.go.jp/article/201306/entry-9179.html)"
+     ],
+     [
+      "JALA:s webbplats",
+      "Uppgifterna som ska redovisas om EDA",
+      "Varje gång ni uppdaterar den (minst en gång om året), uppdatera er webbplats så att den stämmer"
+     ],
+     [
+      "Google-företagsprofilen och det officiella vårdregistret",
+      "Namn, adress, telefon, öppettider, specialiteter",
+      "När något ändras, rätta alla samma dag"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Mödravårdskontroller och gynekologi: vem kan få vad, och när",
+   "paragraphs": [
+    "Med intervallen i ett meddelande från MHLW blir mödravårdskontrollerna ungefär 14 besök, och per den 1 april 2022 subventionerade samtliga kommuner 14 eller fler (de flesta via kuponger). [MHLW:s meddelande (japanska)](https://www.mhlw.go.jp/web/t_doc?dataId=82ab4662&dataType=0&pageNo=1), [MHLW:s enkät (PDF, japanska)](https://www.mhlw.go.jp/content/11908000/000552443.pdf). Subventionernas belopp och regler skiljer sig mellan kommunerna, så ange vilka kommuners kuponger ni godtar och ange inga belopp."
+   ],
+   "list": [
+    "Om ni tar emot patienter som bara går på kontroller, och vilket sjukhus ni samarbetar med för förlossningen (”från vecka X på vårt samarbetssjukhus” och liknande).",
+    "Vilka kommuners kuponger ni godtar (och hur ni hanterar kuponger från en annan kommun för kvinnor som kommer hem för att föda).",
+    "För gynekologi: öppettider per dag, typer av undersökningar som cellprovtagning och om bokning krävs.",
+    "Om ni anger dagar för en kvinnlig läkare, ange dag och namn, och uppdatera samma dag som de ändras.",
+    "För egenbetald vård (till exempel förskrivning av p-piller): ange avgift, de viktigaste riskerna och biverkningarna samt en kontaktpunkt på samma sida (regler för marknadsföring av vård)."
+   ]
+  },
+  {
+   "heading": "Där vanliga AI-råd krockar med reglerna för marknadsföring av vård",
+   "paragraphs": [
+    "Guider om AI-sökning säger ofta ”skaffa fler omdömen” och ”visa resultat”. På en vårdwebbplats i Japan ska ni följa MHLW:s riktlinjer för marknadsföring av vård och tillhörande frågor och svar. Förlossningsberättelser är frestande innehåll, så var särskilt försiktiga."
+   ],
+   "table": {
+    "head": [
+     "Vanligt råd",
+     "Hur det gäller mottagningar (MHLW:s frågor och svar)",
+     "Gör så här i stället"
+    ],
+    "rows": [
+     [
+      "Publicera berättelser från mammor",
+      "Patientberättelser om behandlingens innehåll eller effekt får inte publiceras (Q1-18, Q2-9)",
+      "Förklara fakta i detalj: vistelsen, antal dagar, vad man ska ta med, kostnadsvillkor"
+     ],
+     [
+      "”Smärtfri EDA”, ”trygg förlossning”",
+      "Påståenden om behandlingseffekt är begränsade (Q2-8, Q3-14)",
+      "Publicera uppgifterna om EDA (erfarenhet, beredskap, utbildning) som fakta"
+     ],
+     [
+      "”Den mest valda förlossningskliniken i området”",
+      "Falska, överdrivna eller jämförande påståenden räknas som förbjudna exempel",
+      "Ange bara det ni kan belägga som fakta, till exempel antalet förlossningar"
+     ],
+     [
+      "Beskriv egenbetald vård utförligt",
+      "För egenbetald vård måste innehåll och kostnad, de viktigaste riskerna och biverkningarna samt en kontaktpunkt som svarar på frågor anges (Q6-10 till 6-12)",
+      "Lägg avgift och viktigaste risker på samma sida, så att villkoren uppfylls"
+     ]
+    ]
+   },
+   "after": [
+    "Källor: [MHLW:s frågor och svar om riktlinjerna för marknadsföring av vård (PDF, japanska)](https://www.mhlw.go.jp/content/001683595.pdf), [MHLW:s exempelsamling (PDF, japanska)](https://www.mhlw.go.jp/content/10800000/001232587.pdf). Håll vanliga frågor till faktafrågor som ”Senast vilken vecka ska jag boka min förlossning?” och ”Tar ni emot direktbetalning?”."
+   ]
+  },
+  {
+   "heading": "Strukturerad data: typerna Obstetric och Gynecologic",
+   "paragraphs": [
+    "schema.org har typer för obstetrik och gynekologi (kontrollerat i schema.org V30.1 den 20 november 2026)."
+   ],
+   "table": {
+    "head": [
+     "Typ eller egenskap",
+     "Betydelse",
+     "Hur en mottagning inom obstetrik och gynekologi använder den"
+    ],
+    "rows": [
+     [
+      "[Obstetric](https://schema.org/Obstetric)",
+      "Den gren som behandlar graviditet och förlossning. En MedicalBusiness och en LocalBusiness",
+      "Typen för en mottagning som förlöser barn. Den bär adress, telefon och öppettider direkt"
+     ],
+     [
+      "[Gynecologic](https://schema.org/Gynecologic)",
+      "Den gren som behandlar kvinnans fortplantningsorgan och dess sjukdomar. En MedicalBusiness",
+      "Typen för en gynekologmottagning eller kvinnoklinik som inte har förlossningar"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Den kliniska specialiteten. Värdena omfattar Obstetric och Gynecologic",
+      "Om ni har båda, välj den ena som typ och lägg till den andra som medicalSpecialty"
+     ],
+     [
+      "Service och offers",
+      "En tjänst ni erbjuder och dess pris",
+      "Registrera bara poster vars pris står på sidan, till exempel egenbetalda undersökningar eller bokningens handpenning"
+     ]
+    ]
+   },
+   "after": [
+    "Google säger att ingen särskild strukturerad data behövs för AI Overviews och liknande funktioner, och att strukturerad data ska stämma med sidans synliga innehåll. [Google: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features). Förlossningskostnader beror på villkor, så ange dem inte som ett enda fast pris i strukturerad data."
+   ]
+  },
+  {
+   "heading": "Så ställer ni in det på en WordPress-webbplats för en mottagning inom obstetrik och gynekologi",
+   "list": [
+    "Installera och aktivera Nurevo AIO (gratis, tidigare visat som Nurevo AEO) från [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Det fungerar tillsammans med Yoast SEO, Rank Math, All in One SEO och Slim SEO. Sedan 0.9.1 fungerar det också med SEO SIMPLE PACK och VK All in One Expansion Unit utan att strukturerad data dupliceras.",
+    "Välj ”Klinik eller tandvård” i installationsguiden (typen blir MedicalBusiness). Ändra sedan fältet ”Verksamhetstyp (schema.org-typ)” i inställningarna till Obstetric (eller Gynecologic om ni inte har förlossningar). Fältet accepterar valfritt schema.org-typnamn.",
+    "Kontrollera mottagningens namn, adress, telefon och beskrivning. Bara tomma fält fylls i från befintliga inställningar; värden ni har angett skrivs inte över.",
+    "Ange öppettider endast som mottagningens dagar och tider, till exempel ”Mon-Fri 9:00-12:00 14:00-17:00 / Sat 9:00-12:00”. Skriv förlossningsvård dygnet runt och kontakt utanför ordinarie tider i sidtexten.",
+    "Registrera som tjänster endast poster vars pris står på sidan, till exempel egenbetalda undersökningar eller bokningens handpenning, en i taget. Med namn, beskrivning, pris och valuta matas de ut som tjänster med pris (Service och Offer). Håll priset detsamma som på sidan.",
+    "Lägg i redigerarens sidopanel på sidorna om bokning, kostnad och EDA till vanliga frågor som bara gäller sidan (”Senast vilken vecka ska jag boka?”, ”Tar ni emot direktbetalning?”, ”Finns EDA dygnet runt?”). Lägg inte till patientberättelser eller utlovade resultat. Ställ in inaktuella bokningsmeddelanden på ”Utelämna den här sidan från llms.txt”.",
+    "Kör kontrollen på skärmen för AEO-poäng och åtgärda luckor med ettklicksåtgärder. Se hur er webbplats ser ut utifrån med den [kostnadsfria kontrollen av AI-läsbarhet](/check)."
+   ]
+  },
+  {
+   "heading": "Lägga till medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AIO matar inte ut medicalSpecialty av sig självt. Lägg till det med filtret som ändrar verksamhetens strukturerade data (webmcp_canary_business_node) i temats functions.php eller i ett litet tillägg."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only specialties your pages describe (drop Obstetric if you do not deliver babies)\n    $org['medicalSpecialty'] = array('Obstetric', 'Gynecologic');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Checklista före publicering",
+   "list": [
+    "Sista bokningsdag för förlossning anges i veckor, med bokningssätt och hur eventuell handpenning hanteras.",
+    "Tillgänglighet (till exempel stängda månader) är daterad och skrivs om när den ändras.",
+    "Kostnadssidan anger villkor, ett datum, om ni tar emot direktbetalning och om ni är anslutna till ersättningssystemet.",
+    "Inget om det nya systemet skrivs som beslutat när det inte är det.",
+    "Om ni erbjuder EDA finns checklistans redovisningspunkter på er webbplats och stämmer med JALA:s webbplats.",
+    "Er post i 出産なび och er webbplats stämmer överens om tjänster och kostnader.",
+    "Mottagande av patienter som bara går på kontroller, godtagna kuponger samt gynekologins dagar och tider är angivna.",
+    "Inga patientberättelser, utlovade resultat, superlativ eller jämförelser i sidtext, vanliga frågor eller strukturerad data.",
+    "Typen i den strukturerade datan är Obstetric eller Gynecologic och priserna stämmer med sidan.",
+    "Namn, adress, telefon och öppettider stämmer i strukturerad data, Google-företagsprofilen och det officiella vårdregistret, och llms.txt listar sidorna om förlossning, kostnad, EDA och hitta hit. [Grunder för mottagningar](/guide/medical-clinic-ai-search), [Vad är llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Kontrollera om ni syns i AI-svar",
+   "paragraphs": [
+    "När sidorna är i ordning, skriv fem till tio frågor som gravida och deras anhöriga kan tänkas ställa, där ni kombinerar område × förlossning × sista bokningsdag, område × EDA, område × föda på annan ort och område × gynekologi × lördag × undersökning. Ställ dem i ChatGPT och Perplexity. Notera om er mottagning nämns med namn eller URL, och om sista bokningsdag, kostnadsvillkor och beredskap för EDA anges korrekt. AI-svar ändras varje gång, så ställ samma frågor flera gånger med mellanrum. När ni har ändrat kostnader eller regler, kontrollera också att gamla belopp inte finns kvar i svaren. Se [hur man mäter synlighet i AI](/guide/measure-ai-visibility).",
+    "I Nurevo AIO ställer även planerna Free och Standard en gång i månaden tre frågor till Perplexity, byggda på er verksamhetstyp och ert område (utan mottagningens namn), och noterar om ert namn eller er webbplats förekom. Planen Pro (från USD 99 per månad) lägger till mätning av synlighet i AI i beta: hur ofta er mottagning förekommer i AI-svar, jämfört med konkurrenter och över tid (i dag mäts Perplexity). Båda tittar på urval av svar, inte på alla svar."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Var ska en mottagning inom obstetrik och gynekologi börja med AI-sökning?",
+   "a": "Ange sista bokningsdag för förlossning i veckor, tillsammans med hur man bokar. Lägg sedan till villkor och ett datum på kostnadssidan, och publicera redovisningspunkterna om ni erbjuder EDA. Se slutligen till att namn, adress, telefon och öppettider stämmer i strukturerad data, Google-företagsprofilen och det nationella förlossningsregistret."
+  },
+  {
+   "q": "Hur ska vi skriva förlossningskostnader på vår webbplats?",
+   "a": "Ange en kostnadsuppgift med villkor (förlossningssätt, rum, tid på dygnet) och ett datum ”per månad/år”. Ange också om ni tar emot direktbetalning och om ni är anslutna till förlossningsskadeersättningssystemet. För det nya systemet i 2026 års lag, skriv att startdatumet ännu inte är fastställt, och uppdatera sidan när det är det."
+  },
+  {
+   "q": "Kan vi skriva ”nu är det gratis att föda”?",
+   "a": "Undvik att skriva sådant som inte är beslutat som om det vore beslutat. Ändringen som utfärdades den 5 juni 2026 innebär att sjukförsäkringen betalar ett grundpris för förlossning till vårdinrättningen, men den träder i kraft ett datum som fastställs genom regeringsförordning inom två år, och tills vidare får vårdinrättningar välja att stanna kvar i det nuvarande systemet."
+  },
+  {
+   "q": "Vad ska vi publicera om epiduralbedövning?",
+   "a": "Redovisningspunkterna i MHLW:s checklista för egenkontroll: klinisk erfarenhet, standarddokumentet med patientinformation och standardmetoden, beredskap för akuta situationer, narkosläkarnas utbildning med mera. Håll dem desamma som på JALA:s webbplats och uppdatera dem minst en gång om året. Använd inte ord som utlovar effekt, som ”smärtfri”."
+  },
+  {
+   "q": "Vilken typ av strukturerad data ska vi använda?",
+   "a": "schema.org:s Obstetric om ni har förlossningar, eller Gynecologic för en gynekologmottagning som inte har det. Båda är en MedicalBusiness och en LocalBusiness. Om ni har båda, lägg till den andra som medicalSpecialty."
+  },
+  {
+   "q": "Är Nurevo AIO gratis?",
+   "a": "Ja. Verksamhetstyp, adress, öppettider, tjänster med priser och strukturerad data för vanliga frågor, llms.txt, inställningar för AI-crawlers och AEO-poängen ingår i gratisplanen. Betalplanerna lägger till ständigt uppdaterade regler (Standard, USD 20 per månad) och mätning av synlighet i AI i beta (Pro, från USD 99 per månad). [Nurevo AIO på WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Är min mottagning garanterad att synas i ChatGPT?",
+   "a": "Nej. AI-svar varierar, och inget verktyg eller ingen metod kan garantera synlighet eller ranking. Det ni kan göra är att göra mottagningens fakta läsbara för AI och fortlöpande kontrollera om ni syns."
+  }
+ ],
+ "relatedHeading": "Relaterade guider",
+ "cta": {
+  "heading": "Se först hur AI läser er gynekologmottagnings webbplats",
+  "body": "Den kostnadsfria kontrollen kräver ingen registrering och visar läget för er strukturerade data, llms.txt och AI-crawlers åtkomst. På WordPress fyller Nurevo AIO luckorna gratis.",
+  "label": "Kör den kostnadsfria kontrollen av AI-läsbarhet",
+  "href": "/check",
+  "secondary": {
+   "label": "Hämta Nurevo AIO på WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT är ett varumärke som tillhör OpenAI, Perplexity tillhör Perplexity AI och Google tillhör Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit och WordPress är varumärken som tillhör respektive ägare. Nurevo är inte knutet till eller godkänt av dessa företag. Den här guiden är inte juridisk eller medicinsk rådgivning."
+}
