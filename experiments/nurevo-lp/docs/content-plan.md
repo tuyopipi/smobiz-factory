@@ -398,3 +398,4 @@
 3. 制作会社向け：お客様に渡すAI検索対策の社内向け説明資料（担当者が上司に説明するための1枚）【制作会社向け】
 4. 予約ページ・予約システムをAIに正しく読ませる書き方（外部予約サイトへのリンク・空き状況・キャンセル規定）【全業種】
 5. 次の月曜（11-23）の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-20 調査 | research-wordpress-vs-non-wordpress-2026 | WordPress と非WordPress（HTTP 200で到達した14,361件＝WordPress 12,376・非WP 1,985〔海外の非WPの202 1,477件は表から除外、含めた値は本文〕、JSON-LD 88.8% vs 17.6%、llms.txt 29.6% vs 9.8%、6項目すべて24.9% vs 4.7%、日本の非WP 191件：JSON-LD 28.3%〔WP 72.9%〕・robots.txt 45.0%〔95.6%、無し55.0%〕・canonical 42.9%・llms.txt 6.3%〔14.0%、Fisher p=0.002〕・FAQPage差なし p=0.73、AIボットのブロック 日本 非WP 9.3%〔8/86〕vs 1.0%・海外 非WP 13.8%〔89/643〕vs 4.3%、検索用4種は1%未満、7ボット同一の組み合わせ 海外非WP 73/93・WP 268/465、GPTBotブロックでOAI-SearchBot許可 海外WP 346/363、WP どうしでも日本14.0%・海外33.1%〔p<0.001〕、非WPどうしは差なし、構造化データの型表、6項目の分布、限界にJS非実行・meta descriptionの属性順・WP判定の痕跡） | raw_2026-11-12（summary.japanWP・japanNonWP・intlWP と一致） | ja/en | content/research-20261120 |
