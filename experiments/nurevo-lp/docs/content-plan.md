@@ -362,3 +362,12 @@
 3. 料金ページをAIに正しく読ませる書き方（税込表示・条件つき料金・Offer）【全業種】
 4. 不妊治療クリニックのAI検索対策（保険適用の条件・年齢と回数・先進医療の表示）【業種別】
 5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-20 11時 | pricing-page-ai-search | 料金ページをAIに正しく読ませる書き方（全業種。AIが料金を間違える5つの原因と直し方の表〔画像/PDF/タブ・税の扱い・単位・古い料金・外部の掲載先〕、Profound調査〔2026-09-03、Cloud 100の料金の質問・6エンジン約7,600回答：料金ページの引用46%・最初の出典12%・公開料金ページ77件中57件がAIで読める状態、調査会社自身の調査〕、上位記事〔Uravation 料金ページのAI検索設計（2026-09-05更新）・ステラジェント（費用相場で別テーマ）・0120.co.jp（サービスページ）／Trakkr・Profound・Single Grain・eSEOspace・Texta・GenOptima・PeerPush〕の抜けの表〔総額表示・見積もり制の例・二重価格・WordPressなし、Single GrainとPeerPushで型が食い違う〕、料金の1行の6要素の表と悪い例・良い例、総額表示（国税庁6902）、見積もり制は下限・決まり方・条件つきの例、キャンペーンの期間と二重価格（消費者庁：最近相当期間の価格でなければ期間を正確に表示、架空の希望小売価格）、改定の手順6点、curlでHTMLを確かめる、構造化データ〔schema-dts 2.1.0：price は数字だけ・priceCurrency・valueAddedTaxIncluded・minPrice/maxPrice・validFrom/validThrough・UnitPriceSpecification billingDuration/unitText/priceType〕のJSON-LD例、WordPress手順〔Nurevoの「料金」欄は入れた文字がそのまま price に出る→数字だけ、Offerに税の印なし→説明と本文に、所要時間とllms.txtの行、掲載ページID、料金ページ（BtoB）→ Key facts の Pricing、WooCommerceのOfferは任せる〕、料金の質問の記録表、チェックリスト10、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261120-11 |
+メモ：2026-11-20 11時の回は、国税庁6902・schema.org・Googleの商品/販売者リスティングのドキュメントを取得できなかった（許可待ち）。6902 は 2026-11-01（hair-salon-ai-search）に確認した範囲、schema.org の決まりはローカルに入れた schema-dts 2.1.0 の説明文で書いた。消費者庁の価格表示ガイドラインPDF（週数などの目安）は読めず、数字は書いていない。Googleのリッチリザルトの条件は書かず「各型のドキュメントで確認」とした。funnel-ai.jp の記事は別ドメインへの転送で読んでいない。BtoBの料金ページの項目は b2b-saas-ai-search と重ならないよう、リンクだけにした。
+翻訳の残り（8時台で補完）：company-profile-page-ai-search・multi-location-business-ai-search・dermatology-clinic-ai-search・person-profile-page-ai-search・agency-aeo-client-handover・photo-studio-ai-search・eye-clinic-ai-search・franchise-headquarters-ai-search・lesson-studio-ai-search・b2b-saas-ai-search・detective-agency-ai-search・agency-content-refresh-service・perplexity-citations・google-ai-overviews-citations・ent-clinic-ai-search・gemini-claude-citations・site-renewal-ai-search・faq-page-ai-search・pricing-page-ai-search（ja/en のみ）。
+次の候補：
+1. 不妊治療クリニックのAI検索対策（保険適用の条件・年齢と回数・先進医療の表示）【業種別】（14時か17時で）
+2. 制作会社向け：AI検索対策の見積もり項目と工数の出し方（agency-aeo-first-audit-proposal と重ならない切り口で）【制作会社向け】（17時か20時で）
+3. 比較サイト・ポータルに載っている自社情報の直し方（PR #80 fix-wrong-ai-answers と重ならない「掲載先の一覧と更新依頼の文例」に絞れれば）【全業種】
+4. 営業時間・定休日・臨時休業をAIに正しく読ませる書き方（祝日・年末年始・specialOpeningHours）【全業種】
+5. 次の月曜の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
