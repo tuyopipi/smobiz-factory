@@ -1,0 +1,356 @@
+{
+ "title": "Tìm kiếm AI cho phòng khám sản phụ khoa: đặt sinh, chi phí | Nurevo",
+ "description": "AEO cho phòng khám sản phụ khoa: ghi hạn đặt sinh theo tuần, chi phí kèm điều kiện và ngày, các mục công khai về gây tê ngoài màng cứng, dùng Obstetric hoặc Gynecologic.",
+ "h1": "Tìm kiếm AI cho phòng khám sản phụ khoa: cách công bố hạn đặt sinh, chi phí và thông tin gây tê ngoài màng cứng để AI đọc đúng",
+ "lead": "Điều hữu ích nhất mà một phòng khám sản phụ khoa có thể làm cho tìm kiếm AI là ghi rõ bằng văn bản có ngày tháng trên chính trang web của mình: cần đặt sinh trước tuần thai thứ mấy và bằng cách nào, chi phí bao nhiêu và liên quan thế nào đến các khoản trợ cấp công, cũng như việc gây tê ngoài màng cứng (giảm đau khi chuyển dạ) được tổ chức ra sao. Những người vừa biết mình mang thai thường hỏi AI trước khi chọn nơi sinh. Nếu trang web của phòng khám không nêu các điều kiện này, AI sẽ trả lời dựa trên các đánh giá cũ, trang so sánh hoặc thông tin của bệnh viện khác. Sau đó, hãy làm cho các thông tin ấy khớp nhau trên các danh bạ công, danh sách của chế độ bảo hiểm, dữ liệu có cấu trúc và Google Business Profile.",
+ "intro": [
+  "Viết ngày 20 tháng 11 năm 2026 (JST). Các ví dụ lấy từ Nhật Bản, nơi Nurevo đặt trụ sở. Trợ cấp sinh con trọn gói (Hiệp hội Bảo hiểm Y tế Nhật Bản), sửa đổi năm 2026 đối với Luật Bảo hiểm Y tế (bản tóm tắt của Bộ Y tế, Lao động và Phúc lợi), danh bạ 出産なび (tờ rơi và tài liệu ủy ban của MHLW), số lần khám thai (thông báo và khảo sát của MHLW), các mục công khai về gây tê ngoài màng cứng (bảng tự kiểm tra của MHLW, bản tháng 5 năm 2025), chế độ bồi thường sản khoa (trang quan hệ công chúng của Chính phủ Nhật Bản) và các type của schema.org (V30.1) đã được kiểm tra vào ngày đó. Các mục hỏi đáp về quảng cáo y tế của MHLW là theo lần kiểm tra ngày 16 tháng 11 năm 2026. Ngoài Nhật Bản, quy định về trợ cấp, bảo hiểm và quảng cáo khác nhau: hãy kiểm tra quy định của nước bạn.",
+  "Câu trả lời của AI thay đổi theo từng ngày và theo cách đặt câu hỏi. Hướng dẫn này giúp AI đọc được thông tin về phòng khám của bạn. Nó không đảm bảo bạn sẽ xuất hiện trong câu trả lời của AI hay được xếp hạng cao hơn. Đây không phải là tư vấn pháp lý hay y tế."
+ ],
+ "sections": [
+  {
+   "heading": "Thai phụ và gia đình hỏi AI những gì",
+   "paragraphs": [
+    "Câu hỏi về sản khoa ít liên quan đến triệu chứng mà chủ yếu là về thời điểm, chi phí và cách tổ chức chăm sóc. Người dự định về gần nhà cha mẹ để sinh, người bạn đời và cha mẹ cũng tự tìm hiểu. Về phụ khoa, các câu hỏi về khám sàng lọc, tránh thai và mãn kinh rất phổ biến. Có sáu dạng câu hỏi xuất hiện nhiều nhất."
+   ],
+   "table": {
+    "head": [
+     "Dạng câu hỏi",
+     "Ví dụ",
+     "AI dùng gì để trả lời"
+    ],
+    "rows": [
+     [
+      "Đặt sinh",
+      "\"Bệnh viện ở thành phố X nơi tôi có thể sinh: cần đặt trước tuần thứ mấy?\"",
+      "Có nhận đỡ sinh hay không, hạn đặt sinh tính theo tuần, cách đặt, có tiền đặt cọc không, có cần giấy giới thiệu không"
+     ],
+     [
+      "Chi phí",
+      "\"Sinh ở phòng khám X tốn bao nhiêu? Trợ cấp trọn gói chi trả được bao nhiêu?\"",
+      "Chi phí tham khảo kèm điều kiện (phòng riêng, ngoài giờ), có áp dụng thanh toán trực tiếp cho phòng khám không"
+     ],
+     [
+      "Gây tê ngoài màng cứng",
+      "\"Phòng khám sản có gây tê ngoài màng cứng\" \"Có sẵn 24 giờ không?\"",
+      "Có cung cấp không, theo kế hoạch hay theo yêu cầu, bác sĩ gây mê, số ca, chi phí thêm"
+     ],
+     [
+      "Về quê sinh con",
+      "\"Phòng khám có nhận sản phụ về quê sinh không? Khi nào nên chuyển?\"",
+      "Có nhận không, khi nào cần liên hệ, phải đến khám trước tuần thứ mấy"
+     ],
+     [
+      "Chỉ khám thai",
+      "\"Phòng khám sản phụ khoa chỉ khám thai, sinh ở bệnh viện khác\"",
+      "Có nhận người chỉ khám thai không, bệnh viện liên kết để sinh, có nhận phiếu khám của địa phương không"
+     ],
+     [
+      "Khám phụ khoa ngoại trú",
+      "\"Bác sĩ phụ khoa sàng lọc ung thư cổ tử cung vào thứ Bảy\" \"Có bác sĩ nữ không?\"",
+      "Giờ khám theo từng ngày, các loại sàng lọc và có cần đặt hẹn không, lịch làm việc của bác sĩ"
+     ]
+    ]
+   },
+   "after": [
+    "Trong mọi trường hợp, AI chỉ có thể dùng các trang nêu rõ điều kiện bằng văn bản. Một thông cáo báo chí về khảo sát riêng của một công ty trên 5.460 câu trả lời của ChatGPT cho các tìm kiếm phòng khám cho thấy với câu hỏi về giá, chính trang web của phòng khám được trích dẫn trong 96% câu trả lời (tháng 9 năm 2026). [Thông cáo báo chí (tiếng Nhật)](https://www.excite.co.jp/news/article/Atpress_633888/). Chi phí và điều kiện đặt sinh chính là loại thông tin AI thường lấy từ trang web của bạn."
+   ]
+  },
+  {
+   "heading": "Những gì các bài viết xếp hạng cao bỏ sót",
+   "paragraphs": [
+    "Chúng tôi đã đọc các kết quả hàng đầu cho các truy vấn như \"産婦人科 AI検索対策\", \"婦人科 LLMO\" và \"OB-GYN AI search optimization\": bảy bài tiếng Nhật và sáu bài tiếng Anh. Các bài tiếng Nhật hoặc là bài chung về tìm kiếm AI cho phòng khám (các điểm về quy định quảng cáo và thông tin phòng khám nhất quán rất thực tế), hoặc là bài tiếp thị sản phụ khoa không nhắc đến AI; phần sản khoa chỉ chiếm khoảng một dòng trong bảng. Các bài tiếng Anh phần lớn là tổng hợp công cụ hoặc quy trình sáu bước chung chung, và một số đưa ra con số không có nguồn như \"50 đánh giá là đủ\" hay \"Perplexity phản ánh thay đổi trong 30–60 ngày\".",
+    "Không bài nào đề cập năm điểm sau, cũng là trọng tâm của hướng dẫn này."
+   ],
+   "list": [
+    "Cách ghi hạn và phương thức đặt sinh để AI có thể dùng trong câu trả lời.",
+    "Cách ghi chi phí chính xác, cùng với trợ cấp sinh con trọn gói (500.000 JPY tại Nhật Bản) và hệ thống mới được quy định trong luật năm 2026.",
+    "Cách công bố thông tin gây tê ngoài màng cứng với cùng các mục như bảng tự kiểm tra của MHLW.",
+    "Cách giữ trang web nhất quán với danh bạ thai sản quốc gia và chế độ bồi thường sản khoa.",
+    "Các type schema.org cho sản phụ khoa (Obstetric, Gynecologic), các cài đặt WordPress cụ thể, và cách kiểm tra xem bạn có xuất hiện trong câu trả lời của AI không."
+   ]
+  },
+  {
+   "heading": "Đặt sinh: ghi hạn theo tuần và phương thức",
+   "paragraphs": [
+    "Hạn đặt sinh rất khác nhau. Ví dụ, phần hỏi đáp của Bệnh viện Aiiku ghi việc đặt sinh \"thường vào tuần 8–9\", còn Trung tâm Y tế Chữ thập đỏ Nhật Bản yêu cầu đặt \"trước tuần 20\". [Bệnh viện Aiiku (PDF, tiếng Nhật)](https://www.aiiku.net/clinic/files/sanka_question.pdf), [Trung tâm Y tế Chữ thập đỏ Nhật Bản (PDF, tiếng Nhật)](https://www.med.jrc.or.jp/Portals/0/resources/hospital/clinic/sanka/mternity_note/maternity_02_20250912.pdf). AI được hỏi trực tiếp \"cần đặt trước tuần thứ mấy?\", vì vậy hãy ghi số tuần, đừng chỉ ghi \"vui lòng đặt sớm\"."
+   ],
+   "table": {
+    "head": [
+     "Nội dung cần ghi",
+     "Ví dụ",
+     "Nên tránh"
+    ],
+    "rows": [
+     [
+      "Hạn đặt",
+      "\"Vui lòng đặt sinh trước tuần thai thứ 20\"",
+      "Chỉ ghi \"vui lòng đặt sớm\""
+     ],
+     [
+      "Cách đặt",
+      "\"Đặt sinh tại lần khám ngoại trú đầu tiên. Chúng tôi không nhận đặt sinh qua điện thoại hay trực tuyến\"",
+      "Không nêu cách đặt"
+     ],
+     [
+      "Tiền đặt cọc",
+      "Có hay không và được xử lý thế nào, ví dụ \"tiền đặt cọc X, được trừ vào phí sinh\"",
+      "Ghi số tiền mà không nói gì về hoàn trả hay khấu trừ"
+     ],
+     [
+      "Tình trạng nhận đặt",
+      "\"Đã ngừng nhận đặt cho ngày dự sinh trong tháng 5 năm 2027 (tính đến ngày 20 tháng 11 năm 2026)\"",
+      "Chỉ ghi \"chúng tôi rất đông\", không có ngày"
+     ],
+     [
+      "Về quê sinh con",
+      "Có nhận không, khi nào cần liên hệ, phải đến khám trước tuần thứ mấy",
+      "Chỉ ghi \"vui lòng hỏi chúng tôi\""
+     ]
+    ]
+   },
+   "after": [
+    "Tình trạng nhận đặt thay đổi theo từng tháng. Hãy đăng trong một thông báo có ghi ngày và viết lại khi có thay đổi. Nếu một thông báo đã hết hiệu lực vẫn còn trên mạng, AI có thể vẫn trả lời \"đã ngừng nhận đặt\" nhiều tháng sau."
+   ]
+  },
+  {
+   "heading": "Chi phí: trợ cấp trọn gói và hệ thống sắp thay đổi",
+   "paragraphs": [
+    "Tại Nhật Bản, với các ca sinh từ ngày 1 tháng 4 năm 2023, trợ cấp sinh con trọn gói là 500.000 JPY cho mỗi trẻ khi sinh từ tuần 22 trở đi tại cơ sở tham gia chế độ bồi thường sản khoa (488.000 JPY nếu dưới 22 tuần). Với hệ thống thanh toán trực tiếp, cơ sở nhận khoản này thẳng từ đơn vị bảo hiểm y tế, và người bệnh chỉ trả phần vượt quá. [Hiệp hội Bảo hiểm Y tế Nhật Bản (tiếng Nhật)](https://www.kyoukaikenpo.or.jp/benefit/childbirth/002).",
+    "Hệ thống này sắp thay đổi. Sửa đổi Luật Bảo hiểm Y tế ban hành ngày 5 tháng 6 năm 2026 quy định một đơn giá cơ sở toàn quốc cho việc sinh, do bảo hiểm y tế trả trực tiếp cho cơ sở (trợ cấp bằng hiện vật), cùng với một khoản trợ cấp tiền mặt cố định cho mọi thai phụ. Sửa đổi có hiệu lực vào ngày do nghị định chính phủ ấn định trong vòng hai năm kể từ khi ban hành, và trước mắt mỗi cơ sở có thể tiếp tục áp dụng hệ thống hiện hành. [Bản tóm tắt của MHLW (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/12400000/001713111.pdf), [Tài liệu ủy ban, ngày 1 tháng 10 năm 2026 (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/12401000/001754832.pdf). Tính đến ngày viết hướng dẫn này, ngày bắt đầu và các mức tiền vẫn chưa được ấn định.",
+    "Vì vậy, hãy viết trang chi phí kèm điều kiện và ngày tháng như dưới đây. Đừng viết những điều chưa được quyết định, như \"sinh con giờ đã miễn phí\"."
+   ],
+   "list": [
+    "Chi phí tham khảo và điều kiện đi kèm (sinh thường hay sinh mổ, phòng riêng hay phòng chung, ban ngày trong tuần hay ban đêm và ngày lễ, chi phí thêm cho gây tê ngoài màng cứng).",
+    "Bạn có áp dụng hệ thống thanh toán trực tiếp không.",
+    "Bạn có tham gia chế độ bồi thường sản khoa không (điều này ảnh hưởng đến mức trợ cấp trọn gói).",
+    "Một mốc ngày như \"số tiền tính đến tháng/năm\".",
+    "Nếu nhắc đến hệ thống mới, hãy ghi \"ngày bắt đầu chưa được ấn định; chúng tôi sẽ cập nhật trang này khi có\", và cập nhật khi có."
+   ]
+  },
+  {
+   "heading": "Gây tê ngoài màng cứng: công bố cùng các mục như bảng tự kiểm tra",
+   "paragraphs": [
+    "Bảng tự kiểm tra về gây tê ngoài màng cứng của MHLW (bản tháng 5 năm 2025) liệt kê các mục mà cơ sở cung cấp giảm đau chuyển dạ bằng gây tê ngoài màng cứng nên công bố trên trang web của mình và trên trang của hội đồng các hội giảm đau chuyển dạ Nhật Bản (JALA), cập nhật ít nhất mỗi năm một lần. [Bảng tự kiểm tra (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/10800000/001488916.pdf). Các mục này cũng chính là những thông tin cụ thể mà AI có thể dùng khi được hỏi \"gây tê ngoài màng cứng ở phòng khám này có an toàn không?\"."
+   ],
+   "list": [
+    "Hồ sơ lâm sàng (chẳng hạn số ca).",
+    "Tài liệu giải thích tiêu chuẩn và phương pháp tiêu chuẩn (theo kế hoạch hay sẵn sàng 24 giờ).",
+    "Cách tổ chức xử lý cấp cứu và hồ sơ các buổi diễn tập ứng phó khủng hoảng.",
+    "Hồ sơ đào tạo và khóa học của người phụ trách gây mê và các bác sĩ, cùng ngày hết hạn chứng chỉ khóa hồi sức của họ.",
+    "Việc tham gia chương trình báo cáo biến cố bất lợi và tử vong mẹ của Hiệp hội Sản phụ khoa Nhật Bản.",
+    "Ngày giờ trang web được cập nhật gần nhất."
+   ],
+   "after": [
+    "Hãy ghi những thông tin này thay vì những từ hứa hẹn hiệu quả hay sự an toàn, như \"không đau\" hay \"gây tê ngoài màng cứng an tâm tuyệt đối\". Giữ cho trang web của bạn và trang JALA nói cùng một nội dung."
+   ]
+  },
+  {
+   "heading": "Làm cho trang web khớp với danh bạ thai sản và chế độ bồi thường",
+   "paragraphs": [
+    "出産なび là trang web do MHLW ra mắt ngày 30 tháng 5 năm 2024, hiển thị dịch vụ và chi phí của các cơ sở đỡ sinh trên toàn quốc. Trang liệt kê các cơ sở áp dụng thanh toán trực tiếp và đỡ từ 21 ca sinh mỗi năm trở lên (cơ sở nhỏ hơn có thể tự đăng ký), và có 2.097 cơ sở tính đến ngày 20 tháng 2 năm 2026. Thông tin chi phí được cập nhật hằng quý từ dữ liệu thanh toán. [Tờ rơi 出産なび (PDF, tiếng Nhật)](https://birth-navi.mhlw.go.jp/assets/leaflet-CWn72mWw.pdf), [Tài liệu ủy ban (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/12401000/001754832.pdf). AI đọc cả các trang công và trang của bạn, nên nếu không khớp, một trong hai có thể bị coi là sai."
+   ],
+   "table": {
+    "head": [
+     "Nơi thông tin xuất hiện",
+     "Điều cần giữ giống trang web của bạn",
+     "Cách kiểm tra"
+    ],
+    "rows": [
+     [
+      "出産なび",
+      "Có gây tê ngoài màng cứng không, các dịch vụ như người thân đồng hành khi sinh và mẹ con nằm chung phòng, chi phí",
+      "Mở trang thông tin của bạn và so sánh từng mục với trang web. Rà soát chi phí mỗi quý"
+     ],
+     [
+      "Chế độ bồi thường sản khoa",
+      "Việc bạn đã tham gia (cơ sở tham gia hiển thị biểu tượng của chế độ)",
+      "Kiểm tra mục tìm kiếm cơ sở tham gia của Hội đồng Chất lượng Y tế Nhật Bản. [Chính phủ Nhật Bản (tiếng Nhật)](https://www.gov-online.go.jp/article/201306/entry-9179.html)"
+     ],
+     [
+      "Trang JALA",
+      "Các mục công khai về gây tê ngoài màng cứng",
+      "Mỗi lần bạn cập nhật trang này (ít nhất mỗi năm), hãy cập nhật trang web của bạn cho khớp"
+     ],
+     [
+      "Google Business Profile và danh bạ y tế chính thức",
+      "Tên, địa chỉ, điện thoại, giờ làm việc, chuyên khoa",
+      "Khi có thay đổi, sửa tất cả trong cùng một ngày"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Khám thai và phụ khoa: ai được gì, và khi nào",
+   "paragraphs": [
+    "Theo các khoảng cách trong một thông báo của MHLW, việc khám thai vào khoảng 14 lần, và tính đến ngày 1 tháng 4 năm 2022, mọi địa phương đều hỗ trợ từ 14 lần trở lên (phần lớn qua phiếu khám). [Thông báo của MHLW (tiếng Nhật)](https://www.mhlw.go.jp/web/t_doc?dataId=82ab4662&dataType=0&pageNo=1), [Khảo sát của MHLW (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/11908000/000552443.pdf). Mức hỗ trợ và quy định khác nhau theo địa phương, vì vậy hãy nêu bạn nhận phiếu khám của những địa phương nào, và đừng ghi số tiền."
+   ],
+   "list": [
+    "Bạn có nhận người chỉ khám thai không, và bạn hợp tác với bệnh viện nào để sinh (\"từ tuần X tại bệnh viện liên kết của chúng tôi\", v.v.).",
+    "Bạn nhận phiếu khám của những địa phương nào (và cách bạn xử lý phiếu của địa phương khác đối với sản phụ về quê sinh con).",
+    "Với phụ khoa, giờ khám theo từng ngày, các loại sàng lọc như sàng lọc ung thư cổ tử cung, và có cần đặt hẹn không.",
+    "Nếu ghi lịch làm việc của bác sĩ nữ, hãy nêu ngày và tên, và cập nhật ngay trong ngày có thay đổi.",
+    "Với dịch vụ tự chi trả (như kê đơn thuốc tránh thai), hãy ghi phí, các rủi ro và tác dụng phụ chính, và đầu mối liên hệ trên cùng một trang (quy định quảng cáo y tế)."
+   ]
+  },
+  {
+   "heading": "Khi lời khuyên AI phổ biến va chạm với quy định quảng cáo y tế",
+   "paragraphs": [
+    "Các hướng dẫn tìm kiếm AI thường khuyên \"thu thập thêm đánh giá\" và \"cho thấy kết quả\". Trên trang web y tế tại Nhật Bản, hãy tuân theo hướng dẫn quảng cáo y tế của MHLW và phần hỏi đáp của hướng dẫn đó. Câu chuyện sinh nở là nội dung hấp dẫn, nên cần đặc biệt cẩn trọng."
+   ],
+   "table": {
+    "head": [
+     "Lời khuyên phổ biến",
+     "Áp dụng cho phòng khám thế nào (hỏi đáp của MHLW)",
+     "Nên làm gì thay thế"
+    ],
+    "rows": [
+     [
+      "Đăng câu chuyện của các bà mẹ",
+      "Không được đăng lời chứng thực về nội dung hay hiệu quả điều trị (Q1-18, Q2-9)",
+      "Giải thích chi tiết các thông tin thực tế: thời gian nằm viện, số ngày, những gì cần mang theo, điều kiện chi phí"
+     ],
+     [
+      "\"Gây tê ngoài màng cứng không đau\", \"sinh nở an tâm tuyệt đối\"",
+      "Tuyên bố về hiệu quả điều trị bị hạn chế (Q2-8, Q3-14)",
+      "Công bố các mục công khai về gây tê ngoài màng cứng (hồ sơ, cách tổ chức, đào tạo) như những thông tin thực tế"
+     ],
+     [
+      "\"Phòng khám sản được chọn nhiều nhất trong khu vực\"",
+      "Tuyên bố sai sự thật, phóng đại hoặc so sánh được coi là ví dụ bị cấm",
+      "Chỉ nêu những gì có thể khẳng định là sự thật, như số ca sinh"
+     ],
+     [
+      "Mô tả chi tiết dịch vụ tự chi trả",
+      "Với dịch vụ tự chi trả, phải nêu nội dung và chi phí, các rủi ro và tác dụng phụ chính, và đầu mối liên hệ giải đáp thắc mắc (Q6-10 đến 6-12)",
+      "Ghi phí và các rủi ro chính trên cùng một trang, đáp ứng các điều kiện đó"
+     ]
+    ]
+   },
+   "after": [
+    "Nguồn: [Hỏi đáp về hướng dẫn quảng cáo y tế của MHLW (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/001683595.pdf), [Tập tình huống của MHLW (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/10800000/001232587.pdf). Hãy giới hạn phần FAQ ở các câu hỏi thực tế như \"Tôi nên đặt sinh trước tuần thứ mấy?\" và \"Phòng khám có áp dụng thanh toán trực tiếp không?\"."
+   ]
+  },
+  {
+   "heading": "Dữ liệu có cấu trúc: type Obstetric và Gynecologic",
+   "paragraphs": [
+    "schema.org có các type dành cho sản khoa và phụ khoa (kiểm tra trên schema.org V30.1 ngày 20 tháng 11 năm 2026)."
+   ],
+   "table": {
+    "head": [
+     "Type hoặc thuộc tính",
+     "Ý nghĩa",
+     "Phòng khám sản phụ khoa dùng thế nào"
+    ],
+    "rows": [
+     [
+      "[Obstetric](https://schema.org/Obstetric)",
+      "Chuyên ngành về thai kỳ và sinh nở. Là một MedicalBusiness và một LocalBusiness",
+      "Type cho phòng khám có đỡ sinh. Có thể trực tiếp mang địa chỉ, điện thoại và giờ mở cửa"
+     ],
+     [
+      "[Gynecologic](https://schema.org/Gynecologic)",
+      "Chuyên ngành về hệ sinh sản nữ và các bệnh liên quan. Là một MedicalBusiness",
+      "Type cho phòng khám phụ khoa hoặc phòng khám phụ nữ không đỡ sinh"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Chuyên khoa lâm sàng. Giá trị gồm Obstetric và Gynecologic",
+      "Nếu làm cả hai, chọn một làm type và thêm cái còn lại làm medicalSpecialty"
+     ],
+     [
+      "Service và offers",
+      "Dịch vụ bạn cung cấp và giá của nó",
+      "Chỉ đăng ký các mục có giá hiển thị trên trang, như sàng lọc tự chi trả hoặc tiền đặt cọc đặt sinh"
+     ]
+    ]
+   },
+   "after": [
+    "Google cho biết không cần dữ liệu có cấu trúc đặc biệt nào cho AI Overviews và các tính năng tương tự, và dữ liệu có cấu trúc phải khớp với nội dung hiển thị trên trang. [Google: Các tính năng AI và trang web của bạn](https://developers.google.com/search/docs/appearance/ai-features). Chi phí sinh phụ thuộc vào điều kiện, nên đừng nhập chúng thành một mức giá cố định duy nhất trong dữ liệu có cấu trúc."
+   ]
+  },
+  {
+   "heading": "Thiết lập trên trang web WordPress của phòng khám sản phụ khoa",
+   "list": [
+    "Cài đặt và kích hoạt Nurevo AIO (miễn phí, trước đây hiển thị là Nurevo AEO) từ [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Plugin hoạt động cùng Yoast SEO, Rank Math, All in One SEO và Slim SEO. Từ phiên bản 0.9.1, plugin cũng hoạt động với SEO SIMPLE PACK và VK All in One Expansion Unit mà không trùng lặp dữ liệu có cấu trúc.",
+    "Trong trình hướng dẫn thiết lập, chọn \"Phòng khám hoặc nha khoa\" (type sẽ là MedicalBusiness). Sau đó đổi trường \"Loại hình kinh doanh (type schema.org)\" trong phần cài đặt thành Obstetric (hoặc Gynecologic nếu bạn không đỡ sinh). Trường này chấp nhận bất kỳ tên type nào của schema.org.",
+    "Kiểm tra tên phòng khám, địa chỉ, điện thoại và phần mô tả. Chỉ các trường trống mới được điền từ cài đặt sẵn có; các giá trị bạn đã nhập sẽ không bị ghi đè.",
+    "Chỉ nhập giờ mở cửa là ngày và giờ khám ngoại trú, ví dụ \"Mon-Fri 9:00-12:00 14:00-17:00 / Sat 9:00-12:00\". Ghi việc đỡ sinh 24 giờ và đầu mối liên hệ ngoài giờ trong nội dung trang.",
+    "Chỉ đăng ký làm dịch vụ các mục có giá hiển thị trên trang, như sàng lọc tự chi trả hoặc tiền đặt cọc đặt sinh, từng mục một. Khi có tên, mô tả, giá và đơn vị tiền tệ, chúng được xuất ra thành dịch vụ có giá (Service và Offer). Giữ giá giống với trên trang.",
+    "Trong thanh bên của trình soạn thảo ở các trang đặt sinh, chi phí và gây tê ngoài màng cứng, thêm FAQ riêng cho từng trang (\"Tôi nên đặt trước tuần thứ mấy?\", \"Phòng khám có áp dụng thanh toán trực tiếp không?\", \"Gây tê ngoài màng cứng có sẵn 24 giờ không?\"). Đừng thêm lời chứng thực hay hứa hẹn kết quả. Với các thông báo đặt sinh đã hết hiệu lực, hãy đặt \"Loại trang này khỏi llms.txt\".",
+    "Chạy kiểm tra trên màn hình Điểm AEO và khắc phục các thiếu sót bằng tính năng sửa một lần nhấp. Xem trang web của bạn hiển thị thế nào từ bên ngoài bằng [kiểm tra khả năng đọc của AI miễn phí](/check)."
+   ]
+  },
+  {
+   "heading": "Thêm medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AIO không tự xuất medicalSpecialty. Để thêm, hãy dùng filter thay đổi dữ liệu có cấu trúc của doanh nghiệp (webmcp_canary_business_node) trong functions.php của theme hoặc trong một plugin nhỏ."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only specialties your pages describe (drop Obstetric if you do not deliver babies)\n    $org['medicalSpecialty'] = array('Obstetric', 'Gynecologic');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Danh sách kiểm tra trước khi đăng",
+   "list": [
+    "Hạn đặt sinh được ghi theo tuần, kèm phương thức đặt và cách xử lý tiền đặt cọc (nếu có).",
+    "Tình trạng nhận đặt (như các tháng đã ngừng nhận) có ghi ngày và được viết lại khi thay đổi.",
+    "Trang chi phí nêu điều kiện, ngày tháng, có áp dụng thanh toán trực tiếp không và có tham gia chế độ bồi thường không.",
+    "Không có nội dung nào về hệ thống mới được viết như đã quyết định khi chưa quyết định.",
+    "Nếu có gây tê ngoài màng cứng, các mục công khai theo bảng kiểm tra có trên trang web của bạn và khớp với trang JALA.",
+    "Thông tin của bạn trên 出産なび và trang web khớp nhau về dịch vụ và chi phí.",
+    "Đã nêu rõ việc nhận người chỉ khám thai, các phiếu khám được chấp nhận, và ngày giờ khám phụ khoa.",
+    "Không có lời chứng thực, hứa hẹn kết quả, từ ngữ so sánh nhất hay so sánh trong nội dung trang, FAQ hoặc dữ liệu có cấu trúc.",
+    "Type dữ liệu có cấu trúc là Obstetric hoặc Gynecologic và giá khớp với trang.",
+    "Tên, địa chỉ, điện thoại và giờ làm việc khớp nhau giữa dữ liệu có cấu trúc, Google Business Profile và danh bạ y tế chính thức, và llms.txt liệt kê các trang về sinh, chi phí, gây tê ngoài màng cứng và đường đi. [Cơ bản cho phòng khám](/guide/medical-clinic-ai-search), [llms.txt là gì](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Kiểm tra xem bạn có xuất hiện trong câu trả lời của AI không",
+   "paragraphs": [
+    "Khi các trang đã hoàn chỉnh, hãy viết năm đến mười câu hỏi mà thai phụ và gia đình có thể hỏi, kết hợp khu vực × sinh con × hạn đặt sinh, khu vực × gây tê ngoài màng cứng, khu vực × về quê sinh con và khu vực × phụ khoa × thứ Bảy × sàng lọc. Hỏi trong ChatGPT và Perplexity. Ghi lại xem phòng khám có xuất hiện theo tên hoặc URL không, và hạn đặt sinh, điều kiện chi phí và cách tổ chức gây tê ngoài màng cứng có được nêu đúng không. Câu trả lời của AI thay đổi mỗi lần, vì vậy hãy hỏi cùng các câu hỏi nhiều lần, cách quãng nhau. Sau khi thay đổi chi phí hay quy định, hãy kiểm tra thêm để chắc rằng số tiền cũ không còn trong câu trả lời. Xem [cách đo mức độ hiển thị trên AI](/guide/measure-ai-visibility).",
+    "Trong Nurevo AIO, ngay cả gói Free và Standard cũng hỏi Perplexity ba câu hỏi được tạo từ loại hình kinh doanh và khu vực của bạn (không kèm tên phòng khám) mỗi tháng một lần, và ghi lại xem tên hoặc trang web của bạn có xuất hiện không. Gói Pro (từ 99 USD mỗi tháng) bổ sung tính năng đo mức độ hiển thị trên AI (beta): tần suất phòng khám của bạn xuất hiện trong câu trả lời của AI, so sánh với đối thủ và theo thời gian (hiện đo trên Perplexity). Cả hai đều dựa trên mẫu câu trả lời, không phải mọi câu trả lời."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Phòng khám sản phụ khoa nên bắt đầu tối ưu cho tìm kiếm AI từ đâu?",
+   "a": "Ghi hạn đặt sinh theo tuần, cùng với cách đặt. Sau đó thêm điều kiện và ngày tháng vào trang chi phí, và công bố các mục công khai nếu bạn có gây tê ngoài màng cứng. Cuối cùng, làm cho tên, địa chỉ, điện thoại và giờ làm việc khớp nhau giữa dữ liệu có cấu trúc, Google Business Profile và danh bạ thai sản quốc gia."
+  },
+  {
+   "q": "Chúng tôi nên ghi chi phí sinh trên trang web thế nào?",
+   "a": "Đưa ra chi phí tham khảo kèm điều kiện (phương pháp sinh, phòng, thời điểm trong ngày) và mốc \"tính đến tháng/năm\". Đồng thời nêu bạn có áp dụng thanh toán trực tiếp không và có tham gia chế độ bồi thường sản khoa không. Với hệ thống mới trong luật năm 2026, hãy ghi rằng ngày bắt đầu chưa được ấn định, và cập nhật trang khi có."
+  },
+  {
+   "q": "Chúng tôi có thể ghi \"sinh con giờ đã miễn phí\" không?",
+   "a": "Tránh viết những điều chưa quyết định như thể đã quyết định. Sửa đổi ban hành ngày 5 tháng 6 năm 2026 quy định bảo hiểm y tế trả một mức giá cơ sở cho việc sinh trực tiếp cho cơ sở, nhưng có hiệu lực vào ngày do nghị định chính phủ ấn định trong vòng hai năm, và trước mắt các cơ sở có thể chọn tiếp tục áp dụng hệ thống hiện hành."
+  },
+  {
+   "q": "Chúng tôi nên công bố gì về gây tê ngoài màng cứng?",
+   "a": "Các mục công khai trong bảng tự kiểm tra của MHLW: hồ sơ lâm sàng, tài liệu giải thích và phương pháp tiêu chuẩn, cách tổ chức xử lý cấp cứu, quá trình đào tạo của bác sĩ gây mê, v.v. Giữ chúng giống với trang JALA và cập nhật ít nhất mỗi năm một lần. Đừng dùng những từ hứa hẹn hiệu quả, như \"không đau\"."
+  },
+  {
+   "q": "Chúng tôi nên dùng type dữ liệu có cấu trúc nào?",
+   "a": "Obstetric của schema.org nếu bạn đỡ sinh, hoặc Gynecologic cho phòng khám phụ khoa không đỡ sinh. Cả hai đều là MedicalBusiness và LocalBusiness. Nếu làm cả hai, hãy thêm cái còn lại làm medicalSpecialty."
+  },
+  {
+   "q": "Nurevo AIO có miễn phí không?",
+   "a": "Có. Loại hình kinh doanh, địa chỉ, giờ làm việc, dịch vụ có giá và dữ liệu có cấu trúc FAQ, llms.txt, cài đặt trình thu thập AI và Điểm AEO đều có trong gói miễn phí. Các gói trả phí bổ sung bộ quy tắc luôn được cập nhật (Standard, 20 USD mỗi tháng) và tính năng đo mức độ hiển thị trên AI (beta) (Pro, từ 99 USD mỗi tháng). [Nurevo AIO trên WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Phòng khám của tôi có được đảm bảo xuất hiện trên ChatGPT không?",
+   "a": "Không. Câu trả lời của AI thay đổi, và không công cụ hay phương pháp nào có thể đảm bảo việc xuất hiện hay thứ hạng. Điều bạn có thể làm là giúp AI đọc được thông tin về phòng khám của bạn và tiếp tục kiểm tra xem bạn có xuất hiện không."
+  }
+ ],
+ "relatedHeading": "Hướng dẫn liên quan",
+ "cta": {
+  "heading": "Trước tiên, hãy xem AI đọc trang web phòng khám sản phụ khoa của bạn như thế nào",
+  "body": "Bản kiểm tra miễn phí không cần đăng ký và cho thấy tình trạng dữ liệu có cấu trúc, llms.txt và quyền truy cập của trình thu thập AI. Trên WordPress, Nurevo AIO lấp đầy các chỗ thiếu miễn phí.",
+  "label": "Chạy kiểm tra khả năng đọc của AI miễn phí",
+  "href": "/check",
+  "secondary": {
+   "label": "Tải Nurevo AIO trên WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT là nhãn hiệu của OpenAI, Perplexity của Perplexity AI và Google của Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit và WordPress là nhãn hiệu của các chủ sở hữu tương ứng. Nurevo không liên kết với hay được các công ty này bảo trợ. Hướng dẫn này không phải là tư vấn pháp lý hay y tế."
+}
