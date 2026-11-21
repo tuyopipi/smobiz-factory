@@ -1,0 +1,347 @@
+{
+ "title": "Como fazer a IA ler certo sua página de reservas | Nurevo",
+ "description": "Ajude a IA a responder certo “preciso reservar?” e “tem taxa de cancelamento?”: o que a página de reservas precisa, reservas dentro da IA, schema e WordPress.",
+ "h1": "Como escrever uma página de reservas que a IA lê corretamente: formas de reservar, prazos, regras de cancelamento e como funcionam as reservas dentro da IA",
+ "lead": "Para que a IA responda corretamente às perguntas sobre reservas, escolha uma página de reservas no seu próprio site e escreva nela, como texto HTML e não dentro de uma imagem ou de um widget de reservas incorporado: como reservar (online, por telefone, por mensagem), se a reserva é obrigatória e o que acontece com quem chega sem reserva, com quanta antecedência mínima e máxima você aceita reservas, o prazo e a taxa de cancelamento, e a lista dos canais oficiais de reserva. Em novembro de 2026, as reservas dentro do ChatGPT ou da IA do Google funcionam principalmente para restaurantes, por meio de plataformas de reservas como o OpenTable. Sua própria página de reservas é onde a IA vai ler suas regras de reserva, esteja você ou não em uma dessas plataformas.",
+ "intro": [
+  "Escrito em 21 de novembro de 2026 (JST). Como escrever o horário de funcionamento está em [horário de funcionamento e feriados](/guide/business-hours-holidays-ai-search), e os preços em [como escrever uma página de preços](/guide/pricing-page-ai-search). Este guia trata da página de reservas que salões, clínicas, restaurantes, estúdios, hospedagens e serviços a domicílio têm em comum.",
+  "As respostas de IA mudam conforme o dia, a formulação e o serviço. Os passos aqui ajudam a criar uma página cujas regras de reserva a IA tem menos chance de interpretar mal, e mostram como verificar; não garantem que você vá aparecer em uma resposta nem que passe a aceitar reservas dentro de uma IA."
+ ],
+ "sections": [
+  {
+   "heading": "Resposta curta: cinco motivos pelos quais a IA erra nas reservas, e a solução para cada um",
+   "table": {
+    "head": [
+     "Causa",
+     "O que acontece nas respostas de IA",
+     "Solução"
+    ],
+    "rows": [
+     [
+      "As regras de reserva estão só dentro de um widget incorporado ou de uma imagem",
+      "A IA só consegue dizer “consulte o site oficial para saber como reservar”",
+      "Escreva a forma de reservar, os prazos e as regras de cancelamento como texto na página de reservas"
+     ],
+     [
+      "“Reserva recomendada” ou “com hora marcada” sem explicação",
+      "A IA erra ao dizer se quem chega sem reserva é atendido",
+      "Diga o que acontece sem reserva: “Atendemos sem reserva quando há vaga (pode haver espera)”"
+     ],
+     [
+      "Vários lugares para reservar, nenhum indicado como oficial",
+      "A IA envia as pessoas para um site de reservas antigo ou para um número desativado",
+      "Liste os canais que você usa e defina uma URL oficial de reserva por serviço"
+     ],
+     [
+      "Nenhum prazo ou taxa de cancelamento, ou regras diferentes em cada site",
+      "A IA diz que o cancelamento é gratuito, ou cita a regra de outro estabelecimento",
+      "Escreva o prazo, a taxa e como cancelar em um só lugar, e alinhe os sites de reserva a isso"
+     ],
+     [
+      "A página de reservas exige login ou conta para ser vista",
+      "A IA não consegue nem dizer se você aceita reservas",
+      "Mantenha uma página pública com as regras e coloque o formulário de reserva depois dela"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Como funcionam as reservas dentro da IA (novembro de 2026)",
+   "paragraphs": [
+    "Cada vez mais negócios perguntam como passar a aceitar reservas no ChatGPT. Por enquanto, as reservas dentro de uma IA funcionam por meio de integrações com plataformas de reservas. Não existe uma tag que você possa colocar no site para adicionar um botão de reserva. A tabela resume o que dizem os anúncios oficiais."
+   ],
+   "table": {
+    "head": [
+     "Serviço",
+     "O que faz",
+     "Quem abrange",
+     "Fonte"
+    ],
+    "rows": [
+     [
+      "ChatGPT (reservas em restaurantes)",
+      "Mostra os horários disponíveis na resposta e encaminha a reserva",
+      "OpenTable no mundo todo, Resy nos EUA, Yelp nos EUA e no Canadá. O botão Reserve só aparece quando o ChatGPT consegue associar o restaurante a uma ficha em um provedor compatível. O ChatGPT não salva a reserva; alterações e cancelamentos são feitos pelo provedor",
+      "[Ajuda da OpenAI](https://help.openai.com/en/articles/9237897-chatgpt-search) (consultada em 2026-11-21), [Resy (2026-08-10)](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "Modo IA da Busca Google (reservas agênticas)",
+      "Encontra disponibilidade de acordo com o pedido e leva à página de reserva",
+      "Começou em 2025-08-21 com restaurantes, para assinantes do Google AI Ultra nos EUA (Labs). Reservas em restaurantes no Reino Unido desde 2026-04-10. Entre os parceiros citados estão OpenTable, Resy, Tock e TheFork",
+      "[Google (2025-08-21)](https://blog.google/products/search/ai-mode-agentic-personalized/), [Google Reino Unido (2026-04-10)](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Perfil da Empresa no Google",
+      "Mostra links de reserva no seu perfil",
+      "Perfis verificados. Você pode adicionar seu próprio link ou aparecer por meio de um provedor de reservas do Reserve with Google",
+      "[Políticas de links da empresa](https://support.google.com/business/answer/13769188), [Reservas por meio de um provedor](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "As reservas do ChatGPT são montadas a partir de listas de restaurantes que as plataformas de reservas enviam à OpenAI. Cada registro deve trazer a URL do site do próprio restaurante e a URL da ficha dele na plataforma ([OpenAI: especificação de conversão de reservas em restaurantes](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec), escrita para plataformas de reservas).",
+    "Ou seja, o botão de reserva dentro de uma IA depende da sua plataforma de reservas. O que o negócio controla é manter corretas as fichas nas plataformas e escrever corretamente as regras de reserva no próprio site. Mesmo sem botão de reserva, uma IA que recebe a pergunta “preciso reservar?” ou “tem taxa de cancelamento?” vai responder com base no seu site e em sites de avaliações e guias. O restante deste guia trata de deixar essa resposta certa."
+   ]
+  },
+  {
+   "heading": "O que os principais artigos abordam, e o que deixam de fora",
+   "paragraphs": [
+    "Lemos os principais artigos em japonês e em inglês para buscas como “página de reservas busca por IA” (2026-11-21). A maioria trata da visibilidade local em IA de modo geral (dados do negócio consistentes, mais avaliações). Poucos explicam passo a passo como escrever a própria página de reservas, e quase nenhum traz um exemplo de dados estruturados ou passos no WordPress."
+   ],
+   "table": {
+    "head": [
+     "Artigo",
+     "Ponto forte",
+     "O que falta"
+    ],
+    "rows": [
+     [
+      "[Uravation, canais de telefone e reserva (atualizado em 2026-09-05, em japonês)](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "Não depender demais de ReserveAction, uma URL de reserva fixa, medição no GA4",
+      "Um exemplo de JSON-LD, passos no WordPress, como lidar com vários sites de reserva"
+     ],
+     [
+      "[Uravation, experiências e passeios (2026-10-12, em japonês)](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "Uma página por experiência; escrever condições como cancelamento por chuva e duração",
+      "Só passeios e atividades. Sem código, sem WordPress"
+     ],
+     [
+      "[GMO AIO local (atualizado em 2026-11-16, em japonês)](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/) e [AIsmiley (atualizado em 2026-10-30, em japonês)](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "Configuração do Perfil da Empresa no Google / o que as reservas em restaurantes do ChatGPT abrangem no Japão",
+      "Estatísticas sem fonte (GMO). Nada sobre a página de reservas do próprio negócio (AIsmiley)"
+     ],
+     [
+      "[LSEO reservas, preços e disponibilidade (2026-10-02)](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/) e [LSEO encanador (2026-04-24)](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "Uma frase honesta: não existe um schema universal de reservas, e a disponibilidade deve vir de sistemas em tempo real",
+      "Sem passo a passo, sem fontes, sem WordPress"
+     ],
+     [
+      "[J.A. Watte, hospedagem (atualizado em 2026-11-06)](https://jwatte.com/blog/lodging-sites-ai-agents-booking/), [Owner, restaurantes (2026-10-22)](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search) e [Mindbody (2026-10-13)](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "Links de reserva e preços com impostos (hospedagem), cardápios em texto (restaurantes), uma página de serviços (fitness)",
+      "Cada um limitado a um setor; muito focados nos próprios produtos"
+     ]
+    ]
+   },
+   "after": [
+    "Este guia aborda, para qualquer negócio que aceite reservas, o que escrever na página de reservas, como organizar vários canais de reserva, os dados estruturados, os passos no WordPress e como verificar o resultado."
+   ]
+  },
+  {
+   "heading": "Oito informações que toda página de reservas precisa ter",
+   "paragraphs": [
+    "As perguntas sobre reservas se dividem em cerca de oito tipos. Dedique a cada um um parágrafo de uma ou duas frases, ou uma linha de tabela, no texto da página de reservas."
+   ],
+   "table": {
+    "head": [
+     "Informação",
+     "Exemplo",
+     "A pergunta que a IA recebe"
+    ],
+    "rows": [
+     [
+      "Como reservar",
+      "Online 24 horas por dia, por telefone das 10h às 19h, por mensagem (respostas no horário de funcionamento)",
+      "“Como faço uma reserva em (negócio)?”"
+     ],
+     [
+      "Se a reserva é obrigatória",
+      "Com hora marcada. Atendemos sem reserva quando há vaga (pode haver espera)",
+      "“Posso ir sem reserva?”"
+     ],
+     [
+      "Prazo limite",
+      "Até as 20h do dia anterior. No mesmo dia, só por telefone",
+      "“Posso reservar para hoje?”"
+     ],
+     [
+      "Antecedência máxima",
+      "Até dois meses antes",
+      "“Já dá para reservar para o mês que vem?”"
+     ],
+     [
+      "Duração",
+      "Um corte de cabelo leva cerca de 60 minutos",
+      "“Quanto tempo demora?”"
+     ],
+     [
+      "Cancelamento",
+      "Gratuito até o dia anterior. Cancelamentos no mesmo dia são cobrados em 50%. Cancele por telefone",
+      "“Tem taxa de cancelamento?”"
+     ],
+     [
+      "Pagamento e sinal",
+      "Nenhum pagamento na reserva. Pague no dia em dinheiro, cartão ou pagamento por celular",
+      "“Preciso pagar antecipado?”"
+     ],
+     [
+      "Para quem é, o que levar",
+      "Primeira visita: chegue 10 minutos antes para preencher uma ficha. Crianças são bem-vindas",
+      "“Tudo bem se for minha primeira vez?” “Posso levar meus filhos?”"
+     ]
+    ]
+   },
+   "after": [
+    "Faça cada frase fazer sentido sozinha. A IA às vezes extrai uma única frase para responder, então evite expressões que dependem do contexto, como “veja acima” ou “clique aqui”. Fraco: “Reserve aqui. Avise com antecedência se precisar cancelar.” Forte: “A reserva online fica aberta 24 horas por dia, e a reserva por telefone das 10h às 19h. O cancelamento é gratuito até o dia anterior; cancelamentos no mesmo dia são cobrados em 50% do valor.”",
+    "Diga o que muda com e sem reserva. Se quem reservou tem prioridade, escreva “Quem chega sem reserva é atendido entre os horários marcados.” Se você atende estritamente com hora marcada, escreva “Não conseguimos atender sem reserva.” Isso reduz as respostas que dizem, por engano, “não precisa reservar”."
+   ]
+  },
+  {
+   "heading": "Vários sites de reserva: defina quais canais são oficiais",
+   "paragraphs": [
+    "Salões e restaurantes costumam aceitar reservas em vários lugares: sistema próprio, sites de reserva, telefone, mensagens. A IA repassa qualquer canal de reserva que encontrar, então um site de reservas que você deixou de usar ou um número de telefone antigo pode acabar na resposta. Organize nesta ordem."
+   ],
+   "list": [
+    "Liste todos os canais pelos quais você aceita reservas (sistema próprio, sites de reserva, o link de reserva do Perfil da Empresa no Google, telefone, mensagens, mensagens diretas nas redes sociais)",
+    "Remova as fichas nos canais que você não usa mais, ou marque-as como “não aceitamos mais reservas”",
+    "Na página de reservas, escreva “Aceitamos reservas pelos seguintes canais” e liste apenas os canais que você usa",
+    "Se cada serviço tiver sua própria URL de reserva, defina uma URL oficial por serviço (um link direto para a tela de reserva daquele serviço é melhor que um link para a página inicial)",
+    "Use as mesmas regras de cancelamento e prazos no seu site e em todos os sites de reserva. Onde forem diferentes, diga qual regra vale para qual canal",
+    "Coloque links dos perfis nos sites de reserva e da descrição do seu Perfil da Empresa no Google de volta para a sua própria página de reservas"
+   ],
+   "after": [
+    "Os links de reserva do Perfil da Empresa no Google têm regras: o perfil precisa ser verificado; o link precisa levar a uma página dedicada ao seu negócio onde a reserva possa ser concluída; redes sociais, aplicativos de mensagens, lojas de aplicativos e encurtadores de links não são permitidos; a página precisa abrir sem login nem CAPTCHA e retornar 200 ([Políticas de links da empresa](https://support.google.com/business/answer/13769188)). Você também pode aparecer por meio de um provedor de reservas que trabalhe com o Reserve with Google; o Google diz que os links personalizados que você mesmo adiciona não recebem dados de desempenho ([Reservas por meio de um provedor](https://support.google.com/business/answer/7475773))."
+   ]
+  },
+  {
+   "heading": "Não escreva a disponibilidade. Escreva como consultá-la",
+   "paragraphs": [
+    "Se você escrever “aos sábados costuma ser tranquilo” ou “nos dias úteis não precisa reservar”, uma IA pode continuar usando a frase depois que a situação mudar. Nenhum serviço de IA divulga com que frequência relê uma página. Trate a disponibilidade como algo que o seu sistema de reservas mostra e escreva, em vez disso, como consultá-la: “Veja os horários disponíveis na tela de reserva online. Para disponibilidade no mesmo dia, ligue para nós.”",
+    "Se mencionar horários de movimento, formule-os como um padrão estável: “As tardes de fim de semana ficam cheias, por isso recomendamos reservar.” Fazer parecer mais vazio do que é engana tanto as pessoas quanto a IA."
+   ]
+  },
+  {
+   "heading": "Torne a página legível: verifique incorporações, imagens e logins",
+   "paragraphs": [
+    "Muitos sistemas de reserva mostram a tela como um conteúdo incorporado de outro site (um iframe) ou via JavaScript. As pessoas conseguem ver, mas se a IA lê o texto dentro de uma incorporação como parte da sua página varia conforme o serviço e não é divulgado. Escreva as regras de reserva fora da incorporação, no próprio texto da página de reservas. O formulário de reserva em si pode continuar incorporado.",
+    "Este comando mostra se a sua página de reservas abre sem login e traz as regras no HTML."
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "A OpenAI diz que, para ser incluído na busca do ChatGPT, você deve permitir que o OAI-SearchBot rastreie o seu site e garantir que sua hospedagem ou CDN permita o tráfego dos endereços IP publicados pela OpenAI ([Ajuda da OpenAI](https://help.openai.com/en/articles/9237897-chatgpt-search)). Verifique se a proteção contra bots não está bloqueando justamente a página de reservas. Para negócios que querem que agentes de IA concluam reservas pelos clientes, a Stripe sugere revisar as proteções contra bots e considerar o WebMCP, mas esse é um passo adicional que inclui pagamentos ([Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services))."
+   ]
+  },
+  {
+   "heading": "Dados estruturados: pode adicionar ReserveAction, mas não espere muito",
+   "paragraphs": [
+    "O schema.org tem o [ReserveAction](https://schema.org/ReserveAction), a ação de fazer uma reserva, e você pode usá-lo para associar uma URL de reserva a um serviço. Mas não encontramos nenhuma declaração oficial do ChatGPT, do Perplexity ou dos recursos de IA do Google de que usam ReserveAction para reservas. O Google diz que os recursos de IA não precisam de dados estruturados especiais e que os dados estruturados devem corresponder ao texto visível ([recursos de IA e seu site](https://developers.google.com/search/docs/appearance/ai-features), consultado em 2026-11-18). Adicioná-lo faz pouco mal, mas não vai fazer aparecer um botão de reserva.",
+    "Se for adicioná-lo, aponte cada Service para a sua URL de reserva desta forma. É o mesmo formato que o Nurevo AIO publica."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "O segredo é não escrever um Reservation isolado. Um Reservation sozinho diz que já existe uma reserva, o que não é verdade. Como result de um ReserveAction, ele diz “esta ação gera uma reserva”. Verifique a sintaxe com o [Schema Markup Validator](https://validator.schema.org/)."
+   ]
+  },
+  {
+   "heading": "Passos no WordPress (com o Nurevo AIO)",
+   "paragraphs": [
+    "Com o [Nurevo AIO (gratuito, antes exibido como Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/), a URL de reserva informada para cada serviço em Serviços, nas Configurações, é publicada como ReserveAction nos dados estruturados Service e no llms.txt. Siga esta ordem."
+   ],
+   "list": [
+    "Corrija primeiro o texto da página de reservas, usando as oito informações acima (o texto da página vem antes dos dados estruturados)",
+    "Adicione seus serviços (até 20). Junto com Nome do serviço, Duração (minutos), Preço e Moeda, coloque a URL da tela de reserva daquele serviço em URL de reserva",
+    "Nos serviços com URL de reserva, o nome do serviço no llms.txt leva a ela (por exemplo: - [Haircut](https://example.com/book/haircut/) — 60 min · USD 55.00)",
+    "Nada é lido de plugins de reserva como o Amelia. Isso é proposital, para que uma duração ou URL de reserva errada nunca seja publicada como fato; informe os valores manualmente",
+    "Informe o ID da página de reservas ou de cardápio como a página que contém os serviços, e a marcação Service vai para essa página (0 = página inicial)",
+    "Acrescente taxas de cancelamento, reservas no mesmo dia e atendimento sem reserva às suas perguntas frequentes. Não há duplicação com Yoast SEO, Rank Math, All in One SEO ou Slim SEO, e funciona junto com SEO SIMPLE PACK e VK All in One Expansion Unit (a partir da versão 0.9.1)",
+    "Quando mudar de canal de reserva, atualize no mesmo dia o texto da página, as URLs de reserva no Nurevo, as respostas das perguntas frequentes e o seu Perfil da Empresa no Google"
+   ],
+   "after": [
+    "Agências que mantêm sites de clientes podem incluir “mudanças de canal de reserva” no escopo da manutenção, para que uma URL antiga não fique esquecida toda vez que um cliente trocar de site de reservas. Para agências que oferecem suporte mensal, há um [programa de parceiros](https://nurevo.jp/partner/)."
+   ]
+  },
+  {
+   "heading": "Como verificar: defina suas perguntas sobre reservas e mantenha um registro",
+   "paragraphs": [
+    "Para ver se as suas regras de reserva estão sendo transmitidas corretamente, faça as mesmas perguntas à mesma IA em dias diferentes e registre as respostas. Não tire conclusões a partir de uma única resposta."
+   ],
+   "table": {
+    "head": [
+     "Pergunta",
+     "O que observar"
+    ],
+    "rows": [
+     [
+      "“Preciso reservar em (negócio)?”",
+      "Acerta se é só com hora marcada ou se aceita clientes sem reserva?"
+     ],
+     [
+      "“Posso reservar (negócio) para hoje?”",
+      "O prazo limite e a forma (só por telefone etc.) estão certos?"
+     ],
+     [
+      "“Qual é a taxa de cancelamento de (negócio)?”",
+      "O prazo e a taxa estão certos? A fonte é um site de reservas antigo?"
+     ],
+     [
+      "“Como faço uma reserva em (negócio)?”",
+      "O canal indicado é um que você usa atualmente?"
+     ],
+     [
+      "“Qual (tipo de negócio) em (região) aceita reserva para hoje?”",
+      "Você aparece na lista para uma pergunta sem o nome da marca? Aparece um botão de reserva (restaurantes)?"
+     ]
+    ]
+   },
+   "after": [
+    "Registre a data, o serviço de IA, a pergunta, a resposta e a URL da fonte. Se a fonte for um site de reservas ou um post de blog antigo, corrija-o. Nos planos Free e Standard do Nurevo, uma vez por mês o serviço Nurevo faz ao Perplexity três perguntas sem o nome da marca, montadas a partir do seu tipo de negócio e da sua região, e mostra se o seu nome apareceu e se o seu site foi citado. O Pro (a partir de $99/mês, beta) mede até 20 perguntas no Perplexity (ChatGPT depois de configurado). Registre as perguntas sobre reservas manualmente. Veja mais em [como medir a visibilidade em IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checklist antes de publicar",
+   "list": [
+    "Existe uma única página de reservas, e ela abre sem login",
+    "A forma de reservar e quando as reservas são aceitas estão escritas como texto",
+    "Está indicado se a reserva é obrigatória e o que acontece sem ela",
+    "Estão indicados o prazo limite (mesmo dia, dia anterior) e com quanta antecedência é possível reservar",
+    "O prazo de cancelamento, a taxa e a forma de cancelar estão indicados e coincidem com os sites de reserva",
+    "Só os canais que você usa estão listados; os antigos foram removidos",
+    "A página diz como consultar a disponibilidade, em vez de informar a disponibilidade",
+    "As regras de reserva estão no texto da página, fora de incorporações e imagens",
+    "As URLs de reserva nos dados estruturados apontam para as telas de reserva que você usa atualmente",
+    "O link de reserva do seu Perfil da Empresa no Google aponta para o mesmo canal"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "O que coloco no meu site para ter um botão Reserve no ChatGPT?",
+   "a": "Nada no seu site ativa isso. A ajuda da OpenAI diz que o botão Reserve só aparece quando o ChatGPT consegue associar o restaurante a uma ficha em um provedor compatível (OpenTable, Resy, Yelp). O que você pode fazer é escrever corretamente as regras de reserva no seu site e manter precisas as suas fichas nas plataformas de reservas."
+  },
+  {
+   "q": "Adicionar ReserveAction vai trazer reservas pela IA?",
+   "a": "Não encontramos nenhuma declaração oficial de que isso aconteça. ReserveAction faz pouco mal, mas nenhum benefício para as reservas foi demonstrado. Corrija primeiro as regras de reserva no texto da página."
+  },
+  {
+   "q": "Nossa página de reservas é só um widget incorporado, sem texto.",
+   "a": "Se a IA lê o texto dentro de uma incorporação como parte da sua página varia conforme o serviço e não é divulgado. O formulário pode continuar incorporado; escreva as formas de reservar, os prazos e as regras de cancelamento como texto acima ou abaixo dele."
+  },
+  {
+   "q": "As regras de cancelamento do nosso site de reservas são diferentes das do nosso site.",
+   "a": "Não há como saber qual delas uma IA vai citar. Deixe-as iguais se puder; se não, diga qual regra vale para qual canal, por exemplo: “Reservas online podem ser canceladas gratuitamente até o dia anterior; reservas feitas por sites de reserva seguem as regras de cada site.”"
+  },
+  {
+   "q": "Escrever nossa disponibilidade no site ajudaria a aparecer na IA?",
+   "a": "A disponibilidade muda, então escrevê-la no texto da página traz o risco de informações antigas ficarem nas respostas de IA. Escreva como consultar a disponibilidade e deixe que o sistema de reservas mostre a disponibilidade em si."
+  },
+  {
+   "q": "Negócios que não são restaurantes vão passar a aceitar reservas dentro da IA?",
+   "a": "Em agosto de 2025, o Google disse que as reservas agênticas no Modo IA seriam ampliadas para agendamentos de serviços locais, começando pelos EUA. Acompanhe os anúncios do Google para o seu país. O que você pode fazer agora é manter precisos a sua página de reservas e o link de reserva do seu Perfil da Empresa no Google."
+  },
+  {
+   "q": "Depois que mudarmos a página de reservas, quando as respostas de IA vão mudar?",
+   "a": "Nenhum serviço de IA divulga quanto tempo isso leva. Verifique com as mesmas perguntas de alguns dias a algumas semanas depois. Se um canal de reserva antigo ainda aparecer, confira a URL da fonte e corrija essa página."
+  }
+ ],
+ "relatedHeading": "Guias relacionados",
+ "cta": {
+  "heading": "Veja se a IA consegue ler o seu site",
+  "body": "A verificação gratuita não exige cadastro: digite uma URL para ver o acesso dos crawlers de IA, os dados estruturados e o llms.txt. No WordPress, o plugin gratuito publica seus serviços e URLs de reserva como dados estruturados e no llms.txt, sem duplicar o que o seu plugin de SEO já gera.",
+  "label": "Verifique grátis se seu site está pronto para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Experimente o plugin gratuito para WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é marca registrada da OpenAI; Google, Google Search, Google Business Profile e Reserve with Google da Google LLC; Perplexity da Perplexity AI. OpenTable, Resy, Yelp, Tock, TheFork, Booksy, Stripe, WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, Amelia e os nomes das empresas citadas neste guia são marcas comerciais ou marcas registradas de seus respectivos proprietários. A Nurevo não é afiliada a nenhuma dessas empresas nem endossada por elas."
+}

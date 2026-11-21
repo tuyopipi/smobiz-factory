@@ -1,0 +1,347 @@
+{
+ "title": "Yapay zekânın doğru okuduğu rezervasyon sayfası | Nurevo",
+ "description": "Yapay zekâ \"rezervasyon gerekli mi?\" ve \"iptal ücreti var mı?\" sorularını doğru yanıtlasın: sayfada neler olmalı, yapay zekâ içinde rezervasyon, şema, WordPress adımları.",
+ "h1": "Yapay zekânın doğru okuduğu bir rezervasyon sayfası nasıl yazılır: rezervasyon yöntemleri, son saatler, iptal kuralları ve yapay zekâ içinde rezervasyonun işleyişi",
+ "lead": "Yapay zekânın rezervasyon sorularını doğru yanıtlaması için kendi sitenizde tek bir rezervasyon sayfası seçin ve görsel ya da gömülü rezervasyon aracı içinde değil, HTML metni olarak şunları yazın: nasıl rezervasyon yapılır (çevrim içi, telefon, mesaj), rezervasyon zorunlu mu ve rezervasyonsuz gelenlere ne olur, en geç ne zamana kadar ve en fazla ne kadar önceden rezervasyon alırsınız, iptal son tarihi ve ücreti ile resmî rezervasyon kanallarının listesi. Kasım 2026 itibarıyla ChatGPT veya Google'ın yapay zekâsı içinde rezervasyon esas olarak restoranlar için, OpenTable gibi rezervasyon platformları üzerinden çalışıyor. Bu platformlardan birinde olsanız da olmasanız da yapay zekâ, rezervasyon kurallarınızı okumak için kendi rezervasyon sayfanıza gider.",
+ "intro": [
+  "21 Kasım 2026'da (JST) yazılmıştır. Çalışma saatlerinin nasıl yazılacağı [çalışma saatleri ve tatiller](/guide/business-hours-holidays-ai-search) rehberinde, fiyatlar ise [fiyat sayfası nasıl yazılır](/guide/pricing-page-ai-search) rehberinde. Bu rehber kuaförlerin, kliniklerin, restoranların, stüdyoların, konaklama işletmelerinin ve yerinde hizmet verenlerin ortak noktası olan rezervasyon sayfasını ele alıyor.",
+  "Yapay zekâ yanıtları güne, soru biçimine ve hizmete göre değişir. Buradaki adımlar, rezervasyon kurallarının yapay zekâ tarafından yanlış okunma olasılığını azaltan bir sayfa oluşturur ve nasıl kontrol edileceğini gösterir; bir yanıtta yer alacağınızı veya bir yapay zekâ içinden rezervasyon yapılabilir hâle geleceğinizi garanti etmez."
+ ],
+ "sections": [
+  {
+   "heading": "Kısa yanıt: yapay zekânın rezervasyonu yanlış anlamasının beş nedeni ve her birinin çözümü",
+   "table": {
+    "head": [
+     "Neden",
+     "Yapay zekâ yanıtlarında ne olur",
+     "Çözüm"
+    ],
+    "rows": [
+     [
+      "Rezervasyon kuralları yalnızca gömülü bir aracın ya da bir görselin içinde",
+      "Yapay zekâ yalnızca \"rezervasyon yöntemi için resmî web sitesine bakın\" diyebilir",
+      "Rezervasyon yöntemini, son saatleri ve iptal kurallarını rezervasyon sayfasına metin olarak yazın"
+     ],
+     [
+      "\"Rezervasyon tercih edilir\" veya \"randevuyla\" ifadeleri açıklanmamış",
+      "Yapay zekâ rezervasyonsuz gelenlerin kabul edilip edilmediğini yanlış söyler",
+      "Rezervasyonsuz gelince ne olduğunu yazın: \"Yer varsa rezervasyonsuz gelebilirsiniz (beklemeniz gerekebilir)\""
+     ],
+     [
+      "Birden çok rezervasyon kanalı var, hiçbiri resmî olarak belirtilmemiş",
+      "Yapay zekâ insanları eski bir rezervasyon sitesine ya da kullanılmayan bir numaraya yönlendirir",
+      "Kullandığınız kanalları listeleyin ve her hizmet için tek bir resmî rezervasyon URL'si belirleyin"
+     ],
+     [
+      "İptal son tarihi veya ücreti yok ya da her sitede farklı kurallar var",
+      "Yapay zekâ iptalin ücretsiz olduğunu söyler ya da başka bir işletmenin kuralını aktarır",
+      "Son tarihi, ücreti ve iptal yöntemini tek bir yerde yazın, rezervasyon sitelerini buna uydurun"
+     ],
+     [
+      "Rezervasyon sayfasını görmek için giriş ya da hesap gerekiyor",
+      "Yapay zekâ rezervasyon alıp almadığınızı bile söyleyemez",
+      "Kuralları içeren herkese açık bir sayfa tutun, rezervasyon formunu onun arkasına koyun"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Yapay zekâ içinde rezervasyon nasıl işliyor (Kasım 2026)",
+   "paragraphs": [
+    "Giderek daha fazla işletme ChatGPT'de nasıl rezervasyon alınabilir hâle geleceğini soruyor. Şimdilik yapay zekâ içinde rezervasyon, rezervasyon platformlarıyla yapılan entegrasyonlar üzerinden çalışıyor. Sitenize koyup rezervasyon düğmesi ekleyen bir etiket yok. Tablo, resmî duyuruların ne dediğini listeliyor."
+   ],
+   "table": {
+    "head": [
+     "Hizmet",
+     "Ne yapar",
+     "Kimleri kapsar",
+     "Kaynak"
+    ],
+    "rows": [
+     [
+      "ChatGPT (restoran rezervasyonları)",
+      "Yanıtta uygun saatleri gösterir ve rezervasyonu ilerletir",
+      "Dünya genelinde OpenTable, ABD'de Resy, ABD ve Kanada'da Yelp. Reserve düğmesi yalnızca ChatGPT restoranı desteklenen bir sağlayıcıdaki kayıtla eşleştirebildiğinde görünür. ChatGPT rezervasyonu kaydetmez; değişiklik ve iptaller sağlayıcı üzerinden yapılır",
+      "[OpenAI Yardım](https://help.openai.com/en/articles/9237897-chatgpt-search) (2026-11-21'de kontrol edildi), [Resy (2026-08-10)](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "Google Arama AI Mode (ajan tabanlı rezervasyon)",
+      "İsteğe uyan müsaitliği bulur ve rezervasyon sayfasına bağlantı verir",
+      "2025-08-21'de restoranlarla, ABD'deki Google AI Ultra aboneleri için (Labs) başladı. Birleşik Krallık'ta 2026-04-10'dan itibaren restoran rezervasyonları. Adı geçen ortaklar arasında OpenTable, Resy, Tock ve TheFork var",
+      "[Google (2025-08-21)](https://blog.google/products/search/ai-mode-agentic-personalized/), [Google Birleşik Krallık (2026-04-10)](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Google İşletme Profili",
+      "Profilinizde rezervasyon bağlantıları gösterir",
+      "Doğrulanmış profiller. Kendi bağlantınızı ekleyebilir ya da bir Reserve with Google rezervasyon sağlayıcısı aracılığıyla görünebilirsiniz",
+      "[İşletme bağlantıları politikaları](https://support.google.com/business/answer/13769188), [Sağlayıcı üzerinden rezervasyonlar](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "ChatGPT'nin rezervasyonları, rezervasyon platformlarının OpenAI'a gönderdiği restoran listelerinden oluşturulur. Her kaydın restoranın kendi web sitesi URL'sini ve platformdaki kayıt URL'sini taşıması beklenir ([OpenAI: restoran rezervasyonu dönüşüm spesifikasyonu](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec), rezervasyon platformları için yazılmıştır).",
+    "Yani yapay zekâ içindeki rezervasyon düğmesi rezervasyon platformunuza bağlıdır. Bir işletmenin kontrolünde olan şey, platformlardaki kayıtlarını doğru tutmak ve rezervasyon kurallarını kendi sitesinde doğru yazmaktır. Rezervasyon düğmesi olmasa bile, \"rezervasyon gerekli mi?\" veya \"iptal ücreti var mı?\" diye sorulan bir yapay zekâ, sitenizden ve yorum ile kayıt sitelerinden yanıt verir. Bu rehberin geri kalanı o yanıtı doğru hâle getirmekle ilgili."
+   ]
+  },
+  {
+   "heading": "Üst sıradaki makaleler neleri ele alıyor, neleri atlıyor",
+   "paragraphs": [
+    "\"Rezervasyon sayfası yapay zekâ araması\" gibi sorgular için üst sıradaki Japonca ve İngilizce makaleleri okuduk (2026-11-21). Çoğu genel olarak yerel yapay zekâ görünürlüğünü (tutarlı işletme bilgileri, daha fazla yorum) ele alıyor. Rezervasyon sayfasının kendisini adım adım nasıl yazacağını anlatan az, yapılandırılmış veri örneği ya da WordPress adımları veren neredeyse hiç yok."
+   ],
+   "table": {
+    "head": [
+     "Makale",
+     "Güçlü yanı",
+     "Eksik olan"
+    ],
+    "rows": [
+     [
+      "[Uravation, telefon ve rezervasyon yolları (2026-09-05'te güncellendi, Japonca)](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "ReserveAction'a fazla güvenmemek, tek bir sabit rezervasyon URL'si, GA4 ile ölçüm",
+      "JSON-LD örneği, WordPress adımları, birden çok rezervasyon sitesinin yönetimi"
+     ],
+     [
+      "[Uravation, deneyimler ve turlar (2026-10-12, Japonca)](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "Her deneyim için bir sayfa; yağmur nedeniyle iptal ve süre gibi koşulları yazmak",
+      "Yalnızca turlar ve aktiviteler. Kod yok, WordPress yok"
+     ],
+     [
+      "[GMO yerel AIO (2026-11-16'da güncellendi, Japonca)](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/) ve [AIsmiley (2026-10-30'da güncellendi, Japonca)](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "Google İşletme Profili kurulumu / ChatGPT'nin restoran rezervasyonunun Japonya'da neleri kapsadığı",
+      "Kaynaksız istatistikler (GMO). İşletmenin kendi rezervasyon sayfasına dair hiçbir şey yok (AIsmiley)"
+     ],
+     [
+      "[LSEO rezervasyon, fiyat ve müsaitlik (2026-10-02)](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/) ve [LSEO tesisatçı (2026-04-24)](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "Dürüst bir tespit: evrensel bir rezervasyon şeması yok ve müsaitlik canlı sistemlerden gelmeli",
+      "Adım adım anlatım yok, kaynak yok, WordPress yok"
+     ],
+     [
+      "[J.A. Watte, konaklama (2026-11-06'da güncellendi)](https://jwatte.com/blog/lodging-sites-ai-agents-booking/), [Owner, restoranlar (2026-10-22)](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search) ve [Mindbody (2026-10-13)](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "Rezervasyon bağlantıları ve vergi dahil fiyatlar (konaklama), metin olarak menüler (restoranlar), hizmetler sayfası (fitness)",
+      "Her biri tek bir sektörle sınırlı; kendi ürünlerine ağırlık veriyorlar"
+     ]
+    ]
+   },
+   "after": [
+    "Bu rehber, rezervasyon alan her işletme için rezervasyon sayfasına ne yazılacağını, birden çok rezervasyon kanalının nasıl düzenleneceğini, yapılandırılmış veriyi, WordPress adımlarını ve sonucun nasıl kontrol edileceğini ele alıyor."
+   ]
+  },
+  {
+   "heading": "Her rezervasyon sayfasında olması gereken sekiz bilgi",
+   "paragraphs": [
+    "Rezervasyon soruları kabaca sekiz türe ayrılır. Her birine rezervasyon sayfasının metninde bir iki cümlelik bir paragraf ya da bir tablo satırı ayırın."
+   ],
+   "table": {
+    "head": [
+     "Bilgi",
+     "Örnek",
+     "Yapay zekâya gelen soru"
+    ],
+    "rows": [
+     [
+      "Nasıl rezervasyon yapılır",
+      "Çevrim içi günün 24 saati, telefonla 10.00–19.00 arası, mesajla (yanıtlar çalışma saatlerinde)",
+      "\"(İşletme)'de nasıl rezervasyon yaparım?\""
+     ],
+     [
+      "Rezervasyon zorunlu mu",
+      "Randevuyla. Yer varsa rezervasyonsuz gelebilirsiniz (beklemeniz gerekebilir)",
+      "\"Rezervasyonsuz gidebilir miyim?\""
+     ],
+     [
+      "Son saat",
+      "Bir gün önce saat 20.00'ye kadar. Aynı gün için yalnızca telefonla",
+      "\"Bugün için rezervasyon yapabilir miyim?\""
+     ],
+     [
+      "Ne kadar önceden",
+      "En fazla iki ay önceden",
+      "\"Gelecek ay için şimdiden rezervasyon yapabilir miyim?\""
+     ],
+     [
+      "Süre",
+      "Saç kesimi yaklaşık 60 dakika sürer",
+      "\"Ne kadar sürer?\""
+     ],
+     [
+      "İptal",
+      "Bir gün öncesine kadar ücretsiz. Aynı gün iptallerde %50 ücret alınır. İptal telefonla yapılır",
+      "\"İptal ücreti var mı?\""
+     ],
+     [
+      "Ödeme ve kapora",
+      "Rezervasyonda ödeme yok. Ödeme o gün nakit, kart veya mobil ödemeyle",
+      "\"Önceden ödeme yapmam gerekiyor mu?\""
+     ],
+     [
+      "Kimler için, yanında ne getirmeli",
+      "İlk ziyaret: form doldurmak için 10 dakika erken gelin. Çocuklar da gelebilir",
+      "\"İlk ziyaret için uygun mu?\" \"Çocuklarımı getirebilir miyim?\""
+     ]
+    ]
+   },
+   "after": [
+    "Her cümlenin tek başına anlam taşımasını sağlayın. Yapay zekâ bazen yanıt vermek için tek bir cümleyi alır; bu yüzden \"yukarıya bakın\" veya \"buraya tıklayın\" gibi çevresine dayanan ifadelerden kaçının. Zayıf: \"Buradan rezervasyon yapın. İptal etmeniz gerekirse lütfen erkenden haber verin.\" Güçlü: \"Çevrim içi rezervasyon günün 24 saati, telefonla rezervasyon 10.00–19.00 arası açıktır. İptal bir gün öncesine kadar ücretsizdir; aynı gün iptallerde fiyatın %50'si alınır.\"",
+    "Rezervasyonla ve rezervasyonsuz neyin değiştiğini söyleyin. Rezervasyonlu müşteriler öncelikliyse \"Rezervasyonsuz gelenlere randevular arasında hizmet verilir.\" yazın. Yalnızca randevuyla çalışıyorsanız \"Rezervasyonu olmayan müşterilere hizmet veremiyoruz.\" yazın. Bu, yanlışlıkla \"rezervasyon gerekmez\" diyen yanıtları azaltır."
+   ]
+  },
+  {
+   "heading": "Birden çok rezervasyon sitesi: hangi kanalların resmî olduğuna karar verin",
+   "paragraphs": [
+    "Kuaförler ve restoranlar genellikle birkaç yerden rezervasyon alır: kendi sistemleri, rezervasyon siteleri, telefon, mesajlaşma. Yapay zekâ bulduğu rezervasyon kanalını aktarır; bu yüzden ayrıldığınız bir rezervasyon sitesi ya da eski bir telefon numarası yanıta girebilir. Bunu şu sırayla düzenleyin."
+   ],
+   "list": [
+    "Rezervasyon aldığınız her kanalı listeleyin (kendi sisteminiz, rezervasyon siteleri, Google İşletme Profili rezervasyon bağlantısı, telefon, mesajlaşma, sosyal medya DM'leri)",
+    "Artık kullanmadığınız kanallardaki kayıtları kaldırın ya da \"artık rezervasyon alınmıyor\" olarak işaretleyin",
+    "Rezervasyon sayfasına \"Rezervasyonları şu yollarla alıyoruz\" yazın ve yalnızca kullandığınız kanalları listeleyin",
+    "Her hizmetin kendi rezervasyon URL'si varsa, hizmet başına tek bir resmî URL belirleyin (doğrudan o hizmetin rezervasyon ekranına giden bir bağlantı, ana sayfanıza giden bir bağlantıdan iyidir)",
+    "Sitenizde ve tüm rezervasyon sitelerinde aynı iptal kurallarını ve son saatleri kullanın. Farklı oldukları yerde hangi kuralın hangi kanal için geçerli olduğunu belirtin",
+    "Rezervasyon sitesi profillerinden ve Google İşletme Profili açıklamanızdan kendi rezervasyon sayfanıza bağlantı verin"
+   ],
+   "after": [
+    "Google İşletme Profili rezervasyon bağlantılarının kuralları var: profil doğrulanmış olmalı; bağlantı, rezervasyonun tamamlanabildiği ve işletmenize ayrılmış bir sayfaya gitmeli; sosyal medya, mesajlaşma uygulamaları, uygulama mağazaları ve bağlantı kısaltıcılara izin verilmiyor; sayfa giriş veya CAPTCHA olmadan açılmalı ve 200 döndürmeli ([İşletme bağlantıları politikaları](https://support.google.com/business/answer/13769188)). Reserve with Google ile çalışan bir rezervasyon sağlayıcısı aracılığıyla da görünebilirsiniz; Google, kendi eklediğiniz özel bağlantılar için performans verisi sunulmadığını söylüyor ([Sağlayıcı üzerinden rezervasyonlar](https://support.google.com/business/answer/7475773))."
+   ]
+  },
+  {
+   "heading": "Müsaitliği yazmayın, nasıl kontrol edileceğini yazın",
+   "paragraphs": [
+    "\"Cumartesileri genelde sakin olur\" ya da \"hafta içi rezervasyon gerekmez\" yazarsanız, durum değiştikten sonra da bir yapay zekâ o cümleyi kullanmaya devam edebilir. Hiçbir yapay zekâ hizmeti bir sayfayı ne sıklıkla yeniden okuduğunu açıklamıyor. Müsaitliği rezervasyon sisteminizin gösterdiği bir şey olarak ele alın ve onun yerine nasıl kontrol edileceğini yazın: \"Uygun saatleri çevrim içi rezervasyon ekranında görebilirsiniz. Aynı gün için müsaitliği öğrenmek için lütfen arayın.\"",
+    "Yoğun saatlerden söz edecekseniz, bunları değişmeyen bir düzen olarak ifade edin: \"Hafta sonu öğleden sonraları yoğun olur, bu yüzden rezervasyon yapmanızı öneririz.\" Olduğundan daha boş görünmesini sağlamak hem insanları hem yapay zekâyı yanıltır."
+   ]
+  },
+  {
+   "heading": "Okunabilir hâle getirin: gömülü öğeleri, görselleri ve girişleri kontrol edin",
+   "paragraphs": [
+    "Birçok rezervasyon sistemi ekranını başka bir siteden gömülü öğe (iframe) olarak ya da JavaScript ile gösterir. İnsanlar bunu görebilir, ancak yapay zekânın gömülü öğenin içindeki metni sayfanızın parçası olarak okuyup okumadığı hizmete göre değişir ve açıklanmamıştır. Rezervasyon kurallarını gömülü öğenin dışına, rezervasyon sayfasının kendi metnine yazın. Rezervasyon formunun kendisi gömülü kalabilir.",
+    "Bu komut, rezervasyon sayfanızın giriş yapmadan açılıp açılmadığını ve kuralları HTML'inde taşıyıp taşımadığını gösterir."
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "OpenAI, ChatGPT aramasına dahil olmak için OAI-SearchBot'un sitenizi taramasına izin vermeniz ve barındırma hizmetinizin veya CDN'inizin OpenAI'ın yayımladığı IP adreslerinden gelen trafiğe izin verdiğinden emin olmanız gerektiğini söylüyor ([OpenAI Yardım](https://help.openai.com/en/articles/9237897-chatgpt-search)). Bot korumasının özellikle rezervasyon sayfasını engellemediğini kontrol edin. Yapay zekâ ajanlarının müşteriler adına rezervasyonu tamamlamasını isteyen işletmeler için Stripe, bot korumalarını gözden geçirmeyi ve WebMCP'yi değerlendirmeyi öneriyor; ancak bu, ödemeleri de içeren bir sonraki adımdır ([Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services))."
+   ]
+  },
+  {
+   "heading": "Yapılandırılmış veri: ReserveAction eklenebilir, ama fazla bir şey beklemeyin",
+   "paragraphs": [
+    "schema.org'da rezervasyon yapma eylemi olan [ReserveAction](https://schema.org/ReserveAction) vardır ve bir rezervasyon URL'sini bir hizmete bağlamak için kullanılabilir. Ancak ChatGPT, Perplexity veya Google'ın yapay zekâ özelliklerinin rezervasyon için ReserveAction kullandığına dair resmî bir açıklama bulamadık. Google, yapay zekâ özelliklerinin özel bir yapılandırılmış veriye ihtiyaç duymadığını ve yapılandırılmış verinin görünür metinle eşleşmesi gerektiğini söylüyor ([Yapay zekâ özellikleri ve web siteniz](https://developers.google.com/search/docs/appearance/ai-features), 2026-11-18'de kontrol edildi). Eklemenin pek zararı yoktur, ama bir rezervasyon düğmesi ortaya çıkarmaz.",
+    "Eklerseniz, her Service'i bu şekilde kendi rezervasyon URL'sine yönlendirin. Bu, Nurevo AIO'nun yayımladığı yapının aynısıdır."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "Önemli olan, tek başına bir Reservation yazmamaktır. Yalın bir Reservation, zaten bir rezervasyonun var olduğunu söyler; bu doğru değildir. Bir ReserveAction'ın result'u olarak ise \"bu eylem bir rezervasyon oluşturur\" anlamına gelir. Sözdizimini [Schema Markup Validator](https://validator.schema.org/) ile kontrol edin."
+   ]
+  },
+  {
+   "heading": "WordPress adımları (Nurevo AIO ile)",
+   "paragraphs": [
+    "[Nurevo AIO (ücretsiz, eskiden Nurevo AEO olarak görünüyordu)](https://wordpress.org/plugins/nurevo-webmcp/) ile Ayarlar'daki Hizmetler bölümünde her hizmet için girilen rezervasyon URL'si, Service yapılandırılmış verisinde ReserveAction olarak ve llms.txt içinde yayımlanır. Şu sırayla çalışın."
+   ],
+   "list": [
+    "Önce yukarıdaki sekiz bilgiyi kullanarak rezervasyon sayfasının metnini düzeltin (yapılandırılmış veriden önce sayfa metni)",
+    "Hizmetlerinizi ekleyin (en fazla 20). Hizmet adı, Süre (dakika), Fiyat ve Para birimi alanlarının yanında, o hizmetin rezervasyon ekranı URL'sini Rezervasyon URL'si alanına girin",
+    "Rezervasyon URL'si olan hizmetlerde llms.txt'deki hizmet adı o URL'ye bağlanır (örneğin: - [Haircut](https://example.com/book/haircut/) — 60 min · USD 55.00)",
+    "Amelia gibi rezervasyon eklentilerinden hiçbir şey okunmaz. Bu bilinçli bir tercihtir; böylece yanlış bir süre veya rezervasyon URL'si asla gerçekmiş gibi yayımlanmaz. Değerleri elle girin",
+    "Hizmetleri içeren sayfa olarak rezervasyon veya menü sayfasının kimliğini girin; Service işaretlemesi o sayfaya eklenir (0 = ön sayfa)",
+    "İptal ücretlerini, aynı gün rezervasyonu ve rezervasyonsuz gelişi SSS bölümünüze ekleyin. Yoast SEO, Rank Math, All in One SEO veya Slim SEO ile çakışmaz; SEO SIMPLE PACK ve VK All in One Expansion Unit ile birlikte çalışır (0.9.1 sürümünden itibaren)",
+    "Rezervasyon kanallarını değiştirdiğinizde sayfa metnini, Nurevo'daki rezervasyon URL'lerini, SSS yanıtlarını ve Google İşletme Profilinizi aynı gün güncelleyin"
+   ],
+   "after": [
+    "Müşteri sitelerinin bakımını yapan ajanslar, \"rezervasyon kanalı değişikliklerini\" bakım kapsamına alabilir; böylece müşteri her rezervasyon sitesi değiştirdiğinde eski bir URL geride kalmaz. Aylık destek sunan ajanslar için bir [iş ortaklığı programı](https://nurevo.jp/partner/) var."
+   ]
+  },
+  {
+   "heading": "Nasıl kontrol edilir: rezervasyon sorularınızı sabitleyin ve kayıt tutun",
+   "paragraphs": [
+    "Rezervasyon kurallarınızın doğru aktarılıp aktarılmadığını görmek için aynı soruları aynı yapay zekâya farklı günlerde sorun ve yanıtları kaydedin. Tek bir yanıta bakarak karar vermeyin."
+   ],
+   "table": {
+    "head": [
+     "Soru",
+     "Neye bakılmalı"
+    ],
+    "rows": [
+     [
+      "\"(İşletme) için rezervasyon gerekli mi?\"",
+      "Yalnızca randevuyla mı, rezervasyonsuz da gelinebilir mi konusunda doğru mu?"
+     ],
+     [
+      "\"(İşletme) için bugüne rezervasyon yapabilir miyim?\"",
+      "Son saat ve yöntem (yalnızca telefon vb.) doğru mu?"
+     ],
+     [
+      "\"(İşletme)'nin iptal ücreti ne kadar?\"",
+      "Son tarih ve ücret doğru mu? Kaynak eski bir rezervasyon sitesi mi?"
+     ],
+     [
+      "\"(İşletme)'de nasıl rezervasyon yaparım?\"",
+      "Verdiği kanal şu anda kullandığınız bir kanal mı?"
+     ],
+     [
+      "\"(Bölge)'de bugün rezervasyon yapabileceğim hangi (işletme türü) var?\"",
+      "Marka adı geçmeyen bir soruda listede misiniz? Rezervasyon düğmesi çıkıyor mu (restoranlar)?"
+     ]
+    ]
+   },
+   "after": [
+    "Tarihi, yapay zekâ hizmetini, soruyu, yanıtı ve kaynak URL'yi kaydedin. Kaynak eski bir rezervasyon sitesi veya blog yazısıysa onu düzeltin. Nurevo'nun Free ve Standard planlarında Nurevo hizmeti ayda bir kez, işletme türünüzden ve bölgenizden oluşturulan, marka adı geçmeyen üç soruyu Perplexity'ye sorar ve adınızın geçip geçmediğini ve sitenizin kaynak gösterilip gösterilmediğini gösterir. Pro (aylık $99'dan başlayan fiyatlarla, beta), Perplexity'de en fazla 20 soruyu ölçer (yapılandırıldığında ChatGPT'de de). Rezervasyon sorularını elle kaydedin. Ayrıntılar için [yapay zekâ görünürlüğünü ölçme](/guide/measure-ai-visibility) rehberine bakın."
+   ]
+  },
+  {
+   "heading": "Yayımlamadan önce kontrol listesi",
+   "list": [
+    "Tek bir rezervasyon sayfası var ve giriş yapmadan açılıyor",
+    "Nasıl ve ne zaman rezervasyon alındığı metin olarak yazılmış",
+    "Rezervasyonun zorunlu olup olmadığı ve rezervasyonsuz gelince ne olduğu belirtilmiş",
+    "Son saat (aynı gün, bir gün önce) ve ne kadar önceden rezervasyon yapılabileceği belirtilmiş",
+    "İptal son tarihi, ücreti ve iptal yöntemi belirtilmiş ve rezervasyon siteleriyle eşleşiyor",
+    "Yalnızca kullandığınız kanallar listelenmiş; eskiler kaldırılmış",
+    "Sayfa müsaitliği söylemek yerine nasıl kontrol edileceğini anlatıyor",
+    "Rezervasyon kuralları gömülü öğelerin ve görsellerin dışında, sayfa metninde",
+    "Yapılandırılmış verideki rezervasyon URL'leri şu anda kullandığınız rezervasyon ekranlarını gösteriyor",
+    "Google İşletme Profilinizdeki rezervasyon bağlantısı aynı kanalı gösteriyor"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "ChatGPT'de Reserve düğmesi çıkması için siteme ne koymalıyım?",
+   "a": "Sitenize koyacağınız hiçbir şey bunu açmaz. OpenAI'ın yardım sayfasına göre Reserve düğmesi yalnızca ChatGPT restoranı desteklenen bir sağlayıcıdaki (OpenTable, Resy, Yelp) bir kayıtla eşleştirebildiğinde görünür. Yapabileceğiniz şey, rezervasyon kurallarınızı sitenizde doğru yazmak ve rezervasyon platformlarındaki kayıtlarınızı doğru tutmaktır."
+  },
+  {
+   "q": "ReserveAction eklemek yapay zekâdan rezervasyon getirir mi?",
+   "a": "Bunu yaptığına dair resmî bir açıklama bulamadık. ReserveAction'ın pek zararı yoktur, ama rezervasyonlara bir faydası gösterilmemiştir. Önce sayfa metninizdeki rezervasyon kurallarını düzeltin."
+  },
+  {
+   "q": "Rezervasyon sayfamız metinsiz, yalnızca gömülü bir araçtan ibaret.",
+   "a": "Yapay zekânın gömülü öğenin içindeki metni sayfanızın parçası olarak okuyup okumadığı hizmete göre değişir ve açıklanmamıştır. Form gömülü kalabilir; rezervasyon yöntemlerini, son saatleri ve iptal kurallarını onun üstüne veya altına metin olarak yazın."
+  },
+  {
+   "q": "Rezervasyon sitemizin iptal kuralları kendi sitemizdekinden farklı.",
+   "a": "Bir yapay zekânın hangisini aktaracağı bilinemez. Mümkünse aynı yapın; değilse hangi kuralın hangi kanal için geçerli olduğunu belirtin, örneğin \"Çevrim içi rezervasyonlar bir gün öncesine kadar ücretsiz iptal edilebilir; rezervasyon siteleri üzerinden yapılan rezervasyonlar her sitenin kendi kurallarına tabidir.\""
+  },
+  {
+   "q": "Müsaitliğimizi siteye yazmak yapay zekâda görünmemize yardımcı olur mu?",
+   "a": "Müsaitlik değişir; bu yüzden onu sayfa metnine yazmak eski bilgilerin yapay zekâ yanıtlarında kalması riskini taşır. Müsaitliğin nasıl kontrol edileceğini yazın, müsaitliğin kendisini rezervasyon sistemi göstersin."
+  },
+  {
+   "q": "Restoranlar dışındaki işletmeler de yapay zekâ içinde rezervasyon alabilir hâle gelecek mi?",
+   "a": "Ağustos 2025'te Google, AI Mode'daki ajan tabanlı rezervasyonun ABD'den başlayarak yerel hizmet randevularına genişleyeceğini söyledi. Ülkeniz için Google'ın duyurularını takip edin. Şu anda yapabileceğiniz şey, rezervasyon sayfanızı ve Google İşletme Profilinizdeki rezervasyon bağlantısını doğru tutmaktır."
+  },
+  {
+   "q": "Rezervasyon sayfasını değiştirdikten sonra yapay zekâ yanıtları ne zaman değişir?",
+   "a": "Hiçbir yapay zekâ hizmeti bunun ne kadar sürdüğünü açıklamıyor. Birkaç gün ile birkaç hafta sonra aynı sorularla kontrol edin. Eski bir rezervasyon kanalı hâlâ görünüyorsa kaynak URL'yi kontrol edin ve o sayfayı düzeltin."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Yapay zekânın sitenizi okuyup okuyamadığını görün",
+  "body": "Ücretsiz kontrol üyelik gerektirmez: yapay zekâ tarayıcılarının erişimini, yapılandırılmış veriyi ve llms.txt'yi görmek için bir URL girin. WordPress'te ücretsiz eklenti, hizmetlerinizi ve rezervasyon URL'lerinizi SEO eklentinizin çıktısını çoğaltmadan yapılandırılmış veri olarak ve llms.txt içinde yayımlar.",
+  "label": "Yapay zekâ hazırlığınızı ücretsiz kontrol edin",
+  "href": "/check",
+  "secondary": {
+   "label": "Ücretsiz WordPress eklentisini deneyin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT, OpenAI'ın; Google, Google Search, Google Business Profile ve Reserve with Google, Google LLC'nin; Perplexity ise Perplexity AI'ın ticari markasıdır. OpenTable, Resy, Yelp, Tock, TheFork, Booksy, Stripe, WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, Amelia ve bu rehberde adı geçen şirketlerin adları ilgili sahiplerinin ticari markaları veya tescilli ticari markalarıdır. Nurevo bu şirketlerin hiçbiriyle bağlantılı değildir ve bu şirketler tarafından onaylanmamıştır."
+}

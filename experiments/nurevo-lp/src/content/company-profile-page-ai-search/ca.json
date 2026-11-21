@@ -1,0 +1,316 @@
+{
+ "title": "Pàgina Qui som i cerca amb IA: dades d'empresa correctes | Nurevo",
+ "description": "Com crear una pàgina Qui som fiable per a les respostes d'IA: quines dades publicar, com eliminar variants de nom i adreça, esquema Organization i passos a WordPress.",
+ "h1": "Optimitzar la pàgina Qui som per a la cerca amb IA: que el nom, l'adreça, la data de fundació i l'activitat de l'empresa es descriguin correctament",
+ "lead": "Quan algú pregunta a una IA per la teva empresa pel nom, la pàgina en què es recolza la resposta és la pàgina Qui som o el perfil d'empresa. Posa en una sola pàgina, en text pla, la raó social i els noms que la gent fa servir de veritat, l'adreça, la data de fundació, la direcció, què fas i com contactar-te; publica els mateixos valors com a dades estructurades Organization; i fes que l'ortografia coincideixi a les altres pàgines i als teus perfils d'altres llocs. Aquests tres passos són el nucli de la feina.",
+ "intro": [
+  "Escrit el 15 de novembre de 2026 (JST). Aquesta guia és per a qualsevol empresa, botiga o organització que tingui una pàgina Qui som o un perfil d'empresa, i per a les agències que fan aquests llocs web. El marcatge d'adreça i horaris per a botigues es tracta a [esquema per a negocis locals i connectors SEO](/guide/local-business-schema-seo-plugins). Aquesta guia tracta de la pàgina que diu qui ets i on ets.",
+  "Les respostes de la IA canvien segons el dia i la formulació. Aquests passos fan que la informació que llegeix la IA sigui exacta; no garanteixen que apareguis en una resposta."
+ ],
+ "sections": [
+  {
+   "heading": "Per a què fa servir la IA la teva pàgina Qui som",
+   "paragraphs": [
+    "La cerca de ChatGPT, Perplexity i les AI Overviews de Google llegeixen pàgines web quan responen i les mostren com a fonts. Per a una pregunta que esmenta una empresa, el lloc web d'aquella empresa, i sobretot la pàgina que en recull les dades bàsiques, és un candidat evident. Si la pàgina Qui som és una sola imatge, o si el nom i l'adreça s'escriuen diferent d'una pàgina a l'altra, la IA pot construir la resposta a partir d'una fitxa antiga publicada per algú altre, o d'una altra empresa amb el mateix nom.",
+    "Les preguntes que esmenten una empresa solen seguir uns quants patrons. Cadascuna es pot respondre amb una pàgina Qui som que expliqui els fets en text."
+   ],
+   "list": [
+    "\"A què es dedica Example SL?\" (descripció de l'activitat)",
+    "\"On és la seu d'Example? Tenen oficina a Manchester?\" (ubicacions)",
+    "\"Quan es va fundar Example i qui la dirigeix?\" (data de fundació, direcció)",
+    "\"Quina empresa hi ha darrere de l'app Example?\" (marca i raó social)",
+    "\"Example és la mateixa empresa que Sample?\" (noms anteriors, empreses del grup, homònims)",
+    "\"Com contacto amb Example?\" (telèfon, formulari, horaris)"
+   ],
+   "after": [
+    "Google diu que per aparèixer a les AI Overviews o a l'AI Mode no hi ha requisits addicionals ni dades estructurades especials, i que s'apliquen les bones pràctiques habituals de SEO ([Google Search Central: funcions d'IA i el teu lloc web](https://developers.google.com/search/docs/appearance/ai-features)). La feina a la pàgina Qui som no és una manera especial d'escriure per a la IA. Es tracta d'explicar els fets amb exactitud, de forma llegible i amb els mateixos valors a tot arreu."
+   ]
+  },
+  {
+   "heading": "Què cal posar a la pàgina i com es correspon amb les dades estructurades",
+   "paragraphs": [
+    "La taula recull què hauria d'indicar una pàgina Qui som, els errors típics de les respostes d'IA i la propietat Organization corresponent. Els noms de propietat provenen de les propietats recomanades a la documentació de Google sobre [dades estructurades Organization](https://developers.google.com/search/docs/appearance/structured-data/organization). \"Només text\" marca els elements que no són entre les propietats recomanades per Google."
+   ],
+   "table": {
+    "head": [
+     "Element",
+     "Com escriure'l",
+     "Error típic de la IA",
+     "Dades estructurades"
+    ],
+    "rows": [
+     [
+      "Raó social",
+      "Indica-la un cop, exactament com està registrada",
+      "Confondre't amb una empresa de nom semblant",
+      "legalName (si és diferent de name)"
+     ],
+     [
+      "Nom comercial, marca, nom en altres idiomes",
+      "Relaciona'ls en una frase: \"Example App la gestiona Sample SL\"",
+      "Conèixer la marca però no l'empresa que hi ha darrere",
+      "alternateName"
+     ],
+     [
+      "Adreça",
+      "Separa la seu central de les altres seus; escriu cada adreça amb el mateix format, fins al pis",
+      "Donar l'adreça d'abans d'un trasllat, o una sucursal com a seu central",
+      "address (PostalAddress, una o més)"
+     ],
+     [
+      "Contacte",
+      "Telèfon principal, via per a consultes, horaris",
+      "El telèfon directe d'un departament o un número antic",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Fundació",
+      "Data completa; si la fundació i la constitució difereixen, indica totes dues",
+      "Confondre l'any de fundació amb el de constitució",
+      "foundingDate (ISO 8601, p. ex. 2015-04-01)"
+     ],
+     [
+      "Direcció",
+      "Càrrec i nom; actualitza-ho el mateix dia del canvi",
+      "Esmentar el conseller delegat anterior",
+      "Només text (no és una propietat recomanada per Google)"
+     ],
+     [
+      "Què fas",
+      "Primera frase: què, per a qui, on; després la llista d'activitats",
+      "Presentar una activitat secundària com la principal",
+      "description"
+     ],
+     [
+      "Plantilla, capital social",
+      "Afegeix \"dades a mes i any\"",
+      "Una xifra antiga sense data que es repeteix",
+      "numberOfEmployees (capital social: només text)"
+     ],
+     [
+      "Número de registre mercantil o NIF",
+      "Indica'l a la pàgina si en tens",
+      "Cap manera de distingir-te d'un homònim",
+      "Primer el text (vegeu més avall)"
+     ],
+     [
+      "Xarxes socials i perfils oficials",
+      "Indica només els comptes que controla l'empresa",
+      "Vincular-te a un homònim o a un compte fals",
+      "sameAs"
+     ],
+     [
+      "Logotip",
+      "La mateixa imatge que el logotip del lloc web",
+      "El logotip d'una altra empresa",
+      "logo (com a mínim 112×112 px)"
+     ],
+     [
+      "Darrera actualització",
+      "\"Actualitzat el ...\" al final de la pàgina",
+      "Cap manera de saber si és actual",
+      "Només text"
+     ]
+    ]
+   },
+   "after": [
+    "Sobre els números de registre i fiscals: Google descriu taxID com el número fiscal del país indicat a address, i vatID com el número d'IVA, quan n'hi ha. Si el teu número és un número fiscal o d'IVA del teu país, aquestes propietats encaixen. Si és un altre tipus d'identificador, com el número corporatiu japonès, Google no diu si va a taxID; per tant, indica'l a la pàgina i decideix tu si l'incloses al marcatge.",
+    "No inflis les xifres. Si arrodoneixes a l'alça la plantilla o el nombre de clients, la IA citarà la xifra més alta i és difícil fer-la enrere. Dona la xifra exacta i la data a què correspon."
+   ]
+  },
+  {
+   "heading": "Com escriure la pàgina: no només una taula, mai una imatge",
+   "paragraphs": [
+    "Moltes pàgines Qui som no són res més que una taula de dues columnes. Una taula és fàcil de llegir per a persones i màquines, però per si sola li falta una frase que digui què és l'empresa. Posa dues o tres frases d'introducció damunt la taula i la IA tindrà alguna cosa que pugui fer servir tal qual quan et descrigui."
+   ],
+   "list": [
+    "Primera frase: la raó social, la població i què fas. Per exemple: \"Sample SL, amb seu a Leeds, ajuda les petites empreses a configurar programari de comptabilitat.\"",
+    "Segona frase: fets que et distingeixen dels homònims, com la relació entre la marca i l'empresa i l'any de fundació.",
+    "Després la taula, com a taula HTML o llista amb etiquetes, mai com a imatge o PDF.",
+    "La història, amb una línia per any. En un canvi de nom, un trasllat o una fusió, escriu tant l'antic com el nou: \"El març de 20XX l'empresa va canviar el seu nom, que abans era Old Name SL.\"",
+    "Posa el missatge del fundador i la missió sota encapçalaments separats de les dades.",
+    "Acaba la pàgina amb la data de la darrera actualització."
+   ],
+   "after": [
+    "schema.org té un tipus [AboutPage](https://schema.org/AboutPage) per a la mateixa pàgina, i alguns connectors SEO permeten triar-lo com a tipus de pàgina. És opcional i es pot fer servir sense problema, sempre que no contradigui les altres dades estructurades."
+   ]
+  },
+  {
+   "heading": "Elimina les variants, al teu lloc web i fora",
+   "paragraphs": [
+    "La IA construeix una resposta a partir de diverses pàgines. Si el nom o l'adreça s'escriuen diferent d'una pàgina a l'altra, pot ser que no els tracti com una sola empresa, o que triï l'ortografia antiga. Comença decidint una única forma per a cadascuna de les variants habituals."
+   ],
+   "table": {
+    "head": [
+     "Variant",
+     "Què cal fixar"
+    ],
+    "rows": [
+     [
+      "Sample SL / Sample, S.L. / Sample",
+      "La forma registrada, feta servir a tot arreu on s'esmenti l'empresa"
+     ],
+     [
+      "Noms en altres idiomes o alfabets",
+      "Una forma per idioma, igual a les pàgines, perfils i targetes de visita en aquell idioma"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / amb nom de l'edifici i sense",
+      "Un sol ordre i una sola decisió sobre el nom de l'edifici i el pis"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Un format per idioma, p. ex. format nacional a les pàgines locals i format internacional a les pàgines en anglès per a lectors estrangers"
+     ],
+     [
+      "Pàgines que encara mostren un nom o una adreça antics",
+      "Registra el canvi a la història i després corregeix les pàgines antigues"
+     ]
+    ]
+   },
+   "after": [
+    "On revisar-ho al teu lloc web: Qui som, peu de pàgina, pàgina de contacte, política de privadesa, l'avís legal obligatori si n'hi ha, pàgines de feina, notes de premsa, caixes d'autor del blog i el fullet en PDF.",
+    "On revisar-ho fora: el teu Perfil d'empresa a Google, els perfils socials que controla l'empresa, els portals de feina, les associacions professionals i els directoris locals, i les descripcions que en fan els llocs web dels socis. Alguns no els pots editar. Primer deixa bé el teu lloc web i després demana a qui publica que corregeixi el seu. Quan una resposta d'IA ja és errònia, rastreja'n la font i corregeix cada tipus d'error allà on neix."
+   ]
+  },
+  {
+   "heading": "Ajuda la IA a distingir-te d'una empresa amb el mateix nom",
+   "paragraphs": [
+    "Si el teu nom és una paraula corrent, o una altra empresa d'un altre lloc es diu igual, la IA pot barrejar-les. El que et separa són els fets que només tens tu."
+   ],
+   "list": [
+    "Posa la població i què fas a la primera frase de la introducció.",
+    "Indica fets que un homònim no comparteix: any de fundació, número de registre, nom del conseller delegat.",
+    "A sameAs, indica només comptes i perfils oficials que controla l'empresa. Deixa fora els homònims i les pàgines que no gestiones.",
+    "Si la marca i la raó social són diferents, escriu \"Example la gestiona Sample SL\" a les pàgines de totes dues.",
+    "Google diu que propietats com iso6523Code i naics ajuden a distingir una organització. Si tens els codis corresponents, planteja't afegir-los."
+   ]
+  },
+  {
+   "heading": "Dades estructurades Organization: què diu la documentació de Google",
+   "paragraphs": [
+    "Els punts clau de la documentació de Google sobre [dades estructurades Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) (darrera actualització el 15 de setembre de 2026; llegida el 15 de novembre):"
+   ],
+   "list": [
+    "No hi ha propietats obligatòries; Google recomana afegir tantes propietats aplicables a la teva organització com puguis.",
+    "Posa el marcatge a la pàgina d'inici o en una pàgina que descrigui l'organització, com la pàgina Qui som. No cal que sigui a totes les pàgines.",
+    "Per a un negoci local com un restaurant o una botiga, fes servir el subtipus de LocalBusiness més específic i segueix també les indicacions de LocalBusiness.",
+    "foundingDate fa servir ISO 8601 (p. ex. 2015-04-01).",
+    "El logotip ha de fer com a mínim 112×112 píxels i ha de poder-se rastrejar i indexar."
+   ],
+   "after": [
+    "Google cita com un dels fonaments que les dades estructurades coincideixin amb el text visible ([funcions d'IA i el teu lloc web](https://developers.google.com/search/docs/appearance/ai-features)). Les dades estructurades no canvien les respostes per si soles. Tracta-les com la clau de respostes llegible per màquina del que la pàgina ja diu, i mantindràs bé les prioritats. No posis a les dades estructurades cap fet que el text de la pàgina no indiqui."
+   ]
+  },
+  {
+   "heading": "Passos a WordPress (amb Nurevo AEO)",
+   "paragraphs": [
+    "En un lloc WordPress, [Nurevo AEO (gratuït)](https://wordpress.org/plugins/nurevo-webmcp/) publica les dades bàsiques de la teva empresa com a dades estructurades i a llms.txt. Treballa en aquest ordre."
+   ],
+   "list": [
+    "Corregeix primer el text de la pàgina Qui som, seguint la taula anterior. El text va abans que les dades estructurades.",
+    "Instal·la el connector i tria el tipus de lloc a l'assistent de configuració: \"B2B / SaaS\" per a una Organization, la targeta corresponent per a una botiga o clínica, o \"Altres\" si cap no encaixa.",
+    "Revisa les dades del negoci (nom, descripció, adreça, telèfon, horaris, tipus de negoci, URL, correu electrònic). Els valors llegits de la configuració existent només omplen els camps buits; el que hagis escrit no se sobreescriu mai, i el correu de l'administrador de WordPress no es fa servir mai com a correu de l'empresa.",
+    "Fes que el nom i l'adreça coincideixin amb la pàgina Qui som. L'adreça es publica com una sola cadena dins d'un PostalAddress, així que escriu-la exactament com apareix a la pàgina Qui som.",
+    "El logotip és la imatge definida com a logotip del lloc al tema. Fes que tingui com a mínim 112×112 píxels.",
+    "Amb Yoast SEO, Rank Math, All in One SEO o Slim SEO, Nurevo només afegeix les dades que falten a les dades estructurades d'aquell connector, perquè l'empresa no es descrigui dues vegades. També funciona juntament amb SEO SIMPLE PACK i VK All in One Expansion Unit (des de la 0.9.1). Quan el teu connector SEO ja defineix el nom o el logotip, prevalen els seus valors, així que mantén-los tots dos alineats.",
+    "Per afegir la raó social (legalName), altres noms (alternateName), la data de fundació (foundingDate) o els comptes oficials (sameAs), fes servir el filtre per a desenvolupadors webmcp_canary_business_node. No són camps del formulari de dades del negoci de Nurevo.",
+    "Executa el diagnòstic a la pantalla Puntuació AEO, després obre /llms.txt i comprova que hi surt la pàgina Qui som. llms.txt mostra les 30 pàgines i entrades actualitzades més recentment; si la pàgina Qui som no hi és, afegeix-hi una línia amb el filtre webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "Les mateixes comprovacions valen per als llocs que no estan fets amb WordPress. Introdueix la teva URL a la [comprovació gratuïta](/check), sense registre, per veure l'estat de les dades estructurades, llms.txt i l'accés dels rastrejadors d'IA."
+   ]
+  },
+  {
+   "heading": "Com comprovar-ho: preguntes amb el teu nom i sense",
+   "paragraphs": [
+    "Comprova la feina de la pàgina Qui som amb preguntes que incloguin el nom de l'empresa. Fes la mateixa pregunta a la mateixa IA en dies diferents, diverses vegades, i anota les respostes. No en jutgis a partir d'una sola resposta."
+   ],
+   "table": {
+    "head": [
+     "Què cal anotar",
+     "Exemple"
+    ],
+    "rows": [
+     [
+      "Data, IA, pregunta",
+      "15 nov., Perplexity, \"Què és Sample SL? Quan es va fundar i a què es dedica?\""
+     ],
+     [
+      "Fets de la resposta",
+      "Adreça, data de fundació, direcció, activitat: correctes o no, un per un"
+     ],
+     [
+      "Fonts",
+      "S'ha citat la teva pàgina Qui som o un altre lloc?"
+     ],
+     [
+      "D'on ve un error",
+      "La pàgina citada encara mostra una adreça antiga?"
+     ]
+    ]
+   },
+   "after": [
+    "La comprovació d'IA gratuïta de Nurevo (un cop al mes, per als llocs connectats amb Free i Standard) fa preguntes construïdes a partir del teu tipus de negoci i zona, sense el teu nom. T'indica si et troba la gent que no coneix el teu nom; comprova a mà l'exactitud de les dades de l'empresa amb la taula anterior. La mesura de visibilitat de Pro (beta) cobreix actualment Perplexity. El mètode complet és a [com mesurar la visibilitat a la IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Llista de comprovació de la pàgina Qui som",
+   "list": [
+    "Dues o tres frases damunt la taula indiquen el nom, la ubicació i què fas.",
+    "La relació entre la raó social, la marca i el nom en altres idiomes, si n'hi ha, és escrita en una frase.",
+    "L'adreça i el telèfon s'escriuen igual a totes les pàgines del lloc.",
+    "La data de fundació, la direcció i la plantilla són correctes i estan datades.",
+    "Els canvis de nom i els trasllats surten a la història amb l'antic i el nou.",
+    "La pàgina Qui som no és només una imatge o un PDF.",
+    "Organization (o, per a una botiga, el subtipus de LocalBusiness més específic) és a la pàgina d'inici o a la pàgina Qui som, i els valors coincideixen amb el text.",
+    "sameAs només inclou comptes que controla l'empresa.",
+    "El teu Perfil d'empresa a Google i els altres perfils fan servir la mateixa ortografia.",
+    "La pàgina acaba amb la data de la darrera actualització.",
+    "Ho has comprovat amb preguntes que inclouen el teu nom, en dies diferents, i n'has anotat els resultats."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Necessito una pàgina Qui som a part de la pàgina d'inici?",
+   "a": "No, si la pàgina d'inici ja recull les dades bàsiques de l'empresa. Google recomana posar el marcatge Organization a la pàgina d'inici o en una pàgina que descrigui l'organització. Si la teva pàgina d'inici parla sobretot dels teus serveis, una pàgina Qui som separada manté les dades en un sol lloc."
+  },
+  {
+   "q": "És un problema una pàgina Qui som que només tingui una taula?",
+   "a": "No. Una taula és fàcil de llegir. Però li falta una frase que digui què és l'empresa, així que afegeix-hi dues o tres frases d'introducció a sobre."
+  },
+  {
+   "q": "Les dades estructurades Organization han de ser a totes les pàgines?",
+   "a": "Segons Google, no cal: n'hi ha prou amb la pàgina d'inici o una pàgina com Qui som. Si el teu connector SEO les imprimeix a totes les pàgines, no passa res, sempre que els valors siguin correctes."
+  },
+  {
+   "q": "El nostre número de registre mercantil ha d'anar a taxID?",
+   "a": "Google descriu taxID com el número fiscal del país de la teva adreça. Si el teu número és això, encaixa; si és un altre tipus d'identificador, Google no ho diu. Indica'l primer a la pàgina i després decideix si l'incloses al marcatge."
+  },
+  {
+   "q": "Com fem que qui pregunta pel nostre nom anterior trobi l'empresa actual?",
+   "a": "Escriu tots dos noms a la història (\"El març de 20XX l'empresa va canviar el seu nom, que abans era Old Name SL\") i esmenta-ho a la introducció. Si els perfils d'altres llocs encara mostren el nom antic, demana als qui els publiquen que els actualitzin."
+  },
+  {
+   "q": "Una resposta d'IA dona malament les dades de la nostra empresa. Què hem de fer?",
+   "a": "No pots editar directament la resposta de la IA. Rastreja les fonts: corregeix la pàgina Qui som i les altres pàgines del teu lloc, i demana als altres editors que corregeixin les seves. No hi ha un termini fix perquè les correccions es reflecteixin."
+  },
+  {
+   "q": "Si seguim aquests passos, la IA ens descriurà sempre correctament?",
+   "a": "No es pot garantir; les respostes de la IA canvien segons el dia i la formulació. Aquests passos fan que la informació que llegeix la IA sigui exacta i coherent, de manera que els errors siguin menys probables."
+  }
+ ],
+ "relatedHeading": "Guies relacionades",
+ "cta": {
+  "heading": "Mira com llegeix la IA les dades de la teva empresa",
+  "body": "La comprovació gratuïta no demana registre: introdueix la teva URL per veure l'estat de les dades estructurades, llms.txt i l'accés dels rastrejadors d'IA. A WordPress, el connector gratuït publica les dades bàsiques de la teva empresa com a dades estructurades.",
+  "label": "Fes la comprovació gratuïta de llegibilitat per a IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Prova el connector gratuït de WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT és una marca d'OpenAI, Perplexity de Perplexity AI i Google de Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit i WordPress són marques dels seus respectius propietaris. Nurevo no està afiliada ni avalada per cap d'aquestes empreses."
+}

@@ -1,0 +1,347 @@
+{
+ "title": "Foglalási oldal, amelyet az AI helyesen olvas | Nurevo",
+ "description": "Hogy az AI jól feleljen a „kell foglalnom?” és a „van lemondási díj?” kérdésre: mi kell a foglalási oldalra, hogyan működik a foglalás az AI-ban, séma, WordPress.",
+ "h1": "Hogyan írjon olyan foglalási oldalt, amelyet az AI helyesen olvas: foglalási módok, határidők, lemondási szabályok és az AI-ban történő foglalás működése",
+ "lead": "Ahhoz, hogy az AI helyesen válaszoljon a foglalással kapcsolatos kérdésekre, válasszon ki egyetlen foglalási oldalt a saját webhelyén, és írja le rajta HTML-szövegként – nem képben és nem beágyazott foglalási widgetben –, hogyan lehet foglalni (online, telefonon, üzenetben), kötelező-e a foglalás és mi a helyzet az előzetes foglalás nélkül érkezőkkel, legkésőbb mikor és legfeljebb mennyivel előre fogad foglalást, mi a lemondási határidő és díj, valamint hol lehet hivatalosan foglalni. 2026 novemberében a ChatGPT-n vagy a Google AI-ján belüli foglalás főként éttermeknél működik, olyan foglalási platformokon keresztül, mint az OpenTable. A saját foglalási oldala az a hely, ahol az AI a foglalási szabályait olvassa, akár jelen van ezeken a platformokon, akár nem.",
+ "intro": [
+  "Írva: 2026. november 21. (JST). A nyitvatartás leírásáról a [nyitvatartás és ünnepnapok](/guide/business-hours-holidays-ai-search), az árakról a [hogyan írjon árlistaoldalt](/guide/pricing-page-ai-search) című útmutató szól. Ez az útmutató a foglalási oldallal foglalkozik, amely közös a szalonokban, rendelőkben, éttermekben, stúdiókban, szálláshelyeken és a kiszállásos szolgáltatásoknál.",
+  "Az AI-válaszok naponta, a megfogalmazástól és a szolgáltatástól függően változnak. Az itt leírt lépésekkel olyan oldal készül, amelynek foglalási szabályait az AI kisebb eséllyel érti félre, és megmutatják, hogyan ellenőrizze; azt nem garantálják, hogy megjelenik egy válaszban, vagy hogy az AI-ban foglalhatóvá válik."
+ ],
+ "sections": [
+  {
+   "heading": "Röviden: öt ok, amiért az AI rosszul adja vissza a foglalási tudnivalókat, és mindegyik megoldása",
+   "table": {
+    "head": [
+     "Ok",
+     "Mi történik az AI-válaszokban",
+     "Megoldás"
+    ],
+    "rows": [
+     [
+      "A foglalási szabályok csak egy beágyazott widgetben vagy egy képen szerepelnek",
+      "Az AI csak annyit tud mondani: „a foglalás módjáról tájékozódjon a hivatalos webhelyen”",
+      "Írja le szövegként a foglalási oldalon a foglalás módját, a határidőket és a lemondási szabályokat"
+     ],
+     [
+      "Az „előzetes foglalás ajánlott” vagy a „csak előzetes bejelentkezéssel” nincs kifejtve",
+      "Az AI rosszul mondja meg, fogadnak-e bejelentkezés nélkül érkezőket",
+      "Írja le, mi történik foglalás nélkül: „Bejelentkezés nélkül is szívesen fogadjuk, ha van szabad hely (várakozásra számítson)”"
+     ],
+     [
+      "Több foglalási hely, egyik sincs hivatalosként megjelölve",
+      "Az AI egy régi foglalási oldalra vagy egy megszűnt telefonszámra küldi az embereket",
+      "Sorolja fel a használt helyeket, és szolgáltatásonként rögzítsen egy hivatalos foglalási URL-t"
+     ],
+     [
+      "Nincs lemondási határidő vagy díj, vagy minden oldalon más a szabály",
+      "Az AI azt mondja, hogy a lemondás ingyenes, vagy egy másik vállalkozás szabályát idézi",
+      "Írja le egy helyen a határidőt, a díjat és a lemondás módját, és igazítsa hozzá a foglalási oldalakat"
+     ],
+     [
+      "A foglalási oldal megtekintéséhez bejelentkezés vagy fiók szükséges",
+      "Az AI azt sem tudja megmondani, fogad-e foglalást",
+      "Tartson fenn egy nyilvános oldalt a szabályokkal, és a foglalási űrlapot tegye mögé"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Hogyan működik a foglalás az AI-ban (2026. november)",
+   "paragraphs": [
+    "Egyre több vállalkozás kérdezi, hogyan lehet foglalhatóvá válni a ChatGPT-ben. Egyelőre az AI-ban történő foglalás foglalási platformokkal való integrációkon keresztül működik. Nincs olyan címke, amelyet a webhelyére téve foglalási gomb jelenne meg. A táblázat összefoglalja, mit mondanak a hivatalos bejelentések."
+   ],
+   "table": {
+    "head": [
+     "Szolgáltatás",
+     "Mit csinál",
+     "Kikre terjed ki",
+     "Forrás"
+    ],
+    "rows": [
+     [
+      "ChatGPT (asztalfoglalás éttermekben)",
+      "Megjeleníti a szabad időpontokat a válaszban, és továbbviszi a foglalást",
+      "OpenTable világszerte, Resy az Egyesült Államokban, Yelp az Egyesült Államokban és Kanadában. A Reserve gomb csak akkor jelenik meg, ha a ChatGPT az éttermet egy támogatott szolgáltató adatlapjához tudja rendelni. A ChatGPT nem menti a foglalást; a módosítás és a lemondás a szolgáltatón keresztül történik",
+      "[OpenAI súgó](https://help.openai.com/en/articles/9237897-chatgpt-search) (ellenőrizve: 2026-11-21), [Resy (2026-08-10)](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "Google Search AI Mode (ágensalapú foglalás)",
+      "Megkeresi a kérésnek megfelelő szabad időpontokat, és a foglalási oldalra mutató linket ad",
+      "2025-08-21-én indult éttermekkel, a Google AI Ultra amerikai előfizetői számára (Labs). Éttermi foglalás az Egyesült Királyságban 2026-04-10-től. A megnevezett partnerek között van az OpenTable, a Resy, a Tock és a TheFork",
+      "[Google (2025-08-21)](https://blog.google/products/search/ai-mode-agentic-personalized/), [Google Egyesült Királyság (2026-04-10)](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Google Business Profile",
+      "Foglalási linkeket jelenít meg a profilon",
+      "Ellenőrzött profilok. Hozzáadhatja a saját linkjét, vagy egy Reserve with Google foglalási szolgáltatón keresztül is megjelenhet",
+      "[Irányelvek a vállalkozási linkekhez](https://support.google.com/business/answer/13769188), [Foglalás szolgáltatón keresztül](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "A ChatGPT foglalásai azokból az étteremlistákból épülnek fel, amelyeket a foglalási platformok küldenek az OpenAI-nak. Minden rekordnak tartalmaznia kell az étterem saját webhelyének URL-jét és a platformon lévő adatlapjának URL-jét ([OpenAI: éttermi foglalási konverziós specifikáció](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec), foglalási platformok számára írva).",
+    "Az AI-ban történő foglalási gomb tehát a foglalási platformján múlik. Amit egy vállalkozás befolyásolni tud, az a platformokon lévő adatlapok pontossága és a foglalási szabályok helyes leírása a saját webhelyén. Foglalási gomb nélkül is, ha az AI-t megkérdezik, hogy „kell foglalnom?” vagy „van lemondási díj?”, a webhelye, valamint a véleményező és adatlapos oldalak alapján fog válaszolni. Az útmutató további része arról szól, hogyan legyen ez a válasz helyes."
+   ]
+  },
+  {
+   "heading": "Mit tárgyalnak a vezető cikkek, és mi hiányzik belőlük",
+   "paragraphs": [
+    "Elolvastuk a vezető japán és angol cikkeket olyan keresésekre, mint a „foglalási oldal AI-keresés” (2026-11-21). A legtöbb általánosságban foglalkozik a helyi AI-láthatósággal (egységes vállalkozási adatok, több vélemény). Kevés magyarázza el lépésről lépésre, hogyan kell megírni magát a foglalási oldalt, és szinte egyik sem ad strukturált adatos példát vagy WordPress-lépéseket."
+   ],
+   "table": {
+    "head": [
+     "Cikk",
+     "Erőssége",
+     "Hiányzik"
+    ],
+    "rows": [
+     [
+      "[Uravation, telefonos és foglalási útvonalak (frissítve 2026-09-05, japán nyelven)](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "Nem támaszkodik túlzottan a ReserveActionre, egyetlen rögzített foglalási URL, mérés GA4-ben",
+      "JSON-LD-példa, WordPress-lépések, több foglalási oldal kezelése"
+     ],
+     [
+      "[Uravation, élmények és túrák (2026-10-12, japán nyelven)](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "Élményenként egy oldal; olyan feltételek leírása, mint az eső miatti elmaradás és az időtartam",
+      "Csak túrák és programok. Nincs kód, nincs WordPress"
+     ],
+     [
+      "[GMO helyi AIO (frissítve 2026-11-16, japán nyelven)](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/) és [AIsmiley (frissítve 2026-10-30, japán nyelven)](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "A Google Business Profile beállítása / mire terjed ki Japánban a ChatGPT éttermi foglalása",
+      "Forrás nélküli statisztikák (GMO). Semmi a vállalkozás saját foglalási oldaláról (AIsmiley)"
+     ],
+     [
+      "[LSEO, foglalás, árak és elérhetőség (2026-10-02)](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/) és [LSEO, vízszerelők (2026-04-24)](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "Őszinte megállapítás: nincs univerzális foglalási séma, és az elérhetőségnek élő rendszerekből kell jönnie",
+      "Nincs lépésről lépésre leírás, nincsenek források, nincs WordPress"
+     ],
+     [
+      "[J.A. Watte, szálláshelyek (frissítve 2026-11-06)](https://jwatte.com/blog/lodging-sites-ai-agents-booking/), [Owner, éttermek (2026-10-22)](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search) és [Mindbody (2026-10-13)](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "Foglalási linkek és adót tartalmazó árak (szálláshelyek), étlapok szövegként (éttermek), szolgáltatási oldal (fitnesz)",
+      "Mindegyik egyetlen ágazatra korlátozódik; erősen a saját termékeikre összpontosítanak"
+     ]
+    ]
+   },
+   "after": [
+    "Ez az útmutató minden foglalást fogadó vállalkozás számára bemutatja, mit írjon a foglalási oldalra, hogyan tegyen rendet több foglalási csatorna között, a strukturált adatokat, a WordPress-lépéseket és az eredmény ellenőrzését."
+   ]
+  },
+  {
+   "heading": "Nyolc tény, amelyre minden foglalási oldalnak szüksége van",
+   "paragraphs": [
+    "A foglalási kérdések nagyjából nyolc csoportba sorolhatók. Mindegyiknek szánjon egy-két mondatos bekezdést vagy egy táblázatsort a foglalási oldal szövegében."
+   ],
+   "table": {
+    "head": [
+     "Tény",
+     "Példa",
+     "Az AI-nak feltett kérdés"
+    ],
+    "rows": [
+     [
+      "A foglalás módja",
+      "Online a nap 24 órájában, telefonon 10 és 19 óra között, üzenetben (nyitvatartási időben válaszolunk)",
+      "„Hogyan foglalhatok a(z) (vállalkozás)-nál?”"
+     ],
+     [
+      "Kötelező-e a foglalás",
+      "Csak előzetes bejelentkezéssel. Bejelentkezés nélkül is szívesen fogadjuk, ha van szabad hely (várakozásra számítson)",
+      "„Bemehetek bejelentkezés nélkül?”"
+     ],
+     [
+      "Határidő",
+      "Előző nap 20 óráig. Aznapra csak telefonon",
+      "„Foglalhatok mára?”"
+     ],
+     [
+      "Mennyivel előre",
+      "Legfeljebb két hónappal előre",
+      "„Foglalhatok már a jövő hónapra?”"
+     ],
+     [
+      "Időtartam",
+      "Egy hajvágás körülbelül 60 percig tart",
+      "„Mennyi ideig tart?”"
+     ],
+     [
+      "Lemondás",
+      "Előző napig ingyenes. Az aznapi lemondásért 50%-ot számítunk fel. Lemondás telefonon",
+      "„Van lemondási díj?”"
+     ],
+     [
+      "Fizetés és előleg",
+      "Foglaláskor nincs fizetés. Fizetés a helyszínen készpénzzel, kártyával vagy mobilfizetéssel",
+      "„Előre kell fizetnem?”"
+     ],
+     [
+      "Kinek szól, mit hozzon",
+      "Első alkalommal: érkezzen 10 perccel korábban egy űrlap kitöltéséhez. Gyerekeket is szívesen látunk",
+      "„Első alkalommal is mehetek?” „Vihetem a gyerekeimet?”"
+     ]
+    ]
+   },
+   "after": [
+    "Minden mondat önmagában is legyen érthető. Az AI néha egyetlen mondatot emel ki válaszként, ezért kerülje az olyan, a környezetre támaszkodó kifejezéseket, mint a „lásd fent” vagy a „kattintson ide”. Gyenge: „Foglaljon itt. Ha le kell mondania, kérjük, jelezze időben.” Erős: „Online a nap 24 órájában, telefonon 10 és 19 óra között lehet foglalni. A lemondás előző napig ingyenes; aznapi lemondás esetén az ár 50%-át számítjuk fel.”",
+    "Írja le, mi a különbség foglalással és foglalás nélkül. Ha a foglalással érkezők elsőbbséget élveznek, írja: „Bejelentkezés nélkül érkezőket a foglalt időpontok között fogadunk.” Ha szigorúan csak előzetes bejelentkezéssel dolgozik, írja: „Foglalás nélkül nem tudunk ügyfelet fogadni.” Így ritkábbak lesznek azok a válaszok, amelyek tévesen azt állítják, hogy „nem kell foglalni”."
+   ]
+  },
+  {
+   "heading": "Több foglalási oldal: döntse el, melyik csatorna hivatalos",
+   "paragraphs": [
+    "A szalonok és éttermek gyakran több helyen fogadnak foglalást: saját rendszerben, foglalási oldalakon, telefonon, üzenetben. Az AI bármelyik foglalási csatornát továbbadja, amelyet talál, így egy már elhagyott foglalási oldal vagy egy régi telefonszám is bekerülhet a válaszba. Ebben a sorrendben tegyen rendet."
+   ],
+   "list": [
+    "Sorolja fel az összes csatornát, amelyen foglalást fogad (saját rendszer, foglalási oldalak, a Google Business Profile foglalási linkje, telefon, üzenetek, közösségi médiás privát üzenetek)",
+    "Törölje az adatlapokat azokon a csatornákon, amelyeket már nem használ, vagy jelölje meg őket azzal, hogy „foglalást már nem fogadunk”",
+    "A foglalási oldalon írja le: „Az alábbi módokon fogadunk foglalást”, és csak a használt csatornákat sorolja fel",
+    "Ha minden szolgáltatásnak saját foglalási URL-je van, szolgáltatásonként rögzítsen egy hivatalos URL-t (az adott szolgáltatás foglalási képernyőjére mutató közvetlen link jobb, mint a kezdőlapra mutató)",
+    "A webhelyén és minden foglalási oldalon ugyanazok legyenek a lemondási szabályok és határidők. Ahol eltérnek, írja le, melyik szabály melyik csatornára vonatkozik",
+    "A foglalási oldalakon lévő profilokból és a Google Business Profile leírásából linkeljen vissza a saját foglalási oldalára"
+   ],
+   "after": [
+    "A Google Business Profile foglalási linkjeire szabályok vonatkoznak: a profilnak ellenőrzöttnek kell lennie; a linknek a vállalkozásnak szentelt oldalra kell vezetnie, ahol a foglalás befejezhető; közösségi média, üzenetküldő alkalmazások, alkalmazásboltok és linkrövidítők nem engedélyezettek; az oldalnak bejelentkezés és CAPTCHA nélkül kell megnyílnia, és 200-as kódot kell visszaadnia ([Irányelvek a vállalkozási linkekhez](https://support.google.com/business/answer/13769188)). Olyan foglalási szolgáltatón keresztül is megjelenhet, amely együttműködik a Reserve with Google-lel; a Google szerint a saját maga által hozzáadott egyéni linkekhez nem kap teljesítményadatokat ([Foglalás szolgáltatón keresztül](https://support.google.com/business/answer/7475773))."
+   ]
+  },
+  {
+   "heading": "Ne a szabad helyeket írja le, hanem azt, hogyan lehet ellenőrizni őket",
+   "paragraphs": [
+    "Ha azt írja, hogy „szombaton általában nyugalmas” vagy „hétköznap nem kell foglalni”, az AI akkor is használhatja ezt a mondatot, ha a helyzet már megváltozott. Egyetlen AI-szolgáltatás sem teszi közzé, milyen gyakran olvas újra egy oldalt. A szabad helyeket bízza a foglalási rendszerre, és inkább azt írja le, hogyan lehet ellenőrizni őket: „A szabad időpontokat az online foglalási felületen találja. Aznapi szabad helyekért kérjük, hívjon minket.”",
+    "Ha a forgalmas időszakokat említi, állandó mintaként fogalmazza meg: „Hétvégén délután nagy a forgalom, ezért foglalást javaslunk.” Ha üresebbnek tünteti fel, mint amilyen, az embereket és az AI-t egyaránt félrevezeti."
+   ]
+  },
+  {
+   "heading": "Legyen olvasható: ellenőrizze a beágyazásokat, a képeket és a bejelentkezést",
+   "paragraphs": [
+    "Sok foglalási rendszer egy másik webhelyről beágyazva (iframe-ben) vagy JavaScripttel jeleníti meg a felületét. Az emberek látják, de hogy az AI a beágyazott tartalom szövegét az Ön oldalának részeként olvassa-e, szolgáltatásonként eltér, és nem nyilvános. A foglalási szabályokat a beágyazáson kívül, a foglalási oldal saját szövegében írja le. Maga a foglalási űrlap maradhat beágyazva.",
+    "Ez a parancs megmutatja, hogy a foglalási oldal megnyílik-e bejelentkezés nélkül, és hogy a szabályok szerepelnek-e a HTML-kódjában."
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "Az OpenAI szerint ahhoz, hogy bekerüljön a ChatGPT-keresésbe, engedélyeznie kell az OAI-SearchBot számára a webhely feltérképezését, és meg kell győződnie arról, hogy a tárhelye vagy CDN-je engedi az OpenAI által közzétett IP-címekről érkező forgalmat ([OpenAI súgó](https://help.openai.com/en/articles/9237897-chatgpt-search)). Ellenőrizze, hogy a botvédelem ne épp a foglalási oldalt blokkolja. Azoknak a vállalkozásoknak, amelyek azt szeretnék, hogy AI-ágensek az ügyfelek nevében véglegesítsék a foglalásokat, a Stripe a botvédelem felülvizsgálatát és a WebMCP megfontolását javasolja, de ez egy további, a fizetést is magában foglaló lépés ([Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services))."
+   ]
+  },
+  {
+   "heading": "Strukturált adatok: a ReserveAction hozzáadható, de ne várjon tőle sokat",
+   "paragraphs": [
+    "A schema.org-ban létezik a [ReserveAction](https://schema.org/ReserveAction), a foglalás műveletét jelölő típus, amellyel egy foglalási URL-t egy szolgáltatáshoz köthet. Nem találtunk azonban hivatalos nyilatkozatot a ChatGPT-től, a Perplexitytől vagy a Google AI-funkcióitól arról, hogy a ReserveActiont foglalásra használnák. A Google szerint az AI-funkciókhoz nem kell különleges strukturált adat, és a strukturált adatoknak egyezniük kell a látható szöveggel ([az AI-funkciók és az Ön webhelye](https://developers.google.com/search/docs/appearance/ai-features), ellenőrizve: 2026-11-18). A hozzáadása alig árt, de foglalási gombot nem fog megjeleníteni.",
+    "Ha hozzáadja, minden Service-t így kössön a saját foglalási URL-jéhez. Ez ugyanaz a szerkezet, amelyet a Nurevo AIO közzétesz."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "A lényeg, hogy ne írjon önmagában álló Reservationt. Egy magában álló Reservation azt állítja, hogy a foglalás már létezik, ami nem igaz. Egy ReserveAction eredményeként (result) azt mondja: „ez a művelet foglalást hoz létre”. A szintaxist a [Schema Markup Validator](https://validator.schema.org/) segítségével ellenőrizze."
+   ]
+  },
+  {
+   "heading": "Lépések WordPressben (a Nurevo AIO-val)",
+   "paragraphs": [
+    "A [Nurevo AIO (ingyenes, korábban Nurevo AEO néven jelent meg)](https://wordpress.org/plugins/nurevo-webmcp/) a Beállítások Szolgáltatások részében az egyes szolgáltatásokhoz megadott foglalási URL-t ReserveActionként teszi közzé a Service strukturált adatokban és az llms.txt-ben. Ebben a sorrendben haladjon."
+   ],
+   "list": [
+    "Először a foglalási oldal szövegét javítsa a fenti nyolc tény alapján (az oldal szövege megelőzi a strukturált adatokat)",
+    "Adja hozzá a szolgáltatásait (legfeljebb 20-at). A szolgáltatás neve, az időtartam (perc), az ár és a pénznem mellé írja be a foglalási URL mezőbe az adott szolgáltatás foglalási képernyőjének URL-jét",
+    "A foglalási URL-lel rendelkező szolgáltatásoknál a szolgáltatás neve az llms.txt-ben erre mutató link (például: - [Haircut](https://example.com/book/haircut/) — 60 min · USD 55.00)",
+    "Semmit nem olvas be olyan foglalási bővítményekből, mint az Amelia. Ez szándékos, hogy hibás időtartam vagy foglalási URL soha ne jelenjen meg tényként; az értékeket kézzel adja meg",
+    "Adja meg a foglalási vagy étlapoldal azonosítóját mint a szolgáltatásokat tartalmazó oldalt, és a Service jelölés arra az oldalra kerül (0 = kezdőlap)",
+    "Vegye fel a GYIK-ba a lemondási díjakat, az aznapi foglalást és a bejelentkezés nélküli érkezést. Nem duplázza a Yoast SEO, a Rank Math, az All in One SEO vagy a Slim SEO kimenetét, és a SEO SIMPLE PACK és a VK All in One Expansion Unit mellett is működik (0.9.1-től)",
+    "Ha foglalási csatornát vált, ugyanazon a napon frissítse az oldal szövegét, a Nurevóban megadott foglalási URL-eket, a GYIK válaszait és a Google Business Profile-t"
+   ],
+   "after": [
+    "Az ügyfeleik webhelyét karbantartó ügynökségek felvehetik a „foglalási csatorna módosítását” a karbantartási szolgáltatások közé, hogy ne maradjon régi URL minden alkalommal, amikor egy ügyfél foglalási oldalt vált. A havi támogatást nyújtó ügynökségek számára [partnerprogram](https://nurevo.jp/partner/) is elérhető."
+   ]
+  },
+  {
+   "heading": "Hogyan ellenőrizze: rögzítse a foglalási kérdéseket, és vezessen nyilvántartást",
+   "paragraphs": [
+    "Hogy lássa, helyesen jutnak-e át a foglalási szabályai, tegye fel ugyanazokat a kérdéseket ugyanannak az AI-nak különböző napokon, és jegyezze fel a válaszokat. Ne egyetlen válasz alapján ítéljen."
+   ],
+   "table": {
+    "head": [
+     "Kérdés",
+     "Mit figyeljen"
+    ],
+    "rows": [
+     [
+      "„Kell foglalnom a(z) (vállalkozás)-nál?”",
+      "Helyesen mondja-e meg, hogy csak előzetes bejelentkezéssel lehet menni, vagy bejelentkezés nélkül is szívesen fogadják az érkezőket?"
+     ],
+     [
+      "„Foglalhatok mára a(z) (vállalkozás)-nál?”",
+      "Helyes-e a határidő és a mód (csak telefonon stb.)?"
+     ],
+     [
+      "„Mennyi a lemondási díj a(z) (vállalkozás)-nál?”",
+      "Helyes-e a határidő és a díj? Egy régi foglalási oldal-e a forrás?"
+     ],
+     [
+      "„Hogyan foglalhatok a(z) (vállalkozás)-nál?”",
+      "A megadott csatornát most is használja?"
+     ],
+     [
+      "„Melyik (vállalkozástípus) foglalható ma (terület) környékén?”",
+      "Szerepel-e a listán egy márkanév nélküli kérdésnél? Megjelenik-e foglalási gomb (éttermek)?"
+     ]
+    ]
+   },
+   "after": [
+    "Jegyezze fel a dátumot, az AI-szolgáltatást, a kérdést, a választ és a forrás URL-jét. Ha a forrás egy régi foglalási oldal vagy blogbejegyzés, azt javítsa. A Nurevo Free és Standard csomagjában a Nurevo szolgáltatás havonta egyszer három, a vállalkozás típusából és területéből összeállított, márkanév nélküli kérdést tesz fel a Perplexitynek, és megmutatja, megjelent-e a neve, és idézték-e a webhelyét. A Pro (havi $99-tól, béta) legfeljebb 20 kérdést mér a Perplexityn (beállítás után a ChatGPT-n is). A foglalási kérdéseket kézzel rögzítse. További részletek: [az AI-láthatóság mérése](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Ellenőrzőlista közzététel előtt",
+   "list": [
+    "Egyetlen foglalási oldal van, és bejelentkezés nélkül megnyílik",
+    "A foglalás módja és a foglalási idők szövegként szerepelnek",
+    "Szerepel, hogy kötelező-e a foglalás, és mi történik nélküle",
+    "Szerepel a határidő (aznap, előző nap) és az, hogy mennyivel előre lehet foglalni",
+    "A lemondási határidő, a díj és a lemondás módja szerepel, és egyezik a foglalási oldalakkal",
+    "Csak a használt csatornák szerepelnek; a régiek eltűntek",
+    "Az oldal azt írja le, hogyan lehet ellenőrizni a szabad helyeket, nem pedig a szabad helyeket magukat",
+    "A foglalási szabályok az oldal szövegében vannak, a beágyazásokon és képeken kívül",
+    "A strukturált adatokban lévő foglalási URL-ek a jelenleg használt foglalási képernyőkre mutatnak",
+    "A Google Business Profile foglalási linkje ugyanarra a csatornára mutat"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Mit tegyek a webhelyemre, hogy Reserve gombot kapjak a ChatGPT-ben?",
+   "a": "A webhelyén semmi sem kapcsolja be. Az OpenAI súgója szerint a Reserve gomb csak akkor jelenik meg, ha a ChatGPT az éttermet egy támogatott szolgáltató (OpenTable, Resy, Yelp) adatlapjához tudja rendelni. Amit tehet: írja le helyesen a foglalási szabályokat a webhelyén, és tartsa pontosan a foglalási platformokon lévő adatlapjait."
+  },
+  {
+   "q": "Hoz-e foglalásokat az AI-ból a ReserveAction hozzáadása?",
+   "a": "Nem találtunk erre vonatkozó hivatalos nyilatkozatot. A ReserveAction alig árt, de a foglalásokra gyakorolt előnye nem bizonyított. Először a foglalási szabályokat javítsa az oldal szövegében."
+  },
+  {
+   "q": "A foglalási oldalunk csak egy beágyazott widget, szöveg nélkül.",
+   "a": "Hogy az AI a beágyazott tartalom szövegét az Ön oldalának részeként olvassa-e, szolgáltatásonként eltér, és nem nyilvános. Az űrlap maradhat beágyazva; a foglalási módokat, a határidőket és a lemondási szabályokat írja le szövegként fölötte vagy alatta."
+  },
+  {
+   "q": "A foglalási oldal lemondási szabályai eltérnek a saját webhelyünkétől.",
+   "a": "Nem lehet tudni, melyiket fogja idézni egy AI. Ha lehet, egységesítse őket; ha nem, írja le, melyik szabály melyik csatornára vonatkozik, például: „Az online foglalások előző napig ingyenesen lemondhatók; a foglalási oldalakon keresztül leadott foglalásokra az adott oldal szabályai vonatkoznak.”"
+  },
+  {
+   "q": "Segítene az AI-ban való megjelenésben, ha a szabad helyeket a webhelyre írnánk?",
+   "a": "A szabad helyek változnak, ezért ha az oldal szövegébe írja őket, fennáll a veszélye, hogy régi információ marad az AI-válaszokban. Azt írja le, hogyan lehet ellenőrizni a szabad helyeket, magukat a szabad helyeket pedig mutassa a foglalási rendszer."
+  },
+  {
+   "q": "Az éttermeken kívül más vállalkozások is foglalhatóvá válnak az AI-ban?",
+   "a": "A Google 2025 augusztusában közölte, hogy az AI Mode ágensalapú foglalása a helyi szolgáltatások időpontfoglalására is kiterjed, először az Egyesült Államokban. Kövesse a Google bejelentéseit az Ön országára vonatkozóan. Amit most tehet: tartsa pontosan a foglalási oldalát és a Google Business Profile foglalási linkjét."
+  },
+  {
+   "q": "Miután módosítottuk a foglalási oldalt, mikor változnak meg az AI-válaszok?",
+   "a": "Egyetlen AI-szolgáltatás sem teszi közzé, mennyi ideig tart. Néhány nap vagy néhány hét múlva ellenőrizze ugyanazokkal a kérdésekkel. Ha még mindig megjelenik egy régi foglalási csatorna, nézze meg a forrás URL-jét, és javítsa azt az oldalt."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Nézze meg, el tudja-e olvasni az AI a webhelyét",
+  "body": "Az ingyenes ellenőrzéshez nem kell regisztrálni: adjon meg egy URL-t, és megtudja, milyen az AI-robotok hozzáférése, a strukturált adatok és az llms.txt állapota. WordPressen az ingyenes bővítmény strukturált adatként és az llms.txt-ben teszi közzé a szolgáltatásait és a foglalási URL-eket, a SEO-bővítménye kimenetének duplázása nélkül.",
+  "label": "Ellenőrizze ingyen az AI-felkészültségét",
+  "href": "/check",
+  "secondary": {
+   "label": "Próbálja ki az ingyenes WordPress-bővítményt",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT az OpenAI védjegye; a Google, a Google Search, a Google Business Profile és a Reserve with Google a Google LLC védjegyei; a Perplexity a Perplexity AI védjegye. Az OpenTable, a Resy, a Yelp, a Tock, a TheFork, a Booksy, a Stripe, a WordPress, a Yoast SEO, a Rank Math, az All in One SEO, a Slim SEO, a SEO SIMPLE PACK, a VK All in One Expansion Unit, az Amelia és az útmutatóban idézett cégek nevei a megfelelő tulajdonosaik védjegyei vagy bejegyzett védjegyei. A Nurevo nem áll kapcsolatban ezen cégek egyikével sem, és azok nem támogatják."
+}

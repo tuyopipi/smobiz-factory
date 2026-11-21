@@ -1,0 +1,316 @@
+{
+ "title": "Strona „O nas” a wyszukiwanie AI: poprawne dane firmy | Nurevo",
+ "description": "Jak zbudować stronę „O nas”, na której mogą polegać odpowiedzi AI: jakie fakty podać, jak usunąć warianty nazwy i adresu, schemat Organization i kroki w WordPress.",
+ "h1": "Optymalizacja strony „O nas” pod wyszukiwanie AI: jak sprawić, by nazwa firmy, adres, data założenia i działalność były opisywane poprawnie",
+ "lead": "Gdy ktoś pyta AI o Twoją firmę po nazwie, odpowiedź opiera się głównie na stronie „O nas” lub profilu firmy. Umieść na jednej stronie, zwykłym tekstem, nazwę prawną i nazwy, których ludzie faktycznie używają, adres, datę założenia, kierownictwo, zakres działalności i sposób kontaktu; opublikuj te same wartości jako dane strukturalne Organization; zadbaj o identyczny zapis na pozostałych podstronach i w profilach w innych serwisach. Te trzy kroki to sedno całej pracy.",
+ "intro": [
+  "Tekst powstał 15 listopada 2026 r. (JST). Poradnik jest przeznaczony dla każdej firmy, sklepu lub organizacji, która ma stronę „O nas” lub profil firmy, a także dla agencji budujących takie strony. Oznaczanie adresu i godzin otwarcia sklepów opisujemy w artykule [schemat lokalnej firmy i wtyczki SEO](/guide/local-business-schema-seo-plugins). Ten poradnik dotyczy strony, która mówi, kim jesteś i gdzie jesteś.",
+  "Odpowiedzi AI zmieniają się z dnia na dzień i zależą od sformułowania pytania. Opisane kroki sprawiają, że informacje czytane przez AI są dokładne; nie gwarantują, że pojawisz się w odpowiedzi."
+ ],
+ "sections": [
+  {
+   "heading": "Do czego AI wykorzystuje stronę „O nas”",
+   "paragraphs": [
+    "Wyszukiwarka ChatGPT, Perplexity i Google AI Overviews czytają strony internetowe, gdy udzielają odpowiedzi, i pokazują je jako źródła. Przy pytaniu, które wymienia firmę z nazwy, oczywistym kandydatem jest jej własna witryna, a przede wszystkim strona zbierająca podstawowe fakty. Jeśli strona „O nas” to jeden obrazek albo nazwa i adres są zapisane inaczej na każdej podstronie, AI może zbudować odpowiedź na podstawie czyjegoś starego wpisu lub innej firmy o tej samej nazwie.",
+    "Pytania z nazwą firmy zwykle układają się w kilka schematów. Na każde z nich da się odpowiedzieć na podstawie strony „O nas”, która podaje fakty w formie tekstu."
+   ],
+   "list": [
+    "„Czym zajmuje się Example Ltd?” (opis działalności)",
+    "„Gdzie jest siedziba Example? Czy mają biuro w Manchesterze?” (lokalizacje)",
+    "„Kiedy powstała firma Example i kto nią kieruje?” (data założenia, kierownictwo)",
+    "„Jaka firma stoi za aplikacją Example?” (marka a nazwa firmy)",
+    "„Czy Example to ta sama firma co Sample?” (dawne nazwy, spółki z grupy, firmy o tej samej nazwie)",
+    "„Jak skontaktować się z Example?” (telefon, formularz, godziny)"
+   ],
+   "after": [
+    "Google podaje, że nie ma dodatkowych wymagań ani specjalnych danych strukturalnych potrzebnych do pojawienia się w AI Overviews lub AI Mode i że obowiązują zwykłe dobre praktyki SEO ([Google Search Central: funkcje AI a Twoja witryna](https://developers.google.com/search/docs/appearance/ai-features)). Praca nad stroną „O nas” nie jest specjalnym sposobem pisania pod AI. Chodzi o to, by podać fakty dokładnie, w czytelnej formie i wszędzie z tymi samymi wartościami."
+   ]
+  },
+  {
+   "heading": "Co umieścić na stronie i jak to się przekłada na dane strukturalne",
+   "paragraphs": [
+    "Tabela pokazuje, co powinna zawierać strona „O nas”, jakie błędy zwykle popełniają odpowiedzi AI i która właściwość Organization temu odpowiada. Nazwy właściwości pochodzą z listy zalecanych właściwości w dokumentacji Google [Dane strukturalne Organization](https://developers.google.com/search/docs/appearance/structured-data/organization). „Tylko tekst” oznacza elementy, których nie ma wśród właściwości zalecanych przez Google."
+   ],
+   "table": {
+    "head": [
+     "Element",
+     "Jak to zapisać",
+     "Typowy błąd AI",
+     "Dane strukturalne"
+    ],
+    "rows": [
+     [
+      "Nazwa prawna",
+      "Podaj raz zarejestrowaną nazwę, dokładnie tak, jak w rejestrze",
+      "Mylenie z firmą o podobnej nazwie",
+      "legalName (jeśli różni się od name)"
+     ],
+     [
+      "Nazwa handlowa, marka, nazwa w innym języku",
+      "Połącz je w zdaniu: „Aplikację Example prowadzi Sample Ltd”",
+      "Znajomość marki bez wiedzy, jaka firma za nią stoi",
+      "alternateName"
+     ],
+     [
+      "Adres",
+      "Oddziel siedzibę od innych lokalizacji; zapisuj każdy adres w tym samym formacie, aż do piętra",
+      "Podawanie adresu sprzed przeprowadzki albo oddziału jako siedziby",
+      "address (PostalAddress, jeden lub więcej)"
+     ],
+     [
+      "Kontakt",
+      "Główny numer telefonu, sposób składania zapytań, godziny",
+      "Bezpośredni numer działu albo stary numer",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Data założenia",
+      "Pełna data; jeśli założenie i rejestracja spółki to różne daty, podaj obie",
+      "Mylenie roku założenia z rokiem rejestracji",
+      "foundingDate (ISO 8601, np. 2015-04-01)"
+     ],
+     [
+      "Kierownictwo",
+      "Stanowisko i imię i nazwisko; aktualizuj w dniu zmiany",
+      "Podawanie poprzedniego prezesa",
+      "Tylko tekst (nie jest właściwością zalecaną przez Google)"
+     ],
+     [
+      "Czym się zajmujesz",
+      "Pierwsze zdanie: co, dla kogo, gdzie; potem lista działań",
+      "Przedstawianie działalności pobocznej jako głównej",
+      "description"
+     ],
+     [
+      "Liczba pracowników, kapitał zakładowy",
+      "Dodaj „stan na: miesiąc i rok”",
+      "Powtarzanie starej liczby bez daty",
+      "numberOfEmployees (kapitał zakładowy: tylko tekst)"
+     ],
+     [
+      "Numer rejestrowy lub podatkowy firmy",
+      "Podaj go na stronie, jeśli go masz",
+      "Brak możliwości odróżnienia od firmy o tej samej nazwie",
+      "Najpierw tekst (zob. niżej)"
+     ],
+     [
+      "Oficjalne profile społecznościowe i inne",
+      "Wymień tylko konta, którymi firma zarządza",
+      "Łączenie z firmą o tej samej nazwie lub z fałszywym kontem",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Ten sam obraz co logo witryny",
+      "Logo innej firmy",
+      "logo (co najmniej 112×112 px)"
+     ],
+     [
+      "Ostatnia aktualizacja",
+      "„Zaktualizowano dnia ...” na końcu strony",
+      "Brak możliwości oceny, na ile informacje są aktualne",
+      "Tylko tekst"
+     ]
+    ]
+   },
+   "after": [
+    "O numerach rejestrowych i podatkowych: Google opisuje taxID jako numer podatkowy w kraju podanym w address, a vatID jako numer VAT, jeśli ma zastosowanie. Jeśli Twój numer jest numerem podatkowym lub numerem VAT w Twoim kraju, te właściwości pasują. Jeśli to inny rodzaj identyfikatora, na przykład japoński numer korporacyjny, Google nie mówi, czy należy go umieścić w taxID, więc podaj go na stronie i sam zdecyduj, czy go oznaczać.",
+    "Nie zawyżaj liczb. Jeśli zaokrąglisz w górę liczbę pracowników lub klientów, AI będzie cytować większą liczbę i trudno będzie to odwrócić. Podaj dokładną liczbę i datę, której dotyczy."
+   ]
+  },
+  {
+   "heading": "Jak napisać stronę: nie tylko tabela i nigdy obrazek",
+   "paragraphs": [
+    "Wiele stron „O nas” to wyłącznie dwukolumnowa tabela. Tabela jest łatwa do odczytania dla ludzi i maszyn, ale sama w sobie nie zawiera zdania, które mówi, czym jest firma. Umieść nad tabelą dwa lub trzy zdania wprowadzenia, a AI dostanie gotowy tekst, którego może użyć, opisując Twoją firmę."
+   ],
+   "list": [
+    "Pierwsze zdanie: nazwa prawna, miejscowość i czym się zajmujesz. Na przykład: „Sample Ltd z siedzibą w Leeds pomaga małym firmom wdrażać oprogramowanie księgowe”.",
+    "Drugie zdanie: fakty, które odróżniają Cię od firm o tej samej nazwie, na przykład związek marki z firmą i rok założenia.",
+    "Następnie tabela, jako tabela HTML lub lista z etykietami, nigdy jako obrazek ani PDF.",
+    "Historia w formie jednej linijki na rok. Przy zmianie nazwy, przeprowadzce lub fuzji podaj zarówno stare, jak i nowe dane: „W marcu 20XX r. firma zmieniła nazwę ze Stara Nazwa Ltd”.",
+    "Przesłanie założyciela i misję umieść pod osobnymi nagłówkami, oddzielnie od faktów.",
+    "Zakończ stronę datą ostatniej aktualizacji."
+   ],
+   "after": [
+    "schema.org ma typ [AboutPage](https://schema.org/AboutPage) dla samej strony, a niektóre wtyczki SEO pozwalają wybrać go jako typ strony. Jest opcjonalny i można go używać, o ile nie przeczy pozostałym danym strukturalnym."
+   ]
+  },
+  {
+   "heading": "Usuń warianty, na swojej stronie i poza nią",
+   "paragraphs": [
+    "AI buduje odpowiedź z kilku stron. Jeśli nazwa lub adres są zapisane inaczej na różnych stronach, AI może nie uznać ich za jedną firmę albo wybrać stary zapis. Zacznij od ustalenia jednej formy dla każdego z typowych wariantów."
+   ],
+   "table": {
+    "head": [
+     "Wariant",
+     "Co ustalić"
+    ],
+    "rows": [
+     [
+      "Sample Ltd / Sample Limited / Sample",
+      "Forma z rejestru, używana wszędzie, gdzie pada nazwa firmy"
+     ],
+     [
+      "Nazwy w innych językach lub alfabetach",
+      "Jedna forma na język, taka sama na stronach, w profilach i na wizytówkach w tym języku"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / z nazwą budynku i bez niej",
+      "Jedna kolejność i jedna decyzja co do nazwy budynku i piętra"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Jeden format na język, np. format krajowy na stronach lokalnych i międzynarodowy na stronach anglojęzycznych dla czytelników z zagranicy"
+     ],
+     [
+      "Strony, na których wciąż widnieje stara nazwa lub adres",
+      "Odnotuj zmianę w historii, a potem popraw stare strony"
+     ]
+    ]
+   },
+   "after": [
+    "Gdzie sprawdzić na własnej stronie: „O nas”, stopka, strona kontaktowa, polityka prywatności, wszelkie wymagane prawem informacje handlowe, strony z ofertami pracy, komunikaty prasowe, notki o autorach na blogu i broszura w PDF.",
+    "Gdzie sprawdzić poza stroną: profil firmy w Google (Google Business Profile), profile społecznościowe zarządzane przez firmę, portale z ofertami pracy, katalogi stowarzyszeń branżowych i katalogi lokalne oraz opisy Twojej firmy na stronach partnerów. Części z nich nie możesz edytować. Najpierw uporządkuj własną stronę, potem poproś wydawców o poprawienie ich treści. Jeśli odpowiedź AI już jest błędna, znajdź jej źródło i popraw każdy rodzaj błędu tam, skąd pochodzi."
+   ]
+  },
+  {
+   "heading": "Pomóż AI odróżnić Cię od firmy o tej samej nazwie",
+   "paragraphs": [
+    "Jeśli nazwa Twojej firmy to popularne słowo albo gdzie indziej działa firma o tej samej nazwie, AI może je pomieszać. Odróżniają Cię fakty, które dotyczą tylko Ciebie."
+   ],
+   "list": [
+    "Umieść miejscowość i zakres działalności w pierwszym zdaniu wprowadzenia.",
+    "Podaj fakty, których firma o tej samej nazwie nie będzie mieć: rok założenia, numer rejestrowy, imię i nazwisko prezesa.",
+    "W sameAs wymień tylko oficjalne konta i profile, którymi zarządza firma. Pomiń firmy o tej samej nazwie i strony, którymi nie zarządzasz.",
+    "Jeśli marka i nazwa firmy się różnią, napisz „Example prowadzi Sample Ltd” na stronach obu.",
+    "Google podaje, że właściwości takie jak iso6523Code i naics pomagają odróżnić organizację. Jeśli masz odpowiednie kody, rozważ ich dodanie."
+   ]
+  },
+  {
+   "heading": "Dane strukturalne Organization: co mówi dokumentacja Google",
+   "paragraphs": [
+    "Najważniejsze punkty dokumentacji Google [Dane strukturalne Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) (ostatnia aktualizacja 15 września 2026 r.; przeczytano 15 listopada):"
+   ],
+   "list": [
+    "Nie ma właściwości wymaganych; Google zaleca dodanie jak największej liczby właściwości, które dotyczą Twojej organizacji.",
+    "Umieść oznaczenia na stronie głównej lub na jednej stronie opisującej organizację, np. na stronie „O nas”. Nie muszą być na każdej stronie.",
+    "W przypadku lokalnej firmy, takiej jak restauracja czy sklep, użyj najbardziej szczegółowego podtypu LocalBusiness i stosuj się także do wytycznych dla LocalBusiness.",
+    "foundingDate używa formatu ISO 8601 (np. 2015-04-01).",
+    "Logo musi mieć co najmniej 112×112 pikseli i być dostępne do indeksowania przez roboty."
+   ],
+   "after": [
+    "Google wymienia zgodność danych strukturalnych z widocznym tekstem jako jedną z podstaw ([Funkcje AI a Twoja witryna](https://developers.google.com/search/docs/appearance/ai-features)). Dane strukturalne same w sobie nie zmieniają odpowiedzi. Traktuj je jako czytelny dla maszyn klucz odpowiedzi do tego, co strona już mówi, a zachowasz właściwe priorytety. Nie umieszczaj w danych strukturalnych faktu, którego nie podaje tekst strony."
+   ]
+  },
+  {
+   "heading": "Kroki w WordPress (z Nurevo AEO)",
+   "paragraphs": [
+    "Na stronie opartej na WordPress wtyczka [Nurevo AEO (bezpłatna)](https://wordpress.org/plugins/nurevo-webmcp/) publikuje podstawowe dane firmy jako dane strukturalne i w llms.txt. Działaj w tej kolejności."
+   ],
+   "list": [
+    "Najpierw popraw tekst strony „O nas” według powyższej tabeli. Tekst przed danymi strukturalnymi.",
+    "Zainstaluj wtyczkę i wybierz typ witryny w kreatorze konfiguracji: „B2B / SaaS” dla Organization, odpowiednią kartę dla sklepu lub gabinetu albo „Other”, jeśli nic nie pasuje.",
+    "Sprawdź dane firmy (nazwa, opis, adres, telefon, godziny otwarcia, rodzaj działalności, URL, e-mail). Wartości odczytane z istniejących ustawień wypełniają tylko puste pola; nic, co wpisałeś, nie zostaje nadpisane, a adres e-mail administratora WordPress nigdy nie jest używany jako e-mail firmy.",
+    "Ujednolić nazwę i adres ze stroną „O nas”. Adres jest publikowany jako jeden ciąg znaków w PostalAddress, więc wpisz go dokładnie tak, jak na stronie „O nas”.",
+    "Logo to obraz ustawiony jako logo witryny w motywie. Musi mieć co najmniej 112×112 pikseli.",
+    "Przy Yoast SEO, Rank Math, All in One SEO lub Slim SEO Nurevo dodaje tylko te fakty, których brakuje w danych strukturalnych danej wtyczki, więc firma nie jest opisana dwukrotnie. Działa też razem z SEO SIMPLE PACK i VK All in One Expansion Unit (od wersji 0.9.1). Jeśli Twoja wtyczka SEO już ustawia nazwę lub logo, pierwszeństwo mają jej wartości, więc dbaj o zgodność obu.",
+    "Aby dodać nazwę prawną (legalName), inne nazwy (alternateName), datę założenia (foundingDate) lub oficjalne konta (sameAs), użyj filtra dla programistów webmcp_canary_business_node. Nie są to pola formularza danych firmy w Nurevo.",
+    "Uruchom diagnozę na ekranie wyniku AEO, a następnie otwórz /llms.txt i sprawdź, czy strona „O nas” jest na liście. llms.txt wymienia 30 ostatnio zaktualizowanych stron i wpisów; jeśli strony „O nas” wśród nich nie ma, dodaj wiersz za pomocą filtra webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "Te same kontrole dotyczą stron, które nie są zbudowane na WordPress. Wpisz swój URL w [bezpłatnym teście](/check), bez rejestracji, aby sprawdzić stan danych strukturalnych, llms.txt i dostępu robotów AI."
+   ]
+  },
+  {
+   "heading": "Jak sprawdzić efekty: pytania z nazwą firmy i bez niej",
+   "paragraphs": [
+    "Sprawdzaj efekty pracy nad stroną „O nas” pytaniami zawierającymi nazwę firmy. Zadawaj to samo pytanie temu samemu AI w różne dni, kilka razy, i zapisuj odpowiedzi. Nie oceniaj na podstawie jednej odpowiedzi."
+   ],
+   "table": {
+    "head": [
+     "Co zapisać",
+     "Przykład"
+    ],
+    "rows": [
+     [
+      "Data, AI, pytanie",
+      "15 lis, Perplexity, „Czym jest Sample Ltd? Kiedy powstała i czym się zajmuje?”"
+     ],
+     [
+      "Fakty w odpowiedzi",
+      "Adres, data założenia, kierownictwo, działalność: każdy element osobno, poprawny czy błędny"
+     ],
+     [
+      "Źródła",
+      "Czy zacytowano Twoją stronę „O nas”, czy inną witrynę?"
+     ],
+     [
+      "Skąd wziął się błąd",
+      "Czy zacytowana strona wciąż pokazuje stary adres?"
+     ]
+    ]
+   },
+   "after": [
+    "Bezpłatny test AI w Nurevo (raz w miesiącu, dla połączonych witryn w planach Free i Standard) zadaje pytania zbudowane na podstawie rodzaju działalności i obszaru, bez nazwy firmy. Pokazuje, czy znajdą Cię ludzie, którzy nie znają Twojej nazwy; poprawność danych firmy sprawdzaj ręcznie według powyższej tabeli. Pomiar widoczności w planie Pro (beta) obejmuje obecnie Perplexity. Pełną metodę opisujemy w artykule [jak mierzyć widoczność w AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Lista kontrolna strony „O nas”",
+   "list": [
+    "Dwa lub trzy zdania nad tabelą podają nazwę, lokalizację i zakres działalności.",
+    "Związek między nazwą prawną, marką i nazwą w innym języku jest opisany w formie zdania.",
+    "Adres i telefon są zapisane tak samo na każdej stronie witryny.",
+    "Data założenia, kierownictwo i liczba pracowników są poprawne i opatrzone datą.",
+    "Zmiany nazwy i przeprowadzki są w historii, z danymi starymi i nowymi.",
+    "Strona „O nas” nie jest wyłącznie obrazkiem ani PDF-em.",
+    "Organization (a w przypadku sklepu najbardziej szczegółowy podtyp LocalBusiness) jest na stronie głównej lub stronie „O nas”, a jego wartości zgadzają się z tekstem.",
+    "sameAs wymienia tylko konta, którymi zarządza firma.",
+    "Twój profil firmy w Google i inne profile używają tego samego zapisu.",
+    "Strona kończy się datą ostatniej aktualizacji.",
+    "Sprawdziłeś efekty pytaniami z nazwą firmy, w różne dni, i zapisałeś wyniki."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Czy potrzebuję strony „O nas” oddzielnej od strony głównej?",
+   "a": "Nie, jeśli strona główna już zbiera podstawowe fakty o firmie. Google zaleca umieszczanie oznaczeń Organization na stronie głównej lub na jednej stronie opisującej organizację. Jeśli strona główna dotyczy głównie usług, osobna strona „O nas” utrzymuje fakty w jednym miejscu."
+  },
+  {
+   "q": "Czy strona „O nas” złożona tylko z tabeli to problem?",
+   "a": "Nie. Tabela jest łatwa do odczytania. Brakuje w niej jednak zdania, które mówi, czym jest firma, więc dodaj nad nią dwa lub trzy zdania wprowadzenia."
+  },
+  {
+   "q": "Czy dane strukturalne Organization powinny być na każdej stronie?",
+   "a": "Według Google nie muszą: wystarczy strona główna lub jedna strona, np. „O nas”. Jeśli Twoja wtyczka SEO umieszcza je na każdej stronie, nie ma problemu, o ile wartości są poprawne."
+  },
+  {
+   "q": "Czy numer rejestrowy firmy powinien trafić do taxID?",
+   "a": "Google opisuje taxID jako numer podatkowy w kraju z Twojego adresu. Jeśli Twój numer jest właśnie takim numerem, pasuje; jeśli to inny rodzaj identyfikatora, Google tego nie określa. Najpierw podaj go na stronie, a potem zdecyduj, czy go oznaczać."
+  },
+  {
+   "q": "Jak sprawić, by osoby pytające o naszą dawną nazwę trafiały do obecnej firmy?",
+   "a": "Zapisz obie nazwy w historii („W marcu 20XX r. firma zmieniła nazwę ze Stara Nazwa Ltd”) i wspomnij o tym we wprowadzeniu. Jeśli profile w innych serwisach wciąż pokazują starą nazwę, poproś ich wydawców o aktualizację."
+  },
+  {
+   "q": "Odpowiedź AI podaje błędne dane naszej firmy. Co robić?",
+   "a": "Nie możesz bezpośrednio edytować odpowiedzi AI. Znajdź źródła: popraw stronę „O nas” i inne strony w swojej witrynie, a innych wydawców poproś o poprawienie ich treści. Nie ma określonego czasu, po którym poprawki będą widoczne."
+  },
+  {
+   "q": "Czy jeśli wykonamy te kroki, AI zawsze opisze nas poprawnie?",
+   "a": "Tego nie da się zagwarantować; odpowiedzi AI zmieniają się z dnia na dzień i zależą od sformułowania pytania. Te kroki sprawiają, że informacje czytane przez AI są dokładne i spójne, więc błędy są mniej prawdopodobne."
+  }
+ ],
+ "relatedHeading": "Powiązane poradniki",
+ "cta": {
+  "heading": "Zobacz, jak AI odczytuje dane Twojej firmy",
+  "body": "Bezpłatny test nie wymaga rejestracji: wpisz swój URL, aby sprawdzić stan danych strukturalnych, llms.txt i dostępu robotów AI. W WordPress bezpłatna wtyczka publikuje podstawowe dane Twojej firmy jako dane strukturalne.",
+  "label": "Uruchom bezpłatny test czytelności dla AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Wypróbuj bezpłatną wtyczkę WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT jest znakiem towarowym OpenAI, Perplexity – Perplexity AI, a Google – Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit i WordPress są znakami towarowymi ich właścicieli. Nurevo nie jest powiązane z żadną z tych firm ani przez nie popierane."
+}

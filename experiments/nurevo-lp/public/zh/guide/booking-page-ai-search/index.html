@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>如何写出 AI 能正确读取的预约页面 | Nurevo AIO</title>
+<meta name="description" content="让 AI 正确回答“需要预约吗？”“有取消费吗？”：预约页面应写的内容、AI 内预约的机制、schema 以及 WordPress 设置步骤。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/zh/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="ar" href="https://nurevo.jp/ar/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="bg" href="https://nurevo.jp/bg/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="ca" href="https://nurevo.jp/ca/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="cs" href="https://nurevo.jp/cs/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="da" href="https://nurevo.jp/da/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="de" href="https://nurevo.jp/de/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="el" href="https://nurevo.jp/el/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="et" href="https://nurevo.jp/et/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="fa" href="https://nurevo.jp/fa/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="fi" href="https://nurevo.jp/fi/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="fr" href="https://nurevo.jp/fr/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="fy" href="https://nurevo.jp/fy/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="gl" href="https://nurevo.jp/gl/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="gu" href="https://nurevo.jp/gu/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="he" href="https://nurevo.jp/he/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="hi" href="https://nurevo.jp/hi/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="hr" href="https://nurevo.jp/hr/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="hu" href="https://nurevo.jp/hu/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="id" href="https://nurevo.jp/id/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="it" href="https://nurevo.jp/it/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="ko" href="https://nurevo.jp/ko/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="lo" href="https://nurevo.jp/lo/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="nb" href="https://nurevo.jp/nb/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="nl" href="https://nurevo.jp/nl/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="pl" href="https://nurevo.jp/pl/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="pt-BR" href="https://nurevo.jp/pt-br/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="pt-PT" href="https://nurevo.jp/pt-pt/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="ro" href="https://nurevo.jp/ro/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="ru" href="https://nurevo.jp/ru/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="sk" href="https://nurevo.jp/sk/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="sl" href="https://nurevo.jp/sl/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="sr" href="https://nurevo.jp/sr/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="sv" href="https://nurevo.jp/sv/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="tr" href="https://nurevo.jp/tr/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="uk" href="https://nurevo.jp/uk/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="vi" href="https://nurevo.jp/vi/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="zh-Hans" href="https://nurevo.jp/zh/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="zh-Hant" href="https://nurevo.jp/zh-tw/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="de-AT" href="https://nurevo.jp/de/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="de-CH" href="https://nurevo.jp/de/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es-MX" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es-AR" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es-CL" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es-CO" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es-CR" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es-EC" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es-PE" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="es-VE" href="https://nurevo.jp/es/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="fr-BE" href="https://nurevo.jp/fr/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="fr-CA" href="https://nurevo.jp/fr/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="nl-BE" href="https://nurevo.jp/nl/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="zh-HK" href="https://nurevo.jp/zh-tw/guide/booking-page-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/booking-page-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="如何写出 AI 能正确读取的预约页面 | Nurevo AIO">
+<meta property="og:description" content="让 AI 正确回答“需要预约吗？”“有取消费吗？”：预约页面应写的内容、AI 内预约的机制、schema 以及 WordPress 设置步骤。">
+<meta property="og:url" content="https://nurevo.jp/zh/guide/booking-page-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:locale:alternate" content="bg_BG">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:locale:alternate" content="cs_CZ">
+<meta property="og:locale:alternate" content="da_DK">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="el_GR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="et_EE">
+<meta property="og:locale:alternate" content="fa_IR">
+<meta property="og:locale:alternate" content="fi_FI">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="fy_NL">
+<meta property="og:locale:alternate" content="gl_ES">
+<meta property="og:locale:alternate" content="gu_IN">
+<meta property="og:locale:alternate" content="he_IL">
+<meta property="og:locale:alternate" content="hi_IN">
+<meta property="og:locale:alternate" content="hr_HR">
+<meta property="og:locale:alternate" content="hu_HU">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:locale:alternate" content="it_IT">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="lo_LA">
+<meta property="og:locale:alternate" content="nb_NO">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="pl_PL">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:locale:alternate" content="pt_PT">
+<meta property="og:locale:alternate" content="ro_RO">
+<meta property="og:locale:alternate" content="ru_RU">
+<meta property="og:locale:alternate" content="sk_SK">
+<meta property="og:locale:alternate" content="sl_SI">
+<meta property="og:locale:alternate" content="sr_RS">
+<meta property="og:locale:alternate" content="sv_SE">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="uk_UA">
+<meta property="og:locale:alternate" content="vi_VN">
+<meta property="og:locale:alternate" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="如何写出 AI 能正确读取的预约页面 | Nurevo AIO">
+<meta name="twitter:description" content="让 AI 正确回答“需要预约吗？”“有取消费吗？”：预约页面应写的内容、AI 内预约的机制、schema 以及 WordPress 设置步骤。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/zh/guide/booking-page-ai-search/#webpage","url":"https://nurevo.jp/zh/guide/booking-page-ai-search/","name":"如何写出 AI 能正确读取的预约页面 | Nurevo AIO","description":"让 AI 正确回答“需要预约吗？”“有取消费吗？”：预约页面应写的内容、AI 内预约的机制、schema 以及 WordPress 设置步骤。","inLanguage":"zh-Hans","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/zh/guide/booking-page-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/zh/guide/booking-page-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://nurevo.jp/zh/"},{"@type":"ListItem","position":2,"name":"AEO 指南","item":"https://nurevo.jp/zh/guide/"},{"@type":"ListItem","position":3,"name":"如何写出 AI 能正确读取的预约页面：预约方式、截止时间、取消规则，以及 AI 内预约的机制","item":"https://nurevo.jp/zh/guide/booking-page-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/zh/guide/booking-page-ai-search/#faq","mainEntity":[{"@type":"Question","name":"要在 ChatGPT 中显示 Reserve 按钮，网站上需要放什么？","acceptedAnswer":{"@type":"Answer","text":"网站上没有任何东西能开启它。OpenAI 帮助中心说明，只有当 ChatGPT 能把餐厅与受支持平台（OpenTable、Resy、Yelp）上的商家信息对应起来时，才会显示 Reserve 按钮。你能做的是在网站上正确写明预约规则，并保持预约平台上的商家信息准确。"}},{"@type":"Question","name":"添加 ReserveAction 能从 AI 带来预约吗？","acceptedAnswer":{"@type":"Answer","text":"我们没有找到这样的官方说明。ReserveAction 几乎没有坏处，但尚未证明对预约有帮助。请先完善页面文字中的预约规则。"}},{"@type":"Question","name":"我们的预约页面只有一个嵌入式组件，没有文字。","acceptedAnswer":{"@type":"Answer","text":"AI 是否会把嵌入内容中的文字当作页面的一部分来读取，因服务而异且没有公开。表单可以继续嵌入；请在其上方或下方用文字写明预约方式、截止时间和取消规则。"}},{"@type":"Question","name":"预约网站上的取消规则和我们自己网站上的不一样。","acceptedAnswer":{"@type":"Answer","text":"无法知道 AI 会引用哪一个。能统一就尽量统一；如果不能，请写明哪条规则适用于哪个渠道，例如：“在线预约可在前一天之前免费取消；通过预约网站的预约按各网站的规则处理。”"}},{"@type":"Question","name":"在网站上写空位情况，有助于出现在 AI 中吗？","acceptedAnswer":{"@type":"Answer","text":"空位情况会变化，写在页面文字中可能导致旧信息留在 AI 的回答里。请写明如何查看空位，空位情况本身交给预约系统显示。"}},{"@type":"Question","name":"餐厅以外的商家也会支持在 AI 内预约吗？","acceptedAnswer":{"@type":"Answer","text":"2025 年 8 月，Google 表示 AI Mode 的智能体预约将扩展到本地服务预约，并从美国开始。请查看 Google 针对你所在国家的公告。现在能做的是保持预约页面和 Google 商家资料的预约链接准确。"}},{"@type":"Question","name":"修改预约页面后，AI 的回答多久会改变？","acceptedAnswer":{"@type":"Answer","text":"没有任何 AI 服务公开所需时间。请在几天到几周后用相同的问题检查。如果旧的预约渠道仍然出现，请查看来源 URL 并修正该页面。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/zh/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check?lang=zh">免费检测 AI 就绪度</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="面包屑导航"><a href="/zh/">首页</a> <span aria-hidden="true">›</span> <a href="/zh/guide/">AEO 指南</a> <span aria-hidden="true">›</span> <span>如何写出 AI 能正确读取的预约页面：预约方式、截止时间、取消规则，以及 AI 内预约的机制</span></nav>
+  <article>
+    <h1>如何写出 AI 能正确读取的预约页面：预约方式、截止时间、取消规则，以及 AI 内预约的机制</h1>
+    <p class="lead">要让 AI 正确回答预约相关的问题，请在自己的网站上确定一个预约页面，并以 HTML 文本（而不是图片或嵌入式预约组件）写明：预约方式（在线、电话、消息）、是否必须预约以及未预约到店如何处理、最晚和最早可提前多久预约、取消截止时间和费用，以及官方预约渠道列表。截至 2026 年 11 月，在 ChatGPT 或 Google 的 AI 内直接预约主要面向餐厅，并通过 OpenTable 等预约平台实现。无论你是否入驻这些平台，AI 都会到你自己的预约页面读取预约规则。</p>
+<p>撰写于 2026 年 11 月 21 日（日本时间）。营业时间的写法请参阅<a href="/guide/business-hours-holidays-ai-search/">营业时间与休息日</a>，价格请参阅<a href="/guide/pricing-page-ai-search/">如何写价格页面</a>。本指南讨论的是美发沙龙、诊所、餐厅、工作室、住宿设施和上门服务共同拥有的预约页面。</p>
+<p>AI 的回答会因日期、提问措辞和服务而变化。本文的步骤能帮你做出 AI 不容易误读预约规则的页面，并介绍检查方法；但不能保证你一定会出现在回答中，也不能保证可以在 AI 内被预约。</p>
+<section class="qa"><h2>简要结论：AI 弄错预约信息的五个原因及对策</h2><div class="table-wrap"><table><thead><tr><th scope="col">原因</th><th scope="col">AI 回答中的表现</th><th scope="col">对策</th></tr></thead><tbody><tr><th scope="row">预约规则只存在于嵌入式组件或图片中</th><td>AI 只能说“请到官网查看预约方式”</td><td>在预约页面上用文字写明预约方式、截止时间和取消规则</td></tr><tr><th scope="row">“建议预约”或“预约制”没有具体说明</th><td>AI 搞错能否不预约直接到店</td><td>写明不预约时会怎样：“有空位时欢迎直接到店（可能需要等候）”</td></tr><tr><th scope="row">有多个预约渠道，却没有标明哪个是官方的</th><td>AI 把人引向旧的预约网站或已停用的号码</td><td>列出正在使用的渠道，并为每项服务确定一个官方预约 URL</td></tr><tr><th scope="row">没有取消截止时间或费用，或各网站规则不同</th><td>AI 说可以免费取消，或引用了其他商家的规则</td><td>在一处写明截止时间、费用和取消方式，并让各预约网站与之一致</td></tr><tr><th scope="row">预约页面需要登录或注册账号才能查看</th><td>AI 连你是否接受预约都无法回答</td><td>保留一个写明规则的公开页面，把预约表单放在它后面</td></tr></tbody></table></div></section>
+<section class="qa"><h2>AI 内预约的机制（2026 年 11 月）</h2><p>越来越多的商家想知道如何在 ChatGPT 中被预约。目前，AI 内的预约是通过与预约平台的集成实现的。并不存在放到网站上就能加上预约按钮的标签。下表整理了官方公告中的内容。</p><div class="table-wrap"><table><thead><tr><th scope="col">服务</th><th scope="col">功能</th><th scope="col">适用对象</th><th scope="col">来源</th></tr></thead><tbody><tr><th scope="row">ChatGPT（餐厅预约）</th><td>在回答中显示可预约时间，并推进预约流程</td><td>全球的 OpenTable、美国的 Resy、美国和加拿大的 Yelp。只有当 ChatGPT 能把餐厅与受支持平台上的商家信息对应起来时，才会显示 Reserve 按钮。ChatGPT 不保存预约；变更和取消需通过平台办理</td><td><a href="https://help.openai.com/en/articles/9237897-chatgpt-search">OpenAI 帮助中心</a>（2026-11-21 查阅），<a href="https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/">Resy（2026-08-10）</a></td></tr><tr><th scope="row">Google 搜索 AI Mode（智能体预约）</th><td>查找符合需求的空位，并链接到预约页面</td><td>2025-08-21 从餐厅开始，面向美国的 Google AI Ultra 订阅用户（Labs）。英国自 2026-04-10 起支持餐厅预约。公布的合作伙伴包括 OpenTable、Resy、Tock 和 TheFork</td><td><a href="https://blog.google/products/search/ai-mode-agentic-personalized/">Google（2025-08-21）</a>，<a href="https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/">Google 英国（2026-04-10）</a></td></tr><tr><th scope="row">Google 商家资料</th><td>在商家资料上显示预约链接</td><td>已验证的商家资料。可以添加自己的链接，或通过 Reserve with Google 的预约服务商显示</td><td><a href="https://support.google.com/business/answer/13769188">商家链接政策</a>，<a href="https://support.google.com/business/answer/7475773">通过服务商预约</a></td></tr></tbody></table></div><p>ChatGPT 的预约功能基于预约平台发送给 OpenAI 的餐厅列表。每条记录都应包含餐厅自己的网站 URL 及其在平台上的商家页面 URL（<a href="https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec">OpenAI：餐厅预约转化规范</a>，面向预约平台编写）。</p>
+<p>因此，AI 内的预约按钮取决于你所使用的预约平台。商家能掌控的，是保持平台上的商家信息正确，并在自己的网站上正确写明预约规则。即使没有预约按钮，当 AI 被问到“需要预约吗？”或“有取消费吗？”时，也会根据你的网站以及点评和商家信息网站来回答。本指南的其余部分就是讲如何让这个回答正确。</p></section>
+<section class="qa"><h2>排名靠前的文章写了什么、遗漏了什么</h2><p>我们阅读了“预约页面 AI 搜索”等查询下排名靠前的日文和英文文章（2026-11-21）。大多数文章泛泛地讨论本地商家在 AI 中的可见度（统一商家信息、增加评价）。很少有文章一步步讲解预约页面本身该怎么写，几乎没有文章给出结构化数据示例或 WordPress 步骤。</p><div class="table-wrap"><table><thead><tr><th scope="col">文章</th><th scope="col">优点</th><th scope="col">缺失</th></tr></thead><tbody><tr><th scope="row"><a href="https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/">Uravation：电话与预约导线（2026-09-05 更新，日语）</a></th><td>不过度依赖 ReserveAction、固定一个预约 URL、用 GA4 衡量</td><td>JSON-LD 示例、WordPress 步骤、多个预约网站的处理</td></tr><tr><th scope="row"><a href="https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/">Uravation：体验与旅游活动（2026-10-12，日语）</a></th><td>每项体验一个页面；写明雨天取消、所需时长等条件</td><td>仅限旅游和体验活动。没有代码，没有 WordPress</td></tr><tr><th scope="row"><a href="https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/">GMO 本地 AIO（2026-11-16 更新，日语）</a>和<a href="https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/">AIsmiley（2026-10-30 更新，日语）</a></th><td>Google 商家资料的设置 / ChatGPT 餐厅预约在日本的覆盖范围</td><td>统计数据没有来源（GMO）。没有涉及商家自己的预约页面（AIsmiley）</td></tr><tr><th scope="row"><a href="https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/">LSEO：预约、价格与空位（2026-10-02）</a>和<a href="https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/">LSEO：水管工（2026-04-24）</a></th><td>坦率指出：不存在通用的预约 schema，空位信息应来自实时系统</td><td>没有分步说明，没有来源，没有 WordPress</td></tr><tr><th scope="row"><a href="https://jwatte.com/blog/lodging-sites-ai-agents-booking/">J.A. Watte：住宿（2026-11-06 更新）</a>、<a href="https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search">Owner：餐厅（2026-10-22）</a>和<a href="https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search">Mindbody（2026-10-13）</a></th><td>预约链接和含税价格（住宿）、以文字形式提供菜单（餐厅）、服务介绍页面（健身）</td><td>各自只限一个行业；大量宣传自家产品</td></tr></tbody></table></div><p>本指南面向所有接受预约的商家，介绍预约页面应写的内容、如何整理多个预约渠道、结构化数据、WordPress 步骤以及检查方法。</p></section>
+<section class="qa"><h2>每个预约页面都需要的八项信息</h2><p>与预约有关的问题大致分为八类。在预约页面的文字中，每类用一两句话的段落或一行表格来写。</p><div class="table-wrap"><table><thead><tr><th scope="col">信息</th><th scope="col">示例</th><th scope="col">AI 收到的提问</th></tr></thead><tbody><tr><th scope="row">预约方式</th><td>在线 24 小时，电话上午 10 点至晚上 7 点，消息（营业时间内回复）</td><td>“（商家名）怎么预约？”</td></tr><tr><th scope="row">是否必须预约</th><td>预约制。有空位时欢迎直接到店（可能需要等候）</td><td>“可以不预约直接去吗？”</td></tr><tr><th scope="row">截止时间</th><td>前一天晚上 8 点前。当天预约仅限电话</td><td>“今天还能预约吗？”</td></tr><tr><th scope="row">最早可提前多久</th><td>最早可提前两个月预约</td><td>“现在能预约下个月了吗？”</td></tr><tr><th scope="row">所需时长</th><td>剪发约需 60 分钟</td><td>“需要多长时间？”</td></tr><tr><th scope="row">取消</th><td>前一天之前免费取消。当天取消收取 50%。请通过电话取消</td><td>“有取消费吗？”</td></tr><tr><th scope="row">付款与订金</th><td>预约时无需付款。当天可用现金、银行卡或移动支付付款</td><td>“需要提前付款吗？”</td></tr><tr><th scope="row">适用对象、需携带物品</th><td>首次到店：请提前 10 分钟到达填写表格。欢迎带孩子</td><td>“第一次去可以吗？”“可以带孩子吗？”</td></tr></tbody></table></div><p>让每一句话单独拿出来也能看懂。AI 有时只摘取一句话来回答，因此要避免“见上文”“点击这里”这类依赖上下文的表达。不好的写法：“在这里预约。如需取消请尽早告知。”好的写法：“在线预约 24 小时开放，电话预约时间为上午 10 点至晚上 7 点。前一天之前可免费取消；当天取消收取价格的 50%。”</p>
+<p>写明预约与不预约有什么区别。如果优先接待预约客人，就写“未预约的客人将在预约时段之间接待”。如果严格实行预约制，就写“未预约恕不接待”。这样可以减少 AI 错误地回答“无需预约”。</p></section>
+<section class="qa"><h2>多个预约网站：确定哪些是官方渠道</h2><p>美发沙龙和餐厅通常在多个地方接受预约：自有系统、预约网站、电话、消息。AI 会转述它找到的任何预约渠道，因此你已退出的预约网站或旧电话号码都可能出现在回答中。请按以下顺序整理。</p><ol><li>列出所有接受预约的渠道（自有系统、预约网站、Google 商家资料的预约链接、电话、消息、社交媒体私信）</li><li>删除已不再使用的渠道上的商家信息，或标注“已停止接受预约”</li><li>在预约页面上写明“我们通过以下方式接受预约”，并只列出正在使用的渠道</li><li>如果每项服务都有各自的预约 URL，请为每项服务确定一个官方 URL（直接链接到该服务的预约界面，比链接到首页更好）</li><li>让自己网站和所有预约网站上的取消规则和截止时间保持一致。如有不同，请写明哪条规则适用于哪个渠道</li><li>从预约网站的商家资料和 Google 商家资料的简介中链接回你自己的预约页面</li></ol><p>Google 商家资料的预约链接有相关规定：商家资料必须经过验证；链接必须指向专属于你商家、可以完成预约的页面；不允许使用社交媒体、即时通讯应用、应用商店和短链接；页面必须无需登录或验证码即可打开，并返回 200（<a href="https://support.google.com/business/answer/13769188">商家链接政策</a>）。你也可以通过与 Reserve with Google 合作的预约服务商显示；Google 表示，自己添加的自定义链接不会提供效果数据（<a href="https://support.google.com/business/answer/7475773">通过服务商预约</a>）。</p></section>
+<section class="qa"><h2>不要写空位情况，要写如何查看空位</h2><p>如果写了“周六通常比较空”或“工作日无需预约”，情况变化后 AI 仍可能继续使用这句话。没有任何 AI 服务公开它多久重新读取一次页面。请把空位情况交给预约系统显示，在页面上改写查看方法：“可在在线预约界面查看可预约时间。当天空位请致电咨询。”</p>
+<p>如果要提到繁忙时段，请写成稳定的规律：“周末下午较为繁忙，建议提前预约。”把实际情况写得比实际更空，会同时误导顾客和 AI。</p></section>
+<section class="qa"><h2>确保可读：检查嵌入内容、图片和登录</h2><p>许多预约系统通过来自其他网站的嵌入（iframe）或 JavaScript 显示界面。人能看到，但 AI 是否会把嵌入内容中的文字当作你页面的一部分来读取，因服务而异且没有公开。请把预约规则写在嵌入内容之外、预约页面自身的文字中。预约表单本身可以继续嵌入。</p>
+<p>下面的命令可以检查你的预约页面是否无需登录即可打开，以及 HTML 中是否包含规则。</p><pre class="code" dir="ltr"><code># Is the booking page public (200, no login) and are the rules in its HTML?
+curl -s -o /dev/null -w "%{http_code}\n" https://example.com/book/
+curl -s https://example.com/book/ | grep -iE "cancel|walk-in|same day"
+# If nothing prints, the rules live in an image, an embedded widget or JavaScript</code></pre><p>OpenAI 表示，要被收录到 ChatGPT 搜索中，应允许 OAI-SearchBot 抓取你的网站，并确保主机或 CDN 允许来自 OpenAI 公布 IP 地址的流量（<a href="https://help.openai.com/en/articles/9237897-chatgpt-search">OpenAI 帮助中心</a>）。请特别确认机器人防护没有拦截预约页面。对于希望由 AI 智能体代顾客完成预约的商家，Stripe 建议检查机器人防护并考虑 WebMCP，但这是包含支付在内的更进一步的步骤（<a href="https://docs.stripe.com/agentic-commerce/for-sellers/services">Stripe</a>）。</p></section>
+<section class="qa"><h2>结构化数据：可以添加 ReserveAction，但不要期望太高</h2><p>schema.org 有 <a href="https://schema.org/ReserveAction">ReserveAction</a>，表示进行预约的动作，可以用它把预约 URL 与服务关联起来。但我们没有找到 ChatGPT、Perplexity 或 Google AI 功能使用 ReserveAction 进行预约的官方说明。Google 表示，AI 功能不需要特殊的结构化数据，且结构化数据必须与页面上可见的文字一致（<a href="https://developers.google.com/search/docs/appearance/ai-features">AI 功能与您的网站</a>，2026-11-18 查阅）。添加它几乎没有坏处，但不会让预约按钮出现。</p>
+<p>如果要添加，请像下面这样把每个 Service 指向其预约 URL。这与 Nurevo AIO 发布的结构相同。</p><pre class="code" dir="ltr"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": "https://example.com/#nurevo-service-1",
+  "name": "Haircut (wash and blow-dry included)",
+  "provider": { "@id": "https://example.com/#business" },
+  "additionalProperty": {
+    "@type": "PropertyValue",
+    "name": "duration",
+    "value": 60,
+    "unitCode": "MIN",
+    "unitText": "minutes"
+  },
+  "offers": { "@type": "Offer", "price": "55.00", "priceCurrency": "USD" },
+  "potentialAction": {
+    "@type": "ReserveAction",
+    "target": { "@type": "EntryPoint", "urlTemplate": "https://example.com/book/haircut/" },
+    "result": { "@type": "Reservation", "name": "Haircut (wash and blow-dry included)" }
+  }
+}
+&lt;/script&gt;</code></pre><p>关键是不要单独写 Reservation。单独的 Reservation 表示一项预约已经存在，而事实并非如此。作为 ReserveAction 的 result，它表示“这个动作会产生一项预约”。请用 <a href="https://validator.schema.org/">Schema Markup Validator</a> 检查语法。</p></section>
+<section class="qa"><h2>WordPress 操作步骤（使用 Nurevo AIO）</h2><p>使用 <a href="https://wordpress.org/plugins/nurevo-webmcp/">Nurevo AIO（免费，原显示名称为 Nurevo AEO）</a>时，在设置的“服务”中为每项服务输入的预约 URL，会作为 ReserveAction 发布到 Service 结构化数据和 llms.txt 中。请按以下顺序操作。</p><ol><li>先按照上面的八项信息修改预约页面的文字（先页面文字，后结构化数据）</li><li>添加服务（最多 20 项）。除了服务名称、时长（分钟）、价格和货币外，在预约 URL 中填入该服务预约界面的 URL</li><li>对于设有预约 URL 的服务，llms.txt 中的服务名称会链接到该 URL（例如：- <a href="https://example.com/book/haircut/">Haircut</a> — 60 min · USD 55.00）</li><li>不会从 Amelia 等预约插件读取任何数据。这是有意为之，以免把错误的时长或预约 URL 当作事实发布；请手动输入这些值</li><li>将预约页面或菜单页面的 ID 填为承载服务的页面，Service 标记就会放在该页面上（0 = 首页）</li><li>把取消费、当天预约和直接到店等内容加入 FAQ。它不会与 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO 重复，并可与 SEO SIMPLE PACK 和 VK All in One Expansion Unit 共存（0.9.1 起）</li><li>更换预约渠道时，请在同一天更新页面文字、Nurevo 中的预约 URL、FAQ 回答和 Google 商家资料</li></ol><p>负责维护客户网站的代理公司，可以把“预约渠道变更”纳入维护范围，这样客户每次更换预约网站时都不会遗留旧 URL。面向提供月度支持服务的代理公司，我们设有<a href="https://nurevo.jp/partner/">合作伙伴计划</a>。</p></section>
+<section class="qa"><h2>检查方法：固定预约相关提问并保留记录</h2><p>要查看预约规则是否被正确传达，请在不同日期向同一个 AI 提出相同的问题，并记录回答。不要凭一次回答下结论。</p><div class="table-wrap"><table><thead><tr><th scope="col">提问</th><th scope="col">查看要点</th></tr></thead><tbody><tr><th scope="row">“（商家名）需要预约吗？”</th><td>关于仅限预约还是欢迎直接到店，说得对吗？</td></tr><tr><th scope="row">“（商家名）今天还能预约吗？”</th><td>截止时间和方式（仅限电话等）对吗？</td></tr><tr><th scope="row">“（商家名）的取消费是多少？”</th><td>截止时间和费用对吗？来源是不是旧的预约网站？</td></tr><tr><th scope="row">“（商家名）怎么预约？”</th><td>给出的渠道是你现在使用的吗？</td></tr><tr><th scope="row">“（地区）有哪些（业态）今天可以预约？”</th><td>在不含商家名的提问中，你是否在列表里？是否出现预约按钮（餐厅）？</td></tr></tbody></table></div><p>记录日期、AI 服务、提问、回答和来源 URL。如果来源是旧的预约网站或博客文章，请修正它。在 Nurevo 的 Free 和 Standard 方案中，Nurevo 服务每月一次根据你的业务类型和地区向 Perplexity 提出三个不含商家名的问题，并显示你的名字是否出现、你的网站是否被引用。Pro（每月 $99 起，测试版）可在 Perplexity 上测量最多 20 个问题（配置后也支持 ChatGPT）。预约相关的提问请手动记录。详情请参阅<a href="/zh/guide/measure-ai-visibility/">如何测量 AI 可见度</a>。</p></section>
+<section class="qa"><h2>发布前检查清单</h2><ol><li>只有一个预约页面，且无需登录即可打开</li><li>预约方式和受理时间以文字写明</li><li>写明了是否必须预约，以及不预约时会怎样</li><li>写明了截止时间（当天、前一天）和最早可提前多久预约</li><li>写明了取消截止时间、费用和取消方式，并与各预约网站一致</li><li>只列出正在使用的渠道；旧渠道已删除</li><li>页面写的是如何查看空位，而不是空位情况本身</li><li>预约规则写在页面文字中，不在嵌入内容或图片里</li><li>结构化数据中的预约 URL 指向你现在使用的预约界面</li><li>Google 商家资料的预约链接指向同一渠道</li></ol></section>
+    <section class="qa"><h2>常见问题</h2><h3>要在 ChatGPT 中显示 Reserve 按钮，网站上需要放什么？</h3><p>网站上没有任何东西能开启它。OpenAI 帮助中心说明，只有当 ChatGPT 能把餐厅与受支持平台（OpenTable、Resy、Yelp）上的商家信息对应起来时，才会显示 Reserve 按钮。你能做的是在网站上正确写明预约规则，并保持预约平台上的商家信息准确。</p>
+<h3>添加 ReserveAction 能从 AI 带来预约吗？</h3><p>我们没有找到这样的官方说明。ReserveAction 几乎没有坏处，但尚未证明对预约有帮助。请先完善页面文字中的预约规则。</p>
+<h3>我们的预约页面只有一个嵌入式组件，没有文字。</h3><p>AI 是否会把嵌入内容中的文字当作页面的一部分来读取，因服务而异且没有公开。表单可以继续嵌入；请在其上方或下方用文字写明预约方式、截止时间和取消规则。</p>
+<h3>预约网站上的取消规则和我们自己网站上的不一样。</h3><p>无法知道 AI 会引用哪一个。能统一就尽量统一；如果不能，请写明哪条规则适用于哪个渠道，例如：“在线预约可在前一天之前免费取消；通过预约网站的预约按各网站的规则处理。”</p>
+<h3>在网站上写空位情况，有助于出现在 AI 中吗？</h3><p>空位情况会变化，写在页面文字中可能导致旧信息留在 AI 的回答里。请写明如何查看空位，空位情况本身交给预约系统显示。</p>
+<h3>餐厅以外的商家也会支持在 AI 内预约吗？</h3><p>2025 年 8 月，Google 表示 AI Mode 的智能体预约将扩展到本地服务预约，并从美国开始。请查看 Google 针对你所在国家的公告。现在能做的是保持预约页面和 Google 商家资料的预约链接准确。</p>
+<h3>修改预约页面后，AI 的回答多久会改变？</h3><p>没有任何 AI 服务公开所需时间。请在几天到几周后用相同的问题检查。如果旧的预约渠道仍然出现，请查看来源 URL 并修正该页面。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>看看 AI 能否读取你的网站</h2>
+    <p>免费检测无需注册：输入网址即可查看 AI 爬虫访问、结构化数据和 llms.txt 的状况。在 WordPress 上，免费插件会将你的服务和预约 URL 发布为结构化数据并写入 llms.txt，且不会与 SEO 插件的输出重复。</p>
+    <a class="btn primary lg" href="/check?lang=zh">免费检测 AI 就绪度</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">试用免费 WordPress 插件</a>
+  </aside>
+  <nav class="related" aria-label="相关指南"><h2>相关指南</h2><ul><li><a href="/zh/guide/local-business-schema-seo-plugins/">免费为 Yoast SEO、Rank Math 或 AIOSEO 添加本地商家结构化数据</a></li><li><a href="/zh/guide/measure-ai-visibility/">如何衡量 AI 可见度：问题的选择、提问次数与数据解读</a></li></ul></nav>
+  <nav class="langs" aria-label="其他语言"><h2>其他语言</h2><ul><li><a href="/ja/guide/booking-page-ai-search/" hreflang="ja" lang="ja">日本語</a></li><li><a href="/guide/booking-page-ai-search/" hreflang="en" lang="en">English</a></li><li><a href="/ar/guide/booking-page-ai-search/" hreflang="ar" lang="ar">العربية</a></li><li><a href="/bg/guide/booking-page-ai-search/" hreflang="bg" lang="bg">Български</a></li><li><a href="/ca/guide/booking-page-ai-search/" hreflang="ca" lang="ca">Català</a></li><li><a href="/cs/guide/booking-page-ai-search/" hreflang="cs" lang="cs">Čeština</a></li><li><a href="/da/guide/booking-page-ai-search/" hreflang="da" lang="da">Dansk</a></li><li><a href="/de/guide/booking-page-ai-search/" hreflang="de" lang="de">Deutsch</a></li><li><a href="/el/guide/booking-page-ai-search/" hreflang="el" lang="el">Ελληνικά</a></li><li><a href="/es/guide/booking-page-ai-search/" hreflang="es" lang="es">Español</a></li><li><a href="/et/guide/booking-page-ai-search/" hreflang="et" lang="et">Eesti</a></li><li><a href="/fa/guide/booking-page-ai-search/" hreflang="fa" lang="fa">فارسی</a></li><li><a href="/fi/guide/booking-page-ai-search/" hreflang="fi" lang="fi">Suomi</a></li><li><a href="/fr/guide/booking-page-ai-search/" hreflang="fr" lang="fr">Français</a></li><li><a href="/fy/guide/booking-page-ai-search/" hreflang="fy" lang="fy">Frysk</a></li><li><a href="/gl/guide/booking-page-ai-search/" hreflang="gl" lang="gl">Galego</a></li><li><a href="/gu/guide/booking-page-ai-search/" hreflang="gu" lang="gu">ગુજરાતી</a></li><li><a href="/he/guide/booking-page-ai-search/" hreflang="he" lang="he">עברית</a></li><li><a href="/hi/guide/booking-page-ai-search/" hreflang="hi" lang="hi">हिन्दी</a></li><li><a href="/hr/guide/booking-page-ai-search/" hreflang="hr" lang="hr">Hrvatski</a></li><li><a href="/hu/guide/booking-page-ai-search/" hreflang="hu" lang="hu">Magyar</a></li><li><a href="/id/guide/booking-page-ai-search/" hreflang="id" lang="id">Bahasa Indonesia</a></li><li><a href="/it/guide/booking-page-ai-search/" hreflang="it" lang="it">Italiano</a></li><li><a href="/ko/guide/booking-page-ai-search/" hreflang="ko" lang="ko">한국어</a></li><li><a href="/lo/guide/booking-page-ai-search/" hreflang="lo" lang="lo">ລາວ</a></li><li><a href="/nb/guide/booking-page-ai-search/" hreflang="nb" lang="nb">Norsk bokmål</a></li><li><a href="/nl/guide/booking-page-ai-search/" hreflang="nl" lang="nl">Nederlands</a></li><li><a href="/pl/guide/booking-page-ai-search/" hreflang="pl" lang="pl">Polski</a></li><li><a href="/pt-br/guide/booking-page-ai-search/" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a></li><li><a href="/pt-pt/guide/booking-page-ai-search/" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a></li><li><a href="/ro/guide/booking-page-ai-search/" hreflang="ro" lang="ro">Română</a></li><li><a href="/ru/guide/booking-page-ai-search/" hreflang="ru" lang="ru">Русский</a></li><li><a href="/sk/guide/booking-page-ai-search/" hreflang="sk" lang="sk">Slovenčina</a></li><li><a href="/sl/guide/booking-page-ai-search/" hreflang="sl" lang="sl">Slovenščina</a></li><li><a href="/sr/guide/booking-page-ai-search/" hreflang="sr" lang="sr">Српски</a></li><li><a href="/sv/guide/booking-page-ai-search/" hreflang="sv" lang="sv">Svenska</a></li><li><a href="/tr/guide/booking-page-ai-search/" hreflang="tr" lang="tr">Türkçe</a></li><li><a href="/uk/guide/booking-page-ai-search/" hreflang="uk" lang="uk">Українська</a></li><li><a href="/vi/guide/booking-page-ai-search/" hreflang="vi" lang="vi">Tiếng Việt</a></li><li><a href="/zh-tw/guide/booking-page-ai-search/" hreflang="zh-Hant" lang="zh-Hant">繁體中文</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">ChatGPT 是 OpenAI 的商标；Google、Google Search、Google Business Profile（Google 商家资料）和 Reserve with Google 是 Google LLC 的商标；Perplexity 是 Perplexity AI 的商标。OpenTable、Resy、Yelp、Tock、TheFork、Booksy、Stripe、WordPress、Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit、Amelia 以及本指南中引用的公司名称，均为其各自所有者的商标或注册商标。Nurevo 与上述公司均无关联，也未获得其认可。</p><a href="/zh/">Nurevo AIO</a> ・ <a href="/en/terms/" hreflang="en">服务条款 (English)</a> ・ <a href="/en/privacy/" hreflang="en">隐私政策 (English)</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>

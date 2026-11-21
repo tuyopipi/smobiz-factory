@@ -1,0 +1,347 @@
+{
+ "title": "如何寫出 AI 能正確讀取的預約頁面 | Nurevo",
+ "description": "讓 AI 正確回答「需要預約嗎？」「有取消費嗎？」：預約頁面該寫的內容、AI 內預約的機制、schema 與 WordPress 設定步驟。",
+ "h1": "如何寫出 AI 能正確讀取的預約頁面：預約方式、截止時間、取消規定，以及 AI 內預約的機制",
+ "lead": "要讓 AI 正確回答預約相關問題，請在自己的網站上選定一個預約頁面，並以 HTML 文字（而非圖片或嵌入式預約元件）寫明：預約方式（線上、電話、訊息）、是否必須預約以及未預約到店會如何處理、最晚與最早可以多久前預約、取消期限與費用，以及官方預約管道清單。截至 2026 年 11 月，在 ChatGPT 或 Google 的 AI 內直接預約主要適用於餐廳，並透過 OpenTable 等訂位平台進行。無論你是否有上架這些平台，AI 都會到你自己的預約頁面讀取預約規定。",
+ "intro": [
+  "撰寫於 2026 年 11 月 21 日（日本時間）。營業時間的寫法請參閱[營業時間與公休日](/guide/business-hours-holidays-ai-search)，價格請參閱[如何撰寫價格頁面](/guide/pricing-page-ai-search)。本指南談的是美髮沙龍、診所、餐廳、工作室、住宿業和到府服務共同擁有的預約頁面。",
+  "AI 的回答會隨日期、提問措辭和服務而改變。本文的步驟能幫你做出 AI 較不容易誤讀預約規定的頁面，並說明檢查方式；但無法保證你一定會出現在回答中，也無法保證能在 AI 內被預約。"
+ ],
+ "sections": [
+  {
+   "heading": "重點整理：AI 弄錯預約資訊的五個原因與對策",
+   "table": {
+    "head": [
+     "原因",
+     "AI 回答中的狀況",
+     "對策"
+    ],
+    "rows": [
+     [
+      "預約規定只存在於嵌入式元件或圖片中",
+      "AI 只能說「請至官方網站確認預約方式」",
+      "在預約頁面上以文字寫明預約方式、截止時間與取消規定"
+     ],
+     [
+      "「建議預約」或「採預約制」沒有具體說明",
+      "AI 搞錯能否不預約直接到店",
+      "寫明沒有預約時會怎樣：「有空位時歡迎直接到店（可能需要等候）」"
+     ],
+     [
+      "有多個預約管道，卻沒有標示哪個是官方的",
+      "AI 把人導向舊的預約網站或已停用的號碼",
+      "列出正在使用的管道，並為每項服務固定一個官方預約 URL"
+     ],
+     [
+      "沒有取消期限或費用，或各網站規定不同",
+      "AI 說可以免費取消，或引用了其他店家的規定",
+      "在同一處寫明期限、費用與取消方式，並讓各預約網站與之一致"
+     ],
+     [
+      "預約頁面需要登入或註冊帳號才能瀏覽",
+      "AI 連你是否接受預約都無法回答",
+      "保留一個寫明規定的公開頁面，把預約表單放在它後面"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "AI 內預約的機制（2026 年 11 月）",
+   "paragraphs": [
+    "越來越多店家想知道如何在 ChatGPT 中被預約。目前，AI 內的預約是透過與訂位平台的整合來實現。並沒有放到網站上就能加上預約按鈕的標籤。下表整理了官方公告的內容。"
+   ],
+   "table": {
+    "head": [
+     "服務",
+     "功能",
+     "適用對象",
+     "來源"
+    ],
+    "rows": [
+     [
+      "ChatGPT（餐廳訂位）",
+      "在回答中顯示可預約時段，並推進預約流程",
+      "全球的 OpenTable、美國的 Resy、美國與加拿大的 Yelp。只有當 ChatGPT 能將餐廳對應到受支援平台上的店家資訊時，才會顯示 Reserve 按鈕。ChatGPT 不會儲存預約；變更與取消需透過平台辦理",
+      "[OpenAI 說明中心](https://help.openai.com/en/articles/9237897-chatgpt-search)（2026-11-21 查閱）、[Resy（2026-08-10）](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "Google 搜尋 AI 模式（代理式預約）",
+      "找出符合需求的空位，並連結到預約頁面",
+      "2025-08-21 從餐廳開始，對象為美國的 Google AI Ultra 訂閱者（Labs）。英國自 2026-04-10 起支援餐廳訂位。公布的合作夥伴包括 OpenTable、Resy、Tock 與 TheFork",
+      "[Google（2025-08-21）](https://blog.google/products/search/ai-mode-agentic-personalized/)、[Google 英國（2026-04-10）](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Google 商家檔案",
+      "在商家檔案上顯示預約連結",
+      "已驗證的商家檔案。可以加入自己的連結，或透過 Reserve with Google 的預約服務供應商顯示",
+      "[商家連結政策](https://support.google.com/business/answer/13769188)、[透過供應商預約](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "ChatGPT 的訂位功能是以訂位平台傳送給 OpenAI 的餐廳清單為基礎。每筆資料都應包含餐廳自己的網站 URL，以及其在平台上的店家頁面 URL（[OpenAI：餐廳訂位轉換規格](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec)，為訂位平台撰寫）。",
+    "因此，AI 內的預約按鈕取決於你使用的訂位平台。店家能掌控的，是讓平台上的店家資訊保持正確，並在自己的網站上正確寫明預約規定。即使沒有預約按鈕，當 AI 被問到「需要預約嗎？」或「有取消費嗎？」時，也會根據你的網站以及評論與店家資訊網站來回答。本指南其餘部分就是在說明如何讓這個回答正確。"
+   ]
+  },
+  {
+   "heading": "排名前段的文章寫了什麼、漏了什麼",
+   "paragraphs": [
+    "我們閱讀了「預約頁面 AI 搜尋」等查詢下排名前段的日文與英文文章（2026-11-21）。大多數文章泛談在地店家在 AI 中的能見度（統一商家資訊、增加評論）。很少有文章一步步說明預約頁面本身該怎麼寫，幾乎沒有文章提供結構化資料範例或 WordPress 步驟。"
+   ],
+   "table": {
+    "head": [
+     "文章",
+     "強項",
+     "不足"
+    ],
+    "rows": [
+     [
+      "[Uravation：電話與預約動線（2026-09-05 更新，日文）](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "不過度依賴 ReserveAction、固定一個預約 URL、以 GA4 衡量",
+      "JSON-LD 範例、WordPress 步驟、多個預約網站的處理方式"
+     ],
+     [
+      "[Uravation：體驗與觀光活動（2026-10-12，日文）](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "每項體驗一個頁面；寫明雨天取消、所需時間等條件",
+      "僅限觀光與體驗活動。沒有程式碼，沒有 WordPress"
+     ],
+     [
+      "[GMO 在地 AIO（2026-11-16 更新，日文）](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/)與[AIsmiley（2026-10-30 更新，日文）](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "Google 商家檔案的設定 / ChatGPT 餐廳訂位在日本的適用範圍",
+      "統計數字沒有來源（GMO）。完全沒提到店家自己的預約頁面（AIsmiley）"
+     ],
+     [
+      "[LSEO：預約、價格與空位（2026-10-02）](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/)與[LSEO：水電師傅（2026-04-24）](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "坦白指出：沒有通用的預約 schema，空位資訊應來自即時系統",
+      "沒有逐步說明，沒有來源，沒有 WordPress"
+     ],
+     [
+      "[J.A. Watte：住宿（2026-11-06 更新）](https://jwatte.com/blog/lodging-sites-ai-agents-booking/)、[Owner：餐廳（2026-10-22）](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search)與[Mindbody（2026-10-13）](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "預約連結與含稅價格（住宿）、以文字提供菜單（餐廳）、服務介紹頁面（健身）",
+      "各自只限單一產業；大量宣傳自家產品"
+     ]
+    ]
+   },
+   "after": [
+    "本指南針對所有接受預約的店家，說明預約頁面該寫的內容、如何整理多個預約管道、結構化資料、WordPress 步驟以及檢查方式。"
+   ]
+  },
+  {
+   "heading": "每個預約頁面都需要的八項資訊",
+   "paragraphs": [
+    "與預約有關的問題大致可分為八類。在預約頁面的文字中，每一類以一兩句話的段落或一列表格來寫。"
+   ],
+   "table": {
+    "head": [
+     "資訊",
+     "範例",
+     "AI 收到的提問"
+    ],
+    "rows": [
+     [
+      "預約方式",
+      "線上 24 小時，電話上午 10 點至晚上 7 點，訊息（營業時間內回覆）",
+      "「（店名）要怎麼預約？」"
+     ],
+     [
+      "是否必須預約",
+      "採預約制。有空位時歡迎直接到店（可能需要等候）",
+      "「可以不預約直接去嗎？」"
+     ],
+     [
+      "截止時間",
+      "前一天晚上 8 點前。當天預約僅限電話",
+      "「今天還能預約嗎？」"
+     ],
+     [
+      "最早可以多久前預約",
+      "最早可預約兩個月後",
+      "「現在可以預約下個月了嗎？」"
+     ],
+     [
+      "所需時間",
+      "剪髮約需 60 分鐘",
+      "「需要多久時間？」"
+     ],
+     [
+      "取消",
+      "前一天之前免費取消。當天取消收取 50%。請以電話取消",
+      "「有取消費嗎？」"
+     ],
+     [
+      "付款與訂金",
+      "預約時不需付款。當天可用現金、信用卡或行動支付付款",
+      "「需要事先付款嗎？」"
+     ],
+     [
+      "適用對象、需攜帶物品",
+      "初次來店：請提早 10 分鐘到場填寫表單。歡迎帶小孩",
+      "「第一次去可以嗎？」「可以帶小孩嗎？」"
+     ]
+    ]
+   },
+   "after": [
+    "讓每一句話單獨拿出來也看得懂。AI 有時只擷取一句話來回答，因此請避免「見上方」「點此」這類依賴前後文的說法。不好的寫法：「在此預約。如需取消請盡早告知。」好的寫法：「線上預約 24 小時開放，電話預約時間為上午 10 點至晚上 7 點。前一天之前可免費取消；當天取消收取費用的 50%。」",
+    "寫明有預約與沒預約的差別。如果優先接待預約客人，就寫「未預約的客人會在預約時段之間接待」。如果嚴格採預約制，就寫「未預約恕無法接待」。這樣能減少 AI 錯誤回答「不需預約」。"
+   ]
+  },
+  {
+   "heading": "多個預約網站：決定哪些是官方管道",
+   "paragraphs": [
+    "美髮沙龍和餐廳常在多個地方接受預約：自有系統、預約網站、電話、訊息。AI 會轉述它找到的任何預約管道，所以你已退出的預約網站或舊電話號碼都可能出現在回答中。請依下列順序整理。"
+   ],
+   "list": [
+    "列出所有接受預約的管道（自有系統、預約網站、Google 商家檔案的預約連結、電話、訊息、社群媒體私訊）",
+    "刪除已不再使用之管道上的店家資訊，或標示「已停止接受預約」",
+    "在預約頁面寫明「我們透過以下方式接受預約」，並只列出正在使用的管道",
+    "如果每項服務各有預約 URL，請為每項服務固定一個官方 URL（直接連到該服務的預約畫面，比連到首頁更好）",
+    "讓自己網站與所有預約網站的取消規定和截止時間一致。如有不同，請寫明哪條規定適用於哪個管道",
+    "從預約網站的店家檔案與 Google 商家檔案的說明中，連結回你自己的預約頁面"
+   ],
+   "after": [
+    "Google 商家檔案的預約連結有相關規定：商家檔案必須經過驗證；連結必須指向專屬於你店家、可完成預約的頁面；不允許使用社群媒體、即時通訊應用程式、應用程式商店和短網址；頁面必須不需登入或 CAPTCHA 即可開啟，並回傳 200（[商家連結政策](https://support.google.com/business/answer/13769188)）。你也可以透過與 Reserve with Google 合作的預約服務供應商顯示；Google 表示，自行加入的自訂連結不會提供成效資料（[透過供應商預約](https://support.google.com/business/answer/7475773)）。"
+   ]
+  },
+  {
+   "heading": "不要寫空位狀況，要寫如何查看空位",
+   "paragraphs": [
+    "如果寫了「週六通常比較空」或「平日不需預約」，情況改變後 AI 仍可能繼續使用這句話。沒有任何 AI 服務公開它多久重新讀取一次頁面。請把空位狀況交給預約系統顯示，頁面上改寫查看方式：「可在線上預約畫面查看可預約時段。當天空位請來電洽詢。」",
+    "如果要提到熱門時段，請寫成穩定的規律：「週末下午較為擁擠，建議事先預約。」把實際情況寫得比實際更空，會同時誤導顧客與 AI。"
+   ]
+  },
+  {
+   "heading": "確保可讀取：檢查嵌入內容、圖片與登入",
+   "paragraphs": [
+    "許多預約系統透過來自其他網站的嵌入（iframe）或 JavaScript 顯示畫面。人看得到，但 AI 是否會把嵌入內容中的文字當成你頁面的一部分來讀取，因服務而異且未公開。請把預約規定寫在嵌入內容之外、預約頁面本身的文字中。預約表單本身可以繼續嵌入。",
+    "下面的指令可檢查你的預約頁面是否不需登入即可開啟，以及 HTML 中是否包含規定。"
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "OpenAI 表示，若要被納入 ChatGPT 搜尋，應允許 OAI-SearchBot 檢索你的網站，並確認主機或 CDN 允許來自 OpenAI 公布之 IP 位址的流量（[OpenAI 說明中心](https://help.openai.com/en/articles/9237897-chatgpt-search)）。請特別確認機器人防護沒有擋下預約頁面。對於希望由 AI 代理代替顧客完成預約的店家，Stripe 建議檢視機器人防護並考慮 WebMCP，但那是包含金流在內的進一步步驟（[Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services)）。"
+   ]
+  },
+  {
+   "heading": "結構化資料：可以加入 ReserveAction，但別期望太高",
+   "paragraphs": [
+    "schema.org 有 [ReserveAction](https://schema.org/ReserveAction)，代表進行預約的動作，可用來將預約 URL 與服務連結起來。但我們找不到 ChatGPT、Perplexity 或 Google AI 功能使用 ReserveAction 進行預約的官方說明。Google 表示，AI 功能不需要特殊的結構化資料，且結構化資料必須與頁面上可見的文字一致（[AI 功能與你的網站](https://developers.google.com/search/docs/appearance/ai-features)，2026-11-18 查閱）。加入它幾乎沒有壞處，但不會讓預約按鈕出現。",
+    "如果要加入，請像下面這樣把每個 Service 指向其預約 URL。這與 Nurevo AIO 發布的結構相同。"
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "關鍵是不要單獨寫 Reservation。單獨的 Reservation 表示預約已經存在，但事實並非如此。作為 ReserveAction 的 result，它表示「這個動作會產生一筆預約」。請用 [Schema Markup Validator](https://validator.schema.org/) 檢查語法。"
+   ]
+  },
+  {
+   "heading": "WordPress 操作步驟（使用 Nurevo AIO）",
+   "paragraphs": [
+    "使用 [Nurevo AIO（免費，舊顯示名稱為 Nurevo AEO）](https://wordpress.org/plugins/nurevo-webmcp/)時，在設定的「服務」中為每項服務輸入的預約 URL，會以 ReserveAction 發布到 Service 結構化資料與 llms.txt 中。請依下列順序操作。"
+   ],
+   "list": [
+    "先依照上面的八項資訊修改預約頁面文字（先頁面文字，後結構化資料）",
+    "新增服務（最多 20 項）。除了服務名稱、所需時間（分鐘）、價格與幣別之外，在預約 URL 欄位填入該服務預約畫面的 URL",
+    "設有預約 URL 的服務，llms.txt 中的服務名稱會連結到該 URL（例如：- [Haircut](https://example.com/book/haircut/) — 60 min · USD 55.00）",
+    "不會從 Amelia 等預約外掛讀取任何資料。這是刻意的設計，避免把錯誤的所需時間或預約 URL 當成事實發布；請手動輸入這些值",
+    "將預約頁面或價目表頁面的 ID 設為承載服務的頁面，Service 標記就會放在該頁面上（0 = 首頁）",
+    "把取消費、當天預約與直接到店等內容加入 FAQ。它不會與 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO 重複，並能與 SEO SIMPLE PACK 和 VK All in One Expansion Unit 共存（0.9.1 起）",
+    "更換預約管道時，請在同一天更新頁面文字、Nurevo 中的預約 URL、FAQ 回答與 Google 商家檔案"
+   ],
+   "after": [
+    "負責維護客戶網站的代理商，可以把「預約管道變更」納入維護範圍，這樣客戶每次更換預約網站時都不會留下舊 URL。針對提供月費支援服務的代理商，我們設有[合作夥伴計畫](https://nurevo.jp/partner/)。"
+   ]
+  },
+  {
+   "heading": "檢查方式：固定預約相關提問並留下紀錄",
+   "paragraphs": [
+    "若要確認預約規定是否正確傳達，請在不同日期向同一個 AI 提出相同問題，並記錄回答。不要只憑一次回答下判斷。"
+   ],
+   "table": {
+    "head": [
+     "提問",
+     "檢查重點"
+    ],
+    "rows": [
+     [
+      "「（店名）需要預約嗎？」",
+      "關於僅限預約或歡迎直接到店，說得正確嗎？"
+     ],
+     [
+      "「（店名）今天還能預約嗎？」",
+      "截止時間與方式（僅限電話等）正確嗎？"
+     ],
+     [
+      "「（店名）的取消費是多少？」",
+      "期限與費用正確嗎？來源是不是舊的預約網站？"
+     ],
+     [
+      "「（店名）要怎麼預約？」",
+      "提供的管道是你目前使用的嗎？"
+     ],
+     [
+      "「（地區）有哪些（業種）今天可以預約？」",
+      "在不含店名的提問中，你有在清單上嗎？有沒有出現預約按鈕（餐廳）？"
+     ]
+    ]
+   },
+   "after": [
+    "記錄日期、AI 服務、提問、回答與來源 URL。如果來源是舊的預約網站或部落格文章，請修正它。在 Nurevo 的 Free 與 Standard 方案中，Nurevo 服務每月一次會依你的業種與地區向 Perplexity 提出三個不含店名的問題，並顯示你的名稱是否出現、你的網站是否被引用。Pro（每月 $99 起，測試版）可在 Perplexity 上量測最多 20 個問題（設定後也支援 ChatGPT）。預約相關提問請手動記錄。詳情請參閱[如何量測 AI 能見度](/guide/measure-ai-visibility)。"
+   ]
+  },
+  {
+   "heading": "發布前檢查清單",
+   "list": [
+    "只有一個預約頁面，且不需登入即可開啟",
+    "預約方式與受理時間以文字寫明",
+    "寫明是否必須預約，以及沒有預約時會怎樣",
+    "寫明截止時間（當天、前一天）與最早可以多久前預約",
+    "寫明取消期限、費用與取消方式，且與各預約網站一致",
+    "只列出正在使用的管道；舊管道已移除",
+    "頁面寫的是如何查看空位，而不是空位狀況本身",
+    "預約規定寫在頁面文字中，不在嵌入內容或圖片裡",
+    "結構化資料中的預約 URL 指向你目前使用的預約畫面",
+    "Google 商家檔案的預約連結指向同一個管道"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "要在 ChatGPT 顯示 Reserve 按鈕，網站上該放什麼？",
+   "a": "網站上沒有任何東西能啟用它。OpenAI 說明中心指出，只有當 ChatGPT 能將餐廳對應到受支援平台（OpenTable、Resy、Yelp）上的店家資訊時，才會顯示 Reserve 按鈕。你能做的是在網站上正確寫明預約規定，並讓訂位平台上的店家資訊保持正確。"
+  },
+  {
+   "q": "加入 ReserveAction 能從 AI 帶來預約嗎？",
+   "a": "我們找不到這樣的官方說明。ReserveAction 幾乎沒有壞處，但尚未證實對預約有幫助。請先把頁面文字中的預約規定寫好。"
+  },
+  {
+   "q": "我們的預約頁面只有一個嵌入式元件，沒有文字。",
+   "a": "AI 是否會把嵌入內容中的文字當成頁面的一部分來讀取，因服務而異且未公開。表單可以繼續嵌入；請在其上方或下方以文字寫明預約方式、截止時間與取消規定。"
+  },
+  {
+   "q": "預約網站上的取消規定和我們自己網站上的不同。",
+   "a": "無法得知 AI 會引用哪一個。能統一就盡量統一；如果不行，請寫明哪條規定適用於哪個管道，例如：「線上預約可在前一天之前免費取消；透過預約網站的預約依各網站規定辦理。」"
+  },
+  {
+   "q": "在網站上寫空位狀況，有助於出現在 AI 中嗎？",
+   "a": "空位狀況會變動，寫在頁面文字中可能讓舊資訊留在 AI 的回答裡。請寫明如何查看空位，空位狀況本身交給預約系統顯示。"
+  },
+  {
+   "q": "餐廳以外的店家也會能在 AI 內被預約嗎？",
+   "a": "2025 年 8 月，Google 表示 AI 模式的代理式預約將擴展到在地服務預約，並從美國開始。請查看 Google 針對你所在國家的公告。現在能做的是讓預約頁面與 Google 商家檔案的預約連結保持正確。"
+  },
+  {
+   "q": "修改預約頁面後，AI 的回答多久會改變？",
+   "a": "沒有任何 AI 服務公開所需時間。請在幾天到幾週後用相同問題檢查。如果舊的預約管道仍然出現，請查看來源 URL 並修正該頁面。"
+  }
+ ],
+ "relatedHeading": "相關指南",
+ "cta": {
+  "heading": "看看 AI 能否讀取你的網站",
+  "body": "免費檢測不需註冊：輸入網址即可查看 AI 爬蟲存取、結構化資料與 llms.txt 的狀況。在 WordPress 上，免費外掛會將你的服務與預約 URL 發布為結構化資料並寫入 llms.txt，且不會與 SEO 外掛的輸出重複。",
+  "label": "免費檢測 AI 就緒度",
+  "href": "/check",
+  "secondary": {
+   "label": "試用免費 WordPress 外掛",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT 是 OpenAI 的商標；Google、Google Search、Google Business Profile（Google 商家檔案）與 Reserve with Google 是 Google LLC 的商標；Perplexity 是 Perplexity AI 的商標。OpenTable、Resy、Yelp、Tock、TheFork、Booksy、Stripe、WordPress、Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit、Amelia 以及本指南中引用的公司名稱，皆為其各自所有者的商標或註冊商標。Nurevo 與上述公司皆無關聯，亦未獲其背書。"
+}

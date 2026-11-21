@@ -1,0 +1,316 @@
+{
+ "title": "Om oss-siden og AI-søk: få bedriftens fakta riktig | Nurevo",
+ "description": "Slik lager du en Om oss-side som AI-svar kan stole på: hvilke fakta du bør publisere, hvordan du fjerner navne- og adressevarianter, Organization-schema og WordPress.",
+ "h1": "AI-søkeoptimalisering av Om oss-siden: få bedriftens navn, adresse, stiftelsesdato og virksomhet beskrevet riktig",
+ "lead": "Når noen spør en AI om bedriften din ved navn, er det Om oss-siden eller bedriftsprofilen din svaret lener seg på. Skriv det juridiske navnet og navnene folk faktisk bruker, adressen, stiftelsesdatoen, ledelsen, hva dere gjør og hvordan man kontakter dere, på én side i vanlig tekst; publiser de samme verdiene som Organization-strukturerte data; og sørg for at skrivemåten er den samme på de andre sidene dine og i profilene dine andre steder. Disse tre trinnene er kjernen i arbeidet.",
+ "intro": [
+  "Skrevet 15. november 2026 (JST). Denne guiden er for alle bedrifter, butikker og organisasjoner som har en Om oss-side eller en bedriftsprofil, og for byråene som lager slike nettsteder. Merking av adresse og åpningstider for butikker gjennomgås i [local business-schema og SEO-utvidelser](/guide/local-business-schema-seo-plugins). Denne guiden handler om siden som forteller hvem dere er og hvor dere holder til.",
+  "AI-svar endrer seg fra dag til dag og etter formulering. Disse trinnene gjør informasjonen AI leser riktig; de garanterer ikke at du kommer med i et svar."
+ ],
+ "sections": [
+  {
+   "heading": "Hva AI bruker Om oss-siden din til",
+   "paragraphs": [
+    "ChatGPT-søk, Perplexity og Googles AI Overviews leser nettsider når de svarer, og viser dem som kilder. Ved et spørsmål som nevner en bedrift, er bedriftens eget nettsted – og fremfor alt siden som samler de grunnleggende faktaene – en opplagt kandidat. Hvis Om oss-siden bare er ett bilde, eller hvis navn og adresse skrives ulikt fra side til side, kan AI bygge svaret sitt på noen andres gamle oppføring eller på en annen bedrift med samme navn.",
+    "Spørsmål som nevner en bedrift, følger gjerne noen få mønstre. Hvert av dem kan besvares ut fra en Om oss-side som oppgir faktaene i tekst."
+   ],
+   "list": [
+    "«Hva driver Eksempel AS med?» (virksomhetsbeskrivelse)",
+    "«Hvor ligger hovedkontoret til Eksempel? Har de et kontor i Bergen?» (lokasjoner)",
+    "«Når ble Eksempel stiftet, og hvem leder det?» (stiftelsesdato, ledelse)",
+    "«Hvilken bedrift står bak Eksempel-appen?» (merkevare kontra firmanavn)",
+    "«Er Eksempel det samme selskapet som Prøve?» (tidligere navn, konsernselskaper, navnebrødre)",
+    "«Hvordan kontakter jeg Eksempel?» (telefon, skjema, åpningstider)"
+   ],
+   "after": [
+    "Google sier at det ikke finnes noen ekstra krav og ingen spesielle strukturerte data for å vises i AI Overviews eller AI Mode, og at vanlig god SEO-praksis gjelder ([Google Search Central: AI-funksjoner og nettstedet ditt](https://developers.google.com/search/docs/appearance/ai-features)). Arbeidet med Om oss-siden er ikke en spesiell måte å skrive for AI på. Det handler om å oppgi faktaene presist, i lesbar form og med de samme verdiene overalt."
+   ]
+  },
+  {
+   "heading": "Hva siden skal inneholde, og hvordan det tilsvarer strukturerte data",
+   "paragraphs": [
+    "Tabellen viser hva en Om oss-side bør oppgi, feilene AI-svar ofte gjør, og den tilsvarende Organization-egenskapen. Egenskapsnavnene er hentet fra de anbefalte egenskapene i Googles dokumentasjon om [Organization-strukturerte data](https://developers.google.com/search/docs/appearance/structured-data/organization). «Kun tekst» markerer punkter som ikke er blant Googles anbefalte egenskaper."
+   ],
+   "table": {
+    "head": [
+     "Punkt",
+     "Slik skriver du det",
+     "Typisk AI-feil",
+     "Strukturerte data"
+    ],
+    "rows": [
+     [
+      "Juridisk navn",
+      "Oppgi det registrerte navnet én gang, nøyaktig slik det er registrert",
+      "Forveksler dere med en bedrift med lignende navn",
+      "legalName (hvis det er ulikt name)"
+     ],
+     [
+      "Forretningsnavn, merkevare, navn på andre språk",
+      "Knytt dem sammen i en setning: «Eksempel-appen drives av Prøve AS»",
+      "Kjenner merkevaren, men ikke bedriften bak",
+      "alternateName"
+     ],
+     [
+      "Adresse",
+      "Skill hovedkontoret fra andre lokasjoner; skriv alle adresser i samme format helt ned til etasjen",
+      "Oppgir en adresse fra før flyttingen, eller en filial som hovedkontor",
+      "address (PostalAddress, én eller flere)"
+     ],
+     [
+      "Kontakt",
+      "Sentralbordnummer, henvendelsesvei, åpningstider",
+      "En avdelings direktenummer eller et gammelt nummer",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Stiftet",
+      "Full dato; hvis stiftelse og registrering som selskap er ulike, oppgi begge",
+      "Blander sammen stiftelsesår og registreringsår",
+      "foundingDate (ISO 8601, f.eks. 2015-04-01)"
+     ],
+     [
+      "Ledelse",
+      "Tittel og navn; oppdater samme dag som det endres",
+      "Nevner den forrige daglige lederen",
+      "Kun tekst (ikke en egenskap Google anbefaler)"
+     ],
+     [
+      "Hva dere gjør",
+      "Første setning: hva, for hvem, hvor; deretter listen over virksomhetsområder",
+      "Fremstiller en sidevirksomhet som hovedvirksomheten",
+      "description"
+     ],
+     [
+      "Antall ansatte, aksjekapital",
+      "Legg til «per måned og år»",
+      "Et gammelt, udatert tall gjentas",
+      "numberOfEmployees (aksjekapital: kun tekst)"
+     ],
+     [
+      "Organisasjons- eller skattenummer",
+      "Oppgi det på siden hvis du har et",
+      "Ingen måte å skille dere fra en navnebror på",
+      "Tekst først (se nedenfor)"
+     ],
+     [
+      "Offisielle sosiale medier og profilsider",
+      "Oppgi bare kontoer bedriften selv kontrollerer",
+      "Kobler dere til en navnebror eller en falsk konto",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Det samme bildet som nettstedets logo",
+      "En annen bedrifts logo",
+      "logo (minst 112×112 px)"
+     ],
+     [
+      "Sist oppdatert",
+      "«Oppdatert ...» nederst på siden",
+      "Ingen måte å se hvor oppdatert siden er",
+      "Kun tekst"
+     ]
+    ]
+   },
+   "after": [
+    "Om organisasjons- og skattenumre: Google beskriver taxID som skattenummeret for landet i address, og vatID som MVA-nummeret der det finnes et. Hvis nummeret ditt er et skatte- eller MVA-nummer for landet ditt, passer disse egenskapene. Hvis det er en annen type identifikator, for eksempel Japans foretaksnummer, sier Google ikke om det hører hjemme i taxID, så oppgi det på siden og avgjør selv om det skal merkes opp.",
+    "Ikke blås opp tallene. Hvis du runder antall ansatte eller kunder oppover, vil AI sitere det høyere tallet, og det er vanskelig å trekke tilbake. Oppgi det nøyaktige tallet og datoen det gjelder for."
+   ]
+  },
+  {
+   "heading": "Slik skriver du siden: ikke bare en tabell, aldri et bilde",
+   "paragraphs": [
+    "Mange Om oss-sider består bare av en tabell med to kolonner. En tabell er lett å lese for både mennesker og maskiner, men alene mangler den en setning som sier hva bedriften er. Sett to eller tre innledende setninger over tabellen, så har AI noe den kan bruke direkte når den beskriver dere."
+   ],
+   "list": [
+    "Første setning: det juridiske navnet, stedet og hva dere gjør. For eksempel: «Prøve AS i Trondheim hjelper små bedrifter med å ta i bruk regnskapsprogrammer.»",
+    "Andre setning: fakta som skiller dere fra navnebrødre, som hvordan merkevaren henger sammen med bedriften og året dere ble stiftet.",
+    "Deretter tabellen, som en HTML-tabell eller en liste med etiketter – aldri som et bilde eller en PDF.",
+    "Historikken som én linje per år. Ved navneendring, flytting eller fusjon skriver du både det gamle og det nye: «I mars 20XX endret selskapet navn fra Gammelt Navn AS.»",
+    "Hold gründerens hilsen og visjonen under egne overskrifter, atskilt fra faktaene.",
+    "Avslutt siden med datoen den sist ble oppdatert."
+   ],
+   "after": [
+    "schema.org har en [AboutPage](https://schema.org/AboutPage)-type for selve siden, og noen SEO-utvidelser lar deg velge den som sidetype. Den er valgfri og grei å bruke, så lenge den ikke motsier de øvrige strukturerte dataene dine."
+   ]
+  },
+  {
+   "heading": "Fjern varianter – på nettstedet ditt og andre steder",
+   "paragraphs": [
+    "AI bygger et svar ut fra flere sider. Hvis navnet eller adressen din skrives ulikt fra side til side, behandler den dem kanskje ikke som én bedrift, eller den velger den gamle skrivemåten. Begynn med å bestemme én form for hver av de vanlige variantene."
+   ],
+   "table": {
+    "head": [
+     "Variant",
+     "Hva du skal bestemme deg for"
+    ],
+    "rows": [
+     [
+      "Prøve AS / Prøve Aksjeselskap / Prøve",
+      "Den registrerte formen, brukt overalt der du nevner bedriften"
+     ],
+     [
+      "Navn på andre språk eller skriftsystemer",
+      "Én form per språk, den samme på det språkets sider, profiler og visittkort"
+     ],
+     [
+      "Storgata 12, 3. etg. / 3. etg., Storgata 12 / med og uten bygningsnavn",
+      "Én rekkefølge og ett valg om bygningsnavn og etasje"
+     ],
+     [
+      "22 12 34 56 / 22123456 / +47 22 12 34 56",
+      "Ett format per språk, f.eks. nasjonalt format på lokale sider og internasjonalt format på engelske sider for lesere i utlandet"
+     ],
+     [
+      "Sider som fortsatt viser et gammelt navn eller en gammel adresse",
+      "Før opp endringen i historikken, og rett deretter de gamle sidene"
+     ]
+    ]
+   },
+   "after": [
+    "Hvor du skal sjekke på nettstedet ditt: Om oss, bunntekst, kontaktside, personvernerklæring, eventuelle lovpålagte foretaksopplysninger, karrieresider, pressemeldinger, forfatterbokser på bloggen og brosjyre-PDF-en.",
+    "Hvor du skal sjekke andre steder: Google-bedriftsprofilen din, de sosiale profilene bedriften kontrollerer, jobbportaler, bransjeforeninger og lokale kataloger, og beskrivelser av dere på samarbeidspartneres nettsteder. Noen av disse kan du ikke redigere. Få først orden på ditt eget nettsted, og be deretter utgiveren om å rette sine. Når et AI-svar allerede er feil, spor kilden og rett hver type feil der den oppstår."
+   ]
+  },
+  {
+   "heading": "Hjelp AI med å skille dere fra en bedrift med samme navn",
+   "paragraphs": [
+    "Hvis navnet deres er et vanlig ord, eller en annen bedrift et annet sted har samme navn, kan AI blande de to sammen. Det som skiller dere, er fakta som bare dere har."
+   ],
+   "list": [
+    "Skriv stedet og hva dere gjør i den første setningen i innledningen.",
+    "Oppgi fakta en navnebror ikke deler: stiftelsesår, organisasjonsnummer, navnet på daglig leder.",
+    "I sameAs oppgir du bare offisielle kontoer og profiler bedriften kontrollerer. Utelat navnebrødre og sider du ikke selv administrerer.",
+    "Hvis merkevaren og firmanavnet er ulike, skriv «Eksempel drives av Prøve AS» på sidene for begge.",
+    "Google sier at egenskaper som iso6523Code og naics hjelper med å skille en organisasjon fra andre. Hvis du har de relevante kodene, bør du vurdere å legge dem til."
+   ]
+  },
+  {
+   "heading": "Organization-strukturerte data: hva Googles dokumentasjon sier",
+   "paragraphs": [
+    "Hovedpunktene i Googles dokumentasjon om [Organization-strukturerte data](https://developers.google.com/search/docs/appearance/structured-data/organization) (sist oppdatert 15. september 2026; lest 15. november):"
+   ],
+   "list": [
+    "Det finnes ingen obligatoriske egenskaper; Google anbefaler å legge til så mange av egenskapene som gjelder for organisasjonen din som mulig.",
+    "Plasser merkingen på forsiden eller på én side som beskriver organisasjonen, for eksempel Om oss-siden. Den trenger ikke å være på alle sider.",
+    "For en lokal bedrift som en restaurant eller butikk bruker du den mest spesifikke undertypen av LocalBusiness og følger også veiledningen for LocalBusiness.",
+    "foundingDate bruker ISO 8601 (f.eks. 2015-04-01).",
+    "Logoen må være minst 112×112 piksler og kunne gjennomsøkes og indekseres."
+   ],
+   "after": [
+    "Google nevner at strukturerte data skal samsvare med den synlige teksten, som et av de grunnleggende punktene ([AI-funksjoner og nettstedet ditt](https://developers.google.com/search/docs/appearance/ai-features)). Strukturerte data endrer ikke svarene av seg selv. Se på dem som den maskinlesbare fasiten til det siden allerede sier, så holder du prioriteringene riktige. Ikke legg inn et faktum i de strukturerte dataene som sidens tekst ikke oppgir."
+   ]
+  },
+  {
+   "heading": "Trinn i WordPress (med Nurevo AEO)",
+   "paragraphs": [
+    "På et WordPress-nettsted publiserer [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) bedriftens grunnleggende fakta som strukturerte data og i llms.txt. Arbeid i denne rekkefølgen."
+   ],
+   "list": [
+    "Rett først teksten på Om oss-siden etter tabellen ovenfor. Tekst før strukturerte data.",
+    "Installer utvidelsen og velg nettstedstype i oppsettsveiviseren: «B2B / SaaS» for en Organization, det passende kortet for en butikk eller klinikk, eller «Other» hvis ingenting passer.",
+    "Sjekk bedriftsopplysningene (navn, beskrivelse, adresse, telefon, åpningstider, virksomhetstype, URL, e-post). Verdier som hentes fra de eksisterende innstillingene dine, fyller bare ut tomme felt; det du selv har skrevet inn, blir aldri overskrevet, og WordPress-administratorens e-postadresse brukes aldri som bedriftens e-post.",
+    "Sørg for at navn og adresse samsvarer med Om oss-siden. Adressen publiseres som én tekststreng i en PostalAddress, så skriv den nøyaktig slik den står på Om oss-siden.",
+    "Logoen er bildet som er angitt som temaets nettstedslogo. Gjør den minst 112×112 piksler.",
+    "Med Yoast SEO, Rank Math, All in One SEO eller Slim SEO legger Nurevo bare til faktaene som mangler i den utvidelsens strukturerte data, slik at bedriften ikke beskrives to ganger. Den fungerer også sammen med SEO SIMPLE PACK og VK All in One Expansion Unit (fra 0.9.1). Der SEO-utvidelsen din allerede angir navn eller logo, vinner dens verdier, så hold de to i takt.",
+    "For å legge til det juridiske navnet (legalName), andre navn (alternateName), stiftelsesdato (foundingDate) eller offisielle kontoer (sameAs) bruker du utviklerfilteret webmcp_canary_business_node. Dette er ikke felt i Nurevos skjema for bedriftsopplysninger.",
+    "Kjør diagnosen på skjermen for AEO-poengsum, åpne deretter /llms.txt og sjekk at Om oss-siden står oppført. llms.txt viser de 30 sist oppdaterte sidene og innleggene; hvis Om oss-siden ikke er blant dem, legg til en linje med filteret webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "De samme sjekkene gjelder for nettsteder som ikke er bygget på WordPress. Skriv inn URL-en din i den [gratis sjekken](/check) – ingen registrering nødvendig – for å se status for strukturerte data, llms.txt og tilgang for AI-crawlere."
+   ]
+  },
+  {
+   "heading": "Slik sjekker du: spørsmål med og uten navnet deres",
+   "paragraphs": [
+    "Sjekk arbeidet med Om oss-siden med spørsmål som inneholder bedriftsnavnet. Still det samme spørsmålet til den samme AI-en på ulike dager, flere ganger, og noter svarene. Ikke bedøm ut fra ett enkelt svar."
+   ],
+   "table": {
+    "head": [
+     "Hva du skal notere",
+     "Eksempel"
+    ],
+    "rows": [
+     [
+      "Dato, AI, spørsmål",
+      "15. nov., Perplexity, «Hva er Prøve AS? Når ble det stiftet, og hva driver det med?»"
+     ],
+     [
+      "Fakta i svaret",
+      "Adresse, stiftelsesdato, ledelse, virksomhet: riktig eller feil, punkt for punkt"
+     ],
+     [
+      "Kilder",
+      "Ble Om oss-siden din sitert, eller et annet nettsted?"
+     ],
+     [
+      "Hvor en feil kom fra",
+      "Viser den siterte siden fortsatt en gammel adresse?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevos gratis AI-sjekk (én gang i måneden for tilkoblede Free- og Standard-nettsteder) stiller spørsmål som bygger på virksomhetstypen og området ditt, uten navnet deres. Den viser om folk som ikke kjenner navnet deres, kan finne dere; sjekk at bedriftens fakta stemmer manuelt med tabellen ovenfor. Pro sin synlighetsmåling (beta) dekker foreløpig Perplexity. Hele metoden finner du i [slik måler du AI-synlighet](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Sjekkliste for Om oss-siden",
+   "list": [
+    "To eller tre setninger over tabellen oppgir navn, sted og hva dere gjør.",
+    "Forholdet mellom det juridiske navnet, merkevaren og eventuelle navn på andre språk er skrevet som en setning.",
+    "Adresse og telefon skrives likt på alle sidene på nettstedet.",
+    "Stiftelsesdato, ledelse og antall ansatte er riktige og datert.",
+    "Navneendringer og flyttinger står i historikken med både gammelt og nytt.",
+    "Om oss-siden er ikke bare et bilde eller en PDF.",
+    "Organization (eller, for en butikk, den mest spesifikke undertypen av LocalBusiness) ligger på forsiden eller Om oss-siden, og verdiene samsvarer med teksten.",
+    "sameAs oppgir bare kontoer bedriften kontrollerer.",
+    "Google-bedriftsprofilen din og andre profiler bruker samme skrivemåte.",
+    "Siden avsluttes med en dato for siste oppdatering.",
+    "Du har sjekket med spørsmål som inneholder navnet deres, på ulike dager, og notert resultatene."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Trenger jeg en Om oss-side som er atskilt fra forsiden?",
+   "a": "Ikke hvis forsiden allerede samler bedriftens grunnleggende fakta. Google anbefaler å plassere Organization-merking på forsiden eller på én side som beskriver organisasjonen. Hvis forsiden din mest handler om tjenestene deres, holder en egen Om oss-side faktaene samlet på ett sted."
+  },
+  {
+   "q": "Er det et problem hvis Om oss-siden bare er en tabell?",
+   "a": "Nei. En tabell er lett å lese. Men den mangler en setning som sier hva bedriften er, så legg til to eller tre innledende setninger over den."
+  },
+  {
+   "q": "Skal Organization-strukturerte data ligge på alle sider?",
+   "a": "Ifølge Google trenger de ikke det: forsiden eller én side som Om oss-siden er nok. Hvis SEO-utvidelsen din skriver dem ut på alle sider, er det greit, så lenge verdiene er riktige."
+  },
+  {
+   "q": "Skal organisasjonsnummeret vårt stå i taxID?",
+   "a": "Google beskriver taxID som skattenummeret for landet i adressen din. Hvis nummeret ditt er det, passer det; hvis det er en annen type identifikator, sier Google ingenting. Oppgi det først på siden, og avgjør så om det skal merkes opp."
+  },
+  {
+   "q": "Hvordan sørger vi for at folk som spør om det tidligere navnet vårt, finner den nåværende bedriften?",
+   "a": "Skriv begge navnene i historikken («I mars 20XX endret selskapet navn fra Gammelt Navn AS») og nevn det i innledningen. Hvis profiler andre steder fortsatt viser det gamle navnet, be utgiverne om å oppdatere dem."
+  },
+  {
+   "q": "Et AI-svar gjengir bedriftsfaktaene våre feil. Hva bør vi gjøre?",
+   "a": "Du kan ikke redigere AI-ens svar direkte. Spor kildene: rett Om oss-siden og andre sider på ditt eget nettsted, og be andre utgivere om å rette sine. Det finnes ingen fast tid for når rettelser blir synlige."
+  },
+  {
+   "q": "Hvis vi følger disse trinnene, vil AI da alltid beskrive oss riktig?",
+   "a": "Det kan ikke garanteres; AI-svar endrer seg fra dag til dag og etter formulering. Disse trinnene gjør informasjonen AI leser riktig og konsekvent, slik at feil blir mindre sannsynlige."
+  }
+ ],
+ "relatedHeading": "Relaterte guider",
+ "cta": {
+  "heading": "Se hvordan AI leser bedriftens fakta",
+  "body": "Den gratis sjekken krever ingen registrering: skriv inn URL-en din for å se status for strukturerte data, llms.txt og tilgang for AI-crawlere. På WordPress publiserer den gratis utvidelsen bedriftens grunnleggende fakta som strukturerte data.",
+  "label": "Kjør den gratis sjekken av AI-lesbarhet",
+  "href": "/check",
+  "secondary": {
+   "label": "Prøv den gratis WordPress-utvidelsen",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT er et varemerke som tilhører OpenAI, Perplexity tilhører Perplexity AI og Google tilhører Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit og WordPress er varemerker som tilhører sine respektive eiere. Nurevo er ikke tilknyttet eller godkjent av noen av disse selskapene."
+}

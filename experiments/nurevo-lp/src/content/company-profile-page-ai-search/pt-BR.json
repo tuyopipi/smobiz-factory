@@ -1,0 +1,316 @@
+{
+ "title": "Página Sobre e busca por IA: dados da empresa corretos | Nurevo",
+ "description": "Como criar uma página Sobre em que as respostas de IA possam confiar: que dados publicar, como eliminar variações de nome e endereço, schema Organization e WordPress.",
+ "h1": "Otimização da página Sobre para busca por IA: faça a IA descrever corretamente o nome, o endereço, a data de fundação e as atividades da sua empresa",
+ "lead": "Quando alguém pergunta a uma IA sobre sua empresa pelo nome, a página em que a resposta se apoia é a página Sobre ou de perfil institucional. Reúna em uma só página, em texto simples, a razão social e os nomes que as pessoas realmente usam, o endereço, a data de fundação, a diretoria, o que a empresa faz e como entrar em contato; publique os mesmos valores como dados estruturados Organization; e use a mesma grafia nas outras páginas do site e nos seus perfis em outros lugares. Esses três passos são o núcleo do trabalho.",
+ "intro": [
+  "Escrito em 15 de novembro de 2026 (JST). Este guia é para qualquer empresa, loja ou organização que tenha uma página Sobre ou de perfil institucional, e para as agências que criam esses sites. A marcação de endereço e horário de funcionamento para lojas é tratada em [schema de negócio local e plugins de SEO](/guide/local-business-schema-seo-plugins). Este guia trata da página que diz quem você é e onde você está.",
+  "As respostas de IA mudam de um dia para outro e conforme a formulação da pergunta. Estes passos tornam correta a informação que a IA lê; não garantem que você vá aparecer em uma resposta."
+ ],
+ "sections": [
+  {
+   "heading": "Para que a IA usa sua página Sobre",
+   "paragraphs": [
+    "A busca do ChatGPT, o Perplexity e os AI Overviews do Google leem páginas da web quando respondem e as exibem como fontes. Para uma pergunta que cita uma empresa, o próprio site dela, e principalmente a página que reúne seus dados básicos, é uma candidata óbvia. Quando a página Sobre é uma única imagem, ou quando o nome e o endereço aparecem escritos de formas diferentes em cada página, a IA pode montar a resposta a partir de um cadastro antigo feito por terceiros, ou de outra empresa com o mesmo nome.",
+    "As perguntas que citam uma empresa costumam seguir alguns padrões. Todas podem ser respondidas por uma página Sobre que apresente os dados em texto."
+   ],
+   "list": [
+    "“O que a Example Ltd faz?” (descrição das atividades)",
+    "“Onde fica a sede da Example? Ela tem escritório em Manchester?” (endereços)",
+    "“Quando a Example foi fundada e quem a dirige?” (data de fundação, diretoria)",
+    "“Qual empresa está por trás do aplicativo Example?” (marca versus razão social)",
+    "“A Example é a mesma empresa que a Sample?” (nomes antigos, empresas do grupo, homônimas)",
+    "“Como entro em contato com a Example?” (telefone, formulário, horário)"
+   ],
+   "after": [
+    "O Google afirma que não há requisitos adicionais nem dados estruturados especiais para aparecer nos AI Overviews ou no Modo IA, e que valem as boas práticas normais de SEO ([Google Search Central: recursos de IA e seu site](https://developers.google.com/search/docs/appearance/ai-features)). O trabalho na página Sobre não é um jeito especial de escrever para a IA. É apresentar os fatos com precisão, em formato legível, com os mesmos valores em todos os lugares."
+   ]
+  },
+  {
+   "heading": "O que colocar na página e como isso corresponde aos dados estruturados",
+   "paragraphs": [
+    "A tabela lista o que uma página Sobre deve informar, os erros que as respostas de IA costumam cometer e a propriedade Organization correspondente. Os nomes das propriedades vêm das propriedades recomendadas na documentação de [dados estruturados Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) do Google. “Só texto” indica itens que não estão entre as propriedades recomendadas pelo Google."
+   ],
+   "table": {
+    "head": [
+     "Item",
+     "Como escrever",
+     "Erro típico da IA",
+     "Dados estruturados"
+    ],
+    "rows": [
+     [
+      "Razão social",
+      "Informe uma vez o nome registrado, exatamente como consta no registro",
+      "Confundir você com uma empresa de nome parecido",
+      "legalName (se for diferente de name)"
+     ],
+     [
+      "Nome fantasia, marca, nome em outro idioma",
+      "Relacione-os em uma frase: “O Example App é operado pela Sample Ltd”",
+      "Conhecer a marca, mas não a empresa por trás dela",
+      "alternateName"
+     ],
+     [
+      "Endereço",
+      "Separe a sede das demais unidades; escreva todos os endereços no mesmo formato, até o andar",
+      "Informar o endereço anterior à mudança, ou uma filial como sede",
+      "address (PostalAddress, um ou mais)"
+     ],
+     [
+      "Contato",
+      "Telefone principal, canal de atendimento, horário",
+      "O ramal direto de um departamento ou um número antigo",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Fundação",
+      "Data completa; se a fundação e a constituição jurídica forem diferentes, informe as duas",
+      "Confundir o ano de fundação com o ano de constituição",
+      "foundingDate (ISO 8601, por exemplo 2015-04-01)"
+     ],
+     [
+      "Diretoria",
+      "Cargo e nome; atualize no mesmo dia em que mudar",
+      "Citar o presidente anterior",
+      "Só texto (não é propriedade recomendada pelo Google)"
+     ],
+     [
+      "O que a empresa faz",
+      "Primeira frase: o quê, para quem, onde; depois a lista de atividades",
+      "Apresentar uma atividade secundária como a principal",
+      "description"
+     ],
+     [
+      "Número de funcionários, capital social",
+      "Acrescente “em mês e ano”",
+      "Repetir um número antigo e sem data",
+      "numberOfEmployees (capital social: só texto)"
+     ],
+     [
+      "Número de registro da empresa ou número fiscal",
+      "Informe-o na página, se tiver",
+      "Não ter como distinguir você de uma homônima",
+      "Primeiro no texto (veja abaixo)"
+     ],
+     [
+      "Redes sociais e perfis oficiais",
+      "Liste apenas as contas que a empresa controla",
+      "Associar você a uma homônima ou a uma conta falsa",
+      "sameAs"
+     ],
+     [
+      "Logotipo",
+      "A mesma imagem do logotipo do site",
+      "O logotipo de outra empresa",
+      "logo (no mínimo 112×112 px)"
+     ],
+     [
+      "Última atualização",
+      "“Atualizado em ...” no fim da página",
+      "Não ter como saber se a informação está atual",
+      "Só texto"
+     ]
+    ]
+   },
+   "after": [
+    "Sobre números de registro e fiscais: o Google descreve taxID como o número fiscal do país indicado em address, e vatID como o número de IVA, quando houver. Se o seu número for um número fiscal ou de IVA do seu país, essas propriedades se aplicam. Se for outro tipo de identificador, como o número corporativo do Japão, o Google não diz se ele cabe em taxID; então informe-o na página e decida por conta própria se vai marcá-lo.",
+    "Não infle os números. Se você arredondar para cima o número de funcionários ou de clientes, a IA vai citar o número maior, e é difícil voltar atrás. Informe o número exato e a data a que ele se refere."
+   ]
+  },
+  {
+   "heading": "Como escrever a página: não só uma tabela, nunca uma imagem",
+   "paragraphs": [
+    "Muitas páginas Sobre não passam de uma tabela de duas colunas. Uma tabela é fácil de ler para pessoas e máquinas, mas sozinha não traz uma frase que diga o que a empresa é. Coloque duas ou três frases de apresentação acima da tabela, e a IA terá algo que pode usar diretamente ao descrever você."
+   ],
+   "list": [
+    "Primeira frase: a razão social, a cidade e o que a empresa faz. Por exemplo: “A Sample Ltd, com sede em Leeds, ajuda pequenas empresas a implantar softwares de contabilidade.”",
+    "Segunda frase: fatos que diferenciam você de homônimas, como a relação entre a marca e a empresa e o ano de fundação.",
+    "Depois, a tabela, como tabela HTML ou lista com rótulos, nunca como imagem ou PDF.",
+    "O histórico em uma linha por ano. Para mudança de nome, de endereço ou fusão, escreva o antigo e o novo: “Em março de 20XX, a empresa mudou seu nome, antes Nome Antigo Ltd.”",
+    "Mantenha a mensagem do fundador e a missão em títulos separados dos dados.",
+    "Termine a página com a data da última atualização."
+   ],
+   "after": [
+    "O schema.org tem um tipo [AboutPage](https://schema.org/AboutPage) para a própria página, e alguns plugins de SEO permitem escolhê-lo como tipo de página. Ele é opcional e pode ser usado sem problema, desde que não contradiga seus outros dados estruturados."
+   ]
+  },
+  {
+   "heading": "Elimine as variações, no seu site e fora dele",
+   "paragraphs": [
+    "A IA monta uma resposta a partir de várias páginas. Se seu nome ou endereço estiver escrito de formas diferentes em cada página, ela pode não tratá-las como uma única empresa, ou pode escolher a grafia antiga. Comece definindo uma forma única para cada uma das variações mais comuns."
+   ],
+   "table": {
+    "head": [
+     "Variação",
+     "O que padronizar"
+    ],
+    "rows": [
+     [
+      "Sample Ltd / Sample Limited / Sample",
+      "A forma registrada, usada em todo lugar em que a empresa for citada"
+     ],
+     [
+      "Nomes em outros idiomas ou alfabetos",
+      "Uma forma por idioma, igual nas páginas, perfis e cartões de visita desse idioma"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / com e sem o nome do prédio",
+      "Uma única ordem e uma única decisão sobre nome do prédio e andar"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Um formato por idioma, por exemplo o formato nacional nas páginas locais e o internacional nas páginas em inglês para leitores do exterior"
+     ],
+     [
+      "Páginas que ainda mostram um nome ou endereço antigo",
+      "Registre a mudança no histórico e depois corrija as páginas antigas"
+     ]
+    ]
+   },
+   "after": [
+    "Onde verificar no seu site: página Sobre, rodapé, página de contato, política de privacidade, informações comerciais exigidas por lei, páginas de vagas, comunicados à imprensa, caixas de autor do blog e o folheto em PDF.",
+    "Onde verificar fora dele: seu Perfil da Empresa no Google, os perfis em redes sociais que a empresa controla, sites de vagas, diretórios de associações setoriais e guias locais, e as descrições sobre você nos sites de parceiros. Alguns você não consegue editar. Acerte primeiro o seu próprio site e depois peça ao responsável que corrija o dele. Quando uma resposta de IA já estiver errada, rastreie a fonte e corrija cada tipo de erro na origem."
+   ]
+  },
+  {
+   "heading": "Ajude a IA a distinguir você de uma empresa com o mesmo nome",
+   "paragraphs": [
+    "Se o seu nome for uma palavra comum, ou se outra empresa em outro lugar tiver o mesmo nome, a IA pode misturar as duas. O que diferencia você são os fatos que só você tem."
+   ],
+   "list": [
+    "Coloque a cidade e o que a empresa faz na primeira frase da apresentação.",
+    "Informe fatos que uma homônima não terá em comum: ano de fundação, número de registro, nome do presidente.",
+    "Em sameAs, liste apenas contas e perfis oficiais que a empresa controla. Deixe de fora homônimas e páginas que você não administra.",
+    "Se a marca e a razão social forem diferentes, escreva “O Example é operado pela Sample Ltd” nas páginas de ambas.",
+    "O Google afirma que propriedades como iso6523Code e naics ajudam a distinguir uma organização. Se você tiver os códigos correspondentes, considere adicioná-los."
+   ]
+  },
+  {
+   "heading": "Dados estruturados Organization: o que diz a documentação do Google",
+   "paragraphs": [
+    "Os pontos principais da documentação de [dados estruturados Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) do Google (última atualização em 15 de setembro de 2026; consultada em 15 de novembro):"
+   ],
+   "list": [
+    "Não há propriedades obrigatórias; o Google recomenda adicionar o máximo possível das propriedades que se aplicam à sua organização.",
+    "Coloque a marcação na página inicial ou em uma página que descreva a organização, como a página Sobre. Ela não precisa estar em todas as páginas.",
+    "Para um negócio local, como um restaurante ou uma loja, use o subtipo de LocalBusiness mais específico e siga também as orientações de LocalBusiness.",
+    "foundingDate usa o formato ISO 8601 (por exemplo 2015-04-01).",
+    "O logotipo deve ter no mínimo 112×112 pixels e poder ser rastreado e indexado."
+   ],
+   "after": [
+    "O Google lista fazer os dados estruturados corresponderem ao texto visível como um dos princípios básicos ([recursos de IA e seu site](https://developers.google.com/search/docs/appearance/ai-features)). Os dados estruturados não mudam as respostas por si só. Trate-os como o gabarito legível por máquina daquilo que a página já diz, e as prioridades ficarão certas. Não coloque nos dados estruturados um fato que o texto da página não informe."
+   ]
+  },
+  {
+   "heading": "Passos no WordPress (com o Nurevo AEO)",
+   "paragraphs": [
+    "Em um site WordPress, o [Nurevo AEO (gratuito)](https://wordpress.org/plugins/nurevo-webmcp/) publica os dados básicos da sua empresa como dados estruturados e no llms.txt. Siga esta ordem."
+   ],
+   "list": [
+    "Corrija primeiro o texto da página Sobre, seguindo a tabela acima. O texto vem antes dos dados estruturados.",
+    "Instale o plugin e escolha o tipo de site no assistente de configuração: “B2B / SaaS” para uma Organization, o cartão correspondente para uma loja ou clínica, ou “Other” se nenhum se aplicar.",
+    "Confira os dados do negócio (nome, descrição, endereço, telefone, horário de funcionamento, tipo de negócio, URL, e-mail). Os valores lidos das suas configurações existentes só preenchem campos vazios; nada do que você digitou é sobrescrito, e o e-mail do administrador do WordPress nunca é usado como e-mail da empresa.",
+    "Faça o nome e o endereço coincidirem com a página Sobre. O endereço é publicado como uma única string dentro de um PostalAddress, então digite-o exatamente como está escrito na página Sobre.",
+    "O logotipo é a imagem definida como logotipo do site no tema. Ela deve ter no mínimo 112×112 pixels.",
+    "Com Yoast SEO, Rank Math, All in One SEO ou Slim SEO, o Nurevo só acrescenta os dados que faltam nos dados estruturados desse plugin, para que a empresa não seja descrita duas vezes. Ele também funciona junto com o SEO SIMPLE PACK e o VK All in One Expansion Unit (a partir da versão 0.9.1). Quando seu plugin de SEO já define o nome ou o logotipo, os valores dele prevalecem, então mantenha os dois alinhados.",
+    "Para adicionar a razão social (legalName), outros nomes (alternateName), a data de fundação (foundingDate) ou as contas oficiais (sameAs), use o filtro para desenvolvedores webmcp_canary_business_node. Esses itens não são campos do formulário de dados do negócio do Nurevo.",
+    "Execute o diagnóstico na tela de Pontuação AEO e depois abra /llms.txt e confira se a página Sobre aparece. O llms.txt lista as 30 páginas e posts atualizados mais recentemente; se a página Sobre não estiver entre eles, adicione uma linha com o filtro webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "As mesmas verificações valem para sites que não são feitos em WordPress. Digite seu URL na [verificação gratuita](/check), sem cadastro, para ver o estado dos dados estruturados, do llms.txt e do acesso dos crawlers de IA."
+   ]
+  },
+  {
+   "heading": "Como verificar: perguntas com e sem o nome da empresa",
+   "paragraphs": [
+    "Verifique o trabalho na página Sobre com perguntas que incluam o nome da sua empresa. Faça a mesma pergunta à mesma IA em dias diferentes, várias vezes, e registre as respostas. Não tire conclusões a partir de uma única resposta."
+   ],
+   "table": {
+    "head": [
+     "O que registrar",
+     "Exemplo"
+    ],
+    "rows": [
+     [
+      "Data, IA, pergunta",
+      "15 de nov., Perplexity, “O que é a Sample Ltd? Quando foi fundada e o que ela faz?”"
+     ],
+     [
+      "Fatos na resposta",
+      "Endereço, data de fundação, diretoria, atividades: certo ou errado, um por um"
+     ],
+     [
+      "Fontes",
+      "Sua página Sobre foi citada, ou outro site?"
+     ],
+     [
+      "De onde veio um erro",
+      "A página citada ainda mostra um endereço antigo?"
+     ]
+    ]
+   },
+   "after": [
+    "A verificação de IA gratuita do Nurevo (uma vez por mês, para sites conectados nos planos Free e Standard) faz perguntas montadas a partir do seu tipo de negócio e da sua região, sem o seu nome. Ela mostra se as pessoas que não conhecem seu nome conseguem encontrar você; confira a precisão dos dados da empresa manualmente com a tabela acima. A medição de visibilidade do Pro (beta) cobre atualmente o Perplexity. O método completo está em [como medir a visibilidade em IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checklist da página Sobre",
+   "list": [
+    "Duas ou três frases acima da tabela informam o nome, a localização e o que a empresa faz.",
+    "A relação entre a razão social, a marca e eventuais nomes em outros idiomas está escrita em uma frase.",
+    "Endereço e telefone estão escritos da mesma forma em todas as páginas do site.",
+    "Data de fundação, diretoria e número de funcionários estão corretos e datados.",
+    "Mudanças de nome e de endereço aparecem no histórico com o antigo e o novo.",
+    "A página Sobre não é apenas uma imagem ou um PDF.",
+    "Organization (ou, para uma loja, o subtipo de LocalBusiness mais específico) está na página inicial ou na página Sobre, e seus valores coincidem com o texto.",
+    "sameAs lista apenas contas que a empresa controla.",
+    "Seu Perfil da Empresa no Google e os demais perfis usam a mesma grafia.",
+    "A página termina com a data da última atualização.",
+    "Você verificou com perguntas que incluem o seu nome, em dias diferentes, e registrou os resultados."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Preciso de uma página Sobre separada da página inicial?",
+   "a": "Não, se a página inicial já reúne os dados básicos da empresa. O Google recomenda colocar a marcação Organization na página inicial ou em uma página que descreva a organização. Se sua página inicial fala principalmente dos seus serviços, uma página Sobre separada mantém os dados em um só lugar."
+  },
+  {
+   "q": "Uma página Sobre que é só uma tabela é um problema?",
+   "a": "Não. Uma tabela é fácil de ler. Mas falta uma frase que diga o que a empresa é, então acrescente duas ou três frases de apresentação acima dela."
+  },
+  {
+   "q": "Os dados estruturados Organization devem estar em todas as páginas?",
+   "a": "Segundo o Google, não precisam: a página inicial ou uma página como a Sobre é suficiente. Se seu plugin de SEO os inclui em todas as páginas, tudo bem, desde que os valores estejam corretos."
+  },
+  {
+   "q": "O número de registro da nossa empresa deve ir em taxID?",
+   "a": "O Google descreve taxID como o número fiscal do país do seu endereço. Se o seu número for isso, ele se aplica; se for outro tipo de identificador, o Google não diz. Informe-o primeiro na página e decida se vai marcá-lo."
+  },
+  {
+   "q": "Como garantir que quem pergunta pelo nosso nome antigo encontre a empresa atual?",
+   "a": "Escreva os dois nomes no histórico (“Em março de 20XX, a empresa mudou seu nome, antes Nome Antigo Ltd”) e mencione isso na apresentação. Se perfis em outros sites ainda mostram o nome antigo, peça aos responsáveis que os atualizem."
+  },
+  {
+   "q": "Uma resposta de IA traz dados errados sobre a nossa empresa. O que fazer?",
+   "a": "Não é possível editar diretamente a resposta da IA. Rastreie as fontes: corrija a página Sobre e as outras páginas do seu site, e peça aos outros responsáveis que corrijam as deles. Não há prazo fixo para as correções aparecerem."
+  },
+  {
+   "q": "Se seguirmos estes passos, a IA sempre vai nos descrever corretamente?",
+   "a": "Isso não pode ser garantido; as respostas de IA mudam conforme o dia e a formulação. Estes passos tornam a informação que a IA lê precisa e coerente, de modo que os erros fiquem menos prováveis."
+  }
+ ],
+ "relatedHeading": "Guias relacionados",
+ "cta": {
+  "heading": "Veja como a IA lê os dados da sua empresa",
+  "body": "A verificação gratuita não exige cadastro: digite seu URL para ver o estado dos dados estruturados, do llms.txt e do acesso dos crawlers de IA. No WordPress, o plugin gratuito publica os dados básicos da sua empresa como dados estruturados.",
+  "label": "Fazer a verificação gratuita de legibilidade para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Experimente o plugin gratuito para WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é marca registrada da OpenAI, Perplexity da Perplexity AI e Google da Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit e WordPress são marcas registradas de seus respectivos proprietários. A Nurevo não é afiliada a nenhuma dessas empresas nem endossada por elas."
+}

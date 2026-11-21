@@ -1,0 +1,347 @@
+{
+ "title": "Varaussivu, jonka tekoäly lukee oikein | Nurevo",
+ "description": "Auta tekoälyä vastaamaan oikein kysymyksiin varauksen tarpeesta ja peruutusmaksusta: mitä varaussivulla on oltava, varaus tekoälyssä, skeema ja WordPress.",
+ "h1": "Varaussivu, jonka tekoäly lukee oikein: varaustavat, määräajat, peruutusehdot ja miten varaaminen tekoälyn sisällä toimii",
+ "lead": "Jotta tekoäly vastaisi varauskysymyksiin oikein, valitse omalta sivustoltasi yksi varaussivu ja kirjoita siihen HTML-tekstinä, ei kuvaan tai upotettuun varauswidgettiin: miten varataan (verkossa, puhelimitse, viestillä), onko varaus pakollinen ja miten ilman varausta tulevia palvellaan, kuinka myöhään ja kuinka pitkälle etukäteen varauksia otetaan, peruutuksen määräaika ja maksu sekä luettelo virallisista varauskanavista. Marraskuussa 2026 varaaminen ChatGPT:n tai Googlen tekoälyn sisällä toimii pääasiassa ravintoloille OpenTablen kaltaisten varausalustojen kautta. Oma varaussivusi on paikka, josta tekoäly lukee varausehtosi, olitpa näillä alustoilla tai et.",
+ "intro": [
+  "Kirjoitettu 21. marraskuuta 2026 (JST). Aukioloaikojen kirjoittamisesta kerrotaan oppaassa [aukioloajat ja pyhäpäivät](/guide/business-hours-holidays-ai-search) ja hinnoista oppaassa [hinnastosivun kirjoittaminen](/guide/pricing-page-ai-search). Tämä opas käsittelee varaussivua, joka on yhteinen kampaamoille, klinikoille, ravintoloille, studioille, majoitusliikkeille ja kotikäyntipalveluille.",
+  "Tekoälyn vastaukset vaihtelevat päivän, sanamuodon ja palvelun mukaan. Tämän oppaan vaiheilla teet sivun, jonka varausehtoja tekoäly lukee harvemmin väärin, ja näet, miten tulos tarkistetaan; ne eivät takaa, että näyt vastauksessa tai että sinut voi varata tekoälyn sisällä."
+ ],
+ "sections": [
+  {
+   "heading": "Lyhyesti: viisi syytä, miksi tekoäly ymmärtää varaukset väärin, ja korjaus kuhunkin",
+   "table": {
+    "head": [
+     "Syy",
+     "Mitä tekoälyn vastauksissa tapahtuu",
+     "Korjaus"
+    ],
+    "rows": [
+     [
+      "Varausehdot ovat vain upotetussa widgetissä tai kuvassa",
+      "Tekoäly voi sanoa vain ”tarkista varaustapa virallisilta verkkosivuilta”",
+      "Kirjoita varaustapa, määräajat ja peruutusehdot tekstinä varaussivulle"
+     ],
+     [
+      "”Varaukset suositeltavia” tai ”ajanvarauksella” jää selittämättä",
+      "Tekoäly kertoo väärin, otetaanko ilman varausta tulevia vastaan",
+      "Kerro, mitä tapahtuu ilman varausta: ”Ilman varausta tulevat ovat tervetulleita, jos tilaa on (odotusta voi olla)”"
+     ],
+     [
+      "Useita varauskanavia, joista mitään ei ole merkitty viralliseksi",
+      "Tekoäly ohjaa vanhalle varaussivustolle tai käytöstä poistettuun numeroon",
+      "Luettele käyttämäsi kanavat ja vakiinnuta yksi virallinen varaus-URL palvelua kohden"
+     ],
+     [
+      "Peruutuksen määräaikaa tai maksua ei ole kerrottu, tai ehdot vaihtelevat sivustoittain",
+      "Tekoäly sanoo peruutuksen olevan maksuton tai lainaa toisen yrityksen ehtoa",
+      "Kirjoita määräaika, maksu ja peruutustapa yhteen paikkaan ja yhtenäistä varaussivustot sen mukaan"
+     ],
+     [
+      "Varaussivun näkeminen vaatii kirjautumisen tai tilin",
+      "Tekoäly ei pysty kertomaan edes sitä, otetaanko varauksia",
+      "Pidä ehdot julkisella sivulla ja sijoita varauslomake sen taakse"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Miten varaaminen tekoälyn sisällä toimii (marraskuu 2026)",
+   "paragraphs": [
+    "Yhä useampi yritys kysyy, miten sen voi varata ChatGPT:ssä. Toistaiseksi varaaminen tekoälyn sisällä kulkee varausalustojen integraatioiden kautta. Sivustollesi ei voi lisätä tagia, joka toisi varauspainikkeen. Taulukossa on se, mitä viralliset tiedotteet kertovat."
+   ],
+   "table": {
+    "head": [
+     "Palvelu",
+     "Mitä se tekee",
+     "Keitä se koskee",
+     "Lähde"
+    ],
+    "rows": [
+     [
+      "ChatGPT (ravintolavaraukset)",
+      "Näyttää vapaat ajat vastauksessa ja vie varausta eteenpäin",
+      "OpenTable maailmanlaajuisesti, Resy Yhdysvalloissa, Yelp Yhdysvalloissa ja Kanadassa. Reserve-painike näkyy vain, kun ChatGPT pystyy yhdistämään ravintolan tuetun palveluntarjoajan listaukseen. ChatGPT ei tallenna varausta; muutokset ja peruutukset hoidetaan palveluntarjoajan kautta",
+      "[OpenAI:n ohjeet](https://help.openai.com/en/articles/9237897-chatgpt-search) (tarkistettu 2026-11-21), [Resy (2026-08-10)](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "Google-haun AI Mode (agenttinen varaaminen)",
+      "Etsii pyyntöön sopivia vapaita aikoja ja linkittää varaussivulle",
+      "Alkoi 2025-08-21 ravintoloista Google AI Ultra -tilaajille Yhdysvalloissa (Labs). Ravintolavaraukset Isossa-Britanniassa 2026-04-10 alkaen. Mainittuja kumppaneita ovat muun muassa OpenTable, Resy, Tock ja TheFork",
+      "[Google (2025-08-21)](https://blog.google/products/search/ai-mode-agentic-personalized/), [Google UK (2026-04-10)](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Google Business Profile",
+      "Näyttää varauslinkit profiilissasi",
+      "Vahvistetut profiilit. Voit lisätä oman linkkisi tai näkyä Reserve with Google -varauspalveluntarjoajan kautta",
+      "[Yrityslinkkien käytännöt](https://support.google.com/business/answer/13769188), [Varaukset palveluntarjoajan kautta](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "ChatGPT:n varaukset rakentuvat ravintolaluetteloista, joita varausalustat lähettävät OpenAI:lle. Jokaisessa tietueessa on tarkoitus olla ravintolan oman verkkosivuston URL ja sen listauksen URL alustalla ([OpenAI: Restaurant reservation conversion spec](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec), kirjoitettu varausalustoille).",
+    "Varauspainike tekoälyn sisällä riippuu siis varausalustastasi. Yrityksen omissa käsissä on se, että alustojen listaukset pysyvät oikeina ja varausehdot on kirjoitettu oikein omalle sivustolle. Ilman varauspainikettakin tekoäly vastaa kysymyksiin ”pitääkö varata?” tai ”onko peruutusmaksua?” sivustosi sekä arvostelu- ja listaussivustojen perusteella. Loppuosa oppaasta käsittelee sitä, miten tuo vastaus saadaan oikeaksi."
+   ]
+  },
+  {
+   "heading": "Mitä kärkiartikkelit kattavat ja mitä niistä puuttuu",
+   "paragraphs": [
+    "Luimme kärkeen sijoittuvat japanin- ja englanninkieliset artikkelit esimerkiksi hakuun ”booking page AI search” (2026-11-21). Useimmat käsittelevät paikallista tekoälynäkyvyyttä yleisesti (yhtenäiset yritystiedot, enemmän arvosteluja). Harvat selittävät vaihe vaiheelta, miten itse varaussivu kirjoitetaan, ja lähes mikään ei anna esimerkkiä rakenteisesta datasta tai WordPress-ohjeita."
+   ],
+   "table": {
+    "head": [
+     "Artikkeli",
+     "Vahvuudet",
+     "Puuttuu"
+    ],
+    "rows": [
+     [
+      "[Uravation, puhelin- ja varausreitit (päivitetty 2026-09-05, japaniksi)](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "Ei liiallista nojaamista ReserveActioniin, yksi vakiintunut varaus-URL, mittaus GA4:ssä",
+      "JSON-LD-esimerkki, WordPress-vaiheet, useiden varaussivustojen hallinta"
+     ],
+     [
+      "[Uravation, elämykset ja kierrokset (2026-10-12, japaniksi)](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "Yksi sivu elämystä kohden; ehtojen, kuten sateen vuoksi peruuntumisen ja keston, kirjoittaminen",
+      "Vain kierrokset ja aktiviteetit. Ei koodia, ei WordPressiä"
+     ],
+     [
+      "[GMO local AIO (päivitetty 2026-11-16, japaniksi)](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/) ja [AIsmiley (päivitetty 2026-10-30, japaniksi)](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "Google Business Profilen määritys / mitä ChatGPT:n ravintolavaraus kattaa Japanissa",
+      "Tilastoja ilman lähteitä (GMO). Ei mitään yrityksen omasta varaussivusta (AIsmiley)"
+     ],
+     [
+      "[LSEO, varaus, hinnat ja saatavuus (2026-10-02)](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/) ja [LSEO, putkimies (2026-04-24)](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "Rehellinen toteamus: yleistä varausskeemaa ei ole, ja saatavuuden pitäisi tulla reaaliaikaisista järjestelmistä",
+      "Ei vaiheittaisia ohjeita, ei lähteitä, ei WordPressiä"
+     ],
+     [
+      "[J.A. Watte, majoitus (päivitetty 2026-11-06)](https://jwatte.com/blog/lodging-sites-ai-agents-booking/), [Owner, ravintolat (2026-10-22)](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search) ja [Mindbody (2026-10-13)](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "Varauslinkit ja verolliset hinnat (majoitus), ruokalistat tekstinä (ravintolat), palvelusivu (kuntoilu)",
+      "Kukin rajoittuu yhteen toimialaan; painottavat omia tuotteitaan"
+     ]
+    ]
+   },
+   "after": [
+    "Tämä opas kattaa kaikille varauksia ottaville yrityksille sen, mitä varaussivulle kirjoitetaan, miten useat varauskanavat järjestetään, rakenteisen datan, WordPress-vaiheet ja tuloksen tarkistamisen."
+   ]
+  },
+  {
+   "heading": "Kahdeksan tietoa, jotka jokaisella varaussivulla on oltava",
+   "paragraphs": [
+    "Varauskysymykset jakautuvat karkeasti kahdeksaan tyyppiin. Anna kullekin varaussivun tekstissä yhden tai kahden lauseen kappale tai taulukon rivi."
+   ],
+   "table": {
+    "head": [
+     "Tieto",
+     "Esimerkki",
+     "Tekoälylle esitetty kysymys"
+    ],
+    "rows": [
+     [
+      "Miten varataan",
+      "Verkossa ympäri vuorokauden, puhelimitse klo 10–19, viestillä (vastaamme aukioloaikoina)",
+      "”Miten varaan ajan (yritykseen)?”"
+     ],
+     [
+      "Onko varaus pakollinen",
+      "Ajanvarauksella. Ilman varausta tulevat ovat tervetulleita, jos tilaa on (odotusta voi olla)",
+      "”Voinko tulla ilman varausta?”"
+     ],
+     [
+      "Määräaika",
+      "Edellisenä päivänä klo 20 asti. Saman päivän varaukset vain puhelimitse",
+      "”Voinko varata tälle päivälle?”"
+     ],
+     [
+      "Kuinka pitkälle etukäteen",
+      "Enintään kaksi kuukautta etukäteen",
+      "”Voiko ensi kuulle jo varata?”"
+     ],
+     [
+      "Kesto",
+      "Hiustenleikkuu kestää noin 60 minuuttia",
+      "”Kauanko se kestää?”"
+     ],
+     [
+      "Peruutus",
+      "Maksuton edelliseen päivään asti. Samana päivänä peruutetuista veloitetaan 50 %. Peruutus puhelimitse",
+      "”Onko peruutusmaksua?”"
+     ],
+     [
+      "Maksu ja ennakkomaksut",
+      "Varattaessa ei makseta. Maksu käyntipäivänä käteisellä, kortilla tai mobiilimaksulla",
+      "”Pitääkö maksaa etukäteen?”"
+     ],
+     [
+      "Kenelle se sopii, mitä ottaa mukaan",
+      "Ensikäynti: saavu 10 minuuttia etuajassa täyttämään lomake. Lapset ovat tervetulleita",
+      "”Sopiiko se ensikäynnille?” ”Voinko ottaa lapset mukaan?”"
+     ]
+    ]
+   },
+   "after": [
+    "Tee jokaisesta lauseesta ymmärrettävä sellaisenaan. Tekoäly poimii joskus vastaukseensa yksittäisen lauseen, joten vältä ilmauksia, jotka nojaavat ympäröivään tekstiin, kuten ”katso yllä” tai ”klikkaa tästä”. Heikko: ”Varaa tästä. Ilmoitathan ajoissa, jos joudut perumaan.” Vahva: ”Verkkovaraus on auki ympäri vuorokauden ja puhelinvaraus klo 10–19. Peruutus on maksuton edelliseen päivään asti; samana päivänä peruutetuista veloitetaan 50 % hinnasta.”",
+    "Kerro, mikä muuttuu varauksen kanssa ja ilman. Jos varanneet asiakkaat palvellaan ensin, kirjoita ”Ilman varausta tulevat palvellaan varattujen aikojen välissä.” Jos palvelet vain ajanvarauksella, kirjoita ”Emme voi ottaa vastaan asiakkaita ilman varausta.” Näin vähenevät vastaukset, joissa väitetään virheellisesti, ettei varausta tarvita."
+   ]
+  },
+  {
+   "heading": "Useita varaussivustoja: päätä, mitkä kanavat ovat virallisia",
+   "paragraphs": [
+    "Kampaamot ja ravintolat ottavat varauksia yleisesti monessa paikassa: omassa järjestelmässään, varaussivustoilla, puhelimitse ja viestillä. Tekoäly välittää eteenpäin minkä tahansa löytämänsä varauskanavan, joten sivusto, josta olet jo lähtenyt, tai vanha puhelinnumero voi päätyä vastaukseen. Järjestä asia tässä järjestyksessä."
+   ],
+   "list": [
+    "Listaa kaikki kanavat, joiden kautta otat varauksia (oma järjestelmä, varaussivustot, Google Business Profilen varauslinkki, puhelin, viestit, somen yksityisviestit)",
+    "Poista listaukset kanavista, joita et enää käytä, tai merkitse ne tekstillä ”ei enää varauksia”",
+    "Kirjoita varaussivulle ”Otamme varauksia näillä tavoilla” ja luettele vain käyttämäsi kanavat",
+    "Jos jokaisella palvelulla on oma varaus-URL, vakiinnuta yksi virallinen URL palvelua kohden (linkki suoraan kyseisen palvelun varausnäkymään on parempi kuin linkki etusivulle)",
+    "Käytä samoja peruutusehtoja ja määräaikoja omalla sivustollasi ja kaikilla varaussivustoilla. Jos ne eroavat, kerro, mikä sääntö koskee mitäkin kanavaa",
+    "Linkitä varaussivustojen profiileista ja Google Business Profilen kuvauksesta takaisin omalle varaussivullesi"
+   ],
+   "after": [
+    "Google Business Profilen varauslinkeillä on säännöt: profiilin on oltava vahvistettu; linkin on johdettava yrityksellesi omistetulle sivulle, jolla varauksen voi tehdä loppuun; sosiaalinen media, viestisovellukset, sovelluskaupat ja linkinlyhentäjät eivät ole sallittuja; sivun on auettava ilman kirjautumista tai CAPTCHAa ja palautettava tila 200 ([Yrityslinkkien käytännöt](https://support.google.com/business/answer/13769188)). Voit myös näkyä Reserve with Googlen kanssa toimivan varauspalveluntarjoajan kautta; Googlen mukaan itse lisäämistäsi mukautetuista linkeistä ei saa suoritustietoja ([Varaukset palveluntarjoajan kautta](https://support.google.com/business/answer/7475773))."
+   ]
+  },
+  {
+   "heading": "Älä kirjoita saatavuutta. Kirjoita, miten sen voi tarkistaa",
+   "paragraphs": [
+    "Jos kirjoitat ”lauantait ovat yleensä hiljaisia” tai ”arkisin ei tarvitse varata”, tekoäly voi jatkaa lauseen käyttämistä tilanteen muututtua. Mikään tekoälypalvelu ei kerro julkisesti, kuinka usein se lukee sivun uudelleen. Pidä saatavuutta asiana, jonka varausjärjestelmäsi näyttää, ja kirjoita sen sijaan, miten sen voi tarkistaa: ”Katso vapaat ajat verkkovarausnäkymästä. Saman päivän tilanteen saat soittamalla.”",
+    "Jos mainitset ruuhka-ajat, muotoile ne pysyvänä kaavana: ”Viikonloppuiltapäivät ovat kiireisiä, joten suosittelemme varaamista.” Jos annat ymmärtää, että on hiljaisempaa kuin todellisuudessa, johdat harhaan sekä ihmisiä että tekoälyä."
+   ]
+  },
+  {
+   "heading": "Tee siitä luettava: tarkista upotukset, kuvat ja kirjautumiset",
+   "paragraphs": [
+    "Monet varausjärjestelmät näyttävät näkymänsä toiselta sivustolta upotettuna (iframe) tai JavaScriptin avulla. Ihmiset näkevät sen, mutta se, lukeeko tekoäly upotuksen sisällä olevan tekstin osaksi sivuasi, vaihtelee palveluittain, eikä sitä ole julkaistu. Kirjoita varausehdot upotuksen ulkopuolelle, varaussivun omaan tekstiin. Itse varauslomake voi pysyä upotettuna.",
+    "Tällä komennolla näet, aukeaako varaussivusi ilman kirjautumista ja onko ehdot sen HTML:ssä."
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "OpenAI:n mukaan ChatGPT-hakuun pääsemiseksi kannattaa sallia OAI-SearchBotin indeksoida sivustosi ja varmistaa, että palveluntarjoajasi tai CDN sallii liikenteen OpenAI:n julkaisemista IP-osoitteista ([OpenAI:n ohjeet](https://help.openai.com/en/articles/9237897-chatgpt-search)). Tarkista, ettei bottisuojaus estä erityisesti varaussivua. Yrityksille, jotka haluavat tekoälyagenttien tekevän varauksia asiakkaiden puolesta, Stripe ehdottaa bottisuojausten läpikäyntiä ja WebMCP:n harkitsemista, mutta se on pidemmälle menevä askel, joka sisältää maksut ([Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services))."
+   ]
+  },
+  {
+   "heading": "Rakenteinen data: ReserveActionin voi lisätä, mutta älä odota paljon",
+   "paragraphs": [
+    "schema.org tarjoaa [ReserveAction](https://schema.org/ReserveAction)-tyypin, joka kuvaa varauksen tekemistä, ja sillä voi liittää varaus-URL:n palveluun. Emme kuitenkaan löytäneet ChatGPT:ltä, Perplexityltä tai Googlen tekoälyominaisuuksilta virallista lausuntoa siitä, että ne käyttäisivät ReserveActionia varaamiseen. Googlen mukaan tekoälyominaisuudet eivät tarvitse erityistä rakenteista dataa, ja rakenteisen datan on vastattava näkyvää tekstiä ([tekoälyominaisuudet ja sivustosi](https://developers.google.com/search/docs/appearance/ai-features), tarkistettu 2026-11-18). Sen lisääminen tuskin haittaa, mutta varauspainiketta se ei tuo esiin.",
+    "Jos lisäät sen, osoita jokainen Service sen varaus-URL:iin näin. Rakenne on sama, jonka Nurevo AIO julkaisee."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "Tärkeintä on olla kirjoittamatta Reservationia yksinään. Pelkkä Reservation väittää, että varaus on jo olemassa, mikä ei pidä paikkaansa. ReserveActionin tuloksena se kertoo, että ”tämä toiminto tuottaa varauksen”. Tarkista syntaksi [Schema Markup Validatorilla](https://validator.schema.org/)."
+   ]
+  },
+  {
+   "heading": "WordPress-vaiheet (Nurevo AIO:lla)",
+   "paragraphs": [
+    "[Nurevo AIO (ilmainen, aiemmin nimellä Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) julkaisee asetusten Palvelut-kohdassa kullekin palvelulle syötetyn varaus-URL:n ReserveActionina Service-rakenteisessa datassa ja llms.txt-tiedostossa. Etene tässä järjestyksessä."
+   ],
+   "list": [
+    "Korjaa ensin varaussivun teksti yllä olevien kahdeksan tiedon avulla (sivun teksti ennen rakenteista dataa)",
+    "Lisää palvelusi (enintään 20). Palvelun nimen, keston (minuutteina), hinnan ja valuutan lisäksi syötä kyseisen palvelun varausnäkymän URL Varaus-URL-kenttään",
+    "Palveluissa, joilla on varaus-URL, palvelun nimi llms.txt-tiedostossa linkittää siihen (esimerkiksi: - [Hiustenleikkuu](https://example.com/book/haircut/) — 60 min · USD 55.00)",
+    "Amelian kaltaisista varauslisäosista ei lueta mitään. Tämä on tarkoituksellista, jotta väärää kestoa tai varaus-URL:ia ei koskaan julkaista tosiasiana; syötä arvot käsin",
+    "Syötä palvelut sisältäväksi sivuksi varaus- tai hinnastosivun ID, niin Service-merkintä sijoitetaan sille sivulle (0 = etusivu)",
+    "Lisää peruutusmaksut, saman päivän varaukset ja ilman varausta tulevat UKK-osioon. Se ei tuota päällekkäisyyttä Yoast SEO:n, Rank Mathin, All in One SEO:n tai Slim SEO:n kanssa ja toimii SEO SIMPLE PACK- ja VK All in One Expansion Unit -lisäosien rinnalla (versiosta 0.9.1 alkaen)",
+    "Kun vaihdat varauskanavia, päivitä samana päivänä sivun teksti, Nurevon varaus-URL:t, UKK-vastaukset ja Google Business Profile"
+   ],
+   "after": [
+    "Asiakkaiden sivustoja ylläpitävät toimistot voivat sisällyttää ”varauskanavien muutokset” ylläpidon laajuuteen, jotta vanha URL ei jää jälkeen aina, kun asiakas vaihtaa varaussivustoa. Kuukausittaista tukea tarjoaville toimistoille on [kumppaniohjelma](https://nurevo.jp/partner/)."
+   ]
+  },
+  {
+   "heading": "Miten tarkistetaan: vakioi varauskysymyksesi ja pidä kirjaa",
+   "paragraphs": [
+    "Nähdäksesi, välittyvätkö varausehtosi oikein, kysy samoja kysymyksiä samalta tekoälyltä eri päivinä ja kirjaa vastaukset. Älä tee johtopäätöksiä yhden vastauksen perusteella."
+   ],
+   "table": {
+    "head": [
+     "Kysymys",
+     "Mitä katsotaan"
+    ],
+    "rows": [
+     [
+      "”Pitääkö (yritykseen) varata aika?”",
+      "Meneekö oikein, palvellaanko vain ajanvarauksella vai ovatko ilman varausta tulevat tervetulleita?"
+     ],
+     [
+      "”Voinko varata (yritykseen) tälle päivälle?”",
+      "Ovatko määräaika ja tapa (vain puhelimitse tms.) oikein?"
+     ],
+     [
+      "”Mikä on (yrityksen) peruutusmaksu?”",
+      "Ovatko määräaika ja maksu oikein? Onko lähteenä vanha varaussivusto?"
+     ],
+     [
+      "”Miten varaan ajan (yritykseen)?”",
+      "Onko mainittu kanava sellainen, jota käytät nyt?"
+     ],
+     [
+      "”Mihin (yritystyyppi) (alueella) voin varata tänään?”",
+      "Oletko listalla, kun kysymyksessä ei ole nimeäsi? Näkyykö varauspainike (ravintolat)?"
+     ]
+    ]
+   },
+   "after": [
+    "Kirjaa päivämäärä, tekoälypalvelu, kysymys, vastaus ja lähde-URL. Jos lähde on vanha varaussivusto tai blogikirjoitus, korjaa se. Nurevon Free- ja Standard-tilauksissa Nurevo-palvelu kysyy kerran kuukaudessa Perplexityltä kolme yritystyypistäsi ja alueestasi muodostettua kysymystä ilman nimeäsi ja näyttää, mainittiinko nimesi ja viitattiinko sivustoosi. Pro ($99/kk alkaen, beta) mittaa enintään 20 kysymystä Perplexityssä (ChatGPT:ssä, kun se on määritetty). Kirjaa varauskysymykset käsin. Lisää oppaassa [tekoälynäkyvyyden mittaaminen](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Tarkistuslista ennen julkaisua",
+   "list": [
+    "Varaussivuja on yksi, ja se aukeaa ilman kirjautumista",
+    "Varaustapa ja varausten vastaanottoajat on kirjoitettu tekstinä",
+    "Kerrotaan, onko varaus pakollinen ja mitä tapahtuu ilman sitä",
+    "Määräaika (sama päivä, edellinen päivä) ja se, kuinka pitkälle etukäteen voi varata, on kerrottu",
+    "Peruutuksen määräaika, maksu ja peruutustapa on kerrottu, ja ne vastaavat varaussivustoja",
+    "Vain käytössä olevat kanavat on lueteltu; vanhat on poistettu",
+    "Sivu kertoo, miten saatavuuden voi tarkistaa, sen sijaan että ilmoittaisi saatavuuden",
+    "Varausehdot ovat sivun tekstissä, upotusten ja kuvien ulkopuolella",
+    "Rakenteisen datan varaus-URL:t osoittavat nyt käytössä oleviin varausnäkymiin",
+    "Google Business Profilen varauslinkki osoittaa samaan kanavaan"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Mitä sivustolleni pitää lisätä, jotta saan Reserve-painikkeen ChatGPT:hen?",
+   "a": "Mikään sivustollasi ei kytke sitä päälle. OpenAI:n ohjeiden mukaan Reserve-painike näkyy vain, kun ChatGPT pystyy yhdistämään ravintolan tuetun palveluntarjoajan (OpenTable, Resy, Yelp) listaukseen. Voit kirjoittaa varausehtosi oikein sivustollesi ja pitää varausalustojen listaukset ajan tasalla."
+  },
+  {
+   "q": "Tuoko ReserveActionin lisääminen varauksia tekoälystä?",
+   "a": "Emme löytäneet virallista lausuntoa, että toisi. ReserveAction tuskin haittaa, mutta hyötyä varauksille ei ole osoitettu. Korjaa ensin varausehdot sivun tekstiin."
+  },
+  {
+   "q": "Varaussivumme on pelkkä upotettu widget ilman tekstiä.",
+   "a": "Se, lukeeko tekoäly upotuksen sisällä olevan tekstin osaksi sivuasi, vaihtelee palveluittain, eikä sitä ole julkaistu. Lomake voi pysyä upotettuna; kirjoita varaustavat, määräajat ja peruutusehdot tekstinä sen ylä- tai alapuolelle."
+  },
+  {
+   "q": "Varaussivustomme peruutusehdot eroavat oman sivustomme ehdoista.",
+   "a": "Ei voi tietää, kumpaa tekoäly lainaa. Yhtenäistä ne, jos voit; jos et, kerro, mikä sääntö koskee mitäkin kanavaa, esimerkiksi ”Verkossa tehdyt varaukset voi perua maksutta edelliseen päivään asti; varaussivustojen kautta tehtyihin varauksiin sovelletaan kunkin sivuston ehtoja.”"
+  },
+  {
+   "q": "Auttaisiko saatavuuden kirjoittaminen sivustolle näkymään tekoälyssä?",
+   "a": "Saatavuus muuttuu, joten sen kirjoittaminen sivun tekstiin voi jättää vanhaa tietoa tekoälyn vastauksiin. Kirjoita, miten saatavuuden voi tarkistaa, ja anna varausjärjestelmän näyttää itse saatavuus."
+  },
+  {
+   "q": "Voiko muitakin yrityksiä kuin ravintoloita varata tulevaisuudessa tekoälyn sisällä?",
+   "a": "Elokuussa 2025 Google kertoi, että AI Moden agenttinen varaaminen laajenee paikallisten palvelujen ajanvarauksiin, aluksi Yhdysvalloissa. Tarkista Googlen tiedotteet omasta maastasi. Nyt voit pitää varaussivusi ja Google Business Profilen varauslinkin ajan tasalla."
+  },
+  {
+   "q": "Kun muutamme varaussivua, milloin tekoälyn vastaukset muuttuvat?",
+   "a": "Mikään tekoälypalvelu ei kerro julkisesti, kauanko se kestää. Tarkista samoilla kysymyksillä muutaman päivän tai muutaman viikon kuluttua. Jos vanha varauskanava näkyy yhä, tarkista lähde-URL ja korjaa kyseinen sivu."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso, pystyykö tekoäly lukemaan sivustosi",
+  "body": "Ilmainen tarkistus ei vaadi rekisteröitymistä: syötä URL, niin näet tekoälyindeksoijien pääsyn, rakenteisen datan ja llms.txt-tiedoston tilan. WordPressissä ilmainen lisäosa julkaisee palvelusi ja varaus-URL:t rakenteisena datana ja llms.txt-tiedostossa ilman päällekkäisyyttä SEO-lisäosasi kanssa.",
+  "label": "Tarkista tekoälyvalmiutesi ilmaiseksi",
+  "href": "/check",
+  "secondary": {
+   "label": "Kokeile ilmaista WordPress-lisäosaa",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI:n tavaramerkki; Google, Google Search, Google Business Profile ja Reserve with Google ovat Google LLC:n tavaramerkkejä; Perplexity on Perplexity AI:n tavaramerkki. OpenTable, Resy, Yelp, Tock, TheFork, Booksy, Stripe, WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, Amelia sekä tässä oppaassa mainittujen yritysten nimet ovat omistajiensa tavaramerkkejä tai rekisteröityjä tavaramerkkejä. Nurevo ei ole sidoksissa mihinkään näistä yrityksistä eikä mikään niistä ole hyväksynyt sitä."
+}
