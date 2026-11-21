@@ -1,0 +1,347 @@
+{
+ "title": "AI가 정확히 읽는 예약 페이지 작성법 | Nurevo",
+ "description": "\"예약이 필요한가요?\" \"취소 수수료가 있나요?\"에 AI가 정확히 답하게 하려면: 예약 페이지 필수 내용, AI 내 예약 구조, schema, WordPress 설정.",
+ "h1": "AI가 정확히 읽는 예약 페이지 작성법: 예약 방법, 마감 시간, 취소 규정, 그리고 AI 안에서 예약이 이루어지는 구조",
+ "lead": "AI가 예약 관련 질문에 정확히 답하게 하려면 자사 사이트에 예약 페이지를 하나 정하고, 이미지나 임베드된 예약 위젯이 아닌 HTML 텍스트로 다음을 적으세요. 예약 방법(온라인, 전화, 메시지), 예약 필수 여부와 예약 없이 방문했을 때의 처리, 언제까지 그리고 얼마나 미리 예약할 수 있는지, 취소 마감과 수수료, 공식 예약처 목록입니다. 2026년 11월 현재 ChatGPT나 Google AI 안에서의 예약은 주로 음식점을 대상으로, OpenTable 같은 예약 플랫폼을 통해 이루어집니다. 이런 플랫폼에 등록되어 있든 아니든, AI가 예약 규정을 읽으러 가는 곳은 자사 예약 페이지입니다.",
+ "intro": [
+  "2026년 11월 21일(일본 시간) 작성. 영업시간 작성법은 [영업시간과 휴무일](/guide/business-hours-holidays-ai-search), 가격은 [가격 페이지 작성법](/guide/pricing-page-ai-search)에서 다룹니다. 이 가이드는 미용실, 클리닉, 음식점, 스튜디오, 숙박업, 출장 서비스가 공통으로 갖고 있는 예약 페이지를 다룹니다.",
+  "AI 답변은 날짜, 질문 표현, 서비스에 따라 달라집니다. 여기서 소개하는 단계는 AI가 예약 규정을 잘못 읽을 가능성이 낮은 페이지를 만들고 이를 확인하는 방법을 알려 줄 뿐, 답변에 나타나거나 AI 안에서 예약 가능해진다는 것을 보장하지는 않습니다."
+ ],
+ "sections": [
+  {
+   "heading": "요약: AI가 예약 정보를 틀리는 다섯 가지 원인과 해결책",
+   "table": {
+    "head": [
+     "원인",
+     "AI 답변에서 생기는 일",
+     "해결책"
+    ],
+    "rows": [
+     [
+      "예약 규정이 임베드된 위젯이나 이미지 안에만 있음",
+      "AI가 \"예약 방법은 공식 웹사이트에서 확인하세요\"라고밖에 말하지 못함",
+      "예약 방법, 마감 시간, 취소 규정을 예약 페이지에 텍스트로 적기"
+     ],
+     [
+      "\"예약 권장\"이나 \"예약제\"에 대한 설명이 없음",
+      "예약 없이 방문할 수 있는지를 AI가 틀림",
+      "예약이 없을 때 어떻게 되는지 적기: \"자리가 있으면 예약 없이 방문 가능(대기가 있을 수 있음)\""
+     ],
+     [
+      "예약처가 여러 곳인데 공식 예약처 표시가 없음",
+      "AI가 예전 예약 사이트나 연결되지 않는 번호로 안내",
+      "사용 중인 예약처를 나열하고 서비스마다 공식 예약 URL을 하나로 정하기"
+     ],
+     [
+      "취소 마감이나 수수료가 없거나, 사이트마다 규정이 다름",
+      "AI가 무료 취소라고 하거나 다른 업체의 규정을 인용",
+      "마감, 수수료, 취소 방법을 한곳에 적고 예약 사이트들을 그에 맞추기"
+     ],
+     [
+      "예약 페이지를 보려면 로그인이나 계정이 필요함",
+      "예약을 받는지조차 AI가 답하지 못함",
+      "규정을 담은 공개 페이지를 두고, 예약 양식은 그 뒤에 배치하기"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "AI 안에서 예약이 이루어지는 구조 (2026년 11월)",
+   "paragraphs": [
+    "ChatGPT에서 예약 가능하게 하려면 어떻게 해야 하느냐는 문의가 늘고 있습니다. 현재 AI 안에서의 예약은 예약 플랫폼과의 연동을 통해 이루어집니다. 사이트에 넣기만 하면 예약 버튼이 생기는 태그는 없습니다. 아래 표는 공식 발표 내용을 정리한 것입니다."
+   ],
+   "table": {
+    "head": [
+     "서비스",
+     "기능",
+     "대상",
+     "출처"
+    ],
+    "rows": [
+     [
+      "ChatGPT (음식점 예약)",
+      "답변에 예약 가능한 시간을 보여 주고 예약을 진행",
+      "전 세계 OpenTable, 미국 Resy, 미국과 캐나다 Yelp. Reserve 버튼은 ChatGPT가 음식점을 지원 플랫폼의 등록 정보와 연결할 수 있을 때만 나타납니다. ChatGPT는 예약을 저장하지 않으며 변경과 취소는 플랫폼을 통해 진행합니다",
+      "[OpenAI 고객센터](https://help.openai.com/en/articles/9237897-chatgpt-search) (2026-11-21 확인), [Resy (2026-08-10)](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "Google 검색 AI 모드 (에이전트형 예약)",
+      "요청에 맞는 빈자리를 찾아 예약 페이지로 연결",
+      "2025-08-21 음식점부터 시작, 미국 Google AI Ultra 구독자 대상(Labs). 영국에서는 2026-04-10부터 음식점 예약 지원. 파트너로 OpenTable, Resy, Tock, TheFork 등이 발표됨",
+      "[Google (2025-08-21)](https://blog.google/products/search/ai-mode-agentic-personalized/), [Google 영국 (2026-04-10)](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Google 비즈니스 프로필",
+      "프로필에 예약 링크 표시",
+      "인증된 프로필. 직접 링크를 추가하거나 Reserve with Google 예약 제공업체를 통해 표시 가능",
+      "[비즈니스 링크 정책](https://support.google.com/business/answer/13769188), [제공업체를 통한 예약](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "ChatGPT의 예약 기능은 예약 플랫폼이 OpenAI에 보내는 음식점 목록을 바탕으로 만들어집니다. 각 레코드에는 음식점 자체 웹사이트 URL과 플랫폼상의 등록 페이지 URL이 담기도록 되어 있습니다([OpenAI: 음식점 예약 전환 사양](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec), 예약 플랫폼용 문서).",
+    "즉 AI 안의 예약 버튼은 사용하는 예약 플랫폼에 달려 있습니다. 업체가 직접 관리할 수 있는 것은 플랫폼 등록 정보를 정확하게 유지하고, 자사 사이트에 예약 규정을 정확하게 적는 일입니다. 예약 버튼이 없더라도 AI는 \"예약이 필요한가요?\"나 \"취소 수수료가 있나요?\"라는 질문에 자사 사이트와 리뷰·업체 정보 사이트를 바탕으로 답합니다. 이 가이드의 나머지는 그 답변을 정확하게 만드는 방법입니다."
+   ]
+  },
+  {
+   "heading": "상위 글이 다루는 것과 놓치는 것",
+   "paragraphs": [
+    "\"예약 페이지 AI 검색\" 같은 검색어의 상위 일본어·영어 글을 읽어 보았습니다(2026-11-21). 대부분은 로컬 업체의 AI 노출 전반(업체 정보 통일, 리뷰 늘리기)을 다룹니다. 예약 페이지 자체를 어떻게 쓰는지 단계별로 설명한 글은 드물고, 구조화 데이터 예시나 WordPress 설정 순서를 제시한 글은 거의 없습니다."
+   ],
+   "table": {
+    "head": [
+     "글",
+     "강점",
+     "빠진 것"
+    ],
+    "rows": [
+     [
+      "[Uravation, 전화·예약 동선 (2026-09-05 업데이트, 일본어)](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "ReserveAction에 과도하게 의존하지 않기, 예약 URL 하나로 고정, GA4로 측정",
+      "JSON-LD 예시, WordPress 설정 순서, 여러 예약 사이트 처리"
+     ],
+     [
+      "[Uravation, 체험·관광 (2026-10-12, 일본어)](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "체험마다 한 페이지, 우천 취소나 소요 시간 같은 조건 명시",
+      "투어와 액티비티 한정. 코드 없음, WordPress 없음"
+     ],
+     [
+      "[GMO 로컬 AIO (2026-11-16 업데이트, 일본어)](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/), [AIsmiley (2026-10-30 업데이트, 일본어)](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "Google 비즈니스 프로필 설정 / 일본에서 ChatGPT 음식점 예약이 다루는 범위",
+      "출처 없는 통계(GMO). 업체 자체 예약 페이지에 대한 내용 없음(AIsmiley)"
+     ],
+     [
+      "[LSEO 예약·가격·빈자리 (2026-10-02)](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/), [LSEO 배관공 (2026-04-24)](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "솔직한 지적: 범용 예약 schema는 없으며 빈자리 정보는 실시간 시스템에서 와야 함",
+      "단계별 설명 없음, 출처 없음, WordPress 없음"
+     ],
+     [
+      "[J.A. Watte, 숙박 (2026-11-06 업데이트)](https://jwatte.com/blog/lodging-sites-ai-agents-booking/), [Owner, 음식점 (2026-10-22)](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search), [Mindbody (2026-10-13)](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "예약 링크와 세금 포함 가격(숙박), 텍스트 메뉴(음식점), 서비스 페이지(피트니스)",
+      "각각 한 업종에 한정, 자사 제품 홍보 비중이 큼"
+     ]
+    ]
+   },
+   "after": [
+    "이 가이드는 예약을 받는 모든 업체를 대상으로 예약 페이지에 적을 내용, 여러 예약 채널 정리, 구조화 데이터, WordPress 설정 순서, 결과 확인 방법을 다룹니다."
+   ]
+  },
+  {
+   "heading": "모든 예약 페이지에 필요한 여덟 가지 정보",
+   "paragraphs": [
+    "예약 관련 질문은 대략 여덟 가지로 나뉩니다. 예약 페이지 텍스트에서 각각 한두 문장의 단락이나 표의 한 행으로 적으세요."
+   ],
+   "table": {
+    "head": [
+     "정보",
+     "예시",
+     "AI가 받는 질문"
+    ],
+    "rows": [
+     [
+      "예약 방법",
+      "온라인 24시간, 전화 오전 10시~오후 7시, 메시지(영업시간 내 답장)",
+      "\"(업체명)은 어떻게 예약하나요?\""
+     ],
+     [
+      "예약 필수 여부",
+      "예약제. 자리가 있으면 예약 없이 방문 가능(대기가 있을 수 있음)",
+      "\"예약 없이 가도 되나요?\""
+     ],
+     [
+      "마감",
+      "전날 오후 8시까지. 당일 예약은 전화로만",
+      "\"오늘 예약할 수 있나요?\""
+     ],
+     [
+      "예약 가능 기간",
+      "최대 두 달 앞까지",
+      "\"다음 달 예약도 벌써 되나요?\""
+     ],
+     [
+      "소요 시간",
+      "커트는 약 60분 소요",
+      "\"시간이 얼마나 걸리나요?\""
+     ],
+     [
+      "취소",
+      "전날까지 무료. 당일 취소는 50% 부과. 취소는 전화로",
+      "\"취소 수수료가 있나요?\""
+     ],
+     [
+      "결제와 예약금",
+      "예약 시 결제 없음. 당일 현금, 카드, 모바일 결제로 지불",
+      "\"미리 결제해야 하나요?\""
+     ],
+     [
+      "이용 대상, 준비물",
+      "첫 방문: 문진표 작성을 위해 10분 일찍 도착. 어린이 동반 환영",
+      "\"처음 가도 괜찮나요?\" \"아이를 데려가도 되나요?\""
+     ]
+    ]
+   },
+   "after": [
+    "모든 문장이 그 자체로 의미가 통하게 쓰세요. AI는 문장 하나만 떼어 답변에 쓰기도 하므로 \"위 참조\"나 \"여기를 클릭\"처럼 앞뒤 맥락에 기대는 표현은 피하세요. 약한 예: \"여기서 예약하세요. 취소하실 경우 미리 알려 주세요.\" 좋은 예: \"온라인 예약은 24시간, 전화 예약은 오전 10시부터 오후 7시까지 받습니다. 전날까지는 무료로 취소할 수 있으며, 당일 취소는 요금의 50%가 부과됩니다.\"",
+    "예약했을 때와 하지 않았을 때 무엇이 다른지 적으세요. 예약 고객을 우선한다면 \"예약 없이 오신 분은 예약 사이사이에 안내합니다\"라고 쓰세요. 완전 예약제라면 \"예약 없이는 이용하실 수 없습니다\"라고 쓰세요. 그러면 \"예약 불필요\"라고 잘못 답하는 경우가 줄어듭니다."
+   ]
+  },
+  {
+   "heading": "예약 사이트가 여러 곳일 때: 공식 채널 정하기",
+   "paragraphs": [
+    "미용실과 음식점은 흔히 자체 시스템, 예약 사이트, 전화, 메시지 등 여러 곳에서 예약을 받습니다. AI는 찾아낸 예약 채널을 그대로 전달하므로 이미 탈퇴한 예약 사이트나 예전 전화번호가 답변에 나올 수 있습니다. 다음 순서로 정리하세요."
+   ],
+   "list": [
+    "예약을 받는 모든 채널 나열하기(자체 시스템, 예약 사이트, Google 비즈니스 프로필 예약 링크, 전화, 메시지, 소셜 미디어 DM)",
+    "더 이상 쓰지 않는 채널의 등록 정보는 삭제하거나 \"예약 접수 종료\"로 표시하기",
+    "예약 페이지에 \"다음 방법으로 예약을 받습니다\"라고 쓰고 사용 중인 채널만 나열하기",
+    "서비스마다 예약 URL이 따로 있다면 서비스별로 공식 URL을 하나로 정하기(홈페이지 링크보다 해당 서비스 예약 화면으로 바로 가는 링크가 낫습니다)",
+    "자사 사이트와 모든 예약 사이트의 취소 규정과 마감을 같게 하기. 다르다면 어떤 규정이 어느 채널에 적용되는지 적기",
+    "예약 사이트 프로필과 Google 비즈니스 프로필 설명에서 자사 예약 페이지로 링크하기"
+   ],
+   "after": [
+    "Google 비즈니스 프로필 예약 링크에는 규칙이 있습니다. 프로필이 인증되어 있어야 하고, 링크는 예약을 완료할 수 있는 해당 업체 전용 페이지로 연결되어야 하며, 소셜 미디어, 메시징 앱, 앱 스토어, 단축 URL은 허용되지 않고, 페이지는 로그인이나 CAPTCHA 없이 열려 200을 반환해야 합니다([비즈니스 링크 정책](https://support.google.com/business/answer/13769188)). Reserve with Google과 연동된 예약 제공업체를 통해 표시될 수도 있으며, Google은 직접 추가한 맞춤 링크에는 실적 데이터가 제공되지 않는다고 밝히고 있습니다([제공업체를 통한 예약](https://support.google.com/business/answer/7475773))."
+   ]
+  },
+  {
+   "heading": "빈자리 현황이 아니라 확인 방법을 적기",
+   "paragraphs": [
+    "\"토요일은 대체로 한산합니다\"나 \"평일은 예약 불필요\"라고 써 두면, 상황이 바뀐 뒤에도 AI가 그 문장을 계속 쓸 수 있습니다. 페이지를 얼마나 자주 다시 읽는지 공개한 AI 서비스는 없습니다. 빈자리는 예약 시스템이 보여 주는 것으로 두고, 대신 확인 방법을 적으세요: \"예약 가능한 시간은 온라인 예약 화면에서 확인하세요. 당일 빈자리는 전화로 문의해 주세요.\"",
+    "붐비는 시간을 언급한다면 변하지 않는 경향으로 표현하세요: \"주말 오후는 붐비므로 예약을 권장합니다.\" 실제보다 한산해 보이게 쓰면 사람과 AI 모두를 오해하게 만듭니다."
+   ]
+  },
+  {
+   "heading": "읽을 수 있게 만들기: 임베드, 이미지, 로그인 확인",
+   "paragraphs": [
+    "많은 예약 시스템은 다른 사이트에서 가져온 임베드(iframe)나 JavaScript로 화면을 보여 줍니다. 사람은 볼 수 있지만, AI가 임베드 안의 텍스트를 페이지의 일부로 읽는지는 서비스마다 다르고 공개되어 있지 않습니다. 예약 규정은 임베드 밖, 예약 페이지 자체의 텍스트에 적으세요. 예약 양식 자체는 임베드로 두어도 됩니다.",
+    "다음 명령으로 예약 페이지가 로그인 없이 열리는지, HTML에 규정이 들어 있는지 확인할 수 있습니다."
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "OpenAI는 ChatGPT 검색에 포함되려면 OAI-SearchBot의 사이트 크롤링을 허용하고, 호스팅이나 CDN이 OpenAI가 공개한 IP 주소의 트래픽을 허용하는지 확인하라고 안내합니다([OpenAI 고객센터](https://help.openai.com/en/articles/9237897-chatgpt-search)). 특히 봇 차단 기능이 예약 페이지를 막고 있지 않은지 확인하세요. AI 에이전트가 고객 대신 예약을 완료하기를 원하는 업체에 대해 Stripe는 봇 차단 설정을 검토하고 WebMCP를 고려할 것을 제안하지만, 이는 결제까지 포함하는 한 단계 더 나아간 작업입니다([Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services))."
+   ]
+  },
+  {
+   "heading": "구조화 데이터: ReserveAction은 추가해도 좋지만 큰 기대는 금물",
+   "paragraphs": [
+    "schema.org에는 예약하는 행위를 나타내는 [ReserveAction](https://schema.org/ReserveAction)이 있어 예약 URL을 서비스에 연결하는 데 쓸 수 있습니다. 하지만 ChatGPT, Perplexity, Google AI 기능이 예약에 ReserveAction을 사용한다는 공식 발표는 찾지 못했습니다. Google은 AI 기능에 특별한 구조화 데이터가 필요 없으며 구조화 데이터는 페이지에 보이는 텍스트와 일치해야 한다고 밝히고 있습니다([AI 기능과 웹사이트](https://developers.google.com/search/docs/appearance/ai-features), 2026-11-18 확인). 추가해도 해가 될 일은 거의 없지만, 예약 버튼이 생기지는 않습니다.",
+    "추가한다면 다음과 같이 각 Service를 해당 예약 URL에 연결하세요. Nurevo AIO가 게시하는 것과 같은 구조입니다."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "핵심은 Reservation을 단독으로 쓰지 않는 것입니다. 단독 Reservation은 이미 예약이 존재한다는 뜻이 되는데, 사실이 아닙니다. ReserveAction의 result로 두면 \"이 행위로 예약이 만들어진다\"는 뜻이 됩니다. 문법은 [Schema Markup Validator](https://validator.schema.org/)로 확인하세요."
+   ]
+  },
+  {
+   "heading": "WordPress 설정 순서 (Nurevo AIO 사용)",
+   "paragraphs": [
+    "[Nurevo AIO(무료, 이전 표시명 Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/)를 사용하면 설정의 '서비스'에서 서비스별로 입력한 예약 URL이 Service 구조화 데이터와 llms.txt에 ReserveAction으로 게시됩니다. 다음 순서로 진행하세요."
+   ],
+   "list": [
+    "먼저 위의 여덟 가지 정보를 바탕으로 예약 페이지 텍스트를 고치기(구조화 데이터보다 페이지 텍스트가 먼저)",
+    "서비스 추가(최대 20개). 서비스명, 소요 시간(분), 가격, 통화와 함께 예약 URL에 해당 서비스 예약 화면의 URL 입력",
+    "예약 URL이 있는 서비스는 llms.txt에서 서비스명이 그 URL로 링크됨(예: - [Haircut](https://example.com/book/haircut/) — 60 min · USD 55.00)",
+    "Amelia 같은 예약 플러그인에서는 아무것도 읽어 오지 않습니다. 잘못된 소요 시간이나 예약 URL이 사실처럼 게시되지 않도록 일부러 그렇게 설계했으니 값은 직접 입력하세요",
+    "서비스를 게재할 페이지로 예약 페이지나 메뉴 페이지의 ID를 입력하면 Service 마크업이 그 페이지에 들어감(0 = 프런트 페이지)",
+    "취소 수수료, 당일 예약, 예약 없는 방문에 관한 내용을 FAQ에 추가. Yoast SEO, Rank Math, All in One SEO, Slim SEO와 중복되지 않으며 SEO SIMPLE PACK, VK All in One Expansion Unit과도 함께 작동(0.9.1부터)",
+    "예약 채널을 바꿀 때는 페이지 텍스트, Nurevo의 예약 URL, FAQ 답변, Google 비즈니스 프로필을 같은 날 업데이트"
+   ],
+   "after": [
+    "고객 사이트를 유지보수하는 대행사는 '예약 채널 변경'을 유지보수 범위에 넣어 두면, 고객이 예약 사이트를 바꿀 때마다 예전 URL이 남는 일을 막을 수 있습니다. 월간 지원을 제공하는 대행사를 위한 [파트너 프로그램](https://nurevo.jp/partner/)도 있습니다."
+   ]
+  },
+  {
+   "heading": "확인 방법: 예약 질문을 고정하고 기록 남기기",
+   "paragraphs": [
+    "예약 규정이 정확히 전달되는지 보려면 같은 AI에 같은 질문을 날짜를 바꿔 하고 답변을 기록하세요. 한 번의 답변으로 판단하지 마세요."
+   ],
+   "table": {
+    "head": [
+     "질문",
+     "확인할 점"
+    ],
+    "rows": [
+     [
+      "\"(업체명)은 예약이 필요한가요?\"",
+      "예약제인지, 예약 없이 방문 가능한지를 정확히 말하나?"
+     ],
+     [
+      "\"(업체명) 오늘 예약할 수 있나요?\"",
+      "마감 시간과 방법(전화만 가능 등)이 맞나?"
+     ],
+     [
+      "\"(업체명)의 취소 수수료는 얼마인가요?\"",
+      "마감과 수수료가 맞나? 출처가 예전 예약 사이트는 아닌가?"
+     ],
+     [
+      "\"(업체명)은 어떻게 예약하나요?\"",
+      "안내하는 채널이 지금 사용하는 것인가?"
+     ],
+     [
+      "\"(지역)에서 오늘 예약할 수 있는 (업종)은 어디인가요?\"",
+      "업체명 없는 질문에서 목록에 들어가나? 예약 버튼이 나타나나(음식점)?"
+     ]
+    ]
+   },
+   "after": [
+    "날짜, AI 서비스, 질문, 답변, 출처 URL을 기록하세요. 출처가 예전 예약 사이트나 블로그 글이라면 그곳을 고치세요. Nurevo의 Free와 Standard 플랜에서는 Nurevo 서비스가 월 1회 업종과 지역을 바탕으로 만든 업체명 없는 질문 세 개를 Perplexity에 묻고, 업체명이 나왔는지와 사이트가 인용됐는지를 보여 줍니다. Pro(월 $99부터, 베타)는 Perplexity에서 최대 20개 질문을 측정합니다(설정하면 ChatGPT도 지원). 예약 관련 질문은 직접 기록하세요. 자세한 내용은 [AI 노출도 측정 방법](/guide/measure-ai-visibility)을 참고하세요."
+   ]
+  },
+  {
+   "heading": "게시 전 체크리스트",
+   "list": [
+    "예약 페이지가 하나이며 로그인 없이 열린다",
+    "예약 방법과 접수 시간이 텍스트로 적혀 있다",
+    "예약 필수 여부와 예약이 없을 때 어떻게 되는지 적혀 있다",
+    "마감(당일, 전날)과 얼마나 미리 예약할 수 있는지 적혀 있다",
+    "취소 마감, 수수료, 취소 방법이 적혀 있고 예약 사이트들과 일치한다",
+    "사용 중인 채널만 나열되어 있고 예전 채널은 없다",
+    "빈자리 현황이 아니라 확인 방법이 적혀 있다",
+    "예약 규정이 임베드나 이미지 밖, 페이지 텍스트에 있다",
+    "구조화 데이터의 예약 URL이 지금 사용하는 예약 화면을 가리킨다",
+    "Google 비즈니스 프로필 예약 링크가 같은 채널을 가리킨다"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "ChatGPT에 Reserve 버튼이 나오게 하려면 사이트에 무엇을 넣어야 하나요?",
+   "a": "사이트에 넣어서 켜지는 것은 없습니다. OpenAI 고객센터에 따르면 Reserve 버튼은 ChatGPT가 음식점을 지원 플랫폼(OpenTable, Resy, Yelp)의 등록 정보와 연결할 수 있을 때만 나타납니다. 할 수 있는 일은 사이트에 예약 규정을 정확히 적고 예약 플랫폼 등록 정보를 정확하게 유지하는 것입니다."
+  },
+  {
+   "q": "ReserveAction을 추가하면 AI를 통한 예약이 늘어나나요?",
+   "a": "그렇다는 공식 발표는 찾지 못했습니다. ReserveAction이 해가 될 일은 거의 없지만, 예약에 도움이 된다는 근거도 확인되지 않았습니다. 먼저 페이지 텍스트의 예약 규정을 정비하세요."
+  },
+  {
+   "q": "예약 페이지가 텍스트 없이 임베드된 위젯뿐입니다.",
+   "a": "AI가 임베드 안의 텍스트를 페이지의 일부로 읽는지는 서비스마다 다르고 공개되어 있지 않습니다. 양식은 임베드로 두되, 그 위나 아래에 예약 방법, 마감, 취소 규정을 텍스트로 적으세요."
+  },
+  {
+   "q": "예약 사이트의 취소 규정이 자사 사이트와 다릅니다.",
+   "a": "AI가 어느 쪽을 인용할지 알 수 없습니다. 가능하면 같게 맞추고, 그럴 수 없다면 어떤 규정이 어느 채널에 적용되는지 적으세요. 예: \"온라인 예약은 전날까지 무료로 취소할 수 있으며, 예약 사이트를 통한 예약은 각 사이트의 규정을 따릅니다.\""
+  },
+  {
+   "q": "사이트에 빈자리 현황을 적으면 AI에 노출되는 데 도움이 되나요?",
+   "a": "빈자리는 바뀌기 때문에 페이지 텍스트에 적으면 오래된 정보가 AI 답변에 남을 위험이 있습니다. 확인 방법을 적고, 빈자리 자체는 예약 시스템이 보여 주도록 하세요."
+  },
+  {
+   "q": "음식점이 아닌 업체도 AI 안에서 예약 가능해지나요?",
+   "a": "2025년 8월 Google은 AI 모드의 에이전트형 예약을 미국부터 지역 서비스 예약으로 확대할 것이라고 밝혔습니다. 해당 국가에 대한 Google 발표를 확인하세요. 지금 할 수 있는 일은 예약 페이지와 Google 비즈니스 프로필 예약 링크를 정확하게 유지하는 것입니다."
+  },
+  {
+   "q": "예약 페이지를 고친 뒤 AI 답변은 언제 바뀌나요?",
+   "a": "걸리는 시간을 공개한 AI 서비스는 없습니다. 며칠에서 몇 주 뒤에 같은 질문으로 확인하세요. 예전 예약 채널이 계속 나온다면 출처 URL을 확인하고 그 페이지를 고치세요."
+  }
+ ],
+ "relatedHeading": "관련 가이드",
+ "cta": {
+  "heading": "AI가 사이트를 읽을 수 있는지 확인하세요",
+  "body": "무료 진단은 회원가입이 필요 없습니다. URL을 입력하면 AI 크롤러 접근, 구조화 데이터, llms.txt 상태를 확인할 수 있습니다. WordPress라면 무료 플러그인이 SEO 플러그인 출력과 중복 없이 서비스와 예약 URL을 구조화 데이터와 llms.txt로 게시합니다.",
+  "label": "AI 대응 상태 무료 진단하기",
+  "href": "/check",
+  "secondary": {
+   "label": "무료 WordPress 플러그인 사용해 보기",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT는 OpenAI의 상표이며, Google, Google Search, Google Business Profile, Reserve with Google은 Google LLC의, Perplexity는 Perplexity AI의 상표입니다. OpenTable, Resy, Yelp, Tock, TheFork, Booksy, Stripe, WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, Amelia 및 이 가이드에서 인용한 회사명은 각 소유자의 상표 또는 등록 상표입니다. Nurevo는 이들 회사와 제휴 관계가 없으며 보증을 받지 않았습니다."
+}

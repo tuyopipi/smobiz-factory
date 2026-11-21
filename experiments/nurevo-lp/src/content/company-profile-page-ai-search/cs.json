@@ -1,0 +1,316 @@
+{
+ "title": "Stránka „O nás“ a AI vyhledávání: správné údaje o firmě | Nurevo",
+ "description": "Jak vytvořit stránku „O nás“, na kterou se AI může spolehnout: jaké údaje uvést, jak odstranit varianty názvu a adresy, schéma Organization a postup ve WordPressu.",
+ "h1": "Optimalizace stránky „O nás“ pro AI vyhledávání: jak zajistit správný popis názvu firmy, adresy, data založení a činnosti",
+ "lead": "Když se někdo zeptá AI na vaši firmu jménem, odpověď se opírá hlavně o stránku „O nás“ nebo profil společnosti. Uveďte na jedné stránce prostým textem obchodní firmu (právní název) i názvy, které lidé skutečně používají, adresu, datum založení, vedení, čím se zabýváte a jak vás kontaktovat; publikujte stejné hodnoty jako strukturovaná data Organization; a zajistěte, aby se zápis shodoval na ostatních stránkách i ve vašich profilech jinde na webu. Tyto tři kroky jsou jádrem celé práce.",
+ "intro": [
+  "Napsáno 15. listopadu 2026 (JST). Tento návod je pro každou firmu, obchod nebo organizaci, která má stránku „O nás“ nebo profil společnosti, a pro agentury, které takové weby tvoří. Značkování adresy a otevírací doby obchodů popisujeme v článku [schéma místní firmy a SEO pluginy](/guide/local-business-schema-seo-plugins). Tento návod se týká stránky, která říká, kdo jste a kde jste.",
+  "Odpovědi AI se mění den ode dne a podle formulace dotazu. Tyto kroky zajistí, že informace, které AI čte, budou přesné; nezaručují, že se v odpovědi objevíte."
+ ],
+ "sections": [
+  {
+   "heading": "K čemu AI používá vaši stránku „O nás“",
+   "paragraphs": [
+    "Vyhledávání ChatGPT, Perplexity a Google AI Overviews čtou při odpovídání webové stránky a zobrazují je jako zdroje. U dotazu, který jmenuje konkrétní firmu, je přirozeným kandidátem její vlastní web, a především stránka, která shromažďuje základní údaje. Pokud je stránka „O nás“ jen jeden obrázek nebo jsou název a adresa na každé stránce zapsány jinak, může AI sestavit odpověď z cizího starého záznamu nebo z jiné firmy se stejným názvem.",
+    "Dotazy, které jmenují firmu, obvykle spadají do několika vzorců. Na každý z nich lze odpovědět ze stránky „O nás“, která uvádí údaje v textu."
+   ],
+   "list": [
+    "„Čím se zabývá Example Ltd?“ (popis činnosti)",
+    "„Kde sídlí Example? Mají kancelář v Manchesteru?“ (pobočky)",
+    "„Kdy byla firma Example založena a kdo ji vede?“ (datum založení, vedení)",
+    "„Která firma stojí za aplikací Example?“ (značka versus název firmy)",
+    "„Je Example stejná firma jako Sample?“ (dřívější názvy, firmy ve skupině, jmenovci)",
+    "„Jak mohu kontaktovat Example?“ (telefon, formulář, hodiny)"
+   ],
+   "after": [
+    "Google uvádí, že pro zobrazení v AI Overviews nebo AI Mode neexistují žádné další požadavky ani speciální strukturovaná data a že platí běžné osvědčené postupy SEO ([Google Search Central: Funkce AI a váš web](https://developers.google.com/search/docs/appearance/ai-features)). Práce na stránce „O nás“ není zvláštní způsob psaní pro AI. Jde o to uvést fakta přesně, v čitelné podobě a všude se stejnými hodnotami."
+   ]
+  },
+  {
+   "heading": "Co na stránku uvést a jak to odpovídá strukturovaným datům",
+   "paragraphs": [
+    "Tabulka uvádí, co by stránka „O nás“ měla obsahovat, jaké chyby odpovědi AI obvykle dělají a která vlastnost Organization tomu odpovídá. Názvy vlastností pocházejí z doporučených vlastností v dokumentaci Google [Strukturovaná data Organization](https://developers.google.com/search/docs/appearance/structured-data/organization). „Pouze text“ označuje položky, které mezi doporučenými vlastnostmi Google nejsou."
+   ],
+   "table": {
+    "head": [
+     "Položka",
+     "Jak ji zapsat",
+     "Typická chyba AI",
+     "Strukturovaná data"
+    ],
+    "rows": [
+     [
+      "Právní název",
+      "Uveďte jednou registrovaný název, přesně podle rejstříku",
+      "Záměna s firmou podobného názvu",
+      "legalName (pokud se liší od name)"
+     ],
+     [
+      "Obchodní název, značka, název v jiném jazyce",
+      "Propojte je větou: „Aplikaci Example provozuje Sample Ltd“",
+      "Zná značku, ale ne firmu, která za ní stojí",
+      "alternateName"
+     ],
+     [
+      "Adresa",
+      "Oddělte sídlo od ostatních poboček; každou adresu pište ve stejném formátu až po patro",
+      "Uvádí adresu před stěhováním nebo pobočku jako sídlo",
+      "address (PostalAddress, jedna nebo více)"
+     ],
+     [
+      "Kontakt",
+      "Hlavní telefon, způsob podání dotazu, hodiny",
+      "Přímá linka oddělení nebo staré číslo",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Založení",
+      "Celé datum; pokud se založení a zápis společnosti liší, uveďte obojí",
+      "Záměna roku založení s rokem zápisu",
+      "foundingDate (ISO 8601, např. 2015-04-01)"
+     ],
+     [
+      "Vedení",
+      "Funkce a jméno; aktualizujte v den změny",
+      "Uvádí předchozího generálního ředitele",
+      "Pouze text (není doporučenou vlastností Google)"
+     ],
+     [
+      "Čím se zabýváte",
+      "První věta: co, pro koho, kde; potom seznam činností",
+      "Představí vedlejší činnost jako hlavní",
+      "description"
+     ],
+     [
+      "Počet zaměstnanců, základní kapitál",
+      "Doplňte „stav k: měsíc a rok“",
+      "Opakuje staré číslo bez data",
+      "numberOfEmployees (základní kapitál: pouze text)"
+     ],
+     [
+      "Identifikační nebo daňové číslo firmy",
+      "Uveďte ho na stránce, pokud ho máte",
+      "Nelze vás odlišit od jmenovce",
+      "Nejprve text (viz níže)"
+     ],
+     [
+      "Oficiální sociální sítě a profily",
+      "Uveďte jen účty, které firma spravuje",
+      "Propojí vás se jmenovcem nebo s falešným účtem",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Stejný obrázek jako logo webu",
+      "Logo jiné firmy",
+      "logo (alespoň 112×112 px)"
+     ],
+     [
+      "Poslední aktualizace",
+      "„Aktualizováno dne ...“ na konci stránky",
+      "Nelze poznat, jak aktuální údaje jsou",
+      "Pouze text"
+     ]
+    ]
+   },
+   "after": [
+    "K identifikačním a daňovým číslům: Google popisuje taxID jako daňové číslo pro zemi uvedenou v address a vatID jako číslo DPH, pokud se uplatňuje. Pokud je vaše číslo daňovým číslem nebo číslem DPH ve vaší zemi, tyto vlastnosti se hodí. Pokud jde o jiný druh identifikátoru, například japonské firemní číslo, Google neuvádí, zda patří do taxID, takže ho uveďte na stránce a sami rozhodněte, zda ho označit.",
+    "Nenafukujte čísla. Pokud zaokrouhlíte počet zaměstnanců nebo klientů nahoru, AI bude citovat vyšší číslo a těžko se to vezme zpět. Uveďte přesné číslo a datum, ke kterému platí."
+   ]
+  },
+  {
+   "heading": "Jak stránku napsat: nejen tabulka a nikdy obrázek",
+   "paragraphs": [
+    "Mnoho stránek „O nás“ tvoří jen dvousloupcová tabulka. Tabulka je snadno čitelná pro lidi i stroje, ale sama o sobě postrádá větu, která říká, co je firma zač. Nad tabulku dejte dvě nebo tři věty úvodu a AI dostane text, který může při popisu vaší firmy rovnou použít."
+   ],
+   "list": [
+    "První věta: právní název, město a čím se zabýváte. Například: „Sample Ltd se sídlem v Leedsu pomáhá malým firmám zavádět účetní software.“",
+    "Druhá věta: údaje, které vás odlišují od jmenovců, například vztah značky k firmě a rok založení.",
+    "Potom tabulka, jako HTML tabulka nebo seznam s popisky, nikdy jako obrázek nebo PDF.",
+    "Historie po jednom řádku na rok. U změny názvu, stěhování nebo fúze uveďte staré i nové údaje: „V březnu 20XX změnila společnost název ze Starý Název Ltd.“",
+    "Poselství zakladatele a poslání firmy uveďte pod samostatnými nadpisy, odděleně od faktů.",
+    "Stránku zakončete datem poslední aktualizace."
+   ],
+   "after": [
+    "schema.org má pro samotnou stránku typ [AboutPage](https://schema.org/AboutPage) a některé SEO pluginy ho umožňují zvolit jako typ stránky. Je volitelný a lze ho použít, pokud neodporuje vašim ostatním strukturovaným datům."
+   ]
+  },
+  {
+   "heading": "Odstraňte varianty na vlastním webu i jinde",
+   "paragraphs": [
+    "AI sestavuje odpověď z několika stránek. Pokud je váš název nebo adresa na různých stránkách zapsána jinak, nemusí je považovat za jednu firmu nebo zvolí starý zápis. Začněte tím, že pro každou z obvyklých variant určíte jednu podobu."
+   ],
+   "table": {
+    "head": [
+     "Varianta",
+     "Na čem se ustálit"
+    ],
+    "rows": [
+     [
+      "Sample Ltd / Sample Limited / Sample",
+      "Registrovaná podoba, používaná všude, kde firmu jmenujete"
+     ],
+     [
+      "Názvy v jiných jazycích nebo písmech",
+      "Jedna podoba pro každý jazyk, stejná na stránkách, v profilech i na vizitkách v daném jazyce"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / s názvem budovy i bez něj",
+      "Jedno pořadí a jedno rozhodnutí o názvu budovy a patře"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Jeden formát pro každý jazyk, např. národní formát na místních stránkách a mezinárodní formát na anglických stránkách pro zahraniční čtenáře"
+     ],
+     [
+      "Stránky, které stále ukazují starý název nebo adresu",
+      "Zaznamenejte změnu do historie a potom opravte staré stránky"
+     ]
+    ]
+   },
+   "after": [
+    "Kde to zkontrolovat na vlastním webu: „O nás“, patička, kontaktní stránka, zásady ochrany osobních údajů, zákonem požadované údaje o podnikateli, kariérní stránky, tiskové zprávy, medailonky autorů na blogu a brožura v PDF.",
+    "Kde to zkontrolovat jinde: váš Firemní profil Google (Google Business Profile), profily na sociálních sítích, které firma spravuje, pracovní portály, adresáře oborových asociací a místní katalogy a popisy vaší firmy na webech partnerů. Některé z nich upravit nemůžete. Nejprve dejte do pořádku vlastní web, pak požádejte vydavatele o opravu. Pokud je odpověď AI už chybná, dohledejte její zdroj a každý druh chyby opravte tam, odkud pochází."
+   ]
+  },
+  {
+   "heading": "Pomozte AI odlišit vás od firmy se stejným názvem",
+   "paragraphs": [
+    "Pokud je váš název běžné slovo nebo jinde působí firma se stejným názvem, AI může obě smíchat. Odlišují vás fakta, která máte jen vy."
+   ],
+   "list": [
+    "Do první věty úvodu dejte město a to, čím se zabýváte.",
+    "Uveďte fakta, která jmenovec mít nebude: rok založení, identifikační číslo, jméno generálního ředitele.",
+    "Do sameAs uveďte jen oficiální účty a profily, které firma spravuje. Vynechte jmenovce a stránky, které nespravujete.",
+    "Pokud se značka a název firmy liší, napište „Example provozuje Sample Ltd“ na stránkách obou.",
+    "Google uvádí, že vlastnosti jako iso6523Code a naics pomáhají organizaci odlišit. Pokud příslušné kódy máte, zvažte jejich doplnění."
+   ]
+  },
+  {
+   "heading": "Strukturovaná data Organization: co říká dokumentace Google",
+   "paragraphs": [
+    "Hlavní body dokumentace Google [Strukturovaná data Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) (naposledy aktualizováno 15. září 2026; přečteno 15. listopadu):"
+   ],
+   "list": [
+    "Žádné vlastnosti nejsou povinné; Google doporučuje přidat co nejvíce vlastností, které se vaší organizace týkají.",
+    "Značkování umístěte na domovskou stránku nebo na jednu stránku, která organizaci popisuje, například „O nás“. Nemusí být na každé stránce.",
+    "U místní firmy, jako je restaurace nebo obchod, použijte nejkonkrétnější podtyp LocalBusiness a řiďte se také pokyny pro LocalBusiness.",
+    "foundingDate používá formát ISO 8601 (např. 2015-04-01).",
+    "Logo musí mít alespoň 112×112 pixelů a musí být procházitelné a indexovatelné."
+   ],
+   "after": [
+    "Google uvádí shodu strukturovaných dat s viditelným textem jako jeden ze základů ([Funkce AI a váš web](https://developers.google.com/search/docs/appearance/ai-features)). Strukturovaná data sama o sobě odpovědi nemění. Berte je jako strojově čitelný klíč k tomu, co stránka už říká, a udržíte správné priority. Nedávejte do strukturovaných dat fakt, který text stránky neuvádí."
+   ]
+  },
+  {
+   "heading": "Postup ve WordPressu (s Nurevo AEO)",
+   "paragraphs": [
+    "Na webu ve WordPressu publikuje plugin [Nurevo AEO (zdarma)](https://wordpress.org/plugins/nurevo-webmcp/) základní údaje o vaší firmě jako strukturovaná data a v llms.txt. Postupujte v tomto pořadí."
+   ],
+   "list": [
+    "Nejprve opravte text stránky „O nás“ podle tabulky výše. Text má přednost před strukturovanými daty.",
+    "Nainstalujte plugin a v průvodci nastavením zvolte typ webu: „B2B / SaaS“ pro Organization, odpovídající kartu pro obchod nebo ordinaci, nebo „Other“, pokud nic nesedí.",
+    "Zkontrolujte údaje o firmě (název, popis, adresa, telefon, otevírací doba, typ podnikání, URL, e-mail). Hodnoty načtené z vašich stávajících nastavení vyplní jen prázdná pole; nic, co jste zadali, se nikdy nepřepíše a e-mail administrátora WordPressu se nikdy nepoužije jako firemní e-mail.",
+    "Sjednoťte název a adresu se stránkou „O nás“. Adresa se publikuje jako jeden řetězec uvnitř PostalAddress, takže ji zadejte přesně tak, jak je napsaná na stránce „O nás“.",
+    "Logo je obrázek nastavený jako logo webu v šabloně. Musí mít alespoň 112×112 pixelů.",
+    "Při použití Yoast SEO, Rank Math, All in One SEO nebo Slim SEO doplní Nurevo jen ty údaje, které ve strukturovaných datech daného pluginu chybí, takže firma není popsána dvakrát. Funguje také společně se SEO SIMPLE PACK a VK All in One Expansion Unit (od verze 0.9.1). Pokud váš SEO plugin už nastavuje název nebo logo, mají přednost jeho hodnoty, proto udržujte obojí ve shodě.",
+    "Chcete-li doplnit právní název (legalName), další názvy (alternateName), datum založení (foundingDate) nebo oficiální účty (sameAs), použijte vývojářský filtr webmcp_canary_business_node. Nejsou to pole ve formuláři údajů o firmě v Nurevo.",
+    "Spusťte diagnostiku na obrazovce skóre AEO, potom otevřete /llms.txt a zkontrolujte, zda je v seznamu stránka „O nás“. llms.txt uvádí 30 naposledy aktualizovaných stránek a příspěvků; pokud mezi nimi stránka „O nás“ není, přidejte řádek pomocí filtru webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "Stejné kontroly platí i pro weby, které nejsou postavené na WordPressu. Zadejte svou URL do [bezplatné kontroly](/check), bez registrace, a uvidíte stav strukturovaných dat, llms.txt a přístupu AI crawlerů."
+   ]
+  },
+  {
+   "heading": "Jak to ověřit: dotazy s vaším názvem i bez něj",
+   "paragraphs": [
+    "Práci na stránce „O nás“ ověřujte dotazy, které obsahují název vaší firmy. Pokládejte stejnou otázku stejné AI v různé dny, několikrát, a odpovědi zaznamenávejte. Nesuďte podle jediné odpovědi."
+   ],
+   "table": {
+    "head": [
+     "Co zaznamenat",
+     "Příklad"
+    ],
+    "rows": [
+     [
+      "Datum, AI, dotaz",
+      "15. 11., Perplexity, „Co je Sample Ltd? Kdy byla založena a čím se zabývá?“"
+     ],
+     [
+      "Fakta v odpovědi",
+      "Adresa, datum založení, vedení, činnost: každé zvlášť, správně, nebo špatně"
+     ],
+     [
+      "Zdroje",
+      "Byla citována vaše stránka „O nás“, nebo jiný web?"
+     ],
+     [
+      "Odkud chyba pochází",
+      "Ukazuje citovaná stránka stále starou adresu?"
+     ]
+    ]
+   },
+   "after": [
+    "Bezplatná AI kontrola Nurevo (jednou měsíčně, pro připojené weby v tarifech Free a Standard) pokládá dotazy sestavené z vašeho typu podnikání a oblasti, bez vašeho názvu. Ukazuje, zda vás najdou lidé, kteří vaše jméno neznají; přesnost údajů o firmě kontrolujte ručně podle tabulky výše. Měření viditelnosti v tarifu Pro (beta) aktuálně pokrývá Perplexity. Celý postup najdete v článku [jak měřit viditelnost v AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolní seznam stránky „O nás“",
+   "list": [
+    "Dvě nebo tři věty nad tabulkou uvádějí název, místo a čím se zabýváte.",
+    "Vztah mezi právním názvem, značkou a případným názvem v jiném jazyce je popsán větou.",
+    "Adresa a telefon jsou zapsány stejně na každé stránce webu.",
+    "Datum založení, vedení a počet zaměstnanců jsou správné a opatřené datem.",
+    "Změny názvu a stěhování jsou v historii se starými i novými údaji.",
+    "Stránka „O nás“ není jen obrázek nebo PDF.",
+    "Organization (u obchodu nejkonkrétnější podtyp LocalBusiness) je na domovské stránce nebo na stránce „O nás“ a jeho hodnoty odpovídají textu.",
+    "sameAs uvádí jen účty, které firma spravuje.",
+    "Váš Firemní profil Google a další profily používají stejný zápis.",
+    "Stránka končí datem poslední aktualizace.",
+    "Ověřili jste výsledek dotazy s vaším názvem, v různé dny, a výsledky zaznamenali."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Potřebuji stránku „O nás“ oddělenou od domovské stránky?",
+   "a": "Ne, pokud domovská stránka už základní údaje o firmě shromažďuje. Google doporučuje umístit značkování Organization na domovskou stránku nebo na jednu stránku, která organizaci popisuje. Pokud je vaše domovská stránka hlavně o službách, samostatná stránka „O nás“ udrží fakta na jednom místě."
+  },
+  {
+   "q": "Je problém, když stránku „O nás“ tvoří jen tabulka?",
+   "a": "Ne. Tabulka se dobře čte. Chybí v ní ale věta, která říká, co je firma zač, proto nad ni přidejte dvě nebo tři věty úvodu."
+  },
+  {
+   "q": "Měla by být strukturovaná data Organization na každé stránce?",
+   "a": "Podle Google nemusí: stačí domovská stránka nebo jedna stránka, například „O nás“. Pokud je váš SEO plugin vypisuje na každé stránce, nevadí to, pokud jsou hodnoty správné."
+  },
+  {
+   "q": "Má naše identifikační číslo patřit do taxID?",
+   "a": "Google popisuje taxID jako daňové číslo pro zemi z vaší adresy. Pokud je vaše číslo právě takové, hodí se; pokud jde o jiný druh identifikátoru, Google to neuvádí. Nejprve ho uveďte na stránce a pak rozhodněte, zda ho označit."
+  },
+  {
+   "q": "Jak zajistit, aby lidé, kteří se ptají na náš dřívější název, našli současnou firmu?",
+   "a": "Uveďte oba názvy v historii („V březnu 20XX změnila společnost název ze Starý Název Ltd“) a zmiňte to v úvodu. Pokud profily jinde stále ukazují starý název, požádejte jejich vydavatele o aktualizaci."
+  },
+  {
+   "q": "Odpověď AI uvádí o naší firmě chybné údaje. Co máme dělat?",
+   "a": "Odpověď AI nemůžete upravit přímo. Dohledejte zdroje: opravte stránku „O nás“ a další stránky na vlastním webu a ostatní vydavatele požádejte o opravu. Neexistuje pevná doba, za kterou se opravy projeví."
+  },
+  {
+   "q": "Pokud tyto kroky dodržíme, popíše nás AI vždy správně?",
+   "a": "To nelze zaručit; odpovědi AI se mění den ode dne a podle formulace dotazu. Tyto kroky zajistí, že informace, které AI čte, budou přesné a jednotné, takže chyby budou méně pravděpodobné."
+  }
+ ],
+ "relatedHeading": "Související návody",
+ "cta": {
+  "heading": "Podívejte se, jak AI čte údaje o vaší firmě",
+  "body": "Bezplatná kontrola nevyžaduje registraci: zadejte svou URL a uvidíte stav strukturovaných dat, llms.txt a přístupu AI crawlerů. Ve WordPressu publikuje bezplatný plugin základní údaje o vaší firmě jako strukturovaná data.",
+  "label": "Spustit bezplatnou kontrolu čitelnosti pro AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Vyzkoušet bezplatný plugin pro WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je ochranná známka společnosti OpenAI, Perplexity společnosti Perplexity AI a Google společnosti Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit a WordPress jsou ochranné známky příslušných vlastníků. Nurevo není s žádnou z těchto společností spojeno ani jimi podporováno."
+}

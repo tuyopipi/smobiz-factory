@@ -1,0 +1,316 @@
+{
+ "title": "Über-uns-Seite für KI-Suche: Firmendaten richtig angeben | Nurevo",
+ "description": "So bauen Sie eine Über-uns-Seite, auf die sich KI-Antworten verlassen können: welche Fakten, einheitliche Namen und Adressen, Organization-Schema, WordPress-Schritte.",
+ "h1": "Über-uns-Seite für die KI-Suche optimieren: Firmenname, Adresse, Gründungsdatum und Geschäftstätigkeit korrekt beschreiben",
+ "lead": "Wenn jemand eine KI namentlich nach Ihrem Unternehmen fragt, stützt sich die Antwort auf Ihre Über-uns-Seite bzw. Ihr Unternehmensprofil. Nennen Sie auf einer Seite im Klartext Ihren rechtlichen Namen und die Namen, die Menschen tatsächlich verwenden, Ihre Adresse, das Gründungsdatum, die Geschäftsführung, was Sie tun und wie man Sie erreicht; veröffentlichen Sie dieselben Werte als strukturierte Daten vom Typ Organization; und sorgen Sie dafür, dass die Schreibweise auf Ihren anderen Seiten und Ihren Profilen anderswo übereinstimmt. Diese drei Schritte sind der Kern der Arbeit.",
+ "intro": [
+  "Verfasst am 15. November 2026 (JST). Dieser Leitfaden richtet sich an alle Unternehmen, Geschäfte und Organisationen mit einer Über-uns-Seite oder einem Unternehmensprofil sowie an die Agenturen, die solche Websites bauen. Adress- und Öffnungszeiten-Markup für Geschäfte behandeln wir unter [LocalBusiness-Schema und SEO-Plugins](/guide/local-business-schema-seo-plugins). Hier geht es um die Seite, die sagt, wer Sie sind und wo Sie sind.",
+  "KI-Antworten ändern sich von Tag zu Tag und je nach Formulierung. Diese Schritte machen die Informationen, die die KI liest, korrekt; sie garantieren nicht, dass Sie in einer Antwort erscheinen."
+ ],
+ "sections": [
+  {
+   "heading": "Wofür die KI Ihre Über-uns-Seite nutzt",
+   "paragraphs": [
+    "Die ChatGPT-Suche, Perplexity und Google AI Overviews lesen beim Antworten Webseiten und zeigen sie als Quellen an. Bei einer Frage, die ein Unternehmen nennt, ist dessen eigene Website – und vor allem die Seite, die seine Grunddaten bündelt – ein naheliegender Kandidat. Besteht die Über-uns-Seite nur aus einem Bild oder stehen Name und Adresse auf jeder Seite anders, baut die KI ihre Antwort womöglich aus einem alten Eintrag auf einer fremden Website oder aus einem gleichnamigen anderen Unternehmen.",
+    "Fragen, die ein Unternehmen nennen, folgen meist wenigen Mustern. Jede lässt sich mit einer Über-uns-Seite beantworten, die die Fakten als Text nennt."
+   ],
+   "list": [
+    "„Was macht die Example GmbH?“ (Geschäftstätigkeit)",
+    "„Wo ist der Hauptsitz von Example? Gibt es ein Büro in Hamburg?“ (Standorte)",
+    "„Wann wurde Example gegründet und wer leitet das Unternehmen?“ (Gründungsdatum, Geschäftsführung)",
+    "„Welches Unternehmen steckt hinter der Example-App?“ (Marke versus Firmenname)",
+    "„Ist Example dasselbe Unternehmen wie Sample?“ (frühere Namen, Konzerngesellschaften, Namensvettern)",
+    "„Wie erreiche ich Example?“ (Telefon, Formular, Erreichbarkeit)"
+   ],
+   "after": [
+    "Google erklärt, dass es für AI Overviews oder den KI-Modus keine zusätzlichen Anforderungen und keine speziellen strukturierten Daten gibt und die üblichen SEO-Best-Practices gelten ([Google Search Central: KI-Funktionen und Ihre Website](https://developers.google.com/search/docs/appearance/ai-features)). Die Arbeit an der Über-uns-Seite ist also keine besondere Schreibweise für KI. Es geht darum, die Fakten korrekt, gut lesbar und überall mit denselben Werten anzugeben."
+   ]
+  },
+  {
+   "heading": "Was auf die Seite gehört und wie es den strukturierten Daten entspricht",
+   "paragraphs": [
+    "Die Tabelle zeigt, was eine Über-uns-Seite angeben sollte, welche Fehler KI-Antworten typischerweise machen und welche Organization-Eigenschaft jeweils passt. Die Eigenschaftsnamen stammen aus den empfohlenen Eigenschaften in Googles Dokumentation zu [strukturierten Daten für Organisationen](https://developers.google.com/search/docs/appearance/structured-data/organization). „Nur Text“ kennzeichnet Angaben, die nicht zu Googles empfohlenen Eigenschaften gehören."
+   ],
+   "table": {
+    "head": [
+     "Angabe",
+     "So schreiben Sie sie",
+     "Typischer KI-Fehler",
+     "Strukturierte Daten"
+    ],
+    "rows": [
+     [
+      "Rechtlicher Name",
+      "Den eingetragenen Namen einmal genau so nennen, wie er eingetragen ist",
+      "Verwechslung mit einem ähnlich benannten Unternehmen",
+      "legalName (falls abweichend von name)"
+     ],
+     [
+      "Handelsname, Marke, fremdsprachiger Name",
+      "In einem Satz verknüpfen: „Example App wird von der Sample GmbH betrieben“",
+      "Die Marke ist bekannt, das Unternehmen dahinter nicht",
+      "alternateName"
+     ],
+     [
+      "Adresse",
+      "Hauptsitz von weiteren Standorten trennen; jede Adresse bis zur Etage im selben Format schreiben",
+      "Nennt eine Adresse von vor dem Umzug oder eine Filiale als Hauptsitz",
+      "address (PostalAddress, eine oder mehrere)"
+     ],
+     [
+      "Kontakt",
+      "Zentrale Telefonnummer, Anfrageweg, Erreichbarkeit",
+      "Die Durchwahl einer Abteilung oder eine alte Nummer",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Gründung",
+      "Vollständiges Datum; weichen Gründung und Eintragung voneinander ab, beide nennen",
+      "Verwechselt Gründungsjahr und Eintragungsjahr",
+      "foundingDate (ISO 8601, z. B. 2015-04-01)"
+     ],
+     [
+      "Geschäftsführung",
+      "Funktion und Name; am Tag des Wechsels aktualisieren",
+      "Nennt die vorherige Geschäftsführung",
+      "Nur Text (keine von Google empfohlene Eigenschaft)"
+     ],
+     [
+      "Geschäftstätigkeit",
+      "Erster Satz: was, für wen, wo; danach die Liste der Tätigkeiten",
+      "Stellt ein Nebengeschäft als Hauptgeschäft dar",
+      "description"
+     ],
+     [
+      "Mitarbeiterzahl, Stammkapital",
+      "„Stand: Monat und Jahr“ ergänzen",
+      "Eine alte Zahl ohne Datum wird wiederholt",
+      "numberOfEmployees (Stammkapital: nur Text)"
+     ],
+     [
+      "Handelsregister- oder Steuernummer",
+      "Auf der Seite angeben, falls vorhanden",
+      "Keine Möglichkeit, Sie von einem Namensvetter zu unterscheiden",
+      "Zuerst als Text (siehe unten)"
+     ],
+     [
+      "Offizielle Social-Media- und Profilseiten",
+      "Nur Konten auflisten, die das Unternehmen selbst verwaltet",
+      "Verknüpft Sie mit einem Namensvetter oder einem Fake-Konto",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Dasselbe Bild wie das Website-Logo",
+      "Das Logo eines anderen Unternehmens",
+      "logo (mindestens 112×112 px)"
+     ],
+     [
+      "Zuletzt aktualisiert",
+      "„Aktualisiert am …“ am Ende der Seite",
+      "Keine Möglichkeit zu erkennen, wie aktuell die Angaben sind",
+      "Nur Text"
+     ]
+    ]
+   },
+   "after": [
+    "Zu Register- und Steuernummern: Google beschreibt taxID als Steuernummer für das Land in address und vatID als Umsatzsteuer-Identifikationsnummer, sofern vorhanden. Ist Ihre Nummer eine Steuer- oder USt-IdNr. Ihres Landes, passen diese Eigenschaften. Handelt es sich um eine andere Art von Kennung, etwa die japanische Unternehmensnummer, sagt Google nicht, ob sie in taxID gehört; nennen Sie sie daher auf der Seite und entscheiden Sie selbst, ob Sie sie auszeichnen.",
+    "Übertreiben Sie keine Zahlen. Runden Sie Mitarbeiter- oder Kundenzahlen auf, zitiert die KI die größere Zahl, und das lässt sich schwer zurückholen. Nennen Sie die genaue Zahl und das Datum, auf das sie sich bezieht."
+   ]
+  },
+  {
+   "heading": "So schreiben Sie die Seite: nicht nur eine Tabelle, niemals ein Bild",
+   "paragraphs": [
+    "Viele Über-uns-Seiten bestehen nur aus einer zweispaltigen Tabelle. Eine Tabelle ist für Menschen und Maschinen leicht lesbar, allein fehlt ihr aber ein Satz, der sagt, was das Unternehmen ist. Setzen Sie zwei oder drei einleitende Sätze über die Tabelle, dann hat die KI etwas, das sie unverändert übernehmen kann, wenn sie Sie beschreibt."
+   ],
+   "list": [
+    "Erster Satz: rechtlicher Name, Ort und Tätigkeit. Zum Beispiel: „Die Sample GmbH mit Sitz in Leipzig hilft kleinen Unternehmen bei der Einrichtung von Buchhaltungssoftware.“",
+    "Zweiter Satz: Fakten, die Sie von Namensvettern unterscheiden, etwa wie Marke und Unternehmen zusammenhängen und das Gründungsjahr.",
+    "Danach die Tabelle, als HTML-Tabelle oder als Liste mit Beschriftungen, niemals als Bild oder PDF.",
+    "Die Firmengeschichte mit einer Zeile pro Jahr. Bei Umfirmierung, Umzug oder Fusion alten und neuen Stand nennen: „Im März 20XX firmierte das Unternehmen von Alter Name GmbH um.“",
+    "Grußwort der Gründer und Leitbild unter eigenen Überschriften von den Fakten trennen.",
+    "Die Seite mit dem Datum der letzten Aktualisierung abschließen."
+   ],
+   "after": [
+    "schema.org kennt für die Seite selbst den Typ [AboutPage](https://schema.org/AboutPage), und manche SEO-Plugins lassen Sie ihn als Seitentyp wählen. Er ist optional und unproblematisch, solange er Ihren übrigen strukturierten Daten nicht widerspricht."
+   ]
+  },
+  {
+   "heading": "Varianten beseitigen – auf Ihrer Website und anderswo",
+   "paragraphs": [
+    "Die KI setzt eine Antwort aus mehreren Seiten zusammen. Stehen Name oder Adresse auf jeder Seite anders, behandelt sie diese womöglich nicht als ein Unternehmen oder wählt die alte Schreibweise. Legen Sie zuerst für jede der üblichen Varianten eine einzige Form fest."
+   ],
+   "table": {
+    "head": [
+     "Variante",
+     "Worauf Sie sich festlegen"
+    ],
+    "rows": [
+     [
+      "Sample Ltd / Sample Limited / Sample",
+      "Die eingetragene Form, überall verwendet, wo Sie das Unternehmen nennen"
+     ],
+     [
+      "Namen in anderen Sprachen oder Schriften",
+      "Eine Form pro Sprache, identisch auf den Seiten, Profilen und Visitenkarten dieser Sprache"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / mit und ohne Gebäudenamen",
+      "Eine Reihenfolge und eine Entscheidung zu Gebäudename und Etage"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Ein Format pro Sprache, z. B. nationales Format auf lokalen Seiten und internationales Format auf englischen Seiten für Leser im Ausland"
+     ],
+     [
+      "Seiten, die noch einen alten Namen oder eine alte Adresse zeigen",
+      "Die Änderung in der Firmengeschichte festhalten, dann die alten Seiten korrigieren"
+     ]
+    ]
+   },
+   "after": [
+    "Wo Sie auf Ihrer Website prüfen sollten: Über uns, Footer, Kontaktseite, Datenschutzerklärung, gesetzlich vorgeschriebene Anbieterangaben, Karriereseiten, Pressemitteilungen, Autorenboxen im Blog und die Broschüre als PDF.",
+    "Wo Sie anderswo prüfen sollten: Ihr Google Unternehmensprofil, die vom Unternehmen verwalteten Social-Media-Profile, Jobbörsen, Verbands- und Branchenverzeichnisse sowie Beschreibungen von Ihnen auf Partner-Websites. Manches davon können Sie nicht selbst bearbeiten. Bringen Sie zuerst Ihre eigene Website in Ordnung und bitten Sie dann die Betreiber, ihre Angaben zu korrigieren. Ist eine KI-Antwort bereits falsch, verfolgen Sie die Quelle zurück und beheben Sie jede Fehlerart dort, wo sie entsteht."
+   ]
+  },
+  {
+   "heading": "Der KI helfen, Sie von einem gleichnamigen Unternehmen zu unterscheiden",
+   "paragraphs": [
+    "Ist Ihr Name ein gängiges Wort oder trägt ein anderes Unternehmen anderswo denselben Namen, kann die KI beide vermischen. Was Sie unterscheidet, sind Fakten, die nur Sie haben."
+   ],
+   "list": [
+    "Nennen Sie Ort und Tätigkeit im ersten Satz der Einleitung.",
+    "Nennen Sie Fakten, die ein Namensvetter nicht teilt: Gründungsjahr, Registernummer, Name der Geschäftsführung.",
+    "Führen Sie in sameAs nur offizielle Konten und Profile auf, die das Unternehmen verwaltet. Lassen Sie Namensvettern und Seiten weg, die Sie nicht betreuen.",
+    "Unterscheiden sich Marke und Firmenname, schreiben Sie auf den Seiten für beide „Example wird von der Sample GmbH betrieben“.",
+    "Laut Google helfen Eigenschaften wie iso6523Code und naics, eine Organisation zu unterscheiden. Haben Sie die entsprechenden Codes, sollten Sie sie ergänzen."
+   ]
+  },
+  {
+   "heading": "Strukturierte Daten vom Typ Organization: was Googles Dokumentation sagt",
+   "paragraphs": [
+    "Die wichtigsten Punkte aus Googles Dokumentation zu [strukturierten Daten für Organisationen](https://developers.google.com/search/docs/appearance/structured-data/organization) (zuletzt aktualisiert am 15. September 2026; gelesen am 15. November):"
+   ],
+   "list": [
+    "Es gibt keine Pflichteigenschaften; Google empfiehlt, so viele der auf Ihre Organisation zutreffenden Eigenschaften wie möglich anzugeben.",
+    "Platzieren Sie das Markup auf der Startseite oder auf einer Seite, die die Organisation beschreibt, etwa der Über-uns-Seite. Es muss nicht auf jeder Seite stehen.",
+    "Für ein lokales Unternehmen wie ein Restaurant oder ein Geschäft verwenden Sie den spezifischsten LocalBusiness-Untertyp und folgen zusätzlich den LocalBusiness-Richtlinien.",
+    "foundingDate verwendet ISO 8601 (z. B. 2015-04-01).",
+    "Das Logo muss mindestens 112×112 Pixel groß sowie crawlbar und indexierbar sein."
+   ],
+   "after": [
+    "Google nennt als eine der Grundlagen, dass strukturierte Daten mit dem sichtbaren Text übereinstimmen ([KI-Funktionen und Ihre Website](https://developers.google.com/search/docs/appearance/ai-features)). Strukturierte Daten ändern Antworten nicht von selbst. Betrachten Sie sie als maschinenlesbaren Lösungsschlüssel zu dem, was die Seite bereits sagt, dann bleiben die Prioritäten richtig. Nehmen Sie keinen Fakt in die strukturierten Daten auf, der nicht im Seitentext steht."
+   ]
+  },
+  {
+   "heading": "Schritte in WordPress (mit Nurevo AEO)",
+   "paragraphs": [
+    "Auf einer WordPress-Website veröffentlicht [Nurevo AEO (kostenlos)](https://wordpress.org/plugins/nurevo-webmcp/) die Grunddaten Ihres Unternehmens als strukturierte Daten und in llms.txt. Gehen Sie in dieser Reihenfolge vor."
+   ],
+   "list": [
+    "Korrigieren Sie zuerst den Text der Über-uns-Seite anhand der Tabelle oben. Text vor strukturierten Daten.",
+    "Installieren Sie das Plugin und wählen Sie im Einrichtungsassistenten den Website-Typ: „B2B / SaaS“ für eine Organization, die passende Karte für ein Geschäft oder eine Praxis oder „Sonstiges“, wenn nichts passt.",
+    "Prüfen Sie die Unternehmensangaben (Name, Beschreibung, Adresse, Telefon, Öffnungszeiten, Unternehmenstyp, URL, E-Mail). Aus Ihren bestehenden Einstellungen übernommene Werte füllen nur leere Felder; was Sie eingegeben haben, wird nie überschrieben, und die E-Mail-Adresse des WordPress-Administrators wird nie als geschäftliche E-Mail verwendet.",
+    "Gleichen Sie Name und Adresse an die Über-uns-Seite an. Die Adresse wird als eine Zeichenkette innerhalb einer PostalAddress veröffentlicht; geben Sie sie also genau so ein, wie sie auf der Über-uns-Seite steht.",
+    "Als Logo dient das Bild, das im Theme als Website-Logo festgelegt ist. Es sollte mindestens 112×112 Pixel groß sein.",
+    "Mit Yoast SEO, Rank Math, All in One SEO oder Slim SEO ergänzt Nurevo nur die Fakten, die in den strukturierten Daten dieses Plugins fehlen, sodass das Unternehmen nicht doppelt beschrieben wird. Es funktioniert außerdem zusammen mit SEO SIMPLE PACK und VK All in One Expansion Unit (ab 0.9.1). Wo Ihr SEO-Plugin Name oder Logo bereits festlegt, haben dessen Werte Vorrang; halten Sie daher beide synchron.",
+    "Um den rechtlichen Namen (legalName), weitere Namen (alternateName), das Gründungsdatum (foundingDate) oder offizielle Konten (sameAs) hinzuzufügen, verwenden Sie den Entwickler-Filter webmcp_canary_business_node. Diese Felder gibt es im Formular für Unternehmensangaben von Nurevo nicht.",
+    "Führen Sie die Diagnose auf dem Bildschirm „AEO-Score“ aus, öffnen Sie dann /llms.txt und prüfen Sie, ob die Über-uns-Seite aufgeführt ist. llms.txt listet die 30 zuletzt aktualisierten Seiten und Beiträge; ist die Über-uns-Seite nicht darunter, fügen Sie mit dem Filter webmcp_canary_llms_txt_lines eine Zeile hinzu."
+   ],
+   "after": [
+    "Dieselben Prüfungen gelten für Websites, die nicht auf WordPress laufen. Geben Sie Ihre URL beim [kostenlosen Check](/check) ein, ganz ohne Registrierung, um den Stand von strukturierten Daten, llms.txt und dem Zugriff von KI-Crawlern zu sehen."
+   ]
+  },
+  {
+   "heading": "So prüfen Sie: Fragen mit und ohne Ihren Namen",
+   "paragraphs": [
+    "Prüfen Sie die Arbeit an der Über-uns-Seite mit Fragen, die Ihren Firmennamen enthalten. Stellen Sie dieselbe Frage derselben KI an verschiedenen Tagen mehrmals und notieren Sie die Antworten. Urteilen Sie nicht anhand einer einzigen Antwort."
+   ],
+   "table": {
+    "head": [
+     "Was Sie notieren",
+     "Beispiel"
+    ],
+    "rows": [
+     [
+      "Datum, KI, Frage",
+      "15. Nov., Perplexity, „Was ist die Sample GmbH? Wann wurde sie gegründet und was macht sie?“"
+     ],
+     [
+      "Fakten in der Antwort",
+      "Adresse, Gründungsdatum, Geschäftsführung, Tätigkeit: jeweils richtig oder falsch"
+     ],
+     [
+      "Quellen",
+      "Wurde Ihre Über-uns-Seite zitiert oder eine andere Website?"
+     ],
+     [
+      "Woher ein Fehler stammt",
+      "Zeigt die zitierte Seite noch eine alte Adresse?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevos kostenloser KI-Check (einmal im Monat, für verbundene Websites mit Free und Standard) stellt Fragen, die aus Ihrem Unternehmenstyp und Ihrer Region gebildet werden, ohne Ihren Namen. Er zeigt, ob Menschen, die Ihren Namen nicht kennen, Sie finden; die Richtigkeit Ihrer Firmendaten prüfen Sie von Hand mit der Tabelle oben. Die Sichtbarkeitsmessung von Pro (Beta) deckt derzeit Perplexity ab. Die vollständige Methode finden Sie unter [KI-Sichtbarkeit messen](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checkliste für die Über-uns-Seite",
+   "list": [
+    "Zwei oder drei Sätze über der Tabelle nennen Name, Standort und Tätigkeit.",
+    "Die Beziehung zwischen rechtlichem Namen, Marke und eventuellem fremdsprachigem Namen ist als Satz formuliert.",
+    "Adresse und Telefonnummer stehen auf jeder Seite der Website gleich.",
+    "Gründungsdatum, Geschäftsführung und Mitarbeiterzahl sind korrekt und datiert.",
+    "Umfirmierungen und Umzüge stehen in der Firmengeschichte mit altem und neuem Stand.",
+    "Die Über-uns-Seite besteht nicht nur aus einem Bild oder PDF.",
+    "Organization (bzw. bei einem Geschäft der spezifischste LocalBusiness-Untertyp) steht auf der Startseite oder der Über-uns-Seite, und die Werte stimmen mit dem Text überein.",
+    "sameAs führt nur Konten auf, die das Unternehmen verwaltet.",
+    "Ihr Google Unternehmensprofil und andere Profile verwenden dieselbe Schreibweise.",
+    "Die Seite endet mit einem Datum der letzten Aktualisierung.",
+    "Sie haben mit Fragen, die Ihren Namen enthalten, an verschiedenen Tagen geprüft und die Ergebnisse notiert."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Brauche ich zusätzlich zur Startseite eine eigene Über-uns-Seite?",
+   "a": "Nicht, wenn die Startseite die Grunddaten des Unternehmens bereits bündelt. Google empfiehlt, das Organization-Markup auf die Startseite oder auf eine Seite zu setzen, die die Organisation beschreibt. Geht es auf Ihrer Startseite vor allem um Ihre Leistungen, hält eine eigene Über-uns-Seite die Fakten an einem Ort."
+  },
+  {
+   "q": "Ist eine Über-uns-Seite, die nur aus einer Tabelle besteht, ein Problem?",
+   "a": "Nein. Eine Tabelle ist gut lesbar. Ihr fehlt aber ein Satz, der sagt, was das Unternehmen ist; ergänzen Sie daher zwei oder drei einleitende Sätze darüber."
+  },
+  {
+   "q": "Sollten strukturierte Daten vom Typ Organization auf jeder Seite stehen?",
+   "a": "Laut Google ist das nicht nötig: Die Startseite oder eine Seite wie die Über-uns-Seite genügt. Gibt Ihr SEO-Plugin sie auf jeder Seite aus, ist das in Ordnung, solange die Werte stimmen."
+  },
+  {
+   "q": "Gehört unsere Handelsregisternummer in taxID?",
+   "a": "Google beschreibt taxID als Steuernummer für das Land in Ihrer Adresse. Ist Ihre Nummer eine solche, passt sie; ist es eine andere Art von Kennung, äußert sich Google nicht dazu. Nennen Sie sie zuerst auf der Seite und entscheiden Sie dann, ob Sie sie auszeichnen."
+  },
+  {
+   "q": "Wie stellen wir sicher, dass Menschen, die nach unserem früheren Namen fragen, das heutige Unternehmen finden?",
+   "a": "Nennen Sie beide Namen in der Firmengeschichte („Im März 20XX firmierte das Unternehmen von Alter Name GmbH um“) und erwähnen Sie es in der Einleitung. Zeigen Profile anderswo noch den alten Namen, bitten Sie die Betreiber um eine Aktualisierung."
+  },
+  {
+   "q": "Eine KI-Antwort gibt unsere Firmendaten falsch wieder. Was tun?",
+   "a": "Die Antwort der KI können Sie nicht direkt bearbeiten. Verfolgen Sie die Quellen: Korrigieren Sie die Über-uns-Seite und andere Seiten Ihrer eigenen Website und bitten Sie andere Betreiber, ihre Angaben zu berichtigen. Wann Korrekturen sichtbar werden, ist nicht festgelegt."
+  },
+  {
+   "q": "Beschreibt uns die KI immer korrekt, wenn wir diese Schritte befolgen?",
+   "a": "Das lässt sich nicht garantieren; KI-Antworten ändern sich von Tag zu Tag und je nach Formulierung. Diese Schritte machen die Informationen, die die KI liest, korrekt und einheitlich, sodass Fehler unwahrscheinlicher werden."
+  }
+ ],
+ "relatedHeading": "Verwandte Leitfäden",
+ "cta": {
+  "heading": "Sehen Sie, wie die KI Ihre Firmendaten liest",
+  "body": "Der kostenlose Check braucht keine Registrierung: Geben Sie Ihre URL ein und sehen Sie den Stand von strukturierten Daten, llms.txt und dem Zugriff von KI-Crawlern. Unter WordPress veröffentlicht das kostenlose Plugin die Grunddaten Ihres Unternehmens als strukturierte Daten.",
+  "label": "Kostenlosen KI-Lesbarkeits-Check starten",
+  "href": "/check",
+  "secondary": {
+   "label": "Kostenloses WordPress-Plugin testen",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT ist eine Marke von OpenAI, Perplexity von Perplexity AI und Google von Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit und WordPress sind Marken ihrer jeweiligen Inhaber. Nurevo steht in keiner Verbindung zu diesen Unternehmen und wird von ihnen weder unterstützt noch empfohlen."
+}

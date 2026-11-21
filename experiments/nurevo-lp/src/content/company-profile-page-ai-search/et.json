@@ -1,0 +1,316 @@
+{
+ "title": "Meist-leht ja TI-otsing: ettevõtte andmed õigeks | Nurevo",
+ "description": "Kuidas teha Meist-leht, millele TI vastused saavad toetuda: milliseid andmeid avaldada, nime- ja aadressivariandid, Organization-skeem ja WordPressi sammud.",
+ "h1": "Meist-leht ja TI-otsing: et ettevõtte nimi, aadress, asutamiskuupäev ja tegevus oleksid õigesti kirjeldatud",
+ "lead": "Kui keegi küsib TI-lt teie ettevõtte kohta nime järgi, toetub vastus enamasti teie Meist- või ettevõtteprofiili lehele. Pange ühele lehele lihttekstina kirja ametlik nimi ja nimed, mida inimesed tegelikult kasutavad, aadress, asutamiskuupäev, juhtkond, millega tegelete ja kuidas teiega ühendust võtta; avaldage samad väärtused Organization-tüüpi struktureeritud andmetena; ning ühtlustage kirjapilt oma teistel lehtedel ja mujal olevates profiilides. Need kolm sammu on töö tuum.",
+ "intro": [
+  "Kirjutatud 15. novembril 2026 (JST). Juhend on mõeldud igale ettevõttele, poele või organisatsioonile, kellel on Meist- või ettevõtteprofiili leht, ning selliseid saite ehitavatele agentuuridele. Poodide aadressi- ja lahtiolekuaegade märgendust käsitleb juhend [kohaliku ettevõtte skeem ja SEO-pluginad](/guide/local-business-schema-seo-plugins). See juhend räägib lehest, mis ütleb, kes te olete ja kus te asute.",
+  "TI vastused muutuvad päeviti ja sõnastuse järgi. Need sammud muudavad TI loetava teabe täpseks, kuid ei garanteeri, et te vastuses ilmute."
+ ],
+ "sections": [
+  {
+   "heading": "Milleks TI teie Meist-lehte kasutab",
+   "paragraphs": [
+    "ChatGPT otsing, Perplexity ja Google'i AI Overviews loevad vastamisel veebilehti ja näitavad neid allikatena. Kui küsimuses nimetatakse ettevõtet, on ilmne kandidaat selle ettevõtte enda sait ja eelkõige leht, mis koondab selle põhiandmed. Kui Meist-leht on üksainus pilt või kui nimi ja aadress on lehtedel eri moodi kirjas, võib TI koostada vastuse kellegi teise vana kirje põhjal või hoopis samanimelise ettevõtte põhjal.",
+    "Ettevõtet nimetavad küsimused järgivad tavaliselt mõnda mustrit. Igale neist saab vastata Meist-lehelt, mis esitab faktid tekstina."
+   ],
+   "list": [
+    "„Millega Example Ltd tegeleb?“ (tegevuse kirjeldus)",
+    "„Kus asub Example'i peakontor? Kas neil on kontor Manchesteris?“ (asukohad)",
+    "„Millal Example asutati ja kes seda juhib?“ (asutamiskuupäev, juhtkond)",
+    "„Milline ettevõte on Example'i rakenduse taga?“ (kaubamärk vs ettevõtte nimi)",
+    "„Kas Example on sama ettevõte mis Sample?“ (endised nimed, kontserni ettevõtted, nimekaimud)",
+    "„Kuidas Example'iga ühendust võtta?“ (telefon, vorm, lahtiolekuajad)"
+   ],
+   "after": [
+    "Google ütleb, et AI Overviewsis või AI Mode'is ilmumiseks pole lisanõudeid ega spetsiaalseid struktureeritud andmeid ning kehtivad tavalised SEO head tavad ([Google Search Central: TI-funktsioonid ja teie veebisait](https://developers.google.com/search/docs/appearance/ai-features)). Meist-lehe töö ei ole eriline viis TI jaoks kirjutada. See tähendab faktide täpset, loetavat ja kõikjal ühesuguste väärtustega esitamist."
+   ]
+  },
+  {
+   "heading": "Mida lehele panna ja kuidas see vastab struktureeritud andmetele",
+   "paragraphs": [
+    "Tabelis on see, mida Meist-leht peaks esitama, vead, mida TI vastused kipuvad tegema, ja vastav Organization-omadus. Omaduste nimed pärinevad Google'i [Organization-tüüpi struktureeritud andmete](https://developers.google.com/search/docs/appearance/structured-data/organization) dokumentatsiooni soovitatud omadustest. „Ainult tekst“ tähistab punkte, mis ei kuulu Google'i soovitatud omaduste hulka."
+   ],
+   "table": {
+    "head": [
+     "Punkt",
+     "Kuidas kirjutada",
+     "Tüüpiline TI viga",
+     "Struktureeritud andmed"
+    ],
+    "rows": [
+     [
+      "Ametlik nimi",
+      "Esitage registreeritud nimi üks kord, täpselt nii, nagu see on registreeritud",
+      "Ajab teid segi sarnase nimega ettevõttega",
+      "legalName (kui erineb name'ist)"
+     ],
+     [
+      "Ärinimi, kaubamärk, teisekeelne nimi",
+      "Siduge need lauses: „Example App'i haldab Sample Ltd“",
+      "Teab kaubamärki, kuid mitte selle taga olevat ettevõtet",
+      "alternateName"
+     ],
+     [
+      "Aadress",
+      "Eristage peakontor teistest asukohtadest; kirjutage iga aadress samas vormis kuni korruseni",
+      "Annab kolimiseelse aadressi või filiaali peakontorina",
+      "address (PostalAddress, üks või mitu)"
+     ],
+     [
+      "Kontakt",
+      "Põhinumber, päringute kanal, ajad",
+      "Mõne osakonna otsenumber või vana number",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Asutatud",
+      "Täielik kuupäev; kui asutamine ja registreerimine erinevad, andke mõlemad",
+      "Ajab segi asutamisaasta ja registreerimisaasta",
+      "foundingDate (ISO 8601, nt 2015-04-01)"
+     ],
+     [
+      "Juhtkond",
+      "Ametinimetus ja nimi; uuendage muutuse päeval",
+      "Nimetab eelmise tegevjuhi",
+      "Ainult tekst (pole Google'i soovitatud omadus)"
+     ],
+     [
+      "Millega tegelete",
+      "Esimene lause: mida, kellele, kus; seejärel tegevuste loetelu",
+      "Esitab ühe kõrvaltegevuse põhitegevusena",
+      "description"
+     ],
+     [
+      "Töötajate arv, osakapital",
+      "Lisage „seisuga kuu ja aasta“",
+      "Kordab dateerimata vana arvu",
+      "numberOfEmployees (osakapital: ainult tekst)"
+     ],
+     [
+      "Registri- või maksukood",
+      "Esitage see lehel, kui see teil on",
+      "Teid ei saa nimekaimust eristada",
+      "Kõigepealt tekstina (vt allpool)"
+     ],
+     [
+      "Ametlikud sotsiaalmeedia- ja profiililehed",
+      "Loetlege ainult kontod, mida ettevõte ise haldab",
+      "Seob teid nimekaimu või petiskontoga",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Sama pilt mis saidi logo",
+      "Teise ettevõtte logo",
+      "logo (vähemalt 112×112 px)"
+     ],
+     [
+      "Viimati uuendatud",
+      "„Uuendatud ...“ lehe lõpus",
+      "Pole võimalik aru saada, kui värske teave on",
+      "Ainult tekst"
+     ]
+    ]
+   },
+   "after": [
+    "Registri- ja maksukoodidest: Google kirjeldab taxID-d kui address'is märgitud riigi maksukoodi ja vatID-d kui käibemaksukohustuslase numbrit, kui see on olemas. Kui teie kood on teie riigi maksu- või käibemaksunumber, sobivad need omadused. Kui see on muud tüüpi identifikaator, näiteks Jaapani ettevõttenumber, ei ütle Google, kas see kuulub taxID-sse, seega esitage see lehel ja otsustage ise, kas seda märgendada.",
+    "Ärge paisutage arve. Kui ümardate töötajate või klientide arvu ülespoole, tsiteerib TI suuremat arvu ja seda on raske tagasi võtta. Andke täpne arv ja kuupäev, mille kohta see kehtib."
+   ]
+  },
+  {
+   "heading": "Kuidas lehte kirjutada: mitte ainult tabel, mitte kunagi pilt",
+   "paragraphs": [
+    "Paljud Meist-lehed on lihtsalt kaheveeruline tabel. Tabelit on inimestel ja masinatel lihtne lugeda, kuid üksi jääb sellest puudu lause, mis ütleb, mis ettevõte on. Pange tabeli kohale kahe-kolmelauseline sissejuhatus, siis on TI-l midagi, mida ta saab teid kirjeldades otse kasutada."
+   ],
+   "list": [
+    "Esimene lause: ametlik nimi, linn või asula ja millega tegelete. Näiteks: „Leedsis asuv Sample Ltd aitab väikeettevõtetel raamatupidamistarkvara kasutusele võtta.“",
+    "Teine lause: faktid, mis eristavad teid nimekaimudest, näiteks kaubamärgi seos ettevõttega ja asutamisaasta.",
+    "Seejärel tabel HTML-tabelina või siltidega loendina, mitte kunagi pildi ega PDF-ina.",
+    "Ajalugu üks rida aasta kohta. Nimemuutuse, kolimise või ühinemise korral kirjutage nii vana kui ka uus: „20XX. aasta märtsis muutis ettevõte oma nime, endine nimi Old Name Ltd.“",
+    "Hoidke asutaja pöördumine ja missioon faktidest eraldi, omaette pealkirjade all.",
+    "Lõpetage leht viimase uuendamise kuupäevaga."
+   ],
+   "after": [
+    "schema.org-is on lehe enda jaoks tüüp [AboutPage](https://schema.org/AboutPage) ja mõned SEO-pluginad lasevad selle lehe tüübiks valida. See on valikuline ja seda võib kasutada, kui see ei ole vastuolus teie muude struktureeritud andmetega."
+   ]
+  },
+  {
+   "heading": "Kõrvaldage variandid oma saidil ja mujal",
+   "paragraphs": [
+    "TI koostab vastuse mitme lehe põhjal. Kui teie nimi või aadress on lehtedel eri moodi kirjas, ei pruugi ta neid käsitleda ühe ettevõttena või valib vana kirjapildi. Alustage sellest, et otsustate iga tavalise variandi jaoks ühe vormi."
+   ],
+   "table": {
+    "head": [
+     "Variant",
+     "Milles kokku leppida"
+    ],
+    "rows": [
+     [
+      "Sample Ltd / Sample Limited / Sample",
+      "Registreeritud vorm, mida kasutatakse kõikjal, kus ettevõtet nimetatakse"
+     ],
+     [
+      "Nimed teistes keeltes või kirjasüsteemides",
+      "Üks vorm keele kohta, sama selle keele lehtedel, profiilides ja visiitkaartidel"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / hoone nimega ja ilma",
+      "Üks järjekord ja üks otsus hoone nime ja korruse kohta"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Üks vorming keele kohta, nt riigisisene vorming kohalikel lehtedel ja rahvusvaheline vorming välismaistele lugejatele mõeldud ingliskeelsetel lehtedel"
+     ],
+     [
+      "Lehed, kus on endiselt vana nimi või aadress",
+      "Kirjutage muutus ajalukku ja parandage seejärel vanad lehed"
+     ]
+    ]
+   },
+   "after": [
+    "Mida oma saidil kontrollida: Meist-leht, jalus, kontaktileht, privaatsuspoliitika, seadusega nõutud ettevõtja andmed, karjäärilehed, pressiteated, blogi autorikastid ja tutvustav PDF.",
+    "Mida mujal kontrollida: teie Google Business Profile, ettevõtte hallatavad sotsiaalmeedia profiilid, tööportaalid, erialaliitude ja kohalikud kataloogid ning partnerite saitidel olevad kirjeldused teie kohta. Mõnda neist ei saa te ise muuta. Tehke kõigepealt korda oma sait ja paluge seejärel avaldajal enda oma parandada. Kui TI vastus on juba vale, tehke kindlaks selle allikas ja parandage iga veatüüp seal, kust see pärineb."
+   ]
+  },
+  {
+   "heading": "Aidake TI-l eristada teid samanimelisest ettevõttest",
+   "paragraphs": [
+    "Kui teie nimi on tavaline sõna või mujal tegutseb samanimeline ettevõte, võib TI need kaks kokku segada. Teid eristavad faktid, mis on ainult teil."
+   ],
+   "list": [
+    "Pange linn või asula ja oma tegevus sissejuhatuse esimesse lausesse.",
+    "Esitage faktid, mida nimekaimul pole: asutamisaasta, registrikood, tegevjuhi nimi.",
+    "Loetlege sameAs-is ainult ametlikud kontod ja profiilid, mida ettevõte haldab. Jätke välja nimekaimud ja lehed, mida te ei halda.",
+    "Kui kaubamärk ja ettevõtte nimi erinevad, kirjutage mõlema lehele „Example'i haldab Sample Ltd“.",
+    "Google'i sõnul aitavad organisatsiooni eristada sellised omadused nagu iso6523Code ja naics. Kui teil on asjakohased koodid, kaaluge nende lisamist."
+   ]
+  },
+  {
+   "heading": "Organization-tüüpi struktureeritud andmed: mida Google'i dokumentatsioon ütleb",
+   "paragraphs": [
+    "Google'i [Organization-tüüpi struktureeritud andmete](https://developers.google.com/search/docs/appearance/structured-data/organization) dokumentatsiooni põhipunktid (viimati uuendatud 15. septembril 2026; loetud 15. novembril):"
+   ],
+   "list": [
+    "Kohustuslikke omadusi pole; Google soovitab lisada nii palju teie organisatsiooni puudutavaid omadusi kui võimalik.",
+    "Pange märgendus avalehele või ühele organisatsiooni kirjeldavale lehele, näiteks Meist-lehele. See ei pea olema igal lehel.",
+    "Kohaliku ettevõtte, näiteks restorani või poe puhul kasutage kõige täpsemat LocalBusiness'i alamtüüpi ja järgige ka LocalBusiness'i juhiseid.",
+    "foundingDate kasutab ISO 8601 vormingut (nt 2015-04-01).",
+    "Logo peab olema vähemalt 112×112 pikslit ning roomatav ja indekseeritav."
+   ],
+   "after": [
+    "Google nimetab põhitõdede hulgas, et struktureeritud andmed peavad vastama nähtavale tekstile ([TI-funktsioonid ja teie veebisait](https://developers.google.com/search/docs/appearance/ai-features)). Struktureeritud andmed üksi vastuseid ei muuda. Käsitlege neid masinloetava vastuste võtmena selle kohta, mida leht juba ütleb, ja prioriteedid püsivad õiged. Ärge pange struktureeritud andmetesse fakti, mida lehe tekstis pole."
+   ]
+  },
+  {
+   "heading": "Sammud WordPressis (Nurevo AEO-ga)",
+   "paragraphs": [
+    "WordPressi saidil avaldab [Nurevo AEO (tasuta)](https://wordpress.org/plugins/nurevo-webmcp/) teie ettevõtte põhiandmed struktureeritud andmetena ja failis llms.txt. Tegutsege selles järjekorras."
+   ],
+   "list": [
+    "Parandage kõigepealt Meist-lehe tekst ülaltoodud tabeli järgi. Tekst enne struktureeritud andmeid.",
+    "Paigaldage plugin ja valige seadistusviisardis saidi tüüp: „B2B / SaaS“ Organization'i jaoks, vastav kaart poe või kliiniku jaoks või „Other“, kui ükski ei sobi.",
+    "Kontrollige ettevõtte andmeid (nimi, kirjeldus, aadress, telefon, lahtiolekuajad, ettevõtte tüüp, URL, e-post). Olemasolevatest seadetest loetud väärtused täidavad ainult tühjad väljad; teie sisestatut ei kirjutata kunagi üle ja WordPressi administraatori e-posti ei kasutata kunagi ettevõtte e-postina.",
+    "Viige nimi ja aadress Meist-lehega kooskõlla. Aadress avaldatakse ühe stringina PostalAddress'i sees, seega sisestage see täpselt nii, nagu see on Meist-lehel kirjas.",
+    "Logo on teema saidi logoks määratud pilt. Tehke see vähemalt 112×112 pikslit.",
+    "Yoast SEO, Rank Mathi, All in One SEO või Slim SEO puhul lisab Nurevo ainult need faktid, mis selle plugina struktureeritud andmetest puuduvad, et ettevõtet ei kirjeldataks kaks korda. See töötab ka koos SEO SIMPLE PACKi ja VK All in One Expansion Unitiga (alates versioonist 0.9.1). Kui teie SEO-plugin juba määrab nime või logo, jäävad kehtima selle väärtused, seega hoidke mõlemad kooskõlas.",
+    "Ametliku nime (legalName), muude nimede (alternateName), asutamiskuupäeva (foundingDate) või ametlike kontode (sameAs) lisamiseks kasutage arendajafiltrit webmcp_canary_business_node. Need ei ole Nurevo ettevõtteandmete vormi väljad.",
+    "Käivitage diagnostika AEO skoori vaates, avage seejärel /llms.txt ja kontrollige, et Meist-leht oleks loendis. llms.txt loetleb 30 viimati uuendatud lehte ja postitust; kui Meist-leht pole nende hulgas, lisage rida filtriga webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "Samad kontrollid kehtivad ka saitidele, mis pole WordPressil. Sisestage oma URL [tasuta kontrolli](/check), registreerumist pole vaja, ning näete struktureeritud andmete, llms.txt ja TI-roomikute ligipääsu olukorda."
+   ]
+  },
+  {
+   "heading": "Kuidas kontrollida: küsimused teie nimega ja ilma",
+   "paragraphs": [
+    "Kontrollige Meist-lehe töö tulemust küsimustega, milles on teie ettevõtte nimi. Esitage sama küsimus samale TI-le eri päevadel mitu korda ja pange vastused kirja. Ärge tehke järeldusi ühe vastuse põhjal."
+   ],
+   "table": {
+    "head": [
+     "Mida kirja panna",
+     "Näide"
+    ],
+    "rows": [
+     [
+      "Kuupäev, TI, küsimus",
+      "15. nov, Perplexity, „Mis on Sample Ltd? Millal see asutati ja millega see tegeleb?“"
+     ],
+     [
+      "Vastuses olevad faktid",
+      "Aadress, asutamiskuupäev, juhtkond, tegevus: õige või vale, ükshaaval"
+     ],
+     [
+      "Allikad",
+      "Kas viidati teie Meist-lehele või mõnele teisele saidile?"
+     ],
+     [
+      "Kust viga pärines",
+      "Kas viidatud lehel on endiselt vana aadress?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevo tasuta TI-kontroll (kord kuus ühendatud Free- ja Standard-saitidele) esitab teie ettevõtte tüübi ja piirkonna põhjal koostatud küsimusi ilma teie nimeta. See näitab, kas inimesed, kes teie nime ei tea, leiavad teid üles; ettevõtte andmete täpsust kontrollige käsitsi ülaltoodud tabeli abil. Pro nähtavuse mõõtmine (beeta) hõlmab praegu Perplexityt. Täielik meetod on juhendis [kuidas mõõta TI-nähtavust](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Meist-lehe kontrollnimekiri",
+   "list": [
+    "Kaks-kolm lauset tabeli kohal esitavad nime, asukoha ja tegevuse.",
+    "Ametliku nime, kaubamärgi ja võimaliku teisekeelse nime seos on kirjutatud lausena.",
+    "Aadress ja telefon on saidi igal lehel kirjas ühtemoodi.",
+    "Asutamiskuupäev, juhtkond ja töötajate arv on õiged ja dateeritud.",
+    "Nimemuutused ja kolimised on ajaloos kirjas nii vana kui ka uuega.",
+    "Meist-leht ei ole ainult pilt või PDF.",
+    "Organization (või poe puhul kõige täpsem LocalBusiness'i alamtüüp) on avalehel või Meist-lehel ja selle väärtused vastavad tekstile.",
+    "sameAs loetleb ainult ettevõtte hallatavaid kontosid.",
+    "Teie Google Business Profile ja muud profiilid kasutavad sama kirjapilti.",
+    "Leht lõpeb viimase uuendamise kuupäevaga.",
+    "Te kontrollisite tulemust oma nime sisaldavate küsimustega eri päevadel ja panite tulemused kirja."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kas mul on vaja avalehest eraldi Meist-lehte?",
+   "a": "Ei, kui avaleht juba koondab ettevõtte põhiandmed. Google soovitab panna Organization-märgenduse avalehele või ühele organisatsiooni kirjeldavale lehele. Kui teie avaleht räägib peamiselt teenustest, hoiab eraldi Meist-leht faktid ühes kohas."
+  },
+  {
+   "q": "Kas ainult tabelist koosnev Meist-leht on probleem?",
+   "a": "Ei. Tabelit on lihtne lugeda. Kuid sellest puudub lause, mis ütleb, mis ettevõte on, seega lisage selle kohale kahe-kolmelauseline sissejuhatus."
+  },
+  {
+   "q": "Kas Organization-tüüpi struktureeritud andmed peaksid olema igal lehel?",
+   "a": "Google'i sõnul ei pea: piisab avalehest või ühest lehest, näiteks Meist-lehest. Kui teie SEO-plugin väljastab need igal lehel, on see korras, kui väärtused on õiged."
+  },
+  {
+   "q": "Kas meie registrikood peaks minema taxID-sse?",
+   "a": "Google kirjeldab taxID-d kui teie aadressi riigi maksukoodi. Kui teie number on selline, siis see sobib; kui see on muud tüüpi identifikaator, ei ütle Google midagi. Esitage see kõigepealt lehel ja otsustage siis, kas seda märgendada."
+  },
+  {
+   "q": "Kuidas tagada, et meie endise nime järgi küsijad leiaksid praeguse ettevõtte?",
+   "a": "Kirjutage mõlemad nimed ajalukku („20XX. aasta märtsis muutis ettevõte oma nime, endine nimi Old Name Ltd“) ja mainige seda sissejuhatuses. Kui mujal olevates profiilides on endiselt vana nimi, paluge nende avaldajatel neid uuendada."
+  },
+  {
+   "q": "TI vastus esitab meie ettevõtte andmed valesti. Mida teha?",
+   "a": "TI vastust ei saa otse muuta. Tehke kindlaks allikad: parandage Meist-leht ja teised oma saidi lehed ning paluge teistel avaldajatel enda omad parandada. Paranduste ilmumiseks pole kindlat aega."
+  },
+  {
+   "q": "Kui järgime neid samme, kas TI kirjeldab meid alati õigesti?",
+   "a": "Seda ei saa garanteerida; TI vastused muutuvad päeviti ja sõnastuse järgi. Need sammud muudavad TI loetava teabe täpseks ja ühtseks, nii et vead on vähem tõenäolised."
+  }
+ ],
+ "relatedHeading": "Seotud juhendid",
+ "cta": {
+  "heading": "Vaadake, kuidas TI teie ettevõtte andmeid loeb",
+  "body": "Tasuta kontroll ei nõua registreerumist: sisestage oma URL ja näete struktureeritud andmete, llms.txt ja TI-roomikute ligipääsu olukorda. WordPressis avaldab tasuta plugin teie ettevõtte põhiandmed struktureeritud andmetena.",
+  "label": "Tehke tasuta TI-loetavuse kontroll",
+  "href": "/check",
+  "secondary": {
+   "label": "Proovige tasuta WordPressi pluginat",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI, Perplexity Perplexity AI ja Google Google LLC kaubamärk. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ja WordPress on nende vastavate omanike kaubamärgid. Nurevo ei ole ühegi nimetatud ettevõttega seotud ega nende poolt heaks kiidetud."
+}

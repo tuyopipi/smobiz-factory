@@ -1,0 +1,347 @@
+{
+ "title": "Sådan skriver du en bookingside, som AI læser korrekt | Nurevo",
+ "description": "Hjælp AI med at svare rigtigt på »skal jeg bestille tid?« og »koster afbud noget?«: hvad bookingsiden skal indeholde, booking i AI, schema og WordPress-trin.",
+ "h1": "Sådan skriver du en bookingside, som AI læser korrekt: bookingmetoder, frister, afbudsregler og hvordan booking inde i AI fungerer",
+ "lead": "For at få AI til at svare korrekt på spørgsmål om booking skal du vælge én bookingside på dit eget site og skrive følgende som HTML-tekst – ikke i et billede eller en indlejret bookingwidget: hvordan man booker (online, telefon, besked), om booking er påkrævet, og hvad der sker med kunder uden tid, hvor sent og hvor langt frem I tager imod bookinger, afbudsfristen og gebyret samt listen over officielle steder at booke. Pr. november 2026 fungerer booking inde i ChatGPT eller Googles AI hovedsageligt for restauranter, via bookingplatforme som OpenTable. Din egen bookingside er der, hvor AI læser dine bookingregler, uanset om du er på en af de platforme eller ej.",
+ "intro": [
+  "Skrevet 21. november 2026 (JST). Hvordan du skriver åbningstider, står i [åbningstider og helligdage](/guide/business-hours-holidays-ai-search), og priser i [sådan skriver du en prisside](/guide/pricing-page-ai-search). Denne guide dækker den bookingside, som saloner, klinikker, restauranter, studier, overnatningssteder og udkørende servicevirksomheder alle har til fælles.",
+  "AI-svar ændrer sig fra dag til dag, efter formulering og fra tjeneste til tjeneste. Trinene her giver en side, hvis bookingregler AI er mindre tilbøjelig til at misforstå, og viser, hvordan du tjekker det; de garanterer ikke, at du kommer med i et svar eller kan bookes inde i en AI."
+ ],
+ "sections": [
+  {
+   "heading": "Det korte svar: fem grunde til, at AI tager fejl om booking, og løsningen på hver",
+   "table": {
+    "head": [
+     "Årsag",
+     "Hvad der sker i AI-svar",
+     "Løsning"
+    ],
+    "rows": [
+     [
+      "Bookingreglerne findes kun i en indlejret widget eller et billede",
+      "AI kan kun sige »se det officielle website for, hvordan man booker«",
+      "Skriv bookingmetode, frister og afbudsregler som tekst på bookingsiden"
+     ],
+     [
+      "»Booking foretrækkes« eller »efter aftale« bliver ikke forklaret",
+      "AI tager fejl af, om man kan komme uden tid",
+      "Skriv, hvad der sker uden booking: »Kunder uden tid er velkomne, når der er plads (forvent ventetid)«"
+     ],
+     [
+      "Flere steder at booke, men ingen er markeret som officiel",
+      "AI sender folk til et gammelt bookingsite eller et nedlagt nummer",
+      "Angiv de steder, du bruger, og fastlæg én officiel booking-URL pr. ydelse"
+     ],
+     [
+      "Ingen afbudsfrist eller -gebyr, eller forskellige regler på hvert site",
+      "AI siger, at afbud er gratis, eller citerer en anden virksomheds regel",
+      "Skriv fristen, gebyret og hvordan man melder afbud ét sted, og tilpas bookingsiderne efter det"
+     ],
+     [
+      "Bookingsiden kræver login eller en konto for at blive vist",
+      "AI kan ikke engang sige, om I tager imod bookinger",
+      "Behold en offentlig side med reglerne, og læg bookingformularen bag den"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Sådan fungerer booking inde i AI (november 2026)",
+   "paragraphs": [
+    "Flere virksomheder spørger, hvordan de kan blive bookbare i ChatGPT. Indtil videre kører booking inde i en AI via integrationer med bookingplatforme. Der findes ikke et tag, du kan sætte på dit site, som tilføjer en bookingknap. Tabellen viser, hvad de officielle meddelelser siger."
+   ],
+   "table": {
+    "head": [
+     "Tjeneste",
+     "Hvad den gør",
+     "Hvem den dækker",
+     "Kilde"
+    ],
+    "rows": [
+     [
+      "ChatGPT (bordreservation på restauranter)",
+      "Viser ledige tider i svaret og fører bookingen videre",
+      "OpenTable globalt, Resy i USA, Yelp i USA og Canada. Knappen Reserve vises kun, når ChatGPT kan matche restauranten med en profil hos en understøttet udbyder. ChatGPT gemmer ikke bookingen; ændringer og afbud går gennem udbyderen",
+      "[OpenAI Hjælp](https://help.openai.com/en/articles/9237897-chatgpt-search) (tjekket 2026-11-21), [Resy (2026-08-10)](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "Google-søgningens AI Mode (agentisk booking)",
+      "Finder ledige tider, der passer til forespørgslen, og linker til bookingsiden",
+      "Startede 2025-08-21 med restauranter for Google AI Ultra-abonnenter i USA (Labs). Restaurantbookinger i Storbritannien fra 2026-04-10. Nævnte partnere omfatter OpenTable, Resy, Tock og TheFork",
+      "[Google (2025-08-21)](https://blog.google/products/search/ai-mode-agentic-personalized/), [Google UK (2026-04-10)](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Google-virksomhedsprofil",
+      "Viser bookinglinks på din profil",
+      "Verificerede profiler. Du kan tilføje dit eget link eller blive vist via en bookingudbyder i Reserve with Google",
+      "[Regler for virksomhedslinks](https://support.google.com/business/answer/13769188), [Bookinger via en udbyder](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "ChatGPT's reservationer bygger på lister over restauranter, som bookingplatforme sender til OpenAI. Hver post skal indeholde restaurantens egen website-URL og dens profil-URL på platformen ([OpenAI: specifikation for konvertering af restaurantreservationer](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec), skrevet til bookingplatforme).",
+    "Bookingknappen inde i en AI afhænger altså af din bookingplatform. Det, en virksomhed selv har styr på, er at holde sine platformsprofiler korrekte og skrive sine bookingregler korrekt på sit eget site. Selv uden en bookingknap vil en AI, der bliver spurgt »skal jeg bestille tid?« eller »koster det noget at melde afbud?«, svare ud fra dit site og fra anmeldelses- og katalogsites. Resten af guiden handler om at få det svar til at være rigtigt."
+   ]
+  },
+  {
+   "heading": "Hvad de øverste artikler dækker, og hvad de mangler",
+   "paragraphs": [
+    "Vi læste de øverste japanske og engelske artikler for søgninger som »bookingside AI-søgning« (2026-11-21). De fleste dækker lokal AI-synlighed generelt (ensartede virksomhedsoplysninger, flere anmeldelser). Få forklarer trin for trin, hvordan selve bookingsiden skal skrives, og næsten ingen giver et eksempel på strukturerede data eller WordPress-trin."
+   ],
+   "table": {
+    "head": [
+     "Artikel",
+     "Stærk på",
+     "Mangler"
+    ],
+    "rows": [
+     [
+      "[Uravation, telefon- og bookingveje (opdateret 2026-09-05, japansk)](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "Ikke at læne sig for meget op ad ReserveAction, én fast booking-URL, måling i GA4",
+      "Et JSON-LD-eksempel, WordPress-trin, håndtering af flere bookingsites"
+     ],
+     [
+      "[Uravation, oplevelser og ture (2026-10-12, japansk)](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "Én side pr. oplevelse; beskrivelse af betingelser som aflysning ved regn og varighed",
+      "Kun ture og aktiviteter. Ingen kode, intet WordPress"
+     ],
+     [
+      "[GMO lokal AIO (opdateret 2026-11-16, japansk)](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/) og [AIsmiley (opdateret 2026-10-30, japansk)](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "Opsætning af Google-virksomhedsprofil / hvad ChatGPT's restaurantbooking dækker i Japan",
+      "Statistik uden kilder (GMO). Intet om virksomhedens egen bookingside (AIsmiley)"
+     ],
+     [
+      "[LSEO booking, priser og ledighed (2026-10-02)](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/) og [LSEO VVS-installatør (2026-04-24)](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "En ærlig pointe: der findes intet universelt booking-schema, og ledighed bør komme fra livesystemer",
+      "Ingen trin-for-trin, ingen kilder, intet WordPress"
+     ],
+     [
+      "[J.A. Watte, overnatning (opdateret 2026-11-06)](https://jwatte.com/blog/lodging-sites-ai-agents-booking/), [Owner, restauranter (2026-10-22)](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search) og [Mindbody (2026-10-13)](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "Bookinglinks og priser inklusive skat (overnatning), menukort som tekst (restauranter), en ydelsesside (fitness)",
+      "Hver især begrænset til én branche; meget fokus på egne produkter"
+     ]
+    ]
+   },
+   "after": [
+    "Denne guide dækker for alle virksomheder, der tager imod bookinger, hvad der skal stå på bookingsiden, hvordan du rydder op i flere bookingkanaler, strukturerede data, WordPress-trin og hvordan du tjekker resultatet."
+   ]
+  },
+  {
+   "heading": "Otte fakta, som enhver bookingside skal have",
+   "paragraphs": [
+    "Spørgsmål om booking falder i cirka otte typer. Giv hver af dem et afsnit på en eller to sætninger, eller en tabelrække, i bookingsidens tekst."
+   ],
+   "table": {
+    "head": [
+     "Faktum",
+     "Eksempel",
+     "Spørgsmålet, AI får"
+    ],
+    "rows": [
+     [
+      "Hvordan man booker",
+      "Online døgnet rundt, telefonisk kl. 10–19, via besked (svar inden for åbningstiden)",
+      "»Hvordan booker jeg hos (virksomhed)?«"
+     ],
+     [
+      "Om booking er påkrævet",
+      "Efter aftale. Kunder uden tid er velkomne, når der er plads (forvent ventetid)",
+      "»Kan jeg bare møde op?«"
+     ],
+     [
+      "Frist",
+      "Indtil kl. 20 dagen før. Samme dag kun telefonisk",
+      "»Kan jeg booke til i dag?«"
+     ],
+     [
+      "Hvor langt frem",
+      "Op til to måneder frem",
+      "»Kan jeg booke til næste måned endnu?«"
+     ],
+     [
+      "Varighed",
+      "En klipning tager cirka 60 minutter",
+      "»Hvor lang tid tager det?«"
+     ],
+     [
+      "Afbud",
+      "Gratis indtil dagen før. Afbud samme dag koster 50 %. Afbud meldes telefonisk",
+      "»Er der et afbudsgebyr?«"
+     ],
+     [
+      "Betaling og depositum",
+      "Ingen betaling ved booking. Betal på dagen kontant, med kort eller mobilbetaling",
+      "»Skal jeg betale på forhånd?«"
+     ],
+     [
+      "Hvem det er for, hvad man skal medbringe",
+      "Første besøg: kom 10 minutter før for at udfylde en formular. Børn er velkomne",
+      "»Er det i orden til et første besøg?« »Må jeg tage mine børn med?«"
+     ]
+    ]
+   },
+   "after": [
+    "Sørg for, at hver sætning giver mening for sig selv. AI løfter nogle gange en enkelt sætning ud for at svare, så undgå formuleringer, der læner sig op ad det omkringliggende, som »se ovenfor« eller »klik her«. Svagt: »Book her. Giv os venligst besked i god tid, hvis du skal melde afbud.« Stærkt: »Onlinebooking er åben døgnet rundt, og telefonbooking fra kl. 10 til 19. Afbud er gratis indtil dagen før; ved afbud samme dag opkræves 50 % af prisen.«",
+    "Skriv, hvad der ændrer sig med og uden booking. Hvis kunder med tid kommer først, så skriv »Kunder uden tid tages ind mellem de bookede aftaler.« Hvis I udelukkende arbejder efter aftale, så skriv »Vi kan ikke tage imod kunder uden booking.« Det mindsker antallet af svar, der fejlagtigt siger »ingen booking nødvendig«."
+   ]
+  },
+  {
+   "heading": "Flere bookingsites: beslut, hvilke kanaler der er officielle",
+   "paragraphs": [
+    "Saloner og restauranter tager ofte imod bookinger flere steder: eget system, bookingsites, telefon, beskeder. AI videregiver den bookingkanal, den finder, så et bookingsite, du har forladt, eller et gammelt telefonnummer kan ende i svaret. Ryd op i denne rækkefølge."
+   ],
+   "list": [
+    "Lav en liste over alle kanaler, du tager imod bookinger gennem (eget system, bookingsites, bookinglinket i Google-virksomhedsprofilen, telefon, beskeder, DM'er på sociale medier)",
+    "Fjern profiler på kanaler, du ikke længere bruger, eller markér dem »tager ikke længere imod bookinger«",
+    "Skriv »Vi tager imod bookinger på disse måder« på bookingsiden, og angiv kun de kanaler, du bruger",
+    "Hvis hver ydelse har sin egen booking-URL, så fastlæg én officiel URL pr. ydelse (et link direkte til ydelsens bookingskærm er bedre end et link til forsiden)",
+    "Brug de samme afbudsregler og frister på dit site og alle bookingsites. Hvor de er forskellige, så skriv, hvilken regel der gælder for hvilken kanal",
+    "Link fra profilerne på bookingsites og fra beskrivelsen i din Google-virksomhedsprofil tilbage til din egen bookingside"
+   ],
+   "after": [
+    "Bookinglinks i Google-virksomhedsprofilen har regler: profilen skal være verificeret; linket skal føre til en side dedikeret til din virksomhed, hvor bookingen kan gennemføres; sociale medier, beskedapps, appbutikker og linkforkortere er ikke tilladt; siden skal kunne åbnes uden login eller CAPTCHA og returnere 200 ([Regler for virksomhedslinks](https://support.google.com/business/answer/13769188)). Du kan også blive vist via en bookingudbyder, der samarbejder med Reserve with Google; Google siger, at egne links, du selv tilføjer, ikke får nogen resultatdata ([Bookinger via en udbyder](https://support.google.com/business/answer/7475773))."
+   ]
+  },
+  {
+   "heading": "Skriv ikke ledige tider. Skriv, hvordan man tjekker dem",
+   "paragraphs": [
+    "Skriver du »om lørdagen er der som regel roligt« eller »ingen booking nødvendig på hverdage«, kan en AI blive ved med at bruge sætningen, efter at forholdene har ændret sig. Ingen AI-tjeneste oplyser, hvor ofte den genlæser en side. Betragt ledighed som noget, dit bookingsystem viser, og skriv i stedet, hvordan man tjekker det: »Se ledige tider på onlinebookingskærmen. Ring for ledige tider samme dag.«",
+    "Hvis du nævner travle tidspunkter, så formulér dem som et stabilt mønster: »Weekendeftermiddage er travle, så vi anbefaler at booke.« At få det til at se mere ledigt ud, end det er, vildleder både mennesker og AI."
+   ]
+  },
+  {
+   "heading": "Gør det læsbart: tjek indlejringer, billeder og login",
+   "paragraphs": [
+    "Mange bookingsystemer viser deres skærm som en indlejring fra et andet site (en iframe) eller via JavaScript. Folk kan se den, men om AI læser teksten i en indlejring som en del af din side, varierer fra tjeneste til tjeneste og er ikke offentliggjort. Skriv bookingreglerne uden for indlejringen, i bookingsidens egen tekst. Selve bookingformularen kan godt forblive indlejret.",
+    "Denne kommando viser, om din bookingside kan åbnes uden login og har reglerne i sin HTML."
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "OpenAI siger, at du for at blive inkluderet i ChatGPT-søgning skal tillade OAI-SearchBot at crawle dit site og sikre, at din host eller dit CDN tillader trafik fra OpenAI's offentliggjorte IP-adresser ([OpenAI Hjælp](https://help.openai.com/en/articles/9237897-chatgpt-search)). Tjek, at botbeskyttelsen ikke blokerer netop bookingsiden. For virksomheder, der vil have AI-agenter til at gennemføre bookinger for kunderne, foreslår Stripe at gennemgå botbeskyttelsen og overveje WebMCP, men det er et yderligere skridt, der også omfatter betalinger ([Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services))."
+   ]
+  },
+  {
+   "heading": "Strukturerede data: ReserveAction kan sagtens tilføjes, men forvent ikke meget",
+   "paragraphs": [
+    "schema.org har [ReserveAction](https://schema.org/ReserveAction), handlingen at foretage en reservation, og du kan bruge den til at knytte en booking-URL til en ydelse. Men vi har ikke fundet nogen officiel udtalelse fra ChatGPT, Perplexity eller Googles AI-funktioner om, at de bruger ReserveAction til booking. Google siger, at AI-funktioner ikke kræver særlige strukturerede data, og at strukturerede data skal stemme overens med den synlige tekst ([AI-funktioner og dit website](https://developers.google.com/search/docs/appearance/ai-features), tjekket 2026-11-18). Det skader ikke meget at tilføje den, men den får ikke en bookingknap til at dukke op.",
+    "Hvis du tilføjer den, så lad hver Service pege på sin booking-URL sådan her. Det er samme struktur, som Nurevo AIO offentliggør."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "Det vigtige er ikke at skrive en Reservation for sig selv. En løsrevet Reservation siger, at en booking allerede findes, hvilket ikke er sandt. Som result af en ReserveAction siger den »denne handling fører til en booking«. Tjek syntaksen med [Schema Markup Validator](https://validator.schema.org/)."
+   ]
+  },
+  {
+   "heading": "Trin i WordPress (med Nurevo AIO)",
+   "paragraphs": [
+    "Med [Nurevo AIO (gratis, tidligere vist som Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) bliver den booking-URL, der er indtastet for hver ydelse under »Services« i »Settings«, offentliggjort som en ReserveAction i de strukturerede Service-data og i llms.txt. Arbejd i denne rækkefølge."
+   ],
+   "list": [
+    "Ret først bookingsidens tekst ud fra de otte fakta ovenfor (sidetekst før strukturerede data)",
+    "Tilføj dine ydelser (op til 20). Ud over »Service name«, »Duration (minutes)«, »Price« og »Currency« indsætter du URL'en til ydelsens bookingskærm i »Booking URL«",
+    "For ydelser med en booking-URL linker ydelsens navn i llms.txt til den (for eksempel: - [Haircut](https://example.com/book/haircut/) — 60 min · USD 55.00)",
+    "Intet hentes fra bookingplugins som Amelia. Det er bevidst, så en forkert varighed eller booking-URL aldrig bliver offentliggjort som fakta; indtast værdierne manuelt",
+    "Indtast booking- eller menusidens ID som den side, der bærer ydelserne, så kommer Service-opmærkningen på den side (0 = forsiden)",
+    "Tilføj afbudsgebyrer, booking samme dag og kunder uden tid til din FAQ. Det dublerer ikke Yoast SEO, Rank Math, All in One SEO eller Slim SEO og fungerer sammen med SEO SIMPLE PACK og VK All in One Expansion Unit (fra 0.9.1)",
+    "Når du ændrer bookingkanaler, så opdatér sideteksten, booking-URL'erne i Nurevo, FAQ-svarene og din Google-virksomhedsprofil samme dag"
+   ],
+   "after": [
+    "Bureauer, der vedligeholder kunders sites, kan lægge »ændringer af bookingkanaler« ind i vedligeholdelsesaftalen, så en gammel URL ikke bliver hængende, hver gang en kunde skifter bookingsite. For bureauer, der tilbyder månedlig support, findes der et [partnerprogram](https://nurevo.jp/partner/)."
+   ]
+  },
+  {
+   "heading": "Sådan tjekker du: fastlæg dine bookingspørgsmål og før log",
+   "paragraphs": [
+    "For at se, om dine bookingregler bliver gengivet korrekt, så stil de samme spørgsmål til den samme AI på forskellige dage, og notér svarene. Bedøm ikke ud fra et enkelt svar."
+   ],
+   "table": {
+    "head": [
+     "Spørgsmål",
+     "Hvad du skal se efter"
+    ],
+    "rows": [
+     [
+      "»Skal jeg bestille tid hos (virksomhed)?«",
+      "Er det rigtigt om kun efter aftale kontra kunder uden tid velkomne?"
+     ],
+     [
+      "»Kan jeg booke (virksomhed) til i dag?«",
+      "Er fristen og metoden (kun telefon osv.) rigtige?"
+     ],
+     [
+      "»Hvad er afbudsgebyret hos (virksomhed)?«",
+      "Er fristen og gebyret rigtige? Er kilden et gammelt bookingsite?"
+     ],
+     [
+      "»Hvordan booker jeg hos (virksomhed)?«",
+      "Er den kanal, den angiver, en du bruger nu?"
+     ],
+     [
+      "»Hvilken (virksomhedstype) i (område) kan jeg booke i dag?«",
+      "Er du på listen ved et spørgsmål uden virksomhedsnavn? Vises der en bookingknap (restauranter)?"
+     ]
+    ]
+   },
+   "after": [
+    "Notér dato, AI-tjeneste, spørgsmål, svar og kilde-URL. Hvis kilden er et gammelt bookingsite eller blogindlæg, så ret det. På Nurevos Free- og Standard-abonnementer stiller Nurevo-tjenesten én gang om måneden Perplexity tre spørgsmål uden virksomhedsnavn, bygget ud fra din virksomhedstype og dit område, og viser, om dit navn dukkede op, og om dit site blev citeret. Pro ($99/måned og op, beta) måler op til 20 spørgsmål på Perplexity (ChatGPT, når det er konfigureret). Notér bookingspørgsmål manuelt. Se [måling af AI-synlighed](/guide/measure-ai-visibility) for mere."
+   ]
+  },
+  {
+   "heading": "Tjekliste før du offentliggør",
+   "list": [
+    "Der er én bookingside, og den kan åbnes uden login",
+    "Hvordan man booker, og hvornår der tages imod bookinger, står som tekst",
+    "Det fremgår, om booking er påkrævet, og hvad der sker uden",
+    "Fristen (samme dag, dagen før) og hvor langt frem man kan booke, fremgår",
+    "Afbudsfristen, gebyret og hvordan man melder afbud, fremgår og stemmer med bookingsiderne",
+    "Kun kanaler, du bruger, er angivet; de gamle er væk",
+    "Siden fortæller, hvordan man tjekker ledige tider, i stedet for at angive ledigheden",
+    "Bookingreglerne står i sideteksten, uden for indlejringer og billeder",
+    "Booking-URL'erne i de strukturerede data peger på de bookingskærme, du bruger nu",
+    "Bookinglinket i din Google-virksomhedsprofil peger på samme kanal"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hvad skal jeg sætte på mit site for at få en Reserve-knap i ChatGPT?",
+   "a": "Intet på dit site slår den til. OpenAI's hjælp siger, at Reserve-knappen kun vises, når ChatGPT kan matche restauranten med en profil hos en understøttet udbyder (OpenTable, Resy, Yelp). Det, du kan gøre, er at skrive dine bookingregler korrekt på dit site og holde dine profiler på bookingplatformene præcise."
+  },
+  {
+   "q": "Giver det bookinger fra AI at tilføje ReserveAction?",
+   "a": "Vi har ikke fundet nogen officiel udtalelse om, at det gør. ReserveAction skader ikke meget, men der er ikke påvist nogen gevinst for bookinger. Ret først bookingreglerne i sideteksten."
+  },
+  {
+   "q": "Vores bookingside er bare en indlejret widget uden tekst.",
+   "a": "Om AI læser teksten i en indlejring som en del af din side, varierer fra tjeneste til tjeneste og er ikke offentliggjort. Formularen kan godt forblive indlejret; skriv bookingmetoder, frister og afbudsregler som tekst over eller under den."
+  },
+  {
+   "q": "Vores bookingsites afbudsregler er anderledes end vores eget sites.",
+   "a": "Man kan ikke vide, hvilken en AI vil citere. Gør dem ens, hvis du kan; hvis ikke, så skriv, hvilken regel der gælder for hvilken kanal, for eksempel »Onlinebookinger kan afbestilles gratis indtil dagen før; bookinger foretaget via bookingsites følger det enkelte sites regler.«"
+  },
+  {
+   "q": "Vil det hjælpe os med at blive vist i AI, hvis vi skriver vores ledige tider på sitet?",
+   "a": "Ledighed ændrer sig, så hvis den står i sideteksten, risikerer du, at gamle oplysninger bliver hængende i AI-svar. Skriv, hvordan man tjekker ledige tider, og lad bookingsystemet vise selve ledigheden."
+  },
+  {
+   "q": "Bliver andre virksomheder end restauranter bookbare inde i AI?",
+   "a": "I august 2025 sagde Google, at agentisk booking i AI Mode ville blive udvidet til aftaler hos lokale servicevirksomheder, begyndende i USA. Hold øje med Googles meddelelser for dit land. Det, du kan gøre nu, er at holde din bookingside og bookinglinket i din Google-virksomhedsprofil præcise."
+  },
+  {
+   "q": "Når vi har ændret bookingsiden, hvornår ændrer AI-svarene sig så?",
+   "a": "Ingen AI-tjeneste oplyser, hvor lang tid det tager. Tjek med de samme spørgsmål nogle dage til nogle uger senere. Hvis en gammel bookingkanal stadig dukker op, så tjek kilde-URL'en, og ret den side."
+  }
+ ],
+ "relatedHeading": "Relaterede guides",
+ "cta": {
+  "heading": "Se, om AI kan læse dit site",
+  "body": "Det gratis tjek kræver ingen tilmelding: indtast en URL for at se adgang for AI-crawlere, strukturerede data og llms.txt. På WordPress offentliggør det gratis plugin dine ydelser og booking-URL'er som strukturerede data og i llms.txt uden at dublere dit SEO-plugins output.",
+  "label": "Tjek din AI-parathed gratis",
+  "href": "/check",
+  "secondary": {
+   "label": "Prøv det gratis WordPress-plugin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT er et varemærke tilhørende OpenAI; Google, Google Search, Google Business Profile og Reserve with Google tilhørende Google LLC; Perplexity tilhørende Perplexity AI. OpenTable, Resy, Yelp, Tock, TheFork, Booksy, Stripe, WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, Amelia og navnene på de virksomheder, der citeres i denne guide, er varemærker eller registrerede varemærker tilhørende deres respektive ejere. Nurevo er ikke tilknyttet eller godkendt af nogen af disse virksomheder."
+}

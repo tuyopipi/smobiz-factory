@@ -1,0 +1,316 @@
+{
+ "title": "Over ons-pagina en AI-zoeken: bedrijfsgegevens juist | Nurevo",
+ "description": "Zo bouw je een Over ons-pagina waar AI-antwoorden op kunnen bouwen: welke feiten je publiceert, varianten van naam en adres weghalen, Organization-schema en WordPress.",
+ "h1": "Over ons-pagina optimaliseren voor AI-zoeken: zorg dat je bedrijfsnaam, adres, oprichtingsdatum en activiteiten juist worden beschreven",
+ "lead": "Als iemand een AI naar je bedrijf vraagt bij naam, steunt het antwoord op je Over ons-pagina of bedrijfsprofiel. Zet je statutaire naam en de namen die mensen echt gebruiken, je adres, oprichtingsdatum, directie, wat je doet en hoe men je bereikt op één pagina in platte tekst; publiceer dezelfde waarden als gestructureerde gegevens van het type Organization; en zorg dat de schrijfwijze gelijk is op je andere pagina's en je profielen elders. Die drie stappen vormen de kern van het werk.",
+ "intro": [
+  "Geschreven op 15 november 2026 (JST). Deze gids is voor elk bedrijf, elke winkel of organisatie met een Over ons-pagina of bedrijfsprofiel, en voor de bureaus die zulke sites bouwen. Markup voor adres en openingstijden van winkels staat in [schema voor lokale bedrijven en SEO-plugins](/guide/local-business-schema-seo-plugins). Deze gids gaat over de pagina die zegt wie je bent en waar je zit.",
+  "AI-antwoorden veranderen per dag en per formulering. Deze stappen maken de informatie die AI leest juist; ze garanderen niet dat je in een antwoord verschijnt."
+ ],
+ "sections": [
+  {
+   "heading": "Waar AI je Over ons-pagina voor gebruikt",
+   "paragraphs": [
+    "ChatGPT search, Perplexity en de AI Overviews van Google lezen webpagina's wanneer ze antwoorden en tonen die als bron. Bij een vraag die een bedrijf noemt, is de eigen site van dat bedrijf, en vooral de pagina met de basisgegevens, een voor de hand liggende kandidaat. Is de Over ons-pagina één afbeelding, of staan naam en adres op elke pagina anders, dan bouwt de AI zijn antwoord misschien op een oude vermelding van iemand anders, of op een ander bedrijf met dezelfde naam.",
+    "Vragen die een bedrijf noemen, volgen meestal een paar patronen. Elk ervan is te beantwoorden met een Over ons-pagina die de feiten als tekst vermeldt."
+   ],
+   "list": [
+    "\"Wat doet Example bv?\" (omschrijving van de activiteiten)",
+    "\"Waar zit het hoofdkantoor van Example? Hebben ze een kantoor in Manchester?\" (vestigingen)",
+    "\"Wanneer is Example opgericht en wie leidt het?\" (oprichtingsdatum, directie)",
+    "\"Welk bedrijf zit achter de Example-app?\" (merk tegenover bedrijfsnaam)",
+    "\"Is Example hetzelfde bedrijf als Sample?\" (vroegere namen, groepsmaatschappijen, naamgenoten)",
+    "\"Hoe neem ik contact op met Example?\" (telefoon, formulier, openingstijden)"
+   ],
+   "after": [
+    "Google zegt dat er geen extra eisen en geen speciale gestructureerde gegevens nodig zijn om in AI Overviews of AI Mode te verschijnen, en dat de gewone SEO-best practices gelden ([Google Search Central: AI-functies en je website](https://developers.google.com/search/docs/appearance/ai-features)). Het werk aan de Over ons-pagina is geen speciale manier van schrijven voor AI. Het draait om feiten nauwkeurig vermelden, in een leesbare vorm, overal met dezelfde waarden."
+   ]
+  },
+  {
+   "heading": "Wat er op de pagina hoort, en hoe dat aansluit op gestructureerde gegevens",
+   "paragraphs": [
+    "De tabel toont wat een Over ons-pagina moet vermelden, de fouten die AI-antwoorden vaak maken en de bijbehorende Organization-eigenschap. De eigenschapsnamen komen uit de aanbevolen eigenschappen in de documentatie van Google over [gestructureerde gegevens voor Organization](https://developers.google.com/search/docs/appearance/structured-data/organization). \"Alleen tekst\" markeert onderdelen die niet tot de door Google aanbevolen eigenschappen horen."
+   ],
+   "table": {
+    "head": [
+     "Onderdeel",
+     "Hoe je het schrijft",
+     "Typische AI-fout",
+     "Gestructureerde gegevens"
+    ],
+    "rows": [
+     [
+      "Statutaire naam",
+      "Vermeld de geregistreerde naam één keer, precies zoals ingeschreven",
+      "Je verwarren met een bedrijf met een vergelijkbare naam",
+      "legalName (als die afwijkt van name)"
+     ],
+     [
+      "Handelsnaam, merk, naam in een andere taal",
+      "Verbind ze in een zin: \"Example App wordt gerund door Sample bv\"",
+      "Wel het merk kennen, maar niet het bedrijf erachter",
+      "alternateName"
+     ],
+     [
+      "Adres",
+      "Scheid hoofdkantoor en andere vestigingen; schrijf elk adres in hetzelfde formaat, tot en met de verdieping",
+      "Een adres van vóór een verhuizing geven, of een filiaal als hoofdkantoor",
+      "address (PostalAddress, één of meer)"
+     ],
+     [
+      "Contact",
+      "Hoofdnummer, route voor vragen, openingstijden",
+      "Een direct nummer van een afdeling of een oud nummer",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Opgericht",
+      "Volledige datum; als oprichting en inschrijving verschillen, geef beide",
+      "Oprichtingsjaar verwarren met inschrijvingsjaar",
+      "foundingDate (ISO 8601, bijv. 2015-04-01)"
+     ],
+     [
+      "Directie",
+      "Functie en naam; bijwerken op de dag van de wijziging",
+      "De vorige directeur noemen",
+      "Alleen tekst (geen door Google aanbevolen eigenschap)"
+     ],
+     [
+      "Wat je doet",
+      "Eerste zin: wat, voor wie, waar; daarna de lijst met activiteiten",
+      "Een nevenactiviteit als hoofdactiviteit presenteren",
+      "description"
+     ],
+     [
+      "Aantal medewerkers, aandelenkapitaal",
+      "Voeg \"stand per maand en jaar\" toe",
+      "Een oud cijfer zonder datum dat wordt herhaald",
+      "numberOfEmployees (aandelenkapitaal: alleen tekst)"
+     ],
+     [
+      "KvK-nummer of fiscaal nummer",
+      "Vermeld het op de pagina als je er een hebt",
+      "Geen manier om je van een naamgenoot te onderscheiden",
+      "Eerst tekst (zie hieronder)"
+     ],
+     [
+      "Officiële sociale media en profielpagina's",
+      "Vermeld alleen accounts die het bedrijf beheert",
+      "Je koppelen aan een naamgenoot of een nepaccount",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Dezelfde afbeelding als het sitelogo",
+      "Het logo van een ander bedrijf",
+      "logo (minstens 112×112 px)"
+     ],
+     [
+      "Laatst bijgewerkt",
+      "\"Bijgewerkt op ...\" onderaan de pagina",
+      "Geen manier om te zien hoe actueel het is",
+      "Alleen tekst"
+     ]
+    ]
+   },
+   "after": [
+    "Over registratie- en fiscale nummers: Google omschrijft taxID als het fiscale nummer voor het land in address, en vatID als het btw-nummer waar dat van toepassing is. Is je nummer een fiscaal of btw-nummer voor jouw land, dan passen die eigenschappen. Is het een ander soort identificatie, zoals het Japanse bedrijfsnummer, dan zegt Google niet of het in taxID hoort; vermeld het dus op de pagina en beslis zelf of je het in de markup opneemt.",
+    "Blaas cijfers niet op. Rond je het aantal medewerkers of klanten naar boven af, dan citeert AI het hogere getal en dat is moeilijk terug te draaien. Geef het exacte cijfer en de datum waarop het geldt."
+   ]
+  },
+  {
+   "heading": "Hoe je de pagina schrijft: niet alleen een tabel, nooit een afbeelding",
+   "paragraphs": [
+    "Veel Over ons-pagina's bestaan uit niets meer dan een tabel met twee kolommen. Een tabel is makkelijk te lezen voor mensen en machines, maar op zichzelf mist er een zin die zegt wat het bedrijf is. Zet twee of drie zinnen introductie boven de tabel, dan heeft de AI iets wat hij direct kan gebruiken als hij je beschrijft."
+   ],
+   "list": [
+    "Eerste zin: de statutaire naam, de plaats en wat je doet. Bijvoorbeeld: \"Sample bv, gevestigd in Leeds, helpt kleine bedrijven bij het inrichten van boekhoudsoftware.\"",
+    "Tweede zin: feiten die je van naamgenoten onderscheiden, zoals hoe het merk zich verhoudt tot het bedrijf en het jaar van oprichting.",
+    "Dan de tabel, als HTML-tabel of lijst met labels, nooit als afbeelding of pdf.",
+    "De geschiedenis met één regel per jaar. Bij een naamswijziging, verhuizing of fusie schrijf je zowel het oude als het nieuwe: \"In maart 20XX veranderde het bedrijf zijn naam van Old Name bv.\"",
+    "Zet de boodschap van de oprichter en de missie onder aparte koppen, los van de feiten.",
+    "Sluit de pagina af met de datum van de laatste update."
+   ],
+   "after": [
+    "schema.org heeft een type [AboutPage](https://schema.org/AboutPage) voor de pagina zelf, en sommige SEO-plugins laten je dat als paginatype kiezen. Het is optioneel en prima te gebruiken, zolang het niet in strijd is met je andere gestructureerde gegevens."
+   ]
+  },
+  {
+   "heading": "Haal varianten weg, op je site en elders",
+   "paragraphs": [
+    "AI bouwt een antwoord op uit meerdere pagina's. Staat je naam of adres op elke pagina anders, dan ziet hij ze misschien niet als één bedrijf, of kiest hij de oude schrijfwijze. Begin met één vorm vast te leggen voor elk van de gebruikelijke varianten."
+   ],
+   "table": {
+    "head": [
+     "Variant",
+     "Wat je vastlegt"
+    ],
+    "rows": [
+     [
+      "Sample bv / Sample B.V. / Sample",
+      "De ingeschreven vorm, overal gebruikt waar je het bedrijf noemt"
+     ],
+     [
+      "Namen in andere talen of schriften",
+      "Eén vorm per taal, gelijk op de pagina's, profielen en visitekaartjes in die taal"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / met en zonder gebouwnaam",
+      "Eén volgorde en één keuze over gebouwnaam en verdieping"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Eén formaat per taal, bijv. nationaal formaat op lokale pagina's en internationaal formaat op Engelstalige pagina's voor buitenlandse lezers"
+     ],
+     [
+      "Pagina's die nog een oude naam of een oud adres tonen",
+      "Leg de wijziging vast in de geschiedenis en corrigeer dan de oude pagina's"
+     ]
+    ]
+   },
+   "after": [
+    "Waar je op je site controleert: Over ons, footer, contactpagina, privacyverklaring, eventueel wettelijk verplichte bedrijfsgegevens, vacaturepagina's, persberichten, auteursblokken op de blog en de brochure als pdf.",
+    "Waar je elders controleert: je Google Bedrijfsprofiel, de sociale profielen die het bedrijf beheert, vacaturesites, brancheverenigingen en lokale gidsen, en beschrijvingen van je bedrijf op sites van partners. Sommige daarvan kun je niet bewerken. Zorg eerst dat je eigen site klopt en vraag dan de uitgever om die van hen te corrigeren. Is een AI-antwoord al fout, spoor dan de bron op en herstel elk soort fout daar waar die ontstaat."
+   ]
+  },
+  {
+   "heading": "Help AI je te onderscheiden van een bedrijf met dezelfde naam",
+   "paragraphs": [
+    "Is je naam een gewoon woord, of heeft een ander bedrijf elders dezelfde naam, dan kan AI de twee door elkaar halen. Wat jou onderscheidt, zijn feiten die alleen jij hebt."
+   ],
+   "list": [
+    "Zet de plaats en wat je doet in de eerste zin van de introductie.",
+    "Vermeld feiten die een naamgenoot niet deelt: oprichtingsjaar, inschrijvingsnummer, de naam van je directeur.",
+    "Vermeld in sameAs alleen officiële accounts en profielen die het bedrijf beheert. Laat naamgenoten en pagina's die je niet beheert weg.",
+    "Verschillen merk en bedrijfsnaam, zet dan \"Example wordt gerund door Sample bv\" op de pagina's van beide.",
+    "Google zegt dat eigenschappen zoals iso6523Code en naics helpen een organisatie te onderscheiden. Heb je de relevante codes, overweeg dan ze toe te voegen."
+   ]
+  },
+  {
+   "heading": "Gestructureerde gegevens voor Organization: wat de documentatie van Google zegt",
+   "paragraphs": [
+    "De kernpunten uit de documentatie van Google over [gestructureerde gegevens voor Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) (laatst bijgewerkt 15 september 2026; gelezen op 15 november):"
+   ],
+   "list": [
+    "Er zijn geen verplichte eigenschappen; Google raadt aan zoveel mogelijk eigenschappen toe te voegen die op je organisatie van toepassing zijn.",
+    "Plaats de markup op de homepage of op één pagina die de organisatie beschrijft, zoals de Over ons-pagina. Hij hoeft niet op elke pagina te staan.",
+    "Gebruik voor een lokaal bedrijf zoals een restaurant of winkel het meest specifieke LocalBusiness-subtype en volg ook de richtlijnen voor LocalBusiness.",
+    "foundingDate gebruikt ISO 8601 (bijv. 2015-04-01).",
+    "Het logo moet minstens 112×112 pixels zijn en crawlbaar en indexeerbaar."
+   ],
+   "after": [
+    "Google noemt het laten overeenkomen van gestructureerde gegevens met de zichtbare tekst als een van de basisprincipes ([AI-functies en je website](https://developers.google.com/search/docs/appearance/ai-features)). Gestructureerde gegevens veranderen antwoorden niet op zichzelf. Zie ze als de machineleesbare antwoordsleutel bij wat de pagina al zegt, dan houd je de prioriteiten goed. Zet geen feit in gestructureerde gegevens dat niet in de paginatekst staat."
+   ]
+  },
+  {
+   "heading": "Stappen in WordPress (met Nurevo AEO)",
+   "paragraphs": [
+    "Op een WordPress-site publiceert [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) de basisgegevens van je bedrijf als gestructureerde gegevens en in llms.txt. Werk in deze volgorde."
+   ],
+   "list": [
+    "Corrigeer eerst de tekst van de Over ons-pagina aan de hand van de tabel hierboven. Tekst gaat vóór gestructureerde gegevens.",
+    "Installeer de plugin en kies het sitetype in de installatiewizard: \"B2B / SaaS\" voor een Organization, de passende kaart voor een winkel of praktijk, of \"Overig\" als geen ervan past.",
+    "Controleer de bedrijfsgegevens (naam, beschrijving, adres, telefoon, openingstijden, type bedrijf, URL, e-mail). Waarden uit je bestaande instellingen vullen alleen lege velden; wat je zelf hebt ingetypt, wordt nooit overschreven, en het e-mailadres van de WordPress-beheerder wordt nooit als zakelijk e-mailadres gebruikt.",
+    "Laat naam en adres overeenkomen met de Over ons-pagina. Het adres wordt als één tekenreeks binnen een PostalAddress gepubliceerd, dus typ het precies zoals de Over ons-pagina het schrijft.",
+    "Het logo is de afbeelding die in het thema als sitelogo is ingesteld. Zorg dat die minstens 112×112 pixels is.",
+    "Met Yoast SEO, Rank Math, All in One SEO of Slim SEO voegt Nurevo alleen de feiten toe die ontbreken in de gestructureerde gegevens van die plugin, zodat het bedrijf niet twee keer wordt beschreven. Het werkt ook samen met SEO SIMPLE PACK en VK All in One Expansion Unit (vanaf 0.9.1). Waar je SEO-plugin de naam of het logo al instelt, gaan diens waarden voor; houd beide dus gelijk.",
+    "Gebruik het ontwikkelaarsfilter webmcp_canary_business_node om de statutaire naam (legalName), andere namen (alternateName), oprichtingsdatum (foundingDate) of officiële accounts (sameAs) toe te voegen. Dit zijn geen velden in het formulier met bedrijfsgegevens van Nurevo.",
+    "Voer de diagnose uit op het scherm AEO-score, open dan /llms.txt en controleer of de Over ons-pagina erin staat. llms.txt toont de 30 meest recent bijgewerkte pagina's en berichten; staat de Over ons-pagina daar niet tussen, voeg dan een regel toe met het filter webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "Dezelfde controles gelden voor sites die niet op WordPress draaien. Vul je URL in bij de [gratis check](/check), zonder aanmelding, om de stand van gestructureerde gegevens, llms.txt en toegang voor AI-crawlers te zien."
+   ]
+  },
+  {
+   "heading": "Zo controleer je het: vragen met en zonder je naam",
+   "paragraphs": [
+    "Controleer het werk aan de Over ons-pagina met vragen die je bedrijfsnaam bevatten. Stel dezelfde vraag aan dezelfde AI op verschillende dagen, meerdere keren, en noteer de antwoorden. Oordeel niet op basis van één antwoord."
+   ],
+   "table": {
+    "head": [
+     "Wat je noteert",
+     "Voorbeeld"
+    ],
+    "rows": [
+     [
+      "Datum, AI, vraag",
+      "15 nov, Perplexity, \"Wat is Sample bv? Wanneer is het opgericht en wat doet het?\""
+     ],
+     [
+      "Feiten in het antwoord",
+      "Adres, oprichtingsdatum, directie, activiteiten: goed of fout, één voor één"
+     ],
+     [
+      "Bronnen",
+      "Werd je Over ons-pagina geciteerd, of een andere site?"
+     ],
+     [
+      "Waar een fout vandaan kwam",
+      "Toont de geciteerde pagina nog een oud adres?"
+     ]
+    ]
+   },
+   "after": [
+    "De gratis AI-check van Nurevo (eens per maand, voor gekoppelde Free- en Standard-sites) stelt vragen die zijn opgebouwd uit je type bedrijf en regio, zonder je naam. Hij laat zien of mensen die je naam niet kennen je kunnen vinden; controleer de juistheid van je bedrijfsgegevens met de hand aan de hand van de tabel hierboven. De zichtbaarheidsmeting van Pro (bèta) dekt momenteel Perplexity. De volledige methode staat in [AI-zichtbaarheid meten](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checklist voor de Over ons-pagina",
+   "list": [
+    "Twee of drie zinnen boven de tabel geven de naam, de locatie en wat je doet.",
+    "De relatie tussen statutaire naam, merk en eventuele naam in een andere taal staat in een zin.",
+    "Adres en telefoonnummer staan op elke pagina van de site op dezelfde manier.",
+    "Oprichtingsdatum, directie en aantal medewerkers kloppen en zijn gedateerd.",
+    "Naamswijzigingen en verhuizingen staan in de geschiedenis met oud en nieuw.",
+    "De Over ons-pagina is niet alleen een afbeelding of een pdf.",
+    "Organization (of, voor een winkel, het meest specifieke LocalBusiness-subtype) staat op de homepage of de Over ons-pagina, en de waarden komen overeen met de tekst.",
+    "sameAs vermeldt alleen accounts die het bedrijf beheert.",
+    "Je Google Bedrijfsprofiel en andere profielen gebruiken dezelfde schrijfwijze.",
+    "De pagina eindigt met de datum van de laatste update.",
+    "Je hebt gecontroleerd met vragen die je naam bevatten, op verschillende dagen, en de resultaten genoteerd."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Heb ik een Over ons-pagina nodig naast de homepage?",
+   "a": "Niet als de homepage de basisgegevens van het bedrijf al bij elkaar zet. Google raadt aan de Organization-markup op de homepage te plaatsen of op één pagina die de organisatie beschrijft. Gaat je homepage vooral over je diensten, dan houdt een aparte Over ons-pagina de feiten op één plek."
+  },
+  {
+   "q": "Is een Over ons-pagina met alleen een tabel een probleem?",
+   "a": "Nee. Een tabel is makkelijk te lezen. Maar er ontbreekt een zin die zegt wat het bedrijf is, dus zet er twee of drie zinnen introductie boven."
+  },
+  {
+   "q": "Moeten gestructureerde gegevens voor Organization op elke pagina staan?",
+   "a": "Volgens Google hoeft dat niet: de homepage of één pagina zoals Over ons is genoeg. Zet je SEO-plugin ze op elke pagina, dan is dat prima, zolang de waarden kloppen."
+  },
+  {
+   "q": "Hoort ons KvK-nummer in taxID?",
+   "a": "Google omschrijft taxID als het fiscale nummer voor het land in je adres. Is je nummer dat, dan past het; is het een ander soort identificatie, dan zegt Google het niet. Vermeld het eerst op de pagina en beslis dan of je het in de markup opneemt."
+  },
+  {
+   "q": "Hoe zorgen we dat mensen die naar onze vroegere naam vragen het huidige bedrijf vinden?",
+   "a": "Schrijf beide namen in de geschiedenis (\"In maart 20XX veranderde het bedrijf zijn naam van Old Name bv\") en noem het in de introductie. Tonen profielen elders nog de oude naam, vraag dan de uitgevers om ze bij te werken."
+  },
+  {
+   "q": "Een AI-antwoord geeft onze bedrijfsgegevens verkeerd weer. Wat moeten we doen?",
+   "a": "Je kunt het antwoord van de AI niet rechtstreeks aanpassen. Spoor de bronnen op: corrigeer de Over ons-pagina en andere pagina's op je eigen site, en vraag andere uitgevers om die van hen te corrigeren. Er is geen vaste termijn waarop correcties zichtbaar worden."
+  },
+  {
+   "q": "Als we deze stappen volgen, beschrijft AI ons dan altijd correct?",
+   "a": "Dat valt niet te garanderen; AI-antwoorden veranderen per dag en per formulering. Deze stappen maken de informatie die AI leest juist en consistent, zodat fouten minder waarschijnlijk zijn."
+  }
+ ],
+ "relatedHeading": "Gerelateerde gidsen",
+ "cta": {
+  "heading": "Bekijk hoe AI de gegevens van je bedrijf leest",
+  "body": "De gratis check vraagt geen aanmelding: vul je URL in om de stand van gestructureerde gegevens, llms.txt en toegang voor AI-crawlers te zien. Op WordPress publiceert de gratis plugin de basisgegevens van je bedrijf als gestructureerde gegevens.",
+  "label": "Start de gratis AI-leesbaarheidscheck",
+  "href": "/check",
+  "secondary": {
+   "label": "Probeer de gratis WordPress-plugin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT is een handelsmerk van OpenAI, Perplexity van Perplexity AI en Google van Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit en WordPress zijn handelsmerken van hun respectieve eigenaars. Nurevo is niet gelieerd aan of onderschreven door een van deze bedrijven."
+}

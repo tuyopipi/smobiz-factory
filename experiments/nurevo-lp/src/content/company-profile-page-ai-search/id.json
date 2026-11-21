@@ -1,0 +1,316 @@
+{
+ "title": "Optimasi Halaman Tentang Kami untuk Pencarian AI | Nurevo",
+ "description": "Cara membuat halaman Tentang Kami yang bisa diandalkan jawaban AI: fakta yang perlu dimuat, menyeragamkan nama dan alamat, skema Organization, dan langkah WordPress.",
+ "h1": "Optimasi halaman Tentang Kami untuk pencarian AI: pastikan nama, alamat, tanggal pendirian, dan bidang usaha perusahaan Anda dijelaskan dengan benar",
+ "lead": "Saat seseorang menanyakan perusahaan Anda kepada AI dengan menyebut namanya, halaman yang menjadi sandaran jawaban biasanya adalah halaman Tentang Kami atau profil perusahaan. Tuliskan nama resmi dan nama yang benar-benar dipakai orang, alamat, tanggal pendirian, jajaran pimpinan, bidang usaha, dan cara menghubungi Anda di satu halaman sebagai teks biasa; terbitkan nilai yang sama sebagai data terstruktur Organization; dan samakan ejaannya di halaman lain serta di profil Anda di tempat lain. Tiga langkah itulah inti pekerjaannya.",
+ "intro": [
+  "Ditulis 15 November 2026 (JST). Panduan ini untuk setiap perusahaan, toko, atau organisasi yang memiliki halaman Tentang Kami atau profil perusahaan, serta agensi yang membangun situs tersebut. Markup alamat dan jam buka untuk toko dibahas di [skema bisnis lokal dan plugin SEO](/guide/local-business-schema-seo-plugins). Panduan ini membahas halaman yang menyatakan siapa Anda dan di mana Anda berada.",
+  "Jawaban AI berubah dari hari ke hari dan tergantung cara bertanya. Langkah-langkah ini membuat informasi yang dibaca AI menjadi akurat; langkah ini tidak menjamin Anda akan muncul dalam jawaban."
+ ],
+ "sections": [
+  {
+   "heading": "Untuk apa AI memakai halaman Tentang Kami Anda",
+   "paragraphs": [
+    "Pencarian ChatGPT, Perplexity, dan Google AI Overviews membaca halaman web saat menjawab dan menampilkannya sebagai sumber. Untuk pertanyaan yang menyebut nama perusahaan, situs milik perusahaan itu sendiri, terutama halaman yang merangkum fakta dasarnya, menjadi kandidat yang jelas. Jika halaman Tentang Kami hanya berupa satu gambar, atau nama dan alamat ditulis berbeda di tiap halaman, AI bisa menyusun jawabannya dari data lama milik pihak lain, atau dari perusahaan lain yang namanya sama.",
+    "Pertanyaan yang menyebut nama perusahaan cenderung mengikuti beberapa pola. Masing-masing bisa dijawab dari halaman Tentang Kami yang menuliskan fakta dalam bentuk teks."
+   ],
+   "list": [
+    "\"Example Ltd bergerak di bidang apa?\" (uraian usaha)",
+    "\"Di mana kantor pusat Example? Apakah mereka punya kantor di Manchester?\" (lokasi)",
+    "\"Kapan Example didirikan, dan siapa yang memimpinnya?\" (tanggal pendirian, pimpinan)",
+    "\"Perusahaan apa yang ada di balik aplikasi Example?\" (merek dan nama perusahaan)",
+    "\"Apakah Example sama dengan Sample?\" (nama lama, perusahaan grup, nama serupa)",
+    "\"Bagaimana cara menghubungi Example?\" (telepon, formulir, jam layanan)"
+   ],
+   "after": [
+    "Google menyatakan tidak ada persyaratan tambahan maupun data terstruktur khusus untuk tampil di AI Overviews atau AI Mode, dan praktik terbaik SEO yang biasa tetap berlaku ([Google Search Central: fitur AI dan situs web Anda](https://developers.google.com/search/docs/appearance/ai-features)). Pekerjaan pada halaman Tentang Kami bukanlah cara menulis khusus untuk AI. Intinya adalah menyampaikan fakta secara akurat, dalam bentuk yang mudah dibaca, dengan nilai yang sama di mana pun."
+   ]
+  },
+  {
+   "heading": "Apa yang perlu dimuat di halaman, dan padanannya dalam data terstruktur",
+   "paragraphs": [
+    "Tabel berikut berisi hal yang perlu dicantumkan di halaman Tentang Kami, kesalahan yang sering dibuat jawaban AI, dan properti Organization yang sesuai. Nama properti diambil dari properti yang direkomendasikan dalam dokumentasi [data terstruktur Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) dari Google. \"Hanya teks\" menandai item yang tidak termasuk properti yang direkomendasikan Google."
+   ],
+   "table": {
+    "head": [
+     "Item",
+     "Cara menulisnya",
+     "Kesalahan AI yang umum",
+     "Data terstruktur"
+    ],
+    "rows": [
+     [
+      "Nama resmi",
+      "Cantumkan nama terdaftar satu kali, persis seperti yang terdaftar",
+      "Tertukar dengan perusahaan yang namanya mirip",
+      "legalName (jika berbeda dari name)"
+     ],
+     [
+      "Nama dagang, merek, nama dalam bahasa lain",
+      "Hubungkan dalam satu kalimat: \"Example App dikelola oleh Sample Ltd\"",
+      "Mengenal mereknya tetapi tidak tahu perusahaan di baliknya",
+      "alternateName"
+     ],
+     [
+      "Alamat",
+      "Pisahkan kantor pusat dari lokasi lain; tulis setiap alamat dengan format yang sama sampai ke lantai",
+      "Memberikan alamat sebelum pindah, atau menyebut cabang sebagai kantor pusat",
+      "address (PostalAddress, satu atau lebih)"
+     ],
+     [
+      "Kontak",
+      "Telepon utama, jalur pertanyaan, jam layanan",
+      "Nomor langsung suatu departemen atau nomor lama",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Tanggal berdiri",
+      "Tanggal lengkap; jika tanggal pendirian dan tanggal berbadan hukum berbeda, cantumkan keduanya",
+      "Mencampuradukkan tahun pendirian dengan tahun berbadan hukum",
+      "foundingDate (ISO 8601, mis. 2015-04-01)"
+     ],
+     [
+      "Pimpinan",
+      "Jabatan dan nama; perbarui pada hari terjadinya perubahan",
+      "Menyebut direktur utama sebelumnya",
+      "Hanya teks (bukan properti yang direkomendasikan Google)"
+     ],
+     [
+      "Bidang usaha",
+      "Kalimat pertama: apa, untuk siapa, di mana; lalu daftar kegiatan usaha",
+      "Menampilkan usaha sampingan sebagai usaha utama",
+      "description"
+     ],
+     [
+      "Jumlah karyawan, modal",
+      "Tambahkan \"per bulan dan tahun\"",
+      "Angka lama tanpa tanggal terus diulang",
+      "numberOfEmployees (modal: hanya teks)"
+     ],
+     [
+      "Nomor registrasi perusahaan atau nomor pajak",
+      "Cantumkan di halaman jika Anda memilikinya",
+      "Tidak ada cara membedakan Anda dari perusahaan bernama sama",
+      "Teks lebih dulu (lihat di bawah)"
+     ],
+     [
+      "Media sosial dan halaman profil resmi",
+      "Hanya cantumkan akun yang dikelola perusahaan",
+      "Mengaitkan Anda dengan perusahaan bernama sama atau akun palsu",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Gambar yang sama dengan logo situs",
+      "Logo perusahaan lain",
+      "logo (minimal 112×112 px)"
+     ],
+     [
+      "Terakhir diperbarui",
+      "\"Diperbarui pada ...\" di akhir halaman",
+      "Tidak ada cara mengetahui seberapa mutakhir informasinya",
+      "Hanya teks"
+     ]
+    ]
+   },
+   "after": [
+    "Tentang nomor registrasi dan nomor pajak: Google menjelaskan taxID sebagai nomor pajak untuk negara pada address, dan vatID sebagai nomor PPN jika berlaku. Jika nomor Anda adalah nomor pajak atau PPN di negara Anda, properti tersebut cocok. Jika berupa jenis pengenal lain, seperti nomor korporasi di Jepang, Google tidak menyebutkan apakah itu termasuk taxID, jadi cantumkan di halaman dan putuskan sendiri apakah akan diberi markup.",
+    "Jangan membesar-besarkan angka. Jika Anda membulatkan jumlah karyawan atau klien ke atas, AI akan mengutip angka yang lebih besar dan sulit untuk ditarik kembali. Berikan angka yang tepat dan tanggal berlakunya."
+   ]
+  },
+  {
+   "heading": "Cara menulis halamannya: jangan hanya tabel, jangan pernah gambar",
+   "paragraphs": [
+    "Banyak halaman Tentang Kami hanya berisi tabel dua kolom. Tabel mudah dibaca manusia maupun mesin, tetapi tabel saja tidak memuat kalimat yang menyatakan perusahaan itu apa. Tambahkan dua atau tiga kalimat pengantar di atas tabel, maka AI memiliki teks yang bisa langsung dipakai saat menjelaskan tentang Anda."
+   ],
+   "list": [
+    "Kalimat pertama: nama resmi, kota, dan bidang usaha. Contoh: \"Sample Ltd, yang berbasis di Leeds, membantu usaha kecil memasang perangkat lunak akuntansi.\"",
+    "Kalimat kedua: fakta yang membedakan Anda dari perusahaan bernama sama, misalnya hubungan merek dengan perusahaan dan tahun pendirian.",
+    "Kemudian tabelnya, sebagai tabel HTML atau daftar berlabel, jangan pernah sebagai gambar atau PDF.",
+    "Riwayat perusahaan dengan satu baris per tahun. Untuk pergantian nama, perpindahan kantor, atau merger, tulis yang lama dan yang baru: \"Pada Maret 20XX perusahaan berganti nama dari Old Name Ltd.\"",
+    "Letakkan pesan pendiri dan misi di bawah judul terpisah dari bagian fakta.",
+    "Akhiri halaman dengan tanggal terakhir diperbarui."
+   ],
+   "after": [
+    "schema.org memiliki tipe [AboutPage](https://schema.org/AboutPage) untuk halaman itu sendiri, dan beberapa plugin SEO memungkinkan Anda memilihnya sebagai tipe halaman. Sifatnya opsional, dan boleh dipakai selama tidak bertentangan dengan data terstruktur Anda yang lain."
+   ]
+  },
+  {
+   "heading": "Seragamkan penulisan, di situs Anda dan di tempat lain",
+   "paragraphs": [
+    "AI menyusun jawaban dari beberapa halaman. Jika nama atau alamat Anda ditulis berbeda di tiap halaman, AI mungkin tidak menganggapnya satu perusahaan, atau malah memilih ejaan lama. Mulailah dengan menetapkan satu bentuk untuk setiap variasi yang umum."
+   ],
+   "table": {
+    "head": [
+     "Variasi",
+     "Yang perlu ditetapkan"
+    ],
+    "rows": [
+     [
+      "Sample Ltd / Sample Limited / Sample",
+      "Bentuk yang terdaftar, dipakai di mana pun Anda menyebut nama perusahaan"
+     ],
+     [
+      "Nama dalam bahasa atau aksara lain",
+      "Satu bentuk per bahasa, sama di halaman, profil, dan kartu nama dalam bahasa tersebut"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / dengan dan tanpa nama gedung",
+      "Satu urutan dan satu keputusan soal nama gedung dan lantai"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Satu format per bahasa, mis. format nasional di halaman lokal dan format internasional di halaman berbahasa Inggris untuk pembaca luar negeri"
+     ],
+     [
+      "Halaman yang masih menampilkan nama atau alamat lama",
+      "Catat perubahannya di riwayat perusahaan, lalu perbaiki halaman lama"
+     ]
+    ]
+   },
+   "after": [
+    "Yang perlu diperiksa di situs Anda: Tentang Kami, footer, halaman kontak, kebijakan privasi, keterangan usaha yang diwajibkan hukum, halaman karier, siaran pers, kotak penulis di blog, dan PDF brosur.",
+    "Yang perlu diperiksa di tempat lain: Profil Bisnis Google Anda, profil media sosial yang dikelola perusahaan, situs lowongan kerja, asosiasi industri dan direktori lokal, serta deskripsi tentang Anda di situs mitra. Sebagian tidak bisa Anda ubah sendiri. Benahi situs Anda terlebih dahulu, lalu minta penerbitnya memperbaiki milik mereka. Jika jawaban AI sudah keliru, telusuri sumbernya dan perbaiki setiap jenis kesalahan di tempat asalnya."
+   ]
+  },
+  {
+   "heading": "Bantu AI membedakan Anda dari perusahaan bernama sama",
+   "paragraphs": [
+    "Jika nama Anda berupa kata umum, atau ada perusahaan lain di tempat lain dengan nama yang sama, AI bisa mencampurkan keduanya. Yang membedakan Anda adalah fakta yang hanya Anda miliki."
+   ],
+   "list": [
+    "Tuliskan kota dan bidang usaha di kalimat pertama pengantar.",
+    "Cantumkan fakta yang tidak dimiliki perusahaan bernama sama: tahun pendirian, nomor registrasi, nama direktur utama Anda.",
+    "Di sameAs, hanya cantumkan akun dan profil resmi yang dikelola perusahaan. Jangan sertakan perusahaan bernama sama dan halaman yang tidak Anda kelola.",
+    "Jika merek dan nama perusahaan berbeda, tulis \"Example dikelola oleh Sample Ltd\" di halaman keduanya.",
+    "Google menyebutkan properti seperti iso6523Code dan naics membantu membedakan suatu organisasi. Jika Anda memiliki kode yang relevan, pertimbangkan untuk menambahkannya."
+   ]
+  },
+  {
+   "heading": "Data terstruktur Organization: apa kata dokumentasi Google",
+   "paragraphs": [
+    "Poin-poin utama dokumentasi [data terstruktur Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) dari Google (terakhir diperbarui 15 September 2026; dibaca 15 November):"
+   ],
+   "list": [
+    "Tidak ada properti wajib; Google menyarankan menambahkan sebanyak mungkin properti yang berlaku untuk organisasi Anda.",
+    "Pasang markup di beranda atau di satu halaman yang menjelaskan organisasi, seperti halaman Tentang Kami. Tidak perlu dipasang di setiap halaman.",
+    "Untuk bisnis lokal seperti restoran atau toko, gunakan subtipe LocalBusiness yang paling spesifik dan ikuti juga panduan LocalBusiness.",
+    "foundingDate memakai format ISO 8601 (mis. 2015-04-01).",
+    "Logo harus berukuran minimal 112×112 piksel serta dapat di-crawl dan diindeks."
+   ],
+   "after": [
+    "Google menyebut kesesuaian data terstruktur dengan teks yang terlihat sebagai salah satu hal dasar ([Fitur AI dan situs web Anda](https://developers.google.com/search/docs/appearance/ai-features)). Data terstruktur tidak mengubah jawaban dengan sendirinya. Anggaplah ia sebagai kunci jawaban yang dapat dibaca mesin untuk apa yang sudah dinyatakan halaman, maka prioritas Anda akan tetap tepat. Jangan memasukkan fakta ke data terstruktur yang tidak tertulis di teks halaman."
+   ]
+  },
+  {
+   "heading": "Langkah-langkah di WordPress (dengan Nurevo AEO)",
+   "paragraphs": [
+    "Di situs WordPress, [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) menerbitkan fakta dasar perusahaan Anda sebagai data terstruktur dan di llms.txt. Kerjakan dengan urutan berikut."
+   ],
+   "list": [
+    "Perbaiki dulu teks halaman Tentang Kami sesuai tabel di atas. Teks lebih dulu, baru data terstruktur.",
+    "Pasang plugin dan pilih jenis situs di wizard penyiapan: \"B2B / SaaS\" untuk Organization, kartu yang sesuai untuk toko atau klinik, atau \"Lainnya\" jika tidak ada yang cocok.",
+    "Periksa detail bisnis (nama, deskripsi, alamat, telepon, jam buka, jenis usaha, URL, email). Nilai yang dibaca dari pengaturan Anda yang sudah ada hanya mengisi kolom kosong; apa pun yang sudah Anda ketik tidak pernah ditimpa, dan email administrator WordPress tidak pernah dipakai sebagai email bisnis.",
+    "Samakan nama dan alamat dengan halaman Tentang Kami. Alamat diterbitkan sebagai satu string di dalam PostalAddress, jadi ketik persis seperti yang tertulis di halaman Tentang Kami.",
+    "Logo adalah gambar yang ditetapkan sebagai logo situs pada tema. Pastikan ukurannya minimal 112×112 piksel.",
+    "Bersama Yoast SEO, Rank Math, All in One SEO, atau Slim SEO, Nurevo hanya menambahkan fakta yang belum ada di data terstruktur plugin tersebut, sehingga perusahaan tidak dijelaskan dua kali. Nurevo juga bisa berjalan berdampingan dengan SEO SIMPLE PACK dan VK All in One Expansion Unit (mulai 0.9.1). Jika plugin SEO Anda sudah mengatur nama atau logo, nilai dari plugin itulah yang dipakai, jadi jaga agar keduanya selaras.",
+    "Untuk menambahkan nama resmi (legalName), nama lain (alternateName), tanggal pendirian (foundingDate), atau akun resmi (sameAs), gunakan filter pengembang webmcp_canary_business_node. Semua itu bukan kolom di formulir detail bisnis Nurevo.",
+    "Jalankan diagnosis di layar Skor AEO, lalu buka /llms.txt dan pastikan halaman Tentang Kami tercantum. llms.txt memuat 30 halaman dan pos yang paling baru diperbarui; jika halaman Tentang Kami tidak termasuk, tambahkan satu baris dengan filter webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "Pemeriksaan yang sama berlaku untuk situs yang tidak dibangun dengan WordPress. Masukkan URL Anda ke [pemeriksaan gratis](/check), tanpa perlu mendaftar, untuk melihat kondisi data terstruktur, llms.txt, dan akses crawler AI."
+   ]
+  },
+  {
+   "heading": "Cara memeriksa: pertanyaan dengan dan tanpa nama Anda",
+   "paragraphs": [
+    "Periksa hasil pekerjaan pada halaman Tentang Kami dengan pertanyaan yang menyertakan nama perusahaan Anda. Ajukan pertanyaan yang sama kepada AI yang sama di hari yang berbeda, beberapa kali, dan catat jawabannya. Jangan menilai dari satu jawaban saja."
+   ],
+   "table": {
+    "head": [
+     "Yang dicatat",
+     "Contoh"
+    ],
+    "rows": [
+     [
+      "Tanggal, AI, pertanyaan",
+      "15 Nov, Perplexity, \"Apa itu Sample Ltd? Kapan didirikan dan apa bidang usahanya?\""
+     ],
+     [
+      "Fakta dalam jawaban",
+      "Alamat, tanggal pendirian, pimpinan, bidang usaha: benar atau salah, satu per satu"
+     ],
+     [
+      "Sumber",
+      "Apakah halaman Tentang Kami Anda yang dikutip, atau situs lain?"
+     ],
+     [
+      "Asal kesalahan",
+      "Apakah halaman yang dikutip masih menampilkan alamat lama?"
+     ]
+    ]
+   },
+   "after": [
+    "Pemeriksaan AI gratis dari Nurevo (sebulan sekali, untuk situs Free dan Standard yang terhubung) mengajukan pertanyaan yang disusun dari jenis usaha dan wilayah Anda, tanpa menyebut nama Anda. Hasilnya menunjukkan apakah orang yang belum tahu nama Anda bisa menemukan Anda; akurasi fakta perusahaan tetap perlu diperiksa secara manual dengan tabel di atas. Pengukuran visibilitas di Pro (beta) saat ini mencakup Perplexity. Metode lengkapnya ada di [cara mengukur visibilitas AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Daftar periksa halaman Tentang Kami",
+   "list": [
+    "Dua atau tiga kalimat di atas tabel menyebutkan nama, lokasi, dan bidang usaha.",
+    "Hubungan antara nama resmi, merek, dan nama dalam bahasa lain (jika ada) ditulis dalam kalimat.",
+    "Alamat dan telepon ditulis dengan cara yang sama di setiap halaman situs.",
+    "Tanggal pendirian, pimpinan, dan jumlah karyawan sudah benar dan bertanggal.",
+    "Pergantian nama dan perpindahan kantor tercantum di riwayat perusahaan, lengkap dengan yang lama dan yang baru.",
+    "Halaman Tentang Kami bukan sekadar gambar atau PDF.",
+    "Organization (atau untuk toko, subtipe LocalBusiness yang paling spesifik) ada di beranda atau halaman Tentang Kami, dan nilainya sesuai dengan teks.",
+    "sameAs hanya mencantumkan akun yang dikelola perusahaan.",
+    "Profil Bisnis Google dan profil lain memakai ejaan yang sama.",
+    "Halaman diakhiri dengan tanggal terakhir diperbarui.",
+    "Anda sudah memeriksa dengan pertanyaan yang menyebut nama Anda, di hari yang berbeda, dan mencatat hasilnya."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Apakah saya perlu halaman Tentang Kami yang terpisah dari beranda?",
+   "a": "Tidak, jika beranda sudah merangkum fakta dasar perusahaan. Google menyarankan memasang markup Organization di beranda atau di satu halaman yang menjelaskan organisasi. Jika beranda Anda sebagian besar membahas layanan, halaman Tentang Kami yang terpisah membuat fakta-fakta itu terkumpul di satu tempat."
+  },
+  {
+   "q": "Apakah halaman Tentang Kami yang hanya berisi tabel bermasalah?",
+   "a": "Tidak. Tabel mudah dibaca. Namun tabel tidak memuat kalimat yang menyatakan perusahaan itu apa, jadi tambahkan dua atau tiga kalimat pengantar di atasnya."
+  },
+  {
+   "q": "Apakah data terstruktur Organization harus ada di setiap halaman?",
+   "a": "Menurut Google, tidak perlu: beranda atau satu halaman seperti Tentang Kami sudah cukup. Jika plugin SEO Anda mencetaknya di setiap halaman, itu tidak masalah selama nilainya benar."
+  },
+  {
+   "q": "Apakah nomor registrasi perusahaan kami dimasukkan ke taxID?",
+   "a": "Google menjelaskan taxID sebagai nomor pajak untuk negara pada alamat Anda. Jika nomor Anda memang itu, cocok; jika berupa jenis pengenal lain, Google tidak menjelaskannya. Cantumkan dulu di halaman, lalu putuskan apakah akan diberi markup."
+  },
+  {
+   "q": "Bagaimana memastikan orang yang menanyakan nama lama kami menemukan perusahaan yang sekarang?",
+   "a": "Tulis kedua nama di riwayat perusahaan (\"Pada Maret 20XX perusahaan berganti nama dari Old Name Ltd\") dan sebutkan juga di pengantar. Jika profil di tempat lain masih menampilkan nama lama, minta penerbitnya memperbaruinya."
+  },
+  {
+   "q": "Jawaban AI salah menyebutkan fakta perusahaan kami. Apa yang harus kami lakukan?",
+   "a": "Anda tidak bisa mengedit jawaban AI secara langsung. Telusuri sumbernya: perbaiki halaman Tentang Kami dan halaman lain di situs Anda sendiri, lalu minta penerbit lain memperbaiki milik mereka. Tidak ada waktu pasti kapan perbaikan akan terlihat."
+  },
+  {
+   "q": "Jika kami mengikuti langkah-langkah ini, apakah AI akan selalu menjelaskan kami dengan benar?",
+   "a": "Hal itu tidak bisa dijamin; jawaban AI berubah dari hari ke hari dan tergantung cara bertanya. Langkah-langkah ini membuat informasi yang dibaca AI akurat dan konsisten, sehingga kesalahan lebih kecil kemungkinannya."
+  }
+ ],
+ "relatedHeading": "Panduan terkait",
+ "cta": {
+  "heading": "Lihat bagaimana AI membaca fakta perusahaan Anda",
+  "body": "Pemeriksaan gratis tanpa perlu mendaftar: masukkan URL Anda untuk melihat kondisi data terstruktur, llms.txt, dan akses crawler AI. Di WordPress, plugin gratis menerbitkan fakta dasar perusahaan Anda sebagai data terstruktur.",
+  "label": "Jalankan pemeriksaan keterbacaan AI gratis",
+  "href": "/check",
+  "secondary": {
+   "label": "Coba plugin WordPress gratis",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT adalah merek dagang OpenAI, Perplexity milik Perplexity AI, dan Google milik Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, dan WordPress adalah merek dagang dari pemiliknya masing-masing. Nurevo tidak berafiliasi dengan maupun didukung oleh perusahaan-perusahaan tersebut."
+}

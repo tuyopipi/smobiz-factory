@@ -1,0 +1,347 @@
+{
+ "title": "Een reserveringspagina die AI goed leest | Nurevo",
+ "description": "Laat AI \"moet ik reserveren?\" en \"zijn er annuleringskosten?\" goed beantwoorden: wat een reserveringspagina nodig heeft, boeken in AI, schema, WordPress-stappen.",
+ "h1": "Zo schrijf je een reserveringspagina die AI goed leest: manieren van reserveren, deadlines, annuleringsregels en hoe reserveren binnen AI werkt",
+ "lead": "Wil je dat AI vragen over reserveren goed beantwoordt, kies dan één reserveringspagina op je eigen site en schrijf daarop, als HTML-tekst en niet in een afbeelding of een ingesloten reserveringswidget: hoe je reserveert (online, telefonisch, via berichten), of reserveren verplicht is en wat er gebeurt met mensen die zonder reservering langskomen, tot wanneer en hoe ver vooruit je reserveringen aanneemt, de annuleringstermijn en -kosten, en de lijst met officiële plekken om te reserveren. Per november 2026 werkt reserveren binnen ChatGPT of de AI van Google vooral voor restaurants, via reserveringsplatforms zoals OpenTable. Je eigen reserveringspagina is waar AI je reserveringsregels leest, of je nu op zo'n platform staat of niet.",
+ "intro": [
+  "Geschreven op 21 november 2026 (JST). Hoe je openingstijden schrijft, staat in [openingstijden en feestdagen](/guide/business-hours-holidays-ai-search), en prijzen in [zo schrijf je een prijspagina](/guide/pricing-page-ai-search). Deze gids gaat over de reserveringspagina die kapsalons, praktijken, restaurants, studio's, logiesverstrekkers en servicebedrijven aan huis allemaal gemeen hebben.",
+  "AI-antwoorden veranderen per dag, per formulering en per dienst. De stappen hier leveren een pagina op waarvan AI de reserveringsregels minder snel verkeerd leest, en laten zien hoe je dat controleert; ze garanderen niet dat je in een antwoord verschijnt of binnen een AI te reserveren wordt."
+ ],
+ "sections": [
+  {
+   "heading": "Het korte antwoord: vijf redenen waarom AI reserveringen verkeerd weergeeft, en de oplossing voor elk",
+   "table": {
+    "head": [
+     "Oorzaak",
+     "Wat er in AI-antwoorden gebeurt",
+     "Oplossing"
+    ],
+    "rows": [
+     [
+      "De reserveringsregels staan alleen in een ingesloten widget of een afbeelding",
+      "AI kan alleen zeggen \"kijk op de officiële website hoe je reserveert\"",
+      "Schrijf de manier van reserveren, de deadlines en de annuleringsregels als tekst op de reserveringspagina"
+     ],
+     [
+      "\"Reserveren gewenst\" of \"op afspraak\" wordt niet uitgelegd",
+      "AI zegt verkeerd of je zonder reservering welkom bent",
+      "Zeg wat er gebeurt zonder reservering: \"Zonder reservering welkom als er plek is (reken op wachttijd)\""
+     ],
+     [
+      "Meerdere plekken om te reserveren, geen ervan als officieel aangeduid",
+      "AI stuurt mensen naar een oude reserveringssite of een afgesloten nummer",
+      "Vermeld de kanalen die je gebruikt en leg per dienst één officiële reserverings-URL vast"
+     ],
+     [
+      "Geen annuleringstermijn of -kosten, of andere regels op elke site",
+      "AI zegt dat annuleren gratis is, of noemt de regel van een ander bedrijf",
+      "Schrijf termijn, kosten en manier van annuleren op één plek en stem de reserveringssites daarop af"
+     ],
+     [
+      "Voor de reserveringspagina is een login of account nodig",
+      "AI kan niet eens zeggen of je reserveringen aanneemt",
+      "Houd een openbare pagina met de regels en zet het reserveringsformulier daarachter"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Hoe reserveren binnen AI werkt (november 2026)",
+   "paragraphs": [
+    "Steeds meer bedrijven vragen hoe ze in ChatGPT te reserveren worden. Voorlopig loopt reserveren binnen een AI via koppelingen met reserveringsplatforms. Er bestaat geen tag die je op je site zet om een reserveringsknop toe te voegen. De tabel zet op een rij wat de officiële aankondigingen zeggen."
+   ],
+   "table": {
+    "head": [
+     "Dienst",
+     "Wat het doet",
+     "Voor wie",
+     "Bron"
+    ],
+    "rows": [
+     [
+      "ChatGPT (restaurantreserveringen)",
+      "Toont beschikbare tijden in het antwoord en zet de reservering in gang",
+      "OpenTable wereldwijd, Resy in de VS, Yelp in de VS en Canada. De Reserve-knop verschijnt alleen als ChatGPT het restaurant kan koppelen aan een vermelding bij een ondersteunde aanbieder. ChatGPT slaat de reservering niet op; wijzigingen en annuleringen lopen via de aanbieder",
+      "[OpenAI Help](https://help.openai.com/en/articles/9237897-chatgpt-search) (gecontroleerd op 2026-11-21), [Resy (2026-08-10)](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "AI Mode in Google Zoeken (agentisch reserveren)",
+      "Zoekt beschikbaarheid die bij de vraag past en linkt naar de reserveringspagina",
+      "Gestart op 2025-08-21 met restaurants, voor abonnees van Google AI Ultra in de VS (Labs). Restaurantreserveringen in het VK vanaf 2026-04-10. Genoemde partners zijn onder meer OpenTable, Resy, Tock en TheFork",
+      "[Google (2025-08-21)](https://blog.google/products/search/ai-mode-agentic-personalized/), [Google UK (2026-04-10)](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Google Bedrijfsprofiel",
+      "Toont reserveringslinks op je profiel",
+      "Geverifieerde profielen. Je kunt een eigen link toevoegen, of verschijnen via een reserveringsaanbieder van Reserve with Google",
+      "[Beleid voor bedrijfslinks](https://support.google.com/business/answer/13769188), [Reserveringen via een aanbieder](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "De reserveringen in ChatGPT zijn opgebouwd uit lijsten met restaurants die reserveringsplatforms naar OpenAI sturen. Elk record hoort de URL van de eigen website van het restaurant en de URL van de vermelding op het platform te bevatten ([OpenAI: conversiespecificatie voor restaurantreserveringen](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec), geschreven voor reserveringsplatforms).",
+    "De reserveringsknop binnen een AI hangt dus af van je reserveringsplatform. Wat een bedrijf zelf in de hand heeft, is de vermeldingen op platforms correct houden en de reserveringsregels goed op de eigen site zetten. Ook zonder reserveringsknop antwoordt een AI op \"moet ik reserveren?\" of \"zijn er annuleringskosten?\" op basis van je site en van review- en vermeldingssites. De rest van deze gids gaat erover hoe je dat antwoord juist krijgt."
+   ]
+  },
+  {
+   "heading": "Wat de best scorende artikelen behandelen, en wat ze missen",
+   "paragraphs": [
+    "We lazen de best scorende Japanse en Engelse artikelen voor zoekopdrachten zoals \"reserveringspagina AI-zoeken\" (2026-11-21). De meeste gaan over lokale zichtbaarheid in AI in het algemeen (consistente bedrijfsgegevens, meer reviews). Weinig artikelen leggen stap voor stap uit hoe je de reserveringspagina zelf schrijft, en bijna geen enkel geeft een voorbeeld van gestructureerde gegevens of WordPress-stappen."
+   ],
+   "table": {
+    "head": [
+     "Artikel",
+     "Sterk in",
+     "Ontbreekt"
+    ],
+    "rows": [
+     [
+      "[Uravation, telefoon- en reserveringsroutes (bijgewerkt 2026-09-05, Japans)](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "Niet te veel leunen op ReserveAction, één vaste reserverings-URL, meten in GA4",
+      "Een JSON-LD-voorbeeld, WordPress-stappen, omgaan met meerdere reserveringssites"
+     ],
+     [
+      "[Uravation, belevenissen en tours (2026-10-12, Japans)](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "Eén pagina per belevenis; voorwaarden opschrijven zoals afgelasting bij regen en duur",
+      "Alleen tours en activiteiten. Geen code, geen WordPress"
+     ],
+     [
+      "[GMO lokale AIO (bijgewerkt 2026-11-16, Japans)](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/) en [AIsmiley (bijgewerkt 2026-10-30, Japans)](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "Inrichten van Google Bedrijfsprofiel / wat restaurantreserveringen in ChatGPT in Japan omvatten",
+      "Statistieken zonder bron (GMO). Niets over de eigen reserveringspagina van het bedrijf (AIsmiley)"
+     ],
+     [
+      "[LSEO reserveren, prijzen en beschikbaarheid (2026-10-02)](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/) en [LSEO loodgieter (2026-04-24)](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "Een eerlijke opmerking: er bestaat geen universeel reserveringsschema, en beschikbaarheid hoort uit live systemen te komen",
+      "Geen stappenplan, geen bronnen, geen WordPress"
+     ],
+     [
+      "[J.A. Watte, logies (bijgewerkt 2026-11-06)](https://jwatte.com/blog/lodging-sites-ai-agents-booking/), [Owner, restaurants (2026-10-22)](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search) en [Mindbody (2026-10-13)](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "Reserveringslinks en prijzen inclusief belasting (logies), menu's als tekst (restaurants), een dienstenpagina (fitness)",
+      "Elk beperkt tot één sector; sterk gericht op eigen producten"
+     ]
+    ]
+   },
+   "after": [
+    "Deze gids behandelt, voor elk bedrijf dat reserveringen aanneemt, wat je op de reserveringspagina zet, hoe je meerdere reserveringskanalen ordent, gestructureerde gegevens, WordPress-stappen en hoe je het resultaat controleert."
+   ]
+  },
+  {
+   "heading": "Acht feiten die elke reserveringspagina nodig heeft",
+   "paragraphs": [
+    "Vragen over reserveren vallen grofweg in acht soorten uiteen. Geef elk ervan een alinea van een of twee zinnen, of een tabelrij, in de tekst van de reserveringspagina."
+   ],
+   "table": {
+    "head": [
+     "Feit",
+     "Voorbeeld",
+     "De vraag die AI krijgt"
+    ],
+    "rows": [
+     [
+      "Hoe je reserveert",
+      "Online 24 uur per dag, telefonisch van 10.00 tot 19.00 uur, via berichten (antwoord tijdens openingstijden)",
+      "\"Hoe reserveer ik bij (bedrijf)?\""
+     ],
+     [
+      "Of reserveren verplicht is",
+      "Op afspraak. Zonder reservering welkom als er plek is (reken op wachttijd)",
+      "\"Kan ik gewoon binnenlopen?\""
+     ],
+     [
+      "Deadline",
+      "Tot 20.00 uur de dag ervoor. Dezelfde dag alleen telefonisch",
+      "\"Kan ik voor vandaag reserveren?\""
+     ],
+     [
+      "Hoe ver vooruit",
+      "Tot twee maanden vooruit",
+      "\"Kan ik al voor volgende maand reserveren?\""
+     ],
+     [
+      "Duur",
+      "Knippen duurt ongeveer 60 minuten",
+      "\"Hoe lang duurt het?\""
+     ],
+     [
+      "Annuleren",
+      "Gratis tot de dag ervoor. Bij annulering op dezelfde dag rekenen we 50%. Annuleren gaat telefonisch",
+      "\"Zijn er annuleringskosten?\""
+     ],
+     [
+      "Betaling en aanbetaling",
+      "Geen betaling bij reserveren. Betalen op de dag zelf contant, met kaart of mobiel",
+      "\"Moet ik vooraf betalen?\""
+     ],
+     [
+      "Voor wie, wat meenemen",
+      "Eerste bezoek: kom 10 minuten eerder om een formulier in te vullen. Kinderen welkom",
+      "\"Kan ik er voor een eerste bezoek terecht?\" \"Mag ik mijn kinderen meenemen?\""
+     ]
+    ]
+   },
+   "after": [
+    "Zorg dat elke zin op zichzelf begrijpelijk is. AI licht soms één zin eruit om te antwoorden, dus vermijd zinsdelen die op de omgeving leunen, zoals \"zie hierboven\" of \"klik hier\". Zwak: \"Reserveer hier. Laat het ons tijdig weten als je moet annuleren.\" Sterk: \"Online reserveren kan 24 uur per dag, telefonisch van 10.00 tot 19.00 uur. Annuleren is gratis tot de dag ervoor; bij annulering op dezelfde dag rekenen we 50% van de prijs.\"",
+    "Zeg wat er verandert met en zonder reservering. Gaan klanten met een reservering voor, schrijf dan \"Klanten zonder reservering helpen we tussen de afspraken door.\" Werk je strikt op afspraak, schrijf dan \"Zonder reservering kunnen we je helaas niet helpen.\" Dat vermindert antwoorden die ten onrechte zeggen \"reserveren is niet nodig\"."
+   ]
+  },
+  {
+   "heading": "Meerdere reserveringssites: bepaal welke kanalen officieel zijn",
+   "paragraphs": [
+    "Kapsalons en restaurants nemen vaak op meerdere plekken reserveringen aan: hun eigen systeem, reserveringssites, telefoon, berichten. AI geeft elk reserveringskanaal door dat hij vindt, dus een reserveringssite waar je mee gestopt bent of een oud telefoonnummer kan in het antwoord belanden. Breng orde aan in deze volgorde."
+   ],
+   "list": [
+    "Maak een lijst van elk kanaal waarlangs je reserveringen aanneemt (eigen systeem, reserveringssites, de reserveringslink in je Google Bedrijfsprofiel, telefoon, berichten, DM's op sociale media)",
+    "Verwijder vermeldingen op kanalen die je niet meer gebruikt, of markeer ze als \"neemt geen reserveringen meer aan\"",
+    "Schrijf op de reserveringspagina \"Je kunt op deze manieren reserveren\" en vermeld alleen de kanalen die je gebruikt",
+    "Heeft elke dienst een eigen reserverings-URL, leg dan per dienst één officiële URL vast (een directe link naar het reserveringsscherm van die dienst is beter dan een link naar je homepage)",
+    "Gebruik dezelfde annuleringsregels en deadlines op je site en op elke reserveringssite. Waar ze verschillen, zeg dan welke regel voor welk kanaal geldt",
+    "Link vanuit profielen op reserveringssites en vanuit de beschrijving van je Google Bedrijfsprofiel terug naar je eigen reserveringspagina"
+   ],
+   "after": [
+    "Voor reserveringslinks in Google Bedrijfsprofiel gelden regels: het profiel moet geverifieerd zijn; de link moet leiden naar een pagina die speciaal voor je bedrijf is en waar de reservering kan worden afgerond; sociale media, berichtenapps, appstores en linkverkorters zijn niet toegestaan; de pagina moet openen zonder login of CAPTCHA en 200 teruggeven ([Beleid voor bedrijfslinks](https://support.google.com/business/answer/13769188)). Je kunt ook verschijnen via een reserveringsaanbieder die met Reserve with Google werkt; Google zegt dat eigen links die je zelf toevoegt geen prestatiegegevens krijgen ([Reserveringen via een aanbieder](https://support.google.com/business/answer/7475773))."
+   ]
+  },
+  {
+   "heading": "Schrijf geen beschikbaarheid op. Schrijf hoe je die controleert",
+   "paragraphs": [
+    "Schrijf je \"op zaterdag is het meestal rustig\" of \"doordeweeks hoef je niet te reserveren\", dan kan een AI die zin blijven gebruiken als de situatie al veranderd is. Geen enkele AI-dienst maakt bekend hoe vaak hij een pagina opnieuw leest. Zie beschikbaarheid als iets wat je reserveringssysteem toont, en schrijf in plaats daarvan hoe je die controleert: \"Bekijk de beschikbare tijden in het online reserveringsscherm. Bel ons voor beschikbaarheid op dezelfde dag.\"",
+    "Noem je drukke momenten, formuleer ze dan als een vast patroon: \"In het weekend is het 's middags druk, dus we raden reserveren aan.\" Het rustiger laten lijken dan het is, misleidt zowel mensen als AI."
+   ]
+  },
+  {
+   "heading": "Maak het leesbaar: controleer insluitingen, afbeeldingen en logins",
+   "paragraphs": [
+    "Veel reserveringssystemen tonen hun scherm als insluiting van een andere site (een iframe) of via JavaScript. Mensen kunnen het zien, maar of AI de tekst binnen een insluiting als deel van je pagina leest, verschilt per dienst en wordt niet bekendgemaakt. Schrijf de reserveringsregels buiten de insluiting, in de eigen tekst van de reserveringspagina. Het reserveringsformulier zelf mag ingesloten blijven.",
+    "Met deze opdracht zie je of je reserveringspagina opent zonder login en de regels in de HTML bevat."
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "OpenAI zegt dat je, om in ChatGPT search te worden opgenomen, OAI-SearchBot moet toestaan je site te crawlen en moet zorgen dat je host of CDN verkeer van de door OpenAI gepubliceerde IP-adressen toelaat ([OpenAI Help](https://help.openai.com/en/articles/9237897-chatgpt-search)). Controleer dat botbescherming niet juist de reserveringspagina blokkeert. Voor bedrijven die willen dat AI-agents reserveringen voor klanten afronden, raadt Stripe aan de botbescherming te herzien en WebMCP te overwegen, maar dat is een verdere stap die ook betalingen omvat ([Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services))."
+   ]
+  },
+  {
+   "heading": "Gestructureerde gegevens: ReserveAction mag je toevoegen, maar verwacht er niet veel van",
+   "paragraphs": [
+    "schema.org kent [ReserveAction](https://schema.org/ReserveAction), de handeling van het maken van een reservering, en daarmee kun je een reserverings-URL aan een dienst koppelen. Maar we vonden geen officiële verklaring van ChatGPT, Perplexity of de AI-functies van Google dat ze ReserveAction voor reserveringen gebruiken. Google zegt dat AI-functies geen speciale gestructureerde gegevens nodig hebben en dat gestructureerde gegevens moeten overeenkomen met de zichtbare tekst ([AI-functies en je website](https://developers.google.com/search/docs/appearance/ai-features), gecontroleerd op 2026-11-18). Toevoegen kan weinig kwaad, maar er verschijnt geen reserveringsknop door.",
+    "Voeg je het toe, koppel dan elke Service zo aan de bijbehorende reserverings-URL. Het is dezelfde vorm die Nurevo AIO publiceert."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "Het belangrijkste is dat je geen losse Reservation schrijft. Een losse Reservation zegt dat er al een reservering bestaat, wat niet klopt. Als result van een ReserveAction zegt het \"deze handeling levert een reservering op\". Controleer de syntaxis met de [Schema Markup Validator](https://validator.schema.org/)."
+   ]
+  },
+  {
+   "heading": "Stappen in WordPress (met Nurevo AIO)",
+   "paragraphs": [
+    "Met [Nurevo AIO (gratis, voorheen weergegeven als Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) wordt de reserverings-URL die je per dienst invult onder Diensten in Instellingen gepubliceerd als ReserveAction in de gestructureerde gegevens van Service en in llms.txt. Werk in deze volgorde."
+   ],
+   "list": [
+    "Corrigeer eerst de tekst van de reserveringspagina aan de hand van de acht feiten hierboven (paginatekst gaat vóór gestructureerde gegevens)",
+    "Voeg je diensten toe (maximaal 20). Zet naast Dienstnaam, Duur (minuten), Prijs en Valuta de URL van het reserveringsscherm van die dienst in Reserverings-URL",
+    "Bij diensten met een reserverings-URL linkt de dienstnaam in llms.txt daarnaartoe (bijvoorbeeld: - [Knippen](https://example.com/book/haircut/) — 60 min · USD 55.00)",
+    "Er wordt niets uitgelezen uit reserveringsplugins zoals Amelia. Dat is bewust, zodat een verkeerde duur of reserverings-URL nooit als feit wordt gepubliceerd; vul de waarden met de hand in",
+    "Vul het ID van de reserverings- of menupagina in als de pagina met de diensten; de Service-markup komt dan op die pagina (0 = voorpagina)",
+    "Zet annuleringskosten, reserveren op dezelfde dag en binnenlopen zonder afspraak in je FAQ. Het dupliceert Yoast SEO, Rank Math, All in One SEO of Slim SEO niet, en werkt samen met SEO SIMPLE PACK en VK All in One Expansion Unit (vanaf 0.9.1)",
+    "Verander je van reserveringskanaal, werk dan op dezelfde dag de paginatekst, de reserverings-URL's in Nurevo, de FAQ-antwoorden en je Google Bedrijfsprofiel bij"
+   ],
+   "after": [
+    "Bureaus die sites van klanten onderhouden, kunnen \"wijzigingen in reserveringskanalen\" in het onderhoudspakket opnemen, zodat er niet telkens een oude URL achterblijft wanneer een klant van reserveringssite wisselt. Voor bureaus die maandelijkse ondersteuning bieden, is er een [partnerprogramma](https://nurevo.jp/partner/)."
+   ]
+  },
+  {
+   "heading": "Zo controleer je het: leg je reserveringsvragen vast en houd een logboek bij",
+   "paragraphs": [
+    "Wil je zien of je reserveringsregels goed overkomen, stel dan dezelfde vragen aan dezelfde AI op verschillende dagen en noteer de antwoorden. Oordeel niet op basis van één antwoord."
+   ],
+   "table": {
+    "head": [
+     "Vraag",
+     "Waar je op let"
+    ],
+    "rows": [
+     [
+      "\"Moet ik reserveren bij (bedrijf)?\"",
+      "Klopt wat het zegt over alleen op afspraak tegenover zonder reservering welkom?"
+     ],
+     [
+      "\"Kan ik bij (bedrijf) voor vandaag reserveren?\"",
+      "Kloppen de deadline en de manier (alleen telefonisch enz.)?"
+     ],
+     [
+      "\"Wat zijn de annuleringskosten van (bedrijf)?\"",
+      "Kloppen termijn en kosten? Is de bron een oude reserveringssite?"
+     ],
+     [
+      "\"Hoe reserveer ik bij (bedrijf)?\"",
+      "Is het genoemde kanaal er een dat je nu gebruikt?"
+     ],
+     [
+      "\"Welke (type bedrijf) in (regio) kan ik vandaag reserveren?\"",
+      "Sta je in de lijst bij een vraag zonder je naam? Verschijnt er een reserveringsknop (restaurants)?"
+     ]
+    ]
+   },
+   "after": [
+    "Noteer de datum, de AI-dienst, de vraag, het antwoord en de bron-URL. Is de bron een oude reserveringssite of een oud blogbericht, corrigeer dat dan. Bij de abonnementen Free en Standard van Nurevo stelt de Nurevo-dienst eens per maand drie vragen zonder je naam aan Perplexity, opgebouwd uit je type bedrijf en regio, en laat zien of je naam verscheen en of je site werd geciteerd. Pro (vanaf $99/maand, bèta) meet tot 20 vragen op Perplexity (ChatGPT zodra ingesteld). Noteer reserveringsvragen met de hand. Zie [AI-zichtbaarheid meten](/guide/measure-ai-visibility) voor meer."
+   ]
+  },
+  {
+   "heading": "Checklist vóór publicatie",
+   "list": [
+    "Er is één reserveringspagina, en die opent zonder login",
+    "Hoe je reserveert en wanneer reserveringen worden aangenomen, staat als tekst",
+    "Er staat of reserveren verplicht is, en wat er zonder reservering gebeurt",
+    "De deadline (dezelfde dag, dag ervoor) en hoe ver vooruit je kunt reserveren staan vermeld",
+    "Annuleringstermijn, -kosten en manier van annuleren staan vermeld en komen overeen met de reserveringssites",
+    "Alleen kanalen die je gebruikt worden vermeld; oude zijn verdwenen",
+    "De pagina zegt hoe je beschikbaarheid controleert in plaats van beschikbaarheid te noemen",
+    "De reserveringsregels staan in de paginatekst, buiten insluitingen en afbeeldingen",
+    "De reserverings-URL's in de gestructureerde gegevens wijzen naar de reserveringsschermen die je nu gebruikt",
+    "De reserveringslink in je Google Bedrijfsprofiel wijst naar hetzelfde kanaal"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Wat zet ik op mijn site om een Reserve-knop in ChatGPT te krijgen?",
+   "a": "Niets op je site schakelt die in. Volgens de help van OpenAI verschijnt de Reserve-knop alleen als ChatGPT het restaurant kan koppelen aan een vermelding bij een ondersteunde aanbieder (OpenTable, Resy, Yelp). Wat je wel kunt doen, is je reserveringsregels goed op je site zetten en je vermeldingen op reserveringsplatforms juist houden."
+  },
+  {
+   "q": "Levert ReserveAction toevoegen reserveringen via AI op?",
+   "a": "We vonden geen officiële verklaring dat dat zo is. ReserveAction kan weinig kwaad, maar er is geen voordeel voor reserveringen aangetoond. Zet eerst de reserveringsregels goed in je paginatekst."
+  },
+  {
+   "q": "Onze reserveringspagina is alleen een ingesloten widget zonder tekst.",
+   "a": "Of AI de tekst binnen een insluiting als deel van je pagina leest, verschilt per dienst en wordt niet bekendgemaakt. Het formulier mag ingesloten blijven; schrijf de manieren van reserveren, deadlines en annuleringsregels als tekst erboven of eronder."
+  },
+  {
+   "q": "De annuleringsregels van onze reserveringssite verschillen van die op onze eigen site.",
+   "a": "Je weet niet welke een AI zal citeren. Maak ze gelijk als dat kan; zo niet, zeg dan welke regel voor welk kanaal geldt, bijvoorbeeld \"Online reserveringen kun je tot de dag ervoor gratis annuleren; voor reserveringen via reserveringssites gelden de regels van die site.\""
+  },
+  {
+   "q": "Helpt het als we onze beschikbaarheid op de site zetten om in AI te verschijnen?",
+   "a": "Beschikbaarheid verandert, dus als je die in de paginatekst zet, loop je het risico dat oude informatie in AI-antwoorden blijft hangen. Schrijf hoe je beschikbaarheid controleert, en laat het reserveringssysteem de beschikbaarheid zelf tonen."
+  },
+  {
+   "q": "Worden andere bedrijven dan restaurants binnen AI te reserveren?",
+   "a": "In augustus 2025 zei Google dat agentisch reserveren in AI Mode zou worden uitgebreid naar afspraken bij lokale dienstverleners, te beginnen in de VS. Controleer de aankondigingen van Google voor jouw land. Wat je nu kunt doen, is je reserveringspagina en de reserveringslink in je Google Bedrijfsprofiel juist houden."
+  },
+  {
+   "q": "Wanneer veranderen AI-antwoorden nadat we de reserveringspagina hebben aangepast?",
+   "a": "Geen enkele AI-dienst maakt bekend hoe lang dat duurt. Controleer met dezelfde vragen enkele dagen tot enkele weken later. Verschijnt er nog een oud reserveringskanaal, bekijk dan de bron-URL en corrigeer die pagina."
+  }
+ ],
+ "relatedHeading": "Gerelateerde gidsen",
+ "cta": {
+  "heading": "Bekijk of AI je site kan lezen",
+  "body": "De gratis check vraagt geen aanmelding: vul een URL in om toegang voor AI-crawlers, gestructureerde gegevens en llms.txt te zien. Op WordPress publiceert de gratis plugin je diensten en reserverings-URL's als gestructureerde gegevens en in llms.txt, zonder de uitvoer van je SEO-plugin te dupliceren.",
+  "label": "Check gratis of je klaar bent voor AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Probeer de gratis WordPress-plugin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT is een handelsmerk van OpenAI; Google, Google Search, Google Business Profile en Reserve with Google van Google LLC; Perplexity van Perplexity AI. OpenTable, Resy, Yelp, Tock, TheFork, Booksy, Stripe, WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, Amelia en de namen van de bedrijven die in deze gids worden genoemd, zijn handelsmerken of gedeponeerde handelsmerken van hun respectieve eigenaars. Nurevo is niet gelieerd aan of onderschreven door een van deze bedrijven."
+}

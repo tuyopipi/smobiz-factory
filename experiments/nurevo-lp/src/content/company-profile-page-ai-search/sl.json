@@ -1,0 +1,316 @@
+{
+ "title": "Stran O nas za iskanje z UI: pravilni podatki o podjetju | Nurevo",
+ "description": "Kako zgraditi stran O nas, na katero se odgovori UI lahko zanesejo: katera dejstva objaviti, kako odpraviti različice imena in naslova, Organization in WordPress.",
+ "h1": "Optimizacija strani O nas za iskanje z UI: da bodo ime podjetja, naslov, datum ustanovitve in dejavnost opisani pravilno",
+ "lead": "Ko nekdo UI vpraša o vašem podjetju po imenu, se odgovor najpogosteje opre na stran O nas oziroma predstavitveno stran podjetja. Na eno stran v navadnem besedilu zapišite uradno ime in imena, ki jih ljudje dejansko uporabljajo, naslov, datum ustanovitve, vodstvo, s čim se ukvarjate in kako vas lahko dosežejo; iste vrednosti objavite kot strukturirane podatke Organization; poskrbite, da bo zapis enak na drugih straneh in v vaših profilih drugje. Ti trije koraki so jedro dela.",
+ "intro": [
+  "Napisano 15. novembra 2026 (JST). Vodnik je namenjen vsakemu podjetju, trgovini ali organizaciji, ki ima stran O nas ali predstavitveno stran podjetja, ter agencijam, ki takšna spletna mesta izdelujejo. Označevanje naslova in delovnega časa za trgovine je opisano v vodniku [shema za lokalna podjetja in vtičniki SEO](/guide/local-business-schema-seo-plugins). Ta vodnik govori o strani, ki pove, kdo ste in kje ste.",
+  "Odgovori UI se spreminjajo iz dneva v dan in glede na formulacijo vprašanja. Ti koraki poskrbijo, da so informacije, ki jih UI prebere, točne; ne zagotavljajo, da se boste pojavili v odgovoru."
+ ],
+ "sections": [
+  {
+   "heading": "Za kaj UI uporablja vašo stran O nas",
+   "paragraphs": [
+    "Iskanje ChatGPT, Perplexity in Googlovi AI Overviews med odgovarjanjem berejo spletne strani in jih prikažejo kot vire. Pri vprašanju, ki omenja podjetje, je očiten kandidat spletno mesto tega podjetja, predvsem stran, ki zbira njegove osnovne podatke. Če je stran O nas ena sama slika ali če sta ime in naslov na vsaki strani zapisana drugače, lahko UI odgovor sestavi iz starega vpisa nekoga drugega ali iz podatkov drugega podjetja z enakim imenom.",
+    "Vprašanja, ki omenjajo podjetje, običajno sodijo v nekaj vzorcev. Na vsakega je mogoče odgovoriti s strani O nas, ki dejstva navaja v besedilu."
+   ],
+   "list": [
+    "„S čim se ukvarja Example d.o.o.?“ (opis dejavnosti)",
+    "„Kje je sedež podjetja Example? Imajo pisarno v Mariboru?“ (lokacije)",
+    "„Kdaj je bilo podjetje Example ustanovljeno in kdo ga vodi?“ (datum ustanovitve, vodstvo)",
+    "„Katero podjetje stoji za aplikacijo Example?“ (blagovna znamka proti imenu podjetja)",
+    "„Je Example isto podjetje kot Sample?“ (nekdanja imena, podjetja v skupini, podjetja z enakim imenom)",
+    "„Kako stopim v stik s podjetjem Example?“ (telefon, obrazec, delovni čas)"
+   ],
+   "after": [
+    "Google pravi, da za prikaz v AI Overviews ali AI Mode ni dodatnih zahtev ne posebnih strukturiranih podatkov in da veljajo običajne dobre prakse SEO ([Google Search Central: funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)). Delo na strani O nas torej ni poseben način pisanja za UI. Gre za to, da dejstva navedete točno, v berljivi obliki in povsod z enakimi vrednostmi."
+   ]
+  },
+  {
+   "heading": "Kaj zapisati na stran in kako se to preslika v strukturirane podatke",
+   "paragraphs": [
+    "Tabela navaja, kaj naj stran O nas vsebuje, katere napake odgovori UI pogosto delajo in katera lastnost Organization ustreza posameznemu podatku. Imena lastnosti izhajajo iz priporočenih lastnosti v Googlovi dokumentaciji [strukturirani podatki Organization](https://developers.google.com/search/docs/appearance/structured-data/organization). „Samo besedilo“ označuje podatke, ki niso med Googlovimi priporočenimi lastnostmi."
+   ],
+   "table": {
+    "head": [
+     "Podatek",
+     "Kako ga zapisati",
+     "Tipična napaka UI",
+     "Strukturirani podatki"
+    ],
+    "rows": [
+     [
+      "Uradno ime",
+      "Registrirano ime navedite enkrat, natanko tako, kot je registrirano",
+      "Zamenjava s podjetjem s podobnim imenom",
+      "legalName (če se razlikuje od name)"
+     ],
+     [
+      "Tržno ime, blagovna znamka, ime v drugem jeziku",
+      "Povežite jih v stavku: „Aplikacijo Example upravlja Sample d.o.o.“",
+      "UI pozna blagovno znamko, ne pa podjetja za njo",
+      "alternateName"
+     ],
+     [
+      "Naslov",
+      "Sedež ločite od drugih lokacij; vse naslove zapišite v enaki obliki, vse do nadstropja",
+      "Naslov pred selitvijo ali podružnica, navedena kot sedež",
+      "address (PostalAddress, eden ali več)"
+     ],
+     [
+      "Kontakt",
+      "Glavna telefonska številka, pot za povpraševanja, delovni čas",
+      "Neposredna številka oddelka ali stara številka",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Ustanovitev",
+      "Celoten datum; če se ustanovitev in vpis v register razlikujeta, navedite oboje",
+      "Zamenjava leta ustanovitve z letom vpisa v register",
+      "foundingDate (ISO 8601, npr. 2015-04-01)"
+     ],
+     [
+      "Vodstvo",
+      "Funkcija in ime; posodobite na dan spremembe",
+      "Navedba prejšnjega direktorja",
+      "Samo besedilo (ni Googlova priporočena lastnost)"
+     ],
+     [
+      "S čim se ukvarjate",
+      "Prvi stavek: kaj, za koga, kje; nato seznam dejavnosti",
+      "Stranska dejavnost, predstavljena kot glavna",
+      "description"
+     ],
+     [
+      "Število zaposlenih, osnovni kapital",
+      "Dodajte „stanje na mesec in leto“",
+      "Ponavljanje stare številke brez datuma",
+      "numberOfEmployees (osnovni kapital: samo besedilo)"
+     ],
+     [
+      "Matična ali davčna številka",
+      "Če jo imate, jo navedite na strani",
+      "Ni mogoče ločiti od podjetja z enakim imenom",
+      "Najprej besedilo (glejte spodaj)"
+     ],
+     [
+      "Uradna družbena omrežja in profili",
+      "Navedite le račune, ki jih upravlja podjetje",
+      "Povezava s podjetjem z enakim imenom ali z lažnim računom",
+      "sameAs"
+     ],
+     [
+      "Logotip",
+      "Ista slika kot logotip spletnega mesta",
+      "Logotip drugega podjetja",
+      "logo (najmanj 112×112 px)"
+     ],
+     [
+      "Zadnja posodobitev",
+      "„Posodobljeno dne ...“ na koncu strani",
+      "Ni mogoče ugotoviti, kako sveži so podatki",
+      "Samo besedilo"
+     ]
+    ]
+   },
+   "after": [
+    "O matičnih in davčnih številkah: Google taxID opisuje kot davčno številko za državo v naslovu (address), vatID pa kot identifikacijsko številko za DDV, kjer ta obstaja. Če je vaša številka davčna številka ali številka za DDV v vaši državi, ti lastnosti ustrezata. Če gre za drugo vrsto identifikatorja, na primer japonsko številko pravne osebe, Google ne pove, ali sodi v taxID, zato jo navedite na strani in se sami odločite, ali jo boste označili.",
+    "Ne napihujte številk. Če število zaposlenih ali strank zaokrožite navzgor, bo UI navajal večjo številko in to je težko popraviti. Navedite točno število in datum, na katerega se nanaša."
+   ]
+  },
+  {
+   "heading": "Kako napisati stran: ne samo tabela in nikoli slika",
+   "paragraphs": [
+    "Veliko strani O nas je zgolj tabela z dvema stolpcema. Tabelo zlahka berejo ljudje in stroji, a sama po sebi nima stavka, ki bi povedal, kaj podjetje je. Nad tabelo dodajte dva ali tri uvodne stavke in UI bo imel besedilo, ki ga lahko neposredno uporabi, ko vas opisuje."
+   ],
+   "list": [
+    "Prvi stavek: uradno ime, kraj in s čim se ukvarjate. Na primer: „Sample d.o.o. iz Celja pomaga malim podjetjem vzpostaviti računovodsko programsko opremo.“",
+    "Drugi stavek: dejstva, ki vas ločijo od podjetij z enakim imenom, na primer kako je blagovna znamka povezana s podjetjem in leto ustanovitve.",
+    "Nato tabela, kot tabela HTML ali seznam z oznakami, nikoli kot slika ali PDF.",
+    "Zgodovina v eni vrstici na leto. Pri spremembi imena, selitvi ali združitvi zapišite staro in novo: „Marca 20XX se je podjetje preimenovalo iz Staro Ime d.o.o.“",
+    "Nagovor ustanovitelja in poslanstvo naj bosta pod ločenimi naslovi, ne med dejstvi.",
+    "Stran končajte z datumom zadnje posodobitve."
+   ],
+   "after": [
+    "schema.org ima za samo stran tip [AboutPage](https://schema.org/AboutPage), nekateri vtičniki SEO pa omogočajo, da ga izberete kot vrsto strani. Ni obvezen in ga lahko uporabite, dokler ni v nasprotju z vašimi drugimi strukturiranimi podatki."
+   ]
+  },
+  {
+   "heading": "Odpravite različice, na svojem spletnem mestu in drugje",
+   "paragraphs": [
+    "UI odgovor sestavi iz več strani. Če je vaše ime ali naslov na vsaki strani zapisan drugače, jih morda ne bo obravnaval kot eno podjetje ali pa bo izbral star zapis. Najprej za vsako od običajnih različic določite eno obliko."
+   ],
+   "table": {
+    "head": [
+     "Različica",
+     "Za kaj se odločiti"
+    ],
+    "rows": [
+     [
+      "Sample d.o.o. / Sample, družba z omejeno odgovornostjo / Sample",
+      "Registrirana oblika, uporabljena povsod, kjer navajate podjetje"
+     ],
+     [
+      "Imena v drugih jezikih ali pisavah",
+      "Ena oblika na jezik, enaka na straneh v tem jeziku, v profilih in na vizitkah"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / z imenom stavbe in brez njega",
+      "En vrstni red in ena odločitev glede imena stavbe in nadstropja"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Ena oblika na jezik, npr. nacionalna oblika na lokalnih straneh in mednarodna na angleških straneh za tuje bralce"
+     ],
+     [
+      "Strani, ki še kažejo staro ime ali naslov",
+      "Spremembo zapišite v zgodovino, nato popravite stare strani"
+     ]
+    ]
+   },
+   "after": [
+    "Kje preveriti na svojem spletnem mestu: stran O nas, noga strani, kontaktna stran, politika zasebnosti, zakonsko obvezni podatki o podjetju, strani o zaposlitvi, sporočila za javnost, polja z avtorji na blogu in predstavitveni PDF.",
+    "Kje preveriti drugje: vaš Google Business Profile, profili na družbenih omrežjih, ki jih upravlja podjetje, portali za zaposlovanje, imeniki strokovnih združenj in lokalni imeniki ter opisi vašega podjetja na spletnih mestih partnerjev. Nekaterih od teh ne morete urediti. Najprej uredite svoje spletno mesto, nato izdajatelja prosite, naj popravi svojega. Ko je odgovor UI že napačen, poiščite njegov vir in vsako vrsto napake popravite tam, kjer nastane."
+   ]
+  },
+  {
+   "heading": "Pomagajte UI, da vas loči od podjetja z enakim imenom",
+   "paragraphs": [
+    "Če je vaše ime pogosta beseda ali če ima drugo podjetje drugje enako ime, lahko UI oba pomeša. Ločijo vas dejstva, ki jih imate samo vi."
+   ],
+   "list": [
+    "Kraj in dejavnost zapišite v prvi stavek uvoda.",
+    "Navedite dejstva, ki jih podjetje z enakim imenom ne bo imelo: leto ustanovitve, matično številko, ime direktorja.",
+    "V sameAs navedite le uradne račune in profile, ki jih upravlja podjetje. Izpustite podjetja z enakim imenom in strani, ki jih ne upravljate.",
+    "Če se blagovna znamka in ime podjetja razlikujeta, na straneh obeh zapišite „Example upravlja Sample d.o.o.“.",
+    "Google pravi, da lastnosti, kot sta iso6523Code in naics, pomagajo razlikovati organizacijo. Če imate ustrezne kode, jih razmislite o dodajanju."
+   ]
+  },
+  {
+   "heading": "Strukturirani podatki Organization: kaj pravi Googlova dokumentacija",
+   "paragraphs": [
+    "Ključne točke Googlove dokumentacije [strukturirani podatki Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) (zadnja posodobitev 15. septembra 2026; prebrano 15. novembra):"
+   ],
+   "list": [
+    "Obveznih lastnosti ni; Google priporoča, da dodate čim več lastnosti, ki veljajo za vašo organizacijo.",
+    "Oznake postavite na domačo stran ali na eno stran, ki opisuje organizacijo, na primer stran O nas. Ni jih treba imeti na vsaki strani.",
+    "Za lokalno podjetje, kot je restavracija ali trgovina, uporabite najbolj specifičen podtip LocalBusiness in upoštevajte tudi smernice za LocalBusiness.",
+    "foundingDate uporablja ISO 8601 (npr. 2015-04-01).",
+    "Logotip mora meriti vsaj 112×112 slikovnih pik ter biti dostopen za pajke in indeksiranje."
+   ],
+   "after": [
+    "Google med osnove uvršča tudi to, da se strukturirani podatki ujemajo z vidnim besedilom ([funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)). Strukturirani podatki sami po sebi ne spremenijo odgovorov. Če jih obravnavate kot strojno berljiv ključ odgovorov za to, kar stran že pove, boste prednostne naloge postavili pravilno. V strukturirane podatke ne vpisujte dejstva, ki ga besedilo strani ne navaja."
+   ]
+  },
+  {
+   "heading": "Koraki v WordPressu (z Nurevo AEO)",
+   "paragraphs": [
+    "Na spletnem mestu WordPress [Nurevo AEO (brezplačno)](https://wordpress.org/plugins/nurevo-webmcp/) objavi osnovne podatke o vašem podjetju kot strukturirane podatke in v llms.txt. Delajte v tem vrstnem redu."
+   ],
+   "list": [
+    "Najprej popravite besedilo strani O nas po zgornji tabeli. Besedilo pred strukturiranimi podatki.",
+    "Namestite vtičnik in v čarovniku za nastavitev izberite vrsto spletnega mesta: „B2B / SaaS“ za Organization, ustrezno kartico za trgovino ali ambulanto ali „Other“ (Drugo), če nobena ne ustreza.",
+    "Preverite podatke o podjetju (ime, opis, naslov, telefon, delovni čas, vrsta podjetja, URL, e-pošta). Vrednosti, prebrane iz obstoječih nastavitev, zapolnijo le prazna polja; kar ste vnesli sami, se nikoli ne prepiše, skrbniški e-poštni naslov WordPressa pa se nikoli ne uporabi kot poslovni e-poštni naslov.",
+    "Ime in naslov uskladite s stranjo O nas. Naslov se objavi kot en niz znotraj PostalAddress, zato ga vnesite natanko tako, kot je zapisan na strani O nas.",
+    "Logotip je slika, nastavljena kot logotip spletnega mesta v temi. Naj meri vsaj 112×112 slikovnih pik.",
+    "Ob Yoast SEO, Rank Math, All in One SEO ali Slim SEO Nurevo doda le dejstva, ki v strukturiranih podatkih tega vtičnika manjkajo, zato podjetje ni opisano dvakrat. Deluje tudi skupaj s SEO SIMPLE PACK in VK All in One Expansion Unit (od različice 0.9.1). Kjer vaš vtičnik SEO že nastavi ime ali logotip, imajo prednost njegove vrednosti, zato oboje vzdržujte usklajeno.",
+    "Za dodajanje uradnega imena (legalName), drugih imen (alternateName), datuma ustanovitve (foundingDate) ali uradnih računov (sameAs) uporabite razvijalski filter webmcp_canary_business_node. To niso polja v Nurevovem obrazcu s podatki o podjetju.",
+    "Na zaslonu Ocena AEO zaženite diagnozo, nato odprite /llms.txt in preverite, ali je stran O nas navedena. llms.txt navaja 30 nazadnje posodobljenih strani in prispevkov; če strani O nas ni med njimi, dodajte vrstico s filtrom webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "Enaki pregledi veljajo za spletna mesta, ki niso zgrajena v WordPressu. Vnesite svoj URL v [brezplačni pregled](/check), brez registracije, in videli boste stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI."
+   ]
+  },
+  {
+   "heading": "Kako preveriti: vprašanja z vašim imenom in brez njega",
+   "paragraphs": [
+    "Delo na strani O nas preverite z vprašanji, ki vsebujejo ime vašega podjetja. Isto vprašanje istemu UI zastavite na različne dni, večkrat, in zapišite odgovore. Ne sodite po enem samem odgovoru."
+   ],
+   "table": {
+    "head": [
+     "Kaj zapisati",
+     "Primer"
+    ],
+    "rows": [
+     [
+      "Datum, UI, vprašanje",
+      "15. nov., Perplexity, „Kaj je Sample d.o.o.? Kdaj je bilo ustanovljeno in s čim se ukvarja?“"
+     ],
+     [
+      "Dejstva v odgovoru",
+      "Naslov, datum ustanovitve, vodstvo, dejavnost: pravilno ali napačno, vsako posebej"
+     ],
+     [
+      "Viri",
+      "Je bila navedena vaša stran O nas ali drugo spletno mesto?"
+     ],
+     [
+      "Od kod izvira napaka",
+      "Ali navedena stran še vedno kaže star naslov?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevov brezplačni pregled UI (enkrat na mesec, za povezana spletna mesta s paketoma Free in Standard) zastavlja vprašanja, sestavljena iz vaše vrste dejavnosti in območja, brez vašega imena. Pove vam, ali vas lahko najdejo ljudje, ki vašega imena ne poznajo; točnost podatkov o podjetju preverite ročno z zgornjo tabelo. Merjenje vidnosti v paketu Pro (beta) trenutno zajema Perplexity. Celotna metoda je opisana v vodniku [kako meriti vidnost v UI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam za stran O nas",
+   "list": [
+    "Dva ali trije stavki nad tabelo navajajo ime, lokacijo in dejavnost.",
+    "Razmerje med uradnim imenom, blagovno znamko in morebitnim imenom v drugem jeziku je zapisano v stavku.",
+    "Naslov in telefon sta na vseh straneh spletnega mesta zapisana enako.",
+    "Datum ustanovitve, vodstvo in število zaposlenih so pravilni in datirani.",
+    "Spremembe imena in selitve so v zgodovini zapisane s staro in novo vrednostjo.",
+    "Stran O nas ni samo slika ali PDF.",
+    "Organization (ali za trgovino najbolj specifičen podtip LocalBusiness) je na domači strani ali strani O nas in njegove vrednosti se ujemajo z besedilom.",
+    "sameAs navaja le račune, ki jih upravlja podjetje.",
+    "Vaš Google Business Profile in drugi profili uporabljajo enak zapis.",
+    "Stran se konča z datumom zadnje posodobitve.",
+    "Preverili ste z vprašanji, ki vsebujejo vaše ime, na različne dni, in zapisali rezultate."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ali potrebujem stran O nas, ločeno od domače strani?",
+   "a": "Ne, če domača stran že zbira osnovne podatke o podjetju. Google priporoča, da oznake Organization postavite na domačo stran ali na eno stran, ki opisuje organizacijo. Če je vaša domača stran večinoma namenjena storitvam, ločena stran O nas ohranja dejstva na enem mestu."
+  },
+  {
+   "q": "Je stran O nas, ki je samo tabela, težava?",
+   "a": "Ne. Tabela je lahko berljiva. Manjka pa ji stavek, ki pove, kaj podjetje je, zato nad njo dodajte dva ali tri uvodne stavke."
+  },
+  {
+   "q": "Ali morajo biti strukturirani podatki Organization na vsaki strani?",
+   "a": "Po Googlu ne: dovolj je domača stran ali ena stran, na primer O nas. Če jih vaš vtičnik SEO izpiše na vsaki strani, je to v redu, dokler so vrednosti pravilne."
+  },
+  {
+   "q": "Ali naj matično številko podjetja vpišemo v taxID?",
+   "a": "Google taxID opisuje kot davčno številko za državo v vašem naslovu. Če je vaša številka to, ustreza; če gre za drugo vrsto identifikatorja, Google tega ne pove. Najprej jo navedite na strani, nato se odločite, ali jo boste označili."
+  },
+  {
+   "q": "Kako zagotovimo, da ljudje, ki sprašujejo po našem nekdanjem imenu, najdejo sedanje podjetje?",
+   "a": "V zgodovino zapišite obe imeni („Marca 20XX se je podjetje preimenovalo iz Staro Ime d.o.o.“) in to omenite v uvodu. Če profili drugje še kažejo staro ime, prosite njihove izdajatelje, naj jih posodobijo."
+  },
+  {
+   "q": "Odgovor UI navaja napačne podatke o našem podjetju. Kaj naj storimo?",
+   "a": "Odgovora UI ne morete neposredno urediti. Poiščite vire: popravite stran O nas in druge strani na svojem spletnem mestu ter prosite druge izdajatelje, naj popravijo svoje. Fiksnega roka, v katerem se popravki pokažejo, ni."
+  },
+  {
+   "q": "Če upoštevamo te korake, nas bo UI vedno opisal pravilno?",
+   "a": "Tega ni mogoče zagotoviti; odgovori UI se spreminjajo iz dneva v dan in glede na formulacijo. Ti koraki poskrbijo, da so informacije, ki jih UI prebere, točne in usklajene, zato so napake manj verjetne."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Poglejte, kako UI bere podatke o vašem podjetju",
+  "body": "Brezplačni pregled ne zahteva registracije: vnesite svoj URL in videli boste stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. V WordPressu brezplačni vtičnik objavi osnovne podatke o vašem podjetju kot strukturirane podatke.",
+  "label": "Zaženite brezplačni pregled berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Preizkusite brezplačni vtičnik za WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI, Google pa družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit in WordPress so blagovne znamke svojih lastnikov. Nurevo ni povezan s temi podjetji in ga ta podjetja ne podpirajo."
+}

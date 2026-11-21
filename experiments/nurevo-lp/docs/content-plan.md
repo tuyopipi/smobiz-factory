@@ -399,3 +399,13 @@
 4. 予約ページ・予約システムをAIに正しく読ませる書き方（外部予約サイトへのリンク・空き状況・キャンセル規定）【全業種】
 5. 次の月曜（11-23）の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
 | 2026-11-20 調査 | research-wordpress-vs-non-wordpress-2026 | WordPress と非WordPress（HTTP 200で到達した14,361件＝WordPress 12,376・非WP 1,985〔海外の非WPの202 1,477件は表から除外、含めた値は本文〕、JSON-LD 88.8% vs 17.6%、llms.txt 29.6% vs 9.8%、6項目すべて24.9% vs 4.7%、日本の非WP 191件：JSON-LD 28.3%〔WP 72.9%〕・robots.txt 45.0%〔95.6%、無し55.0%〕・canonical 42.9%・llms.txt 6.3%〔14.0%、Fisher p=0.002〕・FAQPage差なし p=0.73、AIボットのブロック 日本 非WP 9.3%〔8/86〕vs 1.0%・海外 非WP 13.8%〔89/643〕vs 4.3%、検索用4種は1%未満、7ボット同一の組み合わせ 海外非WP 73/93・WP 268/465、GPTBotブロックでOAI-SearchBot許可 海外WP 346/363、WP どうしでも日本14.0%・海外33.1%〔p<0.001〕、非WPどうしは差なし、構造化データの型表、6項目の分布、限界にJS非実行・meta descriptionの属性順・WP判定の痕跡） | raw_2026-11-12（summary.japanWP・japanNonWP・intlWP と一致） | ja/en | content/research-20261120 |
+| 2026-11-21 8時 | booking-page-ai-search | 予約ページをAIに正しく読ませる書き方（全業種。AIが予約を間違える5つの原因の表、AIの中で予約できる仕組みの表〔ChatGPT：OpenTable全世界・Resy米国・Yelp米国とカナダ、予約ボタンは予約サービスの掲載と結び付いたときだけ・予約は保存しない（OpenAIヘルプ 9237897、2026-11-21確認／Resy 2026-08-10）、予約サービス向け仕様で店ごとに website_url と platform_url／Google AIモード：2025-08-21 米国 AI Ultra（Labs）で飲食店から、英国 2026-04-10／GBP：ビジネスリンクのポリシー 13769188、予約サービス経由 7475773〕、上位記事11本〔Uravation 電話・予約導線・Uravation 体験観光・GMO ローカルAIO・AIsmiley・assist-all／LSEO 2本・Mindbody・Owner・J.A. Watte・Mews〕の表、予約ページに書く8つの事実、予約サイトを複数使うときの6手順、空き状況ではなく確かめ方を書く、埋め込み・ログインの curl 確認、OAI-SearchBot と IP、Stripe のエージェント予約、ReserveAction は付けてよいが公式に使うと書いた資料なし、Nurevo の実際の出力（Service＋ReserveAction＋llms.txt のリンク、予約プラグインは読まない）、確かめ方5問、チェックリスト10、FAQ 7問）。41言語 | 全業種 | content/daily-20261121-08 |
+翻訳の補完ログ：2026-11-21 company-profile-page-ai-search に39言語を追加（41言語）。
+メモ：2026-11-21 8時の回は、OpenAIのヘルプに絶対日付がなく、2026-11-21 に読んだ内容で書いた。ChatGPTやAIモードで日本の予約サイトが連携しているという公式発表は見つからず書いていない。Googleの LocalBusiness ドキュメントに ReserveAction がないという点は Uravation の記述で、Googleの資料は直接読んでいないため本文では使っていない。GMO・Owner・Mindbody などの統計は使っていない。
+翻訳の残り（8時台で補完）：multi-location-business-ai-search から順に（前回の一覧から company-profile-page-ai-search を除いたもの）
+次の候補：
+1. 美容皮膚科・美容クリニックのAI検索対策（自由診療の限定解除・料金とリスクの同じページ表示）【業種別】
+2. 制作会社向け：お客様に渡すAI検索対策の社内向け説明資料（担当者が上司に説明するための1枚）【制作会社向け】
+3. 比較サイト・ポータルに載っている自社情報の直し方（掲載先の一覧と更新依頼の文例）【全業種】
+4. アクセス・駐車場・行き方のページをAIに正しく読ませる書き方【全業種】
+5. 次の月曜（11-23）の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）

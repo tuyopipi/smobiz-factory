@@ -1,0 +1,316 @@
+{
+ "title": "Hakkımızda Sayfası ve Yapay Zekâ: Doğru Şirket Bilgisi | Nurevo",
+ "description": "Yapay zekânın güvenebileceği Hakkımızda sayfası: hangi bilgiler yazılmalı, ad ve adres farklılıkları nasıl giderilir, Organization şeması, WordPress adımları.",
+ "h1": "Hakkımızda sayfası için yapay zekâ araması optimizasyonu: şirket adınız, adresiniz, kuruluş tarihiniz ve faaliyetiniz doğru anlatılsın",
+ "lead": "Biri yapay zekâya şirketinizi adıyla sorduğunda, yanıtın dayandığı sayfa çoğu zaman Hakkımızda ya da kurumsal profil sayfanızdır. Resmî unvanınızı ve insanların gerçekte kullandığı adları, adresinizi, kuruluş tarihinizi, yöneticilerinizi, ne iş yaptığınızı ve size nasıl ulaşılacağını tek bir sayfada düz metin olarak yazın; aynı değerleri Organization yapılandırılmış verisi olarak yayımlayın; yazımın diğer sayfalarınızla ve başka yerlerdeki profillerinizle birebir aynı olmasını sağlayın. İşin özü bu üç adımdır.",
+ "intro": [
+  "15 Kasım 2026'da (JST) yazılmıştır. Bu rehber, Hakkımızda ya da kurumsal profil sayfası olan her şirket, mağaza veya kuruluş ile bu siteleri yapan ajanslar içindir. Mağazalar için adres ve çalışma saatleri işaretlemesi [yerel işletme şeması ve SEO eklentileri](/guide/local-business-schema-seo-plugins) rehberinde ele alınıyor. Bu rehber ise kim olduğunuzu ve nerede olduğunuzu anlatan sayfayla ilgilidir.",
+  "Yapay zekâ yanıtları güne ve soru biçimine göre değişir. Bu adımlar yapay zekânın okuduğu bilgiyi doğru hâle getirir; bir yanıtta yer alacağınızı garanti etmez."
+ ],
+ "sections": [
+  {
+   "heading": "Yapay zekâ Hakkımızda sayfanızı ne için kullanır",
+   "paragraphs": [
+    "ChatGPT arama, Perplexity ve Google AI Overviews yanıt verirken web sayfalarını okur ve onları kaynak olarak gösterir. Bir şirketin adını içeren bir soruda, o şirketin kendi sitesi ve özellikle temel bilgilerini bir araya getiren sayfası açık bir adaydır. Hakkımızda sayfası tek bir görselden ibaretse ya da ad ve adres sayfadan sayfaya farklı yazılmışsa, yapay zekâ yanıtını başkasının eski bir kaydından veya aynı adlı başka bir şirketten kurabilir.",
+    "Bir şirketin adını içeren sorular genellikle birkaç kalıba uyar. Her biri, bilgileri metin olarak veren bir Hakkımızda sayfasından yanıtlanabilir."
+   ],
+   "list": [
+    "\"Example Ltd ne iş yapıyor?\" (faaliyet tanımı)",
+    "\"Example'ın genel merkezi nerede? Manchester'da ofisleri var mı?\" (konumlar)",
+    "\"Example ne zaman kuruldu, kim yönetiyor?\" (kuruluş tarihi, yönetim)",
+    "\"Example uygulamasının arkasında hangi şirket var?\" (marka ile şirket adı)",
+    "\"Example ile Sample aynı şirket mi?\" (eski adlar, grup şirketleri, adaşlar)",
+    "\"Example'a nasıl ulaşırım?\" (telefon, form, saatler)"
+   ],
+   "after": [
+    "Google, AI Overviews veya AI Mode'da görünmek için ek bir gereklilik ya da özel bir yapılandırılmış veri bulunmadığını ve olağan SEO en iyi uygulamalarının geçerli olduğunu söylüyor ([Google Search Central: yapay zekâ özellikleri ve web siteniz](https://developers.google.com/search/docs/appearance/ai-features)). Hakkımızda sayfası çalışması yapay zekâ için özel bir yazım tekniği değildir. Bilgileri doğru, okunabilir biçimde ve her yerde aynı değerlerle vermektir."
+   ]
+  },
+  {
+   "heading": "Sayfaya ne yazılmalı ve yapılandırılmış veriyle nasıl eşleşir",
+   "paragraphs": [
+    "Tablo, bir Hakkımızda sayfasının belirtmesi gerekenleri, yapay zekâ yanıtlarının sık yaptığı hataları ve karşılık gelen Organization özelliğini listeler. Özellik adları Google'ın [Organization yapılandırılmış verisi](https://developers.google.com/search/docs/appearance/structured-data/organization) belgesindeki önerilen özelliklerden alınmıştır. \"Yalnızca metin\", Google'ın önerilen özellikleri arasında olmayan öğeleri gösterir."
+   ],
+   "table": {
+    "head": [
+     "Öğe",
+     "Nasıl yazılmalı",
+     "Tipik yapay zekâ hatası",
+     "Yapılandırılmış veri"
+    ],
+    "rows": [
+     [
+      "Resmî unvan",
+      "Tescilli unvanı bir kez, tescil edildiği gibi birebir yazın",
+      "Sizi benzer adlı bir şirketle karıştırmak",
+      "legalName (name'den farklıysa)"
+     ],
+     [
+      "Ticari ad, marka, başka dildeki ad",
+      "Bunları bir cümleyle bağlayın: \"Example App, Sample Ltd tarafından işletilir\"",
+      "Markayı bilip arkasındaki şirketi bilmemek",
+      "alternateName"
+     ],
+     [
+      "Adres",
+      "Genel merkezi diğer lokasyonlardan ayırın; her adresi kata kadar aynı biçimde yazın",
+      "Taşınma öncesi adresi ya da bir şubeyi genel merkez olarak vermek",
+      "address (PostalAddress, bir veya daha fazla)"
+     ],
+     [
+      "İletişim",
+      "Ana telefon, başvuru kanalı, saatler",
+      "Bir departmanın doğrudan hattı ya da eski bir numara",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Kuruluş",
+      "Tam tarih; kuruluş ve tüzel kişilik kazanma tarihi farklıysa ikisini de verin",
+      "Kuruluş yılını tescil yılıyla karıştırmak",
+      "foundingDate (ISO 8601, ör. 2015-04-01)"
+     ],
+     [
+      "Yönetim",
+      "Unvan ve ad; değiştiği gün güncelleyin",
+      "Önceki genel müdürün adını vermek",
+      "Yalnızca metin (Google'ın önerilen özelliği değil)"
+     ],
+     [
+      "Ne iş yaptığınız",
+      "İlk cümle: ne, kimin için, nerede; ardından faaliyet listesi",
+      "Bir yan işi ana faaliyet gibi sunmak",
+      "description"
+     ],
+     [
+      "Çalışan sayısı, sermaye",
+      "\"Ay ve yıl itibarıyla\" ibaresini ekleyin",
+      "Tarihsiz eski bir rakamın tekrarlanması",
+      "numberOfEmployees (sermaye: yalnızca metin)"
+     ],
+     [
+      "Şirket sicil veya vergi numarası",
+      "Varsa sayfada belirtin",
+      "Sizi adaşınızdan ayırmanın yolu kalmaması",
+      "Önce metin (aşağıya bakın)"
+     ],
+     [
+      "Resmî sosyal medya ve profil sayfaları",
+      "Yalnızca şirketin yönettiği hesapları listeleyin",
+      "Sizi bir adaşla ya da sahte bir hesapla ilişkilendirmek",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Site logosuyla aynı görsel",
+      "Başka bir şirketin logosu",
+      "logo (en az 112×112 px)"
+     ],
+     [
+      "Son güncelleme",
+      "Sayfa sonunda \"... tarihinde güncellendi\"",
+      "Bilginin ne kadar güncel olduğunu anlamanın yolu olmaması",
+      "Yalnızca metin"
+     ]
+    ]
+   },
+   "after": [
+    "Sicil ve vergi numaraları hakkında: Google, taxID'yi address'teki ülkenin vergi numarası, vatID'yi ise uygulanıyorsa KDV numarası olarak tanımlıyor. Numaranız ülkenizin vergi veya KDV numarasıysa bu özellikler uygundur. Japonya'nın kurumsal numarası gibi farklı türde bir tanımlayıcıysa Google bunun taxID'ye girip girmediğini söylemiyor; bu yüzden sayfada belirtin ve işaretleyip işaretlemeyeceğinize kendiniz karar verin.",
+    "Rakamları şişirmeyin. Çalışan veya müşteri sayısını yukarı yuvarlarsanız yapay zekâ büyük rakamı aktarır ve bunu geri almak zordur. Kesin rakamı ve geçerli olduğu tarihi verin."
+   ]
+  },
+  {
+   "heading": "Sayfa nasıl yazılmalı: yalnızca tablo değil, asla görsel değil",
+   "paragraphs": [
+    "Pek çok Hakkımızda sayfası iki sütunlu bir tablodan ibarettir. Tablo hem insanlar hem makineler için kolay okunur, ama tek başına şirketin ne olduğunu söyleyen bir cümleden yoksundur. Tablonun üstüne iki üç cümlelik bir giriş koyarsanız, yapay zekâ sizi anlatırken olduğu gibi kullanabileceği bir metne sahip olur."
+   ],
+   "list": [
+    "İlk cümle: resmî unvan, il veya ilçe ve ne iş yaptığınız. Örneğin: \"Leeds merkezli Sample Ltd, küçük işletmelerin muhasebe yazılımı kurmasına yardımcı olur.\"",
+    "İkinci cümle: sizi adaşlarınızdan ayıran bilgiler; örneğin markanın şirketle ilişkisi ve kuruluş yılınız.",
+    "Ardından tablo: HTML tablosu ya da etiketli bir liste olarak; asla görsel veya PDF olarak değil.",
+    "Tarihçe, her yıl için bir satır. Ad değişikliği, taşınma veya birleşmede hem eskisini hem yenisini yazın: \"Şirket Mart 20XX'te Old Name Ltd olan unvanını değiştirdi.\"",
+    "Kurucunun mesajını ve misyonu, bilgilerden ayrı başlıklar altında tutun.",
+    "Sayfayı son güncelleme tarihiyle bitirin."
+   ],
+   "after": [
+    "schema.org'da sayfanın kendisi için bir [AboutPage](https://schema.org/AboutPage) türü vardır ve bazı SEO eklentileri bunu sayfa türü olarak seçmenize izin verir. İsteğe bağlıdır; diğer yapılandırılmış verilerinizle çelişmediği sürece kullanmakta sakınca yoktur."
+   ]
+  },
+  {
+   "heading": "Farklı yazımları sitenizde ve başka yerlerde giderin",
+   "paragraphs": [
+    "Yapay zekâ bir yanıtı birden fazla sayfadan kurar. Adınız veya adresiniz sayfadan sayfaya farklı yazılmışsa, bunları tek bir şirket olarak görmeyebilir ya da eski yazımı seçebilir. İşe, sık görülen her farklılık için tek bir biçim belirleyerek başlayın."
+   ],
+   "table": {
+    "head": [
+     "Farklı yazım",
+     "Neye karar verilmeli"
+    ],
+    "rows": [
+     [
+      "Sample Ltd / Sample Limited / Sample",
+      "Tescilli biçim; şirketin adının geçtiği her yerde kullanılır"
+     ],
+     [
+      "Başka dillerde veya alfabelerdeki adlar",
+      "Her dil için tek biçim; o dilin sayfalarında, profillerinde ve kartvizitlerinde aynı"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / bina adıyla ve bina adı olmadan",
+      "Tek bir sıra ile bina adı ve kat konusunda tek bir tercih"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Her dil için tek biçim; ör. yerel sayfalarda ulusal biçim, yurt dışındaki okurlar için İngilizce sayfalarda uluslararası biçim"
+     ],
+     [
+      "Hâlâ eski bir ad veya adres gösteren sayfalar",
+      "Değişikliği tarihçeye işleyin, ardından eski sayfaları düzeltin"
+     ]
+    ]
+   },
+   "after": [
+    "Sitenizde kontrol edilecek yerler: Hakkımızda, alt bilgi, iletişim sayfası, gizlilik politikası, yasal olarak zorunlu ticari bilgilendirmeler, kariyer sayfaları, basın bültenleri, blogdaki yazar kutuları ve tanıtım broşürü PDF'i.",
+    "Başka yerlerde kontrol edilecekler: Google İşletme Profiliniz, şirketin yönettiği sosyal medya profilleri, iş ilanı siteleri, meslek odası ve yerel rehberler, iş ortaklarının sitelerindeki tanıtımlarınız. Bunların bazılarını düzenleyemezsiniz. Önce kendi sitenizi düzeltin, sonra yayıncıdan kendi sayfasını düzeltmesini isteyin. Bir yapay zekâ yanıtı zaten yanlışsa, kaynağını bulun ve her hata türünü geldiği yerde düzeltin."
+   ]
+  },
+  {
+   "heading": "Yapay zekânın sizi aynı adlı bir şirketten ayırt etmesine yardımcı olun",
+   "paragraphs": [
+    "Adınız yaygın bir kelimeyse ya da başka bir yerde aynı adlı bir şirket varsa, yapay zekâ ikisini karıştırabilir. Sizi ayıran şey, yalnızca sizde olan bilgilerdir."
+   ],
+   "list": [
+    "Girişin ilk cümlesine il veya ilçeyi ve ne iş yaptığınızı yazın.",
+    "Bir adaşın paylaşmayacağı bilgileri belirtin: kuruluş yılı, sicil numarası, genel müdürünüzün adı.",
+    "sameAs'te yalnızca şirketin yönettiği resmî hesapları ve profilleri listeleyin. Adaşları ve yönetmediğiniz sayfaları dışarıda bırakın.",
+    "Marka ve şirket adı farklıysa, her ikisinin sayfasında da \"Example, Sample Ltd tarafından işletilir\" deyin.",
+    "Google, iso6523Code ve naics gibi özelliklerin bir kuruluşu ayırt etmeye yardımcı olduğunu söylüyor. İlgili kodlarınız varsa eklemeyi düşünün."
+   ]
+  },
+  {
+   "heading": "Organization yapılandırılmış verisi: Google'ın belgesi ne diyor",
+   "paragraphs": [
+    "Google'ın [Organization yapılandırılmış verisi](https://developers.google.com/search/docs/appearance/structured-data/organization) belgesinin ana noktaları (son güncelleme 15 Eylül 2026; 15 Kasım'da okundu):"
+   ],
+   "list": [
+    "Zorunlu özellik yoktur; Google, kuruluşunuz için geçerli olan özelliklerden olabildiğince çoğunu eklemenizi önerir.",
+    "İşaretlemeyi ana sayfaya ya da Hakkımızda sayfası gibi kuruluşu anlatan tek bir sayfaya koyun. Her sayfada olması gerekmez.",
+    "Restoran veya mağaza gibi yerel bir işletme için en spesifik LocalBusiness alt türünü kullanın ve LocalBusiness yönergelerine de uyun.",
+    "foundingDate ISO 8601 biçimini kullanır (ör. 2015-04-01).",
+    "Logo en az 112×112 piksel olmalı, taranabilir ve dizine eklenebilir olmalıdır."
+   ],
+   "after": [
+    "Google, yapılandırılmış verinin görünür metinle eşleşmesini temel kurallardan biri olarak sayıyor ([Yapay zekâ özellikleri ve web siteniz](https://developers.google.com/search/docs/appearance/ai-features)). Yapılandırılmış veri tek başına yanıtları değiştirmez. Onu, sayfanın zaten söylediklerinin makinece okunabilir cevap anahtarı olarak görürseniz öncelikleri doğru tutarsınız. Sayfa metninde yazmayan bir bilgiyi yapılandırılmış veriye koymayın."
+   ]
+  },
+  {
+   "heading": "WordPress'te adımlar (Nurevo AEO ile)",
+   "paragraphs": [
+    "Bir WordPress sitesinde [Nurevo AEO (ücretsiz)](https://wordpress.org/plugins/nurevo-webmcp/), şirketinizin temel bilgilerini yapılandırılmış veri olarak ve llms.txt içinde yayımlar. Şu sırayla çalışın."
+   ],
+   "list": [
+    "Önce yukarıdaki tabloya göre Hakkımızda sayfasının metnini düzeltin. Yapılandırılmış veriden önce metin.",
+    "Eklentiyi kurun ve kurulum sihirbazında site türünü seçin: Organization için \"B2B / SaaS\", mağaza veya klinik için ilgili kart, hiçbiri uymuyorsa \"Diğer\".",
+    "İşletme bilgilerini kontrol edin (ad, açıklama, adres, telefon, çalışma saatleri, işletme türü, URL, e-posta). Mevcut ayarlarınızdan okunan değerler yalnızca boş alanları doldurur; sizin yazdığınız hiçbir şeyin üzerine yazılmaz ve WordPress yöneticisinin e-posta adresi asla işletme e-postası olarak kullanılmaz.",
+    "Ad ve adresi Hakkımızda sayfasıyla eşleştirin. Adres, PostalAddress içinde tek bir dize olarak yayımlanır; bu yüzden onu Hakkımızda sayfasında yazıldığı şekliyle birebir girin.",
+    "Logo, temanın site logosu olarak ayarlanmış görseldir. En az 112×112 piksel olmasını sağlayın.",
+    "Yoast SEO, Rank Math, All in One SEO veya Slim SEO kullanıyorsanız Nurevo yalnızca o eklentinin yapılandırılmış verisinde eksik olan bilgileri ekler; böylece şirket iki kez tanımlanmaz. SEO SIMPLE PACK ve VK All in One Expansion Unit ile de birlikte çalışır (0.9.1 sürümünden itibaren). SEO eklentiniz adı veya logoyu zaten belirliyorsa onun değerleri geçerli olur; bu yüzden ikisini uyumlu tutun.",
+    "Resmî unvanı (legalName), diğer adları (alternateName), kuruluş tarihini (foundingDate) veya resmî hesapları (sameAs) eklemek için geliştirici filtresi webmcp_canary_business_node'u kullanın. Bunlar Nurevo'nun işletme bilgileri formunda alan olarak yer almaz.",
+    "AEO puanı ekranında teşhisi çalıştırın, ardından /llms.txt'yi açıp Hakkımızda sayfasının listelendiğini kontrol edin. llms.txt en son güncellenen 30 sayfa ve yazıyı listeler; Hakkımızda sayfası bunların arasında değilse webmcp_canary_llms_txt_lines filtresiyle bir satır ekleyin."
+   ],
+   "after": [
+    "Aynı kontroller WordPress dışındaki siteler için de geçerlidir. Yapılandırılmış veri, llms.txt ve yapay zekâ tarayıcılarının erişim durumunu görmek için URL'nizi üyelik gerektirmeyen [ücretsiz kontrole](/check) girin."
+   ]
+  },
+  {
+   "heading": "Nasıl kontrol edilir: adınızla ve adınız olmadan sorular",
+   "paragraphs": [
+    "Hakkımızda sayfası çalışmasını şirket adınızı içeren sorularla kontrol edin. Aynı soruyu aynı yapay zekâya farklı günlerde birkaç kez sorun ve yanıtları kaydedin. Tek bir yanıta bakarak karar vermeyin."
+   ],
+   "table": {
+    "head": [
+     "Ne kaydedilmeli",
+     "Örnek"
+    ],
+    "rows": [
+     [
+      "Tarih, yapay zekâ, soru",
+      "15 Kasım, Perplexity, \"Sample Ltd nedir? Ne zaman kuruldu ve ne iş yapıyor?\""
+     ],
+     [
+      "Yanıttaki bilgiler",
+      "Adres, kuruluş tarihi, yönetim, faaliyet: tek tek doğru mu yanlış mı"
+     ],
+     [
+      "Kaynaklar",
+      "Hakkımızda sayfanız mı kaynak gösterildi, yoksa başka bir site mi?"
+     ],
+     [
+      "Hatanın nereden geldiği",
+      "Kaynak gösterilen sayfa hâlâ eski bir adres mi gösteriyor?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevo'nun ücretsiz yapay zekâ kontrolü (bağlı Free ve Standard siteler için ayda bir), adınızı kullanmadan işletme türünüzden ve bölgenizden oluşturulan sorular sorar. Adınızı bilmeyen kişilerin sizi bulup bulamadığını gösterir; şirket bilgilerinizin doğruluğunu ise yukarıdaki tabloyla elle kontrol edin. Pro'nun görünürlük ölçümü (beta) şu anda Perplexity'yi kapsıyor. Yöntemin tamamı [yapay zekâ görünürlüğü nasıl ölçülür](/guide/measure-ai-visibility) rehberinde."
+   ]
+  },
+  {
+   "heading": "Hakkımızda sayfası kontrol listesi",
+   "list": [
+    "Tablonun üstündeki iki üç cümle adı, konumu ve ne iş yaptığınızı veriyor.",
+    "Resmî unvan, marka ve varsa başka dildeki ad arasındaki ilişki bir cümleyle yazılmış.",
+    "Adres ve telefon sitenin her sayfasında aynı şekilde yazılmış.",
+    "Kuruluş tarihi, yönetim ve çalışan sayısı doğru ve tarihli.",
+    "Ad değişiklikleri ve taşınmalar tarihçede hem eski hem yeni hâliyle yer alıyor.",
+    "Hakkımızda sayfası yalnızca bir görsel veya PDF değil.",
+    "Organization (mağazalar için en spesifik LocalBusiness alt türü) ana sayfada veya Hakkımızda sayfasında bulunuyor ve değerleri metinle eşleşiyor.",
+    "sameAs yalnızca şirketin yönettiği hesapları listeliyor.",
+    "Google İşletme Profiliniz ve diğer profilleriniz aynı yazımı kullanıyor.",
+    "Sayfa bir son güncelleme tarihiyle bitiyor.",
+    "Adınızı içeren sorularla farklı günlerde kontrol ettiniz ve sonuçları kaydettiniz."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ana sayfadan ayrı bir Hakkımızda sayfasına ihtiyacım var mı?",
+   "a": "Ana sayfa şirketin temel bilgilerini zaten bir araya getiriyorsa hayır. Google, Organization işaretlemesini ana sayfaya ya da kuruluşu anlatan tek bir sayfaya koymayı öneriyor. Ana sayfanız ağırlıklı olarak hizmetlerinizi anlatıyorsa, ayrı bir Hakkımızda sayfası bilgileri tek bir yerde toplar."
+  },
+  {
+   "q": "Yalnızca tablodan oluşan bir Hakkımızda sayfası sorun mu?",
+   "a": "Hayır. Tablo kolay okunur. Ancak şirketin ne olduğunu söyleyen bir cümleden yoksundur; bu yüzden üstüne iki üç cümlelik bir giriş ekleyin."
+  },
+  {
+   "q": "Organization yapılandırılmış verisi her sayfada olmalı mı?",
+   "a": "Google'a göre gerekmez: ana sayfa ya da Hakkımızda sayfası gibi tek bir sayfa yeterlidir. SEO eklentiniz bunu her sayfaya basıyorsa, değerler doğru olduğu sürece sorun yoktur."
+  },
+  {
+   "q": "Şirket sicil numaramız taxID'ye mi girmeli?",
+   "a": "Google, taxID'yi adresinizdeki ülkenin vergi numarası olarak tanımlıyor. Numaranız buysa uygundur; başka türde bir tanımlayıcıysa Google bir şey söylemiyor. Önce sayfada belirtin, sonra işaretleyip işaretlemeyeceğinize karar verin."
+  },
+  {
+   "q": "Eski adımızla soru soranların bugünkü şirketi bulmasını nasıl sağlarız?",
+   "a": "Her iki adı da tarihçeye yazın (\"Şirket Mart 20XX'te Old Name Ltd olan unvanını değiştirdi\") ve girişte de belirtin. Başka yerlerdeki profiller hâlâ eski adı gösteriyorsa, yayıncılarından güncellemelerini isteyin."
+  },
+  {
+   "q": "Bir yapay zekâ yanıtı şirket bilgilerimizi yanlış veriyor. Ne yapmalıyız?",
+   "a": "Yapay zekânın yanıtını doğrudan düzenleyemezsiniz. Kaynakların izini sürün: kendi sitenizdeki Hakkımızda sayfasını ve diğer sayfaları düzeltin, diğer yayıncılardan da kendi sayfalarını düzeltmelerini isteyin. Düzeltmelerin yansıması için belirli bir süre yoktur."
+  },
+  {
+   "q": "Bu adımları izlersek yapay zekâ bizi her zaman doğru anlatır mı?",
+   "a": "Bu garanti edilemez; yapay zekâ yanıtları güne ve soru biçimine göre değişir. Bu adımlar yapay zekânın okuduğu bilgiyi doğru ve tutarlı hâle getirir, böylece hata olasılığı azalır."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Yapay zekânın şirket bilgilerinizi nasıl okuduğunu görün",
+  "body": "Ücretsiz kontrol üyelik gerektirmez: yapılandırılmış veri, llms.txt ve yapay zekâ tarayıcılarının erişim durumunu görmek için URL'nizi girin. WordPress'te ücretsiz eklenti, şirketinizin temel bilgilerini yapılandırılmış veri olarak yayımlar.",
+  "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü çalıştırın",
+  "href": "/check",
+  "secondary": {
+   "label": "Ücretsiz WordPress eklentisini deneyin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT, OpenAI'ın; Perplexity, Perplexity AI'ın; Google ise Google LLC'nin ticari markasıdır. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ve WordPress ilgili sahiplerinin ticari markalarıdır. Nurevo bu şirketlerin hiçbiriyle bağlantılı değildir ve bu şirketler tarafından onaylanmamıştır."
+}

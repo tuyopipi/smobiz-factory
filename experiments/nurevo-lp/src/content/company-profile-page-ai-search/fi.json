@@ -1,0 +1,316 @@
+{
+ "title": "Yrityssivu ja tekoälyhaku: yrityksen tiedot oikein | Nurevo",
+ "description": "Näin teet Tietoa meistä -sivun, johon tekoälyn vastaukset voivat nojata: mitkä tiedot julkaista, nimi- ja osoitemuunnelmat, Organization-skeema ja WordPress.",
+ "h1": "Tietoa meistä -sivu ja tekoälyhaku: yrityksen nimi, osoite, perustamispäivä ja toiminta kuvattuina oikein",
+ "lead": "Kun joku kysyy tekoälyltä yrityksestäsi nimellä, vastaus nojaa yleensä Tietoa meistä- tai yritysesittelysivuusi. Kokoa yhdelle sivulle tavallisena tekstinä virallinen nimi ja nimet, joilla teidät oikeasti tunnetaan, osoite, perustamispäivä, johto, mitä teette ja miten teihin saa yhteyden; julkaise samat arvot Organization-tyyppisenä rakenteisena datana; ja yhtenäistä kirjoitusasu muilla sivuillasi ja muualla olevissa profiileissasi. Nämä kolme vaihetta ovat työn ydin.",
+ "intro": [
+  "Kirjoitettu 15. marraskuuta 2026 (JST). Opas on tarkoitettu kaikille yrityksille, liikkeille ja organisaatioille, joilla on Tietoa meistä- tai yritysesittelysivu, sekä sivustoja rakentaville toimistoille. Liikkeiden osoite- ja aukioloaikamerkinnät käsitellään oppaassa [paikallisen yrityksen skeema ja SEO-lisäosat](/guide/local-business-schema-seo-plugins). Tämä opas käsittelee sivua, joka kertoo, keitä olette ja missä olette.",
+  "Tekoälyn vastaukset vaihtelevat päivän ja sanamuodon mukaan. Nämä vaiheet tekevät tekoälyn lukemista tiedoista oikeita, mutta ne eivät takaa, että pääsette mukaan vastaukseen."
+ ],
+ "sections": [
+  {
+   "heading": "Mihin tekoäly käyttää Tietoa meistä -sivua",
+   "paragraphs": [
+    "ChatGPT-haku, Perplexity ja Googlen AI Overviews lukevat verkkosivuja vastatessaan ja näyttävät ne lähteinä. Kun kysymyksessä mainitaan yritys, luonteva lähde on yrityksen oma sivusto ja ennen kaikkea sivu, joka kokoaa sen perustiedot. Jos Tietoa meistä -sivu on pelkkä kuva tai nimi ja osoite on kirjoitettu eri sivuilla eri tavoin, tekoäly voi rakentaa vastauksensa jonkun muun vanhasta listauksesta tai samannimisestä toisesta yrityksestä.",
+    "Yrityksen nimen sisältävät kysymykset noudattavat yleensä muutamaa kaavaa. Jokaiseen voi vastata Tietoa meistä -sivulta, joka kertoo tosiasiat tekstinä."
+   ],
+   "list": [
+    "”Mitä Example Ltd tekee?” (toiminnan kuvaus)",
+    "”Missä Examplen pääkonttori on? Onko heillä toimistoa Manchesterissa?” (toimipaikat)",
+    "”Milloin Example perustettiin ja kuka sitä johtaa?” (perustamispäivä, johto)",
+    "”Mikä yritys on Example-sovelluksen takana?” (brändi vai yrityksen nimi)",
+    "”Onko Example sama yritys kuin Sample?” (entiset nimet, konserniyhtiöt, kaimat)",
+    "”Miten saan yhteyden Exampleen?” (puhelin, lomake, aukioloajat)"
+   ],
+   "after": [
+    "Googlen mukaan AI Overviewsissa tai AI Modessa näkymiseen ei ole lisävaatimuksia eikä erityistä rakenteista dataa, vaan tavalliset SEO:n hyvät käytännöt pätevät ([Google Search Central: tekoälyominaisuudet ja sivustosi](https://developers.google.com/search/docs/appearance/ai-features)). Tietoa meistä -sivun työstäminen ei ole erityinen tapa kirjoittaa tekoälylle. Kyse on tosiasioiden kertomisesta tarkasti, luettavassa muodossa ja samoilla arvoilla kaikkialla."
+   ]
+  },
+  {
+   "heading": "Mitä sivulle kirjoitetaan ja miten se vastaa rakenteista dataa",
+   "paragraphs": [
+    "Taulukossa on se, mitä Tietoa meistä -sivulla kannattaa kertoa, tekoälyn vastausten tyypilliset virheet ja vastaava Organization-ominaisuus. Ominaisuuksien nimet ovat Googlen [Organization-rakenteisen datan](https://developers.google.com/search/docs/appearance/structured-data/organization) ohjeiden suositelluista ominaisuuksista. ”Vain teksti” tarkoittaa kohtia, jotka eivät kuulu Googlen suosittelemiin ominaisuuksiin."
+   ],
+   "table": {
+    "head": [
+     "Kohta",
+     "Miten se kirjoitetaan",
+     "Tekoälyn tyypillinen virhe",
+     "Rakenteinen data"
+    ],
+    "rows": [
+     [
+      "Virallinen nimi",
+      "Kerro rekisteröity nimi kerran, täsmälleen rekisteröidyssä muodossa",
+      "Sekoittaa teidät samannimiseen yritykseen",
+      "legalName (jos eri kuin name)"
+     ],
+     [
+      "Aputoiminimi, brändi, muunkielinen nimi",
+      "Yhdistä ne lauseessa: ”Example App -sovellusta ylläpitää Sample Ltd”",
+      "Tuntee brändin mutta ei sen takana olevaa yritystä",
+      "alternateName"
+     ],
+     [
+      "Osoite",
+      "Erota pääkonttori muista toimipaikoista; kirjoita jokainen osoite samassa muodossa kerrosta myöten",
+      "Antaa muuttoa edeltävän osoitteen tai sivutoimipisteen pääkonttorina",
+      "address (PostalAddress, yksi tai useampi)"
+     ],
+     [
+      "Yhteystiedot",
+      "Päänumero, yhteydenottotapa, aukioloajat",
+      "Jonkin osaston suora numero tai vanha numero",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Perustettu",
+      "Koko päivämäärä; jos perustaminen ja yhtiöittäminen eroavat, anna molemmat",
+      "Sekoittaa perustamisvuoden ja yhtiöittämisvuoden",
+      "foundingDate (ISO 8601, esim. 2015-04-01)"
+     ],
+     [
+      "Johto",
+      "Titteli ja nimi; päivitä samana päivänä kuin muutos tapahtuu",
+      "Mainitsee edellisen toimitusjohtajan",
+      "Vain teksti (ei Googlen suosittelema ominaisuus)"
+     ],
+     [
+      "Mitä teette",
+      "Ensimmäinen lause: mitä, kenelle, missä; sitten luettelo toiminnoista",
+      "Esittää yhden sivuliiketoiminnan päätoimintana",
+      "description"
+     ],
+     [
+      "Henkilöstömäärä, osakepääoma",
+      "Lisää ”tilanne kuukausi ja vuosi”",
+      "Toistaa päiväämätöntä vanhaa lukua",
+      "numberOfEmployees (osakepääoma: vain teksti)"
+     ],
+     [
+      "Y-tunnus tai verotunniste",
+      "Kerro se sivulla, jos sellainen on",
+      "Teitä ei voi erottaa kaimasta",
+      "Ensin tekstinä (ks. alla)"
+     ],
+     [
+      "Viralliset some- ja profiilisivut",
+      "Luettele vain tilit, joita yritys hallinnoi",
+      "Yhdistää teidät kaimaan tai tekaistuun tiliin",
+      "sameAs"
+     ],
+     [
+      "Logo",
+      "Sama kuva kuin sivuston logo",
+      "Toisen yrityksen logo",
+      "logo (vähintään 112×112 px)"
+     ],
+     [
+      "Viimeksi päivitetty",
+      "”Päivitetty ...” sivun loppuun",
+      "Tietojen ajantasaisuutta ei voi arvioida",
+      "Vain teksti"
+     ]
+    ]
+   },
+   "after": [
+    "Rekisteri- ja verotunnisteista: Google kuvaa taxID-ominaisuuden address-kohdan maan verotunnisteeksi ja vatID-ominaisuuden ALV-tunnisteeksi silloin, kun sellainen on. Jos tunnisteesi on maasi vero- tai ALV-tunniste, nämä ominaisuudet sopivat. Jos se on muunlainen tunniste, kuten Japanin yritysnumero, Google ei kerro, kuuluuko se taxID-kenttään, joten kerro se sivulla ja päätä itse, merkitsetkö sen.",
+    "Älä paisuttele lukuja. Jos pyöristät henkilöstö- tai asiakasmäärän ylöspäin, tekoäly lainaa suurempaa lukua, eikä sitä ole helppo saada takaisin. Kerro tarkka luku ja päivämäärä, jota se koskee."
+   ]
+  },
+  {
+   "heading": "Miten sivu kirjoitetaan: ei pelkkää taulukkoa, ei koskaan kuvaa",
+   "paragraphs": [
+    "Monet Tietoa meistä -sivut ovat pelkkä kaksisarakkeinen taulukko. Taulukkoa on helppo lukea niin ihmisten kuin koneiden, mutta yksinään siitä puuttuu lause, joka kertoo, mikä yritys on. Kirjoita taulukon yläpuolelle kahden tai kolmen lauseen esittely, niin tekoälyllä on jotain, mitä se voi käyttää sellaisenaan kuvatessaan teitä."
+   ],
+   "list": [
+    "Ensimmäinen lause: virallinen nimi, paikkakunta ja mitä teette. Esimerkiksi: ”Leedsissä toimiva Sample Ltd auttaa pienyrityksiä ottamaan käyttöön kirjanpito-ohjelmiston.”",
+    "Toinen lause: tiedot, jotka erottavat teidät kaimoista, kuten brändin suhde yritykseen ja perustamisvuosi.",
+    "Sitten taulukko HTML-taulukkona tai otsikoituna luettelona, ei koskaan kuvana tai PDF:nä.",
+    "Historia yhtenä rivinä vuotta kohden. Nimenmuutoksesta, muutosta tai sulautumisesta kirjoita sekä vanha että uusi: ”Maaliskuussa 20XX yhtiön nimi muuttui Old Name Ltd:stä.”",
+    "Pidä perustajan tervehdys ja missio omien otsikoidensa alla erillään tosiasioista.",
+    "Päätä sivu päivämäärään, jolloin se viimeksi päivitettiin."
+   ],
+   "after": [
+    "schema.org tarjoaa itse sivulle [AboutPage](https://schema.org/AboutPage)-tyypin, ja jotkin SEO-lisäosat antavat valita sen sivutyypiksi. Se on valinnainen, ja sitä voi hyvin käyttää, kunhan se ei ole ristiriidassa muun rakenteisen datasi kanssa."
+   ]
+  },
+  {
+   "heading": "Poista muunnelmat omalta sivustolta ja muualta",
+   "paragraphs": [
+    "Tekoäly kokoaa vastauksen useilta sivuilta. Jos nimesi tai osoitteesi on kirjoitettu sivuittain eri tavoin, se ei välttämättä käsittele niitä yhtenä yrityksenä tai se voi valita vanhan kirjoitusasun. Aloita päättämällä yksi muoto kullekin tavalliselle muunnelmalle."
+   ],
+   "table": {
+    "head": [
+     "Muunnelma",
+     "Mihin päädytään"
+    ],
+    "rows": [
+     [
+      "Sample Ltd / Sample Limited / Sample",
+      "Rekisteröity muoto, jota käytetään kaikkialla, missä yritys mainitaan"
+     ],
+     [
+      "Nimet muilla kielillä tai kirjoitusjärjestelmillä",
+      "Yksi muoto kieltä kohden, sama kyseisen kielen sivuilla, profiileissa ja käyntikorteissa"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / rakennuksen nimellä ja ilman",
+      "Yksi järjestys ja yksi ratkaisu rakennuksen nimestä ja kerroksesta"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Yksi muoto kieltä kohden, esim. kansallinen muoto paikallisilla sivuilla ja kansainvälinen muoto ulkomaisille lukijoille tarkoitetuilla englanninkielisillä sivuilla"
+     ],
+     [
+      "Sivut, joilla näkyy yhä vanha nimi tai osoite",
+      "Kirjaa muutos historiaan ja korjaa sitten vanhat sivut"
+     ]
+    ]
+   },
+   "after": [
+    "Tarkistettavat kohdat omalla sivustolla: Tietoa meistä, alatunniste, yhteystietosivu, tietosuojaseloste, lakisääteiset elinkeinonharjoittajan tiedot, rekrytointisivut, tiedotteet, blogin kirjoittajalaatikot ja esite-PDF.",
+    "Tarkistettavat kohdat muualla: Google Business Profile, yrityksen hallinnoimat someprofiilit, työpaikkasivustot, toimialajärjestöjen ja paikallisten hakemistojen tiedot sekä kumppanien sivustoilla olevat kuvaukset teistä. Osaa näistä et voi muokata. Laita ensin oma sivustosi kuntoon ja pyydä sitten julkaisijaa korjaamaan omansa. Kun tekoälyn vastaus on jo väärä, jäljitä sen lähde ja korjaa kukin virhetyyppi siellä, mistä se on peräisin."
+   ]
+  },
+  {
+   "heading": "Auta tekoälyä erottamaan teidät samannimisestä yrityksestä",
+   "paragraphs": [
+    "Jos nimenne on yleinen sana tai muualla toimii samanniminen yritys, tekoäly voi sekoittaa nämä kaksi. Teidät erottavat tosiasiat, jotka ovat vain teillä."
+   ],
+   "list": [
+    "Mainitse paikkakunta ja toimintanne esittelyn ensimmäisessä lauseessa.",
+    "Kerro tosiasioita, joita kaimalla ei ole: perustamisvuosi, rekisterinumero, toimitusjohtajan nimi.",
+    "Luettele sameAs-kohdassa vain viralliset tilit ja profiilit, joita yritys hallinnoi. Jätä pois kaimat ja sivut, joita et hallinnoi.",
+    "Jos brändi ja yrityksen nimi eroavat, kirjoita ”Examplea ylläpitää Sample Ltd” molempien sivuille.",
+    "Googlen mukaan iso6523Code- ja naics-ominaisuuksien kaltaiset tiedot auttavat erottamaan organisaation. Jos teillä on asiaankuuluvat koodit, harkitse niiden lisäämistä."
+   ]
+  },
+  {
+   "heading": "Organization-rakenteinen data: mitä Googlen ohjeissa sanotaan",
+   "paragraphs": [
+    "Googlen [Organization-rakenteisen datan](https://developers.google.com/search/docs/appearance/structured-data/organization) ohjeiden tärkeimmät kohdat (päivitetty viimeksi 15. syyskuuta 2026; luettu 15. marraskuuta):"
+   ],
+   "list": [
+    "Pakollisia ominaisuuksia ei ole; Google suosittelee lisäämään niin monta organisaatiotasi koskevaa ominaisuutta kuin pystyt.",
+    "Sijoita merkintä etusivulle tai yhdelle organisaatiota kuvaavalle sivulle, kuten Tietoa meistä -sivulle. Sen ei tarvitse olla jokaisella sivulla.",
+    "Paikallisessa yrityksessä, kuten ravintolassa tai liikkeessä, käytä tarkinta LocalBusiness-alatyyppiä ja noudata myös LocalBusiness-ohjeita.",
+    "foundingDate käyttää ISO 8601 -muotoa (esim. 2015-04-01).",
+    "Logon on oltava vähintään 112×112 pikseliä sekä indeksoijien haettavissa ja indeksoitavissa."
+   ],
+   "after": [
+    "Google mainitsee perusasioiden joukossa sen, että rakenteinen data vastaa näkyvää tekstiä ([tekoälyominaisuudet ja sivustosi](https://developers.google.com/search/docs/appearance/ai-features)). Rakenteinen data ei yksinään muuta vastauksia. Kun ajattelet sitä koneluettavana vastausavaimena sille, mitä sivu jo kertoo, painopisteet pysyvät oikeina. Älä lisää rakenteiseen dataan tietoa, jota sivun tekstissä ei kerrota."
+   ]
+  },
+  {
+   "heading": "Vaiheet WordPressissä (Nurevo AEO:lla)",
+   "paragraphs": [
+    "WordPress-sivustolla [Nurevo AEO (ilmainen)](https://wordpress.org/plugins/nurevo-webmcp/) julkaisee yrityksesi perustiedot rakenteisena datana ja llms.txt-tiedostossa. Etene tässä järjestyksessä."
+   ],
+   "list": [
+    "Korjaa ensin Tietoa meistä -sivun teksti yllä olevan taulukon mukaan. Teksti ennen rakenteista dataa.",
+    "Asenna lisäosa ja valitse ohjatussa asennuksessa sivustotyyppi: ”B2B / SaaS” Organization-tyypille, vastaava kortti liikkeelle tai klinikalle, tai ”Other”, jos mikään ei sovi.",
+    "Tarkista yrityksen tiedot (nimi, kuvaus, osoite, puhelin, aukioloajat, yritystyyppi, URL, sähköposti). Nykyisistä asetuksista luetut arvot täyttävät vain tyhjät kentät; itse kirjoittamiasi tietoja ei koskaan korvata, eikä WordPressin ylläpitäjän sähköpostia koskaan käytetä yrityksen sähköpostina.",
+    "Yhtenäistä nimi ja osoite Tietoa meistä -sivun kanssa. Osoite julkaistaan yhtenä merkkijonona PostalAddress-kohdassa, joten kirjoita se täsmälleen niin kuin se on Tietoa meistä -sivulla.",
+    "Logo on teeman sivustologoksi asetettu kuva. Tee siitä vähintään 112×112 pikseliä.",
+    "Kun käytössä on Yoast SEO, Rank Math, All in One SEO tai Slim SEO, Nurevo lisää vain ne tiedot, jotka puuttuvat kyseisen lisäosan rakenteisesta datasta, jotta yritystä ei kuvata kahteen kertaan. Se toimii myös SEO SIMPLE PACK- ja VK All in One Expansion Unit -lisäosien rinnalla (versiosta 0.9.1 alkaen). Jos SEO-lisäosasi jo asettaa nimen tai logon, sen arvot voittavat, joten pidä molemmat ajan tasalla.",
+    "Virallisen nimen (legalName), muiden nimien (alternateName), perustamispäivän (foundingDate) tai virallisten tilien (sameAs) lisäämiseen käytä kehittäjäsuodatinta webmcp_canary_business_node. Ne eivät ole Nurevon yritystietolomakkeen kenttiä.",
+    "Suorita diagnoosi AEO-pisteet-näkymässä, avaa sitten /llms.txt ja tarkista, että Tietoa meistä -sivu on luettelossa. llms.txt luettelee 30 viimeksi päivitettyä sivua ja artikkelia; jos Tietoa meistä -sivu ei ole niiden joukossa, lisää rivi webmcp_canary_llms_txt_lines-suodattimella."
+   ],
+   "after": [
+    "Samat tarkistukset koskevat myös sivustoja, joita ei ole tehty WordPressillä. Syötä URL-osoitteesi [ilmaiseen tarkistukseen](/check) ilman rekisteröitymistä, niin näet rakenteisen datan, llms.txt-tiedoston ja tekoälyindeksoijien pääsyn tilan."
+   ]
+  },
+  {
+   "heading": "Miten tarkistetaan: kysymykset nimellä ja ilman",
+   "paragraphs": [
+    "Tarkista Tietoa meistä -sivun työn tulos kysymyksillä, joissa on yrityksesi nimi. Kysy samaa kysymystä samalta tekoälyltä eri päivinä useita kertoja ja kirjaa vastaukset ylös. Älä tee johtopäätöksiä yhden vastauksen perusteella."
+   ],
+   "table": {
+    "head": [
+     "Mitä kirjataan",
+     "Esimerkki"
+    ],
+    "rows": [
+     [
+      "Päivämäärä, tekoäly, kysymys",
+      "15.11., Perplexity, ”Mikä on Sample Ltd? Milloin se perustettiin ja mitä se tekee?”"
+     ],
+     [
+      "Vastauksen tiedot",
+      "Osoite, perustamispäivä, johto, toiminta: oikein vai väärin, yksi kerrallaan"
+     ],
+     [
+      "Lähteet",
+      "Viitattiinko Tietoa meistä -sivuusi vai toiseen sivustoon?"
+     ],
+     [
+      "Mistä virhe on peräisin",
+      "Näkyykö viitatulla sivulla yhä vanha osoite?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevon ilmainen tekoälytarkistus (kerran kuukaudessa yhdistetyille Free- ja Standard-sivustoille) esittää yritystyypistäsi ja alueestasi muodostettuja kysymyksiä ilman nimeäsi. Se kertoo, löytävätkö teidät ihmiset, jotka eivät tiedä nimeänne; yritystietojen paikkansapitävyys tarkistetaan käsin yllä olevan taulukon avulla. Pro-tilauksen näkyvyysmittaus (beta) kattaa tällä hetkellä Perplexityn. Koko menetelmä on oppaassa [tekoälynäkyvyyden mittaaminen](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Tietoa meistä -sivun tarkistuslista",
+   "list": [
+    "Taulukon yläpuolella kaksi tai kolme lausetta kertoo nimen, sijainnin ja toiminnan.",
+    "Virallisen nimen, brändin ja mahdollisen muunkielisen nimen suhde on kirjoitettu lauseeksi.",
+    "Osoite ja puhelinnumero on kirjoitettu samalla tavalla sivuston jokaisella sivulla.",
+    "Perustamispäivä, johto ja henkilöstömäärä ovat oikein ja päivättyjä.",
+    "Nimenmuutokset ja muutot näkyvät historiassa sekä vanhoina että uusina.",
+    "Tietoa meistä -sivu ei ole pelkkä kuva tai PDF.",
+    "Organization (tai liikkeelle tarkin LocalBusiness-alatyyppi) on etusivulla tai Tietoa meistä -sivulla, ja sen arvot vastaavat tekstiä.",
+    "sameAs luettelee vain yrityksen hallinnoimat tilit.",
+    "Google Business Profile ja muut profiilit käyttävät samaa kirjoitusasua.",
+    "Sivu päättyy viimeisimpään päivityspäivään.",
+    "Tarkistit tuloksen nimesi sisältävillä kysymyksillä eri päivinä ja kirjasit tulokset."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Tarvitaanko etusivun lisäksi erillinen Tietoa meistä -sivu?",
+   "a": "Ei, jos etusivu jo kokoaa yrityksen perustiedot. Google suosittelee sijoittamaan Organization-merkinnän etusivulle tai yhdelle organisaatiota kuvaavalle sivulle. Jos etusivusi kertoo lähinnä palveluistasi, erillinen Tietoa meistä -sivu pitää tiedot yhdessä paikassa."
+  },
+  {
+   "q": "Onko pelkästä taulukosta koostuva Tietoa meistä -sivu ongelma?",
+   "a": "Ei ole. Taulukkoa on helppo lukea. Siitä kuitenkin puuttuu lause, joka kertoo, mikä yritys on, joten lisää sen yläpuolelle kahden tai kolmen lauseen esittely."
+  },
+  {
+   "q": "Pitäisikö Organization-rakenteisen datan olla jokaisella sivulla?",
+   "a": "Googlen mukaan ei tarvitse: etusivu tai yksi sivu, kuten Tietoa meistä, riittää. Jos SEO-lisäosasi tulostaa sen jokaiselle sivulle, sekin on kunnossa, kunhan arvot ovat oikein."
+  },
+  {
+   "q": "Kuuluuko yrityksemme rekisterinumero taxID-kenttään?",
+   "a": "Google kuvaa taxID-ominaisuuden osoitteesi maan verotunnisteeksi. Jos numerosi on sellainen, se sopii; jos se on muunlainen tunniste, Google ei ota kantaa. Kerro se ensin sivulla ja päätä sitten, merkitsetkö sen."
+  },
+  {
+   "q": "Miten varmistamme, että entisellä nimellämme kysyvät löytävät nykyisen yrityksen?",
+   "a": "Kirjoita molemmat nimet historiaan (”Maaliskuussa 20XX yhtiön nimi muuttui Old Name Ltd:stä”) ja mainitse asia esittelyssä. Jos muualla olevissa profiileissa näkyy yhä vanha nimi, pyydä niiden julkaisijoita päivittämään ne."
+  },
+  {
+   "q": "Tekoälyn vastaus kertoo yrityksemme tiedot väärin. Mitä teemme?",
+   "a": "Tekoälyn vastausta ei voi muokata suoraan. Jäljitä lähteet: korjaa Tietoa meistä -sivu ja muut oman sivustosi sivut ja pyydä muita julkaisijoita korjaamaan omansa. Korjausten näkymiselle ei ole kiinteää aikaa."
+  },
+  {
+   "q": "Jos noudatamme näitä vaiheita, kuvaako tekoäly meidät aina oikein?",
+   "a": "Sitä ei voi taata; tekoälyn vastaukset vaihtelevat päivän ja sanamuodon mukaan. Nämä vaiheet tekevät tekoälyn lukemista tiedoista oikeita ja yhtenäisiä, joten virheet ovat epätodennäköisempiä."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso, miten tekoäly lukee yrityksesi tiedot",
+  "body": "Ilmainen tarkistus ei vaadi rekisteröitymistä: syötä URL-osoitteesi, niin näet rakenteisen datan, llms.txt-tiedoston ja tekoälyindeksoijien pääsyn tilan. WordPressissä ilmainen lisäosa julkaisee yrityksesi perustiedot rakenteisena datana.",
+  "label": "Tee ilmainen tekoälyluettavuuden tarkistus",
+  "href": "/check",
+  "secondary": {
+   "label": "Kokeile ilmaista WordPress-lisäosaa",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI:n, Perplexity Perplexity AI:n ja Google Google LLC:n tavaramerkki. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ja WordPress ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa mihinkään näistä yrityksistä eikä mikään niistä ole hyväksynyt sitä."
+}

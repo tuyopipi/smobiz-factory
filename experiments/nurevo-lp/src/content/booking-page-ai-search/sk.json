@@ -1,0 +1,347 @@
+{
+ "title": "Rezervačná stránka, ktorú AI prečíta správne | Nurevo",
+ "description": "Aby AI správne odpovedala na „musím rezervovať?“ a „platí sa storno poplatok?“: čo patrí na rezervačnú stránku, rezervácie v AI, schéma, WordPress.",
+ "h1": "Ako napísať rezervačnú stránku, ktorú AI prečíta správne: spôsoby rezervácie, uzávierky, storno podmienky a ako fungujú rezervácie v AI",
+ "lead": "Aby AI správne odpovedala na otázky o rezerváciách, vyberte na svojom webe jednu rezervačnú stránku a napíšte na ňu ako HTML text, nie do obrázka ani do vloženého rezervačného widgetu: ako rezervovať (online, telefonicky, cez chat), či je rezervácia potrebná a čo sa deje so zákazníkmi bez rezervácie, dokedy a ako dlho dopredu rezervácie prijímate, storno lehotu a poplatok a zoznam oficiálnych miest na rezerváciu. K novembru 2026 fungujú rezervácie priamo v ChatGPT alebo v AI od Googlu najmä pri reštauráciách, prostredníctvom rezervačných platforiem ako OpenTable. Vaša vlastná rezervačná stránka je miesto, kde AI číta vaše rezervačné pravidlá, či už na niektorej z týchto platforiem ste, alebo nie.",
+ "intro": [
+  "Napísané 21. novembra 2026 (JST). Ako písať otváracie hodiny, opisujeme v článku [otváracie hodiny a sviatky](/guide/business-hours-holidays-ai-search) a ceny v článku [ako napísať stránku s cenníkom](/guide/pricing-page-ai-search). Tento návod sa týka rezervačnej stránky, ktorú majú spoločnú salóny, ambulancie, reštaurácie, štúdiá, ubytovanie aj služby s výjazdom k zákazníkovi.",
+  "Odpovede AI sa menia zo dňa na deň, podľa formulácie otázky a podľa služby. Tu opísané kroky vytvoria stránku, ktorej rezervačné pravidlá AI s menšou pravdepodobnosťou zle pochopí, a ukážu, ako to overiť; nezaručujú, že sa objavíte v odpovedi alebo že sa u vás bude dať rezervovať priamo v AI."
+ ],
+ "sections": [
+  {
+   "heading": "Stručne: päť dôvodov, prečo sa AI pri rezerváciách mýli, a riešenie každého z nich",
+   "table": {
+    "head": [
+     "Príčina",
+     "Čo sa deje v odpovediach AI",
+     "Riešenie"
+    ],
+    "rows": [
+     [
+      "Rezervačné pravidlá sú len vo vloženom widgete alebo na obrázku",
+      "AI dokáže povedať len „spôsob rezervácie si overte na oficiálnom webe“",
+      "Napíšte spôsob rezervácie, uzávierky a storno podmienky ako text na rezervačnú stránku"
+     ],
+     [
+      "„Odporúčame rezerváciu“ alebo „len na objednanie“ bez vysvetlenia",
+      "AI chybne uvádza, či prijímate zákazníkov bez rezervácie",
+      "Napíšte, čo sa stane bez rezervácie: „Bez rezervácie vás radi prijmeme, ak máme voľno (počítajte s čakaním)“"
+     ],
+     [
+      "Viacero miest na rezerváciu, žiadne označené ako oficiálne",
+      "AI posiela ľudí na starý rezervačný portál alebo na nefunkčné číslo",
+      "Vypíšte miesta, ktoré používate, a pre každú službu určte jednu oficiálnu rezervačnú URL"
+     ],
+     [
+      "Chýba storno lehota alebo poplatok, prípadne sú na každom webe iné pravidlá",
+      "AI tvrdí, že storno je zadarmo, alebo cituje pravidlo inej firmy",
+      "Napíšte lehotu, poplatok a spôsob zrušenia na jedno miesto a rezervačné portály s tým zjednoťte"
+     ],
+     [
+      "Rezervačná stránka vyžaduje na zobrazenie prihlásenie alebo účet",
+      "AI nedokáže povedať ani to, či rezervácie prijímate",
+      "Majte verejnú stránku s pravidlami a rezervačný formulár umiestnite až za ňu"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Ako fungujú rezervácie v AI (november 2026)",
+   "paragraphs": [
+    "Stále viac firiem sa pýta, ako umožniť rezerváciu v ChatGPT. Zatiaľ rezervácie priamo v AI fungujú cez integrácie s rezervačnými platformami. Neexistuje žiadna značka, ktorú by ste vložili na web a tým pridali rezervačné tlačidlo. Tabuľka zhŕňa, čo hovoria oficiálne oznámenia."
+   ],
+   "table": {
+    "head": [
+     "Služba",
+     "Čo robí",
+     "Koho sa týka",
+     "Zdroj"
+    ],
+    "rows": [
+     [
+      "ChatGPT (rezervácie v reštauráciách)",
+      "Zobrazí v odpovedi voľné časy a posunie rezerváciu ďalej",
+      "OpenTable celosvetovo, Resy v USA, Yelp v USA a Kanade. Tlačidlo Reserve sa zobrazí len vtedy, keď ChatGPT dokáže reštauráciu spárovať so záznamom u podporovaného poskytovateľa. ChatGPT rezerváciu neukladá; zmeny a zrušenia prebiehajú cez poskytovateľa",
+      "[Pomocník OpenAI](https://help.openai.com/en/articles/9237897-chatgpt-search) (overené 2026-11-21), [Resy (2026-08-10)](https://blog.resy.com/newsroom/resy-launches-reservations-in-chatgpt/)"
+     ],
+     [
+      "Google Search AI Mode (agentové rezervácie)",
+      "Nájde voľné termíny zodpovedajúce požiadavke a odkáže na rezervačnú stránku",
+      "Spustené 2025-08-21 pre reštaurácie, pre predplatiteľov Google AI Ultra v USA (Labs). Rezervácie reštaurácií vo Veľkej Británii od 2026-04-10. Medzi menovanými partnermi sú OpenTable, Resy, Tock a TheFork",
+      "[Google (2025-08-21)](https://blog.google/products/search/ai-mode-agentic-personalized/), [Google UK (2026-04-10)](https://blog.google/company-news/inside-google/around-the-globe/google-europe/united-kingdom/ai-mode-restaurants-uk/)"
+     ],
+     [
+      "Google Business Profile",
+      "Zobrazuje rezervačné odkazy vo vašom profile",
+      "Overené profily. Môžete pridať vlastný odkaz, alebo sa zobraziť cez poskytovateľa rezervácií Reserve with Google",
+      "[Pravidlá pre firemné odkazy](https://support.google.com/business/answer/13769188), [Rezervácie cez poskytovateľa](https://support.google.com/business/answer/7475773)"
+     ]
+    ]
+   },
+   "after": [
+    "Rezervácie v ChatGPT vychádzajú zo zoznamov reštaurácií, ktoré rezervačné platformy posielajú spoločnosti OpenAI. Každý záznam má obsahovať URL vlastného webu reštaurácie a URL jej záznamu na platforme ([OpenAI: špecifikácia konverzie rezervácií reštaurácií](https://developers.openai.com/plugins/guides/restaurant-reservation-conversion-spec), určené pre rezervačné platformy).",
+    "Rezervačné tlačidlo v AI teda závisí od vašej rezervačnej platformy. Firma má pod kontrolou to, aby jej záznamy na platformách boli správne a aby rezervačné pravidlá správne opísala na vlastnom webe. Aj bez rezervačného tlačidla AI na otázku „musím rezervovať?“ alebo „platí sa storno poplatok?“ odpovie z vášho webu a z recenzných a katalógových webov. Zvyšok návodu je o tom, aby táto odpoveď bola správna."
+   ]
+  },
+  {
+   "heading": "Čo pokrývajú popredné články a čo v nich chýba",
+   "paragraphs": [
+    "Prečítali sme popredné japonské a anglické články pre otázky ako „rezervačná stránka AI vyhľadávanie“ (2026-11-21). Väčšina sa všeobecne venuje lokálnej viditeľnosti v AI (jednotné údaje o firme, viac recenzií). Len málo z nich krok za krokom vysvetľuje, ako napísať samotnú rezervačnú stránku, a takmer žiadny neuvádza príklad štruktúrovaných údajov ani postup vo WordPresse."
+   ],
+   "table": {
+    "head": [
+     "Článok",
+     "Silné stránky",
+     "Čo chýba"
+    ],
+    "rows": [
+     [
+      "[Uravation, telefonické a rezervačné cesty (aktualizované 2026-09-05, po japonsky)](https://uravation.com/llmo/denwa-yoyaku-dousen-ai-search/)",
+      "Nespoliehať sa príliš na ReserveAction, jedna pevná rezervačná URL, meranie v GA4",
+      "Príklad JSON-LD, postup vo WordPresse, práca s viacerými rezervačnými portálmi"
+     ],
+     [
+      "[Uravation, zážitky a prehliadky (2026-10-12, po japonsky)](https://uravation.com/llmo/taiken-kanko-activity-llmo-taisaku/)",
+      "Jedna stránka na zážitok; opis podmienok ako zrušenie pre dážď a dĺžka trvania",
+      "Len prehliadky a aktivity. Žiadny kód, žiadny WordPress"
+     ],
+     [
+      "[GMO, lokálne AIO (aktualizované 2026-11-16, po japonsky)](https://www.koukoku.jp/service/suketto/marketer/aio/%e7%94%9f%e6%88%90ai%e6%a4%9c%e7%b4%a2%e3%81%a7%e8%a6%8b%e3%81%a4%e3%81%8b%e3%82%8b%e5%ae%9f%e5%ba%97%e8%88%97%e3%83%bb%e5%9c%b0%e5%9f%9f%e3%83%93%e3%82%b8%e3%83%8d%e3%82%b9%e3%82%92%e4%bd%9c%e3%82%8b/) a [AIsmiley (aktualizované 2026-10-30, po japonsky)](https://aismiley.co.jp/ai_news/chatgpt-restaurant-reservation/)",
+      "Nastavenie Firemného profilu Google / čo pokrývajú rezervácie reštaurácií v ChatGPT v Japonsku",
+      "Štatistiky bez zdrojov (GMO). Nič o vlastnej rezervačnej stránke firmy (AIsmiley)"
+     ],
+     [
+      "[LSEO, rezervácie, ceny a dostupnosť (2026-10-02)](https://lseo.com/generative-engine-optimization/booking-pricing-and-availability-pages-for-agentic-search/) a [LSEO, inštalatér (2026-04-24)](https://lseo.com/blog/uncategorized/direct-booking-via-ai-preparing-your-site-for-schedule-a-plumber/)",
+      "Úprimné konštatovanie: univerzálna rezervačná schéma neexistuje a dostupnosť by mala pochádzať zo živých systémov",
+      "Žiadny postup krok za krokom, žiadne zdroje, žiadny WordPress"
+     ],
+     [
+      "[J.A. Watte, ubytovanie (aktualizované 2026-11-06)](https://jwatte.com/blog/lodging-sites-ai-agents-booking/), [Owner, reštaurácie (2026-10-22)](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search) a [Mindbody (2026-10-13)](https://www.mindbodyonline.com/business/education/blog/how-to-optimize-fitness-website-AI-search)",
+      "Rezervačné odkazy a ceny vrátane dane (ubytovanie), menu ako text (reštaurácie), stránka so službami (fitness)",
+      "Každý obmedzený na jedno odvetvie; veľa o vlastných produktoch"
+     ]
+    ]
+   },
+   "after": [
+    "Tento návod pre každú firmu, ktorá prijíma rezervácie, opisuje, čo napísať na rezervačnú stránku, ako usporiadať viacero rezervačných kanálov, štruktúrované údaje, postup vo WordPresse a ako výsledok overiť."
+   ]
+  },
+  {
+   "heading": "Osem údajov, ktoré potrebuje každá rezervačná stránka",
+   "paragraphs": [
+    "Otázky o rezerváciách sa delia zhruba do ôsmich druhov. Každému venujte v texte rezervačnej stránky odsek s jednou alebo dvoma vetami, alebo riadok tabuľky."
+   ],
+   "table": {
+    "head": [
+     "Údaj",
+     "Príklad",
+     "Otázka, ktorú AI dostáva"
+    ],
+    "rows": [
+     [
+      "Ako rezervovať",
+      "Online nonstop, telefonicky 10:00 – 19:00, správou (odpovedáme počas otváracích hodín)",
+      "„Ako si rezervujem (firma)?“"
+     ],
+     [
+      "Či je rezervácia potrebná",
+      "Len na objednanie. Bez rezervácie vás radi prijmeme, ak máme voľno (počítajte s čakaním)",
+      "„Môžem prísť bez objednania?“"
+     ],
+     [
+      "Uzávierka",
+      "Do 20:00 predchádzajúceho dňa. Na ten istý deň len telefonicky",
+      "„Môžem si rezervovať na dnes?“"
+     ],
+     [
+      "Ako dlho dopredu",
+      "Až dva mesiace dopredu",
+      "„Môžem už rezervovať na budúci mesiac?“"
+     ],
+     [
+      "Dĺžka",
+      "Strihanie trvá asi 60 minút",
+      "„Ako dlho to trvá?“"
+     ],
+     [
+      "Zrušenie",
+      "Zadarmo do predchádzajúceho dňa. Pri zrušení v deň termínu účtujeme 50 %. Rušte telefonicky",
+      "„Platí sa storno poplatok?“"
+     ],
+     [
+      "Platba a zálohy",
+      "Pri rezervácii sa neplatí. Platí sa v deň návštevy v hotovosti, kartou alebo mobilom",
+      "„Musím platiť vopred?“"
+     ],
+     [
+      "Pre koho, čo si vziať so sebou",
+      "Prvá návšteva: príďte o 10 minút skôr kvôli vyplneniu formulára. Deti vítané",
+      "„Je to vhodné aj na prvú návštevu?“ „Môžem vziať deti?“"
+     ]
+    ]
+   },
+   "after": [
+    "Každá veta by mala dávať zmysel sama osebe. AI niekedy na odpoveď vytiahne jedinú vetu, preto sa vyhnite slovným spojeniam závislým od okolia, ako „pozri vyššie“ alebo „kliknite sem“. Slabé: „Rezervujte tu. Ak potrebujete zrušiť, dajte nám prosím vedieť včas.“ Silné: „Online rezervácia je k dispozícii nonstop, telefonická od 10:00 do 19:00. Zrušenie je zadarmo do predchádzajúceho dňa; pri zrušení v deň termínu účtujeme 50 % ceny.“",
+    "Napíšte, čo sa mení s rezerváciou a bez nej. Ak majú prednosť zákazníci s rezerváciou, napíšte „Zákazníkov bez rezervácie obslúžime medzi objednanými termínmi.“ Ak prijímate výhradne na objednanie, napíšte „Bez rezervácie vás, žiaľ, obslúžiť nemôžeme.“ Tým ubudne odpovedí, ktoré chybne tvrdia „rezervácia nie je potrebná“."
+   ]
+  },
+  {
+   "heading": "Viacero rezervačných portálov: rozhodnite, ktoré kanály sú oficiálne",
+   "paragraphs": [
+    "Salóny a reštaurácie bežne prijímajú rezervácie na viacerých miestach: vo vlastnom systéme, na rezervačných portáloch, telefonicky, cez chat. AI odovzdá ďalej akýkoľvek rezervačný kanál, ktorý nájde, takže portál, z ktorého ste odišli, alebo staré telefónne číslo sa môžu objaviť v odpovedi. Usporiadajte to v tomto poradí."
+   ],
+   "list": [
+    "Vypíšte všetky kanály, cez ktoré prijímate rezervácie (vlastný systém, rezervačné portály, rezervačný odkaz vo Firemnom profile Google, telefón, chat, správy na sociálnych sieťach)",
+    "Odstráňte záznamy v kanáloch, ktoré už nepoužívate, alebo ich označte „rezervácie už neprijímame“",
+    "Na rezervačnú stránku napíšte „Rezervácie prijímame týmito spôsobmi“ a uveďte len kanály, ktoré používate",
+    "Ak má každá služba vlastnú rezervačnú URL, určte pre každú službu jednu oficiálnu URL (odkaz priamo na rezervačnú obrazovku danej služby je lepší ako odkaz na domovskú stránku)",
+    "Používajte rovnaké storno podmienky a uzávierky na svojom webe aj na všetkých rezervačných portáloch. Ak sa líšia, napíšte, ktoré pravidlo platí pre ktorý kanál",
+    "Z profilov na rezervačných portáloch a z opisu vo Firemnom profile Google odkazujte späť na svoju rezervačnú stránku"
+   ],
+   "after": [
+    "Rezervačné odkazy vo Firemnom profile Google majú svoje pravidlá: profil musí byť overený; odkaz musí viesť na stránku venovanú vašej firme, kde sa dá rezervácia dokončiť; sociálne siete, chatovacie aplikácie, obchody s aplikáciami a skracovače odkazov nie sú povolené; stránka sa musí otvoriť bez prihlásenia či CAPTCHA a vrátiť kód 200 ([Pravidlá pre firemné odkazy](https://support.google.com/business/answer/13769188)). Môžete sa tiež zobraziť cez poskytovateľa rezervácií, ktorý spolupracuje s Reserve with Google; Google uvádza, že pri vlastných odkazoch pridaných ručne nie sú k dispozícii údaje o výkonnosti ([Rezervácie cez poskytovateľa](https://support.google.com/business/answer/7475773))."
+   ]
+  },
+  {
+   "heading": "Nepíšte dostupnosť. Napíšte, ako ju overiť",
+   "paragraphs": [
+    "Ak napíšete „v sobotu býva pokoj“ alebo „cez pracovné dni rezervácia nie je potrebná“, AI môže túto vetu používať aj potom, čo sa situácia zmení. Žiadna služba AI nezverejňuje, ako často stránku znova číta. Dostupnosť berte ako niečo, čo ukazuje váš rezervačný systém, a namiesto nej napíšte, ako ju overiť: „Voľné termíny nájdete na obrazovke online rezervácie. Na dostupnosť na ten istý deň sa, prosím, informujte telefonicky.“",
+    "Ak spomínate špičky, formulujte ich ako stály vzorec: „Cez víkendové popoludnia býva plno, preto odporúčame rezerváciu.“ Vykresľovať situáciu voľnejšiu, než je, klame ľudí aj AI."
+   ]
+  },
+  {
+   "heading": "Zabezpečte čitateľnosť: skontrolujte vložené prvky, obrázky a prihlásenie",
+   "paragraphs": [
+    "Mnohé rezervačné systémy zobrazujú svoju obrazovku ako vložený prvok z iného webu (iframe) alebo cez JavaScript. Ľudia ju vidia, ale či AI číta text vo vloženom prvku ako súčasť vašej stránky, sa líši podľa služby a nie je to zverejnené. Rezervačné pravidlá napíšte mimo vloženého prvku, do vlastného textu rezervačnej stránky. Samotný rezervačný formulár môže zostať vložený.",
+    "Tento príkaz ukáže, či sa rezervačná stránka otvorí bez prihlásenia a či jej HTML obsahuje pravidlá."
+   ],
+   "code": "# Is the booking page public (200, no login) and are the rules in its HTML?\ncurl -s -o /dev/null -w \"%{http_code}\\n\" https://example.com/book/\ncurl -s https://example.com/book/ | grep -iE \"cancel|walk-in|same day\"\n# If nothing prints, the rules live in an image, an embedded widget or JavaScript",
+   "after": [
+    "OpenAI uvádza, že na zahrnutie do vyhľadávania ChatGPT máte povoliť prehľadávanie webu robotu OAI-SearchBot a zabezpečiť, aby váš hosting alebo CDN prepúšťal prevádzku zo zverejnených IP adries OpenAI ([Pomocník OpenAI](https://help.openai.com/en/articles/9237897-chatgpt-search)). Skontrolujte, či ochrana proti botom neblokuje práve rezervačnú stránku. Firmám, ktoré chcú, aby AI agenti dokončovali rezervácie za zákazníkov, Stripe odporúča prejsť ochranu proti botom a zvážiť WebMCP, to je však ďalší krok, ktorý zahŕňa aj platby ([Stripe](https://docs.stripe.com/agentic-commerce/for-sellers/services))."
+   ]
+  },
+  {
+   "heading": "Štruktúrované údaje: ReserveAction pridať môžete, ale veľa nečakajte",
+   "paragraphs": [
+    "schema.org má [ReserveAction](https://schema.org/ReserveAction), akciu vykonania rezervácie, a môžete ju použiť na prepojenie rezervačnej URL so službou. Nenašli sme však žiadne oficiálne vyjadrenie ChatGPT, Perplexity ani funkcií AI od Googlu, že by ReserveAction na rezervácie používali. Google uvádza, že funkcie AI nepotrebujú žiadne špeciálne štruktúrované údaje a že štruktúrované údaje sa musia zhodovať s viditeľným textom ([Funkcie AI a váš web](https://developers.google.com/search/docs/appearance/ai-features), overené 2026-11-18). Pridaním veľa nepokazíte, ale rezervačné tlačidlo sa tým neobjaví.",
+    "Ak ju pridávate, prepojte každú službu (Service) s jej rezervačnou URL takto. Je to rovnaká štruktúra, akú zverejňuje Nurevo AIO."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Service\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Haircut (wash and blow-dry included)\",\n  \"provider\": { \"@id\": \"https://example.com/#business\" },\n  \"additionalProperty\": {\n    \"@type\": \"PropertyValue\",\n    \"name\": \"duration\",\n    \"value\": 60,\n    \"unitCode\": \"MIN\",\n    \"unitText\": \"minutes\"\n  },\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"55.00\", \"priceCurrency\": \"USD\" },\n  \"potentialAction\": {\n    \"@type\": \"ReserveAction\",\n    \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book/haircut/\" },\n    \"result\": { \"@type\": \"Reservation\", \"name\": \"Haircut (wash and blow-dry included)\" }\n  }\n}\n</script>",
+   "after": [
+    "Kľúčové je nepísať Reservation samostatne. Samostatný Reservation hovorí, že rezervácia už existuje, čo nie je pravda. Ako výsledok (result) akcie ReserveAction hovorí „táto akcia vytvorí rezerváciu“. Syntax skontrolujte v [Schema Markup Validator](https://validator.schema.org/)."
+   ]
+  },
+  {
+   "heading": "Postup vo WordPresse (s Nurevo AIO)",
+   "paragraphs": [
+    "S pluginom [Nurevo AIO (zadarmo, predtým zobrazovaný ako Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) sa rezervačná URL zadaná pri každej službe v časti „Services“ v nastaveniach zverejňuje ako ReserveAction v štruktúrovaných údajoch Service a v llms.txt. Postupujte v tomto poradí."
+   ],
+   "list": [
+    "Najprv opravte text rezervačnej stránky podľa ôsmich údajov vyššie (text stránky má prednosť pred štruktúrovanými údajmi)",
+    "Pridajte svoje služby (až 20). Vedľa polí „Service name“, „Duration (minutes)“, „Price“ a „Currency“ zadajte do poľa „Booking URL“ adresu rezervačnej obrazovky danej služby",
+    "Pri službách s rezervačnou URL vedie názov služby v llms.txt práve na ňu (napríklad: - [Strihanie](https://example.com/book/haircut/) — 60 min · USD 55.00)",
+    "Z rezervačných pluginov, ako je Amelia, sa nič nenačítava. Je to zámer, aby sa chybná dĺžka alebo rezervačná URL nikdy nezverejnila ako fakt; hodnoty zadajte ručne",
+    "Ako stránku so službami zadajte ID rezervačnej stránky alebo stránky s ponukou a označenie Service sa umiestni na túto stránku (0 = úvodná stránka)",
+    "Do FAQ pridajte storno poplatky, rezervácie na ten istý deň a príchod bez rezervácie. Nezdvojuje výstup Yoast SEO, Rank Math, All in One SEO ani Slim SEO a funguje spolu so SEO SIMPLE PACK a VK All in One Expansion Unit (od verzie 0.9.1)",
+    "Keď meníte rezervačné kanály, aktualizujte v ten istý deň text stránky, rezervačné URL v Nurevo, odpovede vo FAQ a Firemný profil Google"
+   ],
+   "after": [
+    "Agentúry, ktoré spravujú weby klientov, môžu do rozsahu údržby zahrnúť „zmeny rezervačných kanálov“, aby po každej zmene rezervačného portálu u klienta nezostala stará URL. Pre agentúry ponúkajúce mesačnú podporu máme [partnerský program](https://nurevo.jp/partner/)."
+   ]
+  },
+  {
+   "heading": "Ako to overiť: stanovte si otázky o rezerváciách a veďte si záznamy",
+   "paragraphs": [
+    "Ak chcete zistiť, či sa vaše rezervačné pravidlá odovzdávajú správne, kladte rovnaké otázky rovnakej AI v rôzne dni a zaznamenávajte odpovede. Nesúďte podľa jedinej odpovede."
+   ],
+   "table": {
+    "head": [
+     "Otázka",
+     "Na čo sa pozerať"
+    ],
+    "rows": [
+     [
+      "„Musím si v (firma) rezervovať?“",
+      "Uvádza správne, či len na objednanie, alebo či sú vítaní aj zákazníci bez rezervácie?"
+     ],
+     [
+      "„Môžem si (firma) rezervovať na dnes?“",
+      "Sú uzávierka a spôsob (len telefonicky a pod.) správne?"
+     ],
+     [
+      "„Aký storno poplatok má (firma)?“",
+      "Sú lehota a poplatok správne? Nie je zdrojom starý rezervačný portál?"
+     ],
+     [
+      "„Ako si rezervujem (firma)?“",
+      "Je uvedený kanál ten, ktorý teraz používate?"
+     ],
+     [
+      "„Ktorý (typ podniku) v (oblasť) si môžem rezervovať na dnes?“",
+      "Ste v zozname pri otázke bez názvu firmy? Zobrazí sa rezervačné tlačidlo (reštaurácie)?"
+     ]
+    ]
+   },
+   "after": [
+    "Zaznamenávajte dátum, službu AI, otázku, odpoveď a URL zdroja. Ak je zdrojom starý rezervačný portál alebo článok na blogu, opravte ho. V plánoch Free a Standard položí služba Nurevo raz mesačne službe Perplexity tri otázky bez názvu firmy, zostavené z vášho typu podnikania a oblasti, a ukáže, či sa objavilo vaše meno a či bol citovaný váš web. Pro (od $99/mesiac, beta) meria až 20 otázok v Perplexity (ChatGPT po nastavení). Otázky o rezerváciách zaznamenávajte ručne. Viac v článku [meranie viditeľnosti v AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolný zoznam pred zverejnením",
+   "list": [
+    "Existuje jedna rezervačná stránka a otvorí sa bez prihlásenia",
+    "Spôsob rezervácie a čas prijímania rezervácií sú napísané textom",
+    "Je uvedené, či je rezervácia potrebná a čo sa stane bez nej",
+    "Je uvedená uzávierka (ten istý deň, predchádzajúci deň) a ako dlho dopredu sa dá rezervovať",
+    "Storno lehota, poplatok a spôsob zrušenia sú uvedené a zhodujú sa s rezervačnými portálmi",
+    "Sú uvedené len kanály, ktoré používate; staré sú preč",
+    "Stránka hovorí, ako overiť dostupnosť, namiesto toho, aby dostupnosť uvádzala",
+    "Rezervačné pravidlá sú v texte stránky, mimo vložených prvkov a obrázkov",
+    "Rezervačné URL v štruktúrovaných údajoch vedú na rezervačné obrazovky, ktoré teraz používate",
+    "Rezervačný odkaz vo Firemnom profile Google vedie na rovnaký kanál"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Čo mám dať na web, aby sa v ChatGPT objavilo tlačidlo Reserve?",
+   "a": "Nič na vašom webe ho nezapne. Pomocník OpenAI uvádza, že tlačidlo Reserve sa zobrazí len vtedy, keď ChatGPT dokáže reštauráciu spárovať so záznamom u podporovaného poskytovateľa (OpenTable, Resy, Yelp). Urobiť môžete to, že správne opíšete rezervačné pravidlá na webe a budete udržiavať presné záznamy na rezervačných platformách."
+  },
+  {
+   "q": "Prinesie pridanie ReserveAction rezervácie z AI?",
+   "a": "Nenašli sme žiadne oficiálne vyjadrenie, že áno. ReserveAction veľa nepokazí, ale prínos pre rezervácie sa nepreukázal. Najprv opravte rezervačné pravidlá v texte stránky."
+  },
+  {
+   "q": "Naša rezervačná stránka je len vložený widget bez textu.",
+   "a": "Či AI číta text vo vloženom prvku ako súčasť vašej stránky, sa líši podľa služby a nie je to zverejnené. Formulár môže zostať vložený; spôsoby rezervácie, uzávierky a storno podmienky napíšte ako text nad neho alebo pod neho."
+  },
+  {
+   "q": "Storno podmienky na rezervačnom portáli sa líšia od tých na našom webe.",
+   "a": "Nedá sa odhadnúť, ktoré z nich AI odcituje. Ak môžete, zjednoťte ich; ak nie, napíšte, ktoré pravidlo platí pre ktorý kanál, napríklad „Online rezervácie možno zadarmo zrušiť do predchádzajúceho dňa; rezervácie cez rezervačné portály sa riadia pravidlami daného portálu.“"
+  },
+  {
+   "q": "Pomohlo by uvádzať na webe dostupnosť, aby sme sa objavovali v AI?",
+   "a": "Dostupnosť sa mení, takže ak ju napíšete do textu stránky, hrozí, že v odpovediach AI zostanú staré informácie. Napíšte, ako dostupnosť overiť, a samotnú dostupnosť nechajte zobrazovať rezervačný systém."
+  },
+  {
+   "q": "Bude sa dať v AI rezervovať aj v iných podnikoch než v reštauráciách?",
+   "a": "V auguste 2025 Google uviedol, že agentové rezervácie v AI Mode rozšíri na termíny v miestnych službách, najprv v USA. Sledujte oznámenia Googlu pre svoju krajinu. Už teraz môžete udržiavať presnú rezervačnú stránku a rezervačný odkaz vo Firemnom profile Google."
+  },
+  {
+   "q": "Kedy sa po zmene rezervačnej stránky zmenia odpovede AI?",
+   "a": "Žiadna služba AI nezverejňuje, ako dlho to trvá. Overte to rovnakými otázkami o niekoľko dní až niekoľko týždňov. Ak sa stále objavuje starý rezervačný kanál, skontrolujte URL zdroja a opravte tú stránku."
+  }
+ ],
+ "relatedHeading": "Súvisiace návody",
+ "cta": {
+  "heading": "Zistite, či AI dokáže čítať váš web",
+  "body": "Bezplatná kontrola nevyžaduje registráciu: zadajte URL a uvidíte prístup AI crawlerov, štruktúrované údaje a llms.txt. Vo WordPresse zverejňuje bezplatný plugin vaše služby a rezervačné URL ako štruktúrované údaje a v llms.txt bez zdvojovania výstupu vášho SEO pluginu.",
+  "label": "Skontrolujte pripravenosť na AI zadarmo",
+  "href": "/check",
+  "secondary": {
+   "label": "Vyskúšať bezplatný plugin pre WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je ochranná známka spoločnosti OpenAI; Google, Google Search, Google Business Profile a Reserve with Google spoločnosti Google LLC; Perplexity spoločnosti Perplexity AI. OpenTable, Resy, Yelp, Tock, TheFork, Booksy, Stripe, WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, Amelia a názvy spoločností citovaných v tomto návode sú ochranné známky alebo registrované ochranné známky príslušných vlastníkov. Nurevo nie je s žiadnou z týchto spoločností prepojené ani nimi podporované."
+}

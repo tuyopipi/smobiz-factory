@@ -1,0 +1,316 @@
+{
+ "title": "Stranica O nama za AI pretraživanje: točni podaci o tvrtki | Nurevo",
+ "description": "Kako izraditi stranicu O nama na koju se AI odgovori mogu osloniti: koje činjenice objaviti, kako ukloniti varijante imena i adrese, Organization i WordPress.",
+ "h1": "Optimizacija stranice O nama za AI pretraživanje: da naziv tvrtke, adresa, datum osnivanja i djelatnost budu točno opisani",
+ "lead": "Kad netko AI pita o vašoj tvrtki po imenu, odgovor se najčešće oslanja na stranicu O nama ili stranicu s profilom tvrtke. Na jednu stranicu, u običnom tekstu, napišite službeni naziv i imena koja ljudi stvarno koriste, adresu, datum osnivanja, upravu, čime se bavite i kako vas mogu kontaktirati; iste vrijednosti objavite kao strukturirane podatke Organization; pobrinite se da zapis bude jednak na drugim stranicama i u vašim profilima drugdje. Ta tri koraka srž su posla.",
+ "intro": [
+  "Napisano 15. studenoga 2026. (JST). Vodič je namijenjen svakoj tvrtki, trgovini ili organizaciji koja ima stranicu O nama ili profil tvrtke, kao i agencijama koje izrađuju takva web-mjesta. Označavanje adrese i radnog vremena za trgovine opisano je u vodiču [shema za lokalne tvrtke i SEO dodaci](/guide/local-business-schema-seo-plugins). Ovaj vodič bavi se stranicom koja govori tko ste i gdje ste.",
+  "AI odgovori mijenjaju se iz dana u dan i ovisno o formulaciji pitanja. Ovi koraci osiguravaju da su informacije koje AI čita točne; ne jamče da ćete se pojaviti u odgovoru."
+ ],
+ "sections": [
+  {
+   "heading": "Za što AI koristi vašu stranicu O nama",
+   "paragraphs": [
+    "Pretraživanje ChatGPT, Perplexity i Googleovi AI Overviews čitaju web-stranice dok odgovaraju i prikazuju ih kao izvore. Za pitanje koje imenuje tvrtku očit je kandidat web-mjesto te tvrtke, a prije svega stranica koja okuplja njezine osnovne podatke. Ako je stranica O nama samo jedna slika ili su naziv i adresa na svakoj stranici napisani drukčije, AI može sastaviti odgovor iz nečijeg starog unosa ili iz podataka druge tvrtke istog imena.",
+    "Pitanja koja imenuju tvrtku obično spadaju u nekoliko obrazaca. Na svako se može odgovoriti sa stranice O nama koja činjenice navodi u tekstu."
+   ],
+   "list": [
+    "„Čime se bavi Example d.o.o.?“ (opis djelatnosti)",
+    "„Gdje je sjedište tvrtke Example? Imaju li ured u Splitu?“ (lokacije)",
+    "„Kada je Example osnovan i tko ga vodi?“ (datum osnivanja, uprava)",
+    "„Koja tvrtka stoji iza aplikacije Example?“ (robna marka naspram naziva tvrtke)",
+    "„Je li Example ista tvrtka kao Sample?“ (prijašnji nazivi, tvrtke u grupi, tvrtke istog imena)",
+    "„Kako mogu kontaktirati Example?“ (telefon, obrazac, radno vrijeme)"
+   ],
+   "after": [
+    "Google navodi da za pojavljivanje u AI Overviews ili AI Mode nema dodatnih zahtjeva ni posebnih strukturiranih podataka te da vrijede uobičajene dobre SEO prakse ([Google Search Central: AI značajke i vaše web-mjesto](https://developers.google.com/search/docs/appearance/ai-features)). Rad na stranici O nama nije poseban način pisanja za AI. Riječ je o tome da činjenice navedete točno, u čitljivom obliku i svugdje s istim vrijednostima."
+   ]
+  },
+  {
+   "heading": "Što staviti na stranicu i kako se to preslikava u strukturirane podatke",
+   "paragraphs": [
+    "Tablica navodi što stranica O nama treba sadržavati, koje pogreške AI odgovori često rade i koje svojstvo Organization odgovara svakom podatku. Nazivi svojstava preuzeti su iz preporučenih svojstava u Googleovoj dokumentaciji [strukturirani podaci Organization](https://developers.google.com/search/docs/appearance/structured-data/organization). „Samo tekst“ označava stavke koje nisu među Googleovim preporučenim svojstvima."
+   ],
+   "table": {
+    "head": [
+     "Stavka",
+     "Kako je napisati",
+     "Tipična pogreška AI-ja",
+     "Strukturirani podaci"
+    ],
+    "rows": [
+     [
+      "Službeni naziv",
+      "Registrirani naziv navedite jednom, točno kako je registriran",
+      "Zamjena s tvrtkom sličnog imena",
+      "legalName (ako se razlikuje od name)"
+     ],
+     [
+      "Trgovačko ime, robna marka, naziv na drugom jeziku",
+      "Povežite ih u rečenici: „Aplikaciju Example vodi Sample d.o.o.“",
+      "AI poznaje robnu marku, ali ne i tvrtku iza nje",
+      "alternateName"
+     ],
+     [
+      "Adresa",
+      "Odvojite sjedište od ostalih lokacija; sve adrese napišite u istom obliku, sve do kata",
+      "Adresa prije preseljenja ili podružnica navedena kao sjedište",
+      "address (PostalAddress, jedna ili više)"
+     ],
+     [
+      "Kontakt",
+      "Glavni broj telefona, put za upite, radno vrijeme",
+      "Izravni broj nekog odjela ili stari broj",
+      "telephone, email, contactPoint"
+     ],
+     [
+      "Osnivanje",
+      "Puni datum; ako se osnivanje i upis u registar razlikuju, navedite oba",
+      "Brkanje godine osnivanja s godinom upisa u registar",
+      "foundingDate (ISO 8601, npr. 2015-04-01)"
+     ],
+     [
+      "Uprava",
+      "Funkcija i ime; ažurirajte na dan promjene",
+      "Navođenje prethodnog direktora",
+      "Samo tekst (nije Googleovo preporučeno svojstvo)"
+     ],
+     [
+      "Čime se bavite",
+      "Prva rečenica: što, za koga, gdje; zatim popis djelatnosti",
+      "Sporedna djelatnost predstavljena kao glavna",
+      "description"
+     ],
+     [
+      "Broj zaposlenih, temeljni kapital",
+      "Dodajte „stanje na mjesec i godinu“",
+      "Ponavljanje starog broja bez datuma",
+      "numberOfEmployees (temeljni kapital: samo tekst)"
+     ],
+     [
+      "Matični broj ili OIB",
+      "Ako ga imate, navedite ga na stranici",
+      "Nema načina da vas se razlikuje od tvrtke istog imena",
+      "Najprije tekst (vidi dolje)"
+     ],
+     [
+      "Službene društvene mreže i profili",
+      "Navedite samo račune kojima upravlja tvrtka",
+      "Povezivanje s tvrtkom istog imena ili lažnim računom",
+      "sameAs"
+     ],
+     [
+      "Logotip",
+      "Ista slika kao logotip web-mjesta",
+      "Logotip druge tvrtke",
+      "logo (najmanje 112×112 px)"
+     ],
+     [
+      "Zadnje ažuriranje",
+      "„Ažurirano ...“ na kraju stranice",
+      "Nema načina da se utvrdi koliko su podaci svježi",
+      "Samo tekst"
+     ]
+    ]
+   },
+   "after": [
+    "O matičnim i poreznim brojevima: Google taxID opisuje kao porezni broj za zemlju navedenu u address, a vatID kao PDV identifikacijski broj ondje gdje postoji. Ako je vaš broj porezni ili PDV broj u vašoj zemlji, ta svojstva odgovaraju. Ako je riječ o drugoj vrsti identifikatora, poput japanskog broja pravne osobe, Google ne kaže pripada li u taxID, pa ga navedite na stranici i sami odlučite hoćete li ga označiti.",
+    "Ne napuhujte brojke. Ako broj zaposlenih ili klijenata zaokružite naviše, AI će citirati veći broj, a to je teško povući. Navedite točan broj i datum na koji se odnosi."
+   ]
+  },
+  {
+   "heading": "Kako napisati stranicu: ne samo tablica, nikad slika",
+   "paragraphs": [
+    "Mnoge stranice O nama nisu ništa više od tablice s dva stupca. Tablicu lako čitaju i ljudi i strojevi, ali sama po sebi nema rečenicu koja kaže što tvrtka jest. Iznad tablice dodajte dvije ili tri uvodne rečenice i AI će imati tekst koji može izravno upotrijebiti kad vas opisuje."
+   ],
+   "list": [
+    "Prva rečenica: službeni naziv, grad i čime se bavite. Na primjer: „Sample d.o.o. iz Osijeka pomaže malim tvrtkama uvesti računovodstveni softver.“",
+    "Druga rečenica: činjenice koje vas razlikuju od tvrtki istog imena, poput veze robne marke i tvrtke te godine osnivanja.",
+    "Zatim tablica, kao HTML tablica ili popis s oznakama, nikad kao slika ili PDF.",
+    "Povijest u jednom retku po godini. Kod promjene naziva, preseljenja ili spajanja napišite i staro i novo: „U ožujku 20XX. tvrtka je promijenila naziv iz Staro Ime d.o.o.“",
+    "Poruku osnivača i misiju držite pod zasebnim naslovima, odvojeno od činjenica.",
+    "Stranicu završite datumom zadnjeg ažuriranja."
+   ],
+   "after": [
+    "schema.org ima tip [AboutPage](https://schema.org/AboutPage) za samu stranicu, a neki SEO dodaci omogućuju da ga odaberete kao vrstu stranice. Nije obavezan i možete ga koristiti dokle god nije u suprotnosti s vašim ostalim strukturiranim podacima."
+   ]
+  },
+  {
+   "heading": "Uklonite varijante, na svom web-mjestu i drugdje",
+   "paragraphs": [
+    "AI sastavlja odgovor iz više stranica. Ako je vaš naziv ili adresa na svakoj stranici napisan drukčije, možda ih neće smatrati jednom tvrtkom ili će odabrati stari zapis. Najprije za svaku od uobičajenih varijanti odredite jedan oblik."
+   ],
+   "table": {
+    "head": [
+     "Varijanta",
+     "Za što se odlučiti"
+    ],
+    "rows": [
+     [
+      "Sample d.o.o. / Sample, društvo s ograničenom odgovornošću / Sample",
+      "Registrirani oblik, korišten svugdje gdje navodite tvrtku"
+     ],
+     [
+      "Nazivi na drugim jezicima ili pismima",
+      "Jedan oblik po jeziku, isti na stranicama na tom jeziku, u profilima i na posjetnicama"
+     ],
+     [
+      "Unit 3, 12 High St / 12 High Street, Unit 3 / s nazivom zgrade i bez njega",
+      "Jedan redoslijed i jedna odluka o nazivu zgrade i katu"
+     ],
+     [
+      "0113 496 0000 / (0113) 4960000 / +44 113 496 0000",
+      "Jedan oblik po jeziku, npr. nacionalni oblik na lokalnim stranicama i međunarodni na engleskim stranicama za strane čitatelje"
+     ],
+     [
+      "Stranice koje još prikazuju stari naziv ili adresu",
+      "Zabilježite promjenu u povijesti, zatim ispravite stare stranice"
+     ]
+    ]
+   },
+   "after": [
+    "Gdje provjeriti na svom web-mjestu: O nama, podnožje, stranica za kontakt, pravila privatnosti, zakonski obavezni podaci o tvrtki, stranice o zapošljavanju, priopćenja za medije, okviri s autorima na blogu i PDF brošura.",
+    "Gdje provjeriti drugdje: vaš Google Business Profile, profili na društvenim mrežama kojima upravlja tvrtka, portali za zapošljavanje, imenici strukovnih udruga i lokalni imenici te opisi vaše tvrtke na web-mjestima partnera. Neke od njih ne možete uređivati. Najprije uredite vlastito web-mjesto, zatim zamolite izdavača da ispravi svoje. Kad je AI odgovor već pogrešan, pronađite njegov izvor i svaku vrstu pogreške ispravite ondje gdje nastaje."
+   ]
+  },
+  {
+   "heading": "Pomozite AI-ju da vas razlikuje od tvrtke istog imena",
+   "paragraphs": [
+    "Ako je vaš naziv uobičajena riječ ili druga tvrtka negdje drugdje ima isti naziv, AI ih može pomiješati. Razlikuju vas činjenice koje imate samo vi."
+   ],
+   "list": [
+    "U prvu rečenicu uvoda stavite grad i čime se bavite.",
+    "Navedite činjenice koje tvrtka istog imena neće dijeliti: godinu osnivanja, matični broj, ime direktora.",
+    "U sameAs navedite samo službene račune i profile kojima upravlja tvrtka. Izostavite tvrtke istog imena i stranice kojima ne upravljate.",
+    "Ako se robna marka i naziv tvrtke razlikuju, na stranicama za oboje napišite „Example vodi Sample d.o.o.“.",
+    "Google navodi da svojstva poput iso6523Code i naics pomažu razlikovati organizaciju. Ako imate odgovarajuće kodove, razmislite o njihovu dodavanju."
+   ]
+  },
+  {
+   "heading": "Strukturirani podaci Organization: što kaže Googleova dokumentacija",
+   "paragraphs": [
+    "Ključne točke Googleove dokumentacije [strukturirani podaci Organization](https://developers.google.com/search/docs/appearance/structured-data/organization) (zadnje ažuriranje 15. rujna 2026.; pročitano 15. studenoga):"
+   ],
+   "list": [
+    "Nema obaveznih svojstava; Google preporučuje da dodate što više svojstava koja se odnose na vašu organizaciju.",
+    "Oznake stavite na početnu stranicu ili na jednu stranicu koja opisuje organizaciju, poput stranice O nama. Ne moraju biti na svakoj stranici.",
+    "Za lokalnu tvrtku, poput restorana ili trgovine, upotrijebite najspecifičniji podtip LocalBusiness i slijedite i smjernice za LocalBusiness.",
+    "foundingDate koristi ISO 8601 (npr. 2015-04-01).",
+    "Logotip mora biti najmanje 112×112 piksela te dostupan za indeksiranje i pretraživačke botove."
+   ],
+   "after": [
+    "Google među osnove ubraja i to da se strukturirani podaci podudaraju s vidljivim tekstom ([AI značajke i vaše web-mjesto](https://developers.google.com/search/docs/appearance/ai-features)). Strukturirani podaci sami po sebi ne mijenjaju odgovore. Ako ih smatrate strojno čitljivim ključem odgovora za ono što stranica već kaže, prioriteti će vam biti ispravni. Ne stavljajte u strukturirane podatke činjenicu koju tekst stranice ne navodi."
+   ]
+  },
+  {
+   "heading": "Koraci u WordPressu (uz Nurevo AEO)",
+   "paragraphs": [
+    "Na WordPress web-mjestu [Nurevo AEO (besplatno)](https://wordpress.org/plugins/nurevo-webmcp/) objavljuje osnovne podatke o vašoj tvrtki kao strukturirane podatke i u llms.txt. Radite ovim redoslijedom."
+   ],
+   "list": [
+    "Najprije ispravite tekst stranice O nama prema gornjoj tablici. Tekst prije strukturiranih podataka.",
+    "Instalirajte dodatak i u čarobnjaku za postavljanje odaberite vrstu web-mjesta: „B2B / SaaS“ za Organization, odgovarajuću karticu za trgovinu ili ordinaciju ili „Other“ (Ostalo) ako nijedna ne odgovara.",
+    "Provjerite podatke o tvrtki (naziv, opis, adresa, telefon, radno vrijeme, vrsta djelatnosti, URL, e-pošta). Vrijednosti pročitane iz postojećih postavki popunjavaju samo prazna polja; ono što ste sami upisali nikad se ne prepisuje, a administratorska e-adresa WordPressa nikad se ne koristi kao poslovna e-adresa.",
+    "Uskladite naziv i adresu sa stranicom O nama. Adresa se objavljuje kao jedan niz unutar PostalAddress, pa je upišite točno onako kako je napisana na stranici O nama.",
+    "Logotip je slika postavljena kao logotip web-mjesta u temi. Neka bude najmanje 112×112 piksela.",
+    "Uz Yoast SEO, Rank Math, All in One SEO ili Slim SEO, Nurevo dodaje samo činjenice koje nedostaju u strukturiranim podacima tog dodatka, pa tvrtka nije opisana dvaput. Radi i uz SEO SIMPLE PACK i VK All in One Expansion Unit (od verzije 0.9.1). Kad vaš SEO dodatak već postavlja naziv ili logotip, prednost imaju njegove vrijednosti, pa ih držite usklađenima.",
+    "Za dodavanje službenog naziva (legalName), drugih imena (alternateName), datuma osnivanja (foundingDate) ili službenih računa (sameAs) upotrijebite razvojni filtar webmcp_canary_business_node. To nisu polja u Nurevovu obrascu s podacima o tvrtki.",
+    "Pokrenite dijagnozu na zaslonu AEO ocjena, zatim otvorite /llms.txt i provjerite je li stranica O nama navedena. llms.txt navodi 30 posljednje ažuriranih stranica i objava; ako stranica O nama nije među njima, dodajte redak filtrom webmcp_canary_llms_txt_lines."
+   ],
+   "after": [
+    "Iste provjere vrijede i za web-mjesta koja nisu izrađena u WordPressu. Unesite svoj URL u [besplatnu provjeru](/check), bez registracije, i vidjet ćete stanje strukturiranih podataka, llms.txt i pristupa AI pretraživačkih botova."
+   ]
+  },
+  {
+   "heading": "Kako provjeriti: pitanja s vašim imenom i bez njega",
+   "paragraphs": [
+    "Rad na stranici O nama provjerite pitanjima koja sadrže naziv vaše tvrtke. Isto pitanje postavite istom AI-ju u različite dane, više puta, i zabilježite odgovore. Ne sudite prema jednom odgovoru."
+   ],
+   "table": {
+    "head": [
+     "Što zabilježiti",
+     "Primjer"
+    ],
+    "rows": [
+     [
+      "Datum, AI, pitanje",
+      "15. stu., Perplexity, „Što je Sample d.o.o.? Kada je osnovan i čime se bavi?“"
+     ],
+     [
+      "Činjenice u odgovoru",
+      "Adresa, datum osnivanja, uprava, djelatnost: točno ili netočno, jedno po jedno"
+     ],
+     [
+      "Izvori",
+      "Je li citirana vaša stranica O nama ili neko drugo web-mjesto?"
+     ],
+     [
+      "Odakle potječe pogreška",
+      "Prikazuje li citirana stranica još uvijek staru adresu?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevova besplatna AI provjera (jednom mjesečno, za povezana web-mjesta s paketima Free i Standard) postavlja pitanja sastavljena od vaše vrste djelatnosti i područja, bez vašeg imena. Pokazuje mogu li vas pronaći ljudi koji ne znaju vaše ime; točnost podataka o tvrtki provjerite ručno uz gornju tablicu. Mjerenje vidljivosti u paketu Pro (beta) trenutačno obuhvaća Perplexity. Cijela metoda opisana je u vodiču [kako mjeriti AI vidljivost](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolni popis za stranicu O nama",
+   "list": [
+    "Dvije ili tri rečenice iznad tablice navode naziv, lokaciju i čime se bavite.",
+    "Odnos službenog naziva, robne marke i eventualnog naziva na drugom jeziku napisan je kao rečenica.",
+    "Adresa i telefon napisani su jednako na svakoj stranici web-mjesta.",
+    "Datum osnivanja, uprava i broj zaposlenih točni su i datirani.",
+    "Promjene naziva i preseljenja navedeni su u povijesti sa starom i novom vrijednošću.",
+    "Stranica O nama nije samo slika ili PDF.",
+    "Organization (ili za trgovinu najspecifičniji podtip LocalBusiness) nalazi se na početnoj stranici ili stranici O nama, a njegove vrijednosti odgovaraju tekstu.",
+    "sameAs navodi samo račune kojima upravlja tvrtka.",
+    "Vaš Google Business Profile i drugi profili koriste isti zapis.",
+    "Stranica završava datumom zadnjeg ažuriranja.",
+    "Provjerili ste pitanjima koja sadrže vaše ime, u različite dane, i zabilježili rezultate."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Trebam li stranicu O nama odvojenu od početne stranice?",
+   "a": "Ne ako početna stranica već okuplja osnovne podatke o tvrtki. Google preporučuje da oznake Organization stavite na početnu stranicu ili na jednu stranicu koja opisuje organizaciju. Ako je vaša početna stranica uglavnom posvećena uslugama, zasebna stranica O nama drži činjenice na jednom mjestu."
+  },
+  {
+   "q": "Je li problem ako je stranica O nama samo tablica?",
+   "a": "Nije. Tablica je lako čitljiva. Ali nedostaje joj rečenica koja kaže što tvrtka jest, pa iznad nje dodajte dvije ili tri uvodne rečenice."
+  },
+  {
+   "q": "Trebaju li strukturirani podaci Organization biti na svakoj stranici?",
+   "a": "Prema Googleu ne moraju: dovoljna je početna stranica ili jedna stranica poput O nama. Ako ih vaš SEO dodatak ispisuje na svakoj stranici, to je u redu dokle god su vrijednosti točne."
+  },
+  {
+   "q": "Treba li matični broj naše tvrtke ići u taxID?",
+   "a": "Google taxID opisuje kao porezni broj za zemlju u vašoj adresi. Ako je vaš broj to, odgovara; ako je riječ o drugoj vrsti identifikatora, Google to ne navodi. Najprije ga navedite na stranici, a zatim odlučite hoćete li ga označiti."
+  },
+  {
+   "q": "Kako osigurati da ljudi koji pitaju za naš prijašnji naziv pronađu sadašnju tvrtku?",
+   "a": "Napišite oba naziva u povijesti („U ožujku 20XX. tvrtka je promijenila naziv iz Staro Ime d.o.o.“) i spomenite to u uvodu. Ako profili drugdje još prikazuju stari naziv, zamolite njihove izdavače da ih ažuriraju."
+  },
+  {
+   "q": "AI odgovor navodi pogrešne podatke o našoj tvrtki. Što učiniti?",
+   "a": "AI odgovor ne možete izravno urediti. Pronađite izvore: ispravite stranicu O nama i druge stranice na svom web-mjestu, a druge izdavače zamolite da isprave svoje. Ne postoji fiksni rok u kojem se ispravci pokazuju."
+  },
+  {
+   "q": "Ako slijedimo ove korake, hoće li nas AI uvijek točno opisati?",
+   "a": "To se ne može jamčiti; AI odgovori mijenjaju se iz dana u dan i ovisno o formulaciji. Ovi koraci čine informacije koje AI čita točnima i dosljednima, pa su pogreške manje vjerojatne."
+  }
+ ],
+ "relatedHeading": "Povezani vodiči",
+ "cta": {
+  "heading": "Pogledajte kako AI čita podatke o vašoj tvrtki",
+  "body": "Besplatna provjera ne zahtijeva registraciju: unesite svoj URL i vidjet ćete stanje strukturiranih podataka, llms.txt i pristupa AI pretraživačkih botova. U WordPressu besplatni dodatak objavljuje osnovne podatke o vašoj tvrtki kao strukturirane podatke.",
+  "label": "Pokrenite besplatnu provjeru čitljivosti za AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Isprobajte besplatni WordPress dodatak",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je zaštitni znak tvrtke OpenAI, Perplexity tvrtke Perplexity AI, a Google tvrtke Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit i WordPress zaštitni su znakovi svojih vlasnika. Nurevo nije povezan s tim tvrtkama niti ga one podržavaju."
+}
