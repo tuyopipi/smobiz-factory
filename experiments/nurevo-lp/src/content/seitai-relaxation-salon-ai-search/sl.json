@@ -1,0 +1,239 @@
+{
+ "title": "Iskanje z UI za salone nege telesa in sprostitve | Nurevo",
+ "description": "AEO za salone nege telesa in sprostitve: zapišite, da ne gre za zdravljenje, navedite trajanje in cene, izobrazbo terapevtov in kdo naj gre najprej k zdravniku.",
+ "h1": "Iskanje z UI za salone nege telesa in sprostitve: kako potegniti mejo „to ni zdravljenje“ in doseči, da UI pravilno prebere vašo ponudbo, cene in terapevte",
+ "lead": "Optimizacija za iskanje z UI (AEO) pri salonu nege telesa ali sprostitve pomeni, da vaše lastno spletno mesto zna odgovoriti na to, kar ljudje sprašujejo UI, na primer „Boli me hrbet: naj grem v salon nege telesa ali k zdravniku?“ ali „Koliko stane 60 minut nege telesa blizu postaje?“. Na straneh v besedilu zapišite, kaj delate in česa ne (ne gre za zdravljenje, zdravstveno zavarovanje tega ne krije, kdo naj gre najprej k zdravniku), trajanje in ceno vsake storitve ter resnično izobrazbo svojih terapevtov, nato pa ista dejstva objavite kot strukturirane podatke HealthAndBeautyBusiness in v llms.txt. Drzne trditve, da nekaj „popravite“ ali „pozdravite“, ne povečajo možnosti, da vas UI izbere.",
+ "intro": [
+  "Napisano 22. novembra 2026 (po japonskem času). Pravne in uradne informacije izhajajo iz japonskih virov (National Consumer Affairs Center, Consumer Affairs Agency in Ministrstvo za notranje zadeve in komunikacije), kot je navedeno v besedilu. Na Japonskem seitai (japonska ročna terapija telesa), kiropraktika in sprostitvena nega telesa nimajo državne licence. Pravila se med državami razlikujejo, zato preverite tista, ki veljajo za vas. Ta članek ni pravni nasvet.",
+  "Odgovori UI se spreminjajo iz dneva v dan in glede na to, kako je vprašanje zastavljeno. Tukaj opisani koraki naredijo dejstva o vašem salonu berljiva za UI. Ne zagotavljajo, da bo UI vaš salon omenila ali ga kamorkoli uvrstila. Licencirane ustanove (na Japonskem seikotsuin, ki jih vodijo terapevti juda) tu niso zajete."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj ljudje sprašujejo UI o salonih nege telesa in sprostitve",
+   "paragraphs": [
+    "Vprašanja o negi telesa združujejo kraj in čas („blizu postaje, odprto do 21. ure“) s skrbmi glede telesa („Ali lahko pridem z zategnjenim hrbtom?“, „Kakšna je razlika med nego telesa in licencirano ustanovo?“). Druga vrsta je blizu medicini, zato UI nanjo odgovarja previdno. Če vaše spletno mesto ne pove, kaj delate in česa ne, UI vaš salon v odgovoru težko uporabi ali pa ugiba na podlagi splošnih razlag in mnenj.",
+    "V tej panogi so za UI dejstva z jasno mejo bolj uporabna kot domiselna oglaševalska besedila."
+   ],
+   "table": {
+    "head": [
+     "Vrsta vprašanja",
+     "Primer",
+     "Dejstva, ki jih UI potrebuje od salona"
+    ],
+    "rows": [
+     [
+      "Kaj salon počne",
+      "„Kakšna je razlika med nego telesa, sprostitvijo in licencirano ustanovo?“",
+      "Kaj vključuje obravnava (delo z rokami, oblečeni ali ne), da niste ponudnik zdravstvenih storitev, ali ima kdo državno licenco"
+     ],
+     [
+      "Ali sploh iti",
+      "„Hrbet me močno boli. Ali lahko grem v salon nege telesa?“",
+      "Kdo naj gre najprej k zdravniku (huda bolečina, otrplost, zdravljenje v teku, nosečnost) in kaj takim ljudem poveste"
+     ],
+     [
+      "Cena in čas",
+      "„Koliko stane 60 minut nege telesa blizu postaje?“",
+      "Trajanje in cena z DDV za vsako storitev v ponudbi, podaljšanja, doplačilo za izbiro terapevta in stroški odpovedi"
+     ],
+     [
+      "Zavarovanje",
+      "„Ali zdravstveno zavarovanje krije nego telesa?“",
+      "Ali velja zdravstveno zavarovanje (če ne, to zapišite)"
+     ],
+     [
+      "Terapevti",
+      "„Ali je osebje usposobljeno?“",
+      "Izkušnje terapevtov in natančna imena njihovih kvalifikacij (pri zasebnih certifikatih tudi organizacija, ki jih izdaja)"
+     ],
+     [
+      "Rezervacija",
+      "„Ali lahko rezerviram za danes? Ali lahko prosim za terapevtko?“",
+      "Kako rezervirati, prosti termini za isti dan, izbira terapevta, načini plačila"
+     ]
+    ],
+    "caption": "Primeri ponazarjajo članek. Niso meritev tega, kako pogosto se ta vprašanja zastavljajo."
+   },
+   "after": [
+    "Primer, da sama mnenja niso dovolj: Chirovant, ameriško podjetje za trženje kiropraktike, je ChatGPT petkrat vprašalo za najboljšega kiropraktika za išias v Planu v Teksasu. Vsakič je bila imenovana ista klinika, praksa z oceno 5,0 in 45 mnenji pa ni bila imenovana niti enkrat (lasten test 25. oktobra 2026, sporočilo za javnost 4. novembra 2026). [MarTech Edge: poročilo Chirovant](https://martechedge.com/news/chirovant-report-examines-how-ai-search-is-changing-chiropractic-marketing). Gre za majhen vzorec podjetja, ki prodaja trženjske storitve, a kaže, da UI ne izbira salonov le po številu zvezdic."
+   ]
+  },
+  {
+   "heading": "Kaj najbolje uvrščeni vodniki izpuščajo",
+   "paragraphs": [
+    "22. novembra 2026 smo prebrali 13 najbolje uvrščenih člankov v japonščini in angleščini za iskanja, kot sta „seitai AI search“ in „massage chiropractic AI search“. Le malo japonskih člankov je neposredno obravnavalo salone nege telesa; večina jih je metala v isti koš z licenciranimi ustanovami ali pa je govorila o kozmetičnih in frizerskih salonih. Eden je jasno navedel, da nega telesa nima državne licence, in primerjal izraze, ki se jim je treba izogibati, z izrazi, ki jih je dobro uporabiti, a noben ni navedel javnih virov za to mejo (poročil o škodi potrošniških organov, obvestil ministrstva za zdravje), ni podal korakov za WordPress, ni povedal, katero vrsto strukturiranih podatkov uporabiti, niti ni pojasnil, kako preveriti, kaj pravi UI.",
+    "Angleški članki so se osredotočali na Google Business Profile in mnenja ter skoraj nič niso povedali o tem, kako opisovati učinke. Ta članek zapolnjuje te vrzeli."
+   ]
+  },
+  {
+   "heading": "Meja, ki jo postavljajo japonski javni viri",
+   "paragraphs": [
+    "Na Japonskem ni zakonske licence za seitai, kiropraktiko ali sprostitveno nego telesa. Sporočilo National Consumer Affairs Center z dne 2. avgusta 2012 pojasnjuje, da 1. člen zakona o maserjih, akupunkturistih in izvajalcih moksibustije zahteva, da ima vsakdo, ki ni zdravnik, licenco za poklicno izvajanje anme, masaže ali šiacuja, 12. člen pa načeloma prepoveduje poklicno izvajanje drugih zdravljenju podobnih praks. Dodaja, da se po sodbi vrhovnega sodišča z dne 27. januarja 1960 prepoved razlaga tako, da zajema le prakse, ki lahko škodijo zdravju. [National Consumer Affairs Center: škoda zaradi ročnih zdravljenju podobnih praks, 2. avgust 2012 (v japonščini)](https://www.mhlw.go.jp/stf/shingi/2r9852000002lamn-att/2r9852000002latt.pdf)",
+    "Isto sporočilo navaja obvestilo ministrstva za zdravje z dne 28. junija 1991 o kiropraktiki: ne obravnavati ljudi s stanji, kot so hernija diska, stenoza hrbteničnega kanala ali osteoporoza; prepovedati nevarne tehnike, kot so sunkoviti zasučni potiski na vratu; če simptomi vztrajajo ali se poslabšajo, prenehati in osebo napotiti k zdravniku; ter urediti pretirano oglaševanje, na primer trditve o zdravljenju raka. Poroča tudi, da je bilo na seji ministrstva 29. februarja 2012 poimenovanje kraja, ki ne ponuja anme, masaže ali šiacuja, za salon za „masažo“ opisano kot morda zavajajoče, prefekture pa so bile pozvane, naj takšno oglaševanje popravijo.",
+    "Podatki o škodi so prav tako javni. 26. maja 2017 je Consumer Affairs Agency poročala o 1.483 primerih škode zaradi ročnih praks brez zakonske licence med septembrom 2009 in marcem 2017, od katerih jih je 240 (približno 16 %) zahtevalo zdravljenje mesec dni ali dlje. Večina prijav se je nanašala na seitai, sprostitveno masažo in kiropraktiko, z 290 poškodbami živcev ali hrbtenjače in 122 zlomi. [Consumer Affairs Agency, 26. maj 2017 (v japonščini, kopija na spletnem mestu mesta Osaka)](https://www.city.osaka.lg.jp/lnet/cmsfiles/contents/0000432/432229/20710526.pdf). Ministrstvo za notranje zadeve in komunikacije je 17. novembra 2020 izdalo tudi priporočila o preprečevanju teh nesreč za Consumer Affairs Agency in ministrstvo za zdravje. [MIC: nesreče zaradi zdravljenju podobnih praks, 17. november 2020 (v japonščini)](https://www.soumu.go.jp/menu_news/s-news/hyouka_021117000145332.html)"
+   ],
+   "after": [
+    "Za salon je pomen jasen. UI piše svoje odgovore, potem ko prebere vire, kot so ti. Če so na vaših straneh izrazi, ki zvenijo medicinsko ali obljubljajo varnost, ne morete predvideti, kako vas bo UI predstavila. Salon, ki pravi „nismo zdravstvena ustanova“ in „ti ljudje naj gredo najprej k zdravniku“, UI lažje uporabi kot vir, ko odgovarja na vprašanja o telesu."
+   ]
+  },
+  {
+   "heading": "Izrazi, ki se jim izognite, in dejstva, ki jih zapišite namesto njih",
+   "paragraphs": [
+    "Spodnja tabela je predlog preoblikovanja tega članka, ki temelji na zgornjih javnih virih in primerih oglasov, na katere je opozoril National Consumer Affairs Center. To ni razlaga zakona, zato dvomljive izraze preverite pri pristojnem zdravstvenem organu."
+   ],
+   "table": {
+    "head": [
+     "Čemu se izogniti",
+     "Zakaj",
+     "Dejstva, ki jih zapišite namesto tega (primeri)"
+    ],
+    "rows": [
+     [
+      "„Pozdravi bolečine v hrbtu“, „zdravimo hernijo diska“",
+      "Zveni medicinsko. Obvestilo iz leta 1991 terapevte prosi, naj ne obravnavajo ljudi s hernijo diska in podobnimi stanji",
+      "„60-minutna obravnava za sprostitev napetosti v predelu ledij“, „Če so vam diagnosticirali hernijo diska ali podobno stanje, se najprej posvetujte s svojim zdravnikom“"
+     ],
+     [
+      "„Pacienti“, „pregled“, „klinika“",
+      "Nakazuje ponudnika zdravstvenih storitev",
+      "„Stranke“, „posvet“, „obravnava“"
+     ],
+     [
+      "„Masaža“ (na Japonskem, kadar tam ne dela licenciran izvajalec)",
+      "Na seji ministrstva leta 2012 opisano kot morda zavajajoče",
+      "„Nega telesa“, „sprostitev“, „ročna terapija telesa“"
+     ],
+     [
+      "„Tehnika z državno licenco“ (kadar gre za zasebni certifikat)",
+      "Ni res",
+      "„Certifikat [združenje] (zasebni certifikat)“, „[n] let prakse“"
+     ],
+     [
+      "„Varno“, „brez bolečin“, „brez stranskih učinkov“",
+      "National Consumer Affairs Center jih navaja kot primere oglasov, povezanih s škodo",
+      "„Pritisk med obravnavo prilagajamo“, „Takoj nam povejte, če karkoli boli“"
+     ],
+     [
+      "„To je zdravilna reakcija, kar prihajajte še naprej“",
+      "Consumer Affairs Agency svetuje, naj ljudje ne nadaljujejo samo zato, ker jim nekdo reče, da gre za zdravilno reakcijo",
+      "„Če bolečina po obravnavi ne mine, obiščite zdravnika“"
+     ]
+    ],
+    "caption": "Na Japonskem smejo tudi licencirani izvajalci anme, masaže in šiacuja oglaševati le postavke, naštete v 7. členu njihovega zakona. Konkretne izraze preverite pri pristojnem zdravstvenem organu."
+   }
+  },
+  {
+   "heading": "Osem dejstev za strani s ponudbo in o salonu",
+   "list": [
+    "Kaj vključuje obravnava: delo z rokami ali s pripomočki, oblečeni ali ne, z oljem ali brez.",
+    "Trajanje in cena vsake storitve z DDV: navedite ju skupaj, na primer „60 minut, 45 USD“. Dodajte pogoje za podaljšanje, izbiro terapevta in prvi obisk.",
+    "Da niste ponudnik zdravstvenih storitev: en stavek, na primer „Bolezni ne diagnosticiramo in ne zdravimo.“",
+    "Zdravstveno zavarovanje: če ne velja, zapišite „Zdravstveno zavarovanje teh storitev ne krije.“",
+    "Kdo naj gre najprej k zdravniku: pogoji, ki jih je določil vaš salon, na primer huda bolečina ali otrplost, bolezen v zdravljenju, nosečnost ali nedavna operacija.",
+    "Ozadje terapevtov: leta prakse, izobraževanje, natančna imena kvalifikacij (pri zasebnem certifikatu organizacija, ki ga je izdala, in besedi „zasebni certifikat“). Če ima kdo državno licenco, navedite katero.",
+    "Rezervacija in odpoved: kako rezervirati, termini za isti dan, stroški odpovedi, načini plačila.",
+    "Osnovni podatki o salonu: naslov (stavba in nadstropje), delovni čas, dnevi zaprtja, pot od najbližje postaje."
+   ],
+   "after": [
+    "Teh osem dejstev je minimum, ki ga UI potrebuje, da odgovori na „Naj grem?“, „Koliko stane?“ in „Kdo bo to delal?“. Veliko salonov objavi cenik le kot sliko. Besedila na sliki UI morda ne prebere, zato ga dodajte tudi v besedilo strani. O straneh s cenami na splošno glejte [Iskanje z UI in strani s cenami](/guide/pricing-page-ai-search/), o profilih terapevtov pa [Iskanje z UI in profilne strani oseb](/guide/person-profile-page-ai-search/)."
+   ]
+  },
+  {
+   "heading": "Strukturirani podatki: ne uporabljajte medicinske vrste",
+   "paragraphs": [
+    "schema.org nima vrste, namenjene samo negi telesa ali sprostitvi. Po schema-dts 2.1.0 so podvrste [HealthAndBeautyBusiness](https://schema.org/HealthAndBeautyBusiness) BeautySalon, DaySpa, HairSalon, HealthClub, NailSalon in TattooParlor (preverjeno 22. novembra 2026). Salonu ročne terapije ali nege telesa ustreza HealthAndBeautyBusiness; spa centru ali kopališču ustreza [DaySpa](https://schema.org/DaySpa).",
+    "Previdno s [Physiotherapy](https://schema.org/Physiotherapy). Ime zveni blizu ročnemu delu, a vrsta spada pod MedicalBusiness in je opisana kot zdravljenje bolezni, poškodb ali deformacij s fizikalnimi metodami, kot je masaža. Salon brez licence, ki jo uporabi, se v strukturiranih podatkih predstavlja kot ponudnik zdravstvenih storitev. Tudi kiropraktika v schema.org obstaja le kot vrednost MedicineSystem, ne kot vrsta podjetja.",
+    "Vsako storitev v ponudbi objavite kot ločen Service, z opisom obravnave in opombo, kdo naj gre najprej k zdravniku. Ko jo vnesete v Nurevo AEO, je videti tako (vrednosti so primeri):"
+   ],
+   "code": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"HealthAndBeautyBusiness\",\n      \"@id\": \"https://example.com/#organization\",\n      \"name\": \"Primer studia za nego telesa\",\n      \"description\": \"Ročna nega telesa in sprostitev za vrat, ramena in hrbet. Nismo ponudnik zdravstvenih storitev: bolezni ne diagnosticiramo in ne zdravimo, zdravstveno zavarovanje pa teh storitev ne krije.\",\n      \"address\": { \"@type\": \"PostalAddress\", \"streetAddress\": \"1-2-3 Example St, 2nd floor, Example City\" },\n      \"telephone\": \"+1-000-000-0000\",\n      \"url\": \"https://example.com/\",\n      \"openingHours\": \"Mo-Sa 10:00-21:00\"\n    },\n    {\n      \"@type\": \"Service\",\n      \"@id\": \"https://example.com/#nurevo-service-1\",\n      \"name\": \"Nega celega telesa, 60 minut\",\n      \"description\": \"Popolnoma oblečeni, delo z rokami po vsem telesu. Pritisk je mogoče prilagoditi med obravnavo. Če ste noseči ali se zdravite zaradi bolezni, se pred rezervacijo posvetujte s svojim zdravnikom.\",\n      \"category\": \"Nega telesa\",\n      \"provider\": { \"@id\": \"https://example.com/#organization\" },\n      \"offers\": { \"@type\": \"Offer\", \"price\": \"45\", \"priceCurrency\": \"USD\" },\n      \"potentialAction\": {\n        \"@type\": \"ReserveAction\",\n        \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/book\" },\n        \"result\": { \"@type\": \"Reservation\", \"name\": \"Nega celega telesa, 60 minut\" }\n      }\n    }\n  ]\n}",
+   "after": [
+    "V strukturirane podatke vnesite le dejstva, ki so vidna na strani. Dodajanje učinkov ali vrednosti, kot je „98 % zadovoljstvo“, ne izboljša tega, kako vas ocenjujeta UI ali iskalnik. Google navaja, da za AI Overviews ali AI Mode ni potrebna nobena posebna oznaka schema.org. [Google: funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)"
+   ]
+  },
+  {
+   "heading": "Nastavitev na spletnem mestu WordPress salona nege telesa ali sprostitve",
+   "list": [
+    "Namestite in aktivirajte Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Vaš vtičnik SEO, kot so Yoast SEO, Rank Math ali All in One SEO, deluje naprej.",
+    "V čarovniku za nastavitev izberite „Kozmetični salon“, nato pa v nastavitvah spremenite „Vrsta podjetja (vrsta schema.org)“ v HealthAndBeautyBusiness (za spa center DaySpa). Ne izberite „Klinika ali zobozdravstvo“: s tem nastavite medicinsko vrsto (MedicalBusiness).",
+    "V opis podjetja dodajte „Nismo ponudnik zdravstvenih storitev ter bolezni ne diagnosticiramo in ne zdravimo“ in „Zdravstveno zavarovanje teh storitev ne krije“ ter preverite naslov (s stavbo in nadstropjem), telefon in delovni čas.",
+    "Vsako storitev v ponudbi vnesite kot storitev (do 20): trajanje v imenu, ceno z DDV (samo število), valuto, URL za rezervacijo, v opisu pa, kaj vključuje obravnava in kdo naj gre najprej k zdravniku. Objavljene so kot Service, Offer in dejanje rezervacije, vsaka pa dobi vrstico v llms.txt.",
+    "Dodajte pogosta vprašanja (razlika od licencirane ustanove, zavarovanje, kdo naj ne pride, prilagajanje pritiska, rezervacija za isti dan) in na stran s ponudbo postavite blok Nurevo FAQ (ali kratko kodo [nurevo_faq]).",
+    "Odprite /llms.txt in preverite, ali so navedene strani s ponudbo, cenami, dostopom in terapevti. Stare objave na blogu, kot je „Kako smo pozdravili X“, preoblikujte ali jih izključite iz llms.txt na plošči Nurevo AEO. Zaženite preverjanje na zaslonu Ocena AEO in popravite, kar najde."
+   ],
+   "after": [
+    "Pri spletnih mestih, ki niso na WordPressu, so točke za preverjanje enake. Vnesite svoj URL v [brezplačni pregled](/check), brez registracije, in videli boste stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. Za strani za rezervacije glejte [Iskanje z UI in strani za rezervacije](/guide/booking-page-ai-search/)."
+   ]
+  },
+  {
+   "heading": "Uskladite rezervacijske portale in Google Business Profile",
+   "paragraphs": [
+    "Sprostitveni saloni so pogosto navedeni na rezervacijskih in kuponskih portalih. UI bere tudi te strani, zato se lahko, če se trajanje ali cene storitev na vašem spletnem mestu in na rezervacijskem portalu razlikujejo ali če portal še vedno piše kaj takega kot „odpravi trd vrat“, stari izrazi pojavijo v odgovorih, tudi ko ste svoje spletno mesto že popravili.",
+    "Imena storitev, trajanje, cene z DDV in delovni čas naj bodo enaki na vašem spletnem mestu, na rezervacijskih portalih in v Google Business Profile. Ko se cena spremeni, vse posodobite isti dan; akcijskim cenam določite končni datum in jih po izteku odstranite. Preoblikovanja iz zgornje tabele uporabite tudi v opisih na rezervacijskih portalih in v svojem profilu podjetja."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Stavka „Bolezni ne diagnosticiramo in ne zdravimo“ in „Zdravstveno zavarovanje teh storitev ne krije“ sta zapisana kot besedilo.",
+    "Pogoji, ko je treba najprej k zdravniku, so zapisani.",
+    "Ni medicinsko zvenečih besed, kot so „pozdraviti“, „zdravljenje“ ali „pacienti“.",
+    "Na Japonskem ni „masaže“, razen če tam dela licenciran izvajalec.",
+    "Ni izrazov „varno“, „brez bolečin“ ali „zdravilna reakcija“.",
+    "Vsaka storitev ima trajanje in ceno z DDV ter doplačila za podaljšanje, izbiro terapevta in stroške odpovedi.",
+    "Kvalifikacije terapevtov so natančno poimenovane (zasebni certifikati z organizacijo izdajateljico in besedama „zasebni certifikat“).",
+    "Vrsta strukturiranih podatkov je HealthAndBeautyBusiness (ali DaySpa), ne Physiotherapy ali MedicalBusiness.",
+    "Ponudba, cene, delovni čas in izrazi se ujemajo na vašem spletnem mestu, rezervacijskih portalih in v Google Business Profile.",
+    "llms.txt navaja strani s ponudbo, cenami, dostopom in terapevti. [Kaj je llms.txt](/guide/llms-txt/)"
+   ]
+  },
+  {
+   "heading": "Preverite, ali vas UI prikazuje in ali pravilno",
+   "paragraphs": [
+    "Ko so strani urejene, vprašajte UI to, kar bi vprašale vaše stranke. Preverite, ali ste imenovani pri lokalnih vprašanjih glede težav, kot sta „nega telesa blizu [postaja], odprto pozno“ ali „ročna terapija v [mesto] z ženskim osebjem“, vprašajte tudi z imenom salona, na primer „Ali to krije zavarovanje?“ ali „Ali lahko pridem z bolečinami v hrbtu?“, in zabeležite, ali se odgovori ujemajo z vašim spletnim mestom. Če UI vaš salon opisuje, kot da bi bil ponudnik zdravstvenih storitev, poiščite medicinsko zveneče izraze, ki so ostali na vašem spletnem mestu ali na rezervacijskem portalu.",
+    "Odgovori UI se med posameznimi poskusi razlikujejo, zato ista vprašanja zastavite večkrat, razporejeno skozi čas. Paketa Free in Standard Nurevo AEO vključujeta mesečno preverjanje: tri vprašanja, sestavljena iz vrste dejavnosti in območja (nikoli iz imena salona), se zastavijo Perplexity, vtičnik pa zabeleži, ali so odgovori omenili vaš salon ali navedli vaše spletno mesto. Paket Pro (od 99 USD na mesec) doda merjenje vidnosti v UI v različici beta, s primerjavo s konkurenco in zgodovino (trenutno v Perplexity). Oboje vzorči odgovore, ne spremlja vsakega odgovora. Glejte [kako meriti vidnost v UI](/guide/measure-ai-visibility/)."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kje naj salon nege telesa začne z iskanjem z UI?",
+   "a": "Na svojih straneh kot besedilo zapišite „Nismo ponudnik zdravstvenih storitev ter bolezni ne diagnosticiramo in ne zdravimo“, „Zdravstveno zavarovanje teh storitev ne krije“ in pogoje, ko je treba najprej k zdravniku, skupaj s trajanjem in ceno vsake storitve. Nato ista dejstva objavite kot strukturirane podatke HealthAndBeautyBusiness in v llms.txt ter jih uskladite z rezervacijskimi portali in Google Business Profile."
+  },
+  {
+   "q": "Ali stranke ne bo odvrnilo, če zapišem „to ni zdravljenje“?",
+   "a": "Ne nujno. UI na vprašanja o telesu odgovarja previdno, zato salon z jasno mejo lažje uporabi kot vir. Če tega ne zapišete, UI vaš salon opiše z ugibanjem na podlagi splošnih razlag in mnenj."
+  },
+  {
+   "q": "Ali lahko salon nege telesa na Japonskem svojo storitev imenuje „masaža“?",
+   "a": "Izogibajte se temu, razen če tam dela licenciran izvajalec anme, masaže in šiacuja. Na seji ministrstva za zdravje leta 2012 je bilo poimenovanje kraja, ki ne ponuja anme, masaže ali šiacuja, za salon za „masažo“ opisano kot morda zavajajoče. Uporabljajte besede, kot sta „nega telesa“ ali „sprostitev“."
+  },
+  {
+   "q": "Katero vrsto strukturiranih podatkov naj uporabi salon nege telesa?",
+   "a": "Najbližja je HealthAndBeautyBusiness. Za spa center uporabite DaySpa. Physiotherapy je medicinska vrsta pod MedicalBusiness, zato je salon brez licence ne bi smel uporabljati."
+  },
+  {
+   "q": "Ali lahko objavim mnenja strank, kot je „bolečine v hrbtu so izginile“?",
+   "a": "Če so na vaših straneh objavljena kot pričevanja o učinkih, zvenijo, kot da salon trdi, da zdravi. Varneje je mnenja omejiti na vzdušje in storitev ter izpustiti trditve o učinkih. Konkretne primere preverite pri pristojnem zdravstvenem organu."
+  },
+  {
+   "q": "Ali je Nurevo AEO brezplačen?",
+   "a": "Da. Vrsta dejavnosti (HealthAndBeautyBusiness in druge), naslov, delovni čas, ponudba (storitve) in strukturirani podatki FAQ, llms.txt, pravila za pajke UI, Ocena AEO in mesečno brezplačno preverjanje v UI so v brezplačnem paketu. Plačljivi paketi dodajo vedno posodobljen nabor pravil (Standard, 20 USD na mesec) in merjenje vidnosti v UI v različici beta (Pro, od 99 USD na mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Ali bo to zagotovilo, da se moj salon pojavi v ChatGPT?",
+   "a": "Ne. Odgovori UI se spreminjajo in nobeno orodje ali tehnika ne more zagotoviti omembe ali položaja. Lahko pa poskrbite, da so vaša dejstva za UI lahko berljiva, in redno preverjate, ali se pojavljate in ali so odgovori pravilni."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Najprej preverite, kako UI bere spletno mesto vašega salona",
+  "body": "Brezplačni pregled pokaže stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI, brez registracije. V WordPressu Nurevo AEO brezplačno objavi vašo ponudbo in cene.",
+  "label": "Zaženite brezplačni pregled berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Prenesite Nurevo AEO z WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI, Google in Gemini družbe Google LLC, Claude pa družbe Anthropic. Yoast SEO, Rank Math in All in One SEO so blagovne znamke svojih lastnikov. Nurevo ni povezan z njimi. Ta članek ni pravni nasvet."
+}

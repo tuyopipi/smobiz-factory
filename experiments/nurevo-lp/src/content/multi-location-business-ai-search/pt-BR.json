@@ -1,0 +1,349 @@
+{
+ "title": "Busca por IA para empresas com várias unidades | Nurevo",
+ "description": "Evite que as respostas de IA misturem suas unidades: uma página por unidade, os dados de cada uma, fechamentos e mudanças, schema unidade-marca e WordPress.",
+ "h1": "Busca por IA para empresas com várias unidades: evite que horários, endereços e serviços de cada unidade se misturem",
+ "lead": "Quando uma empresa tem várias unidades, a maioria das respostas erradas da IA vem de dados de uma unidade usados para outra. Dê a cada unidade sua própria página com os dados em texto simples (endereço, telefone, horário, fechamentos temporários, o que muda ali), vincule-a à marca nos dados estruturados e mantenha os mesmos valores no Perfil da Empresa no Google e nas suas outras listagens. Esses três passos são o núcleo do trabalho.",
+ "intro": [
+  "Escrito em 15 de novembro de 2026 (JST). Este guia é para qualquer empresa com duas ou mais unidades ou escritórios (restaurantes, salões, clínicas, lojas, escolas, imobiliárias) e para as agências que criam seus sites. A empresa em si (razão social, data de fundação, direção) é tratada em [Otimização da página Sobre para busca por IA](/guide/company-profile-page-ai-search), e o básico da marcação de uma unidade em [schema de empresa local e plugins de SEO](/guide/local-business-schema-seo-plugins). Este guia trata dos problemas que surgem por ter muitas unidades.",
+  "As respostas de IA mudam de um dia para o outro e conforme a formulação. Estes passos tornam corretas as informações que a IA lê; não garantem que você apareça em uma resposta nem em determinada posição."
+ ],
+ "sections": [
+  {
+   "heading": "Como as respostas de IA erram com empresas de várias unidades",
+   "paragraphs": [
+    "A busca do ChatGPT, o Perplexity e as AI Overviews do Google leem páginas da web, montam uma resposta e mostram suas fontes. Com uma só unidade, “os dados da empresa” são um único conjunto. Com várias, as páginas que a IA lê contêm vários endereços, vários horários e vários telefones. Se o texto não deixar claro qual valor pertence a qual unidade, a resposta pode ser montada com o valor errado.",
+    "As perguntas que as pessoas fazem se dividem entre perguntas sobre a marca e perguntas sobre uma unidade:"
+   ],
+   "list": [
+    "“A unidade Umeda da [marca] abre aos domingos?” (horário e dias de fechamento dessa unidade)",
+    "“Quais unidades da [marca] têm estacionamento?” (instalações que variam por unidade)",
+    "“A [marca] de Shinjuku ainda está aberta ou mudou de endereço?” (fechamentos e mudanças)",
+    "“Tem alguma [marca] perto da Estação de Kyoto?” (qual unidade atende qual região)",
+    "“Posso ter o mesmo cardápio / tratamento / serviço em todas as unidades da [marca]?” (serviços que variam por unidade)",
+    "“Quem administra a [marca]?” (marca e empresa operadora)"
+   ],
+   "after": [
+    "Quatro erros aparecem o tempo todo: o horário da unidade principal informado como horário de todas as unidades, uma unidade fechada descrita como aberta, a central de agendamento informada como telefone de uma unidade e um serviço que só algumas unidades oferecem descrito como disponível em todas. Cada um se torna menos provável quando os dados de cada unidade estão escritos na página dessa própria unidade.",
+    "O Google afirma que não há requisitos adicionais nem dados estruturados especiais para aparecer nas AI Overviews ou no AI Mode, e que valem os fundamentos habituais de SEO ([Google Search Central: recursos de IA e seu site](https://developers.google.com/search/docs/appearance/ai-features)). O trabalho com várias unidades é igual: não é um jeito especial de escrever para a IA, e sim publicar os dados de cada unidade de forma correta, legível e com os mesmos valores em todos os lugares."
+   ]
+  },
+  {
+   "heading": "Estrutura do site: separe a página da marca, a lista de unidades e as páginas das unidades",
+   "paragraphs": [
+    "Primeiro decida qual página responde a qual pergunta. Uma única página que lista todas as unidades facilita que a IA associe um parágrafo à unidade errada."
+   ],
+   "table": {
+    "head": [
+     "Página",
+     "Perguntas que responde",
+     "O que escrever",
+     "Dados estruturados"
+    ],
+    "rows": [
+     [
+      "Marca (página inicial ou Sobre)",
+      "“O que é a [marca]?” “Quem a administra?”",
+      "Marca e empresa operadora, serviços comuns a todas as unidades, número de unidades (com data)",
+      "Organization (matriz)"
+     ],
+     [
+      "Lista de unidades",
+      "“Quantas unidades da [marca] existem em Osaka?” “Tem alguma perto da Estação de Kyoto?”",
+      "Nomes e endereços por região e cidade, com link para a página de cada unidade",
+      "Opcional (coloque nas páginas das unidades)"
+     ],
+     [
+      "Página da unidade (uma por unidade)",
+      "“A Umeda abre aos domingos?” “Tem estacionamento?”",
+      "Dados que pertencem só a essa unidade (próxima tabela)",
+      "Um tipo específico de LocalBusiness por unidade"
+     ],
+     [
+      "Aviso de fechamento ou mudança",
+      "“A de Shinjuku ainda está aberta?”",
+      "Data de fechamento, novo endereço, links para unidades próximas",
+      "Remova os dados estruturados da unidade"
+     ]
+    ]
+   },
+   "after": [
+    "Dê a cada unidade uma URL que não vá mudar, como /stores/osaka/umeda/. Renomear unidades ou URLs no meio do caminho cria mais divergências com o que as IAs e outros sites leram antes. Se for preciso mudar, redirecione a URL antiga para a nova.",
+    "Não crie páginas para regiões onde você não tem unidade (páginas que só trocam o nome do lugar, “procurando X em [cidade]? Escolha a gente”). Elas também podem levar a IA a descrever uma unidade que não existe."
+   ]
+  },
+  {
+   "heading": "O que cada página de unidade precisa e as propriedades correspondentes",
+   "paragraphs": [
+    "A tabela lista o que escrever em texto simples em cada página de unidade e a propriedade schema.org correspondente. A documentação de empresa local do Google indica name e address como obrigatórias, com openingHoursSpecification, telephone, url, geo e department entre as recomendadas, e recomenda o tipo mais específico disponível, como Dentist, HairSalon ou Restaurant ([Google: dados estruturados de empresa local](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Item",
+     "Como escrever",
+     "Erro típico da IA",
+     "Propriedade"
+    ],
+    "rows": [
+     [
+      "Nome da unidade",
+      "Um padrão fixo, marca + lugar (ex.: Sample Dental Umeda), igual para todas as unidades",
+      "Confundida com outra unidade, conhecida só por um apelido",
+      "name"
+     ],
+     [
+      "Endereço",
+      "Do CEP até o prédio e o andar, mais a estação mais próxima e a saída em uma frase",
+      "Um endereço anterior ou o endereço de uma unidade próxima",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telefone",
+      "Diga se é a linha direta da unidade ou uma central de agendamento",
+      "O número da central informado como sendo da unidade",
+      "telephone"
+     ],
+     [
+      "Horário e dias de fechamento",
+      "Por unidade, na página de cada unidade, mesmo que sejam iguais em todas",
+      "O horário da unidade principal informado para todas",
+      "openingHoursSpecification"
+     ],
+     [
+      "Fechamentos temporários e feriados",
+      "Com datas; remova-os quando terminarem",
+      "Avisos antigos de fechamento deixados no ar",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Serviços e instalações",
+      "Separe o que todas as unidades oferecem do que esta oferece (“Esta unidade não oferece consultas de ortodontia aos sábados”)",
+      "O serviço de uma unidade descrito como disponível em todas",
+      "Texto do corpo, FAQ, department (uma seção dentro da unidade)"
+     ],
+     [
+      "Estacionamento, pagamento, idiomas",
+      "Vagas ou estacionamentos conveniados, formas de pagamento, idiomas falados",
+      "As instalações de outra unidade",
+      "Texto do corpo (paymentAccepted e outras)"
+     ],
+     [
+      "Código da loja",
+      "O número usado internamente e no Perfil da Empresa no Google",
+      "Duas unidades com nomes parecidos confundidas",
+      "branchCode"
+     ],
+     [
+      "Vínculo com a marca",
+      "“Operada por Sample Co., Ltd.” com link para a página Sobre",
+      "Franqueado e franqueador confundidos",
+      "parentOrganization"
+     ],
+     [
+      "Data de abertura, última atualização",
+      "“Atualizado em [data]” no fim da página",
+      "Não há como saber se os dados estão atualizados",
+      "Texto do corpo"
+     ]
+    ]
+   },
+   "after": [
+    "As páginas de unidade muitas vezes acabam com o mesmo texto, trocando só o nome e o endereço. Isso é aceitável, mas escrever pelo menos três fatos que valem só para aquela unidade (instalações, quais serviços ela atende, horários de maior movimento, como chegar) dá à IA algo para diferenciar as unidades.",
+    "Mantenha o FAQ de cada unidade na página dessa unidade, separado das perguntas sobre a marca em geral: perguntas que possam ser respondidas com o nome da unidade, como “Tem estacionamento nesta unidade?” ou “Posso fazer X nesta unidade?”"
+   ]
+  },
+  {
+   "heading": "Fechamentos, mudanças e fechamentos temporários",
+   "paragraphs": [
+    "O dado errado que mais dura em empresas com várias unidades é uma unidade fechada. Apagar a página não remove o que outros sites e IAs já leram. Faça a limpeza nesta ordem:"
+   ],
+   "list": [
+    "Não apague a página da unidade fechada de imediato. Reescreva-a como “Esta unidade fechou em [data]” com links para unidades próximas. Em caso de mudança, redirecione para a página da nova unidade ou informe claramente o novo endereço.",
+    "Retire-a da lista de unidades e remova seus dados estruturados (não continue publicando uma unidade fechada como LocalBusiness).",
+    "Atualize o Perfil da Empresa no Google para mostrar o fechamento ou a mudança.",
+    "Procure menções no resto do site (rodapé, página de vagas, páginas de campanha, folhetos em PDF).",
+    "Peça a outros publicadores (sites de agendamento, portais, guias locais) que atualizem suas listagens.",
+    "Para um fechamento temporário, informe as datas e mostre-o com specialOpeningHoursSpecification ou um aviso. Remova quando reabrir."
+   ]
+  },
+  {
+   "heading": "Dados estruturados: vincule cada unidade à marca",
+   "paragraphs": [
+    "Com várias unidades, os dados estruturados devem tornar “qual empresa, qual unidade” legível por máquinas. A abordagem:"
+   ],
+   "list": [
+    "Publique a matriz (marca ou empresa operadora) uma única vez como Organization na página inicial ou na página Sobre, com um @id fixo como https://example.com/#organization.",
+    "Em cada página de unidade, publique exatamente um LocalBusiness do tipo mais específico, com um @id exclusivo dessa unidade, como https://example.com/stores/osaka/umeda/#store.",
+    "Aponte de cada unidade para a matriz com parentOrganization. O schema.org marca o antigo [branchOf](https://schema.org/branchOf) como obsoleto e recomenda [parentOrganization](https://schema.org/parentOrganization) no lugar dele.",
+    "Coloque o código da loja em [branchCode](https://schema.org/branchCode), que o próprio schema.org descreve como o “código da loja”.",
+    "Se uma unidade contém uma seção separada (os exemplos do schema.org são uma loja com farmácia e uma padaria com café), conecte-a com [department](https://schema.org/department), o que permite que cada seção tenha seu próprio horário.",
+    "Coloque os valores de cada unidade na página dela, em vez de listar todos os LocalBusiness na lista de unidades. Não coloque nos dados estruturados valores que o texto da página não mostra."
+   ],
+   "after": [
+    "O Google inclui a correspondência entre os dados estruturados e o conteúdo visível da página entre os fundamentos e recomenda manter atualizadas as informações do Perfil da Empresa ([Recursos de IA e seu site](https://developers.google.com/search/docs/appearance/ai-features)). Trate os dados estruturados como o gabarito do que a página da unidade já diz."
+   ]
+  },
+  {
+   "heading": "Mantenha o Perfil da Empresa no Google e o site com os mesmos valores",
+   "paragraphs": [
+    "Quando o Perfil da Empresa de uma unidade e a página dela não batem, nem as pessoas nem as IAs conseguem saber qual está certo. O que mais ajuda é uma planilha mestre com os dados de todas as unidades, a partir da qual o site, o Perfil da Empresa no Google e os sites de agendamento são atualizados."
+   ],
+   "table": {
+    "head": [
+     "Coluna",
+     "O que definir"
+    ],
+    "rows": [
+     [
+      "Código da loja",
+      "O mesmo número internamente, no site e no Perfil da Empresa"
+     ],
+     [
+      "Nome da unidade",
+      "O padrão fixo marca + lugar"
+     ],
+     [
+      "Endereço e telefone",
+      "Uma única forma de escrever números e separadores"
+     ],
+     [
+      "Horário, dias de fechamento, fechamentos temporários",
+      "Quando mudam e quem os atualiza"
+     ],
+     [
+      "Serviços e instalações",
+      "Comuns a todas vs. só desta unidade"
+     ],
+     [
+      "URL da página da unidade",
+      "Nunca muda; redirecione se mudar"
+     ],
+     [
+      "Status",
+      "Aberta, fechada temporariamente, fechada (com datas)"
+     ],
+     [
+      "Última verificação",
+      "Em um ciclo fixo, por exemplo mensal"
+     ]
+    ]
+   },
+   "after": [
+    "A verificação em massa para empresas com muitas unidades, as ferramentas para gerenciar várias unidades em conjunto e o tratamento dos códigos de loja vêm com condições definidas pelo Google, e essas condições mudam. Consulte a versão atual na [Central de Ajuda do Perfil da Empresa no Google](https://support.google.com/business/). Se os gerentes das unidades editam os próprios perfis, combinem que a planilha mestre é atualizada primeiro, para que os dois não se distanciem."
+   ]
+  },
+  {
+   "heading": "No WordPress (com o Nurevo AEO)",
+   "paragraphs": [
+    "No WordPress, o [Nurevo AEO (gratuito)](https://wordpress.org/plugins/nurevo-webmcp/) publica os dados da matriz como dados estruturados e no llms.txt; combine-o com suas páginas de unidade como abaixo. As configurações do Nurevo descrevem uma empresa por site, então informe ali a matriz (marca)."
+   ],
+   "list": [
+    "Escreva primeiro as páginas das unidades, seguindo a tabela acima (texto antes dos dados estruturados). Use uma página ou uma entrada de um tipo de post de unidade por unidade.",
+    "Nos dados da empresa do Nurevo, informe o nome, a descrição, o endereço, o telefone, a URL e o e-mail da matriz. Diferente de uma empresa com uma só unidade, informar ali o horário de uma unidade faz com que ele pareça o horário de todas.",
+    "Informe as perguntas próprias de cada unidade no painel Nurevo AEO do editor dessa página como perguntas próprias desta página e insira o bloco de FAQ do Nurevo configurado como “Perguntas próprias desta página”. Elas são publicadas como FAQPage apenas nessa página.",
+    "Para publicar um LocalBusiness por unidade, use o filtro para desenvolvedores webmcp_canary_schema_graph para adicionar o nó da unidade a extra apenas nas páginas de unidade. O @id da matriz está disponível como $bundle['org_id']; coloque-o em parentOrganization. Monte os valores da unidade a partir da mesma fonte do texto da página (campos personalizados, por exemplo).",
+    "Com Yoast SEO, Rank Math, All in One SEO ou Slim SEO, o Nurevo adiciona apenas os dados que faltam nos dados estruturados desse plugin, e nós novos (como um nó de unidade) são acrescentados ao grafo desse plugin. O Nurevo também funciona junto com o SEO SIMPLE PACK e o VK All in One Expansion Unit (a partir da 0.9.1).",
+    "Se outra coisa, como um plugin localizador de lojas, já publica dados estruturados por unidade, evite duplicidade: marque “Não publicar dados estruturados do Nurevo nesta página” nessas páginas ou escolha uma única fonte.",
+    "Abra o /llms.txt e confira se a lista de unidades e as páginas das suas principais unidades estão lá. O llms.txt lista as 30 páginas e posts atualizados mais recentemente, então com muitas unidades algumas páginas vão ficar de fora. O filtro webmcp_canary_llms_txt_lines pode adicionar uma linha para a lista de unidades, e a página de uma unidade fechada pode ser removida com “Excluir esta página do llms.txt”.",
+    "Se as unidades franqueadas têm sites WordPress separados, exporte as configurações com wp nurevo export, importe-as no outro site com wp nurevo import e depois altere só o nome, o endereço, o telefone e o horário (chaves e tokens não são exportados)."
+   ],
+   "after": [
+    "As mesmas verificações valem para sites que não são feitos em WordPress. Informe uma URL na [verificação gratuita](/check), sem cadastro, para ver o estado dos dados estruturados, do llms.txt e do acesso dos crawlers de IA. Você pode verificar as páginas das unidades uma URL por vez."
+   ]
+  },
+  {
+   "heading": "Como verificar: por unidade, com e sem o nome",
+   "paragraphs": [
+    "Verifique escolhendo unidades e registrando os resultados por unidade. Não é preciso perguntar sobre todas as unidades toda vez: comece pelas que mudaram de horário ou endereço, pelas que fecharam ou mudaram e pelas que recebem mais contatos. Faça a mesma pergunta à mesma IA em dias diferentes e não tire conclusões a partir de uma única resposta."
+   ],
+   "table": {
+    "head": [
+     "O que registrar",
+     "Exemplo"
+    ],
+    "rows": [
+     [
+      "Data, IA, pergunta",
+      "15 de nov., Perplexity, “A Sample Dental Umeda abre aos domingos?”"
+     ],
+     [
+      "Dados na resposta",
+      "O horário, o endereço, o telefone e os serviços são desta unidade ou de outra?"
+     ],
+     [
+      "Fontes",
+      "A página desta unidade, a lista de unidades ou um site de agendamento externo?"
+     ],
+     [
+      "Pergunta sem o nome",
+      "A unidade aparece para “dentista aberto no domingo em Umeda”?"
+     ],
+     [
+      "Unidades fechadas",
+      "Alguma unidade fechada é descrita como aberta?"
+     ]
+    ]
+   },
+   "after": [
+    "A verificação de IA gratuita do Nurevo (uma vez por mês, para sites Free e Standard conectados) faz perguntas montadas a partir do tipo de negócio e da região nas suas configurações, sem o seu nome. Há uma única região nas configurações, então verifique as regiões das outras unidades manualmente com a tabela acima. A medição de visibilidade do Pro (beta) cobre atualmente o Perplexity. O método completo está em [como medir a visibilidade em IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checklist para várias unidades",
+   "list": [
+    "Cada unidade tem sua própria página, em uma URL que não vai mudar.",
+    "Os nomes das unidades seguem o mesmo padrão marca + lugar em todos os lugares.",
+    "Cada página de unidade informa em texto o endereço, o telefone (direto ou central), o horário e os dias de fechamento dessa unidade.",
+    "Fechamentos temporários e feriados têm datas e são removidos quando terminam.",
+    "Os serviços comuns a todas as unidades estão escritos separadamente dos que só esta unidade oferece.",
+    "Unidades fechadas ou que mudaram mostram um aviso e foram retiradas da lista de unidades e dos dados estruturados.",
+    "O LocalBusiness de cada unidade tem seu próprio @id e aponta para a matriz com parentOrganization.",
+    "Os valores dos dados estruturados correspondem ao texto da página da unidade.",
+    "O site e o Perfil da Empresa no Google são atualizados a partir da mesma planilha mestre.",
+    "É possível navegar pelas unidades por região, com links para a página de cada uma.",
+    "Você escolheu unidades, verificou perguntas com e sem o nome em dias diferentes e registrou os resultados."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Precisamos de uma página para cada unidade ou uma lista de unidades basta?",
+   "a": "Para responder a perguntas sobre uma unidade (seu horário, suas instalações), uma página por unidade é mais confiável. Com apenas uma lista, a IA pode facilmente associar um valor à unidade errada. Mesmo com poucas unidades, dê a cada uma seu próprio título, com endereço e horário juntos."
+  },
+  {
+   "q": "Se todas as unidades têm o mesmo horário, ainda precisamos colocá-lo em cada página?",
+   "a": "Recomendamos que sim. A IA pode responder com base apenas na página da unidade e, se o horário não estiver lá, vai usar valores de outras páginas ou de outros sites."
+  },
+  {
+   "q": "Devemos usar branchOf ou parentOrganization?",
+   "a": "O schema.org marca branchOf como obsoleto e recomenda parentOrganization. Aponte do LocalBusiness de cada unidade para o @id da Organization da matriz com parentOrganization."
+  },
+  {
+   "q": "Devemos apagar a página de uma unidade fechada imediatamente?",
+   "a": "Transformá-la em um aviso com a data de fechamento e links para unidades próximas, e retirá-la da lista de unidades e dos dados estruturados, comunica o fechamento melhor do que apagá-la. Em caso de mudança, redirecione para a página da nova unidade ou informe o novo endereço."
+  },
+  {
+   "q": "Nossos franqueados têm os próprios sites e redes sociais. Como manter tudo consistente?",
+   "a": "Trate a planilha mestre da matriz como a fonte da verdade, compartilhe com os franqueados a grafia combinada de nomes, endereços, telefones e horários e peça que usem os mesmos valores. Colocar links nos dois sentidos, do site do franqueado para a página da unidade na marca e de volta, também deixa a relação clara."
+  },
+  {
+   "q": "Temos unidades demais para o llms.txt. Todas precisam estar listadas?",
+   "a": "Não. Se a lista de unidades e as páginas das principais unidades estiverem lá, as demais podem ser alcançadas a partir delas. No Nurevo AEO, o filtro webmcp_canary_llms_txt_lines pode adicionar uma linha para a lista de unidades."
+  },
+  {
+   "q": "Esses passos vão fazer todas as unidades aparecerem corretamente nas respostas de IA?",
+   "a": "Isso não pode ser garantido; as respostas de IA mudam de um dia para o outro e conforme a formulação. Esses passos reduzem as causas de dados de uma unidade se misturarem com os de outra e tornam corretas e consistentes as informações que a IA lê."
+  }
+ ],
+ "relatedHeading": "Guias relacionados",
+ "cta": {
+  "heading": "Veja como a IA lê as páginas das suas unidades",
+  "body": "A verificação gratuita não exige cadastro: informe uma URL para ver o estado dos dados estruturados, do llms.txt e do acesso dos crawlers de IA, uma página de unidade por vez, se quiser. No WordPress, o plugin gratuito publica os dados da sua matriz como dados estruturados.",
+  "label": "Fazer a verificação gratuita de legibilidade para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Experimentar o plugin gratuito para WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é uma marca registrada da OpenAI, Perplexity da Perplexity AI e Google da Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit e WordPress são marcas registradas de seus respectivos proprietários. A Nurevo não é afiliada a nenhuma dessas empresas nem endossada por elas."
+}

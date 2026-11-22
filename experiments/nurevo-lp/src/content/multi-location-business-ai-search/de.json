@@ -1,0 +1,349 @@
+{
+ "title": "KI-Suche für Filialbetriebe: jeder Standort korrekt | Nurevo",
+ "description": "Damit KI-Antworten Ihre Standorte nicht vermischen: eine Seite pro Standort, die nötigen Fakten, Schließungen, Umzüge, Schema zur Marke und WordPress-Schritte.",
+ "h1": "KI-Suche für Unternehmen mit mehreren Standorten: Öffnungszeiten, Adressen und Leistungen der Standorte nicht vermischen lassen",
+ "lead": "Hat ein Unternehmen mehrere Standorte, entstehen die meisten falschen KI-Antworten dadurch, dass die Fakten eines Standorts für einen anderen verwendet werden. Geben Sie jedem Standort eine eigene Seite mit seinen Fakten als Klartext (Adresse, Telefon, Öffnungszeiten, vorübergehende Schließungen, was dort anders ist), verknüpfen Sie ihn in den strukturierten Daten mit der Marke und halten Sie im Google Unternehmensprofil und in Ihren anderen Einträgen dieselben Werte. Diese drei Schritte sind der Kern der Arbeit.",
+ "intro": [
+  "Verfasst am 15. November 2026 (JST). Dieser Leitfaden richtet sich an alle Unternehmen mit zwei oder mehr Standorten oder Büros (Restaurants, Salons, Praxen, Geschäfte, Schulen, Immobilienmakler) und an die Agenturen, die ihre Websites bauen. Das Unternehmen selbst (Firmenname, Gründungsdatum, Geschäftsführung) behandelt [Über-uns-Seite für die KI-Suche optimieren](/guide/company-profile-page-ai-search), die Grundlagen des Markups für einen einzelnen Standort [LocalBusiness-Schema und SEO-Plugins](/guide/local-business-schema-seo-plugins). In diesem Leitfaden geht es um die Probleme, die durch viele Standorte entstehen.",
+  "KI-Antworten ändern sich je nach Tag und Formulierung. Diese Schritte sorgen dafür, dass die Informationen, die die KI liest, korrekt sind; sie garantieren nicht, dass Sie in einer Antwort oder an einer bestimmten Position erscheinen."
+ ],
+ "sections": [
+  {
+   "heading": "Wie KI-Antworten bei Unternehmen mit mehreren Standorten danebenliegen",
+   "paragraphs": [
+    "Die ChatGPT-Suche, Perplexity und Googles KI-Übersichten lesen Webseiten, bauen daraus eine Antwort und zeigen ihre Quellen. Bei einem einzigen Standort sind „die Fakten des Unternehmens“ ein einziger Satz von Angaben. Bei mehreren enthalten die Seiten, die eine KI liest, mehrere Adressen, mehrere Öffnungszeiten und mehrere Telefonnummern. Wenn der Text nicht klar macht, welcher Wert zu welchem Standort gehört, kann die Antwort aus dem falschen gebaut werden.",
+    "Die Fragen, die Menschen stellen, teilen sich in Fragen zur Marke und Fragen zu einem Standort:"
+   ],
+   "list": [
+    "„Hat die Filiale Umeda von [Marke] sonntags geöffnet?“ (Öffnungszeiten und Ruhetage dieses Standorts)",
+    "„Welche Standorte von [Marke] haben Parkplätze?“ (Ausstattung, die sich je Standort unterscheidet)",
+    "„Gibt es [Marke] in Shinjuku noch, oder ist es umgezogen?“ (Schließungen und Umzüge)",
+    "„Gibt es [Marke] in der Nähe des Bahnhofs Kyoto?“ (welcher Standort welches Gebiet abdeckt)",
+    "„Bekomme ich bei jedem [Marke]-Standort dasselbe Menü / dieselbe Behandlung / denselben Service?“ (Leistungen, die sich je Standort unterscheiden)",
+    "„Wer betreibt [Marke]?“ (Marke und Betreibergesellschaft)"
+   ],
+   "after": [
+    "Vier Fehler tauchen immer wieder auf: Die Öffnungszeiten des Hauptgeschäfts werden als Öffnungszeiten aller Standorte angegeben, ein geschlossener Standort wird als geöffnet beschrieben, die zentrale Buchungsnummer wird als Telefonnummer eines Standorts genannt, und eine Leistung, die nur einige Standorte anbieten, wird als überall verfügbar dargestellt. Jeder dieser Fehler wird unwahrscheinlicher, sobald die Fakten jedes Standorts auf seiner eigenen Seite stehen.",
+    "Google erklärt, dass es für die Anzeige in KI-Übersichten oder im KI-Modus keine zusätzlichen Anforderungen und keine speziellen strukturierten Daten gibt und die üblichen SEO-Grundlagen gelten ([Google Search Central: KI-Funktionen und Ihre Website](https://developers.google.com/search/docs/appearance/ai-features)). Bei mehreren Standorten ist es genauso: keine besondere Schreibweise für KI, sondern die Fakten jedes Standorts korrekt, gut lesbar und überall mit denselben Werten veröffentlicht."
+   ]
+  },
+  {
+   "heading": "Seitenstruktur: Markenseite, Standortliste und Standortseiten trennen",
+   "paragraphs": [
+    "Legen Sie zuerst fest, welche Seite welche Frage beantwortet. Eine einzige Seite, die alle Standorte auflistet, macht es einer KI leicht, einen Absatz dem falschen Standort zuzuordnen."
+   ],
+   "table": {
+    "head": [
+     "Seite",
+     "Fragen, die sie beantwortet",
+     "Was dort stehen sollte",
+     "Strukturierte Daten"
+    ],
+    "rows": [
+     [
+      "Marke (Startseite oder Über uns)",
+      "„Was ist [Marke]?“ „Wer betreibt das?“",
+      "Marke und Betreibergesellschaft, Leistungen aller Standorte, Anzahl der Standorte (mit Datum)",
+      "Organization (Zentrale)"
+     ],
+     [
+      "Standortliste",
+      "„Wie viele [Marke]-Standorte gibt es in Osaka?“ „Gibt es einen in der Nähe des Bahnhofs Kyoto?“",
+      "Namen und Adressen nach Region und Stadt, mit Links zu jeder Standortseite",
+      "Optional (auf jede Standortseite setzen)"
+     ],
+     [
+      "Standortseite (eine pro Standort)",
+      "„Hat Umeda sonntags geöffnet?“ „Gibt es Parkplätze?“",
+      "Fakten, die nur zu diesem Standort gehören (nächste Tabelle)",
+      "Ein spezifischer LocalBusiness-Typ pro Standort"
+     ],
+     [
+      "Hinweis auf Schließung oder Umzug",
+      "„Gibt es Shinjuku noch?“",
+      "Schließungsdatum, neue Adresse, Links zu Standorten in der Nähe",
+      "Strukturierte Daten des Standorts entfernen"
+     ]
+    ]
+   },
+   "after": [
+    "Geben Sie jedem Standort eine URL, die sich nicht ändert, etwa /stores/osaka/umeda/. Werden Standorte oder URLs zwischendurch umbenannt, entstehen mehr Abweichungen zu dem, was KIs und andere Websites zuvor gelesen haben. Wenn Sie eine ändern müssen, leiten Sie die alte URL auf die neue weiter.",
+    "Legen Sie keine Seiten für Gebiete an, in denen Sie keinen Standort haben (Seiten, die nur den Ortsnamen austauschen, „Sie suchen X in [Ort]? Wählen Sie uns“). Sie können eine KI außerdem dazu bringen, einen Standort zu beschreiben, den es nicht gibt."
+   ]
+  },
+  {
+   "heading": "Was jede Standortseite braucht – und die passenden Eigenschaften",
+   "paragraphs": [
+    "Die Tabelle zeigt, was auf jeder Standortseite als Klartext stehen sollte, und die passende schema.org-Eigenschaft. Googles Dokumentation zu lokalen Unternehmen nennt name und address als erforderlich, mit openingHoursSpecification, telephone, url, geo und department unter den empfohlenen Eigenschaften, und empfiehlt den spezifischsten verfügbaren Typ, etwa Dentist, HairSalon oder Restaurant ([Google: Strukturierte Daten für lokale Unternehmen](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Angabe",
+     "Wie man sie schreibt",
+     "Typischer KI-Fehler",
+     "Eigenschaft"
+    ],
+    "rows": [
+     [
+      "Standortname",
+      "Ein festes Muster aus Marke + Ort (z. B. Sample Dental Umeda), für jeden Standort gleich",
+      "Mit einem anderen Standort verwechselt, nur unter einem Spitznamen bekannt",
+      "name"
+     ],
+     [
+      "Adresse",
+      "Von der Postleitzahl bis zu Gebäude und Etage, dazu der nächste Bahnhof und Ausgang in einem Satz",
+      "Eine frühere Adresse oder die Adresse eines Standorts in der Nähe",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telefon",
+      "Angeben, ob es die Durchwahl des Standorts oder eine zentrale Buchungsnummer ist",
+      "Die zentrale Nummer als Nummer des Standorts genannt",
+      "telephone"
+     ],
+     [
+      "Öffnungszeiten und Ruhetage",
+      "Pro Standort, auf der Seite jedes Standorts, auch wenn sie überall gleich sind",
+      "Die Öffnungszeiten des Hauptgeschäfts für alle Standorte angegeben",
+      "openingHoursSpecification"
+     ],
+     [
+      "Vorübergehende Schließungen und Feiertage",
+      "Mit Datum; entfernen, wenn sie vorbei sind",
+      "Alte Schließungshinweise bleiben stehen",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Leistungen und Ausstattung",
+      "Trennen, was alle Standorte bieten und was dieser bietet („An diesem Standort gibt es keine kieferorthopädische Beratung am Samstag“)",
+      "Die Leistung eines Standorts als überall verfügbar beschrieben",
+      "Fließtext, FAQ, department (ein Bereich innerhalb des Standorts)"
+     ],
+     [
+      "Parken, Zahlung, Sprachen",
+      "Stellplätze oder Partnerparkhäuser, Zahlungsarten, gesprochene Sprachen",
+      "Die Ausstattung eines anderen Standorts",
+      "Fließtext (paymentAccepted und weitere)"
+     ],
+     [
+      "Filialcode",
+      "Die Nummer, die intern und im Google Unternehmensprofil verwendet wird",
+      "Zwei Standorte mit ähnlichen Namen verwechselt",
+      "branchCode"
+     ],
+     [
+      "Verbindung zur Marke",
+      "„Betrieben von Sample Co., Ltd.“ mit Link zur Über-uns-Seite",
+      "Franchisenehmer und Franchisegeber verwechselt",
+      "parentOrganization"
+     ],
+     [
+      "Eröffnungsdatum, zuletzt aktualisiert",
+      "„Aktualisiert am [Datum]“ am Ende der Seite",
+      "Nicht erkennbar, wie aktuell die Fakten sind",
+      "Fließtext"
+     ]
+    ]
+   },
+   "after": [
+    "Standortseiten bestehen oft aus demselben Text, bei dem nur Name und Adresse ausgetauscht sind. Das ist in Ordnung, aber wenn Sie mindestens drei Fakten schreiben, die nur für diesen Standort gelten (Ausstattung, welche Leistungen er übernimmt, Stoßzeiten, Anfahrt), hat eine KI etwas, woran sie die Standorte unterscheiden kann.",
+    "Halten Sie die FAQ jedes Standorts auf dessen Seite, getrennt von markenweiten Fragen: Fragen, die sich mit dem Standortnamen darin beantworten lassen, etwa „Gibt es an diesem Standort Parkplätze?“ oder „Bekomme ich X an diesem Standort?“"
+   ]
+  },
+  {
+   "heading": "Schließungen, Umzüge und vorübergehende Schließungen",
+   "paragraphs": [
+    "Der falsche Fakt, der sich bei Unternehmen mit mehreren Standorten am längsten hält, ist ein geschlossener Standort. Das Löschen seiner Seite entfernt nicht, was andere Websites und KIs bereits gelesen haben. Räumen Sie in dieser Reihenfolge auf:"
+   ],
+   "list": [
+    "Löschen Sie die Seite des geschlossenen Standorts nicht sofort. Formulieren Sie sie um zu „Dieser Standort wurde am [Datum] geschlossen“ mit Links zu Standorten in der Nähe. Bei einem Umzug leiten Sie auf die Seite des neuen Standorts weiter oder nennen die neue Adresse deutlich.",
+    "Entfernen Sie ihn aus der Standortliste und entfernen Sie seine strukturierten Daten (veröffentlichen Sie einen geschlossenen Standort nicht weiter als LocalBusiness).",
+    "Aktualisieren Sie sein Google Unternehmensprofil, sodass es die Schließung oder den Umzug zeigt.",
+    "Durchsuchen Sie den Rest der Website (Footer, Karriereseite, Aktionsseiten, PDF-Flyer) nach Erwähnungen.",
+    "Bitten Sie andere Anbieter (Buchungsportale, Portale, lokale Verzeichnisse), ihre Einträge zu aktualisieren.",
+    "Bei einer vorübergehenden Schließung nennen Sie Daten und zeigen sie mit specialOpeningHoursSpecification oder einem Hinweis an. Entfernen Sie sie, wenn Sie wieder öffnen."
+   ]
+  },
+  {
+   "heading": "Strukturierte Daten: jeden Standort mit der Marke verknüpfen",
+   "paragraphs": [
+    "Bei mehreren Standorten sollten strukturierte Daten „welches Unternehmen, welcher Standort“ maschinenlesbar machen. Das Vorgehen:"
+   ],
+   "list": [
+    "Veröffentlichen Sie die Zentrale (Marke oder Betreibergesellschaft) einmal als Organization auf der Startseite oder der Über-uns-Seite, mit einer festen @id wie https://example.com/#organization.",
+    "Veröffentlichen Sie auf jeder Standortseite genau ein LocalBusiness des spezifischsten Typs, mit einer für diesen Standort eindeutigen @id wie https://example.com/stores/osaka/umeda/#store.",
+    "Verweisen Sie von jedem Standort mit parentOrganization auf die Zentrale. schema.org markiert das ältere [branchOf](https://schema.org/branchOf) als veraltet und empfiehlt stattdessen [parentOrganization](https://schema.org/parentOrganization).",
+    "Tragen Sie den Filialcode in [branchCode](https://schema.org/branchCode) ein, das schema.org selbst als „store code“ beschreibt.",
+    "Enthält ein Standort einen eigenen Bereich (die Beispiele von schema.org sind ein Geschäft mit Apotheke und eine Bäckerei mit Café), verbinden Sie ihn mit [department](https://schema.org/department); so kann jeder Bereich eigene Öffnungszeiten haben.",
+    "Setzen Sie die Werte jedes Standorts auf dessen eigene Seite, statt alle LocalBusiness-Einträge in der Standortliste aufzuführen. Tragen Sie in strukturierte Daten keine Werte ein, die der Seitentext nicht zeigt."
+   ],
+   "after": [
+    "Google nennt die Übereinstimmung strukturierter Daten mit dem sichtbaren Seiteninhalt als eine der Grundlagen und empfiehlt, die Angaben im Unternehmensprofil aktuell zu halten ([KI-Funktionen und Ihre Website](https://developers.google.com/search/docs/appearance/ai-features)). Betrachten Sie strukturierte Daten als Lösungsschlüssel zu dem, was die Standortseite bereits sagt."
+   ]
+  },
+  {
+   "heading": "Google Unternehmensprofil und Website auf denselben Werten halten",
+   "paragraphs": [
+    "Wenn das Unternehmensprofil eines Standorts und seine Seite nicht übereinstimmen, können weder Menschen noch KIs erkennen, was stimmt. Am meisten hilft eine zentrale Stammdatentabelle mit den Fakten aller Standorte, aus der die Website, das Google Unternehmensprofil und Buchungsportale aktualisiert werden."
+   ],
+   "table": {
+    "head": [
+     "Spalte",
+     "Was festzulegen ist"
+    ],
+    "rows": [
+     [
+      "Filialcode",
+      "Dieselbe Nummer intern, auf der Website und im Unternehmensprofil"
+     ],
+     [
+      "Standortname",
+      "Das feste Muster aus Marke + Ort"
+     ],
+     [
+      "Adresse und Telefon",
+      "Eine einheitliche Schreibweise für Nummern und Trennzeichen"
+     ],
+     [
+      "Öffnungszeiten, Ruhetage, vorübergehende Schließungen",
+      "Wann sie sich ändern und wer sie aktualisiert"
+     ],
+     [
+      "Leistungen und Ausstattung",
+      "Für alle Standorte gleich vs. nur dieser Standort"
+     ],
+     [
+      "URL der Standortseite",
+      "Ändert sich nie; falls doch, weiterleiten"
+     ],
+     [
+      "Status",
+      "Geöffnet, vorübergehend geschlossen, geschlossen (mit Daten)"
+     ],
+     [
+      "Zuletzt geprüft",
+      "In einem festen Rhythmus, etwa monatlich"
+     ]
+    ]
+   },
+   "after": [
+    "Die Sammelbestätigung für Unternehmen mit vielen Standorten, Tools zur gemeinsamen Verwaltung mehrerer Standorte und der Umgang mit Filialcodes sind an Bedingungen geknüpft, die Google festlegt, und diese Bedingungen ändern sich. Prüfen Sie die aktuelle Fassung in der [Google Unternehmensprofil-Hilfe](https://support.google.com/business/). Wenn Standortleiter ihre Profile selbst bearbeiten, vereinbaren Sie, dass zuerst die Stammdatentabelle aktualisiert wird, damit beide nicht auseinanderlaufen."
+   ]
+  },
+  {
+   "heading": "Unter WordPress (mit Nurevo AEO)",
+   "paragraphs": [
+    "Unter WordPress veröffentlicht [Nurevo AEO (kostenlos)](https://wordpress.org/plugins/nurevo-webmcp/) die Fakten der Zentrale als strukturierte Daten und in llms.txt; kombinieren Sie es wie folgt mit Ihren Standortseiten. Die Einstellungen von Nurevo beschreiben ein Unternehmen pro Website, tragen Sie dort also die Zentrale (Marke) ein."
+   ],
+   "list": [
+    "Schreiben Sie zuerst die Standortseiten nach der Tabelle oben (Text vor strukturierten Daten). Verwenden Sie eine Seite oder einen Eintrag eines Standort-Beitragstyps pro Standort.",
+    "Tragen Sie in den Unternehmensangaben von Nurevo Name, Beschreibung, Adresse, Telefon, URL und E-Mail der Zentrale ein. Anders als bei einem Unternehmen mit nur einem Standort lässt das Eintragen der Öffnungszeiten eines Standorts hier diese wie die Öffnungszeiten aller Standorte erscheinen.",
+    "Tragen Sie die eigenen Fragen jedes Standorts im Nurevo-AEO-Panel des Editors dieser Seite als eigene Fragen dieser Seite ein und setzen Sie den Nurevo-FAQ-Block auf „Eigene Fragen dieser Seite“. Sie werden nur auf dieser Seite als FAQPage veröffentlicht.",
+    "Um pro Standort ein LocalBusiness zu veröffentlichen, fügen Sie mit dem Entwicklerfilter webmcp_canary_schema_graph nur auf Standortseiten den Knoten des Standorts zu extra hinzu. Die @id der Zentrale steht als $bundle['org_id'] zur Verfügung; setzen Sie sie in parentOrganization. Erzeugen Sie die Werte des Standorts aus derselben Quelle wie den Seitentext (zum Beispiel benutzerdefinierte Felder).",
+    "Mit Yoast SEO, Rank Math, All in One SEO oder Slim SEO ergänzt Nurevo nur die Fakten, die in den strukturierten Daten des jeweiligen Plugins fehlen, und neue Knoten (etwa ein Standortknoten) werden an den Graphen dieses Plugins angehängt. Nurevo funktioniert außerdem zusammen mit SEO SIMPLE PACK und VK All in One Expansion Unit (ab 0.9.1).",
+    "Wenn bereits etwas anderes, etwa ein Store-Locator-Plugin, strukturierte Daten pro Standort veröffentlicht, vermeiden Sie Duplikate: Aktivieren Sie auf diesen Seiten „Auf dieser Seite keine strukturierten Daten von Nurevo veröffentlichen“ oder entscheiden Sie sich für eine Quelle.",
+    "Öffnen Sie /llms.txt und prüfen Sie, ob die Standortliste und Ihre wichtigsten Standortseiten enthalten sind. llms.txt listet die 30 zuletzt aktualisierten Seiten und Beiträge auf, bei vielen Standorten fehlen also einige Seiten. Mit dem Filter webmcp_canary_llms_txt_lines lässt sich eine Zeile für die Standortliste hinzufügen, und die Seite eines geschlossenen Standorts kann mit „Diese Seite aus llms.txt auslassen“ entfernt werden.",
+    "Betreiben Franchisestandorte eigene WordPress-Websites, exportieren Sie die Einstellungen mit wp nurevo export, importieren Sie sie auf der anderen Website mit wp nurevo import und ändern Sie dann nur Name, Adresse, Telefon und Öffnungszeiten (Schlüssel und Tokens werden nicht exportiert)."
+   ],
+   "after": [
+    "Dieselben Prüfungen gelten für Websites, die nicht auf WordPress basieren. Geben Sie im [kostenlosen Check](/check) eine URL ein, ohne Registrierung, um den Stand von strukturierten Daten, llms.txt und dem Zugang für KI-Crawler zu sehen. Sie können Standortseiten einzeln, URL für URL, prüfen."
+   ]
+  },
+  {
+   "heading": "So prüfen Sie: pro Standort, mit und ohne Namen",
+   "paragraphs": [
+    "Prüfen Sie stichprobenartig ausgewählte Standorte und halten Sie die Ergebnisse pro Standort fest. Sie müssen nicht jedes Mal zu jedem Standort fragen: Beginnen Sie mit Standorten, deren Öffnungszeiten oder Adresse sich geändert haben, die geschlossen wurden oder umgezogen sind, und denen mit den meisten Anfragen. Stellen Sie derselben KI an verschiedenen Tagen dieselbe Frage und urteilen Sie nicht nach einer einzigen Antwort."
+   ],
+   "table": {
+    "head": [
+     "Was festzuhalten ist",
+     "Beispiel"
+    ],
+    "rows": [
+     [
+      "Datum, KI, Frage",
+      "15. Nov., Perplexity, „Hat Sample Dental Umeda sonntags geöffnet?“"
+     ],
+     [
+      "Fakten in der Antwort",
+      "Sind Öffnungszeiten, Adresse, Telefon und Leistungen die dieses Standorts oder die eines anderen?"
+     ],
+     [
+      "Quellen",
+      "Die Seite dieses Standorts, die Standortliste oder ein externes Buchungsportal?"
+     ],
+     [
+      "Frage ohne den Namen",
+      "Erscheint der Standort bei „Zahnarzt in Umeda, sonntags geöffnet“?"
+     ],
+     [
+      "Geschlossene Standorte",
+      "Wird ein geschlossener Standort als geöffnet beschrieben?"
+     ]
+    ]
+   },
+   "after": [
+    "Der kostenlose KI-Check von Nurevo (einmal im Monat, für verbundene Free- und Standard-Websites) stellt Fragen, die aus Branche und Gebiet in Ihren Einstellungen gebildet werden, ohne Ihren Namen. In den Einstellungen gibt es ein Gebiet, prüfen Sie die Gebiete Ihrer anderen Standorte also von Hand mit der Tabelle oben. Die Sichtbarkeitsmessung von Pro (Beta) deckt derzeit Perplexity ab. Die vollständige Methode steht unter [KI-Sichtbarkeit messen](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checkliste für mehrere Standorte",
+   "list": [
+    "Jeder Standort hat eine eigene Seite unter einer URL, die sich nicht ändert.",
+    "Standortnamen folgen überall demselben Muster aus Marke + Ort.",
+    "Jede Standortseite nennt Adresse, Telefon (Durchwahl oder zentral), Öffnungszeiten und Ruhetage dieses Standorts im Text.",
+    "Vorübergehende Schließungen und Feiertage haben Daten und werden entfernt, wenn sie vorbei sind.",
+    "Leistungen aller Standorte stehen getrennt von denen, die nur dieser Standort anbietet.",
+    "Geschlossene oder umgezogene Standorte zeigen einen Hinweis und sind aus der Standortliste und den strukturierten Daten entfernt.",
+    "Das LocalBusiness jedes Standorts hat eine eigene @id und verweist mit parentOrganization auf die Zentrale.",
+    "Die Werte der strukturierten Daten stimmen mit dem Text der Standortseite überein.",
+    "Website und Google Unternehmensprofil werden aus derselben Stammdatentabelle aktualisiert.",
+    "Standorte lassen sich nach Region durchsuchen, mit Links zu jeder Standortseite.",
+    "Sie haben Standorte ausgewählt, an verschiedenen Tagen Fragen mit und ohne Namen geprüft und die Ergebnisse festgehalten."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Brauchen wir für jeden Standort eine Seite, oder reicht eine Standortliste?",
+   "a": "Um Fragen zu einem Standort zu beantworten (seine Öffnungszeiten, seine Ausstattung), ist eine Seite pro Standort zuverlässiger. Mit nur einer Liste kann eine KI einen Wert leicht dem falschen Standort zuordnen. Auch bei wenigen Standorten sollte jeder eine eigene Überschrift mit Adresse und Öffnungszeiten zusammen haben."
+  },
+  {
+   "q": "Wenn alle Standorte dieselben Öffnungszeiten haben, müssen sie trotzdem auf jeder Seite stehen?",
+   "a": "Wir empfehlen es. Eine KI antwortet unter Umständen nur anhand der Standortseite, und wenn die Öffnungszeiten dort fehlen, verwendet sie Werte von anderen Seiten oder anderen Websites."
+  },
+  {
+   "q": "Sollen wir branchOf oder parentOrganization verwenden?",
+   "a": "schema.org markiert branchOf als veraltet und empfiehlt parentOrganization. Verweisen Sie vom LocalBusiness jedes Standorts mit parentOrganization auf die @id der Organization der Zentrale."
+  },
+  {
+   "q": "Sollen wir die Seite eines geschlossenen Standorts sofort löschen?",
+   "a": "Sie in einen Hinweis mit Schließungsdatum und Links zu Standorten in der Nähe umzuwandeln und sie aus der Standortliste und den strukturierten Daten zu entfernen, vermittelt die Schließung besser als das Löschen. Bei einem Umzug leiten Sie auf die Seite des neuen Standorts weiter oder nennen die neue Adresse."
+  },
+  {
+   "q": "Unsere Franchisenehmer betreiben eigene Websites und Social-Media-Konten. Wie halten wir sie einheitlich?",
+   "a": "Behandeln Sie die Stammdatentabelle der Zentrale als maßgebliche Quelle, teilen Sie die vereinbarte Schreibweise von Namen, Adressen, Telefonnummern und Öffnungszeiten mit den Franchisenehmern und bitten Sie sie, dieselben Werte zu verwenden. Links in beide Richtungen, von der Website des Franchisenehmers zur Standortseite der Marke und zurück, machen die Beziehung ebenfalls deutlich."
+  },
+  {
+   "q": "Wir haben zu viele Standorte für llms.txt. Sollten alle aufgeführt werden?",
+   "a": "Nein. Wenn die Standortliste und Ihre wichtigsten Standortseiten enthalten sind, sind die übrigen von dort aus erreichbar. In Nurevo AEO lässt sich mit dem Filter webmcp_canary_llms_txt_lines eine Zeile für die Standortliste hinzufügen."
+  },
+  {
+   "q": "Sorgen diese Schritte dafür, dass jeder Standort in KI-Antworten korrekt erscheint?",
+   "a": "Das lässt sich nicht garantieren; KI-Antworten ändern sich je nach Tag und Formulierung. Diese Schritte verringern die Ursachen dafür, dass Fakten eines Standorts mit denen eines anderen vermischt werden, und sorgen dafür, dass die Informationen, die die KI liest, korrekt und einheitlich sind."
+  }
+ ],
+ "relatedHeading": "Verwandte Leitfäden",
+ "cta": {
+  "heading": "Sehen Sie, wie KI Ihre Standortseiten liest",
+  "body": "Der kostenlose Check braucht keine Registrierung: Geben Sie eine URL ein, um den Stand von strukturierten Daten, llms.txt und dem Zugang für KI-Crawler zu sehen, auf Wunsch Standortseite für Standortseite. Unter WordPress veröffentlicht das kostenlose Plugin die Fakten Ihrer Zentrale als strukturierte Daten.",
+  "label": "Kostenlosen KI-Lesbarkeitscheck starten",
+  "href": "/check",
+  "secondary": {
+   "label": "Kostenloses WordPress-Plugin testen",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT ist eine Marke von OpenAI, Perplexity von Perplexity AI und Google von Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit und WordPress sind Marken ihrer jeweiligen Inhaber. Nurevo steht in keiner Verbindung zu diesen Unternehmen und wird von ihnen weder unterstützt noch empfohlen."
+}

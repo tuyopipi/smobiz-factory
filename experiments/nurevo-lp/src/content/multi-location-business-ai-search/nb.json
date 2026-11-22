@@ -1,0 +1,349 @@
+{
+ "title": "AI-søk for bedrifter med flere avdelinger | Nurevo",
+ "description": "Hindre at AI-svar blander sammen avdelingene: én side per avdeling, faktaene hver trenger, nedleggelser og flyttinger, schema og WordPress-trinn.",
+ "h1": "AI-søk for bedrifter med flere avdelinger: unngå at åpningstider, adresser og tjenester blandes sammen",
+ "lead": "Når en bedrift har flere avdelinger, skyldes de fleste feil i AI-svar at én avdelings opplysninger brukes om en annen. Gi hver avdeling sin egen side med faktaene i vanlig tekst (adresse, telefon, åpningstider, midlertidige stengninger, hva som er annerledes akkurat der), knytt den til merkevaren i strukturerte data, og hold de samme verdiene i Google Business Profile og de andre oppføringene deres. De tre trinnene er kjernen i arbeidet.",
+ "intro": [
+  "Skrevet 15. november 2026 (JST). Denne guiden er for alle bedrifter med to eller flere avdelinger eller kontorer (restauranter, salonger, klinikker, butikker, skoler, eiendomsmeglere) og for byråene som bygger nettstedene deres. Selve selskapet (juridisk navn, stiftelsesdato, ledelse) dekkes i [AI-søkeoptimalisering av Om oss-siden](/guide/company-profile-page-ai-search), og det grunnleggende i markup for én avdeling i [schema for lokale bedrifter og SEO-utvidelser](/guide/local-business-schema-seo-plugins). Denne guiden handler om problemene som oppstår når man har mange avdelinger.",
+  "AI-svar endrer seg fra dag til dag og etter ordlyden. Disse trinnene gjør informasjonen AI leser korrekt; de garanterer ikke at dere kommer med i et svar eller på en bestemt plass."
+ ],
+ "sections": [
+  {
+   "heading": "Slik går AI-svar galt for bedrifter med flere avdelinger",
+   "paragraphs": [
+    "ChatGPT search, Perplexity og Googles AI Overviews leser nettsider, setter sammen et svar og viser kildene sine. Med én avdeling er «bedriftens fakta» ett sett. Med flere inneholder sidene en AI leser flere adresser, flere sett åpningstider og flere telefonnumre. Hvis teksten ikke gjør det tydelig hvilken verdi som hører til hvilken avdeling, kan svaret bygges på feil verdi.",
+    "Spørsmålene folk stiller, deler seg i spørsmål om merkevaren og spørsmål om én avdeling:"
+   ],
+   "list": [
+    "«Har [merke] på Umeda åpent på søndager?» (den avdelingens åpningstider og stengte dager)",
+    "«Hvilke [merke]-avdelinger har parkering?» (fasiliteter som varierer mellom avdelinger)",
+    "«Har [merke] i Shinjuku fortsatt åpent, eller har de flyttet?» (nedleggelser og flyttinger)",
+    "«Finnes det en [merke] nær Kyoto Station?» (hvilken avdeling som dekker hvilket område)",
+    "«Får jeg samme meny/behandling/tjeneste hos alle [merke]?» (tjenester som varierer mellom avdelinger)",
+    "«Hvem driver [merke]?» (merkevare og driftsselskap)"
+   ],
+   "after": [
+    "Fire feil går igjen og igjen: hovedavdelingens åpningstider oppgitt som alle avdelingers, en nedlagt avdeling beskrevet som åpen, det sentrale bestillingsnummeret oppgitt som en avdelings telefon, og en tjeneste som bare noen avdelinger tilbyr, beskrevet som tilgjengelig overalt. Hver av dem blir mindre sannsynlig når hver avdelings fakta står på avdelingens egen side.",
+    "Google sier at det ikke finnes noen ekstra krav og ingen spesielle strukturerte data for å vises i AI Overviews eller AI Mode, og at de vanlige SEO-grunnprinsippene gjelder ([Google Search Central: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Arbeidet med flere avdelinger er det samme: ikke en spesiell måte å skrive for AI på, men hver avdelings fakta publisert korrekt, lesbart og med de samme verdiene overalt."
+   ]
+  },
+  {
+   "heading": "Nettstedsstruktur: skill merkevaresiden, avdelingsoversikten og avdelingssidene",
+   "paragraphs": [
+    "Bestem først hvilken side som svarer på hvilket spørsmål. Én enkelt side som lister alle avdelinger, gjør det lett for en AI å knytte et avsnitt til feil avdeling."
+   ],
+   "table": {
+    "head": [
+     "Side",
+     "Spørsmål den svarer på",
+     "Hva som skal stå",
+     "Strukturerte data"
+    ],
+    "rows": [
+     [
+      "Merkevare (forside eller Om oss)",
+      "«Hva er [merke]?» «Hvem driver det?»",
+      "Merkevare og driftsselskap, tjenester felles for alle avdelinger, antall avdelinger (med dato)",
+      "Organization (hovedkontor)"
+     ],
+     [
+      "Avdelingsoversikt",
+      "«Hvor mange [merke]-avdelinger finnes i Osaka?» «Finnes det en nær Kyoto Station?»",
+      "Navn og adresser etter region og by, med lenker til hver avdelingsside",
+      "Valgfritt (legg det på hver avdelingsside)"
+     ],
+     [
+      "Avdelingsside (én per avdeling)",
+      "«Har Umeda åpent på søndager?» «Er det parkering?»",
+      "Fakta som bare gjelder den avdelingen (neste tabell)",
+      "Én spesifikk LocalBusiness-type per avdeling"
+     ],
+     [
+      "Melding om nedleggelse eller flytting",
+      "«Har Shinjuku fortsatt åpent?»",
+      "Nedleggelsesdato, ny adresse, lenker til avdelinger i nærheten",
+      "Fjern avdelingens strukturerte data"
+     ]
+    ]
+   },
+   "after": [
+    "Gi hver avdeling en URL som ikke endres, for eksempel /stores/osaka/umeda/. Hvis avdelinger eller URL-er får nye navn underveis, oppstår flere avvik fra det AI-tjenester og andre nettsteder har lest tidligere. Hvis du må endre en, videresend den gamle URL-en til den nye.",
+    "Ikke lag sider for områder der dere ikke har en avdeling (sider som bare bytter ut stedsnavnet, «leter du etter X i [sted]? Velg oss»). De kan også få en AI til å beskrive en avdeling som ikke finnes."
+   ]
+  },
+  {
+   "heading": "Hva hver avdelingsside trenger, og de tilsvarende egenskapene",
+   "paragraphs": [
+    "Tabellen viser hva som skal stå i vanlig tekst på hver avdelingsside, og den tilsvarende schema.org-egenskapen. Googles dokumentasjon for lokale bedrifter oppgir name og address som påkrevd, med openingHoursSpecification, telephone, url, geo og department blant de anbefalte egenskapene, og anbefaler den mest spesifikke typen som finnes, for eksempel Dentist, HairSalon eller Restaurant ([Google: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Punkt",
+     "Slik skriver du det",
+     "Typisk AI-feil",
+     "Egenskap"
+    ],
+    "rows": [
+     [
+      "Avdelingsnavn",
+      "Et fast mønster, merke + sted (f.eks. Eksempel Tannklinikk Umeda), likt for alle avdelinger",
+      "Blandet sammen med en annen avdeling, bare kjent under et kallenavn",
+      "name"
+     ],
+     [
+      "Adresse",
+      "Fra postnummer til bygning og etasje, pluss nærmeste stasjon og utgang i en setning",
+      "En tidligere adresse, eller adressen til en avdeling i nærheten",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telefon",
+      "Oppgi om det er avdelingens direktenummer eller et sentralt bestillingsnummer",
+      "Det sentrale nummeret oppgitt som avdelingens",
+      "telephone"
+     ],
+     [
+      "Åpningstider og stengte dager",
+      "Per avdeling, på hver avdelings side, også om de er like overalt",
+      "Hovedavdelingens åpningstider oppgitt for alle avdelinger",
+      "openingHoursSpecification"
+     ],
+     [
+      "Midlertidige stengninger og feriestengt",
+      "Med datoer; fjern dem når de er over",
+      "Gamle stengningsmeldinger som blir liggende",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Tjenester og fasiliteter",
+      "Skill det alle avdelinger tilbyr fra det denne tilbyr («Denne avdelingen tilbyr ikke kjeveortopediske konsultasjoner på lørdager»)",
+      "Én avdelings tjeneste beskrevet som tilgjengelig overalt",
+      "Brødtekst, FAQ, department (en seksjon inne i avdelingen)"
+     ],
+     [
+      "Parkering, betaling, språk",
+      "Plasser eller samarbeidende parkeringshus, betalingsmåter, språk som snakkes",
+      "En annen avdelings fasiliteter",
+      "Brødtekst (paymentAccepted med flere)"
+     ],
+     [
+      "Butikkode",
+      "Nummeret som brukes internt og i Google Business Profile",
+      "To avdelinger med lignende navn forvekslet",
+      "branchCode"
+     ],
+     [
+      "Lenke til merkevaren",
+      "«Drives av Eksempel AS» med en lenke til Om oss-siden",
+      "Franchisetaker og franchisegiver forvekslet",
+      "parentOrganization"
+     ],
+     [
+      "Åpningsdato, sist oppdatert",
+      "«Oppdatert [dato]» nederst på siden",
+      "Ingen måte å se hvor oppdaterte opplysningene er",
+      "Brødtekst"
+     ]
+    ]
+   },
+   "after": [
+    "Avdelingssider ender ofte opp som den samme teksten der bare navn og adresse er byttet ut. Det er akseptabelt, men hvis du skriver minst tre fakta som bare gjelder den avdelingen (fasiliteter, hvilke tjenester den håndterer, travle tider, veibeskrivelse), får en AI noe å skille avdelingene fra hverandre med.",
+    "Hold hver avdelings FAQ på avdelingens egen side, atskilt fra spørsmål om hele merkevaren: spørsmål som kan besvares med avdelingens navn i, som «Er det parkering ved denne avdelingen?» eller «Får jeg X hos denne avdelingen?»"
+   ]
+  },
+  {
+   "heading": "Nedleggelser, flyttinger og midlertidige stengninger",
+   "paragraphs": [
+    "Den feilaktige opplysningen som lever lengst for bedrifter med flere avdelinger, er en nedlagt avdeling. Å slette siden fjerner ikke det andre nettsteder og AI-tjenester allerede har lest. Rydd opp i denne rekkefølgen:"
+   ],
+   "list": [
+    "Ikke slett den nedlagte avdelingens side med en gang. Skriv den om til «Denne avdelingen ble nedlagt [dato]» med lenker til avdelinger i nærheten. Ved flytting: videresend til den nye avdelingens side, eller oppgi den nye adressen tydelig.",
+    "Fjern den fra avdelingsoversikten, og fjern de strukturerte dataene dens (ikke fortsett å publisere en nedlagt avdeling som LocalBusiness).",
+    "Oppdater Google Business Profile for avdelingen slik at den viser nedleggelsen eller flyttingen.",
+    "Søk gjennom resten av nettstedet (bunntekst, rekrutteringsside, kampanjesider, PDF-flygeblader) etter omtaler.",
+    "Be andre utgivere (bookingsider, portaler, lokale kataloger) om å oppdatere oppføringene sine.",
+    "Ved midlertidig stengning: oppgi datoer, og vis den med specialOpeningHoursSpecification eller en melding. Fjern den når dere åpner igjen."
+   ]
+  },
+  {
+   "heading": "Strukturerte data: knytt hver avdeling til merkevaren",
+   "paragraphs": [
+    "Med flere avdelinger skal strukturerte data gjøre «hvilket selskap, hvilken avdeling» lesbart for maskiner. Fremgangsmåten:"
+   ],
+   "list": [
+    "Publiser hovedkontoret (merkevaren eller driftsselskapet) én gang som Organization på forsiden eller Om oss-siden, med en fast @id som https://example.com/#organization.",
+    "Publiser på hver avdelingsside nøyaktig én LocalBusiness av den mest spesifikke typen, med en @id som er unik for avdelingen, som https://example.com/stores/osaka/umeda/#store.",
+    "Pek fra hver avdeling til hovedkontoret med parentOrganization. schema.org markerer den eldre [branchOf](https://schema.org/branchOf) som utgått og anbefaler [parentOrganization](https://schema.org/parentOrganization) i stedet.",
+    "Legg butikkoden i [branchCode](https://schema.org/branchCode), som schema.org selv beskriver som «store code».",
+    "Hvis en avdeling inneholder en egen seksjon (schema.orgs eksempler er en butikk med et apotek og et bakeri med en kafé), koble den til med [department](https://schema.org/department), som lar hver seksjon ha egne åpningstider.",
+    "Legg hver avdelings verdier på dens egen side i stedet for å liste alle LocalBusiness på avdelingsoversikten. Ikke legg verdier i strukturerte data som sidens tekst ikke viser."
+   ],
+   "after": [
+    "Google regner det at strukturerte data samsvarer med sidens synlige innhold, som et av grunnprinsippene og anbefaler å holde opplysningene i Business Profile oppdatert ([AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Se på strukturerte data som fasiten til det avdelingssiden allerede sier."
+   ]
+  },
+  {
+   "heading": "Hold Google Business Profile og nettstedet på de samme verdiene",
+   "paragraphs": [
+    "Når en avdelings Business Profile og siden dens sier forskjellige ting, kan verken folk eller AI-tjenester avgjøre hva som stemmer. Det som hjelper mest, er ett masterark med alle avdelingers fakta, som nettstedet, Google Business Profile og bookingsider oppdateres ut fra."
+   ],
+   "table": {
+    "head": [
+     "Kolonne",
+     "Hva som må bestemmes"
+    ],
+    "rows": [
+     [
+      "Butikkode",
+      "Samme nummer internt, på nettstedet og i Business Profile"
+     ],
+     [
+      "Avdelingsnavn",
+      "Det faste mønsteret merke + sted"
+     ],
+     [
+      "Adresse og telefon",
+      "Én måte å skrive tall og skilletegn på"
+     ],
+     [
+      "Åpningstider, stengte dager, midlertidige stengninger",
+      "Når de endres, og hvem som oppdaterer dem"
+     ],
+     [
+      "Tjenester og fasiliteter",
+      "Felles for alle eller bare denne avdelingen"
+     ],
+     [
+      "URL til avdelingsside",
+      "Endres aldri; videresend hvis den gjør det"
+     ],
+     [
+      "Status",
+      "Åpen, midlertidig stengt, nedlagt (med datoer)"
+     ],
+     [
+      "Sist kontrollert",
+      "Med fast intervall, for eksempel månedlig"
+     ]
+    ]
+   },
+   "after": [
+    "Massebekreftelse for bedrifter med mange avdelinger, verktøy for å administrere flere avdelinger samlet og håndteringen av butikkoder har alle vilkår som Google fastsetter, og vilkårene endrer seg. Sjekk gjeldende versjon i [Google Business Profile Help Center](https://support.google.com/business/). Hvis avdelingslederne selv redigerer profilene sine, avtal at masterarket oppdateres først, slik at de to ikke glir fra hverandre."
+   ]
+  },
+  {
+   "heading": "På WordPress (med Nurevo AEO)",
+   "paragraphs": [
+    "På WordPress publiserer [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) hovedkontorets fakta som strukturerte data og i llms.txt; kombiner det med avdelingssidene deres som beskrevet nedenfor. Nurevos innstillinger beskriver én bedrift per nettsted, så legg inn hovedkontoret (merkevaren) der."
+   ],
+   "list": [
+    "Skriv avdelingssidene først etter tabellen ovenfor (tekst før strukturerte data). Bruk én side eller én oppføring av en avdelings-innleggstype per avdeling.",
+    "Legg inn hovedkontorets navn, beskrivelse, adresse, telefon, URL og e-post i Nurevos bedriftsopplysninger. I motsetning til en bedrift med én avdeling vil én avdelings åpningstider lagt inn her se ut som alle avdelingers åpningstider.",
+    "Legg inn hver avdelings egne spørsmål i Nurevo AEO-panelet i den sidens redigeringsverktøy som sidens egne spørsmål, og sett inn Nurevo FAQ-blokken innstilt på «Denne sidens egne spørsmål». De publiseres som FAQPage bare på den siden.",
+    "For å publisere en LocalBusiness per avdeling, bruk utviklerfilteret webmcp_canary_schema_graph til å legge avdelingens node til i extra bare på avdelingssider. Hovedkontorets @id er tilgjengelig som $bundle['org_id']; legg den i parentOrganization. Bygg avdelingens verdier fra samme kilde som sidens tekst (for eksempel egendefinerte felt).",
+    "Med Yoast SEO, Rank Math, All in One SEO eller Slim SEO legger Nurevo bare til faktaene som utvidelsens strukturerte data mangler, og nye noder (som en avdelingsnode) føyes til utvidelsens graf. Nurevo fungerer også sammen med SEO SIMPLE PACK og VK All in One Expansion Unit (fra 0.9.1).",
+    "Hvis noe annet, for eksempel en butikkfinner-utvidelse, allerede publiserer strukturerte data per avdeling, unngå duplikater: huk av for «Ikke publiser strukturerte data fra Nurevo på denne siden» på de sidene, eller velg én kilde.",
+    "Åpne /llms.txt, og sjekk at avdelingsoversikten og de viktigste avdelingssidene deres er med. llms.txt lister de 30 sist oppdaterte sidene og innleggene, så med mange avdelinger vil noen sider mangle. Filteret webmcp_canary_llms_txt_lines kan legge til en linje for avdelingsoversikten, og en nedlagt avdelings side kan fjernes med «Utelat denne siden fra llms.txt».",
+    "Hvis franchiseavdelinger driver egne WordPress-nettsteder, eksporter innstillingene med wp nurevo export, importer dem på det andre nettstedet med wp nurevo import, og endre deretter bare navn, adresse, telefon og åpningstider (nøkler og tokens eksporteres ikke)."
+   ],
+   "after": [
+    "De samme kontrollene gjelder for nettsteder som ikke er bygget på WordPress. Skriv inn en URL i den [gratis sjekken](/check), uten registrering, for å se status for strukturerte data, llms.txt og tilgang for AI-crawlere. Du kan sjekke avdelingssider én URL om gangen."
+   ]
+  },
+  {
+   "heading": "Slik sjekker du: per avdeling, med og uten navnet",
+   "paragraphs": [
+    "Sjekk ved å plukke ut avdelinger og notere resultatene per avdeling. Du trenger ikke spørre om alle avdelinger hver gang: begynn med avdelinger der åpningstider eller adresse er endret, de som er nedlagt eller har flyttet, og de som får flest henvendelser. Still det samme spørsmålet til den samme AI-en på forskjellige dager, og ikke trekk konklusjoner ut fra ett svar."
+   ],
+   "table": {
+    "head": [
+     "Hva som skal noteres",
+     "Eksempel"
+    ],
+    "rows": [
+     [
+      "Dato, AI, spørsmål",
+      "15. nov., Perplexity, «Har Eksempel Tannklinikk Umeda åpent på søndager?»"
+     ],
+     [
+      "Fakta i svaret",
+      "Er åpningstider, adresse, telefon og tjenester denne avdelingens, eller en annens?"
+     ],
+     [
+      "Kilder",
+      "Denne avdelingens side, avdelingsoversikten eller en ekstern bookingside?"
+     ],
+     [
+      "Spørsmål uten navnet",
+      "Dukker avdelingen opp for «tannlege med søndagsåpent på Umeda»?"
+     ],
+     [
+      "Nedlagte avdelinger",
+      "Beskrives en nedlagt avdeling som åpen?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevos gratis AI-sjekk (én gang i måneden, for tilkoblede Free- og Standard-nettsteder) stiller spørsmål bygget på bransjen og området i innstillingene dine, uten navnet ditt. Det er ett område i innstillingene, så sjekk de andre avdelingenes områder manuelt med tabellen ovenfor. Pros synlighetsmåling (beta) dekker foreløpig Perplexity. Hele metoden står i [slik måler du synlighet i AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Sjekkliste for flere avdelinger",
+   "list": [
+    "Hver avdeling har sin egen side, på en URL som ikke endres.",
+    "Avdelingsnavnene følger det samme mønsteret merke + sted overalt.",
+    "Hver avdelingsside oppgir avdelingens adresse, telefon (direkte eller sentral), åpningstider og stengte dager i tekst.",
+    "Midlertidige stengninger og feriestengt har datoer og fjernes når de er over.",
+    "Tjenester som er felles for alle avdelinger, står atskilt fra dem bare denne avdelingen tilbyr.",
+    "Nedlagte eller flyttede avdelinger viser en melding og er fjernet fra avdelingsoversikten og de strukturerte dataene.",
+    "Hver avdelings LocalBusiness har sin egen @id og peker på hovedkontoret med parentOrganization.",
+    "Verdiene i de strukturerte dataene samsvarer med avdelingssidens tekst.",
+    "Nettstedet og Google Business Profile oppdateres fra det samme masterarket.",
+    "Avdelingene kan blas gjennom etter region, med lenker til hver avdelingsside.",
+    "Du har plukket ut avdelinger, sjekket spørsmål med og uten navnet på forskjellige dager og notert resultatene."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Trenger vi en side for hver avdeling, eller holder det med én avdelingsoversikt?",
+   "a": "For å svare på spørsmål om én avdeling (åpningstidene, fasilitetene) er én side per avdeling mer pålitelig. Med bare en oversikt kan en AI lett knytte en verdi til feil avdeling. Selv med få avdelinger bør hver ha sin egen overskrift med adresse og åpningstider samlet."
+  },
+  {
+   "q": "Hvis alle avdelinger har de samme åpningstidene, må de likevel stå på hver side?",
+   "a": "Det anbefaler vi. En AI kan svare ut fra avdelingssiden alene, og hvis åpningstidene ikke står der, bruker den verdier fra andre sider eller andre nettsteder."
+  },
+  {
+   "q": "Skal vi bruke branchOf eller parentOrganization?",
+   "a": "schema.org markerer branchOf som utgått og anbefaler parentOrganization. Pek fra hver avdelings LocalBusiness til hovedkontorets Organization-@id med parentOrganization."
+  },
+  {
+   "q": "Skal vi slette en nedlagt avdelings side med en gang?",
+   "a": "Å gjøre den om til en melding med nedleggelsesdato og lenker til avdelinger i nærheten, og fjerne den fra avdelingsoversikten og de strukturerte dataene, formidler nedleggelsen bedre enn å slette den. Ved flytting: videresend til den nye avdelingens side, eller oppgi den nye adressen."
+  },
+  {
+   "q": "Franchisetakerne våre har egne nettsteder og sosiale kontoer. Hvordan holder vi dem konsistente?",
+   "a": "Behandle hovedkontorets masterark som den autoritative kilden, del den avtalte skrivemåten for navn, adresser, telefonnumre og åpningstider med franchisetakerne, og be dem bruke de samme verdiene. Lenker begge veier, fra franchisetakerens nettsted til merkevarens avdelingsside og tilbake, gjør også forholdet tydelig."
+  },
+  {
+   "q": "Vi har for mange avdelinger for llms.txt. Skal alle listes?",
+   "a": "Nei. Hvis avdelingsoversikten og de viktigste avdelingssidene er med, kan resten nås derfra. I Nurevo AEO kan filteret webmcp_canary_llms_txt_lines legge til en linje for avdelingsoversikten."
+  },
+  {
+   "q": "Vil disse trinnene få alle avdelinger til å vises korrekt i AI-svar?",
+   "a": "Det kan ikke garanteres; AI-svar endrer seg fra dag til dag og etter ordlyden. Disse trinnene reduserer årsakene til at én avdelings fakta blandes med en annens, og gjør informasjonen AI leser korrekt og konsistent."
+  }
+ ],
+ "relatedHeading": "Relaterte guider",
+ "cta": {
+  "heading": "Se hvordan AI leser avdelingssidene deres",
+  "body": "Den gratis sjekken krever ingen registrering: skriv inn en URL for å se status for strukturerte data, llms.txt og tilgang for AI-crawlere, gjerne én avdelingsside om gangen. På WordPress publiserer den gratis utvidelsen hovedkontorets fakta som strukturerte data.",
+  "label": "Kjør den gratis sjekken av AI-lesbarhet",
+  "href": "/check",
+  "secondary": {
+   "label": "Prøv den gratis WordPress-utvidelsen",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT er et varemerke som tilhører OpenAI, Perplexity tilhører Perplexity AI og Google tilhører Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit og WordPress er varemerker som tilhører sine respektive eiere. Nurevo er ikke tilknyttet eller godkjent av noen av disse selskapene."
+}

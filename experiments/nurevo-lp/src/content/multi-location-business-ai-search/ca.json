@@ -1,0 +1,349 @@
+{
+ "title": "Cerca amb IA per a empreses amb diversos establiments | Nurevo",
+ "description": "Eviteu que les respostes d'IA barregin els vostres establiments: una pàgina per local, les dades de cadascun, tancaments i trasllats, schema i WordPress.",
+ "h1": "Cerca amb IA per a empreses amb diversos establiments: eviteu que es barregin els horaris, les adreces i els serveis de cadascun",
+ "lead": "Quan una empresa té diversos establiments, la majoria de respostes errònies de la IA venen de fer servir les dades d'un establiment per a un altre. Doneu a cada establiment la seva pròpia pàgina amb les dades en text pla (adreça, telèfon, horari, tancaments temporals, què hi és diferent), vinculeu-la a la marca a les dades estructurades i mantingueu els mateixos valors al Perfil d'Empresa a Google i a la resta de fitxes. Aquests tres passos són el nucli de la feina.",
+ "intro": [
+  "Redactat el 15 de novembre de 2026 (JST). Aquesta guia és per a qualsevol empresa amb dos o més establiments o oficines (restaurants, perruqueries, clíniques, botigues, escoles, agències immobiliàries) i per a les agències que en fan els webs. L'empresa en si (raó social, data de fundació, direcció) es tracta a [Optimització de la pàgina Qui som per a la cerca amb IA](/guide/company-profile-page-ai-search), i els fonaments del marcatge d'un sol establiment a [schema d'empresa local i connectors de SEO](/guide/local-business-schema-seo-plugins). Aquesta guia tracta dels problemes que sorgeixen quan es tenen molts establiments.",
+  "Les respostes d'IA canvien segons el dia i la formulació. Aquests passos fan que la informació que llegeix la IA sigui exacta; no garanteixen que aparegueu en una resposta ni en cap posició concreta."
+ ],
+ "sections": [
+  {
+   "heading": "Com s'equivoquen les respostes d'IA amb les empreses de diversos establiments",
+   "paragraphs": [
+    "La cerca de ChatGPT, Perplexity i les AI Overviews de Google llegeixen pàgines web, construeixen una resposta i en mostren les fonts. Amb un sol establiment, «les dades de l'empresa» són un únic conjunt. Amb diversos, les pàgines que llegeix la IA contenen diverses adreces, diversos horaris i diversos telèfons. Si el text no deixa clar quin valor correspon a quin establiment, la resposta es pot construir amb el valor equivocat.",
+    "Les preguntes que fa la gent es divideixen entre preguntes sobre la marca i preguntes sobre un establiment:"
+   ],
+   "list": [
+    "«L'establiment d'Umeda de [marca] obre els diumenges?» (horari i dies de tancament d'aquell establiment)",
+    "«Quins establiments de [marca] tenen aparcament?» (instal·lacions que varien segons l'establiment)",
+    "«El [marca] de Shinjuku encara és obert o s'ha traslladat?» (tancaments i trasllats)",
+    "«Hi ha algun [marca] a prop de l'estació de Kyoto?» (quin establiment dona servei a quina zona)",
+    "«Puc tenir el mateix menú / tractament / servei a tots els [marca]?» (serveis que varien segons l'establiment)",
+    "«Qui gestiona [marca]?» (marca i empresa operadora)"
+   ],
+   "after": [
+    "Hi ha quatre errors que es repeteixen constantment: l'horari de l'establiment principal donat com a horari de tots, un establiment tancat descrit com a obert, el número central de reserves donat com a telèfon d'un establiment i un servei que només ofereixen alguns establiments descrit com a disponible a tot arreu. Cadascun es fa menys probable quan les dades de cada establiment estan escrites a la pàgina del mateix establiment.",
+    "Google afirma que no hi ha requisits addicionals ni dades estructurades especials per aparèixer a les AI Overviews o a l'AI Mode, i que s'hi apliquen els fonaments habituals del SEO ([Google Search Central: funcions d'IA i el vostre lloc web](https://developers.google.com/search/docs/appearance/ai-features)). La feina amb diversos establiments és igual: no és una manera especial d'escriure per a la IA, sinó publicar les dades de cada establiment de manera exacta, llegible i amb els mateixos valors a tot arreu."
+   ]
+  },
+  {
+   "heading": "Estructura del web: separeu la pàgina de la marca, la llista d'establiments i les pàgines de cada establiment",
+   "paragraphs": [
+    "Primer decidiu quina pàgina respon a quina pregunta. Una sola pàgina que llisti tots els establiments facilita que la IA associï un paràgraf a l'establiment equivocat."
+   ],
+   "table": {
+    "head": [
+     "Pàgina",
+     "Preguntes que respon",
+     "Què hi cal escriure",
+     "Dades estructurades"
+    ],
+    "rows": [
+     [
+      "Marca (pàgina d'inici o Qui som)",
+      "«Què és [marca]?» «Qui la gestiona?»",
+      "Marca i empresa operadora, serveis comuns a tots els establiments, nombre d'establiments (amb data)",
+      "Organization (seu central)"
+     ],
+     [
+      "Llista d'establiments",
+      "«Quants establiments de [marca] hi ha a Osaka?» «N'hi ha algun a prop de l'estació de Kyoto?»",
+      "Noms i adreces per regió i ciutat, amb enllaç a la pàgina de cada establiment",
+      "Opcional (poseu-les a cada pàgina d'establiment)"
+     ],
+     [
+      "Pàgina d'establiment (una per establiment)",
+      "«El d'Umeda obre els diumenges?» «Hi ha aparcament?»",
+      "Dades que corresponen només a aquell establiment (taula següent)",
+      "Un tipus específic de LocalBusiness per establiment"
+     ],
+     [
+      "Avís de tancament o trasllat",
+      "«El de Shinjuku encara és obert?»",
+      "Data de tancament, adreça nova, enllaços a establiments propers",
+      "Elimineu les dades estructurades de l'establiment"
+     ]
+    ]
+   },
+   "after": [
+    "Doneu a cada establiment un URL que no hagi de canviar, com ara /stores/osaka/umeda/. Canviar el nom dels establiments o els URL a mig camí crea més discrepàncies amb el que les IA i altres webs havien llegit abans. Si n'heu de canviar algun, redirigiu l'URL antic al nou.",
+    "No creeu pàgines per a zones on no teniu cap establiment (pàgines que només canvien el nom del lloc, «busqueu X a [població]? Trieu-nos»). També poden portar la IA a descriure un establiment que no existeix."
+   ]
+  },
+  {
+   "heading": "Què necessita cada pàgina d'establiment i les propietats corresponents",
+   "paragraphs": [
+    "La taula recull què cal escriure en text pla a cada pàgina d'establiment i la propietat schema.org corresponent. La documentació de Google sobre empreses locals indica name i address com a obligatòries, amb openingHoursSpecification, telephone, url, geo i department entre les recomanades, i recomana el tipus més específic disponible, com Dentist, HairSalon o Restaurant ([Google: dades estructurades d'empresa local](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Element",
+     "Com escriure-ho",
+     "Error típic de la IA",
+     "Propietat"
+    ],
+    "rows": [
+     [
+      "Nom de l'establiment",
+      "Un patró fix, marca + lloc (p. ex., Sample Dental Umeda), igual per a tots els establiments",
+      "Confós amb un altre establiment, conegut només per un sobrenom",
+      "name"
+     ],
+     [
+      "Adreça",
+      "Del codi postal fins a l'edifici i la planta, més l'estació més propera i la sortida en una frase",
+      "Una adreça anterior o l'adreça d'un establiment proper",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telèfon",
+      "Indiqueu si és la línia directa de l'establiment o una línia central de reserves",
+      "El número central donat com a número de l'establiment",
+      "telephone"
+     ],
+     [
+      "Horari i dies de tancament",
+      "Per establiment, a la pàgina de cadascun, encara que siguin iguals a tot arreu",
+      "L'horari de l'establiment principal donat per a tots",
+      "openingHoursSpecification"
+     ],
+     [
+      "Tancaments temporals i festius",
+      "Amb dates; traieu-los quan s'acabin",
+      "Avisos de tancament antics que s'hi han quedat",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Serveis i instal·lacions",
+      "Separeu el que ofereixen tots els establiments del que ofereix aquest («Aquest establiment no fa consultes d'ortodòncia els dissabtes»)",
+      "El servei d'un establiment descrit com a disponible a tot arreu",
+      "Text del cos, FAQ, department (una secció dins l'establiment)"
+     ],
+     [
+      "Aparcament, pagament, idiomes",
+      "Places o aparcaments concertats, formes de pagament, idiomes que s'hi parlen",
+      "Les instal·lacions d'un altre establiment",
+      "Text del cos (paymentAccepted i altres)"
+     ],
+     [
+      "Codi de botiga",
+      "El número que es fa servir internament i al Perfil d'Empresa a Google",
+      "Dos establiments amb noms semblants confosos",
+      "branchCode"
+     ],
+     [
+      "Vincle amb la marca",
+      "«Gestionat per Sample Co., Ltd.» amb un enllaç a la pàgina Qui som",
+      "Franquiciat i franquiciador confosos",
+      "parentOrganization"
+     ],
+     [
+      "Data d'obertura, última actualització",
+      "«Actualitzat el [data]» al final de la pàgina",
+      "No hi ha manera de saber si les dades estan al dia",
+      "Text del cos"
+     ]
+    ]
+   },
+   "after": [
+    "Sovint les pàgines d'establiment acaben tenint el mateix text i només canvien el nom i l'adreça. És acceptable, però escriure com a mínim tres fets que només s'apliquen a aquell establiment (instal·lacions, quins serveis hi fan, hores de més afluència, com arribar-hi) dona a la IA alguna cosa per distingir els establiments.",
+    "Mantingueu les FAQ de cada establiment a la pàgina d'aquell establiment, separades de les preguntes sobre la marca en general: preguntes que es puguin respondre amb el nom de l'establiment, com ara «Hi ha aparcament en aquest establiment?» o «Puc fer X en aquest establiment?»"
+   ]
+  },
+  {
+   "heading": "Tancaments, trasllats i tancaments temporals",
+   "paragraphs": [
+    "La dada errònia que més dura en les empreses amb diversos establiments és un establiment tancat. Esborrar-ne la pàgina no elimina el que altres webs i les IA ja han llegit. Feu la neteja en aquest ordre:"
+   ],
+   "list": [
+    "No esborreu de seguida la pàgina de l'establiment tancat. Reescriviu-la com a «Aquest establiment va tancar el [data]» amb enllaços a establiments propers. En cas de trasllat, redirigiu a la pàgina del nou establiment o indiqueu clarament l'adreça nova.",
+    "Traieu-lo de la llista d'establiments i elimineu-ne les dades estructurades (no continueu publicant un establiment tancat com a LocalBusiness).",
+    "Actualitzeu-ne el Perfil d'Empresa a Google perquè mostri el tancament o el trasllat.",
+    "Cerqueu-ne mencions a la resta del web (peu de pàgina, pàgina d'ofertes de feina, pàgines de campanyes, fullets en PDF).",
+    "Demaneu a altres editors (webs de reserves, portals, directoris locals) que n'actualitzin les fitxes.",
+    "En un tancament temporal, indiqueu-ne les dates i mostreu-lo amb specialOpeningHoursSpecification o un avís. Traieu-lo quan torneu a obrir."
+   ]
+  },
+  {
+   "heading": "Dades estructurades: vinculeu cada establiment a la marca",
+   "paragraphs": [
+    "Amb diversos establiments, les dades estructurades han de fer llegible per a les màquines «quina empresa, quin establiment». L'enfocament:"
+   ],
+   "list": [
+    "Publiqueu la seu central (marca o empresa operadora) una sola vegada com a Organization a la pàgina d'inici o a la pàgina Qui som, amb un @id fix com ara https://example.com/#organization.",
+    "A cada pàgina d'establiment, publiqueu exactament un LocalBusiness del tipus més específic, amb un @id exclusiu d'aquell establiment com ara https://example.com/stores/osaka/umeda/#store.",
+    "Apunteu des de cada establiment cap a la seu central amb parentOrganization. schema.org marca l'antic [branchOf](https://schema.org/branchOf) com a obsolet i recomana [parentOrganization](https://schema.org/parentOrganization) en el seu lloc.",
+    "Poseu el codi de botiga a [branchCode](https://schema.org/branchCode), que el mateix schema.org descriu com el «codi de botiga».",
+    "Si un establiment conté una secció independent (els exemples de schema.org són una botiga amb farmàcia i una fleca amb cafeteria), connecteu-la amb [department](https://schema.org/department), que permet que cada secció tingui el seu propi horari.",
+    "Poseu els valors de cada establiment a la seva pàgina en lloc de llistar tots els LocalBusiness a la llista d'establiments. No poseu a les dades estructurades valors que el text de la pàgina no mostri."
+   ],
+   "after": [
+    "Google inclou la coincidència entre les dades estructurades i el contingut visible de la pàgina entre els fonaments i recomana mantenir al dia la informació del Perfil d'Empresa ([Funcions d'IA i el vostre lloc web](https://developers.google.com/search/docs/appearance/ai-features)). Tracteu les dades estructurades com les solucions del que la pàgina de l'establiment ja diu."
+   ]
+  },
+  {
+   "heading": "Mantingueu el Perfil d'Empresa a Google i el web amb els mateixos valors",
+   "paragraphs": [
+    "Quan el Perfil d'Empresa d'un establiment i la seva pàgina no coincideixen, ni les persones ni les IA poden saber quin és el correcte. El que més ajuda és un full mestre amb les dades de tots els establiments, a partir del qual s'actualitzen el web, el Perfil d'Empresa a Google i els webs de reserves."
+   ],
+   "table": {
+    "head": [
+     "Columna",
+     "Què cal decidir"
+    ],
+    "rows": [
+     [
+      "Codi de botiga",
+      "El mateix número internament, al web i al Perfil d'Empresa"
+     ],
+     [
+      "Nom de l'establiment",
+      "El patró fix marca + lloc"
+     ],
+     [
+      "Adreça i telèfon",
+      "Una única manera d'escriure números i separadors"
+     ],
+     [
+      "Horari, dies de tancament, tancaments temporals",
+      "Quan canvien i qui els actualitza"
+     ],
+     [
+      "Serveis i instal·lacions",
+      "Comuns a tots o només d'aquest establiment"
+     ],
+     [
+      "URL de la pàgina de l'establiment",
+      "No canvia mai; redirigiu-lo si canvia"
+     ],
+     [
+      "Estat",
+      "Obert, tancat temporalment, tancat (amb dates)"
+     ],
+     [
+      "Última comprovació",
+      "En un cicle fix, per exemple mensual"
+     ]
+    ]
+   },
+   "after": [
+    "La verificació massiva per a empreses amb molts establiments, les eines per gestionar diversos establiments alhora i el tractament dels codis de botiga estan subjectes a condicions que fixa Google, i aquestes condicions canvien. Consulteu-ne la versió actual al [Centre d'ajuda del Perfil d'Empresa a Google](https://support.google.com/business/). Si els responsables dels establiments editen els seus propis perfils, acordeu que primer s'actualitza el full mestre perquè els dos no es desquadrin."
+   ]
+  },
+  {
+   "heading": "A WordPress (amb Nurevo AEO)",
+   "paragraphs": [
+    "A WordPress, [Nurevo AEO (gratuït)](https://wordpress.org/plugins/nurevo-webmcp/) publica les dades de la seu central com a dades estructurades i a llms.txt; combineu-lo amb les pàgines d'establiment com s'indica a continuació. La configuració de Nurevo descriu una empresa per web, de manera que hi heu d'introduir la seu central (la marca)."
+   ],
+   "list": [
+    "Escriviu primer les pàgines dels establiments seguint la taula anterior (el text abans que les dades estructurades). Feu servir una pàgina o una entrada d'un tipus de publicació d'establiment per establiment.",
+    "A les dades de l'empresa de Nurevo, introduïu el nom, la descripció, l'adreça, el telèfon, l'URL i el correu electrònic de la seu central. A diferència d'una empresa amb un sol establiment, si hi introduïu l'horari d'un establiment semblarà que és l'horari de tots.",
+    "Introduïu les preguntes pròpies de cada establiment al tauler Nurevo AEO de l'editor d'aquella pàgina com a preguntes pròpies d'aquesta pàgina i col·loqueu el bloc de FAQ de Nurevo configurat com a «Preguntes pròpies d'aquesta pàgina». Es publiquen com a FAQPage només en aquella pàgina.",
+    "Per publicar un LocalBusiness per establiment, feu servir el filtre per a desenvolupadors webmcp_canary_schema_graph per afegir el node de l'establiment a extra només a les pàgines d'establiment. L'@id de la seu central està disponible com a $bundle['org_id']; poseu-lo a parentOrganization. Construïu els valors de l'establiment a partir de la mateixa font que el text de la pàgina (camps personalitzats, per exemple).",
+    "Amb Yoast SEO, Rank Math, All in One SEO o Slim SEO, Nurevo només afegeix les dades que falten a les dades estructurades d'aquell connector, i els nodes nous (com ara un node d'establiment) s'afegeixen al graf d'aquell connector. Nurevo també funciona juntament amb SEO SIMPLE PACK i VK All in One Expansion Unit (des de la 0.9.1).",
+    "Si alguna altra cosa, com un connector de localitzador de botigues, ja publica dades estructurades per establiment, eviteu duplicats: marqueu «No publicar dades estructurades de Nurevo en aquesta pàgina» en aquelles pàgines o trieu una sola font.",
+    "Obriu /llms.txt i comproveu que hi siguin la llista d'establiments i les pàgines dels establiments principals. llms.txt llista les 30 pàgines i entrades actualitzades més recentment, de manera que amb molts establiments algunes pàgines en quedaran fora. El filtre webmcp_canary_llms_txt_lines pot afegir una línia per a la llista d'establiments, i la pàgina d'un establiment tancat es pot treure amb «Excloure aquesta pàgina de llms.txt».",
+    "Si els establiments franquiciats tenen webs de WordPress separats, exporteu la configuració amb wp nurevo export, importeu-la a l'altre web amb wp nurevo import i després canvieu només el nom, l'adreça, el telèfon i l'horari (les claus i els tokens no s'exporten)."
+   ],
+   "after": [
+    "Les mateixes comprovacions serveixen per a webs que no estan fets amb WordPress. Introduïu un URL a la [comprovació gratuïta](/check), sense registre, per veure l'estat de les dades estructurades, de llms.txt i de l'accés dels rastrejadors d'IA. Podeu comprovar les pàgines dels establiments d'un URL en un."
+   ]
+  },
+  {
+   "heading": "Com comprovar-ho: per establiment, amb el nom i sense",
+   "paragraphs": [
+    "Comproveu-ho triant establiments i anotant els resultats per establiment. No cal preguntar per tots els establiments cada vegada: comenceu pels que han canviat d'horari o d'adreça, pels que han tancat o s'han traslladat i pels que reben més consultes. Feu la mateixa pregunta a la mateixa IA en dies diferents i no en tragueu conclusions a partir d'una sola resposta."
+   ],
+   "table": {
+    "head": [
+     "Què cal anotar",
+     "Exemple"
+    ],
+    "rows": [
+     [
+      "Data, IA, pregunta",
+      "15 de nov., Perplexity, «Sample Dental Umeda obre els diumenges?»"
+     ],
+     [
+      "Dades de la resposta",
+      "L'horari, l'adreça, el telèfon i els serveis són d'aquest establiment o d'un altre?"
+     ],
+     [
+      "Fonts",
+      "La pàgina d'aquest establiment, la llista d'establiments o un web de reserves extern?"
+     ],
+     [
+      "Pregunta sense el nom",
+      "L'establiment apareix per a «dentista obert diumenge a Umeda»?"
+     ],
+     [
+      "Establiments tancats",
+      "Algun establiment tancat es descriu com a obert?"
+     ]
+    ]
+   },
+   "after": [
+    "La comprovació d'IA gratuïta de Nurevo (un cop al mes, per a webs Free i Standard connectats) fa preguntes construïdes a partir del tipus de negoci i la zona de la vostra configuració, sense el vostre nom. A la configuració només hi ha una zona, així que comproveu a mà les zones dels altres establiments amb la taula anterior. La mesura de visibilitat de Pro (beta) cobreix actualment Perplexity. El mètode complet és a [com mesurar la visibilitat a la IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Llista de comprovació per a diversos establiments",
+   "list": [
+    "Cada establiment té la seva pròpia pàgina, en un URL que no canviarà.",
+    "Els noms dels establiments segueixen el mateix patró marca + lloc a tot arreu.",
+    "Cada pàgina d'establiment indica en text l'adreça, el telèfon (directe o central), l'horari i els dies de tancament d'aquell establiment.",
+    "Els tancaments temporals i els festius tenen dates i es treuen quan s'acaben.",
+    "Els serveis comuns a tots els establiments estan escrits per separat dels que només ofereix aquest establiment.",
+    "Els establiments tancats o traslladats mostren un avís i s'han tret de la llista d'establiments i de les dades estructurades.",
+    "El LocalBusiness de cada establiment té el seu propi @id i apunta a la seu central amb parentOrganization.",
+    "Els valors de les dades estructurades coincideixen amb el text de la pàgina de l'establiment.",
+    "El web i el Perfil d'Empresa a Google s'actualitzen a partir del mateix full mestre.",
+    "Es poden consultar els establiments per regió, amb enllaços a la pàgina de cadascun.",
+    "Heu triat establiments, heu comprovat preguntes amb el nom i sense en dies diferents i n'heu anotat els resultats."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Necessitem una pàgina per a cada establiment o n'hi ha prou amb una llista d'establiments?",
+   "a": "Per respondre preguntes sobre un establiment (el seu horari, les seves instal·lacions), una pàgina per establiment és més fiable. Amb només una llista, la IA pot associar fàcilment un valor a l'establiment equivocat. Fins i tot amb pocs establiments, doneu a cadascun el seu propi encapçalament, amb l'adreça i l'horari junts."
+  },
+  {
+   "q": "Si tots els establiments tenen el mateix horari, cal posar-lo igualment a cada pàgina?",
+   "a": "Ho recomanem. La IA pot respondre només a partir de la pàgina de l'establiment, i si l'horari no hi és, farà servir valors d'altres pàgines o d'altres webs."
+  },
+  {
+   "q": "Hem de fer servir branchOf o parentOrganization?",
+   "a": "schema.org marca branchOf com a obsolet i recomana parentOrganization. Apunteu des del LocalBusiness de cada establiment cap a l'@id de l'Organization de la seu central amb parentOrganization."
+  },
+  {
+   "q": "Hem d'esborrar de seguida la pàgina d'un establiment tancat?",
+   "a": "Convertir-la en un avís amb la data de tancament i enllaços a establiments propers, i treure-la de la llista d'establiments i de les dades estructurades, comunica el tancament millor que esborrar-la. En cas de trasllat, redirigiu a la pàgina del nou establiment o indiqueu l'adreça nova."
+  },
+  {
+   "q": "Els nostres franquiciats tenen webs i comptes a xarxes socials propis. Com ho mantenim tot coherent?",
+   "a": "Tracteu el full mestre de la seu central com la font de referència, compartiu amb els franquiciats la grafia acordada de noms, adreces, telèfons i horaris i demaneu-los que facin servir els mateixos valors. Enllaçar en tots dos sentits, del web del franquiciat a la pàgina de l'establiment de la marca i a l'inrevés, també deixa clara la relació."
+  },
+  {
+   "q": "Tenim massa establiments per a llms.txt. Hi han de sortir tots?",
+   "a": "No. Si hi són la llista d'establiments i les pàgines dels establiments principals, a la resta s'hi pot arribar des d'aquestes. A Nurevo AEO, el filtre webmcp_canary_llms_txt_lines pot afegir una línia per a la llista d'establiments."
+  },
+  {
+   "q": "Aquests passos faran que tots els establiments apareguin correctament a les respostes d'IA?",
+   "a": "No es pot garantir; les respostes d'IA canvien segons el dia i la formulació. Aquests passos redueixen les causes que les dades d'un establiment es barregin amb les d'un altre i fan que la informació que llegeix la IA sigui exacta i coherent."
+  }
+ ],
+ "relatedHeading": "Guies relacionades",
+ "cta": {
+  "heading": "Mireu com llegeix la IA les pàgines dels vostres establiments",
+  "body": "La comprovació gratuïta no requereix registre: introduïu un URL per veure l'estat de les dades estructurades, de llms.txt i de l'accés dels rastrejadors d'IA, una pàgina d'establiment cada vegada, si voleu. A WordPress, el connector gratuït publica les dades de la vostra seu central com a dades estructurades.",
+  "label": "Feu la comprovació gratuïta de llegibilitat per a la IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Proveu el connector gratuït per a WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT és una marca comercial d'OpenAI, Perplexity de Perplexity AI i Google de Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit i WordPress són marques comercials dels seus respectius propietaris. Nurevo no està afiliada a cap d'aquestes empreses ni compta amb el seu aval."
+}

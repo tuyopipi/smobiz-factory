@@ -1,0 +1,349 @@
+{
+ "title": "Više poslovnica u AI pretraživanju: svaka poslovnica točno | Nurevo",
+ "description": "Kako spriječiti da AI odgovori miješaju vaše poslovnice: stranica za svaku, potrebni podaci, zatvaranja i selidbe, schema poslovnica–brend i koraci u WordPressu.",
+ "h1": "AI pretraživanje za tvrtke s više poslovnica: kako spriječiti da se radno vrijeme, adrese i usluge pojedinih poslovnica pomiješaju",
+ "lead": "Kad tvrtka ima nekoliko poslovnica, većina pogrešnih AI odgovora nastaje zato što se podaci jedne poslovnice koriste za drugu. Dajte svakoj poslovnici vlastitu stranicu s njezinim podacima u običnom tekstu (adresa, telefon, radno vrijeme, privremena zatvaranja, po čemu se razlikuje), povežite je s brendom u strukturiranim podacima i održavajte iste vrijednosti u Google profilu tvrtke i u ostalim unosima. Ta tri koraka čine srž posla.",
+ "intro": [
+  "Napisano 15. studenoga 2026. (JST). Ovaj vodič namijenjen je svakoj tvrtki s dvije ili više poslovnica ili ureda (restorani, saloni, klinike, trgovine, škole, agencije za nekretnine) i agencijama koje im izrađuju web-stranice. Samom tvrtkom (službeni naziv, datum osnivanja, uprava) bavi se vodič [Optimizacija stranice O nama za AI pretraživanje](/guide/company-profile-page-ai-search), a osnovama označavanja jedne poslovnice vodič [schema lokalne tvrtke i SEO dodaci](/guide/local-business-schema-seo-plugins). Ovaj vodič bavi se problemima koji nastaju kad imate više poslovnica.",
+  "AI odgovori mijenjaju se ovisno o danu i formulaciji. Ovi koraci osiguravaju da su informacije koje AI čita točne; ne jamče da ćete se pojaviti u odgovoru ni na kojem mjestu."
+ ],
+ "sections": [
+  {
+   "heading": "Kako AI odgovori griješe kod tvrtki s više poslovnica",
+   "paragraphs": [
+    "ChatGPT pretraživanje, Perplexity i Googleovi AI Overviews čitaju web-stranice, sastavljaju odgovor i prikazuju svoje izvore. Uz jednu poslovnicu „podaci o tvrtki” su jedan skup. Uz više njih stranice koje AI čita sadrže nekoliko adresa, nekoliko radnih vremena i nekoliko telefonskih brojeva. Ako iz teksta nije jasno koja vrijednost pripada kojoj poslovnici, odgovor može biti sastavljen od pogrešne.",
+    "Pitanja koja ljudi postavljaju dijele se na pitanja o brendu i pitanja o jednoj poslovnici:"
+   ],
+   "list": [
+    "„Radi li poslovnica [brend] u Umedi nedjeljom?” (radno vrijeme i neradni dani te poslovnice)",
+    "„Koje poslovnice [brend] imaju parkiralište?” (sadržaji koji se razlikuju po poslovnicama)",
+    "„Radi li [brend] u Shinjukuu još uvijek ili se preselio?” (zatvaranja i selidbe)",
+    "„Ima li [brend] u blizini kolodvora Kyoto?” (koja poslovnica pokriva koje područje)",
+    "„Mogu li u svakoj poslovnici [brend] dobiti isti jelovnik / tretman / uslugu?” (usluge koje se razlikuju po poslovnicama)",
+    "„Tko vodi [brend]?” (brend i tvrtka koja njime upravlja)"
+   ],
+   "after": [
+    "Četiri pogreške ponavljaju se iznova: radno vrijeme glavne poslovnice navedeno kao radno vrijeme svih poslovnica, zatvorena poslovnica opisana kao otvorena, središnji broj za rezervacije naveden kao telefon poslovnice i usluga koju nude samo neke poslovnice opisana kao dostupna svugdje. Svaka od njih postaje manje vjerojatna kad su podaci svake poslovnice napisani na njezinoj vlastitoj stranici.",
+    "Google navodi da za pojavljivanje u AI Overviews ili AI Mode nema dodatnih zahtjeva ni posebnih strukturiranih podataka te da vrijede uobičajene osnove SEO-a ([Google Search Central: AI značajke i vaša web-stranica](https://developers.google.com/search/docs/appearance/ai-features)). S više poslovnica je isto: ne radi se o posebnom načinu pisanja za AI, nego o tome da podaci svake poslovnice budu objavljeni točno, čitljivo i svugdje s istim vrijednostima."
+   ]
+  },
+  {
+   "heading": "Struktura web-stranice: odvojite stranicu brenda, popis poslovnica i stranice poslovnica",
+   "paragraphs": [
+    "Najprije odlučite koja stranica odgovara na koje pitanje. Jedna stranica sa svim poslovnicama olakšava AI-ju da odlomak pripiše pogrešnoj poslovnici."
+   ],
+   "table": {
+    "head": [
+     "Stranica",
+     "Na koja pitanja odgovara",
+     "Što napisati",
+     "Strukturirani podaci"
+    ],
+    "rows": [
+     [
+      "Brend (početna stranica ili O nama)",
+      "„Što je [brend]?” „Tko ga vodi?”",
+      "Brend i tvrtka koja njime upravlja, usluge zajedničke svim poslovnicama, broj poslovnica (s datumom)",
+      "Organization (sjedište)"
+     ],
+     [
+      "Popis poslovnica",
+      "„Koliko poslovnica [brend] ima u Osaki?” „Ima li koja u blizini kolodvora Kyoto?”",
+      "Nazivi i adrese po regiji i gradu, s poveznicama na stranicu svake poslovnice",
+      "Neobavezno (stavite ih na stranicu svake poslovnice)"
+     ],
+     [
+      "Stranica poslovnice (jedna po poslovnici)",
+      "„Radi li Umeda nedjeljom?” „Ima li parkirališta?”",
+      "Podaci koji pripadaju samo toj poslovnici (sljedeća tablica)",
+      "Jedan konkretan tip LocalBusiness po poslovnici"
+     ],
+     [
+      "Obavijest o zatvaranju ili selidbi",
+      "„Radi li Shinjuku još uvijek?”",
+      "Datum zatvaranja, nova adresa, poveznice na obližnje poslovnice",
+      "Uklonite strukturirane podatke poslovnice"
+     ]
+    ]
+   },
+   "after": [
+    "Dajte svakoj poslovnici URL koji se neće mijenjati, primjerice /stores/osaka/umeda/. Preimenovanje poslovnica ili URL-ova usput stvara nova neslaganja s onim što su AI i druge web-stranice ranije pročitali. Ako nešto morate promijeniti, preusmjerite stari URL na novi.",
+    "Ne izrađujte stranice za područja na kojima nemate poslovnicu (stranice na kojima se mijenja samo naziv mjesta: „tražite X u [mjesto]? Odaberite nas”). One također mogu navesti AI da opiše poslovnicu koja ne postoji."
+   ]
+  },
+  {
+   "heading": "Što treba stranica svake poslovnice i odgovarajuća svojstva",
+   "paragraphs": [
+    "Tablica navodi što napisati običnim tekstom na stranici svake poslovnice i odgovarajuće svojstvo schema.org. Googleova dokumentacija za lokalne tvrtke navodi name i address kao obavezne, openingHoursSpecification, telephone, url, geo i department među preporučenim svojstvima te preporučuje najkonkretniji dostupni tip, poput Dentist, HairSalon ili Restaurant ([Google: Strukturirani podaci lokalne tvrtke](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Stavka",
+     "Kako je napisati",
+     "Tipična AI pogreška",
+     "Svojstvo"
+    ],
+    "rows": [
+     [
+      "Naziv poslovnice",
+      "Stalan obrazac brend + mjesto (npr. Stomatologija Sample Umeda), isti za sve poslovnice",
+      "Zamjena s drugom poslovnicom, poznata samo po nadimku",
+      "name"
+     ],
+     [
+      "Adresa",
+      "Od poštanskog broja do zgrade i kata, uz najbližu stanicu i izlaz u jednoj rečenici",
+      "Prethodna adresa ili adresa obližnje poslovnice",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telefon",
+      "Navedite je li to izravni broj poslovnice ili središnja linija za rezervacije",
+      "Središnji broj naveden kao broj poslovnice",
+      "telephone"
+     ],
+     [
+      "Radno vrijeme i neradni dani",
+      "Za svaku poslovnicu posebno, na stranici svake poslovnice, čak i ako je svugdje isto",
+      "Radno vrijeme glavne poslovnice navedeno za sve poslovnice",
+      "openingHoursSpecification"
+     ],
+     [
+      "Privremena zatvaranja i praznici",
+      "S datumima; uklonite ih kad prođu",
+      "Ostavljene stare obavijesti o zatvaranju",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Usluge i sadržaji",
+      "Odvojite ono što nudi svaka poslovnica od onoga što nudi ova („Ova poslovnica ne nudi ortodontske konzultacije subotom”)",
+      "Usluga jedne poslovnice opisana kao dostupna svugdje",
+      "Tekst stranice, FAQ, department (odjel unutar poslovnice)"
+     ],
+     [
+      "Parkiranje, plaćanje, jezici",
+      "Broj mjesta ili partnerska parkirališta, načini plaćanja, jezici na kojima se komunicira",
+      "Sadržaji druge poslovnice",
+      "Tekst stranice (paymentAccepted i druga)"
+     ],
+     [
+      "Šifra poslovnice",
+      "Broj koji se koristi interno i u Google profilu tvrtke",
+      "Zamjena dviju poslovnica sličnih naziva",
+      "branchCode"
+     ],
+     [
+      "Poveznica s brendom",
+      "„Posluje u sklopu tvrtke Sample d.o.o.” s poveznicom na stranicu O nama",
+      "Zamjena primatelja i davatelja franšize",
+      "parentOrganization"
+     ],
+     [
+      "Datum otvaranja, posljednje ažuriranje",
+      "„Ažurirano [datum]” na kraju stranice",
+      "Ne može se procijeniti koliko su podaci aktualni",
+      "Tekst stranice"
+     ]
+    ]
+   },
+   "after": [
+    "Stranice poslovnica često završe kao isti tekst u kojem se mijenjaju samo naziv i adresa. To je prihvatljivo, ali ako napišete barem tri činjenice koje vrijede samo za tu poslovnicu (sadržaji, koje usluge pruža, kada je najveća gužva, kako doći), dajete AI-ju nešto po čemu može razlikovati poslovnice.",
+    "Česta pitanja svake poslovnice držite na njezinoj stranici, odvojeno od pitanja koja se odnose na cijeli brend: pitanja na koja se može odgovoriti s nazivom poslovnice u tekstu, primjerice „Ima li parkiralište kod ove poslovnice?” ili „Mogu li u ovoj poslovnici dobiti X?”"
+   ]
+  },
+  {
+   "heading": "Zatvaranja, selidbe i privremena zatvaranja",
+   "paragraphs": [
+    "Pogrešan podatak koji se kod tvrtki s više poslovnica najdulje zadržava jest zatvorena poslovnica. Brisanje njezine stranice ne uklanja ono što su druge web-stranice i AI već pročitali. Raščistite ovim redoslijedom:"
+   ],
+   "list": [
+    "Ne brišite odmah stranicu zatvorene poslovnice. Preoblikujte je u „Ova poslovnica zatvorena je [datum]” s poveznicama na obližnje poslovnice. Kod selidbe preusmjerite na stranicu nove poslovnice ili jasno navedite novu adresu.",
+    "Uklonite je s popisa poslovnica i uklonite njezine strukturirane podatke (ne objavljujte i dalje zatvorenu poslovnicu kao LocalBusiness).",
+    "Ažurirajte njezin Google profil tvrtke tako da prikazuje zatvaranje ili selidbu.",
+    "Pretražite ostatak web-stranice (podnožje, stranicu za zapošljavanje, stranice kampanja, letke u PDF-u) radi spominjanja.",
+    "Zamolite ostale izdavače (web-stranice za rezervacije, portale, lokalne imenike) da ažuriraju svoje unose.",
+    "Kod privremenog zatvaranja navedite datume i prikažite ga pomoću specialOpeningHoursSpecification ili obavijesti. Uklonite ga kad ponovno otvorite."
+   ]
+  },
+  {
+   "heading": "Strukturirani podaci: povežite svaku poslovnicu s brendom",
+   "paragraphs": [
+    "Kod više poslovnica strukturirani podaci trebali bi učiniti informaciju „koja tvrtka, koja poslovnica” čitljivom strojevima. Pristup:"
+   ],
+   "list": [
+    "Objavite sjedište (brend ili tvrtku koja upravlja) jednom kao Organization na početnoj stranici ili stranici O nama, sa stalnim @id, primjerice https://example.com/#organization.",
+    "Na stranici svake poslovnice objavite točno jedan LocalBusiness najkonkretnijeg tipa, s @id jedinstvenim za tu poslovnicu, primjerice https://example.com/stores/osaka/umeda/#store.",
+    "Iz svake poslovnice uputite na sjedište pomoću parentOrganization. schema.org stariji [branchOf](https://schema.org/branchOf) označava kao zastarjeli i umjesto njega preporučuje [parentOrganization](https://schema.org/parentOrganization).",
+    "Šifru poslovnice stavite u [branchCode](https://schema.org/branchCode), koji sam schema.org opisuje kao „šifru trgovine”.",
+    "Ako poslovnica sadrži zaseban odjel (primjeri schema.org su trgovina s ljekarnom i pekarnica s kafićem), povežite ga pomoću [department](https://schema.org/department), čime svaki odjel može imati vlastito radno vrijeme.",
+    "Vrijednosti svake poslovnice stavite na njezinu vlastitu stranicu umjesto da sve LocalBusiness navodite na popisu poslovnica. Ne stavljajte u strukturirane podatke vrijednosti koje tekst stranice ne prikazuje."
+   ],
+   "after": [
+    "Google usklađenost strukturiranih podataka s vidljivim sadržajem stranice navodi kao jednu od osnova i preporučuje da informacije u profilu tvrtke budu ažurne ([AI značajke i vaša web-stranica](https://developers.google.com/search/docs/appearance/ai-features)). Strukturirane podatke shvatite kao ključ rješenja za ono što stranica poslovnice već kaže."
+   ]
+  },
+  {
+   "heading": "Održavajte iste vrijednosti u Google profilu tvrtke i na web-stranici",
+   "paragraphs": [
+    "Kad se profil tvrtke za poslovnicu i njezina stranica ne slažu, ni ljudi ni AI ne mogu znati što je točno. Najviše pomaže jedna glavna tablica s podacima svih poslovnica iz koje se ažuriraju web-stranica, Google profil tvrtke i web-stranice za rezervacije."
+   ],
+   "table": {
+    "head": [
+     "Stupac",
+     "Što odrediti"
+    ],
+    "rows": [
+     [
+      "Šifra poslovnice",
+      "Isti broj interno, na web-stranici i u profilu tvrtke"
+     ],
+     [
+      "Naziv poslovnice",
+      "Stalan obrazac brend + mjesto"
+     ],
+     [
+      "Adresa i telefon",
+      "Jedan način pisanja brojeva i razdjelnika"
+     ],
+     [
+      "Radno vrijeme, neradni dani, privremena zatvaranja",
+      "Kada se mijenjaju i tko ih ažurira"
+     ],
+     [
+      "Usluge i sadržaji",
+      "Zajedničko svima ili samo u ovoj poslovnici"
+     ],
+     [
+      "URL stranice poslovnice",
+      "Nikad se ne mijenja; ako se promijeni, preusmjerite"
+     ],
+     [
+      "Status",
+      "Otvoreno, privremeno zatvoreno, zatvoreno (s datumima)"
+     ],
+     [
+      "Posljednja provjera",
+      "U stalnom ciklusu, primjerice mjesečno"
+     ]
+    ]
+   },
+   "after": [
+    "Skupna verifikacija za tvrtke s mnogo poslovnica, alati za zajedničko upravljanje više poslovnica i rad sa šiframa poslovnica podliježu uvjetima koje određuje Google, a ti se uvjeti mijenjaju. Aktualnu verziju provjerite u [Centru za pomoć za Google profil tvrtke](https://support.google.com/business/). Ako voditelji poslovnica sami uređuju svoje profile, dogovorite da se najprije ažurira glavna tablica kako se to dvoje ne bi razišlo."
+   ]
+  },
+  {
+   "heading": "U WordPressu (s Nurevo AEO)",
+   "paragraphs": [
+    "U WordPressu [Nurevo AEO (besplatno)](https://wordpress.org/plugins/nurevo-webmcp/) objavljuje podatke sjedišta kao strukturirane podatke i u llms.txt; kombinirajte to sa stranicama poslovnica kako je opisano u nastavku. Postavke Nurevoa opisuju jednu tvrtku po web-stranici, pa ondje unesite sjedište (brend)."
+   ],
+   "list": [
+    "Najprije napišite stranice poslovnica prema gornjoj tablici (tekst prije strukturiranih podataka). Za svaku poslovnicu upotrijebite jednu stranicu ili jedan unos vrste sadržaja „poslovnica”.",
+    "U podacima o tvrtki u Nurevou unesite naziv, opis, adresu, telefon, URL i e-adresu sjedišta. Za razliku od tvrtke s jednom poslovnicom, ako ovdje unesete radno vrijeme jedne poslovnice, ono će izgledati kao radno vrijeme svih poslovnica.",
+    "Pitanja pojedine poslovnice unesite u ploču Nurevo AEO u uređivaču njezine stranice kao vlastita pitanja te stranice i postavite Nurevo FAQ blok s postavkom „Vlastita pitanja ove stranice”. Objavljuju se kao FAQPage samo na toj stranici.",
+    "Da biste objavili LocalBusiness za svaku poslovnicu, upotrijebite razvojni filtar webmcp_canary_schema_graph i dodajte čvor poslovnice u extra samo na stranicama poslovnica. @id sjedišta dostupan je kao $bundle['org_id']; stavite ga u parentOrganization. Vrijednosti poslovnice gradite iz istog izvora kao i tekst stranice (primjerice iz prilagođenih polja).",
+    "S Yoast SEO, Rank Math, All in One SEO ili Slim SEO Nurevo dodaje samo one podatke koji nedostaju u strukturiranim podacima tog dodatka, a novi čvorovi (primjerice čvor poslovnice) dodaju se grafu tog dodatka. Nurevo radi i zajedno sa SEO SIMPLE PACK i VK All in One Expansion Unit (od verzije 0.9.1).",
+    "Ako strukturirane podatke za svaku poslovnicu već objavljuje nešto drugo, primjerice dodatak s tražilicom poslovnica, izbjegnite duplikate: na tim stranicama označite „Ne objavljuj Nurevo strukturirane podatke na ovoj stranici” ili odaberite jedan izvor.",
+    "Otvorite /llms.txt i provjerite nalaze li se ondje popis poslovnica i vaše glavne stranice poslovnica. llms.txt navodi 30 posljednje ažuriranih stranica i objava, pa će uz mnogo poslovnica neke stranice nedostajati. Filtar webmcp_canary_llms_txt_lines može dodati redak za popis poslovnica, a stranicu zatvorene poslovnice možete izostaviti opcijom „Izostavi ovu stranicu iz llms.txt”.",
+    "Ako franšizne poslovnice vode zasebne WordPress web-stranice, izvezite postavke naredbom wp nurevo export, uvezite ih na drugoj web-stranici naredbom wp nurevo import, a zatim promijenite samo naziv, adresu, telefon i radno vrijeme (ključevi i tokeni se ne izvoze)."
+   ],
+   "after": [
+    "Iste provjere vrijede i za web-stranice koje nisu izrađene u WordPressu. Unesite URL u [besplatnu provjeru](/check), bez registracije, i vidjet ćete stanje strukturiranih podataka, llms.txt i pristupa AI pretraživačkih botova. Stranice poslovnica možete provjeravati jedan po jedan URL."
+   ]
+  },
+  {
+   "heading": "Kako provjeravati: po poslovnicama, s nazivom i bez njega",
+   "paragraphs": [
+    "Provjeravajte tako da odaberete poslovnice i rezultate bilježite za svaku poslovnicu posebno. Ne morate svaki put pitati za sve poslovnice: počnite s onima kojima se promijenilo radno vrijeme ili adresa, onima koje su zatvorene ili preseljene i onima koje primaju najviše upita. Postavljajte isto pitanje istom AI-ju u različite dane i ne sudite prema jednom odgovoru."
+   ],
+   "table": {
+    "head": [
+     "Što zabilježiti",
+     "Primjer"
+    ],
+    "rows": [
+     [
+      "Datum, AI, pitanje",
+      "15. 11., Perplexity, „Radi li Stomatologija Sample Umeda nedjeljom?”"
+     ],
+     [
+      "Podaci u odgovoru",
+      "Pripadaju li radno vrijeme, adresa, telefon i usluge ovoj poslovnici ili nekoj drugoj?"
+     ],
+     [
+      "Izvori",
+      "Stranica ove poslovnice, popis poslovnica ili vanjska web-stranica za rezervacije?"
+     ],
+     [
+      "Pitanje bez naziva",
+      "Pojavljuje li se poslovnica za upit „stomatolog koji radi nedjeljom u Umedi”?"
+     ],
+     [
+      "Zatvorene poslovnice",
+      "Je li zatvorena poslovnica opisana kao otvorena?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevova besplatna AI provjera (jednom mjesečno, za povezane web-stranice s paketom Free i Standard) postavlja pitanja sastavljena od vrste djelatnosti i područja iz vaših postavki, bez vašeg naziva. U postavkama je jedno područje, pa područja ostalih poslovnica provjeravajte ručno pomoću gornje tablice. Mjerenje vidljivosti u paketu Pro (beta) trenutačno obuhvaća Perplexity. Cijela metoda opisana je u vodiču [kako mjeriti vidljivost u AI-ju](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolni popis za više poslovnica",
+   "list": [
+    "Svaka poslovnica ima vlastitu stranicu na URL-u koji se neće mijenjati.",
+    "Nazivi poslovnica svugdje slijede isti obrazac brend + mjesto.",
+    "Stranica svake poslovnice u tekstu navodi njezinu adresu, telefon (izravni ili središnji), radno vrijeme i neradne dane.",
+    "Privremena zatvaranja i praznici imaju datume i uklanjaju se kad prođu.",
+    "Usluge zajedničke svim poslovnicama napisane su odvojeno od onih koje nudi samo ova poslovnica.",
+    "Zatvorene ili preseljene poslovnice prikazuju obavijest i uklonjene su s popisa poslovnica i iz strukturiranih podataka.",
+    "LocalBusiness svake poslovnice ima vlastiti @id i pomoću parentOrganization upućuje na sjedište.",
+    "Vrijednosti u strukturiranim podacima podudaraju se s tekstom stranice poslovnice.",
+    "Web-stranica i Google profil tvrtke ažuriraju se iz iste glavne tablice.",
+    "Poslovnice se mogu pregledavati po regiji, s poveznicama na stranicu svake poslovnice.",
+    "Odabrali ste poslovnice, u različite dane provjerili pitanja s nazivom i bez njega i zabilježili rezultate."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Trebamo li stranicu za svaku poslovnicu ili je dovoljan jedan popis poslovnica?",
+   "a": "Za odgovore na pitanja o jednoj poslovnici (njezino radno vrijeme, njezini sadržaji) jedna stranica po poslovnici pouzdanija je. Uz samo popis AI lako pripiše vrijednost pogrešnoj poslovnici. Čak i uz malo poslovnica dajte svakoj vlastiti naslov uz koji su zajedno navedeni adresa i radno vrijeme."
+  },
+  {
+   "q": "Ako sve poslovnice imaju isto radno vrijeme, trebamo li ga ipak navesti na svakoj stranici?",
+   "a": "Preporučujemo to. AI može odgovoriti samo na temelju stranice poslovnice, a ako radnog vremena ondje nema, upotrijebit će vrijednosti s drugih stranica ili drugih web-stranica."
+  },
+  {
+   "q": "Trebamo li koristiti branchOf ili parentOrganization?",
+   "a": "schema.org branchOf označava kao zastarjeli i preporučuje parentOrganization. Iz LocalBusiness svake poslovnice pomoću parentOrganization uputite na @id objekta Organization sjedišta."
+  },
+  {
+   "q": "Trebamo li odmah izbrisati stranicu zatvorene poslovnice?",
+   "a": "Ako je pretvorite u obavijest s datumom zatvaranja i poveznicama na obližnje poslovnice te je uklonite s popisa poslovnica i iz strukturiranih podataka, zatvaranje ćete priopćiti bolje nego brisanjem. Kod selidbe preusmjerite na stranicu nove poslovnice ili navedite novu adresu."
+  },
+  {
+   "q": "Naši primatelji franšize imaju vlastite web-stranice i profile na društvenim mrežama. Kako održati dosljednost?",
+   "a": "Glavnu tablicu sjedišta smatrajte jedinim izvorom istine, podijelite s primateljima franšize dogovoreni zapis naziva, adresa, telefonskih brojeva i radnog vremena i zamolite ih da koriste iste vrijednosti. Odnos razjašnjavaju i poveznice u oba smjera, s web-stranice primatelja franšize na stranicu poslovnice na web-stranici brenda i natrag."
+  },
+  {
+   "q": "Imamo previše poslovnica za llms.txt. Trebaju li sve biti navedene?",
+   "a": "Ne. Ako su ondje popis poslovnica i vaše glavne stranice poslovnica, do ostalih se može doći preko njih. U Nurevo AEO filtar webmcp_canary_llms_txt_lines može dodati redak za popis poslovnica."
+  },
+  {
+   "q": "Hoće li ovi koraci osigurati da se svaka poslovnica ispravno pojavljuje u AI odgovorima?",
+   "a": "To se ne može jamčiti; AI odgovori mijenjaju se ovisno o danu i formulaciji. Ovi koraci smanjuju uzroke miješanja podataka jedne poslovnice s podacima druge i osiguravaju da su informacije koje AI čita točne i dosljedne."
+  }
+ ],
+ "relatedHeading": "Povezani vodiči",
+ "cta": {
+  "heading": "Pogledajte kako AI čita stranice vaših poslovnica",
+  "body": "Besplatna provjera ne zahtijeva registraciju: unesite URL i vidjet ćete stanje strukturiranih podataka, llms.txt i pristupa AI pretraživačkih botova, ako želite, jednu po jednu stranicu poslovnice. U WordPressu besplatni dodatak objavljuje podatke vašeg sjedišta kao strukturirane podatke.",
+  "label": "Pokrenite besplatnu provjeru čitljivosti za AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Isprobajte besplatni WordPress dodatak",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je zaštitni znak tvrtke OpenAI, Perplexity tvrtke Perplexity AI, a Google tvrtke Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit i WordPress zaštitni su znakovi svojih vlasnika. Nurevo nije povezan ni s jednom od tih tvrtki niti ga one podržavaju."
+}

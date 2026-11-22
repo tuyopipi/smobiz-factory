@@ -1,0 +1,349 @@
+{
+ "title": "Busca con IA para empresas con varios establecementos | Nurevo",
+ "description": "Evite que as respostas de IA mesturen os seus establecementos: unha páxina por local, os datos de cada un, peches e traslados, schema e WordPress.",
+ "h1": "Busca con IA para empresas con varios establecementos: evite que se mesturen os horarios, os enderezos e os servizos de cada un",
+ "lead": "Cando unha empresa ten varios establecementos, a maioría das respostas erradas da IA veñen de usar os datos dun establecemento para outro. Dea a cada establecemento a súa propia páxina cos datos en texto simple (enderezo, teléfono, horario, peches temporais, que é diferente alí), vincúlea á marca nos datos estruturados e manteña os mesmos valores no Perfil da empresa de Google e nas súas outras fichas. Eses tres pasos son o núcleo do traballo.",
+ "intro": [
+  "Redactado o 15 de novembro de 2026 (JST). Esta guía é para calquera empresa con dous ou máis establecementos ou oficinas (restaurantes, salóns de beleza, clínicas, tendas, escolas, inmobiliarias) e para as axencias que lles fan os sitios web. A empresa en si (razón social, data de fundación, dirección) trátase en [Optimización da páxina Quen somos para a busca con IA](/guide/company-profile-page-ai-search), e o básico da marcación dun só establecemento en [schema de empresa local e complementos de SEO](/guide/local-business-schema-seo-plugins). Esta guía trata dos problemas que xorden por ter moitos establecementos.",
+  "As respostas de IA cambian segundo o día e a formulación. Estes pasos fan que a información que le a IA sexa exacta; non garanten que vostede apareza nunha resposta nin en ningunha posición concreta."
+ ],
+ "sections": [
+  {
+   "heading": "Como se equivocan as respostas de IA coas empresas de varios establecementos",
+   "paragraphs": [
+    "A busca de ChatGPT, Perplexity e as AI Overviews de Google len páxinas web, constrúen unha resposta e amosan as súas fontes. Cun só establecemento, «os datos da empresa» son un único conxunto. Con varios, as páxinas que le a IA conteñen varios enderezos, varios horarios e varios teléfonos. Se o texto non deixa claro que valor corresponde a que establecemento, a resposta pode construírse co valor equivocado.",
+    "As preguntas que fai a xente divídense entre preguntas sobre a marca e preguntas sobre un establecemento:"
+   ],
+   "list": [
+    "«O establecemento de Umeda de [marca] abre os domingos?» (horario e días de peche dese establecemento)",
+    "«Que establecementos de [marca] teñen aparcadoiro?» (instalacións que varían segundo o establecemento)",
+    "«O [marca] de Shinjuku segue aberto ou trasladouse?» (peches e traslados)",
+    "«Hai algún [marca] preto da estación de Kioto?» (que establecemento atende que zona)",
+    "«Podo ter o mesmo menú / tratamento / servizo en todos os [marca]?» (servizos que varían segundo o establecemento)",
+    "«Quen xestiona [marca]?» (marca e empresa operadora)"
+   ],
+   "after": [
+    "Hai catro erros que aparecen unha e outra vez: o horario do establecemento principal dado como horario de todos, un establecemento pechado descrito como aberto, o número central de reservas dado como teléfono dun establecemento e un servizo que só ofrecen algúns establecementos descrito como dispoñible en todos. Cada un faise menos probable cando os datos de cada establecemento están escritos na páxina dese mesmo establecemento.",
+    "Google afirma que non hai requisitos adicionais nin datos estruturados especiais para aparecer nas AI Overviews ou no AI Mode, e que se aplican os fundamentos habituais do SEO ([Google Search Central: funcións de IA e o seu sitio web](https://developers.google.com/search/docs/appearance/ai-features)). O traballo con varios establecementos é igual: non é unha maneira especial de escribir para a IA, senón publicar os datos de cada establecemento de forma exacta, lexible e cos mesmos valores en todas partes."
+   ]
+  },
+  {
+   "heading": "Estrutura do sitio: separe a páxina da marca, a lista de establecementos e as páxinas de cada establecemento",
+   "paragraphs": [
+    "Primeiro decida que páxina responde a que pregunta. Unha soa páxina que liste todos os establecementos facilita que a IA asocie un parágrafo ao establecemento equivocado."
+   ],
+   "table": {
+    "head": [
+     "Páxina",
+     "Preguntas que responde",
+     "Que escribir",
+     "Datos estruturados"
+    ],
+    "rows": [
+     [
+      "Marca (páxina de inicio ou Quen somos)",
+      "«Que é [marca]?» «Quen a xestiona?»",
+      "Marca e empresa operadora, servizos comúns a todos os establecementos, número de establecementos (con data)",
+      "Organization (sede central)"
+     ],
+     [
+      "Lista de establecementos",
+      "«Cantos establecementos de [marca] hai en Osaka?» «Hai algún preto da estación de Kioto?»",
+      "Nomes e enderezos por rexión e cidade, con ligazón á páxina de cada establecemento",
+      "Opcional (póñaos en cada páxina de establecemento)"
+     ],
+     [
+      "Páxina do establecemento (unha por establecemento)",
+      "«O de Umeda abre os domingos?» «Hai aparcadoiro?»",
+      "Datos que corresponden só a ese establecemento (táboa seguinte)",
+      "Un tipo específico de LocalBusiness por establecemento"
+     ],
+     [
+      "Aviso de peche ou traslado",
+      "«O de Shinjuku segue aberto?»",
+      "Data de peche, novo enderezo, ligazóns a establecementos próximos",
+      "Elimine os datos estruturados do establecemento"
+     ]
+    ]
+   },
+   "after": [
+    "Dea a cada establecemento un URL que non vaia cambiar, como /stores/osaka/umeda/. Cambiar o nome dos establecementos ou os URL a medio camiño crea máis discrepancias co que as IA e outros sitios leron antes. Se ten que cambiar algún, redirixa o URL antigo ao novo.",
+    "Non cree páxinas para zonas onde non ten ningún establecemento (páxinas que só cambian o nome do lugar, «busca X en [localidade]? Escóllanos»). Tamén poden levar a IA a describir un establecemento que non existe."
+   ]
+  },
+  {
+   "heading": "Que necesita cada páxina de establecemento e as propiedades correspondentes",
+   "paragraphs": [
+    "A táboa recolle que escribir en texto simple en cada páxina de establecemento e a propiedade schema.org correspondente. A documentación de Google sobre empresas locais indica name e address como obrigatorias, con openingHoursSpecification, telephone, url, geo e department entre as recomendadas, e recomenda o tipo máis específico dispoñible, como Dentist, HairSalon ou Restaurant ([Google: datos estruturados de empresa local](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Elemento",
+     "Como escribilo",
+     "Erro típico da IA",
+     "Propiedade"
+    ],
+    "rows": [
+     [
+      "Nome do establecemento",
+      "Un patrón fixo, marca + lugar (p. ex., Sample Dental Umeda), igual para todos os establecementos",
+      "Confundido con outro establecemento, coñecido só por un alcume",
+      "name"
+     ],
+     [
+      "Enderezo",
+      "Do código postal ata o edificio e o andar, máis a estación máis próxima e a saída nunha frase",
+      "Un enderezo anterior ou o enderezo dun establecemento próximo",
+      "address, geo, hasMap"
+     ],
+     [
+      "Teléfono",
+      "Indique se é a liña directa do establecemento ou unha liña central de reservas",
+      "O número central dado como o do establecemento",
+      "telephone"
+     ],
+     [
+      "Horario e días de peche",
+      "Por establecemento, na páxina de cada un, aínda que sexan iguais en todos",
+      "O horario do establecemento principal dado para todos",
+      "openingHoursSpecification"
+     ],
+     [
+      "Peches temporais e festivos",
+      "Con datas; retíreos cando rematen",
+      "Avisos de peche antigos que quedaron publicados",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Servizos e instalacións",
+      "Separe o que ofrecen todos os establecementos do que ofrece este («Este establecemento non fai consultas de ortodoncia os sábados»)",
+      "O servizo dun establecemento descrito como dispoñible en todos",
+      "Texto do corpo, FAQ, department (unha sección dentro do establecemento)"
+     ],
+     [
+      "Aparcadoiro, pagamento, idiomas",
+      "Prazas ou aparcadoiros concertados, formas de pagamento, idiomas que se falan",
+      "As instalacións doutro establecemento",
+      "Texto do corpo (paymentAccepted e outras)"
+     ],
+     [
+      "Código de tenda",
+      "O número que se usa internamente e no Perfil da empresa de Google",
+      "Dous establecementos con nomes parecidos confundidos",
+      "branchCode"
+     ],
+     [
+      "Vínculo coa marca",
+      "«Xestionado por Sample Co., Ltd.» cunha ligazón á páxina Quen somos",
+      "Franquiciado e franquiciador confundidos",
+      "parentOrganization"
+     ],
+     [
+      "Data de apertura, última actualización",
+      "«Actualizado o [data]» ao final da páxina",
+      "Non hai maneira de saber se os datos están ao día",
+      "Texto do corpo"
+     ]
+    ]
+   },
+   "after": [
+    "As páxinas de establecemento adoitan acabar co mesmo texto, cambiando só o nome e o enderezo. É aceptable, pero escribir polo menos tres feitos que só se aplican a ese establecemento (instalacións, que servizos atende, horas de máis afluencia, como chegar) dálle á IA algo para distinguir os establecementos.",
+    "Manteña as FAQ de cada establecemento na páxina dese establecemento, separadas das preguntas sobre a marca en xeral: preguntas que se poidan responder co nome do establecemento, como «Hai aparcadoiro neste establecemento?» ou «Podo facer X neste establecemento?»"
+   ]
+  },
+  {
+   "heading": "Peches, traslados e peches temporais",
+   "paragraphs": [
+    "O dato erróneo que máis dura nas empresas con varios establecementos é un establecemento pechado. Borrar a súa páxina non elimina o que outros sitios e as IA xa leron. Faga a limpeza nesta orde:"
+   ],
+   "list": [
+    "Non borre de inmediato a páxina do establecemento pechado. Reescríbaa como «Este establecemento pechou o [data]» con ligazóns a establecementos próximos. No caso dun traslado, redirixa á páxina do novo establecemento ou indique claramente o novo enderezo.",
+    "Retíreo da lista de establecementos e elimine os seus datos estruturados (non siga publicando un establecemento pechado como LocalBusiness).",
+    "Actualice o seu Perfil da empresa de Google para que mostre o peche ou o traslado.",
+    "Busque mencións no resto do sitio (pé de páxina, páxina de emprego, páxinas de campañas, folletos en PDF).",
+    "Pida a outros editores (sitios de reservas, portais, directorios locais) que actualicen as súas fichas.",
+    "Nun peche temporal, indique as datas e móstreo con specialOpeningHoursSpecification ou cun aviso. Retíreo cando volva abrir."
+   ]
+  },
+  {
+   "heading": "Datos estruturados: vincule cada establecemento á marca",
+   "paragraphs": [
+    "Con varios establecementos, os datos estruturados deben facer lexible para as máquinas «que empresa, que establecemento». O enfoque:"
+   ],
+   "list": [
+    "Publique a sede central (marca ou empresa operadora) unha soa vez como Organization na páxina de inicio ou na páxina Quen somos, cun @id fixo como https://example.com/#organization.",
+    "En cada páxina de establecemento, publique exactamente un LocalBusiness do tipo máis específico, cun @id exclusivo dese establecemento como https://example.com/stores/osaka/umeda/#store.",
+    "Apunte desde cada establecemento cara á sede central con parentOrganization. schema.org marca o antigo [branchOf](https://schema.org/branchOf) como obsoleto e recomenda [parentOrganization](https://schema.org/parentOrganization) no seu lugar.",
+    "Poña o código de tenda en [branchCode](https://schema.org/branchCode), que o propio schema.org describe como o «código de tenda».",
+    "Se un establecemento contén unha sección independente (os exemplos de schema.org son unha tenda con farmacia e unha panadaría con cafetería), conéctea con [department](https://schema.org/department), que permite que cada sección teña o seu propio horario.",
+    "Poña os valores de cada establecemento na súa páxina en lugar de listar todos os LocalBusiness na lista de establecementos. Non poña nos datos estruturados valores que o texto da páxina non mostre."
+   ],
+   "after": [
+    "Google inclúe a correspondencia entre os datos estruturados e o contido visible da páxina entre os fundamentos e recomenda manter ao día a información do Perfil da empresa ([Funcións de IA e o seu sitio web](https://developers.google.com/search/docs/appearance/ai-features)). Trate os datos estruturados como as solucións do que a páxina do establecemento xa di."
+   ]
+  },
+  {
+   "heading": "Manteña o Perfil da empresa de Google e o sitio cos mesmos valores",
+   "paragraphs": [
+    "Cando o Perfil da empresa dun establecemento e a súa páxina non coinciden, nin as persoas nin as IA poden saber cal é o correcto. O que máis axuda é unha folla mestra cos datos de todos os establecementos, a partir da cal se actualizan o sitio, o Perfil da empresa de Google e os sitios de reservas."
+   ],
+   "table": {
+    "head": [
+     "Columna",
+     "Que decidir"
+    ],
+    "rows": [
+     [
+      "Código de tenda",
+      "O mesmo número internamente, no sitio e no Perfil da empresa"
+     ],
+     [
+      "Nome do establecemento",
+      "O patrón fixo marca + lugar"
+     ],
+     [
+      "Enderezo e teléfono",
+      "Unha única forma de escribir números e separadores"
+     ],
+     [
+      "Horario, días de peche, peches temporais",
+      "Cando cambian e quen os actualiza"
+     ],
+     [
+      "Servizos e instalacións",
+      "Comúns a todos ou só deste establecemento"
+     ],
+     [
+      "URL da páxina do establecemento",
+      "Non cambia nunca; redirixa se cambia"
+     ],
+     [
+      "Estado",
+      "Aberto, pechado temporalmente, pechado (con datas)"
+     ],
+     [
+      "Última comprobación",
+      "Nun ciclo fixo, por exemplo mensual"
+     ]
+    ]
+   },
+   "after": [
+    "A verificación masiva para empresas con moitos establecementos, as ferramentas para xestionar varios establecementos á vez e o tratamento dos códigos de tenda están suxeitos a condicións que fixa Google, e esas condicións cambian. Consulte a versión actual no [Centro de axuda do Perfil da empresa de Google](https://support.google.com/business/). Se os responsables dos establecementos editan os seus propios perfís, acorden que primeiro se actualiza a folla mestra para que os dous non se desfasen."
+   ]
+  },
+  {
+   "heading": "En WordPress (con Nurevo AEO)",
+   "paragraphs": [
+    "En WordPress, [Nurevo AEO (gratuíto)](https://wordpress.org/plugins/nurevo-webmcp/) publica os datos da sede central como datos estruturados e en llms.txt; combíneo coas súas páxinas de establecemento como se indica a continuación. A configuración de Nurevo describe unha empresa por sitio, así que introduza nela a sede central (a marca)."
+   ],
+   "list": [
+    "Escriba primeiro as páxinas dos establecementos seguindo a táboa anterior (o texto antes que os datos estruturados). Use unha páxina ou unha entrada dun tipo de publicación de establecemento por establecemento.",
+    "Nos datos da empresa de Nurevo, introduza o nome, a descrición, o enderezo, o teléfono, o URL e o correo electrónico da sede central. A diferenza dunha empresa cun só establecemento, se introduce aí o horario dun establecemento parecerá o horario de todos.",
+    "Introduza as preguntas propias de cada establecemento no panel Nurevo AEO do editor desa páxina como preguntas propias desta páxina e coloque o bloque de FAQ de Nurevo configurado como «Preguntas propias desta páxina». Publícanse como FAQPage só nesa páxina.",
+    "Para publicar un LocalBusiness por establecemento, use o filtro para desenvolvedores webmcp_canary_schema_graph para engadir o nodo do establecemento a extra só nas páxinas de establecemento. O @id da sede central está dispoñible como $bundle['org_id']; póñao en parentOrganization. Constrúa os valores do establecemento a partir da mesma fonte que o texto da páxina (campos personalizados, por exemplo).",
+    "Con Yoast SEO, Rank Math, All in One SEO ou Slim SEO, Nurevo só engade os datos que lles faltan aos datos estruturados dese complemento, e os nodos novos (como un nodo de establecemento) engádense ao grafo dese complemento. Nurevo tamén funciona xunto con SEO SIMPLE PACK e VK All in One Expansion Unit (desde a 0.9.1).",
+    "Se outra cousa, como un complemento localizador de tendas, xa publica datos estruturados por establecemento, evite duplicados: marque «Non publicar datos estruturados de Nurevo nesta páxina» nesas páxinas ou escolla unha soa fonte.",
+    "Abra /llms.txt e comprobe que estean a lista de establecementos e as páxinas dos seus establecementos principais. llms.txt lista as 30 páxinas e entradas actualizadas máis recentemente, polo que con moitos establecementos algunhas páxinas quedarán fóra. O filtro webmcp_canary_llms_txt_lines pode engadir unha liña para a lista de establecementos, e a páxina dun establecemento pechado pode retirarse con «Excluír esta páxina do llms.txt».",
+    "Se os establecementos franquiciados teñen sitios WordPress separados, exporte a configuración con wp nurevo export, impórtea no outro sitio con wp nurevo import e despois cambie só o nome, o enderezo, o teléfono e o horario (as chaves e os tokens non se exportan)."
+   ],
+   "after": [
+    "As mesmas comprobacións serven para sitios que non están feitos con WordPress. Introduza un URL na [comprobación gratuíta](/check), sen rexistro, para ver o estado dos datos estruturados, de llms.txt e do acceso dos rastrexadores de IA. Pode comprobar as páxinas dos establecementos dun URL en un."
+   ]
+  },
+  {
+   "heading": "Como comprobalo: por establecemento, co nome e sen el",
+   "paragraphs": [
+    "Comprobe escollendo establecementos e anotando os resultados por establecemento. Non fai falta preguntar por todos os establecementos cada vez: comece polos que cambiaron de horario ou de enderezo, polos que pecharon ou se trasladaron e polos que reciben máis consultas. Faga a mesma pregunta á mesma IA en días diferentes e non tire conclusións a partir dunha soa resposta."
+   ],
+   "table": {
+    "head": [
+     "Que anotar",
+     "Exemplo"
+    ],
+    "rows": [
+     [
+      "Data, IA, pregunta",
+      "15 de nov., Perplexity, «Sample Dental Umeda abre os domingos?»"
+     ],
+     [
+      "Datos da resposta",
+      "O horario, o enderezo, o teléfono e os servizos son deste establecemento ou doutro?"
+     ],
+     [
+      "Fontes",
+      "A páxina deste establecemento, a lista de establecementos ou un sitio de reservas externo?"
+     ],
+     [
+      "Pregunta sen o nome",
+      "Aparece o establecemento para «dentista aberto o domingo en Umeda»?"
+     ],
+     [
+      "Establecementos pechados",
+      "Descríbese algún establecemento pechado como aberto?"
+     ]
+    ]
+   },
+   "after": [
+    "A comprobación de IA gratuíta de Nurevo (unha vez ao mes, para sitios Free e Standard conectados) fai preguntas construídas a partir do tipo de negocio e da zona da súa configuración, sen o seu nome. Na configuración só hai unha zona, así que comprobe a man as zonas dos outros establecementos coa táboa anterior. A medición de visibilidade de Pro (beta) abrangue actualmente Perplexity. O método completo está en [como medir a visibilidade na IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Lista de comprobación para varios establecementos",
+   "list": [
+    "Cada establecemento ten a súa propia páxina, nun URL que non vai cambiar.",
+    "Os nomes dos establecementos seguen o mesmo patrón marca + lugar en todas partes.",
+    "Cada páxina de establecemento indica en texto o enderezo, o teléfono (directo ou central), o horario e os días de peche dese establecemento.",
+    "Os peches temporais e os festivos teñen datas e retíranse cando rematan.",
+    "Os servizos comúns a todos os establecementos están escritos por separado dos que só ofrece este establecemento.",
+    "Os establecementos pechados ou trasladados mostran un aviso e retiráronse da lista de establecementos e dos datos estruturados.",
+    "O LocalBusiness de cada establecemento ten o seu propio @id e apunta á sede central con parentOrganization.",
+    "Os valores dos datos estruturados coinciden co texto da páxina do establecemento.",
+    "O sitio e o Perfil da empresa de Google actualízanse a partir da mesma folla mestra.",
+    "Pódense consultar os establecementos por rexión, con ligazóns á páxina de cada un.",
+    "Escolleu establecementos, comprobou preguntas co nome e sen el en días diferentes e anotou os resultados."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Necesitamos unha páxina para cada establecemento ou abonda cunha lista de establecementos?",
+   "a": "Para responder preguntas sobre un establecemento (o seu horario, as súas instalacións), unha páxina por establecemento é máis fiable. Cunha simple lista, a IA pode asociar facilmente un valor ao establecemento equivocado. Mesmo con poucos establecementos, dea a cada un o seu propio título, co enderezo e o horario xuntos."
+  },
+  {
+   "q": "Se todos os establecementos teñen o mesmo horario, cómpre poñelo igualmente en cada páxina?",
+   "a": "Recomendámolo. A IA pode responder só a partir da páxina do establecemento e, se o horario non está alí, usará valores doutras páxinas ou doutros sitios."
+  },
+  {
+   "q": "Debemos usar branchOf ou parentOrganization?",
+   "a": "schema.org marca branchOf como obsoleto e recomenda parentOrganization. Apunte desde o LocalBusiness de cada establecemento cara ao @id da Organization da sede central con parentOrganization."
+  },
+  {
+   "q": "Debemos borrar de inmediato a páxina dun establecemento pechado?",
+   "a": "Convertela nun aviso coa data de peche e ligazóns a establecementos próximos, e retirala da lista de establecementos e dos datos estruturados, comunica o peche mellor que borrala. No caso dun traslado, redirixa á páxina do novo establecemento ou indique o novo enderezo."
+  },
+  {
+   "q": "Os nosos franquiciados teñen sitios web e contas en redes sociais propios. Como o mantemos todo coherente?",
+   "a": "Trate a folla mestra da sede central como a fonte de referencia, comparta cos franquiciados a grafía acordada de nomes, enderezos, teléfonos e horarios e pídalles que usen os mesmos valores. Ligar nos dous sentidos, desde o sitio do franquiciado á páxina do establecemento na marca e viceversa, tamén deixa clara a relación."
+  },
+  {
+   "q": "Temos demasiados establecementos para llms.txt. Deben figurar todos?",
+   "a": "Non. Se están a lista de establecementos e as páxinas dos establecementos principais, ao resto pódese chegar desde elas. En Nurevo AEO, o filtro webmcp_canary_llms_txt_lines pode engadir unha liña para a lista de establecementos."
+  },
+  {
+   "q": "Estes pasos farán que todos os establecementos aparezan correctamente nas respostas de IA?",
+   "a": "Iso non se pode garantir; as respostas de IA cambian segundo o día e a formulación. Estes pasos reducen as causas de que os datos dun establecemento se mesturen cos doutro e fan que a información que le a IA sexa exacta e coherente."
+  }
+ ],
+ "relatedHeading": "Guías relacionadas",
+ "cta": {
+  "heading": "Vexa como le a IA as páxinas dos seus establecementos",
+  "body": "A comprobación gratuíta non require rexistro: introduza un URL para ver o estado dos datos estruturados, de llms.txt e do acceso dos rastrexadores de IA, unha páxina de establecemento cada vez, se quere. En WordPress, o complemento gratuíto publica os datos da súa sede central como datos estruturados.",
+  "label": "Facer a comprobación gratuíta de lexibilidade para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Probar o complemento gratuíto para WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é unha marca comercial de OpenAI, Perplexity de Perplexity AI e Google de Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit e WordPress son marcas comerciais dos seus respectivos propietarios. Nurevo non está afiliada a ningunha destas empresas nin conta co seu aval."
+}

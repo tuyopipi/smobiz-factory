@@ -1,0 +1,349 @@
+{
+ "title": "Více poboček ve vyhledávání AI: každá pobočka správně | Nurevo",
+ "description": "Aby odpovědi AI nepletly vaše pobočky: stránka pro každou pobočku, potřebné údaje, uzavření a stěhování, schema pobočka–značka a postup ve WordPressu.",
+ "h1": "Vyhledávání AI pro firmy s více pobočkami: jak zabránit záměně otevírací doby, adresy a služeb jednotlivých poboček",
+ "lead": "Když má firma několik poboček, většina chybných odpovědí AI vzniká tím, že se údaje jedné pobočky použijí pro jinou. Dejte každé pobočce vlastní stránku s jejími údaji v prostém textu (adresa, telefon, otevírací doba, dočasná uzavření, čím se liší), propojte ji se značkou ve strukturovaných datech a udržujte stejné hodnoty v Profilu firmy na Googlu i v ostatních záznamech. Tyto tři kroky tvoří jádro celé práce.",
+ "intro": [
+  "Napsáno 15. listopadu 2026 (JST). Tento průvodce je pro každou firmu se dvěma a více pobočkami nebo kancelářemi (restaurace, salony, kliniky, obchody, školy, realitní kanceláře) a pro agentury, které jim tvoří weby. Samotné firmě (oficiální název, datum založení, vedení) se věnuje průvodce [Optimalizace stránky O nás pro vyhledávání AI](/guide/company-profile-page-ai-search) a základům značkování jedné pobočky průvodce [schema místní firmy a SEO pluginy](/guide/local-business-schema-seo-plugins). Tento průvodce se zabývá problémy, které vznikají, když máte poboček více.",
+  "Odpovědi AI se mění podle dne i podle formulace. Tyto kroky zajistí, že informace, které AI čte, jsou správné; nezaručují, že se v odpovědi objevíte, ani na jaké pozici."
+ ],
+ "sections": [
+  {
+   "heading": "Jak se odpovědi AI u firem s více pobočkami pletou",
+   "paragraphs": [
+    "Vyhledávání ChatGPT, Perplexity a AI Overviews od Googlu čtou webové stránky, sestaví odpověď a uvedou své zdroje. U jedné pobočky jsou „údaje o firmě“ jedna sada. U více poboček obsahují stránky, které AI čte, několik adres, několik otevíracích dob a několik telefonních čísel. Pokud z textu není jasné, která hodnota patří ke které pobočce, odpověď může vzniknout z té špatné.",
+    "Otázky, které lidé kladou, se dělí na otázky o značce a otázky o jedné pobočce:"
+   ],
+   "list": [
+    "„Má pobočka [značka] v Umedě otevřeno v neděli?“ (otevírací doba a zavírací dny této pobočky)",
+    "„Které pobočky [značka] mají parkoviště?“ (vybavení, které se mezi pobočkami liší)",
+    "„Je [značka] v Šindžuku stále otevřená, nebo se přestěhovala?“ (uzavření a stěhování)",
+    "„Je nějaká [značka] poblíž nádraží Kjóto?“ (která pobočka obsluhuje kterou oblast)",
+    "„Dostanu v každé pobočce [značka] stejné menu / ošetření / službu?“ (služby, které se mezi pobočkami liší)",
+    "„Kdo provozuje [značka]?“ (značka a provozující společnost)"
+   ],
+   "after": [
+    "Stále dokola se opakují čtyři chyby: otevírací doba hlavní pobočky uvedená jako otevírací doba všech poboček, uzavřená pobočka popsaná jako otevřená, centrální rezervační číslo uvedené jako telefon pobočky a služba, kterou nabízejí jen některé pobočky, popsaná jako dostupná všude. Každá z nich je méně pravděpodobná, jakmile jsou údaje každé pobočky napsány na její vlastní stránce.",
+    "Google uvádí, že pro zobrazení v AI Overviews nebo AI Mode neexistují žádné další požadavky ani zvláštní strukturovaná data a že platí obvyklé základy SEO ([Google Search Central: Funkce AI a váš web](https://developers.google.com/search/docs/appearance/ai-features)). U více poboček je to stejné: nejde o zvláštní způsob psaní pro AI, ale o to, aby údaje každé pobočky byly zveřejněny správně, čitelně a všude se stejnými hodnotami."
+   ]
+  },
+  {
+   "heading": "Struktura webu: oddělte stránku značky, seznam poboček a stránky poboček",
+   "paragraphs": [
+    "Nejprve rozhodněte, která stránka odpovídá na kterou otázku. Jediná stránka se všemi pobočkami usnadňuje AI přiřadit odstavec ke špatné pobočce."
+   ],
+   "table": {
+    "head": [
+     "Stránka",
+     "Na jaké otázky odpovídá",
+     "Co napsat",
+     "Strukturovaná data"
+    ],
+    "rows": [
+     [
+      "Značka (domovská stránka nebo O nás)",
+      "„Co je [značka]?“ „Kdo ji provozuje?“",
+      "Značka a provozující společnost, služby společné všem pobočkám, počet poboček (s datem)",
+      "Organization (centrála)"
+     ],
+     [
+      "Seznam poboček",
+      "„Kolik poboček má [značka] v Ósace?“ „Je nějaká poblíž nádraží Kjóto?“",
+      "Názvy a adresy podle regionu a města s odkazy na stránku každé pobočky",
+      "Volitelné (uveďte je na stránce každé pobočky)"
+     ],
+     [
+      "Stránka pobočky (jedna na pobočku)",
+      "„Má Umeda otevřeno v neděli?“ „Je tam parkoviště?“",
+      "Údaje, které patří jen k této pobočce (další tabulka)",
+      "Jeden konkrétní typ LocalBusiness na pobočku"
+     ],
+     [
+      "Oznámení o uzavření nebo přestěhování",
+      "„Je Šindžuku stále otevřené?“",
+      "Datum uzavření, nová adresa, odkazy na pobočky v okolí",
+      "Odstraňte strukturovaná data pobočky"
+     ]
+    ]
+   },
+   "after": [
+    "Dejte každé pobočce URL, které se nezmění, například /stores/osaka/umeda/. Přejmenování poboček nebo URL v průběhu vytváří další nesoulady s tím, co AI a jiné weby přečetly dříve. Pokud něco změnit musíte, přesměrujte staré URL na nové.",
+    "Nevytvářejte stránky pro oblasti, kde pobočku nemáte (stránky, kde se mění jen název místa: „hledáte X v [město]? Vyberte si nás“). Mohou také vést AI k popisu pobočky, která neexistuje."
+   ]
+  },
+  {
+   "heading": "Co potřebuje stránka každé pobočky a odpovídající vlastnosti",
+   "paragraphs": [
+    "Tabulka uvádí, co napsat prostým textem na stránku každé pobočky, a odpovídající vlastnost schema.org. Dokumentace Googlu k místním firmám uvádí name a address jako povinné, openingHoursSpecification, telephone, url, geo a department mezi doporučenými vlastnostmi a doporučuje co nejkonkrétnější dostupný typ, například Dentist, HairSalon nebo Restaurant ([Google: Strukturovaná data místní firmy](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Položka",
+     "Jak ji napsat",
+     "Typická chyba AI",
+     "Vlastnost"
+    ],
+    "rows": [
+     [
+      "Název pobočky",
+      "Pevný vzor značka + místo (např. Zubní klinika Sample Umeda), stejný pro všechny pobočky",
+      "Záměna s jinou pobočkou, známá jen pod přezdívkou",
+      "name"
+     ],
+     [
+      "Adresa",
+      "Od PSČ po budovu a patro, plus nejbližší stanice a východ v jedné větě",
+      "Předchozí adresa nebo adresa pobočky v okolí",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telefon",
+      "Uveďte, zda jde o přímou linku pobočky, nebo o centrální rezervační linku",
+      "Centrální číslo uvedené jako číslo pobočky",
+      "telephone"
+     ],
+     [
+      "Otevírací doba a zavírací dny",
+      "Pro každou pobočku zvlášť, na stránce každé pobočky, i když jsou všude stejné",
+      "Otevírací doba hlavní pobočky uvedená pro všechny pobočky",
+      "openingHoursSpecification"
+     ],
+     [
+      "Dočasná uzavření a svátky",
+      "S daty; po skončení je odstraňte",
+      "Ponechaná stará oznámení o uzavření",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Služby a vybavení",
+      "Oddělte, co nabízí každá pobočka, od toho, co nabízí tato („Tato pobočka nenabízí sobotní ortodontické konzultace“)",
+      "Služba jedné pobočky popsaná jako dostupná všude",
+      "Text stránky, FAQ, department (oddělení uvnitř pobočky)"
+     ],
+     [
+      "Parkování, platby, jazyky",
+      "Počet míst nebo smluvní parkoviště, platební metody, jazyky, kterými se mluví",
+      "Vybavení jiné pobočky",
+      "Text stránky (paymentAccepted a další)"
+     ],
+     [
+      "Kód provozovny",
+      "Číslo používané interně a v Profilu firmy na Googlu",
+      "Záměna dvou poboček s podobnými názvy",
+      "branchCode"
+     ],
+     [
+      "Odkaz na značku",
+      "„Provozuje Sample s.r.o.“ s odkazem na stránku O nás",
+      "Záměna franšízanta a franšízora",
+      "parentOrganization"
+     ],
+     [
+      "Datum otevření, poslední aktualizace",
+      "„Aktualizováno [datum]“ na konci stránky",
+      "Nelze poznat, jak aktuální údaje jsou",
+      "Text stránky"
+     ]
+    ]
+   },
+   "after": [
+    "Stránky poboček často skončí jako stejný text, ve kterém se mění jen název a adresa. To je přijatelné, ale když napíšete alespoň tři skutečnosti, které platí jen pro danou pobočku (vybavení, jaké služby zajišťuje, kdy je nejrušněji, jak se tam dostat), dáte AI něco, podle čeho pobočky rozliší.",
+    "FAQ každé pobočky mějte na její stránce, odděleně od otázek týkajících se celé značky: otázky, na které lze odpovědět s názvem pobočky v textu, například „Je u této pobočky parkoviště?“ nebo „Mohu v této pobočce získat X?“"
+   ]
+  },
+  {
+   "heading": "Uzavření, stěhování a dočasná uzavření",
+   "paragraphs": [
+    "Chybná informace, která u firem s více pobočkami vydrží nejdéle, je uzavřená pobočka. Smazání její stránky neodstraní to, co jiné weby a AI už přečetly. Uklízejte v tomto pořadí:"
+   ],
+   "list": [
+    "Stránku uzavřené pobočky hned nemažte. Přepište ji na „Tato pobočka byla uzavřena [datum]“ s odkazy na pobočky v okolí. Při stěhování přesměrujte na stránku nové pobočky nebo jasně uveďte novou adresu.",
+    "Odstraňte ji ze seznamu poboček a odstraňte její strukturovaná data (uzavřenou pobočku dál nezveřejňujte jako LocalBusiness).",
+    "Aktualizujte její Profil firmy na Googlu tak, aby ukazoval uzavření nebo přestěhování.",
+    "Prohledejte zbytek webu (patičku, kariérní stránku, stránky kampaní, letáky v PDF), zda ji ještě někde nezmiňuje.",
+    "Požádejte ostatní vydavatele (rezervační weby, portály, místní katalogy) o aktualizaci záznamů.",
+    "U dočasného uzavření uveďte data a zobrazte je pomocí specialOpeningHoursSpecification nebo oznámení. Po znovuotevření je odstraňte."
+   ]
+  },
+  {
+   "heading": "Strukturovaná data: propojte každou pobočku se značkou",
+   "paragraphs": [
+    "U více poboček by strukturovaná data měla zajistit, aby informace „která firma, která pobočka“ byla čitelná pro stroje. Postup:"
+   ],
+   "list": [
+    "Zveřejněte centrálu (značku nebo provozující společnost) jednou jako Organization na domovské stránce nebo stránce O nás, s pevným @id, například https://example.com/#organization.",
+    "Na stránce každé pobočky zveřejněte právě jeden LocalBusiness co nejkonkrétnějšího typu s @id jedinečným pro tuto pobočku, například https://example.com/stores/osaka/umeda/#store.",
+    "Z každé pobočky odkažte na centrálu pomocí parentOrganization. schema.org označuje starší [branchOf](https://schema.org/branchOf) jako zastaralou a místo ní doporučuje [parentOrganization](https://schema.org/parentOrganization).",
+    "Kód provozovny uveďte v [branchCode](https://schema.org/branchCode), který samo schema.org popisuje jako „kód obchodu“.",
+    "Pokud pobočka obsahuje samostatné oddělení (příklady schema.org jsou obchod s lékárnou a pekárna s kavárnou), připojte ho pomocí [department](https://schema.org/department), díky čemuž může mít každé oddělení vlastní otevírací dobu.",
+    "Hodnoty každé pobočky uvádějte na její vlastní stránce, místo abyste všechny LocalBusiness vypisovali na seznamu poboček. Do strukturovaných dat nedávejte hodnoty, které text stránky neuvádí."
+   ],
+   "after": [
+    "Google uvádí soulad strukturovaných dat s viditelným obsahem stránky jako jeden ze základů a doporučuje udržovat informace v Profilu firmy aktuální ([Funkce AI a váš web](https://developers.google.com/search/docs/appearance/ai-features)). Berte strukturovaná data jako klíč odpovědí k tomu, co stránka pobočky už říká."
+   ]
+  },
+  {
+   "heading": "Udržujte stejné hodnoty v Profilu firmy na Googlu i na webu",
+   "paragraphs": [
+    "Když se Profil firmy pobočky a její stránka neshodují, ani lidé, ani AI nepoznají, co platí. Nejvíc pomáhá jedna hlavní tabulka s údaji všech poboček, podle které se aktualizuje web, Profil firmy na Googlu i rezervační weby."
+   ],
+   "table": {
+    "head": [
+     "Sloupec",
+     "Co určit"
+    ],
+    "rows": [
+     [
+      "Kód provozovny",
+      "Stejné číslo interně, na webu i v Profilu firmy"
+     ],
+     [
+      "Název pobočky",
+      "Pevný vzor značka + místo"
+     ],
+     [
+      "Adresa a telefon",
+      "Jeden způsob zápisu čísel a oddělovačů"
+     ],
+     [
+      "Otevírací doba, zavírací dny, dočasná uzavření",
+      "Kdy se mění a kdo je aktualizuje"
+     ],
+     [
+      "Služby a vybavení",
+      "Společné všem, nebo jen v této pobočce"
+     ],
+     [
+      "URL stránky pobočky",
+      "Nikdy se nemění; pokud ano, přesměrujte"
+     ],
+     [
+      "Stav",
+      "Otevřeno, dočasně zavřeno, uzavřeno (s daty)"
+     ],
+     [
+      "Poslední kontrola",
+      "V pevném cyklu, například měsíčně"
+     ]
+    ]
+   },
+   "after": [
+    "Hromadné ověření pro firmy s mnoha pobočkami, nástroje pro společnou správu více poboček i práce s kódy provozoven podléhají podmínkám, které stanovuje Google, a tyto podmínky se mění. Aktuální verzi si ověřte v [Centru nápovědy Profilu firmy na Googlu](https://support.google.com/business/). Pokud si vedoucí poboček upravují profily sami, dohodněte se, že se nejprve aktualizuje hlavní tabulka, aby se obojí nerozcházelo."
+   ]
+  },
+  {
+   "heading": "Ve WordPressu (s Nurevo AEO)",
+   "paragraphs": [
+    "Ve WordPressu [Nurevo AEO (zdarma)](https://wordpress.org/plugins/nurevo-webmcp/) zveřejňuje údaje centrály jako strukturovaná data a v llms.txt; zkombinujte to se stránkami poboček podle postupu níže. Nastavení Nurevo popisuje jednu firmu na web, proto tam zadejte centrálu (značku)."
+   ],
+   "list": [
+    "Nejprve napište stránky poboček podle tabulky výše (text před strukturovanými daty). Pro každou pobočku použijte jednu stránku nebo jednu položku typu obsahu „pobočka“.",
+    "V údajích o firmě v Nurevo zadejte název, popis, adresu, telefon, URL a e-mail centrály. Na rozdíl od firmy s jednou pobočkou platí, že když sem zadáte otevírací dobu jedné pobočky, bude vypadat jako otevírací doba všech poboček.",
+    "Otázky týkající se dané pobočky zadejte v panelu Nurevo AEO v editoru její stránky jako vlastní otázky této stránky a vložte blok FAQ Nurevo nastavený na „Vlastní otázky této stránky“. Zveřejní se jako FAQPage pouze na této stránce.",
+    "Chcete-li zveřejnit LocalBusiness pro každou pobočku, použijte vývojářský filtr webmcp_canary_schema_graph a přidejte uzel pobočky do extra pouze na stránkách poboček. @id centrály je k dispozici jako $bundle['org_id']; vložte ho do parentOrganization. Hodnoty pobočky sestavujte ze stejného zdroje jako text stránky (například z vlastních polí).",
+    "S Yoast SEO, Rank Math, All in One SEO nebo Slim SEO přidává Nurevo jen ty údaje, které strukturovaným datům daného pluginu chybějí, a nové uzly (například uzel pobočky) se připojí ke grafu tohoto pluginu. Nurevo funguje také společně s SEO SIMPLE PACK a VK All in One Expansion Unit (od verze 0.9.1).",
+    "Pokud strukturovaná data pro každou pobočku už zveřejňuje něco jiného, například plugin s vyhledávačem poboček, vyhněte se duplicitám: na těchto stránkách zaškrtněte „Na této stránce nezveřejňovat strukturovaná data Nurevo“, nebo zvolte jeden zdroj.",
+    "Otevřete /llms.txt a zkontrolujte, že je tam seznam poboček a vaše hlavní stránky poboček. llms.txt uvádí 30 naposledy aktualizovaných stránek a příspěvků, takže při mnoha pobočkách některé stránky chybět budou. Filtr webmcp_canary_llms_txt_lines může přidat řádek pro seznam poboček a stránku uzavřené pobočky lze vyřadit volbou „Vynechat tuto stránku z llms.txt“.",
+    "Pokud franšízové pobočky provozují samostatné weby na WordPressu, exportujte nastavení příkazem wp nurevo export, importujte je na druhém webu příkazem wp nurevo import a pak změňte jen název, adresu, telefon a otevírací dobu (klíče a tokeny se neexportují)."
+   ],
+   "after": [
+    "Stejné kontroly platí i pro weby, které nejsou postavené na WordPressu. Zadejte URL do [bezplatné kontroly](/check), bez registrace, a uvidíte stav strukturovaných dat, llms.txt a přístupu AI crawlerů. Stránky poboček můžete kontrolovat po jednotlivých URL."
+   ]
+  },
+  {
+   "heading": "Jak kontrolovat: po pobočkách, s názvem i bez něj",
+   "paragraphs": [
+    "Kontrolujte tak, že vyberete pobočky a výsledky zaznamenáte pro každou pobočku zvlášť. Nemusíte se pokaždé ptát na všechny pobočky: začněte pobočkami, u kterých se změnila otevírací doba nebo adresa, těmi, které byly uzavřeny nebo se přestěhovaly, a těmi, na které přichází nejvíc dotazů. Pokládejte stejnou otázku stejné AI v různých dnech a nesuďte podle jedné odpovědi."
+   ],
+   "table": {
+    "head": [
+     "Co zaznamenat",
+     "Příklad"
+    ],
+    "rows": [
+     [
+      "Datum, AI, otázka",
+      "15. 11., Perplexity, „Má Zubní klinika Sample Umeda otevřeno v neděli?“"
+     ],
+     [
+      "Údaje v odpovědi",
+      "Patří otevírací doba, adresa, telefon a služby této pobočce, nebo jiné?"
+     ],
+     [
+      "Zdroje",
+      "Stránka této pobočky, seznam poboček, nebo externí rezervační web?"
+     ],
+     [
+      "Otázka bez názvu",
+      "Objeví se pobočka u dotazu „zubař otevřený v neděli v Umedě“?"
+     ],
+     [
+      "Uzavřené pobočky",
+      "Je uzavřená pobočka popsána jako otevřená?"
+     ]
+    ]
+   },
+   "after": [
+    "Bezplatná kontrola AI od Nurevo (jednou měsíčně, pro připojené weby s tarifem Free a Standard) klade otázky sestavené z typu podnikání a oblasti ve vašem nastavení, bez vašeho názvu. V nastavení je jedna oblast, takže oblasti ostatních poboček kontrolujte ručně podle tabulky výše. Měření viditelnosti v tarifu Pro (beta) aktuálně pokrývá Perplexity. Celý postup najdete v průvodci [jak měřit viditelnost v AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolní seznam pro více poboček",
+   "list": [
+    "Každá pobočka má vlastní stránku na URL, které se nezmění.",
+    "Názvy poboček všude dodržují stejný vzor značka + místo.",
+    "Stránka každé pobočky uvádí v textu její adresu, telefon (přímý nebo centrální), otevírací dobu a zavírací dny.",
+    "Dočasná uzavření a svátky mají data a po skončení se odstraňují.",
+    "Služby společné všem pobočkám jsou popsány odděleně od těch, které nabízí jen tato pobočka.",
+    "Uzavřené nebo přestěhované pobočky zobrazují oznámení a jsou odstraněny ze seznamu poboček i ze strukturovaných dat.",
+    "LocalBusiness každé pobočky má vlastní @id a odkazuje na centrálu pomocí parentOrganization.",
+    "Hodnoty ve strukturovaných datech odpovídají textu stránky pobočky.",
+    "Web i Profil firmy na Googlu se aktualizují ze stejné hlavní tabulky.",
+    "Pobočky lze procházet podle regionu, s odkazy na stránku každé pobočky.",
+    "Vybrali jste pobočky, v různých dnech zkontrolovali otázky s názvem i bez něj a výsledky zaznamenali."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Potřebujeme stránku pro každou pobočku, nebo stačí jeden seznam poboček?",
+   "a": "Pro odpovědi na otázky o jedné pobočce (její otevírací doba, její vybavení) je jedna stránka na pobočku spolehlivější. Při pouhém seznamu AI snadno přiřadí hodnotu ke špatné pobočce. I při malém počtu poboček dejte každé vlastní nadpis a uveďte u ní adresu a otevírací dobu pohromadě."
+  },
+  {
+   "q": "Pokud mají všechny pobočky stejnou otevírací dobu, musíme ji přesto uvádět na každé stránce?",
+   "a": "Doporučujeme to. AI může odpovídat jen na základě stránky pobočky, a pokud tam otevírací doba není, použije hodnoty z jiných stránek nebo jiných webů."
+  },
+  {
+   "q": "Máme použít branchOf, nebo parentOrganization?",
+   "a": "schema.org označuje branchOf jako zastaralou a doporučuje parentOrganization. Z LocalBusiness každé pobočky odkažte pomocí parentOrganization na @id objektu Organization centrály."
+  },
+  {
+   "q": "Máme stránku uzavřené pobočky hned smazat?",
+   "a": "Když ji změníte na oznámení s datem uzavření a odkazy na pobočky v okolí a odstraníte ji ze seznamu poboček i ze strukturovaných dat, sdělíte uzavření lépe než smazáním. Při stěhování přesměrujte na stránku nové pobočky nebo uveďte novou adresu."
+  },
+  {
+   "q": "Naši franšízanti mají vlastní weby a účty na sociálních sítích. Jak zajistit jednotnost?",
+   "a": "Hlavní tabulku centrály berte jako jediný zdroj pravdy, sdílejte s franšízanty dohodnutý zápis názvů, adres, telefonních čísel a otevírací doby a požádejte je, aby používali stejné hodnoty. Vztah zpřehlední i odkazy oběma směry, z webu franšízanta na stránku pobočky na webu značky a zpět."
+  },
+  {
+   "q": "Máme příliš mnoho poboček na llms.txt. Mají tam být uvedeny všechny?",
+   "a": "Ne. Pokud je tam seznam poboček a vaše hlavní stránky poboček, ke zbytku se lze dostat z nich. V Nurevo AEO může filtr webmcp_canary_llms_txt_lines přidat řádek pro seznam poboček."
+  },
+  {
+   "q": "Zajistí tyto kroky, že se každá pobočka bude v odpovědích AI zobrazovat správně?",
+   "a": "To nelze zaručit; odpovědi AI se mění podle dne i formulace. Tyto kroky omezují příčiny, proč se údaje jedné pobočky mísí s údaji jiné, a zajišťují, že informace, které AI čte, jsou správné a jednotné."
+  }
+ ],
+ "relatedHeading": "Související průvodce",
+ "cta": {
+  "heading": "Podívejte se, jak AI čte stránky vašich poboček",
+  "body": "Bezplatná kontrola nevyžaduje registraci: zadejte URL a uvidíte stav strukturovaných dat, llms.txt a přístupu AI crawlerů, chcete-li, tak po jednotlivých stránkách poboček. Ve WordPressu bezplatný plugin zveřejní údaje vaší centrály jako strukturovaná data.",
+  "label": "Spustit bezplatnou kontrolu čitelnosti pro AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Vyzkoušet bezplatný plugin pro WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je ochranná známka společnosti OpenAI, Perplexity společnosti Perplexity AI a Google společnosti Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit a WordPress jsou ochranné známky příslušných vlastníků. Nurevo není s žádnou z těchto společností spojeno ani jimi podporováno."
+}
