@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CloudflareやWAFがAIのクローラーを止めていないか確かめる手順 | Nurevo AIO</title>
+<meta name="description" content="robots.txtで許可していても、CDN・WAF・サーバーのボット対策・セキュリティプラグインがAI検索のクローラーを止めていることがあります。2026年のCloudflareの変更、4つの層の確かめ方、お客様への説明と保守契約の項目。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/agency-ai-crawler-blocking-audit/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/agency-ai-crawler-blocking-audit/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/agency-ai-crawler-blocking-audit/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/agency-ai-crawler-blocking-audit/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/agency-ai-crawler-blocking-audit/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/agency-ai-crawler-blocking-audit/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="CloudflareやWAFがAIのクローラーを止めていないか確かめる手順 | Nurevo AIO">
+<meta property="og:description" content="robots.txtで許可していても、CDN・WAF・サーバーのボット対策・セキュリティプラグインがAI検索のクローラーを止めていることがあります。2026年のCloudflareの変更、4つの層の確かめ方、お客様への説明と保守契約の項目。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="CloudflareやWAFがAIのクローラーを止めていないか確かめる手順 | Nurevo AIO">
+<meta name="twitter:description" content="robots.txtで許可していても、CDN・WAF・サーバーのボット対策・セキュリティプラグインがAI検索のクローラーを止めていることがあります。2026年のCloudflareの変更、4つの層の確かめ方、お客様への説明と保守契約の項目。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/#webpage","url":"https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/","name":"CloudflareやWAFがAIのクローラーを止めていないか確かめる手順 | Nurevo AIO","description":"robots.txtで許可していても、CDN・WAF・サーバーのボット対策・セキュリティプラグインがAI検索のクローラーを止めていることがあります。2026年のCloudflareの変更、4つの層の確かめ方、お客様への説明と保守契約の項目。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"CloudflareやWAFがAIのクローラーを止めていないか：制作会社のための確かめ方と設定の手順","item":"https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/agency-ai-crawler-blocking-audit/#faq","mainEntity":[{"@type":"Question","name":"robots.txt で許可していれば、CDNの設定は見なくてよいですか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。robots.txt はクローラーが自分で読む決まりで、CDNやWAFはその手前で要求を止めます。CDNで止めていれば、robots.txt で許可していてもページは読まれません。両方を確かめてください。"}},{"@type":"Question","name":"Cloudflareを昔から使っているお客様も、9月15日の既定の対象ですか？","acceptedAnswer":{"@type":"Answer","text":"Cloudflareのchangelogでは、9月15日からの既定は新しく追加したドメインが対象と書かれています。ただ、以前の「Block AI bots」の設定や、誰かが作ったWAFのルールが残っていることがあるので、既存のドメインも今の設定を確かめてください。"}},{"@type":"Question","name":"GPTBotを止めると、ChatGPTの検索に出なくなりますか？","acceptedAnswer":{"@type":"Answer","text":"GPTBotはOpenAIの学習用のクローラーで、ChatGPTの検索で使われるのはOAI-SearchBotです。学習用を止めても、検索での引用には直接関係しません。止めているのがどちらかを確かめてください。"}},{"@type":"Question","name":"curlでAIのクローラーの名前にしたら 200 でした。もう大丈夫ですか？","acceptedAnswer":{"@type":"Answer","text":"手がかりにはなりますが、確かではありません。本物のクローラーは各社のIPアドレスから来るので、IPで判定するボット対策では結果が変わることがあります。アクセスログかCDNの記録で、本物への応答を確かめてください。"}},{"@type":"Question","name":"429 が返っていました。何が起きていますか？","acceptedAnswer":{"@type":"Answer","text":"429 は回数が多すぎるという意味で、サーバーやCDNの回数制限が働いていることが多い応答です。止める設定ではなく回数制限なので、WAFの画面には出ないことがあります。サーバー会社に、日時とユーザーエージェントを添えて問い合わせてください。"}},{"@type":"Question","name":"お客様が「AIには一切読ませたくない」と言っています。","acceptedAnswer":{"@type":"Answer","text":"お客様の判断なので、その方針で設定します。そのうえで、ChatGPTやPerplexityの回答で自社のページが引用されにくくなること、学習だけをことわる選び方もあることを、書面で説明しておくと安心です。"}},{"@type":"Question","name":"クローラーを通せば、AIの回答に出るようになりますか？","acceptedAnswer":{"@type":"Answer","text":"保証はできません。通すことは読まれるための前提です。AIの回答は日や聞き方で変わり、料金・対応エリア・実績などの事実がページに書かれているかでも変わります。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">無料でAIの読みやすさをチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>CloudflareやWAFがAIのクローラーを止めていないか：制作会社のための確かめ方と設定の手順</span></nav>
+  <article>
+    <h1>CloudflareやWAFがAIのクローラーを止めていないか：制作会社のための確かめ方と設定の手順</h1>
+    <p class="lead">お客様のサイトがChatGPTやPerplexityに引用されないとき、robots.txt だけでなく、Cloudflareなどの CDN、サーバーのファイアウォール（WAF）、セキュリティプラグインが、AI検索のクローラーに 403 や 429 を返していないかを確かめてください。robots.txt で許可していても、その手前で止められていればページは読まれません。Cloudflareは2026年7月1日に、AIのクローラーを「検索」「エージェント」「学習」に分けて扱える設定を無料プランにも出し、9月15日以降に追加された新しいドメインでは、広告のあるページで学習とエージェントが止まる既定になっています。この記事では、4つの層を順に確かめる手順と、お客様への説明、保守の項目をまとめます。</p>
+<p>作成日：2026年11月22日（JST）。対象は、お客様のサイトを作る・保守する制作会社、WordPressの保守会社、サーバーやCDNを預かっているフリーランスの方です。Cloudflareの画面の名前は、この記事の作成時点の公式ドキュメントに合わせています。画面は変わることがあるので、作業の前に各リンク先を確かめてください。</p>
+<p>AIの回答は日や聞き方によって変わります。クローラーを通すことは、読まれて引用されるための前提で、AIの回答に出ることを保証するものではありません。</p>
+<section class="qa"><h2>よく読まれている記事と、足りないこと</h2><p>「Cloudflare AI クローラー ブロック」「WAF ChatGPT 403」「blocking AI crawlers」などで上位に出る日本語5本・英語8本を、2026年11月22日に読みました。日本語では、Impress Watch（2026年9月18日）、Kinsta日本語ブログ（9月18日更新）、GMOの robots.txt の解説（11月16日更新）、@IT（2025年10月7日）、Zennの記事（2025年4月24日）。英語では、Playwire（6月15日）、Search Engine Land のWP Engineの事例、HackerNoon（11月19日）、RunCloud（7月25日更新）、RightBlogger（10月30日更新）、CMSWire（9月24日）、dev.to の記事、韓国のBrunchの記事です。</p>
+<p>「学習用と検索用のクローラーを分けて考える」「robots.txt だけでは足りない」という点はほぼ一致していました。一方で、制作会社がお客様のサイトで実際に確かめるときに必要な次の点は、ほとんど書かれていませんでした。</p><div class="table-wrap"><table><caption>上位の記事には「AIのクローラーの◯%が止められている」といった数字もありましたが、調べ方が書かれていないものや、出典によって大きく食い違うものは使っていません。</caption><thead><tr><th scope="col">足りない点</th><th scope="col">この記事で書いていること</th></tr></thead><tbody><tr><th scope="row">Cloudflareの「Block AI bots」を切る手順のまま（2026年9月に1つのスイッチから3つの区分へ変わった）</th><td>2026年7月・9月の変更を公式ドキュメントで確かめた表と、今の画面の場所</td></tr><tr><th scope="row">robots.txt・CDN・サーバー・プラグインのどの層で止まっているかの切り分け方がない</th><td>4つの層の表と、curl・ログで層を見分ける手順</td></tr><tr><th scope="row">curlでユーザーエージェントを変える確認だけで終わり、その限界が書かれていない</th><td>なりすましと本物の違い、ログで本物の応答を数える方法</td></tr><tr><th scope="row">学習用を止めると、検索と学習を兼ねるクローラー（Googlebotなど）に影響する場合があることが書かれていない</th><td>「学習をブロック」と「学習をことわる（Disallow AI Training）」の違い</td></tr><tr><th scope="row">お客様への説明と、保守契約での扱いがない</th><td>方針の決め方の表、報告の文例、毎月の確認項目</td></tr></tbody></table></div></section>
+<section class="qa"><h2>AIのクローラーが止まる4つの層</h2><p>クローラーの要求は、CDN → サーバー → WordPress の順に届きます。どこか1か所で止められれば、その先の設定（robots.txt での許可など）は意味を持ちません。止められたときに返る応答コードも層によって違います。</p><div class="table-wrap"><table><caption>マネージドWordPressの例では、キャッシュにないページへのAIのクローラーの要求にだけ 429 が返り、WAFの画面では見つからなかったという報告があります（[Search Engine Land](https://searchengineland.com/managed-wordpress-blocking-ai-bots-476510)、1サイトでの事例）。</caption><thead><tr><th scope="col">層</th><th scope="col">止まり方</th><th scope="col">よくある応答</th><th scope="col">どこで確かめるか</th></tr></thead><tbody><tr><th scope="row">robots.txt</th><td>クローラーが自分で読み、Disallow のページを取りに来ない（守るかどうかはクローラー次第）</td><td>要求そのものが来ない</td><td>/robots.txt の最終的な中身（CDNが行を足していないか）</td></tr><tr><th scope="row">CDN・WAF（Cloudflareなど）</th><td>ユーザーエージェントやボットの判定で、ルールに合った要求を止める</td><td>403、チャレンジのページ、402（Cloudflareの有料プランで設定した場合）</td><td>CDNの管理画面の設定とイベントの記録</td></tr><tr><th scope="row">サーバー（ホスティングのWAF・ボット対策・回数制限）</th><td>レンタルサーバーやマネージドWordPressの仕組みが止める・回数を制限する</td><td>403、429、503</td><td>サーバーの管理画面、アクセスログ、サーバー会社への問い合わせ</td></tr><tr><th scope="row">WordPressのプラグイン（セキュリティ・キャッシュ）</th><td>プラグインのボット対策や、ユーザーエージェントの一覧で止める</td><td>403、ログインやチャレンジのページ</td><td>プラグインのブロックの記録と設定</td></tr></tbody></table></div><p>どのくらい起きているかについては、HackerNoonに、ある制作会社の人が選んだ640サイトを調べたところ、測れた591サイトのうち100サイトがGPTBotかClaudeBotを拒否し、そのうち robots.txt にそう書いていたのは4サイトだけだった、という調査があります（<a href="https://hackernoon.com/i-found-my-own-website-blocking-chatgpt-then-i-checked-640-others">HackerNoon</a>、2026年11月19日、無作為の標本ではないと本人が書いています）。robots.txt を読むだけでは見つからない止まり方がある、という点の参考になります。</p></section>
+<section class="qa"><h2>2026年のCloudflareの変更：今の設定の考え方</h2><p>Cloudflareを使っているお客様のサイトでは、2026年に設定の考え方が変わりました。古い記事にある「Block AI bots」を切るだけの手順は、今の画面と合わないことがあります。</p><div class="table-wrap"><table><caption>設定の場所は、ドメイン（ゾーン）の「Security Settings」です（Cloudflareのドキュメント）。</caption><thead><tr><th scope="col">時期</th><th scope="col">変わったこと</th><th scope="col">出典</th></tr></thead><tbody><tr><th scope="row">2026年7月1日</th><td>AIのクローラーを「検索（Search）」「エージェント（Agent）」「学習（Training）」に分けて扱える設定を、無料プランを含むすべての利用者に提供。それぞれ「すべてのページでブロック」「広告を表示するページだけブロック」「ブロックしない」を選べる</td><td><a href="https://developers.cloudflare.com/changelog/post/2026-07-01-ai-traffic-options/">Cloudflare changelog</a></td></tr><tr><th scope="row">2026年9月15日から</th><td>新しくCloudflareに追加したドメインは、広告を表示するページで「学習」と「エージェント」に分類されたボットをブロックし、「検索」は許可する既定に</td><td><a href="https://developers.cloudflare.com/changelog/post/2026-07-01-ai-traffic-options/">Cloudflare changelog</a></td></tr><tr><th scope="row">2026年9月15日</th><td>学習に「Disallow AI Training」（ブロックせずに、学習に使わないよう求める）の選択肢を追加。1つの「Block AI Bots」のスイッチは廃止の予定。Managed robots.txt は「Bot Preference Sync」に</td><td><a href="https://blog.cloudflare.com/accountable-mixed-use-ai-crawlers/">Cloudflare blog</a>、<a href="https://www.watch.impress.co.jp/docs/news/2142146.html">Impress Watch</a></td></tr></tbody></table></div><p>3つの区分の意味は、Cloudflareのドキュメントでは次のとおりです。検索は、あとで質問に答えるために内容を集める・索引にするもの。エージェントは、人の代わりにその場で動くもの（会話の中でページを取りに来るボットや、ブラウザを操作するエージェントなど）。学習は、モデルの学習・調整のために内容を集めるものです（<a href="https://developers.cloudflare.com/bots/concepts/bot/">Cloudflare：ボットの種類</a>）。</p>
+<p>Cloudflareの認証済みボットの説明では、OAI-SearchBot は以前の「AI Search」の例として挙がり、今は「検索」として扱うとされ、Perplexity-User は「AI Assistant」の例です（<a href="https://developers.cloudflare.com/bots/concepts/bot/verified-bots/">Cloudflare：認証済みボット</a>）。ChatGPT-User、Claude-SearchBot、PerplexityBot などの1つずつの区分は、この記事で読んだページには載っていなかったので、お客様の画面の「AI Crawl Control」の一覧で確かめてください。</p>
+<p>注意したいのは学習の扱いです。7月の発表では、学習をブロックすると、検索と学習を兼ねるクローラーにも影響すると説明されていました（<a href="https://developers.cloudflare.com/changelog/post/2026-07-01-ai-traffic-options/">Cloudflare changelog</a>）。Help Net Security は、その例としてGooglebot・Applebot・Bingbotを挙げています（<a href="https://www.helpnetsecurity.com/2026/07/02/cloudflare-ai-crawler-controls/">Help Net Security</a>）。お客様が「学習には使われたくない」と言うときは、ブロックではなく「Disallow AI Training」を選ぶ方法があります（<a href="https://blog.cloudflare.com/accountable-mixed-use-ai-crawlers/">Cloudflare blog</a>）。どちらを選んでも、変更のあとにGooglebotへの応答を確かめてください。</p></section>
+<section class="qa"><h2>確かめる手順：4つの層を順に見る</h2><p>次のコマンドを、お客様のトップページと、引用されてほしい主なページ（料金・サービス・よくある質問）で試します。1でブラウザだけ 200 になり、AIのクローラーの名前で 403・429・503 になれば、ユーザーエージェントで止めている層があります。2の応答ヘッダーに cf-ray があれば、Cloudflareを通っています。</p><pre class="code" dir="ltr"><code># 1) ユーザーエージェントを変えて、同じURLの応答コードを比べる
+URL="https://example.com/"
+for UA in \
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/130 Safari/537.36" \
+  "OAI-SearchBot/1.0" "ChatGPT-User/1.0" \
+  "PerplexityBot/1.0" "Perplexity-User/1.0" \
+  "Claude-SearchBot/1.0" "Claude-User/1.0" \
+  "GPTBot/1.0" "ClaudeBot/1.0"; do
+  printf '%-22.22s ' "$UA"
+  curl -s -o /dev/null -w '%{http_code}\n' -A "$UA" "$URL"
+done
+
+# 2) どの層が応答しているかの手がかり（CDN・サーバー）
+curl -sI "$URL" | grep -iE '^(server|cf-ray|cf-cache-status|x-powered-by|via):'
+
+# 3) 最終的に公開されている robots.txt（CDNが先頭に足した行も含む）
+curl -s "$URL"robots.txt | head -60
+
+# 4) サーバーのアクセスログで、本物のクローラーへの応答コードを数える
+#    （combined形式のログで、9列目が応答コードの場合）
+grep -E 'OAI-SearchBot|ChatGPT-User|PerplexityBot|Perplexity-User|Claude-SearchBot|Claude-User' access.log \
+  | awk '{print $9}' | sort | uniq -c</code></pre><p>ただし、1の結果は手がかりです。本物のクローラーは、各社が公開しているIPアドレスから来ます（<a href="https://developers.openai.com/api/docs/bots">OpenAI：クローラー</a>、<a href="https://docs.perplexity.ai/docs/resources/perplexity-crawlers">Perplexity：クローラー</a>）。自分のパソコンから名前だけ名乗った要求は、なりすましとして止められることもあれば、逆に本物だけが止められていることもあります。Cloudflareの無料プランでは、AI Crawl Control はユーザーエージェントの文字列でAIのクローラーを見分け、有料プランではボット管理の判定も使えます（<a href="https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/">Cloudflare：AIのクローラーの管理</a>）。</p>
+<p>そのため、最後は4のアクセスログか、CDNの記録で、本物のクローラーに何を返したかを確かめます。キャッシュにあるページは 200 で、キャッシュにないページだけ止まる、という例もあるので（<a href="https://searchengineland.com/managed-wordpress-blocking-ai-bots-476510">Search Engine Land</a>）、トップページだけでなく、更新したばかりのページも見ます。</p></section>
+<section class="qa"><h2>Cloudflareでの確かめ方と設定</h2><ol><li>ドメインの「Security Settings」で、ボットの通信（Bot traffic）に絞り、「AI Crawler and Agent access policies」の検索・エージェント・学習の設定を確かめる。お客様の方針と違えば直す（<a href="https://developers.cloudflare.com/bots/additional-configurations/managed-robots-txt/">Cloudflare：managed robots.txt</a>）。</li><li>「AI Crawl Control」の「Crawlers」タブで、クローラーごとの区分・要求数（通ったもの・通らなかったもの）・robots.txt の違反・アクションを見る。ドキュメントには、通らなかった要求はブロック以外のルールやエラーによることもある、と書かれています（<a href="https://developers.cloudflare.com/ai-crawl-control/features/manage-ai-crawlers/">Cloudflare：AIのクローラーの管理</a>）。</li><li>AI Crawl Control でブロックを選ぶと、ゾーンのWAFのカスタムルールが作られる・更新されます（同）。WAFのカスタムルールの一覧で、AIのクローラーに関わるルールを、誰がいつ作ったかと一緒に確かめる。</li><li>「Bot Preference Sync」をオンにして、ブロックや学習のことわりを1つでも選ぶと、Cloudflareが robots.txt の先頭に行を足します。その行には Content-signal と、GPTBot・ClaudeBot・Google-Extended などの Disallow が入ります（<a href="https://developers.cloudflare.com/bots/additional-configurations/managed-robots-txt/">Cloudflare：managed robots.txt</a>）。WordPressで書いた robots.txt と、公開されている robots.txt が違う理由になるので、curl で最終的な中身を見る。</li><li>ボット対策の機能（Bot Fight Modeなど）を使っている場合は、その設定とイベントの記録も見る。認証済みのボットがどう扱われるかは、この記事の作成時に公式ドキュメントで確かめられなかったため、イベントの記録で実際に止まっていないかを確かめてください。</li></ol></section>
+<section class="qa"><h2>サーバーとプラグインでの確かめ方</h2><ol><li>サーバーの管理画面で、WAF・ボット対策・国外からのアクセス制限・回数制限の設定と、その記録を見る。記録が見られないときは、日時とユーザーエージェントを添えてサーバー会社に問い合わせる。</li><li>マネージドWordPressでは、利用者が切れない仕組みで止めている場合があります。上の事例では、サーバー会社への問い合わせで仕組みが分かりました（<a href="https://searchengineland.com/managed-wordpress-blocking-ai-bots-476510">Search Engine Land</a>）。</li><li>セキュリティプラグインのブロックの記録に、OAI-SearchBot・PerplexityBot などの名前が出ていないかを見る。ユーザーエージェントの一覧で止める設定があれば、学習用だけが入っているかを確かめる。</li><li>キャッシュのプラグインやサーバーのキャッシュで、ボットにだけ違うページを返す設定がないかを見る。誰が見ても同じHTMLにしておくのが安全です。</li><li>日本の主なレンタルサーバーのWAFが、AIのクローラーをどう扱うかの公式の記載は、この記事の作成時に確かめられませんでした。サーバーごとに、上の手順とアクセスログで確かめてください。</li></ol></section>
+<section class="qa"><h2>お客様への説明：方針を決めるのはお客様</h2><p>AIのクローラーを通すか止めるかは、お客様の事業の判断です。制作会社は、選べる形と、それぞれで何が起きるかを説明し、決まった方針どおりに設定されているかを確かめる役割にとどめると、あとで食い違いが起きにくくなります。</p><pre class="code" dir="ltr"><code>【AIのクローラーの点検結果】◯◯様サイト（2026年◯月◯日）
+
+1. robots.txt
+   ・AI検索のクローラー（OAI-SearchBot・PerplexityBot など）：許可
+   ・AIの学習用のクローラー（GPTBot・ClaudeBot など）：お客様の方針どおり「止める」
+   ・CDN（Cloudflare）が先頭に足している行：あり／なし
+2. CDN・ファイアウォール
+   ・Cloudflare の設定：検索＝許可／エージェント＝◯◯／学習＝◯◯
+   ・過去30日に止められたAIのクローラー：◯◯（件数）
+3. サーバー・プラグイン
+   ・サーバーのボット対策：◯◯（設定名）
+   ・セキュリティプラグイン：AIのクローラーを止める設定なし
+4. 応答の確認
+   ・ブラウザ：200　OAI-SearchBot：200　PerplexityBot：200 …
+5. 変更したこと／お客様に決めていただきたいこと
+   ・◯◯</code></pre><div class="table-wrap"><table><thead><tr><th scope="col">方針</th><th scope="col">設定の例</th><th scope="col">向いているお客様</th><th scope="col">気をつけること</th></tr></thead><tbody><tr><th scope="row">検索もエージェントも学習も通す</th><td>robots.txt で止めない。CDNの3区分はすべて許可</td><td>認知を広げたい店舗・会社</td><td>サーバーの負荷を見る</td></tr><tr><th scope="row">検索とエージェントは通し、学習はことわる</th><td>robots.txt で学習用だけ Disallow。Cloudflareは学習を「Disallow AI Training」</td><td>多くの店舗・会社の出発点。記事や写真を学習に使われたくない場合</td><td>学習を「ブロック」にするとGooglebotなどに影響する場合がある</td></tr><tr><th scope="row">広告のあるページだけ止める</th><td>Cloudflareで「広告を表示するページだけブロック」</td><td>広告収入のあるメディア</td><td>どのページが「広告のあるページ」と判定されるか確かめる</td></tr><tr><th scope="row">すべて止める</th><td>CDNで3区分ともブロック</td><td>会員向けの内容が中心のサイト</td><td>ChatGPTやPerplexityの回答で、自社のページが引用されにくくなる</td></tr></tbody></table></div><p>点検の結果は、次のような形でお客様に送ると、決めていただきたいことがはっきりします。</p></section>
+<section class="qa"><h2>WordPressでの手順（Nurevo AEOを使う場合）</h2><p>無料のプラグイン<a href="https://wordpress.org/plugins/nurevo-webmcp/">Nurevo AEO</a>を使う場合、robots.txt の層は次のようになります。CDN・サーバー・プラグインの層は、Nurevo AEOの外にあるので、上の手順で別に確かめてください。</p><ol><li>AI検索が使うクローラー（OAI-SearchBot・ChatGPT-User、Claude-SearchBot・Claude-User、PerplexityBot・Perplexity-User）を robots.txt で許可します。サイトの既存の行（Disallow: /wp-admin/ など）は、これらのクローラーにもそのまま適用されます。</li><li>学習用のクローラー（GPTBot、ClaudeBot、Google-Extended、Applebot-Extended、CCBot）は、初期状態ではサイトの robots.txt に任せ、ワンクリックで許可・ブロックを選べます。学習用を止めても、AI検索やAEOスコアには影響しません。</li><li>Nurevoのサービスが、勝手に robots.txt を Disallow に変えることはありません。提案は管理画面に出て、「適用」を押したときだけ反映されます。</li><li>AEOの診断は、公開されているトップページ・/robots.txt・/llms.txt を取りに行きます。診断で robots.txt が問題なしでも、CDNやWAFで止まっていることはありえるので、この記事の curl とログの確認を合わせて行います。</li><li>Cloudflareの Bot Preference Sync を使っていると、WordPressが出す robots.txt の前にCloudflareの行が足されます。両方の行が矛盾していないか、公開されている /robots.txt で確かめます。</li><li>開発者向けには、許可する検索用・学習用のクローラーの一覧を変えるフィルターがあります（名前はプラグインの開発者向けの説明に記載）。</li></ol></section>
+<section class="qa"><h2>保守契約に入れる毎月の確認</h2><p>CDNやサーバーの設定は、制作会社が触っていなくても、サービス側の既定の変更で変わります。2026年のCloudflareの変更のような例があるので、月額の保守に次の確認を入れておくと、気づくのが早くなります（<a href="/ja/guide/agency-aeo-monthly-service/">月額サービスにする方法</a>）。紹介の仕組みを使って保守と組み合わせる場合は、<a href="https://nurevo.jp/partner/">パートナープログラム</a>も参考にしてください。</p><ol><li>主なページで、ブラウザとAI検索のクローラーの名前の応答コードを比べる（上の curl の1）。</li><li>公開されている /robots.txt を前の月と比べる（CDNが足した行も含めて）。</li><li>CDNの AI Crawl Control などの記録で、止められたAIのクローラーの数を見る。</li><li>アクセスログで、本物のクローラーへの応答コードの内訳を見る。</li><li>CDN・サーバー・プラグインの更新のお知らせに、ボット対策の変更がないかを見る。</li><li>変えたことと、お客様に決めていただきたいことを月次の報告に書く。</li></ol></section>
+<section class="qa"><h2>点検のチェックリスト</h2><ol><li>お客様の方針（検索・エージェント・学習をどうするか）を書面で確かめた。</li><li>公開されている /robots.txt で、AI検索のクローラーが Disallow になっていない。</li><li>CDNが robots.txt に行を足している場合、その中身を確かめた。</li><li>主なページで、ブラウザとAI検索のクローラーの名前の応答コードを比べた。</li><li>応答ヘッダーで、CDNを通っているかを確かめた。</li><li>CDNの3区分の設定が、お客様の方針どおりになっている。</li><li>学習を止めたあと、Googlebotへの応答が変わっていない。</li><li>WAFのカスタムルールとボット対策の記録に、意図しないAIのクローラーのブロックがない。</li><li>サーバーとセキュリティプラグインの記録に、AI検索のクローラーのブロックがない。</li><li>アクセスログで、本物のクローラーに 200 を返している。</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>robots.txt で許可していれば、CDNの設定は見なくてよいですか？</h3><p>いいえ。robots.txt はクローラーが自分で読む決まりで、CDNやWAFはその手前で要求を止めます。CDNで止めていれば、robots.txt で許可していてもページは読まれません。両方を確かめてください。</p>
+<h3>Cloudflareを昔から使っているお客様も、9月15日の既定の対象ですか？</h3><p>Cloudflareのchangelogでは、9月15日からの既定は新しく追加したドメインが対象と書かれています。ただ、以前の「Block AI bots」の設定や、誰かが作ったWAFのルールが残っていることがあるので、既存のドメインも今の設定を確かめてください。</p>
+<h3>GPTBotを止めると、ChatGPTの検索に出なくなりますか？</h3><p>GPTBotはOpenAIの学習用のクローラーで、ChatGPTの検索で使われるのはOAI-SearchBotです。学習用を止めても、検索での引用には直接関係しません。止めているのがどちらかを確かめてください。</p>
+<h3>curlでAIのクローラーの名前にしたら 200 でした。もう大丈夫ですか？</h3><p>手がかりにはなりますが、確かではありません。本物のクローラーは各社のIPアドレスから来るので、IPで判定するボット対策では結果が変わることがあります。アクセスログかCDNの記録で、本物への応答を確かめてください。</p>
+<h3>429 が返っていました。何が起きていますか？</h3><p>429 は回数が多すぎるという意味で、サーバーやCDNの回数制限が働いていることが多い応答です。止める設定ではなく回数制限なので、WAFの画面には出ないことがあります。サーバー会社に、日時とユーザーエージェントを添えて問い合わせてください。</p>
+<h3>お客様が「AIには一切読ませたくない」と言っています。</h3><p>お客様の判断なので、その方針で設定します。そのうえで、ChatGPTやPerplexityの回答で自社のページが引用されにくくなること、学習だけをことわる選び方もあることを、書面で説明しておくと安心です。</p>
+<h3>クローラーを通せば、AIの回答に出るようになりますか？</h3><p>保証はできません。通すことは読まれるための前提です。AIの回答は日や聞き方で変わり、料金・対応エリア・実績などの事実がページに書かれているかでも変わります。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>お客様のサイトを、AIがどう読んでいるか確認</h2>
+    <p>無料のチェックは登録不要です。URLを入れると、構造化データ・llms.txt・AIのクローラーの扱いを確かめられます。CDNやWAFの確認とあわせて使えます。</p>
+    <a class="btn primary lg" href="/check">無料でAIの読みやすさをチェック</a>
+    <a class="btn lg" href="https://nurevo.jp/partner/">パートナープログラムを見る</a>
+  </aside>
+  <nav class="related" aria-label="あわせて読みたい"><h2>あわせて読みたい</h2><ul><li><a href="/ja/guide/agency-new-site-build-ai-search/">新規サイト制作にAI検索対策を最初から入れる手順：ヒアリングから公開後の測定まで</a></li><li><a href="/ja/guide/ai-visibility-drop-causes/">AIでの登場率が下がったときの原因の切り分け：制作会社がお客様に報告するまでの手順</a></li><li><a href="/ja/guide/agency-aeo-monthly-service/">制作会社がAI検索対策（AEO）を月額サービスにする方法：作業範囲・レポート・価格の決め方</a></li><li><a href="/ja/guide/agency-aeo-client-handover/">AI検索対策の契約を終える・引き継ぐときの手順：制作会社がお客様に渡すもの、止めるもの</a></li><li><a href="/ja/guide/perplexity-citations/">Perplexityに自社サイトが引用される仕組みと、引用されているかの確かめ方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/agency-ai-crawler-blocking-audit/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">CloudflareはCloudflare, Inc.、ChatGPT・GPTBot・OAI-SearchBotはOpenAI、PerplexityはPerplexity AI、ClaudeはAnthropic、GoogleはGoogle LLCの商標です。WordPressは WordPress Foundation の商標です。Nurevoはこれらの企業と提携・承認の関係にありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>

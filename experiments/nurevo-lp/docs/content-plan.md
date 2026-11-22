@@ -484,3 +484,12 @@
 3. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
 4. 制作会社向け：ECサイトの保守契約に「商品データの整合チェック」を足す方法【制作会社向け】
 5. 次の月曜（11-23）の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
+| 2026-11-22 20時 | agency-ai-crawler-blocking-audit | CloudflareやWAFがAIのクローラーを止めていないか確かめる手順（制作会社向け。上位記事13本〔Impress Watch（2026-09-18）・Kinsta日本語（2026-09-18更新）・GMO robots.txt解説（2026-11-16更新）・@IT（2025-10-07）・Zenn（2025-04-24）／Playwire（2026-06-15）・Search Engine Land WP Engineの事例・HackerNoon（2026-11-19）・RunCloud（2026-07-25更新）・RightBlogger（2026-10-30更新）・CMSWire（2026-09-24）・dev.to・Brunch（2026-06-12）〕の抜けの表、4つの層の表〔robots.txt・CDN/WAF・サーバー・プラグイン、応答コード、確かめる場所。WP Engineの429の事例は1サイト〕、HackerNoonの640サイトの調査（591中100がGPTBot/ClaudeBotを拒否、robots.txtに書いていたのは4、無作為でない）、Cloudflareの2026年の変更の表〔7-01 検索/エージェント/学習の3区分を無料プランにも・9-15以降の新規ドメインは広告のあるページで学習とエージェントをブロック・9-15 Disallow AI Training追加、Block AI Botsのスイッチ廃止予定、Managed robots.txt→Bot Preference Sync〕、学習のブロックがGooglebotなど兼用クローラーに影響する注意、curlとログの確認コマンド（なりすましの限界）、Cloudflareの画面の確認5つ、サーバー・プラグインの確認5つ、方針の表4行と報告の文例、WordPress手順〔Nurevoは robots.txt の層だけ・診断はWAFを見ない〕、保守の毎月の確認6つ、チェックリスト10、FAQ 7問）。2言語（ja・en） | 制作会社向け | content/daily-20261122-20 |
+メモ：2026-11-22 20時の回は、OpenAI・Perplexity・Anthropic・Googleのクローラーの公式ページ、Cloudflareの block-ai-bots・Bot Fight Mode・日本語のプレスリリースを WebFetch の許可待ちで読めなかった。クローラーの名前と用途はプラグインの readme と既存記事（2026-10-31に読んだ内容）に合わせ、公式ページへのリンクを付けた。Bot Fight Mode で認証済みボットが除外されるか、ChatGPT-User・Claude-SearchBot・PerplexityBot のCloudflareでの区分、日本のレンタルサーバーのWAFの既定、クロールと流入の比（出典で食い違う）は書いていない。9-15の既定が新規ドメインだけかは changelog の記述に合わせた。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に agency-ai-crawler-blocking-audit を追加、ja/en のみ）
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（掲載先の一覧と更新依頼の文例）【全業種】（PR #80 と重ならない形で）
+2. ペットサロン・トリミングのAI検索対策（動物病院 PR #84 と分けて）【業種別】
+3. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
+4. 制作会社向け：ECサイトの保守契約に「商品データの整合チェック」を足す方法【制作会社向け】
+5. 次の月曜（11-23）の書き直し候補：aeo-vs-seo-vs-geo（AEO・GEO・SEOの違い、短い初期版）
