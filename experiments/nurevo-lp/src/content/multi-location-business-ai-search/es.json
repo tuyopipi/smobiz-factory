@@ -1,0 +1,349 @@
+{
+ "title": "Búsqueda con IA para negocios con varias sedes | Nurevo",
+ "description": "Evite que la IA mezcle sus sedes: una página por sede, los datos que necesita cada una, cierres y traslados, schema hacia la marca y pasos en WordPress.",
+ "h1": "Búsqueda con IA para negocios con varias sedes: que no se mezclen el horario, la dirección y los servicios de cada sede",
+ "lead": "Cuando un negocio tiene varias sedes, la mayoría de las respuestas erróneas de la IA se deben a que los datos de una sede se usan para otra. Dé a cada sede su propia página con sus datos en texto claro (dirección, teléfono, horario, cierres temporales, lo que cambia allí), vincúlela a la marca en los datos estructurados y mantenga los mismos valores en Google Business Profile y en sus demás fichas. Esos tres pasos son el núcleo del trabajo.",
+ "intro": [
+  "Redactado el 15 de noviembre de 2026 (JST). Esta guía es para cualquier negocio con dos o más sedes u oficinas (restaurantes, salones, clínicas, tiendas, academias, inmobiliarias) y para las agencias que crean sus webs. La empresa en sí (razón social, fecha de fundación, dirección) se trata en [optimizar la página «Quiénes somos» para la búsqueda con IA](/guide/company-profile-page-ai-search), y los fundamentos del marcado de una sola sede en [schema LocalBusiness y plugins de SEO](/guide/local-business-schema-seo-plugins). Esta guía trata de los problemas que surgen al tener muchas sedes.",
+  "Las respuestas de la IA cambian según el día y la formulación. Estos pasos hacen que la información que lee la IA sea correcta; no garantizan que aparezca en una respuesta ni en una posición determinada."
+ ],
+ "sections": [
+  {
+   "heading": "Cómo se equivocan las respuestas de la IA con los negocios con varias sedes",
+   "paragraphs": [
+    "La búsqueda de ChatGPT, Perplexity y las Vistas creadas con IA de Google leen páginas web, construyen una respuesta y muestran sus fuentes. Con una sola sede, «los datos del negocio» son un único conjunto. Con varias, las páginas que lee una IA contienen varias direcciones, varios horarios y varios teléfonos. Si el texto no deja claro qué valor corresponde a qué sede, la respuesta puede construirse con el equivocado.",
+    "Las preguntas que hace la gente se dividen entre preguntas sobre la marca y preguntas sobre una sede:"
+   ],
+   "list": [
+    "«¿La sede de Umeda de [marca] abre los domingos?» (horario y días de cierre de esa sede)",
+    "«¿Qué sedes de [marca] tienen aparcamiento?» (instalaciones que varían según la sede)",
+    "«¿Sigue abierto el [marca] de Shinjuku o se ha trasladado?» (cierres y traslados)",
+    "«¿Hay algún [marca] cerca de la estación de Kioto?» (qué sede atiende qué zona)",
+    "«¿Tienen el mismo menú / tratamiento / servicio en todos los [marca]?» (servicios que varían según la sede)",
+    "«¿Quién gestiona [marca]?» (marca y empresa operadora)"
+   ],
+   "after": [
+    "Hay cuatro errores que se repiten una y otra vez: el horario de la sede principal presentado como el de todas las sedes, una sede cerrada descrita como abierta, el número central de reservas dado como teléfono de una sede y un servicio que solo ofrecen algunas sedes descrito como disponible en todas. Cada uno se vuelve menos probable cuando los datos de cada sede están escritos en su propia página.",
+    "Google afirma que no hay requisitos adicionales ni datos estructurados especiales para aparecer en las Vistas creadas con IA o en el Modo IA, y que se aplican los fundamentos habituales de SEO ([Google Search Central: funciones de IA y tu sitio web](https://developers.google.com/search/docs/appearance/ai-features)). Con varias sedes ocurre lo mismo: no hay una forma especial de escribir para la IA, sino publicar los datos de cada sede de forma precisa, legible y con los mismos valores en todas partes."
+   ]
+  },
+  {
+   "heading": "Estructura del sitio: separar la página de la marca, la lista de sedes y las páginas de cada sede",
+   "paragraphs": [
+    "Primero decida qué página responde a qué pregunta. Una única página que enumera todas las sedes facilita que una IA atribuya un párrafo a la sede equivocada."
+   ],
+   "table": {
+    "head": [
+     "Página",
+     "Preguntas que responde",
+     "Qué escribir",
+     "Datos estructurados"
+    ],
+    "rows": [
+     [
+      "Marca (inicio o «Quiénes somos»)",
+      "«¿Qué es [marca]?» «¿Quién la gestiona?»",
+      "Marca y empresa operadora, servicios comunes a todas las sedes, número de sedes (con fecha)",
+      "Organization (sede central)"
+     ],
+     [
+      "Lista de sedes",
+      "«¿Cuántas sedes de [marca] hay en Osaka?» «¿Hay alguna cerca de la estación de Kioto?»",
+      "Nombres y direcciones por región y ciudad, con enlace a cada página de sede",
+      "Opcional (póngalos en cada página de sede)"
+     ],
+     [
+      "Página de sede (una por sede)",
+      "«¿Umeda abre los domingos?» «¿Hay aparcamiento?»",
+      "Datos que pertenecen solo a esa sede (tabla siguiente)",
+      "Un tipo específico de LocalBusiness por sede"
+     ],
+     [
+      "Aviso de cierre o traslado",
+      "«¿Sigue abierto Shinjuku?»",
+      "Fecha de cierre, nueva dirección, enlaces a sedes cercanas",
+      "Eliminar los datos estructurados de la sede"
+     ]
+    ]
+   },
+   "after": [
+    "Dé a cada sede una URL que no vaya a cambiar, como /stores/osaka/umeda/. Cambiar el nombre de las sedes o las URL a mitad de camino genera más discrepancias con lo que las IA y otros sitios leyeron antes. Si tiene que cambiar una, redirija la URL antigua a la nueva.",
+    "No cree páginas para zonas donde no tiene sede (páginas que solo cambian el nombre del lugar, «¿Busca X en [ciudad]? Elíjanos»). Además, pueden llevar a una IA a describir una sede que no existe."
+   ]
+  },
+  {
+   "heading": "Qué necesita cada página de sede y las propiedades correspondientes",
+   "paragraphs": [
+    "La tabla recoge qué escribir en texto claro en cada página de sede y la propiedad de schema.org correspondiente. La documentación de Google sobre negocios locales indica name y address como obligatorias, con openingHoursSpecification, telephone, url, geo y department entre las propiedades recomendadas, y recomienda el tipo más específico disponible, como Dentist, HairSalon o Restaurant ([Google: datos estructurados de negocios locales](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Elemento",
+     "Cómo escribirlo",
+     "Error típico de la IA",
+     "Propiedad"
+    ],
+    "rows": [
+     [
+      "Nombre de la sede",
+      "Un patrón fijo de marca + lugar (p. ej., Sample Dental Umeda), igual para todas las sedes",
+      "Confundida con otra sede, conocida solo por un apodo",
+      "name"
+     ],
+     [
+      "Dirección",
+      "Del código postal al edificio y la planta, más la estación y la salida más cercanas en una frase",
+      "Una dirección anterior o la de una sede cercana",
+      "address, geo, hasMap"
+     ],
+     [
+      "Teléfono",
+      "Indicar si es la línea directa de la sede o una línea central de reservas",
+      "El número central dado como el de la sede",
+      "telephone"
+     ],
+     [
+      "Horario y días de cierre",
+      "Por sede, en la página de cada sede, aunque sean iguales en todas",
+      "El horario de la sede principal dado para todas las sedes",
+      "openingHoursSpecification"
+     ],
+     [
+      "Cierres temporales y festivos",
+      "Con fechas; retirarlos cuando hayan pasado",
+      "Avisos de cierre antiguos que siguen publicados",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Servicios e instalaciones",
+      "Separar lo que ofrecen todas las sedes de lo que ofrece esta («Esta sede no ofrece consultas de ortodoncia los sábados»)",
+      "El servicio de una sede descrito como disponible en todas",
+      "Texto, FAQ, department (una sección dentro de la sede)"
+     ],
+     [
+      "Aparcamiento, pago, idiomas",
+      "Plazas o aparcamientos concertados, formas de pago, idiomas que se hablan",
+      "Las instalaciones de otra sede",
+      "Texto (paymentAccepted y otras)"
+     ],
+     [
+      "Código de sede",
+      "El número que se usa internamente y en Google Business Profile",
+      "Dos sedes con nombres parecidos confundidas",
+      "branchCode"
+     ],
+     [
+      "Vínculo con la marca",
+      "«Gestionado por Sample Co., Ltd.» con enlace a la página «Quiénes somos»",
+      "Franquiciado y franquiciador confundidos",
+      "parentOrganization"
+     ],
+     [
+      "Fecha de apertura, última actualización",
+      "«Actualizado el [fecha]» al final de la página",
+      "No hay forma de saber si los datos están al día",
+      "Texto"
+     ]
+    ]
+   },
+   "after": [
+    "Las páginas de sede suelen acabar siendo el mismo texto con solo el nombre y la dirección cambiados. Es aceptable, pero escribir al menos tres datos que solo se apliquen a esa sede (instalaciones, qué servicios atiende, horas de más afluencia, cómo llegar) da a la IA algo con lo que distinguir las sedes.",
+    "Mantenga las preguntas frecuentes de cada sede en la página de esa sede, separadas de las preguntas de toda la marca: preguntas que puedan responderse incluyendo el nombre de la sede, como «¿Hay aparcamiento en esta sede?» o «¿Puedo hacer X en esta sede?»"
+   ]
+  },
+  {
+   "heading": "Cierres, traslados y cierres temporales",
+   "paragraphs": [
+    "El dato erróneo que más perdura en los negocios con varias sedes es una sede cerrada. Borrar su página no elimina lo que otros sitios y las IA ya han leído. Haga la limpieza en este orden:"
+   ],
+   "list": [
+    "No borre de inmediato la página de la sede cerrada. Reescríbala como «Esta sede cerró el [fecha]» con enlaces a sedes cercanas. En caso de traslado, redirija a la página de la nueva sede o indique claramente la nueva dirección.",
+    "Quítela de la lista de sedes y elimine sus datos estructurados (no siga publicando una sede cerrada como LocalBusiness).",
+    "Actualice su Google Business Profile para que muestre el cierre o el traslado.",
+    "Busque menciones en el resto del sitio (pie de página, página de empleo, páginas de campañas, folletos en PDF).",
+    "Pida a otros editores (webs de reservas, portales, directorios locales) que actualicen sus fichas.",
+    "Para un cierre temporal, indique las fechas y muéstrelo con specialOpeningHoursSpecification o con un aviso. Retírelo cuando reabra."
+   ]
+  },
+  {
+   "heading": "Datos estructurados: vincular cada sede a la marca",
+   "paragraphs": [
+    "Con varias sedes, los datos estructurados deben hacer legible para las máquinas «qué empresa, qué sede». El planteamiento:"
+   ],
+   "list": [
+    "Publique la sede central (marca o empresa operadora) una sola vez como Organization en la página de inicio o en «Quiénes somos», con un @id fijo como https://example.com/#organization.",
+    "En cada página de sede, publique exactamente un LocalBusiness del tipo más específico, con un @id exclusivo de esa sede como https://example.com/stores/osaka/umeda/#store.",
+    "Apunte desde cada sede a la sede central con parentOrganization. schema.org marca la antigua [branchOf](https://schema.org/branchOf) como obsoleta y recomienda usar [parentOrganization](https://schema.org/parentOrganization) en su lugar.",
+    "Ponga el código de sede en [branchCode](https://schema.org/branchCode), que el propio schema.org describe como el «store code».",
+    "Si una sede contiene una sección independiente (los ejemplos de schema.org son una tienda con farmacia y una panadería con cafetería), conéctela con [department](https://schema.org/department), lo que permite que cada sección tenga su propio horario.",
+    "Ponga los valores de cada sede en su propia página en lugar de enumerar todos los LocalBusiness en la lista de sedes. No incluya en los datos estructurados valores que el texto de la página no muestre."
+   ],
+   "after": [
+    "Google incluye entre los fundamentos que los datos estructurados coincidan con el contenido visible de la página y recomienda mantener actualizada la información del Business Profile ([funciones de IA y tu sitio web](https://developers.google.com/search/docs/appearance/ai-features)). Trate los datos estructurados como la hoja de respuestas de lo que la página de sede ya dice."
+   ]
+  },
+  {
+   "heading": "Mantener los mismos valores en Google Business Profile y en el sitio",
+   "paragraphs": [
+    "Cuando el Business Profile de una sede y su página no coinciden, ni las personas ni las IA pueden saber cuál es correcto. Lo que más ayuda es una única hoja maestra con los datos de todas las sedes, a partir de la cual se actualizan el sitio, Google Business Profile y las webs de reservas."
+   ],
+   "table": {
+    "head": [
+     "Columna",
+     "Qué decidir"
+    ],
+    "rows": [
+     [
+      "Código de sede",
+      "El mismo número internamente, en el sitio y en Business Profile"
+     ],
+     [
+      "Nombre de la sede",
+      "El patrón fijo de marca + lugar"
+     ],
+     [
+      "Dirección y teléfono",
+      "Una única forma de escribir números y separadores"
+     ],
+     [
+      "Horario, días de cierre, cierres temporales",
+      "Cuándo cambian y quién los actualiza"
+     ],
+     [
+      "Servicios e instalaciones",
+      "Comunes a todas o solo de esta sede"
+     ],
+     [
+      "URL de la página de sede",
+      "No cambia nunca; si cambia, redirigir"
+     ],
+     [
+      "Estado",
+      "Abierta, cerrada temporalmente, cerrada (con fechas)"
+     ],
+     [
+      "Última revisión",
+      "Con una periodicidad fija, por ejemplo mensual"
+     ]
+    ]
+   },
+   "after": [
+    "La verificación masiva para negocios con muchas sedes, las herramientas para gestionar varias sedes a la vez y el tratamiento de los códigos de sede están sujetos a condiciones que fija Google, y esas condiciones cambian. Consulte la versión actual en el [Centro de Ayuda de Google Business Profile](https://support.google.com/business/). Si los responsables de cada sede editan sus propios perfiles, acuerden que primero se actualiza la hoja maestra para que ambos no se desfasen."
+   ]
+  },
+  {
+   "heading": "En WordPress (con Nurevo AEO)",
+   "paragraphs": [
+    "En WordPress, [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) publica los datos de la sede central como datos estructurados y en llms.txt; combínelo con sus páginas de sede como se indica a continuación. Los ajustes de Nurevo describen un negocio por sitio, así que introduzca allí la sede central (la marca)."
+   ],
+   "list": [
+    "Escriba primero las páginas de sede siguiendo la tabla anterior (el texto antes que los datos estructurados). Use una página o una entrada de un tipo de contenido de sedes por cada sede.",
+    "En los datos del negocio de Nurevo, introduzca el nombre, la descripción, la dirección, el teléfono, la URL y el correo electrónico de la sede central. A diferencia de un negocio con una sola sede, si introduce aquí el horario de una sede, parecerá el horario de todas.",
+    "Introduzca las preguntas propias de cada sede en el panel Nurevo AEO del editor de esa página como preguntas propias de la página, y coloque el bloque de FAQ de Nurevo configurado como «Preguntas propias de esta página». Se publican como FAQPage solo en esa página.",
+    "Para publicar un LocalBusiness por sede, use el filtro para desarrolladores webmcp_canary_schema_graph y añada el nodo de la sede a extra solo en las páginas de sede. El @id de la sede central está disponible como $bundle['org_id']; póngalo en parentOrganization. Genere los valores de la sede a partir de la misma fuente que el texto de la página (campos personalizados, por ejemplo).",
+    "Con Yoast SEO, Rank Math, All in One SEO o Slim SEO, Nurevo añade solo los datos que faltan en los datos estructurados de ese plugin, y los nodos nuevos (como un nodo de sede) se anexan al grafo de ese plugin. Nurevo también funciona junto a SEO SIMPLE PACK y VK All in One Expansion Unit (desde la 0.9.1).",
+    "Si otra herramienta, como un plugin localizador de tiendas, ya publica datos estructurados por sede, evite duplicados: marque «No publicar datos estructurados de Nurevo en esta página» en esas páginas o elija una sola fuente.",
+    "Abra /llms.txt y compruebe que la lista de sedes y sus principales páginas de sede están ahí. llms.txt enumera las 30 páginas y entradas actualizadas más recientemente, así que con muchas sedes faltarán algunas páginas. El filtro webmcp_canary_llms_txt_lines permite añadir una línea para la lista de sedes, y la página de una sede cerrada puede quitarse con «Excluir esta página de llms.txt».",
+    "Si las sedes franquiciadas tienen sitios WordPress propios, exporte los ajustes con wp nurevo export, impórtelos en el otro sitio con wp nurevo import y cambie solo el nombre, la dirección, el teléfono y el horario (las claves y los tokens no se exportan)."
+   ],
+   "after": [
+    "Las mismas comprobaciones sirven para sitios que no están hechos con WordPress. Introduzca una URL en la [comprobación gratuita](/check), sin registro, para ver el estado de los datos estructurados, de llms.txt y del acceso de los rastreadores de IA. Puede comprobar las páginas de sede de una en una, URL por URL."
+   ]
+  },
+  {
+   "heading": "Cómo comprobarlo: por sede, con y sin el nombre",
+   "paragraphs": [
+    "Compruebe eligiendo algunas sedes y registrando los resultados por sede. No hace falta preguntar por todas las sedes cada vez: empiece por las que cambiaron de horario o dirección, las que cerraron o se trasladaron y las que reciben más consultas. Haga la misma pregunta a la misma IA en días distintos y no saque conclusiones de una sola respuesta."
+   ],
+   "table": {
+    "head": [
+     "Qué registrar",
+     "Ejemplo"
+    ],
+    "rows": [
+     [
+      "Fecha, IA, pregunta",
+      "15 nov., Perplexity, «¿Sample Dental Umeda abre los domingos?»"
+     ],
+     [
+      "Datos de la respuesta",
+      "¿El horario, la dirección, el teléfono y los servicios son de esta sede o de otra?"
+     ],
+     [
+      "Fuentes",
+      "¿La página de esta sede, la lista de sedes o una web de reservas externa?"
+     ],
+     [
+      "Pregunta sin el nombre",
+      "¿Aparece la sede para «dentista abierto los domingos en Umeda»?"
+     ],
+     [
+      "Sedes cerradas",
+      "¿Se describe como abierta una sede cerrada?"
+     ]
+    ]
+   },
+   "after": [
+    "La comprobación de IA gratuita de Nurevo (una vez al mes, para sitios Free y Standard conectados) hace preguntas construidas a partir del tipo de negocio y la zona de sus ajustes, sin su nombre. En los ajustes hay una sola zona, así que compruebe a mano las zonas de sus otras sedes con la tabla anterior. La medición de visibilidad de Pro (beta) cubre actualmente Perplexity. El método completo está en [cómo medir la visibilidad en la IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Lista de comprobación para varias sedes",
+   "list": [
+    "Cada sede tiene su propia página, en una URL que no va a cambiar.",
+    "Los nombres de las sedes siguen en todas partes el mismo patrón de marca + lugar.",
+    "Cada página de sede indica en el texto la dirección, el teléfono (directo o central), el horario y los días de cierre de esa sede.",
+    "Los cierres temporales y festivos tienen fechas y se retiran cuando han pasado.",
+    "Los servicios comunes a todas las sedes se escriben por separado de los que solo ofrece esta sede.",
+    "Las sedes cerradas o trasladadas muestran un aviso y se han quitado de la lista de sedes y de los datos estructurados.",
+    "El LocalBusiness de cada sede tiene su propio @id y apunta a la sede central con parentOrganization.",
+    "Los valores de los datos estructurados coinciden con el texto de la página de sede.",
+    "El sitio y Google Business Profile se actualizan a partir de la misma hoja maestra.",
+    "Las sedes se pueden consultar por región, con enlaces a cada página de sede.",
+    "Ha elegido sedes, ha comprobado en días distintos preguntas con y sin el nombre y ha registrado los resultados."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "¿Necesitamos una página para cada sede o basta con una lista de sedes?",
+   "a": "Para responder preguntas sobre una sede (su horario, sus instalaciones), una página por sede es más fiable. Con solo una lista, una IA puede atribuir fácilmente un valor a la sede equivocada. Aunque tenga pocas sedes, dé a cada una su propio encabezado con su dirección y su horario juntos."
+  },
+  {
+   "q": "Si todas las sedes tienen el mismo horario, ¿hace falta ponerlo en cada página?",
+   "a": "Lo recomendamos. Una IA puede responder basándose solo en la página de sede y, si el horario no está ahí, usará valores de otras páginas o de otros sitios."
+  },
+  {
+   "q": "¿Debemos usar branchOf o parentOrganization?",
+   "a": "schema.org marca branchOf como obsoleta y recomienda parentOrganization. Apunte desde el LocalBusiness de cada sede al @id de la Organization de la sede central con parentOrganization."
+  },
+  {
+   "q": "¿Debemos borrar de inmediato la página de una sede cerrada?",
+   "a": "Convertirla en un aviso con la fecha de cierre y enlaces a sedes cercanas, y quitarla de la lista de sedes y de los datos estructurados, comunica el cierre mejor que borrarla. En caso de traslado, redirija a la página de la nueva sede o indique la nueva dirección."
+  },
+  {
+   "q": "Nuestros franquiciados tienen sus propios sitios y cuentas en redes sociales. ¿Cómo mantenemos la coherencia?",
+   "a": "Trate la hoja maestra de la sede central como la fuente de referencia, comparta con los franquiciados la forma acordada de escribir nombres, direcciones, teléfonos y horarios, y pídales que usen los mismos valores. Enlazar en ambos sentidos, del sitio del franquiciado a la página de sede de la marca y viceversa, también deja clara la relación."
+  },
+  {
+   "q": "Tenemos demasiadas sedes para llms.txt. ¿Hay que incluirlas todas?",
+   "a": "No. Si la lista de sedes y sus principales páginas de sede están incluidas, a las demás se puede llegar desde ellas. En Nurevo AEO, el filtro webmcp_canary_llms_txt_lines permite añadir una línea para la lista de sedes."
+  },
+  {
+   "q": "¿Con estos pasos aparecerán correctamente todas las sedes en las respuestas de la IA?",
+   "a": "No se puede garantizar; las respuestas de la IA cambian según el día y la formulación. Estos pasos reducen las causas de que los datos de una sede se mezclen con los de otra y hacen que la información que lee la IA sea correcta y coherente."
+  }
+ ],
+ "relatedHeading": "Guías relacionadas",
+ "cta": {
+  "heading": "Vea cómo lee la IA sus páginas de sede",
+  "body": "La comprobación gratuita no requiere registro: introduzca una URL para ver el estado de los datos estructurados, de llms.txt y del acceso de los rastreadores de IA, página de sede por página de sede si lo desea. En WordPress, el plugin gratuito publica los datos de su sede central como datos estructurados.",
+  "label": "Hacer la comprobación gratuita de legibilidad para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Probar el plugin gratuito para WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT es una marca comercial de OpenAI, Perplexity de Perplexity AI y Google de Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit y WordPress son marcas comerciales de sus respectivos propietarios. Nurevo no está afiliado a ninguna de estas empresas ni cuenta con su respaldo."
+}

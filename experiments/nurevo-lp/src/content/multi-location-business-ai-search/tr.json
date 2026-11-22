@@ -1,0 +1,349 @@
+{
+ "title": "Çok Şubeli İşletmeler ve Yapay Zekâ Araması: Her Şube Doğru | Nurevo",
+ "description": "Yapay zekâ yanıtları şubelerinizi karıştırmasın: şube başına bir sayfa, gereken bilgiler, kapanış ve taşınmalar, şube-marka şeması ve WordPress adımları.",
+ "h1": "Çok şubeli işletmeler için yapay zekâ araması: her şubenin saatleri, adresi ve hizmetleri birbirine karışmasın",
+ "lead": "Bir işletmenin birden çok şubesi olduğunda, yapay zekânın verdiği yanlış yanıtların çoğu bir şubeye ait bilgilerin başka bir şube için kullanılmasından kaynaklanır. Her şubeye, bilgilerini düz metin olarak içeren kendi sayfasını verin (adres, telefon, çalışma saatleri, geçici kapanışlar, o şubede farklı olanlar), yapılandırılmış veride onu markaya bağlayın ve Google İşletme Profili ile diğer kayıtlarınızda aynı değerleri koruyun. İşin özü bu üç adımdır.",
+ "intro": [
+  "15 Kasım 2026 (JST) tarihinde yazılmıştır. Bu rehber, iki veya daha fazla şubesi ya da ofisi olan her işletme (restoranlar, kuaförler, klinikler, mağazalar, okullar, emlak ofisleri) ve bu işletmelerin sitelerini kuran ajanslar içindir. Şirketin kendisi (ticari unvan, kuruluş tarihi, yönetim) [Hakkımızda sayfası için yapay zekâ araması optimizasyonu](/guide/company-profile-page-ai-search) rehberinde, tek bir şubenin işaretlemesinin temelleri ise [yerel işletme şeması ve SEO eklentileri](/guide/local-business-schema-seo-plugins) rehberinde ele alınır. Bu rehber, çok sayıda şubeye sahip olmaktan doğan sorunlarla ilgilidir.",
+  "Yapay zekâ yanıtları güne ve soru biçimine göre değişir. Bu adımlar yapay zekânın okuduğu bilgileri doğru hâle getirir; bir yanıtta veya belirli bir sırada yer alacağınızı garanti etmez."
+ ],
+ "sections": [
+  {
+   "heading": "Çok şubeli işletmelerde yapay zekâ yanıtları nasıl yanlış çıkar",
+   "paragraphs": [
+    "ChatGPT arama, Perplexity ve Google'ın AI Overviews özelliği web sayfalarını okur, bir yanıt oluşturur ve kaynaklarını gösterir. Tek şubede “işletmenin bilgileri” tek bir settir. Birden çok şubede ise yapay zekânın okuduğu sayfalarda birkaç adres, birkaç farklı çalışma saati ve birkaç telefon numarası bulunur. Metin hangi değerin hangi şubeye ait olduğunu açıkça belirtmezse, yanıt yanlış değerden oluşturulabilir.",
+    "İnsanların sorduğu sorular, markayla ilgili sorular ve tek bir şubeyle ilgili sorular olarak ikiye ayrılır:"
+   ],
+   "list": [
+    "“[Marka]'nın Umeda şubesi pazar günleri açık mı?” (o şubenin çalışma saatleri ve kapalı günleri)",
+    "“Hangi [marka] şubelerinde otopark var?” (şubeye göre değişen olanaklar)",
+    "“Shinjuku'daki [marka] hâlâ açık mı, yoksa taşındı mı?” (kapanışlar ve taşınmalar)",
+    "“Kyoto İstasyonu yakınında bir [marka] var mı?” (hangi şubenin hangi bölgeye hizmet verdiği)",
+    "“Her [marka] şubesinde aynı menüyü / tedaviyi / hizmeti alabilir miyim?” (şubeye göre değişen hizmetler)",
+    "“[Marka]'yı kim işletiyor?” (marka ve işletmeci şirket)"
+   ],
+   "after": [
+    "Dört hata sürekli tekrarlanır: ana şubenin saatlerinin tüm şubelerin saatleri gibi verilmesi, kapanmış bir şubenin açık olarak tanıtılması, merkezi rezervasyon numarasının bir şubenin telefonu olarak verilmesi ve yalnızca bazı şubelerin sunduğu bir hizmetin her yerde mevcutmuş gibi anlatılması. Her şubenin bilgileri o şubenin kendi sayfasında yazıldığında bu hataların her biri daha az olası hâle gelir.",
+    "Google, AI Overviews veya AI Mode'da yer almak için ek bir gereklilik ya da özel bir yapılandırılmış veri olmadığını ve olağan SEO temellerinin geçerli olduğunu belirtir ([Google Search Central: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Çok şubeli işletmelerdeki çalışma da aynıdır: yapay zekâya özel bir yazım biçimi değil, her şubenin bilgilerinin doğru, okunabilir ve her yerde aynı değerlerle yayımlanması."
+   ]
+  },
+  {
+   "heading": "Site yapısı: marka sayfasını, şube listesini ve şube sayfalarını ayırın",
+   "paragraphs": [
+    "Önce hangi sayfanın hangi soruyu yanıtlayacağına karar verin. Tüm şubeleri listeleyen tek bir sayfa, yapay zekânın bir paragrafı yanlış şubeye bağlamasını kolaylaştırır."
+   ],
+   "table": {
+    "head": [
+     "Sayfa",
+     "Yanıtladığı sorular",
+     "Ne yazılmalı",
+     "Yapılandırılmış veri"
+    ],
+    "rows": [
+     [
+      "Marka (ana sayfa veya Hakkımızda)",
+      "“[Marka] nedir?” “Kim işletiyor?”",
+      "Marka ve işletmeci şirket, tüm şubelerde ortak hizmetler, şube sayısı (tarihiyle birlikte)",
+      "Organization (genel merkez)"
+     ],
+     [
+      "Şube listesi",
+      "“Osaka'da kaç [marka] şubesi var?” “Kyoto İstasyonu yakınında var mı?”",
+      "Bölge ve şehre göre adlar ve adresler, her şube sayfasına bağlantılı",
+      "İsteğe bağlı (her şube sayfasına koyun)"
+     ],
+     [
+      "Şube sayfası (her şube için bir tane)",
+      "“Umeda pazar günü açık mı?” “Otopark var mı?”",
+      "Yalnızca o şubeye ait bilgiler (sonraki tablo)",
+      "Her şube için belirli bir LocalBusiness türü"
+     ],
+     [
+      "Kapanış veya taşınma duyurusu",
+      "“Shinjuku hâlâ açık mı?”",
+      "Kapanış tarihi, yeni adres, yakındaki şubelere bağlantılar",
+      "Şubenin yapılandırılmış verisini kaldırın"
+     ]
+    ]
+   },
+   "after": [
+    "Her şubeye değişmeyecek bir URL verin, örneğin /stores/osaka/umeda/. Şubeleri veya URL'leri sonradan yeniden adlandırmak, yapay zekâların ve diğer sitelerin daha önce okuduklarıyla daha fazla uyumsuzluk yaratır. Birini değiştirmek zorundaysanız eski URL'yi yenisine yönlendirin.",
+    "Şubenizin bulunmadığı bölgeler için sayfa oluşturmayın (yalnızca yer adını değiştiren, “[ilçe]'de X mi arıyorsunuz? Bizi seçin” türünden sayfalar). Bu sayfalar yapay zekânın var olmayan bir şubeyi anlatmasına da yol açabilir."
+   ]
+  },
+  {
+   "heading": "Her şube sayfasında olması gerekenler ve karşılık gelen özellikler",
+   "paragraphs": [
+    "Tablo, her şube sayfasına düz metin olarak yazılması gerekenleri ve karşılık gelen schema.org özelliğini listeler. Google'ın yerel işletme belgeleri name ve address özelliklerini zorunlu olarak gösterir; önerilen özellikler arasında openingHoursSpecification, telephone, url, geo ve department bulunur. Ayrıca Dentist, HairSalon veya Restaurant gibi mevcut en belirli türün kullanılmasını önerir ([Google: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Öğe",
+     "Nasıl yazılmalı",
+     "Tipik yapay zekâ hatası",
+     "Özellik"
+    ],
+    "rows": [
+     [
+      "Şube adı",
+      "Sabit bir kalıp, marka + yer (ör. Örnek Diş Umeda), her şube için aynı",
+      "Başka bir şubeyle karıştırılması, yalnızca bir lakapla bilinmesi",
+      "name"
+     ],
+     [
+      "Adres",
+      "Posta kodundan bina ve kata kadar, ayrıca en yakın istasyon ve çıkış bir cümleyle",
+      "Eski bir adres veya yakındaki bir şubenin adresi",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telefon",
+      "Şubenin doğrudan hattı mı yoksa merkezi rezervasyon hattı mı olduğunu belirtin",
+      "Merkezi numaranın şubenin numarası olarak verilmesi",
+      "telephone"
+     ],
+     [
+      "Çalışma saatleri ve kapalı günler",
+      "Şube bazında, her şubenin kendi sayfasında, her yerde aynı olsalar bile",
+      "Ana şubenin saatlerinin tüm şubeler için verilmesi",
+      "openingHoursSpecification"
+     ],
+     [
+      "Geçici kapanışlar ve tatiller",
+      "Tarihleriyle; sona erdiklerinde kaldırın",
+      "Eski kapanış duyurularının yerinde bırakılması",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Hizmetler ve olanaklar",
+      "Tüm şubelerin sunduklarını bu şubenin sunduklarından ayırın (“Bu şubede cumartesi ortodonti muayenesi yapılmamaktadır”)",
+      "Bir şubenin hizmetinin her yerde mevcutmuş gibi anlatılması",
+      "Gövde metni, SSS, department (şube içindeki bir bölüm)"
+     ],
+     [
+      "Otopark, ödeme, diller",
+      "Park yeri sayısı veya anlaşmalı otoparklar, ödeme yöntemleri, konuşulan diller",
+      "Başka bir şubenin olanakları",
+      "Gövde metni (paymentAccepted ve diğerleri)"
+     ],
+     [
+      "Mağaza kodu",
+      "Şirket içinde ve Google İşletme Profili'nde kullanılan numara",
+      "Benzer adlı iki şubenin karıştırılması",
+      "branchCode"
+     ],
+     [
+      "Markaya bağlantı",
+      "Hakkımızda sayfasına bağlantıyla birlikte “Örnek A.Ş. tarafından işletilmektedir”",
+      "Franchise alan ile franchise verenin karıştırılması",
+      "parentOrganization"
+     ],
+     [
+      "Açılış tarihi, son güncelleme",
+      "Sayfanın sonunda “[tarih] tarihinde güncellendi”",
+      "Bilgilerin ne kadar güncel olduğunu anlamanın yolu yok",
+      "Gövde metni"
+     ]
+    ]
+   },
+   "after": [
+    "Şube sayfaları çoğu zaman yalnızca adı ve adresi değiştirilmiş aynı metne dönüşür. Bu kabul edilebilir; ancak yalnızca o şube için geçerli en az üç bilgi yazmak (olanaklar, hangi hizmetleri verdiği, yoğun saatler, yol tarifi) yapay zekâya şubeleri birbirinden ayırt edebileceği bir şey verir.",
+    "Her şubenin SSS'sini marka genelindeki sorulardan ayrı olarak o şubenin sayfasında tutun: “Bu şubede otopark var mı?” veya “Bu şubede X yaptırabilir miyim?” gibi, içinde şubenin adı geçerek yanıtlanabilecek sorular."
+   ]
+  },
+  {
+   "heading": "Kapanışlar, taşınmalar ve geçici kapanışlar",
+   "paragraphs": [
+    "Çok şubeli işletmelerde en uzun süre yaşayan yanlış bilgi, kapanmış bir şubedir. Sayfasını silmek, diğer sitelerin ve yapay zekâların zaten okumuş olduklarını ortadan kaldırmaz. Temizliği şu sırayla yapın:"
+   ],
+   "list": [
+    "Kapanan şubenin sayfasını hemen silmeyin. Sayfayı yakındaki şubelere bağlantılarla birlikte “Bu şube [tarih] tarihinde kapanmıştır” şeklinde yeniden yazın. Taşınma durumunda yeni şubenin sayfasına yönlendirin veya yeni adresi açıkça belirtin.",
+    "Şubeyi şube listesinden çıkarın ve yapılandırılmış verisini kaldırın (kapanmış bir şubeyi LocalBusiness olarak yayımlamaya devam etmeyin).",
+    "Google İşletme Profili'ni kapanışı veya taşınmayı gösterecek şekilde güncelleyin.",
+    "Sitenin geri kalanında (alt bilgi, kariyer sayfası, kampanya sayfaları, PDF broşürler) şubeden söz edilen yerleri arayın.",
+    "Diğer yayıncılardan (rezervasyon siteleri, portallar, yerel rehberler) kayıtlarını güncellemelerini isteyin.",
+    "Geçici kapanışlarda tarih verin ve bunu specialOpeningHoursSpecification veya bir duyuruyla gösterin. Yeniden açıldığınızda kaldırın."
+   ]
+  },
+  {
+   "heading": "Yapılandırılmış veri: her şubeyi markaya bağlayın",
+   "paragraphs": [
+    "Birden çok şube olduğunda yapılandırılmış veri, “hangi şirket, hangi şube” bilgisini makinelerin okuyabileceği hâle getirmelidir. Yaklaşım şöyledir:"
+   ],
+   "list": [
+    "Genel merkezi (marka veya işletmeci şirket) ana sayfada veya Hakkımızda sayfasında bir kez Organization olarak sabit bir @id ile yayımlayın, örneğin https://example.com/#organization.",
+    "Her şube sayfasında, en belirli türde tam olarak bir LocalBusiness yayımlayın; @id o şubeye özgü olsun, örneğin https://example.com/stores/osaka/umeda/#store.",
+    "Her şubeden genel merkeze parentOrganization ile işaret edin. schema.org eski [branchOf](https://schema.org/branchOf) özelliğini kullanımdan kaldırılmış olarak işaretler ve yerine [parentOrganization](https://schema.org/parentOrganization) kullanılmasını önerir.",
+    "Mağaza kodunu, schema.org'un kendisinin “mağaza kodu” olarak tanımladığı [branchCode](https://schema.org/branchCode) özelliğine yazın.",
+    "Bir şube ayrı bir bölüm içeriyorsa (schema.org'un örnekleri eczanesi olan bir mağaza ve kafesi olan bir fırındır), bunu her bölümün kendi çalışma saatlerine sahip olmasını sağlayan [department](https://schema.org/department) ile bağlayın.",
+    "Tüm LocalBusiness kayıtlarını şube listesinde sıralamak yerine her şubenin değerlerini kendi sayfasına koyun. Sayfa metninde görünmeyen değerleri yapılandırılmış veriye koymayın."
+   ],
+   "after": [
+    "Google, yapılandırılmış verinin sayfada görünen içerikle eşleşmesini temel konulardan biri olarak sayar ve İşletme Profili bilgilerinin güncel tutulmasını önerir ([AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Yapılandırılmış veriyi, şube sayfasının zaten söylediklerinin cevap anahtarı olarak düşünün."
+   ]
+  },
+  {
+   "heading": "Google İşletme Profili ile siteyi aynı değerlerde tutun",
+   "paragraphs": [
+    "Bir şubenin İşletme Profili ile sayfası birbirini tutmadığında ne insanlar ne de yapay zekâlar hangisinin doğru olduğunu anlayabilir. En çok işe yarayan şey, tüm şubelerin bilgilerini içeren tek bir ana tablodur; site, Google İşletme Profili ve rezervasyon sitelerinin hepsi bu tablodan güncellenir."
+   ],
+   "table": {
+    "head": [
+     "Sütun",
+     "Neye karar verilmeli"
+    ],
+    "rows": [
+     [
+      "Mağaza kodu",
+      "Şirket içinde, sitede ve İşletme Profili'nde aynı numara"
+     ],
+     [
+      "Şube adı",
+      "Sabit marka + yer kalıbı"
+     ],
+     [
+      "Adres ve telefon",
+      "Numaralar ve ayırıcılar için tek bir yazım biçimi"
+     ],
+     [
+      "Çalışma saatleri, kapalı günler, geçici kapanışlar",
+      "Ne zaman değiştikleri ve kimin güncellediği"
+     ],
+     [
+      "Hizmetler ve olanaklar",
+      "Tüm şubelerde ortak olanlar ile yalnızca bu şubeye ait olanlar"
+     ],
+     [
+      "Şube sayfası URL'si",
+      "Asla değişmez; değişirse yönlendirin"
+     ],
+     [
+      "Durum",
+      "Açık, geçici olarak kapalı, kapandı (tarihleriyle)"
+     ],
+     [
+      "Son kontrol",
+      "Sabit bir döngüyle, örneğin aylık"
+     ]
+    ]
+   },
+   "after": [
+    "Çok sayıda şubesi olan işletmeler için toplu doğrulama, birden çok şubeyi birlikte yönetme araçları ve mağaza kodlarının işlenmesi Google'ın belirlediği koşullara tabidir ve bu koşullar değişir. Güncel sürümü [Google İşletme Profili Yardım Merkezi](https://support.google.com/business/)'nde kontrol edin. Şube yöneticileri kendi profillerini düzenliyorsa, ikisinin birbirinden uzaklaşmaması için önce ana tablonun güncelleneceği konusunda anlaşın."
+   ]
+  },
+  {
+   "heading": "WordPress'te (Nurevo AEO ile)",
+   "paragraphs": [
+    "WordPress'te [Nurevo AEO (ücretsiz)](https://wordpress.org/plugins/nurevo-webmcp/) genel merkezin bilgilerini yapılandırılmış veri olarak ve llms.txt içinde yayımlar; bunu aşağıdaki gibi şube sayfalarınızla birleştirin. Nurevo'nun ayarları site başına bir işletmeyi tanımlar, bu yüzden oraya genel merkezi (markayı) girin."
+   ],
+   "list": [
+    "Önce yukarıdaki tabloyu izleyerek şube sayfalarını yazın (yapılandırılmış veriden önce metin). Her şube için bir sayfa veya bir şube yazı türünün bir girdisini kullanın.",
+    "Nurevo'nun işletme bilgilerine genel merkezin adını, açıklamasını, adresini, telefonunu, URL'sini ve e-postasını girin. Tek şubeli bir işletmenin aksine, buraya bir şubenin çalışma saatlerini girmek onları tüm şubelerin saatleri gibi gösterir.",
+    "Her şubenin kendi sorularını o sayfanın düzenleyicisindeki Nurevo AEO panelinde bu sayfanın kendi soruları olarak girin ve “Bu sayfanın kendi soruları” olarak ayarlanmış Nurevo SSS bloğunu yerleştirin. Bu sorular yalnızca o sayfada FAQPage olarak yayımlanır.",
+    "Her şube için bir LocalBusiness yayımlamak üzere, geliştirici filtresi webmcp_canary_schema_graph ile şubenin düğümünü yalnızca şube sayfalarında extra'ya ekleyin. Genel merkezin @id değeri $bundle['org_id'] olarak kullanılabilir; bunu parentOrganization'a koyun. Şubenin değerlerini sayfa metniyle aynı kaynaktan (örneğin özel alanlardan) oluşturun.",
+    "Yoast SEO, Rank Math, All in One SEO veya Slim SEO ile Nurevo yalnızca o eklentinin yapılandırılmış verisinde eksik olan bilgileri ekler ve yeni düğümler (örneğin bir şube düğümü) o eklentinin grafiğine eklenir. Nurevo, SEO SIMPLE PACK ve VK All in One Expansion Unit ile de birlikte çalışır (0.9.1 sürümünden itibaren).",
+    "Mağaza bulucu eklentisi gibi başka bir şey zaten şube başına yapılandırılmış veri yayımlıyorsa, yinelenmeyi önleyin: o sayfalarda “Bu sayfada Nurevo yapılandırılmış verisi yayımlama” seçeneğini işaretleyin veya tek bir kaynak seçin.",
+    "/llms.txt dosyasını açın ve şube listesinin ve ana şube sayfalarınızın orada olduğunu kontrol edin. llms.txt en son güncellenen 30 sayfa ve yazıyı listeler; bu nedenle çok sayıda şube varsa bazı sayfalar eksik kalır. webmcp_canary_llms_txt_lines filtresi şube listesi için bir satır ekleyebilir; kapanmış bir şubenin sayfası ise “Bu sayfayı llms.txt dışında bırak” ile çıkarılabilir.",
+    "Franchise şubeleri ayrı WordPress siteleri işletiyorsa, ayarları wp nurevo export ile dışa aktarın, diğer sitede wp nurevo import ile içe aktarın, ardından yalnızca adı, adresi, telefonu ve çalışma saatlerini değiştirin (anahtarlar ve belirteçler dışa aktarılmaz)."
+   ],
+   "after": [
+    "Aynı kontroller WordPress üzerine kurulmamış siteler için de geçerlidir. Yapılandırılmış verinin, llms.txt'nin ve yapay zekâ tarayıcısı erişiminin durumunu görmek için üyelik gerektirmeyen [ücretsiz kontrole](/check) bir URL girin. Şube sayfalarını tek tek URL olarak kontrol edebilirsiniz."
+   ]
+  },
+  {
+   "heading": "Nasıl kontrol edilir: şube bazında, adla ve adsız",
+   "paragraphs": [
+    "Şubeler seçerek ve sonuçları şube bazında kaydederek kontrol edin. Her seferinde her şubeyi sormanız gerekmez: çalışma saatleri veya adresi değişen, kapanan veya taşınan ve en çok soru alan şubelerle başlayın. Aynı soruyu aynı yapay zekâya farklı günlerde sorun ve tek bir yanıta göre karar vermeyin."
+   ],
+   "table": {
+    "head": [
+     "Ne kaydedilmeli",
+     "Örnek"
+    ],
+    "rows": [
+     [
+      "Tarih, yapay zekâ, soru",
+      "15 Kasım, Perplexity, “Örnek Diş Umeda pazar günü açık mı?”"
+     ],
+     [
+      "Yanıttaki bilgiler",
+      "Saatler, adres, telefon ve hizmetler bu şubeye mi ait, yoksa başka birine mi?"
+     ],
+     [
+      "Kaynaklar",
+      "Bu şubenin sayfası mı, şube listesi mi, yoksa dışarıdaki bir rezervasyon sitesi mi?"
+     ],
+     [
+      "Adsız soru",
+      "Şube “Umeda'da pazar günü açık diş hekimi” sorusunda çıkıyor mu?"
+     ],
+     [
+      "Kapanmış şubeler",
+      "Kapanmış bir şube açık olarak mı anlatılıyor?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevo'nun ücretsiz yapay zekâ kontrolü (ayda bir kez, bağlı Free ve Standard siteler için), ayarlarınızdaki işletme türü ve bölgeden oluşturulan soruları adınızı kullanmadan sorar. Ayarlarda tek bir bölge vardır; bu yüzden diğer şubelerinizin bölgelerini yukarıdaki tabloyla elle kontrol edin. Pro'nun görünürlük ölçümü (beta) şu anda Perplexity'yi kapsar. Yöntemin tamamı [yapay zekâ görünürlüğü nasıl ölçülür](/guide/measure-ai-visibility) rehberindedir."
+   ]
+  },
+  {
+   "heading": "Çok şubeli işletme kontrol listesi",
+   "list": [
+    "Her şubenin değişmeyecek bir URL'de kendi sayfası var.",
+    "Şube adları her yerde aynı marka + yer kalıbını izliyor.",
+    "Her şube sayfası o şubenin adresini, telefonunu (doğrudan veya merkezi), çalışma saatlerini ve kapalı günlerini metin olarak belirtiyor.",
+    "Geçici kapanışların ve tatillerin tarihleri var ve sona erdiklerinde kaldırılıyorlar.",
+    "Tüm şubelerde ortak hizmetler, yalnızca bu şubenin sunduklarından ayrı yazılmış.",
+    "Kapanan veya taşınan şubeler bir duyuru gösteriyor ve şube listesinden ve yapılandırılmış veriden kaldırılmış.",
+    "Her şubenin LocalBusiness kaydının kendi @id değeri var ve parentOrganization ile genel merkeze işaret ediyor.",
+    "Yapılandırılmış veri değerleri şube sayfası metniyle eşleşiyor.",
+    "Site ve Google İşletme Profili aynı ana tablodan güncelleniyor.",
+    "Şubelere bölgeye göre göz atılabiliyor ve her şube sayfasına bağlantı veriliyor.",
+    "Şubeler seçtiniz, adla ve adsız soruları farklı günlerde kontrol ettiniz ve sonuçları kaydettiniz."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Her şube için bir sayfaya mı ihtiyacımız var, yoksa tek bir şube listesi yeterli mi?",
+   "a": "Tek bir şubeyle ilgili soruları (çalışma saatleri, olanakları) yanıtlamak için şube başına bir sayfa daha güvenilirdir. Yalnızca bir liste olduğunda yapay zekâ bir değeri kolayca yanlış şubeye bağlayabilir. Şube sayısı az olsa bile her birine adresi ve çalışma saatleri bir arada olacak şekilde kendi başlığını verin."
+  },
+  {
+   "q": "Tüm şubelerin çalışma saatleri aynıysa, yine de her sayfada belirtmemiz gerekir mi?",
+   "a": "Bunu öneriyoruz. Yapay zekâ yalnızca şube sayfasına bakarak yanıt verebilir ve saatler orada yoksa başka sayfalardan veya başka sitelerden gelen değerleri kullanır."
+  },
+  {
+   "q": "branchOf mu kullanmalıyız, parentOrganization mı?",
+   "a": "schema.org branchOf'u kullanımdan kaldırılmış olarak işaretler ve parentOrganization'ı önerir. Her şubenin LocalBusiness kaydından genel merkezin Organization @id değerine parentOrganization ile işaret edin."
+  },
+  {
+   "q": "Kapanan bir şubenin sayfasını hemen silmeli miyiz?",
+   "a": "Sayfayı kapanış tarihini ve yakındaki şubelere bağlantıları içeren bir duyuruya dönüştürmek ve şubeyi şube listesinden ve yapılandırılmış veriden kaldırmak, kapanışı silmekten daha iyi duyurur. Taşınma durumunda yeni şubenin sayfasına yönlendirin veya yeni adresi belirtin."
+  },
+  {
+   "q": "Franchise alanlarımız kendi sitelerini ve sosyal medya hesaplarını işletiyor. Tutarlılığı nasıl sağlarız?",
+   "a": "Genel merkezin ana tablosunu tek doğru kaynak olarak kabul edin, adların, adreslerin, telefon numaralarının ve çalışma saatlerinin üzerinde anlaşılmış yazımını franchise alanlarla paylaşın ve aynı değerleri kullanmalarını isteyin. Franchise alanın sitesinden markanın şube sayfasına ve oradan geri olmak üzere iki yönlü bağlantı vermek de ilişkiyi netleştirir."
+  },
+  {
+   "q": "llms.txt için çok fazla şubemiz var. Hepsinin listelenmesi gerekir mi?",
+   "a": "Hayır. Şube listesi ve ana şube sayfalarınız oradaysa, geri kalanlara onlar üzerinden ulaşılabilir. Nurevo AEO'da webmcp_canary_llms_txt_lines filtresi şube listesi için bir satır ekleyebilir."
+  },
+  {
+   "q": "Bu adımlar her şubenin yapay zekâ yanıtlarında doğru görünmesini sağlar mı?",
+   "a": "Bu garanti edilemez; yapay zekâ yanıtları güne ve soru biçimine göre değişir. Bu adımlar bir şubenin bilgilerinin başka bir şubeninkiyle karışmasının nedenlerini azaltır ve yapay zekânın okuduğu bilgileri doğru ve tutarlı hâle getirir."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Yapay zekânın şube sayfalarınızı nasıl okuduğunu görün",
+  "body": "Ücretsiz kontrol üyelik gerektirmez: yapılandırılmış verinin, llms.txt'nin ve yapay zekâ tarayıcısı erişiminin durumunu görmek için bir URL girin; isterseniz şube sayfalarını tek tek kontrol edin. WordPress'te ücretsiz eklenti, genel merkezinizin bilgilerini yapılandırılmış veri olarak yayımlar.",
+  "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü çalıştırın",
+  "href": "/check",
+  "secondary": {
+   "label": "Ücretsiz WordPress eklentisini deneyin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT, OpenAI'ın; Perplexity, Perplexity AI'ın; Google ise Google LLC'nin ticari markasıdır. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ve WordPress ilgili sahiplerinin ticari markalarıdır. Nurevo bu şirketlerin hiçbiriyle bağlantılı değildir ve bu şirketler tarafından onaylanmamıştır."
+}

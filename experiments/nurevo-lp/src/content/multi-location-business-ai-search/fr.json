@@ -1,0 +1,349 @@
+{
+ "title": "Recherche IA multi-établissements : chaque site exact | Nurevo",
+ "description": "Évitez que l’IA mélange vos établissements : une page par site, les infos nécessaires, fermetures et déménagements, schema vers la marque et étapes WordPress.",
+ "h1": "Recherche IA pour les entreprises multi-établissements : éviter que les horaires, adresses et services de vos sites soient mélangés",
+ "lead": "Quand une entreprise a plusieurs établissements, la plupart des réponses erronées de l’IA viennent des informations d’un établissement appliquées à un autre. Donnez à chaque établissement sa propre page, avec ses informations en texte clair (adresse, téléphone, horaires, fermetures temporaires, ce qui y diffère), reliez-le à la marque dans les données structurées et gardez les mêmes valeurs dans Google Business Profile et vos autres fiches. Ces trois étapes sont le cœur du travail.",
+ "intro": [
+  "Rédigé le 15 novembre 2026 (JST). Ce guide s’adresse à toute entreprise ayant deux établissements ou bureaux ou plus (restaurants, salons, cliniques, boutiques, écoles, agences immobilières) et aux agences qui créent leurs sites. L’entreprise elle-même (raison sociale, date de création, dirigeants) est traitée dans [optimiser la page À propos pour la recherche IA](/guide/company-profile-page-ai-search), et les bases du balisage d’un seul établissement dans [schema LocalBusiness et plugins SEO](/guide/local-business-schema-seo-plugins). Ce guide porte sur les problèmes qui naissent du fait d’avoir de nombreux établissements.",
+  "Les réponses de l’IA varient selon le jour et la formulation. Ces étapes rendent exactes les informations que lit l’IA ; elles ne garantissent pas que vous apparaîtrez dans une réponse ni à une position donnée."
+ ],
+ "sections": [
+  {
+   "heading": "Comment les réponses de l’IA se trompent pour les entreprises multi-établissements",
+   "paragraphs": [
+    "La recherche ChatGPT, Perplexity et les Aperçus IA de Google lisent des pages web, construisent une réponse et affichent leurs sources. Avec un seul établissement, « les informations de l’entreprise » forment un seul ensemble. Avec plusieurs, les pages que lit une IA contiennent plusieurs adresses, plusieurs horaires et plusieurs numéros de téléphone. Si le texte n’indique pas clairement quelle valeur appartient à quel établissement, la réponse peut être construite à partir de la mauvaise.",
+    "Les questions posées se répartissent entre questions sur la marque et questions sur un établissement :"
+   ],
+   "list": [
+    "« L’établissement Umeda de [marque] est-il ouvert le dimanche ? » (horaires et jours de fermeture de cet établissement)",
+    "« Quels établissements [marque] ont un parking ? » (équipements qui diffèrent selon l’établissement)",
+    "« Le [marque] de Shinjuku est-il toujours ouvert, ou a-t-il déménagé ? » (fermetures et déménagements)",
+    "« Y a-t-il un [marque] près de la gare de Kyoto ? » (quel établissement dessert quelle zone)",
+    "« Puis-je avoir la même carte / le même soin / le même service dans tous les [marque] ? » (services qui diffèrent selon l’établissement)",
+    "« Qui exploite [marque] ? » (marque et société exploitante)"
+   ],
+   "after": [
+    "Quatre erreurs reviennent sans cesse : les horaires de l’établissement principal donnés comme ceux de tous les établissements, un établissement fermé décrit comme ouvert, le numéro central de réservation donné comme téléphone d’un établissement, et un service proposé par seulement quelques établissements décrit comme disponible partout. Chacune devient moins probable dès que les informations de chaque établissement figurent sur sa propre page.",
+    "Google indique qu’il n’existe aucune exigence supplémentaire ni données structurées spéciales pour apparaître dans les Aperçus IA ou le Mode IA, et que les bases habituelles du SEO s’appliquent ([Google Search Central : fonctionnalités d’IA et votre site web](https://developers.google.com/search/docs/appearance/ai-features)). Il en va de même pour le multi-établissements : pas de manière spéciale d’écrire pour l’IA, mais les informations de chaque établissement publiées avec exactitude, lisibles et avec les mêmes valeurs partout."
+   ]
+  },
+  {
+   "heading": "Structure du site : séparer la page de la marque, la liste des établissements et les pages d’établissement",
+   "paragraphs": [
+    "Décidez d’abord quelle page répond à quelle question. Une page unique qui liste tous les établissements permet facilement à une IA d’attribuer un paragraphe au mauvais établissement."
+   ],
+   "table": {
+    "head": [
+     "Page",
+     "Questions auxquelles elle répond",
+     "Quoi y écrire",
+     "Données structurées"
+    ],
+    "rows": [
+     [
+      "Marque (accueil ou À propos)",
+      "« Qu’est-ce que [marque] ? » « Qui l’exploite ? »",
+      "Marque et société exploitante, services communs à tous les établissements, nombre d’établissements (avec une date)",
+      "Organization (siège)"
+     ],
+     [
+      "Liste des établissements",
+      "« Combien d’établissements [marque] à Osaka ? » « Y en a-t-il un près de la gare de Kyoto ? »",
+      "Noms et adresses par région et par ville, avec un lien vers chaque page d’établissement",
+      "Facultatif (à placer sur chaque page d’établissement)"
+     ],
+     [
+      "Page d’établissement (une par établissement)",
+      "« Umeda est-il ouvert le dimanche ? » « Y a-t-il un parking ? »",
+      "Informations propres à cet établissement uniquement (tableau suivant)",
+      "Un type LocalBusiness précis par établissement"
+     ],
+     [
+      "Avis de fermeture ou de déménagement",
+      "« Shinjuku est-il toujours ouvert ? »",
+      "Date de fermeture, nouvelle adresse, liens vers les établissements proches",
+      "Supprimer les données structurées de l’établissement"
+     ]
+    ]
+   },
+   "after": [
+    "Donnez à chaque établissement une URL qui ne changera pas, par exemple /stores/osaka/umeda/. Renommer des établissements ou des URL en cours de route crée davantage de décalages avec ce que les IA et les autres sites ont lu auparavant. Si vous devez en changer une, redirigez l’ancienne URL vers la nouvelle.",
+    "Ne créez pas de pages pour des zones où vous n’avez pas d’établissement (pages qui ne font que changer le nom du lieu, « vous cherchez X à [ville] ? Choisissez-nous »). Elles peuvent aussi amener une IA à décrire un établissement qui n’existe pas."
+   ]
+  },
+  {
+   "heading": "Ce dont chaque page d’établissement a besoin, et les propriétés correspondantes",
+   "paragraphs": [
+    "Le tableau indique ce qu’il faut écrire en texte clair sur chaque page d’établissement et la propriété schema.org correspondante. La documentation de Google sur les établissements locaux indique name et address comme obligatoires, avec openingHoursSpecification, telephone, url, geo et department parmi les propriétés recommandées, et recommande le type le plus précis disponible, comme Dentist, HairSalon ou Restaurant ([Google : données structurées pour les établissements locaux](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Élément",
+     "Comment l’écrire",
+     "Erreur typique de l’IA",
+     "Propriété"
+    ],
+    "rows": [
+     [
+      "Nom de l’établissement",
+      "Un modèle fixe marque + lieu (p. ex. Sample Dental Umeda), identique pour chaque établissement",
+      "Confondu avec un autre établissement, connu seulement par un surnom",
+      "name"
+     ],
+     [
+      "Adresse",
+      "Du code postal jusqu’au bâtiment et à l’étage, plus la gare et la sortie les plus proches dans une phrase",
+      "Une ancienne adresse, ou celle d’un établissement voisin",
+      "address, geo, hasMap"
+     ],
+     [
+      "Téléphone",
+      "Préciser s’il s’agit de la ligne directe de l’établissement ou d’une ligne centrale de réservation",
+      "Le numéro central donné comme celui de l’établissement",
+      "telephone"
+     ],
+     [
+      "Horaires et jours de fermeture",
+      "Par établissement, sur la page de chacun, même s’ils sont identiques partout",
+      "Les horaires de l’établissement principal donnés pour tous",
+      "openingHoursSpecification"
+     ],
+     [
+      "Fermetures temporaires et jours fériés",
+      "Avec des dates ; les retirer une fois passées",
+      "D’anciens avis de fermeture laissés en place",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Services et équipements",
+      "Séparer ce que proposent tous les établissements de ce que propose celui-ci (« Cet établissement ne propose pas de consultations d’orthodontie le samedi »)",
+      "Le service d’un établissement décrit comme disponible partout",
+      "Texte, FAQ, department (une section au sein de l’établissement)"
+     ],
+     [
+      "Parking, paiement, langues",
+      "Places ou parkings partenaires, moyens de paiement, langues parlées",
+      "Les équipements d’un autre établissement",
+      "Texte (paymentAccepted et autres)"
+     ],
+     [
+      "Code établissement",
+      "Le numéro utilisé en interne et dans Google Business Profile",
+      "Deux établissements aux noms proches confondus",
+      "branchCode"
+     ],
+     [
+      "Lien vers la marque",
+      "« Exploité par Sample Co., Ltd. » avec un lien vers la page À propos",
+      "Franchisé et franchiseur confondus",
+      "parentOrganization"
+     ],
+     [
+      "Date d’ouverture, dernière mise à jour",
+      "« Mis à jour le [date] » en bas de la page",
+      "Impossible de savoir si les informations sont à jour",
+      "Texte"
+     ]
+    ]
+   },
+   "after": [
+    "Les pages d’établissement finissent souvent par reprendre le même texte en ne changeant que le nom et l’adresse. C’est acceptable, mais écrire au moins trois informations propres à cet établissement (équipements, services qu’il assure, heures d’affluence, accès) donne à une IA de quoi distinguer les établissements.",
+    "Gardez la FAQ de chaque établissement sur sa page, séparée des questions concernant toute la marque : des questions auxquelles on peut répondre en y incluant le nom de l’établissement, comme « Y a-t-il un parking dans cet établissement ? » ou « Puis-je obtenir X dans cet établissement ? »"
+   ]
+  },
+  {
+   "heading": "Fermetures, déménagements et fermetures temporaires",
+   "paragraphs": [
+    "L’information erronée qui persiste le plus longtemps pour les entreprises multi-établissements, c’est un établissement fermé. Supprimer sa page n’efface pas ce que d’autres sites et les IA ont déjà lu. Faites le ménage dans cet ordre :"
+   ],
+   "list": [
+    "Ne supprimez pas tout de suite la page de l’établissement fermé. Réécrivez-la en « Cet établissement a fermé le [date] » avec des liens vers les établissements proches. En cas de déménagement, redirigez vers la page du nouvel établissement ou indiquez clairement la nouvelle adresse.",
+    "Retirez-le de la liste des établissements et supprimez ses données structurées (ne continuez pas à publier un établissement fermé comme LocalBusiness).",
+    "Mettez à jour sa fiche Google Business Profile pour indiquer la fermeture ou le déménagement.",
+    "Cherchez les mentions dans le reste du site (pied de page, page recrutement, pages de campagne, prospectus PDF).",
+    "Demandez aux autres éditeurs (sites de réservation, portails, annuaires locaux) de mettre à jour leurs fiches.",
+    "Pour une fermeture temporaire, donnez des dates et indiquez-la avec specialOpeningHoursSpecification ou un avis. Retirez-la à la réouverture."
+   ]
+  },
+  {
+   "heading": "Données structurées : relier chaque établissement à la marque",
+   "paragraphs": [
+    "Avec plusieurs établissements, les données structurées doivent rendre « quelle entreprise, quel établissement » lisible par les machines. La démarche :"
+   ],
+   "list": [
+    "Publiez le siège (marque ou société exploitante) une seule fois comme Organization sur la page d’accueil ou la page À propos, avec un @id fixe comme https://example.com/#organization.",
+    "Sur chaque page d’établissement, publiez exactement un LocalBusiness du type le plus précis, avec un @id propre à cet établissement comme https://example.com/stores/osaka/umeda/#store.",
+    "Pointez de chaque établissement vers le siège avec parentOrganization. schema.org marque l’ancienne propriété [branchOf](https://schema.org/branchOf) comme obsolète et recommande [parentOrganization](https://schema.org/parentOrganization) à la place.",
+    "Indiquez le code établissement dans [branchCode](https://schema.org/branchCode), que schema.org décrit lui-même comme le « store code ».",
+    "Si un établissement comprend une section distincte (les exemples de schema.org sont un magasin avec une pharmacie et une boulangerie avec un café), reliez-la avec [department](https://schema.org/department), ce qui permet à chaque section d’avoir ses propres horaires.",
+    "Placez les valeurs de chaque établissement sur sa propre page plutôt que de lister tous les LocalBusiness sur la liste des établissements. Ne mettez pas dans les données structurées de valeurs que le texte de la page n’affiche pas."
+   ],
+   "after": [
+    "Google cite la correspondance entre données structurées et contenu visible de la page parmi les bases, et recommande de tenir à jour les informations du Business Profile ([fonctionnalités d’IA et votre site web](https://developers.google.com/search/docs/appearance/ai-features)). Considérez les données structurées comme le corrigé de ce que dit déjà la page d’établissement."
+   ]
+  },
+  {
+   "heading": "Garder les mêmes valeurs dans Google Business Profile et sur le site",
+   "paragraphs": [
+    "Quand la fiche Business Profile d’un établissement et sa page divergent, ni les personnes ni les IA ne peuvent savoir laquelle est juste. Le plus utile est un tableau de référence unique avec les informations de tous les établissements, à partir duquel on met à jour le site, Google Business Profile et les sites de réservation."
+   ],
+   "table": {
+    "head": [
+     "Colonne",
+     "Ce qu’il faut décider"
+    ],
+    "rows": [
+     [
+      "Code établissement",
+      "Le même numéro en interne, sur le site et dans Business Profile"
+     ],
+     [
+      "Nom de l’établissement",
+      "Le modèle fixe marque + lieu"
+     ],
+     [
+      "Adresse et téléphone",
+      "Une seule façon d’écrire les numéros et les séparateurs"
+     ],
+     [
+      "Horaires, jours de fermeture, fermetures temporaires",
+      "Quand ils changent et qui les met à jour"
+     ],
+     [
+      "Services et équipements",
+      "Communs à tous ou propres à cet établissement"
+     ],
+     [
+      "URL de la page d’établissement",
+      "Ne change jamais ; sinon, rediriger"
+     ],
+     [
+      "Statut",
+      "Ouvert, fermé temporairement, fermé (avec dates)"
+     ],
+     [
+      "Dernière vérification",
+      "Selon un cycle fixe, par exemple mensuel"
+     ]
+    ]
+   },
+   "after": [
+    "La validation groupée pour les entreprises ayant de nombreux établissements, les outils de gestion de plusieurs établissements ensemble et le traitement des codes établissement sont soumis à des conditions fixées par Google, et ces conditions évoluent. Vérifiez la version actuelle dans le [Centre d’aide Google Business Profile](https://support.google.com/business/). Si les responsables d’établissement modifient eux-mêmes leurs fiches, convenez que le tableau de référence est mis à jour en premier pour que les deux ne divergent pas."
+   ]
+  },
+  {
+   "heading": "Sur WordPress (avec Nurevo AEO)",
+   "paragraphs": [
+    "Sur WordPress, [Nurevo AEO (gratuit)](https://wordpress.org/plugins/nurevo-webmcp/) publie les informations du siège en données structurées et dans llms.txt ; combinez-le avec vos pages d’établissement comme ci-dessous. Les réglages de Nurevo décrivent une entreprise par site : saisissez-y donc le siège (la marque)."
+   ],
+   "list": [
+    "Rédigez d’abord les pages d’établissement en suivant le tableau ci-dessus (le texte avant les données structurées). Utilisez une page ou une entrée d’un type de contenu « établissement » par établissement.",
+    "Dans les informations d’entreprise de Nurevo, saisissez le nom, la description, l’adresse, le téléphone, l’URL et l’e-mail du siège. Contrairement à une entreprise à établissement unique, y saisir les horaires d’un établissement les fait passer pour ceux de tous les établissements.",
+    "Saisissez les questions propres à chaque établissement dans le panneau Nurevo AEO de l’éditeur de cette page, comme questions propres à la page, et placez le bloc FAQ de Nurevo réglé sur « Questions propres à cette page ». Elles sont publiées en FAQPage sur cette page uniquement.",
+    "Pour publier un LocalBusiness par établissement, utilisez le filtre développeur webmcp_canary_schema_graph afin d’ajouter le nœud de l’établissement à extra sur les pages d’établissement uniquement. L’@id du siège est disponible dans $bundle['org_id'] ; placez-le dans parentOrganization. Construisez les valeurs de l’établissement à partir de la même source que le texte de la page (des champs personnalisés, par exemple).",
+    "Avec Yoast SEO, Rank Math, All in One SEO ou Slim SEO, Nurevo n’ajoute que les informations absentes des données structurées de ce plugin, et les nouveaux nœuds (comme un nœud d’établissement) sont ajoutés au graphe de ce plugin. Nurevo fonctionne aussi avec SEO SIMPLE PACK et VK All in One Expansion Unit (depuis la 0.9.1).",
+    "Si un autre outil, comme un plugin de localisation de magasins, publie déjà des données structurées par établissement, évitez les doublons : cochez « Ne publier aucune donnée structurée Nurevo sur cette page » sur ces pages, ou choisissez une seule source.",
+    "Ouvrez /llms.txt et vérifiez que la liste des établissements et vos principales pages d’établissement y figurent. llms.txt liste les 30 pages et articles mis à jour le plus récemment ; avec beaucoup d’établissements, certaines pages manqueront donc. Le filtre webmcp_canary_llms_txt_lines permet d’ajouter une ligne pour la liste des établissements, et la page d’un établissement fermé peut être retirée avec « Exclure cette page de llms.txt ».",
+    "Si des établissements franchisés gèrent des sites WordPress distincts, exportez les réglages avec wp nurevo export, importez-les sur l’autre site avec wp nurevo import, puis ne modifiez que le nom, l’adresse, le téléphone et les horaires (les clés et jetons ne sont pas exportés)."
+   ],
+   "after": [
+    "Les mêmes vérifications s’appliquent aux sites qui ne sont pas sous WordPress. Saisissez une URL dans la [vérification gratuite](/check), sans inscription, pour voir l’état des données structurées, de llms.txt et de l’accès des robots d’IA. Vous pouvez vérifier les pages d’établissement une URL à la fois."
+   ]
+  },
+  {
+   "heading": "Comment vérifier : par établissement, avec et sans le nom",
+   "paragraphs": [
+    "Vérifiez en choisissant des établissements et en notant les résultats par établissement. Inutile d’interroger l’IA sur chaque établissement à chaque fois : commencez par ceux dont les horaires ou l’adresse ont changé, ceux qui ont fermé ou déménagé, et ceux qui reçoivent le plus de demandes. Posez la même question à la même IA à des jours différents, et ne jugez pas sur une seule réponse."
+   ],
+   "table": {
+    "head": [
+     "À noter",
+     "Exemple"
+    ],
+    "rows": [
+     [
+      "Date, IA, question",
+      "15 nov., Perplexity, « Sample Dental Umeda est-il ouvert le dimanche ? »"
+     ],
+     [
+      "Informations dans la réponse",
+      "Les horaires, l’adresse, le téléphone et les services sont-ils ceux de cet établissement ou d’un autre ?"
+     ],
+     [
+      "Sources",
+      "La page de cet établissement, la liste des établissements ou un site de réservation externe ?"
+     ],
+     [
+      "Question sans le nom",
+      "L’établissement apparaît-il pour « dentiste ouvert le dimanche à Umeda » ?"
+     ],
+     [
+      "Établissements fermés",
+      "Un établissement fermé est-il décrit comme ouvert ?"
+     ]
+    ]
+   },
+   "after": [
+    "La vérification IA gratuite de Nurevo (une fois par mois, pour les sites Free et Standard connectés) pose des questions construites à partir du type d’activité et de la zone indiqués dans vos réglages, sans votre nom. Les réglages ne comportent qu’une zone : vérifiez donc à la main les zones de vos autres établissements avec le tableau ci-dessus. La mesure de visibilité de Pro (bêta) couvre actuellement Perplexity. La méthode complète est dans [comment mesurer la visibilité dans l’IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Check-list multi-établissements",
+   "list": [
+    "Chaque établissement a sa propre page, à une URL qui ne changera pas.",
+    "Les noms d’établissement suivent partout le même modèle marque + lieu.",
+    "Chaque page d’établissement indique dans le texte l’adresse, le téléphone (direct ou central), les horaires et les jours de fermeture de cet établissement.",
+    "Les fermetures temporaires et jours fériés sont datés et retirés une fois passés.",
+    "Les services communs à tous les établissements sont écrits séparément de ceux que propose seulement cet établissement.",
+    "Les établissements fermés ou déménagés affichent un avis et sont retirés de la liste des établissements et des données structurées.",
+    "Le LocalBusiness de chaque établissement a son propre @id et pointe vers le siège avec parentOrganization.",
+    "Les valeurs des données structurées correspondent au texte de la page d’établissement.",
+    "Le site et Google Business Profile sont mis à jour à partir du même tableau de référence.",
+    "Les établissements peuvent être parcourus par région, avec des liens vers chaque page d’établissement.",
+    "Vous avez choisi des établissements, vérifié à des jours différents des questions avec et sans le nom, et noté les résultats."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Faut-il une page pour chaque établissement, ou une liste des établissements suffit-elle ?",
+   "a": "Pour répondre aux questions sur un établissement (ses horaires, ses équipements), une page par établissement est plus fiable. Avec une simple liste, une IA peut facilement attribuer une valeur au mauvais établissement. Même avec peu d’établissements, donnez à chacun son propre titre avec son adresse et ses horaires réunis."
+  },
+  {
+   "q": "Si tous les établissements ont les mêmes horaires, faut-il quand même les indiquer sur chaque page ?",
+   "a": "Nous le recommandons. Une IA peut répondre à partir de la seule page d’établissement, et si les horaires n’y figurent pas, elle utilisera des valeurs d’autres pages ou d’autres sites."
+  },
+  {
+   "q": "Faut-il utiliser branchOf ou parentOrganization ?",
+   "a": "schema.org marque branchOf comme obsolète et recommande parentOrganization. Pointez du LocalBusiness de chaque établissement vers l’@id de l’Organization du siège avec parentOrganization."
+  },
+  {
+   "q": "Faut-il supprimer tout de suite la page d’un établissement fermé ?",
+   "a": "La transformer en avis indiquant la date de fermeture et des liens vers les établissements proches, et la retirer de la liste des établissements et des données structurées, fait mieux passer l’information qu’une suppression. En cas de déménagement, redirigez vers la page du nouvel établissement ou indiquez la nouvelle adresse."
+  },
+  {
+   "q": "Nos franchisés gèrent leurs propres sites et comptes de réseaux sociaux. Comment garder la cohérence ?",
+   "a": "Considérez le tableau de référence du siège comme la source qui fait foi, partagez avec les franchisés l’orthographe convenue des noms, adresses, numéros de téléphone et horaires, et demandez-leur d’utiliser les mêmes valeurs. Des liens dans les deux sens, du site du franchisé vers la page d’établissement de la marque et inversement, rendent aussi la relation claire."
+  },
+  {
+   "q": "Nous avons trop d’établissements pour llms.txt. Faut-il tous les lister ?",
+   "a": "Non. Si la liste des établissements et vos principales pages d’établissement y figurent, les autres sont accessibles à partir d’elles. Dans Nurevo AEO, le filtre webmcp_canary_llms_txt_lines permet d’ajouter une ligne pour la liste des établissements."
+  },
+  {
+   "q": "Ces étapes feront-elles apparaître correctement chaque établissement dans les réponses de l’IA ?",
+   "a": "Ce n’est pas garanti ; les réponses de l’IA varient selon le jour et la formulation. Ces étapes réduisent les causes de mélange entre les informations d’un établissement et celles d’un autre, et rendent les informations que lit l’IA exactes et cohérentes."
+  }
+ ],
+ "relatedHeading": "Guides associés",
+ "cta": {
+  "heading": "Voyez comment l’IA lit vos pages d’établissement",
+  "body": "La vérification gratuite ne demande aucune inscription : saisissez une URL pour voir l’état des données structurées, de llms.txt et de l’accès des robots d’IA, une page d’établissement à la fois si vous le souhaitez. Sur WordPress, le plugin gratuit publie les informations de votre siège en données structurées.",
+  "label": "Lancer la vérification gratuite de lisibilité par l’IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Essayer le plugin WordPress gratuit",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT est une marque d’OpenAI, Perplexity de Perplexity AI et Google de Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit et WordPress sont des marques de leurs propriétaires respectifs. Nurevo n’est ni affilié à ces entreprises ni approuvé par elles."
+}

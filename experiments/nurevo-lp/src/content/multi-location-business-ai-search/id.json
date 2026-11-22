@@ -1,0 +1,349 @@
+{
+ "title": "Pencarian AI untuk Bisnis Multi-Cabang: Tiap Cabang Akurat | Nurevo",
+ "description": "Cegah jawaban AI mencampuradukkan cabang: satu halaman per cabang, fakta yang dibutuhkan, tutup dan pindah, schema cabang ke merek, serta langkah WordPress.",
+ "h1": "Pencarian AI untuk bisnis multi-cabang: jaga agar jam buka, alamat, dan layanan tiap cabang tidak tertukar",
+ "lead": "Pada bisnis yang memiliki beberapa cabang, sebagian besar jawaban AI yang salah berasal dari fakta satu cabang yang dipakai untuk cabang lain. Beri setiap cabang halamannya sendiri dengan faktanya dalam teks biasa (alamat, telepon, jam buka, penutupan sementara, apa yang berbeda di sana), hubungkan ke merek dalam data terstruktur, dan pertahankan nilai yang sama di Google Business Profile serta listing Anda yang lain. Tiga langkah itulah inti pekerjaannya.",
+ "intro": [
+  "Ditulis 15 November 2026 (JST). Panduan ini untuk setiap bisnis dengan dua cabang atau kantor atau lebih (restoran, salon, klinik, toko, sekolah, agen properti) dan untuk agensi yang membangun situs mereka. Informasi tentang perusahaannya sendiri (nama resmi, tanggal pendirian, pimpinan) dibahas di [optimasi halaman Tentang Kami untuk pencarian AI](/guide/company-profile-page-ai-search), dan dasar-dasar markup untuk satu cabang di [schema bisnis lokal dan plugin SEO](/guide/local-business-schema-seo-plugins). Panduan ini membahas masalah yang muncul karena memiliki banyak cabang.",
+  "Jawaban AI berubah menurut hari dan susunan kata pertanyaan. Langkah-langkah ini membuat informasi yang dibaca AI menjadi akurat; langkah-langkah ini tidak menjamin Anda akan muncul dalam jawaban atau di posisi tertentu."
+ ],
+ "sections": [
+  {
+   "heading": "Bagaimana jawaban AI keliru untuk bisnis multi-cabang",
+   "paragraphs": [
+    "ChatGPT search, Perplexity, dan AI Overviews Google membaca halaman web, menyusun jawaban, dan menampilkan sumbernya. Dengan satu cabang, “fakta bisnis” hanya satu set. Dengan beberapa cabang, halaman yang dibaca AI memuat beberapa alamat, beberapa set jam buka, dan beberapa nomor telepon. Jika teks tidak menjelaskan nilai mana milik cabang mana, jawaban bisa disusun dari nilai yang salah.",
+    "Pertanyaan yang diajukan orang terbagi menjadi pertanyaan tentang merek dan pertanyaan tentang satu cabang:"
+   ],
+   "list": [
+    "“Apakah cabang Umeda [merek] buka hari Minggu?” (jam buka dan hari libur cabang itu)",
+    "“Cabang [merek] mana saja yang punya tempat parkir?” (fasilitas yang berbeda per cabang)",
+    "“Apakah [merek] di Shinjuku masih buka, atau sudah pindah?” (tutup dan pindah)",
+    "“Apakah ada [merek] di dekat Stasiun Kyoto?” (cabang mana melayani area mana)",
+    "“Apakah saya bisa mendapatkan menu / perawatan / layanan yang sama di setiap [merek]?” (layanan yang berbeda per cabang)",
+    "“Siapa yang menjalankan [merek]?” (merek dan perusahaan pengelola)"
+   ],
+   "after": [
+    "Ada empat kesalahan yang muncul berulang kali: jam buka cabang utama disebut sebagai jam buka semua cabang, cabang yang sudah tutup digambarkan masih buka, nomor reservasi pusat disebut sebagai nomor telepon cabang, dan layanan yang hanya ada di sebagian cabang digambarkan tersedia di mana saja. Masing-masing makin jarang terjadi begitu fakta setiap cabang ditulis di halaman cabang itu sendiri.",
+    "Google menyatakan tidak ada persyaratan tambahan dan tidak ada data terstruktur khusus untuk tampil di AI Overviews atau AI Mode, dan bahwa dasar-dasar SEO yang biasa tetap berlaku ([Google Search Central: Fitur AI dan situs Anda](https://developers.google.com/search/docs/appearance/ai-features)). Pekerjaan multi-cabang pun sama: bukan cara menulis khusus untuk AI, melainkan memublikasikan fakta setiap cabang secara akurat, mudah dibaca, dan dengan nilai yang sama di mana pun."
+   ]
+  },
+  {
+   "heading": "Struktur situs: pisahkan halaman merek, daftar cabang, dan halaman cabang",
+   "paragraphs": [
+    "Pertama, tentukan halaman mana menjawab pertanyaan mana. Satu halaman yang mencantumkan semua cabang memudahkan AI menempelkan sebuah paragraf ke cabang yang salah."
+   ],
+   "table": {
+    "head": [
+     "Halaman",
+     "Pertanyaan yang dijawab",
+     "Yang ditulis",
+     "Data terstruktur"
+    ],
+    "rows": [
+     [
+      "Merek (beranda atau Tentang Kami)",
+      "“Apa itu [merek]?” “Siapa yang menjalankannya?”",
+      "Merek dan perusahaan pengelola, layanan yang sama di semua cabang, jumlah cabang (dengan tanggal)",
+      "Organization (kantor pusat)"
+     ],
+     [
+      "Daftar cabang",
+      "“Berapa cabang [merek] di Osaka?” “Apakah ada di dekat Stasiun Kyoto?”",
+      "Nama dan alamat per wilayah dan kota, dengan tautan ke setiap halaman cabang",
+      "Opsional (taruh di setiap halaman cabang)"
+     ],
+     [
+      "Halaman cabang (satu per cabang)",
+      "“Apakah Umeda buka hari Minggu?” “Apakah ada parkir?”",
+      "Fakta yang hanya milik cabang itu (tabel berikutnya)",
+      "Satu tipe LocalBusiness yang spesifik per cabang"
+     ],
+     [
+      "Pemberitahuan tutup atau pindah",
+      "“Apakah Shinjuku masih buka?”",
+      "Tanggal tutup, alamat baru, tautan ke cabang terdekat",
+      "Hapus data terstruktur cabang tersebut"
+     ]
+    ]
+   },
+   "after": [
+    "Beri setiap cabang URL yang tidak akan berubah, seperti /stores/osaka/umeda/. Mengganti nama cabang atau URL di tengah jalan menciptakan lebih banyak ketidakcocokan dengan apa yang sudah dibaca AI dan situs lain sebelumnya. Jika terpaksa mengubahnya, alihkan URL lama ke URL baru.",
+    "Jangan buat halaman untuk area tempat Anda tidak punya cabang (halaman yang hanya mengganti nama tempat, “mencari X di [kota]? Pilih kami”). Halaman seperti itu juga bisa membuat AI menggambarkan cabang yang tidak ada."
+   ]
+  },
+  {
+   "heading": "Apa yang dibutuhkan setiap halaman cabang, dan properti yang sesuai",
+   "paragraphs": [
+    "Tabel ini mencantumkan apa yang perlu ditulis dalam teks biasa di setiap halaman cabang dan properti schema.org yang sesuai. Dokumentasi bisnis lokal Google mencantumkan name dan address sebagai wajib, dengan openingHoursSpecification, telephone, url, geo, dan department di antara properti yang direkomendasikan, serta menyarankan tipe yang paling spesifik, seperti Dentist, HairSalon, atau Restaurant ([Google: Data terstruktur bisnis lokal](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Item",
+     "Cara menulisnya",
+     "Kesalahan AI yang umum",
+     "Properti"
+    ],
+    "rows": [
+     [
+      "Nama cabang",
+      "Pola tetap, merek + tempat (mis. Klinik Gigi Contoh Umeda), sama untuk setiap cabang",
+      "Tertukar dengan cabang lain, hanya dikenal lewat nama panggilan",
+      "name"
+     ],
+     [
+      "Alamat",
+      "Dari kode pos sampai gedung dan lantai, ditambah stasiun dan pintu keluar terdekat dalam satu kalimat",
+      "Alamat lama, atau alamat cabang terdekat",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telepon",
+      "Sebutkan apakah itu nomor langsung cabang atau nomor reservasi pusat",
+      "Nomor pusat disebut sebagai nomor cabang",
+      "telephone"
+     ],
+     [
+      "Jam buka dan hari libur",
+      "Per cabang, di halaman masing-masing cabang, meskipun sama di semua tempat",
+      "Jam buka cabang utama disebut untuk semua cabang",
+      "openingHoursSpecification"
+     ],
+     [
+      "Penutupan sementara dan hari libur khusus",
+      "Dengan tanggal; hapus setelah selesai",
+      "Pemberitahuan tutup lama dibiarkan",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Layanan dan fasilitas",
+      "Pisahkan apa yang ditawarkan semua cabang dari apa yang ditawarkan cabang ini (“Cabang ini tidak melayani konsultasi ortodonti pada hari Sabtu”)",
+      "Layanan satu cabang digambarkan tersedia di mana saja",
+      "Teks isi, FAQ, department (bagian di dalam cabang)"
+     ],
+     [
+      "Parkir, pembayaran, bahasa",
+      "Jumlah tempat atau parkir mitra, metode pembayaran, bahasa yang dilayani",
+      "Fasilitas cabang lain",
+      "Teks isi (paymentAccepted dan lainnya)"
+     ],
+     [
+      "Kode toko",
+      "Nomor yang dipakai secara internal dan di Google Business Profile",
+      "Dua cabang dengan nama mirip tertukar",
+      "branchCode"
+     ],
+     [
+      "Tautan ke merek",
+      "“Dikelola oleh PT Contoh” dengan tautan ke halaman Tentang Kami",
+      "Terwaralaba dan pewaralaba tertukar",
+      "parentOrganization"
+     ],
+     [
+      "Tanggal pembukaan, pembaruan terakhir",
+      "“Diperbarui pada [tanggal]” di akhir halaman",
+      "Tidak ada cara mengetahui seberapa mutakhir faktanya",
+      "Teks isi"
+     ]
+    ]
+   },
+   "after": [
+    "Halaman cabang sering berakhir sebagai teks yang sama dengan hanya nama dan alamat yang diganti. Itu bisa diterima, tetapi menulis setidaknya tiga fakta yang hanya berlaku untuk cabang itu (fasilitas, layanan yang ditangani, jam ramai, petunjuk arah) memberi AI sesuatu untuk membedakan cabang-cabang.",
+    "Taruh FAQ setiap cabang di halaman cabang itu, terpisah dari pertanyaan yang berlaku untuk seluruh merek: pertanyaan yang bisa dijawab dengan nama cabang di dalamnya, seperti “Apakah ada parkir di cabang ini?” atau “Apakah saya bisa mendapatkan X di cabang ini?”"
+   ]
+  },
+  {
+   "heading": "Tutup, pindah, dan penutupan sementara",
+   "paragraphs": [
+    "Fakta keliru yang paling lama bertahan pada bisnis multi-cabang adalah cabang yang sudah tutup. Menghapus halamannya tidak menghapus apa yang sudah dibaca situs lain dan AI. Bersihkan dengan urutan ini:"
+   ],
+   "list": [
+    "Jangan langsung menghapus halaman cabang yang sudah tutup. Tulis ulang menjadi “Cabang ini tutup pada [tanggal]” dengan tautan ke cabang terdekat. Untuk kepindahan, alihkan ke halaman cabang baru atau sebutkan alamat baru dengan jelas.",
+    "Hapus dari daftar cabang dan hapus data terstrukturnya (jangan terus memublikasikan cabang yang sudah tutup sebagai LocalBusiness).",
+    "Perbarui Google Business Profile-nya untuk menunjukkan penutupan atau kepindahan.",
+    "Cari penyebutannya di bagian lain situs (footer, halaman rekrutmen, halaman kampanye, brosur PDF).",
+    "Minta penerbit lain (situs reservasi, portal, direktori lokal) memperbarui listing mereka.",
+    "Untuk penutupan sementara, cantumkan tanggal dan tunjukkan dengan specialOpeningHoursSpecification atau pemberitahuan. Hapus saat Anda buka kembali."
+   ]
+  },
+  {
+   "heading": "Data terstruktur: hubungkan setiap cabang ke merek",
+   "paragraphs": [
+    "Untuk beberapa cabang, data terstruktur harus membuat “perusahaan mana, cabang mana” dapat dibaca mesin. Pendekatannya:"
+   ],
+   "list": [
+    "Publikasikan kantor pusat (merek atau perusahaan pengelola) sekali sebagai Organization di beranda atau halaman Tentang Kami, dengan @id tetap seperti https://example.com/#organization.",
+    "Di setiap halaman cabang, publikasikan tepat satu LocalBusiness dengan tipe paling spesifik, dengan @id yang unik untuk cabang itu seperti https://example.com/stores/osaka/umeda/#store.",
+    "Arahkan dari setiap cabang ke kantor pusat dengan parentOrganization. schema.org menandai [branchOf](https://schema.org/branchOf) yang lebih lama sebagai usang dan merekomendasikan [parentOrganization](https://schema.org/parentOrganization) sebagai gantinya.",
+    "Masukkan kode toko ke [branchCode](https://schema.org/branchCode), yang oleh schema.org sendiri dijelaskan sebagai “kode toko”.",
+    "Jika sebuah cabang memiliki bagian tersendiri (contoh schema.org adalah toko dengan apotek dan toko roti dengan kafe), hubungkan dengan [department](https://schema.org/department), sehingga setiap bagian bisa memiliki jam bukanya sendiri.",
+    "Taruh nilai setiap cabang di halamannya sendiri alih-alih mencantumkan semua LocalBusiness di daftar cabang. Jangan masukkan nilai ke data terstruktur yang tidak ditampilkan teks halaman."
+   ],
+   "after": [
+    "Google menyebut kesesuaian data terstruktur dengan konten halaman yang terlihat sebagai salah satu dasar dan merekomendasikan agar informasi Business Profile selalu mutakhir ([Fitur AI dan situs Anda](https://developers.google.com/search/docs/appearance/ai-features)). Perlakukan data terstruktur sebagai kunci jawaban untuk apa yang sudah ditulis di halaman cabang."
+   ]
+  },
+  {
+   "heading": "Jaga Google Business Profile dan situs pada nilai yang sama",
+   "paragraphs": [
+    "Ketika Business Profile sebuah cabang dan halamannya tidak sama, baik orang maupun AI tidak bisa tahu mana yang benar. Yang paling membantu adalah satu lembar induk berisi fakta semua cabang, yang menjadi sumber pembaruan situs, Google Business Profile, dan situs reservasi."
+   ],
+   "table": {
+    "head": [
+     "Kolom",
+     "Yang perlu diputuskan"
+    ],
+    "rows": [
+     [
+      "Kode toko",
+      "Nomor yang sama secara internal, di situs, dan di Business Profile"
+     ],
+     [
+      "Nama cabang",
+      "Pola tetap merek + tempat"
+     ],
+     [
+      "Alamat dan telepon",
+      "Satu cara penulisan angka dan pemisah"
+     ],
+     [
+      "Jam buka, hari libur, penutupan sementara",
+      "Kapan berubah dan siapa yang memperbarui"
+     ],
+     [
+      "Layanan dan fasilitas",
+      "Sama di semua cabang vs hanya cabang ini"
+     ],
+     [
+      "URL halaman cabang",
+      "Tidak pernah berubah; alihkan jika berubah"
+     ],
+     [
+      "Status",
+      "Buka, tutup sementara, tutup permanen (dengan tanggal)"
+     ],
+     [
+      "Terakhir diperiksa",
+      "Dengan siklus tetap, misalnya bulanan"
+     ]
+    ]
+   },
+   "after": [
+    "Verifikasi massal untuk bisnis dengan banyak cabang, alat untuk mengelola beberapa cabang sekaligus, dan penanganan kode toko semuanya memiliki ketentuan yang ditetapkan Google, dan ketentuan itu bisa berubah. Periksa versi terbaru di [Pusat Bantuan Google Business Profile](https://support.google.com/business/). Jika manajer cabang mengedit profil mereka sendiri, sepakati bahwa lembar induk diperbarui lebih dulu agar keduanya tidak bergeser."
+   ]
+  },
+  {
+   "heading": "Di WordPress (dengan Nurevo AEO)",
+   "paragraphs": [
+    "Di WordPress, [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) memublikasikan fakta kantor pusat sebagai data terstruktur dan di llms.txt; gabungkan dengan halaman cabang Anda seperti di bawah ini. Pengaturan Nurevo menggambarkan satu bisnis per situs, jadi masukkan kantor pusat (merek) di sana."
+   ],
+   "list": [
+    "Tulis halaman cabang lebih dulu, mengikuti tabel di atas (teks sebelum data terstruktur). Gunakan satu halaman atau satu entri tipe postingan cabang per cabang.",
+    "Di detail bisnis Nurevo, masukkan nama, deskripsi, alamat, telepon, URL, dan email kantor pusat. Berbeda dengan bisnis satu cabang, memasukkan jam buka satu cabang di sini membuatnya terlihat seperti jam buka semua cabang.",
+    "Masukkan pertanyaan khusus setiap cabang di panel Nurevo AEO pada editor halaman itu sebagai pertanyaan khusus halaman ini, lalu tempatkan blok Nurevo FAQ yang disetel ke “Pertanyaan khusus halaman ini”. Pertanyaan itu dipublikasikan sebagai FAQPage hanya di halaman tersebut.",
+    "Untuk memublikasikan LocalBusiness per cabang, gunakan filter pengembang webmcp_canary_schema_graph untuk menambahkan node cabang ke extra hanya di halaman cabang. @id kantor pusat tersedia sebagai $bundle['org_id']; masukkan ke parentOrganization. Bangun nilai cabang dari sumber yang sama dengan teks halaman (misalnya custom field).",
+    "Dengan Yoast SEO, Rank Math, All in One SEO, atau Slim SEO, Nurevo hanya menambahkan fakta yang tidak ada di data terstruktur plugin tersebut, dan node baru (seperti node cabang) ditambahkan ke graph plugin itu. Nurevo juga bekerja berdampingan dengan SEO SIMPLE PACK dan VK All in One Expansion Unit (sejak 0.9.1).",
+    "Jika ada alat lain, seperti plugin pencari toko, yang sudah memublikasikan data terstruktur per cabang, hindari duplikasi: centang “Jangan publikasikan data terstruktur Nurevo di halaman ini” di halaman-halaman tersebut, atau pilih satu sumber.",
+    "Buka /llms.txt dan pastikan daftar cabang dan halaman cabang utama Anda ada di sana. llms.txt mencantumkan 30 halaman dan postingan yang paling baru diperbarui, jadi dengan banyak cabang beberapa halaman tidak akan ada. Filter webmcp_canary_llms_txt_lines dapat menambahkan baris untuk daftar cabang, dan halaman cabang yang sudah tutup dapat dikeluarkan dengan “Jangan sertakan halaman ini di llms.txt”.",
+    "Jika cabang waralaba menjalankan situs WordPress terpisah, ekspor pengaturan dengan wp nurevo export, impor di situs lain dengan wp nurevo import, lalu ubah hanya nama, alamat, telepon, dan jam buka (kunci dan token tidak diekspor)."
+   ],
+   "after": [
+    "Pemeriksaan yang sama berlaku untuk situs yang tidak dibangun dengan WordPress. Masukkan URL di [pemeriksaan gratis](/check), tanpa perlu mendaftar, untuk melihat kondisi data terstruktur, llms.txt, dan akses crawler AI. Anda bisa memeriksa halaman cabang satu URL demi satu URL."
+   ]
+  },
+  {
+   "heading": "Cara memeriksa: per cabang, dengan dan tanpa nama",
+   "paragraphs": [
+    "Periksa dengan memilih beberapa cabang dan mencatat hasilnya per cabang. Anda tidak perlu menanyakan semua cabang setiap kali: mulailah dengan cabang yang jam buka atau alamatnya berubah, yang sudah tutup atau pindah, dan yang paling banyak menerima pertanyaan. Ajukan pertanyaan yang sama ke AI yang sama pada hari yang berbeda, dan jangan menilai dari satu jawaban."
+   ],
+   "table": {
+    "head": [
+     "Yang dicatat",
+     "Contoh"
+    ],
+    "rows": [
+     [
+      "Tanggal, AI, pertanyaan",
+      "15 Nov, Perplexity, “Apakah Klinik Gigi Contoh Umeda buka hari Minggu?”"
+     ],
+     [
+      "Fakta dalam jawaban",
+      "Apakah jam buka, alamat, telepon, dan layanannya milik cabang ini, atau cabang lain?"
+     ],
+     [
+      "Sumber",
+      "Halaman cabang ini, daftar cabang, atau situs reservasi luar?"
+     ],
+     [
+      "Pertanyaan tanpa nama",
+      "Apakah cabang ini muncul untuk “dokter gigi buka hari Minggu di Umeda”?"
+     ],
+     [
+      "Cabang yang sudah tutup",
+      "Apakah cabang yang sudah tutup digambarkan masih buka?"
+     ]
+    ]
+   },
+   "after": [
+    "Pemeriksaan AI gratis dari Nurevo (sebulan sekali, untuk situs Free dan Standard yang terhubung) mengajukan pertanyaan yang disusun dari jenis bisnis dan area di pengaturan Anda, tanpa nama Anda. Pengaturan hanya memiliki satu area, jadi periksa area cabang Anda yang lain secara manual dengan tabel di atas. Pengukuran visibilitas (beta) di Pro saat ini mencakup Perplexity. Metode lengkapnya ada di [cara mengukur visibilitas AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Daftar periksa multi-cabang",
+   "list": [
+    "Setiap cabang punya halamannya sendiri, di URL yang tidak akan berubah.",
+    "Nama cabang mengikuti pola merek + tempat yang sama di mana pun.",
+    "Setiap halaman cabang menyebutkan alamat, telepon (langsung atau pusat), jam buka, dan hari libur cabang itu dalam teks.",
+    "Penutupan sementara dan hari libur khusus memiliki tanggal dan dihapus setelah selesai.",
+    "Layanan yang sama di semua cabang ditulis terpisah dari layanan yang hanya ditawarkan cabang ini.",
+    "Cabang yang tutup atau pindah menampilkan pemberitahuan dan sudah dihapus dari daftar cabang dan data terstruktur.",
+    "LocalBusiness setiap cabang memiliki @id sendiri dan mengarah ke kantor pusat dengan parentOrganization.",
+    "Nilai data terstruktur cocok dengan teks halaman cabang.",
+    "Situs dan Google Business Profile diperbarui dari lembar induk yang sama.",
+    "Cabang dapat dijelajahi per wilayah, dengan tautan ke setiap halaman cabang.",
+    "Anda sudah memilih beberapa cabang, memeriksa pertanyaan dengan dan tanpa nama pada hari yang berbeda, dan mencatat hasilnya."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Apakah kami perlu halaman untuk setiap cabang, atau cukup satu daftar cabang?",
+   "a": "Untuk menjawab pertanyaan tentang satu cabang (jam bukanya, fasilitasnya), satu halaman per cabang lebih andal. Dengan hanya daftar, AI mudah menempelkan nilai ke cabang yang salah. Meskipun cabangnya sedikit, beri setiap cabang judulnya sendiri dengan alamat dan jam buka di tempat yang sama."
+  },
+  {
+   "q": "Jika semua cabang punya jam buka yang sama, apakah tetap perlu ditulis di setiap halaman?",
+   "a": "Kami menyarankannya. AI bisa menjawab hanya dari halaman cabang, dan jika jam buka tidak ada di sana, AI akan memakai nilai dari halaman lain atau situs lain."
+  },
+  {
+   "q": "Sebaiknya pakai branchOf atau parentOrganization?",
+   "a": "schema.org menandai branchOf sebagai usang dan merekomendasikan parentOrganization. Arahkan dari LocalBusiness setiap cabang ke @id Organization kantor pusat dengan parentOrganization."
+  },
+  {
+   "q": "Haruskah halaman cabang yang sudah tutup langsung dihapus?",
+   "a": "Mengubahnya menjadi pemberitahuan dengan tanggal tutup dan tautan ke cabang terdekat, serta menghapusnya dari daftar cabang dan data terstruktur, menyampaikan penutupan dengan lebih baik daripada menghapusnya. Untuk kepindahan, alihkan ke halaman cabang baru atau sebutkan alamat barunya."
+  },
+  {
+   "q": "Terwaralaba kami menjalankan situs dan akun media sosial sendiri. Bagaimana menjaga konsistensinya?",
+   "a": "Jadikan lembar induk kantor pusat sebagai sumber kebenaran, bagikan ejaan nama, alamat, nomor telepon, dan jam buka yang telah disepakati kepada terwaralaba, dan minta mereka memakai nilai yang sama. Menautkan dua arah, dari situs terwaralaba ke halaman cabang merek dan sebaliknya, juga memperjelas hubungannya."
+  },
+  {
+   "q": "Cabang kami terlalu banyak untuk llms.txt. Haruskah semuanya dicantumkan?",
+   "a": "Tidak. Jika daftar cabang dan halaman cabang utama Anda ada di sana, sisanya bisa dijangkau dari situ. Di Nurevo AEO, filter webmcp_canary_llms_txt_lines dapat menambahkan baris untuk daftar cabang."
+  },
+  {
+   "q": "Apakah langkah-langkah ini membuat setiap cabang muncul dengan benar dalam jawaban AI?",
+   "a": "Hal itu tidak bisa dijamin; jawaban AI berubah menurut hari dan susunan kata. Langkah-langkah ini mengurangi penyebab fakta satu cabang tercampur dengan cabang lain dan membuat informasi yang dibaca AI akurat dan konsisten."
+  }
+ ],
+ "relatedHeading": "Panduan terkait",
+ "cta": {
+  "heading": "Lihat bagaimana AI membaca halaman cabang Anda",
+  "body": "Pemeriksaan gratis tanpa perlu mendaftar: masukkan URL untuk melihat kondisi data terstruktur, llms.txt, dan akses crawler AI, satu halaman cabang demi satu jika Anda mau. Di WordPress, plugin gratis memublikasikan fakta kantor pusat Anda sebagai data terstruktur.",
+  "label": "Jalankan pemeriksaan keterbacaan AI gratis",
+  "href": "/check",
+  "secondary": {
+   "label": "Coba plugin WordPress gratis",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT adalah merek dagang OpenAI, Perplexity milik Perplexity AI, dan Google milik Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, dan WordPress adalah merek dagang dari pemiliknya masing-masing. Nurevo tidak berafiliasi dengan atau didukung oleh perusahaan-perusahaan tersebut."
+}

@@ -1,0 +1,349 @@
+{
+ "title": "Več poslovalnic v iskanju z UI: vsaka poslovalnica pravilno | Nurevo",
+ "description": "Da odgovori UI ne bi mešali vaših poslovalnic: stran za vsako, potrebni podatki, zaprtja in selitve, schema poslovalnica–blagovna znamka ter koraki v WordPressu.",
+ "h1": "Iskanje z UI za podjetja z več poslovalnicami: kako preprečiti, da bi se delovni čas, naslovi in storitve posameznih poslovalnic pomešali",
+ "lead": "Ko ima podjetje več poslovalnic, večina napačnih odgovorov UI nastane zato, ker se podatki ene poslovalnice uporabijo za drugo. Vsaki poslovalnici dajte svojo stran z njenimi podatki v navadnem besedilu (naslov, telefon, delovni čas, začasna zaprtja, v čem se razlikuje), jo v strukturiranih podatkih povežite z blagovno znamko in v Profilu podjetja v Googlu ter v drugih vpisih ohranjajte enake vrednosti. Ti trije koraki so jedro dela.",
+ "intro": [
+  "Napisano 15. novembra 2026 (JST). Ta vodnik je namenjen vsakemu podjetju z dvema ali več poslovalnicami ali pisarnami (restavracije, saloni, klinike, trgovine, šole, nepremičninske agencije) in agencijam, ki zanje izdelujejo spletna mesta. Samo podjetje (uradno ime, datum ustanovitve, vodstvo) obravnava vodnik [Optimizacija strani O nas za iskanje z UI](/guide/company-profile-page-ai-search), osnove označevanja ene poslovalnice pa vodnik [schema lokalnega podjetja in vtičniki SEO](/guide/local-business-schema-seo-plugins). Ta vodnik govori o težavah, ki nastanejo, ko imate več poslovalnic.",
+  "Odgovori UI se spreminjajo glede na dan in glede na ubeseditev. Ti koraki poskrbijo, da so informacije, ki jih UI prebere, točne; ne zagotavljajo, da se boste pojavili v odgovoru ali na določenem mestu."
+ ],
+ "sections": [
+  {
+   "heading": "Kako se odgovori UI zmotijo pri podjetjih z več poslovalnicami",
+   "paragraphs": [
+    "Iskanje ChatGPT, Perplexity in Googlovi AI Overviews berejo spletne strani, sestavijo odgovor in navedejo svoje vire. Pri eni poslovalnici so »podatki o podjetju« en sam nabor. Pri več poslovalnicah strani, ki jih bere UI, vsebujejo več naslovov, več delovnih časov in več telefonskih številk. Če iz besedila ni jasno, katera vrednost pripada kateri poslovalnici, je odgovor lahko sestavljen iz napačne.",
+    "Vprašanja, ki jih ljudje postavljajo, se delijo na vprašanja o blagovni znamki in vprašanja o eni poslovalnici:"
+   ],
+   "list": [
+    "»Ali je poslovalnica [znamka] v Umedi ob nedeljah odprta?« (delovni čas in dnevi zaprtja te poslovalnice)",
+    "»Katere poslovalnice [znamka] imajo parkirišče?« (oprema, ki se med poslovalnicami razlikuje)",
+    "»Ali [znamka] v Šindžukuju še deluje ali se je preselila?« (zaprtja in selitve)",
+    "»Ali je kakšna [znamka] blizu postaje Kjoto?« (katera poslovalnica pokriva katero območje)",
+    "»Ali v vsaki poslovalnici [znamka] dobim isti meni / tretma / storitev?« (storitve, ki se med poslovalnicami razlikujejo)",
+    "»Kdo upravlja [znamka]?« (blagovna znamka in podjetje upravljavec)"
+   ],
+   "after": [
+    "Vedno znova se ponavljajo štiri napake: delovni čas glavne poslovalnice, naveden kot delovni čas vseh poslovalnic, zaprta poslovalnica, opisana kot odprta, osrednja številka za rezervacije, navedena kot telefon poslovalnice, in storitev, ki jo ponujajo le nekatere poslovalnice, opisana kot dostopna povsod. Vsaka od njih postane manj verjetna, ko so podatki vsake poslovalnice zapisani na njeni lastni strani.",
+    "Google navaja, da za pojavljanje v AI Overviews ali AI Mode ni dodatnih zahtev ne posebnih strukturiranih podatkov in da veljajo običajne osnove SEO ([Google Search Central: Funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)). Pri več poslovalnicah je enako: ne gre za poseben način pisanja za UI, temveč za to, da so podatki vsake poslovalnice objavljeni točno, berljivo in povsod z enakimi vrednostmi."
+   ]
+  },
+  {
+   "heading": "Zgradba spletnega mesta: ločite stran blagovne znamke, seznam poslovalnic in strani poslovalnic",
+   "paragraphs": [
+    "Najprej se odločite, katera stran odgovarja na katero vprašanje. Ena sama stran z vsemi poslovalnicami UI olajša, da odstavek pripiše napačni poslovalnici."
+   ],
+   "table": {
+    "head": [
+     "Stran",
+     "Na katera vprašanja odgovarja",
+     "Kaj napisati",
+     "Strukturirani podatki"
+    ],
+    "rows": [
+     [
+      "Blagovna znamka (domača stran ali O nas)",
+      "»Kaj je [znamka]?« »Kdo jo upravlja?«",
+      "Blagovna znamka in podjetje upravljavec, storitve, skupne vsem poslovalnicam, število poslovalnic (z datumom)",
+      "Organization (sedež)"
+     ],
+     [
+      "Seznam poslovalnic",
+      "»Koliko poslovalnic ima [znamka] v Osaki?« »Ali je kakšna blizu postaje Kjoto?«",
+      "Imena in naslovi po regijah in mestih, s povezavami na stran vsake poslovalnice",
+      "Neobvezno (namestite jih na stran vsake poslovalnice)"
+     ],
+     [
+      "Stran poslovalnice (ena na poslovalnico)",
+      "»Ali je Umeda ob nedeljah odprta?« »Ali je tam parkirišče?«",
+      "Podatki, ki veljajo samo za to poslovalnico (naslednja tabela)",
+      "En konkreten tip LocalBusiness na poslovalnico"
+     ],
+     [
+      "Obvestilo o zaprtju ali selitvi",
+      "»Ali Šindžuku še deluje?«",
+      "Datum zaprtja, nov naslov, povezave na bližnje poslovalnice",
+      "Odstranite strukturirane podatke poslovalnice"
+     ]
+    ]
+   },
+   "after": [
+    "Vsaki poslovalnici dajte URL, ki se ne bo spreminjal, na primer /stores/osaka/umeda/. Preimenovanje poslovalnic ali URL-jev med potjo ustvarja nova neskladja s tem, kar so UI in druga spletna mesta prebrala prej. Če morate kaj spremeniti, stari URL preusmerite na novega.",
+    "Ne ustvarjajte strani za območja, kjer nimate poslovalnice (strani, na katerih se zamenja le ime kraja: »iščete X v [kraj]? Izberite nas«). Te lahko UI tudi napeljejo, da opiše poslovalnico, ki ne obstaja."
+   ]
+  },
+  {
+   "heading": "Kaj potrebuje stran vsake poslovalnice in ustrezne lastnosti",
+   "paragraphs": [
+    "Tabela navaja, kaj napisati v navadnem besedilu na stran vsake poslovalnice, in ustrezno lastnost schema.org. Googlova dokumentacija o lokalnih podjetjih navaja name in address kot obvezni, openingHoursSpecification, telephone, url, geo in department med priporočenimi lastnostmi ter priporoča najbolj specifičen razpoložljiv tip, na primer Dentist, HairSalon ali Restaurant ([Google: Strukturirani podatki za lokalna podjetja](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Postavka",
+     "Kako jo zapisati",
+     "Tipična napaka UI",
+     "Lastnost"
+    ],
+    "rows": [
+     [
+      "Ime poslovalnice",
+      "Stalen vzorec znamka + kraj (npr. Zobna ordinacija Sample Umeda), enak za vse poslovalnice",
+      "Zamenjava z drugo poslovalnico, poznana le po vzdevku",
+      "name"
+     ],
+     [
+      "Naslov",
+      "Od poštne številke do stavbe in nadstropja, poleg tega najbližja postaja in izhod v enem stavku",
+      "Prejšnji naslov ali naslov bližnje poslovalnice",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telefon",
+      "Navedite, ali gre za neposredno številko poslovalnice ali za osrednjo številko za rezervacije",
+      "Osrednja številka, navedena kot številka poslovalnice",
+      "telephone"
+     ],
+     [
+      "Delovni čas in dnevi zaprtja",
+      "Za vsako poslovalnico posebej, na strani vsake poslovalnice, tudi če je povsod enak",
+      "Delovni čas glavne poslovalnice, naveden za vse poslovalnice",
+      "openingHoursSpecification"
+     ],
+     [
+      "Začasna zaprtja in prazniki",
+      "Z datumi; ko minejo, jih odstranite",
+      "Puščena stara obvestila o zaprtju",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Storitve in oprema",
+      "Ločite, kar ponuja vsaka poslovalnica, od tega, kar ponuja ta (»Ta poslovalnica ne izvaja sobotnih ortodontskih posvetov«)",
+      "Storitev ene poslovalnice, opisana kot dostopna povsod",
+      "Besedilo strani, FAQ, department (oddelek znotraj poslovalnice)"
+     ],
+     [
+      "Parkiranje, plačila, jeziki",
+      "Število mest ali partnerska parkirišča, načini plačila, jeziki, v katerih se sporazumevate",
+      "Oprema druge poslovalnice",
+      "Besedilo strani (paymentAccepted in druge)"
+     ],
+     [
+      "Koda poslovalnice",
+      "Številka, ki se uporablja interno in v Profilu podjetja v Googlu",
+      "Zamenjava dveh poslovalnic s podobnima imenoma",
+      "branchCode"
+     ],
+     [
+      "Povezava z blagovno znamko",
+      "»Upravlja Sample d.o.o.« s povezavo na stran O nas",
+      "Zamenjava franšizojemalca in franšizodajalca",
+      "parentOrganization"
+     ],
+     [
+      "Datum odprtja, zadnja posodobitev",
+      "»Posodobljeno [datum]« na koncu strani",
+      "Ni mogoče ugotoviti, kako aktualni so podatki",
+      "Besedilo strani"
+     ]
+    ]
+   },
+   "after": [
+    "Strani poslovalnic se pogosto končajo kot enako besedilo, v katerem se zamenjata le ime in naslov. To je sprejemljivo, a če zapišete vsaj tri dejstva, ki veljajo samo za to poslovalnico (oprema, katere storitve izvaja, kdaj je največ obiska, kako priti), daste UI nekaj, po čemer poslovalnice loči.",
+    "Pogosta vprašanja vsake poslovalnice imejte na njeni strani, ločeno od vprašanj, ki veljajo za celotno blagovno znamko: vprašanja, na katera je mogoče odgovoriti z imenom poslovalnice v besedilu, na primer »Ali je pri tej poslovalnici parkirišče?« ali »Ali lahko v tej poslovalnici dobim X?«"
+   ]
+  },
+  {
+   "heading": "Zaprtja, selitve in začasna zaprtja",
+   "paragraphs": [
+    "Napačen podatek, ki se pri podjetjih z več poslovalnicami obdrži najdlje, je zaprta poslovalnica. Izbris njene strani ne odstrani tega, kar so druga spletna mesta in UI že prebrali. Pospravite v tem vrstnem redu:"
+   ],
+   "list": [
+    "Strani zaprte poslovalnice ne izbrišite takoj. Prepišite jo v »Ta poslovalnica je bila zaprta [datum]« s povezavami na bližnje poslovalnice. Pri selitvi preusmerite na stran nove poslovalnice ali jasno navedite nov naslov.",
+    "Odstranite jo s seznama poslovalnic in odstranite njene strukturirane podatke (zaprte poslovalnice ne objavljajte več kot LocalBusiness).",
+    "Posodobite njen Profil podjetja v Googlu, da bo prikazoval zaprtje ali selitev.",
+    "Preiščite preostanek spletnega mesta (nogo, stran z zaposlitvami, strani kampanj, letake v PDF), ali jo še kje omenja.",
+    "Druge izdajatelje (spletna mesta za rezervacije, portale, lokalne imenike) prosite, naj posodobijo svoje vpise.",
+    "Pri začasnem zaprtju navedite datume in ga prikažite s specialOpeningHoursSpecification ali obvestilom. Ko znova odprete, ga odstranite."
+   ]
+  },
+  {
+   "heading": "Strukturirani podatki: vsako poslovalnico povežite z blagovno znamko",
+   "paragraphs": [
+    "Pri več poslovalnicah naj strukturirani podatki poskrbijo, da je informacija »katero podjetje, katera poslovalnica« berljiva za stroje. Postopek:"
+   ],
+   "list": [
+    "Sedež (blagovno znamko ali podjetje upravljavca) objavite enkrat kot Organization na domači strani ali strani O nas, s stalnim @id, na primer https://example.com/#organization.",
+    "Na strani vsake poslovalnice objavite natanko en LocalBusiness najbolj specifičnega tipa z @id, edinstvenim za to poslovalnico, na primer https://example.com/stores/osaka/umeda/#store.",
+    "Iz vsake poslovalnice pokažite na sedež s parentOrganization. schema.org starejšo lastnost [branchOf](https://schema.org/branchOf) označuje kot zastarelo in namesto nje priporoča [parentOrganization](https://schema.org/parentOrganization).",
+    "Kodo poslovalnice vpišite v [branchCode](https://schema.org/branchCode), ki ga schema.org sam opisuje kot »kodo trgovine«.",
+    "Če poslovalnica vključuje ločen oddelek (primera schema.org sta trgovina z lekarno in pekarna s kavarno), ga povežite z [department](https://schema.org/department), kar vsakemu oddelku omogoča lasten delovni čas.",
+    "Vrednosti vsake poslovalnice objavite na njeni lastni strani, namesto da bi vse LocalBusiness našteli na seznamu poslovalnic. V strukturirane podatke ne vpisujte vrednosti, ki jih besedilo strani ne prikazuje."
+   ],
+   "after": [
+    "Google ujemanje strukturiranih podatkov z vidno vsebino strani navaja kot eno od osnov in priporoča, da so podatki v Profilu podjetja ažurni ([Funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)). Strukturirane podatke obravnavajte kot ključ odgovorov za to, kar stran poslovalnice že pove."
+   ]
+  },
+  {
+   "heading": "V Profilu podjetja v Googlu in na spletnem mestu ohranjajte enake vrednosti",
+   "paragraphs": [
+    "Ko se Profil podjetja poslovalnice in njena stran ne ujemata, ne ljudje ne UI ne vedo, kaj drži. Najbolj pomaga ena glavna preglednica s podatki vseh poslovalnic, na podlagi katere se posodabljajo spletno mesto, Profil podjetja v Googlu in spletna mesta za rezervacije."
+   ],
+   "table": {
+    "head": [
+     "Stolpec",
+     "Kaj določiti"
+    ],
+    "rows": [
+     [
+      "Koda poslovalnice",
+      "Ista številka interno, na spletnem mestu in v Profilu podjetja"
+     ],
+     [
+      "Ime poslovalnice",
+      "Stalen vzorec znamka + kraj"
+     ],
+     [
+      "Naslov in telefon",
+      "En način zapisa številk in ločil"
+     ],
+     [
+      "Delovni čas, dnevi zaprtja, začasna zaprtja",
+      "Kdaj se spremenijo in kdo jih posodablja"
+     ],
+     [
+      "Storitve in oprema",
+      "Skupne vsem ali samo v tej poslovalnici"
+     ],
+     [
+      "URL strani poslovalnice",
+      "Se nikoli ne spremeni; če se, preusmerite"
+     ],
+     [
+      "Stanje",
+      "Odprto, začasno zaprto, zaprto (z datumi)"
+     ],
+     [
+      "Zadnje preverjanje",
+      "V stalnem ciklu, na primer mesečno"
+     ]
+    ]
+   },
+   "after": [
+    "Za množično preverjanje pri podjetjih z mnogimi poslovalnicami, orodja za skupno upravljanje več poslovalnic in ravnanje s kodami poslovalnic veljajo pogoji, ki jih določa Google, in ti pogoji se spreminjajo. Trenutno različico preverite v [Centru za pomoč za Profil podjetja v Googlu](https://support.google.com/business/). Če vodje poslovalnic sami urejajo svoje profile, se dogovorite, da se najprej posodobi glavna preglednica, da se oboje ne bi razhajalo."
+   ]
+  },
+  {
+   "heading": "V WordPressu (z Nurevo AEO)",
+   "paragraphs": [
+    "V WordPressu [Nurevo AEO (brezplačno)](https://wordpress.org/plugins/nurevo-webmcp/) objavi podatke sedeža kot strukturirane podatke in v llms.txt; s stranmi poslovalnic ga kombinirajte, kot je opisano spodaj. Nastavitve Nurevo opisujejo eno podjetje na spletno mesto, zato tja vnesite sedež (blagovno znamko)."
+   ],
+   "list": [
+    "Najprej napišite strani poslovalnic po zgornji tabeli (besedilo pred strukturiranimi podatki). Za vsako poslovalnico uporabite eno stran ali en vnos vrste vsebine »poslovalnica«.",
+    "V podatkih o podjetju v Nurevo vnesite ime, opis, naslov, telefon, URL in e-naslov sedeža. Za razliko od podjetja z eno poslovalnico se, če sem vnesete delovni čas ene poslovalnice, ta prikaže kot delovni čas vseh poslovalnic.",
+    "Vprašanja posamezne poslovalnice vnesite v ploščo Nurevo AEO v urejevalniku njene strani kot lastna vprašanja te strani in vstavite blok FAQ Nurevo z nastavitvijo »Lastna vprašanja te strani«. Objavijo se kot FAQPage samo na tej strani.",
+    "Če želite objaviti LocalBusiness za vsako poslovalnico, uporabite razvijalski filter webmcp_canary_schema_graph in vozlišče poslovalnice dodajte v extra samo na straneh poslovalnic. @id sedeža je na voljo kot $bundle['org_id']; vpišite ga v parentOrganization. Vrednosti poslovalnice sestavite iz istega vira kot besedilo strani (na primer iz polj po meri).",
+    "Z Yoast SEO, Rank Math, All in One SEO ali Slim SEO Nurevo doda samo podatke, ki v strukturiranih podatkih tega vtičnika manjkajo, nova vozlišča (na primer vozlišče poslovalnice) pa se pripnejo grafu tega vtičnika. Nurevo deluje tudi skupaj s SEO SIMPLE PACK in VK All in One Expansion Unit (od različice 0.9.1).",
+    "Če strukturirane podatke za vsako poslovalnico že objavlja kaj drugega, na primer vtičnik z iskalnikom poslovalnic, se izognite podvajanju: na teh straneh označite »Na tej strani ne objavljaj strukturiranih podatkov Nurevo« ali izberite en vir.",
+    "Odprite /llms.txt in preverite, ali sta tam seznam poslovalnic in vaše glavne strani poslovalnic. llms.txt navaja 30 nazadnje posodobljenih strani in prispevkov, zato bodo pri mnogih poslovalnicah nekatere strani manjkale. Filter webmcp_canary_llms_txt_lines lahko doda vrstico za seznam poslovalnic, stran zaprte poslovalnice pa lahko izločite z možnostjo »Izpusti to stran iz llms.txt«.",
+    "Če franšizne poslovalnice upravljajo ločena spletna mesta WordPress, nastavitve izvozite z ukazom wp nurevo export, jih na drugem mestu uvozite z ukazom wp nurevo import in nato spremenite samo ime, naslov, telefon in delovni čas (ključi in žetoni se ne izvozijo)."
+   ],
+   "after": [
+    "Enaka preverjanja veljajo za spletna mesta, ki niso zgrajena na WordPressu. Vnesite URL v [brezplačno preverjanje](/check), brez registracije, in videli boste stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. Strani poslovalnic lahko preverjate po en URL naenkrat."
+   ]
+  },
+  {
+   "heading": "Kako preverjati: po poslovalnicah, z imenom in brez njega",
+   "paragraphs": [
+    "Preverjajte tako, da izberete poslovalnice in rezultate beležite za vsako poslovalnico posebej. Ni treba vsakič spraševati o vseh poslovalnicah: začnite s tistimi, pri katerih se je spremenil delovni čas ali naslov, s tistimi, ki so se zaprle ali preselile, in s tistimi, ki prejmejo največ povpraševanj. Isto vprašanje postavite isti UI v različnih dneh in ne sodite po enem odgovoru."
+   ],
+   "table": {
+    "head": [
+     "Kaj zabeležiti",
+     "Primer"
+    ],
+    "rows": [
+     [
+      "Datum, UI, vprašanje",
+      "15. 11., Perplexity, »Ali je Zobna ordinacija Sample Umeda ob nedeljah odprta?«"
+     ],
+     [
+      "Podatki v odgovoru",
+      "Ali delovni čas, naslov, telefon in storitve pripadajo tej poslovalnici ali drugi?"
+     ],
+     [
+      "Viri",
+      "Stran te poslovalnice, seznam poslovalnic ali zunanje spletno mesto za rezervacije?"
+     ],
+     [
+      "Vprašanje brez imena",
+      "Ali se poslovalnica pojavi pri vprašanju »zobozdravnik, odprt ob nedeljah, v Umedi«?"
+     ],
+     [
+      "Zaprte poslovalnice",
+      "Ali je zaprta poslovalnica opisana kot odprta?"
+     ]
+    ]
+   },
+   "after": [
+    "Brezplačno preverjanje UI pri Nurevo (enkrat na mesec, za povezana spletna mesta s paketom Free in Standard) postavlja vprašanja, sestavljena iz vrste dejavnosti in območja v vaših nastavitvah, brez vašega imena. V nastavitvah je eno območje, zato območja drugih poslovalnic preverite ročno z zgornjo tabelo. Merjenje vidnosti v paketu Pro (beta) trenutno zajema Perplexity. Celotna metoda je opisana v vodniku [kako meriti vidnost v UI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam za več poslovalnic",
+   "list": [
+    "Vsaka poslovalnica ima svojo stran na URL-ju, ki se ne bo spreminjal.",
+    "Imena poslovalnic povsod sledijo istemu vzorcu znamka + kraj.",
+    "Stran vsake poslovalnice v besedilu navaja njen naslov, telefon (neposreden ali osrednji), delovni čas in dneve zaprtja.",
+    "Začasna zaprtja in prazniki imajo datume in se po izteku odstranijo.",
+    "Storitve, skupne vsem poslovalnicam, so zapisane ločeno od tistih, ki jih ponuja samo ta poslovalnica.",
+    "Zaprte ali preseljene poslovalnice prikazujejo obvestilo in so odstranjene s seznama poslovalnic in iz strukturiranih podatkov.",
+    "LocalBusiness vsake poslovalnice ima svoj @id in s parentOrganization kaže na sedež.",
+    "Vrednosti v strukturiranih podatkih se ujemajo z besedilom strani poslovalnice.",
+    "Spletno mesto in Profil podjetja v Googlu se posodabljata iz iste glavne preglednice.",
+    "Poslovalnice je mogoče brskati po regijah, s povezavami na stran vsake poslovalnice.",
+    "Izbrali ste poslovalnice, v različnih dneh preverili vprašanja z imenom in brez njega ter rezultate zabeležili."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ali potrebujemo stran za vsako poslovalnico ali zadostuje en seznam poslovalnic?",
+   "a": "Za odgovarjanje na vprašanja o eni poslovalnici (njen delovni čas, njena oprema) je ena stran na poslovalnico zanesljivejša. Pri samem seznamu UI zlahka pripiše vrednost napačni poslovalnici. Tudi pri majhnem številu poslovalnic dajte vsaki svoj naslov razdelka, pod katerim sta skupaj navedena naslov in delovni čas."
+  },
+  {
+   "q": "Če imajo vse poslovalnice enak delovni čas, ga moramo vseeno navesti na vsaki strani?",
+   "a": "To priporočamo. UI lahko odgovori samo na podlagi strani poslovalnice, in če delovnega časa tam ni, bo uporabila vrednosti z drugih strani ali drugih spletnih mest."
+  },
+  {
+   "q": "Naj uporabimo branchOf ali parentOrganization?",
+   "a": "schema.org branchOf označuje kot zastarelo in priporoča parentOrganization. Iz LocalBusiness vsake poslovalnice s parentOrganization pokažite na @id objekta Organization sedeža."
+  },
+  {
+   "q": "Ali naj stran zaprte poslovalnice takoj izbrišemo?",
+   "a": "Če jo spremenite v obvestilo z datumom zaprtja in povezavami na bližnje poslovalnice ter jo odstranite s seznama poslovalnic in iz strukturiranih podatkov, zaprtje sporočite bolje kot z izbrisom. Pri selitvi preusmerite na stran nove poslovalnice ali navedite nov naslov."
+  },
+  {
+   "q": "Naši franšizojemalci imajo lastna spletna mesta in profile na družbenih omrežjih. Kako zagotoviti doslednost?",
+   "a": "Glavno preglednico sedeža obravnavajte kot edini vir resnice, s franšizojemalci delite dogovorjen zapis imen, naslovov, telefonskih številk in delovnega časa ter jih prosite, naj uporabljajo enake vrednosti. Odnos razjasnijo tudi povezave v obe smeri, s spletnega mesta franšizojemalca na stran poslovalnice na mestu blagovne znamke in nazaj."
+  },
+  {
+   "q": "Imamo preveč poslovalnic za llms.txt. Ali morajo biti navedene vse?",
+   "a": "Ne. Če sta tam seznam poslovalnic in vaše glavne strani poslovalnic, je ostale mogoče doseči od tam. V Nurevo AEO lahko filter webmcp_canary_llms_txt_lines doda vrstico za seznam poslovalnic."
+  },
+  {
+   "q": "Ali bodo ti koraki poskrbeli, da se bo vsaka poslovalnica v odgovorih UI pravilno pojavljala?",
+   "a": "Tega ni mogoče zagotoviti; odgovori UI se spreminjajo glede na dan in ubeseditev. Ti koraki zmanjšajo vzroke, zaradi katerih se podatki ene poslovalnice mešajo s podatki druge, in poskrbijo, da so informacije, ki jih UI bere, točne in dosledne."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Poglejte, kako UI bere strani vaših poslovalnic",
+  "body": "Brezplačno preverjanje ne zahteva registracije: vnesite URL in videli boste stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI, če želite, po eno stran poslovalnice naenkrat. V WordPressu brezplačni vtičnik objavi podatke vašega sedeža kot strukturirane podatke.",
+  "label": "Zaženite brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Preizkusite brezplačni vtičnik za WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI in Google družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit in WordPress so blagovne znamke svojih lastnikov. Nurevo ni povezan z nobeno od teh družb niti ga te ne podpirajo."
+}

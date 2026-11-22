@@ -1,0 +1,349 @@
+{
+ "title": "AI-sökning för företag med flera enheter | Nurevo",
+ "description": "Hindra AI-svar från att blanda ihop era enheter: en sida per enhet, fakta varje sida behöver, stängningar och flyttar, schema och WordPress-steg.",
+ "h1": "AI-sökning för företag med flera enheter: förhindra att öppettider, adresser och tjänster blandas ihop",
+ "lead": "När ett företag har flera enheter beror de flesta felaktiga AI-svar på att en enhets uppgifter används för en annan. Ge varje enhet en egen sida med dess fakta i vanlig text (adress, telefon, öppettider, tillfälliga stängningar, vad som skiljer sig just där), koppla den till varumärket i strukturerad data och håll samma värden i Google Business Profile och era övriga listningar. De tre stegen är kärnan i arbetet.",
+ "intro": [
+  "Skriven 15 november 2026 (JST). Den här guiden är för alla företag med två eller fler enheter eller kontor (restauranger, salonger, kliniker, butiker, skolor, mäklare) och för byråerna som bygger deras webbplatser. Själva företaget (juridiskt namn, grundandedatum, ledning) behandlas i [AI-sökoptimering av Om oss-sidan](/guide/company-profile-page-ai-search), och grunderna i märkning för en enhet i [schema för lokala företag och SEO-tillägg](/guide/local-business-schema-seo-plugins). Den här guiden handlar om problemen som uppstår när man har många enheter.",
+  "AI-svar ändras från dag till dag och beroende på formulering. De här stegen gör informationen som AI läser korrekt; de garanterar inte att ni syns i ett svar eller på en viss plats."
+ ],
+ "sections": [
+  {
+   "heading": "Så blir AI-svar fel för företag med flera enheter",
+   "paragraphs": [
+    "ChatGPT search, Perplexity och Googles AI Overviews läser webbsidor, sätter ihop ett svar och visar sina källor. Med en enhet är ”företagets fakta” en enda uppsättning. Med flera innehåller sidorna som en AI läser flera adresser, flera uppsättningar öppettider och flera telefonnummer. Om texten inte gör tydligt vilket värde som hör till vilken enhet kan svaret byggas på fel värde.",
+    "Frågorna folk ställer delas upp i frågor om varumärket och frågor om en enskild enhet:"
+   ],
+   "list": [
+    "”Har [varumärke] i Umeda öppet på söndagar?” (den enhetens öppettider och stängda dagar)",
+    "”Vilka [varumärke]-enheter har parkering?” (faciliteter som skiljer sig mellan enheter)",
+    "”Har [varumärke] i Shinjuku fortfarande öppet, eller har de flyttat?” (stängningar och flyttar)",
+    "”Finns det ett [varumärke] nära Kyoto Station?” (vilken enhet som betjänar vilket område)",
+    "”Kan jag få samma meny/behandling/tjänst på alla [varumärke]?” (tjänster som skiljer sig mellan enheter)",
+    "”Vem driver [varumärke]?” (varumärke och driftbolag)"
+   ],
+   "after": [
+    "Fyra misstag återkommer gång på gång: huvudenhetens öppettider anges som alla enheters, en stängd enhet beskrivs som öppen, det centrala bokningsnumret anges som en enhets telefon, och en tjänst som bara vissa enheter erbjuder beskrivs som tillgänglig överallt. Vart och ett blir mindre sannolikt när varje enhets fakta står på enhetens egen sida.",
+    "Google säger att det inte finns några ytterligare krav och ingen särskild strukturerad data för att synas i AI Overviews eller AI Mode, och att de vanliga SEO-grunderna gäller ([Google Search Central: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Arbetet med flera enheter är detsamma: inte ett särskilt sätt att skriva för AI, utan varje enhets fakta publicerade korrekt, läsbart och med samma värden överallt."
+   ]
+  },
+  {
+   "heading": "Webbplatsstruktur: skilj på varumärkessidan, enhetslistan och enhetssidorna",
+   "paragraphs": [
+    "Bestäm först vilken sida som besvarar vilken fråga. En enda sida som listar alla enheter gör det lätt för en AI att koppla ett stycke till fel enhet."
+   ],
+   "table": {
+    "head": [
+     "Sida",
+     "Frågor den besvarar",
+     "Vad som ska stå",
+     "Strukturerad data"
+    ],
+    "rows": [
+     [
+      "Varumärke (startsida eller Om oss)",
+      "”Vad är [varumärke]?” ”Vem driver det?”",
+      "Varumärke och driftbolag, tjänster gemensamma för alla enheter, antal enheter (med datum)",
+      "Organization (huvudkontor)"
+     ],
+     [
+      "Enhetslista",
+      "”Hur många [varumärke]-enheter finns i Osaka?” ”Finns det en nära Kyoto Station?”",
+      "Namn och adresser per region och stad, med länkar till varje enhetssida",
+      "Valfritt (lägg den på varje enhetssida)"
+     ],
+     [
+      "Enhetssida (en per enhet)",
+      "”Har Umeda öppet på söndagar?” ”Finns det parkering?”",
+      "Fakta som bara gäller den enheten (nästa tabell)",
+      "En specifik LocalBusiness-typ per enhet"
+     ],
+     [
+      "Meddelande om stängning eller flytt",
+      "”Har Shinjuku fortfarande öppet?”",
+      "Stängningsdatum, ny adress, länkar till närliggande enheter",
+      "Ta bort enhetens strukturerade data"
+     ]
+    ]
+   },
+   "after": [
+    "Ge varje enhet en URL som inte ändras, till exempel /stores/osaka/umeda/. Om enheter eller URL:er byter namn på vägen uppstår fler avvikelser mot det som AI-tjänster och andra webbplatser har läst tidigare. Om du måste ändra en, omdirigera den gamla URL:en till den nya.",
+    "Skapa inte sidor för områden där ni inte har någon enhet (sidor som bara byter ut ortnamnet, ”letar du efter X i [ort]? Välj oss”). De kan också få en AI att beskriva en enhet som inte finns."
+   ]
+  },
+  {
+   "heading": "Vad varje enhetssida behöver, och motsvarande egenskaper",
+   "paragraphs": [
+    "Tabellen visar vad som ska stå i vanlig text på varje enhetssida och motsvarande schema.org-egenskap. Googles dokumentation för lokala företag anger name och address som obligatoriska, med openingHoursSpecification, telephone, url, geo och department bland de rekommenderade egenskaperna, och rekommenderar den mest specifika typen som finns, till exempel Dentist, HairSalon eller Restaurant ([Google: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business))."
+   ],
+   "table": {
+    "head": [
+     "Uppgift",
+     "Så skriver du den",
+     "Typiskt AI-fel",
+     "Egenskap"
+    ],
+    "rows": [
+     [
+      "Enhetens namn",
+      "Ett fast mönster, varumärke + ort (t.ex. Exempel Tandvård Umeda), lika för alla enheter",
+      "Ihopblandad med en annan enhet, bara känd under ett smeknamn",
+      "name"
+     ],
+     [
+      "Adress",
+      "Från postnummer till byggnad och våning, plus närmaste station och utgång i en mening",
+      "En tidigare adress, eller en närliggande enhets adress",
+      "address, geo, hasMap"
+     ],
+     [
+      "Telefon",
+      "Ange om det är enhetens direktnummer eller ett centralt bokningsnummer",
+      "Det centrala numret angivet som enhetens",
+      "telephone"
+     ],
+     [
+      "Öppettider och stängda dagar",
+      "Per enhet, på varje enhets sida, även om de är lika överallt",
+      "Huvudenhetens öppettider angivna för alla enheter",
+      "openingHoursSpecification"
+     ],
+     [
+      "Tillfälliga stängningar och helgstängt",
+      "Med datum; ta bort dem när de är över",
+      "Gamla stängningsmeddelanden som ligger kvar",
+      "specialOpeningHoursSpecification"
+     ],
+     [
+      "Tjänster och faciliteter",
+      "Skilj på det alla enheter erbjuder och det den här erbjuder (”Den här enheten erbjuder inte tandregleringskonsultationer på lördagar”)",
+      "En enhets tjänst beskriven som tillgänglig överallt",
+      "Brödtext, FAQ, department (en avdelning inom enheten)"
+     ],
+     [
+      "Parkering, betalning, språk",
+      "Platser eller samarbetande parkeringar, betalsätt, språk som talas",
+      "En annan enhets faciliteter",
+      "Brödtext (paymentAccepted med flera)"
+     ],
+     [
+      "Butikskod",
+      "Numret som används internt och i Google Business Profile",
+      "Två enheter med liknande namn förväxlade",
+      "branchCode"
+     ],
+     [
+      "Länk till varumärket",
+      "”Drivs av Exempel AB” med en länk till Om oss-sidan",
+      "Franchisetagare och franchisegivare förväxlade",
+      "parentOrganization"
+     ],
+     [
+      "Öppningsdatum, senast uppdaterad",
+      "”Uppdaterad [datum]” längst ner på sidan",
+      "Inget sätt att se hur aktuella uppgifterna är",
+      "Brödtext"
+     ]
+    ]
+   },
+   "after": [
+    "Enhetssidor blir ofta samma text där bara namn och adress byts ut. Det är godtagbart, men om du skriver minst tre fakta som bara gäller den enheten (faciliteter, vilka tjänster den hanterar, tider med mycket folk, vägbeskrivning) får en AI något att skilja enheterna åt med.",
+    "Håll varje enhets FAQ på enhetens egen sida, åtskild från frågor om hela varumärket: frågor som kan besvaras med enhetens namn i, som ”Finns det parkering vid den här enheten?” eller ”Kan jag få X på den här enheten?”"
+   ]
+  },
+  {
+   "heading": "Stängningar, flyttar och tillfälliga stängningar",
+   "paragraphs": [
+    "Den felaktiga uppgift som lever längst för företag med flera enheter är en stängd enhet. Att radera dess sida tar inte bort det som andra webbplatser och AI-tjänster redan har läst. Städa upp i den här ordningen:"
+   ],
+   "list": [
+    "Radera inte den stängda enhetens sida direkt. Skriv om den till ”Den här enheten stängde [datum]” med länkar till närliggande enheter. Vid en flytt, omdirigera till den nya enhetens sida eller ange den nya adressen tydligt.",
+    "Ta bort den från enhetslistan och ta bort dess strukturerade data (fortsätt inte att publicera en stängd enhet som LocalBusiness).",
+    "Uppdatera dess Google Business Profile så att den visar stängningen eller flytten.",
+    "Sök igenom resten av webbplatsen (sidfot, rekryteringssida, kampanjsidor, PDF-flygblad) efter omnämnanden.",
+    "Be andra publicister (bokningssajter, portaler, lokala kataloger) att uppdatera sina listningar.",
+    "Vid en tillfällig stängning, ange datum och visa den med specialOpeningHoursSpecification eller ett meddelande. Ta bort den när ni öppnar igen."
+   ]
+  },
+  {
+   "heading": "Strukturerad data: koppla varje enhet till varumärket",
+   "paragraphs": [
+    "Vid flera enheter ska strukturerad data göra ”vilket företag, vilken enhet” läsbart för maskiner. Tillvägagångssättet:"
+   ],
+   "list": [
+    "Publicera huvudkontoret (varumärket eller driftbolaget) en gång som Organization på startsidan eller Om oss-sidan, med ett fast @id som https://example.com/#organization.",
+    "Publicera på varje enhetssida exakt en LocalBusiness av den mest specifika typen, med ett @id unikt för enheten, som https://example.com/stores/osaka/umeda/#store.",
+    "Peka från varje enhet till huvudkontoret med parentOrganization. schema.org markerar den äldre [branchOf](https://schema.org/branchOf) som utfasad och rekommenderar [parentOrganization](https://schema.org/parentOrganization) i stället.",
+    "Lägg butikskoden i [branchCode](https://schema.org/branchCode), som schema.org själv beskriver som ”store code”.",
+    "Om en enhet innehåller en separat avdelning (schema.orgs exempel är en butik med ett apotek och ett bageri med ett kafé), koppla den med [department](https://schema.org/department), som låter varje avdelning ha egna öppettider.",
+    "Lägg varje enhets värden på dess egen sida i stället för att lista alla LocalBusiness på enhetslistan. Lägg inte in värden i strukturerad data som sidans text inte visar."
+   ],
+   "after": [
+    "Google räknar att strukturerad data stämmer med sidans synliga innehåll som en av grunderna och rekommenderar att hålla uppgifterna i Business Profile aktuella ([AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Se strukturerad data som facit till det enhetssidan redan säger."
+   ]
+  },
+  {
+   "heading": "Håll Google Business Profile och webbplatsen på samma värden",
+   "paragraphs": [
+    "När en enhets Business Profile och dess sida säger olika saker kan varken människor eller AI-tjänster avgöra vad som stämmer. Det som hjälper mest är ett enda masterark med alla enheters fakta, utifrån vilket webbplatsen, Google Business Profile och bokningssajter uppdateras."
+   ],
+   "table": {
+    "head": [
+     "Kolumn",
+     "Vad som ska bestämmas"
+    ],
+    "rows": [
+     [
+      "Butikskod",
+      "Samma nummer internt, på webbplatsen och i Business Profile"
+     ],
+     [
+      "Enhetens namn",
+      "Det fasta mönstret varumärke + ort"
+     ],
+     [
+      "Adress och telefon",
+      "Ett enda sätt att skriva siffror och avgränsare"
+     ],
+     [
+      "Öppettider, stängda dagar, tillfälliga stängningar",
+      "När de ändras och vem som uppdaterar dem"
+     ],
+     [
+      "Tjänster och faciliteter",
+      "Gemensamt för alla eller bara den här enheten"
+     ],
+     [
+      "Enhetssidans URL",
+      "Ändras aldrig; omdirigera om den gör det"
+     ],
+     [
+      "Status",
+      "Öppen, tillfälligt stängd, stängd (med datum)"
+     ],
+     [
+      "Senast kontrollerad",
+      "Med fast intervall, till exempel varje månad"
+     ]
+    ]
+   },
+   "after": [
+    "Massverifiering för företag med många enheter, verktyg för att hantera flera enheter tillsammans och hanteringen av butikskoder har alla villkor som Google bestämmer, och villkoren ändras. Kontrollera den aktuella versionen i [Google Business Profile Help Center](https://support.google.com/business/). Om enhetscheferna själva redigerar sina profiler, kom överens om att masterarket uppdateras först så att de två inte glider isär."
+   ]
+  },
+  {
+   "heading": "På WordPress (med Nurevo AEO)",
+   "paragraphs": [
+    "På WordPress publicerar [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) huvudkontorets fakta som strukturerad data och i llms.txt; kombinera det med era enhetssidor enligt nedan. Nurevos inställningar beskriver ett företag per webbplats, så ange huvudkontoret (varumärket) där."
+   ],
+   "list": [
+    "Skriv enhetssidorna först enligt tabellen ovan (text före strukturerad data). Använd en sida eller en post av en enhets-posttyp per enhet.",
+    "Ange huvudkontorets namn, beskrivning, adress, telefon, URL och e-post i Nurevos företagsuppgifter. Till skillnad från ett företag med en enhet gör en enhets öppettider angivna här att de ser ut som alla enheters öppettider.",
+    "Ange varje enhets egna frågor i Nurevo AEO-panelen i den sidans redigerare som sidans egna frågor, och placera Nurevo FAQ-blocket inställt på ”Den här sidans egna frågor”. De publiceras som FAQPage bara på den sidan.",
+    "För att publicera en LocalBusiness per enhet, använd utvecklarfiltret webmcp_canary_schema_graph för att lägga till enhetens nod i extra bara på enhetssidor. Huvudkontorets @id finns tillgängligt som $bundle['org_id']; lägg det i parentOrganization. Bygg enhetens värden från samma källa som sidans text (till exempel anpassade fält).",
+    "Med Yoast SEO, Rank Math, All in One SEO eller Slim SEO lägger Nurevo bara till de fakta som tilläggets strukturerade data saknar, och nya noder (som en enhetsnod) läggs till i tilläggets graf. Nurevo fungerar också tillsammans med SEO SIMPLE PACK och VK All in One Expansion Unit (från 0.9.1).",
+    "Om något annat, till exempel ett butikssökartillägg, redan publicerar strukturerad data per enhet, undvik dubbletter: kryssa i ”Publicera ingen strukturerad data från Nurevo på den här sidan” på de sidorna, eller välj en källa.",
+    "Öppna /llms.txt och kontrollera att enhetslistan och era viktigaste enhetssidor finns med. llms.txt listar de 30 senast uppdaterade sidorna och inläggen, så med många enheter kommer vissa sidor att saknas. Filtret webmcp_canary_llms_txt_lines kan lägga till en rad för enhetslistan, och en stängd enhets sida kan tas bort med ”Utelämna den här sidan från llms.txt”.",
+    "Om franchiseenheter driver separata WordPress-webbplatser, exportera inställningarna med wp nurevo export, importera dem på den andra webbplatsen med wp nurevo import och ändra sedan bara namn, adress, telefon och öppettider (nycklar och tokens exporteras inte)."
+   ],
+   "after": [
+    "Samma kontroller gäller för webbplatser som inte är byggda på WordPress. Ange en URL i den [kostnadsfria kontrollen](/check), utan registrering, för att se status för strukturerad data, llms.txt och åtkomst för AI-crawlers. Du kan kontrollera enhetssidor en URL i taget."
+   ]
+  },
+  {
+   "heading": "Så kontrollerar du: per enhet, med och utan namnet",
+   "paragraphs": [
+    "Kontrollera genom att välja ut enheter och notera resultaten per enhet. Du behöver inte fråga om alla enheter varje gång: börja med enheter vars öppettider eller adress har ändrats, de som har stängt eller flyttat och de som får flest förfrågningar. Ställ samma fråga till samma AI på olika dagar, och döm inte utifrån ett enda svar."
+   ],
+   "table": {
+    "head": [
+     "Vad som ska noteras",
+     "Exempel"
+    ],
+    "rows": [
+     [
+      "Datum, AI, fråga",
+      "15 nov., Perplexity, ”Har Exempel Tandvård Umeda öppet på söndagar?”"
+     ],
+     [
+      "Fakta i svaret",
+      "Är öppettider, adress, telefon och tjänster den här enhetens, eller en annans?"
+     ],
+     [
+      "Källor",
+      "Den här enhetens sida, enhetslistan eller en extern bokningssajt?"
+     ],
+     [
+      "Fråga utan namnet",
+      "Syns enheten för ”tandläkare med söndagsöppet i Umeda”?"
+     ],
+     [
+      "Stängda enheter",
+      "Beskrivs en stängd enhet som öppen?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevos kostnadsfria AI-kontroll (en gång i månaden, för anslutna Free- och Standard-webbplatser) ställer frågor byggda på verksamhetstypen och området i dina inställningar, utan ditt namn. Det finns ett område i inställningarna, så kontrollera era andra enheters områden manuellt med tabellen ovan. Pros synlighetsmätning (beta) omfattar för närvarande Perplexity. Hela metoden finns i [så mäter du synlighet i AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checklista för flera enheter",
+   "list": [
+    "Varje enhet har en egen sida, på en URL som inte ändras.",
+    "Enheternas namn följer samma mönster varumärke + ort överallt.",
+    "Varje enhetssida anger enhetens adress, telefon (direkt eller central), öppettider och stängda dagar i text.",
+    "Tillfälliga stängningar och helgstängt har datum och tas bort när de är över.",
+    "Tjänster som är gemensamma för alla enheter står åtskilda från dem som bara den här enheten erbjuder.",
+    "Stängda eller flyttade enheter visar ett meddelande och är borttagna från enhetslistan och den strukturerade datan.",
+    "Varje enhets LocalBusiness har ett eget @id och pekar på huvudkontoret med parentOrganization.",
+    "Värdena i den strukturerade datan stämmer med enhetssidans text.",
+    "Webbplatsen och Google Business Profile uppdateras från samma masterark.",
+    "Enheterna kan bläddras igenom per region, med länkar till varje enhetssida.",
+    "Du har valt ut enheter, kontrollerat frågor med och utan namnet på olika dagar och noterat resultaten."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Behöver vi en sida för varje enhet, eller räcker en enhetslista?",
+   "a": "För att besvara frågor om en enhet (dess öppettider, dess faciliteter) är en sida per enhet mer tillförlitligt. Med bara en lista kan en AI lätt koppla ett värde till fel enhet. Även med få enheter bör varje enhet få en egen rubrik med adress och öppettider samlade."
+  },
+  {
+   "q": "Om alla enheter har samma öppettider, behöver de ändå stå på varje sida?",
+   "a": "Det rekommenderar vi. En AI kan svara utifrån enhetssidan ensam, och om öppettiderna inte står där använder den värden från andra sidor eller andra webbplatser."
+  },
+  {
+   "q": "Ska vi använda branchOf eller parentOrganization?",
+   "a": "schema.org markerar branchOf som utfasad och rekommenderar parentOrganization. Peka från varje enhets LocalBusiness till huvudkontorets Organization-@id med parentOrganization."
+  },
+  {
+   "q": "Ska vi radera en stängd enhets sida direkt?",
+   "a": "Att göra om den till ett meddelande med stängningsdatum och länkar till närliggande enheter, och ta bort den från enhetslistan och den strukturerade datan, förmedlar stängningen bättre än att radera den. Vid en flytt, omdirigera till den nya enhetens sida eller ange den nya adressen."
+  },
+  {
+   "q": "Våra franchisetagare har egna webbplatser och sociala konton. Hur håller vi dem enhetliga?",
+   "a": "Behandla huvudkontorets masterark som den auktoritativa källan, dela den överenskomna stavningen av namn, adresser, telefonnummer och öppettider med franchisetagarna och be dem använda samma värden. Länkar åt båda hållen, från franchisetagarens webbplats till varumärkets enhetssida och tillbaka, gör också relationen tydlig."
+  },
+  {
+   "q": "Vi har för många enheter för llms.txt. Ska alla listas?",
+   "a": "Nej. Om enhetslistan och era viktigaste enhetssidor finns med går det att nå resten därifrån. I Nurevo AEO kan filtret webmcp_canary_llms_txt_lines lägga till en rad för enhetslistan."
+  },
+  {
+   "q": "Kommer de här stegen att få alla enheter att visas korrekt i AI-svar?",
+   "a": "Det kan inte garanteras; AI-svar ändras från dag till dag och beroende på formulering. De här stegen minskar orsakerna till att en enhets fakta blandas ihop med en annans och gör informationen som AI läser korrekt och enhetlig."
+  }
+ ],
+ "relatedHeading": "Relaterade guider",
+ "cta": {
+  "heading": "Se hur AI läser era enhetssidor",
+  "body": "Den kostnadsfria kontrollen kräver ingen registrering: ange en URL för att se status för strukturerad data, llms.txt och åtkomst för AI-crawlers, gärna en enhetssida i taget. På WordPress publicerar det kostnadsfria tillägget huvudkontorets fakta som strukturerad data.",
+  "label": "Kör den kostnadsfria kontrollen av AI-läsbarhet",
+  "href": "/check",
+  "secondary": {
+   "label": "Prova det kostnadsfria WordPress-tillägget",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT är ett varumärke som tillhör OpenAI, Perplexity tillhör Perplexity AI och Google tillhör Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit och WordPress är varumärken som tillhör respektive ägare. Nurevo är inte anslutet till eller godkänt av något av dessa företag."
+}
