@@ -524,3 +524,12 @@
 3. Bing Webmaster Tools の AI Performance の見方（Copilot での引用数・グラウンディングクエリ・引用シェア）【計測】
 4. 出張撮影・ドッグトレーナー（訓練業）のAI検索対策【業種別】
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
+| 2026-11-23 17時 | bing-webmaster-ai-performance | Bing Webmaster Tools の AI Performance の見方（計測。search-console-ai-features の Microsoft 版、役割を分ける。上位記事11本〔uravation（2026-11-04）・Adobe Experience League JA（2026-10-03更新、動画のみ）・pasqualepillitteri JA（ボット対策で読めず）／Search Engine Land 468751・Similarweb（2026-02-16、09-22更新、例の数字は仮定）・Practical Ecommerce（2026-06-22）・SER（2026-06-17）・PinMeTo（2026-07-03）・TechWyse（2026-06-17）。SEL 480277・472320 は取得できず〕の抜け〔WordPress手順なし・Google以外のAIとの並べ方なし・見えたことを直しにつなげる表なし・小規模事業者の例なし〕を埋めた。指標の表5行〔Bing Webmaster Blog 2026-02-10：公開プレビュー、Copilot・BingのAI要約・一部の提携先、グラウンディングクエリは標本、順位・位置を示さない、robots.txtを守る、IndexNow・Bing Placesを推奨〕、追加機能の表6行〔Microsoft Advertising 2026-03-23 Page Mapping／Bing Search Blog 2026-06-16 Intents・Topics・Citation Share（競合ドメインを見せない・アクセスのシェアでない・品質の点数でない）・Compare（30日 vs 前30日・任意）／Bing Webmaster Blog 2026-10-13 Topics Portfolio ベータ（1〜3か月、Topic Size・Sites Cited・Queries は概数、Opportunity Queries、方向を示すもの）〕、始め方〔GSCからの取り込み・約24時間・書き出しは Practical Ecommerce による〕、6月1日の急増はバックフィル（PinMeTo、二次情報）、見えたこと→やることの表5行、毎月の記録の表5行（Search Console・Perplexity・参照元）、WordPress手順6つ〔表示設定・robots.txtのBingbot・確認コード・サイトマップ・IndexNow・Bing Places、Nurevo の許可一覧に Bingbot はない〕、チェックリスト10、制作会社の報告の注意、FAQ 7問）。2言語（ja・en） | 計測 | content/daily-20261123-17 |
+メモ：2026-11-23 17時の回は、Bing のヘルプ（AI Performance・サイトの追加と確認）が WebFetch の許可待ちで読めず、データの更新頻度・保存期間・API・国や言語の制限・公式の意図の一覧は書いていない。uravation が書いている「ページ単位のAIグラウンディングの制御（Disallow／DisallowExtended、2027-02-01から）」は Bing のブログの一覧で見つからず書いていない。SEOプラグインの Bing 確認コード欄・IndexNow 機能はプラグイン名を挙げずに一般的に書いた。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に bing-webmaster-ai-performance を追加、ja/en のみ。次は person-profile-page-ai-search）
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（掲載先の一覧と更新依頼の文例）【全業種】（PR #80 と重ならない形で）
+2. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
+3. 出張撮影・ドッグトレーナー（訓練業）のAI検索対策【業種別】（20時で）
+4. Bing Places for Business の登録と、Copilot での店舗情報のそろえ方【店舗】
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
