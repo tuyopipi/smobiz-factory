@@ -515,3 +515,12 @@
 3. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
 4. Bing Webmaster Tools の AI Performance の見方（Copilot での引用数・グラウンディングクエリ・引用シェア）【計測】
 5. ペットホテル・ペットシッターのAI検索対策は今回と重なるため保留。代わりに、写真館以外の出張撮影・ドッグトレーナー（訓練業）のAI検索対策【業種別】
+| 2026-11-23 14時 | agency-ec-product-data-check | ECサイトの保守に「商品データの整合チェック」を足す方法（制作会社向け。chatgpt-shopping-product-feed とは分け、保守の作業と報告に絞る。上位記事16本〔Salesforce JP チェックリスト（2026-11-17更新）・Shopify JP ECの構造化データ（2026-07-23）・ネットショップ担当者フォーラム 15079（2025-11-07）・ECのミカタ 48397（会員限定で本文未読）・コマースピック 98063（2026-07-21）・Business Insider Japan（2026-09-28）・Shopifyヘルプ・stellagent（別記事が返った）／SEJ フィードの担当（2026-06-10）・BelVG（2026-06-12）・Yotpo（2026-10-20更新）・Sitebulb（2026-03-31）・TechWyse（2026-09-07）・DesignRush（2026-10-05）・Redefine Web（2026-09-22更新）・dev.to EShopSet〕の抜けの表、Googleの説明の表5行〔Merchant Center ヘルプ 12159029：ページ・構造化データとの比較、不承認・アカウント停止の可能性、JSで入れた価格はエラー、構造化データが違えば不承認が続く／9773429：警告・事前の不承認、審査7営業日・不合格で7営業日の待機／14916353：自動更新でも重大なエラー扱い／7331077：サーバーのHTML、表示と一致、自動更新に price・priceCurrency・availability・condition〕、AIの回答の数字〔Product.ai（BI Japan）：913件中85%が今の価格と一致・Googleは開発者APIと反論／Productrise（TechWyse）：AIモードと通常検索で38.1%不一致・相関のみ／Profound（DesignRush経由）：フィード由来61.54%・追跡した質問のみ〕、4か所×9項目の表、ずれの原因と直し方8行、毎月の手順8つとPythonのスクリプト（フィードCSVとページのJSON-LDのprice・availabilityを比較、ローカルで動作確認済み）、AIの回答の確かめ方、報告の文例、契約の範囲の表4行、WordPress手順〔Nurevo：OnlineStore、トップに OfferCatalog 最大30件、商品ページはWooCommerceに任せる、llms.txt は新しい50件・get_price のまま（税抜入力なら税抜）・transient 最大1日・保存で作り直し、MerchantReturnPolicy、フィードは作らない〕、チェックリスト10、FAQ 7問）。2言語（ja・en） | 制作会社向け | content/daily-20261123-14 |
+メモ：2026-11-23 14時の回は、WooCommerce本体の構造化データの項目（priceValidUntil の既定値、税の扱い）はコードを読んでおらず書いていない。日本の総額表示とMerchant Centerの税の扱い、BelVGの「68%」（件数の記載なし）、Yotpoの市場の数字、日本の保守の相場は書いていない。Product.aiの原典・Productriseの原典・SEJのProfoundの記事は二次情報（報道）で確認し、その旨を本文に書いた。Search Central の販売者のリスティングのページは一部を要約で確認。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に agency-ec-product-data-check を追加、ja/en のみ。次は person-profile-page-ai-search）
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（掲載先の一覧と更新依頼の文例）【全業種】（PR #80 と重ならない形で）
+2. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で、17時か20時で）
+3. Bing Webmaster Tools の AI Performance の見方（Copilot での引用数・グラウンディングクエリ・引用シェア）【計測】
+4. 出張撮影・ドッグトレーナー（訓練業）のAI検索対策【業種別】
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）

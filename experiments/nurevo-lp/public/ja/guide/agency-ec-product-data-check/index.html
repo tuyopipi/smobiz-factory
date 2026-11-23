@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ECサイトの保守に「商品データの整合チェック」を足す方法 | Nurevo AIO</title>
+<meta name="description" content="ネットショップの保守契約に、商品ページの表示・構造化データ・Merchant Centerのフィード・llms.txtの価格と在庫を毎月突き合わせる作業を足す手順。ずれの原因、確認のスクリプト、報告の文例、契約の書き方。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/agency-ec-product-data-check/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/agency-ec-product-data-check/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/agency-ec-product-data-check/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/agency-ec-product-data-check/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/agency-ec-product-data-check/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/agency-ec-product-data-check/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/agency-ec-product-data-check/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/agency-ec-product-data-check/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/agency-ec-product-data-check/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="ECサイトの保守に「商品データの整合チェック」を足す方法 | Nurevo AIO">
+<meta property="og:description" content="ネットショップの保守契約に、商品ページの表示・構造化データ・Merchant Centerのフィード・llms.txtの価格と在庫を毎月突き合わせる作業を足す手順。ずれの原因、確認のスクリプト、報告の文例、契約の書き方。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/agency-ec-product-data-check/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ECサイトの保守に「商品データの整合チェック」を足す方法 | Nurevo AIO">
+<meta name="twitter:description" content="ネットショップの保守契約に、商品ページの表示・構造化データ・Merchant Centerのフィード・llms.txtの価格と在庫を毎月突き合わせる作業を足す手順。ずれの原因、確認のスクリプト、報告の文例、契約の書き方。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/agency-ec-product-data-check/#webpage","url":"https://nurevo.jp/ja/guide/agency-ec-product-data-check/","name":"ECサイトの保守に「商品データの整合チェック」を足す方法 | Nurevo AIO","description":"ネットショップの保守契約に、商品ページの表示・構造化データ・Merchant Centerのフィード・llms.txtの価格と在庫を毎月突き合わせる作業を足す手順。ずれの原因、確認のスクリプト、報告の文例、契約の書き方。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/agency-ec-product-data-check/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/agency-ec-product-data-check/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"ECサイトの保守に「商品データの整合チェック」を足す方法：制作会社のための手順と報告の型","item":"https://nurevo.jp/ja/guide/agency-ec-product-data-check/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/agency-ec-product-data-check/#faq","mainEntity":[{"@type":"Question","name":"Merchant Centerを使っていないショップにも、この点検は必要ですか？","acceptedAnswer":{"@type":"Answer","text":"フィードがなくても、ページの表示と構造化データ、llms.txt、AIの回答の突き合わせは役立ちます。AIや検索がページの構造化データを読むので、表示と構造化データのずれを毎月確かめる価値があります。"}},{"@type":"Question","name":"「自動での商品の更新」をオンにすれば、点検はいりませんか？","acceptedAnswer":{"@type":"Answer","text":"Googleのヘルプでは、自動での更新で価格が直された場合も、ずれは引き続き重大なエラーとして扱われ、アカウントの停止につながりうると説明されています。自動の更新は保険と考え、元のずれを直す点検は続けてください。"}},{"@type":"Question","name":"全商品を毎月見る必要がありますか？","acceptedAnswer":{"@type":"Answer","text":"多くのショップでは、売れ筋・セール中・今月変更した商品・バリエーションのある商品を中心に数十件を見れば、ずれの多くを見つけられます。ずれが続く原因が見つかったら、その原因に当てはまる商品をまとめて確かめます。"}},{"@type":"Question","name":"スクリプトでMISMATCHになりました。まず何を見ればいいですか？","acceptedAnswer":{"@type":"Answer","text":"ブラウザでその商品ページを開き、見えている価格がフィードとJSON-LDのどちらと同じかを確かめます。見えている価格とJSON-LDが違えば構造化データやキャッシュ、見えている価格とフィードが違えばフィードの更新やセールの設定を疑います。"}},{"@type":"Question","name":"AIが古い価格を答えています。どうすればいいですか？","acceptedAnswer":{"@type":"Answer","text":"回答の出典を確かめます。自社のページが出典なら、そのページの表示・構造化データ・キャッシュを直します。モールや比較サイトが出典なら、その掲載の更新が必要です。直してもすぐに回答が変わるとは限らないので、数か月の記録で見てください。"}},{"@type":"Question","name":"価格の入力やセールの設定もお客様から頼まれます。保守に含めるべきですか？","acceptedAnswer":{"@type":"Answer","text":"契約で分けておくのがおすすめです。点検と、設定やキャッシュが原因のずれの修正は保守に、商品の登録や価格の決定はお客様の作業、または別料金の運用代行にすると、作業量が読みやすくなります。"}},{"@type":"Question","name":"商品データをそろえれば、ChatGPTやGoogleのAIに商品が出ますか？","acceptedAnswer":{"@type":"Answer","text":"保証はできません。AIの回答は日や聞き方で変わり、ほかの店の商品や口コミも使われます。そろえておくことは、出たときに正しい価格や在庫で紹介されるための前提です。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">AIへの読まれ方を無料でチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>ECサイトの保守に「商品データの整合チェック」を足す方法：制作会社のための手順と報告の型</span></nav>
+  <article>
+    <h1>ECサイトの保守に「商品データの整合チェック」を足す方法：制作会社のための手順と報告の型</h1>
+    <p class="lead">ネットショップの保守契約には、同じ商品について「ページに見えている価格と在庫」「ページの構造化データ（Product・Offer）」「Merchant Centerなどのフィード」「llms.txt とAIの回答」の4か所の値が一致しているかを、毎月、決まった商品で突き合わせる作業を足すのがおすすめです。Googleは、フィードの価格がページや構造化データと一致しないと商品が不承認になることがあり、アカウントの停止につながる場合もあると説明しています。AIの回答も、価格を古いまま答えることがあります。この記事では、ずれが起きる原因、点検の手順とスクリプト、報告の文例、契約への書き方をまとめます。</p>
+<p>作成日：2026年11月23日（JST）。対象は、ネットショップを作る・保守する制作会社、WordPress（WooCommerce）の保守会社、ECの運用を預かっているフリーランスの方です。Merchant Centerの説明は、この記事の作成時点のGoogleのヘルプに合わせています。画面や条件は変わることがあるので、作業の前に各リンク先を確かめてください。</p>
+<p>AIの回答は日や聞き方によって変わります。商品データをそろえることは、AIや検索に正しく読まれるための前提で、AIの回答に出ることや順位を保証するものではありません。</p>
+<section class="qa"><h2>よく読まれている記事と、足りないこと</h2><p>「ECサイト 保守 商品データ」「Merchant Center 価格の不一致」「product data consistency」などで上位に出る日本語8本・英語8本を、2026年11月23日に読みました。日本語では、Salesforceのチェックリスト（11月17日更新）、ShopifyのECの構造化データの解説（7月23日）、ネットショップ担当者フォーラム（2025年11月7日）、コマースピック（7月21日）、Business Insider Japan（9月28日）、Shopifyのヘルプなど。英語では、Search Engine Journal（6月10日）、BelVG（6月12日）、Yotpo（10月20日更新）、Sitebulb（3月31日）、TechWyse（9月7日）、DesignRush（10月5日）、Redefine Webの保守プランの記事（9月22日更新）、dev.toのMerchant Centerの記事です。</p>
+<p>「ページ・構造化データ・フィードの値をそろえる」ことが大事だという点は、ほとんどの記事で一致していました。一方で、制作会社が保守の作業として毎月回すときに必要な次の点は、ほとんど書かれていませんでした。</p><div class="table-wrap"><table><caption>上位の記事には「◯%の店でずれている」といった数字もありましたが、調べた件数や方法が書かれていないものは使っていません。</caption><thead><tr><th scope="col">足りない点</th><th scope="col">この記事で書いていること</th></tr></thead><tbody><tr><th scope="row">「価格をそろえる」とだけ書かれ、どの値をどこで比べるかが書かれていない</th><td>4か所×9項目の突き合わせの表</td></tr><tr><th scope="row">ずれる原因（セールの時刻、キャッシュ、JavaScriptでの表示、バリエーションなど）と直し方がまとまっていない</th><td>Googleのヘルプに沿った原因と直し方の表</td></tr><tr><th scope="row">点検の方法が、1ページずつの手作業かツールの紹介だけ</th><td>フィードの書き出しとページのJSON-LDを比べるスクリプトと、抜き出す商品の選び方</td></tr><tr><th scope="row">WordPress（WooCommerce）での手順がない</th><td>WooCommerceとNurevo AEOを使う場合に、どこを見るか</td></tr><tr><th scope="row">保守契約・報告での扱いがない</th><td>毎月の流れ、報告の文例、契約に書く範囲の表</td></tr></tbody></table></div></section>
+<section class="qa"><h2>なぜ保守の項目にするのか：Googleの扱いとAIの回答</h2><p>商品データのずれは、一度直しても、セールや値上げ、在庫の変化のたびに起きます。月に一度、決まった手順で確かめる保守の項目にしておくと、お客様から言われる前に見つけられます。Googleのヘルプには、次のように書かれています。</p><div class="table-wrap"><table><thead><tr><th scope="col">Googleの説明</th><th scope="col">出典</th></tr></thead><tbody><tr><th scope="row">Googlebotは商品ページを定期的に読み、フィードの価格を、ページに表示された価格や構造化データ（ある場合）と比べる。一致しないと商品が不承認になることがあり、アカウントの停止につながる場合もある</th><td><a href="https://support.google.com/merchants/answer/12159029">Merchant Center ヘルプ：価格の不一致</a></td></tr><tr><th scope="row">ページのHTMLの価格は、Merchant Centerの価格と正確に一致している必要がある。読み込みのあとにJavaScriptで入れた価格はエラーになる。ページとフィードが一致していても、構造化データが違えば、構造化データを直すまで不承認が続く</th><td><a href="https://support.google.com/merchants/answer/12159029">Merchant Center ヘルプ：価格の不一致</a></td></tr><tr><th scope="row">審査の担当者が価格や在庫のずれを見つけると、アカウントへの警告や、商品の事前の不承認になることがある。審査は7営業日かかり、審査に通らないと7営業日の待機期間がある</th><td><a href="https://support.google.com/merchants/answer/9773429">Merchant Center ヘルプ：フィードとページの不一致</a></td></tr><tr><th scope="row">「自動での商品の更新」をオンにすると、Googleがページの値で価格を直すことがある。ただし、ずれは引き続き重大なエラーとして扱われ、アカウントの停止につながりうる</th><td><a href="https://support.google.com/merchants/answer/14916353">Merchant Center ヘルプ：自動更新と価格の不一致</a></td></tr><tr><th scope="row">構造化データは、サーバーが返すHTMLに入っていて、利用者に見えている値と一致している必要がある。自動での商品の更新には price・priceCurrency・availability・condition が必要</th><td><a href="https://support.google.com/merchants/answer/7331077">Merchant Center ヘルプ：構造化データの設定</a></td></tr></tbody></table></div><p>AIの回答の側でも、価格の誤りは起きています。Business Insider Japan が紹介した Product.ai の調査（2026年9月）では、ChatGPT・Claude・Gemini・Perplexity に220の買い物の質問を5回ずつ聞き、価格を確かめられた913件の回答のうち、今の価格と一致したのは85%でした（<a href="https://www.businessinsider.jp/article/2609-study-shows-ai-errors-shopping-tools-struggle-accuracy/">Business Insider Japan</a>。Googleは、調べたのは開発者向けのAPIで、一般向けのアプリではないと説明しています）。ショップ側でできるのは、AIが読む元のデータを、どこで読まれても同じ値にしておくことです。</p>
+<p>また、GoogleのAIモードと通常の検索で、同じ商品の価格が一致しなかった例が38.1%あったという、Productriseのデータを紹介する記事もあります（<a href="https://www.techwyse.com/news/reports-data/google-ai-mode-product-prices-seller-mismatch">TechWyse</a>。8月の約3週間・200万件以上の掲載を追った集計で、原因は示されていないと記事に書かれています）。ChatGPTのショッピングでは、Profoundが追っている質問で、フィードとつながった情報源からの商品の推薦が7月に61.54%になったと報じられています（<a href="https://news.designrush.com/chatgpt-shopping-makes-bad-product-data-harder-hide">DesignRush</a>。ChatGPT全体の数字ではありません）。フィードとページがずれていると、どちらの値がAIに使われるかを、ショップ側では選べません。</p></section>
+<section class="qa"><h2>突き合わせる4か所と9項目</h2><p>点検では、同じ商品（同じSKU、バリエーションがある場合は同じ色・サイズ）について、次の表の4か所の値を横に並べます。すべての商品で9項目を見る必要はありません。毎月は「価格・セール・在庫」を、四半期に一度は残りの項目を見る、という分け方でも十分に役立ちます。</p><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">ページの表示</th><th scope="col">構造化データ（JSON-LD）</th><th scope="col">フィード（Merchant Centerなど）</th><th scope="col">llms.txt・AIの回答</th></tr></thead><tbody><tr><th scope="row">価格</th><td>カートに入れる前に見える価格</td><td>Offer の price</td><td>price</td><td>載せている場合の価格</td></tr><tr><th scope="row">セール価格と期間</th><td>セールの価格と、いつまでか</td><td>セール中は price がセール価格</td><td>sale_price と sale_price_effective_date</td><td>セールの価格のまま残っていないか</td></tr><tr><th scope="row">通貨</th><td>円の表示</td><td>priceCurrency（JPY）</td><td>price の通貨</td><td>通貨の書き方</td></tr><tr><th scope="row">在庫</th><td>在庫あり・なし・予約</td><td>availability</td><td>availability</td><td>「在庫切れ」の商品をすすめていないか</td></tr><tr><th scope="row">送料</th><td>送料と無料の条件</td><td>shippingDetails（入れている場合）</td><td>shipping、またはMerchant Centerの送料の設定</td><td>送料を聞いたときの答え</td></tr><tr><th scope="row">返品</th><td>返品の条件のページ</td><td>hasMerchantReturnPolicy（入れている場合）</td><td>Merchant Centerの返品の設定</td><td>返品を聞いたときの答え</td></tr><tr><th scope="row">商品名</th><td>商品名</td><td>Product の name</td><td>title</td><td>商品名の言い方</td></tr><tr><th scope="row">識別子</th><td>型番・JANなど（表示している場合）</td><td>sku・gtin</td><td>id・gtin・mpn</td><td>—</td></tr><tr><th scope="row">画像</th><td>主な画像</td><td>image</td><td>image_link</td><td>—</td></tr></tbody></table></div><p>Search Centralの説明では、Offer の price と priceCurrency が必須で、availability・shippingDetails・hasMerchantReturnPolicy・priceValidUntil は推奨です（<a href="https://developers.google.com/search/docs/appearance/structured-data/merchant-listing">Google：販売者のリスティングの構造化データ</a>）。</p></section>
+<section class="qa"><h2>ずれが起きるよくある原因と直し方</h2><p>Googleのヘルプに挙がっている原因のうち、制作会社が保守で見つけやすいものを、直し方と一緒に並べました。</p><div class="table-wrap"><table><thead><tr><th scope="col">原因</th><th scope="col">起きること</th><th scope="col">直し方</th></tr></thead><tbody><tr><th scope="row">セールの開始・終了の時刻やタイムゾーンの設定違い</th><td>フィードかページのどちらかが、セール前・セール後の価格のまま</td><td>フィードの sale_price_effective_date とショップのセールの設定を同じ日時・タイムゾーンにする</td></tr><tr><th scope="row">フィードの更新が1日1回などで、ページより遅い</th><td>値上げ・値下げや在庫切れのあと、しばらくずれる</td><td>ページの更新のすぐあとにフィードを更新する設定にする。自動での商品の更新も検討する</td></tr><tr><th scope="row">ページのキャッシュ（プラグイン・サーバー・CDN）が古い</th><td>管理画面では新しい価格なのに、公開されたHTMLは古い価格</td><td>価格を変えたときに商品ページのキャッシュが消える設定か確かめる</td></tr><tr><th scope="row">価格をJavaScriptで後から表示している</th><td>Googlebotが読むHTMLに価格がない、または違う</td><td>サーバーが返すHTMLに価格と構造化データを入れる</td></tr><tr><th scope="row">バリエーションの初期表示</th><td>ページで最初に選ばれている色・サイズの価格と、フィードの商品の価格が違う</td><td>フィードの各バリエーションのURLで、その色・サイズが選ばれた状態になるようにする</td></tr><tr><th scope="row">会員価格・まとめ買い・最小注文数</th><td>誰でも払える価格とフィードの価格が違う</td><td>フィードとページの目立つ価格を、誰でも払える価格にそろえる。最小注文数がある場合は、その数の合計価格を出す</td></tr><tr><th scope="row">構造化データが2つ出ている（テーマ・プラグインの重複）</th><td>Product・Offer が2組あり、片方が古い価格</td><td>どのプラグインが出しているかを確かめ、1つにする</td></tr><tr><th scope="row">税込・税抜の入力と表示の設定</th><td>表示は税込なのに、構造化データやフィードが別の数字</td><td>ショップの価格の入力と表示の設定を確かめ、4か所で同じ数字が出るようにする</td></tr></tbody></table></div><p>原因の一覧は、<a href="https://support.google.com/merchants/answer/12159029">価格の不一致</a>と<a href="https://support.google.com/merchants/answer/9773429">フィードとページの不一致</a>のヘルプをもとに、制作会社の作業の言葉に直したものです。</p></section>
+<section class="qa"><h2>毎月の点検の手順</h2><ol><li>点検する商品を決める（例：30件）。売れ筋の上位、いまセール中の商品、今月価格や在庫を変えた商品、バリエーションのある商品、新しく追加した商品を、少しずつ入れる。毎月すべてを見るより、ずれやすい商品を確実に見るほうが役立ちます。</li><li>Merchant Centerの「診断」で、価格・在庫の不一致の警告や不承認がないかを先に見る。期限のある警告があれば、ほかの作業より先に対応する。</li><li>フィードから、点検する商品の id・link・price・availability を書き出す。</li><li>下のスクリプトで、フィードの価格・在庫が、ページのJSON-LDに入っているかを比べる。</li><li>スクリプトで OK になった商品も、5件ほどはブラウザで開き、カートに入れる前の価格・在庫・送料の表示が同じかを目で見る（スクリプトは見えている文字までは比べません）。</li><li>llms.txt を出している場合は、点検した商品の価格・在庫が載っていれば一致を確かめる。</li><li>AIに、点検した商品の価格・在庫・送料を数問聞き、日付と一緒に質問と回答を残す。</li><li>ずれていた商品は、原因の表に当てはめて直し、翌月に同じ商品をもう一度見る。</li></ol><pre class="code" dir="ltr"><code># 使い方：python3 check_offers.py feed.csv &gt; result.tsv
+# feed.csv は id, link, price, availability の列を持つCSV
+# （Merchant Center の商品一覧の書き出しや、フィードのファイルから列を選んだもの）
+# 結果：OK＝フィードの価格・在庫がページのJSON-LDにある／MISMATCH＝ずれている
+#       NO_JSONLD＝ページにProduct・Offerがない／FETCH_ERROR＝ページを取れない
+import csv, json, re, sys, urllib.request
+
+def offers(node):
+    if isinstance(node, list):
+        for n in node:
+            yield from offers(n)
+    elif isinstance(node, dict):
+        if "@graph" in node:
+            yield from offers(node["@graph"])
+        types = node.get("@type", [])
+        types = types if isinstance(types, list) else [types]
+        if "Product" in types or "ProductGroup" in types:
+            yield from offers(node.get("offers", []))
+            yield from offers(node.get("hasVariant", []))
+        if "Offer" in types or "AggregateOffer" in types:
+            yield node
+
+def num(text):
+    m = re.search(r"\d[\d,]*(?:\.\d+)?", str(text or ""))
+    return float(m.group(0).replace(",", "")) if m else None
+
+def page_offers(url):
+    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0 (offer-check)"})
+    html = urllib.request.urlopen(req, timeout=20).read().decode("utf-8", "replace")
+    found = []
+    for block in re.findall(r'&lt;script[^&gt;]+application/ld\+json[^&gt;]*&gt;(.*?)&lt;/script&gt;', html, re.S | re.I):
+        try:
+            found += list(offers(json.loads(block)))
+        except ValueError:
+            pass
+    return found
+
+print("id\tfeed_price\tjsonld_price\tfeed_availability\tjsonld_availability\tresult")
+for row in csv.DictReader(open(sys.argv[1], encoding="utf-8-sig")):
+    try:
+        found = page_offers(row["link"])
+    except Exception as e:
+        print(f"{row['id']}\t{row['price']}\t\t{row['availability']}\t\tFETCH_ERROR {e}")
+        continue
+    prices = sorted({num(o.get("price", o.get("lowPrice"))) for o in found} - {None})
+    avail = sorted({str(o.get("availability", "")).rsplit("/", 1)[-1] for o in found})
+    feed_avail = row["availability"].replace("_", "").lower()
+    ok_price = num(row["price"]) in prices
+    ok_avail = any(a.lower() == feed_avail for a in avail)
+    result = "OK" if ok_price and ok_avail else ("NO_JSONLD" if not found else "MISMATCH")
+    print(f"{row['id']}\t{row['price']}\t{','.join(f'{p:g}' for p in prices)}\t{row['availability']}\t{','.join(avail)}\t{result}")</code></pre><p>フィードとページのJSON-LDを比べるスクリプトの例です（Python 3、標準ライブラリだけ）。お客様の承諾を得て、サーバーに負担をかけない数（数十件）で使ってください。</p></section>
+<section class="qa"><h2>AIの回答の確かめ方</h2><p>AIの回答は、ショップのデータを直してもすぐには変わりません。毎月同じ質問を聞き、変化を記録するのが現実的です。</p><ol><li>質問は、お客様が実際に聞きそうな形にする。例：「◯◯ショップの△△（商品名）はいくら？」「△△は在庫がある？」「◯◯ショップの送料は？」「◯◯ショップで返品できる？」。</li><li>ChatGPT・Perplexity・GoogleのAIモードなど、聞いたAI・日付・回答・出典のURLを表に残す。回答に出典があれば、どのページ（自社の商品ページ、モール、比較サイト）から答えているかも残す。</li><li>古い価格や在庫を答えていて、出典が自社のページなら、そのページのキャッシュと構造化データを確かめる。出典がモールや比較サイトなら、そちらの掲載をお客様に直してもらう。</li><li>同じ質問でも回答は変わるので、1回の誤りで判断せず、数か月の傾向で見る。</li></ol></section>
+<section class="qa"><h2>お客様への報告の文例</h2><p>毎月の報告は、件数と、お客様に決めていただきたいことが分かる形にしておくと、作業の価値が伝わりやすくなります。</p><pre class="code" dir="ltr"><code>【商品データの整合チェック】◯◯ショップ様（2026年◯月◯日）
+
+1. 点検した商品：◯件（売れ筋◯・セール中◯・今月変更した商品◯・バリエーションのある商品◯）
+2. 結果
+   ・ページの表示とJSON-LDとフィードが一致：◯件
+   ・ずれていた：◯件（価格◯・在庫◯・送料◯・商品名や画像◯）
+   ・JSON-LDがない／ページを取れない：◯件
+3. Merchant Center
+   ・価格・在庫の不一致による警告・不承認：なし／あり（◯件、期限◯月◯日）
+   ・自動での商品の更新：オン／オフ
+4. llms.txt・AIの回答
+   ・llms.txt の価格・在庫がサイトと一致：◯件中◯件
+   ・AIに聞いた質問：◯問（価格◯・在庫◯・送料◯）。古い・違う回答：◯件（質問と回答を添付）
+5. 直したこと／お客様に決めていただきたいこと
+   ・◯◯（例：セールの終了日時の設定、フィードの更新の回数）</code></pre></section>
+<section class="qa"><h2>保守契約への書き方</h2><p>商品データの整合チェックは、作業の範囲をはっきり書いておかないと、「商品の登録や価格の変更も保守に入っている」と受け取られることがあります。誰が何をするかを、次のように分けておくと安心です。</p><div class="table-wrap"><table><thead><tr><th scope="col">区分</th><th scope="col">例</th></tr></thead><tbody><tr><th scope="row">保守に含む（制作会社）</th><td>毎月◯件の点検、Merchant Centerの警告の確認、スクリプトと目視での突き合わせ、AIへの質問◯問、報告書、原因が設定やキャッシュにある場合の修正</td></tr><tr><th scope="row">お客様の作業</th><td>商品の登録、価格・セールの決定と入力、在庫の更新、モール・比較サイトの掲載の更新</td></tr><tr><th scope="row">別見積もり</th><td>フィードの仕組みの作り直し、テーマ・プラグインの入れ替え、全商品の一括の修正、ChatGPTなど新しいフィードへの申し込み</td></tr><tr><th scope="row">決めておくこと</th><td>点検する件数と選び方、警告が出たときの連絡の早さ、報告の日、AIに聞く質問の一覧</td></tr></tbody></table></div><p>米国の制作会社の保守プランの例では、フィードの監視を上位のプランに含め、下のプランでは追加の作業にしているものもあります（<a href="https://redefineweb.com/blog/best-ecommerce-maintenance-package-tiers-pricing/">Redefine Web</a>）。日本の価格の相場は、確かめられる資料がなかったため書いていません。</p>
+<p>Search Engine Journal の記事では、ある店の1つの商品が、サイト・フィード・Googleが選んだ価格・構造化データで4つの違う価格になっていた例を挙げ、SEOの担当とフィードの担当が一緒に毎月確かめることをすすめています（<a href="https://www.searchenginejournal.com/why-your-product-feed-is-an-seo-asset-and-who-should-own-it/575543/">Search Engine Journal</a>）。保守の報告に、フィードの担当者（広告代理店やお客様の社内の担当）も入れておくと、直す人がすぐ決まります。</p>
+<p>月額の保守としてのAI検索対策全体の組み立て方は、<a href="/ja/guide/agency-aeo-monthly-service/">AI検索対策を月額サービスにする方法</a>にまとめています。</p></section>
+<section class="qa"><h2>WordPress（WooCommerce）での手順（Nurevo AEOを使う場合）</h2><p>無料のプラグイン<a href="https://wordpress.org/plugins/nurevo-webmcp/">Nurevo AEO</a>を使うショップでは、点検する場所が次のようになります。Nurevo AEOはMerchant CenterやChatGPTのフィードは作らないので、フィードは今お使いの仕組みで確かめてください。</p><ol><li>サイトの種類で「ネットショップ」を選ぶと（WooCommerceが有効なら提案されます）、店の情報を OnlineStore として出します。商品ページの Product・Offer は、WooCommerceの出力をそのまま使い、重ねて出しません。商品ページのJSON-LDを見るときは、WooCommerce以外のテーマやプラグインが2つ目を出していないかを確かめます。</li><li>トップページには、商品の一覧（新しい順に最大30件）を OfferCatalog として載せます。価格がある商品だけに Offer を付け、在庫が分かれば在庫あり・なしを入れます。トップページも点検の対象に入れてください。</li><li>llms.txt には、公開中で表示されている商品のうち新しい50件を、WooCommerceにある今の価格（セール中はセール価格）・通貨・在庫と一緒に載せます。WooCommerceに入力した価格の数字をそのまま使うので、税抜で入力して表示のときに税を足す設定では、税抜の数字になります。</li><li>llms.txt は、投稿や商品を保存したとき、設定を変えたときに作り直され、それ以外は最大1日、前の内容を使います。予約したセールが始まった・終わった直後は、llms.txt の価格も確かめてください。</li><li>返品のページを設定すると、そのURLを返品ポリシー（MerchantReturnPolicy）として載せます。返品の条件そのものは、ページの文章で書きます。</li><li>AIでの登場の確認は、つないだ Free・Standard のサイトで月に1回、Perplexityに3つの質問をして結果を表示します。Pro（月14,800円〜）では、計測を Perplexity で行います（ChatGPTは設定され次第）。</li></ol></section>
+<section class="qa"><h2>制作会社がNurevoを使う場合</h2><p>お客様のショップごとに無料のプラグインを入れ、構造化データ・llms.txt・AIのクローラーの許可を整えたうえで、この記事の点検を保守の項目にすると、「何を直したか」と「AIにどう読まれているか」を同じ報告にまとめられます。Standardは月3,000円です。パートナー制度は<a href="https://nurevo.jp/partner/">パートナーのページ</a>をご覧ください。</p></section>
+<section class="qa"><h2>毎月の点検のチェックリスト</h2><ol><li>Merchant Centerに、価格・在庫の不一致の警告や不承認がない（あれば期限を確かめた）</li><li>点検する商品に、売れ筋・セール中・今月変更・バリエーションのある商品が入っている</li><li>フィードの価格・在庫が、ページのJSON-LDの Offer と一致している</li><li>ブラウザで見える価格・在庫・送料が、JSON-LDと一致している（数件の目視）</li><li>セールの開始・終了の日時が、ショップとフィードで同じ</li><li>価格や在庫を変えたあと、商品ページのキャッシュが消えている</li><li>Product・Offer の構造化データが1ページに1組だけ出ている</li><li>価格がサーバーのHTMLに入っている（JavaScriptで後から入れていない）</li><li>llms.txt の価格・在庫が、サイトと一致している</li><li>AIへの質問と回答を日付つきで残し、前の月と比べた</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>Merchant Centerを使っていないショップにも、この点検は必要ですか？</h3><p>フィードがなくても、ページの表示と構造化データ、llms.txt、AIの回答の突き合わせは役立ちます。AIや検索がページの構造化データを読むので、表示と構造化データのずれを毎月確かめる価値があります。</p>
+<h3>「自動での商品の更新」をオンにすれば、点検はいりませんか？</h3><p>Googleのヘルプでは、自動での更新で価格が直された場合も、ずれは引き続き重大なエラーとして扱われ、アカウントの停止につながりうると説明されています。自動の更新は保険と考え、元のずれを直す点検は続けてください。</p>
+<h3>全商品を毎月見る必要がありますか？</h3><p>多くのショップでは、売れ筋・セール中・今月変更した商品・バリエーションのある商品を中心に数十件を見れば、ずれの多くを見つけられます。ずれが続く原因が見つかったら、その原因に当てはまる商品をまとめて確かめます。</p>
+<h3>スクリプトでMISMATCHになりました。まず何を見ればいいですか？</h3><p>ブラウザでその商品ページを開き、見えている価格がフィードとJSON-LDのどちらと同じかを確かめます。見えている価格とJSON-LDが違えば構造化データやキャッシュ、見えている価格とフィードが違えばフィードの更新やセールの設定を疑います。</p>
+<h3>AIが古い価格を答えています。どうすればいいですか？</h3><p>回答の出典を確かめます。自社のページが出典なら、そのページの表示・構造化データ・キャッシュを直します。モールや比較サイトが出典なら、その掲載の更新が必要です。直してもすぐに回答が変わるとは限らないので、数か月の記録で見てください。</p>
+<h3>価格の入力やセールの設定もお客様から頼まれます。保守に含めるべきですか？</h3><p>契約で分けておくのがおすすめです。点検と、設定やキャッシュが原因のずれの修正は保守に、商品の登録や価格の決定はお客様の作業、または別料金の運用代行にすると、作業量が読みやすくなります。</p>
+<h3>商品データをそろえれば、ChatGPTやGoogleのAIに商品が出ますか？</h3><p>保証はできません。AIの回答は日や聞き方で変わり、ほかの店の商品や口コミも使われます。そろえておくことは、出たときに正しい価格や在庫で紹介されるための前提です。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>お客様のショップを、AIがどう読んでいるか確認</h2>
+    <p>無料のチェックは登録不要です。URLを入れると、構造化データ・llms.txt・AIのクローラーの許可の状態が分かります。毎月の点検の前に使ってください。</p>
+    <a class="btn primary lg" href="/check">AIへの読まれ方を無料でチェック</a>
+    <a class="btn lg" href="https://nurevo.jp/partner/">パートナー制度を見る</a>
+  </aside>
+  <nav class="related" aria-label="関連するガイド"><h2>関連するガイド</h2><ul><li><a href="/ja/guide/chatgpt-shopping-product-feed/">ChatGPTのショッピングに商品を出す方法：商品フィード・Merchant Centerとの違いと、日本のショップがいまやること</a></li><li><a href="/ja/guide/online-shop-ai-search/">ネットショップ（EC）のAI検索対策：商品・価格・在庫・返品条件をAIに正しく読ませる手順</a></li><li><a href="/ja/guide/agency-aeo-monthly-service/">制作会社がAI検索対策（AEO）を月額サービスにする方法：作業範囲・レポート・価格の決め方</a></li><li><a href="/ja/guide/agency-content-refresh-service/">既存記事のAI検索向けの見直しを、制作会社の月額サービスにする方法</a></li><li><a href="/ja/guide/ai-visibility-drop-causes/">AIでの登場率が下がったときの原因の切り分け：制作会社がお客様に報告するまでの手順</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/agency-ec-product-data-check/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Google・Merchant Center・Gemini はGoogle LLC、ChatGPTはOpenAI、PerplexityはPerplexity AI、ClaudeはAnthropicの商標です。WordPressはWordPress Foundation、WooCommerceはAutomatticの商標です。Nurevoはこれらの企業と提携・承認の関係にありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
