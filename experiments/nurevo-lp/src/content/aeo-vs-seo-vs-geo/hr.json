@@ -1,19 +1,352 @@
 {
-"title": "AEO, SEO i GEO: koja je razlika? | Nurevo",
-"description": "Razlike između SEO-a, AEO-a i GEO-a, zašto trebate i vidljivost u tražilicama i čitljivost za AI te odakle krenuti sa svojim web-mjestom.",
-"h1": "AEO, SEO i GEO: koja je razlika?",
-"lead": "Ova se tri izraza često koriste olako. Evo jasne verzije.",
-"sections": [
-{"heading": "SEO, AEO i GEO", "list": ["SEO (Search Engine Optimization): optimizacija za višu poziciju na popisu poveznica u tražilicama poput Googlea.", "AEO (Answer Engine Optimization): optimizacija za to da budete spomenuti ili citirani u odgovoru AI-ja – ChatGPT, Perplexity, Google AI Overviews, Gemini.", "GEO (Generative Engine Optimization): izraz koji mnogi marketinški stručnjaci engleskoga govornog područja koriste za istu ideju kao AEO."]},
-{"heading": "AEO i GEO imaju isti cilj", "paragraphs": ["Različite riječi, isti cilj: da vas prikaže generativni AI. Koristite izraz koji koristi vaša publika – i navedite oba kako biste bili pronađeni."]},
-{"heading": "Po čemu se AEO razlikuje od SEO-a", "paragraphs": ["SEO optimizira za algoritam koji slaže poveznice, a zatim čovjek klikne. AEO optimizira za jezični model koji odlučuje koga će citirati, a korisnik često uopće ne vidi poveznicu. SEO nagrađuje ključne riječi, povratne poveznice i autoritet stranice. AEO nagrađuje strojno čitljivu strukturu (schema.org), izričite signale (llms.txt), pristup AI botova i jasne činjenice koje je lako preuzeti."]},
-{"heading": "Trebate li oboje?", "paragraphs": ["Da. Dobar SEO i dalje pomaže – AI često crpi iz dobro rangiranih, pouzdanih stranica. No sam SEO više ne jamči da ste u odgovoru. AEO dodaje sloj pomoću kojeg vas AI može pročitati i citirati. [Što je AEO?](/guide/what-is-aeo)"]}
-],
-"faqs": [
-{"q": "Zamjenjuje li AEO SEO?", "a": "Nadopunjuje ga, ne zamjenjuje. Pretraživanje ne nestaje; AI odgovori novi su sloj iznad njega koji brzo raste."},
-{"q": "Da kažem AEO ili GEO?", "a": "Isto je. GEO je češći u SEO krugovima engleskoga govornog područja; AEO je opisniji. Koristite oba."},
-{"q": "Odakle krenuti?", "a": "Pobrinite se da AI može pročitati vaše web-mjesto – struktura, llms.txt, pristup botova – a zatim mjerite pojavljujete li se. [AEO za WordPress](/guide/aeo-wordpress)"}
-],
-"relatedHeading": "Povezani vodiči",
-"cta": {"heading": "Napravite besplatnu AEO provjeru", "body": "Bez registracije.", "label": "Pokrenite besplatnu AEO provjeru", "href": "/check"}
+ "title": "AEO vs GEO vs SEO (te LLMO i AIO): razlike | Nurevo",
+ "description": "Jesu li AEO, GEO, LLMO i AIO isto i po čemu se razlikuju od SEO-a? Tablica pojmova, razlike u rezultatima i mjerenju, što kažu istraživanja i odakle krenuti.",
+ "h1": "AEO vs GEO vs SEO (te LLMO i AIO): što znači koji pojam, po čemu se razlikuje mjerenje i što učiniti prvo",
+ "lead": "AEO, GEO, LLMO i AIO različiti su nazivi za isti posao: postići da odgovori ChatGPT-a, Perplexityja, Google AI Overviews i sličnih alata spominju vašu tvrtku ili citiraju vaše stranice. U praksi ih možete smatrati jednim te istim. SEO se odnosi na rangiranje na popisu rezultata pretraživanja. Temelj je zajednički (stranice koje se mogu indeksirati i koje navode točne činjenice); razlikuje se to gdje se rezultati pojavljuju i kako se mjere. Sam Google kaže da AI Overviews i AI Mode ne zahtijevaju nikakvu posebnu optimizaciju osim dobrih praksi SEO-a.",
+ "intro": [
+  "Napisano 23. studenoga 2026. (JST). Ovo je potpuno prerađena verzija naše kratke stranice iz listopada 2026., temeljena na novom čitanju 13 dobro rangiranih japanskih i engleskih članaka te primarnih izvora. Namijenjena je vlasnicima tvrtki koji su se izgubili u kraticama i web agencijama koje prodaju usluge „GEO” ili „LLMO” ili su im ih prodali.",
+  "Odgovori AI-ja mijenjaju se iz dana u dan i ovisno o tome kako je pitanje postavljeno. Ovdje opisani koraci čine informacije koje AI čita točnijima; ne mogu jamčiti da ćete se pojaviti u odgovoru AI-ja ni da ćete zauzeti ikakvu poziciju."
+ ],
+ "sections": [
+  {
+   "heading": "Pojmovi ukratko: SEO, AEO, GEO, LLMO i AIO",
+   "paragraphs": [
+    "Evo odakle potječe koji pojam i čemu teži. Autori ih definiraju malo drukčije i ne postoji dogovorena standardna definicija."
+   ],
+   "table": {
+    "head": [
+     "Kratica",
+     "Značenje",
+     "Podrijetlo pojma",
+     "Što obično znači"
+    ],
+    "rows": [
+     [
+      "SEO",
+      "Search Engine Optimization (optimizacija za tražilice)",
+      "Opći pojam koji se proširio s web-tražilicama",
+      "Viši položaj na popisu poveznica u Googleu, Bingu i drugim tražilicama"
+     ],
+     [
+      "AEO",
+      "Answer Engine Optimization (optimizacija za sustave odgovora)",
+      "Prije generativnog AI-ja značio je osvajanje istaknutih isječaka i odgovora glasovnih asistenata",
+      "Biti spomenut ili citiran u odgovorima AI-ja"
+     ],
+     [
+      "GEO",
+      "Generative Engine Optimization (optimizacija za generativne sustave)",
+      "Nazvan u znanstvenom radu prvi put objavljenom 2023. ([Aggarwal i sur., KDD 2024](https://arxiv.org/abs/2311.09735))",
+      "Da se vaš sadržaj koristi i citira u odgovorima generativnog AI-ja"
+     ],
+     [
+      "LLMO",
+      "Large Language Model Optimization (optimizacija za velike jezične modele)",
+      "Čest u člancima japanskih SEO tvrtki i agencija",
+      "Da vas LLM-ovi poput ChatGPT-a ispravno razumiju i opisuju"
+     ],
+     [
+      "AIO",
+      "AI Optimization (optimizacija za AI)",
+      "Koristi se uglavnom u Japanu. „AIO” je i kratica za Google AI Overviews",
+      "Pretraživanje s AI-jem općenito, a ponekad samo Google AI Overviews"
+     ]
+    ]
+   },
+   "after": [
+    "Pripazite na AIO jer ima dva značenja. Kad vam netko nudi „AIO optimizaciju”, pitajte misli li na pretraživanje s AI-jem općenito ili samo na Google AI Overviews. O odgovoru ovisi gdje ćete mjeriti rezultate (vidi niže)."
+   ]
+  },
+  {
+   "heading": "Jesu li AEO, GEO, LLMO i AIO isto?",
+   "paragraphs": [
+    "Praktično gledano, da. Japanski blog Ahrefsa navodi da GEO, LLMO i AEO označavaju isto ([Ahrefs: GEO je samo SEO](https://ahrefs.com/ja/blog/geo-is-just-seo/)). Japanski članak o AIO-u i LLMO-u napominje da definicije nisu ustaljene, a zatim za oba navodi iste zajedničke taktike ([Sungrove](https://www.sungrove.co.jp/aio-llmo-difference/)).",
+    "Neki engleski članci ih razdvajaju: AEO kao izdvajanje u obliku izravnog odgovora, GEO kao sažimanje, sintezu i citiranje od strane generativnog AI-ja ([NeuronWriter](https://neuronwriter.com/geo-vs-aeo-vs-seo/)). No ta razlika ne stvara zaseban posao na vašoj web-stranici. Bez obzira na oznaku, posao se svodi na tri stvari: učiniti stranicu čitljivom za AI, održavati činjenice na stranicama točnima i dosljednima te mjeriti pojavljujete li se doista."
+   ],
+   "after": [
+    "Koju riječ koristiti: onu koju vaši klijenti i kolege već koriste. U ponudama i ugovorima umjesto oznake zapišite što će se popraviti i što će se i kako mjeriti. Ako se isti posao i isti rezultati prodaju kao zasebno naplaćeni paketi „AEO”, „GEO” i „LLMO”, usporedite što zapravo sadrže."
+   ]
+  },
+  {
+   "heading": "SEO naspram optimizacije za AI pretraživanje (AEO/GEO): usporedna tablica",
+   "paragraphs": [
+    "Stvarne razlike su u tome gdje se rezultati pojavljuju i kako ih mjerite."
+   ],
+   "table": {
+    "head": [
+     "Aspekt",
+     "SEO",
+     "AEO / GEO (AI pretraživanje)"
+    ],
+    "rows": [
+     [
+      "Gdje se rezultati pojavljuju",
+      "Na popisu rezultata pretraživanja",
+      "U odgovorima ChatGPT-a, Perplexityja, Geminija, Claudea, Microsoft Copilota te u Google AI Overviews i AI Mode"
+     ],
+     [
+      "Kako izgleda uspjeh",
+      "Pozicija, prikazivanja, klikovi",
+      "Biti spomenut, citiran kao izvor, ispravno opisan"
+     ],
+     [
+      "Klikovi",
+      "Posjet se događa samo kad netko klikne",
+      "Odgovor korisniku često bude dovoljan bez klika"
+     ],
+     [
+      "Stabilnost",
+      "Pozicije se mijenjaju svaki dan, ali isti upit daje približno sličan redoslijed",
+      "Isto pitanje može dobiti drugačiji odgovor u drugom pokušaju, drugog dana ili drukčije formulirano. Jedan rezultat malo govori"
+     ],
+     [
+      "Odakle AI uzima informacije",
+      "Iz indeksa tražilice",
+      "Iz pretraživanja u trenutku odgovora (pretraživački botovi ili indeks svake tvrtke) i iz podataka za treniranje modela"
+     ],
+     [
+      "Službeno mjerenje",
+      "Google Search Console, Bing Webmaster Tools",
+      "Izvješće o izvedbi generativnog AI-ja u Search Consoleu (prikazivanja) za Googleove AI značajke; Bingovo izvješće AI Performance za Copilot i drugo. ChatGPT i Perplexity ne nude službeno izvješće za vlasnike web-stranica"
+     ],
+     [
+      "Zajednički temelj",
+      "Indeksiranje i pretraživanje, sadržaj stranice, strukturirani podaci koji odgovaraju stranici",
+      "Isto, uz to: AI pretraživački botovi nisu blokirani, a vaši podaci na drugim stranicama ne proturječe vašima"
+     ]
+    ]
+   },
+   "after": [
+    "Kao što tablica pokazuje, optimizacija za AI pretraživanje nadopunjuje SEO, a ne zamjenjuje ga. Stranicu koja nije indeksirana ili ne navodi svoje činjenice u tekstu vjerojatno neće koristiti ni jedno ni drugo."
+   ]
+  },
+  {
+   "heading": "Što istraživanja i službeni izvori doista pokazuju",
+   "paragraphs": [
+    "Tvrdnji o tome kako postići da vas AI citira ima napretek, ali malo ih se može provjeriti. Ovo su točke koje smo na dan 23. studenoga 2026. uspjeli povezati s izvorom."
+   ],
+   "table": {
+    "head": [
+     "Pitanje",
+     "Što se zna",
+     "Izvor"
+    ],
+    "rows": [
+     [
+      "Odakle dolazi GEO i što je istraživanje pokazalo",
+      "Na skupu GEO-bench od 10.000 upita autori navode da je promjena načina pisanja sadržaja povećala njegovu vidljivost u odgovorima generativnih sustava do 40 %, a na Perplexity.ai do 37 %. To su rezultati u istraživačkom okruženju i možda se ne prenose izravno na komercijalno AI pretraživanje",
+      "[Aggarwal i sur., „GEO: Generative Engine Optimization” (KDD 2024)](https://arxiv.org/abs/2311.09735)"
+     ],
+     [
+      "Trebaju li Googleove AI značajke poseban rad?",
+      "Google kaže da za pojavljivanje u AI Overviews ili AI Mode nisu potrebni dodatni zahtjevi, posebne oznake ni nove tekstualne datoteke za AI te da dobre prakse SEO-a i dalje vrijede",
+      "[Google Search Central: AI značajke i vaša web-stranica](https://developers.google.com/search/docs/appearance/ai-features)"
+     ],
+     [
+      "Mogu li se Googleove AI značajke mjeriti?",
+      "Izvješće o izvedbi generativnog AI-ja u Search Consoleu prikazuje prikazivanja u AI Overviews i AI Mode (u cijelom svijetu od 31. kolovoza 2026.). Klikova u tom izvješću nema",
+      "[Kako to vidjeti u Search Consoleu](/guide/search-console-ai-features)"
+     ],
+     [
+      "Mogu li se mjeriti citati u Copilotu?",
+      "Izvješće AI Performance u Bing Webmaster Tools (javni pregled od 10. veljače 2026.) prikazuje citate u Microsoft Copilotu, u sažecima koje u Bingu generira AI i u nekim partnerskim integracijama, citirane stranice te uzorak upita kojima je AI pretraživao. Bing je 16. lipnja 2026. dodao namjere, teme, udio citata i usporedbu razdoblja",
+      "[Blog Bing Webmaster (velj.)](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview), [Blog Bing Search (lip.)](https://blogs.bing.com/search/June-2026/New-AI-Visibility-Insights-in-Bing-Webmaster-Tools-Intents-Topics-Citation-Share-Compare)"
+     ],
+     [
+      "Spominju li se češće stranice s višom on-site ocjenom?",
+      "Kod 62 lokalne tvrtke u Japanu nismo pronašli vezu između on-site ocjene (strukturirani podaci, llms.txt, pristup botova) i pojavljivanja u Perplexityju (rho = 0,03)",
+      "[Studija Nurevo](/guide/aeo-signals-ai-answers-study)"
+     ],
+     [
+      "Kako ChatGPT i Perplexity biraju izvore?",
+      "Nijedan ne objavljuje detaljne kriterije odabira",
+      "Javna dokumentacija svake tvrtke, koliko smo mogli provjeriti u trenutku pisanja"
+     ]
+    ]
+   },
+   "after": [
+    "Ukratko: način pisanja može promijeniti vidljivost u istraživačkom okruženju; Google kaže da poseban rad nije potreban; a samo povećanje on-site ocjene ne donosi spominjanja. Zato je mjerenje pojavljujete li se doista obavezan korak, a ne dodatak."
+   ]
+  },
+  {
+   "heading": "Odakle krenuti: prioriteti za malu tvrtku",
+   "paragraphs": [
+    "Bez obzira na oznaku, radite ovim redoslijedom jer se svaki korak oslanja na prethodni."
+   ],
+   "list": [
+    "Indeksiranje i pretraživanje: u Search Consoleu provjerite jesu li početna i ključne stranice indeksirane. Provjerite da robots.txt, CDN ili vatrozid ne blokiraju AI pretraživačke botove kao što su OAI-SearchBot, ChatGPT-User, PerplexityBot i Claude-SearchBot ([kako provjeriti](/guide/agency-ai-crawler-blocking-audit))",
+    "Činjenice na stranici: naziv tvrtke, adresu, telefon, radno vrijeme, cijene, područje usluge i ponudu navedite u tekstu, a ne na slikama",
+    "Strukturirani podaci: objavite te činjenice kao JSON-LD s istim vrijednostima koje prikazuje stranica",
+    "Dosljednost drugdje: uskladite Googleov profil tvrtke, unose u imenicima i profile na društvenim mrežama sa svojom web-stranicom",
+    "Stranice koje odgovaraju na pitanja: odgovorite na ono što klijenti pitaju AI (koliko košta, treba li rezervacija, gdje se nalazite) jasnim naslovom i kratkim odgovorom",
+    "Mjerenje: odaberite pitanja koja ne sadrže naziv vaše tvrtke, postavljajte ih više puta pod istim uvjetima i bilježite koliko ste često spomenuti ili citirani ([kako mjeriti](/guide/measure-ai-visibility))"
+   ],
+   "after": [
+    "llms.txt smatrajte nečim što se dodaje nakon ovih šest koraka. Njegov učinak nije dokazan, ali malo košta i ne postoji službena izjava da šteti ([llms.txt objašnjen](/guide/llms-txt))."
+   ]
+  },
+  {
+   "heading": "Po čemu se razlikuje mjerenje: što i gdje gledati",
+   "table": {
+    "head": [
+     "Što želite znati",
+     "Gdje pogledati",
+     "Što prikazuje",
+     "Što ne prikazuje"
+    ],
+    "rows": [
+     [
+      "Pozicije i klikovi u Googleu (SEO)",
+      "Izvješće o izvedbi u Search Consoleu",
+      "Prikazivanja, klikove, prosječnu poziciju",
+      "Što kažu odgovori AI-ja"
+     ],
+     [
+      "Google AI Overviews i AI Mode (AIO/AEO)",
+      "Izvješće o izvedbi generativnog AI-ja u Search Consoleu",
+      "Prikazivanja u AI značajkama po stranici, državi i uređaju",
+      "Klikove ni ono što je odgovor rekao o vama"
+     ],
+     [
+      "Microsoft Copilot i AI u Bingu",
+      "AI Performance u Bing Webmaster Tools",
+      "Citate, citirane stranice, uzorak upita koje je AI koristio",
+      "AI alate drugih tvrtki, poput ChatGPT-a"
+     ],
+     [
+      "ChatGPT, Perplexity, Gemini, Claude (GEO/LLMO)",
+      "Fiksna pitanja koja sami postavljate ili alat za praćenje",
+      "Koliko ste često spomenuti ili citirani i koji se konkurenti pojavljuju umjesto vas",
+      "Odgovor svakog korisnika (uvijek vidite samo uzorak)"
+     ],
+     [
+      "Posjeti iz AI-ja",
+      "Izvori preporuka u vašoj analitici (chatgpt.com, perplexity.ai i drugi)",
+      "Koliko je ljudi kliknulo i što su učinili nakon toga",
+      "Odgovore koji nisu doveli do klika"
+     ]
+    ]
+   },
+   "after": [
+    "Kad vam netko izvještava o „LLMO rezultatima” ili „GEO učinku”, najprije se dogovorite na koji redak ove tablice misli. Tako izvješće govori o mjerenjima, a ne o oznakama."
+   ]
+  },
+  {
+   "heading": "Na WordPressu: SEO dodatak i postavke za AI pretraživanje zajedno",
+   "paragraphs": [
+    "Na WordPressu SEO dodaci kao što su Yoast SEO, Rank Math, All in One SEO i SEO SIMPLE PACK brinu se za naslove, karte web-stranice i osnovne strukturirane podatke. Za AI pretraživanje obično nedostaju strukturirani podaci s činjenicama o vašoj tvrtki (adresa, radno vrijeme, cijene, usluge), llms.txt i pravila koja dopuštaju AI pretraživačke botove."
+   ],
+   "list": [
+    "Zadržite svoj SEO dodatak. Provjerite naslove i meta opise, XML kartu web-stranice i postavke noindex",
+    "Instalirajte [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (besplatno) i unesite vrstu stranice (lokalna tvrtka, web-trgovina, B2B itd.) i podatke o tvrtki. Radi zajedno s Yoast SEO, Rank Math, AIOSEO i Slim SEO, a od verzije 0.9.1 i sa SEO SIMPLE PACK i VK All in One Expansion Unit, bez dupliciranja strukturiranih podataka",
+    "Pokrenite dijagnostiku na zaslonu AEO Score, pročitajte rezultat od 0 do 100 i popis ispravaka te primijenite besplatne ispravke",
+    "Provjerite robots.txt. Nurevo AEO dopušta AI pretraživačke botove (OAI-SearchBot, ChatGPT-User, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User), a botove za treniranje (GPTBot, ClaudeBot, Google-Extended i druge) prepušta vašem postojećem robots.txt-u. Blokiranje botova za treniranje ne utječe na AI pretraživanje ni na vašu AEO ocjenu",
+    "Otvorite /llms.txt i provjerite pojavljuju li se vaše činjenice s istim vrijednostima kao na stranicama",
+    "Za praćenje trenda koristite besplatnu mjesečnu AI provjeru (Perplexityju se postavljaju tri pitanja sastavljena prema vrsti vaše djelatnosti i području te se prikazuje jeste li spomenuti ili citirani). Za kontinuirano mjerenje na fiksnim pitanjima svaki mjesec postoji Pro (od 99 USD mjesečno; mjerenje se trenutačno provodi na Perplexityju)"
+   ],
+   "after": [
+    "AEO ocjena mjeri koliko je vaša stranica čitljiva za AI, a ne preporučuje li vas AI. Kao što pokazuje gornja studija, viša ocjena ne jamči više spominjanja, pa posljednji korak, mjerenje, smatrajte dijelom istog posla."
+   ]
+  },
+  {
+   "heading": "Pitanja koja treba postaviti kad vam netko prodaje „GEO” ili „LLMO”",
+   "paragraphs": [
+    "Što je oznaka novija, to je više usluga nejasnog sadržaja. Bilo da kupujete ili kao agencija prodajete, pisani dogovor o ovih pet točaka sprječava većinu nesporazuma."
+   ],
+   "table": {
+    "head": [
+     "Pitanje",
+     "Dobar odgovor",
+     "Znak upozorenja"
+    ],
+    "rows": [
+     [
+      "Što će se popraviti?",
+      "Popis zadataka: strukturirani podaci, činjenice na stranicama, postavke botova, ispravci na drugim stranicama",
+      "„Optimiziramo vas za AI” bez navedenih zadataka"
+     ],
+     [
+      "Kako će se mjeriti?",
+      "Koji AI alati, koja pitanja, koliko puta i kada",
+      "Nema metode ili samo jedna snimka zaslona"
+     ],
+     [
+      "Koji se rezultati izvještavaju?",
+      "Dogovorena izvješća iz Search Consolea, Binga ili vlastitog mjerenja",
+      "SEO pozicije prikazane kao rezultati AI pretraživanja"
+     ],
+     [
+      "Jamstva",
+      "Objašnjenje da se odgovori AI-ja mijenjaju pa se ništa ne može jamčiti",
+      "„Zajamčeno pojavljivanje u AI-ju” ili „zajamčeno 1. mjesto”"
+     ],
+     [
+      "Metode",
+      "Točne činjenice i ispravne informacije na stranicama trećih strana",
+      "Samostalno pisane recenzije, skrivene upute za AI, masovno proizvedene gotovo duplicirane stranice"
+     ]
+    ]
+   },
+   "after": [
+    "Za agencije: taktike koje treba izbjegavati navodimo u članku [rizici manipuliranja AI pretraživanjem](/guide/agency-ai-search-manipulation-risks), a kako odrediti opseg mjesečne usluge u članku [optimizacija za AI pretraživanje kao mjesečna usluga](/guide/agency-aeo-monthly-service). Ako upravljate mnogim stranicama klijenata, pogledajte [partnerski program Nurevo](https://nurevo.jp/partner/)."
+   ]
+  },
+  {
+   "heading": "Popis za provjeru",
+   "list": [
+    "Vaš tim i klijenti koriste iste pojmove (AEO, GEO, LLMO, AIO) i slažu se oko njihova značenja",
+    "Jasno je znači li „AIO” AI pretraživanje općenito ili samo Google AI Overviews",
+    "Ključne stranice su indeksirane, a robots.txt, CDN i vatrozid ne blokiraju AI pretraživačke botove",
+    "Naziv tvrtke, adresa, telefon, radno vrijeme i cijene napisani su u tekstu stranice",
+    "Vrijednosti strukturiranih podataka odgovaraju onome što stranica prikazuje",
+    "Googleov profil tvrtke i unosi u imenicima odgovaraju vašoj web-stranici",
+    "Postoje stranice koje odgovaraju na pitanja koja klijenti postavljaju AI-ju, s jasnim naslovima i kratkim odgovorima",
+    "Imate fiksna pitanja bez naziva tvrtke, postavljate ih pod istim uvjetima i bilježite rezultate",
+    "Netko je zadužen za redovitu provjeru izvješća o generativnom AI-ju u Search Consoleu i AI Performance u Bingu prema utvrđenom rasporedu",
+    "Ne plaćate nijednu uslugu koja obećava zajamčeno pojavljivanje ili pozicije"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Trebam li reći AEO ili GEO?",
+   "a": "Svejedno je. Posao i rezultati gotovo su isti. Marketinški stručnjaci engleskog govornog područja koriste i GEO i AEO; u Japanu su česti i LLMO i AIO. Na svojim stranicama i u ponudama spomenite pojmove koje će vaši čitatelji vjerojatno pretraživati."
+  },
+  {
+   "q": "Ako radim optimizaciju za AI pretraživanje, trebam li i dalje SEO?",
+   "a": "Da. Većina odgovora AI-ja nastaje iz stranica koje su prikupili pretraživački botovi i indeksi. Stranice koje nisu indeksirane ili ne navode svoje činjenice vjerojatno neće koristiti ni AI. Zamislite SEO kao temelj, a optimizaciju za AI pretraživanje kao sloj iznad njega."
+  },
+  {
+   "q": "Odnosi li se LLMO na podatke za treniranje, a GEO na pretraživanje?",
+   "a": "Neki članci tako tvrde, ali to nije dogovorena definicija. Stvarni odgovori AI-ja mogu se oslanjati i na pretraživanje u trenutku odgovora i na podatke za treniranje, a posao koji možete obaviti na svojoj stranici (točne činjenice, pristup botova, dosljednost s drugim stranicama) isti je u oba slučaja. Hoćete li blokirati botove za treniranje, odluka je odvojena od AI pretraživanja."
+  },
+  {
+   "q": "Znači li AIO Google AI Overviews?",
+   "a": "Koristi se na oba načina: AIO kao kratica za AI Overviews i AIO kao AI Optimization. Pitajte što se misli. Ako je riječ samo o Google AI Overviews, vaša prikazivanja ondje prikazuje izvješće o izvedbi generativnog AI-ja u Search Consoleu."
+  },
+  {
+   "q": "Koliko treba da optimizacija za AI pretraživanje počne djelovati?",
+   "a": "Ne postoji fiksni rok. Odgovori AI-ja lako se mijenjaju, a brzina kojom pretraživački botovi ponovno čitaju vaše stranice razlikuje se od usluge do usluge. Svaki mjesec mjerite ista pitanja pod istim uvjetima i procjenjujte prema trendu, a ne prema jednom rezultatu."
+  },
+  {
+   "q": "Vrijedi li „do 40 %” iz rada o GEO-u za ChatGPT?",
+   "a": "Ne nužno. Rad je eksperimentirao s 10.000 istraživačkih upita i generativnim sustavom izrađenim za studiju te je testirao i Perplexity.ai, ali svaki komercijalni alat za AI pretraživanje radi i ažurira se drukčije. Shvatite to kao dokaz da izbori pri pisanju mogu biti važni i mjerite na vlastitoj stranici."
+  },
+  {
+   "q": "Što trebam instalirati na WordPress?",
+   "a": "Zadržite svoj SEO dodatak i dodajte ono što nedostaje: strukturirane podatke s činjenicama o tvrtki, llms.txt i pravila koja dopuštaju AI pretraživačke botove. Nurevo AEO (besplatno) pruža sve troje i ne duplicira strukturirane podatke s glavnim SEO dodacima. Nakon instalacije mjerite pojavljujete li se doista u odgovorima AI-ja."
+  }
+ ],
+ "relatedHeading": "Povezani vodiči",
+ "cta": {
+  "heading": "Prije kratica provjerite može li AI čitati vašu stranicu",
+  "body": "Besplatna provjera ne zahtijeva registraciju i prikazuje stanje vaših strukturiranih podataka, llms.txt-a i pristupa AI botova. Na WordPressu Nurevo AEO besplatno popunjava praznine. Ne može jamčiti da ćete se pojaviti u odgovorima AI-ja.",
+  "label": "Pokrenite besplatnu provjeru čitljivosti za AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Isprobajte Nurevo AEO besplatno na WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je zaštitni znak tvrtke OpenAI, Perplexity tvrtke Perplexity AI, Claude tvrtke Anthropic, Google i Gemini tvrtke Google LLC, a Microsoft Copilot i Bing tvrtke Microsoft. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, WordPress, Ahrefs i NeuronWriter zaštitni su znakovi svojih vlasnika. Nurevo nije povezan ni s jednom od tih tvrtki niti ga one podupiru."
 }

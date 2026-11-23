@@ -1,19 +1,352 @@
 {
-"title": "AEO、SEO 与 GEO：有什么区别？ | Nurevo",
-"description": "了解 SEO、AEO 和 GEO 的区别，为什么搜索与 AI 可读性都需要，以及网站应从哪里开始。",
-"h1": "AEO、SEO 与 GEO：有什么区别？",
-"lead": "这三个词常被混用。下面是清楚的解释。",
-"sections": [
-{"heading": "SEO、AEO 和 GEO", "list": ["SEO（搜索引擎优化）：为在 Google 等搜索引擎的链接列表中排名更靠前而优化。", "AEO（答案引擎优化）：为在 AI 的回答中被提到或引用而优化——ChatGPT、Perplexity、Google AI Overviews、Gemini。", "GEO（生成式引擎优化）：许多英语圈营销人员对与 AEO 相同概念的称呼。"]},
-{"heading": "AEO 和 GEO 是同一个目标", "paragraphs": ["说法不同，目的相同：被生成式 AI 呈现出来。使用受众习惯的说法即可——为了便于被找到，两者都写上。"]},
-{"heading": "AEO 与 SEO 有何不同", "paragraphs": ["SEO 针对给链接排序的排名算法，然后由人去点击。AEO 针对决定引用谁的语言模型，用户往往根本看不到链接。SEO 看重关键词、反向链接和页面权威性；AEO 看重机器可读的结构（schema.org）、明确的信号（llms.txt）、AI 爬虫访问以及清晰、易于提取的事实。"]},
-{"heading": "两者都需要吗？", "paragraphs": ["需要。好的 SEO 依然有帮助——AI 经常参考排名靠前、可信的页面。但仅靠 SEO 已无法保证您出现在答案中。AEO 增加的是让 AI 读懂并引用您的那一层。[什么是 AEO？](/guide/what-is-aeo)"]}
-],
-"faqs": [
-{"q": "AEO 正在取代 SEO 吗？", "a": "是补充，而不是取代。搜索不会消失；AI 回答是在其之上快速增长的新一层。"},
-{"q": "应该说 AEO 还是 GEO？", "a": "是一回事。GEO 在英语 SEO 圈更常见；AEO 更直观。两者都用。"},
-{"q": "从哪里开始？", "a": "先确保 AI 能读懂您的网站——结构、llms.txt、爬虫访问——然后测量您是否出现在回答中。[WordPress 的 AEO](/guide/aeo-wordpress)"}
-],
-"relatedHeading": "相关指南",
-"cta": {"heading": "进行免费 AEO 检测", "body": "无需注册。", "label": "免费 AEO 检测", "href": "/check"}
+ "title": "AEO、GEO 与 SEO（及 LLMO、AIO）的区别 | Nurevo",
+ "description": "AEO、GEO、LLMO 和 AIO 是一回事吗？与 SEO 有何不同？术语对照表、结果与衡量方式的差异、研究结论，以及应该先做什么。",
+ "h1": "AEO、GEO 与 SEO（及 LLMO、AIO）：各术语的含义、衡量方式的差异与优先要做的事",
+ "lead": "AEO、GEO、LLMO 和 AIO 都是同一项工作的不同叫法：让你的商家在 ChatGPT、Perplexity、Google AI Overviews 等工具的回答中被提及，或让你的网页被引用。实际操作中，可以把它们当作一回事。SEO 则是在搜索结果列表中争取排名。两者的基础相同（网页可被抓取，并写明准确的事实）；不同之处在于结果出现在哪里，以及如何衡量。Google 自己也表示，AI Overviews 和 AI Mode 除了 SEO 最佳实践之外，不需要任何特别优化。",
+ "intro": [
+  "撰写于 2026 年 11 月 23 日（日本时间）。本文是对我们 2026 年 10 月短篇页面的全面重写，基于重新阅读 13 篇排名靠前的日文和英文文章以及一手资料。本文面向被各种缩写弄糊涂的商家，以及正在销售或被推销“GEO”“LLMO”服务的网络代理公司。",
+  "AI 的回答会每天变化，也会随提问方式而变。本文的步骤能让 AI 读取到的信息更准确，但无法保证你一定会出现在 AI 回答中，或占据某个位置。"
+ ],
+ "sections": [
+  {
+   "heading": "术语一览：SEO、AEO、GEO、LLMO 和 AIO",
+   "paragraphs": [
+    "下面是各术语的来源及其目标。不同作者的定义略有差异，目前也没有公认的标准定义。"
+   ],
+   "table": {
+    "head": [
+     "缩写",
+     "全称",
+     "术语来源",
+     "通常含义"
+    ],
+    "rows": [
+     [
+      "SEO",
+      "Search Engine Optimization（搜索引擎优化）",
+      "随网页搜索引擎普及的通用术语",
+      "在 Google、Bing 等搜索引擎的链接列表中排名更靠前"
+     ],
+     [
+      "AEO",
+      "Answer Engine Optimization（答案引擎优化）",
+      "在生成式 AI 出现之前，指争取精选摘要和语音助手的回答",
+      "在 AI 回答中被提及或引用"
+     ],
+     [
+      "GEO",
+      "Generative Engine Optimization（生成式引擎优化）",
+      "得名于一篇 2023 年首次发表的研究论文（[Aggarwal 等，KDD 2024](https://arxiv.org/abs/2311.09735)）",
+      "让你的内容在生成式 AI 的回答中被采用和引用"
+     ],
+     [
+      "LLMO",
+      "Large Language Model Optimization（大语言模型优化）",
+      "常见于日本 SEO 公司和代理公司的文章",
+      "让 ChatGPT 等 LLM 正确理解并描述你"
+     ],
+     [
+      "AIO",
+      "AI Optimization（AI 优化）",
+      "主要在日本使用。“AIO”也是 Google AI Overviews 的缩写",
+      "泛指 AI 搜索，有时仅指 Google AI Overviews"
+     ]
+    ]
+   },
+   "after": [
+    "要特别注意 AIO，因为它有两种含义。当有人提出“AIO 优化”时，请问清楚指的是整体 AI 搜索，还是仅指 Google AI Overviews。答案决定了在哪里衡量结果（见下文）。"
+   ]
+  },
+  {
+   "heading": "AEO、GEO、LLMO 和 AIO 是一回事吗？",
+   "paragraphs": [
+    "从实用角度看，是的。Ahrefs 日文博客指出，GEO、LLMO 和 AEO 指的都是同一件事（[Ahrefs：GEO 就是 SEO](https://ahrefs.com/ja/blog/geo-is-just-seo/)）。一篇比较 AIO 与 LLMO 的日文文章指出定义尚未确定，随后为两者列出了相同的通用做法（[Sungrove](https://www.sungrove.co.jp/aio-llmo-difference/)）。",
+    "有些英文文章会把它们区分开：AEO 是被提取为直接答案，GEO 是被生成式 AI 概括、综合并引用（[NeuronWriter](https://neuronwriter.com/geo-vs-aeo-vs-seo/)）。不过，这种区分并不会在你的网站上产生不同的工作。无论叫什么，工作都归结为三件事：让 AI 能读懂你的网站，让网页上的事实准确且一致，并衡量你是否真的出现了。"
+   ],
+   "after": [
+    "用哪个词：用你的客户和同事已经在用的那个。在提案和合同中，与其写标签，不如写明要修改什么、要衡量什么以及如何衡量。如果相同的工作和交付物被拆成分别定价的“AEO”“GEO”“LLMO”套餐来卖，请比较其中的实际内容。"
+   ]
+  },
+  {
+   "heading": "SEO 与 AI 搜索优化（AEO/GEO）对比表",
+   "paragraphs": [
+    "真正的差别在于结果出现在哪里，以及如何衡量。"
+   ],
+   "table": {
+    "head": [
+     "方面",
+     "SEO",
+     "AEO / GEO（AI 搜索）"
+    ],
+    "rows": [
+     [
+      "结果出现的位置",
+      "搜索结果列表",
+      "ChatGPT、Perplexity、Gemini、Claude、Microsoft Copilot 以及 Google AI Overviews 和 AI Mode 的回答中"
+     ],
+     [
+      "成功的标志",
+      "排名、展示次数、点击次数",
+      "被提及、被引用为来源、被正确描述"
+     ],
+     [
+      "点击",
+      "只有用户点击才会产生访问",
+      "回答本身常常已满足用户，无需点击"
+     ],
+     [
+      "稳定性",
+      "排名每天都会变动，但同一查询的顺序大体相似",
+      "同一个问题，换一次运行、换一天或换个措辞，回答都可能不同。单次结果说明不了什么"
+     ],
+     [
+      "AI 的信息来源",
+      "搜索引擎的索引",
+      "回答时的搜索（各公司的搜索爬虫或索引）以及模型的训练数据"
+     ],
+     [
+      "官方衡量工具",
+      "Google Search Console、Bing Webmaster Tools",
+      "针对 Google AI 功能的 Search Console 生成式 AI 效果报告（展示次数）；针对 Copilot 等的 Bing AI Performance 报告。ChatGPT 和 Perplexity 没有为网站所有者提供官方报告"
+     ],
+     [
+      "共同基础",
+      "抓取与索引、网页内容、与网页一致的结构化数据",
+      "相同，另外还要：不屏蔽 AI 搜索爬虫，且你在其他网站上的信息与自家网站不矛盾"
+     ]
+    ]
+   },
+   "after": [
+    "如表所示，AI 搜索优化是在 SEO 之上叠加，而不是取代它。未被索引的网页，或没有在正文中写明事实的网页，两者都不太可能用到。"
+   ]
+  },
+  {
+   "heading": "研究与官方资料实际表明了什么",
+   "paragraphs": [
+    "关于如何被 AI 引用的说法很多，但能核实的很少。以下是截至 2026 年 11 月 23 日我们能追溯到来源的要点。"
+   ],
+   "table": {
+    "head": [
+     "问题",
+     "已知情况",
+     "来源"
+    ],
+    "rows": [
+     [
+      "GEO 从何而来，研究发现了什么",
+      "作者使用包含 10,000 个查询的 GEO-bench，报告称改变内容的写法可使其在生成式引擎回答中的可见度最多提高 40%，在 Perplexity.ai 上最多提高 37%。这些是研究环境下的结果，未必能直接套用到商业 AI 搜索",
+      "[Aggarwal 等，“GEO: Generative Engine Optimization”（KDD 2024）](https://arxiv.org/abs/2311.09735)"
+     ],
+     [
+      "Google 的 AI 功能需要特别处理吗？",
+      "Google 表示，要出现在 AI Overviews 或 AI Mode 中，不需要额外要求、特殊标记或新的 AI 文本文件，SEO 最佳实践依然适用",
+      "[Google 搜索中心：AI 功能与你的网站](https://developers.google.com/search/docs/appearance/ai-features)"
+     ],
+     [
+      "能衡量 Google 的 AI 功能吗？",
+      "Search Console 的生成式 AI 效果报告显示在 AI Overviews 和 AI Mode 中的展示次数（自 2026 年 8 月 31 日起面向全球）。该报告不含点击次数",
+      "[如何在 Search Console 中查看](/guide/search-console-ai-features)"
+     ],
+     [
+      "能衡量 Copilot 中的引用吗？",
+      "Bing Webmaster Tools 的 AI Performance 报告（2026 年 2 月 10 日起公开预览）显示在 Microsoft Copilot、Bing 中的 AI 生成摘要及部分合作伙伴集成中的引用、被引用的网页，以及 AI 搜索时所用查询的样本。2026 年 6 月 16 日，Bing 新增了意图、主题、引用份额和时段对比",
+      "[Bing Webmaster 博客（2 月）](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview)，[Bing Search 博客（6 月）](https://blogs.bing.com/search/June-2026/New-AI-Visibility-Insights-in-Bing-Webmaster-Tools-Intents-Topics-Citation-Share-Compare)"
+     ],
+     [
+      "站内得分更高的网站会被更多提及吗？",
+      "在日本 62 家本地商家中，我们没有发现站内得分（结构化数据、llms.txt、爬虫访问）与在 Perplexity 中出现之间存在关联（rho = 0.03）",
+      "[Nurevo 研究](/guide/aeo-signals-ai-answers-study)"
+     ],
+     [
+      "ChatGPT 和 Perplexity 如何选择来源？",
+      "两者都没有公开详细的选择标准",
+      "各公司的公开文档（以撰写时我们能查证的范围为限）"
+     ]
+    ]
+   },
+   "after": [
+    "简而言之：在研究环境中，内容的写法可以改变可见度；Google 表示不需要特别处理；仅提高站内得分本身并不会让你被提及。因此，衡量你是否真的出现是必要步骤，而不是额外选项。"
+   ]
+  },
+  {
+   "heading": "从哪里开始：小商家的优先顺序",
+   "paragraphs": [
+    "无论叫什么，都请按顺序进行，因为每一步都建立在上一步的基础上。"
+   ],
+   "list": [
+    "索引与抓取：在 Search Console 中确认首页和重要网页已被索引。确认 robots.txt、CDN 或防火墙没有屏蔽 OAI-SearchBot、ChatGPT-User、PerplexityBot、Claude-SearchBot 等 AI 搜索爬虫（[检查方法](/guide/agency-ai-crawler-blocking-audit)）",
+    "网页上的事实：用文字（而不是图片）写明商家名称、地址、电话、营业时间、价格、服务区域以及提供的内容",
+    "结构化数据：将这些事实以 JSON-LD 发布，数值与网页显示的一致",
+    "其他平台的一致性：让 Google 商家资料、目录收录信息和社交媒体资料与网站保持一致",
+    "回答问题的网页：针对客户会问 AI 的问题（费用多少、是否需要预约、在哪里），用清晰的标题和简短的回答作答",
+    "衡量：选择不含商家名称的问题，在相同条件下反复提问，记录你被提及或引用的频率（[衡量方法](/guide/measure-ai-visibility)）"
+   ],
+   "after": [
+    "llms.txt 可在完成这六步之后再添加。其效果尚未得到证实，但成本很低，也没有官方说法认为它有害（[llms.txt 详解](/guide/llms-txt)）。"
+   ]
+  },
+  {
+   "heading": "衡量方式的差异：看什么、在哪里看",
+   "table": {
+    "head": [
+     "想了解的内容",
+     "查看位置",
+     "能看到什么",
+     "看不到什么"
+    ],
+    "rows": [
+     [
+      "Google 排名与点击（SEO）",
+      "Search Console 效果报告",
+      "展示次数、点击次数、平均排名",
+      "AI 回答的内容"
+     ],
+     [
+      "Google AI Overviews 和 AI Mode（AIO/AEO）",
+      "Search Console 生成式 AI 效果报告",
+      "AI 功能中的展示次数，可按网页、国家和设备查看",
+      "点击次数，或回答中如何描述你"
+     ],
+     [
+      "Microsoft Copilot 和 Bing AI",
+      "Bing Webmaster Tools 的 AI Performance",
+      "引用、被引用的网页、AI 所用查询的样本",
+      "其他公司的 AI 工具，例如 ChatGPT"
+     ],
+     [
+      "ChatGPT、Perplexity、Gemini、Claude（GEO/LLMO）",
+      "自己提出的固定问题，或监测工具",
+      "你被提及或引用的频率，以及取而代之出现的竞争对手",
+      "每位用户得到的回答（你永远只能看到样本）"
+     ],
+     [
+      "来自 AI 的访问",
+      "分析工具中的引荐来源（chatgpt.com、perplexity.ai 等）",
+      "有多少人点击进入，以及之后做了什么",
+      "没有带来点击的回答"
+     ]
+    ]
+   },
+   "after": [
+    "当有人汇报“LLMO 成果”或“GEO 效果”时，先确认他们指的是本表的哪一行。这样报告讨论的是衡量数据，而不是标签。"
+   ]
+  },
+  {
+   "heading": "WordPress 上：SEO 插件与 AI 搜索设置并用",
+   "paragraphs": [
+    "在 WordPress 上，Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK 等 SEO 插件负责标题、站点地图和基础结构化数据。AI 搜索往往缺少的是：商家事实（地址、营业时间、价格、服务）的结构化数据、llms.txt，以及允许 AI 搜索爬虫的规则。"
+   ],
+   "list": [
+    "保留你的 SEO 插件。检查标题和元描述、XML 站点地图以及 noindex 设置",
+    "安装 [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)（免费），填写网站类型（本地商家、网店、B2B 等）和商家信息。它可与 Yoast SEO、Rank Math、AIOSEO 和 Slim SEO 并用，自 0.9.1 起也支持 SEO SIMPLE PACK 和 VK All in One Expansion Unit，不会重复输出结构化数据",
+    "在 AEO Score 页面运行诊断，查看 0–100 的结果和修复清单，并应用免费修复项",
+    "检查 robots.txt。Nurevo AEO 允许 AI 搜索爬虫（OAI-SearchBot、ChatGPT-User、Claude-SearchBot、Claude-User、PerplexityBot、Perplexity-User），训练用爬虫（GPTBot、ClaudeBot、Google-Extended 等）则交由你现有的 robots.txt 处理。屏蔽训练用爬虫不会影响 AI 搜索或你的 AEO 分数",
+    "打开 /llms.txt，确认其中的事实与网页上的数值一致",
+    "使用免费的每月 AI 检查（根据你的业务类型和地区生成三个问题提交给 Perplexity，显示你是否被提及或引用）来跟踪趋势。如需每月用固定问题持续衡量，可选择 Pro（每月 USD 99 起；目前衡量在 Perplexity 上进行）"
+   ],
+   "after": [
+    "AEO 分数衡量的是你的网站对 AI 的可读程度，而不是 AI 是否推荐你。正如上面的研究所示，分数更高并不保证被提及更多，所以请把最后一步“衡量”视为同一项工作的一部分。"
+   ]
+  },
+  {
+   "heading": "有人向你推销“GEO”或“LLMO”时应问的问题",
+   "paragraphs": [
+    "标签越新，内容不清楚的服务就越多。无论你是买方还是销售服务的代理公司，以书面形式就以下五点达成一致，就能避免大多数误解。"
+   ],
+   "table": {
+    "head": [
+     "要问的",
+     "好的回答",
+     "警示信号"
+    ],
+    "rows": [
+     [
+      "要修改什么？",
+      "任务清单：结构化数据、网页事实、爬虫设置、其他网站上的更正",
+      "只说“我们为你做 AI 优化”，却没有列出任务"
+     ],
+     [
+      "如何衡量？",
+      "哪些 AI 工具、哪些问题、多少次、什么时候",
+      "没有方法，或只有一张截图"
+     ],
+     [
+      "汇报哪些结果？",
+      "事先约定的来自 Search Console、Bing 或其自有衡量的报告",
+      "把 SEO 排名当作 AI 搜索成果来展示"
+     ],
+     [
+      "保证",
+      "说明 AI 回答会变化，因此无法保证任何结果",
+      "“保证出现在 AI 中”或“保证第一”"
+     ],
+     [
+      "方法",
+      "准确的事实，以及第三方网站上的正确信息",
+      "自写评论、给 AI 的隐藏指令、批量生成的近似重复网页"
+     ]
+    ]
+   },
+   "after": [
+    "给代理公司：我们在[操纵 AI 搜索的风险](/guide/agency-ai-search-manipulation-risks)中列出了应避免的做法，并在[把 AI 搜索优化做成月度服务](/guide/agency-aeo-monthly-service)中介绍了如何界定月度服务范围。如果你管理多个客户网站，请参阅 [Nurevo 合作伙伴计划](https://nurevo.jp/partner/)。"
+   ]
+  },
+  {
+   "heading": "检查清单",
+   "list": [
+    "团队和客户使用相同的术语（AEO、GEO、LLMO、AIO），并对其含义达成一致",
+    "已明确“AIO”指整体 AI 搜索还是仅指 Google AI Overviews",
+    "重要网页已被索引，robots.txt、CDN 和防火墙没有屏蔽 AI 搜索爬虫",
+    "商家名称、地址、电话、营业时间和价格以网页文字写明",
+    "结构化数据的数值与网页显示一致",
+    "Google 商家资料和目录收录信息与网站一致",
+    "有网页以清晰的标题和简短的回答，回应客户会问 AI 的问题",
+    "准备了不含商家名称的固定问题，在相同条件下提问并记录结果",
+    "有专人按固定周期查看 Search Console 的生成式 AI 报告和 Bing 的 AI Performance",
+    "没有为任何承诺保证出现或保证排名的服务付费"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "应该说 AEO 还是 GEO？",
+   "a": "都可以。工作内容和交付物几乎相同。英语圈营销人员 GEO 和 AEO 都在用；在日本，LLMO 和 AIO 也很常见。在你自己的网页和提案中，提到读者可能会搜索的术语即可。"
+  },
+  {
+   "q": "做了 AI 搜索优化，还需要 SEO 吗？",
+   "a": "需要。大多数 AI 回答都是基于搜索爬虫和索引收集到的网页生成的。未被索引或没有写明事实的网页，AI 也不太可能采用。可以把 SEO 看作地基，把 AI 搜索优化看作上面的一层。"
+  },
+  {
+   "q": "LLMO 是针对训练数据，GEO 是针对搜索吗？",
+   "a": "有些文章这么说，但这并不是公认的定义。实际的 AI 回答既可能来自回答时的搜索，也可能来自训练数据，而你能在网站上做的事情（准确的事实、爬虫访问、与其他网站一致）都是一样的。是否屏蔽训练用爬虫，是与 AI 搜索无关的另一个决定。"
+  },
+  {
+   "q": "AIO 是指 Google AI Overviews 吗？",
+   "a": "两种用法都有：AIO 作为 AI Overviews 的缩写，以及 AIO 作为 AI Optimization。请问清楚指的是哪一个。如果仅指 Google AI Overviews，Search Console 的生成式 AI 效果报告会显示你在其中的展示次数。"
+  },
+  {
+   "q": "AI 搜索优化多久能见效？",
+   "a": "没有固定的时间表。AI 回答容易变化，搜索爬虫重新读取网页的速度也因服务而异。每月在相同条件下衡量相同的问题，根据趋势而不是单次结果来判断。"
+  },
+  {
+   "q": "GEO 论文中的“最多 40%”适用于 ChatGPT 吗？",
+   "a": "不一定。该论文使用 10,000 个研究查询和为研究构建的生成式引擎进行实验，也测试了 Perplexity.ai，但每个商业 AI 搜索工具的工作方式和更新节奏都不同。请把它看作“写法会产生影响”的证据，并在自己的网站上实际衡量。"
+  },
+  {
+   "q": "WordPress 上应该安装什么？",
+   "a": "保留你的 SEO 插件，补上缺少的部分：商家事实的结构化数据、llms.txt 以及允许 AI 搜索爬虫的规则。Nurevo AEO（免费）三者都能提供，并避免与主流 SEO 插件重复输出结构化数据。安装后，请衡量你是否真的出现在 AI 回答中。"
+  }
+ ],
+ "relatedHeading": "相关指南",
+ "cta": {
+  "heading": "在纠结缩写之前，先检查 AI 能否读懂你的网站",
+  "body": "免费检查无需注册，可显示你的结构化数据、llms.txt 和 AI 爬虫访问状态。在 WordPress 上，Nurevo AEO 可免费补齐缺口。它无法保证你一定会出现在 AI 回答中。",
+  "label": "运行免费的 AI 可读性检查",
+  "href": "/check",
+  "secondary": {
+   "label": "在 WordPress.org 免费试用 Nurevo AEO",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT 是 OpenAI 的商标，Perplexity 是 Perplexity AI 的商标，Claude 是 Anthropic 的商标，Google 和 Gemini 是 Google LLC 的商标，Microsoft Copilot 和 Bing 是 Microsoft 的商标。Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit、WordPress、Ahrefs 和 NeuronWriter 是其各自所有者的商标。Nurevo 与上述公司均无关联，也未获得其认可。"
 }

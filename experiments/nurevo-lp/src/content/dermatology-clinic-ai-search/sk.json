@@ -1,0 +1,263 @@
+{
+ "title": "AI vyhľadávanie pre dermatologické kliniky: ceny, riziká | Nurevo",
+ "description": "AEO pre dermatologické a estetické kliniky: oddeľte starostlivosť hradenú poisťovňou od platenej, pri každom zákroku uveďte ceny a hlavné riziká a zosúlaďte schema.",
+ "h1": "AI vyhľadávanie pre dermatologické a estetické kliniky: ako dosiahnuť, aby AI správne pochopila, čo hradí poisťovňa, čo je za priamu platbu, ceny a riziká",
+ "lead": "Najúčinnejšie, čo môže dermatologická alebo estetická klinika pre AI vyhľadávanie urobiť, je uviesť textom na stránke každého zákroku, či ho hradí zdravotné poistenie, koľko stojí, ak nie, a aké sú hlavné riziká a doba rekonvalescencie. Keď AI odpovedá na otázku s podmienkami — „dermatológ pri stanici, ktorý lieči akné na poisťovňu“, „koľko stojí laserové odstránenie pigmentových škvŕn a ako dlho trvá rekonvalescencia“ —, opiera sa o stránky, na ktorých sa tieto podmienky dajú prečítať. Potom dodržiavajte pravidlá zdravotníckej reklamy (obmedzenia recenzií pacientov a fotografií pred a po, zverejňovanie cien a rizík pri platenej starostlivosti) a rovnaké údaje zverejnite v štruktúrovaných údajoch, v súbore llms.txt a v Profile firmy na Googli.",
+ "intro": [
+  "Napísané 16. novembra 2026 (JST). V ten deň boli overené otázky a odpovede (Q&A) japonského Ministerstva zdravotníctva, práce a sociálnych vecí k jeho usmerneniam pre zdravotnícku reklamu, správa ministerskej expertnej skupiny o estetickej medicíne, údaje Národného centra pre spotrebiteľské záležitosti a typy schema.org (podľa definícií v schema-dts 2.1.0). Citované pravidlá platia v Japonsku; overte si pravidlá v mieste, kde pôsobíte.",
+  "Odpovede AI sa menia zo dňa na deň a podľa toho, ako je otázka položená. Kroky v tomto článku sprístupnia údaje o vašej klinike pre AI. Nezaručujú, že AI vašu kliniku spomenie ani že ju umiestni na nejakú pozíciu. Tento článok nie je právne poradenstvo."
+ ],
+ "sections": [
+  {
+   "heading": "Na čo sa pacienti pýtajú AI v súvislosti s kožnými klinikami",
+   "paragraphs": [
+    "Dermatologické otázky sa delia do dvoch skupín. Otázky z všeobecnej dermatológie obsahujú príznak, pacienta, čas a otázku poistenia: „dermatológ, ktorý prijíma deti s ekzémom“, „kožná ambulancia otvorená v sobotu“, „hradí poisťovňa liečbu plesne nôh?“. Estetické otázky sa týkajú ceny, počtu sedení, rekonvalescencie a rizika: „bežná cena laserového odstránenia pigmentových škvŕn“, „koľko sedení si vyžaduje lekárska laserová epilácia?“, „liečba jaziev po akné s krátkou rekonvalescenciou“.",
+    "V oboch prípadoch môže AI využiť len stránku, na ktorej sú tieto podmienky napísané. Cenník, ktorý existuje len ako obrázok, stránka zákroku, ktorá nikde neuvádza, či je hradený poisťovňou alebo platený, či stránka, kde je len „ceny vám vysvetlíme pri konzultácii“, nedávajú AI nič, čo by mohla pri otázke s podmienkami citovať.",
+    "Estetická medicína je tiež zdrojom mnohých sťažností. Japonské Národné centrum pre spotrebiteľské záležitosti zaznamenalo 6 281 podnetov týkajúcich sa estetickej medicíny v roku 2023, 10 744 v roku 2024 a 7 944 v roku 2025 (údaje PIO-NET k 31. máju 2026, stránka aktualizovaná 31. júla 2026). [Národné centrum pre spotrebiteľské záležitosti: estetická medicína (po japonsky)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Pacienti si chcú ceny a riziká overiť ešte pred objednaním a pýtajú sa na ne AI. Zverejňovanie presných cien a rizík je predovšetkým informáciou pre pacientov a až potom optimalizáciou pre AI."
+   ]
+  },
+  {
+   "heading": "Čo najlepšie hodnotené články vynechávajú",
+   "paragraphs": [
+    "Pri čítaní článkov, ktoré sa umiestňujú na popredných pozíciách pre „optimalizácia pre AI vyhľadávanie v dermatológii“, „medical spa ChatGPT“ a ich japonské ekvivalenty, vidno, že väčšina končí pri radách „udržiavajte správne odbory, adresu a ordinačné hodiny“, „pridajte štruktúrované údaje“ a „získajte viac recenzií“. Niektoré anglické návody uvádzajú prahové hodnoty ako „50+ recenzií“ bez akéhokoľvek zdroja.",
+    "Štyri body, na ktorých kožným klinikám najviac záleží, tam boli sotva spomenuté, a preto tvoria jadro tohto návodu:"
+   ],
+   "list": [
+    "Ako na stránke oddeliť starostlivosť hradenú poisťovňou od platenej starostlivosti.",
+    "Kde a ako zverejniť ceny a hlavné riziká a nežiaduce účinky platených zákrokov a ako to súvisí s pravidlami reklamy.",
+    "Kde sa všeobecné rady „zbierajte recenzie“ a „ukazujte fotky prípadov“ stretávajú s japonskými pravidlami zdravotníckej reklamy.",
+    "Konkrétne nastavenia WordPressu (typ, služby s cenami, FAQ len pre danú stránku) a ako overiť, či sa zobrazujete."
+   ]
+  },
+  {
+   "heading": "Oddeľte starostlivosť hradenú poisťovňou od platenej",
+   "paragraphs": [
+    "AI sa pri kožnej klinike najčastejšie mýli vtedy, keď rovnaké označenie — „liečba akné“, „liečba pigmentových škvŕn“ — zahŕňa možnosti hradené poisťovňou aj platené. Hneď na začiatku každej stránky príznaku alebo zákroku uveďte, či je hradený poisťovňou, alebo platený. Q&A ministerstva tiež uvádza, že platené zákroky so schválenými prípravkami (ako príklady uvádza zubné implantáty a bielenie) musia uvádzať, že sú platené, a ich štandardnú cenu. [MHLW: Q&A k usmerneniam pre zdravotnícku reklamu (PDF, po japonsky)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Stránka",
+     "Čo uviesť",
+     "Čo AI často zle pochopí"
+    ],
+    "rows": [
+     [
+      "Stránky príznakov (akné, ekzém, dermatitída, pleseň nôh, bradavice)",
+      "Čo sa lieči na poisťovňu, platené možnosti výslovne označené ako platené, kedy navštíviť lekára",
+      "Zákroky hradené poisťovňou a platené uvedené spolu bez rozlíšenia"
+     ],
+     [
+      "Stránky zákrokov (laser, peelingy, injekcie, epilácia)",
+      "Že je zákrok platený, cena za sedenie a za kúru (s DPH alebo bez), bežný počet sedení, hlavné riziká a nežiaduce účinky, doba rekonvalescencie",
+      "Len „ceny vysvetlíme pri konzultácii“"
+     ],
+     [
+      "Cenník",
+      "Samostatné tabuľky pre starostlivosť hradenú poisťovňou a platenú, dátum poslednej aktualizácie, ako fungujú poplatky za konzultáciu, kontrolu a lieky",
+      "Cenník len ako obrázok alebo iba akciové ceny"
+     ],
+     [
+      "Informácie o klinike (úvod, ako sa k nám dostať)",
+      "Samostatné ordinačné hodiny a pravidlá objednávania pre všeobecnú a estetickú dermatológiu, ak sa líšia, vekové rozpätie pacientov",
+      "Hodiny estetickej ambulancie uvedené ako všeobecné ordinačné hodiny"
+     ],
+     [
+      "Profily lekárov",
+      "Meno, odbor a kvalifikácia (v rozsahu, ktorý možno inzerovať)",
+      "Superlatívy a porovnania (pozri nižšie)"
+     ]
+    ],
+    "caption": "Na základe otázok, ktoré pacienti kladú o kožných klinikách, a medzier v najlepšie hodnotených článkoch."
+   },
+   "after": [
+    "Ak majú všeobecná a estetická dermatológia odlišné ordinačné hodiny alebo pravidlá objednávania, dajte každej vlastnú tabuľku hodín, aby ich AI nezlúčila, a pri každej uveďte, či prijímate aj neobjednaných pacientov."
+   ]
+  },
+  {
+   "heading": "Stránky platených zákrokov: ceny a hlavné riziká na tej istej stránke",
+   "paragraphs": [
+    "Podľa japonských pravidiel zdravotníckej reklamy smie webová stránka, ktorú si pacienti sami vyhľadajú, podrobne vysvetľovať veci, ktoré bežne inzerovať nemožno, ak splní určité podmienky (tzv. „zrušenie obmedzenia“). Q&A ministerstva uvádza, že pri platenej starostlivosti tieto podmienky zahŕňajú opis bežne potrebnej liečby a jej cien a jej hlavných rizík a nežiaducich účinkov — a že uviesť jednu alebo dve všeobecné nevýhody nestačí (Q6-12). Ďalšou podmienkou je kontaktné miesto pre otázky; číslo len na objednávanie alebo linka s automatickou odpoveďou ju nespĺňa (Q6-10). Tieto údaje musia byť dobre viditeľné: veľmi drobné písmo alebo text vo farbe pozadia sa nepočíta (Q6-11). [MHLW: Q&A (PDF, po japonsky)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "To smeruje rovnakým smerom ako AI vyhľadávanie. Keď sa AI pýtate na cenu, rekonvalescenciu alebo riziko, môže použiť len stránky, kde sú tieto údaje v texte. Stránka zákroku sa dobre číta v tomto poradí:"
+   ],
+   "list": [
+    "Názov zákroku a informácia, že je platený.",
+    "Aký problém rieši (bez sľubovania výsledkov).",
+    "Ako sa vykonáva, dĺžka jedného sedenia, bežný počet sedení a interval.",
+    "Ceny (za sedenie a za kúru, s DPH alebo bez, príplatky napr. za anestéziu, lieky či kontrolu).",
+    "Hlavné riziká a nežiaduce účinky a bežná doba rekonvalescencie.",
+    "Kto zákrok podstúpiť nemôže alebo by mal byť opatrný.",
+    "Kontaktné miesto, ktoré odpovedá na otázky (telefónne číslo a hodiny), a komu volať, ak sa neskôr objaví problém.",
+    "Dátum poslednej aktualizácie stránky."
+   ],
+   "after": [
+    "Zákroky s neschválenými liekmi alebo pomôckami, prípadne so schválenými liekmi na neschválené účely, si vyžadujú ďalšie vysvetlenie. Q&A uvádza, že použitie mimo schválených indikácií (off-label) sa posudzuje rovnako ako neschválené lieky (Q2-14). Overte si požadované údaje priamo v usmerneniach.",
+    "Pokiaľ ide konkrétne o estetickú medicínu, správa ministerskej expertnej skupiny (22. novembra 2024) vyzýva na prísnejšie monitorovanie zdravotníckej reklamy na internete a na to, aby kliniky zriadili kontakt pre problémy po zákroku a informovali o ňom pacientov. [MHLW: správa skupiny o správnej praxi v estetickej medicíne (PDF, po japonsky)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Uvedenie kontaktu pre následnú starostlivosť na stránke každého zákroku do tohto smeru tiež zapadá."
+   ]
+  },
+  {
+   "heading": "Recenzie a fotografie prípadov: kde sa všeobecné rady o AI stretávajú s pravidlami",
+   "paragraphs": [
+    "Návody k AI vyhľadávaniu často odporúčajú zbierať recenzie a ukazovať fotografie pred a po ako dôkaz. Pri zdravotníckych zariadeniach v Japonsku si to vyžaduje opatrnosť."
+   ],
+   "table": {
+    "head": [
+     "Bežná rada",
+     "Ako to posudzuje japonské Q&A",
+     "Čo robiť namiesto toho"
+    ],
+    "rows": [
+     [
+      "Zverejňujte recenzie pacientov",
+      "Recenzie o priebehu alebo účinku liečby sa zverejňovať nesmú (Q1-18, Q2-9)",
+      "Podrobnejšie vysvetlite fakty: postup, ceny, riziká"
+     ],
+     [
+      "Dajte recenzie do FAQ alebo do schema recenzií",
+      "Rovnaké pravidlo; môže sa týkať aj recenzií, ktoré klinika zaplatila, vyžiadala alebo upravila",
+      "Píšte vecné FAQ: „Hradí to poisťovňa?“, „Koľko sedení?“"
+     ],
+     [
+      "Ukazujte fotografie pred a po",
+      "Aj fotografie len „pred“ alebo len „po“ sa považujú za tvrdenia o účinku liečby a nesmú sa inzerovať (Q2-8, Q3-14)",
+      "Overte si v usmerneniach a v zbierke prípadov, kedy možno fotografie použiť"
+     ],
+     [
+      "„Najlepší v okolí“, „bezbolestne“, „zaručené výsledky“",
+      "Nepravdivé, prehnané a porovnávacie tvrdenia sa považujú za zakázané",
+      "Píšte len to, čo môžete doložiť ako fakt alebo číslami"
+     ]
+    ]
+   },
+   "after": [
+    "Na druhej strane príspevky na sociálnych sieťach samotných pacientov alebo na nezávislých recenzných weboch, za ktoré klinika neplatila a o ktoré nežiadala, nie sú reklamou (Q2-11). Či ich AI číta, klinika neovplyvní, a spoľahlivým krokom je preto mať správne údaje na vlastnom webe. Príklady sú zhromaždené v [zbierke prípadov ministerstva (PDF, po japonsky)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Štruktúrované údaje: typ Dermatology a jedna služba na každý zákrok",
+   "paragraphs": [
+    "schema.org má typ pre dermatológiu (overené v definíciách typov schema-dts 2.1.0 dňa 16. novembra 2026)."
+   ],
+   "table": {
+    "head": [
+     "Typ / vlastnosť",
+     "Význam",
+     "Použitie pri kožnej klinike"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Odbor medicíny zaoberajúci sa kožnými ochoreniami. Ide o MedicalBusiness, a teda aj LocalBusiness",
+      "Typ pre dermatologickú ambulanciu; nesie adresu, telefón a otváracie hodiny"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Odbor praxe. Hodnoty zahŕňajú Dermatology a PlasticSurgery",
+      "Ak ponúkate všeobecnú aj estetickú dermatológiu, uveďte len odbory, ktoré vaše stránky opisujú"
+     ],
+     [
+      "Service s offers",
+      "Služba, ktorú poskytujete, a jej cena",
+      "Zaregistrujte každý platený zákrok s rovnakou cenou ako na stránke"
+     ],
+     [
+      "openingHoursSpecification",
+      "Otváracie hodiny podľa dní",
+      "Ak sa hodiny všeobecnej a estetickej dermatológie líšia, referenciou je tabuľka na stránke a značkovanie uvádza hlavné hodiny"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Či sú prijímaní noví pacienti (vlastnosť MedicalOrganization)",
+      "Pre obdobia, keď nových pacientov neprijímate"
+     ]
+    ]
+   },
+   "after": [
+    "Google uvádza, že pre AI Overviews a podobné funkcie nie sú potrebné žiadne osobitné štruktúrované údaje a že štruktúrované údaje majú zodpovedať tomu, čo je na stránke vidieť. [Google: funkcie AI a váš web](https://developers.google.com/search/docs/appearance/ai-features) / [Štruktúrované údaje LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Neuvádzajte cenu len v značkovaní ani cenu odlišnú od stránky."
+   ]
+  },
+  {
+   "heading": "Nastavenie na webe kožnej kliniky vo WordPresse",
+   "list": [
+    "Nainštalujte a aktivujte Nurevo AEO (zadarmo) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO a Slim SEO fungujú ďalej bez zmeny. Od verzie 0.9.1 funguje aj spolu so SEO SIMPLE PACK a VK All in One Expansion Unit bez duplikovania štruktúrovaných údajov.",
+    "V sprievodcovi prvým nastavením zvoľte „Clinic or dental“ (tým sa nastaví MedicalBusiness). Potom v nastaveniach zmeňte pole typu podniku na Dermatology. Pole prijíma ľubovoľný názov typu schema.org.",
+    "Skontrolujte názov kliniky, adresu, telefón a opis. Z vašich existujúcich nastavení sa doplnia len prázdne polia; hodnoty, ktoré ste zadali, sa nikdy neprepisujú.",
+    "Otváracie hodiny zapíšte len ako dni a časy, napríklad „Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00“. Samostatné hodiny estetiky, sviatky a čas posledného príjmu patria do tabuľky na samotnej stránke.",
+    "V sekcii služieb v nastaveniach zaregistrujte každý platený zákrok. S názvom, opisom, dĺžkou, cenou a menou sa každý zverejní ako Service s Offer. Udržiavajte cenu zhodnú so stránkou a meňte oboje súčasne.",
+    "Na bočnom paneli editora každej stránky zákroku pridajte otázky len pre túto stránku („Hradí to poisťovňa?“, „Koľko sedení?“, „Ako dlho trvá rekonvalescencia?“). Vynechajte recenzie pacientov a odpovede sľubujúce výsledky. Stránky akcií, ktoré nechcete mať v zozname, označte ako „leave this page out of llms.txt“.",
+    "Spustite diagnostiku na obrazovke Skóre AEO a použite opravy jedným kliknutím. Ako web vyzerá zvonku, overíte [bezplatnou kontrolou čitateľnosti pre AI](/check)."
+   ]
+  },
+  {
+   "heading": "Pridanie medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AEO samo medicalSpecialty negeneruje. Ak ho chcete pridať, použite filter, ktorý upravuje štruktúrované údaje podniku (webmcp_canary_business_node), v súbore functions.php vašej témy alebo v malom plugine. Pridajte len odbory, ktoré vaše stránky opisujú."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Kontrolný zoznam pred zverejnením",
+   "list": [
+    "Každá stránka príznaku a zákroku uvádza, či ide o starostlivosť hradenú poisťovňou, alebo platenú.",
+    "Stránky platených zákrokov uvádzajú cenu (s DPH alebo bez, príplatky), bežný počet sedení, hlavné riziká a nežiaduce účinky a dobu rekonvalescencie.",
+    "Zreteľne je uvedené kontaktné miesto, ktoré odpovedá na otázky — nielen na objednávanie.",
+    "Cenník je v textovej podobe, nie len ako obrázok, a má dátum poslednej aktualizácie.",
+    "Ak sa všeobecná a estetická dermatológia líšia hodinami alebo objednávaním, každá je opísaná zvlášť.",
+    "V texte, FAQ ani štruktúrovaných údajoch nie sú recenzie pacientov, fotografie pred a po, superlatívy ani porovnania.",
+    "Zákroky s neschválenými prípravkami alebo použitím off-label obsahujú vysvetlenie vyžadované usmerneniami.",
+    "Ceny služieb v štruktúrovaných údajoch zodpovedajú cenám na stránke.",
+    "Názov, adresa, telefón a hodiny sa zhodujú v štruktúrovaných údajoch, Profile firmy na Googli aj v oficiálnych zdravotníckych registroch.",
+    "Súbor llms.txt obsahuje informácie o klinike, cenník, hlavné zákroky a stránky s opisom cesty. [Čo je llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Ako overiť, či sa objavujete v odpovediach AI",
+   "paragraphs": [
+    "Keď budú stránky v poriadku, spíšte päť až desať otázok, ktoré by mohol položiť pacient, kombináciou lokalita × príznak × poistenie, lokalita × zákrok × cena a zákrok × rekonvalescencia, a položte ich ChatGPT a Perplexity. Zaznamenajte, či sa vaša klinika objaví menom alebo URL a či sú správne uvedené úhrada poisťovňou, ceny a riziká. Ak AI cituje chybnú cenu, skontrolujte, ako je napísaný cenník a stránka zákroku a či nie je stále online stará akciová stránka. Odpovede AI sa pri každom spustení líšia, preto rovnaké otázky opakujte niekoľko týždňov. Metóda je opísaná v článku [ako merať viditeľnosť v AI](/guide/measure-ai-visibility).",
+    "Analýza zverejnená MGMA, americkou asociáciou pre riadenie lekárskych praxí (máj 2026, autorom je zakladateľ firmy zaoberajúcej sa AI vyhľadávaním), zistila, že ChatGPT nespomenul žiadnu z 200 nezávislých praxí vo vzorke. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Krajiny aj podmienky sa líšia, ale skutočné položenie otázok je východiskovým bodom.",
+    "V Nurevo AEO plány Free a Standard tiež raz mesačne položia Perplexity tri otázky zostavené z vášho typu podniku a lokality (bez názvu kliniky) a zaznamenajú, či bola vaša klinika menovaná alebo váš web citovaný. Plán Pro (od 99 USD mesačne) pridáva meranie viditeľnosti v AI vo verzii beta: podiel odpovedí AI, v ktorých sa vaša klinika objavuje, v porovnaní s konkurenciou a v čase (aktuálne merané na Perplexity). Oboje pracuje so vzorkami odpovedí; ani jedno nesleduje všetky odpovede."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Čím by mala dermatologická klinika začať v AI vyhľadávaní?",
+   "a": "Začnite tým, že na každej stránke príznaku a zákroku uvediete, či je starostlivosť hradená poisťovňou, alebo platená. Potom na každej stránke plateného zákroku uveďte cenu, bežný počet sedení, hlavné riziká a nežiaduce účinky a dobu rekonvalescencie a zosúlaďte názov, adresu, telefón a hodiny v štruktúrovaných údajoch a v Profile firmy na Googli."
+  },
+  {
+   "q": "Mala by estetická klinika zverejňovať svoje ceny?",
+   "a": "Áno. Keď sa AI pýtate na cenu, používa stránky, kde je cena uvedená v texte. V Japonsku Q&A ministerstva tiež radí bežnú liečbu, jej ceny a jej hlavné riziká a nežiaduce účinky medzi podmienky na podrobné vysvetľovanie platenej starostlivosti na webe."
+  },
+  {
+   "q": "Aký typ štruktúrovaných údajov mám použiť?",
+   "a": "Typ Dermatology zo schema.org predstavuje dermatologickú ambulanciu a je druhom MedicalBusiness a LocalBusiness. Ak ponúkate aj estetické zákroky, môžete ako hodnoty medicalSpecialty pridať Dermatology a PlasticSurgery. Zhoda so stránkou je dôležitejšia než samotný typ."
+  },
+  {
+   "q": "Pomáhajú fotografie pred a po tomu, aby si AI kliniku vybrala?",
+   "a": "Neexistujú overené dôkazy, že áno. Podľa japonských pravidiel zdravotníckej reklamy sa fotografie pred a po považujú za tvrdenia o účinku liečby a sú obmedzené. Kedy ich možno použiť, si overte v usmerneniach, v zbierke prípadov a na miestnom zdravotnom stredisku."
+  },
+  {
+   "q": "Vyradia nízke hodnotenia na recenzných weboch moju kliniku z odpovedí AI?",
+   "a": "Poskytovatelia AI nezverejňujú, akú váhu takým informáciám prikladajú, takže to nikto nemôže s istotou povedať. Nezávislé recenzie, o ktoré klinika nežiadala, nie sú reklamou, ale klinika nesmie na vlastnom webe zverejňovať recenzie, ktoré zaplatila alebo si vyžiadala. Sústreďte sa na správnosť údajov na vlastnom webe."
+  },
+  {
+   "q": "Je Nurevo AEO zadarmo?",
+   "a": "Áno. Typ podniku, adresa, hodiny, služby s cenami a štruktúrované údaje FAQ, llms.txt, nastavenia AI crawlerov a Skóre AEO sú v bezplatnom pláne. Platené plány pridávajú stále aktuálnu sadu pravidiel (Standard, 20 USD mesačne) a meranie viditeľnosti v AI vo verzii beta (Pro, od 99 USD mesačne). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Je zaručené, že sa moja klinika objaví v ChatGPT?",
+   "a": "Nie. Odpovede AI sa líšia a žiadny nástroj ani metóda nemôže zaručiť zobrazenie ani pozíciu. Môžete však zabezpečiť, aby údaje o vašej klinike boli pre AI čitateľné, a priebežne overovať, či sa objavujete."
+  }
+ ],
+ "relatedHeading": "Súvisiace návody",
+ "cta": {
+  "heading": "Najprv sa pozrite, ako AI číta web vašej kožnej kliniky",
+  "body": "Bezplatná kontrola nevyžaduje registráciu a ukáže stav vašich štruktúrovaných údajov, súboru llms.txt a prístupu AI crawlerov. Vo WordPresse Nurevo AEO medzery zadarmo doplní.",
+  "label": "Spustiť bezplatnú kontrolu čitateľnosti pre AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Stiahnuť Nurevo AEO z WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je ochranná známka spoločnosti OpenAI, Perplexity spoločnosti Perplexity AI a Google spoločnosti Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit a WordPress sú ochranné známky príslušných vlastníkov. Nurevo nie je s žiadnou z týchto spoločností prepojené ani nimi podporované. Tento článok nie je právne ani lekárske poradenstvo."
+}

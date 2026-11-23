@@ -1,0 +1,263 @@
+{
+ "title": "AI-keresés bőrgyógyászatoknak: díjak, kockázatok | Nurevo",
+ "description": "AEO bőrgyógyászati és esztétikai klinikáknak: válassza szét a biztosított és a térítéses ellátást, közölje a díjakat és kockázatokat, igazítsa hozzá a schemát.",
+ "h1": "AI-keresés bőrgyógyászati és esztétikai klinikáknak: hogyan értse meg helyesen az AI a biztosított és térítéses ellátást, a díjakat és a kockázatokat",
+ "lead": "A leghatékonyabb lépés, amelyet egy bőrgyógyászati vagy esztétikai klinika az AI-keresésért tehet, hogy minden kezelési oldalon szövegesen közli: fedezi-e a kezelést a biztosítás, mennyibe kerül, ha nem, és melyek a fő kockázatok és a felépülési idő. Amikor az AI feltételeket tartalmazó kérdésre válaszol — „bőrgyógyász az állomás közelében, aki biztosításra kezeli az aknét”, „mennyibe kerül a lézeres folteltávolítás, és mennyi a felépülési idő” —, olyan oldalakra támaszkodik, amelyekről ezek a feltételek kiolvashatók. Ezután betartja az egészségügyi reklámszabályokat (korlátozások a páciensvéleményekre és az előtte/utána fotókra, a díjak és kockázatok közzététele a térítéses ellátásnál), és ugyanezeket a tényeket közzéteszi a strukturált adatokban, az llms.txt-ben és a Google Cégprofilban.",
+ "intro": [
+  "Íródott 2026. november 16-án (JST). Aznap ellenőriztük a japán Egészségügyi, Munkaügyi és Népjóléti Minisztérium egészségügyi reklámirányelveihez kiadott kérdés-válasz dokumentumát, a minisztérium esztétikai orvoslásról szóló szakértői jelentését, a Nemzeti Fogyasztóvédelmi Központ adatait és a schema.org típusait (a schema-dts 2.1.0 definíciói szerint). Az idézett szabályok japánok; ellenőrizze a működési helyén érvényes szabályokat.",
+  "Az AI válaszai napról napra és a kérdés megfogalmazásától függően változnak. Az itt leírt lépések olvashatóvá teszik klinikája tényeit az AI számára. Nem garantálják, hogy az AI megemlíti vagy bárhová rangsorolja a klinikát. Ez a cikk nem minősül jogi tanácsadásnak."
+ ],
+ "sections": [
+  {
+   "heading": "Mit kérdeznek a páciensek az AI-tól a bőrgyógyászatokról",
+   "paragraphs": [
+    "A bőrgyógyászati kérdések két csoportba sorolhatók. Az általános bőrgyógyászati kérdésekben szerepel egy tünet, egy páciens, egy időpont és a biztosítás kérdése: „bőrgyógyász, aki ekcémás gyerekeket is fogad”, „szombaton nyitva tartó bőrgyógyászat”, „fedezi a biztosítás a lábgomba kezelését?”. Az esztétikai kérdésekben ár, alkalmak száma, felépülési idő és kockázat szerepel: „a lézeres folteltávolítás szokásos ára”, „hány alkalom kell az orvosi szőrtelenítéshez?”, „aknés hegek kezelése rövid felépüléssel”.",
+    "Az AI mindkét esetben csak olyan oldalt tud használni, amelyen ezek a feltételek le vannak írva. A csak képként létező árlista, az a kezelési oldal, amely sehol nem mondja meg, hogy biztosított vagy térítéses, vagy az az oldal, amely csak annyit ír, hogy „a díjakat a konzultáción ismertetjük”, semmit sem ad az AI-nak, amire egy feltételes kérdésnél hivatkozhatna.",
+    "Az esztétikai orvoslás ráadásul sok panaszt vált ki. A japán Nemzeti Fogyasztóvédelmi Központ 2023-ban 6281, 2024-ben 10 744, 2025-ben 7944 esztétikai orvoslással kapcsolatos megkeresést rögzített (PIO-NET-adatok 2026. május 31-i állapot szerint, az oldal frissítve: 2026. július 31.). [Nemzeti Fogyasztóvédelmi Központ: esztétikai orvoslás (japánul)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). A páciensek a foglalás előtt szeretnék ellenőrizni az árakat és a kockázatokat, és az AI-tól kérdeznek róluk. A pontos díjak és kockázatok közzététele elsősorban betegtájékoztatás, és csak másodsorban AI-optimalizálás."
+   ]
+  },
+  {
+   "heading": "Amit a találati lista élén álló cikkek kihagynak",
+   "paragraphs": [
+    "Ha elolvassuk az „AI search optimization for dermatology”, a „medical spa ChatGPT” és japán megfelelőik keresésekre rangsorolt cikkeket, a legtöbb megáll annál, hogy „tartsa pontosan a szakterületeket, a címet és a rendelési időt”, „adjon hozzá strukturált adatokat” és „gyűjtsön több értékelést”. Néhány angol nyelvű útmutató forrás nélkül ad meg olyan küszöböket, mint „50+ értékelés”.",
+    "Négy pont, amely a bőrgyógyászatok számára a legfontosabb, alig kapott figyelmet, ezért ezek alkotják az útmutató magját:"
+   ],
+   "list": [
+    "Hogyan válassza szét az oldalon a biztosított és a térítéses ellátást.",
+    "Hol és hogyan tegye közzé a térítéses kezelések díjait, fő kockázatait és mellékhatásait, és ez hogyan viszonyul a reklámszabályokhoz.",
+    "Hol ütközik a „gyűjtsön értékeléseket” és „mutasson esetfotókat” általános tanács a japán egészségügyi reklámszabályokkal.",
+    "Konkrét WordPress-beállítások (típus, szolgáltatások árakkal, csak az oldalhoz tartozó GYIK), és hogyan ellenőrizze, hogy megjelenik-e."
+   ]
+  },
+  {
+   "heading": "Válassza szét a biztosított és a térítéses ellátást",
+   "paragraphs": [
+    "Az AI leggyakrabban akkor téved egy bőrgyógyászattal kapcsolatban, ha ugyanaz a megnevezés — „aknekezelés”, „pigmentfolt-kezelés” — biztosított és térítéses lehetőségeket is takar. Minden tünet- vagy kezelési oldal tetején tüntesse fel, hogy biztosított vagy térítéses-e. A minisztérium kérdés-válasz dokumentuma azt is kimondja, hogy a jóváhagyott termékeket használó térítéses kezeléseknél (példaként a fogimplantátumot és a fogfehérítést hozza) fel kell tüntetni, hogy térítésesek, és meg kell adni a szokásos díjat. [MHLW: kérdések és válaszok az egészségügyi reklámirányelvekhez (PDF, japánul)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Oldal",
+     "Mit írjon",
+     "Mit ért félre gyakran az AI"
+    ],
+    "rows": [
+     [
+      "Tünetoldalak (akne, ekcéma, bőrgyulladás, lábgomba, szemölcs)",
+      "Mit kezelnek biztosításra, a térítéses lehetőségek térítésesként megnevezve, mikor forduljon orvoshoz",
+      "Biztosított és térítéses kezelések megkülönböztetés nélkül, együtt felsorolva"
+     ],
+     [
+      "Kezelési oldalak (lézer, hámlasztás, injekciós kezelések, szőrtelenítés)",
+      "Hogy térítéses, ár alkalmanként és kúránként (áfával vagy anélkül), szokásos alkalomszám, fő kockázatok és mellékhatások, felépülési idő",
+      "„A díjakat a konzultáción ismertetjük” és semmi más"
+     ],
+     [
+      "Árlista",
+      "Külön táblázat a biztosított és a térítéses ellátásra, utolsó frissítés dátuma, hogyan számolják a konzultáció, a kontroll és a gyógyszerek díját",
+      "Csak képként közölt árlista, vagy csak akciós árak"
+     ],
+     [
+      "Klinikai információk (kezdőlap, megközelítés)",
+      "Külön rendelési idő és foglalási szabályok az általános és az esztétikai bőrgyógyászatra, ha eltérnek, a fogadott korosztály",
+      "Az esztétikai rendelési idő általános rendelési időként feltüntetve"
+     ],
+     [
+      "Orvosi profilok",
+      "Név, szakterület és képesítések (a reklámozható kereteken belül)",
+      "Felsőfokú jelzők és összehasonlítások (lásd lent)"
+     ]
+    ],
+    "caption": "A páciensek bőrgyógyászatokkal kapcsolatos kérdései és a találati lista élén álló cikkek hiányosságai alapján."
+   },
+   "after": [
+    "Ha az általános és az esztétikai bőrgyógyászat rendelési ideje vagy foglalási szabályai eltérnek, adjon mindkettőnek saját időtáblázatot, hogy az AI ne vonja össze őket, és mindkettőnél írja meg, fogadnak-e előjegyzés nélkül."
+   ]
+  },
+  {
+   "heading": "Térítéses kezelési oldalak: díjak és fő kockázatok ugyanazon az oldalon",
+   "paragraphs": [
+    "A japán egészségügyi reklámszabályok szerint egy olyan weboldal, amelyet a páciensek maguk keresnek fel, bizonyos feltételek teljesülése esetén részletesen elmagyarázhat olyan dolgokat is, amelyeket egyébként nem lehet reklámozni (ezt nevezik „a korlátozás feloldásának”). A minisztérium kérdés-válasz dokumentuma szerint a térítéses ellátásnál ezek közé a feltételek közé tartozik a szokásosan szükséges kezelés és díjainak, valamint fő kockázatainak és mellékhatásainak leírása — és egy-két általános hátrány felsorolása nem elég (Q6-12). Egy másik feltétel a kérdésekre válaszoló kapcsolattartási pont; egy csak foglalásra szolgáló szám vagy automatikus üzenetrögzítő ennek nem felel meg (Q6-10). Ezeknek könnyen láthatónak kell lenniük: a nagyon apró vagy a háttérrel azonos színű szöveg nem számít (Q6-11). [MHLW: kérdések és válaszok (PDF, japánul)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Ez ugyanabba az irányba mutat, mint az AI-keresés. Amikor az AI-t árról, felépülési időről vagy kockázatról kérdezik, csak olyan oldalakat tud használni, ahol ezek a fő szövegben szerepelnek. Egy kezelési oldal ebben a sorrendben olvasható jól:"
+   ],
+   "list": [
+    "A kezelés neve, és hogy térítéses.",
+    "Milyen problémára szolgál (eredmények ígérete nélkül).",
+    "Hogyan történik, egy alkalom időtartama, a szokásos alkalomszám és a köztük eltelt idő.",
+    "Díjak (alkalmanként és kúránként, áfával vagy anélkül, többletköltségek, például érzéstelenítés, gyógyszer vagy kontroll).",
+    "Fő kockázatok és mellékhatások, valamint a jellemző felépülési idő.",
+    "Kinek nem végezhető, illetve kinek kell óvatosnak lennie.",
+    "Kérdésekre válaszoló kapcsolattartási pont (telefonszám és elérhetőség), és kit hívjon, ha utána probléma adódik.",
+    "Az oldal utolsó frissítésének dátuma."
+   ],
+   "after": [
+    "A nem engedélyezett gyógyszereket vagy eszközöket, illetve engedélyezett gyógyszereket nem engedélyezett célra használó kezelések további magyarázatot igényelnek. A kérdés-válasz dokumentum szerint az engedélyen kívüli (off-label) alkalmazás ugyanúgy kezelendő, mint a nem engedélyezett gyógyszerek (Q2-14). Az előírt elemeket magukban az irányelvekben ellenőrizze.",
+    "Kifejezetten az esztétikai orvoslás kapcsán a minisztérium szakértői testületének jelentése (2024. november 22.) az egészségügyi reklámok szigorúbb online felügyeletét sürgeti, és azt, hogy a klinikák hozzanak létre kapcsolattartási pontot a kezelés utáni problémákra, és tájékoztassák erről a pácienseket. [MHLW: jelentés az esztétikai orvoslás megfelelő gyakorlatáról (PDF, japánul)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). A kezelés utáni gondozás elérhetőségének feltüntetése minden kezelési oldalon szintén ebbe az irányba mutat."
+   ]
+  },
+  {
+   "heading": "Értékelések és esetfotók: ahol az általános AI-tanácsok ütköznek a szabályokkal",
+   "paragraphs": [
+    "Az AI-keresési útmutatók gyakran javasolják az értékelések gyűjtését és az előtte/utána fotók bizonyítékként való bemutatását. Japán egészségügyi intézményeknél ez óvatosságot igényel."
+   ],
+   "table": {
+    "head": [
+     "Gyakori tanács",
+     "Hogyan kezeli a japán kérdés-válasz dokumentum",
+     "Mit tegyen helyette"
+    ],
+    "rows": [
+     [
+      "Tegyen közzé páciensvéleményeket",
+      "A kezelés tartalmáról vagy hatásáról szóló páciensvélemények nem tehetők közzé (Q1-18, Q2-9)",
+      "Magyarázza el részletesebben a tényeket: a folyamatot, a díjakat, a kockázatokat"
+     ],
+     [
+      "Tegyen értékeléseket a GYIK-be vagy az értékelési schemába",
+      "Ugyanaz a szabály; a klinika által fizetett, kért vagy szerkesztett értékelések is ide tartozhatnak",
+      "Legyen a GYIK tényszerű: „Fedezi a biztosítás?”, „Hány alkalom kell?”"
+     ],
+     [
+      "Mutasson előtte/utána fotókat",
+      "Még a csak „előtte” vagy csak „utána” fotók is a kezelés hatására vonatkozó állításnak minősülnek, és nem reklámozhatók (Q2-8, Q3-14)",
+      "Nézze meg az irányelvekben és az esetgyűjteményben, mikor használhatók fotók"
+     ],
+     [
+      "„A környék legjobbja”, „fájdalommentes”, „garantált eredmény”",
+      "A valótlan, túlzó és összehasonlító állítások tiltottnak minősülnek",
+      "Csak azt írja le, amit tényként vagy számokkal alá tud támasztani"
+     ]
+    ]
+   },
+   "after": [
+    "Másrészt a páciensek saját közösségimédia-bejegyzései vagy a független értékelőoldalak, amelyekért a klinika nem fizetett, és amelyeket nem kért, nem minősülnek reklámnak (Q2-11). Hogy az AI elolvassa-e őket, azt a klinika nem befolyásolja, ezért a biztos lépés a saját oldal tényeinek pontossá tétele. Példák a [minisztérium esetgyűjteményében (PDF, japánul)](https://www.mhlw.go.jp/content/10800000/001232587.pdf) találhatók."
+   ]
+  },
+  {
+   "heading": "Strukturált adatok: a Dermatology típus és kezelésenként egy szolgáltatás",
+   "paragraphs": [
+    "A schema.org-ban van típus a bőrgyógyászatra (ellenőrizve a schema-dts 2.1.0 típusdefinícióiban, 2026. november 16-án)."
+   ],
+   "table": {
+    "head": [
+     "Típus / tulajdonság",
+     "Jelentés",
+     "Használat bőrgyógyászatnál"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Az orvostudomány bőrbetegségekkel foglalkozó ága. MedicalBusiness, így LocalBusiness is",
+      "A bőrgyógyászati rendelő típusa; tartalmazza a címet, a telefonszámot és a nyitvatartást"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Szakterület. Az értékek között szerepel a Dermatology és a PlasticSurgery",
+      "Ha általános és esztétikai bőrgyógyászatot is kínál, csak azokat a területeket adja meg, amelyeket az oldalai leírnak"
+     ],
+     [
+      "Service offers tulajdonsággal",
+      "Egy nyújtott szolgáltatás és annak ára",
+      "Minden térítéses kezelést ugyanazzal az árral rögzítsen, mint az oldalon"
+     ],
+     [
+      "openingHoursSpecification",
+      "Nyitvatartás naponként",
+      "Ha az általános és az esztétikai rendelési idő eltér, az oldalon lévő táblázat a mérvadó, a jelölés a fő rendelési időt adja meg"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Fogad-e új pácienseket (a MedicalOrganization tulajdonsága)",
+      "Azokra az időszakokra, amikor nem fogad új pácienseket"
+     ]
+    ]
+   },
+   "after": [
+    "A Google szerint az AI Overviews és hasonló funkciókhoz nincs szükség különleges strukturált adatokra, és a strukturált adatoknak meg kell egyezniük az oldalon látható tartalommal. [Google: AI-funkciók és az Ön webhelye](https://developers.google.com/search/docs/appearance/ai-features) / [LocalBusiness strukturált adatok](https://developers.google.com/search/docs/appearance/structured-data/local-business). Ne adjon meg árat csak a jelölésben, vagy az oldaltól eltérő árat."
+   ]
+  },
+  {
+   "heading": "Beállítás egy bőrgyógyászat WordPress-oldalán",
+   "list": [
+    "Telepítse és aktiválja a Nurevo AEO-t (ingyenes) a [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) oldalról. A Yoast SEO, a Rank Math, az All in One SEO és a Slim SEO a megszokott módon működik tovább. A 0.9.1-es verziótól a SEO SIMPLE PACK és a VK All in One Expansion Unit mellett is működik, a strukturált adatok megkettőzése nélkül.",
+    "Az első indításkor megjelenő beállítási varázslóban válassza a „Clinic or dental” lehetőséget (ez a MedicalBusiness típust állítja be). Ezután a Beállításokban módosítsa a vállalkozástípus mezőt Dermatology-ra. A mező bármely schema.org-típusnevet elfogad.",
+    "Ellenőrizze a klinika nevét, címét, telefonszámát és leírását. A meglévő beállításokból csak az üres mezők töltődnek ki; az Ön által megadott értékeket soha nem írja felül.",
+    "A nyitvatartást csak napokként és időpontokként adja meg, például „Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00”. A külön esztétikai rendelési idő, az ünnepnapok és az utolsó érkezési időpont az oldal saját táblázatába való.",
+    "A Beállítások szolgáltatások részében rögzítsen minden térítéses kezelést. Névvel, leírással, időtartammal, árral és pénznemmel mindegyik Service-ként, Offerrel jelenik meg. Az ár legyen azonos az oldalon szereplővel, és a kettőt együtt módosítsa.",
+    "Minden kezelési oldal szerkesztőjének oldalsávjában adjon hozzá csak az adott oldalra vonatkozó kérdéseket („Fedezi a biztosítás?”, „Hány alkalom kell?”, „Mennyi a felépülési idő?”). Hagyja ki a páciensvéleményeket és az eredményt ígérő válaszokat. A nem listázandó kampányoldalakat jelölje meg a „leave this page out of llms.txt” beállítással.",
+    "Futtassa a diagnosztikát az AEO-pontszám képernyőn, és alkalmazza az egykattintásos javításokat. Hogy kívülről hogyan látszik az oldal, azt az [ingyenes AI-olvashatósági ellenőrzéssel](/check) nézheti meg."
+   ]
+  },
+  {
+   "heading": "A medicalSpecialty hozzáadása",
+   "paragraphs": [
+    "A Nurevo AEO magától nem adja ki a medicalSpecialty tulajdonságot. Hozzáadásához használja a vállalkozás strukturált adatait módosító szűrőt (webmcp_canary_business_node) a téma functions.php fájljában vagy egy kis bővítményben. Csak azokat a területeket adja hozzá, amelyeket az oldalai leírnak."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Ellenőrzőlista közzététel előtt",
+   "list": [
+    "Minden tünet- és kezelési oldal feltünteti, hogy biztosított vagy térítéses ellátásról van-e szó.",
+    "A térítéses kezelési oldalak megadják a díjat (áfával vagy anélkül, többletköltségek), a szokásos alkalomszámot, a fő kockázatokat és mellékhatásokat, valamint a felépülési időt.",
+    "Jól láthatóan szerepel egy kérdésekre válaszoló — nem csak foglalásra szolgáló — kapcsolattartási pont.",
+    "Az árlista szöveges, nem csak kép, és van utolsó frissítési dátuma.",
+    "Ha az általános és az esztétikai bőrgyógyászat rendelési ideje vagy foglalása eltér, mindkettő külön le van írva.",
+    "A szövegben, a GYIK-ben és a strukturált adatokban nincs páciensvélemény, előtte/utána fotó, felsőfokú jelző vagy összehasonlítás.",
+    "A nem engedélyezett termékeket vagy engedélyen kívüli alkalmazást használó kezeléseknél szerepel az irányelvek által előírt magyarázat.",
+    "A strukturált adatokban szereplő szolgáltatásárak megegyeznek az oldalon szereplő árakkal.",
+    "A név, cím, telefonszám és nyitvatartás megegyezik a strukturált adatokban, a Google Cégprofilban és minden hivatalos egészségügyi jegyzékben.",
+    "Az llms.txt felsorolja a klinikai információkat, az árlistát, a fő kezeléseket és a megközelítési oldalakat. [Mi az llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Hogyan ellenőrizze, megjelenik-e az AI válaszaiban",
+   "paragraphs": [
+    "Amikor az oldalak rendben vannak, írjon öt–tíz olyan kérdést, amelyet egy páciens feltehet, a terület × tünet × biztosítás, terület × kezelés × ár és kezelés × felépülési idő kombinációkkal, és tegye fel őket a ChatGPT-nek és a Perplexitynek. Jegyezze fel, hogy klinikája megjelenik-e névvel vagy URL-lel, és helyesen szerepel-e a biztosítási státusz, a díjak és a kockázatok. Ha az AI rossz árat idéz, ellenőrizze, hogyan van megírva az árlista és a kezelési oldal, és nem érhető-e még el egy régi kampányoldal. Az AI válaszai futtatásonként változnak, ezért több héten át tegye fel újra ugyanazokat a kérdéseket. A módszert a [hogyan mérjük az AI-láthatóságot](/guide/measure-ai-visibility) című cikk ismerteti.",
+    "Az MGMA, az amerikai orvosi rendelőket menedzselők szövetsége által közzétett elemzés (2026. május, egy AI-keresési cég alapítójának tollából) szerint a mintában szereplő 200 független rendelő közül egyet sem nevezett meg a ChatGPT. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Az országok és a körülmények eltérnek, de a kiindulópont az, hogy ténylegesen feltegye a kérdéseket.",
+    "A Nurevo AEO Free és Standard csomagja havonta egyszer három, a vállalkozástípusból és a területből összeállított kérdést is feltesz a Perplexitynek (a klinika neve nélkül), és rögzíti, hogy megnevezték-e a klinikát vagy hivatkoztak-e az oldalra. A Pro csomag (havi 99 USD-től) béta AI-láthatóság-mérést ad hozzá: az AI-válaszok azon arányát, amelyekben a klinika megjelenik, a versenytársakkal összevetve és időben követve (jelenleg a Perplexityn mérve). Mindkettő válaszmintákat vizsgál; egyik sem figyel meg minden választ."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hol kezdje egy bőrgyógyászat az AI-keresést?",
+   "a": "Kezdje azzal, hogy minden tünet- és kezelési oldalon feltünteti, biztosított vagy térítéses-e az ellátás. Ezután minden térítéses kezelési oldalon adja meg a díjat, a szokásos alkalomszámot, a fő kockázatokat és mellékhatásokat és a felépülési időt, és hangolja össze a nevet, a címet, a telefonszámot és a nyitvatartást a strukturált adatokban és a Google Cégprofilban."
+  },
+  {
+   "q": "Közzé kell tennie az árait egy esztétikai bőrklinikának?",
+   "a": "Igen. Amikor az AI-t árról kérdezik, olyan oldalakat használ, ahol az ár a szövegben szerepel. Japánban a minisztérium kérdés-válasz dokumentuma is a szokásos kezelést, annak díjait és fő kockázatait és mellékhatásait sorolja azon feltételek közé, amelyek mellett a térítéses ellátás részletesen ismertethető egy weboldalon."
+  },
+  {
+   "q": "Melyik strukturáltadat-típust használjam?",
+   "a": "A schema.org Dermatology típusa bőrgyógyászati rendelőt jelöl, és a MedicalBusiness, illetve a LocalBusiness egy fajtája. Ha esztétikai kezeléseket is kínál, a medicalSpecialty értékeként megadhatja a Dermatology és a PlasticSurgery értéket. Az oldallal való egyezés fontosabb, mint a típus."
+  },
+  {
+   "q": "Segítenek az előtte/utána fotók abban, hogy az AI a klinikát válassza?",
+   "a": "Nincs erre igazolt bizonyíték. A japán egészségügyi reklámszabályok szerint az előtte és utána fotók a kezelés hatására vonatkozó állításnak minősülnek, és korlátozottak. Az irányelvekben, az esetgyűjteményben és a helyi népegészségügyi központnál ellenőrizze, mikor használhatók."
+  },
+  {
+   "q": "Kiszoríthatják az értékelőoldalakon kapott alacsony pontszámok a klinikámat az AI válaszaiból?",
+   "a": "Az AI-szolgáltatók nem hozzák nyilvánosságra, mekkora súlyt adnak az ilyen információknak, így ezt senki sem tudja biztosan megmondani. A klinika által nem kért független értékelések nem minősülnek reklámnak, de a klinika a saját oldalán nem tehet közzé általa fizetett vagy kért értékeléseket. Arra összpontosítson, hogy a saját oldala tényei pontosak legyenek."
+  },
+  {
+   "q": "Ingyenes a Nurevo AEO?",
+   "a": "Igen. A vállalkozástípus, a cím, a nyitvatartás, a szolgáltatások árakkal és a GYIK strukturált adatai, az llms.txt, az AI-robotok beállításai és az AEO-pontszám az ingyenes csomag része. A fizetős csomagok a mindig naprakész szabálykészletet (Standard, havi 20 USD) és a béta AI-láthatóság-mérést (Pro, havi 99 USD-től) adják hozzá. [Nurevo AEO a WordPress.org-on](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Garantált, hogy a klinikám megjelenik a ChatGPT-ben?",
+   "a": "Nem. Az AI válaszai változnak, és semmilyen eszköz vagy módszer nem garantálhatja a megjelenést vagy a helyezést. Amit tehet: olvashatóvá teszi klinikája tényeit az AI számára, és folyamatosan ellenőrzi, megjelenik-e."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Először nézze meg, hogyan olvassa az AI bőrgyógyászata weboldalát",
+  "body": "Az ingyenes ellenőrzéshez nem kell regisztrálni, és megmutatja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát. WordPressen a Nurevo AEO ingyen pótolja a hiányokat.",
+  "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+  "href": "/check",
+  "secondary": {
+   "label": "A Nurevo AEO letöltése a WordPress.org-ról",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google a Google LLC védjegye. A Yoast SEO, a Rank Math, az All in One SEO, a Slim SEO, a SEO SIMPLE PACK, a VK All in One Expansion Unit és a WordPress a megfelelő tulajdonosok védjegyei. A Nurevo nem áll kapcsolatban egyik vállalattal sem, és azok nem támogatják. Ez a cikk nem minősül jogi vagy orvosi tanácsadásnak."
+}

@@ -1,0 +1,263 @@
+{
+ "title": "Pencarian AI untuk Klinik Kulit: Biaya, Risiko, Schema | Nurevo",
+ "description": "AEO untuk klinik kulit dan estetika: pisahkan layanan asuransi dari layanan mandiri, cantumkan biaya dan risiko utama di tiap halaman perawatan, serta selaraskan schema.",
+ "h1": "Pencarian AI untuk klinik dermatologi dan estetika kulit: cara agar AI membaca layanan asuransi vs biaya mandiri, tarif, dan risiko dengan benar",
+ "lead": "Langkah paling efektif yang bisa dilakukan klinik dermatologi atau estetika kulit untuk pencarian AI adalah menuliskan, dalam bentuk teks di setiap halaman perawatan, apakah perawatan itu ditanggung asuransi, berapa biayanya jika tidak, serta apa risiko utama dan masa pemulihannya (downtime). Ketika AI menjawab pertanyaan yang memuat syarat — “dokter kulit dekat stasiun yang menangani jerawat dengan asuransi”, “berapa biaya laser penghilang flek dan berapa lama downtime-nya” — AI mengandalkan halaman yang memuat syarat-syarat itu secara terbaca. Lalu Anda mengikuti aturan iklan medis (batasan testimoni dan foto sebelum/sesudah, keterbukaan biaya dan risiko untuk layanan mandiri) dan menerbitkan fakta yang sama di data terstruktur, llms.txt, dan Profil Bisnis Google Anda.",
+ "intro": [
+  "Ditulis pada 16 November 2026 (JST). Pada hari itu kami memeriksa tanya-jawab (Q&A) Kementerian Kesehatan, Tenaga Kerja, dan Kesejahteraan Jepang tentang pedoman iklan medisnya, laporan panel ahlinya tentang kedokteran estetika, data National Consumer Affairs Center, serta tipe-tipe schema.org (sebagaimana didefinisikan di schema-dts 2.1.0). Aturan yang dikutip adalah aturan Jepang; periksa aturan di tempat Anda berpraktik.",
+  "Jawaban AI berubah dari hari ke hari dan tergantung cara pertanyaan diajukan. Langkah-langkah di sini membuat fakta klinik Anda dapat dibaca AI. Langkah ini tidak menjamin AI akan menyebut klinik Anda atau menempatkannya di peringkat mana pun. Artikel ini bukan nasihat hukum."
+ ],
+ "sections": [
+  {
+   "heading": "Apa yang ditanyakan pasien kepada AI tentang klinik kulit",
+   "paragraphs": [
+    "Pertanyaan dermatologi terbagi menjadi dua kelompok. Pertanyaan dermatologi umum memuat gejala, pasien, waktu, dan soal asuransi: “dokter kulit yang menangani anak dengan eksim”, “klinik kulit yang buka hari Sabtu”, “apakah pengobatan kutu air ditanggung asuransi?”. Pertanyaan estetika memuat harga, jumlah sesi, downtime, dan risiko: “harga umum laser penghilang flek”, “berapa sesi yang dibutuhkan untuk hair removal medis?”, “perawatan bekas jerawat dengan downtime singkat”.",
+    "Dalam kedua kasus, AI hanya bisa memakai halaman yang menuliskan syarat-syarat tersebut. Daftar harga yang hanya berupa gambar, halaman perawatan yang tidak pernah menyebut apakah ditanggung asuransi atau biaya mandiri, atau halaman yang hanya berbunyi “biaya akan dijelaskan saat konsultasi” tidak memberi AI apa pun untuk dikutip bagi pertanyaan yang memuat syarat.",
+    "Kedokteran estetika juga banyak menuai keluhan. National Consumer Affairs Center Jepang mencatat 6.281 konsultasi tentang kedokteran estetika pada 2023, 10.744 pada 2024, dan 7.944 pada 2025 (data PIO-NET per 31 Mei 2026, halaman diperbarui 31 Juli 2026). [National Consumer Affairs Center: kedokteran estetika (bahasa Jepang)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Pasien ingin memeriksa harga dan risiko sebelum membuat janji, dan mereka menanyakannya kepada AI. Menerbitkan biaya dan risiko yang akurat pertama-tama adalah informasi bagi pasien, baru kemudian optimasi AI."
+   ]
+  },
+  {
+   "heading": "Yang terlewat dari artikel-artikel peringkat teratas",
+   "paragraphs": [
+    "Jika membaca artikel yang menempati peringkat atas untuk “AI search optimization for dermatology”, “medical spa ChatGPT”, dan padanan bahasa Jepangnya, sebagian besar berhenti pada “jaga agar spesialisasi, alamat, dan jam praktik akurat”, “tambahkan data terstruktur”, dan “perbanyak ulasan”. Beberapa panduan berbahasa Inggris memberi ambang seperti “50+ ulasan” tanpa sumber.",
+    "Empat hal yang paling penting bagi klinik kulit nyaris tidak dibahas, sehingga keempatnya menjadi inti panduan ini:"
+   ],
+   "list": [
+    "Cara memisahkan layanan asuransi dan layanan biaya mandiri di halaman.",
+    "Di mana dan bagaimana menerbitkan biaya serta risiko dan efek samping utama untuk perawatan biaya mandiri, dan kaitannya dengan aturan iklan.",
+    "Di mana saran umum untuk “mengumpulkan ulasan” dan “menampilkan foto kasus” berbenturan dengan aturan iklan medis Jepang.",
+    "Pengaturan WordPress yang konkret (tipe, layanan dengan harga, FAQ khusus halaman) dan cara memeriksa apakah klinik Anda muncul."
+   ]
+  },
+  {
+   "heading": "Pisahkan layanan asuransi dan layanan biaya mandiri",
+   "paragraphs": [
+    "AI paling sering keliru tentang klinik kulit ketika label yang sama — “perawatan jerawat”, “perawatan pigmentasi” — mencakup pilihan asuransi dan biaya mandiri sekaligus. Tuliskan di bagian atas setiap halaman gejala atau perawatan apakah layanannya ditanggung asuransi atau biaya mandiri. Q&A Kementerian juga menyatakan bahwa perawatan biaya mandiri yang memakai produk yang disetujui (contoh yang diberikan adalah implan gigi dan pemutihan gigi) harus menyebutkan bahwa itu biaya mandiri dan mencantumkan biaya standarnya. [MHLW: Q&A pedoman iklan medis (PDF, bahasa Jepang)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Halaman",
+     "Yang perlu ditulis",
+     "Yang cenderung disalahbaca AI"
+    ],
+    "rows": [
+     [
+      "Halaman gejala (jerawat, eksim, dermatitis, kutu air, kutil)",
+      "Apa yang ditangani dengan asuransi, pilihan biaya mandiri yang disebut sebagai biaya mandiri, kapan harus ke dokter",
+      "Perawatan asuransi dan biaya mandiri dicantumkan bersama tanpa pembedaan"
+     ],
+     [
+      "Halaman perawatan (laser, peeling, injeksi, hair removal)",
+      "Bahwa ini biaya mandiri, harga per sesi dan per paket (termasuk pajak atau tidak), jumlah sesi yang umum, risiko dan efek samping utama, downtime",
+      "Hanya “biaya dijelaskan saat konsultasi”, tanpa yang lain"
+     ],
+     [
+      "Daftar harga",
+      "Tabel asuransi dan biaya mandiri terpisah, tanggal pembaruan terakhir, cara kerja biaya konsultasi, kontrol, dan obat",
+      "Daftar harga yang hanya berupa gambar, atau hanya harga promo"
+     ],
+     [
+      "Informasi klinik (beranda, akses)",
+      "Jam dan aturan reservasi terpisah untuk dermatologi umum dan estetika jika berbeda, rentang usia pasien",
+      "Jam janji temu estetika ditampilkan sebagai jam praktik umum klinik"
+     ],
+     [
+      "Profil dokter",
+      "Nama, bidang, dan kualifikasi (dalam batas yang boleh diiklankan)",
+      "Klaim superlatif dan perbandingan (lihat di bawah)"
+     ]
+    ],
+    "caption": "Berdasarkan pertanyaan pasien tentang klinik kulit dan celah yang ditemukan di artikel-artikel peringkat teratas."
+   },
+   "after": [
+    "Jika dermatologi umum dan estetika memiliki jam atau aturan reservasi yang berbeda, buat tabel jam masing-masing agar AI tidak menggabungkannya, dan sebutkan untuk masing-masing apakah pasien tanpa janji diterima."
+   ]
+  },
+  {
+   "heading": "Halaman perawatan biaya mandiri: biaya dan risiko utama di halaman yang sama",
+   "paragraphs": [
+    "Menurut aturan iklan medis Jepang, situs web yang dicari sendiri oleh pasien boleh menjelaskan secara rinci hal-hal yang biasanya tidak boleh diiklankan, asalkan syarat tertentu terpenuhi (dikenal sebagai “pencabutan batasan”). Q&A Kementerian menyebutkan bahwa untuk layanan biaya mandiri, syarat ini mencakup penjelasan tentang perawatan yang biasanya diperlukan beserta biayanya, serta risiko dan efek samping utamanya — dan mencantumkan satu atau dua kekurangan umum saja tidak cukup (Q6-12). Syarat lainnya adalah kontak untuk pertanyaan; nomor khusus reservasi atau saluran balasan otomatis tidak memenuhinya (Q6-10). Hal-hal ini harus mudah dilihat: teks yang sangat kecil atau berwarna sama dengan latar belakang tidak dihitung (Q6-11). [MHLW: Q&A (PDF, bahasa Jepang)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Ini sejalan dengan pencarian AI. Saat AI ditanya tentang harga, downtime, atau risiko, AI hanya bisa memakai halaman yang menuliskannya di teks isi. Halaman perawatan enak dibaca dengan urutan ini:"
+   ],
+   "list": [
+    "Nama perawatan, dan bahwa ini biaya mandiri.",
+    "Masalah apa yang ditangani (tanpa menjanjikan hasil).",
+    "Cara pelaksanaan, waktu per sesi, jumlah sesi yang umum, dan jaraknya.",
+    "Biaya (per sesi dan per paket, termasuk pajak atau tidak, tambahan seperti anestesi, obat, atau kontrol).",
+    "Risiko dan efek samping utama, serta downtime yang umum.",
+    "Siapa yang tidak boleh menjalaninya atau perlu berhati-hati.",
+    "Kontak yang menjawab pertanyaan (nomor telepon dan jamnya), serta siapa yang dihubungi jika ada masalah setelahnya.",
+    "Tanggal halaman terakhir diperbarui."
+   ],
+   "after": [
+    "Perawatan yang memakai obat atau alat yang belum disetujui, atau obat yang disetujui untuk tujuan yang belum disetujui, memerlukan penjelasan tambahan. Q&A menyatakan bahwa penggunaan di luar indikasi (off-label) diperlakukan sama seperti obat yang belum disetujui (Q2-14). Periksa butir-butir yang diwajibkan di pedoman itu sendiri.",
+    "Khusus untuk kedokteran estetika, laporan panel ahli Kementerian (22 November 2024) menyerukan pemantauan daring yang lebih ketat terhadap iklan medis dan meminta klinik menyediakan kontak untuk masalah setelah perawatan serta memberitahukannya kepada pasien. [MHLW: laporan panel tentang praktik kedokteran estetika yang tepat (PDF, bahasa Jepang)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Mencantumkan kontak perawatan lanjutan di setiap halaman perawatan juga sejalan dengan arah tersebut."
+   ]
+  },
+  {
+   "heading": "Ulasan dan foto kasus: di mana saran AI umum berbenturan dengan aturan",
+   "paragraphs": [
+    "Panduan pencarian AI sering menyarankan mengumpulkan ulasan dan menampilkan foto sebelum/sesudah sebagai bukti. Bagi institusi medis di Jepang, hal ini perlu kehati-hatian."
+   ],
+   "table": {
+    "head": [
+     "Saran umum",
+     "Perlakuan menurut Q&A Jepang",
+     "Yang sebaiknya dilakukan"
+    ],
+    "rows": [
+     [
+      "Menerbitkan testimoni pasien",
+      "Testimoni tentang isi atau efek perawatan tidak boleh diterbitkan (Q1-18, Q2-9)",
+      "Jelaskan fakta lebih rinci: proses, biaya, risiko"
+     ],
+     [
+      "Memasukkan ulasan ke FAQ atau schema ulasan",
+      "Aturan yang sama; ulasan yang dibayar, diminta, atau disunting klinik juga bisa termasuk",
+      "Buat FAQ yang faktual: “Apakah ditanggung asuransi?”, “Berapa sesi?”"
+     ],
+     [
+      "Menampilkan foto sebelum/sesudah",
+      "Bahkan foto sebelum saja atau sesudah saja dianggap klaim tentang efek perawatan dan tidak boleh diiklankan (Q2-8, Q3-14)",
+      "Periksa pedoman dan buku kasus untuk mengetahui kapan foto boleh dipakai"
+     ],
+     [
+      "“Terbaik di wilayah ini”, “tanpa rasa sakit”, “hasil dijamin”",
+      "Klaim palsu, berlebihan, dan perbandingan diperlakukan sebagai terlarang",
+      "Tulis hanya apa yang bisa Anda nyatakan sebagai fakta atau angka"
+     ]
+    ]
+   },
+   "after": [
+    "Di sisi lain, unggahan pasien di media sosial mereka sendiri atau di situs ulasan independen yang tidak dibayar atau diminta oleh klinik bukanlah iklan (Q2-11). Apakah AI membacanya bukan hal yang dapat dikendalikan klinik, jadi langkah yang andal adalah membuat fakta di situs Anda sendiri akurat. Contoh-contohnya dikumpulkan di [buku kasus Kementerian (PDF, bahasa Jepang)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Data terstruktur: tipe Dermatology dan satu layanan per perawatan",
+   "paragraphs": [
+    "schema.org memiliki tipe untuk dermatologi (diperiksa di definisi tipe schema-dts 2.1.0 pada 16 November 2026)."
+   ],
+   "table": {
+    "head": [
+     "Tipe / properti",
+     "Arti",
+     "Penggunaan untuk klinik kulit"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Cabang kedokteran yang menangani gangguan kulit. Sebuah MedicalBusiness, sehingga juga LocalBusiness",
+      "Tipe untuk praktik dermatologi; memuat alamat, telepon, dan jam buka"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Bidang praktik. Nilainya antara lain Dermatology dan PlasticSurgery",
+      "Jika Anda menawarkan dermatologi umum dan estetika, cantumkan hanya bidang yang dijelaskan di halaman Anda"
+     ],
+     [
+      "Service dengan offers",
+      "Layanan yang Anda berikan dan harganya",
+      "Daftarkan setiap perawatan biaya mandiri dengan harga yang sama seperti di halaman"
+     ],
+     [
+      "openingHoursSpecification",
+      "Jam buka per hari",
+      "Jika jam umum dan estetika berbeda, tabel di halaman menjadi acuan dan markup memuat jam utama"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Apakah pasien baru diterima (properti MedicalOrganization)",
+      "Untuk periode ketika Anda tidak menerima pasien baru"
+     ]
+    ]
+   },
+   "after": [
+    "Google menyatakan bahwa tidak diperlukan data terstruktur khusus untuk AI Overviews dan fitur serupa, dan bahwa data terstruktur harus sesuai dengan apa yang terlihat di halaman. [Google: fitur AI dan situs web Anda](https://developers.google.com/search/docs/appearance/ai-features) / [Data terstruktur LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Jangan menaruh harga hanya di markup, atau harga yang berbeda dari halaman."
+   ]
+  },
+  {
+   "heading": "Pengaturan di situs WordPress klinik kulit",
+   "list": [
+    "Pasang dan aktifkan Nurevo AEO (gratis) dari [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO, dan Slim SEO tetap berjalan seperti biasa. Mulai versi 0.9.1, plugin ini juga bisa berjalan berdampingan dengan SEO SIMPLE PACK dan VK All in One Expansion Unit tanpa menduplikasi data terstruktur.",
+    "Di wizard penyiapan pertama, pilih “Clinic or dental” (ini menetapkan MedicalBusiness). Lalu ubah kolom tipe bisnis di Pengaturan menjadi Dermatology. Kolom ini menerima nama tipe schema.org apa pun.",
+    "Periksa nama klinik, alamat, telepon, dan deskripsi. Hanya kolom yang kosong yang diisi dari pengaturan yang sudah ada; nilai yang Anda masukkan tidak pernah ditimpa.",
+    "Tulis jam buka hanya sebagai hari dan jam, misalnya “Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00”. Jam estetika terpisah, hari libur nasional, dan batas waktu pendaftaran terakhir dimasukkan di tabel halaman itu sendiri.",
+    "Di bagian layanan pada Pengaturan, daftarkan setiap perawatan biaya mandiri. Dengan nama, deskripsi, durasi, harga, dan mata uang, masing-masing diterbitkan sebagai Service dengan Offer. Jaga harga tetap identik dengan halaman dan ubah keduanya bersamaan.",
+    "Di sidebar editor setiap halaman perawatan, tambahkan pertanyaan khusus halaman itu (“Apakah ditanggung asuransi?”, “Berapa sesi?”, “Berapa lama downtime-nya?”). Jangan sertakan testimoni dan jawaban yang menjanjikan hasil. Tandai halaman promo yang tidak ingin dicantumkan dengan “leave this page out of llms.txt”.",
+    "Jalankan diagnosis di layar Skor AEO dan terapkan perbaikan sekali klik. Periksa tampilan situs dari luar dengan [cek keterbacaan AI gratis](/check)."
+   ]
+  },
+  {
+   "heading": "Menambahkan medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AEO tidak mengeluarkan medicalSpecialty dengan sendirinya. Untuk menambahkannya, gunakan filter yang mengubah data terstruktur bisnis (webmcp_canary_business_node), di functions.php tema Anda atau di plugin kecil. Tambahkan hanya bidang yang dijelaskan di halaman Anda."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Daftar periksa sebelum menerbitkan",
+   "list": [
+    "Setiap halaman gejala dan perawatan menyebutkan apakah ditanggung asuransi atau biaya mandiri.",
+    "Halaman perawatan biaya mandiri mencantumkan biaya (termasuk pajak atau tidak, tambahan), jumlah sesi yang umum, risiko dan efek samping utama, serta downtime.",
+    "Kontak yang menjawab pertanyaan — bukan khusus reservasi — ditampilkan dengan jelas.",
+    "Daftar harga berupa teks, bukan hanya gambar, dan memiliki tanggal pembaruan terakhir.",
+    "Jika dermatologi umum dan estetika berbeda dalam jam atau reservasi, masing-masing dituliskan.",
+    "Tidak ada testimoni, foto sebelum/sesudah, klaim superlatif, atau perbandingan di teks isi, FAQ, maupun data terstruktur.",
+    "Perawatan yang memakai produk yang belum disetujui atau penggunaan off-label disertai penjelasan yang diwajibkan pedoman.",
+    "Harga layanan di data terstruktur sesuai dengan harga di halaman.",
+    "Nama, alamat, telepon, dan jam sama di data terstruktur, Profil Bisnis Google, dan direktori kesehatan resmi mana pun.",
+    "llms.txt mencantumkan halaman informasi klinik, daftar harga, perawatan utama, dan akses. [Apa itu llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Memeriksa apakah klinik Anda muncul di jawaban AI",
+   "paragraphs": [
+    "Setelah halaman tertata, tulis lima sampai sepuluh pertanyaan yang mungkin diajukan pasien, dengan menggabungkan wilayah × gejala × asuransi, wilayah × perawatan × harga, serta perawatan × downtime, lalu ajukan ke ChatGPT dan Perplexity. Catat apakah klinik Anda muncul dengan nama atau URL, dan apakah status asuransi, biaya, dan risiko disebutkan dengan benar. Jika AI mengutip harga yang salah, periksa cara penulisan daftar harga dan halaman perawatan Anda serta apakah halaman promo lama masih aktif. Jawaban AI berubah dari satu percobaan ke percobaan lain, jadi ajukan pertanyaan yang sama lagi selama beberapa minggu. Caranya dijelaskan di [cara mengukur visibilitas AI](/guide/measure-ai-visibility).",
+    "Sebuah analisis yang diterbitkan MGMA, asosiasi manajemen praktik medis di AS (Mei 2026, ditulis oleh pendiri sebuah perusahaan pencarian AI), menemukan bahwa tidak satu pun dari 200 praktik independen dalam sampelnya disebut oleh ChatGPT. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Negara dan kondisinya berbeda, tetapi benar-benar mengajukan pertanyaan adalah titik awalnya.",
+    "Dengan Nurevo AEO, paket Free dan Standard juga mengajukan tiga pertanyaan yang disusun dari tipe bisnis dan wilayah Anda ke Perplexity sebulan sekali (tanpa nama klinik Anda) dan mencatat apakah klinik Anda disebut atau situs Anda dikutip. Paket Pro (mulai USD 99 per bulan) menambahkan pengukuran visibilitas AI versi beta: proporsi jawaban AI tempat klinik Anda muncul, dibandingkan dengan pesaing dan dilacak dari waktu ke waktu (saat ini diukur di Perplexity). Keduanya melihat sampel jawaban; tidak ada yang mengamati setiap jawaban."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Dari mana klinik dermatologi sebaiknya memulai untuk pencarian AI?",
+   "a": "Mulailah dengan menyebutkan di setiap halaman gejala dan perawatan apakah layanannya ditanggung asuransi atau biaya mandiri. Lalu berikan setiap halaman perawatan biaya mandiri biayanya, jumlah sesi yang umum, risiko dan efek samping utama, serta downtime, dan samakan nama, alamat, telepon, dan jam di data terstruktur dan Profil Bisnis Google Anda."
+  },
+  {
+   "q": "Apakah klinik estetika kulit sebaiknya menerbitkan harganya?",
+   "a": "Ya. Saat AI ditanya soal harga, AI memakai halaman yang menuliskan harga di teksnya. Di Jepang, Q&A Kementerian juga mencantumkan perawatan yang umum, biayanya, serta risiko dan efek samping utamanya di antara syarat untuk menjelaskan layanan biaya mandiri secara rinci di situs web."
+  },
+  {
+   "q": "Tipe data terstruktur apa yang sebaiknya saya pakai?",
+   "a": "Tipe Dermatology dari schema.org mewakili praktik dermatologi dan merupakan jenis MedicalBusiness dan LocalBusiness. Jika Anda juga menawarkan perawatan estetika, Anda bisa menambahkan Dermatology dan PlasticSurgery sebagai nilai medicalSpecialty. Kesesuaian dengan halaman lebih penting daripada tipenya."
+  },
+  {
+   "q": "Apakah foto sebelum/sesudah membantu klinik dipilih oleh AI?",
+   "a": "Tidak ada bukti terverifikasi bahwa itu membantu. Menurut aturan iklan medis Jepang, foto sebelum dan sesudah diperlakukan sebagai klaim tentang efek perawatan dan dibatasi. Periksa pedoman, buku kasus, dan pusat kesehatan setempat untuk mengetahui kapan foto boleh dipakai."
+  },
+  {
+   "q": "Apakah rating rendah di situs ulasan membuat klinik saya tidak muncul di jawaban AI?",
+   "a": "Penyedia AI tidak memublikasikan seberapa besar bobot yang mereka berikan pada informasi semacam itu, jadi tidak ada yang bisa memastikannya. Ulasan independen yang tidak diminta klinik bukanlah iklan, tetapi klinik tidak boleh menerbitkan ulasan yang dibayar atau diminta di situsnya sendiri. Fokuslah membuat fakta di situs Anda sendiri akurat."
+  },
+  {
+   "q": "Apakah Nurevo AEO gratis?",
+   "a": "Ya. Data terstruktur untuk tipe bisnis, alamat, jam, layanan dengan harga, dan FAQ, serta llms.txt, pengaturan crawler AI, dan Skor AEO tersedia di paket gratis. Paket berbayar menambahkan rangkaian aturan yang selalu terbaru (Standard, USD 20 per bulan) dan pengukuran visibilitas AI versi beta (Pro, mulai USD 99 per bulan). [Nurevo AEO di WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Apakah klinik saya dijamin muncul di ChatGPT?",
+   "a": "Tidak. Jawaban AI bervariasi, dan tidak ada alat atau metode yang bisa menjamin kemunculan atau peringkat. Yang bisa Anda lakukan adalah membuat fakta klinik Anda dapat dibaca AI dan terus memeriksa apakah klinik Anda muncul."
+  }
+ ],
+ "relatedHeading": "Panduan terkait",
+ "cta": {
+  "heading": "Pertama, lihat bagaimana AI membaca situs klinik kulit Anda",
+  "body": "Cek gratis tanpa pendaftaran ini menunjukkan kondisi data terstruktur, llms.txt, dan akses crawler AI Anda. Di WordPress, Nurevo AEO mengisi kekurangannya secara gratis.",
+  "label": "Jalankan cek keterbacaan AI gratis",
+  "href": "/check",
+  "secondary": {
+   "label": "Dapatkan Nurevo AEO di WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT adalah merek dagang OpenAI, Perplexity milik Perplexity AI, dan Google milik Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, dan WordPress adalah merek dagang dari pemiliknya masing-masing. Nurevo tidak berafiliasi dengan atau didukung oleh perusahaan-perusahaan tersebut. Artikel ini bukan nasihat hukum atau medis."
+}

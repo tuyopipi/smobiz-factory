@@ -1,19 +1,352 @@
 {
-"title": "AEO, SEO ja GEO: mikä ero niillä on? | Nurevo",
-"description": "SEO:n, AEO:n ja GEO:n erot, miksi tarvitset sekä haku- että tekoälyluettavuutta ja mistä sivustosi kanssa kannattaa aloittaa.",
-"h1": "AEO, SEO ja GEO: mikä ero niillä on?",
-"lead": "Näitä kolmea termiä käytetään usein epätarkasti. Tässä selkeä versio.",
-"sections": [
-{"heading": "SEO, AEO ja GEO", "list": ["SEO (Search Engine Optimization): optimointi, jolla noustaan korkeammalle linkkilistassa Googlen kaltaisissa hakukoneissa.", "AEO (Answer Engine Optimization): optimointi, jolla tulee mainituksi tai lainatuksi tekoälyn vastauksessa – ChatGPT, Perplexity, Google AI Overviews, Gemini.", "GEO (Generative Engine Optimization): termi, jota moni englanninkielinen markkinoija käyttää samasta ajatuksesta kuin AEO."]},
-{"heading": "AEO:lla ja GEO:lla on sama tavoite", "paragraphs": ["Eri sanat, sama päämäärä: päästä generatiivisen tekoälyn nostamaksi. Käytä yleisösi käyttämää termiä – ja mainitse molemmat, jotta sinut löydetään."]},
-{"heading": "Miten AEO eroaa SEO:sta", "paragraphs": ["SEO optimoi linkkejä järjestävää hakualgoritmia varten, minkä jälkeen ihminen klikkaa. AEO optimoi kielimallia varten, joka päättää, keneen se viittaa, eikä käyttäjä usein näe linkkiä lainkaan. SEO palkitsee hakusanat, saapuvat linkit ja sivujen auktoriteetin. AEO palkitsee koneluettavan rakenteen (schema.org), eksplisiittiset signaalit (llms.txt), tekoälyindeksoijien pääsyn ja selkeät, helposti poimittavat tosiasiat."]},
-{"heading": "Tarvitsetko molemmat?", "paragraphs": ["Kyllä. Hyvä SEO auttaa yhä – tekoäly nojaa usein hyvin sijoittuviin, luotettaviin sivuihin. Mutta pelkkä SEO ei enää takaa, että olet vastauksessa. AEO lisää kerroksen, jonka avulla tekoäly voi lukea sinua ja viitata sinuun. [Mitä AEO tarkoittaa?](/guide/what-is-aeo)"]}
-],
-"faqs": [
-{"q": "Korvaako AEO SEO:n?", "a": "Se täydentää SEO:ta eikä korvaa sitä. Haku ei ole katoamassa; tekoälyn vastaukset ovat uusi, nopeasti kasvava kerros sen päällä."},
-{"q": "Pitäisikö sanoa AEO vai GEO?", "a": "Ne ovat sama asia. GEO on yleisempi englanninkielisissä SEO-piireissä; AEO on kuvaavampi. Käytä molempia."},
-{"q": "Mistä aloitan?", "a": "Varmista, että tekoäly voi lukea sivustoasi – rakenne, llms.txt, indeksoijien pääsy – ja mittaa sitten, näytkö vastauksissa. [AEO WordPressissä](/guide/aeo-wordpress)"}
-],
-"relatedHeading": "Aiheeseen liittyvät oppaat",
-"cta": {"heading": "Tee ilmainen AEO-tarkistus", "body": "Ei rekisteröitymistä.", "label": "Tee ilmainen AEO-tarkistus", "href": "/check"}
+ "title": "AEO vs. GEO vs. SEO (sekä LLMO ja AIO): erot | Nurevo",
+ "description": "Ovatko AEO, GEO, LLMO ja AIO sama asia, ja miten ne eroavat SEO:sta? Termitaulukko, erot tuloksissa ja mittaamisessa, mitä tutkimus näyttää ja mistä aloittaa.",
+ "h1": "AEO vs. GEO vs. SEO (sekä LLMO ja AIO): mitä kukin termi tarkoittaa, miten mittaaminen eroaa ja mistä aloittaa",
+ "lead": "AEO, GEO, LLMO ja AIO ovat kaikki saman työn nimiä: sen, että yrityksesi mainitaan tai sivujasi siteerataan ChatGPT:n, Perplexityn, Google AI Overviewsin ja vastaavien työkalujen vastauksissa. Käytännössä niitä voi pitää yhtenä ja samana asiana. SEO taas tarkoittaa sijoittumista hakutulosten listassa. Perusta on yhteinen (sivut, jotka voidaan indeksoida ja joilla kerrotaan paikkansapitävät tiedot); ero on siinä, missä tulokset näkyvät ja miten niitä mitataan. Google itse sanoo, että AI Overviews ja AI Mode eivät vaadi erityistä optimointia SEO:n parhaiden käytäntöjen lisäksi.",
+ "intro": [
+  "Kirjoitettu 23. marraskuuta 2026 (JST). Tämä on kokonaan uudelleen kirjoitettu versio lyhyestä lokakuun 2026 sivustamme, ja se perustuu 13 hyvin sijoittuvan japanin- ja englanninkielisen artikkelin sekä alkuperäislähteiden uuteen läpikäyntiin. Sivu on tarkoitettu yrittäjille, jotka ovat eksyneet lyhenteiden keskelle, sekä verkkotoimistoille, jotka myyvät ”GEO”- tai ”LLMO”-palveluja tai joille niitä on myyty.",
+  "Tekoälyn vastaukset muuttuvat päivästä toiseen ja sen mukaan, miten kysymys esitetään. Tässä kuvatut vaiheet tekevät tekoälyn lukemista tiedoista tarkempia; ne eivät voi taata, että näyt tekoälyn vastauksessa tai pysyt tietyllä sijalla."
+ ],
+ "sections": [
+  {
+   "heading": "Termit lyhyesti: SEO, AEO, GEO, LLMO ja AIO",
+   "paragraphs": [
+    "Tässä näet, mistä kukin termi on peräisin ja mihin se tähtää. Kirjoittajat määrittelevät ne hieman eri tavoin, eikä yhteisesti sovittua vakiomääritelmää ole."
+   ],
+   "table": {
+    "head": [
+     "Lyhenne",
+     "Tarkoittaa",
+     "Termin alkuperä",
+     "Mitä sillä yleensä tarkoitetaan"
+    ],
+    "rows": [
+     [
+      "SEO",
+      "Search Engine Optimization (hakukoneoptimointi)",
+      "Yleistermi, joka levisi verkon hakukoneiden myötä",
+      "Korkeampi sijoitus Googlen, Bingin ja muiden hakukoneiden linkkilistassa"
+     ],
+     [
+      "AEO",
+      "Answer Engine Optimization (vastauskoneoptimointi)",
+      "Ennen generatiivista tekoälyä se tarkoitti nostettujen katkelmien ja puheavustajien vastausten saavuttamista",
+      "Tulla mainituksi tai siteeratuksi tekoälyn vastauksissa"
+     ],
+     [
+      "GEO",
+      "Generative Engine Optimization",
+      "Nimetty tutkimusartikkelissa, joka julkaistiin ensimmäisen kerran vuonna 2023 ([Aggarwal et al., KDD 2024](https://arxiv.org/abs/2311.09735))",
+      "Sisältösi käyttäminen ja siteeraaminen generatiivisen tekoälyn vastauksissa"
+     ],
+     [
+      "LLMO",
+      "Large Language Model Optimization",
+      "Yleinen japanilaisten SEO-yritysten ja toimistojen artikkeleissa",
+      "Että ChatGPT:n kaltaiset suuret kielimallit ymmärtävät ja kuvaavat sinut oikein"
+     ],
+     [
+      "AIO",
+      "AI Optimization",
+      "Käytetään lähinnä Japanissa. ”AIO” on myös lyhenne nimestä Google AI Overviews",
+      "Tekoälyhaku yleisesti tai joskus pelkkä Google AI Overviews"
+     ]
+    ]
+   },
+   "after": [
+    "Ole tarkkana AIO:n kanssa, koska sillä on kaksi merkitystä. Kun joku tarjoaa ”AIO-optimointia”, kysy, tarkoitetaanko tekoälyhakua yleisesti vai pelkkää Google AI Overviewsia. Vastaus vaikuttaa siihen, missä tuloksia mitataan (ks. alla)."
+   ]
+  },
+  {
+   "heading": "Ovatko AEO, GEO, LLMO ja AIO sama asia?",
+   "paragraphs": [
+    "Käytännössä kyllä. Ahrefsin japanilainen blogi toteaa, että GEO, LLMO ja AEO tarkoittavat kaikki samaa ([Ahrefs: GEO is just SEO](https://ahrefs.com/ja/blog/geo-is-just-seo/)). Japanilainen artikkeli AIO:n ja LLMO:n eroista huomauttaa, että määritelmät eivät ole vakiintuneet, ja luettelee sitten molemmille samat yhteiset keinot ([Sungrove](https://www.sungrove.co.jp/aio-llmo-difference/)).",
+    "Jotkin englanninkieliset artikkelit erottelevat ne: AEO on sitä, että sisältö poimitaan suoraksi vastaukseksi, ja GEO sitä, että generatiivinen tekoäly tiivistää, yhdistelee ja siteeraa sitä ([NeuronWriter](https://neuronwriter.com/geo-vs-aeo-vs-seo/)). Erottelu ei kuitenkaan synnytä erillistä työtä sivustollasi. Nimestä riippumatta työ tiivistyy kolmeen asiaan: tee sivustostasi tekoälylle luettava, varmista että sivujesi tiedot ovat oikeita ja yhdenmukaisia, ja mittaa, näytkö todella."
+   ],
+   "after": [
+    "Mitä sanaa käyttää: sitä, jota asiakkaasi ja kollegasi jo käyttävät. Kirjaa tarjouksiin ja sopimuksiin nimen sijaan, mitä korjataan ja mitä mitataan ja miten. Jos samaa työtä ja samoja tuotoksia myydään erikseen hinnoiteltuina ”AEO”-, ”GEO”- ja ”LLMO”-paketteina, vertaa, mitä niihin oikeasti sisältyy."
+   ]
+  },
+  {
+   "heading": "SEO vs. tekoälyhakuoptimointi (AEO/GEO): vertailutaulukko",
+   "paragraphs": [
+    "Todelliset erot ovat siinä, missä tulokset näkyvät ja miten niitä mitataan."
+   ],
+   "table": {
+    "head": [
+     "Näkökulma",
+     "SEO",
+     "AEO / GEO (tekoälyhaku)"
+    ],
+    "rows": [
+     [
+      "Missä tulokset näkyvät",
+      "Hakutulosten listassa",
+      "ChatGPT:n, Perplexityn, Geminin, Clauden, Microsoft Copilotin sekä Google AI Overviewsin ja AI Moden vastauksissa"
+     ],
+     [
+      "Miltä onnistuminen näyttää",
+      "Sijoitus, näyttökerrat, klikkaukset",
+      "Tulla mainituksi, tulla siteeratuksi lähteenä, tulla kuvatuksi oikein"
+     ],
+     [
+      "Klikkaukset",
+      "Käynti syntyy vain, kun joku klikkaa",
+      "Vastaus tyydyttää käyttäjän usein ilman klikkausta"
+     ],
+     [
+      "Vakaus",
+      "Sijoitukset vaihtelevat päivittäin, mutta sama haku antaa pääosin samankaltaisen järjestyksen",
+      "Sama kysymys voi saada eri vastauksen toisella kerralla, toisena päivänä tai eri sanamuodolla. Yksittäinen tulos kertoo vähän"
+     ],
+     [
+      "Mistä tekoäly saa tietonsa",
+      "Hakukoneen indeksistä",
+      "Vastaushetken hausta (kunkin yrityksen hakuindeksoijat tai indeksi) ja mallin koulutusdatasta"
+     ],
+     [
+      "Virallinen mittaus",
+      "Google Search Console, Bing Webmaster Tools",
+      "Search Consolen generatiivisen tekoälyn tehokkuusraportti (näyttökerrat) Googlen tekoälyominaisuuksille; Bingin AI Performance -raportti Copilotille ja muille. ChatGPT ja Perplexity eivät tarjoa sivuston omistajille virallista raporttia"
+     ],
+     [
+      "Yhteinen perusta",
+      "Indeksointi, sivun sisältö, sivua vastaava rakenteinen data",
+      "Sama, ja lisäksi: tekoälyhaun indeksoijia ei estetä, eivätkä tietosi muilla sivustoilla ole ristiriidassa omiesi kanssa"
+     ]
+    ]
+   },
+   "after": [
+    "Kuten taulukko osoittaa, tekoälyhakuoptimointi täydentää SEO:ta eikä korvaa sitä. Sivua, jota ei ole indeksoitu tai joka ei kerro tietojaan tekstissä, tuskin käyttää kumpikaan."
+   ]
+  },
+  {
+   "heading": "Mitä tutkimus ja viralliset lähteet todella osoittavat",
+   "paragraphs": [
+    "Väitteitä siitä, miten tekoäly saadaan siteeraamaan, riittää, mutta tarkistettavissa olevaa tietoa on vähän. Nämä ovat kohdat, jotka pystyimme jäljittämään lähteeseen 23. marraskuuta 2026 tilanteen mukaan."
+   ],
+   "table": {
+    "head": [
+     "Kysymys",
+     "Mitä tiedetään",
+     "Lähde"
+    ],
+    "rows": [
+     [
+      "Mistä GEO on peräisin ja mitä tutkimus havaitsi",
+      "GEO-benchin, 10 000 hakukyselyn joukon, avulla kirjoittajat raportoivat, että sisällön kirjoitustavan muuttaminen nosti sen näkyvyyttä generatiivisten hakukoneiden vastauksissa jopa 40 % ja Perplexity.ai:ssa jopa 37 %. Tulokset on saatu tutkimusasetelmassa, eivätkä ne välttämättä siirry suoraan kaupalliseen tekoälyhakuun",
+      "[Aggarwal et al., ”GEO: Generative Engine Optimization” (KDD 2024)](https://arxiv.org/abs/2311.09735)"
+     ],
+     [
+      "Vaativatko Googlen tekoälyominaisuudet erityistä työtä?",
+      "Google sanoo, ettei AI Overviewsissa tai AI Modessa näkyminen edellytä lisävaatimuksia, erityistä merkintää tai uusia tekoälytekstitiedostoja ja että SEO:n parhaat käytännöt pätevät edelleen",
+      "[Google Search Central: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)"
+     ],
+     [
+      "Voiko Googlen tekoälyominaisuuksia mitata?",
+      "Search Consolen generatiivisen tekoälyn tehokkuusraportti näyttää näyttökerrat AI Overviewsissa ja AI Modessa (maailmanlaajuisesti 31. elokuuta 2026 alkaen). Klikkauksia raportissa ei ole",
+      "[Näin näet sen Search Consolessa](/guide/search-console-ai-features)"
+     ],
+     [
+      "Voiko Copilotin lähdeviittauksia mitata?",
+      "Bing Webmaster Toolsin AI Performance -raportti (julkinen esiversio 10. helmikuuta 2026 alkaen) näyttää lähdeviittaukset Microsoft Copilotissa, Bingin tekoälyn luomissa yhteenvedoissa ja joissakin kumppaniintegraatioissa, siteeratut sivut sekä otoksen hauista, joilla tekoäly haki. Bing lisäsi 16. kesäkuuta 2026 hakuaikeet, aiheet, viittausosuuden ja ajanjaksojen vertailun",
+      "[Bing Webmaster -blogi (helmikuu)](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview), [Bing Search -blogi (kesäkuu)](https://blogs.bing.com/search/June-2026/New-AI-Visibility-Insights-in-Bing-Webmaster-Tools-Intents-Topics-Citation-Share-Compare)"
+     ],
+     [
+      "Mainitaanko sivustoja, joilla on korkeammat on-site-pisteet, useammin?",
+      "62 japanilaisen paikallisyrityksen joukossa emme löytäneet yhteyttä on-site-pisteiden (rakenteinen data, llms.txt, indeksoijien pääsy) ja Perplexityssä näkymisen välillä (rho = 0,03)",
+      "[Nurevon tutkimus](/guide/aeo-signals-ai-answers-study)"
+     ],
+     [
+      "Miten ChatGPT ja Perplexity valitsevat lähteensä?",
+      "Kumpikaan ei julkaise yksityiskohtaisia valintaperusteita",
+      "Kunkin yrityksen julkinen dokumentaatio, sikäli kuin pystyimme sen kirjoitushetkellä tarkistamaan"
+     ]
+    ]
+   },
+   "after": [
+    "Lyhyesti: sisällön kirjoitustapa voi muuttaa näkyvyyttä tutkimusasetelmassa; Googlen mukaan erityistä työtä ei tarvita; eikä on-site-pisteiden nostaminen yksinään saa sinua mainituksi. Siksi sen mittaaminen, näytkö todella, on pakollinen vaihe eikä lisä."
+   ]
+  },
+  {
+   "heading": "Mistä aloittaa: pienyrityksen prioriteetit",
+   "paragraphs": [
+    "Nimestä riippumatta tee nämä järjestyksessä, koska jokainen vaihe rakentuu edellisen päälle."
+   ],
+   "list": [
+    "Indeksointi: tarkista Search Consolesta, että etusivusi ja tärkeimmät sivusi on indeksoitu. Tarkista, että robots.txt, CDN tai palomuuri ei estä tekoälyhaun indeksoijia, kuten OAI-SearchBotia, ChatGPT-Useria, PerplexityBotia ja Claude-SearchBotia ([näin tarkistat](/guide/agency-ai-crawler-blocking-audit))",
+    "Tiedot sivulla: kerro yrityksen nimi, osoite, puhelinnumero, aukioloajat, hinnat, palvelualue ja tarjontasi tekstinä, ei kuvissa",
+    "Rakenteinen data: julkaise nämä tiedot JSON-LD-muodossa samoilla arvoilla, jotka sivu näyttää",
+    "Yhdenmukaisuus muualla: varmista, että Google-yritysprofiilisi, hakemistomerkinnät ja sosiaalisen median profiilit vastaavat verkkosivustoasi",
+    "Kysymyksiin vastaavat sivut: vastaa siihen, mitä asiakkaat kysyvät tekoälyltä (paljonko maksaa, tarvitaanko varaus, missä olet), selkeällä otsikolla ja lyhyellä vastauksella",
+    "Mittaaminen: valitse kysymyksiä, joissa ei ole yrityksesi nimeä, esitä niitä toistuvasti samoissa olosuhteissa ja kirjaa, kuinka usein sinut mainitaan tai sinua siteerataan ([näin mittaat](/guide/measure-ai-visibility))"
+   ],
+   "after": [
+    "Pidä llms.txt:tä asiana, joka lisätään näiden kuuden vaiheen jälkeen. Sen vaikutusta ei ole osoitettu, mutta se on edullinen, eikä virallista lausuntoa sen haitallisuudesta ole ([llms.txt selitettynä](/guide/llms-txt))."
+   ]
+  },
+  {
+   "heading": "Miten mittaaminen eroaa: mitä katsoa ja mistä",
+   "table": {
+    "head": [
+     "Mitä haluat tietää",
+     "Mistä katsot",
+     "Mitä se näyttää",
+     "Mitä se ei näytä"
+    ],
+    "rows": [
+     [
+      "Googlen sijoitukset ja klikkaukset (SEO)",
+      "Search Consolen tehokkuusraportti",
+      "Näyttökerrat, klikkaukset, keskimääräinen sijainti",
+      "Mitä tekoälyn vastaukset sanovat"
+     ],
+     [
+      "Google AI Overviews ja AI Mode (AIO/AEO)",
+      "Search Consolen generatiivisen tekoälyn tehokkuusraportti",
+      "Näyttökerrat tekoälyominaisuuksissa sivuittain, maittain ja laitteittain",
+      "Klikkaukset tai se, mitä vastaus kertoi sinusta"
+     ],
+     [
+      "Microsoft Copilot ja Bingin tekoäly",
+      "Bing Webmaster Toolsin AI Performance",
+      "Lähdeviittaukset, siteeratut sivut, otos tekoälyn käyttämistä hauista",
+      "Muiden yritysten tekoälytyökalut, kuten ChatGPT"
+     ],
+     [
+      "ChatGPT, Perplexity, Gemini, Claude (GEO/LLMO)",
+      "Kiinteät kysymykset, jotka esität itse, tai seurantatyökalu",
+      "Kuinka usein sinut mainitaan tai sinua siteerataan ja mitkä kilpailijat näkyvät sijastasi",
+      "Jokaisen käyttäjän saama vastaus (näet aina vain otoksen)"
+     ],
+     [
+      "Käynnit tekoälystä",
+      "Viittaavat lähteet analytiikassasi (chatgpt.com, perplexity.ai ja muut)",
+      "Kuinka moni klikkasi sivustollesi ja mitä he tekivät sen jälkeen",
+      "Vastaukset, jotka eivät johtaneet klikkaukseen"
+     ]
+    ]
+   },
+   "after": [
+    "Kun joku raportoi ”LLMO-tuloksia” tai ”GEO-suorituskykyä”, sopikaa ensin, mitä taulukon riviä tarkoitetaan. Näin raportti käsittelee mittauksia eikä nimilappuja."
+   ]
+  },
+  {
+   "heading": "WordPressissä: SEO-lisäosa ja tekoälyhaun asetukset rinnakkain",
+   "paragraphs": [
+    "WordPressissä SEO-lisäosat, kuten Yoast SEO, Rank Math, All in One SEO ja SEO SIMPLE PACK, hoitavat otsikot, sivukartat ja perustason rakenteisen datan. Tekoälyhakua varten puuttuu usein rakenteinen data yrityksesi tiedoista (osoite, aukioloajat, hinnat, palvelut), llms.txt sekä säännöt, jotka sallivat tekoälyhaun indeksoijat."
+   ],
+   "list": [
+    "Pidä SEO-lisäosasi. Tarkista otsikot ja metakuvaukset, XML-sivukartta ja noindex-asetukset",
+    "Asenna [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (maksuton) ja syötä sivustotyyppi (paikallisyritys, verkkokauppa, B2B ja niin edelleen) sekä yrityksesi tiedot. Se toimii yhdessä Yoast SEO:n, Rank Mathin, AIOSEO:n ja Slim SEO:n kanssa ja versiosta 0.9.1 alkaen myös SEO SIMPLE PACKin ja VK All in One Expansion Unitin kanssa ilman päällekkäistä rakenteista dataa",
+    "Suorita diagnoosi AEO-pisteet-näkymässä, lue tulos asteikolla 0–100 ja korjauslista, ja tee maksuttomat korjaukset",
+    "Tarkista robots.txt. Nurevo AEO sallii tekoälyhaun indeksoijat (OAI-SearchBot, ChatGPT-User, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User) ja jättää koulutusindeksoijat (GPTBot, ClaudeBot, Google-Extended ja muut) nykyisen robots.txt-tiedostosi varaan. Koulutusindeksoijien estäminen ei vaikuta tekoälyhakuun eikä AEO-pisteisiisi",
+    "Avaa /llms.txt ja tarkista, että tietosi näkyvät samoilla arvoilla kuin sivuillasi",
+    "Käytä maksutonta kuukausittaista tekoälytarkistusta (Perplexitylle esitetään kolme toimialasi ja alueesi perusteella muodostettua kysymystä, ja näet, mainittiinko tai siteerattiinko sinua) kehityksen seuraamiseen. Jatkuvaan mittaamiseen kiinteillä kysymyksillä joka kuukausi on Pro (alkaen 99 USD kuukaudessa; mittaus tehdään tällä hetkellä Perplexityssä)"
+   ],
+   "after": [
+    "AEO-pisteet mittaavat, kuinka luettava sivustosi on tekoälylle, eivät sitä, suositteleeko tekoäly sinua. Kuten yllä mainittu tutkimus osoittaa, korkeammat pisteet eivät takaa useampia mainintoja, joten pidä viimeistä vaihetta, mittaamista, osana samaa työtä."
+   ]
+  },
+  {
+   "heading": "Kysymyksiä, kun joku myy sinulle ”GEO:ta” tai ”LLMO:ta”",
+   "paragraphs": [
+    "Mitä uudempi nimilappu, sitä enemmän on palveluja, joiden sisältö on epäselvä. Olitpa ostaja tai myyvä toimisto, näistä viidestä kohdasta kirjallisesti sopiminen ehkäisee useimmat väärinkäsitykset."
+   ],
+   "table": {
+    "head": [
+     "Kysy",
+     "Hyvä vastaus",
+     "Varoitusmerkki"
+    ],
+    "rows": [
+     [
+      "Mitä korjataan?",
+      "Tehtävälista: rakenteinen data, sivujen tiedot, indeksoija-asetukset, korjaukset muilla sivustoilla",
+      "”Optimoimme teidät tekoälylle” ilman listattuja tehtäviä"
+     ],
+     [
+      "Miten mitataan?",
+      "Mitkä tekoälytyökalut, mitkä kysymykset, kuinka monta kertaa ja milloin",
+      "Ei menetelmää tai yksi ainoa kuvakaappaus"
+     ],
+     [
+      "Mitä tuloksia raportoidaan?",
+      "Sovitut raportit Search Consolesta, Bingistä tai omasta mittauksesta",
+      "SEO-sijoituksia esitetään tekoälyhaun tuloksina"
+     ],
+     [
+      "Takuut",
+      "Selitys siitä, että tekoälyn vastaukset muuttuvat, joten mitään ei voi taata",
+      "”Taattu näkyvyys tekoälyssä” tai ”taattu ykkössija”"
+     ],
+     [
+      "Menetelmät",
+      "Oikeat tiedot ja paikkansapitävä tieto kolmansien osapuolten sivustoilla",
+      "Itse kirjoitetut arvostelut, piilotetut ohjeet tekoälylle, massatuotetut lähes identtiset sivut"
+     ]
+    ]
+   },
+   "after": [
+    "Toimistoille: vältettävät keinot luettelemme artikkelissa [tekoälyhaun manipuloinnin riskit](/guide/agency-ai-search-manipulation-risks), ja kuukausipalvelun rajaamisen artikkelissa [tekoälyhakuoptimointi kuukausipalveluksi](/guide/agency-aeo-monthly-service). Jos hallinnoit useita asiakassivustoja, tutustu [Nurevon kumppaniohjelmaan](https://nurevo.jp/partner/)."
+   ]
+  },
+  {
+   "heading": "Tarkistuslista",
+   "list": [
+    "Tiimisi ja asiakkaasi käyttävät samoja termejä (AEO, GEO, LLMO, AIO) ja ovat yhtä mieltä niiden merkityksestä",
+    "On selvää, tarkoittaako ”AIO” tekoälyhakua yleisesti vai pelkkää Google AI Overviewsia",
+    "Tärkeät sivut on indeksoitu, eivätkä robots.txt, CDN tai palomuuri estä tekoälyhaun indeksoijia",
+    "Yrityksen nimi, osoite, puhelinnumero, aukioloajat ja hinnat on kirjoitettu sivun tekstiin",
+    "Rakenteisen datan arvot vastaavat sitä, mitä sivu näyttää",
+    "Google-yritysprofiili ja hakemistomerkinnät vastaavat verkkosivustoasi",
+    "On sivuja, jotka vastaavat asiakkaiden tekoälylle esittämiin kysymyksiin, selkein otsikoin ja lyhyin vastauksin",
+    "Sinulla on kiinteät kysymykset ilman yrityksesi nimeä, esität ne samoissa olosuhteissa ja kirjaat tulokset",
+    "Joku vastaa Search Consolen generatiivisen tekoälyn raportin ja Bingin AI Performancen tarkistamisesta sovitun aikataulun mukaan",
+    "Et maksa palvelusta, joka lupaa taattua näkyvyyttä tai sijoituksia"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Pitäisikö sanoa AEO vai GEO?",
+   "a": "Kumpi tahansa käy. Työ ja tuotokset ovat lähes samat. Englanninkieliset markkinoijat käyttävät sekä GEO:ta että AEO:ta; Japanissa myös LLMO ja AIO ovat yleisiä. Mainitse omilla sivuillasi ja tarjouksissa ne termit, joilla lukijasi todennäköisesti hakevat."
+  },
+  {
+   "q": "Tarvitsenko vielä SEO:ta, jos teen tekoälyhakuoptimointia?",
+   "a": "Kyllä. Useimmat tekoälyn vastaukset rakentuvat sivuista, jotka hakuindeksoijat ja hakuindeksit ovat keränneet. Sivuja, joita ei ole indeksoitu tai jotka eivät kerro tietojaan, tuskin käyttää tekoälykään. Ajattele SEO:ta perustuksena ja tekoälyhakuoptimointia sen päälle rakentuvana kerroksena."
+  },
+  {
+   "q": "Koskeeko LLMO koulutusdataa ja GEO hakua?",
+   "a": "Jotkin artikkelit väittävät niin, mutta se ei ole sovittu määritelmä. Todelliset tekoälyn vastaukset voivat perustua sekä vastaushetken hakuun että koulutusdataan, ja se, mitä voit tehdä sivustollasi (oikeat tiedot, indeksoijien pääsy, yhdenmukaisuus muiden sivustojen kanssa), on kummassakin tapauksessa sama. Koulutusindeksoijien estäminen on tekoälyhausta erillinen päätös."
+  },
+  {
+   "q": "Tarkoittaako AIO Google AI Overviewsia?",
+   "a": "Sitä käytetään molemmissa merkityksissä: AIO lyhenteenä nimestä AI Overviews ja AIO tarkoittamassa AI Optimizationia. Kysy, kumpaa tarkoitetaan. Jos kyse on pelkästä Google AI Overviewsista, Search Consolen generatiivisen tekoälyn tehokkuusraportti näyttää näyttökertasi siellä."
+  },
+  {
+   "q": "Kuinka kauan kestää, ennen kuin tekoälyhakuoptimointi tuottaa tulosta?",
+   "a": "Kiinteää aikataulua ei ole. Tekoälyn vastaukset muuttuvat helposti, ja se, kuinka nopeasti hakuindeksoijat lukevat sivusi uudelleen, vaihtelee palveluittain. Mittaa samoja kysymyksiä samoissa olosuhteissa joka kuukausi ja arvioi kehityssuunnan, älä yksittäisen tuloksen perusteella."
+  },
+  {
+   "q": "Päteekö GEO-artikkelin ”jopa 40 %” ChatGPT:hen?",
+   "a": "Ei välttämättä. Artikkelissa kokeiltiin 10 000 tutkimuskyselyä ja tutkimusta varten rakennettua generatiivista hakukonetta, ja testattiin myös Perplexity.ai:ta, mutta jokainen kaupallinen tekoälyhakutyökalu toimii ja päivittyy eri tavalla. Lue se näyttönä siitä, että kirjoitusvalinnoilla voi olla merkitystä, ja mittaa omalla sivustollasi."
+  },
+  {
+   "q": "Mitä minun pitäisi asentaa WordPressiin?",
+   "a": "Pidä SEO-lisäosasi ja lisää se, mikä puuttuu: rakenteinen data yrityksesi tiedoista, llms.txt ja säännöt, jotka sallivat tekoälyhaun indeksoijat. Nurevo AEO (maksuton) tarjoaa kaikki kolme ja välttää päällekkäisen rakenteisen datan tärkeimpien SEO-lisäosien kanssa. Mittaa asennuksen jälkeen, näytkö todella tekoälyn vastauksissa."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Ennen lyhenteitä: tarkista, pystyykö tekoäly lukemaan sivustosi",
+  "body": "Maksuton tarkistus ei vaadi rekisteröitymistä, ja se näyttää rakenteisen datasi, llms.txt:n ja tekoälyindeksoijien pääsyn tilan. WordPressissä Nurevo AEO paikkaa puutteet maksutta. Se ei voi taata, että näyt tekoälyn vastauksissa.",
+  "label": "Tee maksuton tekoälyluettavuuden tarkistus",
+  "href": "/check",
+  "secondary": {
+   "label": "Kokeile Nurevo AEO:ta maksutta WordPress.orgissa",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI:n tavaramerkki, Perplexity Perplexity AI:n, Claude Anthropicin, Google ja Gemini Google LLC:n sekä Microsoft Copilot ja Bing Microsoftin. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, WordPress, Ahrefs ja NeuronWriter ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa mihinkään näistä yrityksistä, eikä mikään niistä ole hyväksynyt sitä."
 }

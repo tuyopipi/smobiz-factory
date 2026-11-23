@@ -1,0 +1,263 @@
+{
+ "title": "Dermatoloji için yapay zekâ araması: ücret, risk | Nurevo",
+ "description": "Dermatoloji ve estetik cilt klinikleri için AEO: sigortalı ve ücretli tedaviyi ayırın, her tedavi sayfasında ücret ve riskleri yayımlayın, schema'yı eşleyin.",
+ "h1": "Dermatoloji ve estetik cilt klinikleri için yapay zekâ araması: yapay zekânın sigortalı ve ücretli tedaviyi, ücretleri ve riskleri doğru okumasını sağlamak",
+ "lead": "Bir dermatoloji ya da estetik cilt kliniğinin yapay zekâ araması için yapabileceği en etkili şey, her tedavi sayfasında metin olarak tedavinin sigorta kapsamında olup olmadığını, değilse ne kadara mal olduğunu ve başlıca riskleri ile iyileşme süresini belirtmektir. Yapay zekâ koşullar içeren bir soruyu yanıtlarken — “istasyona yakın, sivilceyi sigortayla tedavi eden bir dermatolog”, “lazerle leke tedavisi ne kadar tutar ve iyileşme süresi ne kadar” — bu koşulların okunabildiği sayfalara dayanır. Ardından tıbbi reklam kurallarına uyarsınız (hasta yorumları ve öncesi/sonrası fotoğraflarına sınırlar, ücretli tedavide ücret ve risklerin açıklanması) ve aynı bilgileri yapılandırılmış verilerde, llms.txt'de ve Google İşletme Profilinizde yayımlarsınız.",
+ "intro": [
+  "16 Kasım 2026'da (JST) yazıldı. O gün Japonya Sağlık, Çalışma ve Refah Bakanlığı'nın tıbbi reklam yönergelerine ilişkin soru-cevap belgesi, bakanlığın estetik tıp hakkındaki uzman paneli raporu, Ulusal Tüketici İşleri Merkezi'nin verileri ve schema.org türleri (schema-dts 2.1.0'daki tanımlarıyla) kontrol edildi. Aktarılan kurallar Japonya'ya aittir; hizmet verdiğiniz yerdeki kuralları kontrol edin.",
+  "Yapay zekâ yanıtları günden güne ve sorunun nasıl sorulduğuna göre değişir. Buradaki adımlar kliniğinize ait bilgileri yapay zekâ için okunabilir hâle getirir. Bir yapay zekânın kliniğinizden bahsedeceğini ya da onu herhangi bir sıraya koyacağını garanti etmez. Bu makale hukuki tavsiye değildir."
+ ],
+ "sections": [
+  {
+   "heading": "Hastalar cilt klinikleri hakkında yapay zekâya ne soruyor",
+   "paragraphs": [
+    "Dermatoloji soruları iki gruba ayrılır. Genel dermatoloji sorularında bir belirti, bir hasta, bir zaman ve sigorta sorusu bulunur: “egzamalı çocuklara bakan bir dermatolog”, “cumartesi açık bir cilt kliniği”, “ayak mantarı tedavisi sigortaya dahil mi?”. Estetik sorularda fiyat, seans sayısı, iyileşme süresi ve risk bulunur: “lazerle leke tedavisinin ortalama fiyatı”, “medikal epilasyon kaç seans sürer?”, “iyileşme süresi kısa akne izi tedavisi”.",
+    "Her iki durumda da yapay zekâ yalnızca bu koşulların yazılı olduğu bir sayfayı kullanabilir. Yalnızca görsel olarak bulunan bir fiyat listesi, sigortalı mı ücretli mi olduğunu hiç söylemeyen bir tedavi sayfası ya da yalnızca “ücretleri muayenede açıklıyoruz” diyen bir sayfa, koşul içeren bir soru için yapay zekâya alıntılayacak hiçbir şey vermez.",
+    "Estetik tıp ayrıca çok sayıda şikâyete konu oluyor. Japonya Ulusal Tüketici İşleri Merkezi, estetik tıpla ilgili 2023'te 6.281, 2024'te 10.744 ve 2025'te 7.944 başvuru kaydetti (31 Mayıs 2026 itibarıyla PIO-NET verileri, sayfa 31 Temmuz 2026'da güncellendi). [Ulusal Tüketici İşleri Merkezi: estetik tıp (Japonca)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Hastalar randevu almadan önce fiyatları ve riskleri kontrol etmek istiyor ve bunları yapay zekâya soruyor. Doğru ücret ve riskleri yayımlamak önce hasta bilgilendirmesi, sonra yapay zekâ optimizasyonudur."
+   ]
+  },
+  {
+   "heading": "Üst sıralardaki makalelerin atladıkları",
+   "paragraphs": [
+    "“AI search optimization for dermatology”, “medical spa ChatGPT” ve bunların Japonca karşılıkları için üst sıralarda yer alan makaleler okunduğunda, çoğu “uzmanlık alanlarınızı, adresinizi ve çalışma saatlerinizi doğru tutun”, “yapılandırılmış veri ekleyin” ve “daha fazla yorum toplayın” noktasında kalıyor. Bazı İngilizce rehberler “50+ yorum” gibi eşikleri kaynak göstermeden veriyor.",
+    "Cilt klinikleri için en önemli dört nokta neredeyse hiç ele alınmamış; bu yüzden bu rehberin özünü onlar oluşturuyor:"
+   ],
+   "list": [
+    "Sayfada sigortalı ve ücretli tedavinin nasıl ayrılacağı.",
+    "Ücretli tedavilerin ücretlerinin ve başlıca risk ve yan etkilerinin nerede ve nasıl yayımlanacağı ve bunun reklam kurallarıyla ilişkisi.",
+    "“Yorum toplayın” ve “vaka fotoğrafları gösterin” şeklindeki genel tavsiyenin Japonya'nın tıbbi reklam kurallarıyla nerede çatıştığı.",
+    "Somut WordPress ayarları (tür, fiyatlı hizmetler, yalnızca sayfaya özel SSS) ve görünüp görünmediğinizi nasıl kontrol edeceğiniz."
+   ]
+  },
+  {
+   "heading": "Sigortalı ve ücretli tedaviyi ayırın",
+   "paragraphs": [
+    "Yapay zekâ bir cilt kliniği hakkında en çok, aynı adlandırma — “sivilce tedavisi”, “leke tedavisi” — hem sigortalı hem ücretli seçenekleri kapsadığında yanılır. Her belirti ya da tedavi sayfasının en üstünde sigortalı mı ücretli mi olduğunu belirtin. Bakanlığın soru-cevap belgesi ayrıca onaylı ürünlerin kullanıldığı ücretli tedavilerde (örnek olarak diş implantları ve beyazlatma verilir) ücretli olduklarının belirtilmesi ve standart ücretin verilmesi gerektiğini söyler. [MHLW: tıbbi reklam yönergelerine ilişkin soru-cevap (PDF, Japonca)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Sayfa",
+     "Ne yazılmalı",
+     "Yapay zekânın sık yanlış okuduğu"
+    ],
+    "rows": [
+     [
+      "Belirti sayfaları (sivilce, egzama, dermatit, ayak mantarı, siğil)",
+      "Sigortayla neyin tedavi edildiği, ücretli seçeneklerin ücretli olarak belirtilmesi, ne zaman doktora gidilmesi gerektiği",
+      "Sigortalı ve ücretli tedavilerin ayrım yapılmadan birlikte listelenmesi"
+     ],
+     [
+      "Tedavi sayfaları (lazer, peeling, enjeksiyonlar, epilasyon)",
+      "Ücretli olduğu, seans başı ve kür başı fiyat (vergi dahil mi değil mi), olağan seans sayısı, başlıca riskler ve yan etkiler, iyileşme süresi",
+      "Yalnızca “ücretler muayenede açıklanır” ve başka hiçbir şey"
+     ],
+     [
+      "Fiyat listesi",
+      "Sigortalı ve ücretli tedavi için ayrı tablolar, son güncelleme tarihi, muayene, kontrol ve ilaç ücretlerinin nasıl işlediği",
+      "Yalnızca görsel olan bir fiyat listesi ya da yalnızca kampanya fiyatları"
+     ],
+     [
+      "Klinik bilgileri (ana sayfa, ulaşım)",
+      "Farklıysa genel ve estetik dermatoloji için ayrı çalışma saatleri ve randevu kuralları, bakılan yaş aralığı",
+      "Estetik randevu saatlerinin genel klinik saatleri olarak gösterilmesi"
+     ],
+     [
+      "Doktor profilleri",
+      "Ad, alan ve nitelikler (reklamı yapılabilecek sınırlar içinde)",
+      "Üstünlük ifadeleri ve karşılaştırmalar (aşağıya bakın)"
+     ]
+    ],
+    "caption": "Hastaların cilt klinikleri hakkında sorduğu sorulara ve üst sıralardaki makalelerde bulunan boşluklara dayanır."
+   },
+   "after": [
+    "Genel ve estetik dermatolojinin çalışma saatleri ya da randevu kuralları farklıysa, yapay zekâ bunları birleştirmesin diye her birine kendi saat tablosunu verin ve her biri için randevusuz hasta kabul edilip edilmediğini yazın."
+   ]
+  },
+  {
+   "heading": "Ücretli tedavi sayfaları: ücretler ve başlıca riskler aynı sayfada",
+   "paragraphs": [
+    "Japonya'nın tıbbi reklam kurallarına göre, hastaların kendilerinin aradığı bir web sitesi, belirli koşullar sağlandığında normalde reklamı yapılamayan konuları ayrıntılı olarak açıklayabilir (“sınırlamanın kaldırılması” olarak bilinir). Bakanlığın soru-cevap belgesi, ücretli tedavide bu koşulların normalde gereken tedaviyi ve ücretlerini, başlıca risk ve yan etkilerini açıklamayı içerdiğini — ve bir iki genel olumsuzluğu sıralamanın yeterli olmadığını — belirtir (Q6-12). Bir diğer koşul sorular için bir iletişim noktasıdır; yalnızca randevuya ayrılmış bir numara ya da otomatik yanıt hattı bu koşulu karşılamaz (Q6-10). Bu bilgiler kolayca görülebilmelidir: çok küçük yazı ya da arka planla aynı renkteki yazı sayılmaz (Q6-11). [MHLW: soru-cevap (PDF, Japonca)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Bu, yapay zekâ aramasıyla aynı yönü gösterir. Yapay zekâya fiyat, iyileşme süresi ya da risk sorulduğunda yalnızca bunların ana metinde yazılı olduğu sayfaları kullanabilir. Bir tedavi sayfası şu sırayla iyi okunur:"
+   ],
+   "list": [
+    "Tedavinin adı ve ücretli olduğu.",
+    "Hangi sorunu ele aldığı (sonuç vaat etmeden).",
+    "Nasıl yapıldığı, seans süresi, olağan seans sayısı ve aralığı.",
+    "Ücretler (seans başı ve kür başı, vergi dahil mi değil mi, anestezi, ilaç ya da kontrol gibi ek ücretler).",
+    "Başlıca riskler ve yan etkiler ile tipik iyileşme süresi.",
+    "Kimlerin yaptıramayacağı ya da dikkat etmesi gerektiği.",
+    "Soruları yanıtlayan bir iletişim noktası (telefon numarası ve saatler) ve sonrasında bir sorun çıkarsa kimin aranacağı.",
+    "Sayfanın son güncellendiği tarih."
+   ],
+   "after": [
+    "Onaylanmamış ilaç ya da cihaz kullanan veya onaylı ilaçları onaylanmamış amaçlarla kullanan tedaviler ek açıklama gerektirir. Soru-cevap belgesi, endikasyon dışı kullanımın onaylanmamış ilaçlarla aynı şekilde değerlendirildiğini söyler (Q2-14). Gerekli maddeleri yönergelerin kendisinden kontrol edin.",
+    "Özellikle estetik tıp konusunda, bakanlığın uzman paneli raporu (22 Kasım 2024) tıbbi reklamların çevrim içi denetiminin güçlendirilmesini ve kliniklerin tedavi sonrası sorunlar için bir iletişim noktası oluşturup hastalara bildirmesini istiyor. [MHLW: estetik tıbbın uygun uygulanmasına ilişkin panel raporu (PDF, Japonca)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Her tedavi sayfasına tedavi sonrası bakım için bir iletişim noktası koymak da bu yöne uygundur."
+   ]
+  },
+  {
+   "heading": "Yorumlar ve vaka fotoğrafları: genel yapay zekâ tavsiyelerinin kurallarla çatıştığı yer",
+   "paragraphs": [
+    "Yapay zekâ araması rehberleri sıklıkla yorum toplamayı ve kanıt olarak öncesi/sonrası fotoğrafları göstermeyi önerir. Japonya'daki sağlık kuruluşları için bunlar dikkat gerektirir."
+   ],
+   "table": {
+    "head": [
+     "Yaygın tavsiye",
+     "Japonya'nın soru-cevap belgesi bunu nasıl ele alıyor",
+     "Bunun yerine ne yapılmalı"
+    ],
+    "rows": [
+     [
+      "Hasta yorumlarını yayımlayın",
+      "Tedavinin içeriği ya da etkisi hakkındaki hasta yorumları yayımlanamaz (Q1-18, Q2-9)",
+      "Gerçekleri daha ayrıntılı açıklayın: süreç, ücretler, riskler"
+     ],
+     [
+      "Yorumları SSS'ye ya da yorum schema'sına koyun",
+      "Aynı kural; kliniğin ücret ödediği, talep ettiği ya da düzenlediği yorumlar da bu kapsama girebilir",
+      "SSS'yi olgusal yapın: “Sigortaya dahil mi?”, “Kaç seans?”"
+     ],
+     [
+      "Öncesi/sonrası fotoğrafları gösterin",
+      "Yalnızca “öncesi” ya da yalnızca “sonrası” fotoğraflar bile tedavi etkisine ilişkin iddia sayılır ve reklamı yapılamaz (Q2-8, Q3-14)",
+      "Fotoğrafların ne zaman kullanılabileceğini yönergelerden ve örnek vakalar derlemesinden kontrol edin"
+     ],
+     [
+      "“Bölgenin en iyisi”, “acısız”, “garantili sonuç”",
+      "Yanlış, abartılı ve karşılaştırmalı iddialar yasak olarak değerlendirilir",
+      "Yalnızca olgu ya da rakamla ifade edebileceğinizi yazın"
+     ]
+    ]
+   },
+   "after": [
+    "Öte yandan, hastaların kendi sosyal medya paylaşımları ya da kliniğin ücret ödemediği veya talep etmediği bağımsız yorum siteleri reklam değildir (Q2-11). Yapay zekânın bunları okuyup okumadığı kliniğin kontrolünde değildir; bu nedenle güvenilir adım kendi sitenizdeki bilgileri doğru hâle getirmektir. Örnekler [bakanlığın örnek vakalar derlemesinde (PDF, Japonca)](https://www.mhlw.go.jp/content/10800000/001232587.pdf) toplanmıştır."
+   ]
+  },
+  {
+   "heading": "Yapılandırılmış veri: Dermatology türü ve her tedavi için bir hizmet",
+   "paragraphs": [
+    "schema.org'da dermatoloji için bir tür vardır (16 Kasım 2026'da schema-dts 2.1.0 tür tanımlarında kontrol edildi)."
+   ],
+   "table": {
+    "head": [
+     "Tür / özellik",
+     "Anlamı",
+     "Cilt kliniği için kullanımı"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Cilt hastalıklarıyla ilgilenen tıp dalı. Bir MedicalBusiness, dolayısıyla bir LocalBusiness",
+      "Dermatoloji muayenehanesi türü; adres, telefon ve çalışma saatlerini taşır"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Uygulama alanı. Değerler arasında Dermatology ve PlasticSurgery bulunur",
+      "Hem genel hem estetik dermatoloji sunuyorsanız yalnızca sayfalarınızın anlattığı alanları listeleyin"
+     ],
+     [
+      "offers içeren Service",
+      "Sunduğunuz bir hizmet ve fiyatı",
+      "Her ücretli tedaviyi sayfadakiyle aynı fiyatla kaydedin"
+     ],
+     [
+      "openingHoursSpecification",
+      "Günlere göre çalışma saatleri",
+      "Genel ve estetik saatler farklıysa referans sayfadaki tablodur, işaretleme ana saatleri verir"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Yeni hasta kabul edilip edilmediği (bir MedicalOrganization özelliği)",
+      "Yeni hasta almadığınız dönemler için"
+     ]
+    ]
+   },
+   "after": [
+    "Google, AI Overviews ve benzeri özellikler için özel yapılandırılmış veri gerekmediğini ve yapılandırılmış verilerin sayfada görünenle eşleşmesi gerektiğini söylüyor. [Google: yapay zekâ özellikleri ve web siteniz](https://developers.google.com/search/docs/appearance/ai-features) / [LocalBusiness yapılandırılmış verisi](https://developers.google.com/search/docs/appearance/structured-data/local-business). Bir fiyatı yalnızca işaretlemeye ya da sayfadakinden farklı bir fiyatı koymayın."
+   ]
+  },
+  {
+   "heading": "WordPress tabanlı bir cilt kliniği sitesinde kurulum",
+   "list": [
+    "Nurevo AEO'yu (ücretsiz) [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) üzerinden yükleyip etkinleştirin. Yoast SEO, Rank Math, All in One SEO ve Slim SEO olduğu gibi çalışmaya devam eder. 0.9.1 sürümünden itibaren SEO SIMPLE PACK ve VK All in One Expansion Unit ile birlikte de yapılandırılmış veriyi çoğaltmadan çalışır.",
+    "İlk çalıştırma kurulum sihirbazında “Clinic or dental” seçeneğini seçin (bu MedicalBusiness'ı ayarlar). Ardından Ayarlar'daki işletme türü alanını Dermatology olarak değiştirin. Alan herhangi bir schema.org tür adını kabul eder.",
+    "Klinik adını, adresi, telefonu ve açıklamayı kontrol edin. Mevcut ayarlarınızdan yalnızca boş alanlar doldurulur; girdiğiniz değerlerin üzerine asla yazılmaz.",
+    "Çalışma saatlerini yalnızca gün ve saat olarak yazın, örneğin “Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00”. Ayrı estetik saatleri, resmî tatiller ve son kabul saatleri sayfanın kendi tablosunda yer almalıdır.",
+    "Ayarlar'daki hizmetler bölümünde her ücretli tedaviyi kaydedin. Ad, açıklama, süre, fiyat ve para birimiyle her biri bir Offer içeren Service olarak yayımlanır. Fiyatı sayfayla aynı tutun ve ikisini birlikte değiştirin.",
+    "Her tedavi sayfasının düzenleyici kenar çubuğunda yalnızca o sayfaya ait sorular ekleyin (“Sigortaya dahil mi?”, “Kaç seans?”, “İyileşme süresi ne kadar?”). Hasta yorumlarını ve sonuç vaat eden yanıtları dışarıda bırakın. Listelenmesini istemediğiniz kampanya sayfalarını “leave this page out of llms.txt” olarak işaretleyin.",
+    "AEO puanı ekranında tanılamayı çalıştırın ve tek tıklamalı düzeltmeleri uygulayın. Sitenin dışarıdan nasıl göründüğünü [ücretsiz yapay zekâ okunabilirlik kontrolü](/check) ile kontrol edin."
+   ]
+  },
+  {
+   "heading": "medicalSpecialty eklemek",
+   "paragraphs": [
+    "Nurevo AEO medicalSpecialty'yi kendiliğinden çıktı olarak vermez. Eklemek için işletme yapılandırılmış verisini değiştiren filtreyi (webmcp_canary_business_node) temanızın functions.php dosyasında ya da küçük bir eklentide kullanın. Yalnızca sayfalarınızın anlattığı alanları ekleyin."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Yayımlamadan önce kontrol listesi",
+   "list": [
+    "Her belirti ve tedavi sayfası sigortalı mı ücretli mi olduğunu belirtiyor.",
+    "Ücretli tedavi sayfaları ücreti (vergi dahil mi değil mi, ek ücretler), olağan seans sayısını, başlıca risk ve yan etkileri ve iyileşme süresini veriyor.",
+    "Soruları yanıtlayan — yalnızca randevu için olmayan — bir iletişim noktası açıkça gösteriliyor.",
+    "Fiyat listesi yalnızca görsel değil metin olarak var ve son güncelleme tarihi taşıyor.",
+    "Genel ve estetik dermatoloji saat ya da randevu açısından farklıysa her biri ayrı yazılmış.",
+    "Metinde, SSS'de ya da yapılandırılmış veride hasta yorumu, öncesi/sonrası fotoğrafı, üstünlük ifadesi ya da karşılaştırma yok.",
+    "Onaylanmamış ürün ya da endikasyon dışı kullanım içeren tedavilerde yönergelerin istediği açıklama var.",
+    "Yapılandırılmış verideki hizmet fiyatları sayfadaki fiyatlarla eşleşiyor.",
+    "Ad, adres, telefon ve saatler yapılandırılmış veride, Google İşletme Profili'nde ve resmî sağlık rehberlerinde aynı.",
+    "llms.txt klinik bilgilerinizi, fiyat listenizi, başlıca tedavilerinizi ve ulaşım sayfalarınızı listeliyor. [llms.txt nedir](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Yapay zekâ yanıtlarında görünüp görünmediğinizi kontrol etmek",
+   "paragraphs": [
+    "Sayfalar düzene girince, bölge × belirti × sigorta, bölge × tedavi × fiyat ve tedavi × iyileşme süresi birleşimlerinden bir hastanın sorabileceği beş ila on soru yazın ve bunları ChatGPT ile Perplexity'ye sorun. Kliniğinizin adıyla ya da URL'siyle görünüp görünmediğini ve sigorta durumunun, ücretlerin ve risklerin doğru verilip verilmediğini kaydedin. Yapay zekâ yanlış bir fiyat aktarıyorsa fiyat listenizin ve tedavi sayfanızın nasıl yazıldığını ve eski bir kampanya sayfasının hâlâ yayında olup olmadığını kontrol edin. Yapay zekâ yanıtları her çalıştırmada değişir, bu yüzden aynı soruları birkaç hafta boyunca yeniden sorun. Yöntem [yapay zekâ görünürlüğü nasıl ölçülür](/guide/measure-ai-visibility) yazısında anlatılıyor.",
+    "ABD'li tıbbi muayenehane yönetimi derneği MGMA'nın yayımladığı bir analiz (Mayıs 2026, bir yapay zekâ arama şirketinin kurucusu tarafından yazıldı), örneklemdeki 200 bağımsız muayenehanenin hiçbirinin ChatGPT tarafından anılmadığını buldu. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Ülkeler ve koşullar farklıdır ama başlangıç noktası soruları gerçekten sormaktır.",
+    "Nurevo AEO'da Free ve Standard planlar ayda bir kez işletme türünüzden ve bölgenizden oluşturulan üç soruyu (klinik adınız olmadan) Perplexity'ye de sorar ve kliniğinizin anılıp anılmadığını ya da sitenizin kaynak gösterilip gösterilmediğini kaydeder. Pro plan (ayda 99 USD'den başlayan) beta yapay zekâ görünürlük ölçümünü ekler: kliniğinizin göründüğü yapay zekâ yanıtlarının payı, rakiplerle karşılaştırmalı ve zaman içinde izlenerek (şu anda Perplexity üzerinde ölçülür). Her ikisi de yanıt örneklerine bakar; hiçbiri her yanıtı gözlemlemez."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Bir dermatoloji kliniği yapay zekâ aramasına nereden başlamalı?",
+   "a": "Her belirti ve tedavi sayfasında tedavinin sigortalı mı ücretli mi olduğunu belirterek başlayın. Ardından her ücretli tedavi sayfasına ücreti, olağan seans sayısını, başlıca risk ve yan etkileri ve iyileşme süresini ekleyin; adınızı, adresinizi, telefonunuzu ve saatlerinizi yapılandırılmış veride ve Google İşletme Profili'nde eşleştirin."
+  },
+  {
+   "q": "Bir estetik cilt kliniği fiyatlarını yayımlamalı mı?",
+   "a": "Evet. Yapay zekâya fiyat sorulduğunda, fiyatın metinde yazılı olduğu sayfaları kullanır. Japonya'da bakanlığın soru-cevap belgesi de olağan tedaviyi, ücretlerini ve başlıca risk ve yan etkilerini, ücretli tedavinin bir web sitesinde ayrıntılı açıklanabilmesinin koşulları arasında sayar."
+  },
+  {
+   "q": "Hangi yapılandırılmış veri türünü kullanmalıyım?",
+   "a": "schema.org'un Dermatology türü bir dermatoloji muayenehanesini temsil eder ve bir tür MedicalBusiness ile LocalBusiness'tır. Estetik tedaviler de sunuyorsanız medicalSpecialty değerleri olarak Dermatology ve PlasticSurgery ekleyebilirsiniz. Sayfayla eşleşmek türden daha önemlidir."
+  },
+  {
+   "q": "Öncesi/sonrası fotoğraflar bir kliniğin yapay zekâ tarafından seçilmesine yardımcı olur mu?",
+   "a": "Buna dair doğrulanmış bir kanıt yok. Japonya'nın tıbbi reklam kurallarına göre öncesi ve sonrası fotoğraflar tedavi etkisine ilişkin iddia sayılır ve kısıtlanmıştır. Ne zaman kullanılabileceklerini yönergelerden, örnek vakalar derlemesinden ve yerel sağlık merkezinizden kontrol edin."
+  },
+  {
+   "q": "Yorum sitelerindeki düşük puanlar kliniğimi yapay zekâ yanıtlarının dışında bırakır mı?",
+   "a": "Yapay zekâ sağlayıcıları bu tür bilgilere ne kadar ağırlık verdiklerini açıklamıyor, bu yüzden kimse kesin bir şey söyleyemez. Kliniğin talep etmediği bağımsız yorumlar reklam değildir, ancak klinik ücret ödediği ya da talep ettiği yorumları kendi sitesinde yayımlayamaz. Kendi sitenizdeki bilgileri doğru tutmaya odaklanın."
+  },
+  {
+   "q": "Nurevo AEO ücretsiz mi?",
+   "a": "Evet. İşletme türü, adres, saatler, fiyatlı hizmetler ve SSS yapılandırılmış verisi, llms.txt, yapay zekâ tarayıcı ayarları ve AEO puanı ücretsiz plandadır. Ücretli planlar sürekli güncel kural setini (Standard, ayda 20 USD) ve beta yapay zekâ görünürlük ölçümünü (Pro, ayda 99 USD'den başlayan) ekler. [WordPress.org'da Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Kliniğimin ChatGPT'de görünmesi garanti mi?",
+   "a": "Hayır. Yapay zekâ yanıtları değişkendir ve hiçbir araç ya da yöntem görünmeyi veya sıralamayı garanti edemez. Yapabileceğiniz şey, kliniğinizin bilgilerini yapay zekâ için okunabilir kılmak ve görünüp görünmediğinizi kontrol etmeye devam etmektir."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Önce yapay zekânın cilt kliniğinizin web sitesini nasıl okuduğunu görün",
+  "body": "Ücretsiz kontrol kayıt gerektirmez ve yapılandırılmış verilerinizin, llms.txt'nin ve yapay zekâ tarayıcı erişiminin durumunu gösterir. WordPress'te Nurevo AEO eksikleri ücretsiz tamamlar.",
+  "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü çalıştırın",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO'yu WordPress.org'dan edinin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT, OpenAI'nin; Perplexity, Perplexity AI'nin; Google ise Google LLC'nin ticari markasıdır. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ve WordPress ilgili sahiplerinin ticari markalarıdır. Nurevo bu şirketlerin hiçbiriyle bağlantılı değildir ve onlar tarafından desteklenmemektedir. Bu makale hukuki ya da tıbbi tavsiye değildir."
+}
