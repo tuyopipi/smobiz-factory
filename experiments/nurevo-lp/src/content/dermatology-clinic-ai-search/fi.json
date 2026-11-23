@@ -1,0 +1,263 @@
+{
+ "title": "Tekoälyhaku ihoklinikoille: hinnat, riskit, schema | Nurevo",
+ "description": "AEO iho- ja kauneusklinikoille: erota vakuutuksen kattama ja itse maksettava hoito, kerro hinta ja riskit hoitokohtaisesti ja pidä schema sivun mukaisena.",
+ "h1": "Tekoälyhaku iholääkäreille ja esteettisille ihoklinikoille: näin tekoäly lukee oikein vakuutuksen kattaman ja itse maksettavan hoidon, hinnat ja riskit",
+ "lead": "Tehokkain asia, jonka ihotautien tai esteettisen ihohoidon klinikka voi tehdä tekoälyhakua varten, on kertoa tekstinä jokaisella hoitosivulla, korvaako vakuutus hoidon, mitä se maksaa, jos ei korvaa, ja mitkä ovat sen tärkeimmät riskit ja toipumisaika. Kun tekoäly vastaa kysymykseen, jossa on ehtoja – ”asemaa lähellä oleva ihotautilääkäri, joka hoitaa aknea vakuutuksella”, ”paljonko pigmenttiläiskien laserpoisto maksaa ja kauanko toipuminen kestää?” –, se nojaa sivuihin, joilta nuo ehdot voi lukea. Sen jälkeen noudatat terveydenhuollon markkinointia koskevia sääntöjäsi (rajoitukset potilaskokemuksille ja ennen–jälkeen-kuville, hintojen ja riskien ilmoittaminen itse maksettavassa hoidossa) ja julkaiset samat tiedot rakenteisena datana, llms.txt-tiedostossa ja Google-yritysprofiilissasi.",
+ "intro": [
+  "Kirjoitettu 16. marraskuuta 2026 (JST). Samana päivänä tarkistettiin Japanin terveys-, työ- ja hyvinvointiministeriön (MHLW) kysymys–vastaus-asiakirja sen terveydenhuollon markkinointia koskeviin ohjeisiin, ministeriön asiantuntijaryhmän raportti esteettisestä lääketieteestä, National Consumer Affairs Centerin luvut sekä schema.org-tyypit (schema-dts 2.1.0:n määrittelemänä). Lainatut säännöt ovat Japanin; tarkista säännöt siellä, missä toimit.",
+  "Tekoälyn vastaukset muuttuvat päivästä toiseen ja kysymyksen muotoilun mukaan. Tämän oppaan vaiheet tekevät klinikkasi tiedot tekoälylle luettaviksi. Ne eivät takaa, että tekoäly mainitsee klinikkasi tai sijoittaa sen mihinkään. Tämä artikkeli ei ole oikeudellista neuvontaa."
+ ],
+ "sections": [
+  {
+   "heading": "Mitä potilaat kysyvät tekoälyltä ihoklinikoista",
+   "paragraphs": [
+    "Ihotauteja koskevat kysymykset jakautuvat kahteen ryhmään. Yleisen ihotautiopin kysymyksissä on oire, potilas, ajankohta ja vakuutuskysymys: ”ihotautilääkäri, joka ottaa vastaan ekseemaa sairastavia lapsia”, ”lauantaisin auki oleva ihoklinikka”, ”korvaako vakuutus jalkasilsan hoidon?”. Esteettisissä kysymyksissä on hinta, hoitokertojen määrä, toipumisaika ja riski: ”pigmenttiläiskien laserpoiston tavallinen hinta”, ”montako kertaa lääketieteellinen karvanpoisto vaatii?”, ”aknearpien hoito lyhyellä toipumisajalla”.",
+    "Kummassakin tapauksessa tekoäly voi käyttää vain sivua, jolle nuo ehdot on kirjoitettu. Pelkkänä kuvana oleva hinnasto, hoitosivu, joka ei koskaan kerro, onko hoito vakuutuksen kattama vai itse maksettava, tai sivu, jolla lukee vain ”kerromme hinnoista vastaanotolla”, ei anna tekoälylle mitään lainattavaa ehtoja sisältävään kysymykseen.",
+    "Esteettinen lääketiede kerää lisäksi paljon valituksia. Japanin National Consumer Affairs Center kirjasi esteettiseen lääketieteeseen liittyviä neuvontapyyntöjä 6 281 vuonna 2023, 10 744 vuonna 2024 ja 7 944 vuonna 2025 (PIO-NET-luvut 31.5.2026 tilanteen mukaan, sivu päivitetty 31.7.2026). [National Consumer Affairs Center: esteettinen lääketiede (japaniksi)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Potilaat haluavat tarkistaa hinnat ja riskit ennen ajanvarausta, ja he kysyvät niistä tekoälyltä. Oikeiden hintojen ja riskien julkaiseminen on ennen kaikkea potilastiedottamista ja vasta toiseksi tekoälyoptimointia."
+   ]
+  },
+  {
+   "heading": "Mitä parhaiten sijoittuvat artikkelit jättävät pois",
+   "paragraphs": [
+    "Kun lukee artikkeleita, jotka sijoittuvat hauilla ”AI search optimization for dermatology”, ”medical spa ChatGPT” ja niiden japanilaisilla vastineilla, useimmat pysähtyvät neuvoihin ”pidä erikoisalat, osoite ja aukioloajat oikeina”, ”lisää rakenteista dataa” ja ”hanki lisää arvosteluja”. Jotkin englanninkieliset oppaat antavat raja-arvoja, kuten ”yli 50 arvostelua”, ilman lähdettä.",
+    "Neljää ihoklinikoille tärkeintä asiaa käsiteltiin tuskin lainkaan, joten ne muodostavat tämän oppaan ytimen:"
+   ],
+   "list": [
+    "Miten vakuutuksen kattama ja itse maksettava hoito erotetaan sivulla.",
+    "Missä ja miten itse maksettavien hoitojen hinnat sekä tärkeimmät riskit ja haittavaikutukset julkaistaan, ja miten se liittyy markkinointisääntöihin.",
+    "Missä yleinen neuvo ”kerää arvosteluja” ja ”näytä tapauskuvia” törmää Japanin terveydenhuollon markkinointisääntöihin.",
+    "Konkreettiset WordPress-asetukset (tyyppi, palvelut hintoineen, sivukohtainen UKK) ja miten tarkistat, näytkö vastauksissa."
+   ]
+  },
+  {
+   "heading": "Erota vakuutuksen kattama ja itse maksettava hoito",
+   "paragraphs": [
+    "Tekoäly erehtyy ihoklinikasta useimmin silloin, kun sama nimitys – ”aknehoito”, ”pigmenttihoito” – kattaa sekä vakuutuksen kattamia että itse maksettavia vaihtoehtoja. Kerro jokaisen oire- tai hoitosivun alussa, onko hoito vakuutuksen kattama vai itse maksettava. Ministeriön kysymys–vastaus-asiakirjan mukaan hyväksyttyjä tuotteita käyttävissä itse maksettavissa hoidoissa (esimerkkeinä hammasimplantit ja hampaiden valkaisu) on myös ilmoitettava, että ne ovat itse maksettavia, ja kerrottava vakiohinta. [MHLW: kysymykset ja vastaukset terveydenhuollon markkinointiohjeisiin (PDF, japaniksi)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Sivu",
+     "Mitä kirjoitetaan",
+     "Mitä tekoäly lukee usein väärin"
+    ],
+    "rows": [
+     [
+      "Oiresivut (akne, ekseema, ihottuma, jalkasilsa, syylät)",
+      "Mitä hoidetaan vakuutuksella, mahdolliset itse maksettavat vaihtoehdot nimettyinä itse maksettaviksi, milloin lääkäriin pitää hakeutua",
+      "Vakuutuksen kattamat ja itse maksettavat hoidot lueteltuina yhdessä ilman erottelua"
+     ],
+     [
+      "Hoitosivut (laser, kuorinnat, injektiot, karvanpoisto)",
+      "Että hoito on itse maksettava, hinta per kerta ja per hoitojakso (sis. tai ei sis. veroa), tavallinen hoitokertojen määrä, tärkeimmät riskit ja haittavaikutukset, toipumisaika",
+      "Pelkkä ”hinnoista kerrotaan vastaanotolla”"
+     ],
+     [
+      "Hinnasto",
+      "Erilliset taulukot vakuutuksen kattamalle ja itse maksettavalle hoidolle, viimeisimmän päivityksen päivämäärä, miten vastaanotto-, seuranta- ja lääkemaksut määräytyvät",
+      "Pelkkänä kuvana oleva hinnasto tai pelkät kampanjahinnat"
+     ],
+     [
+      "Klinikan tiedot (etusivu, saapuminen)",
+      "Erilliset aukioloajat ja ajanvaraussäännöt yleiselle ja esteettiselle ihotautiopille, jos ne eroavat, vastaanotettavat ikäryhmät",
+      "Esteettisten hoitojen vastaanottoajat esitettyinä klinikan yleisinä aukioloaikoina"
+     ],
+     [
+      "Lääkäriesittelyt",
+      "Nimi, erikoisala ja pätevyydet (siinä laajuudessa kuin niitä saa mainostaa)",
+      "Superlatiivit ja vertailut (ks. alla)"
+     ]
+    ],
+    "caption": "Perustuu potilaiden ihoklinikoista esittämiin kysymyksiin ja parhaiten sijoittuvien artikkelien aukkoihin."
+   },
+   "after": [
+    "Jos yleisellä ja esteettisellä ihotautiopilla on eri aukioloajat tai ajanvaraussäännöt, anna kummallekin oma aikataulukko, jotta tekoäly ei yhdistä niitä, ja kerro kummankin kohdalla, otetaanko vastaan ilman ajanvarausta."
+   ]
+  },
+  {
+   "heading": "Itse maksettavien hoitojen sivut: hinnat ja tärkeimmät riskit samalla sivulla",
+   "paragraphs": [
+    "Japanin terveydenhuollon markkinointisääntöjen mukaan verkkosivusto, jolle potilaat itse hakeutuvat, saa selittää yksityiskohtaisesti asioita, joita ei tavallisesti saa mainostaa, kunhan tietyt ehdot täyttyvät (ns. ”rajoituksen poistaminen”). Ministeriön kysymys–vastaus-asiakirjan mukaan itse maksettavassa hoidossa näihin ehtoihin kuuluu tavallisesti tarvittavan hoidon ja sen hintojen sekä tärkeimpien riskien ja haittavaikutusten kuvaaminen – eikä yhden tai kahden yleisen haitan luetteleminen riitä (Q6-12). Toinen ehto on yhteyspiste kysymyksille; pelkkä ajanvarausnumero tai automaattisesti vastaava linja ei täytä sitä (Q6-10). Tietojen on oltava helposti nähtävissä: hyvin pieni teksti tai taustan värinen teksti ei kelpaa (Q6-11). [MHLW: kysymykset ja vastaukset (PDF, japaniksi)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Tämä osoittaa samaan suuntaan kuin tekoälyhaku. Kun tekoälyltä kysytään hinnasta, toipumisajasta tai riskeistä, se voi käyttää vain sivuja, joiden leipätekstissä nämä on kerrottu. Hoitosivu toimii hyvin tässä järjestyksessä:"
+   ],
+   "list": [
+    "Hoidon nimi ja se, että hoito on itse maksettava.",
+    "Mihin vaivaan se on tarkoitettu (lupaamatta tuloksia).",
+    "Miten hoito tehdään, yhden kerran kesto, tavallinen hoitokertojen määrä ja väli.",
+    "Hinnat (per kerta ja per hoitojakso, sis. tai ei sis. veroa, lisät kuten puudutus, lääkkeet tai seuranta).",
+    "Tärkeimmät riskit ja haittavaikutukset sekä tavallinen toipumisaika.",
+    "Kenelle hoito ei sovi tai kenen on syytä olla varovainen.",
+    "Kysymyksiin vastaava yhteyspiste (puhelinnumero ja aukioloajat) ja kenelle soitetaan, jos jälkeenpäin ilmenee ongelmia.",
+    "Sivun viimeisimmän päivityksen päivämäärä."
+   ],
+   "after": [
+    "Hoidot, joissa käytetään hyväksymättömiä lääkkeitä tai laitteita tai hyväksyttyjä lääkkeitä hyväksymättömiin käyttötarkoituksiin, edellyttävät lisäselvityksiä. Kysymys–vastaus-asiakirjan mukaan käyttöaiheen ulkopuolista käyttöä kohdellaan samoin kuin hyväksymättömiä lääkkeitä (Q2-14). Tarkista ohjeissa itsessään vaaditut kohdat.",
+    "Erityisesti esteettisen lääketieteen osalta ministeriön asiantuntijaryhmän raportti (22. marraskuuta 2024) edellyttää terveydenhuollon markkinoinnin tehostettua verkkovalvontaa ja sitä, että klinikat perustavat yhteyspisteen hoidon jälkeisiä ongelmia varten ja kertovat siitä potilaille. [MHLW: raportti esteettisen lääketieteen asianmukaisesta harjoittamisesta (PDF, japaniksi)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Jälkihoidon yhteyspiste jokaisella hoitosivulla sopii myös tähän suuntaan."
+   ]
+  },
+  {
+   "heading": "Arvostelut ja tapauskuvat: missä yleiset tekoälyneuvot törmäävät sääntöihin",
+   "paragraphs": [
+    "Tekoälyhakua käsittelevät oppaat suosittelevat usein keräämään arvosteluja ja näyttämään ennen–jälkeen-kuvia todisteeksi. Japanilaisten terveydenhuollon laitosten on oltava näissä varovaisia."
+   ],
+   "table": {
+    "head": [
+     "Yleinen neuvo",
+     "Miten Japanin kysymys–vastaus-asiakirja sen käsittelee",
+     "Mitä tehdä sen sijaan"
+    ],
+    "rows": [
+     [
+      "Julkaise potilaskokemuksia",
+      "Hoidon sisältöä tai vaikutusta koskevia kokemuksia ei saa julkaista (Q1-18, Q2-9)",
+      "Kerro tosiasiat tarkemmin: kulku, hinnat, riskit"
+     ],
+     [
+      "Lisää arvosteluja UKK:hon tai review-schemaan",
+      "Sama sääntö; myös klinikan maksamat, pyytämät tai muokkaamat arvostelut voivat kuulua sen piiriin",
+      "Tee UKK:sta asiapitoinen: ”Korvaako vakuutus?”, ”Montako kertaa?”"
+     ],
+     [
+      "Näytä ennen–jälkeen-kuvia",
+      "Pelkät ennen- tai pelkät jälkeen-kuvatkin katsotaan väitteiksi hoidon vaikutuksesta, eikä niitä saa mainostaa (Q2-8, Q3-14)",
+      "Tarkista ohjeista ja esimerkkikokoelmasta, milloin kuvia saa käyttää"
+     ],
+     [
+      "”Alueen paras”, ”kivuton”, ”taatut tulokset”",
+      "Virheelliset, liioittelevat ja vertailevat väitteet katsotaan kielletyiksi",
+      "Kirjoita vain se, minkä voit esittää tosiasiana tai lukuina"
+     ]
+    ]
+   },
+   "after": [
+    "Sen sijaan potilaiden omissa sosiaalisen median kanavissa tai riippumattomilla arvostelusivustoilla julkaistut kirjoitukset, joita klinikka ei ole maksanut tai pyytänyt, eivät ole markkinointia (Q2-11). Sitä, lukeeko tekoäly niitä, klinikka ei voi hallita, joten varma keino on pitää oman sivuston tiedot oikeina. Esimerkkejä on koottu [ministeriön esimerkkikokoelmaan (PDF, japaniksi)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Rakenteinen data: Dermatology-tyyppi ja yksi Service hoitoa kohden",
+   "paragraphs": [
+    "schema.org:ssa on tyyppi ihotautiopille (tarkistettu schema-dts 2.1.0:n tyyppimäärittelyistä 16. marraskuuta 2026)."
+   ],
+   "table": {
+    "head": [
+     "Tyyppi / ominaisuus",
+     "Merkitys",
+     "Käyttö ihoklinikalla"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Ihosairauksia käsittelevä lääketieteen ala. MedicalBusiness ja siten LocalBusiness",
+      "Ihotautien vastaanoton tyyppi; siihen kuuluvat osoite, puhelin ja aukioloajat"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Erikoisala. Arvoja ovat mm. Dermatology ja PlasticSurgery",
+      "Jos tarjoat sekä yleistä että esteettistä ihotautioppia, ilmoita vain ne alat, joita sivusi kuvaavat"
+     ],
+     [
+      "Service ja offers",
+      "Tarjoamasi palvelu ja sen hinta",
+      "Rekisteröi jokainen itse maksettava hoito samalla hinnalla kuin sivulla"
+     ],
+     [
+      "openingHoursSpecification",
+      "Aukioloajat päivittäin",
+      "Jos yleiset ja esteettiset ajat eroavat, sivun taulukko on määräävä ja merkintä kertoo pääasialliset aukioloajat"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Otetaanko uusia potilaita vastaan (MedicalOrganization-ominaisuus)",
+      "Jaksoille, joina et ota uusia potilaita"
+     ]
+    ]
+   },
+   "after": [
+    "Googlen mukaan AI Overviews ja vastaavat ominaisuudet eivät vaadi erityistä rakenteista dataa, ja rakenteisen datan on vastattava sitä, mitä sivulla näkyy. [Google: tekoälyominaisuudet ja verkkosivustosi](https://developers.google.com/search/docs/appearance/ai-features) / [LocalBusiness-rakenteinen data](https://developers.google.com/search/docs/appearance/structured-data/local-business). Älä laita hintaa vain merkintään äläkä hintaa, joka poikkeaa sivun hinnasta."
+   ]
+  },
+  {
+   "heading": "Käyttöönotto ihoklinikan WordPress-sivustolla",
+   "list": [
+    "Asenna ja ota käyttöön Nurevo AEO (ilmainen) osoitteesta [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO ja Slim SEO toimivat edelleen ennallaan. Versiosta 0.9.1 alkaen se toimii myös yhdessä SEO SIMPLE PACKin ja VK All in One Expansion Unitin kanssa ilman päällekkäistä rakenteista dataa.",
+    "Valitse ensimmäisen käynnistyksen ohjatussa määrityksessä ”Klinikka tai hammaslääkäri” (tämä asettaa MedicalBusiness-tyypin). Vaihda sitten asetusten yritystyyppikenttään Dermatology. Kenttä hyväksyy minkä tahansa schema.org-tyypin nimen.",
+    "Tarkista klinikan nimi, osoite, puhelin ja kuvaus. Vain tyhjät kentät täytetään olemassa olevista asetuksistasi; syöttämiäsi arvoja ei koskaan korvata.",
+    "Kirjoita aukioloajat vain päivinä ja kellonaikoina, esimerkiksi ”Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00”. Erilliset esteettisten hoitojen ajat, juhlapyhät ja viimeiset ilmoittautumisajat kuuluvat sivun omaan taulukkoon.",
+    "Rekisteröi asetusten palveluissa jokainen itse maksettava hoito. Kun nimi, kuvaus, kesto, hinta ja valuutta on annettu, kukin julkaistaan Service-palveluna, jolla on Offer. Pidä hinta samana kuin sivulla ja muuta molempia yhtä aikaa.",
+    "Lisää kunkin hoitosivun editorin sivupaneelissa kysymyksiä vain kyseiselle sivulle (”Korvaako vakuutus?”, ”Montako kertaa?”, ”Kauanko toipuminen kestää?”). Jätä pois potilaskokemukset ja tuloksia lupaavat vastaukset. Merkitse kampanjasivut, joita et halua luetteloon, valinnalla ”jätä tämä sivu pois llms.txt-tiedostosta”.",
+    "Suorita diagnoosi AEO-pisteet-näkymässä ja ota yhden napsautuksen korjaukset käyttöön. Tarkista, miltä sivusto näyttää ulkopuolelta, [ilmaisella tekoälyluettavuuden tarkistuksella](/check)."
+   ]
+  },
+  {
+   "heading": "medicalSpecialtyn lisääminen",
+   "paragraphs": [
+    "Nurevo AEO ei tulosta medicalSpecialty-ominaisuutta itsestään. Lisää se suodattimella, joka muokkaa yrityksen rakenteista dataa (webmcp_canary_business_node), teemasi functions.php-tiedostossa tai pienessä lisäosassa. Lisää vain ne alat, joita sivusi kuvaavat."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Tarkistuslista ennen julkaisua",
+   "list": [
+    "Jokainen oire- ja hoitosivu kertoo, onko hoito vakuutuksen kattama vai itse maksettava.",
+    "Itse maksettavien hoitojen sivuilla on hinta (sis. tai ei sis. veroa, lisät), tavallinen hoitokertojen määrä, tärkeimmät riskit ja haittavaikutukset sekä toipumisaika.",
+    "Kysymyksiin vastaava yhteyspiste – ei pelkkä ajanvaraus – on näkyvästi esillä.",
+    "Hinnasto on tekstiä, ei pelkkä kuva, ja siinä on viimeisimmän päivityksen päivämäärä.",
+    "Jos yleinen ja esteettinen ihotautioppi eroavat aukioloajoiltaan tai ajanvaraukseltaan, molemmat on kirjoitettu auki.",
+    "Leipätekstissä, UKK:ssa tai rakenteisessa datassa ei ole potilaskokemuksia, ennen–jälkeen-kuvia, superlatiiveja eikä vertailuja.",
+    "Hyväksymättömiä tuotteita tai käyttöaiheen ulkopuolista käyttöä sisältävissä hoidoissa on ohjeiden vaatima selvitys.",
+    "Rakenteisen datan palveluhinnat vastaavat sivun hintoja.",
+    "Nimi, osoite, puhelin ja aukioloajat täsmäävät rakenteisessa datassa, Google-yritysprofiilissa ja kaikissa virallisissa terveyspalveluhakemistoissa.",
+    "llms.txt luettelee klinikan tiedot, hinnaston, tärkeimmät hoidot ja saapumisohjeiden sivut. [Mikä on llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Tarkista, näytkö tekoälyn vastauksissa",
+   "paragraphs": [
+    "Kun sivut ovat kunnossa, kirjoita viidestä kymmeneen kysymystä, joita potilas voisi esittää, yhdistelemällä alue × oire × vakuutus, alue × hoito × hinta ja hoito × toipumisaika, ja esitä ne ChatGPT:lle ja Perplexitylle. Kirjaa, näkyykö klinikkasi nimellä tai URL-osoitteella ja kerrotaanko vakuutustilanne, hinnat ja riskit oikein. Jos tekoäly mainitsee väärän hinnan, tarkista, miten hinnasto ja hoitosivu on kirjoitettu ja onko vanha kampanjasivu yhä verkossa. Tekoälyn vastaukset vaihtelevat kerrasta toiseen, joten esitä samat kysymykset uudelleen usean viikon ajan. Menetelmä on kuvattu oppaassa [näin mittaat näkyvyyttä tekoälyssä](/guide/measure-ai-visibility).",
+    "Yhdysvaltain lääkäriasemien johtamisen yhdistyksen MGMA:n julkaisema analyysi (toukokuu 2026, kirjoittajana tekoälyhakuyrityksen perustaja) totesi, ettei ChatGPT maininnut yhtäkään otoksen 200 itsenäisestä vastaanotosta. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Maat ja olosuhteet eroavat, mutta kysymysten esittäminen käytännössä on paikka aloittaa.",
+    "Nurevo AEO:n Free- ja Standard-tilaukset esittävät lisäksi kerran kuukaudessa Perplexitylle kolme yritystyypistäsi ja alueestasi muodostettua kysymystä (ilman klinikkasi nimeä) ja kirjaavat, mainittiinko klinikkasi tai viitattiinko sivustoosi. Pro-tilaus (alkaen 99 USD kuukaudessa) lisää beetavaiheen tekoälynäkyvyyden mittauksen: niiden tekoälyvastausten osuuden, joissa klinikkasi esiintyy, verrattuna kilpailijoihin ja seurattuna ajan mittaan (tällä hetkellä mitataan Perplexityssä). Molemmat tarkastelevat otoksia vastauksista; kumpikaan ei näe jokaista vastausta."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Mistä ihotautiklinikan kannattaa aloittaa tekoälyhaun kanssa?",
+   "a": "Aloita kertomalla jokaisella oire- ja hoitosivulla, onko hoito vakuutuksen kattama vai itse maksettava. Anna sitten jokaiselle itse maksettavan hoidon sivulle hinta, tavallinen hoitokertojen määrä, tärkeimmät riskit ja haittavaikutukset sekä toipumisaika, ja varmista, että nimi, osoite, puhelin ja aukioloajat täsmäävät rakenteisessa datassa ja Google-yritysprofiilissasi."
+  },
+  {
+   "q": "Pitäisikö esteettisen ihoklinikan julkaista hintansa?",
+   "a": "Kyllä. Kun tekoälyltä kysytään hintaa, se käyttää sivuja, joiden tekstissä hinta on kerrottu. Japanissa ministeriön kysymys–vastaus-asiakirja mainitsee lisäksi tavanomaisen hoidon, sen hinnat sekä tärkeimmät riskit ja haittavaikutukset ehtoina sille, että itse maksettavaa hoitoa saa selittää verkkosivustolla yksityiskohtaisesti."
+  },
+  {
+   "q": "Mitä rakenteisen datan tyyppiä minun pitäisi käyttää?",
+   "a": "schema.org:n Dermatology-tyyppi kuvaa ihotautien vastaanottoa ja on eräs MedicalBusiness- ja LocalBusiness-tyyppi. Jos tarjoat myös esteettisiä hoitoja, voit lisätä medicalSpecialty-arvoiksi Dermatology ja PlasticSurgery. Vastaavuus sivun kanssa on tärkeämpää kuin tyyppi."
+  },
+  {
+   "q": "Auttavatko ennen–jälkeen-kuvat klinikkaa tulemaan tekoälyn valitsemaksi?",
+   "a": "Siitä ei ole varmennettua näyttöä. Japanin terveydenhuollon markkinointisääntöjen mukaan ennen- ja jälkeen-kuvat katsotaan väitteiksi hoidon vaikutuksesta, ja niiden käyttöä on rajoitettu. Tarkista ohjeista, esimerkkikokoelmasta ja paikalliselta terveyskeskukselta, milloin niitä saa käyttää."
+  },
+  {
+   "q": "Pitävätkö huonot arviot arvostelusivustoilla klinikkani poissa tekoälyn vastauksista?",
+   "a": "Tekoälypalvelujen tarjoajat eivät julkaise, kuinka paljon painoa ne antavat tällaiselle tiedolle, joten kukaan ei voi sanoa varmasti. Riippumattomat arvostelut, joita klinikka ei ole pyytänyt, eivät ole markkinointia, mutta klinikka ei saa julkaista omalla sivustollaan maksamiaan tai pyytämiään arvosteluja. Keskity pitämään oman sivustosi tiedot oikeina."
+  },
+  {
+   "q": "Onko Nurevo AEO ilmainen?",
+   "a": "Kyllä. Rakenteinen data yritystyypille, osoitteelle, aukioloajoille, palveluille hintoineen ja UKK:lle sekä llms.txt, tekoälyindeksoijien asetukset ja AEO-pisteet sisältyvät ilmaiseen tilaukseen. Maksulliset tilaukset lisäävät aina ajantasaisen sääntökokoelman (Standard, 20 USD kuukaudessa) ja beetavaiheen tekoälynäkyvyyden mittauksen (Pro, alkaen 99 USD kuukaudessa). [Nurevo AEO WordPress.orgissa](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Näkyykö klinikkani varmasti ChatGPT:ssä?",
+   "a": "Ei. Tekoälyn vastaukset vaihtelevat, eikä mikään työkalu tai menetelmä voi taata näkymistä tai sijoitusta. Voit tehdä klinikkasi tiedoista tekoälylle luettavia ja jatkaa sen tarkistamista, näytkö vastauksissa."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso ensin, miten tekoäly lukee ihoklinikkasi verkkosivuston",
+  "body": "Ilmainen tarkistus ei vaadi rekisteröitymistä, ja se näyttää rakenteisen datasi, llms.txt-tiedostosi ja tekoälyindeksoijien pääsyn tilan. WordPressissä Nurevo AEO paikkaa puutteet ilmaiseksi.",
+  "label": "Tee ilmainen tekoälyluettavuuden tarkistus",
+  "href": "/check",
+  "secondary": {
+   "label": "Hanki Nurevo AEO WordPress.orgista",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT on OpenAI:n, Perplexity Perplexity AI:n ja Google Google LLC:n tavaramerkki. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ja WordPress ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa mihinkään näistä yrityksistä eikä yksikään niistä ole hyväksynyt sitä. Tämä artikkeli ei ole oikeudellista eikä lääketieteellistä neuvontaa."
+}

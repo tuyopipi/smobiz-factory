@@ -1,0 +1,263 @@
+{
+ "title": "Pesquisa com IA para clínicas de dermatologia: preços, riscos | Nurevo",
+ "description": "AEO para clínicas de dermatologia e estética: separe seguro de particular, publique preços e riscos principais em cada página de tratamento e alinhe o schema.",
+ "h1": "Pesquisa com IA para clínicas de dermatologia e estética: como fazer a IA ler corretamente o que é coberto pelo seguro, o que é particular, os preços e os riscos",
+ "lead": "O que mais resulta para uma clínica de dermatologia ou de estética na pesquisa com IA é indicar, em texto, em cada página de tratamento: se o tratamento é coberto pelo seguro de saúde, quanto custa quando não é, e quais são os principais riscos e o tempo de recuperação. Quando a IA responde a uma pergunta com condições — “dermatologista perto da estação que trate acne pelo seguro”, “quanto custa remover manchas com laser e quanto tempo dura a recuperação” —, baseia-se em páginas onde essas condições podem ser lidas. Depois, cumpra as regras de publicidade médica (limites aos testemunhos e às fotografias de antes e depois, divulgação de preços e riscos nos tratamentos particulares) e publique os mesmos dados nos dados estruturados, no llms.txt e no Perfil da Empresa no Google.",
+ "intro": [
+  "Escrito a 16 de novembro de 2026 (JST). Nesse dia foram verificados as perguntas e respostas (Q&A) do Ministério da Saúde, Trabalho e Bem-Estar do Japão sobre as suas diretrizes de publicidade médica, o relatório do painel de peritos do ministério sobre medicina estética, os números do Centro Nacional de Assuntos do Consumidor e os tipos do schema.org (tal como definidos no schema-dts 2.1.0). As regras citadas são as do Japão; verifique as regras do local onde exerce.",
+  "As respostas da IA mudam de dia para dia e consoante a forma como a pergunta é feita. Os passos aqui descritos tornam os dados da sua clínica legíveis para a IA. Não garantem que uma IA mencione a sua clínica nem que a coloque em determinada posição. Este artigo não constitui aconselhamento jurídico."
+ ],
+ "sections": [
+  {
+   "heading": "O que os doentes perguntam à IA sobre clínicas de pele",
+   "paragraphs": [
+    "As perguntas sobre dermatologia dividem-se em dois grupos. As de dermatologia geral incluem um sintoma, um doente, um horário e a questão do seguro: “dermatologista que atenda crianças com eczema”, “clínica de pele aberta ao sábado”, “o tratamento do pé de atleta é coberto pelo seguro?”. As de estética incluem preço, número de sessões, tempo de recuperação e risco: “preço habitual da remoção de manchas com laser”, “quantas sessões exige a depilação a laser médica?”, “tratamento de cicatrizes de acne com recuperação curta”.",
+    "Em ambos os casos, a IA só pode utilizar uma página em que essas condições estejam escritas. Uma tabela de preços que só existe como imagem, uma página de tratamento que nunca diz se é pelo seguro ou particular, ou uma página que apenas diz “explicamos os valores na consulta” não dão à IA nada para citar perante uma pergunta com condições.",
+    "A medicina estética também gera muitas reclamações. O Centro Nacional de Assuntos do Consumidor do Japão registou 6.281 consultas sobre medicina estética em 2023, 10.744 em 2024 e 7.944 em 2025 (dados do PIO-NET a 31 de maio de 2026, página atualizada a 31 de julho de 2026). [Centro Nacional de Assuntos do Consumidor: medicina estética (em japonês)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Os doentes querem confirmar preços e riscos antes de marcar e perguntam-no à IA. Publicar preços e riscos corretos é, antes de mais, informação ao doente; a otimização para IA vem depois."
+   ]
+  },
+  {
+   "heading": "O que os artigos mais bem posicionados deixam de fora",
+   "paragraphs": [
+    "Lendo os artigos que surgem no topo para “otimização para pesquisa com IA em dermatologia”, “medical spa ChatGPT” e os seus equivalentes em japonês, a maioria fica-se por “mantenha especialidades, morada e horários corretos”, “adicione dados estruturados” e “obtenha mais avaliações”. Alguns guias em inglês apresentam limiares como “mais de 50 avaliações” sem qualquer fonte.",
+    "Quatro pontos que mais importam para as clínicas de pele quase não foram abordados, pelo que constituem o núcleo deste guia:"
+   ],
+   "list": [
+    "Como separar na página os cuidados cobertos pelo seguro dos cuidados particulares.",
+    "Onde e como publicar os preços e os principais riscos e efeitos secundários dos tratamentos particulares, e como isso se relaciona com as regras de publicidade.",
+    "Onde os conselhos genéricos de “recolha avaliações” e “mostre fotografias de casos” chocam com as regras de publicidade médica do Japão.",
+    "Definições concretas no WordPress (tipo, serviços com preços, FAQ exclusiva da página) e como verificar se aparece."
+   ]
+  },
+  {
+   "heading": "Separe os cuidados cobertos pelo seguro dos particulares",
+   "paragraphs": [
+    "O erro mais frequente da IA com uma clínica de pele surge quando o mesmo rótulo — “tratamento da acne”, “tratamento de manchas” — abrange opções cobertas pelo seguro e particulares. Indique logo no início de cada página de sintoma ou de tratamento se é coberto pelo seguro ou particular. O Q&A do ministério diz também que os tratamentos particulares com produtos aprovados (dá como exemplos os implantes dentários e o branqueamento) devem indicar que são particulares e apresentar o preço de referência. [MHLW: Q&A sobre as diretrizes de publicidade médica (PDF, em japonês)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Página",
+     "O que escrever",
+     "O que a IA tende a interpretar mal"
+    ],
+    "rows": [
+     [
+      "Páginas de sintomas (acne, eczema, dermatite, pé de atleta, verrugas)",
+      "O que é tratado pelo seguro, opções particulares identificadas como particulares, quando consultar um médico",
+      "Tratamentos cobertos pelo seguro e particulares listados juntos, sem distinção"
+     ],
+     [
+      "Páginas de tratamento (laser, peelings, injetáveis, depilação)",
+      "Que é particular, preço por sessão e por pacote (com ou sem IVA), número habitual de sessões, principais riscos e efeitos secundários, tempo de recuperação",
+      "Apenas “valores explicados na consulta”"
+     ],
+     [
+      "Tabela de preços",
+      "Tabelas separadas para seguro e particular, data da última atualização, como funcionam as taxas de consulta, de seguimento e de medicação",
+      "Tabela de preços só em imagem, ou apenas preços promocionais"
+     ],
+     [
+      "Informações da clínica (início, como chegar)",
+      "Horários e regras de marcação separados para dermatologia geral e estética, se forem diferentes, faixa etária atendida",
+      "Horários de estética apresentados como horário geral da clínica"
+     ],
+     [
+      "Perfis dos médicos",
+      "Nome, área e qualificações (dentro do que pode ser publicitado)",
+      "Superlativos e comparações (ver abaixo)"
+     ]
+    ],
+    "caption": "Com base nas perguntas que os doentes fazem sobre clínicas de pele e nas lacunas encontradas nos artigos mais bem posicionados."
+   },
+   "after": [
+    "Se a dermatologia geral e a estética tiverem horários ou regras de marcação diferentes, dê a cada uma a sua própria tabela de horários para que a IA não as misture, e indique em cada uma se atende sem marcação."
+   ]
+  },
+  {
+   "heading": "Páginas de tratamentos particulares: preços e principais riscos na mesma página",
+   "paragraphs": [
+    "Segundo as regras de publicidade médica do Japão, um site que os próprios doentes procuram pode explicar em pormenor aspetos que normalmente não podem ser publicitados, desde que cumpra determinadas condições (o chamado “levantamento da restrição”). O Q&A do ministério diz que, nos cuidados particulares, essas condições incluem descrever o tratamento normalmente necessário e os seus preços, e os seus principais riscos e efeitos secundários — e que enumerar uma ou duas desvantagens genéricas não basta (Q6-12). Outra condição é um contacto para esclarecimento de dúvidas; um número só para marcações ou uma linha de resposta automática não a cumpre (Q6-10). Estes elementos têm de ser fáceis de ver: letra muito pequena ou texto da mesma cor do fundo não conta (Q6-11). [MHLW: Q&A (PDF, em japonês)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Isto aponta no mesmo sentido da pesquisa com IA. Quando a IA recebe uma pergunta sobre preço, recuperação ou risco, só pode utilizar páginas em que esses dados estejam no corpo do texto. Uma página de tratamento lê-se bem por esta ordem:"
+   ],
+   "list": [
+    "O nome do tratamento e a indicação de que é particular.",
+    "A que problema se destina (sem prometer resultados).",
+    "Como é feito, duração de cada sessão, número habitual de sessões e intervalo.",
+    "Preços (por sessão e por pacote, com ou sem IVA, extras como anestesia, medicação ou seguimento).",
+    "Principais riscos e efeitos secundários, e o tempo de recuperação típico.",
+    "Quem não pode fazê-lo ou deve ter cuidado.",
+    "Um contacto que responda a dúvidas (número de telefone e horário) e a quem ligar se surgir um problema depois.",
+    "A data da última atualização da página."
+   ],
+   "after": [
+    "Os tratamentos que utilizam medicamentos ou dispositivos não aprovados, ou medicamentos aprovados para fins não aprovados, exigem explicações adicionais. O Q&A diz que a utilização off-label é tratada da mesma forma que os medicamentos não aprovados (Q2-14). Confirme os elementos exigidos nas próprias diretrizes.",
+    "Sobre a medicina estética em concreto, o relatório do painel de peritos do ministério (22 de novembro de 2024) pede uma monitorização mais rigorosa da publicidade médica online e que as clínicas criem um contacto para problemas após o tratamento e informem os doentes sobre ele. [MHLW: relatório do painel sobre a prática adequada da medicina estética (PDF, em japonês)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Colocar um contacto de acompanhamento pós-tratamento em cada página de tratamento vai também nesse sentido."
+   ]
+  },
+  {
+   "heading": "Avaliações e fotografias de casos: onde os conselhos genéricos sobre IA chocam com as regras",
+   "paragraphs": [
+    "Os guias de pesquisa com IA recomendam muitas vezes recolher avaliações e mostrar fotografias de antes e depois como prova. Para as instituições médicas no Japão, isso exige cuidado."
+   ],
+   "table": {
+    "head": [
+     "Conselho habitual",
+     "Como o Q&A do Japão o trata",
+     "O que fazer em alternativa"
+    ],
+    "rows": [
+     [
+      "Publicar testemunhos de doentes",
+      "Os testemunhos sobre o conteúdo ou o efeito do tratamento não podem ser publicados (Q1-18, Q2-9)",
+      "Explicar os factos com mais pormenor: procedimento, preços, riscos"
+     ],
+     [
+      "Colocar avaliações na FAQ ou no schema de avaliações",
+      "A mesma regra; as avaliações que a clínica pagou, pediu ou editou também podem estar abrangidas",
+      "Fazer FAQ factuais: “É coberto pelo seguro?”, “Quantas sessões?”"
+     ],
+     [
+      "Mostrar fotografias de antes e depois",
+      "Mesmo fotografias só do antes ou só do depois contam como alegações sobre o efeito do tratamento e não podem ser publicitadas (Q2-8, Q3-14)",
+      "Consultar as diretrizes e a compilação de casos para saber quando as fotografias podem ser utilizadas"
+     ],
+     [
+      "“O melhor da zona”, “sem dor”, “resultados garantidos”",
+      "As alegações falsas, exageradas e comparativas são tratadas como proibidas",
+      "Escrever apenas o que pode afirmar como facto ou com números"
+     ]
+    ]
+   },
+   "after": [
+    "Por outro lado, as publicações nas redes sociais dos próprios doentes ou em sites de avaliação independentes que a clínica não pagou nem pediu não são publicidade (Q2-11). Se a IA as lê ou não está fora do controlo da clínica, pelo que o caminho fiável é manter corretos os dados do seu próprio site. Há exemplos reunidos na [compilação de casos do ministério (PDF, em japonês)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Dados estruturados: o tipo Dermatology e um serviço por tratamento",
+   "paragraphs": [
+    "O schema.org tem um tipo para a dermatologia (verificado nas definições de tipos do schema-dts 2.1.0 a 16 de novembro de 2026)."
+   ],
+   "table": {
+    "head": [
+     "Tipo / propriedade",
+     "Significado",
+     "Utilização numa clínica de pele"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "O ramo da medicina que trata das doenças da pele. É um MedicalBusiness e, portanto, um LocalBusiness",
+      "O tipo para uma clínica de dermatologia; inclui morada, telefone e horário de funcionamento"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Área de atuação. Os valores incluem Dermatology e PlasticSurgery",
+      "Se oferece dermatologia geral e estética, indique apenas as áreas que as suas páginas descrevem"
+     ],
+     [
+      "Service com offers",
+      "Um serviço que presta e o respetivo preço",
+      "Registe cada tratamento particular com o mesmo preço da página"
+     ],
+     [
+      "openingHoursSpecification",
+      "Horário de funcionamento por dia",
+      "Se os horários da dermatologia geral e da estética forem diferentes, a tabela da página é a referência e a marcação indica o horário principal"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Se são aceites novos doentes (propriedade de MedicalOrganization)",
+      "Para períodos em que não aceita novos doentes"
+     ]
+    ]
+   },
+   "after": [
+    "A Google afirma que não são necessários dados estruturados especiais para os AI Overviews e funcionalidades semelhantes, e que os dados estruturados devem corresponder ao que está visível na página. [Google: funcionalidades de IA e o seu site](https://developers.google.com/search/docs/appearance/ai-features) / [Dados estruturados de LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Não coloque um preço apenas na marcação, nem um preço diferente do da página."
+   ]
+  },
+  {
+   "heading": "Configuração num site WordPress de uma clínica de pele",
+   "list": [
+    "Instale e ative o Nurevo AEO (gratuito) a partir do [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). O Yoast SEO, o Rank Math, o All in One SEO e o Slim SEO continuam a funcionar como estão. A partir da versão 0.9.1, funciona também em conjunto com o SEO SIMPLE PACK e o VK All in One Expansion Unit sem duplicar dados estruturados.",
+    "No assistente de configuração inicial, escolha “Clinic or dental” (isto define MedicalBusiness). Depois, altere o campo do tipo de negócio nas definições para Dermatology. O campo aceita qualquer nome de tipo do schema.org.",
+    "Confirme o nome da clínica, a morada, o telefone e a descrição. Só os campos vazios são preenchidos a partir das suas definições existentes; os valores que introduziu nunca são substituídos.",
+    "Escreva o horário de funcionamento apenas com dias e horas, como “Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00”. Horários separados da estética, feriados e últimas horas de admissão ficam na tabela da própria página.",
+    "Em serviços, nas definições, registe cada tratamento particular. Com nome, descrição, duração, preço e moeda, cada um é publicado como Service com um Offer. Mantenha o preço idêntico ao da página e altere ambos em simultâneo.",
+    "Na barra lateral do editor de cada página de tratamento, adicione perguntas apenas dessa página (“É coberto pelo seguro?”, “Quantas sessões?”, “Quanto tempo dura a recuperação?”). Deixe de fora testemunhos e respostas que prometam resultados. Marque as páginas de campanhas que não quer listar como “leave this page out of llms.txt”.",
+    "Execute o diagnóstico no ecrã da Pontuação AEO e aplique as correções com um clique. Veja como o site é visto de fora com a [verificação gratuita de legibilidade para IA](/check)."
+   ]
+  },
+  {
+   "heading": "Adicionar medicalSpecialty",
+   "paragraphs": [
+    "O Nurevo AEO não gera medicalSpecialty por si só. Para o adicionar, utilize o filtro que altera os dados estruturados do negócio (webmcp_canary_business_node), no functions.php do seu tema ou num pequeno plugin. Adicione apenas as áreas que as suas páginas descrevem."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Lista de verificação antes de publicar",
+   "list": [
+    "Todas as páginas de sintomas e de tratamentos indicam se são cobertas pelo seguro ou particulares.",
+    "As páginas de tratamentos particulares indicam o preço (com ou sem IVA, extras), o número habitual de sessões, os principais riscos e efeitos secundários e o tempo de recuperação.",
+    "Um contacto que responde a dúvidas — e não apenas para marcações — está bem visível.",
+    "A tabela de preços está em texto, não apenas em imagem, e tem data da última atualização.",
+    "Se a dermatologia geral e a estética diferem em horário ou marcação, cada uma está descrita.",
+    "Não há testemunhos, fotografias de antes e depois, superlativos nem comparações no texto, na FAQ ou nos dados estruturados.",
+    "Os tratamentos com produtos não aprovados ou utilização off-label incluem a explicação exigida pelas diretrizes.",
+    "Os preços dos serviços nos dados estruturados correspondem aos preços da página.",
+    "Nome, morada, telefone e horário coincidem entre os dados estruturados, o Perfil da Empresa no Google e qualquer diretório oficial de saúde.",
+    "O llms.txt lista as informações da clínica, a tabela de preços, os principais tratamentos e as páginas de acesso. [O que é o llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Verificar se aparece nas respostas da IA",
+   "paragraphs": [
+    "Com as páginas em ordem, escreva cinco a dez perguntas que um doente poderia fazer, combinando zona × sintoma × seguro, zona × tratamento × preço e tratamento × recuperação, e coloque-as ao ChatGPT e ao Perplexity. Registe se a sua clínica aparece pelo nome ou pelo URL, e se a cobertura do seguro, os preços e os riscos estão corretos. Se a IA citar um preço errado, verifique como estão escritas a tabela de preços e a página do tratamento, e se uma página de campanha antiga continua online. As respostas da IA mudam de execução para execução, por isso repita as mesmas perguntas ao longo de várias semanas. O método está descrito em [como medir a visibilidade em IA](/guide/measure-ai-visibility).",
+    "Uma análise publicada pela MGMA, a associação norte-americana de gestão de consultórios médicos (maio de 2026, escrita pelo fundador de uma empresa de pesquisa com IA), concluiu que nenhum dos 200 consultórios independentes da amostra foi mencionado pelo ChatGPT. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Os países e as condições são diferentes, mas fazer efetivamente as perguntas é o ponto de partida.",
+    "Com o Nurevo AEO, os planos Free e Standard também colocam ao Perplexity, uma vez por mês, três perguntas construídas a partir do seu tipo de negócio e da sua zona (sem o nome da clínica) e registam se a sua clínica foi mencionada ou o seu site citado. O plano Pro (a partir de USD 99 por mês) acrescenta a medição de visibilidade em IA em beta: a percentagem de respostas de IA em que a sua clínica aparece, comparada com a concorrência e acompanhada ao longo do tempo (atualmente medida no Perplexity). Ambos analisam amostras de respostas; nenhum observa todas as respostas."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Por onde deve uma clínica de dermatologia começar na pesquisa com IA?",
+   "a": "Comece por indicar em cada página de sintoma e de tratamento se os cuidados são cobertos pelo seguro ou particulares. Depois, dê a cada página de tratamento particular o preço, o número habitual de sessões, os principais riscos e efeitos secundários e o tempo de recuperação, e faça com que o nome, a morada, o telefone e o horário coincidam entre os dados estruturados e o Perfil da Empresa no Google."
+  },
+  {
+   "q": "Uma clínica de estética deve publicar os seus preços?",
+   "a": "Sim. Quando a IA recebe uma pergunta sobre preço, utiliza páginas em que o preço está escrito no texto. No Japão, o Q&A do ministério também inclui o tratamento habitual, os seus preços e os seus principais riscos e efeitos secundários entre as condições para explicar em pormenor os cuidados particulares num site."
+  },
+  {
+   "q": "Que tipo de dados estruturados devo utilizar?",
+   "a": "O tipo Dermatology do schema.org representa uma clínica de dermatologia e é um tipo de MedicalBusiness e LocalBusiness. Se também oferece tratamentos estéticos, pode adicionar Dermatology e PlasticSurgery como valores de medicalSpecialty. Corresponder à página importa mais do que o tipo."
+  },
+  {
+   "q": "As fotografias de antes e depois ajudam uma clínica a ser escolhida pela IA?",
+   "a": "Não há provas verificadas de que ajudem. Segundo as regras de publicidade médica do Japão, as fotografias de antes e depois são tratadas como alegações sobre o efeito do tratamento e estão sujeitas a restrições. Consulte as diretrizes, a compilação de casos e o centro de saúde local para saber quando podem ser utilizadas."
+  },
+  {
+   "q": "Classificações baixas em sites de avaliação deixam a minha clínica fora das respostas da IA?",
+   "a": "Os fornecedores de IA não divulgam o peso que dão a esse tipo de informação, pelo que ninguém pode afirmá-lo com certeza. As avaliações independentes que a clínica não pediu não são publicidade, mas a clínica não pode publicar no próprio site avaliações que pagou ou pediu. Concentre-se em manter corretos os dados do seu próprio site."
+  },
+  {
+   "q": "O Nurevo AEO é gratuito?",
+   "a": "Sim. Tipo de negócio, morada, horário, serviços com preços e dados estruturados de FAQ, llms.txt, definições de crawlers de IA e a Pontuação AEO estão incluídos no plano gratuito. Os planos pagos acrescentam o conjunto de regras sempre atualizado (Standard, USD 20 por mês) e a medição de visibilidade em IA em beta (Pro, a partir de USD 99 por mês). [Nurevo AEO no WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Há garantia de que a minha clínica aparece no ChatGPT?",
+   "a": "Não. As respostas da IA variam e nenhuma ferramenta ou método pode garantir presença ou posição. O que pode fazer é tornar os dados da sua clínica legíveis para a IA e continuar a verificar se aparece."
+  }
+ ],
+ "relatedHeading": "Guias relacionados",
+ "cta": {
+  "heading": "Primeiro, veja como a IA lê o site da sua clínica de pele",
+  "body": "A verificação gratuita não exige registo e mostra o estado dos seus dados estruturados, do llms.txt e do acesso dos crawlers de IA. No WordPress, o Nurevo AEO preenche as lacunas gratuitamente.",
+  "label": "Fazer a verificação gratuita de legibilidade para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Obter o Nurevo AEO no WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é uma marca da OpenAI, Perplexity da Perplexity AI e Google da Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit e WordPress são marcas dos respetivos proprietários. A Nurevo não está afiliada a nenhuma destas empresas nem é por elas apoiada. Este artigo não constitui aconselhamento jurídico nem médico."
+}

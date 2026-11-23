@@ -1,0 +1,263 @@
+{
+ "title": "KI-Suche für Hautarztpraxen: Preise, Risiken, Schema | Nurevo",
+ "description": "AEO für Dermatologie und ästhetische Hautkliniken: Kassen- und Selbstzahlerleistungen trennen, Preise und Hauptrisiken je Behandlung nennen, Schema abgleichen.",
+ "h1": "KI-Suche für dermatologische und ästhetische Hautkliniken: So liest KI Kassen- und Selbstzahlerleistungen, Preise und Risiken richtig",
+ "lead": "Das Wirksamste, was eine dermatologische oder ästhetische Hautklinik für die KI-Suche tun kann: auf jeder Behandlungsseite im Text angeben, ob die Behandlung von der Versicherung übernommen wird, was sie andernfalls kostet und welche Hauptrisiken und Ausfallzeiten bestehen. Beantwortet eine KI eine Frage mit Bedingungen – „ein Hautarzt nahe dem Bahnhof, der Akne auf Kasse behandelt“, „was kostet die Laserentfernung von Pigmentflecken und wie lange ist die Ausfallzeit?“ –, stützt sie sich auf Seiten, auf denen diese Bedingungen lesbar sind. Danach halten Sie Ihre Regeln für Werbung im Gesundheitswesen ein (Grenzen für Patientenstimmen und Vorher-nachher-Fotos, Angabe von Preisen und Risiken bei Selbstzahlerleistungen) und veröffentlichen dieselben Fakten in strukturierten Daten, in llms.txt und in Ihrem Google-Unternehmensprofil.",
+ "intro": [
+  "Verfasst am 16. November 2026 (JST). Der Q&A des japanischen Ministeriums für Gesundheit, Arbeit und Soziales (MHLW) zu seinen Leitlinien für medizinische Werbung, der Bericht seines Expertengremiums zur ästhetischen Medizin, die Zahlen des National Consumer Affairs Center und die Typen von schema.org (laut schema-dts 2.1.0) wurden an diesem Tag geprüft. Die zitierten Regeln gelten in Japan; prüfen Sie die Regeln dort, wo Sie praktizieren.",
+  "KI-Antworten ändern sich von Tag zu Tag und je nach Formulierung der Frage. Die Schritte hier machen die Fakten Ihrer Klinik für KI lesbar. Sie garantieren nicht, dass eine KI Ihre Klinik nennt oder irgendwo platziert. Dieser Artikel ist keine Rechtsberatung."
+ ],
+ "sections": [
+  {
+   "heading": "Was Patienten die KI über Hautkliniken fragen",
+   "paragraphs": [
+    "Fragen zur Dermatologie fallen in zwei Gruppen. Fragen zur allgemeinen Dermatologie enthalten ein Symptom, einen Patienten, eine Zeit und die Versicherungsfrage: „ein Hautarzt, der Kinder mit Ekzem behandelt“, „eine Hautklinik, die samstags geöffnet hat“, „wird die Behandlung von Fußpilz von der Versicherung übernommen?“. Fragen zur ästhetischen Behandlung enthalten Preis, Anzahl der Sitzungen, Ausfallzeit und Risiko: „üblicher Preis für die Laserentfernung von Pigmentflecken“, „wie viele Sitzungen braucht eine medizinische Haarentfernung?“, „Behandlung von Aknenarben mit kurzer Ausfallzeit“.",
+    "In beiden Fällen kann die KI nur eine Seite nutzen, auf der diese Bedingungen aufgeschrieben sind. Eine Preisliste, die nur als Bild existiert, eine Behandlungsseite, die nie sagt, ob es sich um eine Kassen- oder Selbstzahlerleistung handelt, oder eine Seite, die nur „die Kosten erläutern wir Ihnen im Beratungsgespräch“ sagt, gibt der KI für eine Frage mit Bedingungen nichts zum Zitieren.",
+    "Die ästhetische Medizin zieht zudem viele Beschwerden auf sich. Das japanische National Consumer Affairs Center verzeichnete 6.281 Beratungen zur ästhetischen Medizin im Jahr 2023, 10.744 im Jahr 2024 und 7.944 im Jahr 2025 (PIO-NET-Zahlen mit Stand 31. Mai 2026, Seite aktualisiert am 31. Juli 2026). [National Consumer Affairs Center: ästhetische Medizin (Japanisch)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Patienten wollen Preise und Risiken vor der Buchung prüfen, und sie fragen die KI danach. Korrekte Preise und Risiken zu veröffentlichen ist in erster Linie Patienteninformation und erst in zweiter Linie KI-Optimierung."
+   ]
+  },
+  {
+   "heading": "Was die bestplatzierten Artikel auslassen",
+   "paragraphs": [
+    "Liest man die Artikel, die für „AI search optimization for dermatology“, „medical spa ChatGPT“ und ihre japanischen Entsprechungen ranken, hören die meisten bei „Fachgebiete, Adresse und Öffnungszeiten korrekt halten“, „strukturierte Daten hinzufügen“ und „mehr Bewertungen sammeln“ auf. Einige englischsprachige Ratgeber nennen Schwellenwerte wie „50+ Bewertungen“ ohne Quelle.",
+    "Vier Punkte, die für Hautkliniken am wichtigsten sind, kamen kaum vor. Sie bilden deshalb den Kern dieses Leitfadens:"
+   ],
+   "list": [
+    "Wie man Kassen- und Selbstzahlerleistungen auf der Seite trennt.",
+    "Wo und wie man bei Selbstzahlerbehandlungen Preise sowie Hauptrisiken und Nebenwirkungen veröffentlicht und wie das mit den Werberegeln zusammenhängt.",
+    "Wo der allgemeine Rat, „Bewertungen sammeln“ und „Fallfotos zeigen“, mit Japans Regeln für medizinische Werbung kollidiert.",
+    "Konkrete WordPress-Einstellungen (Typ, Leistungen mit Preisen, seitenbezogene FAQ) und wie Sie prüfen, ob Sie erscheinen."
+   ]
+  },
+  {
+   "heading": "Kassen- und Selbstzahlerleistungen trennen",
+   "paragraphs": [
+    "Am häufigsten liegt die KI bei einer Hautklinik falsch, wenn dieselbe Bezeichnung – „Aknebehandlung“, „Pigmentbehandlung“ – sowohl Kassen- als auch Selbstzahleroptionen abdeckt. Geben Sie oben auf jeder Symptom- oder Behandlungsseite an, ob es sich um eine Kassen- oder Selbstzahlerleistung handelt. Der Q&A des Ministeriums sagt außerdem, dass Selbstzahlerbehandlungen mit zugelassenen Produkten (als Beispiele nennt er Zahnimplantate und Bleaching) als Selbstzahlerleistung gekennzeichnet sein und den Standardpreis angeben müssen. [MHLW: Q&A zu den Leitlinien für medizinische Werbung (PDF, Japanisch)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Seite",
+     "Was dort stehen sollte",
+     "Was die KI oft falsch liest"
+    ],
+    "rows": [
+     [
+      "Symptomseiten (Akne, Ekzem, Dermatitis, Fußpilz, Warzen)",
+      "Was auf Kasse behandelt wird, etwaige Selbstzahleroptionen ausdrücklich als Selbstzahlerleistung benannt, wann man zum Arzt gehen sollte",
+      "Kassen- und Selbstzahlerbehandlungen ohne Unterscheidung nebeneinander"
+     ],
+     [
+      "Behandlungsseiten (Laser, Peelings, Injektionen, Haarentfernung)",
+      "Dass es eine Selbstzahlerleistung ist, Preis pro Sitzung und pro Kur (inkl. oder zzgl. Steuer), übliche Anzahl der Sitzungen, Hauptrisiken und Nebenwirkungen, Ausfallzeit",
+      "Nur „Kosten werden im Beratungsgespräch erläutert“"
+     ],
+     [
+      "Preisliste",
+      "Getrennte Tabellen für Kassen- und Selbstzahlerleistungen, Datum der letzten Aktualisierung, wie Beratungs-, Nachsorge- und Medikamentenkosten berechnet werden",
+      "Eine Preisliste nur als Bild oder nur mit Aktionspreisen"
+     ],
+     [
+      "Klinikinformationen (Startseite, Anfahrt)",
+      "Getrennte Sprechzeiten und Buchungsregeln für allgemeine und ästhetische Dermatologie, falls sie sich unterscheiden, behandelte Altersgruppen",
+      "Termine für ästhetische Behandlungen als allgemeine Sprechzeiten angezeigt"
+     ],
+     [
+      "Arztprofile",
+      "Name, Fachgebiet und Qualifikationen (im Rahmen dessen, was beworben werden darf)",
+      "Superlative und Vergleiche (siehe unten)"
+     ]
+    ],
+    "caption": "Auf Grundlage der Fragen, die Patienten zu Hautkliniken stellen, und der Lücken in den bestplatzierten Artikeln."
+   },
+   "after": [
+    "Haben allgemeine und ästhetische Dermatologie unterschiedliche Sprechzeiten oder Buchungsregeln, geben Sie jeder eine eigene Sprechzeitentabelle, damit die KI sie nicht vermischt, und sagen Sie jeweils, ob Patienten ohne Termin behandelt werden."
+   ]
+  },
+  {
+   "heading": "Seiten für Selbstzahlerbehandlungen: Preise und Hauptrisiken auf derselben Seite",
+   "paragraphs": [
+    "Nach Japans Regeln für medizinische Werbung darf eine Website, die Patienten selbst aufsuchen, Dinge ausführlich erklären, die normalerweise nicht beworben werden dürfen, sofern bestimmte Bedingungen erfüllt sind (die sogenannte „Aufhebung der Beschränkung“). Laut Q&A des Ministeriums gehört bei Selbstzahlerleistungen dazu, die normalerweise erforderliche Behandlung und ihre Kosten sowie ihre Hauptrisiken und Nebenwirkungen zu beschreiben – und ein oder zwei allgemeine Nachteile aufzuzählen reicht nicht (Q6-12). Eine weitere Bedingung ist eine Kontaktstelle für Anfragen; eine reine Buchungsnummer oder eine Leitung mit automatischer Ansage erfüllt sie nicht (Q6-10). Diese Angaben müssen gut sichtbar sein: sehr kleine Schrift oder Text in der Hintergrundfarbe zählt nicht (Q6-11). [MHLW: Q&A (PDF, Japanisch)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Das weist in dieselbe Richtung wie die KI-Suche. Wird die KI nach Preis, Ausfallzeit oder Risiko gefragt, kann sie nur Seiten nutzen, auf denen dies im Fließtext steht. Eine Behandlungsseite liest sich gut in dieser Reihenfolge:"
+   ],
+   "list": [
+    "Name der Behandlung und dass es eine Selbstzahlerleistung ist.",
+    "Welches Anliegen sie behandelt (ohne Ergebnisse zu versprechen).",
+    "Wie sie durchgeführt wird, Dauer pro Sitzung, übliche Anzahl der Sitzungen und Abstand.",
+    "Kosten (pro Sitzung und pro Kur, inkl. oder zzgl. Steuer, Zusatzkosten wie Betäubung, Medikamente oder Nachsorge).",
+    "Hauptrisiken und Nebenwirkungen sowie die typische Ausfallzeit.",
+    "Wer sie nicht erhalten kann oder vorsichtig sein sollte.",
+    "Eine Kontaktstelle, die Fragen beantwortet (Telefonnummer und Erreichbarkeit), und wen man bei Problemen danach anruft.",
+    "Das Datum der letzten Aktualisierung der Seite."
+   ],
+   "after": [
+    "Behandlungen mit nicht zugelassenen Arzneimitteln oder Geräten oder mit zugelassenen Arzneimitteln für nicht zugelassene Zwecke brauchen zusätzliche Erläuterungen. Der Q&A sagt, dass Off-Label-Anwendung genauso behandelt wird wie nicht zugelassene Arzneimittel (Q2-14). Prüfen Sie die in den Leitlinien selbst geforderten Angaben.",
+    "Speziell zur ästhetischen Medizin fordert der Bericht des Expertengremiums des Ministeriums (22. November 2024) eine stärkere Online-Überwachung medizinischer Werbung und dass Kliniken eine Kontaktstelle für Probleme nach der Behandlung einrichten und Patienten darüber informieren. [MHLW: Bericht des Gremiums zur angemessenen Praxis der ästhetischen Medizin (PDF, Japanisch)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Eine Nachsorge-Kontaktstelle auf jeder Behandlungsseite passt ebenfalls in diese Richtung."
+   ]
+  },
+  {
+   "heading": "Bewertungen und Fallfotos: wo allgemeine KI-Ratschläge mit den Regeln kollidieren",
+   "paragraphs": [
+    "Ratgeber zur KI-Suche empfehlen oft, Bewertungen zu sammeln und Vorher-nachher-Fotos als Beleg zu zeigen. Für medizinische Einrichtungen in Japan ist hier Vorsicht geboten."
+   ],
+   "table": {
+    "head": [
+     "Üblicher Rat",
+     "Wie Japans Q&A ihn behandelt",
+     "Was Sie stattdessen tun"
+    ],
+    "rows": [
+     [
+      "Patientenstimmen veröffentlichen",
+      "Erfahrungsberichte über Inhalt oder Wirkung einer Behandlung dürfen nicht veröffentlicht werden (Q1-18, Q2-9)",
+      "Die Fakten ausführlicher erklären: Ablauf, Kosten, Risiken"
+     ],
+     [
+      "Bewertungen in die FAQ oder ins Review-Schema aufnehmen",
+      "Gleiche Regel; auch Bewertungen, die die Klinik bezahlt, angefragt oder bearbeitet hat, können darunter fallen",
+      "FAQ sachlich halten: „Übernimmt die Versicherung das?“, „Wie viele Sitzungen?“"
+     ],
+     [
+      "Vorher-nachher-Fotos zeigen",
+      "Auch reine Vorher- oder reine Nachher-Fotos gelten als Aussagen über die Behandlungswirkung und dürfen nicht beworben werden (Q2-8, Q3-14)",
+      "In den Leitlinien und der Fallsammlung prüfen, wann Fotos verwendet werden dürfen"
+     ],
+     [
+      "„Die Beste in der Region“, „schmerzfrei“, „garantierte Ergebnisse“",
+      "Falsche, übertriebene und vergleichende Aussagen gelten als verboten",
+      "Nur schreiben, was Sie als Tatsache oder in Zahlen belegen können"
+     ]
+    ]
+   },
+   "after": [
+    "Andererseits sind Beiträge in den eigenen sozialen Medien von Patienten oder auf unabhängigen Bewertungsportalen, die die Klinik weder bezahlt noch angefragt hat, keine Werbung (Q2-11). Ob die KI sie liest, kann eine Klinik nicht steuern. Der verlässliche Weg ist daher, die Fakten auf der eigenen Website korrekt zu halten. Beispiele sind in der [Fallsammlung des Ministeriums (PDF, Japanisch)](https://www.mhlw.go.jp/content/10800000/001232587.pdf) zusammengestellt."
+   ]
+  },
+  {
+   "heading": "Strukturierte Daten: der Typ Dermatology und ein Service pro Behandlung",
+   "paragraphs": [
+    "schema.org hat einen Typ für Dermatologie (geprüft in den Typdefinitionen von schema-dts 2.1.0 am 16. November 2026)."
+   ],
+   "table": {
+    "head": [
+     "Typ / Eigenschaft",
+     "Bedeutung",
+     "Einsatz in einer Hautklinik"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Das Fachgebiet der Medizin, das sich mit Hauterkrankungen befasst. Ein MedicalBusiness und damit ein LocalBusiness",
+      "Der Typ für eine dermatologische Praxis; er trägt Adresse, Telefon und Öffnungszeiten"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Fachgebiet. Mögliche Werte sind u. a. Dermatology und PlasticSurgery",
+      "Wenn Sie allgemeine und ästhetische Dermatologie anbieten, nur die Fachgebiete angeben, die Ihre Seiten beschreiben"
+     ],
+     [
+      "Service mit offers",
+      "Eine Leistung, die Sie erbringen, und ihr Preis",
+      "Jede Selbstzahlerbehandlung mit demselben Preis wie auf der Seite erfassen"
+     ],
+     [
+      "openingHoursSpecification",
+      "Öffnungszeiten nach Wochentag",
+      "Unterscheiden sich allgemeine und ästhetische Sprechzeiten, ist die Tabelle auf der Seite maßgeblich und das Markup gibt die Hauptöffnungszeiten an"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Ob neue Patienten angenommen werden (eine Eigenschaft von MedicalOrganization)",
+      "Für Zeiträume, in denen Sie keine neuen Patienten aufnehmen"
+     ]
+    ]
+   },
+   "after": [
+    "Google sagt, dass für AI Overviews und ähnliche Funktionen keine speziellen strukturierten Daten nötig sind und dass strukturierte Daten mit dem übereinstimmen sollten, was auf der Seite sichtbar ist. [Google: KI-Funktionen und Ihre Website](https://developers.google.com/search/docs/appearance/ai-features) / [Strukturierte Daten für LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Setzen Sie keinen Preis nur ins Markup und keinen Preis, der von der Seite abweicht."
+   ]
+  },
+  {
+   "heading": "Einrichtung auf einer WordPress-Website einer Hautklinik",
+   "list": [
+    "Installieren und aktivieren Sie Nurevo AEO (kostenlos) von [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO und Slim SEO funktionieren unverändert weiter. Ab Version 0.9.1 arbeitet es auch mit SEO SIMPLE PACK und VK All in One Expansion Unit zusammen, ohne strukturierte Daten zu duplizieren.",
+    "Wählen Sie im Einrichtungsassistenten beim ersten Start „Klinik oder Zahnarzt“ (damit wird MedicalBusiness gesetzt). Ändern Sie dann in den Einstellungen das Feld für den Unternehmenstyp auf Dermatology. Das Feld akzeptiert jeden schema.org-Typnamen.",
+    "Prüfen Sie Name der Klinik, Adresse, Telefon und Beschreibung. Nur leere Felder werden aus Ihren bestehenden Einstellungen befüllt; von Ihnen eingetragene Werte werden nie überschrieben.",
+    "Tragen Sie die Öffnungszeiten nur als Tage und Uhrzeiten ein, etwa „Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00“. Gesonderte Zeiten für ästhetische Behandlungen, Feiertage und letzte Anmeldezeiten gehören in die Tabelle auf der Seite.",
+    "Erfassen Sie unter Leistungen in den Einstellungen jede Selbstzahlerbehandlung. Mit Name, Beschreibung, Dauer, Preis und Währung wird jede als Service mit einem Offer veröffentlicht. Halten Sie den Preis identisch mit der Seite und ändern Sie beides gemeinsam.",
+    "Fügen Sie in der Editor-Seitenleiste jeder Behandlungsseite Fragen nur für diese Seite hinzu („Übernimmt die Versicherung das?“, „Wie viele Sitzungen?“, „Wie lange ist die Ausfallzeit?“). Lassen Sie Patientenstimmen und Antworten, die Ergebnisse versprechen, weg. Markieren Sie Aktionsseiten, die nicht aufgeführt werden sollen, mit „diese Seite aus llms.txt ausschließen“.",
+    "Starten Sie die Diagnose auf dem Bildschirm „AEO-Score“ und wenden Sie die Ein-Klick-Korrekturen an. Wie die Website von außen aussieht, prüfen Sie mit dem [kostenlosen KI-Lesbarkeitscheck](/check)."
+   ]
+  },
+  {
+   "heading": "medicalSpecialty hinzufügen",
+   "paragraphs": [
+    "Nurevo AEO gibt medicalSpecialty nicht von selbst aus. Um es hinzuzufügen, nutzen Sie den Filter, der die strukturierten Unternehmensdaten ändert (webmcp_canary_business_node), in der functions.php Ihres Themes oder in einem kleinen Plugin. Fügen Sie nur die Fachgebiete hinzu, die Ihre Seiten beschreiben."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Checkliste vor der Veröffentlichung",
+   "list": [
+    "Jede Symptom- und Behandlungsseite sagt, ob es sich um eine Kassen- oder Selbstzahlerleistung handelt.",
+    "Seiten für Selbstzahlerbehandlungen nennen den Preis (inkl. oder zzgl. Steuer, Zusatzkosten), die übliche Anzahl der Sitzungen, Hauptrisiken und Nebenwirkungen sowie die Ausfallzeit.",
+    "Eine Kontaktstelle, die Fragen beantwortet – nicht nur für Buchungen –, ist deutlich angegeben.",
+    "Die Preisliste ist Text, nicht nur ein Bild, und hat ein Datum der letzten Aktualisierung.",
+    "Unterscheiden sich allgemeine und ästhetische Dermatologie bei Sprechzeiten oder Buchung, ist beides ausgeschrieben.",
+    "Weder im Fließtext noch in der FAQ oder den strukturierten Daten erscheinen Patientenstimmen, Vorher-nachher-Fotos, Superlative oder Vergleiche.",
+    "Behandlungen mit nicht zugelassenen Produkten oder Off-Label-Anwendung enthalten die von den Leitlinien geforderte Erläuterung.",
+    "Die Preise der Services in den strukturierten Daten stimmen mit den Preisen auf der Seite überein.",
+    "Name, Adresse, Telefon und Öffnungszeiten stimmen in strukturierten Daten, Google-Unternehmensprofil und jedem offiziellen Gesundheitsverzeichnis überein.",
+    "llms.txt führt Ihre Klinikinformationen, Preisliste, wichtigsten Behandlungen und Anfahrtsseiten auf. [Was ist llms.txt?](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Prüfen, ob Sie in KI-Antworten erscheinen",
+   "paragraphs": [
+    "Sind die Seiten in Ordnung, schreiben Sie fünf bis zehn Fragen auf, die ein Patient stellen könnte – Kombinationen aus Region × Symptom × Versicherung, Region × Behandlung × Preis und Behandlung × Ausfallzeit – und stellen Sie sie ChatGPT und Perplexity. Notieren Sie, ob Ihre Klinik mit Namen oder URL erscheint und ob Versicherungsstatus, Preise und Risiken korrekt wiedergegeben werden. Nennt die KI einen falschen Preis, prüfen Sie, wie Preisliste und Behandlungsseite formuliert sind und ob eine alte Aktionsseite noch online ist. KI-Antworten ändern sich von Durchlauf zu Durchlauf, also stellen Sie dieselben Fragen über mehrere Wochen erneut. Die Methode ist in [So messen Sie KI-Sichtbarkeit](/guide/measure-ai-visibility) beschrieben.",
+    "Eine von MGMA, dem US-Verband für Praxismanagement, veröffentlichte Analyse (Mai 2026, verfasst vom Gründer eines Unternehmens für KI-Suche) ergab, dass keine der 200 unabhängigen Praxen ihrer Stichprobe von ChatGPT genannt wurde. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Länder und Bedingungen unterscheiden sich, aber die Fragen tatsächlich zu stellen ist der richtige Anfang.",
+    "Mit Nurevo AEO stellen die Tarife Free und Standard außerdem einmal im Monat Perplexity drei Fragen, die aus Ihrem Unternehmenstyp und Ihrer Region gebildet werden (ohne den Namen Ihrer Klinik), und erfassen, ob Ihre Klinik genannt oder Ihre Website zitiert wurde. Der Tarif Pro (ab 99 USD pro Monat) ergänzt eine KI-Sichtbarkeitsmessung als Beta: den Anteil der KI-Antworten, in denen Ihre Klinik erscheint, im Vergleich zu Wettbewerbern und im zeitlichen Verlauf (derzeit auf Perplexity gemessen). Beide betrachten Stichproben von Antworten; keine erfasst jede Antwort."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Wo sollte eine Hautarztpraxis bei der KI-Suche anfangen?",
+   "a": "Geben Sie zuerst auf jeder Symptom- und Behandlungsseite an, ob es sich um eine Kassen- oder Selbstzahlerleistung handelt. Nennen Sie dann auf jeder Seite für Selbstzahlerbehandlungen Preis, übliche Anzahl der Sitzungen, Hauptrisiken und Nebenwirkungen sowie Ausfallzeit, und sorgen Sie dafür, dass Name, Adresse, Telefon und Öffnungszeiten in strukturierten Daten und Google-Unternehmensprofil übereinstimmen."
+  },
+  {
+   "q": "Sollte eine ästhetische Hautklinik ihre Preise veröffentlichen?",
+   "a": "Ja. Wird die KI nach dem Preis gefragt, nutzt sie Seiten, auf denen der Preis im Text steht. In Japan nennt der Q&A des Ministeriums außerdem die übliche Behandlung, ihre Kosten sowie ihre Hauptrisiken und Nebenwirkungen unter den Bedingungen dafür, Selbstzahlerleistungen auf einer Website ausführlich zu erklären."
+  },
+  {
+   "q": "Welchen Typ strukturierter Daten sollte ich verwenden?",
+   "a": "Der schema.org-Typ Dermatology steht für eine dermatologische Praxis und ist eine Art von MedicalBusiness und LocalBusiness. Bieten Sie auch ästhetische Behandlungen an, können Sie Dermatology und PlasticSurgery als Werte für medicalSpecialty angeben. Die Übereinstimmung mit der Seite ist wichtiger als der Typ."
+  },
+  {
+   "q": "Helfen Vorher-nachher-Fotos, damit eine Klinik von der KI ausgewählt wird?",
+   "a": "Dafür gibt es keine belegten Hinweise. Nach Japans Regeln für medizinische Werbung gelten Vorher- und Nachher-Fotos als Aussagen über die Behandlungswirkung und sind eingeschränkt. Prüfen Sie in den Leitlinien, der Fallsammlung und bei Ihrem örtlichen Gesundheitsamt, wann sie verwendet werden dürfen."
+  },
+  {
+   "q": "Halten schlechte Bewertungen auf Bewertungsportalen meine Klinik aus KI-Antworten heraus?",
+   "a": "KI-Anbieter veröffentlichen nicht, wie stark sie solche Informationen gewichten, daher kann das niemand sicher sagen. Unabhängige Bewertungen, die die Klinik nicht angefragt hat, sind keine Werbung, aber die Klinik darf bezahlte oder angefragte Bewertungen nicht auf der eigenen Website veröffentlichen. Konzentrieren Sie sich darauf, die Fakten auf Ihrer eigenen Website korrekt zu halten."
+  },
+  {
+   "q": "Ist Nurevo AEO kostenlos?",
+   "a": "Ja. Strukturierte Daten für Unternehmenstyp, Adresse, Öffnungszeiten, Leistungen mit Preisen und FAQ sowie llms.txt, Einstellungen für KI-Crawler und der AEO-Score sind im kostenlosen Tarif enthalten. Die bezahlten Tarife ergänzen das stets aktuelle Regelwerk (Standard, 20 USD pro Monat) und die KI-Sichtbarkeitsmessung als Beta (Pro, ab 99 USD pro Monat). [Nurevo AEO auf WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Erscheint meine Klinik garantiert in ChatGPT?",
+   "a": "Nein. KI-Antworten schwanken, und kein Tool und keine Methode kann ein Erscheinen oder eine Platzierung garantieren. Sie können die Fakten Ihrer Klinik für KI lesbar machen und regelmäßig prüfen, ob Sie erscheinen."
+  }
+ ],
+ "relatedHeading": "Verwandte Leitfäden",
+ "cta": {
+  "heading": "Sehen Sie zuerst, wie KI die Website Ihrer Hautklinik liest",
+  "body": "Der kostenlose Check braucht keine Anmeldung und zeigt den Stand Ihrer strukturierten Daten, von llms.txt und des Zugangs für KI-Crawler. Unter WordPress schließt Nurevo AEO die Lücken kostenlos.",
+  "label": "Kostenlosen KI-Lesbarkeitscheck starten",
+  "href": "/check",
+  "secondary": {
+   "label": "Nurevo AEO auf WordPress.org holen",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT ist eine Marke von OpenAI, Perplexity von Perplexity AI und Google von Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit und WordPress sind Marken ihrer jeweiligen Inhaber. Nurevo ist mit keinem dieser Unternehmen verbunden und wird von keinem unterstützt. Dieser Artikel ist keine Rechts- oder medizinische Beratung."
+}

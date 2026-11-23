@@ -1,19 +1,352 @@
 {
-"title": "AEO, SEO och GEO: vad är skillnaden? | Nurevo",
-"description": "Skillnaderna mellan SEO, AEO och GEO, varför du behöver både sök- och AI-läsbarhet och var du börjar med din webbplats.",
-"h1": "AEO, SEO och GEO: vad är skillnaden?",
-"lead": "De här tre begreppen används ofta slarvigt. Här är den tydliga versionen.",
-"sections": [
-{"heading": "SEO, AEO och GEO", "list": ["SEO (Search Engine Optimization): optimering för att ranka högre i en lista med länkar i sökmotorer som Google.", "AEO (Answer Engine Optimization): optimering för att bli nämnd eller citerad i en AI:s svar – ChatGPT, Perplexity, Google AI Overviews, Gemini.", "GEO (Generative Engine Optimization): den term många engelskspråkiga marknadsförare använder för samma idé som AEO."]},
-{"heading": "AEO och GEO har samma mål", "paragraphs": ["Olika ord, samma mål: att lyftas fram av generativ AI. Använd det begrepp din målgrupp använder – och nämn båda för att bli hittad."]},
-{"heading": "Hur AEO skiljer sig från SEO", "paragraphs": ["SEO optimerar för en rankningsalgoritm som ordnar länkar, varefter en människa klickar. AEO optimerar för en språkmodell som avgör vem den citerar, och användaren ser ofta aldrig någon länk. SEO belönar sökord, länkar och sidauktoritet. AEO belönar maskinläsbar struktur (schema.org), explicita signaler (llms.txt), åtkomst för AI-crawlers och tydliga fakta som är lätta att lyfta ut."]},
-{"heading": "Behöver du båda?", "paragraphs": ["Ja. Bra SEO hjälper fortfarande – AI hämtar ofta från välrankade, pålitliga sidor. Men SEO ensamt garanterar inte längre att du finns i svaret. AEO lägger till lagret som låter AI läsa och citera dig. [Vad är AEO?](/guide/what-is-aeo)"]}
-],
-"faqs": [
-{"q": "Ersätter AEO SEO?", "a": "Det kompletterar SEO i stället för att ersätta det. Sökning försvinner inte; AI-svar är ett nytt, snabbt växande lager ovanpå."},
-{"q": "Ska jag säga AEO eller GEO?", "a": "Det är samma sak. GEO är vanligare i engelskspråkiga SEO-kretsar; AEO är mer beskrivande. Använd båda."},
-{"q": "Var börjar jag?", "a": "Se till att AI kan läsa din webbplats – struktur, llms.txt, crawleråtkomst – och mät sedan om du syns. [AEO för WordPress](/guide/aeo-wordpress)"}
-],
-"relatedHeading": "Relaterade guider",
-"cta": {"heading": "Gör en gratis AEO-kontroll", "body": "Ingen registrering.", "label": "Gör den gratis AEO-kontrollen", "href": "/check"}
+ "title": "AEO vs GEO vs SEO (plus LLMO och AIO): skillnaderna | Nurevo",
+ "description": "Är AEO, GEO, LLMO och AIO samma sak, och hur skiljer de sig från SEO? En begreppstabell, skillnader i resultat och mätning, vad forskningen visar och var du börjar.",
+ "h1": "AEO vs GEO vs SEO (plus LLMO och AIO): vad varje begrepp betyder, hur mätningen skiljer sig och var du börjar",
+ "lead": "AEO, GEO, LLMO och AIO är alla namn på samma arbete: att få ditt företag nämnt, eller dina sidor citerade, i svar från ChatGPT, Perplexity, Google AI Overviews och liknande verktyg. I praktiken kan du behandla dem som en och samma sak. SEO handlar om att ranka i en lista med sökresultat. Grunden är gemensam (sidor som kan genomsökas och som anger korrekta fakta); det som skiljer är var resultaten syns och hur du mäter dem. Google säger själv att AI Overviews och AI Mode inte kräver någon särskild optimering utöver bästa praxis för SEO.",
+ "intro": [
+  "Skriven 23 november 2026 (JST). Det här är en fullständig omskrivning av vår korta sida från oktober 2026, baserad på en ny genomläsning av 13 högt rankade japanska och engelska artiklar och primärkällorna. Den riktar sig till företagare som gått vilse bland förkortningarna och till webbyråer som säljer, eller har blivit sålda, ”GEO”- eller ”LLMO”-tjänster.",
+  "AI-svar ändras från dag till dag och beroende på hur en fråga ställs. Stegen här gör informationen som AI läser mer korrekt; de kan inte garantera att du syns i ett AI-svar eller behåller en viss position."
+ ],
+ "sections": [
+  {
+   "heading": "Begreppen i korthet: SEO, AEO, GEO, LLMO och AIO",
+   "paragraphs": [
+    "Här ser du var varje begrepp kommer ifrån och vad det siktar på. Skribenter definierar dem lite olika, och det finns ingen vedertagen standarddefinition."
+   ],
+   "table": {
+    "head": [
+     "Förkortning",
+     "Står för",
+     "Var begreppet kommer ifrån",
+     "Vad det oftast betyder"
+    ],
+    "rows": [
+     [
+      "SEO",
+      "Search Engine Optimization (sökmotoroptimering)",
+      "Allmänt begrepp som spreds med webbens sökmotorer",
+      "Att ranka högre i länklistan hos Google, Bing och andra sökmotorer"
+     ],
+     [
+      "AEO",
+      "Answer Engine Optimization (optimering för svarsmotorer)",
+      "Före generativ AI betydde det att vinna utvalda utdrag och svar från röstassistenter",
+      "Att bli nämnd eller citerad i AI-svar"
+     ],
+     [
+      "GEO",
+      "Generative Engine Optimization",
+      "Namngivet i en forskningsartikel som först publicerades 2023 ([Aggarwal et al., KDD 2024](https://arxiv.org/abs/2311.09735))",
+      "Att få ditt innehåll använt och citerat i svar från generativ AI"
+     ],
+     [
+      "LLMO",
+      "Large Language Model Optimization",
+      "Vanligt i artiklar från japanska SEO-företag och byråer",
+      "Att få LLM:er som ChatGPT att förstå och beskriva dig korrekt"
+     ],
+     [
+      "AIO",
+      "AI Optimization",
+      "Används mest i Japan. ”AIO” är också en förkortning av Google AI Overviews",
+      "AI-sökning i allmänhet, eller ibland bara Google AI Overviews"
+     ]
+    ]
+   },
+   "after": [
+    "Se upp med AIO, eftersom det har två betydelser. När någon erbjuder ”AIO-optimering”, fråga om de menar AI-sökning i allmänhet eller bara Google AI Overviews. Svaret avgör var du mäter resultaten (se nedan)."
+   ]
+  },
+  {
+   "heading": "Är AEO, GEO, LLMO och AIO samma sak?",
+   "paragraphs": [
+    "I praktiken ja. Ahrefs japanska blogg skriver att GEO, LLMO och AEO alla syftar på samma sak ([Ahrefs: GEO is just SEO](https://ahrefs.com/ja/blog/geo-is-just-seo/)). En japansk artikel om AIO kontra LLMO konstaterar att definitionerna inte är fastslagna och listar sedan samma gemensamma åtgärder för båda ([Sungrove](https://www.sungrove.co.jp/aio-llmo-difference/)).",
+    "Vissa engelska artiklar skiljer dem åt: AEO som att bli utplockad som ett direkt svar, GEO som att bli sammanfattad, sammanställd och citerad av generativ AI ([NeuronWriter](https://neuronwriter.com/geo-vs-aeo-vs-seo/)). Den distinktionen skapar dock inget separat arbete på din webbplats. Oavsett etikett handlar arbetet om tre saker: gör din webbplats läsbar för AI, se till att fakta på dina sidor är korrekta och konsekventa, och mät om du faktiskt syns."
+   ],
+   "after": [
+    "Vilket ord du ska använda: det som dina kunder och kollegor redan använder. Skriv i offerter och avtal vad som ska åtgärdas och vad som ska mätas och hur, snarare än etiketten. Om samma arbete och leveranser säljs som separat prissatta ”AEO”-, ”GEO”- och ”LLMO”-paket, jämför vad de faktiskt innehåller."
+   ]
+  },
+  {
+   "heading": "SEO vs optimering för AI-sökning (AEO/GEO): jämförelsetabell",
+   "paragraphs": [
+    "De verkliga skillnaderna ligger i var resultaten syns och hur du mäter dem."
+   ],
+   "table": {
+    "head": [
+     "Aspekt",
+     "SEO",
+     "AEO / GEO (AI-sökning)"
+    ],
+    "rows": [
+     [
+      "Var resultaten syns",
+      "I listan med sökresultat",
+      "I svar från ChatGPT, Perplexity, Gemini, Claude, Microsoft Copilot samt Google AI Overviews och AI Mode"
+     ],
+     [
+      "Hur framgång ser ut",
+      "Placering, visningar, klick",
+      "Att bli nämnd, att bli citerad som källa, att bli korrekt beskriven"
+     ],
+     [
+      "Klick",
+      "Ett besök sker bara när någon klickar",
+      "Svaret räcker ofta för användaren utan något klick"
+     ],
+     [
+      "Stabilitet",
+      "Placeringar rör sig dagligen, men samma sökning ger en i stort sett liknande ordning",
+      "Samma fråga kan få ett annat svar vid en ny körning, en annan dag eller med en annan formulering. Ett enskilt resultat säger lite"
+     ],
+     [
+      "Var AI:n hämtar information",
+      "Sökmotorns index",
+      "En sökning vid svarstillfället (respektive företags sökrobotar eller index) och modellens träningsdata"
+     ],
+     [
+      "Officiell mätning",
+      "Google Search Console, Bing Webmaster Tools",
+      "Search Consoles resultatrapport för generativ AI (visningar) för Googles AI-funktioner; Bings AI Performance-rapport för Copilot med mera. ChatGPT och Perplexity erbjuder ingen officiell rapport till webbplatsägare"
+     ],
+     [
+      "Gemensam grund",
+      "Genomsökning och indexering, sidinnehåll, strukturerad data som stämmer med sidan",
+      "Samma sak, plus: AI-sökrobotar blockeras inte, och dina uppgifter på andra webbplatser motsäger inte dina egna"
+     ]
+    ]
+   },
+   "after": [
+    "Som tabellen visar är optimering för AI-sökning ett tillägg till SEO, inte en ersättning. En sida som inte är indexerad, eller som inte anger sina fakta i texten, används troligen inte av någon av dem."
+   ]
+  },
+  {
+   "heading": "Vad forskning och officiella källor faktiskt visar",
+   "paragraphs": [
+    "Det finns gott om påståenden om hur man blir citerad av AI, men lite som går att kontrollera. Det här är punkterna vi kunde spåra till en källa per 23 november 2026."
+   ],
+   "table": {
+    "head": [
+     "Fråga",
+     "Vad man vet",
+     "Källa"
+    ],
+    "rows": [
+     [
+      "Var GEO kommer ifrån och vad forskningen fann",
+      "Med GEO-bench, en uppsättning på 10 000 sökfrågor, rapporterar författarna att ändringar i hur innehåll är skrivet ökade dess synlighet i svar från generativa sökmotorer med upp till 40 %, och med upp till 37 % på Perplexity.ai. Det är resultat i en forskningsmiljö som inte nödvändigtvis går att överföra direkt till kommersiell AI-sökning",
+      "[Aggarwal et al., ”GEO: Generative Engine Optimization” (KDD 2024)](https://arxiv.org/abs/2311.09735)"
+     ],
+     [
+      "Kräver Googles AI-funktioner särskilt arbete?",
+      "Google säger att det inte behövs några ytterligare krav, särskild uppmärkning eller nya AI-textfiler för att synas i AI Overviews eller AI Mode, och att bästa praxis för SEO fortfarande gäller",
+      "[Google Search Central: AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)"
+     ],
+     [
+      "Går det att mäta Googles AI-funktioner?",
+      "Search Consoles resultatrapport för generativ AI visar visningar i AI Overviews och AI Mode (globalt sedan 31 augusti 2026). Klick finns inte med i rapporten",
+      "[Så ser du den i Search Console](/guide/search-console-ai-features)"
+     ],
+     [
+      "Går det att mäta citeringar i Copilot?",
+      "Bing Webmaster Tools AI Performance-rapport (offentlig förhandsversion från 10 februari 2026) visar citeringar i Microsoft Copilot, i AI-genererade sammanfattningar i Bing och i vissa partnerintegrationer, citerade sidor och ett urval av de sökfrågor AI:n sökte med. Den 16 juni 2026 lade Bing till avsikter, ämnen, citeringsandel och periodjämförelse",
+      "[Bing Webmaster-bloggen (feb.)](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview), [Bing Search-bloggen (juni)](https://blogs.bing.com/search/June-2026/New-AI-Visibility-Insights-in-Bing-Webmaster-Tools-Intents-Topics-Citation-Share-Compare)"
+     ],
+     [
+      "Nämns webbplatser med högre on-site-poäng oftare?",
+      "Bland 62 lokala företag i Japan fann vi inget samband mellan on-site-poäng (strukturerad data, llms.txt, robotåtkomst) och att synas i Perplexity (rho = 0,03)",
+      "[Nurevos studie](/guide/aeo-signals-ai-answers-study)"
+     ],
+     [
+      "Hur väljer ChatGPT och Perplexity källor?",
+      "Ingen av dem publicerar detaljerade urvalskriterier",
+      "Offentlig dokumentation från respektive företag, så långt vi kunde kontrollera när vi skrev"
+     ]
+    ]
+   },
+   "after": [
+    "Kort sagt: hur innehåll är skrivet kan ändra synligheten i en forskningsmiljö; Google säger att inget särskilt arbete behövs; och en högre on-site-poäng gör inte i sig att du blir nämnd. Därför är det ett obligatoriskt steg, inte ett tillval, att mäta om du faktiskt syns."
+   ]
+  },
+  {
+   "heading": "Var du börjar: prioriteringar för ett litet företag",
+   "paragraphs": [
+    "Oavsett etikett: gör så här i ordning, eftersom varje steg bygger på det föregående."
+   ],
+   "list": [
+    "Indexering och genomsökning: kontrollera i Search Console att din startsida och viktiga sidor är indexerade. Kontrollera att robots.txt, ditt CDN eller din brandvägg inte blockerar AI-sökrobotar som OAI-SearchBot, ChatGPT-User, PerplexityBot och Claude-SearchBot ([så kontrollerar du](/guide/agency-ai-crawler-blocking-audit))",
+    "Fakta på sidan: ange företagsnamn, adress, telefonnummer, öppettider, priser, serviceområde och vad du erbjuder i texten, inte i bilder",
+    "Strukturerad data: publicera de fakta som JSON-LD, med samma värden som sidan visar",
+    "Konsekvens på andra ställen: se till att din Google-företagsprofil, katalogposter och sociala profiler stämmer med din webbplats",
+    "Sidor som besvarar frågor: besvara det kunder frågar AI (vad det kostar, om man behöver boka, var du finns) med en tydlig rubrik och ett kort svar",
+    "Mätning: välj frågor som inte innehåller ditt företagsnamn, ställ dem upprepade gånger under samma förutsättningar och notera hur ofta du blir nämnd eller citerad ([så mäter du](/guide/measure-ai-visibility))"
+   ],
+   "after": [
+    "Se llms.txt som något att lägga till efter dessa sex steg. Effekten är obevisad, men det kostar lite och det finns inget officiellt uttalande om att det skadar ([llms.txt förklarat](/guide/llms-txt))."
+   ]
+  },
+  {
+   "heading": "Hur mätningen skiljer sig: vad du ska titta på, och var",
+   "table": {
+    "head": [
+     "Vad du vill veta",
+     "Var du tittar",
+     "Vad det visar",
+     "Vad det inte visar"
+    ],
+    "rows": [
+     [
+      "Placeringar och klick i Google (SEO)",
+      "Search Consoles resultatrapport",
+      "Visningar, klick, genomsnittlig position",
+      "Vad AI-svaren säger"
+     ],
+     [
+      "Google AI Overviews och AI Mode (AIO/AEO)",
+      "Search Consoles resultatrapport för generativ AI",
+      "Visningar i AI-funktioner, per sida, land och enhet",
+      "Klick, eller vad svaret sa om dig"
+     ],
+     [
+      "Microsoft Copilot och Bing AI",
+      "AI Performance i Bing Webmaster Tools",
+      "Citeringar, citerade sidor, ett urval av sökfrågorna som AI:n använde",
+      "Andra företags AI-verktyg, till exempel ChatGPT"
+     ],
+     [
+      "ChatGPT, Perplexity, Gemini, Claude (GEO/LLMO)",
+      "Fasta frågor som du ställer själv, eller ett bevakningsverktyg",
+      "Hur ofta du blir nämnd eller citerad, och vilka konkurrenter som syns i stället",
+      "Varje användares svar (du ser alltid bara ett urval)"
+     ],
+     [
+      "Besök från AI",
+      "Hänvisningskällor i ditt analysverktyg (chatgpt.com, perplexity.ai med flera)",
+      "Hur många som klickade sig vidare och vad de gjorde sedan",
+      "Svar som inte ledde till något klick"
+     ]
+    ]
+   },
+   "after": [
+    "När någon rapporterar ”LLMO-resultat” eller ”GEO-prestanda”, kom först överens om vilken rad i tabellen som avses. Då handlar rapporten om mätningar i stället för etiketter."
+   ]
+  },
+  {
+   "heading": "På WordPress: kör ett SEO-tillägg och inställningar för AI-sökning tillsammans",
+   "paragraphs": [
+    "På WordPress sköter SEO-tillägg som Yoast SEO, Rank Math, All in One SEO och SEO SIMPLE PACK titlar, webbplatskartor och grundläggande strukturerad data. Det som ofta saknas för AI-sökning är strukturerad data för dina företagsfakta (adress, öppettider, priser, tjänster), llms.txt och regler som tillåter AI-sökrobotar."
+   ],
+   "list": [
+    "Behåll ditt SEO-tillägg. Kontrollera titlar och metabeskrivningar, XML-webbplatskartan och noindex-inställningarna",
+    "Installera [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) (gratis) och ange din webbplatstyp (lokalt företag, e-handel, B2B och så vidare) och företagsuppgifter. Det fungerar tillsammans med Yoast SEO, Rank Math, AIOSEO och Slim SEO, och från 0.9.1 även SEO SIMPLE PACK och VK All in One Expansion Unit, utan att duplicera strukturerad data",
+    "Kör diagnosen på skärmen AEO-poäng, läs resultatet på 0–100 och listan med åtgärder, och genomför de kostnadsfria åtgärderna",
+    "Kontrollera robots.txt. Nurevo AEO tillåter AI-sökrobotarna (OAI-SearchBot, ChatGPT-User, Claude-SearchBot, Claude-User, PerplexityBot, Perplexity-User) och lämnar träningsrobotar (GPTBot, ClaudeBot, Google-Extended med flera) åt din befintliga robots.txt. Att blockera träningsrobotar påverkar varken AI-sökning eller din AEO-poäng",
+    "Öppna /llms.txt och kontrollera att dina fakta visas med samma värden som på dina sidor",
+    "Använd den kostnadsfria månatliga AI-kontrollen (tre frågor utifrån din bransch och ditt område ställs till Perplexity och visar om du blev nämnd eller citerad) för att följa trenden. För löpande mätning på fasta frågor varje månad finns Pro (från 99 USD per månad; mätningen görs för närvarande på Perplexity)"
+   ],
+   "after": [
+    "AEO-poängen mäter hur läsbar din webbplats är för AI, inte om AI rekommenderar dig. Som studien ovan visar garanterar en högre poäng inte fler omnämnanden, så se det sista steget, mätningen, som en del av samma arbete."
+   ]
+  },
+  {
+   "heading": "Frågor att ställa när någon säljer ”GEO” eller ”LLMO” till dig",
+   "paragraphs": [
+    "Ju nyare etiketten är, desto fler tjänster finns det med oklart innehåll. Oavsett om du köper eller är en byrå som säljer förhindrar en skriftlig överenskommelse om de här fem punkterna de flesta missförstånd."
+   ],
+   "table": {
+    "head": [
+     "Fråga",
+     "Ett bra svar",
+     "En varningssignal"
+    ],
+    "rows": [
+     [
+      "Vad ska åtgärdas?",
+      "En lista med uppgifter: strukturerad data, fakta på sidorna, robotinställningar, rättelser på andra webbplatser",
+      "”Vi optimerar dig för AI” utan några uppgifter listade"
+     ],
+     [
+      "Hur ska det mätas?",
+      "Vilka AI-verktyg, vilka frågor, hur många gånger och när",
+      "Ingen metod, eller en enda skärmdump"
+     ],
+     [
+      "Vilka resultat rapporteras?",
+      "Överenskomna rapporter från Search Console, Bing eller egna mätningar",
+      "SEO-placeringar som presenteras som resultat från AI-sökning"
+     ],
+     [
+      "Garantier",
+      "En förklaring att AI-svar ändras och att inget därför kan garanteras",
+      "”Garanterat synlig i AI” eller ”garanterad förstaplats”"
+     ],
+     [
+      "Metoder",
+      "Korrekta fakta och rätt information på tredjepartswebbplatser",
+      "Egenskrivna recensioner, dolda instruktioner till AI, massproducerade nästan identiska sidor"
+     ]
+    ]
+   },
+   "after": [
+    "För byråer: vi listar taktiker att undvika i [riskerna med att manipulera AI-sökning](/guide/agency-ai-search-manipulation-risks), och hur du avgränsar en månadstjänst i [gör optimering för AI-sökning till en månadstjänst](/guide/agency-aeo-monthly-service). Om du förvaltar många kundwebbplatser, se [Nurevos partnerprogram](https://nurevo.jp/partner/)."
+   ]
+  },
+  {
+   "heading": "Checklista",
+   "list": [
+    "Ditt team och dina kunder använder samma begrepp (AEO, GEO, LLMO, AIO) och är överens om vad de betyder",
+    "Det är tydligt om ”AIO” betyder AI-sökning i allmänhet eller bara Google AI Overviews",
+    "Viktiga sidor är indexerade, och robots.txt, CDN och brandvägg blockerar inte AI-sökrobotar",
+    "Företagsnamn, adress, telefonnummer, öppettider och priser står i sidtexten",
+    "Värdena i den strukturerade datan stämmer med det sidan visar",
+    "Google-företagsprofilen och katalogposter stämmer med din webbplats",
+    "Det finns sidor som besvarar frågorna kunder ställer till AI, med tydliga rubriker och korta svar",
+    "Du har fasta frågor utan ditt företagsnamn, ställer dem under samma förutsättningar och noterar resultaten",
+    "Någon ansvarar för att enligt ett fast schema kontrollera Search Consoles rapport för generativ AI och Bings AI Performance",
+    "Du betalar inte för någon tjänst som utlovar garanterad synlighet eller placering"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ska jag säga AEO eller GEO?",
+   "a": "Vilket som. Arbetet och leveranserna är nästan desamma. Engelskspråkiga marknadsförare använder både GEO och AEO; i Japan är även LLMO och AIO vanliga. På dina egna sidor och i offerter, nämn de begrepp som dina läsare sannolikt söker på."
+  },
+  {
+   "q": "Om jag arbetar med optimering för AI-sökning, behöver jag fortfarande SEO?",
+   "a": "Ja. De flesta AI-svar bygger på sidor som sökrobotar och sökindex har samlat in. Sidor som inte är indexerade, eller som inte anger sina fakta, används troligen inte heller av AI. Se SEO som grunden och optimering för AI-sökning som lagret ovanpå."
+  },
+  {
+   "q": "Handlar LLMO om träningsdata och GEO om sökning?",
+   "a": "Vissa artiklar säger så, men det är ingen vedertagen definition. Verkliga AI-svar kan bygga på både sökning vid svarstillfället och träningsdata, och det du kan göra på din webbplats (korrekta fakta, robotåtkomst, konsekvens med andra webbplatser) är detsamma i båda fallen. Om du ska blockera träningsrobotar är ett separat beslut, fristående från AI-sökning."
+  },
+  {
+   "q": "Betyder AIO Google AI Overviews?",
+   "a": "Det används på båda sätten: AIO som förkortning av AI Overviews och AIO som AI Optimization. Fråga vilket som avses. Gäller det bara Google AI Overviews visar Search Consoles resultatrapport för generativ AI dina visningar där."
+  },
+  {
+   "q": "Hur lång tid tar det innan optimering för AI-sökning ger effekt?",
+   "a": "Det finns ingen fast tidslinje. AI-svar ändras lätt, och hur snabbt sökrobotar läser om dina sidor skiljer sig mellan tjänster. Mät samma frågor under samma förutsättningar varje månad och bedöm utifrån trenden, inte ett enskilt resultat."
+  },
+  {
+   "q": "Gäller GEO-artikelns ”upp till 40 %” för ChatGPT?",
+   "a": "Inte nödvändigtvis. Artikeln experimenterade med 10 000 forskningsfrågor och en generativ sökmotor byggd för studien, och testade även Perplexity.ai, men varje kommersiellt AI-sökverktyg fungerar och uppdateras på sitt sätt. Läs det som belägg för att val i skrivandet kan spela roll, och mät på din egen webbplats."
+  },
+  {
+   "q": "Vad ska jag installera på WordPress?",
+   "a": "Behåll ditt SEO-tillägg och lägg till det som saknas: strukturerad data för dina företagsfakta, llms.txt och regler som tillåter AI-sökrobotar. Nurevo AEO (gratis) ger alla tre och undviker att duplicera strukturerad data med de stora SEO-tilläggen. Mät efter installationen om du faktiskt syns i AI-svar."
+  }
+ ],
+ "relatedHeading": "Relaterade guider",
+ "cta": {
+  "heading": "Före förkortningarna: kontrollera om AI kan läsa din webbplats",
+  "body": "Den kostnadsfria kontrollen kräver ingen registrering och visar läget för din strukturerade data, llms.txt och AI-robotarnas åtkomst. På WordPress fyller Nurevo AEO luckorna gratis. Det kan inte garantera att du syns i AI-svar.",
+  "label": "Kör den kostnadsfria kontrollen av AI-läsbarhet",
+  "href": "/check",
+  "secondary": {
+   "label": "Prova Nurevo AEO gratis på WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT är ett varumärke som tillhör OpenAI, Perplexity tillhör Perplexity AI, Claude tillhör Anthropic, Google och Gemini tillhör Google LLC, och Microsoft Copilot och Bing tillhör Microsoft. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, WordPress, Ahrefs och NeuronWriter är varumärken som tillhör sina respektive ägare. Nurevo är inte knutet till eller godkänt av något av dessa företag."
 }

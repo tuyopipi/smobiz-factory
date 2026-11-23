@@ -1,0 +1,263 @@
+{
+ "title": "Busca con IA para clínicas de dermatoloxía: prezos, riscos | Nurevo",
+ "description": "AEO para clínicas de dermatoloxía e estética: separe a atención con seguro da privada, publique prezos e riscos en cada tratamento e axuste o schema.",
+ "h1": "Busca con IA para clínicas de dermatoloxía e estética: como conseguir que a IA lea ben que cobre o seguro, que é privado, os prezos e os riscos",
+ "lead": "O que máis funciona para que unha clínica de dermatoloxía ou de estética apareza na busca con IA é indicar, en texto e en cada páxina de tratamento, se o tratamento o cobre o seguro sanitario, canto custa se non é así e cales son os seus principais riscos e o tempo de recuperación. Cando a IA responde unha pregunta con condicións — «dermatólogo preto da estación que trate a acne co seguro», «canto custa eliminar manchas con láser e canto dura a recuperación» —, apóiase en páxinas onde esas condicións se poden ler. Despois, siga as normas de publicidade médica (límites aos testemuños e ás fotos de antes e despois, divulgación de prezos e riscos na atención privada) e publique os mesmos datos nos datos estruturados, no llms.txt e no Perfil da Empresa en Google.",
+ "intro": [
+  "Escrito o 16 de novembro de 2026 (JST). Ese día comprobáronse as preguntas e respostas (Q&A) do Ministerio de Sanidade, Traballo e Benestar do Xapón sobre as súas directrices de publicidade médica, o informe do grupo de expertos do ministerio sobre medicina estética, as cifras do Centro Nacional de Asuntos do Consumidor e os tipos de schema.org (tal como se definen en schema-dts 2.1.0). As normas citadas son as do Xapón; comprobe as normas do lugar onde exerce.",
+  "As respostas da IA cambian dun día para outro e segundo como se formula a pregunta. Os pasos desta guía fan que os datos da súa clínica sexan lexibles para a IA. Non garanten que unha IA mencione a súa clínica nin que a sitúe en ningunha posición. Este artigo non é asesoramento xurídico."
+ ],
+ "sections": [
+  {
+   "heading": "Que lle preguntan os pacientes á IA sobre as clínicas de pel",
+   "paragraphs": [
+    "As preguntas sobre dermatoloxía divídense en dous grupos. As de dermatoloxía xeral inclúen un síntoma, un paciente, un horario e a cuestión do seguro: «dermatólogo que atenda nenos con eccema», «clínica de pel aberta o sábado», «o tratamento do pé de atleta cóbreo o seguro?». As de estética inclúen prezo, número de sesións, tempo de recuperación e risco: «prezo habitual da eliminación de manchas con láser», «cantas sesións precisa a depilación láser médica?», «tratamento de cicatrices de acne con recuperación curta».",
+    "En ambos os casos, a IA só pode usar unha páxina onde esas condicións estean escritas. Unha lista de prezos que só existe como imaxe, unha páxina de tratamento que nunca di se é co seguro ou privado, ou unha páxina que só di «explicarémoslle os prezos na consulta» non lle dan á IA nada que citar ante unha pregunta con condicións.",
+    "A medicina estética tamén xera moitas queixas. O Centro Nacional de Asuntos do Consumidor do Xapón rexistrou 6.281 consultas sobre medicina estética en 2023, 10.744 en 2024 e 7.944 en 2025 (datos de PIO-NET a 31 de maio de 2026, páxina actualizada o 31 de xullo de 2026). [Centro Nacional de Asuntos do Consumidor: medicina estética (en xaponés)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Os pacientes queren comprobar prezos e riscos antes de reservar, e pregúntanllo á IA. Publicar prezos e riscos correctos é, ante todo, información para o paciente; a optimización para IA vén despois."
+   ]
+  },
+  {
+   "heading": "O que deixan fóra os artigos mellor posicionados",
+   "paragraphs": [
+    "Se se len os artigos que saen primeiro para «optimización para busca con IA en dermatoloxía», «medical spa ChatGPT» e os seus equivalentes en xaponés, a maioría quedan en «manteña correctas as especialidades, o enderezo e o horario», «engada datos estruturados» e «consiga máis opinións». Algunhas guías en inglés dan limiares como «máis de 50 opinións» sen ningunha fonte.",
+    "Catro puntos que son os que máis importan ás clínicas de pel apenas se trataban, e por iso son o núcleo desta guía:"
+   ],
+   "list": [
+    "Como separar na páxina a atención co seguro da atención privada.",
+    "Onde e como publicar os prezos e os principais riscos e efectos secundarios dos tratamentos privados, e como se relaciona isto coas normas de publicidade.",
+    "Onde os consellos xenéricos de «recolla opinións» e «mostre fotos de casos» chocan coas normas de publicidade médica do Xapón.",
+    "Configuración concreta de WordPress (tipo, servizos con prezos, FAQ só da páxina) e como comprobar se aparece."
+   ]
+  },
+  {
+   "heading": "Separe a atención co seguro da privada",
+   "paragraphs": [
+    "O erro máis habitual da IA cunha clínica de pel prodúcese cando unha mesma etiqueta — «tratamento da acne», «tratamento de manchas» — inclúe opcións co seguro e privadas. Indique na parte superior de cada páxina de síntoma ou de tratamento se é co seguro ou privado. O Q&A do ministerio tamén di que os tratamentos privados con produtos aprobados (pon como exemplos os implantes dentais e o branqueamento) deben indicar que son privados e dar o seu prezo de referencia. [MHLW: Q&A sobre as directrices de publicidade médica (PDF, en xaponés)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Páxina",
+     "Que escribir",
+     "Que tende a interpretar mal a IA"
+    ],
+    "rows": [
+     [
+      "Páxinas de síntomas (acne, eccema, dermatite, pé de atleta, verrugas)",
+      "Que se trata co seguro, as opcións privadas indicadas como privadas, cando ir ao médico",
+      "Tratamentos co seguro e privados listados xuntos sen distinción"
+     ],
+     [
+      "Páxinas de tratamento (láser, peelings, inxectables, depilación)",
+      "Que é privado, prezo por sesión e por tratamento completo (con impostos ou sen eles), número habitual de sesións, principais riscos e efectos secundarios, tempo de recuperación",
+      "Só «prezos explicados na consulta»"
+     ],
+     [
+      "Lista de prezos",
+      "Táboas separadas para seguro e privado, data da última actualización, como funcionan as tarifas de consulta, seguimento e medicación",
+      "Unha lista de prezos só en imaxe, ou só prezos de promoción"
+     ],
+     [
+      "Información da clínica (inicio, como chegar)",
+      "Horarios e normas de reserva separados para dermatoloxía xeral e estética se son distintos, franxa de idade atendida",
+      "O horario de estética presentado como horario xeral da clínica"
+     ],
+     [
+      "Perfís dos médicos",
+      "Nome, ámbito e titulacións (dentro do que se pode anunciar)",
+      "Superlativos e comparacións (véxase máis abaixo)"
+     ]
+    ],
+    "caption": "Baseado nas preguntas que fan os pacientes sobre as clínicas de pel e nas carencias atopadas nos artigos mellor posicionados."
+   },
+   "after": [
+    "Se a dermatoloxía xeral e a estética teñen horarios ou normas de reserva distintos, dea a cada unha a súa propia táboa de horarios para que a IA non as mesture, e indique para cada unha se se atende sen cita."
+   ]
+  },
+  {
+   "heading": "Páxinas de tratamentos privados: prezos e principais riscos na mesma páxina",
+   "paragraphs": [
+    "Segundo as normas de publicidade médica do Xapón, un sitio web que os pacientes buscan por si mesmos pode explicar en detalle aspectos que normalmente non se poden anunciar, sempre que cumpra determinadas condicións (o chamado «levantamento da restrición»). O Q&A do ministerio di que, na atención privada, esas condicións inclúen describir o tratamento que normalmente se precisa e os seus prezos, e os seus principais riscos e efectos secundarios — e que enumerar un ou dous inconvenientes xenéricos non abonda (Q6-12). Outra condición é un punto de contacto para consultas; un número só para reservas ou unha liña de resposta automática non a cumpre (Q6-10). Estes elementos teñen que ser fáciles de ver: un texto moi pequeno ou da mesma cor ca o fondo non conta (Q6-11). [MHLW: Q&A (PDF, en xaponés)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Isto apunta na mesma dirección ca a busca con IA. Cando se lle pregunta á IA polo prezo, a recuperación ou o risco, só pode usar páxinas onde eses datos estean no corpo do texto. Unha páxina de tratamento lese ben nesta orde:"
+   ],
+   "list": [
+    "O nome do tratamento e que é privado.",
+    "Que problema trata (sen prometer resultados).",
+    "Como se fai, duración de cada sesión, número habitual de sesións e intervalo.",
+    "Prezos (por sesión e por tratamento completo, con impostos ou sen eles, extras como anestesia, medicación ou seguimento).",
+    "Principais riscos e efectos secundarios, e tempo de recuperación habitual.",
+    "Quen non pode facelo ou debe ter coidado.",
+    "Un punto de contacto que responda preguntas (teléfono e horario) e a quen chamar se despois hai algún problema.",
+    "A data da última actualización da páxina."
+   ],
+   "after": [
+    "Os tratamentos que usan medicamentos ou dispositivos non aprobados, ou medicamentos aprobados para usos non aprobados, precisan explicacións adicionais. O Q&A di que o uso fóra de indicación se trata igual cos medicamentos non aprobados (Q2-14). Comprobe os elementos que esixen as propias directrices.",
+    "No que respecta concretamente á medicina estética, o informe do grupo de expertos do ministerio (22 de novembro de 2024) pide reforzar a vixilancia da publicidade médica en liña e que as clínicas establezan un contacto para problemas despois do tratamento e informen del aos pacientes. [MHLW: informe do grupo sobre a práctica axeitada da medicina estética (PDF, en xaponés)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Poñer un contacto de seguimento posterior en cada páxina de tratamento tamén vai nesa dirección."
+   ]
+  },
+  {
+   "heading": "Opinións e fotos de casos: onde os consellos xenéricos sobre IA chocan coas normas",
+   "paragraphs": [
+    "As guías de busca con IA adoitan recomendar recoller opinións e mostrar fotos de antes e despois como proba. Para as institucións médicas do Xapón, isto require coidado."
+   ],
+   "table": {
+    "head": [
+     "Consello habitual",
+     "Como o trata o Q&A do Xapón",
+     "Que facer no seu lugar"
+    ],
+    "rows": [
+     [
+      "Publicar testemuños de pacientes",
+      "Non se poden publicar testemuños sobre o contido ou o efecto do tratamento (Q1-18, Q2-9)",
+      "Explicar os feitos con máis detalle: procedemento, prezos, riscos"
+     ],
+     [
+      "Poñer opinións nas FAQ ou no schema de opinións",
+      "A mesma norma; as opinións que a clínica pagou, pediu ou editou tamén poden entrar nela",
+      "Facer FAQ factuais: «Cóbreo o seguro?», «Cantas sesións fan falta?»"
+     ],
+     [
+      "Mostrar fotos de antes e despois",
+      "Mesmo as fotos só de antes ou só de despois contan como afirmacións sobre o efecto do tratamento e non se poden anunciar (Q2-8, Q3-14)",
+      "Consultar as directrices e a recompilación de casos para saber cando se poden usar fotos"
+     ],
+     [
+      "«O mellor da zona», «sen dor», «resultados garantidos»",
+      "As afirmacións falsas, esaxeradas e comparativas considéranse prohibidas",
+      "Escribir só o que poida afirmar como feito ou con cifras"
+     ]
+    ]
+   },
+   "after": [
+    "Por outra banda, as publicacións nas redes sociais dos propios pacientes ou en sitios de opinións independentes que a clínica non pagou nin pediu non son publicidade (Q2-11). Que a IA as lea ou non, non o controla a clínica; por iso, o camiño seguro é que os datos do seu propio sitio sexan correctos. Hai exemplos recollidos na [recompilación de casos do ministerio (PDF, en xaponés)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Datos estruturados: o tipo Dermatology e un servizo por tratamento",
+   "paragraphs": [
+    "schema.org ten un tipo para a dermatoloxía (comprobado nas definicións de tipos de schema-dts 2.1.0 o 16 de novembro de 2026)."
+   ],
+   "table": {
+    "head": [
+     "Tipo / propiedade",
+     "Significado",
+     "Uso nunha clínica de pel"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "A rama da medicina que trata as enfermidades da pel. É un MedicalBusiness e, polo tanto, un LocalBusiness",
+      "O tipo para unha consulta de dermatoloxía; inclúe enderezo, teléfono e horario de apertura"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Ámbito de exercicio. Os valores inclúen Dermatology e PlasticSurgery",
+      "Se ofrece dermatoloxía xeral e estética, indique só os ámbitos que describen as súas páxinas"
+     ],
+     [
+      "Service con offers",
+      "Un servizo que ofrece e o seu prezo",
+      "Rexistre cada tratamento privado co mesmo prezo ca na páxina"
+     ],
+     [
+      "openingHoursSpecification",
+      "Horario de apertura por día",
+      "Se os horarios de dermatoloxía xeral e de estética son distintos, a táboa da páxina é a referencia e a marcaxe dá o horario principal"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Se se aceptan pacientes novos (propiedade de MedicalOrganization)",
+      "Para os períodos en que non acepta pacientes novos"
+     ]
+    ]
+   },
+   "after": [
+    "Google di que non fan falta datos estruturados especiais para os AI Overviews e funcións similares, e que os datos estruturados deben coincidir co que é visible na páxina. [Google: funcións de IA e o seu sitio web](https://developers.google.com/search/docs/appearance/ai-features) / [Datos estruturados de LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Non poña un prezo só na marcaxe, nin un prezo distinto do da páxina."
+   ]
+  },
+  {
+   "heading": "Configuración nun sitio WordPress dunha clínica de pel",
+   "list": [
+    "Instale e active Nurevo AEO (gratuíto) desde [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO e Slim SEO seguen funcionando igual. A partir da versión 0.9.1 tamén funciona xunto con SEO SIMPLE PACK e VK All in One Expansion Unit sen duplicar datos estruturados.",
+    "No asistente de configuración inicial, escolla «Clinic or dental» (isto define MedicalBusiness). Despois, cambie o campo do tipo de negocio na configuración por Dermatology. O campo acepta calquera nome de tipo de schema.org.",
+    "Comprobe o nome da clínica, o enderezo, o teléfono e a descrición. Só se enchen os campos baleiros a partir da configuración existente; os valores que introduciu nunca se sobrescriben.",
+    "Escriba o horario de apertura só con días e horas, como «Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00». Os horarios separados de estética, os festivos e as últimas horas de admisión van na táboa da propia páxina.",
+    "En servizos, dentro da configuración, rexistre cada tratamento privado. Con nome, descrición, duración, prezo e moeda, cada un publícase como Service cun Offer. Manteña o prezo idéntico ao da páxina e cambie os dous á vez.",
+    "Na barra lateral do editor de cada páxina de tratamento, engada preguntas só desa páxina («Cóbreo o seguro?», «Cantas sesións fan falta?», «Canto dura a recuperación?»). Deixe fóra os testemuños e as respostas que prometen resultados. Marque as páxinas de promocións que non queira listar como «leave this page out of llms.txt».",
+    "Execute o diagnóstico na pantalla de Puntuación AEO e aplique as correccións dun clic. Comprobe como se ve o sitio desde fóra coa [comprobación gratuíta de lexibilidade para IA](/check)."
+   ]
+  },
+  {
+   "heading": "Como engadir medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AEO non xera medicalSpecialty pola súa conta. Para engadilo, use o filtro que modifica os datos estruturados do negocio (webmcp_canary_business_node), no functions.php do seu tema ou nun pequeno plugin. Engada só os ámbitos que describen as súas páxinas."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Lista de comprobación antes de publicar",
+   "list": [
+    "Cada páxina de síntoma e de tratamento indica se é co seguro ou privado.",
+    "As páxinas de tratamentos privados indican o prezo (con impostos ou sen eles, extras), o número habitual de sesións, os principais riscos e efectos secundarios e o tempo de recuperación.",
+    "Móstrase claramente un punto de contacto que responde preguntas — non só para reservas.",
+    "A lista de prezos está en texto, non só en imaxe, e ten data da última actualización.",
+    "Se a dermatoloxía xeral e a estética difiren en horario ou reservas, cada unha está descrita.",
+    "Non hai testemuños, fotos de antes e despois, superlativos nin comparacións no texto, nas FAQ nin nos datos estruturados.",
+    "Os tratamentos con produtos non aprobados ou de uso fóra de indicación inclúen a explicación que esixen as directrices.",
+    "Os prezos dos servizos nos datos estruturados coinciden cos prezos da páxina.",
+    "O nome, o enderezo, o teléfono e o horario coinciden entre os datos estruturados, o Perfil da Empresa en Google e calquera directorio sanitario oficial.",
+    "O llms.txt inclúe a información da clínica, a lista de prezos, os principais tratamentos e as páxinas de como chegar. [Que é llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Como comprobar se aparece nas respostas da IA",
+   "paragraphs": [
+    "Unha vez que as páxinas estean en orde, escriba de cinco a dez preguntas que podería facer un paciente, combinando zona × síntoma × seguro, zona × tratamento × prezo e tratamento × recuperación, e fágallas a ChatGPT e a Perplexity. Anote se a súa clínica aparece polo nome ou polo URL, e se a cobertura do seguro, os prezos e os riscos son correctos. Se a IA cita un prezo equivocado, revise como están escritas a lista de prezos e a páxina do tratamento, e se segue en liña unha páxina de promoción antiga. As respostas da IA cambian dunha execución a outra, así que repita as mesmas preguntas durante varias semanas. O método explícase en [como medir a visibilidade en IA](/guide/measure-ai-visibility).",
+    "Unha análise publicada pola MGMA, a asociación estadounidense de xestión de consultas médicas (maio de 2026, escrita polo fundador dunha empresa de busca con IA), atopou que ningunha das 200 consultas independentes da mostra era mencionada por ChatGPT. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Os países e as condicións son distintos, pero facer realmente as preguntas é o punto de partida.",
+    "Con Nurevo AEO, os plans Free e Standard tamén lle fan a Perplexity, unha vez ao mes, tres preguntas creadas a partir do seu tipo de negocio e zona (sen o nome da clínica) e rexistran se se mencionou a súa clínica ou se citou o seu sitio. O plan Pro (desde 99 USD ao mes) engade a medición de visibilidade en IA en beta: a proporción de respostas de IA nas que aparece a súa clínica, comparada coa competencia e seguida ao longo do tempo (actualmente medida en Perplexity). Ambos analizan mostras de respostas; ningún observa todas as respostas."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Por onde debe empezar unha clínica de dermatoloxía coa busca con IA?",
+   "a": "Empece indicando en cada páxina de síntoma e de tratamento se a atención é co seguro ou privada. Despois, dea a cada páxina de tratamento privado o prezo, o número habitual de sesións, os principais riscos e efectos secundarios e o tempo de recuperación, e faga que o nome, o enderezo, o teléfono e o horario coincidan entre os datos estruturados e o Perfil da Empresa en Google."
+  },
+  {
+   "q": "Unha clínica de estética debe publicar os seus prezos?",
+   "a": "Si. Cando se lle pregunta á IA por un prezo, usa páxinas onde o prezo está escrito no texto. No Xapón, o Q&A do ministerio tamén inclúe o tratamento habitual, os seus prezos e os seus principais riscos e efectos secundarios entre as condicións para explicar en detalle a atención privada nun sitio web."
+  },
+  {
+   "q": "Que tipo de datos estruturados debo usar?",
+   "a": "O tipo Dermatology de schema.org representa unha consulta de dermatoloxía e é un tipo de MedicalBusiness e LocalBusiness. Se tamén ofrece tratamentos estéticos, pode engadir Dermatology e PlasticSurgery como valores de medicalSpecialty. Coincidir coa páxina importa máis ca o tipo."
+  },
+  {
+   "q": "As fotos de antes e despois axudan a que a IA escolla unha clínica?",
+   "a": "Non hai probas verificadas de que o fagan. Segundo as normas de publicidade médica do Xapón, as fotos de antes e despois considéranse afirmacións sobre o efecto do tratamento e están restrinxidas. Consulte as directrices, a recompilación de casos e o centro de saúde local para saber cando se poden usar."
+  },
+  {
+   "q": "As valoracións baixas en sitios de opinións deixarán a miña clínica fóra das respostas da IA?",
+   "a": "Os provedores de IA non publican que peso lle dan a esa información, así que ninguén o pode dicir con certeza. As opinións independentes que a clínica non pediu non son publicidade, pero a clínica non pode publicar no seu sitio opinións que pagou ou pediu. Céntrese en que os datos do seu propio sitio sexan correctos."
+  },
+  {
+   "q": "Nurevo AEO é gratuíto?",
+   "a": "Si. O tipo de negocio, o enderezo, o horario, os servizos con prezos e os datos estruturados de FAQ, o llms.txt, a configuración dos rastrexadores de IA e a Puntuación AEO están no plan gratuíto. Os plans de pagamento engaden o conxunto de regras sempre actualizado (Standard, 20 USD ao mes) e a medición de visibilidade en IA en beta (Pro, desde 99 USD ao mes). [Nurevo AEO en WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Está garantido que a miña clínica sairá en ChatGPT?",
+   "a": "Non. As respostas da IA varían, e ningunha ferramenta nin método pode garantir a aparición nin a posición. O que si pode facer é que os datos da súa clínica sexan lexibles para a IA e seguir comprobando se aparece."
+  }
+ ],
+ "relatedHeading": "Guías relacionadas",
+ "cta": {
+  "heading": "Primeiro, vexa como le a IA o sitio web da súa clínica de pel",
+  "body": "A comprobación gratuíta non require rexistro e mostra o estado dos seus datos estruturados, do llms.txt e do acceso dos rastrexadores de IA. En WordPress, Nurevo AEO enche as carencias de balde.",
+  "label": "Facer a comprobación gratuíta de lexibilidade para IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Obter Nurevo AEO en WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é unha marca de OpenAI, Perplexity de Perplexity AI e Google de Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit e WordPress son marcas dos seus respectivos propietarios. Nurevo non está afiliada a ningunha destas empresas nin conta co seu aval. Este artigo non é asesoramento xurídico nin médico."
+}

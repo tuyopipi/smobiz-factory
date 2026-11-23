@@ -1,0 +1,263 @@
+{
+ "title": "AI-sök för hudkliniker: priser, risker, schema | Nurevo",
+ "description": "AEO för hudläkar- och estetiska hudkliniker: skilj försäkringsvård från egenbetald vård, visa pris och risker per behandling och stäm av ditt schema.",
+ "h1": "AI-sök för hudläkar- och estetiska hudkliniker: så läser AI försäkringsvård och egenbetald vård, priser och risker rätt",
+ "lead": "Det mest verkningsfulla en hudläkar- eller estetisk hudklinik kan göra för AI-sök är att i text på varje behandlingssida ange om behandlingen täcks av försäkringen, vad den kostar om den inte gör det och vilka de viktigaste riskerna och återhämtningstiden är. När AI svarar på en fråga med villkor – ”en hudläkare nära stationen som behandlar akne via försäkringen”, ”vad kostar laserbehandling av pigmentfläckar och hur lång är återhämtningstiden?” – förlitar den sig på sidor där de villkoren går att läsa. Därefter följer du reglerna för marknadsföring av hälso- och sjukvård (begränsningar för patientomdömen och före- och efterbilder, uppgifter om priser och risker för egenbetald vård) och publicerar samma uppgifter i strukturerad data, llms.txt och din Google-företagsprofil.",
+ "intro": [
+  "Skriven den 16 november 2026 (JST). Samma dag kontrollerades frågorna och svaren från det japanska ministeriet för hälsa, arbete och välfärd (MHLW) om riktlinjerna för marknadsföring av hälso- och sjukvård, rapporten från ministeriets expertpanel om estetisk medicin, siffrorna från National Consumer Affairs Center och schema.org:s typer (enligt schema-dts 2.1.0). De citerade reglerna är japanska; kontrollera reglerna där du är verksam.",
+  "AI-svar ändras från dag till dag och beroende på hur en fråga formuleras. Stegen här gör klinikens uppgifter läsbara för AI. De garanterar inte att en AI nämner din klinik eller rankar den någonstans. Den här artikeln är inte juridisk rådgivning."
+ ],
+ "sections": [
+  {
+   "heading": "Vad patienter frågar AI om hudkliniker",
+   "paragraphs": [
+    "Frågor om dermatologi delas in i två grupper. Frågor om allmän dermatologi innehåller ett symtom, en patient, en tid och frågan om försäkring: ”en hudläkare som tar emot barn med eksem”, ”en hudklinik som har öppet på lördagar”, ”täcks behandling av fotsvamp av försäkringen?”. Estetiska frågor gäller pris, antal behandlingar, återhämtningstid och risk: ”normalpris för laserbehandling av pigmentfläckar”, ”hur många behandlingar krävs för medicinsk hårborttagning?”, ”behandling av aknefärrar med kort återhämtningstid”.",
+    "I båda fallen kan AI bara använda en sida där villkoren står nedskrivna. En prislista som bara finns som bild, en behandlingssida som aldrig säger om det är försäkringsvård eller egenbetald vård, eller en sida som bara säger ”vi berättar om priserna vid konsultationen” ger AI inget att citera för en fråga med villkor.",
+    "Estetisk medicin ger dessutom upphov till många klagomål. Japans National Consumer Affairs Center registrerade 6 281 rådgivningsärenden om estetisk medicin 2023, 10 744 under 2024 och 7 944 under 2025 (PIO-NET-siffror per den 31 maj 2026, sidan uppdaterad den 31 juli 2026). [National Consumer Affairs Center: estetisk medicin (japanska)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Patienter vill kontrollera priser och risker innan de bokar, och de frågar AI om dem. Att publicera korrekta priser och risker är i första hand patientinformation och först i andra hand AI-optimering."
+   ]
+  },
+  {
+   "heading": "Vad de högst rankade artiklarna utelämnar",
+   "paragraphs": [
+    "Läser man artiklarna som rankar för ”AI search optimization for dermatology”, ”medical spa ChatGPT” och deras japanska motsvarigheter stannar de flesta vid ”håll specialiteter, adress och öppettider korrekta”, ”lägg till strukturerad data” och ”skaffa fler omdömen”. Vissa engelskspråkiga guider anger tröskelvärden som ”50+ omdömen” utan källa.",
+    "Fyra punkter som betyder mest för hudkliniker berördes knappt, så de är kärnan i den här guiden:"
+   ],
+   "list": [
+    "Hur man skiljer försäkringsvård från egenbetald vård på sidan.",
+    "Var och hur man publicerar priser och de viktigaste riskerna och biverkningarna för egenbetalda behandlingar, och hur det hänger ihop med marknadsföringsreglerna.",
+    "Var de generella råden att ”samla omdömen” och ”visa fallbilder” krockar med Japans regler för marknadsföring av hälso- och sjukvård.",
+    "Konkreta WordPress-inställningar (typ, tjänster med priser, FAQ bara för sidan) och hur du kontrollerar om du syns."
+   ]
+  },
+  {
+   "heading": "Skilj försäkringsvård från egenbetald vård",
+   "paragraphs": [
+    "AI har oftast fel om en hudklinik när samma benämning – ”aknebehandling”, ”pigmentbehandling” – täcker både försäkrade och egenbetalda alternativ. Ange högst upp på varje symtom- eller behandlingssida om det är försäkringsvård eller egenbetald vård. Ministeriets frågor och svar säger också att egenbetalda behandlingar med godkända produkter (som exempel nämns tandimplantat och tandblekning) ska ange att de är egenbetalda och uppge standardpriset. [MHLW: frågor och svar om riktlinjerna för marknadsföring av hälso- och sjukvård (PDF, japanska)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Sida",
+     "Vad som ska stå",
+     "Vad AI ofta läser fel"
+    ],
+    "rows": [
+     [
+      "Symtomsidor (akne, eksem, dermatit, fotsvamp, vårtor)",
+      "Vad som behandlas via försäkringen, eventuella egenbetalda alternativ tydligt angivna som egenbetalda, när man bör söka läkare",
+      "Försäkrade och egenbetalda behandlingar listade tillsammans utan åtskillnad"
+     ],
+     [
+      "Behandlingssidor (laser, peeling, injektioner, hårborttagning)",
+      "Att den är egenbetald, pris per behandling och per kur (inkl. eller exkl. moms), vanligt antal behandlingar, viktigaste risker och biverkningar, återhämtningstid",
+      "Bara ”priserna förklaras vid konsultationen”"
+     ],
+     [
+      "Prislista",
+      "Separata tabeller för försäkringsvård och egenbetald vård, datum för senaste uppdatering, hur avgifter för konsultation, återbesök och läkemedel fungerar",
+      "En prislista som bara är en bild, eller bara kampanjpriser"
+     ],
+     [
+      "Klinikinformation (startsida, hitta hit)",
+      "Separata öppettider och bokningsregler för allmän och estetisk dermatologi om de skiljer sig, vilka åldrar som tas emot",
+      "Tider för estetiska besök visade som klinikens allmänna öppettider"
+     ],
+     [
+      "Läkarprofiler",
+      "Namn, område och kvalifikationer (inom ramen för vad som får marknadsföras)",
+      "Superlativ och jämförelser (se nedan)"
+     ]
+    ],
+    "caption": "Baserat på de frågor patienter ställer om hudkliniker och luckorna i de högst rankade artiklarna."
+   },
+   "after": [
+    "Om allmän och estetisk dermatologi har olika öppettider eller bokningsregler, ge var och en sin egen tidstabell så att AI inte slår ihop dem, och ange för var och en om man tar emot patienter utan tidsbokning."
+   ]
+  },
+  {
+   "heading": "Sidor för egenbetalda behandlingar: priser och viktigaste risker på samma sida",
+   "paragraphs": [
+    "Enligt Japans regler för marknadsföring av hälso- och sjukvård får en webbplats som patienter själva söker upp förklara sådant i detalj som normalt inte får marknadsföras, om vissa villkor är uppfyllda (så kallad ”hävning av begränsningen”). Ministeriets frågor och svar säger att villkoren för egenbetald vård omfattar en beskrivning av den behandling som normalt krävs och dess priser samt dess viktigaste risker och biverkningar – och att det inte räcker att nämna en eller två allmänna nackdelar (Q6-12). Ett annat villkor är en kontaktpunkt för frågor; ett nummer enbart för bokning eller en linje med automatiskt svar uppfyller inte villkoret (Q6-10). Uppgifterna ska vara lätta att se: mycket liten text eller text i samma färg som bakgrunden räknas inte (Q6-11). [MHLW: frågor och svar (PDF, japanska)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Det pekar åt samma håll som AI-sök. När AI får frågor om pris, återhämtning eller risk kan den bara använda sidor där det står i brödtexten. En behandlingssida läses bra i den här ordningen:"
+   ],
+   "list": [
+    "Behandlingens namn, och att den är egenbetald.",
+    "Vilket besvär den riktar sig mot (utan att lova resultat).",
+    "Hur den utförs, tid per behandling, vanligt antal behandlingar och intervall.",
+    "Priser (per behandling och per kur, inkl. eller exkl. moms, tillägg som bedövning, läkemedel eller återbesök).",
+    "Viktigaste risker och biverkningar, och normal återhämtningstid.",
+    "Vem som inte kan få behandlingen eller bör vara försiktig.",
+    "En kontaktpunkt som svarar på frågor (telefonnummer och tider), och vem man ringer om problem uppstår efteråt.",
+    "Datum då sidan senast uppdaterades."
+   ],
+   "after": [
+    "Behandlingar med ej godkända läkemedel eller produkter, eller med godkända läkemedel för ej godkända ändamål, kräver ytterligare förklaring. Frågorna och svaren säger att off label-användning behandlas på samma sätt som ej godkända läkemedel (Q2-14). Kontrollera de punkter som riktlinjerna själva kräver.",
+    "När det gäller estetisk medicin specifikt efterlyser rapporten från ministeriets expertpanel (22 november 2024) skärpt övervakning av marknadsföring av hälso- och sjukvård på nätet och att kliniker inrättar en kontaktpunkt för problem efter behandling och informerar patienterna om den. [MHLW: rapport från panelen om lämplig praxis inom estetisk medicin (PDF, japanska)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). En kontaktpunkt för eftervård på varje behandlingssida ligger också i linje med det."
+   ]
+  },
+  {
+   "heading": "Omdömen och fallbilder: där generella AI-råd krockar med reglerna",
+   "paragraphs": [
+    "Guider om AI-sök rekommenderar ofta att samla omdömen och visa före- och efterbilder som bevis. För vårdinrättningar i Japan kräver det försiktighet."
+   ],
+   "table": {
+    "head": [
+     "Vanligt råd",
+     "Hur Japans frågor och svar behandlar det",
+     "Vad du gör i stället"
+    ],
+    "rows": [
+     [
+      "Publicera patientomdömen",
+      "Omdömen om behandlingens innehåll eller effekt får inte publiceras (Q1-18, Q2-9)",
+      "Förklara fakta mer utförligt: förlopp, priser, risker"
+     ],
+     [
+      "Lägg omdömen i din FAQ eller ditt review-schema",
+      "Samma regel; omdömen som kliniken betalat för, bett om eller redigerat kan också omfattas",
+      "Gör FAQ:n saklig: ”Täcks det av försäkringen?”, ”Hur många behandlingar?”"
+     ],
+     [
+      "Visa före- och efterbilder",
+      "Även bilder enbart före eller enbart efter räknas som påståenden om behandlingens effekt och får inte marknadsföras (Q2-8, Q3-14)",
+      "Kontrollera i riktlinjerna och exempelsamlingen när bilder får användas"
+     ],
+     [
+      "”Bäst i området”, ”smärtfritt”, ”garanterat resultat”",
+      "Falska, överdrivna och jämförande påståenden behandlas som förbjudna",
+      "Skriv bara det du kan belägga som fakta eller siffror"
+     ]
+    ]
+   },
+   "after": [
+    "Däremot är inlägg i patienters egna sociala medier eller på oberoende omdömessajter som kliniken inte har betalat för eller bett om inte marknadsföring (Q2-11). Om AI läser dem är inget en klinik styr över, så det säkra steget är att göra uppgifterna på den egna webbplatsen korrekta. Exempel finns samlade i [ministeriets exempelsamling (PDF, japanska)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Strukturerad data: typen Dermatology och en Service per behandling",
+   "paragraphs": [
+    "schema.org har en typ för dermatologi (kontrollerad i typdefinitionerna i schema-dts 2.1.0 den 16 november 2026)."
+   ],
+   "table": {
+    "head": [
+     "Typ / egenskap",
+     "Betydelse",
+     "Användning för en hudklinik"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Den gren av medicinen som behandlar hudsjukdomar. En MedicalBusiness och därmed en LocalBusiness",
+      "Typen för en hudläkarmottagning; den bär adress, telefon och öppettider"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Verksamhetsområde. Värden inkluderar Dermatology och PlasticSurgery",
+      "Erbjuder du både allmän och estetisk dermatologi, ange bara de områden dina sidor beskriver"
+     ],
+     [
+      "Service med offers",
+      "En tjänst du tillhandahåller och dess pris",
+      "Registrera varje egenbetald behandling med samma pris som på sidan"
+     ],
+     [
+      "openingHoursSpecification",
+      "Öppettider per dag",
+      "Om allmänna och estetiska tider skiljer sig är tabellen på sidan styrande och markeringen anger de huvudsakliga öppettiderna"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Om nya patienter tas emot (en egenskap hos MedicalOrganization)",
+      "För perioder då du inte tar emot nya patienter"
+     ]
+    ]
+   },
+   "after": [
+    "Google säger att ingen särskild strukturerad data behövs för AI Overviews och liknande funktioner, och att strukturerad data ska stämma med det som syns på sidan. [Google: AI-funktioner och din webbplats](https://developers.google.com/search/docs/appearance/ai-features) / [Strukturerad data för LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Lägg inte ett pris bara i markeringen, eller ett pris som skiljer sig från sidan."
+   ]
+  },
+  {
+   "heading": "Konfigurera en hudkliniks WordPress-webbplats",
+   "list": [
+    "Installera och aktivera Nurevo AEO (gratis) från [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO och Slim SEO fortsätter att fungera som vanligt. Från 0.9.1 fungerar det även tillsammans med SEO SIMPLE PACK och VK All in One Expansion Unit utan att duplicera strukturerad data.",
+    "Välj ”Klinik eller tandvård” i installationsguiden vid första start (det ställer in MedicalBusiness). Ändra sedan fältet för verksamhetstyp i inställningarna till Dermatology. Fältet accepterar alla typnamn från schema.org.",
+    "Kontrollera klinikens namn, adress, telefon och beskrivning. Bara tomma fält fylls i från dina befintliga inställningar; värden du har angett skrivs aldrig över.",
+    "Skriv öppettider bara som dagar och tider, till exempel ”Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00”. Separata estetiska tider, helgdagar och sista inskrivningstider hör hemma i sidans egen tabell.",
+    "Registrera varje egenbetald behandling under tjänster i inställningarna. Med namn, beskrivning, varaktighet, pris och valuta publiceras varje behandling som en Service med ett Offer. Håll priset identiskt med sidan och ändra båda samtidigt.",
+    "Lägg i redigerarens sidopanel på varje behandlingssida till frågor bara för den sidan (”Täcks det av försäkringen?”, ”Hur många behandlingar?”, ”Hur lång är återhämtningstiden?”). Utelämna patientomdömen och svar som lovar resultat. Markera kampanjsidor som du inte vill ha listade med ”utelämna den här sidan från llms.txt”.",
+    "Kör diagnosen på skärmen för AEO-poäng och tillämpa åtgärderna med ett klick. Kontrollera hur webbplatsen ser ut utifrån med [den kostnadsfria kontrollen av AI-läsbarhet](/check)."
+   ]
+  },
+  {
+   "heading": "Lägga till medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AEO skriver inte ut medicalSpecialty av sig självt. För att lägga till det använder du filtret som ändrar verksamhetens strukturerade data (webmcp_canary_business_node), i temats functions.php eller i ett litet tillägg. Lägg bara till de områden dina sidor beskriver."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Checklista innan du publicerar",
+   "list": [
+    "Varje symtom- och behandlingssida anger om det är försäkringsvård eller egenbetald vård.",
+    "Sidor för egenbetalda behandlingar anger pris (inkl. eller exkl. moms, tillägg), vanligt antal behandlingar, viktigaste risker och biverkningar samt återhämtningstid.",
+    "En kontaktpunkt som svarar på frågor – inte bara för bokning – visas tydligt.",
+    "Prislistan är text, inte bara en bild, och har ett datum för senaste uppdatering.",
+    "Om allmän och estetisk dermatologi skiljer sig i öppettider eller bokning är båda utskrivna.",
+    "Inga patientomdömen, före- och efterbilder, superlativ eller jämförelser förekommer i brödtext, FAQ eller strukturerad data.",
+    "Behandlingar med ej godkända produkter eller off label-användning har den förklaring som riktlinjerna kräver.",
+    "Priserna på tjänsterna i den strukturerade datan stämmer med priserna på sidan.",
+    "Namn, adress, telefon och öppettider stämmer överens i strukturerad data, Google-företagsprofilen och varje officiell vårdkatalog.",
+    "llms.txt listar din klinikinformation, prislista, viktigaste behandlingar och vägbeskrivningssidor. [Vad är llms.txt?](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Kontrollera om du syns i AI-svar",
+   "paragraphs": [
+    "När sidorna är i ordning, skriv fem till tio frågor som en patient skulle kunna ställa – kombinationer av område × symtom × försäkring, område × behandling × pris och behandling × återhämtningstid – och ställ dem till ChatGPT och Perplexity. Notera om din klinik syns med namn eller URL, och om försäkringsstatus, priser och risker anges korrekt. Om AI anger ett felaktigt pris, kontrollera hur prislistan och behandlingssidan är skrivna och om en gammal kampanjsida fortfarande ligger ute. AI-svar ändras mellan körningar, så ställ samma frågor igen under flera veckor. Metoden beskrivs i [så mäter du AI-synlighet](/guide/measure-ai-visibility).",
+    "En analys publicerad av MGMA, den amerikanska branschorganisationen för mottagningsledning (maj 2026, skriven av grundaren till ett företag inom AI-sök), fann att ingen av de 200 oberoende mottagningarna i urvalet nämndes av ChatGPT. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Länder och förutsättningar skiljer sig, men att faktiskt ställa frågorna är där man börjar.",
+    "Med Nurevo AEO ställer planerna Free och Standard dessutom en gång i månaden tre frågor till Perplexity som bygger på din verksamhetstyp och ditt område (utan klinikens namn) och registrerar om kliniken nämndes eller webbplatsen citerades. Planen Pro (från USD 99 per månad) lägger till mätning av AI-synlighet i beta: andelen AI-svar där din klinik syns, jämfört med konkurrenter och följd över tid (för närvarande mätt på Perplexity). Båda tittar på urval av svar; ingen av dem ser varje svar."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Var ska en hudklinik börja med AI-sök?",
+   "a": "Börja med att ange på varje symtom- och behandlingssida om vården är försäkrad eller egenbetald. Ge sedan varje sida för egenbetald behandling pris, vanligt antal behandlingar, viktigaste risker och biverkningar samt återhämtningstid, och se till att namn, adress, telefon och öppettider stämmer överens i strukturerad data och din Google-företagsprofil."
+  },
+  {
+   "q": "Bör en estetisk hudklinik publicera sina priser?",
+   "a": "Ja. När AI får frågor om pris använder den sidor där priset står i texten. I Japan räknar ministeriets frågor och svar dessutom upp den vanliga behandlingen, dess priser och dess viktigaste risker och biverkningar bland villkoren för att utförligt förklara egenbetald vård på en webbplats."
+  },
+  {
+   "q": "Vilken typ av strukturerad data ska jag använda?",
+   "a": "schema.org:s typ Dermatology representerar en hudläkarmottagning och är en sorts MedicalBusiness och LocalBusiness. Om du även erbjuder estetiska behandlingar kan du lägga till Dermatology och PlasticSurgery som värden för medicalSpecialty. Att det stämmer med sidan är viktigare än typen."
+  },
+  {
+   "q": "Hjälper före- och efterbilder en klinik att väljas av AI?",
+   "a": "Det finns inga verifierade belägg för det. Enligt Japans regler för marknadsföring av hälso- och sjukvård räknas före- och efterbilder som påståenden om behandlingens effekt och är begränsade. Kontrollera riktlinjerna, exempelsamlingen och din lokala hälsocentral för när de får användas."
+  },
+  {
+   "q": "Håller låga betyg på omdömessajter min klinik borta från AI-svar?",
+   "a": "AI-leverantörer publicerar inte hur stor vikt de lägger vid sådan information, så ingen kan säga säkert. Oberoende omdömen som kliniken inte bett om är inte marknadsföring, men kliniken får inte publicera omdömen den betalat för eller bett om på sin egen webbplats. Fokusera på att göra uppgifterna på din egen webbplats korrekta."
+  },
+  {
+   "q": "Är Nurevo AEO gratis?",
+   "a": "Ja. Strukturerad data för verksamhetstyp, adress, öppettider, tjänster med priser och FAQ samt llms.txt, inställningar för AI-crawlers och AEO-poäng ingår i gratisplanen. Betalplanerna lägger till den alltid aktuella regeluppsättningen (Standard, USD 20 per månad) och mätning av AI-synlighet i beta (Pro, från USD 99 per månad). [Nurevo AEO på WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Är det garanterat att min klinik syns i ChatGPT?",
+   "a": "Nej. AI-svar varierar, och inget verktyg eller någon metod kan garantera synlighet eller placering. Det du kan göra är att göra klinikens uppgifter läsbara för AI och fortsätta kontrollera om du syns."
+  }
+ ],
+ "relatedHeading": "Relaterade guider",
+ "cta": {
+  "heading": "Se först hur AI läser din hudkliniks webbplats",
+  "body": "Den kostnadsfria kontrollen kräver ingen registrering och visar läget för din strukturerade data, llms.txt och AI-crawlers åtkomst. På WordPress fyller Nurevo AEO luckorna gratis.",
+  "label": "Kör den kostnadsfria kontrollen av AI-läsbarhet",
+  "href": "/check",
+  "secondary": {
+   "label": "Hämta Nurevo AEO på WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT är ett varumärke som tillhör OpenAI, Perplexity tillhör Perplexity AI och Google tillhör Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit och WordPress är varumärken som tillhör respektive ägare. Nurevo är inte knutet till eller godkänt av något av dessa företag. Den här artikeln är inte juridisk eller medicinsk rådgivning."
+}

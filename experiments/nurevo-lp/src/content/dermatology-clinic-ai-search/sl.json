@@ -1,0 +1,263 @@
+{
+ "title": "Iskanje z UI za dermatološke klinike: cene, tveganja | Nurevo",
+ "description": "AEO za dermatološke in estetske klinike: ločite storitve v breme zavarovanja od samoplačniških, pri vsakem posegu objavite cene in glavna tveganja ter uskladite schema.",
+ "h1": "Iskanje z UI za dermatološke in estetske klinike: kako doseči, da UI pravilno razume, kaj krije zavarovanje, kaj je samoplačniško, cene in tveganja",
+ "lead": "Najučinkovitejše, kar lahko dermatološka ali estetska klinika naredi za iskanje z UI, je, da na strani vsakega posega v besedilu navede, ali ga krije zdravstveno zavarovanje, koliko stane, če ga ne, ter kakšna so glavna tveganja in čas okrevanja. Ko UI odgovarja na vprašanje s pogoji — „dermatolog blizu postaje, ki zdravi akne v okviru zavarovanja“, „koliko stane lasersko odstranjevanje pigmentnih madežev in kako dolgo traja okrevanje“ —, se opira na strani, na katerih je mogoče te pogoje prebrati. Nato upoštevajte pravila oglaševanja v zdravstvu (omejitve pri mnenjih pacientov in fotografijah pred in po, razkritje cen in tveganj pri samoplačniških storitvah) in iste podatke objavite v strukturiranih podatkih, v datoteki llms.txt in v Profilu podjetja v Googlu.",
+ "intro": [
+  "Napisano 16. novembra 2026 (JST). Tisti dan so bili preverjeni vprašanja in odgovori (Q&A) japonskega Ministrstva za zdravje, delo in socialne zadeve k njegovim smernicam za oglaševanje v zdravstvu, poročilo ministrske strokovne skupine o estetski medicini, podatki Nacionalnega centra za potrošniške zadeve in tipi schema.org (kot so opredeljeni v schema-dts 2.1.0). Navedena pravila so japonska; preverite pravila, ki veljajo tam, kjer delujete.",
+  "Odgovori UI se spreminjajo iz dneva v dan in glede na to, kako je vprašanje postavljeno. Koraki v tem članku naredijo podatke o vaši kliniki berljive za UI. Ne zagotavljajo, da bo UI omenila vašo kliniko ali jo uvrstila na katero koli mesto. Ta članek ni pravni nasvet."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj pacienti sprašujejo UI o kožnih klinikah",
+   "paragraphs": [
+    "Dermatološka vprašanja se delijo v dve skupini. Vprašanja iz splošne dermatologije vsebujejo simptom, pacienta, čas in vprašanje zavarovanja: „dermatolog, ki sprejema otroke z ekcemom“, „kožna ambulanta, odprta v soboto“, „ali zavarovanje krije zdravljenje atletskega stopala?“. Estetska vprašanja se nanašajo na ceno, število obravnav, okrevanje in tveganje: „običajna cena laserskega odstranjevanja pigmentnih madežev“, „koliko obravnav zahteva medicinska laserska epilacija?“, „zdravljenje brazgotin po aknah s kratkim okrevanjem“.",
+    "V obeh primerih lahko UI uporabi le stran, na kateri so ti pogoji zapisani. Cenik, ki obstaja samo kot slika, stran posega, ki nikjer ne pove, ali je v breme zavarovanja ali samoplačniški, ali stran, ki pravi le „cene vam pojasnimo ob posvetu“, UI ne dajo ničesar, kar bi lahko navedla pri vprašanju s pogoji.",
+    "Estetska medicina je tudi vir številnih pritožb. Japonski Nacionalni center za potrošniške zadeve je zabeležil 6.281 prijav v zvezi z estetsko medicino v letu 2023, 10.744 v letu 2024 in 7.944 v letu 2025 (podatki PIO-NET na dan 31. maja 2026, stran posodobljena 31. julija 2026). [Nacionalni center za potrošniške zadeve: estetska medicina (v japonščini)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Pacienti želijo cene in tveganja preveriti, preden se naročijo, in o tem sprašujejo UI. Objava točnih cen in tveganj je najprej informacija za paciente, šele nato optimizacija za UI."
+   ]
+  },
+  {
+   "heading": "Kaj najbolje uvrščeni članki izpuščajo",
+   "paragraphs": [
+    "Ob branju člankov, ki so najvišje uvrščeni za „optimizacija za iskanje z UI v dermatologiji“, „medical spa ChatGPT“ in njihove japonske ustreznice, je vidno, da se večina ustavi pri „skrbite za pravilne specialnosti, naslov in delovni čas“, „dodajte strukturirane podatke“ in „pridobite več mnenj“. Nekateri angleški vodniki navajajo pragove, kot je „več kot 50 mnenj“, brez kakršnega koli vira.",
+    "Štiri točke, ki so za kožne klinike najpomembnejše, so bile tam komaj omenjene, zato so jedro tega vodnika:"
+   ],
+   "list": [
+    "Kako na strani ločiti storitve v breme zavarovanja od samoplačniških.",
+    "Kje in kako objaviti cene ter glavna tveganja in neželene učinke samoplačniških posegov in kako je to povezano s pravili oglaševanja.",
+    "Kje splošni nasveti „zbirajte mnenja“ in „pokažite fotografije primerov“ trčijo ob japonska pravila oglaševanja v zdravstvu.",
+    "Konkretne nastavitve v WordPressu (tip, storitve s cenami, FAQ samo za posamezno stran) in kako preveriti, ali se pojavljate."
+   ]
+  },
+  {
+   "heading": "Ločite storitve v breme zavarovanja od samoplačniških",
+   "paragraphs": [
+    "UI se pri kožni kliniki najpogosteje zmoti, ko ista oznaka — „zdravljenje aken“, „zdravljenje pigmentacij“ — zajema možnosti v breme zavarovanja in samoplačniške. Na vrhu vsake strani simptoma ali posega navedite, ali je v breme zavarovanja ali samoplačniški. Q&A ministrstva tudi pravi, da morajo samoplačniški posegi z odobrenimi izdelki (kot primera navaja zobne vsadke in beljenje) navesti, da so samoplačniški, in standardno ceno. [MHLW: Q&A k smernicam za oglaševanje v zdravstvu (PDF, v japonščini)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Stran",
+     "Kaj napisati",
+     "Kaj UI pogosto napačno razume"
+    ],
+    "rows": [
+     [
+      "Strani simptomov (akne, ekcem, dermatitis, atletsko stopalo, bradavice)",
+      "Kaj se zdravi v okviru zavarovanja, samoplačniške možnosti, izrecno označene kot samoplačniške, kdaj obiskati zdravnika",
+      "Posegi v breme zavarovanja in samoplačniški, navedeni skupaj brez razlikovanja"
+     ],
+     [
+      "Strani posegov (laser, pilingi, injekcije, odstranjevanje dlak)",
+      "Da je poseg samoplačniški, cena na obravnavo in na paket (z davkom ali brez), običajno število obravnav, glavna tveganja in neželeni učinki, čas okrevanja",
+      "Samo „cene pojasnimo ob posvetu“"
+     ],
+     [
+      "Cenik",
+      "Ločeni tabeli za storitve v breme zavarovanja in samoplačniške, datum zadnje posodobitve, kako delujejo stroški posveta, kontrole in zdravil",
+      "Cenik samo kot slika ali samo akcijske cene"
+     ],
+     [
+      "Podatki o kliniki (domača stran, dostop)",
+      "Ločen delovni čas in pravila naročanja za splošno in estetsko dermatologijo, če se razlikujejo, starostni razpon pacientov",
+      "Delovni čas estetske ambulante, prikazan kot splošni delovni čas klinike"
+     ],
+     [
+      "Profili zdravnikov",
+      "Ime, področje in kvalifikacije (v okviru tega, kar se sme oglaševati)",
+      "Presežniki in primerjave (glejte spodaj)"
+     ]
+    ],
+    "caption": "Na podlagi vprašanj, ki jih pacienti postavljajo o kožnih klinikah, in vrzeli v najbolje uvrščenih člankih."
+   },
+   "after": [
+    "Če imata splošna in estetska dermatologija različen delovni čas ali pravila naročanja, dajte vsaki svojo tabelo delovnega časa, da ju UI ne združi, in pri vsaki navedite, ali sprejemate tudi nenaročene paciente."
+   ]
+  },
+  {
+   "heading": "Strani samoplačniških posegov: cene in glavna tveganja na isti strani",
+   "paragraphs": [
+    "Po japonskih pravilih oglaševanja v zdravstvu lahko spletno mesto, ki ga pacienti poiščejo sami, podrobno pojasni stvari, ki jih običajno ni dovoljeno oglaševati, če izpolnjuje določene pogoje (t. i. „odprava omejitve“). Q&A ministrstva pravi, da ti pogoji pri samoplačniških storitvah vključujejo opis običajno potrebnega zdravljenja in njegovih cen ter njegovih glavnih tveganj in neželenih učinkov — in da navedba ene ali dveh splošnih slabosti ne zadošča (Q6-12). Drug pogoj je kontaktna točka za vprašanja; številka samo za naročanje ali linija s samodejnim odgovorom ga ne izpolnjuje (Q6-10). Ti podatki morajo biti dobro vidni: zelo drobno besedilo ali besedilo v barvi ozadja ne šteje (Q6-11). [MHLW: Q&A (PDF, v japonščini)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "To kaže v isto smer kot iskanje z UI. Ko UI dobi vprašanje o ceni, okrevanju ali tveganju, lahko uporabi le strani, kjer so ti podatki v besedilu. Stran posega se dobro bere v tem vrstnem redu:"
+   ],
+   "list": [
+    "Ime posega in navedba, da je samoplačniški.",
+    "Katero težavo obravnava (brez obljubljanja rezultatov).",
+    "Kako se izvaja, trajanje ene obravnave, običajno število obravnav in presledek med njimi.",
+    "Cene (na obravnavo in na paket, z davkom ali brez, doplačila, npr. za anestetik, zdravila ali kontrolo).",
+    "Glavna tveganja in neželeni učinki ter običajni čas okrevanja.",
+    "Kdo posega ne sme opraviti ali mora biti previden.",
+    "Kontaktna točka, ki odgovarja na vprašanja (telefonska številka in ure), ter koga poklicati, če se pozneje pojavi težava.",
+    "Datum zadnje posodobitve strani."
+   ],
+   "after": [
+    "Posegi z neodobrenimi zdravili ali pripomočki ali z odobrenimi zdravili za neodobrene namene zahtevajo dodatna pojasnila. Q&A pravi, da se uporaba zunaj odobrenih indikacij (off-label) obravnava enako kot neodobrena zdravila (Q2-14). Zahtevane podatke preverite v samih smernicah.",
+    "Glede estetske medicine posebej poročilo ministrske strokovne skupine (22. novembra 2024) poziva k strožjemu spremljanju spletnega oglaševanja v zdravstvu in k temu, da klinike vzpostavijo kontakt za težave po posegu ter o njem obvestijo paciente. [MHLW: poročilo skupine o ustrezni praksi v estetski medicini (PDF, v japonščini)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Navedba kontakta za poznejšo oskrbo na strani vsakega posega se prav tako sklada s to usmeritvijo."
+   ]
+  },
+  {
+   "heading": "Mnenja in fotografije primerov: kje splošni nasveti o UI trčijo ob pravila",
+   "paragraphs": [
+    "Vodniki za iskanje z UI pogosto priporočajo zbiranje mnenj in prikaz fotografij pred in po kot dokaz. Pri zdravstvenih ustanovah na Japonskem je pri tem potrebna previdnost."
+   ],
+   "table": {
+    "head": [
+     "Pogost nasvet",
+     "Kako to obravnava japonski Q&A",
+     "Kaj narediti namesto tega"
+    ],
+    "rows": [
+     [
+      "Objavljajte mnenja pacientov",
+      "Mnenj o poteku ali učinku zdravljenja ni dovoljeno objavljati (Q1-18, Q2-9)",
+      "Podrobneje pojasnite dejstva: postopek, cene, tveganja"
+     ],
+     [
+      "Vključite mnenja v FAQ ali v schema za mnenja",
+      "Isto pravilo; zajema lahko tudi mnenja, ki jih je klinika plačala, zahtevala ali urejala",
+      "Pišite stvarna FAQ: „Ali to krije zavarovanje?“, „Koliko obravnav?“"
+     ],
+     [
+      "Pokažite fotografije pred in po",
+      "Tudi fotografije samo „pred“ ali samo „po“ štejejo za trditve o učinku zdravljenja in jih ni dovoljeno oglaševati (Q2-8, Q3-14)",
+      "V smernicah in zbirki primerov preverite, kdaj se fotografije smejo uporabiti"
+     ],
+     [
+      "„Najboljši v okolici“, „neboleče“, „zagotovljeni rezultati“",
+      "Lažne, pretirane in primerjalne trditve se obravnavajo kot prepovedane",
+      "Pišite le to, kar lahko navedete kot dejstvo ali s številkami"
+     ]
+    ]
+   },
+   "after": [
+    "Po drugi strani objave na družbenih omrežjih samih pacientov ali na neodvisnih straneh z mnenji, ki jih klinika ni plačala ali zahtevala, niso oglaševanje (Q2-11). Ali jih UI bere, klinika ne more nadzorovati, zato je zanesljiva pot poskrbeti za točnost podatkov na lastnem spletnem mestu. Primeri so zbrani v [zbirki primerov ministrstva (PDF, v japonščini)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Strukturirani podatki: tip Dermatology in ena storitev na poseg",
+   "paragraphs": [
+    "schema.org ima tip za dermatologijo (preverjeno v definicijah tipov schema-dts 2.1.0 dne 16. novembra 2026)."
+   ],
+   "table": {
+    "head": [
+     "Tip / lastnost",
+     "Pomen",
+     "Uporaba pri kožni kliniki"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Veja medicine, ki se ukvarja s kožnimi boleznimi. Gre za MedicalBusiness in s tem za LocalBusiness",
+      "Tip za dermatološko ambulanto; vsebuje naslov, telefon in delovni čas"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Področje dela. Vrednosti vključujejo Dermatology in PlasticSurgery",
+      "Če ponujate splošno in estetsko dermatologijo, navedite le področja, ki jih opisujejo vaše strani"
+     ],
+     [
+      "Service z offers",
+      "Storitev, ki jo izvajate, in njena cena",
+      "Vsak samoplačniški poseg registrirajte z enako ceno kot na strani"
+     ],
+     [
+      "openingHoursSpecification",
+      "Delovni čas po dnevih",
+      "Če se delovni čas splošne in estetske dermatologije razlikuje, je merodajna tabela na strani, oznake pa podajo glavni delovni čas"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Ali se sprejemajo novi pacienti (lastnost MedicalOrganization)",
+      "Za obdobja, ko novih pacientov ne sprejemate"
+     ]
+    ]
+   },
+   "after": [
+    "Google navaja, da za AI Overviews in podobne funkcije niso potrebni posebni strukturirani podatki in da se morajo strukturirani podatki ujemati s tem, kar je vidno na strani. [Google: funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features) / [Strukturirani podatki LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Ne navajajte cene samo v oznakah ali cene, ki se razlikuje od tiste na strani."
+   ]
+  },
+  {
+   "heading": "Nastavitev na spletnem mestu kožne klinike v WordPressu",
+   "list": [
+    "Namestite in aktivirajte Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO in Slim SEO delujejo naprej kot doslej. Od različice 0.9.1 deluje tudi skupaj s SEO SIMPLE PACK in VK All in One Expansion Unit brez podvajanja strukturiranih podatkov.",
+    "V čarovniku za prvo nastavitev izberite „Clinic or dental“ (to nastavi MedicalBusiness). Nato v nastavitvah spremenite polje vrste podjetja v Dermatology. Polje sprejme katero koli ime tipa schema.org.",
+    "Preverite ime klinike, naslov, telefon in opis. Iz obstoječih nastavitev se izpolnijo le prazna polja; vrednosti, ki ste jih vnesli, se nikoli ne prepišejo.",
+    "Delovni čas zapišite le kot dneve in ure, npr. „Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00“. Ločen delovni čas estetike, prazniki in čas zadnjega sprejema sodijo v tabelo na sami strani.",
+    "V razdelku storitev v nastavitvah registrirajte vsak samoplačniški poseg. Z imenom, opisom, trajanjem, ceno in valuto se vsak objavi kot Service z Offer. Ceno ohranite enako kot na strani in obe spreminjajte hkrati.",
+    "V stranski vrstici urejevalnika vsake strani posega dodajte vprašanja samo za to stran („Ali to krije zavarovanje?“, „Koliko obravnav?“, „Kako dolgo traja okrevanje?“). Izpustite mnenja pacientov in odgovore, ki obljubljajo rezultate. Strani akcij, ki jih ne želite na seznamu, označite kot „leave this page out of llms.txt“.",
+    "Na zaslonu Ocena AEO zaženite diagnostiko in uporabite popravke z enim klikom. Kako je spletno mesto videti od zunaj, preverite z [brezplačnim preverjanjem berljivosti za UI](/check)."
+   ]
+  },
+  {
+   "heading": "Dodajanje medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AEO sam ne ustvari medicalSpecialty. Če ga želite dodati, uporabite filter, ki spreminja strukturirane podatke podjetja (webmcp_canary_business_node), v datoteki functions.php svoje teme ali v majhnem vtičniku. Dodajte le področja, ki jih opisujejo vaše strani."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Vsaka stran simptoma in posega navaja, ali gre za storitev v breme zavarovanja ali samoplačniško.",
+    "Strani samoplačniških posegov navajajo ceno (z davkom ali brez, doplačila), običajno število obravnav, glavna tveganja in neželene učinke ter čas okrevanja.",
+    "Jasno je prikazana kontaktna točka, ki odgovarja na vprašanja — ne le za naročanje.",
+    "Cenik je v besedilni obliki, ne le kot slika, in ima datum zadnje posodobitve.",
+    "Če se splošna in estetska dermatologija razlikujeta po delovnem času ali naročanju, je vsaka opisana posebej.",
+    "V besedilu, FAQ in strukturiranih podatkih ni mnenj pacientov, fotografij pred in po, presežnikov ali primerjav.",
+    "Posegi z neodobrenimi izdelki ali uporabo off-label vsebujejo pojasnila, ki jih zahtevajo smernice.",
+    "Cene storitev v strukturiranih podatkih se ujemajo s cenami na strani.",
+    "Ime, naslov, telefon in delovni čas se ujemajo v strukturiranih podatkih, Profilu podjetja v Googlu in morebitnih uradnih zdravstvenih imenikih.",
+    "Datoteka llms.txt navaja podatke o kliniki, cenik, glavne posege in strani z navodili za dostop. [Kaj je llms.txt](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Kako preveriti, ali se pojavljate v odgovorih UI",
+   "paragraphs": [
+    "Ko so strani urejene, zapišite pet do deset vprašanj, ki bi jih lahko postavil pacient, s kombinacijami območje × simptom × zavarovanje, območje × poseg × cena in poseg × okrevanje, ter jih postavite ChatGPT in Perplexity. Zabeležite, ali se vaša klinika pojavi z imenom ali URL-jem in ali so kritje zavarovanja, cene in tveganja navedeni pravilno. Če UI navaja napačno ceno, preverite, kako sta napisana cenik in stran posega in ali je stara stran akcije še vedno na spletu. Odgovori UI se ob vsakem zagonu razlikujejo, zato ista vprašanja ponavljajte več tednov. Metoda je opisana v članku [kako meriti vidnost v UI](/guide/measure-ai-visibility).",
+    "Analiza, ki jo je objavila MGMA, ameriško združenje za upravljanje zdravniških praks (maj 2026, avtor je ustanovitelj podjetja za iskanje z UI), je pokazala, da ChatGPT ni omenil nobene od 200 samostojnih praks v vzorcu. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Države in razmere se razlikujejo, a izhodišče je, da vprašanja dejansko postavite.",
+    "Pri Nurevo AEO paketa Free in Standard enkrat mesečno postavita Perplexity tudi tri vprašanja, sestavljena iz vaše vrste podjetja in območja (brez imena klinike), ter zabeležita, ali je bila vaša klinika omenjena ali vaše spletno mesto navedeno. Paket Pro (od 99 USD na mesec) doda merjenje vidnosti v UI v različici beta: delež odgovorov UI, v katerih se pojavi vaša klinika, v primerjavi s konkurenco in skozi čas (trenutno merjeno v Perplexity). Oboje temelji na vzorcih odgovorov; nobeno ne spremlja vseh odgovorov."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kje naj dermatološka klinika začne pri iskanju z UI?",
+   "a": "Začnite tako, da na vsaki strani simptoma in posega navedete, ali je storitev v breme zavarovanja ali samoplačniška. Nato na vsaki strani samoplačniškega posega navedite ceno, običajno število obravnav, glavna tveganja in neželene učinke ter čas okrevanja, ime, naslov, telefon in delovni čas pa uskladite v strukturiranih podatkih in Profilu podjetja v Googlu."
+  },
+  {
+   "q": "Ali naj estetska klinika objavi svoje cene?",
+   "a": "Da. Ko UI dobi vprašanje o ceni, uporabi strani, kjer je cena zapisana v besedilu. Na Japonskem Q&A ministrstva med pogoje za podrobno pojasnjevanje samoplačniških storitev na spletnem mestu uvršča tudi običajno zdravljenje, njegove cene ter njegova glavna tveganja in neželene učinke."
+  },
+  {
+   "q": "Kateri tip strukturiranih podatkov naj uporabim?",
+   "a": "Tip Dermatology v schema.org predstavlja dermatološko ambulanto in je vrsta MedicalBusiness in LocalBusiness. Če ponujate tudi estetske posege, lahko kot vrednosti medicalSpecialty dodate Dermatology in PlasticSurgery. Ujemanje s stranjo je pomembnejše od samega tipa."
+  },
+  {
+   "q": "Ali fotografije pred in po pomagajo, da UI izbere kliniko?",
+   "a": "Ni preverjenih dokazov, da bi. Po japonskih pravilih oglaševanja v zdravstvu se fotografije pred in po obravnavajo kot trditve o učinku zdravljenja in so omejene. V smernicah, zbirki primerov in pri lokalnem zdravstvenem domu preverite, kdaj se smejo uporabiti."
+  },
+  {
+   "q": "Ali bodo nizke ocene na straneh z mnenji izključile mojo kliniko iz odgovorov UI?",
+   "a": "Ponudniki UI ne objavljajo, kolikšno težo pripisujejo takim podatkom, zato tega nihče ne more zagotovo trditi. Neodvisna mnenja, ki jih klinika ni zahtevala, niso oglaševanje, vendar klinika na lastnem spletnem mestu ne sme objavljati mnenj, ki jih je plačala ali zahtevala. Osredotočite se na točnost podatkov na lastnem spletnem mestu."
+  },
+  {
+   "q": "Ali je Nurevo AEO brezplačen?",
+   "a": "Da. Vrsta podjetja, naslov, delovni čas, storitve s cenami in strukturirani podatki FAQ, llms.txt, nastavitve pajkov UI in Ocena AEO so v brezplačnem paketu. Plačljivi paketi dodajo vedno posodobljen nabor pravil (Standard, 20 USD na mesec) in merjenje vidnosti v UI v različici beta (Pro, od 99 USD na mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Ali je zagotovljeno, da se bo moja klinika pojavila v ChatGPT?",
+   "a": "Ne. Odgovori UI se razlikujejo in nobeno orodje ali metoda ne more zagotoviti pojavljanja ali uvrstitve. Lahko pa poskrbite, da so podatki o vaši kliniki berljivi za UI, in redno preverjate, ali se pojavljate."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Najprej preverite, kako UI bere spletno mesto vaše kožne klinike",
+  "body": "Brezplačno preverjanje ne zahteva registracije in pokaže stanje vaših strukturiranih podatkov, datoteke llms.txt in dostopa pajkov UI. V WordPressu Nurevo AEO brezplačno zapolni vrzeli.",
+  "label": "Zaženi brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Prenesi Nurevo AEO z WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI in Google družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit in WordPress so blagovne znamke njihovih lastnikov. Nurevo ni povezan s temi družbami niti ga te ne podpirajo. Ta članek ni pravni ali zdravniški nasvet."
+}

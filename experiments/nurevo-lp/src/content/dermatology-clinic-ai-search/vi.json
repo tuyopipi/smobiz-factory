@@ -1,0 +1,263 @@
+{
+ "title": "Tìm kiếm AI cho phòng khám da liễu: phí, rủi ro, schema | Nurevo",
+ "description": "AEO cho phòng khám da liễu và thẩm mỹ da: tách điều trị có bảo hiểm khỏi tự chi trả, ghi phí và rủi ro chính trên mỗi trang liệu trình, và khớp schema.",
+ "h1": "Tìm kiếm AI cho phòng khám da liễu và thẩm mỹ da: làm sao để AI hiểu đúng điều trị có bảo hiểm và tự chi trả, chi phí và rủi ro",
+ "lead": "Việc hiệu quả nhất mà một phòng khám da liễu hoặc thẩm mỹ da có thể làm cho tìm kiếm AI là ghi rõ bằng văn bản trên từng trang liệu trình: liệu trình đó có được bảo hiểm chi trả không, nếu không thì giá bao nhiêu, và rủi ro chính cũng như thời gian phục hồi (downtime) là gì. Khi AI trả lời một câu hỏi có điều kiện — “bác sĩ da liễu gần ga tàu chữa mụn bằng bảo hiểm”, “xóa nám bằng laser giá bao nhiêu và downtime bao lâu” — nó dựa vào những trang có thể đọc được các điều kiện đó. Sau đó, bạn tuân thủ quy định quảng cáo y tế (hạn chế lời chứng thực và ảnh trước/sau, công khai phí và rủi ro cho điều trị tự chi trả) và đăng cùng những thông tin đó trong dữ liệu có cấu trúc, llms.txt và Hồ sơ doanh nghiệp trên Google.",
+ "intro": [
+  "Viết ngày 16 tháng 11 năm 2026 (giờ Nhật Bản). Bộ Hỏi–Đáp (Q&A) của Bộ Y tế, Lao động và Phúc lợi Nhật Bản về hướng dẫn quảng cáo y tế, báo cáo của hội đồng chuyên gia về y học thẩm mỹ, số liệu của National Consumer Affairs Center và các kiểu schema.org (theo định nghĩa trong schema-dts 2.1.0) đã được kiểm tra vào ngày đó. Các quy định được trích dẫn là của Nhật Bản; hãy kiểm tra quy định tại nơi bạn hành nghề.",
+  "Câu trả lời của AI thay đổi theo ngày và theo cách đặt câu hỏi. Các bước ở đây giúp AI đọc được thông tin về phòng khám của bạn. Chúng không đảm bảo AI sẽ nhắc đến phòng khám của bạn hay xếp hạng nó ở bất kỳ vị trí nào. Bài viết này không phải là tư vấn pháp lý."
+ ],
+ "sections": [
+  {
+   "heading": "Bệnh nhân hỏi AI những gì về phòng khám da liễu",
+   "paragraphs": [
+    "Câu hỏi về da liễu chia thành hai nhóm. Câu hỏi da liễu tổng quát gồm triệu chứng, đối tượng bệnh nhân, thời gian và vấn đề bảo hiểm: “bác sĩ da liễu khám cho trẻ bị chàm”, “phòng khám da mở cửa thứ Bảy”, “điều trị nấm chân có được bảo hiểm không?”. Câu hỏi thẩm mỹ gồm giá, số buổi, downtime và rủi ro: “giá thông thường của xóa nám bằng laser”, “triệt lông y khoa cần bao nhiêu buổi?”, “điều trị sẹo mụn có downtime ngắn”.",
+    "Trong cả hai trường hợp, AI chỉ có thể dùng trang có ghi các điều kiện đó. Một bảng giá chỉ ở dạng hình ảnh, một trang liệu trình không bao giờ nói là có bảo hiểm hay tự chi trả, hoặc một trang chỉ ghi “chi phí sẽ được giải thích khi tư vấn” không cho AI thứ gì để trích dẫn cho câu hỏi có điều kiện.",
+    "Y học thẩm mỹ cũng nhận nhiều khiếu nại. National Consumer Affairs Center của Nhật Bản ghi nhận 6.281 lượt tư vấn về y học thẩm mỹ năm 2023, 10.744 năm 2024 và 7.944 năm 2025 (số liệu PIO-NET tính đến ngày 31/5/2026, trang cập nhật ngày 31/7/2026). [National Consumer Affairs Center: y học thẩm mỹ (tiếng Nhật)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Bệnh nhân muốn kiểm tra giá và rủi ro trước khi đặt lịch, và họ hỏi AI về điều đó. Công khai chi phí và rủi ro chính xác trước hết là thông tin cho bệnh nhân, sau đó mới là tối ưu cho AI."
+   ]
+  },
+  {
+   "heading": "Những gì các bài viết xếp hạng cao bỏ sót",
+   "paragraphs": [
+    "Đọc các bài viết xếp hạng cao cho “AI search optimization for dermatology”, “medical spa ChatGPT” và các cụm từ tương đương bằng tiếng Nhật, phần lớn dừng lại ở “giữ chuyên khoa, địa chỉ và giờ làm việc chính xác”, “thêm dữ liệu có cấu trúc” và “tăng số lượng đánh giá”. Một số hướng dẫn tiếng Anh đưa ra ngưỡng như “50+ đánh giá” mà không có nguồn.",
+    "Bốn điểm quan trọng nhất đối với phòng khám da liễu hầu như không được đề cập, vì vậy chúng là cốt lõi của hướng dẫn này:"
+   ],
+   "list": [
+    "Cách tách điều trị có bảo hiểm và tự chi trả trên trang.",
+    "Đăng chi phí cùng các rủi ro và tác dụng phụ chính của liệu trình tự chi trả ở đâu và như thế nào, và điều đó liên quan thế nào đến quy định quảng cáo.",
+    "Những chỗ mà lời khuyên chung chung “thu thập đánh giá” và “đăng ảnh ca điều trị” va chạm với quy định quảng cáo y tế của Nhật Bản.",
+    "Thiết lập WordPress cụ thể (kiểu, dịch vụ kèm giá, FAQ riêng cho trang) và cách kiểm tra xem bạn có xuất hiện không."
+   ]
+  },
+  {
+   "heading": "Tách điều trị có bảo hiểm và tự chi trả",
+   "paragraphs": [
+    "AI hay hiểu sai về phòng khám da liễu nhất khi cùng một nhãn — “điều trị mụn”, “điều trị sắc tố” — bao gồm cả lựa chọn có bảo hiểm lẫn tự chi trả. Hãy ghi gần đầu mỗi trang triệu chứng hoặc liệu trình là có bảo hiểm hay tự chi trả. Q&A của Bộ cũng nói rằng các điều trị tự chi trả dùng sản phẩm đã được phê duyệt (ví dụ được nêu là cấy ghép implant nha khoa và tẩy trắng răng) phải ghi rõ là tự chi trả và nêu mức phí tiêu chuẩn. [MHLW: Q&A về hướng dẫn quảng cáo y tế (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Trang",
+     "Nên ghi gì",
+     "AI dễ đọc sai điều gì"
+    ],
+    "rows": [
+     [
+      "Trang triệu chứng (mụn, chàm, viêm da, nấm chân, mụn cóc)",
+      "Những gì được điều trị bằng bảo hiểm, các lựa chọn tự chi trả được ghi rõ là tự chi trả, khi nào nên đi khám",
+      "Điều trị có bảo hiểm và tự chi trả được liệt kê chung, không phân biệt"
+     ],
+     [
+      "Trang liệu trình (laser, peel, tiêm, triệt lông)",
+      "Là tự chi trả, giá mỗi buổi và mỗi liệu trình (đã gồm thuế hay chưa), số buổi thông thường, rủi ro và tác dụng phụ chính, downtime",
+      "Chỉ có “chi phí giải thích khi tư vấn”, ngoài ra không có gì"
+     ],
+     [
+      "Bảng giá",
+      "Bảng có bảo hiểm và tự chi trả riêng, ngày cập nhật gần nhất, cách tính phí khám, tái khám và thuốc",
+      "Bảng giá chỉ ở dạng hình ảnh, hoặc chỉ có giá khuyến mãi"
+     ],
+     [
+      "Thông tin phòng khám (trang chủ, đường đi)",
+      "Giờ làm việc và quy tắc đặt lịch riêng cho da liễu tổng quát và thẩm mỹ nếu khác nhau, độ tuổi khám",
+      "Giờ hẹn thẩm mỹ bị hiển thị như giờ làm việc chung của phòng khám"
+     ],
+     [
+      "Hồ sơ bác sĩ",
+      "Tên, lĩnh vực và bằng cấp (trong phạm vi được phép quảng cáo)",
+      "Từ ngữ so sánh nhất và so sánh (xem bên dưới)"
+     ]
+    ],
+    "caption": "Dựa trên các câu hỏi bệnh nhân đặt ra về phòng khám da liễu và những khoảng trống tìm thấy trong các bài viết xếp hạng cao."
+   },
+   "after": [
+    "Nếu da liễu tổng quát và thẩm mỹ có giờ làm việc hoặc quy tắc đặt lịch khác nhau, hãy cho mỗi bên một bảng giờ riêng để AI không gộp chúng lại, và ghi rõ cho từng bên có nhận khách không hẹn trước hay không."
+   ]
+  },
+  {
+   "heading": "Trang liệu trình tự chi trả: chi phí và rủi ro chính trên cùng một trang",
+   "paragraphs": [
+    "Theo quy định quảng cáo y tế của Nhật Bản, một trang web mà bệnh nhân tự tìm đến có thể giải thích chi tiết những điều thông thường không được quảng cáo, miễn là đáp ứng một số điều kiện (gọi là “dỡ bỏ giới hạn”). Q&A của Bộ nói rằng với điều trị tự chi trả, các điều kiện này bao gồm mô tả điều trị thường cần thiết và chi phí, cùng các rủi ro và tác dụng phụ chính của nó — và chỉ liệt kê một hai nhược điểm chung chung là chưa đủ (Q6-12). Một điều kiện khác là đầu mối liên hệ để hỏi đáp; số điện thoại chỉ dùng đặt lịch hoặc đường dây trả lời tự động không đáp ứng (Q6-10). Các mục này phải dễ thấy: chữ rất nhỏ hoặc chữ cùng màu với nền không được tính (Q6-11). [MHLW: Q&A (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Điều này cùng hướng với tìm kiếm AI. Khi AI được hỏi về giá, downtime hay rủi ro, nó chỉ có thể dùng những trang ghi các thông tin đó trong phần nội dung. Một trang liệu trình dễ đọc khi theo thứ tự này:"
+   ],
+   "list": [
+    "Tên liệu trình và việc nó là tự chi trả.",
+    "Liệu trình giải quyết vấn đề gì (không hứa hẹn kết quả).",
+    "Cách thực hiện, thời gian mỗi buổi, số buổi thông thường và khoảng cách giữa các buổi.",
+    "Chi phí (mỗi buổi và mỗi liệu trình, đã gồm thuế hay chưa, các khoản phụ như gây tê, thuốc hoặc tái khám).",
+    "Rủi ro và tác dụng phụ chính, và downtime thông thường.",
+    "Ai không thể thực hiện hoặc cần thận trọng.",
+    "Đầu mối liên hệ trả lời câu hỏi (số điện thoại và giờ tiếp nhận), và cần gọi cho ai nếu có vấn đề sau đó.",
+    "Ngày trang được cập nhật gần nhất."
+   ],
+   "after": [
+    "Các liệu trình dùng thuốc hoặc thiết bị chưa được phê duyệt, hoặc dùng thuốc đã phê duyệt cho mục đích chưa được phê duyệt, cần giải thích bổ sung. Q&A nói rằng việc dùng ngoài chỉ định (off-label) được đối xử như thuốc chưa được phê duyệt (Q2-14). Hãy kiểm tra các mục bắt buộc trong chính bản hướng dẫn.",
+    "Riêng về y học thẩm mỹ, báo cáo của hội đồng chuyên gia của Bộ (22/11/2024) kêu gọi tăng cường giám sát trực tuyến đối với quảng cáo y tế và yêu cầu phòng khám thiết lập đầu mối liên hệ cho các vấn đề sau điều trị và thông báo cho bệnh nhân. [MHLW: báo cáo của hội đồng về thực hành y học thẩm mỹ phù hợp (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Đặt đầu mối chăm sóc sau điều trị trên mỗi trang liệu trình cũng phù hợp với định hướng đó."
+   ]
+  },
+  {
+   "heading": "Đánh giá và ảnh ca điều trị: nơi lời khuyên AI chung chung va chạm với quy định",
+   "paragraphs": [
+    "Các hướng dẫn tìm kiếm AI thường khuyên thu thập đánh giá và đăng ảnh trước/sau làm bằng chứng. Với cơ sở y tế tại Nhật Bản, những việc này cần thận trọng."
+   ],
+   "table": {
+    "head": [
+     "Lời khuyên phổ biến",
+     "Q&A của Nhật Bản xử lý thế nào",
+     "Nên làm gì thay thế"
+    ],
+    "rows": [
+     [
+      "Đăng lời chứng thực của bệnh nhân",
+      "Không được đăng lời chứng thực về nội dung hoặc hiệu quả điều trị (Q1-18, Q2-9)",
+      "Giải thích sự thật chi tiết hơn: quy trình, chi phí, rủi ro"
+     ],
+     [
+      "Đưa đánh giá vào FAQ hoặc schema đánh giá",
+      "Cùng quy định; đánh giá mà phòng khám trả tiền, yêu cầu hoặc chỉnh sửa cũng có thể thuộc diện này",
+      "Làm FAQ mang tính sự thật: “Có được bảo hiểm không?”, “Bao nhiêu buổi?”"
+     ],
+     [
+      "Đăng ảnh trước/sau",
+      "Ngay cả ảnh chỉ trước hoặc chỉ sau cũng bị coi là tuyên bố về hiệu quả điều trị và không được quảng cáo (Q2-8, Q3-14)",
+      "Kiểm tra hướng dẫn và tập tình huống để biết khi nào được dùng ảnh"
+     ],
+     [
+      "“Tốt nhất khu vực”, “không đau”, “cam kết hiệu quả”",
+      "Tuyên bố sai sự thật, phóng đại và so sánh bị coi là bị cấm",
+      "Chỉ viết những gì bạn có thể nêu bằng sự thật hoặc số liệu"
+     ]
+    ]
+   },
+   "after": [
+    "Mặt khác, bài đăng trên mạng xã hội của chính bệnh nhân hoặc trên các trang đánh giá độc lập mà phòng khám không trả tiền hay yêu cầu thì không phải là quảng cáo (Q2-11). AI có đọc chúng hay không là điều phòng khám không kiểm soát được, vì vậy cách chắc chắn là làm cho thông tin trên trang web của chính bạn chính xác. Các ví dụ được tập hợp trong [tập tình huống của Bộ (PDF, tiếng Nhật)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Dữ liệu có cấu trúc: kiểu Dermatology và một dịch vụ cho mỗi liệu trình",
+   "paragraphs": [
+    "schema.org có một kiểu dành cho da liễu (đã kiểm tra trong định nghĩa kiểu của schema-dts 2.1.0 ngày 16/11/2026)."
+   ],
+   "table": {
+    "head": [
+     "Kiểu / thuộc tính",
+     "Ý nghĩa",
+     "Cách dùng cho phòng khám da liễu"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Chuyên ngành y học về các rối loạn của da. Là một MedicalBusiness, do đó cũng là LocalBusiness",
+      "Kiểu dành cho phòng khám da liễu; chứa địa chỉ, điện thoại và giờ mở cửa"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Lĩnh vực hành nghề. Giá trị bao gồm Dermatology và PlasticSurgery",
+      "Nếu bạn có cả da liễu tổng quát và thẩm mỹ, chỉ liệt kê các lĩnh vực mà trang của bạn mô tả"
+     ],
+     [
+      "Service có offers",
+      "Một dịch vụ bạn cung cấp và giá của nó",
+      "Đăng ký từng liệu trình tự chi trả với cùng mức giá như trên trang"
+     ],
+     [
+      "openingHoursSpecification",
+      "Giờ mở cửa theo ngày",
+      "Nếu giờ tổng quát và thẩm mỹ khác nhau, bảng trên trang là chuẩn và markup ghi giờ chính"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Có nhận bệnh nhân mới hay không (thuộc tính của MedicalOrganization)",
+      "Dùng cho các giai đoạn bạn không nhận bệnh nhân mới"
+     ]
+    ]
+   },
+   "after": [
+    "Google cho biết không cần dữ liệu có cấu trúc đặc biệt nào cho AI Overviews và các tính năng tương tự, và dữ liệu có cấu trúc nên khớp với những gì hiển thị trên trang. [Google: Các tính năng AI và trang web của bạn](https://developers.google.com/search/docs/appearance/ai-features) / [Dữ liệu có cấu trúc LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Đừng đặt giá chỉ trong markup, hoặc một mức giá khác với trang."
+   ]
+  },
+  {
+   "heading": "Thiết lập trên trang WordPress của phòng khám da liễu",
+   "list": [
+    "Cài đặt và kích hoạt Nurevo AEO (miễn phí) từ [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO và Slim SEO vẫn hoạt động như cũ. Từ bản 0.9.1, plugin cũng chạy song song với SEO SIMPLE PACK và VK All in One Expansion Unit mà không trùng lặp dữ liệu có cấu trúc.",
+    "Trong trình hướng dẫn thiết lập lần đầu, chọn “Clinic or dental” (thiết lập MedicalBusiness). Sau đó đổi trường loại hình doanh nghiệp trong Cài đặt thành Dermatology. Trường này chấp nhận bất kỳ tên kiểu schema.org nào.",
+    "Kiểm tra tên phòng khám, địa chỉ, điện thoại và mô tả. Chỉ những trường trống mới được điền từ cài đặt hiện có; các giá trị bạn đã nhập không bao giờ bị ghi đè.",
+    "Ghi giờ mở cửa chỉ gồm ngày và giờ, ví dụ “Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00”. Giờ thẩm mỹ riêng, ngày lễ và giờ tiếp nhận cuối cùng thuộc về bảng trên chính trang đó.",
+    "Trong mục dịch vụ ở Cài đặt, đăng ký từng liệu trình tự chi trả. Với tên, mô tả, thời lượng, giá và đơn vị tiền tệ, mỗi mục được xuất bản thành một Service có Offer. Giữ giá giống hệt với trang và thay đổi cả hai cùng lúc.",
+    "Trong thanh bên của trình soạn thảo mỗi trang liệu trình, thêm câu hỏi chỉ dành cho trang đó (“Có được bảo hiểm không?”, “Bao nhiêu buổi?”, “Downtime bao lâu?”). Bỏ qua lời chứng thực và câu trả lời hứa hẹn kết quả. Đánh dấu các trang khuyến mãi bạn không muốn được liệt kê bằng “leave this page out of llms.txt”.",
+    "Chạy chẩn đoán trên màn hình Điểm AEO và áp dụng các sửa lỗi một chạm. Kiểm tra trang web trông thế nào từ bên ngoài bằng [công cụ kiểm tra khả năng đọc của AI miễn phí](/check)."
+   ]
+  },
+  {
+   "heading": "Thêm medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AEO không tự xuất medicalSpecialty. Để thêm, hãy dùng filter thay đổi dữ liệu có cấu trúc của doanh nghiệp (webmcp_canary_business_node), trong functions.php của theme hoặc một plugin nhỏ. Chỉ thêm các lĩnh vực mà trang của bạn mô tả."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Danh sách kiểm tra trước khi xuất bản",
+   "list": [
+    "Mọi trang triệu chứng và liệu trình đều ghi là có bảo hiểm hay tự chi trả.",
+    "Trang liệu trình tự chi trả nêu chi phí (đã gồm thuế hay chưa, các khoản phụ), số buổi thông thường, rủi ro và tác dụng phụ chính, và downtime.",
+    "Đầu mối liên hệ trả lời câu hỏi — không chỉ để đặt lịch — được hiển thị rõ ràng.",
+    "Bảng giá ở dạng văn bản, không chỉ là hình ảnh, và có ngày cập nhật gần nhất.",
+    "Nếu da liễu tổng quát và thẩm mỹ khác nhau về giờ hoặc đặt lịch, mỗi bên được ghi riêng.",
+    "Không có lời chứng thực, ảnh trước/sau, từ so sánh nhất hay so sánh trong nội dung, FAQ hoặc dữ liệu có cấu trúc.",
+    "Liệu trình dùng sản phẩm chưa phê duyệt hoặc dùng ngoài chỉ định có kèm phần giải thích mà hướng dẫn yêu cầu.",
+    "Giá dịch vụ trong dữ liệu có cấu trúc khớp với giá trên trang.",
+    "Tên, địa chỉ, điện thoại và giờ làm việc khớp nhau giữa dữ liệu có cấu trúc, Hồ sơ doanh nghiệp trên Google và mọi danh bạ y tế chính thức.",
+    "llms.txt liệt kê các trang thông tin phòng khám, bảng giá, liệu trình chính và đường đi. [llms.txt là gì](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Kiểm tra xem bạn có xuất hiện trong câu trả lời của AI không",
+   "paragraphs": [
+    "Khi các trang đã chỉn chu, hãy viết năm đến mười câu hỏi bệnh nhân có thể đặt ra, kết hợp khu vực × triệu chứng × bảo hiểm, khu vực × liệu trình × giá, và liệu trình × downtime, rồi hỏi ChatGPT và Perplexity. Ghi lại phòng khám của bạn có xuất hiện bằng tên hoặc URL không, và tình trạng bảo hiểm, chi phí, rủi ro có được nêu đúng không. Nếu AI trích dẫn sai giá, hãy kiểm tra cách viết bảng giá và trang liệu trình, và xem trang khuyến mãi cũ có còn hoạt động không. Câu trả lời của AI thay đổi giữa các lần chạy, vì vậy hãy hỏi lại cùng câu hỏi trong vài tuần. Phương pháp được trình bày trong [cách đo lường mức độ hiển thị trên AI](/guide/measure-ai-visibility).",
+    "Một phân tích do MGMA, hiệp hội quản lý cơ sở hành nghề y tế của Mỹ, công bố (tháng 5/2026, do nhà sáng lập một công ty tìm kiếm AI viết) cho thấy không phòng khám nào trong 200 phòng khám độc lập của mẫu được ChatGPT nêu tên. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Quốc gia và điều kiện khác nhau, nhưng thực sự đặt câu hỏi là điểm khởi đầu.",
+    "Với Nurevo AEO, các gói Free và Standard cũng hỏi Perplexity ba câu hỏi được tạo từ loại hình doanh nghiệp và khu vực của bạn mỗi tháng một lần (không kèm tên phòng khám) và ghi lại phòng khám có được nêu tên hay trang web có được trích dẫn không. Gói Pro (từ USD 99 mỗi tháng) bổ sung đo lường mức độ hiển thị trên AI bản beta: tỷ lệ câu trả lời AI có phòng khám của bạn, so sánh với đối thủ và theo dõi theo thời gian (hiện đo trên Perplexity). Cả hai đều xem xét mẫu câu trả lời; không cái nào quan sát được mọi câu trả lời."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Phòng khám da liễu nên bắt đầu từ đâu với tìm kiếm AI?",
+   "a": "Hãy bắt đầu bằng việc ghi trên mỗi trang triệu chứng và liệu trình là có bảo hiểm hay tự chi trả. Sau đó, cho mỗi trang liệu trình tự chi trả chi phí, số buổi thông thường, rủi ro và tác dụng phụ chính và downtime, và làm cho tên, địa chỉ, điện thoại và giờ làm việc khớp nhau giữa dữ liệu có cấu trúc và Hồ sơ doanh nghiệp trên Google."
+  },
+  {
+   "q": "Phòng khám thẩm mỹ da có nên công khai giá không?",
+   "a": "Có. Khi AI được hỏi về giá, nó dùng các trang ghi giá trong văn bản. Tại Nhật Bản, Q&A của Bộ cũng liệt kê điều trị thông thường, chi phí và các rủi ro, tác dụng phụ chính của nó trong số các điều kiện để giải thích chi tiết điều trị tự chi trả trên trang web."
+  },
+  {
+   "q": "Tôi nên dùng kiểu dữ liệu có cấu trúc nào?",
+   "a": "Kiểu Dermatology của schema.org đại diện cho phòng khám da liễu và là một loại MedicalBusiness và LocalBusiness. Nếu bạn cũng cung cấp liệu trình thẩm mỹ, bạn có thể thêm Dermatology và PlasticSurgery làm giá trị medicalSpecialty. Khớp với trang quan trọng hơn kiểu."
+  },
+  {
+   "q": "Ảnh trước/sau có giúp phòng khám được AI chọn không?",
+   "a": "Không có bằng chứng đã được kiểm chứng nào cho thấy điều đó. Theo quy định quảng cáo y tế của Nhật Bản, ảnh trước và sau bị coi là tuyên bố về hiệu quả điều trị và bị hạn chế. Hãy kiểm tra hướng dẫn, tập tình huống và trung tâm y tế công cộng địa phương để biết khi nào được dùng."
+  },
+  {
+   "q": "Điểm đánh giá thấp trên các trang review có khiến phòng khám không xuất hiện trong câu trả lời AI không?",
+   "a": "Các nhà cung cấp AI không công bố họ coi trọng những thông tin như vậy đến mức nào, nên không ai có thể khẳng định. Đánh giá độc lập mà phòng khám không yêu cầu không phải là quảng cáo, nhưng phòng khám không được đăng trên trang của mình các đánh giá đã trả tiền hoặc yêu cầu. Hãy tập trung làm cho thông tin trên trang của chính bạn chính xác."
+  },
+  {
+   "q": "Nurevo AEO có miễn phí không?",
+   "a": "Có. Dữ liệu có cấu trúc cho loại hình doanh nghiệp, địa chỉ, giờ làm việc, dịch vụ kèm giá và FAQ, cùng llms.txt, cài đặt trình thu thập AI và Điểm AEO đều có trong gói miễn phí. Các gói trả phí bổ sung bộ quy tắc luôn cập nhật (Standard, USD 20 mỗi tháng) và đo lường mức độ hiển thị trên AI bản beta (Pro, từ USD 99 mỗi tháng). [Nurevo AEO trên WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Phòng khám của tôi có được đảm bảo xuất hiện trong ChatGPT không?",
+   "a": "Không. Câu trả lời của AI thay đổi, và không công cụ hay phương pháp nào có thể đảm bảo xuất hiện hoặc xếp hạng. Điều bạn có thể làm là giúp AI đọc được thông tin về phòng khám và tiếp tục kiểm tra xem bạn có xuất hiện không."
+  }
+ ],
+ "relatedHeading": "Hướng dẫn liên quan",
+ "cta": {
+  "heading": "Trước tiên, hãy xem AI đọc trang web phòng khám da liễu của bạn thế nào",
+  "body": "Công cụ kiểm tra miễn phí không cần đăng ký, cho thấy tình trạng dữ liệu có cấu trúc, llms.txt và quyền truy cập của trình thu thập AI. Trên WordPress, Nurevo AEO lấp các chỗ thiếu miễn phí.",
+  "label": "Chạy kiểm tra khả năng đọc của AI miễn phí",
+  "href": "/check",
+  "secondary": {
+   "label": "Tải Nurevo AEO trên WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT là nhãn hiệu của OpenAI, Perplexity của Perplexity AI và Google của Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit và WordPress là nhãn hiệu của các chủ sở hữu tương ứng. Nurevo không liên kết với hoặc được bảo trợ bởi bất kỳ công ty nào trong số này. Bài viết này không phải là tư vấn pháp lý hay y khoa."
+}

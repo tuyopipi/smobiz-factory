@@ -1,0 +1,263 @@
+{
+ "title": "AI-søgning for hudklinikker: priser, risici, schema | Nurevo",
+ "description": "AEO for hudlæge- og kosmetiske hudklinikker: adskil forsikringsdækket og selvbetalt behandling, vis pris og risici pr. behandling, og afstem dit schema.",
+ "h1": "AI-søgning for hudlæger og kosmetiske hudklinikker: sådan læser AI forsikringsdækket og selvbetalt behandling, priser og risici korrekt",
+ "lead": "Det mest virkningsfulde, en hudlæge- eller kosmetisk hudklinik kan gøre for AI-søgning, er at skrive i tekst på hver behandlingsside, om behandlingen dækkes af forsikringen, hvad den koster, hvis den ikke gør, og hvad de vigtigste risici og rekonvalescenstiden er. Når AI svarer på et spørgsmål med betingelser – „en hudlæge nær stationen, der behandler akne på forsikringen“, „hvad koster laserfjernelse af pigmentpletter, og hvor lang er rekonvalescenstiden?“ – bygger den på sider, hvor de betingelser kan læses. Derefter følger du dine regler for markedsføring af sundhedsydelser (begrænsninger for patientudtalelser og før-og-efter-billeder, oplysning om priser og risici ved selvbetalt behandling) og offentliggør de samme oplysninger i strukturerede data, llms.txt og din Google Virksomhedsprofil.",
+ "intro": [
+  "Skrevet 16. november 2026 (JST). Den dag blev følgende kontrolleret: det japanske sundheds-, arbejds- og velfærdsministeriums (MHLW) spørgsmål og svar til retningslinjerne for markedsføring af sundhedsydelser, rapporten fra ministeriets ekspertpanel om kosmetisk medicin, tallene fra National Consumer Affairs Center og schema.org’s typer (som defineret i schema-dts 2.1.0). De citerede regler er japanske; tjek reglerne der, hvor du praktiserer.",
+  "AI-svar ændrer sig fra dag til dag og med, hvordan et spørgsmål formuleres. Trinnene her gør din kliniks oplysninger læsbare for AI. De garanterer ikke, at en AI nævner din klinik eller placerer den nogen steder. Denne artikel er ikke juridisk rådgivning."
+ ],
+ "sections": [
+  {
+   "heading": "Hvad patienter spørger AI om hudklinikker",
+   "paragraphs": [
+    "Spørgsmål om dermatologi falder i to grupper. Spørgsmål om almen dermatologi indeholder et symptom, en patient, et tidspunkt og spørgsmålet om forsikring: „en hudlæge, der ser børn med eksem“, „en hudklinik, der har åbent om lørdagen“, „dækkes behandling af fodsvamp af forsikringen?“. Kosmetiske spørgsmål handler om pris, antal behandlinger, rekonvalescenstid og risiko: „normal pris for laserfjernelse af pigmentpletter“, „hvor mange behandlinger kræver medicinsk hårfjerning?“, „behandling af aknear med kort rekonvalescenstid“.",
+    "I begge tilfælde kan AI kun bruge en side, hvor de betingelser står skrevet. En prisliste, der kun findes som billede, en behandlingsside, der aldrig siger, om behandlingen er forsikringsdækket eller selvbetalt, eller en side, der kun siger „vi forklarer priserne ved konsultationen“, giver ikke AI noget at citere ved et spørgsmål med betingelser.",
+    "Kosmetisk medicin giver desuden mange klager. Japans National Consumer Affairs Center registrerede 6.281 henvendelser om kosmetisk medicin i 2023, 10.744 i 2024 og 7.944 i 2025 (PIO-NET-tal pr. 31. maj 2026, siden opdateret 31. juli 2026). [National Consumer Affairs Center: kosmetisk medicin (japansk)](https://www.kokusen.go.jp/soudan_topics/data/biyo.html). Patienter vil tjekke priser og risici, før de booker, og de spørger AI om dem. At offentliggøre korrekte priser og risici er først og fremmest patientinformation og kun dernæst AI-optimering."
+   ]
+  },
+  {
+   "heading": "Hvad de højest rangerede artikler udelader",
+   "paragraphs": [
+    "Læser man de artikler, der rangerer på „AI search optimization for dermatology“, „medical spa ChatGPT“ og de japanske modstykker, stopper de fleste ved „hold dine specialer, din adresse og dine åbningstider korrekte“, „tilføj strukturerede data“ og „få flere anmeldelser“. Nogle engelsksprogede guides angiver tærskler som „50+ anmeldelser“ uden kilde.",
+    "Fire punkter, der betyder mest for hudklinikker, blev knap berørt, så de er kernen i denne guide:"
+   ],
+   "list": [
+    "Hvordan man adskiller forsikringsdækket og selvbetalt behandling på siden.",
+    "Hvor og hvordan man offentliggør priser og de vigtigste risici og bivirkninger ved selvbetalte behandlinger, og hvordan det hænger sammen med markedsføringsreglerne.",
+    "Hvor det generelle råd om at „samle anmeldelser“ og „vise casebilleder“ støder sammen med Japans regler for markedsføring af sundhedsydelser.",
+    "Konkrete WordPress-indstillinger (type, ydelser med priser, FAQ kun for siden) og hvordan du tjekker, om du optræder."
+   ]
+  },
+  {
+   "heading": "Adskil forsikringsdækket og selvbetalt behandling",
+   "paragraphs": [
+    "AI tager oftest fejl om en hudklinik, når den samme betegnelse – „aknebehandling“, „pigmentbehandling“ – dækker både forsikringsdækkede og selvbetalte muligheder. Skriv øverst på hver symptom- eller behandlingsside, om behandlingen er forsikringsdækket eller selvbetalt. Ministeriets spørgsmål og svar siger også, at selvbetalte behandlinger med godkendte produkter (som eksempler nævnes tandimplantater og tandblegning) skal angive, at de er selvbetalte, og oplyse standardprisen. [MHLW: spørgsmål og svar til retningslinjerne for markedsføring af sundhedsydelser (PDF, japansk)](https://www.mhlw.go.jp/content/001683595.pdf)"
+   ],
+   "table": {
+    "head": [
+     "Side",
+     "Hvad der skal stå",
+     "Hvad AI ofte læser forkert"
+    ],
+    "rows": [
+     [
+      "Symptomsider (akne, eksem, dermatitis, fodsvamp, vorter)",
+      "Hvad der behandles på forsikringen, eventuelle selvbetalte muligheder tydeligt angivet som selvbetalte, hvornår man skal gå til læge",
+      "Forsikringsdækkede og selvbetalte behandlinger listet sammen uden skelnen"
+     ],
+     [
+      "Behandlingssider (laser, peeling, injektioner, hårfjerning)",
+      "At den er selvbetalt, pris pr. behandling og pr. forløb (inkl. eller ekskl. moms), sædvanligt antal behandlinger, vigtigste risici og bivirkninger, rekonvalescenstid",
+      "Kun „priser forklares ved konsultationen“"
+     ],
+     [
+      "Prisliste",
+      "Separate tabeller for forsikringsdækket og selvbetalt behandling, dato for seneste opdatering, hvordan konsultations-, opfølgnings- og medicinudgifter fungerer",
+      "En prisliste, der kun er et billede, eller kun kampagnepriser"
+     ],
+     [
+      "Klinikoplysninger (forside, find vej)",
+      "Separate åbningstider og bookingregler for almen og kosmetisk dermatologi, hvis de er forskellige, aldersgrupper der ses",
+      "Tider for kosmetiske aftaler vist som klinikkens generelle åbningstider"
+     ],
+     [
+      "Lægeprofiler",
+      "Navn, område og kvalifikationer (inden for det, der må markedsføres)",
+      "Superlativer og sammenligninger (se nedenfor)"
+     ]
+    ],
+    "caption": "Baseret på de spørgsmål, patienter stiller om hudklinikker, og hullerne i de højest rangerede artikler."
+   },
+   "after": [
+    "Hvis almen og kosmetisk dermatologi har forskellige åbningstider eller bookingregler, så giv hver sin egen tidstabel, så AI ikke blander dem sammen, og angiv for hver, om man kan komme uden aftale."
+   ]
+  },
+  {
+   "heading": "Sider for selvbetalte behandlinger: priser og vigtigste risici på samme side",
+   "paragraphs": [
+    "Efter Japans regler for markedsføring af sundhedsydelser må en hjemmeside, som patienter selv opsøger, forklare ting i detaljer, som normalt ikke må markedsføres, hvis visse betingelser er opfyldt (kendt som „ophævelse af begrænsningen“). Ministeriets spørgsmål og svar siger, at disse betingelser for selvbetalt behandling omfatter en beskrivelse af den behandling, der normalt kræves, og dens priser samt dens vigtigste risici og bivirkninger – og at det ikke er nok at nævne en eller to generelle ulemper (Q6-12). En anden betingelse er et kontaktpunkt for henvendelser; et nummer kun til booking eller en linje med automatisk svar opfylder den ikke (Q6-10). Oplysningerne skal være lette at se: meget lille tekst eller tekst i samme farve som baggrunden tæller ikke (Q6-11). [MHLW: spørgsmål og svar (PDF, japansk)](https://www.mhlw.go.jp/content/001683595.pdf)",
+    "Det peger i samme retning som AI-søgning. Når AI bliver spurgt om pris, rekonvalescenstid eller risiko, kan den kun bruge sider, hvor det står i brødteksten. En behandlingsside læses godt i denne rækkefølge:"
+   ],
+   "list": [
+    "Behandlingens navn, og at den er selvbetalt.",
+    "Hvilket problem den retter sig mod (uden at love resultater).",
+    "Hvordan den udføres, tid pr. behandling, sædvanligt antal behandlinger og interval.",
+    "Priser (pr. behandling og pr. forløb, inkl. eller ekskl. moms, tillæg som bedøvelse, medicin eller opfølgning).",
+    "Vigtigste risici og bivirkninger samt typisk rekonvalescenstid.",
+    "Hvem der ikke kan få behandlingen eller skal være forsigtig.",
+    "Et kontaktpunkt, der besvarer spørgsmål (telefonnummer og åbningstid), og hvem man ringer til, hvis der opstår problemer bagefter.",
+    "Datoen for sidens seneste opdatering."
+   ],
+   "after": [
+    "Behandlinger med ikke-godkendte lægemidler eller udstyr, eller med godkendte lægemidler til ikke-godkendte formål, kræver yderligere forklaring. Spørgsmål og svar siger, at off label-brug behandles på samme måde som ikke-godkendte lægemidler (Q2-14). Tjek de punkter, som selve retningslinjerne kræver.",
+    "Specifikt om kosmetisk medicin opfordrer rapporten fra ministeriets ekspertpanel (22. november 2024) til skærpet onlineovervågning af markedsføring af sundhedsydelser og til, at klinikker opretter et kontaktpunkt for problemer efter behandling og fortæller patienterne om det. [MHLW: rapport fra panelet om korrekt praksis i kosmetisk medicin (PDF, japansk)](https://www.mhlw.go.jp/content/11201250/001337817.pdf). Et kontaktpunkt for efterbehandling på hver behandlingsside passer også ind i den retning."
+   ]
+  },
+  {
+   "heading": "Anmeldelser og casebilleder: hvor generelle AI-råd støder sammen med reglerne",
+   "paragraphs": [
+    "Guides om AI-søgning anbefaler ofte at samle anmeldelser og vise før-og-efter-billeder som bevis. For sundhedsinstitutioner i Japan kræver det forsigtighed."
+   ],
+   "table": {
+    "head": [
+     "Almindeligt råd",
+     "Hvordan Japans spørgsmål og svar behandler det",
+     "Hvad du gør i stedet"
+    ],
+    "rows": [
+     [
+      "Offentliggør patientudtalelser",
+      "Udtalelser om behandlingens indhold eller virkning må ikke offentliggøres (Q1-18, Q2-9)",
+      "Forklar fakta mere detaljeret: forløb, priser, risici"
+     ],
+     [
+      "Sæt anmeldelser i din FAQ eller dit review-schema",
+      "Samme regel; anmeldelser, som klinikken har betalt for, bedt om eller redigeret, kan også være omfattet",
+      "Gør FAQ’en saglig: „Dækkes det af forsikringen?“, „Hvor mange behandlinger?“"
+     ],
+     [
+      "Vis før-og-efter-billeder",
+      "Selv billeder kun fra før eller kun fra efter regnes som påstande om behandlingens virkning og må ikke markedsføres (Q2-8, Q3-14)",
+      "Tjek retningslinjerne og eksempelsamlingen for, hvornår billeder må bruges"
+     ],
+     [
+      "„Bedst i området“, „smertefrit“, „garanterede resultater“",
+      "Falske, overdrevne og sammenlignende påstande behandles som forbudte",
+      "Skriv kun det, du kan dokumentere som fakta eller tal"
+     ]
+    ]
+   },
+   "after": [
+    "Til gengæld er opslag på patienters egne sociale medier eller på uafhængige anmeldelsessider, som klinikken ikke har betalt for eller bedt om, ikke markedsføring (Q2-11). Om AI læser dem, er ikke noget, en klinik styrer, så det sikre træk er at gøre oplysningerne på dit eget website korrekte. Eksempler er samlet i [ministeriets eksempelsamling (PDF, japansk)](https://www.mhlw.go.jp/content/10800000/001232587.pdf)."
+   ]
+  },
+  {
+   "heading": "Strukturerede data: typen Dermatology og én Service pr. behandling",
+   "paragraphs": [
+    "schema.org har en type for dermatologi (tjekket i typedefinitionerne i schema-dts 2.1.0 den 16. november 2026)."
+   ],
+   "table": {
+    "head": [
+     "Type / egenskab",
+     "Betydning",
+     "Brug på en hudklinik"
+    ],
+    "rows": [
+     [
+      "[Dermatology](https://schema.org/Dermatology)",
+      "Den gren af medicinen, der beskæftiger sig med hudsygdomme. En MedicalBusiness og dermed en LocalBusiness",
+      "Typen for en hudlægepraksis; den bærer adresse, telefon og åbningstider"
+     ],
+     [
+      "[medicalSpecialty](https://schema.org/medicalSpecialty)",
+      "Fagområde. Værdier omfatter Dermatology og PlasticSurgery",
+      "Tilbyder du både almen og kosmetisk dermatologi, så angiv kun de områder, dine sider beskriver"
+     ],
+     [
+      "Service med offers",
+      "En ydelse, du leverer, og dens pris",
+      "Registrér hver selvbetalt behandling med samme pris som på siden"
+     ],
+     [
+      "openingHoursSpecification",
+      "Åbningstider pr. dag",
+      "Er almene og kosmetiske tider forskellige, er tabellen på siden gældende, og markuppen angiver de primære åbningstider"
+     ],
+     [
+      "isAcceptingNewPatients",
+      "Om nye patienter modtages (en egenskab ved MedicalOrganization)",
+      "Til perioder, hvor du ikke tager nye patienter"
+     ]
+    ]
+   },
+   "after": [
+    "Google siger, at der ikke kræves særlige strukturerede data til AI Overviews og lignende funktioner, og at strukturerede data skal stemme overens med det, der er synligt på siden. [Google: AI-funktioner og dit website](https://developers.google.com/search/docs/appearance/ai-features) / [Strukturerede data for LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business). Sæt ikke en pris kun i markuppen eller en pris, der afviger fra siden."
+   ]
+  },
+  {
+   "heading": "Opsætning på en hudkliniks WordPress-site",
+   "list": [
+    "Installér og aktivér Nurevo AEO (gratis) fra [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO og Slim SEO fortsætter med at virke som hidtil. Fra 0.9.1 fungerer det også sammen med SEO SIMPLE PACK og VK All in One Expansion Unit uden at duplikere strukturerede data.",
+    "Vælg „Klinik eller tandlæge“ i opsætningsguiden ved første start (det sætter MedicalBusiness). Ændr derefter feltet for virksomhedstype i indstillingerne til Dermatology. Feltet accepterer ethvert schema.org-typenavn.",
+    "Tjek klinikkens navn, adresse, telefon og beskrivelse. Kun tomme felter udfyldes fra dine eksisterende indstillinger; værdier, du har indtastet, overskrives aldrig.",
+    "Skriv åbningstider kun som dage og klokkeslæt, fx „Mon-Fri 9:00-12:00 15:00-18:00 / Sat 9:00-13:00“. Separate kosmetiske tider, helligdage og seneste fremmødetider hører hjemme i sidens egen tabel.",
+    "Registrér hver selvbetalt behandling under ydelser i indstillingerne. Med navn, beskrivelse, varighed, pris og valuta offentliggøres hver som en Service med en Offer. Hold prisen identisk med siden, og ændr begge samtidig.",
+    "Tilføj i editorens sidepanel på hver behandlingsside spørgsmål kun for den side („Dækkes det af forsikringen?“, „Hvor mange behandlinger?“, „Hvor lang er rekonvalescenstiden?“). Udelad patientudtalelser og svar, der lover resultater. Markér kampagnesider, du ikke vil have listet, med „udelad denne side fra llms.txt“.",
+    "Kør diagnosen på skærmen med AEO-score, og anvend rettelserne med ét klik. Tjek, hvordan sitet ser ud udefra, med [det gratis tjek af AI-læsbarhed](/check)."
+   ]
+  },
+  {
+   "heading": "Tilføj medicalSpecialty",
+   "paragraphs": [
+    "Nurevo AEO udskriver ikke medicalSpecialty af sig selv. For at tilføje det skal du bruge filteret, der ændrer virksomhedens strukturerede data (webmcp_canary_business_node), i dit temas functions.php eller i et lille plugin. Tilføj kun de områder, dine sider beskriver."
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Add only the specialties your pages actually describe\n    $org['medicalSpecialty'] = array('Dermatology', 'PlasticSurgery');\n    return $org;\n}, 10, 2);"
+  },
+  {
+   "heading": "Tjekliste før du offentliggør",
+   "list": [
+    "Hver symptom- og behandlingsside angiver, om behandlingen er forsikringsdækket eller selvbetalt.",
+    "Sider for selvbetalte behandlinger angiver prisen (inkl. eller ekskl. moms, tillæg), sædvanligt antal behandlinger, vigtigste risici og bivirkninger samt rekonvalescenstid.",
+    "Et kontaktpunkt, der besvarer spørgsmål – ikke kun booking – er tydeligt vist.",
+    "Prislisten er tekst, ikke kun et billede, og har en dato for seneste opdatering.",
+    "Hvis almen og kosmetisk dermatologi har forskellige åbningstider eller booking, er begge skrevet ud.",
+    "Der optræder ingen patientudtalelser, før-og-efter-billeder, superlativer eller sammenligninger i brødtekst, FAQ eller strukturerede data.",
+    "Behandlinger med ikke-godkendte produkter eller off label-brug har den forklaring, retningslinjerne kræver.",
+    "Priserne på ydelserne i de strukturerede data svarer til priserne på siden.",
+    "Navn, adresse, telefon og åbningstider stemmer overens i strukturerede data, Google Virksomhedsprofil og ethvert officielt sundhedsregister.",
+    "llms.txt angiver dine klinikoplysninger, prisliste, vigtigste behandlinger og sider om at finde vej. [Hvad er llms.txt?](/guide/llms-txt)"
+   ]
+  },
+  {
+   "heading": "Tjek, om du optræder i AI-svar",
+   "paragraphs": [
+    "Når siderne er i orden, så skriv fem til ti spørgsmål, som en patient kunne stille – kombinationer af område × symptom × forsikring, område × behandling × pris og behandling × rekonvalescenstid – og stil dem til ChatGPT og Perplexity. Notér, om din klinik optræder med navn eller URL, og om forsikringsdækning, priser og risici gengives korrekt. Hvis AI angiver en forkert pris, så tjek, hvordan prislisten og behandlingssiden er skrevet, og om en gammel kampagneside stadig er online. AI-svar ændrer sig fra gang til gang, så stil de samme spørgsmål igen over flere uger. Metoden er beskrevet i [sådan måler du AI-synlighed](/guide/measure-ai-visibility).",
+    "En analyse offentliggjort af MGMA, den amerikanske forening for praksisledelse (maj 2026, skrevet af stifteren af en virksomhed inden for AI-søgning), fandt, at ingen af de 200 uafhængige praksisser i stikprøven blev nævnt af ChatGPT. [MGMA](https://www.mgma.com/articles/why-chatgpt-has-probably-never-named-your-practice). Lande og forhold er forskellige, men at stille spørgsmålene i praksis er stedet at begynde.",
+    "Med Nurevo AEO stiller planerne Free og Standard desuden én gang om måneden Perplexity tre spørgsmål bygget ud fra din virksomhedstype og dit område (uden klinikkens navn) og registrerer, om klinikken blev nævnt eller dit website citeret. Planen Pro (fra USD 99 pr. måned) tilføjer måling af AI-synlighed i beta: andelen af AI-svar, din klinik optræder i, sammenlignet med konkurrenter og fulgt over tid (i øjeblikket målt på Perplexity). Begge ser på stikprøver af svar; ingen af dem ser alle svar."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Hvor skal en hudklinik begynde med AI-søgning?",
+   "a": "Begynd med at angive på hver symptom- og behandlingsside, om behandlingen er forsikringsdækket eller selvbetalt. Giv derefter hver side for en selvbetalt behandling pris, sædvanligt antal behandlinger, vigtigste risici og bivirkninger samt rekonvalescenstid, og sørg for, at navn, adresse, telefon og åbningstider stemmer overens i strukturerede data og din Google Virksomhedsprofil."
+  },
+  {
+   "q": "Bør en kosmetisk hudklinik offentliggøre sine priser?",
+   "a": "Ja. Når AI bliver spurgt om pris, bruger den sider, hvor prisen står i teksten. I Japan nævner ministeriets spørgsmål og svar desuden den sædvanlige behandling, dens priser og dens vigtigste risici og bivirkninger blandt betingelserne for at forklare selvbetalt behandling i detaljer på et website."
+  },
+  {
+   "q": "Hvilken type strukturerede data skal jeg bruge?",
+   "a": "schema.org’s type Dermatology repræsenterer en hudlægepraksis og er en slags MedicalBusiness og LocalBusiness. Tilbyder du også kosmetiske behandlinger, kan du tilføje Dermatology og PlasticSurgery som værdier for medicalSpecialty. Overensstemmelse med siden betyder mere end typen."
+  },
+  {
+   "q": "Hjælper før-og-efter-billeder en klinik med at blive valgt af AI?",
+   "a": "Der er ingen dokumenteret evidens for det. Efter Japans regler for markedsføring af sundhedsydelser regnes før- og efterbilleder som påstande om behandlingens virkning og er begrænsede. Tjek retningslinjerne, eksempelsamlingen og dit lokale sundhedscenter for, hvornår de må bruges."
+  },
+  {
+   "q": "Holder lave vurderinger på anmeldelsessider min klinik ude af AI-svar?",
+   "a": "AI-udbydere offentliggør ikke, hvor meget vægt de tillægger den slags information, så ingen kan sige det med sikkerhed. Uafhængige anmeldelser, som klinikken ikke har bedt om, er ikke markedsføring, men klinikken må ikke offentliggøre anmeldelser, den har betalt for eller bedt om, på sit eget website. Fokusér på at gøre oplysningerne på dit eget website korrekte."
+  },
+  {
+   "q": "Er Nurevo AEO gratis?",
+   "a": "Ja. Strukturerede data for virksomhedstype, adresse, åbningstider, ydelser med priser og FAQ samt llms.txt, indstillinger for AI-crawlere og AEO-score er med i den gratis plan. Betalte planer tilføjer det altid opdaterede regelsæt (Standard, USD 20 pr. måned) og måling af AI-synlighed i beta (Pro, fra USD 99 pr. måned). [Nurevo AEO på WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Er det garanteret, at min klinik optræder i ChatGPT?",
+   "a": "Nej. AI-svar varierer, og intet værktøj eller nogen metode kan garantere synlighed eller placering. Det, du kan gøre, er at gøre din kliniks oplysninger læsbare for AI og blive ved med at tjekke, om du optræder."
+  }
+ ],
+ "relatedHeading": "Relaterede guides",
+ "cta": {
+  "heading": "Se først, hvordan AI læser din hudkliniks website",
+  "body": "Det gratis tjek kræver ingen tilmelding og viser status for dine strukturerede data, llms.txt og AI-crawleres adgang. På WordPress udfylder Nurevo AEO hullerne gratis.",
+  "label": "Kør det gratis tjek af AI-læsbarhed",
+  "href": "/check",
+  "secondary": {
+   "label": "Hent Nurevo AEO på WordPress.org",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT er et varemærke tilhørende OpenAI, Perplexity tilhørende Perplexity AI og Google tilhørende Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit og WordPress er varemærker tilhørende deres respektive ejere. Nurevo er ikke tilknyttet eller godkendt af nogen af disse virksomheder. Denne artikel er ikke juridisk eller medicinsk rådgivning."
+}
