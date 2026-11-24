@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>中古車販売店のAI検索対策：支払総額・在庫・古物商の表示 | Nurevo AIO</title>
+<meta name="description" content="中古車販売店のAI検索対策は、支払総額と内訳・条件、走行距離・保証・整備・修復歴の表示、売約車の扱い、古物商の表示を、サイト・ポータル・Googleでそろえて正確に出すこと。手順と構造化データの例。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/used-car-dealer-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/used-car-dealer-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/used-car-dealer-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/used-car-dealer-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/used-car-dealer-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/used-car-dealer-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/used-car-dealer-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/used-car-dealer-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/used-car-dealer-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="中古車販売店のAI検索対策：支払総額・在庫・古物商の表示 | Nurevo AIO">
+<meta property="og:description" content="中古車販売店のAI検索対策は、支払総額と内訳・条件、走行距離・保証・整備・修復歴の表示、売約車の扱い、古物商の表示を、サイト・ポータル・Googleでそろえて正確に出すこと。手順と構造化データの例。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/used-car-dealer-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="中古車販売店のAI検索対策：支払総額・在庫・古物商の表示 | Nurevo AIO">
+<meta name="twitter:description" content="中古車販売店のAI検索対策は、支払総額と内訳・条件、走行距離・保証・整備・修復歴の表示、売約車の扱い、古物商の表示を、サイト・ポータル・Googleでそろえて正確に出すこと。手順と構造化データの例。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/used-car-dealer-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/used-car-dealer-ai-search/","name":"中古車販売店のAI検索対策：支払総額・在庫・古物商の表示 | Nurevo AIO","description":"中古車販売店のAI検索対策は、支払総額と内訳・条件、走行距離・保証・整備・修復歴の表示、売約車の扱い、古物商の表示を、サイト・ポータル・Googleでそろえて正確に出すこと。手順と構造化データの例。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/used-car-dealer-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/used-car-dealer-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"中古車販売店のAI検索対策：支払総額、在庫の表示、古物商の表示をAIに正しく読ませる手順","item":"https://nurevo.jp/ja/guide/used-car-dealer-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/used-car-dealer-ai-search/#faq","mainEntity":[{"@type":"Question","name":"中古車販売店のAI検索対策は、何から始めればいいですか？","acceptedAnswer":{"@type":"Answer","text":"まず、在庫ページの価格を「支払総額」と内訳・条件つきの文字にし、走行距離・保証・定期点検整備・修復歴を1台ずつ文字で書きます。次に、売れた車を当日に「売約済」にする運用を決め、古物商の表示をフッターに入れます。そのうえで、店の情報を AutoDealer の構造化データとllms.txtで出し、ポータルとGoogleビジネスプロフィールの情報をそろえます。"}},{"@type":"Question","name":"支払総額の表示は、自社のホームページにも必要ですか？","acceptedAnswer":{"@type":"Answer","text":"自動車公正取引協議会の資料は、Webサイトの広告の表示例を示し、自社のWebサイトと中古車情報サイトの表示の両方を支払総額に変えるよう求めています。協議会の会員でない場合の扱いなど細かいことは、協議会に確認してください。"}},{"@type":"Question","name":"古物商の許可番号は、サイトのどこに書けばいいですか？","acceptedAnswer":{"@type":"Answer","text":"古物営業法では「消費者の目につきやすい箇所に明瞭に」とされています。全ページのフッターか、会社概要・店舗案内のページに、氏名又は名称、許可をした公安委員会の名称、許可証の番号を文字で書くのが確実です。"}},{"@type":"Question","name":"車1台ずつに構造化データは必要ですか？","acceptedAnswer":{"@type":"Answer","text":"必須ではありません。schema.orgの Car で走行距離や初度登録年月を書けますが、Googleは車両の掲載の構造化データの説明を2025年9月に削除しており、検索結果の特別な表示は期待できません。まずは在庫ページの本文に事実を文字で書くことが先です。構造化データを使うなら、本文と同じ内容にし、売約済のときは一緒に直します。"}},{"@type":"Question","name":"Nurevo AEOで、在庫の車を出せますか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。Nurevo AEOは店の情報（AutoDealerなど）、サービス、FAQ、llms.txtを出すもので、車1台ずつの構造化データは出しません。在庫ページは在庫管理の仕組みやテーマに任せ、Nurevo AEOには車検・保証・下取り・ローン相談などの店のサービスを登録します。"}},{"@type":"Question","name":"Nurevo AEOは無料で使えますか？","acceptedAnswer":{"@type":"Answer","text":"はい。業種・住所・営業時間・サービス・FAQの構造化データ、llms.txt、AIクローラの設定、AEOスコア、月1回の無料AIチェックは無料プランで使えます。有料プランでは、常に最新のルール（Standard、月3,000円）と、ベータ版のAI登場率の計測（Pro、月14,800円〜）が加わります。WordPress.orgのNurevo AEO"}},{"@type":"Question","name":"この対策で、ChatGPTに必ず紹介されますか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。AIの回答は変わるもので、どの道具や方法でも、表示や順位は保証できません。できるのは、価格と在庫の事実をAIが読みやすい形で出し、出ているか・正しいかを確かめ続けることです。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">無料でAIの読みやすさをチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>中古車販売店のAI検索対策：支払総額、在庫の表示、古物商の表示をAIに正しく読ませる手順</span></nav>
+  <article>
+    <h1>中古車販売店のAI検索対策：支払総額、在庫の表示、古物商の表示をAIに正しく読ませる手順</h1>
+    <p class="lead">中古車販売店のAI検索対策（AEO）で一番大事なのは、AIに「◯◯市で総額100万円以下の軽自動車を置いている店は？」「この店の価格は諸費用込み？」と聞かれたときに、自分のサイトが正確な答えを返せる状態にすることです。具体的には、価格を支払総額と内訳・条件つきで書き、走行距離・保証・定期点検整備・修復歴を1台ずつ文字で出し、売れた車をすぐ「売約済」にし、古物商の表示をサイトに入れ、同じ事実をポータルサイトとGoogleビジネスプロフィールにもそろえます。</p>
+<p>作成日：2026年11月24日（JST）。表示のルールは、本文に記した自動車公正取引協議会の資料と、警視庁・静岡県警察のページで確認したものです。この記事は法的な助言ではありません。細かい扱いは自動車公正取引協議会や管轄の警察署に確認してください。</p>
+<p>AIの回答は日や聞き方によって変わります。この記事の対策は、AIが店と在庫の事実を正しく読める状態をつくるもので、AIの回答に必ず表示される・順位が上がることを保証するものではありません。</p>
+<section class="qa"><h2>中古車の購入で、AIにどんな質問がされているか</h2><p>中古車を探す人は、車種と予算から入ることが多く、そのあと「どこで買うか」「本当にその値段で買えるか」「状態は大丈夫か」で候補を絞ります。AIはこうした質問に、店のサイト・ポータルサイトの掲載・地図の情報・口コミなどを組み合わせて答えます。店のサイトに条件が文字で書かれていないと、AIはほかの情報源に頼るか、条件をつけずにあいまいに答えます。</p><div class="table-wrap"><table><caption>質問の例は、この記事の説明のための例です。実際の質問の頻度を調べたものではありません。</caption><thead><tr><th scope="col">よくある質問の型</th><th scope="col">質問の例</th><th scope="col">AIが答えに必要な、店側の事実</th></tr></thead><tbody><tr><th scope="row">予算</th><td>「総額100万円以下のミニバンがある店は？」</td><td>支払総額と、その内訳（車両価格＋諸費用）、総額の条件（登録地域・納車方法）</td></tr><tr><th scope="row">在庫</th><td>「◯◯市でN-BOXを置いている店は？」</td><td>車種・グレード・年式・走行距離・色、今も売っているか（売約済か）</td></tr><tr><th scope="row">状態</th><td>「修復歴なしで保証つきの車は？」</td><td>修復歴の有無、保証の有無と期間・距離、定期点検整備の有無</td></tr><tr><th scope="row">買い方</th><td>「ローンは使える？下取りは？県外に納車できる？」</td><td>ローン・下取り・県外登録・自宅納車の可否と、別にかかる費用</td></tr><tr><th scope="row">店の信頼</th><td>「ちゃんとした店？」</td><td>古物商許可の表示、所在地、営業時間、定休日、口コミへの返信</td></tr><tr><th scope="row">相談</th><td>「家族4人で乗れる、燃費のいい車は？」</td><td>得意な車種、用途別のおすすめの考え方、試乗の可否</td></tr></tbody></table></div></section>
+<section class="qa"><h2>上位の解説記事に足りないこと</h2><p>2026年11月24日に、日本語と英語で「中古車販売店 AI検索対策」「car dealership AI search」などの上位記事を13本選び、11本を読みました（2本は取得できず）。日本語では、販売と整備をまとめて扱う記事が中心でした。支払総額の表示まで触れていたのは<a href="https://uravation.com/llmo/jidosha-hanbai-seibi-llmo-taisaku/">uravationの記事</a>だけで、<a href="https://0120.co.jp/blog/aio-157/">株式会社課題解決プラットフォームの記事</a>は毎月同じ質問をAIに投げて記録する測り方が具体的でした。一方で、古物商の表示、売約車の扱い、WordPressでの手順、車1台ずつの構造化データの書き方は、どの日本語記事にもありませんでした。</p>
+<p>英語の記事は、6本中5本が販売店向けの製品を売る会社のもので、統計の多くは出典がないか自社調査でした。<a href="https://keyloop.com/blog/industry-insights/seo-in-the-age-of-ai">Keyloopの記事</a>はサーバーのログでAIのボットを見る方法、<a href="https://www.marchex.com/chatgpts-new-role-as-car-buying-advisor-how-ai-is-transforming-dealership-marketing/">Marchexの記事</a>は電話の計測で見分ける方法を挙げていて参考になります。ただ、どの記事も車の構造化データの例や、「総額でいくらか」を正確に出す書き方までは説明していません。また、Googleは2025年9月に、車両の掲載（vehicle listing）の構造化データの説明を削除しています（下で説明します）。この記事は、これらの抜けを日本の表示ルールに沿って埋めます。</p></section>
+<section class="qa"><h2>価格は「支払総額」で、内訳と条件まで文字で書く</h2><p>2023年10月1日から、自動車公正取引協議会の規約により、中古車の価格を表示するときは「支払総額」を表示することになりました。支払総額は、車両価格と諸費用を足したもので、内訳として車両価格と諸費用の額を示し、登録の時期や地域などの条件を書きます。諸費用に入れてよいのは、保険料（自賠責）、税金、登録などに伴う費用（検査登録・車庫証明の手続き代行費用）だけです。<a href="https://www.aftc.or.jp/content/files/pdf/shiharaisougakupnf.pdf">自動車公正取引協議会：中古車の販売価格の表示が「支払総額」に変わります（PDF）</a></p>
+<p>「納車準備費用」や納車前の点検・整備の費用、販売手数料、広告掲載料などは、諸費用として別に取ることはできず、車両価格に含めます。保証や定期点検整備を買う条件にしている場合、その費用も車両価格に含めます。協議会の資料は、「諸費用０円」の表示や、「コミコミ価格」「諸費用込価格」といった名前での表示を認めていません。<a href="https://www.aftc.or.jp/content/files/pdf/2023_07_kaiseipamph_A4.pdf">パンフレット（PDF）</a>／<a href="https://www.aftc.or.jp/pdf/cyuko_cl.pdf">広告宣伝のチェックリスト（PDF）</a></p>
+<p>AI検索にとっても、これはそのまま「正確に答えられる価格」になります。条件のない数字だけの価格や、画像の中にだけある価格は、AIが「総額か、車両本体だけか」を判断できません。総額・内訳・条件を、同じ文の中に文字で書きます。</p><div class="table-wrap"><table><caption>協議会の資料は、支払総額が変わったときは速やかに直すよう求めており、「●月現在」と書くだけでは問題を避けられないとしています。</caption><thead><tr><th scope="col">書き方</th><th scope="col">AIにとっての読みやすさ</th><th scope="col">直し方</th></tr></thead><tbody><tr><th scope="row">「98万円」だけ</th><td>総額か本体価格か判断できない</td><td>「支払総額1,298,000円（車両価格1,180,000円＋諸費用118,000円）」</td></tr><tr><th scope="row">「諸費用別途」</th><td>協議会の資料では違反の例にあたる</td><td>支払総額と内訳を書き、条件をそえる</td></tr><tr><th scope="row">総額はあるが条件がない</th><td>県外の人に同じ金額で買えると読まれる</td><td>「2026年11月現在、◯◯県内登録・店頭納車の場合」</td></tr><tr><th scope="row">プライスボードの写真だけ</th><td>画像の文字は読まれないことがある</td><td>在庫ページの本文に、同じ内容を文字で書く</td></tr><tr><th scope="row">総額が古いまま</th><td>ポータルとサイトで金額が違い、どちらを使うか定まらない</td><td>値下げしたら、サイト・ポータルの両方を同じ日に直す</td></tr></tbody></table></div><p>協議会の調査では、消費者の約9割が支払総額の表示を求めていたと報じられています。<a href="https://kuruma-news.jp/post/693314">くるまのニュース（2023年10月1日）</a>。AIに「総額で比べたい」と聞く人にとっても、総額と条件が書いてある店は答えに使いやすい店になります。</p></section>
+<section class="qa"><h2>1台ずつ書く事実：走行距離・保証・整備・修復歴</h2><p>協議会の「中古車の広告宣伝を行う際のチェックリスト」（2020年4月）は、広告で必ず表示する事項として次の7つを挙げています。これは、AIが「状態は大丈夫か」に答えるための事実の一覧でもあります。</p><div class="table-wrap"><table><caption>自動車公正取引協議会のチェックリスト（2020年4月版）の「必要表示事項」をもとにした表です。全車が保証付・修復歴無なら「全車」と書きます。修復歴にあたる部位の定義はこの資料にはないため、協議会の資料で確かめてください。</caption><thead><tr><th scope="col">表示する事項</th><th scope="col">書き方の例</th><th scope="col">AIにとっての意味</th></tr></thead><tbody><tr><th scope="row">車両価格（現金価格）</th><td>車両価格1,180,000円</td><td>支払総額の内訳がわかる</td></tr><tr><th scope="row">支払総額</th><td>支払総額1,298,000円（◯月現在、県内登録・店頭納車）</td><td>予算の質問に、条件つきで答えられる</td></tr><tr><th scope="row">走行距離</th><td>3.1万km</td><td>「走行距離が少ない車」の質問に答えられる</td></tr><tr><th scope="row">保証の有無</th><td>保証付（1年・走行距離無制限）／保証無</td><td>「保証つきの車」の質問に、期間と距離まで答えられる</td></tr><tr><th scope="row">定期点検整備</th><td>定期点検整備付き（整備費用は車両価格に含む）／なし</td><td>納車前に何をしてくれるかがわかる</td></tr><tr><th scope="row">修復歴の有無</th><td>修復歴無／修復歴有</td><td>「修復歴なし」の質問に答えられる</td></tr><tr><th scope="row">車台番号</th><td>下3桁「…123」（車台番号）</td><td>同じ車が複数のサイトに出ていても、同じ1台だとわかる</td></tr></tbody></table></div><p>登録済未使用車について「未走行」「0km」と書くことは、チェックリストで不当表示のおそれがある例に挙げられています。AI検索のためにも、強い言葉よりも、走行距離の数字と登録の状態をそのまま書くほうが、条件つきで正しく紹介されます。</p></section>
+<section class="qa"><h2>売れた車と在庫ページの扱い</h2><p>中古車は1台ずつしかないので、売れた車のページが「販売中」のまま残ると、AIが「この店にある」と答えて、問い合わせのあとに食い違いが起きます。AIの答えのもとになる情報が古いことは、AIが店の情報を間違えるよくある原因の1つです。</p><ol><li>売約が決まった日に、サイトの在庫ページを「売約済」にし、価格の表示を外すか「売約済」と並べます。ポータルサイトの掲載も同じ日に直します。</li><li>売約済のページは、しばらく残すなら「売約済」を見出しの近くに文字で書き、似た在庫の一覧へのリンクを置きます。残さないなら削除し、在庫一覧から外します。</li><li>在庫一覧のページには、最後に更新した日付と、「掲載の在庫は◯月◯日時点です」の一文を入れます。</li><li>構造化データを使っている場合は、availability を SoldOut にするか、ページと一緒に消します。ページが「売約済」なのにデータが InStock のままにしないこと。</li><li>店のトップや「店舗案内」には、在庫が日々変わること、最新の在庫はどのページかを書きます。AIに「在庫は電話で確かめて」と案内してもらいやすくなります。</li></ol><p>情報がずれる原因と直し方は<a href="/ja/guide/ai-visibility-drop-causes/">AIでの表示が減った・間違うときの原因</a>にまとめています。</p></section>
+<section class="qa"><h2>古物商の表示：サイトに「氏名・公安委員会・許可番号」</h2><p>中古車の売買は古物営業にあたり、古物商はホームページに「氏名又は名称、許可をした公安委員会の名称及び許可証の番号」を表示することになっています（古物営業法第12条第2項、令和6年4月1日施行）。常時使用する従業員が5人以下の場合などは対象外ですが、インターネットで取引をする届出をしている古物商（特定古物商）は、人数にかかわらず表示が必要です。表示は「消費者の目につきやすい箇所に明瞭に」とされています。<a href="https://www.keishicho.metro.tokyo.lg.jp/tetsuzuki/kobutsu/kaisetsu/kobutu_eigyo_r6.html">警視庁：古物営業法の一部改正について</a></p>
+<p>インターネットで古物取引をする場合は、サイトのURLを公安委員会に届け出ます。都道府県警察は、届け出た古物商の名称・URL・許可番号を公表しています。<a href="https://www.pref.shizuoka.jp/police/shinse/seikatsu/kobutsu/internet/index.html">静岡県警察：インターネット利用の古物商</a>。サイトのURLを変えたとき（リニューアルやドメインの変更）は、届け出の変更も確かめてください。</p>
+<p>この表示は法律上のものですが、AIにとっても「実在して、許可を受けている店」を示す具体的な事実になります。フッターか「会社概要」「店舗案内」のページに、画像ではなく文字で書きます。書き方の例：「古物商許可：◯◯県公安委員会 第000000000000号　例オート株式会社」。</p></section>
+<section class="qa"><h2>店の構造化データ：AutoDealer</h2><p>schema.orgには販売店を表す<a href="https://schema.org/AutoDealer">AutoDealer</a>があり、LocalBusinessの一種（自動車関係の事業者 AutomotiveBusiness の下）です。店の情報はこの型で、本文と同じ名前・住所・電話・営業時間を出します（schema-dts 2.1.0で確認、2026年11月24日）。</p><pre class="code" dir="ltr"><code>{
+  "@context": "https://schema.org",
+  "@type": "AutoDealer",
+  "@id": "https://example.jp/#organization",
+  "name": "例オート（例）",
+  "description": "◯◯市の中古車販売店です。軽自動車とミニバンを中心に、常時30台前後を展示しています。価格はすべて支払総額（県内登録・店頭納車）で表示しています。古物商許可：◯◯県公安委員会 第000000000000号。",
+  "address": { "@type": "PostalAddress", "streetAddress": "◯◯県◯◯市◯◯町1-2-3" },
+  "telephone": "+81-00-0000-0000",
+  "url": "https://example.jp/",
+  "openingHours": "Mo,Tu,Th,Fr,Sa,Su 10:00-19:00"
+}</code></pre></section>
+<section class="qa"><h2>在庫の1台ずつはCarで：Googleの扱いが変わった点に注意</h2><p>在庫の1台ずつは<a href="https://schema.org/Car">Car</a>で書けます。Carは車両（Vehicle）、さらに商品（Product）の一種で、初度登録の年月（dateVehicleFirstRegistered）、走行距離（mileageFromOdometer）、燃料、変速機、色、修理済み・未修理の損傷の説明（knownVehicleDamages）などの項目があり、価格は Offer に入れます。下の例では、価格（price）に支払総額を入れ、内訳・条件・保証・整備は説明（description）に、ページと同じ文で書いています。</p><pre class="code" dir="ltr"><code>{
+  "@context": "https://schema.org",
+  "@type": "Car",
+  "name": "例メーカー 例ワゴン G 2WD",
+  "url": "https://example.jp/stock/1234/",
+  "dateVehicleFirstRegistered": "2021-04",
+  "mileageFromOdometer": { "@type": "QuantitativeValue", "value": 31000, "unitCode": "KMT" },
+  "fuelType": "ガソリン",
+  "vehicleTransmission": "CVT",
+  "color": "パールホワイト",
+  "knownVehicleDamages": "修復歴なし",
+  "offers": {
+    "@type": "Offer",
+    "price": "1298000",
+    "priceCurrency": "JPY",
+    "itemCondition": "https://schema.org/UsedCondition",
+    "availability": "https://schema.org/InStock",
+    "description": "支払総額1,298,000円（車両価格1,180,000円＋諸費用118,000円）。2026年11月現在、◯◯県内登録・店頭納車の場合。保証付（1年・走行距離無制限）、定期点検整備付き（整備費用は車両価格に含む）。",
+    "seller": { "@id": "https://example.jp/#organization" }
+  }
+}</code></pre><p>注意点が1つあります。Googleは2023年10月に車両の掲載（vehicle listing）の構造化データを始めましたが、2025年9月9日に、この型の説明を「Google検索の結果に表示されなくなった」として削除しました。<a href="https://developers.google.com/search/updates">Google：Search Central の更新履歴</a>／<a href="https://developers.google.com/search/blog/2023/10/vehicle-listings-structured-data">2023年の発表</a>。つまり、Carのマークアップで検索結果に特別な表示が出ることは期待できません。また、GoogleはAI OverviewsやAI Modeのための特別なマークアップは必要ないとしています。<a href="https://developers.google.com/search/docs/appearance/ai-features">Google：AI features and your website</a>。Carのマークアップは、ページの事実を項目ごとに機械が読める形にした写しとして使い、本文に見えている事実だけを入れ、ページとずれないようにすることが大切です。</p></section>
+<section class="qa"><h2>WordPressの中古車販売店のサイトでの設定手順</h2><ol><li><a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.org</a>からNurevo AEO（無料）をインストールして有効化します。Yoast SEO・Rank Math・All in One SEO・SEO SIMPLE PACK・VK All in One Expansion Unitなどはそのまま使えます（構造化データは重複しません）。</li><li>初回の設定ウィザードで「その他」を選び、住所・電話番号・営業時間（定休日を含む）を入れます。ウィザードには車の販売店のカードがないため、そのあと「設定」の「業種（schema.org型）」に AutoDealer と入力します。入力した型で店の情報が出力されます。</li><li>店の説明に、扱う車種の傾向、展示台数の目安、価格はすべて支払総額で表示していること、古物商許可の表示（公安委員会と許可番号）を入れます。</li><li>在庫の車1台ずつは、Nurevo AEOのサービスには登録しません（サービスは最大20件で、店のメニュー向けです）。代わりに、車検・点検、保証プラン、下取り査定、ローンの相談、県外登録・自宅納車のような店のサービスを、料金と条件つきで登録します。llms.txtにも載ります。</li><li>在庫ページは、在庫管理の仕組みやテーマが出す構造化データに任せます。Nurevo AEOは車（Car）の構造化データを出しません。在庫ページにすでに Car や Product が出ているか、テストツールで確かめ、出ていない場合は上の例を参考に制作会社と相談してください。</li><li>よくある質問（総額の条件、県外への納車、下取り、ローン、保証の範囲、売約済の車の扱い）を入力し、Nurevo FAQブロック（または[nurevo_faq]ショートコード）を置きます。書き方は<a href="/ja/guide/faq-page-ai-search/">FAQページのAI検索対策</a>をご覧ください。</li><li>/llms.txt を開き、在庫一覧・店舗案内・保証や整備の説明・会社概要のページが載っているか確かめます。AEOスコアの画面で診断を実行し、不足を直します。</li></ol><p>WordPress以外のサイトでも、確かめる項目は同じです。登録不要の<a href="/check">無料チェック</a>にURLを入れると、構造化データ・llms.txt・AIクローラの許可の状態がわかります。料金の書き方全般は<a href="/ja/guide/pricing-page-ai-search/">料金ページのAI検索対策</a>をご覧ください。</p></section>
+<section class="qa"><h2>ポータルサイト・Googleビジネスプロフィール・Bingとそろえる</h2><p>中古車販売店の在庫は、自社サイトより先に、中古車のポータルサイトに載っていることが多いはずです。AIはポータルの掲載も読むので、サイトとポータルで支払総額・走行距離・保証の内容が違うと、どちらが正しいか定まらず、古いほうの情報が答えに使われることがあります。協議会の資料も、支払総額への変更にあたって、自社のWebサイトと中古車情報サイトの両方の表示を直すよう求めています。</p>
+<p>そろえる順番は、①在庫の元データ（管理の仕組み）→②自社サイト→③ポータル→④Googleビジネスプロフィール（営業時間・定休日・電話・サイトのURL）です。店の基本情報はBing Placesにも同じものを入れます。手順は<a href="/ja/guide/bing-places-ai-search/">Bing PlacesのAI検索対策</a>をご覧ください。</p><div class="table-wrap"><table><caption>ポータルやGoogleビジネスプロフィールの欄の名前と有無は、サービスによって違います。この表はそろえる項目の考え方を示すものです。</caption><thead><tr><th scope="col">そろえる事実</th><th scope="col">自社サイト</th><th scope="col">ポータル</th><th scope="col">Googleビジネスプロフィール</th></tr></thead><tbody><tr><th scope="row">支払総額と条件</th><td>在庫ページの本文</td><td>掲載の価格欄と備考</td><td>（載せる場合は商品の説明）</td></tr><tr><th scope="row">走行距離・保証・整備・修復歴</th><td>在庫ページの本文</td><td>掲載の項目欄</td><td>—</td></tr><tr><th scope="row">売約済</th><td>当日に「売約済」</td><td>当日に掲載を終了</td><td>—</td></tr><tr><th scope="row">営業時間・定休日</th><td>店舗案内とフッター</td><td>店舗情報</td><td>営業時間と特別営業時間</td></tr><tr><th scope="row">古物商許可の表示</th><td>フッターか会社概要</td><td>店舗情報（欄があれば）</td><td>—</td></tr></tbody></table></div></section>
+<section class="qa"><h2>公開前のチェックリスト</h2><ol><li>価格がすべて「支払総額」で、内訳（車両価格＋諸費用）と条件（◯月現在、登録地域、店頭納車など）が文字で書かれている。</li><li>「諸費用別途」「諸費用0円」「コミコミ価格」の表示が残っていない。</li><li>在庫ページに、走行距離・保証の有無（期間・距離）・定期点検整備・修復歴の有無・車台番号（下3桁以上）が文字で書かれている。</li><li>プライスボードや掲載の画像の中にだけある情報がない。</li><li>売れた車が当日に「売約済」になり、構造化データも InStock のままになっていない。</li><li>在庫一覧に「◯月◯日時点」の更新日がある。</li><li>古物商の表示（氏名又は名称、公安委員会の名称、許可証の番号）がフッターか会社概要に文字である。</li><li>店の構造化データの型が AutoDealer（または LocalBusiness）で、名前・住所・電話・営業時間が本文と同じ。</li><li>自社サイト・ポータル・Googleビジネスプロフィール・Bing Placesで、価格・在庫・営業時間がそろっている。</li><li>llms.txtに在庫一覧・店舗案内・保証と整備の説明・会社概要が載っている。<a href="/ja/guide/llms-txt/">llms.txtとは</a></li></ol></section>
+<section class="qa"><h2>AIに出ているか、正しく答えているかを確かめる</h2><p>整えたあとは、買う人が聞きそうな質問をAIに投げます。「◯◯市 中古車 軽自動車 総額100万円以下」「◯◯駅の近くの中古車販売店 修復歴なし」のような地域＋条件の質問で名前が出るかに加えて、店の名前を入れて「この店の価格は諸費用込み？」「県外にも納車できる？」と聞き、答えがサイトの事実と合っているかも見ます。売れた車を「ある」と答えていないかも確かめます。</p>
+<p>AIの回答は回ごとに変わるので、同じ質問を期間をあけて何度か確かめ、結果を記録します。Nurevo AEOでは、Free・Standardプランでも月に1回、業種と地域から作った3つの質問（店の名前は含めません）をPerplexityに投げ、回答に店の名前やサイトが出たかを記録します。Proプラン（月14,800円〜）では、ベータ版のAI登場率の計測で、競合との比較と推移を見られます（現在はPerplexity）。どちらも回答の一部を見本として調べるもので、すべての回答を見ているわけではありません。くわしくは<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>をご覧ください。</p></section>
+    <section class="qa"><h2>よくある質問</h2><h3>中古車販売店のAI検索対策は、何から始めればいいですか？</h3><p>まず、在庫ページの価格を「支払総額」と内訳・条件つきの文字にし、走行距離・保証・定期点検整備・修復歴を1台ずつ文字で書きます。次に、売れた車を当日に「売約済」にする運用を決め、古物商の表示をフッターに入れます。そのうえで、店の情報を AutoDealer の構造化データとllms.txtで出し、ポータルとGoogleビジネスプロフィールの情報をそろえます。</p>
+<h3>支払総額の表示は、自社のホームページにも必要ですか？</h3><p>自動車公正取引協議会の資料は、Webサイトの広告の表示例を示し、自社のWebサイトと中古車情報サイトの表示の両方を支払総額に変えるよう求めています。協議会の会員でない場合の扱いなど細かいことは、協議会に確認してください。</p>
+<h3>古物商の許可番号は、サイトのどこに書けばいいですか？</h3><p>古物営業法では「消費者の目につきやすい箇所に明瞭に」とされています。全ページのフッターか、会社概要・店舗案内のページに、氏名又は名称、許可をした公安委員会の名称、許可証の番号を文字で書くのが確実です。</p>
+<h3>車1台ずつに構造化データは必要ですか？</h3><p>必須ではありません。schema.orgの Car で走行距離や初度登録年月を書けますが、Googleは車両の掲載の構造化データの説明を2025年9月に削除しており、検索結果の特別な表示は期待できません。まずは在庫ページの本文に事実を文字で書くことが先です。構造化データを使うなら、本文と同じ内容にし、売約済のときは一緒に直します。</p>
+<h3>Nurevo AEOで、在庫の車を出せますか？</h3><p>いいえ。Nurevo AEOは店の情報（AutoDealerなど）、サービス、FAQ、llms.txtを出すもので、車1台ずつの構造化データは出しません。在庫ページは在庫管理の仕組みやテーマに任せ、Nurevo AEOには車検・保証・下取り・ローン相談などの店のサービスを登録します。</p>
+<h3>Nurevo AEOは無料で使えますか？</h3><p>はい。業種・住所・営業時間・サービス・FAQの構造化データ、llms.txt、AIクローラの設定、AEOスコア、月1回の無料AIチェックは無料プランで使えます。有料プランでは、常に最新のルール（Standard、月3,000円）と、ベータ版のAI登場率の計測（Pro、月14,800円〜）が加わります。<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgのNurevo AEO</a></p>
+<h3>この対策で、ChatGPTに必ず紹介されますか？</h3><p>いいえ。AIの回答は変わるもので、どの道具や方法でも、表示や順位は保証できません。できるのは、価格と在庫の事実をAIが読みやすい形で出し、出ているか・正しいかを確かめ続けることです。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、AIがあなたの店のサイトをどう読んでいるか確かめる</h2>
+    <p>無料チェックでは、構造化データ・llms.txt・AIクローラの許可の状態が、登録なしでわかります。WordPressなら、Nurevo AEOで店の情報とサービスを無料で出せます。</p>
+    <a class="btn primary lg" href="/check">無料でAIの読みやすさをチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgで無料で入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/pricing-page-ai-search/">料金ページをAIに正しく読ませる書き方：税込表示・条件つきの料金・改定のときの手順</a></li><li><a href="/ja/guide/online-shop-ai-search/">ネットショップ（EC）のAI検索対策：商品・価格・在庫・返品条件をAIに正しく読ませる手順</a></li><li><a href="/ja/guide/faq-page-ai-search/">FAQページとFAQ構造化データはAI検索に効くか：2026年の扱いと、AIに使われる書き方</a></li><li><a href="/ja/guide/bing-places-ai-search/">Bing Places for Businessの登録と、Copilot・Bingでの店舗情報のそろえ方：Googleからの取り込み、同期の向き、重複の直し方</a></li><li><a href="/ja/guide/ai-visibility-drop-causes/">AIでの登場率が下がったときの原因の切り分け：制作会社がお客様に報告するまでの手順</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/used-car-dealer-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">ChatGPTはOpenAIの、PerplexityはPerplexity AIの、GoogleはGoogle LLCの、BingはMicrosoft Corporationの商標です。N-BOXは本田技研工業株式会社の商標です。Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK、VK All in One Expansion Unitは、それぞれの権利者の商標です。Nurevoはこれらの会社と提携していません。この記事は法的な助言ではありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
