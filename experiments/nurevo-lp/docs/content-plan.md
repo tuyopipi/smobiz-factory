@@ -564,3 +564,12 @@
 3. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
 4. 出張撮影（フォトグラファー）のAI検索対策【業種別】（photo-studio-ai-search と分けて）
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
+| 2026-11-24 14時 | multilingual-site-ai-search | 多言語サイト（インバウンド・海外向け）のAI検索対策（制作会社向け。site-renewal-ai-search・agency-new-site-build-ai-search とは分け、言語ごとのURL・hreflang・言語でそろえる事実に絞る。上位記事13本を選び12本を読んだ〔uravation（2026-07-18、09-05更新）・DeepL掲載のWeglot（2026-06-19更新、noindex）・GOOD LUCK TRIP（2025-03-21更新、AIの話なし）・JNTO（2026-09-30）・Digima（2026-03-11、AIの話なし）／GSQi（2025-12-01）・Weglot（2026-08-10更新）・RWS（2026-04-28）・Lokalise（2026-11-16）・eSEOspace（2026-10-13、11-16確認）・MultiLipi（2026-05-27）。funnel-ai は別ホストに転送され読んでいない〕の抜け〔hreflang の例と相互の確かめ方なし・公式と推測の区別なし・言語でずれる事実の扱いなし・WordPress手順なし・見積もりと保守の扱いなし、英語は翻訳ツールの会社の調べ方のない数字〕を埋めた。わかっていること・いないことの表6行〔Google 多言語・多地域（ja 2025-12-18更新）：本文で言語判定・lang属性やURLは使わない・自動の転送を避ける・Googlebotは米国からAccept-Languageなし・1ページ1言語・テンプレだけの翻訳は重複／ローカライズ版（2026-09-21更新）：hreflangとlangは言語判定に使わない・相互に指さないと無視・3方法は同等・ISO 639-1/3166-1/15924・es-419不可・完全なURL／スパムポリシー（2026-11-23更新）：自動の変換の例に翻訳／Googleのコメント 2025-06（SER・GSQi）：AI翻訳はそれだけでスパムではない・robots.txtで自動翻訳をブロックする記述を削除／Bing 2020-09 Fabrice Canel：hreflangはcontent-languageより弱い／ChatGPT・Perplexity・Claude：公式の説明なし〕、GSQiの観察（仏・伊・西の3例、ChatGPT・Claudeは3例とも英語版、Copilotは3例とも正しい）、URLの分け方の表4行、そろえる事実と変えるものの表8行、hreflangのコード例と間違いの表5行、相互の確認のPythonスクリプト（public/ のローカルのファイルで動作確認済み）、構造化データの方針〔同じ@id・name/alternateName・inLanguage、Googleの決まりではないと明記〕、WordPress手順〔Polylang：自動・x-defaultはトップだけ・pll_rel_hreflang_attributes／WPML（2025-01-07更新）：自動・言語ごとのコード欄・誤りを警告しない／Nurevo：inLanguage は get_bloginfo('language')・Polylang/WPML専用の処理なし・会社情報は1組・llms.txt はサイトの言語で1つ／nurevo.jp の hreflang の例〕、言語ごとの確かめ方、見積もりの表5行、チェックリスト10、FAQ 7問）。2言語（ja・en） | 制作会社向け | content/daily-20261124-14 |
+メモ：2026-11-24 14時の回は、hreflang-for-polylang のページが WebFetch の許可待ちで読めず、Polylang単体で足りない点の詳細は書いていない。Weglotの「327%」「431%」は調べ方がなく使っていない。GSQiの「Reddit の AI 翻訳が2026年5月のコアアップデートで下落」の記事は読んでおらず書いていない。Search Console の生成AIのレポートの国別の表示は確かめておらず、通常の検索パフォーマンスの国別だけを書いた。Bing の発言は2020年のもので古い旨を本文に書いた。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に multilingual-site-ai-search を追加、ja/en のみ）
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（掲載先の一覧と更新依頼の文例）【全業種】（PR #80 と重ならない形で）
+2. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で、17時か20時で）
+3. 出張撮影（フォトグラファー）のAI検索対策【業種別】（photo-studio-ai-search と分けて）
+4. 観光施設・体験アクティビティのAI検索対策（料金・所要時間・予約・言語対応）【業種別】
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
