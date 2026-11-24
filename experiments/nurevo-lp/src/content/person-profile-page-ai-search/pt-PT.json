@@ -1,0 +1,377 @@
+{
+ "title": "Perfis de fundadores, especialistas e autores para a IA | Nurevo",
+ "description": "Páginas de perfil em que a IA confie ao responder quem gere a empresa ou escreveu um artigo: o que o Google diz, o que escrever, Person, ProfilePage e WordPress.",
+ "h1": "Páginas de perfil de fundadores, especialistas e autores para a pesquisa com IA: faça a IA ler corretamente cargos, credenciais e especialidades",
+ "lead": "Uma IA responder corretamente a uma pergunta sobre uma pessoa depende de a página de perfil dessa pessoa indicar, em texto simples, quem ela é, onde trabalha e em que é especialista. Reúna numa só página o nome, o cargo, a organização, as credenciais, as áreas de especialidade e o percurso; crie ligações para ela a partir das assinaturas dos artigos e da linha da direção na página Sobre; e publique os mesmos valores como dados estruturados Person. Estes três passos são o essencial. Inflacionar credenciais ou inventar autores é contraproducente: o Google chama engano aos perfis de criadores fabricados.",
+ "intro": [
+  "Escrito a 16 de novembro de 2026 (JST). Os documentos do Google “Creating helpful, reliable, people-first content” (Criar conteúdo útil, fiável e centrado nas pessoas; última atualização a 5 de outubro de 2026) e “Profile page (ProfilePage) structured data” (Dados estruturados de página de perfil) foram verificados no mesmo dia. Este guia destina-se a empresas, lojas e consultórios com páginas sobre o fundador, o diretor, profissionais, professores ou redatores, e às agências que criam esses sites. A própria empresa é tratada em [otimização da página Sobre para a pesquisa com IA](/guide/company-profile-page-ai-search).",
+  "As respostas de IA mudam consoante o dia e a formulação. Estes passos tornam corretas as informações que a IA lê; não garantem que uma pessoa apareça numa resposta nem que o posicionamento suba."
+ ],
+ "sections": [
+  {
+   "heading": "Para que é que a IA usa as páginas de perfil",
+   "paragraphs": [
+    "A pesquisa do ChatGPT, o Perplexity e as AI Overviews do Google leem páginas web quando respondem e apresentam-nas como fontes. Para uma pergunta sobre uma pessoa, a página de perfil no site da organização a que pertence é o material mais direto. Quando essa página não existe, quando tem apenas uma fotografia e um nome, ou quando o cargo varia de página para página, a IA pode construir a resposta a partir de um artigo antigo ou de outra pessoa com o mesmo nome.",
+    "As perguntas sobre pessoas tendem a seguir alguns padrões."
+   ],
+   "list": [
+    "“Quem gere a Sample Ltd e qual é o seu percurso?” (o fundador ou CEO)",
+    "“Em que é especialista o diretor da Sample Clinic?” (credenciais e área de um especialista)",
+    "“Que contabilista em Leeds percebe de impostos sobre heranças?” (procura por especialidade; nenhum nome na pergunta)",
+    "“Quem escreveu este artigo e posso confiar nele?” (o autor)",
+    "“Qual é a ligação de Jane Doe à Sample Ltd?” (cargo, outras funções, empregos anteriores)",
+    "“Como marco uma consulta com a Dra. Doe?” (contacto e marcação)"
+   ],
+   "after": [
+    "Numa pergunta como a terceira, sem nome, a IA procura primeiro um escritório ou loja e depois acrescenta quem trataria do trabalho. Uma página de perfil é material não só quando alguém pergunta pelo nome, mas também quando a pesquisa é por especialidade."
+   ]
+  },
+  {
+   "heading": "O que o próprio Google diz (até onde conseguimos verificar)",
+   "paragraphs": [
+    "Muito do que circula sobre autoria e E-E-A-T é especulação. Parta do que o próprio Google escreve."
+   ],
+   "table": {
+    "head": [
+     "O que o Google diz",
+     "Fonte",
+     "O que este guia retira daí"
+    ],
+    "rows": [
+     [
+      "Incentiva vivamente informações de autoria exatas, como assinaturas, onde os leitores as possam esperar",
+      "[Criar conteúdo útil](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "Mostre o nome do autor nos artigos e ligue-o a um perfil"
+     ],
+     [
+      "Fabricar perfis de criadores com fotografias geradas por IA, nomes inventados ou credenciais falsas é engano e sinal de página de baixa qualidade",
+      "Idem",
+      "Nada de autores inventados nem de credenciais inflacionadas"
+     ],
+     [
+      "O E-E-A-T em si não é um fator de classificação específico; dos seus componentes, a confiança é o mais importante; o E-E-A-T pesa mais em temas de saúde, finanças e segurança (YMYL)",
+      "Idem",
+      "Trate o E-E-A-T como forma de publicar factos fiáveis, não como uma pontuação"
+     ],
+     [
+      "ProfilePage destina-se a páginas cujo tema principal é uma pessoa ou organização ligada ao site (páginas de autor, a página “sobre mim” de um blogue, páginas de colaboradores de uma empresa); a página inicial de uma loja não se qualifica",
+      "[Dados estruturados ProfilePage](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "Use-a nas páginas de fundadores, especialistas e autores, não na página inicial da empresa"
+     ],
+     [
+      "Obrigatórios em ProfilePage: mainEntity (Person ou Organization) e o respetivo name; dateModified deve refletir apenas edições humanas",
+      "Idem",
+      "Comece pelo mínimo e use a data em que alguém editou de facto o perfil"
+     ],
+     [
+      "Não existem requisitos adicionais nem marcação especial para AI Overviews ou o Modo IA",
+      "[Funcionalidades de IA e o seu site](https://developers.google.com/search/docs/appearance/ai-features)",
+      "A marcação é a chave de respostas do texto; o texto vem primeiro"
+     ]
+    ]
+   },
+   "after": [
+    "Os sítios onde o Google diz que a marcação ProfilePage pode aparecer são funcionalidades como Discussões e fóruns. Não refere qualquer efeito nas respostas de IA. Este guia trata a marcação como forma de publicar os mesmos factos do texto num formato que as máquinas conseguem ler."
+   ]
+  },
+  {
+   "heading": "Afirmações que vai encontrar nos artigos mais bem posicionados, e quanto valem",
+   "paragraphs": [
+    "Lemos dez dos principais artigos em japonês e em inglês para pesquisas como “author E-E-A-T AI search”. Muitos têm passos e listas de verificação úteis, mas as afirmações abaixo não puderam ser rastreadas até uma fonte primária. Use a tabela como guia de leitura."
+   ],
+   "table": {
+    "head": [
+     "Afirmação comum",
+     "O que encontrámos"
+    ],
+    "rows": [
+     [
+      "Percentagens como “as credenciais do autor representam 16% do peso nas decisões de citação da IA”",
+      "Nenhum dos artigos indica o estudo original, e nenhum define o que esse “peso” mede"
+     ],
+     [
+      "“O schema Person é obrigatório”",
+      "O Google indica propriedades obrigatórias apenas para a ProfilePage aparecer nas suas funcionalidades de pesquisa; nunca diz que a marcação é necessária para as respostas de IA"
+     ],
+     [
+      "“Quantas mais ligações sameAs, melhor”",
+      "Sem provas. Indicar apenas perfis que a pessoa controla e que claramente lhe pertencem é a opção mais segura"
+     ],
+     [
+      "“Acrescentar um revisor médico ou jurídico aumenta o seu E-E-A-T”",
+      "Não há provas para uma linha de revisor só com o nome, e o Google chama engano à deturpação dos criadores. Indique o que foi revisto e quando"
+     ],
+     [
+      "“O tamanho ideal de uma biografia é N palavras”",
+      "O número varia de artigo para artigo e nenhum indica fonte. O tamanho importa menos do que a presença dos factos"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "De quem é a página, e onde fica",
+   "paragraphs": [
+    "Distribua as pessoas do seu site por quatro papéis. Nem todos precisam de uma página longa; comece pelas pessoas sobre quem é mais provável que se pergunte a uma IA."
+   ],
+   "table": {
+    "head": [
+     "Papel",
+     "Onde",
+     "Conteúdo mínimo",
+     "Como ligar"
+    ],
+    "rows": [
+     [
+      "Fundador ou CEO",
+      "Dentro da página Sobre, ou numa página como /about/nome/",
+      "Nome, cargo, percurso, o que faz na empresa",
+      "Ligação a partir da linha da direção na página Sobre; na marcação, aponte o founder ou employee da empresa para o mesmo @id"
+     ],
+     [
+      "Especialista (diretor, profissional, professor)",
+      "Uma lista da equipa mais uma página por pessoa",
+      "Credenciais, número de inscrição, área, que serviços assegura",
+      "Ligação a partir da linha “quem o vai atender” nas páginas de serviço"
+     ],
+     [
+      "Autor de artigos",
+      "O arquivo de autor do WordPress ou uma página normal",
+      "Nome, organização, temas, lista de artigos",
+      "Ligação a partir da assinatura"
+     ],
+     [
+      "Revisor externo",
+      "Uma página de revisor com ligação à organização a que pertence",
+      "Nome, credencial, afiliação, o que reviu",
+      "No artigo: “Revisto por Nome (credencial), data”, com ligação para a página"
+     ]
+    ]
+   },
+   "after": [
+    "Quando a mesma pessoa aparece como fundadora, autora e revisora, mantenha uma só página e escreva o nome e o cargo da mesma forma em todo o lado. Uma IA pode tomar duas grafias por duas pessoas."
+   ]
+  },
+  {
+   "heading": "O que escrever, e os dados estruturados correspondentes",
+   "paragraphs": [
+    "A tabela indica o que uma página de perfil deve conter, os erros que as respostas de IA tendem a cometer e as propriedades schema.org correspondentes, escolhidas a partir das definições de Person e ProfilePage (tipos verificados no schema-dts 2.1.0)."
+   ],
+   "table": {
+    "head": [
+     "Item",
+     "Como escrever",
+     "Erro típico da IA",
+     "Dados estruturados"
+    ],
+    "rows": [
+     [
+      "Nome",
+      "Uma só grafia em todo o site; indique uma vez outras escritas ou a forma romanizada",
+      "Confundido com alguém com o mesmo nome",
+      "name, alternateName"
+     ],
+     [
+      "Cargo e organização",
+      "Sempre com o nome da empresa, por exemplo “Fundadora, Sample Ltd”",
+      "Apresentado com um cargo anterior ou de uma atividade paralela",
+      "jobTitle, worksFor"
+     ],
+     [
+      "Credenciais",
+      "Nome oficial completo, número de inscrição (se puder ser público), entidade emissora, ano",
+      "O tipo de credencial é confundido",
+      "hasCredential (EducationalOccupationalCredential)"
+     ],
+     [
+      "Áreas de especialidade",
+      "Três a cinco áreas concretas, não “tudo”",
+      "Recomendado para coisas fora da sua área",
+      "knowsAbout"
+     ],
+     [
+      "Percurso",
+      "Uma linha por ano e acontecimento: formação, empregos anteriores, quando se estabeleceu",
+      "Datas trocadas",
+      "Texto (alumniOf para estabelecimentos de ensino)"
+     ],
+     [
+      "Resultados",
+      "Números com data e forma de contagem",
+      "São citados números antigos ou inflacionados",
+      "Só texto"
+     ],
+     [
+      "Prémios e presença nos media",
+      "Nome, ano, organizador; ligação sempre que possível",
+      "Prémios confundidos com menções",
+      "award (só prémios)"
+     ],
+     [
+      "Outros perfis",
+      "Apenas contas que a pessoa controla",
+      "Ligado a impostores ou homónimos",
+      "sameAs"
+     ],
+     [
+      "Fotografia",
+      "Uma fotografia real; nada de retratos gerados por IA",
+      "—",
+      "image"
+     ],
+     [
+      "Artigos e serviços",
+      "Uma lista ou ligações",
+      "Não fica claro em que área a pessoa trabalha",
+      "Texto"
+     ],
+     [
+      "Última atualização",
+      "No fim da página; corrija os cargos assim que mudarem",
+      "Apresentado com um cargo antigo",
+      "dateModified (ProfilePage)"
+     ]
+    ]
+   },
+   "after": [
+    "O schema.org descreve knowsAbout como “suggesting possible expertise but not implying it” (sugere uma possível especialidade, mas não a implica) ([schema.org: knowsAbout](https://schema.org/knowsAbout)). Indicar áreas na marcação não prova nada por si só; por isso, sustente-as no texto com casos tratados e artigos escritos."
+   ]
+  },
+  {
+   "heading": "Escrever a página: diga quem é a pessoa logo na primeira frase",
+   "list": [
+    "Coloque o nome, o cargo, a organização e a área na primeira frase, por exemplo: “Jane Doe é fundadora da Sample Ltd, em Leeds, e contabilista certificada especializada na contabilidade de pequenas empresas e em impostos sobre heranças.”",
+    "Use a segunda frase para factos que a distinguem de outras pessoas: o ano em que obteve a certificação, as entidades a que pertence, a zona que abrange.",
+    "Escreva as credenciais por extenso. Quando uma credencial puder ser consultada num registo público, pode indicá-lo, para que os leitores a possam verificar.",
+    "Coloque o percurso numa tabela ou cronologia, não numa imagem nem num PDF.",
+    "Substitua afirmações que ninguém consegue comparar, como “o número um do setor”, por factos: anos, números, áreas.",
+    "Em áreas reguladas, como a medicina e o direito, há regras sobre a forma de publicitar títulos e qualificações. Para a saúde, consulte também [pesquisa com IA para clínicas](/guide/medical-clinic-ai-search)."
+   ]
+  },
+  {
+   "heading": "Assinaturas e revisores",
+   "paragraphs": [
+    "Mostre o nome do autor no início ou no fim de cada artigo e ligue-o à página de perfil. Uma assinatura de equipa é aceitável, mas nesse caso a página da equipa deve indicar quem escreve e como.",
+    "Quando um especialista externo verifica o conteúdo, chame-lhe revisão, separada da autoria, e indique o que foi revisto (por exemplo, “os cálculos fiscais”) e quando. O schema.org tem [reviewedBy](https://schema.org/reviewedBy) para pessoas que reviram a exatidão de uma página, uma propriedade diferente de author. Não coloque o autor e o revisor juntos em author.",
+    "O Google recomenda informar os leitores sobre a forma como o conteúdo foi produzido, incluindo se foi usada automação ou IA. Se um artigo foi redigido com IA, indique-o onde os leitores o esperariam, juntamente com o facto de uma pessoa o ter verificado."
+   ]
+  },
+  {
+   "heading": "Exemplo de marcação: ProfilePage e Person",
+   "paragraphs": [
+    "Um exemplo mínimo. Todos os valores têm de constar também do texto. Apontar worksFor para o mesmo @id do nó da sua empresa permite que a pessoa e a empresa sejam lidas como um par."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Fundadora e contabilista certificada\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Contabilista certificada especializada na contabilidade de pequenas empresas e em impostos sobre heranças em Leeds.\",\n    \"knowsAbout\": [\"Impostos sobre heranças\", \"Contabilidade de pequenas empresas\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Contabilista certificada\",\n      \"credentialCategory\": \"Qualificação profissional\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "O tipo de credencial [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential) também pode indicar o tipo de credencial (credentialCategory) e a entidade que a reconhece (recognizedBy). Em sameAs, coloque apenas perfis que a pessoa controla e que claramente lhe pertencem."
+   ]
+  },
+  {
+   "heading": "No WordPress (com o Nurevo AEO)",
+   "paragraphs": [
+    "Com o [Nurevo AEO (gratuito)](https://wordpress.org/plugins/nurevo-webmcp/), as pessoas são tratadas da seguinte forma."
+   ],
+   "list": [
+    "Primeiro, em Utilizadores > Perfil, defina “Mostrar o nome publicamente como” de cada redator com o nome real (ou o nome que o site usa). Quando o Nurevo publica o seu próprio grafo, os artigos passam a BlogPosting com o autor como Person com esse nome de apresentação. As páginas não recebem autor.",
+    "Com Yoast SEO, Rank Math, All in One SEO ou Slim SEO, o Article e o respetivo autor ficam exatamente como esse plugin os publica; o Nurevo não os altera. Configure os autores nas definições de utilizador desse plugin. O autor do Article do VK All in One Expansion Unit também não é alterado.",
+    "Para acrescentar o fundador à marcação da empresa, ou uma ProfilePage a uma página de perfil, use os filtros para programadores abaixo (o Nurevo não tem campos para isso). Com um plugin de SEO, os valores do nó da empresa vindos desse plugin continuam a prevalecer.",
+    "Verifique o código-fonte da página para garantir que o seu plugin de SEO não publica já uma ProfilePage para esse autor, para que nada fique duplicado.",
+    "Abra o /llms.txt e verifique se a página de perfil consta da lista. O llms.txt indica as 30 páginas e artigos modificados mais recentemente; se não estiver, acrescente uma linha com o filtro webmcp_canary_llms_txt_lines."
+   ],
+   "code": "// 1) Acrescentar o fundador ao nó da empresa (apenas alguém que a página Sobre nomeia)\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) Acrescentar uma ProfilePage apenas na página de perfil (slug jane-doe)\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Fundadora e contabilista certificada',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Impostos sobre heranças', 'Contabilidade de pequenas empresas'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "Noutras plataformas, as verificações são as mesmas. A [verificação gratuita](/check) não exige registo: introduza um URL para ver o estado dos dados estruturados, do llms.txt e do acesso dos crawlers de IA."
+   ]
+  },
+  {
+   "heading": "Como verificar: perguntas com o nome da pessoa",
+   "paragraphs": [
+    "Verifique as páginas de perfil com perguntas que incluam o nome da pessoa. Faça a mesma pergunta à mesma IA em dias diferentes e registe as respostas; não tire conclusões a partir de uma única resposta."
+   ],
+   "table": {
+    "head": [
+     "O que registar",
+     "Exemplo"
+    ],
+    "rows": [
+     [
+      "Data, IA, pergunta",
+      "16/11, Perplexity, “Qual é o percurso de Jane Doe, fundadora da Sample Ltd?”"
+     ],
+     [
+      "Factos na resposta",
+      "Cargo, credenciais, área e percurso: certo ou errado, um a um"
+     ],
+     [
+      "Fontes",
+      "Foi citada a sua página de perfil, ou a página de outra pessoa?"
+     ],
+     [
+      "Confusões",
+      "Algum homónimo ou cargo antigo na resposta?"
+     ]
+    ]
+   },
+   "after": [
+    "A verificação de IA gratuita do Nurevo (uma vez por mês nos sites Free e Standard ligados) faz perguntas construídas a partir do seu tipo de atividade e zona, nunca de um nome; por isso, as perguntas sobre pessoas verificam-se manualmente com a tabela acima. A medição de visibilidade Pro (beta) abrange atualmente o Perplexity. O método completo está em [como medir a visibilidade em IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Lista de verificação da página de perfil",
+   "list": [
+    "A primeira frase tem o nome, o cargo, a organização e a área.",
+    "O nome e o cargo estão escritos da mesma forma na página Sobre, nas assinaturas e nas páginas da equipa.",
+    "As credenciais estão por extenso, com o ano ou a entidade emissora.",
+    "As áreas de especialidade são concretas e sustentadas por casos ou artigos.",
+    "Os números têm data e indicam como foram contados.",
+    "Nenhuma pessoa inventada, retrato gerado por IA ou credencial inflacionada.",
+    "As assinaturas ligam ao perfil; as revisões estão separadas da autoria, com âmbito e data.",
+    "A marcação ProfilePage e Person corresponde ao texto e não está duplicada.",
+    "O sameAs indica apenas contas que a pessoa controla.",
+    "Os cargos são corrigidos assim que mudam, e a data de última atualização acompanha.",
+    "Verificou com perguntas que incluem o nome, em dias diferentes, e registou os resultados."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Uma pequena empresa precisa de uma página do fundador?",
+   "a": "Algumas linhas com o nome, o cargo e o percurso na página Sobre costumam bastar. Se o fundador escreve artigos, dá palestras ou entrevistas, ou se as pessoas o procuram pelo nome, uma página própria mantém os factos num só sítio."
+  },
+  {
+   "q": "Os artigos de pessoas sem credenciais formais têm menos probabilidade de ser usados pela IA?",
+   "a": "O Google não diz que a falta de uma credencial seja, por si só, um problema. O que diz ser mais importante é a confiança, e a experiência real (quantos anos, que tipo de trabalho) escrita como facto é um bom material. Em temas de saúde ou dinheiro, pode também pedir a um especialista que reveja o conteúdo e indicá-lo."
+  },
+  {
+   "q": "Podemos publicar com um pseudónimo?",
+   "a": "Sim, desde que não lhe associe um percurso ou credenciais inventados e que a página do pseudónimo indique em que qualidade a pessoa escreve. O Google chama engano aos perfis de criadores fabricados."
+  },
+  {
+   "q": "O que vem primeiro, a página do autor ou a marcação ProfilePage?",
+   "a": "A página. A marcação coloca os mesmos factos do texto num formato legível por máquinas; não coloque na marcação factos que o texto não refere."
+  },
+  {
+   "q": "Um revisor deve ficar em author?",
+   "a": "Mantenha autores e revisores separados. O schema.org tem reviewedBy para pessoas que verificaram a exatidão de uma página. Também no texto, escreva “escrito por” e “revisto por” separadamente."
+  },
+  {
+   "q": "O nosso CEO mudou. O que devemos atualizar?",
+   "a": "A página Sobre, a página de perfil do CEO, founder ou employee na marcação, as assinaturas e os perfis noutros sítios (redes sociais, diretórios do setor). Mantenha a página do antigo CEO com o cargo e as datas, ou redirecione-a para a nova página. Não há um prazo fixo para as respostas de IA se atualizarem."
+  },
+  {
+   "q": "Se seguirmos estes passos, a IA vai descrever sempre corretamente as nossas pessoas?",
+   "a": "Não é possível garanti-lo; as respostas de IA mudam consoante o dia e a formulação. Estes passos tornam as informações que a IA lê exatas e coerentes, pelo que as confusões se tornam menos prováveis."
+  }
+ ],
+ "relatedHeading": "Guias relacionados",
+ "cta": {
+  "heading": "Veja como a IA lê as pessoas e a empresa do seu site",
+  "body": "A verificação gratuita não exige registo: introduza o seu URL para ver o estado dos dados estruturados, do llms.txt e do acesso dos crawlers de IA. No WordPress, o plugin gratuito publica os dados básicos da sua empresa e os autores dos seus artigos como dados estruturados.",
+  "label": "Fazer a verificação gratuita de legibilidade por IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Experimente o plugin gratuito para WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT é uma marca da OpenAI, Perplexity da Perplexity AI e Google da Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, VK All in One Expansion Unit, LinkedIn e WordPress são marcas dos respetivos proprietários. A Nurevo não está afiliada a nenhuma destas empresas nem é por elas apoiada."
+}

@@ -1,0 +1,377 @@
+{
+ "title": "AI 검색을 위한 창업자·전문가·저자 프로필 페이지 | Nurevo",
+ "description": "회사를 누가 운영하는지, 글을 누가 썼는지 물었을 때 AI가 믿을 수 있는 프로필 페이지 만들기: Google의 설명, 쓸 내용, Person·ProfilePage 마크업, WordPress 절차.",
+ "h1": "AI 검색을 위한 창업자·전문가·저자 프로필 페이지: 인물의 직책, 자격, 전문 분야를 정확히 읽히게 하기",
+ "lead": "AI가 어떤 사람에 관한 질문에 정확히 답하는지는 그 사람의 프로필 페이지가 누구인지, 어디서 일하는지, 무엇의 전문가인지를 평범한 텍스트로 밝히고 있느냐에 달려 있습니다. 이름, 직책, 소속, 자격, 전문 분야, 경력을 한 페이지에 모으고, 기사의 저자 표시와 회사 소개 페이지의 경영진 소개에서 그 페이지로 링크하고, 같은 값을 Person 구조화 데이터로 게시하세요. 이 세 가지가 핵심입니다. 자격을 부풀리거나 저자를 지어내면 역효과가 납니다. Google은 꾸며낸 작성자 프로필을 기만이라고 부릅니다.",
+ "intro": [
+  "2026년 11월 16일(일본 시간)에 작성했습니다. Google의 \"Creating helpful, reliable, people-first content\"(유용하고 신뢰할 수 있는 사람 중심 콘텐츠 만들기, 최종 업데이트 2026년 10월 5일)와 \"Profile page (ProfilePage) structured data\"(프로필 페이지 구조화 데이터)는 같은 날 확인했습니다. 이 가이드는 창업자, 원장, 실무자, 강사, 필자를 소개하는 페이지가 있는 회사, 매장, 의원과 그런 사이트를 만드는 대행사를 위한 것입니다. 회사 자체에 관한 내용은 [회사 소개 페이지의 AI 검색 최적화](/guide/company-profile-page-ai-search)에서 다룹니다.",
+  "AI 답변은 날짜와 표현에 따라 바뀝니다. 이 절차는 AI가 읽는 정보를 정확하게 만들 뿐, 특정 인물이 답변에 나온다거나 순위가 오른다고 보장하지 않습니다."
+ ],
+ "sections": [
+  {
+   "heading": "AI는 프로필 페이지를 무엇에 쓰는가",
+   "paragraphs": [
+    "ChatGPT 검색, Perplexity, Google의 AI Overviews는 답변할 때 웹 페이지를 읽고 출처로 보여 줍니다. 사람에 관한 질문이라면 그 사람이 속한 조직의 사이트에 있는 프로필 페이지가 가장 직접적인 자료입니다. 그런 페이지가 없거나, 사진과 이름만 있거나, 페이지마다 직책이 다르면 AI는 오래된 기사나 동명이인의 정보로 답변을 구성할 수 있습니다.",
+    "사람에 관한 질문은 몇 가지 유형으로 나뉩니다."
+   ],
+   "list": [
+    "\"Sample Ltd는 누가 운영하고, 어떤 경력이 있나요?\"(창업자 또는 CEO)",
+    "\"Sample Clinic 원장의 전문 분야는 무엇인가요?\"(전문가의 자격과 분야)",
+    "\"리즈에서 상속세를 잘 아는 회계사는 누구인가요?\"(전문 분야로 찾음, 질문에 이름이 없음)",
+    "\"이 글은 누가 썼고, 믿을 만한가요?\"(저자)",
+    "\"Jane Doe와 Sample Ltd는 어떤 관계인가요?\"(직책, 겸직, 이전 직장)",
+    "\"Doe 선생님 상담은 어떻게 예약하나요?\"(연락처와 예약)"
+   ],
+   "after": [
+    "세 번째처럼 이름이 없는 질문에서 AI는 먼저 사무소나 매장을 찾은 뒤 누가 그 일을 담당하는지를 덧붙입니다. 프로필 페이지는 누군가 이름으로 물을 때뿐 아니라 전문 분야로 찾을 때도 자료가 됩니다."
+   ]
+  },
+  {
+   "heading": "Google 자신이 말하는 것(확인할 수 있었던 범위)",
+   "paragraphs": [
+    "저자 정보와 E-E-A-T에 관해 떠도는 이야기의 상당수는 추측입니다. Google이 직접 쓴 내용에서 출발하세요."
+   ],
+   "table": {
+    "head": [
+     "Google의 설명",
+     "출처",
+     "이 가이드의 해석"
+    ],
+    "rows": [
+     [
+      "독자가 기대할 만한 곳에 저자 표시(바이라인) 같은 정확한 저자 정보를 제공할 것을 강력히 권장",
+      "[Creating helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "기사에 저자 이름을 표시하고 프로필로 링크"
+     ],
+     [
+      "AI 생성 프로필 사진, 지어낸 이름, 거짓 자격으로 작성자 프로필을 꾸며내는 것은 기만이며 품질이 낮은 페이지의 신호",
+      "위와 같음",
+      "가공의 저자도, 부풀린 자격도 쓰지 않기"
+     ],
+     [
+      "E-E-A-T 자체는 특정 순위 요소가 아님. 그중 가장 중요한 것은 신뢰. 건강, 금융, 안전 주제(YMYL)에서는 E-E-A-T의 비중이 더 큼",
+      "위와 같음",
+      "E-E-A-T를 점수가 아니라 신뢰할 수 있는 사실을 게시하는 방법으로 다루기"
+     ],
+     [
+      "ProfilePage는 사이트와 관련된 한 사람이나 조직이 주제인 페이지(저자 페이지, 블로그의 자기소개 페이지, 회사의 직원 페이지)용이며, 매장의 홈페이지는 해당하지 않음",
+      "[ProfilePage structured data](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "회사 홈페이지가 아니라 창업자, 전문가, 저자 페이지에 사용"
+     ],
+     [
+      "ProfilePage의 필수 항목: mainEntity(Person 또는 Organization)와 그 name. dateModified는 사람이 수정한 것만 반영해야 함",
+      "위와 같음",
+      "작게 시작하고, 실제로 사람이 프로필을 수정한 날짜를 사용"
+     ],
+     [
+      "AI Overviews나 AI Mode를 위한 추가 요건이나 특별한 마크업은 없음",
+      "[AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)",
+      "마크업은 본문의 정답지이며, 본문이 먼저"
+     ]
+    ]
+   },
+   "after": [
+    "Google이 ProfilePage 마크업이 나타날 수 있다고 말하는 곳은 토론 및 포럼 같은 기능입니다. AI 답변에 대한 효과는 언급하지 않습니다. 이 가이드는 마크업을 본문과 같은 사실을 기계가 읽을 수 있는 형태로 게시하는 방법으로 봅니다."
+   ]
+  },
+  {
+   "heading": "상위 글에서 보이는 주장과 그 근거의 정도",
+   "paragraphs": [
+    "\"author E-E-A-T AI search\" 같은 검색어의 상위 일본어·영어 글 10개를 읽었습니다. 유용한 절차와 체크리스트가 많지만, 아래 주장은 1차 출처를 찾을 수 없었습니다. 표를 읽을 때 참고하세요."
+   ],
+   "table": {
+    "head": [
+     "흔한 주장",
+     "확인 결과"
+    ],
+    "rows": [
+     [
+      "\"AI 인용 판단에서 저자 자격이 16%의 비중을 차지한다\" 같은 비율",
+      "원 연구를 링크한 글이 하나도 없고, \"비중\"이 무엇을 측정하는지 정의한 글도 없음"
+     ],
+     [
+      "\"Person schema는 필수다\"",
+      "Google은 ProfilePage가 검색 기능에 나타나기 위한 필수 항목만 제시하며, AI 답변에 마크업이 필요하다고 말한 적은 없음"
+     ],
+     [
+      "\"sameAs 링크는 많을수록 좋다\"",
+      "근거 없음. 본인이 관리하고 분명히 본인 것인 프로필만 넣는 편이 안전"
+     ],
+     [
+      "\"의료나 법률 감수자를 붙이면 E-E-A-T가 오른다\"",
+      "이름만 적은 감수 표시에는 근거가 없고, Google은 작성자를 사실과 다르게 표시하는 것을 기만이라고 함. 무엇을 언제 감수했는지 밝히기"
+     ],
+     [
+      "\"이상적인 소개 글 길이는 N자다\"",
+      "글마다 숫자가 다르고 출처도 없음. 길이보다 사실이 담겨 있는지가 중요"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "누구의 페이지를 어디에 둘까",
+   "paragraphs": [
+    "사이트에 나오는 사람을 네 가지 역할로 나눕니다. 모두에게 긴 페이지가 필요하지는 않으니, AI가 질문받을 가능성이 가장 큰 사람부터 시작하세요."
+   ],
+   "table": {
+    "head": [
+     "역할",
+     "위치",
+     "최소 내용",
+     "연결 방법"
+    ],
+    "rows": [
+     [
+      "창업자 또는 CEO",
+      "회사 소개 페이지 안, 또는 /about/name/ 같은 페이지",
+      "이름, 직책, 경력, 회사에서 맡은 일",
+      "회사 소개 페이지의 경영진 소개에서 링크. 마크업에서는 회사의 founder나 employee가 같은 @id를 가리키게 함"
+     ],
+     [
+      "전문가(원장, 실무자, 강사)",
+      "직원 목록과 1인 1페이지",
+      "자격, 등록번호, 분야, 담당 서비스",
+      "서비스 페이지의 \"담당자\" 안내에서 링크"
+     ],
+     [
+      "기사 저자",
+      "WordPress 저자 아카이브 또는 일반 페이지",
+      "이름, 소속, 주제, 기사 목록",
+      "저자 표시에서 링크"
+     ],
+     [
+      "외부 감수자",
+      "감수자 페이지와 그 사람이 속한 조직으로의 링크",
+      "이름, 자격, 소속, 감수한 내용",
+      "기사에 \"감수: 이름(자격), 날짜\"를 적고 해당 페이지로 링크"
+     ]
+    ]
+   },
+   "after": [
+    "같은 사람이 창업자, 저자, 감수자로 모두 등장한다면 페이지는 하나만 두고 이름과 직함을 어디서나 똑같이 쓰세요. 표기가 둘이면 AI가 두 사람으로 받아들일 수 있습니다."
+   ]
+  },
+  {
+   "heading": "쓸 내용과 대응하는 구조화 데이터",
+   "paragraphs": [
+    "아래 표는 프로필 페이지에 담을 내용, AI 답변에서 흔히 생기는 실수, 그리고 Person과 ProfilePage 정의에서 고른 대응 schema.org 속성을 정리한 것입니다(타입은 schema-dts 2.1.0으로 확인)."
+   ],
+   "table": {
+    "head": [
+     "항목",
+     "쓰는 법",
+     "AI의 흔한 실수",
+     "구조화 데이터"
+    ],
+    "rows": [
+     [
+      "이름",
+      "사이트 전체에서 표기를 하나로. 다른 문자 표기나 로마자는 한 번만",
+      "동명이인과 혼동",
+      "name, alternateName"
+     ],
+     [
+      "직책과 소속",
+      "항상 회사명과 함께, 예: \"Sample Ltd 창업자\"",
+      "이전 직함이나 부업 직함으로 소개",
+      "jobTitle, worksFor"
+     ],
+     [
+      "자격",
+      "정식 명칭 전체, 등록번호(공개해도 된다면), 발급 기관, 연도",
+      "자격의 종류를 혼동",
+      "hasCredential(EducationalOccupationalCredential)"
+     ],
+     [
+      "전문 분야",
+      "\"모든 분야\"가 아니라 구체적인 분야 3~5개",
+      "전문 분야 밖의 일로 추천됨",
+      "knowsAbout"
+     ],
+     [
+      "경력",
+      "한 줄에 연도와 사건 하나씩: 학력, 이전 직장, 개업 시기",
+      "연도 혼동",
+      "본문(학교는 alumniOf)"
+     ],
+     [
+      "실적",
+      "숫자에 날짜와 집계 방법을 함께",
+      "오래되거나 부풀려진 숫자가 인용됨",
+      "본문만"
+     ],
+     [
+      "수상과 언론 보도",
+      "명칭, 연도, 주최자. 가능하면 링크",
+      "수상과 언급을 혼동",
+      "award(수상만)"
+     ],
+     [
+      "다른 프로필",
+      "본인이 관리하는 계정만",
+      "사칭 계정이나 동명이인과 연결됨",
+      "sameAs"
+     ],
+     [
+      "사진",
+      "실제 사진. AI 생성 프로필 사진은 쓰지 않기",
+      "—",
+      "image"
+     ],
+     [
+      "기사와 서비스",
+      "목록이나 링크",
+      "어떤 분야에서 일하는 사람인지 불분명",
+      "본문"
+     ],
+     [
+      "최종 업데이트",
+      "페이지 끝에. 직함이 바뀌면 바로 수정",
+      "이전 직책으로 소개",
+      "dateModified(ProfilePage)"
+     ]
+    ]
+   },
+   "after": [
+    "schema.org는 knowsAbout을 \"suggesting possible expertise but not implying it\"(가능한 전문성을 시사하지만 그것을 의미하지는 않음)이라고 설명합니다([schema.org: knowsAbout](https://schema.org/knowsAbout)). 마크업에 분야를 적는 것만으로는 아무것도 증명되지 않으니, 본문에서 다룬 사례와 쓴 글로 뒷받침하세요."
+   ]
+  },
+  {
+   "heading": "페이지 쓰기: 첫 문장에서 누구인지 밝히기",
+   "list": [
+    "첫 문장에 이름, 직책, 소속, 분야를 넣습니다. 예: \"Jane Doe는 리즈에 있는 Sample Ltd의 창업자이자, 소기업 회계와 상속세를 전문으로 하는 공인회계사입니다.\"",
+    "두 번째 문장에는 다른 사람과 구별되는 사실을 씁니다. 자격을 취득한 해, 소속 단체, 담당 지역 등입니다.",
+    "자격은 정식 명칭으로 씁니다. 공개 명부에서 확인할 수 있는 자격이라면 그 사실을 적어 독자가 확인할 수 있게 해도 좋습니다.",
+    "경력은 이미지나 PDF가 아니라 표나 연표로 씁니다.",
+    "\"업계 1위\"처럼 아무도 비교할 수 없는 주장은 연수, 숫자, 분야 같은 사실로 바꿉니다.",
+    "의료나 법률처럼 규제가 있는 분야에서는 직함과 자격을 광고하는 방식에 규칙이 있습니다. 의료 분야는 [의원의 AI 검색](/guide/medical-clinic-ai-search)도 참고하세요."
+   ]
+  },
+  {
+   "heading": "저자 표시와 감수자",
+   "paragraphs": [
+    "각 기사의 처음이나 끝에 저자 이름을 표시하고 프로필 페이지로 링크합니다. 팀 이름으로 표시해도 되지만, 그렇다면 팀 페이지에 누가 어떻게 쓰는지 적어야 합니다.",
+    "외부 전문가가 내용을 확인했다면 저자와 구분해 감수라고 부르고, 무엇을(예: \"세액 계산 부분\") 언제 감수했는지 밝힙니다. schema.org에는 페이지의 정확성을 검토한 사람을 위한 [reviewedBy](https://schema.org/reviewedBy)가 있으며, author와는 다른 속성입니다. 저자와 감수자를 함께 author에 넣지 마세요.",
+    "Google은 자동화나 AI를 썼는지를 포함해 콘텐츠가 어떻게 만들어졌는지 독자에게 알리라고 권장합니다. AI로 초안을 쓴 기사라면 독자가 기대할 만한 곳에 그 사실과 사람이 확인했다는 사실을 함께 적으세요."
+   ]
+  },
+  {
+   "heading": "마크업 예: ProfilePage와 Person",
+   "paragraphs": [
+    "최소한의 예입니다. 모든 값은 본문에도 있어야 합니다. worksFor가 회사 노드와 같은 @id를 가리키게 하면 인물과 회사를 한 쌍으로 읽을 수 있습니다."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Founder and Chartered Accountant\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Chartered accountant specialising in small-business accounts and inheritance tax in Leeds.\",\n    \"knowsAbout\": [\"Inheritance tax\", \"Small-business accounting\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Chartered Accountant\",\n      \"credentialCategory\": \"Professional qualification\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "자격 타입 [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential)에는 자격의 종류(credentialCategory)와 그 자격을 인정하는 기관(recognizedBy)도 넣을 수 있습니다. sameAs에는 본인이 관리하고 분명히 본인 것인 프로필만 넣으세요."
+   ]
+  },
+  {
+   "heading": "WordPress에서(Nurevo AEO 사용 시)",
+   "paragraphs": [
+    "[Nurevo AEO(무료)](https://wordpress.org/plugins/nurevo-webmcp/)에서는 인물을 다음과 같이 다룹니다."
+   ],
+   "list": [
+    "먼저 Users > Profile(사용자 > 프로필)에서 각 필자의 \"Display name publicly as\"(공개적으로 보일 이름)를 실명(또는 사이트에서 쓰는 이름)으로 설정합니다. Nurevo가 자체 그래프를 게시할 때 글은 BlogPosting이 되고, 저자는 그 표시 이름을 가진 Person이 됩니다. 페이지에는 저자가 붙지 않습니다.",
+    "Yoast SEO, Rank Math, All in One SEO, Slim SEO를 쓰는 경우 Article과 그 저자는 해당 플러그인이 게시한 그대로 유지되며, Nurevo는 바꾸지 않습니다. 저자 설정은 그 플러그인의 사용자 설정에서 하세요. VK All in One Expansion Unit의 Article에 있는 저자도 바꾸지 않습니다.",
+    "회사 마크업에 창업자를 추가하거나 프로필 페이지에 ProfilePage를 추가하려면 아래의 개발자용 필터를 사용합니다(Nurevo에는 이를 위한 입력란이 없습니다). SEO 플러그인을 쓰는 경우 회사 노드는 여전히 그 플러그인의 값이 우선합니다.",
+    "페이지 소스를 보고 SEO 플러그인이 해당 저자의 ProfilePage를 이미 게시하고 있지 않은지 확인해 중복을 막습니다.",
+    "/llms.txt를 열어 프로필 페이지가 목록에 있는지 확인합니다. llms.txt에는 최근에 수정된 페이지와 글 30개가 나열되며, 빠져 있다면 webmcp_canary_llms_txt_lines 필터로 한 줄을 추가하세요."
+   ],
+   "code": "// 1) 회사 노드에 창업자 추가 (회사 소개 페이지에 이름이 나오는 사람만)\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) 프로필 페이지(슬러그 jane-doe)에만 ProfilePage 추가\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Founder and Chartered Accountant',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Inheritance tax', 'Small-business accounting'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "다른 플랫폼에서도 확인할 점은 같습니다. [무료 점검](/check)은 가입이 필요 없으며, URL을 입력하면 구조화 데이터, llms.txt, AI 크롤러 접근 상태를 볼 수 있습니다."
+   ]
+  },
+  {
+   "heading": "확인 방법: 인물 이름이 들어간 질문으로",
+   "paragraphs": [
+    "프로필 페이지는 인물 이름이 들어간 질문으로 확인합니다. 같은 AI에 같은 질문을 날을 바꿔 하고 답변을 기록하세요. 한 번의 답변으로 판단하지 마세요."
+   ],
+   "table": {
+    "head": [
+     "기록할 내용",
+     "예"
+    ],
+    "rows": [
+     [
+      "날짜, AI, 질문",
+      "11월 16일, Perplexity, \"Sample Ltd 창업자 Jane Doe는 어떤 경력이 있나요?\""
+     ],
+     [
+      "답변 속 사실",
+      "직책, 자격, 분야, 경력: 하나씩 맞는지 틀린지"
+     ],
+     [
+      "출처",
+      "내 프로필 페이지가 인용되었나, 아니면 다른 사람의 페이지인가?"
+     ],
+     [
+      "혼동",
+      "답변에 동명이인이나 이전 직함이 섞여 있나?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevo의 무료 AI 점검(연결된 Free 및 Standard 사이트에서 월 1회)은 업종과 지역으로 만든 질문을 하며 이름은 절대 넣지 않으므로, 인물에 관한 질문은 위 표로 직접 확인합니다. Pro 가시성 측정(베타)은 현재 Perplexity를 지원합니다. 전체 방법은 [AI 가시성 측정 방법](/guide/measure-ai-visibility)에 있습니다."
+   ]
+  },
+  {
+   "heading": "프로필 페이지 체크리스트",
+   "list": [
+    "첫 문장에 이름, 직책, 소속, 분야가 있다.",
+    "회사 소개 페이지, 저자 표시, 직원 페이지에서 이름과 직함 표기가 같다.",
+    "자격을 정식 명칭으로, 연도나 발급 기관과 함께 썼다.",
+    "전문 분야가 구체적이고 사례나 기사로 뒷받침된다.",
+    "숫자에 날짜와 집계 방법이 있다.",
+    "가공의 인물, AI 생성 프로필 사진, 부풀린 자격이 없다.",
+    "저자 표시가 프로필로 링크되고, 감수는 저자와 구분해 범위와 날짜를 밝혔다.",
+    "ProfilePage와 Person 마크업이 본문과 일치하고 중복되지 않는다.",
+    "sameAs에는 본인이 관리하는 계정만 있다.",
+    "직함이 바뀌면 바로 고치고 최종 업데이트 날짜도 따라 바꾼다.",
+    "이름이 들어간 질문으로 날을 바꿔 확인하고 결과를 기록했다."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "작은 회사에도 창업자 페이지가 필요한가요?",
+   "a": "회사 소개 페이지에 이름, 직책, 경력을 몇 줄 적는 것으로 충분한 경우가 많습니다. 창업자가 글을 쓰거나 강연이나 인터뷰를 하거나, 사람들이 이름으로 검색한다면 별도 페이지를 두면 정보를 한곳에 모을 수 있습니다."
+  },
+  {
+   "q": "정식 자격이 없는 사람이 쓴 글은 AI가 덜 쓰나요?",
+   "a": "Google은 자격이 없다는 것 자체가 문제라고 말하지 않습니다. 가장 중요하다고 말하는 것은 신뢰이며, 실제 경험(몇 년, 어떤 일)을 사실로 적은 것은 좋은 자료입니다. 건강이나 돈에 관한 주제라면 전문가에게 감수를 받고 그 사실을 밝힐 수도 있습니다."
+  },
+  {
+   "q": "필명으로 게시해도 되나요?",
+   "a": "됩니다. 다만 가공의 경력이나 자격을 붙이지 않고, 필명 페이지에 어떤 입장에서 쓰는지 밝혀야 합니다. Google은 꾸며낸 작성자 프로필을 기만이라고 부릅니다."
+  },
+  {
+   "q": "저자 페이지와 ProfilePage 마크업 중 무엇이 먼저인가요?",
+   "a": "페이지가 먼저입니다. 마크업은 본문과 같은 사실을 기계가 읽을 수 있는 형태로 옮긴 것이므로, 본문에 없는 사실을 마크업에 넣지 마세요."
+  },
+  {
+   "q": "감수자를 author에 넣어야 하나요?",
+   "a": "저자와 감수자는 구분하세요. schema.org에는 페이지의 정확성을 확인한 사람을 위한 reviewedBy가 있습니다. 본문에서도 \"글\"과 \"감수\"를 따로 적으세요."
+  },
+  {
+   "q": "대표가 바뀌었습니다. 무엇을 업데이트해야 하나요?",
+   "a": "회사 소개 페이지, 대표 프로필 페이지, 마크업의 founder 또는 employee, 저자 표시, 그리고 다른 곳의 프로필(소셜 계정, 업계 명부)입니다. 전임 대표의 페이지는 직책과 재임 기간을 적어 남기거나 새 페이지로 연결하세요. AI 답변이 따라오기까지 정해진 기간은 없습니다."
+  },
+  {
+   "q": "이 절차를 따르면 AI가 항상 우리 사람들을 정확히 설명하나요?",
+   "a": "보장할 수 없습니다. AI 답변은 날짜와 표현에 따라 바뀝니다. 이 절차는 AI가 읽는 정보를 정확하고 일관되게 만들어 혼동을 줄여 줍니다."
+  }
+ ],
+ "relatedHeading": "관련 가이드",
+ "cta": {
+  "heading": "AI가 내 사이트의 인물과 회사를 어떻게 읽는지 확인하세요",
+  "body": "무료 점검은 가입이 필요 없습니다. URL을 입력하면 구조화 데이터, llms.txt, AI 크롤러 접근 상태를 볼 수 있습니다. WordPress에서는 무료 플러그인이 회사의 기본 정보와 기사 저자를 구조화 데이터로 게시합니다.",
+  "label": "무료 AI 가독성 점검 실행",
+  "href": "/check",
+  "secondary": {
+   "label": "무료 WordPress 플러그인 사용해 보기",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT는 OpenAI의, Perplexity는 Perplexity AI의, Google은 Google LLC의 상표입니다. Yoast SEO, Rank Math, All in One SEO, Slim SEO, VK All in One Expansion Unit, LinkedIn, WordPress는 각 소유자의 상표입니다. Nurevo는 이들 기업과 제휴 관계가 없으며 보증을 받지도 않았습니다."
+}

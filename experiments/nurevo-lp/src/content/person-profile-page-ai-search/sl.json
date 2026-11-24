@@ -1,0 +1,377 @@
+{
+ "title": "Profilne strani ustanoviteljev, strokovnjakov, avtorjev za UI | Nurevo",
+ "description": "Kako zgraditi profil, ki mu UI lahko zaupa, ko jo vprašate, kdo vodi podjetje ali je napisal članek: kaj pravi Google, kaj napisati, Person, ProfilePage, WordPress.",
+ "h1": "Profilne strani ustanoviteljev, strokovnjakov in avtorjev za iskanje z UI: da UI pravilno prebere vloge, kvalifikacije in strokovnost ljudi",
+ "lead": "Ali bo UI pravilno odgovorila na vprašanje o osebi, je odvisno od tega, ali profilna stran te osebe v navadnem besedilu pove, kdo je, kje dela in na katerem področju je strokovnjak. Ime, vlogo, organizacijo, kvalifikacije, področja strokovnosti in poklicno pot zberite na eni strani; nanjo povežite iz podpisov pod članki in iz vrstice o vodstvu na strani O nas; iste vrednosti objavite kot strukturirane podatke Person. Ti trije koraki so jedro. Napihovanje kvalifikacij ali izmišljanje avtorjev se maščuje: Google izmišljene profile ustvarjalcev označuje za zavajanje.",
+ "intro": [
+  "Napisano 16. novembra 2026 (JST). Istega dne sta bila preverjena Googlova dokumenta „Creating helpful, reliable, people-first content“ (zadnja posodobitev 5. oktobra 2026) in „Profile page (ProfilePage) structured data“. Vodnik je namenjen podjetjem, trgovinam in ordinacijam s stranmi o ustanovitelju, direktorju, strokovnjakih, učiteljih ali avtorjih ter agencijam, ki take spletne strani izdelujejo. Samemu podjetju je namenjen vodnik [optimizacija strani O nas za iskanje z UI](/guide/company-profile-page-ai-search).",
+  "Odgovori UI se spreminjajo glede na dan in ubeseditev. Ti koraki poskrbijo, da so podatki, ki jih UI bere, točni; ne zagotavljajo, da se bo oseba pojavila v odgovoru ali da se bodo uvrstitve izboljšale."
+ ],
+ "sections": [
+  {
+   "heading": "Za kaj UI uporablja profilne strani",
+   "paragraphs": [
+    "Iskanje ChatGPT, Perplexity in Google AI Overviews pri odgovarjanju berejo spletne strani in jih prikazujejo kot vire. Pri vprašanju o osebi je najneposrednejše gradivo profilna stran na spletnem mestu organizacije, ki ji oseba pripada. Kadar take strani ni, kadar vsebuje le fotografijo in ime ali kadar se naziv delovnega mesta od strani do strani razlikuje, lahko UI odgovor sestavi iz starega članka ali iz nekoga drugega z istim imenom.",
+    "Vprašanja o ljudeh se navadno ujemajo z nekaj vzorci."
+   ],
+   "list": [
+    "„Kdo vodi Sample Ltd in kakšne izkušnje ima?“ (ustanovitelj ali direktor)",
+    "„Za kaj je specialist direktor Sample Clinic?“ (kvalifikacije in področje strokovnjaka)",
+    "„Kateri računovodja v Leedsu se dobro spozna na davek na dediščino?“ (iskanje po strokovnosti; v vprašanju ni imena)",
+    "„Kdo je napisal ta članek in ali mu lahko zaupam?“ (avtor)",
+    "„Kako je Jane Doe povezana s Sample Ltd?“ (vloga, druge funkcije, prejšnje zaposlitve)",
+    "„Kako se naročim na posvet pri dr. Doe?“ (kontakt in rezervacija)"
+   ],
+   "after": [
+    "Pri vprašanju, kot je tretje, brez imena, UI najprej poišče ordinacijo ali podjetje in nato doda, kdo bi se zadeve lotil. Profilna stran je torej gradivo ne le takrat, ko kdo sprašuje po imenu, ampak tudi takrat, ko išče po strokovnosti."
+   ]
+  },
+  {
+   "heading": "Kaj pravi Google sam (kolikor smo lahko preverili)",
+   "paragraphs": [
+    "Veliko tega, kar kroži o avtorstvu in E-E-A-T, je ugibanje. Začnite pri tem, kar piše Google sam."
+   ],
+   "table": {
+    "head": [
+     "Kaj pravi Google",
+     "Vir",
+     "Kaj iz tega povzema ta vodnik"
+    ],
+    "rows": [
+     [
+      "Močno spodbuja točne podatke o avtorstvu, na primer podpise avtorjev, tam, kjer jih bralci lahko pričakujejo",
+      "[Creating helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "Pri člankih navedite ime avtorja in ga povežite s profilom"
+     ],
+     [
+      "Izmišljanje profilov ustvarjalcev s portreti, ustvarjenimi z UI, izmišljenimi imeni ali lažnimi kvalifikacijami je zavajanje in znak strani nizke kakovosti",
+      "Isto",
+      "Nobenih izmišljenih avtorjev in nobenih napihnjenih kvalifikacij"
+     ],
+     [
+      "E-E-A-T sam po sebi ni določen dejavnik razvrščanja; od njegovih delov je najpomembnejše zaupanje; E-E-A-T ima večjo težo pri temah zdravja, financ in varnosti (YMYL)",
+      "Isto",
+      "E-E-A-T obravnavajte kot način objavljanja zaupanja vrednih dejstev, ne kot oceno"
+     ],
+     [
+      "ProfilePage je za strani, katerih glavna tema je ena oseba ali organizacija, povezana s spletnim mestom (strani avtorjev, stran „o meni“ na blogu, strani zaposlenih v podjetju); domača stran trgovine ne ustreza",
+      "[ProfilePage structured data](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "Uporabljajte ga na straneh ustanoviteljev, strokovnjakov in avtorjev, ne na domači strani podjetja"
+     ],
+     [
+      "Obvezno pri ProfilePage: mainEntity (Person ali Organization) in njegov name; dateModified naj odraža le spremembe, ki jih je naredil človek",
+      "Isto",
+      "Začnite z malim in uporabite datum, ko je nekdo profil dejansko uredil"
+     ],
+     [
+      "Za AI Overviews ali AI Mode ni dodatnih zahtev ali posebnih oznak",
+      "[AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)",
+      "Oznake so ključ k besedilu; besedilo je na prvem mestu"
+     ]
+    ]
+   },
+   "after": [
+    "Mesta, kjer se po Googlovih besedah lahko pokažejo oznake ProfilePage, so funkcije, kot so razprave in forumi. O vplivu na odgovore UI ne pove ničesar. Ta vodnik oznake obravnava kot način, da ista dejstva kot v besedilu objavite v obliki, berljivi za stroje."
+   ]
+  },
+  {
+   "heading": "Trditve iz vodilnih člankov in koliko držijo",
+   "paragraphs": [
+    "Prebrali smo deset vodilnih japonskih in angleških člankov za poizvedbe, kot je „author E-E-A-T AI search“. Mnogi vsebujejo uporabne korake in kontrolne sezname, spodnjih trditev pa nismo mogli izslediti do primarnega vira. Tabelo uporabite kot vodilo pri branju."
+   ],
+   "table": {
+    "head": [
+     "Pogosta trditev",
+     "Kaj smo ugotovili"
+    ],
+    "rows": [
+     [
+      "Odstotki, kot je „kvalifikacije avtorja predstavljajo 16 % teže pri odločitvah UI o navedbah“",
+      "Noben članek ne povezuje na izvirno raziskavo in noben ne opredeli, kaj ta „teža“ meri"
+     ],
+     [
+      "„Shema Person je obvezna“",
+      "Google navaja obvezne lastnosti le za prikaz ProfilePage v svojih funkcijah iskanja; nikjer ne pravi, da so oznake obvezne za odgovore UI"
+     ],
+     [
+      "„Več ko je povezav sameAs, bolje je“",
+      "Ni dokazov. Varneje je navesti le profile, ki jih oseba upravlja in ki ji očitno pripadajo"
+     ],
+     [
+      "„Dodajanje medicinskega ali pravnega recenzenta dvigne E-E-A-T“",
+      "Za zgolj vrstico z imenom recenzenta ni dokazov, Google pa napačno predstavljanje ustvarjalcev označuje za zavajanje. Navedite, kaj je bilo pregledano in kdaj"
+     ],
+     [
+      "„Idealna dolžina življenjepisa je N besed“",
+      "Število se od članka do članka razlikuje in noben ne navaja vira. Dolžina je manj pomembna kot to, ali so v njem dejstva"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Čigava stran in kje",
+   "paragraphs": [
+    "Ljudi na spletnem mestu razvrstite v štiri vloge. Ne potrebuje vsak dolge strani; začnite pri ljudeh, o katerih bodo UI najverjetneje spraševali."
+   ],
+   "table": {
+    "head": [
+     "Vloga",
+     "Kje",
+     "Najmanjša vsebina",
+     "Kako povezati"
+    ],
+    "rows": [
+     [
+      "Ustanovitelj ali direktor",
+      "Na strani O nas ali na strani, kot je /about/ime/",
+      "Ime, vloga, poklicna pot, s čim se ukvarja v podjetju",
+      "Povezava iz vrstice o vodstvu na strani O nas; v oznakah founder ali employee podjetja usmerite na isti @id"
+     ],
+     [
+      "Strokovnjak (direktor, specialist, učitelj)",
+      "Seznam ekipe in ena stran na osebo",
+      "Kvalifikacije, registrska številka, področje, katere storitve izvaja",
+      "Povezava iz vrstice „kdo vas bo sprejel“ na straneh storitev"
+     ],
+     [
+      "Avtor člankov",
+      "Arhiv avtorja v WordPressu ali navadna stran",
+      "Ime, organizacija, teme, seznam člankov",
+      "Povezava iz podpisa avtorja"
+     ],
+     [
+      "Zunanji recenzent",
+      "Stran recenzenta s povezavo do njegove organizacije",
+      "Ime, kvalifikacija, pripadnost, kaj je pregledal",
+      "Pri članku: „Pregledal: ime (kvalifikacija), datum“, s povezavo do strani"
+     ]
+    ]
+   },
+   "after": [
+    "Ko se ista oseba pojavlja kot ustanovitelj, avtor in recenzent, imejte eno stran ter ime in naziv povsod zapišite enako. UI lahko dva zapisa razume kot dve osebi."
+   ]
+  },
+  {
+   "heading": "Kaj napisati in ustrezni strukturirani podatki",
+   "paragraphs": [
+    "Tabela navaja, kaj naj vsebuje profilna stran, napake, ki se pogosto pojavljajo v odgovorih UI, in ustrezne lastnosti schema.org, izbrane iz definicij Person in ProfilePage (tipi preverjeni v schema-dts 2.1.0)."
+   ],
+   "table": {
+    "head": [
+     "Postavka",
+     "Kako jo zapisati",
+     "Tipična napaka UI",
+     "Strukturirani podatki"
+    ],
+    "rows": [
+     [
+      "Ime",
+      "En zapis na celotnem spletnem mestu; drugo pisavo ali latinični zapis navedite enkrat",
+      "Zamenjava z nekom z istim imenom",
+      "name, alternateName"
+     ],
+     [
+      "Vloga in organizacija",
+      "Vedno z imenom podjetja, npr. „ustanoviteljica, Sample Ltd“",
+      "Predstavitev s prejšnjim ali stranskim nazivom",
+      "jobTitle, worksFor"
+     ],
+     [
+      "Kvalifikacije",
+      "Polno uradno ime, registrska številka (če sme biti javna), izdajatelj, leto",
+      "Zamenjana vrsta kvalifikacije",
+      "hasCredential (EducationalOccupationalCredential)"
+     ],
+     [
+      "Področja strokovnosti",
+      "Tri do pet konkretnih področij, ne „vse“",
+      "Priporočanje za stvari zunaj področja",
+      "knowsAbout"
+     ],
+     [
+      "Poklicna pot",
+      "Ena vrstica na leto in dogodek: izobrazba, prejšnje zaposlitve, ustanovitev dejavnosti",
+      "Zamenjani datumi",
+      "Besedilo (alumniOf za šole)"
+     ],
+     [
+      "Dosežki",
+      "Številke z datumom in načinom štetja",
+      "Navajanje starih ali napihnjenih številk",
+      "Samo besedilo"
+     ],
+     [
+      "Nagrade in omembe v medijih",
+      "Ime, leto, organizator; povezava, kjer je mogoče",
+      "Zamenjava nagrad z omembami",
+      "award (samo nagrade)"
+     ],
+     [
+      "Drugi profili",
+      "Samo računi, ki jih oseba upravlja",
+      "Povezava s posnemovalci ali soimenjaki",
+      "sameAs"
+     ],
+     [
+      "Fotografija",
+      "Prava fotografija; brez portretov, ustvarjenih z UI",
+      "—",
+      "image"
+     ],
+     [
+      "Članki in storitve",
+      "Seznam ali povezave",
+      "Ni jasno, na katerem področju oseba deluje",
+      "Besedilo"
+     ],
+     [
+      "Zadnja posodobitev",
+      "Na koncu strani; nazive popravite takoj, ko se spremenijo",
+      "Predstavitev z nekdanjo funkcijo",
+      "dateModified (ProfilePage)"
+     ]
+    ]
+   },
+   "after": [
+    "schema.org opisuje knowsAbout kot „suggesting possible expertise but not implying it“ (nakazuje morebitno strokovnost, ne pa je tudi zatrjuje) ([schema.org: knowsAbout](https://schema.org/knowsAbout)). Navedba področij v oznakah sama po sebi ničesar ne dokazuje, zato jih v besedilu podprite z obravnavanimi primeri in napisanimi članki."
+   ]
+  },
+  {
+   "heading": "Pisanje strani: v prvem stavku povejte, kdo je oseba",
+   "list": [
+    "V prvi stavek vključite ime, vlogo, organizacijo in področje, npr. „Jane Doe je ustanoviteljica Sample Ltd v Leedsu in pooblaščena računovodkinja, specializirana za računovodstvo malih podjetij in davek na dediščino.“",
+    "Drugi stavek namenite dejstvom, ki jo ločijo od drugih: letu pridobitve kvalifikacije, organizacijam, katerih članica je, območju, ki ga pokriva.",
+    "Kvalifikacije navajajte v celoti. Če je kvalifikacijo mogoče preveriti v javnem registru, lahko to navedete, da jo bralci lahko preverijo.",
+    "Poklicno pot zapišite v tabeli ali časovnici, ne kot sliko ali PDF.",
+    "Trditve, ki jih nihče ne more primerjati, kot je „številka ena v panogi“, nadomestite z dejstvi: leti, številkami, področji.",
+    "V reguliranih poklicih, kot sta medicina in pravo, veljajo pravila o oglaševanju nazivov in kvalifikacij. Za zdravstvo glejte tudi [iskanje z UI za klinike in ordinacije](/guide/medical-clinic-ai-search)."
+   ]
+  },
+  {
+   "heading": "Podpisi avtorjev in recenzenti",
+   "paragraphs": [
+    "Ime avtorja navedite na začetku ali koncu vsakega članka in ga povežite s profilno stranjo. Podpis ekipe je v redu, a potem naj stran ekipe pove, kdo piše in kako.",
+    "Ko vsebino preveri zunanji strokovnjak, to imenujte recenzija, ločeno od avtorstva, in navedite, kaj je bilo pregledano (na primer „davčni izračuni“) in kdaj. schema.org ima za ljudi, ki so stran pregledali glede točnosti, lastnost [reviewedBy](https://schema.org/reviewedBy), ki se razlikuje od author. Avtorja in recenzenta ne navajajte skupaj pod author.",
+    "Google priporoča, da bralcem poveste, kako je vsebina nastala, vključno s tem, ali so bili uporabljeni avtomatizacija ali UI. Če je bil članek pripravljen z UI, to navedite tam, kjer bi bralci to pričakovali, skupaj z dejstvom, da ga je preveril človek."
+   ]
+  },
+  {
+   "heading": "Primer oznak: ProfilePage in Person",
+   "paragraphs": [
+    "Najmanjši primer. Vsaka vrednost mora biti tudi v besedilu. Če worksFor usmerite na isti @id kot vozlišče podjetja, se oseba in podjetje lahko bereta kot par."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Founder and Chartered Accountant\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Chartered accountant specialising in small-business accounts and inheritance tax in Leeds.\",\n    \"knowsAbout\": [\"Inheritance tax\", \"Small-business accounting\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Chartered Accountant\",\n      \"credentialCategory\": \"Professional qualification\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "Tip kvalifikacije [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential) lahko vsebuje tudi vrsto kvalifikacije (credentialCategory) in organ, ki jo priznava (recognizedBy). V sameAs vključite le profile, ki jih oseba upravlja in ki ji očitno pripadajo."
+   ]
+  },
+  {
+   "heading": "V WordPressu (z Nurevo AEO)",
+   "paragraphs": [
+    "Z [Nurevo AEO (brezplačno)](https://wordpress.org/plugins/nurevo-webmcp/) se ljudje obravnavajo takole."
+   ],
+   "list": [
+    "Najprej v Users > Profile (Uporabniki > Profil) za vsakega avtorja nastavite „Display name publicly as“ (Javno prikazano ime) na njegovo pravo ime (ali ime, ki ga uporablja spletno mesto). Ko Nurevo objavi svoj graf, prispevki postanejo BlogPosting z avtorjem kot Person s tem prikazanim imenom. Strani avtorja ne dobijo.",
+    "Z Yoast SEO, Rank Math, All in One SEO ali Slim SEO ostaneta Article in njegov avtor natanko taka, kot ju objavi ta vtičnik; Nurevo ju ne spreminja. Avtorje nastavite v uporabniških nastavitvah tega vtičnika. Tudi avtor v Article iz VK All in One Expansion Unit se ne spremeni.",
+    "Če želite ustanovitelja dodati v oznake podjetja ali ProfilePage na profilno stran, uporabite spodnje filtre za razvijalce (Nurevo za to nima vnosnih polj). Z vtičnikom SEO imajo vrednosti vozlišča podjetja iz tega vtičnika še vedno prednost.",
+    "V izvorni kodi strani preverite, ali vaš vtičnik SEO za tega avtorja že objavlja ProfilePage, da se nič ne podvoji.",
+    "Odprite /llms.txt in preverite, ali je profilna stran navedena. llms.txt navaja 30 nazadnje spremenjenih strani in prispevkov; če je ni, dodajte vrstico s filtrom webmcp_canary_llms_txt_lines."
+   ],
+   "code": "// 1) Add the founder to the business node (only someone your About page names)\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) Add a ProfilePage only on the profile page (slug jane-doe)\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Founder and Chartered Accountant',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Inheritance tax', 'Small-business accounting'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "Na drugih platformah so preverjanja enaka. [Brezplačno preverjanje](/check) ne zahteva registracije: vnesite URL in poglejte stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI."
+   ]
+  },
+  {
+   "heading": "Kako preveriti: vprašanja z imenom osebe",
+   "paragraphs": [
+    "Profilne strani preverjajte z vprašanji, ki vsebujejo ime osebe. Isto vprašanje zastavite isti UI na različne dni in zapišite odgovore; ne sodite po enem odgovoru."
+   ],
+   "table": {
+    "head": [
+     "Kaj zapisati",
+     "Primer"
+    ],
+    "rows": [
+     [
+      "Datum, UI, vprašanje",
+      "16. 11., Perplexity, „Kakšne izkušnje ima Jane Doe, ustanoviteljica Sample Ltd?“"
+     ],
+     [
+      "Dejstva v odgovoru",
+      "Vloga, kvalifikacije, področje in poklicna pot: pravilno ali ne, eno za drugim"
+     ],
+     [
+      "Viri",
+      "Je bila navedena vaša profilna stran ali stran nekoga drugega?"
+     ],
+     [
+      "Zamenjave",
+      "Se je v odgovoru pojavil soimenjak ali nekdanji naziv?"
+     ]
+    ]
+   },
+   "after": [
+    "Brezplačno preverjanje UI pri Nurevo (enkrat mesečno za povezana spletna mesta v paketih Free in Standard) zastavlja vprašanja, sestavljena iz vrste dejavnosti in območja, nikoli iz imena, zato se vprašanja o ljudeh preverjajo ročno s tabelo zgoraj. Merjenje vidnosti v paketu Pro (beta) trenutno pokriva Perplexity. Celotna metoda je v vodniku [kako meriti vidnost v UI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam profilne strani",
+   "list": [
+    "Prvi stavek vsebuje ime, vlogo, organizacijo in področje.",
+    "Ime in naziv sta zapisana enako na strani O nas, v podpisih avtorjev in na straneh ekipe.",
+    "Kvalifikacije so navedene v celoti z letom ali izdajateljem.",
+    "Področja strokovnosti so konkretna in podprta s primeri ali članki.",
+    "Številke imajo datum in povedo, kako so bile preštete.",
+    "Ni izmišljenih oseb, portretov, ustvarjenih z UI, ali napihnjenih kvalifikacij.",
+    "Podpisi avtorjev vodijo na profil; recenzije so ločene od avtorstva, z obsegom in datumom.",
+    "Oznake ProfilePage in Person se ujemajo z besedilom in niso podvojene.",
+    "sameAs navaja le račune, ki jih oseba upravlja.",
+    "Nazivi se popravijo takoj, ko se spremenijo, datum zadnje posodobitve pa temu sledi.",
+    "Stran ste preverili z vprašanji z imenom na različne dni in zapisali rezultate."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ali majhno podjetje potrebuje stran ustanovitelja?",
+   "a": "Pogosto zadošča nekaj vrstic z imenom, vlogo in izkušnjami na strani O nas. Če ustanovitelj piše članke, nastopa, daje intervjuje ali ga ljudje iščejo po imenu, ločena stran ohrani dejstva na enem mestu."
+  },
+  {
+   "q": "Ali UI redkeje uporablja članke ljudi brez formalnih kvalifikacij?",
+   "a": "Google ne pravi, da je pomanjkanje kvalifikacije samo po sebi težava. Po njegovih besedah je najpomembnejše zaupanje, resnične izkušnje (koliko let, kakšno delo), zapisane kot dejstvo, pa so dobro gradivo. Pri temah zdravja ali denarja lahko vsebino daste v pregled tudi strokovnjaku in to navedete."
+  },
+  {
+   "q": "Ali lahko objavljamo pod psevdonimom?",
+   "a": "Da, če psevdonimu ne pripišete izmišljenega življenjepisa ali kvalifikacij in stran psevdonima pove, v kakšni vlogi oseba piše. Google izmišljene profile ustvarjalcev označuje za zavajanje."
+  },
+  {
+   "q": "Kaj najprej: stran avtorja ali oznake ProfilePage?",
+   "a": "Stran. Oznake ista dejstva kot v besedilu podajo v obliki, berljivi za stroje; v oznake ne vstavljajte dejstev, ki jih besedilo ne navaja."
+  },
+  {
+   "q": "Ali naj bo recenzent pod author?",
+   "a": "Avtorje in recenzente ločite. schema.org ima reviewedBy za ljudi, ki so stran pregledali glede točnosti. Tudi v besedilu ločeno zapišite „avtor“ in „pregledal“."
+  },
+  {
+   "q": "Zamenjal se nam je direktor. Kaj moramo posodobiti?",
+   "a": "Stran O nas, profilno stran direktorja, founder ali employee v oznakah, podpise avtorjev in profile drugje (družbena omrežja, panožni imeniki). Stran nekdanjega direktorja ohranite z njegovo vlogo in datumi ali jo preusmerite na novo stran. Ni določenega časa, v katerem bi odgovori UI sledili spremembi."
+  },
+  {
+   "q": "Če sledimo tem korakom, bo UI naše ljudi vedno opisala pravilno?",
+   "a": "Tega ni mogoče zagotoviti; odgovori UI se spreminjajo glede na dan in ubeseditev. Ti koraki poskrbijo, da so podatki, ki jih UI bere, točni in usklajeni, zato so zamenjave manj verjetne."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Poglejte, kako UI bere ljudi in podjetje na vašem spletnem mestu",
+  "body": "Brezplačno preverjanje ne zahteva registracije: vnesite URL in poglejte stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. V WordPressu brezplačni vtičnik objavi osnovne podatke podjetja in avtorje člankov kot strukturirane podatke.",
+  "label": "Zaženi brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Preizkusite brezplačni vtičnik za WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI in Google družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, VK All in One Expansion Unit, LinkedIn in WordPress so blagovne znamke svojih lastnikov. Nurevo ni povezan s temi podjetji niti ga ta podjetja ne podpirajo."
+}

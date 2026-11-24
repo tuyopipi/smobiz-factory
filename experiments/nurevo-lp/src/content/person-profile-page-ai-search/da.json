@@ -1,0 +1,377 @@
+{
+ "title": "Profilsider til AI-søgning: stiftere, eksperter, forfattere | Nurevo",
+ "description": "Lav profilsider, AI kan stole på, når nogen spørger, hvem der driver en virksomhed eller skrev en artikel: Googles ord, indhold, Person-markup og WordPress-trin.",
+ "h1": "Profilsider for stiftere, eksperter og forfattere til AI-søgning: få personers roller, kvalifikationer og ekspertise læst korrekt",
+ "lead": "Om en AI svarer korrekt på et spørgsmål om en person, afhænger af, om personens profilside i klar tekst siger, hvem de er, hvor de arbejder, og hvad de er eksperter i. Saml navn, rolle, organisation, kvalifikationer, ekspertiseområder og karriere på én side; link til den fra artiklernes forfatterlinjer og fra ledelseslinjen på din Om os-side; og offentliggør de samme værdier som Person-strukturerede data. De tre trin er kernen. Oppustede kvalifikationer eller opdigtede forfattere giver bagslag: Google kalder fabrikerede skaberprofiler vildledning.",
+ "intro": [
+  "Skrevet 16. november 2026 (JST). Googles »Creating helpful, reliable, people-first content« (senest opdateret 5. oktober 2026) og »Profile page (ProfilePage) structured data« blev kontrolleret samme dag. Denne guide er til virksomheder, butikker og praksisser med sider om deres stifter, direktør, behandlere, undervisere eller skribenter, og til de bureauer, der bygger disse websites. Selve virksomheden behandles i [AI-søgeoptimering af Om os-siden](/guide/company-profile-page-ai-search).",
+  "AI-svar ændrer sig fra dag til dag og med formuleringen. Disse trin gør de oplysninger, AI læser, korrekte; de garanterer ikke, at en person vises i et svar, eller at placeringer stiger."
+ ],
+ "sections": [
+  {
+   "heading": "Hvad AI bruger profilsider til",
+   "paragraphs": [
+    "ChatGPT search, Perplexity og Googles AI Overviews læser websider, når de svarer, og viser dem som kilder. Ved et spørgsmål om en person er profilsiden på websitet for den organisation, personen hører til, det mest direkte materiale. Når der ikke findes en sådan side, når den kun består af et foto og et navn, eller når jobtitlen er forskellig fra side til side, kan AI'en bygge sit svar på en gammel artikel eller på en anden person med samme navn.",
+    "Spørgsmål om personer falder typisk i nogle få mønstre."
+   ],
+   "list": [
+    "»Hvem driver Sample Ltd, og hvad er deres baggrund?« (stifteren eller den administrerende direktør)",
+    "»Hvad er direktøren for Sample Clinic specialist i?« (en eksperts kvalifikationer og fagområde)",
+    "»Hvilken revisor i Leeds er god til arveafgift?« (findes via ekspertise; intet navn i spørgsmålet)",
+    "»Hvem skrev denne artikel, og kan jeg stole på den?« (forfatteren)",
+    "»Hvordan er Jane Doe knyttet til Sample Ltd?« (rolle, andre poster, tidligere job)",
+    "»Hvordan booker jeg en konsultation hos Dr Doe?« (kontakt og booking)"
+   ],
+   "after": [
+    "I et spørgsmål som det tredje, uden navn, leder AI'en først efter en praksis eller butik og tilføjer derefter, hvem der ville håndtere opgaven. En profilside er materiale, ikke kun når nogen spørger ved navn, men også når de søger efter ekspertise."
+   ]
+  },
+  {
+   "heading": "Hvad Google selv siger (så vidt vi kunne kontrollere)",
+   "paragraphs": [
+    "Meget af det, der cirkulerer om forfatterskab og E-E-A-T, er gætværk. Start med det, Google selv skriver."
+   ],
+   "table": {
+    "head": [
+     "Hvad Google siger",
+     "Kilde",
+     "Hvad denne guide tager med"
+    ],
+    "rows": [
+     [
+      "Google opfordrer kraftigt til korrekte forfatteroplysninger, f.eks. forfatterlinjer, hvor læserne kan forvente dem",
+      "[Creating helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "Vis forfatterens navn på artikler, og link det til en profil"
+     ],
+     [
+      "At fabrikere skaberprofiler med AI-genererede portrætfotos, opdigtede navne eller falske kvalifikationer er vildledning og et tegn på en side af lav kvalitet",
+      "Samme",
+      "Ingen opdigtede forfattere og ingen oppustede kvalifikationer"
+     ],
+     [
+      "E-E-A-T er ikke i sig selv en specifik rangeringsfaktor; af delene betyder tillid mest; E-E-A-T vægter tungere ved emner om sundhed, økonomi og sikkerhed (YMYL)",
+      "Samme",
+      "Brug E-E-A-T som en måde at offentliggøre troværdige fakta på, ikke som en score"
+     ],
+     [
+      "ProfilePage er til sider, hvis hovedemne er én person eller organisation knyttet til websitet (forfattersider, en blogs om mig-side, en virksomheds medarbejdersider); en butiks forside kvalificerer ikke",
+      "[ProfilePage structured data](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "Brug det på stifter-, ekspert- og forfattersider, ikke på virksomhedens forside"
+     ],
+     [
+      "Påkrævet på ProfilePage: mainEntity (Person eller Organization) og dens name; dateModified bør kun afspejle menneskelige redigeringer",
+      "Samme",
+      "Start småt, og brug den dato, hvor nogen faktisk redigerede profilen"
+     ],
+     [
+      "Der er ingen ekstra krav eller særlig markup til AI Overviews eller AI Mode",
+      "[AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)",
+      "Markup er facitlisten til teksten; teksten kommer først"
+     ]
+    ]
+   },
+   "after": [
+    "De steder, hvor Google siger, at ProfilePage-markup kan vises, er funktioner som diskussioner og fora. Der står intet om en effekt på AI-svar. Denne guide behandler markup som en måde at offentliggøre de samme fakta som teksten i en form, maskiner kan læse."
+   ]
+  },
+  {
+   "heading": "Påstande, du møder i topartikler, og hvor godt de holder",
+   "paragraphs": [
+    "Vi læste ti af de øverste japanske og engelske artikler for søgninger som »author E-E-A-T AI search«. Mange har nyttige trin og tjeklister, men påstandene nedenfor kunne ikke spores til en primær kilde. Brug tabellen som læsevejledning."
+   ],
+   "table": {
+    "head": [
+     "Almindelig påstand",
+     "Hvad vi fandt"
+    ],
+    "rows": [
+     [
+      "Procenter som »forfatterens kvalifikationer vægter 16 % i AI's beslutninger om citationer«",
+      "Ingen af artiklerne linker til den oprindelige undersøgelse, og ingen definerer, hvad »vægten« måler"
+     ],
+     [
+      "»Person-schema er obligatorisk«",
+      "Google angiver kun påkrævede egenskaber for, at ProfilePage kan vises i dets søgefunktioner; det siger aldrig, at markup er påkrævet for AI-svar"
+     ],
+     [
+      "»Jo flere sameAs-links, jo bedre«",
+      "Ingen dokumentation. Det sikreste er kun at angive profiler, som personen selv styrer, og som tydeligt tilhører dem"
+     ],
+     [
+      "»En medicinsk eller juridisk fagkontrollant hæver din E-E-A-T«",
+      "Ingen dokumentation for en linje med kun et navn, og Google kalder vildledning om skabere for bedrag. Angiv, hvad der blev gennemgået og hvornår"
+     ],
+     [
+      "»Den ideelle biografilængde er N ord«",
+      "Tallet varierer fra artikel til artikel, og ingen angiver en kilde. Længden betyder mindre end, om fakta er der"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Hvis side, og hvor",
+   "paragraphs": [
+    "Inddel personerne på dit website i fire roller. Ikke alle har brug for en lang side; start med de personer, som en AI mest sandsynligt bliver spurgt om."
+   ],
+   "table": {
+    "head": [
+     "Rolle",
+     "Hvor",
+     "Minimumsindhold",
+     "Sådan forbinder du den"
+    ],
+    "rows": [
+     [
+      "Stifter eller administrerende direktør",
+      "På Om os-siden eller en side som /about/navn/",
+      "Navn, rolle, karriere, hvad de laver i virksomheden",
+      "Link fra ledelseslinjen på Om os-siden; i markup peger virksomhedens founder eller employee på samme @id"
+     ],
+     [
+      "Ekspert (direktør, behandler, underviser)",
+      "En medarbejderoversigt plus én side pr. person",
+      "Kvalifikationer, autorisationsnummer, fagområde, hvilke ydelser de varetager",
+      "Link fra linjen »hvem du møder« på ydelsessider"
+     ],
+     [
+      "Artikelforfatter",
+      "WordPress' forfatterarkiv eller en almindelig side",
+      "Navn, organisation, emner, liste over artikler",
+      "Link fra forfatterlinjen"
+     ],
+     [
+      "Ekstern fagkontrollant",
+      "En kontrollantside med link til deres egen organisation",
+      "Navn, kvalifikation, tilknytning, hvad de gennemgik",
+      "I artiklen: »Fagligt gennemgået af Navn (kvalifikation), dato«, linket til siden"
+     ]
+    ]
+   },
+   "after": [
+    "Når den samme person optræder som stifter, forfatter og fagkontrollant, så hold én side, og stav navn og titel ens overalt. En AI kan opfatte to stavemåder som to personer."
+   ]
+  },
+  {
+   "heading": "Hvad du skal skrive, og de tilsvarende strukturerede data",
+   "paragraphs": [
+    "Tabellen viser, hvad en profilside bør indeholde, de fejl AI-svar typisk begår, og de tilsvarende schema.org-egenskaber, udvalgt fra definitionerne af Person og ProfilePage (typer kontrolleret i schema-dts 2.1.0)."
+   ],
+   "table": {
+    "head": [
+     "Punkt",
+     "Sådan skriver du det",
+     "Typisk AI-fejl",
+     "Strukturerede data"
+    ],
+    "rows": [
+     [
+      "Navn",
+      "Én stavemåde på hele websitet; angiv andre skriftsystemer eller en latinsk translitteration én gang",
+      "Forvekslet med en anden med samme navn",
+      "name, alternateName"
+     ],
+     [
+      "Rolle og organisation",
+      "Altid med virksomhedens navn, f.eks. »Stifter, Sample Ltd«",
+      "Præsenteret med en tidligere titel eller en bijobtitel",
+      "jobTitle, worksFor"
+     ],
+     [
+      "Kvalifikationer",
+      "Fuldt officielt navn, autorisationsnummer (hvis det må være offentligt), udstedende organ, år",
+      "Typen af kvalifikation forveksles",
+      "hasCredential (EducationalOccupationalCredential)"
+     ],
+     [
+      "Ekspertiseområder",
+      "Tre til fem konkrete områder, ikke »alt«",
+      "Anbefalet til ting uden for deres fagområde",
+      "knowsAbout"
+     ],
+     [
+      "Karriere",
+      "Én linje pr. år og begivenhed: uddannelse, tidligere job, hvornår de startede for sig selv",
+      "Datoer blandet sammen",
+      "Tekst (alumniOf for skoler)"
+     ],
+     [
+      "Resultater",
+      "Tal med en dato og en angivelse af, hvordan de er opgjort",
+      "Gamle eller oppustede tal citeres",
+      "Kun tekst"
+     ],
+     [
+      "Priser og omtale",
+      "Navn, år, arrangør; link, hvor det er muligt",
+      "Priser forveksles med omtaler",
+      "award (kun priser)"
+     ],
+     [
+      "Andre profiler",
+      "Kun konti, som personen selv styrer",
+      "Linket til imitatorer eller navnefæller",
+      "sameAs"
+     ],
+     [
+      "Foto",
+      "Et rigtigt foto; ingen AI-genererede portrætfotos",
+      "—",
+      "image"
+     ],
+     [
+      "Artikler og ydelser",
+      "En liste eller links",
+      "Uklart, hvilket fagområde personen arbejder i",
+      "Tekst"
+     ],
+     [
+      "Senest opdateret",
+      "Nederst på siden; ret titler, så snart de ændres",
+      "Præsenteret med en tidligere rolle",
+      "dateModified (ProfilePage)"
+     ]
+    ]
+   },
+   "after": [
+    "schema.org beskriver knowsAbout som »suggesting possible expertise but not implying it« (antyder mulig ekspertise uden at forudsætte den) ([schema.org: knowsAbout](https://schema.org/knowsAbout)). At angive områder i markup beviser intet i sig selv, så understøt dem i teksten med behandlede sager og skrevne artikler."
+   ]
+  },
+  {
+   "heading": "Sådan skriver du siden: sig, hvem personen er, i første sætning",
+   "list": [
+    "Sæt navn, rolle, organisation og fagområde i første sætning, f.eks. »Jane Doe er stifter af Sample Ltd i Leeds og statsautoriseret revisor med speciale i regnskaber for små virksomheder og arveafgift.«",
+    "Brug anden sætning til fakta, der adskiller hende fra andre: året, hun blev autoriseret, de organisationer, hun er medlem af, det område, hun dækker.",
+    "Skriv kvalifikationer fuldt ud. Hvor en kvalifikation kan kontrolleres i et offentligt register, kan du nævne det, så læserne kan verificere den.",
+    "Sæt karrieren i en tabel eller tidslinje, ikke i et billede eller en PDF.",
+    "Erstat påstande, ingen kan sammenligne, som »branchens nummer ét«, med fakta: år, tal, fagområder.",
+    "I regulerede fag som medicin og jura er der regler for, hvordan titler og kvalifikationer må markedsføres. For sundhedsområdet, se også [AI-søgning for klinikker](/guide/medical-clinic-ai-search)."
+   ]
+  },
+  {
+   "heading": "Forfatterlinjer og fagkontrollanter",
+   "paragraphs": [
+    "Vis forfatterens navn i starten eller slutningen af hver artikel, og link det til profilsiden. En teamforfatterlinje er fin, men så bør teamsiden sige, hvem der skriver, og hvordan.",
+    "Når en ekstern ekspert kontrollerer indholdet, så kald det en faglig gennemgang, adskilt fra forfatterskab, og angiv, hvad der blev gennemgået (f.eks. »skatteberegningerne«) og hvornår. schema.org har [reviewedBy](https://schema.org/reviewedBy) til personer, der har gennemgået en side for korrekthed, en anden egenskab end author. Angiv ikke forfatter og kontrollant sammen under author.",
+    "Google anbefaler at fortælle læserne, hvordan indhold blev produceret, herunder om automatisering eller AI blev brugt. Er en artikel skrevet i udkast med AI, så sig det, hvor læserne ville forvente det, sammen med at et menneske har kontrolleret den."
+   ]
+  },
+  {
+   "heading": "Eksempel på markup: ProfilePage og Person",
+   "paragraphs": [
+    "Et minimalt eksempel. Alle værdier skal også stå i teksten. Når worksFor peger på samme @id som din virksomhedsnode, kan personen og virksomheden læses som et par."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Founder and Chartered Accountant\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Chartered accountant specialising in small-business accounts and inheritance tax in Leeds.\",\n    \"knowsAbout\": [\"Inheritance tax\", \"Small-business accounting\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Chartered Accountant\",\n      \"credentialCategory\": \"Professional qualification\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "Kvalifikationstypen [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential) kan også angive kvalifikationens art (credentialCategory) og det organ, der anerkender den (recognizedBy). Angiv kun profiler i sameAs, som personen selv styrer, og som tydeligt tilhører dem."
+   ]
+  },
+  {
+   "heading": "På WordPress (med Nurevo AEO)",
+   "paragraphs": [
+    "Med [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) håndteres personer sådan her."
+   ],
+   "list": [
+    "Under Users > Profile (Brugere > Profil) skal du først sætte hver skribents »Display name publicly as« (Vis navn offentligt som) til deres rigtige navn (eller det navn, websitet bruger). Når Nurevo offentliggør sin egen graf, bliver indlæg til BlogPosting med forfatteren som en Person med det viste navn. Sider får ingen forfatter.",
+    "Med Yoast SEO, Rank Math, All in One SEO eller Slim SEO forbliver Article og dens forfatter præcis, som det plugin offentliggør dem; Nurevo ændrer dem ikke. Opsæt forfattere i det plugins brugerindstillinger. Forfatteren på VK All in One Expansion Units Article ændres heller ikke.",
+    "For at tilføje stifteren til virksomhedens markup eller en ProfilePage til en profilside bruger du udviklerfiltrene nedenfor (der er ingen inputfelter til dette i Nurevo). Med et SEO-plugin vinder virksomhedsnodens værdier fra det plugin stadig.",
+    "Tjek sidens kildekode for at sikre, at dit SEO-plugin ikke allerede offentliggør en ProfilePage for den forfatter, så intet bliver dobbelt.",
+    "Åbn /llms.txt, og tjek, at profilsiden står på listen. llms.txt viser de 30 senest ændrede sider og indlæg; mangler den, så tilføj en linje med filteret webmcp_canary_llms_txt_lines."
+   ],
+   "code": "// 1) Add the founder to the business node (only someone your About page names)\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) Add a ProfilePage only on the profile page (slug jane-doe)\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Founder and Chartered Accountant',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Inheritance tax', 'Small-business accounting'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "På andre platforme er kontrollerne de samme. Det [gratis tjek](/check) kræver ingen tilmelding: indtast en URL for at se status for strukturerede data, llms.txt og AI-crawleres adgang."
+   ]
+  },
+  {
+   "heading": "Sådan kontrollerer du: spørgsmål med personens navn",
+   "paragraphs": [
+    "Kontrollér profilsider med spørgsmål, der indeholder personens navn. Stil det samme spørgsmål til den samme AI på forskellige dage, og notér svarene; døm ikke ud fra ét svar."
+   ],
+   "table": {
+    "head": [
+     "Hvad du noterer",
+     "Eksempel"
+    ],
+    "rows": [
+     [
+      "Dato, AI, spørgsmål",
+      "16. nov., Perplexity, »Hvad er baggrunden for Jane Doe, stifter af Sample Ltd?«"
+     ],
+     [
+      "Fakta i svaret",
+      "Rolle, kvalifikationer, fagområde og karriere: rigtigt eller forkert, ét ad gangen"
+     ],
+     [
+      "Kilder",
+      "Blev din profilside citeret, eller en andens side?"
+     ],
+     [
+      "Forvekslinger",
+      "Er der en navnefælle eller en tidligere titel i svaret?"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevos gratis AI-tjek (én gang om måneden på tilsluttede Free- og Standard-websites) stiller spørgsmål bygget ud fra din forretningstype og dit område, aldrig et navn, så spørgsmål om personer kontrolleres manuelt med tabellen ovenfor. Pro-synlighedsmåling (beta) dækker i øjeblikket Perplexity. Hele metoden står i [sådan måler du AI-synlighed](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Tjekliste for profilsider",
+   "list": [
+    "Første sætning indeholder navn, rolle, organisation og fagområde.",
+    "Navn og titel skrives ens på Om os-siden, i forfatterlinjer og på medarbejdersider.",
+    "Kvalifikationer er skrevet fuldt ud med år eller udstedende organ.",
+    "Ekspertiseområder er konkrete og underbygget med sager eller artikler.",
+    "Tal har en dato og angiver, hvordan de er opgjort.",
+    "Ingen opdigtede personer, AI-genererede portrætfotos eller oppustede kvalifikationer.",
+    "Forfatterlinjer linker til profilen; faglige gennemgange er adskilt fra forfatterskab, med omfang og dato.",
+    "ProfilePage- og Person-markup stemmer med teksten og er ikke dobbelt.",
+    "sameAs angiver kun konti, som personen selv styrer.",
+    "Titler rettes, så snart de ændres, og datoen for seneste opdatering følger med.",
+    "Du har kontrolleret med spørgsmål, der indeholder navnet, på forskellige dage, og noteret resultaterne."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Har en lille virksomhed brug for en side om stifteren?",
+   "a": "Et par linjer med navn, rolle og baggrund på Om os-siden er ofte nok. Skriver stifteren artikler, holder foredrag, bliver interviewet, eller søger folk efter personen ved navn, samler en separat side fakta ét sted."
+  },
+  {
+   "q": "Er artikler af personer uden formelle kvalifikationer mindre tilbøjelige til at blive brugt af AI?",
+   "a": "Google siger ikke, at manglende kvalifikationer i sig selv er et problem. Det, Google siger betyder mest, er tillid, og reel erfaring (hvor mange år, hvilken slags arbejde) skrevet som fakta er godt materiale. Ved emner om sundhed eller penge kan du også få en ekspert til at gennemgå indholdet og oplyse det."
+  },
+  {
+   "q": "Må vi udgive under et pseudonym?",
+   "a": "Ja, så længe du ikke knytter en opdigtet baggrund eller kvalifikationer til det, og pseudonymets side angiver, i hvilken egenskab personen skriver. Google kalder fabrikerede skaberprofiler vildledning."
+  },
+  {
+   "q": "Hvad kommer først, forfattersiden eller ProfilePage-markuppen?",
+   "a": "Siden. Markup gengiver de samme fakta som teksten i en maskinlæsbar form; læg ikke fakta i markup, som teksten ikke nævner."
+  },
+  {
+   "q": "Skal en fagkontrollant stå under author?",
+   "a": "Hold forfattere og fagkontrollanter adskilt. schema.org har reviewedBy til personer, der har kontrolleret en side for korrekthed. Skriv også i teksten »skrevet af« og »fagligt gennemgået af« hver for sig."
+  },
+  {
+   "q": "Vores administrerende direktør er skiftet. Hvad skal vi opdatere?",
+   "a": "Om os-siden, direktørens profilside, founder eller employee i markup, forfatterlinjer og profiler andre steder (sociale konti, branchekataloger). Behold den tidligere direktørs side med rolle og datoer, eller lad den pege på den nye side. Der er ingen fast tid for, hvornår AI-svar følger med."
+  },
+  {
+   "q": "Hvis vi følger disse trin, vil AI så altid beskrive vores folk korrekt?",
+   "a": "Det kan ikke garanteres; AI-svar ændrer sig fra dag til dag og med formuleringen. Disse trin gør de oplysninger, AI læser, korrekte og ensartede, så forvekslinger bliver mindre sandsynlige."
+  }
+ ],
+ "relatedHeading": "Relaterede guides",
+ "cta": {
+  "heading": "Se, hvordan AI læser personerne og virksomheden på dit website",
+  "body": "Det gratis tjek kræver ingen tilmelding: indtast din URL for at se status for strukturerede data, llms.txt og AI-crawleres adgang. På WordPress offentliggør det gratis plugin din virksomheds grundoplysninger og dine artiklers forfattere som strukturerede data.",
+  "label": "Kør det gratis tjek af AI-læsbarhed",
+  "href": "/check",
+  "secondary": {
+   "label": "Prøv det gratis WordPress-plugin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT er et varemærke tilhørende OpenAI, Perplexity tilhørende Perplexity AI og Google tilhørende Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, VK All in One Expansion Unit, LinkedIn og WordPress er varemærker tilhørende deres respektive ejere. Nurevo er ikke tilknyttet eller godkendt af nogen af disse virksomheder."
+}

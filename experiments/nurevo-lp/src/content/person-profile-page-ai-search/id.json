@@ -1,0 +1,377 @@
+{
+ "title": "Halaman Profil Pendiri, Pakar, dan Penulis untuk Pencarian AI | Nurevo",
+ "description": "Bangun halaman profil yang dapat diandalkan AI saat ditanya siapa pengelola perusahaan atau penulis artikel: kata Google, isi, markup Person dan ProfilePage, WordPress.",
+ "h1": "Halaman profil pendiri, pakar, dan penulis untuk pencarian AI: agar peran, kredensial, dan keahlian seseorang terbaca dengan benar",
+ "lead": "Apakah AI menjawab pertanyaan tentang seseorang dengan benar bergantung pada apakah halaman profil orang itu menyatakan, dalam teks biasa, siapa dia, di mana dia bekerja, dan apa keahliannya. Taruh nama, peran, organisasi, kredensial, bidang keahlian, dan riwayat karier di satu halaman; tautkan ke halaman itu dari byline artikel dan dari bagian pimpinan di halaman Tentang Kami; lalu publikasikan nilai yang sama sebagai data terstruktur Person. Tiga langkah itulah intinya. Membesar-besarkan kredensial atau mengarang penulis justru merugikan: Google menyebut profil kreator rekaan sebagai penipuan.",
+ "intro": [
+  "Ditulis pada 16 November 2026 (JST). \"Creating helpful, reliable, people-first content\" (Membuat konten yang bermanfaat, andal, dan mengutamakan orang; terakhir diperbarui 5 Oktober 2026) dan \"Profile page (ProfilePage) structured data\" (Data terstruktur halaman profil) dari Google diperiksa pada hari yang sama. Panduan ini ditujukan bagi perusahaan, toko, dan praktik yang memiliki halaman tentang pendiri, direktur, praktisi, pengajar, atau penulisnya, serta agensi yang membangun situs tersebut. Perusahaan itu sendiri dibahas di [optimasi halaman Tentang Kami untuk pencarian AI](/guide/company-profile-page-ai-search).",
+  "Jawaban AI berubah menurut hari dan susunan kata. Langkah-langkah ini membuat informasi yang dibaca AI akurat; langkah-langkah ini tidak menjamin seseorang akan muncul dalam jawaban atau peringkat akan naik."
+ ],
+ "sections": [
+  {
+   "heading": "Untuk apa AI menggunakan halaman profil",
+   "paragraphs": [
+    "ChatGPT search, Perplexity, dan AI Overviews Google membaca halaman web saat menjawab dan menampilkannya sebagai sumber. Untuk pertanyaan tentang seseorang, halaman profil di situs organisasi tempat orang itu bernaung adalah bahan yang paling langsung. Jika halaman itu tidak ada, hanya berisi foto dan nama, atau jabatannya berbeda dari satu halaman ke halaman lain, AI bisa menyusun jawabannya dari artikel lama atau dari orang lain yang namanya sama.",
+    "Pertanyaan tentang orang cenderung masuk ke beberapa pola."
+   ],
+   "list": [
+    "\"Siapa yang menjalankan Sample Ltd dan apa latar belakangnya?\" (pendiri atau CEO)",
+    "\"Direktur Sample Clinic ahli di bidang apa?\" (kredensial dan bidang seorang pakar)",
+    "\"Akuntan mana di Leeds yang menguasai pajak warisan?\" (dicari berdasarkan keahlian; tidak ada nama dalam pertanyaan)",
+    "\"Siapa yang menulis artikel ini, dan apakah bisa dipercaya?\" (penulis)",
+    "\"Apa hubungan Jane Doe dengan Sample Ltd?\" (peran, jabatan lain, pekerjaan sebelumnya)",
+    "\"Bagaimana cara membuat janji konsultasi dengan dr. Doe?\" (kontak dan pemesanan)"
+   ],
+   "after": [
+    "Dalam pertanyaan seperti yang ketiga, tanpa nama di dalamnya, AI terlebih dahulu mencari kantor praktik atau toko, lalu menambahkan siapa yang akan menangani pekerjaannya. Halaman profil menjadi bahan bukan hanya ketika seseorang bertanya berdasarkan nama, tetapi juga ketika mereka mencari berdasarkan keahlian."
+   ]
+  },
+  {
+   "heading": "Apa kata Google sendiri (sejauh yang bisa kami periksa)",
+   "paragraphs": [
+    "Banyak hal yang beredar tentang kepenulisan dan E-E-A-T hanyalah tebakan. Mulailah dari apa yang ditulis Google sendiri."
+   ],
+   "table": {
+    "head": [
+     "Apa kata Google",
+     "Sumber",
+     "Yang diambil panduan ini"
+    ],
+    "rows": [
+     [
+      "Google sangat menganjurkan informasi kepenulisan yang akurat, seperti byline, di tempat pembaca mungkin mengharapkannya",
+      "[Creating helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "Tampilkan nama penulis di artikel dan tautkan ke profil"
+     ],
+     [
+      "Mengarang profil kreator dengan foto wajah buatan AI, nama karangan, atau kredensial palsu adalah penipuan dan tanda halaman berkualitas rendah",
+      "Sama",
+      "Tidak ada penulis rekaan dan tidak ada kredensial yang dibesar-besarkan"
+     ],
+     [
+      "E-E-A-T sendiri bukan faktor peringkat tertentu; dari unsur-unsurnya, kepercayaan paling penting; E-E-A-T lebih berbobot pada topik kesehatan, keuangan, dan keselamatan (YMYL)",
+      "Sama",
+      "Perlakukan E-E-A-T sebagai cara memublikasikan fakta yang dapat dipercaya, bukan sebagai skor"
+     ],
+     [
+      "ProfilePage ditujukan untuk halaman yang subjek utamanya satu orang atau organisasi yang terkait dengan situs (halaman penulis, halaman tentang saya di blog, halaman karyawan perusahaan); beranda toko tidak memenuhi syarat",
+      "[ProfilePage structured data](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "Gunakan di halaman pendiri, pakar, dan penulis, bukan di beranda perusahaan"
+     ],
+     [
+      "Wajib pada ProfilePage: mainEntity (Person atau Organization) beserta name-nya; dateModified sebaiknya hanya mencerminkan suntingan manusia",
+      "Sama",
+      "Mulailah dari yang sedikit dan gunakan tanggal ketika seseorang benar-benar menyunting profil"
+     ],
+     [
+      "Tidak ada persyaratan tambahan atau markup khusus untuk AI Overviews atau AI Mode",
+      "[AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)",
+      "Markup adalah kunci jawaban bagi teks; teks lebih dulu"
+     ]
+    ]
+   },
+   "after": [
+    "Tempat-tempat yang menurut Google dapat menampilkan markup ProfilePage adalah fitur seperti Diskusi dan forum. Google tidak menyebut efek apa pun terhadap jawaban AI. Panduan ini memperlakukan markup sebagai cara memublikasikan fakta yang sama dengan teks dalam bentuk yang dapat dibaca mesin."
+   ]
+  },
+  {
+   "heading": "Klaim yang sering muncul di artikel teratas, dan seberapa kuat dasarnya",
+   "paragraphs": [
+    "Kami membaca sepuluh artikel teratas berbahasa Jepang dan Inggris untuk kueri seperti \"author E-E-A-T AI search\". Banyak yang memuat langkah dan daftar periksa yang berguna, tetapi klaim di bawah ini tidak dapat ditelusuri ke sumber primer. Gunakan tabel ini sebagai panduan membaca."
+   ],
+   "table": {
+    "head": [
+     "Klaim umum",
+     "Temuan kami"
+    ],
+    "rows": [
+     [
+      "Persentase seperti \"kredensial penulis berbobot 16% dalam keputusan kutipan AI\"",
+      "Tidak satu pun artikel menautkan studi aslinya, dan tidak ada yang mendefinisikan apa yang diukur oleh \"bobot\" itu"
+     ],
+     [
+      "\"Person schema wajib\"",
+      "Google mencantumkan properti wajib hanya agar ProfilePage muncul di fitur pencariannya; Google tidak pernah mengatakan markup wajib untuk jawaban AI"
+     ],
+     [
+      "\"Makin banyak tautan sameAs, makin baik\"",
+      "Tidak ada bukti. Mencantumkan hanya profil yang dikelola orang itu sendiri dan jelas miliknya adalah pilihan yang lebih aman"
+     ],
+     [
+      "\"Menambahkan peninjau medis atau hukum meningkatkan E-E-A-T Anda\"",
+      "Tidak ada bukti untuk baris peninjau yang hanya berisi nama, dan Google menyebut penyajian kreator yang keliru sebagai penipuan. Nyatakan apa yang ditinjau dan kapan"
+     ],
+     [
+      "\"Panjang bio ideal adalah N kata\"",
+      "Angkanya berbeda dari artikel ke artikel dan tidak ada yang menyebutkan sumber. Panjang kurang penting dibanding apakah faktanya ada"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Halaman siapa, dan di mana",
+   "paragraphs": [
+    "Kelompokkan orang-orang di situs Anda ke dalam empat peran. Tidak semua orang membutuhkan halaman panjang; mulailah dari orang yang paling mungkin ditanyakan kepada AI."
+   ],
+   "table": {
+    "head": [
+     "Peran",
+     "Di mana",
+     "Isi minimum",
+     "Cara menghubungkannya"
+    ],
+    "rows": [
+     [
+      "Pendiri atau CEO",
+      "Di dalam halaman Tentang Kami, atau halaman seperti /about/name/",
+      "Nama, peran, riwayat karier, apa yang mereka kerjakan di perusahaan",
+      "Tautkan dari bagian pimpinan di halaman Tentang Kami; dalam markup, arahkan founder atau employee perusahaan ke @id yang sama"
+     ],
+     [
+      "Pakar (direktur, praktisi, pengajar)",
+      "Daftar staf ditambah satu halaman per orang",
+      "Kredensial, nomor registrasi, bidang, layanan yang ditangani",
+      "Tautkan dari baris \"siapa yang akan melayani Anda\" di halaman layanan"
+     ],
+     [
+      "Penulis artikel",
+      "Arsip penulis WordPress atau halaman biasa",
+      "Nama, organisasi, topik, daftar artikel",
+      "Tautkan dari byline"
+     ],
+     [
+      "Peninjau eksternal",
+      "Halaman peninjau dengan tautan ke organisasi mereka sendiri",
+      "Nama, kredensial, afiliasi, apa yang mereka tinjau",
+      "Di artikel: \"Ditinjau oleh Nama (kredensial), tanggal\", ditautkan ke halaman itu"
+     ]
+    ]
+   },
+   "after": [
+    "Jika orang yang sama tampil sebagai pendiri, penulis, dan peninjau, pertahankan satu halaman dan tulis nama serta jabatannya dengan cara yang sama di mana-mana. AI bisa menganggap dua ejaan sebagai dua orang."
+   ]
+  },
+  {
+   "heading": "Apa yang ditulis, dan data terstruktur yang sesuai",
+   "paragraphs": [
+    "Tabel ini mencantumkan apa yang sebaiknya dimuat halaman profil, kesalahan yang cenderung terjadi dalam jawaban AI, dan properti schema.org yang sesuai, dipilih dari definisi Person dan ProfilePage (tipe diperiksa di schema-dts 2.1.0)."
+   ],
+   "table": {
+    "head": [
+     "Item",
+     "Cara menulisnya",
+     "Kesalahan AI yang umum",
+     "Data terstruktur"
+    ],
+    "rows": [
+     [
+      "Nama",
+      "Satu ejaan di seluruh situs; cantumkan aksara lain atau bentuk latin sekali saja",
+      "Tertukar dengan orang bernama sama",
+      "name, alternateName"
+     ],
+     [
+      "Peran dan organisasi",
+      "Selalu dengan nama perusahaan, misalnya \"Pendiri, Sample Ltd\"",
+      "Diperkenalkan dengan jabatan lama atau pekerjaan sampingan",
+      "jobTitle, worksFor"
+     ],
+     [
+      "Kredensial",
+      "Nama resmi lengkap, nomor registrasi (jika boleh dipublikasikan), lembaga penerbit, tahun",
+      "Jenis kredensial tertukar",
+      "hasCredential (EducationalOccupationalCredential)"
+     ],
+     [
+      "Bidang keahlian",
+      "Tiga sampai lima bidang spesifik, bukan \"semuanya\"",
+      "Direkomendasikan untuk hal di luar bidangnya",
+      "knowsAbout"
+     ],
+     [
+      "Riwayat karier",
+      "Satu baris per tahun dan peristiwa: pendidikan, pekerjaan sebelumnya, kapan mulai usaha",
+      "Tanggal tertukar",
+      "Teks (alumniOf untuk sekolah)"
+     ],
+     [
+      "Rekam jejak",
+      "Angka dengan tanggal dan cara penghitungannya",
+      "Angka lama atau yang dibesar-besarkan dikutip",
+      "Hanya teks"
+     ],
+     [
+      "Penghargaan dan liputan",
+      "Nama, tahun, penyelenggara; sertakan tautan bila memungkinkan",
+      "Penghargaan tertukar dengan sekadar disebut",
+      "award (khusus penghargaan)"
+     ],
+     [
+      "Profil lain",
+      "Hanya akun yang dikelola orang itu sendiri",
+      "Ditautkan ke akun peniru atau orang bernama sama",
+      "sameAs"
+     ],
+     [
+      "Foto",
+      "Foto asli; tanpa foto wajah buatan AI",
+      "—",
+      "image"
+     ],
+     [
+      "Artikel dan layanan",
+      "Daftar atau tautan",
+      "Tidak jelas orang itu bekerja di bidang apa",
+      "Teks"
+     ],
+     [
+      "Terakhir diperbarui",
+      "Di akhir halaman; perbaiki jabatan segera setelah berubah",
+      "Diperkenalkan dengan peran sebelumnya",
+      "dateModified (ProfilePage)"
+     ]
+    ]
+   },
+   "after": [
+    "schema.org menggambarkan knowsAbout sebagai \"suggesting possible expertise but not implying it\" (mengisyaratkan kemungkinan keahlian tetapi tidak menyiratkannya) ([schema.org: knowsAbout](https://schema.org/knowsAbout)). Mencantumkan bidang di markup tidak membuktikan apa pun dengan sendirinya, jadi dukung di teks dengan kasus yang pernah ditangani dan artikel yang pernah ditulis."
+   ]
+  },
+  {
+   "heading": "Menulis halaman: sebutkan siapa orangnya di kalimat pertama",
+   "list": [
+    "Masukkan nama, peran, organisasi, dan bidang di kalimat pertama, misalnya \"Jane Doe adalah pendiri Sample Ltd di Leeds dan akuntan bersertifikat yang berspesialisasi dalam pembukuan usaha kecil dan pajak warisan.\"",
+    "Gunakan kalimat kedua untuk fakta yang membedakannya dari orang lain: tahun ia memperoleh kualifikasi, asosiasi yang ia ikuti, wilayah yang ia tangani.",
+    "Tulis kredensial secara lengkap. Jika kredensial dapat dicek di daftar publik, Anda bisa menyebutkannya agar pembaca dapat memverifikasinya.",
+    "Sajikan riwayat karier dalam tabel atau linimasa, bukan gambar atau PDF.",
+    "Ganti klaim yang tidak bisa dibandingkan siapa pun, seperti \"nomor satu di industri\", dengan fakta: tahun, angka, bidang.",
+    "Di bidang yang diatur seperti kedokteran dan hukum, ada aturan tentang cara mengiklankan gelar dan kualifikasi. Untuk layanan kesehatan, lihat juga [pencarian AI untuk klinik](/guide/medical-clinic-ai-search)."
+   ]
+  },
+  {
+   "heading": "Byline dan peninjau",
+   "paragraphs": [
+    "Tampilkan nama penulis di awal atau akhir setiap artikel dan tautkan ke halaman profil. Byline atas nama tim boleh saja, tetapi halaman tim sebaiknya menjelaskan siapa yang menulis dan bagaimana.",
+    "Ketika pakar eksternal memeriksa konten, sebut itu tinjauan, terpisah dari kepenulisan, dan nyatakan apa yang ditinjau (misalnya \"perhitungan pajak\") dan kapan. schema.org memiliki [reviewedBy](https://schema.org/reviewedBy) untuk orang yang meninjau keakuratan halaman, properti yang berbeda dari author. Jangan mencantumkan penulis dan peninjau bersama-sama di author.",
+    "Google menganjurkan untuk memberi tahu pembaca bagaimana konten dibuat, termasuk apakah otomatisasi atau AI digunakan. Jika artikel didraf dengan AI, sampaikan hal itu di tempat yang diharapkan pembaca, beserta fakta bahwa seseorang telah memeriksanya."
+   ]
+  },
+  {
+   "heading": "Contoh markup: ProfilePage dan Person",
+   "paragraphs": [
+    "Contoh minimal. Setiap nilai juga harus ada di teks. Mengarahkan worksFor ke @id yang sama dengan node perusahaan Anda membuat orang dan perusahaan terbaca sebagai satu pasangan."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Founder and Chartered Accountant\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Chartered accountant specialising in small-business accounts and inheritance tax in Leeds.\",\n    \"knowsAbout\": [\"Inheritance tax\", \"Small-business accounting\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Chartered Accountant\",\n      \"credentialCategory\": \"Professional qualification\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "Tipe kredensial [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential) juga dapat memuat jenis kredensial (credentialCategory) dan lembaga yang mengakuinya (recognizedBy). Masukkan ke sameAs hanya profil yang dikelola orang itu sendiri dan jelas miliknya."
+   ]
+  },
+  {
+   "heading": "Di WordPress (dengan Nurevo AEO)",
+   "paragraphs": [
+    "Dengan [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/), data orang ditangani sebagai berikut."
+   ],
+   "list": [
+    "Pertama, di Users > Profile (Pengguna > Profil), atur \"Display name publicly as\" (Tampilkan nama secara publik sebagai) untuk setiap penulis ke nama aslinya (atau nama yang digunakan situs). Ketika Nurevo memublikasikan graph-nya sendiri, pos menjadi BlogPosting dengan penulis berupa Person yang membawa nama tampilan itu. Halaman (page) tidak diberi penulis.",
+    "Dengan Yoast SEO, Rank Math, All in One SEO, atau Slim SEO, Article dan penulisnya tetap persis seperti yang dipublikasikan plugin tersebut; Nurevo tidak mengubahnya. Atur penulis di pengaturan pengguna plugin itu. Penulis pada Article dari VK All in One Expansion Unit juga tidak diubah.",
+    "Untuk menambahkan pendiri ke markup perusahaan, atau ProfilePage ke halaman profil, gunakan filter developer di bawah ini (tidak ada kolom isian untuk hal ini di Nurevo). Jika memakai plugin SEO, nilai node perusahaan dari plugin itu tetap diutamakan.",
+    "Periksa sumber halaman untuk memastikan plugin SEO Anda belum memublikasikan ProfilePage untuk penulis tersebut, agar tidak ada duplikasi.",
+    "Buka /llms.txt dan pastikan halaman profil tercantum. llms.txt mencantumkan 30 halaman dan pos yang paling baru diubah; jika tidak ada, tambahkan satu baris dengan filter webmcp_canary_llms_txt_lines."
+   ],
+   "code": "// 1) Tambahkan pendiri ke node bisnis (hanya orang yang disebut di halaman Tentang Kami)\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) Tambahkan ProfilePage hanya di halaman profil (slug jane-doe)\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Founder and Chartered Accountant',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Inheritance tax', 'Small-business accounting'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "Di platform lain, pemeriksaannya sama. [Cek gratis](/check) tidak memerlukan pendaftaran: masukkan URL untuk melihat kondisi data terstruktur, llms.txt, dan akses crawler AI."
+   ]
+  },
+  {
+   "heading": "Cara memeriksa: pertanyaan yang memuat nama orang",
+   "paragraphs": [
+    "Periksa halaman profil dengan pertanyaan yang menyertakan nama orang tersebut. Ajukan pertanyaan yang sama kepada AI yang sama pada hari yang berbeda dan catat jawabannya; jangan menilai dari satu jawaban."
+   ],
+   "table": {
+    "head": [
+     "Yang dicatat",
+     "Contoh"
+    ],
+    "rows": [
+     [
+      "Tanggal, AI, pertanyaan",
+      "16 Nov, Perplexity, \"Apa latar belakang Jane Doe, pendiri Sample Ltd?\""
+     ],
+     [
+      "Fakta dalam jawaban",
+      "Peran, kredensial, bidang, dan riwayat karier: benar atau salah, satu per satu"
+     ],
+     [
+      "Sumber",
+      "Apakah halaman profil Anda yang dikutip, atau halaman orang lain?"
+     ],
+     [
+      "Kekeliruan",
+      "Adakah orang bernama sama atau jabatan lama dalam jawaban?"
+     ]
+    ]
+   },
+   "after": [
+    "Cek AI gratis Nurevo (sebulan sekali untuk situs Free dan Standard yang terhubung) mengajukan pertanyaan yang disusun dari jenis usaha dan area Anda, tidak pernah dengan nama, sehingga pertanyaan tentang orang diperiksa secara manual dengan tabel di atas. Pengukuran visibilitas Pro (beta) saat ini mencakup Perplexity. Metode lengkapnya ada di [cara mengukur visibilitas AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Daftar periksa halaman profil",
+   "list": [
+    "Kalimat pertama memuat nama, peran, organisasi, dan bidang.",
+    "Nama dan jabatan ditulis dengan cara yang sama di halaman Tentang Kami, byline, dan halaman staf.",
+    "Kredensial ditulis lengkap dengan tahun atau lembaga penerbitnya.",
+    "Bidang keahlian spesifik dan didukung oleh kasus atau artikel.",
+    "Angka memiliki tanggal dan menjelaskan cara penghitungannya.",
+    "Tidak ada orang rekaan, foto wajah buatan AI, atau kredensial yang dibesar-besarkan.",
+    "Byline tertaut ke profil; tinjauan terpisah dari kepenulisan, dengan cakupan dan tanggal.",
+    "Markup ProfilePage dan Person sesuai dengan teks dan tidak terduplikasi.",
+    "sameAs hanya mencantumkan akun yang dikelola orang itu sendiri.",
+    "Jabatan diperbaiki segera setelah berubah, dan tanggal terakhir diperbarui ikut menyesuaikan.",
+    "Anda sudah memeriksa dengan pertanyaan yang memuat nama, pada hari yang berbeda, dan mencatat hasilnya."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Apakah perusahaan kecil membutuhkan halaman pendiri?",
+   "a": "Beberapa baris berisi nama, peran, dan latar belakang di halaman Tentang Kami sering kali sudah cukup. Jika pendiri menulis artikel, menjadi pembicara, atau diwawancarai, atau orang mencarinya berdasarkan nama, halaman tersendiri menjaga fakta-faktanya di satu tempat."
+  },
+  {
+   "q": "Apakah artikel oleh orang tanpa kredensial formal lebih jarang digunakan AI?",
+   "a": "Google tidak mengatakan bahwa tidak memiliki kredensial adalah masalah dengan sendirinya. Yang menurut Google paling penting adalah kepercayaan, dan pengalaman nyata (berapa tahun, jenis pekerjaan apa) yang ditulis sebagai fakta adalah bahan yang baik. Untuk topik kesehatan atau keuangan, Anda juga bisa meminta pakar meninjau konten dan menyebutkannya."
+  },
+  {
+   "q": "Bolehkah kami memublikasikan dengan nama pena?",
+   "a": "Boleh, selama Anda tidak melekatkan latar belakang atau kredensial rekaan, dan halaman nama pena itu menjelaskan dalam kapasitas apa orang tersebut menulis. Google menyebut profil kreator rekaan sebagai penipuan."
+  },
+  {
+   "q": "Mana yang lebih dulu, halaman penulis atau markup ProfilePage?",
+   "a": "Halamannya. Markup menuangkan fakta yang sama dengan teks ke dalam bentuk yang dapat dibaca mesin; jangan masukkan fakta ke markup yang tidak dinyatakan di teks."
+  },
+  {
+   "q": "Apakah peninjau sebaiknya dimasukkan ke author?",
+   "a": "Pisahkan penulis dan peninjau. schema.org memiliki reviewedBy untuk orang yang memeriksa keakuratan halaman. Di teks pun, tulis \"ditulis oleh\" dan \"ditinjau oleh\" secara terpisah."
+  },
+  {
+   "q": "CEO kami berganti. Apa yang harus kami perbarui?",
+   "a": "Halaman Tentang Kami, halaman profil CEO, founder atau employee di markup, byline, dan profil di tempat lain (akun media sosial, direktori industri). Pertahankan halaman CEO sebelumnya dengan peran dan masa jabatannya, atau arahkan ke halaman baru. Tidak ada waktu pasti kapan jawaban AI akan menyesuaikan."
+  },
+  {
+   "q": "Jika kami mengikuti langkah-langkah ini, apakah AI selalu akan menggambarkan orang-orang kami dengan benar?",
+   "a": "Hal itu tidak dapat dijamin; jawaban AI berubah menurut hari dan susunan kata. Langkah-langkah ini membuat informasi yang dibaca AI akurat dan konsisten, sehingga kekeliruan lebih kecil kemungkinannya."
+  }
+ ],
+ "relatedHeading": "Panduan terkait",
+ "cta": {
+  "heading": "Lihat bagaimana AI membaca orang dan perusahaan di situs Anda",
+  "body": "Cek gratis tidak memerlukan pendaftaran: masukkan URL Anda untuk melihat kondisi data terstruktur, llms.txt, dan akses crawler AI. Di WordPress, plugin gratis ini memublikasikan fakta dasar perusahaan dan penulis artikel Anda sebagai data terstruktur.",
+  "label": "Jalankan cek keterbacaan AI gratis",
+  "href": "/check",
+  "secondary": {
+   "label": "Coba plugin WordPress gratis",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT adalah merek dagang OpenAI, Perplexity milik Perplexity AI, dan Google milik Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, VK All in One Expansion Unit, LinkedIn, dan WordPress adalah merek dagang dari pemiliknya masing-masing. Nurevo tidak berafiliasi dengan atau didukung oleh perusahaan mana pun di antaranya."
+}
