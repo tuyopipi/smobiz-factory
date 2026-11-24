@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wikipedia・WikidataとAI検索：自社の記事は作るべきか | Nurevo AIO</title>
+<meta name="description" content="ChatGPTはWikipediaを多く出典にしますが、自社の記事は基準を満たさないと作れず、自分で書くことも推奨されません。特筆性・有料編集の開示・Wikidata・自社サイトでできることを公式の規則で整理。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/wikipedia-wikidata-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/wikipedia-wikidata-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/wikipedia-wikidata-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/wikipedia-wikidata-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/wikipedia-wikidata-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/wikipedia-wikidata-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="Wikipedia・WikidataとAI検索：自社の記事は作るべきか | Nurevo AIO">
+<meta property="og:description" content="ChatGPTはWikipediaを多く出典にしますが、自社の記事は基準を満たさないと作れず、自分で書くことも推奨されません。特筆性・有料編集の開示・Wikidata・自社サイトでできることを公式の規則で整理。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Wikipedia・WikidataとAI検索：自社の記事は作るべきか | Nurevo AIO">
+<meta name="twitter:description" content="ChatGPTはWikipediaを多く出典にしますが、自社の記事は基準を満たさないと作れず、自分で書くことも推奨されません。特筆性・有料編集の開示・Wikidata・自社サイトでできることを公式の規則で整理。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/","name":"Wikipedia・WikidataとAI検索：自社の記事は作るべきか | Nurevo AIO","description":"ChatGPTはWikipediaを多く出典にしますが、自社の記事は基準を満たさないと作れず、自分で書くことも推奨されません。特筆性・有料編集の開示・Wikidata・自社サイトでできることを公式の規則で整理。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"Wikipedia・WikidataとAI検索：自社の記事は作るべきか、載らない会社は何をすればいいか","item":"https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/wikipedia-wikidata-ai-search/#faq","mainEntity":[{"@type":"Question","name":"Wikipediaに会社の記事がないと、ChatGPTに出られませんか？","acceptedAnswer":{"@type":"Answer","text":"そうとは言えません。ChatGPTはWikipediaを多く出典にしますが、会社の情報は自社サイトや報道、口コミのサイトなど、ほかのページからも読まれます。GoogleのAIやPerplexityでは、Wikipediaの割合はさらに小さいという調査があります。"}},{"@type":"Question","name":"自社の記事を社員が書いてもいいですか？","acceptedAnswer":{"@type":"Answer","text":"勧められません。英語版のガイドラインは利益相反の編集を強く非推奨とし、ノートページでの提案を求めています。仕事として書くなら、報酬を受けた編集として雇用主などの開示も必要です。"}},{"@type":"Question","name":"プレスリリースをたくさん出せば、特筆性はできますか？","acceptedAnswer":{"@type":"Answer","text":"できません。プレスリリースは会社自身が出した一次情報源とされ、特筆性の根拠になりません。独立した媒体が会社そのものを取り上げた記事が必要です。"}},{"@type":"Question","name":"Wikidataなら自由に会社を登録できますか？","acceptedAnswer":{"@type":"Answer","text":"自由ではありません。Wikidataにも収録基準があり、信頼できる公開の資料で説明できることなどが求められます。報酬を受けた投稿の開示の決まりも適用されます。"}},{"@type":"Question","name":"Wikipediaの記事の内容が間違っています。直してもいいですか？","acceptedAnswer":{"@type":"Answer","text":"直接書き換えず、記事のノートページで、関係者であることを書いたうえで、正しい内容と出典を示して提案してください。判断はほかの編集者が行います。"}},{"@type":"Question","name":"Googleのナレッジパネルを出すにはWikipediaが必要ですか？","acceptedAnswer":{"@type":"Answer","text":"Googleのヘルプは、オープンウェブに十分な情報があるとパネルが自動で作られると説明しており、Wikipediaが必要とは書いていません。パネルが出ていれば、認証して変更を提案できます。"}},{"@type":"Question","name":"構造化データの sameAs にWikipediaのURLを入れていいですか？","acceptedAnswer":{"@type":"Answer","text":"自社の記事が実在し、内容が正しい場合は入れてかまいません。業界の一般的な記事や同名の他社の記事、作られていない項目は入れないでください。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">無料でAI可読性をチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>Wikipedia・WikidataとAI検索：自社の記事は作るべきか、載らない会社は何をすればいいか</span></nav>
+  <article>
+    <h1>Wikipedia・WikidataとAI検索：自社の記事は作るべきか、載らない会社は何をすればいいか</h1>
+    <p class="lead">ChatGPTの回答の出典として、Wikipediaはもっとも多く使われるサイトの1つです。ただし、会社の記事が作れるのは、会社と関係のない信頼できる媒体で取り上げられている（特筆性がある）場合だけで、社員や依頼を受けた人が自分で書くことは強く非推奨、報酬を受けて編集するなら開示が義務です。多くの中小企業にとって確かなのは、Wikipediaに記事を作ることではなく、自社サイトの会社概要と構造化データを正しい事実の置き場所にし、すでに記事がある場合は正しい手続きで間違いを直すことです。</p>
+<p>作成日：2026年11月24日（日本時間）。Wikipediaの規則は日本語版の「特筆性 (組織)」、英語版の「利益相反」、ウィキメディア財団の有料編集の決まりを同日に読んで確認しました。Wikidataの収録基準は原文のページを取得できなかったため、二次情報で要約しています。</p>
+<p>Wikipediaに記事があっても、AIの回答に会社が必ず出る・順位が上がるということはありません。AIの回答は日々変わり、出典の選び方も公表されていません。この記事は、AIに会社の事実を正しく伝えるための判断と手順をまとめたものです。</p>
+<section class="qa"><h2>AIはどれくらいWikipediaを出典にしているか</h2><p>Wikipediaの影響はAIの種類によって大きく違い、時期によっても変わります。公開されている2つの調査を並べます。数え方が違うため、数字どうしを直接くらべることはできません。</p><div class="table-wrap"><table><thead><tr><th scope="col">調査</th><th scope="col">対象と期間</th><th scope="col">Wikipediaについての結果</th></tr></thead><tbody><tr><th scope="row">Profound（Search Engine Roundtable の報道、2025-06-11）</th><td>約3,000万件の引用、2024年8月〜2025年6月、ChatGPT・GoogleのAIによる概要・Perplexity</td><td>ChatGPTでもっとも多い出典がWikipediaで、上位の出典の中で47.9%。AIによる概要では5.7%（1位はReddit 21%）。Perplexityの1位はReddit（46.7%）</td></tr><tr><th scope="row">Semrush（2025-11-10）</th><td>23万件超の質問を13週（2025年7月14日〜10月12日）、1億件超の引用、ChatGPT検索・GoogleのAIモード・Perplexity</td><td>ChatGPTの回答のおよそ55%に出ていたが、2025年9月中旬から20%未満に。それでもRedditと並ぶChatGPTの2大出典。AIモードでは回答の約2〜3%、Perplexityでは0.8%</td></tr></tbody></table></div><p>出典：<a href="https://www.seroundtable.com/chatgpt-google-aio-sources-39578.html">Search Engine Roundtable</a>、<a href="https://www.semrush.com/blog/most-cited-domains-ai/">Semrush</a>。どちらも民間の調査で、質問の選び方によって結果は変わります。</p>
+<p>読み取れるのは、ChatGPTでは出典として目立つ一方、GoogleのAIやPerplexityではそれほど大きくないこと、そして割合は数か月で大きく動くことです。「Wikipediaさえあれば大丈夫」とも「Wikipediaがないと出られない」とも言えません。</p>
+<p>また、ここで数えているのは「Wikipediaのページが出典として表示されたか」です。表示されたページが自社の記事とは限らず、業界や地域の一般的な記事であることがほとんどです。</p></section>
+<section class="qa"><h2>自社はWikipediaに載る条件を満たすか：判定表</h2><p>日本語版Wikipediaのガイドライン「特筆性 (組織)」は、会社や団体は「二次情報源で報道の対象となっている場合」に特筆性があるとしています。情報源は信頼でき、会社から独立している必要があり、取り上げ方が浅い場合は複数の独立した情報源が要ります（<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E7%89%B9%E7%AD%86%E6%80%A7_%28%E7%B5%84%E7%B9%94%29">Wikipedia:特筆性 (組織)</a>）。特筆性は「有名」「重要」という意味ではなく、独立した媒体の「目に留まった」かどうかです。</p><div class="table-wrap"><table><thead><tr><th scope="col">手元にあるもの</th><th scope="col">特筆性の根拠になるか</th><th scope="col">理由</th></tr></thead><tbody><tr><th scope="row">新聞・雑誌・専門誌が、会社そのものを中心に取り上げた記事（複数）</th><td>なりうる</td><td>信頼でき、会社から独立した二次情報源</td></tr><tr><th scope="row">プレスリリース、PR TIMESなどの配信記事</th><td>ならない</td><td>会社自身が出した一次情報源として扱われる</td></tr><tr><th scope="row">自社サイト、会社案内、宣伝動画、社長の著書</th><td>ならない</td><td>会社自身の発行物</td></tr><tr><th scope="row">お金を払って載せた記事・記事広告</th><td>ならない</td><td>独立していない</td></tr><tr><th scope="row">電話帳・企業データベース・業界団体の名簿への掲載</th><td>ならない</td><td>電話番号や住所の掲載は取り上げではない</td></tr><tr><th scope="row">新店オープン、新製品、役員交代、資金調達、受賞の短い報道</th><td>ふつうはならない</td><td>英語版の解説は、通常の事業活動の報道だけでは足りないとしている</td></tr><tr><th scope="row">創業者へのインタビューをもとにした紹介記事</th><td>ふつうはならない</td><td>会社に依存した情報源とみなされる</td></tr><tr><th scope="row">会社の規模、上場していること、店舗数</th><td>それだけではならない</td><td>規模だけを基準にしないとガイドラインが書いている</td></tr></tbody></table></div><p>表の5行目までは「特筆性 (組織)」、6・7行目は英語版の解説ページ「Wikipedia is not Crunchbase」によります（<a href="https://en.wikipedia.org/wiki/Wikipedia:Wikipedia_is_not_Crunchbase">英語版</a>）。チェーン店の各店舗は一般に特筆性がなく、製品やサービスは会社の記事にまとめるのが普通だともガイドラインは書いています。</p>
+<p>地域の中小企業の多くは、地元紙で1回紹介された程度では基準に届きません。届かない会社が記事を作っても、削除の議論にかけられる可能性が高く、時間と信用を失います。</p></section>
+<section class="qa"><h2>自分で書く・業者に頼む前に知っておく規則</h2><p>条件を満たしそうでも、会社の人が自分で記事を書くのは規則上とても難しいことです。主な決まりは次の3つです。</p><ol><li>宣伝は禁止：「特筆性 (組織)」は、宣伝活動はウィキペディアの公式な方針で禁止されていると書いています（<a href="https://ja.wikipedia.org/wiki/Wikipedia:%E7%89%B9%E7%AD%86%E6%80%A7_%28%E7%B5%84%E7%B9%94%29">Wikipedia:特筆性 (組織)</a>）。</li><li>利益相反の編集は強く非推奨：英語版のガイドラインは、自社に関係する記事を直接編集せず、記事のノート（トーク）ページで変更を提案するよう求めています。新しい記事は「Articles for Creation」で審査を受ける流れです。また「記事が作られたら、その内容を管理する権利はない」とはっきり書いています（<a href="https://en.wikipedia.org/wiki/Wikipedia:Conflict_of_interest">Wikipedia:Conflict of interest</a>）。</li><li>報酬を受けた編集は開示が義務：ウィキメディア財団の利用規約は、報酬を受けてウィキメディアのどのプロジェクトに投稿する場合も、雇用主・依頼主・関係を開示するよう定めています。開示の場所は利用者ページ、記事のノートページ、編集の要約欄のいずれかで、金額は開示しなくてよいとされています。この決まりは2014年6月16日に発効しました（<a href="https://meta.wikimedia.org/wiki/Terms_of_use/FAQ_on_paid_contributions_without_disclosure">有料編集のFAQ</a>、<a href="https://meta.wikimedia.org/wiki/Terms_of_use/Paid_contributions_amendment/ja">改訂案の日本語訳</a>）。プロジェクトごとに合意で別の開示の方針を決めることもできるため、日本語版の運用もあわせて確かめてください。</li></ol><p>「Wikipediaの記事を作成します」「掲載を保証します」という業者もいますが、記事を残すか消すかを決めるのはWikipediaの編集者のコミュニティで、業者が保証できるものではありません。頼むなら、少なくとも次の3点を確かめてください。</p></section>
+<section class="qa"><h2>作成代行を検討するときの確認表</h2><div class="table-wrap"><table><thead><tr><th scope="col">確かめること</th><th scope="col">望ましい答え</th><th scope="col">危ない答え</th></tr></thead><tbody><tr><th scope="row">報酬を受けていることを開示するか</th><td>利用者ページなどで依頼主を開示する</td><td>「開示しなくてもばれない」</td></tr><tr><th scope="row">どう投稿するか</th><td>下書きの審査やノートページでの提案を使う</td><td>複数のアカウントで直接作る</td></tr><tr><th scope="row">根拠になる記事</th><td>独立した媒体の記事を事前に一覧にして見せる</td><td>プレスリリースや自社サイトで足りると言う</td></tr><tr><th scope="row">掲載の保証</th><td>保証できないと説明する</td><td>「必ず載る」「削除されたら作り直す」</td></tr><tr><th scope="row">作った後の内容</th><td>会社が内容を決められないことを説明する</td><td>会社の望む文面にできると言う</td></tr></tbody></table></div><p>開示しない有料編集が見つかると、記事への注意書きや削除、アカウントの停止につながることがあり、報道されれば会社の評判にも響きます。AI検索の対策として頼んだことが、かえって会社の情報を不安定にします。</p></section>
+<section class="qa"><h2>すでに記事がある会社：間違いを直す手順</h2><ol><li>記事の間違い（古い所在地、退任した役員、終わった事業など）と、正しいことを示す公開の資料（登記の情報、新聞記事、決算公告など）を一覧にします。自社サイトだけを根拠にすると採用されにくくなります。</li><li>記事を直接書き換えず、記事の「ノート」ページに、会社の関係者であることを書いたうえで、直してほしい箇所・正しい内容・出典を並べて提案します。英語版では {{edit COI}} というテンプレートで編集依頼を出す方法が案内されています。</li><li>反映されなくても、何度も同じ依頼を出したり、別のアカウントで書き換えたりしないでください。ほかの編集者が判断するまで待ちます。</li><li>直った内容と日付を記録し、自社サイトの会社概要も同じ事実になっているかを見直します。</li></ol><p>既存の記事を競合とくらべて改善点を出すツールもあります（例：Adobe LLM OptimizerのWikipedia分析。記事があることが前提で、編集はWikipedia上で行う、と説明されています。<a href="https://experienceleague.adobe.com/en/docs/llm-optimizer/using/dashboards/opportunities/wikipedia-analysis">Adobe Experience League</a>）。ツールが出す提案も、上の規則に沿って提案の形で出すことになります。</p></section>
+<section class="qa"><h2>Wikidataとは：Wikipediaより基準は広いが、宣伝の場ではない</h2><p>Wikidataは、ウィキメディアが運営する構造化データのデータベースです。1つの物事が「項目」として Q で始まる番号を持ち、名前・説明・別名と、「設立日」「本社の所在地」「公式サイト」といった事実を文の形で持ちます。Wikipediaの記事がなくても項目を作れる場合があるため、「Wikipediaに載らない会社はWikidataを」と勧める記事が多くあります。</p>
+<p>ただしWikidataにも収録基準（<a href="https://www.wikidata.org/wiki/Wikidata:Notability">Wikidata:Notability</a>）があります。今回は原文のページを取得できなかったため、二次情報による要約ですが、項目は次のどれかを満たす必要があるとされています。①ウィキメディアのプロジェクト（Wikipediaなど）のページとつながっている、②信頼できる公開の資料で説明できる、はっきり識別できる実体である、③ほかの項目の記述に構造上必要である。登録する前に必ず原文を読んでください。</p><ol><li>Wikidataも報酬を受けた投稿の開示の対象です（利用規約はウィキメディアのすべてのプロジェクトに適用されます）。</li><li>公式サイトだけを出典にした項目より、登記や報道など公開の資料を出典にした項目のほうが残りやすくなります。</li><li>同じ会社の項目がすでにないか、社名・英語名・旧社名で先に検索します。重複を作らないことが大切です。</li><li>AIがWikidataをどの程度使っているかを公表しているAIの会社はありません。項目を作ればAIに出る、という関係は確かめられていません。</li></ol></section>
+<section class="qa"><h2>Googleのナレッジパネルとの関係</h2><p>Googleの検索結果の右側に出る会社の情報の枠（ナレッジパネル）は、オープンウェブに十分な情報があると、Googleのアルゴリズムが自動で作るとGoogleは説明しています。情報の出どころは、公開されている情報源、データ提供者との契約、内容の持ち主（会社など）からの情報だとしており、このヘルプにWikipediaの名前は出てきません（<a href="https://support.google.com/knowledgepanel/answer/9787176?hl=ja">Googleのナレッジグラフの仕組み</a>）。</p>
+<p>パネルが出ている会社は、Googleで自社を検索し、パネルの「ナレッジパネルの認証を受ける」から、YouTube・Search Console・X（Twitter）・Facebookの公式アカウントにログインして本人確認をすると、変更を提案できるようになります。すべてのパネルが認証できるわけではありません（<a href="https://support.google.com/knowledgepanel/answer/7534902?hl=ja">Google の認証を受ける</a>）。誰でもパネルの「フィードバック」から間違いを報告できます。</p></section>
+<section class="qa"><h2>4つの置き場所の比較</h2><div class="table-wrap"><table><thead><tr><th scope="col">置き場所</th><th scope="col">誰が書くか</th><th scope="col">載る条件</th><th scope="col">会社が自分で直せるか</th><th scope="col">AIでの使われ方</th></tr></thead><tbody><tr><th scope="row">自社サイト（会社概要・構造化データ）</th><td>会社</td><td>なし</td><td>直せる</td><td>ウェブ検索で読まれ、出典にもなる</td></tr><tr><th scope="row">Wikipedia</th><td>独立した編集者</td><td>特筆性（独立した二次情報源）</td><td>直接は直さず、ノートで提案</td><td>ChatGPTでは目立つ出典。割合は時期で変わる</td></tr><tr><th scope="row">Wikidata</th><td>編集者（会社も開示すれば参加できる）</td><td>Wikidataの収録基準</td><td>規則に沿って編集できるが、ほかの編集者も直す</td><td>公表された説明はない</td></tr><tr><th scope="row">Googleのナレッジパネル</th><td>Googleが自動で作る</td><td>ウェブ上の十分な情報</td><td>認証すれば変更を提案できる</td><td>Googleが情報をどこまでAIの回答に使うかは公表されていない</td></tr></tbody></table></div><p>どの会社でも、今日から確実に直せるのは自社サイトだけです。Wikipediaがある会社もない会社も、ほかの3つが参照できる「正しい事実」をまず自社サイトに置くことが土台になります。</p></section>
+<section class="qa"><h2>Wikipediaがなくても自社サイトでできること</h2><ol><li>会社概要のページに、正式な社名・英語表記・旧社名・設立年月日・所在地・代表者・事業内容を文字で書きます。書き方は<a href="/ja/guide/company-profile-page-ai-search/">会社概要ページのAI検索対策</a>にまとめています。</li><li>トップページか会社概要のページに、Organization の構造化データを置きます。Googleは必須の項目はないとしたうえで、ホームページか組織を説明する1つのページに置くことを勧めています。</li><li>sameAs には、その会社の情報が載っている別のサイトのURLを並べます。入れるのは会社が管理している公式アカウントや、自社を指していることが確かなページだけです。Wikidataの項目やWikipediaの記事は、実在して内容が正しい場合にだけ入れます。</li><li>新聞や専門誌に取り上げられたら、サイトの「掲載実績」に媒体名・日付・記事へのリンクを書きます。AIにとっても、Wikipediaの編集者にとっても、独立した情報源を見つける手がかりになります。</li></ol><pre class="code" dir="ltr"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": "https://example.co.jp/#organization",
+  "name": "株式会社サンプル",
+  "alternateName": "Sample Inc.",
+  "url": "https://example.co.jp/",
+  "logo": "https://example.co.jp/logo.png",
+  "foundingDate": "2012-04-01",
+  "sameAs": [
+    "https://www.linkedin.com/company/example",
+    "https://www.youtube.com/@example",
+    "https://www.wikidata.org/wiki/Q00000000"
+  ]
+}
+&lt;/script&gt;</code></pre><p>上の例の Q00000000 は書き方の見本です。実在しない番号や他社の項目を入れないでください（<a href="https://developers.google.com/search/docs/appearance/structured-data/organization?hl=ja">Google：組織の構造化データ</a>）。</p></section>
+<section class="qa"><h2>WordPressでの手順</h2><ol><li>使っているSEOプラグイン（Yoast SEO、Rank Math、SEO SIMPLE PACKなど）やテーマが Organization を出しているか、ページのソースで application/ld+json を探して確かめます。SNSのURLの欄があれば、そこに公式アカウントを入れます。</li><li>Nurevo AEO（無料のWordPressプラグイン）は会社・店舗の構造化データを出しますが、Wikipediaの記事やWikidataの項目を作ったり、自動で探したりはしません。WikidataのURLなどを sameAs に足したいときは、開発者向けのフィルター webmcp_canary_business_node を使います。</li><li>Yoast SEO・Rank Math・All in One SEO・Slim SEOが有効な場合、このフィルターの値はそれらのプラグインの会社の情報にまとめられ、プラグインがすでに出している値が優先されます。0.9.1からはSEO SIMPLE PACK・VK All in One Expansion Unitと一緒に使っても構造化データは重複しません。</li><li>入れたら、ページのソースで sameAs が1か所にまとまって出ているかを確かめます。<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgで入手</a></li></ol><pre class="code" dir="ltr"><code>add_filter('webmcp_canary_business_node', function (array $node, array $settings) {
+    // 会社が管理しているページと、実在する Wikidata の項目だけを入れる
+    $node['sameAs'] = array(
+        'https://www.linkedin.com/company/example',
+        'https://www.wikidata.org/wiki/Q00000000',
+    );
+    return $node;
+}, 10, 2);</code></pre></section>
+<section class="qa"><h2>確かめ方</h2><ol><li>ChatGPT・Perplexity・GoogleのAIモードに「（社名）はどんな会社？」「（社名）の設立は？」と聞き、答えと出典のURLを日付付きで記録します。間違いがあれば、その出典がWikipediaか、ほかのサイトかを見ます。</li><li>Wikipediaで社名・旧社名・英語名を検索し、記事の有無と内容を確かめます。同名の別の会社の記事と混ざっていないかも見ます。</li><li>Wikidataで同じように検索し、項目があれば、公式サイトのURL・設立日・所在地が正しいかを見ます。</li><li>AIの回答は日によって変わるため、同じ質問を毎月同じ日に聞きます。決めた質問のセットで記録する方法は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>にあります。</li><li>Nurevo AEOの無料のAIチェックは、接続したサイトに月1回、業種と地域から作った3つの質問をPerplexityに聞きます。継続して測るPro（月14,800円〜）も現在はPerplexityで測っています（ChatGPTは設定され次第）。</li></ol></section>
+<section class="qa"><h2>チェックリスト</h2><ol><li>自社を中心に取り上げた独立した媒体の記事を一覧にした</li><li>プレスリリース・自社サイト・名簿への掲載を根拠に数えていない</li><li>基準に届かないなら、Wikipediaの記事を作らないと決めた</li><li>作成代行に頼むなら、開示・投稿の方法・保証しないことを確かめた</li><li>既存の記事の間違いは、ノートページで出典付きで提案した</li><li>Wikidataで重複がないか、社名・英語名・旧社名で検索した</li><li>Wikidataの収録基準を原文で読んだ</li><li>会社概要のページに、社名・設立・所在地などを文字で書いた</li><li>Organization の構造化データの sameAs に、管理しているページと実在する項目だけを入れた</li><li>AIへの質問と答え・出典を、日付を付けて記録した</li></ol></section>
+<section class="qa"><h2>制作会社がお客様に「Wikipediaを作って」と頼まれたら</h2><p>お客様のためにWikipediaの記事を書くことは、報酬を受けた編集にあたり、開示が必要で、直接の作成も勧められていません。多くの場合は、特筆性の判定表でお客様の手元の記事を一緒に確かめ、届かなければ会社概要と構造化データの整備、掲載実績のページ作りを提案するほうが、確実で説明もしやすくなります。</p>
+<p>頼まれた施策が規則に触れそうなときの判断と断り方は<a href="/ja/guide/agency-ai-search-manipulation-risks/">AI検索の不正な手法を頼まれたら</a>にまとめています。AI検索の整備を月額の保守に入れる方法は<a href="https://nurevo.jp/partner/">パートナーのページ</a>をご覧ください。</p></section>
+    <section class="qa"><h2>よくある質問</h2><h3>Wikipediaに会社の記事がないと、ChatGPTに出られませんか？</h3><p>そうとは言えません。ChatGPTはWikipediaを多く出典にしますが、会社の情報は自社サイトや報道、口コミのサイトなど、ほかのページからも読まれます。GoogleのAIやPerplexityでは、Wikipediaの割合はさらに小さいという調査があります。</p>
+<h3>自社の記事を社員が書いてもいいですか？</h3><p>勧められません。英語版のガイドラインは利益相反の編集を強く非推奨とし、ノートページでの提案を求めています。仕事として書くなら、報酬を受けた編集として雇用主などの開示も必要です。</p>
+<h3>プレスリリースをたくさん出せば、特筆性はできますか？</h3><p>できません。プレスリリースは会社自身が出した一次情報源とされ、特筆性の根拠になりません。独立した媒体が会社そのものを取り上げた記事が必要です。</p>
+<h3>Wikidataなら自由に会社を登録できますか？</h3><p>自由ではありません。Wikidataにも収録基準があり、信頼できる公開の資料で説明できることなどが求められます。報酬を受けた投稿の開示の決まりも適用されます。</p>
+<h3>Wikipediaの記事の内容が間違っています。直してもいいですか？</h3><p>直接書き換えず、記事のノートページで、関係者であることを書いたうえで、正しい内容と出典を示して提案してください。判断はほかの編集者が行います。</p>
+<h3>Googleのナレッジパネルを出すにはWikipediaが必要ですか？</h3><p>Googleのヘルプは、オープンウェブに十分な情報があるとパネルが自動で作られると説明しており、Wikipediaが必要とは書いていません。パネルが出ていれば、認証して変更を提案できます。</p>
+<h3>構造化データの sameAs にWikipediaのURLを入れていいですか？</h3><p>自社の記事が実在し、内容が正しい場合は入れてかまいません。業界の一般的な記事や同名の他社の記事、作られていない項目は入れないでください。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、AIがあなたの会社のサイトを読めるか確認</h2>
+    <p>登録不要の無料チェックで、会社の構造化データ、llms.txt、AI検索のクローラーの許可の状態がわかります。WordPressなら、Nurevo AEOで不足分を無料で整えられます。</p>
+    <a class="btn primary lg" href="/check">無料でAI可読性をチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgでNurevo AEOを入手</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/company-profile-page-ai-search/">会社概要ページのAI検索対策：社名・所在地・設立・事業内容をAIに正しく読ませる手順</a></li><li><a href="/ja/guide/agency-ai-search-manipulation-risks/">AI検索の不正な手法をお客様に頼まれたとき：制作会社の判断表・断り方・点検の手順</a></li><li><a href="/ja/guide/person-profile-page-ai-search/">代表者・専門家・著者のプロフィールページのAI検索対策：経歴・資格・専門分野をAIに正しく読ませる手順</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/wikipedia-wikidata-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Wikipedia、Wikidata、ウィキペディアはWikimedia Foundationの商標または登録商標です。Google、Search Console、YouTube、ChatGPT、OpenAI、Perplexity、Semrush、Profound、Adobe、X、Facebook、LinkedIn、Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit、WordPressおよび各製品名は、それぞれの権利者の商標または登録商標です。Nurevoはこれらの団体・企業と提携・協賛関係にありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>

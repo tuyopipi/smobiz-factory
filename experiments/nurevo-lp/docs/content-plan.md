@@ -582,3 +582,12 @@
 3. 出張撮影（フォトグラファー）のAI検索対策【業種別】（photo-studio-ai-search と分けて）
 4. 制作会社向け：OTA・GBP・自社サイトの事実の対照表を観光・体験のお客様の保守に入れる方法【制作会社向け】
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
+| 2026-11-24 20時 | wikipedia-wikidata-ai-search | Wikipedia・WikidataとAI検索：自社の記事は作るべきか（全業種・制作会社。company-profile-page-ai-search〔会社概要ページ〕・agency-ai-search-manipulation-risks〔不正な手法の断り方〕とは分け、Wikipedia の記事の可否・規則・Wikidata・ナレッジパネル・sameAs に絞る。上位記事11本を読んだ〔uravation（2026-07-18、09-05更新）・マネーフォワード（2026-02-26、利用者向けで対象外）・frank_marketing note（2026-05-15、出典のない基準と作成代行の宣伝）／wellows（2026-11-12）・Search Atlas（2026-04-06更新、出典のない数字・矛盾）・Agility PR（2026-06-05）・Writesonic（2025-09-29）・Wix（2025-08-26更新）・Radiant Elephant（2026-07-14）・parse.gl（2026-11-20更新）・iPullRank（2026-06-04）〕の抜け〔47.9%と7.8%などの数字の混同・WordPress手順なし・特筆性の判定を具体的な資料でできない・作成代行の確認点なし・ナレッジパネルの公式の説明なし・日本語版の規則の確認なし〕を埋めた。調査の表2行〔Profound（SER 2025-06-11）：3,000万件、2024-08〜2025-06、ChatGPT の上位の出典で47.9%・AIO 5.7%・Perplexity は Reddit 46.7%／Semrush（2025-11-10）：23万件×13週、ChatGPT の回答の約55%→9月中旬から20%未満・AIモード約2〜3%・Perplexity 0.8%〕、判定表8行〔ja「特筆性 (組織)」：独立した信頼できる二次情報源・プレスリリース/自社発行物/記事広告/名簿は不可・規模だけでは不可・宣伝は禁止・チェーンの各店は一般に不可／en「Wikipedia is not Crunchbase」：通常の事業活動の報道・創業者インタビューは不可〕、規則3つ〔en COI：直接編集は強く非推奨・ノートで提案・AfC・内容を管理する権利はない／有料編集の開示：雇用主・依頼主・関係、利用者ページ・ノート・要約欄、2014-06-16発効、プロジェクトごとの別方針可〕、作成代行の確認表5行、既存記事の直し方4つ（{{edit COI}}、Adobe LLM Optimizer の Wikipedia 分析）、Wikidata〔収録基準3つは二次情報で要約・原文を読むよう明記、開示の決まりは全プロジェクト〕、ナレッジパネル〔9787176：自動で作成・Wikipedia の名前なし／7534902：認証の手順〕、4つの置き場所の比較表、自社サイト〔Organization はホームか会社概要・必須項目なし・sameAs〕のJSON-LD例、WordPress手順〔Nurevo：Wikipedia/Wikidata は作らない・探さない、webmcp_canary_business_node で sameAs を足す、Yoast等が有効なら既存の値が優先、0.9.1 併用〕、確かめ方5つ、チェックリスト10、制作会社向け、FAQ 7問）。2言語（ja・en） | 全業種・制作会社 | content/daily-20261124-20 |
+メモ：2026-11-24 20時の回は、Wikidata のページ（Help:Items・Wikidata:Notability・Help:Editing）、英語版の WP:PAID・NCORP、日本語版の WP:NRVE が取得できず、Wikidata の基準は二次情報（parse.gl・uravation）の要約として書き、原文を読むよう本文に書いた。日本語版Wikipediaの利益相反のページは読んでおらず、英語版のガイドラインとして書いた。有料編集の発効日は Meta の FAQ（Wayback 2021-09-29）による。wellows 等の「7.8%（ChatGPT の全引用）」は一次情報を読めず書いていない。AIが Wikidata をどう使うか、記事の削除率、反映までの時間は書いていない。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に wikipedia-wikidata-ai-search を追加、ja/en のみ）
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（掲載先の一覧と更新依頼の文例）【全業種】（PR #80 と重ならない形で）
+2. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
+3. 出張撮影（フォトグラファー）のAI検索対策【業種別】（photo-studio-ai-search と分けて）
+4. 掲載実績・メディア掲載ページの作り方（独立した報道をAIと編集者に見つけてもらう）【全業種】
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
