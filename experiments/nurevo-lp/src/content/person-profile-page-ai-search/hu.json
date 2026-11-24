@@ -1,0 +1,377 @@
+{
+ "title": "Alapítói, szakértői és szerzői profiloldalak AI-kereséshez | Nurevo",
+ "description": "Profiloldalak, amelyekre az AI támaszkodhat, ha azt kérdezik, ki vezeti a céget vagy ki írta a cikket: mit mond a Google, mit írjon, Person és ProfilePage, WordPress.",
+ "h1": "Alapítói, szakértői és szerzői profiloldalak AI-kereséshez: hogy az AI helyesen olvassa az emberek szerepét, képesítését és szakterületét",
+ "lead": "Hogy egy AI helyesen válaszol-e egy személyről szóló kérdésre, azon múlik, hogy az illető profiloldala egyszerű szövegben kimondja-e, ki ő, hol dolgozik és miben szakértő. Tegye egy oldalra a nevet, a szerepet, a szervezetet, a képesítéseket, a szakterületeket és a pályafutást; linkelje a cikkek szerzői sorából és a Rólunk oldal vezetőségi sorából; és tegye közzé ugyanezeket az értékeket Person strukturált adatként. Ez a három lépés a lényeg. A felnagyított képesítések vagy kitalált szerzők visszaütnek: a Google megtévesztésnek nevezi a hamis alkotói profilokat.",
+ "intro": [
+  "Íródott 2026. november 16-án (JST). A Google „Creating helpful, reliable, people-first content” (utolsó frissítés: 2026. október 5.) és „Profile page (ProfilePage) structured data” dokumentumait ugyanazon a napon ellenőriztük. Ez az útmutató olyan cégeknek, üzleteknek és praxisoknak szól, amelyeknek oldalai vannak az alapítójukról, igazgatójukról, szakembereikről, tanáraikról vagy szerzőikről, valamint az ilyen webhelyeket készítő ügynökségeknek. Magáról a cégről a [Rólunk oldal optimalizálása AI-kereséshez](/guide/company-profile-page-ai-search) szól.",
+  "Az AI-válaszok naponta és a megfogalmazástól függően változnak. Ezek a lépések pontossá teszik az AI által olvasott információkat; nem garantálják, hogy egy személy megjelenik egy válaszban, vagy hogy javul a rangsorolás."
+ ],
+ "sections": [
+  {
+   "heading": "Mire használja az AI a profiloldalakat",
+   "paragraphs": [
+    "A ChatGPT keresés, a Perplexity és a Google AI Overviews válaszadáskor weboldalakat olvas, és forrásként megjeleníti őket. Egy személyről szóló kérdésnél a legközvetlenebb anyag az illető szervezetének webhelyén található profiloldal. Ha nincs ilyen oldal, ha csak egy fotó és egy név szerepel rajta, vagy ha a beosztás oldalanként eltér, az AI egy régi cikkből vagy egy azonos nevű másik személyről állíthatja össze a válaszát.",
+    "A személyekről szóló kérdések néhány mintát követnek."
+   ],
+   "list": [
+    "„Ki vezeti a Sample Ltd-t, és mi a háttere?” (az alapító vagy a vezérigazgató)",
+    "„Miben szakértő a Sample Clinic igazgatója?” (egy szakértő képesítései és szakterülete)",
+    "„Melyik leedsi könyvelő ért jól az örökösödési adóhoz?” (szakterület alapján; a kérdésben nincs név)",
+    "„Ki írta ezt a cikket, és megbízhatok benne?” (a szerző)",
+    "„Hogyan kapcsolódik Jane Doe a Sample Ltd-hez?” (szerep, egyéb pozíciók, korábbi munkahelyek)",
+    "„Hogyan foglalhatok konzultációt Dr. Doe-nál?” (kapcsolat és foglalás)"
+   ],
+   "after": [
+    "A harmadikhoz hasonló, név nélküli kérdésnél az AI először egy praxist vagy üzletet keres, majd hozzáteszi, ki végezné a munkát. A profiloldal tehát nemcsak akkor anyag, ha név szerint kérdeznek valakire, hanem akkor is, ha szakterület alapján keresnek."
+   ]
+  },
+  {
+   "heading": "Mit mond maga a Google (amennyire ellenőrizni tudtuk)",
+   "paragraphs": [
+    "A szerzőségről és az E-E-A-T-ről keringő állítások nagy része találgatás. Induljon ki abból, amit a Google maga ír."
+   ],
+   "table": {
+    "head": [
+     "Mit mond a Google",
+     "Forrás",
+     "Mit vesz át ebből ez az útmutató"
+    ],
+    "rows": [
+     [
+      "Határozottan ösztönzi a pontos szerzőségi információkat, például a szerzői sorokat, ott, ahol az olvasók ezt elvárják",
+      "[Creating helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "Tüntesse fel a szerző nevét a cikkeken, és linkelje egy profilhoz"
+     ],
+     [
+      "A hamis alkotói profilok AI által generált portréfotókkal, kitalált nevekkel vagy hamis képesítésekkel megtévesztésnek és gyenge minőségű oldal jelének számítanak",
+      "Ugyanott",
+      "Nincsenek kitalált szerzők és felnagyított képesítések"
+     ],
+     [
+      "Maga az E-E-A-T nem konkrét rangsorolási tényező; elemei közül a megbízhatóság a legfontosabb; az E-E-A-T nagyobb súlyú egészségügyi, pénzügyi és biztonsági témákban (YMYL)",
+      "Ugyanott",
+      "Az E-E-A-T-t megbízható tények közzétételének módjaként kezelje, ne pontszámként"
+     ],
+     [
+      "A ProfilePage olyan oldalakhoz való, amelyek fő témája egyetlen, a webhelyhez kötődő személy vagy szervezet (szerzői oldalak, egy blog bemutatkozó oldala, egy cég munkatársi oldalai); egy üzlet kezdőlapja nem ilyen",
+      "[ProfilePage structured data](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "Alapítói, szakértői és szerzői oldalakon használja, ne a cég kezdőlapján"
+     ],
+     [
+      "A ProfilePage kötelező elemei: a mainEntity (Person vagy Organization) és annak name tulajdonsága; a dateModified csak emberi szerkesztéseket tükrözzön",
+      "Ugyanott",
+      "Kezdje kicsiben, és azt a dátumot használja, amikor valaki ténylegesen szerkesztette a profilt"
+     ],
+     [
+      "Az AI Overviews-hoz vagy az AI Mode-hoz nincsenek további követelmények vagy speciális jelölés",
+      "[AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)",
+      "A jelölés a szöveg megoldókulcsa; a szöveg az első"
+     ]
+    ]
+   },
+   "after": [
+    "A Google szerint a ProfilePage jelölés olyan funkciókban jelenhet meg, mint a Discussions and forums. Az AI-válaszokra gyakorolt hatásról semmit nem mond. Ez az útmutató a jelölést annak eszközeként kezeli, hogy ugyanazokat a tényeket, amelyek a szövegben szerepelnek, géppel olvasható formában is közzétegye."
+   ]
+  },
+  {
+   "heading": "Állítások, amelyekkel a vezető cikkekben találkozik, és mennyire állják meg a helyüket",
+   "paragraphs": [
+    "Elolvastuk a tíz legelőkelőbb helyen álló japán és angol cikket olyan keresésekre, mint „author E-E-A-T AI search”. Sokban hasznos lépések és ellenőrzőlisták vannak, de az alábbi állításokat nem tudtuk elsődleges forrásig visszavezetni. Használja a táblázatot olvasási segédletként."
+   ],
+   "table": {
+    "head": [
+     "Gyakori állítás",
+     "Amit találtunk"
+    ],
+    "rows": [
+     [
+      "Százalékok, például „a szerző képesítései 16%-os súllyal szerepelnek az AI-hivatkozási döntésekben”",
+      "Egyik cikk sem linkeli az eredeti tanulmányt, és egyik sem határozza meg, mit mér a „súly”"
+     ],
+     [
+      "„A Person schema kötelező”",
+      "A Google kötelező tulajdonságokat csak ahhoz sorol fel, hogy a ProfilePage megjelenjen a keresési funkcióiban; sehol nem mondja, hogy a jelölés kötelező az AI-válaszokhoz"
+     ],
+     [
+      "„Minél több sameAs link, annál jobb”",
+      "Nincs rá bizonyíték. Biztonságosabb csak olyan profilokat felsorolni, amelyeket az illető kezel, és amelyek egyértelműen hozzá tartoznak"
+     ],
+     [
+      "„Orvosi vagy jogi lektor hozzáadása növeli az E-E-A-T-t”",
+      "Nincs bizonyíték egy csak nevet tartalmazó lektori sorra, és a Google megtévesztésnek nevezi az alkotók hamis bemutatását. Írja le, mit és mikor lektoráltak"
+     ],
+     [
+      "„Az ideális bemutatkozás N szó hosszú”",
+      "A szám cikkenként eltér, és egyik sem ad forrást. A hossz kevésbé számít, mint az, hogy benne vannak-e a tények"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Kinek legyen oldala, és hol",
+   "paragraphs": [
+    "Sorolja a webhelyén szereplő embereket négy szerepkörbe. Nem mindenkinek kell hosszú oldal; kezdje azokkal, akikről a legvalószínűbb, hogy kérdezik az AI-t."
+   ],
+   "table": {
+    "head": [
+     "Szerep",
+     "Hol",
+     "Minimális tartalom",
+     "Hogyan kapcsolja össze"
+    ],
+    "rows": [
+     [
+      "Alapító vagy vezérigazgató",
+      "A Rólunk oldalon belül, vagy egy olyan oldalon, mint az /about/name/",
+      "Név, szerep, pályafutás, mit csinál a cégben",
+      "Linkelje a Rólunk oldal vezetőségi sorából; a jelölésben a cég founder vagy employee tulajdonsága mutasson ugyanarra az @id-re"
+     ],
+     [
+      "Szakértő (igazgató, szakember, tanár)",
+      "Munkatársi lista, plusz személyenként egy oldal",
+      "Képesítések, nyilvántartási szám, szakterület, mely szolgáltatásokat végzi",
+      "Linkelje a szolgáltatásoldalak „kihez kerül” sorából"
+     ],
+     [
+      "Cikkszerző",
+      "A WordPress szerzői archívuma vagy egy normál oldal",
+      "Név, szervezet, témák, cikklista",
+      "Linkelje a szerzői sorból"
+     ],
+     [
+      "Külső lektor",
+      "Lektori oldal a saját szervezetére mutató linkkel",
+      "Név, képesítés, szervezet, mit lektorált",
+      "A cikken: „Lektorálta: Név (képesítés), dátum”, az oldalra linkelve"
+     ]
+    ]
+   },
+   "after": [
+    "Ha ugyanaz a személy alapítóként, szerzőként és lektorként is szerepel, tartson meg egyetlen oldalt, és mindenhol ugyanúgy írja a nevét és a beosztását. Az AI két írásmódot két személynek vehet."
+   ]
+  },
+  {
+   "heading": "Mit írjon, és a hozzá tartozó strukturált adatok",
+   "paragraphs": [
+    "A táblázat felsorolja, mit tartalmazzon egy profiloldal, milyen hibákat szoktak elkövetni az AI-válaszok, és a megfelelő schema.org tulajdonságokat, a Person és a ProfilePage definícióiból válogatva (a típusokat a schema-dts 2.1.0-ban ellenőriztük)."
+   ],
+   "table": {
+    "head": [
+     "Tétel",
+     "Hogyan írja",
+     "Tipikus AI-hiba",
+     "Strukturált adatok"
+    ],
+    "rows": [
+     [
+      "Név",
+      "Egyetlen írásmód az egész webhelyen; más írásrendszerű vagy latin betűs alakot egyszer adjon meg",
+      "Összekeveri egy azonos nevű személlyel",
+      "name, alternateName"
+     ],
+     [
+      "Szerep és szervezet",
+      "Mindig a cégnévvel, pl. „a Sample Ltd alapítója”",
+      "Korábbi vagy mellékállásbeli beosztással mutatja be",
+      "jobTitle, worksFor"
+     ],
+     [
+      "Képesítések",
+      "Teljes hivatalos név, nyilvántartási szám (ha nyilvános lehet), kiállító szerv, év",
+      "Összekeveri a képesítés típusát",
+      "hasCredential (EducationalOccupationalCredential)"
+     ],
+     [
+      "Szakterületek",
+      "Három-öt konkrét terület, nem „minden”",
+      "A szakterületén kívüli dolgokra ajánlja",
+      "knowsAbout"
+     ],
+     [
+      "Pályafutás",
+      "Évenként és eseményenként egy sor: tanulmányok, korábbi munkahelyek, mikor alapított",
+      "Összekeveri a dátumokat",
+      "Szöveg (iskolákhoz alumniOf)"
+     ],
+     [
+      "Eredmények",
+      "Számok dátummal és a számítás módjával",
+      "Régi vagy felnagyított számokat idéz",
+      "Csak szöveg"
+     ],
+     [
+      "Díjak és médiamegjelenések",
+      "Név, év, szervező; ahol lehet, linkkel",
+      "Összekeveri a díjakat az említésekkel",
+      "award (csak díjakhoz)"
+     ],
+     [
+      "Egyéb profilok",
+      "Csak az illető által kezelt fiókok",
+      "Csalókhoz vagy névrokonokhoz linkel",
+      "sameAs"
+     ],
+     [
+      "Fotó",
+      "Valódi fotó; nem AI által generált portré",
+      "—",
+      "image"
+     ],
+     [
+      "Cikkek és szolgáltatások",
+      "Lista vagy linkek",
+      "Nem világos, milyen területen dolgozik az illető",
+      "Szöveg"
+     ],
+     [
+      "Utolsó frissítés",
+      "Az oldal végén; a beosztásokat azonnal javítsa, amint változnak",
+      "Korábbi szerepkörrel mutatja be",
+      "dateModified (ProfilePage)"
+     ]
+    ]
+   },
+   "after": [
+    "A schema.org a knowsAbout tulajdonságot úgy írja le, mint ami „suggesting possible expertise but not implying it” (lehetséges szakértelemre utal, de nem állítja azt) ([schema.org: knowsAbout](https://schema.org/knowsAbout)). A területek jelölésben való felsorolása önmagában semmit nem bizonyít, ezért támassza alá őket a szövegben kezelt esetekkel és megírt cikkekkel."
+   ]
+  },
+  {
+   "heading": "Az oldal megírása: az első mondatban mondja ki, ki az illető",
+   "list": [
+    "Az első mondatba kerüljön a név, a szerep, a szervezet és a szakterület, pl. „Jane Doe a leedsi Sample Ltd alapítója, okleveles könyvelő, aki kisvállalkozások könyvelésére és örökösödési adóra szakosodott.”",
+    "A második mondatban olyan tények álljanak, amelyek megkülönböztetik másoktól: a képesítése megszerzésének éve, a szervezetek, amelyeknek tagja, a terület, amelyet lefed.",
+    "A képesítéseket írja ki teljes formában. Ahol egy képesítés nyilvános nyilvántartásban ellenőrizhető, ezt jelezheti, hogy az olvasók ellenőrizni tudják.",
+    "A pályafutást táblázatban vagy idővonalon közölje, ne képként vagy PDF-ként.",
+    "Az összehasonlíthatatlan állításokat, mint „az iparág első számú szereplője”, cserélje tényekre: évekre, számokra, szakterületekre.",
+    "Szabályozott területeken, például az orvoslásban és a jogban, szabályok vonatkoznak arra, hogyan hirdethetők a címek és képesítések. Az egészségügyről lásd még: [AI-keresés klinikáknak](/guide/medical-clinic-ai-search)."
+   ]
+  },
+  {
+   "heading": "Szerzői sorok és lektorok",
+   "paragraphs": [
+    "Minden cikk elején vagy végén tüntesse fel a szerző nevét, és linkelje a profiloldalához. A csapat szerzőként való feltüntetése is rendben van, de ekkor a csapat oldalán szerepeljen, ki és hogyan ír.",
+    "Ha külső szakértő ellenőrzi a tartalmat, nevezze ezt lektorálásnak, a szerzőségtől elkülönítve, és írja le, mit lektorált (például „az adószámításokat”) és mikor. A schema.org-ban a [reviewedBy](https://schema.org/reviewedBy) azokra vonatkozik, akik egy oldal pontosságát ellenőrizték, és ez az authortól eltérő tulajdonság. Ne sorolja fel a szerzőt és a lektort együtt az author alatt.",
+    "A Google azt javasolja, hogy tájékoztassa az olvasókat a tartalom készítésének módjáról, beleértve azt is, hogy használtak-e automatizálást vagy AI-t. Ha egy cikk vázlata AI-jal készült, ezt jelezze ott, ahol az olvasók elvárják, azzal együtt, hogy egy ember ellenőrizte."
+   ]
+  },
+  {
+   "heading": "Jelölési példa: ProfilePage és Person",
+   "paragraphs": [
+    "Egy minimális példa. Minden értéknek a szövegben is szerepelnie kell. Ha a worksFor ugyanarra az @id-re mutat, mint a cég csomópontja, a személy és a cég egy párként olvasható."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Founder and Chartered Accountant\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Chartered accountant specialising in small-business accounts and inheritance tax in Leeds.\",\n    \"knowsAbout\": [\"Inheritance tax\", \"Small-business accounting\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Chartered Accountant\",\n      \"credentialCategory\": \"Professional qualification\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "Az [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential) képesítéstípus a képesítés fajtáját (credentialCategory) és az azt elismerő szervet (recognizedBy) is tartalmazhatja. A sameAs mezőbe csak olyan profilokat tegyen, amelyeket az illető kezel, és amelyek egyértelműen hozzá tartoznak."
+   ]
+  },
+  {
+   "heading": "WordPressen (Nurevo AEO-val)",
+   "paragraphs": [
+    "A [Nurevo AEO (ingyenes)](https://wordpress.org/plugins/nurevo-webmcp/) a személyeket a következőképpen kezeli."
+   ],
+   "list": [
+    "Először a Users > Profile (Felhasználók > Profil) menüben állítsa be minden szerzőnél a „Display name publicly as” (Nyilvánosan megjelenített név) értékét a valódi nevére (vagy a webhelyen használt névre). Amikor a Nurevo a saját gráfját teszi közzé, a bejegyzések BlogPostinggá válnak, a szerző pedig ezt a megjelenített nevet viselő Person lesz. Az oldalak nem kapnak szerzőt.",
+    "Yoast SEO, Rank Math, All in One SEO vagy Slim SEO esetén az Article és a szerzője pontosan úgy marad, ahogy az adott bővítmény közzéteszi; a Nurevo nem módosítja őket. A szerzőket az adott bővítmény felhasználói beállításaiban állítsa be. A VK All in One Expansion Unit Article-jének szerzője sem változik.",
+    "Az alapító hozzáadásához a cég jelöléséhez, vagy egy ProfilePage hozzáadásához egy profiloldalhoz használja az alábbi fejlesztői szűrőket (a Nurevóban nincsenek erre beviteli mezők). SEO-bővítmény mellett a cég csomópontjában továbbra is az adott bővítmény értékei érvényesülnek.",
+    "Ellenőrizze az oldal forráskódjában, hogy az SEO-bővítménye nem tesz-e már közzé ProfilePage-et az adott szerzőhöz, így semmi sem duplikálódik.",
+    "Nyissa meg az /llms.txt fájlt, és ellenőrizze, hogy szerepel-e benne a profiloldal. Az llms.txt a 30 legutóbb módosított oldalt és bejegyzést sorolja fel; ha hiányzik, adjon hozzá egy sort a webmcp_canary_llms_txt_lines szűrővel."
+   ],
+   "code": "// 1) Az alapító hozzáadása az üzleti csomóponthoz (csak akit a Rólunk oldal megnevez)\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) ProfilePage hozzáadása csak a profiloldalon (slug: jane-doe)\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Founder and Chartered Accountant',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Inheritance tax', 'Small-business accounting'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "Más platformokon ugyanazok az ellenőrzések. Az [ingyenes ellenőrzés](/check) nem igényel regisztrációt: adjon meg egy URL-t, és láthatja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát."
+   ]
+  },
+  {
+   "heading": "Ellenőrzés: kérdések a személy nevével",
+   "paragraphs": [
+    "A profiloldalakat olyan kérdésekkel ellenőrizze, amelyek tartalmazzák a személy nevét. Tegye fel ugyanazt a kérdést ugyanannak az AI-nak különböző napokon, és jegyezze fel a válaszokat; ne egyetlen válasz alapján ítéljen."
+   ],
+   "table": {
+    "head": [
+     "Mit jegyezzen fel",
+     "Példa"
+    ],
+    "rows": [
+     [
+      "Dátum, AI, kérdés",
+      "nov. 16., Perplexity, „Mi a háttere Jane Doe-nak, a Sample Ltd alapítójának?”"
+     ],
+     [
+      "Tények a válaszban",
+      "Szerep, képesítések, szakterület és pályafutás: egyenként helyes vagy helytelen"
+     ],
+     [
+      "Források",
+      "A saját profiloldalát idézte, vagy valaki más oldalát?"
+     ],
+     [
+      "Összekeverések",
+      "Van-e a válaszban névrokon vagy korábbi beosztás?"
+     ]
+    ]
+   },
+   "after": [
+    "A Nurevo ingyenes AI-ellenőrzése (havonta egyszer a csatlakoztatott Free és Standard webhelyeken) a tevékenységéből és a környékéből összeállított kérdéseket tesz fel, soha nem nevet, ezért a személyekre vonatkozó kérdéseket kézzel ellenőrizze a fenti táblázattal. A Pro láthatóságmérés (béta) jelenleg a Perplexityre terjed ki. A teljes módszer az [AI-láthatóság mérése](/guide/measure-ai-visibility) útmutatóban található."
+   ]
+  },
+  {
+   "heading": "Profiloldal ellenőrzőlista",
+   "list": [
+    "Az első mondatban szerepel a név, a szerep, a szervezet és a szakterület.",
+    "A név és a beosztás ugyanúgy szerepel a Rólunk oldalon, a szerzői sorokban és a munkatársi oldalakon.",
+    "A képesítések teljes formában, az évvel vagy a kiállító szervvel szerepelnek.",
+    "A szakterületek konkrétak, és esetek vagy cikkek támasztják alá őket.",
+    "A számok mellett dátum áll, és kiderül, hogyan számolták őket.",
+    "Nincsenek kitalált személyek, AI által generált portrék vagy felnagyított képesítések.",
+    "A szerzői sorok a profilra linkelnek; a lektorálás elkülönül a szerzőségtől, terjedelemmel és dátummal.",
+    "A ProfilePage és a Person jelölés egyezik a szöveggel, és nincs duplikálva.",
+    "A sameAs csak az illető által kezelt fiókokat sorolja fel.",
+    "A beosztásokat azonnal javítják, amint változnak, és az utolsó frissítés dátuma is követi.",
+    "Névvel ellátott kérdésekkel, különböző napokon ellenőrizte, és feljegyezte az eredményeket."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kell egy kis cégnek alapítói oldal?",
+   "a": "Gyakran elég néhány sor a névvel, a szereppel és a háttérrel a Rólunk oldalon. Ha az alapító cikkeket ír, előadásokat tart, interjúkat ad, vagy név szerint keresnek rá, egy külön oldal egy helyen tartja a tényeket."
+  },
+  {
+   "q": "Kisebb eséllyel használja az AI a formális képesítés nélküli emberek cikkeit?",
+   "a": "A Google nem mondja, hogy a képesítés hiánya önmagában probléma. Szerinte a megbízhatóság a legfontosabb, és a tényként leírt valódi tapasztalat (hány év, milyen munka) jó anyag. Egészségügyi vagy pénzügyi témáknál szakértővel is lektoráltathatja a tartalmat, és ezt jelezheti."
+  },
+  {
+   "q": "Publikálhatunk álnéven?",
+   "a": "Igen, amennyiben nem társít hozzá kitalált hátteret vagy képesítéseket, és az álnév oldala kimondja, milyen minőségben ír az illető. A Google megtévesztésnek nevezi a hamis alkotói profilokat."
+  },
+  {
+   "q": "Mi az első, a szerzői oldal vagy a ProfilePage jelölés?",
+   "a": "Az oldal. A jelölés ugyanazokat a tényeket teszi géppel olvasható formába, mint a szöveg; ne tegyen a jelölésbe olyan tényeket, amelyeket a szöveg nem tartalmaz."
+  },
+  {
+   "q": "A lektort az author alá kell tenni?",
+   "a": "Tartsa külön a szerzőket és a lektorokat. A schema.org-ban a reviewedBy azokra vonatkozik, akik egy oldal pontosságát ellenőrizték. A szövegben is külön írja: „írta” és „lektorálta”."
+  },
+  {
+   "q": "Megváltozott a vezérigazgatónk. Mit frissítsünk?",
+   "a": "A Rólunk oldalt, a vezérigazgató profiloldalát, a jelölésben a foundert vagy az employee-t, a szerzői sorokat és a máshol lévő profilokat (közösségimédia-fiókok, iparági címtárak). A korábbi vezérigazgató oldalát tartsa meg a szerepével és a dátumokkal, vagy irányítsa át az új oldalra. Nincs meghatározott idő, amíg az AI-válaszok utolérik a változást."
+  },
+  {
+   "q": "Ha követjük ezeket a lépéseket, az AI mindig helyesen írja le az embereinket?",
+   "a": "Ez nem garantálható; az AI-válaszok naponta és a megfogalmazástól függően változnak. Ezek a lépések pontossá és következetessé teszik az AI által olvasott információkat, így kevésbé valószínűek az összekeverések."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Nézze meg, hogyan olvassa az AI a webhelyén szereplő embereket és céget",
+  "body": "Az ingyenes ellenőrzés nem igényel regisztrációt: adja meg az URL-jét, és láthatja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát. WordPressen az ingyenes bővítmény strukturált adatként teszi közzé a cége alapadatait és a cikkei szerzőit.",
+  "label": "Ingyenes AI-olvashatósági ellenőrzés indítása",
+  "href": "/check",
+  "secondary": {
+   "label": "Próbálja ki az ingyenes WordPress-bővítményt",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google pedig a Google LLC védjegye. A Yoast SEO, a Rank Math, az All in One SEO, a Slim SEO, a VK All in One Expansion Unit, a LinkedIn és a WordPress a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban egyik vállalattal sem, és azok nem támogatják."
+}

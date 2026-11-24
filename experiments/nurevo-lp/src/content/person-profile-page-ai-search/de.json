@@ -1,0 +1,377 @@
+{
+ "title": "Profilseiten für Gründer, Experten und Autoren in KI-Suche | Nurevo",
+ "description": "Profilseiten, auf die sich KI bei der Frage nach Leitung oder Autor stützen kann: was Google sagt, was hineingehört, Person- und ProfilePage-Markup, WordPress-Schritte.",
+ "h1": "Profilseiten für Gründer, Experten und Autoren in der KI-Suche: Rollen, Qualifikationen und Fachgebiete richtig lesbar machen",
+ "lead": "Ob eine KI eine Frage zu einer Person richtig beantwortet, hängt davon ab, ob deren Profilseite in klarem Text sagt, wer sie ist, wo sie arbeitet und worin sie Expertin oder Experte ist. Bündeln Sie Name, Rolle, Organisation, Qualifikationen, Fachgebiete und Werdegang auf einer Seite; verlinken Sie sie aus den Autorenzeilen der Artikel und aus der Zeile zur Geschäftsleitung auf Ihrer Über-uns-Seite; und veröffentlichen Sie dieselben Werte als strukturierte Person-Daten. Diese drei Schritte sind der Kern. Aufgeblähte Qualifikationen oder erfundene Autoren schaden: Google bezeichnet erfundene Urheberprofile als Täuschung.",
+ "intro": [
+  "Verfasst am 16. November 2026 (JST). Googles „Creating helpful, reliable, people-first content“ (Hilfreiche, zuverlässige Inhalte erstellen, bei denen Menschen im Mittelpunkt stehen; zuletzt aktualisiert am 5. Oktober 2026) und „Profile page (ProfilePage) structured data“ (strukturierte Daten für Profilseiten) wurden am selben Tag geprüft. Dieser Leitfaden richtet sich an Unternehmen, Geschäfte und Praxen mit Seiten über ihre Gründer, Leitung, Behandelnden, Lehrkräfte oder Autoren sowie an die Agenturen, die diese Websites bauen. Das Unternehmen selbst behandelt [Über-uns-Seite für die KI-Suche optimieren](/guide/company-profile-page-ai-search).",
+  "KI-Antworten ändern sich je nach Tag und Formulierung. Diese Schritte machen die Informationen, die KI liest, korrekt; sie garantieren nicht, dass eine Person in einer Antwort erscheint oder dass Rankings steigen."
+ ],
+ "sections": [
+  {
+   "heading": "Wofür KI Profilseiten nutzt",
+   "paragraphs": [
+    "Die ChatGPT-Suche, Perplexity und Googles AI Overviews lesen beim Antworten Webseiten und zeigen sie als Quellen. Bei einer Frage zu einer Person ist die Profilseite auf der Website ihrer Organisation das direkteste Material. Gibt es keine solche Seite, besteht sie nur aus Foto und Namen oder weicht die Berufsbezeichnung von Seite zu Seite ab, baut die KI ihre Antwort womöglich aus einem alten Artikel oder aus einer gleichnamigen anderen Person.",
+    "Fragen zu Personen folgen meist einigen wenigen Mustern."
+   ],
+   "list": [
+    "„Wer leitet Sample Ltd und welchen Hintergrund hat die Person?“ (Gründer oder Geschäftsführung)",
+    "„Worauf ist die ärztliche Leitung der Sample Clinic spezialisiert?“ (Qualifikationen und Fachgebiet einer Expertin oder eines Experten)",
+    "„Welcher Steuerberater in Leeds kennt sich mit Erbschaftsteuer aus?“ (Suche nach Fachgebiet; kein Name in der Frage)",
+    "„Wer hat diesen Artikel geschrieben, und kann ich ihm vertrauen?“ (Autor)",
+    "„Wie ist Jane Doe mit Sample Ltd verbunden?“ (Rolle, weitere Positionen, frühere Tätigkeiten)",
+    "„Wie buche ich einen Beratungstermin bei Dr. Doe?“ (Kontakt und Buchung)"
+   ],
+   "after": [
+    "Bei einer Frage wie der dritten, ohne Namen, sucht die KI zuerst eine Praxis oder ein Geschäft und ergänzt dann, wer die Arbeit übernehmen würde. Eine Profilseite ist also nicht nur Material, wenn jemand nach einem Namen fragt, sondern auch bei der Suche nach Fachgebiet."
+   ]
+  },
+  {
+   "heading": "Was Google selbst sagt (soweit wir es prüfen konnten)",
+   "paragraphs": [
+    "Vieles, was über Autorschaft und E-E-A-T kursiert, ist Vermutung. Gehen Sie von dem aus, was Google selbst schreibt."
+   ],
+   "table": {
+    "head": [
+     "Was Google sagt",
+     "Quelle",
+     "Was dieser Leitfaden daraus ableitet"
+    ],
+    "rows": [
+     [
+      "Google empfiehlt nachdrücklich genaue Angaben zur Autorschaft, etwa Autorenzeilen, wo Leser sie erwarten",
+      "[Hilfreiche Inhalte erstellen](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "Den Namen des Autors an Artikeln zeigen und mit einem Profil verlinken"
+     ],
+     [
+      "Erfundene Urheberprofile mit KI-generierten Porträtfotos, ausgedachten Namen oder falschen Qualifikationen sind Täuschung und ein Zeichen für eine minderwertige Seite",
+      "Ebenda",
+      "Keine erfundenen Autoren und keine aufgeblähten Qualifikationen"
+     ],
+     [
+      "E-E-A-T selbst ist kein bestimmter Rankingfaktor; von seinen Bestandteilen zählt Vertrauen am meisten; bei Gesundheits-, Finanz- und Sicherheitsthemen (YMYL) hat E-E-A-T mehr Gewicht",
+      "Ebenda",
+      "E-E-A-T als Weg sehen, vertrauenswürdige Fakten zu veröffentlichen, nicht als Punktzahl"
+     ],
+     [
+      "ProfilePage ist für Seiten gedacht, deren Hauptthema eine Person oder Organisation mit Bezug zur Website ist (Autorenseiten, die Über-mich-Seite eines Blogs, Mitarbeiterseiten eines Unternehmens); die Startseite eines Geschäfts gehört nicht dazu",
+      "[Strukturierte Daten für ProfilePage](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "Auf Gründer-, Experten- und Autorenseiten verwenden, nicht auf der Startseite des Unternehmens"
+     ],
+     [
+      "Pflicht bei ProfilePage: mainEntity (Person oder Organization) und deren name; dateModified sollte nur Änderungen durch Menschen widerspiegeln",
+      "Ebenda",
+      "Klein anfangen und das Datum verwenden, an dem jemand das Profil tatsächlich bearbeitet hat"
+     ],
+     [
+      "Für AI Overviews oder den KI-Modus gibt es keine zusätzlichen Anforderungen und kein spezielles Markup",
+      "[KI-Funktionen und Ihre Website](https://developers.google.com/search/docs/appearance/ai-features)",
+      "Markup ist der Lösungsschlüssel zum Text; der Text kommt zuerst"
+     ]
+    ]
+   },
+   "after": [
+    "Als Orte, an denen ProfilePage-Markup erscheinen kann, nennt Google Funktionen wie Diskussionen und Foren. Über eine Wirkung auf KI-Antworten sagt Google nichts. Dieser Leitfaden behandelt Markup als Mittel, dieselben Fakten wie im Text in maschinenlesbarer Form zu veröffentlichen."
+   ]
+  },
+  {
+   "heading": "Behauptungen aus Top-Artikeln und wie belastbar sie sind",
+   "paragraphs": [
+    "Wir haben zehn der bestplatzierten japanischen und englischen Artikel zu Suchanfragen wie „author E-E-A-T AI search“ gelesen. Viele enthalten nützliche Schritte und Checklisten, doch die folgenden Behauptungen ließen sich auf keine Primärquelle zurückführen. Nutzen Sie die Tabelle als Lesehilfe."
+   ],
+   "table": {
+    "head": [
+     "Verbreitete Behauptung",
+     "Was wir gefunden haben"
+    ],
+    "rows": [
+     [
+      "Prozentangaben wie „Autorenqualifikationen machen 16 % des Gewichts bei KI-Zitierentscheidungen aus“",
+      "Keiner der Artikel verlinkt die Originalstudie, und keiner definiert, was das „Gewicht“ misst"
+     ],
+     [
+      "„Person-Schema ist Pflicht“",
+      "Google nennt Pflichtattribute nur dafür, dass ProfilePage in seinen Suchfunktionen erscheint; dass Markup für KI-Antworten nötig sei, sagt Google nirgends"
+     ],
+     [
+      "„Je mehr sameAs-Links, desto besser“",
+      "Kein Beleg. Sicherer ist es, nur Profile aufzuführen, die die Person selbst kontrolliert und die eindeutig zu ihr gehören"
+     ],
+     [
+      "„Ein medizinischer oder juristischer Prüfer erhöht Ihr E-E-A-T“",
+      "Für eine bloße Prüferzeile mit Namen gibt es keinen Beleg, und Google nennt falsche Angaben zu Urhebern Täuschung. Geben Sie an, was wann geprüft wurde"
+     ],
+     [
+      "„Die ideale Bio-Länge beträgt N Wörter“",
+      "Die Zahl unterscheidet sich von Artikel zu Artikel, und keiner nennt eine Quelle. Entscheidend ist weniger die Länge als die Frage, ob die Fakten vorhanden sind"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Wessen Seite und wo",
+   "paragraphs": [
+    "Ordnen Sie die Personen auf Ihrer Website vier Rollen zu. Nicht jede braucht eine lange Seite; beginnen Sie mit denen, nach denen eine KI am ehesten gefragt wird."
+   ],
+   "table": {
+    "head": [
+     "Rolle",
+     "Wo",
+     "Mindestinhalt",
+     "Wie verknüpfen"
+    ],
+    "rows": [
+     [
+      "Gründer oder Geschäftsführung",
+      "Innerhalb der Über-uns-Seite oder auf einer Seite wie /about/name/",
+      "Name, Rolle, Werdegang, Aufgabe im Unternehmen",
+      "Link aus der Zeile zur Geschäftsleitung auf der Über-uns-Seite; im Markup founder oder employee des Unternehmens auf dieselbe @id verweisen lassen"
+     ],
+     [
+      "Experte (Leitung, Behandelnde, Lehrkraft)",
+      "Eine Teamübersicht plus eine Seite pro Person",
+      "Qualifikationen, Registriernummer, Fachgebiet, welche Leistungen die Person übernimmt",
+      "Link aus der Zeile „Wer Sie betreut“ auf Leistungsseiten"
+     ],
+     [
+      "Artikelautor",
+      "Das Autorenarchiv von WordPress oder eine normale Seite",
+      "Name, Organisation, Themen, Artikelliste",
+      "Link aus der Autorenzeile"
+     ],
+     [
+      "Externer Prüfer",
+      "Eine Prüferseite mit Link zur eigenen Organisation",
+      "Name, Qualifikation, Zugehörigkeit, was geprüft wurde",
+      "Im Artikel: „Geprüft von Name (Qualifikation), Datum“, verlinkt mit der Seite"
+     ]
+    ]
+   },
+   "after": [
+    "Tritt dieselbe Person als Gründer, Autor und Prüfer auf, behalten Sie eine Seite und schreiben Name und Titel überall gleich. Eine KI hält zwei Schreibweisen womöglich für zwei Personen."
+   ]
+  },
+  {
+   "heading": "Was hineingehört und die passenden strukturierten Daten",
+   "paragraphs": [
+    "Die Tabelle zeigt, was eine Profilseite enthalten sollte, welche Fehler KI-Antworten häufig machen und welche schema.org-Eigenschaften dazu passen, ausgewählt aus den Definitionen von Person und ProfilePage (Typen geprüft in schema-dts 2.1.0)."
+   ],
+   "table": {
+    "head": [
+     "Punkt",
+     "Wie schreiben",
+     "Typischer KI-Fehler",
+     "Strukturierte Daten"
+    ],
+    "rows": [
+     [
+      "Name",
+      "Eine Schreibweise auf der ganzen Website; andere Schriften oder eine Umschrift einmal angeben",
+      "Verwechslung mit einer gleichnamigen Person",
+      "name, alternateName"
+     ],
+     [
+      "Rolle und Organisation",
+      "Immer mit Firmennamen, z. B. „Gründerin, Sample Ltd“",
+      "Vorstellung mit einem früheren Titel oder einer Nebentätigkeit",
+      "jobTitle, worksFor"
+     ],
+     [
+      "Qualifikationen",
+      "Vollständige offizielle Bezeichnung, Registriernummer (falls sie öffentlich sein darf), ausstellende Stelle, Jahr",
+      "Art der Qualifikation verwechselt",
+      "hasCredential (EducationalOccupationalCredential)"
+     ],
+     [
+      "Fachgebiete",
+      "Drei bis fünf konkrete Gebiete, nicht „alles“",
+      "Empfehlung für Themen außerhalb des Fachgebiets",
+      "knowsAbout"
+     ],
+     [
+      "Werdegang",
+      "Eine Zeile pro Jahr und Ereignis: Ausbildung, frühere Stellen, Gründung",
+      "Daten durcheinander",
+      "Text (alumniOf für Hochschulen)"
+     ],
+     [
+      "Erfolge",
+      "Zahlen mit Datum und Zählweise",
+      "Alte oder aufgeblähte Zahlen werden zitiert",
+      "Nur Text"
+     ],
+     [
+      "Auszeichnungen und Presse",
+      "Name, Jahr, Veranstalter; wenn möglich verlinkt",
+      "Auszeichnungen mit Erwähnungen verwechselt",
+      "award (nur Auszeichnungen)"
+     ],
+     [
+      "Andere Profile",
+      "Nur Konten, die die Person selbst kontrolliert",
+      "Verknüpfung mit Nachahmern oder Namensvettern",
+      "sameAs"
+     ],
+     [
+      "Foto",
+      "Ein echtes Foto; keine KI-generierten Porträts",
+      "—",
+      "image"
+     ],
+     [
+      "Artikel und Leistungen",
+      "Eine Liste oder Links",
+      "Unklar, in welchem Fachgebiet die Person arbeitet",
+      "Text"
+     ],
+     [
+      "Zuletzt aktualisiert",
+      "Am Seitenende; Titel sofort korrigieren, wenn sie sich ändern",
+      "Vorstellung mit einer früheren Rolle",
+      "dateModified (ProfilePage)"
+     ]
+    ]
+   },
+   "after": [
+    "schema.org beschreibt knowsAbout als „suggesting possible expertise but not implying it“ (deutet mögliche Expertise an, ohne sie zu behaupten) ([schema.org: knowsAbout](https://schema.org/knowsAbout)). Fachgebiete im Markup beweisen für sich genommen nichts; untermauern Sie sie im Text mit bearbeiteten Fällen und geschriebenen Artikeln."
+   ]
+  },
+  {
+   "heading": "Die Seite schreiben: im ersten Satz sagen, wer die Person ist",
+   "list": [
+    "Nennen Sie Name, Rolle, Organisation und Fachgebiet im ersten Satz, z. B. „Jane Doe ist Gründerin von Sample Ltd in Leeds und Chartered Accountant mit Schwerpunkt auf Abschlüssen kleiner Unternehmen und Erbschaftsteuer.“",
+    "Nutzen Sie den zweiten Satz für Fakten, die sie von anderen unterscheiden: das Jahr ihrer Qualifikation, die Verbände, denen sie angehört, das Gebiet, das sie abdeckt.",
+    "Schreiben Sie Qualifikationen vollständig aus. Lässt sich eine Qualifikation in einem öffentlichen Register prüfen, können Sie darauf hinweisen, damit Leser sie verifizieren können.",
+    "Stellen Sie den Werdegang als Tabelle oder Zeitleiste dar, nicht als Bild oder PDF.",
+    "Ersetzen Sie unvergleichbare Aussagen wie „die Nummer eins der Branche“ durch Fakten: Jahre, Zahlen, Fachgebiete.",
+    "In regulierten Bereichen wie Medizin und Recht gibt es Regeln dafür, wie Titel und Qualifikationen beworben werden dürfen. Für das Gesundheitswesen siehe auch [KI-Suche für Arztpraxen](/guide/medical-clinic-ai-search)."
+   ]
+  },
+  {
+   "heading": "Autorenzeilen und Prüfer",
+   "paragraphs": [
+    "Zeigen Sie den Namen des Autors am Anfang oder Ende jedes Artikels und verlinken Sie ihn mit der Profilseite. Eine Team-Autorenzeile ist in Ordnung, dann sollte die Teamseite aber sagen, wer schreibt und wie.",
+    "Prüft eine externe Fachperson den Inhalt, nennen Sie das eine Prüfung, getrennt von der Autorschaft, und geben Sie an, was geprüft wurde (zum Beispiel „die Steuerberechnungen“) und wann. schema.org hat [reviewedBy](https://schema.org/reviewedBy) für Personen, die eine Seite auf Richtigkeit geprüft haben – eine andere Eigenschaft als author. Führen Sie Autor und Prüfer nicht gemeinsam unter author auf.",
+    "Google empfiehlt, Lesern zu erklären, wie Inhalte entstanden sind, auch ob Automatisierung oder KI eingesetzt wurde. Wurde ein Artikel mit KI entworfen, sagen Sie das dort, wo Leser es erwarten, zusammen mit der Information, dass ein Mensch ihn geprüft hat."
+   ]
+  },
+  {
+   "heading": "Markup-Beispiel: ProfilePage und Person",
+   "paragraphs": [
+    "Ein minimales Beispiel. Jeder Wert muss auch im Text stehen. Verweist worksFor auf dieselbe @id wie Ihr Unternehmensknoten, lassen sich Person und Unternehmen als zusammengehöriges Paar lesen."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Founder and Chartered Accountant\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Chartered accountant specialising in small-business accounts and inheritance tax in Leeds.\",\n    \"knowsAbout\": [\"Inheritance tax\", \"Small-business accounting\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Chartered Accountant\",\n      \"credentialCategory\": \"Professional qualification\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "Der Qualifikationstyp [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential) kann auch die Art der Qualifikation (credentialCategory) und die anerkennende Stelle (recognizedBy) enthalten. Tragen Sie in sameAs nur Profile ein, die die Person selbst kontrolliert und die eindeutig zu ihr gehören."
+   ]
+  },
+  {
+   "heading": "In WordPress (mit Nurevo AEO)",
+   "paragraphs": [
+    "Mit [Nurevo AEO (kostenlos)](https://wordpress.org/plugins/nurevo-webmcp/) werden Personen wie folgt behandelt."
+   ],
+   "list": [
+    "Stellen Sie zuerst unter Benutzer > Profil (Users > Profile) für jeden Schreibenden „Öffentlicher Name“ (Display name publicly as) auf den echten Namen (oder den auf der Website verwendeten Namen). Wenn Nurevo seinen eigenen Graphen veröffentlicht, werden Beiträge zu BlogPosting mit dem Autor als Person mit diesem Anzeigenamen. Seiten erhalten keinen Autor.",
+    "Mit Yoast SEO, Rank Math, All in One SEO oder Slim SEO bleiben Article und sein Autor genau so, wie das jeweilige Plugin sie veröffentlicht; Nurevo ändert sie nicht. Richten Sie Autoren in den Benutzereinstellungen dieses Plugins ein. Auch der Autor im Article von VK All in One Expansion Unit wird nicht geändert.",
+    "Um den Gründer zum Markup des Unternehmens oder eine ProfilePage zu einer Profilseite hinzuzufügen, nutzen Sie die Entwicklerfilter unten (Nurevo hat dafür keine Eingabefelder). Mit einem SEO-Plugin haben die Werte des Unternehmensknotens aus diesem Plugin weiterhin Vorrang.",
+    "Prüfen Sie im Seitenquelltext, dass Ihr SEO-Plugin für diesen Autor nicht bereits eine ProfilePage ausgibt, damit nichts doppelt vorhanden ist.",
+    "Öffnen Sie /llms.txt und prüfen Sie, ob die Profilseite aufgeführt ist. llms.txt listet die 30 zuletzt geänderten Seiten und Beiträge; fehlt sie, fügen Sie mit dem Filter webmcp_canary_llms_txt_lines eine Zeile hinzu."
+   ],
+   "code": "// 1) Gründer zum Unternehmensknoten hinzufügen (nur jemanden, den Ihre Über-uns-Seite nennt)\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) ProfilePage nur auf der Profilseite hinzufügen (Slug jane-doe)\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Founder and Chartered Accountant',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Inheritance tax', 'Small-business accounting'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "Auf anderen Plattformen sind die Prüfungen dieselben. Der [kostenlose Check](/check) braucht keine Anmeldung: Geben Sie eine URL ein und sehen Sie den Zustand von strukturierten Daten, llms.txt und dem Zugang für KI-Crawler."
+   ]
+  },
+  {
+   "heading": "So prüfen Sie: Fragen mit dem Namen der Person",
+   "paragraphs": [
+    "Prüfen Sie Profilseiten mit Fragen, die den Namen der Person enthalten. Stellen Sie derselben KI an verschiedenen Tagen dieselbe Frage und notieren Sie die Antworten; urteilen Sie nicht nach einer einzigen Antwort."
+   ],
+   "table": {
+    "head": [
+     "Was notieren",
+     "Beispiel"
+    ],
+    "rows": [
+     [
+      "Datum, KI, Frage",
+      "16. Nov., Perplexity, „Welchen Hintergrund hat Jane Doe, Gründerin von Sample Ltd?“"
+     ],
+     [
+      "Fakten in der Antwort",
+      "Rolle, Qualifikationen, Fachgebiet und Werdegang: einzeln richtig oder falsch"
+     ],
+     [
+      "Quellen",
+      "Wurde Ihre Profilseite zitiert oder die Seite eines anderen?"
+     ],
+     [
+      "Verwechslungen",
+      "Ein Namensvetter oder ein früherer Titel in der Antwort?"
+     ]
+    ]
+   },
+   "after": [
+    "Der kostenlose KI-Check von Nurevo (einmal im Monat für verbundene Free- und Standard-Websites) stellt Fragen, die aus Ihrer Branche und Region gebildet werden, nie aus einem Namen; Fragen zu Personen prüfen Sie daher von Hand mit der Tabelle oben. Die Sichtbarkeitsmessung in Pro (Beta) deckt derzeit Perplexity ab. Die vollständige Methode steht in [KI-Sichtbarkeit messen](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checkliste für Profilseiten",
+   "list": [
+    "Der erste Satz enthält Name, Rolle, Organisation und Fachgebiet.",
+    "Name und Titel sind auf der Über-uns-Seite, in Autorenzeilen und auf Teamseiten gleich geschrieben.",
+    "Qualifikationen sind vollständig ausgeschrieben, mit Jahr oder ausstellender Stelle.",
+    "Fachgebiete sind konkret und durch Fälle oder Artikel belegt.",
+    "Zahlen haben ein Datum und eine Angabe zur Zählweise.",
+    "Keine erfundenen Personen, KI-generierten Porträts oder aufgeblähten Qualifikationen.",
+    "Autorenzeilen verlinken auf das Profil; Prüfungen sind von der Autorschaft getrennt, mit Umfang und Datum.",
+    "ProfilePage- und Person-Markup stimmen mit dem Text überein und sind nicht doppelt vorhanden.",
+    "sameAs listet nur Konten, die die Person selbst kontrolliert.",
+    "Titel werden sofort korrigiert, wenn sie sich ändern, und das Aktualisierungsdatum zieht nach.",
+    "Sie haben mit Fragen, die den Namen enthalten, an verschiedenen Tagen geprüft und die Ergebnisse festgehalten."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Braucht ein kleines Unternehmen eine Gründerseite?",
+   "a": "Oft reichen ein paar Zeilen mit Name, Rolle und Hintergrund auf der Über-uns-Seite. Schreibt der Gründer Artikel, hält Vorträge, gibt Interviews oder wird nach Namen gesucht, bündelt eine eigene Seite die Fakten an einem Ort."
+  },
+  {
+   "q": "Nutzt KI Artikel von Personen ohne formale Qualifikation seltener?",
+   "a": "Google sagt nicht, dass eine fehlende Qualifikation an sich ein Problem ist. Am wichtigsten ist laut Google Vertrauen, und echte Erfahrung (wie viele Jahre, welche Art von Arbeit), als Fakt aufgeschrieben, ist gutes Material. Bei Gesundheits- oder Geldthemen können Sie den Inhalt zusätzlich von einer Fachperson prüfen lassen und das angeben."
+  },
+  {
+   "q": "Dürfen wir unter einem Pseudonym veröffentlichen?",
+   "a": "Ja, solange Sie keinen erfundenen Hintergrund oder erfundene Qualifikationen anhängen und die Seite des Pseudonyms angibt, in welcher Funktion die Person schreibt. Google bezeichnet erfundene Urheberprofile als Täuschung."
+  },
+  {
+   "q": "Was kommt zuerst, die Autorenseite oder das ProfilePage-Markup?",
+   "a": "Die Seite. Markup gibt dieselben Fakten wie der Text in maschinenlesbarer Form wieder; nehmen Sie keine Fakten ins Markup auf, die der Text nicht nennt."
+  },
+  {
+   "q": "Gehört ein Prüfer unter author?",
+   "a": "Halten Sie Autoren und Prüfer getrennt. schema.org hat reviewedBy für Personen, die eine Seite auf Richtigkeit geprüft haben. Schreiben Sie auch im Text „verfasst von“ und „geprüft von“ getrennt."
+  },
+  {
+   "q": "Unsere Geschäftsführung hat gewechselt. Was müssen wir aktualisieren?",
+   "a": "Die Über-uns-Seite, die Profilseite der Geschäftsführung, founder oder employee im Markup, Autorenzeilen und Profile anderswo (Social-Media-Konten, Branchenverzeichnisse). Behalten Sie die Seite der früheren Geschäftsführung mit Rolle und Zeitraum oder leiten Sie sie auf die neue Seite weiter. Wann KI-Antworten nachziehen, ist nicht festgelegt."
+  },
+  {
+   "q": "Beschreibt KI unsere Mitarbeitenden immer richtig, wenn wir diese Schritte befolgen?",
+   "a": "Das lässt sich nicht garantieren; KI-Antworten ändern sich je nach Tag und Formulierung. Diese Schritte machen die Informationen, die KI liest, korrekt und einheitlich, sodass Verwechslungen unwahrscheinlicher werden."
+  }
+ ],
+ "relatedHeading": "Verwandte Leitfäden",
+ "cta": {
+  "heading": "Sehen Sie, wie KI die Personen und das Unternehmen auf Ihrer Website liest",
+  "body": "Der kostenlose Check braucht keine Anmeldung: Geben Sie Ihre URL ein und sehen Sie den Zustand von strukturierten Daten, llms.txt und dem Zugang für KI-Crawler. Unter WordPress veröffentlicht das kostenlose Plugin die Grunddaten Ihres Unternehmens und die Autoren Ihrer Artikel als strukturierte Daten.",
+  "label": "Kostenlosen KI-Lesbarkeitscheck starten",
+  "href": "/check",
+  "secondary": {
+   "label": "Das kostenlose WordPress-Plugin testen",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT ist eine Marke von OpenAI, Perplexity von Perplexity AI und Google von Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, VK All in One Expansion Unit, LinkedIn und WordPress sind Marken ihrer jeweiligen Inhaber. Nurevo ist mit keinem dieser Unternehmen verbunden und wird von keinem unterstützt."
+}

@@ -1,0 +1,300 @@
+{
+  "title": "Bing Places beállítása és pontos üzletadatok a Copilothoz | Nurevo",
+  "description": "A Bing Places kezeli a vállalkozás adatlapját a Bingben és a Bing Mapsben. Google-import, szinkronizálás, duplikátumok javítása és a webhely strukturált adatai.",
+  "h1": "Bing Places for Business beállítása a Copilothoz és a Binghez: import a Google-ből, melyik irányba ír felül a szinkronizálás, és a duplikátumok javítása",
+  "lead": "A Bing Places for Business a Microsoft ingyenes szolgáltatása a Bingben és a Bing Mapsben megjelenő vállalkozási adatlap kezelésére. Ha már van Google Business Profile-ja (GBP), az importálás a leggyorsabb út, és bekapcsolt szinkronizálás mellett a GBP felülírja a Binget, így a két hely, amelyet szerkesztenie kell, a GBP és a webhelye. A Microsoft szerint mélyíti az integrációt a Copilottal, de nem tette közzé, hogyan használják a Copilot mai válaszai a Bing Places adatait. Ezért a legmegbízhatóbb felkészülés az, ha a név, a cím, a telefonszám és a nyitvatartás a Bing Places-ben, a GBP-ben és a webhelyén is pontosan egyezik.",
+  "intro": [
+    "Íródott 2026. november 24-én (JST). A Bing Places működését aznap a Microsoft hivatalos blogjain és a Microsoft munkatársainak a Microsoft Q&A-n adott válaszaiban ellenőriztük. A Bing Places saját felületeit és súgóoldalait aznap nem tudtuk lekérni, ezért a képernyők nevei és a lépések megváltozhattak. Regisztrációkor kövesse azt, amit a képernyő mutat.",
+    "Egyetlen adatlap sem garantálja, hogy a Copilot vagy bármely más AI megjeleníti a vállalkozását, vagy előrébb sorolja. Az AI-válaszok napról napra változnak. Ez az útmutató arról szól, hogyan készítse elő az adatait, hogy az AI helyesen írhassa le a vállalkozását."
+  ],
+  "sections": [
+    {
+      "heading": "Mi a Bing Places, és mit változtatott a 2025. októberi megújítás",
+      "paragraphs": [
+        "2025. október 3-án a Microsoft bejelentette a megújított Bing Places for Business szolgáltatást ([Bing Search Blog](https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research)). Ez egy ingyenes szolgáltatás a Bing találatai között és a Bing Mapsben megjelenő vállalkozási adatlapok létrehozására és kezelésére."
+      ],
+      "table": {
+        "head": [
+          "Mi változott",
+          "Részletek"
+        ],
+        "rows": [
+          [
+            "Cím (URL)",
+            "A bingplaces.com helyett [bing.com/forbusiness](https://www.bing.com/forbusiness). A meglévő adatlapok automatikusan átkerültek az új fiókba; a régi belépési adatokkal való bejelentkezés átirányít"
+          ],
+          [
+            "Google-import",
+            "Gyorsabb és megbízhatóbb, és megőrzi a nevet, a nyitvatartást és az elérhetőségeket"
+          ],
+          [
+            "Recommendation Tool (ajánlóeszköz)",
+            "Fotók, webhelylink, nyitvatartás és közösségimédia-linkek hozzáadását javasolja; éttermeknél menü- vagy online rendelési linkeket"
+          ],
+          [
+            "Több telephely",
+            "Tömeges szerkesztés és valós idejű adatlap-állapot"
+          ],
+          [
+            "Mi következik",
+            "Folyamatos befektetés a Bing Mapsszel és a Copilottal való mélyebb integrációba (tervként megfogalmazva)"
+          ]
+        ],
+        "caption": "A Bing Search Blog (2025-10-03) és a Search Engine Journal (ugyanazon a napon) alapján."
+      },
+      "after": [
+        "Amikor a Bing 2026 februárjában elindította az AI-hivatkozásokat mérő AI Performance jelentést, azt is javasolta, hogy a helyi vállalkozások tartsák naprakészen a Bing Places adataikat ([Bing Webmaster Blog](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview)). Lásd: [hogyan értelmezze a Bing Webmaster Tools AI Performance jelentését](/guide/bing-webmaster-ai-performance)."
+      ]
+    },
+    {
+      "heading": "Használja a Copilot a Bing Places adatait? Mi ismert és mi nem",
+      "paragraphs": [
+        "Sok cikk állítja, hogy a Copilot a helyi kérdésekre a Bing Places adataiból válaszol. Az általunk olvasott Microsoft-anyagok egyike sem ír le ilyen mechanizmust. Az alábbiakban külön választjuk, mi ismert és mi nem."
+      ],
+      "table": {
+        "head": [
+          "Tétel",
+          "Állapot",
+          "Forrás"
+        ],
+        "rows": [
+          [
+            "A Bing Places adatai megjelennek a Bing találatai között és a Bing Mapsben",
+            "A Microsoft leírja",
+            "[Bing Search Blog](https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research)"
+          ],
+          [
+            "Mélyebb integráció a Copilottal",
+            "Tervként bejelentve",
+            "[Bing Search Blog](https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research)"
+          ],
+          [
+            "A helyi vállalkozások tartsák pontosan a Bing Places adataikat",
+            "A Microsoft ajánlása az AI Performance bejelentésében",
+            "[Bing Webmaster Blog](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview)"
+          ],
+          [
+            "A Bing Places mely mezőit használják a Copilot mai válaszai",
+            "Nem közzétett",
+            "—"
+          ],
+          [
+            "A Bing Places a Windows keresésében vagy az Edge-ben is megjelenik",
+            "Egyes ügynökségi cikkek állítják; a Microsoft anyagaiban nem találtuk",
+            "—"
+          ]
+        ]
+      },
+      "after": [
+        "Mivel a mechanizmus nem nyilvános, egyetlen mezőre fogadni kevésbé észszerű, mint az alapadatokat mindenhol egyformán tartani. A Copilot a válaszaihoz weboldalakat is használ forrásként, így a webhelye ugyanilyen fontos."
+      ]
+    },
+    {
+      "heading": "Beállítás: meglévő adatlap keresése, import, ellenőrzés",
+      "list": [
+        "Jelentkezzen be a [bing.com/forbusiness](https://www.bing.com/forbusiness) oldalon Microsoft-fiókkal.",
+        "Először keressen rá a vállalkozására. A Bing nyilvános adatokból automatikusan is létrehozhat adatlapot, és ha emellé újat hoz létre, duplikátum keletkezik.",
+        "Ha GBP-t használ, válassza az „Import from Google” (Importálás a Google-ből) lehetőséget, jelentkezzen be a GBP-fiókkal, és válassza ki a telephelyet. A Microsoft egyik munkatársa a fórumon azt írta, hogy az import „could take up to two days” (akár két napig is tarthat) ([Microsoft Q&A, 2025. nov.](https://learn.microsoft.com/en-us/answers/questions/5632446/bing-places-manual-verification-needed-for-busines)).",
+        "Az import után ellenőrizze a kategóriát. Egy 2023-as ügyfélszolgálati válasz szerint a kategóriák nem importálódnak, kézzel kell beállítani őket ([Microsoft Q&A](https://learn.microsoft.com/en-us/answers/questions/2289915/cannot-sync-my-webpages-with-google-as-bing-inform)). Ez a 2025-ös megújítással változhatott, ezért nézze meg a képernyőn.",
+        "GBP nélkül adja meg kézzel a nevet, a címet, a telefonszámot, a kategóriát, a nyitvatartást és a webhelyet, majd igazolja a tulajdonjogot a felkínált módon. Hogy mely módszerek jelennek meg (telefon, e-mail, postai levelezőlap stb.), az országtól és a vállalkozás adataitól függ.",
+        "Dolgozza végig a Recommendation Tool javaslatait (fotók, nyitvatartás, közösségimédia-linkek), végül ellenőrizze, hogy minden egyezik-e a webhelyével."
+      ],
+      "after": [
+        "Az általunk elérhető anyagok nem írták le, hogy minden ország címei támogatottak-e, és hol mely ellenőrzési módszerek érhetők el. Franciaországban egy tulajdonos arról számolt be, hogy az egyetlen lehetőség egy levelezőlap volt, amely soha nem érkezett meg; a Microsoft munkatársa a Google-importot javasolta, ennek sikertelensége esetén pedig az ügyfélszolgálat megkeresését, mert csak ők tudnak kézzel közzétenni egy adatlapot ([Microsoft Q&A](https://learn.microsoft.com/en-us/answers/questions/5632446/bing-places-manual-verification-needed-for-busines), [ügyfélszolgálat](https://www.bing.com/forbusiness/contactSupport)).",
+        "Az olyan korlátokat, mint a legfeljebb 100 fotó és legfeljebb 10 kategória, a Whitespark útmutatója közli (frissítve: 2025-10-30) a Bing súgóoldalai alapján ([Whitespark](https://whitespark.ca/guides/the-ultimate-guide-to-your-bing-places-listing/), másodlagos forrás)."
+      ]
+    },
+    {
+      "heading": "Szinkronizálás a GBP-vel: döntse el, melyik irányba ír felül",
+      "paragraphs": [
+        "Egy Bing Places ügyfélszolgálati szakértő 2023-as válasza egyértelműen leírja a szinkronizálás irányát ([Microsoft Q&A](https://learn.microsoft.com/en-us/answers/questions/2289915/cannot-sync-my-webpages-with-google-as-bing-inform)). A megújítás előtti, így a részletek változhattak, de az elv továbbra is hasznos."
+      ],
+      "table": {
+        "head": [
+          "Tétel",
+          "Az ügyfélszolgálat 2023-as magyarázata",
+          "Teendő"
+        ],
+        "rows": [
+          [
+            "Szinkronizálás módja",
+            "Kézi vagy automatikus (hetente, kéthetente vagy havonta)",
+            "Használjon automatikusat, ha a nyitvatartása évszakonként vagy ünnepnapokon változik"
+          ],
+          [
+            "Felülírás iránya",
+            "A GBP adatai felülírják a Bing-adatlapot. A GBP-vel ütköző Bing-szerkesztés a GBP értékére változik, függetlenül attól, melyik az újabb",
+            "Szinkronizálás alatt a GBP-t szerkessze, ne a Binget"
+          ],
+          [
+            "Bingből a Google felé",
+            "A Bing irányítópultjáról nem frissítheti a GBP-t",
+            "A GBP-t és a webhelyét tekintse a két hiteles forrásnak"
+          ],
+          [
+            "Közzétételi idő",
+            "A szokásos közzétételi ciklus általában nagyjából tíz napig tart, és minden ellenőrzés vagy szerkesztés újraindítja",
+            "A sürgős változtatásokat gyűjtse össze, ne szerkesszen ismételten"
+          ],
+          [
+            "Cím",
+            "A Bing címet követel meg; a cím nélküli GBP-adatlapokat (kiszállási területtel működő vállalkozások) megjelöli",
+            "A kiszállási területtel működő vállalkozások ellenőrizzék, hogyan kezeli a rendszer a címet"
+          ]
+        ]
+      },
+      "after": [
+        "Szinkronizáló vállalkozásnál a Bing Places a GBP másolata. Ha hibát talál, először a GBP-t és a webhelyét javítsa, majd hagyja, hogy a szinkronizálás átvigye a Bingre. Szinkronizálás nélkül a GBP-t, a Binget és a webhelyet külön-külön kell javítania, és sokkal valószínűbb az eltérés."
+      ]
+    },
+    {
+      "heading": "Ha duplikátumot vagy nem Ön által létrehozott adatlapot talál",
+      "list": [
+        "Keressen a Bing Mapsben névre, telefonszámra és címre, és számolja meg, hány adatlap létezik a vállalkozásáról. Keresse a költözés előtti címeket és a régi neveket is.",
+        "A Microsoft munkatársai szerint a duplikátum „likely created automatically from a different data source” (valószínűleg automatikusan jött létre egy másik adatforrásból) ([Microsoft Q&A, 2026. jún.](https://learn.microsoft.com/en-us/answers/questions/5927863/duplicate-bing-places-listing-cannot-be-verified-o)).",
+        "Ne igazolja a duplikátumot. Ha mindkettő az Öné, nehezebb megállapítani, melyik a helyes.",
+        "Küldje el az [ügyfélszolgálatnak](https://www.bing.com/forbusiness/contactSupport) mindkét adatlap adatait (a megtartandóét, például a Google-lel szinkronizáltat, és az eltávolítandóét), a tulajdonjog igazolását, a GBP-linkjét és képernyőképeket, és kérje az összevonást vagy az eltávolítást. A munkatársak szerint a régió és a nyelv kiválasztása után chatelhet az ügyfélszolgálattal.",
+        "Jelentse a duplikátumot a Bing Maps adatlapján a „Suggest an edit” (Szerkesztés javaslata) vagy a „Feedback” (Visszajelzés) funkcióval is. A munkatársak ezt olyasminek írják le, ami „sometimes works” (néha működik), tehát nem garancia."
+      ]
+    },
+    {
+      "heading": "Mit kell egyeztetni: a Bing Places, a GBP és a webhely egymás mellett",
+      "paragraphs": [
+        "Az AI több forrást olvas. Ha ugyanazt a vállalkozást különböző helyeken eltérően írják le, ingadozhat, melyik változatot adja vissza. Az alábbi tételek legyenek mindhárom helyen azonosak."
+      ],
+      "table": {
+        "head": [
+          "Tétel",
+          "Bing Places és GBP",
+          "Webhely (szöveg és strukturált adatok)",
+          "Gyakori eltérés"
+        ],
+        "rows": [
+          [
+            "Név",
+            "A cégtáblán és a cégjegyzékben szereplő hivatalos név, marketingszavak nélkül",
+            "Rólunk oldal, lábléc, a strukturált adatok name mezője",
+            "Csak egy helyen szereplő fióktelep-utótag, régi nevek"
+          ],
+          [
+            "Cím",
+            "Ugyanaz az épületnév és emelet, ugyanúgy írva",
+            "A szövegben szereplő cím és a PostalAddress",
+            "Költözés előtti cím, rövidített épületnév"
+          ],
+          [
+            "Telefon",
+            "Az a szám, amelyen foglalást fogadnak",
+            "A szövegben helyi formátum; a strukturált adatokban a nemzetközi formátum (+81-3-…, +1-…) is megfelelő",
+            "Összekevert központi és fióktelepi számok, megszűnt számok"
+          ],
+          [
+            "Nyitvatartás és zárva tartás",
+            "Rendes nyitvatartás, valamint ünnepnapi és különleges nyitvatartás",
+            "A nyitvatartási táblázat és az openingHoursSpecification",
+            "A webhely frissítve, a Bing és a GBP elavult maradt"
+          ],
+          [
+            "Kategória",
+            "Elsőként a fő tevékenység",
+            "Strukturált adattípus (Dentist, HairSalon stb.)",
+            "Import után hiányzó kategória"
+          ],
+          [
+            "Webhely",
+            "A kezdőlap vagy az adott telephely oldala",
+            "A kanonikus URL (https, www-vel vagy anélkül, következetesen)",
+            "Lejárt kampányoldalak, régi domainek"
+          ]
+        ]
+      },
+      "after": [
+        "Az ünnepnapi és különleges nyitvatartásról lásd: [nyitvatartás, ünnepnapok és zárva tartás az AI-kereséshez](/guide/business-hours-holidays-ai-search). Több telephely esetén lásd: [AI-keresés több telephelyes vállalkozásoknak](/guide/multi-location-business-ai-search)."
+      ]
+    },
+    {
+      "heading": "WordPress-lépések: egyeztesse az adatokat a webhelyén",
+      "list": [
+        "A nevet, a címet, a telefonszámot és a nyitvatartást szövegként, ne képként írja ki a Rólunk vagy Megközelítés oldalon, pontosan azzal a megfogalmazással, amelyet a Bing Places-ben és a GBP-ben megadott.",
+        "Ellenőrizze, milyen nevet, címet és telefonszámot tesz a strukturált adatokba az SEO-bővítménye vagy a témája. Az ingyenes változatok gyakran kihagyják a címet és a nyitvatartást. Lásd: [SEO-bővítmények és helyi vállalkozási strukturált adatok](/guide/local-business-schema-seo-plugins).",
+        "A Nurevo AEO-val (ingyenes WordPress-bővítmény) adja meg a nevet, a címet, a telefonszámot és a nyitvatartást a beállításokban. A cím schema.org PostalAddressként jelenik meg; japán webhelyen a japán telefonszám a strukturált adatokban nemzetközi formában jelenik meg (a megadott szám nem változik). A szokásos nyitvatartási formátumokból, például „Mon-Fri 9:00-18:00 / Sat 10:00-15:00”, openingHoursSpecification lesz; azt a nyitvatartást, amelyet nem tud biztosan értelmezni, beírt formában teszi közzé, sosem találgat. Az SEO-bővítménye által már beállított értékeket soha nem írja felül; csak a hiányzó adatokat egészíti ki ugyanazon @id alatt. A 0.9.1-es verziótól a SEO SIMPLE PACK és a VK All in One Expansion Unit mellett is duplikáció nélkül működik. [Letöltés a WordPress.org-ról](https://wordpress.org/plugins/nurevo-webmcp/)",
+        "Győződjön meg róla, hogy a Bing olvashatja a webhelyét: a Settings > Reading (Beállítások > Olvasás) menüben a „Search engine visibility” (Keresőmotorok általi láthatóság) jelölőnégyzet ne legyen bejelölve, és a /robots.txt ne tiltsa a Bingbotot.",
+        "Ha változik a nyitvatartás, ugyanazon a napon frissítse a webhelyet és a GBP-t (és a Bing Places-t is, ha nem szinkronizál), és jegyezze fel a dátumot."
+      ]
+    },
+    {
+      "heading": "Ellenőrzés a beállítás után",
+      "list": [
+        "Keressen rá a vállalkozása nevére a Bingen, és ellenőrizze, hogy a Bing Maps adatlapja ugyanazt a nevet, címet, telefonszámot és nyitvatartást mutatja-e, mint a webhelye.",
+        "Tegyen fel a Copilotnak olyan kérdéseket, mint „egy [tevékenység] [környék]en, amely [feltétel]” és „Mikor van nyitva a(z) [vállalkozás neve]?”, és jegyezze fel a választ és a forrásait. A válaszok napról napra változnak, ezért minden hónapban ugyanazon a napon tegye fel ugyanazokat a kérdéseket.",
+        "A Bing Webmaster Tools AI Performance jelentésében nézze meg, milyen gyakran voltak az oldalai források a Microsoft AI-jában, és mely kifejezéseknél.",
+        "Az analitikájában nézze meg a copilot.microsoft.com felől érkező látogatásokat.",
+        "A ChatGPT és a Perplexity a Bingtől függetlenül működik. Rögzítse őket rögzített kérdéssorral, ahogyan az [AI-láthatóság mérése](/guide/measure-ai-visibility) útmutatóban szerepel. A Nurevo AEO ingyenes AI-ellenőrzése a csatlakoztatott webhelyeknél havonta egyszer három, a tevékenységéből és a környékéből összeállított kérdést tesz fel a Perplexitynek. A Pro csomag (havi 99 USD-tól) folyamatosan mér, jelenleg a Perplexityn (a ChatGPT-n a beállítás után)."
+      ]
+    },
+    {
+      "heading": "Ellenőrzőlista",
+      "list": [
+        "Megkerestem a meglévő adatlapot a bing.com/forbusiness oldalon",
+        "Importáltam a GBP-ből, vagy kézzel regisztráltam és elvégeztem az ellenőrzést",
+        "Meggyőződtem róla, hogy a kategória be van állítva",
+        "Eldöntöttem és feljegyeztem, szinkronizálok-e, és hogy a GBP és a webhely a hiteles forrás",
+        "Duplikátumokat, régi címeket és régi neveket kerestem a Bing Mapsben",
+        "Duplikátum esetén igazolás helyett az ügyfélszolgálattól kértem az összevonást vagy eltávolítást",
+        "A név, a cím, a telefonszám, a nyitvatartás, a kategória és az URL egyezik a Bingben, a GBP-ben és a webhelyen",
+        "A strukturált adatok értékei egyeznek a webhely szövegével",
+        "Meggyőződtem róla, hogy a robots.txt nem tiltja a Bingbotot",
+        "Dátummal feljegyeztem a Copilotnak feltett kérdéseket és a válaszokat"
+      ]
+    },
+    {
+      "heading": "Ügyfél nevében regisztráló ügynökségeknek és helyi SEO-cégeknek",
+      "paragraphs": [
+        "Először döntsék el, kinek a Microsoft-fiókja birtokolja az adatlapot. Biztonságosabb a vállalkozás saját fiókjában létrehozni, és az ügynökséget kezelőként hozzáadni: így a vállalkozás akkor is hozzáfér, ha a munkatársak cserélődnek.",
+        "Ha a havi karbantartásba felvesznek egy egyoldalas összevetést a GBP-ről, a Bing Places-ről és a webhelyről, a jelentéseikben az AI-keresésre való felkészültséget is szerepeltethetik. Lásd: [hogyan alakítják az ügynökségek az AI-keresési munkát havi szolgáltatássá](/guide/agency-aeo-monthly-service) és a [partneroldal](https://nurevo.jp/partner/)."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Ingyenes a Bing Places?",
+      "a": "Igen. A Microsoft a Bing Places for Business szolgáltatást ingyenes szolgáltatásként írja le a Bingben és a Bing Mapsben megjelenő adatlapok létrehozására és kezelésére."
+    },
+    {
+      "q": "Ha van Google Business Profile-om, szükségem van még a Bing Places-re?",
+      "a": "A GBP-je nem jelenik meg automatikusan a Bing Places-ben. A Bing Places „Import from Google” funkciójával hozhat létre belőle adatlapot. Bekapcsolt szinkronizálás mellett a későbbi GBP-módosítások is eljutnak a Bingre."
+    },
+    {
+      "q": "Javítottam valamit a Bing Places-ben, és visszaváltozott.",
+      "a": "Bekapcsolt GBP-szinkronizálás mellett az ütköző mezőket a GBP értékei írják felül, ahogyan egy Bing ügyfélszolgálati szakértő 2023-ban elmagyarázta. Szinkronizálás alatt a GBP oldalon javítson."
+    },
+    {
+      "q": "Mennyi idő alatt jelennek meg a módosítások?",
+      "a": "Egy 2023-as ügyfélszolgálati válasz szerint a közzétételi ciklus általában nagyjából tíz napig tart, és minden szerkesztéssel újraindul. 2025-ben a munkatársak azt írták, hogy a Google-import akár két napig is tarthat. Az aktuális időzítést nézze meg a képernyőn."
+    },
+    {
+      "q": "A Bing Places adataiból válaszol a Copilot?",
+      "a": "A Microsoft bejelentette a Copilottal való mélyebb integrációt, de nem tette közzé, hogyan használják a mai válaszok a Bing Places adatait. A megbízható felkészülés az, ha az adatai a Bing Places-ben, a GBP-ben és a webhelyén is azonosak."
+    },
+    {
+      "q": "Minden ország vállalkozásai regisztrálhatnak?",
+      "a": "Az általunk elérhető Microsoft-anyagok sem a támogatott országokat, sem az országonkénti ellenőrzési módszereket nem sorolják fel. A regisztrációs képernyőn ellenőrizze, kiválasztható-e az országa és a címe, és mely ellenőrzési módszerek jelennek meg."
+    },
+    {
+      "q": "Törölhetek magam egy duplikált adatlapot?",
+      "a": "A Microsoft fórumának munkatársai a Bing Places ügyfélszolgálatához irányítanak. Küldje el a megtartandó és az eltávolítandó adatlap adatait a tulajdonjog igazolásával együtt, és kérje az összevonást vagy eltávolítást. Ne igazolja a duplikátumot."
+    }
+  ],
+  "relatedHeading": "Kapcsolódó útmutatók",
+  "cta": {
+    "heading": "Először nézze meg, el tudja-e olvasni az AI a vállalkozása webhelyét",
+    "body": "Az ingyenes, regisztráció nélküli ellenőrzés megmutatja a strukturált adatok (cím, telefonszám, nyitvatartás), az llms.txt és az AI-keresőrobotok hozzáférésének állapotát. WordPressen a Nurevo AEO ingyenesen pótolja a hiányokat.",
+    "label": "Ingyenes AI-olvashatósági ellenőrzés",
+    "href": "/check",
+    "secondary": {
+      "label": "Nurevo AEO letöltése a WordPress.org-ról",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "A Microsoft, a Bing, a Bing Places, a Bing Maps, a Copilot, a Bing Webmaster Tools, az Edge, a Windows, a Google, a Google Business Profile, a ChatGPT, az OpenAI, a Perplexity, a SEO SIMPLE PACK, a VK All in One Expansion Unit, a WordPress és ezek terméknevei a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban velük."
+}

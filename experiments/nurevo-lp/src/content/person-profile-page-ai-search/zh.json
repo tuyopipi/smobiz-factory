@@ -1,0 +1,377 @@
+{
+ "title": "面向 AI 搜索的创始人、专家与作者介绍页 | Nurevo",
+ "description": "打造 AI 在被问到“谁在经营公司”“谁写了这篇文章”时能信赖的人物介绍页：Google 的说法、写什么、Person 与 ProfilePage 标记、WordPress 步骤。",
+ "h1": "面向 AI 搜索的创始人、专家与作者介绍页：让 AI 正确读懂人物的职务、资质和专长",
+ "lead": "AI 能否正确回答关于某个人的问题，取决于这个人的介绍页是否用纯文本写明了他是谁、在哪里工作、擅长什么。把姓名、职务、所属机构、资质、专业领域和经历放在同一页上；从文章署名和公司简介页的管理层介绍链接到这一页；再把相同的值作为 Person 结构化数据发布。这三步是核心。夸大资质或虚构作者会适得其反：Google 把捏造的创作者资料称为欺骗。",
+ "intro": [
+  "本文撰写于 2026 年 11 月 16 日（日本时间）。当天核对了 Google 的《Creating helpful, reliable, people-first content》（创建有用、可靠、以人为本的内容，最后更新于 2026 年 10 月 5 日）和《Profile page (ProfilePage) structured data》（个人资料页结构化数据）。本指南面向设有创始人、院长、从业者、讲师或撰稿人介绍页的公司、店铺和诊所，以及为其建站的代理公司。公司本身的部分请参见[公司简介页的 AI 搜索优化](/guide/company-profile-page-ai-search)。",
+  "AI 的回答会因日期和措辞而变化。这些步骤能让 AI 读到的信息更准确，但不能保证某个人一定会出现在回答中，也不能保证排名上升。"
+ ],
+ "sections": [
+  {
+   "heading": "AI 用人物介绍页来做什么",
+   "paragraphs": [
+    "ChatGPT 搜索、Perplexity 和 Google 的 AI Overviews 在回答时会读取网页，并把它们列为来源。对于关于某个人的问题，此人所属机构网站上的介绍页是最直接的材料。如果没有这样的页面，或者页面上只有照片和姓名，或者各页面上的职务不一致，AI 就可能根据旧文章或同名的其他人来组织回答。",
+    "关于人物的问题大致可以分为几种类型。"
+   ],
+   "list": [
+    "“Sample Ltd 的负责人是谁，有什么背景？”（创始人或 CEO）",
+    "“Sample Clinic 的院长擅长什么？”（专家的资质和领域）",
+    "“利兹哪位会计师擅长遗产税？”（按专长查找；问题中没有姓名）",
+    "“这篇文章是谁写的，可信吗？”（作者）",
+    "“Jane Doe 和 Sample Ltd 是什么关系？”（职务、其他职位、以前的工作）",
+    "“怎样预约 Doe 医生的咨询？”（联系方式和预约）"
+   ],
+   "after": [
+    "像第三个这样不含姓名的问题，AI 会先寻找事务所或店铺，然后再补充由谁来负责。人物介绍页不仅在别人按姓名询问时是材料，在别人按专长搜索时也是。"
+   ]
+  },
+  {
+   "heading": "Google 自己怎么说（就我们能核实的范围）",
+   "paragraphs": [
+    "关于作者信息和 E-E-A-T 的流行说法，很多都是猜测。请从 Google 自己写的内容出发。"
+   ],
+   "table": {
+    "head": [
+     "Google 的说法",
+     "来源",
+     "本指南的理解"
+    ],
+    "rows": [
+     [
+      "在读者可能期待看到的地方，强烈建议提供准确的作者信息，例如署名",
+      "[Creating helpful content](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "在文章上显示作者姓名并链接到介绍页"
+     ],
+     [
+      "用 AI 生成的头像、编造的姓名或虚假的资质捏造创作者资料属于欺骗，是低质量页面的迹象",
+      "同上",
+      "不虚构作者，不夸大资质"
+     ],
+     [
+      "E-E-A-T 本身不是具体的排名因素；其中最重要的是信任；在健康、财务和安全话题（YMYL）上，E-E-A-T 的分量更重",
+      "同上",
+      "把 E-E-A-T 当作发布可信事实的方法，而不是一个分数"
+     ],
+     [
+      "ProfilePage 用于以与网站相关的某一个人或组织为主要内容的页面（作者页、博客的“关于我”页、公司的员工页）；店铺首页不符合条件",
+      "[ProfilePage structured data](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "用于创始人、专家和作者页，不用于公司首页"
+     ],
+     [
+      "ProfilePage 的必需属性：mainEntity（Person 或 Organization）及其 name；dateModified 应只反映人工编辑",
+      "同上",
+      "从少量属性开始，并使用有人实际编辑介绍页的日期"
+     ],
+     [
+      "对于 AI Overviews 或 AI Mode，没有额外的要求，也不需要特殊标记",
+      "[AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)",
+      "标记是正文的“答案对照表”；正文优先"
+     ]
+    ]
+   },
+   "after": [
+    "Google 说明 ProfilePage 标记可能出现的地方，是讨论与论坛等功能。它并没有提到对 AI 回答有什么影响。本指南把标记视为以机器可读的形式发布与正文相同事实的方法。"
+   ]
+  },
+  {
+   "heading": "热门文章中常见的说法，以及它们的可靠程度",
+   "paragraphs": [
+    "我们阅读了“author E-E-A-T AI search”等查询下排名靠前的十篇日文和英文文章。许多文章提供了有用的步骤和检查清单，但下面这些说法无法追溯到一手来源。请把下表当作阅读时的参考。"
+   ],
+   "table": {
+    "head": [
+     "常见说法",
+     "我们的发现"
+    ],
+    "rows": [
+     [
+      "“作者资质在 AI 引用判断中占 16% 的权重”之类的百分比",
+      "没有一篇文章链接到原始研究，也没有一篇说明“权重”衡量的是什么"
+     ],
+     [
+      "“Person schema 是必需的”",
+      "Google 只为 ProfilePage 出现在其搜索功能中列出了必需属性；从未说过 AI 回答需要标记"
+     ],
+     [
+      "“sameAs 链接越多越好”",
+      "没有证据。只列出本人管理、且明确属于本人的资料更稳妥"
+     ],
+     [
+      "“加上医学或法律审核人能提高 E-E-A-T”",
+      "只写审核人姓名并无证据支持，而且 Google 把虚假呈现创作者称为欺骗。请写明审核了什么、何时审核"
+     ],
+     [
+      "“理想的简介长度是 N 个字”",
+      "各篇文章给出的数字都不一样，也都没有来源。长度不如事实是否齐全重要"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "为谁建页面，放在哪里",
+   "paragraphs": [
+    "把网站上的人物分成四种角色。并不是每个人都需要很长的页面；从 AI 最可能被问到的人开始。"
+   ],
+   "table": {
+    "head": [
+     "角色",
+     "放在哪里",
+     "最少内容",
+     "如何关联"
+    ],
+    "rows": [
+     [
+      "创始人或 CEO",
+      "公司简介页内，或 /about/name/ 这样的页面",
+      "姓名、职务、经历、在公司负责什么",
+      "从公司简介页的管理层介绍链接过来；在标记中让公司的 founder 或 employee 指向同一个 @id"
+     ],
+     [
+      "专家（院长、从业者、讲师）",
+      "员工列表加上每人一页",
+      "资质、登记号、领域、负责哪些服务",
+      "从服务页的“由谁为您服务”处链接过来"
+     ],
+     [
+      "文章作者",
+      "WordPress 作者归档页或普通页面",
+      "姓名、所属机构、主题、文章列表",
+      "从署名链接过来"
+     ],
+     [
+      "外部审核人",
+      "审核人页面，并附上其所属机构的链接",
+      "姓名、资质、所属机构、审核了什么",
+      "在文章上写“审核：姓名（资质），日期”，并链接到该页面"
+     ]
+    ]
+   },
+   "after": [
+    "同一个人同时是创始人、作者和审核人时，只保留一个页面，并在所有地方用相同的方式书写姓名和职务。两种写法可能会被 AI 当成两个人。"
+   ]
+  },
+  {
+   "heading": "写什么，以及对应的结构化数据",
+   "paragraphs": [
+    "下表列出了人物介绍页应包含的内容、AI 回答容易出现的错误，以及对应的 schema.org 属性，这些属性选自 Person 和 ProfilePage 的定义（类型依据 schema-dts 2.1.0 核对）。"
+   ],
+   "table": {
+    "head": [
+     "项目",
+     "写法",
+     "AI 的典型错误",
+     "结构化数据"
+    ],
+    "rows": [
+     [
+      "姓名",
+      "全站统一一种写法；其他文字写法或罗马字只给一次",
+      "与同名者混淆",
+      "name、alternateName"
+     ],
+     [
+      "职务和所属机构",
+      "一定带上公司名，例如“Sample Ltd 创始人”",
+      "用以前的职务或副业头衔来介绍",
+      "jobTitle、worksFor"
+     ],
+     [
+      "资质",
+      "正式全称、登记号（如可公开）、颁发机构、年份",
+      "资质类型被混淆",
+      "hasCredential（EducationalOccupationalCredential）"
+     ],
+     [
+      "专业领域",
+      "三到五个具体领域，而不是“什么都行”",
+      "被推荐做领域之外的事",
+      "knowsAbout"
+     ],
+     [
+      "经历",
+      "每行一个年份和事件：学历、以前的工作、何时创业",
+      "年份混淆",
+      "正文（学校用 alumniOf）"
+     ],
+     [
+      "业绩",
+      "数字附上日期和统计方法",
+      "引用旧的或夸大的数字",
+      "仅正文"
+     ],
+     [
+      "获奖和媒体报道",
+      "名称、年份、主办方；尽可能附链接",
+      "把获奖和被提及混为一谈",
+      "award（仅限获奖）"
+     ],
+     [
+      "其他资料",
+      "只列本人管理的账号",
+      "被关联到冒充者或同名者",
+      "sameAs"
+     ],
+     [
+      "照片",
+      "真实照片；不用 AI 生成的头像",
+      "—",
+      "image"
+     ],
+     [
+      "文章和服务",
+      "列表或链接",
+      "不清楚此人从事什么领域",
+      "正文"
+     ],
+     [
+      "最后更新",
+      "放在页面末尾；职务一变就立即修改",
+      "用以前的职务来介绍",
+      "dateModified（ProfilePage）"
+     ]
+    ]
+   },
+   "after": [
+    "schema.org 对 knowsAbout 的描述是“suggesting possible expertise but not implying it”（暗示可能具备的专长，但并不意味着一定具备）（[schema.org: knowsAbout](https://schema.org/knowsAbout)）。只在标记中列出领域本身证明不了什么，因此要在正文中用处理过的案例和撰写的文章来佐证。"
+   ]
+  },
+  {
+   "heading": "撰写页面：第一句就说明此人是谁",
+   "list": [
+    "第一句写出姓名、职务、所属机构和领域，例如：“Jane Doe 是利兹 Sample Ltd 的创始人，也是一名专注于小企业账务和遗产税的特许会计师。”",
+    "第二句写能把她与他人区分开的事实：取得资质的年份、所属的协会、负责的地区。",
+    "资质要写全称。如果资质可以在公开名录中查到，可以注明，方便读者核实。",
+    "经历用表格或时间线呈现，而不是图片或 PDF。",
+    "把“业界第一”这类无法比较的说法换成事实：年数、数字、领域。",
+    "在医疗、法律等受监管的领域，对头衔和资质的宣传方式有相关规定。医疗领域另请参见[诊所的 AI 搜索](/guide/medical-clinic-ai-search)。"
+   ]
+  },
+  {
+   "heading": "署名与审核人",
+   "paragraphs": [
+    "在每篇文章的开头或结尾显示作者姓名，并链接到介绍页。用团队署名也可以，但团队页面应说明由谁、以何种方式撰写。",
+    "外部专家核对内容时，应称之为“审核”，与作者身份分开，并写明审核了什么（例如“税额计算部分”）以及何时审核。schema.org 有 [reviewedBy](https://schema.org/reviewedBy)，用于表示为页面准确性进行审核的人，这是与 author 不同的属性。不要把作者和审核人一起列在 author 下。",
+    "Google 建议向读者说明内容是如何制作的，包括是否使用了自动化或 AI。如果文章是用 AI 起草的，请在读者期待看到的地方说明这一点，并说明已经过人工核对。"
+   ]
+  },
+  {
+   "heading": "标记示例：ProfilePage 与 Person",
+   "paragraphs": [
+    "这是一个最简示例。每个值也都必须出现在正文中。让 worksFor 指向与公司节点相同的 @id，就能把人物和公司作为一对来读取。"
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Founder and Chartered Accountant\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Chartered accountant specialising in small-business accounts and inheritance tax in Leeds.\",\n    \"knowsAbout\": [\"Inheritance tax\", \"Small-business accounting\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Chartered Accountant\",\n      \"credentialCategory\": \"Professional qualification\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "资质类型 [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential) 还可以写明资质的种类（credentialCategory）和认可该资质的机构（recognizedBy）。sameAs 中只放本人管理、且明确属于本人的资料。"
+   ]
+  },
+  {
+   "heading": "在 WordPress 上（使用 Nurevo AEO）",
+   "paragraphs": [
+    "使用 [Nurevo AEO（免费）](https://wordpress.org/plugins/nurevo-webmcp/) 时，人物按如下方式处理。"
+   ],
+   "list": [
+    "首先，在“用户 > 个人资料”（Users > Profile）中，把每位撰稿人的“公开显示为”（Display name publicly as）设为其真实姓名（或网站使用的名字）。Nurevo 输出自己的图谱时，文章会成为 BlogPosting，作者为带有该显示名称的 Person。页面不设作者。",
+    "使用 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO 时，Article 及其作者完全保持该插件的输出；Nurevo 不会更改。请在该插件的用户设置中配置作者。VK All in One Expansion Unit 的 Article 中的作者同样不会被更改。",
+    "要在公司的标记中加入创始人，或在介绍页上加入 ProfilePage，请使用下面的开发者过滤器（Nurevo 中没有这些项目的输入栏）。使用 SEO 插件时，公司节点仍以该插件的值为准。",
+    "查看页面源代码，确认 SEO 插件没有为该作者输出 ProfilePage，以免重复。",
+    "打开 /llms.txt，确认介绍页已列出。llms.txt 会列出最近修改的 30 个页面和文章；如果没有列出，用 webmcp_canary_llms_txt_lines 过滤器添加一行。"
+   ],
+   "code": "// 1) 在公司节点中加入创始人（仅限公司简介页上写明的人）\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) 只在介绍页（slug 为 jane-doe）上加入 ProfilePage\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Founder and Chartered Accountant',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Inheritance tax', 'Small-business accounting'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "在其他平台上，检查项目也一样。[免费检测](/check)无需注册：输入网址，即可查看结构化数据、llms.txt 和 AI 爬虫访问的状态。"
+   ]
+  },
+  {
+   "heading": "如何检查：用带有人名的问题",
+   "paragraphs": [
+    "用包含人名的问题来检查介绍页。在不同的日子向同一个 AI 提出同样的问题并记录回答；不要凭一次回答下结论。"
+   ],
+   "table": {
+    "head": [
+     "记录内容",
+     "示例"
+    ],
+    "rows": [
+     [
+      "日期、AI、问题",
+      "11 月 16 日，Perplexity，“Sample Ltd 创始人 Jane Doe 有什么背景？”"
+     ],
+     [
+      "回答中的事实",
+      "职务、资质、领域和经历：逐项判断对错"
+     ],
+     [
+      "来源",
+      "引用的是你的介绍页，还是别人的页面？"
+     ],
+     [
+      "混淆",
+      "回答中有没有同名者或以前的职务？"
+     ]
+    ]
+   },
+   "after": [
+    "Nurevo 的免费 AI 检测（对已连接的 Free 和 Standard 网站每月一次）提出的问题是根据你的业务类型和区域生成的，从不包含人名，因此关于人物的问题需要用上表手动检查。Pro 的可见度测量（测试版）目前覆盖 Perplexity。完整方法见[如何衡量 AI 可见度](/guide/measure-ai-visibility)。"
+   ]
+  },
+  {
+   "heading": "人物介绍页检查清单",
+   "list": [
+    "第一句包含姓名、职务、所属机构和领域。",
+    "公司简介页、署名和员工页上的姓名和职务写法一致。",
+    "资质写了全称，并注明年份或颁发机构。",
+    "专业领域具体，并有案例或文章佐证。",
+    "数字附有日期，并说明统计方法。",
+    "没有虚构的人物、AI 生成的头像或夸大的资质。",
+    "署名链接到介绍页；审核与作者身份分开，并写明范围和日期。",
+    "ProfilePage 和 Person 标记与正文一致，且没有重复。",
+    "sameAs 只列出本人管理的账号。",
+    "职务一变就立即修改，最后更新日期也随之更新。",
+    "已在不同的日子用包含姓名的问题检查，并记录了结果。"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "小公司也需要创始人介绍页吗？",
+   "a": "在公司简介页中用几行写出姓名、职务和背景，通常就够了。如果创始人撰写文章、演讲或接受采访，或者有人按姓名搜索他，单独建一个页面可以把信息集中在一处。"
+  },
+  {
+   "q": "没有正式资质的人写的文章，AI 会不太愿意使用吗？",
+   "a": "Google 并没有说缺少资质本身是个问题。它说最重要的是信任，而以事实写出的真实经验（多少年、做过什么工作）就是很好的材料。对于健康或金钱相关话题，也可以请专家审核内容并加以说明。"
+  },
+  {
+   "q": "可以用笔名发表吗？",
+   "a": "可以，前提是不附加虚构的背景或资质，并且笔名的页面要说明此人以什么身份撰稿。Google 把捏造的创作者资料称为欺骗。"
+  },
+  {
+   "q": "作者页和 ProfilePage 标记，哪个先做？",
+   "a": "先做页面。标记是把与正文相同的事实转为机器可读的形式；不要在标记中放入正文没有写明的事实。"
+  },
+  {
+   "q": "审核人应该放在 author 下吗？",
+   "a": "把作者和审核人分开。schema.org 有 reviewedBy，用于表示核对页面准确性的人。正文中也请把“撰稿”和“审核”分开写。"
+  },
+  {
+   "q": "我们的 CEO 换人了，应该更新哪些地方？",
+   "a": "公司简介页、CEO 的介绍页、标记中的 founder 或 employee、署名，以及其他地方的资料（社交账号、行业名录）。保留前任 CEO 的页面并写明其职务和任期，或者把它指向新页面。AI 回答需要多久才能跟上，并没有固定的时间。"
+  },
+  {
+   "q": "按这些步骤做了，AI 就一定能正确描述我们的人员吗？",
+   "a": "无法保证；AI 的回答会因日期和措辞而变化。这些步骤能让 AI 读到的信息准确且一致，从而减少混淆。"
+  }
+ ],
+ "relatedHeading": "相关指南",
+ "cta": {
+  "heading": "看看 AI 如何读取你网站上的人物和公司",
+  "body": "免费检测无需注册：输入网址，即可查看结构化数据、llms.txt 和 AI 爬虫访问的状态。在 WordPress 上，这款免费插件会把公司的基本信息和文章作者作为结构化数据发布。",
+  "label": "运行免费 AI 可读性检测",
+  "href": "/check",
+  "secondary": {
+   "label": "试用免费 WordPress 插件",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT 是 OpenAI 的商标，Perplexity 是 Perplexity AI 的商标，Google 是 Google LLC 的商标。Yoast SEO、Rank Math、All in One SEO、Slim SEO、VK All in One Expansion Unit、LinkedIn 和 WordPress 均为各自所有者的商标。Nurevo 与上述公司均无关联，也未获得其认可。"
+}

@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bing Places 设置：让 Copilot 读到一致的店铺信息 | Nurevo AIO</title>
+<meta name="description" content="Bing Places 管理你在 Bing 和 Bing Maps 上的商家信息。本文讲解从 Google 导入与同步机制、重复信息的处理，以及如何与网站的结构化数据保持一致。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/zh/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="ar" href="https://nurevo.jp/ar/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="bg" href="https://nurevo.jp/bg/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="ca" href="https://nurevo.jp/ca/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="cs" href="https://nurevo.jp/cs/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="da" href="https://nurevo.jp/da/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="de" href="https://nurevo.jp/de/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="el" href="https://nurevo.jp/el/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="et" href="https://nurevo.jp/et/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="fa" href="https://nurevo.jp/fa/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="fi" href="https://nurevo.jp/fi/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="fr" href="https://nurevo.jp/fr/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="fy" href="https://nurevo.jp/fy/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="gl" href="https://nurevo.jp/gl/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="gu" href="https://nurevo.jp/gu/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="he" href="https://nurevo.jp/he/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="hi" href="https://nurevo.jp/hi/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="hr" href="https://nurevo.jp/hr/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="hu" href="https://nurevo.jp/hu/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="id" href="https://nurevo.jp/id/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="it" href="https://nurevo.jp/it/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="ko" href="https://nurevo.jp/ko/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="lo" href="https://nurevo.jp/lo/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="nb" href="https://nurevo.jp/nb/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="nl" href="https://nurevo.jp/nl/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="pl" href="https://nurevo.jp/pl/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="pt-BR" href="https://nurevo.jp/pt-br/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="pt-PT" href="https://nurevo.jp/pt-pt/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="ro" href="https://nurevo.jp/ro/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="ru" href="https://nurevo.jp/ru/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="sk" href="https://nurevo.jp/sk/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="sl" href="https://nurevo.jp/sl/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="sr" href="https://nurevo.jp/sr/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="sv" href="https://nurevo.jp/sv/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="tr" href="https://nurevo.jp/tr/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="uk" href="https://nurevo.jp/uk/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="vi" href="https://nurevo.jp/vi/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="zh-Hans" href="https://nurevo.jp/zh/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="zh-Hant" href="https://nurevo.jp/zh-tw/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="de-AT" href="https://nurevo.jp/de/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="de-CH" href="https://nurevo.jp/de/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es-MX" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es-AR" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es-CL" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es-CO" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es-CR" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es-EC" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es-PE" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="es-VE" href="https://nurevo.jp/es/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="fr-BE" href="https://nurevo.jp/fr/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="fr-CA" href="https://nurevo.jp/fr/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="nl-BE" href="https://nurevo.jp/nl/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="zh-HK" href="https://nurevo.jp/zh-tw/guide/bing-places-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/bing-places-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="Bing Places 设置：让 Copilot 读到一致的店铺信息 | Nurevo AIO">
+<meta property="og:description" content="Bing Places 管理你在 Bing 和 Bing Maps 上的商家信息。本文讲解从 Google 导入与同步机制、重复信息的处理，以及如何与网站的结构化数据保持一致。">
+<meta property="og:url" content="https://nurevo.jp/zh/guide/bing-places-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta property="og:locale:alternate" content="ar_AR">
+<meta property="og:locale:alternate" content="bg_BG">
+<meta property="og:locale:alternate" content="ca_ES">
+<meta property="og:locale:alternate" content="cs_CZ">
+<meta property="og:locale:alternate" content="da_DK">
+<meta property="og:locale:alternate" content="de_DE">
+<meta property="og:locale:alternate" content="el_GR">
+<meta property="og:locale:alternate" content="es_ES">
+<meta property="og:locale:alternate" content="et_EE">
+<meta property="og:locale:alternate" content="fa_IR">
+<meta property="og:locale:alternate" content="fi_FI">
+<meta property="og:locale:alternate" content="fr_FR">
+<meta property="og:locale:alternate" content="fy_NL">
+<meta property="og:locale:alternate" content="gl_ES">
+<meta property="og:locale:alternate" content="gu_IN">
+<meta property="og:locale:alternate" content="he_IL">
+<meta property="og:locale:alternate" content="hi_IN">
+<meta property="og:locale:alternate" content="hr_HR">
+<meta property="og:locale:alternate" content="hu_HU">
+<meta property="og:locale:alternate" content="id_ID">
+<meta property="og:locale:alternate" content="it_IT">
+<meta property="og:locale:alternate" content="ko_KR">
+<meta property="og:locale:alternate" content="lo_LA">
+<meta property="og:locale:alternate" content="nb_NO">
+<meta property="og:locale:alternate" content="nl_NL">
+<meta property="og:locale:alternate" content="pl_PL">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:locale:alternate" content="pt_PT">
+<meta property="og:locale:alternate" content="ro_RO">
+<meta property="og:locale:alternate" content="ru_RU">
+<meta property="og:locale:alternate" content="sk_SK">
+<meta property="og:locale:alternate" content="sl_SI">
+<meta property="og:locale:alternate" content="sr_RS">
+<meta property="og:locale:alternate" content="sv_SE">
+<meta property="og:locale:alternate" content="tr_TR">
+<meta property="og:locale:alternate" content="uk_UA">
+<meta property="og:locale:alternate" content="vi_VN">
+<meta property="og:locale:alternate" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Bing Places 设置：让 Copilot 读到一致的店铺信息 | Nurevo AIO">
+<meta name="twitter:description" content="Bing Places 管理你在 Bing 和 Bing Maps 上的商家信息。本文讲解从 Google 导入与同步机制、重复信息的处理，以及如何与网站的结构化数据保持一致。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/zh/guide/bing-places-ai-search/#webpage","url":"https://nurevo.jp/zh/guide/bing-places-ai-search/","name":"Bing Places 设置：让 Copilot 读到一致的店铺信息 | Nurevo AIO","description":"Bing Places 管理你在 Bing 和 Bing Maps 上的商家信息。本文讲解从 Google 导入与同步机制、重复信息的处理，以及如何与网站的结构化数据保持一致。","inLanguage":"zh-Hans","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/zh/guide/bing-places-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/zh/guide/bing-places-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://nurevo.jp/zh/"},{"@type":"ListItem","position":2,"name":"AEO 指南","item":"https://nurevo.jp/zh/guide/"},{"@type":"ListItem","position":3,"name":"面向 Copilot 和 Bing 的 Bing Places for Business 设置：从 Google 导入、同步的覆盖方向与重复信息处理","item":"https://nurevo.jp/zh/guide/bing-places-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/zh/guide/bing-places-ai-search/#faq","mainEntity":[{"@type":"Question","name":"Bing Places 免费吗？","acceptedAnswer":{"@type":"Answer","text":"是的。Microsoft 将 Bing Places for Business 描述为用于在 Bing 和 Bing Maps 上创建和管理商家信息的免费服务。"}},{"@type":"Question","name":"已经有 Google Business Profile，还需要 Bing Places 吗？","acceptedAnswer":{"@type":"Answer","text":"你的 GBP 不会自动出现在 Bing Places 中。请在 Bing Places 中使用“Import from Google”（从 Google 导入）据此创建商家信息。开启同步后，之后对 GBP 的修改也会同步到 Bing。"}},{"@type":"Question","name":"我在 Bing Places 中改了内容，结果又变回去了。","acceptedAnswer":{"@type":"Answer","text":"据 Bing 支持专员 2023 年的解释，开启 GBP 同步后，冲突的字段会被 GBP 的值覆盖。同步期间请在 GBP 一侧修改。"}},{"@type":"Question","name":"修改需要多久才会显示？","acceptedAnswer":{"@type":"Answer","text":"2023 年的一条支持回答称，发布周期通常约为十天，每次修改都会重新开始。2025 年，员工表示从 Google 导入可能需要最多两天。当前所需时间请以界面为准。"}},{"@type":"Question","name":"Copilot 会根据 Bing Places 的数据回答吗？","acceptedAnswer":{"@type":"Answer","text":"Microsoft 已宣布将加深与 Copilot 的整合，但尚未公开现在的回答如何使用 Bing Places。让 Bing Places、GBP 和网站上的信息保持一致，才是可靠的准备。"}},{"@type":"Question","name":"所有国家的商家都能注册吗？","acceptedAnswer":{"@type":"Answer","text":"我们能读到的 Microsoft 资料既没有列出支持的国家，也没有列出各国的验证方式。请在注册界面上确认能否选择你的国家和地址，以及会出现哪些验证方式。"}},{"@type":"Question","name":"我可以自己删除重复的商家信息吗？","acceptedAnswer":{"@type":"Answer","text":"Microsoft 论坛的员工建议联系 Bing Places 支持团队。请提交要保留和要删除的商家信息详情以及所有权证明，请求合并或删除。不要验证重复的那条。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/zh/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check?lang=zh">免费检测 AI 可读性</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="面包屑导航"><a href="/zh/">首页</a> <span aria-hidden="true">›</span> <a href="/zh/guide/">AEO 指南</a> <span aria-hidden="true">›</span> <span>面向 Copilot 和 Bing 的 Bing Places for Business 设置：从 Google 导入、同步的覆盖方向与重复信息处理</span></nav>
+  <article>
+    <h1>面向 Copilot 和 Bing 的 Bing Places for Business 设置：从 Google 导入、同步的覆盖方向与重复信息处理</h1>
+    <p class="lead">Bing Places for Business 是 Microsoft 提供的免费服务，用于管理在 Bing 和 Bing Maps 上显示的商家信息。如果你已经有 Google Business Profile（GBP），导入是最快的方式；开启同步后，GBP 会覆盖 Bing，因此需要编辑的地方只有 GBP 和你的网站两处。Microsoft 表示正在加深与 Copilot 的整合，但尚未公开现在的 Copilot 回答如何使用 Bing Places。正因如此，最可靠的准备就是让 Bing Places、GBP 和网站上的名称、地址、电话和营业时间完全一致。</p>
+<p>本文撰写于 2026 年 11 月 24 日（日本时间）。当天我们通过 Microsoft 官方博客和 Microsoft Q&amp;A 上 Microsoft 员工的回答核对了 Bing Places 的行为。当天我们无法读取 Bing Places 本身的界面和帮助页面，因此界面名称和步骤可能已有变化。注册时请以界面实际显示为准。</p>
+<p>任何商家信息都无法保证 Copilot 或其他 AI 会展示你的商家或提高其排名。AI 的回答每天都在变化。本指南讲的是如何整理好你的信息，让 AI 能正确描述你的商家。</p>
+<section class="qa"><h2>Bing Places 是什么，2025 年 10 月的改版改变了什么</h2><p>2025 年 10 月 3 日，Microsoft 宣布推出改版后的 Bing Places for Business（<a href="https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research">Bing Search Blog</a>）。这是一项免费服务，用于创建和管理显示在 Bing 搜索结果和 Bing Maps 上的商家信息。</p><div class="table-wrap"><table><caption>依据 Bing Search Blog（2025-10-03）和 Search Engine Journal（同日）。</caption><thead><tr><th scope="col">变化内容</th><th scope="col">详情</th></tr></thead><tbody><tr><th scope="row">网址（URL）</th><td>从 bingplaces.com 迁移到 <a href="https://www.bing.com/forbusiness">bing.com/forbusiness</a>。现有商家信息已自动迁移到新账户；使用旧凭据登录会自动跳转</td></tr><tr><th scope="row">从 Google 导入</th><td>更快、更可靠，并保留名称、营业时间和联系方式</td></tr><tr><th scope="row">Recommendation Tool（推荐工具）</th><td>建议添加照片、网站链接、营业时间和社交媒体链接；餐厅还会建议添加菜单或在线点餐链接</td></tr><tr><th scope="row">多门店</th><td>批量编辑和实时查看商家信息状态</td></tr><tr><th scope="row">后续计划</th><td>将继续投入，加深与 Bing Maps 和 Copilot 的整合（以计划形式表述）</td></tr></tbody></table></div><p>2026 年 2 月 Bing 推出面向 AI 引用的 AI Performance 时，也建议本地商家保持 Bing Places 信息最新（<a href="https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview">Bing Webmaster Blog</a>）。参见<a href="/guide/bing-webmaster-ai-performance/">如何解读 Bing Webmaster Tools 的 AI Performance 报告</a>。</p></section>
+<section class="qa"><h2>Copilot 会使用 Bing Places 吗？已知与未知</h2><p>许多文章称 Copilot 会根据 Bing Places 的数据回答本地问题。但我们阅读的 Microsoft 资料中，没有任何一份说明过这样的机制。下面把已知的和未知的分开列出。</p><div class="table-wrap"><table><thead><tr><th scope="col">项目</th><th scope="col">状态</th><th scope="col">来源</th></tr></thead><tbody><tr><th scope="row">Bing Places 的数据会显示在 Bing 搜索结果和 Bing Maps 上</th><td>Microsoft 有说明</td><td><a href="https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research">Bing Search Blog</a></td></tr><tr><th scope="row">加深与 Copilot 的整合</th><td>以计划形式公布</td><td><a href="https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research">Bing Search Blog</a></td></tr><tr><th scope="row">本地商家应保持 Bing Places 信息准确</th><td>Microsoft 在 AI Performance 发布文章中建议</td><td><a href="https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview">Bing Webmaster Blog</a></td></tr><tr><th scope="row">现在的 Copilot 回答使用 Bing Places 的哪些字段</th><td>未公开</td><td>—</td></tr><tr><th scope="row">Bing Places 也会显示在 Windows 搜索或 Edge 中</th><td>部分代理公司的文章如此声称；Microsoft 资料中未找到</td><td>—</td></tr></tbody></table></div><p>既然机制未公开，与其押注某个字段，不如让基本信息在所有出现的地方保持一致。Copilot 回答时也会以网页为来源，所以你的网站同样重要。</p></section>
+<section class="qa"><h2>设置：查找现有信息、导入、验证</h2><ol><li>用 Microsoft 账户登录 <a href="https://www.bing.com/forbusiness">bing.com/forbusiness</a>。</li><li>先搜索你的商家。Bing 可能已根据公开数据自动创建了商家信息，在此基础上再新建一条就会产生重复。</li><li>如果使用 GBP，选择“Import from Google”（从 Google 导入），用 GBP 账户登录并选择门店。论坛上一位 Microsoft 员工回答称，导入“could take up to two days”（可能需要最多两天）（<a href="https://learn.microsoft.com/en-us/answers/questions/5632446/bing-places-manual-verification-needed-for-busines">Microsoft Q&amp;A，2025 年 11 月</a>）。</li><li>导入后检查类别。2023 年的一条支持回答称，类别不会被导入，需要手动设置（<a href="https://learn.microsoft.com/en-us/answers/questions/2289915/cannot-sync-my-webpages-with-google-as-bing-inform">Microsoft Q&amp;A</a>）。2025 年改版后可能已有变化，请在界面上确认。</li><li>没有 GBP 时，手动填写名称、地址、电话、类别、营业时间和网站，并用系统提供的方式验证所有权。会出现哪些验证方式（电话、电子邮件、邮寄明信片等）取决于国家和商家信息。</li><li>逐条处理 Recommendation Tool 的建议（照片、营业时间、社交媒体链接），最后确认所有内容与你的网站一致。</li></ol><p>我们能读到的资料没有说明是否支持所有国家的地址，也没有说明各地提供哪些验证方式。在法国，有一位店主反映唯一的选项是邮寄明信片，但明信片一直没有寄到；Microsoft 员工建议尝试从 Google 导入，若仍不行则联系支持团队——只有支持团队能手动发布商家信息（<a href="https://learn.microsoft.com/en-us/answers/questions/5632446/bing-places-manual-verification-needed-for-busines">Microsoft Q&amp;A</a>，<a href="https://www.bing.com/forbusiness/contactSupport">联系支持</a>）。</p>
+<p>最多 100 张照片、最多 10 个类别等限制，见于 Whitespark 依据 Bing 帮助页面编写的指南（2025-10-30 更新）（<a href="https://whitespark.ca/guides/the-ultimate-guide-to-your-bing-places-listing/">Whitespark</a>，二手资料）。</p></section>
+<section class="qa"><h2>与 GBP 同步：确定由哪一方覆盖</h2><p>2023 年一位 Bing Places 支持专员的回答明确说明了同步方向（<a href="https://learn.microsoft.com/en-us/answers/questions/2289915/cannot-sync-my-webpages-with-google-as-bing-inform">Microsoft Q&amp;A</a>）。这是改版前的说明，细节可能已有变化，但其原则仍有参考价值。</p><div class="table-wrap"><table><thead><tr><th scope="col">项目</th><th scope="col">2023 年支持团队的说明</th><th scope="col">应对方法</th></tr></thead><tbody><tr><th scope="row">同步方式</th><td>手动，或自动（每周、每两周或每月）</td><td>如果营业时间会随季节或节假日变化，使用自动同步</td></tr><tr><th scope="row">覆盖方向</th><td>GBP 的数据会覆盖 Bing 上的商家信息。与 GBP 冲突的 Bing 端修改会变成 GBP 的值，无论哪个更新</td><td>同步期间修改 GBP，而不是 Bing</td></tr><tr><th scope="row">从 Bing 到 Google</th><td>无法从 Bing 后台更新 GBP</td><td>把 GBP 和你的网站当作两个“唯一可信来源”</td></tr><tr><th scope="row">发布所需时间</th><td>标准发布周期通常约为十天，每次验证或修改都会重新开始计算</td><td>紧急修改请集中一次完成，不要反复修改</td></tr><tr><th scope="row">地址</th><td>Bing 要求填写地址；没有地址的 GBP 商家信息（上门服务型商家）会被标记</td><td>上门服务型商家应确认地址的处理方式</td></tr></tbody></table></div><p>对开启同步的商家来说，Bing Places 是 GBP 的副本。发现错误时，先修改 GBP 和网站，再让同步把修改带到 Bing。不同步的话，就必须分别修改 GBP、Bing 和网站，信息也更容易出现偏差。</p></section>
+<section class="qa"><h2>发现重复信息或并非自己创建的商家信息时</h2><ol><li>在 Bing Maps 上按名称、电话和地址搜索，数一数你的商家共有几条信息。也要查找搬迁前的地址和旧名称。</li><li>Microsoft 员工表示，重复信息“likely created automatically from a different data source”（很可能是从其他数据源自动创建的）（<a href="https://learn.microsoft.com/en-us/answers/questions/5927863/duplicate-bing-places-listing-cannot-be-verified-o">Microsoft Q&amp;A，2026 年 6 月</a>）。</li><li>不要验证重复的那条。两条都归你所有，会更难判断哪条才是正确的。</li><li>向<a href="https://www.bing.com/forbusiness/contactSupport">支持团队</a>提交两条信息的详情（要保留的一条，例如与 Google 同步的那条，以及要删除的一条）、所有权证明、你的 GBP 链接和截图，请求合并或删除。员工表示，选择地区和语言后可以与支持团队在线聊天。</li><li>同时在 Bing Maps 的商家信息上通过“Suggest an edit”（建议编辑）或“Feedback”（反馈）报告重复。员工称这种方法“sometimes works”（有时有效），因此并无保证。</li></ol></section>
+<section class="qa"><h2>需要统一的内容：Bing Places、GBP 与网站对照</h2><p>AI 会读取多个来源。同一家商家在不同地方的描述不一致时，AI 给出哪个版本就可能摇摆不定。请让下列项目在三处完全一致。</p><div class="table-wrap"><table><thead><tr><th scope="col">项目</th><th scope="col">Bing Places 和 GBP</th><th scope="col">网站（正文和结构化数据）</th><th scope="col">常见不一致</th></tr></thead><tbody><tr><th scope="row">名称</th><td>招牌和登记上的正式名称，不添加宣传词语</td><td>公司简介页、页脚、结构化数据的 name</td><td>只有一处带分店名后缀、旧名称</td></tr><tr><th scope="row">地址</th><td>楼名和楼层相同，写法一致</td><td>正文中的地址和 PostalAddress</td><td>搬迁前的地址、楼名缩写</td></tr><tr><th scope="row">电话</th><td>接受预约的号码</td><td>正文用本地格式；结构化数据中用国际格式（+81-3-…、+1-…）也可以</td><td>总部和分店号码混用、已停用的号码</td></tr><tr><th scope="row">营业时间和休息日</th><td>常规营业时间，以及节假日和特别营业时间</td><td>营业时间表和 openingHoursSpecification</td><td>网站已更新，Bing 和 GBP 未更新</td></tr><tr><th scope="row">类别</th><td>主要业务类型放在首位</td><td>结构化数据的类型（Dentist、HairSalon 等）</td><td>导入后缺少类别</td></tr><tr><th scope="row">网站</th><td>首页或该门店的页面</td><td>规范网址（统一使用 https，统一带或不带 www）</td><td>已结束的活动页面、旧域名</td></tr></tbody></table></div><p>节假日和特别营业时间请参见<a href="/guide/business-hours-holidays-ai-search/">面向 AI 搜索的营业时间、节假日与临时休业</a>。有多家门店时，请参见<a href="/zh/guide/multi-location-business-ai-search/">多门店商家的 AI 搜索</a>。</p></section>
+<section class="qa"><h2>WordPress 操作步骤：让网站上的信息保持一致</h2><ol><li>在公司简介页或交通指南页上，用文字（而不是图片）写出名称、地址、电话和营业时间，措辞与你在 Bing Places 和 GBP 中填写的完全相同。</li><li>检查 SEO 插件或主题输出到结构化数据中的名称、地址和电话。免费版往往缺少地址和营业时间。参见<a href="/zh/guide/local-business-schema-seo-plugins/">SEO 插件与本地商家结构化数据</a>。</li><li>使用 Nurevo AEO（免费 WordPress 插件）时，在设置中填写名称、地址、电话和营业时间。地址以 schema.org 的 PostalAddress 发布；在日语网站上，日本电话号码会在结构化数据中以国际格式发布（你填写的号码本身不会被修改）。“Mon-Fri 9:00-18:00 / Sat 10:00-15:00”等常见营业时间写法会转换为 openingHoursSpecification；无法确定解读的营业时间会按原样发布，绝不猜测。SEO 插件已设置的值绝不会被覆盖，只会在同一个 @id 下补充缺少的信息。从 0.9.1 版起，它还能与 SEO SIMPLE PACK 和 VK All in One Expansion Unit 共存而不重复输出。<a href="https://wordpress.org/plugins/nurevo-webmcp/">在 WordPress.org 获取</a></li><li>确保 Bing 能读取你的网站：在“设置 &gt; 阅读”（Settings &gt; Reading）中，“Search engine visibility”（对搜索引擎的可见性）应保持未勾选，且 /robots.txt 不应屏蔽 Bingbot。</li><li>营业时间变更时，在同一天更新网站和 GBP（如未同步，也要更新 Bing Places），并记下日期。</li></ol></section>
+<section class="qa"><h2>设置完成后如何检查</h2><ol><li>在 Bing 上搜索你的商家名称，确认 Bing Maps 上的信息与网站上的名称、地址、电话和营业时间相同。</li><li>向 Copilot 提出“[区域]有没有[条件]的[业务类型]”和“[商家名称]的营业时间是几点？”这类问题，记录回答及其来源。回答每天都在变化，因此每月在同一天问同样的问题。</li><li>在 Bing Webmaster Tools 的 AI Performance 中，查看你的页面在 Microsoft 的 AI 中被用作来源的频率，以及对应的查询词。</li><li>在访问分析工具中，查看来自 copilot.microsoft.com 的访问。</li><li>ChatGPT 和 Perplexity 与 Bing 是分开运作的。请参照<a href="/zh/guide/measure-ai-visibility/">如何衡量 AI 可见度</a>，用一组固定问题记录它们的回答。Nurevo AEO 的免费 AI 检测会每月一次，针对已连接的网站，用根据你的业务类型和区域生成的三个问题询问 Perplexity。Pro 方案（每月 $99 起）会持续测量，目前支持 Perplexity（配置完成后也支持 ChatGPT）。</li></ol></section>
+<section class="qa"><h2>检查清单</h2><ol><li>已在 bing.com/forbusiness 上搜索现有商家信息</li><li>已从 GBP 导入，或已手动注册并完成验证</li><li>已确认设置了类别</li><li>已决定并记录是否同步，并明确 GBP 和网站是可信来源</li><li>已在 Bing Maps 上搜索重复信息、旧地址和旧名称</li><li>对重复信息，已请支持团队合并或删除，而不是去验证它</li><li>名称、地址、电话、营业时间、类别和网址在 Bing、GBP 和网站上一致</li><li>结构化数据的值与网站正文一致</li><li>已确认 robots.txt 没有屏蔽 Bingbot</li><li>已连同日期记录向 Copilot 提出的问题和回答</li></ol></section>
+<section class="qa"><h2>致代客户注册的代理公司和本地 SEO 公司</h2><p>首先确定商家信息归谁的 Microsoft 账户所有。用商家自己的账户创建，再把代理公司添加为管理员更安全：即使人员变动，商家也不会失去访问权限。</p>
+<p>在每月维护中加入一页 GBP、Bing Places 与网站的对照表，就能把 AI 搜索应对纳入你的报告。参见<a href="/zh/guide/agency-aeo-monthly-service/">代理公司如何把 AI 搜索应对做成月度服务</a>和<a href="https://nurevo.jp/partner/">合作伙伴页面</a>。</p></section>
+    <section class="qa"><h2>常见问题</h2><h3>Bing Places 免费吗？</h3><p>是的。Microsoft 将 Bing Places for Business 描述为用于在 Bing 和 Bing Maps 上创建和管理商家信息的免费服务。</p>
+<h3>已经有 Google Business Profile，还需要 Bing Places 吗？</h3><p>你的 GBP 不会自动出现在 Bing Places 中。请在 Bing Places 中使用“Import from Google”（从 Google 导入）据此创建商家信息。开启同步后，之后对 GBP 的修改也会同步到 Bing。</p>
+<h3>我在 Bing Places 中改了内容，结果又变回去了。</h3><p>据 Bing 支持专员 2023 年的解释，开启 GBP 同步后，冲突的字段会被 GBP 的值覆盖。同步期间请在 GBP 一侧修改。</p>
+<h3>修改需要多久才会显示？</h3><p>2023 年的一条支持回答称，发布周期通常约为十天，每次修改都会重新开始。2025 年，员工表示从 Google 导入可能需要最多两天。当前所需时间请以界面为准。</p>
+<h3>Copilot 会根据 Bing Places 的数据回答吗？</h3><p>Microsoft 已宣布将加深与 Copilot 的整合，但尚未公开现在的回答如何使用 Bing Places。让 Bing Places、GBP 和网站上的信息保持一致，才是可靠的准备。</p>
+<h3>所有国家的商家都能注册吗？</h3><p>我们能读到的 Microsoft 资料既没有列出支持的国家，也没有列出各国的验证方式。请在注册界面上确认能否选择你的国家和地址，以及会出现哪些验证方式。</p>
+<h3>我可以自己删除重复的商家信息吗？</h3><p>Microsoft 论坛的员工建议联系 Bing Places 支持团队。请提交要保留和要删除的商家信息详情以及所有权证明，请求合并或删除。不要验证重复的那条。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>先检查 AI 能否读懂你的商家网站</h2>
+    <p>免费检测无需注册，即可查看结构化数据（地址、电话、营业时间）、llms.txt 以及 AI 搜索爬虫访问的状态。在 WordPress 上，Nurevo AEO 可免费补齐缺失的部分。</p>
+    <a class="btn primary lg" href="/check?lang=zh">免费检测 AI 可读性</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">在 WordPress.org 获取 Nurevo AEO</a>
+  </aside>
+  <nav class="related" aria-label="相关指南"><h2>相关指南</h2><ul><li><a href="/zh/guide/multi-location-business-ai-search/">多门店企业的 AI 搜索：避免各门店的营业时间、地址和服务被混淆</a></li><li><a href="/zh/guide/local-business-schema-seo-plugins/">免费为 Yoast SEO、Rank Math 或 AIOSEO 添加本地商家结构化数据</a></li><li><a href="/zh/guide/measure-ai-visibility/">如何衡量 AI 可见度：问题的选择、提问次数与数据解读</a></li></ul></nav>
+  <nav class="langs" aria-label="其他语言"><h2>其他语言</h2><ul><li><a href="/ja/guide/bing-places-ai-search/" hreflang="ja" lang="ja">日本語</a></li><li><a href="/guide/bing-places-ai-search/" hreflang="en" lang="en">English</a></li><li><a href="/ar/guide/bing-places-ai-search/" hreflang="ar" lang="ar">العربية</a></li><li><a href="/bg/guide/bing-places-ai-search/" hreflang="bg" lang="bg">Български</a></li><li><a href="/ca/guide/bing-places-ai-search/" hreflang="ca" lang="ca">Català</a></li><li><a href="/cs/guide/bing-places-ai-search/" hreflang="cs" lang="cs">Čeština</a></li><li><a href="/da/guide/bing-places-ai-search/" hreflang="da" lang="da">Dansk</a></li><li><a href="/de/guide/bing-places-ai-search/" hreflang="de" lang="de">Deutsch</a></li><li><a href="/el/guide/bing-places-ai-search/" hreflang="el" lang="el">Ελληνικά</a></li><li><a href="/es/guide/bing-places-ai-search/" hreflang="es" lang="es">Español</a></li><li><a href="/et/guide/bing-places-ai-search/" hreflang="et" lang="et">Eesti</a></li><li><a href="/fa/guide/bing-places-ai-search/" hreflang="fa" lang="fa">فارسی</a></li><li><a href="/fi/guide/bing-places-ai-search/" hreflang="fi" lang="fi">Suomi</a></li><li><a href="/fr/guide/bing-places-ai-search/" hreflang="fr" lang="fr">Français</a></li><li><a href="/fy/guide/bing-places-ai-search/" hreflang="fy" lang="fy">Frysk</a></li><li><a href="/gl/guide/bing-places-ai-search/" hreflang="gl" lang="gl">Galego</a></li><li><a href="/gu/guide/bing-places-ai-search/" hreflang="gu" lang="gu">ગુજરાતી</a></li><li><a href="/he/guide/bing-places-ai-search/" hreflang="he" lang="he">עברית</a></li><li><a href="/hi/guide/bing-places-ai-search/" hreflang="hi" lang="hi">हिन्दी</a></li><li><a href="/hr/guide/bing-places-ai-search/" hreflang="hr" lang="hr">Hrvatski</a></li><li><a href="/hu/guide/bing-places-ai-search/" hreflang="hu" lang="hu">Magyar</a></li><li><a href="/id/guide/bing-places-ai-search/" hreflang="id" lang="id">Bahasa Indonesia</a></li><li><a href="/it/guide/bing-places-ai-search/" hreflang="it" lang="it">Italiano</a></li><li><a href="/ko/guide/bing-places-ai-search/" hreflang="ko" lang="ko">한국어</a></li><li><a href="/lo/guide/bing-places-ai-search/" hreflang="lo" lang="lo">ລາວ</a></li><li><a href="/nb/guide/bing-places-ai-search/" hreflang="nb" lang="nb">Norsk bokmål</a></li><li><a href="/nl/guide/bing-places-ai-search/" hreflang="nl" lang="nl">Nederlands</a></li><li><a href="/pl/guide/bing-places-ai-search/" hreflang="pl" lang="pl">Polski</a></li><li><a href="/pt-br/guide/bing-places-ai-search/" hreflang="pt-BR" lang="pt-BR">Português (Brasil)</a></li><li><a href="/pt-pt/guide/bing-places-ai-search/" hreflang="pt-PT" lang="pt-PT">Português (Portugal)</a></li><li><a href="/ro/guide/bing-places-ai-search/" hreflang="ro" lang="ro">Română</a></li><li><a href="/ru/guide/bing-places-ai-search/" hreflang="ru" lang="ru">Русский</a></li><li><a href="/sk/guide/bing-places-ai-search/" hreflang="sk" lang="sk">Slovenčina</a></li><li><a href="/sl/guide/bing-places-ai-search/" hreflang="sl" lang="sl">Slovenščina</a></li><li><a href="/sr/guide/bing-places-ai-search/" hreflang="sr" lang="sr">Српски</a></li><li><a href="/sv/guide/bing-places-ai-search/" hreflang="sv" lang="sv">Svenska</a></li><li><a href="/tr/guide/bing-places-ai-search/" hreflang="tr" lang="tr">Türkçe</a></li><li><a href="/uk/guide/bing-places-ai-search/" hreflang="uk" lang="uk">Українська</a></li><li><a href="/vi/guide/bing-places-ai-search/" hreflang="vi" lang="vi">Tiếng Việt</a></li><li><a href="/zh-tw/guide/bing-places-ai-search/" hreflang="zh-Hant" lang="zh-Hant">繁體中文</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Microsoft、Bing、Bing Places、Bing Maps、Copilot、Bing Webmaster Tools、Edge、Windows、Google、Google Business Profile、ChatGPT、OpenAI、Perplexity、SEO SIMPLE PACK、VK All in One Expansion Unit、WordPress 及其产品名称均为各自所有者的商标。Nurevo 与上述公司均无关联。</p><a href="/zh/">Nurevo AIO</a> ・ <a href="/en/terms/" hreflang="en">服务条款 (English)</a> ・ <a href="/en/privacy/" hreflang="en">隐私政策 (English)</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>

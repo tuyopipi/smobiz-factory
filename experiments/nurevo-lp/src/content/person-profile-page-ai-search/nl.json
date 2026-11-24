@@ -1,0 +1,377 @@
+{
+ "title": "Profielpagina’s voor oprichters, experts en auteurs voor AI | Nurevo",
+ "description": "Profielpagina’s waar AI op kan bouwen bij de vraag wie een bedrijf leidt of iets schreef: wat Google zegt, wat erop moet, Person- en ProfilePage-markup, WordPress.",
+ "h1": "Profielpagina’s voor oprichters, experts en auteurs voor AI-zoeken: zorg dat rollen, kwalificaties en expertise goed gelezen worden",
+ "lead": "Of een AI een vraag over een persoon goed beantwoordt, hangt ervan af of de profielpagina van die persoon in gewone tekst zegt wie ze is, waar ze werkt en waar ze expert in is. Zet naam, rol, organisatie, kwalificaties, expertisegebieden en loopbaan op één pagina; link ernaar vanuit de auteursregels van artikelen en vanuit de regel over de directie op uw Over-ons-pagina; en publiceer dezelfde waarden als gestructureerde Person-gegevens. Die drie stappen vormen de kern. Kwalificaties opblazen of auteurs verzinnen werkt averechts: Google noemt verzonnen makersprofielen misleiding.",
+ "intro": [
+  "Geschreven op 16 november 2026 (JST). Googles ‘Creating helpful, reliable, people-first content’ (nuttige, betrouwbare content maken waarbij mensen centraal staan; laatst bijgewerkt op 5 oktober 2026) en ‘Profile page (ProfilePage) structured data’ (gestructureerde gegevens voor profielpagina’s) zijn dezelfde dag gecontroleerd. Deze gids is voor bedrijven, winkels en praktijken met pagina’s over hun oprichter, directeur, behandelaars, docenten of schrijvers, en voor de bureaus die die sites bouwen. Het bedrijf zelf komt aan bod in [de Over-ons-pagina optimaliseren voor AI-zoeken](/guide/company-profile-page-ai-search).",
+  "AI-antwoorden veranderen per dag en per formulering. Deze stappen maken de informatie die AI leest juist; ze garanderen niet dat een persoon in een antwoord verschijnt of dat posities stijgen."
+ ],
+ "sections": [
+  {
+   "heading": "Waarvoor AI profielpagina’s gebruikt",
+   "paragraphs": [
+    "ChatGPT search, Perplexity en Googles AI Overviews lezen webpagina’s wanneer ze antwoorden en tonen die als bronnen. Bij een vraag over een persoon is de profielpagina op de site van de organisatie waar die persoon bij hoort het meest directe materiaal. Is er geen zo’n pagina, staat er alleen een foto en een naam, of verschilt de functietitel per pagina, dan kan de AI haar antwoord baseren op een oud artikel of op iemand anders met dezelfde naam.",
+    "Vragen over personen volgen meestal een paar patronen."
+   ],
+   "list": [
+    "‘Wie leidt Sample Ltd en wat is zijn of haar achtergrond?’ (de oprichter of CEO)",
+    "‘Waarin is de directeur van Sample Clinic gespecialiseerd?’ (kwalificaties en vakgebied van een expert)",
+    "‘Welke accountant in Leeds is goed in erfbelasting?’ (gevonden op expertise; geen naam in de vraag)",
+    "‘Wie heeft dit artikel geschreven, en kan ik het vertrouwen?’ (de auteur)",
+    "‘Hoe is Jane Doe verbonden met Sample Ltd?’ (rol, andere functies, eerdere banen)",
+    "‘Hoe boek ik een consult bij dr. Doe?’ (contact en boeken)"
+   ],
+   "after": [
+    "Bij een vraag als de derde, zonder naam, zoekt de AI eerst een praktijk of winkel en vult dan aan wie het werk zou doen. Een profielpagina is dus niet alleen materiaal als iemand naar een naam vraagt, maar ook als iemand op expertise zoekt."
+   ]
+  },
+  {
+   "heading": "Wat Google zelf zegt (voor zover we konden nagaan)",
+   "paragraphs": [
+    "Veel van wat er rondgaat over auteurschap en E-E-A-T is giswerk. Begin bij wat Google zelf schrijft."
+   ],
+   "table": {
+    "head": [
+     "Wat Google zegt",
+     "Bron",
+     "Wat deze gids eruit haalt"
+    ],
+    "rows": [
+     [
+      "Google moedigt nauwkeurige auteursinformatie, zoals auteursregels, sterk aan waar lezers die verwachten",
+      "[Nuttige content maken](https://developers.google.com/search/docs/fundamentals/creating-helpful-content)",
+      "Toon de naam van de auteur bij artikelen en link die naar een profiel"
+     ],
+     [
+      "Makersprofielen fabriceren met door AI gegenereerde portretfoto’s, verzonnen namen of valse kwalificaties is misleiding en een teken van een pagina van lage kwaliteit",
+      "Idem",
+      "Geen verzonnen auteurs en geen opgeblazen kwalificaties"
+     ],
+     [
+      "E-E-A-T zelf is geen specifieke rankingfactor; van de onderdelen telt vertrouwen het zwaarst; E-E-A-T weegt zwaarder bij onderwerpen over gezondheid, financiën en veiligheid (YMYL)",
+      "Idem",
+      "Zie E-E-A-T als een manier om betrouwbare feiten te publiceren, niet als een score"
+     ],
+     [
+      "ProfilePage is bedoeld voor pagina’s waarvan het hoofdonderwerp één persoon of organisatie is die aan de site verbonden is (auteurspagina’s, de over-mij-pagina van een blog, medewerkerspagina’s van een bedrijf); de homepage van een winkel valt daar niet onder",
+      "[Gestructureerde gegevens voor ProfilePage](https://developers.google.com/search/docs/appearance/structured-data/profile-page)",
+      "Gebruik het op pagina’s van oprichters, experts en auteurs, niet op de homepage van het bedrijf"
+     ],
+     [
+      "Verplicht bij ProfilePage: mainEntity (Person of Organization) en de name daarvan; dateModified hoort alleen wijzigingen door mensen weer te geven",
+      "Idem",
+      "Begin klein en gebruik de datum waarop iemand het profiel echt heeft bewerkt"
+     ],
+     [
+      "Er zijn geen extra eisen en geen speciale markup voor AI Overviews of AI Mode",
+      "[AI-functies en uw website](https://developers.google.com/search/docs/appearance/ai-features)",
+      "Markup is de antwoordsleutel bij de tekst; de tekst komt eerst"
+     ]
+    ]
+   },
+   "after": [
+    "De plekken waar ProfilePage-markup volgens Google kan verschijnen, zijn functies als Discussies en forums. Over een effect op AI-antwoorden zegt Google niets. Deze gids behandelt markup als een manier om dezelfde feiten als de tekst in machineleesbare vorm te publiceren."
+   ]
+  },
+  {
+   "heading": "Beweringen uit topartikelen, en hoe stevig ze zijn",
+   "paragraphs": [
+    "We lazen tien van de best scorende Japanse en Engelse artikelen voor zoekopdrachten als ‘author E-E-A-T AI search’. Veel ervan bevatten nuttige stappen en checklists, maar de beweringen hieronder konden we niet herleiden tot een primaire bron. Gebruik de tabel als leeswijzer."
+   ],
+   "table": {
+    "head": [
+     "Veelgehoorde bewering",
+     "Wat we vonden"
+    ],
+    "rows": [
+     [
+      "Percentages als ‘auteurskwalificaties bepalen 16% van het gewicht bij citatiebeslissingen van AI’",
+      "Geen van de artikelen linkt naar het oorspronkelijke onderzoek, en geen enkel artikel definieert wat dat ‘gewicht’ meet"
+     ],
+     [
+      "‘Person-schema is verplicht’",
+      "Google noemt verplichte eigenschappen alleen om ProfilePage in zijn zoekfuncties te laten verschijnen; nergens staat dat markup nodig is voor AI-antwoorden"
+     ],
+     [
+      "‘Hoe meer sameAs-links, hoe beter’",
+      "Geen bewijs. Veiliger is om alleen profielen te vermelden die de persoon zelf beheert en die duidelijk van hem of haar zijn"
+     ],
+     [
+      "‘Een medische of juridische beoordelaar toevoegen verhoogt uw E-E-A-T’",
+      "Geen bewijs voor een regel met alleen de naam van een beoordelaar, en Google noemt het verkeerd voorstellen van makers misleiding. Vermeld wat er is beoordeeld en wanneer"
+     ],
+     [
+      "‘De ideale lengte van een bio is N woorden’",
+      "Het getal verschilt per artikel en geen enkel artikel noemt een bron. Lengte doet er minder toe dan de vraag of de feiten erin staan"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Wiens pagina, en waar",
+   "paragraphs": [
+    "Deel de mensen op uw site in vier rollen in. Niet iedereen heeft een lange pagina nodig; begin met de mensen naar wie een AI het vaakst gevraagd zal worden."
+   ],
+   "table": {
+    "head": [
+     "Rol",
+     "Waar",
+     "Minimale inhoud",
+     "Hoe koppelen"
+    ],
+    "rows": [
+     [
+      "Oprichter of CEO",
+      "Binnen de Over-ons-pagina, of een pagina als /about/naam/",
+      "Naam, rol, loopbaan, wat hij of zij in het bedrijf doet",
+      "Link vanuit de regel over de directie op de Over-ons-pagina; laat in de markup founder of employee van het bedrijf naar dezelfde @id verwijzen"
+     ],
+     [
+      "Expert (directeur, behandelaar, docent)",
+      "Een teamoverzicht plus één pagina per persoon",
+      "Kwalificaties, registratienummer, vakgebied, welke diensten hij of zij verzorgt",
+      "Link vanuit de regel ‘wie u helpt’ op dienstpagina’s"
+     ],
+     [
+      "Auteur van artikelen",
+      "Het auteursarchief van WordPress of een gewone pagina",
+      "Naam, organisatie, onderwerpen, lijst met artikelen",
+      "Link vanuit de auteursregel"
+     ],
+     [
+      "Externe beoordelaar",
+      "Een beoordelaarspagina met een link naar de eigen organisatie",
+      "Naam, kwalificatie, organisatie, wat er beoordeeld is",
+      "In het artikel: ‘Beoordeeld door Naam (kwalificatie), datum’, gelinkt naar de pagina"
+     ]
+    ]
+   },
+   "after": [
+    "Komt dezelfde persoon voor als oprichter, auteur en beoordelaar, houd dan één pagina aan en schrijf naam en titel overal hetzelfde. Een AI kan twee spellingen voor twee personen aanzien."
+   ]
+  },
+  {
+   "heading": "Wat erop moet, en de bijbehorende gestructureerde gegevens",
+   "paragraphs": [
+    "De tabel toont wat een profielpagina moet bevatten, welke fouten AI-antwoorden vaak maken en welke schema.org-eigenschappen erbij horen, gekozen uit de definities van Person en ProfilePage (typen gecontroleerd in schema-dts 2.1.0)."
+   ],
+   "table": {
+    "head": [
+     "Onderdeel",
+     "Hoe schrijven",
+     "Typische AI-fout",
+     "Gestructureerde gegevens"
+    ],
+    "rows": [
+     [
+      "Naam",
+      "Eén spelling op de hele site; vermeld andere schriften of een geromaniseerde vorm één keer",
+      "Verward met iemand met dezelfde naam",
+      "name, alternateName"
+     ],
+     [
+      "Rol en organisatie",
+      "Altijd met de bedrijfsnaam, bijv. ‘Oprichter, Sample Ltd’",
+      "Voorgesteld met een vroegere functie of een nevenfunctie",
+      "jobTitle, worksFor"
+     ],
+     [
+      "Kwalificaties",
+      "Volledige officiële naam, registratienummer (als dat openbaar mag), uitgevende instantie, jaar",
+      "Het soort kwalificatie wordt verward",
+      "hasCredential (EducationalOccupationalCredential)"
+     ],
+     [
+      "Expertisegebieden",
+      "Drie tot vijf concrete gebieden, niet ‘alles’",
+      "Aanbevolen voor zaken buiten het vakgebied",
+      "knowsAbout"
+     ],
+     [
+      "Loopbaan",
+      "Eén regel per jaar en gebeurtenis: opleiding, eerdere banen, wanneer gestart",
+      "Data door elkaar",
+      "Tekst (alumniOf voor opleidingen)"
+     ],
+     [
+      "Resultaten",
+      "Cijfers met datum en telwijze",
+      "Oude of opgeblazen cijfers worden geciteerd",
+      "Alleen tekst"
+     ],
+     [
+      "Prijzen en media",
+      "Naam, jaar, organisator; link waar mogelijk",
+      "Prijzen verward met vermeldingen",
+      "award (alleen prijzen)"
+     ],
+     [
+      "Andere profielen",
+      "Alleen accounts die de persoon zelf beheert",
+      "Gekoppeld aan imitators of naamgenoten",
+      "sameAs"
+     ],
+     [
+      "Foto",
+      "Een echte foto; geen door AI gegenereerde portretten",
+      "—",
+      "image"
+     ],
+     [
+      "Artikelen en diensten",
+      "Een lijst of links",
+      "Onduidelijk in welk vakgebied de persoon werkt",
+      "Tekst"
+     ],
+     [
+      "Laatst bijgewerkt",
+      "Onderaan de pagina; titels direct aanpassen zodra ze veranderen",
+      "Voorgesteld met een vroegere rol",
+      "dateModified (ProfilePage)"
+     ]
+    ]
+   },
+   "after": [
+    "schema.org omschrijft knowsAbout als ‘suggesting possible expertise but not implying it’ (wijst op mogelijke expertise zonder die te impliceren) ([schema.org: knowsAbout](https://schema.org/knowsAbout)). Gebieden opsommen in markup bewijst op zichzelf niets, dus onderbouw ze in de tekst met behandelde zaken en geschreven artikelen."
+   ]
+  },
+  {
+   "heading": "De pagina schrijven: zeg in de eerste zin wie de persoon is",
+   "list": [
+    "Zet naam, rol, organisatie en vakgebied in de eerste zin, bijv. ‘Jane Doe is oprichter van Sample Ltd in Leeds en chartered accountant, gespecialiseerd in jaarrekeningen voor kleine bedrijven en erfbelasting.’",
+    "Gebruik de tweede zin voor feiten die haar van anderen onderscheiden: het jaar waarin ze zich kwalificeerde, de beroepsorganisaties waarbij ze is aangesloten, het gebied dat ze bedient.",
+    "Schrijf kwalificaties voluit. Is een kwalificatie te controleren in een openbaar register, dan kunt u dat vermelden, zodat lezers het kunnen nagaan.",
+    "Zet de loopbaan in een tabel of tijdlijn, niet in een afbeelding of pdf.",
+    "Vervang beweringen die niemand kan vergelijken, zoals ‘de nummer één van de branche’, door feiten: jaren, aantallen, vakgebieden.",
+    "In gereguleerde sectoren zoals de zorg en de advocatuur gelden regels voor hoe titels en kwalificaties mogen worden aangeprezen. Zie voor de zorg ook [AI-zoeken voor klinieken](/guide/medical-clinic-ai-search)."
+   ]
+  },
+  {
+   "heading": "Auteursregels en beoordelaars",
+   "paragraphs": [
+    "Toon de naam van de auteur aan het begin of einde van elk artikel en link die naar de profielpagina. Een teamauteursregel is prima, maar dan moet de teampagina zeggen wie er schrijft en hoe.",
+    "Controleert een externe expert de inhoud, noem dat dan een beoordeling, los van het auteurschap, en vermeld wat er is beoordeeld (bijvoorbeeld ‘de belastingberekeningen’) en wanneer. schema.org heeft [reviewedBy](https://schema.org/reviewedBy) voor mensen die een pagina op juistheid hebben beoordeeld, een andere eigenschap dan author. Zet auteur en beoordelaar niet samen onder author.",
+    "Google raadt aan lezers te vertellen hoe content tot stand kwam, ook of er automatisering of AI is gebruikt. Is een artikel met AI opgesteld, zeg dat dan waar lezers het verwachten, samen met het feit dat een mens het heeft gecontroleerd."
+   ]
+  },
+  {
+   "heading": "Markupvoorbeeld: ProfilePage en Person",
+   "paragraphs": [
+    "Een minimaal voorbeeld. Elke waarde moet ook in de tekst staan. Laat worksFor naar dezelfde @id verwijzen als uw bedrijfsnode, dan worden persoon en bedrijf als één paar gelezen."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"ProfilePage\",\n  \"dateModified\": \"2026-11-16\",\n  \"mainEntity\": {\n    \"@type\": \"Person\",\n    \"@id\": \"https://example.com/about/jane-doe/#person\",\n    \"name\": \"Jane Doe\",\n    \"jobTitle\": \"Founder and Chartered Accountant\",\n    \"worksFor\": { \"@id\": \"https://example.com/#organization\" },\n    \"description\": \"Chartered accountant specialising in small-business accounts and inheritance tax in Leeds.\",\n    \"knowsAbout\": [\"Inheritance tax\", \"Small-business accounting\"],\n    \"hasCredential\": {\n      \"@type\": \"EducationalOccupationalCredential\",\n      \"name\": \"Chartered Accountant\",\n      \"credentialCategory\": \"Professional qualification\"\n    },\n    \"image\": \"https://example.com/images/jane-doe.jpg\",\n    \"sameAs\": [\"https://www.linkedin.com/in/example\"]\n  }\n}\n</script>",
+   "after": [
+    "Het kwalificatietype [EducationalOccupationalCredential](https://schema.org/EducationalOccupationalCredential) kan ook het soort kwalificatie (credentialCategory) en de erkennende instantie (recognizedBy) bevatten. Zet in sameAs alleen profielen die de persoon zelf beheert en die duidelijk van hem of haar zijn."
+   ]
+  },
+  {
+   "heading": "In WordPress (met Nurevo AEO)",
+   "paragraphs": [
+    "Met [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) worden personen als volgt verwerkt."
+   ],
+   "list": [
+    "Stel eerst bij Gebruikers > Profiel (Users > Profile) voor elke schrijver ‘Openbaar weergeven als’ (Display name publicly as) in op de echte naam (of de naam die de site gebruikt). Wanneer Nurevo zijn eigen graph publiceert, worden berichten BlogPosting met de auteur als Person met die weergavenaam. Pagina’s krijgen geen auteur.",
+    "Met Yoast SEO, Rank Math, All in One SEO of Slim SEO blijven het Article en de auteur precies zoals die plugin ze publiceert; Nurevo verandert ze niet. Stel auteurs in bij de gebruikersinstellingen van die plugin. Ook de auteur in het Article van VK All in One Expansion Unit wordt niet gewijzigd.",
+    "Gebruik de ontwikkelaarsfilters hieronder om de oprichter aan de markup van het bedrijf toe te voegen, of een ProfilePage aan een profielpagina (Nurevo heeft hier geen invoervelden voor). Met een SEO-plugin blijven de waarden van de bedrijfsnode uit die plugin voorgaan.",
+    "Controleer in de paginabron dat uw SEO-plugin niet al een ProfilePage voor die auteur publiceert, zodat er niets dubbel staat.",
+    "Open /llms.txt en controleer of de profielpagina erin staat. llms.txt toont de 30 meest recent gewijzigde pagina’s en berichten; ontbreekt hij, voeg dan een regel toe met het filter webmcp_canary_llms_txt_lines."
+   ],
+   "code": "// 1) Voeg de oprichter toe aan de bedrijfsnode (alleen iemand die uw Over-ons-pagina noemt)\nadd_filter('webmcp_canary_business_node', function ($org, $settings) {\n    $org['founder'] = array(\n        '@type' => 'Person',\n        '@id'   => home_url('/about/jane-doe/#person'),\n        'name'  => 'Jane Doe',\n    );\n    return $org;\n}, 10, 2);\n\n// 2) Voeg alleen op de profielpagina een ProfilePage toe (slug jane-doe)\nadd_filter('webmcp_canary_schema_graph', function (array $bundle) {\n    if (!is_page('jane-doe')) {\n        return $bundle;\n    }\n    $bundle['extra'][] = array(\n        '@type'      => 'ProfilePage',\n        'url'        => get_permalink(),\n        'mainEntity' => array(\n            '@type'     => 'Person',\n            '@id'       => home_url('/about/jane-doe/#person'),\n            'name'      => 'Jane Doe',\n            'jobTitle'  => 'Founder and Chartered Accountant',\n            'worksFor'  => array('@id' => $bundle['org_id']),\n            'knowsAbout'=> array('Inheritance tax', 'Small-business accounting'),\n        ),\n    );\n    return $bundle;\n});",
+   "after": [
+    "Op andere platforms zijn de controles hetzelfde. De [gratis check](/check) vraagt geen aanmelding: vul een URL in en zie de staat van gestructureerde gegevens, llms.txt en de toegang voor AI-crawlers."
+   ]
+  },
+  {
+   "heading": "Zo controleert u het: vragen met de naam van de persoon",
+   "paragraphs": [
+    "Controleer profielpagina’s met vragen waarin de naam van de persoon staat. Stel dezelfde vraag op verschillende dagen aan dezelfde AI en noteer de antwoorden; oordeel niet op basis van één antwoord."
+   ],
+   "table": {
+    "head": [
+     "Wat noteren",
+     "Voorbeeld"
+    ],
+    "rows": [
+     [
+      "Datum, AI, vraag",
+      "16 nov., Perplexity, ‘Wat is de achtergrond van Jane Doe, oprichter van Sample Ltd?’"
+     ],
+     [
+      "Feiten in het antwoord",
+      "Rol, kwalificaties, vakgebied en loopbaan: per onderdeel goed of fout"
+     ],
+     [
+      "Bronnen",
+      "Werd uw profielpagina geciteerd, of de pagina van iemand anders?"
+     ],
+     [
+      "Verwarring",
+      "Een naamgenoot of vroegere titel in het antwoord?"
+     ]
+    ]
+   },
+   "after": [
+    "De gratis AI-check van Nurevo (eenmaal per maand op gekoppelde Free- en Standard-sites) stelt vragen op basis van uw branche en gebied, nooit op basis van een naam, dus vragen over personen controleert u handmatig met de tabel hierboven. De zichtbaarheidsmeting van Pro (bèta) dekt momenteel Perplexity. De volledige methode staat in [AI-zichtbaarheid meten](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checklist voor profielpagina’s",
+   "list": [
+    "De eerste zin bevat naam, rol, organisatie en vakgebied.",
+    "Naam en titel zijn op de Over-ons-pagina, in auteursregels en op teampagina’s op dezelfde manier geschreven.",
+    "Kwalificaties zijn voluit geschreven, met het jaar of de uitgevende instantie.",
+    "Expertisegebieden zijn concreet en onderbouwd met zaken of artikelen.",
+    "Cijfers hebben een datum en vermelden hoe ze zijn geteld.",
+    "Geen verzonnen personen, door AI gegenereerde portretten of opgeblazen kwalificaties.",
+    "Auteursregels linken naar het profiel; beoordelingen staan los van het auteurschap, met reikwijdte en datum.",
+    "ProfilePage- en Person-markup komen overeen met de tekst en staan er niet dubbel in.",
+    "sameAs vermeldt alleen accounts die de persoon zelf beheert.",
+    "Titels worden direct aangepast zodra ze veranderen, en de datum van laatste wijziging volgt.",
+    "U hebt gecontroleerd met vragen waarin de naam staat, op verschillende dagen, en de resultaten vastgelegd."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Heeft een klein bedrijf een pagina voor de oprichter nodig?",
+   "a": "Vaak zijn een paar regels met naam, rol en achtergrond op de Over-ons-pagina genoeg. Schrijft de oprichter artikelen, geeft hij of zij lezingen of interviews, of zoeken mensen op de naam, dan houdt een aparte pagina de feiten op één plek bij elkaar."
+  },
+  {
+   "q": "Gebruikt AI artikelen van mensen zonder formele kwalificaties minder vaak?",
+   "a": "Google zegt niet dat het ontbreken van een kwalificatie op zichzelf een probleem is. Wat volgens Google het zwaarst weegt, is vertrouwen, en echte ervaring (hoeveel jaar, wat voor werk) als feit opgeschreven is goed materiaal. Bij onderwerpen over gezondheid of geld kunt u de inhoud ook door een expert laten beoordelen en dat vermelden."
+  },
+  {
+   "q": "Mogen we onder een pseudoniem publiceren?",
+   "a": "Ja, zolang u er geen verzonnen achtergrond of kwalificaties aan hangt en de pagina van het pseudoniem vermeldt in welke hoedanigheid de persoon schrijft. Google noemt verzonnen makersprofielen misleiding."
+  },
+  {
+   "q": "Wat komt eerst, de auteurspagina of de ProfilePage-markup?",
+   "a": "De pagina. Markup zet dezelfde feiten als de tekst in machineleesbare vorm; zet geen feiten in markup die niet in de tekst staan."
+  },
+  {
+   "q": "Hoort een beoordelaar onder author?",
+   "a": "Houd auteurs en beoordelaars gescheiden. schema.org heeft reviewedBy voor mensen die een pagina op juistheid hebben gecontroleerd. Schrijf ook in de tekst ‘geschreven door’ en ‘beoordeeld door’ apart."
+  },
+  {
+   "q": "We hebben een nieuwe CEO. Wat moeten we bijwerken?",
+   "a": "De Over-ons-pagina, de profielpagina van de CEO, founder of employee in de markup, auteursregels en profielen elders (sociale accounts, branchegidsen). Bewaar de pagina van de vorige CEO met rol en periode, of verwijs die door naar de nieuwe pagina. Er is geen vaste termijn waarbinnen AI-antwoorden bijgewerkt worden."
+  },
+  {
+   "q": "Als we deze stappen volgen, beschrijft AI onze mensen dan altijd correct?",
+   "a": "Dat valt niet te garanderen; AI-antwoorden veranderen per dag en per formulering. Deze stappen maken de informatie die AI leest juist en consistent, zodat verwarring minder waarschijnlijk wordt."
+  }
+ ],
+ "relatedHeading": "Gerelateerde gidsen",
+ "cta": {
+  "heading": "Zie hoe AI de mensen en het bedrijf op uw site leest",
+  "body": "De gratis check vraagt geen aanmelding: vul uw URL in en zie de staat van gestructureerde gegevens, llms.txt en de toegang voor AI-crawlers. Op WordPress publiceert de gratis plugin de basisgegevens van uw bedrijf en de auteurs van uw artikelen als gestructureerde gegevens.",
+  "label": "Start de gratis AI-leesbaarheidscheck",
+  "href": "/check",
+  "secondary": {
+   "label": "Probeer de gratis WordPress-plugin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT is een handelsmerk van OpenAI, Perplexity van Perplexity AI en Google van Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, VK All in One Expansion Unit, LinkedIn en WordPress zijn handelsmerken van hun respectieve eigenaren. Nurevo is niet gelieerd aan en wordt niet ondersteund door een van deze bedrijven."
+}

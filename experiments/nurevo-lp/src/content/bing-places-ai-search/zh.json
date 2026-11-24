@@ -1,0 +1,300 @@
+{
+  "title": "Bing Places 设置：让 Copilot 读到一致的店铺信息 | Nurevo",
+  "description": "Bing Places 管理你在 Bing 和 Bing Maps 上的商家信息。本文讲解从 Google 导入与同步机制、重复信息的处理，以及如何与网站的结构化数据保持一致。",
+  "h1": "面向 Copilot 和 Bing 的 Bing Places for Business 设置：从 Google 导入、同步的覆盖方向与重复信息处理",
+  "lead": "Bing Places for Business 是 Microsoft 提供的免费服务，用于管理在 Bing 和 Bing Maps 上显示的商家信息。如果你已经有 Google Business Profile（GBP），导入是最快的方式；开启同步后，GBP 会覆盖 Bing，因此需要编辑的地方只有 GBP 和你的网站两处。Microsoft 表示正在加深与 Copilot 的整合，但尚未公开现在的 Copilot 回答如何使用 Bing Places。正因如此，最可靠的准备就是让 Bing Places、GBP 和网站上的名称、地址、电话和营业时间完全一致。",
+  "intro": [
+    "本文撰写于 2026 年 11 月 24 日（日本时间）。当天我们通过 Microsoft 官方博客和 Microsoft Q&A 上 Microsoft 员工的回答核对了 Bing Places 的行为。当天我们无法读取 Bing Places 本身的界面和帮助页面，因此界面名称和步骤可能已有变化。注册时请以界面实际显示为准。",
+    "任何商家信息都无法保证 Copilot 或其他 AI 会展示你的商家或提高其排名。AI 的回答每天都在变化。本指南讲的是如何整理好你的信息，让 AI 能正确描述你的商家。"
+  ],
+  "sections": [
+    {
+      "heading": "Bing Places 是什么，2025 年 10 月的改版改变了什么",
+      "paragraphs": [
+        "2025 年 10 月 3 日，Microsoft 宣布推出改版后的 Bing Places for Business（[Bing Search Blog](https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research)）。这是一项免费服务，用于创建和管理显示在 Bing 搜索结果和 Bing Maps 上的商家信息。"
+      ],
+      "table": {
+        "head": [
+          "变化内容",
+          "详情"
+        ],
+        "rows": [
+          [
+            "网址（URL）",
+            "从 bingplaces.com 迁移到 [bing.com/forbusiness](https://www.bing.com/forbusiness)。现有商家信息已自动迁移到新账户；使用旧凭据登录会自动跳转"
+          ],
+          [
+            "从 Google 导入",
+            "更快、更可靠，并保留名称、营业时间和联系方式"
+          ],
+          [
+            "Recommendation Tool（推荐工具）",
+            "建议添加照片、网站链接、营业时间和社交媒体链接；餐厅还会建议添加菜单或在线点餐链接"
+          ],
+          [
+            "多门店",
+            "批量编辑和实时查看商家信息状态"
+          ],
+          [
+            "后续计划",
+            "将继续投入，加深与 Bing Maps 和 Copilot 的整合（以计划形式表述）"
+          ]
+        ],
+        "caption": "依据 Bing Search Blog（2025-10-03）和 Search Engine Journal（同日）。"
+      },
+      "after": [
+        "2026 年 2 月 Bing 推出面向 AI 引用的 AI Performance 时，也建议本地商家保持 Bing Places 信息最新（[Bing Webmaster Blog](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview)）。参见[如何解读 Bing Webmaster Tools 的 AI Performance 报告](/guide/bing-webmaster-ai-performance)。"
+      ]
+    },
+    {
+      "heading": "Copilot 会使用 Bing Places 吗？已知与未知",
+      "paragraphs": [
+        "许多文章称 Copilot 会根据 Bing Places 的数据回答本地问题。但我们阅读的 Microsoft 资料中，没有任何一份说明过这样的机制。下面把已知的和未知的分开列出。"
+      ],
+      "table": {
+        "head": [
+          "项目",
+          "状态",
+          "来源"
+        ],
+        "rows": [
+          [
+            "Bing Places 的数据会显示在 Bing 搜索结果和 Bing Maps 上",
+            "Microsoft 有说明",
+            "[Bing Search Blog](https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research)"
+          ],
+          [
+            "加深与 Copilot 的整合",
+            "以计划形式公布",
+            "[Bing Search Blog](https://blogs.bing.com/search/October-2025/Introducing-the-New-Bing-Places-for-Business-Built-for-Business-Owners,-Powered-by-Research)"
+          ],
+          [
+            "本地商家应保持 Bing Places 信息准确",
+            "Microsoft 在 AI Performance 发布文章中建议",
+            "[Bing Webmaster Blog](https://blogs.bing.com/webmaster/February-2026/Introducing-AI-Performance-in-Bing-Webmaster-Tools-Public-Preview)"
+          ],
+          [
+            "现在的 Copilot 回答使用 Bing Places 的哪些字段",
+            "未公开",
+            "—"
+          ],
+          [
+            "Bing Places 也会显示在 Windows 搜索或 Edge 中",
+            "部分代理公司的文章如此声称；Microsoft 资料中未找到",
+            "—"
+          ]
+        ]
+      },
+      "after": [
+        "既然机制未公开，与其押注某个字段，不如让基本信息在所有出现的地方保持一致。Copilot 回答时也会以网页为来源，所以你的网站同样重要。"
+      ]
+    },
+    {
+      "heading": "设置：查找现有信息、导入、验证",
+      "list": [
+        "用 Microsoft 账户登录 [bing.com/forbusiness](https://www.bing.com/forbusiness)。",
+        "先搜索你的商家。Bing 可能已根据公开数据自动创建了商家信息，在此基础上再新建一条就会产生重复。",
+        "如果使用 GBP，选择“Import from Google”（从 Google 导入），用 GBP 账户登录并选择门店。论坛上一位 Microsoft 员工回答称，导入“could take up to two days”（可能需要最多两天）（[Microsoft Q&A，2025 年 11 月](https://learn.microsoft.com/en-us/answers/questions/5632446/bing-places-manual-verification-needed-for-busines)）。",
+        "导入后检查类别。2023 年的一条支持回答称，类别不会被导入，需要手动设置（[Microsoft Q&A](https://learn.microsoft.com/en-us/answers/questions/2289915/cannot-sync-my-webpages-with-google-as-bing-inform)）。2025 年改版后可能已有变化，请在界面上确认。",
+        "没有 GBP 时，手动填写名称、地址、电话、类别、营业时间和网站，并用系统提供的方式验证所有权。会出现哪些验证方式（电话、电子邮件、邮寄明信片等）取决于国家和商家信息。",
+        "逐条处理 Recommendation Tool 的建议（照片、营业时间、社交媒体链接），最后确认所有内容与你的网站一致。"
+      ],
+      "after": [
+        "我们能读到的资料没有说明是否支持所有国家的地址，也没有说明各地提供哪些验证方式。在法国，有一位店主反映唯一的选项是邮寄明信片，但明信片一直没有寄到；Microsoft 员工建议尝试从 Google 导入，若仍不行则联系支持团队——只有支持团队能手动发布商家信息（[Microsoft Q&A](https://learn.microsoft.com/en-us/answers/questions/5632446/bing-places-manual-verification-needed-for-busines)，[联系支持](https://www.bing.com/forbusiness/contactSupport)）。",
+        "最多 100 张照片、最多 10 个类别等限制，见于 Whitespark 依据 Bing 帮助页面编写的指南（2025-10-30 更新）（[Whitespark](https://whitespark.ca/guides/the-ultimate-guide-to-your-bing-places-listing/)，二手资料）。"
+      ]
+    },
+    {
+      "heading": "与 GBP 同步：确定由哪一方覆盖",
+      "paragraphs": [
+        "2023 年一位 Bing Places 支持专员的回答明确说明了同步方向（[Microsoft Q&A](https://learn.microsoft.com/en-us/answers/questions/2289915/cannot-sync-my-webpages-with-google-as-bing-inform)）。这是改版前的说明，细节可能已有变化，但其原则仍有参考价值。"
+      ],
+      "table": {
+        "head": [
+          "项目",
+          "2023 年支持团队的说明",
+          "应对方法"
+        ],
+        "rows": [
+          [
+            "同步方式",
+            "手动，或自动（每周、每两周或每月）",
+            "如果营业时间会随季节或节假日变化，使用自动同步"
+          ],
+          [
+            "覆盖方向",
+            "GBP 的数据会覆盖 Bing 上的商家信息。与 GBP 冲突的 Bing 端修改会变成 GBP 的值，无论哪个更新",
+            "同步期间修改 GBP，而不是 Bing"
+          ],
+          [
+            "从 Bing 到 Google",
+            "无法从 Bing 后台更新 GBP",
+            "把 GBP 和你的网站当作两个“唯一可信来源”"
+          ],
+          [
+            "发布所需时间",
+            "标准发布周期通常约为十天，每次验证或修改都会重新开始计算",
+            "紧急修改请集中一次完成，不要反复修改"
+          ],
+          [
+            "地址",
+            "Bing 要求填写地址；没有地址的 GBP 商家信息（上门服务型商家）会被标记",
+            "上门服务型商家应确认地址的处理方式"
+          ]
+        ]
+      },
+      "after": [
+        "对开启同步的商家来说，Bing Places 是 GBP 的副本。发现错误时，先修改 GBP 和网站，再让同步把修改带到 Bing。不同步的话，就必须分别修改 GBP、Bing 和网站，信息也更容易出现偏差。"
+      ]
+    },
+    {
+      "heading": "发现重复信息或并非自己创建的商家信息时",
+      "list": [
+        "在 Bing Maps 上按名称、电话和地址搜索，数一数你的商家共有几条信息。也要查找搬迁前的地址和旧名称。",
+        "Microsoft 员工表示，重复信息“likely created automatically from a different data source”（很可能是从其他数据源自动创建的）（[Microsoft Q&A，2026 年 6 月](https://learn.microsoft.com/en-us/answers/questions/5927863/duplicate-bing-places-listing-cannot-be-verified-o)）。",
+        "不要验证重复的那条。两条都归你所有，会更难判断哪条才是正确的。",
+        "向[支持团队](https://www.bing.com/forbusiness/contactSupport)提交两条信息的详情（要保留的一条，例如与 Google 同步的那条，以及要删除的一条）、所有权证明、你的 GBP 链接和截图，请求合并或删除。员工表示，选择地区和语言后可以与支持团队在线聊天。",
+        "同时在 Bing Maps 的商家信息上通过“Suggest an edit”（建议编辑）或“Feedback”（反馈）报告重复。员工称这种方法“sometimes works”（有时有效），因此并无保证。"
+      ]
+    },
+    {
+      "heading": "需要统一的内容：Bing Places、GBP 与网站对照",
+      "paragraphs": [
+        "AI 会读取多个来源。同一家商家在不同地方的描述不一致时，AI 给出哪个版本就可能摇摆不定。请让下列项目在三处完全一致。"
+      ],
+      "table": {
+        "head": [
+          "项目",
+          "Bing Places 和 GBP",
+          "网站（正文和结构化数据）",
+          "常见不一致"
+        ],
+        "rows": [
+          [
+            "名称",
+            "招牌和登记上的正式名称，不添加宣传词语",
+            "公司简介页、页脚、结构化数据的 name",
+            "只有一处带分店名后缀、旧名称"
+          ],
+          [
+            "地址",
+            "楼名和楼层相同，写法一致",
+            "正文中的地址和 PostalAddress",
+            "搬迁前的地址、楼名缩写"
+          ],
+          [
+            "电话",
+            "接受预约的号码",
+            "正文用本地格式；结构化数据中用国际格式（+81-3-…、+1-…）也可以",
+            "总部和分店号码混用、已停用的号码"
+          ],
+          [
+            "营业时间和休息日",
+            "常规营业时间，以及节假日和特别营业时间",
+            "营业时间表和 openingHoursSpecification",
+            "网站已更新，Bing 和 GBP 未更新"
+          ],
+          [
+            "类别",
+            "主要业务类型放在首位",
+            "结构化数据的类型（Dentist、HairSalon 等）",
+            "导入后缺少类别"
+          ],
+          [
+            "网站",
+            "首页或该门店的页面",
+            "规范网址（统一使用 https，统一带或不带 www）",
+            "已结束的活动页面、旧域名"
+          ]
+        ]
+      },
+      "after": [
+        "节假日和特别营业时间请参见[面向 AI 搜索的营业时间、节假日与临时休业](/guide/business-hours-holidays-ai-search)。有多家门店时，请参见[多门店商家的 AI 搜索](/guide/multi-location-business-ai-search)。"
+      ]
+    },
+    {
+      "heading": "WordPress 操作步骤：让网站上的信息保持一致",
+      "list": [
+        "在公司简介页或交通指南页上，用文字（而不是图片）写出名称、地址、电话和营业时间，措辞与你在 Bing Places 和 GBP 中填写的完全相同。",
+        "检查 SEO 插件或主题输出到结构化数据中的名称、地址和电话。免费版往往缺少地址和营业时间。参见[SEO 插件与本地商家结构化数据](/guide/local-business-schema-seo-plugins)。",
+        "使用 Nurevo AEO（免费 WordPress 插件）时，在设置中填写名称、地址、电话和营业时间。地址以 schema.org 的 PostalAddress 发布；在日语网站上，日本电话号码会在结构化数据中以国际格式发布（你填写的号码本身不会被修改）。“Mon-Fri 9:00-18:00 / Sat 10:00-15:00”等常见营业时间写法会转换为 openingHoursSpecification；无法确定解读的营业时间会按原样发布，绝不猜测。SEO 插件已设置的值绝不会被覆盖，只会在同一个 @id 下补充缺少的信息。从 0.9.1 版起，它还能与 SEO SIMPLE PACK 和 VK All in One Expansion Unit 共存而不重复输出。[在 WordPress.org 获取](https://wordpress.org/plugins/nurevo-webmcp/)",
+        "确保 Bing 能读取你的网站：在“设置 > 阅读”（Settings > Reading）中，“Search engine visibility”（对搜索引擎的可见性）应保持未勾选，且 /robots.txt 不应屏蔽 Bingbot。",
+        "营业时间变更时，在同一天更新网站和 GBP（如未同步，也要更新 Bing Places），并记下日期。"
+      ]
+    },
+    {
+      "heading": "设置完成后如何检查",
+      "list": [
+        "在 Bing 上搜索你的商家名称，确认 Bing Maps 上的信息与网站上的名称、地址、电话和营业时间相同。",
+        "向 Copilot 提出“[区域]有没有[条件]的[业务类型]”和“[商家名称]的营业时间是几点？”这类问题，记录回答及其来源。回答每天都在变化，因此每月在同一天问同样的问题。",
+        "在 Bing Webmaster Tools 的 AI Performance 中，查看你的页面在 Microsoft 的 AI 中被用作来源的频率，以及对应的查询词。",
+        "在访问分析工具中，查看来自 copilot.microsoft.com 的访问。",
+        "ChatGPT 和 Perplexity 与 Bing 是分开运作的。请参照[如何衡量 AI 可见度](/guide/measure-ai-visibility)，用一组固定问题记录它们的回答。Nurevo AEO 的免费 AI 检测会每月一次，针对已连接的网站，用根据你的业务类型和区域生成的三个问题询问 Perplexity。Pro 方案（每月 $99 起）会持续测量，目前支持 Perplexity（配置完成后也支持 ChatGPT）。"
+      ]
+    },
+    {
+      "heading": "检查清单",
+      "list": [
+        "已在 bing.com/forbusiness 上搜索现有商家信息",
+        "已从 GBP 导入，或已手动注册并完成验证",
+        "已确认设置了类别",
+        "已决定并记录是否同步，并明确 GBP 和网站是可信来源",
+        "已在 Bing Maps 上搜索重复信息、旧地址和旧名称",
+        "对重复信息，已请支持团队合并或删除，而不是去验证它",
+        "名称、地址、电话、营业时间、类别和网址在 Bing、GBP 和网站上一致",
+        "结构化数据的值与网站正文一致",
+        "已确认 robots.txt 没有屏蔽 Bingbot",
+        "已连同日期记录向 Copilot 提出的问题和回答"
+      ]
+    },
+    {
+      "heading": "致代客户注册的代理公司和本地 SEO 公司",
+      "paragraphs": [
+        "首先确定商家信息归谁的 Microsoft 账户所有。用商家自己的账户创建，再把代理公司添加为管理员更安全：即使人员变动，商家也不会失去访问权限。",
+        "在每月维护中加入一页 GBP、Bing Places 与网站的对照表，就能把 AI 搜索应对纳入你的报告。参见[代理公司如何把 AI 搜索应对做成月度服务](/guide/agency-aeo-monthly-service)和[合作伙伴页面](https://nurevo.jp/partner/)。"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Bing Places 免费吗？",
+      "a": "是的。Microsoft 将 Bing Places for Business 描述为用于在 Bing 和 Bing Maps 上创建和管理商家信息的免费服务。"
+    },
+    {
+      "q": "已经有 Google Business Profile，还需要 Bing Places 吗？",
+      "a": "你的 GBP 不会自动出现在 Bing Places 中。请在 Bing Places 中使用“Import from Google”（从 Google 导入）据此创建商家信息。开启同步后，之后对 GBP 的修改也会同步到 Bing。"
+    },
+    {
+      "q": "我在 Bing Places 中改了内容，结果又变回去了。",
+      "a": "据 Bing 支持专员 2023 年的解释，开启 GBP 同步后，冲突的字段会被 GBP 的值覆盖。同步期间请在 GBP 一侧修改。"
+    },
+    {
+      "q": "修改需要多久才会显示？",
+      "a": "2023 年的一条支持回答称，发布周期通常约为十天，每次修改都会重新开始。2025 年，员工表示从 Google 导入可能需要最多两天。当前所需时间请以界面为准。"
+    },
+    {
+      "q": "Copilot 会根据 Bing Places 的数据回答吗？",
+      "a": "Microsoft 已宣布将加深与 Copilot 的整合，但尚未公开现在的回答如何使用 Bing Places。让 Bing Places、GBP 和网站上的信息保持一致，才是可靠的准备。"
+    },
+    {
+      "q": "所有国家的商家都能注册吗？",
+      "a": "我们能读到的 Microsoft 资料既没有列出支持的国家，也没有列出各国的验证方式。请在注册界面上确认能否选择你的国家和地址，以及会出现哪些验证方式。"
+    },
+    {
+      "q": "我可以自己删除重复的商家信息吗？",
+      "a": "Microsoft 论坛的员工建议联系 Bing Places 支持团队。请提交要保留和要删除的商家信息详情以及所有权证明，请求合并或删除。不要验证重复的那条。"
+    }
+  ],
+  "relatedHeading": "相关指南",
+  "cta": {
+    "heading": "先检查 AI 能否读懂你的商家网站",
+    "body": "免费检测无需注册，即可查看结构化数据（地址、电话、营业时间）、llms.txt 以及 AI 搜索爬虫访问的状态。在 WordPress 上，Nurevo AEO 可免费补齐缺失的部分。",
+    "label": "免费检测 AI 可读性",
+    "href": "/check",
+    "secondary": {
+      "label": "在 WordPress.org 获取 Nurevo AEO",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "Microsoft、Bing、Bing Places、Bing Maps、Copilot、Bing Webmaster Tools、Edge、Windows、Google、Google Business Profile、ChatGPT、OpenAI、Perplexity、SEO SIMPLE PACK、VK All in One Expansion Unit、WordPress 及其产品名称均为各自所有者的商标。Nurevo 与上述公司均无关联。"
+}
