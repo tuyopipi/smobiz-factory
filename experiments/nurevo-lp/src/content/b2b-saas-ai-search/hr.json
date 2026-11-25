@@ -1,0 +1,418 @@
+{
+  "title": "AI pretraživanje za B2B i SaaS: cjenici, reference, usporedbe | Nurevo",
+  "description": "Kako B2B i SaaS kupci s AI-jem biraju dobavljače i koje im stranice odgovaraju: cjenik, reference, usporedbe. Tablice polja, schema, llms.txt, koraci u WordPressu.",
+  "h1": "AI pretraživanje za B2B i SaaS: neka AI ispravno pročita vaš cjenik, reference i usporedbe",
+  "lead": "Kupci B2B i SaaS rješenja uži izbor dobavljača rade tako da AI pitaju primjerice „Koji je najbolji alat za X?”, „Kako se A uspoređuje s B?” ili „Koliko to obično stoji?”. Srž posla je imati stranice koje na ta pitanja odgovaraju tekstom (cjenik, reference, usporedbe i alternative, integracije i sigurnost), s uvjetima i datumima, te održavati usklađenima stranice s recenzijama i vanjske profile. Strukturirani podaci i llms.txt zatim iste činjenice s tih stranica ponavljaju u obliku koji strojevi čitaju.",
+  "intro": [
+    "Napisano 17. studenoga 2026. (JST). Tipovi schema.org provjereni su tog dana u schema-dts 2.1.0. Izjave Googlea, OpenAI-ja i Perplexityja potječu s njihovih stranica pročitanih između 31. listopada i 10. studenoga 2026. za ranije vodiče Nurevo. Primjeri potrošačkih pravila su iz Japana; provjerite pravila ondje gdje poslujete.",
+    "Ovaj je vodič za tvrtke koje drugim tvrtkama prodaju softver (SaaS), vanjske usluge ili savjetovanje te za agencije koje im izrađuju web-stranice. Kako napisati stranicu O nama, opisuje [AI pretraživanje za stranicu O nama](/guide/company-profile-page-ai-search), a kako pisati objave na blogu [kako pisati članke koje AI citira](/guide/blog-articles-ai-citations). Ovaj vodič pokriva stranice koje odgovaraju na pitanje „kojeg dobavljača odabrati?”. Odgovori AI-ja mijenjaju se iz dana u dan i ovisno o tome kako je pitanje sročeno. Ovdje opisani koraci čine vaše činjenice čitljivima AI-ju. Ne jamče da će vas AI spomenuti ili vas negdje rangirati."
+  ],
+  "sections": [
+    {
+      "heading": "Što B2B kupci pitaju AI",
+      "paragraphs": [
+        "Lokalni posao traži se po „vrsta djelatnosti + mjesto”. B2B dobavljač traži se po tome što kupac treba obaviti i pod kojim uvjetima. Mnoga od tih pitanja postavljaju se prije nego što kupac zna vaše ime, pa ako vašeg imena nema u odgovoru, nikad ne uđete u uži izbor. U anketi japanske agencije TaTap iz studenoga 2026. 62,2 % od 135 rukovoditelja koji su sami tražili dobavljača reklo je da su generativni AI pitali za preporučene tvrtke, a 27,4 % da su tvrtke čija se imena nisu pojavila izbacili ili im dali niži prioritet ([TaTap](https://tatap.jp/knowledge/btob-llmo-agency/), mala anketa tvrtke koja prodaje takve usluge).",
+        "Pitanja se dijele na otprilike šest vrsta, a na svaku odgovara druga stranica."
+      ],
+      "table": {
+        "head": [
+          "Vrsta pitanja",
+          "Primjer",
+          "Stranica koja odgovara",
+          "Tipična pogreška u odgovorima AI-ja"
+        ],
+        "rows": [
+          [
+            "Pretraga po kategoriji",
+            "„Najbolji alat za evidenciju radnog vremena?” „Navedi 3 vodeća sustava za evidenciju vremena”",
+            "Stranica proizvoda (što, za koga, za koju veličinu)",
+            "Pogrešna veličina tvrtke ili djelatnost, svrstavanje u pogrešnu kategoriju"
+          ],
+          [
+            "Filtriranje po uvjetima",
+            "„Evidencija vremena za 50 ljudi koja se povezuje s našim softverom za plaće?”",
+            "Stranice integracija, funkcija i zahtjeva",
+            "Tvrdi da integracija postoji kad ne postoji, ili obrnuto"
+          ],
+          [
+            "Usporedba",
+            "„A ili B?” „Usporedi sustave za evidenciju vremena”",
+            "Stranica usporedbe s kriterijima odabira",
+            "Usporedba prema starim funkcijama ili starim cijenama"
+          ],
+          [
+            "Cijena",
+            "„Koliko obično stoji softver za evidenciju vremena?”",
+            "Cjenik",
+            "Stare cijene, zabuna oko poreza, previđen minimalni broj licenci"
+          ],
+          [
+            "Prelazak",
+            "„Alternative za X?”",
+            "Stranica o migraciji / prelasku",
+            "Izostavljeni trud oko migracije i uvoz podataka"
+          ],
+          [
+            "Provjera imena",
+            "„Što ljudi kažu o X?” „Koliko stoji X?”",
+            "Priče korisnika, stranica O nama, stranice s recenzijama",
+            "Stari podaci sa stranica s recenzijama ili zamjena s istoimenim proizvodom"
+          ]
+        ]
+      },
+      "after": [
+        "Pitanja koja Nurevo mjerenje postavlja za B2B / SaaS stranice slijede iste vrste („Koji je najbolji alat za ...?”, „Usporedi glavne ...”, „Koje ... preporučuješ za malu tvrtku?”, „Koji je uobičajeni raspon cijena za ...?”, „Koji ... imaju najviše referenci korisnika?”, „Koja je dobra alternativa ako želim prijeći s ...?”), sva bez vašeg imena. Pitanja s vašim imenom provjeravaju se ručno, kako je opisano niže."
+      ]
+    },
+    {
+      "heading": "Što tvrde najbolji članci i kako ih ovaj vodič tretira",
+      "paragraphs": [
+        "Pročitali smo 13 japanskih i engleskih članaka koji se rangiraju za „B2B SaaS AI search” i slične upite. Gotovo se svi slažu da su stranice usporedbe, reference i stranice s recenzijama važne. Većina njihovih brojki, međutim, ili ne navodi izvor ili dolazi od autorovih vlastitih klijenata. Ovaj vodič ne koristi brojke koje se ne mogu provjeriti."
+      ],
+      "table": {
+        "head": [
+          "Česta tvrdnja",
+          "Koliko su jaki dokazi",
+          "Kako je ovaj vodič tretira"
+        ],
+        "rows": [
+          [
+            "„Posjetitelji iz AI-ja konvertiraju višestruko bolje od posjetitelja iz Googlea”",
+            "Brojke se među člancima kreću od nekoliko puta do više od 20 puta; temeljne studije često se ne mogu pronaći",
+            "Ne koristi se. Pokazujemo kako to provjeriti u vlastitom GA4"
+          ],
+          [
+            "„Sedam od deset B2B kupaca istraživanje započinje s AI-jem”",
+            "Bez izvora ili samo „podaci iz industrije”",
+            "Ne koristi se. Samo ankete s navedenim izvorom i veličinom uzorka"
+          ],
+          [
+            "„Stranice usporedbe i alternativa često se citiraju”",
+            "Zapažanja agencija; nema službene izjave",
+            "Vrijedi ih izraditi jer odgovaraju pitanjima koja se postavljaju AI-ju; ništa više"
+          ],
+          [
+            "„Oznake SoftwareApplication ili FAQ dovest će vas u odgovore AI-ja”",
+            "Članci tvrde suprotno. Google kaže da AI funkcije ne trebaju posebne oznake",
+            "Tretira se kao ponavljanje činjenica sa stranice"
+          ],
+          [
+            "„Više recenzija na stranicama s recenzijama znači više preporuka”",
+            "Uglavnom neimenovane studije",
+            "Umjesto lova na brojke provjerite jesu li cijene i funkcije ondje aktualne i usklađene s vašom stranicom"
+          ],
+          [
+            "„Dodajte llms.txt i AI će vas čitati”",
+            "Google kaže da nije potrebna nova datoteka za AI; ostale AI tvrtke nisu se izjasnile",
+            "Ako ga dodate, koristite ga kao ulaz do cjenika i referenci"
+          ]
+        ]
+      },
+      "after": [
+        "Što je najboljim člancima uglavnom nedostajalo: konkretna polja za cjenik i reference, koraci u WordPressu i način mjerenja koji razdvaja pitanja bez brenda od pitanja s brendom. Tome ovaj vodič posvećuje najviše prostora."
+      ]
+    },
+    {
+      "heading": "Cjenik: dajte podlogu za odluku, čak i bez svih brojki",
+      "paragraphs": [
+        "Na „Koliko stoji?” ili „Koliko stoji X?” AI odgovara s vašeg cjenika ili, ako ga nema, s brojki na stranicama s recenzijama i u člancima s usporedbama. Aktualni uvjeti na vašoj stranici sigurniji su od starih brojki koje je napisao netko drugi. Čak i kod cijene na upit možete reći o čemu cijena ovisi."
+      ],
+      "table": {
+        "head": [
+          "Polje",
+          "Primjer",
+          "Što se događa bez njega"
+        ],
+        "rows": [
+          [
+            "Jedinica obračuna",
+            "„Po korisniku mjesečno”, „po lokaciji”, „prema korištenju, po 1.000 zapisa”",
+            "Ukupni iznos pogrešno procijenjen za velik faktor"
+          ],
+          [
+            "Razlike među paketima",
+            "Nazivi paketa, uključene funkcije i ograničenja (korisnici, čuvanje podataka) u tablici",
+            "Funkcije najvišeg paketa opisane kao uključene u sve pakete"
+          ],
+          [
+            "Naknade za uvođenje i minimumi",
+            "Naknada za uvođenje, minimalni broj licenci, minimalno trajanje, godišnje ili mjesečno plaćanje",
+            "Širi se samo mjesečna cijena, a ugovor ljude iznenadi"
+          ],
+          [
+            "Porez",
+            "Jedan jasan redak iznad tablice, primjerice „Sve cijene su bez poreza”",
+            "Cijene s porezom i bez njega uspoređene jedna uz drugu"
+          ],
+          [
+            "Besplatna proba ili besplatni paket",
+            "Trajanje, što je uključeno, počinje li naplata automatski",
+            "Navedeno jednostavno kao „besplatno”"
+          ],
+          [
+            "Dodaci",
+            "Uvođenje, dodatna pohrana, pristup API-ju, premium podrška",
+            "Nužni troškovi nedostaju u odgovoru"
+          ],
+          [
+            "Cijena na upit",
+            "„Cijena ovisi o X i Y. Paketi počinju od otprilike Z mjesečno.”",
+            "Navedeno samo kao „cijena nije javna” i ispadate s popisa"
+          ],
+          [
+            "Zadnje ažuriranje",
+            "Na stranici „Cijene ažurirane 1. studenoga 2026.”",
+            "Nema načina da se razlikuju stare i nove cijene"
+          ]
+        ]
+      },
+      "after": [
+        "Kad mijenjate cijene, ažurirajte stranicu usporedbe, FAQ, stare objave na blogu i svoje profile na stranicama s recenzijama istog dana kao i cjenik. Kad si vaše stranice proturječe, AI odabere jednu od njih.",
+        "Ne objavljujte cijene samo kao sliku ili PDF. Koristite HTML tablicu ili popis s oznakama."
+      ]
+    },
+    {
+      "heading": "Reference: uskladite se s uvjetima po kojima kupci traže",
+      "paragraphs": [
+        "B2B pitanja sadrže uvjete: „Koje alate za evidenciju vremena koriste proizvođači?”, „Koji ... imaju najviše referenci?”. Kod reference je važnije da se ti uvjeti lako pronađu nego da se lijepo čita. Na vrh svake priče stavite sljedeća polja u tablicu, a zatim pripovijest."
+      ],
+      "table": {
+        "head": [
+          "Polje",
+          "Primjer"
+        ],
+        "rows": [
+          [
+            "Djelatnost i veličina",
+            "„Proizvođač hrane, oko 250 zaposlenih, 2 pogona”"
+          ],
+          [
+            "Tko ga koristi",
+            "„Kadrovska služba i voditelji u svakom pogonu”"
+          ],
+          [
+            "Problem prije",
+            "„Papirnate kartice evidencije, ručno zbrajane na kraju mjeseca”"
+          ],
+          [
+            "Zašto su ga odabrali i prema kojim kriterijima",
+            "„Podrška za smjene i integracija s postojećim softverom za plaće” (konkurente nije potrebno imenovati)"
+          ],
+          [
+            "Korištene funkcije i integracije",
+            "„Prijava dolaska, planiranje smjena, izvoz za plaće”"
+          ],
+          [
+            "Vrijeme do pokretanja",
+            "„Oko 2 mjeseca od ugovora do produkcije”"
+          ],
+          [
+            "Rezultat i kako je izmjeren",
+            "„Mjesečni obračun skraćen je s 3 dana na pola dana (radni dnevnik kadrovske službe, 6 mjeseci nakon pokretanja)”: što, kada, kako izmjereno"
+          ],
+          [
+            "Datum i trenutak",
+            "„Intervju u listopadu 2026. Funkcije i brojke na dan intervjua”"
+          ]
+        ]
+      },
+      "after": [
+        "Objavljujte samo rezultate iza kojih korisnik stoji, s metodom i datumom. Napuhane brojke AI citira kakve jesu i kasnije ih je teško ispraviti. Za prikaz imena, logotipa i citata korisnika pribavite pisano dopuštenje.",
+        "Dok imate malo priča, dodajte stranicu-kazalo po djelatnosti i veličini tvrtke s poveznicama na svaku priču. Stranicu nazvanu „Priče korisnika” ili „Reference”, povezanu s naslovne stranice, ljudi i AI lako pronalaze."
+      ]
+    },
+    {
+      "heading": "Stranice usporedbe i prelaska: recite kad niste pravi izbor",
+      "paragraphs": [
+        "Na pitanje „A ili B?” AI koji s vaše stranice nema nikakvu podlogu odgovara sa stranica konkurenata ili s web-stranica za usporedbu. Stranicu usporedbe gradite kao materijal za odluku o tome koji proizvod odgovara kojoj tvrtki, a ne kao tablicu bodova."
+      ],
+      "list": [
+        "Najprije odredite kriterije (veličina tvrtke, jedinica obračuna, integracije, podrška, lokacija podataka i slično) i sve proizvode usporedite prema istim kriterijima.",
+        "Za funkcije i cijene konkurenata navedite datum kad ste provjerili njihovu službenu stranicu i poveznicu. Izostavite sve što ne možete provjeriti.",
+        "Jasno recite kad niste pravi izbor („Za manje od 100 ljudi možda vam više odgovara besplatni paket A”). Jednostranoj usporedbi ne vjeruju ni čitatelji.",
+        "Na stranici o prelasku navedite koji se podaci mogu uvesti, korake i potrebno vrijeme, koliko dugo sustavi trebaju raditi paralelno te je li pomoć pri migraciji plaćena ili besplatna.",
+        "Stranicu usporedbe datirajte i pregledajte je kad god vi ili konkurent promijenite cijene."
+      ],
+      "after": [
+        "Kad imenujete konkurente, držite se činjenica i bez dopuštenja ne koristite njihove logotipe ni snimke zaslona."
+      ]
+    },
+    {
+      "heading": "Integracije, zahtjevi, sigurnost i podrška: odgovorite na pitanja s uvjetima",
+      "paragraphs": [
+        "Uvjeti poput „povezuje se s X”, „ima ISO/IEC 27001” ili „podrška vikendom” činjenice su koje AI rado koristi pri sužavanju popisa. Jedan redak na popisu funkcija slab je materijal, pa svakom uvjetu dajte vlastitu stranicu ili naslov."
+      ],
+      "list": [
+        "Integracije: usluge s kojima se povezujete, kako (ugrađeno, API, CSV) i naplaćuje li se dodatno.",
+        "Zahtjevi: preglednici, postoji li mobilna aplikacija i za koji OS, kako se ponaša bez veze.",
+        "Sigurnost: za svaki certifikat koji imate njegov naziv, opseg i registracijski broj ili datum. Ne navodite one koje nemate. Gdje su podaci pohranjeni (država ili regija).",
+        "Podrška: radno vrijeme, kanali (telefon, e-pošta, chat), razlike po paketima, što uključuje uvođenje.",
+        "Ugovor i otkaz: kako otkazati i što se nakon toga događa s podacima."
+      ]
+    },
+    {
+      "heading": "Vanjski izvori: uskladite stranice s recenzijama i profile sa svojom stranicom",
+      "paragraphs": [
+        "Za pitanja s vašim imenom („Što ljudi kažu o X?”) kao izvori se često koriste stranice s recenzijama poput G2, Capterra, ITreview i BOXIL, priopćenja za medije i članci s usporedbama. Te stranice ne možete uređivati, pa se usredotočite na dvije stvari."
+      ],
+      "list": [
+        "Održavajte profil aktualnim: opis proizvoda, cijene, funkcije i podaci o tvrtki napisani jednako i s istim brojkama kao na vašoj stranici. Ažuriranja tražite od operatera svake stranice prema njegovim pravilima za profile.",
+        "Prikupljajte recenzije pošteno: u Japanu je prikriveni marketing od 1. listopada 2023. kršenje Zakona protiv neopravdanih nagrada i obmanjujućih prikaza, a recenzije za čiju objavu tvrtka moli ili upućuje treće strane smatraju se oglašavanjem te tvrtke ([Agencija za potrošačka pitanja](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)). Ako za recenzije nudite poticaj, provjerite pravila svake stranice s recenzijama, kako se poticaj mora istaknuti te pravila ondje gdje poslujete."
+      ],
+      "after": [
+        "Kad na svojoj stranici prikazujete ocjenu iz recenzija, navedite s koje stranice, na koji datum i iz koliko recenzija. Ocjene koje ste sami prikupili ne objavljujte u strukturiranim podacima kao aggregateRating bez navođenja odakle potječu."
+      ]
+    },
+    {
+      "heading": "Može li AI pročitati stranicu? Botovi i JavaScript",
+      "paragraphs": [
+        "SaaS stranice ponekad tablice cijena ili usporedbe funkcija iscrtavaju JavaScriptom nakon učitavanja stranice. Ono što vidite u pregledniku može nedostajati u HTML-u koji bot dobije. Sigurnije je da tekst cjenika i referenci bude u HTML-u koji poslužitelj prvi vrati. Dohvatite HTML stranice (primjerice s curl) i provjerite jesu li u njemu cijene i tekst priča.",
+        "Provjerite i da robots.txt ne blokira pretraživačke botove AI usluga. OpenAI navodi da se stranice koje se isključe od OAI-SearchBot neće prikazivati u odgovorima pretraživanja ChatGPT ([OpenAI botovi](https://developers.openai.com/api/docs/bots)); to je drugi bot od GPTBot, koji služi za treniranje. Perplexity također zasebno dokumentira PerplexityBot i Perplexity-User ([Perplexity botovi](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)). WAF ili usluga zaštite od botova može ih blokirati, a da nitko ne primijeti."
+      ]
+    },
+    {
+      "heading": "Strukturirani podaci: Organization za tvrtku, SoftwareApplication ili Service za ono što prodajete",
+      "paragraphs": [
+        "Google kaže da AI Overviews i AI Mode ne trebaju posebne strukturirane podatke ni datoteke te da strukturirani podaci trebaju odgovarati onome što je vidljivo na stranici ([AI funkcije i vaša web-stranica](https://developers.google.com/search/docs/appearance/ai-features)). Imajući to na umu, uobičajena kombinacija za B2B i SaaS je:"
+      ],
+      "list": [
+        "Tvrtka: Organization (ili podtip poput Corporation), s nazivom, URL-om, logotipom, opisom i kontaktom. Vidi [AI pretraživanje za stranicu O nama](/guide/company-profile-page-ai-search).",
+        "Softver: SoftwareApplication. U schema.org to je vrsta CreativeWork, a među svojstvima su applicationCategory, operatingSystem, featureList, softwareVersion i offers. Softver u pregledniku ima i podtip WebApplication ([schema.org SoftwareApplication](https://schema.org/SoftwareApplication)).",
+        "Usluge poput vanjskih usluga ili savjetovanja: Service, povezan s tvrtkom preko provider.",
+        "FAQ: FAQPage samo na stranici koja prikazuje ta pitanja i odgovore."
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "Primjer je oblik koji Nurevo AEO objavljuje kad je usluga označena kao „Ovo je softver (SaaS ili aplikacija)” (vrijednosti su izmišljene). provider pokazuje na čvor tvrtke, kategorija postaje applicationCategory, a cijena i valuta postaju Offer. Jedinicu obračuna, primjerice „po korisniku mjesečno”, navedite u tekstu cjenika.",
+        "Googleov obogaćeni rezultat za softverske aplikacije u rezultatima pretraživanja ima vlastite zahtjeve, poput ocjena ili recenzija. Ako želite taj obogaćeni rezultat, provjerite aktualne zahtjeve u dokumentaciji [Googleovi strukturirani podaci za softverske aplikacije](https://developers.google.com/search/docs/appearance/structured-data/software-app). Nurevo AEO nikad ne objavljuje ocjenu iza koje nema stvarnih recenzija."
+      ]
+    },
+    {
+      "heading": "llms.txt: ulaz do cjenika, referenci i usporedbi",
+      "paragraphs": [
+        "llms.txt je jedna tekstualna datoteka sa sažetkom stranice i poveznicama na glavne stranice. Nijedna AI tvrtka nije službeno opisala učinak, a Google kaže da nije potreban (vidi [kako napisati llms.txt](/guide/llms-txt)). Ako ga dodate, za B2B i SaaS poanta je osigurati da navodi vaš cjenik, reference, usporedbe i stranice integracija. Kad je vrsta stranice postavljena na „B2B / SaaS”, Nurevo AEO sastavlja ga ovako (vrijednosti su izmišljene):"
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "Pricing i Case studies pod Key facts su URL-ovi uneseni u Postavkama kao „Stranica cjenika (B2B)” i „Stranica referenci (B2B)”. B2B / SaaS stranice ne objavljuju radno vrijeme. Pages navodi 30 posljednje ažuriranih stranica i objava, pa na stranici s aktivnim blogom stranica usporedbe može biti istisnuta. U tom slučaju objave koje tamo ne trebaju označite s „izostavi ovu stranicu iz llms.txt” ili dodajte retke razvojnim filtrom webmcp_canary_llms_txt_lines."
+      ]
+    },
+    {
+      "heading": "Koraci u WordPressu (s Nurevo AEO)",
+      "paragraphs": [
+        "U WordPressu [Nurevo AEO (besplatan)](https://wordpress.org/plugins/nurevo-webmcp/) objavljuje podatke o vašoj tvrtki i proizvodima kao strukturirane podatke i u llms.txt. Radite ovim redoslijedom."
+      ],
+      "list": [
+        "Najprije popravite tekst cjenika, referenci, usporedbi i stranica integracija prema gornjim tablicama. Tekst prije strukturiranih podataka.",
+        "U čarobnjaku za postavljanje (ili u Postavkama) postavite vrstu stranice na „B2B / SaaS”. Tvrtka se objavljuje kao Organization. Ako u polju vrste djelatnosti odaberete odgovarajući tip, poput Corporation, ProfessionalService ili AccountingService, koristi se taj tip; tip koji ne odgovara B2B stranici vraća se na Organization. Adresa i radno vrijeme nisu obavezni.",
+        "Dodajte svoje usluge (do 20): naziv, opis u jednoj rečenici, URL stranice usluge, kategoriju, cijenu i valutu. Za softver označite „Ovo je softver (SaaS ili aplikacija)”. Označeni unosi objavljuju se kao SoftwareApplication, ostali kao Service.",
+        "Za kategoriju koristite riječi koje kupci koriste kad pitaju AI („softver za evidenciju radnog vremena”, „upravljanje troškovima”). Pitanja Nurevo mjerenja grade se iz te kategorije.",
+        "Unesite URL-ove „Stranica cjenika (B2B)” i „Stranica referenci (B2B)”. Ulaze u Key facts u llms.txt i provjerava ih dijagnostika.",
+        "Unosi FAQ objavljuju se kao FAQPage samo na stranicama koje ih prikazuju blokom Nurevo FAQ ili kratkim kodom [nurevo_faq]. Cjeniku dajte vlastiti FAQ za pitanja o cijenama.",
+        "Uz Yoast SEO, Rank Math, All in One SEO ili Slim SEO Nurevo u strukturirane podatke tog dodatka dodaje samo činjenice i usluge koje nedostaju, pa tvrtka nije opisana dvaput. Radi i uz SEO SIMPLE PACK i VK All in One Expansion Unit (od 0.9.1).",
+        "Pokrenite dijagnostiku na zaslonu AEO ocjena. Za B2B / SaaS stranice provjerava četiri stvari: opise usluga, stranicu cjenika, reference (ili FAQ) i identitet tvrtke."
+      ],
+      "after": [
+        "Na stranicama koje nisu izrađene u WordPressu provjere su iste. Unesite svoj URL u [besplatnu provjeru](/check), bez registracije, i pogledajte stanje strukturiranih podataka, llms.txt i pristupa AI botova.",
+        "Agencije koje izrađuju ili održavaju stranice za B2B klijente mogu postupak pri promjeni cijena (cjenik, stranice usporedbe, FAQ, profili na stranicama s recenzijama) uključiti u opseg održavanja kako se činjenice ne bi razišle. Agencije koje klijente podržavaju mjesečno mogu se pridružiti [partnerskom programu](https://nurevo.jp/partner/)."
+      ]
+    },
+    {
+      "heading": "Kako provjeriti: razdvojite pitanja bez brenda i s brendom",
+      "paragraphs": [
+        "Za B2B zasebno bilježite dvije vrste pitanja. Pitanja bez brenda govore ulazite li u uži izbor ljudi koji vas ne poznaju. Pitanja s brendom govore dobivaju li ljudi koji vas poznaju točne činjenice. Isto pitanje postavite istom AI-ju u različite dane i nikad ne sudite prema jednom odgovoru."
+      ],
+      "table": {
+        "head": [
+          "Vrsta",
+          "Primjer",
+          "Što zabilježiti"
+        ],
+        "rows": [
+          [
+            "Bez brenda (kategorija)",
+            "„Koji softver za evidenciju vremena preporučuješ za malu tvrtku?”",
+            "Jeste li imenovani, je li citirana vaša stranica, koji su se drugi proizvodi pojavili"
+          ],
+          [
+            "Bez brenda (uvjet)",
+            "„Evidencija vremena koja se povezuje s našim softverom za plaće?”",
+            "Je li uvjet ispravno primijenjen"
+          ],
+          [
+            "S brendom (cijena)",
+            "„Koliko stoji Example Timesheets?”",
+            "Odgovaraju li cijena, jedinica obračuna i porez današnjem cjeniku i što je bio izvor"
+          ],
+          [
+            "S brendom (ugled)",
+            "„Što ljudi kažu o Example Timesheets?”",
+            "Koja je stranica s recenzijama ili članak bio izvor i jesu li se uvukle stare informacije"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo besplatna AI provjera (jednom mjesečno, za povezane Free i Standard stranice) Perplexityju postavlja tri pitanja bez brenda. Mjerenje vidljivosti u Pro (beta) trenutno pokriva Perplexity, a ChatGPT slijedi kad bude postavljen. Pitanja s brendom provjerite ručno prema gornjoj tablici.",
+        "Za posjete pogledajte izvor u GA4. Poveznice iz ChatGPT-ja mogu nositi utm_source=chatgpt.com ([OpenAI FAQ za izdavače](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)). Drugi pogled daje izvješće o uspješnosti generativnog AI-ja u Search Consoleu ([blog Google Search Central](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)). B2B kupnja traje, pa polje „Kako ste čuli za nas (uključujući odgovore AI-ja)?” u kontaktnom obrascu hvata utjecaj koji se nikad ne pokaže kao klik. Cijela metoda je u [kako mjeriti vidljivost u AI-ju](/guide/measure-ai-visibility)."
+      ]
+    },
+    {
+      "heading": "Kontrolni popis za B2B i SaaS stranice",
+      "list": [
+        "Prva rečenica stranice proizvoda kaže što je, za koga (djelatnost i veličina) i kako se isporučuje.",
+        "Cjenik navodi jedinicu obračuna, razlike među paketima, naknadu za uvođenje, minimume, porez i datum zadnjeg ažuriranja (ili, za cijenu na upit, o čemu cijena ovisi i početnu točku).",
+        "Tekst cjenika i referenci nalazi se u HTML-u bez pokretanja JavaScripta.",
+        "Reference navode djelatnost, veličinu, tim, problem, korištene funkcije, vrijeme do pokretanja te kako i kada su rezultati izmjereni.",
+        "Stranice usporedbe koriste iste kriterije za sve proizvode, činjenice o konkurentima imaju datum i izvor, i kažu kad niste pravi izbor.",
+        "Integracije, zahtjevi, sigurnost i podrška imaju svaki svoj naslov ili stranicu.",
+        "Za dan promjene cijena postoji postupak koji ažurira i stranice usporedbe, FAQ, stare objave i profile na stranicama s recenzijama.",
+        "robots.txt i WAF ne blokiraju pretraživačke botove poput OAI-SearchBot i PerplexityBot.",
+        "Vrijednosti Organization i SoftwareApplication (ili Service) odgovaraju tekstu stranice i nije objavljena nikakva izmišljena ocjena.",
+        "llms.txt navodi cjenik, reference i stranice usporedbe.",
+        "Pitanja bez brenda i s brendom bilježe se zasebno, u različite dane."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Ako ne objavimo cijene, hoće li nas AI izostaviti?",
+      "a": "I dalje možete biti spomenuti. No bez materijala za pitanja o cijeni AI odgovara starim brojkama s drugih stranica ili samo kaže da cijena nije javna. Čak i ako ne možete prikazati iznose, recite o čemu cijena ovisi i navedite početnu točku."
+    },
+    {
+      "q": "Smijemo li na stranici usporedbe imenovati konkurente?",
+      "a": "Mnoge tvrtke to rade, dok god su činjenice točne. Navedite datum kad ste provjerili službenu stranicu svakog konkurenta i poveznicu, izostavite ono što ne možete provjeriti i bez dopuštenja ne koristite njihove logotipe ni snimke zaslona. Provjerite zakone i pravila struke o usporednom oglašavanju koja se na vas odnose."
+    },
+    {
+      "q": "Treba li SaaS koristiti oznake SoftwareApplication ili Product?",
+      "a": "schema.org za softver nudi SoftwareApplication (i WebApplication za softver u pregledniku). Nurevo AEO usluge označene kao softver objavljuje kao SoftwareApplication. Ako želite Googleov obogaćeni rezultat, provjerite zahtjeve u Googleovoj dokumentaciji."
+    },
+    {
+      "q": "Hoće li niska ocjena na stranicama s recenzijama spriječiti AI da nas preporuči?",
+      "a": "Nijedna AI tvrtka nije službeno objasnila kako se ocjene iz recenzija koriste u odgovorima. Ono što možete učiniti jest održavati profile aktualnima i pošteno prikupljati recenzije. Ako nudite poticaje, provjerite pravila o prikrivenom marketingu ondje gdje poslujete i pravila svake stranice."
+    },
+    {
+      "q": "Vrijedi li ovo i za razvojne agencije i konzultantske tvrtke?",
+      "a": "Osnove su iste. Umjesto stranice proizvoda napišite stranicu za svaku uslugu (za koga je, kako funkcionira, koliko traje, kako se određuje cijena, reference) i koristite oznake Service. U Nurevo AEO dodajte usluge bez označavanja polja za softver."
+    },
+    {
+      "q": "AI stalno navodi naše stare cijene. Što možemo učiniti?",
+      "a": "Pronađite izvore u odgovoru. Na svojoj stranici ispravite stare brojke izvan cjenika (stranice usporedbe, FAQ, stare objave); na drugim stranicama zamolite izdavača za ažuriranje. Odgovore AI-ja ne možete izravno uređivati i ne postoji određeno vrijeme za koje se promjene pokažu."
+    },
+    {
+      "q": "Hoće li nas ovi koraci dovesti u preporuke AI-ja?",
+      "a": "Jamstva nema. Odgovori AI-ja mijenjaju se s danom i formulacijom, a AI odlučuje koje će proizvode imenovati. Ovi koraci čine točnima činjenice koje AI čita i daju mu materijal na vašoj stranici prema kojem vas može odabrati."
+    }
+  ],
+  "relatedHeading": "Povezani vodiči",
+  "cta": {
+    "heading": "Pogledajte kako AI čita vašu stranicu",
+    "body": "Besplatna provjera ne zahtijeva registraciju: unesite URL i pogledajte stanje strukturiranih podataka, llms.txt i pristupa AI botova. U WordPressu besplatni dodatak objavljuje podatke o vašoj tvrtki i proizvodima kao strukturirane podatke i u llms.txt.",
+    "label": "Besplatno provjerite spremnost za AI",
+    "href": "/check",
+    "secondary": {
+      "label": "Isprobajte besplatni dodatak za WordPress",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT je zaštitni znak tvrtke OpenAI, Perplexity tvrtke Perplexity AI, a Google tvrtke Google LLC. G2, Capterra, ITreview, BOXIL, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit i WordPress zaštitni su znakovi ili registrirani zaštitni znakovi svojih vlasnika. Nurevo nije povezan ni s jednom od tih tvrtki niti ga one podržavaju."
+}

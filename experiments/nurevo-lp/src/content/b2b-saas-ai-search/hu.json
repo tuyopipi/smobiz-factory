@@ -1,0 +1,418 @@
+{
+  "title": "AI-keresés B2B és SaaS cégeknek: árak, esettanulmányok | Nurevo",
+  "description": "Hogyan választanak szállítót AI-jal a B2B és SaaS vevők, és mely oldalak felelnek nekik: árak, esettanulmányok, összehasonlítás. Mezőtáblák, schema, llms.txt, WordPress.",
+  "h1": "AI-keresés B2B és SaaS cégeknek: tegye az ár-, esettanulmány- és összehasonlító oldalakat olvashatóvá az AI számára",
+  "lead": "A B2B és SaaS vevők úgy szűkítik a szállítók listáját, hogy olyasmit kérdeznek az AI-tól, mint „Mi a legjobb eszköz X-re?”, „Hogyan viszonyul A a B-hez?” vagy „Mennyibe kerül ez általában?”. A munka lényege, hogy legyenek olyan oldalai, amelyek szövegesen válaszolnak ezekre a kérdésekre (árak, esettanulmányok, összehasonlítások és alternatívák, integrációk és biztonság), feltételekkel és dátumokkal, és hogy az értékelőoldalak és külső profilok összhangban legyenek velük. A strukturált adatok és az llms.txt ezután gépek által olvasható formában ismétlik meg az oldalak tényeit.",
+  "intro": [
+    "Írva: 2026. november 17. (JST). A schema.org típusokat aznap ellenőriztük a schema-dts 2.1.0-ban. A Google, az OpenAI és a Perplexity állításai az oldalaikról származnak, amelyeket 2026. október 31. és november 10. között olvastunk el korábbi Nurevo útmutatókhoz. A fogyasztóvédelmi szabályok példái Japánból valók; ellenőrizze a szabályokat ott, ahol működik.",
+    "Ez az útmutató azoknak a cégeknek szól, amelyek szoftvert (SaaS), kiszervezett munkát vagy tanácsadást értékesítenek más cégeknek, valamint az ő weboldalaikat készítő ügynökségeknek. A Rólunk oldal megírását a [AI-keresés a Rólunk oldalhoz](/guide/company-profile-page-ai-search) tárgyalja, a blogbejegyzésekét pedig a [hogyan írjunk cikkeket, amelyeket az AI idéz](/guide/blog-articles-ai-citations). Ez az útmutató azokkal az oldalakkal foglalkozik, amelyek a „melyik szállítót válasszuk?” kérdésre felelnek. Az AI válaszai napról napra és a kérdés megfogalmazásától függően változnak. Az itt leírt lépések olvashatóvá teszik a tényeit az AI számára. Nem garantálják, hogy az AI megemlíti vagy bárhová rangsorolja Önt."
+  ],
+  "sections": [
+    {
+      "heading": "Mit kérdeznek a B2B vevők az AI-tól",
+      "paragraphs": [
+        "Egy helyi vállalkozást a „vállalkozás típusa + környék” alapján találnak meg. Egy B2B szállítót aszerint, hogy a vevő mit akar elvégezni és milyen feltételek mellett. Sok ilyen kérdés még azelőtt hangzik el, hogy a vevő ismerné a nevét, így ha a neve hiányzik a válaszból, soha nem kerül a szűkített listára. A japán TaTap ügynökség 2026 novemberi felmérésében a szállítót maguk kereső 135 vezető 62,2%-a mondta, hogy generatív AI-tól kért ajánlott cégeket, 27,4%-uk pedig, hogy elvetette vagy hátrébb sorolta azokat a cégeket, amelyek neve nem szerepelt ([TaTap](https://tatap.jp/knowledge/btob-llmo-agency/), egy ilyen szolgáltatást értékesítő cég kis felmérése).",
+        "A kérdések nagyjából hat fajtába sorolhatók, és mindegyikre más oldal felel."
+      ],
+      "table": {
+        "head": [
+          "A kérdés fajtája",
+          "Példa",
+          "Az oldal, amely felel rá",
+          "Tipikus hiba az AI válaszaiban"
+        ],
+        "rows": [
+          [
+            "Kategóriakeresés",
+            "„Mi a legjobb munkaidő-nyilvántartó eszköz?” „Nevezz meg 3 vezető munkaidő-nyilvántartó rendszert”",
+            "Termékoldal (mi, kinek, milyen méretre)",
+            "Rossz cégméret vagy iparág, rossz kategóriába sorolva"
+          ],
+          [
+            "Szűrés feltételek szerint",
+            "„Munkaidő-nyilvántartás 50 főre, amely integrálódik a bérszámfejtő szoftverünkkel?”",
+            "Integrációs, funkció- és követelményoldalak",
+            "Azt állítja, hogy van integráció, amikor nincs, vagy fordítva"
+          ],
+          [
+            "Összehasonlítás",
+            "„A vagy B?” „Hasonlítsd össze a munkaidő-nyilvántartó rendszereket”",
+            "Összehasonlító oldal kiválasztási szempontokkal",
+            "Régi funkciók vagy régi árak alapján összehasonlítva"
+          ],
+          [
+            "Ár",
+            "„Mennyibe kerül általában egy munkaidő-nyilvántartó szoftver?”",
+            "Árak oldal",
+            "Régi árak, adózási zavar, figyelmen kívül hagyott minimális licencszám"
+          ],
+          [
+            "Váltás",
+            "„Alternatívák X helyett?”",
+            "Migrációs / váltási oldal",
+            "Kimarad a migráció ráfordítása és az adatimport"
+          ],
+          [
+            "Név ellenőrzése",
+            "„Mit mondanak az emberek X-ről?” „Mennyibe kerül X?”",
+            "Ügyféltörténetek, Rólunk oldal, értékelőoldalak",
+            "Régi értékelőoldal-adatok, vagy összekeverés egy azonos nevű termékkel"
+          ]
+        ]
+      },
+      "after": [
+        "A Nurevo mérés által B2B / SaaS oldalaknál feltett kérdések is ezeket a fajtákat követik („Mi a legjobb eszköz ...-ra?”, „Hasonlítsd össze a fő ...-kat”, „Melyik ...-t ajánlod kisvállalkozásnak?”, „Mi a szokásos ársáv ... esetén?”, „Melyik ...-nak van a legtöbb ügyfél-esettanulmánya?”, „Mi a jó alternatíva, ha váltani szeretnék ...-ról?”), mind az Ön neve nélkül. A nevét tartalmazó kérdéseket kézzel kell ellenőrizni, ahogy lent leírjuk."
+      ]
+    },
+    {
+      "heading": "Mit állítanak a vezető cikkek, és hogyan kezeli ezt az útmutató",
+      "paragraphs": [
+        "Elolvastunk 13 japán és angol cikket, amelyek a „B2B SaaS AI search” és hasonló keresésekre rangsorolnak. Szinte mind egyetért abban, hogy az összehasonlító oldalak, az esettanulmányok és az értékelőoldalak fontosak. Számaik többsége azonban vagy nem nevez meg forrást, vagy a szerző saját ügyfeleitől származik. Ez az útmutató nem használ ellenőrizhetetlen számokat."
+      ],
+      "table": {
+        "head": [
+          "Gyakori állítás",
+          "Mennyire erős a bizonyíték",
+          "Hogyan kezeli ez az útmutató"
+        ],
+        "rows": [
+          [
+            "„Az AI-ból érkező látogatók sokszor jobban konvertálnak, mint a Google-ből érkezők”",
+            "A számok cikkenként néhányszorostól több mint 20-szorosig terjednek; az alapul szolgáló kutatások gyakran nem követhetők vissza",
+            "Nem használjuk. Megmutatjuk, hogyan ellenőrizze a saját GA4-ében"
+          ],
+          [
+            "„Tízből hét B2B vevő AI-jal kezdi a kutatást”",
+            "Nincs forrás, vagy csak „iparági adat”",
+            "Nem használjuk. Csak megnevezett forrású és mintanagyságú felméréseket"
+          ],
+          [
+            "„Az összehasonlító és alternatíva-oldalakat gyakran idézik”",
+            "Ügynökségi megfigyelések; nincs hivatalos nyilatkozat",
+            "Érdemes elkészíteni őket, mert megfelelnek az AI-nak feltett kérdéseknek; ennyi"
+          ],
+          [
+            "„A SoftwareApplication vagy FAQ jelölés bejuttat az AI válaszaiba”",
+            "A cikkek ellentmondanak egymásnak. A Google szerint az AI-funkciókhoz nem kell különleges jelölés",
+            "Az oldalon lévő tények megismétléseként kezeljük"
+          ],
+          [
+            "„Több értékelés az értékelőoldalakon több ajánlást jelent”",
+            "Többnyire meg nem nevezett kutatások",
+            "Darabszám hajszolása helyett ellenőrizze, hogy az ottani árak és funkciók aktuálisak és egyeznek-e az oldalával"
+          ],
+          [
+            "„Tegyen fel llms.txt-t, és az AI olvasni fogja”",
+            "A Google szerint nincs szükség új AI-fájlra; más AI-cégek nem nyilatkoztak",
+            "Ha felteszi, használja bejáratként az ár- és esettanulmány-oldalakhoz"
+          ]
+        ]
+      },
+      "after": [
+        "Ami a vezető cikkekből többnyire hiányzott: konkrét mezők az ár- és esettanulmány-oldalakhoz, WordPress-lépések, és olyan mérési mód, amely szétválasztja a márkanév nélküli és a márkanevet tartalmazó kérdéseket. Ez az útmutató ezekre fordítja a legtöbb időt."
+      ]
+    },
+    {
+      "heading": "Árak oldal: adja meg a döntés alapjait, még ha nem is minden számot",
+      "paragraphs": [
+        "A „Mennyibe kerül?” vagy „Mennyibe kerül X?” kérdésre az AI az Ön árak oldaláról válaszol, vagy ha nincs ilyen, értékelőoldalak és összehasonlító cikkek számaiból. A saját oldalán lévő aktuális feltételek biztonságosabbak, mint a más által írt régi számok. Egyedi árajánlat esetén is megírhatja, mitől függ az ár."
+      ],
+      "table": {
+        "head": [
+          "Mező",
+          "Példa",
+          "Mi történik nélküle"
+        ],
+        "rows": [
+          [
+            "Számlázási egység",
+            "„Felhasználónként havonta”, „telephelyenként”, „használat alapján, 1000 rekordonként”",
+            "A végösszeget nagy szorzóval félreértik"
+          ],
+          [
+            "Csomagok közötti különbségek",
+            "Csomagnevek, tartalmazott funkciók és korlátok (felhasználók, megőrzési idő) táblázatban",
+            "A legfelső csomag funkcióit minden csomagban elérhetőnek írják le"
+          ],
+          [
+            "Bevezetési díjak és minimumok",
+            "Bevezetési díj, minimális licencszám, minimális időtartam, éves vagy havi számlázás",
+            "Csak a havi ár terjed, és a szerződés meglepi az embereket"
+          ],
+          [
+            "Adó",
+            "Egy egyértelmű sor a táblázat felett, például „Minden ár adó nélkül értendő”",
+            "Adóval és adó nélküli árakat hasonlítanak össze egymás mellett"
+          ],
+          [
+            "Ingyenes próba vagy ingyenes csomag",
+            "Időtartam, mit tartalmaz, automatikusan indul-e a számlázás",
+            "Egyszerűen „ingyenesként” jelenik meg"
+          ],
+          [
+            "Kiegészítők",
+            "Bevezetés, extra tárhely, API-hozzáférés, prémium támogatás",
+            "A szükséges költségek hiányoznak a válaszból"
+          ],
+          [
+            "Egyedi árajánlat",
+            "„Az ár X-től és Y-tól függ. A csomagok nagyjából havi Z-től indulnak.”",
+            "Csak „az ár nem nyilvános” jelenik meg, és kiesik a listáról"
+          ],
+          [
+            "Utolsó frissítés",
+            "Az oldalon: „Árak frissítve: 2026. november 1.”",
+            "Nem lehet megkülönböztetni a régi és az új árakat"
+          ]
+        ]
+      },
+      "after": [
+        "Ha árat változtat, ugyanazon a napon, mint az árak oldalt, frissítse az összehasonlító oldalt, a GYIK-et, a régi blogbejegyzéseket és az értékelőoldalakon lévő profiljait is. Ha a saját oldalai ellentmondanak egymásnak, az AI kiválaszt egyet közülük.",
+        "Ne tegye közzé az árakat csak képként vagy PDF-ként. Használjon HTML-táblázatot vagy címkézett listát."
+      ]
+    },
+    {
+      "heading": "Esettanulmány-oldalak: igazodjon azokhoz a feltételekhez, amelyekkel a vevők keresnek",
+      "paragraphs": [
+        "A B2B kérdések feltételeket tartalmaznak: „Milyen munkaidő-nyilvántartó eszközöket használnak a gyártók?”, „Melyik ...-nak van a legtöbb esettanulmánya?”. Egy esettanulmánynál fontosabb, hogy ezek a feltételek könnyen megtalálhatók legyenek, mint hogy jól olvasható legyen. Minden történet elejére tegye a következő mezőket táblázatba, majd jöjjön az elbeszélés."
+      ],
+      "table": {
+        "head": [
+          "Mező",
+          "Példa"
+        ],
+        "rows": [
+          [
+            "Iparág és méret",
+            "„Élelmiszergyártó, kb. 250 alkalmazott, 2 üzem”"
+          ],
+          [
+            "Ki használja",
+            "„A HR és az egyes üzemek vezetői”"
+          ],
+          [
+            "Korábbi probléma",
+            "„Papíralapú jelenléti ívek, hó végén kézzel összesítve”"
+          ],
+          [
+            "Miért választották, és milyen szempontok alapján",
+            "„Műszakkezelés és integráció a meglévő bérszámfejtő szoftverrel” (versenytársakat nem kell megnevezni)"
+          ],
+          [
+            "Használt funkciók és integrációk",
+            "„Be- és kijelentkezés, műszaktervezés, bérszámfejtési export”"
+          ],
+          [
+            "Bevezetési idő",
+            "„Kb. 2 hónap a szerződéstől az éles üzemig”"
+          ],
+          [
+            "Eredmény, és hogyan mérték",
+            "„A havi összesítés 3 napról fél napra csökkent (HR munkanapló, 6 hónappal az indulás után)”: mit, mikor, hogyan mértek"
+          ],
+          [
+            "Dátum és időpont",
+            "„Interjú: 2026. október. Beosztások és számok az interjú időpontjában”"
+          ]
+        ]
+      },
+      "after": [
+        "Csak olyan eredményeket tegyen közzé, amelyek mögé az ügyfél oda tud állni, a módszerrel és a dátummal együtt. A felfújt számokat az AI úgy idézi, ahogy vannak, és később nehéz kijavítani őket. Kérjen írásos engedélyt az ügyfél nevének, logójának és idézeteinek megjelenítéséhez.",
+        "Amíg kevés története van, készítsen iparág és cégméret szerinti indexoldalt, amely minden történetre hivatkozik. Az „Ügyféltörténetek” vagy „Esettanulmányok” nevű, a kezdőlapról linkelt oldalt emberek és AI egyaránt könnyen megtalálják."
+      ]
+    },
+    {
+      "heading": "Összehasonlító és váltási oldalak: mondja meg, mikor nem Ön a megfelelő választás",
+      "paragraphs": [
+        "Az „A vagy B?” kérdésre egy AI, amelynek az Ön oldalán nincs mire támaszkodnia, a versenytársak oldalaiból vagy összehasonlító oldalakról válaszol. Az összehasonlító oldalt ne eredménytáblaként építse fel, hanem döntési anyagként arról, melyik termék melyik cégnek felel meg."
+      ],
+      "list": [
+        "Először határozza meg a szempontokat (cégméret, számlázási egység, integrációk, támogatás, adatok helye stb.), és minden terméket ugyanazon szempontok szerint hasonlítson össze.",
+        "A versenytársak funkcióinál és árainál adja meg, mikor ellenőrizte a hivatalos oldalukat, és egy linket. Hagyja ki, amit nem tud ellenőrizni.",
+        "Mondja ki egyenesen, mikor nem Ön a megfelelő választás („100 fő alatt A ingyenes csomagja jobban illhet Önhöz”). Az egyoldalú összehasonlításban az olvasók sem bíznak.",
+        "A váltási oldalon írja le, milyen adatok importálhatók, a lépéseket és az időigényt, mennyi ideig fusson párhuzamosan a két rendszer, és fizetős vagy ingyenes-e a migrációs segítség.",
+        "Lássa el dátummal az összehasonlító oldalt, és nézze át, valahányszor Ön vagy egy versenytárs árat változtat."
+      ],
+      "after": [
+        "Ha versenytársakat nevez meg, maradjon a tényeknél, és engedély nélkül ne használja a logóikat vagy képernyőképeiket."
+      ]
+    },
+    {
+      "heading": "Integrációk, követelmények, biztonság és támogatás: válaszoljon a feltételes kérdésekre",
+      "paragraphs": [
+        "Az olyan feltételek, mint „integrálódik X-szel”, „ISO/IEC 27001 tanúsítvánnyal rendelkezik” vagy „hétvégi támogatás”, olyan tények, amelyeket az AI szívesen használ a lista szűkítésekor. Egyetlen sor egy funkciólistában gyenge anyag, ezért minden feltételnek adjon saját oldalt vagy címsort."
+      ],
+      "list": [
+        "Integrációk: a szolgáltatások, amelyekhez csatlakozik, hogyan (beépítve, API, CSV), és kerül-e pluszba.",
+        "Követelmények: böngészők, van-e mobilalkalmazás és milyen operációs rendszerre, hogyan működik offline.",
+        "Biztonság: minden meglévő tanúsítványnál a neve, hatóköre és nyilvántartási száma vagy dátuma. Ne soroljon fel olyat, amivel nem rendelkezik. Hol tárolják az adatokat (ország vagy régió).",
+        "Támogatás: időbeosztás, csatornák (telefon, e-mail, chat), csomagonkénti különbségek, mit tartalmaz a bevezetés.",
+        "Szerződés és felmondás: hogyan lehet felmondani, és mi történik utána az adatokkal."
+      ]
+    },
+    {
+      "heading": "Külső források: tartsa összhangban az értékelőoldalakat és profilokat az oldalával",
+      "paragraphs": [
+        "A nevét tartalmazó kérdéseknél („Mit mondanak az emberek X-ről?”) gyakran értékelőoldalakat, például a G2-t, a Capterrát, az ITreview-t és a BOXIL-t, sajtóközleményeket és összehasonlító cikkeket használnak forrásként. Ezeket az oldalakat nem szerkesztheti, ezért két dologra összpontosítson."
+      ],
+      "list": [
+        "Tartsa naprakészen a profilt: a termékleírás, az árak, a funkciók és a cégadatok ugyanúgy és ugyanazokkal a számokkal szerepeljenek, mint az Ön oldalán. A frissítést az egyes oldalak üzemeltetőitől kérje, azok profilszabályai szerint.",
+        "Gyűjtsön értékeléseket tisztességesen: Japánban 2023. október 1. óta a rejtett marketing sérti az indokolatlan nyereményekről és félrevezető megjelenítésről szóló törvényt, és azok az értékelések, amelyek közzétételét egy vállalkozás harmadik felektől kéri vagy rájuk bízza, a vállalkozás reklámjának számítanak ([Fogyasztóügyi Hivatal](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)). Ha ösztönzőt kínál az értékelésekért, ellenőrizze minden értékelőoldal szabályait, azt, hogyan kell az ösztönzőt feltüntetni, és a szabályokat ott, ahol működik."
+      ],
+      "after": [
+        "Ha értékelési pontszámot mutat az oldalán, adja meg, melyik oldalról, mikori állapot szerint és hány értékelésből. Az Ön által gyűjtött értékeléseket ne tegye közzé aggregateRating-ként a strukturált adatokban anélkül, hogy megmondaná, honnan származnak."
+      ]
+    },
+    {
+      "heading": "El tudja olvasni az AI az oldalt? Robotok és JavaScript",
+      "paragraphs": [
+        "A SaaS-oldalak néha az oldal betöltése után JavaScripttel jelenítik meg az ártáblázatokat vagy a funkció-összehasonlításokat. Amit a böngészőben lát, az hiányozhat abból a HTML-ből, amelyet a robot megkap. Biztonságosabb, ha az ár- és esettanulmány-szöveg abban a HTML-ben van, amelyet a szerver elsőként visszaad. Töltse le az oldal HTML-jét (például curl-lel), és ellenőrizze, hogy benne vannak-e az árak és a történetek szövege.",
+        "Ellenőrizze azt is, hogy a robots.txt nem blokkolja-e az AI-szolgáltatások keresőrobotjait. Az OpenAI szerint azok az oldalak, amelyek kizárják az OAI-SearchBot-ot, nem jelennek meg a ChatGPT keresési válaszaiban ([OpenAI robotok](https://developers.openai.com/api/docs/bots)); ez más bot, mint a tanításra szolgáló GPTBot. A Perplexity is külön dokumentálja a PerplexityBot-ot és a Perplexity-User-t ([Perplexity robotok](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)). Egy WAF vagy botvédelmi szolgáltatás anélkül is blokkolhatja őket, hogy bárki észrevenné."
+      ]
+    },
+    {
+      "heading": "Strukturált adatok: Organization a cégnek, SoftwareApplication vagy Service annak, amit értékesít",
+      "paragraphs": [
+        "A Google szerint az AI Overviews és az AI Mode nem igényel különleges strukturált adatokat vagy fájlokat, és a strukturált adatoknak egyezniük kell az oldalon láthatóval ([AI-funkciók és az Ön webhelye](https://developers.google.com/search/docs/appearance/ai-features)). Ezt szem előtt tartva a B2B és SaaS szokásos kombinációja:"
+      ],
+      "list": [
+        "A cég: Organization (vagy altípusa, például Corporation), névvel, URL-lel, logóval, leírással és elérhetőséggel. Lásd: [AI-keresés a Rólunk oldalhoz](/guide/company-profile-page-ai-search).",
+        "Szoftver: SoftwareApplication. A schema.org-ban ez a CreativeWork egy fajtája, tulajdonságai között szerepel az applicationCategory, az operatingSystem, a featureList, a softwareVersion és az offers. A böngészőben futó szoftvernek WebApplication altípusa is van ([schema.org SoftwareApplication](https://schema.org/SoftwareApplication)).",
+        "Szolgáltatások, például kiszervezett munka vagy tanácsadás: Service, a céghez a provider révén kapcsolva.",
+        "GYIK: FAQPage csak olyan oldalon, amely megjeleníti ezeket a kérdéseket és válaszokat."
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "A példa azt a formát mutatja, amelyet a Nurevo AEO közzétesz, ha egy szolgáltatás „Ez szoftver (SaaS vagy alkalmazás)” jelölést kap (az értékek kitaláltak). A provider a cég csomópontjára mutat, a kategóriából applicationCategory lesz, az árból és pénznemből pedig Offer. A számlázási egységet, például „felhasználónként havonta”, az árak oldal szövegében adja meg.",
+        "A Google szoftveralkalmazás-bővített találatának saját követelményei vannak, például értékelések vagy vélemények. Ha ezt a bővített találatot szeretné, ellenőrizze az aktuális követelményeket a [Google szoftveralkalmazás strukturált adatai](https://developers.google.com/search/docs/appearance/structured-data/software-app) dokumentációban. A Nurevo AEO soha nem tesz közzé olyan értékelést, amely mögött nincsenek valódi vélemények."
+      ]
+    },
+    {
+      "heading": "llms.txt: bejárat az ár-, esettanulmány- és összehasonlító oldalakhoz",
+      "paragraphs": [
+        "Az llms.txt egyetlen szövegfájl az oldal összefoglalójával és a fő oldalakra mutató linkekkel. Egyetlen AI-cég sem írt le hivatalosan hatást, és a Google szerint nincs rá szükség (lásd: [hogyan írjuk meg az llms.txt-t](/guide/llms-txt)). Ha mégis felteszi, B2B és SaaS esetén az a lényeg, hogy szerepeljenek benne az ár-, esettanulmány-, összehasonlító és integrációs oldalak. „B2B / SaaS” oldaltípus mellett a Nurevo AEO így állítja össze (az értékek kitaláltak):"
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "A Key facts alatti Pricing és Case studies a Beállításokban „Árak oldal (B2B)” és „Esettanulmányok oldal (B2B)” néven megadott URL-ek. A B2B / SaaS oldalak nem tesznek közzé nyitvatartást. A Pages a 30 legutóbb frissített oldalt és bejegyzést sorolja fel, így egy aktív blogú oldalon az összehasonlító oldal kiszorulhat. Ilyenkor jelölje meg a felesleges bejegyzéseket a „hagyja ki ezt az oldalt az llms.txt-ből” opcióval, vagy adjon hozzá sorokat a webmcp_canary_llms_txt_lines fejlesztői szűrővel."
+      ]
+    },
+    {
+      "heading": "Lépések WordPressben (a Nurevo AEO-val)",
+      "paragraphs": [
+        "WordPressben a [Nurevo AEO (ingyenes)](https://wordpress.org/plugins/nurevo-webmcp/) strukturált adatként és az llms.txt-ben teszi közzé a cég- és termékadatokat. Ebben a sorrendben haladjon."
+      ],
+      "list": [
+        "Először javítsa ki az ár-, esettanulmány-, összehasonlító és integrációs oldalak szövegét a fenti táblázatok szerint. Szöveg a strukturált adatok előtt.",
+        "A beállítási varázslóban (vagy a Beállításokban) állítsa az oldal típusát „B2B / SaaS”-ra. A cég Organization-ként jelenik meg. Ha a vállalkozás típusa mezőben megfelelő típust választ, például Corporation, ProfessionalService vagy AccountingService, azt használja; a B2B oldalhoz nem illő típus Organization-re áll vissza. Cím és nyitvatartás nem szükséges.",
+        "Adja hozzá a szolgáltatásait (legfeljebb 20): név, egymondatos leírás, a szolgáltatásoldal URL-je, kategória, ár és pénznem. Szoftvernél jelölje be az „Ez szoftver (SaaS vagy alkalmazás)” lehetőséget. A bejelölt tételek SoftwareApplication-ként, a többiek Service-ként jelennek meg.",
+        "Kategóriának azokat a szavakat használja, amelyeket a vevők az AI-tól kérdezve használnak („munkaidő-nyilvántartó szoftver”, „költségkezelés”). A Nurevo mérési kérdései ebből a kategóriából épülnek fel.",
+        "Adja meg az „Árak oldal (B2B)” és az „Esettanulmányok oldal (B2B)” URL-jét. Ezek bekerülnek az llms.txt Key facts részébe, és a diagnosztika ellenőrzi őket.",
+        "A GYIK-tételek csak azokon az oldalakon jelennek meg FAQPage-ként, amelyek a Nurevo FAQ blokkal vagy a [nurevo_faq] rövidkóddal megjelenítik őket. Az árak oldalnak adjon saját GYIK-et az árkérdésekhez.",
+        "Yoast SEO, Rank Math, All in One SEO vagy Slim SEO mellett a Nurevo csak a hiányzó tényeket és szolgáltatásokat adja hozzá az adott bővítmény strukturált adataihoz, így a cég nincs kétszer leírva. Az SEO SIMPLE PACK és a VK All in One Expansion Unit mellett is működik (0.9.1-től).",
+        "Futtassa a diagnosztikát az AEO-pontszám képernyőn. B2B / SaaS oldalaknál négy dolgot ellenőriz: a szolgáltatásleírásokat, az árak oldalt, az esettanulmányokat (vagy GYIK-et) és a cég azonosíthatóságát."
+      ],
+      "after": [
+        "A nem WordPresszel készült oldalakon az ellenőrzések ugyanazok. Adja meg az URL-jét az [ingyenes ellenőrzésben](/check), regisztráció nélkül, és lássa a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát.",
+        "A B2B ügyfeleknek oldalt építő vagy karbantartó ügynökségek a karbantartás körébe vehetik az árváltozási rutint (árak oldal, összehasonlító oldalak, GYIK, értékelőoldal-profilok), hogy a tények ne térjenek el egymástól. A havonta ügyfeleket támogató ügynökségek csatlakozhatnak a [partnerprogramhoz](https://nurevo.jp/partner/)."
+      ]
+    },
+    {
+      "heading": "Hogyan ellenőrizze: válassza szét a márkanév nélküli és a márkanevet tartalmazó kérdéseket",
+      "paragraphs": [
+        "B2B esetén kétféle kérdést rögzítsen külön. A márkanév nélküli kérdések megmutatják, bekerül-e azok szűkített listájára, akik nem ismerik Önt. A márkanevet tartalmazó kérdések megmutatják, hogy akik ismerik Önt, a helyes tényeket kapják-e. Ugyanazt a kérdést tegye fel ugyanannak az AI-nak különböző napokon, és soha ne ítéljen egyetlen válasz alapján."
+      ],
+      "table": {
+        "head": [
+          "Fajta",
+          "Példa",
+          "Mit rögzítsen"
+        ],
+        "rows": [
+          [
+            "Márkanév nélkül (kategória)",
+            "„Melyik munkaidő-nyilvántartó szoftvert ajánlod kisvállalkozásnak?”",
+            "Megneveztek-e, idézték-e az oldalát, milyen más termékek jelentek meg"
+          ],
+          [
+            "Márkanév nélkül (feltétel)",
+            "„Munkaidő-nyilvántartás, amely integrálódik a bérszámfejtő szoftverünkkel?”",
+            "Helyesen alkalmazta-e a feltételt"
+          ],
+          [
+            "Márkanévvel (ár)",
+            "„Mennyibe kerül az Example Timesheets?”",
+            "Egyezik-e az ár, a számlázási egység és az adó a mai árak oldallal, és mi volt a forrás"
+          ],
+          [
+            "Márkanévvel (hírnév)",
+            "„Mit mondanak az emberek az Example Timesheets-ről?”",
+            "Melyik értékelőoldal vagy cikk volt a forrás, és becsúszott-e régi információ"
+          ]
+        ]
+      },
+      "after": [
+        "A Nurevo ingyenes AI-ellenőrzése (havonta egyszer, a csatlakoztatott Free és Standard oldalaknál) három márkanév nélküli kérdést tesz fel a Perplexitynek. A Pro láthatósági mérése (béta) jelenleg a Perplexityt fedi le, a ChatGPT a beállítása után következik. A márkanevet tartalmazó kérdéseket kézzel ellenőrizze a fenti táblázat alapján.",
+        "A látogatásoknál nézze meg a forrást a GA4-ben. A ChatGPT-ből érkező linkek hordozhatják az utm_source=chatgpt.com paramétert ([OpenAI GYIK kiadóknak](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)). A Search Console generatív AI teljesítményjelentése egy másik nézetet ad ([Google Search Central blog](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)). A B2B vásárlás időbe telik, ezért a kapcsolatfelvételi űrlapon egy „Honnan hallott rólunk (AI-válaszokat is beleértve)?” mező olyan hatást is megfog, amely soha nem jelenik meg kattintásként. A teljes módszer: [hogyan mérjük az AI-láthatóságot](/guide/measure-ai-visibility)."
+      ]
+    },
+    {
+      "heading": "Ellenőrzőlista B2B és SaaS oldalakhoz",
+      "list": [
+        "A termékoldal első mondata megmondja, mi ez, kinek szól (iparág és méret), és hogyan érhető el.",
+        "Az árak oldal megadja a számlázási egységet, a csomagok közötti különbségeket, a bevezetési díjat, a minimumokat, az adót és az utolsó frissítés dátumát (vagy egyedi ár esetén azt, mitől függ az ár, és egy kiindulópontot).",
+        "Az ár- és esettanulmány-szöveg JavaScript futtatása nélkül is benne van a HTML-ben.",
+        "Az esettanulmányok megadják az iparágat, a méretet, a csapatot, a problémát, a használt funkciókat, a bevezetési időt, és hogy hogyan és mikor mérték az eredményeket.",
+        "Az összehasonlító oldalak minden terméknél ugyanazokat a szempontokat használják, a versenytársak adatait dátummal és forrással látják el, és megmondják, mikor nem Ön a megfelelő választás.",
+        "Az integrációknak, követelményeknek, biztonságnak és támogatásnak külön címsora vagy oldala van.",
+        "Az árváltozás napjára van rutin, amely az összehasonlító oldalakat, a GYIK-et, a régi bejegyzéseket és az értékelőoldal-profilokat is frissíti.",
+        "A robots.txt és a WAF nem blokkolja az olyan keresőrobotokat, mint az OAI-SearchBot és a PerplexityBot.",
+        "Az Organization és a SoftwareApplication (vagy Service) értékei egyeznek az oldal szövegével, és nincs közzétéve kitalált értékelés.",
+        "Az llms.txt tartalmazza az ár-, esettanulmány- és összehasonlító oldalakat.",
+        "A márkanév nélküli és a márkanevet tartalmazó kérdéseket külön, különböző napokon rögzítik."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Ha nem tesszük közzé az árakat, kihagy minket az AI?",
+      "a": "Még így is megemlíthetik. De az árkérdésekhez szükséges anyag nélkül az AI más oldalak régi számaiból válaszol, vagy csak annyit mond, hogy az ár nem nyilvános. Ha összegeket nem is tud mutatni, írja le, mitől függ az ár, és adjon meg egy kiindulópontot."
+    },
+    {
+      "q": "Megnevezhetünk versenytársakat egy összehasonlító oldalon?",
+      "a": "Sok cég megteszi, amíg a tények pontosak. Adja meg, mikor ellenőrizte az egyes versenytársak hivatalos oldalát, és egy linket, hagyja ki, amit nem tud ellenőrizni, és engedély nélkül ne használja a logóikat vagy képernyőképeiket. Ellenőrizze az Önre vonatkozó, összehasonlító reklámra vonatkozó törvényeket és iparági szabályokat."
+    },
+    {
+      "q": "SaaS esetén SoftwareApplication vagy Product jelölést használjunk?",
+      "a": "A schema.org a SoftwareApplication típust kínálja szoftverhez (és a WebApplication típust a böngészőben futó szoftverhez). A Nurevo AEO a szoftverként jelölt szolgáltatásokat SoftwareApplication-ként teszi közzé. Ha a Google bővített találatát szeretné, ellenőrizze a követelményeket a Google dokumentációjában."
+    },
+    {
+      "q": "Egy alacsony pontszám az értékelőoldalakon megakadályozza, hogy az AI ajánljon minket?",
+      "a": "Egyetlen AI-cég sem magyarázta el hivatalosan, hogyan használják az értékelési pontszámokat a válaszokban. Amit tehet: naprakészen tartja a profilokat, és tisztességesen gyűjt értékeléseket. Ha ösztönzőt kínál, ellenőrizze a rejtett marketingre vonatkozó szabályokat ott, ahol működik, és az egyes oldalak szabályait."
+    },
+    {
+      "q": "Ez a fejlesztő ügynökségekre és tanácsadó cégekre is vonatkozik?",
+      "a": "Az alapok ugyanazok. Termékoldal helyett írjon oldalt minden szolgáltatáshoz (kinek szól, hogyan működik, mennyi ideig tart, hogyan alakul az ár, esettanulmányok), és használjon Service jelölést. A Nurevo AEO-ban a szoftver jelölőnégyzet bejelölése nélkül adja hozzá a szolgáltatásokat."
+    },
+    {
+      "q": "Az AI folyamatosan a régi árainkat idézi. Mit tehetünk?",
+      "a": "Kövesse vissza a válasz forrásait. A saját oldalán javítsa ki a régi számokat az árak oldalon kívül (összehasonlító oldalak, GYIK, régi bejegyzések); más oldalakon kérje meg a kiadót a frissítésre. Az AI válaszait közvetlenül nem szerkesztheti, és nincs meghatározott idő, amíg a változások megjelennek."
+    },
+    {
+      "q": "Ezekkel a lépésekkel bekerülünk az AI ajánlásai közé?",
+      "a": "Nincs garancia. Az AI válaszai a nappal és a megfogalmazással változnak, és az AI dönti el, mely termékeket nevezi meg. Ezek a lépések pontossá teszik az AI által olvasott tényeket, és a saját oldalán adnak neki anyagot, amely alapján Önt választhatja."
+    }
+  ],
+  "relatedHeading": "Kapcsolódó útmutatók",
+  "cta": {
+    "heading": "Nézze meg, hogyan olvassa az AI az oldalát",
+    "body": "Az ingyenes ellenőrzéshez nem kell regisztrálni: adjon meg egy URL-t, és lássa a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát. WordPressben az ingyenes bővítmény strukturált adatként és az llms.txt-ben teszi közzé a cég- és termékadatokat.",
+    "label": "Ellenőrizze ingyen az AI-készültséget",
+    "href": "/check",
+    "secondary": {
+      "label": "Próbálja ki az ingyenes WordPress-bővítményt",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "A ChatGPT az OpenAI, a Perplexity a Perplexity AI, a Google pedig a Google LLC védjegye. A G2, a Capterra, az ITreview, a BOXIL, a Yoast SEO, a Rank Math, az All in One SEO, a Slim SEO, az SEO SIMPLE PACK, a VK All in One Expansion Unit és a WordPress a megfelelő tulajdonosaik védjegyei vagy bejegyzett védjegyei. A Nurevo nem áll kapcsolatban egyik céggel sem, és egyikük sem támogatja."
+}

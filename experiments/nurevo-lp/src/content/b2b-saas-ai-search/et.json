@@ -1,0 +1,418 @@
+{
+  "title": "TI-otsing B2B ja SaaS jaoks: hinnad, juhtumid, võrdlused | Nurevo",
+  "description": "Kuidas B2B ja SaaS ostjad TI abil tarnijaid valivad ja millised lehed neile vastavad: hinnad, juhtumiuuringud, võrdlused. Väljatabelid, schema, llms.txt, WordPress.",
+  "h1": "TI-otsing B2B ja SaaS jaoks: tehke hinna-, juhtumiuuringu- ja võrdluslehed TI-le loetavaks",
+  "lead": "B2B ja SaaS ostjad koostavad tarnijate lühinimekirja, küsides TI-lt näiteks „Mis on parim tööriist X jaoks?“, „Kuidas A võrdub B-ga?“ ja „Mis see tavaliselt maksab?“. Töö tuum on omada lehti, mis vastavad neile küsimustele tekstina (hinnad, juhtumiuuringud, võrdlused ja alternatiivid, integratsioonid ja turvalisus), koos tingimuste ja kuupäevadega, ning hoida arvustussaidid ja välised profiilid nendega kooskõlas. Struktureeritud andmed ja llms.txt kordavad seejärel nende lehtede fakte masinloetaval kujul.",
+  "intro": [
+    "Kirjutatud 17. novembril 2026 (JST). schema.org tüübid kontrolliti samal päeval schema-dts 2.1.0-s. Google'i, OpenAI ja Perplexity väited pärinevad nende lehtedelt, mida loeti 31. oktoobrist 10. novembrini 2026 varasemate Nurevo juhendite jaoks. Tarbijareeglite näited on Jaapanist; kontrollige reegleid seal, kus tegutsete.",
+    "See juhend on ettevõtetele, kes müüvad teistele ettevõtetele tarkvara (SaaS), allhanketööd või nõustamist, ja agentuuridele, kes nende veebisaite ehitavad. Lehe „Meist“ kirjutamist käsitleb [TI-otsing lehe „Meist“ jaoks](/guide/company-profile-page-ai-search) ja blogipostituste kirjutamist [kuidas kirjutada artikleid, mida TI tsiteerib](/guide/blog-articles-ai-citations). See juhend käsitleb lehti, mis vastavad küsimusele „millise tarnija peaksime valima?“. TI vastused muutuvad päevast päeva ja sõltuvalt küsimuse sõnastusest. Siinsed sammud muudavad teie faktid TI-le loetavaks. Need ei garanteeri, et TI teid mainib või kuhugi järjestab."
+  ],
+  "sections": [
+    {
+      "heading": "Mida B2B ostjad TI-lt küsivad",
+      "paragraphs": [
+        "Kohalikku ettevõtet leitakse päringuga „tegevusala + piirkond“. B2B tarnijat leitakse selle järgi, mida ostja tahab ära teha ja millistel tingimustel. Paljud neist küsimustest esitatakse enne, kui ostja teie nime teab, nii et kui teie nimi vastusest puudub, ei jõua te kunagi lühinimekirja. Jaapani agentuuri TaTap 2026. aasta novembri küsitluses ütles 62,2% 135 juhist, kes olid ise tarnijat otsinud, et küsisid generatiivselt TI-lt soovitatud ettevõtteid, ja 27,4%, et jätsid kõrvale või seadsid tahaplaanile ettevõtted, mille nimed ei ilmunud ([TaTap](https://tatap.jp/knowledge/btob-llmo-agency/), väike küsitlus ettevõttelt, kes seda teenust müüb).",
+        "Küsimused jagunevad umbes kuueks liigiks ja igale vastab erinev leht."
+      ],
+      "table": {
+        "head": [
+          "Küsimuse liik",
+          "Näide",
+          "Leht, mis vastab",
+          "Tüüpiline viga TI vastustes"
+        ],
+        "rows": [
+          [
+            "Kategooria otsing",
+            "„Parim tööaja arvestuse tööriist?“ „Nimeta 3 juhtivat tööaja arvestuse süsteemi“",
+            "Tooteleht (mis, kellele, millise suurusega ettevõttele)",
+            "Vale ettevõtte suurus või valdkond, vales kategoorias"
+          ],
+          [
+            "Tingimuste järgi filtreerimine",
+            "„Tööaja arvestus 50 inimesele, mis integreerub meie palgatarkvaraga?“",
+            "Integratsioonide, funktsioonide ja nõuete lehed",
+            "Ütleb, et integratsioon on olemas, kui seda pole, või vastupidi"
+          ],
+          [
+            "Võrdlemine",
+            "„A või B?“ „Võrdle tööaja arvestuse süsteeme“",
+            "Võrdlusleht valikukriteeriumidega",
+            "Võrreldud vanade funktsioonide või vanade hindade põhjal"
+          ],
+          [
+            "Hind",
+            "„Mis tööaja arvestuse tarkvara tavaliselt maksab?“",
+            "Hinnaleht",
+            "Vanad hinnad, segadus maksudega, minimaalne litsentside arv kahe silma vahele jäänud"
+          ],
+          [
+            "Vahetamine",
+            "„Alternatiivid X-ile?“",
+            "Migratsiooni / vahetamise leht",
+            "Migratsiooni töömaht ja andmete import välja jäetud"
+          ],
+          [
+            "Nime kontrollimine",
+            "„Mida inimesed X-ist arvavad?“ „Mis X maksab?“",
+            "Klientide lood, leht „Meist“, arvustussaidid",
+            "Vanad arvustussaidi andmed või segiajamine samanimelise tootega"
+          ]
+        ]
+      },
+      "after": [
+        "Küsimused, mida Nurevo mõõtmine B2B / SaaS saitide puhul esitab, järgivad samu liike („Mis on parim tööriist ... jaoks?“, „Võrdle peamisi ...“, „Milliseid ... soovitad väikeettevõttele?“, „Milline on ... tavaline hinnavahemik?“, „Millistel ... on kõige rohkem klientide juhtumiuuringuid?“, „Mis on hea alternatiiv, kui tahan ...-lt üle minna?“), kõik ilma teie nimeta. Teie nimega küsimusi kontrollitakse käsitsi, nagu allpool kirjeldatud."
+      ]
+    },
+    {
+      "heading": "Mida väidavad tipp-artiklid ja kuidas see juhend neid käsitleb",
+      "paragraphs": [
+        "Lugesime 13 jaapani- ja ingliskeelset artiklit, mis on päringu „B2B SaaS AI search“ ja sarnaste päringute tipus. Peaaegu kõik nõustuvad, et võrdluslehed, juhtumiuuringud ja arvustussaidid on olulised. Enamik nende arvudest aga kas ei nimeta allikat või pärineb autori enda klientidelt. See juhend ei kasuta arve, mida ei saa kontrollida."
+      ],
+      "table": {
+        "head": [
+          "Levinud väide",
+          "Kui tugevad on tõendid",
+          "Kuidas see juhend seda käsitleb"
+        ],
+        "rows": [
+          [
+            "„TI-st tulevad külastajad konverteerivad mitu korda paremini kui Google'ist tulevad“",
+            "Arvud ulatuvad artiklites mõnekordsest üle 20-kordseni; aluseks olevaid uuringuid ei saa sageli jälgida",
+            "Ei kasutata. Näitame, kuidas seda oma GA4-s kontrollida"
+          ],
+          [
+            "„Seitse kümnest B2B ostjast alustab uurimist TI-ga“",
+            "Allikas puudub või lihtsalt „valdkonna andmed“",
+            "Ei kasutata. Ainult nimetatud allika ja valimi suurusega küsitlused"
+          ],
+          [
+            "„Võrdlus- ja alternatiivide lehti tsiteeritakse palju“",
+            "Agentuuride tähelepanekud; ametlikku avaldust pole",
+            "Tasub teha, sest need vastavad TI-le esitatavatele küsimustele; mitte rohkem"
+          ],
+          [
+            "„SoftwareApplication või FAQ märgendus viib teid TI vastustesse“",
+            "Artiklid väidavad vastupidiseid asju. Google ütleb, et TI-funktsioonid ei vaja erilist märgendust",
+            "Käsitletakse lehe faktide kordamisena"
+          ],
+          [
+            "„Rohkem arvustusi arvustussaitidel tähendab rohkem soovitusi“",
+            "Enamasti nimetamata uuringud",
+            "Kontrollige, et sealsed hinnad ja funktsioonid on ajakohased ja vastavad teie saidile, selle asemel et arve taga ajada"
+          ],
+          [
+            "„Lisage llms.txt ja TI loeb teid“",
+            "Google ütleb, et uut TI-faili pole vaja; teised TI-ettevõtted pole öelnud",
+            "Kui lisate, kasutage seda sissepääsuna hinna- ja juhtumiuuringu lehtedele"
+          ]
+        ]
+      },
+      "after": [
+        "Mis tipp-artiklitest enamasti puudus: konkreetsed väljad hinna- ja juhtumiuuringu lehtede jaoks, WordPressi sammud ja mõõtmisviis, mis eristab brändita küsimusi brändiga küsimustest. Sellele pühendab see juhend kõige rohkem aega."
+      ]
+    },
+    {
+      "heading": "Hinnaleht: andke otsuse alus ka ilma kõigi arvudeta",
+      "paragraphs": [
+        "Küsimustele „Mis see maksab?“ või „Mis X maksab?“ vastab TI teie hinnalehe põhjal või, kui seda pole, arvustussaitide ja võrdlusartiklite arvude põhjal. Ajakohased tingimused teie enda lehel on kindlamad kui kellegi teise kirjutatud vanad arvud. Ka pakkumispõhise hinna puhul saate öelda, millest hind sõltub."
+      ],
+      "table": {
+        "head": [
+          "Väli",
+          "Näide",
+          "Mis juhtub ilma selleta"
+        ],
+        "rows": [
+          [
+            "Arveldusühik",
+            "„Kasutaja kohta kuus“, „asukoha kohta“, „kasutuspõhine, 1000 kirje kohta“",
+            "Kogusumma loetakse valesti mitmekordselt"
+          ],
+          [
+            "Pakettide erinevused",
+            "Pakettide nimed, sisalduvad funktsioonid ja piirangud (kasutajad, säilitamine) tabelis",
+            "Kõrgeima paketi funktsioonid kirjeldatakse kõigis pakettides sisalduvana"
+          ],
+          [
+            "Juurutustasud ja miinimumid",
+            "Juurutustasu, minimaalne litsentside arv, minimaalne periood, aastane vs igakuine arveldus",
+            "Levib ainult kuuhind ja leping üllatab inimesi"
+          ],
+          [
+            "Maks",
+            "Üks selge rida tabeli kohal, näiteks „Kõik hinnad on ilma maksuta“",
+            "Maksuga ja maksuta hindu võrreldakse kõrvuti"
+          ],
+          [
+            "Tasuta prooviperiood või tasuta pakett",
+            "Pikkus, mis sisaldub, kas arveldus algab automaatselt",
+            "Esitatakse lihtsalt kui „tasuta“"
+          ],
+          [
+            "Lisateenused",
+            "Juurutus, lisasalvestusruum, API-juurdepääs, premium-tugi",
+            "Vajalikud kulud vastusest puudu"
+          ],
+          [
+            "Pakkumispõhine hind",
+            "„Hind sõltub X-ist ja Y-st. Paketid algavad umbes Z-st kuus.“",
+            "Esitatakse ainult kui „hind pole avalik“ ja te kukute nimekirjast välja"
+          ],
+          [
+            "Viimati uuendatud",
+            "Lehel: „Hinnad muudetud 1. novembril 2026“",
+            "Vanu ja uusi hindu pole võimalik eristada"
+          ]
+        ]
+      },
+      "after": [
+        "Hindade muutmisel uuendage samal päeval kui hinnalehte ka võrdluslehte, KKK-d, vanu blogipostitusi ja oma arvustussaitide profiile. Kui teie enda lehed on omavahel vastuolus, valib TI neist ühe.",
+        "Ärge avaldage hindu ainult pildi või PDF-ina. Kasutage HTML-tabelit või siltidega loendit."
+      ]
+    },
+    {
+      "heading": "Juhtumiuuringute lehed: sobituge tingimustega, millega ostjad otsivad",
+      "paragraphs": [
+        "B2B küsimustes on tingimused: „Milliseid tööaja arvestuse tööriistu tootjad kasutavad?“, „Millistel ... on kõige rohkem juhtumiuuringuid?“. Juhtumiuuringus on olulisem, et need tingimused oleksid kergesti leitavad, kui see, et tekst hästi loeks. Pange iga loo algusesse tabelina järgmised väljad ja seejärel jutustus."
+      ],
+      "table": {
+        "head": [
+          "Väli",
+          "Näide"
+        ],
+        "rows": [
+          [
+            "Valdkond ja suurus",
+            "„Toiduainetootja, umbes 250 töötajat, 2 tehast“"
+          ],
+          [
+            "Kes seda kasutab",
+            "„Personaliosakond ja iga tehase juhid“"
+          ],
+          [
+            "Probleem enne",
+            "„Paberil ajatabelid, mis summeeriti kuu lõpus käsitsi“"
+          ],
+          [
+            "Miks nad selle valisid ja millised olid kriteeriumid",
+            "„Vahetuste tugi ja integratsioon olemasoleva palgatarkvaraga“ (konkurente pole vaja nimetada)"
+          ],
+          [
+            "Kasutatud funktsioonid ja integratsioonid",
+            "„Sisseregistreerimine, vahetuste planeerimine, palgaeksport“"
+          ],
+          [
+            "Aeg kasutuselevõtuni",
+            "„Umbes 2 kuud lepingust tootmiskasutuseni“"
+          ],
+          [
+            "Tulemus ja kuidas seda mõõdeti",
+            "„Igakuine kokkuvõte lühenes 3 päevalt pooleks päevaks (personaliosakonna tööpäevik, 6 kuud pärast käivitamist)“: mis, millal, kuidas mõõdetud"
+          ],
+          [
+            "Kuupäev ja ajahetk",
+            "„Intervjuu oktoobris 2026. Ametinimetused ja arvud intervjuu seisuga“"
+          ]
+        ]
+      },
+      "after": [
+        "Avaldage ainult tulemusi, mille taga klient seisab, koos meetodi ja kuupäevaga. Paisutatud arve tsiteerib TI nii, nagu need on, ja neid on hiljem raske parandada. Hankige kirjalik luba kliendi nime, logo ja tsitaatide näitamiseks.",
+        "Kuni lugusid on vähe, lisage valdkonna ja ettevõtte suuruse järgi registrileht, mis viitab igale loole. Avalehelt lingitud leht nimega „Klientide lood“ või „Juhtumiuuringud“ on inimestele ja TI-le kergesti leitav."
+      ]
+    },
+    {
+      "heading": "Võrdlus- ja vahetamislehed: öelge, kellele te ei sobi",
+      "paragraphs": [
+        "Küsimusele „A või B?“ vastab TI, millel pole teie saidilt millelegi toetuda, konkurentide lehtede või võrdlussaitide põhjal. Ehitage võrdlusleht kui materjal otsustamiseks, milline toode millisele ettevõttele sobib, mitte kui punktitabel."
+      ],
+      "list": [
+        "Määrake esmalt kriteeriumid (ettevõtte suurus, arveldusühik, integratsioonid, tugi, andmete asukoht jne) ja võrrelge iga toodet samade kriteeriumide alusel.",
+        "Konkurentide funktsioonide ja hindade puhul märkige kuupäev, millal kontrollisite nende ametlikku lehte, ja link. Jätke välja kõik, mida te ei saa kontrollida.",
+        "Öelge selgelt, kellele te ei sobi („Alla 100 inimese puhul võib A tasuta pakett teile paremini sobida“). Ühekülgset võrdlust ei usalda ka lugejad.",
+        "Vahetamislehel märkige, milliseid andmeid saab importida, sammud ja kuluv aeg, kui kaua mõlemat süsteemi paralleelselt kasutada ning kas migratsiooniabi on tasuline või tasuta.",
+        "Lisage võrdluslehele kuupäev ja vaadake see üle iga kord, kui teie või konkurent hindu muudab."
+      ],
+      "after": [
+        "Konkurentide nimetamisel jääge faktide juurde ja ärge kasutage nende logosid ega ekraanipilte ilma loata."
+      ]
+    },
+    {
+      "heading": "Integratsioonid, nõuded, turvalisus ja tugi: vastake tingimustega küsimustele",
+      "paragraphs": [
+        "Tingimused nagu „integreerub X-iga“, „omab ISO/IEC 27001“ või „tugi nädalavahetustel“ on faktid, mida TI kipub nimekirja kitsendamisel kasutama. Üks rida funktsioonide loendis on nõrk materjal, seega andke igale tingimusele oma leht või pealkiri."
+      ],
+      "list": [
+        "Integratsioonid: teenused, millega ühendute, kuidas (sisseehitatud, API, CSV) ja kas see maksab lisaks.",
+        "Nõuded: brauserid, kas on mobiilirakendus ja millisele OS-ile, kuidas see võrguühenduseta käitub.",
+        "Turvalisus: iga teil oleva sertifikaadi nimi, ulatus ja registreerimisnumber või kuupäev. Ärge loetlege neid, mida teil pole. Kus andmeid hoitakse (riik või piirkond).",
+        "Tugi: tunnid, kanalid (telefon, e-post, vestlus), erinevused pakettide kaupa, mida juurutus hõlmab.",
+        "Leping ja lõpetamine: kuidas lõpetada ja mis andmetega pärast juhtub."
+      ]
+    },
+    {
+      "heading": "Välised allikad: hoidke arvustussaidid ja profiilid oma saidiga kooskõlas",
+      "paragraphs": [
+        "Teie nimega küsimuste puhul („Mida inimesed X-ist arvavad?“) kasutatakse allikana sageli arvustussaite nagu G2, Capterra, ITreview ja BOXIL, pressiteateid ja võrdlusartikleid. Neid lehti te muuta ei saa, seega keskenduge kahele asjale."
+      ],
+      "list": [
+        "Hoidke profiil ajakohasena: tootekirjeldus, hinnad, funktsioonid ja ettevõtte andmed kirjutatud samamoodi ja samade arvudega nagu teie saidil. Küsige uuendusi iga saidi haldajalt selle profiilireeglite järgi.",
+        "Koguge arvustusi ausalt: Jaapanis on varjatud turundus alates 1. oktoobrist 2023 põhjendamatute preemiate ja eksitavate esituste vastase seaduse rikkumine ning arvustused, mille avaldamist ettevõte kolmandatelt osapooltelt palub või neile juhiseid annab, loetakse selle ettevõtte reklaamiks ([Tarbijaasjade amet](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)). Kui pakute arvustuste eest stiimulit, kontrollige iga arvustussaidi reegleid, kuidas stiimul tuleb avalikustada, ja reegleid seal, kus tegutsete."
+      ],
+      "after": [
+        "Kui näitate oma saidil arvustuste hinnet, öelge, millise saidi oma see on, millise kuupäeva seisuga ja mitme arvustuse põhjal. Ärge avaldage ise kogutud hinnanguid struktureeritud andmetes aggregateRating-una, ütlemata, kust need pärinevad."
+      ]
+    },
+    {
+      "heading": "Kas TI suudab lehte lugeda? Roomikud ja JavaScript",
+      "paragraphs": [
+        "SaaS-saidid kuvavad mõnikord hinnatabeleid või funktsioonide võrdlusi JavaScriptiga pärast lehe laadimist. See, mida brauseris näete, võib puududa HTML-ist, mille roomik saab. Kindlam on, kui hinna- ja juhtumiuuringu tekst on HTML-is, mille server esimesena tagastab. Laadige lehe HTML alla (näiteks curl-iga) ja kontrollige, et hinnad ja lugude tekst on seal olemas.",
+        "Kontrollige ka, et robots.txt ei blokeeri TI-teenuste otsinguroomikuid. OpenAI ütleb, et saite, mis loobuvad OAI-SearchBot-ist, ei näidata ChatGPT otsinguvastustes ([OpenAI roomikud](https://developers.openai.com/api/docs/bots)); see on teine bot kui GPTBot, mis on mõeldud treenimiseks. Ka Perplexity dokumenteerib PerplexityBot-i ja Perplexity-User-i eraldi ([Perplexity roomikud](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)). WAF või botikaitseteenus võib neid blokeerida, ilma et keegi märkaks."
+      ]
+    },
+    {
+      "heading": "Struktureeritud andmed: Organization ettevõtte jaoks, SoftwareApplication või Service selle jaoks, mida müüte",
+      "paragraphs": [
+        "Google ütleb, et AI Overviews ja AI Mode ei vaja erilisi struktureeritud andmeid ega faile ning et struktureeritud andmed peavad vastama lehel nähtavale ([TI-funktsioonid ja teie veebisait](https://developers.google.com/search/docs/appearance/ai-features)). Seda silmas pidades on B2B ja SaaS tavaline kombinatsioon:"
+      ],
+      "list": [
+        "Ettevõte: Organization (või alamtüüp nagu Corporation) koos nime, URL-i, logo, kirjelduse ja kontaktiga. Vt [TI-otsing lehe „Meist“ jaoks](/guide/company-profile-page-ai-search).",
+        "Tarkvara: SoftwareApplication. schema.org-is on see CreativeWork-i liik, mille omaduste hulgas on applicationCategory, operatingSystem, featureList, softwareVersion ja offers. Brauseripõhisel tarkvaral on ka alamtüüp WebApplication ([schema.org SoftwareApplication](https://schema.org/SoftwareApplication)).",
+        "Teenused, nagu allhange või nõustamine: Service, mis on ettevõttega seotud provider-i kaudu.",
+        "KKK: FAQPage ainult lehel, mis neid küsimusi ja vastuseid näitab."
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "Näide on kuju, mille Nurevo AEO avaldab, kui teenus on märgitud „See on tarkvara (SaaS või rakendus)“ (väärtused on välja mõeldud). provider osutab ettevõtte sõlmele, kategooriast saab applicationCategory ning hinnast ja valuutast Offer. Märkige arveldusühik, näiteks „kasutaja kohta kuus“, hinnalehe tekstis.",
+        "Google'i tarkvararakenduse rikastatud tulemusel otsingutulemustes on oma nõuded, näiteks hinnangud või arvustused. Kui soovite seda rikastatud tulemust, kontrollige kehtivaid nõudeid dokumentatsioonist [Google'i tarkvararakenduse struktureeritud andmed](https://developers.google.com/search/docs/appearance/structured-data/software-app). Nurevo AEO ei avalda kunagi hinnangut, mille taga pole päris arvustusi."
+      ]
+    },
+    {
+      "heading": "llms.txt: sissepääs hinna-, juhtumiuuringu- ja võrdluslehtedele",
+      "paragraphs": [
+        "llms.txt on üks tekstifail saidi kokkuvõtte ja linkidega põhilehtedele. Ükski TI-ettevõte pole ametlikult mõju kirjeldanud ja Google ütleb, et seda pole vaja (vt [kuidas kirjutada llms.txt](/guide/llms-txt)). Kui selle lisate, on B2B ja SaaS puhul mõte tagada, et see loetleb teie hinna-, juhtumiuuringu-, võrdlus- ja integratsioonilehed. Kui saidi tüübiks on „B2B / SaaS“, koostab Nurevo AEO selle nii (väärtused on välja mõeldud):"
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "Key facts all olevad Pricing ja Case studies on URL-id, mis on sisestatud Seadetes kui „Hinnaleht (B2B)“ ja „Juhtumiuuringute leht (B2B)“. B2B / SaaS saidid ei avalda lahtiolekuaegu. Pages loetleb 30 viimati uuendatud lehte ja postitust, nii et aktiivse blogiga saidil võib võrdlusleht välja tõrjutud saada. Sel juhul märkige postitused, mida seal vaja pole, valikuga „jäta see leht llms.txt-st välja“ või lisage read arendajafiltriga webmcp_canary_llms_txt_lines."
+      ]
+    },
+    {
+      "heading": "Sammud WordPressis (Nurevo AEO-ga)",
+      "paragraphs": [
+        "WordPressis avaldab [Nurevo AEO (tasuta)](https://wordpress.org/plugins/nurevo-webmcp/) teie ettevõtte ja toodete faktid struktureeritud andmetena ja llms.txt-s. Töötage selles järjekorras."
+      ],
+      "list": [
+        "Parandage esmalt hinna-, juhtumiuuringu-, võrdlus- ja integratsioonilehtede tekst ülaltoodud tabelite järgi. Tekst enne struktureeritud andmeid.",
+        "Seadistusviisardis (või Seadetes) määrake saidi tüübiks „B2B / SaaS“. Ettevõte avaldatakse kui Organization. Kui valite ettevõtte tüübi väljal sobiva tüübi, näiteks Corporation, ProfessionalService või AccountingService, kasutatakse seda tüüpi; B2B saidile mittesobiv tüüp asendatakse Organization-iga. Aadress ja lahtiolekuajad pole kohustuslikud.",
+        "Lisage oma teenused (kuni 20): nimi, ühelauseline kirjeldus, teenuselehe URL, kategooria, hind ja valuuta. Tarkvara puhul märkige „See on tarkvara (SaaS või rakendus)“. Märgitud kirjed avaldatakse kui SoftwareApplication, ülejäänud kui Service.",
+        "Kategooriaks kasutage sõnu, mida ostjad TI-lt küsides kasutavad („tööaja arvestuse tarkvara“, „kulude haldus“). Nurevo mõõtmisküsimused koostatakse sellest kategooriast.",
+        "Sisestage „Hinnaleht (B2B)“ ja „Juhtumiuuringute leht (B2B)“ URL-id. Need lähevad llms.txt Key facts alla ja diagnostika kontrollib neid.",
+        "KKK kirjed avaldatakse kui FAQPage ainult lehtedel, mis näitavad neid Nurevo FAQ ploki või [nurevo_faq] lühikoodiga. Andke hinnalehele hinnaküsimuste jaoks oma KKK.",
+        "Yoast SEO, Rank Mathi, All in One SEO või Slim SEO-ga lisab Nurevo selle pistikprogrammi struktureeritud andmetesse ainult puuduvad faktid ja teenused, nii et ettevõtet ei kirjeldata kaks korda. Töötab ka koos SEO SIMPLE PACK-i ja VK All in One Expansion Unit-iga (alates 0.9.1).",
+        "Käivitage diagnostika AEO skoori ekraanil. B2B / SaaS saitide puhul kontrollib see nelja asja: teenuste kirjeldusi, hinnalehte, juhtumiuuringuid (või KKK-d) ja ettevõtte identiteeti."
+      ],
+      "after": [
+        "Saitidel, mis pole WordPressiga ehitatud, on kontrollid samad. Sisestage oma URL [tasuta kontrolli](/check), registreerumist pole vaja, et näha struktureeritud andmete, llms.txt ja TI-roomikute juurdepääsu olekut.",
+        "Agentuurid, kes ehitavad või haldavad B2B klientide saite, võivad hinnamuutuse rutiini (hinnaleht, võrdluslehed, KKK, arvustussaitide profiilid) lisada hoolduse ulatusse, et faktid lahku ei läheks. Agentuurid, kes toetavad kliente igakuiselt, saavad liituda [partnerprogrammiga](https://nurevo.jp/partner/)."
+      ]
+    },
+    {
+      "heading": "Kuidas kontrollida: eristage brändita ja brändiga küsimusi",
+      "paragraphs": [
+        "B2B puhul salvestage kahte liiki küsimusi eraldi. Brändita küsimused näitavad, kas jõuate nende lühinimekirja, kes teid ei tunne. Brändiga küsimused näitavad, kas need, kes teid tunnevad, saavad õiged faktid. Esitage sama küsimus samale TI-le eri päevadel ja ärge kunagi otsustage ühe vastuse põhjal."
+      ],
+      "table": {
+        "head": [
+          "Liik",
+          "Näide",
+          "Mida salvestada"
+        ],
+        "rows": [
+          [
+            "Brändita (kategooria)",
+            "„Millist tööaja arvestuse tarkvara soovitad väikeettevõttele?“",
+            "Kas teid nimetati, kas teie saiti tsiteeriti, millised teised tooted ilmusid"
+          ],
+          [
+            "Brändita (tingimus)",
+            "„Tööaja arvestus, mis integreerub meie palgatarkvaraga?“",
+            "Kas tingimust rakendati õigesti"
+          ],
+          [
+            "Brändiga (hind)",
+            "„Mis Example Timesheets maksab?“",
+            "Kas hind, arveldusühik ja maks vastavad teie tänasele hinnalehele ja mis oli allikas"
+          ],
+          [
+            "Brändiga (maine)",
+            "„Mida inimesed Example Timesheets'ist arvavad?“",
+            "Milline arvustussait või artikkel oli allikas ja kas vana teave on sisse imbunud"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo tasuta TI-kontroll (kord kuus, ühendatud Free ja Standard saitide jaoks) esitab Perplexityle kolm brändita küsimust. Pro nähtavuse mõõtmine (beeta) hõlmab praegu Perplexityt, ChatGPT lisandub, kui see on seadistatud. Kontrollige brändiga küsimusi käsitsi ülaltoodud tabeli järgi.",
+        "Külastuste puhul vaadake allikat GA4-s. ChatGPT lingid võivad kanda utm_source=chatgpt.com ([OpenAI kirjastajate KKK](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)). Search Console'i generatiivse TI toimivuse aruanne pakub teist vaadet ([Google Search Centrali blogi](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)). B2B ost võtab aega, seega püüab kontaktivormi väli „Kuidas te meist kuulsite (sh TI vastustest)?“ kinni mõju, mis kunagi klikina ei ilmu. Täielik meetod on juhendis [kuidas mõõta TI-nähtavust](/guide/measure-ai-visibility)."
+      ]
+    },
+    {
+      "heading": "B2B ja SaaS saitide kontrollnimekiri",
+      "list": [
+        "Tootelehe esimene lause ütleb, mis see on, kellele (valdkond ja suurus) ja kuidas see tarnitakse.",
+        "Hinnaleht märgib arveldusühiku, pakettide erinevused, juurutustasu, miinimumid, maksu ja viimase uuenduse kuupäeva (või pakkumispõhise hinna puhul, millest hind sõltub, ja lähtepunkti).",
+        "Hinna- ja juhtumiuuringu tekst on HTML-is ilma JavaScripti käivitamata.",
+        "Juhtumiuuringud märgivad valdkonna, suuruse, meeskonna, probleemi, kasutatud funktsioonid, aja kasutuselevõtuni ning kuidas ja millal tulemusi mõõdeti.",
+        "Võrdluslehed kasutavad iga toote jaoks samu kriteeriume, konkurentide faktidel on kuupäev ja allikas, ning öeldakse, kellele te ei sobi.",
+        "Integratsioonidel, nõuetel, turvalisusel ja toel on igaühel oma pealkiri või leht.",
+        "Hinnamuutuse päevaks on rutiin, mis uuendab ka võrdluslehti, KKK-d, vanu postitusi ja arvustussaitide profiile.",
+        "robots.txt ja WAF ei blokeeri otsinguroomikuid nagu OAI-SearchBot ja PerplexityBot.",
+        "Organization ja SoftwareApplication (või Service) väärtused vastavad lehe tekstile ja ühtegi väljamõeldud hinnangut pole avaldatud.",
+        "llms.txt loetleb hinna-, juhtumiuuringu- ja võrdluslehed.",
+        "Brändita ja brändiga küsimused salvestatakse eraldi, eri päevadel."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Kui me hindu ei avalda, kas TI jätab meid välja?",
+      "a": "Teid võidakse siiski mainida. Kuid ilma hinnaküsimuste materjalita vastab TI teiste saitide vanade arvude põhjal või ütleb lihtsalt, et hind pole avalik. Isegi kui te ei saa summasid näidata, öelge, millest hind sõltub, ja andke lähtepunkt."
+    },
+    {
+      "q": "Kas võime võrdluslehel konkurente nimetada?",
+      "a": "Paljud ettevõtted teevad seda, kui faktid on täpsed. Märkige kuupäev, millal kontrollisite iga konkurendi ametlikku lehte, ja link, jätke välja see, mida ei saa kontrollida, ning ärge kasutage nende logosid ega ekraanipilte ilma loata. Kontrollige teile kehtivaid võrdleva reklaami seadusi ja valdkonna reegleid."
+    },
+    {
+      "q": "Kas SaaS peaks kasutama SoftwareApplication või Product märgendust?",
+      "a": "schema.org pakub tarkvarale SoftwareApplication-it (ja brauseripõhisele tarkvarale WebApplication-it). Nurevo AEO avaldab tarkvarana märgitud teenused kui SoftwareApplication. Kui soovite Google'i rikastatud tulemust, kontrollige nõudeid Google'i dokumentatsioonist."
+    },
+    {
+      "q": "Kas madal hinne arvustussaitidel takistab TI-l meid soovitamast?",
+      "a": "Ükski TI-ettevõte pole ametlikult selgitanud, kuidas arvustuste hindeid vastustes kasutatakse. Mida saate teha, on hoida profiilid ajakohased ja koguda arvustusi ausalt. Kui pakute stiimuleid, kontrollige varjatud turunduse reegleid seal, kus tegutsete, ja iga saidi reegleid."
+    },
+    {
+      "q": "Kas see kehtib ka arendusagentuuride ja nõustamisfirmade kohta?",
+      "a": "Põhitõed on samad. Tootelehe asemel kirjutage leht iga teenuse kohta (kellele see on, kuidas see toimib, kui kaua see võtab, kuidas hind kujuneb, juhtumiuuringud) ja kasutage Service märgendust. Nurevo AEO-s lisage teenused ilma tarkvara kasti märkimata."
+    },
+    {
+      "q": "TI tsiteerib ikka meie vanu hindu. Mida teha?",
+      "a": "Jälgige vastuse allikad. Oma saidil parandage vanad arvud väljaspool hinnalehte (võrdluslehed, KKK, vanad postitused); teistel saitidel paluge kirjastajal uuendada. TI vastuseid ei saa otse muuta ja muudatuste ilmumiseks pole kindlat aega."
+    },
+    {
+      "q": "Kas need sammud viivad meid TI soovitustesse?",
+      "a": "Garantiid pole. TI vastused muutuvad päeva ja sõnastusega ning TI otsustab, milliseid tooteid nimetada. Need sammud muudavad TI loetavad faktid täpseks ja annavad talle teie enda saidil materjali, mille põhjal teid valida."
+    }
+  ],
+  "relatedHeading": "Seotud juhendid",
+  "cta": {
+    "heading": "Vaadake, kuidas TI teie saiti loeb",
+    "body": "Tasuta kontroll ei nõua registreerumist: sisestage URL, et näha struktureeritud andmete, llms.txt ja TI-roomikute juurdepääsu olekut. WordPressis avaldab tasuta pistikprogramm teie ettevõtte ja toodete faktid struktureeritud andmetena ja llms.txt-s.",
+    "label": "Kontrollige oma TI-valmidust tasuta",
+    "href": "/check",
+    "secondary": {
+      "label": "Proovige tasuta WordPressi pistikprogrammi",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT on OpenAI, Perplexity Perplexity AI ja Google Google LLC kaubamärk. G2, Capterra, ITreview, BOXIL, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ja WordPress on vastavate omanike kaubamärgid või registreeritud kaubamärgid. Nurevo ei ole ühegi neist ettevõtetest seotud ega nende poolt heaks kiidetud."
+}
