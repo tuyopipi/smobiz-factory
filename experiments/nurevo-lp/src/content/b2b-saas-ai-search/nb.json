@@ -1,0 +1,418 @@
+{
+  "title": "AI-søk for B2B og SaaS: priser, kundecaser, sammenligninger | Nurevo",
+  "description": "Slik bruker B2B- og SaaS-kjøpere AI til å velge leverandører, og sidene som svarer: priser, kundecaser, sammenligninger. Felttabeller, schema, llms.txt, WordPress.",
+  "h1": "AI-søk for B2B og SaaS: gjør pris-, kundecase- og sammenligningssidene dine lesbare for AI",
+  "lead": "B2B- og SaaS-kjøpere lager kortlisten over leverandører ved å spørre AI om ting som «Hva er det beste verktøyet for X?», «Hvordan står A seg mot B?» og «Hva koster dette vanligvis?». Kjernen i arbeidet er å ha sider som besvarer disse spørsmålene i tekst (priser, kundecaser, sammenligninger og alternativer, integrasjoner og sikkerhet), med vilkår og datoer, og å holde anmeldelsesnettsteder og eksterne profiler i samsvar med dem. Strukturerte data og llms.txt gjengir deretter faktaene fra disse sidene i en form maskiner kan lese.",
+  "intro": [
+    "Skrevet 17. november 2026 (JST). schema.org-typene ble kontrollert den dagen i schema-dts 2.1.0. Utsagn fra Google, OpenAI og Perplexity kommer fra deres sider, lest mellom 31. oktober og 10. november 2026 for tidligere Nurevo-guider. Eksempler på forbrukerregler kommer fra Japan; sjekk reglene der du driver virksomhet.",
+    "Denne guiden er for bedrifter som selger programvare (SaaS), utsatt arbeid eller rådgivning til andre bedrifter, og for byråene som bygger nettstedene deres. Hvordan du skriver Om oss-siden, står i [AI-søk for Om oss-siden din](/guide/company-profile-page-ai-search), og hvordan du skriver blogginnlegg, i [slik skriver du artikler AI kan sitere](/guide/blog-articles-ai-citations). Denne guiden handler om sidene som svarer på «hvilken leverandør bør vi velge?». AI-svar endrer seg fra dag til dag og etter hvordan et spørsmål formuleres. Trinnene her gjør faktaene dine lesbare for AI. De garanterer ikke at en AI nevner deg eller rangerer deg noe sted."
+  ],
+  "sections": [
+    {
+      "heading": "Hva B2B-kjøpere spør AI om",
+      "paragraphs": [
+        "En lokal bedrift blir funnet med «bransje + område». En B2B-leverandør blir funnet ut fra hva kjøperen vil få gjort, og under hvilke vilkår. Mange av disse spørsmålene kommer før kjøperen kjenner navnet ditt, så hvis navnet ditt mangler i svaret, kommer du aldri på kortlisten. I en undersøkelse utført av det japanske byrået TaTap i november 2026 sa 62,2 % av 135 ledere som selv hadde lett etter en leverandør, at de hadde bedt en generativ AI om anbefalte selskaper, og 27,4 % sa at de hadde valgt bort eller nedprioritert selskaper som ikke ble nevnt ([TaTap](https://tatap.jp/knowledge/btob-llmo-agency/), en liten undersøkelse fra et firma som selger nettopp denne tjenesten).",
+        "Spørsmålene faller grovt sett i seks typer, og hver type besvares av en egen side."
+      ],
+      "table": {
+        "head": [
+          "Type spørsmål",
+          "Eksempel",
+          "Side som besvarer det",
+          "Typisk feil i AI-svar"
+        ],
+        "rows": [
+          [
+            "Kategorisøk",
+            "«Beste verktøy for timeregistrering?» «Nevn 3 ledende timeregistreringssystemer»",
+            "Produktside (hva, for hvem, hvilken størrelse)",
+            "Feil bedriftsstørrelse eller bransje, oppført i feil kategori"
+          ],
+          [
+            "Filtrering på vilkår",
+            "«Timeregistrering for 50 personer som integrerer med lønnssystemet vårt?»",
+            "Sider om integrasjoner, funksjoner og krav",
+            "Sier at en integrasjon finnes når den ikke gjør det, eller omvendt"
+          ],
+          [
+            "Sammenligning",
+            "«A eller B?» «Sammenlign timeregistreringssystemer»",
+            "Sammenligningsside med utvalgskriterier",
+            "Sammenlignet på gamle funksjoner eller gamle priser"
+          ],
+          [
+            "Pris",
+            "«Hva koster programvare for timeregistrering vanligvis?»",
+            "Prisside",
+            "Gamle priser, forvirring om mva., minimumsantall brukere oversett"
+          ],
+          [
+            "Bytte",
+            "«Alternativer til X?»",
+            "Migrerings- / bytteside",
+            "Migreringsarbeid og dataimport utelatt"
+          ],
+          [
+            "Sjekk av et navn",
+            "«Hva sier folk om X?» «Hva koster X?»",
+            "Kundehistorier, Om oss-side, anmeldelsesnettsteder",
+            "Gamle data fra anmeldelsesnettsteder, eller forveksling med et produkt med samme navn"
+          ]
+        ]
+      },
+      "after": [
+        "Spørsmålene Nurevos måling stiller for B2B- / SaaS-nettsteder, følger også disse typene («Hva er det beste verktøyet for …?», «Sammenlign de viktigste …», «Hvilket … anbefaler du for en liten bedrift?», «Hva er det typiske prisnivået for …?», «Hvilke … har flest kundecaser?», «Hva er et godt alternativ hvis jeg vil bytte fra …?»), alle uten navnet ditt. Spørsmål med navnet ditt sjekkes manuelt, som beskrevet nedenfor."
+      ]
+    },
+    {
+      "heading": "Hva de høyest rangerte artiklene påstår, og hvordan denne guiden behandler det",
+      "paragraphs": [
+        "Vi leste 13 japanske og engelske artikler som rangerer for «B2B SaaS AI search» og lignende søk. Nesten alle er enige om at sammenligningssider, kundecaser og anmeldelsesnettsteder betyr noe. De fleste tallene deres oppgir likevel ingen kilde eller kommer fra forfatterens egne kunder. Denne guiden bruker ikke tall som ikke kan etterprøves."
+      ],
+      "table": {
+        "head": [
+          "Vanlig påstand",
+          "Hvor sterkt belegget er",
+          "Hvordan denne guiden behandler det"
+        ],
+        "rows": [
+          [
+            "«Besøkende fra AI konverterer mange ganger bedre enn besøkende fra Google»",
+            "Tallene spenner fra noen få ganger til over 20 ganger mellom artiklene; de underliggende studiene kan ofte ikke spores",
+            "Brukes ikke. Vi viser hvordan du sjekker det i din egen GA4"
+          ],
+          [
+            "«Sju av ti B2B-kjøpere starter researchen med AI»",
+            "Ingen kilde, eller bare «bransjedata»",
+            "Brukes ikke. Bare undersøkelser med navngitt kilde og utvalgsstørrelse"
+          ],
+          [
+            "«Sammenlignings- og alternativsider blir sitert mye»",
+            "Byråers observasjoner; ingen offisiell uttalelse",
+            "Verdt å lage fordi de passer til spørsmålene AI får; ikke noe mer"
+          ],
+          [
+            "«SoftwareApplication- eller FAQ-markering får deg inn i AI-svar»",
+            "Artiklene sier motsatte ting. Google sier at AI-funksjoner ikke krever spesiell markering",
+            "Behandles som en gjengivelse av faktaene på siden"
+          ],
+          [
+            "«Flere anmeldelser på anmeldelsesnettsteder gir flere anbefalinger»",
+            "Stort sett navnløse studier",
+            "Sjekk at priser og funksjoner der er oppdaterte og stemmer med nettstedet ditt, i stedet for å jage antall"
+          ],
+          [
+            "«Legg til llms.txt, så leser AI deg»",
+            "Google sier at ingen ny AI-fil trengs; andre AI-selskaper har ikke uttalt seg",
+            "Hvis du legger den til, bruk den som inngang til pris- og kundecasesider"
+          ]
+        ]
+      },
+      "after": [
+        "Det de høyest rangerte artiklene oftest manglet: konkrete felt for pris- og kundecasesider, trinn for WordPress og en målemetode som skiller spørsmål uten og med merkenavn. Det er der denne guiden bruker tiden sin."
+      ]
+    },
+    {
+      "heading": "Prisside: gi grunnlaget for en beslutning, også uten alle tall",
+      "paragraphs": [
+        "På «Hva koster det?» eller «Hva koster X?» svarer AI ut fra prissiden din eller, hvis du ikke har en, ut fra tall på anmeldelsesnettsteder og i sammenligningsartikler. Gjeldende vilkår på din egen side er tryggere enn gamle tall skrevet av noen andre. Selv med pris etter tilbud kan du si hva prisen avhenger av."
+      ],
+      "table": {
+        "head": [
+          "Felt",
+          "Eksempel",
+          "Hva som skjer uten det"
+        ],
+        "rows": [
+          [
+            "Faktureringsenhet",
+            "«Per bruker per måned», «per lokasjon», «bruksbasert, per 1 000 poster»",
+            "Totalbeløp feiltolkes med en stor faktor"
+          ],
+          [
+            "Forskjeller mellom planer",
+            "Plannavn, inkluderte funksjoner og grenser (brukere, lagringstid) i en tabell",
+            "Funksjoner fra den øverste planen beskrives som inkludert i alle planer"
+          ],
+          [
+            "Etableringsgebyr og minimumskrav",
+            "Etableringsgebyr, minimumsantall brukere, minste bindingstid, årlig eller månedlig fakturering",
+            "Bare månedsprisen spres, og kontrakten overrasker"
+          ],
+          [
+            "Mva.",
+            "Én tydelig linje over tabellen, for eksempel «Alle priser er eks. mva.»",
+            "Priser med og uten mva. sammenlignes side om side"
+          ],
+          [
+            "Gratis prøveperiode eller gratisplan",
+            "Lengde, hva som er inkludert, om faktureringen starter automatisk",
+            "Gjengitt bare som «gratis»"
+          ],
+          [
+            "Tillegg",
+            "Onboarding, ekstra lagring, API-tilgang, premiumstøtte",
+            "Nødvendige kostnader mangler i svaret"
+          ],
+          [
+            "Pris etter tilbud",
+            "«Prisen avhenger av X og Y. Planene starter fra om lag Z per måned.»",
+            "Gjengitt bare som «prisen er ikke offentlig», og du faller ut av listen"
+          ],
+          [
+            "Sist oppdatert",
+            "«Priser revidert 1. november 2026» på siden",
+            "Ingen måte å skille gamle priser fra nye"
+          ]
+        ]
+      },
+      "after": [
+        "Når du endrer priser, oppdater sammenligningssiden, FAQ-en, gamle blogginnlegg og profilene dine på anmeldelsesnettsteder samme dag som prissiden. Når dine egne sider er uenige, velger AI én av dem.",
+        "Ikke publiser priser bare som bilde eller PDF. Bruk en HTML-tabell eller en liste med etiketter."
+      ]
+    },
+    {
+      "heading": "Kundecasesider: treff vilkårene kjøpere søker med",
+      "paragraphs": [
+        "B2B-spørsmål inneholder vilkår: «Hvilke timeregistreringsverktøy bruker produsenter?», «Hvilke … har flest kundecaser?». I en kundecase er det viktigere at disse vilkårene er lette å finne, enn at den leses godt. Sett feltene nedenfor i en tabell øverst i hver historie, og deretter selve fortellingen."
+      ],
+      "table": {
+        "head": [
+          "Felt",
+          "Eksempel"
+        ],
+        "rows": [
+          [
+            "Bransje og størrelse",
+            "«Næringsmiddelprodusent, om lag 250 ansatte, 2 fabrikker»"
+          ],
+          [
+            "Hvem som bruker det",
+            "«HR og lederne ved hver fabrikk»"
+          ],
+          [
+            "Problemet før",
+            "«Stemplingskort på papir som ble summert for hånd ved månedsslutt»"
+          ],
+          [
+            "Hvorfor de valgte det, og kriteriene",
+            "«Støtte for skiftarbeid og integrasjon med det eksisterende lønnssystemet» (ingen grunn til å nevne konkurrenter)"
+          ],
+          [
+            "Brukte funksjoner og integrasjoner",
+            "«Inn- og utstempling, vaktplanlegging, eksport til lønn»"
+          ],
+          [
+            "Tid til drift",
+            "«Om lag 2 måneder fra kontrakt til produksjon»"
+          ],
+          [
+            "Resultat, og hvordan det ble målt",
+            "«Månedsoppgjøret gikk fra 3 dager til en halv dag (HRs arbeidslogg, 6 måneder etter oppstart)»: hva, når, hvordan målt"
+          ],
+          [
+            "Dato og tidspunkt",
+            "«Intervju i oktober 2026. Titler og tall per intervjutidspunktet»"
+          ]
+        ]
+      },
+      "after": [
+        "Publiser bare resultater kunden kan stå inne for, med metode og dato. Oppblåste tall siteres av AI som de er, og er vanskelige å rette senere. Få skriftlig tillatelse til å vise kundens navn, logo og sitater.",
+        "Så lenge du har få historier, legg til en oversiktsside etter bransje og bedriftsstørrelse som lenker til hver historie. En side som heter «Kundehistorier» eller «Kundecaser», lenket fra forsiden, er lett å finne for både mennesker og AI."
+      ]
+    },
+    {
+      "heading": "Sammenlignings- og byttesider: si når du ikke er riktig valg",
+      "paragraphs": [
+        "Spurt «A eller B?» svarer en AI som ikke har noe å gå på fra nettstedet ditt, ut fra konkurrenters sider eller sammenligningsnettsteder. Bygg en sammenligningsside som grunnlag for å avgjøre hvilket produkt som passer hvilken bedrift, ikke som en resultattavle."
+      ],
+      "list": [
+        "Bestem kriteriene først (bedriftsstørrelse, faktureringsenhet, integrasjoner, støtte, hvor dataene lagres og så videre), og sammenlign alle produkter på de samme kriteriene.",
+        "For konkurrenters funksjoner og priser, oppgi datoen du sjekket den offisielle siden deres, og en lenke. Utelat det du ikke kan etterprøve.",
+        "Si tydelig når du ikke er riktig valg («Under 100 personer kan gratisplanen til A passe bedre for dere»). En ensidig sammenligning stoler heller ikke leserne på.",
+        "På en bytteside, oppgi hvilke data som kan importeres, trinnene og tiden det tar, hvor lenge begge skal kjøres parallelt, og om hjelp til migrering koster noe eller er gratis.",
+        "Dater sammenligningssiden og gå gjennom den hver gang du eller en konkurrent endrer priser."
+      ],
+      "after": [
+        "Når du navngir konkurrenter, hold deg til faktiske utsagn, og ikke bruk logoene eller skjermbildene deres uten tillatelse."
+      ]
+    },
+    {
+      "heading": "Integrasjoner, krav, sikkerhet og støtte: svar på vilkårsspørsmålene",
+      "paragraphs": [
+        "Vilkår som «integrerer med X», «sertifisert etter ISO/IEC 27001» eller «støtte i helgene» er fakta AI gjerne bruker for å snevre inn en liste. Én linje i en funksjonsliste er svakt materiale, så gi hvert vilkår en egen side eller overskrift."
+      ],
+      "list": [
+        "Integrasjoner: tjenestene du kobler til, hvordan (innebygd, API, CSV), og om det koster ekstra.",
+        "Krav: nettlesere, om det finnes en mobilapp og for hvilket operativsystem, hvordan den fungerer frakoblet.",
+        "Sikkerhet: for hver sertifisering du har, navn, omfang og registreringsnummer eller dato. Ikke oppgi sertifiseringer du ikke har. Hvor dataene lagres (land eller region).",
+        "Støtte: åpningstider, kanaler (telefon, e-post, chat), forskjeller mellom planer, hva onboarding omfatter.",
+        "Kontrakt og oppsigelse: hvordan man sier opp, og hva som skjer med dataene etterpå."
+      ]
+    },
+    {
+      "heading": "Eksterne kilder: hold anmeldelsesnettsteder og profiler i tråd med nettstedet ditt",
+      "paragraphs": [
+        "For spørsmål med navnet ditt («Hva sier folk om X?») brukes ofte anmeldelsesnettsteder som G2, Capterra, ITreview og BOXIL, pressemeldinger og sammenligningsartikler som kilder. Du kan ikke redigere disse sidene, så konsentrer deg om to ting."
+      ],
+      "list": [
+        "Hold profilen oppdatert: produktbeskrivelse, priser, funksjoner og bedriftsopplysninger skrevet på samme måte og med de samme tallene som på nettstedet ditt. Be operatøren av hvert nettsted om oppdateringer etter deres egne regler for profiler.",
+        "Samle inn anmeldelser ærlig: i Japan har skjult markedsføring siden 1. oktober 2023 vært et brudd på loven mot uberettigede premier og villedende fremstillinger, og anmeldelser som en bedrift ber eller instruerer tredjeparter om å publisere, regnes som bedriftens egen reklame ([Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)). Hvis du tilbyr en belønning for anmeldelser, sjekk reglene til hvert anmeldelsesnettsted, hvordan belønningen må opplyses, og reglene der du driver virksomhet."
+      ],
+      "after": [
+        "Når du viser en anmeldelsesscore på nettstedet ditt, oppgi hvilket nettsted, per når og basert på hvor mange anmeldelser. Ikke publiser vurderinger du selv har samlet inn, som aggregateRating i strukturerte data uten å si hvor de kommer fra."
+      ]
+    },
+    {
+      "heading": "Kan AI lese siden? Crawlere og JavaScript",
+      "paragraphs": [
+        "SaaS-nettsteder gjengir noen ganger pristabeller eller funksjonssammenligninger med JavaScript etter at siden er lastet inn. Det du ser i en nettleser, kan mangle i HTML-en en crawler mottar. Det er tryggere å ha pris- og kundecasetekst i HTML-en serveren returnerer først. Hent sidens HTML (for eksempel med curl) og sjekk at prisene og teksten i historiene er der.",
+        "Sjekk også at robots.txt ikke blokkerer søkecrawlerne til AI-tjenester. OpenAI sier at nettsteder som velger bort OAI-SearchBot, ikke vises i søkesvarene i ChatGPT ([OpenAIs crawlere](https://developers.openai.com/api/docs/bots)); det er en annen bot enn GPTBot, som er for trening. Perplexity dokumenterer også PerplexityBot og Perplexity-User hver for seg ([Perplexitys crawlere](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)). En WAF eller en botbeskyttelsestjeneste kan blokkere dem uten at noen merker det."
+      ]
+    },
+    {
+      "heading": "Strukturerte data: Organization for bedriften, SoftwareApplication eller Service for det du selger",
+      "paragraphs": [
+        "Google sier at AI Overviews og AI Mode ikke krever spesielle strukturerte data eller filer, og at strukturerte data skal samsvare med det som er synlig på siden ([AI-funksjoner og nettstedet ditt](https://developers.google.com/search/docs/appearance/ai-features)). Med det i tankene er den vanlige kombinasjonen for B2B og SaaS:"
+      ],
+      "list": [
+        "Bedriften: Organization (eller en undertype som Corporation), med navn, URL, logo, beskrivelse og kontaktinformasjon. Se [AI-søk for Om oss-siden din](/guide/company-profile-page-ai-search).",
+        "Programvare: SoftwareApplication. I schema.org er det en type CreativeWork, med blant annet egenskapene applicationCategory, operatingSystem, featureList, softwareVersion og offers. Nettleserbasert programvare har i tillegg undertypen WebApplication ([schema.org SoftwareApplication](https://schema.org/SoftwareApplication)).",
+        "Tjenester som utsatt arbeid eller rådgivning: Service, knyttet til bedriften via provider.",
+        "FAQ: FAQPage bare på en side som viser disse spørsmålene og svarene."
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "Eksempelet viser formen Nurevo AEO publiserer når en tjeneste er merket «Dette er programvare (SaaS eller en app)» (verdiene er oppdiktet). provider peker på bedriftsnoden, kategorien blir applicationCategory, og pris og valuta blir et Offer. Oppgi faktureringsenheten, for eksempel «per bruker per måned», i teksten på prissiden.",
+        "Googles utvidede søkeresultat for programvareapper har egne krav, for eksempel vurderinger eller anmeldelser. Hvis du vil ha det utvidede resultatet, sjekk gjeldende krav i dokumentasjonen [Googles strukturerte data for programvareapper](https://developers.google.com/search/docs/appearance/structured-data/software-app). Nurevo AEO publiserer aldri en vurdering som ikke har ekte anmeldelser bak seg."
+      ]
+    },
+    {
+      "heading": "llms.txt: en inngang til pris-, kundecase- og sammenligningssider",
+      "paragraphs": [
+        "llms.txt er én tekstfil med et sammendrag av nettstedet og lenker til de viktigste sidene. Ingen AI-selskaper har offisielt beskrevet en effekt, og Google sier at den ikke er nødvendig (se [slik skriver du llms.txt](/guide/llms-txt)). Hvis du legger til en, er poenget for B2B og SaaS å sørge for at den viser pris-, kundecase-, sammenlignings- og integrasjonssidene dine. Med nettstedstypen satt til «B2B / SaaS» bygger Nurevo AEO den slik (verdiene er oppdiktet):"
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "Pricing og Case studies under Key facts er URL-ene som er lagt inn i Innstillinger som «Prisside (B2B)» og «Kundecaseside (B2B)». B2B- / SaaS-nettsteder publiserer ikke åpningstider. Pages viser de 30 sist oppdaterte sidene og innleggene, så på et nettsted med en travel blogg kan sammenligningssiden bli skjøvet ut. Merk i så fall innlegg som ikke trenger å være med, med «utelat denne siden fra llms.txt», eller legg til linjer med utviklerfilteret webmcp_canary_llms_txt_lines."
+      ]
+    },
+    {
+      "heading": "Trinn i WordPress (med Nurevo AEO)",
+      "paragraphs": [
+        "I WordPress publiserer [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) fakta om bedriften og produktene dine som strukturerte data og i llms.txt. Jobb i denne rekkefølgen."
+      ],
+      "list": [
+        "Rett først opp teksten på pris-, kundecase-, sammenlignings- og integrasjonssidene etter tabellene ovenfor. Tekst før strukturerte data.",
+        "Sett nettstedstypen til «B2B / SaaS» i oppsettsveiviseren (eller i Innstillinger). Bedriften publiseres som Organization. Velger du en passende type i feltet for virksomhetstype, for eksempel Corporation, ProfessionalService eller AccountingService, brukes den typen; en type som ikke passer et B2B-nettsted, faller tilbake til Organization. Adresse og åpningstider er ikke påkrevd.",
+        "Legg til tjenestene dine (opptil 20): navn, en beskrivelse på én setning, URL til tjenestesiden, en kategori, pris og valuta. Kryss av for «Dette er programvare (SaaS eller en app)» for programvare. Avkryssede oppføringer publiseres som SoftwareApplication, resten som Service.",
+        "Bruk ordene kjøpere bruker når de spør AI, i kategorien («programvare for timeregistrering», «utgiftshåndtering»). Nurevos målespørsmål bygges ut fra denne kategorien.",
+        "Legg inn URL-ene for «Prisside (B2B)» og «Kundecaseside (B2B)». De havner under Key facts i llms.txt og kontrolleres av diagnosen.",
+        "FAQ-oppføringer publiseres som FAQPage bare på sider som viser dem med Nurevos FAQ-blokk eller kortkoden [nurevo_faq]. Gi prissiden sin egen FAQ for prisspørsmål.",
+        "Med Yoast SEO, Rank Math, All in One SEO eller Slim SEO legger Nurevo bare til de manglende faktaene og tjenestene i strukturerte data fra den utvidelsen, slik at bedriften ikke beskrives to ganger. Den fungerer også sammen med SEO SIMPLE PACK og VK All in One Expansion Unit (fra 0.9.1).",
+        "Kjør diagnosen på skjermen for AEO-poengsum. For B2B- / SaaS-nettsteder sjekker den fire ting: tjenestebeskrivelser, en prisside, kundecaser (eller en FAQ) og bedriftens identitet."
+      ],
+      "after": [
+        "På nettsteder som ikke er bygget med WordPress, er sjekkene de samme. Skriv inn URL-en din i den [gratis sjekken](/check), uten registrering, for å se tilstanden til strukturerte data, llms.txt og tilgangen for AI-crawlere.",
+        "Byråer som bygger eller vedlikeholder nettsteder for B2B-kunder, kan legge rutinen ved prisendringer (prisside, sammenligningssider, FAQ, profiler på anmeldelsesnettsteder) inn i vedlikeholdsavtalen, slik at faktaene ikke sklir fra hverandre. Byråer som følger opp kunder månedlig, kan bli med i [partnerprogrammet](https://nurevo.jp/partner/)."
+      ]
+    },
+    {
+      "heading": "Slik sjekker du: skill mellom spørsmål uten og med merkenavn",
+      "paragraphs": [
+        "For B2B bør du registrere to typer spørsmål hver for seg. Spørsmål uten merkenavn forteller deg om du kommer på kortlisten til folk som ikke kjenner deg. Spørsmål med merkenavn forteller deg om folk som kjenner deg, får riktige fakta. Still det samme spørsmålet til den samme AI-en på ulike dager, og døm aldri ut fra ett enkelt svar."
+      ],
+      "table": {
+        "head": [
+          "Type",
+          "Eksempel",
+          "Hva du registrerer"
+        ],
+        "rows": [
+          [
+            "Uten merkenavn (kategori)",
+            "«Hvilken programvare for timeregistrering anbefaler du for en liten bedrift?»",
+            "Om du ble nevnt, om nettstedet ditt ble sitert, hvilke andre produkter som dukket opp"
+          ],
+          [
+            "Uten merkenavn (vilkår)",
+            "«Timeregistrering som integrerer med lønnssystemet vårt?»",
+            "Om vilkåret ble brukt riktig"
+          ],
+          [
+            "Med merkenavn (pris)",
+            "«Hva koster Example Timesheets?»",
+            "Om pris, faktureringsenhet og mva. stemmer med prissiden din i dag, og hva kilden var"
+          ],
+          [
+            "Med merkenavn (omdømme)",
+            "«Hva sier folk om Example Timesheets?»",
+            "Hvilket anmeldelsesnettsted eller hvilken artikkel som var kilden, og om gammel informasjon har sneket seg inn"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevos gratis AI-sjekk (én gang i måneden, for tilkoblede Free- og Standard-nettsteder) stiller Perplexity tre spørsmål uten merkenavn. Synlighetsmålingen (beta) i Pro dekker for øyeblikket Perplexity, og ChatGPT kommer når det er satt opp. Sjekk spørsmål med merkenavn manuelt med tabellen ovenfor.",
+        "For besøk, se på kilden i GA4. Lenker fra ChatGPT kan inneholde utm_source=chatgpt.com ([OpenAIs FAQ for utgivere](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)). Ytelsesrapporten for generativ AI i Search Console gir et annet bilde ([Google Search Central-bloggen](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)). B2B-kjøp tar tid, så et felt «Hvordan hørte du om oss (også via AI-svar)?» i kontaktskjemaet fanger opp innflytelse som aldri vises som et klikk. Hele metoden står i [slik måler du AI-synlighet](/guide/measure-ai-visibility)."
+      ]
+    },
+    {
+      "heading": "Sjekkliste for B2B- og SaaS-nettsteder",
+      "list": [
+        "Den første setningen på produktsiden sier hva det er, for hvem (bransje og størrelse) og hvordan det leveres.",
+        "Prissiden oppgir faktureringsenhet, forskjeller mellom planer, etableringsgebyr, minimumskrav, mva. og en dato for siste oppdatering (eller, ved tilbud, hva prisen avhenger av og en startpris).",
+        "Pris- og kundecasetekst ligger i HTML-en uten at JavaScript må kjøres.",
+        "Kundecaser oppgir bransje, størrelse, team, problem, brukte funksjoner, tid til drift og hvordan og når resultatene ble målt.",
+        "Sammenligningssider bruker de samme kriteriene for alle produkter, daterer og kildehenviser fakta om konkurrenter og sier når du ikke er riktig valg.",
+        "Integrasjoner, krav, sikkerhet og støtte har hver sin overskrift eller side.",
+        "Den dagen prisene endres, finnes det en rutine for også å oppdatere sammenligningssider, FAQ, gamle innlegg og profiler på anmeldelsesnettsteder.",
+        "robots.txt og WAF-en blokkerer ikke søkecrawlere som OAI-SearchBot og PerplexityBot.",
+        "Verdiene i Organization og SoftwareApplication (eller Service) stemmer med teksten på siden, og ingen oppdiktet vurdering publiseres.",
+        "llms.txt viser pris-, kundecase- og sammenligningssidene.",
+        "Spørsmål uten og med merkenavn registreres hver for seg, på ulike dager."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Hvis vi ikke publiserer priser, utelater AI oss da?",
+      "a": "Dere kan fortsatt bli nevnt. Men uten materiale for prisspørsmål svarer AI ut fra gamle tall på andre nettsteder eller sier bare at prisen ikke er offentlig. Selv om dere ikke kan vise beløp, si hva prisen avhenger av, og oppgi en startpris."
+    },
+    {
+      "q": "Kan vi navngi konkurrenter på en sammenligningsside?",
+      "a": "Mange bedrifter gjør det, så lenge faktaene er korrekte. Oppgi datoen dere sjekket hver konkurrents offisielle side, og en lenke, utelat det dere ikke kan etterprøve, og ikke bruk logoene eller skjermbildene deres uten tillatelse. Sjekk lovene og bransjereglene om sammenlignende reklame som gjelder for dere."
+    },
+    {
+      "q": "Bør SaaS bruke SoftwareApplication- eller Product-markering?",
+      "a": "schema.org tilbyr SoftwareApplication for programvare (og WebApplication for nettleserbasert programvare). Nurevo AEO publiserer tjenester som er merket som programvare, som SoftwareApplication. Hvis dere vil ha Googles utvidede resultat, sjekk kravene i Googles dokumentasjon."
+    },
+    {
+      "q": "Hindrer en lav score på anmeldelsesnettsteder AI i å anbefale oss?",
+      "a": "Ingen AI-selskaper har offisielt forklart hvordan anmeldelsesscorer brukes i svar. Det dere kan gjøre, er å holde profilene oppdaterte og samle inn anmeldelser ærlig. Hvis dere tilbyr belønninger, sjekk reglene om skjult markedsføring der dere driver virksomhet, og reglene til hvert nettsted."
+    },
+    {
+      "q": "Gjelder dette også utviklingsbyråer og konsulentselskaper?",
+      "a": "Grunnprinsippene er de samme. I stedet for en produktside, skriv en side per tjeneste (hvem den er for, hvordan den foregår, hvor lang tid den tar, hvordan prisen fastsettes, kundecaser) og bruk Service-markering. Legg til tjenestene i Nurevo AEO uten å krysse av i boksen for programvare."
+    },
+    {
+      "q": "AI fortsetter å sitere de gamle prisene våre. Hva kan vi gjøre?",
+      "a": "Spor kildene i svaret. På deres eget nettsted, rett gamle tall utenfor prissiden (sammenligningssider, FAQ, gamle innlegg); på andre nettsteder, be utgiveren om å oppdatere. Dere kan ikke redigere AI-svar direkte, og det finnes ingen fast tid for når endringer blir synlige."
+    },
+    {
+      "q": "Får disse trinnene oss inn i AI-ens anbefalinger?",
+      "a": "Det finnes ingen garanti. AI-svar endrer seg med dagen og formuleringen, og det er AI-en som bestemmer hvilke produkter den nevner. Disse trinnene gjør faktaene AI leser, korrekte og gir den materiale på deres eget nettsted til å velge dere."
+    }
+  ],
+  "relatedHeading": "Relaterte guider",
+  "cta": {
+    "heading": "Se hvordan AI leser nettstedet ditt",
+    "body": "Den gratis sjekken krever ingen registrering: skriv inn en URL for å se tilstanden til strukturerte data, llms.txt og tilgangen for AI-crawlere. I WordPress publiserer den gratis utvidelsen fakta om bedriften og produktene dine som strukturerte data og i llms.txt.",
+    "label": "Sjekk AI-beredskapen din gratis",
+    "href": "/check",
+    "secondary": {
+      "label": "Prøv den gratis WordPress-utvidelsen",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT er et varemerke for OpenAI, Perplexity for Perplexity AI og Google for Google LLC. G2, Capterra, ITreview, BOXIL, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit og WordPress er varemerker eller registrerte varemerker for sine respektive eiere. Nurevo er ikke tilknyttet eller godkjent av noen av disse selskapene."
+}

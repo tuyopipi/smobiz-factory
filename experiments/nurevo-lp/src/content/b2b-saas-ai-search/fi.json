@@ -1,0 +1,418 @@
+{
+  "title": "B2B- ja SaaS-tekoälyhaku: hinnat, asiakastarinat, vertailut | Nurevo",
+  "description": "Miten B2B- ja SaaS-ostajat valitsevat toimittajia tekoälyllä ja mitkä sivut vastaavat: hinnat, asiakastarinat, vertailut. Taulukot, schema, llms.txt, WordPress.",
+  "h1": "Tekoälyhaku B2B:lle ja SaaSille: tee hinta-, asiakastarina- ja vertailusivuista tekoälyn luettavia",
+  "lead": "B2B- ja SaaS-ostajat kokoavat toimittajien lyhytlistan kysymällä tekoälyltä esimerkiksi ”Mikä on paras työkalu X:ään?”, ”Miten A vertautuu B:hen?” ja ”Paljonko tämä yleensä maksaa?”. Työn ydin on, että sinulla on sivut, jotka vastaavat näihin kysymyksiin tekstinä (hinnat, asiakastarinat, vertailut ja vaihtoehdot, integraatiot ja tietoturva) ehtoineen ja päivämäärineen, ja että arvostelusivustot ja ulkoiset profiilit pidetään niiden kanssa yhtäpitävinä. Rakenteinen data ja llms.txt toistavat sitten näiden sivujen tiedot koneiden luettavassa muodossa.",
+  "intro": [
+    "Kirjoitettu 17. marraskuuta 2026 (JST). schema.org-tyypit tarkistettiin sinä päivänä schema-dts 2.1.0:ssa. Googlen, OpenAI:n ja Perplexityn lausumat ovat niiden sivuilta, jotka luettiin 31. lokakuuta ja 10. marraskuuta 2026 välisenä aikana aiempia Nurevo-oppaita varten. Esimerkit kuluttajansuojasäännöistä ovat Japanista; tarkista säännöt omalla toiminta-alueellasi.",
+    "Tämä opas on tarkoitettu yrityksille, jotka myyvät ohjelmistoja (SaaS), ulkoistettuja palveluja tai konsultointia toisille yrityksille, sekä toimistoille, jotka rakentavat niiden sivustoja. Tietoa meistä -sivun kirjoittamista käsitellään oppaassa [tekoälyhaku Tietoa meistä -sivulle](/guide/company-profile-page-ai-search) ja blogikirjoitusten kirjoittamista oppaassa [näin kirjoitat artikkeleita, joita tekoäly voi lainata](/guide/blog-articles-ai-citations). Tämä opas käsittelee sivuja, jotka vastaavat kysymykseen ”minkä toimittajan valitsemme?”. Tekoälyn vastaukset muuttuvat päivästä toiseen ja kysymyksen muotoilun mukaan. Tämän oppaan vaiheet tekevät tiedoistasi tekoälyn luettavia. Ne eivät takaa, että tekoäly mainitsee sinut tai sijoittaa sinut mihinkään."
+  ],
+  "sections": [
+    {
+      "heading": "Mitä B2B-ostajat kysyvät tekoälyltä",
+      "paragraphs": [
+        "Paikallinen yritys löydetään hakemalla ”toimiala + alue”. B2B-toimittaja löydetään sen perusteella, mitä ostaja haluaa saada aikaan ja millä ehdoilla. Moni näistä kysymyksistä esitetään ennen kuin ostaja tuntee nimesi, joten jos nimesi puuttuu vastauksesta, et koskaan pääse lyhytlistalle. Japanilaisen TaTap-toimiston marraskuussa 2026 tekemässä kyselyssä 62,2 % 135 johtajasta, jotka olivat itse etsineet toimittajaa, kertoi pyytäneensä generatiiviselta tekoälyltä suositeltuja yrityksiä, ja 27,4 % kertoi karsineensa tai siirtäneensä taka-alalle yritykset, joiden nimeä ei näkynyt ([TaTap](https://tatap.jp/knowledge/btob-llmo-agency/), pieni kysely yritykseltä, joka myy juuri tätä palvelua).",
+        "Kysymykset jakautuvat karkeasti kuuteen tyyppiin, ja jokaiseen tyyppiin vastaa eri sivu."
+      ],
+      "table": {
+        "head": [
+          "Kysymyksen tyyppi",
+          "Esimerkki",
+          "Sivu, joka vastaa",
+          "Tyypillinen virhe tekoälyn vastauksissa"
+        ],
+        "rows": [
+          [
+            "Kategoriahaku",
+            "”Paras työajanseurantatyökalu?” ”Nimeä 3 johtavaa työajanseurantajärjestelmää”",
+            "Tuotesivu (mitä, kenelle, minkä kokoiselle)",
+            "Väärä yrityskoko tai toimiala, listattu väärään kategoriaan"
+          ],
+          [
+            "Rajaus ehdon mukaan",
+            "”Työajanseuranta 50 hengelle, joka integroituu palkanlaskentaohjelmistoomme?”",
+            "Integraatio-, ominaisuus- ja vaatimussivut",
+            "Väittää integraation olevan olemassa, vaikka sitä ei ole, tai päinvastoin"
+          ],
+          [
+            "Vertailu",
+            "”A vai B?” ”Vertaile työajanseurantajärjestelmiä”",
+            "Vertailusivu valintakriteereineen",
+            "Vertailtu vanhojen ominaisuuksien tai vanhojen hintojen perusteella"
+          ],
+          [
+            "Hinta",
+            "”Paljonko työajanseurantaohjelmisto yleensä maksaa?”",
+            "Hinnoittelusivu",
+            "Vanhat hinnat, sekaannus veroista, käyttäjien vähimmäismäärä ohitettu"
+          ],
+          [
+            "Vaihtaminen",
+            "”Vaihtoehtoja X:lle?”",
+            "Siirto- / vaihtosivu",
+            "Siirron työmäärä ja tietojen tuonti jätetty pois"
+          ],
+          [
+            "Nimen tarkistaminen",
+            "”Mitä X:stä sanotaan?” ”Paljonko X maksaa?”",
+            "Asiakastarinat, Tietoa meistä -sivu, arvostelusivustot",
+            "Vanhaa tietoa arvostelusivustoilta tai sekoitettu samannimiseen tuotteeseen"
+          ]
+        ]
+      },
+      "after": [
+        "Kysymykset, joita Nurevon mittaus esittää B2B- / SaaS-sivustoille, noudattavat myös näitä tyyppejä (”Mikä on paras työkalu …?”, ”Vertaile tärkeimpiä …”, ”Mitä … suosittelet pienyritykselle?”, ”Mikä on tyypillinen hintahaarukka …?”, ”Millä … on eniten asiakastarinoita?”, ”Mikä on hyvä vaihtoehto, jos haluan vaihtaa …?”), kaikki ilman nimeäsi. Kysymykset, joissa nimesi on mukana, tarkistetaan käsin alla kuvatulla tavalla."
+      ]
+    },
+    {
+      "heading": "Mitä kärkiartikkelit väittävät ja miten tämä opas niihin suhtautuu",
+      "paragraphs": [
+        "Luimme 13 japanin- ja englanninkielistä artikkelia, jotka sijoittuvat hauilla ”B2B SaaS AI search” ja vastaavilla. Lähes kaikki ovat yhtä mieltä siitä, että vertailusivut, asiakastarinat ja arvostelusivustot ovat tärkeitä. Useimmissa niiden luvuista ei kuitenkaan mainita lähdettä, tai ne ovat peräisin kirjoittajan omilta asiakkailta. Tämä opas ei käytä lukuja, joita ei voi tarkistaa."
+      ],
+      "table": {
+        "head": [
+          "Yleinen väite",
+          "Kuinka vahvaa näyttö on",
+          "Miten tämä opas suhtautuu"
+        ],
+        "rows": [
+          [
+            "”Tekoälystä tulevat kävijät konvertoivat moninkertaisesti paremmin kuin Googlesta tulevat”",
+            "Luvut vaihtelevat artikkeleittain muutamasta kerrasta yli 20-kertaiseen; taustalla olevia tutkimuksia ei usein voi jäljittää",
+            "Ei käytetä. Näytämme, miten tarkistat sen omasta GA4:stäsi"
+          ],
+          [
+            "”Seitsemän kymmenestä B2B-ostajasta aloittaa tiedonhaun tekoälyllä”",
+            "Ei lähdettä, tai vain ”toimialan dataa”",
+            "Ei käytetä. Vain kyselyt, joissa on nimetty lähde ja otoskoko"
+          ],
+          [
+            "”Vertailu- ja vaihtoehtosivuja lainataan paljon”",
+            "Toimistojen havaintoja; ei virallista lausuntoa",
+            "Kannattaa tehdä, koska ne vastaavat tekoälylle esitettyjä kysymyksiä; ei muuta"
+          ],
+          [
+            "”SoftwareApplication- tai FAQ-merkintä tuo sinut tekoälyn vastauksiin”",
+            "Artikkelit sanovat päinvastaisia asioita. Google sanoo, etteivät tekoälyominaisuudet vaadi erityisiä merkintöjä",
+            "Käsitellään sivun tietojen toistona"
+          ],
+          [
+            "”Enemmän arvosteluja arvostelusivustoilla tarkoittaa enemmän suosituksia”",
+            "Enimmäkseen nimeämättömiä tutkimuksia",
+            "Tarkista, että hinnat ja ominaisuudet siellä ovat ajan tasalla ja vastaavat sivustoasi, sen sijaan että tavoittelisit määriä"
+          ],
+          [
+            "”Lisää llms.txt, niin tekoäly lukee sinut”",
+            "Google sanoo, ettei uutta tekoälytiedostoa tarvita; muut tekoälyyritykset eivät ole ottaneet kantaa",
+            "Jos lisäät sen, käytä sitä sisäänkäyntinä hinnoittelu- ja asiakastarinasivuille"
+          ]
+        ]
+      },
+      "after": [
+        "Mitä kärkiartikkeleista useimmiten puuttui: konkreettiset kentät hinnoittelu- ja asiakastarinasivuille, vaiheet WordPressiin ja mittaustapa, joka erottaa brändittömät ja brändätyt kysymykset. Siihen tämä opas käyttää aikansa."
+      ]
+    },
+    {
+      "heading": "Hinnoittelusivu: anna päätöksen ainekset, vaikka kaikkia lukuja ei olisi",
+      "paragraphs": [
+        "Kysymykseen ”Paljonko se maksaa?” tai ”Paljonko X maksaa?” tekoäly vastaa hinnoittelusivusi perusteella tai, jos sitä ei ole, arvostelusivustojen ja vertailuartikkelien lukujen perusteella. Ajantasaiset ehdot omalla sivullasi ovat turvallisempia kuin jonkun muun kirjoittamat vanhat luvut. Myös tarjouspohjaisessa hinnoittelussa voit kertoa, mistä hinta riippuu."
+      ],
+      "table": {
+        "head": [
+          "Kenttä",
+          "Esimerkki",
+          "Mitä tapahtuu ilman sitä"
+        ],
+        "rows": [
+          [
+            "Laskutusyksikkö",
+            "”Per käyttäjä kuukaudessa”, ”per toimipaikka”, ”käytön mukaan, per 1 000 tietuetta”",
+            "Kokonaissummat tulkitaan väärin moninkertaisesti"
+          ],
+          [
+            "Erot tilausten välillä",
+            "Tilausten nimet, sisältyvät ominaisuudet ja rajat (käyttäjät, säilytysaika) taulukossa",
+            "Ylimmän tilauksen ominaisuudet kuvataan kaikkiin tilauksiin sisältyviksi"
+          ],
+          [
+            "Käyttöönottomaksut ja vähimmäisehdot",
+            "Käyttöönottomaksu, käyttäjien vähimmäismäärä, vähimmäissopimuskausi, vuosi- vai kuukausilaskutus",
+            "Vain kuukausihinta leviää, ja sopimus tulee yllätyksenä"
+          ],
+          [
+            "Verot",
+            "Yksi selkeä rivi taulukon yläpuolella, esimerkiksi ”Kaikki hinnat ilman arvonlisäveroa”",
+            "Verolliset ja verottomat hinnat rinnakkain vertailussa"
+          ],
+          [
+            "Ilmainen kokeilu tai ilmainen tilaus",
+            "Kesto, mitä sisältyy, alkaako laskutus automaattisesti",
+            "Kerrotaan yksinkertaisesti ”ilmaiseksi”"
+          ],
+          [
+            "Lisäpalvelut",
+            "Käyttöönottotuki, lisätallennustila, API-pääsy, premium-tuki",
+            "Välttämättömät kustannukset puuttuvat vastauksesta"
+          ],
+          [
+            "Tarjouspohjainen hinnoittelu",
+            "”Hinta riippuu X:stä ja Y:stä. Tilaukset alkaen noin Z kuukaudessa.”",
+            "Kerrotaan vain ”hinta ei ole julkinen”, ja putoat listalta"
+          ],
+          [
+            "Viimeksi päivitetty",
+            "”Hinnat päivitetty 1. marraskuuta 2026” sivulla",
+            "Vanhoja ja uusia hintoja ei voi erottaa toisistaan"
+          ]
+        ]
+      },
+      "after": [
+        "Kun muutat hintoja, päivitä vertailusivu, UKK, vanhat blogikirjoitukset ja arvostelusivustojen profiilisi samana päivänä kuin hinnoittelusivu. Kun omat sivusi ovat ristiriidassa, tekoäly valitsee niistä yhden.",
+        "Älä julkaise hintoja pelkkänä kuvana tai PDF-tiedostona. Käytä HTML-taulukkoa tai otsikoitua luetteloa."
+      ]
+    },
+    {
+      "heading": "Asiakastarinasivut: vastaa ehtoihin, joilla ostajat hakevat",
+      "paragraphs": [
+        "B2B-kysymyksissä on ehtoja: ”Mitä työajanseurantatyökaluja valmistavat yritykset käyttävät?”, ”Millä … on eniten asiakastarinoita?”. Asiakastarinassa on tärkeämpää, että nämä ehdot löytyvät helposti, kuin että teksti on sujuvaa. Laita seuraavat kentät taulukkona jokaisen tarinan alkuun ja sen jälkeen itse kertomus."
+      ],
+      "table": {
+        "head": [
+          "Kenttä",
+          "Esimerkki"
+        ],
+        "rows": [
+          [
+            "Toimiala ja koko",
+            "”Elintarvikevalmistaja, noin 250 työntekijää, 2 tehdasta”"
+          ],
+          [
+            "Kuka käyttää",
+            "”HR ja kunkin tehtaan esihenkilöt”"
+          ],
+          [
+            "Ongelma ennen",
+            "”Paperiset leimauskortit laskettiin käsin yhteen kuun lopussa”"
+          ],
+          [
+            "Miksi he valitsivat sen, ja kriteerit",
+            "”Vuorotyön tuki ja integraatio heidän nykyiseen palkanlaskentaohjelmistoonsa” (kilpailijoita ei tarvitse nimetä)"
+          ],
+          [
+            "Käytetyt ominaisuudet ja integraatiot",
+            "”Leimaus, vuorosuunnittelu, vienti palkanlaskentaan”"
+          ],
+          [
+            "Aika käyttöönottoon",
+            "”Noin 2 kuukautta sopimuksesta tuotantokäyttöön”"
+          ],
+          [
+            "Tulos ja miten se mitattiin",
+            "”Kuukausiyhteenveto lyheni 3 päivästä puoleen päivään (HR:n työloki, 6 kuukautta käyttöönoton jälkeen)”: mitä, milloin, miten mitattu"
+          ],
+          [
+            "Päivämäärä ja ajankohta",
+            "”Haastattelu lokakuussa 2026. Tehtävänimikkeet ja luvut haastatteluhetken mukaan”"
+          ]
+        ]
+      },
+      "after": [
+        "Julkaise vain tuloksia, joiden takana asiakas voi seistä, menetelmän ja päivämäärän kanssa. Tekoäly lainaa paisuteltuja lukuja sellaisinaan, ja niitä on vaikea korjata jälkikäteen. Hanki kirjallinen lupa asiakkaan nimen, logon ja lainausten näyttämiseen.",
+        "Kun tarinoita on vielä vähän, lisää toimialan ja yrityskoon mukaan järjestetty hakemistosivu, joka linkittää jokaiseen tarinaan. Etusivulta linkitetty sivu nimeltä ”Asiakastarinat” tai ”Referenssit” on ihmisten ja tekoälyn helppo löytää."
+      ]
+    },
+    {
+      "heading": "Vertailu- ja vaihtosivut: kerro, milloin et ole oikea valinta",
+      "paragraphs": [
+        "Kun tekoälyltä kysytään ”A vai B?” eikä se löydä sivustoltasi mitään, se vastaa kilpailijoiden sivujen tai vertailusivustojen perusteella. Rakenna vertailusivu aineistoksi sen päättämiseen, mikä tuote sopii millekin yritykselle, ei pistetaulukoksi."
+      ],
+      "list": [
+        "Päätä ensin kriteerit (yrityskoko, laskutusyksikkö, integraatiot, tuki, tietojen sijainti ja niin edelleen) ja vertaa jokaista tuotetta samoilla kriteereillä.",
+        "Kerro kilpailijoiden ominaisuuksista ja hinnoista päivämäärä, jolloin tarkistit heidän virallisen sivunsa, sekä linkki. Jätä pois se, mitä et voi tarkistaa.",
+        "Kerro suoraan, milloin et ole oikea valinta (”Alle 100 hengen yritykselle A:n ilmainen tilaus voi sopia paremmin”). Yksipuoliseen vertailuun eivät luota lukijatkaan.",
+        "Kerro vaihtosivulla, mitä tietoja voi tuoda, vaiheet ja niihin kuluva aika, kuinka kauan molempia käytetään rinnakkain ja onko siirtoapu maksullista vai maksutonta.",
+        "Päivää vertailusivu ja tarkista se aina, kun sinä tai kilpailija muuttaa hintoja."
+      ],
+      "after": [
+        "Kun nimeät kilpailijoita, pysy tosiasioissa äläkä käytä heidän logojaan tai kuvakaappauksiaan ilman lupaa."
+      ]
+    },
+    {
+      "heading": "Integraatiot, vaatimukset, tietoturva ja tuki: vastaa ehtokysymyksiin",
+      "paragraphs": [
+        "Ehdot kuten ”integroituu X:ään”, ”ISO/IEC 27001 -sertifioitu” tai ”tuki viikonloppuisin” ovat tietoja, joita tekoäly mielellään käyttää listan rajaamiseen. Yksi rivi ominaisuusluettelossa on heikkoa aineistoa, joten anna jokaiselle ehdolle oma sivu tai otsikko."
+      ],
+      "list": [
+        "Integraatiot: palvelut, joihin yhdistät, miten (sisäänrakennettu, API, CSV) ja maksaako se lisää.",
+        "Vaatimukset: selaimet, onko mobiilisovellus ja mille käyttöjärjestelmälle, miten se toimii ilman verkkoyhteyttä.",
+        "Tietoturva: jokaisesta sertifioinnista, joka sinulla on, nimi, laajuus ja rekisterinumero tai päivämäärä. Älä listaa sertifiointeja, joita sinulla ei ole. Missä tiedot säilytetään (maa tai alue).",
+        "Tuki: aukioloajat, kanavat (puhelin, sähköposti, chat), erot tilausten välillä, mitä käyttöönottotuki sisältää.",
+        "Sopimus ja irtisanominen: miten irtisanotaan ja mitä tiedoille tapahtuu sen jälkeen."
+      ]
+    },
+    {
+      "heading": "Ulkoiset lähteet: pidä arvostelusivustot ja profiilit linjassa sivustosi kanssa",
+      "paragraphs": [
+        "Kysymyksissä, joissa nimesi on mukana (”Mitä X:stä sanotaan?”), lähteinä käytetään usein arvostelusivustoja kuten G2, Capterra, ITreview ja BOXIL, lehdistötiedotteita ja vertailuartikkeleita. Et voi muokata niitä sivuja, joten keskity kahteen asiaan."
+      ],
+      "list": [
+        "Pidä profiili ajan tasalla: tuotekuvaus, hinnat, ominaisuudet ja yritystiedot kirjoitettuina samalla tavalla ja samoin luvuin kuin sivustollasi. Pyydä päivityksiä kunkin sivuston ylläpitäjältä sen omien profiilisääntöjen mukaisesti.",
+        "Kerää arvosteluja rehellisesti: Japanissa piilomarkkinointi on 1. lokakuuta 2023 alkaen ollut perusteettomia palkkioita ja harhaanjohtavia esityksiä koskevan lain rikkomus, ja arvostelut, joita yritys pyytää tai ohjeistaa kolmansia osapuolia julkaisemaan, katsotaan kyseisen yrityksen mainonnaksi ([Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)). Jos tarjoat palkkion arvosteluista, tarkista kunkin arvostelusivuston säännöt, miten palkkio on ilmoitettava, sekä säännöt omalla toiminta-alueellasi."
+      ],
+      "after": [
+        "Kun näytät sivustollasi arvosteluarvosanan, kerro mistä sivustosta, minkä ajankohdan mukaan ja kuinka monen arvostelun perusteella. Älä julkaise itse keräämiäsi arvioita aggregateRatingina rakenteisessa datassa kertomatta, mistä ne ovat peräisin."
+      ]
+    },
+    {
+      "heading": "Pystyykö tekoäly lukemaan sivun? Indeksoijat ja JavaScript",
+      "paragraphs": [
+        "SaaS-sivustot muodostavat joskus hintataulukot tai ominaisuusvertailut JavaScriptillä sivun latautumisen jälkeen. Se, mitä näet selaimessa, voi puuttua HTML:stä, jonka indeksoija saa. On turvallisempaa, että hinta- ja asiakastarinateksti on HTML:ssä, jonka palvelin palauttaa ensimmäisenä. Hae sivun HTML (esimerkiksi curlilla) ja tarkista, että hinnat ja tarinoiden teksti ovat siellä.",
+        "Tarkista myös, ettei robots.txt estä tekoälypalvelujen hakuindeksoijia. OpenAI sanoo, että sivustoja, jotka estävät OAI-SearchBotin, ei näytetä ChatGPT:n hakuvastauksissa ([OpenAI:n indeksoijat](https://developers.openai.com/api/docs/bots)); se on eri botti kuin GPTBot, joka on koulutusta varten. Myös Perplexity dokumentoi PerplexityBotin ja Perplexity-Userin erikseen ([Perplexityn indeksoijat](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)). WAF tai bottisuojauspalvelu voi estää ne kenenkään huomaamatta."
+      ]
+    },
+    {
+      "heading": "Rakenteinen data: Organization yritykselle, SoftwareApplication tai Service sille, mitä myyt",
+      "paragraphs": [
+        "Google sanoo, etteivät AI Overviews ja AI Mode tarvitse erityistä rakenteista dataa tai tiedostoja ja että rakenteisen datan on vastattava sitä, mitä sivulla näkyy ([tekoälyominaisuudet ja sivustosi](https://developers.google.com/search/docs/appearance/ai-features)). Tämä huomioon ottaen tavallinen yhdistelmä B2B:lle ja SaaSille on:"
+      ],
+      "list": [
+        "Yritys: Organization (tai alatyyppi kuten Corporation), jossa nimi, URL, logo, kuvaus ja yhteystiedot. Katso [tekoälyhaku Tietoa meistä -sivulle](/guide/company-profile-page-ai-search).",
+        "Ohjelmisto: SoftwareApplication. schema.orgissa se on CreativeWorkin laji, ja sen ominaisuuksiin kuuluvat muun muassa applicationCategory, operatingSystem, featureList, softwareVersion ja offers. Selainpohjaisella ohjelmistolla on lisäksi alatyyppi WebApplication ([schema.org SoftwareApplication](https://schema.org/SoftwareApplication)).",
+        "Palvelut kuten ulkoistettu työ tai konsultointi: Service, joka liitetään yritykseen providerin kautta.",
+        "UKK: FAQPage vain sivulla, joka näyttää kyseiset kysymykset ja vastaukset."
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "Esimerkki näyttää muodon, jonka Nurevo AEO julkaisee, kun palvelu on merkitty kohdalla ”Tämä on ohjelmisto (SaaS tai sovellus)” (arvot ovat keksittyjä). provider osoittaa yrityssolmuun, kategoriasta tulee applicationCategory, ja hinnasta ja valuutasta tulee Offer. Kerro laskutusyksikkö, kuten ”per käyttäjä kuukaudessa”, hinnoittelusivun tekstissä.",
+        "Googlen ohjelmistosovellusten rich result -hakutuloksella on omat vaatimuksensa, kuten arviot tai arvostelut. Jos haluat tämän rich resultin, tarkista ajantasaiset vaatimukset dokumentaatiosta [Googlen ohjelmistosovellusten rakenteinen data](https://developers.google.com/search/docs/appearance/structured-data/software-app). Nurevo AEO ei koskaan julkaise arviota, jonka takana ei ole oikeita arvosteluja."
+      ]
+    },
+    {
+      "heading": "llms.txt: sisäänkäynti hinnoittelu-, asiakastarina- ja vertailusivuille",
+      "paragraphs": [
+        "llms.txt on yksi tekstitiedosto, jossa on sivuston yhteenveto ja linkit sen tärkeimmille sivuille. Mikään tekoälyyritys ei ole virallisesti kuvannut sen vaikutusta, ja Google sanoo, ettei sitä tarvita (katso [näin kirjoitat llms.txt-tiedoston](/guide/llms-txt)). Jos lisäät sellaisen, B2B:ssä ja SaaSissa tärkeintä on varmistaa, että siinä on hinnoittelu-, asiakastarina-, vertailu- ja integraatiosivusi. Kun sivustotyypiksi on asetettu ”B2B / SaaS”, Nurevo AEO rakentaa sen näin (arvot ovat keksittyjä):"
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "Key facts -kohdan Pricing ja Case studies ovat URL-osoitteet, jotka on syötetty Asetuksiin kohtiin ”Hinnoittelusivu (B2B)” ja ”Asiakastarinasivu (B2B)”. B2B- / SaaS-sivustot eivät julkaise aukioloaikoja. Pages listaa 30 viimeksi päivitettyä sivua ja artikkelia, joten vilkkaasti blogaavalla sivustolla vertailusivu voi pudota pois. Merkitse siinä tapauksessa artikkelit, joiden ei tarvitse olla mukana, valinnalla ”jätä tämä sivu pois llms.txt-tiedostosta”, tai lisää rivejä kehittäjäsuodattimella webmcp_canary_llms_txt_lines."
+      ]
+    },
+    {
+      "heading": "Vaiheet WordPressissä (Nurevo AEO:lla)",
+      "paragraphs": [
+        "WordPressissä [Nurevo AEO (ilmainen)](https://wordpress.org/plugins/nurevo-webmcp/) julkaisee yrityksesi ja tuotteidesi tiedot rakenteisena datana ja llms.txt-tiedostossa. Etene tässä järjestyksessä."
+      ],
+      "list": [
+        "Korjaa ensin hinnoittelu-, asiakastarina-, vertailu- ja integraatiosivujen teksti yllä olevien taulukoiden mukaisesti. Teksti ennen rakenteista dataa.",
+        "Aseta ohjatussa määrityksessä (tai Asetuksissa) sivustotyypiksi ”B2B / SaaS”. Yritys julkaistaan Organizationina. Jos valitset liiketoiminnan tyyppi -kenttään sopivan tyypin, kuten Corporation, ProfessionalService tai AccountingService, sitä tyyppiä käytetään; B2B-sivustolle sopimaton tyyppi palautuu Organizationiksi. Osoite ja aukioloajat eivät ole pakollisia.",
+        "Lisää palvelusi (enintään 20): nimi, yhden lauseen kuvaus, palvelusivun URL, kategoria, hinta ja valuutta. Valitse ohjelmistoille ”Tämä on ohjelmisto (SaaS tai sovellus)”. Valitut kohteet julkaistaan SoftwareApplicationina, muut Serviceinä.",
+        "Käytä kategoriassa sanoja, joita ostajat käyttävät kysyessään tekoälyltä (”työajanseurantaohjelmisto”, ”kulunhallinta”). Nurevon mittauskysymykset muodostetaan tästä kategoriasta.",
+        "Syötä URL-osoitteet kohtiin ”Hinnoittelusivu (B2B)” ja ”Asiakastarinasivu (B2B)”. Ne päätyvät llms.txt-tiedoston Key facts -kohtaan, ja diagnoosi tarkistaa ne.",
+        "UKK-kohteet julkaistaan FAQPagena vain sivuilla, jotka näyttävät ne Nurevon UKK-lohkolla tai lyhytkoodilla [nurevo_faq]. Anna hinnoittelusivulle oma UKK hintakysymyksiä varten.",
+        "Kun käytössä on Yoast SEO, Rank Math, All in One SEO tai Slim SEO, Nurevo lisää kyseisen lisäosan rakenteiseen dataan vain puuttuvat tiedot ja palvelut, jotta yritystä ei kuvata kahdesti. Se toimii myös yhdessä SEO SIMPLE PACKin ja VK All in One Expansion Unitin kanssa (versiosta 0.9.1 alkaen).",
+        "Suorita diagnoosi AEO-pisteet-näkymässä. B2B- / SaaS-sivustoilla se tarkistaa neljä asiaa: palvelukuvaukset, hinnoittelusivun, asiakastarinat (tai UKK:n) ja yrityksen tunnistettavuuden."
+      ],
+      "after": [
+        "Sivustoilla, joita ei ole rakennettu WordPressillä, tarkistukset ovat samat. Syötä URL-osoitteesi [ilmaiseen tarkistukseen](/check) ilman rekisteröitymistä nähdäksesi rakenteisen datasi, llms.txt-tiedoston ja tekoälyindeksoijien pääsyn tilan.",
+        "Toimistot, jotka rakentavat tai ylläpitävät sivustoja B2B-asiakkaille, voivat sisällyttää hinnanmuutosrutiinin (hinnoittelusivu, vertailusivut, UKK, arvostelusivustojen profiilit) ylläpitosopimukseen, jotta tiedot eivät ajaudu erilleen. Toimistot, jotka tukevat asiakkaita kuukausittain, voivat liittyä [kumppaniohjelmaan](https://nurevo.jp/partner/)."
+      ]
+    },
+    {
+      "heading": "Näin tarkistat: erota brändittömät ja brändätyt kysymykset",
+      "paragraphs": [
+        "B2B:ssä kirjaa kaksi kysymystyyppiä erikseen. Brändittömät kysymykset kertovat, pääsetkö niiden lyhytlistalle, jotka eivät tunne sinua. Brändätyt kysymykset kertovat, saavatko sinut tuntevat oikeat tiedot. Kysy sama kysymys samalta tekoälyltä eri päivinä, äläkä koskaan tee johtopäätöksiä yhden vastauksen perusteella."
+      ],
+      "table": {
+        "head": [
+          "Tyyppi",
+          "Esimerkki",
+          "Mitä kirjaat"
+        ],
+        "rows": [
+          [
+            "Bränditön (kategoria)",
+            "”Mitä työajanseurantaohjelmistoa suosittelet pienyritykselle?”",
+            "Mainittiinko sinut, lainattiinko sivustoasi, mitä muita tuotteita esiintyi"
+          ],
+          [
+            "Bränditön (ehto)",
+            "”Työajanseuranta, joka integroituu palkanlaskentaohjelmistoomme?”",
+            "Sovellettiinko ehtoa oikein"
+          ],
+          [
+            "Brändätty (hinta)",
+            "”Paljonko Example Timesheets maksaa?”",
+            "Vastaavatko hinta, laskutusyksikkö ja verot tämänpäiväistä hinnoittelusivuasi, ja mikä oli lähde"
+          ],
+          [
+            "Brändätty (maine)",
+            "”Mitä Example Timesheetsistä sanotaan?”",
+            "Mikä arvostelusivusto tai artikkeli oli lähde ja oliko mukaan livahtanut vanhaa tietoa"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevon ilmainen tekoälytarkistus (kerran kuukaudessa yhdistetyille Free- ja Standard-sivustoille) esittää Perplexitylle kolme brändittömää kysymystä. Pro-tilauksen näkyvyysmittaus (beta) kattaa tällä hetkellä Perplexityn, ja ChatGPT seuraa, kun se on otettu käyttöön. Tarkista brändätyt kysymykset käsin yllä olevan taulukon avulla.",
+        "Katso käyntien lähde GA4:stä. ChatGPT:stä tulevissa linkeissä voi olla utm_source=chatgpt.com ([OpenAI:n UKK julkaisijoille](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)). Search Consolen generatiivisen tekoälyn tehokkuusraportti antaa toisen näkökulman ([Google Search Central -blogi](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)). B2B-ostaminen vie aikaa, joten yhteydenottolomakkeen kenttä ”Mistä kuulit meistä (myös tekoälyn vastauksista)?” tavoittaa vaikutuksen, joka ei koskaan näy klikkauksena. Koko menetelmä on oppaassa [näin mittaat näkyvyyttä tekoälyssä](/guide/measure-ai-visibility)."
+      ]
+    },
+    {
+      "heading": "Tarkistuslista B2B- ja SaaS-sivustoille",
+      "list": [
+        "Tuotesivun ensimmäinen virke kertoo, mikä se on, kenelle (toimiala ja koko) ja miten se toimitetaan.",
+        "Hinnoittelusivulla kerrotaan laskutusyksikkö, tilausten erot, käyttöönottomaksu, vähimmäisehdot, verot ja viimeisimmän päivityksen päivämäärä (tai tarjouspohjaisessa hinnoittelussa se, mistä hinta riippuu, ja lähtöhinta).",
+        "Hinta- ja asiakastarinateksti on HTML:ssä ilman, että JavaScriptiä tarvitsee ajaa.",
+        "Asiakastarinoissa kerrotaan toimiala, koko, tiimi, ongelma, käytetyt ominaisuudet, aika käyttöönottoon sekä miten ja milloin tulokset mitattiin.",
+        "Vertailusivut käyttävät samoja kriteerejä jokaiselle tuotteelle, päiväävät kilpailijoita koskevat tiedot ja kertovat niiden lähteet sekä sanovat, milloin et ole oikea valinta.",
+        "Integraatioilla, vaatimuksilla, tietoturvalla ja tuella on kullakin oma otsikko tai sivu.",
+        "Hintojen muuttumispäivänä on rutiini, jolla päivitetään myös vertailusivut, UKK, vanhat artikkelit ja arvostelusivustojen profiilit.",
+        "robots.txt ja WAF eivät estä hakuindeksoijia kuten OAI-SearchBotia ja PerplexityBotia.",
+        "Organizationin ja SoftwareApplicationin (tai Servicen) arvot vastaavat sivun tekstiä, eikä keksittyä arviota julkaista.",
+        "llms.txt sisältää hinnoittelu-, asiakastarina- ja vertailusivut.",
+        "Brändittömät ja brändätyt kysymykset kirjataan erikseen, eri päivinä."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Jos emme julkaise hintoja, jättääkö tekoäly meidät pois?",
+      "a": "Teidät voidaan silti mainita. Mutta ilman aineistoa hintakysymyksiin tekoäly vastaa muiden sivustojen vanhojen lukujen perusteella tai sanoo vain, ettei hinta ole julkinen. Vaikka ette voisi näyttää summia, kertokaa, mistä hinta riippuu, ja antakaa lähtöhinta."
+    },
+    {
+      "q": "Saammeko nimetä kilpailijoita vertailusivulla?",
+      "a": "Monet yritykset tekevät niin, kunhan tiedot ovat oikeita. Kertokaa päivämäärä, jolloin tarkistitte kunkin kilpailijan virallisen sivun, sekä linkki, jättäkää pois se, mitä ette voi tarkistaa, älkääkä käyttäkö heidän logojaan tai kuvakaappauksiaan ilman lupaa. Tarkistakaa teitä koskevat vertailevaa mainontaa koskevat lait ja alan säännöt."
+    },
+    {
+      "q": "Pitäisikö SaaSin käyttää SoftwareApplication- vai Product-merkintää?",
+      "a": "schema.org tarjoaa ohjelmistoille SoftwareApplicationin (ja selainpohjaisille ohjelmistoille WebApplicationin). Nurevo AEO julkaisee ohjelmistoksi merkityt palvelut SoftwareApplicationina. Jos haluatte Googlen rich resultin, tarkistakaa vaatimukset Googlen dokumentaatiosta."
+    },
+    {
+      "q": "Estääkö heikko arvosana arvostelusivustoilla tekoälyä suosittelemasta meitä?",
+      "a": "Mikään tekoälyyritys ei ole virallisesti selittänyt, miten arvosteluarvosanoja käytetään vastauksissa. Voitte pitää profiilit ajan tasalla ja kerätä arvosteluja rehellisesti. Jos tarjoatte palkkioita, tarkistakaa piilomarkkinointia koskevat säännöt omalla toiminta-alueellanne ja kunkin sivuston säännöt."
+    },
+    {
+      "q": "Koskeeko tämä myös ohjelmistotaloja ja konsulttiyrityksiä?",
+      "a": "Perusteet ovat samat. Kirjoittakaa tuotesivun sijaan sivu jokaisesta palvelusta (kenelle se on, miten se etenee, kauanko se kestää, miten hinta määräytyy, asiakastarinat) ja käyttäkää Service-merkintää. Lisätkää palvelut Nurevo AEO:hon valitsematta ohjelmistoruutua."
+    },
+    {
+      "q": "Tekoäly lainaa jatkuvasti vanhoja hintojamme. Mitä voimme tehdä?",
+      "a": "Jäljittäkää vastauksen lähteet. Korjatkaa omalla sivustollanne vanhat luvut hinnoittelusivun ulkopuolelta (vertailusivut, UKK, vanhat artikkelit); pyytäkää muilla sivustoilla julkaisijaa päivittämään. Tekoälyn vastauksia ei voi muokata suoraan, eikä muutosten näkymiselle ole kiinteää aikaa."
+    },
+    {
+      "q": "Pääsemmekö näillä vaiheilla tekoälyn suosituksiin?",
+      "a": "Takeita ei ole. Tekoälyn vastaukset muuttuvat päivän ja muotoilun mukaan, ja tekoäly päättää, mitkä tuotteet se mainitsee. Nämä vaiheet tekevät tekoälyn lukemista tiedoista oikeita ja antavat sille omalla sivustollanne aineistoa valita teidät."
+    }
+  ],
+  "relatedHeading": "Aiheeseen liittyvät oppaat",
+  "cta": {
+    "heading": "Katso, miten tekoäly lukee sivustoasi",
+    "body": "Ilmainen tarkistus ei vaadi rekisteröitymistä: syötä URL nähdäksesi rakenteisen datasi, llms.txt-tiedoston ja tekoälyindeksoijien pääsyn tilan. WordPressissä ilmainen lisäosa julkaisee yrityksesi ja tuotteidesi tiedot rakenteisena datana ja llms.txt-tiedostossa.",
+    "label": "Tarkista tekoälyvalmiutesi ilmaiseksi",
+    "href": "/check",
+    "secondary": {
+      "label": "Kokeile ilmaista WordPress-lisäosaa",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT on OpenAI:n, Perplexity Perplexity AI:n ja Google Google LLC:n tavaramerkki. G2, Capterra, ITreview, BOXIL, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ja WordPress ovat omistajiensa tavaramerkkejä tai rekisteröityjä tavaramerkkejä. Nurevo ei ole sidoksissa mihinkään näistä yrityksistä eikä niiden hyväksymä."
+}

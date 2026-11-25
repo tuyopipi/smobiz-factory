@@ -1,0 +1,418 @@
+{
+  "title": "Pencarian AI B2B & SaaS: Harga, Studi Kasus, Perbandingan | Nurevo",
+  "description": "Cara pembeli B2B dan SaaS memakai AI untuk menyaring vendor, dan halaman yang menjawabnya: harga, studi kasus, perbandingan. Tabel, schema, llms.txt, WordPress.",
+  "h1": "Pencarian AI untuk B2B dan SaaS: buat halaman harga, studi kasus, dan perbandingan Anda terbaca oleh AI",
+  "lead": "Pembeli B2B dan SaaS menyaring vendor dengan bertanya kepada AI hal seperti \"Apa alat terbaik untuk X?\", \"Bagaimana A dibandingkan B?\", dan \"Biasanya berapa biayanya?\". Inti pekerjaannya adalah memiliki halaman yang menjawab pertanyaan itu dalam bentuk teks (harga, studi kasus, perbandingan dan alternatif, integrasi dan keamanan), lengkap dengan syarat dan tanggal, serta menjaga situs ulasan dan profil eksternal tetap konsisten dengannya. Data terstruktur dan llms.txt kemudian menyatakan ulang fakta di halaman tersebut dalam bentuk yang dapat dibaca mesin.",
+  "intro": [
+    "Ditulis 17 November 2026 (JST). Tipe schema.org diperiksa pada hari itu di schema-dts 2.1.0. Pernyataan dari Google, OpenAI, dan Perplexity berasal dari halaman mereka yang dibaca antara 31 Oktober dan 10 November 2026 untuk panduan Nurevo sebelumnya. Contoh aturan perlindungan konsumen berasal dari Jepang; periksa aturan di wilayah Anda beroperasi.",
+    "Panduan ini ditujukan bagi perusahaan yang menjual perangkat lunak (SaaS), pekerjaan alih daya, atau konsultasi kepada bisnis lain, serta agensi yang membangun situs mereka. Cara menulis halaman Tentang Kami dibahas di [pencarian AI untuk halaman Tentang Kami](/guide/company-profile-page-ai-search), dan cara menulis artikel blog di [cara menulis artikel yang dapat dikutip AI](/guide/blog-articles-ai-citations). Panduan ini membahas halaman yang menjawab \"vendor mana yang sebaiknya kami pilih?\". Jawaban AI berubah dari hari ke hari dan tergantung cara pertanyaan diajukan. Langkah-langkah di sini membuat fakta Anda terbaca oleh AI. Langkah ini tidak menjamin AI akan menyebut Anda atau menempatkan Anda di peringkat mana pun."
+  ],
+  "sections": [
+    {
+      "heading": "Apa yang ditanyakan pembeli B2B kepada AI",
+      "paragraphs": [
+        "Bisnis lokal ditemukan dengan \"jenis usaha + area\". Vendor B2B ditemukan dari apa yang ingin diselesaikan pembeli dan dalam kondisi apa. Banyak pertanyaan ini muncul sebelum pembeli mengenal nama Anda, jadi jika nama Anda tidak ada dalam jawaban, Anda tidak pernah masuk daftar pendek. Dalam survei yang dilakukan agensi Jepang TaTap pada November 2026, 62,2% dari 135 eksekutif yang pernah mencari vendor sendiri mengatakan bahwa mereka meminta rekomendasi perusahaan kepada AI generatif, dan 27,4% mengatakan mereka mencoret atau menurunkan prioritas perusahaan yang namanya tidak muncul ([TaTap](https://tatap.jp/knowledge/btob-llmo-agency/), survei kecil oleh perusahaan yang menjual layanan ini).",
+        "Pertanyaannya terbagi menjadi kira-kira enam jenis, dan setiap jenis dijawab oleh halaman yang berbeda."
+      ],
+      "table": {
+        "head": [
+          "Jenis pertanyaan",
+          "Contoh",
+          "Halaman yang menjawabnya",
+          "Kesalahan umum dalam jawaban AI"
+        ],
+        "rows": [
+          [
+            "Pencarian kategori",
+            "\"Alat pencatat waktu kerja terbaik?\" \"Sebutkan 3 sistem pencatat waktu kerja terkemuka\"",
+            "Halaman produk (apa, untuk siapa, untuk ukuran berapa)",
+            "Ukuran perusahaan atau industri salah, dimasukkan ke kategori yang salah"
+          ],
+          [
+            "Penyaringan berdasarkan syarat",
+            "\"Pencatat waktu kerja untuk 50 orang yang terintegrasi dengan software penggajian kami?\"",
+            "Halaman integrasi, fitur, dan persyaratan",
+            "Menyebut ada integrasi padahal tidak, atau sebaliknya"
+          ],
+          [
+            "Membandingkan",
+            "\"A vs B?\" \"Bandingkan sistem pencatat waktu kerja\"",
+            "Halaman perbandingan dengan kriteria pemilihan",
+            "Dibandingkan dengan fitur lama atau harga lama"
+          ],
+          [
+            "Harga",
+            "\"Biasanya berapa harga software pencatat waktu kerja?\"",
+            "Halaman harga",
+            "Harga lama, bingung soal pajak, jumlah pengguna minimum terlewat"
+          ],
+          [
+            "Beralih",
+            "\"Alternatif untuk X?\"",
+            "Halaman migrasi / peralihan",
+            "Upaya migrasi dan impor data tidak disebut"
+          ],
+          [
+            "Memeriksa nama",
+            "\"Apa kata orang tentang X?\" \"Berapa harga X?\"",
+            "Kisah pelanggan, halaman Tentang Kami, situs ulasan",
+            "Data lama dari situs ulasan, atau tertukar dengan produk bernama sama"
+          ]
+        ]
+      },
+      "after": [
+        "Pertanyaan yang dipakai pengukuran Nurevo untuk situs B2B / SaaS juga mengikuti jenis-jenis ini (\"Apa alat terbaik untuk ...?\", \"Bandingkan ... yang utama\", \"... mana yang Anda rekomendasikan untuk bisnis kecil?\", \"Berapa kisaran harga umum untuk ...?\", \"... mana yang punya studi kasus pelanggan terbanyak?\", \"Apa alternatif yang bagus jika saya ingin beralih dari ...?\"), semuanya tanpa nama Anda. Pertanyaan yang menyebut nama Anda diperiksa secara manual, seperti dijelaskan di bawah."
+      ]
+    },
+    {
+      "heading": "Klaim artikel teratas, dan bagaimana panduan ini menyikapinya",
+      "paragraphs": [
+        "Kami membaca 13 artikel berbahasa Jepang dan Inggris yang berperingkat untuk \"B2B SaaS AI search\" dan kueri serupa. Hampir semuanya sepakat bahwa halaman perbandingan, studi kasus, dan situs ulasan itu penting. Namun sebagian besar angka mereka tidak menyebut sumber atau berasal dari klien penulis sendiri. Panduan ini tidak memakai angka yang tidak bisa diperiksa."
+      ],
+      "table": {
+        "head": [
+          "Klaim umum",
+          "Seberapa kuat buktinya",
+          "Sikap panduan ini"
+        ],
+        "rows": [
+          [
+            "\"Pengunjung dari AI berkonversi berkali-kali lipat lebih baik daripada pengunjung Google\"",
+            "Angkanya berkisar dari beberapa kali hingga lebih dari 20 kali antarartikel; studi dasarnya sering tidak bisa dilacak",
+            "Tidak dipakai. Kami tunjukkan cara memeriksanya di GA4 Anda sendiri"
+          ],
+          [
+            "\"Tujuh dari sepuluh pembeli B2B memulai riset dengan AI\"",
+            "Tanpa sumber, atau hanya \"data industri\"",
+            "Tidak dipakai. Hanya survei dengan sumber dan ukuran sampel yang disebutkan"
+          ],
+          [
+            "\"Halaman perbandingan dan alternatif sering dikutip\"",
+            "Pengamatan agensi; tidak ada pernyataan resmi",
+            "Layak dibuat karena sesuai dengan pertanyaan yang diajukan ke AI; tidak lebih"
+          ],
+          [
+            "\"Markup SoftwareApplication atau FAQ membuat Anda masuk jawaban AI\"",
+            "Artikel saling bertentangan. Google mengatakan fitur AI tidak memerlukan markup khusus",
+            "Diperlakukan sebagai pernyataan ulang fakta di halaman"
+          ],
+          [
+            "\"Makin banyak ulasan di situs ulasan, makin sering direkomendasikan\"",
+            "Sebagian besar studi yang tidak disebutkan namanya",
+            "Pastikan harga dan fitur di sana terbaru dan sesuai dengan situs Anda, alih-alih mengejar jumlah"
+          ],
+          [
+            "\"Tambahkan llms.txt dan AI akan membaca Anda\"",
+            "Google mengatakan tidak perlu file AI baru; perusahaan AI lain belum berkomentar",
+            "Jika ditambahkan, gunakan sebagai pintu masuk ke halaman harga dan studi kasus"
+          ]
+        ]
+      },
+      "after": [
+        "Yang sebagian besar tidak ada di artikel teratas: kolom konkret untuk halaman harga dan studi kasus, langkah di WordPress, dan cara mengukur yang memisahkan pertanyaan tanpa merek dari pertanyaan bermerek. Di situlah panduan ini memusatkan perhatian."
+      ]
+    },
+    {
+      "heading": "Halaman harga: berikan bahan untuk mengambil keputusan, meski tanpa semua angka",
+      "paragraphs": [
+        "Untuk \"Berapa biayanya?\" atau \"Berapa harga X?\", AI menjawab dari halaman harga Anda atau, jika tidak ada, dari angka di situs ulasan dan artikel perbandingan. Ketentuan terbaru di halaman Anda sendiri lebih aman daripada angka lama yang ditulis orang lain. Bahkan dengan harga berdasarkan penawaran, Anda bisa menjelaskan apa yang menentukan harganya."
+      ],
+      "table": {
+        "head": [
+          "Kolom",
+          "Contoh",
+          "Yang terjadi tanpanya"
+        ],
+        "rows": [
+          [
+            "Satuan penagihan",
+            "\"Per pengguna per bulan\", \"per lokasi\", \"berbasis pemakaian, per 1.000 catatan\"",
+            "Total salah dibaca hingga berlipat-lipat"
+          ],
+          [
+            "Perbedaan paket",
+            "Nama paket, fitur yang termasuk, dan batasan (pengguna, masa simpan) dalam tabel",
+            "Fitur paket teratas digambarkan seolah termasuk di semua paket"
+          ],
+          [
+            "Biaya awal dan ketentuan minimum",
+            "Biaya awal, jumlah pengguna minimum, masa kontrak minimum, tagihan tahunan vs bulanan",
+            "Hanya harga bulanan yang tersebar, dan kontraknya mengejutkan orang"
+          ],
+          [
+            "Pajak",
+            "Satu baris jelas di atas tabel, seperti \"Semua harga belum termasuk pajak\"",
+            "Harga dengan dan tanpa pajak dibandingkan berdampingan"
+          ],
+          [
+            "Uji coba gratis atau paket gratis",
+            "Durasi, apa yang termasuk, apakah tagihan dimulai otomatis",
+            "Dilaporkan sekadar \"gratis\""
+          ],
+          [
+            "Tambahan",
+            "Onboarding, penyimpanan ekstra, akses API, dukungan premium",
+            "Biaya yang diperlukan tidak muncul dalam jawaban"
+          ],
+          [
+            "Harga berdasarkan penawaran",
+            "\"Harga bergantung pada X dan Y. Paket mulai dari sekitar Z per bulan.\"",
+            "Hanya dilaporkan sebagai \"harga tidak dipublikasikan\", dan Anda tersingkir dari daftar"
+          ],
+          [
+            "Terakhir diperbarui",
+            "\"Harga direvisi 1 November 2026\" di halaman",
+            "Tidak ada cara membedakan harga lama dan baru"
+          ]
+        ]
+      },
+      "after": [
+        "Saat mengubah harga, perbarui halaman perbandingan, FAQ, artikel blog lama, dan listing di situs ulasan pada hari yang sama dengan halaman harga. Jika halaman Anda sendiri saling bertentangan, AI akan memilih salah satunya.",
+        "Jangan menerbitkan harga hanya sebagai gambar atau PDF. Gunakan tabel HTML atau daftar berlabel."
+      ]
+    },
+    {
+      "heading": "Halaman studi kasus: sesuaikan dengan syarat yang dicari pembeli",
+      "paragraphs": [
+        "Pertanyaan B2B membawa syarat: \"Alat pencatat waktu kerja apa yang dipakai produsen?\", \"... mana yang punya studi kasus terbanyak?\". Yang penting dalam studi kasus adalah syarat-syarat ini mudah ditemukan, lebih dari sekadar enak dibaca. Letakkan kolom-kolom berikut dalam tabel di bagian atas setiap kisah, lalu narasinya."
+      ],
+      "table": {
+        "head": [
+          "Kolom",
+          "Contoh"
+        ],
+        "rows": [
+          [
+            "Industri dan ukuran",
+            "\"Produsen makanan, sekitar 250 karyawan, 2 pabrik\""
+          ],
+          [
+            "Siapa yang memakainya",
+            "\"Bagian SDM dan manajer di setiap pabrik\""
+          ],
+          [
+            "Masalah sebelumnya",
+            "\"Kartu absen kertas direkap manual di akhir bulan\""
+          ],
+          [
+            "Alasan memilih, dan kriterianya",
+            "\"Dukungan shift dan integrasi dengan software penggajian yang sudah ada\" (tidak perlu menyebut pesaing)"
+          ],
+          [
+            "Fitur dan integrasi yang dipakai",
+            "\"Absen masuk, perencanaan shift, ekspor penggajian\""
+          ],
+          [
+            "Waktu hingga berjalan",
+            "\"Sekitar 2 bulan dari kontrak hingga produksi\""
+          ],
+          [
+            "Hasil, dan cara mengukurnya",
+            "\"Rekap bulanan turun dari 3 hari menjadi setengah hari (catatan kerja SDM, 6 bulan setelah peluncuran)\": apa, kapan, bagaimana diukur"
+          ],
+          [
+            "Tanggal dan titik waktu",
+            "\"Diwawancarai Oktober 2026. Jabatan dan angka per saat wawancara\""
+          ]
+        ]
+      },
+      "after": [
+        "Terbitkan hanya hasil yang dapat dipertanggungjawabkan pelanggan, beserta metode dan tanggalnya. Angka yang dilebih-lebihkan dikutip AI apa adanya dan sulit dikoreksi kemudian. Dapatkan izin tertulis untuk menampilkan nama, logo, dan kutipan pelanggan.",
+        "Selama kisah Anda masih sedikit, tambahkan halaman indeks berdasarkan industri dan ukuran perusahaan yang menautkan ke setiap kisah. Halaman bernama \"Kisah pelanggan\" atau \"Studi kasus\" yang ditautkan dari beranda mudah ditemukan oleh orang dan AI."
+      ]
+    },
+    {
+      "heading": "Halaman perbandingan dan peralihan: katakan kapan Anda bukan pilihan yang tepat",
+      "paragraphs": [
+        "Saat ditanya \"A vs B?\", AI yang tidak menemukan bahan di situs Anda akan menjawab dari halaman pesaing atau situs perbandingan. Buat halaman perbandingan sebagai bahan untuk memutuskan produk mana yang cocok untuk perusahaan mana, bukan sebagai papan skor."
+      ],
+      "list": [
+        "Tentukan kriteria terlebih dahulu (ukuran perusahaan, satuan penagihan, integrasi, dukungan, lokasi data, dan sebagainya) dan bandingkan setiap produk dengan kriteria yang sama.",
+        "Untuk fitur dan harga pesaing, cantumkan tanggal Anda memeriksa halaman resmi mereka dan tautannya. Hilangkan apa pun yang tidak bisa Anda periksa.",
+        "Katakan dengan jelas kapan Anda bukan pilihan yang tepat (\"Di bawah 100 orang, paket gratis A mungkin lebih cocok untuk Anda\"). Perbandingan yang berat sebelah juga tidak dipercaya pembaca.",
+        "Di halaman peralihan, sebutkan data apa yang bisa diimpor, langkah dan waktu yang diperlukan, berapa lama menjalankan keduanya secara paralel, dan apakah bantuan migrasi berbayar atau gratis.",
+        "Beri tanggal pada halaman perbandingan dan tinjau ulang setiap kali Anda atau pesaing mengubah harga."
+      ],
+      "after": [
+        "Saat menyebut pesaing, batasi pada pernyataan fakta, dan jangan memakai logo atau tangkapan layar mereka tanpa izin."
+      ]
+    },
+    {
+      "heading": "Integrasi, persyaratan, keamanan, dan dukungan: jawab pertanyaan bersyarat",
+      "paragraphs": [
+        "Syarat seperti \"terintegrasi dengan X\", \"memiliki ISO/IEC 27001\" atau \"dukungan di akhir pekan\" adalah fakta yang cenderung dipakai AI saat mempersempit daftar. Satu baris di daftar fitur adalah bahan yang lemah, jadi beri setiap syarat halaman atau judulnya sendiri."
+      ],
+      "list": [
+        "Integrasi: layanan yang terhubung, caranya (bawaan, API, CSV), dan apakah ada biaya tambahan.",
+        "Persyaratan: browser, apakah ada aplikasi seluler dan untuk OS apa, bagaimana perilakunya saat offline.",
+        "Keamanan: untuk setiap sertifikasi yang Anda miliki, nama, cakupan, dan nomor registrasi atau tanggalnya. Jangan cantumkan yang tidak Anda miliki. Lokasi penyimpanan data (negara atau wilayah).",
+        "Dukungan: jam layanan, saluran (telepon, email, chat), perbedaan per paket, apa saja yang termasuk dalam onboarding.",
+        "Kontrak dan pembatalan: cara membatalkan dan apa yang terjadi pada data setelahnya."
+      ]
+    },
+    {
+      "heading": "Sumber eksternal: jaga situs ulasan dan profil tetap selaras dengan situs Anda",
+      "paragraphs": [
+        "Untuk pertanyaan yang menyebut nama Anda (\"Apa kata orang tentang X?\"), situs ulasan seperti G2, Capterra, ITreview, dan BOXIL, siaran pers, serta artikel perbandingan sering dipakai sebagai sumber. Anda tidak bisa mengedit halaman-halaman itu, jadi fokuslah pada dua hal."
+      ],
+      "list": [
+        "Jaga listing tetap terbaru: deskripsi produk, harga, fitur, dan data perusahaan ditulis dengan cara dan angka yang sama seperti di situs Anda. Minta pembaruan kepada operator setiap situs sesuai aturan listing masing-masing.",
+        "Kumpulkan ulasan dengan jujur: di Jepang, pemasaran terselubung (stealth marketing) telah menjadi pelanggaran Undang-Undang tentang Hadiah yang Tidak Dapat Dibenarkan dan Representasi yang Menyesatkan sejak 1 Oktober 2023, dan ulasan yang diminta atau diinstruksikan oleh bisnis kepada pihak ketiga dianggap sebagai iklan bisnis tersebut ([Badan Urusan Konsumen](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)). Jika Anda memberi insentif untuk ulasan, periksa aturan setiap situs ulasan dan cara insentif harus diungkapkan, serta aturan di wilayah Anda beroperasi."
+      ],
+      "after": [
+        "Saat menampilkan skor ulasan di situs Anda, sebutkan situsnya, per kapan, dan dari berapa ulasan. Jangan menerbitkan peringkat yang Anda kumpulkan sendiri sebagai aggregateRating dalam data terstruktur tanpa menyebutkan asalnya."
+      ]
+    },
+    {
+      "heading": "Bisakah AI membaca halamannya? Crawler dan JavaScript",
+      "paragraphs": [
+        "Situs SaaS kadang menampilkan tabel harga atau perbandingan fitur dengan JavaScript setelah halaman dimuat. Apa yang Anda lihat di browser mungkin tidak ada di HTML yang diterima crawler. Lebih aman jika teks harga dan studi kasus ada di HTML yang pertama kali dikembalikan server. Ambil HTML halaman (misalnya dengan curl) dan periksa bahwa harga dan teks kisahnya ada di sana.",
+        "Periksa juga bahwa robots.txt tidak memblokir crawler pencarian layanan AI. OpenAI mengatakan situs yang menolak OAI-SearchBot tidak akan ditampilkan dalam jawaban pencarian ChatGPT ([crawler OpenAI](https://developers.openai.com/api/docs/bots)); ini bot yang berbeda dari GPTBot, yang dipakai untuk pelatihan. Perplexity juga mendokumentasikan PerplexityBot dan Perplexity-User secara terpisah ([crawler Perplexity](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)). WAF atau layanan perlindungan bot bisa memblokirnya tanpa ada yang menyadari."
+      ]
+    },
+    {
+      "heading": "Data terstruktur: Organization untuk perusahaan, SoftwareApplication atau Service untuk yang Anda jual",
+      "paragraphs": [
+        "Google mengatakan AI Overviews dan AI Mode tidak memerlukan data terstruktur atau file khusus, dan bahwa data terstruktur harus sesuai dengan yang terlihat di halaman ([Fitur AI dan situs Anda](https://developers.google.com/search/docs/appearance/ai-features)). Dengan memperhatikan hal itu, kombinasi yang umum untuk B2B dan SaaS adalah:"
+      ],
+      "list": [
+        "Perusahaan: Organization (atau subtipe seperti Corporation), dengan nama, URL, logo, deskripsi, dan kontak. Lihat [pencarian AI untuk halaman Tentang Kami](/guide/company-profile-page-ai-search).",
+        "Perangkat lunak: SoftwareApplication. Di schema.org ini adalah jenis CreativeWork, dengan applicationCategory, operatingSystem, featureList, softwareVersion, dan offers di antara propertinya. Perangkat lunak berbasis browser juga memiliki subtipe WebApplication ([schema.org SoftwareApplication](https://schema.org/SoftwareApplication)).",
+        "Layanan seperti pekerjaan alih daya atau konsultasi: Service, ditautkan ke perusahaan melalui provider.",
+        "FAQ: FAQPage hanya di halaman yang menampilkan tanya jawab tersebut."
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "Contoh ini adalah bentuk yang diterbitkan Nurevo AEO saat sebuah layanan ditandai \"Ini perangkat lunak (SaaS atau aplikasi)\" (nilainya rekaan). provider menunjuk ke node perusahaan, kategori menjadi applicationCategory, serta harga dan mata uang menjadi Offer. Sebutkan satuan penagihan, seperti \"per pengguna per bulan\", di teks halaman harga.",
+        "Hasil kaya aplikasi perangkat lunak Google di hasil penelusuran memiliki persyaratannya sendiri, seperti rating atau ulasan. Jika Anda menginginkan hasil kaya itu, periksa persyaratan terbaru di dokumentasi [data terstruktur aplikasi perangkat lunak Google](https://developers.google.com/search/docs/appearance/structured-data/software-app). Nurevo AEO tidak pernah menerbitkan rating yang tidak didukung ulasan nyata."
+      ]
+    },
+    {
+      "heading": "llms.txt: pintu masuk ke halaman harga, studi kasus, dan perbandingan",
+      "paragraphs": [
+        "llms.txt adalah satu file teks berisi ringkasan situs dan tautan ke halaman-halaman utamanya. Belum ada perusahaan AI yang secara resmi menjelaskan efeknya, dan Google mengatakan file ini tidak diperlukan (lihat [cara menulis llms.txt](/guide/llms-txt)). Jika Anda menambahkannya, untuk B2B dan SaaS intinya adalah memastikan file itu mencantumkan halaman harga, studi kasus, perbandingan, dan integrasi Anda. Dengan jenis situs diatur ke \"B2B / SaaS\", Nurevo AEO membuatnya seperti ini (nilainya rekaan):"
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "Pricing dan Case studies di bawah Key facts adalah URL yang dimasukkan di Pengaturan sebagai \"Halaman harga (B2B)\" dan \"Halaman studi kasus (B2B)\". Situs B2B / SaaS tidak menerbitkan jam operasional. Pages mencantumkan 30 halaman dan artikel yang paling baru diperbarui, sehingga di situs dengan blog yang aktif halaman perbandingan bisa tergeser. Dalam hal itu, tandai artikel yang tidak perlu ada dengan \"keluarkan halaman ini dari llms.txt\", atau tambahkan baris dengan filter developer webmcp_canary_llms_txt_lines."
+      ]
+    },
+    {
+      "heading": "Langkah di WordPress (dengan Nurevo AEO)",
+      "paragraphs": [
+        "Di WordPress, [Nurevo AEO (gratis)](https://wordpress.org/plugins/nurevo-webmcp/) menerbitkan fakta perusahaan dan produk Anda sebagai data terstruktur dan di llms.txt. Kerjakan dengan urutan ini."
+      ],
+      "list": [
+        "Perbaiki dulu teks halaman harga, studi kasus, perbandingan, dan integrasi, mengikuti tabel di atas. Teks sebelum data terstruktur.",
+        "Di wizard penyiapan (atau Pengaturan), atur jenis situs ke \"B2B / SaaS\". Perusahaan diterbitkan sebagai Organization. Jika Anda memilih tipe yang sesuai di kolom jenis usaha, seperti Corporation, ProfessionalService, atau AccountingService, tipe itulah yang dipakai; tipe yang tidak sesuai untuk situs B2B kembali ke Organization. Alamat dan jam operasional tidak wajib.",
+        "Tambahkan layanan Anda (hingga 20): nama, deskripsi satu kalimat, URL halaman layanan, kategori, harga, dan mata uang. Centang \"Ini perangkat lunak (SaaS atau aplikasi)\" untuk perangkat lunak. Entri yang dicentang diterbitkan sebagai SoftwareApplication, sisanya sebagai Service.",
+        "Untuk kategori, gunakan kata-kata yang dipakai pembeli saat bertanya kepada AI (\"software pencatat waktu kerja\", \"manajemen pengeluaran\"). Pertanyaan pengukuran Nurevo dibuat dari kategori ini.",
+        "Masukkan URL \"Halaman harga (B2B)\" dan \"Halaman studi kasus (B2B)\". Keduanya masuk ke Key facts di llms.txt dan diperiksa oleh diagnosis.",
+        "Entri FAQ diterbitkan sebagai FAQPage hanya di halaman yang menampilkannya dengan blok Nurevo FAQ atau shortcode [nurevo_faq]. Beri halaman harga FAQ sendiri untuk pertanyaan seputar harga.",
+        "Bersama Yoast SEO, Rank Math, All in One SEO, atau Slim SEO, Nurevo hanya menambahkan fakta dan layanan yang belum ada ke data terstruktur plugin tersebut, sehingga perusahaan tidak dideskripsikan dua kali. Plugin ini juga bekerja berdampingan dengan SEO SIMPLE PACK dan VK All in One Expansion Unit (sejak 0.9.1).",
+        "Jalankan diagnosis di layar Skor AEO. Untuk situs B2B / SaaS, diagnosis memeriksa empat hal: deskripsi layanan, halaman harga, studi kasus (atau FAQ), dan identitas perusahaan."
+      ],
+      "after": [
+        "Untuk situs yang tidak dibangun dengan WordPress, pemeriksaannya sama. Masukkan URL Anda di [pemeriksaan gratis](/check), tanpa perlu mendaftar, untuk melihat kondisi data terstruktur, llms.txt, dan akses crawler AI.",
+        "Agensi yang membangun atau memelihara situs untuk klien B2B dapat memasukkan rutinitas perubahan harga (halaman harga, halaman perbandingan, FAQ, listing situs ulasan) ke dalam cakupan pemeliharaan agar fakta tidak saling menyimpang. Agensi yang mendampingi klien setiap bulan dapat bergabung dengan [program mitra](https://nurevo.jp/partner/)."
+      ]
+    },
+    {
+      "heading": "Cara memeriksa: pisahkan pertanyaan tanpa merek dan bermerek",
+      "paragraphs": [
+        "Untuk B2B, catat dua jenis pertanyaan secara terpisah. Pertanyaan tanpa merek memberi tahu apakah Anda masuk daftar pendek orang yang belum mengenal Anda. Pertanyaan bermerek memberi tahu apakah orang yang mengenal Anda mendapatkan fakta yang benar. Ajukan pertanyaan yang sama kepada AI yang sama di hari yang berbeda, dan jangan pernah menilai dari satu jawaban saja."
+      ],
+      "table": {
+        "head": [
+          "Jenis",
+          "Contoh",
+          "Yang dicatat"
+        ],
+        "rows": [
+          [
+            "Tanpa merek (kategori)",
+            "\"Software pencatat waktu kerja apa yang Anda rekomendasikan untuk bisnis kecil?\"",
+            "Apakah Anda disebut, apakah situs Anda dikutip, produk lain apa yang muncul"
+          ],
+          [
+            "Tanpa merek (syarat)",
+            "\"Pencatat waktu kerja yang terintegrasi dengan software penggajian kami?\"",
+            "Apakah syarat diterapkan dengan benar"
+          ],
+          [
+            "Bermerek (harga)",
+            "\"Berapa harga Example Timesheets?\"",
+            "Apakah harga, satuan penagihan, dan pajak sesuai dengan halaman harga Anda hari ini, dan apa sumbernya"
+          ],
+          [
+            "Bermerek (reputasi)",
+            "\"Apa kata orang tentang Example Timesheets?\"",
+            "Situs ulasan atau artikel mana yang menjadi sumber, dan apakah informasi lama ikut masuk"
+          ]
+        ]
+      },
+      "after": [
+        "Pemeriksaan AI gratis Nurevo (sebulan sekali, untuk situs Free dan Standard yang terhubung) mengajukan tiga pertanyaan tanpa merek ke Perplexity. Pengukuran visibilitas Pro (beta) saat ini mencakup Perplexity, dan ChatGPT menyusul setelah siap. Periksa pertanyaan bermerek secara manual dengan tabel di atas.",
+        "Untuk kunjungan, lihat sumbernya di GA4. Tautan dari ChatGPT dapat membawa utm_source=chatgpt.com ([FAQ penerbit OpenAI](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)). Laporan performa AI generatif di Search Console adalah sudut pandang lain ([blog Google Search Central](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)). Pembelian B2B butuh waktu, jadi kolom \"Dari mana Anda mengetahui kami (termasuk jawaban AI)?\" di formulir kontak dapat menangkap pengaruh yang tidak pernah muncul sebagai klik. Metode lengkapnya ada di [cara mengukur visibilitas AI](/guide/measure-ai-visibility)."
+      ]
+    },
+    {
+      "heading": "Daftar periksa situs B2B dan SaaS",
+      "list": [
+        "Kalimat pertama halaman produk menyebutkan apa produknya, untuk siapa (industri dan ukuran), dan bagaimana disediakan.",
+        "Halaman harga menyebutkan satuan penagihan, perbedaan paket, biaya awal, ketentuan minimum, pajak, dan tanggal terakhir diperbarui (atau, untuk penawaran, apa yang menentukan harga dan titik awalnya).",
+        "Teks harga dan studi kasus ada di HTML tanpa menjalankan JavaScript.",
+        "Studi kasus mencantumkan industri, ukuran, tim, masalah, fitur yang dipakai, waktu hingga berjalan, serta bagaimana dan kapan hasil diukur.",
+        "Halaman perbandingan memakai kriteria yang sama untuk setiap produk, memberi tanggal dan sumber untuk fakta pesaing, dan mengatakan kapan Anda bukan pilihan yang tepat.",
+        "Integrasi, persyaratan, keamanan, dan dukungan masing-masing punya judul atau halaman sendiri.",
+        "Ada rutinitas untuk memperbarui halaman perbandingan, FAQ, artikel lama, dan listing situs ulasan pada hari harga berubah.",
+        "robots.txt dan WAF tidak memblokir crawler pencarian seperti OAI-SearchBot dan PerplexityBot.",
+        "Nilai Organization dan SoftwareApplication (atau Service) sesuai dengan teks halaman, dan tidak ada rating rekaan yang diterbitkan.",
+        "llms.txt mencantumkan halaman harga, studi kasus, dan perbandingan.",
+        "Pertanyaan tanpa merek dan bermerek dicatat secara terpisah, di hari yang berbeda."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Jika kami tidak menerbitkan harga, apakah AI akan mengabaikan kami?",
+      "a": "Anda tetap bisa disebut. Namun tanpa bahan untuk pertanyaan harga, AI menjawab dari angka lama di situs lain atau hanya mengatakan harga tidak dipublikasikan. Meski tidak bisa menampilkan nominal, jelaskan apa yang menentukan harga dan berikan titik awalnya."
+    },
+    {
+      "q": "Bolehkah kami menyebut pesaing di halaman perbandingan?",
+      "a": "Banyak perusahaan melakukannya, asalkan faktanya akurat. Cantumkan tanggal Anda memeriksa halaman resmi setiap pesaing beserta tautannya, hilangkan yang tidak bisa Anda periksa, dan jangan memakai logo atau tangkapan layar mereka tanpa izin. Periksa hukum dan aturan industri tentang iklan perbandingan yang berlaku bagi Anda."
+    },
+    {
+      "q": "Apakah SaaS sebaiknya memakai markup SoftwareApplication atau Product?",
+      "a": "schema.org menyediakan SoftwareApplication untuk perangkat lunak (dan WebApplication untuk perangkat lunak berbasis browser). Nurevo AEO menerbitkan layanan yang ditandai sebagai perangkat lunak sebagai SoftwareApplication. Jika Anda menginginkan hasil kaya Google, periksa persyaratannya di dokumentasi Google."
+    },
+    {
+      "q": "Apakah skor rendah di situs ulasan membuat AI tidak merekomendasikan kami?",
+      "a": "Belum ada perusahaan AI yang secara resmi menjelaskan bagaimana skor ulasan dipakai dalam jawaban. Yang bisa Anda lakukan adalah menjaga listing tetap terbaru dan mengumpulkan ulasan dengan jujur. Jika memberi insentif, periksa aturan pemasaran terselubung di wilayah Anda beroperasi dan aturan setiap situs."
+    },
+    {
+      "q": "Apakah ini juga berlaku untuk agensi pengembangan dan konsultan?",
+      "a": "Dasarnya sama. Alih-alih halaman produk, tulis halaman untuk setiap layanan (untuk siapa, cara kerjanya, berapa lama, bagaimana harga ditetapkan, studi kasus) dan gunakan markup Service. Di Nurevo AEO, tambahkan layanan tanpa mencentang kotak perangkat lunak."
+    },
+    {
+      "q": "AI terus mengutip harga lama kami. Apa yang bisa kami lakukan?",
+      "a": "Telusuri sumber dalam jawabannya. Di situs Anda sendiri, perbaiki angka lama di luar halaman harga (halaman perbandingan, FAQ, artikel lama); di situs lain, minta penerbitnya memperbarui. Anda tidak bisa mengedit jawaban AI secara langsung, dan tidak ada waktu pasti kapan perubahan akan terlihat."
+    },
+    {
+      "q": "Apakah langkah-langkah ini akan membuat kami masuk rekomendasi AI?",
+      "a": "Tidak ada jaminan. Jawaban AI berubah tergantung hari dan susunan kata, dan AI yang memutuskan produk mana yang disebut. Langkah-langkah ini membuat fakta yang dibaca AI akurat dan memberinya bahan di situs Anda sendiri untuk memilih Anda."
+    }
+  ],
+  "relatedHeading": "Panduan terkait",
+  "cta": {
+    "heading": "Lihat bagaimana AI membaca situs Anda",
+    "body": "Pemeriksaan gratis tanpa perlu mendaftar: masukkan URL untuk melihat kondisi data terstruktur, llms.txt, dan akses crawler AI. Di WordPress, plugin gratis menerbitkan fakta perusahaan dan produk Anda sebagai data terstruktur dan di llms.txt.",
+    "label": "Periksa kesiapan AI Anda secara gratis",
+    "href": "/check",
+    "secondary": {
+      "label": "Coba plugin WordPress gratis",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT adalah merek dagang OpenAI, Perplexity merek dagang Perplexity AI, dan Google merek dagang Google LLC. G2, Capterra, ITreview, BOXIL, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit, dan WordPress adalah merek dagang atau merek dagang terdaftar dari pemiliknya masing-masing. Nurevo tidak berafiliasi dengan atau didukung oleh perusahaan-perusahaan tersebut."
+}

@@ -1,0 +1,418 @@
+{
+  "title": "B2B 與 SaaS 的 AI 搜尋：價格、案例與比較頁 | Nurevo",
+  "description": "B2B 與 SaaS 買家如何用 AI 篩選供應商，以及回答這些問題的頁面：價格、客戶案例、比較頁。附欄位表、schema、llms.txt 與 WordPress 步驟。",
+  "h1": "B2B 與 SaaS 的 AI 搜尋：讓 AI 讀懂你的價格頁、客戶案例頁與比較頁",
+  "lead": "B2B 與 SaaS 買家會向 AI 提出「做 X 最好的工具是什麼？」「A 和 B 相比如何？」「這通常要花多少錢？」之類的問題來擬定供應商候選名單。工作的核心是準備好用文字回答這些問題的頁面（價格、客戶案例、比較與替代方案、整合與資安），並寫明條件與日期，同時讓評論網站與外部資料與之保持一致。結構化資料與 llms.txt 則把這些頁面上的事實改寫成機器可讀的形式。",
+  "intro": [
+    "撰寫於 2026 年 11 月 17 日（日本時間）。schema.org 類型於當天在 schema-dts 2.1.0 中核對。Google、OpenAI 與 Perplexity 的說法來自 Nurevo 先前指南在 2026 年 10 月 31 日至 11 月 10 日之間閱讀的官方頁面。消費者相關法規的例子來自日本，請確認你所在地區的規定。",
+    "本指南的對象是向其他企業銷售軟體（SaaS）、委外服務或顧問服務的公司，以及為它們架站的代理商。公司簡介頁的寫法請見[公司簡介頁的 AI 搜尋優化](/guide/company-profile-page-ai-search)，部落格文章的寫法請見[如何撰寫 AI 能引用的文章](/guide/blog-articles-ai-citations)。本指南談的是回答「我們該選哪家供應商？」的頁面。AI 的回答每天都在變，也會隨提問方式而不同。這裡的步驟能讓 AI 讀懂你的事實，但不保證 AI 會提到你或把你排在某個位置。"
+  ],
+  "sections": [
+    {
+      "heading": "B2B 買家會問 AI 什麼",
+      "paragraphs": [
+        "在地商家是透過「業種 + 地區」被找到的，而 B2B 供應商則是透過買家想完成的事情與附帶的條件被找到的。這類問題很多發生在買家知道你的名字之前，所以如果答案裡沒有你的名字，你就永遠進不了候選名單。日本代理商 TaTap 於 2026 年 11 月進行的調查顯示，在 135 位曾親自尋找供應商的主管中，62.2% 表示曾向生成式 AI 詢問推薦的公司，27.4% 表示會放棄或降低未出現在答案中的公司的優先順序（[TaTap](https://tatap.jp/knowledge/btob-llmo-agency/)，這是一家銷售此類服務的公司所做的小規模調查）。",
+        "這些問題大致分為六類，每一類由不同的頁面來回答。"
+      ],
+      "table": {
+        "head": [
+          "問題類型",
+          "範例",
+          "回答它的頁面",
+          "AI 回答中的常見錯誤"
+        ],
+        "rows": [
+          [
+            "類別搜尋",
+            "「最好的出勤管理工具？」「列出 3 個主流出勤系統」",
+            "產品頁（是什麼、給誰用、適合多大規模）",
+            "公司規模或產業錯誤，被歸入錯誤的類別"
+          ],
+          [
+            "依條件篩選",
+            "「適合 50 人、能和我們的薪資軟體整合的出勤工具？」",
+            "整合、功能與系統需求頁面",
+            "說有整合但其實沒有，或者反過來"
+          ],
+          [
+            "比較",
+            "「A 和 B 哪個好？」「比較一下出勤系統」",
+            "附有選擇標準的比較頁",
+            "用舊功能或舊價格做比較"
+          ],
+          [
+            "價格",
+            "「出勤軟體一般多少錢？」",
+            "價格頁",
+            "舊價格、含稅與否混淆、漏掉最低席次數"
+          ],
+          [
+            "轉換",
+            "「X 的替代方案有哪些？」",
+            "移轉 / 轉換頁",
+            "漏掉移轉工作量與資料匯入"
+          ],
+          [
+            "確認名稱",
+            "「大家怎麼評價 X？」「X 多少錢？」",
+            "客戶案例、公司簡介頁、評論網站",
+            "評論網站上的舊資料，或與同名產品混淆"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo 對 B2B / SaaS 網站進行測量時所用的問題也依循這些類型（「做……最好的工具是什麼？」「比較一下主要的……」「小企業推薦哪個……？」「……的一般價格區間是多少？」「哪些……的客戶案例最多？」「想換掉……的話，有什麼好的替代？」），都不包含你的名字。包含名字的問題依下文所述手動檢查。"
+      ]
+    },
+    {
+      "heading": "排名前面的文章怎麼說，本指南如何看待",
+      "paragraphs": [
+        "我們閱讀了 13 篇在「B2B SaaS AI search」及類似查詢中排名前面的日文與英文文章。幾乎所有文章都認為比較頁、客戶案例與評論網站很重要。但它們多數的數字不是沒有註明來源，就是來自作者自己的客戶。本指南不使用無法查證的數字。"
+      ],
+      "table": {
+        "head": [
+          "常見說法",
+          "證據強度",
+          "本指南的處理方式"
+        ],
+        "rows": [
+          [
+            "「來自 AI 的訪客轉換率是 Google 訪客的好幾倍」",
+            "各文章的數字從幾倍到 20 倍以上不等，底層研究往往無從追溯",
+            "不採用。我們說明如何在你自己的 GA4 中查證"
+          ],
+          [
+            "「七成 B2B 買家從 AI 開始調查」",
+            "沒有來源，或只寫「產業資料」",
+            "不採用。只採用註明來源與樣本數的調查"
+          ],
+          [
+            "「比較頁和替代方案頁很常被引用」",
+            "代理商的觀察，沒有官方說法",
+            "因為與人們問 AI 的問題相符，所以值得製作，僅此而已"
+          ],
+          [
+            "「SoftwareApplication 或 FAQ 標記能讓你進入 AI 回答」",
+            "各文章說法相反。Google 表示 AI 功能不需要特殊標記",
+            "視為對頁面事實的重述"
+          ],
+          [
+            "「評論網站上的評論越多，被推薦得越多」",
+            "大多是未具名的研究",
+            "與其追求數量，不如確認那裡的價格和功能是最新的，並與你的網站一致"
+          ],
+          [
+            "「加上 llms.txt，AI 就會讀你的網站」",
+            "Google 表示不需要新的 AI 專用檔案，其他 AI 公司沒有表態",
+            "如果加上，就把它當作通往價格頁與案例頁的入口"
+          ]
+        ]
+      },
+      "after": [
+        "排名前面的文章大多缺少的是：價格頁與案例頁的具體欄位、WordPress 步驟，以及區分無品牌問題與品牌問題的測量方法。本指南把篇幅花在這些地方。"
+      ]
+    },
+    {
+      "heading": "價格頁：即使不公開全部數字，也要提供決策依據",
+      "paragraphs": [
+        "對於「要花多少錢？」或「X 多少錢？」，AI 會根據你的價格頁回答；沒有價格頁時，就用評論網站與比較文章裡的數字。你自己頁面上的最新條件，比別人寫的舊數字更可靠。即使是依報價計價，也可以說明價格取決於什麼。"
+      ],
+      "table": {
+        "head": [
+          "欄位",
+          "範例",
+          "缺少時會怎樣"
+        ],
+        "rows": [
+          [
+            "計費單位",
+            "「每位使用者每月」「每個據點」「依用量，每 1,000 筆記錄」",
+            "總額被誤讀好幾倍"
+          ],
+          [
+            "方案差異",
+            "用表格列出方案名稱、包含的功能與限制（使用者數、保存期間）",
+            "最高方案的功能被說成所有方案都包含"
+          ],
+          [
+            "初期費用與最低要求",
+            "初期費用、最低席次數、最短合約期、年繳與月繳",
+            "只有月費被傳開，簽約時讓人意外"
+          ],
+          [
+            "稅",
+            "在表格上方寫一行清楚的說明，例如「所有價格均未稅」",
+            "含稅價與未稅價被並排比較"
+          ],
+          [
+            "免費試用或免費方案",
+            "期間、包含的內容、是否自動開始計費",
+            "被簡單地說成「免費」"
+          ],
+          [
+            "加購項目",
+            "導入支援、額外儲存空間、API 存取、進階支援",
+            "必要的費用沒有出現在答案中"
+          ],
+          [
+            "依報價計價",
+            "「價格取決於 X 與 Y。方案每月約 Z 起。」",
+            "只被說成「價格未公開」，你也就從名單上消失"
+          ],
+          [
+            "最後更新",
+            "在頁面上寫明「價格於 2026 年 11 月 1 日修訂」",
+            "無法分辨新舊價格"
+          ]
+        ]
+      },
+      "after": [
+        "調整價格時，要在更新價格頁的同一天，同時更新比較頁、FAQ、舊部落格文章與評論網站上的資訊。當你自己的頁面互相矛盾時，AI 會從中任選一個。",
+        "不要只用圖片或 PDF 公布價格。請使用 HTML 表格或附標籤的清單。"
+      ]
+    },
+    {
+      "heading": "客戶案例頁：對應買家搜尋時的條件",
+      "paragraphs": [
+        "B2B 問題會帶有條件：「製造業用哪些出勤工具？」「哪些……的案例最多？」。客戶案例中重要的是這些條件容易找到，而不是讀起來是否精彩。請在每個案例開頭用表格列出以下欄位，接著再寫內文。"
+      ],
+      "table": {
+        "head": [
+          "欄位",
+          "範例"
+        ],
+        "rows": [
+          [
+            "產業與規模",
+            "「食品製造商，員工約 250 人，2 座工廠」"
+          ],
+          [
+            "使用者",
+            "「人資部門與各工廠的主管」"
+          ],
+          [
+            "導入前的問題",
+            "「紙本出勤卡，月底手工統計」"
+          ],
+          [
+            "選擇的原因與標準",
+            "「支援排班，並能與現有薪資軟體整合」（不需寫出競爭對手名稱）"
+          ],
+          [
+            "使用的功能與整合",
+            "「打卡、排班、薪資資料匯出」"
+          ],
+          [
+            "上線所需時間",
+            "「從簽約到正式運作約 2 個月」"
+          ],
+          [
+            "成果與測量方法",
+            "「每月統計從 3 天縮短為半天（人資工作記錄，上線 6 個月後）」：什麼、何時、如何測量"
+          ],
+          [
+            "日期與時間點",
+            "「2026 年 10 月採訪。職稱與數字皆為採訪當時的資訊」"
+          ]
+        ]
+      },
+      "after": [
+        "只公布客戶能夠認可的成果，並附上測量方法與日期。誇大的數字會被 AI 原封不動地引用，事後很難更正。展示客戶名稱、標誌與引言前，請取得書面同意。",
+        "案例還不多的時候，可以依產業與公司規模製作一個索引頁，連結到各個案例。名為「客戶案例」或「導入案例」並從首頁連結的頁面，人和 AI 都容易找到。"
+      ]
+    },
+    {
+      "heading": "比較頁與轉換頁：說明你在什麼情況下並不適合",
+      "paragraphs": [
+        "被問到「A 和 B 哪個好？」時，如果你的網站上沒有可用的材料，AI 就會根據競爭對手的頁面或比較網站回答。請把比較頁做成判斷哪種產品適合哪類公司的材料，而不是一張計分表。"
+      ],
+      "list": [
+        "先確定標準（公司規模、計費單位、整合、支援、資料存放位置等），並用同樣的標準比較每個產品。",
+        "對於競爭對手的功能與價格，寫明你查看其官方頁面的日期並附上連結。無法查證的內容一律不寫。",
+        "坦白說明你在什麼情況下並不適合（「不到 100 人的話，A 的免費方案可能更適合你」）。一面倒的比較，讀者也不會相信。",
+        "在轉換頁上，寫明可以匯入哪些資料、步驟與所需時間、需要並行運作多久，以及移轉支援是付費還是免費。",
+        "為比較頁標註日期，並在你或競爭對手調整價格時重新檢查。"
+      ],
+      "after": [
+        "提到競爭對手時，只陳述事實，未經同意不要使用對方的標誌或截圖。"
+      ]
+    },
+    {
+      "heading": "整合、系統需求、資安與支援：回答條件類問題",
+      "paragraphs": [
+        "「能與 X 整合」「取得 ISO/IEC 27001」「週末提供支援」之類的條件，是 AI 在縮小候選範圍時常用的事實。功能清單裡的一行字作為材料很薄弱，所以請為每個條件單獨設置頁面或標題。"
+      ],
+      "list": [
+        "整合：可連接的服務、連接方式（內建、API、CSV）以及是否額外收費。",
+        "系統需求：支援的瀏覽器、是否有行動 App 及支援哪些作業系統、離線時的表現。",
+        "資安：對於每項已取得的認證，寫明名稱、範圍以及登錄編號或日期。不要列出未取得的認證。寫明資料存放在哪裡（國家或地區）。",
+        "支援：時間、管道（電話、電子郵件、線上聊天）、各方案的差異、導入支援包含哪些內容。",
+        "合約與解約：如何解約，以及解約後資料如何處理。"
+      ]
+    },
+    {
+      "heading": "外部來源：讓評論網站與外部資料和你的網站保持一致",
+      "paragraphs": [
+        "對於包含你名字的問題（「大家怎麼評價 X？」），G2、Capterra、ITreview、BOXIL 等評論網站、新聞稿與比較文章常被當作來源。這些頁面你無法編輯，所以請專注於兩件事。"
+      ],
+      "list": [
+        "保持資訊最新：產品說明、價格、功能與公司資訊，要用與你的網站相同的寫法與相同的數字。依照各網站自己的刊登規則，請營運方更新。",
+        "誠實地收集評論：在日本，自 2023 年 10 月 1 日起，隱性行銷屬於違反《不當贈品類及不當標示防止法》的行為，企業請求或指示第三方發布的評論被視為該企業的廣告（[消費者廳](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)）。如果你為評論提供獎勵，請確認各評論網站的規則與獎勵的揭露方式，以及你所在地區的規定。"
+      ],
+      "after": [
+        "在你的網站上顯示評論分數時，寫明是哪個網站、截至何時以及根據多少則評論。不要在未說明來源的情況下，把自己收集的評分當作 aggregateRating 發布到結構化資料中。"
+      ]
+    },
+    {
+      "heading": "AI 讀得到頁面嗎？爬蟲與 JavaScript",
+      "paragraphs": [
+        "SaaS 網站有時會在頁面載入後用 JavaScript 繪製價格表或功能比較。你在瀏覽器裡看到的內容，爬蟲收到的 HTML 裡可能沒有。較穩妥的做法是讓價格與案例文字包含在伺服器最先回傳的 HTML 中。請取得頁面的 HTML（例如用 curl），確認價格與案例文字都在其中。",
+        "也要確認 robots.txt 沒有封鎖 AI 服務的搜尋爬蟲。OpenAI 表示，選擇封鎖 OAI-SearchBot 的網站不會出現在 ChatGPT 搜尋的回答中（[OpenAI 爬蟲](https://developers.openai.com/api/docs/bots)）；它與用於訓練的 GPTBot 是不同的爬蟲。Perplexity 也分別說明了 PerplexityBot 與 Perplexity-User（[Perplexity 爬蟲](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)）。WAF 或機器人防護服務可能在無人察覺的情況下封鎖它們。"
+      ]
+    },
+    {
+      "heading": "結構化資料：公司用 Organization，所售產品用 SoftwareApplication 或 Service",
+      "paragraphs": [
+        "Google 表示，AI 摘要與 AI 模式不需要特殊的結構化資料或檔案，且結構化資料應與頁面上可見的內容一致（[AI 功能與你的網站](https://developers.google.com/search/docs/appearance/ai-features)）。在此前提下，B2B 與 SaaS 常用的組合如下："
+      ],
+      "list": [
+        "公司：Organization（或 Corporation 等子類型），包含名稱、URL、標誌、簡介與聯絡方式。請見[公司簡介頁的 AI 搜尋優化](/guide/company-profile-page-ai-search)。",
+        "軟體：SoftwareApplication。在 schema.org 中它屬於 CreativeWork 的一種，屬性包括 applicationCategory、operatingSystem、featureList、softwareVersion 與 offers 等。以瀏覽器為基礎的軟體還有子類型 WebApplication（[schema.org SoftwareApplication](https://schema.org/SoftwareApplication)）。",
+        "委外或顧問等服務：Service，透過 provider 與公司連結。",
+        "FAQ：僅在顯示這些問答的頁面上使用 FAQPage。"
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "這個範例是服務被標記為「這是軟體（SaaS 或 App）」時 Nurevo AEO 輸出的結構（數值為虛構）。provider 指向公司節點，類別成為 applicationCategory，價格與幣別成為 Offer。「每位使用者每月」之類的計費單位，請寫在價格頁的內文裡。",
+        "Google 搜尋結果中的軟體應用程式複合式搜尋結果有自己的要求，例如評分或評論。如果你想取得該複合式搜尋結果，請在 [Google 的軟體應用程式結構化資料](https://developers.google.com/search/docs/appearance/structured-data/software-app)文件中確認目前的要求。Nurevo AEO 絕不會發布沒有真實評論支撐的評分。"
+      ]
+    },
+    {
+      "heading": "llms.txt：通往價格頁、案例頁與比較頁的入口",
+      "paragraphs": [
+        "llms.txt 是一個文字檔，包含網站摘要與主要頁面的連結。沒有任何 AI 公司正式說明過它的效果，Google 也表示不需要（請見[如何撰寫 llms.txt](/guide/llms-txt)）。如果要加上，對 B2B 與 SaaS 來說，重點是確保其中列出你的價格頁、案例頁、比較頁與整合頁。當網站類型設為「B2B / SaaS」時，Nurevo AEO 會這樣產生（數值為虛構）："
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "Key facts 中的 Pricing 與 Case studies，是在設定中填寫的「價格頁（B2B）」與「案例頁（B2B）」的 URL。B2B / SaaS 網站不輸出營業時間。Pages 列出最近更新的 30 個頁面與文章，因此在部落格更新頻繁的網站上，比較頁可能被擠出去。這種情況下，可以對不需要列入的文章勾選「不在 llms.txt 中列出此頁」，或用開發者過濾器 webmcp_canary_llms_txt_lines 加入條目。"
+      ]
+    },
+    {
+      "heading": "WordPress 上的步驟（使用 Nurevo AEO）",
+      "paragraphs": [
+        "在 WordPress 上，[Nurevo AEO（免費）](https://wordpress.org/plugins/nurevo-webmcp/) 會把你的公司與產品資訊以結構化資料和 llms.txt 的形式發布。請依以下順序操作。"
+      ],
+      "list": [
+        "先依照上面的表格修好價格頁、案例頁、比較頁與整合頁的文字。先文字，後結構化資料。",
+        "在設定精靈（或設定）中，把網站類型設為「B2B / SaaS」。公司將以 Organization 發布。如果在業務類型欄位中選擇了合適的類型，例如 Corporation、ProfessionalService 或 AccountingService，則使用該類型；不適合 B2B 網站的類型會退回為 Organization。地址與營業時間不是必填。",
+        "加入你的服務（最多 20 個）：名稱、一句話簡介、服務頁 URL、類別、價格與幣別。軟體請勾選「這是軟體（SaaS 或 App）」。勾選的項目以 SoftwareApplication 發布，其餘以 Service 發布。",
+        "類別請使用買家問 AI 時用的詞（「出勤管理軟體」「費用報銷管理」）。Nurevo 的測量問題就是根據這個類別產生的。",
+        "填寫「價格頁（B2B）」與「案例頁（B2B）」的 URL。它們會進入 llms.txt 的 Key facts，並由診斷功能檢查。",
+        "FAQ 項目只會在用 Nurevo FAQ 區塊或 [nurevo_faq] 短代碼顯示它們的頁面上以 FAQPage 發布。請為價格頁單獨設置關於價格問題的 FAQ。",
+        "與 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO 一起使用時，Nurevo 只會把缺少的資訊與服務補進該外掛的結構化資料，因此公司不會被重複描述。它也能與 SEO SIMPLE PACK 及 VK All in One Expansion Unit 一起使用（0.9.1 起）。",
+        "在 AEO 分數畫面執行診斷。對於 B2B / SaaS 網站，它檢查四項內容：服務說明、價格頁、客戶案例（或 FAQ）以及公司身分資訊。"
+      ],
+      "after": [
+        "不是用 WordPress 架設的網站，檢查重點也一樣。在[免費檢測](/check)中輸入你的 URL，不需註冊，即可查看結構化資料、llms.txt 與 AI 爬蟲存取的狀態。",
+        "為 B2B 客戶架站或維護網站的代理商，可以把價格調整時的更新流程（價格頁、比較頁、FAQ、評論網站資訊）納入維護範圍，避免資訊彼此脫節。每月為客戶提供支援的代理商可以加入[合作夥伴計畫](https://nurevo.jp/partner/)。"
+      ]
+    },
+    {
+      "heading": "如何檢查：區分無品牌問題與品牌問題",
+      "paragraphs": [
+        "對於 B2B，請分別記錄兩類問題。無品牌問題告訴你，在不認識你的人那裡你能否進入候選名單；品牌問題告訴你，認識你的人能否得到正確的資訊。請在不同的日子向同一個 AI 提出同一個問題，絕不要只憑一次回答下結論。"
+      ],
+      "table": {
+        "head": [
+          "類型",
+          "範例",
+          "要記錄的內容"
+        ],
+        "rows": [
+          [
+            "無品牌（類別）",
+            "「小企業推薦哪款出勤軟體？」",
+            "是否提到你、是否引用了你的網站、還出現了哪些產品"
+          ],
+          [
+            "無品牌（條件）",
+            "「能和我們的薪資軟體整合的出勤工具？」",
+            "條件是否被正確套用"
+          ],
+          [
+            "品牌（價格）",
+            "「Example Timesheets 多少錢？」",
+            "價格、計費單位與稅是否與你目前的價格頁一致，來源是什麼"
+          ],
+          [
+            "品牌（評價）",
+            "「大家怎麼評價 Example Timesheets？」",
+            "來源是哪個評論網站或文章，是否混入了舊資訊"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo 的免費 AI 檢測（每月一次，適用於已連接的 Free 與 Standard 網站）會向 Perplexity 提出三個無品牌問題。Pro 的能見度測量（測試版）目前涵蓋 Perplexity，ChatGPT 將在準備就緒後加入。品牌問題請用上表手動檢查。",
+        "造訪量請在 GA4 中查看來源。來自 ChatGPT 的連結可能帶有 utm_source=chatgpt.com（[OpenAI 發布者 FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)）。Search Console 的生成式 AI 成效報告也是一個角度（[Google 搜尋中心部落格](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)）。B2B 採購需要時間，所以在聯絡表單中加一個「您是透過什麼得知我們的（包括 AI 回答）？」欄位，可以捕捉到不會顯示為點擊的影響。完整方法請見[如何測量 AI 能見度](/guide/measure-ai-visibility)。"
+      ]
+    },
+    {
+      "heading": "B2B 與 SaaS 網站檢查清單",
+      "list": [
+        "產品頁的第一句話說明了它是什麼、給誰用（產業與規模）以及如何提供。",
+        "價格頁寫明了計費單位、方案差異、初期費用、最低要求、稅與最後更新日期（依報價計價時，寫明價格取決於什麼以及起價）。",
+        "價格與案例文字在不執行 JavaScript 的情況下就存在於 HTML 中。",
+        "客戶案例寫明了產業、規模、團隊、問題、使用的功能、上線所需時間，以及成果如何、何時測量。",
+        "比較頁對每個產品使用相同標準，競爭對手資訊註明日期與來源，並說明你在什麼情況下並不適合。",
+        "整合、系統需求、資安與支援各有自己的標題或頁面。",
+        "有一套流程，在價格調整當天同時更新比較頁、FAQ、舊文章與評論網站資訊。",
+        "robots.txt 與 WAF 沒有封鎖 OAI-SearchBot 與 PerplexityBot 等搜尋爬蟲。",
+        "Organization 與 SoftwareApplication（或 Service）的值與頁面文字一致，且沒有發布虛構的評分。",
+        "llms.txt 列出了價格頁、案例頁與比較頁。",
+        "無品牌問題與品牌問題分開記錄，並在不同的日子進行。"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "如果我們不公開價格，AI 會把我們排除在外嗎？",
+      "a": "你仍然可能被提到。但如果沒有回答價格問題的材料，AI 就會用其他網站上的舊數字回答，或只說價格未公開。即使不能公布金額，也請說明價格取決於什麼，並給出起價。"
+    },
+    {
+      "q": "可以在比較頁上寫出競爭對手的名稱嗎？",
+      "a": "只要事實正確，很多公司都這麼做。請寫明查看每個競爭對手官方頁面的日期並附上連結，不寫無法查證的內容，未經同意不要使用對方的標誌或截圖。請確認適用於你的比較廣告相關法律與產業規範。"
+    },
+    {
+      "q": "SaaS 應該用 SoftwareApplication 還是 Product 標記？",
+      "a": "schema.org 為軟體提供了 SoftwareApplication（以瀏覽器為基礎的軟體還有 WebApplication）。Nurevo AEO 會把標記為軟體的服務以 SoftwareApplication 發布。如果你想取得 Google 的複合式搜尋結果，請在 Google 的文件中確認要求。"
+    },
+    {
+      "q": "評論網站上的分數低，會讓 AI 不推薦我們嗎？",
+      "a": "沒有任何 AI 公司正式說明過評論分數在回答中如何使用。你能做的是保持資訊最新，並誠實地收集評論。如果提供獎勵，請確認你所在地區關於隱性行銷的規定以及各網站的規則。"
+    },
+    {
+      "q": "這也適用於開發公司與顧問公司嗎？",
+      "a": "基本做法相同。不寫產品頁，而是為每項服務寫一個頁面（給誰、如何進行、需要多久、價格如何決定、客戶案例），並使用 Service 標記。在 Nurevo AEO 中加入服務時，不要勾選軟體選項。"
+    },
+    {
+      "q": "AI 一直引用我們的舊價格，該怎麼辦？",
+      "a": "追查回答中的來源。在你自己的網站上，修正價格頁以外的舊數字（比較頁、FAQ、舊文章）；在其他網站上，請發布方更新。你無法直接編輯 AI 的回答，變更生效的時間也沒有定數。"
+    },
+    {
+      "q": "這些步驟能讓我們進入 AI 的推薦嗎？",
+      "a": "沒有保證。AI 的回答會隨日期與措辭變化，提到哪些產品由 AI 決定。這些步驟能讓 AI 讀到的事實正確，並在你自己的網站上為它提供選擇你的材料。"
+    }
+  ],
+  "relatedHeading": "相關指南",
+  "cta": {
+    "heading": "看看 AI 如何讀取你的網站",
+    "body": "免費檢測不需註冊：輸入 URL，即可查看結構化資料、llms.txt 與 AI 爬蟲存取的狀態。在 WordPress 上，免費外掛會把你的公司與產品資訊以結構化資料和 llms.txt 的形式發布。",
+    "label": "免費檢測 AI 可讀性",
+    "href": "/check",
+    "secondary": {
+      "label": "試用免費 WordPress 外掛",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT 是 OpenAI 的商標，Perplexity 是 Perplexity AI 的商標，Google 是 Google LLC 的商標。G2、Capterra、ITreview、BOXIL、Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit 與 WordPress 是其各自所有者的商標或註冊商標。Nurevo 與上述公司均無關聯，也未獲其背書。"
+}

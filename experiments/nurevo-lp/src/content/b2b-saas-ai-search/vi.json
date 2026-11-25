@@ -1,0 +1,418 @@
+{
+  "title": "Tìm kiếm AI cho B2B & SaaS: giá, case study, so sánh | Nurevo",
+  "description": "Người mua B2B và SaaS dùng AI để lọc nhà cung cấp ra sao, và các trang trả lời họ: giá, case study, so sánh. Bảng trường, schema, llms.txt, WordPress.",
+  "h1": "Tìm kiếm AI cho B2B và SaaS: giúp AI đọc được trang giá, case study và trang so sánh của bạn",
+  "lead": "Người mua B2B và SaaS lập danh sách nhà cung cấp bằng cách hỏi AI những câu như \"Công cụ tốt nhất cho X là gì?\", \"A so với B thế nào?\" và \"Thường tốn bao nhiêu?\". Cốt lõi của công việc là có những trang trả lời các câu hỏi đó bằng văn bản (giá, case study, so sánh và giải pháp thay thế, tích hợp và bảo mật), kèm điều kiện và ngày tháng, đồng thời giữ cho các trang đánh giá và hồ sơ bên ngoài nhất quán với chúng. Dữ liệu có cấu trúc và llms.txt sau đó trình bày lại các dữ kiện trên những trang này dưới dạng máy đọc được.",
+  "intro": [
+    "Viết ngày 17 tháng 11 năm 2026 (JST). Các kiểu schema.org được kiểm tra hôm đó trên schema-dts 2.1.0. Các phát biểu của Google, OpenAI và Perplexity lấy từ trang của họ, được đọc trong khoảng 31 tháng 10 đến 10 tháng 11 năm 2026 cho các hướng dẫn Nurevo trước đây. Ví dụ về quy định bảo vệ người tiêu dùng lấy từ Nhật Bản; hãy kiểm tra quy định nơi bạn hoạt động.",
+    "Hướng dẫn này dành cho các công ty bán phần mềm (SaaS), dịch vụ thuê ngoài hoặc tư vấn cho doanh nghiệp khác, và cho các agency xây dựng website cho họ. Cách viết trang Giới thiệu có trong [tìm kiếm AI cho trang Giới thiệu](/guide/company-profile-page-ai-search), và cách viết bài blog trong [cách viết bài viết AI có thể trích dẫn](/guide/blog-articles-ai-citations). Hướng dẫn này nói về những trang trả lời câu hỏi \"nên chọn nhà cung cấp nào?\". Câu trả lời của AI thay đổi theo từng ngày và theo cách đặt câu hỏi. Các bước ở đây giúp AI đọc được dữ kiện của bạn. Chúng không đảm bảo AI sẽ nhắc đến bạn hay xếp bạn ở vị trí nào."
+  ],
+  "sections": [
+    {
+      "heading": "Người mua B2B hỏi AI những gì",
+      "paragraphs": [
+        "Doanh nghiệp địa phương được tìm thấy bằng \"loại hình kinh doanh + khu vực\". Nhà cung cấp B2B được tìm thấy từ việc người mua muốn làm gì và trong điều kiện nào. Nhiều câu hỏi như vậy xuất hiện trước khi người mua biết tên bạn, nên nếu tên bạn không có trong câu trả lời, bạn sẽ không bao giờ lọt vào danh sách rút gọn. Trong khảo sát do agency Nhật Bản TaTap thực hiện vào tháng 11 năm 2026, 62,2% trong số 135 lãnh đạo từng tự tìm nhà cung cấp cho biết họ đã hỏi AI tạo sinh để được gợi ý công ty, và 27,4% cho biết họ loại bỏ hoặc hạ ưu tiên những công ty không xuất hiện tên ([TaTap](https://tatap.jp/knowledge/btob-llmo-agency/), một khảo sát nhỏ của công ty bán dịch vụ này).",
+        "Các câu hỏi chia thành khoảng sáu loại, và mỗi loại được trả lời bởi một trang khác nhau."
+      ],
+      "table": {
+        "head": [
+          "Loại câu hỏi",
+          "Ví dụ",
+          "Trang trả lời",
+          "Lỗi thường gặp trong câu trả lời của AI"
+        ],
+        "rows": [
+          [
+            "Tìm theo danh mục",
+            "\"Công cụ chấm công tốt nhất?\" \"Kể tên 3 hệ thống chấm công hàng đầu\"",
+            "Trang sản phẩm (là gì, cho ai, quy mô nào)",
+            "Sai quy mô công ty hoặc ngành, xếp vào sai danh mục"
+          ],
+          [
+            "Lọc theo điều kiện",
+            "\"Chấm công cho 50 người, tích hợp với phần mềm tính lương của chúng tôi?\"",
+            "Trang tích hợp, tính năng và yêu cầu hệ thống",
+            "Nói có tích hợp trong khi không có, hoặc ngược lại"
+          ],
+          [
+            "So sánh",
+            "\"A hay B?\" \"So sánh các hệ thống chấm công\"",
+            "Trang so sánh có tiêu chí lựa chọn",
+            "So sánh theo tính năng cũ hoặc giá cũ"
+          ],
+          [
+            "Giá",
+            "\"Phần mềm chấm công thường giá bao nhiêu?\"",
+            "Trang giá",
+            "Giá cũ, nhầm lẫn về thuế, bỏ sót số tài khoản tối thiểu"
+          ],
+          [
+            "Chuyển đổi",
+            "\"Giải pháp thay thế cho X?\"",
+            "Trang di chuyển / chuyển đổi",
+            "Bỏ qua công sức di chuyển và nhập dữ liệu"
+          ],
+          [
+            "Kiểm tra một cái tên",
+            "\"Mọi người nói gì về X?\" \"X giá bao nhiêu?\"",
+            "Câu chuyện khách hàng, trang Giới thiệu, trang đánh giá",
+            "Dữ liệu cũ từ trang đánh giá, hoặc nhầm với sản phẩm cùng tên"
+          ]
+        ]
+      },
+      "after": [
+        "Các câu hỏi mà phép đo của Nurevo dùng cho website B2B / SaaS cũng theo các loại này (\"Công cụ tốt nhất cho ... là gì?\", \"So sánh các ... chính\", \"Bạn gợi ý ... nào cho doanh nghiệp nhỏ?\", \"Mức giá thông thường của ... là bao nhiêu?\", \"... nào có nhiều case study khách hàng nhất?\", \"Nếu muốn chuyển khỏi ... thì có lựa chọn thay thế nào tốt?\"), tất cả đều không có tên bạn. Những câu hỏi có tên bạn được kiểm tra thủ công, như mô tả bên dưới."
+      ]
+    },
+    {
+      "heading": "Các bài viết hàng đầu khẳng định gì, và hướng dẫn này xử lý ra sao",
+      "paragraphs": [
+        "Chúng tôi đã đọc 13 bài viết tiếng Nhật và tiếng Anh xếp hạng cho \"B2B SaaS AI search\" và các truy vấn tương tự. Hầu hết đều đồng ý rằng trang so sánh, case study và trang đánh giá là quan trọng. Tuy nhiên, phần lớn số liệu của họ hoặc không nêu nguồn, hoặc đến từ chính khách hàng của tác giả. Hướng dẫn này không dùng những con số không thể kiểm chứng."
+      ],
+      "table": {
+        "head": [
+          "Khẳng định phổ biến",
+          "Mức độ bằng chứng",
+          "Cách hướng dẫn này xử lý"
+        ],
+        "rows": [
+          [
+            "\"Khách đến từ AI chuyển đổi tốt hơn khách từ Google gấp nhiều lần\"",
+            "Con số dao động từ vài lần đến hơn 20 lần giữa các bài; nghiên cứu gốc thường không truy được",
+            "Không dùng. Chúng tôi chỉ cách kiểm tra trong GA4 của chính bạn"
+          ],
+          [
+            "\"Bảy trên mười người mua B2B bắt đầu nghiên cứu bằng AI\"",
+            "Không có nguồn, hoặc chỉ ghi \"dữ liệu ngành\"",
+            "Không dùng. Chỉ dùng khảo sát có nêu nguồn và cỡ mẫu"
+          ],
+          [
+            "\"Trang so sánh và trang giải pháp thay thế được trích dẫn nhiều\"",
+            "Quan sát của agency; không có phát biểu chính thức",
+            "Đáng làm vì khớp với câu hỏi người ta hỏi AI; không hơn"
+          ],
+          [
+            "\"Markup SoftwareApplication hoặc FAQ giúp bạn vào câu trả lời của AI\"",
+            "Các bài nói ngược nhau. Google cho biết tính năng AI không cần markup đặc biệt",
+            "Xem như việc trình bày lại dữ kiện trên trang"
+          ],
+          [
+            "\"Càng nhiều đánh giá trên trang đánh giá thì càng được gợi ý nhiều\"",
+            "Chủ yếu là nghiên cứu không nêu tên",
+            "Kiểm tra giá và tính năng ở đó còn mới và khớp với website của bạn, thay vì chạy theo số lượng"
+          ],
+          [
+            "\"Thêm llms.txt là AI sẽ đọc bạn\"",
+            "Google nói không cần file AI mới; các công ty AI khác chưa lên tiếng",
+            "Nếu thêm, hãy dùng nó làm lối vào trang giá và trang case study"
+          ]
+        ]
+      },
+      "after": [
+        "Những gì các bài viết hàng đầu phần lớn còn thiếu: các trường cụ thể cho trang giá và trang case study, các bước trên WordPress, và cách đo lường tách bạch câu hỏi không chứa thương hiệu với câu hỏi có thương hiệu. Đó là nơi hướng dẫn này dành nhiều thời gian."
+      ]
+    },
+    {
+      "heading": "Trang giá: đưa ra dữ liệu để quyết định, kể cả khi chưa có mọi con số",
+      "paragraphs": [
+        "Với \"Tốn bao nhiêu?\" hay \"X giá bao nhiêu?\", AI trả lời từ trang giá của bạn, hoặc nếu không có, từ các con số trên trang đánh giá và bài so sánh. Điều khoản hiện hành trên trang của chính bạn an toàn hơn những con số cũ do người khác viết. Ngay cả khi giá theo báo giá, bạn vẫn có thể nói giá phụ thuộc vào những gì."
+      ],
+      "table": {
+        "head": [
+          "Trường",
+          "Ví dụ",
+          "Điều xảy ra nếu thiếu"
+        ],
+        "rows": [
+          [
+            "Đơn vị tính phí",
+            "\"Mỗi người dùng mỗi tháng\", \"mỗi địa điểm\", \"theo mức sử dụng, mỗi 1.000 bản ghi\"",
+            "Tổng chi phí bị hiểu sai gấp nhiều lần"
+          ],
+          [
+            "Khác biệt giữa các gói",
+            "Tên gói, tính năng bao gồm và giới hạn (người dùng, thời gian lưu trữ) trong một bảng",
+            "Tính năng của gói cao nhất bị mô tả là có trong mọi gói"
+          ],
+          [
+            "Phí thiết lập và mức tối thiểu",
+            "Phí thiết lập, số tài khoản tối thiểu, thời hạn tối thiểu, thanh toán theo năm hay theo tháng",
+            "Chỉ giá theo tháng được lan truyền, và hợp đồng khiến người ta bất ngờ"
+          ],
+          [
+            "Thuế",
+            "Một dòng rõ ràng phía trên bảng, chẳng hạn \"Tất cả giá chưa bao gồm thuế\"",
+            "Giá có thuế và chưa thuế bị so sánh cạnh nhau"
+          ],
+          [
+            "Dùng thử miễn phí hoặc gói miễn phí",
+            "Thời hạn, những gì bao gồm, có tự động bắt đầu tính phí không",
+            "Bị đưa tin đơn giản là \"miễn phí\""
+          ],
+          [
+            "Tùy chọn bổ sung",
+            "Hỗ trợ triển khai, dung lượng thêm, truy cập API, hỗ trợ cao cấp",
+            "Chi phí cần thiết bị thiếu trong câu trả lời"
+          ],
+          [
+            "Giá theo báo giá",
+            "\"Giá phụ thuộc vào X và Y. Các gói bắt đầu từ khoảng Z mỗi tháng.\"",
+            "Chỉ được đưa tin là \"không công bố giá\", và bạn rơi khỏi danh sách"
+          ],
+          [
+            "Cập nhật lần cuối",
+            "\"Giá được điều chỉnh ngày 1 tháng 11 năm 2026\" trên trang",
+            "Không có cách phân biệt giá cũ và giá mới"
+          ]
+        ]
+      },
+      "after": [
+        "Khi thay đổi giá, hãy cập nhật trang so sánh, FAQ, bài blog cũ và thông tin trên các trang đánh giá trong cùng ngày với trang giá. Khi các trang của chính bạn mâu thuẫn nhau, AI sẽ chọn một trong số đó.",
+        "Đừng công bố giá chỉ dưới dạng hình ảnh hay PDF. Hãy dùng bảng HTML hoặc danh sách có nhãn."
+      ]
+    },
+    {
+      "heading": "Trang case study: khớp với các điều kiện người mua tìm kiếm",
+      "paragraphs": [
+        "Câu hỏi B2B luôn kèm điều kiện: \"Các nhà sản xuất dùng công cụ chấm công nào?\", \"... nào có nhiều case study nhất?\". Điều quan trọng trong một case study là các điều kiện này dễ tìm thấy, hơn là đọc có hay hay không. Hãy đặt các trường sau vào một bảng ở đầu mỗi câu chuyện, rồi mới đến phần tường thuật."
+      ],
+      "table": {
+        "head": [
+          "Trường",
+          "Ví dụ"
+        ],
+        "rows": [
+          [
+            "Ngành và quy mô",
+            "\"Nhà sản xuất thực phẩm, khoảng 250 nhân viên, 2 nhà máy\""
+          ],
+          [
+            "Ai sử dụng",
+            "\"Phòng nhân sự và quản lý tại mỗi nhà máy\""
+          ],
+          [
+            "Vấn đề trước đó",
+            "\"Thẻ chấm công giấy được tổng hợp thủ công vào cuối tháng\""
+          ],
+          [
+            "Lý do chọn và tiêu chí",
+            "\"Hỗ trợ ca làm việc và tích hợp với phần mềm tính lương hiện có\" (không cần nêu tên đối thủ)"
+          ],
+          [
+            "Tính năng và tích hợp được dùng",
+            "\"Chấm công vào ra, lập lịch ca, xuất dữ liệu lương\""
+          ],
+          [
+            "Thời gian triển khai",
+            "\"Khoảng 2 tháng từ ký hợp đồng đến vận hành chính thức\""
+          ],
+          [
+            "Kết quả và cách đo",
+            "\"Tổng hợp hàng tháng giảm từ 3 ngày xuống nửa ngày (nhật ký công việc nhân sự, 6 tháng sau khi triển khai)\": cái gì, khi nào, đo bằng cách nào"
+          ],
+          [
+            "Ngày và thời điểm",
+            "\"Phỏng vấn tháng 10 năm 2026. Chức danh và số liệu tại thời điểm phỏng vấn\""
+          ]
+        ]
+      },
+      "after": [
+        "Chỉ công bố những kết quả mà khách hàng có thể đứng ra xác nhận, kèm phương pháp và ngày tháng. Con số thổi phồng sẽ bị AI trích dẫn nguyên văn và khó sửa về sau. Hãy xin phép bằng văn bản để hiển thị tên, logo và lời trích dẫn của khách hàng.",
+        "Khi còn ít câu chuyện, hãy thêm một trang mục lục theo ngành và quy mô công ty, liên kết đến từng câu chuyện. Một trang có tên \"Câu chuyện khách hàng\" hoặc \"Case study\", được liên kết từ trang chủ, sẽ dễ tìm cho cả người và AI."
+      ]
+    },
+    {
+      "heading": "Trang so sánh và trang chuyển đổi: nói rõ khi nào bạn không phải lựa chọn phù hợp",
+      "paragraphs": [
+        "Khi được hỏi \"A hay B?\", nếu website của bạn không có gì để dựa vào, AI sẽ trả lời từ trang của đối thủ hoặc trang so sánh. Hãy xây dựng trang so sánh như tài liệu giúp quyết định sản phẩm nào hợp với công ty nào, chứ không phải bảng tỷ số."
+      ],
+      "list": [
+        "Xác định tiêu chí trước (quy mô công ty, đơn vị tính phí, tích hợp, hỗ trợ, nơi lưu dữ liệu, v.v.) và so sánh mọi sản phẩm theo cùng tiêu chí.",
+        "Với tính năng và giá của đối thủ, ghi ngày bạn kiểm tra trang chính thức của họ và đường liên kết. Bỏ qua mọi thứ bạn không thể kiểm chứng.",
+        "Nói thẳng khi nào bạn không phải lựa chọn phù hợp (\"Dưới 100 người, gói miễn phí của A có thể hợp với bạn hơn\"). Một bài so sánh một chiều cũng không được người đọc tin.",
+        "Trên trang chuyển đổi, nêu rõ dữ liệu nào có thể nhập, các bước và thời gian cần thiết, chạy song song cả hai trong bao lâu, và hỗ trợ di chuyển có tính phí hay miễn phí.",
+        "Ghi ngày trên trang so sánh và rà soát lại mỗi khi bạn hoặc đối thủ thay đổi giá."
+      ],
+      "after": [
+        "Khi nêu tên đối thủ, chỉ đưa ra các phát biểu dựa trên sự thật, và không dùng logo hay ảnh chụp màn hình của họ khi chưa được phép."
+      ]
+    },
+    {
+      "heading": "Tích hợp, yêu cầu hệ thống, bảo mật và hỗ trợ: trả lời các câu hỏi có điều kiện",
+      "paragraphs": [
+        "Những điều kiện như \"tích hợp với X\", \"đạt ISO/IEC 27001\" hay \"hỗ trợ cuối tuần\" là dữ kiện AI hay dùng khi thu hẹp danh sách. Một dòng trong danh sách tính năng là tư liệu yếu, vì vậy hãy cho mỗi điều kiện một trang hoặc tiêu đề riêng."
+      ],
+      "list": [
+        "Tích hợp: các dịch vụ bạn kết nối, cách kết nối (sẵn có, API, CSV) và có tính thêm phí không.",
+        "Yêu cầu hệ thống: trình duyệt, có ứng dụng di động không và cho hệ điều hành nào, hoạt động ra sao khi ngoại tuyến.",
+        "Bảo mật: với mỗi chứng nhận bạn có, ghi tên, phạm vi và số đăng ký hoặc ngày cấp. Không liệt kê những gì bạn không có. Nơi lưu trữ dữ liệu (quốc gia hoặc khu vực).",
+        "Hỗ trợ: giờ hỗ trợ, kênh (điện thoại, email, chat), khác biệt theo gói, hỗ trợ triển khai bao gồm những gì.",
+        "Hợp đồng và hủy: cách hủy và dữ liệu được xử lý thế nào sau đó."
+      ]
+    },
+    {
+      "heading": "Nguồn bên ngoài: giữ trang đánh giá và hồ sơ khớp với website của bạn",
+      "paragraphs": [
+        "Với những câu hỏi có tên bạn (\"Mọi người nói gì về X?\"), các trang đánh giá như G2, Capterra, ITreview và BOXIL, thông cáo báo chí và bài so sánh thường được dùng làm nguồn. Bạn không thể chỉnh sửa những trang đó, nên hãy tập trung vào hai việc."
+      ],
+      "list": [
+        "Giữ thông tin luôn cập nhật: mô tả sản phẩm, giá, tính năng và thông tin công ty được viết theo cùng cách và cùng con số như trên website của bạn. Yêu cầu đơn vị vận hành từng trang cập nhật theo quy định đăng tin riêng của họ.",
+        "Thu thập đánh giá một cách trung thực: tại Nhật Bản, tiếp thị ngầm (stealth marketing) là hành vi vi phạm Luật chống quà tặng bất hợp lý và quảng cáo gây hiểu lầm kể từ ngày 1 tháng 10 năm 2023, và các đánh giá mà doanh nghiệp yêu cầu hoặc chỉ đạo bên thứ ba đăng được coi là quảng cáo của doanh nghiệp đó ([Cơ quan Người tiêu dùng](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)). Nếu bạn đưa ra ưu đãi cho việc đánh giá, hãy kiểm tra quy định của từng trang đánh giá và cách phải công khai ưu đãi, cũng như quy định nơi bạn hoạt động."
+      ],
+      "after": [
+        "Khi hiển thị điểm đánh giá trên website của bạn, hãy nói rõ trang nào, tính đến thời điểm nào và từ bao nhiêu đánh giá. Đừng công bố điểm do bạn tự thu thập dưới dạng aggregateRating trong dữ liệu có cấu trúc mà không nói rõ nguồn gốc."
+      ]
+    },
+    {
+      "heading": "AI có đọc được trang không? Trình thu thập và JavaScript",
+      "paragraphs": [
+        "Các website SaaS đôi khi hiển thị bảng giá hoặc so sánh tính năng bằng JavaScript sau khi trang tải xong. Những gì bạn thấy trên trình duyệt có thể không có trong HTML mà trình thu thập nhận được. An toàn hơn là để văn bản giá và case study nằm trong HTML mà máy chủ trả về đầu tiên. Hãy lấy HTML của trang (ví dụ bằng curl) và kiểm tra giá cùng nội dung câu chuyện có ở đó không.",
+        "Cũng hãy kiểm tra robots.txt không chặn trình thu thập tìm kiếm của các dịch vụ AI. OpenAI cho biết các trang từ chối OAI-SearchBot sẽ không được hiển thị trong câu trả lời tìm kiếm của ChatGPT ([trình thu thập của OpenAI](https://developers.openai.com/api/docs/bots)); đây là bot khác với GPTBot, vốn dùng để huấn luyện. Perplexity cũng mô tả riêng PerplexityBot và Perplexity-User ([trình thu thập của Perplexity](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)). WAF hoặc dịch vụ chống bot có thể chặn chúng mà không ai hay biết."
+      ]
+    },
+    {
+      "heading": "Dữ liệu có cấu trúc: Organization cho công ty, SoftwareApplication hoặc Service cho thứ bạn bán",
+      "paragraphs": [
+        "Google cho biết AI Overviews và AI Mode không cần dữ liệu có cấu trúc hay file đặc biệt nào, và dữ liệu có cấu trúc nên khớp với những gì hiển thị trên trang ([Tính năng AI và website của bạn](https://developers.google.com/search/docs/appearance/ai-features)). Với điều đó, tổ hợp thông dụng cho B2B và SaaS là:"
+      ],
+      "list": [
+        "Công ty: Organization (hoặc kiểu con như Corporation), với tên, URL, logo, mô tả và thông tin liên hệ. Xem [tìm kiếm AI cho trang Giới thiệu](/guide/company-profile-page-ai-search).",
+        "Phần mềm: SoftwareApplication. Trong schema.org đây là một loại CreativeWork, với các thuộc tính như applicationCategory, operatingSystem, featureList, softwareVersion và offers. Phần mềm chạy trên trình duyệt còn có kiểu con WebApplication ([schema.org SoftwareApplication](https://schema.org/SoftwareApplication)).",
+        "Dịch vụ như thuê ngoài hoặc tư vấn: Service, liên kết với công ty qua provider.",
+        "FAQ: FAQPage chỉ trên trang hiển thị các câu hỏi và câu trả lời đó."
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "Ví dụ trên là dạng mà Nurevo AEO xuất ra khi một dịch vụ được đánh dấu \"Đây là phần mềm (SaaS hoặc ứng dụng)\" (giá trị là giả định). provider trỏ đến nút công ty, danh mục trở thành applicationCategory, còn giá và tiền tệ trở thành Offer. Hãy nêu đơn vị tính phí, chẳng hạn \"mỗi người dùng mỗi tháng\", trong nội dung trang giá.",
+        "Kết quả nhiều định dạng cho ứng dụng phần mềm của Google trong kết quả tìm kiếm có yêu cầu riêng, chẳng hạn điểm xếp hạng hoặc đánh giá. Nếu bạn muốn kết quả đó, hãy kiểm tra yêu cầu hiện hành trong tài liệu [dữ liệu có cấu trúc cho ứng dụng phần mềm của Google](https://developers.google.com/search/docs/appearance/structured-data/software-app). Nurevo AEO không bao giờ xuất điểm xếp hạng không có đánh giá thật đứng sau."
+      ]
+    },
+    {
+      "heading": "llms.txt: lối vào trang giá, case study và so sánh",
+      "paragraphs": [
+        "llms.txt là một file văn bản duy nhất chứa tóm tắt website và liên kết đến các trang chính. Chưa có công ty AI nào chính thức mô tả hiệu quả của nó, và Google nói không cần thiết (xem [cách viết llms.txt](/guide/llms-txt)). Nếu bạn thêm, với B2B và SaaS, điều quan trọng là đảm bảo nó liệt kê trang giá, case study, so sánh và tích hợp của bạn. Khi loại website được đặt là \"B2B / SaaS\", Nurevo AEO tạo nó như sau (giá trị là giả định):"
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "Pricing và Case studies trong Key facts là các URL được nhập trong Cài đặt dưới tên \"Trang giá (B2B)\" và \"Trang case study (B2B)\". Website B2B / SaaS không xuất giờ làm việc. Pages liệt kê 30 trang và bài viết được cập nhật gần đây nhất, nên trên website có blog hoạt động sôi nổi, trang so sánh có thể bị đẩy ra ngoài. Khi đó, hãy đánh dấu các bài không cần có mặt bằng \"loại trang này khỏi llms.txt\", hoặc thêm dòng bằng bộ lọc dành cho nhà phát triển webmcp_canary_llms_txt_lines."
+      ]
+    },
+    {
+      "heading": "Các bước trên WordPress (với Nurevo AEO)",
+      "paragraphs": [
+        "Trên WordPress, [Nurevo AEO (miễn phí)](https://wordpress.org/plugins/nurevo-webmcp/) xuất bản dữ kiện về công ty và sản phẩm của bạn dưới dạng dữ liệu có cấu trúc và trong llms.txt. Hãy làm theo thứ tự này."
+      ],
+      "list": [
+        "Sửa văn bản của trang giá, case study, so sánh và tích hợp trước, theo các bảng ở trên. Văn bản trước, dữ liệu có cấu trúc sau.",
+        "Trong trình hướng dẫn thiết lập (hoặc Cài đặt), đặt loại website là \"B2B / SaaS\". Công ty được xuất bản dưới dạng Organization. Nếu bạn chọn một kiểu phù hợp trong trường loại hình kinh doanh, như Corporation, ProfessionalService hoặc AccountingService, kiểu đó sẽ được dùng; kiểu không hợp với website B2B sẽ quay về Organization. Địa chỉ và giờ làm việc không bắt buộc.",
+        "Thêm dịch vụ của bạn (tối đa 20): tên, mô tả một câu, URL trang dịch vụ, danh mục, giá và tiền tệ. Đánh dấu \"Đây là phần mềm (SaaS hoặc ứng dụng)\" cho phần mềm. Mục được đánh dấu xuất bản dưới dạng SoftwareApplication, còn lại dưới dạng Service.",
+        "Với danh mục, hãy dùng từ ngữ mà người mua dùng khi hỏi AI (\"phần mềm chấm công\", \"quản lý chi phí\"). Câu hỏi đo lường của Nurevo được xây dựng từ danh mục này.",
+        "Nhập URL \"Trang giá (B2B)\" và \"Trang case study (B2B)\". Chúng được đưa vào Key facts trong llms.txt và được chẩn đoán kiểm tra.",
+        "Các mục FAQ chỉ được xuất bản dưới dạng FAQPage trên trang hiển thị chúng bằng khối Nurevo FAQ hoặc shortcode [nurevo_faq]. Hãy cho trang giá một FAQ riêng cho các câu hỏi về giá.",
+        "Khi dùng cùng Yoast SEO, Rank Math, All in One SEO hoặc Slim SEO, Nurevo chỉ thêm các dữ kiện và dịch vụ còn thiếu vào dữ liệu có cấu trúc của plugin đó, nên công ty không bị mô tả hai lần. Nó cũng hoạt động cùng SEO SIMPLE PACK và VK All in One Expansion Unit (từ 0.9.1).",
+        "Chạy chẩn đoán trên màn hình Điểm AEO. Với website B2B / SaaS, nó kiểm tra bốn điều: mô tả dịch vụ, trang giá, case study (hoặc FAQ) và danh tính công ty."
+      ],
+      "after": [
+        "Với website không xây bằng WordPress, các điểm kiểm tra vẫn như vậy. Nhập URL của bạn vào [kiểm tra miễn phí](/check), không cần đăng ký, để xem tình trạng dữ liệu có cấu trúc, llms.txt và quyền truy cập của trình thu thập AI.",
+        "Các agency xây dựng hoặc bảo trì website cho khách hàng B2B có thể đưa quy trình cập nhật khi đổi giá (trang giá, trang so sánh, FAQ, thông tin trên trang đánh giá) vào phạm vi bảo trì để dữ kiện không bị lệch nhau. Các agency hỗ trợ khách hàng hằng tháng có thể tham gia [chương trình đối tác](https://nurevo.jp/partner/)."
+      ]
+    },
+    {
+      "heading": "Cách kiểm tra: tách câu hỏi không thương hiệu và có thương hiệu",
+      "paragraphs": [
+        "Với B2B, hãy ghi lại hai loại câu hỏi riêng biệt. Câu hỏi không thương hiệu cho bạn biết liệu bạn có lọt vào danh sách rút gọn của những người chưa biết bạn. Câu hỏi có thương hiệu cho bạn biết liệu những người biết bạn có nhận được dữ kiện đúng. Hãy hỏi cùng một câu với cùng một AI vào những ngày khác nhau, và đừng bao giờ đánh giá chỉ từ một câu trả lời."
+      ],
+      "table": {
+        "head": [
+          "Loại",
+          "Ví dụ",
+          "Cần ghi lại"
+        ],
+        "rows": [
+          [
+            "Không thương hiệu (danh mục)",
+            "\"Bạn gợi ý phần mềm chấm công nào cho doanh nghiệp nhỏ?\"",
+            "Bạn có được nêu tên không, website của bạn có được trích dẫn không, những sản phẩm nào khác xuất hiện"
+          ],
+          [
+            "Không thương hiệu (điều kiện)",
+            "\"Chấm công tích hợp với phần mềm tính lương của chúng tôi?\"",
+            "Điều kiện có được áp dụng đúng không"
+          ],
+          [
+            "Có thương hiệu (giá)",
+            "\"Example Timesheets giá bao nhiêu?\"",
+            "Giá, đơn vị tính phí và thuế có khớp với trang giá hiện tại của bạn không, và nguồn là gì"
+          ],
+          [
+            "Có thương hiệu (danh tiếng)",
+            "\"Mọi người nói gì về Example Timesheets?\"",
+            "Trang đánh giá hoặc bài viết nào là nguồn, và thông tin cũ có lẫn vào không"
+          ]
+        ]
+      },
+      "after": [
+        "Kiểm tra AI miễn phí của Nurevo (mỗi tháng một lần, cho các website Free và Standard đã kết nối) hỏi Perplexity ba câu hỏi không thương hiệu. Đo lường mức hiển thị của Pro (beta) hiện bao gồm Perplexity, ChatGPT sẽ được bổ sung khi sẵn sàng. Hãy kiểm tra câu hỏi có thương hiệu thủ công với bảng trên.",
+        "Với lượt truy cập, hãy xem nguồn trong GA4. Liên kết từ ChatGPT có thể mang utm_source=chatgpt.com ([FAQ dành cho nhà xuất bản của OpenAI](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)). Báo cáo hiệu suất AI tạo sinh của Search Console là một góc nhìn khác ([blog Google Search Central](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)). Mua hàng B2B cần thời gian, nên một trường \"Bạn biết đến chúng tôi qua đâu (kể cả câu trả lời của AI)?\" trên biểu mẫu liên hệ sẽ nắm bắt được ảnh hưởng không bao giờ hiện ra dưới dạng lượt nhấp. Phương pháp đầy đủ có trong [cách đo lường mức hiển thị trên AI](/guide/measure-ai-visibility)."
+      ]
+    },
+    {
+      "heading": "Danh sách kiểm tra cho website B2B và SaaS",
+      "list": [
+        "Câu đầu tiên của trang sản phẩm nói rõ nó là gì, dành cho ai (ngành và quy mô) và được cung cấp như thế nào.",
+        "Trang giá nêu đơn vị tính phí, khác biệt giữa các gói, phí thiết lập, mức tối thiểu, thuế và ngày cập nhật cuối (hoặc, với báo giá, giá phụ thuộc vào gì và mức khởi điểm).",
+        "Văn bản giá và case study có trong HTML mà không cần chạy JavaScript.",
+        "Case study nêu ngành, quy mô, nhóm sử dụng, vấn đề, tính năng dùng, thời gian triển khai, và kết quả được đo thế nào và khi nào.",
+        "Trang so sánh dùng cùng tiêu chí cho mọi sản phẩm, ghi ngày và nguồn cho dữ kiện về đối thủ, và nói rõ khi nào bạn không phù hợp.",
+        "Tích hợp, yêu cầu hệ thống, bảo mật và hỗ trợ mỗi mục có tiêu đề hoặc trang riêng.",
+        "Có quy trình để vào ngày đổi giá cũng cập nhật trang so sánh, FAQ, bài cũ và thông tin trên trang đánh giá.",
+        "robots.txt và WAF không chặn các trình thu thập tìm kiếm như OAI-SearchBot và PerplexityBot.",
+        "Giá trị của Organization và SoftwareApplication (hoặc Service) khớp với văn bản trên trang, và không xuất bản điểm xếp hạng bịa đặt.",
+        "llms.txt liệt kê trang giá, case study và so sánh.",
+        "Câu hỏi không thương hiệu và có thương hiệu được ghi lại riêng, vào những ngày khác nhau."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Nếu không công bố giá, AI có bỏ qua chúng tôi không?",
+      "a": "Bạn vẫn có thể được nhắc đến. Nhưng không có tư liệu cho câu hỏi về giá, AI sẽ trả lời từ những con số cũ trên trang khác hoặc chỉ nói giá không được công bố. Kể cả khi không thể đưa ra số tiền, hãy nói giá phụ thuộc vào gì và đưa ra mức khởi điểm."
+    },
+    {
+      "q": "Chúng tôi có thể nêu tên đối thủ trên trang so sánh không?",
+      "a": "Nhiều công ty làm vậy, miễn là dữ kiện chính xác. Hãy ghi ngày bạn kiểm tra trang chính thức của từng đối thủ và đường liên kết, bỏ qua những gì không kiểm chứng được, và không dùng logo hay ảnh chụp màn hình của họ khi chưa được phép. Hãy kiểm tra luật và quy định ngành về quảng cáo so sánh áp dụng cho bạn."
+    },
+    {
+      "q": "SaaS nên dùng markup SoftwareApplication hay Product?",
+      "a": "schema.org cung cấp SoftwareApplication cho phần mềm (và WebApplication cho phần mềm chạy trên trình duyệt). Nurevo AEO xuất bản các dịch vụ được đánh dấu là phần mềm dưới dạng SoftwareApplication. Nếu bạn muốn kết quả nhiều định dạng của Google, hãy kiểm tra yêu cầu trong tài liệu của Google."
+    },
+    {
+      "q": "Điểm thấp trên trang đánh giá có khiến AI không gợi ý chúng tôi không?",
+      "a": "Chưa có công ty AI nào chính thức giải thích điểm đánh giá được dùng thế nào trong câu trả lời. Điều bạn có thể làm là giữ thông tin cập nhật và thu thập đánh giá trung thực. Nếu đưa ra ưu đãi, hãy kiểm tra quy định về tiếp thị ngầm nơi bạn hoạt động và quy định của từng trang."
+    },
+    {
+      "q": "Điều này có áp dụng cho công ty phát triển phần mềm và công ty tư vấn không?",
+      "a": "Những điều cơ bản là như nhau. Thay vì trang sản phẩm, hãy viết một trang cho mỗi dịch vụ (dành cho ai, cách thực hiện, mất bao lâu, giá được định thế nào, case study) và dùng markup Service. Trong Nurevo AEO, hãy thêm dịch vụ mà không đánh dấu ô phần mềm."
+    },
+    {
+      "q": "AI cứ trích dẫn giá cũ của chúng tôi. Chúng tôi có thể làm gì?",
+      "a": "Lần theo các nguồn trong câu trả lời. Trên website của bạn, sửa các con số cũ ngoài trang giá (trang so sánh, FAQ, bài cũ); trên các trang khác, đề nghị bên đăng tải cập nhật. Bạn không thể sửa trực tiếp câu trả lời của AI, và không có thời gian cố định để thay đổi hiển thị."
+    },
+    {
+      "q": "Các bước này có giúp chúng tôi lọt vào gợi ý của AI không?",
+      "a": "Không có gì đảm bảo. Câu trả lời của AI thay đổi theo ngày và cách diễn đạt, và AI quyết định nêu tên sản phẩm nào. Các bước này làm cho dữ kiện AI đọc được chính xác và cho nó tư liệu trên chính website của bạn để chọn bạn."
+    }
+  ],
+  "relatedHeading": "Hướng dẫn liên quan",
+  "cta": {
+    "heading": "Xem AI đọc website của bạn như thế nào",
+    "body": "Kiểm tra miễn phí không cần đăng ký: nhập URL để xem tình trạng dữ liệu có cấu trúc, llms.txt và quyền truy cập của trình thu thập AI. Trên WordPress, plugin miễn phí xuất bản dữ kiện về công ty và sản phẩm của bạn dưới dạng dữ liệu có cấu trúc và trong llms.txt.",
+    "label": "Kiểm tra mức sẵn sàng cho AI miễn phí",
+    "href": "/check",
+    "secondary": {
+      "label": "Dùng thử plugin WordPress miễn phí",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT là nhãn hiệu của OpenAI, Perplexity của Perplexity AI và Google của Google LLC. G2, Capterra, ITreview, BOXIL, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit và WordPress là nhãn hiệu hoặc nhãn hiệu đã đăng ký của chủ sở hữu tương ứng. Nurevo không liên kết với cũng như không được bất kỳ công ty nào trong số này bảo trợ."
+}

@@ -1,0 +1,418 @@
+{
+  "title": "B2B ve SaaS için yapay zekâ araması: fiyat, vaka, kıyas | Nurevo",
+  "description": "B2B ve SaaS alıcıları tedarikçiyi yapay zekâyla nasıl seçiyor, hangi sayfalar yanıt veriyor: fiyat, vaka çalışması, karşılaştırma. Tablolar, schema, llms.txt, WordPress.",
+  "h1": "B2B ve SaaS için yapay zekâ araması: fiyat, vaka çalışması ve karşılaştırma sayfalarınızı yapay zekânın okuyabileceği hâle getirin",
+  "lead": "B2B ve SaaS alıcıları tedarikçi kısa listesini yapay zekâya “X için en iyi araç hangisi?”, “A, B ile nasıl karşılaştırılır?” ve “Bu genelde ne kadar tutar?” gibi sorular sorarak oluşturuyor. İşin özü, bu sorulara metinle (fiyatlandırma, vaka çalışmaları, karşılaştırmalar ve alternatifler, entegrasyonlar ve güvenlik), koşullar ve tarihlerle yanıt veren sayfalara sahip olmak ve inceleme sitelerini ve dış profilleri bunlarla tutarlı tutmaktır. Yapılandırılmış veri ve llms.txt ardından bu sayfalardaki bilgileri makinelerin okuyabileceği biçimde yeniden ifade eder.",
+  "intro": [
+    "17 Kasım 2026'da (JST) yazıldı. schema.org türleri aynı gün schema-dts 2.1.0 ile kontrol edildi. Google, OpenAI ve Perplexity'nin açıklamaları, önceki Nurevo rehberleri için 31 Ekim ile 10 Kasım 2026 arasında okunan sayfalarından alınmıştır. Tüketici kurallarına ilişkin örnekler Japonya'dandır; faaliyet gösterdiğiniz yerdeki kuralları kontrol edin.",
+    "Bu rehber, diğer işletmelere yazılım (SaaS), dış kaynak hizmeti veya danışmanlık satan şirketler ve onların sitelerini yapan ajanslar içindir. Hakkımızda sayfasının nasıl yazılacağı [Hakkımızda sayfanız için yapay zekâ araması](/guide/company-profile-page-ai-search) rehberinde, blog yazılarının nasıl yazılacağı ise [yapay zekânın kaynak gösterebileceği makaleler nasıl yazılır](/guide/blog-articles-ai-citations) rehberinde ele alınıyor. Bu rehber “hangi tedarikçiyi seçmeliyiz?” sorusunu yanıtlayan sayfaları kapsıyor. Yapay zekâ yanıtları günden güne ve sorunun nasıl ifade edildiğine göre değişir. Buradaki adımlar bilgilerinizi yapay zekânın okuyabileceği hâle getirir. Bir yapay zekânın sizden bahsedeceğini veya sizi herhangi bir sıraya koyacağını garanti etmez."
+  ],
+  "sections": [
+    {
+      "heading": "B2B alıcıları yapay zekâya ne soruyor",
+      "paragraphs": [
+        "Yerel bir işletme “işletme türü + bölge” ile bulunur. Bir B2B tedarikçisi ise alıcının ne yapmak istediğinden ve hangi koşullarda yapmak istediğinden yola çıkılarak bulunur. Bu soruların çoğu alıcı adınızı öğrenmeden önce sorulur; adınız yanıtta yoksa kısa listeye hiç giremezsiniz. Japon ajansı TaTap'ın Kasım 2026'da yaptığı bir ankette, kendisi tedarikçi aramış 135 yöneticinin %62,2'si üretken bir yapay zekâdan şirket önerisi istediğini, %27,4'ü de adı geçmeyen şirketleri elediğini veya önceliğini düşürdüğünü söyledi ([TaTap](https://tatap.jp/knowledge/btob-llmo-agency/), bu hizmeti satan bir firmanın yaptığı küçük bir anket).",
+        "Sorular kabaca altı türe ayrılır ve her türe farklı bir sayfa yanıt verir."
+      ],
+      "table": {
+        "head": [
+          "Soru türü",
+          "Örnek",
+          "Yanıt veren sayfa",
+          "Yapay zekâ yanıtlarında tipik hata"
+        ],
+        "rows": [
+          [
+            "Kategori araması",
+            "“En iyi mesai takip aracı hangisi?” “Önde gelen 3 mesai takip sistemini say”",
+            "Ürün sayfası (ne olduğu, kimin için, hangi ölçek için)",
+            "Yanlış şirket ölçeği veya sektör, yanlış kategoride listelenme"
+          ],
+          [
+            "Koşula göre filtreleme",
+            "“Bordro yazılımımızla entegre çalışan, 50 kişilik mesai takibi?”",
+            "Entegrasyon, özellik ve gereksinim sayfaları",
+            "Olmayan bir entegrasyonun var olduğunu söylemesi veya tersi"
+          ],
+          [
+            "Karşılaştırma",
+            "“A mı B mi?” “Mesai takip sistemlerini karşılaştır”",
+            "Seçim kriterleri içeren karşılaştırma sayfası",
+            "Eski özellikler veya eski fiyatlarla karşılaştırma"
+          ],
+          [
+            "Fiyat",
+            "“Mesai takip yazılımı genelde ne kadar tutar?”",
+            "Fiyatlandırma sayfası",
+            "Eski fiyatlar, vergi karışıklığı, asgari kullanıcı sayısının atlanması"
+          ],
+          [
+            "Geçiş",
+            "“X'e alternatifler?”",
+            "Taşıma / geçiş sayfası",
+            "Taşıma emeğinin ve veri aktarımının atlanması"
+          ],
+          [
+            "Ad kontrolü",
+            "“X hakkında ne deniyor?” “X ne kadar?”",
+            "Müşteri hikâyeleri, Hakkımızda sayfası, inceleme siteleri",
+            "İnceleme sitelerinden eski veriler veya aynı adlı bir ürünle karıştırma"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo ölçümünün B2B / SaaS siteleri için sorduğu sorular da bu türleri izler (“... için en iyi araç hangisi?”, “Başlıca ...'ları karşılaştır”, “Küçük bir işletme için hangi ...'yı önerirsin?”, “... için tipik fiyat aralığı nedir?”, “Hangi ...'ların en çok müşteri vaka çalışması var?”, “... değiştirmek istersem iyi bir alternatif nedir?”) ve hiçbirinde adınız geçmez. Adınızın geçtiği sorular aşağıda anlatıldığı gibi elle kontrol edilir."
+      ]
+    },
+    {
+      "heading": "Üst sıradaki makaleler ne iddia ediyor ve bu rehber bunu nasıl ele alıyor",
+      "paragraphs": [
+        "“B2B SaaS AI search” ve benzeri sorgularda üst sıralarda yer alan 13 Japonca ve İngilizce makaleyi okuduk. Neredeyse hepsi karşılaştırma sayfalarının, vaka çalışmalarının ve inceleme sitelerinin önemli olduğunda hemfikir. Ancak rakamlarının çoğu ya kaynak belirtmiyor ya da yazarın kendi müşterilerinden geliyor. Bu rehber doğrulanamayan rakamları kullanmaz."
+      ],
+      "table": {
+        "head": [
+          "Yaygın iddia",
+          "Kanıt ne kadar güçlü",
+          "Bu rehber nasıl ele alıyor"
+        ],
+        "rows": [
+          [
+            "“Yapay zekâdan gelen ziyaretçiler Google ziyaretçilerinden kat kat daha iyi dönüşüyor”",
+            "Rakamlar makaleden makaleye birkaç kattan 20 katın üzerine kadar değişiyor; dayandıkları çalışmalar çoğu zaman bulunamıyor",
+            "Kullanılmıyor. Bunu kendi GA4'ünüzde nasıl kontrol edeceğinizi gösteriyoruz"
+          ],
+          [
+            "“Her on B2B alıcısından yedisi araştırmaya yapay zekâyla başlıyor”",
+            "Kaynak yok veya yalnızca “sektör verileri”",
+            "Kullanılmıyor. Yalnızca kaynağı ve örneklem büyüklüğü belirtilen anketler"
+          ],
+          [
+            "“Karşılaştırma ve alternatif sayfaları çok kaynak gösteriliyor”",
+            "Ajans gözlemleri; resmî bir açıklama yok",
+            "Yapay zekâya sorulan sorulara uydukları için yapmaya değer; fazlası değil"
+          ],
+          [
+            "“SoftwareApplication veya FAQ işaretlemesi sizi yapay zekâ yanıtlarına sokar”",
+            "Makaleler birbirine zıt şeyler söylüyor. Google, yapay zekâ özelliklerinin özel bir işaretleme gerektirmediğini söylüyor",
+            "Sayfadaki bilgilerin yeniden ifadesi olarak ele alınıyor"
+          ],
+          [
+            "“İnceleme sitelerinde daha çok yorum, daha çok öneri demektir”",
+            "Çoğunlukla adı verilmeyen çalışmalar",
+            "Sayıların peşinden koşmak yerine oradaki fiyat ve özelliklerin güncel olduğunu ve sitenizle örtüştüğünü kontrol edin"
+          ],
+          [
+            "“llms.txt ekleyin, yapay zekâ sizi okusun”",
+            "Google yeni bir yapay zekâ dosyasına gerek olmadığını söylüyor; diğer yapay zekâ şirketleri bir şey söylemedi",
+            "Eklerseniz fiyatlandırma ve vaka çalışması sayfalarına bir giriş kapısı olarak kullanın"
+          ]
+        ]
+      },
+      "after": [
+        "Üst sıradaki makalelerde çoğunlukla eksik olanlar: fiyatlandırma ve vaka çalışması sayfaları için somut alanlar, WordPress adımları ve markasız soruları markalı sorulardan ayıran bir ölçüm yöntemi. Bu rehber zamanını tam da bunlara ayırıyor."
+      ]
+    },
+    {
+      "heading": "Fiyatlandırma sayfası: tüm rakamlar olmasa bile karar için gereken bilgiyi verin",
+      "paragraphs": [
+        "“Ne kadar tutar?” veya “X ne kadar?” sorularında yapay zekâ fiyatlandırma sayfanızdan, sayfa yoksa inceleme sitelerindeki ve karşılaştırma makalelerindeki rakamlardan yanıt verir. Kendi sayfanızdaki güncel koşullar, başkasının yazdığı eski rakamlardan daha güvenlidir. Teklife dayalı fiyatlandırmada bile fiyatın neye bağlı olduğunu söyleyebilirsiniz."
+      ],
+      "table": {
+        "head": [
+          "Alan",
+          "Örnek",
+          "Olmazsa ne olur"
+        ],
+        "rows": [
+          [
+            "Faturalandırma birimi",
+            "“Kullanıcı başına aylık”, “lokasyon başına”, “kullanıma göre, 1.000 kayıt başına”",
+            "Toplamlar kat kat yanlış okunur"
+          ],
+          [
+            "Paket farkları",
+            "Paket adları, dahil özellikler ve sınırlar (kullanıcı, saklama süresi) bir tabloda",
+            "En üst paketin özellikleri tüm paketlerde varmış gibi anlatılır"
+          ],
+          [
+            "Kurulum ücretleri ve asgari koşullar",
+            "Kurulum ücreti, asgari kullanıcı sayısı, asgari süre, yıllık veya aylık faturalandırma",
+            "Yalnızca aylık fiyat yayılır ve sözleşme insanları şaşırtır"
+          ],
+          [
+            "Vergi",
+            "Tablonun üstünde “Tüm fiyatlara vergi dahil değildir” gibi açık bir satır",
+            "Vergili ve vergisiz fiyatlar yan yana karşılaştırılır"
+          ],
+          [
+            "Ücretsiz deneme veya ücretsiz paket",
+            "Süre, neyin dahil olduğu, faturalandırmanın otomatik başlayıp başlamadığı",
+            "Yalnızca “ücretsiz” diye aktarılır"
+          ],
+          [
+            "Eklentiler",
+            "Kurulum desteği (onboarding), ek depolama, API erişimi, premium destek",
+            "Gerekli maliyetler yanıtta yer almaz"
+          ],
+          [
+            "Teklife dayalı fiyatlandırma",
+            "“Fiyat X ve Y'ye bağlıdır. Paketler aylık yaklaşık Z'den başlar.”",
+            "Yalnızca “fiyat açıklanmıyor” diye aktarılır ve listeden düşersiniz"
+          ],
+          [
+            "Son güncelleme",
+            "Sayfada “Fiyatlar 1 Kasım 2026'da güncellendi”",
+            "Eski ve yeni fiyatları ayırt etmenin yolu kalmaz"
+          ]
+        ]
+      },
+      "after": [
+        "Fiyatları değiştirdiğinizde karşılaştırma sayfasını, SSS'yi, eski blog yazılarını ve inceleme sitelerindeki kayıtlarınızı fiyatlandırma sayfasıyla aynı gün güncelleyin. Kendi sayfalarınız birbiriyle çeliştiğinde yapay zekâ bunlardan birini seçer.",
+        "Fiyatları yalnızca görsel veya PDF olarak yayımlamayın. Bir HTML tablosu veya etiketli bir liste kullanın."
+      ]
+    },
+    {
+      "heading": "Vaka çalışması sayfaları: alıcıların aradığı koşullarla eşleşin",
+      "paragraphs": [
+        "B2B soruları koşul içerir: “Üreticiler hangi mesai takip araçlarını kullanıyor?”, “Hangi ...'ların en çok vaka çalışması var?”. Bir vaka çalışmasında önemli olan, akıcı okunmasından çok bu koşulların kolayca bulunabilmesidir. Aşağıdaki alanları her hikâyenin başında bir tabloya koyun, ardından anlatıyı yazın."
+      ],
+      "table": {
+        "head": [
+          "Alan",
+          "Örnek"
+        ],
+        "rows": [
+          [
+            "Sektör ve ölçek",
+            "“Gıda üreticisi, yaklaşık 250 çalışan, 2 fabrika”"
+          ],
+          [
+            "Kim kullanıyor",
+            "“İK ve her fabrikanın yöneticileri”"
+          ],
+          [
+            "Önceki sorun",
+            "“Ay sonunda elle toplanan kâğıt puantaj kartları”"
+          ],
+          [
+            "Neden seçtiler ve kriterler",
+            "“Vardiya desteği ve mevcut bordro yazılımlarıyla entegrasyon” (rakiplerin adını vermeye gerek yok)"
+          ],
+          [
+            "Kullanılan özellikler ve entegrasyonlar",
+            "“Giriş-çıkış kaydı, vardiya planlama, bordro dışa aktarımı”"
+          ],
+          [
+            "Devreye alma süresi",
+            "“Sözleşmeden canlı kullanıma yaklaşık 2 ay”"
+          ],
+          [
+            "Sonuç ve nasıl ölçüldüğü",
+            "“Aylık puantaj toplama 3 günden yarım güne indi (İK iş kaydı, devreye alındıktan 6 ay sonra)”: ne, ne zaman, nasıl ölçüldü"
+          ],
+          [
+            "Tarih ve zaman noktası",
+            "“Görüşme Ekim 2026'da yapıldı. Unvanlar ve rakamlar görüşme tarihindeki hâliyle”"
+          ]
+        ]
+      },
+      "after": [
+        "Yalnızca müşterinin arkasında durabileceği sonuçları, yöntem ve tarihle birlikte yayımlayın. Şişirilmiş rakamlar yapay zekâ tarafından olduğu gibi aktarılır ve sonradan düzeltilmesi zordur. Müşterinin adını, logosunu ve sözlerini göstermek için yazılı izin alın.",
+        "Hikâyeniz azken, sektöre ve şirket ölçeğine göre her hikâyeye bağlantı veren bir dizin sayfası ekleyin. Ana sayfadan bağlantı verilen “Müşteri hikâyeleri” veya “Vaka çalışmaları” adlı bir sayfa, insanlar ve yapay zekâ için kolay bulunur."
+      ]
+    },
+    {
+      "heading": "Karşılaştırma ve geçiş sayfaları: doğru seçim olmadığınız durumu söyleyin",
+      "paragraphs": [
+        "“A mı B mi?” diye sorulduğunda, sitenizde dayanacak bir şey bulamayan bir yapay zekâ rakiplerin sayfalarından veya karşılaştırma sitelerinden yanıt verir. Karşılaştırma sayfasını bir puan tablosu olarak değil, hangi ürünün hangi şirkete uyduğuna karar vermek için bir malzeme olarak hazırlayın."
+      ],
+      "list": [
+        "Önce kriterleri belirleyin (şirket ölçeği, faturalandırma birimi, entegrasyonlar, destek, verinin konumu vb.) ve her ürünü aynı kriterlerle karşılaştırın.",
+        "Rakiplerin özellikleri ve fiyatları için resmî sayfalarını kontrol ettiğiniz tarihi ve bir bağlantıyı verin. Doğrulayamadığınız her şeyi dışarıda bırakın.",
+        "Doğru seçim olmadığınız durumu açıkça söyleyin (“100 kişinin altındaysanız A'nın ücretsiz paketi size daha uygun olabilir”). Tek taraflı bir karşılaştırmaya okurlar da güvenmez.",
+        "Geçiş sayfasında hangi verilerin aktarılabileceğini, gereken adımları ve süreyi, iki sistemin ne kadar süre paralel çalıştırılacağını ve taşıma desteğinin ücretli mi ücretsiz mi olduğunu belirtin.",
+        "Karşılaştırma sayfasına tarih koyun ve siz veya bir rakip fiyat değiştirdiğinde sayfayı gözden geçirin."
+      ],
+      "after": [
+        "Rakiplerin adını verdiğinizde olgusal ifadelerle sınırlı kalın ve logolarını veya ekran görüntülerini izinsiz kullanmayın."
+      ]
+    },
+    {
+      "heading": "Entegrasyonlar, gereksinimler, güvenlik ve destek: koşul sorularını yanıtlayın",
+      "paragraphs": [
+        "“X ile entegre çalışır”, “ISO/IEC 27001 sertifikası var” veya “hafta sonu destek” gibi koşullar, yapay zekânın bir listeyi daraltırken kullanma eğiliminde olduğu bilgilerdir. Bir özellik listesindeki tek bir satır zayıf bir malzemedir; bu yüzden her koşula kendi sayfasını veya başlığını verin."
+      ],
+      "list": [
+        "Entegrasyonlar: bağlandığınız hizmetler, nasıl bağlandığı (yerleşik, API, CSV) ve ek ücret olup olmadığı.",
+        "Gereksinimler: tarayıcılar, mobil uygulama olup olmadığı ve hangi işletim sistemi için olduğu, çevrimdışıyken nasıl davrandığı.",
+        "Güvenlik: sahip olduğunuz her sertifika için adı, kapsamı ve kayıt numarası veya tarihi. Sahip olmadıklarınızı listelemeyin. Verilerin nerede saklandığı (ülke veya bölge).",
+        "Destek: saatler, kanallar (telefon, e-posta, sohbet), pakete göre farklar, kurulum desteğinin (onboarding) neleri kapsadığı.",
+        "Sözleşme ve fesih: nasıl iptal edildiği ve sonrasında verilere ne olduğu."
+      ]
+    },
+    {
+      "heading": "Dış kaynaklar: inceleme sitelerini ve profilleri sitenizle uyumlu tutun",
+      "paragraphs": [
+        "Adınızın geçtiği sorularda (“X hakkında ne deniyor?”) G2, Capterra, ITreview ve BOXIL gibi inceleme siteleri, basın bültenleri ve karşılaştırma makaleleri sıklıkla kaynak olarak kullanılır. Bu sayfaları düzenleyemezsiniz; bu yüzden iki şeye odaklanın."
+      ],
+      "list": [
+        "Kaydı güncel tutun: ürün açıklaması, fiyatlar, özellikler ve şirket bilgileri sitenizdekiyle aynı şekilde ve aynı rakamlarla yazılmış olsun. Her sitenin işletmecisinden, kendi kayıt kurallarına göre güncelleme isteyin.",
+        "Yorumları dürüstçe toplayın: Japonya'da gizli pazarlama (stealth marketing) 1 Ekim 2023'ten beri Haksız Promosyonlar ve Yanıltıcı Beyanlara Karşı Kanun'un ihlali sayılıyor ve bir işletmenin üçüncü kişilerden yayımlamasını istediği veya talimat verdiği yorumlar o işletmenin reklamı olarak kabul ediliyor ([Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)). Yorum karşılığında teşvik sunuyorsanız, her inceleme sitesinin kurallarını ve teşvikin nasıl açıklanması gerektiğini, ayrıca faaliyet gösterdiğiniz yerdeki kuralları kontrol edin."
+      ],
+      "after": [
+        "Sitenizde bir inceleme puanı gösterdiğinizde hangi siteden, hangi tarih itibarıyla ve kaç yoruma dayandığını belirtin. Kendi topladığınız puanları, nereden geldiğini söylemeden yapılandırılmış veride aggregateRating olarak yayımlamayın."
+      ]
+    },
+    {
+      "heading": "Yapay zekâ sayfayı okuyabiliyor mu? Tarayıcılar ve JavaScript",
+      "paragraphs": [
+        "SaaS siteleri bazen fiyat tablolarını veya özellik karşılaştırmalarını sayfa yüklendikten sonra JavaScript ile oluşturur. Tarayıcıda gördüğünüz şey, bir tarayıcı botunun aldığı HTML'de olmayabilir. Fiyatlandırma ve vaka çalışması metninin sunucunun ilk döndürdüğü HTML'de bulunması daha güvenlidir. Sayfanın HTML'ini (örneğin curl ile) çekin ve fiyatların ve hikâye metninin orada olduğunu kontrol edin.",
+        "Ayrıca robots.txt dosyasının yapay zekâ hizmetlerinin arama tarayıcılarını engellemediğini kontrol edin. OpenAI, OAI-SearchBot'u engelleyen sitelerin ChatGPT arama yanıtlarında gösterilmeyeceğini söylüyor ([OpenAI crawlers](https://developers.openai.com/api/docs/bots)); bu, eğitim için kullanılan GPTBot'tan farklı bir bottur. Perplexity de PerplexityBot ve Perplexity-User'ı ayrı ayrı belgeliyor ([Perplexity crawlers](https://docs.perplexity.ai/docs/resources/perplexity-crawlers)). Bir WAF veya bot koruma hizmeti, kimse fark etmeden bunları engelleyebilir."
+      ]
+    },
+    {
+      "heading": "Yapılandırılmış veri: şirket için Organization, sattığınız şey için SoftwareApplication veya Service",
+      "paragraphs": [
+        "Google, AI Overviews ve AI Mode için özel bir yapılandırılmış veriye veya dosyaya gerek olmadığını ve yapılandırılmış verinin sayfada görünenle örtüşmesi gerektiğini söylüyor ([AI features and your website](https://developers.google.com/search/docs/appearance/ai-features)). Bunu göz önünde tutarak B2B ve SaaS için olağan kombinasyon şöyledir:"
+      ],
+      "list": [
+        "Şirket: ad, URL, logo, açıklama ve iletişim bilgileriyle Organization (veya Corporation gibi bir alt tür). Bkz. [Hakkımızda sayfanız için yapay zekâ araması](/guide/company-profile-page-ai-search).",
+        "Yazılım: SoftwareApplication. schema.org'da bir CreativeWork türüdür; özellikleri arasında applicationCategory, operatingSystem, featureList, softwareVersion ve offers bulunur. Tarayıcıda çalışan yazılımlar için WebApplication alt türü de vardır ([schema.org SoftwareApplication](https://schema.org/SoftwareApplication)).",
+        "Dış kaynak hizmeti veya danışmanlık gibi hizmetler: provider aracılığıyla şirkete bağlanan Service.",
+        "SSS: FAQPage yalnızca bu soru ve yanıtları gösteren bir sayfada."
+      ],
+      "code": "{\n  \"@type\": \"SoftwareApplication\",\n  \"@id\": \"https://example.com/#nurevo-service-1\",\n  \"name\": \"Example Timesheets\",\n  \"provider\": { \"@id\": \"https://example.com/#organization\" },\n  \"description\": \"Cloud time tracking for companies with 50 to 300 employees: clock-in, shifts and leave in one place.\",\n  \"url\": \"https://example.com/product/\",\n  \"applicationCategory\": \"Time tracking software\",\n  \"offers\": { \"@type\": \"Offer\", \"price\": \"4\", \"priceCurrency\": \"USD\" }\n}",
+      "after": [
+        "Örnek, bir hizmet “Bu bir yazılımdır (SaaS veya uygulama)” olarak işaretlendiğinde Nurevo AEO'nun yayımladığı biçimdir (değerler uydurmadır). provider şirket düğümünü gösterir, kategori applicationCategory olur, fiyat ve para birimi de bir Offer olur. “Kullanıcı başına aylık” gibi faturalandırma birimini fiyatlandırma sayfasının metninde belirtin.",
+        "Google'ın arama sonuçlarındaki yazılım uygulaması zengin sonucunun, puan veya yorum gibi kendi gereksinimleri vardır. Bu zengin sonucu istiyorsanız güncel gereksinimleri [Google's software app structured data](https://developers.google.com/search/docs/appearance/structured-data/software-app) belgesinden kontrol edin. Nurevo AEO, arkasında gerçek yorumlar olmayan bir puanı asla yayımlamaz."
+      ]
+    },
+    {
+      "heading": "llms.txt: fiyatlandırma, vaka çalışması ve karşılaştırma sayfalarına bir giriş kapısı",
+      "paragraphs": [
+        "llms.txt, sitenin bir özetini ve ana sayfalarına bağlantıları içeren tek bir metin dosyasıdır. Hiçbir yapay zekâ şirketi resmî olarak bir etkisini açıklamadı ve Google gerekli olmadığını söylüyor (bkz. [llms.txt nasıl yazılır](/guide/llms-txt)). Eklerseniz, B2B ve SaaS için asıl mesele fiyatlandırma, vaka çalışması, karşılaştırma ve entegrasyon sayfalarınızın listede olmasını sağlamaktır. Site türü “B2B / SaaS” olarak ayarlandığında Nurevo AEO dosyayı şöyle oluşturur (değerler uydurmadır):"
+      ],
+      "code": "# Example Timesheets\n\n> Cloud time tracking for companies with 50 to 300 employees, made by Example Inc.\n\n## Key facts\n\n- URL: https://example.com/\n- Email: info@example.com\n- Type: Corporation\n- Pricing: https://example.com/pricing/\n- Case studies: https://example.com/customers/\n\n## Pages\n\n- [Pricing](https://example.com/pricing/)\n- [Customer stories](https://example.com/customers/)\n- [How we compare](https://example.com/compare/)\n- [Integrations](https://example.com/integrations/)\n\n## Services\n\n- [Example Timesheets](https://example.com/product/) — Clock-in, shifts and leave in one place · USD 4 · Time tracking software",
+      "after": [
+        "Key facts altındaki Pricing ve Case studies, Ayarlar'da “Fiyatlandırma sayfası (B2B)” ve “Vaka çalışmaları sayfası (B2B)” olarak girilen URL'lerdir. B2B / SaaS siteleri çalışma saatlerini yayımlamaz. Pages, en son güncellenen 30 sayfa ve yazıyı listeler; bu nedenle blogu yoğun bir sitede karşılaştırma sayfası listenin dışına itilebilir. Bu durumda, orada olması gerekmeyen yazıları “bu sayfayı llms.txt dışında bırak” ile işaretleyin veya geliştirici filtresi webmcp_canary_llms_txt_lines ile satır ekleyin."
+      ]
+    },
+    {
+      "heading": "WordPress'te adımlar (Nurevo AEO ile)",
+      "paragraphs": [
+        "WordPress'te [Nurevo AEO (ücretsiz)](https://wordpress.org/plugins/nurevo-webmcp/), şirket ve ürün bilgilerinizi yapılandırılmış veri olarak ve llms.txt içinde yayımlar. Şu sırayla çalışın."
+      ],
+      "list": [
+        "Önce yukarıdaki tabloları izleyerek fiyatlandırma, vaka çalışması, karşılaştırma ve entegrasyon sayfalarının metnini düzeltin. Önce metin, sonra yapılandırılmış veri.",
+        "Kurulum sihirbazında (veya Ayarlar'da) site türünü “B2B / SaaS” olarak ayarlayın. Şirket Organization olarak yayımlanır. İşletme türü alanında Corporation, ProfessionalService veya AccountingService gibi uygun bir tür seçerseniz o tür kullanılır; B2B sitesine uymayan bir tür Organization'a geri döner. Adres ve çalışma saatleri gerekli değildir.",
+        "Hizmetlerinizi ekleyin (en fazla 20): ad, tek cümlelik açıklama, hizmet sayfasının URL'i, kategori, fiyat ve para birimi. Yazılımlar için “Bu bir yazılımdır (SaaS veya uygulama)” kutusunu işaretleyin. İşaretli kayıtlar SoftwareApplication, diğerleri Service olarak yayımlanır.",
+        "Kategori için alıcıların yapay zekâya sorarken kullandığı kelimeleri kullanın (“mesai takip yazılımı”, “masraf yönetimi”). Nurevo'nun ölçüm soruları bu kategoriden oluşturulur.",
+        "“Fiyatlandırma sayfası (B2B)” ve “Vaka çalışmaları sayfası (B2B)” URL'lerini girin. Bunlar llms.txt içindeki Key facts bölümüne girer ve teşhis tarafından kontrol edilir.",
+        "SSS kayıtları yalnızca bunları Nurevo FAQ bloğu veya [nurevo_faq] kısa koduyla gösteren sayfalarda FAQPage olarak yayımlanır. Fiyat soruları için fiyatlandırma sayfasına kendi SSS'sini verin.",
+        "Yoast SEO, Rank Math, All in One SEO veya Slim SEO ile birlikte Nurevo, şirketin iki kez tanımlanmaması için o eklentinin yapılandırılmış verisine yalnızca eksik bilgileri ve hizmetleri ekler. SEO SIMPLE PACK ve VK All in One Expansion Unit ile de birlikte çalışır (0.9.1'den itibaren).",
+        "Teşhisi AEO puanı ekranında çalıştırın. B2B / SaaS siteleri için dört şeyi kontrol eder: hizmet açıklamaları, fiyatlandırma sayfası, vaka çalışmaları (veya SSS) ve şirket kimliği."
+      ],
+      "after": [
+        "WordPress ile yapılmamış sitelerde kontroller aynıdır. Yapılandırılmış verinizin, llms.txt dosyanızın ve yapay zekâ tarayıcılarının erişiminin durumunu görmek için URL'nizi kayıt gerektirmeyen [ücretsiz kontrole](/check) girin.",
+        "B2B müşterileri için site yapan veya bakımını üstlenen ajanslar, bilgilerin birbirinden kopmaması için fiyat değişikliği rutinini (fiyatlandırma sayfası, karşılaştırma sayfaları, SSS, inceleme sitesi kayıtları) bakım kapsamına alabilir. Müşterilerine aylık destek veren ajanslar [iş ortaklığı programına](https://nurevo.jp/partner/) katılabilir."
+      ]
+    },
+    {
+      "heading": "Nasıl kontrol edilir: markasız ve markalı soruları ayırın",
+      "paragraphs": [
+        "B2B için iki tür soruyu ayrı ayrı kaydedin. Markasız sorular, sizi tanımayan kişilerin kısa listesine girip girmediğinizi gösterir. Markalı sorular, sizi tanıyan kişilerin doğru bilgiyi alıp almadığını gösterir. Aynı soruyu aynı yapay zekâya farklı günlerde sorun ve asla tek bir yanıta bakarak karar vermeyin."
+      ],
+      "table": {
+        "head": [
+          "Tür",
+          "Örnek",
+          "Ne kaydedilir"
+        ],
+        "rows": [
+          [
+            "Markasız (kategori)",
+            "“Küçük bir işletme için hangi mesai takip yazılımını önerirsin?”",
+            "Adınızın geçip geçmediği, sitenizin kaynak gösterilip gösterilmediği, başka hangi ürünlerin çıktığı"
+          ],
+          [
+            "Markasız (koşul)",
+            "“Bordro yazılımımızla entegre çalışan mesai takibi?”",
+            "Koşulun doğru uygulanıp uygulanmadığı"
+          ],
+          [
+            "Markalı (fiyat)",
+            "“Example Timesheets ne kadar?”",
+            "Fiyat, faturalandırma birimi ve verginin bugünkü fiyatlandırma sayfanızla örtüşüp örtüşmediği ve kaynağın ne olduğu"
+          ],
+          [
+            "Markalı (itibar)",
+            "“Example Timesheets hakkında ne deniyor?”",
+            "Kaynağın hangi inceleme sitesi veya makale olduğu ve eski bilgilerin araya karışıp karışmadığı"
+          ]
+        ]
+      },
+      "after": [
+        "Nurevo'nun ücretsiz yapay zekâ kontrolü (ayda bir, bağlı Free ve Standard siteler için) Perplexity'ye üç markasız soru sorar. Pro'nun görünürlük ölçümü (beta) şu anda Perplexity'yi kapsıyor; ChatGPT kurulumu tamamlandığında eklenecek. Markalı soruları yukarıdaki tabloyla elle kontrol edin.",
+        "Ziyaretler için GA4'te kaynağa bakın. ChatGPT'den gelen bağlantılar utm_source=chatgpt.com taşıyabilir ([OpenAI publishers FAQ](https://help.openai.com/en/articles/12627856-publishers-and-developers-faq)). Search Console'un üretken yapay zekâ performans raporu da başka bir bakış açısı sunar ([Google Search Central blog](https://developers.google.com/search/blog/2026/06/gen-ai-performance-reports)). B2B satın alma süreçleri zaman aldığından, iletişim formuna eklenen “Bizi nereden duydunuz (yapay zekâ yanıtları dahil)?” alanı hiçbir zaman tıklama olarak görünmeyen etkiyi yakalar. Yöntemin tamamı [yapay zekâ görünürlüğü nasıl ölçülür](/guide/measure-ai-visibility) rehberinde."
+      ]
+    },
+    {
+      "heading": "B2B ve SaaS siteleri için kontrol listesi",
+      "list": [
+        "Ürün sayfasının ilk cümlesi ürünün ne olduğunu, kimin için olduğunu (sektör ve ölçek) ve nasıl sunulduğunu söylüyor.",
+        "Fiyatlandırma sayfası faturalandırma birimini, paket farklarını, kurulum ücretini, asgari koşulları, vergiyi ve son güncelleme tarihini (teklif usulünde ise fiyatın neye bağlı olduğunu ve bir başlangıç noktasını) belirtiyor.",
+        "Fiyatlandırma ve vaka çalışması metni, JavaScript çalıştırılmadan HTML'de bulunuyor.",
+        "Vaka çalışmaları sektörü, ölçeği, ekibi, sorunu, kullanılan özellikleri, devreye alma süresini ve sonuçların nasıl ve ne zaman ölçüldüğünü veriyor.",
+        "Karşılaştırma sayfaları her ürün için aynı kriterleri kullanıyor, rakiplere ilişkin bilgilere tarih ve kaynak veriyor ve doğru seçim olmadığınız durumu söylüyor.",
+        "Entegrasyonların, gereksinimlerin, güvenliğin ve desteğin her birinin kendi başlığı veya sayfası var.",
+        "Fiyatların değiştiği gün karşılaştırma sayfalarını, SSS'yi, eski yazıları ve inceleme sitesi kayıtlarını da güncelleyen bir rutin var.",
+        "robots.txt ve WAF, OAI-SearchBot ve PerplexityBot gibi arama tarayıcılarını engellemiyor.",
+        "Organization ve SoftwareApplication (veya Service) değerleri sayfa metniyle örtüşüyor ve uydurma bir puan yayımlanmıyor.",
+        "llms.txt fiyatlandırma, vaka çalışması ve karşılaştırma sayfalarını listeliyor.",
+        "Markasız ve markalı sorular ayrı ayrı, farklı günlerde kaydediliyor."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Fiyat yayımlamazsak yapay zekâ bizi dışarıda bırakır mı?",
+      "a": "Yine de adınız geçebilir. Ancak fiyat soruları için malzeme olmadığında yapay zekâ başka sitelerdeki eski rakamlarla yanıt verir ya da yalnızca fiyatın açıklanmadığını söyler. Tutarları gösteremeseniz bile fiyatın neye bağlı olduğunu söyleyin ve bir başlangıç noktası verin."
+    },
+    {
+      "q": "Karşılaştırma sayfasında rakiplerin adını verebilir miyiz?",
+      "a": "Bilgiler doğru olduğu sürece birçok şirket bunu yapıyor. Her rakibin resmî sayfasını kontrol ettiğiniz tarihi ve bir bağlantıyı verin, doğrulayamadıklarınızı dışarıda bırakın ve logolarını veya ekran görüntülerini izinsiz kullanmayın. Size uygulanan karşılaştırmalı reklam yasalarını ve sektör kurallarını kontrol edin."
+    },
+    {
+      "q": "SaaS, SoftwareApplication mı yoksa Product işaretlemesi mi kullanmalı?",
+      "a": "schema.org yazılım için SoftwareApplication'ı (tarayıcıda çalışan yazılım için de WebApplication'ı) sunar. Nurevo AEO, yazılım olarak işaretlenen hizmetleri SoftwareApplication olarak yayımlar. Google'ın zengin sonucunu istiyorsanız gereksinimleri Google'ın belgelerinden kontrol edin."
+    },
+    {
+      "q": "İnceleme sitelerindeki düşük bir puan, yapay zekânın bizi önermesini engeller mi?",
+      "a": "Hiçbir yapay zekâ şirketi inceleme puanlarının yanıtlarda nasıl kullanıldığını resmî olarak açıklamadı. Yapabileceğiniz şey kayıtları güncel tutmak ve yorumları dürüstçe toplamaktır. Teşvik sunuyorsanız faaliyet gösterdiğiniz yerdeki gizli pazarlama kurallarını ve her sitenin kurallarını kontrol edin."
+    },
+    {
+      "q": "Bu, yazılım geliştirme ajansları ve danışmanlık firmaları için de geçerli mi?",
+      "a": "Temeller aynı. Ürün sayfası yerine her hizmet için bir sayfa yazın (kimin için olduğu, nasıl işlediği, ne kadar sürdüğü, fiyatın nasıl belirlendiği, vaka çalışmaları) ve Service işaretlemesi kullanın. Nurevo AEO'da hizmetleri yazılım kutusunu işaretlemeden ekleyin."
+    },
+    {
+      "q": "Yapay zekâ eski fiyatlarımızı aktarmaya devam ediyor. Ne yapabiliriz?",
+      "a": "Yanıttaki kaynakların izini sürün. Kendi sitenizde fiyatlandırma sayfası dışındaki eski rakamları (karşılaştırma sayfaları, SSS, eski yazılar) düzeltin; diğer sitelerde yayıncıdan güncelleme isteyin. Yapay zekâ yanıtlarını doğrudan düzenleyemezsiniz ve değişikliklerin yansıması için belirli bir süre yoktur."
+    },
+    {
+      "q": "Bu adımlar bizi yapay zekâ önerilerine sokar mı?",
+      "a": "Garantisi yok. Yapay zekâ yanıtları güne ve ifadeye göre değişir ve hangi ürünlerin adının geçeceğine yapay zekâ karar verir. Bu adımlar yapay zekânın okuduğu bilgileri doğru hâle getirir ve ona sizi seçmesi için kendi sitenizde malzeme sağlar."
+    }
+  ],
+  "relatedHeading": "İlgili rehberler",
+  "cta": {
+    "heading": "Yapay zekânın sitenizi nasıl okuduğunu görün",
+    "body": "Ücretsiz kontrol kayıt gerektirmez: yapılandırılmış verinizin, llms.txt dosyanızın ve yapay zekâ tarayıcılarının erişiminin durumunu görmek için bir URL girin. WordPress'te ücretsiz eklenti, şirket ve ürün bilgilerinizi yapılandırılmış veri olarak ve llms.txt içinde yayımlar.",
+    "label": "Yapay zekâ hazırlığınızı ücretsiz kontrol edin",
+    "href": "/check",
+    "secondary": {
+      "label": "Ücretsiz WordPress eklentisini deneyin",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT, OpenAI'nin; Perplexity, Perplexity AI'nin; Google ise Google LLC'nin ticari markasıdır. G2, Capterra, ITreview, BOXIL, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ve WordPress, ilgili sahiplerinin ticari markaları veya tescilli ticari markalarıdır. Nurevo bu şirketlerin hiçbiriyle bağlantılı değildir ve onlar tarafından onaylanmamıştır."
+}
