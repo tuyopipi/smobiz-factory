@@ -612,3 +612,12 @@
 3. ハウスクリーニング・家事代行のAI検索対策（対応エリア・料金の内訳・損害の補償）【業種別】（on-location-photographer と同じ出張型だが、作業範囲と補償に絞る）
 4. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
+| 2026-11-25 14時 | agency-press-release-ai-search | プレスリリースをAI検索向けに整える：制作会社の代行メニュー（制作会社向け。media-coverage-page-ai-search〔第三者の記事の一覧〕・agency-ai-search-manipulation-risks・agency-aeo-monthly-service とは分け、リリース本文・自社サイトの原本・リンクの決まり・確かめ方に絞る。上位記事15本〔uravation（2026-07-18、09-05更新）・汐留PR塾 3本（2026-02〜03、04-21更新）・共同通信PRワイヤー LLMO・Web担 PRIZMA（2025-12-10）・IDEATECH（2026-02-26）／Business Wire（2026-03-12）・PR Newswire ME・Notified（2026-05-12）・PR.co（2025-11-06）・Meltwater（2026-09-29）・Superprompt（2026-01-23）・Matter（2025-12-16）・Medianet（2025-10-22）〕の抜け〔自社サイトの原本と訂正の扱いなし・WordPress手順なし・Googleのリンクスパムの例に触れるのは1本だけ・確かめ方が手動の聞き取りだけ・調査の数字の数え方の区別なし・制作会社の作業の分け方なし〕を埋めた。調査の表4行〔Optyino.ai（2026-07-11）：81,895件・回答の15.05%・URLの2.20%・PR TIMES 60.5%・上位5で69.4%・本文内リンク0.63%、AIごとの割合7つ、限界／Muck Rack 2025-12：1.2%→約6%／Meltwater：2026年5月0.2%〕、本文の型、書き換え表5行、調査リリースの方法、やってはいけないこと〔Google スパムポリシー（ja 2026-11-24更新）：プレスリリース内の作為的なアンカーテキスト、nofollow/sponsored は違反でない、大量生成、2013年に追加（SEL）〕、WordPress手順〔Nurevo：SEOプラグインなしで BlogPosting の description は抜粋、日付・著者・画像・publisher、SEOプラグインがあれば Article はそのまま、llms.txt 30件と webmcp_canary_llms_txt_lines、0.9.1 併用〕、代行メニューの表5行〔料金は書かず、共同通信PRワイヤーの公表価格をja だけに例示〕、確かめ方5つ、チェックリスト10、FAQ 7問）。2言語（ja・en） | 制作会社向け | content/daily-20261125-14 |
+メモ：2026-11-25 14時の回は、Google の外部リンクの属性・Article の構造化データのページ・PR TIMES の規約が WebFetch の許可待ちで読めず、rel の説明はスパムポリシーの記述だけで書き、PR TIMES の料金・規約は書いていない。2021年のリンクスパムのブログは本文が取得できず使っていない。Notified の「GlobeNewswire 61%」は母数が不明で使っていない。Optyino.ai の Gemini・Grok の数字は別ページで読んでおらず書いていない。英語版では日本の配信サービスの料金は書いていない。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に agency-press-release-ai-search を追加、ja/en のみ。次は access-directions-parking-ai-search）
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（掲載先の一覧と更新依頼の文例）【全業種】（PR #80 と重ならない形で）
+2. ハウスクリーニング・家事代行のAI検索対策（対応エリア・料金の内訳・損害の補償）【業種別】（17時か20時で）
+3. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
+4. 調査リリース・独自データのページの作り方（方法・限界・データの置き場所）【全業種】（agency-press-release-ai-search と分け、自社サイトのデータのページに絞る）
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
