@@ -630,3 +630,12 @@
 3. 調査リリース・独自データのページの作り方（方法・限界・データの置き場所）【全業種】（20時で）
 4. 制作会社向け：フランチャイズ加盟店のサイトをAI検索向けにそろえる運用（franchise-headquarters-ai-search と分け、制作会社の作業に絞る）【制作会社向け】
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
+| 2026-11-25 20時 | original-research-data-page-ai-search | 独自調査・データのページの作り方：AI検索に引用される一次情報（全業種。agency-press-release-ai-search〔リリース本文と配信〕・media-coverage-page-ai-search〔第三者の記事の一覧〕・blog-articles-ai-citations〔普通の記事〕とは分け、自社サイトの調査ページの中身・方法と限界の書き方・データファイル・引用のルール・No.1表示の決まり・Dataset に絞る。上位記事12本を読んだ〔GMO AIかんたん集客（2026-08-06、11-16更新）・PRIZMA 2本（ASCII 2026-03-05・07-30）・ナレッジホールディングス（ASCII 2026-05-21）・IDEATECH（Web担）・TRUE MARKETING（2026-09-29）／Similarweb（2026-07-09、10-04更新）・Kevin Indig（Search Engine Land）・Ranktracker（2025-11-25）・Pollfish（2026-05-22）。media-radar・Neil Patel・SEL 481380 は取得失敗〕の抜け〔景品表示法・No.1表示の注意なし・データファイルとDatasetの説明なし・WordPress手順は1本だけ・研究の数字の条件の説明なし・小さな会社のデータの例なし〕を埋めた。研究3つの表〔GEO KDD 2024：19.3→統計25.2・引用27.2・出典24.6・詰め込み17.7、最大約40%（Perplexity 37%）／Indig・Gauge：301ページ中8ページ2.7%が引用8.4%、11.3対3.4、90件中75件はベンチマーク／SIGIR 2026：関連性と並び順、価格と日付〕、国内の担当者調査2つ（自己申告と明記）、独自データ5種類の表、調査ページの10項目の表、Nurevo の調査ページの実例、No.1表示〔消費者庁 2024-09-26 報告書：368件・1,000人・15社中1社、利用を確かめない満足度調査、責任は広告主／公取委2008／JMRA 2022-01-18〕、Dataset〔name・description 50〜5,000字必須、推奨項目〕、WordPress手順〔webmcp_canary_schema_graph の extra で Dataset、llms_txt_lines、0.9.1 併用〕、確かめ方5つ、チェックリスト10、毎年続ける、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261125-20 |
+メモ：2026-11-25 20時の回は、消費者庁の報告書の本文（PDF。No.1表示の根拠の詳しい条件）を取得できず、条件の詳細は書いていない（長官の会見要旨と報道で確認した範囲のみ）。日本以外の広告規制は確認しておらず、英語版は国ごとに違う旨を書いた。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に original-research-data-page-ai-search を追加、ja/en のみ。次は access-directions-parking-ai-search）
+次の候補：
+1. 比較サイト・ポータルに載っている自社情報の直し方（掲載先の一覧と更新依頼の文例）【全業種】（PR #80 と重ならない形で）
+2. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
+3. 制作会社向け：フランチャイズ加盟店のサイトをAI検索向けにそろえる運用（franchise-headquarters-ai-search と分け、制作会社の作業に絞る）【制作会社向け】
+4. 葬儀社・仏壇店のAI検索対策（PR #88 と重ならない形で、仏壇・墓石の店に絞る）【業種別】
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）

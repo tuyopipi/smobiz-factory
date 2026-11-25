@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>独自調査・データのページの作り方：AI検索に引用される一次情報 | Nurevo AIO</title>
+<meta name="description" content="独自調査のページは、数字・対象・期間・方法・限界を1か所にそろえると、AIと記者が引用しやすくなります。調査概要の書き方、No.1表示の注意、Datasetの構造化データ、WordPressの手順をまとめました。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/original-research-data-page-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/original-research-data-page-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/original-research-data-page-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/original-research-data-page-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/original-research-data-page-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/original-research-data-page-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/original-research-data-page-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/original-research-data-page-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/original-research-data-page-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="独自調査・データのページの作り方：AI検索に引用される一次情報 | Nurevo AIO">
+<meta property="og:description" content="独自調査のページは、数字・対象・期間・方法・限界を1か所にそろえると、AIと記者が引用しやすくなります。調査概要の書き方、No.1表示の注意、Datasetの構造化データ、WordPressの手順をまとめました。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/original-research-data-page-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="独自調査・データのページの作り方：AI検索に引用される一次情報 | Nurevo AIO">
+<meta name="twitter:description" content="独自調査のページは、数字・対象・期間・方法・限界を1か所にそろえると、AIと記者が引用しやすくなります。調査概要の書き方、No.1表示の注意、Datasetの構造化データ、WordPressの手順をまとめました。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/original-research-data-page-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/original-research-data-page-ai-search/","name":"独自調査・データのページの作り方：AI検索に引用される一次情報 | Nurevo AIO","description":"独自調査のページは、数字・対象・期間・方法・限界を1か所にそろえると、AIと記者が引用しやすくなります。調査概要の書き方、No.1表示の注意、Datasetの構造化データ、WordPressの手順をまとめました。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/original-research-data-page-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/original-research-data-page-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"独自調査・データのページの作り方：AI検索と記者に引用される「原本」を自社サイトに置く手順","item":"https://nurevo.jp/ja/guide/original-research-data-page-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/original-research-data-page-ai-search/#faq","mainEntity":[{"@type":"Question","name":"独自調査のページを作れば、AIに引用されますか？","acceptedAnswer":{"@type":"Answer","text":"必ずとは言えません。数字や出典を書いた文章は回答に使われやすいという研究はありますが、出典の選び方は公表されていません。対象・件数・方法・限界をそろえ、確かめられる形にすることが前提です。"}},{"@type":"Question","name":"回答者は何人いれば調査として出せますか？","acceptedAnswer":{"@type":"Answer","text":"決まった基準はありません。件数そのものより、件数と対象を正直に書くことが大切です。少ない件数を細かく分けた数字は出さず、限界に書きます。"}},{"@type":"Question","name":"プレスリリースだけ出せば十分ですか？","acceptedAnswer":{"@type":"Answer","text":"数字の原本は自社サイトに置くことをおすすめします。リリースの配信ページは変更や削除ができないことがあり、方法やデータを全部は載せられません。リリースから調査ページにリンクします。"}},{"@type":"Question","name":"調査結果をダウンロードするのにメール登録を必須にしてもいいですか？","acceptedAnswer":{"@type":"Answer","text":"営業上の理由で登録を求めることはできますが、AIのクローラーや記者は登録の先を読めません。少なくとも要点・調査概要・主な表はページに文字で公開してください。"}},{"@type":"Question","name":"「満足度No.1」と書くための調査をしてもいいですか？","acceptedAnswer":{"@type":"Answer","text":"景品表示法の対象になります。消費者庁は、利用したか確かめずに満足度を聞いた調査を問題の例に挙げ、責任は広告主にあるとしています。比べた相手・対象・方法を明記し、必要に応じて専門家に確認してください。"}},{"@type":"Question","name":"AIでデータを分析・文章化してもいいですか？","acceptedAnswer":{"@type":"Answer","text":"使えますが、数字は元のデータで確かめ、AIをどう使ったかを調査概要に書くと読者が判断できます。Googleも、自動化やAIをどう使ったかの説明を勧めています。"}},{"@type":"Question","name":"Dataset の構造化データは必須ですか？","acceptedAnswer":{"@type":"Answer","text":"必須ではありません。Google の Dataset Search 向けのもので、AIが使うと公表している会社はありません。CSVを公開するなら、本文と同じ内容で足すとよいでしょう。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">AI対応を無料でチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>独自調査・データのページの作り方：AI検索と記者に引用される「原本」を自社サイトに置く手順</span></nav>
+  <article>
+    <h1>独自調査・データのページの作り方：AI検索と記者に引用される「原本」を自社サイトに置く手順</h1>
+    <p class="lead">独自調査やデータをAI検索に引用してもらうには、プレスリリースだけでなく、自社サイトに「原本」のページを置き、数字と一緒に対象・件数・期間・方法・限界を書くことが基本です。数字や引用を足した文章はAIの回答に使われやすいという研究がある一方、出典として選ばれる仕組みは公表されておらず、引用を約束できる方法はありません。小さな会社でも、自社の受注や問い合わせの集計、価格の推移、測定・比較の結果なら、ほかにないデータを作れます。</p>
+<p>作成日：2026年11月25日（日本時間）。研究と調査の数字は、論文（arXiv）・Search Engine Land の記事・Googleの公式ドキュメント・消費者庁の発表と報道を同日に読んで確認しました。</p>
+<p>AIの回答は日々変わり、どのページを出典にするかはAIの会社ごとに決めていて、詳しい基準は公表されていません。この記事は、調査を正しく、確かめられる形で公開するための手順です。</p>
+<section class="qa"><h2>数字や一次情報は、AIの回答に使われやすいのか：3つの研究</h2><p>「独自データはAIに引用されやすい」という話はよく見かけますが、根拠になっている研究は条件つきです。主な3つを並べます。</p><div class="table-wrap"><table><thead><tr><th scope="col">研究</th><th scope="col">条件</th><th scope="col">わかったこと</th></tr></thead><tbody><tr><th scope="row">GEO（プリンストン大学ほか、KDD 2024）</th><td>1万件の質問。Google上位5件をもとに gpt-3.5-turbo が答える実験用の仕組み（Perplexity でも検証）</td><td>統計を足すと見える量の指標が19.3→25.2、引用を足すと27.2、出典を書くと24.6。キーワードの詰め込みは17.7に下がった。最大で約40%の改善（Perplexity では最大37%）</td></tr><tr><th scope="row">Kevin Indig（Search Engine Land）</th><td>Gauge のデータで、7業種・316の質問で引用された301ページ・1,075件の引用</td><td>一次調査は8ページ（2.7%）だが引用の8.4%（90件）を集め、1ページあたり11.3件（ほかは3.4件）。ただし90件中75件はクラウドのデータ基盤の性能比較という1つの分野に集中</td></tr><tr><th scope="row">Sprinklr の研究者（SIGIR 2026）</th><td>6つのAIモデル、2つの文書をくらべる実験を25万2,000回</td><td>引用の順番を最も左右したのは、質問との関連性と並び順。明記された価格と新しい日付も効いた。見た目の書式だけの変更はほとんど効かなかった</td></tr></tbody></table></div><p>出典：<a href="https://arxiv.org/abs/2311.09735">GEO の論文</a>、<a href="https://searchengineland.com/why-most-original-data-never-gets-cited-481676">Kevin Indig の記事</a>、<a href="https://arxiv.org/abs/2605.25517">What Gets Cited</a>。GEO は実験用の仕組みでの結果で、今のChatGPTやGoogleのAIモードでの数字ではありません。Indig の記事は質問の選び方を説明しておらず、記事に日付の記載もありません。</p>
+<p>3つから言えるのは、①数字・引用・出典を本文に書くと回答に使われやすい傾向がある、②一次調査が強いのは「比較の基準になる数字」を求める質問がある分野、③見た目を整えるより、質問に合った中身と新しい日付が大事、というところまでです。</p>
+<p>Googleも、役に立つコンテンツの自己評価の質問として「独自の情報・報道・調査・分析を提供しているか」を挙げています（<a href="https://developers.google.com/search/docs/fundamentals/creating-helpful-content?hl=ja">Google 検索セントラル</a>）。</p></section>
+<section class="qa"><h2>国内の担当者は一次情報をどう見ているか</h2><p>国内でも一次情報への注目は高まっています。PRIZMA の調査（2026年7月、426人）では、AIによる概要の対策で効果を実感した施策として「一次情報」が43.5%（外部への配信52.8%に次ぐ）でした（<a href="https://ascii.jp/elem/000/004/423/4423386/">ASCII.jp</a>）。別の調査（2026年8月、1,003人）では、実施している施策の1位が「一次情報」の46.9%でした（<a href="https://www.koukoku.jp/truemarketing/aio/20260929/">TRUE MARKETING</a>）。</p>
+<p>どちらもAI対策のサービスを売る会社の調査で、効果は回答者の自己申告です。「一次情報を出せば引用される」ことを示すデータではありません。</p></section>
+<section class="qa"><h2>小さな会社でも作れる独自データ5種類</h2><p>大きなアンケートを外注しなくても、ほかの会社が持っていないデータは手元にあります。</p><div class="table-wrap"><table><thead><tr><th scope="col">種類</th><th scope="col">例</th><th scope="col">注意</th></tr></thead><tbody><tr><th scope="row">自社の実績の集計</th><td>見積もり依頼の内訳、問い合わせの多い月、修理の故障箇所の割合</td><td>個人が特定されないように集計し、少ない件数のグループは出さない</td></tr><tr><th scope="row">価格・相場の記録</th><td>毎月の仕入れ値、地域の家賃の募集価格を1年記録</td><td>どこの何を、いつ記録したかを書く</td></tr><tr><th scope="row">測定・比較（ベンチマーク）</th><td>道具や機器を同じ条件で試した結果、サイトの表示速度の比較</td><td>条件と手順を書き、他社製品を扱うなら公平に</td></tr><tr><th scope="row">お客様へのアンケート</th><td>利用後アンケートの満足度、選んだ理由</td><td>対象が「利用した人」だけだと明記。No.1表示に使うなら後の「日本の決まり」の章を必ず確認</td></tr><tr><th scope="row">公開データの集計</th><td>官公庁の統計を地域・業種で集計し直す</td><td>元のデータの出典と取得日を書き、加工したことを明記</td></tr></tbody></table></div><p>Indig の分析で引用が集中したのは「性能を比べた結果」でした。自社の業種で「比べたいけれど数字がない」質問（例：〇〇の修理は何日かかる？）を探すと、テーマが決まりやすくなります。</p></section>
+<section class="qa"><h2>調査ページに書く10の項目</h2><p>プレスリリースは配信サービスに載りますが、数字の原本は自社サイトに置きます。リリースからは必ずこのページにリンクします。</p><div class="table-wrap"><table><thead><tr><th scope="col">項目</th><th scope="col">書き方</th><th scope="col">理由</th></tr></thead><tbody><tr><th scope="row">タイトル</th><td>何を・どこで・いつ・何件（例：〇〇市の見積もり依頼412件の集計、2026年10月）</td><td>質問と合うかを一目で判断できる</td></tr><tr><th scope="row">要点</th><td>1文に1つの数字。分母・時期・出典名を同じ文に入れる</td><td>その1文だけを引用されても意味が通る</td></tr><tr><th scope="row">調査概要</th><td>対象・抽出の方法・期間・方法・件数（n）</td><td>数字の重みを読者とAIが判断できる</td></tr><tr><th scope="row">設問・定義</th><td>質問文そのもの、「あり」とみなした条件</td><td>数字の意味がぶれない</td></tr><tr><th scope="row">結果の表</th><td>表は画像ではなく文字の表。分母を書く</td><td>AIも読者も読み取れる</td></tr><tr><th scope="row">限界</th><td>調べていないこと、偏りのありそうなところ</td><td>過大な引用を防ぐ</td></tr><tr><th scope="row">意見</th><td>「ここからは当社の意見です」と分ける</td><td>事実と解釈を混ぜない</td></tr><tr><th scope="row">引用・転載のルール</th><td>出典の書き方と、そのまま使える1文</td><td>引用する人の手間を減らす</td></tr><tr><th scope="row">データファイル</th><td>CSVなど。列の説明を付ける</td><td>裏付けを確かめられる</td></tr><tr><th scope="row">日付と更新履歴</th><td>公開日・集計日・直した内容</td><td>新しい日付は引用に効くという研究がある</td></tr></tbody></table></div><p>Nurevo の調査ページもこの形で作っています。たとえば<a href="/ja/guide/research-japan-web-agencies-ai-search-2026/">国内Web制作会社サイトの調査</a>は、対象2,756件・トップページに到達できた2,357件・2026年11月5日集計と調査概要に書き、限界・引用のルール・当社の意見を別の見出しに分けました。会社名は出さず、30件未満のグループの数字も出していません。</p></section>
+<section class="qa"><h2>日本の決まり：調査をNo.1表示や広告に使うとき</h2><p>調査の結果を「満足度No.1」のように広告で使うと、景品表示法の対象になります。消費者庁は2024年9月26日に「No.1表示に関する実態調査報告書」を公表しました（<a href="https://www.caa.go.jp/notice/entry/039459/">消費者庁</a>）。報道によると、広告368件・消費者1,000人へのWebアンケート・広告主15社への聞き取りをもとにしており、比べた相手の会社を知っていた広告主は15社中1社でした（<a href="https://ecnomikata.com/ecnews/44902/">ECのミカタ</a>）。</p>
+<p>長官の会見では、利用したかどうかを確かめずに満足度を聞いた調査が問題の例として挙げられ、調査会社に頼んだ場合でも責任は広告主にあること、根拠を消費者が確かめられるようにすることが求められました（<a href="https://www.caa.go.jp/notice/statement/arai/039582.html">会見要旨</a>）。2008年の公正取引委員会の報告書の考え方（客観的な調査にもとづくこと、結果を正確に引用すること）も引き続き使われます。</p>
+<p>日本マーケティング・リサーチ協会は2022年1月18日に、結果ありきの「No.1調査」への抗議状を出しました。報道では、設計を明かさない、回答者の偏り、上回った時点で調査を止める、部門を細かく分けて1位を作る、といった手口が挙げられています（<a href="https://www.j-cast.com/2022/02/03430291.html?p=all">J-CAST</a>）。</p><ol><li>調査ページには、No.1表示に使うかどうかにかかわらず、対象・比べた相手・期間・方法・件数を書く</li><li>利用者に聞いたのか、利用していない人の印象を聞いたのかを明記する</li><li>広告やリリースに数字を使うときは、調査ページへのリンク（またはQRコード）を付ける</li><li>お金を払って記事や順位を載せた場合は広告と明示する（2023年10月からのステルスマーケティング規制）</li></ol><p>この記事は法律の助言ではありません。広告に使う前に、必要に応じて専門家に確認してください。</p></section>
+<section class="qa"><h2>構造化データ：Dataset を使うか</h2><p>Google は、データセットを Dataset Search で見つけやすくするための構造化データ Dataset を説明しています。「データのある表やCSVファイル」もデータセットの例に入っています。必須は name と description（50〜5,000文字）で、creator・license・temporalCoverage・spatialCoverage・variableMeasured・distribution（ダウンロードのURLと形式）などが推奨です（<a href="https://developers.google.com/search/docs/appearance/structured-data/dataset?hl=ja">Google 検索セントラル</a>）。</p>
+<p>これは Dataset Search 向けのもので、AIの回答に使われると公表しているAIの会社はありません。ページに文字で調査概要と表を書くことが先で、Dataset はCSVを公開するときの追加と考えてください。ページに見えていない内容を構造化データだけに書くのは避けます。</p></section>
+<section class="qa"><h2>WordPressでの手順</h2><ol><li>固定ページで調査ページを作り、URLを /research-2026/ のような短い英字にします。要点・調査概要・結果・限界・意見・引用のルール・データ・更新履歴を見出しで分けます。</li><li>結果はテーブルブロックで文字の表にします。グラフを画像で入れる場合も、同じ数字の表を下に置きます。</li><li>CSVをメディアライブラリ（または自社サーバー）に置き、ページからリンクします。列の名前と意味を本文に書きます。フォームの入力やメールアドレスの登録をしないとデータが見られない形にすると、AIのクローラーも記者も中身を読めません。</li><li>プレスリリース・ブログ記事・会社概要から調査ページにリンクします。リリースの書き方は<a href="/ja/guide/agency-press-release-ai-search/">プレスリリースをAI検索向けに整える</a>にあります。</li><li>Nurevo AEO（無料のWordPressプラグイン）では、フィルター webmcp_canary_schema_graph の extra に足したノードは、SEOプラグインと併用していても外されません（下の例）。構造化データを出さない設定にしたページでは呼ばれません。0.9.1 からは SEO SIMPLE PACK・VK All in One Expansion Unit と一緒に使っても構造化データは重複しません。</li><li>Nurevo AEO の llms.txt は最近更新した公開済みのページと投稿を30件まで並べます。調査ページを長く更新しないと外れることがあるため、残したい場合はフィルター webmcp_canary_llms_txt_lines で行を足します（2つ目の例）。</li><li>入れたら、ページのソース（application/ld+json）と /llms.txt で、本文と同じ内容が出ているかを確かめます。<a href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgで入手</a></li></ol><pre class="code" dir="ltr"><code>// 調査ページ（スラッグ research-2026）にだけ Dataset を足す
+add_filter('webmcp_canary_schema_graph', function (array $bundle) {
+    if (!is_page('research-2026')) {
+        return $bundle;
+    }
+    $bundle['extra'][] = array(
+        '@type'            =&gt; 'Dataset',
+        'name'             =&gt; '（地域）の引っ越し見積もり 依頼内容の集計 2026年10月',
+        'description'      =&gt; '当社に2026年10月に届いた見積もり依頼412件を、間取り・移動距離・希望日で集計したデータ。対象・期間・集計方法と限界は本文に記載。',
+        'creator'          =&gt; array('@id' =&gt; $bundle['org_id']),
+        'license'          =&gt; 'https://creativecommons.org/licenses/by/4.0/',
+        'temporalCoverage' =&gt; '2026-10-01/2026-10-31',
+        'distribution'     =&gt; array(array(
+            '@type'          =&gt; 'DataDownload',
+            'encodingFormat' =&gt; 'text/csv',
+            'contentUrl'     =&gt; 'https://example.co.jp/wp-content/uploads/2026/11/research-2026.csv',
+        )),
+    );
+    return $bundle;
+});</code></pre></section>
+<section class="qa"><h2>llms.txt に調査ページを残す</h2><p>上の Dataset とは別に、調査ページへの入り口を llms.txt に固定する例です。</p><pre class="code" dir="ltr"><code>// 調査ページを、更新日にかかわらず llms.txt に載せる
+add_filter('webmcp_canary_llms_txt_lines', function (array $lines) {
+    $lines[] = '## 調査・データ';
+    $lines[] = '';
+    $lines[] = '- [引っ越し見積もり依頼の集計 2026年10月](https://example.co.jp/research-2026/): 412件の集計、方法・限界・CSVあり';
+    $lines[] = '';
+    return $lines;
+});</code></pre></section>
+<section class="qa"><h2>確かめ方</h2><ol><li>調査が答える質問（例：「（地域）の引っ越しはいつが安い？」）を ChatGPT・Perplexity・GoogleのAIモードに聞き、答えと出典のURLを日付付きで記録します。</li><li>出典に調査ページ・リリース・それを取り上げた記事のどれが出るか、数字が正しく引用されているかを見ます。数字が違っていたら、要点の1文をより明確に書き直します。</li><li>Googleアナリティクス4で、調査ページへのAIのサービスからの流入と、CSVのダウンロード数を見ます。被リンクや言及は Search Console のリンクのレポートや社名の検索で見ます。</li><li>AIの回答は日によって変わるため、同じ質問を毎月同じ日に聞きます。決めた質問のセットで記録する方法は<a href="/ja/guide/measure-ai-visibility/">AIでの登場率の測り方</a>にあります。</li><li>Nurevo AEO の無料のAIチェックは、接続したサイトに月1回、業種と地域から作った3つの質問を Perplexity に聞きます。継続して測る Pro（月14,800円〜）も現在は Perplexity で測っています（ChatGPTは設定され次第）。</li></ol></section>
+<section class="qa"><h2>公開前のチェックリスト</h2><ol><li>タイトルに、何を・どこで・いつ・何件かを入れた</li><li>要点の各文に、分母・時期・出典名を入れた</li><li>対象・抽出の方法・期間・方法・件数・設問を書いた</li><li>結果を画像だけでなく文字の表でも載せた</li><li>調べていないこと（限界）を書いた</li><li>事実と当社の意見を見出しで分けた</li><li>個人や取引先が特定されないように集計し、少ない件数は出していない</li><li>No.1表示や広告に使う場合、利用者に聞いたか・比べた相手を明記した</li><li>CSVと列の説明を、登録なしで見られるようにした</li><li>引用のルールと、そのまま使える1文を書いた</li></ol></section>
+<section class="qa"><h2>毎年続けると強くなる</h2><p>同じ方法で毎年（または毎月）集計すると、「前年からどう変わったか」という、ほかにない数字ができます。URLは年ごとに分け（/research-2026/、/research-2027/）、前年のページは消さずに残し、互いにリンクします。方法を変えたときは、比べられない点を限界に書きます。</p></section>
+    <section class="qa"><h2>よくある質問</h2><h3>独自調査のページを作れば、AIに引用されますか？</h3><p>必ずとは言えません。数字や出典を書いた文章は回答に使われやすいという研究はありますが、出典の選び方は公表されていません。対象・件数・方法・限界をそろえ、確かめられる形にすることが前提です。</p>
+<h3>回答者は何人いれば調査として出せますか？</h3><p>決まった基準はありません。件数そのものより、件数と対象を正直に書くことが大切です。少ない件数を細かく分けた数字は出さず、限界に書きます。</p>
+<h3>プレスリリースだけ出せば十分ですか？</h3><p>数字の原本は自社サイトに置くことをおすすめします。リリースの配信ページは変更や削除ができないことがあり、方法やデータを全部は載せられません。リリースから調査ページにリンクします。</p>
+<h3>調査結果をダウンロードするのにメール登録を必須にしてもいいですか？</h3><p>営業上の理由で登録を求めることはできますが、AIのクローラーや記者は登録の先を読めません。少なくとも要点・調査概要・主な表はページに文字で公開してください。</p>
+<h3>「満足度No.1」と書くための調査をしてもいいですか？</h3><p>景品表示法の対象になります。消費者庁は、利用したか確かめずに満足度を聞いた調査を問題の例に挙げ、責任は広告主にあるとしています。比べた相手・対象・方法を明記し、必要に応じて専門家に確認してください。</p>
+<h3>AIでデータを分析・文章化してもいいですか？</h3><p>使えますが、数字は元のデータで確かめ、AIをどう使ったかを調査概要に書くと読者が判断できます。Googleも、自動化やAIをどう使ったかの説明を勧めています。</p>
+<h3>Dataset の構造化データは必須ですか？</h3><p>必須ではありません。Google の Dataset Search 向けのもので、AIが使うと公表している会社はありません。CSVを公開するなら、本文と同じ内容で足すとよいでしょう。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、AIがあなたのサイトを読めるか確認</h2>
+    <p>登録不要の無料チェックで、構造化データ、llms.txt、AI検索のクローラーの許可の状態がわかります。WordPressなら、Nurevo AEOで不足分を無料で整えられます。</p>
+    <a class="btn primary lg" href="/check">AI対応を無料でチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgで無料で入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/agency-press-release-ai-search/">プレスリリースをAI検索に読まれる形に整える：本文の型・原本の置き方・制作会社の代行メニュー</a></li><li><a href="/ja/guide/media-coverage-page-ai-search/">メディア掲載ページの作り方：AI検索と読者に、第三者の報道を正しく見つけてもらう手順</a></li><li><a href="/ja/guide/blog-articles-ai-citations/">AIに引用される記事・ブログの書き方：公式情報で確かめた手順と、根拠のない「AI向けテクニック」の見分け方</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li><li><a href="/ja/guide/research-japan-web-agencies-ai-search-2026/">国内Web制作会社サイトのAI検索対応状況：2,357件を調査（2026年11月）</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/original-research-data-page-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">Google、Googleアナリティクス、Search Console、Dataset Search、ChatGPT、OpenAI、Perplexity、Gemini、Search Engine Land、Gauge、Fivetran、Sprinklr、PRIZMA、SEO SIMPLE PACK、VK All in One Expansion Unit、WordPress などの製品名・社名・媒体名は各社の商標または登録商標です。Nurevo はこれらの組織と提携していません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
