@@ -678,3 +678,12 @@
 3. 比較サイト・ポータルに載っている自社情報の直し方（PR #80 の「掲載情報・第三者」の章と重ならない、掲載先ごとの更新依頼の文例に絞る）【全業種】
 4. 画像・動画とAI検索：代替テキスト・キャプション・動画の文字起こしをAIに読ませる手順【全業種】
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
+| 2026-11-26 20時 | images-video-ai-search | 画像・動画とAI検索：代替テキスト・キャプション・動画の文字起こしをAIに読ませる手順（全業種。ai-crawlers-javascript-rendering〔最初のHTML。画像の文字は表の1行だけ〕・photo-studio-ai-search／on-location-photographer-ai-search〔作例の alt、業種別〕・blog-articles-ai-citations とは分け、画像の種類ごとの alt と本文・キャプション・自社サイトの動画の再生ページと要約・文字起こし・YouTube の説明欄とチャプター・VideoObject に絞る。上位記事11本〔Uravation 画像（2026-08-04、09-05更新）・Uravation 動画（07-19、09-05更新）・Ahrefs JA AIによる概要（02-01、07-10更新）・マーケドリブン YouTube AI対策（11-26）／Search Engine Land（BrightEdge、日付なし）・Texta・Wistia（01-23）・iPullRank（11-18更新）・VEED（OtterlyAI の紹介）・AltText.ai（06-15）・Digiday（09-23）。media-radar・SEL 462830 は取得失敗〕の抜け〔方法のない倍率の数字・YouTube と自社サイトが混在・料金表/メニュー/地図など画像の種類ごとの扱いなし・WordPress 手順は Uravation の一言だけ・確かめ方なし〕を埋めた。分かっていることの表6行〔Google 画像SEO（2026-03-02更新）：alt は最重要・画像認識とページ内容を合わせる・CSS背景は索引しない／Vercel・Writesonic〔::before 0/6〕／ChatGPT・Perplexity がページの画像を読むかは非公開／Google 動画SEO：video・embed・iframe・object、再生ページ／OtterlyAI 2026-03-02：Perplexity 38.7%・AIO 36.6%・AI Mode 19.6%・ChatGPT 4.4%〕、画像の種類8行の表、画像のほか5点、動画6手順〔VideoObject 必須 name・thumbnailUrl・uploadDate、他社プレーヤーでも推奨、Clip は全言語〕、OtterlyAI の表6行〔94%/5.7%・長さ・r=-0.03・r=0.31・1,000回未満 40.83%・時刻付きは Google だけ 73/27〕と著者の注意、YouTube チャプターの決まり〔00:00・3つ以上・10秒以上〕、WordPress 手順6点〔Nurevo はアイキャッチを WebPage/BlogPosting の image に、WooCommerce はメイン画像、VideoObject は出さないので webmcp_canary_schema_graph で足すコード、0.9.1 併用〕、確かめ方のコマンド、チェックリスト10、FAQ 7問）。2言語（ja・en） | 全業種 | content/daily-20261126-20 |
+メモ：2026-11-26 20時の回は、ChatGPT・Perplexity がページの画像を読み取るか（各社の説明に見当たらず）、Texta の「3.2倍・5.3倍」など方法のない倍率、BrightEdge の「200倍」（SEL 462830 が取得失敗）、サムネイルの最小サイズ（要約でしか読めず）、画像のファイルサイズの目安は書いていない。Google の動画の構造化データのページは後半が要約でしか読めなかったため、必須・推奨の項目名だけを使い（マーケドリブンの記述とも一致）、Clip の細かい条件（30秒以上など）は書いていない。今日は業種別が2本（教習所・仏壇店）出ていたため、候補1の遺品整理は見送り、全業種の候補4にした。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に images-video-ai-search を追加、ja/en のみ。次は agency-ai-search-manipulation-risks）
+次の候補：
+1. 遺品整理・不用品回収のAI検索対策（許可の区分・料金・買取との違い）【業種別】
+2. 制作会社向け：口コミへの返信の代行（返信の型、否定的な口コミ、業種別の注意）【制作会社向け】
+3. 比較サイト・ポータルに載っている自社情報の直し方（PR #80 と重ならない、掲載先ごとの更新依頼の文例に絞る）【全業種】
+4. ECの商品画像・商品動画とAIショッピング（chatgpt-shopping-product-feed と重ならない、商品ページの画像の扱いに絞る）【EC】
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
