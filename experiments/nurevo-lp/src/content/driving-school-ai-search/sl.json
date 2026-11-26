@@ -1,0 +1,245 @@
+{
+ "title": "Iskanje z UI za avtošole: odobritev, skupna cena, čas | Nurevo",
+ "description": "AEO za avtošole: navedite uradno odobritev, skupno ceno do izpita, kdaj so doplačila, vračila, koliko časa traja in kako se rezervirajo ure vožnje.",
+ "h1": "Iskanje z UI za avtošole: kako doseči, da UI pravilno prebere vašo odobritev, skupno ceno, doplačila in trajanje usposabljanja",
+ "lead": "Optimizacija za iskanje z UI (AEO) v avtošoli pomeni, da na lastnih straneh z besedilom odgovorite na vprašanja, ki jih kandidati in starši zastavijo UI pred vpisom: Ali je avtošola uradno odobrena? Koliko skupaj stane pridobitev vozniškega dovoljenja? Kdaj nastanejo doplačila? Koliko časa bo trajalo in ali je ure vožnje sploh mogoče rezervirati? Kaj se zgodi, če na pol poti odneham? Zapišite svoj status odobritve, skupno ceno za vsako kategorijo s tem, kaj je in kaj ni vključeno, ceno dodatnih ur vožnje in ponovnih izpitov, kaj krije morebitna garancija, kako se izračuna vračilo in realno trajanje. Nato iste podatke objavite v strukturiranih podatkih, llms.txt, Google Business Profile in na portalih za rezervacije.",
+ "intro": [
+  "Napisano 26. novembra 2026 (JST). Uradni primeri so iz Japonske, kjer smo 26. novembra 2026 preverili Nacionalno policijsko agencijo, dokumente dveh prefekturnih policij ali komisij za javno varnost in Nacionalni center za potrošniške zadeve. Pravila o vozniških dovoljenjih, odobritvi avtošol in varstvu potrošnikov se razlikujejo po državah in regijah, zato upoštevajte tista, ki veljajo za vas. Tipe schema.org smo isti dan preverili v schema-dts 2.1.0. Ta članek ni pravni nasvet.",
+  "Odgovori UI se spreminjajo iz dneva v dan, glede na to, kako je vprašanje zastavljeno, in glede na storitev. Tukaj opisani koraki naredijo vaše podatke berljive za UI in vam pomagajo preverjati odgovore. Ne zagotavljajo, da vas bo UI omenila ali da boste kjer koli uvrščeni. O parkiranju in mestih, kjer prevzamete kandidate, piše vodnik [kako napisati stran z navodili za pot in parkiranjem](/guide/access-directions-parking-ai-search)."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj kandidati in starši sprašujejo UI",
+   "paragraphs": [
+    "Vprašanja o avtošolah so dveh vrst: iskanje avtošole, ki je dovolj blizu za obiskovanje, in primerjava bolj oddaljenih avtošol zaradi intenzivnega tečaja ali tečaja z nastanitvijo. Oboje se konča enako: pri ceni, času in pogojih."
+   ],
+   "table": {
+    "head": [
+     "Vrsta vprašanja",
+     "Primer vprašanja za UI",
+     "Podatki, ki jih odgovor potrebuje"
+    ],
+    "rows": [
+     [
+      "Avtošola v bližini",
+      "»Avtošola v Springfieldu s prevzemom, avtomatski menjalnik«",
+      "Lokacija, območje prevzema, kategorije, ki jih poučujete"
+     ],
+     [
+      "Skupna cena",
+      "»Koliko skupaj stane Example Driving School?«",
+      "Skupna cena z davkom po kategoriji, starosti in obstoječem dovoljenju; kaj je vključeno"
+     ],
+     [
+      "Doplačila",
+      "»Koliko doplačam, če potrebujem več ur vožnje?«",
+      "Cena dodatne ure vožnje in ponovnega izpita; kaj krije garancija"
+     ],
+     [
+      "Čas in rezervacija",
+      "»Kako hitro lahko opravim izpit? Ali lahko poleti rezerviram ure vožnje?«",
+      "Najkrajši in običajni čas, obdobja največje zasedenosti, kako poteka rezervacija"
+     ],
+     [
+      "Intenzivni tečaj",
+      "»Dvotedenski intenzivni tečaj za vozniški izpit z nastanitvijo«",
+      "Nastanitev, obroki, prevoz, cena dodatnih noči, stroški odpovedi"
+     ],
+     [
+      "Izstop",
+      "»Ali dobim vračilo, če odneham?«",
+      "Kako izstopiti, kako se izračuna vračilo, kaj se ne vrača"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Česa najbolje uvrščeni članki ne povedo",
+   "paragraphs": [
+    "Prebrali smo 12 najbolje uvrščenih člankov v japonščini in angleščini. Preglednost cen in razlika med lokalnimi in intenzivnimi tečaji sta v nekaterih že obravnavani. Večini pa manjka naslednje:"
+   ],
+   "list": [
+    "Kaj uradna odobritev spremeni v odgovoru UI – z javnim virom",
+    "Opozorilo potrošniške agencije o rezervacijah, vračilih in doplačilih (Japonska, februar 2026)",
+    "Dejstvo, da schema.org nima tipa za avtošolo (nekateri angleški članki priporočajo tip DrivingSchool, ki ne obstaja)",
+    "Primer strukturiranih podatkov in koraki nastavitve v WordPressu",
+    "Kako opredeliti uspešnost na izpitih in druge številke, preden jih objavite",
+    "Način, kako preveriti, ali so odgovori UI o vas pravilni"
+   ]
+  },
+  {
+   "heading": "Najprej povejte, ali ste uradno odobreni",
+   "paragraphs": [
+    "Na Japonskem večina novih voznikov konča avtošolo, ki jo je določila prefekturna komisija za javno varnost. Po beli knjigi Nacionalne policijske agencije je bilo konec leta 2025 1.277 določenih avtošol, v letu 2025 pa je vozniški izpit opravilo 1.446.135 njihovih absolventov. Absolventi so oproščeni praktičnega izpita v izpitnem centru. [Bela knjiga Nacionalne policijske agencije 2026, 5. poglavje (v japonščini)](https://www.npa.go.jp/hakusyo/r08/honbun/html/cc5531000.html)",
+    "Zaključek avtošole, ki ni določena, ne oprosti praktičnega izpita niti obveznega tečaja za nove voznike. [Prefekturna policija Ibaraki (v japonščini)](https://www.pref.ibaraki.jp/kenkei/a03_license/school/about.html). Japonski Nacionalni center za potrošniške zadeve opozarja tudi, da se določene in nedoločene avtošole razlikujejo po tem, ali zanje veljajo pravila o roku za dokončanje tečaja in številu učnih ur. [Nacionalni center za potrošniške zadeve, 19. februar 2026 (v japonščini)](https://www.kokusen.go.jp/mimamori/kmj_mailmag/kmj-support230.html)",
+    "Kjer koli delujete, je odgovor na vprašanje »ali zaključek tečaja v tej avtošoli nadomesti del uradnega izpita?« odvisen od statusa odobritve ali registracije. Ta status zapišite kot besedilo na domači strani in strani »O nas«, z imenom organa in kategorijami, na katere se nanaša. Če je le v logotipu ali na sliki potrdila, ga UI morda ne bo prebrala. Tečaje zunaj odobrenega programa (na primer osvežitvene ure za voznike z dovoljenjem) jasno ločite."
+   ]
+  },
+  {
+   "heading": "Navedite ceno celotnega izpita in pogoje za doplačila",
+   "paragraphs": [
+    "Februarja 2026 je japonski Nacionalni center za potrošniške zadeve opisal pritožbe kandidatov, ki niso mogli rezervirati praktičnih ur vožnje in so po odpovedi dobili majhna vračila. Svetoval je, naj se preveri, koliko časa traja tečaj, kako preprosto je rezervirati ure vožnje, ali so doplačila in kakšni so pogoji odpovedi. [Nacionalni center za potrošniške zadeve (v japonščini)](https://www.kokusen.go.jp/mimamori/kmj_mailmag/kmj-support230.html). Prav to ljudje sprašujejo UI. Če je vaš cenik le v PDF-ju ali na sliki ali piše samo »pokličite nas«, lahko UI odgovori po starem vnosu na portalu ali ugiba.",
+    "Cene za potrošnike navajajte z davkom, kot zahtevajo lokalni predpisi. Na Japonskem morajo cene, ki se vnaprej prikazujejo potrošnikom, vključevati potrošniški davek. [Nacionalna davčna agencija, št. 6902 (v japonščini)](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm)"
+   ],
+   "table": {
+    "head": [
+     "Postavka",
+     "Kaj zapisati",
+     "Primer besedila"
+    ],
+    "rows": [
+     [
+      "Skupaj",
+      "Skupna cena z davkom po kategoriji, avtomatskem/ročnem menjalniku, obstoječem dovoljenju in starosti",
+      "»Osebni avto, avtomatski menjalnik, brez dovoljenja: skupaj $000 z davkom«"
+     ],
+     [
+      "Vključeno",
+      "Vpisnina, gradiva, obvezne ure, izpiti, potrdila",
+      "»Vključuje interni izpit in potrdilo o zaključku tečaja«"
+     ],
+     [
+      "Ni vključeno",
+      "Pristojbine, plačane organu za izdajo dovoljenj, dodatne ure vožnje",
+      "»Upravne pristojbine niso vključene«"
+     ],
+     [
+      "Doplačila",
+      "Cena dodatne praktične ure, ponovnega izpita in dopolnilne ure",
+      "»Dodatne praktične ure stanejo $00 vsaka«"
+     ],
+     [
+      "Garancija",
+      "Kaj postane brezplačno, kolikokrat in do kdaj",
+      "»Dodatne ure in ponovni izpiti brezplačno do zaključka; ne velja po roku za dokončanje tečaja«"
+     ],
+     [
+      "Popusti",
+      "Pogoji za dijaške in študentske, skupinske in sezonske popuste ter ali se seštevajo",
+      "»Študentski popust zahteva potrdilo o vpisu; ni ga mogoče kombinirati«"
+     ],
+     [
+      "Izstop in vračila",
+      "Postopek, izračun vračila, kaj se ne vrača",
+      "»Neopravljene ure vrnemo; vpisnine ne vračamo«"
+     ]
+    ]
+   },
+   "after": [
+    "Vsako »0« zamenjajte s svojimi zneski. Tržnih cen nismo navedli: močno se razlikujejo glede na območje, sezono in kategorijo, javnih statistik, s katerimi bi jih lahko primerjali, pa nismo našli."
+   ]
+  },
+  {
+   "heading": "Bodite pošteni glede trajanja in razpoložljivosti ur vožnje",
+   "paragraphs": [
+    "Če napišete samo »izpit že v X dneh«, bo UI to številko ponavljala kot običajni čas. Najkrajši in običajni čas navedite ločeno (na primer lansko povprečje ali razpon, v katerem je končala večina kandidatov) in povejte, če je med šolskimi počitnicami ure vožnje težje rezervirati. Objavljajte le številke iz lastnih evidenc, z obdobjem, na katero se nanašajo.",
+    "Zapišite, kako se rezervirajo praktične ure vožnje (splet, aplikacija ali recepcija), koliko ur lahko kandidat opravi na dan, rok za odpoved ure in urnik prevzemov. Na Japonskem ima teoretični del standardnega tečaja za osebni avto 10 ur v prvi fazi in 16 v drugi (merila za določitev avtošol Komisije za javno varnost prefekture Kjoto, priloga 1). [Prefektura Kjoto (PDF, v japonščini)](https://www.pref.kyoto.jp/fukei/kotu/koki_k_t/shinsa/documents/12shinsa.pdf). Zahteve za praktične ure se pri avtomatskem in ročnem menjalniku razlikujejo, zato uporabite enake številke kot v svojem vodniku po tečaju.",
+    "Zapišite tudi rok za dokončanje tečaja (v kolikšnem času po vpisu morajo kandidati končati) in kako dolgo velja morebitno začasno dovoljenje ali potrdilo o zaključku – natanko tako, kot piše v vaših pogojih. Večina garancij velja le znotraj tega roka, zato ga postavite ob garancijo in UI bo verjetneje navedla tudi pogoje."
+   ]
+  },
+  {
+   "heading": "Kaj potrebuje stran intenzivnega tečaja ali tečaja z nastanitvijo",
+   "paragraphs": [
+    "Intenzivne tečaje ljudje primerjajo med regijami. Stran naj pove, kaj vključuje skupna cena: vrsto sobe, število obrokov, zgornjo mejo potnih stroškov. Navesti mora tudi ceno dodatnih noči, če kandidat potrebuje več časa, in ali jih krije garancija, datume začetka, stroške odpovedi (od koliko dni prej in koliko) ter kje se prijaviti.",
+    "Če se cena ali pogoji pri rezervaciji prek portala razlikujejo od rezervacije neposredno pri vas, to povejte na svojem spletnem mestu. Sicer lahko UI pomeša ceno s portala z vašo. Nekajkrat na leto preverite, ali se vnosi na portalih še ujemajo z vašim spletnim mestom."
+   ]
+  },
+  {
+   "heading": "Uspešnost na izpitih in druge številke opredelite, preden jih objavite",
+   "paragraphs": [
+    "Stavek, kot je »98-odstotna uspešnost«, UI zlahka navede, brez opredelitve pa ga ni mogoče primerjati. Povejte, za kateri izpit gre (teorija, interni končni izpit avtošole ali uradni izpit), kaj je imenovalec (kandidati, ki so pristopili k izpitu, ali vsi vpisani), obdobje in ali se štejejo le prvi poskusi.",
+    "Če javni organ objavlja podatke po posameznih avtošolah, jih lahko navedete. Prefekturna policija Aiči na Japonskem na primer za vsako avtošolo objavlja, koliko absolventov je bilo v letu dni po pridobitvi standardnega dovoljenja udeleženih v prometni nesreči s poškodbami, in ustrezni delež. [Prefekturna policija Aiči (PDF, v japonščini)](https://www.pref.aichi.jp/police/menkyo/tetsuzuki/jinkou/images/R8hutuu.pdf). Če takšne podatke navajate, dodajte leto in vir in jih ne uporabljajte za blatenje drugih avtošol."
+   ]
+  },
+  {
+   "heading": "Strukturirani podatki: tipa za avtošolo ni",
+   "paragraphs": [
+    "Schema.org nima tipa za avtošole (preverjeno v schema-dts 2.1.0 26. novembra 2026). Podobno poimenovani [DrivingSchoolVehicleUsage](https://schema.org/DrivingSchoolVehicleUsage) je vrednost, ki opisuje avto, ki ga uporablja avtošola, ne pa tip za samo avtošolo. Podtipi [EducationalOrganization](https://schema.org/EducationalOrganization) so visoka šola ali univerza, osnovna, nižja srednja in srednja šola, vrtec ter šola, ta tip pa ne spada pod [LocalBusiness](https://schema.org/LocalBusiness).",
+    "Če želite UI in iskalnikom posredovati naslov, telefonsko številko in delovni čas, objavite avtošolo kot LocalBusiness in nanjo povežite vsak tečaj za vozniško dovoljenje kot Service z Offer. Ko tečaje vnesete v Nurevo AEO, je izpis takšen (cene so nadomestne):"
+   ],
+   "code": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"LocalBusiness\",\n      \"@id\": \"https://example.com/#business\",\n      \"name\": \"Example Driving School\",\n      \"description\": \"State-approved driving school for cars (automatic and manual) and motorcycles. Weekday and weekend lessons, teen and adult courses.\",\n      \"telephone\": \"+1-000-000-0000\",\n      \"url\": \"https://example.com/\",\n      \"address\": {\n        \"@type\": \"PostalAddress\",\n        \"streetAddress\": \"123 Example Street\",\n        \"addressLocality\": \"Springfield\",\n        \"addressRegion\": \"IL\",\n        \"postalCode\": \"62701\",\n        \"addressCountry\": \"US\"\n      },\n      \"openingHours\": \"Mo-Sa 08:00-19:00\"\n    },\n    {\n      \"@type\": \"Service\",\n      \"@id\": \"https://example.com/#nurevo-service-1\",\n      \"name\": \"Teen driver's ed package (automatic)\",\n      \"category\": \"Car licence\",\n      \"provider\": { \"@id\": \"https://example.com/#business\" },\n      \"description\": \"Total $000 including tax: classroom course, 6 in-car lessons of 60 minutes, use of a school car for the road test. Extra lessons $00 each. Licence and test fees paid to the state are not included.\",\n      \"url\": \"https://example.com/prices/\",\n      \"offers\": { \"@type\": \"Offer\", \"price\": \"000\", \"priceCurrency\": \"USD\" },\n      \"potentialAction\": {\n        \"@type\": \"ReserveAction\",\n        \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/enroll/\" },\n        \"result\": { \"@type\": \"Reservation\", \"name\": \"Teen driver's ed package (automatic)\" }\n      }\n    }\n  ]\n}",
+   "after": [
+    "Schema.org ima tudi tip [Course](https://schema.org/Course), ki ga Nurevo AEO ne objavlja. Ne glede na to, katere tipe uporabite, imejte strukturirane podatke za kopijo skupnih cen in pogojev s strani in jih ohranjajte enake besedilu. Google pravi, da za pojavljanje v njegovih funkcijah UI niso potrebni nobeni posebni strukturirani podatki. [Google: funkcije UI in vaše spletno mesto](https://developers.google.com/search/docs/appearance/ai-features)"
+   ]
+  },
+  {
+   "heading": "Nastavitev na spletnem mestu avtošole v WordPressu",
+   "list": [
+    "Namestite in aktivirajte Nurevo AEO (brezplačno) z [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/). Yoast SEO, Rank Math, All in One SEO in Slim SEO delujejo naprej. Od različice 0.9.1 deluje tudi skupaj s SEO SIMPLE PACK in VK All in One Expansion Unit brez podvojenih strukturiranih podatkov.",
+    "V čarovniku za nastavitev izberite »Other« (Drugo). Brez določenega tipa se podjetje objavi kot LocalBusiness, če je izpolnjen naslov, telefonska številka ali delovni čas.",
+    "Vnesite ime avtošole, naslov, telefon in uradne ure pisarne (vključno z dnevi zaprtja), v opis pa zapišite svoj status odobritve in kategorije, ki jih poučujete.",
+    "Vsak tečaj dodajte pod Storitve, enega na tečaj (do 20): ime s pogoji (»Osebni avto, avtomatski menjalnik, brez dovoljenja, 18+«), skupno ceno z davkom in valuto, kategorijo, URL cenika, URL za vpis in opis tega, kaj je vključeno, kaj ne in kakšna so doplačila. Polje za minute pustite prazno, saj tečaj ni ena sama ura. Vsak tečaj se objavi kot Service z Offer in ReserveAction ter dobi vrstico v llms.txt.",
+    "Garancijo, izstop in vračila, rok za dokončanje tečaja, način rezervacije, območje prevzema in stroške odpovedi intenzivnega tečaja vnesite v FAQ, na stran cenika ali vpisa pa postavite blok Nurevo FAQ (ali kratko kodo [nurevo_faq]). FAQPage se objavi le na strani, ki prikazuje vprašanja. Glejte [strani FAQ za iskanje z UI](/guide/faq-page-ai-search).",
+    "Cenik postavite v besedilo strani kot tabelo, ne le v PDF. Strani starih sezonskih akcij lahko iz llms.txt izključite na plošči Nurevo AEO v urejevalniku blokov.",
+    "Odprite /llms.txt in preverite, ali so navedene strani cenika, vpisa, intenzivnega tečaja, navodil za pot in FAQ. Na zaslonu Ocena AEO zaženite diagnozo in dopolnite, kar manjka."
+   ],
+   "after": [
+    "Ob vtičniku SEO Nurevo AEO ne izpiše drugega grafa; grafu vtičnika SEO doda le manjkajoči naslov, telefon, delovni čas, storitve in FAQ. Na spletnem mestu, ki ni v WordPressu, so preverjanja enaka: vnesite URL v [brezplačno preverjanje](/check), brez registracije, in si oglejte strukturirane podatke, llms.txt in dostop pajkov UI."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Status odobritve in kategorije, na katere se nanaša, so zapisani kot besedilo na domači strani in strani »O nas«.",
+    "V besedilu strani je tabela skupnih cen z davkom po kategoriji, avtomatskem/ročnem menjalniku, obstoječem dovoljenju in starosti.",
+    "Zapisano je, kaj skupna cena vključuje in česa ne (na primer pristojbin, plačanih organu).",
+    "Zapisani so cena dodatnih ur in ponovnih izpitov ter obseg, rok in izjeme garancije.",
+    "Zapisani so postopek izstopa, izračun vračil in kaj se ne vrača.",
+    "Najkrajši in običajni čas sta navedena ločeno, skupaj s tem, kako poteka rezervacija v obdobjih največje zasedenosti.",
+    "Zapisani so rok za dokončanje tečaja, način rezervacije, rok za odpoved ure ter območje in časi prevzema.",
+    "Stran intenzivnega tečaja zajema nastanitev, obroke, prevoz, dodatne noči, stroške odpovedi in datume začetka.",
+    "Uspešnost na izpitih in druge številke imajo naveden izpit, imenovalec, obdobje in vir.",
+    "Google Business Profile in vnosi na portalih kažejo enake cene in delovni čas kot vaše spletno mesto."
+   ]
+  },
+  {
+   "heading": "Kako preveriti, ali vas UI omenja in ali ima prav",
+   "paragraphs": [
+    "Ko so strani urejene, vprašajte UI tisto, kar bi vprašal bodoči kandidat. Preverite, ali se vaše ime pojavi pri vprašanjih, kot sta »avtošola v Springfieldu s prevzemom« ali »dvotedenski intenzivni tečaj, avtomatski menjalnik«. Nato vprašajte z imenom svoje avtošole: »Koliko znaša skupna cena?«, »Ali so doplačila?«, »Ali je uradno odobrena?«, »Ali dobim vračilo, če odneham?« in odgovore primerjajte s svojim spletnim mestom. Bodite pozorni na stare cene ali akcije, ki so se že končale.",
+    "Odgovori UI so vsakič drugačni, zato ista vprašanja zastavljajte v presledkih in vodite evidenco. Paketa Free in Standard v Nurevo AEO enkrat na mesec Perplexityju zastavita tri vprašanja, sestavljena iz vaše dejavnosti in območja (brez imena podjetja), in zabeležita, ali se je pojavilo vaše ime ali spletno mesto. Paket Pro (od USD 99 na mesec) doda merjenje vidnosti v UI v različici beta, s primerjavo s konkurenco in trendi (trenutno v Perplexityju). Oba pregledujeta vzorec odgovorov, ne vseh odgovorov. Glejte [kako meriti vidnost v UI](/guide/measure-ai-visibility)."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Kje naj avtošola začne z iskanjem z UI?",
+   "a": "Začnite tako, da zapišete svoj status odobritve in besedilno tabelo skupnih cen z davkom za vsako kategorijo, s tem, kaj je vključeno in kdaj nastanejo doplačila. Nato dodajte garancijo, izstop in vračila ter trajanje in iste podatke ohranjajte v strukturiranih podatkih, llms.txt, Google Business Profile in na portalih."
+  },
+  {
+   "q": "Ali zadošča cenik v PDF-ju?",
+   "a": "PDF lahko obdržite, vendar cene postavite tudi v besedilo strani kot tabelo. UI lahko številke v PDF-jih in slikah preskoči ali napačno prebere in potem odgovori po starem vnosu na portalu ali ugiba."
+  },
+  {
+   "q": "Ali mi oglaševanje »izpit v X dneh« pomaga do priporočil?",
+   "a": "Ni uradne izjave, da bi krajše trajanje pripomoglo k priporočilu avtošole. Če navedete le najkrajši čas, ga lahko UI predstavi kot običajnega, razkorak z resničnostjo pa lahko vodi v pritožbe. Najkrajši in običajni čas navedite ločeno."
+  },
+  {
+   "q": "Ali naj uporabim tip schema DrivingSchool?",
+   "a": "Schema.org nima tipa DrivingSchool (preverjeno v schema-dts 2.1.0, november 2026). Avtošolo objavite kot LocalBusiness, vsak tečaj za vozniško dovoljenje pa kot Service z Offer. DrivingSchoolVehicleUsage opisuje, kako se avto uporablja, ne avtošole."
+  },
+  {
+   "q": "Smo na portalih za rezervacije – ali moramo vseeno urediti svoje spletno mesto?",
+   "a": "Portali pomagajo, da vas najdejo ljudje, ki primerjajo avtošole, vendar lahko UI bere tako portal kot vaše spletno mesto. Če so skupne cene, pogoji in način prijave na vašem spletnem mestu, vnosi na portalih pa se z njim ujemajo, UI redkeje daje nasprotujoče si odgovore."
+  },
+  {
+   "q": "Ali je Nurevo AEO brezplačen?",
+   "a": "Da. Strukturirani podatki za vašo dejavnost, kontaktni podatki, delovni čas, storitve in FAQ, llms.txt, nastavitve pajkov UI, Ocena AEO in brezplačno mesečno preverjanje v UI so v paketu Free. Plačljivi paketi dodajo vedno posodobljena pravila (Standard, USD 20 na mesec) in merjenje vidnosti v UI v različici beta (Pro, od USD 99 na mesec). [Nurevo AEO na WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "Ali to zagotavlja, da nas bo ChatGPT priporočil?",
+   "a": "Ne. Odgovori UI se spreminjajo in nobeno orodje ali metoda ne more zagotoviti pojavljanja ali uvrstitve. Lahko pa svojo odobritev, skupne cene, doplačila, trajanje in pogoje vračil objavite v obliki, ki jo UI lahko prebere, in sproti preverjate, ali se pojavljate in ali so odgovori pravilni."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Najprej preverite, kako UI bere spletno mesto vaše avtošole",
+  "body": "Brezplačno preverjanje ne zahteva registracije: vnesite URL in si oglejte stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. V WordPressu brezplačni vtičnik Nurevo AEO objavi vaše tečaje za vozniško dovoljenje in FAQ.",
+  "label": "Zaženite brezplačno preverjanje berljivosti za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Preizkusite brezplačni vtičnik za WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT je blagovna znamka družbe OpenAI, Perplexity družbe Perplexity AI in Google družbe Google LLC. Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit in imena organizacij, navedenih v tem vodniku, so blagovne znamke svojih lastnikov. Nurevo z njimi ni povezan. Ta članek ni pravni nasvet."
+}

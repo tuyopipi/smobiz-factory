@@ -1,0 +1,321 @@
+{
+ "title": "Stránka s příjezdem a parkováním, kterou AI čte správně | Nurevo",
+ "description": "Jak napsat stránku s příjezdem, aby AI správně odpovídala na „dá se tam parkovat?“ a „jak se tam dostanu?“: adresa, MHD, vchod, parkování, schema, WordPress.",
+ "h1": "Jak napsat stránku s příjezdem, přístupem a parkováním, aby ji AI vyhledávání četlo správně",
+ "lead": "Aby AI uváděla správné informace o cestě a parkování, napište na stránku s příjezdem jako HTML text – nejen do mapy nebo obrázku – tyto údaje: úplnou adresu (včetně čísla kanceláře nebo patra), nejbližší stanici či zastávku s výstupem a dobou chůze (a tím, jak jste ji změřili), orientační body až ke vchodu a parkování (zda je, kolik míst, kde a za kolik). Pak používejte jeden zápis adresy všude – na webu, v Google Business Profile i v katalozích firem – a stejnou adresu spolu se souřadnicemi vchodu dejte do strukturovaných dat. Pokud parkoviště nemáte, napište to: „Parkoviště nemáme; využijte prosím veřejné parkoviště v Example Street.“ AI pak má méně prostoru hádat.",
+ "intro": [
+  "Napsáno 21. listopadu 2026 (JST). Otevírací dobu popisuje [jak zveřejnit otevírací dobu a dny zavřeno](/guide/business-hours-holidays-ai-search) a rezervace [jak napsat stránku pro rezervace](/guide/booking-page-ai-search). Tento průvodce je pro každou firmu, kam lidé chodí osobně – obchody, ordinace, studia, kanceláře, penziony – a zaměřuje se na jedinou věc: aby AI správně řekla, jak se k vám dostat a zda se dá přijet autem.",
+  "Odpovědi AI se mění ze dne na den, podle formulace otázky i podle služby. Zde popsané kroky ztěžují AI chybné čtení vašich údajů o příjezdu a ukazují, jak to ověřit; nezaručují, že se v odpovědi objevíte ani že bude správná."
+ ],
+ "sections": [
+  {
+   "heading": "Stručně: pět důvodů, proč AI plete údaje o příjezdu",
+   "table": {
+    "head": [
+     "Příčina",
+     "Co se děje v odpovědích AI",
+     "Řešení"
+    ],
+    "rows": [
+     [
+      "Popis cesty je jen ve vložené mapě nebo na obrázku",
+      "AI neumí říct, ze které stanice jít ani kde zaparkovat, nebo opakuje staré údaje z jiného webu",
+      "Pod mapu napište textem stanici, výstup, dobu chůze, vchod a parkování"
+     ],
+     [
+      "Adresa je na webu, v Google Business Profile a v katalozích zapsaná jinak („kanc. 300“ vs „kancelář 300“, chybí patro)",
+      "AI vás považuje za dvě místa nebo vynechá číslo kanceláře či patro",
+      "Zvolte jeden zápis včetně kanceláře a patra a používejte ho ve všech záznamech"
+     ],
+     [
+      "O parkování není ani slovo",
+      "AI hádá „parkování k dispozici“ nebo „bez parkování“",
+      "Napište to, i když parkoviště nemáte, a uveďte, kde zaparkovat jinde"
+     ],
+     [
+      "Jen „blízko stanice“ nebo „snadno nás najdete“",
+      "AI neumí říct, která stanice ani který výstup",
+      "Uveďte stanici, linku, výstup a dobu chůze a také způsob měření"
+     ],
+     [
+      "Po stěhování nebo změně parkování jsou staré stránky či PDF stále online",
+      "AI uvádí starou adresu nebo parkoviště, které už nepoužíváte",
+      "Najděte staré stránky s příjezdem, letáky v PDF a články na blogu a opravte je nebo odstraňte"
+     ]
+    ]
+   },
+   "after": [
+    "Otázky, které návštěvníci AI skutečně kladou, mají podmínky: „Dá se u (firma) zaparkovat?“, „Jak daleko je to od (stanice)?“, „Dostanu se tam s kočárkem?“ AI odpovídá větami vytaženými ze stránky s příjezdem, takže cokoli, co není napsané jako text, se spíš doplní z jiných webů nebo odhadem."
+   ]
+  },
+  {
+   "heading": "Co pokrývají nejlepší články a co jim chybí",
+   "paragraphs": [
+    "Přečetli jsme přední japonské a anglické výsledky pro dotazy jako „directions page parking AI search“, „local business AI search optimization“ a jejich japonské ekvivalenty (21. listopadu 2026). Japonské články se shodují na uvedení stanice a doby chůze, informaci o parkování a jednotné adrese. Většina anglických končí u „udržujte jednotné NAP (název, adresa, telefon)“ a o příjezdu či parkování se sotva zmíní. Žádný neuvedl příklad strukturovaných dat pro údaje o příjezdu (geo, hasMap, amenityFeature), postup ve WordPressu ani způsob, jak výsledek ověřit."
+   ],
+   "table": {
+    "head": [
+     "Článek",
+     "Co dělá dobře",
+     "Co chybí"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Jednotné NAP v Google Business Profile a katalozích; příklad JSON-LD LocalBusiness s adresou",
+      "Chybí příjezd, parkování a bezbariérovost; chybí geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Ověření adresy nebo oblasti působnosti v profilu; sledování návštěv z AI v GA4 a měsíční namátková kontrola promptů",
+      "Chybí rady ke stránce s příjezdem; chybí schema kód"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "FAQ pro jednotlivé pobočky, např. zda má pobočka parkování zdarma",
+      "Chybí značkování, chybí stránka s příjezdem, převážně o produktu"
+     ],
+     [
+      "[Birdeye (aktualizováno 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Upozorňuje, že AI si špatně poradí se vzdáleností; jednotné záznamy v Google, Bing a Yelp",
+      "Chybí schema kód, chybí stránka s příjezdem"
+     ],
+     [
+      "[Uravation, místní firmy (japonsky, aktualizováno 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) a [nezávislé kavárny (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Stanice, pěší trasa, parkování a vchod na stránce pobočky; „3 minuty od stanice“ vyžaduje uvést výchozí bod",
+      "Vlastnosti vyjmenované bez kódu; chybí postup ve WordPressu"
+     ],
+     [
+      "[Issoh (japonsky, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Příklady variant adresy ke sjednocení; atributy parkování a bezbariérovosti",
+      "Chybí šablona stránky s příjezdem i příklad schema"
+     ]
+    ]
+   },
+   "after": [
+    "Tento průvodce odpovídá na všechny otázky, na které odpovídají tyto články, a přidává pravidlo pro dobu chůze, šablonu pro údaje o parkování, adresu a souřadnice zapsané tak, jak je ukazuje dokumentace Googlu, postup ve WordPressu s Nurevo a sadu otázek pro ověření AI."
+   ]
+  },
+  {
+   "heading": "Osm věcí, které patří na stránku s příjezdem",
+   "paragraphs": [
+    "Uveďte je na stránce pobočky nebo na samostatné stránce „Jak k nám“. Pokud vkládáte mapu, napište stejné údaje i textem: AI nemusí umět přečíst obsah mapy."
+   ],
+   "table": {
+    "head": [
+     "Co napsat",
+     "Příklad",
+     "Co se pokazí bez toho"
+    ],
+    "rows": [
+     [
+      "Úplná adresa s číslem kanceláře nebo patrem a PSČ",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Šíří se adresa bez čísla kanceláře a lidé bloudí u dveří"
+     ],
+     [
+      "Nejbližší stanice nebo zastávka, linka, výstup, doba chůze",
+      "Stanice Springfield (Blue Line), severní výstup, 4 minuty chůze (asi 300 m / 0,2 míle)",
+      "Návštěvníci jsou posláni na špatnou stanici nebo ke špatnému výstupu"
+     ],
+     [
+      "Trasa se dvěma až třemi orientačními body",
+      "Ze severního výstupu doprava, u kavárny na rohu doleva; jsme v budově s lékárnou v přízemí, před druhým semaforem",
+      "Lidé se dostanou do blízkosti a pak bloudí; víc telefonátů"
+     ],
+     [
+      "Vchod a patro",
+      "Vchod je v průchodu vlevo od budovy, ne hlavními dveřmi. Výtahem do 3. patra",
+      "Lidé najdou budovu, ale ne vchod"
+     ],
+     [
+      "Parkování",
+      "Dvě vyhrazená místa za budovou (č. 7 a 8). Když jsou obsazená, použijte veřejné parkoviště v Oak Street (parkovné neproplácíme)",
+      "AI hádá, zda máte parkování"
+     ],
+     [
+      "Kola a motocykly",
+      "Stojan na kola před budovou; parkování pro motocykly není",
+      "Lidé parkují, kde nemají"
+     ],
+     [
+      "Bezbariérovost a kočárky",
+      "Výtah je k dispozici. U vchodu je schod 2 cm; vozíčkáře prosíme, aby předem zavolali",
+      "Návštěvníci nevědí, zda se dostanou dovnitř"
+     ],
+     [
+      "Autobus, taxi a auto",
+      "Autobus 12, zastávka Oak Street, 1 minuta chůze. Řidiči vjíždějí z Main Street (jednosměrka)",
+      "Řidiči přijíždějí špatnou cestou"
+     ]
+    ]
+   },
+   "after": [
+    "Špatně: „Blízko stanice! Parkování k dispozici. Viz mapa.“ Dobře: „4 minuty chůze (asi 300 m) od severního výstupu stanice Springfield. 123 Example Street, Suite 300. Vchod je v průchodu vlevo od budovy. Dvě vyhrazená místa za budovou (7 a 8); když jsou obsazená, použijte veřejné parkoviště v Oak Street.“",
+    "Samotné „parkování k dispozici“ neříká, kolik je míst, kde, zda je zdarma ani zda jde o smluvní parkoviště. U smluvního parkoviště uveďte jeho název, adresu a podmínky slevy (například „hodina zdarma při nákupu nad 20 USD“). Když se podmínky změní, aktualizujte stránku ještě týž den."
+   ]
+  },
+  {
+   "heading": "Doba chůze: rozhodněte, jak ji měříte, a napište to",
+   "paragraphs": [
+    "Doby chůze se snadno uvádějí nejednotně. Japonská reklama na nemovitosti má pevné pravidlo: vzdálenost po cestě, 80 m za minutu, každý zbytek zaokrouhlený nahoru na celou minutu, bez započtení semaforů či stoupání (prováděcí pravidla japonského kodexu poctivé soutěže v reklamě na nemovitosti, vysvětlená ve [slovníčku Mitsubishi Jisho House Net](https://www.mec-h.com/words/detail?n=59), japonsky). Obchody a ordinace jím vázány nejsou a jiné země společné pravidlo nemají, ale když si zvolíte jedno pravidlo a budete se ho držet, váš web a záznamy v katalozích si nebudou odporovat."
+   ],
+   "list": [
+    "Určete výchozí a cílový bod („od turniketů severního výstupu ke vchodu do naší budovy“)",
+    "Změřte pěší vzdálenost po trase v mapové aplikaci a přepočtěte ji podle svého pravidla. Uvedená vzdálenost („asi 300 m“) umožní ověření AI i lidem",
+    "Na velkých stanicích s několika výstupy uveďte nejbližší výstup a přidejte jednu větu pro ty, kdo přicházejí od jiného",
+    "Zkontrolujte, zda záznamy v katalozích a popis v Google Business Profile neuvádějí jiné číslo, a sjednoťte je"
+   ],
+   "after": [
+    "„1 minutu od stanice“ pište, jen pokud jste opravdu u výstupu. Přehnaná doba chůze se vrátí v recenzích jako nesoulad."
+   ]
+  },
+  {
+   "heading": "Používejte všude jeden zápis adresy",
+   "paragraphs": [
+    "Obecně se má za to, že služby AI kombinují váš web, Google Business Profile, katalogy a profily na sociálních sítích, aby posoudily, zda popisují stejnou firmu; jak je párují, zveřejněno není. Když je adresa v jednotlivých záznamech zapsaná jinak, záznamy se nemusí propojit nebo se do odpovědí dostane adresa bez čísla kanceláře či patra. Rozhodněte těchto pět věcí a používejte je ve všech záznamech."
+   ],
+   "list": [
+    "Zkratky: „ulice“, nebo „ul.“, „kancelář“, nebo „kanc.“. Obojí je v pořádku; vyberte jedno",
+    "Znaky: obyčejné spojovníky, jednotné číslování, žádné ozdobné symboly",
+    "Název budovy, číslo kanceláře a patro. Pokud se budova přejmenuje, aktualizujte všechny záznamy týž den",
+    "Zda uvádět kraj nebo region (ve strukturovaných datech ho uvádějte vždy)",
+    "Pokud zveřejňujete adresu i v jiném jazyce, napište ji tak, aby bylo poznat, že jde o stejné místo (uveďte název budovy)"
+   ],
+   "after": [
+    "Po stěhování uveďte novou adresu na stránce s příjezdem s jednou větou typu „Přestěhovali jsme se (datum); naše předchozí adresa byla …“. Prosté smazání staré stránky nechá starou adresu na jiných webech bez vazby na váš web a AI ji může dál uvádět."
+   ]
+  },
+  {
+   "heading": "Nastavte atributy parkování a bezbariérovosti v Google Business Profile",
+   "paragraphs": [
+    "Google Business Profile má „atributy“, které se zobrazují ve Vyhledávání Google, Mapách Google a dalších službách Googlu. Některé atributy upravujete sami; jiné mohou být doplněny podle zákazníků, kteří vás navštíví. Atributy bezbariérovosti zahrnují bezbariérový vchod, toaletu, sezení, výtah a bezbariérové parkování – u posledního zvolte Ano, pokud máte parkovací místo vyhrazené pro osoby se zdravotním postižením. Google uvádí, že kontrola úpravy obvykle trvá asi 10 minut, ale může trvat až 30 dní ([Správa atributů firmy](https://support.google.com/business/answer/9049526?hl=en), ověřeno 21. listopadu 2026). Které atributy uvidíte, závisí na kategorii firmy.",
+    "Jak Google AI Overviews a režim AI využívají atributy profilu, zveřejněno není. Profil jsou ale informace zobrazované v Mapách a Vyhledávání Google, takže ať říká totéž co váš web. Podrobnosti, které atributy nevyjádří – počet míst, cenu, smluvní podmínky –, patří do textu stránky a do popisu profilu."
+   ]
+  },
+  {
+   "heading": "Strukturovaná data: adresa, souřadnice, mapa a vybavení",
+   "paragraphs": [
+    "V [dokumentaci strukturovaných dat LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) od Googlu (aktualizováno v září 2026) jsou name a address povinné a geo (zeměpisná šířka a délka) je doporučené. Příklady dělí adresu na PostalAddress streetAddress, addressLocality, addressRegion, postalCode a addressCountry a souřadnice musí mít přesnost alespoň na pět desetinných míst. Souřadnice si vezměte z mapové aplikace u vchodu: pro popis cesty jsou dveře, které lidé používají, užitečnější než střed budovy.",
+    "Dokumentace Googlu je nezmiňuje, ale schema.org má také [hasMap](https://schema.org/hasMap) (URL mapy místa), [amenityFeature](https://schema.org/amenityFeature) (vybavení zapsané jako dvojice name/value v [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)) a [publicAccess](https://schema.org/publicAccess) (zda je místo otevřené pro veřejnost). Při našem průzkumu jsme nenašli oficiální vyjádření, že Google nebo jiná služba AI hasMap či amenityFeature využívá. Jejich přidání neuškodí, ale berte je jako zopakování toho, co už říká text stránky."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Adresa, souřadnice a počet míst ve strukturovaných datech musí odpovídat textu stránky. Syntaxi ověřte v [testu výsledků s bohatými prvky](https://search.google.com/test/rich-results) nebo v [Schema Markup Validator](https://validator.schema.org/). Máte-li více poboček, dejte každé vlastní stránku s vlastní adresou a souřadnicemi (viz [AI vyhledávání pro firmy s více pobočkami](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "Postup ve WordPressu (s Nurevo AIO)",
+   "paragraphs": [
+    "V [Nurevo AIO (zdarma, dříve zobrazováno jako Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) se to, co napíšete do pole Adresa, zveřejní přesně tak, jak je napsáno, ve strukturovaných datech firmy (PostalAddress streetAddress) a na řádku „Address“ v llms.txt. Postupujte v tomto pořadí."
+   ],
+   "list": [
+    "Nejdřív opravte text stránky s příjezdem podle osmi bodů výše (text stránky před strukturovanými daty)",
+    "V poli Adresa použijte stejný zápis jako na stránce a v Google Business Profile, včetně kanceláře, patra a PSČ. Pole se zveřejňuje jako jeden řetězec, nedělí se na části",
+    "Nurevo souřadnice z adresy neodhaduje. Chcete-li je zveřejnit, přidejte geo pomocí vývojářského filtru webmcp_canary_business_node (kód níže); hasMap a amenityFeature lze přidat stejně",
+    "Pokud váš SEO plugin nebo šablona už zveřejňuje název firmy, adresu, telefon a otevírací dobu, Nurevo druhý uzel firmy nezveřejňuje, takže filtr nemá žádný účinek; souřadnice pak přidejte v tom pluginu nebo šabloně. Nurevo neduplikuje Yoast SEO, Rank Math, All in One SEO ani Slim SEO a od verze 0.9.1 funguje i vedle SEO SIMPLE PACK a VK All in One Expansion Unit",
+    "Položka „Pokrytí klíčových informací“ v diagnostice pluginu ukazuje, zda jsou zveřejněny název, adresa, telefon, otevírací doba, poloha a URL",
+    "Weby nastavené jako e-shop nebo B2B web nezveřejňují otevírací dobu ani polohu (geo), protože nemají místo k návštěvě"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Přidejte ho do functions.php podřízené šablony nebo do pluginu pro úryvky kódu a pak ve zdrojovém kódu stránky nebo v testu výsledků s bohatými prvky ověřte, že se geo u vaší firmy objevuje. Když se přestěhujete nebo se změní parkování, aktualizujte pole, filtr i text stránky týž den.",
+    "Agentury, které spravují weby klientů, mohou z „aktualizace všech záznamů týž den“ udělat standardní úkol při stěhování, změnách smluv na parkování a přejmenování budov. Nurevo má [partnerský program](https://nurevo.jp/partner/) pro agentury, které nabízejí měsíční podporu."
+   ]
+  },
+  {
+   "heading": "Jak ověřit výsledek po změnách",
+   "paragraphs": [
+    "Položte AI stejné otázky v den změn a znovu po dvou až čtyřech týdnech a odpovědi si zaznamenejte. Žádná služba AI nezveřejňuje, jak dlouho aktualizace trvají."
+   ],
+   "table": {
+    "head": [
+     "Otázka",
+     "Správná odpověď"
+    ],
+    "rows": [
+     [
+      "„Jaká je adresa (firma)?“",
+      "Vaše aktuální adresa s číslem kanceláře nebo patrem, ne ta stará"
+     ],
+     [
+      "„Jak se dostanu do (firma) z (stanice)?“",
+      "Výstup a doba chůze uvedené na vašem webu"
+     ],
+     [
+      "„Dá se u (firma) zaparkovat?“",
+      "Zda parkování máte, kolik míst a smluvní podmínky – stejně jako na webu"
+     ],
+     [
+      "„Je (firma) bezbariérová?“",
+      "Totéž co na vašem webu a v Google Business Profile"
+     ],
+     [
+      "„(Typ firmy) s parkováním v (oblast)“",
+      "Zda se objeví vaše jméno a zda je citována vaše stránka s příjezdem"
+     ]
+    ]
+   },
+   "after": [
+    "Zaznamenejte datum, službu AI, otázku, odpověď a citované URL. Pokud je zdrojem katalog nebo starý leták, opravte ho. V tarifech Free a Standard služba Nurevo jednou měsíčně položí Perplexity tři otázky bez značky sestavené z typu firmy a oblasti a ukáže, zda se objevilo vaše jméno a zda byl citován váš web. Pro (beta, od USD 99 měsíčně) sleduje až 20 otázek v Perplexity (v ChatGPT, jakmile bude nastaven). Otázky na parkování a příjezd zaznamenávejte ručně. Viz [jak měřit viditelnost v AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolní seznam před zveřejněním",
+   "list": [
+    "Adresa s číslem kanceláře nebo patrem a PSČ je napsaná jako HTML text",
+    "Je uvedena nejbližší stanice nebo zastávka, linka, výstup, doba chůze a vzdálenost a je určeno, odkud a kam jste měřili",
+    "Je popsaná trasa se dvěma až třemi orientačními body a také vchod a patro",
+    "Je popsáno parkování – zda je, počet míst, umístění, cena, smluvní podmínky; pokud není, je to napsané",
+    "Jsou pokryta kola, motocykly, bezbariérovost a kočárky",
+    "Adresa je zapsaná stejně na webu, v Google Business Profile, katalozích a profilech na sociálních sítích",
+    "Atributy Google Business Profile (parkování, bezbariérovost) odpovídají webu",
+    "Adresa a souřadnice (alespoň pět desetinných míst) ve strukturovaných datech odpovídají textu stránky",
+    "Žádná stránka, PDF ani článek na blogu už neuvádí starou adresu ani parkoviště, které nepoužíváte",
+    "Vybrali jste otázky a zaznamenali odpovědi AI v den změn a po dvou až čtyřech týdnech"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Vkládáme mapu. Musíme cestu popsat i textem?",
+   "a": "Ano. Zda AI umí přečíst vloženou mapu nebo obrázek s popisem cesty, se liší podle služby a zveřejněno to není. Berte mapu jako pomoc pro lidi a stanici, výstup, dobu chůze, vchod a parkování napište do textu stránky."
+  },
+  {
+   "q": "Parkoviště nemáme. Máme to prostě vynechat?",
+   "a": "Bezpečnější je napsat „Parkoviště nemáme“. Pokud nenapíšete nic, AI může odpovědět podle jiných webů nebo hádat. Doplňte, kde se dá zaparkovat poblíž a jak přijet veřejnou dopravou."
+  },
+  {
+   "q": "Jak máme počítat dobu chůze?",
+   "a": "Univerzální pravidlo neexistuje. Japonský standard reklamy na nemovitosti (vzdálenost po cestě, 80 m za minutu, zaokrouhlení nahoru) je jedna jasná možnost. Ať zvolíte cokoli, napište, odkud a kam jste měřili, a přidejte vzdálenost."
+  },
+  {
+   "q": "Potřebujeme souřadnice ve strukturovaných datech, abychom se objevili v odpovědích AI?",
+   "a": "Ne nutně. V dokumentaci Googlu je geo doporučené a povinné jsou jen name a address. Zda ChatGPT nebo Perplexity souřadnice využívají, zveřejněno není. Nejdřív opravte text stránky a zápis adresy, pak přidejte souřadnice odečtené u vchodu."
+  },
+  {
+   "q": "Máme přidat hasMap nebo amenityFeature?",
+   "a": "Můžete, ale v dokumentaci Googlu nejsou a nenašli jsme oficiální vyjádření, že je některá služba AI využívá. Přidejte je jako zopakování stránky s mapou a údajů o parkování, které už na stránce máte."
+  },
+  {
+   "q": "Přestěhovali jsme se a AI stále uvádí naši starou adresu.",
+   "a": "Aktualizujte web, Google Business Profile, katalogy a profily na sociálních sítích týž den a ponechte na stránce s příjezdem jednu větu s datem stěhování a předchozí adresou. Zkontrolujte URL, které AI cituje; pokud jde o staré stránky nebo PDF, opravte je nebo odstraňte. Doba aktualizace zveřejněná není, takže se zeptejte znovu za několik týdnů."
+  },
+  {
+   "q": "Mohu do pole Adresa v Nurevo zadat číslo kanceláře a patro?",
+   "a": "Ano, prosím zadejte je. Pole se zveřejňuje přesně tak, jak je napsáno, ve streetAddress a na řádku „Address“ v llms.txt. Použijte stejný zápis jako na stránce a v Google Business Profile."
+  }
+ ],
+ "relatedHeading": "Související průvodci",
+ "cta": {
+  "heading": "Zjistěte, zda AI dokáže přečíst váš web",
+  "body": "Bezplatná kontrola nevyžaduje registraci: zadejte URL a uvidíte přístup AI crawlerů, strukturovaná data a llms.txt. Ve WordPressu bezplatný plugin zveřejní vaši adresu, telefon a otevírací dobu ve strukturovaných datech a v llms.txt, aniž by duplikoval výstup vašeho SEO pluginu.",
+  "label": "Zkontrolujte připravenost na AI zdarma",
+  "href": "/check",
+  "secondary": {
+   "label": "Vyzkoušejte bezplatný plugin pro WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Vyhledávání Google, Mapy Google a Gemini jsou ochranné známky společnosti Google LLC, ChatGPT společnosti OpenAI a Perplexity společnosti Perplexity AI. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit a názvy společností citovaných v tomto průvodci jsou ochranné známky nebo registrované ochranné známky příslušných vlastníků. Nurevo není s žádnou z těchto společností spojeno ani jimi podporováno."
+}

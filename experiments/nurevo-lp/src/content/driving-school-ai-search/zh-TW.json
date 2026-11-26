@@ -1,0 +1,245 @@
+{
+ "title": "駕訓班如何因應 AI 搜尋：資格、總費用與所需時間 | Nurevo",
+ "description": "駕訓班的 AEO：寫清官方資格、考到駕照的總費用、何時產生追加費用、退費、所需時間以及如何預約練車。",
+ "h1": "駕訓班的 AI 搜尋對策：讓 AI 正確讀懂你的資格、總費用、追加費用與所需時間",
+ "lead": "駕訓班的 AI 搜尋最佳化（AEO），說到底就是在自己的網頁上用文字回答學員與家長報名前會問 AI 的問題：是否經官方認可？考到駕照總共要多少錢？什麼情況會產生追加費用？需要多久，練車真的約得到嗎？中途退訓怎麼辦？請寫明你的資格、各類駕照的總費用與包含、不包含的項目、加堂與補考的價格、保障涵蓋的範圍、退費的計算方式與實際所需時間。接著在結構化資料、llms.txt、Google 商家檔案與各報名平台上公布同樣的資訊。",
+ "intro": [
+  "撰寫於 2026 年 11 月 26 日（日本時間）。本文的官方範例來自日本：我們在 2026 年 11 月 26 日查閱了日本警察廳、兩個都道府縣警察或公安委員會的資料，以及日本國民生活中心的資料。駕照、資格認可與消費者保護規定因國家與地區而異，請以適用於你的規定為準。schema.org 類型於同日在 schema-dts 2.1.0 中核對。本文不構成法律建議。",
+  "AI 的回答會因日期、提問措辭與服務而改變。這裡的步驟能讓 AI 讀懂你的資訊，並協助你檢查回答；但不保證 AI 一定會提到你，也不保證任何排名。停車與接送地點請見[如何撰寫交通與停車頁面](/guide/access-directions-parking-ai-search)。"
+ ],
+ "sections": [
+  {
+   "heading": "學員與家長會問 AI 什麼",
+   "paragraphs": [
+    "關於駕訓班的提問分成兩類：尋找離家近、方便上課的駕訓班，以及比較外地駕訓班的密集班或住宿班。兩者最後都落在同一處：價格、時間與條件。"
+   ],
+   "table": {
+    "head": [
+     "問題類型",
+     "向 AI 提問的範例",
+     "回答需要的資訊"
+    ],
+    "rows": [
+     [
+      "附近的駕訓班",
+      "「Springfield 有接送的自排駕訓班」",
+      "地點、接送範圍、可考的駕照類型"
+     ],
+     [
+      "總費用",
+      "「Example Driving School 總共要多少錢？」",
+      "依駕照類型、年齡與已持有駕照區分的含稅總價；包含哪些項目"
+     ],
+     [
+      "追加費用",
+      "「如果需要加堂，要多付多少？」",
+      "每堂加堂課與每次補考的價格；保障涵蓋的範圍"
+     ],
+     [
+      "時間與預約",
+      "「最快多久能考到？暑假約得到練車嗎？」",
+      "最短與一般所需時間、旺季、預約方式"
+     ],
+     [
+      "密集班",
+      "「兩週密集、含住宿的駕訓班」",
+      "住宿、餐食、交通、延長住宿費用、取消費"
+     ],
+     [
+      "退訓",
+      "「中途退訓能退錢嗎？」",
+      "退訓手續、退費計算方式、不退還的項目"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "排名靠前的文章漏掉了什麼",
+   "paragraphs": [
+    "我們閱讀了日文與英文搜尋結果中排名靠前的 12 篇文章。其中有些已經談到價格透明，以及在地駕訓班與密集班的差別。但大多數文章缺少以下內容："
+   ],
+   "list": [
+    "官方資格會如何改變 AI 的回答，並附公開來源",
+    "消費者機構對預約、退費與追加費用的提醒（日本，2026 年 2 月）",
+    "schema.org 沒有駕訓班類型這件事（部分英文文章推薦了並不存在的 DrivingSchool 類型）",
+    "結構化資料範例與 WordPress 設定步驟",
+    "公布合格率等數字前如何先定義清楚",
+    "檢查 AI 對你的回答是否正確的方法"
+   ]
+  },
+  {
+   "heading": "首先寫明是否經官方認可",
+   "paragraphs": [
+    "在日本，大多數新手駕駛人畢業於都道府縣公安委員會指定的駕訓班（指定自動車教習所）。根據日本警察廳白皮書，截至 2025 年底共有 1,277 所指定駕訓班，2025 年內有 1,446,135 名畢業生通過駕照考試。畢業生在駕照考場可免考技能考試。[日本警察廳 2026 年白皮書第 5 章（日文）](https://www.npa.go.jp/hakusyo/r08/honbun/html/cc5531000.html)",
+    "從非指定駕訓班畢業，不能免考技能考試，也不能免除取得駕照時的必修講習。[茨城縣警察（日文）](https://www.pref.ibaraki.jp/kenkei/a03_license/school/about.html)。日本國民生活中心也指出，指定與非指定駕訓班在是否有結訓期限與課時數規定上有所不同。[日本國民生活中心，2026 年 2 月 19 日（日文）](https://www.kokusen.go.jp/mimamori/kmj_mailmag/kmj-support230.html)",
+    "不論在哪個國家，「上完這間駕訓班的課程能否取代部分官方考試？」這個問題都取決於駕訓班的認可或登記狀態。請在首頁與「關於我們」頁面用文字寫明這個狀態，以及認可機關的名稱與涵蓋的駕照類型。如果只出現在標誌或證書圖片中，AI 可能讀不到。認可課程以外的課程（例如給已有駕照者的複習課）要明確區分開來。"
+   ]
+  },
+  {
+   "heading": "標出考到駕照的全部費用，以及產生追加費用的條件",
+   "paragraphs": [
+    "2026 年 2 月，日本國民生活中心介紹了一些申訴：學員約不到道路駕駛練習，取消後拿到的退款很少。該中心建議事先確認課程所需時間、練車是否容易預約、有無追加費用與解約條件。[日本國民生活中心（日文）](https://www.kokusen.go.jp/mimamori/kmj_mailmag/kmj-support230.html)。這些正是大家會問 AI 的問題。如果你的價目表只是 PDF 或圖片，或只寫著「請洽詢」，AI 可能會依報名平台上的舊資訊或猜測來回答。",
+    "請依當地規定，以含稅價向消費者標示價格。在日本，對消費者的事先價格標示必須包含消費稅。[日本國稅廳 No. 6902（日文）](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shohi/6902.htm)"
+   ],
+   "table": {
+    "head": [
+     "項目",
+     "要寫的內容",
+     "範例寫法"
+    ],
+    "rows": [
+     [
+      "總價",
+      "依駕照類型、自排/手排、已持有駕照與年齡區分的含稅總價",
+      "「小型車、自排、無駕照：含稅總價 $000」"
+     ],
+     [
+      "包含項目",
+      "報名費、教材、規定課時、考試、證書",
+      "「包含校內考試與結訓證書」"
+     ],
+     [
+      "不包含項目",
+      "繳給駕照主管機關的費用、加堂",
+      "「不含繳給政府的費用」"
+     ],
+     [
+      "追加費用",
+      "每堂加堂道路駕駛課、每次補考與補課的價格",
+      "「加堂道路駕駛課每堂 $00」"
+     ],
+     [
+      "保障",
+      "哪些項目免費、幾次、到何時為止",
+      "「結訓前加堂與補考免費；超過結訓期限後無效」"
+     ],
+     [
+      "折扣",
+      "學生、團體與季節折扣的條件，以及能否併用",
+      "「學生折扣需出示在學證明；不可與其他優惠併用」"
+     ],
+     [
+      "退訓與退費",
+      "手續、退費計算方式、不退還的項目",
+      "「未上的課時可退費；報名費不退」"
+     ]
+    ]
+   },
+   "after": [
+    "請把所有「0」換成你自己的數字。我們沒有提供市場行情：價格因地區、季節與駕照類型差異很大，而且我們找不到可供核對的公開統計資料。"
+   ]
+  },
+  {
+   "heading": "如實寫出所需時間與練車預約難易度",
+   "paragraphs": [
+    "如果只寫「最快 X 天考到」，AI 會把這個數字當成一般所需時間轉述。請分別寫出最短時間與一般所需時間（例如去年的平均值，或大多數學員所花時間的範圍），如果寒暑假期間練車比較難約，也請寫明。只公布來自你自己紀錄的數字，並註明統計期間。",
+    "寫明道路駕駛課的預約方式（網頁、App 或櫃檯）、學員每天最多可上幾堂課、取消課程的期限與接送車時刻表。在日本，普通汽車駕照課程的學科部分為第一階段 10 堂、第二階段 16 堂（京都府公安委員會指定基準，附表 1）。[京都府（PDF，日文）](https://www.pref.kyoto.jp/fukei/kotu/koki_k_t/shinsa/documents/12shinsa.pdf)。自排與手排的道路駕駛課時要求不同，請使用與你自己課程說明相同的數字。",
+    "另外，請完全依照你自己的條款，寫明結訓期限（報名後須在多久內結訓），以及學習駕照或結訓證書的有效期限。大多數保障只在期限內有效，因此把期限寫在保障旁邊，AI 比較可能連同條件一起回答。"
+   ]
+  },
+  {
+   "heading": "密集班或住宿班頁面需要什麼",
+   "paragraphs": [
+    "密集班會被跨地區比較。頁面應寫明總價包含什麼：房型、幾餐、交通費上限。也應寫出學員需要延長時的額外住宿費用與保障是否涵蓋、開課日期、取消費（從幾天前開始收、收多少）以及報名方式。",
+    "如果透過報名平台報名與直接向你報名的價格或條件不同，請在你自己的網站上寫明。否則 AI 可能把平台價格與你的價格混在一起。每年檢查幾次，確認平台上的資訊仍與你的網站一致。"
+   ]
+  },
+  {
+   "heading": "公布合格率等數字前先定義清楚",
+   "paragraphs": [
+    "「合格率 98%」這類說法很容易被 AI 引用，但沒有定義就無法比較。請寫明是哪一項考試（學科考試、校內結訓考試或官方考試）、分母（應考的學員或所有報名者）、統計期間，以及是否只計算第一次應考。",
+    "如果公部門公布了各駕訓班的數據，可以引用。例如日本愛知縣警察公布了各駕訓班畢業生在取得普通駕照後一年內發生傷亡事故的人數與比例。[愛知縣警察（PDF，日文）](https://www.pref.aichi.jp/police/menkyo/tetsuzuki/jinkou/images/R8hutuu.pdf)。引用這類數據時，請註明年份與來源，也不要拿來貶低其他駕訓班。"
+   ]
+  },
+  {
+   "heading": "結構化資料：沒有駕訓班類型",
+   "paragraphs": [
+    "schema.org 沒有駕訓班類型（2026 年 11 月 26 日在 schema-dts 2.1.0 中核對）。名稱相近的 [DrivingSchoolVehicleUsage](https://schema.org/DrivingSchoolVehicleUsage) 是描述駕訓班所用車輛的值，不是駕訓班本身的類型。[EducationalOrganization](https://schema.org/EducationalOrganization) 的子類型是學院或大學、小學、國中、高中、幼兒園與學校，而且它不屬於 [LocalBusiness](https://schema.org/LocalBusiness)。",
+    "要把地址、電話與營業時間提供給 AI 和搜尋引擎，請把駕訓班發布為 LocalBusiness，並把每個駕照課程以帶有 Offer 的 Service 連結到它。在 Nurevo AEO 中輸入課程後，輸出如下（價格為預留值）："
+   ],
+   "code": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"LocalBusiness\",\n      \"@id\": \"https://example.com/#business\",\n      \"name\": \"Example Driving School\",\n      \"description\": \"State-approved driving school for cars (automatic and manual) and motorcycles. Weekday and weekend lessons, teen and adult courses.\",\n      \"telephone\": \"+1-000-000-0000\",\n      \"url\": \"https://example.com/\",\n      \"address\": {\n        \"@type\": \"PostalAddress\",\n        \"streetAddress\": \"123 Example Street\",\n        \"addressLocality\": \"Springfield\",\n        \"addressRegion\": \"IL\",\n        \"postalCode\": \"62701\",\n        \"addressCountry\": \"US\"\n      },\n      \"openingHours\": \"Mo-Sa 08:00-19:00\"\n    },\n    {\n      \"@type\": \"Service\",\n      \"@id\": \"https://example.com/#nurevo-service-1\",\n      \"name\": \"Teen driver's ed package (automatic)\",\n      \"category\": \"Car licence\",\n      \"provider\": { \"@id\": \"https://example.com/#business\" },\n      \"description\": \"Total $000 including tax: classroom course, 6 in-car lessons of 60 minutes, use of a school car for the road test. Extra lessons $00 each. Licence and test fees paid to the state are not included.\",\n      \"url\": \"https://example.com/prices/\",\n      \"offers\": { \"@type\": \"Offer\", \"price\": \"000\", \"priceCurrency\": \"USD\" },\n      \"potentialAction\": {\n        \"@type\": \"ReserveAction\",\n        \"target\": { \"@type\": \"EntryPoint\", \"urlTemplate\": \"https://example.com/enroll/\" },\n        \"result\": { \"@type\": \"Reservation\", \"name\": \"Teen driver's ed package (automatic)\" }\n      }\n    }\n  ]\n}",
+   "after": [
+    "schema.org 也有 [Course](https://schema.org/Course) 類型，但 Nurevo AEO 不會輸出。不論使用哪些類型，都請把結構化資料當成頁面上總價與條件的副本，並與內文保持一致。Google 表示，要出現在其 AI 功能中不需要特殊的結構化資料。[Google：AI 功能與你的網站](https://developers.google.com/search/docs/appearance/ai-features)"
+   ]
+  },
+  {
+   "heading": "在 WordPress 駕訓班網站上設定",
+   "list": [
+    "從 [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) 安裝並啟用 Nurevo AEO（免費）。Yoast SEO、Rank Math、All in One SEO 與 Slim SEO 可照常使用。自 0.9.1 起，也能與 SEO SIMPLE PACK 和 VK All in One Expansion Unit 並用，不會產生重複的結構化資料。",
+    "在設定精靈中選擇「Other（其他）」。不設定特定類型時，只要填寫了地址、電話或營業時間其中一項，商家就會以 LocalBusiness 發布。",
+    "輸入駕訓班名稱、地址、電話與辦公時間（包括公休日），並在說明中寫明你的資格與可考的駕照類型。",
+    "在「服務」中每個課程新增一項（最多 20 項）：包含條件的名稱（「小型車、自排、無駕照、18 歲以上」）、含稅總價與幣別、類別、價目頁 URL、報名 URL，以及寫明包含項目、不包含項目與追加費用的說明。課程不是單堂課，所以「分鐘」欄位請留空。每個課程會以帶有 Offer 與 ReserveAction 的 Service 發布，並在 llms.txt 中占一行。",
+    "把保障、退訓與退費、結訓期限、預約方式、接送範圍與密集班取消費寫進 FAQ，並在價目頁或報名頁放上 Nurevo FAQ 區塊（或 [nurevo_faq] 短代碼）。FAQPage 只會在顯示這些問題的頁面上發布。請見[給 AI 搜尋的 FAQ 頁面](/guide/faq-page-ai-search)。",
+    "把價目表以表格形式放在頁面內文中，而不只是放在 PDF 裡。過去的季節性活動頁面可以在區塊編輯器的 Nurevo AEO 面板中排除在 llms.txt 之外。",
+    "開啟 /llms.txt，確認價目頁、報名頁、密集班頁、交通頁與 FAQ 頁都已列出。在 AEO 分數畫面執行診斷，補上缺少的內容。"
+   ],
+   "after": [
+    "與 SEO 外掛並用時，Nurevo AEO 不會輸出第二個圖譜，只會把缺少的地址、電話、營業時間、服務與 FAQ 補進 SEO 外掛的圖譜。非 WordPress 網站的檢查項目相同：把 URL 輸入[免費檢測](/check)（無需註冊），即可查看結構化資料、llms.txt 與 AI 爬蟲的存取情況。"
+   ]
+  },
+  {
+   "heading": "發布前檢查清單",
+   "list": [
+    "首頁與「關於我們」頁面以文字寫明了資格及其涵蓋的駕照類型。",
+    "頁面內文有依駕照類型、自排/手排、已持有駕照與年齡區分的含稅總價表。",
+    "寫明了總價包含與不包含的項目（例如繳給主管機關的費用）。",
+    "寫明了加堂與補考的價格，以及保障的範圍、期限與例外。",
+    "寫明了退訓手續、退費計算方式與不退還的項目。",
+    "分別列出最短與一般所需時間，以及旺季的預約狀況。",
+    "寫明了結訓期限、預約方式、取消課程的期限，以及接送範圍與時間。",
+    "密集班頁面涵蓋住宿、餐食、交通、延長住宿、取消費與開課日期。",
+    "合格率等數字附有考試種類、分母、統計期間與來源。",
+    "Google 商家檔案與報名平台上的價格和營業時間與你的網站一致。"
+   ]
+  },
+  {
+   "heading": "檢查 AI 是否提到你、說得對不對",
+   "paragraphs": [
+    "頁面整理好之後，像潛在學員一樣向 AI 提問。檢查在「Springfield 有接送的駕訓班」或「兩週密集班、自排」這類問題中是否出現你的名字。接著帶上駕訓班名稱提問：「總共要多少錢？」「有追加費用嗎？」「是官方認可的嗎？」「中途退訓能退錢嗎？」，並把回答與你的網站對照。留意舊價格或已結束的活動。",
+    "AI 的回答每次都會變，所以要隔一段時間問同樣的問題並留下紀錄。Nurevo AEO 的 Free 與 Standard 方案每月一次，以依你的業種與地區產生的三個問題（不含你的商家名稱）詢問 Perplexity，記錄你的名稱或網站是否出現。Pro 方案（每月 USD 99 起）增加測試版 AI 能見度測量，提供競爭對手比較與趨勢（目前針對 Perplexity）。兩者都只是抽樣檢視回答，並非涵蓋所有回答。請見[如何測量 AI 能見度](/guide/measure-ai-visibility)。"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "駕訓班應該從哪裡開始做 AI 搜尋對策？",
+   "a": "先寫明你的資格，並用文字表格列出各類駕照的含稅總價、包含的項目與產生追加費用的情況。接著補上保障、退訓與退費以及所需時間，並在結構化資料、llms.txt、Google 商家檔案與報名平台上維持相同的資訊。"
+  },
+  {
+   "q": "只有 PDF 價目表夠嗎？",
+   "a": "可以保留 PDF，但也請把價格以表格形式放在頁面內文中。AI 可能略過或誤讀 PDF 與圖片中的數字，進而依報名平台上的舊資訊或猜測來回答。"
+  },
+  {
+   "q": "宣傳「X 天考到」有助於被推薦嗎？",
+   "a": "沒有官方說法指出所需時間越短越容易被推薦。如果只寫最短時間，AI 可能把它當成一般情況介紹，與實際的落差可能引發客訴。請分別寫出最短與一般所需時間。"
+  },
+  {
+   "q": "應該使用 DrivingSchool 這個 schema 類型嗎？",
+   "a": "schema.org 沒有 DrivingSchool 類型（2026 年 11 月在 schema-dts 2.1.0 中核對）。請把駕訓班發布為 LocalBusiness，把每個駕照課程發布為帶有 Offer 的 Service。DrivingSchoolVehicleUsage 描述的是車輛的用途，不是駕訓班。"
+  },
+  {
+   "q": "已經在報名平台上架了，還需要修改自己的網站嗎？",
+   "a": "報名平台能幫助正在比較駕訓班的人找到你，但 AI 可能同時讀取平台與你的網站。只要你自己的網站寫明總價、條件與報名方式，平台資訊也與之一致，AI 就比較不會給出互相矛盾的回答。"
+  },
+  {
+   "q": "Nurevo AEO 免費嗎？",
+   "a": "是的。針對業種的結構化資料、聯絡資訊、營業時間、服務與 FAQ、llms.txt、AI 爬蟲設定、AEO 分數以及每月一次的免費 AI 檢查都包含在 Free 方案中。付費方案增加隨時保持最新的規則（Standard，每月 USD 20）與測試版 AI 能見度測量（Pro，每月 USD 99 起）。[WordPress.org 上的 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+  },
+  {
+   "q": "這樣做能保證 ChatGPT 推薦我們嗎？",
+   "a": "不能。AI 的回答會變動，任何工具或方法都無法保證出現或排名。你能做的是以 AI 讀得懂的形式公布資格、總價、追加費用、所需時間與退費條件，並持續檢查自己是否出現、回答是否正確。"
+  }
+ ],
+ "relatedHeading": "相關指南",
+ "cta": {
+  "heading": "先看看 AI 如何讀取你的駕訓班網站",
+  "body": "免費檢測無需註冊：輸入 URL 即可查看結構化資料、llms.txt 與 AI 爬蟲存取的狀態。在 WordPress 上，免費的 Nurevo AEO 外掛會發布你的駕照課程與 FAQ。",
+  "label": "免費檢測 AI 可讀性",
+  "href": "/check",
+  "secondary": {
+   "label": "試用免費的 WordPress 外掛",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "ChatGPT 是 OpenAI 的商標，Perplexity 是 Perplexity AI 的商標，Google 是 Google LLC 的商標。Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit 以及本指南中引用的機構名稱是其各自所有者的商標。Nurevo 與上述各方均無關聯。本文不構成法律建議。"
+}

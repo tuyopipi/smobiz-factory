@@ -1,0 +1,321 @@
+{
+ "title": "Páxina de como chegar e aparcamento que a IA le ben | Nurevo",
+ "description": "Como escribir a páxina de acceso para que a IA responda ben \"hai aparcamento?\" e \"como chego?\": enderezo, transporte, entrada, aparcamento, schema e WordPress.",
+ "h1": "Como escribir a páxina de acceso, como chegar e aparcamento para que a busca con IA acerte",
+ "lead": "Para que a IA dea indicacións e información de aparcamento correctas, escribe isto na páxina de como chegar como texto HTML, non só nun mapa ou nunha imaxe: o enderezo completo (co despacho ou o andar), a estación ou parada máis próxima coa saída e o tempo a pé (e como o mediches), puntos de referencia ata a entrada e o aparcamento (se tes, cantas prazas, onde e canto custa). Despois usa un só formato de enderezo en todas partes —o teu sitio web, o Perfil de Empresa de Google e os directorios— e pon o mesmo enderezo e as coordenadas da entrada nos datos estruturados. Se non tes aparcamento, dio: \"Non dispoñemos de aparcamento; empreguen o aparcamento público de Example Street.\" Así a IA ten menos marxe para adiviñar.",
+ "intro": [
+  "Escrito o 21 de novembro de 2026 (JST). Os horarios trátanse en [Como publicar horarios e peches](/guide/business-hours-holidays-ai-search) e as reservas en [Como escribir a páxina de reservas](/guide/booking-page-ai-search). Esta guía é para calquera negocio que recibe visitas —tendas, clínicas, estudos, oficinas, casas de hóspedes— e céntrase nunha soa cousa: que a IA diga correctamente como chegar e se se pode ir en coche.",
+  "As respostas da IA cambian segundo o día, a forma de formular a pregunta e o servizo. Os pasos desta guía fan que á IA lle custe máis interpretar mal os teus datos de acceso e ensínanche a comprobalo; non garanten que aparezas nunha resposta nin que sexa correcta."
+ ],
+ "sections": [
+  {
+   "heading": "En resumo: cinco motivos polos que a IA se equivoca co teu acceso",
+   "table": {
+    "head": [
+     "Causa",
+     "Que pasa nas respostas da IA",
+     "Solución"
+    ],
+    "rows": [
+     [
+      "As indicacións só existen como mapa incrustado ou como imaxe",
+      "A IA non sabe dicir que estación nin onde aparcar, ou repite datos antigos doutro sitio web",
+      "Debaixo do mapa, escribe como texto a estación, a saída, o tempo a pé, a entrada e o aparcamento"
+     ],
+     [
+      "O enderezo está escrito de forma distinta no teu sitio web, no Perfil de Empresa de Google e nos directorios (\"Ste 300\" e \"Suite 300\", sen o andar)",
+      "A IA trátate como dous lugares distintos, ou omite o despacho ou o andar",
+      "Escolle un formato, con despacho e andar, e úsao en todas as fichas"
+     ],
+     [
+      "Non se di nada do aparcamento",
+      "A IA supón \"hai aparcamento\" ou \"non hai aparcamento\"",
+      "Dio aínda que non teñas, e indica onde se pode aparcar"
+     ],
+     [
+      "Só \"preto da estación\" ou \"fácil de atopar\"",
+      "A IA non sabe dicir que estación nin que saída",
+      "Indica a estación, a liña, a saída e o tempo a pé, e como o mediches"
+     ],
+     [
+      "Despois dun traslado ou dun cambio de aparcamento, aínda hai páxinas ou PDF antigos en liña",
+      "A IA dá o enderezo anterior ou un aparcamento que xa non usas",
+      "Busca as páxinas de acceso antigas, os PDF de folletos e as entradas de blog, e corríxeos ou elimínaos"
+     ]
+    ]
+   },
+   "after": [
+    "O que os visitantes lle preguntan de verdade á IA vén con condicións: \"Hai aparcamento preto de (negocio)?\", \"A que distancia está de (estación)?\", \"Pódese chegar cun carriño?\" A IA responde collendo frases da túa páxina de como chegar, así que todo o que non estea escrito como texto ten máis probabilidades de completarse con outros sitios web ou por suposición."
+   ]
+  },
+  {
+   "heading": "Que cobren os artigos mellor posicionados e que se lles escapa",
+   "paragraphs": [
+    "Lemos os primeiros resultados en xaponés e en inglés para buscas como \"directions page parking AI search\", \"local business AI search optimization\" e os seus equivalentes en xaponés (21 de novembro de 2026). Os artigos xaponeses coinciden en nomear a estación e o tempo a pé, indicar se hai aparcamento e manter o enderezo coherente. A maioría dos artigos en inglés quédanse en \"mantén coherente o teu NAP (nome, enderezo, teléfono)\" e apenas falan de como chegar ou do aparcamento. Ningún daba un exemplo de datos estruturados para o acceso (geo, hasMap, amenityFeature), pasos para WordPress nin unha forma de comprobar o resultado."
+   ],
+   "table": {
+    "head": [
+     "Artigo",
+     "Que fai ben",
+     "Que lle falta"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Coherencia do NAP entre o Perfil de Empresa de Google e os directorios; un exemplo JSON-LD de LocalBusiness con enderezo",
+      "Nada sobre como chegar, aparcamento nin accesibilidade; sen geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Verificar o enderezo ou a zona de servizo no perfil; seguir en GA4 as visitas que chegan desde a IA e probar consultas cada mes",
+      "Ningunha pauta para a páxina de acceso; sen código schema"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Preguntas frecuentes por establecemento, por exemplo se un local ten aparcamento gratuíto",
+      "Sen marcado, sen páxina de acceso, centrado sobre todo no produto"
+     ],
+     [
+      "[Birdeye (actualizado o 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Sinala que a IA xestiona mal a proximidade; fichas coherentes en Google, Bing e Yelp",
+      "Sen código schema, sen páxina de acceso"
+     ],
+     [
+      "[Uravation, negocios locais (en xaponés, actualizado o 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) e [cafetarías independentes (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Estación, ruta a pé, aparcamento e entrada na páxina do local; \"a 3 minutos da estación\" precisa un punto de partida explícito",
+      "Propiedades enumeradas sen código; sen pasos para WordPress"
+     ],
+     [
+      "[Issoh (en xaponés, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Exemplos de variantes de enderezo que unificar; atributos de aparcamento e accesibilidade",
+      "Sen modelo de páxina de acceso nin exemplo schema"
+     ]
+    ]
+   },
+   "after": [
+    "Esta guía responde todas as preguntas que tratan eses artigos e engade unha regra para os tempos a pé, un modelo para a información de aparcamento, o enderezo e as coordenadas escritos tal como amosa a documentación de Google, pasos para WordPress con Nurevo e unha serie de preguntas para comprobar a IA."
+   ]
+  },
+  {
+   "heading": "Oito cousas que debes poñer na páxina de como chegar",
+   "paragraphs": [
+    "Ponas na páxina do local ou nunha páxina á parte de \"Como chegar\". Se incrustas un mapa, escribe igualmente os mesmos datos como texto: pode que a IA non sexa quen de ler o que hai dentro do mapa."
+   ],
+   "table": {
+    "head": [
+     "Que escribir",
+     "Exemplo",
+     "Que falla se non está"
+    ],
+    "rows": [
+     [
+      "Enderezo completo con despacho ou andar e código postal",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Difúndese un enderezo sen o despacho e a xente pérdese na porta"
+     ],
+     [
+      "Estación ou parada máis próxima, liña, saída, tempo a pé",
+      "Estación de Springfield (Blue Line), saída norte, a 4 minutos a pé (uns 300 m / 0,2 mi)",
+      "Mándase os visitantes á estación ou á saída equivocada"
+     ],
+     [
+      "Ruta con dous ou tres puntos de referencia",
+      "Ao saír pola saída norte, xira á dereita e despois á esquerda na cafetaría da esquina; estamos no edificio coa farmacia no baixo, antes do segundo semáforo",
+      "A xente chega preto e despois pérdese; máis chamadas"
+     ],
+     [
+      "Entrada e andar",
+      "A entrada está ao fondo da pasaxe á esquerda do edificio, non pola porta principal. Sube no ascensor ao 3.º andar",
+      "A xente atopa o edificio, pero non a entrada"
+     ],
+     [
+      "Aparcamento",
+      "Dúas prazas reservadas detrás do edificio (números 7 e 8). Se están ocupadas, usa o aparcamento público de Oak Street (non o bonificamos)",
+      "A IA adiviña se tes aparcamento"
+     ],
+     [
+      "Bicicletas e motos",
+      "Aparcadoiro de bicicletas diante do edificio; non hai aparcamento para motos",
+      "A xente aparca onde non debe"
+     ],
+     [
+      "Accesibilidade e carriños",
+      "Hai ascensor. Hai un chanzo de 2 cm na entrada; se vas en cadeira de rodas, chama antes de vir",
+      "Os visitantes non saben se poderán entrar"
+     ],
+     [
+      "Autobús, taxi e coche",
+      "Autobús 12, parada Oak Street, a 1 minuto a pé. En coche, entra por Main Street (rúa de sentido único)",
+      "Os condutores chegan polo lado equivocado"
+     ]
+    ]
+   },
+   "after": [
+    "Mal: \"Preto da estación! Hai aparcamento. Mira o mapa.\" Ben: \"A 4 minutos a pé (uns 300 m) da saída norte da estación de Springfield. 123 Example Street, Suite 300. A entrada está ao fondo da pasaxe á esquerda do edificio. Dúas prazas reservadas detrás do edificio (7 e 8); se están ocupadas, empreguen o aparcamento público de Oak Street.\"",
+    "\"Hai aparcamento\" sen máis non di cantas prazas, onde, se é gratuíto nin se é un aparcamento concertado. Se é concertado, indica o seu nome, o enderezo e as condicións do desconto (por exemplo, \"unha hora gratis con compras de máis de 20 USD\"). Cando cambien as condicións, actualiza a páxina o mesmo día."
+   ]
+  },
+  {
+   "heading": "Tempos a pé: decide como os medes e dio",
+   "paragraphs": [
+    "Os tempos a pé vólvense incoherentes con facilidade. A publicidade inmobiliaria xaponesa segue unha regra fixa: distancia real pola rúa, 80 m por minuto, calquera fracción arredondada ao minuto seguinte, sen contar semáforos nin pendentes (normas de aplicación do código de competencia leal de Xapón para a publicidade inmobiliaria, explicadas no [glosario de Mitsubishi Jisho House Net](https://www.mec-h.com/words/detail?n=59), en xaponés). As tendas e as clínicas non están obrigadas a seguila e outros países non teñen ningunha regra común, pero escoller unha regra e mantela evita que o teu sitio web e as fichas dos directorios se contradigan."
+   ],
+   "list": [
+    "Define os puntos de inicio e de chegada (\"desde os torniquetes da saída norte ata a entrada do noso edificio\")",
+    "Mide a distancia a pé pola ruta cunha aplicación de mapas e convértea coa túa regra. Engadir a distancia (\"uns 300 m\") permite que tanto a IA como as persoas o comproben",
+    "Nas estacións grandes con varias saídas, indica a máis próxima e engade unha liña para quen chegue por outra",
+    "Revisa se as fichas dos directorios e a descrición do Perfil de Empresa de Google dan outra cifra, e unifícaas"
+   ],
+   "after": [
+    "Escribe \"a 1 minuto da estación\" só se de verdade estás a carón da saída. Un tempo a pé esaxerado acaba aparecendo nas recensións como unha discrepancia."
+   ]
+  },
+  {
+   "heading": "Usa un só formato de enderezo en todas partes",
+   "paragraphs": [
+    "En xeral considérase que os servizos de IA combinan o teu sitio web, o Perfil de Empresa de Google, os directorios e os perfís nas redes sociais para decidir se describen o mesmo negocio; como os relacionan non se fixo público. Cando o enderezo se escribe distinto en cada ficha, pode que as fichas non se vinculen, ou que un enderezo sen despacho nin andar acabe nas respostas. Decide estas cinco cousas e aplícaas en todas as fichas."
+   ],
+   "list": [
+    "Abreviaturas: \"Street\" ou \"St\", \"Suite\" ou \"Ste\". Calquera vale; escolle unha",
+    "Caracteres: guións simples, numeración coherente, sen símbolos decorativos",
+    "Nome do edificio, despacho e andar. Se o edificio cambia de nome, actualiza todas as fichas o mesmo día",
+    "Se se inclúe ou non o estado ou a rexión (nos datos estruturados, inclúeo sempre)",
+    "Se tamén publicas o enderezo noutra lingua, escríbeo de xeito que se recoñeza o mesmo lugar (inclúe o nome do edificio)"
+   ],
+   "after": [
+    "Despois dun traslado, pon o novo enderezo na páxina de como chegar cunha liña como \"Trasladámonos o (data); o noso enderezo anterior era…\". Se simplemente borras a páxina antiga, o enderezo vello segue noutros sitios web sen conexión co teu, e a IA pode seguir dándoo."
+   ]
+  },
+  {
+   "heading": "Configura os atributos de aparcamento e accesibilidade no Perfil de Empresa de Google",
+   "paragraphs": [
+    "O Perfil de Empresa de Google ten \"atributos\", que se amosan na Busca de Google, en Maps e noutros servizos de Google. Algúns atributos edítalos ti; outros pódense completar a partir dos clientes que te visitan. Entre os atributos de accesibilidade están a entrada, o aseo, os asentos, o ascensor e o aparcamento accesibles en cadeira de rodas; escolle Si neste último se tes unha praza reservada para persoas con necesidades de accesibilidade. Google indica que a revisión dun cambio adoita levar uns 10 minutos, pero pode chegar a 30 días ([Manage your business attributes](https://support.google.com/business/answer/9049526?hl=en), consultado o 21 de novembro de 2026). Os atributos que verás dependen da categoría do teu negocio.",
+    "Non se publicou como usan os atributos do perfil as AI Overviews e o Modo IA de Google. Pero o perfil é a información que se amosa en Google Maps e na Busca, así que fai que diga o mesmo que o teu sitio web. Os detalles que os atributos non poden expresar —número de prazas, prezo, condicións do concerto— van no texto da páxina e na descrición do perfil."
+   ]
+  },
+  {
+   "heading": "Datos estruturados: enderezo, coordenadas, mapa e servizos",
+   "paragraphs": [
+    "Na [documentación de Google sobre datos estruturados de LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) (actualizada en setembro de 2026), name e address son obrigatorios e geo (latitude e lonxitude) é recomendado. Os exemplos dividen o enderezo en PostalAddress streetAddress, addressLocality, addressRegion, postalCode e addressCountry, e as coordenadas deben ter unha precisión de polo menos cinco decimais. Colle as coordenadas cunha aplicación de mapas na túa entrada: para chegar, a porta que usa a xente é máis útil que o centro do edificio.",
+    "A documentación de Google non os menciona, pero schema.org tamén ten [hasMap](https://schema.org/hasMap) (un URL a un mapa do lugar), [amenityFeature](https://schema.org/amenityFeature) (servizos escritos como pares name/value de [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)) e [publicAccess](https://schema.org/publicAccess) (se o lugar está aberto ao público). Na nosa investigación non atopamos ningunha declaración oficial de que Google ou outro servizo de IA use hasMap ou amenityFeature. Engadilos non fai mal, pero considéraos unha repetición do que xa di o texto da páxina."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "O enderezo, as coordenadas e o número de prazas dos datos estruturados deben coincidir co texto da páxina. Comproba a sintaxe coa [proba de resultados enriquecidos](https://search.google.com/test/rich-results) ou co [Schema Markup Validator](https://validator.schema.org/). Se tes varios locais, dálle a cada un a súa propia páxina co seu enderezo e as súas coordenadas (consulta [busca con IA para negocios con varios locais](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "Pasos en WordPress (con Nurevo AIO)",
+   "paragraphs": [
+    "En [Nurevo AIO (gratuíto, antes mostrado como Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/), o que escribes no campo Enderezo publícase tal cal nos datos estruturados do teu negocio (PostalAddress streetAddress) e na liña \"Address\" de llms.txt. Traballa nesta orde."
+   ],
+   "list": [
+    "Corrixe primeiro o texto da páxina de como chegar cos oito puntos anteriores (o texto da páxina antes que os datos estruturados)",
+    "No campo Enderezo, usa o mesmo formato que na páxina e no Perfil de Empresa de Google, con despacho, andar e código postal. O campo publícase como unha soa cadea, sen dividilo en partes",
+    "Nurevo non deduce coordenadas a partir do enderezo. Para publicalas, engade geo co filtro para desenvolvedores webmcp_canary_business_node (código a continuación); hasMap e amenityFeature pódense engadir do mesmo xeito",
+    "Se o teu complemento de SEO ou o tema xa publican o nome, o enderezo, o teléfono e o horario do negocio, Nurevo non publica un segundo nodo de negocio, polo que o filtro non ten efecto; engade as coordenadas nese complemento ou tema. Nurevo non duplica Yoast SEO, Rank Math, All in One SEO nin Slim SEO e, desde a 0.9.1, tamén funciona xunto a SEO SIMPLE PACK e VK All in One Expansion Unit",
+    "O elemento \"Cobertura da información clave\" do diagnóstico do complemento amosa se o nome, o enderezo, o teléfono, o horario, a localización e o URL están publicados",
+    "Os sitios configurados como tenda en liña ou sitio B2B non publican horario nin localización (geo), xa que non hai ningún lugar que visitar"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Engádeo ao functions.php do tema fillo ou a un complemento de fragmentos de código e, despois, comproba no código fonte da páxina ou coa proba de resultados enriquecidos que geo aparece no teu negocio. Cando te traslades ou cambie o aparcamento, actualiza o campo, o filtro e o texto da páxina o mesmo día.",
+    "As axencias que manteñen sitios web de clientes poden converter \"actualizar todas as fichas o mesmo día\" nunha tarefa estándar ante traslados, cambios de contrato de aparcamento e cambios de nome do edificio. Nurevo ten un [programa de partners](https://nurevo.jp/partner/) para axencias que ofrecen soporte mensual."
+   ]
+  },
+  {
+   "heading": "Como comprobalo despois dos cambios",
+   "paragraphs": [
+    "Faille á IA as mesmas preguntas o día dos cambios e de novo entre dúas e catro semanas despois, e anota as respostas. Ningún servizo de IA publica canto tardan en reflectirse as actualizacións."
+   ],
+   "table": {
+    "head": [
+     "Pregunta",
+     "Unha resposta correcta"
+    ],
+    "rows": [
+     [
+      "\"Cal é o enderezo de (negocio)?\"",
+      "O enderezo actual con despacho ou andar, non o anterior"
+     ],
+     [
+      "\"Como chego a (negocio) desde (estación)?\"",
+      "A saída e o tempo a pé que figuran no teu sitio web"
+     ],
+     [
+      "\"(Negocio) ten aparcamento?\"",
+      "Se tes, cantas prazas e as condicións do concerto, como no teu sitio web"
+     ],
+     [
+      "\"(Negocio) é accesible en cadeira de rodas?\"",
+      "O mesmo que no teu sitio web e no Perfil de Empresa de Google"
+     ],
+     [
+      "\"(Tipo de negocio) con aparcamento en (zona)\"",
+      "Se aparece o teu nome e se se cita a túa páxina de como chegar"
+     ]
+    ]
+   },
+   "after": [
+    "Anota a data, o servizo de IA, a pregunta, a resposta e os URL citados. Se a fonte é un directorio ou un folleto antigo, corríxea. Nos plans Free e Standard de Nurevo, o servizo de Nurevo faille a Perplexity, unha vez ao mes, tres preguntas sen marca baseadas no teu tipo de negocio e na túa zona, e amosa se apareceu o teu nome e se se citou o teu sitio web. Pro (beta, desde 99 USD ao mes) segue ata 20 preguntas en Perplexity (e en ChatGPT cando estea configurado). As preguntas sobre aparcamento e como chegar, anótaas a man. Consulta [Como medir a visibilidade na IA](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Lista de comprobación antes de publicar",
+   "list": [
+    "O enderezo, con despacho ou andar e código postal, está escrito como texto HTML",
+    "Figuran a estación ou parada máis próxima, a liña, a saída, o tempo a pé e a distancia, e decidiches desde onde e ata onde medes",
+    "Hai unha ruta con dous ou tres puntos de referencia, ademais da entrada e o andar",
+    "O aparcamento —se tes, prazas, localización, prezo, condicións do concerto— está escrito; se non tes, dise",
+    "Trátanse as bicicletas, as motos, a accesibilidade e os carriños",
+    "O enderezo está escrito igual no teu sitio web, no Perfil de Empresa de Google, nos directorios e nos perfís nas redes sociais",
+    "Os atributos do Perfil de Empresa de Google (aparcamento, accesibilidade) coinciden co teu sitio web",
+    "O enderezo e as coordenadas (polo menos cinco decimais) dos datos estruturados coinciden co texto da páxina",
+    "Ningunha páxina, PDF nin entrada de blog amosa aínda un enderezo antigo ou un aparcamento que xa non usas",
+    "Escolliches as preguntas e anotaches as respostas da IA o mesmo día e entre dúas e catro semanas despois"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Temos un mapa incrustado. Cómpre escribir tamén como chegar en texto?",
+   "a": "Si. Se a IA pode ler un mapa incrustado ou unha imaxe con indicacións depende do servizo e non se fixo público. Considera o mapa unha axuda para as persoas e escribe a estación, a saída, o tempo a pé, a entrada e o aparcamento no texto da páxina."
+  },
+  {
+   "q": "Non temos aparcamento. Abonda con non mencionalo?",
+   "a": "É máis seguro dicir \"Non dispoñemos de aparcamento\". Se non dis nada, a IA pode responder con datos doutros sitios web ou adiviñar. Engade onde se pode aparcar preto e como chegar en transporte público."
+  },
+  {
+   "q": "Como debemos calcular o tempo a pé?",
+   "a": "Non hai ningunha regra universal. A norma xaponesa de publicidade inmobiliaria (distancia pola rúa, 80 m por minuto, arredondando á alza) é unha opción clara. Escollas a que escollas, indica desde onde e ata onde medes, e engade a distancia."
+  },
+  {
+   "q": "Cómpren coordenadas nos datos estruturados para aparecer nas respostas da IA?",
+   "a": "Non necesariamente. Na documentación de Google, geo é recomendado e só name e address son obrigatorios. Non se fixo público se ChatGPT ou Perplexity usan coordenadas. Corrixe primeiro o texto da páxina e o formato do enderezo, e despois engade coordenadas collidas na túa entrada."
+  },
+  {
+   "q": "Debemos engadir hasMap ou amenityFeature?",
+   "a": "Podes facelo, pero non aparecen na documentación de Google e non atopamos ningunha declaración oficial de que algún servizo de IA os use. Engádeos como repetición da páxina do mapa e da información de aparcamento que xa tes na páxina."
+  },
+  {
+   "q": "Trasladámonos e a IA segue dando o enderezo anterior.",
+   "a": "Actualiza o teu sitio web, o Perfil de Empresa de Google, os directorios e os perfís nas redes sociais o mesmo día, e mantén na páxina de como chegar unha liña coa data do traslado e o enderezo anterior. Revisa os URL que cita a IA; se son páxinas ou PDF antigos, corríxeos ou elimínaos. Os prazos de actualización non se publican, así que volve preguntar unhas semanas despois."
+  },
+  {
+   "q": "Podo incluír o despacho e o andar no campo Enderezo de Nurevo?",
+   "a": "Si, recomendámoscho. O campo publícase tal cal en streetAddress e na liña \"Address\" de llms.txt. Usa o mesmo formato que na páxina e no Perfil de Empresa de Google."
+  }
+ ],
+ "relatedHeading": "Guías relacionadas",
+ "cta": {
+  "heading": "Mira se a IA pode ler o teu sitio",
+  "body": "A comprobación gratuíta non require rexistro: introduce un URL para ver o acceso dos rastrexadores de IA, os datos estruturados e llms.txt. En WordPress, o complemento gratuíto publica o enderezo, o teléfono e o horario como datos estruturados e en llms.txt, sen duplicar o que xa publica o teu complemento de SEO.",
+  "label": "Comproba de balde se estás preparado para a IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Proba o complemento gratuíto para WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Google Search, Google Maps e Gemini son marcas comerciais de Google LLC, ChatGPT de OpenAI e Perplexity de Perplexity AI. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit e os nomes das empresas citadas nesta guía son marcas comerciais ou marcas rexistradas dos seus respectivos propietarios. Nurevo non está afiliado a ningunha destas empresas nin conta co seu aval."
+}
