@@ -669,3 +669,12 @@
 3. 遺品整理・不用品回収のAI検索対策（許可の区分・料金・買取との違い）【業種別】
 4. 制作会社向け：口コミへの返信の代行（返信の型、否定的な口コミ、業種別の注意。今回の記事の依頼の章と重ならない深さで）【制作会社向け】
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
+| 2026-11-26 17時 | ai-crawlers-javascript-rendering | AIのクローラーはJavaScriptを読むのか：ChatGPT・Perplexityに見えている中身の確かめ方（全業種・技術。agency-ai-crawler-blocking-audit〔CDN・WAFで止まっているか〕・booking-page-ai-search〔埋め込みの外に決まりを書く〕・agency-new-site-build-ai-search〔「ほかのAIのJavaScriptの扱いは確認していない」と書いていた点〕とは分け、最初のHTMLに事実があるかの確かめ方とWordPressで隠れやすい場所に絞る。上位記事12本〔Ahrefs JA（2026-09-28）・Uravation（09-05更新）・Web担当者Forum/Moz（06-29）・Kinsta JP（06-15）／Vercel（2024-12-17）・Hall・searchVIU（11-03更新）・AWR（08-20）・Go Fish Digital（09-11）・SearchEngineWorld（06-09、12アシスタント）・Writesonic（2026-03）・RESONEO（2026-01）〕の抜けの表、AIごとの表〔Vercel：ChatGPT 11.50%・Claude 23.84% はJSファイルを取得するが実行しない、Gemini は Googlebot の仕組みで処理／2026年の3テスト：ChatGPT・Claude・Gemini のその場の取得は最初のHTMLだけ、Copilot・Grok は結果が分かれる、DeepSeek など5つは実行〕、Google の「ブロックされていなければJSも処理」、curl の確認コード〔最初のHTML・事実の文字・JSON-LD・UA〕、コマンドなしの4つ〔ソース表示・Disable JavaScript・Search Console のURL検査・AIに貼るのは最後〔Perplexity の説明とログの食い違い〕〕、アクセスログのコード、WordPressの表8行〔タブ・もっと見る・埋め込み・GTMのJSON-LD・カウンター・::before と画像の文字〔Writesonic 0/6、display:none は5/6〕・ヘッドレス・JSチャレンジ〕、直し方の順番6、Nurevo〔JSON-LD と llms.txt はサーバー側、FAQ ブロックは render_callback、ブラウザ用タグは初期オフ〕、チェックリスト10、FAQ 7問）。2言語（ja・en） | 実践ガイド（技術） | content/daily-20261126-17 |
+メモ：2026-11-26 17時の回は、Google の JavaScript SEO の基本・ダイナミックレンダリング・JavaScript で作る構造化データのページ、OpenAI と Perplexity のクローラーのページが WebFetch の許可待ちで読めず、Google の記述は以前の回で確認した最適化ガイド（2026-07-10）と、JavaScript SEO の基本の「クロール・レンダリング・インデックス」の流れだけにし、ダイナミックレンダリングの位置づけは書いていない。Search Engine Land（485228、レート制限）と Indie Hackers の投稿（取得失敗）は読めていない。ChatGPT 検索の索引が JavaScript を処理するか、Google のレンダリングにかかる時間、「引用が◯倍」の数字は確認できず書いていない。テストはどれもページ1つ・ある時点のもので、その旨を本文に書いた。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に ai-crawlers-javascript-rendering を追加、ja/en のみ。次は agency-ai-search-manipulation-risks）
+次の候補：
+1. 遺品整理・不用品回収のAI検索対策（許可の区分・料金・買取との違い）【業種別】
+2. 制作会社向け：口コミへの返信の代行（返信の型、否定的な口コミ、業種別の注意）【制作会社向け】
+3. 比較サイト・ポータルに載っている自社情報の直し方（PR #80 の「掲載情報・第三者」の章と重ならない、掲載先ごとの更新依頼の文例に絞る）【全業種】
+4. 画像・動画とAI検索：代替テキスト・キャプション・動画の文字起こしをAIに読ませる手順【全業種】
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
