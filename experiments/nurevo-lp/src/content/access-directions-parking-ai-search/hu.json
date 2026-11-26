@@ -1,0 +1,321 @@
+{
+ "title": "Megközelítés és parkolás: oldal, amit az AI jól ért | Nurevo",
+ "description": "Így írja meg a megközelítési oldalt, hogy az AI jól feleljen a „van parkoló?” és „hogyan jutok oda?” kérdésre: cím, tömegközlekedés, bejárat, parkolás, séma, WordPress.",
+ "h1": "Hogyan írja meg a megközelítési és parkolási oldalát, hogy az AI-keresés jól értse",
+ "lead": "Ahhoz, hogy az AI helyes útbaigazítást és parkolási információt adjon, a megközelítési oldalon HTML-szövegként írja le – ne csak térképként vagy képként – a teljes címét (iroda- vagy emeletszámmal), a legközelebbi állomást vagy megállót a kijárattal és a gyalogos menetidővel (és azzal, hogyan mérte), a bejáratig vezető tájékozódási pontokat, valamint a parkolást (van-e, hány hely, hol és mennyibe kerül). Ezután mindenhol – a weboldalon, a Google Business Profile-ban és a cégjegyzékekben – ugyanazt a címformátumot használja, és a strukturált adatokban adja meg ugyanazt a címet és a bejárat koordinátáit. Ha nincs parkolója, írja le: „Saját parkolónk nincs; kérjük, használja az Example Street-i nyilvános parkolóházat.” Így az AI-nak kevesebb tere marad a találgatásra.",
+ "intro": [
+  "Írva: 2026. november 21. (JST). A nyitvatartást a [Hogyan tegye közzé a nyitvatartást és a szünnapokat](/guide/business-hours-holidays-ai-search), a foglalást a [Hogyan írja meg a foglalási oldalt](/guide/booking-page-ai-search) tárgyalja. Ez az útmutató minden olyan vállalkozásnak szól, amelyet személyesen felkeresnek – üzleteknek, rendelőknek, stúdióknak, irodáknak, vendégházaknak –, és egyetlen dologra összpontosít: hogy az AI helyesen mondja meg, hogyan lehet eljutni Önökhöz, és lehet-e autóval érkezni.",
+  "Az AI válaszai a naptól, a kérdés megfogalmazásától és a szolgáltatástól függően változnak. Az itt leírt lépések megnehezítik, hogy az AI félreértse a megközelítési adatait, és megmutatják, hogyan ellenőrizze ezt; nem garantálják, hogy megjelenik egy válaszban, vagy hogy a válasz helyes lesz."
+ ],
+ "sections": [
+  {
+   "heading": "Röviden: öt ok, amiért az AI rosszul adja meg, hogyan lehet Önökhöz eljutni",
+   "table": {
+    "head": [
+     "Ok",
+     "Mi történik az AI válaszaiban",
+     "Megoldás"
+    ],
+    "rows": [
+     [
+      "Az útbaigazítás csak beágyazott térképként vagy képként létezik",
+      "Az AI nem tudja megmondani, melyik állomás, vagy hol lehet parkolni, illetve egy másik oldal régi adatait ismétli",
+      "A térkép alá írja le szövegként az állomást, a kijáratot, a gyalogos menetidőt, a bejáratot és a parkolást"
+     ],
+     [
+      "A cím eltérően szerepel a weboldalon, a Google Business Profile-ban és a cégjegyzékekben („Ste 300” vagy „Suite 300”, hiányzó emelet)",
+      "Az AI két helynek tekinti Önöket, vagy elhagyja az iroda- vagy emeletszámot",
+      "Válasszon egy formátumot iroda- és emeletszámmal, és ezt használja minden adatlapon"
+     ],
+     [
+      "A parkolásról semmi nem szerepel",
+      "Az AI találgat: „van parkoló” vagy „nincs parkoló”",
+      "Írja le akkor is, ha nincs, és azt is, hol lehet helyette parkolni"
+     ],
+     [
+      "Csak annyi, hogy „közel az állomáshoz” vagy „könnyen megtalálható”",
+      "Az AI nem tudja megmondani, melyik állomás és melyik kijárat",
+      "Nevezze meg az állomást, a vonalat, a kijáratot és a gyalogos menetidőt, valamint azt, hogyan mérte"
+     ],
+     [
+      "Költözés vagy a parkolás változása után régi oldalak vagy PDF-ek maradnak elérhetők",
+      "Az AI a régi címet vagy egy már nem használt parkolót ad meg",
+      "Keresse meg a régi megközelítési oldalakat, szórólap-PDF-eket és blogbejegyzéseket, és javítsa vagy törölje őket"
+     ]
+    ]
+   },
+   "after": [
+    "A látogatók feltételekkel kérdezik az AI-t: „Van parkoló a (vállalkozás) közelében?”, „Milyen messze van a (állomás)-tól?”, „Oda lehet jutni babakocsival?” Az AI a megközelítési oldal mondataiból válaszol, így ami nincs szövegként leírva, azt nagyobb eséllyel más oldalakról vagy találgatással egészíti ki."
+   ]
+  },
+  {
+   "heading": "Mit tárgyalnak a legjobb cikkek, és mi marad ki belőlük",
+   "paragraphs": [
+    "Elolvastuk a legjobb japán és angol találatokat olyan keresésekre, mint a „directions page parking AI search”, a „local business AI search optimization” és ezek japán megfelelői (2026. november 21.). A japán cikkek egyetértenek abban, hogy meg kell nevezni az állomást és a gyalogos menetidőt, jelezni kell, van-e parkoló, és egységesen kell tartani a címet. Az angol cikkek többsége megáll annál, hogy „tartsa egységesen a NAP-ot (név, cím, telefon)”, a megközelítést és a parkolást alig említi. Egyik sem adott strukturáltadat-példát a megközelítési adatokra (geo, hasMap, amenityFeature), WordPress-lépéseket vagy módszert az eredmény ellenőrzésére."
+   ],
+   "table": {
+    "head": [
+     "Cikk",
+     "Amiben jó",
+     "Ami kimarad"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "NAP-egységesség a Google Business Profile-ban és a cégjegyzékekben; LocalBusiness JSON-LD példa címmel",
+      "Nincs megközelítés, parkolás vagy akadálymentesség; nincs geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "A cím vagy a szolgáltatási terület ellenőrzése a profilban; AI-ból érkező forgalom követése a GA4-ben és havi szúrópróbás promptellenőrzés",
+      "Nincs útmutatás a megközelítési oldalhoz; nincs sémakód"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Helyszínenkénti GYIK, például hogy van-e ingyenes parkoló az adott helyen",
+      "Nincs jelölés, nincs megközelítési oldal, főleg termékközpontú"
+     ],
+     [
+      "[Birdeye (frissítve: 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Rámutat, hogy az AI rosszul kezeli a közelséget; egységes adatlapok a Google-ön, a Bingen és a Yelpen",
+      "Nincs sémakód, nincs megközelítési oldal"
+     ],
+     [
+      "[Uravation, helyi vállalkozások (japánul, frissítve: 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) és [független kávézók (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Állomás, gyalogos útvonal, parkolás és bejárat a helyszíni oldalon; a „3 percre az állomástól” megadott kiindulópontot igényel",
+      "Tulajdonságok kód nélkül felsorolva; nincsenek WordPress-lépések"
+     ],
+     [
+      "[Issoh (japánul, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Példák egységesítendő címváltozatokra; parkolási és akadálymentességi attribútumok",
+      "Nincs megközelítésioldal-sablon vagy sémapélda"
+     ]
+    ]
+   },
+   "after": [
+    "Ez az útmutató minden kérdésre válaszol, amelyre ezek a cikkek, és hozzáad egy szabályt a gyalogos menetidőhöz, egy sablont a parkolási adatokhoz, a címet és a koordinátákat úgy, ahogy a Google dokumentációja mutatja, WordPress-lépéseket a Nurevóval, valamint egy kérdéssort az AI ellenőrzéséhez."
+   ]
+  },
+  {
+   "heading": "Nyolc dolog, aminek a megközelítési oldalon szerepelnie kell",
+   "paragraphs": [
+    "Ezeket a helyszíni oldalra vagy egy külön „Megközelítés” oldalra tegye. Ha térképet ágyaz be, ugyanezeket az adatokat akkor is írja le szövegként: lehet, hogy az AI nem tudja elolvasni, ami a térképen belül van."
+   ],
+   "table": {
+    "head": [
+     "Mit írjon le",
+     "Példa",
+     "Mi csúszik el nélküle"
+    ],
+    "rows": [
+     [
+      "Teljes cím iroda- vagy emeletszámmal és irányítószámmal",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Az irodaszám nélküli cím terjed el, és az emberek az ajtónál tévednek el"
+     ],
+     [
+      "Legközelebbi állomás vagy megálló, vonal, kijárat, gyalogos menetidő",
+      "Springfield állomás (Blue Line), északi kijárat, 4 perc gyalog (kb. 300 m / 0,2 mérföld)",
+      "A látogatókat rossz állomásra vagy kijárathoz irányítják"
+     ],
+     [
+      "Útvonal két-három tájékozódási ponttal",
+      "Az északi kijárattól jobbra, a sarki kávézónál balra, és a második lámpa előtt, abban az épületben vagyunk, amelynek földszintjén gyógyszertár van",
+      "Az emberek a közelbe érnek, aztán eltévednek; több telefonhívás"
+     ],
+     [
+      "Bejárat és emelet",
+      "A bejárat az épület bal oldalán lévő átjáróban van, nem a főbejáratnál. Lifttel menjen a 3. emeletre",
+      "Az emberek megtalálják az épületet, de a bejáratot nem"
+     ],
+     [
+      "Parkolás",
+      "Két fenntartott hely az épület mögött (7-es és 8-as). Ha foglaltak, használja az Oak Street-i nyilvános parkolóházat (a parkolási díjat nem térítjük)",
+      "Az AI találgatja, van-e parkolójuk"
+     ],
+     [
+      "Kerékpárok és motorok",
+      "Kerékpártároló az épület előtt; motorparkoló nincs",
+      "Az emberek ott parkolnak, ahol nem szabadna"
+     ],
+     [
+      "Akadálymentesség és babakocsik",
+      "Van lift. A bejáratnál 2 cm-es lépcsőfok van; kerekesszékkel érkezőket kérjük, előtte telefonáljanak",
+      "A látogatók nem tudják, be tudnak-e jutni"
+     ],
+     [
+      "Busz, taxi és autó",
+      "12-es busz, Oak Street megálló, 1 perc gyalog. Autóval a Main Street felől lehet behajtani (egyirányú utca)",
+      "Az autósok rossz irányból érkeznek"
+     ]
+    ]
+   },
+   "after": [
+    "Rossz: „Közel az állomáshoz! Parkolás megoldott. Lásd a térképet.” Jó: „4 perc gyalog (kb. 300 m) a Springfield állomás északi kijáratától. 123 Example Street, Suite 300. A bejárat az épület bal oldalán lévő átjáróban van. Két fenntartott hely az épület mögött (7 és 8); ha foglaltak, használja az Oak Street-i nyilvános parkolóházat.”",
+    "Az önmagában álló „parkolás megoldott” nem mondja meg, hány hely van, hol, ingyenes-e, vagy partnerparkolóról van-e szó. Partnerparkolónál adja meg a nevét, a címét és a kedvezmény feltételeit (például „20 $ feletti vásárlás esetén egy óra ingyen”). Ha a feltételek változnak, még aznap frissítse az oldalt."
+   ]
+  },
+  {
+   "heading": "Gyalogos menetidő: döntse el, hogyan méri, és írja is le",
+   "paragraphs": [
+    "A gyalogos menetidőt könnyű következetlenül megadni. A japán ingatlanhirdetésekben rögzített szabály van: az útvonal mentén mért közúti távolság, percenként 80 m, a maradékot egész percre felfelé kerekítik, a lámpákat és emelkedőket nem számítják bele (a japán ingatlanhirdetési tisztességes versenyről szóló kódex végrehajtási szabályai, a [Mitsubishi Jisho House Net szójegyzéke](https://www.mec-h.com/words/detail?n=59) szerint, japánul). Az üzletekre és rendelőkre ez nem vonatkozik, más országokban pedig nincs közös szabály, de ha választ egy szabályt és kitart mellette, a weboldala és a cégjegyzék-adatlapjai nem mondanak ellent egymásnak."
+   ],
+   "list": [
+    "Határozza meg a kiinduló- és végpontot („az északi kijárat beléptetőkapuitól az épületünk bejáratáig”)",
+    "Mérje meg egy térképalkalmazásban az útvonal menti gyalogos távolságot, és számolja át a saját szabálya szerint. Ha a távolságot is megadja („kb. 300 m”), az AI és az emberek is ellenőrizni tudják",
+    "Több kijáratú nagy állomásoknál nevezze meg a legközelebbi kijáratot, és írjon egy sort azoknak, akik másikon érkeznek",
+    "Nézze meg, nem szerepel-e más szám a cégjegyzék-adatlapjain és a Google Business Profile leírásában, és hangolja össze őket"
+   ],
+   "after": [
+    "Csak akkor írja, hogy „1 percre az állomástól”, ha tényleg a kijáratnál vannak. A túlzó menetidő eltérésként jelenik meg a véleményekben."
+   ]
+  },
+  {
+   "heading": "Mindenhol ugyanazt a címformátumot használja",
+   "paragraphs": [
+    "Általában úgy tartják, hogy az AI-szolgáltatások összevetik a weboldalát, a Google Business Profile-t, a cégjegyzékeket és a közösségimédia-profilokat, hogy eldöntsék, ugyanarról a vállalkozásról szólnak-e; hogy ezt pontosan hogyan teszik, nem nyilvános. Ha a cím adatlaponként eltérően szerepel, előfordulhat, hogy az adatlapok nem kapcsolódnak össze, vagy iroda- és emeletszám nélküli cím kerül a válaszokba. Döntse el ezt az öt dolgot, és használja minden adatlapon."
+   ],
+   "list": [
+    "Rövidítések: „Street” vagy „St”, „Suite” vagy „Ste”. Bármelyik jó; válasszon egyet",
+    "Karakterek: egyszerű kötőjelek, egységes számozás, díszítő jelek nélkül",
+    "Az épület neve, az irodaszám és az emelet. Ha az épületet átnevezik, még aznap frissítsen minden adatlapot",
+    "Szerepeljen-e az állam vagy a régió (a strukturált adatokban mindig adja meg)",
+    "Ha más nyelven is közzéteszi a címet, úgy írja, hogy felismerhetően ugyanaz a hely legyen (adja meg az épület nevét)"
+   ],
+   "after": [
+    "Költözés után tegye az új címet a megközelítési oldalra egy ilyen sorral: „(dátum)-án/-én elköltöztünk; korábbi címünk: …”. Ha egyszerűen törli a régi oldalt, a más oldalakon szereplő régi cím nem kapcsolódik a weboldalához, és az AI továbbra is megadhatja."
+   ]
+  },
+  {
+   "heading": "Állítsa be a parkolási és akadálymentességi attribútumokat a Google Business Profile-ban",
+   "paragraphs": [
+    "A Google Business Profile-ban „attribútumok” vannak, amelyek a Google Keresőben, a Mapsben és más Google-szolgáltatásokban jelennek meg. Néhány attribútumot Ön szerkeszt, másokat a látogató ügyfelek adatai alapján tölthetnek ki. Az akadálymentességi attribútumok közé tartozik a kerekesszékkel megközelíthető bejárat, mosdó, ülőhely, lift és parkoló – az utóbbinál válassza az Igen lehetőséget, ha van kifejezetten mozgáskorlátozottaknak fenntartott parkolóhelye. A Google szerint egy módosítás ellenőrzése általában körülbelül 10 percig tart, de akár 30 napig is eltarthat ([Manage your business attributes](https://support.google.com/business/answer/9049526?hl=en), ellenőrizve: 2026. november 21.). Hogy mely attribútumokat látja, a vállalkozás kategóriájától függ.",
+    "Hogy a Google AI Overviews és az AI Mode hogyan használja a profil attribútumait, nem nyilvános. A profil azonban az az információ, amely a Google Mapsben és a Keresőben megjelenik, ezért ugyanazt mondja, mint a weboldala. Amit attribútummal nem lehet kifejezni – a helyek száma, a díj, a partnerfeltételek –, azt az oldal szövegébe és a profil leírásába írja."
+   ]
+  },
+  {
+   "heading": "Strukturált adatok: cím, koordináták, térkép és szolgáltatások",
+   "paragraphs": [
+    "A Google [LocalBusiness strukturált adatokról szóló dokumentációjában](https://developers.google.com/search/docs/appearance/structured-data/local-business) (frissítve: 2026. szeptember) a name és az address kötelező, a geo (szélesség és hosszúság) ajánlott. A példák a címet PostalAddress streetAddress, addressLocality, addressRegion, postalCode és addressCountry részekre bontják, a koordináták pontossága pedig legalább öt tizedesjegy kell legyen. A koordinátákat egy térképalkalmazásból a bejáratnál vegye: az útbaigazításhoz az az ajtó hasznosabb, amelyen az emberek bemennek, mint az épület közepe.",
+    "A Google dokumentációja nem említi őket, de a schema.org-ban van még [hasMap](https://schema.org/hasMap) (a hely térképének URL-je), [amenityFeature](https://schema.org/amenityFeature) (szolgáltatások [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification) name/value párokként) és [publicAccess](https://schema.org/publicAccess) (nyitva áll-e a hely a nyilvánosság számára). Kutatásunk során nem találtunk hivatalos közlést arról, hogy a Google vagy bármely más AI-szolgáltatás használná a hasMap vagy az amenityFeature tulajdonságot. Hozzáadásuk nem árt, de tekintse őket annak megismétlésének, amit az oldal szövege már elmond."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "A strukturált adatokban szereplő címnek, koordinátáknak és helyszámnak egyeznie kell az oldal szövegével. A szintaxist a [Rich Results Test](https://search.google.com/test/rich-results) vagy a [Schema Markup Validator](https://validator.schema.org/) segítségével ellenőrizze. Több helyszín esetén mindegyiknek legyen saját oldala saját címmel és koordinátákkal (lásd: [AI-keresés több helyszínes vállalkozásoknak](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "WordPress-lépések (a Nurevo AIO-val)",
+   "paragraphs": [
+    "A [Nurevo AIO-ban (ingyenes, korábbi nevén Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) a Cím mezőbe írtak változatlanul jelennek meg a vállalkozás strukturált adataiban (PostalAddress streetAddress) és az llms.txt „Address” sorában. Ebben a sorrendben haladjon."
+   ],
+   "list": [
+    "Először javítsa a megközelítési oldal szövegét a fenti nyolc pont alapján (az oldal szövege előbb, mint a strukturált adatok)",
+    "A Cím mezőben ugyanazt a formátumot használja, mint az oldalon és a Google Business Profile-ban, iroda- és emeletszámmal, irányítószámmal. A mező egyetlen szövegként jelenik meg, nem részekre bontva",
+    "A Nurevo nem találgat koordinátákat a címből. Közzétételükhöz adja hozzá a geo-t a webmcp_canary_business_node fejlesztői szűrővel (kód lent); a hasMap és az amenityFeature ugyanígy adható hozzá",
+    "Ha az SEO-bővítménye vagy a témája már közzéteszi a vállalkozás nevét, címét, telefonszámát és nyitvatartását, a Nurevo nem tesz közzé második vállalkozás-csomópontot, így a szűrőnek nincs hatása; ilyenkor abban a bővítményben vagy témában adja meg a koordinátákat. A Nurevo nem duplikálja a Yoast SEO, a Rank Math, az All in One SEO és a Slim SEO kimenetét, a 0.9.1-es verzió óta pedig az SEO SIMPLE PACK és a VK All in One Expansion Unit mellett is működik",
+    "A bővítmény diagnosztikájának „Kulcsinformációk lefedettsége” pontja mutatja, hogy a név, a cím, a telefonszám, a nyitvatartás, a helyszín és az URL mind közzé van-e téve",
+    "A webáruházként vagy B2B-oldalként beállított oldalak nem tesznek közzé nyitvatartást és helyszínt (geo), mivel nincs felkereshető hely"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Tegye a gyermektéma functions.php fájljába vagy egy kódrészlet-bővítménybe, majd az oldal forrásában vagy a Rich Results Testben ellenőrizze, hogy a geo megjelenik-e a vállalkozásánál. Költözéskor vagy a parkolás változásakor ugyanazon a napon frissítse a mezőt, a szűrőt és az oldal szövegét.",
+    "Az ügyféloldalakat karbantartó ügynökségek a „minden adatlap frissítése még aznap” feladatot standard teendővé tehetik költözés, parkolási szerződés változása és épület-átnevezés esetén. A Nurevónak [partnerprogramja](https://nurevo.jp/partner/) van a havi támogatást kínáló ügynökségek számára."
+   ]
+  },
+  {
+   "heading": "Hogyan ellenőrizze a változtatások után",
+   "paragraphs": [
+    "Tegye fel az AI-nak ugyanazokat a kérdéseket a változtatás napján, majd két-négy héttel később, és jegyezze fel a válaszokat. Egyik AI-szolgáltatás sem teszi közzé, mennyi ideig tart a frissülés."
+   ],
+   "table": {
+    "head": [
+     "Kérdés",
+     "Helyes válasz"
+    ],
+    "rows": [
+     [
+      "„Mi a (vállalkozás) címe?”",
+      "A jelenlegi címe iroda- vagy emeletszámmal, nem a régi"
+     ],
+     [
+      "„Hogyan jutok el a (vállalkozás)-hoz a (állomás)-tól?”",
+      "A weboldalán szereplő kijárat és gyalogos menetidő"
+     ],
+     [
+      "„Van parkoló a (vállalkozás)-nál?”",
+      "Van-e, hány hely és milyen partnerfeltételek, ahogy a weboldalán áll"
+     ],
+     [
+      "„Akadálymentes a (vállalkozás) kerekesszékkel?”",
+      "Ugyanaz, mint a weboldalán és a Google Business Profile-ban"
+     ],
+     [
+      "„(Vállalkozástípus) parkolóval (környék)”",
+      "Megjelenik-e a neve, és hivatkozik-e a válasz a megközelítési oldalára"
+     ]
+    ]
+   },
+   "after": [
+    "Jegyezze fel a dátumot, az AI-szolgáltatást, a kérdést, a választ és a hivatkozott URL-eket. Ha a forrás egy cégjegyzék vagy egy régi szórólap, azt javítsa. A Nurevo Free és Standard csomagjában a Nurevo szolgáltatás havonta egyszer feltesz a Perplexitynek három márkanév nélküli kérdést, amelyeket a vállalkozás típusából és a környékből állít össze, és megmutatja, megjelent-e a neve, és hivatkoztak-e a weboldalára. A Pro (béta, havi 99 USD-tól) legfeljebb 20 kérdést követ a Perplexityn (a ChatGPT-n, amint beállításra kerül). A parkolási és megközelítési kérdéseket kézzel jegyezze fel. Lásd: [Hogyan mérje az AI-láthatóságot](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Ellenőrzőlista közzététel előtt",
+   "list": [
+    "A cím iroda- vagy emeletszámmal és irányítószámmal HTML-szövegként szerepel",
+    "A legközelebbi állomás vagy megálló, a vonal, a kijárat, a gyalogos menetidő és a távolság le van írva, és eldöntötte, honnan hová mér",
+    "Le van írva egy útvonal két-három tájékozódási ponttal, valamint a bejárat és az emelet",
+    "A parkolás – van-e, helyek, elhelyezkedés, díj, partnerfeltételek – le van írva; ha nincs, ez is szerepel",
+    "A kerékpárok, motorok, akadálymentesség és babakocsik is szerepelnek",
+    "A cím ugyanúgy szerepel a weboldalon, a Google Business Profile-ban, a cégjegyzékekben és a közösségimédia-profilokon",
+    "A Google Business Profile attribútumai (parkolás, akadálymentesség) egyeznek a weboldallal",
+    "A strukturált adatokban szereplő cím és koordináták (legalább öt tizedesjegy) egyeznek az oldal szövegével",
+    "Egyetlen oldal, PDF vagy blogbejegyzés sem mutat régi címet vagy már nem használt parkolót",
+    "Kiválasztotta a kérdéseit, és feljegyezte az AI válaszait a változtatás napján és két-négy héttel később"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Beágyazott térképünk van. Szövegként is le kell írnunk a megközelítést?",
+   "a": "Igen. Hogy az AI el tudja-e olvasni a beágyazott térképet vagy az útbaigazító képet, szolgáltatásonként eltér, és nem nyilvános. A térképet az emberek segítségének tekintse, az állomást, a kijáratot, a gyalogos menetidőt, a bejáratot és a parkolást pedig írja az oldal szövegébe."
+  },
+  {
+   "q": "Nincs parkolónk. Egyszerűen hagyjuk ki?",
+   "a": "Biztonságosabb leírni, hogy „Saját parkolónk nincs”. Ha semmit nem ír, az AI más oldalak alapján vagy találgatással válaszolhat. Írja le, hol lehet a közelben parkolni, és hogyan lehet tömegközlekedéssel érkezni."
+  },
+  {
+   "q": "Hogyan számoljuk ki a gyalogos menetidőt?",
+   "a": "Nincs általános szabály. A japán ingatlanhirdetési szabvány (közúti távolság, percenként 80 m, felfelé kerekítés) az egyik egyértelmű lehetőség. Bármit választ, írja le, honnan hová mért, és adja meg a távolságot is."
+  },
+  {
+   "q": "Kellenek koordináták a strukturált adatokba ahhoz, hogy megjelenjünk az AI válaszaiban?",
+   "a": "Nem feltétlenül. A Google dokumentációjában a geo ajánlott, és csak a name és az address kötelező. Hogy a ChatGPT vagy a Perplexity használ-e koordinátákat, nem nyilvános. Először az oldal szövegét és a címformátumot javítsa, majd adja hozzá a bejáratnál vett koordinátákat."
+  },
+  {
+   "q": "Adjuk hozzá a hasMap vagy az amenityFeature tulajdonságot?",
+   "a": "Hozzáadhatja, de nem szerepelnek a Google dokumentációjában, és nem találtunk hivatalos közlést arról, hogy bármely AI-szolgáltatás használná őket. A térképoldal és az oldalán már szereplő parkolási adatok megismétléseként adja hozzá őket."
+  },
+  {
+   "q": "Elköltöztünk, és az AI továbbra is a régi címünket adja meg.",
+   "a": "Ugyanazon a napon frissítse a weboldalát, a Google Business Profile-t, a cégjegyzékeket és a közösségimédia-profilokat, és hagyjon a megközelítési oldalon egy sort a költözés dátumával és a korábbi címmel. Ellenőrizze az AI által hivatkozott URL-eket; ha régi oldalak vagy PDF-ek, javítsa vagy törölje őket. A frissülési idők nem nyilvánosak, ezért néhány hét múlva kérdezzen újra."
+  },
+  {
+   "q": "Megadhatom az irodaszámot és az emeletet a Nurevo Cím mezőjében?",
+   "a": "Igen, kérjük, adja meg. A mező változatlanul jelenik meg a streetAddress-ben és az llms.txt „Address” sorában. Ugyanazt a formátumot használja, mint az oldalon és a Google Business Profile-ban."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Nézze meg, el tudja-e olvasni az AI az oldalát",
+  "body": "Az ingyenes ellenőrzéshez nem kell regisztrálni: adjon meg egy URL-t, és lássa az AI-robotok hozzáférését, a strukturált adatokat és az llms.txt-t. WordPressben az ingyenes bővítmény strukturált adatként és az llms.txt-ben teszi közzé a címét, telefonszámát és nyitvatartását, anélkül hogy megduplázná az SEO-bővítménye kimenetét.",
+  "label": "Ellenőrizze ingyen az AI-készültséget",
+  "href": "/check",
+  "secondary": {
+   "label": "Próbálja ki az ingyenes WordPress-bővítményt",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "A Google, a Google Kereső, a Google Maps és a Gemini a Google LLC, a ChatGPT az OpenAI, a Perplexity pedig a Perplexity AI védjegye. A WordPress, a Yoast SEO, a Rank Math, az All in One SEO, a Slim SEO, az SEO SIMPLE PACK, a VK All in One Expansion Unit és az útmutatóban hivatkozott cégek nevei a megfelelő tulajdonosaik védjegyei vagy bejegyzett védjegyei. A Nurevo nem áll kapcsolatban egyik céggel sem, és egyikük sem támogatja."
+}

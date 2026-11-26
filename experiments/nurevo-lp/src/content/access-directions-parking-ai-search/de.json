@@ -1,0 +1,321 @@
+{
+ "title": "Anfahrt und Parken: Seiten, die KI richtig liest | Nurevo",
+ "description": "So schreiben Sie Ihre Anfahrtsseite, damit KI „Gibt es Parkplätze?“ und „Wie komme ich hin?“ richtig beantwortet: Adresse, ÖPNV, Eingang, Parken, Schema, WordPress.",
+ "h1": "So schreiben Sie Ihre Anfahrts- und Parkplatzseite, damit die KI-Suche sie richtig wiedergibt",
+ "lead": "Damit KI Anfahrt und Parkmöglichkeiten richtig angibt, schreiben Sie Folgendes als HTML-Text auf Ihre Anfahrtsseite, nicht nur als Karte oder Bild: Ihre vollständige Adresse (mit Suite oder Etage), die nächste Haltestelle oder den nächsten Bahnhof mit Ausgang und Gehzeit (und wie Sie sie gemessen haben), Orientierungspunkte bis zum Eingang und das Parken (ob es Parkplätze gibt, wie viele, wo und was sie kosten). Verwenden Sie dann überall dasselbe Adressformat – auf Ihrer Website, im Google-Unternehmensprofil und in Verzeichnissen – und hinterlegen Sie dieselbe Adresse und die Koordinaten Ihres Eingangs in Ihren strukturierten Daten. Wenn Sie keine Parkplätze haben, sagen Sie es: „Wir haben keine Parkplätze; bitte nutzen Sie das öffentliche Parkhaus in der Example Street.“ So bleibt der KI weniger Raum zum Raten.",
+ "intro": [
+  "Verfasst am 21. November 2026 (JST). Öffnungszeiten behandelt [Öffnungszeiten und Schließtage veröffentlichen](/guide/business-hours-holidays-ai-search), Buchungen [So schreiben Sie Ihre Buchungsseite](/guide/booking-page-ai-search). Dieser Leitfaden richtet sich an alle Betriebe, die Besuch bekommen – Geschäfte, Praxen, Studios, Büros, Gästehäuser – und konzentriert sich auf eines: dass KI richtig sagt, wie man zu Ihnen kommt und ob man mit dem Auto anreisen kann.",
+  "KI-Antworten ändern sich je nach Tag, Formulierung der Frage und Dienst. Die Schritte hier machen es der KI schwerer, Ihre Anfahrtsangaben falsch zu verstehen, und zeigen Ihnen, wie Sie das prüfen. Sie garantieren nicht, dass Sie in einer Antwort erscheinen oder dass diese korrekt ist."
+ ],
+ "sections": [
+  {
+   "heading": "Die Kurzfassung: fünf Gründe, warum KI Ihre Anfahrtsangaben falsch wiedergibt",
+   "table": {
+    "head": [
+     "Ursache",
+     "Was in KI-Antworten passiert",
+     "Lösung"
+    ],
+    "rows": [
+     [
+      "Die Anfahrt gibt es nur als eingebettete Karte oder als Bild",
+      "KI kann weder den Bahnhof noch den Parkplatz nennen oder wiederholt alte Angaben von einer anderen Website",
+      "Schreiben Sie unter die Karte Bahnhof, Ausgang, Gehzeit, Eingang und Parken als Text"
+     ],
+     [
+      "Die Adresse steht auf Ihrer Website, im Google-Unternehmensprofil und in Verzeichnissen unterschiedlich („Ste 300“ statt „Suite 300“, Etage fehlt)",
+      "KI behandelt Sie als zwei Orte oder lässt Suite oder Etage weg",
+      "Legen Sie ein Format fest, inklusive Suite und Etage, und verwenden Sie es in jedem Eintrag"
+     ],
+     [
+      "Zum Parken steht nichts da",
+      "KI rät „Parkplätze vorhanden“ oder „keine Parkplätze“",
+      "Sagen Sie es, auch wenn Sie keine haben, und sagen Sie, wo man stattdessen parken kann"
+     ],
+     [
+      "Nur „nahe am Bahnhof“ oder „leicht zu finden“",
+      "KI kann weder Bahnhof noch Ausgang nennen",
+      "Nennen Sie Bahnhof, Linie, Ausgang und Gehzeit – und wie Sie sie gemessen haben"
+     ],
+     [
+      "Nach einem Umzug oder einer Änderung beim Parken sind alte Seiten oder PDFs noch online",
+      "KI nennt Ihre alte Adresse oder einen Parkplatz, den Sie nicht mehr nutzen",
+      "Suchen Sie alte Anfahrtsseiten, Flyer-PDFs und Blogbeiträge und korrigieren oder entfernen Sie sie"
+     ]
+    ]
+   },
+   "after": [
+    "Was Besucher die KI tatsächlich fragen, ist an Bedingungen geknüpft: „Gibt es Parkplätze in der Nähe von (Betrieb)?“, „Wie weit ist es von (Bahnhof)?“, „Komme ich mit dem Kinderwagen hin?“ KI antwortet mit Sätzen aus Ihrer Anfahrtsseite. Was dort nicht als Text steht, wird eher aus anderen Websites ergänzt oder geraten."
+   ]
+  },
+  {
+   "heading": "Was die Top-Artikel abdecken – und was ihnen fehlt",
+   "paragraphs": [
+    "Wir haben die besten japanischen und englischen Ergebnisse für Suchen wie „directions page parking AI search“, „local business AI search optimization“ und deren japanische Entsprechungen gelesen (21. November 2026). Die japanischen Artikel sind sich einig: Bahnhof und Gehzeit nennen, angeben, ob es Parkplätze gibt, und die Adresse einheitlich halten. Die meisten englischen Artikel bleiben bei „halten Sie Ihre NAP-Daten (Name, Adresse, Telefon) einheitlich“ stehen und erwähnen Anfahrt oder Parken kaum. Keiner bot ein Beispiel für strukturierte Daten zu Anfahrtsangaben (geo, hasMap, amenityFeature), WordPress-Schritte oder eine Möglichkeit, das Ergebnis zu prüfen."
+   ],
+   "table": {
+    "head": [
+     "Artikel",
+     "Was er gut macht",
+     "Was ihm fehlt"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Einheitliche NAP-Daten im Google-Unternehmensprofil und in Verzeichnissen; ein LocalBusiness-JSON-LD-Beispiel mit Adresse",
+      "Keine Anfahrt, kein Parken, keine Barrierefreiheit; kein geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Adresse oder Einzugsgebiet im Profil bestätigen; KI-Verweise in GA4 verfolgen und monatlich Stichproben mit Prompts machen",
+      "Keine Hinweise zur Anfahrtsseite; kein Schema-Code"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Standortbezogene FAQs, etwa ob ein Standort kostenlose Parkplätze hat",
+      "Kein Markup, keine Anfahrtsseite, überwiegend produktgetrieben"
+     ],
+     [
+      "[Birdeye (aktualisiert 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Weist darauf hin, dass KI mit Entfernungen schlecht umgeht; einheitliche Einträge bei Google, Bing und Yelp",
+      "Kein Schema-Code, keine Anfahrtsseite"
+     ],
+     [
+      "[Uravation, lokale Betriebe (Japanisch, aktualisiert 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) und [unabhängige Cafés (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Bahnhof, Fußweg, Parken und Eingang auf der Standortseite; „3 Minuten vom Bahnhof“ braucht einen genannten Startpunkt",
+      "Eigenschaften ohne Code aufgelistet; keine WordPress-Schritte"
+     ],
+     [
+      "[Issoh (Japanisch, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Beispiele für zu vereinheitlichende Adressvarianten; Attribute für Parken und Barrierefreiheit",
+      "Keine Vorlage für die Anfahrtsseite, kein Schema-Beispiel"
+     ]
+    ]
+   },
+   "after": [
+    "Dieser Leitfaden beantwortet alle Fragen, die diese Artikel beantworten, und ergänzt eine Regel für Gehzeiten, eine Vorlage für Parkangaben, Adresse und Koordinaten so, wie sie in Googles Dokumentation stehen, WordPress-Schritte mit Nurevo und eine Reihe von Fragen, mit denen Sie die KI prüfen können."
+   ]
+  },
+  {
+   "heading": "Acht Angaben für Ihre Anfahrtsseite",
+   "paragraphs": [
+    "Schreiben Sie diese auf Ihre Standortseite oder eine eigene Seite „Anfahrt“. Wenn Sie eine Karte einbetten, schreiben Sie dieselben Angaben trotzdem als Text: KI kann den Inhalt der Karte womöglich nicht lesen."
+   ],
+   "table": {
+    "head": [
+     "Was Sie angeben",
+     "Beispiel",
+     "Was ohne diese Angabe schiefgeht"
+    ],
+    "rows": [
+     [
+      "Vollständige Adresse mit Suite oder Etage und Postleitzahl",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Eine Adresse ohne Suite verbreitet sich, und die Leute irren an der Tür umher"
+     ],
+     [
+      "Nächster Bahnhof oder nächste Haltestelle, Linie, Ausgang, Gehzeit",
+      "Springfield Station (Blue Line), Nordausgang, 4 Minuten zu Fuß (etwa 300 m / 0,2 mi)",
+      "Besucher werden zum falschen Bahnhof oder Ausgang geschickt"
+     ],
+     [
+      "Weg mit zwei oder drei Orientierungspunkten",
+      "Am Nordausgang rechts, an der Ecke mit dem Café links, und wir sind im Gebäude mit der Apotheke im Erdgeschoss, vor der zweiten Ampel",
+      "Die Leute kommen in die Nähe und verlaufen sich dann; mehr Anrufe"
+     ],
+     [
+      "Eingang und Etage",
+      "Der Eingang liegt im Durchgang links neben dem Gebäude, nicht an der Vordertür. Mit dem Aufzug in den 3. Stock",
+      "Die Leute finden das Gebäude, aber nicht den Weg hinein"
+     ],
+     [
+      "Parken",
+      "Zwei reservierte Stellplätze hinter dem Gebäude (Nummer 7 und 8). Wenn belegt, nutzen Sie das öffentliche Parkhaus in der Oak Street (keine Parkgebührenerstattung)",
+      "KI rät, ob Sie Parkplätze haben"
+     ],
+     [
+      "Fahrräder und Motorräder",
+      "Fahrradständer vor dem Gebäude; keine Motorradstellplätze",
+      "Die Leute parken, wo sie nicht sollten"
+     ],
+     [
+      "Barrierefreiheit und Kinderwagen",
+      "Aufzug vorhanden. Am Eingang gibt es eine 2-cm-Stufe; Rollstuhlfahrer melden sich bitte vorher telefonisch",
+      "Besucher können nicht einschätzen, ob sie hineinkommen"
+     ],
+     [
+      "Bus, Taxi und Auto",
+      "Bus 12, Haltestelle Oak Street, 1 Minute zu Fuß. Autofahrer fahren über die Main Street an (Einbahnstraße)",
+      "Autofahrer nehmen die falsche Zufahrt"
+     ]
+    ]
+   },
+   "after": [
+    "Schlecht: „Nahe am Bahnhof! Parkplätze vorhanden. Siehe Karte.“ Gut: „4 Minuten zu Fuß (etwa 300 m) vom Nordausgang der Springfield Station. 123 Example Street, Suite 300. Der Eingang liegt im Durchgang links neben dem Gebäude. Zwei reservierte Stellplätze hinter dem Gebäude (7 und 8); wenn sie belegt sind, nutzen Sie das öffentliche Parkhaus in der Oak Street.“",
+    "„Parkplätze vorhanden“ allein sagt nicht, wie viele es sind, wo, ob sie kostenlos sind oder ob es sich um einen Partnerparkplatz handelt. Bei einem Partnerparkplatz nennen Sie Name, Adresse und Rabattbedingungen (zum Beispiel „eine Stunde gratis bei einem Einkauf über 20 USD“). Ändern sich die Bedingungen, aktualisieren Sie die Seite noch am selben Tag."
+   ]
+  },
+  {
+   "heading": "Gehzeiten: Legen Sie fest, wie Sie messen – und sagen Sie es",
+   "paragraphs": [
+    "Gehzeiten werden schnell uneinheitlich. Die japanische Immobilienwerbung hat eine feste Regel: Wegstrecke entlang der Route, 80 m pro Minute, ein Rest wird auf eine volle Minute aufgerundet, ohne Zuschlag für Ampeln oder Steigungen (Durchführungsbestimmungen des japanischen Wettbewerbskodex für Immobilienwerbung, erläutert im [Glossar von Mitsubishi Jisho House Net](https://www.mec-h.com/words/detail?n=59), Japanisch). Geschäfte und Praxen sind nicht daran gebunden, und andere Länder haben keine gemeinsame Regel. Wenn Sie aber eine Regel wählen und dabei bleiben, widersprechen sich Ihre Website und Ihre Verzeichniseinträge nicht."
+   ],
+   "list": [
+    "Legen Sie Start- und Endpunkt fest („von den Sperren am Nordausgang bis zum Eingang unseres Gebäudes“)",
+    "Messen Sie die Gehstrecke entlang der Route in einer Karten-App und rechnen Sie sie mit Ihrer Regel um. Wenn Sie die Entfernung dazuschreiben („etwa 300 m“), können KI und Menschen sie nachprüfen",
+    "An großen Bahnhöfen mit mehreren Ausgängen nennen Sie den nächstgelegenen Ausgang und ergänzen eine Zeile für alle, die von einem anderen kommen",
+    "Prüfen Sie Ihre Verzeichniseinträge und die Beschreibung im Google-Unternehmensprofil auf abweichende Zahlen und gleichen Sie sie an"
+   ],
+   "after": [
+    "Schreiben Sie „1 Minute vom Bahnhof“ nur, wenn Sie wirklich direkt am Ausgang liegen. Eine geschönte Gehzeit taucht in Bewertungen als Widerspruch auf."
+   ]
+  },
+  {
+   "heading": "Verwenden Sie überall dasselbe Adressformat",
+   "paragraphs": [
+    "Man geht allgemein davon aus, dass KI-Dienste Ihre Website, Ihr Google-Unternehmensprofil, Verzeichnisse und Social-Media-Profile zusammenführen, um zu entscheiden, ob sie denselben Betrieb beschreiben; wie sie das abgleichen, ist nicht veröffentlicht. Steht die Adresse von Eintrag zu Eintrag anders da, werden die Einträge womöglich nicht verknüpft, oder eine Adresse ohne Suite oder Etage landet in den Antworten. Legen Sie diese fünf Punkte fest und verwenden Sie sie in jedem Eintrag."
+   ],
+   "list": [
+    "Abkürzungen: „Street“ oder „St“, „Suite“ oder „Ste“. Beides ist in Ordnung; entscheiden Sie sich für eins",
+    "Zeichen: einfache Bindestriche, einheitliche Nummerierung, keine Schmucksymbole",
+    "Gebäudename, Suite und Etage. Wird das Gebäude umbenannt, aktualisieren Sie jeden Eintrag noch am selben Tag",
+    "Ob Bundesstaat oder Region dazugehören (in strukturierten Daten immer angeben)",
+    "Wenn Sie zusätzlich eine Adresse in einer anderen Sprache veröffentlichen, schreiben Sie sie so, dass sie erkennbar derselbe Ort ist (mit Gebäudenamen)"
+   ],
+   "after": [
+    "Nach einem Umzug schreiben Sie die neue Adresse mit einer Zeile wie „Wir sind am (Datum) umgezogen; unsere frühere Adresse war …“ auf Ihre Anfahrtsseite. Löschen Sie die alte Seite einfach, bleibt die alte Adresse auf anderen Websites ohne Verbindung zu Ihrer Website stehen, und KI nennt sie womöglich weiter."
+   ]
+  },
+  {
+   "heading": "Attribute für Parken und Barrierefreiheit im Google-Unternehmensprofil festlegen",
+   "paragraphs": [
+    "Das Google-Unternehmensprofil hat „Attribute“, die in der Google Suche, in Maps und anderen Google-Diensten angezeigt werden. Manche Attribute bearbeiten Sie selbst, andere werden womöglich anhand von Kunden ausgefüllt, die Sie besuchen. Zu den Attributen für Barrierefreiheit gehören ein rollstuhlgerechter Eingang, eine rollstuhlgerechte Toilette, rollstuhlgerechte Sitzplätze, ein Aufzug und rollstuhlgerechte Parkplätze – wählen Sie bei Letzterem Ja, wenn Sie einen Stellplatz für Menschen mit Mobilitätseinschränkungen reserviert haben. Laut Google dauert die Prüfung einer Änderung meist etwa 10 Minuten, kann aber bis zu 30 Tage dauern ([Unternehmensattribute verwalten](https://support.google.com/business/answer/9049526?hl=en), geprüft am 21. November 2026). Welche Attribute Sie sehen, hängt von Ihrer Unternehmenskategorie ab.",
+    "Wie Googles AI Overviews und der KI-Modus Profilattribute nutzen, ist nicht veröffentlicht. Das Profil ist aber die Information, die in Google Maps und in der Suche angezeigt wird. Sorgen Sie also dafür, dass es dasselbe sagt wie Ihre Website. Was Attribute nicht ausdrücken können – Zahl der Stellplätze, Kosten, Partnerbedingungen –, gehört in Ihren Seitentext und in die Profilbeschreibung."
+   ]
+  },
+  {
+   "heading": "Strukturierte Daten: Adresse, Koordinaten, Karte und Ausstattung",
+   "paragraphs": [
+    "In Googles [Dokumentation zu strukturierten Daten für LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) (aktualisiert im September 2026) sind name und address Pflicht, geo (Breiten- und Längengrad) wird empfohlen. Die Beispiele teilen die Adresse in PostalAddress streetAddress, addressLocality, addressRegion, postalCode und addressCountry auf, und die Koordinaten müssen mindestens fünf Nachkommastellen haben. Nehmen Sie die Koordinaten in einer Karten-App an Ihrem Eingang ab: Für die Anfahrt ist die Tür, die die Leute benutzen, nützlicher als die Mitte des Gebäudes.",
+    "Googles Dokumentation erwähnt sie nicht, aber schema.org kennt außerdem [hasMap](https://schema.org/hasMap) (eine URL zu einer Karte des Ortes), [amenityFeature](https://schema.org/amenityFeature) (Ausstattungsmerkmale als Name-Wert-Paare vom Typ [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)) und [publicAccess](https://schema.org/publicAccess) (ob der Ort für die Öffentlichkeit zugänglich ist). Bei unserer Recherche haben wir keine offizielle Aussage gefunden, dass Google oder ein anderer KI-Dienst hasMap oder amenityFeature nutzt. Sie schaden nicht, aber betrachten Sie sie als Wiederholung dessen, was Ihr Seitentext bereits sagt."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Adresse, Koordinaten und Zahl der Stellplätze in Ihren strukturierten Daten müssen mit dem Seitentext übereinstimmen. Prüfen Sie die Syntax mit dem [Test für Rich-Suchergebnisse](https://search.google.com/test/rich-results) oder dem [Schema Markup Validator](https://validator.schema.org/). Bei mehreren Standorten erhält jeder Standort eine eigene Seite mit eigener Adresse und eigenen Koordinaten (siehe [KI-Suche für Betriebe mit mehreren Standorten](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "Schritte in WordPress (mit Nurevo AIO)",
+   "paragraphs": [
+    "In [Nurevo AIO (kostenlos, früher als Nurevo AEO angezeigt)](https://wordpress.org/plugins/nurevo-webmcp/) wird das, was Sie in das Feld „Address“ eingeben, genau so in den strukturierten Daten Ihres Betriebs (PostalAddress streetAddress) und in der Zeile „Address“ von llms.txt veröffentlicht. Gehen Sie in dieser Reihenfolge vor."
+   ],
+   "list": [
+    "Korrigieren Sie zuerst den Text Ihrer Anfahrtsseite anhand der acht Angaben oben (Seitentext vor strukturierten Daten)",
+    "Verwenden Sie im Feld „Address“ dasselbe Format wie auf Ihrer Seite und im Google-Unternehmensprofil, inklusive Suite, Etage und Postleitzahl. Das Feld wird als eine Zeichenkette veröffentlicht, nicht in Teile zerlegt",
+    "Nurevo leitet keine Koordinaten aus Ihrer Adresse ab. Um sie zu veröffentlichen, fügen Sie geo mit dem Entwicklerfilter webmcp_canary_business_node hinzu (Code unten); hasMap und amenityFeature lassen sich genauso ergänzen",
+    "Wenn Ihr SEO-Plugin oder Theme bereits Name, Adresse, Telefon und Öffnungszeiten Ihres Betriebs veröffentlicht, gibt Nurevo keinen zweiten Business-Knoten aus, und der Filter wirkt nicht; ergänzen Sie die Koordinaten dann in diesem Plugin oder Theme. Nurevo dupliziert Yoast SEO, Rank Math, All in One SEO und Slim SEO nicht und arbeitet seit 0.9.1 auch mit SEO SIMPLE PACK und VK All in One Expansion Unit zusammen",
+    "Der Punkt „Key information coverage“ in der Plugin-Diagnose zeigt, ob Name, Adresse, Telefon, Öffnungszeiten, Standort und URL vollständig veröffentlicht sind",
+    "Websites, die als Onlineshop oder B2B-Website eingerichtet sind, veröffentlichen keine Öffnungszeiten und keinen Standort (geo), da es keinen Ort zum Besuchen gibt"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Fügen Sie den Code in die functions.php Ihres Child-Themes oder in ein Code-Snippets-Plugin ein und prüfen Sie dann im Seitenquelltext oder mit dem Test für Rich-Suchergebnisse, ob geo bei Ihrem Betrieb erscheint. Wenn Sie umziehen oder sich beim Parken etwas ändert, aktualisieren Sie Feld, Filter und Seitentext am selben Tag.",
+    "Agenturen, die Kundenwebsites betreuen, können „jeden Eintrag am selben Tag aktualisieren“ zur Standardaufgabe bei Umzügen, geänderten Parkverträgen und Gebäudeumbenennungen machen. Nurevo hat ein [Partnerprogramm](https://nurevo.jp/partner/) für Agenturen, die monatliche Betreuung anbieten."
+   ]
+  },
+  {
+   "heading": "So prüfen Sie nach den Änderungen",
+   "paragraphs": [
+    "Stellen Sie der KI am Tag der Änderung und erneut zwei bis vier Wochen später dieselben Fragen und halten Sie die Antworten fest. Kein KI-Dienst veröffentlicht, wie lange Aktualisierungen dauern."
+   ],
+   "table": {
+    "head": [
+     "Frage",
+     "Eine richtige Antwort"
+    ],
+    "rows": [
+     [
+      "„Wie lautet die Adresse von (Betrieb)?“",
+      "Ihre aktuelle Adresse mit Suite oder Etage, nicht die alte"
+     ],
+     [
+      "„Wie komme ich von (Bahnhof) zu (Betrieb)?“",
+      "Der Ausgang und die Gehzeit von Ihrer Website"
+     ],
+     [
+      "„Gibt es bei (Betrieb) Parkplätze?“",
+      "Ob es welche gibt, wie viele und die Partnerbedingungen, wie auf Ihrer Website"
+     ],
+     [
+      "„Ist (Betrieb) rollstuhlgerecht?“",
+      "Dasselbe wie auf Ihrer Website und im Google-Unternehmensprofil"
+     ],
+     [
+      "„(Branche) mit Parkplatz in (Gegend)“",
+      "Ob Ihr Name erscheint und ob Ihre Anfahrtsseite zitiert wird"
+     ]
+    ]
+   },
+   "after": [
+    "Notieren Sie Datum, KI-Dienst, Frage, Antwort und zitierte URLs. Ist die Quelle ein Verzeichnis oder ein alter Flyer, korrigieren Sie diesen. In den Tarifen Free und Standard stellt der Nurevo-Dienst Perplexity einmal im Monat drei Fragen ohne Markennamen, die aus Ihrer Branche und Gegend gebildet werden, und zeigt, ob Ihr Name erschien und Ihre Website zitiert wurde. Pro (Beta, ab 99 USD im Monat) verfolgt bis zu 20 Fragen bei Perplexity (ChatGPT, sobald es eingerichtet ist). Fragen zu Parken und Anfahrt halten Sie von Hand fest. Siehe [KI-Sichtbarkeit messen](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checkliste vor der Veröffentlichung",
+   "list": [
+    "Ihre Adresse mit Suite oder Etage und Postleitzahl steht als HTML-Text da",
+    "Nächster Bahnhof oder nächste Haltestelle, Linie, Ausgang, Gehzeit und Entfernung stehen da, und Sie haben festgelegt, von wo bis wo Sie gemessen haben",
+    "Ein Weg mit zwei oder drei Orientierungspunkten sowie Eingang und Etage stehen da",
+    "Das Parken – ob vorhanden, Stellplätze, Lage, Kosten, Partnerbedingungen – steht da; wenn Sie keine Parkplätze haben, steht auch das da",
+    "Fahrräder, Motorräder, Barrierefreiheit und Kinderwagen sind abgedeckt",
+    "Die Adresse steht auf Ihrer Website, im Google-Unternehmensprofil, in Verzeichnissen und Social-Media-Profilen gleich",
+    "Die Attribute im Google-Unternehmensprofil (Parken, Barrierefreiheit) stimmen mit Ihrer Website überein",
+    "Adresse und Koordinaten (mindestens fünf Nachkommastellen) in den strukturierten Daten stimmen mit dem Seitentext überein",
+    "Keine Seite, kein PDF und kein Blogbeitrag zeigt noch eine alte Adresse oder einen Parkplatz, den Sie nicht mehr nutzen",
+    "Sie haben Ihre Fragen festgelegt und die Antworten der KI am Tag selbst und zwei bis vier Wochen später festgehalten"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Wir haben eine Karte eingebettet. Müssen wir die Anfahrt trotzdem als Text schreiben?",
+   "a": "Ja. Ob KI eine eingebettete Karte oder ein Anfahrtsbild lesen kann, unterscheidet sich je nach Dienst und ist nicht veröffentlicht. Betrachten Sie die Karte als Hilfe für Menschen und schreiben Sie Bahnhof, Ausgang, Gehzeit, Eingang und Parken in den Seitentext."
+  },
+  {
+   "q": "Wir haben keine Parkplätze. Sollen wir das Thema einfach weglassen?",
+   "a": "Sicherer ist es, „Wir haben keine Parkplätze“ zu schreiben. Sagen Sie nichts, antwortet KI womöglich anhand anderer Websites oder rät. Ergänzen Sie, wo man in der Nähe parken kann und wie man mit öffentlichen Verkehrsmitteln anreist."
+  },
+  {
+   "q": "Wie sollen wir die Gehzeit berechnen?",
+   "a": "Es gibt keine allgemeingültige Regel. Der japanische Standard für Immobilienwerbung (Wegstrecke, 80 m pro Minute, aufrunden) ist eine klare Möglichkeit. Wofür Sie sich auch entscheiden: Sagen Sie, von wo bis wo Sie gemessen haben, und geben Sie die Entfernung an."
+  },
+  {
+   "q": "Brauchen wir Koordinaten in den strukturierten Daten, um in KI-Antworten zu erscheinen?",
+   "a": "Nicht unbedingt. In Googles Dokumentation wird geo empfohlen, Pflicht sind nur name und address. Ob ChatGPT oder Perplexity Koordinaten nutzen, ist nicht veröffentlicht. Korrigieren Sie zuerst Seitentext und Adressformat und ergänzen Sie dann Koordinaten, die Sie an Ihrem Eingang abgenommen haben."
+  },
+  {
+   "q": "Sollen wir hasMap oder amenityFeature hinzufügen?",
+   "a": "Das können Sie, aber sie stehen nicht in Googles Dokumentation, und wir haben keine offizielle Aussage gefunden, dass ein KI-Dienst sie nutzt. Fügen Sie sie als Wiederholung der Kartenseite und der Parkangaben hinzu, die bereits auf Ihrer Seite stehen."
+  },
+  {
+   "q": "Wir sind umgezogen, und die KI nennt weiter unsere alte Adresse.",
+   "a": "Aktualisieren Sie Website, Google-Unternehmensprofil, Verzeichnisse und Social-Media-Profile am selben Tag und lassen Sie auf Ihrer Anfahrtsseite eine Zeile mit Umzugsdatum und früherer Adresse stehen. Prüfen Sie die URLs, die die KI zitiert; sind es alte Seiten oder PDFs, korrigieren oder entfernen Sie sie. Aktualisierungszeiten sind nicht veröffentlicht, fragen Sie also einige Wochen später erneut."
+  },
+  {
+   "q": "Darf ich Suite und Etage in das Feld „Address“ von Nurevo schreiben?",
+   "a": "Ja, bitte tun Sie das. Das Feld wird genau so in streetAddress und in der Zeile „Address“ von llms.txt veröffentlicht. Verwenden Sie dasselbe Format wie auf Ihrer Seite und im Google-Unternehmensprofil."
+  }
+ ],
+ "relatedHeading": "Verwandte Leitfäden",
+ "cta": {
+  "heading": "Sehen Sie, ob KI Ihre Website lesen kann",
+  "body": "Der kostenlose Check braucht keine Anmeldung: Geben Sie eine URL ein und sehen Sie den Zugang für KI-Crawler, strukturierte Daten und llms.txt. Unter WordPress veröffentlicht das kostenlose Plugin Ihre Adresse, Telefonnummer und Öffnungszeiten in strukturierten Daten und llms.txt, ohne die Ausgabe Ihres SEO-Plugins zu duplizieren.",
+  "label": "Kostenlosen KI-Lesbarkeitscheck starten",
+  "href": "/check",
+  "secondary": {
+   "label": "Das kostenlose WordPress-Plugin testen",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Google Suche, Google Maps und Gemini sind Marken von Google LLC, ChatGPT von OpenAI und Perplexity von Perplexity AI. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit und die Namen der in diesem Leitfaden zitierten Unternehmen sind Marken oder eingetragene Marken ihrer jeweiligen Inhaber. Nurevo ist mit keinem dieser Unternehmen verbunden und wird von keinem unterstützt."
+}

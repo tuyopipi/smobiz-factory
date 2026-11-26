@@ -1,0 +1,321 @@
+{
+ "title": "Saapumisohjeet ja pysäköinti, jotka tekoäly lukee oikein | Nurevo",
+ "description": "Näin tekoäly vastaa oikein kysymyksiin ”onko pysäköintiä?” ja ”miten sinne pääsee?”: osoite, julkinen liikenne, sisäänkäynti, pysäköinti, schema, WordPress.",
+ "h1": "Näin kirjoitat saapumisohje-, esteettömyys- ja pysäköintisivun, jotta tekoälyhaku ymmärtää sen oikein",
+ "lead": "Jotta tekoäly antaisi oikeat saapumisohjeet ja pysäköintitiedot, kirjoita nämä saapumisohjesivullesi HTML-tekstinä, ei pelkkänä karttana tai kuvana: koko osoite (myös huoneisto tai kerros), lähin asema tai pysäkki uloskäynteineen ja kävelyaikoineen (ja miten mittasit sen), maamerkit sisäänkäynnille asti sekä pysäköinti (onko sitä, montako paikkaa, missä ja mitä se maksaa). Käytä sitten samaa osoitemuotoa kaikkialla – sivustollasi, Google Business Profilessa ja hakemistoissa – ja lisää sama osoite ja sisäänkäyntisi koordinaatit rakenteiseen dataan. Jos teillä ei ole pysäköintiä, sano se: ”Meillä ei ole pysäköintiä; käytäthän Example Streetin yleistä pysäköintitaloa.” Silloin tekoälyllä on vähemmän arvailun varaa.",
+ "intro": [
+  "Kirjoitettu 21. marraskuuta 2026 (JST). Aukioloajoista kerrotaan oppaassa [Näin julkaiset aukioloajat ja poikkeusaukiolot](/guide/business-hours-holidays-ai-search) ja ajanvarauksesta oppaassa [Näin kirjoitat ajanvaraussivun](/guide/booking-page-ai-search). Tämä opas on kaikille yrityksille, joissa käy asiakkaita – kaupoille, klinikoille, studioille, toimistoille, majataloille – ja keskittyy yhteen asiaan: että tekoäly kertoo oikein, miten luoksenne pääsee ja voiko tulla autolla.",
+  "Tekoälyn vastaukset vaihtelevat päivän, kysymyksen sanamuodon ja palvelun mukaan. Tämän oppaan vaiheet vaikeuttavat saapumistietojesi väärintulkintaa ja näyttävät, miten tarkistat tuloksen; ne eivät takaa, että näyt vastauksessa tai että vastaus on oikein."
+ ],
+ "sections": [
+  {
+   "heading": "Lyhyt vastaus: viisi syytä, miksi tekoäly erehtyy saapumistiedoistasi",
+   "table": {
+    "head": [
+     "Syy",
+     "Mitä tekoälyn vastauksissa tapahtuu",
+     "Korjaus"
+    ],
+    "rows": [
+     [
+      "Saapumisohjeet ovat vain upotettuna karttana tai kuvana",
+      "Tekoäly ei osaa kertoa, mikä asema tai missä pysäköidä, tai toistaa vanhoja tietoja toiselta sivustolta",
+      "Kirjoita kartan alle tekstinä asema, uloskäynti, kävelyaika, sisäänkäynti ja pysäköinti"
+     ],
+     [
+      "Osoite on kirjoitettu eri tavoin sivustolla, Google Business Profilessa ja hakemistoissa (”Ste 300” tai ”Suite 300”, kerros puuttuu)",
+      "Tekoäly käsittelee teitä kahtena paikkana tai pudottaa huoneiston tai kerroksen pois",
+      "Valitse yksi muoto, johon kuuluvat huoneisto ja kerros, ja käytä sitä kaikissa listauksissa"
+     ],
+     [
+      "Pysäköinnistä ei sanota mitään",
+      "Tekoäly arvaa ”pysäköintiä on” tai ”ei pysäköintiä”",
+      "Kerro asia, vaikka pysäköintiä ei olisi, ja kerro, minne voi pysäköidä sen sijaan"
+     ],
+     [
+      "Vain ”lähellä asemaa” tai ”helppo löytää”",
+      "Tekoäly ei osaa kertoa, mikä asema tai mikä uloskäynti",
+      "Nimeä asema, linja, uloskäynti ja kävelyaika sekä se, miten mittasit sen"
+     ],
+     [
+      "Muuton tai pysäköintimuutoksen jälkeen vanhoja sivuja tai PDF-tiedostoja on yhä verkossa",
+      "Tekoäly antaa vanhan osoitteenne tai pysäköintipaikan, jota ette enää käytä",
+      "Etsi vanhat saapumisohjesivut, esite-PDF:t ja blogikirjoitukset ja korjaa tai poista ne"
+     ]
+    ]
+   },
+   "after": [
+    "Kävijöiden todelliset kysymykset tekoälylle sisältävät ehtoja: ”Onko (yrityksen) lähellä pysäköintiä?”, ”Kuinka kaukana se on (asemalta)?”, ”Pääseekö sinne lastenrattaiden kanssa?” Tekoäly vastaa poimimalla lauseita saapumisohjesivultasi, joten se, mitä ei ole kirjoitettu tekstinä, täydentyy helpommin muilta sivustoilta tai arvaamalla."
+   ]
+  },
+  {
+   "heading": "Mitä kärkiartikkelit kattavat ja mitä niistä puuttuu",
+   "paragraphs": [
+    "Luimme kärkitulokset japaniksi ja englanniksi hauille kuten ”directions page parking AI search” ja ”local business AI search optimization” sekä niiden japanilaisille vastineille (21. marraskuuta 2026). Japanilaiset artikkelit ovat yhtä mieltä siitä, että aseman ja kävelyajan nimeäminen, pysäköinnin olemassaolon kertominen ja osoitteen yhtenäisyys ovat tärkeitä. Useimmat englanninkieliset artikkelit pysähtyvät neuvoon ”pidä NAP (nimi, osoite, puhelin) yhtenäisenä” eivätkä juuri mainitse saapumisohjeita tai pysäköintiä. Yksikään ei antanut rakenteisen datan esimerkkiä saapumistiedoista (geo, hasMap, amenityFeature), WordPress-vaiheita tai tapaa tarkistaa tulos."
+   ],
+   "table": {
+    "head": [
+     "Artikkeli",
+     "Mitä se tekee hyvin",
+     "Mitä siitä puuttuu"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Yhtenäinen NAP Google Business Profilessa ja hakemistoissa; LocalBusiness-esimerkki JSON-LD-muodossa osoitteen kanssa",
+      "Ei saapumisohjeita, pysäköintiä tai esteettömyyttä; ei geoa"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Vahvista osoite tai palvelualue profiilissa; seuraa tekoälyltä tulevia käyntejä GA4:ssä ja tee kuukausittain pistokokeita kysymyksillä",
+      "Ei ohjeita saapumisohjesivulle; ei schema-koodia"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Toimipistekohtaiset usein kysytyt kysymykset, esimerkiksi onko toimipisteessä ilmainen pysäköinti",
+      "Ei merkintäkoodia, ei saapumisohjesivua, pääosin tuotevetoinen"
+     ],
+     [
+      "[Birdeye (päivitetty 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Huomauttaa, että tekoäly käsittelee läheisyyttä huonosti; yhtenäiset listaukset Googlessa, Bingissä ja Yelpissä",
+      "Ei schema-koodia, ei saapumisohjesivua"
+     ],
+     [
+      "[Uravation, paikalliset yritykset (japaniksi, päivitetty 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) ja [itsenäiset kahvilat (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Asema, kävelyreitti, pysäköinti ja sisäänkäynti toimipistesivulla; ”3 minuuttia asemalta” vaatii ilmoitetun lähtöpisteen",
+      "Ominaisuudet luetellaan ilman koodia; ei WordPress-vaiheita"
+     ],
+     [
+      "[Issoh (japaniksi, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Esimerkkejä yhtenäistettävistä osoitemuodoista; pysäköinti- ja esteettömyysattribuutit",
+      "Ei saapumisohjesivun mallia eikä schema-esimerkkiä"
+     ]
+    ]
+   },
+   "after": [
+    "Tämä opas vastaa kaikkiin kysymyksiin, joihin nuo artikkelit vastaavat, ja lisää säännön kävelyajoille, mallin pysäköintitiedoille, osoitteen ja koordinaatit siinä muodossa kuin Googlen dokumentaatio ne näyttää, WordPress-vaiheet Nurevon kanssa sekä kysymyssarjan tekoälyn tarkistamiseen."
+   ]
+  },
+  {
+   "heading": "Kahdeksan asiaa saapumisohjesivulle",
+   "paragraphs": [
+    "Sijoita nämä toimipistesivulle tai erilliselle ”Saapumisohjeet”-sivulle. Vaikka upottaisit kartan, kirjoita samat tiedot myös tekstinä: tekoäly ei välttämättä pysty lukemaan kartan sisältöä."
+   ],
+   "table": {
+    "head": [
+     "Mitä kirjoittaa",
+     "Esimerkki",
+     "Mikä menee pieleen ilman sitä"
+    ],
+    "rows": [
+     [
+      "Koko osoite huoneistoineen tai kerroksineen ja postinumeroineen",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Osoite ilman huoneistoa leviää, ja ihmiset eksyvät ovella"
+     ],
+     [
+      "Lähin asema tai pysäkki, linja, uloskäynti, kävelyaika",
+      "Springfield Station (Blue Line), pohjoinen uloskäynti, 4 minuutin kävely (noin 300 m / 0,2 mi)",
+      "Kävijät ohjataan väärälle asemalle tai uloskäynnille"
+     ],
+     [
+      "Reitti kahden tai kolmen maamerkin avulla",
+      "Käänny pohjoiselta uloskäynniltä oikealle, kulmakahvilan kohdalta vasemmalle, ja olemme rakennuksessa, jonka pohjakerroksessa on apteekki, ennen toisia liikennevaloja",
+      "Ihmiset pääsevät lähelle mutta eksyvät; enemmän puheluita"
+     ],
+     [
+      "Sisäänkäynti ja kerros",
+      "Sisäänkäynti on rakennuksen vasemmalla puolella olevan käytävän päässä, ei pääovesta. Mene hissillä 3. kerrokseen",
+      "Ihmiset löytävät rakennuksen mutta eivät sisäänkäyntiä"
+     ],
+     [
+      "Pysäköinti",
+      "Kaksi varattua paikkaa rakennuksen takana (numerot 7 ja 8). Kun ne ovat täynnä, käytä Oak Streetin yleistä pysäköintitaloa (emme korvaa maksua)",
+      "Tekoäly arvaa, onko teillä pysäköintiä"
+     ],
+     [
+      "Polkupyörät ja moottoripyörät",
+      "Pyöräteline rakennuksen edessä; ei moottoripyöräpaikkoja",
+      "Ihmiset pysäköivät paikkoihin, joihin ei saisi"
+     ],
+     [
+      "Esteettömyys ja lastenrattaat",
+      "Hissi on käytettävissä. Sisäänkäynnillä on 2 cm:n kynnys; pyörätuolin käyttäjät, soittakaa etukäteen",
+      "Kävijät eivät tiedä, pääsevätkö he sisään"
+     ],
+     [
+      "Bussi, taksi ja autolla tulo",
+      "Bussi 12, Oak Streetin pysäkki, 1 minuutin kävely. Autoilijat ajavat sisään Main Streetiltä (yksisuuntainen katu)",
+      "Autoilijat valitsevat väärän tulosuunnan"
+     ]
+    ]
+   },
+   "after": [
+    "Huono: ”Lähellä asemaa! Pysäköintiä on. Katso kartta.” Hyvä: ”4 minuutin kävely (noin 300 m) Springfield Stationin pohjoiselta uloskäynniltä. 123 Example Street, Suite 300. Sisäänkäynti on rakennuksen vasemmalla puolella olevan käytävän päässä. Kaksi varattua paikkaa rakennuksen takana (7 ja 8); kun ne ovat täynnä, käytä Oak Streetin yleistä pysäköintitaloa.”",
+    "Pelkkä ”pysäköintiä on” ei kerro, montako paikkaa, missä, onko se ilmaista tai onko kyse yhteistyöpysäköinnistä. Yhteistyöpysäköinnistä kerro nimi, osoite ja alennusehdot (esimerkiksi ”tunti ilmaiseksi yli $20:n ostoksella”). Kun ehdot muuttuvat, päivitä sivu samana päivänä."
+   ]
+  },
+  {
+   "heading": "Kävelyajat: päätä, miten mittaat, ja kerro se",
+   "paragraphs": [
+    "Kävelyajat menevät helposti ristiin. Japanilaisessa kiinteistömainonnassa on kiinteä sääntö: reittiä pitkin mitattu tiematka, 80 m minuutissa, mahdollinen jakojäännös pyöristetään ylöspäin täyteen minuuttiin, eikä liikennevaloja tai mäkiä huomioida (Japanin kiinteistömainonnan reilun kilpailun säännöstön soveltamisohjeet, kuten [Mitsubishi Jisho House Netin sanastossa](https://www.mec-h.com/words/detail?n=59) selitetään, japaniksi). Kaupat ja klinikat eivät ole sen sitomia, eikä muissa maissa ole yhteistä sääntöä, mutta kun valitset yhden säännön ja pidät siitä kiinni, sivustosi ja hakemistolistauksesi eivät ole ristiriidassa."
+   ],
+   "list": [
+    "Päätä lähtö- ja päätepiste (”pohjoisen uloskäynnin lipunleimauslaitteilta rakennuksemme sisäänkäynnille”)",
+    "Mittaa kävelymatka reittiä pitkin karttasovelluksessa ja muunna se säännölläsi. Kun lisäät matkan (”noin 300 m”), sekä tekoäly että ihmiset voivat tarkistaa sen",
+    "Suurilla asemilla, joilla on useita uloskäyntejä, nimeä lähin uloskäynti ja lisää yksi rivi muualta saapuville",
+    "Tarkista, onko hakemistolistauksissasi tai Google Business Profilen kuvauksessa eri luku, ja yhtenäistä ne"
+   ],
+   "after": [
+    "Kirjoita ”1 minuutti asemalta” vain, jos olette todella uloskäynnin vieressä. Liioiteltu kävelyaika näkyy arvosteluissa ristiriitana."
+   ]
+  },
+  {
+   "heading": "Käytä samaa osoitemuotoa kaikkialla",
+   "paragraphs": [
+    "Tekoälypalvelujen oletetaan yleisesti yhdistävän sivustosi, Google Business Profilen, hakemistot ja sosiaalisen median profiilit päätelläkseen, kuvaavatko ne samaa yritystä; sitä, miten ne yhdistetään, ei ole julkaistu. Kun osoite on kirjoitettu eri listauksissa eri tavoin, listauksia ei ehkä yhdistetä, tai vastauksiin päätyy osoite ilman huoneistoa tai kerrosta. Päätä nämä viisi asiaa ja käytä niitä kaikissa listauksissa."
+   ],
+   "list": [
+    "Lyhenteet: ”Street” vai ”St”, ”Suite” vai ”Ste”. Kumpi tahansa käy; valitse yksi",
+    "Merkit: tavalliset yhdysmerkit, johdonmukainen numerointi, ei koristesymboleja",
+    "Rakennuksen nimi, huoneisto ja kerros. Jos rakennus nimetään uudelleen, päivitä kaikki listaukset samana päivänä",
+    "Otetaanko osavaltio tai alue mukaan (ota se aina mukaan rakenteiseen dataan)",
+    "Jos julkaiset osoitteen myös toisella kielellä, kirjoita se niin, että paikka on selvästi sama (ota rakennuksen nimi mukaan)"
+   ],
+   "after": [
+    "Muuton jälkeen lisää uusi osoite saapumisohjesivulle yhdellä rivillä, kuten ”Muutimme (päivämäärä); aiempi osoitteemme oli …”. Jos vain poistat vanhan sivun, vanha osoite jää muille sivustoille ilman yhteyttä sivustoosi, ja tekoäly voi jatkaa sen antamista."
+   ]
+  },
+  {
+   "heading": "Määritä pysäköinti- ja esteettömyysattribuutit Google Business Profilessa",
+   "paragraphs": [
+    "Google Business Profilessa on ”attribuutteja”, jotka näkyvät Google-haussa, Mapsissa ja muissa Googlen palveluissa. Osaa attribuuteista muokkaat itse; toiset voidaan täyttää paikalla käyneiden asiakkaiden tietojen perusteella. Esteettömyysattribuutteihin kuuluvat pyörätuolilla esteetön sisäänkäynti, wc, istumapaikat, hissi ja pyörätuolilla esteetön pysäköinti – valitse viimeiseen Kyllä, jos teillä on pysäköintipaikka varattuna esteettömyyttä tarvitseville. Googlen mukaan muokkauksen tarkistus kestää yleensä noin 10 minuuttia, mutta voi kestää jopa 30 päivää ([Manage your business attributes](https://support.google.com/business/answer/9049526?hl=en), tarkistettu 21. marraskuuta 2026). Se, mitkä attribuutit näet, riippuu yritysluokastasi.",
+    "Sitä, miten Googlen AI Overviews ja AI Mode käyttävät profiilin attribuutteja, ei ole julkaistu. Profiili on kuitenkin se tieto, joka näkyy Google Mapsissa ja haussa, joten varmista, että se kertoo saman kuin sivustosi. Tiedot, joita attribuutit eivät pysty ilmaisemaan – paikkojen määrä, hinta, yhteistyöpysäköinnin ehdot – kirjoitetaan sivun tekstiin ja profiilin kuvaukseen."
+   ]
+  },
+  {
+   "heading": "Rakenteinen data: osoite, koordinaatit, kartta ja palvelut",
+   "paragraphs": [
+    "Googlen [LocalBusiness-rakenteisen datan dokumentaatiossa](https://developers.google.com/search/docs/appearance/structured-data/local-business) (päivitetty syyskuussa 2026) name ja address ovat pakollisia ja geo (leveys- ja pituusaste) on suositeltu. Esimerkeissä osoite jaetaan PostalAddress-osiin streetAddress, addressLocality, addressRegion, postalCode ja addressCountry, ja koordinaattien tarkkuuden on oltava vähintään viisi desimaalia. Ota koordinaatit karttasovelluksesta sisäänkäyntisi kohdalta: saapumisohjeissa ovi, jota ihmiset käyttävät, on hyödyllisempi kuin rakennuksen keskikohta.",
+    "Googlen dokumentaatio ei mainitse niitä, mutta schema.orgissa on myös [hasMap](https://schema.org/hasMap) (URL paikan karttaan), [amenityFeature](https://schema.org/amenityFeature) (palvelut [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)-muotoisina nimi/arvo-pareina) ja [publicAccess](https://schema.org/publicAccess) (onko paikka avoin yleisölle). Selvityksessämme emme löytäneet virallista lausuntoa siitä, että Google tai mikään muu tekoälypalvelu käyttäisi hasMapia tai amenityFeaturea. Niiden lisäämisestä ei ole haittaa, mutta pidä niitä sivun tekstin jo kertoman toistona."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Rakenteisen datan osoitteen, koordinaattien ja paikkamäärän on vastattava sivun tekstiä. Tarkista syntaksi [Rich Results Testillä](https://search.google.com/test/rich-results) tai [Schema Markup Validatorilla](https://validator.schema.org/). Jos toimipisteitä on useita, anna kullekin oma sivu omalla osoitteella ja koordinaateilla (katso [Tekoälyhaku usean toimipisteen yrityksille](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "WordPress-vaiheet (Nurevo AIO:lla)",
+   "paragraphs": [
+    "[Nurevo AIO](https://wordpress.org/plugins/nurevo-webmcp/) (ilmainen, aiemmin nimellä Nurevo AEO) julkaisee Osoite-kenttään kirjoittamasi tekstin sellaisenaan yrityksesi rakenteisessa datassa (PostalAddress streetAddress) ja llms.txt-tiedoston ”Address”-rivillä. Etene tässä järjestyksessä."
+   ],
+   "list": [
+    "Korjaa ensin saapumisohjesivun teksti yllä olevien kahdeksan kohdan mukaan (sivun teksti ennen rakenteista dataa)",
+    "Käytä Osoite-kentässä samaa muotoa kuin sivullasi ja Google Business Profilessa, mukaan lukien huoneisto, kerros ja postinumero. Kenttä julkaistaan yhtenä merkkijonona, ei osiin jaettuna",
+    "Nurevo ei arvaa koordinaatteja osoitteen perusteella. Jos haluat julkaista ne, lisää geo kehittäjäsuodattimella webmcp_canary_business_node (koodi alla); hasMap ja amenityFeature voidaan lisätä samalla tavalla",
+    "Jos SEO-lisäosasi tai teemasi julkaisee jo yrityksesi nimen, osoitteen, puhelinnumeron ja aukioloajat, Nurevo ei julkaise toista yrityssolmua, joten suodattimella ei ole vaikutusta; lisää koordinaatit silloin kyseiseen lisäosaan tai teemaan. Nurevo ei tee päällekkäistä merkintää Yoast SEO:n, Rank Mathin, All in One SEO:n tai Slim SEO:n kanssa, ja versiosta 0.9.1 lähtien se toimii myös SEO SIMPLE PACKin ja VK All in One Expansion Unitin rinnalla",
+    "Lisäosan diagnoosin kohta ”Keskeisten tietojen kattavuus” näyttää, julkaistaanko nimi, osoite, puhelin, aukioloajat, sijainti ja URL",
+    "Verkkokaupaksi tai B2B-sivustoksi määritetyt sivustot eivät julkaise aukioloaikoja tai sijaintia (geo), koska käyntikohdetta ei ole"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Lisää koodi lapsiteeman functions.php-tiedostoon tai koodinpätkälisäosaan ja tarkista sitten sivun lähdekoodista tai Rich Results Testillä, että geo näkyy yrityksessäsi. Kun muutatte tai pysäköinti muuttuu, päivitä kenttä, suodatin ja sivun teksti samana päivänä.",
+    "Asiakkaiden sivustoja ylläpitävät toimistot voivat tehdä ”päivitä kaikki listaukset samana päivänä” -periaatteesta vakiotehtävän muuttojen, pysäköintisopimusten muutosten ja rakennusten nimenmuutosten yhteydessä. Nurevolla on [kumppaniohjelma](https://nurevo.jp/partner/) toimistoille, jotka tarjoavat kuukausittaista tukea."
+   ]
+  },
+  {
+   "heading": "Näin tarkistat muutosten jälkeen",
+   "paragraphs": [
+    "Esitä tekoälylle samat kysymykset muutospäivänä ja uudelleen kahden–neljän viikon kuluttua, ja kirjaa vastaukset. Mikään tekoälypalvelu ei julkaise, kuinka kauan päivitykset kestävät."
+   ],
+   "table": {
+    "head": [
+     "Kysymys",
+     "Oikea vastaus"
+    ],
+    "rows": [
+     [
+      "”Mikä on (yrityksen) osoite?”",
+      "Nykyinen osoitteenne huoneistoineen tai kerroksineen, ei vanha"
+     ],
+     [
+      "”Miten pääsen (yritykseen) (asemalta)?”",
+      "Sivustollanne kerrottu uloskäynti ja kävelyaika"
+     ],
+     [
+      "”Onko (yrityksellä) pysäköintiä?”",
+      "Onko pysäköintiä, montako paikkaa ja yhteistyöpysäköinnin ehdot, kuten sivustollanne"
+     ],
+     [
+      "”Onko (yritys) esteetön pyörätuolilla?”",
+      "Sama kuin sivustollanne ja Google Business Profilessa"
+     ],
+     [
+      "”(Toimiala), jossa on pysäköinti, (alueella)”",
+      "Näkyykö nimenne ja viitataanko saapumisohjesivuunne"
+     ]
+    ]
+   },
+   "after": [
+    "Kirjaa päivämäärä, tekoälypalvelu, kysymys, vastaus ja lähteinä mainitut URL-osoitteet. Jos lähde on hakemisto tai vanha esite, korjaa se. Nurevon Free- ja Standard-tilauksissa Nurevo-palvelu esittää kerran kuukaudessa Perplexitylle kolme brändiä mainitsematonta kysymystä, jotka on muodostettu toimialasi ja alueesi perusteella, ja näyttää, näkyikö nimesi ja viitattiinko sivustoosi. Pro (beta, alkaen USD 99 kuukaudessa) seuraa enintään 20 kysymystä Perplexityssä (ChatGPT:ssä, kun se on otettu käyttöön). Kirjaa pysäköintiä ja saapumisohjeita koskevat kysymykset käsin. Katso [Näin mittaat näkyvyyttä tekoälyssä](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Tarkistuslista ennen julkaisua",
+   "list": [
+    "Osoitteesi huoneistoineen tai kerroksineen ja postinumeroineen on kirjoitettu HTML-tekstinä",
+    "Lähin asema tai pysäkki, linja, uloskäynti, kävelyaika ja matka on kirjoitettu, ja olet päättänyt, mistä mihin mittasit",
+    "Reitti kahden tai kolmen maamerkin avulla sekä sisäänkäynti ja kerros on kirjoitettu",
+    "Pysäköinti – onko sitä, paikat, sijainti, hinta, yhteistyöpysäköinnin ehdot – on kirjoitettu; jos pysäköintiä ei ole, se sanotaan",
+    "Polkupyörät, moottoripyörät, esteettömyys ja lastenrattaat on huomioitu",
+    "Osoite on kirjoitettu samalla tavalla sivustolla, Google Business Profilessa, hakemistoissa ja sosiaalisen median profiileissa",
+    "Google Business Profilen attribuutit (pysäköinti, esteettömyys) vastaavat sivustoasi",
+    "Rakenteisen datan osoite ja koordinaatit (vähintään viisi desimaalia) vastaavat sivun tekstiä",
+    "Mikään sivu, PDF tai blogikirjoitus ei enää näytä vanhaa osoitetta tai pysäköintipaikkaa, jota ette enää käytä",
+    "Valitsit kysymyksesi ja kirjasit tekoälyn vastaukset muutospäivänä ja kahden–neljän viikon kuluttua"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Sivullamme on upotettu kartta. Pitääkö saapumisohjeet silti kirjoittaa tekstinä?",
+   "a": "Kyllä. Se, pystyykö tekoäly lukemaan upotetun kartan tai saapumisohjekuvan, vaihtelee palveluittain eikä sitä ole julkaistu. Pidä karttaa apuna ihmisille ja kirjoita asema, uloskäynti, kävelyaika, sisäänkäynti ja pysäköinti sivun tekstiin."
+  },
+  {
+   "q": "Meillä ei ole pysäköintiä. Jätetäänkö asia vain mainitsematta?",
+   "a": "On turvallisempaa kirjoittaa ”Meillä ei ole pysäköintiä”. Jos ette sano mitään, tekoäly voi vastata muiden sivustojen perusteella tai arvata. Lisää, missä lähistöllä voi pysäköidä ja miten paikalle pääsee julkisilla."
+  },
+  {
+   "q": "Miten kävelyaika pitäisi laskea?",
+   "a": "Yleistä sääntöä ei ole. Japanin kiinteistömainonnan standardi (tiematka, 80 m minuutissa, pyöristys ylöspäin) on yksi selkeä vaihtoehto. Valitsitpa minkä tahansa, kerro, mistä mihin mittasit, ja lisää matka."
+  },
+  {
+   "q": "Tarvitaanko rakenteiseen dataan koordinaatit, jotta näkyisimme tekoälyn vastauksissa?",
+   "a": "Ei välttämättä. Googlen dokumentaatiossa geo on suositeltu, ja vain name ja address ovat pakollisia. Sitä, käyttävätkö ChatGPT tai Perplexity koordinaatteja, ei ole julkaistu. Korjaa ensin sivun teksti ja osoitemuoto ja lisää sitten sisäänkäynnin kohdalta otetut koordinaatit."
+  },
+  {
+   "q": "Pitäisikö lisätä hasMap tai amenityFeature?",
+   "a": "Voitte lisätä, mutta ne eivät ole Googlen dokumentaatiossa, emmekä löytäneet virallista lausuntoa siitä, että mikään tekoälypalvelu käyttäisi niitä. Lisää ne sivullasi jo olevan karttasivun ja pysäköintitietojen toistona."
+  },
+  {
+   "q": "Muutimme, ja tekoäly antaa yhä vanhan osoitteemme.",
+   "a": "Päivitä sivusto, Google Business Profile, hakemistot ja sosiaalisen median profiilit samana päivänä, ja säilytä saapumisohjesivulla yksi rivi muuttopäivästä ja aiemmasta osoitteesta. Tarkista, mihin URL-osoitteisiin tekoäly viittaa; jos ne ovat vanhoja sivuja tai PDF-tiedostoja, korjaa tai poista ne. Päivitysaikoja ei ole julkaistu, joten kysy uudelleen muutaman viikon kuluttua."
+  },
+  {
+   "q": "Voinko lisätä huoneiston ja kerroksen Nurevon Osoite-kenttään?",
+   "a": "Kyllä, lisää ne. Kenttä julkaistaan sellaisenaan streetAddressissa ja llms.txt-tiedoston ”Address”-rivillä. Käytä samaa muotoa kuin sivullasi ja Google Business Profilessa."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso, pystyykö tekoäly lukemaan sivustoasi",
+  "body": "Ilmainen tarkistus ei vaadi rekisteröitymistä: syötä URL nähdäksesi tekoälyindeksoijien pääsyn, rakenteisen datan ja llms.txt-tiedoston tilan. WordPressissä ilmainen lisäosa julkaisee osoitteesi, puhelinnumerosi ja aukioloaikasi rakenteisena datana ja llms.txt-tiedostossa ilman päällekkäisyyttä SEO-lisäosasi tuottaman merkinnän kanssa.",
+  "label": "Tarkista tekoälyvalmiutesi ilmaiseksi",
+  "href": "/check",
+  "secondary": {
+   "label": "Kokeile ilmaista WordPress-lisäosaa",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Google-haku, Google Maps ja Gemini ovat Google LLC:n tavaramerkkejä, ChatGPT on OpenAI:n ja Perplexity Perplexity AI:n tavaramerkki. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ja tässä oppaassa mainittujen yritysten nimet ovat omistajiensa tavaramerkkejä tai rekisteröityjä tavaramerkkejä. Nurevo ei ole sidoksissa mihinkään näistä yrityksistä eikä niiden hyväksymä."
+}

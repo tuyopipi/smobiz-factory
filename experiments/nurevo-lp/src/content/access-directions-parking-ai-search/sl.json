@@ -1,0 +1,321 @@
+{
+ "title": "Stran z navodili za pot in parkiranjem, ki jo UI bere prav | Nurevo",
+ "description": "Kako napisati stran z navodili za pot, da UI pravilno odgovori na »ali je parkirišče?« in »kako pridem tja?«: naslov, javni prevoz, vhod, parkiranje, schema, WordPress.",
+ "h1": "Kako napisati stran z navodili za pot, dostopom in parkiranjem, da jo iskanje z UI pravilno razume",
+ "lead": "Da bo UI dajala pravilne podatke o poti in parkiranju, na stran z navodili za pot kot besedilo HTML – ne samo v zemljevid ali sliko – zapišite: celoten naslov (z oznako pisarne ali nadstropjem), najbližjo postajo ali postajališče z izhodom in časom hoje (ter kako ste ga izmerili), orientacijske točke do vhoda in parkiranje (ali ga imate, koliko mest, kje in koliko stane). Nato povsod uporabljajte enak zapis naslova – na spletnem mestu, v Google Business Profile in v imenikih podjetij – ter isti naslov in koordinate vhoda vpišite v strukturirane podatke. Če parkirišča nimate, to povejte: »Parkirišča nimamo; uporabite javno parkirišče na Example Street.« Tako ima UI manj prostora za ugibanje.",
+ "intro": [
+  "Napisano 21. novembra 2026 (JST). Delovni čas obravnava [kako objaviti delovni čas in dneve zaprtja](/guide/business-hours-holidays-ai-search), rezervacije pa [kako napisati stran za rezervacije](/guide/booking-page-ai-search). Ta vodnik je za vsako podjetje, ki ga ljudje obiščejo – trgovine, ordinacije, studie, pisarne, penzione – in se osredotoča na eno stvar: da UI pravilno pove, kako priti do vas in ali lahko pridete z avtom.",
+  "Odgovori UI se spreminjajo iz dneva v dan, glede na to, kako je vprašanje zastavljeno, in glede na storitev. Tukaj opisani koraki otežijo, da bi UI napačno prebrala vaše podatke o dostopu, in pokažejo, kako to preveriti; ne zagotavljajo, da se boste pojavili v odgovoru ali da bo ta pravilen."
+ ],
+ "sections": [
+  {
+   "heading": "Na kratko: pet razlogov, zakaj UI zamenja podatke o dostopu",
+   "table": {
+    "head": [
+     "Vzrok",
+     "Kaj se zgodi v odgovorih UI",
+     "Rešitev"
+    ],
+    "rows": [
+     [
+      "Navodila za pot so le v vdelanem zemljevidu ali na sliki",
+      "UI ne zna povedati, s katere postaje iti ali kje parkirati, ali pa ponavlja stare podatke z drugega spletnega mesta",
+      "Pod zemljevid z besedilom zapišite postajo, izhod, čas hoje, vhod in parkiranje"
+     ],
+     [
+      "Naslov je na spletnem mestu, v Google Business Profile in v imenikih zapisan različno (»pis. 300« ali »pisarna 300«, manjka nadstropje)",
+      "UI vas obravnava kot dve lokaciji ali izpusti oznako pisarne oziroma nadstropje",
+      "Izberite en zapis z oznako pisarne in nadstropjem ter ga uporabljajte v vseh vpisih"
+     ],
+     [
+      "O parkiranju ni nobene besede",
+      "UI ugiba »parkiranje na voljo« ali »ni parkiranja«",
+      "Povejte, tudi če parkirišča nimate, in navedite, kje parkirati namesto tega"
+     ],
+     [
+      "Samo »blizu postaje« ali »lahko nas najdete«",
+      "UI ne zna povedati, katera postaja ali kateri izhod",
+      "Navedite postajo, linijo, izhod in čas hoje ter kako ste ga izmerili"
+     ],
+     [
+      "Po selitvi ali spremembi parkiranja so stare strani ali PDF-ji še vedno na spletu",
+      "UI navaja vaš stari naslov ali parkirišče, ki ga ne uporabljate več",
+      "Poiščite stare strani z navodili za pot, letake v PDF in objave na blogu ter jih popravite ali odstranite"
+     ]
+    ]
+   },
+   "after": [
+    "Vprašanja, ki jih obiskovalci res zastavljajo UI, vsebujejo pogoje: »Ali je pri (podjetje) parkirišče?«, »Kako daleč je od (postaja)?«, »Ali pridem tja z otroškim vozičkom?« UI odgovarja s stavki, povzetimi s strani z navodili za pot, zato se vse, kar ni zapisano kot besedilo, pogosteje dopolni z drugih spletnih mest ali z ugibanjem."
+   ]
+  },
+  {
+   "heading": "Kaj zajemajo najboljši članki in česa jim manjka",
+   "paragraphs": [
+    "Prebrali smo vodilne japonske in angleške rezultate za iskanja, kot so »directions page parking AI search«, »local business AI search optimization« in njihove japonske ustreznice (21. novembra 2026). Japonski članki se strinjajo, da je treba navesti postajo in čas hoje, povedati, ali imate parkirišče, in ohranjati enoten naslov. Večina angleških se ustavi pri »ohranjajte dosleden NAP (ime, naslov, telefon)« in navodil za pot ali parkiranja skoraj ne omeni. Nobeden ni dal primera strukturiranih podatkov za podatke o dostopu (geo, hasMap, amenityFeature), korakov v WordPressu ali načina, kako preveriti rezultat."
+   ],
+   "table": {
+    "head": [
+     "Članek",
+     "Kaj dobro naredi",
+     "Česa manjka"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Doslednost NAP v Google Business Profile in imenikih; primer JSON-LD LocalBusiness z naslovom",
+      "Ni navodil za pot, parkiranja ali dostopnosti; ni geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Preverjanje naslova ali območja storitev v profilu; spremljanje obiskov iz UI v GA4 in mesečno naključno preverjanje pozivov",
+      "Ni napotkov za stran z navodili za pot; ni kode schema"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Pogosta vprašanja za posamezne lokacije, npr. ali ima lokacija brezplačno parkiranje",
+      "Ni označevanja, ni strani z navodili za pot, večinoma o izdelku"
+     ],
+     [
+      "[Birdeye (posodobljeno 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Opozori, da UI slabo obravnava bližino; dosledni vpisi v Google, Bing in Yelp",
+      "Ni kode schema, ni strani z navodili za pot"
+     ],
+     [
+      "[Uravation, lokalna podjetja (v japonščini, posodobljeno 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) in [neodvisne kavarne (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Postaja, peš pot, parkiranje in vhod na strani lokacije; »3 minute od postaje« zahteva navedeno izhodišče",
+      "Lastnosti naštete brez kode; ni korakov v WordPressu"
+     ],
+     [
+      "[Issoh (v japonščini, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Primeri različic naslova za poenotenje; atributi parkiranja in dostopnosti",
+      "Ni predloge strani z navodili za pot ali primera schema"
+     ]
+    ]
+   },
+   "after": [
+    "Ta vodnik odgovori na vsa vprašanja, na katera odgovarjajo ti članki, in doda pravilo za čas hoje, predlogo za podatke o parkiranju, naslov in koordinate, zapisane tako, kot jih prikazuje Googlova dokumentacija, korake v WordPressu z Nurevo in nabor vprašanj za preverjanje UI."
+   ]
+  },
+  {
+   "heading": "Osem stvari za stran z navodili za pot",
+   "paragraphs": [
+    "Zapišite jih na stran lokacije ali na ločeno stran »Kako do nas«. Če vdelate zemljevid, iste podatke vseeno zapišite tudi z besedilom: UI morda ne zna prebrati vsebine zemljevida."
+   ],
+   "table": {
+    "head": [
+     "Kaj zapisati",
+     "Primer",
+     "Kaj gre narobe brez tega"
+    ],
+    "rows": [
+     [
+      "Celoten naslov z oznako pisarne ali nadstropjem in poštno številko",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Širi se naslov brez oznake pisarne in ljudje se izgubijo pri vratih"
+     ],
+     [
+      "Najbližja postaja ali postajališče, linija, izhod, čas hoje",
+      "Postaja Springfield (Blue Line), severni izhod, 4 minute hoje (približno 300 m / 0,2 milje)",
+      "Obiskovalci so napoteni na napačno postajo ali izhod"
+     ],
+     [
+      "Pot z dvema ali tremi orientacijskimi točkami",
+      "Iz severnega izhoda zavijte desno, pri kavarni na vogalu levo; smo v stavbi z lekarno v pritličju, pred drugim semaforjem",
+      "Ljudje pridejo blizu in se nato izgubijo; več telefonskih klicev"
+     ],
+     [
+      "Vhod in nadstropje",
+      "Vhod je v prehodu levo od stavbe, ne skozi glavna vrata. Z dvigalom v 3. nadstropje",
+      "Ljudje najdejo stavbo, ne pa vhoda"
+     ],
+     [
+      "Parkiranje",
+      "Dve rezervirani mesti za stavbo (št. 7 in 8). Ko sta zasedeni, uporabite javno parkirišče na Oak Street (parkirnine ne povrnemo)",
+      "UI ugiba, ali imate parkirišče"
+     ],
+     [
+      "Kolesa in motorji",
+      "Stojalo za kolesa pred stavbo; parkiranja za motorje ni",
+      "Ljudje parkirajo, kjer ne bi smeli"
+     ],
+     [
+      "Dostopnost in otroški vozički",
+      "Dvigalo je na voljo. Pri vhodu je 2 cm visok prag; uporabnike invalidskih vozičkov prosimo, da prej pokličejo",
+      "Obiskovalci ne vedo, ali bodo lahko vstopili"
+     ],
+     [
+      "Avtobus, taksi in avto",
+      "Avtobus 12, postajališče Oak Street, 1 minuta hoje. Vozniki zapeljejo z Main Street (enosmerna ulica)",
+      "Vozniki pridejo z napačne smeri"
+     ]
+    ]
+   },
+   "after": [
+    "Slabo: »Blizu postaje! Parkiranje na voljo. Glejte zemljevid.« Dobro: »4 minute hoje (približno 300 m) od severnega izhoda postaje Springfield. 123 Example Street, Suite 300. Vhod je v prehodu levo od stavbe. Dve rezervirani mesti za stavbo (7 in 8); ko sta zasedeni, uporabite javno parkirišče na Oak Street.«",
+    "Samo »parkiranje na voljo« ne pove, koliko je mest, kje, ali je brezplačno in ali gre za partnersko parkirišče. Pri partnerskem parkirišču navedite njegovo ime, naslov in pogoje popusta (na primer »ena ura brezplačno ob nakupu nad 20 USD«). Ko se pogoji spremenijo, stran posodobite še isti dan."
+   ]
+  },
+  {
+   "heading": "Čas hoje: določite, kako ga merite, in to povejte",
+   "paragraphs": [
+    "Čase hoje je lahko navajati nedosledno. Japonsko oglaševanje nepremičnin ima stalno pravilo: razdalja po poti, 80 m na minuto, vsak ostanek zaokrožen navzgor na celo minuto, brez upoštevanja semaforjev ali klancev (izvedbena pravila japonskega kodeksa poštene konkurence pri oglaševanju nepremičnin, kot jih pojasnjuje [slovarček Mitsubishi Jisho House Net](https://www.mec-h.com/words/detail?n=59), v japonščini). Trgovine in ordinacije k temu niso zavezane, druge države pa skupnega pravila nimajo, a če izberete eno pravilo in se ga držite, si vaše spletno mesto in vpisi v imenikih ne bodo nasprotovali."
+   ],
+   "list": [
+    "Določite začetno in končno točko (»od zapornic severnega izhoda do vhoda v našo stavbo«)",
+    "Izmerite razdaljo hoje po poti v aplikaciji z zemljevidi in jo pretvorite po svojem pravilu. Navedena razdalja (»približno 300 m«) omogoča preverjanje tako UI kot ljudem",
+    "Na velikih postajah z več izhodi navedite najbližji izhod in dodajte en stavek za tiste, ki pridejo z drugega",
+    "Preverite, ali vpisi v imenikih in opis v Google Business Profile navajajo drugačno številko, in jih uskladite"
+   ],
+   "after": [
+    "»1 minuta od postaje« napišite samo, če ste res pri izhodu. Pretiran čas hoje se v ocenah vrne kot neskladje."
+   ]
+  },
+  {
+   "heading": "Povsod uporabljajte enak zapis naslova",
+   "paragraphs": [
+    "Na splošno velja, da storitve UI združujejo vaše spletno mesto, Google Business Profile, imenike in profile na družbenih omrežjih, da presodijo, ali opisujejo isto podjetje; kako jih povezujejo, ni objavljeno. Ko je naslov od vpisa do vpisa zapisan različno, se vpisi morda ne povežejo ali pa v odgovore pride naslov brez oznake pisarne oziroma nadstropja. Določite teh pet stvari in jih uporabljajte v vseh vpisih."
+   ],
+   "list": [
+    "Okrajšave: »ulica« ali »ul.«, »pisarna« ali »pis.«. Oboje je v redu; izberite eno",
+    "Znaki: navadni vezaji, dosledno številčenje, brez okrasnih simbolov",
+    "Ime stavbe, oznaka pisarne in nadstropje. Če se stavba preimenuje, posodobite vse vpise isti dan",
+    "Ali navajati regijo (v strukturiranih podatkih jo vedno navedite)",
+    "Če naslov objavljate tudi v drugem jeziku, ga zapišite tako, da je prepoznavno isto mesto (navedite ime stavbe)"
+   ],
+   "after": [
+    "Po selitvi navedite novi naslov na strani z navodili za pot z enim stavkom, kot je »Preselili smo se (datum); naš prejšnji naslov je bil …«. Če staro stran samo izbrišete, stari naslov ostane na drugih spletnih mestih brez povezave z vašim, UI pa ga lahko še naprej navaja."
+   ]
+  },
+  {
+   "heading": "Nastavite atribute parkiranja in dostopnosti v Google Business Profile",
+   "paragraphs": [
+    "Google Business Profile ima »atribute«, ki so prikazani v Iskanju Google, Google Zemljevidih in drugih Googlovih storitvah. Nekatere atribute urejate sami; druge lahko dopolnijo podatki strank, ki vas obiščejo. Atributi dostopnosti vključujejo vhod, dostopen z invalidskim vozičkom, stranišče, sedišča, dvigalo in parkirišče, dostopno z invalidskim vozičkom – pri slednjem izberite Da, če imate parkirno mesto, rezervirano za osebe s posebnimi potrebami. Google navaja, da pregled spremembe običajno traja približno 10 minut, lahko pa do 30 dni ([Upravljanje atributov podjetja](https://support.google.com/business/answer/9049526?hl=en), preverjeno 21. novembra 2026). Katere atribute vidite, je odvisno od kategorije podjetja.",
+    "Kako Google AI Overviews in način UI uporabljajo atribute profila, ni objavljeno. Profil pa so podatki, prikazani v Google Zemljevidih in Iskanju, zato naj pove isto kot vaše spletno mesto. Podrobnosti, ki jih atributi ne morejo izraziti – število mest, ceno, partnerske pogoje –, zapišite v besedilo strani in v opis profila."
+   ]
+  },
+  {
+   "heading": "Strukturirani podatki: naslov, koordinate, zemljevid in ugodnosti",
+   "paragraphs": [
+    "V Googlovi [dokumentaciji strukturiranih podatkov LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) (posodobljeno septembra 2026) sta name in address obvezna, geo (zemljepisna širina in dolžina) pa je priporočen. Primeri naslov razdelijo na PostalAddress streetAddress, addressLocality, addressRegion, postalCode in addressCountry, koordinate pa morajo imeti natančnost vsaj pet decimalnih mest. Koordinate vzemite iz aplikacije z zemljevidi pri vhodu: za navodila za pot so vrata, ki jih ljudje uporabljajo, bolj uporabna kot sredina stavbe.",
+    "Googlova dokumentacija jih ne omenja, schema.org pa ima tudi [hasMap](https://schema.org/hasMap) (URL zemljevida kraja), [amenityFeature](https://schema.org/amenityFeature) (ugodnosti, zapisane kot pari name/value v [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)) in [publicAccess](https://schema.org/publicAccess) (ali je kraj odprt za javne obiskovalce). Pri raziskavi nismo našli uradne izjave, da Google ali katera koli druga storitev UI uporablja hasMap ali amenityFeature. Če jih dodate, ne škodi, a jih obravnavajte kot ponovitev tega, kar že pove besedilo strani."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Naslov, koordinate in število mest v strukturiranih podatkih se morajo ujemati z besedilom strani. Sintakso preverite s [preizkusom obogatenih rezultatov](https://search.google.com/test/rich-results) ali s [Schema Markup Validator](https://validator.schema.org/). Če imate več lokacij, dajte vsaki svojo stran z lastnim naslovom in koordinatami (glejte [iskanje z UI za podjetja z več lokacijami](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "Koraki v WordPressu (z Nurevo AIO)",
+   "paragraphs": [
+    "V [Nurevo AIO (brezplačen, prej prikazan kot Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) se to, kar vpišete v polje Naslov, objavi natanko tako, kot je vpisano, v strukturiranih podatkih podjetja (PostalAddress streetAddress) in v vrstici »Address« v llms.txt. Delajte v tem vrstnem redu."
+   ],
+   "list": [
+    "Najprej popravite besedilo strani z navodili za pot po osmih točkah zgoraj (besedilo strani pred strukturiranimi podatki)",
+    "V polju Naslov uporabite enak zapis kot na strani in v Google Business Profile, z oznako pisarne, nadstropjem in poštno številko. Polje se objavi kot en niz, ne razdeljeno na dele",
+    "Nurevo koordinat ne ugiba iz naslova. Če jih želite objaviti, dodajte geo z razvijalskim filtrom webmcp_canary_business_node (koda spodaj); hasMap in amenityFeature lahko dodate na enak način",
+    "Če vaš vtičnik SEO ali tema že objavlja ime podjetja, naslov, telefon in delovni čas, Nurevo ne objavi drugega vozlišča podjetja, zato filter nima učinka; koordinate tedaj dodajte v tistem vtičniku ali temi. Nurevo ne podvaja Yoast SEO, Rank Math, All in One SEO ali Slim SEO, od različice 0.9.1 pa deluje tudi skupaj s SEO SIMPLE PACK in VK All in One Expansion Unit",
+    "Postavka »Pokritost ključnih informacij« v diagnozi vtičnika pokaže, ali so ime, naslov, telefon, delovni čas, lokacija in URL objavljeni",
+    "Spletna mesta, nastavljena kot spletna trgovina ali B2B, ne objavljajo delovnega časa ali lokacije (geo), saj ni kraja za obisk"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Dodajte ga v functions.php podrejene teme ali v vtičnik za odrezke kode, nato v izvorni kodi strani ali s preizkusom obogatenih rezultatov preverite, ali se geo pojavi pri vašem podjetju. Ko se preselite ali se parkiranje spremeni, posodobite polje, filter in besedilo strani isti dan.",
+    "Agencije, ki vzdržujejo spletna mesta strank, lahko »posodobitev vseh vpisov isti dan« naredijo za standardno opravilo pri selitvah, spremembah pogodb za parkiranje in preimenovanjih stavb. Nurevo ima [partnerski program](https://nurevo.jp/partner/) za agencije, ki ponujajo mesečno podporo."
+   ]
+  },
+  {
+   "heading": "Kako preveriti po spremembah",
+   "paragraphs": [
+    "UI zastavite ista vprašanja na dan sprememb in znova čez dva do štiri tedne ter odgovore zabeležite. Nobena storitev UI ne objavlja, koliko časa trajajo posodobitve."
+   ],
+   "table": {
+    "head": [
+     "Vprašanje",
+     "Pravilen odgovor"
+    ],
+    "rows": [
+     [
+      "»Kakšen je naslov (podjetje)?«",
+      "Vaš trenutni naslov z oznako pisarne ali nadstropjem, ne stari"
+     ],
+     [
+      "»Kako pridem do (podjetje) od (postaja)?«",
+      "Izhod in čas hoje, navedena na vašem spletnem mestu"
+     ],
+     [
+      "»Ali je pri (podjetje) parkirišče?«",
+      "Ali ga imate, koliko mest in partnerski pogoji – tako kot na vašem spletnem mestu"
+     ],
+     [
+      "»Ali je (podjetje) dostopno z invalidskim vozičkom?«",
+      "Enako kot na vašem spletnem mestu in v Google Business Profile"
+     ],
+     [
+      "»(Vrsta podjetja) s parkiriščem v (območje)«",
+      "Ali se pojavi vaše ime in ali je navedena vaša stran z navodili za pot"
+     ]
+    ]
+   },
+   "after": [
+    "Zabeležite datum, storitev UI, vprašanje, odgovor in navedene URL-je. Če je vir imenik ali star letak, ga popravite. V paketih Free in Standard storitev Nurevo enkrat na mesec Perplexity zastavi tri vprašanja brez blagovne znamke, sestavljena iz vrste podjetja in območja, ter pokaže, ali se je pojavilo vaše ime in ali je bilo navedeno vaše spletno mesto. Pro (beta, od USD 99 na mesec) spremlja do 20 vprašanj v Perplexity (v ChatGPT, ko bo nastavljen). Vprašanja o parkiranju in poti beležite ročno. Glejte [kako meriti vidnost v UI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam pred objavo",
+   "list": [
+    "Naslov z oznako pisarne ali nadstropjem in poštno številko je zapisan kot besedilo HTML",
+    "Navedeni so najbližja postaja ali postajališče, linija, izhod, čas hoje in razdalja, določili pa ste, od kod in do kod ste merili",
+    "Opisana je pot z dvema ali tremi orientacijskimi točkami ter vhod in nadstropje",
+    "Opisano je parkiranje – ali ga imate, število mest, lokacija, cena, partnerski pogoji; če ga nimate, je to zapisano",
+    "Zajeti so kolesa, motorji, dostopnost in otroški vozički",
+    "Naslov je enako zapisan na spletnem mestu, v Google Business Profile, imenikih in profilih na družbenih omrežjih",
+    "Atributi v Google Business Profile (parkiranje, dostopnost) se ujemajo s spletnim mestom",
+    "Naslov in koordinate (vsaj pet decimalnih mest) v strukturiranih podatkih se ujemajo z besedilom strani",
+    "Nobena stran, PDF ali objava na blogu ne prikazuje več starega naslova ali parkirišča, ki ga ne uporabljate več",
+    "Izbrali ste vprašanja in zabeležili odgovore UI na dan sprememb ter čez dva do štiri tedne"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Vdelujemo zemljevid. Ali moramo pot vseeno opisati z besedilom?",
+   "a": "Da. Ali UI zna prebrati vdelan zemljevid ali sliko z navodili za pot, se razlikuje od storitve do storitve in ni objavljeno. Zemljevid obravnavajte kot pomoč za ljudi, postajo, izhod, čas hoje, vhod in parkiranje pa zapišite v besedilo strani."
+  },
+  {
+   "q": "Parkirišča nimamo. Naj to preprosto izpustimo?",
+   "a": "Varneje je napisati »Parkirišča nimamo«. Če ne napišete ničesar, lahko UI odgovori na podlagi drugih spletnih mest ali ugiba. Dodajte, kje lahko parkirate v bližini in kako pridete z javnim prevozom."
+  },
+  {
+   "q": "Kako naj izračunamo čas hoje?",
+   "a": "Univerzalnega pravila ni. Japonski standard oglaševanja nepremičnin (razdalja po poti, 80 m na minuto, zaokroževanje navzgor) je ena jasna možnost. Karkoli izberete, povejte, od kod in do kod ste merili, in dodajte razdaljo."
+  },
+  {
+   "q": "Ali potrebujemo koordinate v strukturiranih podatkih, da se pojavimo v odgovorih UI?",
+   "a": "Ne nujno. V Googlovi dokumentaciji je geo priporočen, obvezna sta le name in address. Ali ChatGPT ali Perplexity uporabljata koordinate, ni objavljeno. Najprej popravite besedilo strani in zapis naslova, nato dodajte koordinate, odčitane pri vhodu."
+  },
+  {
+   "q": "Ali naj dodamo hasMap ali amenityFeature?",
+   "a": "Lahko, vendar ju ni v Googlovi dokumentaciji in nismo našli uradne izjave, da ju uporablja katera koli storitev UI. Dodajte ju kot ponovitev strani z zemljevidom in podatkov o parkiranju, ki so že na vaši strani."
+  },
+  {
+   "q": "Preselili smo se, UI pa še vedno navaja naš stari naslov.",
+   "a": "Isti dan posodobite spletno mesto, Google Business Profile, imenike in profile na družbenih omrežjih ter na strani z navodili za pot ohranite en stavek z datumom selitve in prejšnjim naslovom. Preverite URL-je, ki jih navaja UI; če so to stare strani ali PDF-ji, jih popravite ali odstranite. Čas posodobitve ni objavljen, zato vprašajte znova čez nekaj tednov."
+  },
+  {
+   "q": "Ali lahko v polje Naslov v Nurevo vpišem oznako pisarne in nadstropje?",
+   "a": "Da, prosimo, vpišite ju. Polje se objavi natanko tako, kot je vpisano, v streetAddress in v vrstici »Address« v llms.txt. Uporabite enak zapis kot na strani in v Google Business Profile."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Preverite, ali UI zna prebrati vaše spletno mesto",
+  "body": "Brezplačno preverjanje ne zahteva registracije: vnesite URL in si oglejte dostop pajkov UI, strukturirane podatke in llms.txt. V WordPressu brezplačni vtičnik objavi vaš naslov, telefon in delovni čas v strukturiranih podatkih in v llms.txt, ne da bi podvajal izpis vašega vtičnika SEO.",
+  "label": "Brezplačno preverite pripravljenost na UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Preizkusite brezplačni vtičnik za WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Iskanje Google, Google Zemljevidi in Gemini so blagovne znamke družbe Google LLC, ChatGPT družbe OpenAI in Perplexity družbe Perplexity AI. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit in imena podjetij, navedenih v tem vodniku, so blagovne znamke ali registrirane blagovne znamke svojih lastnikov. Nurevo ni povezan z nobenim od teh podjetij niti ga ta ne podpirajo."
+}

@@ -1,0 +1,321 @@
+{
+ "title": "Yapay zekânın doğru okuduğu ulaşım ve otopark sayfası | Nurevo",
+ "description": "Yapay zekânın \"otopark var mı?\" ve \"nasıl giderim?\" sorularını doğru yanıtlaması için ulaşım sayfası: adres, toplu taşıma, giriş, otopark, şema, WordPress.",
+ "h1": "Yapay zekâ aramasının doğru anlaması için ulaşım ve otopark sayfanızı nasıl yazmalısınız",
+ "lead": "Yapay zekânın doğru yol tarifi ve otopark bilgisi vermesi için ulaşım sayfanıza şunları yalnızca harita veya görsel olarak değil, HTML metin olarak yazın: tam adresiniz (ofis numarası veya kat dahil), en yakın istasyon ya da durak ile çıkış ve yürüme süresi (ve bunu nasıl ölçtüğünüz), girişe kadar yer işaretleri ve otopark (var mı, kaç yer, nerede ve ücreti ne). Ardından her yerde — sitenizde, Google Business Profile'da ve rehber sitelerde — tek bir adres biçimi kullanın ve aynı adresi ve girişinizin koordinatlarını yapılandırılmış verinize koyun. Otoparkınız yoksa bunu söyleyin: \"Otoparkımız yoktur; lütfen Example Street'teki genel otoparkı kullanın.\" Böylece yapay zekâya tahmin edecek daha az alan kalır.",
+ "intro": [
+  "21 Kasım 2026'da (JST) yazıldı. Çalışma saatleri [Çalışma saatleri ve kapalı günler nasıl yayımlanır](/guide/business-hours-holidays-ai-search), randevu ise [Randevu sayfanızı nasıl yazmalısınız](/guide/booking-page-ai-search) rehberinde ele alınıyor. Bu rehber insanların ziyaret ettiği her işletme — mağazalar, klinikler, stüdyolar, ofisler, pansiyonlar — içindir ve tek bir konuya odaklanır: yapay zekânın size nasıl ulaşılacağını ve arabayla gelinip gelinemeyeceğini doğru söylemesi.",
+  "Yapay zekâ yanıtları güne, sorunun nasıl ifade edildiğine ve hizmete göre değişir. Buradaki adımlar, ulaşım bilgilerinizin yapay zekâ tarafından yanlış okunmasını zorlaştırır ve bunu nasıl kontrol edeceğinizi gösterir; bir yanıtta yer alacağınızı veya yanıtın doğru olacağını garanti etmez."
+ ],
+ "sections": [
+  {
+   "heading": "Kısaca: yapay zekânın ulaşım bilgilerinizi yanlış vermesinin beş nedeni",
+   "table": {
+    "head": [
+     "Neden",
+     "Yapay zekâ yanıtlarında ne olur",
+     "Çözüm"
+    ],
+    "rows": [
+     [
+      "Yol tarifi yalnızca gömülü bir harita veya görsel olarak var",
+      "Yapay zekâ hangi istasyon olduğunu veya nereye park edileceğini söyleyemez ya da başka bir siteden eski bilgileri tekrarlar",
+      "Haritanın altına istasyonu, çıkışı, yürüme süresini, girişi ve otoparkı metin olarak yazın"
+     ],
+     [
+      "Adres sitenizde, Google Business Profile'da ve rehber sitelerde farklı yazılmış (\"Ste 300\" ile \"Suite 300\", kat eksik)",
+      "Yapay zekâ sizi iki ayrı yer olarak görür ya da ofis numarasını veya katı atar",
+      "Ofis ve kat dahil tek bir biçim seçin ve her kayıtta onu kullanın"
+     ],
+     [
+      "Otopark hakkında hiçbir şey yazılmamış",
+      "Yapay zekâ \"otopark var\" ya da \"otopark yok\" diye tahmin eder",
+      "Otoparkınız olmasa bile bunu yazın ve bunun yerine nereye park edilebileceğini belirtin"
+     ],
+     [
+      "Yalnızca \"istasyona yakın\" veya \"bulması kolay\"",
+      "Yapay zekâ hangi istasyon ve hangi çıkış olduğunu söyleyemez",
+      "İstasyonu, hattı, çıkışı ve yürüme süresini, ayrıca bunu nasıl ölçtüğünüzü belirtin"
+     ],
+     [
+      "Taşınma veya otopark değişikliğinden sonra eski sayfalar ya da PDF'ler hâlâ yayında",
+      "Yapay zekâ eski adresinizi veya artık kullanmadığınız bir otoparkı verir",
+      "Eski ulaşım sayfalarını, broşür PDF'lerini ve blog yazılarını bulun; düzeltin ya da kaldırın"
+     ]
+    ]
+   },
+   "after": [
+    "Ziyaretçiler yapay zekâya koşullu sorular sorar: \"(İşletme) yakınında otopark var mı?\", \"(İstasyon)'dan ne kadar uzakta?\", \"Bebek arabasıyla gidilebilir mi?\" Yapay zekâ, ulaşım sayfanızdaki cümleleri alarak yanıt verir; bu yüzden metin olarak yazılmayan her şeyin başka sitelerden ya da tahminle doldurulma olasılığı daha yüksektir."
+   ]
+  },
+  {
+   "heading": "Öne çıkan makaleler neyi ele alıyor, neyi atlıyor",
+   "paragraphs": [
+    "\"directions page parking AI search\", \"local business AI search optimization\" gibi aramalar ve bunların Japonca karşılıkları için öne çıkan Japonca ve İngilizce sonuçları okuduk (21 Kasım 2026). Japonca makaleler istasyonu ve yürüme süresini belirtmek, otopark olup olmadığını yazmak ve adresi tutarlı tutmak konusunda hemfikir. İngilizce makalelerin çoğu \"NAP'inizi (ad, adres, telefon) tutarlı tutun\" demekle yetiniyor, ulaşım ve otoparktan neredeyse hiç bahsetmiyor. Hiçbiri ulaşım bilgileri için bir yapılandırılmış veri örneği (geo, hasMap, amenityFeature), WordPress adımları veya sonucu kontrol etmenin bir yolunu vermiyor."
+   ],
+   "table": {
+    "head": [
+     "Makale",
+     "İyi yaptığı",
+     "Eksik bıraktığı"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Google Business Profile ve rehber sitelerde NAP tutarlılığı; adres içeren bir LocalBusiness JSON-LD örneği",
+      "Ulaşım, otopark veya erişilebilirlik yok; geo yok"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Profilde adresi veya hizmet bölgesini doğrulamak; yapay zekâdan gelen trafiği GA4'te izlemek ve istemleri aylık olarak örnek kontrol etmek",
+      "Ulaşım sayfası için yönlendirme yok; şema kodu yok"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Bir şubede ücretsiz otopark olup olmadığı gibi şubeye özel SSS'ler",
+      "İşaretleme yok, ulaşım sayfası yok, çoğunlukla ürün odaklı"
+     ],
+     [
+      "[Birdeye (güncelleme 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Yapay zekânın yakınlığı iyi değerlendiremediğine dikkat çekiyor; Google, Bing ve Yelp'te tutarlı kayıtlar",
+      "Şema kodu yok, ulaşım sayfası yok"
+     ],
+     [
+      "[Uravation, yerel işletmeler (Japonca, güncelleme 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) ve [bağımsız kafeler (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Şube sayfasında istasyon, yürüyüş rotası, otopark ve giriş; \"istasyona 3 dakika\" için belirtilmiş bir başlangıç noktası gerekir",
+      "Özellikler kodsuz listelenmiş; WordPress adımları yok"
+     ],
+     [
+      "[Issoh (Japonca, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Birleştirilmesi gereken adres varyasyonlarına örnekler; otopark ve erişilebilirlik özellikleri",
+      "Ulaşım sayfası şablonu veya şema örneği yok"
+     ]
+    ]
+   },
+   "after": [
+    "Bu rehber, o makalelerin yanıtladığı her soruyu yanıtlar ve bunlara yürüme süresi için bir kural, otopark bilgileri için bir şablon, Google belgelerinin gösterdiği şekilde yazılmış adres ve koordinatlar, Nurevo ile WordPress adımları ve yapay zekâyı kontrol etmek için bir soru seti ekler."
+   ]
+  },
+  {
+   "heading": "Ulaşım sayfanıza yazmanız gereken sekiz şey",
+   "paragraphs": [
+    "Bunları şube sayfanıza veya ayrı bir \"Ulaşım\" sayfasına koyun. Harita gömüyorsanız aynı bilgileri yine de metin olarak yazın: yapay zekâ haritanın içindekini okuyamayabilir."
+   ],
+   "table": {
+    "head": [
+     "Ne yazılmalı",
+     "Örnek",
+     "Yazılmazsa ne ters gider"
+    ],
+    "rows": [
+     [
+      "Ofis numarası veya kat ve posta kodu dahil tam adres",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Ofis numarası olmayan bir adres yayılır ve insanlar kapıda kaybolur"
+     ],
+     [
+      "En yakın istasyon veya durak, hat, çıkış, yürüme süresi",
+      "Springfield İstasyonu (Blue Line), kuzey çıkışı, 4 dakika yürüme (yaklaşık 300 m / 0,2 mil)",
+      "Ziyaretçiler yanlış istasyona veya çıkışa yönlendirilir"
+     ],
+     [
+      "İki üç yer işaretiyle rota",
+      "Kuzey çıkışından sağa dönün, köşedeki kafeden sola dönün; ikinci ışıklardan önce, zemin katında eczane olan binadayız",
+      "İnsanlar yaklaşır, sonra kaybolur; daha çok telefon gelir"
+     ],
+     [
+      "Giriş ve kat",
+      "Giriş ön kapıdan değil, binanın solundaki geçittendir. Asansörle 3. kata çıkın",
+      "İnsanlar binayı bulur ama girişi bulamaz"
+     ],
+     [
+      "Otopark",
+      "Binanın arkasında iki ayrılmış yer (7 ve 8 numara). Doluysa Oak Street'teki genel otoparkı kullanın (otopark ücretini karşılamıyoruz)",
+      "Yapay zekâ otoparkınız olup olmadığını tahmin eder"
+     ],
+     [
+      "Bisiklet ve motosiklet",
+      "Binanın önünde bisiklet park yeri; motosiklet park yeri yok",
+      "İnsanlar park etmemeleri gereken yere park eder"
+     ],
+     [
+      "Erişilebilirlik ve bebek arabaları",
+      "Asansör var. Girişte 2 cm'lik bir basamak var; tekerlekli sandalye kullananlar lütfen önceden arasın",
+      "Ziyaretçiler içeri girip giremeyeceklerini bilemez"
+     ],
+     [
+      "Otobüs, taksi ve araba",
+      "12 numaralı otobüs, Oak Street durağı, 1 dakika yürüme. Araçla giriş Main Street'ten (tek yönlü sokak)",
+      "Sürücüler yanlış yönden gelir"
+     ]
+    ]
+   },
+   "after": [
+    "Kötü: \"İstasyona yakın! Otopark mevcut. Haritaya bakın.\" İyi: \"Springfield İstasyonu kuzey çıkışından 4 dakika yürüme (yaklaşık 300 m). 123 Example Street, Suite 300. Giriş binanın solundaki geçitten. Binanın arkasında iki ayrılmış yer (7 ve 8); doluysa Oak Street'teki genel otoparkı kullanın.\"",
+    "Tek başına \"otopark mevcut\", kaç yer olduğunu, nerede olduğunu, ücretsiz olup olmadığını veya anlaşmalı bir otopark olup olmadığını söylemez. Anlaşmalı otopark için adını, adresini ve indirim koşullarını verin (örneğin \"20 $ üzeri alışverişte bir saat ücretsiz\"). Koşullar değiştiğinde sayfayı aynı gün güncelleyin."
+   ]
+  },
+  {
+   "heading": "Yürüme süresi: nasıl ölçeceğinize karar verin ve bunu belirtin",
+   "paragraphs": [
+    "Yürüme süreleri kolayca tutarsız hâle gelir. Japonya'da emlak reklamlarının sabit bir kuralı vardır: rota boyunca yol mesafesi, dakikada 80 m, kalan kısım tam dakikaya yukarı yuvarlanır, trafik ışıkları veya yokuşlar hesaba katılmaz (Japonya'nın emlak reklamcılığına ilişkin adil rekabet kurallarının uygulama yönetmeliği; [Mitsubishi Jisho House Net sözlüğünde](https://www.mec-h.com/words/detail?n=59) açıklandığı gibi, Japonca). Mağazalar ve klinikler buna bağlı değildir ve başka ülkelerde ortak bir kural yoktur; ancak bir kural seçip ona bağlı kalmak, sitenizle rehber kayıtlarınızın birbiriyle çelişmesini önler."
+   ],
+   "list": [
+    "Başlangıç ve bitiş noktalarını belirleyin (\"kuzey çıkışı turnikelerinden binamızın girişine\")",
+    "Bir harita uygulamasında rota boyunca yürüme mesafesini ölçün ve kendi kuralınızla dönüştürün. Mesafeyi de eklemek (\"yaklaşık 300 m\") hem yapay zekânın hem de insanların kontrol etmesini sağlar",
+    "Birden çok çıkışı olan büyük istasyonlarda en yakın çıkışı belirtin ve başka bir çıkıştan gelenler için bir satır ekleyin",
+    "Rehber kayıtlarınızda ve Google Business Profile açıklamanızda farklı bir sayı olup olmadığını kontrol edin ve bunları eşleştirin"
+   ],
+   "after": [
+    "\"İstasyona 1 dakika\" ifadesini yalnızca gerçekten çıkışın yanındaysanız yazın. Abartılı bir yürüme süresi yorumlarda tutarsızlık olarak ortaya çıkar."
+   ]
+  },
+  {
+   "heading": "Her yerde tek bir adres biçimi kullanın",
+   "paragraphs": [
+    "Yapay zekâ hizmetlerinin, aynı işletmeyi anlatıp anlatmadıklarına karar vermek için sitenizi, Google Business Profile'ı, rehber siteleri ve sosyal medya profillerini birleştirdiği genel olarak kabul edilir; bunları nasıl eşleştirdikleri yayımlanmamıştır. Adres kayıttan kayda farklı yazıldığında kayıtlar birbirine bağlanmayabilir ya da ofis numarası veya katı olmayan bir adres yanıtlara girer. Şu beş şeye karar verin ve her kayıtta kullanın."
+   ],
+   "list": [
+    "Kısaltmalar: \"Street\" veya \"St\", \"Suite\" veya \"Ste\". İkisi de olur; birini seçin",
+    "Karakterler: düz kısa çizgiler, tutarlı numaralandırma, süs simgesi yok",
+    "Bina adı, ofis numarası ve kat. Binanın adı değişirse her kaydı aynı gün güncelleyin",
+    "Eyalet veya bölgenin yazılıp yazılmayacağı (yapılandırılmış veride her zaman yazın)",
+    "Adresi başka bir dilde de yayımlıyorsanız, aynı yer olduğu anlaşılacak şekilde yazın (bina adını ekleyin)"
+   ],
+   "after": [
+    "Taşındıktan sonra yeni adresi ulaşım sayfanıza \"(tarih) tarihinde taşındık; önceki adresimiz …\" gibi bir satırla koyun. Eski sayfayı yalnızca silmek, başka sitelerdeki eski adresi sitenizle bağlantısız bırakır ve yapay zekâ onu vermeye devam edebilir."
+   ]
+  },
+  {
+   "heading": "Google Business Profile'da otopark ve erişilebilirlik özelliklerini ayarlayın",
+   "paragraphs": [
+    "Google Business Profile'da Google Arama, Haritalar ve diğer Google hizmetlerinde gösterilen \"özellikler\" vardır. Bazı özellikleri kendiniz düzenlersiniz; diğerleri sizi ziyaret eden müşterilerden gelen bilgilerle doldurulabilir. Erişilebilirlik özellikleri arasında tekerlekli sandalyeyle erişilebilir giriş, tuvalet, oturma yeri, asansör ve otopark bulunur — erişilebilirlik ihtiyacı olan kişilere ayrılmış bir park yeriniz varsa sonuncusu için Evet'i seçin. Google, bir düzenlemenin incelenmesinin genellikle yaklaşık 10 dakika sürdüğünü ancak 30 güne kadar uzayabileceğini belirtiyor ([Manage your business attributes](https://support.google.com/business/answer/9049526?hl=en), 21 Kasım 2026'da kontrol edildi). Hangi özellikleri göreceğiniz işletme kategorinize bağlıdır.",
+    "Google AI Overviews ve AI Mode'un profil özelliklerini nasıl kullandığı yayımlanmamıştır. Ancak profil, Google Haritalar ve Arama'da gösterilen bilgidir; bu yüzden sitenizle aynı şeyi söylemesini sağlayın. Özelliklerle ifade edilemeyen ayrıntıları — yer sayısı, ücret, anlaşma koşulları — sayfa metninize ve profil açıklamasına yazın."
+   ]
+  },
+  {
+   "heading": "Yapılandırılmış veri: adres, koordinatlar, harita ve olanaklar",
+   "paragraphs": [
+    "Google'ın [LocalBusiness yapılandırılmış veri belgelerinde](https://developers.google.com/search/docs/appearance/structured-data/local-business) (Eylül 2026'da güncellendi) name ve address zorunlu, geo (enlem ve boylam) ise önerilir. Örnekler adresi PostalAddress streetAddress, addressLocality, addressRegion, postalCode ve addressCountry olarak ayırır ve koordinatların en az beş ondalık basamak hassasiyetinde olması gerekir. Koordinatları bir harita uygulamasından girişinizde alın: yol tarifi için insanların kullandığı kapı, binanın ortasından daha kullanışlıdır.",
+    "Google'ın belgeleri bunlardan bahsetmez, ancak schema.org'da ayrıca [hasMap](https://schema.org/hasMap) (yerin haritasının URL'si), [amenityFeature](https://schema.org/amenityFeature) ([LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification) name/value çiftleri olarak yazılan olanaklar) ve [publicAccess](https://schema.org/publicAccess) (yerin ziyaretçilere açık olup olmadığı) bulunur. Araştırmamızda Google'ın veya başka bir yapay zekâ hizmetinin hasMap ya da amenityFeature kullandığına dair resmî bir açıklama bulamadık. Eklemenin zararı yoktur, ancak bunları sayfa metninizin zaten söylediklerinin tekrarı olarak görün."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Yapılandırılmış verinizdeki adres, koordinatlar ve yer sayısı sayfa metniyle eşleşmelidir. Sözdizimini [Rich Results Test](https://search.google.com/test/rich-results) veya [Schema Markup Validator](https://validator.schema.org/) ile kontrol edin. Birden çok şubeniz varsa her şubeye kendi adresi ve koordinatlarıyla kendi sayfasını verin (bkz. [Çok şubeli işletmeler için yapay zekâ araması](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "WordPress adımları (Nurevo AIO ile)",
+   "paragraphs": [
+    "[Nurevo AIO'da (ücretsiz, eski adıyla Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) Adres alanına yazdığınız şey, işletme yapılandırılmış verinizde (PostalAddress streetAddress) ve llms.txt dosyasının \"Address\" satırında yazdığınız gibi yayımlanır. Şu sırayla ilerleyin."
+   ],
+   "list": [
+    "Önce yukarıdaki sekiz maddeyi kullanarak ulaşım sayfanızın metnini düzeltin (yapılandırılmış veriden önce sayfa metni)",
+    "Adres alanında sayfanız ve Google Business Profile ile aynı biçimi, ofis numarası, kat ve posta kodu dahil kullanın. Alan parçalara ayrılmadan tek bir metin olarak yayımlanır",
+    "Nurevo adresinizden koordinat tahmin etmez. Yayımlamak için geo'yu webmcp_canary_business_node geliştirici filtresiyle ekleyin (kod aşağıda); hasMap ve amenityFeature de aynı şekilde eklenebilir",
+    "SEO eklentiniz veya temanız işletme adınızı, adresinizi, telefonunuzu ve çalışma saatlerinizi zaten yayımlıyorsa, Nurevo ikinci bir işletme düğümü yayımlamaz ve filtrenin etkisi olmaz; koordinatları o eklentide veya temada ekleyin. Nurevo Yoast SEO, Rank Math, All in One SEO veya Slim SEO çıktısını yinelemez ve 0.9.1'den beri SEO SIMPLE PACK ve VK All in One Expansion Unit ile birlikte de çalışır",
+    "Eklenti tanılamasındaki \"Temel bilgi kapsamı\" maddesi adınızın, adresinizin, telefonunuzun, çalışma saatlerinizin, konumunuzun ve URL'nizin yayımlanıp yayımlanmadığını gösterir",
+    "Çevrimiçi mağaza veya B2B sitesi olarak ayarlanmış siteler, ziyaret edilecek bir yer olmadığı için çalışma saatleri veya konum (geo) yayımlamaz"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Kodu alt temanızın functions.php dosyasına veya bir kod parçacığı eklentisine ekleyin, ardından geo'nun işletmenizde göründüğünü doğrulamak için sayfa kaynağını veya Rich Results Test'i kontrol edin. Taşındığınızda veya otopark değiştiğinde alanı, filtreyi ve sayfa metnini aynı gün güncelleyin.",
+    "Müşteri sitelerinin bakımını yapan ajanslar, taşınma, otopark sözleşmesi değişikliği ve bina adı değişikliği durumlarında \"her kaydı aynı gün güncelle\" işini standart bir görev hâline getirebilir. Nurevo'nun aylık destek sunan ajanslar için bir [iş ortaklığı programı](https://nurevo.jp/partner/) vardır."
+   ]
+  },
+  {
+   "heading": "Değişikliklerden sonra nasıl kontrol edilir",
+   "paragraphs": [
+    "Değişiklik yaptığınız gün ve iki ila dört hafta sonra yapay zekâya aynı soruları sorun ve yanıtları kaydedin. Hiçbir yapay zekâ hizmeti güncellemelerin ne kadar sürdüğünü yayımlamaz."
+   ],
+   "table": {
+    "head": [
+     "Soru",
+     "Doğru bir yanıt"
+    ],
+    "rows": [
+     [
+      "\"(İşletme)'nin adresi nedir?\"",
+      "Eski adres değil, ofis numarası veya kat dahil güncel adresiniz"
+     ],
+     [
+      "\"(İstasyon)'dan (işletme)'ye nasıl giderim?\"",
+      "Sitenizdeki çıkış ve yürüme süresi"
+     ],
+     [
+      "\"(İşletme)'de otopark var mı?\"",
+      "Sitenizdeki gibi, otopark olup olmadığı, kaç yer olduğu ve anlaşma koşulları"
+     ],
+     [
+      "\"(İşletme) tekerlekli sandalyeyle erişilebilir mi?\"",
+      "Sitenizde ve Google Business Profile'da yazanla aynı"
+     ],
+     [
+      "\"(Bölge)'de otoparklı (işletme türü)\"",
+      "Adınızın görünüp görünmediği ve ulaşım sayfanızın kaynak gösterilip gösterilmediği"
+     ]
+    ]
+   },
+   "after": [
+    "Tarihi, yapay zekâ hizmetini, soruyu, yanıtı ve kaynak gösterilen URL'leri kaydedin. Kaynak bir rehber site veya eski bir broşürse onu düzeltin. Nurevo'nun Free ve Standard planlarında Nurevo hizmeti, işletme türünüz ve bölgenizden oluşturulan, marka adı içermeyen üç soruyu ayda bir Perplexity'ye sorar ve adınızın görünüp görünmediğini ve sitenizin kaynak gösterilip gösterilmediğini gösterir. Pro (beta, ayda 99 USD'den başlayan) Perplexity'de 20 soruya kadar takip eder (ChatGPT kurulduğunda orada da). Otopark ve ulaşım sorularını elle kaydedin. Bkz. [Yapay zekâ görünürlüğü nasıl ölçülür](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Yayımlamadan önce kontrol listesi",
+   "list": [
+    "Ofis numarası veya kat ve posta kodu dahil adresiniz HTML metin olarak yazılı",
+    "En yakın istasyon veya durak, hat, çıkış, yürüme süresi ve mesafe yazılı ve nereden nereye ölçtüğünüze karar verdiniz",
+    "İki üç yer işaretiyle bir rota, ayrıca giriş ve kat yazılı",
+    "Otopark — var mı, yer sayısı, konum, ücret, anlaşma koşulları — yazılı; yoksa bu belirtilmiş",
+    "Bisiklet, motosiklet, erişilebilirlik ve bebek arabaları ele alınmış",
+    "Adres sitenizde, Google Business Profile'da, rehber sitelerde ve sosyal medya profillerinde aynı şekilde yazılmış",
+    "Google Business Profile özellikleri (otopark, erişilebilirlik) sitenizle eşleşiyor",
+    "Yapılandırılmış verideki adres ve koordinatlar (en az beş ondalık basamak) sayfa metniyle eşleşiyor",
+    "Hiçbir sayfa, PDF veya blog yazısı hâlâ eski bir adres veya artık kullanmadığınız bir otopark göstermiyor",
+    "Sorularınızı seçtiniz ve yapay zekânın yanıtlarını değişiklik günü ve iki ila dört hafta sonra kaydettiniz"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Gömülü bir haritamız var. Yol tarifini yine de metin olarak yazmamız gerekir mi?",
+   "a": "Evet. Yapay zekânın gömülü bir haritayı veya yol tarifi görselini okuyup okuyamadığı hizmete göre değişir ve yayımlanmamıştır. Haritayı insanlar için bir yardım olarak görün; istasyonu, çıkışı, yürüme süresini, girişi ve otoparkı sayfa metnine yazın."
+  },
+  {
+   "q": "Otoparkımız yok. Hiç bahsetmesek olur mu?",
+   "a": "\"Otoparkımız yoktur\" demek daha güvenlidir. Hiçbir şey söylemezseniz yapay zekâ başka sitelerden yanıt verebilir ya da tahmin edebilir. Yakında nereye park edilebileceğini ve toplu taşımayla nasıl gelinebileceğini ekleyin."
+  },
+  {
+   "q": "Yürüme süresini nasıl hesaplamalıyız?",
+   "a": "Evrensel bir kural yoktur. Japonya'nın emlak reklamı standardı (yol mesafesi, dakikada 80 m, yukarı yuvarlama) açık bir seçenektir. Hangisini seçerseniz seçin, nereden nereye ölçtüğünüzü belirtin ve mesafeyi ekleyin."
+  },
+  {
+   "q": "Yapay zekâ yanıtlarında yer almak için yapılandırılmış veride koordinat gerekir mi?",
+   "a": "Şart değil. Google'ın belgelerinde geo önerilir ve yalnızca name ve address zorunludur. ChatGPT veya Perplexity'nin koordinat kullanıp kullanmadığı yayımlanmamıştır. Önce sayfa metnini ve adres biçimini düzeltin, ardından girişinizde alınmış koordinatları ekleyin."
+  },
+  {
+   "q": "hasMap veya amenityFeature eklemeli miyiz?",
+   "a": "Ekleyebilirsiniz, ancak Google'ın belgelerinde yer almazlar ve herhangi bir yapay zekâ hizmetinin bunları kullandığına dair resmî bir açıklama bulamadık. Bunları harita sayfasının ve sayfanızda zaten bulunan otopark bilgilerinin tekrarı olarak ekleyin."
+  },
+  {
+   "q": "Taşındık ama yapay zekâ eski adresimizi vermeye devam ediyor.",
+   "a": "Sitenizi, Google Business Profile'ı, rehber siteleri ve sosyal medya profillerini aynı gün güncelleyin ve ulaşım sayfanızda taşınma tarihini ve önceki adresi içeren bir satır bırakın. Yapay zekânın kaynak gösterdiği URL'leri kontrol edin; eski sayfalar veya PDF'lerse düzeltin ya da kaldırın. Güncelleme süreleri yayımlanmadığından birkaç hafta sonra tekrar sorun."
+  },
+  {
+   "q": "Nurevo'nun Adres alanına ofis numarasını ve katı yazabilir miyim?",
+   "a": "Evet, lütfen yazın. Alan, streetAddress'te ve llms.txt'nin \"Address\" satırında yazdığınız gibi yayımlanır. Sayfanız ve Google Business Profile ile aynı biçimi kullanın."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Yapay zekânın sitenizi okuyup okuyamadığını görün",
+  "body": "Ücretsiz kontrol kayıt gerektirmez: yapay zekâ tarayıcılarının erişimini, yapılandırılmış veriyi ve llms.txt dosyanızı görmek için bir URL girin. WordPress'te ücretsiz eklenti, SEO eklentinizin çıktısını yinelemeden adresinizi, telefonunuzu ve çalışma saatlerinizi yapılandırılmış veri olarak ve llms.txt içinde yayımlar.",
+  "label": "Yapay zekâ hazırlığınızı ücretsiz kontrol edin",
+  "href": "/check",
+  "secondary": {
+   "label": "Ücretsiz WordPress eklentisini deneyin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Google Arama, Google Haritalar ve Gemini, Google LLC'nin; ChatGPT, OpenAI'nin; Perplexity ise Perplexity AI'nin ticari markalarıdır. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ve bu rehberde anılan şirketlerin adları, ilgili sahiplerinin ticari markaları veya tescilli ticari markalarıdır. Nurevo bu şirketlerin hiçbiriyle bağlantılı değildir ve onlar tarafından onaylanmamıştır."
+}

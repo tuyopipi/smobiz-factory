@@ -1,0 +1,321 @@
+{
+ "title": "让 AI 正确读懂的交通与停车页面写法 | Nurevo",
+ "description": "如何写交通指引页，让 AI 正确回答“有停车场吗？”“怎么去？”：地址、公共交通、入口、停车、schema 与 WordPress 步骤。",
+ "h1": "如何撰写交通指引与停车页面，让 AI 搜索给出正确答案",
+ "lead": "要让 AI 给出正确的交通和停车信息，请在交通指引页上用 HTML 文字写明以下内容，而不是只放地图或图片：完整地址（包括房间号或楼层）、最近的车站或站点及出口和步行时间（以及测量方式）、到入口为止的地标，以及停车信息（有无、车位数、位置、费用）。然后在所有地方使用同一种地址写法——你的网站、Google 商家资料和各类目录网站——并在结构化数据中放入相同的地址和入口的坐标。如果没有停车场，也要直接写明：“本店没有停车场，请使用 Example Street 上的公共停车场。”这样 AI 就更少有猜测的余地。",
+ "intro": [
+  "撰写于 2026 年 11 月 21 日（日本时间）。营业时间请参阅[如何发布营业时间与休息日](/guide/business-hours-holidays-ai-search)，预约请参阅[如何撰写预约页面](/guide/booking-page-ai-search)。本指南适用于所有需要顾客到访的商家——店铺、诊所、工作室、办公室、民宿——只聚焦一件事：让 AI 正确说出怎么到你这里，以及能不能开车来。",
+  "AI 的回答会因日期、提问措辞和服务而变化。这里的步骤能让 AI 更不容易误读你的交通信息，并告诉你如何检查；但不保证你会出现在回答中，也不保证回答一定正确。"
+ ],
+ "sections": [
+  {
+   "heading": "简短回答：AI 弄错交通信息的五个原因",
+   "table": {
+    "head": [
+     "原因",
+     "AI 回答中会出现的情况",
+     "解决方法"
+    ],
+    "rows": [
+     [
+      "交通指引只有嵌入的地图或图片",
+      "AI 说不出哪个车站、在哪里停车，或者照搬其他网站上的旧信息",
+      "在地图下方用文字写出车站、出口、步行时间、入口和停车信息"
+     ],
+     [
+      "网站、Google 商家资料和目录网站上的地址写法不一致（“Ste 300”与“Suite 300”、缺少楼层）",
+      "AI 把你当成两个地点，或漏掉房间号或楼层",
+      "选定一种包含房间号和楼层的写法，并在所有平台上统一使用"
+     ],
+     [
+      "完全没有提到停车",
+      "AI 会猜测“有停车场”或“没有停车场”",
+      "即使没有也要写明，并说明可以在哪里停车"
+     ],
+     [
+      "只写“离车站很近”或“很好找”",
+      "AI 说不出是哪个车站、哪个出口",
+      "写明车站、线路、出口和步行时间，以及测量方式"
+     ],
+     [
+      "搬迁或停车安排变更后，旧页面或 PDF 仍在网上",
+      "AI 给出旧地址或已不再使用的停车场",
+      "找出旧的交通指引页、宣传单 PDF 和博客文章，进行修正或删除"
+     ]
+    ]
+   },
+   "after": [
+    "到访者真正向 AI 提的问题都带着条件：“（商家）附近有停车场吗？”“从（车站）过去要多远？”“推婴儿车能去吗？”AI 会从你的交通指引页中摘取句子来回答，所以没有写成文字的内容，更容易被其他网站的信息或猜测填补。"
+   ]
+  },
+  {
+   "heading": "排名靠前的文章写了什么、漏了什么",
+   "paragraphs": [
+    "我们阅读了“directions page parking AI search”“local business AI search optimization”及其日文对应搜索词的日文和英文前几名结果（2026 年 11 月 21 日）。日文文章一致建议写明车站和步行时间、说明有无停车场、保持地址一致。大多数英文文章止步于“保持 NAP（名称、地址、电话）一致”，几乎没有提到交通指引或停车。没有一篇给出交通信息的结构化数据示例（geo、hasMap、amenityFeature）、WordPress 步骤或检查结果的方法。"
+   ],
+   "table": {
+    "head": [
+     "文章",
+     "做得好的地方",
+     "遗漏的地方"
+    ],
+    "rows": [
+     [
+      "[Semrush（2026-07-15）](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Google 商家资料与目录网站之间的 NAP 一致性；含地址的 LocalBusiness JSON-LD 示例",
+      "没有交通指引、停车或无障碍信息；没有 geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "在商家资料中验证地址或服务区域；在 GA4 中追踪 AI 引荐流量，并每月抽查提示词",
+      "没有交通指引页的写法；没有 schema 代码"
+     ],
+     [
+      "[Yext（2025-01-24）](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "针对各门店的常见问题，例如该门店是否有免费停车",
+      "没有标记代码、没有交通指引页，内容以产品宣传为主"
+     ],
+     [
+      "[Birdeye（2026-08-17 更新）](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "指出 AI 不擅长处理距离远近；在 Google、Bing 和 Yelp 上保持信息一致",
+      "没有 schema 代码，没有交通指引页"
+     ],
+     [
+      "[Uravation，本地商家（日文，2026-09-05 更新）](https://uravation.com/llmo/local-business-aio-taisaku/)和[个人经营咖啡馆（2026-10-09）](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "在门店页面写明车站、步行路线、停车和入口；“离车站 3 分钟”需要注明起点",
+      "只列出属性名称，没有代码；没有 WordPress 步骤"
+     ],
+     [
+      "[Issoh（日文，2026-08-09）](https://www.issoh.co.jp/column/details/16350/)",
+      "需要统一的地址写法变体示例；停车和无障碍属性",
+      "没有交通指引页模板或 schema 示例"
+     ]
+    ]
+   },
+   "after": [
+    "本指南回答了这些文章回答的所有问题，并补充了步行时间的计算规则、停车信息模板、按 Google 文档示例写法的地址和坐标、使用 Nurevo 的 WordPress 步骤，以及一组用来检查 AI 的问题。"
+   ]
+  },
+  {
+   "heading": "交通指引页上应写的八项内容",
+   "paragraphs": [
+    "把这些内容放在门店页面或单独的“交通指引”页面上。即使嵌入了地图，也要用文字写出同样的信息：AI 可能无法读取地图里的内容。"
+   ],
+   "table": {
+    "head": [
+     "要写的内容",
+     "示例",
+     "不写会出现的问题"
+    ],
+    "rows": [
+     [
+      "包含房间号或楼层和邮政编码的完整地址",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "缺少房间号的地址到处传播，顾客到了门口却找不到"
+     ],
+     [
+      "最近的车站或站点、线路、出口、步行时间",
+      "Springfield 站（Blue Line）北出口，步行 4 分钟（约 300 米 / 0.2 英里）",
+      "到访者被引导到错误的车站或出口"
+     ],
+     [
+      "带两三个地标的路线",
+      "出北出口右转，在街角咖啡馆处左转，在第二个红绿灯之前、一楼是药店的那栋楼就是我们",
+      "顾客走到附近却迷路；电话询问增多"
+     ],
+     [
+      "入口和楼层",
+      "入口不是正门，而是大楼左侧通道里面的门。请乘电梯到 3 楼",
+      "顾客找到了大楼，却找不到入口"
+     ],
+     [
+      "停车",
+      "大楼后方有两个专用车位（7 号和 8 号）。车位已满时，请使用 Oak Street 上的公共停车场（本店不提供停车费减免）",
+      "AI 只能猜测你是否有停车场"
+     ],
+     [
+      "自行车和摩托车",
+      "大楼前有自行车停放架；没有摩托车停车位",
+      "顾客把车停在不该停的地方"
+     ],
+     [
+      "无障碍与婴儿车",
+      "有电梯。入口处有 2 厘米的台阶；使用轮椅的顾客请提前致电",
+      "到访者无法判断自己能否进入"
+     ],
+     [
+      "公交、出租车和自驾",
+      "12 路公交车，Oak Street 站下车，步行 1 分钟。自驾请从 Main Street 驶入（单行道）",
+      "开车的顾客走错路线"
+     ]
+    ]
+   },
+   "after": [
+    "不好的写法：“近车站！有停车场。请看地图。”好的写法：“从 Springfield 站北出口步行 4 分钟（约 300 米）。123 Example Street, Suite 300。入口在大楼左侧的通道里。大楼后方有两个专用车位（7 号和 8 号）；车位已满时，请使用 Oak Street 上的公共停车场。”",
+    "只写“有停车场”，并没有说明有几个车位、在哪里、是否免费，或是否为合作停车场。如果是合作停车场，请写出它的名称、地址和优惠条件（例如“消费满 $20 可免费停车一小时”）。条件变更时，当天就更新页面。"
+   ]
+  },
+  {
+   "heading": "步行时间：决定测量方法，并写明出来",
+   "paragraphs": [
+    "步行时间很容易出现前后不一致。日本的房地产广告有固定规则：按沿途道路距离计算，每分钟 80 米，不足一分钟的部分进位为一分钟，不考虑红绿灯或坡道（日本房地产广告公平竞争规约的施行规则，参见[三菱地所 House Net 的术语解释](https://www.mec-h.com/words/detail?n=59)，日文）。店铺和诊所不受此约束，其他国家也没有通用规则，但选定一种规则并坚持使用，就能避免你的网站和目录网站上的信息互相矛盾。"
+   ],
+   "list": [
+    "确定起点和终点（“从北出口检票口到本楼入口”）",
+    "在地图应用中测量沿路线的步行距离，再按你的规则换算。同时写上距离（“约 300 米”），AI 和人都能核对",
+    "在有多个出口的大型车站，写明最近的出口，并为从其他出口出来的人补充一句说明",
+    "检查目录网站和 Google 商家资料的简介里是否写着不同的数字，并统一起来"
+   ],
+   "after": [
+    "只有真的就在出口旁边，才写“离车站 1 分钟”。夸大的步行时间会在评价中被指出与实际不符。"
+   ]
+  },
+  {
+   "heading": "所有地方使用同一种地址写法",
+   "paragraphs": [
+    "一般认为，AI 服务会综合你的网站、Google 商家资料、目录网站和社交媒体资料，来判断它们是否指同一家商家；具体如何匹配并未公开。各平台上的地址写法不同时，这些信息可能无法关联起来，或者缺少房间号或楼层的地址会出现在回答中。请确定以下五点，并在所有平台上统一使用。"
+   ],
+   "list": [
+    "缩写：用“Street”还是“St”，用“Suite”还是“Ste”。哪种都可以，选定一种",
+    "字符：使用普通连字符，编号方式保持一致，不使用装饰性符号",
+    "大楼名称、房间号和楼层。如果大楼改名，当天就更新所有平台",
+    "是否写州或地区（结构化数据中务必写上）",
+    "如果还发布其他语言的地址，要写得让人能看出是同一个地方（包含大楼名称）"
+   ],
+   "after": [
+    "搬迁后，在交通指引页上写明新地址，并加一句“我们已于（日期）搬迁；原地址为……”。如果只是删除旧页面，其他网站上的旧地址就会与你的网站失去关联，AI 可能会继续给出旧地址。"
+   ]
+  },
+  {
+   "heading": "在 Google 商家资料中设置停车和无障碍属性",
+   "paragraphs": [
+    "Google 商家资料中有“属性”，会显示在 Google 搜索、Google 地图和其他 Google 服务上。有些属性由你自己编辑，有些可能根据到访顾客的反馈填写。无障碍属性包括轮椅可通行的入口、洗手间、座位、电梯和轮椅可用的停车位——如果你有专供有无障碍需求人士使用的车位，最后一项请选择“是”。Google 表示，编辑内容的审核通常需要约 10 分钟，但最长可能需要 30 天（[管理商家属性](https://support.google.com/business/answer/9049526?hl=en)，2026 年 11 月 21 日查阅）。你能看到哪些属性取决于商家类别。",
+    "Google 的 AI Overviews 和 AI Mode 如何使用商家资料中的属性并未公开。但商家资料就是 Google 地图和搜索中显示的信息，所以要让它与你的网站内容一致。属性无法表达的细节——车位数、费用、合作条件——请写在页面正文和商家资料的简介中。"
+   ]
+  },
+  {
+   "heading": "结构化数据：地址、坐标、地图和设施",
+   "paragraphs": [
+    "在 Google 的 [LocalBusiness 结构化数据文档](https://developers.google.com/search/docs/appearance/structured-data/local-business)（2026 年 9 月更新）中，name 和 address 为必需属性，geo（纬度和经度）为推荐属性。示例将地址拆分为 PostalAddress 的 streetAddress、addressLocality、addressRegion、postalCode 和 addressCountry，坐标的精度至少要保留到小数点后五位。请在地图应用中取入口位置的坐标：对交通指引来说，人们实际使用的那扇门比大楼中心点更有用。",
+    "Google 的文档没有提到，但 schema.org 还有 [hasMap](https://schema.org/hasMap)（指向该地点地图的 URL）、[amenityFeature](https://schema.org/amenityFeature)（以 [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification) 的 name/value 形式写出的设施）和 [publicAccess](https://schema.org/publicAccess)（该地点是否对公众开放）。在我们的调查中，没有找到 Google 或任何其他 AI 服务使用 hasMap 或 amenityFeature 的官方说明。添加它们没有坏处，但应把它们视为对页面正文已有内容的重述。"
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "结构化数据中的地址、坐标和车位数必须与页面正文一致。请用[富媒体搜索结果测试](https://search.google.com/test/rich-results)或 [Schema Markup Validator](https://validator.schema.org/) 检查语法。如果有多个门店，请为每个门店建立单独的页面，并分别写上各自的地址和坐标（参阅[多门店商家的 AI 搜索](/guide/multi-location-business-ai-search)）。"
+   ]
+  },
+  {
+   "heading": "WordPress 步骤（使用 Nurevo AIO）",
+   "paragraphs": [
+    "在 [Nurevo AIO（免费，原显示名称为 Nurevo AEO）](https://wordpress.org/plugins/nurevo-webmcp/)中，你在“地址”字段中输入的内容会原样发布到商家结构化数据（PostalAddress 的 streetAddress）和 llms.txt 的“Address”行中。请按以下顺序操作。"
+   ],
+   "list": [
+    "先按上面的八项内容修改交通指引页的正文（页面正文优先于结构化数据）",
+    "在“地址”字段中使用与页面和 Google 商家资料相同的写法，包括房间号、楼层和邮政编码。该字段以一个字符串发布，不会拆分",
+    "Nurevo 不会根据地址推测坐标。如需发布坐标，请用开发者过滤器 webmcp_canary_business_node 添加 geo（代码见下）；hasMap 和 amenityFeature 也可以用同样方法添加",
+    "如果你的 SEO 插件或主题已经发布了商家名称、地址、电话和营业时间，Nurevo 不会再发布第二个商家节点，因此该过滤器不会生效；请改在那个插件或主题中添加坐标。Nurevo 不会与 Yoast SEO、Rank Math、All in One SEO 或 Slim SEO 重复输出，从 0.9.1 起也能与 SEO SIMPLE PACK 和 VK All in One Expansion Unit 共存",
+    "插件诊断中的“关键信息覆盖率”一项会显示名称、地址、电话、营业时间、位置和 URL 是否都已发布",
+    "设置为网店或 B2B 网站的站点不会发布营业时间和位置（geo），因为没有可供到访的地点"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "把它添加到子主题的 functions.php 或代码片段插件中，然后查看页面源代码或使用富媒体搜索结果测试，确认商家信息中出现了 geo。搬迁或停车安排变更时，请在同一天更新该字段、过滤器和页面正文。",
+    "负责维护客户网站的代理商，可以把“当天更新所有平台”作为搬迁、停车合同变更和大楼改名时的标准作业。Nurevo 为提供每月维护支持的代理商设有[合作伙伴计划](https://nurevo.jp/partner/)。"
+   ]
+  },
+  {
+   "heading": "修改后如何检查",
+   "paragraphs": [
+    "在修改当天以及两到四周后，向 AI 提出相同的问题，并记录回答。没有任何 AI 服务公开信息更新需要多长时间。"
+   ],
+   "table": {
+    "head": [
+     "问题",
+     "正确的回答"
+    ],
+    "rows": [
+     [
+      "“（商家）的地址是什么？”",
+      "包含房间号或楼层的现地址，而不是旧地址"
+     ],
+     [
+      "“从（车站）怎么去（商家）？”",
+      "你网站上写的出口和步行时间"
+     ],
+     [
+      "“（商家）有停车场吗？”",
+      "与你网站一致的有无停车场、车位数和合作条件"
+     ],
+     [
+      "“（商家）方便轮椅出入吗？”",
+      "与你的网站和 Google 商家资料一致"
+     ],
+     [
+      "“（地区）有停车场的（业种）”",
+      "你的名字是否出现，以及你的交通指引页是否被引用"
+     ]
+    ]
+   },
+   "after": [
+    "记录日期、AI 服务、问题、回答和被引用的 URL。如果来源是目录网站或旧宣传单，就去修正它。在 Nurevo 的 Free 和 Standard 方案中，Nurevo 服务每月一次根据你的业种和地区生成三个不含品牌名的问题向 Perplexity 提问，并显示你的名字是否出现、网站是否被引用。Pro（测试版，每月 USD 99 起）可在 Perplexity 上追踪最多 20 个问题（ChatGPT 设置完成后也将支持）。停车和交通相关的问题请手动记录。参阅[如何衡量 AI 可见度](/guide/measure-ai-visibility)。"
+   ]
+  },
+  {
+   "heading": "发布前检查清单",
+   "list": [
+    "包含房间号或楼层和邮政编码的地址已用 HTML 文字写出",
+    "已写出最近的车站或站点、线路、出口、步行时间和距离，并确定了测量的起点和终点",
+    "已写出带两三个地标的路线，以及入口和楼层",
+    "已写出停车信息——有无、车位数、位置、费用、合作条件；如果没有停车场，也已写明",
+    "已说明自行车、摩托车、无障碍和婴儿车相关信息",
+    "网站、Google 商家资料、目录网站和社交媒体资料上的地址写法一致",
+    "Google 商家资料的属性（停车、无障碍）与网站一致",
+    "结构化数据中的地址和坐标（至少小数点后五位）与页面正文一致",
+    "没有页面、PDF 或博客文章仍显示旧地址或已不再使用的停车场",
+    "已确定要问的问题，并记录了修改当天和两到四周后 AI 的回答"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "我们嵌入了地图。还需要用文字写交通指引吗？",
+   "a": "需要。AI 能否读取嵌入的地图或交通指引图片，因服务而异，且并未公开。把地图当作给人看的辅助，在页面正文中写出车站、出口、步行时间、入口和停车信息。"
+  },
+  {
+   "q": "我们没有停车场。直接不写可以吗？",
+   "a": "写明“本店没有停车场”更稳妥。如果什么都不写，AI 可能会根据其他网站回答或自行猜测。请补充附近可以停车的地方，以及乘坐公共交通前来的方法。"
+  },
+  {
+   "q": "步行时间应该怎么计算？",
+   "a": "没有通用的规则。日本房地产广告的标准（按道路距离、每分钟 80 米、不足一分钟进位）是一个清晰的选择。无论选择哪种方法，都要写明从哪里测到哪里，并加上距离。"
+  },
+  {
+   "q": "要出现在 AI 回答中，结构化数据里必须有坐标吗？",
+   "a": "不一定。在 Google 的文档中，geo 是推荐属性，只有 name 和 address 是必需的。ChatGPT 或 Perplexity 是否使用坐标并未公开。请先修正页面正文和地址写法，再添加在入口处取得的坐标。"
+  },
+  {
+   "q": "应该添加 hasMap 或 amenityFeature 吗？",
+   "a": "可以添加，但它们不在 Google 的文档中，我们也没有找到任何 AI 服务使用它们的官方说明。请把它们作为对页面上已有的地图页面和停车信息的重述来添加。"
+  },
+  {
+   "q": "我们搬迁了，但 AI 一直给出旧地址。",
+   "a": "在同一天更新网站、Google 商家资料、目录网站和社交媒体资料，并在交通指引页上保留一行写明搬迁日期和原地址的说明。检查 AI 引用的 URL；如果是旧页面或 PDF，请修正或删除。更新所需时间并未公开，所以几周后再问一次。"
+  },
+  {
+   "q": "Nurevo 的“地址”字段里可以写房间号和楼层吗？",
+   "a": "可以，请务必写上。该字段会原样发布到 streetAddress 和 llms.txt 的“Address”行中。请使用与页面和 Google 商家资料相同的写法。"
+  }
+ ],
+ "relatedHeading": "相关指南",
+ "cta": {
+  "heading": "看看 AI 能否读懂你的网站",
+  "body": "免费检测无需注册：输入 URL 即可查看 AI 爬虫的访问情况、结构化数据和 llms.txt。在 WordPress 上，免费插件会把你的地址、电话和营业时间发布到结构化数据和 llms.txt 中，且不会与 SEO 插件的输出重复。",
+  "label": "免费检测 AI 就绪度",
+  "href": "/check",
+  "secondary": {
+   "label": "试用免费的 WordPress 插件",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google、Google 搜索、Google 地图和 Gemini 是 Google LLC 的商标，ChatGPT 是 OpenAI 的商标，Perplexity 是 Perplexity AI 的商标。WordPress、Yoast SEO、Rank Math、All in One SEO、Slim SEO、SEO SIMPLE PACK、VK All in One Expansion Unit 以及本指南中提到的公司名称是其各自所有者的商标或注册商标。Nurevo 与上述公司均无关联，也未获得其认可。"
+}

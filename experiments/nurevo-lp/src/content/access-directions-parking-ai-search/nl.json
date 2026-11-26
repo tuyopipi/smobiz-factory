@@ -1,0 +1,321 @@
+{
+ "title": "Route- en parkeerpagina's die AI goed leest | Nurevo",
+ "description": "Zo schrijf je een routepagina waarmee AI ‘is er parkeergelegenheid?’ en ‘hoe kom ik er?’ goed beantwoordt: adres, ov, ingang, parkeren, schema, WordPress.",
+ "h1": "Zo schrijf je je route-, bereikbaarheids- en parkeerpagina zodat AI-zoeken het goed heeft",
+ "lead": "Wil je dat AI de juiste route- en parkeerinformatie geeft, zet dan het volgende als HTML-tekst op je routepagina, niet alleen als kaart of afbeelding: je volledige adres (met suite of verdieping), het dichtstbijzijnde station of de dichtstbijzijnde halte met uitgang en looptijd (en hoe je die gemeten hebt), herkenningspunten tot aan de ingang, en parkeren (of je parkeerplaatsen hebt, hoeveel, waar en wat het kost). Gebruik daarna overal één adresnotatie – op je site, in je Google Bedrijfsprofiel en in bedrijvengidsen – en zet hetzelfde adres en de coördinaten van je ingang in je gestructureerde gegevens. Heb je geen parkeergelegenheid, zeg dat dan: ‘We hebben geen parkeerplaatsen; gebruik de openbare parkeergarage aan Example Street.’ Dan heeft AI minder ruimte om te gokken.",
+ "intro": [
+  "Geschreven op 21 november 2026 (JST). Openingstijden komen aan bod in [Openingstijden en sluitingsdagen publiceren](/guide/business-hours-holidays-ai-search) en reserveren in [Zo schrijf je je reserveringspagina](/guide/booking-page-ai-search). Deze gids is voor elk bedrijf waar mensen langskomen – winkels, praktijken, studio's, kantoren, pensions – en richt zich op één ding: zorgen dat AI correct zegt hoe je bij je komt en of je met de auto kunt komen.",
+  "AI-antwoorden veranderen per dag, per formulering van de vraag en per dienst. De stappen hier maken je bereikbaarheidsgegevens moeilijker verkeerd te lezen voor AI en laten zien hoe je dat controleert; ze garanderen niet dat je in een antwoord verschijnt of dat het antwoord klopt."
+ ],
+ "sections": [
+  {
+   "heading": "Het korte antwoord: vijf redenen waarom AI je bereikbaarheid verkeerd weergeeft",
+   "table": {
+    "head": [
+     "Oorzaak",
+     "Wat er in AI-antwoorden gebeurt",
+     "Oplossing"
+    ],
+    "rows": [
+     [
+      "De routebeschrijving bestaat alleen als ingesloten kaart of als afbeelding",
+      "AI kan niet zeggen welk station of waar je parkeert, of herhaalt oude gegevens van een andere site",
+      "Schrijf onder de kaart het station, de uitgang, de looptijd, de ingang en het parkeren als tekst"
+     ],
+     [
+      "Het adres staat anders op je site, in je Google Bedrijfsprofiel en in bedrijvengidsen (‘Ste 300’ tegenover ‘Suite 300’, verdieping ontbreekt)",
+      "AI ziet je als twee locaties, of laat de suite of verdieping weg",
+      "Kies één notatie, met suite en verdieping, en gebruik die in elke vermelding"
+     ],
+     [
+      "Over parkeren staat niets",
+      "AI gokt ‘parkeren mogelijk’ of ‘geen parkeergelegenheid’",
+      "Vermeld het ook als je geen parkeerplaatsen hebt, en zeg waar men in plaats daarvan kan parkeren"
+     ],
+     [
+      "Alleen ‘vlak bij het station’ of ‘makkelijk te vinden’",
+      "AI kan niet zeggen welk station of welke uitgang",
+      "Noem station, lijn, uitgang en looptijd, en hoe je die gemeten hebt"
+     ],
+     [
+      "Na een verhuizing of een wijziging in het parkeren staan oude pagina's of pdf's nog online",
+      "AI geeft je oude adres of een parkeerplaats die je niet meer gebruikt",
+      "Zoek oude routepagina's, flyer-pdf's en blogberichten op en corrigeer of verwijder ze"
+     ]
+    ]
+   },
+   "after": [
+    "Wat bezoekers AI echt vragen, zit vol voorwaarden: ‘Is er parkeergelegenheid bij (bedrijf)?’, ‘Hoe ver is het vanaf (station)?’, ‘Kan ik er met een kinderwagen komen?’ AI antwoordt met zinnen uit je routepagina, dus alles wat daar niet als tekst staat, wordt eerder aangevuld vanuit andere sites of geraden."
+   ]
+  },
+  {
+   "heading": "Wat de toonaangevende artikelen behandelen, en wat ze missen",
+   "paragraphs": [
+    "We lazen de beste Japanse en Engelse resultaten voor zoekopdrachten als ‘directions page parking AI search’, ‘local business AI search optimization’ en hun Japanse equivalenten (21 november 2026). De Japanse artikelen zijn het eens over het noemen van station en looptijd, vermelden of je parkeergelegenheid hebt en het adres consistent houden. De meeste Engelse artikelen blijven steken bij ‘houd je NAP (naam, adres, telefoon) consistent’ en noemen route of parkeren nauwelijks. Geen enkel artikel gaf een voorbeeld van gestructureerde gegevens voor bereikbaarheid (geo, hasMap, amenityFeature), stappen voor WordPress of een manier om het resultaat te controleren."
+   ],
+   "table": {
+    "head": [
+     "Artikel",
+     "Wat het goed doet",
+     "Wat het mist"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Consistente NAP in Google Bedrijfsprofiel en bedrijvengidsen; een LocalBusiness-JSON-LD-voorbeeld met adres",
+      "Geen route, parkeren of toegankelijkheid; geen geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Adres of servicegebied in het profiel verifiëren; AI-verwijzingen in GA4 volgen en maandelijks steekproeven met prompts doen",
+      "Geen advies over de routepagina; geen schemacode"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Locatiespecifieke veelgestelde vragen, zoals of een locatie gratis parkeren heeft",
+      "Geen markup, geen routepagina, vooral productgericht"
+     ],
+     [
+      "[Birdeye (bijgewerkt 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Wijst erop dat AI slecht met afstand omgaat; consistente vermeldingen op Google, Bing en Yelp",
+      "Geen schemacode, geen routepagina"
+     ],
+     [
+      "[Uravation, lokale bedrijven (Japans, bijgewerkt 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) en [zelfstandige cafés (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Station, looproute, parkeren en ingang op de locatiepagina; ‘3 minuten van het station’ vraagt om een genoemd vertrekpunt",
+      "Eigenschappen zonder code opgesomd; geen WordPress-stappen"
+     ],
+     [
+      "[Issoh (Japans, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Voorbeelden van adresvarianten om gelijk te trekken; attributen voor parkeren en toegankelijkheid",
+      "Geen sjabloon voor de routepagina, geen schemavoorbeeld"
+     ]
+    ]
+   },
+   "after": [
+    "Deze gids beantwoordt alle vragen die deze artikelen beantwoorden en voegt toe: een regel voor looptijden, een sjabloon voor parkeergegevens, adres en coördinaten zoals Googles documentatie ze laat zien, WordPress-stappen met Nurevo en een set vragen om AI mee te controleren."
+   ]
+  },
+  {
+   "heading": "Acht dingen voor op je routepagina",
+   "paragraphs": [
+    "Zet deze op je locatiepagina of op een aparte pagina ‘Route’. Sluit je een kaart in, schrijf dezelfde gegevens dan toch als tekst: AI kan de inhoud van de kaart mogelijk niet lezen."
+   ],
+   "table": {
+    "head": [
+     "Wat je vermeldt",
+     "Voorbeeld",
+     "Wat er misgaat zonder"
+    ],
+    "rows": [
+     [
+      "Volledig adres met suite of verdieping en postcode",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Een adres zonder suite verspreidt zich, en mensen dwalen rond bij de deur"
+     ],
+     [
+      "Dichtstbijzijnd station of halte, lijn, uitgang, looptijd",
+      "Springfield Station (Blue Line), noorduitgang, 4 minuten lopen (ongeveer 300 m / 0,2 mi)",
+      "Bezoekers worden naar het verkeerde station of de verkeerde uitgang gestuurd"
+     ],
+     [
+      "Route met twee of drie herkenningspunten",
+      "Bij de noorduitgang rechtsaf, bij het café op de hoek linksaf, en we zitten in het gebouw met de apotheek op de begane grond, vóór het tweede stoplicht",
+      "Mensen komen in de buurt en raken dan de weg kwijt; meer telefoontjes"
+     ],
+     [
+      "Ingang en verdieping",
+      "De ingang is via de doorgang links van het gebouw, niet de voordeur. Neem de lift naar de 3e verdieping",
+      "Mensen vinden het gebouw, maar niet de weg naar binnen"
+     ],
+     [
+      "Parkeren",
+      "Twee gereserveerde plaatsen achter het gebouw (nummer 7 en 8). Vol? Gebruik de openbare parkeergarage aan Oak Street (we vergoeden het parkeren niet)",
+      "AI gokt of je parkeergelegenheid hebt"
+     ],
+     [
+      "Fietsen en motoren",
+      "Fietsenrek voor het gebouw; geen parkeerplek voor motoren",
+      "Mensen parkeren waar het niet mag"
+     ],
+     [
+      "Toegankelijkheid en kinderwagens",
+      "Lift aanwezig. Bij de ingang is een drempel van 2 cm; rolstoelgebruikers, bel vooraf even",
+      "Bezoekers weten niet of ze naar binnen kunnen"
+     ],
+     [
+      "Bus, taxi en auto",
+      "Bus 12, halte Oak Street, 1 minuut lopen. Automobilisten rijden in via Main Street (eenrichtingsweg)",
+      "Automobilisten nemen de verkeerde aanrijroute"
+     ]
+    ]
+   },
+   "after": [
+    "Slecht: ‘Vlak bij het station! Parkeren mogelijk. Zie de kaart.’ Goed: ‘4 minuten lopen (ongeveer 300 m) vanaf de noorduitgang van Springfield Station. 123 Example Street, Suite 300. De ingang is via de doorgang links van het gebouw. Twee gereserveerde plaatsen achter het gebouw (7 en 8); zijn die bezet, gebruik dan de openbare parkeergarage aan Oak Street.’",
+    "Alleen ‘parkeren mogelijk’ zegt niet hoeveel plaatsen, waar, of het gratis is en of het om een partnerparkeerplaats gaat. Bij een partnerparkeerplaats geef je de naam, het adres en de kortingsvoorwaarden (bijvoorbeeld ‘één uur gratis bij een aankoop boven 20 USD’). Veranderen de voorwaarden, werk de pagina dan dezelfde dag bij."
+   ]
+  },
+  {
+   "heading": "Looptijden: bepaal hoe je meet, en zeg het erbij",
+   "paragraphs": [
+    "Looptijden raken snel inconsistent. Japanse vastgoedreclame kent een vaste regel: afstand over de weg langs de route, 80 m per minuut, een restant naar boven afgerond op een hele minuut, zonder rekening te houden met stoplichten of hellingen (de uitvoeringsregels van de Japanse eerlijke-concurrentiecode voor vastgoedreclame, zoals uitgelegd in de [woordenlijst van Mitsubishi Jisho House Net](https://www.mec-h.com/words/detail?n=59), Japans). Winkels en praktijken zijn er niet aan gebonden en andere landen hebben geen gemeenschappelijke regel, maar als je één regel kiest en daaraan vasthoudt, spreken je site en je vermeldingen in bedrijvengidsen elkaar niet tegen."
+   ],
+   "list": [
+    "Bepaal het begin- en eindpunt (‘van de poortjes bij de noorduitgang tot de ingang van ons gebouw’)",
+    "Meet de loopafstand langs de route in een kaartapp en reken die om met je regel. Zet je de afstand erbij (‘ongeveer 300 m’), dan kunnen zowel AI als mensen het controleren",
+    "Noem bij grote stations met meerdere uitgangen de dichtstbijzijnde uitgang en voeg één regel toe voor wie via een andere uitgang komt",
+    "Controleer je vermeldingen in bedrijvengidsen en de beschrijving in je Google Bedrijfsprofiel op een afwijkend getal, en trek ze gelijk"
+   ],
+   "after": [
+    "Schrijf alleen ‘1 minuut van het station’ als je echt bij de uitgang zit. Een overdreven looptijd duikt in reviews op als iets wat niet klopt."
+   ]
+  },
+  {
+   "heading": "Gebruik overal één adresnotatie",
+   "paragraphs": [
+    "Algemeen wordt aangenomen dat AI-diensten je site, Google Bedrijfsprofiel, bedrijvengidsen en socialemediaprofielen combineren om te bepalen of ze hetzelfde bedrijf beschrijven; hoe ze die koppelen, is niet openbaar. Staat het adres per vermelding anders, dan worden de vermeldingen mogelijk niet gekoppeld, of belandt een adres zonder suite of verdieping in antwoorden. Leg deze vijf dingen vast en gebruik ze in elke vermelding."
+   ],
+   "list": [
+    "Afkortingen: ‘Street’ of ‘St’, ‘Suite’ of ‘Ste’. Beide is prima; kies er één",
+    "Tekens: gewone koppeltekens, consistente nummering, geen decoratieve symbolen",
+    "Gebouwnaam, suite en verdieping. Krijgt het gebouw een nieuwe naam, werk dan dezelfde dag elke vermelding bij",
+    "Of je de staat of regio vermeldt (in gestructureerde gegevens altijd vermelden)",
+    "Publiceer je ook een adres in een andere taal, schrijf het dan zo dat het herkenbaar dezelfde plek is (met de gebouwnaam)"
+   ],
+   "after": [
+    "Na een verhuizing zet je het nieuwe adres op je routepagina, met één regel zoals ‘We zijn op (datum) verhuisd; ons vorige adres was …’. Verwijder je de oude pagina gewoon, dan blijft het oude adres op andere sites staan zonder verband met je site, en blijft AI het mogelijk noemen."
+   ]
+  },
+  {
+   "heading": "Stel attributen voor parkeren en toegankelijkheid in je Google Bedrijfsprofiel in",
+   "paragraphs": [
+    "Google Bedrijfsprofiel heeft ‘kenmerken’ (attributen), die worden getoond in Google Zoeken, Maps en andere Google-diensten. Sommige attributen bewerk je zelf; andere worden mogelijk ingevuld op basis van klanten die langskomen. Toegankelijkheidsattributen zijn onder meer een rolstoeltoegankelijke ingang, toilet, zitplaatsen, lift en rolstoeltoegankelijke parkeerplaats – kies bij die laatste Ja als je een parkeerplaats hebt gereserveerd voor mensen met een beperking. Volgens Google duurt de beoordeling van een wijziging meestal ongeveer 10 minuten, maar kan die tot 30 dagen duren ([Je bedrijfskenmerken beheren](https://support.google.com/business/answer/9049526?hl=en), gecontroleerd op 21 november 2026). Welke attributen je ziet, hangt af van je bedrijfscategorie.",
+    "Hoe Googles AI Overviews en AI-modus profielattributen gebruiken, is niet openbaar. Maar het profiel is de informatie die in Google Maps en Zoeken wordt getoond, dus zorg dat het hetzelfde zegt als je site. Wat attributen niet kunnen uitdrukken – aantal plaatsen, kosten, partnervoorwaarden – hoort in je paginatekst en de profielbeschrijving."
+   ]
+  },
+  {
+   "heading": "Gestructureerde gegevens: adres, coördinaten, kaart en voorzieningen",
+   "paragraphs": [
+    "In Googles [documentatie over gestructureerde gegevens voor LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) (bijgewerkt september 2026) zijn name en address verplicht en wordt geo (breedte- en lengtegraad) aanbevolen. De voorbeelden splitsen het adres in PostalAddress streetAddress, addressLocality, addressRegion, postalCode en addressCountry, en de coördinaten moeten een precisie van minstens vijf decimalen hebben. Neem de coördinaten in een kaartapp bij je ingang: voor een routebeschrijving is de deur die mensen gebruiken nuttiger dan het midden van het gebouw.",
+    "Googles documentatie noemt ze niet, maar schema.org kent ook [hasMap](https://schema.org/hasMap) (een URL naar een kaart van de plek), [amenityFeature](https://schema.org/amenityFeature) (voorzieningen als naam-waardeparen van het type [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)) en [publicAccess](https://schema.org/publicAccess) (of de plek open is voor publiek). In ons onderzoek vonden we geen officiële verklaring dat Google of een andere AI-dienst hasMap of amenityFeature gebruikt. Toevoegen kan geen kwaad, maar zie ze als een herhaling van wat je paginatekst al zegt."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Het adres, de coördinaten en het aantal parkeerplaatsen in je gestructureerde gegevens moeten overeenkomen met de paginatekst. Controleer de syntaxis met de [test voor rich resultaten](https://search.google.com/test/rich-results) of de [Schema Markup Validator](https://validator.schema.org/). Heb je meerdere locaties, geef dan elke locatie een eigen pagina met een eigen adres en eigen coördinaten (zie [AI-zoeken voor bedrijven met meerdere vestigingen](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "Stappen in WordPress (met Nurevo AIO)",
+   "paragraphs": [
+    "In [Nurevo AIO (gratis, voorheen weergegeven als Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) wordt wat je in het veld ‘Address’ typt precies zo gepubliceerd in de gestructureerde gegevens van je bedrijf (PostalAddress streetAddress) en op de regel ‘Address’ van llms.txt. Werk in deze volgorde."
+   ],
+   "list": [
+    "Corrigeer eerst de tekst van je routepagina met de acht punten hierboven (paginatekst vóór gestructureerde gegevens)",
+    "Gebruik in het veld ‘Address’ dezelfde notatie als op je pagina en in je Google Bedrijfsprofiel, met suite, verdieping en postcode. Het veld wordt als één tekenreeks gepubliceerd, niet opgesplitst in delen",
+    "Nurevo leidt geen coördinaten af uit je adres. Om ze te publiceren voeg je geo toe met het ontwikkelaarsfilter webmcp_canary_business_node (code hieronder); hasMap en amenityFeature kun je op dezelfde manier toevoegen",
+    "Publiceert je SEO-plugin of thema al de naam, het adres, het telefoonnummer en de openingstijden van je bedrijf, dan publiceert Nurevo geen tweede bedrijfsnode en heeft het filter geen effect; voeg de coördinaten dan in die plugin of dat thema toe. Nurevo dupliceert Yoast SEO, Rank Math, All in One SEO en Slim SEO niet, en werkt sinds 0.9.1 ook samen met SEO SIMPLE PACK en VK All in One Expansion Unit",
+    "Het onderdeel ‘Key information coverage’ in de plugindiagnose laat zien of je naam, adres, telefoon, openingstijden, locatie en URL allemaal gepubliceerd zijn",
+    "Sites die zijn ingesteld als webwinkel of B2B-site publiceren geen openingstijden of locatie (geo), omdat er geen plek is om te bezoeken"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Voeg het toe aan de functions.php van je child-thema of aan een plugin voor codefragmenten, en controleer daarna in de paginabron of met de test voor rich resultaten of geo bij je bedrijf verschijnt. Verhuis je of verandert het parkeren, werk dan het veld, het filter en de paginatekst op dezelfde dag bij.",
+    "Bureaus die sites van klanten onderhouden, kunnen ‘elke vermelding dezelfde dag bijwerken’ een standaardtaak maken bij verhuizingen, gewijzigde parkeercontracten en nieuwe gebouwnamen. Nurevo heeft een [partnerprogramma](https://nurevo.jp/partner/) voor bureaus die maandelijkse ondersteuning bieden."
+   ]
+  },
+  {
+   "heading": "Zo controleer je na je wijzigingen",
+   "paragraphs": [
+    "Stel AI op de dag van je wijzigingen en opnieuw twee tot vier weken later dezelfde vragen, en leg de antwoorden vast. Geen enkele AI-dienst maakt bekend hoe lang updates duren."
+   ],
+   "table": {
+    "head": [
+     "Vraag",
+     "Een correct antwoord"
+    ],
+    "rows": [
+     [
+      "‘Wat is het adres van (bedrijf)?’",
+      "Je huidige adres met suite of verdieping, niet het oude"
+     ],
+     [
+      "‘Hoe kom ik van (station) bij (bedrijf)?’",
+      "De uitgang en looptijd van je site"
+     ],
+     [
+      "‘Is er parkeergelegenheid bij (bedrijf)?’",
+      "Of je die hebt, hoeveel plaatsen en de partnervoorwaarden, zoals op je site"
+     ],
+     [
+      "‘Is (bedrijf) toegankelijk voor rolstoelen?’",
+      "Hetzelfde als op je site en in je Google Bedrijfsprofiel"
+     ],
+     [
+      "‘(Soort bedrijf) met parkeergelegenheid in (gebied)’",
+      "Of je naam verschijnt, en of je routepagina wordt geciteerd"
+     ]
+    ]
+   },
+   "after": [
+    "Noteer de datum, de AI-dienst, de vraag, het antwoord en de geciteerde URL's. Is de bron een bedrijvengids of een oude flyer, corrigeer die dan. Bij de abonnementen Free en Standard stelt de Nurevo-dienst Perplexity eens per maand drie vragen zonder merknaam, opgebouwd uit je soort bedrijf en gebied, en laat zien of je naam verscheen en je site werd geciteerd. Pro (bèta, vanaf 99 USD per maand) volgt tot 20 vragen op Perplexity (ChatGPT zodra dat is ingericht). Vragen over parkeren en route leg je met de hand vast. Zie [Zo meet je AI-zichtbaarheid](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Checklist voordat je publiceert",
+   "list": [
+    "Je adres, met suite of verdieping en postcode, staat er als HTML-tekst",
+    "Het dichtstbijzijnde station of de dichtstbijzijnde halte, lijn, uitgang, looptijd en afstand staan erop, en je hebt bepaald van waar tot waar je gemeten hebt",
+    "Een route met twee of drie herkenningspunten, plus de ingang en verdieping, staat erop",
+    "Parkeren – of je het hebt, aantal plaatsen, locatie, kosten, partnervoorwaarden – staat erop; heb je geen parkeergelegenheid, dan staat dat er ook",
+    "Fietsen, motoren, toegankelijkheid en kinderwagens zijn behandeld",
+    "Het adres staat hetzelfde op je site, in je Google Bedrijfsprofiel, in bedrijvengidsen en op socialemediaprofielen",
+    "De attributen in je Google Bedrijfsprofiel (parkeren, toegankelijkheid) komen overeen met je site",
+    "Het adres en de coördinaten (minstens vijf decimalen) in de gestructureerde gegevens komen overeen met de paginatekst",
+    "Geen enkele pagina, pdf of blogbericht toont nog een oud adres of een parkeerplaats die je niet meer gebruikt",
+    "Je hebt je vragen gekozen en de antwoorden van AI vastgelegd op de dag zelf en twee tot vier weken later"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "We hebben een kaart ingesloten. Moeten we de route dan nog als tekst schrijven?",
+   "a": "Ja. Of AI een ingesloten kaart of een routeafbeelding kan lezen, verschilt per dienst en is niet openbaar. Zie de kaart als hulp voor mensen, en schrijf het station, de uitgang, de looptijd, de ingang en het parkeren in de paginatekst."
+  },
+  {
+   "q": "We hebben geen parkeergelegenheid. Kunnen we het dan gewoon weglaten?",
+   "a": "‘We hebben geen parkeerplaatsen’ vermelden is veiliger. Zeg je niets, dan antwoordt AI mogelijk op basis van andere sites of gokt het. Vermeld waar men in de buurt kan parkeren en hoe je met het openbaar vervoer komt."
+  },
+  {
+   "q": "Hoe moeten we de looptijd berekenen?",
+   "a": "Er is geen universele regel. De Japanse norm voor vastgoedreclame (afstand over de weg, 80 m per minuut, naar boven afronden) is een duidelijke optie. Wat je ook kiest, zeg van waar tot waar je gemeten hebt en vermeld de afstand."
+  },
+  {
+   "q": "Hebben we coördinaten in gestructureerde gegevens nodig om in AI-antwoorden te verschijnen?",
+   "a": "Niet per se. In Googles documentatie wordt geo aanbevolen en zijn alleen name en address verplicht. Of ChatGPT of Perplexity coördinaten gebruiken, is niet openbaar. Corrigeer eerst de paginatekst en de adresnotatie, en voeg daarna coördinaten toe die je bij je ingang hebt genomen."
+  },
+  {
+   "q": "Moeten we hasMap of amenityFeature toevoegen?",
+   "a": "Dat kan, maar ze staan niet in Googles documentatie en we vonden geen officiële verklaring dat een AI-dienst ze gebruikt. Voeg ze toe als herhaling van de kaartpagina en de parkeergegevens die al op je pagina staan."
+  },
+  {
+   "q": "We zijn verhuisd, en AI blijft ons oude adres geven.",
+   "a": "Werk je site, Google Bedrijfsprofiel, bedrijvengidsen en socialemediaprofielen op dezelfde dag bij, en houd op je routepagina één regel met de verhuisdatum en het vorige adres. Controleer de URL's die AI citeert; zijn het oude pagina's of pdf's, corrigeer of verwijder ze dan. Hoe lang updates duren, is niet openbaar, dus vraag het een paar weken later opnieuw."
+  },
+  {
+   "q": "Kan ik de suite en verdieping in het veld ‘Address’ van Nurevo opnemen?",
+   "a": "Ja, graag zelfs. Het veld wordt precies zo gepubliceerd in streetAddress en op de regel ‘Address’ van llms.txt. Gebruik dezelfde notatie als op je pagina en in je Google Bedrijfsprofiel."
+  }
+ ],
+ "relatedHeading": "Gerelateerde gidsen",
+ "cta": {
+  "heading": "Zie of AI je site kan lezen",
+  "body": "De gratis check vraagt geen aanmelding: vul een URL in om de toegang voor AI-crawlers, gestructureerde gegevens en llms.txt te zien. In WordPress publiceert de gratis plugin je adres, telefoonnummer en openingstijden in gestructureerde gegevens en llms.txt, zonder de uitvoer van je SEO-plugin te dupliceren.",
+  "label": "Controleer gratis je AI-gereedheid",
+  "href": "/check",
+  "secondary": {
+   "label": "Probeer de gratis WordPress-plugin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Google Zoeken, Google Maps en Gemini zijn handelsmerken van Google LLC, ChatGPT van OpenAI en Perplexity van Perplexity AI. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit en de namen van de bedrijven die in deze gids worden aangehaald, zijn handelsmerken of gedeponeerde handelsmerken van hun respectieve eigenaren. Nurevo is niet gelieerd aan of goedgekeurd door een van deze bedrijven."
+}

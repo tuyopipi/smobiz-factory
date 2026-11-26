@@ -1,0 +1,321 @@
+{
+ "title": "Saabumisjuhised ja parkimine, mida TI loeb õigesti | Nurevo",
+ "description": "Kuidas TI vastaks õigesti küsimustele „kas parkimist on?“ ja „kuidas sinna jõuda?“: aadress, ühistransport, sissepääs, parkimine, schema, WordPress.",
+ "h1": "Kuidas kirjutada saabumis-, ligipääsetavuse ja parkimise leht nii, et TI-otsing saaks selle õigesti aru",
+ "lead": "Et TI annaks õiged saabumisjuhised ja parkimisinfo, kirjutage saabumisjuhiste lehele HTML-tekstina, mitte ainult kaardi või pildina: täielik aadress (ka ruum või korrus), lähim jaam või peatus koos väljapääsu ja jalutusajaga (ning kuidas te selle mõõtsite), orientiirid kuni sissepääsuni ja parkimine (kas see on olemas, mitu kohta, kus ja mis see maksab). Seejärel kasutage ühte aadressivormingut kõikjal – oma saidil, Google Business Profile'is ja kataloogides – ning lisage sama aadress ja sissepääsu koordinaadid oma struktureeritud andmetesse. Kui teil parkimist pole, öelge seda: „Meil parkimist ei ole; palun kasutage Example Streeti avalikku parkimismaja.“ Nii jääb TI-le vähem ruumi oletada.",
+ "intro": [
+  "Kirjutatud 21. novembril 2026 (JST). Lahtiolekuajad on käsitletud juhendis [Kuidas avaldada lahtiolekuaegu ja suletud päevi](/guide/business-hours-holidays-ai-search) ja broneerimine juhendis [Kuidas kirjutada broneerimislehte](/guide/booking-page-ai-search). See juhend on igale ettevõttele, kuhu inimesed kohale tulevad – kauplustele, kliinikutele, stuudiotele, kontoritele, külalistemajadele – ja keskendub ühele asjale: et TI ütleks õigesti, kuidas teieni jõuda ja kas saab tulla autoga.",
+  "TI vastused muutuvad olenevalt päevast, küsimuse sõnastusest ja teenusest. Siinsed sammud muudavad TI-l teie saabumisinfo valesti mõistmise raskemaks ja näitavad, kuidas tulemust kontrollida; need ei taga, et te vastuses ilmute või et vastus on õige."
+ ],
+ "sections": [
+  {
+   "heading": "Lühike vastus: viis põhjust, miks TI teie saabumisinfo valesti esitab",
+   "table": {
+    "head": [
+     "Põhjus",
+     "Mis TI vastustes juhtub",
+     "Lahendus"
+    ],
+    "rows": [
+     [
+      "Saabumisjuhised on ainult manustatud kaardi või pildina",
+      "TI ei oska öelda, milline jaam või kus parkida, või kordab teiselt saidilt vanu andmeid",
+      "Kirjutage kaardi alla tekstina jaam, väljapääs, jalutusaeg, sissepääs ja parkimine"
+     ],
+     [
+      "Aadress on saidil, Google Business Profile'is ja kataloogides kirjutatud erinevalt („Ste 300“ või „Suite 300“, korrus puudub)",
+      "TI käsitleb teid kahe kohana või jätab ruumi või korruse ära",
+      "Valige üks vorming koos ruumi ja korrusega ning kasutage seda igas kirjes"
+     ],
+     [
+      "Parkimisest ei öelda midagi",
+      "TI oletab „parkimine olemas“ või „parkimist pole“",
+      "Öelge seda ka siis, kui parkimist pole, ja öelge, kus selle asemel parkida"
+     ],
+     [
+      "Ainult „jaama lähedal“ või „lihtne leida“",
+      "TI ei oska öelda, milline jaam või milline väljapääs",
+      "Nimetage jaam, liin, väljapääs ja jalutusaeg ning see, kuidas te selle mõõtsite"
+     ],
+     [
+      "Pärast kolimist või parkimise muutumist on vanad lehed või PDF-id endiselt veebis",
+      "TI annab teie vana aadressi või parkla, mida te enam ei kasuta",
+      "Leidke vanad saabumisjuhiste lehed, flaierite PDF-id ja blogipostitused ning parandage või eemaldage need"
+     ]
+    ]
+   },
+   "after": [
+    "Külastajate tegelikud küsimused TI-le sisaldavad tingimusi: „Kas (ettevõtte) lähedal on parkimist?“, „Kui kaugel see on (jaamast)?“, „Kas sinna saab lapsevankriga?“ TI vastab, võttes lauseid teie saabumisjuhiste lehelt, seega see, mis pole tekstina kirjas, täidetakse kergemini teistelt saitidelt või oletades."
+   ]
+  },
+  {
+   "heading": "Mida parimad artiklid käsitlevad ja mis neist puudub",
+   "paragraphs": [
+    "Lugesime parimaid jaapani- ja ingliskeelseid tulemusi otsingutele nagu „directions page parking AI search“, „local business AI search optimization“ ja nende jaapanikeelsetele vastetele (21. november 2026). Jaapani artiklid on ühel meelel, et tuleb nimetada jaam ja jalutusaeg, öelda, kas parkimine on olemas, ning hoida aadress ühtne. Enamik ingliskeelseid artikleid piirdub soovitusega „hoidke NAP (nimi, aadress, telefon) ühtsena“ ega maini peaaegu üldse saabumisjuhiseid ega parkimist. Ükski ei andnud struktureeritud andmete näidet saabumisinfo kohta (geo, hasMap, amenityFeature), WordPressi samme ega viisi tulemuse kontrollimiseks."
+   ],
+   "table": {
+    "head": [
+     "Artikkel",
+     "Mida see teeb hästi",
+     "Mis sellest puudub"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Ühtne NAP Google Business Profile'is ja kataloogides; LocalBusiness JSON-LD näide koos aadressiga",
+      "Pole saabumisjuhiseid, parkimist ega ligipääsetavust; pole geo't"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Kinnitage profiilis aadress või teeninduspiirkond; jälgige GA4-s TI-st tulevaid külastusi ja kontrollige igakuiselt pistelisi küsimusi",
+      "Pole juhiseid saabumisjuhiste lehe kohta; pole schema-koodi"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Asukohapõhised korduma kippuvad küsimused, näiteks kas asukohas on tasuta parkimine",
+      "Pole märgendust, pole saabumisjuhiste lehte, peamiselt tootekeskne"
+     ],
+     [
+      "[Birdeye (uuendatud 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Juhib tähelepanu, et TI käsitleb lähedust halvasti; ühtsed kirjed Google'is, Bingis ja Yelpis",
+      "Pole schema-koodi, pole saabumisjuhiste lehte"
+     ],
+     [
+      "[Uravation, kohalikud ettevõtted (jaapani keeles, uuendatud 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) ja [iseseisvad kohvikud (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Jaam, jalgsi marsruut, parkimine ja sissepääs asukohalehel; „3 minutit jaamast“ vajab märgitud lähtepunkti",
+      "Omadused on loetletud ilma koodita; pole WordPressi samme"
+     ],
+     [
+      "[Issoh (jaapani keeles, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Näited ühtlustamist vajavatest aadressivariantidest; parkimise ja ligipääsetavuse atribuudid",
+      "Pole saabumisjuhiste lehe malli ega schema-näidet"
+     ]
+    ]
+   },
+   "after": [
+    "See juhend vastab kõigile küsimustele, millele need artiklid vastavad, ning lisab reegli jalutusaegade jaoks, malli parkimisinfo jaoks, aadressi ja koordinaadid nii, nagu Google'i dokumentatsioon neid näitab, WordPressi sammud Nurevoga ja küsimuste komplekti TI kontrollimiseks."
+   ]
+  },
+  {
+   "heading": "Kaheksa asja, mis peavad saabumisjuhiste lehel olema",
+   "paragraphs": [
+    "Pange need asukohalehele või eraldi lehele „Saabumisjuhised“. Kui manustate kaardi, kirjutage samad andmed ikkagi ka tekstina: TI ei pruugi kaardi sisu lugeda."
+   ],
+   "table": {
+    "head": [
+     "Mida kirjutada",
+     "Näide",
+     "Mis ilma selleta valesti läheb"
+    ],
+    "rows": [
+     [
+      "Täielik aadress koos ruumi või korruse ja postiindeksiga",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Ruumita aadress levib ja inimesed eksivad ukse juures"
+     ],
+     [
+      "Lähim jaam või peatus, liin, väljapääs, jalutusaeg",
+      "Springfield Station (Blue Line), põhjapoolne väljapääs, 4 minutit jalgsi (umbes 300 m / 0,2 mi)",
+      "Külastajad suunatakse valesse jaama või väljapääsu"
+     ],
+     [
+      "Marsruut kahe või kolme orientiiriga",
+      "Põhjapoolsest väljapääsust paremale, nurgakohviku juurest vasakule, ja meie oleme majas, mille esimesel korrusel on apteek, enne teist valgusfoori",
+      "Inimesed jõuavad lähedale ja eksivad siis ära; rohkem telefonikõnesid"
+     ],
+     [
+      "Sissepääs ja korrus",
+      "Sissepääs on hoone vasakul pool oleva käigu kaudu, mitte peauksest. Sõitke liftiga 3. korrusele",
+      "Inimesed leiavad hoone, kuid mitte sissepääsu"
+     ],
+     [
+      "Parkimine",
+      "Kaks reserveeritud kohta hoone taga (numbrid 7 ja 8). Kui need on täis, kasutage Oak Streeti avalikku parkimismaja (tasu me ei hüvita)",
+      "TI oletab, kas teil on parkimist"
+     ],
+     [
+      "Jalgrattad ja mootorrattad",
+      "Rattahoidja hoone ees; mootorrataste parkimist pole",
+      "Inimesed pargivad sinna, kuhu ei tohiks"
+     ],
+     [
+      "Ligipääsetavus ja lapsevankrid",
+      "Lift on olemas. Sissepääsu juures on 2 cm aste; ratastoolikasutajad, palun helistage ette",
+      "Külastajad ei tea, kas nad pääsevad sisse"
+     ],
+     [
+      "Buss, takso ja autoga sõitmine",
+      "Buss 12, Oak Streeti peatus, 1 minut jalgsi. Autojuhid sõidavad sisse Main Streetilt (ühesuunaline tänav)",
+      "Autojuhid valivad vale juurdepääsu"
+     ]
+    ]
+   },
+   "after": [
+    "Halb: „Jaama lähedal! Parkimine olemas. Vaadake kaarti.“ Hea: „4 minutit jalgsi (umbes 300 m) Springfield Stationi põhjapoolsest väljapääsust. 123 Example Street, Suite 300. Sissepääs on hoone vasakul pool oleva käigu kaudu. Kaks reserveeritud kohta hoone taga (7 ja 8); kui need on täis, kasutage Oak Streeti avalikku parkimismaja.“",
+    "Ainult „parkimine olemas“ ei ütle, mitu kohta, kus, kas see on tasuta või kas tegemist on partnerparklaga. Partnerparkla puhul andke selle nimi, aadress ja soodustingimused (näiteks „üks tund tasuta üle $20 ostu korral“). Kui tingimused muutuvad, uuendage lehte samal päeval."
+   ]
+  },
+  {
+   "heading": "Jalutusajad: otsustage, kuidas mõõdate, ja öelge see välja",
+   "paragraphs": [
+    "Jalutusajad lähevad kergesti omavahel lahku. Jaapani kinnisvarareklaamis kehtib kindel reegel: teekonna pikkus mööda marsruuti, 80 m minutis, jääk ümardatakse üles täisminutini, valgusfoore ega tõuse arvesse ei võeta (Jaapani kinnisvarareklaami ausa konkurentsi koodeksi rakendusreeglid, nagu neid selgitab [Mitsubishi Jisho House Neti sõnastik](https://www.mec-h.com/words/detail?n=59), jaapani keeles). Kauplused ja kliinikud sellega seotud ei ole ning teistes riikides ühist reeglit pole, kuid kui valite ühe reegli ja peate sellest kinni, ei lähe teie sait ja kataloogikirjed omavahel vastuollu."
+   ],
+   "list": [
+    "Otsustage algus- ja lõpp-punkt („põhjapoolse väljapääsu piletiväravatest meie hoone sissepääsuni“)",
+    "Mõõtke kaardirakenduses jalgsi teekonna pikkus mööda marsruuti ja teisendage see oma reegli järgi. Kui lisate vahemaa („umbes 300 m“), saavad nii TI kui ka inimesed seda kontrollida",
+    "Mitme väljapääsuga suurtes jaamades nimetage lähim väljapääs ja lisage üks rida neile, kes tulevad mõnest teisest",
+    "Kontrollige, kas kataloogikirjetes ja Google Business Profile'i kirjelduses on teistsugune arv, ja ühtlustage need"
+   ],
+   "after": [
+    "Kirjutage „1 minut jaamast“ ainult siis, kui asute tõesti väljapääsu juures. Liialdatud jalutusaeg ilmub arvustustesse kui lahknevus."
+   ]
+  },
+  {
+   "heading": "Kasutage kõikjal ühte aadressivormingut",
+   "paragraphs": [
+    "Üldiselt arvatakse, et TI-teenused kombineerivad teie saiti, Google Business Profile'it, katalooge ja sotsiaalmeedia profiile, et otsustada, kas need kirjeldavad sama ettevõtet; kuidas nad neid kokku viivad, pole avaldatud. Kui aadress on eri kirjetes erinevalt kirjutatud, ei pruugita kirjeid omavahel siduda või satub vastustesse aadress ilma ruumi või korruseta. Otsustage need viis asja ja kasutage neid igas kirjes."
+   ],
+   "list": [
+    "Lühendid: „Street“ või „St“, „Suite“ või „Ste“. Sobib kumbki; valige üks",
+    "Märgid: tavalised sidekriipsud, ühtne numeratsioon, ilma dekoratiivsete sümboliteta",
+    "Hoone nimi, ruum ja korrus. Kui hoone nimi muutub, uuendage kõiki kirjeid samal päeval",
+    "Kas lisada osariik või piirkond (struktureeritud andmetes lisage see alati)",
+    "Kui avaldate aadressi ka teises keeles, kirjutage see nii, et koht oleks selgelt äratuntav (lisage hoone nimi)"
+   ],
+   "after": [
+    "Pärast kolimist pange uus aadress saabumisjuhiste lehele koos ühe reaga, näiteks „Kolisime (kuupäev); meie eelmine aadress oli …“. Kui lihtsalt kustutate vana lehe, jääb vana aadress teistele saitidele ilma seoseta teie saidiga ja TI võib seda edasi pakkuda."
+   ]
+  },
+  {
+   "heading": "Määrake Google Business Profile'is parkimise ja ligipääsetavuse atribuudid",
+   "paragraphs": [
+    "Google Business Profile'is on „atribuudid“, mida näidatakse Google'i otsingus, Mapsis ja teistes Google'i teenustes. Mõnda atribuuti muudate ise; teisi võidakse täita kohal käinud klientide põhjal. Ligipääsetavuse atribuutide hulka kuuluvad ratastooliga ligipääsetav sissepääs, tualett, istekohad, lift ja ratastooliga ligipääsetav parkimine – valige viimase puhul Jah, kui teil on parkimiskoht reserveeritud ligipääsetavuse vajadustega inimestele. Google'i sõnul võtab muudatuse ülevaatus tavaliselt umbes 10 minutit, kuid võib kesta kuni 30 päeva ([Manage your business attributes](https://support.google.com/business/answer/9049526?hl=en), kontrollitud 21. novembril 2026). See, milliseid atribuute näete, sõltub teie ettevõtte kategooriast.",
+    "Kuidas Google'i AI Overviews ja AI Mode profiili atribuute kasutavad, pole avaldatud. Kuid profiil on see teave, mida näidatakse Google Mapsis ja otsingus, seega hoolitsege, et see ütleks sama mis teie sait. Andmed, mida atribuudid väljendada ei saa – kohtade arv, hind, partnerparkla tingimused –, kirjutage lehe teksti ja profiili kirjeldusse."
+   ]
+  },
+  {
+   "heading": "Struktureeritud andmed: aadress, koordinaadid, kaart ja mugavused",
+   "paragraphs": [
+    "Google'i [LocalBusiness'i struktureeritud andmete dokumentatsioonis](https://developers.google.com/search/docs/appearance/structured-data/local-business) (uuendatud septembris 2026) on name ja address kohustuslikud ning geo (laius- ja pikkuskraad) soovitatav. Näidetes jagatakse aadress PostalAddress'i osadeks streetAddress, addressLocality, addressRegion, postalCode ja addressCountry ning koordinaatide täpsus peab olema vähemalt viis kohta pärast koma. Võtke koordinaadid kaardirakendusest oma sissepääsu juurest: saabumisjuhiste jaoks on uks, mida inimesed kasutavad, kasulikum kui hoone keskpunkt.",
+    "Google'i dokumentatsioon neid ei maini, kuid schema.org-is on ka [hasMap](https://schema.org/hasMap) (URL koha kaardile), [amenityFeature](https://schema.org/amenityFeature) (mugavused [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification) nimi/väärtus-paaridena) ja [publicAccess](https://schema.org/publicAccess) (kas koht on avalikkusele avatud). Oma uurimuses ei leidnud me ametlikku teadet, et Google või mõni muu TI-teenus kasutaks hasMap'i või amenityFeature'it. Nende lisamine ei kahjusta, kuid käsitlege neid lehe tekstis juba öeldu kordusena."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Struktureeritud andmete aadress, koordinaadid ja kohtade arv peavad vastama lehe tekstile. Kontrollige süntaksit [Rich Results Testiga](https://search.google.com/test/rich-results) või [Schema Markup Validatoriga](https://validator.schema.org/). Mitme asukoha korral andke igale asukohale oma leht oma aadressi ja koordinaatidega (vt [TI-otsing mitme asukohaga ettevõtetele](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "WordPressi sammud (Nurevo AIO-ga)",
+   "paragraphs": [
+    "[Nurevo AIO](https://wordpress.org/plugins/nurevo-webmcp/) (tasuta, varem nimega Nurevo AEO) avaldab aadressiväljale kirjutatu täpselt nii, nagu see on sisestatud, teie ettevõtte struktureeritud andmetes (PostalAddress streetAddress) ja llms.txt „Address“ real. Tegutsege selles järjekorras."
+   ],
+   "list": [
+    "Parandage kõigepealt saabumisjuhiste lehe tekst ülaltoodud kaheksa punkti järgi (lehe tekst enne struktureeritud andmeid)",
+    "Kasutage aadressiväljal sama vormingut mis lehel ja Google Business Profile'is, sh ruum, korrus ja postiindeks. Väli avaldatakse ühe stringina, mitte osadeks jagatuna",
+    "Nurevo ei arva koordinaate aadressi põhjal. Nende avaldamiseks lisage geo arendajafiltriga webmcp_canary_business_node (kood allpool); hasMap ja amenityFeature saab lisada samamoodi",
+    "Kui teie SEO-pistikprogramm või teema avaldab juba ettevõtte nime, aadressi, telefoni ja lahtiolekuajad, ei avalda Nurevo teist ettevõtte sõlme, seega filtril pole mõju; lisage koordinaadid selle asemel sellesse pistikprogrammi või teemasse. Nurevo ei dubleeri Yoast SEO, Rank Mathi, All in One SEO ega Slim SEO väljundit ning alates versioonist 0.9.1 töötab see ka koos SEO SIMPLE PACKi ja VK All in One Expansion Unitiga",
+    "Pistikprogrammi diagnostika punkt „Põhiteabe katvus“ näitab, kas nimi, aadress, telefon, lahtiolekuajad, asukoht ja URL on kõik avaldatud",
+    "E-poe või B2B-saidina seadistatud saidid ei avalda lahtiolekuaegu ega asukohta (geo), sest külastatavat kohta pole"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Lisage kood alamteema functions.php-faili või koodijuppide pistikprogrammi ning kontrollige seejärel lehe lähtekoodist või Rich Results Testiga, et geo ilmub teie ettevõtte juures. Kui kolite või parkimine muutub, uuendage välja, filtrit ja lehe teksti samal päeval.",
+    "Klientide saite hooldavad agentuurid saavad muuta põhimõtte „uuenda kõiki kirjeid samal päeval“ standardseks ülesandeks kolimiste, parkimislepingute muutuste ja hoonete ümbernimetamise korral. Nurevol on [partnerprogramm](https://nurevo.jp/partner/) agentuuridele, kes pakuvad igakuist tuge."
+   ]
+  },
+  {
+   "heading": "Kuidas pärast muudatusi kontrollida",
+   "paragraphs": [
+    "Esitage TI-le samad küsimused muudatuste päeval ja uuesti kahe kuni nelja nädala pärast ning pange vastused kirja. Ükski TI-teenus ei avalda, kui kaua uuendused aega võtavad."
+   ],
+   "table": {
+    "head": [
+     "Küsimus",
+     "Õige vastus"
+    ],
+    "rows": [
+     [
+      "„Mis on (ettevõtte) aadress?“",
+      "Teie praegune aadress koos ruumi või korrusega, mitte vana"
+     ],
+     [
+      "„Kuidas jõuda (jaamast) (ettevõtteni)?“",
+      "Teie saidil märgitud väljapääs ja jalutusaeg"
+     ],
+     [
+      "„Kas (ettevõtte) juures on parkimist?“",
+      "Kas parkimine on olemas, mitu kohta ja partnerparkla tingimused, nagu teie saidil"
+     ],
+     [
+      "„Kas (ettevõte) on ratastooliga ligipääsetav?“",
+      "Sama mis teie saidil ja Google Business Profile'is"
+     ],
+     [
+      "„(Ettevõtte tüüp) parkimisega (piirkonnas)“",
+      "Kas teie nimi ilmub ja kas viidatakse teie saabumisjuhiste lehele"
+     ]
+    ]
+   },
+   "after": [
+    "Pange kirja kuupäev, TI-teenus, küsimus, vastus ja viidatud URL-id. Kui allikas on kataloog või vana flaier, parandage see. Nurevo Free- ja Standard-paketis esitab Nurevo teenus kord kuus Perplexityle kolm brändivaba küsimust, mis on koostatud teie ettevõtte tüübi ja piirkonna põhjal, ning näitab, kas teie nimi ilmus ja kas viidati teie saidile. Pro (beeta, alates USD 99 kuus) jälgib kuni 20 küsimust Perplexitys (ChatGPT-s, kui see on seadistatud). Parkimise ja saabumisjuhiste küsimused pange kirja käsitsi. Vt [Kuidas mõõta nähtavust TI-s](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Kontrollnimekiri enne avaldamist",
+   "list": [
+    "Teie aadress koos ruumi või korruse ja postiindeksiga on kirjas HTML-tekstina",
+    "Lähim jaam või peatus, liin, väljapääs, jalutusaeg ja vahemaa on kirjas ning olete otsustanud, kust kuhu mõõtsite",
+    "Kahe või kolme orientiiriga marsruut koos sissepääsu ja korrusega on kirjas",
+    "Parkimine – kas see on olemas, kohad, asukoht, hind, partnerparkla tingimused – on kirjas; kui seda pole, on see öeldud",
+    "Jalgrattad, mootorrattad, ligipääsetavus ja lapsevankrid on käsitletud",
+    "Aadress on kirjutatud ühtmoodi teie saidil, Google Business Profile'is, kataloogides ja sotsiaalmeedia profiilides",
+    "Google Business Profile'i atribuudid (parkimine, ligipääsetavus) vastavad teie saidile",
+    "Struktureeritud andmete aadress ja koordinaadid (vähemalt viis kohta pärast koma) vastavad lehe tekstile",
+    "Ükski leht, PDF ega blogipostitus ei näita enam vana aadressi või parklat, mida te enam ei kasuta",
+    "Valisite oma küsimused ja panite TI vastused kirja muudatuste päeval ning kahe kuni nelja nädala pärast"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Meil on manustatud kaart. Kas peame saabumisjuhised ikkagi tekstina kirjutama?",
+   "a": "Jah. See, kas TI suudab lugeda manustatud kaarti või saabumisjuhiste pilti, erineb teenuseti ja pole avaldatud. Käsitlege kaarti abina inimestele ning kirjutage jaam, väljapääs, jalutusaeg, sissepääs ja parkimine lehe teksti."
+  },
+  {
+   "q": "Meil parkimist pole. Kas jätta see lihtsalt mainimata?",
+   "a": "Kindlam on kirjutada „Meil parkimist ei ole“. Kui te midagi ei ütle, võib TI vastata teiste saitide põhjal või oletada. Lisage, kus läheduses parkida saab ja kuidas ühistranspordiga kohale tulla."
+  },
+  {
+   "q": "Kuidas peaksime jalutusaja välja arvutama?",
+   "a": "Universaalset reeglit pole. Jaapani kinnisvarareklaami standard (teekonna pikkus, 80 m minutis, ümardamine üles) on üks selge võimalus. Mida iganes valite, öelge, kust kuhu mõõtsite, ja lisage vahemaa."
+  },
+  {
+   "q": "Kas TI vastustes ilmumiseks on struktureeritud andmetes vaja koordinaate?",
+   "a": "Mitte tingimata. Google'i dokumentatsioonis on geo soovitatav ning kohustuslikud on ainult name ja address. Kas ChatGPT või Perplexity koordinaate kasutavad, pole avaldatud. Parandage kõigepealt lehe tekst ja aadressivorming ning lisage seejärel sissepääsu juurest võetud koordinaadid."
+  },
+  {
+   "q": "Kas peaksime lisama hasMap'i või amenityFeature'i?",
+   "a": "Võite, kuid neid pole Google'i dokumentatsioonis ja me ei leidnud ametlikku teadet, et mõni TI-teenus neid kasutaks. Lisage need teie lehel juba oleva kaardilehe ja parkimisinfo kordusena."
+  },
+  {
+   "q": "Kolisime ja TI annab ikka meie vana aadressi.",
+   "a": "Uuendage saiti, Google Business Profile'it, katalooge ja sotsiaalmeedia profiile samal päeval ning hoidke saabumisjuhiste lehel üks rida kolimise kuupäeva ja eelmise aadressiga. Kontrollige, milliseid URL-e TI viitab; kui need on vanad lehed või PDF-id, parandage või eemaldage need. Uuendamise ajad pole avaldatud, seega küsige mõne nädala pärast uuesti."
+  },
+  {
+   "q": "Kas saan lisada Nurevo aadressiväljale ruumi ja korruse?",
+   "a": "Jah, palun tehke seda. Väli avaldatakse täpselt nii, nagu see on sisestatud, streetAddress'is ja llms.txt „Address“ real. Kasutage sama vormingut mis lehel ja Google Business Profile'is."
+  }
+ ],
+ "relatedHeading": "Seotud juhendid",
+ "cta": {
+  "heading": "Vaadake, kas TI suudab teie saiti lugeda",
+  "body": "Tasuta kontroll ei nõua registreerumist: sisestage URL, et näha TI-roomikute juurdepääsu, struktureeritud andmeid ja llms.txt-i. WordPressis avaldab tasuta pistikprogramm teie aadressi, telefoni ja lahtiolekuajad struktureeritud andmetena ja llms.txt-s, dubleerimata teie SEO-pistikprogrammi väljundit.",
+  "label": "Kontrollige oma TI-valmidust tasuta",
+  "href": "/check",
+  "secondary": {
+   "label": "Proovige tasuta WordPressi pistikprogrammi",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Google'i otsing, Google Maps ja Gemini on Google LLC kaubamärgid, ChatGPT on OpenAI ja Perplexity Perplexity AI kaubamärk. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit ning selles juhendis viidatud ettevõtete nimed on vastavate omanike kaubamärgid või registreeritud kaubamärgid. Nurevo ei ole ühegi neist ettevõtetest seotud ega nende poolt heaks kiidetud."
+}

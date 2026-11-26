@@ -1,0 +1,321 @@
+{
+ "title": "Vejvisnings- og parkeringssider, AI læser rigtigt | Nurevo",
+ "description": "Sådan skriver du en vejvisningsside, så AI svarer rigtigt på »er der parkering?« og »hvordan kommer jeg dertil?«: adresse, transport, indgang, schema, WordPress.",
+ "h1": "Sådan skriver du din side om vejvisning, adgang og parkering, så AI-søgning får det rigtigt",
+ "lead": "Hvis AI skal give korrekte oplysninger om vejvisning og parkering, så skriv følgende som HTML-tekst på din vejvisningsside, ikke kun som kort eller billede: din fulde adresse (med suite eller etage), nærmeste station eller stoppested med udgang og gangtid (og hvordan du har målt den), pejlemærker hen til indgangen og parkering (om du har det, hvor mange pladser, hvor og hvad det koster). Brug derefter ét adresseformat overalt – på dit site, i Google Business Profile og i virksomhedsoversigter – og læg den samme adresse og koordinaterne for din indgang i dine strukturerede data. Hvis du ikke har parkering, så skriv det: »Vi har ingen parkering; brug venligst det offentlige parkeringshus på Example Street.« Så har AI mindre plads til at gætte.",
+ "intro": [
+  "Skrevet 21. november 2026 (JST). Åbningstider er beskrevet i [Sådan offentliggør du åbningstider og lukkedage](/guide/business-hours-holidays-ai-search) og booking i [Sådan skriver du din bookingside](/guide/booking-page-ai-search). Denne guide er til alle virksomheder, folk besøger – butikker, klinikker, studier, kontorer, gæstehuse – og handler om én ting: at få AI til at sige korrekt, hvordan man kommer hen til dig, og om man kan komme i bil.",
+  "AI-svar ændrer sig med dagen, formuleringen af spørgsmålet og tjenesten. Trinene her gør det sværere for AI at misforstå dine adgangsoplysninger og viser dig, hvordan du tjekker det; de garanterer ikke, at du kommer med i et svar, eller at svaret er korrekt."
+ ],
+ "sections": [
+  {
+   "heading": "Det korte svar: fem grunde til, at AI gengiver dine adgangsoplysninger forkert",
+   "table": {
+    "head": [
+     "Årsag",
+     "Hvad der sker i AI-svar",
+     "Løsning"
+    ],
+    "rows": [
+     [
+      "Vejvisningen findes kun som et indlejret kort eller et billede",
+      "AI kan ikke sige, hvilken station eller hvor man parkerer, eller gentager gamle oplysninger fra et andet site",
+      "Skriv station, udgang, gangtid, indgang og parkering som tekst under kortet"
+     ],
+     [
+      "Adressen står forskelligt på dit site, i Google Business Profile og i virksomhedsoversigter (»Ste 300« mod »Suite 300«, etage mangler)",
+      "AI opfatter dig som to steder eller udelader suite eller etage",
+      "Vælg ét format, med suite og etage, og brug det i alle opslag"
+     ],
+     [
+      "Der står intet om parkering",
+      "AI gætter på »parkering mulig« eller »ingen parkering«",
+      "Skriv det, også hvis du ikke har parkering, og skriv, hvor man kan parkere i stedet"
+     ],
+     [
+      "Kun »tæt på stationen« eller »let at finde«",
+      "AI kan ikke sige, hvilken station eller hvilken udgang",
+      "Nævn station, linje, udgang og gangtid, og hvordan du har målt den"
+     ],
+     [
+      "Efter en flytning eller en ændring i parkeringen ligger gamle sider eller PDF'er stadig online",
+      "AI giver din gamle adresse eller en parkeringsplads, du ikke længere bruger",
+      "Find gamle vejvisningssider, flyer-PDF'er og blogindlæg, og ret eller fjern dem"
+     ]
+    ]
+   },
+   "after": [
+    "Det, besøgende faktisk spørger AI om, kommer med betingelser: »Er der parkering i nærheden af (virksomhed)?«, »Hvor langt er der fra (station)?«, »Kan jeg komme derhen med barnevogn?« AI svarer ved at hente sætninger fra din vejvisningsside, så alt, der ikke står som tekst, bliver oftere udfyldt fra andre sites eller gættet."
+   ]
+  },
+  {
+   "heading": "Hvad de førende artikler dækker, og hvad de mangler",
+   "paragraphs": [
+    "Vi læste de øverste japanske og engelske resultater for søgninger som »directions page parking AI search«, »local business AI search optimization« og deres japanske modstykker (21. november 2026). De japanske artikler er enige om at nævne station og gangtid, oplyse om du har parkering og holde adressen ensartet. De fleste engelske artikler stopper ved »hold din NAP (navn, adresse, telefon) ensartet« og nævner næsten ikke vejvisning eller parkering. Ingen gav et eksempel på strukturerede data for adgangsoplysninger (geo, hasMap, amenityFeature), trin til WordPress eller en måde at tjekke resultatet på."
+   ],
+   "table": {
+    "head": [
+     "Artikel",
+     "Hvad den gør godt",
+     "Hvad den mangler"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Ensartet NAP i Google Business Profile og virksomhedsoversigter; et LocalBusiness-JSON-LD-eksempel med adresse",
+      "Ingen vejvisning, parkering eller tilgængelighed; ingen geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Bekræft adresse eller serviceområde i profilen; følg AI-henvisninger i GA4 og lav stikprøver med prompts hver måned",
+      "Ingen vejledning om vejvisningssiden; ingen schema-kode"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Lokationsspecifikke FAQ'er, fx om en lokation har gratis parkering",
+      "Ingen markup, ingen vejvisningsside, mest produktdrevet"
+     ],
+     [
+      "[Birdeye (opdateret 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Påpeger, at AI håndterer afstand dårligt; ensartede opslag på Google, Bing og Yelp",
+      "Ingen schema-kode, ingen vejvisningsside"
+     ],
+     [
+      "[Uravation, lokale virksomheder (japansk, opdateret 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) og [uafhængige caféer (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Station, gangrute, parkering og indgang på lokationssiden; »3 minutter fra stationen« kræver et angivet udgangspunkt",
+      "Egenskaber nævnt uden kode; ingen WordPress-trin"
+     ],
+     [
+      "[Issoh (japansk, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Eksempler på adressevarianter, der skal ensrettes; attributter for parkering og tilgængelighed",
+      "Ingen skabelon til vejvisningssiden, intet schema-eksempel"
+     ]
+    ]
+   },
+   "after": [
+    "Denne guide besvarer alle de spørgsmål, artiklerne besvarer, og tilføjer en regel for gangtider, en skabelon til parkeringsoplysninger, adresse og koordinater skrevet sådan, som Googles dokumentation viser dem, WordPress-trin med Nurevo og et sæt spørgsmål, du kan tjekke AI med."
+   ]
+  },
+  {
+   "heading": "Otte ting, din vejvisningsside skal indeholde",
+   "paragraphs": [
+    "Sæt dem på din lokationsside eller på en separat side med »Find vej«. Hvis du indlejrer et kort, så skriv stadig de samme oplysninger som tekst: AI kan muligvis ikke læse indholdet af kortet."
+   ],
+   "table": {
+    "head": [
+     "Hvad du skriver",
+     "Eksempel",
+     "Hvad der går galt uden"
+    ],
+    "rows": [
+     [
+      "Fuld adresse med suite eller etage og postnummer",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "En adresse uden suite spreder sig, og folk farer vild ved døren"
+     ],
+     [
+      "Nærmeste station eller stoppested, linje, udgang, gangtid",
+      "Springfield Station (Blue Line), nordlig udgang, 4 minutters gang (ca. 300 m / 0,2 mi)",
+      "Besøgende bliver sendt til den forkerte station eller udgang"
+     ],
+     [
+      "Rute med to eller tre pejlemærker",
+      "Drej til højre ud af den nordlige udgang, til venstre ved caféen på hjørnet, og vi ligger i bygningen med apoteket i stueetagen, før det andet lyskryds",
+      "Folk kommer tæt på og farer så vild; flere telefonopkald"
+     ],
+     [
+      "Indgang og etage",
+      "Indgangen er nede ad passagen til venstre for bygningen, ikke hoveddøren. Tag elevatoren til 3. sal",
+      "Folk finder bygningen, men ikke vejen ind"
+     ],
+     [
+      "Parkering",
+      "To reserverede pladser bag bygningen (nummer 7 og 8). Er de optaget, så brug det offentlige parkeringshus på Oak Street (vi refunderer ikke parkering)",
+      "AI gætter på, om du har parkering"
+     ],
+     [
+      "Cykler og motorcykler",
+      "Cykelstativ foran bygningen; ingen motorcykelparkering",
+      "Folk parkerer, hvor de ikke må"
+     ],
+     [
+      "Tilgængelighed og barnevogne",
+      "Elevator findes. Der er et trin på 2 cm ved indgangen; kørestolsbrugere bedes ringe i forvejen",
+      "Besøgende kan ikke vide, om de kan komme ind"
+     ],
+     [
+      "Bus, taxa og bil",
+      "Bus 12, stoppestedet Oak Street, 1 minuts gang. Bilister kører ind fra Main Street (ensrettet gade)",
+      "Bilister tager den forkerte tilkørsel"
+     ]
+    ]
+   },
+   "after": [
+    "Dårligt: »Tæt på stationen! Parkering mulig. Se kortet.« Godt: »4 minutters gang (ca. 300 m) fra den nordlige udgang af Springfield Station. 123 Example Street, Suite 300. Indgangen er nede ad passagen til venstre for bygningen. To reserverede pladser bag bygningen (7 og 8); er de optaget, så brug det offentlige parkeringshus på Oak Street.«",
+    "»Parkering mulig« alene siger ikke, hvor mange pladser, hvor, om det er gratis, eller om det er en partnerparkering. Ved en partnerparkering skal du angive navn, adresse og rabatbetingelser (fx »én time gratis ved køb over 20 USD«). Når betingelserne ændres, så opdater siden samme dag."
+   ]
+  },
+  {
+   "heading": "Gangtider: beslut, hvordan du måler, og skriv det",
+   "paragraphs": [
+    "Gangtider bliver let uensartede. Japansk ejendomsreklame har en fast regel: vejafstand langs ruten, 80 m pr. minut, en rest rundes op til et helt minut, uden tillæg for lyskryds eller bakker (håndhævelsesreglerne i Japans kodeks for fair konkurrence inden for ejendomsreklame, som forklaret i [Mitsubishi Jisho House Nets ordliste](https://www.mec-h.com/words/detail?n=59), japansk). Butikker og klinikker er ikke bundet af den, og andre lande har ingen fælles regel, men vælger du én regel og holder dig til den, modsiger dit site og dine opslag i virksomhedsoversigter ikke hinanden."
+   ],
+   "list": [
+    "Beslut start- og slutpunkt (»fra adgangskontrollen ved den nordlige udgang til indgangen til vores bygning«)",
+    "Mål gangafstanden langs ruten i en kortapp, og omregn den med din regel. Skriver du afstanden med (»ca. 300 m«), kan både AI og mennesker tjekke den",
+    "Ved store stationer med flere udgange skal du nævne den nærmeste udgang og tilføje én linje til dem, der kommer fra en anden",
+    "Tjek dine opslag i virksomhedsoversigter og beskrivelsen i Google Business Profile for et afvigende tal, og få dem til at stemme overens"
+   ],
+   "after": [
+    "Skriv kun »1 minut fra stationen«, hvis du virkelig ligger ved udgangen. En overdrevet gangtid dukker op i anmeldelser som noget, der ikke passer."
+   ]
+  },
+  {
+   "heading": "Brug ét adresseformat overalt",
+   "paragraphs": [
+    "Det antages generelt, at AI-tjenester kombinerer dit site, Google Business Profile, virksomhedsoversigter og sociale profiler for at afgøre, om de beskriver den samme virksomhed; hvordan de matcher dem, er ikke offentliggjort. Står adressen forskelligt fra opslag til opslag, bliver opslagene måske ikke koblet sammen, eller en adresse uden suite eller etage havner i svarene. Beslut disse fem ting, og brug dem i alle opslag."
+   ],
+   "list": [
+    "Forkortelser: »Street« eller »St«, »Suite« eller »Ste«. Begge dele er fint; vælg én",
+    "Tegn: almindelige bindestreger, ensartet nummerering, ingen dekorative symboler",
+    "Bygningsnavn, suite og etage. Hvis bygningen skifter navn, så opdater alle opslag samme dag",
+    "Om stat eller region skal med (i strukturerede data skal den altid med)",
+    "Hvis du også offentliggør en adresse på et andet sprog, så skriv den, så den tydeligt er det samme sted (med bygningsnavnet)"
+   ],
+   "after": [
+    "Efter en flytning skal du sætte den nye adresse på din vejvisningsside med én linje som »Vi flyttede den (dato); vores tidligere adresse var …«. Sletter du blot den gamle side, bliver den gamle adresse stående på andre sites uden forbindelse til dit site, og AI kan blive ved med at oplyse den."
+   ]
+  },
+  {
+   "heading": "Angiv attributter for parkering og tilgængelighed i Google Business Profile",
+   "paragraphs": [
+    "Google Business Profile har »attributter«, som vises i Google Søgning, Maps og andre Google-tjenester. Nogle attributter redigerer du selv; andre kan blive udfyldt ud fra kunder, der besøger dig. Tilgængelighedsattributter omfatter kørestolsvenlig indgang, toilet, siddepladser, elevator og kørestolsvenlig parkering – vælg Ja ved den sidste, hvis du har en parkeringsplads reserveret til personer med særlige adgangsbehov. Ifølge Google tager gennemgangen af en ændring normalt omkring 10 minutter, men den kan tage op til 30 dage ([Administrer din virksomheds attributter](https://support.google.com/business/answer/9049526?hl=en), tjekket 21. november 2026). Hvilke attributter du ser, afhænger af din virksomhedskategori.",
+    "Hvordan Googles AI Overviews og AI Mode bruger profilattributter, er ikke offentliggjort. Men profilen er de oplysninger, der vises i Google Maps og Søgning, så sørg for, at den siger det samme som dit site. Det, attributter ikke kan udtrykke – antal pladser, pris, partnerbetingelser – hører hjemme i din sidetekst og i profilbeskrivelsen."
+   ]
+  },
+  {
+   "heading": "Strukturerede data: adresse, koordinater, kort og faciliteter",
+   "paragraphs": [
+    "I Googles [dokumentation om strukturerede data for LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) (opdateret september 2026) er name og address påkrævet, og geo (bredde- og længdegrad) anbefales. Eksemplerne deler adressen op i PostalAddress streetAddress, addressLocality, addressRegion, postalCode og addressCountry, og koordinaterne skal have en præcision på mindst fem decimaler. Tag koordinaterne fra en kortapp ved din indgang: til vejvisning er den dør, folk bruger, mere nyttig end midten af bygningen.",
+    "Googles dokumentation nævner dem ikke, men schema.org har også [hasMap](https://schema.org/hasMap) (en URL til et kort over stedet), [amenityFeature](https://schema.org/amenityFeature) (faciliteter skrevet som navn-værdi-par af typen [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)) og [publicAccess](https://schema.org/publicAccess) (om stedet er åbent for offentligheden). I vores research fandt vi ingen officiel udtalelse om, at Google eller en anden AI-tjeneste bruger hasMap eller amenityFeature. Det skader ikke at tilføje dem, men betragt dem som en gentagelse af det, din sidetekst allerede siger."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Adressen, koordinaterne og antallet af pladser i dine strukturerede data skal stemme overens med sideteksten. Tjek syntaksen med [testen af beriget indhold](https://search.google.com/test/rich-results) eller [Schema Markup Validator](https://validator.schema.org/). Har du flere lokationer, så giv hver lokation sin egen side med egen adresse og egne koordinater (se [AI-søgning for virksomheder med flere lokationer](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "Trin i WordPress (med Nurevo AIO)",
+   "paragraphs": [
+    "I [Nurevo AIO (gratis, tidligere vist som Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) bliver det, du skriver i feltet »Address«, offentliggjort præcis som skrevet i din virksomheds strukturerede data (PostalAddress streetAddress) og på linjen »Address« i llms.txt. Arbejd i denne rækkefølge."
+   ],
+   "list": [
+    "Ret først teksten på din vejvisningsside ud fra de otte punkter ovenfor (sidetekst før strukturerede data)",
+    "Brug i feltet »Address« samme format som på din side og i Google Business Profile, med suite, etage og postnummer. Feltet offentliggøres som én tekststreng, ikke delt op",
+    "Nurevo gætter ikke koordinater ud fra din adresse. For at offentliggøre dem skal du tilføje geo med udviklerfilteret webmcp_canary_business_node (kode nedenfor); hasMap og amenityFeature kan tilføjes på samme måde",
+    "Hvis dit SEO-plugin eller tema allerede offentliggør din virksomheds navn, adresse, telefon og åbningstider, offentliggør Nurevo ikke en ekstra virksomhedsnode, og filteret har ingen effekt; tilføj i så fald koordinaterne i det plugin eller tema. Nurevo dublerer ikke Yoast SEO, Rank Math, All in One SEO eller Slim SEO, og siden 0.9.1 fungerer det også sammen med SEO SIMPLE PACK og VK All in One Expansion Unit",
+    "Punktet »Key information coverage« i pluginets diagnose viser, om dit navn, adresse, telefon, åbningstider, lokation og URL alle er offentliggjort",
+    "Sites, der er sat op som webshop eller B2B-site, offentliggør ingen åbningstider eller lokation (geo), da der ikke er et sted at besøge"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Tilføj koden i dit child-temas functions.php eller i et plugin til kodestumper, og tjek derefter i sidens kildekode eller med testen af beriget indhold, at geo vises på din virksomhed. Når du flytter, eller parkeringen ændres, så opdater feltet, filteret og sideteksten samme dag.",
+    "Bureauer, der vedligeholder kunders sites, kan gøre »opdater alle opslag samme dag« til en standardopgave ved flytninger, ændrede parkeringsaftaler og nye bygningsnavne. Nurevo har et [partnerprogram](https://nurevo.jp/partner/) for bureauer, der tilbyder månedlig support."
+   ]
+  },
+  {
+   "heading": "Sådan tjekker du efter ændringerne",
+   "paragraphs": [
+    "Stil AI de samme spørgsmål på den dag, du laver ændringerne, og igen to til fire uger senere, og noter svarene. Ingen AI-tjeneste offentliggør, hvor lang tid opdateringer tager."
+   ],
+   "table": {
+    "head": [
+     "Spørgsmål",
+     "Et korrekt svar"
+    ],
+    "rows": [
+     [
+      "»Hvad er adressen på (virksomhed)?«",
+      "Din nuværende adresse med suite eller etage, ikke den gamle"
+     ],
+     [
+      "»Hvordan kommer jeg fra (station) til (virksomhed)?«",
+      "Udgangen og gangtiden fra dit site"
+     ],
+     [
+      "»Er der parkering ved (virksomhed)?«",
+      "Om du har det, hvor mange pladser og partnerbetingelserne, som på dit site"
+     ],
+     [
+      "»Er (virksomhed) kørestolsvenlig?«",
+      "Det samme som på dit site og i Google Business Profile"
+     ],
+     [
+      "»(Virksomhedstype) med parkering i (område)«",
+      "Om dit navn kommer med, og om din vejvisningsside bliver citeret"
+     ]
+    ]
+   },
+   "after": [
+    "Noter dato, AI-tjeneste, spørgsmål, svar og citerede URL'er. Hvis kilden er en virksomhedsoversigt eller en gammel flyer, så ret den. På Nurevos Free- og Standard-plan stiller Nurevo-tjenesten én gang om måneden Perplexity tre spørgsmål uden brandnavn, bygget ud fra din virksomhedstype og dit område, og viser, om dit navn kom med, og om dit site blev citeret. Pro (beta, fra 99 USD om måneden) følger op til 20 spørgsmål på Perplexity (ChatGPT, når det er sat op). Spørgsmål om parkering og vejvisning noterer du i hånden. Se [Sådan måler du AI-synlighed](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Tjekliste, før du udgiver",
+   "list": [
+    "Din adresse, med suite eller etage og postnummer, står som HTML-tekst",
+    "Nærmeste station eller stoppested, linje, udgang, gangtid og afstand står der, og du har besluttet, hvorfra og hvortil du målte",
+    "En rute med to eller tre pejlemærker samt indgang og etage står der",
+    "Parkering – om du har det, pladser, placering, pris, partnerbetingelser – står der; har du ingen, står det også",
+    "Cykler, motorcykler, tilgængelighed og barnevogne er dækket",
+    "Adressen står på samme måde på dit site, i Google Business Profile, i virksomhedsoversigter og på sociale profiler",
+    "Attributterne i Google Business Profile (parkering, tilgængelighed) stemmer overens med dit site",
+    "Adressen og koordinaterne (mindst fem decimaler) i de strukturerede data stemmer overens med sideteksten",
+    "Ingen side, PDF eller blogindlæg viser stadig en gammel adresse eller en parkeringsplads, du ikke længere bruger",
+    "Du har valgt dine spørgsmål og noteret AI's svar på dagen og to til fire uger senere"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Vi har indlejret et kort. Skal vi så stadig skrive vejvisningen som tekst?",
+   "a": "Ja. Om AI kan læse et indlejret kort eller et vejvisningsbillede, varierer fra tjeneste til tjeneste og er ikke offentliggjort. Betragt kortet som en hjælp til mennesker, og skriv station, udgang, gangtid, indgang og parkering i sideteksten."
+  },
+  {
+   "q": "Vi har ingen parkering. Skal vi bare udelade det?",
+   "a": "Det er sikrere at skrive »Vi har ingen parkering«. Siger du ingenting, svarer AI måske ud fra andre sites eller gætter. Tilføj, hvor man kan parkere i nærheden, og hvordan man kommer med offentlig transport."
+  },
+  {
+   "q": "Hvordan skal vi beregne gangtiden?",
+   "a": "Der findes ingen universel regel. Japans standard for ejendomsreklame (vejafstand, 80 m pr. minut, rund op) er en klar mulighed. Uanset hvad du vælger, så skriv, hvorfra og hvortil du målte, og angiv afstanden."
+  },
+  {
+   "q": "Skal vi have koordinater i strukturerede data for at komme med i AI-svar?",
+   "a": "Ikke nødvendigvis. I Googles dokumentation anbefales geo, og kun name og address er påkrævet. Om ChatGPT eller Perplexity bruger koordinater, er ikke offentliggjort. Ret først sideteksten og adresseformatet, og tilføj derefter koordinater taget ved din indgang."
+  },
+  {
+   "q": "Skal vi tilføje hasMap eller amenityFeature?",
+   "a": "Det kan du, men de står ikke i Googles dokumentation, og vi fandt ingen officiel udtalelse om, at nogen AI-tjeneste bruger dem. Tilføj dem som en gentagelse af kortsiden og de parkeringsoplysninger, der allerede står på din side."
+  },
+  {
+   "q": "Vi er flyttet, og AI bliver ved med at give vores gamle adresse.",
+   "a": "Opdater dit site, Google Business Profile, virksomhedsoversigter og sociale profiler samme dag, og behold én linje på din vejvisningsside med flyttedatoen og den tidligere adresse. Tjek de URL'er, AI citerer; er det gamle sider eller PDF'er, så ret eller fjern dem. Opdateringstider er ikke offentliggjort, så spørg igen nogle uger senere."
+  },
+  {
+   "q": "Kan jeg skrive suite og etage i Nurevos felt »Address«?",
+   "a": "Ja, gør endelig det. Feltet offentliggøres præcis som skrevet i streetAddress og på linjen »Address« i llms.txt. Brug samme format som på din side og i Google Business Profile."
+  }
+ ],
+ "relatedHeading": "Relaterede guides",
+ "cta": {
+  "heading": "Se, om AI kan læse dit site",
+  "body": "Det gratis tjek kræver ingen tilmelding: indtast en URL for at se AI-crawleres adgang, strukturerede data og llms.txt. I WordPress udgiver det gratis plugin din adresse, telefon og åbningstider i strukturerede data og llms.txt uden at dublere outputtet fra dit SEO-plugin.",
+  "label": "Tjek din AI-parathed gratis",
+  "href": "/check",
+  "secondary": {
+   "label": "Prøv det gratis WordPress-plugin",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Google Søgning, Google Maps og Gemini er varemærker tilhørende Google LLC, ChatGPT tilhørende OpenAI og Perplexity tilhørende Perplexity AI. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit og navnene på de virksomheder, der citeres i denne guide, er varemærker eller registrerede varemærker tilhørende deres respektive ejere. Nurevo er ikke tilknyttet eller godkendt af nogen af disse virksomheder."
+}

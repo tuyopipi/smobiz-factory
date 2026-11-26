@@ -1,0 +1,321 @@
+{
+ "title": "Strona dojazdu i parkingu, którą AI czyta poprawnie | Nurevo",
+ "description": "Jak napisać stronę dojazdu, by AI poprawnie odpowiadało na „czy jest parking?” i „jak dojechać?”: adres, komunikacja, wejście, parking, schema, WordPress.",
+ "h1": "Jak napisać stronę dojazdu, dostępu i parkingu, by wyszukiwanie AI podawało poprawne informacje",
+ "lead": "Aby AI podawało poprawne informacje o dojeździe i parkingu, napisz na stronie dojazdu jako tekst HTML – nie tylko w formie mapy czy obrazka – te rzeczy: pełny adres (z numerem lokalu lub piętrem), najbliższą stację lub przystanek z wyjściem i czasem dojścia (oraz tym, jak go zmierzono), punkty orientacyjne aż do wejścia i parking (czy jest, ile miejsc, gdzie i ile kosztuje). Potem używaj jednego zapisu adresu wszędzie – na stronie, w Google Business Profile i w katalogach firm – i umieść ten sam adres oraz współrzędne wejścia w danych strukturalnych. Jeśli nie masz parkingu, napisz to wprost: „Nie mamy parkingu; prosimy korzystać z publicznego parkingu przy Example Street”. Wtedy AI ma mniej miejsca na zgadywanie.",
+ "intro": [
+  "Tekst powstał 21 listopada 2026 r. (JST). Godziny otwarcia omawiamy w przewodniku [jak publikować godziny otwarcia i dni wolne](/guide/business-hours-holidays-ai-search), a rezerwacje w przewodniku [jak napisać stronę rezerwacji](/guide/booking-page-ai-search). Ten przewodnik jest dla każdej firmy, którą odwiedzają klienci – sklepów, gabinetów, studiów, biur, pensjonatów – i skupia się na jednym: by AI poprawnie mówiło, jak do Ciebie dotrzeć i czy można przyjechać samochodem.",
+  "Odpowiedzi AI zmieniają się z dnia na dzień, zależą od sformułowania pytania i od usługi. Opisane kroki utrudniają AI błędne odczytanie informacji o dojeździe i pokazują, jak to sprawdzić; nie gwarantują, że pojawisz się w odpowiedzi ani że będzie ona poprawna."
+ ],
+ "sections": [
+  {
+   "heading": "W skrócie: pięć powodów, dla których AI myli informacje o dojeździe",
+   "table": {
+    "head": [
+     "Przyczyna",
+     "Co dzieje się w odpowiedziach AI",
+     "Rozwiązanie"
+    ],
+    "rows": [
+     [
+      "Wskazówki dojazdu są tylko w osadzonej mapie lub na obrazku",
+      "AI nie potrafi powiedzieć, z której stacji iść ani gdzie zaparkować, albo powtarza stare dane z innej strony",
+      "Pod mapą napisz tekstem stację, wyjście, czas dojścia, wejście i parking"
+     ],
+     [
+      "Adres jest zapisany inaczej na stronie, w Google Business Profile i w katalogach („lok. 300” vs „lokal 300”, brak piętra)",
+      "AI traktuje Cię jak dwa różne miejsca albo gubi numer lokalu lub piętro",
+      "Wybierz jeden zapis z lokalem i piętrem i używaj go we wszystkich wpisach"
+     ],
+     [
+      "Nie ma ani słowa o parkingu",
+      "AI zgaduje „parking dostępny” albo „brak parkingu”",
+      "Napisz to, nawet jeśli parkingu nie masz, i podaj, gdzie zaparkować zamiast tego"
+     ],
+     [
+      "Tylko „blisko stacji” albo „łatwo trafić”",
+      "AI nie potrafi powiedzieć, która stacja ani które wyjście",
+      "Podaj stację, linię, wyjście i czas dojścia oraz sposób pomiaru"
+     ],
+     [
+      "Po przeprowadzce lub zmianie parkingu stare strony albo pliki PDF wciąż są w sieci",
+      "AI podaje stary adres albo parking, z którego już nie korzystasz",
+      "Znajdź stare strony dojazdu, ulotki w PDF i wpisy na blogu, a potem je popraw lub usuń"
+     ]
+    ]
+   },
+   "after": [
+    "Pytania, które odwiedzający faktycznie zadają AI, zawierają warunki: „Czy przy (firma) jest parking?”, „Jak daleko jest z (stacja)?”, „Czy da się tam dotrzeć z wózkiem?” AI odpowiada, wyciągając zdania ze strony dojazdu, więc wszystko, czego nie zapisano tekstem, częściej zostaje uzupełnione z innych stron albo zgadnięte."
+   ]
+  },
+  {
+   "heading": "Co opisują najlepsze artykuły, a czego w nich brakuje",
+   "paragraphs": [
+    "Przeczytaliśmy czołowe wyniki japońskie i angielskie dla zapytań takich jak „directions page parking AI search”, „local business AI search optimization” i ich japońskich odpowiedników (21 listopada 2026 r.). Artykuły japońskie zgodnie zalecają podanie stacji i czasu dojścia, informacji o parkingu i spójnego adresu. Większość angielskich kończy na „dbaj o spójność NAP (nazwa, adres, telefon)” i ledwo wspomina o dojeździe czy parkingu. Żaden nie podał przykładu danych strukturalnych dla informacji o dojeździe (geo, hasMap, amenityFeature), kroków w WordPress ani sposobu sprawdzenia efektu."
+   ],
+   "table": {
+    "head": [
+     "Artykuł",
+     "Co robi dobrze",
+     "Czego brakuje"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Spójność NAP w Google Business Profile i katalogach; przykład JSON-LD LocalBusiness z adresem",
+      "Brak dojazdu, parkingu i dostępności; brak geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Weryfikacja adresu lub obszaru działania w profilu; śledzenie wejść z AI w GA4 i comiesięczne wyrywkowe sprawdzanie promptów",
+      "Brak wskazówek dla strony dojazdu; brak kodu schema"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "FAQ dla poszczególnych lokalizacji, np. czy lokalizacja ma bezpłatny parking",
+      "Brak znaczników, brak strony dojazdu, głównie o produkcie"
+     ],
+     [
+      "[Birdeye (aktualizacja 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Zwraca uwagę, że AI słabo radzi sobie z odległością; spójne wpisy w Google, Bing i Yelp",
+      "Brak kodu schema, brak strony dojazdu"
+     ],
+     [
+      "[Uravation, firmy lokalne (po japońsku, aktualizacja 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) i [niezależne kawiarnie (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Stacja, trasa piesza, parking i wejście na stronie lokalizacji; „3 minuty od stacji” wymaga podania punktu startowego",
+      "Wymienia właściwości bez kodu; brak kroków w WordPress"
+     ],
+     [
+      "[Issoh (po japońsku, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Przykłady wariantów adresu do ujednolicenia; atrybuty parkingu i dostępności",
+      "Brak szablonu strony dojazdu i przykładu schema"
+     ]
+    ]
+   },
+   "after": [
+    "Ten przewodnik odpowiada na wszystkie pytania, na które odpowiadają te artykuły, i dodaje zasadę liczenia czasu dojścia, szablon opisu parkingu, adres i współrzędne zapisane tak, jak pokazuje dokumentacja Google, kroki w WordPress z Nurevo oraz zestaw pytań do sprawdzenia AI."
+   ]
+  },
+  {
+   "heading": "Osiem rzeczy, które warto umieścić na stronie dojazdu",
+   "paragraphs": [
+    "Umieść je na stronie lokalizacji lub na osobnej stronie „Dojazd”. Jeśli osadzasz mapę, i tak zapisz te same informacje tekstem: AI może nie odczytać zawartości mapy."
+   ],
+   "table": {
+    "head": [
+     "Co napisać",
+     "Przykład",
+     "Co idzie źle bez tego"
+    ],
+    "rows": [
+     [
+      "Pełny adres z numerem lokalu lub piętrem i kodem pocztowym",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Rozchodzi się adres bez numeru lokalu, a ludzie gubią się przy drzwiach"
+     ],
+     [
+      "Najbliższa stacja lub przystanek, linia, wyjście, czas dojścia",
+      "Stacja Springfield (Blue Line), wyjście północne, 4 minuty pieszo (ok. 300 m / 0,2 mili)",
+      "Odwiedzający trafiają na złą stację lub do złego wyjścia"
+     ],
+     [
+      "Trasa z dwoma–trzema punktami orientacyjnymi",
+      "Z wyjścia północnego skręć w prawo, przy kawiarni na rogu w lewo; jesteśmy w budynku z apteką na parterze, przed drugimi światłami",
+      "Ludzie docierają w pobliże i się gubią; więcej telefonów"
+     ],
+     [
+      "Wejście i piętro",
+      "Wejście jest w przejściu po lewej stronie budynku, nie od frontu. Windą na 3. piętro",
+      "Ludzie znajdują budynek, ale nie wejście"
+     ],
+     [
+      "Parking",
+      "Dwa zarezerwowane miejsca za budynkiem (nr 7 i 8). Gdy są zajęte, skorzystaj z publicznego parkingu przy Oak Street (nie zwracamy kosztów)",
+      "AI zgaduje, czy masz parking"
+     ],
+     [
+      "Rowery i motocykle",
+      "Stojak na rowery przed budynkiem; brak miejsc dla motocykli",
+      "Ludzie parkują tam, gdzie nie powinni"
+     ],
+     [
+      "Dostępność i wózki dziecięce",
+      "Jest winda. Przy wejściu jest próg 2 cm; osoby na wózkach prosimy o wcześniejszy telefon",
+      "Odwiedzający nie wiedzą, czy dostaną się do środka"
+     ],
+     [
+      "Autobus, taksówka i samochód",
+      "Autobus 12, przystanek Oak Street, 1 minuta pieszo. Kierowcy wjeżdżają od Main Street (ulica jednokierunkowa)",
+      "Kierowcy dojeżdżają złą drogą"
+     ]
+    ]
+   },
+   "after": [
+    "Źle: „Blisko stacji! Parking dostępny. Zobacz mapę”. Dobrze: „4 minuty pieszo (ok. 300 m) od wyjścia północnego stacji Springfield. 123 Example Street, Suite 300. Wejście jest w przejściu po lewej stronie budynku. Dwa zarezerwowane miejsca za budynkiem (7 i 8); gdy są zajęte, skorzystaj z publicznego parkingu przy Oak Street”.",
+    "Samo „parking dostępny” nie mówi, ile jest miejsc, gdzie, czy jest bezpłatny ani czy to parking partnerski. W przypadku parkingu partnerskiego podaj jego nazwę, adres i warunki zniżki (np. „godzina gratis przy zakupach powyżej 20 USD”). Gdy warunki się zmienią, zaktualizuj stronę tego samego dnia."
+   ]
+  },
+  {
+   "heading": "Czas dojścia: ustal sposób pomiaru i napisz o nim",
+   "paragraphs": [
+    "Czasy dojścia łatwo podawać niespójnie. Japońskie reklamy nieruchomości mają stałą zasadę: odległość mierzona drogą wzdłuż trasy, 80 m na minutę, każda reszta zaokrąglana w górę do pełnej minuty, bez uwzględniania świateł czy podjazdów (przepisy wykonawcze japońskiego kodeksu uczciwej konkurencji w reklamie nieruchomości, objaśnione w [słowniczku Mitsubishi Jisho House Net](https://www.mec-h.com/words/detail?n=59), po japońsku). Sklepów i gabinetów ona nie obowiązuje, a w innych krajach nie ma wspólnej zasady, ale wybranie jednej reguły i trzymanie się jej sprawia, że Twoja strona i wpisy w katalogach nie przeczą sobie nawzajem."
+   ],
+   "list": [
+    "Ustal punkt początkowy i końcowy („od bramek wyjścia północnego do wejścia do naszego budynku”)",
+    "Zmierz odległość pieszą wzdłuż trasy w aplikacji z mapami i przelicz ją według swojej zasady. Podanie odległości („ok. 300 m”) pozwala sprawdzić ją i AI, i ludziom",
+    "Na dużych stacjach z kilkoma wyjściami podaj najbliższe wyjście i dodaj jedno zdanie dla osób przychodzących z innego",
+    "Sprawdź, czy wpisy w katalogach i opis w Google Business Profile nie podają innej liczby, i ujednolić je"
+   ],
+   "after": [
+    "Pisz „1 minuta od stacji” tylko wtedy, gdy naprawdę jesteś przy wyjściu. Zawyżony czas dojścia wraca w opiniach jako niezgodność."
+   ]
+  },
+  {
+   "heading": "Używaj wszędzie jednego zapisu adresu",
+   "paragraphs": [
+    "Przyjmuje się, że usługi AI łączą Twoją stronę, Google Business Profile, katalogi i profile w mediach społecznościowych, by ocenić, czy opisują tę samą firmę; sposób ich dopasowywania nie jest publikowany. Gdy adres w poszczególnych wpisach jest zapisany inaczej, wpisy mogą nie zostać powiązane albo do odpowiedzi trafia adres bez numeru lokalu lub piętra. Ustal te pięć rzeczy i stosuj je we wszystkich wpisach."
+   ],
+   "list": [
+    "Skróty: „ulica” czy „ul.”, „lokal” czy „lok.”. Obie formy są w porządku; wybierz jedną",
+    "Znaki: zwykłe łączniki, spójna numeracja, bez ozdobnych symboli",
+    "Nazwa budynku, numer lokalu i piętro. Jeśli budynek zmieni nazwę, zaktualizuj wszystkie wpisy tego samego dnia",
+    "Czy podawać województwo lub region (w danych strukturalnych zawsze go podawaj)",
+    "Jeśli publikujesz też adres w innym języku, zapisz go tak, by było widać, że to to samo miejsce (podaj nazwę budynku)"
+   ],
+   "after": [
+    "Po przeprowadzce umieść nowy adres na stronie dojazdu z jednym zdaniem w rodzaju „Przenieśliśmy się (data); nasz poprzedni adres to…”. Samo usunięcie starej strony zostawia stary adres na innych stronach bez powiązania z Twoją witryną, a AI może go dalej podawać."
+   ]
+  },
+  {
+   "heading": "Ustaw atrybuty parkingu i dostępności w Google Business Profile",
+   "paragraphs": [
+    "Google Business Profile ma „atrybuty”, wyświetlane w wyszukiwarce Google, Mapach Google i innych usługach Google. Niektóre atrybuty edytujesz sam; inne mogą być uzupełniane na podstawie informacji od odwiedzających klientów. Atrybuty dostępności obejmują wejście dostępne dla wózków, toaletę, miejsca siedzące, windę i parking dostępny dla wózków – dla tego ostatniego wybierz Tak, jeśli masz miejsce parkingowe zarezerwowane dla osób z niepełnosprawnościami. Google podaje, że weryfikacja zmiany trwa zwykle około 10 minut, ale może potrwać do 30 dni ([Zarządzanie atrybutami firmy](https://support.google.com/business/answer/9049526?hl=en), sprawdzono 21 listopada 2026 r.). To, które atrybuty widzisz, zależy od kategorii firmy.",
+    "Nie opublikowano, jak Google AI Overviews i tryb AI korzystają z atrybutów profilu. Profil to jednak informacje wyświetlane w Mapach i wyszukiwarce Google, więc niech mówi to samo co Twoja strona. Szczegóły, których atrybuty nie wyrażą – liczbę miejsc, cenę, warunki partnerskie – umieść w tekście strony i w opisie profilu."
+   ]
+  },
+  {
+   "heading": "Dane strukturalne: adres, współrzędne, mapa i udogodnienia",
+   "paragraphs": [
+    "W [dokumentacji danych strukturalnych LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) Google (aktualizacja z września 2026 r.) name i address są wymagane, a geo (szerokość i długość geograficzna) jest zalecane. Przykłady dzielą adres na pola PostalAddress streetAddress, addressLocality, addressRegion, postalCode i addressCountry, a współrzędne muszą mieć dokładność co najmniej pięciu miejsc po przecinku. Pobierz współrzędne z aplikacji z mapami przy wejściu: przy wskazówkach dojazdu drzwi, z których korzystają ludzie, są bardziej przydatne niż środek budynku.",
+    "Dokumentacja Google o nich nie wspomina, ale schema.org ma też [hasMap](https://schema.org/hasMap) (URL mapy miejsca), [amenityFeature](https://schema.org/amenityFeature) (udogodnienia zapisane jako pary name/value w [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)) i [publicAccess](https://schema.org/publicAccess) (czy miejsce jest otwarte dla odwiedzających). W naszym researchu nie znaleźliśmy oficjalnej informacji, że Google lub jakakolwiek inna usługa AI korzysta z hasMap lub amenityFeature. Dodanie ich nie szkodzi, ale traktuj je jako powtórzenie tego, co już mówi tekst strony."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Adres, współrzędne i liczba miejsc w danych strukturalnych muszą zgadzać się z tekstem strony. Składnię sprawdź w [teście wyników z elementami rozszerzonymi](https://search.google.com/test/rich-results) lub w [Schema Markup Validator](https://validator.schema.org/). Przy kilku lokalizacjach daj każdej osobną stronę z własnym adresem i współrzędnymi (zob. [wyszukiwanie AI dla firm z wieloma lokalizacjami](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "Kroki w WordPress (z Nurevo AIO)",
+   "paragraphs": [
+    "W [Nurevo AIO (bezpłatna, wcześniej wyświetlana jako Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/) to, co wpiszesz w polu Adres, jest publikowane dokładnie tak, jak wpisano, w danych strukturalnych firmy (PostalAddress streetAddress) i w wierszu „Address” w llms.txt. Działaj w tej kolejności."
+   ],
+   "list": [
+    "Najpierw popraw tekst strony dojazdu według ośmiu punktów powyżej (tekst strony przed danymi strukturalnymi)",
+    "W polu Adres użyj tego samego zapisu co na stronie i w Google Business Profile, z numerem lokalu, piętrem i kodem pocztowym. Pole jest publikowane jako jeden ciąg znaków, nie dzielone na części",
+    "Nurevo nie zgaduje współrzędnych na podstawie adresu. Aby je opublikować, dodaj geo filtrem dla deweloperów webmcp_canary_business_node (kod poniżej); hasMap i amenityFeature można dodać w ten sam sposób",
+    "Jeśli Twoja wtyczka SEO lub motyw już publikuje nazwę firmy, adres, telefon i godziny, Nurevo nie publikuje drugiego węzła firmy, więc filtr nic nie zmieni; dodaj wtedy współrzędne w tej wtyczce lub motywie. Nurevo nie dubluje Yoast SEO, Rank Math, All in One SEO ani Slim SEO, a od wersji 0.9.1 działa też obok SEO SIMPLE PACK i VK All in One Expansion Unit",
+    "Pozycja „Pokrycie kluczowych informacji” w diagnozie wtyczki pokazuje, czy nazwa, adres, telefon, godziny, lokalizacja i URL są opublikowane",
+    "Witryny skonfigurowane jako sklep internetowy lub strona B2B nie publikują godzin otwarcia ani lokalizacji (geo), bo nie ma miejsca do odwiedzenia"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Dodaj go do functions.php motywu potomnego lub do wtyczki do fragmentów kodu, a potem w źródle strony lub w teście wyników z elementami rozszerzonymi sprawdź, czy geo pojawia się przy Twojej firmie. Gdy się przeprowadzisz lub zmieni się parking, zaktualizuj pole, filtr i tekst strony tego samego dnia.",
+    "Agencje, które utrzymują strony klientów, mogą uczynić „aktualizację wszystkich wpisów tego samego dnia” standardowym zadaniem przy przeprowadzkach, zmianach umów parkingowych i zmianach nazw budynków. Nurevo ma [program partnerski](https://nurevo.jp/partner/) dla agencji oferujących comiesięczne wsparcie."
+   ]
+  },
+  {
+   "heading": "Jak sprawdzić efekt po wprowadzeniu zmian",
+   "paragraphs": [
+    "Zadaj AI te same pytania w dniu wprowadzenia zmian i ponownie po dwóch–czterech tygodniach, a odpowiedzi zapisz. Żadna usługa AI nie publikuje, ile trwa aktualizacja."
+   ],
+   "table": {
+    "head": [
+     "Pytanie",
+     "Poprawna odpowiedź"
+    ],
+    "rows": [
+     [
+      "„Jaki jest adres (firma)?”",
+      "Twój aktualny adres z numerem lokalu lub piętrem, nie stary"
+     ],
+     [
+      "„Jak dojść do (firma) z (stacja)?”",
+      "Wyjście i czas dojścia podane na Twojej stronie"
+     ],
+     [
+      "„Czy przy (firma) jest parking?”",
+      "Czy jest, ile miejsc i jakie warunki partnerskie – tak jak na Twojej stronie"
+     ],
+     [
+      "„Czy (firma) jest dostępna dla wózków?”",
+      "To samo co na Twojej stronie i w Google Business Profile"
+     ],
+     [
+      "„(Rodzaj firmy) z parkingiem w (okolica)”",
+      "Czy pojawia się Twoja nazwa i czy cytowana jest Twoja strona dojazdu"
+     ]
+    ]
+   },
+   "after": [
+    "Zapisz datę, usługę AI, pytanie, odpowiedź i cytowane URL-e. Jeśli źródłem jest katalog lub stara ulotka, popraw je. W planach Free i Standard usługa Nurevo raz w miesiącu zadaje Perplexity trzy pytania bez nazwy marki, zbudowane z rodzaju firmy i okolicy, i pokazuje, czy pojawiła się Twoja nazwa i czy cytowano Twoją stronę. Pro (beta, od USD 99 miesięcznie) śledzi do 20 pytań w Perplexity (w ChatGPT, gdy zostanie skonfigurowany). Pytania o parking i dojazd zapisuj ręcznie. Zob. [jak mierzyć widoczność w AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Lista kontrolna przed publikacją",
+   "list": [
+    "Adres z numerem lokalu lub piętrem i kodem pocztowym jest zapisany jako tekst HTML",
+    "Podano najbliższą stację lub przystanek, linię, wyjście, czas dojścia i odległość, a punkt początkowy i końcowy pomiaru jest ustalony",
+    "Opisano trasę z dwoma–trzema punktami orientacyjnymi oraz wejście i piętro",
+    "Opisano parking – czy jest, liczbę miejsc, lokalizację, cenę, warunki partnerskie; jeśli go nie ma, jest to napisane",
+    "Uwzględniono rowery, motocykle, dostępność i wózki dziecięce",
+    "Adres jest zapisany tak samo na stronie, w Google Business Profile, katalogach i profilach społecznościowych",
+    "Atrybuty Google Business Profile (parking, dostępność) zgadzają się ze stroną",
+    "Adres i współrzędne (co najmniej pięć miejsc po przecinku) w danych strukturalnych zgadzają się z tekstem strony",
+    "Żadna strona, PDF ani wpis na blogu nie pokazuje już starego adresu ani parkingu, z którego nie korzystasz",
+    "Wybrano pytania i zapisano odpowiedzi AI w dniu zmian oraz po dwóch–czterech tygodniach"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Osadzamy mapę. Czy nadal musimy opisywać dojazd tekstem?",
+   "a": "Tak. To, czy AI potrafi odczytać osadzoną mapę lub obrazek z dojazdem, zależy od usługi i nie jest publikowane. Traktuj mapę jako pomoc dla ludzi, a stację, wyjście, czas dojścia, wejście i parking zapisz w tekście strony."
+  },
+  {
+   "q": "Nie mamy parkingu. Czy po prostu to pominąć?",
+   "a": "Bezpieczniej napisać „Nie mamy parkingu”. Jeśli nic nie napiszesz, AI może odpowiedzieć na podstawie innych stron albo zgadywać. Dodaj, gdzie można zaparkować w pobliżu i jak dojechać komunikacją publiczną."
+  },
+  {
+   "q": "Jak liczyć czas dojścia?",
+   "a": "Nie ma uniwersalnej zasady. Japoński standard reklamy nieruchomości (odległość drogą, 80 m na minutę, zaokrąglenie w górę) to jedna jasna opcja. Cokolwiek wybierzesz, napisz, skąd i dokąd mierzono, i podaj odległość."
+  },
+  {
+   "q": "Czy potrzebujemy współrzędnych w danych strukturalnych, by pojawić się w odpowiedziach AI?",
+   "a": "Niekoniecznie. W dokumentacji Google geo jest zalecane, a wymagane są tylko name i address. Nie opublikowano, czy ChatGPT lub Perplexity korzystają ze współrzędnych. Najpierw popraw tekst strony i zapis adresu, a potem dodaj współrzędne pobrane przy wejściu."
+  },
+  {
+   "q": "Czy dodawać hasMap lub amenityFeature?",
+   "a": "Możesz, ale nie ma ich w dokumentacji Google i nie znaleźliśmy oficjalnej informacji, że korzysta z nich jakakolwiek usługa AI. Dodaj je jako powtórzenie strony z mapą i informacji o parkingu, które już są na stronie."
+  },
+  {
+   "q": "Przenieśliśmy się, a AI wciąż podaje nasz stary adres.",
+   "a": "Zaktualizuj stronę, Google Business Profile, katalogi i profile społecznościowe tego samego dnia i zostaw na stronie dojazdu jedno zdanie z datą przeprowadzki i poprzednim adresem. Sprawdź URL-e cytowane przez AI; jeśli to stare strony lub pliki PDF, popraw je lub usuń. Czas aktualizacji nie jest publikowany, więc zapytaj ponownie po kilku tygodniach."
+  },
+  {
+   "q": "Czy mogę wpisać numer lokalu i piętro w polu Adres w Nurevo?",
+   "a": "Tak, prosimy to zrobić. Pole jest publikowane dokładnie tak, jak wpisano, w streetAddress i w wierszu „Address” w llms.txt. Użyj tego samego zapisu co na stronie i w Google Business Profile."
+  }
+ ],
+ "relatedHeading": "Powiązane przewodniki",
+ "cta": {
+  "heading": "Sprawdź, czy AI potrafi odczytać Twoją stronę",
+  "body": "Bezpłatny test nie wymaga rejestracji: wpisz URL, by zobaczyć dostęp robotów AI, dane strukturalne i llms.txt. W WordPress bezpłatna wtyczka publikuje adres, telefon i godziny otwarcia w danych strukturalnych i w llms.txt, nie dublując danych z Twojej wtyczki SEO.",
+  "label": "Sprawdź gotowość na AI za darmo",
+  "href": "/check",
+  "secondary": {
+   "label": "Wypróbuj bezpłatną wtyczkę WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, wyszukiwarka Google, Mapy Google i Gemini są znakami towarowymi Google LLC, ChatGPT – OpenAI, a Perplexity – Perplexity AI. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit oraz nazwy firm cytowanych w tym przewodniku są znakami towarowymi lub zarejestrowanymi znakami towarowymi ich właścicieli. Nurevo nie jest powiązane z żadną z tych firm ani przez nie popierane."
+}

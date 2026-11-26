@@ -1,0 +1,321 @@
+{
+ "title": "Pagini de acces și parcare pe care AI le citește corect | Nurevo",
+ "description": "Cum scrieți pagina de acces ca AI să răspundă corect la „există parcare?” și „cum ajung acolo?”: adresă, transport, intrare, parcare, schema, WordPress.",
+ "h1": "Cum să scrieți pagina de acces, indicații și parcare astfel încât căutarea AI să o înțeleagă corect",
+ "lead": "Ca AI să ofere indicații și informații corecte despre parcare, scrieți pe pagina de acces, ca text HTML, nu doar ca hartă sau imagine: adresa completă (inclusiv apartamentul, biroul sau etajul), cea mai apropiată stație sau oprire cu ieșirea și timpul de mers pe jos (și cum l-ați măsurat), repere până la intrare și parcarea (dacă există, câte locuri, unde și cât costă). Apoi folosiți un singur format de adresă peste tot — pe site, în Profilul companiei pe Google și în directoare — și puneți aceeași adresă și coordonatele intrării în datele structurate. Dacă nu aveți parcare, spuneți-o: „Nu avem parcare; vă rugăm să folosiți parcarea publică de pe Example Street.” Astfel AI are mai puțin loc de presupuneri.",
+ "intro": [
+  "Scris pe 21 noiembrie 2026 (JST). Programul de funcționare este tratat în [Cum publicați programul și zilele închise](/guide/business-hours-holidays-ai-search), iar rezervările în [Cum scrieți pagina de rezervări](/guide/booking-page-ai-search). Acest ghid este pentru orice afacere pe care oamenii o vizitează — magazine, clinici, studiouri, birouri, pensiuni — și se concentrează pe un singur lucru: ca AI să spună corect cum se ajunge la dvs. și dacă se poate veni cu mașina.",
+  "Răspunsurile AI se schimbă în funcție de zi, de formularea întrebării și de serviciu. Pașii de aici fac mai greu ca AI să interpreteze greșit informațiile dvs. de acces și vă arată cum să verificați; nu garantează că veți apărea într-un răspuns sau că acesta va fi corect."
+ ],
+ "sections": [
+  {
+   "heading": "Pe scurt: cinci motive pentru care AI greșește informațiile de acces",
+   "table": {
+    "head": [
+     "Cauză",
+     "Ce se întâmplă în răspunsurile AI",
+     "Soluție"
+    ],
+    "rows": [
+     [
+      "Indicațiile există doar ca hartă încorporată sau imagine",
+      "AI nu poate spune care stație sau unde se parchează, ori repetă informații vechi de pe alt site",
+      "Sub hartă, scrieți ca text stația, ieșirea, timpul de mers pe jos, intrarea și parcarea"
+     ],
+     [
+      "Adresa este scrisă diferit pe site, în Profilul companiei pe Google și în directoare („Ste 300” față de „Suite 300”, etaj lipsă)",
+      "AI vă tratează ca pe două locuri sau omite biroul ori etajul",
+      "Alegeți un singur format, cu birou și etaj, și folosiți-l în fiecare listare"
+     ],
+     [
+      "Nu se spune nimic despre parcare",
+      "AI ghicește „parcare disponibilă” sau „fără parcare”",
+      "Spuneți-o chiar dacă nu aveți și indicați unde se poate parca în schimb"
+     ],
+     [
+      "Doar „aproape de stație” sau „ușor de găsit”",
+      "AI nu poate spune care stație sau care ieșire",
+      "Numiți stația, linia, ieșirea și timpul de mers pe jos, și cum l-ați măsurat"
+     ],
+     [
+      "După o mutare sau o schimbare de parcare, pagini sau PDF-uri vechi sunt încă online",
+      "AI dă adresa veche sau o parcare pe care nu o mai folosiți",
+      "Găsiți paginile vechi de acces, PDF-urile cu pliante și articolele de blog, apoi corectați-le sau eliminați-le"
+     ]
+    ]
+   },
+   "after": [
+    "Ce întreabă de fapt vizitatorii AI vine cu condiții: „Există parcare lângă (afacere)?”, „Cât de departe e de (stație)?”, „Pot ajunge acolo cu căruciorul?” AI răspunde preluând fraze din pagina dvs. de acces, așa că tot ce nu este scris ca text are mai multe șanse să fie completat din alte site-uri sau prin presupuneri."
+   ]
+  },
+  {
+   "heading": "Ce acoperă primele articole și ce le lipsește",
+   "paragraphs": [
+    "Am citit primele rezultate în japoneză și engleză pentru căutări precum „directions page parking AI search”, „local business AI search optimization” și echivalentele lor japoneze (21 noiembrie 2026). Articolele japoneze sunt de acord că trebuie numite stația și timpul de mers pe jos, că trebuie spus dacă există parcare și că adresa trebuie să fie consecventă. Majoritatea articolelor în engleză se opresc la „păstrați NAP-ul (nume, adresă, telefon) consecvent” și abia menționează indicațiile sau parcarea. Niciunul nu oferea un exemplu de date structurate pentru informațiile de acces (geo, hasMap, amenityFeature), pași pentru WordPress sau o metodă de verificare a rezultatului."
+   ],
+   "table": {
+    "head": [
+     "Articol",
+     "Ce face bine",
+     "Ce îi lipsește"
+    ],
+    "rows": [
+     [
+      "[Semrush (2026-07-15)](https://www.semrush.com/blog/ai-search-optimization-for-local-businesses/)",
+      "Consecvența NAP în Profilul companiei pe Google și în directoare; un exemplu de JSON-LD LocalBusiness cu adresă",
+      "Fără indicații, parcare sau accesibilitate; fără geo"
+     ],
+     [
+      "[Straight North](https://www.straightnorth.com/blog/ai-search-optimization-for-local-businesses-gbp-reviews-and-citations/)",
+      "Verificarea adresei sau a zonei deservite în profil; urmărirea traficului venit din AI în GA4 și verificarea lunară prin sondaj a unor prompturi",
+      "Fără îndrumări pentru pagina de acces; fără cod schema"
+     ],
+     [
+      "[Yext (2025-01-24)](https://www.yext.com/blog/maximize-smb-clients-search-visibility-chatgpt)",
+      "Întrebări frecvente specifice fiecărei locații, de exemplu dacă o locație are parcare gratuită",
+      "Fără marcaj, fără pagină de acces, orientat mai ales spre produs"
+     ],
+     [
+      "[Birdeye (actualizat 2026-08-17)](https://birdeye.com/blog/get-found-on-ai-tools-search-local-business)",
+      "Arată că AI gestionează prost proximitatea; listări consecvente pe Google, Bing și Yelp",
+      "Fără cod schema, fără pagină de acces"
+     ],
+     [
+      "[Uravation, afaceri locale (în japoneză, actualizat 2026-09-05)](https://uravation.com/llmo/local-business-aio-taisaku/) și [cafenele independente (2026-10-09)](https://uravation.com/llmo/cafe-kojin-inshokuten-llmo-taisaku/)",
+      "Stația, traseul pe jos, parcarea și intrarea pe pagina locației; „3 minute de stație” necesită un punct de plecare declarat",
+      "Proprietăți enumerate fără cod; fără pași pentru WordPress"
+     ],
+     [
+      "[Issoh (în japoneză, 2026-08-09)](https://www.issoh.co.jp/column/details/16350/)",
+      "Exemple de variante de adresă de unificat; atribute de parcare și accesibilitate",
+      "Fără șablon de pagină de acces și fără exemplu de schema"
+     ]
+    ]
+   },
+   "after": [
+    "Acest ghid răspunde la toate întrebările la care răspund acele articole și adaugă o regulă pentru timpii de mers pe jos, un șablon pentru informațiile despre parcare, adresa și coordonatele scrise așa cum arată documentația Google, pași pentru WordPress cu Nurevo și un set de întrebări pentru a verifica AI."
+   ]
+  },
+  {
+   "heading": "Opt lucruri de pus pe pagina de acces",
+   "paragraphs": [
+    "Puneți-le pe pagina locației sau pe o pagină separată „Cum ajungeți”. Dacă încorporați o hartă, scrieți totuși aceleași informații ca text: este posibil ca AI să nu poată citi ce se află în hartă."
+   ],
+   "table": {
+    "head": [
+     "Ce să scrieți",
+     "Exemplu",
+     "Ce merge prost fără el"
+    ],
+    "rows": [
+     [
+      "Adresa completă cu birou sau etaj și cod poștal",
+      "123 Example Street, Suite 300, Springfield, IL 62701",
+      "Se răspândește o adresă fără birou, iar oamenii se rătăcesc la ușă"
+     ],
+     [
+      "Cea mai apropiată stație sau oprire, linia, ieșirea, timpul de mers pe jos",
+      "Springfield Station (Blue Line), ieșirea de nord, 4 minute pe jos (aproximativ 300 m / 0,2 mi)",
+      "Vizitatorii sunt trimiși la stația sau ieșirea greșită"
+     ],
+     [
+      "Traseu cu două sau trei repere",
+      "Ieșiți pe la ieșirea de nord și luați-o la dreapta, apoi la stânga la cafeneaua din colț; suntem în clădirea cu farmacia la parter, înainte de al doilea semafor",
+      "Oamenii ajung aproape, apoi se rătăcesc; mai multe telefoane"
+     ],
+     [
+      "Intrarea și etajul",
+      "Intrarea este pe pasajul din stânga clădirii, nu pe ușa din față. Luați liftul până la etajul 3",
+      "Oamenii găsesc clădirea, dar nu și intrarea"
+     ],
+     [
+      "Parcare",
+      "Două locuri rezervate în spatele clădirii (numerele 7 și 8). Când sunt ocupate, folosiți parcarea publică de pe Oak Street (nu decontăm parcarea)",
+      "AI ghicește dacă aveți parcare"
+     ],
+     [
+      "Biciclete și motociclete",
+      "Rastel pentru biciclete în fața clădirii; fără loc de parcare pentru motociclete",
+      "Oamenii parchează unde nu ar trebui"
+     ],
+     [
+      "Accesibilitate și cărucioare",
+      "Există lift. La intrare este o treaptă de 2 cm; persoanele în scaun rulant sunt rugate să sune în prealabil",
+      "Vizitatorii nu își dau seama dacă pot intra"
+     ],
+     [
+      "Autobuz, taxi și mașină",
+      "Autobuzul 12, stația Oak Street, 1 minut pe jos. Cu mașina se intră dinspre Main Street (sens unic)",
+      "Șoferii aleg drumul de acces greșit"
+     ]
+    ]
+   },
+   "after": [
+    "Greșit: „Aproape de stație! Parcare disponibilă. Vezi harta.” Corect: „La 4 minute pe jos (aproximativ 300 m) de ieșirea de nord a Springfield Station. 123 Example Street, Suite 300. Intrarea este pe pasajul din stânga clădirii. Două locuri rezervate în spatele clădirii (7 și 8); când sunt ocupate, folosiți parcarea publică de pe Oak Street.”",
+    "Doar „parcare disponibilă” nu spune câte locuri sunt, unde, dacă e gratuită sau dacă e o parcare parteneră. Pentru o parcare parteneră, indicați numele, adresa și condițiile reducerii (de exemplu, „o oră gratuită la o cumpărătură de peste $20”). Când condițiile se schimbă, actualizați pagina în aceeași zi."
+   ]
+  },
+  {
+   "heading": "Timpii de mers pe jos: decideți cum îi măsurați și spuneți-o",
+   "paragraphs": [
+    "Timpii de mers pe jos devin ușor inconsecvenți. Publicitatea imobiliară japoneză are o regulă fixă: distanța pe drum de-a lungul traseului, 80 m pe minut, orice rest rotunjit în sus la un minut întreg, fără a ține cont de semafoare sau pante (regulile de aplicare ale codului japonez de concurență loială pentru publicitatea imobiliară, așa cum sunt explicate în [glosarul Mitsubishi Jisho House Net](https://www.mec-h.com/words/detail?n=59), în japoneză). Magazinele și clinicile nu sunt obligate să o respecte, iar alte țări nu au o regulă comună, dar alegerea unei reguli și respectarea ei împiedică site-ul și listările din directoare să se contrazică."
+   ],
+   "list": [
+    "Stabiliți punctul de plecare și cel de sosire („de la turnichetele ieșirii de nord până la intrarea clădirii noastre”)",
+    "Măsurați distanța pe jos de-a lungul traseului într-o aplicație de hărți și convertiți-o după regula dvs. Adăugarea distanței („aproximativ 300 m”) permite atât AI, cât și oamenilor să o verifice",
+    "În stațiile mari cu mai multe ieșiri, numiți ieșirea cea mai apropiată și adăugați un rând pentru cei care vin pe alta",
+    "Verificați dacă listările din directoare și descrierea din Profilul companiei pe Google au alt număr și aduceți-le la același"
+   ],
+   "after": [
+    "Scrieți „la 1 minut de stație” doar dacă sunteți cu adevărat la ieșire. Un timp de mers exagerat apare în recenzii ca nepotrivire."
+   ]
+  },
+  {
+   "heading": "Folosiți un singur format de adresă peste tot",
+   "paragraphs": [
+    "Se consideră în general că serviciile AI combină site-ul, Profilul companiei pe Google, directoarele și profilurile de pe rețelele sociale pentru a decide dacă descriu aceeași afacere; modul în care le potrivesc nu este publicat. Când adresa este scrisă diferit de la o listare la alta, listările pot rămâne nelegate sau în răspunsuri ajunge o adresă fără birou sau etaj. Stabiliți aceste cinci lucruri și folosiți-le în fiecare listare."
+   ],
+   "list": [
+    "Abrevieri: „Street” sau „St”, „Suite” sau „Ste”. Oricare e bună; alegeți una",
+    "Caractere: cratime simple, numerotare consecventă, fără simboluri decorative",
+    "Numele clădirii, biroul și etajul. Dacă clădirea este redenumită, actualizați fiecare listare în aceeași zi",
+    "Dacă includeți statul sau regiunea (în datele structurate includeți-le întotdeauna)",
+    "Dacă publicați adresa și într-o altă limbă, scrieți-o astfel încât să fie recunoscută ca același loc (includeți numele clădirii)"
+   ],
+   "after": [
+    "După o mutare, puneți noua adresă pe pagina de acces cu un rând precum „Ne-am mutat pe (data); adresa noastră anterioară era …”. Dacă doar ștergeți pagina veche, adresa veche rămâne pe alte site-uri fără legătură cu site-ul dvs., iar AI ar putea continua să o ofere."
+   ]
+  },
+  {
+   "heading": "Setați atributele de parcare și accesibilitate în Profilul companiei pe Google",
+   "paragraphs": [
+    "Profilul companiei pe Google are „atribute”, afișate în Căutarea Google, în Maps și în alte servicii Google. Unele atribute le editați singur; altele pot fi completate pe baza clienților care vă vizitează. Atributele de accesibilitate includ intrare, toaletă, locuri de șezut, lift și parcare accesibile scaunelor rulante — la ultimul alegeți Da dacă aveți un loc de parcare rezervat persoanelor cu nevoi de accesibilitate. Google spune că verificarea unei modificări durează de obicei aproximativ 10 minute, dar poate dura până la 30 de zile ([Gestionați atributele companiei](https://support.google.com/business/answer/9049526?hl=en), verificat pe 21 noiembrie 2026). Atributele pe care le vedeți depind de categoria afacerii.",
+    "Modul în care AI Overviews și AI Mode de la Google folosesc atributele profilului nu este publicat. Dar profilul este informația afișată în Google Maps și în Căutare, așa că faceți-l să spună același lucru ca site-ul. Detaliile pe care atributele nu le pot exprima — numărul de locuri, costul, condițiile parteneriatului — merg în textul paginii și în descrierea profilului."
+   ]
+  },
+  {
+   "heading": "Date structurate: adresă, coordonate, hartă și facilități",
+   "paragraphs": [
+    "În [documentația Google despre datele structurate LocalBusiness](https://developers.google.com/search/docs/appearance/structured-data/local-business) (actualizată în septembrie 2026), name și address sunt obligatorii, iar geo (latitudine și longitudine) este recomandat. Exemplele împart adresa în PostalAddress streetAddress, addressLocality, addressRegion, postalCode și addressCountry, iar coordonatele trebuie să aibă o precizie de cel puțin cinci zecimale. Luați coordonatele dintr-o aplicație de hărți, de la intrare: pentru indicații, ușa pe care o folosesc oamenii este mai utilă decât mijlocul clădirii.",
+    "Documentația Google nu le menționează, dar schema.org are și [hasMap](https://schema.org/hasMap) (un URL către o hartă a locului), [amenityFeature](https://schema.org/amenityFeature) (facilități scrise ca perechi nume/valoare [LocationFeatureSpecification](https://schema.org/LocationFeatureSpecification)) și [publicAccess](https://schema.org/publicAccess) (dacă locul este deschis vizitatorilor). În cercetarea noastră nu am găsit nicio declarație oficială că Google sau alt serviciu AI folosește hasMap sau amenityFeature. Adăugarea lor nu strică, dar tratați-le ca pe o reluare a ceea ce spune deja textul paginii."
+   ],
+   "code": "<script type=\"application/ld+json\">\n{\n  \"@context\": \"https://schema.org\",\n  \"@type\": \"Dentist\",\n  \"@id\": \"https://example.com/#business\",\n  \"name\": \"Example Dental\",\n  \"url\": \"https://example.com/\",\n  \"address\": {\n    \"@type\": \"PostalAddress\",\n    \"streetAddress\": \"123 Example Street, Suite 300\",\n    \"addressLocality\": \"Springfield\",\n    \"addressRegion\": \"IL\",\n    \"postalCode\": \"62701\",\n    \"addressCountry\": \"US\"\n  },\n  \"geo\": {\n    \"@type\": \"GeoCoordinates\",\n    \"latitude\": 39.79817,\n    \"longitude\": -89.64407\n  },\n  \"hasMap\": \"https://example.com/directions/\",\n  \"amenityFeature\": [\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Free patient parking (2 spaces)\", \"value\": true },\n    { \"@type\": \"LocationFeatureSpecification\", \"name\": \"Elevator\", \"value\": true }\n  ]\n}\n</script>\n<!-- Coordinates and counts are examples. Take your own entrance's coordinates from a\n     map app and use the same values as the page text -->",
+   "after": [
+    "Adresa, coordonatele și numărul de locuri din datele structurate trebuie să corespundă textului paginii. Verificați sintaxa cu [Rich Results Test](https://search.google.com/test/rich-results) sau cu [Schema Markup Validator](https://validator.schema.org/). Dacă aveți mai multe locații, dați fiecăreia o pagină proprie, cu adresa și coordonatele ei (vedeți [Căutare AI pentru afaceri cu mai multe locații](/guide/multi-location-business-ai-search))."
+   ]
+  },
+  {
+   "heading": "Pași în WordPress (cu Nurevo AIO)",
+   "paragraphs": [
+    "În [Nurevo AIO (gratuit, afișat anterior ca Nurevo AEO)](https://wordpress.org/plugins/nurevo-webmcp/), ce introduceți în câmpul Adresă este publicat exact așa cum l-ați scris în datele structurate ale afacerii (PostalAddress streetAddress) și pe rândul „Address” din llms.txt. Lucrați în această ordine."
+   ],
+   "list": [
+    "Corectați mai întâi textul paginii de acces, folosind cele opt elemente de mai sus (textul paginii înaintea datelor structurate)",
+    "În câmpul Adresă, folosiți același format ca pe pagină și în Profilul companiei pe Google, cu birou, etaj și cod poștal. Câmpul este publicat ca un singur șir, nu împărțit în părți",
+    "Nurevo nu deduce coordonatele din adresă. Pentru a le publica, adăugați geo cu filtrul pentru dezvoltatori webmcp_canary_business_node (codul de mai jos); hasMap și amenityFeature se pot adăuga la fel",
+    "Dacă pluginul SEO sau tema publică deja numele, adresa, telefonul și programul afacerii, Nurevo nu publică un al doilea nod al afacerii, deci filtrul nu are efect; adăugați coordonatele în acel plugin sau acea temă. Nurevo nu dublează Yoast SEO, Rank Math, All in One SEO sau Slim SEO, iar din versiunea 0.9.1 funcționează și alături de SEO SIMPLE PACK și VK All in One Expansion Unit",
+    "Elementul „Acoperirea informațiilor cheie” din diagnosticarea pluginului arată dacă numele, adresa, telefonul, programul, locația și URL-ul sunt toate publicate",
+    "Site-urile configurate ca magazin online sau site B2B nu publică program de funcționare și nici locație (geo), deoarece nu există un loc de vizitat"
+   ],
+   "code": "add_filter('webmcp_canary_business_node', function ($org, $settings) {\n    // Entrance coordinates and the directions page. Same values as the page text\n    $org['geo'] = array(\n        '@type'     => 'GeoCoordinates',\n        'latitude'  => 39.79817,\n        'longitude' => -89.64407,\n    );\n    $org['hasMap'] = home_url('/directions/');\n    $org['amenityFeature'] = array(\n        array('@type' => 'LocationFeatureSpecification', 'name' => 'Free patient parking (2 spaces)', 'value' => true),\n    );\n    return $org;\n}, 10, 2);",
+   "after": [
+    "Adăugați-l în functions.php al temei copil sau într-un plugin pentru fragmente de cod, apoi verificați sursa paginii sau Rich Results Test pentru a confirma că geo apare la afacerea dvs. Când vă mutați sau se schimbă parcarea, actualizați câmpul, filtrul și textul paginii în aceeași zi.",
+    "Agențiile care întrețin site-urile clienților pot face din „actualizarea fiecărei listări în aceeași zi” o sarcină standard la mutări, schimbări ale contractului de parcare și redenumiri ale clădirii. Nurevo are un [program de parteneriat](https://nurevo.jp/partner/) pentru agențiile care oferă suport lunar."
+   ]
+  },
+  {
+   "heading": "Cum verificați după modificări",
+   "paragraphs": [
+    "Puneți AI aceleași întrebări în ziua în care faceți modificările și din nou după două până la patru săptămâni, și notați răspunsurile. Niciun serviciu AI nu publică cât durează actualizările."
+   ],
+   "table": {
+    "head": [
+     "Întrebare",
+     "Un răspuns corect"
+    ],
+    "rows": [
+     [
+      "„Care este adresa (afacere)?”",
+      "Adresa actuală cu birou sau etaj, nu cea veche"
+     ],
+     [
+      "„Cum ajung la (afacere) de la (stație)?”",
+      "Ieșirea și timpul de mers pe jos de pe site-ul dvs."
+     ],
+     [
+      "„Există parcare la (afacere)?”",
+      "Dacă există, câte locuri și condițiile parteneriatului, ca pe site-ul dvs."
+     ],
+     [
+      "„(Afacere) este accesibilă pentru scaune rulante?”",
+      "Același lucru ca pe site-ul dvs. și în Profilul companiei pe Google"
+     ],
+     [
+      "„(Tip de afacere) cu parcare în (zonă)”",
+      "Dacă apare numele dvs. și dacă este citată pagina dvs. de acces"
+     ]
+    ]
+   },
+   "after": [
+    "Notați data, serviciul AI, întrebarea, răspunsul și URL-urile citate. Dacă sursa este un director sau un pliant vechi, corectați-o. Pe planurile Free și Standard ale Nurevo, serviciul Nurevo pune lunar lui Perplexity trei întrebări fără numele mărcii, construite din tipul afacerii și zonă, și arată dacă a apărut numele dvs. și dacă site-ul a fost citat. Pro (beta, de la 99 USD pe lună) urmărește până la 20 de întrebări pe Perplexity (și pe ChatGPT după ce este configurat). Întrebările despre parcare și acces notați-le manual. Vedeți [Cum măsurați vizibilitatea în AI](/guide/measure-ai-visibility)."
+   ]
+  },
+  {
+   "heading": "Listă de verificare înainte de publicare",
+   "list": [
+    "Adresa, cu birou sau etaj și cod poștal, este scrisă ca text HTML",
+    "Sunt scrise cea mai apropiată stație sau oprire, linia, ieșirea, timpul de mers pe jos și distanța, iar ați stabilit de unde până unde ați măsurat",
+    "Este descris un traseu cu două sau trei repere, plus intrarea și etajul",
+    "Parcarea — dacă există, locuri, amplasare, cost, condiții de parteneriat — este descrisă; dacă nu există, se spune",
+    "Bicicletele, motocicletele, accesibilitatea și cărucioarele sunt acoperite",
+    "Adresa este scrisă la fel pe site, în Profilul companiei pe Google, în directoare și pe profilurile de pe rețelele sociale",
+    "Atributele din Profilul companiei pe Google (parcare, accesibilitate) corespund site-ului",
+    "Adresa și coordonatele (cel puțin cinci zecimale) din datele structurate corespund textului paginii",
+    "Nicio pagină, niciun PDF și niciun articol de blog nu mai arată o adresă veche sau o parcare pe care nu o mai folosiți",
+    "V-ați ales întrebările și ați notat răspunsurile AI în ziua respectivă și după două până la patru săptămâni"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Avem o hartă încorporată. Mai trebuie să scriem indicațiile ca text?",
+   "a": "Da. Dacă AI poate citi o hartă încorporată sau o imagine cu indicații diferă de la un serviciu la altul și nu este publicat. Tratați harta ca pe un ajutor pentru oameni și scrieți stația, ieșirea, timpul de mers pe jos, intrarea și parcarea în textul paginii."
+  },
+  {
+   "q": "Nu avem parcare. Ar trebui pur și simplu să nu pomenim nimic?",
+   "a": "Este mai sigur să spuneți „Nu avem parcare”. Dacă nu spuneți nimic, AI poate răspunde pe baza altor site-uri sau poate ghici. Adăugați unde se poate parca în apropiere și cum se ajunge cu transportul public."
+  },
+  {
+   "q": "Cum ar trebui să calculăm timpul de mers pe jos?",
+   "a": "Nu există o regulă universală. Standardul japonez din publicitatea imobiliară (distanța pe drum, 80 m pe minut, rotunjire în sus) este o opțiune clară. Orice ați alege, spuneți de unde până unde ați măsurat și adăugați distanța."
+  },
+  {
+   "q": "Avem nevoie de coordonate în datele structurate ca să apărem în răspunsurile AI?",
+   "a": "Nu neapărat. În documentația Google, geo este recomandat și doar name și address sunt obligatorii. Nu este publicat dacă ChatGPT sau Perplexity folosesc coordonate. Corectați mai întâi textul paginii și formatul adresei, apoi adăugați coordonatele luate de la intrare."
+  },
+  {
+   "q": "Ar trebui să adăugăm hasMap sau amenityFeature?",
+   "a": "Puteți, dar nu apar în documentația Google și nu am găsit nicio declarație oficială că vreun serviciu AI le folosește. Adăugați-le ca reluare a paginii cu harta și a informațiilor despre parcare care sunt deja pe pagină."
+  },
+  {
+   "q": "Ne-am mutat, iar AI continuă să dea adresa veche.",
+   "a": "Actualizați site-ul, Profilul companiei pe Google, directoarele și profilurile de pe rețelele sociale în aceeași zi și păstrați pe pagina de acces un rând cu data mutării și adresa anterioară. Verificați URL-urile citate de AI; dacă sunt pagini sau PDF-uri vechi, corectați-le sau eliminați-le. Timpii de actualizare nu sunt publicați, așa că întrebați din nou după câteva săptămâni."
+  },
+  {
+   "q": "Pot include biroul și etajul în câmpul Adresă din Nurevo?",
+   "a": "Da, chiar vă rugăm să o faceți. Câmpul este publicat exact cum l-ați scris în streetAddress și pe rândul „Address” din llms.txt. Folosiți același format ca pe pagină și în Profilul companiei pe Google."
+  }
+ ],
+ "relatedHeading": "Ghiduri conexe",
+ "cta": {
+  "heading": "Vedeți dacă AI vă poate citi site-ul",
+  "body": "Verificarea gratuită nu necesită înregistrare: introduceți un URL pentru a vedea accesul crawlerelor AI, datele structurate și llms.txt. În WordPress, pluginul gratuit publică adresa, telefonul și programul în datele structurate și în llms.txt, fără a dubla ce publică deja pluginul SEO.",
+  "label": "Verificați gratuit pregătirea pentru AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Încercați pluginul gratuit pentru WordPress",
+   "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+  }
+ },
+ "footnote": "Google, Căutarea Google, Google Maps și Gemini sunt mărci comerciale ale Google LLC, ChatGPT al OpenAI, iar Perplexity al Perplexity AI. WordPress, Yoast SEO, Rank Math, All in One SEO, Slim SEO, SEO SIMPLE PACK, VK All in One Expansion Unit și numele companiilor citate în acest ghid sunt mărci comerciale sau mărci înregistrate ale proprietarilor respectivi. Nurevo nu este afiliat cu și nu este susținut de niciuna dintre aceste companii."
+}
