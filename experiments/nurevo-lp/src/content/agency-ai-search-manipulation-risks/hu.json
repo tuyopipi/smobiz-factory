@@ -1,0 +1,303 @@
+{
+ "title": "AI-keresési trükköket kér az ügyfél: útmutató ügynökségeknek | Nurevo",
+ "description": "Rejtett AI-szöveget, magát elsőnek soroló listát vagy hamis értékeléseket kér az ügyfél? Döntési táblázat, 2026-os szabályok, elutasító e-mail, szerződési pont, audit.",
+ "h1": "Ha az ügyfél AI-keresési trükköket kér: döntési táblázat, elutasító szöveg és audit ügynökségeknek",
+ "lead": "Ha az ügyfél azt kéri, hogy tegyenek az oldalra csak az AI számára látható szöveget, vagy jelentessenek meg egy „legjobb szolgáltatók” listát, amely őt sorolja az első helyre, egy ügynökség számára a biztonságos válasz az, hogy ezt elutasítja, és egy legitim utat kínál ugyanannak a célnak az eléréséhez. A Google 2026. május 15-én frissítette a dokumentációját, hogy egyértelművé tegye: a spamirányelvei a Google Keresés AI-válaszaira is vonatkoznak, például az AI Overviews és az AI Mode esetében, a burkolt reklámot pedig számos piacon szabályozzák. Ez az útmutató táblázatot ad a gyakran kért taktikákról, megmutatja, hol ér véget a szürke zóna, és tartalmaz egy elutasító e-mailt, egy szerződési pontot, valamint parancsokat egy átvett webhely auditálásához.",
+ "intro": [
+  "Írva: 2026. november 21. (JST). Ügynökségeknek, SEO-cégeknek, WordPress-karbantartó vállalkozásoknak és szabadúszóknak, akik ügyfélwebhelyeket építenek vagy tartanak karban. Ha jogi megítélésre van szükség, kérdezzen ügyvédet vagy a felügyeleti hatóságot. Ez az útmutató nem jogi tanácsadás.",
+  "Az AI-válaszok napról napra és a megfogalmazástól függően változnak. Az itt leírt lépések biztonságban tartják az ügyfél webhelyét a keresésben és az AI-ban egyaránt; azt nem garantálják, hogy a webhely bármely AI-válaszban megjelenik."
+ ],
+ "sections": [
+  {
+   "heading": "Mit tárgyalnak az élen álló útmutatók, és mi marad ki belőlük",
+   "paragraphs": [
+    "2026. november 21-én elolvastuk a „black hat GEO”, „AI search what not to do” és hasonló keresésekre rangsorolt oldalakat: négy angol nyelvűt (Similarweb, 2026. február 26., frissítve május 20-án; Lily Ray, 2026. június 17.; Citable, 2026. június 25.; valamint a Search Engine Land egy cikkét a rejtett prompt injectionről) és hat japán nyelvűt, amelyek közül három sorolja fel a kerülendő taktikákat (Uravation, Jinrai, Sungrove).",
+    "Az alapokban egyetértenek: nincs rejtett szöveg, nincs tömegesen gyártott, sovány tartalom, nincsenek hamis értékelések. Azt viszont, amire egy ügynökségnek akkor van szüksége, amikor az ügyfél ténylegesen ilyesmit kér, többnyire nem tárgyalják."
+   ],
+   "table": {
+    "head": [
+     "Hiányosság",
+     "Mit tesz hozzá ez az útmutató"
+    ],
+    "rows": [
+     [
+      "Taktikalisták, de semmi arról, hogyan mondjunk nemet az ügyfélnek",
+      "Elutasító e-mail és felkínálható alternatívák"
+     ],
+     [
+      "A Google irányelveit megnevezik, de a 2026. májusi változást és a reklámjelölési szabályokat ritkán teszik egymás mellé",
+      "A Google, az Anthropic és a japán Fogyasztói Ügyek Hivatala (Consumer Affairs Agency) három szabálya egy táblázatban"
+     ],
+     [
+      "Az útmutatók nem értenek egyet abban, hogy megengedettek-e az önmagunkat is tartalmazó összehasonlító oldalak",
+      "Szürkezóna-táblázat: mi rendben van, ha jelölik, és mire kell figyelni"
+     ],
+     [
+      "Semmi a szerződésekről vagy a munkaköri leírásokról (a Citable egy sorban említi)",
+      "Minta szerződési pont"
+     ],
+     [
+      "Nincs mód annak ellenőrzésére, hogy egy korábbi szolgáltató hagyott-e ilyen taktikákat a webhelyen",
+      "curl és WP-CLI auditparancsok"
+     ],
+     [
+      "Nincsenek WordPress-specifikus részletek",
+      "Hogyan ellenőrizhető, hogy az AI-nak szánt kimenet megegyezik azzal, amit a látogatók látnak"
+     ]
+    ],
+    "caption": "Néhány élen álló oldal forrás nélkül idéz olyan számokat, mint „60–80% forgalomvesztés napokon belül” vagy „3–6 hónap a helyreálláshoz”, ezért ezeket itt nem használjuk."
+   }
+  },
+  {
+   "heading": "A 2026-os alapvonal: három szabály",
+   "paragraphs": [
+    "Ezekre a szabályokra hivatkozhat egy ügynökség, amikor nemet mond. Egyik sem vezet be vadonatúj tilalmat; mindegyik azt teszi egyértelművé, hogy a meglévő normák az AI-válaszokra is kiterjednek."
+   ],
+   "table": {
+    "head": [
+     "Szabály",
+     "Mióta",
+     "Mit mond ki",
+     "Kire vonatkozik"
+    ],
+    "rows": [
+     [
+      "A Google Keresés spamirányelvei ([eredeti](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Pontosítva: 2026. május 15.",
+      "A Search Engine Roundtable szerint a Google frissítette a dokumentációját, amely szerint a spamirányelvek a Google Keresés generatív AI-válaszaira, azaz az AI Overviews és az AI Mode válaszaira is vonatkoznak ([beszámoló](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [a Google változásnaplója](https://developers.google.com/search/updates)). A Search Engine Land beszámolója szerint az irányelv nyitó mondata most már a generatív AI-válaszok manipulálására irányuló kísérleteket is magában foglalja ([beszámoló](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Webhelyek (ha szabálysértést állapítanak meg, hátrébb kerülhetnek vagy egyáltalán nem jelennek meg)"
+     ],
+     [
+      "Az Anthropic felhasználási szabályzata ([eredeti](https://www.anthropic.com/legal/aup))",
+      "Hatályos 2026. november 12-től",
+      "Tiltja azoknak a forrásoknak a manipulálását, amelyekből a keresőmotorok vagy AI-rendszerek a válaszaikat merítik, olyan tartalom elhelyezésével, amely hamisan tünteti fel az eredetét, szerzőségét vagy függetlenségét (például független forrásnak kiadott webhelyhálózatok), továbbá a kamuprofilokat, az astroturfinget és a hamis értékeléseket, valamint bármelyikük szolgáltatásként való értékesítését",
+      "A Claude-ot használó személyek és cégek, beleértve a vele szövegeket készítő ügynökségeket"
+     ],
+     [
+      "Japán burkolt reklámra vonatkozó szabálya az indokolatlan ajándékokról és félrevezető megjelenítésekről szóló törvény alapján ([Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "2023. október 1-től",
+      "Azt a reklámot szabályozza, amelyről az átlagos fogyasztó nem tudja megállapítani, hogy reklám",
+      "A hirdető (az Ön ügyfele), nem pedig a posztolásra felkért influenszer"
+     ]
+    ],
+    "caption": "Írás közben nem tudtuk lekérni a Google saját irányelvoldalát, ezért a fenti megfogalmazás a két beszámolót követi. Mielőtt erre támaszkodna, olvassa el az eredetit és a változásnaplót. Japánon kívül ellenőrizze a saját piacának reklámjelölési és hamis értékelésekre vonatkozó szabályait."
+   },
+   "after": [
+    "A japán szabály szerint a hirdető a felelős fél, nem pedig a tartalmat elkészítő ügynökség (Consumer Affairs Agency, kérdések és válaszok, Q1). Éppen ezért érdemes ezt elmagyarázni az ügyfélnek. A jogsértés abbahagyásra kötelező határozathoz vezethet (Q2)."
+   ]
+  },
+  {
+   "heading": "Döntési táblázat a gyakran kért taktikákhoz",
+   "paragraphs": [
+    "Íme azok a taktikák, amelyeket az ügyfelek ténylegesen kérnek, nagyjából úgy megfogalmazva, ahogy kérik, az indoklással és azzal együtt, mit tegyünk helyettük."
+   ],
+   "table": {
+    "head": [
+     "Kérés",
+     "Döntés",
+     "Miért",
+     "Helyette ezt tegye"
+    ],
+    "rows": [
+     [
+      "„Csak az AI által olvasható szöveg” fehér színnel, display:none-nal vagy apró betűvel; „utasítások az AI-nak” HTML-kommentekben",
+      "Elutasítás",
+      "A Google spamirányelvei szerint ez rejtett szöveg. Nem hivatalos tesztek szerint a rejtett promptoknak nem volt látható hatásuk ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), egyetlen szerző tesztje)",
+      "Tegye az üzenetet a látható szövegbe. Válaszolja meg a kérdést az első két mondatban"
+     ],
+     [
+      "Más oldal kiszolgálása az AI-robotoknak (cloaking)",
+      "Elutasítás",
+      "Ha a keresőmotorok más tartalmat látnak, mint a felhasználók, az a spamirányelvek szerint cloaking",
+      "Mindenkinek ugyanazt a HTML-t szolgálja ki. Az AI-barát összefoglaló kerüljön az llms.txt-be, ugyanazokkal a tényekkel"
+     ],
+     [
+      "Egy „10 legjobb X” lista, amely az ügyfelet sorolja első helyre, semleges értékelésnek álcázva",
+      "Elutasítás a kért formában",
+      "Ha az olvasók nem tudják megállapítani, hogy reklámról van szó, a jelölési szabályok alkalmazandók lehetnek. Lily Ray 100 keresésből álló mintájában az önreklámozó listákra mutató 323 hivatkozásból 224 (69%) esetében magában az AI-válaszban nem ajánlották a céget ([cikk](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); saját minta, az ok nem bizonyított)",
+      "Egyértelműen az ügyfél saját oldalaként jelölt összehasonlító oldal, szempontokkal és a versenytársak erősségeivel"
+     ],
+     [
+      "Munkatársak vagy rokonok által írt értékelések; kedvezmény öt csillagért",
+      "Elutasítás",
+      "Azok az értékelések, amelyek tartalmát a vállalkozás irányítja, reklámnak minősülhetnek; az öt csillaghoz vagy ajánláshoz kötött kedvezményre kiterjed a japán szabály (kérdések és válaszok, Q6)",
+      "Kérjen értékeléseket feltételek nélkül, és a rosszakra is válaszoljon"
+     ],
+     [
+      "Több „független” értékelőoldal vagy blog, amely az ügyfelet ajánlja",
+      "Elutasítás",
+      "Pontosan ez a példa szerepel az Anthropic szabályzatában: független forrásnak kiadott webhelyhálózatok. A Google számára linkspam is lehet",
+      "Adjon valódi harmadik feleknek (szövetségek, partnerek, média) okot arra, hogy megemlítsék az ügyfelet: eredményeket, adatokat"
+     ],
+     [
+      "Több tucat oldal, amelyeken csak a városnév változik",
+      "Elutasítás",
+      "A nagy számú, tartalom nélküli oldal a tömegesen előállított tartalommal vagy az átjárólapokkal való visszaélés körébe eshet",
+      "Egyetlen szolgáltatási terület oldal; külön oldal csak ott, ahol egy területnek saját tényei vannak (kiszállási idő, árak, esetek)"
+     ],
+     [
+      "GYIK vagy csillagos értékelések a strukturált adatokban, amelyeket az oldal nem jelenít meg",
+      "Elutasítás",
+      "A Google megköveteli, hogy a strukturált adatok egyezzenek a látható tartalommal",
+      "Tegye a GYIK-et látható oldalra; értékeléseket csak valódi vélemények esetén adjon ki"
+     ],
+     [
+      "Olyan szolgáltató vagy eszköz megbízása, amely „első helyet az AI-ban” ígér",
+      "Nem ajánlott",
+      "Az AI-válaszok változnak, így senki sem garantálhatja ezt; az ilyen szolgáltatók gyakran a fenti taktikákra támaszkodnak",
+      "Rögzítsen egy rögzített kérdéssort, és ellenőrizze a hozzáadott tények nyomán bekövetkező javulást"
+     ]
+    ],
+    "caption": "A „Döntés” oszlop ennek az útmutatónak az ajánlása egy ügynökség számára. Hogy egy törvény alkalmazandó-e, az az adott eset tényeitől függ."
+   }
+  },
+  {
+   "heading": "Hol ér véget a szürke zóna",
+   "paragraphs": [
+    "Nem minden kérésre kell nemet mondani. Az alábbiak rendben vannak, ha megváltozik a formájuk. A próba két részből áll: meg tudják-e állapítani az olvasók, ki írta és reklámról van-e szó, és egyezik-e a tartalom az oldalon látható tényekkel?"
+   ],
+   "table": {
+    "head": [
+     "Kérés",
+     "Elfogadható forma",
+     "Mire figyeljen"
+    ],
+    "rows": [
+     [
+      "Az ügyfelet is tartalmazó összehasonlító oldal",
+      "Egyértelműen az ügyfél saját webhelyén, szempontokkal, dátummal és olyan esetekkel, amelyekben egy versenytárs jobb választás",
+      "Az olyan állításokhoz, mint az „iparági első”, forrás és dátum kell, különben ne szerepeljenek"
+     ],
+     [
+      "Fizetett megjelenés médiában vagy értékelőoldalakon",
+      "„Hirdetés”, „PR”, „Szponzorált” vagy hasonló jelöléssel (kérdések és válaszok, Q11)",
+      "Előfordulhat, hogy nem elég, ha a jelölés csak a kommentekben vagy csak a videó elején szerepel (Q14, Q15)"
+     ],
+     [
+      "Ügyfélvélemények",
+      "Feltételek nélkül gyűjtött vélemények",
+      "Ha csak a kedvezőeket válogatják ki, arra is kiterjedhet a szabály (Q10). Ne címkézze át az influenszerposztokat ügyfélértékelésnek (Q16)"
+     ],
+     [
+      "Munkatársak promóciója a közösségi médiában",
+      "Olyan posztok, amelyekből kiderül a munkaviszony",
+      "A beosztástól függően a posztok a cég sajátjának minősülhetnek (Q3); a beosztás megnevezése önmagában nem elegendő jelölés (Q12)"
+     ],
+     [
+      "AI segítségével megírt cikkek",
+      "Ember által ellenőrzött és szerkesztett szöveg, az ügyfél saját tényeivel és adataival kiegészítve",
+      "Ne tűzzön ki cikkszám-célokat, és ne írja át ugyanazt a cikket sok változatba"
+     ],
+     [
+      "Az llms.txt közzététele",
+      "Ugyanazok a tények, mint az oldalakon, rájuk mutató linkekkel",
+      "Ne legyenek benne kizárólag az AI-nak írt promóciós állítások"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Hogyan mondjunk nemet: minta e-mail",
+   "paragraphs": [
+    "Írja meg három részben: a döntés, az indoklás (a szabály neve és dátuma) és egy alternatíva, amely ugyanazt a célt szolgálja. Egy puszta „kockázatos, inkább ne” általában azzal végződik, hogy az ügyfél mást bíz meg vele."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Indoklásként külső szabályokat adjon meg, ne az ügynökség ízlését; az ügyfél ezeket változtatás nélkül továbbíthatja a felettesének. Az alternatívát ahhoz igazítsa, amit az ügyfél valójában szeretne, például hogy az AI ajánlja, vagy hogy erősebbnek tűnjön egy versenytársnál."
+   ]
+  },
+  {
+   "heading": "Mi kerüljön a szerződésbe és a munkaköri leírásba",
+   "paragraphs": [
+    "Hogy később ne hangozzon el, hogy „az előző ügynökség megcsinálta” vagy „ez benne volt a szerződésben”, írja bele a kizárt módszereket a megállapodásba vagy a feladatleírásba. Egy minta:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Az a havidíjas megbízás, amely eredményként bizonyos számú AI-említést ígér, mindenkinek okot ad arra, hogy a fenti taktikákhoz nyúljon. Ehelyett arról számoljon be, milyen tényekkel bővült a webhely, és egy rögzített kérdéssor eredményeiről ([az AI-keresés értékesítése havi szolgáltatásként](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Egy átvett webhely auditálása",
+   "paragraphs": [
+    "A karbantartásra vagy újraépítésre átvett webhelyeken lehetnek korábbi szolgáltató vagy bővítmény által hozzáadott taktikák. Ezek a parancsok rejtett stílusokat, robotspecifikus tartalmat, tömeges gyártás jeleit és a használt strukturáltadat-típusokat keresik. A találatokat csak nyomnak tekintse: a display:none a menükben és harmonikamenükben megszokott, ezért mindegyiket nézze meg saját szemével."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Ha a 2. lépés jelentős méret- vagy tartalombeli eltérést mutat, keressen user-agent alapú váltást a bővítményekben vagy a szerverbeállításokban; a gyorsítótárazás és a hirdetések kisebb eltéréseket okoznak. A Search Console-ban a Biztonság és manuális műveletek alatti Manuális műveletek jelentés mutatja azokat a szabálysértéseket, amelyeket a Google egyik ellenőre talált ([súgó](https://support.google.com/webmasters/answer/9044175?hl=en)). Szüntesse meg az okot, majd kérjen felülvizsgálatot.",
+    "Ha tömegesen gyártott oldalakat talál, vonja össze őket egy tartalmas oldallá, vagy távolítsa el azokat, amelyeket nem érdemes megtartani. A döntési folyamatot [a tartalomfrissítés értékesítése havi szolgáltatásként](/guide/agency-content-refresh-service) című útmutató írja le."
+   ]
+  },
+  {
+   "heading": "Lépések WordPressben (a Nurevo AEO-val)",
+   "paragraphs": [
+    "Így ellenőrizheti az ingyenes [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) bővítménnyel, hogy az AI-nak szánt kimenet megegyezik azzal, amit a látogatók látnak. Más bővítménnyel vagy kézzel ugyanezeket ellenőrizze."
+   ],
+   "list": [
+    "A Nurevo AEO nem olvassa ki a látogató user agentjét. A strukturált adatokat a szerver rendereli az oldal HTML-jébe, így a böngészők és az AI-robotok ugyanazt kapják. A robots.txt robotonkénti csoportjai szokásos konfigurációk, nem kivételek ez alól.",
+    "A GYIK strukturált adatai (FAQPage) csak olyan oldalon jelennek meg, ahol a Nurevo FAQ blokk vagy a [nurevo_faq] el van helyezve, és a kérdések láthatók. Nem látható GYIK-hez semmi sem kerül kiadásra.",
+    "A termékértékelések (AggregateRating) csak akkor jelennek meg, ha a WooCommerce-terméknek vannak értékelései. Nincs olyan mező, amelybe értékelést lehetne beírni.",
+    "A vállalkozás adatai a SEO-bővítmény beállításaiból és a nyilvános tartalomból csak az üres mezőkbe kerülnek be; a beírt értékeket soha nem írja felül. A diagnózis alapján ellenőrizze, hogy az adminisztrációs felület értékei és az oldal szövege egyeznek.",
+    "A tömegesen gyártott vagy reklámoldalak kihagyhatók az llms.txt-ből, és a bejegyzésenkénti Nurevo AEO panelen kikapcsolható rajtuk a Nurevo strukturált adata. Hogy magát az oldalt megtartja-e, az külön döntés.",
+    "Az ingyenes AI-ellenőrzés havonta három kérdést tesz fel a Perplexitynek, amelyeket a vállalkozás típusából és területéből állít össze, a vállalkozás nevét soha nem használja. Név szerinti kérdésre egy vállalkozás úgyis megjelenik, így ez azt mutatja meg, hogy a tények – nem pedig a manipuláció – változtattak-e valamin. A Pro mérés (béta) számait is tájékoztató jellegűként kezelje.",
+    "Az audit után nyissa meg a fontos oldalakat a [Rich Results Test](https://search.google.com/test/rich-results) eszközben, és ellenőrizze, hogy a strukturált adatok értékei megegyeznek a látható szöveggel."
+   ]
+  },
+  {
+   "heading": "Ellenőrzőlista az elutasítás után",
+   "list": [
+    "Az ügyfél e-mailben megkapta a döntést, a szabály nevét és dátumát, valamint egy alternatívát.",
+    "Az árajánlatot és a munkakört az alternatíva köré építették újra.",
+    "A szerződés felsorolja a kizárt módszereket és azt, amit nem garantálnak (ügyvéd által átnézve).",
+    "A kezdőoldalon és a fontos oldalakon nincs láthatatlan szöveg vagy az AI-nak szóló utasítás.",
+    "A böngészők és az AI-robotok ugyanazt a HTML-t kapják.",
+    "A havi közzétételi számok nem mutatják tömegesen gyártott oldalak hirtelen megugrását.",
+    "A GYIK és az értékelések strukturált adatai egyeznek a látható tartalommal.",
+    "Az összehasonlító oldalak és a fizetett megjelenések egyértelműen az ügyfél sajátjaként vagy reklámként vannak jelölve.",
+    "Az értékelési kérések nem tartalmaznak feltételeket, például öt csillagot.",
+    "Az eredményekről egy rögzített, a vállalkozás nevét nem tartalmazó kérdéssor alapján számolnak be."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ha a Google ki is szűri a rejtett szöveget, a ChatGPT-n vagy a Perplexityn nem működik mégis?",
+   "a": "Nem találtunk megbízható bizonyítékot arra, hogy működne. Az AI-cégek nyilvánosan ismertetik a rejtett utasítások elleni védekezésüket, és nem hivatalos tesztek sem találtak hatást. Még ha rövid ideig működne is, a Google Keresés rejtett szövegként kezeli, így nem éri meg a kockázatot."
+  },
+  {
+   "q": "Tilos minden olyan összehasonlító cikk, amely a saját cégünket is tartalmazza?",
+   "a": "Nem. Tegye egyértelművé, hogy ez a saját oldala, adja meg a szempontokat és a dátumot, és írja le, hol jobb választás egy versenytárs. A határ ott van, ha semleges, harmadik féltől származó értékelésként tüntetik fel."
+  },
+  {
+   "q": "Japán burkolt reklámra vonatkozó szabálya szerint az ügynökséget büntetik?",
+   "a": "A Consumer Affairs Agency kérdések és válaszai szerint a szabály arra a vállalkozásra vonatkozik, amely a tartalomról döntött (a hirdetőre), nem pedig a posztolásra felkért harmadik felekre. Ezért van szüksége az ügyfélnek a magyarázatra, hogy maga dönthessen."
+  },
+  {
+   "q": "Betiltott a Google 2026. májusi változása valamilyen új taktikát?",
+   "a": "A beszámolók szerint nem vezetett be új szabályokat; azt tette egyértelművé, hogy a meglévő spamirányelvek az AI Overviews és az AI Mode válaszaira is vonatkoznak. Az eredeti megfogalmazásért nézze meg a Google változásnaplóját."
+  },
+  {
+   "q": "Számít az Anthropic felhasználási szabályzata azoknak az ügynökségeknek, amelyek nem használják a Claude-ot?",
+   "a": "Közvetlenül a Claude használatát szabályozza. Az elutasítás magyarázatakor mégis hasznos, mert megmutatja, mit tekint egy AI-cég megtévesztőnek, bármilyen AI-eszközt használ is."
+  },
+  {
+   "q": "Egy korábbi szolgáltató által hagyott rejtett szöveget találtunk. Mi a teendő?",
+   "a": "Mutassa meg az ügyfélnek, és az ő beleegyezésével távolítsa el. Nézze meg a Search Console Manuális műveletek jelentését; ha szabálysértés szerepel benne, a javítás után kérjen felülvizsgálatot. Jegyezze fel az eltávolítás dátumát, hogy később összehasonlíthasson."
+  },
+  {
+   "q": "Pusztán a legitim munkával elérhető, hogy az AI ajánlja az ügyfelet?",
+   "a": "Ezt nem lehet garantálni. Az AI-válaszok napról napra és a megfogalmazástól függően változnak. Amit megtehet: az olyan tényeket, mint az árak, a területek és az eredmények, forrásokkal az oldalakra teszi, gondoskodik róla, hogy az AI el tudja olvasni őket, és ugyanazokkal a kérdésekkel követi a változásokat."
+  }
+ ],
+ "relatedHeading": "Kapcsolódó útmutatók",
+ "cta": {
+  "heading": "Nézze meg, hogyan olvassa az AI az imént átvett webhelyet",
+  "body": "Az ingyenes ellenőrzéshez nem kell regisztrálni: adjon meg egy URL-t, és megtudja a strukturált adatok, az llms.txt és az AI-robotok hozzáférésének állapotát. Jó első lépés egy audithoz.",
+  "label": "AI-olvashatóság ingyenes ellenőrzése",
+  "href": "/check",
+  "secondary": {
+   "label": "A partnerprogram megtekintése",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "A ChatGPT és az OAI-SearchBot az OpenAI, a Perplexity a Perplexity AI, a Claude az Anthropic, a Google és a Search Console pedig a Google LLC védjegye. A WordPress és a WooCommerce a megfelelő tulajdonosaik védjegyei. A Nurevo nem áll kapcsolatban ezekkel a cégekkel, és azok nem támogatják."
+}

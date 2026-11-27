@@ -1,0 +1,303 @@
+{
+ "title": "Stranka želi trike za iskanje z UI: vodnik za agencije | Nurevo",
+ "description": "Ko stranka želi skrito besedilo za UI, lestvice s sabo na vrhu ali lažne ocene: tabela presoje, pravila 2026, e-pošta z zavrnitvijo, pogodbena klavzula in revizija.",
+ "h1": "Ko stranka želi trike za iskanje z UI: tabela presoje, scenarij zavrnitve in revizija za agencije",
+ "lead": "Ko vas stranka prosi za besedilo, ki ga vidi samo UI, ali za seznam »najboljših ponudnikov«, na katerem je ona na prvem mestu, je za agencijo varen odgovor zavrnitev in ponudba legitimne poti do istega cilja. Google je 15. maja 2026 posodobil dokumentacijo in pojasnil, da njegovi pravilniki o neželeni vsebini veljajo tudi za odgovore UI v Iskanju Google, kot sta AI Overviews in AI Mode, prikrito oglaševanje pa je urejeno na mnogih trgih. Ta vodnik prinaša tabelo pogosto zahtevanih taktik, mejo sive cone, e-pošto z zavrnitvijo, pogodbeno klavzulo in ukaze za revizijo prevzetega spletnega mesta.",
+ "intro": [
+  "Napisano 21. novembra 2026 (JST). Za agencije, SEO podjetja, podjetja za vzdrževanje WordPressa in samostojne izvajalce, ki izdelujejo ali vzdržujejo spletna mesta strank. Kadar je potrebna pravna presoja, se obrnite na odvetnika ali regulatorja. Ta vodnik ni pravni nasvet.",
+  "Odgovori UI se spreminjajo iz dneva v dan in glede na ubeseditev. Ti koraki ohranjajo spletno mesto stranke varno v iskanju in v UI; ne zagotavljajo pojavitve v nobenem odgovoru UI."
+ ],
+ "sections": [
+  {
+   "heading": "Kaj zajemajo najvišje uvrščeni vodniki in kaj izpuščajo",
+   "paragraphs": [
+    "21. novembra 2026 smo prebrali strani, uvrščene na poizvedbe, kot so »black hat GEO«, »česa ne početi pri iskanju z UI« in podobne: štiri v angleščini (Similarweb, 26. februar 2026, posodobljeno 20. maja; Lily Ray, 17. junij 2026; Citable, 25. junij 2026; in članek Search Engine Land o skritem prompt injection) ter šest v japonščini, od katerih tri naštevajo taktike, ki se jim je treba izogniti (Uravation, Jinrai, Sungrove).",
+    "Strinjajo se glede osnov: nobenega skritega besedila, nobene množično izdelane plitke vsebine, nobenih lažnih ocen. Tisto, kar agencija potrebuje, ko stranka dejansko zahteva kaj od tega, je večinoma manjkalo."
+   ],
+   "table": {
+    "head": [
+     "Vrzel",
+     "Kaj doda ta vodnik"
+    ],
+    "rows": [
+     [
+      "Seznami taktik, a nič o tem, kako stranki reči ne",
+      "E-pošta z zavrnitvijo in alternative, ki jih ponudite"
+     ],
+     [
+      "Googlovi pravilniki so omenjeni, sprememba iz maja 2026 in pravila o označevanju oglasov pa so redko postavljeni drug ob drugega",
+      "Tri pravila Googla, Anthropica in japonske Agencije za zadeve potrošnikov v eni tabeli"
+     ],
+     [
+      "Vodniki se ne strinjajo, ali so primerjalne strani, ki vključujejo vas same, dovoljene",
+      "Tabela sive cone: kaj je v redu ob razkritju in kaj zahteva previdnost"
+     ],
+     [
+      "Nič o pogodbah ali dokumentih o obsegu (Citable to omeni v eni vrstici)",
+      "Vzorčna pogodbena klavzula"
+     ],
+     [
+      "Ni načina, da preverite, ali je prejšnji izvajalec pustil te taktike na spletnem mestu",
+      "Ukazi curl in WP-CLI za revizijo"
+     ],
+     [
+      "Nobenih posebnosti za WordPress",
+      "Kako potrditi, da se izhod za UI ujema s tem, kar vidijo obiskovalci"
+     ]
+    ],
+    "caption": "Nekatere najvišje uvrščene strani navajajo številke, kot sta »60–80 % izgube prometa v nekaj dneh« ali »3–6 mesecev do okrevanja«, brez vira, zato jih tu ne uporabljamo."
+   }
+  },
+  {
+   "heading": "Izhodišče za leto 2026: tri pravila",
+   "paragraphs": [
+    "To so pravila, na katera se agencija lahko sklicuje ob zavrnitvi. Nobeno ne uvaja povsem nove prepovedi; vsako pojasnjuje, da obstoječi standardi segajo tudi do odgovorov UI."
+   ],
+   "table": {
+    "head": [
+     "Pravilo",
+     "Od",
+     "Kaj določa",
+     "Za koga velja"
+    ],
+    "rows": [
+     [
+      "Pravilniki o neželeni vsebini v Iskanju Google ([izvirnik](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Pojasnjeno 15. maja 2026",
+      "Po poročanju Search Engine Roundtable je Google posodobil dokumentacijo in navaja, da pravilniki o neželeni vsebini veljajo tudi za odgovore generativne UI v Iskanju Google, tj. AI Overviews in AI Mode ([poročilo](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [Googlov dnevnik sprememb](https://developers.google.com/search/updates)). Search Engine Land poroča, da uvodna vrstica pravilnika zdaj zajema tudi poskuse manipuliranja odgovorov generativne UI ([poročilo](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Spletna mesta (če se ugotovi kršitev, se lahko uvrščajo nižje ali se sploh ne prikažejo)"
+     ],
+     [
+      "Pravilnik o uporabi Anthropic ([izvirnik](https://www.anthropic.com/legal/aup))",
+      "Velja od 12. novembra 2026",
+      "Prepoveduje manipuliranje virov, iz katerih iskalniki ali sistemi UI črpajo odgovore, z vnašanjem vsebine, ki napačno prikazuje svoj izvor, avtorstvo ali neodvisnost (na primer mreže spletnih mest, ki se predstavljajo kot nepovezani viri), lažne profile (sockpuppets), astroturfing in lažne ocene ter prodajo česar koli od tega kot storitve",
+      "Posamezniki in podjetja, ki uporabljajo Claude, vključno z agencijami, ki z njim pišejo besedila"
+     ],
+     [
+      "Japonsko pravilo o prikritem trženju po Zakonu proti neupravičenim nagradam in zavajajočim navedbam ([Agencija za zadeve potrošnikov](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "Od 1. oktobra 2023",
+      "Ureja oglaševanje, za katero običajni potrošniki ne morejo ugotoviti, da je oglaševanje",
+      "Oglaševalec (vaša stranka), ne vplivnež, najet za objavo"
+     ]
+    ],
+    "caption": "Med pisanjem nismo mogli naložiti same Googlove strani pravilnika, zato zgornja ubeseditev sledi obema poročiloma. Preden se nanjo zanesete, preberite izvirnik in dnevnik sprememb. Zunaj Japonske preverite pravila o označevanju oglasov in lažnih ocenah na svojem trgu."
+   },
+   "after": [
+    "Po japonskem pravilu je odgovoren oglaševalec, ne agencija, ki je vsebino pripravila (vprašanja in odgovori Agencije za zadeve potrošnikov, Q1). Prav zato se stranki to splača razložiti. Kršitev lahko vodi do odredbe o prenehanju (Q2)."
+   ]
+  },
+  {
+   "heading": "Tabela presoje pogosto zahtevanih taktik",
+   "paragraphs": [
+    "Tu so taktike, ki jih stranke dejansko zahtevajo, ubesedene približno tako, kot jih zahtevajo, z razlogom in s tem, kaj storiti namesto tega."
+   ],
+   "table": {
+    "head": [
+     "Zahteva",
+     "Odločitev",
+     "Zakaj",
+     "Namesto tega"
+    ],
+    "rows": [
+     [
+      "»Besedilo, ki ga bere samo UI« v beli barvi, z display:none ali drobno pisavo; »navodila za UI« v komentarjih HTML",
+      "Zavrnite",
+      "Po Googlovih pravilnikih o neželeni vsebini je to skrito besedilo. Neformalni preizkusi niso pokazali vidnega učinka skritih pozivov ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), preizkus enega avtorja)",
+      "Sporočilo vključite v vidno besedilo. Na vprašanje odgovorite v prvih dveh stavkih"
+     ],
+     [
+      "Pajkom UI pošiljati drugačno stran (cloaking)",
+      "Zavrnite",
+      "Prikazovanje drugačne vsebine iskalnikom kot uporabnikom je po pravilnikih o neželeni vsebini cloaking",
+      "Vsem pošiljajte enak HTML. Povzetek, primeren za UI, dajte v llms.txt z enakimi dejstvi"
+     ],
+     [
+      "Seznam »10 najboljših X« s stranko na prvem mestu, predstavljen kot nevtralna ocena",
+      "V tej obliki zavrnite",
+      "Če bralci ne morejo ugotoviti, da gre za oglas, lahko veljajo pravila o razkritju. V vzorcu 100 poizvedb Lily Ray 224 od 323 navedb samopromocijskih seznamov (69 %) ni bilo priporočenih v samem odgovoru UI ([članek](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); njen lastni vzorec, vzrok ni dokazan)",
+      "Primerjalna stran, jasno označena kot stran stranke, s kriteriji in prednostmi konkurentov"
+     ],
+     [
+      "Ocene zaposlenih ali sorodnikov; popust za pet zvezdic",
+      "Zavrnite",
+      "Ocene, katerih vsebino nadzoruje podjetje, lahko štejejo za oglaševanje; popust, pogojen s petimi zvezdicami ali priporočilom, zajema japonsko pravilo (Q&A Q6)",
+      "Prosite za ocene brez pogojev in odgovarjajte tudi na slabe"
+     ],
+     [
+      "Več »neodvisnih« spletnih mest z ocenami ali blogov, ki priporočajo stranko",
+      "Zavrnite",
+      "To je natanko primer iz pravilnika Anthropic: mreže spletnih mest, ki se predstavljajo kot nepovezana. Za Google je to lahko tudi neželena vsebina s povezavami",
+      "Pravim tretjim osebam (združenjem, partnerjem, medijem) dajte razlog, da omenijo stranko: rezultate, podatke"
+     ],
+     [
+      "Na desetine strani, ki zamenjajo samo ime mesta",
+      "Zavrnite",
+      "Veliko število strani brez vsebine lahko spada pod zlorabo vsebine v velikem obsegu ali zlorabo prehodnih strani (doorway)",
+      "Ena stran o območju storitev; ločene strani le, kjer ima območje svoja dejstva (čas prihoda, cene, primeri)"
+     ],
+     [
+      "FAQ ali ocene z zvezdicami v strukturiranih podatkih, ki jih stran ne prikazuje",
+      "Zavrnite",
+      "Google zahteva, da se strukturirani podatki ujemajo z vidno vsebino",
+      "FAQ objavite na vidni strani; ocene izpisujte le, če obstajajo resnične ocene"
+     ],
+     [
+      "Najem izvajalca ali orodja, ki obljublja »št. 1 v UI«",
+      "Odsvetujte",
+      "Odgovori UI se razlikujejo, zato tega nihče ne more zagotoviti; takšni izvajalci se pogosto zanašajo na zgornje taktike",
+      "Zabeležite stalen nabor vprašanj in preverjajte izboljšave zaradi dodanih dejstev"
+     ]
+    ],
+    "caption": "Stolpec »odločitev« je priporočilo tega vodnika za agencijo. Ali se uporablja zakon, je odvisno od okoliščin posameznega primera."
+   }
+  },
+  {
+   "heading": "Kje se konča siva cona",
+   "paragraphs": [
+    "Ni treba vsake zahteve zavrniti. Spodnje so v redu, ko se spremeni oblika. Preizkus ima dva dela: ali bralci lahko ugotovijo, kdo je to napisal in ali gre za oglas, ter ali se ujema z dejstvi, vidnimi na strani?"
+   ],
+   "table": {
+    "head": [
+     "Zahteva",
+     "Sprejemljiva oblika",
+     "Na kaj paziti"
+    ],
+    "rows": [
+     [
+      "Primerjalna stran, ki vključuje stranko",
+      "Jasno na lastnem spletnem mestu stranke, s kriteriji, datumom in primeri, ko je konkurent primernejši",
+      "Trditve, kot je »št. 1 v panogi«, potrebujejo vir in datum, sicer se ne smejo pojaviti"
+     ],
+     [
+      "Plačana umestitev v medijih ali na spletnih mestih z ocenami",
+      "Označeno kot »Oglas«, »PR«, »Sponzorirano« ali podobno (Q&A Q11)",
+      "Oznaka samo v komentarjih ali samo na začetku videa morda ne zadošča (Q14, Q15)"
+     ],
+     [
+      "Mnenja strank",
+      "Mnenja, zbrana brez pogojev",
+      "Izbiranje samo ugodnih je lahko zajeto (Q10). Objav vplivnežev ne preimenujte v mnenja strank (Q16)"
+     ],
+     [
+      "Promocija zaposlenih na družbenih omrežjih",
+      "Objave, iz katerih je jasno razvidna zaposlitev",
+      "Glede na vlogo lahko objave štejejo za objave podjetja (Q3); sam naziv delovnega mesta ni zadostna oznaka (Q12)"
+     ],
+     [
+      "Članki, pripravljeni z UI",
+      "Dejstva preveri in besedilo uredi človek, dodana so lastna dejstva in podatki stranke",
+      "Ne postavljajte ciljev števila člankov in istega besedila ne preoblikujte v mnoga"
+     ],
+     [
+      "Objava llms.txt",
+      "Enaka dejstva kot na straneh, s povezavami nanje",
+      "Nobenih promocijskih trditev, napisanih samo za UI"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Kako reči ne: vzorčno e-poštno sporočilo",
+   "paragraphs": [
+    "Napišite ga v treh delih: odločitev, razlog (ime pravila in datum) in alternativa, ki služi istemu cilju. Samo »to je tvegano, raje ne« se običajno konča tako, da stranka najame nekoga drugega, ki to naredi."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Kot razlog navedite zunanja pravila, ne okusa svoje agencije; stranka jih lahko nespremenjena posreduje nadrejenemu. Alternativo izberite glede na to, kaj stranka dejansko želi, na primer da jo UI priporoča ali da je videti močnejša od konkurenta."
+   ]
+  },
+  {
+   "heading": "Kaj zapisati v pogodbo in obseg del",
+   "paragraphs": [
+    "Da se pozneje izognete izgovorom »prejšnja agencija je to delala« ali »to je bilo v pogodbi«, izključene metode zapišite v pogodbo ali opis del. Vzorec:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Mesečni pavšal, ki kot rezultat obljublja število omemb v UI, vsem daje razlog, da posežejo po zgornjih taktikah. Namesto tega poročajte o tem, katera dejstva so bila dodana, in o stalnem naboru zabeleženih vprašanj ([prodaja iskanja z UI kot mesečne storitve](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Revizija prevzetega spletnega mesta",
+   "paragraphs": [
+    "Spletna mesta, ki jih prevzamete v vzdrževanje ali prenovo, lahko vsebujejo taktike, ki jih je dodal prejšnji izvajalec ali vtičnik. Ti ukazi iščejo skrite sloge, vsebino za posamezne pajke, znake množične izdelave in uporabljene tipe strukturiranih podatkov. Zadetke obravnavajte le kot namige: display:none je običajen v menijih in harmonikah, zato vsakega preverite na oko."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Če 2. korak pokaže veliko razliko v velikosti ali vsebini, poiščite preklapljanje glede na user-agent v vtičnikih ali nastavitvah strežnika; predpomnjenje in oglasi povzročajo majhne razlike. V Search Console poročilo Ročni ukrepi v razdelku Varnost in ročni ukrepi prikazuje kršitve, ki jih je odkril Googlov pregledovalec ([pomoč](https://support.google.com/webmasters/answer/9044175?hl=en)). Odpravite vzrok in nato zahtevajte pregled.",
+    "Če najdete množično izdelane strani, jih združite v stran z vsebino ali odstranite tiste, ki jih ni vredno obdržati. Postopek odločanja je v vodniku [prodaja osveževanja vsebin kot mesečne storitve](/guide/agency-content-refresh-service)."
+   ]
+  },
+  {
+   "heading": "Koraki v WordPressu (z Nurevo AEO)",
+   "paragraphs": [
+    "Tako z brezplačnim vtičnikom [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) potrdite, da se izhod za UI ujema s tem, kar vidijo obiskovalci. Z drugim vtičnikom ali ročno preverite iste stvari."
+   ],
+   "list": [
+    "Nurevo AEO ne bere obiskovalčevega user agenta. Strukturirani podatki se na strežniku izrišejo v HTML strani, zato brskalniki in pajki UI prejmejo isto. Skupine za posamezne pajke v robots.txt so običajna konfiguracija, ne izjema od tega.",
+    "Strukturirani podatki FAQ (FAQPage) se izpišejo samo na strani, kjer je postavljen blok Nurevo FAQ ali [nurevo_faq] in so vprašanja prikazana. Za FAQ, ki ni viden, se ne izpiše nič.",
+    "Ocene izdelkov (AggregateRating) se izpišejo samo, ko ima izdelek WooCommerce ocene. Ni polja, v katerega bi lahko vtipkali oceno.",
+    "Podatki o podjetju se iz nastavitev vašega SEO vtičnika in javne vsebine vpišejo samo v prazna polja; vrednosti, ki ste jih vnesli, se nikoli ne prepišejo. Z diagnostiko preverite, da se vrednosti v skrbniškem vmesniku in besedilo na strani ujemajo.",
+    "Množično izdelane ali oglaševalske strani lahko izpustite iz llms.txt in jim izklopite strukturirane podatke Nurevo v podoknu Nurevo AEO pri posamezni objavi. Ali obdržati samo stran, je ločena odločitev.",
+    "Brezplačno preverjanje UI postavi Perplexity tri vprašanja na mesec, sestavljena iz vrste dejavnosti in območja, nikoli iz imena podjetja. Podjetje se ob vprašanju po imenu prikaže tako ali tako, zato to pokaže, ali so nekaj spremenila dejstva in ne manipulacija. Tudi številke merjenja Pro (beta) berite kot okvirne.",
+    "Po reviziji odprite ključne strani v [preizkusu obogatenih rezultatov](https://search.google.com/test/rich-results) in potrdite, da se vrednosti strukturiranih podatkov ujemajo z vidnim besedilom."
+   ]
+  },
+  {
+   "heading": "Kontrolni seznam po zavrnitvi",
+   "list": [
+    "Stranka je po e-pošti prejela odločitev, ime pravila z datumom in alternativo.",
+    "Ponudba in obseg del sta bila pripravljena na novo glede na alternativo.",
+    "Pogodba navaja izključene metode in kaj ni zagotovljeno (pregledal odvetnik).",
+    "Domača stran in ključne strani ne vsebujejo nevidnega besedila ali navodil za UI.",
+    "Brskalniki in pajki UI prejmejo enak HTML.",
+    "Mesečno število objav ne kaže izbruha množično izdelanih strani.",
+    "Strukturirani podatki FAQ in ocen se ujemajo z vidno vsebino.",
+    "Primerjalne strani in plačane umestitve so jasno označene kot lastne strani stranke ali kot oglas.",
+    "Prošnje za ocene ne vsebujejo pogojev, kot je pet zvezdic.",
+    "Rezultati se poročajo iz stalnega nabora zabeleženih vprašanj brez imena podjetja."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Tudi če Google zazna skrito besedilo, ali ne deluje še vedno v ChatGPT ali Perplexity?",
+   "a": "Nismo našli zanesljivih dokazov, da deluje. Podjetja za UI objavljajo zaščite pred skritimi navodili, neformalni preizkusi pa niso pokazali učinka. Tudi če bi za kratek čas delovalo, ga Iskanje Google obravnava kot skrito besedilo, zato tveganja ni vredno."
+  },
+  {
+   "q": "Ali je vsak primerjalni članek, ki vključuje naše podjetje, prepovedan?",
+   "a": "Ne. Jasno povejte, da gre za vašo stran, navedite kriterije in datum ter povejte, kje so konkurenti primernejši. Meja je predstavljanje članka kot nevtralne ocene tretje osebe."
+  },
+  {
+   "q": "Ali japonsko pravilo o prikritem trženju kaznuje agencijo?",
+   "a": "Vprašanja in odgovori Agencije za zadeve potrošnikov navajajo, da pravilo zajema podjetje, ki je odločilo o vsebini (oglaševalca), ne tretjih oseb, ki so bile naprošene za objavo. Zato potrebuje razlago stranka, da se lahko odloči sama."
+  },
+  {
+   "q": "Ali je Googlova sprememba iz maja 2026 prepovedala kakšno novo taktiko?",
+   "a": "Po poročanju ni dodala novih pravil; pojasnila je, da obstoječi pravilniki o neželeni vsebini veljajo za odgovore v AI Overviews in AI Mode. Izvirno ubeseditev preverite v Googlovem dnevniku sprememb."
+  },
+  {
+   "q": "Ali je pravilnik o uporabi Anthropic pomemben za agencije, ki ne uporabljajo Claude?",
+   "a": "Neposredno ureja uporabo Claude. Kljub temu je koristen pri pojasnjevanju zavrnitve, saj kaže, kaj podjetje za UI šteje za zavajajoče, ne glede na to, katero orodje UI uporabljate."
+  },
+  {
+   "q": "Našli smo skrito besedilo, ki ga je pustil prejšnji izvajalec. Kaj zdaj?",
+   "a": "Pokažite ga stranki in ga z njenim soglasjem odstranite. Preverite poročilo Ročni ukrepi v Search Console; če je navedena kršitev, po odpravi zahtevajte pregled. Zabeležite datum odstranitve, da boste lahko pozneje primerjali."
+  },
+  {
+   "q": "Ali bo UI stranko priporočala samo zaradi legitimnega dela?",
+   "a": "Tega ni mogoče zagotoviti. Odgovori UI se spreminjajo iz dneva v dan in glede na ubeseditev. Lahko pa na strani objavite dejstva, kot so cene, območja in rezultati, z viri, poskrbite, da jih UI lahko prebere, in spremljate spremembe z istimi vprašanji."
+  }
+ ],
+ "relatedHeading": "Sorodni vodniki",
+ "cta": {
+  "heading": "Poglejte, kako UI bere spletno mesto, ki ste ga pravkar prevzeli",
+  "body": "Brezplačno preverjanje ne zahteva registracije: vnesite URL in si oglejte stanje strukturiranih podatkov, llms.txt in dostopa pajkov UI. Dober prvi korak revizije.",
+  "label": "Brezplačno preverite berljivost za UI",
+  "href": "/check",
+  "secondary": {
+   "label": "Oglejte si partnerski program",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT in OAI-SearchBot sta blagovni znamki družbe OpenAI, Perplexity družbe Perplexity AI, Claude družbe Anthropic ter Google in Search Console družbe Google LLC. WordPress in WooCommerce sta blagovni znamki svojih lastnikov. Nurevo ni povezan s temi podjetji niti ga ta ne podpirajo."
+}

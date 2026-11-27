@@ -1,0 +1,303 @@
+{
+ "title": "Clientul cere trucuri pentru căutarea AI: ghid pentru agenții | Nurevo",
+ "description": "Când clientul cere text ascuns pentru AI, topuri cu el pe primul loc sau recenzii false: tabel de evaluare, regulile din 2026, e-mail de refuz, clauză și audit.",
+ "h1": "Când clientul cere trucuri pentru căutarea AI: tabel de evaluare, scenariu de refuz și audit pentru agenții",
+ "lead": "Când un client vă cere să adăugați text pe care îl vede doar AI sau să publicați o listă cu „cei mai buni furnizori” în care el apare primul, răspunsul sigur pentru o agenție este să refuze și să ofere o cale legitimă către același obiectiv. Pe 15 mai 2026, Google și-a actualizat documentația pentru a clarifica faptul că politicile sale privind spamul se aplică și răspunsurilor AI din Căutarea Google, precum AI Overviews și AI Mode, iar publicitatea mascată este reglementată pe multe piețe. Acest ghid oferă un tabel cu tacticile cerute frecvent, limita zonei gri, un e-mail de refuz, o clauză contractuală și comenzi pentru auditul unui site preluat.",
+ "intro": [
+  "Scris pe 21 noiembrie 2026 (JST). Pentru agenții, firme de SEO, companii de mentenanță WordPress și freelanceri care construiesc sau întrețin site-urile clienților. Când este nevoie de o evaluare juridică, apelați la un avocat sau la autoritatea de reglementare. Acest ghid nu constituie consultanță juridică.",
+  "Răspunsurile AI se schimbă de la o zi la alta și în funcție de formulare. Pașii de aici mențin site-ul clientului în siguranță atât în căutare, cât și în AI; nu garantează apariția în niciun răspuns AI."
+ ],
+ "sections": [
+  {
+   "heading": "Ce acoperă ghidurile din topul rezultatelor și ce omit",
+   "paragraphs": [
+    "Pe 21 noiembrie 2026 am citit paginile clasate pentru interogări precum „black hat GEO”, „ce să nu faci în căutarea AI” și altele similare: patru în engleză (Similarweb, 26 februarie 2026, actualizat pe 20 mai; Lily Ray, 17 iunie 2026; Citable, 25 iunie 2026; și un articol Search Engine Land despre prompt injection ascuns) și șase în japoneză, dintre care trei enumeră tactici de evitat (Uravation, Jinrai, Sungrove).",
+    "Sunt de acord asupra elementelor de bază: fără text ascuns, fără conținut subțire produs în masă, fără recenzii false. Ceea ce îi trebuie unei agenții atunci când un client chiar cere așa ceva lipsea în mare parte."
+   ],
+   "table": {
+    "head": [
+     "Lacună",
+     "Ce adaugă acest ghid"
+    ],
+    "rows": [
+     [
+      "Liste de tactici, dar nimic despre cum să-i spui nu unui client",
+      "Un e-mail de refuz și alternativele de oferit"
+     ],
+     [
+      "Politicile Google sunt menționate, dar schimbarea din mai 2026 și regulile de semnalare a publicității rareori sunt puse alături",
+      "Trei reguli de la Google, Anthropic și Agenția japoneză pentru Protecția Consumatorilor într-un singur tabel"
+     ],
+     [
+      "Ghidurile nu sunt de acord dacă paginile comparative care vă includ pe dumneavoastră sunt permise",
+      "Un tabel al zonei gri: ce e în regulă dacă e declarat și ce necesită atenție"
+     ],
+     [
+      "Nimic despre contracte sau documente de scop (Citable menționează asta într-un rând)",
+      "Un model de clauză contractuală"
+     ],
+     [
+      "Nicio modalitate de a verifica dacă un furnizor anterior a lăsat aceste tactici pe site",
+      "Comenzi curl și WP-CLI pentru audit"
+     ],
+     [
+      "Nimic specific pentru WordPress",
+      "Cum confirmați că rezultatul destinat AI corespunde cu ce văd vizitatorii"
+     ]
+    ],
+    "caption": "Unele dintre paginile din top citează cifre precum „pierdere de 60–80% din trafic în câteva zile” sau „3–6 luni pentru recuperare” fără sursă, așa că nu le folosim aici."
+   }
+  },
+  {
+   "heading": "Punctul de referință pentru 2026: trei reguli",
+   "paragraphs": [
+    "Acestea sunt regulile la care o agenție se poate raporta atunci când refuză. Niciuna nu introduce o interdicție cu totul nouă; fiecare clarifică faptul că standardele existente se aplică și răspunsurilor AI."
+   ],
+   "table": {
+    "head": [
+     "Regulă",
+     "De când",
+     "Ce prevede",
+     "Cui se aplică"
+    ],
+    "rows": [
+     [
+      "Politicile privind spamul din Căutarea Google ([original](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Clarificat pe 15 mai 2026",
+      "Potrivit Search Engine Roundtable, Google și-a actualizat documentația pentru a preciza că politicile privind spamul se aplică și răspunsurilor AI generative din Căutarea Google, adică AI Overviews și AI Mode ([articol](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [jurnalul de modificări Google](https://developers.google.com/search/updates)). Search Engine Land relatează că fraza de deschidere a politicii include acum încercările de a manipula răspunsurile AI generative ([articol](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Site-uri (dacă se constată o încălcare, pot fi clasate mai jos sau pot să nu apară deloc)"
+     ],
+     [
+      "Politica de utilizare Anthropic ([original](https://www.anthropic.com/legal/aup))",
+      "În vigoare din 12 noiembrie 2026",
+      "Interzice manipularea surselor din care motoarele de căutare sau sistemele AI își extrag răspunsurile prin plasarea de conținut care își denaturează originea, autorul sau independența (de exemplu rețele de site-uri care se prezintă drept surse neafiliate), conturile false (sockpuppets), astroturfingul și recenziile false, precum și vânzarea oricăreia dintre acestea ca serviciu",
+      "Persoane și companii care folosesc Claude, inclusiv agenții care redactează texte cu el"
+     ],
+     [
+      "Regula japoneză privind marketingul mascat în temeiul Legii împotriva premiilor nejustificate și a declarațiilor înșelătoare ([Agenția pentru Protecția Consumatorilor](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "Din 1 octombrie 2023",
+      "Reglementează publicitatea pe care consumatorii obișnuiți nu o pot recunoaște ca publicitate",
+      "Advertiserul (clientul dumneavoastră), nu influencerul angajat să posteze"
+     ]
+    ],
+    "caption": "În timpul redactării nu am putut accesa pagina de politică a Google, așa că formularea de mai sus urmează cele două articole. Citiți originalul și jurnalul de modificări înainte de a vă baza pe ea. În afara Japoniei, verificați regulile privind semnalarea publicității și recenziile false de pe propria piață."
+   },
+   "after": [
+    "Conform regulii japoneze, partea considerată responsabilă este advertiserul, nu agenția care a produs conținutul (întrebări și răspunsuri ale Agenției pentru Protecția Consumatorilor, Q1). Tocmai de aceea merită explicat clientului. O încălcare poate duce la un ordin de încetare (Q2)."
+   ]
+  },
+  {
+   "heading": "Un tabel de evaluare pentru tacticile cerute frecvent",
+   "paragraphs": [
+    "Iată tacticile pe care clienții le cer efectiv, formulate aproximativ așa cum le cer, cu motivul și ce să faceți în schimb."
+   ],
+   "table": {
+    "head": [
+     "Cerere",
+     "Decizie",
+     "De ce",
+     "Ce să faceți în schimb"
+    ],
+    "rows": [
+     [
+      "„Text pe care îl citește doar AI” cu alb, display:none sau caractere minuscule; „instrucțiuni pentru AI” în comentarii HTML",
+      "Refuzați",
+      "Este text ascuns conform politicilor Google privind spamul. Teste informale nu au găsit niciun efect vizibil al prompturilor ascunse ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), testul unui singur autor)",
+      "Puneți mesajul în textul vizibil. Răspundeți la întrebare în primele două propoziții"
+     ],
+     [
+      "Servirea unei alte pagini crawlerelor AI (cloaking)",
+      "Refuzați",
+      "Afișarea către motoarele de căutare a unui conținut diferit de cel văzut de utilizatori este cloaking conform politicilor privind spamul",
+      "Serviți tuturor același HTML. Puneți un rezumat potrivit pentru AI în llms.txt, cu aceleași fapte"
+     ],
+     [
+      "O listă „Top 10 X” cu clientul pe primul loc, prezentată drept recenzie neutră",
+      "Refuzați în forma cerută",
+      "Dacă cititorii nu își pot da seama că este publicitate, se pot aplica regulile de semnalare. În eșantionul de 100 de interogări al lui Lily Ray, 224 din 323 de citări ale listelor autopromoționale (69%) nu au fost recomandate în răspunsul AI propriu-zis ([articol](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); eșantionul ei propriu, cauza nedovedită)",
+      "O pagină comparativă marcată clar ca fiind a clientului, cu criterii și punctele forte ale concurenților"
+     ],
+     [
+      "Recenzii scrise de angajați sau rude; reducere pentru cinci stele",
+      "Refuzați",
+      "Recenziile al căror conținut este controlat de firmă pot fi considerate publicitate; o reducere condiționată de cinci stele sau de o recomandare intră sub incidența regulii japoneze (Q&A Q6)",
+      "Cereți recenzii fără condiții și răspundeți și la cele negative"
+     ],
+     [
+      "Mai multe site-uri de recenzii sau bloguri „independente” care îl recomandă pe client",
+      "Refuzați",
+      "Este exact exemplul din politica Anthropic: rețele de site-uri care se prezintă drept neafiliate. Pentru Google poate fi și spam cu linkuri",
+      "Dați terților reali (asociații, parteneri, presă) un motiv să-l menționeze pe client: rezultate, date"
+     ],
+     [
+      "Zeci de pagini care schimbă doar numele orașului",
+      "Refuzați",
+      "Un număr mare de pagini fără substanță poate intra sub abuzul de conținut la scară sau abuzul de pagini doorway",
+      "O singură pagină pentru zona deservită; pagini separate doar acolo unde o zonă are fapte proprii (timp de sosire, prețuri, cazuri)"
+     ],
+     [
+      "FAQ sau evaluări cu stele în datele structurate pe care pagina nu le afișează",
+      "Refuzați",
+      "Google cere ca datele structurate să corespundă conținutului vizibil",
+      "Puneți FAQ pe o pagină vizibilă; afișați evaluări doar când există recenzii reale"
+     ],
+     [
+      "Angajarea unui furnizor sau a unui instrument care promite „nr. 1 în AI”",
+      "Nu recomandați",
+      "Răspunsurile AI variază, deci nimeni nu poate garanta asta; astfel de furnizori se bazează adesea pe tacticile de mai sus",
+      "Înregistrați un set fix de întrebări și verificați îmbunătățirile aduse de faptele adăugate"
+     ]
+    ],
+    "caption": "Coloana „decizie” este recomandarea acestui ghid pentru o agenție. Dacă se aplică o lege depinde de faptele fiecărui caz."
+   }
+  },
+  {
+   "heading": "Unde se termină zona gri",
+   "paragraphs": [
+    "Nu orice cerere trebuie refuzată. Cele de mai jos sunt în regulă odată ce se schimbă formatul. Testul are două părți: pot cititorii să-și dea seama cine a scris și dacă este publicitate, și corespunde cu faptele vizibile pe pagină?"
+   ],
+   "table": {
+    "head": [
+     "Cerere",
+     "Formă acceptabilă",
+     "Atenție la"
+    ],
+    "rows": [
+     [
+      "O pagină comparativă care include clientul",
+      "Clar pe site-ul propriu al clientului, cu criterii, o dată și cazuri în care un concurent se potrivește mai bine",
+      "Afirmațiile de tipul „nr. 1 în industrie” au nevoie de sursă și dată sau nu ar trebui să apară"
+     ],
+     [
+      "Plasare plătită în presă sau pe site-uri de recenzii",
+      "Marcată „Publicitate”, „PR”, „Sponsorizat” sau similar (Q&A Q11)",
+      "O etichetă doar în comentarii sau doar la începutul unui videoclip poate să nu fie suficientă (Q14, Q15)"
+     ],
+     [
+      "Testimoniale ale clienților",
+      "Testimoniale colectate fără condiții",
+      "Alegerea doar a celor favorabile poate intra sub incidența regulii (Q10). Nu reetichetați postările influencerilor drept recenzii ale clienților (Q16)"
+     ],
+     [
+      "Promovare de către angajați pe rețelele sociale",
+      "Postări din care reiese clar raportul de muncă",
+      "În funcție de rol, postările pot fi considerate ale companiei înseși (Q3); doar titlul postului nu este o etichetă suficientă (Q12)"
+     ],
+     [
+      "Articole redactate cu AI",
+      "Verificate și editate de un om, cu faptele și datele proprii ale clientului adăugate",
+      "Nu stabiliți ținte de număr de articole și nu reformulați același text în multe variante"
+     ],
+     [
+      "Publicarea llms.txt",
+      "Aceleași fapte ca pe pagini, cu linkuri către ele",
+      "Fără afirmații promoționale scrise doar pentru AI"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Cum să spuneți nu: un model de e-mail",
+   "paragraphs": [
+    "Scrieți-l în trei părți: decizia, motivul (numele regulii și data) și o alternativă care servește aceluiași obiectiv. Un simplu „e riscant, mai bine nu” se termină de obicei cu clientul angajând pe altcineva să o facă."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Invocați reguli externe ca motiv, nu gustul agenției; clientul le poate trimite mai departe unui manager așa cum sunt. Alegeți alternativa în funcție de ce vrea de fapt clientul, de exemplu să fie recomandat de AI sau să pară mai puternic decât un concurent."
+   ]
+  },
+  {
+   "heading": "Ce să includeți în contract și în scopul lucrărilor",
+   "paragraphs": [
+    "Pentru a evita mai târziu replici ca „agenția anterioară o făcea” sau „asta era în contract”, treceți metodele excluse în contract sau în documentul de scop al lucrărilor. Un model:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Un abonament care promite ca rezultat un număr de mențiuni în AI le dă tuturor un motiv să recurgă la tacticile de mai sus. Raportați în schimb ce fapte au fost adăugate și rezultatele pe un set fix de întrebări înregistrate ([vânzarea căutării AI ca serviciu lunar](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Auditul unui site preluat",
+   "paragraphs": [
+    "Site-urile pe care le preluați pentru mentenanță sau refacere pot conține tactici adăugate de un furnizor anterior sau de un plugin. Aceste comenzi caută stiluri ascunse, conținut specific crawlerelor, semne de producție în masă și tipurile de date structurate folosite. Tratați potrivirile doar ca indicii: display:none este normal în meniuri și acordeoane, așa că verificați fiecare cu ochiul liber."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Dacă pasul 2 arată o diferență mare de dimensiune sau conținut, căutați comutarea în funcție de user-agent în pluginuri sau în setările serverului; cache-ul și reclamele produc diferențe mici. În Search Console, raportul Acțiuni manuale din secțiunea Securitate și acțiuni manuale arată încălcările găsite de un evaluator Google ([ajutor](https://support.google.com/webmasters/answer/9044175?hl=en)). Remediați cauza, apoi solicitați o reexaminare.",
+    "Dacă găsiți pagini produse în masă, fie le comasați într-o pagină cu substanță, fie le eliminați pe cele care nu merită păstrate. Procesul de decizie este descris în [vânzarea actualizării conținutului ca serviciu lunar](/guide/agency-content-refresh-service)."
+   ]
+  },
+  {
+   "heading": "Pași în WordPress (cu Nurevo AEO)",
+   "paragraphs": [
+    "Iată cum confirmați, cu pluginul gratuit [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/), că rezultatul destinat AI corespunde cu ce văd vizitatorii. Cu alt plugin sau manual, verificați aceleași lucruri."
+   ],
+   "list": [
+    "Nurevo AEO nu citește user agentul vizitatorului. Datele structurate sunt generate pe server în HTML-ul paginii, astfel încât browserele și crawlerele AI primesc același lucru. Grupurile pe crawler din robots.txt sunt o configurare obișnuită, nu o excepție de la aceasta.",
+    "Datele structurate FAQ (FAQPage) sunt generate doar pe o pagină în care este plasat blocul Nurevo FAQ sau [nurevo_faq] și întrebările sunt afișate. Pentru un FAQ care nu este vizibil nu se generează nimic.",
+    "Evaluările produselor (AggregateRating) sunt generate doar când produsul WooCommerce are recenzii. Nu există niciun câmp în care să introduceți o evaluare.",
+    "Detaliile firmei sunt completate din setările pluginului SEO și din conținutul public doar în câmpurile goale; valorile introduse de dumneavoastră nu sunt niciodată suprascrise. Verificați în diagnostic că valorile din administrare și textul paginii coincid.",
+    "Paginile produse în masă sau publicitare pot fi excluse din llms.txt și li se pot dezactiva datele structurate Nurevo din panoul Nurevo AEO al fiecărei postări. Dacă păstrați pagina în sine este o decizie separată.",
+    "Verificarea AI gratuită îi pune lui Perplexity trei întrebări pe lună, construite din tipul de activitate și zonă, niciodată din numele firmei. O firmă apare oricum când este căutată după nume, așa că aceasta arată dacă faptele, nu manipularea, au schimbat ceva. Citiți și cifrele măsurătorilor Pro (beta) ca orientative.",
+    "După audit, deschideți paginile cheie în [Testul pentru rezultate îmbogățite](https://search.google.com/test/rich-results) și confirmați că valorile datelor structurate corespund textului vizibil."
+   ]
+  },
+  {
+   "heading": "Listă de verificare după refuz",
+   "list": [
+    "Clientul a primit prin e-mail decizia, numele regulii și data, precum și o alternativă.",
+    "Oferta și scopul lucrărilor au fost refăcute în jurul alternativei.",
+    "Contractul enumeră metodele excluse și ce nu este garantat (revizuit de un avocat).",
+    "Pagina principală și paginile cheie nu conțin text invizibil sau instrucțiuni pentru AI.",
+    "Browserele și crawlerele AI primesc același HTML.",
+    "Numărul lunar de publicări nu arată un val de pagini produse în masă.",
+    "Datele structurate FAQ și de evaluare corespund conținutului vizibil.",
+    "Paginile comparative și plasările plătite sunt marcate clar ca aparținând clientului sau ca publicitate.",
+    "Cererile de recenzii nu conțin condiții precum cinci stele.",
+    "Rezultatele sunt raportate pe un set fix de întrebări înregistrate, fără numele firmei."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Chiar dacă Google prinde textul ascuns, nu funcționează totuși în ChatGPT sau Perplexity?",
+   "a": "Nu am găsit nicio dovadă de încredere că funcționează. Companiile de AI publică măsuri de apărare împotriva instrucțiunilor ascunse, iar testele informale nu au găsit niciun efect. Chiar dacă ar funcționa pentru scurt timp, Căutarea Google îl tratează ca text ascuns, deci nu merită riscul."
+  },
+  {
+   "q": "Este interzis orice articol comparativ care include propria noastră firmă?",
+   "a": "Nu. Arătați clar că este pagina dumneavoastră, precizați criteriile și data și spuneți unde se potrivesc mai bine concurenții. Limita este prezentarea lui drept recenzie neutră a unui terț."
+  },
+  {
+   "q": "Conform regulii japoneze privind marketingul mascat, agenția este cea sancționată?",
+   "a": "Întrebările și răspunsurile Agenției pentru Protecția Consumatorilor precizează că regula vizează firma care a decis conținutul (advertiserul), nu terții rugați să posteze. De aceea clientul are nevoie de explicație, ca să poată decide singur."
+  },
+  {
+   "q": "A interzis schimbarea Google din mai 2026 vreo tactică nouă?",
+   "a": "Potrivit relatărilor, nu a adăugat reguli noi; a clarificat că politicile existente privind spamul se aplică răspunsurilor din AI Overviews și AI Mode. Verificați formularea originală în jurnalul de modificări Google."
+  },
+  {
+   "q": "Contează Politica de utilizare Anthropic pentru agențiile care nu folosesc Claude?",
+   "a": "Ea reglementează direct utilizarea Claude. Este totuși utilă când explicați un refuz, pentru că arată ce consideră înșelător o companie de AI, indiferent de instrumentul AI pe care îl folosiți."
+  },
+  {
+   "q": "Am găsit text ascuns lăsat de un furnizor anterior. Ce facem acum?",
+   "a": "Arătați-i-l clientului și eliminați-l cu acordul lui. Verificați raportul Acțiuni manuale din Search Console; dacă este listată o încălcare, solicitați o reexaminare după remediere. Notați data eliminării, ca să puteți compara mai târziu."
+  },
+  {
+   "q": "Doar munca legitimă îl va face pe client să fie recomandat de AI?",
+   "a": "Acest lucru nu poate fi garantat. Răspunsurile AI se schimbă de la o zi la alta și în funcție de formulare. Ce puteți face este să puneți pe pagini fapte precum prețuri, zone și rezultate, cu surse, să vă asigurați că AI le poate citi și să urmăriți schimbările cu aceleași întrebări."
+  }
+ ],
+ "relatedHeading": "Ghiduri conexe",
+ "cta": {
+  "heading": "Vedeți cum citește AI un site pe care tocmai l-ați preluat",
+  "body": "Verificarea gratuită nu necesită înregistrare: introduceți un URL și vedeți starea datelor structurate, a llms.txt și a accesului crawlerelor AI. Un prim pas bun pentru un audit.",
+  "label": "Verificați gratuit lizibilitatea pentru AI",
+  "href": "/check",
+  "secondary": {
+   "label": "Vedeți programul de parteneriat",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT și OAI-SearchBot sunt mărci comerciale ale OpenAI, Perplexity a Perplexity AI, Claude a Anthropic, iar Google și Search Console ale Google LLC. WordPress și WooCommerce sunt mărci comerciale ale proprietarilor respectivi. Nurevo nu este afiliat cu aceste companii și nici susținut de ele."
+}

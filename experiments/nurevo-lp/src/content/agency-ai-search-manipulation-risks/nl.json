@@ -1,0 +1,303 @@
+{
+ "title": "Klanten die AI-zoektrucs willen: gids voor bureaus | Nurevo",
+ "description": "Als een klant verborgen tekst voor AI, lijstjes met zichzelf op 1 of nepreviews wil: beoordelingstabel, regels 2026, afwijzingsmail, contractclausule en audit.",
+ "h1": "Als een klant om trucs voor AI-zoeken vraagt: een beoordelingstabel, een afwijzingsscript en een audit voor bureaus",
+ "lead": "Als een klant je vraagt tekst toe te voegen die alleen AI kan zien, of een lijst van ‘beste aanbieders’ te publiceren waarop hij zelf bovenaan staat, is het veilige antwoord voor een bureau: weigeren en een legitieme manier aanbieden om hetzelfde doel te bereiken. Op 15 mei 2026 heeft Google zijn documentatie bijgewerkt om duidelijk te maken dat het spambeleid ook geldt voor AI-antwoorden in Google Zoeken, zoals AI Overviews en AI Mode, en verkapte reclame is in veel markten gereguleerd. Deze gids geeft een tabel met vaak gevraagde tactieken, laat zien waar het grijze gebied ophoudt, en biedt een afwijzingsmail, een contractclausule en commando’s om een overgenomen site te auditen.",
+ "intro": [
+  "Geschreven op 21 november 2026 (JST). Voor bureaus, SEO-bedrijven, WordPress-onderhoudsbedrijven en freelancers die klantsites bouwen of onderhouden. Waar een juridisch oordeel nodig is, raadpleeg een advocaat of de toezichthouder. Deze gids is geen juridisch advies.",
+  "AI-antwoorden veranderen per dag en per formulering. De stappen hier houden de site van een klant veilig in zowel zoekmachines als AI; ze garanderen geen vermelding in een AI-antwoord."
+ ],
+ "sections": [
+  {
+   "heading": "Wat de best scorende gidsen behandelen en wat ze weglaten",
+   "paragraphs": [
+    "Op 21 november 2026 lazen we de pagina’s die ranken op ‘black hat GEO’, ‘AI search what not to do’ en vergelijkbare zoekopdrachten: vier in het Engels (Similarweb, 26 februari 2026, bijgewerkt op 20 mei; Lily Ray, 17 juni 2026; Citable, 25 juni 2026; en een artikel van Search Engine Land over verborgen prompt-injectie) en zes in het Japans, waarvan drie tactieken opsommen die je moet vermijden (Uravation, Jinrai, Sungrove).",
+    "Ze zijn het eens over de basis: geen verborgen tekst, geen massaal geproduceerde dunne content, geen nepreviews. Wat een bureau nodig heeft als een klant daadwerkelijk om zoiets vraagt, ontbrak meestal."
+   ],
+   "table": {
+    "head": [
+     "Gat",
+     "Wat deze gids toevoegt"
+    ],
+    "rows": [
+     [
+      "Lijsten met tactieken, maar niets over hoe je nee zegt tegen een klant",
+      "Een afwijzingsmail en de alternatieven om aan te bieden"
+     ],
+     [
+      "Het beleid van Google wordt genoemd, maar de wijziging van mei 2026 en regels voor reclame-openbaarmaking worden zelden naast elkaar gezet",
+      "Drie regels van Google, Anthropic en de Japanse consumentenautoriteit (Consumer Affairs Agency) in één tabel"
+     ],
+     [
+      "Gidsen zijn het oneens over of vergelijkingspagina’s waarin je zelf staat zijn toegestaan",
+      "Een tabel voor het grijze gebied: wat mag mits openbaar gemaakt, wat vraagt voorzichtigheid"
+     ],
+     [
+      "Niets over contracten of opdrachtomschrijvingen (Citable noemt het in één regel)",
+      "Een voorbeeld van een contractclausule"
+     ],
+     [
+      "Geen manier om te controleren of een vorige leverancier deze tactieken op een site heeft achtergelaten",
+      "Auditcommando’s voor curl en WP-CLI"
+     ],
+     [
+      "Geen WordPress-specifieke informatie",
+      "Hoe je controleert dat wat AI te zien krijgt overeenkomt met wat bezoekers zien"
+     ]
+    ],
+    "caption": "Sommige toppagina’s noemen cijfers als ‘60-80% verkeersverlies binnen enkele dagen’ of ‘3-6 maanden om te herstellen’ zonder bron, dus die gebruiken we hier niet."
+   }
+  },
+  {
+   "heading": "De basis in 2026: drie regels",
+   "paragraphs": [
+    "Dit zijn de regels waarnaar een bureau kan verwijzen bij een afwijzing. Geen ervan voert een gloednieuw verbod in; elk maakt duidelijk dat bestaande normen ook voor AI-antwoorden gelden."
+   ],
+   "table": {
+    "head": [
+     "Regel",
+     "Sinds",
+     "Wat erin staat",
+     "Voor wie het geldt"
+    ],
+    "rows": [
+     [
+      "Spambeleid van Google Zoeken ([origineel](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Verduidelijkt op 15 mei 2026",
+      "Volgens Search Engine Roundtable heeft Google zijn documentatie bijgewerkt: het spambeleid geldt ook voor generatieve AI-antwoorden in Google Zoeken, dus AI Overviews en AI Mode ([bericht](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [wijzigingslog van Google](https://developers.google.com/search/updates)). Search Engine Land meldt dat de openingszin van het beleid nu ook pogingen omvat om generatieve AI-antwoorden te manipuleren ([bericht](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Sites (bij een vastgestelde overtreding kunnen ze lager ranken of helemaal niet verschijnen)"
+     ],
+     [
+      "Gebruiksbeleid van Anthropic ([origineel](https://www.anthropic.com/legal/aup))",
+      "Van kracht sinds 12 november 2026",
+      "Verbiedt het manipuleren van de bronnen waaruit zoekmachines of AI-systemen hun antwoorden halen door content te verspreiden die herkomst, auteurschap of onafhankelijkheid verkeerd voorstelt (bijvoorbeeld netwerken van sites die zich voordoen als onafhankelijke bronnen), sockpuppets, astroturfing en nepreviews, en het verkopen van een van deze als dienst",
+      "Personen en bedrijven die Claude gebruiken, inclusief bureaus die er teksten mee opstellen"
+     ],
+     [
+      "Japanse regel tegen stealthmarketing onder de wet tegen ongerechtvaardigde premies en misleidende voorstellingen ([Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "Sinds 1 oktober 2023",
+      "Reguleert reclame waarvan gewone consumenten niet kunnen zien dat het reclame is",
+      "De adverteerder (je klant), niet de influencer die wordt ingehuurd om te posten"
+     ]
+    ],
+    "caption": "We konden de beleidspagina van Google zelf tijdens het schrijven niet ophalen, dus de formulering hierboven volgt de twee berichten. Lees het origineel en het wijzigingslog voordat je erop vertrouwt. Buiten Japan: controleer de regels van je eigen markt voor reclame-openbaarmaking en nepreviews."
+   },
+   "after": [
+    "Onder de Japanse regel is de adverteerder verantwoordelijk, niet het bureau dat de content heeft gemaakt (Q&A van de Consumer Affairs Agency, Q1). Juist daarom loont het om het aan de klant uit te leggen. Een overtreding kan leiden tot een bevel tot staking (Q2)."
+   ]
+  },
+  {
+   "heading": "Een beoordelingstabel voor vaak gevraagde tactieken",
+   "paragraphs": [
+    "Hier zijn de tactieken waar klanten echt om vragen, ongeveer zoals ze het formuleren, met de reden en wat je in plaats daarvan doet."
+   ],
+   "table": {
+    "head": [
+     "Verzoek",
+     "Besluit",
+     "Waarom",
+     "Doe in plaats daarvan"
+    ],
+    "rows": [
+     [
+      "‘Tekst die alleen AI kan lezen’ in wit, met display:none of piepkleine letters; ‘instructies voor AI’ in HTML-commentaar",
+      "Weigeren",
+      "Dit is verborgen tekst volgens het spambeleid van Google. Informele tests vonden geen zichtbaar effect van verborgen prompts ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), test door één auteur)",
+      "Zet de boodschap in de zichtbare tekst. Beantwoord de vraag in de eerste twee zinnen"
+     ],
+     [
+      "AI-crawlers een andere pagina tonen (cloaking)",
+      "Weigeren",
+      "Zoekmachines andere content tonen dan gebruikers is cloaking volgens het spambeleid",
+      "Geef iedereen dezelfde HTML. Zet een AI-vriendelijke samenvatting met dezelfde feiten in llms.txt"
+     ],
+     [
+      "Een lijst ‘De 10 beste X’ met de klant op 1, vermomd als neutrale review",
+      "Weigeren zoals gevraagd",
+      "Als lezers niet kunnen zien dat het reclame is, kunnen openbaarmakingsregels gelden. In de steekproef van 100 zoekopdrachten van Lily Ray werden bij 224 van de 323 citaties van zelfpromotende lijsten (69%) de aanbieders niet aanbevolen in het AI-antwoord zelf ([artikel](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); haar eigen steekproef, oorzaak niet bewezen)",
+      "Een vergelijkingspagina die duidelijk als die van de klant is aangemerkt, met criteria en de sterke punten van concurrenten"
+     ],
+     [
+      "Reviews door medewerkers of familie; korting voor vijf sterren",
+      "Weigeren",
+      "Reviews waarvan het bedrijf de inhoud bepaalt, kunnen als reclame gelden; korting op voorwaarde van vijf sterren of een aanbeveling valt onder de Japanse regel (Q&A Q6)",
+      "Vraag om reviews zonder voorwaarden en reageer ook op de slechte"
+     ],
+     [
+      "Meerdere ‘onafhankelijke’ reviewsites of blogs die de klant aanbevelen",
+      "Weigeren",
+      "Dit is precies het voorbeeld uit het beleid van Anthropic: netwerken van sites die zich voordoen als onafhankelijk. Voor Google kan het ook linkspam zijn",
+      "Geef echte derden (brancheverenigingen, partners, media) een reden om de klant te noemen: resultaten, data"
+     ],
+     [
+      "Tientallen pagina’s waarin alleen de plaatsnaam verschilt",
+      "Weigeren",
+      "Grote aantallen pagina’s zonder inhoud kunnen vallen onder misbruik van geschaalde content of doorway-pagina’s",
+      "Eén pagina over het werkgebied; aparte pagina’s alleen waar een gebied eigen feiten heeft (aanrijtijd, prijzen, cases)"
+     ],
+     [
+      "FAQ of sterbeoordelingen in gestructureerde gegevens die de pagina niet toont",
+      "Weigeren",
+      "Google eist dat gestructureerde gegevens overeenkomen met zichtbare content",
+      "Zet de FAQ op een zichtbare pagina; geef beoordelingen alleen uit als er echte reviews zijn"
+     ],
+     [
+      "Een leverancier of tool inhuren die ‘nummer 1 in AI’ belooft",
+      "Afraden",
+      "AI-antwoorden variëren, dus niemand kan het garanderen; zulke leveranciers leunen vaak op de tactieken hierboven",
+      "Leg een vaste set vragen vast en controleer verbeteringen door toegevoegde feiten"
+     ]
+    ],
+    "caption": "De kolom ‘Besluit’ is het advies van deze gids voor een bureau. Of een wet van toepassing is, hangt af van de feiten van elk geval."
+   }
+  },
+  {
+   "heading": "Waar het grijze gebied ophoudt",
+   "paragraphs": [
+    "Niet elk verzoek vraagt om een nee. De onderstaande zijn in orde zodra de vorm verandert. De toets heeft twee delen: kunnen lezers zien wie het schreef en of het reclame is, en klopt het met de feiten die op de pagina zichtbaar zijn?"
+   ],
+   "table": {
+    "head": [
+     "Verzoek",
+     "Aanvaardbare vorm",
+     "Let op"
+    ],
+    "rows": [
+     [
+      "Een vergelijkingspagina waarin de klant staat",
+      "Duidelijk op de eigen site van de klant, met criteria, een datum en gevallen waarin een concurrent beter past",
+      "Claims als ‘nummer 1 in de branche’ hebben een bron en datum nodig, of horen er niet te staan"
+     ],
+     [
+      "Betaalde plaatsing in media of op reviewsites",
+      "Gemarkeerd als ‘Advertentie’, ‘PR’, ‘Gesponsord’ of vergelijkbaar (Q&A Q11)",
+      "Een vermelding alleen in de reacties, of alleen aan het begin van een video, is mogelijk niet genoeg (Q14, Q15)"
+     ],
+     [
+      "Klantervaringen",
+      "Ervaringen die zonder voorwaarden zijn verzameld",
+      "Alleen de positieve uitkiezen kan eronder vallen (Q10). Plak geen etiket ‘klantreview’ op influencerposts (Q16)"
+     ],
+     [
+      "Medewerkers die promoten op sociale media",
+      "Posts die het dienstverband duidelijk maken",
+      "Afhankelijk van de functie kunnen posts als die van het bedrijf zelf gelden (Q3); een functietitel alleen is geen voldoende vermelding (Q12)"
+     ],
+     [
+      "Artikelen opgesteld met AI",
+      "Gecontroleerd en bewerkt door een mens, aangevuld met eigen feiten en data van de klant",
+      "Stel geen doelen voor aantallen artikelen en herschrijf niet hetzelfde stuk tot vele"
+     ],
+     [
+      "llms.txt publiceren",
+      "Dezelfde feiten als op de pagina’s, met links ernaartoe",
+      "Geen promotionele claims die alleen voor AI zijn geschreven"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Hoe je nee zegt: een voorbeeldmail",
+   "paragraphs": [
+    "Schrijf hem in drie delen: het besluit, de reden (naam en datum van de regel) en een alternatief dat hetzelfde doel dient. Alleen ‘Dat is riskant, laten we het niet doen’ eindigt er meestal mee dat de klant iemand anders inhuurt."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Geef externe regels als reden, niet de smaak van je bureau; de klant kan ze ongewijzigd doorsturen naar een leidinggevende. Kies het alternatief dat past bij wat de klant eigenlijk wil, zoals door AI aanbevolen worden of sterker overkomen dan een concurrent."
+   ]
+  },
+  {
+   "heading": "Wat je in het contract en de opdrachtomschrijving zet",
+   "paragraphs": [
+    "Om later ‘het vorige bureau deed het ook’ of ‘dat stond in het contract’ te voorkomen, leg je de uitgesloten methoden vast in de overeenkomst of de opdrachtomschrijving. Een voorbeeld:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Een onderhoudscontract dat een aantal AI-vermeldingen als resultaat belooft, geeft iedereen een reden om naar de tactieken hierboven te grijpen. Rapporteer in plaats daarvan welke feiten zijn toegevoegd en over een vaste set vastgelegde vragen ([AI-zoeken als maandelijkse dienst verkopen](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Een overgenomen site auditen",
+   "paragraphs": [
+    "Sites die je overneemt voor onderhoud of een herbouw kunnen tactieken bevatten die een vorige leverancier of plugin heeft toegevoegd. Deze commando’s zoeken naar verborgen opmaak, crawlerspecifieke content, tekenen van massaproductie en de gebruikte typen gestructureerde gegevens. Behandel treffers alleen als aanwijzingen: display:none is normaal in menu’s en accordeons, dus controleer elke treffer met het blote oog."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Toont stap 2 een groot verschil in grootte of inhoud, zoek dan in plugins of serverinstellingen naar schakelen op basis van de user-agent; caching en advertenties veroorzaken kleine verschillen. In Search Console toont het rapport ‘Handmatige acties’ onder ‘Beveiliging en handmatige acties’ overtredingen die een beoordelaar van Google heeft gevonden ([help](https://support.google.com/webmasters/answer/9044175?hl=en)). Los de oorzaak op en vraag daarna een heroverweging aan.",
+    "Vind je massaal geproduceerde pagina’s, voeg ze dan samen tot een pagina met inhoud of verwijder de pagina’s die het bewaren niet waard zijn. Het beslisproces staat in [contentverversing als maandelijkse dienst verkopen](/guide/agency-content-refresh-service)."
+   ]
+  },
+  {
+   "heading": "Stappen in WordPress (met Nurevo AEO)",
+   "paragraphs": [
+    "Zo controleer je met de gratis plugin [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) dat wat AI te zien krijgt overeenkomt met wat bezoekers zien. Met een andere plugin of handmatig controleer je dezelfde punten."
+   ],
+   "list": [
+    "Nurevo AEO leest de user-agent van de bezoeker niet uit. Gestructureerde gegevens worden op de server in de HTML van de pagina gerenderd, zodat browsers en AI-crawlers hetzelfde ontvangen. Groepen per crawler in robots.txt zijn gewone configuratie, geen uitzondering hierop.",
+    "Gestructureerde FAQ-gegevens (FAQPage) worden alleen uitgegeven op een pagina waar het Nurevo-FAQ-blok of [nurevo_faq] staat en de vragen worden getoond. Voor een FAQ die niet zichtbaar is, wordt niets uitgegeven.",
+    "Productbeoordelingen (AggregateRating) worden alleen uitgegeven als het WooCommerce-product reviews heeft. Er is geen veld om een beoordeling in te typen.",
+    "Bedrijfsgegevens worden uit de instellingen van je SEO-plugin en openbare content alleen in lege velden ingevuld; waarden die je zelf hebt ingevoerd, worden nooit overschreven. Controleer met de diagnose of de waarden in de beheeromgeving en de paginatekst overeenkomen.",
+    "Massaal geproduceerde of reclamepagina’s kun je in het Nurevo AEO-paneel per bericht uitsluiten van llms.txt en daar de gestructureerde gegevens van Nurevo uitschakelen. Of je de pagina zelf houdt, is een aparte beslissing.",
+    "De gratis AI-check stelt Perplexity drie vragen per maand, opgebouwd uit bedrijfstype en regio en nooit uit de bedrijfsnaam. Een bedrijf verschijnt hoe dan ook als je naar de naam vraagt, dus dit laat zien of feiten, en niet manipulatie, iets hebben veranderd. Lees ook de cijfers van de Pro-meting (bèta) als indicatief.",
+    "Open na de audit belangrijke pagina’s in de [test voor uitgebreide resultaten](https://search.google.com/test/rich-results) en controleer dat de waarden van de gestructureerde gegevens overeenkomen met de zichtbare tekst."
+   ]
+  },
+  {
+   "heading": "Checklist na de afwijzing",
+   "list": [
+    "De klant heeft per e-mail het besluit, de naam en datum van de regel en een alternatief ontvangen.",
+    "Offerte en opdrachtomschrijving zijn opnieuw opgesteld rond het alternatief.",
+    "Het contract noemt de uitgesloten methoden en wat niet wordt gegarandeerd (gecontroleerd door een advocaat).",
+    "De homepage en belangrijke pagina’s bevatten geen onzichtbare tekst of instructies voor AI.",
+    "Browsers en AI-crawlers ontvangen dezelfde HTML.",
+    "Het aantal publicaties per maand toont geen piek van massaal geproduceerde pagina’s.",
+    "Gestructureerde FAQ- en beoordelingsgegevens komen overeen met zichtbare content.",
+    "Vergelijkingspagina’s en betaalde plaatsingen zijn duidelijk gemarkeerd als van de klant of als reclame.",
+    "Verzoeken om reviews bevatten geen voorwaarden zoals vijf sterren.",
+    "Resultaten worden gerapporteerd op basis van een vaste set vastgelegde vragen zonder de bedrijfsnaam."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Ook als Google verborgen tekst betrapt, werkt het dan niet toch bij ChatGPT of Perplexity?",
+   "a": "We vonden geen betrouwbaar bewijs dat het werkt. AI-bedrijven publiceren verdedigingen tegen verborgen instructies, en informele tests vonden geen effect. Zelfs als het even werkte, behandelt Google Zoeken het als verborgen tekst, dus het risico is het niet waard."
+  },
+  {
+   "q": "Is elk vergelijkend artikel waarin ons eigen bedrijf staat verboden?",
+   "a": "Nee. Maak duidelijk dat het je eigen pagina is, vermeld de criteria en de datum, en zeg waar concurrenten beter passen. De grens ligt bij het presenteren als neutrale review van een derde."
+  },
+  {
+   "q": "Wordt onder de Japanse regel tegen stealthmarketing het bureau bestraft?",
+   "a": "Volgens de Q&A van de Consumer Affairs Agency geldt de regel voor het bedrijf dat over de inhoud besliste (de adverteerder), niet voor derden die werden gevraagd te posten. Daarom heeft de klant de uitleg nodig, zodat hij zelf kan beslissen."
+  },
+  {
+   "q": "Heeft de wijziging van Google in mei 2026 een nieuwe tactiek verboden?",
+   "a": "Volgens berichten zijn er geen nieuwe regels toegevoegd; er is verduidelijkt dat het bestaande spambeleid geldt voor antwoorden in AI Overviews en AI Mode. Raadpleeg het wijzigingslog van Google voor de oorspronkelijke formulering."
+  },
+  {
+   "q": "Is het gebruiksbeleid van Anthropic van belang voor bureaus die Claude niet gebruiken?",
+   "a": "Het regelt direct het gebruik van Claude. Toch is het nuttig bij het uitleggen van een afwijzing, omdat het laat zien wat een AI-bedrijf als misleidend beschouwt, welke AI-tool je ook gebruikt."
+  },
+  {
+   "q": "We vonden verborgen tekst van een vorige leverancier. Wat nu?",
+   "a": "Laat het de klant zien en verwijder het met diens toestemming. Controleer het rapport ‘Handmatige acties’ in Search Console; staat er een overtreding, vraag dan na het herstel een heroverweging aan. Noteer de datum van verwijdering, zodat je later kunt vergelijken."
+  },
+  {
+   "q": "Zorgt legitiem werk alleen ervoor dat AI de klant aanbeveelt?",
+   "a": "Dat valt niet te garanderen. AI-antwoorden veranderen per dag en formulering. Wat je kunt doen: feiten als prijzen, regio’s en resultaten met bronnen op de pagina’s zetten, zorgen dat AI ze kan lezen, en veranderingen volgen met dezelfde vragen."
+  }
+ ],
+ "relatedHeading": "Gerelateerde gidsen",
+ "cta": {
+  "heading": "Bekijk hoe AI een net overgenomen site leest",
+  "body": "De gratis check vraagt geen registratie: voer een URL in en zie de staat van de gestructureerde gegevens, llms.txt en de toegang voor AI-crawlers. Een goede eerste stap voor een audit.",
+  "label": "AI-leesbaarheid gratis controleren",
+  "href": "/check",
+  "secondary": {
+   "label": "Bekijk het partnerprogramma",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT en OAI-SearchBot zijn handelsmerken van OpenAI, Perplexity van Perplexity AI, Claude van Anthropic, en Google en Search Console van Google LLC. WordPress en WooCommerce zijn handelsmerken van hun respectieve eigenaren. Nurevo is niet gelieerd aan of goedgekeurd door deze bedrijven."
+}

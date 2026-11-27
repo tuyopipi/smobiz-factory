@@ -1,0 +1,303 @@
+{
+ "title": "Müşteri yapay zekâ arama hilesi isterse: ajans rehberi | Nurevo",
+ "description": "Müşteri yapay zekâya gizli metin, kendini ilk sıraya koyan listeler veya sahte yorumlar isterse: karar tablosu, 2026 kuralları, ret e-postası, sözleşme maddesi, denetim.",
+ "h1": "Müşteri yapay zekâ arama hileleri istediğinde: ajanslar için karar tablosu, ret metni ve denetim",
+ "lead": "Bir müşteri yalnızca yapay zekânın görebileceği bir metin eklemenizi ya da kendisini ilk sıraya koyan bir \"en iyi hizmet sağlayıcılar\" listesi yayımlamanızı istediğinde, bir ajans için güvenli yanıt reddetmek ve aynı hedefe ulaşmanın meşru bir yolunu önermektir. Google, 15 Mayıs 2026'da belgelerini güncelleyerek spam politikalarının AI Overviews ve AI Mode gibi Google Arama'daki yapay zekâ yanıtları için de geçerli olduğunu netleştirdi; gizlenmiş reklam da pek çok pazarda düzenlemeye tabidir. Bu rehber sık istenen taktiklerin bir tablosunu, gri alanın nerede bittiğini, bir ret e-postasını, bir sözleşme maddesini ve devraldığınız bir siteyi denetlemek için komutları sunar.",
+ "intro": [
+  "21 Kasım 2026 tarihinde yazılmıştır (JST). Müşteri sitelerini kuran veya bakımını yapan ajanslar, SEO firmaları, WordPress bakım şirketleri ve serbest çalışanlar için. Hukuki bir değerlendirme gerektiğinde bir avukata veya ilgili düzenleyici kuruma danışın. Bu rehber hukuki tavsiye değildir.",
+  "Yapay zekâ yanıtları güne ve ifadeye göre değişir. Buradaki adımlar müşterinin sitesini hem aramada hem de yapay zekâda güvende tutar; herhangi bir yapay zekâ yanıtında yer almayı garanti etmez."
+ ],
+ "sections": [
+  {
+   "heading": "Üst sıradaki rehberler neyi ele alıyor, neyi atlıyor",
+   "paragraphs": [
+    "21 Kasım 2026'da \"black hat GEO\", \"AI search what not to do\" ve benzeri sorgularda üst sıralarda yer alan sayfaları okuduk: dördü İngilizce (Similarweb, 26 Şubat 2026, 20 Mayıs'ta güncellendi; Lily Ray, 17 Haziran 2026; Citable, 25 Haziran 2026; ve Search Engine Land'in gizli prompt injection hakkındaki bir yazısı) ve altısı Japonca; bunlardan üçü kaçınılması gereken taktikleri listeliyor (Uravation, Jinrai, Sungrove).",
+    "Temel konularda hemfikirler: gizli metin yok, toplu üretilmiş zayıf içerik yok, sahte yorum yok. Bir müşteri gerçekten bunlardan birini istediğinde bir ajansın ihtiyaç duyduğu şeyler ise çoğunlukla eksikti."
+   ],
+   "table": {
+    "head": [
+     "Eksik",
+     "Bu rehberin eklediği"
+    ],
+    "rows": [
+     [
+      "Taktik listeleri var, ama müşteriye nasıl hayır deneceğine dair bir şey yok",
+      "Bir ret e-postası ve önerilebilecek alternatifler"
+     ],
+     [
+      "Google'ın politikalarından söz ediliyor, ancak Mayıs 2026 değişikliği ve reklam açıklama kuralları nadiren yan yana konuyor",
+      "Google, Anthropic ve Japonya Tüketici İşleri Ajansı'nın (Consumer Affairs Agency) üç kuralı tek bir tabloda"
+     ],
+     [
+      "Rehberler, sizi de içeren karşılaştırma sayfalarına izin verilip verilmediği konusunda ayrışıyor",
+      "Bir gri alan tablosu: açıklanırsa sorun olmayanlar, dikkat gerektirenler"
+     ],
+     [
+      "Sözleşmeler veya iş kapsamı belgeleri hakkında hiçbir şey yok (Citable tek satırda değiniyor)",
+      "Örnek bir sözleşme maddesi"
+     ],
+     [
+      "Önceki bir hizmet sağlayıcının sitede bu taktikleri bırakıp bırakmadığını kontrol etmenin yolu yok",
+      "curl ve WP-CLI denetim komutları"
+     ],
+     [
+      "WordPress'e özgü ayrıntı yok",
+      "Yapay zekâya yönelik çıktının ziyaretçilerin gördüğüyle eşleştiğini nasıl doğrulayacağınız"
+     ]
+    ],
+    "caption": "Üst sıradaki sayfaların bazıları \"birkaç gün içinde %60-80 trafik kaybı\" veya \"toparlanma için 3-6 ay\" gibi rakamları kaynak göstermeden aktarıyor; bu nedenle onları burada kullanmıyoruz."
+   }
+  },
+  {
+   "heading": "2026'nın temel çizgisi: üç kural",
+   "paragraphs": [
+    "Bunlar bir ajansın reddederken başvurabileceği kurallardır. Hiçbiri yepyeni bir yasak getirmiyor; her biri mevcut standartların yapay zekâ yanıtlarını da kapsadığını netleştiriyor."
+   ],
+   "table": {
+    "head": [
+     "Kural",
+     "Başlangıç",
+     "Ne diyor",
+     "Kimi kapsıyor"
+    ],
+    "rows": [
+     [
+      "Google Arama spam politikaları ([orijinal](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "15 Mayıs 2026'da netleştirildi",
+      "Search Engine Roundtable'a göre Google, belgelerini spam politikalarının Google Arama'daki üretken yapay zekâ yanıtları, yani AI Overviews ve AI Mode için de geçerli olduğunu belirtecek şekilde güncelledi ([haber](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [Google'ın değişiklik günlüğü](https://developers.google.com/search/updates)). Search Engine Land, politikanın giriş cümlesinin artık üretken yapay zekâ yanıtlarını manipüle etme girişimlerini de kapsadığını bildiriyor ([haber](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Siteler (ihlal tespit edilirse daha alt sıralarda yer alabilir veya hiç görünmeyebilir)"
+     ],
+     [
+      "Anthropic Kullanım Politikası ([orijinal](https://www.anthropic.com/legal/aup))",
+      "12 Kasım 2026'dan itibaren yürürlükte",
+      "Arama motorlarının veya yapay zekâ sistemlerinin yanıtlarını aldığı kaynakları; kökenini, yazarını veya bağımsızlığını yanlış gösteren içerik yerleştirerek (örneğin bağımsız kaynak gibi görünen site ağları) manipüle etmeyi, sahte hesapları (sockpuppet), astroturfing'i ve sahte yorumları, ayrıca bunlardan herhangi birini hizmet olarak satmayı yasaklar",
+      "Claude'u kullanan kişiler ve şirketler; onunla metin hazırlayan ajanslar dahil"
+     ],
+     [
+      "Japonya'nın Haksız Promosyonlar ve Yanıltıcı Beyanlara Karşı Kanun kapsamındaki gizli pazarlama kuralı ([Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "1 Ekim 2023'ten itibaren",
+      "Sıradan tüketicilerin reklam olduğunu anlayamadığı reklamları düzenler",
+      "Reklam veren (müşteriniz), paylaşım yapması için tutulan influencer değil"
+     ]
+    ],
+    "caption": "Yazım sırasında Google'ın kendi politika sayfasına erişemedik; bu nedenle yukarıdaki ifadeler iki habere dayanıyor. Buna güvenmeden önce orijinali ve değişiklik günlüğünü okuyun. Japonya dışında, kendi pazarınızın reklam açıklama ve sahte yorum kurallarını kontrol edin."
+   },
+   "after": [
+    "Japon kuralına göre sorumlu tutulan taraf, içeriği üreten ajans değil reklam verendir (Consumer Affairs Agency Soru-Cevap, Q1). Tam da bu yüzden bunu müşteriye açıklamaya değer. Bir ihlal, faaliyetin durdurulması emrine yol açabilir (Q2)."
+   ]
+  },
+  {
+   "heading": "Sık istenen taktikler için karar tablosu",
+   "paragraphs": [
+    "İşte müşterilerin gerçekten istediği taktikler, aşağı yukarı istedikleri şekilde ifade edilmiş olarak; gerekçesi ve bunun yerine ne yapılacağıyla birlikte."
+   ],
+   "table": {
+    "head": [
+     "Talep",
+     "Karar",
+     "Neden",
+     "Bunun yerine bunu yapın"
+    ],
+    "rows": [
+     [
+      "Beyaz renkte, display:none ile veya çok küçük puntoyla \"yalnızca yapay zekânın okuyabileceği metin\"; HTML yorumlarında \"yapay zekâ için talimatlar\"",
+      "Reddet",
+      "Google'ın spam politikalarına göre bu gizli metindir. Gayri resmî testlerde gizli prompt'ların görünür bir etkisi olmadığı görüldü ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), tek bir yazarın testi)",
+      "Mesajı görünür metne koyun. Soruyu ilk iki cümlede yanıtlayın"
+     ],
+     [
+      "Yapay zekâ tarayıcılarına farklı bir sayfa sunmak (cloaking)",
+      "Reddet",
+      "Arama motorlarına kullanıcılardan farklı içerik göstermek, spam politikalarına göre cloaking'dir",
+      "Herkese aynı HTML'i sunun. Yapay zekâ dostu bir özeti aynı bilgilerle llms.txt dosyasına koyun"
+     ],
+     [
+      "Tarafsız bir inceleme kılığında, müşteriyi ilk sıraya koyan bir \"en iyi 10 X\" listesi",
+      "İstendiği hâliyle reddet",
+      "Okuyucular bunun reklam olduğunu anlayamıyorsa açıklama kuralları geçerli olabilir. Lily Ray'in 100 sorguluk örnekleminde, kendini öne çıkaran listelere yapılan 323 atıftan 224'ünde (%69) şirket yapay zekâ yanıtının kendisinde önerilmedi ([makale](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); kendi örneklemi, neden kanıtlanmadı)",
+      "Müşterinin kendi sayfası olduğu açıkça belirtilen; kriterleri ve rakiplerin güçlü yanlarını içeren bir karşılaştırma sayfası"
+     ],
+     [
+      "Çalışanların veya akrabaların yazdığı yorumlar; beş yıldız karşılığında indirim",
+      "Reddet",
+      "İçeriğini işletmenin kontrol ettiği yorumlar reklam sayılabilir; beş yıldıza veya tavsiyeye bağlı bir indirim Japon kuralının kapsamındadır (Soru-Cevap Q6)",
+      "Koşulsuz yorum isteyin ve olumsuz olanlara da yanıt verin"
+     ],
+     [
+      "Müşteriyi öneren birkaç \"bağımsız\" inceleme sitesi veya blog",
+      "Reddet",
+      "Bu, Anthropic politikasındaki örneğin ta kendisi: bağımsız gibi görünen site ağları. Google açısından bağlantı spam'i de olabilir",
+      "Gerçek üçüncü taraflara (dernekler, iş ortakları, medya) müşteriden söz etmeleri için bir neden verin: sonuçlar, veriler"
+     ],
+     [
+      "Yalnızca şehir adının değiştiği düzinelerce sayfa",
+      "Reddet",
+      "Özü olmayan çok sayıda sayfa, ölçekli içerik kötüye kullanımı veya ara sayfa (doorway) kötüye kullanımı kapsamına girebilir",
+      "Tek bir hizmet bölgesi sayfası; ayrı sayfalar yalnızca bir bölgenin kendine özgü bilgileri olduğunda (varış süresi, fiyatlar, vakalar)"
+     ],
+     [
+      "Sayfada gösterilmeyen SSS veya yıldız puanlarının yapılandırılmış veride yer alması",
+      "Reddet",
+      "Google, yapılandırılmış verinin görünür içerikle eşleşmesini şart koşar",
+      "SSS'yi görünür bir sayfaya koyun; puanları yalnızca gerçek yorumlar varsa çıktı olarak verin"
+     ],
+     [
+      "\"Yapay zekâda 1 numara\" vaat eden bir hizmet sağlayıcı veya aracı kullanmak",
+      "Tavsiye edilmez",
+      "Yapay zekâ yanıtları değişkendir, bu yüzden kimse bunu garanti edemez; bu tür sağlayıcılar çoğu zaman yukarıdaki taktiklere dayanır",
+      "Sabit bir soru setini kaydedin ve eklenen bilgilerle gelen iyileşmeleri kontrol edin"
+     ]
+    ],
+    "caption": "\"Karar\" sütunu, bu rehberin bir ajansa önerisidir. Bir yasanın uygulanıp uygulanmayacağı her vakanın koşullarına bağlıdır."
+   }
+  },
+  {
+   "heading": "Gri alan nerede biter",
+   "paragraphs": [
+    "Her talebe hayır demek gerekmez. Aşağıdakiler biçim değiştiğinde sorun olmaz. Test iki bölümden oluşur: okuyucular bunu kimin yazdığını ve reklam olup olmadığını anlayabiliyor mu, ve sayfada görünen bilgilerle örtüşüyor mu?"
+   ],
+   "table": {
+    "head": [
+     "Talep",
+     "Kabul edilebilir biçim",
+     "Dikkat edilmesi gerekenler"
+    ],
+    "rows": [
+     [
+      "Müşteriyi de içeren bir karşılaştırma sayfası",
+      "Açıkça müşterinin kendi sitesinde; kriterler, tarih ve bir rakibin daha uygun olduğu durumlarla birlikte",
+      "\"Sektörde 1 numara\" gibi iddialar kaynak ve tarih gerektirir, aksi hâlde yer almamalıdır"
+     ],
+     [
+      "Medyada veya inceleme sitelerinde ücretli yerleşim",
+      "\"Reklam\", \"PR\", \"Sponsorlu\" veya benzeri bir etiketle (Soru-Cevap Q11)",
+      "Yalnızca yorumlarda ya da yalnızca videonun başında yer alan bir etiket yeterli olmayabilir (Q14, Q15)"
+     ],
+     [
+      "Müşteri görüşleri",
+      "Koşulsuz toplanmış görüşler",
+      "Yalnızca olumlu olanları seçmek kapsama girebilir (Q10). Influencer paylaşımlarını müşteri yorumu olarak yeniden etiketlemeyin (Q16)"
+     ],
+     [
+      "Çalışanların sosyal medyada tanıtım yapması",
+      "İş ilişkisini açıkça gösteren paylaşımlar",
+      "Role bağlı olarak paylaşımlar şirketin kendi paylaşımı sayılabilir (Q3); tek başına unvan yeterli bir etiket değildir (Q12)"
+     ],
+     [
+      "Yapay zekâ ile taslağı hazırlanan makaleler",
+      "Bir insan tarafından doğrulanmış ve düzenlenmiş, müşterinin kendi bilgileri ve verileri eklenmiş",
+      "Makale sayısı hedefleri koymayın ve aynı yazıyı farklı ifadelerle çoğaltmayın"
+     ],
+     [
+      "llms.txt yayımlamak",
+      "Sayfalarla aynı bilgiler, sayfalara bağlantılarla",
+      "Yalnızca yapay zekâ için yazılmış tanıtım iddiaları olmasın"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Nasıl hayır denir: örnek e-posta",
+   "paragraphs": [
+    "Üç bölüm hâlinde yazın: karar, gerekçe (kuralın adı ve tarihi) ve aynı hedefe hizmet eden bir alternatif. Tek başına \"riskli, yapmayalım\" demek genellikle müşterinin bunu yapması için başka birini tutmasıyla sonuçlanır."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Gerekçe olarak ajansınızın zevkini değil, dış kuralları gösterin; müşteri bunları olduğu gibi bir yöneticiye iletebilir. Alternatifi, müşterinin gerçekte ne istediğine göre seçin; örneğin yapay zekâ tarafından önerilmek ya da bir rakipten daha güçlü görünmek."
+   ]
+  },
+  {
+   "heading": "Sözleşmeye ve iş kapsamına ne yazılmalı",
+   "paragraphs": [
+    "İleride \"önceki ajans yapmıştı\" ya da \"bu sözleşmede vardı\" gibi tartışmalardan kaçınmak için hariç tutulan yöntemleri sözleşmeye veya iş tanımına yazın. Bir örnek:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Sonuç olarak belirli sayıda yapay zekâ anılması vaat eden aylık bir sözleşme, herkese yukarıdaki taktiklere başvurmak için bir neden verir. Bunun yerine hangi bilgilerin eklendiğini ve kaydedilmiş sabit bir soru setinin sonuçlarını raporlayın ([yapay zekâ aramasını aylık hizmet olarak satmak](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Devralınan bir siteyi denetlemek",
+   "paragraphs": [
+    "Bakım veya yeniden yapım için devraldığınız sitelerde önceki bir hizmet sağlayıcının veya eklentinin eklediği taktikler bulunabilir. Bu komutlar gizli stilleri, tarayıcıya özel içeriği, toplu üretim belirtilerini ve kullanılan yapılandırılmış veri türlerini arar. Eşleşmeleri yalnızca ipucu olarak görün: display:none menülerde ve akordeonlarda olağandır, bu yüzden her birini gözle kontrol edin."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "2. adım boyut veya içerikte büyük bir fark gösterirse, eklentilerde veya sunucu ayarlarında user agent'a göre geçiş yapan bir şey arayın; önbellekleme ve reklamlar küçük farklara neden olur. Search Console'da Güvenlik ve Manuel İşlemler altındaki Manuel işlemler raporu, bir Google incelemecisinin tespit ettiği ihlalleri gösterir ([yardım](https://support.google.com/webmasters/answer/9044175?hl=en)). Nedeni düzeltin, ardından inceleme isteyin.",
+    "Toplu üretilmiş sayfalar bulursanız, bunları özü olan tek bir sayfada birleştirin ya da tutmaya değmeyenleri kaldırın. Karar süreci [içerik yenilemeyi aylık hizmet olarak satmak](/guide/agency-content-refresh-service) rehberinde anlatılıyor."
+   ]
+  },
+  {
+   "heading": "WordPress'te adımlar (Nurevo AEO ile)",
+   "paragraphs": [
+    "Ücretsiz [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) eklentisiyle yapay zekâya yönelik çıktının ziyaretçilerin gördüğüyle eşleştiğini şöyle doğrulayabilirsiniz. Başka bir eklentiyle veya elle de aynı şeyleri kontrol edin."
+   ],
+   "list": [
+    "Nurevo AEO ziyaretçinin user agent'ını okumaz. Yapılandırılmış veri sunucuda sayfa HTML'ine işlenir, böylece tarayıcılar ve yapay zekâ tarayıcıları aynı şeyi alır. robots.txt içindeki tarayıcıya özel gruplar olağan bir yapılandırmadır, bunun bir istisnası değildir.",
+    "SSS yapılandırılmış verisi (FAQPage) yalnızca Nurevo FAQ bloğunun veya [nurevo_faq] kısa kodunun yerleştirildiği ve soruların gösterildiği bir sayfada çıktı olarak verilir. Görünmeyen bir SSS için hiçbir şey çıktı olarak verilmez.",
+    "Ürün puanları (AggregateRating) yalnızca WooCommerce ürününün yorumları olduğunda çıktı olarak verilir. Puan yazmak için bir alan yoktur.",
+    "İşletme bilgileri, SEO eklentinizin ayarlarından ve herkese açık içerikten yalnızca boş alanlara doldurulur; girdiğiniz değerlerin üzerine asla yazılmaz. Teşhise bakarak yönetim panelindeki değerlerle sayfa metninin örtüştüğünü kontrol edin.",
+    "Toplu üretilmiş veya reklam sayfaları llms.txt dışında bırakılabilir ve yazı başına Nurevo AEO panelinde Nurevo'nun yapılandırılmış verisi kapatılabilir. Sayfanın kendisinin tutulup tutulmayacağı ayrı bir karardır.",
+    "Ücretsiz yapay zekâ kontrolü, Perplexity'ye ayda üç soru sorar; bu sorular işletme türü ve bölgeden oluşturulur, asla işletme adını içermez. Bir işletme adıyla sorulduğunda zaten görünür; dolayısıyla bu, bir şeyi manipülasyonun değil bilgilerin değiştirip değiştirmediğini gösterir. Pro ölçümünün (beta) rakamlarını da yol gösterici olarak okuyun.",
+    "Denetimden sonra önemli sayfaları [Rich Results Test](https://search.google.com/test/rich-results) aracında açın ve yapılandırılmış veri değerlerinin görünür metinle eşleştiğini doğrulayın."
+   ]
+  },
+  {
+   "heading": "Reddettikten sonra kontrol listesi",
+   "list": [
+    "Müşteri kararı, kuralın adını ve tarihini ve bir alternatifi e-postayla aldı.",
+    "Teklif ve iş kapsamı alternatife göre yeniden hazırlandı.",
+    "Sözleşmede hariç tutulan yöntemler ve garanti edilmeyenler listeleniyor (avukat tarafından incelendi).",
+    "Ana sayfada ve önemli sayfalarda görünmeyen metin veya yapay zekâya yönelik talimat yok.",
+    "Tarayıcılar ve yapay zekâ tarayıcıları aynı HTML'i alıyor.",
+    "Aylık yayın sayıları toplu üretilmiş sayfalarda ani bir artış göstermiyor.",
+    "SSS ve puan yapılandırılmış verileri görünür içerikle eşleşiyor.",
+    "Karşılaştırma sayfaları ve ücretli yerleşimler açıkça müşterinin kendisine ait ya da reklam olarak etiketlenmiş.",
+    "Yorum taleplerinde beş yıldız gibi koşullar yok.",
+    "Sonuçlar, işletme adını içermeyen, kaydedilmiş sabit bir soru setine göre raporlanıyor."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Google gizli metni yakalasa bile, ChatGPT veya Perplexity'de yine de işe yaramaz mı?",
+   "a": "İşe yaradığına dair güvenilir bir kanıt bulamadık. Yapay zekâ şirketleri gizli talimatlara karşı savunmalarını yayımlıyor ve gayri resmî testler de bir etki bulmadı. Kısa bir süre işe yarasa bile Google Arama bunu gizli metin olarak değerlendirir, bu yüzden riske değmez."
+  },
+  {
+   "q": "Kendi şirketimizi de içeren her karşılaştırma yazısı yasak mı?",
+   "a": "Hayır. Bunun kendi sayfanız olduğunu açıkça belirtin, kriterleri ve tarihi yazın ve rakiplerin nerede daha uygun olduğunu söyleyin. Sınır, bunu tarafsız bir üçüncü taraf incelemesi gibi sunmaktır."
+  },
+  {
+   "q": "Japonya'nın gizli pazarlama kuralına göre cezalandırılan ajans mı?",
+   "a": "Consumer Affairs Agency Soru-Cevap metni, kuralın içeriğe karar veren işletmeyi (reklam vereni) kapsadığını, paylaşım yapması istenen üçüncü tarafları kapsamadığını söylüyor. Bu yüzden müşterinin kendi kararını verebilmesi için açıklamaya ihtiyacı var."
+  },
+  {
+   "q": "Google'ın Mayıs 2026 değişikliği yeni bir taktiği yasakladı mı?",
+   "a": "Haberlere göre yeni kural eklemedi; mevcut spam politikalarının AI Overviews ve AI Mode'daki yanıtlara uygulandığını netleştirdi. Orijinal ifade için Google'ın değişiklik günlüğüne bakın."
+  },
+  {
+   "q": "Anthropic Kullanım Politikası, Claude kullanmayan ajanslar için önemli mi?",
+   "a": "Doğrudan Claude kullanımını düzenler. Yine de bir reddi açıklarken işe yarar, çünkü hangi yapay zekâ aracını kullanırsanız kullanın, bir yapay zekâ şirketinin neyi aldatıcı saydığını gösterir."
+  },
+  {
+   "q": "Önceki bir hizmet sağlayıcının bıraktığı gizli metin bulduk. Şimdi ne yapmalıyız?",
+   "a": "Bunu müşteriye gösterin ve onayıyla kaldırın. Search Console'daki Manuel işlemler raporunu kontrol edin; bir ihlal listeleniyorsa düzelttikten sonra inceleme isteyin. Daha sonra karşılaştırabilmek için kaldırdığınız tarihi kaydedin."
+  },
+  {
+   "q": "Yalnızca meşru çalışma, müşterinin yapay zekâ tarafından önerilmesini sağlar mı?",
+   "a": "Bu garanti edilemez. Yapay zekâ yanıtları güne ve ifadeye göre değişir. Yapabileceğiniz şey, fiyatlar, bölgeler ve sonuçlar gibi bilgileri kaynaklarıyla birlikte sayfalara koymak, yapay zekânın bunları okuyabildiğinden emin olmak ve değişiklikleri aynı sorularla takip etmektir."
+  }
+ ],
+ "relatedHeading": "İlgili rehberler",
+ "cta": {
+  "heading": "Yeni devraldığınız bir siteyi yapay zekânın nasıl okuduğunu görün",
+  "body": "Ücretsiz kontrol için kayıt gerekmez: yapılandırılmış verinin, llms.txt'nin ve yapay zekâ tarayıcısı erişiminin durumunu görmek için bir URL girin. Bir denetim için iyi bir ilk adım.",
+  "label": "Yapay zekâ okunabilirliğini ücretsiz kontrol et",
+  "href": "/check",
+  "secondary": {
+   "label": "İş ortaklığı programını görün",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT ve OAI-SearchBot OpenAI'ın, Perplexity Perplexity AI'ın, Claude Anthropic'in, Google ve Search Console ise Google LLC'nin ticari markalarıdır. WordPress ve WooCommerce ilgili sahiplerinin ticari markalarıdır. Nurevo bu şirketlerle bağlantılı değildir ve onlar tarafından desteklenmemektedir."
+}

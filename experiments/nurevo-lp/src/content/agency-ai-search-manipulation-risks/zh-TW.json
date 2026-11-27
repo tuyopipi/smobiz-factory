@@ -1,0 +1,303 @@
+{
+ "title": "客戶要求 AI 搜尋作弊手法時：代理商應對指南 | Nurevo",
+ "description": "客戶要求給 AI 看的隱藏文字、把自己排第一的榜單或假評論時怎麼辦：判斷表、2026 年規則、婉拒信、合約條款與網站稽核。",
+ "h1": "客戶要求 AI 搜尋作弊手法時：給代理商的判斷表、婉拒話術與稽核方法",
+ "lead": "當客戶要求你加入只有 AI 才看得到的文字，或發布一份把他們排在第一名的「最佳服務商」榜單時，代理商最穩妥的做法是婉拒，並提出達成同一目標的正當方法。2026 年 5 月 15 日，Google 更新了文件，明確表示其垃圾內容政策同樣適用於 Google 搜尋中的 AI 回答，例如 AI Overviews 和 AI Mode；而偽裝廣告在許多市場都受到規範。本指南提供常見請求手法的判斷表、灰色地帶的界線、婉拒信、合約條款，以及稽核接手網站的指令。",
+ "intro": [
+  "撰寫於 2026 年 11 月 21 日（JST）。適合為客戶建置或維護網站的代理商、SEO 公司、WordPress 維護公司與自由工作者。需要法律判斷時，請洽詢律師或主管機關。本指南不構成法律建議。",
+  "AI 的回答會因日期與提問措辭而改變。這裡的步驟能讓客戶網站在搜尋與 AI 中都保持安全，但不保證會出現在任何 AI 回答中。"
+ ],
+ "sections": [
+  {
+   "heading": "排名前段的指南談了什麼，又漏了什麼",
+   "paragraphs": [
+    "2026 年 11 月 21 日，我們閱讀了在「black hat GEO」「AI search what not to do」等查詢中排名前段的頁面：英文四篇（Similarweb，2026 年 2 月 26 日發布、5 月 20 日更新；Lily Ray，2026 年 6 月 17 日；Citable，2026 年 6 月 25 日；以及 Search Engine Land 一篇關於隱藏 prompt injection 的文章），日文六篇，其中三篇列出了應避免的手法（Uravation、Jinrai、Sungrove）。",
+    "它們在基本觀念上一致：不用隱藏文字、不大量產出內容空洞的頁面、不做假評論。但當客戶真的提出這類要求時，代理商需要的內容大多付之闕如。"
+   ],
+   "table": {
+    "head": [
+     "缺漏之處",
+     "本指南補充的內容"
+    ],
+    "rows": [
+     [
+      "列出了手法，卻沒說如何婉拒客戶",
+      "婉拒信與可提出的替代方案"
+     ],
+     [
+      "提到了 Google 的政策，但很少把 2026 年 5 月的變更與廣告揭露規範並列",
+      "將 Google、Anthropic 與日本消費者廳（Consumer Affairs Agency）的三項規則整理成一張表"
+     ],
+     [
+      "對於包含自家公司的比較頁面是否可行，各指南說法不一",
+      "灰色地帶表：哪些揭露後就沒問題，哪些需要留意"
+     ],
+     [
+      "沒有提到合約或工作範圍文件（Citable 僅一句帶過）",
+      "合約條款範例"
+     ],
+     [
+      "沒有方法檢查前任廠商是否在網站上留下這些手法",
+      "curl 與 WP-CLI 稽核指令"
+     ],
+     [
+      "沒有 WordPress 的具體內容",
+      "如何確認給 AI 的輸出與訪客看到的內容一致"
+     ]
+    ],
+    "caption": "部分排名前段的頁面引用了「數天內流量流失 60-80%」「需要 3-6 個月才能恢復」等數字卻未註明出處，因此本文不採用。"
+   }
+  },
+  {
+   "heading": "2026 年的基準：三項規則",
+   "paragraphs": [
+    "這些是代理商婉拒時可以援引的規則。它們都不是全新的禁令，而是明確表示既有標準同樣適用於 AI 回答。"
+   ],
+   "table": {
+    "head": [
+     "規則",
+     "起始時間",
+     "內容",
+     "適用對象"
+    ],
+    "rows": [
+     [
+      "Google 搜尋垃圾內容政策（[原文](https://developers.google.com/search/docs/essentials/spam-policies)）",
+      "2026 年 5 月 15 日明確化",
+      "根據 Search Engine Roundtable 報導，Google 更新文件，說明垃圾內容政策也適用於 Google 搜尋中的生成式 AI 回答，也就是 AI Overviews 和 AI Mode（[報導](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html)、[Google 更新記錄](https://developers.google.com/search/updates)）。Search Engine Land 報導指出，該政策的開頭一句現已包含試圖操縱生成式 AI 回答的行為（[報導](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657)）",
+      "網站（一旦被判定違規，排名可能下降或完全不顯示）"
+     ],
+     [
+      "Anthropic 使用政策（[原文](https://www.anthropic.com/legal/aup)）",
+      "2026 年 11 月 12 日起生效",
+      "禁止透過散布扭曲來源、作者或獨立性的內容（例如偽裝成無關聯來源的網站群）來操縱搜尋引擎或 AI 系統擷取答案的來源，禁止分身帳號、假草根造勢（astroturfing）與假評論，也禁止將其中任何一項當作服務販售",
+      "使用 Claude 的個人與企業，包括用它撰寫文案的代理商"
+     ],
+     [
+      "日本《不當贈品類及不當標示防止法》下的隱性行銷規定（[Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/)）",
+      "2023 年 10 月 1 日起",
+      "規範一般消費者無法辨識為廣告的廣告",
+      "廣告主（你的客戶），而非受僱發文的網紅"
+     ]
+    ],
+    "caption": "撰寫本文時我們無法取得 Google 本身的政策頁面，因此上述措辭依據的是兩篇報導。依此行事前，請先閱讀原文與更新記錄。在日本以外，請確認你所在市場的廣告揭露與假評論規範。"
+   },
+   "after": [
+    "依照日本的規定，負責任的是廣告主，而不是製作內容的代理商（消費者廳問答 Q1）。正因如此，才值得向客戶說明。違規可能會被下達停止命令（Q2）。"
+   ]
+  },
+  {
+   "heading": "常見請求手法的判斷表",
+   "paragraphs": [
+    "以下是客戶實際會提出的手法，大致照他們的說法描述，並附上理由與替代做法。"
+   ],
+   "table": {
+    "head": [
+     "請求",
+     "判斷",
+     "理由",
+     "替代做法"
+    ],
+    "rows": [
+     [
+      "用白色文字、display:none 或極小字級放「只給 AI 看的文字」；在 HTML 註解裡寫「給 AI 的指示」",
+      "婉拒",
+      "依照 Google 的垃圾內容政策，這屬於隱藏文字。非正式測試發現隱藏提示詞沒有明顯效果（[Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331)，單一作者的測試）",
+      "把訊息寫進可見內文。在前兩句回答問題"
+     ],
+     [
+      "提供 AI 爬蟲不同的頁面（偽裝 cloaking）",
+      "婉拒",
+      "向搜尋引擎顯示與使用者不同的內容，依垃圾內容政策屬於偽裝",
+      "向所有人提供相同的 HTML。在 llms.txt 中以相同事實撰寫方便 AI 理解的摘要"
+     ],
+     [
+      "偽裝成中立評測、把客戶排第一的「10 大最佳 X」榜單",
+      "依原樣婉拒",
+      "如果讀者看不出這是廣告，可能適用揭露規範。在 Lily Ray 的 100 個查詢樣本中，自我推薦榜單的 323 次引用裡有 224 次（69%）在 AI 回答本身並未推薦該公司（[文章](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could)；其自有樣本，因果關係未經證實）",
+      "明確標示為客戶自家頁面的比較頁，寫出評比標準與競爭對手的優勢"
+     ],
+     [
+      "由員工或親友撰寫評論；給五星評價打折",
+      "婉拒",
+      "內容由業者控制的評論可能被視為廣告；以五星或推薦為條件的折扣屬於日本規定的範圍（問答 Q6）",
+      "不附條件地邀請評論，也要回覆負評"
+     ],
+     [
+      "多個推薦客戶的「獨立」評測網站或部落格",
+      "婉拒",
+      "這正是 Anthropic 政策中的例子：偽裝成無關聯的網站群。對 Google 來說也可能構成連結垃圾",
+      "給真正的第三方（公協會、合作夥伴、媒體）提及客戶的理由：成果、數據"
+     ],
+     [
+      "數十個只替換城市名稱的頁面",
+      "婉拒",
+      "大量缺乏實質內容的頁面，可能屬於大規模內容濫用或門頁（doorway）濫用",
+      "做一個服務區域頁面；只有當某個區域有自己的事實（抵達時間、價格、案例）時才另外建頁"
+     ],
+     [
+      "在結構化資料中放入頁面沒有顯示的 FAQ 或星等評分",
+      "婉拒",
+      "Google 要求結構化資料必須與可見內容一致",
+      "把 FAQ 放在可見頁面上；只有在有真實評論時才輸出評分"
+     ],
+     [
+      "委託承諾「AI 中排名第一」的廠商或工具",
+      "不建議",
+      "AI 回答會變動，沒有人能保證這一點；這類廠商往往仰賴上述手法",
+      "記錄一組固定問題，檢查補充事實後帶來的改善"
+     ]
+    ],
+    "caption": "「判斷」欄是本指南給代理商的建議。是否適用某項法律，取決於個案的具體情況。"
+   }
+  },
+  {
+   "heading": "灰色地帶的界線在哪裡",
+   "paragraphs": [
+    "並不是每個請求都要婉拒。以下項目只要改變形式就沒有問題。判斷標準有兩點：讀者能否看出是誰寫的、是否為廣告；以及內容是否與頁面上可見的事實一致。"
+   ],
+   "table": {
+    "head": [
+     "請求",
+     "可接受的形式",
+     "注意事項"
+    ],
+    "rows": [
+     [
+      "包含客戶的比較頁面",
+      "明確放在客戶自己的網站上，寫出評比標準、日期，以及競爭對手更適合的情況",
+      "「業界第一」之類的說法需要出處與日期，否則不應出現"
+     ],
+     [
+      "在媒體或評測網站上的付費刊登",
+      "標示「廣告」「PR」「贊助」或類似字樣（問答 Q11）",
+      "只在留言區或只在影片開頭標示，可能不夠（Q14、Q15）"
+     ],
+     [
+      "顧客心得",
+      "無條件蒐集的心得",
+      "只挑選好評也可能屬於規範範圍（Q10）。不要把網紅貼文改標為顧客評論（Q16）"
+     ],
+     [
+      "員工在社群媒體上宣傳",
+      "清楚表明僱傭關係的貼文",
+      "視職務而定，貼文可能被視為公司本身的發布（Q3）；只寫職稱不算充分標示（Q12）"
+     ],
+     [
+      "以 AI 撰寫草稿的文章",
+      "由人工查證事實並編輯，補上客戶自己的事實與數據",
+      "不要設定文章篇數目標，也不要把同一篇改寫成多篇"
+     ],
+     [
+      "發布 llms.txt",
+      "與頁面相同的事實，並附上指向頁面的連結",
+      "不寫只給 AI 看的宣傳性說法"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "如何婉拒：信件範例",
+   "paragraphs": [
+    "分三部分撰寫：結論、理由（規則名稱與日期），以及達成同一目標的替代方案。只說一句「有風險，還是別做吧」，往往會讓客戶轉而找別人來做。"
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "以外部規則作為理由，而不是你們公司的喜好；客戶可以原封不動轉給主管。替代方案要依客戶真正想要的來挑選，例如被 AI 推薦，或看起來比競爭對手更強。"
+   ]
+  },
+  {
+   "heading": "合約與工作範圍中應寫明什麼",
+   "paragraphs": [
+    "為了避免日後出現「上一家代理商就做了」或「合約裡有寫」的爭議，請把排除的方法寫進合約或工作說明書。範例如下："
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "如果月費合約以 AI 提及次數作為承諾成果，就會讓所有人都有理由使用上述手法。應改為報告補充了哪些事實，以及一組固定記錄問題的結果（[把 AI 搜尋當作月費服務來銷售](/guide/agency-aeo-monthly-service)）。"
+   ]
+  },
+  {
+   "heading": "稽核接手的網站",
+   "paragraphs": [
+    "你接手維護或改版的網站，可能帶有前任廠商或外掛加入的手法。下列指令會尋找隱藏樣式、針對爬蟲的內容、大量產出的跡象，以及正在使用的結構化資料類型。比對結果僅作為線索：display:none 在選單與摺疊面板中很常見，請逐一以肉眼確認。"
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "如果第 2 步顯示大小或內容差異很大，請在外掛或伺服器設定中尋找依 user agent 切換的機制；快取與廣告只會造成些微差異。在 Search Console 中，「安全性與專人介入處理」底下的「專人介入處理」報告會顯示 Google 審查人員發現的違規（[說明](https://support.google.com/webmasters/answer/9044175?hl=en)）。修正原因後再申請重新審查。",
+    "如果發現大量產出的頁面，可以合併成一個有實質內容的頁面，或刪除不值得保留的頁面。判斷流程請見[把內容更新當作月費服務來銷售](/guide/agency-content-refresh-service)。"
+   ]
+  },
+  {
+   "heading": "WordPress 中的步驟（使用 Nurevo AEO）",
+   "paragraphs": [
+    "以下說明如何用免費外掛 [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) 確認給 AI 的輸出與訪客看到的內容一致。使用其他外掛或手動操作時，也請檢查相同項目。"
+   ],
+   "list": [
+    "Nurevo AEO 不讀取訪客的 user agent。結構化資料在伺服器端轉譯進頁面 HTML，因此瀏覽器與 AI 爬蟲收到的內容相同。robots.txt 中依爬蟲劃分的群組屬於一般設定，並非例外。",
+    "FAQ 結構化資料（FAQPage）只會在放置了 Nurevo FAQ 區塊或 [nurevo_faq] 且顯示問題的頁面上輸出。看不到的 FAQ 不會輸出任何內容。",
+    "商品評分（AggregateRating）只在 WooCommerce 商品有評論時輸出。沒有可以手動輸入評分的欄位。",
+    "商家資訊會從 SEO 外掛的設定與公開內容自動補上，但只填入空白欄位；你輸入的值絕不會被覆寫。請對照診斷結果，確認後台的值與頁面文字一致。",
+    "大量產出的頁面或廣告頁面，可以在每篇文章的 Nurevo AEO 面板中排除於 llms.txt 之外，並關閉 Nurevo 的結構化資料。是否保留頁面本身則是另一個決定。",
+    "免費 AI 檢測每月向 Perplexity 提出三個問題，問題由業種與地區組成，絕不使用商家名稱。以名稱提問時商家無論如何都會出現，因此這樣能看出帶來變化的是事實而不是操縱。Pro 量測（beta）的數字同樣僅供參考。",
+    "稽核結束後，用 [Rich Results Test](https://search.google.com/test/rich-results) 開啟主要頁面，確認結構化資料的值與可見文字一致。"
+   ]
+  },
+  {
+   "heading": "婉拒之後的檢查清單",
+   "list": [
+    "已透過電子郵件向客戶傳達結論、規則名稱與日期，以及替代方案。",
+    "已依替代方案重新製作報價與工作範圍。",
+    "合約中列明排除的方法與不提供保證的事項（經律師審閱）。",
+    "首頁與主要頁面沒有看不見的文字或給 AI 的指示。",
+    "瀏覽器與 AI 爬蟲收到相同的 HTML。",
+    "每月發布數量沒有出現大量產出頁面的暴增。",
+    "FAQ 與評分的結構化資料與可見內容一致。",
+    "比較頁面與付費刊登已明確標示為客戶自家內容或廣告。",
+    "邀請評論時沒有附加五星等條件。",
+    "成果依據一組不含商家名稱、固定記錄的問題來報告。"
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "就算隱藏文字被 Google 抓到，在 ChatGPT 或 Perplexity 上不是仍然有效嗎？",
+   "a": "我們沒有找到能證明其有效的可靠證據。AI 公司公開了防範隱藏指示的措施，非正式測試也沒有發現效果。即使短期內有效，Google 搜尋也會將其視為隱藏文字，因此不值得冒險。"
+  },
+  {
+   "q": "包含自家公司的比較文章都不能做嗎？",
+   "a": "不是。要清楚表明這是你們自己的頁面，寫出評比標準與日期，並說明競爭對手在哪些情況下更適合。界線在於是否把它包裝成中立的第三方評測。"
+  },
+  {
+   "q": "依照日本的隱性行銷規定，受罰的是代理商嗎？",
+   "a": "消費者廳的問答指出，該規定針對的是決定內容的業者（廣告主），而不是受託發文的第三方。正因如此，客戶需要得到說明，才能自行判斷。"
+  },
+  {
+   "q": "Google 2026 年 5 月的變更是否禁止了新的手法？",
+   "a": "根據報導，這次變更並未新增規則，而是明確表示既有的垃圾內容政策適用於 AI Overviews 和 AI Mode 中的回答。原文措辭請查閱 Google 的更新記錄。"
+  },
+  {
+   "q": "對於不使用 Claude 的代理商，Anthropic 使用政策有意義嗎？",
+   "a": "它直接規範的是 Claude 的使用。但在說明婉拒理由時仍然有用，因為無論你使用哪種 AI 工具，它都能說明 AI 公司把什麼視為欺騙行為。"
+  },
+  {
+   "q": "發現前任廠商留下的隱藏文字，該怎麼辦？",
+   "a": "先給客戶看，取得同意後移除。查看 Search Console 中的「專人介入處理」報告；如果列出違規，修正後申請重新審查。記錄移除日期，方便日後比較。"
+  },
+  {
+   "q": "只做正當的工作，就能讓客戶被 AI 推薦嗎？",
+   "a": "這無法保證。AI 的回答會因日期與措辭而改變。你能做的是把價格、地區、成果等事實連同出處寫在頁面上，確保 AI 能夠讀取，並用相同的問題追蹤變化。"
+  }
+ ],
+ "relatedHeading": "相關指南",
+ "cta": {
+  "heading": "看看 AI 如何讀取你剛接手的網站",
+  "body": "免費檢測不需註冊：輸入 URL，即可查看其結構化資料、llms.txt 與 AI 爬蟲存取的狀態。是展開稽核的理想第一步。",
+  "label": "免費檢測 AI 可讀性",
+  "href": "/check",
+  "secondary": {
+   "label": "了解合作夥伴計畫",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT 與 OAI-SearchBot 是 OpenAI 的商標，Perplexity 是 Perplexity AI 的商標，Claude 是 Anthropic 的商標，Google 與 Search Console 是 Google LLC 的商標。WordPress 與 WooCommerce 是其各自所有者的商標。Nurevo 與這些公司沒有關聯，也未獲得其背書。"
+}

@@ -1,0 +1,303 @@
+{
+ "title": "Klient chce triky pre AI vyhľadávanie: návod pre agentúry | Nurevo",
+ "description": "Keď klient žiada skrytý text pre AI, rebríčky so sebou na čele či falošné recenzie: tabuľka posúdenia, pravidlá 2026, e-mail s odmietnutím, zmluvná doložka a audit.",
+ "h1": "Keď klient žiada triky pre AI vyhľadávanie: tabuľka posúdenia, scenár odmietnutia a audit pre agentúry",
+ "lead": "Keď vás klient požiada o text, ktorý uvidí iba AI, alebo o zoznam „najlepších poskytovateľov“, v ktorom je on na prvom mieste, bezpečnou odpoveďou agentúry je odmietnuť a ponúknuť legitímnu cestu k rovnakému cieľu. Google 15. mája 2026 aktualizoval dokumentáciu a objasnil, že jeho pravidlá proti spamu platia aj pre odpovede AI vo Vyhľadávaní Google, ako sú AI Overviews a AI Mode, a skrytá reklama je regulovaná na mnohých trhoch. Tento návod prináša tabuľku často žiadaných taktík, hranicu šedej zóny, e-mail s odmietnutím, zmluvnú doložku a príkazy na audit prevzatého webu.",
+ "intro": [
+  "Napísané 21. novembra 2026 (JST). Pre agentúry, SEO firmy, spoločnosti spravujúce WordPress a freelancerov, ktorí tvoria alebo udržiavajú weby klientov. Ak je potrebné právne posúdenie, obráťte sa na advokáta alebo regulačný orgán. Tento návod nie je právnym poradenstvom.",
+  "Odpovede AI sa menia zo dňa na deň a podľa formulácie otázky. Tieto kroky udržia web klienta v bezpečí vo vyhľadávaní aj v AI; nezaručujú zobrazenie v žiadnej odpovedi AI."
+ ],
+ "sections": [
+  {
+   "heading": "Čo pokrývajú najlepšie hodnotené návody a čo vynechávajú",
+   "paragraphs": [
+    "21. novembra 2026 sme prečítali stránky, ktoré sa umiestňujú na dopyty ako „black hat GEO“, „čo nerobiť pri AI vyhľadávaní“ a podobné: štyri v angličtine (Similarweb, 26. februára 2026, aktualizované 20. mája; Lily Ray, 17. júna 2026; Citable, 25. júna 2026; a článok Search Engine Land o skrytom prompt injection) a šesť v japončine, z ktorých tri uvádzajú taktiky, ktorým sa treba vyhnúť (Uravation, Jinrai, Sungrove).",
+    "Zhodujú sa v základoch: žiadny skrytý text, žiadny masovo vyrábaný plytký obsah, žiadne falošné recenzie. To, čo agentúra potrebuje, keď klient o niečo z toho naozaj požiada, väčšinou chýbalo."
+   ],
+   "table": {
+    "head": [
+     "Medzera",
+     "Čo pridáva tento návod"
+    ],
+    "rows": [
+     [
+      "Zoznamy taktík, ale nič o tom, ako klientovi povedať nie",
+      "E-mail s odmietnutím a alternatívy, ktoré ponúknuť"
+     ],
+     [
+      "Pravidlá Google sa spomínajú, ale zmena z mája 2026 a pravidlá označovania reklamy sa zriedka porovnávajú vedľa seba",
+      "Tri pravidlá od Google, Anthropic a japonskej Agentúry pre spotrebiteľské záležitosti v jednej tabuľke"
+     ],
+     [
+      "Návody sa nezhodujú, či sú porovnávacie stránky zahŕňajúce vás samých povolené",
+      "Tabuľka šedej zóny: čo je v poriadku pri zverejnení a čo si vyžaduje opatrnosť"
+     ],
+     [
+      "Nič o zmluvách ani dokumentoch o rozsahu (Citable to spomína jednou vetou)",
+      "Vzorová zmluvná doložka"
+     ],
+     [
+      "Žiadny spôsob, ako overiť, či predchádzajúci dodávateľ nenechal tieto taktiky na webe",
+      "Príkazy curl a WP-CLI na audit"
+     ],
+     [
+      "Žiadne špecifiká pre WordPress",
+      "Ako overiť, že výstup pre AI zodpovedá tomu, čo vidia návštevníci"
+     ]
+    ],
+    "caption": "Niektoré z najlepšie hodnotených stránok uvádzajú čísla ako „strata 60 – 80 % návštevnosti v priebehu dní“ alebo „3 – 6 mesiacov na zotavenie“ bez zdroja, preto ich tu nepoužívame."
+   }
+  },
+  {
+   "heading": "Východisko pre rok 2026: tri pravidlá",
+   "paragraphs": [
+    "Toto sú pravidlá, na ktoré sa agentúra môže odvolať pri odmietnutí. Žiadne z nich nezavádza úplne nový zákaz; každé objasňuje, že existujúce štandardy sa vzťahujú aj na odpovede AI."
+   ],
+   "table": {
+    "head": [
+     "Pravidlo",
+     "Od",
+     "Čo hovorí",
+     "Na koho sa vzťahuje"
+    ],
+    "rows": [
+     [
+      "Pravidlá proti spamu vo Vyhľadávaní Google ([originál](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Objasnené 15. mája 2026",
+      "Podľa Search Engine Roundtable Google aktualizoval dokumentáciu a uvádza, že pravidlá proti spamu platia aj pre odpovede generatívnej AI vo Vyhľadávaní Google, teda AI Overviews a AI Mode ([správa](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [denník zmien Google](https://developers.google.com/search/updates)). Search Engine Land uvádza, že úvodná veta pravidiel teraz zahŕňa aj pokusy manipulovať odpovede generatívnej AI ([správa](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Weby (pri zistenom porušení sa môžu umiestňovať nižšie alebo sa nezobraziť vôbec)"
+     ],
+     [
+      "Zásady používania Anthropic ([originál](https://www.anthropic.com/legal/aup))",
+      "Účinné od 12. novembra 2026",
+      "Zakazuje manipulovať zdroje, z ktorých vyhľadávače alebo systémy AI čerpajú odpovede, vkladaním obsahu, ktorý skresľuje svoj pôvod, autorstvo alebo nezávislosť (napríklad siete webov vydávajúcich sa za neprepojené zdroje), sockpuppety, astroturfing a falošné recenzie, ako aj predaj čohokoľvek z toho ako služby",
+      "Ľudia a firmy používajúce Claude vrátane agentúr, ktoré s ním píšu texty"
+     ],
+     [
+      "Japonské pravidlo o skrytom marketingu podľa zákona proti neoprávneným prémiám a zavádzajúcim vyhláseniam ([Agentúra pre spotrebiteľské záležitosti](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "Od 1. októbra 2023",
+      "Reguluje reklamu, pri ktorej bežný spotrebiteľ nedokáže rozoznať, že ide o reklamu",
+      "Inzerent (váš klient), nie influencer najatý na zverejnenie"
+     ]
+    ],
+    "caption": "Pri písaní sa nám nepodarilo načítať samotnú stránku pravidiel Google, preto znenie vyššie vychádza z dvoch správ. Skôr než sa naň spoľahnete, prečítajte si originál a denník zmien. Mimo Japonska si overte pravidlá označovania reklamy a falošných recenzií na vlastnom trhu."
+   },
+   "after": [
+    "Podľa japonského pravidla zodpovedá inzerent, nie agentúra, ktorá obsah vytvorila (Q&A Agentúry pre spotrebiteľské záležitosti, Q1). Práve preto sa oplatí klientovi to vysvetliť. Porušenie môže viesť k príkazu na zdržanie sa konania (Q2)."
+   ]
+  },
+  {
+   "heading": "Tabuľka posúdenia často žiadaných taktík",
+   "paragraphs": [
+    "Tu sú taktiky, o ktoré klienti naozaj žiadajú, sformulované zhruba tak, ako ich žiadajú, spolu s dôvodom a s tým, čo robiť namiesto nich."
+   ],
+   "table": {
+    "head": [
+     "Požiadavka",
+     "Verdikt",
+     "Prečo",
+     "Namiesto toho"
+    ],
+    "rows": [
+     [
+      "„Text, ktorý prečíta iba AI“ bielou farbou, cez display:none alebo drobným písmom; „pokyny pre AI“ v HTML komentároch",
+      "Odmietnuť",
+      "Podľa pravidiel Google proti spamu ide o skrytý text. Neformálne testy nezistili žiadny viditeľný účinok skrytých promptov ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), test jedného autora)",
+      "Dajte posolstvo do viditeľného textu. Odpovedzte na otázku v prvých dvoch vetách"
+     ],
+     [
+      "Posielať AI crawlerom inú stránku (cloaking)",
+      "Odmietnuť",
+      "Zobrazovať vyhľadávačom iný obsah než používateľom je podľa pravidiel proti spamu cloaking",
+      "Posielajte všetkým rovnaké HTML. Zhrnutie vhodné pre AI dajte do llms.txt s rovnakými faktami"
+     ],
+     [
+      "Zoznam „10 najlepších X“ s klientom na prvom mieste, vydávaný za neutrálnu recenziu",
+      "V tejto podobe odmietnuť",
+      "Ak čitatelia nedokážu rozoznať, že ide o reklamu, môžu sa uplatniť pravidlá označovania. Vo vzorke 100 dopytov Lily Ray nebolo 224 z 323 citácií sebapropagačných zoznamov (69 %) odporúčaných v samotnej odpovedi AI ([článok](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); jej vlastná vzorka, príčina nepreukázaná)",
+      "Porovnávacia stránka jasne označená ako klientova vlastná, s kritériami a silnými stránkami konkurentov"
+     ],
+     [
+      "Recenzie od zamestnancov alebo príbuzných; zľava za päť hviezdičiek",
+      "Odmietnuť",
+      "Recenzie, ktorých obsah firma ovláda, sa môžu považovať za reklamu; zľava podmienená piatimi hviezdičkami alebo odporúčaním spadá pod japonské pravidlo (Q&A Q6)",
+      "Žiadajte recenzie bez podmienok a odpovedajte aj na tie zlé"
+     ],
+     [
+      "Niekoľko „nezávislých“ recenzných webov alebo blogov, ktoré klienta odporúčajú",
+      "Odmietnuť",
+      "Presne toto je príklad v zásadách Anthropic: siete webov vydávajúcich sa za neprepojené. Pre Google to môže byť aj odkazový spam",
+      "Dajte skutočným tretím stranám (združeniam, partnerom, médiám) dôvod klienta spomenúť: výsledky, údaje"
+     ],
+     [
+      "Desiatky stránok, ktoré menia iba názov mesta",
+      "Odmietnuť",
+      "Veľké množstvo stránok bez obsahu môže spadať pod zneužívanie škálovaného obsahu alebo zneužívanie vstupných stránok (doorway)",
+      "Jedna stránka o oblasti pôsobenia; samostatné stránky iba tam, kde má oblasť vlastné fakty (čas príchodu, ceny, prípady)"
+     ],
+     [
+      "FAQ alebo hodnotenia hviezdičkami v štruktúrovaných údajoch, ktoré stránka nezobrazuje",
+      "Odmietnuť",
+      "Google vyžaduje, aby štruktúrované údaje zodpovedali viditeľnému obsahu",
+      "Dajte FAQ na viditeľnú stránku; hodnotenia vypisujte iba vtedy, keď existujú skutočné recenzie"
+     ],
+     [
+      "Najať dodávateľa alebo nástroj, ktorý sľubuje „č. 1 v AI“",
+      "Neodporúčať",
+      "Odpovede AI sa líšia, takže to nikto nemôže zaručiť; takí dodávatelia sa často spoliehajú na taktiky vyššie",
+      "Zaznamenajte pevnú sadu otázok a sledujte zlepšenia vďaka doplneným faktom"
+     ]
+    ],
+    "caption": "Stĺpec „verdikt“ je odporúčanie tohto návodu pre agentúru. Či sa uplatní zákon, závisí od okolností každého prípadu."
+   }
+  },
+  {
+   "heading": "Kde končí šedá zóna",
+   "paragraphs": [
+    "Nie každá požiadavka si vyžaduje odmietnutie. Tie nižšie sú v poriadku, keď sa zmení forma. Test má dve časti: dokážu čitatelia rozoznať, kto to napísal a či ide o reklamu, a zodpovedá to faktom viditeľným na stránke?"
+   ],
+   "table": {
+    "head": [
+     "Požiadavka",
+     "Prijateľná forma",
+     "Na čo si dať pozor"
+    ],
+    "rows": [
+     [
+      "Porovnávacia stránka zahŕňajúca klienta",
+      "Jasne na klientovom vlastnom webe, s kritériami, dátumom a prípadmi, keď sa lepšie hodí konkurent",
+      "Tvrdenia ako „č. 1 v odvetví“ potrebujú zdroj a dátum, inak by sa nemali objaviť"
+     ],
+     [
+      "Platené umiestnenie v médiách alebo na recenzných weboch",
+      "Označené ako „Reklama“, „PR“, „Sponzorované“ a pod. (Q&A Q11)",
+      "Označenie iba v komentároch alebo iba na začiatku videa nemusí stačiť (Q14, Q15)"
+     ],
+     [
+      "Referencie zákazníkov",
+      "Referencie zozbierané bez podmienok",
+      "Výber iba priaznivých môže spadať pod pravidlo (Q10). Neoznačujte príspevky influencerov ako recenzie zákazníkov (Q16)"
+     ],
+     [
+      "Propagácia zamestnancami na sociálnych sieťach",
+      "Príspevky, z ktorých je zrejmý pracovný pomer",
+      "Podľa pozície sa príspevky môžu považovať za vlastné príspevky firmy (Q3); samotný názov pozície nie je dostatočné označenie (Q12)"
+     ],
+     [
+      "Články napísané s pomocou AI",
+      "Overené a upravené človekom, doplnené o vlastné fakty a údaje klienta",
+      "Nestanovujte ciele počtu článkov a neprepisujte ten istý text do mnohých"
+     ],
+     [
+      "Zverejnenie llms.txt",
+      "Rovnaké fakty ako na stránkach, s odkazmi na ne",
+      "Žiadne propagačné tvrdenia napísané iba pre AI"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Ako povedať nie: vzorový e-mail",
+   "paragraphs": [
+    "Napíšte ho v troch častiach: rozhodnutie, dôvod (názov pravidla a dátum) a alternatíva, ktorá slúži rovnakému cieľu. Samotné „je to riskantné, radšej nie“ zvyčajne skončí tým, že si klient najme niekoho iného, kto to urobí."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Ako dôvod uvádzajte vonkajšie pravidlá, nie vkus vašej agentúry; klient ich môže tak, ako sú, preposlať nadriadenému. Alternatívu vyberte podľa toho, čo klient naozaj chce, napríklad aby ho AI odporúčala alebo aby pôsobil silnejšie než konkurent."
+   ]
+  },
+  {
+   "heading": "Čo uviesť v zmluve a rozsahu prác",
+   "paragraphs": [
+    "Aby ste sa neskôr vyhli argumentom „predchádzajúca agentúra to robila“ alebo „to bolo v zmluve“, zapíšte vylúčené metódy do zmluvy alebo do opisu prác. Vzor:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Paušál, ktorý ako výsledok sľubuje počet zmienok v AI, dáva všetkým dôvod siahnuť po taktikách vyššie. Namiesto toho reportujte, aké fakty pribudli, a výsledky pevnej sady zaznamenaných otázok ([predaj AI vyhľadávania ako mesačnej služby](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Audit prevzatého webu",
+   "paragraphs": [
+    "Weby, ktoré preberáte do správy alebo na prerobenie, môžu obsahovať taktiky pridané predchádzajúcim dodávateľom alebo pluginom. Tieto príkazy hľadajú skryté štýly, obsah určený pre konkrétne crawlery, znaky masovej výroby a použité typy štruktúrovaných údajov. Zhody berte iba ako stopy: display:none je bežné v menu a akordeónoch, preto každú skontrolujte očami."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Ak krok 2 ukáže veľký rozdiel vo veľkosti alebo obsahu, hľadajte prepínanie podľa user-agenta v pluginoch alebo nastaveniach servera; cache a reklamy spôsobujú malé rozdiely. V Search Console zobrazuje prehľad Manuálne zásahy v časti Zabezpečenie a manuálne zásahy porušenia, ktoré zistil posudzovateľ Google ([pomocník](https://support.google.com/webmasters/answer/9044175?hl=en)). Odstráňte príčinu a potom požiadajte o kontrolu.",
+    "Ak nájdete masovo vyrobené stránky, buď ich zlúčte do stránky s obsahom, alebo odstráňte tie, ktoré sa neoplatí ponechať. Postup rozhodovania je v návode [predaj aktualizácie obsahu ako mesačnej služby](/guide/agency-content-refresh-service)."
+   ]
+  },
+  {
+   "heading": "Kroky vo WordPresse (s Nurevo AEO)",
+   "paragraphs": [
+    "Takto s bezplatným pluginom [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) overíte, že výstup pre AI zodpovedá tomu, čo vidia návštevníci. S iným pluginom alebo ručne skontrolujte tie isté veci."
+   ],
+   "list": [
+    "Nurevo AEO nečíta user agenta návštevníka. Štruktúrované údaje sa vykresľujú na serveri do HTML stránky, takže prehliadače aj AI crawlery dostanú to isté. Skupiny pre jednotlivé crawlery v robots.txt sú bežná konfigurácia, nie výnimka z tohto pravidla.",
+    "Štruktúrované údaje FAQ (FAQPage) sa vypisujú iba na stránke, kde je umiestnený blok Nurevo FAQ alebo [nurevo_faq] a otázky sú zobrazené. Pre FAQ, ktoré nie je viditeľné, sa nevypisuje nič.",
+    "Hodnotenia produktov (AggregateRating) sa vypisujú iba vtedy, keď má produkt WooCommerce recenzie. Neexistuje pole, do ktorého by sa dalo hodnotenie zadať.",
+    "Údaje o firme sa dopĺňajú z nastavení vášho SEO pluginu a z verejného obsahu iba do prázdnych polí; hodnoty, ktoré ste zadali, sa nikdy neprepíšu. Podľa diagnostiky overte, že hodnoty v administrácii a text na stránke sa zhodujú.",
+    "Masovo vyrobené alebo reklamné stránky možno vynechať z llms.txt a vypnúť pre ne štruktúrované údaje Nurevo v paneli Nurevo AEO pri každom príspevku. Či ponechať samotnú stránku, je samostatné rozhodnutie.",
+    "Bezplatná kontrola AI kladie Perplexity tri otázky mesačne, zostavené z typu podnikania a oblasti, nikdy nie z názvu firmy. Firma sa pri otázke na jej názov zobrazí tak či tak, preto to ukazuje, či niečo zmenili fakty, nie manipulácia. Aj čísla z merania Pro (beta) čítajte ako orientačné.",
+    "Po audite otvorte kľúčové stránky v nástroji [Test rozšírených výsledkov](https://search.google.com/test/rich-results) a overte, že hodnoty štruktúrovaných údajov zodpovedajú viditeľnému textu."
+   ]
+  },
+  {
+   "heading": "Kontrolný zoznam po odmietnutí",
+   "list": [
+    "Klient dostal e-mailom rozhodnutie, názov pravidla s dátumom a alternatívu.",
+    "Cenová ponuka a rozsah prác boli prepracované podľa alternatívy.",
+    "Zmluva uvádza vylúčené metódy a to, čo sa nezaručuje (skontrolované advokátom).",
+    "Domovská stránka a kľúčové stránky neobsahujú neviditeľný text ani pokyny pre AI.",
+    "Prehliadače aj AI crawlery dostávajú rovnaké HTML.",
+    "Mesačné počty publikovaných stránok neukazujú nával masovo vyrobených stránok.",
+    "Štruktúrované údaje FAQ a hodnotení zodpovedajú viditeľnému obsahu.",
+    "Porovnávacie stránky a platené umiestnenia sú jasne označené ako klientove vlastné alebo ako reklama.",
+    "Žiadosti o recenzie neobsahujú podmienky ako päť hviezdičiek.",
+    "Výsledky sa reportujú z pevnej sady zaznamenaných otázok bez názvu firmy."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Aj keď Google skrytý text odhalí, nefunguje to stále na ChatGPT alebo Perplexity?",
+   "a": "Nenašli sme žiadny spoľahlivý dôkaz, že to funguje. Firmy z oblasti AI zverejňujú ochranu proti skrytým pokynom a neformálne testy nezistili žiadny účinok. Aj keby to krátko fungovalo, Vyhľadávanie Google to považuje za skrytý text, takže to za to riziko nestojí."
+  },
+  {
+   "q": "Je každý porovnávací článok, ktorý zahŕňa našu vlastnú firmu, zakázaný?",
+   "a": "Nie. Jasne uveďte, že ide o vašu vlastnú stránku, uveďte kritériá a dátum a povedzte, kde sa lepšie hodia konkurenti. Hranicou je vydávať ho za neutrálnu recenziu tretej strany."
+  },
+  {
+   "q": "Trestá japonské pravidlo o skrytom marketingu agentúru?",
+   "a": "Q&A Agentúry pre spotrebiteľské záležitosti uvádza, že pravidlo sa vzťahuje na podnik, ktorý o obsahu rozhodol (inzerenta), nie na tretie strany požiadané o zverejnenie. Preto potrebuje vysvetlenie klient, aby sa mohol rozhodnúť sám."
+  },
+  {
+   "q": "Zakázala zmena Google z mája 2026 nejakú novú taktiku?",
+   "a": "Podľa správ nepridala nové pravidlá; objasnila, že existujúce pravidlá proti spamu platia aj pre odpovede v AI Overviews a AI Mode. Pôvodné znenie nájdete v denníku zmien Google."
+  },
+  {
+   "q": "Záleží na zásadách používania Anthropic agentúram, ktoré Claude nepoužívajú?",
+   "a": "Priamo upravujú používanie Claude. Pri vysvetľovaní odmietnutia sú však užitočné, pretože ukazujú, čo firma z oblasti AI považuje za klamlivé, bez ohľadu na to, aký nástroj AI používate."
+  },
+  {
+   "q": "Našli sme skrytý text, ktorý zanechal predchádzajúci dodávateľ. Čo teraz?",
+   "a": "Ukážte ho klientovi a s jeho súhlasom ho odstráňte. Skontrolujte prehľad Manuálne zásahy v Search Console; ak je v ňom uvedené porušenie, po náprave požiadajte o kontrolu. Zaznamenajte dátum odstránenia, aby ste mohli neskôr porovnávať."
+  },
+  {
+   "q": "Zabezpečí samotná legitímna práca, že AI klienta odporučí?",
+   "a": "To sa nedá zaručiť. Odpovede AI sa menia zo dňa na deň a podľa formulácie. Môžete však uviesť na stránkach fakty ako ceny, oblasti a výsledky so zdrojmi, zabezpečiť, aby ich AI dokázala prečítať, a sledovať zmeny pomocou tých istých otázok."
+  }
+ ],
+ "relatedHeading": "Súvisiace návody",
+ "cta": {
+  "heading": "Pozrite sa, ako AI číta web, ktorý ste práve prevzali",
+  "body": "Bezplatná kontrola nevyžaduje registráciu: zadajte URL a uvidíte stav štruktúrovaných údajov, llms.txt a prístupu AI crawlerov. Dobrý prvý krok auditu.",
+  "label": "Skontrolovať čitateľnosť pre AI zadarmo",
+  "href": "/check",
+  "secondary": {
+   "label": "Pozrieť partnerský program",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT a OAI-SearchBot sú ochranné známky spoločnosti OpenAI, Perplexity spoločnosti Perplexity AI, Claude spoločnosti Anthropic a Google a Search Console spoločnosti Google LLC. WordPress a WooCommerce sú ochranné známky príslušných vlastníkov. Nurevo nie je prepojené s týmito spoločnosťami ani nimi podporované."
+}

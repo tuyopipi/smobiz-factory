@@ -1,0 +1,303 @@
+{
+ "title": "Khách hàng đòi mẹo tìm kiếm AI: Hướng dẫn cho agency | Nurevo",
+ "description": "Khi khách hàng muốn văn bản ẩn cho AI, danh sách tự xếp mình đầu bảng hay đánh giá giả: bảng phân định, quy tắc 2026, email từ chối, điều khoản hợp đồng và kiểm tra.",
+ "h1": "Khi khách hàng đòi mẹo tìm kiếm AI: bảng phân định, mẫu từ chối và quy trình kiểm tra cho agency",
+ "lead": "Khi khách hàng yêu cầu bạn thêm văn bản mà chỉ AI nhìn thấy, hoặc đăng một danh sách \"nhà cung cấp tốt nhất\" xếp họ ở vị trí số một, câu trả lời an toàn cho một agency là từ chối và đề xuất một cách chính đáng để đạt cùng mục tiêu. Ngày 15/5/2026, Google đã cập nhật tài liệu để làm rõ rằng chính sách về spam của họ cũng áp dụng cho các câu trả lời AI trong Google Tìm kiếm, như AI Overviews và AI Mode, và quảng cáo trá hình bị quản lý ở nhiều thị trường. Hướng dẫn này đưa ra bảng các chiến thuật thường được yêu cầu, chỉ ra nơi vùng xám kết thúc, một email từ chối, một điều khoản hợp đồng và các lệnh để kiểm tra một website bạn tiếp nhận.",
+ "intro": [
+  "Viết ngày 21/11/2026 (JST). Dành cho agency, công ty SEO, công ty bảo trì WordPress và freelancer xây dựng hoặc duy trì website cho khách hàng. Khi cần đánh giá pháp lý, hãy hỏi luật sư hoặc cơ quan quản lý. Hướng dẫn này không phải là tư vấn pháp lý.",
+  "Câu trả lời của AI thay đổi theo ngày và theo cách đặt câu hỏi. Các bước ở đây giữ cho website của khách hàng an toàn cả trên công cụ tìm kiếm lẫn AI; chúng không đảm bảo website xuất hiện trong bất kỳ câu trả lời AI nào."
+ ],
+ "sections": [
+  {
+   "heading": "Các bài hướng dẫn xếp hạng cao nói gì, và bỏ sót điều gì",
+   "paragraphs": [
+    "Ngày 21/11/2026, chúng tôi đã đọc các trang xếp hạng cho \"black hat GEO\", \"AI search what not to do\" và các truy vấn tương tự: bốn trang tiếng Anh (Similarweb, 26/2/2026, cập nhật 20/5; Lily Ray, 17/6/2026; Citable, 25/6/2026; và một bài của Search Engine Land về prompt injection ẩn) và sáu trang tiếng Nhật, trong đó ba trang liệt kê các chiến thuật cần tránh (Uravation, Jinrai, Sungrove).",
+    "Họ thống nhất ở những điều cơ bản: không văn bản ẩn, không nội dung mỏng sản xuất hàng loạt, không đánh giá giả. Còn những gì một agency cần khi khách hàng thực sự yêu cầu một trong những điều này thì phần lớn bị bỏ trống."
+   ],
+   "table": {
+    "head": [
+     "Khoảng trống",
+     "Hướng dẫn này bổ sung"
+    ],
+    "rows": [
+     [
+      "Có danh sách chiến thuật, nhưng không nói gì về cách từ chối khách hàng",
+      "Một email từ chối và các phương án thay thế để đề xuất"
+     ],
+     [
+      "Chính sách của Google được nhắc đến, nhưng thay đổi tháng 5/2026 và quy tắc công khai quảng cáo hiếm khi được đặt cạnh nhau",
+      "Ba quy tắc từ Google, Anthropic và Cơ quan Các vấn đề Người tiêu dùng Nhật Bản (Consumer Affairs Agency) trong một bảng"
+     ],
+     [
+      "Các bài hướng dẫn không thống nhất về việc trang so sánh có bao gồm chính mình hay không thì có được phép",
+      "Bảng vùng xám: điều gì ổn nếu được công khai, điều gì cần thận trọng"
+     ],
+     [
+      "Không nói gì về hợp đồng hay tài liệu phạm vi công việc (Citable nhắc đến trong một dòng)",
+      "Mẫu điều khoản hợp đồng"
+     ],
+     [
+      "Không có cách kiểm tra xem nhà cung cấp trước có để lại các chiến thuật này trên website hay không",
+      "Các lệnh kiểm tra bằng curl và WP-CLI"
+     ],
+     [
+      "Không có chi tiết riêng cho WordPress",
+      "Cách xác nhận rằng đầu ra dành cho AI khớp với những gì khách truy cập thấy"
+     ]
+    ],
+    "caption": "Một số trang hàng đầu dẫn các con số như \"mất 60-80% lưu lượng trong vài ngày\" hay \"3-6 tháng để phục hồi\" mà không có nguồn, vì vậy chúng tôi không sử dụng ở đây."
+   }
+  },
+  {
+   "heading": "Mốc chuẩn năm 2026: ba quy tắc",
+   "paragraphs": [
+    "Đây là những quy tắc mà agency có thể viện dẫn khi từ chối. Không quy tắc nào tạo ra một lệnh cấm hoàn toàn mới; mỗi quy tắc làm rõ rằng các tiêu chuẩn hiện có cũng áp dụng cho câu trả lời của AI."
+   ],
+   "table": {
+    "head": [
+     "Quy tắc",
+     "Từ khi",
+     "Nội dung",
+     "Áp dụng cho"
+    ],
+    "rows": [
+     [
+      "Chính sách về spam của Google Tìm kiếm ([bản gốc](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Làm rõ ngày 15/5/2026",
+      "Theo Search Engine Roundtable, Google đã cập nhật tài liệu để nêu rằng chính sách về spam cũng áp dụng cho các câu trả lời AI tạo sinh trong Google Tìm kiếm, tức là AI Overviews và AI Mode ([bài đưa tin](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [nhật ký thay đổi của Google](https://developers.google.com/search/updates)). Search Engine Land đưa tin rằng câu mở đầu của chính sách giờ đây bao gồm cả các nỗ lực thao túng câu trả lời AI tạo sinh ([bài đưa tin](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Website (nếu bị phát hiện vi phạm, có thể bị xếp hạng thấp hơn hoặc hoàn toàn không xuất hiện)"
+     ],
+     [
+      "Chính sách sử dụng của Anthropic ([bản gốc](https://www.anthropic.com/legal/aup))",
+      "Có hiệu lực từ 12/11/2026",
+      "Cấm thao túng các nguồn mà công cụ tìm kiếm hoặc hệ thống AI dùng để đưa ra câu trả lời bằng cách gieo nội dung khai man nguồn gốc, tác giả hoặc tính độc lập của nó (ví dụ mạng lưới website giả làm nguồn không liên kết), tài khoản giả (sockpuppet), astroturfing và đánh giá giả, cũng như bán bất kỳ điều nào trong số đó như một dịch vụ",
+      "Cá nhân và công ty sử dụng Claude, bao gồm các agency soạn nội dung bằng nó"
+     ],
+     [
+      "Quy tắc về tiếp thị ngầm của Nhật Bản theo Luật chống Khuyến mại Bất hợp lý và Trình bày Gây hiểu lầm ([Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "Từ 1/10/2023",
+      "Quản lý quảng cáo mà người tiêu dùng thông thường không thể nhận ra là quảng cáo",
+      "Nhà quảng cáo (khách hàng của bạn), không phải influencer được thuê để đăng bài"
+     ]
+    ],
+    "caption": "Chúng tôi không thể truy cập trang chính sách của chính Google khi viết bài, vì vậy cách diễn đạt ở trên dựa theo hai bài đưa tin. Hãy đọc bản gốc và nhật ký thay đổi trước khi dựa vào đó. Bên ngoài Nhật Bản, hãy kiểm tra quy tắc công khai quảng cáo và đánh giá giả tại thị trường của bạn."
+   },
+   "after": [
+    "Theo quy tắc của Nhật Bản, bên chịu trách nhiệm là nhà quảng cáo, không phải agency sản xuất nội dung (Hỏi đáp của Consumer Affairs Agency, Q1). Chính vì vậy mà điều này đáng để giải thích cho khách hàng. Vi phạm có thể dẫn đến lệnh đình chỉ (Q2)."
+   ]
+  },
+  {
+   "heading": "Bảng phân định cho các chiến thuật thường được yêu cầu",
+   "paragraphs": [
+    "Dưới đây là các chiến thuật mà khách hàng thực sự yêu cầu, được diễn đạt gần giống cách họ nói, kèm lý do và việc nên làm thay thế."
+   ],
+   "table": {
+    "head": [
+     "Yêu cầu",
+     "Quyết định",
+     "Lý do",
+     "Làm thế này thay vào đó"
+    ],
+    "rows": [
+     [
+      "\"Văn bản chỉ AI đọc được\" bằng chữ trắng, display:none hoặc cỡ chữ cực nhỏ; \"hướng dẫn cho AI\" trong comment HTML",
+      "Từ chối",
+      "Theo chính sách về spam của Google, đây là văn bản ẩn. Các thử nghiệm không chính thức cho thấy prompt ẩn không có tác động rõ rệt ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), thử nghiệm của một tác giả)",
+      "Đưa thông điệp vào phần nội dung hiển thị. Trả lời câu hỏi ngay trong hai câu đầu tiên"
+     ],
+     [
+      "Phục vụ trang khác cho trình thu thập AI (cloaking)",
+      "Từ chối",
+      "Hiển thị cho công cụ tìm kiếm nội dung khác với người dùng là cloaking theo chính sách về spam",
+      "Phục vụ cùng một HTML cho mọi người. Đặt bản tóm tắt thân thiện với AI trong llms.txt với cùng các dữ kiện"
+     ],
+     [
+      "Danh sách \"10 X tốt nhất\" xếp khách hàng đứng đầu, ngụy trang thành bài đánh giá trung lập",
+      "Từ chối theo dạng được yêu cầu",
+      "Nếu người đọc không nhận ra đó là quảng cáo, quy tắc công khai có thể được áp dụng. Trong mẫu 100 truy vấn của Lily Ray, 224 trên 323 lượt trích dẫn danh sách tự quảng bá (69%) không được đề xuất trong chính câu trả lời AI ([bài viết](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); mẫu do bà tự lập, nguyên nhân chưa được chứng minh)",
+      "Một trang so sánh ghi rõ là của khách hàng, có tiêu chí và điểm mạnh của đối thủ"
+     ],
+     [
+      "Đánh giá do nhân viên hoặc người thân viết; giảm giá để đổi lấy năm sao",
+      "Từ chối",
+      "Đánh giá mà doanh nghiệp kiểm soát nội dung có thể bị coi là quảng cáo; giảm giá với điều kiện năm sao hoặc giới thiệu thuộc phạm vi quy tắc của Nhật Bản (Hỏi đáp Q6)",
+      "Xin đánh giá mà không kèm điều kiện, và trả lời cả những đánh giá tiêu cực"
+     ],
+     [
+      "Nhiều website đánh giá hay blog \"độc lập\" giới thiệu khách hàng",
+      "Từ chối",
+      "Đây chính là ví dụ trong chính sách của Anthropic: mạng lưới website giả làm không liên kết. Với Google, đây cũng có thể là spam liên kết",
+      "Cho bên thứ ba thực sự (hiệp hội, đối tác, truyền thông) lý do để nhắc đến khách hàng: kết quả, dữ liệu"
+     ],
+     [
+      "Hàng chục trang chỉ thay tên thành phố",
+      "Từ chối",
+      "Số lượng lớn trang không có thực chất có thể thuộc diện lạm dụng nội dung quy mô lớn hoặc lạm dụng trang ngõ (doorway)",
+      "Một trang khu vực phục vụ; chỉ tách trang riêng khi một khu vực có dữ kiện riêng (thời gian đến nơi, giá, ca thực tế)"
+     ],
+     [
+      "FAQ hoặc xếp hạng sao trong dữ liệu có cấu trúc mà trang không hiển thị",
+      "Từ chối",
+      "Google yêu cầu dữ liệu có cấu trúc phải khớp với nội dung hiển thị",
+      "Đặt FAQ trên trang hiển thị; chỉ xuất xếp hạng khi có đánh giá thật"
+     ],
+     [
+      "Thuê nhà cung cấp hay công cụ hứa \"số 1 trên AI\"",
+      "Khuyên không nên",
+      "Câu trả lời AI biến động nên không ai đảm bảo được điều đó; những nhà cung cấp như vậy thường dựa vào các chiến thuật trên",
+      "Ghi lại một bộ câu hỏi cố định và theo dõi cải thiện từ các dữ kiện được bổ sung"
+     ]
+    ],
+    "caption": "Cột \"Quyết định\" là khuyến nghị của hướng dẫn này dành cho agency. Việc một đạo luật có áp dụng hay không tùy thuộc vào tình tiết của từng trường hợp."
+   }
+  },
+  {
+   "heading": "Vùng xám kết thúc ở đâu",
+   "paragraphs": [
+    "Không phải yêu cầu nào cũng cần từ chối. Những yêu cầu dưới đây sẽ ổn khi thay đổi hình thức. Phép thử gồm hai phần: người đọc có biết ai viết và đó có phải quảng cáo không, và nội dung có khớp với dữ kiện hiển thị trên trang không?"
+   ],
+   "table": {
+    "head": [
+     "Yêu cầu",
+     "Hình thức chấp nhận được",
+     "Cần lưu ý"
+    ],
+    "rows": [
+     [
+      "Trang so sánh có bao gồm khách hàng",
+      "Rõ ràng nằm trên website của chính khách hàng, có tiêu chí, ngày tháng và các trường hợp đối thủ phù hợp hơn",
+      "Các tuyên bố như \"số 1 trong ngành\" cần có nguồn và ngày, nếu không thì không nên xuất hiện"
+     ],
+     [
+      "Đăng bài trả phí trên truyền thông hoặc website đánh giá",
+      "Gắn nhãn \"Quảng cáo\", \"PR\", \"Được tài trợ\" hoặc tương tự (Hỏi đáp Q11)",
+      "Nhãn chỉ có trong phần bình luận, hoặc chỉ ở đầu video, có thể chưa đủ (Q14, Q15)"
+     ],
+     [
+      "Lời chứng thực của khách hàng",
+      "Lời chứng thực được thu thập không kèm điều kiện",
+      "Chỉ chọn những lời khen có thể thuộc phạm vi điều chỉnh (Q10). Đừng gắn nhãn lại bài của influencer thành đánh giá của khách hàng (Q16)"
+     ],
+     [
+      "Nhân viên quảng bá trên mạng xã hội",
+      "Bài đăng thể hiện rõ quan hệ lao động",
+      "Tùy vai trò, bài đăng có thể được coi là của chính công ty (Q3); chỉ ghi chức danh thì chưa đủ làm nhãn (Q12)"
+     ],
+     [
+      "Bài viết soạn bằng AI",
+      "Được con người kiểm chứng và biên tập, bổ sung dữ kiện và dữ liệu riêng của khách hàng",
+      "Đừng đặt chỉ tiêu số lượng bài viết hay viết lại cùng một bài thành nhiều bài"
+     ],
+     [
+      "Đăng llms.txt",
+      "Cùng dữ kiện với các trang, kèm liên kết đến các trang đó",
+      "Không có tuyên bố quảng bá chỉ viết riêng cho AI"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Cách từ chối: email mẫu",
+   "paragraphs": [
+    "Viết thành ba phần: quyết định, lý do (tên và ngày của quy tắc), và một phương án thay thế phục vụ cùng mục tiêu. Chỉ nói \"rủi ro lắm, đừng làm\" thường dẫn đến việc khách hàng thuê người khác làm."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Hãy đưa ra lý do là các quy tắc bên ngoài, không phải sở thích của agency; khách hàng có thể chuyển nguyên văn cho cấp trên. Chọn phương án thay thế phù hợp với điều khách hàng thực sự muốn, chẳng hạn được AI giới thiệu hoặc trông mạnh hơn đối thủ."
+   ]
+  },
+  {
+   "heading": "Nên ghi gì vào hợp đồng và phạm vi công việc",
+   "paragraphs": [
+    "Để tránh về sau có chuyện \"agency trước đã làm\" hay \"cái đó có trong hợp đồng\", hãy ghi các phương pháp bị loại trừ vào thỏa thuận hoặc bản mô tả công việc. Một mẫu:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Một hợp đồng hằng tháng hứa hẹn số lượt nhắc đến trên AI làm kết quả sẽ khiến mọi người có lý do tìm đến các chiến thuật trên. Thay vào đó, hãy báo cáo những dữ kiện nào đã được bổ sung và kết quả từ một bộ câu hỏi cố định đã ghi lại ([bán tìm kiếm AI như một dịch vụ hằng tháng](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Kiểm tra website được tiếp nhận",
+   "paragraphs": [
+    "Các website bạn tiếp nhận để bảo trì hoặc làm lại có thể chứa chiến thuật do nhà cung cấp hoặc plugin trước đó thêm vào. Các lệnh này tìm styling ẩn, nội dung riêng cho trình thu thập, dấu hiệu sản xuất hàng loạt và các loại dữ liệu có cấu trúc đang dùng. Hãy coi kết quả khớp chỉ là manh mối: display:none là bình thường trong menu và accordion, nên hãy kiểm tra từng cái bằng mắt."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Nếu bước 2 cho thấy khác biệt lớn về kích thước hoặc nội dung, hãy tìm cơ chế chuyển đổi theo user agent trong plugin hoặc cài đặt máy chủ; bộ nhớ đệm và quảng cáo gây ra khác biệt nhỏ. Trong Search Console, báo cáo Thao tác thủ công trong mục Bảo mật và thao tác thủ công hiển thị các vi phạm mà người đánh giá của Google đã phát hiện ([trợ giúp](https://support.google.com/webmasters/answer/9044175?hl=en)). Khắc phục nguyên nhân rồi gửi yêu cầu xem xét lại.",
+    "Nếu phát hiện các trang sản xuất hàng loạt, hãy gộp chúng thành một trang có thực chất hoặc xóa những trang không đáng giữ. Quy trình ra quyết định có trong [bán làm mới nội dung như một dịch vụ hằng tháng](/guide/agency-content-refresh-service)."
+   ]
+  },
+  {
+   "heading": "Các bước trong WordPress (với Nurevo AEO)",
+   "paragraphs": [
+    "Đây là cách xác nhận, bằng plugin miễn phí [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/), rằng đầu ra dành cho AI khớp với những gì khách truy cập thấy. Với plugin khác hoặc làm thủ công, hãy kiểm tra những điểm tương tự."
+   ],
+   "list": [
+    "Nurevo AEO không đọc user agent của khách truy cập. Dữ liệu có cấu trúc được render trên máy chủ vào HTML của trang, nên trình duyệt và trình thu thập AI nhận được cùng một nội dung. Các nhóm theo từng trình thu thập trong robots.txt là cấu hình thông thường, không phải ngoại lệ của điều này.",
+    "Dữ liệu có cấu trúc FAQ (FAQPage) chỉ được xuất trên trang có đặt khối Nurevo FAQ hoặc [nurevo_faq] và các câu hỏi được hiển thị. Không có gì được xuất cho FAQ không hiển thị.",
+    "Xếp hạng sản phẩm (AggregateRating) chỉ được xuất khi sản phẩm WooCommerce có đánh giá. Không có trường nào để nhập xếp hạng.",
+    "Thông tin doanh nghiệp được điền từ cài đặt của plugin SEO và nội dung công khai chỉ vào các trường trống; giá trị bạn đã nhập không bao giờ bị ghi đè. Đối chiếu với kết quả chẩn đoán để chắc chắn giá trị trong trang quản trị và nội dung trang khớp nhau.",
+    "Các trang sản xuất hàng loạt hoặc trang quảng cáo có thể được loại khỏi llms.txt và tắt dữ liệu có cấu trúc của Nurevo trong bảng Nurevo AEO của từng bài viết. Có giữ chính trang đó hay không là một quyết định riêng.",
+    "Kiểm tra AI miễn phí hỏi Perplexity ba câu mỗi tháng, được tạo từ loại hình kinh doanh và khu vực, không bao giờ dùng tên doanh nghiệp. Doanh nghiệp vẫn sẽ xuất hiện khi được hỏi bằng tên, nên cách này cho thấy dữ kiện, chứ không phải thao túng, có tạo ra thay đổi hay không. Các con số đo lường Pro (beta) cũng chỉ nên xem là tham khảo.",
+    "Sau khi kiểm tra, mở các trang chính trong [Rich Results Test](https://search.google.com/test/rich-results) và xác nhận giá trị dữ liệu có cấu trúc khớp với văn bản hiển thị."
+   ]
+  },
+  {
+   "heading": "Danh sách kiểm tra sau khi từ chối",
+   "list": [
+    "Khách hàng đã nhận qua email quyết định, tên và ngày của quy tắc, cùng một phương án thay thế.",
+    "Báo giá và phạm vi công việc đã được làm lại theo phương án thay thế.",
+    "Hợp đồng liệt kê các phương pháp bị loại trừ và những gì không được đảm bảo (đã được luật sư xem xét).",
+    "Trang chủ và các trang chính không chứa văn bản vô hình hay hướng dẫn cho AI.",
+    "Trình duyệt và trình thu thập AI nhận cùng một HTML.",
+    "Số bài đăng hằng tháng không cho thấy đợt tăng đột biến trang sản xuất hàng loạt.",
+    "Dữ liệu có cấu trúc FAQ và xếp hạng khớp với nội dung hiển thị.",
+    "Trang so sánh và bài đăng trả phí được gắn nhãn rõ là của khách hàng hoặc là quảng cáo.",
+    "Yêu cầu đánh giá không kèm điều kiện như năm sao.",
+    "Kết quả được báo cáo từ một bộ câu hỏi cố định đã ghi lại, không chứa tên doanh nghiệp."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Dù Google phát hiện văn bản ẩn, chẳng phải nó vẫn có tác dụng với ChatGPT hay Perplexity sao?",
+   "a": "Chúng tôi không tìm thấy bằng chứng đáng tin cậy nào cho thấy nó có tác dụng. Các công ty AI công bố biện pháp phòng vệ trước hướng dẫn ẩn, và các thử nghiệm không chính thức không thấy tác động. Kể cả nếu nó có tác dụng trong thời gian ngắn, Google Tìm kiếm vẫn coi đó là văn bản ẩn, nên không đáng để mạo hiểm."
+  },
+  {
+   "q": "Mọi bài so sánh có nhắc đến công ty chúng tôi đều bị cấm sao?",
+   "a": "Không. Hãy nói rõ đó là trang của bạn, nêu tiêu chí và ngày tháng, và chỉ ra trường hợp đối thủ phù hợp hơn. Ranh giới là việc trình bày nó như một bài đánh giá trung lập của bên thứ ba."
+  },
+  {
+   "q": "Theo quy tắc tiếp thị ngầm của Nhật Bản, agency có bị xử phạt không?",
+   "a": "Hỏi đáp của Consumer Affairs Agency cho biết quy tắc này áp dụng cho doanh nghiệp quyết định nội dung (nhà quảng cáo), không phải bên thứ ba được nhờ đăng bài. Đó là lý do khách hàng cần được giải thích, để họ tự đưa ra quyết định."
+  },
+  {
+   "q": "Thay đổi tháng 5/2026 của Google có cấm chiến thuật mới nào không?",
+   "a": "Theo các bài đưa tin, thay đổi này không bổ sung quy tắc mới; nó làm rõ rằng các chính sách về spam hiện có áp dụng cho câu trả lời trong AI Overviews và AI Mode. Hãy xem nhật ký thay đổi của Google để đọc nguyên văn."
+  },
+  {
+   "q": "Chính sách sử dụng của Anthropic có quan trọng với agency không dùng Claude không?",
+   "a": "Chính sách này trực tiếp điều chỉnh việc sử dụng Claude. Tuy vậy nó vẫn hữu ích khi giải thích lý do từ chối, vì nó cho thấy điều mà một công ty AI coi là lừa dối, dù bạn dùng công cụ AI nào."
+  },
+  {
+   "q": "Chúng tôi phát hiện văn bản ẩn do nhà cung cấp trước để lại. Giờ phải làm gì?",
+   "a": "Cho khách hàng xem và gỡ bỏ khi có sự đồng ý của họ. Kiểm tra báo cáo Thao tác thủ công trong Search Console; nếu có vi phạm được liệt kê, hãy gửi yêu cầu xem xét lại sau khi khắc phục. Ghi lại ngày gỡ bỏ để có thể so sánh về sau."
+  },
+  {
+   "q": "Chỉ làm đúng cách thì khách hàng có được AI giới thiệu không?",
+   "a": "Điều đó không thể đảm bảo. Câu trả lời của AI thay đổi theo ngày và theo cách đặt câu hỏi. Điều bạn có thể làm là đưa các dữ kiện như giá, khu vực và kết quả lên trang kèm nguồn, đảm bảo AI đọc được chúng, và theo dõi thay đổi bằng cùng một bộ câu hỏi."
+  }
+ ],
+ "relatedHeading": "Hướng dẫn liên quan",
+ "cta": {
+  "heading": "Xem AI đọc website bạn vừa tiếp nhận như thế nào",
+  "body": "Kiểm tra miễn phí không cần đăng ký: nhập URL để xem tình trạng dữ liệu có cấu trúc, llms.txt và quyền truy cập của trình thu thập AI. Một bước đầu tốt cho việc kiểm tra.",
+  "label": "Kiểm tra khả năng đọc của AI miễn phí",
+  "href": "/check",
+  "secondary": {
+   "label": "Xem chương trình đối tác",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT và OAI-SearchBot là nhãn hiệu của OpenAI, Perplexity của Perplexity AI, Claude của Anthropic, còn Google và Search Console của Google LLC. WordPress và WooCommerce là nhãn hiệu của chủ sở hữu tương ứng. Nurevo không liên kết với hay được các công ty này bảo trợ."
+}

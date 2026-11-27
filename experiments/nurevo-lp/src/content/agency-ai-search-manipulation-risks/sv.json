@@ -1,0 +1,303 @@
+{
+ "title": "Kunder som ber om AI-söktrick: en guide för byråer | Nurevo",
+ "description": "När en kund ber om dold text för AI, listor som rankar dem först eller falska recensioner: bedömningstabell, regler för 2026, nej-mejl, avtalsklausul och granskning.",
+ "h1": "När en kund ber om AI-söktrick: bedömningstabell, mall för att säga nej och granskning för byråer",
+ "lead": "När en kund ber dig lägga till text som bara AI kan se, eller publicera en lista över \"bästa leverantörerna\" där kunden hamnar först, är det säkra svaret för en byrå att tacka nej och erbjuda ett legitimt sätt att nå samma mål. Den 15 maj 2026 uppdaterade Google sin dokumentation för att klargöra att dess spampolicyer även gäller AI-svar i Google Sök, som AI Overviews och AI Mode, och dold reklam är reglerad på många marknader. Den här guiden ger en tabell över vanligt efterfrågade taktiker, var gråzonen tar slut, ett avböjningsmejl, en avtalsklausul och kommandon för att granska en webbplats du tar över.",
+ "intro": [
+  "Skriven den 21 november 2026 (JST). För byråer, SEO-företag, företag som förvaltar WordPress-webbplatser och frilansare som bygger eller underhåller kunders webbplatser. Där en juridisk bedömning behövs, fråga en jurist eller tillsynsmyndigheten. Den här guiden är inte juridisk rådgivning.",
+  "AI-svar ändras från dag till dag och beroende på formulering. Stegen här håller kundens webbplats säker både i sök och i AI; de garanterar inte att den syns i något AI-svar."
+ ],
+ "sections": [
+  {
+   "heading": "Vad de högst rankade guiderna tar upp och vad de utelämnar",
+   "paragraphs": [
+    "Den 21 november 2026 läste vi sidorna som rankar för \"black hat GEO\", \"vad man inte ska göra i AI-sök\" och liknande sökningar: fyra på engelska (Similarweb, 26 februari 2026, uppdaterad 20 maj; Lily Ray, 17 juni 2026; Citable, 25 juni 2026; och en artikel i Search Engine Land om dold prompt injection) och sex på japanska, varav tre listar taktiker att undvika (Uravation, Jinrai, Sungrove).",
+    "De är överens om grunderna: ingen dold text, inget massproducerat tunt innehåll, inga falska recensioner. Det en byrå behöver när en kund faktiskt ber om någon av dessa saker saknades för det mesta."
+   ],
+   "table": {
+    "head": [
+     "Lucka",
+     "Vad den här guiden tillför"
+    ],
+    "rows": [
+     [
+      "Listor över taktiker, men inget om hur man säger nej till en kund",
+      "Ett avböjningsmejl och alternativen att erbjuda"
+     ],
+     [
+      "Googles policyer nämns, men ändringen i maj 2026 och reglerna om reklammärkning ställs sällan sida vid sida",
+      "Tre regler från Google, Anthropic och Japans konsumentmyndighet i en tabell"
+     ],
+     [
+      "Guiderna är oeniga om huruvida jämförelsesidor som inkluderar en själv är tillåtna",
+      "En gråzonstabell: vad som är okej om det redovisas och vad som kräver försiktighet"
+     ],
+     [
+      "Inget om avtal eller uppdragsbeskrivningar (Citable nämner det på en rad)",
+      "Ett exempel på avtalsklausul"
+     ],
+     [
+      "Inget sätt att kontrollera om en tidigare leverantör lämnat kvar sådana taktiker på en webbplats",
+      "Granskningskommandon med curl och WP-CLI"
+     ],
+     [
+      "Inget specifikt om WordPress",
+      "Hur du bekräftar att det som levereras till AI stämmer med det besökarna ser"
+     ]
+    ],
+    "caption": "Några av de översta sidorna anger siffror som \"60–80 % trafikförlust inom några dagar\" eller \"3–6 månader för att återhämta sig\" utan källa, så vi använder dem inte här."
+   }
+  },
+  {
+   "heading": "Utgångsläget 2026: tre regler",
+   "paragraphs": [
+    "Det här är reglerna en byrå kan hänvisa till när den tackar nej. Ingen av dem inför ett helt nytt förbud; var och en klargör att befintliga standarder även omfattar AI-svar."
+   ],
+   "table": {
+    "head": [
+     "Regel",
+     "Sedan",
+     "Vad den säger",
+     "Vem den gäller"
+    ],
+    "rows": [
+     [
+      "Google Söks spampolicyer ([original](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Förtydligade 15 maj 2026",
+      "Enligt Search Engine Roundtable uppdaterade Google sin dokumentation så att den säger att spampolicyerna även gäller generativa AI-svar i Google Sök, alltså AI Overviews och AI Mode ([rapport](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [Googles ändringslogg](https://developers.google.com/search/updates)). Search Engine Land rapporterar att policyns inledande mening nu omfattar försök att manipulera generativa AI-svar ([rapport](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Webbplatser (om en överträdelse upptäcks kan de rankas lägre eller inte visas alls)"
+     ],
+     [
+      "Anthropics användarpolicy ([original](https://www.anthropic.com/legal/aup))",
+      "Gäller från 12 november 2026",
+      "Förbjuder att manipulera de källor som sökmotorer eller AI-system hämtar svar från genom att sprida innehåll som ger en falsk bild av dess ursprung, upphovsperson eller oberoende (till exempel nätverk av webbplatser som utger sig för att vara fristående källor), sockpuppets, astroturfing och falska recensioner, samt att sälja något av detta som tjänst",
+      "Personer och företag som använder Claude, inklusive byråer som skriver texter med det"
+     ],
+     [
+      "Japans regel om dold marknadsföring enligt lagen mot oskäliga premier och vilseledande framställningar ([konsumentmyndigheten](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "Från 1 oktober 2023",
+      "Reglerar reklam som vanliga konsumenter inte kan känna igen som reklam",
+      "Annonsören (din kund), inte influencern som anlitats för att publicera"
+     ]
+    ],
+    "caption": "Vi kunde inte hämta Googles egen policysida när vi skrev, så formuleringen ovan följer de två rapporterna. Läs originalet och ändringsloggen innan du förlitar dig på den. Utanför Japan, kontrollera din egen marknads regler om reklammärkning och falska recensioner."
+   },
+   "after": [
+    "Enligt den japanska regeln är det annonsören som hålls ansvarig, inte byrån som tagit fram innehållet (konsumentmyndighetens frågor och svar, F1). Just därför är det värt att förklara för kunden. En överträdelse kan leda till ett föreläggande om att upphöra (F2)."
+   ]
+  },
+  {
+   "heading": "En bedömningstabell för vanligt efterfrågade taktiker",
+   "paragraphs": [
+    "Här är taktikerna kunder faktiskt ber om, ungefär formulerade som de frågar, med skälet och vad man kan göra i stället."
+   ],
+   "table": {
+    "head": [
+     "Önskemål",
+     "Bedömning",
+     "Varför",
+     "Gör så här i stället"
+    ],
+    "rows": [
+     [
+      "\"Text som bara AI kan läsa\" i vitt, med display:none eller pytteliten text; \"instruktioner till AI\" i HTML-kommentarer",
+      "Tacka nej",
+      "Det är dold text enligt Googles spampolicyer. Informella tester har visat att dolda promptar inte hade någon synlig effekt ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), en enskild skribents test)",
+      "Lägg budskapet i den synliga texten. Besvara frågan i de två första meningarna"
+     ],
+     [
+      "Visa AI-crawlers en annan sida (cloaking)",
+      "Tacka nej",
+      "Att visa sökmotorer annat innehåll än användarna är cloaking enligt spampolicyerna",
+      "Leverera samma HTML till alla. Lägg en AI-vänlig sammanfattning med samma fakta i llms.txt"
+     ],
+     [
+      "En lista över \"10 bästa X\" som rankar kunden först, förklädd till en neutral recension",
+      "Tacka nej i den formen",
+      "Om läsarna inte kan se att det är reklam kan regler om reklammärkning gälla. I Lily Rays urval av 100 sökningar blev 224 av 323 citeringar av självpromotande listor (69 %) inte rekommenderade i själva AI-svaret ([artikel](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); hennes eget urval, orsak inte bevisad)",
+      "En jämförelsesida som tydligt är märkt som kundens egen, med kriterier och konkurrenternas styrkor"
+     ],
+     [
+      "Recensioner från anställda eller släktingar; rabatt för fem stjärnor",
+      "Tacka nej",
+      "Recensioner vars innehåll företaget styr kan räknas som reklam; en rabatt villkorad av fem stjärnor eller en rekommendation omfattas av den japanska regeln (F&S F6)",
+      "Be om recensioner utan villkor, och svara även på de dåliga"
+     ],
+     [
+      "Flera \"oberoende\" recensionssajter eller bloggar som rekommenderar kunden",
+      "Tacka nej",
+      "Det är just exemplet i Anthropics policy: nätverk av webbplatser som utger sig för att vara fristående. För Google kan det också vara länkspam",
+      "Ge verkliga tredje parter (branschorganisationer, partner, medier) ett skäl att nämna kunden: resultat, data"
+     ],
+     [
+      "Dussintals sidor där bara ortnamnet byts ut",
+      "Tacka nej",
+      "Stora mängder sidor utan substans kan räknas som missbruk av skalat innehåll eller dörrsidor",
+      "En sida för serviceområdet; separata sidor bara där ett område har egna fakta (ankomsttid, priser, case)"
+     ],
+     [
+      "FAQ eller stjärnbetyg i strukturerad data som sidan inte visar",
+      "Tacka nej",
+      "Google kräver att strukturerad data stämmer med det synliga innehållet",
+      "Lägg FAQ:n på en synlig sida; skriv bara ut betyg när det finns verkliga recensioner"
+     ],
+     [
+      "Anlita en leverantör eller ett verktyg som lovar \"nummer 1 i AI\"",
+      "Avråd",
+      "AI-svar varierar, så ingen kan garantera det; sådana leverantörer förlitar sig ofta på taktikerna ovan",
+      "Registrera en fast uppsättning frågor och följ förbättringar som kommer av tillagda fakta"
+     ]
+    ],
+    "caption": "Kolumnen \"Bedömning\" är den här guidens rekommendation för en byrå. Om en lag är tillämplig beror på omständigheterna i varje enskilt fall."
+   }
+  },
+  {
+   "heading": "Var gråzonen tar slut",
+   "paragraphs": [
+    "Alla önskemål kräver inte ett nej. De nedan är okej när formatet ändras. Testet har två delar: kan läsarna se vem som skrivit det och om det är reklam, och stämmer det med de fakta som syns på sidan?"
+   ],
+   "table": {
+    "head": [
+     "Önskemål",
+     "Godtagbar form",
+     "Se upp med"
+    ],
+    "rows": [
+     [
+      "En jämförelsesida som inkluderar kunden",
+      "Tydligt på kundens egen webbplats, med kriterier, ett datum och fall där en konkurrent passar bättre",
+      "Påståenden som \"branschens nummer 1\" kräver källa och datum, annars bör de inte stå med"
+     ],
+     [
+      "Betald placering i medier eller på recensionssajter",
+      "Märkt \"Annons\", \"PR\", \"Sponsrat\" eller liknande (F&S F11)",
+      "En märkning bara i kommentarerna, eller bara i början av en video, räcker kanske inte (F14, F15)"
+     ],
+     [
+      "Kundomdömen",
+      "Omdömen som samlats in utan villkor",
+      "Att bara välja ut de positiva kan omfattas (F10). Märk inte om influencerinlägg till kundrecensioner (F16)"
+     ],
+     [
+      "Anställda som marknadsför i sociala medier",
+      "Inlägg som gör anställningen tydlig",
+      "Beroende på roll kan inläggen räknas som företagets egna (F3); en yrkestitel räcker inte ensam som märkning (F12)"
+     ],
+     [
+      "Artiklar skrivna med AI",
+      "Faktagranskade och redigerade av en människa, med kundens egna fakta och data tillagda",
+      "Sätt inte mål för antal artiklar och skriv inte om samma text till många"
+     ],
+     [
+      "Publicera llms.txt",
+      "Samma fakta som på sidorna, med länkar till dem",
+      "Inga säljande påståenden som bara skrivits för AI"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Så säger du nej: ett exempelmejl",
+   "paragraphs": [
+    "Skriv det i tre delar: beslutet, skälet (regelns namn och datum) och ett alternativ som tjänar samma mål. Ett \"det är riskabelt, vi låter bli\" på egen hand slutar oftast med att kunden anlitar någon annan som gör det."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Ange externa regler som skäl, inte byråns egen smak; kunden kan vidarebefordra dem som de är till en chef. Välj alternativ efter vad kunden faktiskt vill, till exempel att bli rekommenderad av AI eller att framstå som starkare än en konkurrent."
+   ]
+  },
+  {
+   "heading": "Vad som ska stå i avtalet och uppdragsbeskrivningen",
+   "paragraphs": [
+    "För att slippa \"den förra byrån gjorde det\" eller \"det stod i avtalet\" senare, skriv in de undantagna metoderna i avtalet eller uppdragsbeskrivningen. Ett exempel:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Ett löpande uppdrag som lovar ett antal AI-omnämnanden som resultat ger alla ett skäl att ta till taktikerna ovan. Rapportera i stället vilka fakta som lagts till och resultatet för en fast uppsättning registrerade frågor ([sälja AI-sök som en månadstjänst](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Granska en webbplats du tagit över",
+   "paragraphs": [
+    "Webbplatser du tar över för förvaltning eller ombyggnad kan innehålla taktiker som lagts till av en tidigare leverantör eller ett plugin. De här kommandona letar efter dold styling, crawlerspecifikt innehåll, tecken på massproduktion och vilka typer av strukturerad data som används. Se träffar som ledtrådar: display:none är normalt i menyer och dragspel, så kontrollera var och en med egna ögon."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Om steg 2 visar en stor skillnad i storlek eller innehåll, leta efter växling baserad på user agent i plugin eller serverinställningar; cachning och annonser ger små skillnader. I Search Console visar rapporten Manuella åtgärder under Säkerhet och manuella åtgärder överträdelser som en granskare på Google har hittat ([hjälp](https://support.google.com/webmasters/answer/9044175?hl=en)). Åtgärda orsaken och begär sedan en omprövning.",
+    "Om du hittar massproducerade sidor, slå antingen ihop dem till en sida med substans eller ta bort dem som inte är värda att behålla. Beslutsprocessen finns i [sälja innehållsuppdatering som en månadstjänst](/guide/agency-content-refresh-service)."
+   ]
+  },
+  {
+   "heading": "Steg i WordPress (med Nurevo AEO)",
+   "paragraphs": [
+    "Så här bekräftar du med det kostnadsfria pluginet [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/) att det som levereras till AI stämmer med det besökarna ser. Med ett annat plugin eller manuellt kontrollerar du samma saker."
+   ],
+   "list": [
+    "Nurevo AEO läser inte besökarens user agent. Strukturerad data renderas på servern i sidans HTML, så webbläsare och AI-crawlers får samma sak. Grupper per crawler i robots.txt är vanlig konfiguration, inte ett undantag från detta.",
+    "Strukturerad FAQ-data (FAQPage) skrivs bara ut på en sida där Nurevo FAQ-blocket eller [nurevo_faq] är placerat och frågorna visas. Ingenting skrivs ut för en FAQ som inte syns.",
+    "Produktbetyg (AggregateRating) skrivs bara ut när WooCommerce-produkten har recensioner. Det finns inget fält där man kan skriva in ett betyg.",
+    "Företagsuppgifter fylls i från ditt SEO-plugins inställningar och offentligt innehåll, bara i tomma fält; värden du själv skrivit in skrivs aldrig över. Kontrollera mot diagnosen att värdena i administrationen och sidtexten stämmer överens.",
+    "Massproducerade sidor eller reklamsidor kan uteslutas ur llms.txt och få Nurevos strukturerade data avstängd i Nurevo AEO-panelen för varje inlägg. Om själva sidan ska behållas är ett separat beslut.",
+    "Den kostnadsfria AI-kontrollen ställer tre frågor i månaden till Perplexity, byggda på verksamhetstyp och område och aldrig företagsnamnet. Ett företag dyker ändå upp när man frågar efter namnet, så detta visar om det var fakta och inte manipulation som förändrade något. Läs även siffrorna från Pro-mätningen (beta) som vägledande.",
+    "Efter granskningen, öppna de viktigaste sidorna i [Test av utökade sökresultat](https://search.google.com/test/rich-results) och bekräfta att värdena i den strukturerade datan stämmer med den synliga texten."
+   ]
+  },
+  {
+   "heading": "Checklista efter ett nej",
+   "list": [
+    "Kunden har via mejl fått beslutet, regelns namn och datum samt ett alternativ.",
+    "Offert och uppdragsbeskrivning har gjorts om utifrån alternativet.",
+    "Avtalet listar undantagna metoder och vad som inte garanteras (granskat av en jurist).",
+    "Startsidan och de viktigaste sidorna har ingen osynlig text eller instruktioner till AI.",
+    "Webbläsare och AI-crawlers får samma HTML.",
+    "Antalet publiceringar per månad visar ingen topp av massproducerade sidor.",
+    "Strukturerad data för FAQ och betyg stämmer med det synliga innehållet.",
+    "Jämförelsesidor och betalda placeringar är tydligt märkta som kundens egna eller som reklam.",
+    "Förfrågningar om recensioner har inga villkor som fem stjärnor.",
+    "Resultat rapporteras utifrån en fast uppsättning registrerade frågor utan företagsnamnet."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Även om Google upptäcker dold text, fungerar det inte ändå i ChatGPT eller Perplexity?",
+   "a": "Vi har inte hittat några tillförlitliga belägg för att det gör det. AI-företag publicerar skydd mot dolda instruktioner, och informella tester fann ingen effekt. Även om det skulle fungera en kort tid behandlar Google Sök det som dold text, så det är inte värt risken."
+  },
+  {
+   "q": "Är alla jämförelseartiklar som inkluderar vårt eget företag förbjudna?",
+   "a": "Nej. Gör det tydligt att det är er egen sida, ange kriterier och datum och säg var konkurrenterna passar bättre. Gränsen går vid att presentera den som en neutral recension från en tredje part."
+  },
+  {
+   "q": "Är det byrån som straffas enligt Japans regel om dold marknadsföring?",
+   "a": "Konsumentmyndighetens frågor och svar säger att regeln omfattar det företag som bestämt innehållet (annonsören), inte tredje parter som ombetts publicera. Därför behöver kunden förklaringen, så att de kan fatta beslutet själva."
+  },
+  {
+   "q": "Förbjöd Googles ändring i maj 2026 någon ny taktik?",
+   "a": "Enligt rapporterna tillkom inga nya regler; den klargjorde att de befintliga spampolicyerna gäller svar i AI Overviews och AI Mode. Kontrollera Googles ändringslogg för den ursprungliga formuleringen."
+  },
+  {
+   "q": "Spelar Anthropics användarpolicy någon roll för byråer som inte använder Claude?",
+   "a": "Den styr direkt användningen av Claude. Den är ändå användbar när man förklarar ett nej, eftersom den visar vad ett AI-företag betraktar som vilseledande, oavsett vilket AI-verktyg du använder."
+  },
+  {
+   "q": "Vi hittade dold text som en tidigare leverantör lämnat. Vad gör vi nu?",
+   "a": "Visa det för kunden och ta bort det med deras godkännande. Kontrollera rapporten Manuella åtgärder i Search Console; om en överträdelse finns listad, begär en omprövning efter att den åtgärdats. Anteckna datumet då du tog bort det så att du kan jämföra senare."
+  },
+  {
+   "q": "Räcker legitimt arbete för att kunden ska bli rekommenderad av AI?",
+   "a": "Det kan inte garanteras. AI-svar ändras från dag till dag och beroende på formulering. Det du kan göra är att lägga fakta som priser, områden och resultat på sidorna med källor, se till att AI kan läsa dem och följa förändringar med samma frågor."
+  }
+ ],
+ "relatedHeading": "Relaterade guider",
+ "cta": {
+  "heading": "Se hur AI läser en webbplats du just tagit över",
+  "body": "Den kostnadsfria kontrollen kräver ingen registrering: ange en URL för att se läget för strukturerad data, llms.txt och AI-crawlers åtkomst. Ett bra första steg i en granskning.",
+  "label": "Kontrollera AI-läsbarheten gratis",
+  "href": "/check",
+  "secondary": {
+   "label": "Se partnerprogrammet",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT och OAI-SearchBot är varumärken som tillhör OpenAI, Perplexity tillhör Perplexity AI, Claude tillhör Anthropic, och Google och Search Console tillhör Google LLC. WordPress och WooCommerce är varumärken som tillhör respektive ägare. Nurevo är inte knutet till eller godkänt av dessa företag."
+}

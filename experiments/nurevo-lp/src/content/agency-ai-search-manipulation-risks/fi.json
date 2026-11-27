@@ -1,0 +1,303 @@
+{
+ "title": "Kun asiakas pyytää tekoälyhaun kikkoja: opas toimistoille | Nurevo",
+ "description": "Asiakas pyytää piilotekstiä tekoälylle, kärkeen nostavia listoja tai valearvosteluja? Arviotaulukko, vuoden 2026 säännöt, kieltäytymisviesti, sopimusehto, tarkastus.",
+ "h1": "Kun asiakas pyytää tekoälyhaun kikkoja: arviotaulukko, kieltäytymispohja ja tarkastus toimistoille",
+ "lead": "Kun asiakas pyytää lisäämään tekstiä, jonka vain tekoäly näkee, tai julkaisemaan \"parhaat palveluntarjoajat\" -listan, jossa hän itse on ensimmäisenä, toimiston turvallinen vastaus on kieltäytyä ja tarjota oikeutettu tapa päästä samaan tavoitteeseen. Google päivitti 15. toukokuuta 2026 dokumentaatiotaan tehdäkseen selväksi, että sen roskapostikäytännöt koskevat myös Google-haun tekoälyvastauksia, kuten AI Overviews- ja AI Mode -vastauksia, ja piilomainonta on säänneltyä monilla markkinoilla. Tämä opas sisältää taulukon usein pyydetyistä taktiikoista, harmaan alueen rajat, kieltäytymisviestin, sopimusehdon ja komennot perimäsi sivuston tarkastamiseen.",
+ "intro": [
+  "Kirjoitettu 21. marraskuuta 2026 (JST). Toimistoille, SEO-yrityksille, WordPress-ylläpitoyrityksille ja freelancereille, jotka rakentavat tai ylläpitävät asiakkaiden sivustoja. Kun tarvitaan oikeudellista arviota, kysy juristilta tai valvovalta viranomaiselta. Tämä opas ei ole oikeudellista neuvontaa.",
+  "Tekoälyn vastaukset vaihtelevat päivän ja sanamuodon mukaan. Tässä kuvatut vaiheet pitävät asiakkaan sivuston turvassa sekä haussa että tekoälyssä; ne eivät takaa näkymistä missään tekoälyvastauksessa."
+ ],
+ "sections": [
+  {
+   "heading": "Mitä kärkisijoilla olevat oppaat käsittelevät ja mitä niistä puuttuu",
+   "paragraphs": [
+    "Luimme 21. marraskuuta 2026 sivut, jotka sijoittuvat hauilla \"black hat GEO\", \"mitä tekoälyhaussa ei pidä tehdä\" ja vastaavilla: neljä englanniksi (Similarweb, 26. helmikuuta 2026, päivitetty 20. toukokuuta; Lily Ray, 17. kesäkuuta 2026; Citable, 25. kesäkuuta 2026; sekä Search Engine Landin artikkeli piilotetusta kehoteinjektiosta) ja kuusi japaniksi, joista kolme luettelee vältettäviä taktiikoita (Uravation, Jinrai, Sungrove).",
+    "Ne ovat yhtä mieltä perusasioista: ei piilotekstiä, ei massatuotettua ohutta sisältöä, ei valearvosteluja. Se, mitä toimisto tarvitsee, kun asiakas todella pyytää jotakin näistä, puuttui enimmäkseen."
+   ],
+   "table": {
+    "head": [
+     "Puute",
+     "Mitä tämä opas lisää"
+    ],
+    "rows": [
+     [
+      "Taktiikkalistoja, mutta ei mitään siitä, miten asiakkaalle sanotaan ei",
+      "Kieltäytymisviesti ja tarjottavat vaihtoehdot"
+     ],
+     [
+      "Googlen käytännöt mainitaan, mutta toukokuun 2026 muutosta ja mainonnan merkitsemissääntöjä asetetaan harvoin rinnakkain",
+      "Kolme sääntöä Googlelta, Anthropicilta ja Japanin kuluttajavirastolta yhdessä taulukossa"
+     ],
+     [
+      "Oppaat ovat eri mieltä siitä, ovatko itsensä sisältävät vertailusivut sallittuja",
+      "Harmaan alueen taulukko: mikä on kunnossa, jos se kerrotaan, ja mikä vaatii varovaisuutta"
+     ],
+     [
+      "Ei mitään sopimuksista tai työnkuvauksista (Citable mainitsee sen yhdellä rivillä)",
+      "Esimerkki sopimusehdosta"
+     ],
+     [
+      "Ei keinoa tarkistaa, onko aiempi toimittaja jättänyt näitä taktiikoita sivustolle",
+      "Tarkastuskomennot curlilla ja WP-CLI:llä"
+     ],
+     [
+      "Ei WordPress-kohtaisia ohjeita",
+      "Miten varmistat, että tekoälylle näkyvä sisältö vastaa sitä, mitä kävijät näkevät"
+     ]
+    ],
+    "caption": "Osa kärkisivuista mainitsee lukuja, kuten \"60–80 %:n liikennemenetys muutamassa päivässä\" tai \"3–6 kuukautta toipumiseen\", ilman lähdettä, joten emme käytä niitä tässä."
+   }
+  },
+  {
+   "heading": "Lähtötaso vuonna 2026: kolme sääntöä",
+   "paragraphs": [
+    "Näihin sääntöihin toimisto voi vedota kieltäytyessään. Mikään niistä ei luo täysin uutta kieltoa; kukin tekee selväksi, että nykyiset normit ulottuvat myös tekoälyvastauksiin."
+   ],
+   "table": {
+    "head": [
+     "Sääntö",
+     "Alkaen",
+     "Mitä se sanoo",
+     "Ketä se koskee"
+    ],
+    "rows": [
+     [
+      "Google-haun roskapostikäytännöt ([alkuperäinen](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Täsmennetty 15. toukokuuta 2026",
+      "Search Engine Roundtablen mukaan Google päivitti dokumentaationsa todetakseen, että roskapostikäytännöt koskevat myös Google-haun generatiivisia tekoälyvastauksia eli AI Overviews- ja AI Mode -vastauksia ([uutinen](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [Googlen muutosloki](https://developers.google.com/search/updates)). Search Engine Landin mukaan käytännön avauslause kattaa nyt yritykset manipuloida generatiivisia tekoälyvastauksia ([uutinen](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Sivustot (jos rikkomus havaitaan, ne voivat sijoittua alemmas tai jäädä kokonaan pois)"
+     ],
+     [
+      "Anthropicin käyttöehdot ([alkuperäinen](https://www.anthropic.com/legal/aup))",
+      "Voimassa 12. marraskuuta 2026 alkaen",
+      "Kieltää manipuloimasta lähteitä, joista hakukoneet tai tekoälyjärjestelmät hakevat vastauksensa, levittämällä sisältöä, joka antaa väärän kuvan alkuperästään, tekijästään tai riippumattomuudestaan (esimerkiksi sivustoverkostot, jotka esiintyvät riippumattomina lähteinä), sekä sockpuppet-tilit, astroturfingin ja valearvostelut, ja kieltää myymästä mitään näistä palveluna",
+      "Henkilöt ja yritykset, jotka käyttävät Claudea, mukaan lukien sillä tekstejä luonnostelevat toimistot"
+     ],
+     [
+      "Japanin piilomarkkinointisääntö kohtuuttomia lisäetuja ja harhaanjohtavia esityksiä koskevan lain nojalla ([kuluttajavirasto](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "1. lokakuuta 2023 alkaen",
+      "Sääntelee mainontaa, jota tavallinen kuluttaja ei tunnista mainonnaksi",
+      "Mainostaja (asiakkaasi), ei julkaisemaan palkattu vaikuttaja"
+     ]
+    ],
+    "caption": "Emme saaneet haettua Googlen omaa käytäntösivua kirjoittaessamme, joten yllä oleva muotoilu perustuu kahteen uutiseen. Lue alkuperäinen ja muutosloki ennen kuin luotat siihen. Japanin ulkopuolella tarkista oman markkinasi mainonnan merkitsemistä ja valearvosteluja koskevat säännöt."
+   },
+   "after": [
+    "Japanin säännön mukaan vastuussa on mainostaja, ei sisällön tuottanut toimisto (kuluttajaviraston kysymykset ja vastaukset, K1). Juuri siksi asia kannattaa selittää asiakkaalle. Rikkomuksesta voi seurata määräys lopettaa toiminta (K2)."
+   ]
+  },
+  {
+   "heading": "Arviotaulukko usein pyydetyistä taktiikoista",
+   "paragraphs": [
+    "Tässä ovat taktiikat, joita asiakkaat todella pyytävät, suunnilleen heidän omin sanoin, perusteluineen ja vaihtoehtoineen."
+   ],
+   "table": {
+    "head": [
+     "Pyyntö",
+     "Ratkaisu",
+     "Miksi",
+     "Tee sen sijaan näin"
+    ],
+    "rows": [
+     [
+      "\"Tekstiä, jonka vain tekoäly voi lukea\" valkoisella, display:nonella tai pikkuruisella fontilla; \"ohjeita tekoälylle\" HTML-kommenteissa",
+      "Kieltäydy",
+      "Tämä on piilotekstiä Googlen roskapostikäytäntöjen mukaan. Epävirallisissa testeissä piilotetuilla kehotteilla ei havaittu näkyvää vaikutusta ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), yhden kirjoittajan testi)",
+      "Kirjoita viesti näkyvään tekstiin. Vastaa kysymykseen kahdessa ensimmäisessä virkkeessä"
+     ],
+     [
+      "Eri sivun näyttäminen tekoälyindeksoijille (cloaking)",
+      "Kieltäydy",
+      "Hakukoneille eri sisällön näyttäminen kuin käyttäjille on cloakingia roskapostikäytäntöjen mukaan",
+      "Tarjoa kaikille sama HTML. Laita tekoälylle sopiva tiivistelmä samoine tietoineen llms.txt-tiedostoon"
+     ],
+     [
+      "\"10 parasta X:ää\" -lista, jossa asiakas on ensimmäisenä, naamioituna puolueettomaksi arvioksi",
+      "Kieltäydy pyydetyssä muodossa",
+      "Jos lukijat eivät huomaa sen olevan mainontaa, merkitsemissäännöt voivat soveltua. Lily Rayn 100 haun otoksessa 224 viittausta 323:sta itseään mainostaviin listoihin (69 %) ei johtanut suositukseen itse tekoälyvastauksessa ([artikkeli](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); hänen oma otoksensa, syy-yhteyttä ei osoitettu)",
+      "Selvästi asiakkaan omaksi merkitty vertailusivu, jossa on kriteerit ja kilpailijoiden vahvuudet"
+     ],
+     [
+      "Työntekijöiden tai sukulaisten arvostelut; alennus viidestä tähdestä",
+      "Kieltäydy",
+      "Arvostelut, joiden sisältöä yritys hallitsee, voidaan katsoa mainonnaksi; viiteen tähteen tai suositukseen sidottu alennus kuuluu Japanin säännön piiriin (K&V K6)",
+      "Pyydä arvosteluja ilman ehtoja ja vastaa myös huonoihin"
+     ],
+     [
+      "Useita \"riippumattomia\" arvostelusivustoja tai blogeja, jotka suosittelevat asiakasta",
+      "Kieltäydy",
+      "Tämä on juuri Anthropicin käyttöehtojen esimerkki: riippumattomina esiintyvät sivustoverkostot. Googlelle se voi olla myös linkkiroskapostia",
+      "Anna todellisille kolmansille osapuolille (järjestöt, kumppanit, media) syy mainita asiakas: tuloksia, dataa"
+     ],
+     [
+      "Kymmeniä sivuja, joissa vain kaupungin nimi vaihtuu",
+      "Kieltäydy",
+      "Suuret määrät sisällöttömiä sivuja voivat olla skaalatun sisällön väärinkäyttöä tai porttisivuja",
+      "Yksi palvelualuesivu; erilliset sivut vain, kun alueella on omia tietoja (saapumisaika, hinnat, tapaukset)"
+     ],
+     [
+      "UKK tai tähtiarviot rakenteisessa datassa, jota sivu ei näytä",
+      "Kieltäydy",
+      "Google edellyttää, että rakenteinen data vastaa näkyvää sisältöä",
+      "Laita UKK näkyvälle sivulle; tulosta arviot vain, kun todellisia arvosteluja on"
+     ],
+     [
+      "\"Ykkönen tekoälyssä\" -lupauksen antavan toimittajan tai työkalun palkkaaminen",
+      "Neuvo välttämään",
+      "Tekoälyn vastaukset vaihtelevat, joten kukaan ei voi taata sitä; tällaiset toimittajat nojaavat usein yllä oleviin taktiikoihin",
+      "Kirjaa kiinteä kysymyssarja ja seuraa lisättyjen tietojen tuomia parannuksia"
+     ]
+    ],
+    "caption": "\"Ratkaisu\"-sarake on tämän oppaan suositus toimistolle. Se, soveltuuko jokin laki, riippuu kunkin tapauksen tosiasioista."
+   }
+  },
+  {
+   "heading": "Missä harmaa alue päättyy",
+   "paragraphs": [
+    "Kaikkiin pyyntöihin ei tarvitse sanoa ei. Alla olevat ovat kunnossa, kun muotoa muutetaan. Testissä on kaksi osaa: näkevätkö lukijat, kuka sen on kirjoittanut ja onko se mainontaa, ja vastaako se sivulla näkyviä tosiasioita?"
+   ],
+   "table": {
+    "head": [
+     "Pyyntö",
+     "Hyväksyttävä muoto",
+     "Varo"
+    ],
+    "rows": [
+     [
+      "Vertailusivu, jossa asiakas on mukana",
+      "Selvästi asiakkaan omalla sivustolla, kriteereineen, päivämäärineen ja tapauksineen, joissa kilpailija sopii paremmin",
+      "Väitteet kuten \"alan ykkönen\" vaativat lähteen ja päivämäärän, muuten niitä ei pidä esittää"
+     ],
+     [
+      "Maksettu näkyvyys mediassa tai arvostelusivustoilla",
+      "Merkintä \"Mainos\", \"PR\", \"Sponsoroitu\" tai vastaava (K&V K11)",
+      "Merkintä vain kommenteissa tai vain videon alussa ei välttämättä riitä (K14, K15)"
+     ],
+     [
+      "Asiakaskokemukset",
+      "Ilman ehtoja kerätyt kokemukset",
+      "Vain myönteisten valikoiminen voi kuulua säännön piiriin (K10). Älä nimeä vaikuttajien julkaisuja asiakasarvosteluiksi (K16)"
+     ],
+     [
+      "Työntekijöiden markkinointi somessa",
+      "Julkaisut, joista työsuhde käy ilmi",
+      "Roolista riippuen julkaisut voidaan katsoa yrityksen omiksi (K3); pelkkä työnimike ei ole riittävä merkintä (K12)"
+     ],
+     [
+      "Tekoälyn avulla luonnostellut artikkelit",
+      "Ihmisen faktantarkistamat ja editoimat, asiakkaan omilla tiedoilla ja datalla täydennetyt",
+      "Älä aseta artikkelimäärätavoitteita äläkä muotoile samaa tekstiä uudelleen moneksi"
+     ],
+     [
+      "llms.txt-tiedoston julkaiseminen",
+      "Samat tiedot kuin sivuilla, linkkeineen niihin",
+      "Ei pelkästään tekoälylle kirjoitettuja mainosväitteitä"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Miten sanoa ei: esimerkkiviesti",
+   "paragraphs": [
+    "Kirjoita se kolmessa osassa: päätös, perustelu (säännön nimi ja päivämäärä) ja vaihtoehto, joka palvelee samaa tavoitetta. Pelkkä \"se on riskialtista, jätetään väliin\" päättyy yleensä siihen, että asiakas palkkaa jonkun muun tekemään sen."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Perustele ulkoisilla säännöillä, älä toimistosi omalla maulla; asiakas voi välittää ne sellaisenaan esihenkilölleen. Valitse vaihtoehto sen mukaan, mitä asiakas todella haluaa, kuten tekoälyn suosittelua tai kilpailijaa vahvemmalta näyttämistä."
+   ]
+  },
+  {
+   "heading": "Mitä sopimukseen ja työnkuvaukseen kirjataan",
+   "paragraphs": [
+    "Välttääksesi myöhemmin väitteet \"edellinen toimisto teki niin\" tai \"se oli sopimuksessa\", kirjaa poissuljetut menetelmät sopimukseen tai työnkuvaukseen. Esimerkki:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Jatkuva sopimus, joka lupaa tuloksena tietyn määrän tekoälymainintoja, antaa kaikille syyn tarttua yllä oleviin taktiikoihin. Raportoi sen sijaan, mitä tietoja on lisätty, sekä kiinteän kirjatun kysymyssarjan tulokset ([tekoälyhaun myyminen kuukausipalveluna](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Perityn sivuston tarkastaminen",
+   "paragraphs": [
+    "Ylläpitoon tai uudistukseen ottamillasi sivustoilla voi olla aiemman toimittajan tai lisäosan lisäämiä taktiikoita. Nämä komennot etsivät piilotettua tyylittelyä, indeksoijakohtaista sisältöä, merkkejä massatuotannosta ja käytössä olevia rakenteisen datan tyyppejä. Pidä osumia vain vihjeinä: display:none on tavallinen valikoissa ja haitareissa, joten tarkista jokainen silmämääräisesti."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Jos vaihe 2 näyttää suuren eron koossa tai sisällössä, etsi user agentin mukaan vaihtuvaa sisältöä lisäosista tai palvelinasetuksista; välimuisti ja mainokset aiheuttavat pieniä eroja. Search Consolessa Suojaus ja manuaaliset toimenpiteet -kohdan Manuaaliset toimenpiteet -raportti näyttää Googlen tarkastajan havaitsemat rikkomukset ([ohje](https://support.google.com/webmasters/answer/9044175?hl=en)). Korjaa syy ja pyydä sitten uudelleenarviointia.",
+    "Jos löydät massatuotettuja sivuja, yhdistä ne sisällökkääksi sivuksi tai poista ne, joita ei kannata säilyttää. Päätösprosessi on kuvattu oppaassa [sisällön päivittämisen myyminen kuukausipalveluna](/guide/agency-content-refresh-service)."
+   ]
+  },
+  {
+   "heading": "Vaiheet WordPressissä (Nurevo AEO:n kanssa)",
+   "paragraphs": [
+    "Näin varmistat ilmaisella lisäosalla [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/), että tekoälylle näkyvä sisältö vastaa sitä, mitä kävijät näkevät. Toisella lisäosalla tai käsin tarkistat samat asiat."
+   ],
+   "list": [
+    "Nurevo AEO ei lue kävijän user agentia. Rakenteinen data muodostetaan palvelimella sivun HTML:ään, joten selaimet ja tekoälyindeksoijat saavat saman sisällön. Indeksoijakohtaiset ryhmät robots.txt-tiedostossa ovat tavallista konfiguraatiota, eivät poikkeus tästä.",
+    "UKK:n rakenteinen data (FAQPage) tulostetaan vain sivulla, jolle on lisätty Nurevo FAQ -lohko tai [nurevo_faq] ja jolla kysymykset näytetään. Näkymättömästä UKK:sta ei tulosteta mitään.",
+    "Tuotearviot (AggregateRating) tulostetaan vain, kun WooCommerce-tuotteella on arvosteluja. Arvion kirjoittamiseen ei ole kenttää.",
+    "Yrityksen tiedot täytetään SEO-lisäosasi asetuksista ja julkisesta sisällöstä vain tyhjiin kenttiin; itse syöttämiäsi arvoja ei koskaan korvata. Tarkista diagnoosista, että hallintapaneelin arvot ja sivun teksti täsmäävät.",
+    "Massatuotetut tai mainossivut voidaan jättää pois llms.txt-tiedostosta ja niiden Nurevo-rakenteinen data voidaan kytkeä pois kunkin julkaisun Nurevo AEO -paneelista. Itse sivun säilyttäminen on erillinen päätös.",
+    "Ilmainen tekoälytarkistus esittää Perplexitylle kolme kysymystä kuukaudessa, jotka muodostetaan toimialasta ja alueesta eikä koskaan yrityksen nimestä. Yritys tulee joka tapauksessa esiin, kun sitä kysytään nimellä, joten tämä näyttää, muuttivatko jotakin tosiasiat eivätkä manipulointi. Lue myös Pro-mittauksen (beta) luvut suuntaa antavina.",
+    "Avaa tarkastuksen jälkeen tärkeimmät sivut [Rich Results -testissä](https://search.google.com/test/rich-results) ja varmista, että rakenteisen datan arvot vastaavat näkyvää tekstiä."
+   ]
+  },
+  {
+   "heading": "Tarkistuslista kieltäytymisen jälkeen",
+   "list": [
+    "Asiakas sai sähköpostilla päätöksen, säännön nimen ja päivämäärän sekä vaihtoehdon.",
+    "Tarjous ja työnkuvaus tehtiin uudelleen vaihtoehdon pohjalta.",
+    "Sopimuksessa luetellaan poissuljetut menetelmät ja se, mitä ei taata (juristin tarkastama).",
+    "Etusivulla ja tärkeimmillä sivuilla ei ole näkymätöntä tekstiä tai ohjeita tekoälylle.",
+    "Selaimet ja tekoälyindeksoijat saavat saman HTML:n.",
+    "Kuukausittaisissa julkaisumäärissä ei näy massatuotettujen sivujen piikkiä.",
+    "UKK:n ja arvioiden rakenteinen data vastaa näkyvää sisältöä.",
+    "Vertailusivut ja maksettu näkyvyys on merkitty selvästi asiakkaan omiksi tai mainonnaksi.",
+    "Arvostelupyynnöissä ei ole ehtoja, kuten viittä tähteä.",
+    "Tulokset raportoidaan kiinteästä kirjatusta kysymyssarjasta ilman yrityksen nimeä."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Vaikka Google havaitsee piilotekstin, eikö se silti toimi ChatGPT:ssä tai Perplexityssä?",
+   "a": "Emme löytäneet luotettavaa näyttöä siitä, että se toimisi. Tekoälyyritykset julkaisevat suojauksia piilotettuja ohjeita vastaan, eikä epävirallisissa testeissä havaittu vaikutusta. Vaikka se toimisikin hetken, Google-haku käsittelee sitä piilotekstinä, joten riski ei kannata."
+  },
+  {
+   "q": "Onko jokainen omaa yritystämme sisältävä vertailuartikkeli kielletty?",
+   "a": "Ei. Tee selväksi, että sivu on oma, kerro kriteerit ja päivämäärä ja kerro, missä kilpailijat sopivat paremmin. Raja kulkee siinä, että sivu esitetään puolueettomana kolmannen osapuolen arviona."
+  },
+  {
+   "q": "Rangaistaanko Japanin piilomarkkinointisäännön nojalla toimistoa?",
+   "a": "Kuluttajaviraston kysymysten ja vastausten mukaan sääntö koskee yritystä, joka päätti sisällöstä (mainostaja), ei kolmansia osapuolia, joita pyydettiin julkaisemaan. Siksi asiakas tarvitsee selityksen, jotta hän voi päättää itse."
+  },
+  {
+   "q": "Kielsikö Googlen toukokuun 2026 muutos jonkin uuden taktiikan?",
+   "a": "Uutisten mukaan se ei lisännyt uusia sääntöjä; se teki selväksi, että nykyiset roskapostikäytännöt koskevat AI Overviews- ja AI Mode -vastauksia. Tarkista alkuperäinen sanamuoto Googlen muutoslokista."
+  },
+  {
+   "q": "Onko Anthropicin käyttöehdoilla merkitystä toimistoille, jotka eivät käytä Claudea?",
+   "a": "Ne koskevat suoraan Clauden käyttöä. Ne ovat silti hyödyllisiä kieltäytymistä perusteltaessa, koska ne näyttävät, mitä tekoälyyritys pitää harhaanjohtavana, käytitpä mitä tahansa tekoälytyökalua."
+  },
+  {
+   "q": "Löysimme aiemman toimittajan jättämää piilotekstiä. Mitä nyt?",
+   "a": "Näytä se asiakkaalle ja poista se hänen suostumuksellaan. Tarkista Search Consolen Manuaaliset toimenpiteet -raportti; jos siinä on rikkomus, pyydä uudelleenarviointia korjauksen jälkeen. Kirjaa poistopäivä, jotta voit verrata myöhemmin."
+  },
+  {
+   "q": "Saako pelkkä oikeutettu työ tekoälyn suosittelemaan asiakasta?",
+   "a": "Sitä ei voi taata. Tekoälyn vastaukset vaihtelevat päivän ja sanamuodon mukaan. Voit kuitenkin lisätä sivuille tietoja, kuten hinnat, alueet ja tulokset, lähteineen, varmistaa, että tekoäly pystyy lukemaan ne, ja seurata muutoksia samoilla kysymyksillä."
+  }
+ ],
+ "relatedHeading": "Aiheeseen liittyvät oppaat",
+ "cta": {
+  "heading": "Katso, miten tekoäly lukee juuri perimääsi sivustoa",
+  "body": "Ilmainen tarkistus ei vaadi rekisteröitymistä: syötä URL ja näet rakenteisen datan, llms.txt-tiedoston ja tekoälyindeksoijien pääsyn tilan. Hyvä ensimmäinen askel tarkastukseen.",
+  "label": "Tarkista tekoälyluettavuus maksutta",
+  "href": "/check",
+  "secondary": {
+   "label": "Tutustu kumppaniohjelmaan",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT ja OAI-SearchBot ovat OpenAI:n tavaramerkkejä, Perplexity Perplexity AI:n, Claude Anthropicin sekä Google ja Search Console Google LLC:n tavaramerkkejä. WordPress ja WooCommerce ovat omistajiensa tavaramerkkejä. Nurevo ei ole sidoksissa näihin yrityksiin eivätkä ne ole hyväksyneet sitä."
+}
