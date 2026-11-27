@@ -689,3 +689,13 @@
 3. 比較サイト・ポータルに載っている自社情報の直し方（PR #80 と重ならない、掲載先ごとの更新依頼の文例に絞る）【全業種】
 4. ECの商品画像・商品動画とAIショッピング（chatgpt-shopping-product-feed と重ならない、商品ページの画像の扱いに絞る）【EC】
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）
+| 2026-11-27 8時 | estate-cleanout-junk-removal-ai-search | 遺品整理・不用品回収のAI検索対策（業種別。moving-company-ai-search〔不用品は表の1行だけ〕・house-cleaning-housekeeping-ai-search・emergency-home-repair-ai-search・uravation 便利屋とは分け、家庭のごみの許可〔一般廃棄物収集運搬業 or 許可業者への委託〕と産廃・古物商の区別、量の決め方と追加料金、家電4品目、買取と処分の分け方、遺品の仕分け・貴重品・立ち会い・同意に絞る。上位記事10本〔uravation 不用品回収・遺品整理（2026-08-28）・uravation 便利屋（10-26）・サングローブ（2025-11-25、2026-07-15更新、AI検索なし）・神戸新聞NEXT（10-29）／Texta junk removal・Texta estate liquidation（日付なし、出典のない口コミ50件）・FindSkill（06-16）・The Haulers Edge（08-09）・Servgrow（日付なし）・Workiz（05-11更新）。stock-sun 2本は取得失敗〕の抜け〔家電リサイクル法なし・JSON-LD例とWordPress手順なし・量の決め方の表なし・引き取れない物なし・買取と処分の明細なし〕を埋めた。国民生活センター 不用品回収（2022-11-02、11-11更新：2018年度1,354・2019 1,457・2020 1,788・2021 2,231・2022 857〔9月末〕、軽トラックパック7,000円→25万円、あおりの高さまで、1台を2台分、確認4点）、遺品整理（2018-07-19：2013年度73→2017年度105、2018年度31〔6月末、前年同期16〕、処分しないよう頼んだ物の処分）、環境省 2011-05-23〔一般廃棄物収集運搬業の許可が原則、許可「わからない」84.5%〕、環境省 Q&A〔産廃・古物商の許可では家庭の廃棄物は不可、家電4品目のリサイクル料金・収集運搬料金・リサイクル券〕、環境省 令和5年度報告書（R6-03-22：古物商でも記録なしで無許可回収と判断）、杉並区（2025-06-10）・千葉市（2025-07-30）、愛知県警 古物営業法（2025-12-15）、神戸新聞NEXT〔ブランディングワークス 2026-09 54回答：くらしのマーケット51.9%・ミツモア50.0%、元資料リンクなし〕、EPA HHW（2026-06-01更新）・HHW and Demolition（2026-03-09更新）、schema-dts 2.1.0〔専用型なし、RecyclingCenter は施設〕、許可の表5行、料金の表6行、JSON-LD例、WordPress手順〔「その他」→LocalBusiness、サービス最大20、areaServed・hasCredential はフィルター、0.9.1 併用〕、チェックリスト10、FAQ 7問）。41言語 | 業種別 | content/daily-20261127-08 |
+翻訳の補完ログ：2026-11-27 agency-ai-search-manipulation-risks に39言語を追加（41言語。断りのメール・契約の条文・点検コマンドのコードブロックは英語のまま）。
+メモ：2026-11-27 8時の回は、不用品回収・遺品整理の料金の相場、遺品整理士の資格の要件、訪問購入のクーリング・オフの日数、AIで業者を探す人の割合、米国の州ごとの許可の決まりは確認しておらず書いていない。FTC の業者選びのページは取得できず使っていない。英語版の積載量（15立方ヤード）・金額は書き方の例。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧から agency-ai-search-manipulation-risks を除いたもの。次は agency-reviews-testimonials-ai-search 以前の未翻訳記事の公開順〔butsudan-gravestone-shop-ai-search・agency-reviews-testimonials-ai-search・ai-crawlers-javascript-rendering・images-video-ai-search ほか〕。ai-visibility-check は en のみ）
+次の候補：
+1. 制作会社向け：口コミへの返信の代行（返信の型、否定的な口コミ、業種別の注意）【制作会社向け】
+2. 比較サイト・ポータルに載っている自社情報の直し方（PR #80 と重ならない、掲載先ごとの更新依頼の文例に絞る）【全業種】
+3. ECの商品画像・商品動画とAIショッピング（chatgpt-shopping-product-feed と重ならない）【EC】
+4. 行政書士・社労士などの士業のAI検索対策（業務範囲と報酬額の表示）【業種別】（PR #63 と重ならない形で）
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける）

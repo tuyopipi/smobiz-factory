@@ -1,0 +1,303 @@
+{
+ "title": "Clientes que piden trucos para a IA: guía para axencias | Nurevo",
+ "description": "Texto oculto para a IA, clasificacións onde gaña o cliente ou recensións falsas: táboa de decisión, normas de 2026, correo de rexeitamento, cláusula e auditoría.",
+ "h1": "Cando un cliente pide trucos para a busca con IA: táboa de decisión, modelo de rexeitamento e auditoría para axencias",
+ "lead": "Cando un cliente che pide engadir texto que só a IA pode ver, ou publicar unha lista dos «mellores provedores» que o sitúa en primeiro lugar, a resposta segura para unha axencia é rexeitalo e ofrecer unha vía lexítima para acadar o mesmo obxectivo. O 15 de maio de 2026, Google actualizou a súa documentación para aclarar que as súas políticas sobre spam tamén se aplican ás respostas de IA na Busca de Google, como AI Overviews e AI Mode, e a publicidade encuberta está regulada en moitos mercados. Esta guía ofrece unha táboa de tácticas que se piden a miúdo, mostra onde remata a zona gris e achega un correo de rexeitamento, unha cláusula de contrato e comandos para auditar un sitio web que herdas.",
+ "intro": [
+  "Redactado o 21 de novembro de 2026 (JST). Para axencias, empresas de SEO, empresas de mantemento de WordPress e profesionais autónomos que crean ou manteñen sitios web de clientes. Cando faga falta unha valoración xurídica, consulta un avogado ou o organismo regulador. Esta guía non é asesoramento legal.",
+  "As respostas da IA cambian segundo o día e a formulación. Os pasos desta guía manteñen o sitio web dun cliente a salvo tanto na busca como na IA; non garanten que apareza en ningunha resposta de IA."
+ ],
+ "sections": [
+  {
+   "heading": "Que cobren as guías mellor posicionadas e que deixan fóra",
+   "paragraphs": [
+    "O 21 de novembro de 2026 lemos as páxinas que posicionan para «black hat GEO», «AI search what not to do» e consultas semellantes: catro en inglés (Similarweb, 26 de febreiro de 2026, actualizada o 20 de maio; Lily Ray, 17 de xuño de 2026; Citable, 25 de xuño de 2026; e un artigo de Search Engine Land sobre a inxección de prompts ocultos) e seis en xaponés, tres das cales enumeran tácticas que cómpre evitar (Uravation, Jinrai, Sungrove).",
+    "Coinciden no básico: nada de texto oculto, nada de contido pobre producido en masa, nada de recensións falsas. O que necesita unha axencia cando un cliente pide de verdade algunha destas cousas faltaba case sempre."
+   ],
+   "table": {
+    "head": [
+     "Carencia",
+     "Que achega esta guía"
+    ],
+    "rows": [
+     [
+      "Listas de tácticas, pero nada sobre como dicir que non a un cliente",
+      "Un correo de rexeitamento e as alternativas que ofrecer"
+     ],
+     [
+      "Cítanse as políticas de Google, pero poucas veces se comparan o cambio de maio de 2026 e as normas de identificación publicitaria",
+      "Tres normas de Google, Anthropic e a Axencia de Asuntos do Consumidor do Xapón (Consumer Affairs Agency) nunha soa táboa"
+     ],
+     [
+      "As guías discrepan sobre se se permiten as páxinas comparativas que te inclúen",
+      "Unha táboa da zona gris: que está ben se se declara e que require coidado"
+     ],
+     [
+      "Nada sobre contratos nin documentos de alcance (Citable menciónao nunha liña)",
+      "Un modelo de cláusula contractual"
+     ],
+     [
+      "Ningunha forma de comprobar se un provedor anterior deixou estas tácticas nun sitio web",
+      "Comandos de auditoría con curl e WP-CLI"
+     ],
+     [
+      "Nada específico de WordPress",
+      "Como confirmar que o que se entrega á IA coincide co que ven os visitantes"
+     ]
+    ],
+    "caption": "Algunhas das páxinas mellor posicionadas citan cifras como «perda de tráfico do 60-80 % en poucos días» ou «3-6 meses para recuperarse» sen fonte, así que aquí non as usamos."
+   }
+  },
+  {
+   "heading": "A base de 2026: tres normas",
+   "paragraphs": [
+    "Estas son as normas que unha axencia pode citar ao rexeitar. Ningunha crea unha prohibición totalmente nova; cada unha aclara que os estándares existentes tamén alcanzan as respostas de IA."
+   ],
+   "table": {
+    "head": [
+     "Norma",
+     "Desde",
+     "Que di",
+     "A quen se aplica"
+    ],
+    "rows": [
+     [
+      "Políticas sobre spam da Busca de Google ([orixinal](https://developers.google.com/search/docs/essentials/spam-policies))",
+      "Aclarado o 15 de maio de 2026",
+      "Segundo Search Engine Roundtable, Google actualizou a súa documentación para indicar que as políticas sobre spam tamén se aplican ás respostas de IA xerativa na Busca de Google, é dicir, AI Overviews e AI Mode ([noticia](https://www.seroundtable.com/google-spam-policies-apply-ai-responses-41331.html), [rexistro de cambios de Google](https://developers.google.com/search/updates)). Search Engine Land informa de que a frase inicial da política inclúe agora os intentos de manipular as respostas de IA xerativa ([noticia](https://searchengineland.com/google-updates-search-spam-policies-to-clarify-it-applies-to-generative-ai-responses-477657))",
+      "Sitios web (se se detecta un incumprimento, poden posicionar peor ou non aparecer)"
+     ],
+     [
+      "Política de uso de Anthropic ([orixinal](https://www.anthropic.com/legal/aup))",
+      "En vigor desde o 12 de novembro de 2026",
+      "Prohibe manipular as fontes das que os buscadores ou os sistemas de IA extraen respostas mediante a sementeira de contido que falsea a súa orixe, autoría ou independencia (por exemplo, redes de sitios que se fan pasar por fontes non afiliadas), as contas monicreque, o astroturfing e as recensións falsas, así como vender calquera delas como servizo",
+      "Persoas e empresas que usan Claude, incluídas as axencias que redactan textos con el"
+     ],
+     [
+      "Norma xaponesa sobre márketing encuberto segundo a Lei contra premios inxustificados e representacións enganosas ([Consumer Affairs Agency](https://www.caa.go.jp/policies/policy/representation/fair_labeling/stealth_marketing/))",
+      "Desde o 1 de outubro de 2023",
+      "Regula a publicidade que os consumidores correntes non poden identificar como publicidade",
+      "O anunciante (o teu cliente), non o influencer contratado para publicar"
+     ]
+    ],
+    "caption": "Non puidemos acceder á páxina de políticas de Google mentres escribiamos, así que a redacción anterior segue as dúas noticias. Le o orixinal e o rexistro de cambios antes de basearte nel. Fóra do Xapón, revisa as normas do teu mercado sobre identificación publicitaria e recensións falsas."
+   },
+   "after": [
+    "Segundo a norma xaponesa, a parte responsable é o anunciante, non a axencia que produciu o contido (preguntas e respostas da Consumer Affairs Agency, Q1). Precisamente por iso paga a pena explicarllo ao cliente. Un incumprimento pode dar lugar a unha orde de cesamento (Q2)."
+   ]
+  },
+  {
+   "heading": "Táboa de decisión para as tácticas que máis se piden",
+   "paragraphs": [
+    "Estas son as tácticas que os clientes piden de verdade, formuladas máis ou menos como as piden, co motivo e o que convén facer no seu lugar."
+   ],
+   "table": {
+    "head": [
+     "Petición",
+     "Decisión",
+     "Por que",
+     "Fai isto no seu lugar"
+    ],
+    "rows": [
+     [
+      "«Texto que só le a IA» en branco, con display:none ou letra diminuta; «instrucións para a IA» en comentarios HTML",
+      "Rexeitar",
+      "É texto oculto segundo as políticas sobre spam de Google. Probas informais non atoparon ningún efecto visible dos prompts ocultos ([Search Engine Land](https://searchengineland.com/hidden-prompt-injection-black-hat-trick-ai-outgrew-462331), proba dun só autor)",
+      "Pon a mensaxe no texto visible. Responde á pregunta nas dúas primeiras frases"
+     ],
+     [
+      "Servir unha páxina distinta aos rastrexadores de IA (cloaking)",
+      "Rexeitar",
+      "Mostrarlles aos buscadores un contido distinto do que ven os usuarios é cloaking segundo as políticas sobre spam",
+      "Serve o mesmo HTML a todos. Pon un resumo pensado para a IA en llms.txt cos mesmos datos"
+     ],
+     [
+      "Unha lista «Os 10 mellores X» co cliente en primeiro lugar, presentada como recensión neutral",
+      "Rexeitar tal como se pide",
+      "Se os lectores non poden saber que é publicidade, poden aplicarse as normas de identificación. Na mostra de 100 consultas de Lily Ray, 224 de 323 citas de listas autopromocionais (69 %) non aparecían recomendadas na propia resposta de IA ([artigo](https://lilyraynyc.substack.com/p/why-calling-yourself-the-best-could); mostra propia, causa non demostrada)",
+      "Unha páxina comparativa claramente identificada como propia do cliente, con criterios e os puntos fortes da competencia"
+     ],
+     [
+      "Recensións de empregados ou familiares; un desconto a cambio de cinco estrelas",
+      "Rexeitar",
+      "As recensións cuxo contido controla a empresa poden considerarse publicidade; un desconto condicionado a cinco estrelas ou a unha recomendación entra na norma xaponesa (preguntas e respostas, Q6)",
+      "Pide recensións sen condicións e responde tamén ás malas"
+     ],
+     [
+      "Varios sitios de recensións ou blogs «independentes» que recomendan o cliente",
+      "Rexeitar",
+      "É xusto o exemplo da política de Anthropic: redes de sitios que se fan pasar por non afiliados. Para Google tamén pode ser spam de ligazóns",
+      "Dálles a terceiros reais (asociacións, socios, medios) un motivo para mencionar o cliente: resultados, datos"
+     ],
+     [
+      "Decenas de páxinas que só cambian o nome da cidade",
+      "Rexeitar",
+      "Un gran número de páxinas sen substancia pode considerarse abuso de contido a escala ou páxinas porta",
+      "Unha páxina de zona de servizo; páxinas separadas só onde unha zona teña datos propios (tempo de chegada, prezos, casos)"
+     ],
+     [
+      "FAQ ou valoracións con estrelas en datos estruturados que a páxina non mostra",
+      "Rexeitar",
+      "Google esixe que os datos estruturados coincidan co contido visible",
+      "Pon as FAQ nunha páxina visible; emite valoracións só cando existan recensións reais"
+     ],
+     [
+      "Contratar un provedor ou unha ferramenta que promete «o número 1 na IA»",
+      "Desaconsellar",
+      "As respostas da IA varían, así que ninguén pode garantilo; estes provedores adoitan recorrer ás tácticas anteriores",
+      "Rexistra un conxunto fixo de preguntas e comproba as melloras que achegan os datos engadidos"
+     ]
+    ],
+    "caption": "A columna «Decisión» é a recomendación desta guía para unha axencia. Que se aplique ou non unha lei depende dos feitos de cada caso."
+   }
+  },
+  {
+   "heading": "Onde remata a zona gris",
+   "paragraphs": [
+    "Non todas as peticións requiren un non. As seguintes son aceptables en canto cambia o formato. A proba ten dúas partes: poden saber os lectores quen o escribiu e se é publicidade?, e coincide cos datos visibles na páxina?"
+   ],
+   "table": {
+    "head": [
+     "Petición",
+     "Forma aceptable",
+     "Precaucións"
+    ],
+    "rows": [
+     [
+      "Unha páxina comparativa que inclúe o cliente",
+      "Claramente no sitio web propio do cliente, con criterios, unha data e casos nos que un competidor encaixa mellor",
+      "Afirmacións como «número 1 do sector» necesitan fonte e data, ou non deben aparecer"
+     ],
+     [
+      "Colocación pagada en medios ou sitios de recensións",
+      "Identificada como «Publicidade», «PR», «Patrocinado» ou similar (preguntas e respostas, Q11)",
+      "Unha etiqueta só nos comentarios, ou só ao comezo dun vídeo, pode non abondar (Q14, Q15)"
+     ],
+     [
+      "Testemuños de clientes",
+      "Testemuños recollidos sen condicións",
+      "Escoller só os favorables pode quedar cuberto (Q10). Non fagas pasar publicacións de influencers por recensións de clientes (Q16)"
+     ],
+     [
+      "Empregados que fan promoción nas redes sociais",
+      "Publicacións que deixan clara a relación laboral",
+      "Segundo o posto, as publicacións poden contar como propias da empresa (Q3); un cargo por si só non é unha identificación suficiente (Q12)"
+     ],
+     [
+      "Artigos redactados con IA",
+      "Verificados e editados por unha persoa, con datos e feitos propios do cliente engadidos",
+      "Non fixes obxectivos de número de artigos nin reescribas o mesmo texto en moitos"
+     ],
+     [
+      "Publicar llms.txt",
+      "Os mesmos datos que as páxinas, con ligazóns a elas",
+      "Nada de afirmacións promocionais escritas só para a IA"
+     ]
+    ]
+   }
+  },
+  {
+   "heading": "Como dicir que non: un correo de exemplo",
+   "paragraphs": [
+    "Escríbeo en tres partes: a decisión, o motivo (o nome e a data da norma) e unha alternativa que sirva ao mesmo obxectivo. Un simple «é arriscado, mellor non» adoita rematar co cliente contratando a outro para facelo."
+   ],
+   "code": "Subject: Your AI search request - a change to our proposal\n\nHi <name>,\n\nWe looked at the two ideas you raised: hidden text written for AI, and a\n\"best providers\" article that ranks your company first.\n\nWe won't do either, for two reasons:\n1. On 15 May 2026 Google updated its documentation to make clear that its\n   spam policies also apply to AI responses in Google Search, such as AI\n   Overviews. Sites found in breach can rank lower or drop out of results.\n2. Advertising made to look like a neutral review can break consumer-protection\n   or advertising-disclosure rules, and the advertiser is usually the one held\n   responsible.\n\nHere is what we suggest instead, for the same goal (AI describing your\nstrengths accurately):\n- State prices, service areas and results on the page, with sources and dates\n- Publish a comparison page that says clearly it is written by you\n- Set up a way to collect customer reviews without conditions attached\n\nWe'll send a revised quote on this basis. Happy to talk it through.",
+   "after": [
+    "Dá como motivo normas externas, non o gusto da túa axencia; o cliente pode reenviarllas tal cal a un responsable. Escolle a alternativa segundo o que o cliente quere de verdade, como que a IA o recomende ou parecer máis forte ca un competidor."
+   ]
+  },
+  {
+   "heading": "Que incluír no contrato e no alcance",
+   "paragraphs": [
+    "Para evitar máis adiante o «a axencia anterior facíao» ou «iso estaba no contrato», inclúe os métodos excluídos no contrato ou no documento de alcance. Un exemplo:"
+   ],
+   "code": "(AI search methods)\n1. In performing the services, the Agency will not:\n   (a) place text or instructions on a page that visitors cannot see;\n   (b) return different content to search engine or AI crawlers than to visitors;\n   (c) present the Client's advertising as an independent, neutral review,\n       unless it is clearly labelled as advertising;\n   (d) create reviews or endorsements from people who do not exist or are not\n       real customers;\n   (e) put facts in structured data that the page does not show.\n2. If the Client asks for any of the above, the Agency may decline, and\n   declining is not a breach of this agreement.\n3. AI answers vary by day and by question; the Agency does not guarantee\n   appearance or position in any AI answer.\nNote: this is a sample. Have a lawyer review the wording for your contract.",
+   "after": [
+    "Un contrato de mantemento que promete un número de mencións na IA como resultado dálles a todos un motivo para recorrer ás tácticas anteriores. Informa no seu lugar dos datos engadidos e dun conxunto fixo de preguntas rexistradas ([vender a busca con IA como servizo mensual](/guide/agency-aeo-monthly-service))."
+   ]
+  },
+  {
+   "heading": "Auditar un sitio web herdado",
+   "paragraphs": [
+    "Os sitios web que asumes para mantemento ou redeseño poden conter tácticas engadidas por un provedor anterior ou por un plugin. Estes comandos buscan estilos ocultos, contido específico para rastrexadores, sinais de produción en masa e os tipos de datos estruturados en uso. Trata as coincidencias só como pistas: display:none é normal en menús e acordeóns, así que revisa cada unha a simple vista."
+   ],
+   "code": "# 1. Hidden text or instructions aimed at AI (home page and key pages)\ncurl -s https://www.example.com/ | grep -inE 'display: ?none|visibility: ?hidden|font-size: ?0|ChatGPT|Perplexity|AI assistant|ignore (all|previous)'\n\n# 2. Do AI crawlers and browsers get the same content? (size and diff)\ncurl -s -A 'Mozilla/5.0' https://www.example.com/ > browser.html\ncurl -s -A 'OAI-SearchBot' https://www.example.com/ > bot.html\nwc -c browser.html bot.html; diff <(sed 's/nonce=\"[^\"]*\"//g' browser.html) <(sed 's/nonce=\"[^\"]*\"//g' bot.html) | head\n\n# 3. Hidden styling inside WordPress posts\nwp post list --post_type=any --post_status=publish --s='display:none' --fields=ID,post_title,post_type\nwp db query \"SELECT ID, post_title FROM $(wp db prefix)posts WHERE post_status='publish' AND post_content REGEXP 'visibility:[ ]*hidden|font-size:[ ]*0'\"\n\n# 4. Pages mass-produced in a short time (published per month)\nwp db query \"SELECT DATE_FORMAT(post_date,'%Y-%m') m, COUNT(*) FROM $(wp db prefix)posts WHERE post_status='publish' AND post_type IN ('post','page') GROUP BY m ORDER BY m DESC LIMIT 12\"\n\n# 5. Which structured data types and ratings (AggregateRating, Review) appear\ncurl -s https://www.example.com/ | grep -o '\"@type\": *\"[A-Za-z]*\"' | sort | uniq -c",
+   "after": [
+    "Se o paso 2 mostra unha gran diferenza de tamaño ou de contido, busca un cambio segundo o user-agent nos plugins ou na configuración do servidor; a caché e os anuncios causan diferenzas pequenas. En Search Console, o informe «Accións manuais», dentro de «Seguranza e accións manuais», mostra as infraccións detectadas por un revisor de Google ([axuda](https://support.google.com/webmasters/answer/9044175?hl=en)). Corrixe a causa e despois solicita unha revisión.",
+    "Se atopas páxinas producidas en masa, fusiónaas nunha páxina con substancia ou elimina as que non pague a pena conservar. O proceso de decisión está en [vender a actualización de contidos como servizo mensual](/guide/agency-content-refresh-service)."
+   ]
+  },
+  {
+   "heading": "Pasos en WordPress (con Nurevo AEO)",
+   "paragraphs": [
+    "Así podes confirmar, co plugin gratuíto [Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/), que o que se entrega á IA coincide co que ven os visitantes. Con outro plugin ou a man, comproba o mesmo."
+   ],
+   "list": [
+    "Nurevo AEO non le o user-agent do visitante. Os datos estruturados xéranse no servidor dentro do HTML da páxina, de modo que navegadores e rastrexadores de IA reciben o mesmo. Os grupos por rastrexador en robots.txt son configuración habitual, non unha excepción a isto.",
+    "Os datos estruturados de FAQ (FAQPage) só se emiten nunha páxina onde se colocou o bloque FAQ de Nurevo ou [nurevo_faq] e se mostran as preguntas. Non se emite nada para unhas FAQ que non son visibles.",
+    "As valoracións de produto (AggregateRating) só se emiten cando o produto de WooCommerce ten recensións. Non hai ningún campo para escribir unha valoración.",
+    "Os datos do negocio complétanse a partir da configuración do teu plugin de SEO e do contido público, só en campos baleiros; os valores que escribiches nunca se sobrescriben. Comproba co diagnóstico que os valores do panel de administración e o texto da páxina coinciden.",
+    "As páxinas producidas en masa ou publicitarias poden excluírse de llms.txt e desactivar nelas os datos estruturados de Nurevo no panel Nurevo AEO de cada entrada. Se conservar ou non a propia páxina é unha decisión aparte.",
+    "A comprobación de IA gratuíta faille a Perplexity tres preguntas ao mes, construídas a partir do tipo de negocio e a zona, nunca do nome do negocio. Un negocio aparece de todos os xeitos cando se pregunta polo seu nome, así que isto mostra se foron os datos, e non a manipulación, o que cambiou algo. Interpreta tamén como orientativas as cifras da medición Pro (beta).",
+    "Tras a auditoría, abre as páxinas clave na [proba de resultados enriquecidos](https://search.google.com/test/rich-results) e confirma que os valores dos datos estruturados coinciden co texto visible."
+   ]
+  },
+  {
+   "heading": "Lista de comprobación tras rexeitar",
+   "list": [
+    "O cliente recibiu por correo a decisión, o nome e a data da norma, e unha alternativa.",
+    "O orzamento e o alcance refixéronse arredor da alternativa.",
+    "O contrato enumera os métodos excluídos e o que non se garante (revisado por un avogado).",
+    "A páxina de inicio e as páxinas clave non conteñen texto invisible nin instrucións para a IA.",
+    "Os navegadores e os rastrexadores de IA reciben o mesmo HTML.",
+    "As cifras de publicación mensual non mostran picos de páxinas producidas en masa.",
+    "Os datos estruturados de FAQ e valoracións coinciden co contido visible.",
+    "As páxinas comparativas e as colocacións pagadas están claramente identificadas como propias do cliente ou como publicidade.",
+    "As solicitudes de recensións non levan condicións como as cinco estrelas.",
+    "Os resultados infórmanse a partir dun conxunto fixo de preguntas rexistradas sen o nome do negocio."
+   ]
+  }
+ ],
+ "faqs": [
+  {
+   "q": "Aínda que Google detecte o texto oculto, non segue funcionando en ChatGPT ou Perplexity?",
+   "a": "Non atopamos probas fiables de que funcione. As empresas de IA publican defensas contra as instrucións ocultas e as probas informais non atoparon ningún efecto. Aínda que funcionase un tempo, a Busca de Google trátao como texto oculto, así que non paga a pena o risco."
+  },
+  {
+   "q": "Está prohibido calquera artigo comparativo que inclúa a nosa propia empresa?",
+   "a": "Non. Deixa claro que é a túa propia páxina, indica os criterios e a data, e di onde encaixan mellor os competidores. O límite está en presentalo como unha recensión neutral dun terceiro."
+  },
+  {
+   "q": "Segundo a norma xaponesa sobre márketing encuberto, sanciónase a axencia?",
+   "a": "As preguntas e respostas da Consumer Affairs Agency indican que a norma alcanza a empresa que decidiu o contido (o anunciante), non os terceiros aos que se lles pediu publicar. Por iso o cliente necesita a explicación, para poder decidir por si mesmo."
+  },
+  {
+   "q": "O cambio de Google de maio de 2026 prohibiu algunha táctica nova?",
+   "a": "Segundo as noticias, non engadiu normas novas; aclarou que as políticas sobre spam existentes se aplican ás respostas de AI Overviews e AI Mode. Consulta o rexistro de cambios de Google para ver a redacción orixinal."
+  },
+  {
+   "q": "Impórtalles a política de uso de Anthropic ás axencias que non usan Claude?",
+   "a": "Rexe directamente o uso de Claude. Aínda así é útil para explicar un rexeitamento, porque mostra o que unha empresa de IA considera enganoso, sexa cal sexa a ferramenta de IA que uses."
+  },
+  {
+   "q": "Atopamos texto oculto que deixou un provedor anterior. E agora que?",
+   "a": "Móstrallo ao cliente e elimínao co seu acordo. Revisa o informe «Accións manuais» en Search Console; se aparece unha infracción, solicita unha revisión despois de corrixila. Anota a data en que o eliminaches para poder comparar máis adiante."
+  },
+  {
+   "q": "Abondará co traballo lexítimo para que a IA recomende o cliente?",
+   "a": "Non se pode garantir. As respostas da IA cambian segundo o día e a formulación. O que si podes facer é poñer nas páxinas datos como prezos, zonas e resultados coas súas fontes, asegurarte de que a IA pode lelos e seguir os cambios coas mesmas preguntas."
+  }
+ ],
+ "relatedHeading": "Guías relacionadas",
+ "cta": {
+  "heading": "Mira como le a IA un sitio web que acabas de herdar",
+  "body": "A comprobación gratuíta non require rexistro: introduce un URL para ver o estado dos seus datos estruturados, de llms.txt e do acceso dos rastrexadores de IA. Un bo primeiro paso para unha auditoría.",
+  "label": "Comproba gratis a lexibilidade para a IA",
+  "href": "/check",
+  "secondary": {
+   "label": "Ver o programa de socios",
+   "href": "https://nurevo.jp/partner/"
+  }
+ },
+ "footnote": "ChatGPT e OAI-SearchBot son marcas comerciais de OpenAI; Perplexity, de Perplexity AI; Claude, de Anthropic; e Google e Search Console, de Google LLC. WordPress e WooCommerce son marcas comerciais dos seus respectivos propietarios. Nurevo non está afiliado a estas empresas nin conta co seu respaldo."
+}
