@@ -1,0 +1,325 @@
+{
+  "title": "餐厅 AI 搜索优化：菜单、价格与过敏原信息 | Nurevo",
+  "description": "餐厅的 AI 搜索优化：把菜单写成网页文字，写清完整价格和附加费，安全地写过敏原和饮食信息，对齐 Google 与 ChatGPT 上的信息，附结构化数据和 WordPress 步骤。",
+  "h1": "餐厅的 AI 搜索优化：让 ChatGPT 和 Google 读懂您的菜单、价格和过敏原信息",
+  "lead": "餐厅做 AI 搜索优化（AEO），最重要的是在自己的网站上用文字写清食客在决定去哪家店之前会问 AI 的事实：能吃什么、要花多少钱、能不能安心吃。具体来说，就是把菜单写成网页文字，而不是只有 PDF 或照片；写出包含服务费或座位费在内的完整价格；写出过敏原信息，并注明其适用范围和日期；写清“纯素”或“清真”背后的具体做法。然后让 Google 商家资料、订位和点评网站以及新推出的 Businesses in ChatGPT 上的信息保持一致，再用 Restaurant 和 Menu 结构化数据加以支持。",
+  "intro": [
+    "撰写于 2026 年 11 月 28 日（日本时间）。文中链接的 FDA、英国政府、schema.org、Google 和 OpenAI 页面均于 2026 年 11 月 28 日核实。本文不构成法律建议；过敏原和标示义务请向当地食品监管部门确认。",
+    "AI 的回答每天都在变，也会因提问方式不同而不同。本文的做法有助于 AI 正确读取您餐厅的信息，但不保证您一定会出现在 AI 回答中，也不保证排名提升。"
+  ],
+  "sections": [
+    {
+      "heading": "食客会向 AI 问哪些关于餐厅的问题",
+      "paragraphs": [
+        "人们不只是问“示例站附近的午餐”，还会加上条件：“带小孩去可以吗？”“我对贝类过敏，有能吃的吗？”“有纯素菜吗？”“晚餐人均多少钱？”只有当答案以文字形式写在某处时，AI 才能回答这些问题。"
+      ],
+      "table": {
+        "head": [
+          "问题类型",
+          "示例",
+          "AI 回答所需的信息"
+        ],
+        "rows": [
+          [
+            "菜品与风格",
+            "“示例站附近哪里能吃到烤鱼？”",
+            "菜系、招牌菜、午餐和晚餐有何不同"
+          ],
+          [
+            "菜单与价格",
+            "“晚餐只有套餐吗？人均多少钱？”",
+            "文字菜单、完整价格、服务费或座位费"
+          ],
+          [
+            "我能吃吗？",
+            "“有无麸质的菜吗？”“适合纯素食者吗？”",
+            "过敏原一览、能保证和不能保证的内容、交叉接触、确认方式"
+          ],
+          [
+            "是否合适",
+            "“适合一个人吃吗？”“有包间吗？”“能带小孩吗？”",
+            "座位类型和数量、包间、儿童座椅、无障碍设施"
+          ],
+          [
+            "订位与排队",
+            "“能订位吗？不订位能直接去吗？”",
+            "订位方式、截止时间、是否接待未订位的客人"
+          ],
+          [
+            "外带与外卖",
+            "“可以外带吗？”",
+            "外带菜单和价格、自取方式、外卖平台"
+          ]
+        ],
+        "caption": "示例问题仅用于说明本文内容，并非实际统计的提问频率。"
+      },
+      "after": [
+        "营业时间和休息日请参阅[营业时间、休息日与 AI 搜索](/guide/business-hours-holidays-ai-search)，订位页面请参阅[订位页面与 AI 搜索](/guide/booking-page-ai-search)。本文聚焦餐厅特有的内容：菜单、价格和“我能不能吃”。"
+      ]
+    },
+    {
+      "heading": "数据：用 AI 选餐厅的食客，以及被 AI 漏掉的餐厅",
+      "paragraphs": [
+        "有多少人用 AI 选餐厅，因国家和调查而异。以下是我们能在发布方自己的页面上核实的数据。"
+      ],
+      "table": {
+        "head": [
+          "调查（发布方，日期）",
+          "对象",
+          "数据"
+        ],
+        "rows": [
+          [
+            "[DoorDash（2026 年 5 月 18 日）](https://about.doordash.com/en-us/news/doordash-restaurant-industry-trends-report-2026)",
+            "3,001 名美国消费者",
+            "22% 曾用 ChatGPT 或 Gemini 等 AI 工具帮助选择餐厅"
+          ],
+          [
+            "[Reputation / Nielsen（2025 年 10 月 21 日）](https://reputation.com/press-room/new-reputation-survey-reveals-how-ai-and-economic-pressures-are-rewriting-the-rules-of-dining-out-in-america/)",
+            "763 名美国消费者",
+            "20% 使用 ChatGPT 等 AI 工具查找餐厅和酒吧"
+          ],
+          [
+            "[NIQ / Zonal（2026 年 10 月 8 日）](https://nielseniq.com/global/en/insights/report/2026/nearly-a-fifth-of-consumers-use-ai-tools-to-plan-a-visit-to-a-pub-bar-or-restaurant/)",
+            "5,000 多名英国消费者",
+            "19% 用 AI 规划去酒馆、酒吧或餐厅；其中 38% 查看菜单，43% 查看价格，35% 查看营业时间"
+          ],
+          [
+            "[Honichi Lab（2026 年 10 月 1 日）](https://honichi.com/reports/202610_survey_gourmet_ai/)",
+            "日本 483 名每天使用 AI 并曾用 AI 选餐厅的人",
+            "60% 去过 AI 推荐的餐厅；超过 80% 曾因信息不足而放弃考虑某家餐厅"
+          ],
+          [
+            "[Uberall（无日期）](https://uberall.com/en-us/qsr-geo-playbook-2026)",
+            "该公司自己的研究（未说明样本量）",
+            "83% 的餐厅门店没有出现在 AI 推荐中；17% 出现在 ChatGPT 的推荐中"
+          ]
+        ],
+        "caption": "Honichi Lab 的数据来自其免费摘要。Uberall 的数据由该公司作为自身研究发布。"
+      },
+      "after": [
+        "这些调查都没有说明 AI 是如何挑选餐厅的。各国调查的共同点是：食客会查看菜单、价格和营业时间，并放弃信息缺失的餐厅。要想被选中，首先得把 AI 需要的信息放在您的网站上。"
+      ]
+    },
+    {
+      "heading": "排名靠前的文章遗漏了什么",
+      "paragraphs": [
+        "2026 年 11 月 28 日，我们阅读了“restaurant AI search”等查询在英文和日文中的 16 篇靠前结果。[Owner](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search)（2026 年 10 月 22 日）最有力地论证了文字菜单优于 PDF，并说明了如何在未登录状态下检查 ChatGPT。[Yext](https://www.yext.com/knowledge-center/how-restaurants-use-menus-to-win-citations-near-me-searches)（2026 年 6 月 18 日）列出了 AI 使用的菜单数据字段；[Bloom Intelligence](https://bloomintelligence.com/blog/ai-restaurant-discovery/)（2026 年 10 月 5 日更新）给出了最具体的衡量方案，每个门店一组提示词。[ChowNow](https://get.chownow.com/blog/how-to-get-your-restaurant-found-in-ai-search/)（2026 年 9 月 18 日更新）强调要把菜单放在自己的网站上，而不只是放在点餐应用里。这些文章都没有结构化数据的代码示例，我们能读到的 [Malou 结构化数据指南](https://www.malou.io/en-us/blog/structured-data-for-restaurants)（2026 年 9 月 22 日更新）正文中也没有。",
+        "在两种语言中，没有一篇文章讲到如何写过敏原信息才能在 AI 只摘取一句话时依然安全，没有一篇解释美国和英国的规定实际要求餐厅公开什么，没有一篇给出 WordPress 步骤，也没有一篇介绍 2026 年 11 月推出的 Businesses in ChatGPT。还有几篇在没有来源的情况下重复所谓的 AI“评分门槛”。本文补上了这些空白。"
+      ]
+    },
+    {
+      "heading": "把菜单写成网页文字，而不只是 PDF 或照片",
+      "paragraphs": [
+        "如果菜单只有照片或 PDF，AI 可能读不到，也可能读错。请把每道菜的名称、简短说明和价格以 HTML 文字放在页面上。PDF 或照片可以作为文字菜单的补充，而不是替代。"
+      ],
+      "list": [
+        "使用与纸质菜单相同的菜名，并用一行说明这是什么（主要食材、分量、辣度）。只写“主厨随心”对 AI 来说毫无信息。",
+        "按午餐、晚餐、套餐或品鉴菜单、饮品和外带分组。标明只在午餐或只在工作日供应的菜品。",
+        "季节限定或限量菜品要写明日期，结束后及时删除。留在页面上的菜，AI 就会说您还在供应。",
+        "注明菜单的最后更新日期。价格变动时，请在同一天更新网站、Google 商家资料和点评网站。",
+        "如果很多客人来自海外，也请用他们的语言发布文字菜单。请参阅[多语言网站与 AI 搜索](/guide/multilingual-site-ai-search)。"
+      ],
+      "after": [
+        "在 Google 商家资料中，餐饮商家可以在菜单编辑器里添加分类、菜品、说明和价格，修改可能需要 24 到 48 小时生效。也可以添加菜单照片（也支持 PDF）或菜单链接；Google 可能会从您的网站转录菜单，商家可以选择显示哪份菜单。[Google 商家资料帮助：关于菜单编辑器](https://support.google.com/business/answer/9455840?hl=en) 把网站上的文字菜单写好，也有助于 Google 从中读取的菜单更准确。"
+      ]
+    },
+    {
+      "heading": "价格：包含什么，另收什么",
+      "paragraphs": [
+        "AI 可能只引用您页面上的一句话。“主菜 $15 起”而条件写在页面底部，就可能变成只剩“$15”。请把条件和价格写在同一句话里：“午餐主菜 $15 至 $24；每张账单另加 3% 厨房费。”",
+        "在美国，拥有 20 家及以上门店的连锁餐厅必须为标准菜单项目标示卡路里，合规日期为 2018 年 5 月 7 日（[FDA: Menu labeling requirements](https://www.fda.gov/food/food-labeling-nutrition/menu-labeling-requirements)）。该规定对菜单的定义包括“menus on the Internet”（互联网上的菜单）（[21 CFR 101.11，2019 年版](https://www.govinfo.gov/content/pkg/CFR-2019-title21-vol2/pdf/CFR-2019-title21-vol2-sec101-11.pdf)），因此受规管连锁店的网站菜单需要标示与纸质菜单相同的卡路里。"
+      ],
+      "list": [
+        "列出所有附加费用：服务费、座位费、厨房费或健康福利费、包间最低消费。并说明各自何时收取（仅晚餐、六人及以上）。",
+        "套餐或品鉴菜单要在价格旁写明道数、包含哪些饮品、最少用餐人数和订位截止时间。",
+        "如果给出“人均消费”，请在同一句话里说明包含什么（是否含饮品、是否含小费）。",
+        "如果外带和堂食价格不同，两处都要写明。"
+      ]
+    },
+    {
+      "heading": "过敏原信息：规定要求什么，以及怎么写",
+      "paragraphs": [
+        "美国有九种主要食物过敏原：牛奶、鸡蛋、鱼类、甲壳类贝类、坚果、花生、小麦、大豆和芝麻，其中芝麻自 2023 年 1 月 1 日起加入（[FDA: FASTER Act](https://www.fda.gov/food/food-allergies/faster-act-sesame-ninth-major-food-allergen)）。联邦标示规定适用于包装食品。对于非包装食品，2022 年版 FDA Food Code 规定，许可证持有人应以书面形式告知消费者食品中的主要过敏原，可以通过菜单等实体或电子方式；Food Code 是一份范本，只有在州或地方辖区采用后才适用（[FDA: 2022 Food Code and sesame](https://www.fda.gov/food/retail-food-industryregulatory-assistance-training/addition-2022-food-code-sesame-added-major-food-allergen)）。请确认您所在辖区采用的是哪个版本。",
+        "在英国，非预包装食品必须能提供 14 种过敏原的信息。信息可以由员工口头告知，前提是有告示、菜单或标签告诉顾客在哪里可以获得；为直接销售而预包装的食品自 2021 年 10 月 1 日起必须完整标示配料；网上订购时，信息必须在购买前和送达时都能获得（[英国技术指南，2026 年 11 月 3 日更新](https://www.gov.uk/government/publications/food-allergen-labelling-and-information-requirements-technical-guidance/food-allergen-labelling-and-information-requirements-technical-guidance)）。食品标准局（Food Standards Agency）的最佳实践指南（2025 年 2 月 24 日）建议以书面信息为主、辅以当面沟通，网上则放在主菜单上或最多一次点击即可到达的位置。这是指南，不是法律（[FSA best practice](https://www.gov.uk/government/publications/allergen-information-for-non-prepacked-foods-best-practice/allergen-information-for-non-prepacked-foods-best-practice)）。"
+      ],
+      "table": {
+        "head": [
+          "要写的内容",
+          "示例"
+        ],
+        "rows": [
+          [
+            "范围",
+            "“我们的过敏原表涵盖所有菜品的 14 种过敏原。其他食材请咨询店员。”"
+          ],
+          [
+            "格式",
+            "以菜品为行、过敏原为列的文字表格，而不只是图片"
+          ],
+          [
+            "交叉接触",
+            "“贝类和小麦在同一厨房、同一油炸锅中烹制。我们无法保证任何菜品完全不含微量残留。”"
+          ],
+          [
+            "确认方式",
+            "“订位时请告知过敏情况。用餐当天，店长会再次确认食材。”"
+          ],
+          [
+            "日期",
+            "“食材信息截至[日期]。供应商变更时我们会重新检查此表。”"
+          ]
+        ],
+        "caption": "仅为示例。请写出您厨房的实际做法，无法确认的内容不要写。"
+      },
+      "after": [
+        "AI 的风险在于：“不含贝类”被引用了，而“与贝类使用同一油炸锅”却被丢掉。请把交叉接触警示放在页面顶部和相关菜品旁，并把“不含”与“可以做成不含”区分开。不要在 Google 商家介绍或常见问题中单独使用“过敏友好”这类笼统说法。",
+        "如果您在日本经营餐厅，规则有所不同：过敏原标示只对包装食品是强制性的，自 2026 年 4 月起适用九种特定原材料，米饭类菜品还必须告知大米产地。本页的日文版介绍了这些规则。"
+      ]
+    },
+    {
+      "heading": "素食、纯素、清真及其他饮食需求",
+      "list": [
+        "如果写“纯素”，请说明是哪些菜，以及高汤和酱汁是否也不含动物成分。如果某道菜不含肉但用了鱼高汤，就如实写出来。",
+        "关于清真或犹太洁食，如有认证请写明认证名称。如果没有，只写您实际怎么做：“部分菜品不含猪肉和酒精（未获认证）。”",
+        "即使符合条件的菜只有几道，也请写出菜名。这样 AI 就能说“这家店的这道菜您可以吃”，而不是靠猜。",
+        "“自制”“本地”“一本钓”等词语会成为 AI 回答中对您餐厅的描述。只在属实的地方使用。"
+      ]
+    },
+    {
+      "heading": "网站、Google、点评网站和 ChatGPT：各自负责什么",
+      "paragraphs": [
+        "2026 年 11 月 10 日，OpenAI 以测试版形式推出了 Businesses in ChatGPT：商家可以在 Business Hub 中认领并验证自己的资料，并更新信息（[OpenAI: Introducing Businesses in ChatGPT](https://openai.com/index/introducing-businesses-chatgpt/)）。根据帮助中心的说明，可以编辑网站、介绍、类别和标志；本地商店和餐厅只能认领已有的美国商家条目；认领并不保证曝光增加，因为 ChatGPT 也可能使用其他来源（[OpenAI Help: Setting up your business on ChatGPT](https://help.openai.com/en/articles/20001635-setting-up-your-business-on-chatgpt)）。在美国以外，让 ChatGPT 回答正确的办法仍然是保持自己的网站和其他商家信息准确。"
+      ],
+      "table": {
+        "head": [
+          "渠道",
+          "作用",
+          "需保持一致的内容"
+        ],
+        "rows": [
+          [
+            "您的网站",
+            "信息的源头：菜单、价格、过敏原、饮食需求、座位、订位",
+            "其他渠道都以此为准"
+          ],
+          [
+            "Google 商家资料",
+            "地图和搜索：营业时间、菜单、照片、评价",
+            "店名、地址、电话、营业时间、菜单价格"
+          ],
+          [
+            "订位和点评网站（OpenTable、Yelp、Tripadvisor 等）",
+            "订位和比较；常被 AI 引用",
+            "营业时间、价格区间、座位、订位方式"
+          ],
+          [
+            "Businesses in ChatGPT（美国，测试版）",
+            "可以修正 ChatGPT 对您商家的展示",
+            "网站、介绍、类别"
+          ],
+          [
+            "社交媒体帖子",
+            "新菜品和临时休业",
+            "任何变更的信息都要在同一天更新到网站上"
+          ]
+        ],
+        "caption": "这一分工是我们的建议。"
+      },
+      "after": [
+        "要修正错误的商家信息，请参阅[如何为 AI 搜索修正商家信息](/guide/fix-business-listings-ai-search)。连锁或多门店请参阅[多门店企业与 AI 搜索](/guide/multi-location-business-ai-search)。"
+      ]
+    },
+    {
+      "heading": "结构化数据：Restaurant 和 Menu",
+      "paragraphs": [
+        "使用 [Restaurant](https://schema.org/Restaurant)（或 CafeOrCoffeeShop、Bakery、BarOrPub）。菜系写在 servesCuisine，价格水平写在 priceRange，订位写在 acceptsReservations（true/false 或订位页面的 URL）。关于菜单，schema.org 当前的属性是 hasMenu，它取代了 menu；Google 的文档将 menu（菜单 URL）、servesCuisine 和 priceRange 列为推荐属性（[Google Search Central: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)）。两者填写同一个 URL 是一致的做法。",
+        "菜品可以用 Menu、MenuSection 和 [MenuItem](https://schema.org/MenuItem) 描述。MenuItem 有 suitableForDiet 属性，其值是 11 种 [RestrictedDiet](https://schema.org/RestrictedDiet) 类型，例如 VeganDiet、VegetarianDiet、HalalDiet 和 GlutenFreeDiet。schema.org 没有表示过敏原的属性，因此过敏原信息应放在页面上的文字表格中，而不是结构化数据里。"
+      ],
+      "code": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"Restaurant\",\n      \"@id\": \"https://example.com/#organization\",\n      \"name\": \"Example Kitchen (example)\",\n      \"description\": \"Neighbourhood bistro three minutes from Example Station. Lunch set menus, dinner à la carte and a tasting menu.\",\n      \"url\": \"https://example.com/\",\n      \"telephone\": \"+1-000-000-0000\",\n      \"address\": {\n        \"@type\": \"PostalAddress\",\n        \"addressRegion\": \"CA\",\n        \"addressLocality\": \"Example City\",\n        \"streetAddress\": \"123 Example St\"\n      },\n      \"openingHours\": [\"Tu-Su 11:30-14:00\", \"Tu-Sa 17:30-22:00\"],\n      \"servesCuisine\": [\"French\", \"Seafood\"],\n      \"priceRange\": \"$$\",\n      \"menu\": \"https://example.com/menu/\",\n      \"hasMenu\": { \"@id\": \"https://example.com/menu/#menu\" },\n      \"acceptsReservations\": \"https://example.com/reserve/\"\n    },\n    {\n      \"@type\": \"Menu\",\n      \"@id\": \"https://example.com/menu/#menu\",\n      \"name\": \"Lunch menu\",\n      \"hasMenuSection\": {\n        \"@type\": \"MenuSection\",\n        \"name\": \"Mains\",\n        \"hasMenuItem\": [\n          {\n            \"@type\": \"MenuItem\",\n            \"name\": \"Grilled mackerel\",\n            \"description\": \"Grilled mackerel, potatoes, green salad.\",\n            \"offers\": { \"@type\": \"Offer\", \"price\": \"18.00\", \"priceCurrency\": \"USD\" }\n          },\n          {\n            \"@type\": \"MenuItem\",\n            \"name\": \"Roasted vegetable plate\",\n            \"description\": \"No meat, fish, dairy or eggs, including the stock.\",\n            \"suitableForDiet\": \"https://schema.org/VeganDiet\",\n            \"offers\": { \"@type\": \"Offer\", \"price\": \"15.00\", \"priceCurrency\": \"USD\" }\n          }\n        ]\n      }\n    }\n  ]\n}",
+      "after": [
+        "只有在能与页面保持一致的情况下，才对单个菜品做标记。如果菜单很长或价格经常变动，让 hasMenu 指向菜单页面就足够了。结构化数据中的价格与页面不一致，会让 AI 不知道哪个才对。"
+      ]
+    },
+    {
+      "heading": "在 WordPress 网站上设置",
+      "list": [
+        "从 [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) 安装并启用 Nurevo AEO（免费）。Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK 和 VK All in One Expansion Unit 可以继续使用，不会产生重复的结构化数据。",
+        "在设置向导中选择“餐厅或咖啡馆”，即会输出 Restaurant。如果是咖啡馆、面包店或酒吧，请在设置的“业务类型（schema.org 类型）”中输入 CafeOrCoffeeShop、Bakery 或 BarOrPub。",
+        "店名、地址、电话和营业时间请与 Google 商家资料完全一致。介绍的开头写明菜系、招牌菜以及午餐和晚餐有何不同。",
+        "把客人使用您的方式作为服务添加：品鉴菜单、包间用餐、活动、外带、餐饮外送（最多 20 项）。服务会出现在结构化数据（Service）和 llms.txt 中。单个菜品应放在菜单页面，而不是服务里。",
+        "没有 servesCuisine、priceRange、menu/hasMenu 或 acceptsReservations 的输入栏，请用下面的 webmcp_canary_business_node 过滤器添加，取值与页面文字相同。如果启用了 Yoast SEO 等插件，以它已输出的值为准。",
+        "输入关于过敏原、纯素菜、儿童、包间和不订位到店的常见问题，并在菜单页或到店指南页放置 Nurevo FAQ 区块（或 [nurevo_faq] 短代码）。FAQ 结构化数据只会在显示这些问题的页面上输出。请参阅[常见问题页面与 AI 搜索](/guide/faq-page-ai-search)。",
+        "打开 /llms.txt，确认菜单、到店指南和订位页面已列出。在 AEO 分数界面运行检测，并修正它指出的问题。"
+      ],
+      "code": "// Add cuisine, price range, menu and booking URLs to the business node (same values as the page text)\nadd_filter('webmcp_canary_business_node', function (array $node, array $settings) {\n    $node['servesCuisine'] = array('French', 'Seafood');\n    $node['priceRange'] = '$$';\n    $node['menu'] = 'https://example.com/menu/';\n    $node['hasMenu'] = 'https://example.com/menu/';\n    $node['acceptsReservations'] = 'https://example.com/reserve/';\n    return $node;\n}, 10, 2);",
+      "after": [
+        "不使用 WordPress 的网站也适用同样的检查。在[免费检测](/check)中输入您的网址，无需注册，即可查看结构化数据、llms.txt 和 AI 爬虫访问的状态。"
+      ]
+    },
+    {
+      "heading": "发布前检查清单",
+      "list": [
+        "菜单页面以文字形式写有菜名、简短说明和价格，而不只是照片或 PDF。",
+        "午餐、晚餐、套餐、饮品和外带各有自己的标题，菜单注明了更新日期。",
+        "每句价格都说明了包含什么，并列出了附加费用及其适用条件。",
+        "如果您是拥有 20 家及以上门店的美国连锁店，网站菜单标示了与纸质菜单相同的卡路里。",
+        "过敏原信息写明了范围，有文字表格、交叉接触警示、确认方式和日期。",
+        "纯素、素食、清真或无麸质的说法写出了具体菜品及其依据（高汤、酱汁、认证）。",
+        "“自制”“本地”等词语只在属实时使用。",
+        "店名、地址、电话、营业时间和菜单价格在网站、Google 商家资料和点评网站上一致。",
+        "结构化数据使用 Restaurant（或咖啡馆、面包店、酒吧类型），servesCuisine、priceRange、menu/hasMenu 和 acceptsReservations 与页面一致。",
+        "llms.txt 列出了菜单、到店指南和订位页面。[什么是 llms.txt？](/guide/llms-txt)"
+      ]
+    },
+    {
+      "heading": "检查 AI 是否提到您，以及说得对不对",
+      "paragraphs": [
+        "信息整理好后，用食客会问的问题去问 AI。先检查“示例站附近的烤鱼午餐”这类“地区＋菜品”的问题，再带上您的店名提问：“晚餐人均多少钱？”“对贝类过敏能去吃吗？”“有纯素菜吗？”把每个回答与您的网站对照。如有错误，先打开回答引用的页面，在那里修正信息。",
+        "AI 的回答每次运行都会变化，所以请隔一段时间提出同样的问题，并做好记录。在 Free 和 Standard 方案中，Nurevo AEO 每月一次根据您的业务类型和地区（绝不使用您的名称）生成三个问题提交给 Perplexity，并记录回答中是否出现您的名称或网站。Pro 方案（$99/月起）增加了测试版的 AI 可见度测量，包括竞品对比和历史记录（目前基于 Perplexity）。两者都是对回答进行抽样，而不是观察每一个回答。请参阅[如何衡量 AI 可见度](/guide/measure-ai-visibility)。"
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "餐厅做 AI 搜索优化应该从哪里开始？",
+      "a": "从菜单页面开始：以文字写出菜名、简短说明和价格，而不只是 PDF 或照片。然后补充附加费用、注明范围和日期的过敏原信息，以及饮食说明背后的具体内容，并让 Google 商家资料和点评网站与您的网站保持一致。"
+    },
+    {
+      "q": "PDF 菜单有问题吗？",
+      "a": "有 PDF 没问题，但如果菜单只有 PDF 或照片，AI 可能读不到，也可能读错。请把同样的菜单以网页文字发布，PDF 留作打印用。"
+    },
+    {
+      "q": "餐厅必须公开过敏原信息吗？",
+      "a": "这取决于您所在的地方。在英国，非预包装食品必须能提供 14 种过敏原的信息，只要有提示告知顾客，可以由员工提供。在美国，联邦标示规定适用于包装食品，而在已采用 FDA Food Code 的地区，非包装食品需要书面告知。无论规定如何，只要公开，就要准确，并附上交叉接触警示和日期。"
+    },
+    {
+      "q": "过敏原可以写进结构化数据吗？",
+      "a": "schema.org 没有过敏原属性。您可以用 MenuItem 的 suitableForDiet 标记适合纯素或清真等饮食的菜品，但过敏原信息请以文字表格形式发布在页面上。"
+    },
+    {
+      "q": "我们应该在 ChatGPT 中认领自己的餐厅吗？",
+      "a": "如果您在美国，并且在 Business Hub 中能看到您已有的商家条目，认领后就可以修正网站、介绍和类别。OpenAI 表示这并不保证曝光增加。在美国以外，本地商家目前还无法认领，所以请保持网站和其他商家信息准确。"
+    },
+    {
+      "q": "Nurevo AEO 是免费的吗？",
+      "a": "是的。业务类型、地址、营业时间、服务和 FAQ 的结构化数据、llms.txt、AI 爬虫规则、AEO 分数以及每月一次的免费 AI 检测都包含在免费方案中。付费方案增加了始终保持最新的规则集（Standard，$20/月）和测试版的 AI 可见度测量（Pro，$99/月起）。[WordPress.org 上的 Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "这样做能保证 ChatGPT 推荐我们吗？",
+      "a": "不能。AI 的回答会变化，没有任何工具或技巧能保证被提及或排在某个位置。您能做的是让菜单、价格和饮食相关信息便于 AI 读取，并持续检查是否被提及、描述是否正确。"
+    }
+  ],
+  "relatedHeading": "相关指南",
+  "cta": {
+    "heading": "先看看 AI 如何读取您餐厅的网站",
+    "body": "免费检测可显示结构化数据、llms.txt 和 AI 爬虫访问的状态，无需注册。在 WordPress 上，Nurevo AEO 可免费输出您餐厅的基本信息、包间用餐和外带等服务以及常见问题。",
+    "label": "运行免费 AI 可读性检测",
+    "href": "/check",
+    "secondary": {
+      "label": "在 WordPress.org 获取 Nurevo AEO",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT 是 OpenAI 的商标，Perplexity 是 Perplexity AI 的商标，Google 和 Gemini 是 Google LLC 的商标。DoorDash、Reputation、Nielsen、NIQ、Zonal、Uberall、Owner、ChowNow、Yext、Bloom Intelligence、Malou、OpenTable、Yelp、Tripadvisor、Yoast SEO、Rank Math、All in One SEO、SEO SIMPLE PACK 和 VK All in One Expansion Unit 是其各自所有者的商标。Nurevo 与上述各方无关联。本文不构成法律建议。"
+}
