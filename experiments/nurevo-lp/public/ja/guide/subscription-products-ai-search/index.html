@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>定期便・サブスク商品のAI検索対策：解約条件と総額の書き方 | Nurevo AIO</title>
+<meta name="description" content="「この定期便は何回で解約できる？」とAIに聞かれたときに、正しい答えの材料になる条件の表の作り方。特定商取引法の最終確認画面とそろえる手順、WooCommerceでの設定、確かめ方。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/subscription-products-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/subscription-products-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/subscription-products-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/subscription-products-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/subscription-products-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/subscription-products-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/subscription-products-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/subscription-products-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/subscription-products-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="定期便・サブスク商品のAI検索対策：解約条件と総額の書き方 | Nurevo AIO">
+<meta property="og:description" content="「この定期便は何回で解約できる？」とAIに聞かれたときに、正しい答えの材料になる条件の表の作り方。特定商取引法の最終確認画面とそろえる手順、WooCommerceでの設定、確かめ方。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/subscription-products-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="定期便・サブスク商品のAI検索対策：解約条件と総額の書き方 | Nurevo AIO">
+<meta name="twitter:description" content="「この定期便は何回で解約できる？」とAIに聞かれたときに、正しい答えの材料になる条件の表の作り方。特定商取引法の最終確認画面とそろえる手順、WooCommerceでの設定、確かめ方。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/subscription-products-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/subscription-products-ai-search/","name":"定期便・サブスク商品のAI検索対策：解約条件と総額の書き方 | Nurevo AIO","description":"「この定期便は何回で解約できる？」とAIに聞かれたときに、正しい答えの材料になる条件の表の作り方。特定商取引法の最終確認画面とそろえる手順、WooCommerceでの設定、確かめ方。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/subscription-products-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/subscription-products-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"定期便・サブスク商品のAI検索対策：解約条件・回数・総額をAIに正しく読ませる手順","item":"https://nurevo.jp/ja/guide/subscription-products-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/subscription-products-ai-search/#faq","mainEntity":[{"@type":"Question","name":"定期便の条件は、商品ページと別のページのどちらに書けばいいですか？","acceptedAnswer":{"@type":"Answer","text":"商品ページに条件の表を置き、解約やスキップの手順は別の案内ページにまとめてリンクするのがおすすめです。どちらのページでも数字と締め切りは同じにします。"}},{"@type":"Question","name":"「初回無料」「初回980円」と大きく書いてもいいですか？","acceptedAnswer":{"@type":"Answer","text":"書くことはできますが、すぐ近くに2回目以降の価格と回数の約束を同じ大きさで書いてください。埼玉県の説明では、大きなお試しの表示の近くに小さく定期購入と書く表示が、誤解を招く例として挙げられています。"}},{"@type":"Question","name":"回数の縛りがあると、AIに不利になりますか？","acceptedAnswer":{"@type":"Answer","text":"回数の約束があること自体で不利になるかは分かりません。ただ、書いていないと、AIが「いつでも解約可能」と答えたり、口コミの不満が答えの材料になったりしやすくなります。回数と総額をはっきり書くほうが安全です。"}},{"@type":"Question","name":"構造化データだけで条件を伝えられますか？","acceptedAnswer":{"@type":"Answer","text":"伝えられません。Google の商品の構造化データには定期便の周期や回数の項目がなく、本文の文字の表が一番大事です。構造化データは補助として考えてください。"}},{"@type":"Question","name":"WooCommerce Subscriptions の設定を変えたら、何を直せばいいですか？","acceptedAnswer":{"@type":"Answer","text":"商品説明の条件の表、案内ページ、よくある質問、最終確認画面の表示の4つを同じ日に直し、表の最終更新日を変えます。llms.txt の価格は WooCommerce の価格から作られます。"}},{"@type":"Question","name":"Nurevo AEO は定期便の条件を自動で出力しますか？","acceptedAnswer":{"@type":"Answer","text":"いいえ。Nurevo AEO はショップの情報（OnlineStore）、返品ポリシー、llms.txt の商品の一覧（商品ごとに価格1つ）を出し、AIの検索のクローラーを許可します。周期や回数の約束は、本文の表とよくある質問で書いてください。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">無料でAI対応度を診断する</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>定期便・サブスク商品のAI検索対策：解約条件・回数・総額をAIに正しく読ませる手順</span></nav>
+  <article>
+    <h1>定期便・サブスク商品のAI検索対策：解約条件・回数・総額をAIに正しく読ませる手順</h1>
+    <p class="lead">定期便についてAIに聞く人が知りたいのは「1回いくらで、何回続けると総額いくらか」「いつまでに、どうやって解約できるか」です。答えの材料になるのは、商品ページの本文に文字で書いた1枚の条件の表です。初回価格と2回目以降の価格、回数の約束、総額、スキップと解約の締め切り、解約の方法を同じ表に並べ、注文の最終確認画面・よくある質問・llms.txt と同じ値にそろえると、AIが「初回だけの価格」や「条件の抜けた『いつでも解約可能』」を答えにしにくくなります。</p>
+<p>作成日：2026年11月28日（日本時間）。消費者庁と埼玉県の公開ページ、schema.org、Google と WooCommerce の公式の説明を同じ日に読んで確認しました。</p>
+<p>対象は、食品・化粧品・日用品などを定期便やサブスクリプションで売っているネットショップの方と、その制作・運用の担当者です。ショップ全体の情報（送料・返品・在庫）は<a href="/ja/guide/online-shop-ai-search/">ネットショップのAI検索対策</a>、色やサイズの書き方は<a href="/ja/guide/ec-product-variants-specs-ai-search/">商品のサイズ・色・仕様をAIに正しく読ませる手順</a>にあります。ここでは「定期で届く契約の条件」だけを扱います。</p>
+<p>この記事は法律の助言ではありません。表示が法律に合っているかは、消費者庁の資料や専門家に確認してください。AIの答えは聞くたびに変わることがあり、ここに書いたことでAIに出ることを約束するものではありません。</p>
+<section class="qa"><h2>上位の記事に書かれていなかったこと</h2><p>「定期通販 AIO対策」「ECサイト LLMO」「subscription ecommerce AI search」などで上位に出る日本語6本・英語5本を、2026年11月28日に読みました。定期購入の条件と解約方法を画像ではなく文字で書くべきだという指摘（<a href="https://martechlab.gaprise.jp/archives/aio-geo/aio-landing-page-optimization/">MarTechLab</a>）や、「解約は簡単か」「一時停止できるか」といった質問を見張るべきだという指摘（<a href="https://www.ranktracker.com/blog/ai-overviews-subscription-ecommerce">Ranktracker</a>、<a href="https://www.texta.ai/industries/ecommerce/subscription-box">Texta</a>）は役に立つものでした。一方で、次のことはどの記事にもありませんでした。</p><ol><li>定期便の条件を、どの項目・どの順番でページに書けばよいかの具体的な形</li><li>特定商取引法の最終確認画面の項目と、AIが読むページの項目をそろえる考え方</li><li>定期便の価格を構造化データでどこまで書けるか（Google が何を案内していないか）</li><li>WordPress（WooCommerce Subscriptions）の画面での手順</li><li>定期便の条件について、AIの答えが正しいかを確かめる質問の例</li></ol><p>以下では、この5つを順に埋めます。</p></section>
+<section class="qa"><h2>定期便についてAIに聞かれる質問と、答えに必要な事実</h2><p>生成AIの答えを買う前の参考にする人は増えています。株式会社ギャプライズの2025年の調査（800人）では、44.0%が購入前に生成AIを使っていました（<a href="https://martechlab.gaprise.jp/archives/aio-geo/aio-landing-page-optimization/">MarTechLab</a>）。定期便は「買ったあとに続く契約」なので、聞かれるのは商品のよさより条件です。よくある質問と、答えに必要な事実を並べました。</p><div class="table-wrap"><table><thead><tr><th scope="col">よく聞かれること</th><th scope="col">答えに必要な事実</th><th scope="col">書いてないとどうなりやすいか</th></tr></thead><tbody><tr><th scope="row">1回いくら？</th><td>初回価格と2回目以降の価格、税込か、送料込みか</td><td>初回の安い価格だけが答えに出る</td></tr><tr><th scope="row">何回で解約できる？</th><td>回数の約束（最低回数）の有無と回数</td><td>「いつでも解約可能」とだけ答えられる</td></tr><tr><th scope="row">全部でいくらかかる？</th><td>回数の約束がある場合の総額、ない場合の例</td><td>利用者が自分で計算することになる</td></tr><tr><th scope="row">休める？間隔は変えられる？</th><td>スキップ・休止・間隔の変更の方法と締め切り</td><td>「できるかどうか分からない」と答えられる</td></tr><tr><th scope="row">どうやって解約する？</th><td>解約の方法（画面・電話・メール）、受付時間、締め切り、解約料</td><td>他のサイトの口コミが答えの材料になる</td></tr><tr><th scope="row">他の定期便と比べてどう？</th><td>上のすべてが、比べられる形で並んでいること</td><td>比べる材料が少ない店は候補に挙げにくい</td></tr></tbody></table></div><p>どの質問も、ページに文字で書かれていれば答えの材料になります。画像のバナーやポップアップの中だけにある条件は、AIの検索の仕組みによっては読まれません。</p></section>
+<section class="qa"><h2>1枚の「定期便の条件」の表にまとめる</h2><p>条件はページのあちこちに散らさず、1か所に、1行1項目で並べます。AIは見出しと短い行の組み合わせを読み取りやすく、人にとっても比べやすくなります。架空のコーヒー豆の定期便で書いた例です。</p><pre class="code" dir="ltr"><code>【定期便の条件】国産ブレンド珈琲豆 定期便（200g）
+- 1回の内容：珈琲豆 200g × 1袋
+- お届けの間隔：4週間ごと（2・4・6週間から選べます）
+- 価格：初回 1,980円、2回目以降 2,480円（税込・送料込み）
+- 回数の約束：なし（初回のあと、いつでも解約できます）
+- 総額の例：3回受け取った場合 6,940円
+- お支払い：お届けごとにクレジットカードで決済（発送日に決済）
+- スキップ・休止・間隔の変更：マイページから、次回発送日の5日前まで
+- 解約の方法：マイページの「定期便の解約」ボタン、または電話 03-0000-0000（平日10〜17時）
+- 解約の締め切り：次回発送日の5日前まで（それ以降は次の1回が届きます）
+- 解約料：なし
+- 返品：未開封で到着から8日以内（初回のみ送料当店負担）
+最終更新：2026年11月28日</code></pre><p>書くときのポイントは4つです。1つ目は、初回価格と2回目以降の価格を同じ行に書くことです。2つ目は、回数の約束がないなら「なし」と書くことです。書いていないと、AIは「ない」とは判断できません。3つ目は、締め切りを「次回発送日の5日前」のように日付の数え方で書くことです。4つ目は、最終更新日を入れることです。価格や締め切りを変えたら、日付も変えます。</p>
+<p>同じ表を、商品ページ、定期便の案内ページ、注文の最終確認画面、よくある質問の答えで使い回します。言い回しが違っても、数字と締め切りは同じにします。</p></section>
+<section class="qa"><h2>特定商取引法の最終確認画面と同じ値にそろえる</h2><p>2022年6月1日に施行された改正特定商取引法（第12条の6）で、ネットショップの注文の最終確認画面に、契約の大事な条件を表示することが決まりました（<a href="https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2021/">消費者庁</a>）。埼玉県の消費生活支援センターの説明では、表示する項目は次の6つです（<a href="https://www.pref.saitama.lg.jp/b0304/shohisoudan/jirei/tsuhan/teikikonyu.html">埼玉県</a>）。</p><div class="table-wrap"><table><thead><tr><th scope="col">最終確認画面の項目</th><th scope="col">定期便で書くこと</th><th scope="col">上の条件の表の行</th></tr></thead><tbody><tr><th scope="row">分量</th><td>1回の内容、回数、期間</td><td>1回の内容・回数の約束</td></tr><tr><th scope="row">価格</th><td>各回の代金と、今後支払う代金の総額</td><td>価格・総額の例</td></tr><tr><th scope="row">支払の時期と方法</th><td>いつ、何で決済するか</td><td>お支払い</td></tr><tr><th scope="row">引渡しの時期</th><td>いつ届くか、間隔</td><td>お届けの間隔</td></tr><tr><th scope="row">申込みの期限</th><td>期限がある場合はその期限</td><td>（期限があれば足す）</td></tr><tr><th scope="row">申込みの撤回・解除</th><td>解約の方法、締め切り、解約料</td><td>解約の方法・締め切り・解約料</td></tr></tbody></table></div><p>同じページでは、大きな「お試し」「初回無料」の近くに小さく定期購入と書く表示や、条件を隠した「いつでも解約可能」が、誤解を招く表示の例として挙げられています。こうした表示で誤解して申し込んだ人は申込みを取り消せる（第15条の4）とされ、行政処分や罰則の対象にもなります（<a href="https://www.pref.saitama.lg.jp/b0304/shohisoudan/jirei/tsuhan/teikikonyu.html">埼玉県</a>）。消費者庁のガイドライン「通信販売の申込み段階における表示についてのガイドライン」も公開されています（<a href="https://www.caa.go.jp/policies/policy/consumer_transaction/amendment/2021/">消費者庁</a>）。</p>
+<p>AI検索のためにも、この6項目は役に立ちます。最終確認画面に出す値をそのまま商品ページの条件の表にも書いておくと、AIが読むページと、お客様が申し込む画面の内容が一致します。逆に、商品ページには「初回1,980円」だけ、条件は最終確認画面にだけ、という作りだと、AIが読めるのは初回価格だけになりがちです。最終確認画面はログインやカートの中にあり、AIの検索のクローラーは通常そこまで入りません。</p></section>
+<section class="qa"><h2>構造化データで書けること・書けないこと</h2><p>Google の商品の構造化データ（merchant listing）の説明には、定期便の周期や回数を書く項目はありません。UnitPriceSpecification（単位あたりの価格）は、単位価格、元の価格（取り消し線の価格）、会員価格の書き方として案内されています（<a href="https://developers.google.com/search/docs/appearance/structured-data/merchant-listing">Google</a>）。</p>
+<p>schema.org の語彙では、UnitPriceSpecification に referenceQuantity（何あたりの価格か）や billingDuration（「定期の契約や支払いプランの期間」を表すのに使える）が定義されています（<a href="https://schema.org/UnitPriceSpecification">UnitPriceSpecification</a>、<a href="https://schema.org/billingDuration">billingDuration</a>）。書くなら次のような形ですが、Google の検索の表示に使われるとは案内されていないため、優先度は本文の表より下です。</p><pre class="code" dir="ltr"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "Offer",
+  "url": "https://shop.example.jp/product/coffee-subscription/",
+  "price": "2480",
+  "priceCurrency": "JPY",
+  "availability": "https://schema.org/InStock",
+  "priceSpecification": {
+    "@type": "UnitPriceSpecification",
+    "price": "2480",
+    "priceCurrency": "JPY",
+    "valueAddedTaxIncluded": true,
+    "referenceQuantity": { "@type": "QuantitativeValue", "value": 4, "unitCode": "WEE" }
+  }
+}
+&lt;/script&gt;
+※ 価格・URLは書き方の例です。WooCommerce がすでに出している Product の
+  offers を、プラグインやフィルターで書き換える形にし、Product を2つ作らないでください。
+  Google はこの書き方を定期便の表示に使うとは案内していません。</code></pre><p>WooCommerce はすでに商品の Product と Offer を出しているので、別の Product を足すと同じ商品が2つあることになります。足すなら WooCommerce の Offer を書き換える形にし、できないなら構造化データは触らず、本文の表とよくある質問を整えるほうが確実です。</p></section>
+<section class="qa"><h2>WordPress（WooCommerce Subscriptions）での手順</h2><p>WooCommerce Subscriptions の公式の説明（2026年11月25日更新）では、定期便の商品に設定する項目は、定期の価格、支払いの間隔（日・週・月・年ごと、1〜6の間隔）、更新を止めるまでの期間、初回登録料、無料のお試し期間です。初回登録料は定期の価格に足され、たとえば月75ドルに登録料200ドルなら、最初の会計は275ドルになるとされています（<a href="https://woocommerce.com/document/subscriptions/creating-subscription-products/">WooCommerce</a>）。</p><ol><li>1. 商品の編集画面で、定期の価格・間隔・期間・登録料・お試し期間を設定し、保存後にプレビューで、お客様に見える価格の表示を確認する</li><li>2. 商品説明に「定期便の条件」の表を文字で貼る。プレビューで見えた価格の表示と、表の数字が同じかを確かめる</li><li>3. 解約の方法・スキップの方法を書いた案内ページを1つ作り、商品説明からリンクする</li><li>4. 注文の最終確認画面に、条件の表と同じ6項目が出ているかを、実際にテスト注文の直前まで進めて確かめる</li><li>5. よくある質問（何回で解約できるか、いつまでに解約すればよいか、休めるか）を、Nurevo AEO の設定に入れ、Nurevo FAQ ブロックを案内ページに置く。そのページにだけ FAQPage の構造化データが出る</li><li>6. Nurevo AEO のサイトの種類を「ネットショップ」にし、返品ポリシーと配送のページのURLを入れる。llms.txt の商品の一覧には商品ごとに価格が1つ載るので、その価格がどの回の価格かが分かるよう、商品名か案内ページで補う</li><li>7. SEO SIMPLE PACK などのSEOプラグインと併用していても、Nurevo AEO 0.9.1 以降は構造化データを重ねて出さない。他の構造化データのプラグインを足す場合は、Product が2つにならないかを確かめる</li></ol><p>llms.txt の商品の行には、名前・URL・価格・通貨・在庫・SKU・カテゴリーが載り、周期や回数の約束は載りません。条件を llms.txt にも載せたい場合は、案内ページのURLを主なページとして載せるか、開発者向けのフィルター（webmcp_canary_llms_txt_lines）で行を足します。</p></section>
+<section class="qa"><h2>海外のお客様にも売る場合</h2><p>米国では、ネットでの定期契約に ROSCA という法律があり、決済情報を受け取る前に大事な条件をはっきり示すこと、同意を得ること、簡単に止められる方法を用意することが求められています。連邦取引委員会（FTC）の「クリックで解約」の規則は2025年7月に裁判所で取り消され、2026年3月に規則づくりがやり直されています（<a href="https://www.gibsondunn.com/ftc-restarts-negative-option-rulemaking-after-eighth-circuit-vacatur-enforcement-under-rosca-continues/">Gibson Dunn</a>）。州ごとの自動更新の法律も約30州にあるとされます（<a href="https://www.jonesday.com/en/insights/2026/05/ftc-revives-clicktocancel-rule-new-risks-for-subscription-businesses">Jones Day</a>）。</p>
+<p>英国では、DMCC法の定期契約の規則が2027年1月に施行される見込みと伝えられています（2026年10月22日時点、<a href="https://dwfgroup.com/fr-ca/news-and-insights/insights/2026/10/dmcca-subscription-contracts-regime-preparing-for-the-new-restrictions">DWF</a>）。どちらの国でも、条件の表を英語で用意しておくことが、法律への対応とAIの答えの両方の土台になります。</p></section>
+<section class="qa"><h2>AIの答えを確かめる質問の例</h2><p>条件の表を載せたら、ChatGPT・Perplexity・Google の AI による概要で、次のように聞いてみます。ページの更新から反映まで時間がかかることがあるので、数週間おきに同じ質問を繰り返し、答えと日付を記録します。</p><ol><li>「（店名）の（商品名）の定期便は、何回続けないと解約できませんか？」</li><li>「（商品名）の定期便を3回受け取ると、総額いくらですか？」</li><li>「（店名）の定期便の解約は、いつまでに、どうやって申し込めばよいですか？」</li><li>「（商品のジャンル）の定期便で、回数の約束がないものを教えて」</li></ol><p>答えが表と違うときは、AIが出典にしたページを確かめます。古いキャンペーンのページ、比較サイト、口コミが出典になっていることがよくあります。自社の古いページなら更新するか、最新の案内ページへのリンクを足します。Nurevo AEO の Pro プランでは、こうした質問でのAIでの登場を Perplexity で計測しています（ChatGPT は設定され次第）。</p></section>
+<section class="qa"><h2>チェックリスト</h2><ol><li>条件の表が、画像ではなく文字で商品ページにある</li><li>初回価格と2回目以降の価格が同じ行にある</li><li>回数の約束が「なし」または「◯回」とはっきり書いてある</li><li>総額（または受け取り回数ごとの例）が書いてある</li><li>スキップ・休止・解約の締め切りが、次回発送日からの日数で書いてある</li><li>解約の方法と受付時間、解約料が書いてある</li><li>最終確認画面の6項目と、表の数字が一致している</li><li>よくある質問の答えと、表の数字が一致している</li><li>古いキャンペーンのページが、今と違う条件のまま残っていない</li><li>表に最終更新日があり、条件を変えたら更新している</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>定期便の条件は、商品ページと別のページのどちらに書けばいいですか？</h3><p>商品ページに条件の表を置き、解約やスキップの手順は別の案内ページにまとめてリンクするのがおすすめです。どちらのページでも数字と締め切りは同じにします。</p>
+<h3>「初回無料」「初回980円」と大きく書いてもいいですか？</h3><p>書くことはできますが、すぐ近くに2回目以降の価格と回数の約束を同じ大きさで書いてください。埼玉県の説明では、大きなお試しの表示の近くに小さく定期購入と書く表示が、誤解を招く例として挙げられています。</p>
+<h3>回数の縛りがあると、AIに不利になりますか？</h3><p>回数の約束があること自体で不利になるかは分かりません。ただ、書いていないと、AIが「いつでも解約可能」と答えたり、口コミの不満が答えの材料になったりしやすくなります。回数と総額をはっきり書くほうが安全です。</p>
+<h3>構造化データだけで条件を伝えられますか？</h3><p>伝えられません。Google の商品の構造化データには定期便の周期や回数の項目がなく、本文の文字の表が一番大事です。構造化データは補助として考えてください。</p>
+<h3>WooCommerce Subscriptions の設定を変えたら、何を直せばいいですか？</h3><p>商品説明の条件の表、案内ページ、よくある質問、最終確認画面の表示の4つを同じ日に直し、表の最終更新日を変えます。llms.txt の価格は WooCommerce の価格から作られます。</p>
+<h3>Nurevo AEO は定期便の条件を自動で出力しますか？</h3><p>いいえ。Nurevo AEO はショップの情報（OnlineStore）、返品ポリシー、llms.txt の商品の一覧（商品ごとに価格1つ）を出し、AIの検索のクローラーを許可します。周期や回数の約束は、本文の表とよくある質問で書いてください。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、AIからショップがどう読めているかを確かめる</h2>
+    <p>無料の診断で、構造化データ・llms.txt・AIのクローラーの許可の状態が登録なしで分かります。WordPress なら Nurevo AEO を無料で入れて、ショップの情報と商品の一覧をAI向けに出せます。</p>
+    <a class="btn primary lg" href="/check">無料でAI対応度を診断する</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.org で無料で入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連するガイド"><h2>関連するガイド</h2><ul><li><a href="/ja/guide/online-shop-ai-search/">ネットショップ（EC）のAI検索対策：商品・価格・在庫・返品条件をAIに正しく読ませる手順</a></li><li><a href="/ja/guide/ec-product-variants-specs-ai-search/">ECの商品のサイズ・色・仕様をAIに正しく読ませる手順：仕様表、バリエーション、WooCommerce</a></li><li><a href="/ja/guide/chatgpt-shopping-product-feed/">ChatGPTのショッピングに商品を出す方法：商品フィード・Merchant Centerとの違いと、日本のショップがいまやること</a></li><li><a href="/ja/guide/faq-page-ai-search/">FAQページとFAQ構造化データはAI検索に効くか：2026年の扱いと、AIに使われる書き方</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/subscription-products-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">ChatGPT は OpenAI、Perplexity は Perplexity AI、Google は Google LLC の商標です。WordPress は WordPress Foundation、WooCommerce は Automattic の商標です。SEO SIMPLE PACK、Ranktracker、Texta、MarTechLab、Gibson Dunn、Jones Day、DWF は各社の商標です。Nurevo はこれらの企業と提携・承認の関係にありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
