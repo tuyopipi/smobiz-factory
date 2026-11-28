@@ -1,0 +1,325 @@
+{
+  "title": "Restoranlar için Yapay Zekâ Araması: Menü, Fiyat, Alerjen | Nurevo",
+  "description": "Restoranlar için yapay zekâ araması: metin olarak menü, tam fiyatlar ve ek ücretler, güvenli alerjen ve diyet bilgisi, Google ve ChatGPT, schema ve WordPress adımları.",
+  "h1": "Restoranlar için yapay zekâ araması: menünüzü, fiyatlarınızı ve alerjen bilgilerinizi ChatGPT ve Google için okunur hâle getirin",
+  "lead": "Bir restoran için yapay zekâ araması optimizasyonunun (AEO) en önemli kısmı, misafirlerin seçim yapmadan önce yapay zekâya sorduğu bilgileri kendi sitenizde metin olarak yazmaktır: ne yiyebilirler, ne kadar tutar ve güvenle yiyebilirler mi. Bu; yalnızca PDF ya da fotoğraf değil sayfa metni olarak yazılmış bir menü, servis veya kuver ücretleri dâhil tam fiyatlar, sınırları ve tarihiyle birlikte alerjen bilgisi ve “vegan” ya da “helal” ifadelerinin arkasındaki gerçek ayrıntılar demektir. Ardından aynı bilgileri Google Business Profile'da, rezervasyon ve yorum sitelerinde ve yeni Businesses in ChatGPT'de eşitleyin ve bunları Restaurant ve Menu yapılandırılmış verisiyle destekleyin.",
+  "intro": [
+    "28 Kasım 2026'da (JST) yazıldı. FDA, Birleşik Krallık hükümeti, schema.org, Google ve OpenAI sayfaları metindeki bağlantılardan 28 Kasım 2026'da kontrol edildi. Bu makale hukuki tavsiye değildir; alerjen ve etiketleme yükümlülüklerinizi yerel gıda otoritenizle doğrulayın.",
+    "Yapay zekâ yanıtları günden güne ve sorunun nasıl sorulduğuna göre değişir. Buradaki adımlar yapay zekânın restoranınızla ilgili bilgileri doğru okumasına yardımcı olur; bir yapay zekâ yanıtında görüneceğinizi ya da daha üst sıralara çıkacağınızı garanti etmez."
+  ],
+  "sections": [
+    {
+      "heading": "Misafirler restoranlar hakkında yapay zekâya ne soruyor",
+      "paragraphs": [
+        "İnsanlar yalnızca “Örnek İstasyonu yakınında öğle yemeği” diye sormaz. Koşul eklerler: “Çocukla gitmeye uygun mu?”, “Kabuklu deniz ürünlerine alerjim var, yiyebileceğim bir şey var mı?”, “Vegan yemekleri var mı?”, “Akşam yemeği kişi başı ne kadar?”. Yapay zekâ bunları ancak yanıt bir yerde metin olarak yazılıysa cevaplayabilir."
+      ],
+      "table": {
+        "head": [
+          "Soru türü",
+          "Örnek",
+          "Yapay zekânın yanıt için ihtiyaç duyduğu bilgiler"
+        ],
+        "rows": [
+          [
+            "Yemek ve tarz",
+            "“Örnek İstasyonu yakınında ızgara balık nerede yenir?”",
+            "Mutfak, imza yemekler, öğle ve akşam yemeğinin farkı"
+          ],
+          [
+            "Menü ve fiyat",
+            "“Akşamları sadece tadım menüsü mü var? Kişi başı ne kadar?”",
+            "Metin menü, tam fiyatlar, servis veya kuver ücretleri"
+          ],
+          [
+            "Bunu yiyebilir miyim?",
+            "“Glütensiz bir şey var mı?” “Veganlara uygun mu?”",
+            "Alerjen listesi, neyi garanti edip neyi edemediğiniz, çapraz bulaşma, nasıl teyit edileceği"
+          ],
+          [
+            "Uygunluk",
+            "“Tek başına gelenlere uygun mu?” “Özel salon var mı?” “Çocuklar?”",
+            "Oturma türleri ve sayıları, özel salonlar, mama sandalyeleri, erişilebilirlik"
+          ],
+          [
+            "Rezervasyon ve bekleme",
+            "“Rezervasyon yapılabiliyor mu? Rezervasyonsuz alıyorlar mı?”",
+            "Nasıl rezervasyon yapılır, son saatler, rezervasyonsuz gelenlerin oturtulup oturtulmadığı"
+          ],
+          [
+            "Paket servis ve teslimat",
+            "“Paket servisleri var mı?”",
+            "Paket menüsü ve fiyatları, gel-al, teslimat hizmetleri"
+          ]
+        ],
+        "caption": "Örnek sorular bu makaleyi açıklamak içindir; ölçülmüş soru sıklıkları değildir."
+      },
+      "after": [
+        "Çalışma saatleri ve tatil günleri [yapay zekâ araması için çalışma saatleri ve tatiller](/guide/business-hours-holidays-ai-search) rehberinde, rezervasyon sayfaları ise [yapay zekâ araması için rezervasyon sayfaları](/guide/booking-page-ai-search) rehberinde ele alınıyor. Bu makale restoranlara özgü olana odaklanıyor: menü, fiyat ve “bunu yiyebilir miyim”."
+      ]
+    },
+    {
+      "heading": "Rakamlar: yapay zekâ kullanan misafirler ve dışarıda kalan restoranlar",
+      "paragraphs": [
+        "Restoran seçmek için yapay zekâ kullananların oranı ülkeye ve ankete göre değişir. Aşağıdakiler, yayıncının kendi sayfasında doğrulayabildiğimiz rakamlardır."
+      ],
+      "table": {
+        "head": [
+          "Anket (yayıncı, tarih)",
+          "Kimler",
+          "Rakam"
+        ],
+        "rows": [
+          [
+            "[DoorDash (18 Mayıs 2026)](https://about.doordash.com/en-us/news/doordash-restaurant-industry-trends-report-2026)",
+            "ABD'de 3.001 tüketici",
+            "%22'si restoran seçmek için ChatGPT veya Gemini gibi bir yapay zekâ aracı kullanmış"
+          ],
+          [
+            "[Reputation / Nielsen (21 Ekim 2025)](https://reputation.com/press-room/new-reputation-survey-reveals-how-ai-and-economic-pressures-are-rewriting-the-rules-of-dining-out-in-america/)",
+            "ABD'de 763 tüketici",
+            "%20'si restoran ve barları araştırmak için ChatGPT gibi yapay zekâ araçları kullanıyor"
+          ],
+          [
+            "[NIQ / Zonal (8 Ekim 2026)](https://nielseniq.com/global/en/insights/report/2026/nearly-a-fifth-of-consumers-use-ai-tools-to-plan-a-visit-to-a-pub-bar-or-restaurant/)",
+            "5.000'den fazla İngiliz tüketici",
+            "%19'u pub, bar veya restoran ziyaretini planlamak için yapay zekâ kullanıyor; bunların %38'i menülere bakıyor, %43'ü fiyatları ve %35'i çalışma saatlerini kontrol ediyor"
+          ],
+          [
+            "[Honichi Lab (1 Ekim 2026)](https://honichi.com/reports/202610_survey_gourmet_ai/)",
+            "Japonya'da yapay zekâyı her gün kullanan ve restoran seçmek için kullanmış 483 kişi",
+            "%60'ı yapay zekânın önerdiği bir restorana gitmiş; %80'den fazlası bilgi eksikliği nedeniyle bir restoranı listesinden çıkarmış"
+          ],
+          [
+            "[Uberall (tarihsiz)](https://uberall.com/en-us/qsr-geo-playbook-2026)",
+            "Şirketin kendi çalışması (örneklem büyüklüğü belirtilmemiş)",
+            "Restoran şubelerinin %83'ü yapay zekâ önerilerinde görünmüyor; %17'si bir ChatGPT önerisinde görünüyor"
+          ]
+        ],
+        "caption": "Honichi Lab rakamları ücretsiz özetinden alınmıştır. Uberall rakamları şirketin kendi çalışması olarak sunulmaktadır."
+      },
+      "after": [
+        "Bu anketlerin hiçbiri yapay zekânın restoranları nasıl seçtiğini göstermiyor. Ülkeler arasında ortak olan, misafirlerin menülere, fiyatlara ve çalışma saatlerine bakması ve bilgisi eksik yerleri elemesidir. Seçilebilmeniz için önce yapay zekânın ihtiyaç duyduğu bilgilerin sitenizde olması gerekir."
+      ]
+    },
+    {
+      "heading": "Üst sıralardaki makalelerin atladıkları",
+      "paragraphs": [
+        "28 Kasım 2026'da “restaurant AI search” gibi sorgular için İngilizce ve Japonca 16 üst sonucu okuduk. [Owner](https://www.owner.com/blog/the-ultimate-guide-to-chatgpt-for-restaurants-how-to-get-recommended-in-ai-search) (22 Ekim 2026), PDF yerine metin menü için en güçlü savunmayı yapıyor ve ChatGPT'yi oturum açmadan kontrol etmeyi anlatıyor. [Yext](https://www.yext.com/knowledge-center/how-restaurants-use-menus-to-win-citations-near-me-searches) (18 Haziran 2026) yapay zekânın kullandığı menü veri alanlarını listeliyor, [Bloom Intelligence](https://bloomintelligence.com/blog/ai-restaurant-discovery/) (5 Ekim 2026'da güncellendi) ise her şube için bir soru setiyle en somut ölçüm planını sunuyor. [ChowNow](https://get.chownow.com/blog/how-to-get-your-restaurant-found-in-ai-search/) (18 Eylül 2026'da güncellendi), menünün yalnızca bir sipariş uygulamasında değil kendi sitenizde de olmasını vurguluyor. Hiçbirinde yapılandırılmış veri kod örneği yok; [Malou'nun yapılandırılmış veri rehberinin](https://www.malou.io/en-us/blog/structured-data-for-restaurants) (22 Eylül 2026'da güncellendi) okuyabildiğimiz metninde de yoktu.",
+        "Her iki dilde de hiçbir makale, alerjen bilgisini yapay zekâ tek bir cümleyi alıntıladığında da güvenli kalacak şekilde ele almıyordu; hiçbiri ABD ve Birleşik Krallık kurallarının restoranlardan gerçekte neyi açıklamalarını istediğini anlatmıyordu; hiçbirinde WordPress adımları yoktu ve hiçbiri Kasım 2026'da başlatılan Businesses in ChatGPT'yi ele almıyordu. Birkaçı yapay zekâ “puan eşiklerini” kaynak göstermeden tekrarlıyor. Bu makale bu boşlukları dolduruyor."
+      ]
+    },
+    {
+      "heading": "Menüyü yalnızca PDF veya fotoğraf olarak değil, sayfa metni olarak yazın",
+      "paragraphs": [
+        "Menünüz yalnızca fotoğraf veya PDF olarak varsa, yapay zekâ onu okumayabilir ya da yanlış okuyabilir. Her yemeğin adını, kısa bir açıklamasını ve fiyatını sayfaya HTML metni olarak koyun. PDF'i veya fotoğrafı metin menünün yerine değil, ona ek olarak tutun."
+      ],
+      "list": [
+        "Basılı menünüzdekiyle aynı yemek adlarını kullanın ve ne olduğunu anlatan bir satır ekleyin (ana malzemeler, porsiyon, acılık derecesi). Tek başına “Şefin seçimi” yapay zekâya hiçbir şey söylemez.",
+        "Öğle, akşam, fiks veya tadım menüleri, içecekler ve paket servis olarak gruplayın. Yalnızca öğlen ya da yalnızca hafta içi sunulan yemekleri işaretleyin.",
+        "Mevsimlik veya sınırlı süreli yemeklerde tarihleri verin ve bittiklerinde kaldırın. Sayfada bırakılan bir yemek, yapay zekânın hâlâ sunduğunuzu söyleyeceği bir yemektir.",
+        "Menünün son güncellenme tarihini gösterin. Fiyatlar değiştiğinde sitenizi, Google Business Profile'ı ve listeleme sitelerini aynı gün güncelleyin.",
+        "Misafirlerinizin çoğu yurt dışından geliyorsa menüyü onların dillerinde de metin olarak yayımlayın. Bkz. [yapay zekâ araması için çok dilli siteler](/guide/multilingual-site-ai-search)."
+      ],
+      "after": [
+        "Google Business Profile'da yiyecek-içecek işletmeleri menü düzenleyicide bölümler, yemekler, açıklamalar ve fiyatlar ekleyebilir; değişikliklerin yansıması 24 ila 48 saat sürebilir. Menü fotoğrafları (PDF de olabilir) veya menü bağlantısı da ekleyebilirsiniz; Google menüyü web sitenizden aktarabilir ve işletme sahipleri hangi menünün gösterileceğini seçebilir. [Google Business Profile Help: About the menu editor](https://support.google.com/business/answer/9455840?hl=en) Sitenizdeki metin menüyü doğru tutmak, Google'ın oradan okuduğu menüye de yardımcı olur."
+      ]
+    },
+    {
+      "heading": "Fiyatlar: neler dâhil, neler ekstra",
+      "paragraphs": [
+        "Yapay zekâ sayfanızdan tek bir cümleyi alıntılayabilir. Koşulları sayfanın en altında duran “Ana yemekler $15'ten başlayan fiyatlarla” ifadesi düpedüz “$15”e dönüşebilir. Koşulları fiyatla aynı cümleye yazın: “Öğle ana yemekleri $15 ile $24 arasındadır; her hesaba %3 mutfak ücreti eklenir.”",
+        "ABD'de 20 veya daha fazla şubesi olan restoran zincirleri standart menü ürünlerinin kalorisini göstermek zorundadır; uyum tarihi 7 Mayıs 2018'di ([FDA: Menu labeling requirements](https://www.fda.gov/food/food-labeling-nutrition/menu-labeling-requirements)). Kuraldaki menü tanımı “menus on the Internet” ifadesini içerir ([21 CFR 101.11, 2019 baskısı](https://www.govinfo.gov/content/pkg/CFR-2019-title21-vol2/pdf/CFR-2019-title21-vol2-sec101-11.pdf)); dolayısıyla kapsama giren bir zincirin web sitesindeki menüde de basılı menüdeki kaloriler yer almalıdır."
+      ],
+      "list": [
+        "Her ek ücreti listeleyin: servis ücreti, kuver, mutfak veya “wellness” ücretleri, özel salon için minimum harcama. Her birinin ne zaman uygulandığını belirtin (yalnızca akşam, altı kişi ve üzeri gruplar).",
+        "Fiks veya tadım menülerinde fiyatın yanında servis sayısını, hangi içeceklerin dâhil olduğunu, minimum kişi sayısını ve rezervasyon için son tarihi verin.",
+        "“Kişi başı ortalama harcama” veriyorsanız neleri kapsadığını (içecek dâhil mi, bahşiş dâhil mi) aynı cümlede söyleyin.",
+        "Paket servis ve restoranda yeme fiyatları farklıysa bunu her iki yerde de belirtin."
+      ]
+    },
+    {
+      "heading": "Alerjen bilgisi: kurallar ne istiyor ve nasıl yazılır",
+      "paragraphs": [
+        "ABD'de dokuz ana gıda alerjeni vardır: süt, yumurta, balık, kabuklu deniz ürünleri, sert kabuklu yemişler, yer fıstığı, buğday, soya ve 1 Ocak 2023'ten itibaren eklenen susam ([FDA: FASTER Act](https://www.fda.gov/food/food-allergies/faster-act-sesame-ninth-major-food-allergen)). Federal etiketleme kuralları ambalajlı gıdalar için geçerlidir. Ambalajsız gıdalar için 2022 FDA Food Code, izin sahibinin gıdadaki ana gıda alerjenlerini tüketicilere menü gibi fiziksel veya elektronik bir yolla yazılı olarak bildirmesini öngörür; Food Code bir modeldir ve yalnızca bir eyalet veya yerel yönetim onu benimsediğinde uygulanır ([FDA: 2022 Food Code and sesame](https://www.fda.gov/food/retail-food-industryregulatory-assistance-training/addition-2022-food-code-sesame-added-major-food-allergen)). Bölgenizin hangi baskıyı kullandığını kontrol edin.",
+        "Birleşik Krallık'ta önceden ambalajlanmamış gıdalar için 14 alerjene ilişkin bilgi sunulmalıdır. Bir duyuru, menü veya etiket müşterilere bilgiyi nerede bulacaklarını söylediği sürece bu bilgi personel tarafından sözlü olarak verilebilir; doğrudan satış için önceden ambalajlanan gıdalarda 1 Ekim 2021'den beri tam içerik etiketi gerekir; çevrim içi siparişlerde ise bilgi satın almadan önce ve teslimatta erişilebilir olmalıdır ([Birleşik Krallık teknik kılavuzu, 3 Kasım 2026'da güncellendi](https://www.gov.uk/government/publications/food-allergen-labelling-and-information-requirements-technical-guidance/food-allergen-labelling-and-information-requirements-technical-guidance)). Food Standards Agency'nin iyi uygulama kılavuzu (24 Şubat 2025), bir sohbetle desteklenen yazılı bilgiyi ve çevrim içi ortamda ana menüde ya da en fazla bir tık uzakta olmasını öneriyor. Bu bir kılavuzdur, yasa değildir ([FSA iyi uygulama](https://www.gov.uk/government/publications/allergen-information-for-non-prepacked-foods-best-practice/allergen-information-for-non-prepacked-foods-best-practice))."
+      ],
+      "table": {
+        "head": [
+          "Ne yazılmalı",
+          "Örnek"
+        ],
+        "rows": [
+          [
+            "Kapsam",
+            "“Alerjen tablomuz her yemek için 14 alerjeni kapsar. Diğer malzemeler için lütfen personelimize sorun.”"
+          ],
+          [
+            "Biçim",
+            "Satırlarda yemeklerin, sütunlarda alerjenlerin olduğu metin tablo; yalnızca görsel değil"
+          ],
+          [
+            "Çapraz bulaşma",
+            "“Kabuklu deniz ürünlerini ve buğdayı aynı mutfakta ve aynı fritözde pişiriyoruz. Hiçbir yemeğin iz içermediğini garanti edemeyiz.”"
+          ],
+          [
+            "Nasıl teyit edilir",
+            "“Rezervasyon sırasında alerjilerinizi bize bildirin. Ziyaret günü müdürümüz malzemeleri teyit edecektir.”"
+          ],
+          [
+            "Tarih",
+            "“Malzemeler [tarih] itibarıyla. Tedarikçi değiştiğinde tabloyu her seferinde gözden geçiriyoruz.”"
+          ]
+        ],
+        "caption": "Yalnızca örnektir. Mutfağınızın gerçekte ne yaptığını yazın ve doğrulayamadığınız hiçbir şeyi eklemeyin."
+      },
+      "after": [
+        "Yapay zekâdaki risk, “kabuklu deniz ürünü içermez” ifadesinin alıntı olarak kalıp “kabuklu deniz ürünleriyle aynı fritözde pişirilir” ifadesinin düşmesidir. Çapraz bulaşma uyarısını sayfanın en üstüne ve ilgili yemeklerin yanına koyun, “içermez” ile “olmadan hazırlanabilir” ifadelerini birbirinden ayırın. Google açıklamanızda veya SSS'lerinizde “alerji dostu” gibi genel ifadeleri tek başına kullanmaktan kaçının.",
+        "Japonya'da bir restoran işletiyorsanız kurallar farklıdır: alerjen etiketlemesi yalnızca ambalajlı gıdalar için zorunludur, Nisan 2026'dan beri dokuz belirlenmiş malzeme geçerlidir ve pirinç yemeklerinde pirincin menşei bildirilmelidir. Bu sayfanın Japonca sürümü bu kuralları ele alıyor."
+      ]
+    },
+    {
+      "heading": "Vejetaryen, vegan, helal ve diğer diyetler",
+      "list": [
+        "“Vegan” diyorsanız hangi yemekler olduğunu ve et suyu ile sosların da hayvansal ürün içermeyip içermediğini söyleyin. Bir yemekte et yok ama balık suyu kullanılıyorsa tam olarak bunu yazın.",
+        "Helal veya koşer için, varsa sertifikayı belirtin. Yoksa yalnızca ne yaptığınızı söyleyin: “Bazı yemeklerde domuz eti veya alkol yoktur (sertifikasız).”",
+        "Yalnızca birkaç yemek uygun olsa bile adlarını verin. Böylece yapay zekâ tahmin yürütmek yerine “burada bu yemeği yiyebilirsiniz” diyebilir.",
+        "“Ev yapımı”, “yerel” veya “oltayla avlanmış” gibi kelimeler yapay zekâ yanıtlarında restoranınızın tanımına dönüşür. Bunları yalnızca doğru olduğu yerlerde kullanın."
+      ]
+    },
+    {
+      "heading": "Siteniz, Google, listeleme siteleri ve ChatGPT: hangisi ne işe yarar",
+      "paragraphs": [
+        "OpenAI, 10 Kasım 2026'da Businesses in ChatGPT'yi beta olarak başlattı: Business Hub'da bir işletme profilini sahiplenip doğrulayabiliyor ve bilgilerini güncelleyebiliyor ([OpenAI: Introducing Businesses in ChatGPT](https://openai.com/index/introducing-businesses-chatgpt/)). Yardım merkezine göre web sitesini, açıklamayı, kategoriyi ve logoyu düzenleyebilirsiniz; yerel mağazalar ve restoranlar yalnızca ABD'deki mevcut bir kaydı sahiplenebilir; sahiplenmek daha fazla görünürlüğü garanti etmez, çünkü ChatGPT başka kaynakları da kullanabilir ([OpenAI Help: Setting up your business on ChatGPT](https://help.openai.com/en/articles/20001635-setting-up-your-business-on-chatgpt)). ABD dışında, ChatGPT'nin yanıtlarını doğru tutmanın yolu hâlâ kendi sitenizi ve diğer kayıtlarınızı doğru tutmaktır."
+      ],
+      "table": {
+        "head": [
+          "Yer",
+          "Rol",
+          "Aynı tutulacaklar"
+        ],
+        "rows": [
+          [
+            "Web siteniz",
+            "Asıl kaynak: menü, fiyatlar, alerjenler, diyetler, oturma düzeni, rezervasyon",
+            "Diğer her şey bunu takip eder"
+          ],
+          [
+            "Google Business Profile",
+            "Haritalar ve arama: çalışma saatleri, menü, fotoğraflar, yorumlar",
+            "Ad, adres, telefon, çalışma saatleri, menü fiyatları"
+          ],
+          [
+            "Rezervasyon ve yorum siteleri (OpenTable, Yelp, Tripadvisor...)",
+            "Rezervasyon ve karşılaştırma; yapay zekâ sıkça kaynak gösterir",
+            "Çalışma saatleri, fiyat aralığı, oturma düzeni, rezervasyon yöntemi"
+          ],
+          [
+            "Businesses in ChatGPT (ABD, beta)",
+            "ChatGPT'nin işletmenizi nasıl gösterdiğini düzeltmenizi sağlar",
+            "Web sitesi, açıklama, kategori"
+          ],
+          [
+            "Sosyal medya paylaşımları",
+            "Yeni yemekler ve geçici kapanışlar",
+            "Değişen her bilgiyi aynı gün sitenize koyun"
+          ]
+        ],
+        "caption": "Bu rol dağılımı bizim önerimizdir."
+      },
+      "after": [
+        "Hatalı kayıtları düzeltmek için bkz. [yapay zekâ araması için işletme kayıtlarını düzeltme](/guide/fix-business-listings-ai-search). Zincirler için bkz. [çok şubeli işletmeler ve yapay zekâ araması](/guide/multi-location-business-ai-search)."
+      ]
+    },
+    {
+      "heading": "Yapılandırılmış veri: Restaurant ve Menu",
+      "paragraphs": [
+        "[Restaurant](https://schema.org/Restaurant) (veya CafeOrCoffeeShop, Bakery, BarOrPub) kullanın. Mutfak servesCuisine'e, fiyat düzeyi priceRange'e, rezervasyon ise acceptsReservations'a (true/false veya rezervasyon sayfanızın URL'si) girer. Menü için schema.org'un güncel özelliği, menu'nün yerini alan hasMenu'dür; Google'ın belgeleri menu (menü URL'si), servesCuisine ve priceRange'i önerilen özellikler olarak listeler ([Google Search Central: Local business structured data](https://developers.google.com/search/docs/appearance/structured-data/local-business)). İkisine de aynı URL'yi vermek tutarlıdır.",
+        "Yemekler Menu, MenuSection ve [MenuItem](https://schema.org/MenuItem) ile tanımlanabilir. MenuItem'ın suitableForDiet özelliği vardır; değerleri VeganDiet, VegetarianDiet, HalalDiet ve GlutenFreeDiet gibi 11 [RestrictedDiet](https://schema.org/RestrictedDiet) türüdür. schema.org'da alerjenler için bir özellik yoktur; bu yüzden alerjen bilgisi yapılandırılmış veride değil, sayfadaki bir metin tabloda yer almalıdır."
+      ],
+      "code": "{\n  \"@context\": \"https://schema.org\",\n  \"@graph\": [\n    {\n      \"@type\": \"Restaurant\",\n      \"@id\": \"https://example.com/#organization\",\n      \"name\": \"Example Kitchen (example)\",\n      \"description\": \"Neighbourhood bistro three minutes from Example Station. Lunch set menus, dinner à la carte and a tasting menu.\",\n      \"url\": \"https://example.com/\",\n      \"telephone\": \"+1-000-000-0000\",\n      \"address\": {\n        \"@type\": \"PostalAddress\",\n        \"addressRegion\": \"CA\",\n        \"addressLocality\": \"Example City\",\n        \"streetAddress\": \"123 Example St\"\n      },\n      \"openingHours\": [\"Tu-Su 11:30-14:00\", \"Tu-Sa 17:30-22:00\"],\n      \"servesCuisine\": [\"French\", \"Seafood\"],\n      \"priceRange\": \"$$\",\n      \"menu\": \"https://example.com/menu/\",\n      \"hasMenu\": { \"@id\": \"https://example.com/menu/#menu\" },\n      \"acceptsReservations\": \"https://example.com/reserve/\"\n    },\n    {\n      \"@type\": \"Menu\",\n      \"@id\": \"https://example.com/menu/#menu\",\n      \"name\": \"Lunch menu\",\n      \"hasMenuSection\": {\n        \"@type\": \"MenuSection\",\n        \"name\": \"Mains\",\n        \"hasMenuItem\": [\n          {\n            \"@type\": \"MenuItem\",\n            \"name\": \"Grilled mackerel\",\n            \"description\": \"Grilled mackerel, potatoes, green salad.\",\n            \"offers\": { \"@type\": \"Offer\", \"price\": \"18.00\", \"priceCurrency\": \"USD\" }\n          },\n          {\n            \"@type\": \"MenuItem\",\n            \"name\": \"Roasted vegetable plate\",\n            \"description\": \"No meat, fish, dairy or eggs, including the stock.\",\n            \"suitableForDiet\": \"https://schema.org/VeganDiet\",\n            \"offers\": { \"@type\": \"Offer\", \"price\": \"15.00\", \"priceCurrency\": \"USD\" }\n          }\n        ]\n      }\n    }\n  ]\n}",
+      "after": [
+        "Tek tek yemekleri yalnızca sayfayla birebir aynı tutabiliyorsanız işaretleyin. Menünüz uzunsa veya fiyatlar sık değişiyorsa hasMenu'yü menü sayfasına yönlendirmek yeterlidir. Yapılandırılmış verideki fiyat sayfadakinden farklıysa yapay zekâ hangisinin doğru olduğundan emin olamaz."
+      ]
+    },
+    {
+      "heading": "WordPress sitesinde kurulum",
+      "list": [
+        "Nurevo AEO'yu (ücretsiz) [WordPress.org](https://wordpress.org/plugins/nurevo-webmcp/) üzerinden yükleyip etkinleştirin. Yoast SEO, Rank Math, All in One SEO, SEO SIMPLE PACK ve VK All in One Expansion Unit, yinelenen yapılandırılmış veri olmadan çalışmaya devam eder.",
+        "Kurulum sihirbazında “Restoran veya kafe”yi seçin. Bu, Restaurant yayımlar. Kafe, fırın veya bar için Ayarlar'daki “İşletme türü (schema.org türü)” alanına CafeOrCoffeeShop, Bakery veya BarOrPub girin.",
+        "Adınızı, adresinizi, telefonunuzu ve çalışma saatlerinizi Google Business Profile'dakiyle birebir aynı girin. Açıklamaya mutfağınız, imza yemekleriniz ve öğle ile akşam yemeğinin farkıyla başlayın.",
+        "Misafirlerin sizden yararlanma biçimlerini Hizmetler olarak ekleyin: tadım menüsü, özel yemekler, etkinlikler, paket servis, catering (en fazla 20). Hizmetler yapılandırılmış veride (Service) ve llms.txt'de görünür. Tek tek yemekler Hizmetler'e değil, menü sayfasına aittir.",
+        "servesCuisine, priceRange, menu/hasMenu veya acceptsReservations için alan yoktur; bu yüzden bunları aşağıdaki webmcp_canary_business_node filtresiyle, sayfa metninizle aynı değerleri kullanarak ekleyin. Yoast SEO veya benzer bir eklenti etkinse, onun zaten yayımladığı değerler önceliklidir.",
+        "Alerjenler, vegan yemekler, çocuklar, özel salonlar ve rezervasyonsuz gelişler hakkında SSS girin ve Nurevo FAQ bloğunu (veya [nurevo_faq] kısa kodunu) menü ya da ziyaret sayfanıza yerleştirin. SSS yapılandırılmış verisi yalnızca soruları gösteren bir sayfada yayımlanır. Bkz. [yapay zekâ araması için SSS sayfaları](/guide/faq-page-ai-search).",
+        "/llms.txt'yi açın ve menü, ziyaret ve rezervasyon sayfalarının listelendiğini kontrol edin. AEO puanı ekranında kontrolü çalıştırın ve işaretlediği sorunları düzeltin."
+      ],
+      "code": "// Add cuisine, price range, menu and booking URLs to the business node (same values as the page text)\nadd_filter('webmcp_canary_business_node', function (array $node, array $settings) {\n    $node['servesCuisine'] = array('French', 'Seafood');\n    $node['priceRange'] = '$$';\n    $node['menu'] = 'https://example.com/menu/';\n    $node['hasMenu'] = 'https://example.com/menu/';\n    $node['acceptsReservations'] = 'https://example.com/reserve/';\n    return $node;\n}, 10, 2);",
+      "after": [
+        "Aynı kontroller WordPress dışındaki siteler için de geçerlidir. Yapılandırılmış verinizin, llms.txt'nin ve yapay zekâ tarayıcı erişiminin durumunu görmek için URL'nizi kayıt gerektirmeyen [ücretsiz kontrole](/check) girin."
+      ]
+    },
+    {
+      "heading": "Yayın öncesi kontrol listesi",
+      "list": [
+        "Menü sayfasında yemek adları, kısa açıklamalar ve fiyatlar yalnızca fotoğraf veya PDF olarak değil, metin olarak yer alıyor.",
+        "Öğle, akşam, fiks menüler, içecekler ve paket servisin kendi başlıkları var ve menüde güncelleme tarihi görünüyor.",
+        "Her fiyat cümlesi neyin dâhil olduğunu söylüyor; ek ücretler ve ne zaman uygulandıkları listelenmiş.",
+        "20'den fazla şubesi olan bir ABD zinciriyseniz web sitesi menüsü basılı menüyle aynı kalorileri gösteriyor.",
+        "Alerjen bilgisi kapsamını belirtiyor; metin tablo, çapraz bulaşma uyarısı, teyit yöntemi ve tarih içeriyor.",
+        "Vegan, vejetaryen, helal veya glütensiz iddiaları yemeklerin adını ve arkasındakileri (et suları, soslar, sertifika) belirtiyor.",
+        "“Ev yapımı”, “yerel” ve benzeri kelimeler yalnızca doğru olduğu yerlerde kullanılıyor.",
+        "Ad, adres, telefon, çalışma saatleri ve menü fiyatları sitenizde, Google Business Profile'da ve listeleme sitelerinde aynı.",
+        "Yapılandırılmış veri, sayfayla eşleşen servesCuisine, priceRange, menu/hasMenu ve acceptsReservations ile Restaurant (veya kafe, fırın ya da bar türü) kullanıyor.",
+        "llms.txt menü, ziyaret ve rezervasyon sayfalarınızı listeliyor. [llms.txt nedir?](/guide/llms-txt)"
+      ]
+    },
+    {
+      "heading": "Yapay zekânın sizden bahsedip bahsetmediğini ve doğru söyleyip söylemediğini kontrol edin",
+      "paragraphs": [
+        "Bilgiler yerine oturduğunda, yapay zekâya misafirlerin soracağı şeyleri sorun. “Örnek İstasyonu yakınında ızgara balıklı öğle yemeği” gibi bölge artı yemek sorularını kontrol edin, sonra adınızla sorun: “Akşam yemeği kişi başı ne kadar?”, “Kabuklu deniz ürünü alerjisiyle orada yemek yiyebilir miyim?”, “Vegan yemekleri var mı?”. Her yanıtı sitenizle karşılaştırın. Bir şey yanlışsa, yanıtın kaynak gösterdiği sayfayı açın ve bilgiyi önce orada düzeltin.",
+        "Yapay zekâ yanıtları her çalıştırmada farklılık gösterir; bu yüzden aynı soruları aralıklarla sorun ve kayıt tutun. Free ve Standard planlarında Nurevo AEO, işletme türünüz ve bölgenizden (asla adınızdan değil) oluşturulan üç soruyu ayda bir Perplexity'ye gönderir ve adınızın ya da sitenizin görünüp görünmediğini kaydeder. Pro planı (aylık $99'dan başlayan) rakip karşılaştırması ve geçmişle birlikte beta sürümde yapay zekâ görünürlük ölçümü ekler (şu an Perplexity'de). İkisi de her yanıtı izlemek yerine yanıtlardan örneklem alır. Bkz. [yapay zekâ görünürlüğü nasıl ölçülür](/guide/measure-ai-visibility)."
+      ]
+    }
+  ],
+  "faqs": [
+    {
+      "q": "Bir restoran yapay zekâ aramasına nereden başlamalı?",
+      "a": "Menü sayfasından başlayın: yemek adları, kısa açıklamalar ve fiyatlar yalnızca PDF veya fotoğraf olarak değil, metin olarak. Ardından ek ücretleri, sınırları ve tarihiyle alerjen bilgisini ve diyet iddialarının arkasındaki ayrıntıları ekleyin; Google Business Profile'ı ve listeleme sitelerini sitenizle eşleştirin."
+    },
+    {
+      "q": "PDF menü sorun mu?",
+      "a": "PDF olması sorun değil; ancak menü yalnızca PDF veya fotoğraf olarak varsa yapay zekâ onu okumayabilir ya da yanlış okuyabilir. Aynı menüyü sayfa metni olarak yayımlayın ve PDF'i baskı için saklayın."
+    },
+    {
+      "q": "Restoranların alerjen bilgisi yayımlaması zorunlu mu?",
+      "a": "Nerede olduğunuza bağlı. Birleşik Krallık'ta önceden ambalajlanmamış gıdalar için 14 alerjene ilişkin bilgi sunulmalıdır ve bu bilgi, yönlendirme yapıldığı takdirde personel tarafından verilebilir. ABD'de federal etiketleme kuralları ambalajlı gıdaları kapsar; FDA Food Code ise benimsendiği yerlerde ambalajsız gıdalar için yazılı bildirim ister. Kural ne olursa olsun, yayımlıyorsanız bilgiyi doğru, çapraz bulaşma uyarılı ve tarihli yapın."
+    },
+    {
+      "q": "Alerjenler yapılandırılmış veriye girebilir mi?",
+      "a": "schema.org'da alerjen özelliği yoktur. Vegan veya helal gibi diyetlere uygun yemekleri MenuItem üzerinde suitableForDiet ile işaretleyebilirsiniz, ancak alerjen bilgisini sayfada metin tablo olarak yayımlayın."
+    },
+    {
+      "q": "Restoranımızı ChatGPT'de sahiplenmeli miyiz?",
+      "a": "ABD'deyseniz ve Business Hub'da sizin için mevcut bir kayıt görünüyorsa, onu sahiplenmek web sitenizi, açıklamanızı ve kategorinizi düzeltmenizi sağlar. OpenAI bunun daha fazla görünürlüğü garanti etmediğini söylüyor. ABD dışında yerel işletmeler henüz sahiplenemiyor; bu yüzden sitenizi ve diğer kayıtlarınızı doğru tutun."
+    },
+    {
+      "q": "Nurevo AEO ücretsiz mi?",
+      "a": "Evet. İşletme türü, adres, çalışma saatleri, hizmetler ve SSS yapılandırılmış verisi, llms.txt, yapay zekâ tarayıcı kuralları, AEO puanı ve aylık ücretsiz yapay zekâ kontrolü ücretsiz plandadır. Ücretli planlar her zaman güncel bir kural seti (Standard, aylık $20) ve beta sürümde yapay zekâ görünürlük ölçümü (Pro, aylık $99'dan başlayan) ekler. [WordPress.org'da Nurevo AEO](https://wordpress.org/plugins/nurevo-webmcp/)"
+    },
+    {
+      "q": "Bu, ChatGPT'nin bizi önereceğini garanti eder mi?",
+      "a": "Hayır. Yapay zekâ yanıtları değişir ve hiçbir araç ya da teknik bir anılmayı veya sırayı garanti edemez. Yapabileceğiniz şey; menünüzü, fiyatlarınızı ve diyet bilgilerinizi yapay zekânın kolayca okuyabileceği hâle getirmek ve sizden bahsedilip bahsedilmediğini, doğru anlatılıp anlatılmadığını kontrol etmeye devam etmektir."
+    }
+  ],
+  "relatedHeading": "İlgili rehberler",
+  "cta": {
+    "heading": "Önce yapay zekânın restoranınızın sitesini nasıl okuduğunu görün",
+    "body": "Ücretsiz kontrol, kayıt gerektirmeden yapılandırılmış verinizin, llms.txt'nin ve yapay zekâ tarayıcı erişiminin durumunu gösterir. WordPress'te Nurevo AEO, restoranınızın bilgilerini, özel yemek ve paket servis gibi hizmetlerinizi ve SSS'lerinizi ücretsiz yayımlar.",
+    "label": "Ücretsiz yapay zekâ okunabilirlik kontrolünü çalıştırın",
+    "href": "/check",
+    "secondary": {
+      "label": "Nurevo AEO'yu WordPress.org'dan edinin",
+      "href": "https://wordpress.org/plugins/nurevo-webmcp/"
+    }
+  },
+  "footnote": "ChatGPT, OpenAI'ın; Perplexity, Perplexity AI'ın; Google ve Gemini ise Google LLC'nin ticari markalarıdır. DoorDash, Reputation, Nielsen, NIQ, Zonal, Uberall, Owner, ChowNow, Yext, Bloom Intelligence, Malou, OpenTable, Yelp, Tripadvisor, Yoast SEO, Rank Math, All in One SEO, SEO SIMPLE PACK ve VK All in One Expansion Unit ilgili sahiplerinin ticari markalarıdır. Nurevo bunlarla bağlantılı değildir. Bu makale hukuki tavsiye değildir."
+}
