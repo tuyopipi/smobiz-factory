@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>商品のサイズ・色・仕様をAIに正しく読ませる手順（EC） | Nurevo AIO</title>
+<meta name="description" content="「Mサイズは身長170cmで合う？」「白の在庫は？」とAIに聞かれたとき、答えの材料になる仕様表とバリエーションの書き方。ProductGroupの例、WooCommerceの現状と手順、確かめ方。">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
+<link rel="canonical" href="https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/">
+<link rel="alternate" hreflang="ja" href="https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/">
+<link rel="alternate" hreflang="en" href="https://nurevo.jp/guide/ec-product-variants-specs-ai-search/">
+<link rel="alternate" hreflang="en-GB" href="https://nurevo.jp/guide/ec-product-variants-specs-ai-search/">
+<link rel="alternate" hreflang="en-AU" href="https://nurevo.jp/guide/ec-product-variants-specs-ai-search/">
+<link rel="alternate" hreflang="en-CA" href="https://nurevo.jp/guide/ec-product-variants-specs-ai-search/">
+<link rel="alternate" hreflang="en-NZ" href="https://nurevo.jp/guide/ec-product-variants-specs-ai-search/">
+<link rel="alternate" hreflang="en-ZA" href="https://nurevo.jp/guide/ec-product-variants-specs-ai-search/">
+<link rel="alternate" hreflang="x-default" href="https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/">
+<link rel="icon" href="/assets/favicon-64.png" type="image/png" sizes="64x64">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<meta name="theme-color" content="#6f4df6">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Nurevo AIO">
+<meta property="og:title" content="商品のサイズ・色・仕様をAIに正しく読ませる手順（EC） | Nurevo AIO">
+<meta property="og:description" content="「Mサイズは身長170cmで合う？」「白の在庫は？」とAIに聞かれたとき、答えの材料になる仕様表とバリエーションの書き方。ProductGroupの例、WooCommerceの現状と手順、確かめ方。">
+<meta property="og:url" content="https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/">
+<meta property="og:image" content="https://nurevo.jp/ogp.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:locale:alternate" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="商品のサイズ・色・仕様をAIに正しく読ませる手順（EC） | Nurevo AIO">
+<meta name="twitter:description" content="「Mサイズは身長170cmで合う？」「白の在庫は？」とAIに聞かれたとき、答えの材料になる仕様表とバリエーションの書き方。ProductGroupの例、WooCommerceの現状と手順、確かめ方。">
+<meta name="twitter:image" content="https://nurevo.jp/ogp.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&amp;family=JetBrains+Mono:wght@500&amp;family=Noto+Sans+JP:wght@500;700;900&amp;display=swap"></noscript>
+<style>:root{color-scheme:light;--ink:#171423;--muted:#5c5768;--line:#eee6ef;--purple:#6f4df6;--purple-d:#4b31c6;--wash:#f2edff;--bg:#fff9f5}
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,"Noto Sans JP",ui-sans-serif,system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Segoe UI",sans-serif;color:var(--ink);background:var(--bg);line-height:1.75;-webkit-font-smoothing:antialiased}
+a{color:var(--purple-d)}
+.wrap{max-width:780px;margin:0 auto;padding-inline:clamp(20px,5vw,32px)}
+.nav{background:#fff;border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:12px;max-width:1040px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:900;font-size:20px;color:var(--ink);text-decoration:none}
+.btn{display:inline-block;padding:10px 16px;border-radius:10px;font-weight:800;text-decoration:none;border:1px solid var(--purple);color:var(--purple-d);background:#fff}
+.btn.primary{background:var(--purple-d);border-color:var(--purple-d);color:#fff}
+.btn.lg{padding:14px 22px;font-size:16px}
+.crumbs{font-size:13px;color:var(--muted);margin:26px 0 6px}
+h1{font-size:clamp(28px,5vw,40px);line-height:1.18;letter-spacing:-.02em;margin:8px 0 14px}
+h2{font-size:clamp(20px,3.4vw,24px);line-height:1.3;margin:0 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 28px}
+.qa{background:#fff;border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:14px 0}
+.qa p{margin:0 0 12px}.qa p:last-child{margin-bottom:0}
+.cta{background:var(--wash);border-radius:18px;padding:28px;margin:34px 0;text-align:center}
+.cta p{margin:0 0 18px;color:var(--muted)}
+.related{margin:0 0 44px}.related ul{margin:0;padding-left:20px}.related li{margin:6px 0}
+.foot{border-top:1px solid var(--line);padding:22px 0;font-size:13px;color:var(--muted);text-align:center}
+.table-wrap{overflow-x:auto;margin:14px 0}
+.table-wrap table{border-collapse:collapse;width:100%;min-width:520px;font-size:15px;line-height:1.6}
+.table-wrap th,.table-wrap td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.table-wrap thead th{background:var(--wash)}
+.table-wrap caption{caption-side:bottom;text-align:left;font-size:13px;color:var(--muted);padding-top:8px}
+.cta .btn+.btn{margin:8px 0 0 10px}
+.foot .note{margin:0 0 10px;font-size:12px}
+.qa pre.code{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;margin:0 0 12px;overflow-x:auto;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}.qa pre.code code{font:inherit;color:inherit;background:none}
+</style>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Organization","@id":"https://nurevo.jp/#organization","name":"Nurevo AIO","legalName":"Bestie.合同会社","alternateName":"Bestie.合同会社","brand":{"@type":"Brand","name":"Nurevo AIO"},"url":"https://nurevo.jp/","logo":{"@type":"ImageObject","url":"https://nurevo.jp/assets/logo.png","width":128,"height":128},"email":"info@nurevo.jp","foundingDate":"2025-05","founder":{"@type":"Person","name":"橋本 剛"},"address":{"@type":"PostalAddress","streetAddress":"神田三崎町3-2-6","addressLocality":"千代田区","addressRegion":"東京都","addressCountry":"JP"},"sameAs":["https://wordpress.org/plugins/nurevo-webmcp/"]},{"@type":"WebSite","@id":"https://nurevo.jp/#website","name":"Nurevo AIO","url":"https://nurevo.jp/","publisher":{"@id":"https://nurevo.jp/#organization"},"inLanguage":["ja","en","ar","bg","ca","cs","da","de","el","es","et","fa","fi","fr","fy","gl","gu","he","hi","hr","hu","id","it","ko","lo","nb","nl","pl","pt-BR","pt-PT","ro","ru","sk","sl","sr","sv","tr","uk","vi","zh-Hans","zh-Hant"]},{"@type":"WebPage","@id":"https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/#webpage","url":"https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/","name":"商品のサイズ・色・仕様をAIに正しく読ませる手順（EC） | Nurevo AIO","description":"「Mサイズは身長170cmで合う？」「白の在庫は？」とAIに聞かれたとき、答えの材料になる仕様表とバリエーションの書き方。ProductGroupの例、WooCommerceの現状と手順、確かめ方。","inLanguage":"ja","isPartOf":{"@id":"https://nurevo.jp/#website"},"publisher":{"@id":"https://nurevo.jp/#organization"},"breadcrumb":{"@id":"https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/#breadcrumb"},"primaryImageOfPage":{"@type":"ImageObject","url":"https://nurevo.jp/ogp.png","width":1200,"height":630}},{"@type":"BreadcrumbList","@id":"https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/#breadcrumb","itemListElement":[{"@type":"ListItem","position":1,"name":"ホーム","item":"https://nurevo.jp/"},{"@type":"ListItem","position":2,"name":"AEOガイド","item":"https://nurevo.jp/ja/guide/"},{"@type":"ListItem","position":3,"name":"ECの商品のサイズ・色・仕様をAIに正しく読ませる手順：仕様表、バリエーション、WooCommerce","item":"https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/"}]},{"@type":"FAQPage","@id":"https://nurevo.jp/ja/guide/ec-product-variants-specs-ai-search/#faq","mainEntity":[{"@type":"Question","name":"サイズ表を画像で載せているのはだめですか？","acceptedAnswer":{"@type":"Answer","text":"画像は人には分かりやすいので残してかまいません。ただし、同じ内容を文字の表でも本文に載せてください。画像の中の数字は、AIの検索のクローラーが読めるとは限りません。"}},{"@type":"Question","name":"ProductGroup を入れればAIに出ますか？","acceptedAnswer":{"@type":"Answer","text":"構造化データはAIの回答に出ることを約束するものではありません。本文の事実を、機械が取り違えない形でも置いておくためのものです。まず本文の仕様表とバリエーションごとの価格・在庫を整えてください。"}},{"@type":"Question","name":"WooCommerce だけで ProductGroup は出せますか？","acceptedAnswer":{"@type":"Answer","text":"WooCommerce 11.3.1 の標準の構造化データは ProductGroup と色・サイズを出しません。出すには、Yoast WooCommerce SEO のように ProductGroup に対応したプラグインを使います。その場合、ほかのプラグインと Product が重ならないかを確かめてください。"}},{"@type":"Question","name":"色ごとにページを分けたほうがよいですか？","acceptedAnswer":{"@type":"Answer","text":"Google は、1ページで切り替える作りと、色・サイズごとにページを分ける作りの両方の書き方を案内しています。どちらでもよく、大事なのは、色・サイズごとに別のIDと、選んだ状態で開くURL、正しい価格と在庫があることです。"}},{"@type":"Question","name":"JANコードがない商品はどうすればよいですか？","acceptedAnswer":{"@type":"Answer","text":"GTIN は任意です。自社の SKU を色・サイズごとに付ければ区別できます。OpenAI の仕様では、GTIN がないときに型番を作って埋めないよう書かれています。"}},{"@type":"Question","name":"身長の目安を書くと、AIが「必ず合う」と言いませんか？","acceptedAnswer":{"@type":"Answer","text":"言い切られる可能性はあります。目安は実寸と別の行に「目安」と書き、実寸と測り方も並べておくと、根拠のある数字が一緒に読まれやすくなります。"}},{"@type":"Question","name":"Nurevo AEO はバリエーションの構造化データを出しますか？","acceptedAnswer":{"@type":"Answer","text":"出しません。商品の Product と Offer は WooCommerce 側の出力に任せ、重ねません。Nurevo は店の情報（OnlineStore）、返品ポリシー、llms.txt の商品一覧（最大50件、親の商品の単位）を出し、AI検索のクローラーを許可します。"}}]}]}</script>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="brand" href="/"><img src="/assets/logo.png" alt="" width="28" height="28">Nurevo AIO</a>
+  <a class="btn primary" href="/check">無料でAIの読みやすさをチェック</a>
+</div></header>
+<main class="wrap">
+  <nav class="crumbs" aria-label="パンくずリスト"><a href="/">ホーム</a> <span aria-hidden="true">›</span> <a href="/ja/guide/">AEOガイド</a> <span aria-hidden="true">›</span> <span>ECの商品のサイズ・色・仕様をAIに正しく読ませる手順：仕様表、バリエーション、WooCommerce</span></nav>
+  <article>
+    <h1>ECの商品のサイズ・色・仕様をAIに正しく読ませる手順：仕様表、バリエーション、WooCommerce</h1>
+    <p class="lead">AIに商品を聞く人は「この棚の幅90cmで白はある？」「身長170cmならMとLのどちら？」のように、条件をつけて聞きます。答えの材料になるのは、ページの本文にある文字の仕様表（単位と測り方つき）と、色・サイズごとに別のID・URL・価格・在庫を持つバリエーションの情報です。本文、構造化データ（ProductGroup）、商品フィードの3か所で同じ値にそろえると、AIが取り違えにくくなります。WooCommerceの標準の構造化データは色・サイズを出さないため、本文の表とバリエーションのURLを先に整えるのが近道です。</p>
+<p>作成日：2026年11月28日（日本時間）。Google・OpenAIの公式の説明と、WooCommerce 11.3.1 のソースコードを同じ日に読んで確認しました。</p>
+<p>対象は、色・サイズ・容量などの違いがある商品を自社のネットショップで売っている方と、その制作・運用を担当する方です。ショップ全体の情報（返品・送料・在庫の出し方）は<a href="/ja/guide/online-shop-ai-search/">ネットショップのAI検索対策</a>、ChatGPTの商品フィードの申し込みは<a href="/ja/guide/chatgpt-shopping-product-feed/">ChatGPTのショッピングに商品を出す方法</a>にあります。ここでは、1つの商品ページの中の「サイズ・色・仕様」だけを扱います。</p>
+<section class="qa"><h2>上位の記事に書かれていなかったこと</h2><p>「ECサイト AIO対策」「商品ページ LLMO」「product attributes ChatGPT」などで上位に出る日本語7本・英語6本を、2026年11月28日に読みました。アパレルのサイズ表を「実寸」と「選び方」に分ける考え方（<a href="https://uravation.com/llmo/apparel-fashion-d2c-llmo-taisaku/">uravation</a>）や、AIに条件つきの質問をして確かめる5つのテスト（<a href="https://www.practicalecommerce.com/test-your-products-for-ai-discovery">Practical Ecommerce</a>）はよくまとまっていました。一方で、次のことはどの記事にもありませんでした。</p><ol><li>アパレル以外（家具の外寸と内寸、対応機種、容量）の仕様をどう書くか</li><li>ProductGroup（バリエーションをまとめる構造化データ）のコードの例。画像の中にしかない記事もありました</li><li>WooCommerceが標準で何を出していて、何を出していないか</li><li>WordPress（WooCommerce）の画面での具体的な手順</li><li>色・サイズを指定した質問で、AIの答えを確かめる方法</li></ol><p>以下では、この5つを埋めます。</p></section>
+<section class="qa"><h2>AIに聞かれる商品の質問は「条件つき」</h2><p>「おすすめのシャツ」だけでなく、条件を足して聞かれるのが商品の質問の特徴です。AIはその条件に合う事実をページから探すので、条件にあたる値が文字で書かれていないと、答えの材料になりません。商品の種類ごとに、よくある条件と、ページに必要な事実を並べました。</p><div class="table-wrap"><table><thead><tr><th scope="col">商品の種類</th><th scope="col">条件つきの質問の例</th><th scope="col">ページに文字で必要な事実</th></tr></thead><tbody><tr><th scope="row">服</th><td>身長170cmでゆったり着たい。MとLのどちら？</td><td>サイズごとの実寸、身長の目安、モデルの身長と着用サイズ、素材</td></tr><tr><th scope="row">靴</th><td>幅広の足で25.5cmはある？</td><td>サイズの表記（cm）、足囲・幅の表記、在庫のあるサイズ</td></tr><tr><th scope="row">家具・収納</th><td>幅90cm以内で白の本棚は？</td><td>外寸と内寸、色の名前、重さ、組み立ての有無</td></tr><tr><th scope="row">スマホケース・部品</th><td>iPhone 17に合うケースは？</td><td>対応機種の型番の一覧、対応しない機種</td></tr><tr><th scope="row">化粧品・食品</th><td>詰め替えで300mL以上のものは？</td><td>内容量と単位、詰め替えかどうか、成分や原材料</td></tr></tbody></table></div><p>どの種類でも、条件に合うかどうかは「色・サイズごと」に変わります。白だけ在庫がない、Lだけ価格が高い、といった違いがあるなら、その違いがバリエーションごとに読める形になっている必要があります。</p></section>
+<section class="qa"><h2>3か所で同じ値にそろえる：本文・構造化データ・商品フィード</h2><p>商品の事実が置かれる場所は3つあります。AIの検索の仕組みによって読む場所が違うため、どれか1つだけでは足りません。3か所の値が食い違うと、どれが正しいか分からなくなります。</p><div class="table-wrap"><table><thead><tr><th scope="col">場所</th><th scope="col">中身</th><th scope="col">主に読むもの</th></tr></thead><tbody><tr><th scope="row">ページの本文</th><td>仕様表、サイズ表、色の名前、説明文</td><td>ページを読みに来るAIの検索のクローラー、人</td></tr><tr><th scope="row">構造化データ（JSON-LD）</th><td>ProductGroup と、色・サイズごとの Product（SKU・GTIN・価格・在庫）</td><td>Google の検索と、ページを読むAI</td></tr><tr><th scope="row">商品フィード</th><td>Merchant Center や OpenAI に送る商品の一覧</td><td>Google のショッピング、ChatGPT のショッピング（申し込んだ場合）</td></tr></tbody></table></div><p>Google は、色やサイズなどの違いを ProductGroup にまとめ、hasVariant に色・サイズごとの Product を並べる書き方を2024年2月20日に案内しました（<a href="https://developers.google.com/search/blog/2024/02/product-variants">Google 検索セントラル ブログ</a>）。variesBy に書ける違いは color・size・suggestedAge・suggestedGender・material・pattern で、色・サイズごとに別の SKU か GTIN が必要です（<a href="https://developers.google.com/search/docs/appearance/structured-data/product-variants">商品バリエーションの構造化データ</a>）。</p>
+<p>OpenAI の商品フィードの仕様でも、item_id は「色・サイズごとに1つ」で、バリエーションには group_id、すべての行に listing_has_variations=true、違いを {"color":"Black","size":"10"} のように書く variant_dict が条件つきで必要です。寸法は長さ・幅・高さのうち2つ以上と単位、重さは単位つきで書けます。GTIN がないときに型番（mpn）を作って埋めないこと、とも書かれています（<a href="https://developers.openai.com/commerce/specs/file-upload/products">OpenAI 商品フィードの仕様</a>）。</p></section>
+<section class="qa"><h2>仕様表とサイズ表の書き方</h2><p>仕様表は、画像ではなく文字の表でページの本文に載せます。画像の中の数字は、AIのクローラーが読めるとは限りません。次の例と決まりを使ってください。</p><pre class="code" dir="ltr"><code>【仕様表の書き方の例（ページの本文に、文字の表で載せる）】
+項目            書き方の例                         書くときの決まり
+サイズ（実寸）  M：着丈72cm／身幅58cm／袖丈24cm    平置きで測った値。測り方を表の下に書く
+サイズ（目安）  M：身長165〜175cm                   実寸と分けて書き、目安だと明記する
+モデル          身長178cm・Lを着用                   着用したサイズと体格を両方書く
+素材            麻55%・綿45%                         洗濯表示と同じ書き方にする
+外寸と内寸      外寸 幅90×奥行30×高さ180cm          家具・収納は外寸と内寸を別の行に
+重さ            3.2kg（本体のみ）                    何を含む重さかを書く
+対応機種        iPhone 17・iPhone 17 Pro（型番まで）  「最新機種」などの言い方はしない
+容量・内容量    50mL                                  単位を省かない
+色の名前        ネイビー（紺）                        画像・選択肢・JSON-LDで同じ名前</code></pre><p>大事なのは、実寸と目安を分けることです。「Mは身長165〜175cmの目安」は店の考えで、「Mの身幅58cm」は測った事実です。AIの答えは一文だけ抜き出されることがあるので、目安には「目安」と書いておくと、事実として言い切られにくくなります。</p>
+<p>測り方（平置き・ヌード寸法・外寸か内寸か）は、表の下に1行で書きます。同じ「幅」でも測り方が違えば別の数字になり、比べられません。色の名前は、商品画像の説明・選択肢・構造化データで同じ言葉を使います。選択肢が「紺」で構造化データが「ネイビー」だと、同じ色だと分からないことがあります。</p></section>
+<section class="qa"><h2>バリエーションの書き方：ID・URL・価格・在庫</h2><p>色・サイズごとに、次の4つを持たせます。</p><ol><li>別の SKU（できればJANコードなどの GTIN も）。親の商品と同じ値を使い回さない</li><li>そのバリエーションを選んだ状態で開くURL。Google は、1ページで色・サイズを切り替える作りなら、URLのクエリ（?color=… など）でバリエーションを選んだ状態にでき、その状態で正しい画像・価格・在庫が表示され、カートに入れられることを求めています</li><li>バリエーションごとの価格と在庫。「白のMだけ在庫切れ」が読める状態にする</li><li>色・サイズの名前。本文・選択肢・構造化データ・フィードで同じ</li></ol><p>URLのクエリについては、<a href="https://www.salesforce.com/jp/commerce/ai/ai-readiness-seo-checklist/">Salesforce のチェックリスト</a>のように「?color=blue のようなURLは避ける」とする記事もあります。これはクエリで重複ページが増えるのを避ける助言で、Google の説明は、1ページの作りでは代表のURLを1つにしたうえで、クエリでバリエーションを選べるようにする、というものです。正規のURL（canonical）は親の商品ページに向け、クエリつきのURLはフィードや構造化データの offers.url に使う、と分けると両立します。</p>
+<p>Google は、構造化データを最初に返すHTMLに入れることを勧め、JavaScriptで後から作る場合はショッピングのクロールの頻度や正確さが下がることがあるとしています。色を選ぶと価格が変わる作りでも、各バリエーションの値は最初のHTMLに入れておきます。</p></section>
+<section class="qa"><h2>構造化データの例（ProductGroup）</h2><p>Google の例にならった、シャツの ProductGroup の書き方です。hasVariant の中に、色・サイズごとの Product を1つずつ並べます。</p><pre class="code" dir="ltr"><code>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "ProductGroup",
+  "name": "リネン混 オープンカラーシャツ",
+  "description": "麻55%・綿45%。洗濯機で洗えるオープンカラーシャツ。",
+  "url": "https://shop.example.jp/product/linen-shirt/",
+  "brand": { "@type": "Brand", "name": "Example Works" },
+  "productGroupID": "LS-100",
+  "variesBy": ["https://schema.org/color", "https://schema.org/size"],
+  "hasVariant": [
+    {
+      "@type": "Product",
+      "name": "リネン混 オープンカラーシャツ ネイビー M",
+      "sku": "LS-100-NV-M",
+      "gtin13": "4900000000000",
+      "color": "ネイビー",
+      "size": "M",
+      "material": "麻55%・綿45%",
+      "image": "https://shop.example.jp/img/ls-100-nv.jpg",
+      "offers": {
+        "@type": "Offer",
+        "url": "https://shop.example.jp/product/linen-shirt/?attribute_pa_color=navy&amp;attribute_pa_size=m",
+        "price": "8800",
+        "priceCurrency": "JPY",
+        "availability": "https://schema.org/InStock"
+      }
+    }
+  ]
+}
+&lt;/script&gt;
+※ GTIN・URL・価格は書き方の例です。実際の値は自社の商品のものを入れ、
+  ページに表示している内容と同じにしてください。バリエーションごとに1つずつ並べます。</code></pre><p>書いたら、<a href="https://search.google.com/test/rich-results">リッチリザルト テスト</a>で、商品のバリエーションとしてエラーなく読めるかを確かめます。Search Console の「商品スニペット」「販売者のリスティング」のレポートでも、バリエーションの検証結果が見られます。構造化データがあればAIの回答に出る、というものではありません。本文の表と同じ値を、機械が取り違えない形でも置いておく、という位置づけです。</p></section>
+<section class="qa"><h2>WooCommerceの現状：標準で出るもの、出ないもの</h2><p>WooCommerce 11.3.1 のソースコード（<a href="https://github.com/woocommerce/woocommerce/blob/11.3.1/plugins/woocommerce/includes/class-wc-structured-data.php">class-wc-structured-data.php</a>）を読むと、色・サイズがある「バリエーション商品」の標準の構造化データは次のとおりです。</p><div class="table-wrap"><table><caption>WooCommerce 11.0.0 から、クエリで1つのバリエーションに決まるURLでは、そのバリエーションの価格を出すようになりました（10.9.0 にはありません）。1つに決まらないとき（「すべて」を含むバリエーションと重なるときなど）は、価格の幅のままです。</caption><thead><tr><th scope="col">URL</th><th scope="col">WooCommerceが出すもの</th><th scope="col">出さないもの</th></tr></thead><tbody><tr><th scope="row">商品ページ（クエリなし）</th><td>Product と、価格の幅（AggregateOffer：最安・最高・バリエーションの数）。全バリエーションが同じ価格なら Offer</td><td>色・サイズごとの価格と在庫、color・size・material、ProductGroup</td></tr><tr><th scope="row">すべての属性をクエリで指定したURL（例：?attribute_pa_color=navy&amp;attribute_pa_size=m）</th><td>そのバリエーションの価格の Offer、そのバリエーションの SKU・GTIN・型番、親のSKUを指す inProductGroupWithID</td><td>color・size・material、ProductGroup</td></tr></tbody></table></div><p>同じ ?attribute_… のクエリで、商品ページの選択欄もそのバリエーションが選ばれた状態で開きます（<a href="https://github.com/woocommerce/woocommerce/blob/11.3.1/plugins/woocommerce/includes/wc-template-functions.php">wc-template-functions.php</a>）。つまり WooCommerce 11 以降なら、フィードや構造化データに書くバリエーションのURLは、このクエリの形を使えば価格が合います。</p>
+<p>色・サイズを構造化データに出すには、標準の機能では足りません。Yoast の開発者向けの説明では、有料の Yoast WooCommerce SEO がバリエーション商品に ProductGroup を出し、各バリエーションを hasVariant に並べます（<a href="https://developer.yoast.com/features/schema/pieces/productgroup/">Yoast ProductGroup</a>）。WooCommerce の Google 向けフィードの拡張機能について「バリエーションが別々の商品として出る。ProductGroup にしてほしい」という要望が2024年11月12日から出ていて、受付中のままです（<a href="https://woocommerce.com/feature-request/use-productgroup-structured-data-for-variants-instead-of-separate-products/">機能の要望</a>）。プラグインを足す前に、すでに入っているプラグインが Product を出していないかを確かめ、同じ商品の Product が2つ出ないようにしてください。</p></section>
+<section class="qa"><h2>WordPress（WooCommerce）での手順</h2><ol><li>「商品 → 属性」で、色・サイズを共通の属性として作る（商品ごとの独自の属性にしない）。名前はお客様が使う言葉（「ネイビー」など）にする</li><li>商品の「属性」タブで、使う属性の「商品ページで表示」に印をつけ、「バリエーションとして使用」にも印をつける。表示にした属性は「追加情報」タブに文字で出る</li><li>「配送」タブで重さと寸法（長さ・幅・高さ）を入れる。これも「追加情報」タブに出る</li><li>「バリエーション」タブで、色・サイズごとに SKU、GTIN（JANコード）、価格、在庫を入れる。説明欄に、そのバリエーションだけの違い（「Lのみ着丈が長い」など）を書く</li><li>商品の説明に、サイズ表・仕様表を文字の表で入れる（ブロックエディタの「表」ブロック）。測り方を表の下に1行で書く</li><li>バリエーションのURLを「?attribute_pa_color=navy&amp;attribute_pa_size=m」の形で開き、選択欄・画像・価格・在庫がそのバリエーションになることを確かめる</li><li><a href="https://wordpress.org/plugins/nurevo-webmcp/">Nurevo AEO（無料）</a>を入れ、サイトの種類を「ネットショップ」にする。店の情報を OnlineStore として出し、商品の Product・Offer は WooCommerce 側に任せて重ねません。llms.txt には、新しい順に最大50件の商品を、名前・URL・価格・在庫・SKU・カテゴリで載せます（親の商品の単位で、色・サイズごとではありません）。Yoast SEO・Rank Math・SEO SIMPLE PACK・VK All in One Expansion Unit と併用できます（0.9.1 以降）</li></ol><pre class="code" dir="ltr"><code>curl -s 'https://shop.example.jp/product/linen-shirt/?attribute_pa_color=navy&amp;attribute_pa_size=m' \
+  | grep -o '"sku":"[^"]*"'</code></pre><p>ターミナルが使えるなら、上のコマンドのように、クエリつきのURLで構造化データの SKU がバリエーションのものに変わるかを確かめられます（ドメインと商品のURLは自分の店のものに変えてください）。</p></section>
+<section class="qa"><h2>AIの答えを確かめる：色・サイズを指定して聞く</h2><p>店名や商品名だけで聞くと、条件の事実が読めているかは分かりません。お客様が実際に聞きそうな、条件つきの質問で確かめます。</p><ol><li>主な商品ごとに、条件つきの質問を3つ作る（例：「幅90cm以内の白い本棚」「身長170cmでゆったり着られるリネンシャツ」「iPhone 17に合う手帳型ケース」）</li><li>ChatGPT・Perplexity・GoogleのAIモードで聞き、回答・出典のURL・出てきた数値を表に記録する</li><li>数値（寸法・価格・在庫・対応機種）がページと合っているか、別の色やサイズの値と取り違えていないかを見る</li><li>直したら、2〜4週間後に同じ質問で記録を取り直す</li></ol><p>AIの回答は、日や聞き方、使う人の地域で変わります。1回の結果で判断せず、同じ質問を何回か聞いて記録してください。Nurevo の無料のAIチェックは月1回、Perplexity に3つの質問をします。Pro（月14,800円〜、ベータ版）は現在 Perplexity で登場率を計測し、ChatGPT は設定され次第対象になります。Standard は月3,000円です。</p></section>
+<section class="qa"><h2>チェックリスト</h2><ol><li>仕様表・サイズ表が、画像ではなく文字の表で本文にある</li><li>サイズの実寸と目安が分かれ、目安には「目安」と書いてある</li><li>測り方（平置き・外寸／内寸など）が表の下に書いてある</li><li>対応機種は型番で書き、「最新機種」などの言い方をしていない</li><li>色の名前が、選択肢・画像の説明・構造化データ・フィードで同じ</li><li>色・サイズごとに別の SKU（できれば GTIN）がある</li><li>クエリつきのURLで、そのバリエーションの画像・価格・在庫が表示される</li><li>構造化データの価格・在庫が、表示と同じ（リッチリザルト テストで確認）</li><li>同じ商品の Product が、複数のプラグインから重ねて出ていない</li><li>条件つきの質問を3つ決め、AIの回答を記録している</li></ol></section>
+    <section class="qa"><h2>よくある質問</h2><h3>サイズ表を画像で載せているのはだめですか？</h3><p>画像は人には分かりやすいので残してかまいません。ただし、同じ内容を文字の表でも本文に載せてください。画像の中の数字は、AIの検索のクローラーが読めるとは限りません。</p>
+<h3>ProductGroup を入れればAIに出ますか？</h3><p>構造化データはAIの回答に出ることを約束するものではありません。本文の事実を、機械が取り違えない形でも置いておくためのものです。まず本文の仕様表とバリエーションごとの価格・在庫を整えてください。</p>
+<h3>WooCommerce だけで ProductGroup は出せますか？</h3><p>WooCommerce 11.3.1 の標準の構造化データは ProductGroup と色・サイズを出しません。出すには、Yoast WooCommerce SEO のように ProductGroup に対応したプラグインを使います。その場合、ほかのプラグインと Product が重ならないかを確かめてください。</p>
+<h3>色ごとにページを分けたほうがよいですか？</h3><p>Google は、1ページで切り替える作りと、色・サイズごとにページを分ける作りの両方の書き方を案内しています。どちらでもよく、大事なのは、色・サイズごとに別のIDと、選んだ状態で開くURL、正しい価格と在庫があることです。</p>
+<h3>JANコードがない商品はどうすればよいですか？</h3><p>GTIN は任意です。自社の SKU を色・サイズごとに付ければ区別できます。OpenAI の仕様では、GTIN がないときに型番を作って埋めないよう書かれています。</p>
+<h3>身長の目安を書くと、AIが「必ず合う」と言いませんか？</h3><p>言い切られる可能性はあります。目安は実寸と別の行に「目安」と書き、実寸と測り方も並べておくと、根拠のある数字が一緒に読まれやすくなります。</p>
+<h3>Nurevo AEO はバリエーションの構造化データを出しますか？</h3><p>出しません。商品の Product と Offer は WooCommerce 側の出力に任せ、重ねません。Nurevo は店の情報（OnlineStore）、返品ポリシー、llms.txt の商品一覧（最大50件、親の商品の単位）を出し、AI検索のクローラーを許可します。</p></section>
+  </article>
+  <aside class="cta">
+    <h2>まず、あなたのショップがAIにどう読まれているか確かめる</h2>
+    <p>無料チェックでは、構造化データ・llms.txt・AIクローラーの許可の状態が、登録なしで分かります。WooCommerce なら、Nurevo AEO で店の情報と商品の一覧を、商品の構造化データと重ねずに無料で出せます。</p>
+    <a class="btn primary lg" href="/check">無料でAIの読みやすさをチェック</a>
+    <a class="btn lg" href="https://wordpress.org/plugins/nurevo-webmcp/">WordPress.orgで無料で入れてみる</a>
+  </aside>
+  <nav class="related" aria-label="関連ガイド"><h2>関連ガイド</h2><ul><li><a href="/ja/guide/online-shop-ai-search/">ネットショップ（EC）のAI検索対策：商品・価格・在庫・返品条件をAIに正しく読ませる手順</a></li><li><a href="/ja/guide/chatgpt-shopping-product-feed/">ChatGPTのショッピングに商品を出す方法：商品フィード・Merchant Centerとの違いと、日本のショップがいまやること</a></li><li><a href="/ja/guide/agency-ec-product-data-check/">ECサイトの保守に「商品データの整合チェック」を足す方法：制作会社のための手順と報告の型</a></li><li><a href="/ja/guide/images-video-ai-search/">画像・動画とAI検索：代替テキスト、キャプション、動画の文字起こしをAIに読ませる手順</a></li><li><a href="/ja/guide/measure-ai-visibility/">AIでの登場率（AI可視性）の測り方：質問の選び方・回数・数字の読み方</a></li></ul></nav>
+  <nav class="langs" aria-label="他の言語"><h2>他の言語</h2><ul><li><a href="/guide/ec-product-variants-specs-ai-search/" hreflang="en" lang="en">English</a></li></ul></nav>
+</main>
+<footer class="foot"><div class="wrap"><p class="note">ChatGPTはOpenAIの、PerplexityはPerplexity AIの、Google・Merchant Center・Search ConsoleはGoogle LLCの商標です。iPhoneはApple Inc.の商標です。WordPressはWordPress Foundation、WooCommerceはAutomatticの商標です。Yoast SEO、Rank Math、SEO SIMPLE PACK、VK All in One Expansion Unit、Salesforceは、それぞれの権利者の商標です。Nurevoはこれらの企業と提携・承認の関係にありません。</p><a href="/">Nurevo AIO</a> ・ <a href="/terms">利用規約</a> ・ <a href="/privacy">プライバシーポリシー</a></div></footer>
+<script src="/assets/ai-referral.js" defer></script>
+</body>
+</html>
