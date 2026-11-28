@@ -774,3 +774,12 @@
 3. 葬儀社以外の終活関連（遺品整理は既出）：司法書士・相続の相談窓口は PR #63 と重なるため避け、霊園・納骨堂のAI検索対策（永代供養の費用と条件）【業種別】
 4. 結婚式場以外のイベント：貸し会議室・レンタルスペースのAI検索対策（定員・料金の時間単位・キャンセル）【業種別】
 5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける。Businesses in ChatGPT〔2026-11-10〕を反映）
+| 2026-11-28 20時 | subscription-products-ai-search | 定期便・サブスク商品のAI検索対策：解約条件・回数・総額をAIに正しく読ませる手順（EC。online-shop-ai-search〔ショップ全体〕・ec-product-variants-specs-ai-search〔色・サイズ〕・chatgpt-shopping-product-feed〔フィード〕・pricing-page-ai-search〔BtoB の料金ページ〕とは分け、定期の契約の条件に絞る。上位記事11本〔mercart 235（2026-04-16、11-04更新）・MarTechLab 単品通販LP（08-26）・jinrai EC AIO（05-20、11-27更新）・EC実務ラボ（03-20）・giftls（09-04）・w2solution 単品リピート（日付なし）／Ranktracker（01-21）・Texta（日付なし）・Shopify（11-24）・BigCommerce（日付なし）・Search Engine Land（Kagzi）。ADSX は取得失敗〕の抜け〔条件の書き方の型なし・最終確認画面とページをそろえる考え方なし・構造化データの限界の説明なし・WooCommerce の手順なし・確かめる質問なし〕を埋めた。条件の表の例（架空のコーヒー豆、日英）、聞かれる質問6行の表、特商法 第12条の6（2022-06-01 施行、消費者庁）と最終確認画面6項目（埼玉県の説明 2026-02-19）・第15条の4 の取消し・誤認表示の例、Google merchant listing に定期の項目がないこと、schema.org の referenceQuantity・billingDuration と Offer の例（Product を2つ作らない注意）、WooCommerce Subscriptions の項目（2026-11-25 更新：価格・1〜6の間隔・更新停止・登録料〔$75＋$200＝$275〕・お試し）と7手順〔Nurevo FAQ ブロック、サイト種類ネットショップ、llms.txt は商品ごとに価格1つ・周期は載らない、webmcp_canary_llms_txt_lines、0.9.1 併用〕、海外（ROSCA・Click-to-Cancel 2025-07 取消し・2026-03-11 ANPRM〔Gibson Dunn〕、約30州〔Jones Day〕、英国 DMCCA 2027年1月見込み〔DWF 2026-10-22〕）、確かめる質問4つ、チェックリスト10、FAQ 6問。ギャプライズ調査（2025、800人、44.0%）を引用）。2言語（ja・en） | EC | content/daily-20261128-20 |
+メモ：2026-11-28 20時の回は、消費者庁の最終確認画面の解説ページ（notice02）・OpenAI の商品フィード仕様・schema.org の PriceTypeEnumeration・Hogan Lovells が取得の許可待ちで読めず、6項目は埼玉県の説明を出典にした。定期購入の相談件数、罰則の金額、OpenAI フィードの定期の項目、WooCommerce Subscriptions の価格が WooCommerce の JSON-LD にどう出るかは確認できず書いていない。今日は業種別2本（飲食店・ペットショップ）と制作会社向け（見積もり）が出ていたため、業種別ではなくEC（定期便）にした。
+翻訳の残り（8時台で補完）：ja/en のみの記事から順に（前回の一覧に subscription-products-ai-search を追加、ja/en のみ。次は agency-reviews-testimonials-ai-search）
+次の候補：
+1. 制作会社向け：飲食店のクライアントのメニュー更新を月額サービスにする（restaurant-ai-search のメニュー・アレルギー表の運用に絞る）【制作会社向け】
+2. 貸し会議室・レンタルスペースのAI検索対策（定員・時間単位の料金・キャンセル）【業種別】
+3. 霊園・納骨堂のAI検索対策（永代供養の費用と条件。葬儀社 PR #88 と分ける）【業種別】
+4. 化粧品・健康食品のネットショップのAI検索対策：薬機法・健康増進法の表示の範囲で効能を書かない書き方（subscription-products-ai-search と分け、表示の言葉に絞る）【EC】
+5. 次の月曜（11-30）の書き直し候補：appear-in-chatgpt（ChatGPTに載る方法、初期版。how-to-appear-in-chatgpt と役割を分ける。Businesses in ChatGPT〔2026-11-10〕を反映）
